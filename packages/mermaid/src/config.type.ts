@@ -297,6 +297,7 @@ export interface GanttDiagramConfig extends BaseDiagramConfig {
   sectionFontSize?: string | number;
   numberSectionStyles?: number;
   axisFormat?: string;
+  tickInterval?: string;
   topAxis?: boolean;
 }
 

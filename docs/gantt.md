@@ -230,6 +230,18 @@ The following formatting strings are supported:
 
 More info in: https://github.com/mbostock/d3/wiki/Time-Formatting
 
+### Axis ticks
+
+The default output ticks are auto. You can custom your `tickInterval`, like `1day` or `1week`.
+
+    tickInterval 1day
+
+The pattern is:
+
+    /^([1-9][0-9]*)(minute|hour|day|week|month)$/
+
+More info in: <https://github.com/d3/d3-time#interval_every>
+
 ## Comments
 
 Comments can be entered within a gantt chart, which will be ignored by the parser. Comments need to be on their own line and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
