@@ -48,11 +48,13 @@ describe('when using mermaid and ', function () {
       const node = document.createElement('div');
       node.appendChild(document.createTextNode('graph TD;\na;'));
 
-      await mermaid.initThrowsErrors(undefined, node);
+      mermaid.initThrowsErrors(undefined, node);
       // mermaidAPI.render function has been mocked, since it doesn't yet work
       // in Node.JS (only works in browser)
       expect(mermaidAPI.render).toHaveBeenCalled();
     });
+  });
+  describe('when using #initThrowsErrorsAsync', function () {
     it('should throw error (but still render) if lazyLoadedDiagram fails', async () => {
       const node = document.createElement('div');
       node.appendChild(document.createTextNode('graph TD;\na;'));
@@ -60,14 +62,14 @@ describe('when using mermaid and ', function () {
       mermaidAPI.setConfig({
         lazyLoadedDiagrams: ['this-file-does-not-exist.mjs'],
       });
-      await expect(mermaid.initThrowsErrors(undefined, node)).rejects.toThrowError(
+      await expect(mermaid.initThrowsErrorsAsync(undefined, node)).rejects.toThrowError(
         // this error message is probably different on every platform
         // this one is just for vite-note (node/jest/browser may be different)
         'Failed to load this-file-does-not-exist.mjs'
       );
 
       // should still render, even if lazyLoadedDiagrams fails
-      expect(mermaidAPI.render).toHaveBeenCalled();
+      expect(mermaidAPI.renderAsync).toHaveBeenCalled();
     });
 
     afterEach(() => {
