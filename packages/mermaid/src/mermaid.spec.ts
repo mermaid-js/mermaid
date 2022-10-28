@@ -54,6 +54,29 @@ describe('when using mermaid and ', function () {
       expect(mermaidAPI.render).toHaveBeenCalled();
     });
   });
+  describe('when using #initThrowsErrorsAsync', function () {
+    it('should throw error (but still render) if lazyLoadedDiagram fails', async () => {
+      const node = document.createElement('div');
+      node.appendChild(document.createTextNode('graph TD;\na;'));
+
+      mermaidAPI.setConfig({
+        lazyLoadedDiagrams: ['this-file-does-not-exist.mjs'],
+      });
+      await expect(mermaid.initThrowsErrorsAsync(undefined, node)).rejects.toThrowError(
+        // this error message is probably different on every platform
+        // this one is just for vite-note (node/jest/browser may be different)
+        'Failed to load this-file-does-not-exist.mjs'
+      );
+
+      // should still render, even if lazyLoadedDiagrams fails
+      expect(mermaidAPI.renderAsync).toHaveBeenCalled();
+    });
+
+    afterEach(() => {
+      // we modify mermaid config in some tests, so we need to make sure to reset them
+      mermaidAPI.reset();
+    });
+  });
 
   describe('checking validity of input ', function () {
     it('should throw for an invalid definition', function () {

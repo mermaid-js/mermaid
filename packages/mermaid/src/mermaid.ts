@@ -49,7 +49,6 @@ const init = async function (
   try {
     const conf = mermaidAPI.getConfig();
     if (conf?.lazyLoadedDiagrams && conf.lazyLoadedDiagrams.length > 0) {
-      await registerLazyLoadedDiagrams(conf);
       await initThrowsErrorsAsync(config, nodes, callback);
     } else {
       initThrowsErrors(config, nodes, callback);
@@ -178,10 +177,12 @@ const initThrowsErrors = function (
   }
 };
 
-let lazyLoadingPromise: Promise<unknown> | undefined = undefined;
+let lazyLoadingPromise: Promise<PromiseSettledResult<void>[]> | undefined = undefined;
 /**
- * @param conf
- * @deprecated This is an internal function and should not be used. Will be removed in v10.
+ * This is an internal function and should not be made public, as it will likely change.
+ * @internal
+ * @param conf - Mermaid config.
+ * @returns An array of {@link PromiseSettledResult}, showing the status of imports.
  */
 const registerLazyLoadedDiagrams = async (conf: MermaidConfig) => {
   // Only lazy load once
@@ -195,7 +196,7 @@ const registerLazyLoadedDiagrams = async (conf: MermaidConfig) => {
       })
     );
   }
-  await lazyLoadingPromise;
+  return await lazyLoadingPromise;
 };
 
 let loadingPromise: Promise<unknown> | undefined = undefined;
@@ -218,9 +219,20 @@ const loadExternalDiagrams = async (conf: MermaidConfig) => {
 };
 
 /**
- * @deprecated This is an internal function and should not be used. Will be removed in v10.
+ * Equivalent to {@link init()}, except an error will be thrown on error.
+ *
+ * @alpha
+ * @deprecated This is an internal function and will very likely be modified in v10, or earlier.
+ * We recommend staying with {@link initThrowsErrors} if you don't need `lazyLoadedDiagrams`.
+ *
+ * @param config - **Deprecated** Mermaid sequenceConfig.
+ * @param nodes - One of:
+ * - A DOM Node
+ * - An array of DOM nodes (as would come from a jQuery selector)
+ * - A W3C selector, a la `.mermaid` (default)
+ * @param callback - Function that is called with the id of each generated mermaid diagram.
+ * @returns Resolves on success, otherwise the {@link Promise} will be rejected.
  */
-
 const initThrowsErrorsAsync = async function (
   config?: MermaidConfig,
   // eslint-disable-next-line no-undef
@@ -229,6 +241,14 @@ const initThrowsErrorsAsync = async function (
   callback?: Function
 ) {
   const conf = mermaidAPI.getConfig();
+
+  const registerLazyLoadedDiagramsErrors: Error[] = [];
+  for (const registerResult of await registerLazyLoadedDiagrams(conf)) {
+    if (registerResult.status == 'rejected') {
+      registerLazyLoadedDiagramsErrors.push(registerResult.reason);
+    }
+  }
+
   if (config) {
     // This is a legacy way of setting config. It is not documented and should be removed in the future.
     // @ts-ignore: TODO Fix ts errors
@@ -303,9 +323,10 @@ const initThrowsErrorsAsync = async function (
       handleError(error, errors, mermaid.parseError);
     }
   }
-  if (errors.length > 0) {
+  const allErrors = [...registerLazyLoadedDiagramsErrors, ...errors];
+  if (allErrors.length > 0) {
     // TODO: We should be throwing an error object.
-    throw errors[0];
+    throw allErrors[0];
   }
 };
 
@@ -500,6 +521,7 @@ const mermaid: {
   renderAsync: typeof renderAsync;
   init: typeof init;
   initThrowsErrors: typeof initThrowsErrors;
+  initThrowsErrorsAsync: typeof initThrowsErrorsAsync;
   initialize: typeof initialize;
   initializeAsync: typeof initializeAsync;
   contentLoaded: typeof contentLoaded;
@@ -514,6 +536,7 @@ const mermaid: {
   renderAsync,
   init,
   initThrowsErrors,
+  initThrowsErrorsAsync,
   initialize,
   initializeAsync,
   parseError: undefined,
