@@ -2,19 +2,20 @@
   "version": "0.2",
   "language": "en",
   "words": [
+    "blockquotes",
     "customizability",
     "Gantt",
     "jison",
     "knsv",
     "Knut",
+    "mermiad",
     "mindmap",
     "Mindmaps",
     "mitigations",
     "sandboxed",
     "Sveidqvist",
     "verdana",
-    "Visio",
-    "mermiad"
+    "Visio"
   ],
   "ignoreWords": [
     "Faber",

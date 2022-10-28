@@ -508,7 +508,7 @@ export default mermaidAPI;
  *
  * ```html
  * <script>
- *   var config = {
+ *   const config = {
  *     theme: 'default',
  *     logLevel: 'fatal',
  *     securityLevel: 'strict',

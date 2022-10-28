@@ -224,7 +224,7 @@ The example code below is an extract of what mermaid does when using the API. Th
 bind events to an SVG when using the API for rendering.
 
 ```javascript
-var insertSvg = function (svgCode, bindFunctions) {
+const insertSvg = function (svgCode, bindFunctions) {
   element.innerHTML = svgCode;
   if (typeof callback !== 'undefined') {
     callback(id);
@@ -232,7 +232,7 @@ var insertSvg = function (svgCode, bindFunctions) {
   bindFunctions(element);
 };
 
-var id = 'theGraph';
+const id = 'theGraph';
 
 mermaidAPI.render(id, txt, insertSvg, element);
 ```
@@ -248,7 +248,7 @@ mermaidAPI.render(id, txt, insertSvg, element);
 This is the renderer used for transforming the documentation from Markdown to html with mermaid diagrams in the html.
 
 ```javascript
-var renderer = new marked.Renderer();
+const renderer = new marked.Renderer();
 renderer.code = function (code, language) {
   if (code.match(/^sequenceDiagram/) || code.match(/^graph/)) {
     return '<pre class="mermaid">' + code + '</pre>';
@@ -299,8 +299,8 @@ mermaid.parseError = function (err, hash) {
   displayErrorInGui(err);
 };
 
-var textFieldUpdated = function () {
-  var textStr = getTextFromFormField('code');
+const textFieldUpdated = function () {
+  const textStr = getTextFromFormField('code');
 
   if (mermaid.parse(textStr)) {
     reRender(textStr);

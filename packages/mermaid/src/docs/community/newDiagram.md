@@ -43,8 +43,7 @@ exports.parseError = function (err, hash) {
 when parsing the `yy` object is initialized as per below:
 
 ```javascript
-var parser;
-parser = exampleParser.parser;
+const parser = exampleParser.parser;
 parser.yy = db;
 ```
 
@@ -67,8 +66,8 @@ At this point when mermaid is trying to render the diagram, it will detect it as
 ### Setup
 
 ```javascript
-var graph = require('./graphDb');
-var flow = require('./parser/flow');
+const graph = require('./graphDb');
+const flow = require('./parser/flow');
 flow.parser.yy = graph;
 ```
 
@@ -89,7 +88,7 @@ graph.getEdges();
 The parser is also exposed in the mermaid api by calling:
 
 ```javascript
-var parser = mermaid.getParser();
+const parser = mermaid.getParser();
 ```
 
 Note that the parse needs a graph object to store the data as per:
