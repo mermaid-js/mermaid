@@ -1,32 +1,55 @@
+import type { MarkdownRenderer } from 'vitepress';
 import shiki from 'shiki';
 
-const MermaidExample = async (md) => {
-  const fence = md.renderer.rules.fence.bind(md.renderer.rules);
+const MermaidExample = async (md: MarkdownRenderer) => {
+  const defaultRenderer = md.renderer.rules.fence;
 
-  const highlighter = await shiki.getHighlighter({ theme: 'material-palenight' });
+  if (!defaultRenderer) {
+    throw new Error('defaultRenderer is undefined');
+  }
+
+  const highlighter = await shiki.getHighlighter({
+    theme: 'material-palenight',
+    langs: ['mermaid'],
+  });
 
   md.renderer.rules.fence = (tokens, index, options, env, slf) => {
     const token = tokens[index];
-    // console.log("==>",token.info);
 
     if (token.info.trim() === 'mermaid-example') {
-      let code = highlighter.codeToHtml(token.content, { lang: 'mermaid' });
-      code = code.replace('#2e3440ff', 'transparent');
-      code = code.replace('#292D3E', 'transparent');
+      const highlight = highlighter
+        .codeToHtml(token.content, { lang: 'mermaid' })
+        .replace(/<span/g, '<span v-pre')
+        .replace('#2e3440ff', 'transparent')
+        .replace('#292D3E', 'transparent');
 
-      code =
-        '<h5>Code:</h5>' +
-        `<div class="language-mermaid">` +
-        `<button class="copy"></button><span class="lang">mermaid</span>` +
-        code +
-        '</div>';
-
-      // return code;
-      return `${code}
-          <h5>Render:</h5>
-          <Mermaid id="me${index}"  graph="${encodeURIComponent(token.content)}"></Mermaid>`;
+      return `<h5>Code:</h5>
+          <div class="language-mermaid">
+          <button class="copy"></button>
+          <span class="lang">mermaid</span>
+${highlight}
+          </div>
+          <h5>Diagram:</h5>`;
     }
-    return fence(tokens, index, options, env, slf);
+    if (token.info.trim() === 'warning') {
+      return `<div class="warning custom-block"><p class="custom-block-title">WARNING</p><p>${token.content}}</p></div>`;
+    }
+
+    if (token.info.trim() === 'note') {
+      return `<div class="tip custom-block"><p class="custom-block-title">NOTE</p><p>${token.content}}</p></div>`;
+    }
+
+    if (token.info.trim() === 'jison') {
+      return `<div class="language-">
+      <button class="copy"></button>
+      <span class="lang">jison</span>
+      <pre>
+      <code>${token.content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code>
+      </pre>
+      </div>`;
+    }
+
+    return defaultRenderer(tokens, index, options, env, slf);
   };
 };
 

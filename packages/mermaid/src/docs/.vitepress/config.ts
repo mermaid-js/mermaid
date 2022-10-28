@@ -1,14 +1,12 @@
 import { version } from '../../../package.json';
 import MermaidExample from './mermaid-markdown-all';
 import { MermaidMarkdown } from 'vitepress-plugin-mermaid';
-import CustomMarkdown from './blocks-markdown';
-import { defineConfig } from 'vitepress';
+import { defineConfig, MarkdownOptions } from 'vitepress';
 
-const allMarkdownTransformers = {
+const allMarkdownTransformers: MarkdownOptions = {
   config: async (md) => {
-    MermaidMarkdown(md);
     await MermaidExample(md);
-    CustomMarkdown(md);
+    MermaidMarkdown(md);
   },
 };
 
@@ -28,11 +26,6 @@ export default defineConfig({
 
     sidebar: {
       '/': sidebarAll(),
-      // "/intro/": sidebarIntro(),
-      // "/syntax/": sidebarSyntax(),
-      // "/config": sidebarConfig(),
-      // "/misc/": sidebarMisc(),
-      // "/community/": sidebarCommunity(),
     },
   },
 });
@@ -90,10 +83,6 @@ function sidebarAll() {
     ...sidebarConfig(),
     ...sidebarMisc(),
     ...sidebarCommunity(),
-    // {
-    //   text: "Generated",
-    //   items: [{ text: "modules", link: "docs/code/modules" }],
-    // },
   ];
 }
 

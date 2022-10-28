@@ -33,5 +33,4 @@ cypress/snapshots/
 .tsbuildinfo
 tsconfig.tsbuildinfo
 
-#docs generate from code
-packages/mermaid/src/docs/config/setup
+packages/mermaid/src/vitepress
