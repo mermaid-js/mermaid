@@ -18,12 +18,13 @@ jobs:
       - name: Install deps
         run: pnpm install
 
-      - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
+      - name: Install and Build 🔧
         run: |
           cd ./packages/mermaid
-          pnpm docs:bundle
+          pnpm docs:build:vitepress
+
       - name: Deploy 🚀📕
         uses: JamesIves/github-pages-deploy-action@v4.3.3
         with:
-          branch: gh-pages # The branch the action should deploy to.
-          folder: packages/mermaid/src/docs/.vitepress/dist # The folder the action should deploy.
+          branch: gh-pages
+          folder: packages/mermaid/src/vitepress/.vitepress/dist
