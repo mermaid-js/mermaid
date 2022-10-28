@@ -354,7 +354,11 @@ To report a vulnerability, please e-mail security@mermaid.live with a descriptio
 
 A quick note from Knut Sveidqvist:
 
-> _Many thanks to the [d3](https://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing the graphical layout and drawing libraries!_ >_Thanks also to the [js-sequence-diagram](https://bramp.github.io/js-sequence-diagrams) project for usage of the grammar for the sequence diagrams. Thanks to Jessica Peter for inspiration and starting point for gantt rendering._ > _Thank you to [Tyler Long](https://github.com/tylerlong) who has been a collaborator since April 2017._
+> _Many thanks to the [d3](https://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing the graphical layout and drawing libraries!_
+>
+> _Thanks also to the [js-sequence-diagram](https://bramp.github.io/js-sequence-diagrams) project for usage of the grammar for the sequence diagrams. Thanks to Jessica Peter for inspiration and starting point for gantt rendering._
+>
+> _Thank you to [Tyler Long](https://github.com/tylerlong) who has been a collaborator since April 2017._
 >
 > _Thank you to the ever-growing list of [contributors](https://github.com/knsv/mermaid/graphs/contributors) that brought the project this far!_
 
