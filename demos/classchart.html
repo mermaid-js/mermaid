@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Class diagrams Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        /* font-family: 'trebuchet ms', verdana, arial; */
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Class diagram demos</h1>
+
+    <pre class="mermaid">
+		classDiagram
+      accTitle: Demo Class Diagram
+      accDescr: This class diagram show the abstract Animal class, and 3 classes that inherit from it: Duck, Fish, and Zebra.
+
+      Animal <|-- Duck
+      Animal <|-- Fish
+      Animal <|-- Zebra
+      Animal : +int age
+      Animal : +String gender
+      Animal: +isMammal()
+      Animal: +mate()
+
+      class Duck{
+        +String beakColor
+        +swim()
+        +quack()
+      }
+      class Fish{
+        -int sizeInFeet
+        -canEat()
+      }
+      class Zebra{
+        +bool is_wild
+        +run()
+      }
+
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+    classDiagram
+    Class01 <|-- AveryLongClass : Cool
+
+    &lt;&lt;interface&gt;&gt; Class01
+    Class03 "0" *-- "0..n" Class04
+    Class05 "1" o-- "many" Class06
+    Class07 .. Class08
+    Class09 "many" --> "1" C2 : Where am i?
+    Class09 "0" --* "1..n" C3
+    Class09 --|> Class07
+    Class07 : equals()
+    Class07 : Object[] elementData
+    Class01 : #size()
+    Class01 : -int chimp
+    Class01 : +int gorilla
+    Class08 <--> C2: Cool label
+      class Class10 {
+      &lt;&lt;service&gt;&gt;
+      int id
+      size()
+      }
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+    classDiagram
+    class Class01~T~
+    Class01 : #size()
+    Class01 : -int chimp
+    Class01 : +int gorilla
+    class Class10~T~ {
+    &lt;&lt;service&gt;&gt;
+    int id
+    size()
+    }
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+    classDiagram
+    Class01~T~ <|-- AveryLongClass : Cool
+    &lt;&lt;interface&gt;&gt; Class01
+    Class03~T~ "0" *-- "0..n" Class04
+    Class05 "1" o-- "many" Class06
+    Class07~T~ .. Class08
+    Class09 "many" --> "1" C2 : Where am i?
+      Class09 "0" --* "1..n" C3
+      Class09 --|> Class07
+      Class07 : equals()
+      Class07 : Object[] elementData
+      Class01 : #size()
+      Class01 : -int chimp
+      Class01 : +int gorilla
+      Class08 <--> C2: Cool label
+        class Class10 {
+        &lt;&lt;service&gt;&gt;
+        int id
+        size()
+        }
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+    classDiagram
+    Interface1 ()-- Interface1Impl
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+    classDiagram
+    direction LR
+    Animal ()-- Dog
+    Dog : bark()
+    Dog : species()
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+    classDiagram
+    direction RL
+    Fruit ()-- Apple
+    Apple : color()
+    Apple : -int leafCount()
+    Fruit ()-- Pineapple
+    Pineapple : color()
+    Pineapple : -int leafCount()
+    Pineapple : -int spikeCount()
+    </pre>
+
+    <hr />
+
+    <script src="./mermaid.js"></script>
+    <script>
+      mermaid.initialize({
+        theme: 'default',
+        // themeCSS: '.node rect { fill: red; }',
+        logLevel: 3,
+        securityLevel: 'loose',
+        flowchart: { curve: 'basis' },
+        gantt: { axisFormat: '%m/%d/%Y' },
+        sequence: { actorMargin: 50 },
+        // sequenceDiagram: { actorMargin: 300 } // deprecated
+      });
+    </script>
+  </body>
+</html>

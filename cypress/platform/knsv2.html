@@ -1,31 +1,46 @@
 <html>
   <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
     <link
-      href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
       rel="stylesheet"
     />
-    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
     <style>
       body {
         /* background: rgb(221, 208, 208); */
         /* background:#333; */
         font-family: 'Arial';
         /* font-size: 18px !important; */
-        }
-      h1 { color: grey;}
+      }
+      h1 {
+        color: grey;
+      }
       .mermaid2 {
         display: none;
       }
       .mermaid svg {
         /* font-size: 18px !important; */
+        background-color: #eee;
+        background-image: radial-gradient(#fff 1%, transparent 11%),
+          radial-gradient(#fff 1%, transparent 11%);
+        background-size: 20px 20px;
+        background-position: 0 0, 10px 10px;
+        background-repeat: repeat;
       }
       .malware {
         position: fixed;
-        bottom:0;
-        left:0;
-        right:0;
+        bottom: 0;
+        left: 0;
+        right: 0;
         height: 150px;
         background: red;
         color: black;
@@ -40,58 +55,81 @@
   </head>
   <body>
     <div>Security check</div>
-    <div class="flex">
-      <div id="diagram" class="mermaid"></div>
-      <div id="res" class=""></div>
-  <script src="./mermaid.js"></script>
+    <pre id="diagram" class="mermaid">
+flowchart TD
+    A --> B
+    B --> C
+    A --> C
+    </pre>
+    <pre id="diagram" class="mermaid">
+mindmap
+  root((mindmap))
+    Origins
+      Long history
+      ::icon(fa fa-book)
+      Popularisation
+      ::icon(fa fa-book)
+        British popular psychology author Tony Buzan
+    Research
+      ::icon(fa fa-book)
+      On effectivness<br/>and features
+      On Automatic creation
+        Uses
+            Creative techniques
+            Strategic planning
+            Argument mapping
+    Tools
+      Pen and paper
+      Mermaid
+        </pre>
+    <pre id="diagram" class="mermaid">
+      gantt
+        title Style today marker (vertical line should be 5px wide and half-transparent blue)
+        dateFormat YYYY-MM-DD
+        axisFormat %d
+        todayMarker stroke-width:5px,stroke:#00f,opacity:0.5
+        section Section1
+        Today: 1, -1h
+    </pre>
+
+    <!-- <div id="cy"></div> -->
+    <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
+    <!-- <script src="./mermaid-example-diagram-detector.js"></script>    -->
+    <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.7/dist/mermaid.min.js"></script> -->
+    <script src="./mermaid.js"></script>
+
     <script>
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'forest',
-        arrowMarkerAbsolute: true,
-        // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
+        theme: 'base',
+        startOnLoad: true,
         logLevel: 0,
-        state: {
-          defaultRenderer: 'dagre-wrapper',
-        },
         flowchart: {
-          // defaultRenderer: 'dagre-wrapper',
-          nodeSpacing: 10,
-    curve: 'cardinal',
-    htmlLabels: true,
+          useMaxWidth: false,
+          htmlLabels: true,
         },
-        htmlLabels: false,
-        // gantt: { axisFormat: '%m/%d/%Y' },
-        sequence: { actorFontFamily: 'courier', actorMargin: 50, showSequenceNumbers: false },
-        // sequenceDiagram: { actorMargin: 300 } // deprecated
-        // fontFamily: '"times", sans-serif',
-        // fontFamily: 'courier',
-        fontSize: 18,
-        curve: 'basis',
-        securityLevel: 'strict',
-        startOnLoad: false,
-        // themeVariables: {relationLabelColor: 'red'}
+        gantt: {
+          useMaxWidth: false,
+        },
+        useMaxWidth: false,
+        lazyLoadedDiagrams: [
+          './mermaid-mindmap-detector.esm.mjs',
+          './mermaid-example-diagram-detector.esm.mjs',
+        ],
       });
       function callback() {
-  alert('It worked');
-}
-
-      var diagram = '%%{init: {"flowchart": {"htmlLabels": "false"}} }%%\n';
-diagram += 'flowchart\n';
-diagram += 'A["<ifra';
-diagram += "me srcdoc='<scrip";
-diagram += 't src=http://localhost:9000/exploit.js>';
-diagram += '</scr';
-diagram += 'ipt>\'></iframe>"]';
-
-console.log(diagram);
-// document.querySelector('#diagram').innerHTML = diagram;
-mermaid.render('diagram', diagram, (res) => {
-  document.querySelector('#res').innerHTML = res;
-});
+        alert('It worked');
+      }
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+      // mermaid.test1('first_slow', 1200).then((r) => console.info(r));
+      // mermaid.test1('second_fast', 200).then((r) => console.info(r));
+      // mermaid.test1('third_fast', 200).then((r) => console.info(r));
+      // mermaid.test1('forth_slow', 1200).then((r) => console.info(r));
     </script>
   </body>
 </html>
-

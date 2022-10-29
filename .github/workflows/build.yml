@@ -1,58 +1,51 @@
 name: Build
 
-on: [push, pull_request]
+on:
+  push: {}
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - ready_for_review
+
+permissions:
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        cache: yarn
-        node-version: ${{ matrix.node-version }}
+      - uses: pnpm/action-setup@v2
+        # uses version from "packageManager" field in package.json
 
-    - name: Install Yarn
-      run: npm i yarn --global
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          cache: pnpm
+          node-version: ${{ matrix.node-version }}
 
-    - name: Install Packages
-      run: |
-        yarn install --frozen-lockfile
-      env:
-        CYPRESS_CACHE_FOLDER: .cache/Cypress
+      - name: Install Packages
+        run: |
+          pnpm install --frozen-lockfile
+        env:
+          CYPRESS_CACHE_FOLDER: .cache/Cypress
 
-    - name: Run Build
-      run: yarn build
+      - name: Run Build
+        run: pnpm run build
 
-    - name: Upload Build as Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: dist
-        path: dist
+      - name: Upload Mermaid Build as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: mermaid-build
+          path: packages/mermaid/dist
 
-    - name: Run Unit Tests
-      run: |
-        yarn test --coverage
-
-    #- name: Upload Test Results
-    #  uses: coverallsapp/github-action@v1.0.1
-    #  with:
-    #    github-token: ${{ secrets.GITHUB_TOKEN }}
-    #    parallel: true
-
-    # - name: Run E2E Tests
-    #   run: yarn e2e
-    #   env:
-    #     PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
-    #     CYPRESS_CACHE_FOLDER: .cache/Cypress
-
-    #- name: Post Upload Test Results
-    #  uses: coverallsapp/github-action@master
-    #  with:
-    #    github-token: ${{ secrets.GITHUB_TOKEN }}
-    #    parallel-finished: true
+      - name: Upload Mermaid Mindmap Build as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: mermaid-mindmap-build
+          path: packages/mermaid-mindmap/dist

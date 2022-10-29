@@ -1,0 +1,141 @@
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        /* background: rgb(221, 208, 208); */
+        /* background:#111; */
+        /* background:#333; */
+        font-family: 'Arial';
+      }
+      /* h1 { color: white;} */
+      .mermaid2 {
+        display: none;
+      }
+      .customCss > rect,
+      .customCss {
+        fill: #ff0000 !important;
+        stroke: #ffff00 !important;
+        stroke-width: 4px !important;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>info below</h1>
+    <pre class="mermaid2" style="width: 100%; height: 20%">
+       gitGraph:
+       commit "Ashish"
+       branch newbranch
+       checkout newbranch
+       commit id:"1111"
+       commit tag:"test"
+       checkout main
+       commit type: HIGHLIGHT
+       commit
+       merge newbranch
+       commit
+       branch b2
+       commit
+    </pre>
+    <pre class="mermaid" style="width: 100%; height: 20%">
+      %%{init: {  "gitGraph": { "showBranches": true, "mainBranchName": "APA" }}}%%
+      gitGraph
+      commit
+      branch hotfix
+      checkout hotfix
+      commit
+      branch develop
+      checkout develop
+      commit id:"An id" tag:"A tag"
+      branch featureB
+      checkout featureB
+      commit type:HIGHLIGHT
+      checkout APA
+      checkout hotfix
+      commit type:NORMAL
+      checkout develop
+      commit type:REVERSE
+      checkout featureB
+      commit
+      checkout APA
+      merge hotfix
+      checkout featureB
+      commit
+      checkout develop
+      branch featureA
+      commit
+      checkout develop
+      merge hotfix
+      checkout featureA
+      commit
+      checkout featureB
+      commit
+      checkout develop
+      merge featureA
+      branch release
+      checkout release
+      commit
+      checkout APA
+      commit
+      checkout release
+      merge APA
+      checkout develop
+      merge release
+    </pre>
+    <pre class="mermaid2" style="width: 100%; height: 20%">
+      gitGraph:
+      commit
+      commit
+      branch newbranch
+      commit
+      merge main
+    </pre>
+    <script src="./mermaid.js"></script>
+    <script>
+      mermaid.parseError = function (err, hash) {
+        // console.error('Mermaid error: ', err);
+      };
+      mermaid.initialize({
+        theme: 'default',
+        themeVariables: {
+          // primaryColor: '#9400D3',
+          // darkMode: false,
+          // background: '#222',
+          // textColor: 'white',
+          // primaryTextColor: '#f4f4f4',
+          // nodeBkg: '#ff0000',
+          // mainBkg: '#0000ff',
+          // tertiaryColor: '#ffffcc',
+        },
+        // theme: 'forest',
+        // theme: 'neutral',
+        // theme: 'dark',
+        // arrowMarkerAbsolute: true,
+        // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
+        logLevel: 1,
+        flowchart: { curve: 'linear', htmlLabels: true },
+        // gitGraph: { showCommitLabel: false },
+        // gantt: { axisFormat: '%m/%d/%Y' },
+        sequence: { actorMargin: 50, showSequenceNumbers: true },
+        // sequenceDiagram: { actorMargin: 300 } // deprecated
+        // fontFamily: '"arial", sans-serif',
+        // themeVariables: {
+        //   fontFamily: '"arial", sans-serif',
+        // },
+        curve: 'linear',
+        securityLevel: 'loose',
+      });
+      function callback() {
+        alert('It worked');
+      }
+    </script>
+  </body>
+</html>

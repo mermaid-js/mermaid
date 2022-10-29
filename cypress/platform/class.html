@@ -1,31 +1,37 @@
 <html>
   <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
     <link
-      href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet">
     <style>
       body {
         background: rgb(221, 208, 208);
         /*background:#333;*/
         font-family: 'Arial';
-        }
-      h1 { color: white;}
+      }
+      h1 {
+        color: white;
+      }
       .mermaid2 {
         display: none;
       }
-      .customCss > rect, .customCss{
-        fill:#FF0000 !important;
-        stroke:#FFFF00 !important;
-        stroke-width:4px !important;
-    }
+      .customCss > rect,
+      .customCss {
+        fill: #ff0000 !important;
+        stroke: #ffff00 !important;
+        stroke-width: 4px !important;
+      }
     </style>
   </head>
   <body>
     <h1>info below</h1>
-    <div class="mermaid" style="width: 100%; height: 20%;">
+    <pre class="mermaid" style="width: 100%; height: 20%">
       %%{init: {'theme': 'base',  'fontFamily': 'courier', 'themeVariables': {  'primaryColor': '#fff000'}}}%%
       classDiagram
        class BankAccount{
@@ -36,8 +42,8 @@
        }
        cssClass "BankAccount" customCss
 
-    </div>
-    <div class="mermaid" style="width: 100%; height: 20%;">
+    </pre>
+    <pre class="mermaid" style="width: 100%; height: 20%">
       %%{init: {'theme': 'base',  'fontFamily': 'courier', 'themeVariables': {  'primaryColor': '#fff000'}}}%%
       classDiagram-v2
        class BankAccount{
@@ -47,9 +53,8 @@
         +withdrawl(amount) int
        }
        cssClass "BankAccount" customCss
-
-    </div>
-      <div class="mermaid2" style="width: 100%; height: 20%;">
+    </pre>
+    <pre class="mermaid2" style="width: 100%; height: 20%">
         %%{init: {'theme': 'base',  'fontFamily': 'courier', 'themeVariables': {  'primaryColor': '#fff000'}}}%%
         classDiagram
          class BankAccount{
@@ -71,18 +76,18 @@
             }
             callback Class01 "callback" "A Tooltip"
 
-      </div>
-      <div class="mermaid2" style="width: 100%; height: 20%;">
+    </pre>
+    <pre class="mermaid2" style="width: 100%; height: 20%">
       flowchart TB
       a_a(Aftonbladet) --> b_b[gorilla]:::apa --> c_c{chimp}:::apa -->a_a
       a_a --> c --> d_d --> c_c
       classDef apa fill:#f9f,stroke:#333,stroke-width:4px;
       class a_a apa;
-      click a_a "http://www.aftonbladet.se" "apa"
+      click a_a "https://www.aftonbladet.se" "apa"
 
-      </div>
+    </pre>
 
-      <div class="mermaid2" style="width: 100%; height: 20%;">
+    <pre class="mermaid2" style="width: 100%; height: 20%">
         classDiagram-v2
 
         classA -- classB : Inheritance
@@ -97,7 +102,7 @@
         classK ..> classL : Dependency
         classM ..|> classN : Realization
         classO .. classP : Link(Dashed)
-       classA : +attr1
+        classA : +attr1
         classA : attr2
         classA : method1()
         &lt;&lt;interface&gt;&gt; classB
@@ -111,8 +116,8 @@
         class Shape
         callback Shape "callbackFunction" "This is a tooltip for a callback"
 
-      </div>
-      <script src="./mermaid.js"></script>
+    </pre>
+    <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
@@ -134,8 +139,8 @@
         securityLevel: 'loose',
       });
       function callback() {
-  alert('It worked');
-}
+        alert('It worked');
+      }
     </script>
   </body>
 </html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Git Graphs Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        /* font-family: 'trebuchet ms', verdana, arial; */
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Git diagram demo</h1>
+    <pre class="mermaid">
+    gitGraph:
+    options
+    {
+    "nodeSpacing": 50,
+    "nodeRadius": 5
+    }
+    end
+    branch master
+    commit
+    branch newbranch
+    checkout newbranch
+    commit
+    commit
+    checkout master
+    commit
+    commit
+    merge newbranch
+    </pre>
+
+    <script src="./mermaid.js"></script>
+    <script>
+      const ALLOWED_TAGS = [
+        'a',
+        'b',
+        'blockquote',
+        'br',
+        'dd',
+        'div',
+        'dl',
+        'dt',
+        'em',
+        'foreignObject',
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'h6',
+        'h7',
+        'h8',
+        'hr',
+        'i',
+        'li',
+        'ul',
+        'ol',
+        'p',
+        'pre',
+        'span',
+        'strike',
+        'strong',
+        'table',
+        'tbody',
+        'td',
+        'tfoot',
+        'th',
+        'thead',
+        'tr',
+      ];
+      mermaid.initialize({
+        theme: 'default',
+        // themeCSS: '.node rect { fill: red; }',
+        logLevel: 3,
+        securityLevel: 'loose',
+        flowchart: { curve: 'basis' },
+        gantt: { axisFormat: '%m/%d/%Y' },
+        sequence: { actorMargin: 50 },
+        dompurifyConfig: {
+          USE_PROFILES: {
+            svg: true,
+          },
+          ADD_TAGS: ALLOWED_TAGS,
+          ADD_ATTR: ['transform-origin'],
+        },
+      });
+    </script>
+  </body>
+</html>

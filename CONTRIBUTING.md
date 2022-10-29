@@ -2,17 +2,37 @@
 
 So you want to help? That's great!
 
-![Image of happy people jumping with excitement](https://media.giphy.com/media/BlVnrxJgTGsUw/giphy.gif)
+![Happy people jumping with excitement](https://media.giphy.com/media/BlVnrxJgTGsUw/giphy.gif)
 
 Here are a few things to know to get you started on the right path.
 
+Below link will help you making a copy of the repository in your local system.
+
+https://docs.github.com/en/get-started/quickstart/fork-a-repo
+
+## Requirements
+
+- [volta](https://volta.sh/) to manage node versions.
+- [Node.js](https://nodejs.org/en/). `volta install node`
+- [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
+
+## Development Installation
+
+```bash
+git clone git@github.com:mermaid-js/mermaid.git
+cd mermaid
+# npx is required for first install as volta support for pnpm is not added yet.
+npx pnpm install
+pnpm test
+```
+
 ## Committing code
 
-We make all changes via pull requests. As we have many pull requests from developers new to mermaid, the current approach is to have *knsv, Knut Sveidqvist* as a main reviewer of changes and merging pull requests. More precisely like this:
+We make all changes via pull requests. As we have many pull requests from developers new to mermaid, the current approach is to have _knsv, Knut Sveidqvist_ as a main reviewer of changes and merging pull requests. More precisely like this:
 
-* Large changes reviewed by knsv or other developer asked to review by knsv
-* Smaller low-risk changes like dependencies, documentation etc can be merged by active collaborators
-* documentation (updates to the docs folder is also allowed via direct commits)
+- Large changes reviewed by knsv or other developer asked to review by knsv
+- Smaller low-risk changes like dependencies, documentation, etc. can be merged by active collaborators
+- Documentation (updates to the `src/docs` folder is also allowed via direct commits)
 
 To commit code, create a branch, let it start with the type like feature or bug followed by the issue number for reference and some describing text.
 
@@ -28,12 +48,28 @@ Another:
 
 Less strict here, it is OK to commit directly in the `develop` branch if you are a collaborator.
 
-The documentation is located in the `docs` directory and published using GitHub Pages.
-The documentation site is powered by [Docsify](https://docsify.js.org), a simple documentation site generator.
+The documentation is written in **Markdown**. For more information about Markdown [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
 
-The documentation is written in Markdown, for more information about Markdown [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
+### Documentation source files are in [`/packages/mermaid/src/docs`](packages/mermaid/src/docs)
 
-If you want to preview the documentation site on your machine, you need to install `docsify-cli`:
+The source files for the project documentation are located in the [`/packages/mermaid/src/docs`](packages/mermaid/src/docs) directory. This is where you should make changes.
+The files under `/packages/mermaid/src/docs` are processed to generate the published documentation, and the resulting files are put into the `/docs` directory.
+
+```mermaid
+flowchart LR
+  classDef default fill:#fff,color:black,stroke:black
+
+  source["files in /packages/mermaid/src/docs\n(changes should be done here)"] -- automatic processing\nto generate the final documentation--> published["files in /docs\ndisplayed on the official documentation site"]
+
+```
+
+**_DO NOT CHANGE FILES IN `/docs`_**
+
+### The official documentation site
+
+**[The mermaid documentation site](https://mermaid-js.github.io/mermaid/) is powered by [Docsify](https://docsify.js.org), a simple documentation site generator.**
+
+If you want to preview the whole documentation site on your machine, you need to install `docsify-cli`:
 
 ```sh
 $ npm i docsify-cli -g
@@ -76,19 +112,20 @@ This is important so that, if someone else does a change to the grammar that doe
 
 ### **Add e2e tests**
 
-This tests the rendering and visual apearance of the diagram. This ensures that the rendering of that feature in the e2e will be reviewed in the release process going forward. Less chance that it breaks!
+This tests the rendering and visual appearance of the diagram. This ensures that the rendering of that feature in the e2e will be reviewed in the release process going forward. Less chance that it breaks!
 
-To start working with the e2e tests, run `yarn dev` to start the dev server, after that start cypress by running `cypress open` in the mermaid folder. (Make sure you have path to cypress in order, the binary is located in node_modules/.bin).
+To start working with the e2e tests, run `pnpm run dev` to start the dev server, after that start cypress by running `pnpm exec cypress open` in the mermaid folder.
 
 The rendering tests are very straightforward to create. There is a function imgSnapshotTest. This function takes a diagram in text form, the mermaid options and renders that diagram in cypress.
 
 When running in ci it will take a snapshot of the rendered diagram and compare it with the snapshot from last build and flag for review it if it differs.
 
 This is what a rendering test looks like:
+
 ```javascript
-  it('should render forks and joins', () => {
-    imgSnapshotTest(
-      `
+it('should render forks and joins', () => {
+  imgSnapshotTest(
+    `
     stateDiagram
     state fork_state &lt;&lt;fork&gt;&gt;
       [*] --> fork_state
@@ -101,20 +138,23 @@ This is what a rendering test looks like:
       join_state --> State4
       State4 --> [*]
     `,
-      { logLevel: 0 }
-    );
-    cy.get('svg');
-  });
-  ```
-
+    { logLevel: 0 }
+  );
+  cy.get('svg');
+});
+```
 
 ### **Add documentation for it**
 
 Finally, if it is not in the documentation, no one will know about it and then **no one will use it**. Wouldn't that be sad? With all the effort that was put into the feature?
 
-The docs are located in the docs folder and are ofc written in markdown. Just pick the right section and start typing. If you want to add to the structure as in adding a new section and new file you do that via the _navbar.md.
+The source files for documentation are in `/packages/mermaid/src/docs` and are written in markdown. Just pick the right section and start typing. See the [Committing Documentation](#committing-documentation) section for more about how the documentation is generated.
 
-The changes in master is reflected in http://mermaid-js.github.io/mermaid/ once released the updates are commited to https://mermaid-js.github.io/#/
+#### Adding to or changing the documentation organization
+
+If you want to add a new section or change the organization (structure), then you need to make sure to **change the side navigation** in `src/docs/_sidebar.md`.
+
+When changes are committed and then released, they become part of the `master` branch and become part of the published documentation on https://mermaid-js.github.io/mermaid/
 
 ## Last words
 
@@ -122,5 +162,4 @@ Don't get daunted if it is hard in the beginning. We have a great community with
 
 [Join our slack community if you want closer contact!](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
 
-
-![Image of superhero wishing you good luck](https://media.giphy.com/media/l49JHz7kJvl6MCj3G/giphy.gif)
+![A superhero wishing you good luck](https://media.giphy.com/media/l49JHz7kJvl6MCj3G/giphy.gif)

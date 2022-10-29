@@ -1,19 +1,24 @@
 <html>
   <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
     <link
-      href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"
     />
-    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet">
     <style>
       body {
         /* background: rgb(221, 208, 208); */
         /* background:#333; */
         font-family: 'Arial';
-        }
-      h1 { color: grey;}
+      }
+      h1 {
+        color: grey;
+      }
       .mermaid2 {
         display: none;
       }
@@ -22,7 +27,7 @@
   <body>
     <h1>info below</h1>
     <div class="flex">
-      <div class="mermaid2" style="width: 50%; height: 20%;">
+      <pre class="mermaid2" style="width: 50%; height: 20%">
 flowchart BT
     subgraph two
     b1
@@ -32,13 +37,13 @@ flowchart BT
     end
     c1 --apa apa apa--> b1
     two --> c2
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 200px;">
+      </pre>
+      <pre class="mermaid2" style="width: 50%; height: 200px">
 sequenceDiagram
-   Alice->>Bob:Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+   Alice->>Bob:Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
    Bob->>Alice: I'm short though
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 200px;">
+      </pre>
+      <pre class="mermaid2" style="width: 50%; height: 200px">
         %%{init: {'securityLevel': 'loose'}}%%
       graph TD
         A[Christmas] -->|Get money| B(Go shopping)
@@ -51,8 +56,8 @@ sequenceDiagram
         classDef someclass fill:#f96;
         class A someclass;
         class C someclass;
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 200px;">
+      </pre>
+      <pre class="mermaid2" style="width: 50%; height: 200px">
 
       flowchart BT
       subgraph a
@@ -62,8 +67,8 @@ sequenceDiagram
       c --> d
       b1 --> d
       a --asd123 --> d
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
+      </pre>
+      <pre class="mermaid2" style="width: 50%; height: 20%">
 stateDiagram-v2
   state A {
     B1 --> B2: ok
@@ -72,9 +77,9 @@ stateDiagram-v2
   C --> D
   B1 --> D
   A --> D: asd123
-      </div>
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
+      </pre>
+    </div>
+    <pre class="mermaid2" style="width: 50%; height: 20%">
         %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
 flowchart LR
   a -->b
@@ -84,9 +89,8 @@ flowchart LR
   subgraph B
   b
   end
-
-      </div>
-      <div class="mermaid" style="width: 50%; height: 20%;">
+    </pre>
+    <pre class="mermaid" style="width: 50%; height: 20%">
 flowchart TB
     subgraph A
     b-->B
@@ -95,16 +99,15 @@ flowchart TB
     subgraph B
       c
     end
-
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
+    </pre>
+    <pre class="mermaid2" style="width: 50%; height: 20%">
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 Note over Alice,Bob: Looks
 Note over Bob,Alice: Looks back
-      </div>
+    </pre>
 
-  <script src="./mermaid.js"></script>
+    <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
@@ -124,8 +127,8 @@ Note over Bob,Alice: Looks back
         securityLevel: 'strict',
       });
       function callback() {
-  alert('It worked');
-}
+        alert('It worked');
+      }
     </script>
   </body>
 </html>

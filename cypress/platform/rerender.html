@@ -1,30 +1,30 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Mermaid Quick Test Page</title>
-  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
-</head>
-<body>
-<div id="graph">
-</div>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+  </head>
+  <body>
+    <div id="graph"></div>
 
-  <script src="./mermaid.js"></script>
-  <script>mermaid.init({ startOnLoad: false });
-    mermaid.mermaidAPI.initialize();
+    <script src="./mermaid.js"></script>
+    <script>
+      mermaid.init({ startOnLoad: false });
+      mermaid.mermaidAPI.initialize();
 
-    rerender('XMas');
+      rerender('XMas');
 
-    function rerender(text) {
-      var graphText = `graph TD
+      function rerender(text) {
+        const graphText = `graph TD
         A[${text}] -->|Get money| B(Go shopping)`;
-      var graph = mermaid.mermaidAPI.render('id', graphText);
-      console.log('\x1b[35m%s\x1b[0m', '>> graph', graph);
-      document.getElementById('graph').innerHTML = graph;
-    }
-  </script>
-  <button id="rerender" onclick="rerender('Saturday')">Rerender</button>
-
-</body>
+        mermaid.mermaidAPI.render('id', graphText).then((svg) => {
+          console.log('\x1b[35m%s\x1b[0m', '>> graph', svg);
+          document.getElementById('graph').innerHTML = svg;
+        });
+      }
+    </script>
+    <button id="rerender" onclick="rerender('Saturday')">Rerender</button>
+  </body>
 </html>

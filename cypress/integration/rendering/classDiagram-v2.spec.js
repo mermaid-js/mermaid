@@ -381,7 +381,7 @@ describe('Class diagram V2', () => {
     cy.get('svg');
   });
 
-  it('16b: should handle the direction statemnent with TB', () => {
+  it('16b: should handle the direction statement with TB', () => {
     imgSnapshotTest(
       `
       classDiagram
@@ -406,7 +406,7 @@ describe('Class diagram V2', () => {
     cy.get('svg');
   });
 
-  it('18: should handle the direction statemnent with LR', () => {
+  it('18: should handle the direction statement with LR', () => {
     imgSnapshotTest(
       `
       classDiagram
@@ -430,7 +430,7 @@ describe('Class diagram V2', () => {
     );
     cy.get('svg');
   });
-  it('17a: should handle the direction statemnent with BT', () => {
+  it('17a: should handle the direction statement with BT', () => {
     imgSnapshotTest(
       `
       classDiagram
@@ -454,7 +454,7 @@ describe('Class diagram V2', () => {
     );
     cy.get('svg');
   });
-  it('17b: should handle the direction statemment with RL', () => {
+  it('17b: should handle the direction statement with RL', () => {
     imgSnapshotTest(
       `
       classDiagram
@@ -474,6 +474,24 @@ describe('Class diagram V2', () => {
         Student "1" --o "1" Bike : rides
 
       `,
+      { logLevel: 1, flowchart: { htmlLabels: false } }
+    );
+    cy.get('svg');
+  });
+
+  it('18: should render a simple class diagram with notes', () => {
+    imgSnapshotTest(
+      `
+      classDiagram-v2
+        note "I love this diagram!\nDo you love it?"
+        class Class10 {
+          <<service>>
+          int id
+          size()
+        }
+        note for Class10 "Cool class\nI said it's very cool class!"
+
+        `,
       { logLevel: 1, flowchart: { htmlLabels: false } }
     );
     cy.get('svg');

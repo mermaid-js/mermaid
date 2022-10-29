@@ -15,11 +15,13 @@ describe('Configuration', () => {
 
       // Check the marker-end property to make sure it is properly set to
       // start with #
-      cy.get('.edgePath path')
-        .first()
-        .should('have.attr', 'marker-end')
-        .should('exist')
-        .and('include', 'url(#');
+      cy.get('.edgePaths').within(() => {
+        cy.get('path')
+          .first()
+          .should('have.attr', 'marker-end')
+          .should('exist')
+          .and('include', 'url(#');
+      });
     });
     it('should handle default value false of arrowMarkerAbsolute', () => {
       renderGraph(
@@ -35,13 +37,15 @@ describe('Configuration', () => {
 
       // Check the marker-end property to make sure it is properly set to
       // start with #
-      cy.get('.edgePath path')
-        .first()
-        .should('have.attr', 'marker-end')
-        .should('exist')
-        .and('include', 'url(#');
+      cy.get('.edgePaths').within(() => {
+        cy.get('path')
+          .first()
+          .should('have.attr', 'marker-end')
+          .should('exist')
+          .and('include', 'url(#');
+      });
     });
-    it('should handle arrowMarkerAbsolute excplicitly set to false', () => {
+    it('should handle arrowMarkerAbsolute explicitly set to false', () => {
       renderGraph(
         `graph TD
         A[Christmas] -->|Get money| B(Go shopping)
@@ -57,13 +61,15 @@ describe('Configuration', () => {
 
       // Check the marker-end property to make sure it is properly set to
       // start with #
-      cy.get('.edgePath path')
-        .first()
-        .should('have.attr', 'marker-end')
-        .should('exist')
-        .and('include', 'url(#');
+      cy.get('.edgePaths').within(() => {
+        cy.get('path')
+          .first()
+          .should('have.attr', 'marker-end')
+          .should('exist')
+          .and('include', 'url(#');
+      });
     });
-    it('should handle arrowMarkerAbsolute excplicitly set to "false" as false', () => {
+    it('should handle arrowMarkerAbsolute explicitly set to "false" as false', () => {
       renderGraph(
         `graph TD
         A[Christmas] -->|Get money| B(Go shopping)
@@ -79,15 +85,17 @@ describe('Configuration', () => {
 
       // Check the marker-end property to make sure it is properly set to
       // start with #
-      cy.get('.edgePath path')
-        .first()
-        .should('have.attr', 'marker-end')
-        .should('exist')
-        .and('include', 'url(#');
+      cy.get('.edgePaths').within(() => {
+        cy.get('path')
+          .first()
+          .should('have.attr', 'marker-end')
+          .should('exist')
+          .and('include', 'url(#');
+      });
     });
     it('should handle arrowMarkerAbsolute set to true', () => {
       renderGraph(
-        `graph TD
+        `flowchart TD
         A[Christmas] -->|Get money| B(Go shopping)
         B --> C{Let me think}
         C -->|One| D[Laptop]
@@ -99,11 +107,13 @@ describe('Configuration', () => {
         }
       );
 
-      cy.get('.edgePath path')
-        .first()
-        .should('have.attr', 'marker-end')
-        .should('exist')
-        .and('include', 'url(http://localhost');
+      cy.get('.edgePaths').within(() => {
+        cy.get('path')
+          .first()
+          .should('have.attr', 'marker-end')
+          .should('exist')
+          .and('include', 'url(http://localhost');
+      });
     });
     it('should not taint the initial configuration when using multiple directives', () => {
       const url = 'http://localhost:9000/regression/issue-1874.html';
@@ -111,7 +121,9 @@ describe('Configuration', () => {
       cy.visit(url);
 
       cy.get('svg');
-      cy.percySnapshot();
+      cy.matchImageSnapshot(
+        'configuration.spec-should-not-taint-initial-configuration-when-using-multiple-directives'
+      );
     });
   });
 });

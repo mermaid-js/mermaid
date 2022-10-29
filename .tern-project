@@ -1,15 +1,8 @@
 {
   "ecmaVersion": 6,
-  "libs": [
-    "browser"
-  ],
-  "loadEagerly": [
-    "path/to/your/js/**/*.js"
-  ],
-  "dontLoad": [
-    "node_modules/**",
-    "path/to/your/js/**/*.js"
-  ],
+  "libs": ["browser"],
+  "loadEagerly": [],
+  "dontLoad": ["node_modules/**"],
   "plugins": {
     "modules": {},
     "es_modules": {},
