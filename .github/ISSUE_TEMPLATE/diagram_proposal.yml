@@ -1,8 +1,8 @@
 name: Diagram Proposal
 description: Suggest a new Diagram Type to add to Mermaid.
 labels:
-  - "Status: Triage"
-  - "Type: Enhancement"
+  - 'Status: Triage'
+  - 'Type: Enhancement'
 
 body:
   - type: markdown
@@ -11,9 +11,9 @@ body:
         ## Before you submit...
         First of all, thank you for proposing a new Diagram to us.
         We are always happy about new ideas to improve Mermaid.js wherever possible.
-        
+
         To get the fastest and best response possible, make sure you do the following:
-        
+
         - Use a clear and concise title
         - Fill out the text fields with as much detail as possible.
         - Never be shy to give us screenshots and/or code samples. It will help!

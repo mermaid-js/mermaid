@@ -1,8 +1,8 @@
 name: Bug Report
 description: Create a report to help us improve
 labels:
-  - "Status: Triage"
-  - "Type: Bug / Error"
+  - 'Status: Triage'
+  - 'Type: Bug / Error'
 
 body:
   - type: markdown
@@ -10,7 +10,7 @@ body:
       value: |-
         ## Before you submit...
         We like to help you, but in order to do that should you make a few things first:
-        
+
         - Use a clear and concise title
         - Fill out the text fields with as much detail as possible.
         - Never be shy to give us screenshots and/or code samples. It will help!
@@ -51,12 +51,12 @@ body:
         Note that you only need to fill out one and not both sections.
       value: |-
         **Desktop**
-        
+
         - OS and Version: [Windows, Linux, Mac, ...]
         - Browser and Version: [Chrome, Edge, Firefox]
-        
+
         **Smartphone**
-        
+
         - Device: [Samsung, iPhone, ...]
         - OS and Version: [Android, iOS, ...]
         - Browser and Version: [Chrome, Safari, ...]
