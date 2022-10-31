@@ -845,4 +845,4 @@ g.classGroup line {
 
 ## Configuration
 
-`Coming soon`
+`Coming soon!`

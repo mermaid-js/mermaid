@@ -284,7 +284,7 @@ const getFilesFromGlobs = async (globs: string[]): Promise<string[]> => {
     }
     if (git) {
       console.log(`Adding changes in ${FINAL_DOCS_DIR} folder to git`);
-      exec('git add docs');
+      exec(`git add ${FINAL_DOCS_DIR}`);
     }
   }
 })();
