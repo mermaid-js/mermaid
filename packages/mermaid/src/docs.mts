@@ -59,7 +59,7 @@ const LOGMSG_TRANSFORMED = 'transformed';
 const LOGMSG_TO_BE_TRANSFORMED = 'to be transformed';
 const LOGMSG_COPIED = `, and copied to ${FINAL_DOCS_DIR}`;
 
-const WARN_DOCSDIR_DOESNT_MATCH = `Changed files were transformed in ${SOURCE_DOCS_DIR} but do not match the files in ${FINAL_DOCS_DIR}. Please run pnpm docs:build after making changes to ${SOURCE_DOCS_DIR} to update the ${FINAL_DOCS_DIR} directory with the transformed files.`;
+const WARN_DOCSDIR_DOESNT_MATCH = `Changed files were transformed in ${SOURCE_DOCS_DIR} but do not match the files in ${FINAL_DOCS_DIR}. Please run 'pnpm --filter mermaid run docs:build' after making changes to ${SOURCE_DOCS_DIR} to update the ${FINAL_DOCS_DIR} directory with the transformed files.`;
 
 // TODO: Read from .prettierrc?
 const prettierConfig: prettier.Config = {
