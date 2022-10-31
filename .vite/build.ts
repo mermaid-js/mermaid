@@ -118,6 +118,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
   if (watch && config.build) {
     config.build.watch = {
       include: [
+        'packages/mermaid-zenuml/src/**',
         'packages/mermaid-mindmap/src/**',
         'packages/mermaid/src/**',
         'packages/mermaid-example-diagram/src/**',

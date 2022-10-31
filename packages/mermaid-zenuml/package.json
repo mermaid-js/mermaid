@@ -14,6 +14,7 @@
   },
   "scripts": {
     "clean": "rimraf dist",
+    "build:code": "ts-node-esm --transpileOnly --project=tsconfig.json .vite/build.ts",
     "build:types": "tsc -p ./tsconfig.json --emitDeclarationOnly",
     "build:watch": "yarn build:code --watch",
     "build:esbuild": "concurrently \"yarn build:code\" \"yarn build:types\"",
