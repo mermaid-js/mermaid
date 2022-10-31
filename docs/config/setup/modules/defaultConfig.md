@@ -8,17 +8,17 @@
 
 ## Variables
 
-### <a id="configkeys" name="configkeys"></a> configKeys
+### configKeys
 
 • `Const` **configKeys**: `string`\[]
 
 #### Defined in
 
-defaultConfig.ts:1869
+[defaultConfig.ts:1869](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L1869)
 
 ---
 
-### <a id="default" name="default"></a> default
+### default
 
 • `Const` **default**: `Partial`<`MermaidConfig`>
 
@@ -53,4 +53,4 @@ A description of each option follows below.
 
 #### Defined in
 
-defaultConfig.ts:33
+[defaultConfig.ts:33](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L33)

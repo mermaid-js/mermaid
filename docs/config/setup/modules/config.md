@@ -8,17 +8,17 @@
 
 ## Variables
 
-### <a id="defaultconfig" name="defaultconfig"></a> defaultConfig
+### defaultConfig
 
 • `Const` **defaultConfig**: `MermaidConfig`
 
 #### Defined in
 
-config.ts:7
+[config.ts:7](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L7)
 
 ## Functions
 
-### <a id="adddirective" name="adddirective"></a> addDirective
+### addDirective
 
 ▸ **addDirective**(`directive`): `void`
 
@@ -36,11 +36,11 @@ Pushes in a directive to the configuration
 
 #### Defined in
 
-config.ts:191
+[config.ts:191](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L191)
 
 ---
 
-### <a id="getconfig" name="getconfig"></a> getConfig
+### getConfig
 
 ▸ **getConfig**(): `MermaidConfig`
 
@@ -60,11 +60,11 @@ The currentConfig
 
 #### Defined in
 
-config.ts:136
+[config.ts:136](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L136)
 
 ---
 
-### <a id="getsiteconfig" name="getsiteconfig"></a> getSiteConfig
+### getSiteConfig
 
 ▸ **getSiteConfig**(): `MermaidConfig`
 
@@ -84,11 +84,11 @@ The siteConfig
 
 #### Defined in
 
-config.ts:96
+[config.ts:96](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L96)
 
 ---
 
-### <a id="reset" name="reset"></a> reset
+### reset
 
 ▸ **reset**(`config?`): `void`
 
@@ -118,11 +118,11 @@ config.ts:96
 
 #### Defined in
 
-config.ts:223
+[config.ts:223](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L223)
 
 ---
 
-### <a id="sanitize" name="sanitize"></a> sanitize
+### sanitize
 
 ▸ **sanitize**(`options`): `void`
 
@@ -147,11 +147,11 @@ options in-place
 
 #### Defined in
 
-config.ts:151
+[config.ts:151](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L151)
 
 ---
 
-### <a id="saveconfigfrominitialize" name="saveconfigfrominitialize"></a> saveConfigFromInitialize
+### saveConfigFromInitialize
 
 ▸ **saveConfigFromInitialize**(`conf`): `void`
 
@@ -167,11 +167,11 @@ config.ts:151
 
 #### Defined in
 
-config.ts:75
+[config.ts:75](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L75)
 
 ---
 
-### <a id="setconfig" name="setconfig"></a> setConfig
+### setConfig
 
 ▸ **setConfig**(`conf`): `MermaidConfig`
 
@@ -199,11 +199,11 @@ The currentConfig merged with the sanitized conf
 
 #### Defined in
 
-config.ts:113
+[config.ts:113](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L113)
 
 ---
 
-### <a id="setsiteconfig" name="setsiteconfig"></a> setSiteConfig
+### setSiteConfig
 
 ▸ **setSiteConfig**(`conf`): `MermaidConfig`
 
@@ -232,11 +232,11 @@ The new siteConfig
 
 #### Defined in
 
-config.ts:61
+[config.ts:61](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L61)
 
 ---
 
-### <a id="updatecurrentconfig" name="updatecurrentconfig"></a> updateCurrentConfig
+### updateCurrentConfig
 
 ▸ **updateCurrentConfig**(`siteCfg`, `_directives`): `MermaidConfig`
 
@@ -253,11 +253,11 @@ config.ts:61
 
 #### Defined in
 
-config.ts:14
+[config.ts:14](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L14)
 
 ---
 
-### <a id="updatesiteconfig" name="updatesiteconfig"></a> updateSiteConfig
+### updateSiteConfig
 
 ▸ **updateSiteConfig**(`conf`): `MermaidConfig`
 
@@ -273,4 +273,4 @@ config.ts:14
 
 #### Defined in
 
-config.ts:79
+[config.ts:79](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L79)

@@ -8,13 +8,13 @@
 
 ## References
 
-### <a id="default" name="default"></a> default
+### default
 
 Renames and re-exports [mermaidAPI](mermaidAPI.md#mermaidapi)
 
 ## Variables
 
-### <a id="mermaidapi" name="mermaidapi"></a> mermaidAPI
+### mermaidAPI
 
 • `Const` **mermaidAPI**: `Readonly`<{ `defaultConfig`: `MermaidConfig` = configApi.defaultConfig; `getConfig`: () => `MermaidConfig` = configApi.getConfig; `getSiteConfig`: () => `MermaidConfig` = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`options`: `MermaidConfig`) => `Promise`<`void`> ; `parse`: (`text`: `string`, `parseError?`: `ParseErrorFunction`) => `boolean` ; `parseDirective`: (`p`: `any`, `statement`: `string`, `context`: `string`, `type`: `string`) => `void` ; `render`: (`id`: `string`, `text`: `string`, `cb`: (`svgCode`: `string`, `bindFunctions?`: (`element`: `Element`) => `void`) => `void`, `container?`: `Element`) => `Promise`<`void`> ; `reset`: () => `void` ; `setConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.setConfig; `updateSiteConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.updateSiteConfig }>
 
@@ -80,11 +80,11 @@ mermaid.initialize(config);
 
 #### Defined in
 
-mermaidAPI.ts:546
+[mermaidAPI.ts:546](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L546)
 
 ## Functions
 
-### <a id="decodeentities" name="decodeentities"></a> decodeEntities
+### decodeEntities
 
 ▸ **decodeEntities**(`text`): `string`
 
@@ -100,11 +100,11 @@ mermaidAPI.ts:546
 
 #### Defined in
 
-mermaidAPI.ts:72
+[mermaidAPI.ts:72](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L72)
 
 ---
 
-### <a id="encodeentities" name="encodeentities"></a> encodeEntities
+### encodeEntities
 
 ▸ **encodeEntities**(`text`): `string`
 
@@ -120,4 +120,4 @@ mermaidAPI.ts:72
 
 #### Defined in
 
-mermaidAPI.ts:46
+[mermaidAPI.ts:46](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L46)
