@@ -32,5 +32,3 @@ cypress/snapshots/
 .eslintcache
 .tsbuildinfo
 tsconfig.tsbuildinfo
-
-packages/mermaid/src/vitepress
