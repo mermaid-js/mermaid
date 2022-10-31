@@ -1,7 +1,9 @@
 export const id = 'zenuml';
 
+export const regexp = /^\s*zenuml/;
+
 export const detector = (txt: string) => {
-  return txt.match(/^\s*zenuml/) !== null;
+  return txt.match(regexp) !== null;
 };
 
 export const loadDiagram = async () => {

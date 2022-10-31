@@ -1,4 +1,5 @@
 import { resolve } from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { build, InlineConfig } from 'vite';
 import pkg from '../package.json' assert { type: 'json' };
@@ -73,6 +74,10 @@ const main = async () => {
   for (const pkg of packageNames) {
     await buildPackage(pkg);
   }
+  fs.copyFileSync(
+    resolve(__dirname, `../node_modules/vue-sequence/dist/vue-sequence.css`),
+    resolve(__dirname, `../dist/zenuml.css`)
+  );
 };
 
 main();
