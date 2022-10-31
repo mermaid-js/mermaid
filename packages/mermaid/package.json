@@ -33,7 +33,7 @@
     "dev": "node .esbuild/serve.cjs",
     "docs:code": "typedoc --plugin typedoc-plugin-markdown --readme none --githubPages false --hideBreadcrumbs --gitRemote disable --hideInPageTOC --namedAnchors --out src/docs/config/setup --entryPointStrategy expand src/defaultConfig.ts src/config.ts src/mermaidAPI.ts && prettier --write ./src/docs/config/setup",
     "docs:build": "rimraf ../../docs && pnpm docs:code && ts-node-esm src/docs.mts",
-    "docs:verify": "ts-node-esm src/docs.mts --verify",
+    "docs:verify": "pnpm docs:code && ts-node-esm src/docs.mts --verify",
     "docs:pre:vitepress": "rimraf src/vitepress && pnpm docs:code && ts-node-esm src/docs.mts --vitepress",
     "docs:build:vitepress": "pnpm docs:pre:vitepress && vitepress build src/vitepress",
     "docs:dev": "pnpm docs:pre:vitepress && vitepress dev src/vitepress",
