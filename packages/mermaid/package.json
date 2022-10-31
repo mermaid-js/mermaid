@@ -37,7 +37,7 @@
     "docs:pre:vitepress": "rimraf src/vitepress && pnpm docs:code && ts-node-esm src/docs.mts --vitepress",
     "docs:build:vitepress": "pnpm docs:pre:vitepress && vitepress build src/vitepress",
     "docs:dev": "pnpm docs:pre:vitepress && vitepress dev src/vitepress",
-    "docs:serve": "pnpm docs:pre:vitepress && vitepress serve src/vitepress",
+    "docs:serve": "pnpm docs:build:vitepress && vitepress serve src/vitepress",
     "release": "pnpm build",
     "lint": "eslint --cache --ignore-path .gitignore . && pnpm lint:jison && prettier --check .",
     "lint:fix": "eslint --fix --ignore-path .gitignore . && prettier --write .",

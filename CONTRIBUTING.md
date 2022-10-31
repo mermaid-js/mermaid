@@ -80,7 +80,6 @@ pnpm docs:dev
 You can now build and serve the documentation site:
 
 ```sh
-pnpm docs:build:vitepress
 pnpm docs:serve
 ```
 
