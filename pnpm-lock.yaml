@@ -34,7 +34,6 @@ importers:
       d3: 7.6.1
       dagre: 0.8.5
       dagre-d3: 0.6.4
-      documentation: 13.2.5
       dompurify: 2.4.0
       esbuild: 0.15.12
       eslint: 8.25.0
@@ -119,7 +118,6 @@ importers:
       coveralls: 3.1.1
       cypress: 10.10.0
       cypress-image-snapshot: 4.0.1_i53o2fh6a5o5tv3qlenzwcubc4
-      documentation: 13.2.5
       esbuild: 0.15.12
       eslint: 8.25.0
       eslint-config-prettier: 8.5.0_eslint@8.25.0

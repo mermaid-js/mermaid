@@ -482,32 +482,10 @@ async function initialize(options: MermaidConfig) {
   addDiagrams();
 }
 
-export const mermaidAPI = Object.freeze({
-  render,
-  parse,
-  parseDirective,
-  initialize,
-  getConfig: configApi.getConfig,
-  setConfig: configApi.setConfig,
-  getSiteConfig: configApi.getSiteConfig,
-  updateSiteConfig: configApi.updateSiteConfig,
-  reset: () => {
-    configApi.reset();
-  },
-  globalReset: () => {
-    configApi.reset(configApi.defaultConfig);
-  },
-  defaultConfig: configApi.defaultConfig,
-});
-
-setLogLevel(configApi.getConfig().logLevel);
-configApi.reset(configApi.getConfig());
-export default mermaidAPI;
 /**
  * ## mermaidAPI configuration defaults
  *
- * ```html
- * <script>
+ * ```ts
  *   const config = {
  *     theme: 'default',
  *     logLevel: 'fatal',
@@ -563,6 +541,27 @@ export default mermaidAPI;
  *     },
  *   };
  *   mermaid.initialize(config);
- * </script>
  * ```
  */
+export const mermaidAPI = Object.freeze({
+  render,
+  parse,
+  parseDirective,
+  initialize,
+  getConfig: configApi.getConfig,
+  setConfig: configApi.setConfig,
+  getSiteConfig: configApi.getSiteConfig,
+  updateSiteConfig: configApi.updateSiteConfig,
+  reset: () => {
+    configApi.reset();
+  },
+  globalReset: () => {
+    configApi.reset(configApi.defaultConfig);
+  },
+  defaultConfig: configApi.defaultConfig,
+});
+
+setLogLevel(configApi.getConfig().logLevel);
+configApi.reset(configApi.getConfig());
+
+export default mermaidAPI;

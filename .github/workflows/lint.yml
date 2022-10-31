@@ -39,4 +39,5 @@ jobs:
         run: pnpm run lint
 
       - name: Verify Docs
-        run: cd packages/mermaid && pnpm docs:verify
+        working-directory: ./packages/mermaid
+        run: pnpm run docs:verify

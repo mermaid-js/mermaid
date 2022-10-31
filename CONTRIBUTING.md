@@ -72,16 +72,16 @@ flowchart LR
 If you want to preview the whole documentation site on your machine:
 
 ```sh
-$ cd mermaid
-$ pnpm i
-$ pnpm docs:dev
+cd mermaid
+pnpm i
+pnpm docs:dev
 ```
 
 You can now build and serve the documentation site:
 
 ```sh
-$ pnpm docs:build:vitepress
-$ pnpm docs:serve
+pnpm docs:build:vitepress
+pnpm docs:serve
 ```
 
 ## Branching
