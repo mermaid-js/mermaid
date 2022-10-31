@@ -34,7 +34,6 @@
     "release": "pnpm build",
     "lint": "eslint --cache --ignore-path .gitignore . && pnpm lint:jison && prettier --check .",
     "lint:fix": "eslint --fix --ignore-path .gitignore . && prettier --write .",
-    "lint:jison": "ts-node-esm --transpileOnly packages/mermaid/src/jison/lint.mts",
     "cypress": "cypress run",
     "cypress:open": "cypress open",
     "e2e": "start-server-and-test dev http://localhost:9000/ cypress",
