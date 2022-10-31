@@ -24,7 +24,7 @@ Mermaid basically supports two types of configuration options to be overridden b
 2. _Diagram specific configurations_ : These are the configurations that are available and applied to a specific diagram. For each diagram there are specific configuration that will alter how that particular diagram looks and behaves.
    For example, `mirrorActors` is a configuration that is specific to the `SequenceDiagram` and alter whether the actors are mirrored or not. So this config is available only for the `SequenceDiagram` type.
 
-**NOTE:** These options listed here are not all the configuration options. To get hold of all the configuration options, please refer to the [defaultConfig.js](https://github.com/mermaid-js/mermaid/blob/develop/src/defaultConfig.js) in the source code.
+**NOTE:** These options listed here are not all the configuration options. To get hold of all the configuration options, please refer to the [defaultConfig.ts](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/defaultConfig.ts) in the source code.
 
 ```
 Soon we plan to publish a complete list of top-level configurations & all the diagram specific configurations, with their possible values in the docs
@@ -188,7 +188,7 @@ Some common flowchart configurations are:
 - _diagramPadding_: number
 - _useMaxWidth_: number
 
-For complete list of flowchart configurations, see [defaultConfig.js](https://github.com/mermaid-js/mermaid/blob/develop/src/defaultConfig.js) in the source code.
+For complete list of flowchart configurations, see [defaultConfig.ts](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/defaultConfig.ts) in the source code.
 _Soon we plan to publish a complete list all diagram specific configurations updated in the docs_
 
 The following code snippet changes flowchart config:
@@ -221,7 +221,7 @@ Some common sequence configurations are:
 - _showSequenceNumbers_: boolean
 - _wrap_: boolean
 
-For complete list of sequence diagram configurations, see _defaultConfig.js_ in the source code.
+For complete list of sequence diagram configurations, see _defaultConfig.ts_ in the source code.
 _Soon we plan to publish a complete list all diagram specific configurations updated in the docs_
 
 So, `wrap` by default has a value of `false` for sequence diagrams.
