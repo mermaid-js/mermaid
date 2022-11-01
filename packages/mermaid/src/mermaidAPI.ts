@@ -181,8 +181,8 @@ export const createCssStyles = (
 
   // classDefs defined in the diagram text
   if (classDefs && Object.keys(classDefs).length > 0) {
-    if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
-      const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels;
+    if (CLASSDEF_DIAGRAMS.includes(graphType)) {
+      const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
 
       const cssHtmlElements = ['> *', 'span']; // TODO make a constant
       const cssShapeElements = ['rect', 'polygon', 'ellipse', 'circle']; // TODO make a constant
