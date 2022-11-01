@@ -10,6 +10,11 @@ import {
   axisBottom,
   axisTop,
   timeFormat,
+  timeMinute,
+  timeHour,
+  timeDay,
+  timeWeek,
+  timeMonth,
 } from 'd3';
 import common from '../common/common';
 import { getConfig } from '../../config';
@@ -495,6 +500,33 @@ export const draw = function (text, id, version, diagObj) {
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
       .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
 
+    const reTickInterval = /^([1-9][0-9]*)(minute|hour|day|week|month)$/;
+    const resultTickInterval = reTickInterval.exec(
+      diagObj.db.getTickInterval() || conf.tickInterval
+    );
+
+    if (resultTickInterval !== null) {
+      const every = resultTickInterval[1];
+      const interval = resultTickInterval[2];
+      switch (interval) {
+        case 'minute':
+          bottomXAxis.ticks(timeMinute.every(every));
+          break;
+        case 'hour':
+          bottomXAxis.ticks(timeHour.every(every));
+          break;
+        case 'day':
+          bottomXAxis.ticks(timeDay.every(every));
+          break;
+        case 'week':
+          bottomXAxis.ticks(timeWeek.every(every));
+          break;
+        case 'month':
+          bottomXAxis.ticks(timeMonth.every(every));
+          break;
+      }
+    }
+
     svg
       .append('g')
       .attr('class', 'grid')
@@ -511,6 +543,28 @@ export const draw = function (text, id, version, diagObj) {
       let topXAxis = axisTop(timeScale)
         .tickSize(-h + theTopPad + conf.gridLineStartPadding)
         .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+
+      if (resultTickInterval !== null) {
+        const every = resultTickInterval[1];
+        const interval = resultTickInterval[2];
+        switch (interval) {
+          case 'minute':
+            topXAxis.ticks(timeMinute.every(every));
+            break;
+          case 'hour':
+            topXAxis.ticks(timeHour.every(every));
+            break;
+          case 'day':
+            topXAxis.ticks(timeDay.every(every));
+            break;
+          case 'week':
+            topXAxis.ticks(timeWeek.every(every));
+            break;
+          case 'month':
+            topXAxis.ticks(timeMonth.every(every));
+            break;
+        }
+      }
 
       svg
         .append('g')

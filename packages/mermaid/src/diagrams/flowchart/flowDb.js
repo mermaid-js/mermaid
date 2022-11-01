@@ -119,7 +119,11 @@ export const addVertex = function (_id, text, type, style, classes, dir, props =
   if (typeof dir !== 'undefined') {
     vertices[id].dir = dir;
   }
-  vertices[id].props = props;
+  if (typeof vertices[id].props === 'undefined') {
+    vertices[id].props = props;
+  } else if (typeof props !== 'undefined') {
+    Object.assign(vertices[id].props, props);
+  }
 };
 
 /**

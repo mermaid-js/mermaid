@@ -255,4 +255,22 @@ describe('Entity Relationship Diagram', () => {
     );
     cy.get('svg');
   });
+
+  it('should render entities with aliases', () => {
+    renderGraph(
+      `
+    erDiagram
+      T1 one or zero to one or more T2 : test
+      T2 one or many optionally to zero or one T3 : test
+      T3 zero or more to zero or many T4 : test
+      T4 many(0) to many(1) T5 : test
+      T5 many optionally to one T6 : test
+      T6 only one optionally to only one T1 : test
+      T4 0+ to 1+ T6 : test
+      T1 1 to 1 T3 : test
+      `,
+      { logLevel: 1 }
+    );
+    cy.get('svg');
+  });
 });

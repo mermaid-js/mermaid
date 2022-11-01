@@ -322,15 +322,10 @@ function calcLabelPosition(points: Point[]): Point {
 
 const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition) => {
   let prevPoint;
-  log.info('our points', points);
+  log.info(`our points ${JSON.stringify(points)}`);
   if (points[0] !== initialPosition) {
     points = points.reverse();
   }
-  points.forEach((point) => {
-    totalDistance += distance(point, prevPoint);
-    prevPoint = point;
-  });
-
   // Traverse only 25 total distance along points to find cardinality point
   const distanceToCardinalityPoint = 25;
 
