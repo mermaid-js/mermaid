@@ -180,7 +180,7 @@ export const createCssStyles = (
   }
 
   // classDefs defined in the diagram text
-  if (classDefs && Object.keys(classDefs).length > 0) {
+  if (!isEmpty(classDefs)) {
     if (CLASSDEF_DIAGRAMS.includes(graphType)) {
       const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
 
@@ -481,11 +481,15 @@ const render = async function (
   // Insert an element into svg. This is where we put the styles
   const svg = element.firstChild;
   const firstChild = svg.firstChild;
+  const diagramClassDefs = CLASSDEF_DIAGRAMS.includes(graphType)
+    ? diag.renderer.getClasses(text, diag)
+    : {};
+
   const rules = createUserStyles(
     config,
     graphType,
     // @ts-ignore convert renderer to TS.
-    diag.renderer.getClasses(text, diag),
+    diagramClassDefs,
     idSelector
   );
 
