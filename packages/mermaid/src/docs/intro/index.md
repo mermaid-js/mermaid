@@ -168,10 +168,10 @@ Latest Version: [https://unpkg.com/browse/mermaid@8.8.0/](https://unpkg.com/brow
 To Deploy Mermaid:
 
 1. You will need to install node v16, which would have npm
-2. Download yarn using npm
-3. Enter the following command: `yarn add mermaid`
-4. You can then add mermaid as a dev dependency using this command:
-   `yarn add --dev mermaid`
+2. Install mermaid
+   - NPM: `npm i mermaid`
+   - Yarn: `yarn add mermaid`
+   - Pnpm: `pnpm add mermaid`
 
 ### [Mermaid API](../config/setup/README):
 
@@ -212,22 +212,26 @@ Don't hesitate to contact me if you want to get involved!
 
 ## For contributors
 
-### Setup
+### Requirements
 
-```sh
-yarn install
-```
+- [volta](https://volta.sh/) to manage node versions.
+- [Node.js](https://nodejs.org/en/). `volta install node`
+- [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
 
-### Build
+## Development Installation
 
-```sh
-yarn build:watch
+```bash
+git clone git@github.com:mermaid-js/mermaid.git
+cd mermaid
+# npx is required for first install as volta support for pnpm is not added yet.
+npx pnpm install
+pnpm test
 ```
 
 ### Lint
 
 ```sh
-yarn lint
+pnpm lint
 ```
 
 We use [eslint](https://eslint.org/).
@@ -236,7 +240,7 @@ We recommend you to install [editor plugins](https://eslint.org/docs/user-guide/
 ### Test
 
 ```sh
-yarn test
+pnpm test
 ```
 
 Manual test in browser: open `dist/index.html`
