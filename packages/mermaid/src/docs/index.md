@@ -100,6 +100,12 @@ const members = [
     ],
   },
   {
+    avatar: "https://avatars.githubusercontent.com/u/114684273?v=4",
+    name: "Per Brolin",
+    title: "Developer",
+    links: [{ icon: "github", link: "https://github.com/pbrolin47" }],
+  },
+  {
     avatar: "https://avatars.githubusercontent.com/u/53054099?v=4",
     name: "Yash Singh",
     title: "Developer",
@@ -119,6 +125,12 @@ const members = [
     name: "Mindaugas Laganeckas",
     title: "Developer",
     links: [{ icon: "github", link: "https://github.com/MindaugasLaganeckas" }],
+  },
+  {
+    avatar: "https://avatars.githubusercontent.com/u/300077?v=4",
+    name: "Justin Greywolf",
+    title: "Developer",
+    links: [{ icon: "github", link: "https://github.com/jgreywolf" }],
   },
   {
     avatar: "https://avatars.githubusercontent.com/u/1564825?v=4",
