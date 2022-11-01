@@ -1,4 +1,6 @@
-# mermaid [![Build Status](https://travis-ci.org/mermaid-js/mermaid.svg?branch=master)](https://travis-ci.org/mermaid-js/mermaid) [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid) [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master) [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
+# mermaid
+
+[![Build CI Status](https://github.com/mermaid-js/mermaid/actions/workflows/build.yml/badge.svg)](https://github.com/mermaid-js/mermaid/actions/workflows/build.yml) [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid) [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master) [![CDN Status](https://img.shields.io/jsdelivr/npm/hm/mermaid)](https://www.jsdelivr.com/package/npm/mermaid) [![NPM](https://img.shields.io/npm/dm/mermaid)](https://www.npmjs.com/package/mermaid) [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE) [![Twitter Follow](https://img.shields.io/twitter/follow/mermaidjs_?style=social)](https://twitter.com/mermaidjs_)
 
 [English](./README.md) | 简体中文
 
@@ -13,6 +15,7 @@
 ## 关于 Mermaid
 
 <!-- <Main description>   -->
+
 Mermaid 是一个基于 Javascript 的图表绘制工具，通过解析类 Markdown 的文本语法来实现图表的创建和动态修改。Mermaid 诞生的主要目的是让文档的更新能够及时跟上开发进度。
 
 > Doc-Rot 是 Mermaid 致力于解决的一个难题。
@@ -31,7 +34,8 @@ Mermaid 甚至能让非程序员也能通过 [Mermaid Live Editor](https://merma
 
 ## 示例
 
-__下面是一些可以使用 Mermaid 创建的图表示例。点击 [语法](https://mermaid-js.github.io/mermaid/#/n00b-syntaxReference) 查看详情。__
+**下面是一些可以使用 Mermaid 创建的图表示例。点击 [语法](https://mermaid-js.github.io/mermaid/#/n00b-syntaxReference) 查看详情。**
+
 <table>
 <!-- <Flowchart> -->
 
@@ -44,6 +48,7 @@ B --> C{Decision}
 C -->|One| D[Result 1]
 C -->|Two| E[Result 2]
 ```
+
 ```mermaid
 flowchart LR
 A[Hard] -->|Text| B(Round)
@@ -65,6 +70,7 @@ John-->>Alice: Great!
 John->>Bob: How about you?
 Bob-->>John: Jolly good!
 ```
+
 ```mermaid
 sequenceDiagram
 Alice->>John: Hello John, how are you?
@@ -89,6 +95,7 @@ gantt
     Parallel 3   :         des5, after des3, 1d
     Parallel 4   :         des6, after des4, 1d
 ```
+
 ```mermaid
 gantt
     section Section
@@ -120,6 +127,7 @@ class Class10 {
   size()
 }
 ```
+
 ```mermaid
 classDiagram
 Class01 <|-- AveryLongClass : Cool
@@ -150,6 +158,7 @@ Moving --> Still
 Moving --> Crash
 Crash --> [*]
 ```
+
 ```mermaid
 stateDiagram-v2
 [*] --> Still
@@ -168,6 +177,7 @@ pie
 "Cats" : 85
 "Rats" : 15
 ```
+
 ```mermaid
 pie
 "Dogs" : 386
@@ -175,7 +185,7 @@ pie
 "Rats" : 15
 ```
 
-### Git图 [实验特性 - <a href="https://mermaidjs.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiZ2l0R3JhcGg6XG5vcHRpb25zXG57XG4gICAgXCJub2RlU3BhY2luZ1wiOiAxNTAsXG4gICAgXCJub2RlUmFkaXVzXCI6IDEwXG59XG5lbmRcbmNvbW1pdFxuYnJhbmNoIG5ld2JyYW5jaFxuY2hlY2tvdXQgbmV3YnJhbmNoXG5jb21taXRcbmNvbW1pdFxuY2hlY2tvdXQgbWFzdGVyXG5jb21taXRcbmNvbW1pdFxubWVyZ2UgbmV3YnJhbmNoXG4iLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9fQ">live editor</a>]
+### Git 图 [实验特性 - <a href="https://mermaidjs.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiZ2l0R3JhcGg6XG5vcHRpb25zXG57XG4gICAgXCJub2RlU3BhY2luZ1wiOiAxNTAsXG4gICAgXCJub2RlUmFkaXVzXCI6IDEwXG59XG5lbmRcbmNvbW1pdFxuYnJhbmNoIG5ld2JyYW5jaFxuY2hlY2tvdXQgbmV3YnJhbmNoXG5jb21taXRcbmNvbW1pdFxuY2hlY2tvdXQgbWFzdGVyXG5jb21taXRcbmNvbW1pdFxubWVyZ2UgbmV3YnJhbmNoXG4iLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9fQ">live editor</a>]
 
 ### 用户体验旅程图 [<a href="https://mermaid-js.github.io/mermaid/#/user-journey">文档</a> - <a href="https://mermaidjs.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoic3RhdGVEaWFncmFtXG4gICAgWypdIC0tPiBTdGlsbFxuICAgIFN0aWxsIC0tPiBbKl1cbiAgICBTdGlsbCAtLT4gTW92aW5nXG4gICAgTW92aW5nIC0tPiBTdGlsbFxuICAgIE1vdmluZyAtLT4gQ3Jhc2hcbiAgICBDcmFzaCAtLT4gWypdIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifX0">live editor</a>]
 
@@ -190,6 +200,7 @@ pie
       Go downstairs: 5: Me
       Sit down: 3: Me
 ```
+
 ```mermaid
   journey
     title My working day
@@ -238,6 +249,7 @@ BiRel(SystemAA, SystemE, "Uses")
 Rel(SystemAA, SystemC, "Sends e-mails", "SMTP")
 Rel(SystemC, customerA, "Sends e-mails to")
 ```
+
 ```mermaid
 C4Context
 title System Context diagram for Internet Banking System
@@ -303,20 +315,20 @@ Mermaid 是一个不断发展中的社区，并且还在接收新的贡献者。
 
 作为拥有外部用户的网站的额外安全级别，我们很高兴推出一个新的安全级别，其中的图表在沙盒 iframe 中渲染，防止代码中的 javascript 被执行，这是在安全性方面迈出的一大步。
 
-*很不幸的是，鱼与熊掌不可兼得，在这个场景下它意味着在可能的恶意代码被阻止时，也会损失部分交互能力*。
+_很不幸的是，鱼与熊掌不可兼得，在这个场景下它意味着在可能的恶意代码被阻止时，也会损失部分交互能力_。
 
 ## 报告漏洞
 
 如果想要报告漏洞，请发送邮件到 security@mermaid.live, 并附上问题的描述、复现问题的步骤、受影响的版本，以及解决问题的方案（如果有的话）。
 
 ## 鸣谢
+
 来自 Knut Sveidqvist:
->*特别感谢 [d3](https://d3js.org/) 和 [dagre-d3](https://github.com/cpettitt/dagre-d3) 这两个优秀的项目，它们提供了图形布局和绘图工具库! *
->*同样感谢 [js-sequence-diagram](https://bramp.github.io/js-sequence-diagrams) 提供了时序图语法的使用。 感谢 Jessica Peter 提供了甘特图渲染的灵感。*
->*感谢 [Tyler Long](https://github.com/tylerlong) 从 2017年四月开始成为了项目的合作者。*
+
+> _特别感谢 [d3](https://d3js.org/) 和 [dagre-d3](https://github.com/cpettitt/dagre-d3) 这两个优秀的项目，它们提供了图形布局和绘图工具库! _ >_同样感谢 [js-sequence-diagram](https://bramp.github.io/js-sequence-diagrams) 提供了时序图语法的使用。 感谢 Jessica Peter 提供了甘特图渲染的灵感。_ >_感谢 [Tyler Long](https://github.com/tylerlong) 从 2017 年四月开始成为了项目的合作者。_
 >
->*感谢越来越多的 [贡献者们](https://github.com/knsv/mermaid/graphs/contributors)，没有你们，就没有这个项目的今天！*
+> _感谢越来越多的 [贡献者们](https://github.com/knsv/mermaid/graphs/contributors)，没有你们，就没有这个项目的今天！_
 
 ---
 
-*Mermaid 是由 Knut Sveidqvist 创建，它为了更简单的文档编写而生。*
+_Mermaid 是由 Knut Sveidqvist 创建，它为了更简单的文档编写而生。_

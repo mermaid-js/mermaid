@@ -1,15 +1,12 @@
 <html>
   <head>
-    <link
-      href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
     <style>
       .malware {
         position: fixed;
-        bottom:0;
-        left:0;
-        right:0;
+        bottom: 0;
+        left: 0;
+        right: 0;
         height: 150px;
         background: red;
         color: black;
@@ -33,20 +30,21 @@
     </script>
   </head>
   <body>
-    <div class="mermaid">
+    <pre class="mermaid">
+      <!-- prettier-ignore -->
       %%{init: { 'fontFamily': '\"></style><img src=x onerror=xssAttack()>'} }%%
       graph LR
           A --> B
-    </div>
+    </pre>
     <script src="./mermaid.js"></script>
     <script>
       mermaid.initialize({
         startOnLoad: true,
         useMaxWidth: true,
       });
-      var cnt = 0;
-      var a;
-      var handler = setInterval(() => {
+      let cnt = 0;
+      let a;
+      const handler = setInterval(() => {
         cnt++;
         a = {};
         if (typeof a.polluted !== 'undefined') {

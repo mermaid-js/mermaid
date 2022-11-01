@@ -92,7 +92,7 @@ describe('Gantt diagram', () => {
       {}
     );
   });
-  it('should render a gantt chart for issue #1060', () => {
+  it('should FAIL redering a gantt chart for issue #1060 with invalid date', () => {
     imgSnapshotTest(
       `
       gantt
@@ -175,7 +175,7 @@ describe('Gantt diagram', () => {
       Another task     :after a1, 20ms
       section Another
       Another another task      :b1, 20, 12ms
-      Another another another task     :after b1, 24ms
+      Another another another task     :after b1, 0.024s
         `,
       {}
     );

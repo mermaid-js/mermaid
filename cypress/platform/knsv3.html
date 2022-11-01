@@ -1,20 +1,25 @@
 <html>
   <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
     <link
-      href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"
     />
-    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet">
     <style>
       body {
         /* background: rgb(221, 208, 208); */
         /* background:#333; */
         font-family: 'Courier New', Courier, monospace;
         /* font-size: 18px !important; */
-        }
-      h1 { color: grey;}
+      }
+      h1 {
+        color: grey;
+      }
       .mermaid2 {
         display: none;
       }
@@ -28,27 +33,27 @@
   <body>
     <div>info below</div>
     <div class="">
-      <div class="mermaid2" style="width: 100%; height: 400px;">
+      <pre class="mermaid2" style="width: 100%; height: 400px">
 flowchart TB;subgraph "number as labels";1;end;
-      </div>
-      <div class="mermaid2" style="width: 100%; height: 400px;">
+      </pre>
+      <pre class="mermaid2" style="width: 100%; height: 400px">
 flowchart TB;a[APA];
-      </div>
-      <div class="mermaid2" style="margin-left:100px;">
+      </pre>
+      <pre class="mermaid2" style="margin-left: 100px">
 graph TD
       work --> sleep
       sleep --> work
       eat --> sleep
       work --> eat
-  </div>
-      <div class="mermaid2" style="margin-left:100px;">
+      </pre>
+      <pre class="mermaid2" style="margin-left: 100px">
 flowchart TD
       work --> sleep
       sleep --> work
       eat --> sleep
       work --> eat
-  </div>
-      <div class="mermaid2" style="">
+      </pre>
+      <pre class="mermaid2" style="">
  graph TB
       A
       B
@@ -76,8 +81,8 @@ flowchart TD
 
       style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
       style bar fill:#999,stroke-width:2px,stroke:#0F0,color:blue
-    </div>
-    <div class="mermaid2" style="">
+      </pre>
+      <pre class="mermaid2" style="">
       graph TB
 %%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
       A
@@ -106,56 +111,56 @@ flowchart TD
 
       style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
       style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
-    </div>
-      <div class="mermaid2" style="">
+      </pre>
+      <pre class="mermaid2" style="">
       graph TD
         A[Christmas] ==> D
         A[Christmas] -->|Get money| B(Go shopping)
         A[Christmas] ==> C
-    </div>
-    <div class="mermaid2" style="">
+      </pre>
+      <pre class="mermaid2" style="">
       graph TD
 %%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
         A[Christmas] ==> D
         A[Christmas] -->|Get money| B(Go shopping)
         A[Christmas] ==> C
-    </div>
-      <div class="mermaid2" style="">
+      </pre>
+      <pre class="mermaid2" style="">
       flowchart TD
         A[Christmas] ==> D
         A[Christmas] -->|Get money| B(Go shopping)
         A[Christmas] ==> C
-    </div>
-    <div class="mermaid2" style="">
+      </pre>
+      <pre class="mermaid2" style="">
       flowchart TD
 %%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
         A[Christmas] ==> D
         A[Christmas] -->|Get money| B(Go shopping)
         A[Christmas] ==> C
-    </div>
-      <div class="mermaid2" style="">
+      </pre>
+      <pre class="mermaid2" style="">
 flowchart LR
         a["<strong>Haiya</strong>"]---->b
-</div>
-      <div class="mermaid" style="">
+      </pre>
+      <pre class="mermaid" style="">
 flowchart LR
 %%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
         a["<strong>Haiya</strong>"]---->b
-</div>
-    <div class="mermaid2" style="">
+      </pre>
+      <pre class="mermaid2" style="">
       flowchart TD
         A[Christmas] ==> D
         A[Christmas] -->|Get money| B(Go shopping)
         A[Christmas] ==> C
-    </div>
-    <div class="mermaid2" style="">
+      </pre>
+      <pre class="mermaid2" style="">
       flowchart TD
 %%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
         A[Christmas] ==> D
         A[Christmas] -->|Get money| B(Go shopping)
         A[Christmas] ==> C
-    </div>
-    <div class="mermaid2" style="">
+      </pre>
+      <pre class="mermaid2" style="">
       %%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
 classDiagram-v2
       Class01 <|-- AveryLongClass : Cool
@@ -182,8 +187,8 @@ classDiagram-v2
         int id
         test()
       }
-      </div>
-    <div class="mermaid2" style="">
+      </pre>
+      <pre class="mermaid2" style="">
 classDiagram-v2
       Class01 <|-- AveryLongClass : Cool
       &lt;&lt;interface&gt;&gt; Class01
@@ -209,8 +214,8 @@ classDiagram-v2
         int id
         test()
       }
-      </div>
-    <div class="mermaid" style="">
+      </pre>
+      <pre class="mermaid" style="">
 flowchart BT
    subgraph S1
     sub1 -->sub2
@@ -220,8 +225,9 @@ flowchart BT
    end
    S1 --> S2
    sub1 --> sub4
-      </div>
-  <script src="./mermaid.js"></script>
+      </pre>
+    </div>
+    <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
@@ -244,8 +250,8 @@ flowchart BT
         // themeVariables: {relationLabelColor: 'red'}
       });
       function callback() {
-  alert('It worked');
-}
+        alert('It worked');
+      }
     </script>
   </body>
 </html>

@@ -1,12 +1,8 @@
 {
   "ecmaVersion": 6,
-  "libs": [
-    "browser"
-  ],
+  "libs": ["browser"],
   "loadEagerly": [],
-  "dontLoad": [
-    "node_modules/**"
-  ],
+  "dontLoad": ["node_modules/**"],
   "plugins": {
     "modules": {},
     "es_modules": {},

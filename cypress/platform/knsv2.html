@@ -1,31 +1,46 @@
 <html>
   <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
     <link
-      href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
       rel="stylesheet"
     />
-    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
     <style>
       body {
         /* background: rgb(221, 208, 208); */
         /* background:#333; */
         font-family: 'Arial';
         /* font-size: 18px !important; */
-        }
-      h1 { color: grey;}
+      }
+      h1 {
+        color: grey;
+      }
       .mermaid2 {
         display: none;
       }
       .mermaid svg {
         /* font-size: 18px !important; */
+        background-color: #eee;
+        background-image: radial-gradient(#fff 1%, transparent 11%),
+          radial-gradient(#fff 1%, transparent 11%);
+        background-size: 20px 20px;
+        background-position: 0 0, 10px 10px;
+        background-repeat: repeat;
       }
       .malware {
         position: fixed;
-        bottom:0;
-        left:0;
-        right:0;
+        bottom: 0;
+        left: 0;
+        right: 0;
         height: 150px;
         background: red;
         color: black;
@@ -40,32 +55,72 @@
   </head>
   <body>
     <div>Security check</div>
-    <div class="flex">
-      <div id="diagram" class="mermaid">
-sequenceDiagram
-  Nothing:Valid;
-      </div>
-      <div id="res" class=""></div>
-  <script src="./mermaid.js"></script>
+    <pre id="diagram" class="mermaid">
+classDiagram
+        direction LR
+        class Student {
+          -idCard : IdCard
+        }
+        class IdCard{
+          -id : int
+          -name : string
+        }
+        class Bike{
+          -id : int
+          -name : string
+        }
+        Student "1" --o "1" IdCard : carries
+        Student "1" --o "1" Bike : rides
+    </pre>
+    <pre id="diagram" class="mermaid2">
+mindmap
+  root
+    child1((Circle))
+        grandchild 1
+        grandchild 2
+    child2(Round rectangle)
+        grandchild 3
+        grandchild 4
+    child3[Square]
+        grandchild 5
+        ::icon(mdi mdi-fire)
+        gc6((grand<br/>child 6))
+        ::icon(mdi mdi-fire)
+          gc7((grand<br/>grand<br/>child 8))
+        </pre>
+    <pre id="diagram" class="mermaid2">
+      example-diagram
+    </pre>
+
+    <!-- <div id="cy"></div> -->
+    <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
+    <!-- <script src="./mermaid-example-diagram-detector.js"></script>    -->
+    <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.7/dist/mermaid.min.js"></script> -->
+    <script src="./mermaid.js"></script>
+
     <script>
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        startOnLoad: false,
-        // themeVariables: {relationLabelColor: 'red'}
+        theme: 'forest',
+        startOnLoad: true,
+        logLevel: 0,
+        // basePath: './packages/',
+        // themeVariables: { darkMode: true },
+        lazyLoadedDiagrams: [
+          './mermaid-mindmap-detector.esm.mjs',
+          './mermaid-example-diagram-detector.esm.mjs',
+        ],
+        // lazyLoadedDiagrams: ['../../mermaid-mindmap/registry.ts'],
       });
       function callback() {
-  alert('It worked');
-}
-
-// document.querySelector('#diagram').innerHTML = diagram;
-try {
-  mermaid.initThrowsErrors(undefined, '#diagram');
-} catch (err) {
-  console.log('Caught error:', err);
-}
+        alert('It worked');
+      }
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
     </script>
   </body>
 </html>
-

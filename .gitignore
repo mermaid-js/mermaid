@@ -12,7 +12,11 @@ token
 
 package-lock.json
 
-.vscode/
+# ignore files in /.vscode/ except for launch.json and extensions.json
+/.vscode/**
+!/.vscode/launch.json
+!/.vscode/extensions.json
+
 cypress/platform/current.html
 cypress/platform/experimental.html
 local/
@@ -26,3 +30,8 @@ cypress/snapshots/
 
 # eslint --cache file
 .eslintcache
+.tsbuildinfo
+tsconfig.tsbuildinfo
+knsv*.html
+
+local*.html

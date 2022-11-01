@@ -16,24 +16,27 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        cache: yarn
-        node-version: ${{ matrix.node-version }}
+      - uses: pnpm/action-setup@v2
+        # uses version from "packageManager" field in package.json
 
-    - name: Install Yarn
-      run: npm i yarn --global
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          cache: pnpm
+          node-version: ${{ matrix.node-version }}
 
-    - name: Install Packages
-      run: |
-        yarn install --frozen-lockfile
-      env:
-        CYPRESS_CACHE_FOLDER: .cache/Cypress
+      - name: Install Packages
+        run: |
+          pnpm install --frozen-lockfile
+        env:
+          CYPRESS_CACHE_FOLDER: .cache/Cypress
 
-    - name: Run Linting
-      run: yarn lint
+      - name: Run Linting
+        run: pnpm run lint
+
+      - name: Verify Docs
+        run: pnpm run docs:verify

@@ -14,12 +14,12 @@ jobs:
     name: check tests
     if: github.repository_owner == 'mermaid-js'
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - uses: testomatio/check-tests@stable
-      with:
-        framework: cypress
-        tests: "./cypress/e2e/**/**.spec.js"
-        token: ${{ secrets.GITHUB_TOKEN }}
-        has-tests-label: true
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: testomatio/check-tests@stable
+        with:
+          framework: cypress
+          tests: './cypress/e2e/**/**.spec.js'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          has-tests-label: true
