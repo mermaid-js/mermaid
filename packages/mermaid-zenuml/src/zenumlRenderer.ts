@@ -2,6 +2,7 @@
 import { getConfig } from './mermaidUtils';
 import { VueSequence } from 'vue-sequence';
 import { regexp } from './detector';
+import 'vue-sequence/dist/vue-sequence.css';
 
 const { Vue, Vuex } = VueSequence;
 
@@ -36,11 +37,12 @@ export const draw = function (text: string, id: string) {
     return;
   }
 
-  loadCss(root, './zenuml.css');
+  loadCss(root, './style.css');
 
   Vue.use(Vuex);
   const store = new Vuex.Store(VueSequence.Store());
   store.dispatch('updateCode', { code: text });
+
   new Vue({
     el: diagram,
     store,
