@@ -9,7 +9,6 @@
  * page or do something completely different.
  *
  * In addition to the render function, a number of behavioral configuration options are available.
- *
  */
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
@@ -19,7 +18,6 @@ import * as configApi from './config';
 import { addDiagrams } from './diagram-api/diagram-orchestration';
 import classDb from './diagrams/class/classDb';
 import flowDb from './diagrams/flowchart/flowDb';
-import flowRenderer from './diagrams/flowchart/flowRenderer';
 import ganttDb from './diagrams/gantt/ganttDb';
 import Diagram, { getDiagramFromText, type ParseErrorFunction } from './Diagram';
 import errorRenderer from './diagrams/error/errorRenderer';
@@ -31,6 +29,9 @@ import utils, { directiveSanitizer, isNonEmptyArray } from './utils';
 import DOMPurify from 'dompurify';
 import { MermaidConfig } from './config.type';
 import { evaluate } from './diagrams/common/common';
+
+// diagram names that support classDef statements
+const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram'];
 
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
   'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -165,7 +166,7 @@ export const createCssStyles = (
 
   // user provided theme CSS info
   // If you add more configuration driven data into the user styles make sure that the value is
-  // sanitized by the santizeCSS function  @todo TODO where is this method?  what should be used to replace it?  refactor so that it's always sanitized
+  // sanitized by the sanitize CSS function TODO where is this method?  what should be used to replace it?  refactor so that it's always sanitized
   if (config.themeCSS !== undefined) {
     cssStyles += `\n${config.themeCSS}`;
   }
@@ -182,8 +183,8 @@ export const createCssStyles = (
     if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
       const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels;
 
-      const cssHtmlElements = ['> *', 'span']; // @todo TODO make a constant
-      const cssShapeElements = ['rect', 'polygon', 'ellipse', 'circle']; // @todo TODO make a constant
+      const cssHtmlElements = ['> *', 'span']; // TODO make a constant
+      const cssShapeElements = ['rect', 'polygon', 'ellipse', 'circle']; // TODO make a constant
 
       const cssElements = htmlLabels ? cssHtmlElements : cssShapeElements;
 
@@ -482,8 +483,8 @@ const render = async function (
   const rules = createUserStyles(
     config,
     graphType,
-    // @ts-ignore convert flowRender to TS.
-    flowRenderer.getClasses(text, diag),
+    // @ts-ignore convert renderer to TS.
+    diag.renderer.getClasses(text, diag),
     idSelector
   );
 
@@ -496,7 +497,7 @@ const render = async function (
   try {
     await diag.renderer.draw(text, id, pkg.version, diag);
   } catch (e) {
-    errorRenderer.draw(text, id, pkg.version);
+    await errorRenderer.draw(text, id, pkg.version);
     throw e;
   }
 
@@ -542,7 +543,6 @@ const render = async function (
   } else {
     log.debug('CB = undefined!');
   }
-
   attachFunctions();
 
   // -------------------------------------------------------------------------------

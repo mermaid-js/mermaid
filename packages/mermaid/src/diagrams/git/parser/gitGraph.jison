@@ -109,12 +109,12 @@ statement
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
     | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }  | section {yy.addSection($1.substr(8));$$=$1.substr(8);}
     | branchStatement
-    | CHECKOUT ID {yy.checkout($2)}
+    | CHECKOUT ref {yy.checkout($2)}
     // | RESET reset_arg {yy.reset($2)}
     ;
 branchStatement
-    : BRANCH ID {yy.branch($2)}
-    | BRANCH ID ORDER NUM {yy.branch($2, $4)}
+    : BRANCH ref {yy.branch($2)}
+    | BRANCH ref ORDER NUM {yy.branch($2, $4)}
     ;
 
 cherryPickStatement
@@ -126,22 +126,22 @@ cherryPickStatement
     ;
 
 mergeStatement
-    : MERGE ID {yy.merge($2,'','','')}
-    | MERGE ID COMMIT_ID STR {yy.merge($2, $4,'','')}
-    | MERGE ID COMMIT_TYPE commitType  {yy.merge($2,'', $4,'')}
-    | MERGE ID COMMIT_TAG STR {yy.merge($2, '','',$4)}
-    | MERGE ID COMMIT_TAG STR COMMIT_ID STR {yy.merge($2, $6,'', $4)}
-    | MERGE ID COMMIT_TAG STR COMMIT_TYPE commitType {yy.merge($2, '',$6, $4)}
-    | MERGE ID COMMIT_TYPE commitType COMMIT_TAG STR {yy.merge($2, '',$4, $6)}
-    | MERGE ID COMMIT_ID STR COMMIT_TYPE commitType {yy.merge($2, $4, $6, '')}
-    | MERGE ID COMMIT_ID STR COMMIT_TAG STR {yy.merge($2, $4, '', $6)}
-    | MERGE ID COMMIT_TYPE commitType COMMIT_ID STR {yy.merge($2, $6,$4, '')}
-    | MERGE ID COMMIT_ID STR COMMIT_TYPE commitType COMMIT_TAG STR {yy.merge($2, $4, $6, $8)}
-    | MERGE ID COMMIT_TYPE commitType COMMIT_TAG STR COMMIT_ID STR {yy.merge($2, $8, $4, $6)}
-    | MERGE ID COMMIT_ID STR COMMIT_TAG STR COMMIT_TYPE commitType {yy.merge($2, $4, $8, $6)}
-    | MERGE ID COMMIT_TYPE commitType COMMIT_ID STR COMMIT_TAG STR {yy.merge($2, $6, $4, $8)}
-    | MERGE ID COMMIT_TAG STR COMMIT_TYPE commitType COMMIT_ID STR {yy.merge($2, $8, $6, $4)}
-    | MERGE ID COMMIT_TAG STR COMMIT_ID STR COMMIT_TYPE commitType {yy.merge($2, $6, $8, $4)}
+    : MERGE ref {yy.merge($2,'','','')}
+    | MERGE ref COMMIT_ID STR {yy.merge($2, $4,'','')}
+    | MERGE ref COMMIT_TYPE commitType  {yy.merge($2,'', $4,'')}
+    | MERGE ref COMMIT_TAG STR {yy.merge($2, '','',$4)}
+    | MERGE ref COMMIT_TAG STR COMMIT_ID STR {yy.merge($2, $6,'', $4)}
+    | MERGE ref COMMIT_TAG STR COMMIT_TYPE commitType {yy.merge($2, '',$6, $4)}
+    | MERGE ref COMMIT_TYPE commitType COMMIT_TAG STR {yy.merge($2, '',$4, $6)}
+    | MERGE ref COMMIT_ID STR COMMIT_TYPE commitType {yy.merge($2, $4, $6, '')}
+    | MERGE ref COMMIT_ID STR COMMIT_TAG STR {yy.merge($2, $4, '', $6)}
+    | MERGE ref COMMIT_TYPE commitType COMMIT_ID STR {yy.merge($2, $6,$4, '')}
+    | MERGE ref COMMIT_ID STR COMMIT_TYPE commitType COMMIT_TAG STR {yy.merge($2, $4, $6, $8)}
+    | MERGE ref COMMIT_TYPE commitType COMMIT_TAG STR COMMIT_ID STR {yy.merge($2, $8, $4, $6)}
+    | MERGE ref COMMIT_ID STR COMMIT_TAG STR COMMIT_TYPE commitType {yy.merge($2, $4, $8, $6)}
+    | MERGE ref COMMIT_TYPE commitType COMMIT_ID STR COMMIT_TAG STR {yy.merge($2, $6, $4, $8)}
+    | MERGE ref COMMIT_TAG STR COMMIT_TYPE commitType COMMIT_ID STR {yy.merge($2, $8, $6, $4)}
+    | MERGE ref COMMIT_TAG STR COMMIT_ID STR COMMIT_TYPE commitType {yy.merge($2, $6, $8, $4)}
     ;
 
 commitStatement
@@ -260,6 +260,11 @@ argDirective
 closeDirective
   : close_directive { yy.parseDirective('}%%', 'close_directive', 'gitGraph'); }
   ;
+
+ref
+    : ID
+    | STR
+    ;
 
 eol
   : NL
