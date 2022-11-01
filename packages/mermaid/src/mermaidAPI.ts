@@ -25,10 +25,11 @@ import { attachFunctions } from './interactionDb';
 import { log, setLogLevel } from './logger';
 import getStyles from './styles';
 import theme from './themes';
-import utils, { directiveSanitizer, isNonEmptyArray } from './utils';
+import utils, { directiveSanitizer } from './utils';
 import DOMPurify from 'dompurify';
 import { MermaidConfig } from './config.type';
 import { evaluate } from './diagrams/common/common';
+import { isEmpty } from 'lodash';
 
 // diagram names that support classDef statements
 const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram'];
@@ -192,13 +193,13 @@ export const createCssStyles = (
       for (const classId in classDefs) {
         const styleClassDef = classDefs[classId];
         // create the css styles for each cssElement and the styles (only if there are styles)
-        if (isNonEmptyArray(styleClassDef.styles)) {
+        if (!isEmpty(styleClassDef.styles)) {
           cssElements.forEach((cssElement) => {
             cssStyles += cssImportantStyles(styleClassDef.id, cssElement, styleClassDef.styles);
           });
         }
         // create the css styles for the tspan element and the text styles (only if there are textStyles)
-        if (isNonEmptyArray(styleClassDef.textStyles)) {
+        if (!isEmpty(styleClassDef.textStyles)) {
           cssStyles += cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles);
         }
       }
