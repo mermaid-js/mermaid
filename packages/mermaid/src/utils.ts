@@ -7,7 +7,7 @@ import {
   CurveFactory,
   curveLinear,
   curveLinearClosed,
-  curveMonoisEmptytoneX,
+  curveMonotoneX,
   curveMonotoneY,
   curveNatural,
   curveStep,
