@@ -47,9 +47,11 @@ export const draw = function (text: string, id: string) {
   svgContainer?.appendChild(foreignObject);
 
   // Create a Zen UML container outside of the svg first, otherwise the Zen UML diagram cannot be rendered properly
-  const app = document.createElement('div');
-  app.id = 'app';
-  document.body.appendChild(app);
+  const container = document.createElement('div');
+  container.innerHTML = '<div id="app"></div>';
+  container.style.display = 'none';
+  const app = container.querySelector('#app') as HTMLElement;
+  document.body.appendChild(container);
 
   Vue.use(Vuex);
   const store = new Vuex.Store(VueSequence.Store());
