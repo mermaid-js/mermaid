@@ -2,21 +2,35 @@
   "version": "0.2",
   "language": "en",
   "words": [
+    "blockquotes",
     "customizability",
     "Gantt",
     "jison",
-    "knsv",
-    "Knut",
+    "mermiad",
     "mindmap",
     "Mindmaps",
     "mitigations",
     "sandboxed",
-    "Sveidqvist",
+    "shiki",
     "verdana",
-    "Visio",
-    "mermiad"
+    "Visio"
   ],
   "ignoreWords": [
+    "Alois",
+    "Klink",
+    "knsv",
+    "Knut",
+    "Matthieu",
+    "Sidharth",
+    "Sveidqvist",
+    "Vinod",
+    "Faber",
+    "Orlandoni",
+    "Klemm",
+    "Mindaugas",
+    "Laganeckas",
+    "Cuzon",
+    "Yash",
     "Adamiecki",
     "applitools",
     "Asciidoctor",
@@ -63,7 +77,9 @@
     "Kaufmann",
     "viewports",
     "edgechromium",
-    "statediagram"
+    "statediagram",
+    "Brolin",
+    "Greywolf"
   ],
   "patterns": [
     {

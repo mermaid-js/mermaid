@@ -32,7 +32,7 @@ We make all changes via pull requests. As we have many pull requests from develo
 
 - Large changes reviewed by knsv or other developer asked to review by knsv
 - Smaller low-risk changes like dependencies, documentation, etc. can be merged by active collaborators
-- Documentation (updates to the `src/docs` folder is also allowed via direct commits)
+- Documentation (updates to the `package/mermaid/src/docs` folder is also allowed via direct commits)
 
 To commit code, create a branch, let it start with the type like feature or bug followed by the issue number for reference and some describing text.
 
@@ -67,30 +67,21 @@ flowchart LR
 
 ### The official documentation site
 
-**[The mermaid documentation site](https://mermaid-js.github.io/mermaid/) is powered by [Docsify](https://docsify.js.org), a simple documentation site generator.**
+**[The mermaid documentation site](https://mermaid-js.github.io/mermaid/) is powered by [Vitepress](https://vitepress.vuejs.org/), a simple documentation site generator.**
 
-If you want to preview the whole documentation site on your machine, you need to install `docsify-cli`:
-
-```sh
-$ npm i docsify-cli -g
-```
-
-If you are more familiar with Yarn, you can use the following command:
+If you want to preview the whole documentation site on your machine:
 
 ```sh
-$ yarn global add docsify-cli
+cd mermaid
+pnpm i
+pnpm docs:dev
 ```
 
-The above command will install `docsify-cli` globally.
-If the installation is successful, the command `docsify` will be available in your `PATH`.
-
-You can now run the following command to serve the documentation site:
+You can now build and serve the documentation site:
 
 ```sh
-$ docsify serve docs
+pnpm docs:serve
 ```
-
-Once the local HTTP server is listening, you can point your browser at http://localhost:3000.
 
 ## Branching
 
@@ -152,7 +143,7 @@ The source files for documentation are in `/packages/mermaid/src/docs` and are w
 
 #### Adding to or changing the documentation organization
 
-If you want to add a new section or change the organization (structure), then you need to make sure to **change the side navigation** in `src/docs/_sidebar.md`.
+If you want to add a new section or change the organization (structure), then you need to make sure to **change the side navigation** in `mermaid/src/docs/.vitepress/config.js`.
 
 When changes are committed and then released, they become part of the `master` branch and become part of the published documentation on https://mermaid-js.github.io/mermaid/
 
