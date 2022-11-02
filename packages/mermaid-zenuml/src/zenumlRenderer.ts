@@ -31,23 +31,60 @@ export const draw = function (text: string, id: string) {
 
   const root = securityLevel === 'sandbox' ? sandboxElement?.contentWindow?.document : document;
 
-  const diagram = root?.querySelector(`#d${id}`);
+  const svgContainer = root?.querySelector(`svg#${id}`);
 
-  if (!root || !diagram) {
+  if (!root || !svgContainer) {
     return;
   }
 
   loadCss(root, './style.css');
+
+  const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+  foreignObject.setAttribute('x', 0);
+  foreignObject.setAttribute('y', 0);
+  foreignObject.setAttribute('width', '100%');
+  foreignObject.setAttribute('height', '100%');
+  svgContainer?.appendChild(foreignObject);
+
+  // Create a Zen UML container outside of the svg first, otherwise the Zen UML diagram cannot be rendered properly
+  const app = document.createElement('div');
+  app.id = 'app';
+  document.body.appendChild(app);
 
   Vue.use(Vuex);
   const store = new Vuex.Store(VueSequence.Store());
   store.dispatch('updateCode', { code: text });
 
   new Vue({
-    el: diagram,
+    el: app,
     store,
-    render: (h) => h(VueSequence.DiagramFrame),
+    render: (h) => {
+      return h(VueSequence.DiagramFrame);
+    },
   });
+
+  // The vue-sequence component is rendered in the Zen UML container, so we need to move the output dom to the svg container
+  setTimeout(() => {
+    const x = document.querySelector('.zenuml');
+    const y = document.querySelector('foreignObject');
+    const z = document.querySelector(`svg#${id}`);
+    y?.appendChild(x);
+    const { width, height } = window.getComputedStyle(x);
+    z?.setAttribute('style', `width: ${width}; height: ${height};`);
+    app.style = 'display: block';
+  }, 1000);
+
+  /*
+    Alternative: export dom to svg in data url format and set it as the src of the image
+
+    setTimeout(function () {
+      document.querySelector('.frame')?.parentElement.__vue__.toSvg().then((dataUrl: string) => {
+      log.info(dataUrl);
+      const img = new Image();
+      img.src = dataUrl;
+      diagram.appendChild(img);
+    });
+  }, 1000); */
 };
 
 export default {
