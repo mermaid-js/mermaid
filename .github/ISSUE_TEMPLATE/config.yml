@@ -5,7 +5,7 @@ contact_links:
     about: Ask the Community questions or share your own graphs in our discussions.
   - name: Security Vulnerability
     url: https://github.com/mermaid-js/.github/blob/main/SECURITY.md
-    about: Report security issues
+    about: Report security issues confidentially.
   - name: Slack
     url: https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE
     about: Join our Community on Slack for Help and a casual chat.
