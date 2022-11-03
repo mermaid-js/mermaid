@@ -8,6 +8,9 @@ body:
   - type: markdown
     attributes:
       value: |-
+        ## Security vulnerabilities
+        Please refer our [Security Policy](https://github.com/mermaid-js/.github/blob/main/SECURITY.md) and report to keep vulnerabilities confidential so we can release fixes first.
+
         ## Before you submit...
         We like to help you, but in order to do that should you make a few things first:
 
