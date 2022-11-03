@@ -4,7 +4,18 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/community/development.md](../../packages/mermaid/src/docs/community/development.md).
 
-# Development and Contribution 🙌
+# Contributing to Mermaid 🙌
+
+## Contents
+
+[1. Requirements](#requirements)
+[2. Development Installation](#development-installation)
+[3. Contributing Code](#contributing-code)
+[4. Contributing Documentation](#contributing-documentation)
+[5. Have Questions or Suggestions?](#have-questions-or-suggestions)
+[6. Last Words](#6-last-words)
+
+---
 
 So you want to help? That's great!
 
@@ -12,13 +23,15 @@ So you want to help? That's great!
 
 Here are a few things to get you started on the right path.
 
-## Requirements
+## 1. Requirements
+
+These are the main tools we use for working with the code and information (including documentation):
 
 - [volta](https://volta.sh/) to manage node versions.
 - [Node.js](https://nodejs.org/en/). `volta install node`
 - [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
 
-## Development Installation
+## 2. Development Installation _(todo - merge this under development? )_
 
 In GitHub, you _fork_ a repository when you are going to make changes and submit pull requests.
 [Here is a GitHub document that gives an overview of the process.](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
@@ -33,7 +46,7 @@ pnpm test
 
 **The Docs Structure is dictated by [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/src/docs/_sidebar.md)**
 
-## Contributing Code
+## 3. Contributing Code
 
 The basic steps for contributing code are:
 
@@ -169,7 +182,7 @@ we have put in place a process, wherein _knsv, Knut Sveidqvist_ is the primary r
 
 **Reminder: Pull Requests should be directed to the develop branch.**
 
-## Contributing Documentation
+## 4. Contributing Documentation
 
 If it is not in the documentation, it's like it never happened. Wouldn't that be sad? With all the effort that was put into the feature?
 
@@ -224,7 +237,7 @@ To edit Docs on GitHub:
 5.  Submit your changes by clicking the button **Propose file change** at the bottom (by automatic creation of a fork and a new branch).
 6.  Create a Pull Request of your newly forked branch by clicking the green **Create Pull Request** button.
 
-## Any Questions or Suggestions?
+## 5. Have Questions or Suggestions?
 
 #### First search to see if someone has already asked (and hopefully been answered) or suggested the same thing.
 
@@ -243,7 +256,7 @@ Log in to [GitHub.com](https://www.github.com), open or append to an issue [usin
 
 ### How to Contribute a Suggestion
 
-## Last Words
+## 6. Last Words
 
 Don't get daunted if it is hard in the beginning. We have a great community with only encouraging words. So, if you get stuck, ask for help and hints in the Slack forum. If you want to show off something good, show it off there.
 
