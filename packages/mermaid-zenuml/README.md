@@ -2,7 +2,7 @@
 
 This package contains the support for [ZenUML](https://zenuml.com) in mermaid.
 ZenUML is an opensource diagram-as-code tool for creating sequence diagrams.
-The source code for the core renderer is https://github.com/ZenUml/vue-sequence/.
+The source code for the core renderer is https://github.com/ZenUml/core.
 
 ## Audience
 
