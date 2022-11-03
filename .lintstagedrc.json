@@ -1,4 +1,4 @@
 {
   "!(docs/**/*)*.{ts,js,json,html,md,mts}": ["eslint --fix", "prettier --write"],
-  "cSpell.json": ["./bin/checkCSpell.sh"]
+  "cSpell.json": ["ts-node-esm bin/checkCSpell.ts"]
 }
