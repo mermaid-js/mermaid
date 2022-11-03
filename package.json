@@ -33,7 +33,7 @@
     "dev": "concurrently \"pnpm build:vite --watch\" \"ts-node-esm .vite/server.ts\"",
     "release": "pnpm build",
     "lint": "eslint --cache --ignore-path .gitignore . && pnpm --filter mermaid run lint:jison && prettier --check .",
-    "lint:fix": "eslint --fix --ignore-path .gitignore . && prettier --write .",
+    "lint:fix": "eslint --fix --ignore-path .gitignore . && prettier --write . && ts-node-esm bin/fixCSpell.ts",
     "cypress": "cypress run",
     "cypress:open": "cypress open",
     "e2e": "start-server-and-test dev http://localhost:9000/ cypress",
