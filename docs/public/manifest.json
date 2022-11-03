@@ -1,0 +1,14 @@
+{
+  "short_name": "Mermaid",
+  "name": "Mermaid JS",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "background_color": "#6366F1",
+  "display": "standalone",
+  "theme_color": "#6366F1"
+}
