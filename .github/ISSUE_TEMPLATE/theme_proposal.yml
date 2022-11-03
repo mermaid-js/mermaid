@@ -1,0 +1,42 @@
+name: Theme Proposal
+description: Suggest a new theme to add to Mermaid.js.
+labels:
+  - 'Status: Triage'
+  - 'Type: Enhancement'
+
+body:
+  - type: markdown
+    attributes:
+      value: |-
+        ## Before you submit...
+        First of all, thank you for proposing a new Theme to us.
+        We are always happy about new ideas to improve Mermaid.js wherever possible.
+
+        To get the fastest and best response possible, make sure you do the following:
+
+        - Use a clear and concise title
+        - Fill out the text fields with as much detail as possible. Examples are always welcome!
+        - Never be shy to give us screenshots and/or code samples. It will help!
+  - type: textarea
+    attributes:
+      label: Proposal
+      description: A clear and concise description of what theme should be added to Mermaid.js.
+      placeholder: Mermaid.js should add ... because ...
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Colors
+      description: |-
+        A detailed list of the different colour values to use.
+        A list of currently used variable names can be found [here](https://mermaid-js.github.io/mermaid/#/theming?id=theme-variables-reference-table)
+      placeholder: |-
+        - background: #f4f4f4
+        - primaryColor: #fff4dd
+        - ...
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to show possible examples of how the theme may look like.
