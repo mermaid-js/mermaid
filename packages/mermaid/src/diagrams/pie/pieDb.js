@@ -14,6 +14,7 @@ import {
 
 let sections = {};
 let showData = false;
+let diagramType = 'pie';
 
 export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
@@ -26,6 +27,16 @@ const addSection = function (id, value) {
     log.debug('Added new section :', id);
   }
 };
+
+const setDiagramType = function (diagType) {
+  diagramType = diagType;
+  log.debug('Added diag type :', diagType);
+};
+
+const getDiagramType = function () {
+  return diagramType;
+};
+
 const getSections = () => sections;
 
 const setShowData = function (toggle) {
@@ -66,4 +77,6 @@ export default {
   getShowData,
   getAccDescription,
   setAccDescription,
+  setDiagramType,
+  getDiagramType,
 };

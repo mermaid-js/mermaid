@@ -40,6 +40,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <string>["]                                                     { this.popState(); }
 <string>[^"]*                                                   { return "txt"; }
 "pie"		                                                        return 'PIE';
+"bar"		                                                        return 'BAR';
 "showData"                                                      return 'showData';
 ":"[\s]*[\d]+(?:\.[\d]+)?                                       return "value";
 <<EOF>>                                                         return 'EOF';
@@ -53,9 +54,14 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 start
   : eol start
   | directive start
-	| PIE document
-  | PIE showData document {yy.setShowData(true);}
+	| document_type document
+  | document_type showData document {yy.setShowData(true);}
 	;
+
+document_type
+  : PIE {yy.setDiagramType($1); }
+  | BAR {yy.setDiagramType($1); }
+  ;
 
 document
 	: /* empty */
