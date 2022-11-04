@@ -662,6 +662,19 @@ const config: Partial<MermaidConfig> = {
     axisFormat: '%Y-%m-%d',
 
     /**
+     * | Parameter    | Description | Type   | Required | Values  |
+     * | ------------ | ------------| ------ | -------- | ------- |
+     * | tickInterval | axis ticks  | string | Optional | string  |
+     *
+     * **Notes:**
+     *
+     * Pattern is /^([1-9][0-9]*)(minute|hour|day|week|month)$/
+     *
+     * Default value: undefined
+     */
+    tickInterval: undefined,
+
+    /**
      * | Parameter   | Description | Type    | Required | Values      |
      * | ----------- | ----------- | ------- | -------- | ----------- |
      * | useMaxWidth | See notes   | boolean | 4        | true, false |
