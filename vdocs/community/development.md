@@ -210,9 +210,15 @@ Updates committed to the `master` branch are reflected in the [Mermaid Docs](htt
 
 ### How to Contribute to Documentation
 
+**_[Note: This entire section needs to be updated.]_**
+
 We are a little less strict here, it is OK to commit directly in the `develop` branch if you are a collaborator.
 
 The documentation is located in the `src/docs` directory and organized according to relevant subfolder.
+
+_- documentation is now in `vdocs/....`_
+
+_- how to run the vdocs server (explain vdoc tasks in package.json)_
 
 **The Docs Structure is dictated by [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/src/docs/_sidebar.md)**
 
