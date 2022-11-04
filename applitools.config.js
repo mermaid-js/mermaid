@@ -15,5 +15,5 @@ module.exports = defineConfig({
     //   { deviceName: 'Pixel 2', screenOrientation: 'portrait' },
   ],
   // set batch name to the configuration
-  batchName: `Mermaid ${process.env.APPLI_BRANCH ?? "'no APPLI_BRANCH set'"}`,
+  // batchName: `Mermaid ${process.env.APPLI_BRANCH ?? "'no APPLI_BRANCH set'"}`,
 });
