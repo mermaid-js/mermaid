@@ -2,6 +2,8 @@ const utf8ToB64 = (str) => {
   return window.btoa(unescape(encodeURIComponent(str)));
 };
 
+const batchId = 'mermid-batch' + new Date().getTime();
+
 export const mermaidUrl = (graphStr, options, api) => {
   const obj = {
     code: graphStr,
@@ -49,9 +51,12 @@ export const imgSnapshotTest = (graphStr, _options, api = false, validation) => 
   const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
   if (useAppli) {
+    cy.log('Opening eyes ' + Cypress.spec.name + ' --- ' + name);
     cy.eyesOpen({
       appName: 'Mermaid',
       testName: name,
+      batchName: Cypress.spec.name,
+      batchId: batchId + Cypress.spec.name,
     });
   }
 
@@ -65,7 +70,9 @@ export const imgSnapshotTest = (graphStr, _options, api = false, validation) => 
   // Default name to test title
 
   if (useAppli) {
+    cy.log('Check eyes' + Cypress.spec.name);
     cy.eyesCheckWindow('Click!');
+    cy.log('Closing eyes: ' + Cypress.spec.name);
     cy.eyesClose();
   } else {
     cy.matchImageSnapshot(name);
@@ -101,9 +108,12 @@ export const urlSnapshotTest = (url, _options, api = false, validation) => {
   const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
   if (useAppli) {
+    cy.log('Opening eyes 2' + Cypress.spec.name);
     cy.eyesOpen({
       appName: 'Mermaid',
       testName: name,
+      batchName: Cypress.spec.name,
+      batchId: batchId + Cypress.spec.name,
     });
   }
 
@@ -115,7 +125,9 @@ export const urlSnapshotTest = (url, _options, api = false, validation) => {
   // Default name to test title
 
   if (useAppli) {
+    cy.log('Check eyes 2' + Cypress.spec.name);
     cy.eyesCheckWindow('Click!');
+    cy.log('Closing eyes 2' + Cypress.spec.name);
     cy.eyesClose();
   } else {
     cy.matchImageSnapshot(name);
