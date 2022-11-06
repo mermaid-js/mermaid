@@ -37,7 +37,7 @@ We have compiled some Video [Tutorials](./Tutorials.md) on how to use the mermai
 
 **Hosting mermaid on a web page.**
 
-> Note:This topic explored in greater depth in the [User Guide for Beginners](../intro/n00b-gettingStarted)
+> Note:This topic explored in greater depth in the [User Guide for Beginners](../intro/n00b-gettingStarted.md)
 
 The easiest way to integrate mermaid on a web page requires two elements:
 

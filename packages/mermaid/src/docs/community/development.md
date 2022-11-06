@@ -26,7 +26,7 @@ We make all changes via Pull Requests. As we have many Pull Requests from develo
 
 - Large changes reviewed by knsv or other developer asked to review by knsv
 - Smaller, low-risk changes like dependencies, documentation, etc. can be merged by active collaborators
-- Documentation (we encourage updates to the `src/docs` folder; you can submit them via direct commits)
+- Documentation (we encourage updates to the `/packages/mermaid/src/docs` folder; you can submit them via direct commits)
 
 When you commit code, create a branch with the following naming convention:
 
@@ -58,7 +58,7 @@ The documentation is located in the `src/docs` directory and organized according
 
 The `docs` folder will be automatically generated when committing to `src/docs` and should not be edited manually.
 
-We encourage contributions to the documentation at [mermaid-js/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/src/docs). We publish documentation using GitHub Pages with [Docsify](https://www.youtube.com/watch?v=TV88lp7egMw&t=3s)
+We encourage contributions to the documentation at [mermaid-js/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs). We publish documentation using GitHub Pages with [Docsify](https://www.youtube.com/watch?v=TV88lp7egMw&t=3s)
 
 ### Add Unit Tests for Parsing
 
@@ -111,7 +111,7 @@ Markdown is used to format the text, for more information about Markdown [see th
 
 To edit Docs on your computer:
 
-1. Find the Markdown file (.md) to edit in the [mermaid-js/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/src/docs) directory in the `develop` branch.
+1. Find the Markdown file (.md) to edit in the [mermaid-js/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs) directory in the `develop` branch.
 2. Create a fork of the develop branch.
 3. Make changes or add new documentation.
 4. Commit changes to your fork and push it to GitHub.
@@ -120,7 +120,7 @@ To edit Docs on your computer:
 To edit Docs on GitHub:
 
 1. Login to [GitHub.com](https://www.github.com).
-2. Navigate to [mermaid-js/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/src/docs).
+2. Navigate to [mermaid-js/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs).
 3. To edit a file, click the pencil icon at the top-right of the file contents panel.
 4. Describe what you changed in the **Propose file change** section, located at the bottom of the page.
 5. Submit your changes by clicking the button **Propose file change** at the bottom (by automatic creation of a fork and a new branch).

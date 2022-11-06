@@ -24,7 +24,7 @@ erDiagram
           PRODUCT ||--o{ ORDER-ITEM : "ordered in"
 ```
 
-The [Getting Started](n00b-gettingStarted) section can also provide some practical examples of mermaid syntax.
+The [Getting Started](./n00b-gettingStarted.md) section can also provide some practical examples of mermaid syntax.
 
 ## Diagram Breaking
 
@@ -36,7 +36,7 @@ One should **beware the use of some words or symbols** that can break diagrams. 
 | [` %%{``}%% `](https://github.com/mermaid-js/mermaid/issues/1968)                                              | Similar to [Directives](../config/directives.md) confuses the renderer. | In comments using `%%`, avoid using "{}".         |
 | **Flow-Charts**                                                                                                |                                                                         |                                                   |
 | 'end'                                                                                                          | The word "End" can cause Flowcharts and Sequence diagrams to break      | Wrap them in quotation marks to prevent breakage. |
-| [Nodes inside Nodes](https://mermaid-js.github.io/mermaid/#/flowchart?id=special-characters-that-break-syntax) | Mermaid gets confused with nested shapes                                | wrap them in quotation marks to prevent breaking  |
+| [Nodes inside Nodes](../syntax/flowchart.md?id=special-characters-that-break-syntax) | Mermaid gets confused with nested shapes                                | wrap them in quotation marks to prevent breaking  |
 
 ### Mermaid Live Editor
 
@@ -48,7 +48,7 @@ Configuration is the third part of Mermaid, after deployment and syntax. It deal
 
 If you are interested in altering and customizing your Mermaid Diagrams, you will find the methods and values available for [Configuration](../config/setup/README) here. It includes themes.
 This section will introduce the different methods of configuring the behaviors and appearances of Mermaid Diagrams.
-The following are the most commonly used methods, and they are all tied to Mermaid [Deployment](n00b-gettingStarted) methods.
+The following are the most commonly used methods, and they are all tied to Mermaid [Deployment](./n00b-gettingStarted.md) methods.
 
 ### Configuration Section in the [Live Editor](https://mermaid.live).
 
