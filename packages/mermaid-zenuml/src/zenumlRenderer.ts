@@ -6,12 +6,32 @@ import 'vue-sequence/dist/vue-sequence.css';
 
 const { Vue, Vuex } = VueSequence;
 
+// Load Zen UML CSS
 function loadCss(root: Document, url: string) {
   const link = root.createElement('link');
   link.type = 'text/css';
   link.rel = 'stylesheet';
   link.href = url;
   root.getElementsByTagName('head')[0].appendChild(link);
+}
+
+// Create a Zen UML container outside of the svg first for rendering, otherwise the Zen UML diagram cannot be rendered properly
+function createTemporaryZenumlContainer() {
+  const container = document.createElement('div');
+  container.innerHTML = '<div id="app"></div>';
+  container.style.display = 'none';
+  const app = container.querySelector('#app') as HTMLElement;
+  return { container, app };
+}
+
+// Create a foreignObject to wrap the Zen UML container in the svg
+function createForeignObject() {
+  const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+  foreignObject.setAttribute('x', 0);
+  foreignObject.setAttribute('y', 0);
+  foreignObject.setAttribute('width', '100%');
+  foreignObject.setAttribute('height', '100%');
+  return foreignObject;
 }
 
 /**
@@ -39,18 +59,10 @@ export const draw = function (text: string, id: string) {
 
   loadCss(root, './style.css');
 
-  const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
-  foreignObject.setAttribute('x', 0);
-  foreignObject.setAttribute('y', 0);
-  foreignObject.setAttribute('width', '100%');
-  foreignObject.setAttribute('height', '100%');
+  const foreignObject = createForeignObject();
   svgContainer?.appendChild(foreignObject);
 
-  // Create a Zen UML container outside of the svg first, otherwise the Zen UML diagram cannot be rendered properly
-  const container = document.createElement('div');
-  container.innerHTML = '<div id="app"></div>';
-  container.style.display = 'none';
-  const app = container.querySelector('#app') as HTMLElement;
+  const { container, app } = createTemporaryZenumlContainer();
   document.body.appendChild(container);
 
   Vue.use(Vuex);
@@ -67,26 +79,12 @@ export const draw = function (text: string, id: string) {
 
   // The vue-sequence component is rendered in the Zen UML container, so we need to move the output dom to the svg container
   setTimeout(() => {
-    const x = document.querySelector('.zenuml');
-    const y = document.querySelector('foreignObject');
-    const z = document.querySelector(`svg#${id}`);
-    y?.appendChild(x);
-    const { width, height } = window.getComputedStyle(x);
-    z?.setAttribute('style', `width: ${width}; height: ${height};`);
-    app.style = 'display: block';
+    const zenUml = document.querySelector('.zenuml');
+    foreignObject.appendChild(zenUml);
+    const { width, height } = window.getComputedStyle(zenUml);
+    svgContainer.setAttribute('style', `width: ${width}; height: ${height};`);
+    container.remove();
   }, 1000);
-
-  /*
-    Alternative: export dom to svg in data url format and set it as the src of the image
-
-    setTimeout(function () {
-      document.querySelector('.frame')?.parentElement.__vue__.toSvg().then((dataUrl: string) => {
-      log.info(dataUrl);
-      const img = new Image();
-      img.src = dataUrl;
-      diagram.appendChild(img);
-    });
-  }, 1000); */
 };
 
 export default {
