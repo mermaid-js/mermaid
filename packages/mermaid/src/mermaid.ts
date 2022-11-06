@@ -482,9 +482,9 @@ const parseAsync = (txt: string) => {
 const renderAsync = (
   id: string,
   text: string,
-  cb: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
+  cb?: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
   container?: Element
-): Promise<void> => {
+): Promise<string> => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the mermaidAPI.render call is done.
     // It will be queued first and will be executed when it is first in line
