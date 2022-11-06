@@ -1,0 +1,10 @@
+# These links are ignored by our link checker https://github.com/lycheeverse/lychee
+# The file allows you to list multiple regular expressions for exclusion (one pattern per line).
+
+# Network error: Forbidden
+https://codepen.io
+
+# Network error: The certificate was not trusted
+https://mkdocs.org/
+https://osawards.com/javascript/#nominees
+https://osawards.com/javascript/2019
