@@ -1,3 +1,10 @@
+/**
+ * Sorts all the `words` in the cSpell.json file.
+ *
+ * Run from the same folder as the `cSpell.json` file
+ * (i.e. the root of the Mermaid project).
+ */
+
 import { readFileSync, writeFileSync } from 'node:fs';
 import prettier from 'prettier';
 
