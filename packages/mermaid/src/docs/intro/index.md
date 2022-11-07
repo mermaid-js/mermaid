@@ -173,7 +173,7 @@ To Deploy Mermaid:
    - Yarn: `yarn add mermaid`
    - Pnpm: `pnpm add mermaid`
 
-### [Mermaid API](../config/setup/README):
+### [Mermaid API](../config/setup/README.md):
 
 **To deploy mermaid without a bundler, one can insert a `script` tag with an absolute address and a `mermaid.initialize` call into the HTML like so:**
 

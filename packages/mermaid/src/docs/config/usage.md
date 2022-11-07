@@ -12,7 +12,7 @@ Please note that you can switch versions through the dropdown box at the top rig
 
 ## Using mermaid
 
-For the majority of users, Using the [Live Editor](https://mermaid.live/) would be sufficient, however you may also opt to deploy mermaid as a dependency or using the [Mermaid API](setup/README).
+For the majority of users, Using the [Live Editor](https://mermaid.live/) would be sufficient, however you may also opt to deploy mermaid as a dependency or using the [Mermaid API](./setup/README.md).
 
 We have compiled some Video [Tutorials](./Tutorials.md) on how to use the mermaid Live Editor.
 
@@ -324,7 +324,7 @@ setting the options in mermaid.
 4. Instantiation of the configuration using the **mermaid.init** call- **Deprecated**
 
 The list above has two ways too many of doing this. Three are deprecated and will eventually be removed. The list of
-configuration objects are described [in the mermaidAPI documentation](setup/README).
+configuration objects are described [in the mermaidAPI documentation](./setup/README.md).
 
 ## Using the `mermaidAPI.initialize`/`mermaid.initialize` call
 

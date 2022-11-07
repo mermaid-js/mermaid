@@ -46,7 +46,7 @@ Now, that you've seen what you should not add to your diagrams, you can play aro
 
 Configuration is the third part of Mermaid, after deployment and syntax. It deals with the different ways that Mermaid can be customized across different deployments.
 
-If you are interested in altering and customizing your Mermaid Diagrams, you will find the methods and values available for [Configuration](../config/setup/README) here. It includes themes.
+If you are interested in altering and customizing your Mermaid Diagrams, you will find the methods and values available for [Configuration](../config/setup/README.md) here. It includes themes.
 This section will introduce the different methods of configuring the behaviors and appearances of Mermaid Diagrams.
 The following are the most commonly used methods, and they are all tied to Mermaid [Deployment](./n00b-gettingStarted.md) methods.
 
