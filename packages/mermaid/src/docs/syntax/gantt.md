@@ -210,7 +210,7 @@ gantt
 
 ## Styling
 
-Styling of the a gantt diagram is done by defining a number of css classes. During rendering, these classes are extracted from the file located at src/themes/gantt.scss
+Styling of the Gantt diagram is done by defining a number of CSS classes. During rendering, these classes are extracted from the file located at src/diagrams/gantt/styles.js
 
 ### Classes used
 
