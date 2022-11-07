@@ -6,7 +6,7 @@ So you want to help? That's great!
 
 Here are a few things to get you started on the right path.
 
-**The Docs Structure is dictated by [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/src/docs/_sidebar.md)**
+**The Docs Structure is dictated by [.vitepress/config.ts](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/docs/.vitepress/config.ts)**.
 
 **Note: Commits and Pull Requests should be directed to the develop branch.**
 
@@ -44,9 +44,9 @@ Start with the type, such as **feature** or **bug**, followed by the issue numbe
 
 If it is not in the documentation, it's like it never happened. Wouldn't that be sad? With all the effort that was put into the feature?
 
-The docs are located in the `src/docs` folder and are written in Markdown. Just pick the right section and start typing. If you want to propose changes to the structure of the documentation, such as adding a new section or a new file you do that via the **[sidebar](https://github.com/mermaid-js/mermaid/edit/develop/src/docs/_sidebar.md)**.
+The docs are located in the `src/docs` folder and are written in Markdown. Just pick the right section and start typing. If you want to propose changes to the structure of the documentation, such as adding a new section or a new file you do that via **[.vitepress/config.ts](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/docs/.vitepress/config.ts)**.
 
-> **All the documents displayed in the GitHub.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/src/docs/_sidebar.md)**.
+> **All the documents displayed in the GitHub.io page are listed in [.vitepress/config.ts](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/docs/.vitepress/config.ts)**.
 
 The contents of [https://mermaid-js.github.io/mermaid/](https://mermaid-js.github.io/mermaid/) are based on the docs from the `master` branch. Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid-js.github.io/mermaid/) once released.
 

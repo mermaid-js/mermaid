@@ -357,7 +357,7 @@ To hide the marker, set `todayMarker` to `off`.
 It is possible to adjust the margins for rendering the gantt diagram.
 
 This is done by defining the `ganttConfig` part of the configuration object.
-How to use the CLI is described in the [mermaidCLI](../config/mermaidCLI) page.
+How to use the CLI is described in the [mermaidCLI](../config/mermaidCLI.md) page.
 
 mermaid.ganttConfig can be set to a JSON string with config parameters or the corresponding object.
 
