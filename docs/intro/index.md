@@ -10,7 +10,7 @@
 
 It is a JavaScript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically.
 
-> If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](n00b-syntaxReference.md).
+> If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](n00b-syntaxReference).
 
 <img src="/header.png" alt="" />
 
@@ -35,7 +35,7 @@ Use Mermaid with your favorite applications, check out the list of [Integrations
 
 For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](../community/n00b-overview.md) and [Usage](../config/usage.md).
 
-🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](../community/development.md) | 🔌 [Plug-Ins](../misc/integrations.md)
+🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/docs/development.md) | 🔌 [Plug-Ins](../misc/integrations.md)
 
 > 🖖 Keep a steady pulse: mermaid needs more Collaborators, [Read More](https://github.com/knsv/mermaid/issues/866).
 
@@ -163,7 +163,7 @@ Class01 : int gorilla
 Class08 <--> C2: Cool label
 ```
 
-### [Git graph](../syntax/gitgraph.md)
+### Git graph
 
 ```mermaid-example
     gitGraph
@@ -237,9 +237,9 @@ journey
 
 ## Installation
 
-**In depth guides and examples can be found at [Getting Started](./n00b-gettingStarted.md) and [Usage](../config/usage.md).**
+**In depth guides and examples can be found at [Getting Started](n00b-gettingStarted) and [Usage](../config/usage).**
 
-**It would also be helpful to learn more about mermaid's [Syntax](./n00b-syntaxReference.md).**
+**It would also be helpful to learn more about mermaid's [Syntax](n00b-syntaxReference).**
 
 ### CDN
 
@@ -261,7 +261,7 @@ To Deploy Mermaid:
     - Yarn: `yarn add mermaid`
     - Pnpm: `pnpm add mermaid`
 
-### [Mermaid API](../config/setup/README.md):
+### [Mermaid API](../config/setup/README):
 
 **To deploy mermaid without a bundler, one can insert a `script` tag with an absolute address and a `mermaid.initialize` call into the HTML like so:**
 
@@ -274,7 +274,7 @@ To Deploy Mermaid:
 
 **Doing so will command the mermaid parser to look for the `<div>` or `<pre>` tags with `class="mermaid"`. From these tags mermaid will try to read the diagram/chart definitions and render them into SVG charts.**
 
-**Examples can be found at** [Other examples](../syntax/examples.md)
+**Examples can be found at** [Other examples](../syntax/examples)
 
 ## Sibling projects
 

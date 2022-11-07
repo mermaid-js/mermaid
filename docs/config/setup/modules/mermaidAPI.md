@@ -80,7 +80,7 @@ mermaid.initialize(config);
 
 #### Defined in
 
-[mermaidAPI.ts:546](https://github.com/spier/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L546)
+[mermaidAPI.ts:546](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L546)
 
 ## Functions
 
@@ -100,7 +100,7 @@ mermaid.initialize(config);
 
 #### Defined in
 
-[mermaidAPI.ts:72](https://github.com/spier/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L72)
+[mermaidAPI.ts:72](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L72)
 
 ---
 
@@ -120,4 +120,4 @@ mermaid.initialize(config);
 
 #### Defined in
 
-[mermaidAPI.ts:46](https://github.com/spier/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L46)
+[mermaidAPI.ts:46](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L46)
