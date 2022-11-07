@@ -28,7 +28,7 @@ The definitions that can be generated the Live-Editor are also backwards-compati
 
 ## Mermaid with HTML
 
-Examples are provided in [Getting Started](../intro/n00b-gettingStarted.md)
+Examples are provided in [Getting Started](../intro/n00b-gettingStarted)
 
 **CodePen Examples:**
 
