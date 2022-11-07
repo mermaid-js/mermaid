@@ -166,10 +166,12 @@ importers:
       '@types/express': 4.17.14
       '@types/jsdom': 20.0.0
       '@types/lodash': 4.14.188
+      '@types/micromatch': 4.0.2
       '@types/prettier': 2.7.1
       '@types/stylis': 4.0.2
       '@typescript-eslint/eslint-plugin': 5.42.0
       '@typescript-eslint/parser': 5.42.0
+      chokidar: 3.5.3
       concurrently: 7.5.0
       coveralls: 3.1.1
       cypress: 10.11.0
@@ -200,6 +202,7 @@ importers:
       khroma: ^2.0.0
       lint-staged: 13.0.3
       lodash: ^4.17.21
+      micromatch: ^4.0.5
       moment: 2.29.4
       moment-mini: ^2.24.0
       non-layered-tidy-tree-layout: ^2.0.2
@@ -239,10 +242,12 @@ importers:
       '@types/express': 4.17.14
       '@types/jsdom': 20.0.0
       '@types/lodash': 4.14.188
+      '@types/micromatch': 4.0.2
       '@types/prettier': 2.7.1
       '@types/stylis': 4.0.2
       '@typescript-eslint/eslint-plugin': 5.42.0_ofgjrzjuekeo7s3hdyz2yuzw34
       '@typescript-eslint/parser': 5.42.0_rmayb2veg2btbq6mbmnyivgasy
+      chokidar: 3.5.3
       concurrently: 7.5.0
       coveralls: 3.1.1
       cypress: 10.11.0
@@ -265,6 +270,7 @@ importers:
       js-base64: 3.7.2
       jsdom: 20.0.2
       lint-staged: 13.0.3
+      micromatch: 4.0.5
       moment: 2.29.4
       path-browserify: 1.0.1
       prettier: 2.7.1
@@ -2302,6 +2308,10 @@ packages:
       '@types/node': 18.11.9
     dev: true
 
+  /@types/braces/3.0.1:
+    resolution: {integrity: sha512-+euflG6ygo4bn0JHtn4pYqcXwRtLvElQ7/nnjDu7iYG56H0+OhCd7d6Ug0IE3WcFpZozBKW2+80FUbv5QGk5AQ==}
+    dev: true
+
   /@types/cacheable-request/6.0.2:
     resolution: {integrity: sha512-B3xVo+dlKM6nnKTcmm5ZtY/OL8bOAOd2Olee9M1zft65ox50OzjEHW91sDiU9j6cvW8Ejg1/Qkf4xd2kugApUA==}
     dependencies:
@@ -2633,6 +2643,12 @@ packages:
 
   /@types/mdurl/1.0.2:
     resolution: {integrity: sha512-eC4U9MlIcu2q0KQmXszyn5Akca/0jrQmwDRgpAMJai7qBWq4amIQhZyNau4VYGtCeALvW1/NtjzJJ567aZxfKA==}
+    dev: true
+
+  /@types/micromatch/4.0.2:
+    resolution: {integrity: sha512-oqXqVb0ci19GtH0vOA/U2TmHTcRY9kuZl4mqUxe0QmJAlIW13kzhuK5pi1i9+ngav8FjpSb9FVS/GE00GLX1VA==}
+    dependencies:
+      '@types/braces': 3.0.1
     dev: true
 
   /@types/mime/3.0.1:
