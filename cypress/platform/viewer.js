@@ -1,4 +1,5 @@
 import mermaid2 from '../../packages/mermaid/src/mermaid';
+import mindmap from '../../packages/mermaid-example-diagram/src/detector';
 
 function b64ToUtf8(str) {
   return decodeURIComponent(escape(window.atob(str)));
@@ -9,7 +10,7 @@ function b64ToUtf8(str) {
  * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the
  * page.
  */
-const contentLoaded = function () {
+const contentLoaded = async function () {
   let pos = document.location.href.indexOf('?graph=');
   if (pos > 0) {
     pos = pos + 7;
@@ -36,8 +37,7 @@ const contentLoaded = function () {
       document.getElementsByTagName('body')[0].appendChild(div);
     }
 
-    graphObj.mermaid.lazyLoadedDiagrams = ['/mermaid-mindmap-detector.esm.mjs'];
-
+    await mermaid2.registerExternalDiagrams([mindmap]);
     mermaid2.initialize(graphObj.mermaid);
     mermaid2.init();
   }
