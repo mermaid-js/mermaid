@@ -101,7 +101,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
       include: [
         'packages/mermaid-mindmap/src/**',
         'packages/mermaid/src/**',
-        'packages/mermaid-example-diagram/src/**',
+        // 'packages/mermaid-example-diagram/src/**',
       ],
     };
   }
@@ -131,7 +131,7 @@ if (watch) {
   build(getBuildConfig({ minify: false, watch, core: true, entryName: 'mermaid' }));
   if (!mermaidOnly) {
     build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-mindmap' }));
-    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
+    // build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
   }
 } else {
   void main();

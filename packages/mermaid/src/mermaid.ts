@@ -336,7 +336,7 @@ const registerExternalDiagrams = async (
     lazyLoad = true,
   }: {
     lazyLoad?: boolean;
-  }
+  } = {}
 ) => {
   if (lazyLoad) {
     registerLazyLoadedDiagrams(diagrams);

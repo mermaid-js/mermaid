@@ -27,9 +27,9 @@ mindmap
         ::icon(mdi mdi-fire)
           gc7((grand<br/>grand<br/>child 8))
     </pre>
-    <pre id="diagram" class="mermaid2">
+    <!-- <pre id="diagram" class="mermaid2">
       example-diagram
-    </pre>
+    </pre> -->
 
     <!-- <div id="cy"></div> -->
     <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
@@ -37,22 +37,13 @@ mindmap
     <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.7/dist/mermaid.min.js"></script> -->
     <!-- <script type="module" src="./external-diagrams-mindmap.mjs" /> -->
     <script type="module">
-      import {
-        diagram as mindmap,
-        detector as mindmapDetector,
-        id as mindmapId,
-      } from '../../packages/mermaid-mindmap/src/diagram-definition';
-      import {
-        diagram as exampleDiagram,
-        detector as exampleDiagramDetector,
-        id as exampleDiagramId,
-      } from '../../packages/mermaid-example-diagram/src/diagram-definition';
+      import mindmap from '../../packages/mermaid-mindmap/src/detector';
+      // import example from '../../packages/mermaid-example-diagram/src/detector';
       import mermaid from '../../packages/mermaid/src/mermaid';
 
-      mermaid.mermaidAPI.registerDiagram(mindmapId, mindmap, mindmapDetector);
-      mermaid.mermaidAPI.registerDiagram(exampleDiagramId, exampleDiagram, exampleDiagramDetector);
+      await mermaid.registerExternalDiagrams([mindmap]);
       await mermaid.initialize({ logLevel: 0 });
-      await mermaid.initThrowsErrors();
+      await mermaid.initThrowsErrorsAsync();
     </script>
   </body>
 </html>
