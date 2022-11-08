@@ -3,8 +3,19 @@
   "private": true,
   "version": "9.2.0-rc4",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
+  "main": "dist/mermaid.core.mjs",
+  "module": "dist/mermaid.core.mjs",
+  "types": "dist/mermaid.d.ts",
   "type": "module",
-  "packageManager": "pnpm@7.14.2",
+  "packageManager": "pnpm@7.13.2",
+  "exports": {
+    ".": {
+      "require": "./dist/mermaid.min.js",
+      "import": "./dist/mermaid.core.mjs",
+      "types": "./dist/mermaid.d.ts"
+    },
+    "./*": "./*"
+  },
   "keywords": [
     "diagram",
     "markdown",
@@ -118,7 +129,7 @@
     "lint-staged": "^13.0.3",
     "markdown-it": "^13.0.1",
     "path-browserify": "^1.0.1",
-    "pnpm": "^7.14.2",
+    "pnpm": "^7.13.2",
     "prettier": "^2.7.1",
     "prettier-plugin-jsdoc": "^0.4.2",
     "remark": "^14.0.2",
@@ -128,14 +139,17 @@
     "typescript": "^4.8.4",
     "unist-util-flatmap": "^1.0.0",
     "vite": "^3.1.4",
-    "vitepress": "^1.0.0-alpha.28",
+    "vitepress": "^1.0.0-alpha.19",
     "vitepress-plugin-mermaid": "^2.0.8",
-    "vitepress-plugin-search": "^1.0.4-alpha.15",
+    "vitepress-plugin-search": "^1.0.4-alpha.11",
     "vitest": "^0.23.4"
   },
   "resolutions": {
     "d3": "^7.0.0"
   },
+  "files": [
+    "dist"
+  ],
   "sideEffects": [
     "**/*.css",
     "**/*.scss"
