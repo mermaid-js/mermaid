@@ -22,17 +22,34 @@ export interface Detectors {
   [key: string]: DiagramDetector;
 }
 
+/**
+ * Registers the given diagram with Mermaid.
+ *
+ * Can be used for third-party custom diagrams.
+ *
+ * For third-party diagrams that are rarely used, we recommend instead setting
+ * the `lazyLoadedDiagrams` param in the Mermaid config, as that will instead
+ * only load the diagram when needed.
+ *
+ * @param id - A unique ID for the given diagram.
+ * @param diagram - The diagram definition.
+ * @param detector - Function that returns `true` if a given mermaid text is this diagram definition.
+ *
+ * @example How to add `@mermaid-js/mermaid-mindmap` to mermaid
+ *
+ * ```js
+ * import {
+ *   diagram as mindmap, detector as mindmapDetector, id as mindmapId
+ * } from "@mermaid-js/mermaid-mindmap";
+ * import mermaid from "mermaid";
+ *
+ * mermaid.mermaidAPI.registerDiagram(mindmapId, mindmap, mindmapDetector);
+ * ```
+ */
 export const registerDiagram = (
   id: string,
   diagram: DiagramDefinition,
-  detector?: DiagramDetector,
-  callback?: (
-    _log: any,
-    _setLogLevel: any,
-    _getConfig: any,
-    _sanitizeText: any,
-    _setupGraphViewbox: any
-  ) => void
+  detector?: DiagramDetector
 ) => {
   log.debug(`Registering diagram ${id}`);
   if (diagrams[id]) {
@@ -48,8 +65,9 @@ export const registerDiagram = (
     addDetector(id, detector);
   }
   addStylesForDiagram(id, diagram.styles);
-  if (typeof callback !== 'undefined') {
-    callback(log, setLogLevel, getConfig, sanitizeText, setupGraphViewbox);
+
+  if (diagram.injectUtils) {
+    diagram.injectUtils(log, setLogLevel, getConfig, sanitizeText, setupGraphViewbox);
   }
   log.debug(`Registered diagram ${id}. ${Object.keys(diagrams).join(', ')} diagrams registered.`);
 };

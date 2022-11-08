@@ -106,11 +106,10 @@ export const getDiagramFromText = (
     // registerDiagram(type, diagram, undefined, diagram.injectUtils);
     // // new diagram will try getDiagram again and if fails then it is a valid throw
     return loader().then(({ diagram }) => {
-      registerDiagram(type, diagram, undefined, diagram.injectUtils);
+      registerDiagram(type, diagram, undefined);
       return new Diagram(txt, parseError);
     });
   }
-  // return new Diagram(txt, parseError);
 };
 
 export default Diagram;

@@ -14,7 +14,13 @@ export interface DiagramDefinition {
   parser: any;
   styles: any;
   init?: (config: MermaidConfig) => void;
-  injectUtils?: (utils: InjectUtils) => void;
+  injectUtils?: (
+    _log: InjectUtils['_log'],
+    _setLogLevel: InjectUtils['_setLogLevel'],
+    _getConfig: InjectUtils['_getConfig'],
+    _sanitizeText: InjectUtils['_sanitizeText'],
+    _setupGraphViewbox: InjectUtils['_setupGraphViewbox']
+  ) => void;
 }
 
 export interface DetectorRecord {

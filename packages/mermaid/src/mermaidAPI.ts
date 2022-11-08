@@ -18,6 +18,7 @@ import { compile, serialize, stringify } from 'stylis';
 import pkg from '../package.json';
 import * as configApi from './config';
 import { addDiagrams } from './diagram-api/diagram-orchestration';
+import { registerDiagram } from './diagram-api/diagramAPI';
 import classDb from './diagrams/class/classDb';
 import flowDb from './diagrams/flowchart/flowDb';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
@@ -769,6 +770,8 @@ function initialize(options: MermaidConfig = {}) {
   addDiagrams();
 }
 
+export { registerDiagram };
+
 export const mermaidAPI = Object.freeze({
   render,
   renderAsync,
@@ -776,6 +779,7 @@ export const mermaidAPI = Object.freeze({
   parseAsync,
   parseDirective,
   initialize,
+  registerDiagram,
   getConfig: configApi.getConfig,
   setConfig: configApi.setConfig,
   getSiteConfig: configApi.getSiteConfig,
