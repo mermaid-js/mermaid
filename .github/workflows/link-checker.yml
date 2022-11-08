@@ -7,8 +7,6 @@
 name: Link Checker
 
 on:
-  # TODO remove before merging.
-  # just using the push and pull_request event in for testing only.
   push:
     branches:
       - develop
