@@ -28,5 +28,11 @@ export interface DetectorRecord {
   loader?: DiagramLoader;
 }
 
+export interface ExternalDiagramDefinition {
+  id: string;
+  detector: DiagramDetector;
+  loader: DiagramLoader;
+}
+
 export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
-export type DiagramLoader = (() => Promise<{ id: string; diagram: DiagramDefinition }>) | null;
+export type DiagramLoader = () => Promise<{ id: string; diagram: DiagramDefinition }>;

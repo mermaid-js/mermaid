@@ -17,6 +17,7 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
-    "mermaid": "workspace:*"
+    "mermaid": "workspace:*",
+    "@mermaid-js/mermaid-mindmap": "workspace:*"
   }
 }

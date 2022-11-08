@@ -9,8 +9,11 @@ import { mermaidAPI } from './mermaidAPI';
 import { addDetector } from './diagram-api/detectType';
 import { isDetailedError, type DetailedError } from './utils';
 import { registerDiagram } from './diagram-api/diagramAPI';
+import { ExternalDiagramDefinition } from './diagram-api/types';
 
-export type { MermaidConfig, DetailedError };
+export type { MermaidConfig, DetailedError, ExternalDiagramDefinition };
+
+let externalDiagramsRegistered = false;
 /**
  * ## init
  *
@@ -47,8 +50,8 @@ const init = async function (
   callback?: Function
 ) {
   try {
-    const conf = mermaidAPI.getConfig();
-    if (conf?.lazyLoadedDiagrams && conf.lazyLoadedDiagrams.length > 0) {
+    // Not really sure if we need to check this, or simply call initThrowsErrorsAsync directly.
+    if (externalDiagramsRegistered) {
       await initThrowsErrorsAsync(config, nodes, callback);
     } else {
       initThrowsErrors(config, nodes, callback);
@@ -89,6 +92,7 @@ const handleError = (error: unknown, errors: DetailedError[], parseError?: Funct
     }
   }
 };
+
 const initThrowsErrors = function (
   config?: MermaidConfig,
   // eslint-disable-next-line no-undef
@@ -177,45 +181,39 @@ const initThrowsErrors = function (
   }
 };
 
-let lazyLoadingPromise: Promise<PromiseSettledResult<void>[]> | undefined = undefined;
 /**
  * This is an internal function and should not be made public, as it will likely change.
  * @internal
- * @param conf - Mermaid config.
- * @returns An array of {@link PromiseSettledResult}, showing the status of imports.
+ * @param diagrams - Array of {@link ExternalDiagramDefinition}.
  */
-const registerLazyLoadedDiagrams = async (conf: MermaidConfig) => {
-  // Only lazy load once
-  // TODO: This is a hack. We should either throw error when new diagrams are added, or load them anyway.
-  if (lazyLoadingPromise === undefined) {
-    // Load all lazy loaded diagrams in parallel
-    lazyLoadingPromise = Promise.allSettled(
-      (conf?.lazyLoadedDiagrams ?? []).map(async (diagram: string) => {
-        const { id, detector, loadDiagram } = await import(diagram);
-        addDetector(id, detector, loadDiagram);
-      })
-    );
+const registerLazyLoadedDiagrams = (diagrams: ExternalDiagramDefinition[]) => {
+  for (const { id, detector, loader } of diagrams) {
+    addDetector(id, detector, loader);
   }
-  return await lazyLoadingPromise;
 };
 
-let loadingPromise: Promise<unknown> | undefined = undefined;
-
-const loadExternalDiagrams = async (conf: MermaidConfig) => {
-  // Only lazy load once
-  // TODO: This is a hack. We should either throw error when new diagrams are added, or load them anyway.
-  if (loadingPromise === undefined) {
-    log.debug(`Loading ${conf?.lazyLoadedDiagrams?.length} external diagrams`);
-    // Load all lazy loaded diagrams in parallel
-    loadingPromise = Promise.allSettled(
-      (conf?.lazyLoadedDiagrams ?? []).map(async (url: string) => {
-        const { id, detector, loadDiagram } = await import(url);
-        const { diagram } = await loadDiagram();
-        registerDiagram(id, diagram, detector, diagram.injectUtils);
-      })
-    );
+/**
+ * This is an internal function and should not be made public, as it will likely change.
+ * @internal
+ * @param diagrams - Array of {@link ExternalDiagramDefinition}.
+ */
+const loadExternalDiagrams = async (diagrams: ExternalDiagramDefinition[]) => {
+  log.debug(`Loading ${diagrams.length} external diagrams`);
+  // Load all lazy loaded diagrams in parallel
+  const results = await Promise.allSettled(
+    diagrams.map(async ({ id, detector, loader }) => {
+      const { diagram } = await loader();
+      registerDiagram(id, diagram, detector);
+    })
+  );
+  const failed = results.filter((result) => result.status === 'rejected');
+  if (failed.length > 0) {
+    log.error(`Failed to load ${failed.length} external diagrams`);
+    for (const res of failed) {
+      log.error(res);
+    }
+    throw new Error(`Failed to load ${failed.length} external diagrams`);
   }
-  await loadingPromise;
 };
 
 /**
@@ -241,13 +239,6 @@ const initThrowsErrorsAsync = async function (
   callback?: Function
 ) {
   const conf = mermaidAPI.getConfig();
-
-  const registerLazyLoadedDiagramsErrors: Error[] = [];
-  for (const registerResult of await registerLazyLoadedDiagrams(conf)) {
-    if (registerResult.status == 'rejected') {
-      registerLazyLoadedDiagramsErrors.push(registerResult.reason);
-    }
-  }
 
   if (config) {
     // This is a legacy way of setting config. It is not documented and should be removed in the future.
@@ -323,10 +314,9 @@ const initThrowsErrorsAsync = async function (
       handleError(error, errors, mermaid.parseError);
     }
   }
-  const allErrors = [...registerLazyLoadedDiagramsErrors, ...errors];
-  if (allErrors.length > 0) {
+  if (errors.length > 0) {
     // TODO: We should be throwing an error object.
-    throw allErrors[0];
+    throw errors[0];
   }
 };
 
@@ -335,16 +325,25 @@ const initialize = function (config: MermaidConfig) {
 };
 
 /**
- * @param config
- * @deprecated This is an internal function and should not be used. Will be removed in v10.
+ * Used to register external diagram types.
+ * @param diagrams - Array of {@link ExternalDiagramDefinition}.
+ * @param opts
+ * @param opts.lazyLoad - If true, the diagram will be loaded on demand.
  */
-const initializeAsync = async function (config: MermaidConfig) {
-  if (config.loadExternalDiagramsAtStartup) {
-    await loadExternalDiagrams(config);
-  } else {
-    await registerLazyLoadedDiagrams(config);
+const registerExternalDiagrams = async (
+  diagrams: ExternalDiagramDefinition[],
+  {
+    lazyLoad = true,
+  }: {
+    lazyLoad?: boolean;
   }
-  mermaidAPI.initialize(config);
+) => {
+  if (lazyLoad) {
+    registerLazyLoadedDiagrams(diagrams);
+  } else {
+    await loadExternalDiagrams(diagrams);
+  }
+  externalDiagramsRegistered = true;
 };
 
 /**
@@ -414,7 +413,7 @@ const executeQueue = async () => {
  * @param txt
  * @deprecated This is an internal function and should not be used. Will be removed in v10.
  */
-const parseAsync = (txt: string) => {
+const parseAsync = (txt: string): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the mermaidAPI.render call is done.
     // It will be queued first and will be executed when it is first in line
@@ -424,7 +423,7 @@ const parseAsync = (txt: string) => {
           (r) => {
             // This resolves for the promise for the queue handling
             res(r);
-            // This fullfills the promise sent to the value back to the original caller
+            // This fulfills the promise sent to the value back to the original caller
             resolve(r);
           },
           (e) => {
@@ -522,8 +521,8 @@ const mermaid: {
   init: typeof init;
   initThrowsErrors: typeof initThrowsErrors;
   initThrowsErrorsAsync: typeof initThrowsErrorsAsync;
+  registerExternalDiagrams: typeof registerExternalDiagrams;
   initialize: typeof initialize;
-  initializeAsync: typeof initializeAsync;
   contentLoaded: typeof contentLoaded;
   setParseErrorHandler: typeof setParseErrorHandler;
 } = {
@@ -537,8 +536,8 @@ const mermaid: {
   init,
   initThrowsErrors,
   initThrowsErrorsAsync,
+  registerExternalDiagrams,
   initialize,
-  initializeAsync,
   parseError: undefined,
   contentLoaded,
   setParseErrorHandler,
