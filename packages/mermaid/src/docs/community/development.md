@@ -111,7 +111,7 @@ Markdown is used to format the text, for more information about Markdown [see th
 
 To edit Docs on your computer:
 
-1. Find the Markdown file (.md) to edit in the [mermaid-js/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs) directory in the `develop` branch.
+1. Find the Markdown file (.md) to edit in the [packages/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs) directory in the `develop` branch.
 2. Create a fork of the develop branch.
 3. Make changes or add new documentation.
 4. Commit changes to your fork and push it to GitHub.
@@ -120,7 +120,7 @@ To edit Docs on your computer:
 To edit Docs on GitHub:
 
 1. Login to [GitHub.com](https://www.github.com).
-2. Navigate to [mermaid-js/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs).
+2. Navigate to [packages/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs).
 3. To edit a file, click the pencil icon at the top-right of the file contents panel.
 4. Describe what you changed in the **Propose file change** section, located at the bottom of the page.
 5. Submit your changes by clicking the button **Propose file change** at the bottom (by automatic creation of a fork and a new branch).
