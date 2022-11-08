@@ -1,5 +1,5 @@
 import mermaid2 from '../../packages/mermaid/src/mermaid';
-import mindmap from '../../packages/mermaid-example-diagram/src/detector';
+import mindmap from '../../packages/mermaid-mindmap/src/detector';
 
 function b64ToUtf8(str) {
   return decodeURIComponent(escape(window.atob(str)));
