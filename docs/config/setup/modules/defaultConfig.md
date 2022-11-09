@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[defaultConfig.ts:1882](https://github.com/weedySeaDragon/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L1882)
+[defaultConfig.ts:1882](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L1882)
 
 ---
 
@@ -53,4 +53,4 @@ A description of each option follows below.
 
 #### Defined in
 
-[defaultConfig.ts:33](https://github.com/weedySeaDragon/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L33)
+[defaultConfig.ts:33](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L33)
