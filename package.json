@@ -3,19 +3,8 @@
   "private": true,
   "version": "9.2.0-rc4",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
-  "main": "dist/mermaid.core.mjs",
-  "module": "dist/mermaid.core.mjs",
-  "types": "dist/mermaid.d.ts",
   "type": "module",
   "packageManager": "pnpm@7.13.2",
-  "exports": {
-    ".": {
-      "require": "./dist/mermaid.min.js",
-      "import": "./dist/mermaid.core.mjs",
-      "types": "./dist/mermaid.d.ts"
-    },
-    "./*": "./*"
-  },
   "keywords": [
     "diagram",
     "markdown",
@@ -147,9 +136,6 @@
   "resolutions": {
     "d3": "^7.0.0"
   },
-  "files": [
-    "dist"
-  ],
   "sideEffects": [
     "**/*.css",
     "**/*.scss"

@@ -49,10 +49,9 @@
   <body>
     <div id="app"></div>
     <script type="module">
-      // import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9.2.0/dist/mermaid.esm.min.mjs';
-      // import mermaid from 'http://localhost:9000/mermaid.esm.mjs';
-      console.log(mermaid); // eslint-disable-line
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
+      import mindmap from 'https://cdn.jsdelivr.net/npm/@mermaid-js/mermaid-mindmap@9/dist/mermaid-mindmap.esm.mjs';
+
       window.mermaid = mermaid;
       const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
@@ -60,20 +59,18 @@
         logLevel: 4,
         startOnLoad: true,
         themeCSS: '.label { font-family: Source Sans Pro,Helvetica Neue,Arial,sans-serif; }',
-        lazyLoadedDiagrams: [
-          'https://cdn.jsdelivr.net/npm/@mermaid-js/mermaid-mindmap@9.2.0/dist/mermaid-mindmap-detector.esm.mjs',
-          // 'http://localhost:9000/mermaid-mindmap-detector.esm.mjs',
-        ],
       };
       if (isDarkMode) conf.theme = 'dark';
 
       async function loadMermaid() {
-        await mermaid.initialize(conf);
+        mermaid.parseError = (e) => {
+          console.log('parse error', e); // eslint-disable-line
+        };
+        await mermaid.registerExternalDiagrams([mindmap]);
+        mermaid.initialize(conf);
         console.log('mermaid initialized'); // eslint-disable-line
       }
-      mermaid.parseError = (e) => {
-        console.log('parse error', e); // eslint-disable-line
-      };
+
       await loadMermaid();
     </script>
     <script>
