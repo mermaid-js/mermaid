@@ -40,7 +40,8 @@ export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: any[]) 
   }
 
   currentConfig = cfg;
-  return cfg;
+  checkConfig(currentConfig);
+  return currentConfig;
 };
 
 /**
@@ -68,7 +69,7 @@ export const setSiteConfig = (conf: MermaidConfig): MermaidConfig => {
     siteConfig.themeVariables = theme[conf.theme].getThemeVariables(conf.themeVariables);
   }
 
-  currentConfig = updateCurrentConfig(siteConfig, directives);
+  updateCurrentConfig(siteConfig, directives);
   return siteConfig;
 };
 
@@ -117,6 +118,7 @@ export const setConfig = (conf: MermaidConfig): MermaidConfig => {
   //   conf[key] = manipulator ? manipulator(conf[key]) : conf[key];
   // });
 
+  checkConfig(conf);
   assignWithDepth(currentConfig, conf);
 
   return getConfig();
@@ -223,4 +225,26 @@ export const reset = (config = siteConfig): void => {
   // Replace current config with siteConfig
   directives = [];
   updateCurrentConfig(config, directives);
+};
+
+enum ConfigWarning {
+  'LAZY_LOAD_DEPRECATED' = 'The configuration options lazyLoadedDiagrams and loadExternalDiagramsAtStartup are deprecated. Please use registerExternalDiagrams instead.',
+}
+type ConfigWarningStrings = keyof typeof ConfigWarning;
+const issuedWarnings: { [key in ConfigWarningStrings]?: boolean } = {};
+const issueWarning = (warning: ConfigWarningStrings) => {
+  if (issuedWarnings[warning]) {
+    return;
+  }
+  log.warn(ConfigWarning[warning]);
+  issuedWarnings[warning] = true;
+};
+
+const checkConfig = (config: MermaidConfig) => {
+  if (!config) {
+    return;
+  }
+  if (config.lazyLoadedDiagrams || config.loadExternalDiagramsAtStartup) {
+    issueWarning('LAZY_LOAD_DEPRECATED');
+  }
 };
