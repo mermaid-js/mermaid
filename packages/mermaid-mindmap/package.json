@@ -1,13 +1,13 @@
 {
   "name": "@mermaid-js/mermaid-mindmap",
-  "version": "9.2.0",
+  "version": "9.2.2-rc.2",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
-  "module": "dist/mermaid-mindmap.esm.min.mjs",
+  "module": "dist/mermaid-mindmap.core.mjs",
   "types": "dist/detector.d.ts",
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/mermaid-mindmap.esm.min.mjs",
+      "import": "./dist/mermaid-mindmap.core.mjs",
       "types": "./dist/detector.d.ts"
     },
     "./*": "./*"
