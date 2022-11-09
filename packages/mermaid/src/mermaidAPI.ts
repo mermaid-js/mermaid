@@ -115,19 +115,19 @@ export const decodeEntities = function (text: string): string {
  *
  * @param {string} id The id of the element to be rendered
  * @param {string} text The graph definition
- * @param {(svgCode: string, bindFunctions?: (element: Element) => void) => void} cb Callback which
+ * @param cb - Optional callback which
  *   is called after rendering is finished with the svg code as inparam.
  * @param {Element} container Selector to element in which a div with the graph temporarily will be
  *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
  *   element will be removed when rendering is completed.
- * @returns {void}
+ * @returns Returns the rendered element as a string containing the SVG definition.
  */
 const render = function (
   id: string,
   text: string,
-  cb: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
+  cb?: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
   container?: Element
-): void {
+): string {
   addDiagrams();
   configApi.reset();
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
@@ -401,9 +401,9 @@ const render = function (
 const renderAsync = async function (
   id: string,
   text: string,
-  cb: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
+  cb?: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
   container?: Element
-): Promise<void> {
+): Promise<string> {
   addDiagrams();
   configApi.reset();
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
