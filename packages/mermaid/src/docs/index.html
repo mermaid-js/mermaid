@@ -49,8 +49,8 @@
   <body>
     <div id="app"></div>
     <script type="module">
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@<MERMAID_VERSION>/dist/mermaid.esm.min.mjs';
-      import mindmap from 'https://cdn.jsdelivr.net/npm/@mermaid-js/mermaid-mindmap@<MERMAID_VERSION>/dist/mermaid-mindmap.esm.mjs';
+      import mermaid from '<CDN_URL>/mermaid@<MERMAID_VERSION>/dist/mermaid.esm.min.mjs';
+      import mindmap from '<CDN_URL>/@mermaid-js/mermaid-mindmap@<MERMAID_VERSION>/dist/mermaid-mindmap.esm.min.mjs';
       await mermaid.registerExternalDiagrams([mindmap]);
 
       window.mermaid = mermaid;
@@ -145,8 +145,8 @@
               return editHtml + html;
             });
             // Invoked on each page load after new HTML has been appended to the DOM
-            hook.doneEach(function () {
-              window.mermaid.init();
+            hook.doneEach(async function () {
+              await mermaid.init();
             });
 
             hook.afterEach(function (html, next) {
