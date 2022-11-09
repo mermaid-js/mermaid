@@ -30,7 +30,7 @@
  * @todo Write a test file for this. (Will need to be able to deal .mts file. Jest has trouble with
  *   it.)
  */
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync, rmdirSync } from 'fs';
 import { exec } from 'child_process';
 import { globby } from 'globby';
 import { JSDOM } from 'jsdom';
@@ -38,6 +38,8 @@ import type { Code, Root } from 'mdast';
 import { posix, dirname, relative } from 'path';
 import prettier from 'prettier';
 import { remark } from 'remark';
+import chokidar from 'chokidar';
+import mm from 'micromatch';
 // @ts-ignore No typescript declaration file
 import flatmap from 'unist-util-flatmap';
 
@@ -47,6 +49,7 @@ const MERMAID_MAJOR_VERSION = (
 
 const verifyOnly: boolean = process.argv.includes('--verify');
 const git: boolean = process.argv.includes('--git');
+const watch: boolean = process.argv.includes('--watch');
 const vitepress: boolean = process.argv.includes('--vitepress');
 const noHeader: boolean = process.argv.includes('--noHeader') || vitepress;
 
@@ -61,14 +64,7 @@ const LOGMSG_COPIED = `, and copied to ${FINAL_DOCS_DIR}`;
 
 const WARN_DOCSDIR_DOESNT_MATCH = `Changed files were transformed in ${SOURCE_DOCS_DIR} but do not match the files in ${FINAL_DOCS_DIR}. Please run 'pnpm --filter mermaid run docs:build' after making changes to ${SOURCE_DOCS_DIR} to update the ${FINAL_DOCS_DIR} directory with the transformed files.`;
 
-// TODO: Read from .prettierrc?
-const prettierConfig: prettier.Config = {
-  useTabs: false,
-  tabWidth: 2,
-  endOfLine: 'auto',
-  printWidth: 100,
-  singleQuote: true,
-};
+const prettierConfig = prettier.resolveConfig.sync('.') ?? {};
 
 let filesWereTransformed = false;
 
@@ -246,11 +242,15 @@ const transformHtml = (filename: string) => {
   copyTransformedContents(filename, !verifyOnly, formattedHTML);
 };
 
-const getFilesFromGlobs = async (globs: string[]): Promise<string[]> => {
+const getGlobs = (globs: string[]): string[] => {
   globs.push('!**/dist');
   if (!vitepress) {
     globs.push('!**/.vitepress', '!**/vite.config.ts', '!src/docs/index.md');
   }
+  return globs;
+};
+
+const getFilesFromGlobs = async (globs: string[]): Promise<string[]> => {
   return await globby(globs, { dot: true });
 };
 
@@ -263,15 +263,18 @@ const getFilesFromGlobs = async (globs: string[]): Promise<string[]> => {
   const sourceDirGlob = posix.join('.', SOURCE_DOCS_DIR, '**');
   const action = verifyOnly ? 'Verifying' : 'Transforming';
 
-  const mdFiles = await getFilesFromGlobs([posix.join(sourceDirGlob, '*.md')]);
+  const mdFileGlobs = getGlobs([posix.join(sourceDirGlob, '*.md')]);
+  const mdFiles = await getFilesFromGlobs(mdFileGlobs);
   console.log(`${action} ${mdFiles.length} markdown files...`);
   mdFiles.forEach(transformMarkdown);
 
-  const htmlFiles = await getFilesFromGlobs([posix.join(sourceDirGlob, '*.html')]);
+  const htmlFileGlobs = getGlobs([posix.join(sourceDirGlob, '*.html')]);
+  const htmlFiles = await getFilesFromGlobs(htmlFileGlobs);
   console.log(`${action} ${htmlFiles.length} html files...`);
   htmlFiles.forEach(transformHtml);
 
-  const otherFiles = await getFilesFromGlobs([sourceDirGlob, '!**/*.md', '!**/*.html']);
+  const otherFileGlobs = getGlobs([sourceDirGlob, '!**/*.md', '!**/*.html']);
+  const otherFiles = await getFilesFromGlobs(otherFileGlobs);
   console.log(`${action} ${otherFiles.length} other files...`);
   otherFiles.forEach((file: string) => {
     copyTransformedContents(file, !verifyOnly); // no transformation
@@ -286,5 +289,33 @@ const getFilesFromGlobs = async (globs: string[]): Promise<string[]> => {
       console.log(`Adding changes in ${FINAL_DOCS_DIR} folder to git`);
       exec(`git add ${FINAL_DOCS_DIR}`);
     }
+  }
+
+  if (watch) {
+    console.log(`Watching for changes in ${SOURCE_DOCS_DIR}`);
+
+    const matcher = (globs: string[]) => (file: string) => mm.every(file, globs);
+    const isMd = matcher(mdFileGlobs);
+    const isHtml = matcher(htmlFileGlobs);
+    const isOther = matcher(otherFileGlobs);
+
+    chokidar
+      .watch(SOURCE_DOCS_DIR)
+      // Delete files from the final docs dir if they are deleted from the source dir
+      .on('unlink', (file: string) => rmSync(changeToFinalDocDir(file)))
+      .on('unlinkDir', (file: string) => rmdirSync(changeToFinalDocDir(file)))
+      .on('all', (event, path) => {
+        // Ignore other events.
+        if (!['add', 'change'].includes(event)) {
+          return;
+        }
+        if (isMd(path)) {
+          transformMarkdown(path);
+        } else if (isHtml(path)) {
+          transformHtml(path);
+        } else if (isOther(path)) {
+          copyTransformedContents(path, true);
+        }
+      });
   }
 })();

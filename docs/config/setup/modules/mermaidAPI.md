@@ -80,7 +80,7 @@ mermaid.initialize(config);
 
 #### Defined in
 
-[mermaidAPI.ts:736](https://github.com/weedySeaDragon/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L736)
+[mermaidAPI.ts:740](https://github.com/weedySeaDragon/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L740)
 
 ## Functions
 

@@ -371,7 +371,11 @@ export const removeExistingElements = (
  * @param text - The text for the graph definition
  * @param cb - Callback which is called after rendering is finished with the svg code as in param.
  * @param svgContainingElement - HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
- *   inserted. If no svgContainingElement is provided then the SVG element will be appended to the body.
+ *   If no svgContainingElement is provided then the SVG element will be appended to the body.
+ *    Selector to element in which a div with the graph temporarily will be
+ *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
+ *   element will be removed when rendering is completed.
+ * @returns - Resolves when finished rendering.
  */
 const render = async function (
   id: string,
