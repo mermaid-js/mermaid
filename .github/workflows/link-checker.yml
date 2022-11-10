@@ -20,6 +20,9 @@ on:
 jobs:
   linkChecker:
     runs-on: ubuntu-latest
+    permissions:
+      # lychee only uses the GITHUB_TOKEN to avoid rate-limiting
+      contents: read
     steps:
       - uses: actions/checkout@v3
 
