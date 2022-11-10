@@ -6,6 +6,7 @@ import pkg from '../package.json' assert { type: 'json' };
 
 const { dependencies } = pkg;
 const watch = process.argv.includes('--watch');
+const mermaidOnly = process.argv.includes('--mermaid');
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 type OutputOptions = Exclude<
@@ -22,23 +23,13 @@ const packageOptions = {
   'mermaid-mindmap': {
     name: 'mermaid-mindmap',
     packageName: 'mermaid-mindmap',
-    file: 'diagram-definition.ts',
-  },
-  'mermaid-mindmap-detector': {
-    name: 'mermaid-mindmap-detector',
-    packageName: 'mermaid-mindmap',
     file: 'detector.ts',
   },
-  'mermaid-example-diagram': {
-    name: 'mermaid-example-diagram',
-    packageName: 'mermaid-example-diagram',
-    file: 'diagram-definition.ts',
-  },
-  'mermaid-example-diagram-detector': {
-    name: 'mermaid-example-diagram-detector',
-    packageName: 'mermaid-example-diagram',
-    file: 'detector.ts',
-  },
+  // 'mermaid-example-diagram-detector': {
+  //   name: 'mermaid-example-diagram-detector',
+  //   packageName: 'mermaid-example-diagram',
+  //   file: 'detector.ts',
+  // },
 };
 
 interface BuildOptions {
@@ -110,7 +101,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
       include: [
         'packages/mermaid-mindmap/src/**',
         'packages/mermaid/src/**',
-        'packages/mermaid-example-diagram/src/**',
+        // 'packages/mermaid-example-diagram/src/**',
       ],
     };
   }
@@ -134,9 +125,11 @@ const main = async () => {
 };
 
 if (watch) {
-  build(getBuildConfig({ minify: false, watch, entryName: 'mermaid' }));
-  build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-mindmap' }));
-  build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
+  build(getBuildConfig({ minify: false, watch, core: true, entryName: 'mermaid' }));
+  if (!mermaidOnly) {
+    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-mindmap' }));
+    // build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
+  }
 } else {
   void main();
 }

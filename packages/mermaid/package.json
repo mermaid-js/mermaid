@@ -1,11 +1,11 @@
 {
   "name": "mermaid",
-  "version": "9.2.0-rc2",
+  "version": "9.2.2",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
-  "main": "./dist/mermaid.core.mjs",
+  "main": "./dist/mermaid.min.js",
   "module": "./dist/mermaid.core.mjs",
   "types": "./dist/mermaid.d.ts",
-  "type": "module",
+  "type": "commonjs",
   "exports": {
     ".": {
       "require": "./dist/mermaid.min.js",
@@ -76,7 +76,8 @@
     "lodash": "^4.17.21",
     "moment-mini": "^2.24.0",
     "non-layered-tidy-tree-layout": "^2.0.2",
-    "stylis": "^4.1.2"
+    "stylis": "^4.1.2",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@applitools/eyes-cypress": "3.27.6",
@@ -91,6 +92,7 @@
     "@types/micromatch": "4.0.2",
     "@types/prettier": "2.7.1",
     "@types/stylis": "4.0.2",
+    "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "5.42.0",
     "@typescript-eslint/parser": "5.42.0",
     "chokidar": "3.5.3",
@@ -98,7 +100,6 @@
     "coveralls": "3.1.1",
     "cypress": "10.11.0",
     "cypress-image-snapshot": "4.0.1",
-    "documentation": "13.2.5",
     "esbuild": "0.15.13",
     "eslint": "8.27.0",
     "eslint-config-prettier": "8.5.0",
@@ -135,7 +136,8 @@
     "d3": "^7.0.0"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "sideEffects": [
     "**/*.css",

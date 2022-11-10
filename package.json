@@ -1,21 +1,10 @@
 {
   "name": "mermaid-monorepo",
   "private": true,
-  "version": "9.2.0-rc2",
+  "version": "9.2.2",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
-  "main": "dist/mermaid.core.mjs",
-  "module": "dist/mermaid.core.mjs",
-  "types": "dist/mermaid.d.ts",
   "type": "module",
   "packageManager": "pnpm@7.14.2",
-  "exports": {
-    ".": {
-      "require": "./dist/mermaid.min.js",
-      "import": "./dist/mermaid.core.mjs",
-      "types": "./dist/mermaid.d.ts"
-    },
-    "./*": "./*"
-  },
   "keywords": [
     "diagram",
     "markdown",
@@ -27,7 +16,7 @@
   ],
   "scripts": {
     "build:vite": "ts-node-esm --transpileOnly --project=.vite/tsconfig.json .vite/build.ts",
-    "build:types": "concurrently \"tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly\" \"tsc -p ./packages/mermaid-mindmap/tsconfig.json --emitDeclarationOnly\"",
+    "build:types": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-mindmap/tsconfig.json --emitDeclarationOnly",
     "build:watch": "pnpm build:vite --watch",
     "build": "pnpm run -r clean && concurrently \"pnpm build:vite\" \"pnpm build:types\"",
     "dev": "concurrently \"pnpm build:vite --watch\" \"ts-node-esm .vite/server.ts\"",
@@ -140,9 +129,6 @@
   "resolutions": {
     "d3": "7.6.1"
   },
-  "files": [
-    "dist"
-  ],
   "sideEffects": [
     "**/*.css",
     "**/*.scss"
