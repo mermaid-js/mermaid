@@ -4,7 +4,7 @@
   "version": "9.2.2",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
-  "packageManager": "pnpm@7.13.2",
+  "packageManager": "pnpm@7.15.0",
   "keywords": [
     "diagram",
     "markdown",
@@ -41,6 +41,7 @@
     "test:coverage": "vitest --coverage",
     "prepublishOnly": "pnpm build && pnpm test",
     "prepare": "concurrently \"husky install\" \"pnpm build\"",
+    "postinstall": "./scripts/fixPnpmLock.sh",
     "pre-commit": "lint-staged"
   },
   "repository": {
@@ -101,7 +102,7 @@
     "jsdom": "^20.0.1",
     "lint-staged": "^13.0.3",
     "markdown-it": "^13.0.1",
-    "pnpm": "^7.13.2",
+    "pnpm": "^7.15.0",
     "prettier": "^2.7.1",
     "prettier-plugin-jsdoc": "^0.4.2",
     "remark": "^14.0.2",
