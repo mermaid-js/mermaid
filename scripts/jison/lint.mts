@@ -11,6 +11,7 @@ const linter = new ESLint({
 });
 
 const lint = async (file: string): Promise<boolean> => {
+  console.log(`Linting ${file}`);
   const jisonCode = await readFile(file, 'utf8');
   // @ts-ignore no typings
   const jsCode = new jison.Generator(jisonCode, { moduleType: 'amd' }).generate();
@@ -23,7 +24,9 @@ const lint = async (file: string): Promise<boolean> => {
 };
 
 (async () => {
-  const jisonFiles = await globby(['./src/**/*.jison'], { dot: true });
+  const jisonFiles = await globby(['./packages/**/*.jison', '!./**/node_modules/**'], {
+    dot: true,
+  });
   const lintResults = await Promise.all(jisonFiles.map(lint));
   if (lintResults.some((result) => result === false)) {
     process.exit(1);

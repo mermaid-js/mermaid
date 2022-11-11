@@ -2,9 +2,8 @@ import { build, InlineConfig } from 'vite';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import jisonPlugin from './jisonPlugin.js';
-import pkg from '../package.json' assert { type: 'json' };
+import { readFileSync } from 'fs';
 
-const { dependencies } = pkg;
 const watch = process.argv.includes('--watch');
 const mermaidOnly = process.argv.includes('--mermaid');
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -59,6 +58,9 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
   ];
 
   if (core) {
+    const { dependencies } = JSON.parse(
+      readFileSync(resolve(__dirname, `../packages/${packageName}/package.json`), 'utf-8')
+    );
     // Core build is used to generate file without bundled dependencies.
     // This is used by downstream projects to bundle dependencies themselves.
     external.push(...Object.keys(dependencies));
