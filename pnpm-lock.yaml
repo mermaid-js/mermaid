@@ -5484,7 +5484,6 @@ packages:
 
   /defined/1.0.1:
     resolution: {integrity: sha512-hsBd2qSVCRE+5PmNdHt1uzyrFu5d3RwmFDKzyNZMFq/EwDNJF7Ee5+D5oEKF0hU6LhtoUF1macFvOe4AskQC1Q==}
-    dev: true
 
   /degenerator/3.0.2:
     resolution: {integrity: sha512-c0mef3SNQo56t6urUU6tdQAs+ThoD0o9B9MJ8HEt7NQcGEILCRFqQb7ZbP9JAv+QF1Ky5plydhMR/IrqWDm+TQ==}
@@ -9577,6 +9576,12 @@ packages:
       repeat-string: 1.6.1
     dev: true
 
+  /marked/2.1.3:
+    resolution: {integrity: sha512-/Q+7MGzaETqifOMWYEA7HVMaZb4XbcRfaOzcSsHZEith83KGlvaSG33u0SKu89Mj5h+T8V2hM+8O45Qc5XTgwA==}
+    engines: {node: '>= 10'}
+    hasBin: true
+    dev: false
+
   /marked/4.1.1:
     resolution: {integrity: sha512-0cNMnTcUJPxbA6uWmCmjWz4NJRe/0Xfk2NhXCUHjew9qJzFN20krFnsUe7QynwqOwa5m1fZ4UDg0ycKFVC0ccw==}
     engines: {node: '>= 12'}
@@ -11167,7 +11172,7 @@ packages:
     dependencies:
       commander: 8.3.0
       glob: 7.2.3
-      postcss: 8.4.16
+      postcss: 8.4.18
       postcss-selector-parser: 6.0.10
     dev: false
 
