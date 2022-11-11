@@ -17,6 +17,7 @@ import {
 
 let dateFormat = '';
 let axisFormat = '';
+let tickInterval = undefined;
 let todayMarker = '';
 let includes = [];
 let excludes = [];
@@ -47,6 +48,7 @@ export const clear = function () {
   rawTasks = [];
   dateFormat = '';
   axisFormat = '';
+  tickInterval = undefined;
   todayMarker = '';
   includes = [];
   excludes = [];
@@ -63,6 +65,14 @@ export const setAxisFormat = function (txt) {
 
 export const getAxisFormat = function () {
   return axisFormat;
+};
+
+export const setTickInterval = function (txt) {
+  tickInterval = txt;
+};
+
+export const getTickInterval = function () {
+  return tickInterval;
 };
 
 export const setTodayMarker = function (txt) {
@@ -647,6 +657,8 @@ export default {
   topAxisEnabled,
   setAxisFormat,
   getAxisFormat,
+  setTickInterval,
+  getTickInterval,
   setTodayMarker,
   getTodayMarker,
   setAccTitle,

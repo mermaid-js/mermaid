@@ -1,0 +1,11 @@
+{
+  "plugin": ["typedoc-plugin-markdown"],
+  "readme": "none",
+  "githubPages": false,
+  "gitRemote": "origin",
+  "gitRevision": "master",
+  "out": "src/docs/config/setup",
+  "entryPointStrategy": "expand",
+  "hideBreadcrumbs": true,
+  "hideInPageTOC": true
+}

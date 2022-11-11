@@ -55,7 +55,7 @@ export class Diagram {
   }
 
   handleError(error: unknown, parseError?: ParseErrorFunction) {
-    // Is this the correct way to access mermiad's parseError()
+    // Is this the correct way to access mermaid's parseError()
     // method ? (or global.mermaid.parseError()) ?
 
     if (parseError === undefined) {

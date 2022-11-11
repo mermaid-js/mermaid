@@ -18,7 +18,7 @@ import { MermaidConfig } from './config.type';
  *
  * ```html
  * <script>
- * var config = {
+ * const config = {
  *   startOnLoad:true,
  *   flowchart:{ useMaxWidth:true, htmlLabels:true, curve:'cardinal'},
  *   securityLevel:'loose',
@@ -660,6 +660,19 @@ const config: Partial<MermaidConfig> = {
      * Default value: '%Y-%m-%d'.
      */
     axisFormat: '%Y-%m-%d',
+
+    /**
+     * | Parameter    | Description | Type   | Required | Values  |
+     * | ------------ | ------------| ------ | -------- | ------- |
+     * | tickInterval | axis ticks  | string | Optional | string  |
+     *
+     * **Notes:**
+     *
+     * Pattern is /^([1-9][0-9]*)(minute|hour|day|week|month)$/
+     *
+     * Default value: undefined
+     */
+    tickInterval: undefined,
 
     /**
      * | Parameter   | Description | Type    | Required | Values      |
