@@ -1,4 +1,4 @@
-lockfileVersion: 5.4
+lockfileVersion: 5.4-inlineSpecifiers
 
 overrides:
   d3: ^7.0.0
@@ -6,267 +6,382 @@ overrides:
 importers:
 
   .:
-    specifiers:
-      '@applitools/eyes-cypress': ^3.27.1
-      '@commitlint/cli': ^17.1.2
-      '@commitlint/config-conventional': ^17.1.0
-      '@types/d3': ^7.4.0
-      '@types/dompurify': ^2.3.4
-      '@types/eslint': ^8.4.6
-      '@types/express': ^4.17.14
-      '@types/jsdom': ^20.0.0
-      '@types/lodash': ^4.14.186
-      '@types/mdast': ^3.0.10
-      '@types/node': ^18.11.9
-      '@types/prettier': ^2.7.1
-      '@types/stylis': ^4.0.2
-      '@types/uuid': ^8.3.4
-      '@typescript-eslint/eslint-plugin': ^5.39.0
-      '@typescript-eslint/parser': ^5.39.0
-      '@vitest/coverage-c8': ^0.23.4
-      '@vitest/ui': ^0.23.4
-      concurrently: ^7.4.0
-      coveralls: ^3.1.1
-      cypress: ^10.0.0
-      cypress-image-snapshot: ^4.0.1
-      documentation: 13.2.0
-      esbuild: ^0.15.10
-      eslint: ^8.24.0
-      eslint-config-prettier: ^8.5.0
-      eslint-plugin-cypress: ^2.12.1
-      eslint-plugin-html: ^7.1.0
-      eslint-plugin-jest: ^27.1.0
-      eslint-plugin-jsdoc: ^39.3.6
-      eslint-plugin-json: ^3.1.0
-      eslint-plugin-markdown: ^3.0.0
-      express: ^4.18.1
-      globby: ^13.1.2
-      husky: ^8.0.1
-      identity-obj-proxy: ^3.0.0
-      jest: 29.x
-      jison: ^0.4.18
-      jsdom: ^20.0.1
-      lint-staged: ^13.0.3
-      markdown-it: ^13.0.1
-      pnpm: ^7.15.0
-      prettier: ^2.7.1
-      prettier-plugin-jsdoc: ^0.4.2
-      remark: ^14.0.2
-      rimraf: ^3.0.2
-      start-server-and-test: ^1.14.0
-      ts-node: ^10.9.1
-      typescript: ^4.8.4
-      unist-util-flatmap: ^1.0.0
-      vite: ^3.1.4
-      vitepress: ^1.0.0-alpha.19
-      vitepress-plugin-mermaid: ^2.0.8
-      vitepress-plugin-search: ^1.0.4-alpha.11
-      vitest: ^0.23.4
     devDependencies:
-      '@applitools/eyes-cypress': 3.27.6
-      '@commitlint/cli': 17.2.0
-      '@commitlint/config-conventional': 17.2.0
-      '@types/d3': 7.4.0
-      '@types/dompurify': 2.3.4
-      '@types/eslint': 8.4.10
-      '@types/express': 4.17.14
-      '@types/jsdom': 20.0.1
-      '@types/lodash': 4.14.188
-      '@types/mdast': 3.0.10
-      '@types/node': 18.11.9
-      '@types/prettier': 2.7.1
-      '@types/stylis': 4.0.2
-      '@types/uuid': 8.3.4
-      '@typescript-eslint/eslint-plugin': 5.42.1_2udltptbznfmezdozpdoa2aemq
-      '@typescript-eslint/parser': 5.42.1_rmayb2veg2btbq6mbmnyivgasy
-      '@vitest/coverage-c8': 0.23.4_upgr4zu6lczg6poy6g2njng6vm
-      '@vitest/ui': 0.23.4
-      concurrently: 7.5.0
-      coveralls: 3.1.1
-      cypress: 10.11.0
-      cypress-image-snapshot: 4.0.1_bg25yee4qeg7mpleuvd346a3tq
-      documentation: 13.2.0
-      esbuild: 0.15.13
-      eslint: 8.27.0
-      eslint-config-prettier: 8.5.0_eslint@8.27.0
-      eslint-plugin-cypress: 2.12.1_eslint@8.27.0
-      eslint-plugin-html: 7.1.0
-      eslint-plugin-jest: 27.1.5_kdswgjmqcx7mthqz7ow2zlfevy
-      eslint-plugin-jsdoc: 39.6.2_eslint@8.27.0
-      eslint-plugin-json: 3.1.0
-      eslint-plugin-markdown: 3.0.0_eslint@8.27.0
-      express: 4.18.2
-      globby: 13.1.2
-      husky: 8.0.2
-      identity-obj-proxy: 3.0.0
-      jest: 29.3.1_odkjkoia5xunhxkdrka32ib6vi
-      jison: 0.4.18
-      jsdom: 20.0.2
-      lint-staged: 13.0.3
-      markdown-it: 13.0.1
-      pnpm: 7.15.0
-      prettier: 2.7.1
-      prettier-plugin-jsdoc: 0.4.2_prettier@2.7.1
-      remark: 14.0.2
-      rimraf: 3.0.2
-      start-server-and-test: 1.14.0
-      ts-node: 10.9.1_cbe7ovvae6zqfnmtgctpgpys54
-      typescript: 4.8.4
-      unist-util-flatmap: 1.0.0
-      vite: 3.2.3_@types+node@18.11.9
-      vitepress: 1.0.0-alpha.28_ysryt2e75uhznkanan6iyjk4mi
-      vitepress-plugin-mermaid: 2.0.8_2q5vfj2vm6nj3r62ddjdsi7aoe
-      vitepress-plugin-search: 1.0.4-alpha.15_pb3anlaclwt5smse4ujf447uy4
-      vitest: 0.23.4_upgr4zu6lczg6poy6g2njng6vm
+      '@applitools/eyes-cypress':
+        specifier: ^3.27.1
+        version: 3.27.6
+      '@commitlint/cli':
+        specifier: ^17.1.2
+        version: 17.2.0
+      '@commitlint/config-conventional':
+        specifier: ^17.1.0
+        version: 17.2.0
+      '@types/d3':
+        specifier: ^7.4.0
+        version: 7.4.0
+      '@types/dompurify':
+        specifier: ^2.3.4
+        version: 2.3.4
+      '@types/eslint':
+        specifier: ^8.4.6
+        version: 8.4.10
+      '@types/express':
+        specifier: ^4.17.14
+        version: 4.17.14
+      '@types/jsdom':
+        specifier: ^20.0.0
+        version: 20.0.1
+      '@types/lodash':
+        specifier: ^4.14.186
+        version: 4.14.188
+      '@types/mdast':
+        specifier: ^3.0.10
+        version: 3.0.10
+      '@types/node':
+        specifier: ^18.11.9
+        version: 18.11.9
+      '@types/prettier':
+        specifier: ^2.7.1
+        version: 2.7.1
+      '@types/stylis':
+        specifier: ^4.0.2
+        version: 4.0.2
+      '@types/uuid':
+        specifier: ^8.3.4
+        version: 8.3.4
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^5.39.0
+        version: 5.42.1_2udltptbznfmezdozpdoa2aemq
+      '@typescript-eslint/parser':
+        specifier: ^5.39.0
+        version: 5.42.1_rmayb2veg2btbq6mbmnyivgasy
+      '@vitest/coverage-c8':
+        specifier: ^0.23.4
+        version: 0.23.4_upgr4zu6lczg6poy6g2njng6vm
+      '@vitest/ui':
+        specifier: ^0.23.4
+        version: 0.23.4
+      concurrently:
+        specifier: ^7.4.0
+        version: 7.5.0
+      coveralls:
+        specifier: ^3.1.1
+        version: 3.1.1
+      cypress:
+        specifier: ^10.0.0
+        version: 10.11.0
+      cypress-image-snapshot:
+        specifier: ^4.0.1
+        version: 4.0.1_bg25yee4qeg7mpleuvd346a3tq
+      documentation:
+        specifier: 13.2.0
+        version: 13.2.0
+      esbuild:
+        specifier: ^0.15.10
+        version: 0.15.13
+      eslint:
+        specifier: ^8.24.0
+        version: 8.27.0
+      eslint-config-prettier:
+        specifier: ^8.5.0
+        version: 8.5.0_eslint@8.27.0
+      eslint-plugin-cypress:
+        specifier: ^2.12.1
+        version: 2.12.1_eslint@8.27.0
+      eslint-plugin-html:
+        specifier: ^7.1.0
+        version: 7.1.0
+      eslint-plugin-jest:
+        specifier: ^27.1.0
+        version: 27.1.5_kdswgjmqcx7mthqz7ow2zlfevy
+      eslint-plugin-jsdoc:
+        specifier: ^39.3.6
+        version: 39.6.2_eslint@8.27.0
+      eslint-plugin-json:
+        specifier: ^3.1.0
+        version: 3.1.0
+      eslint-plugin-markdown:
+        specifier: ^3.0.0
+        version: 3.0.0_eslint@8.27.0
+      express:
+        specifier: ^4.18.1
+        version: 4.18.2
+      globby:
+        specifier: ^13.1.2
+        version: 13.1.2
+      husky:
+        specifier: ^8.0.1
+        version: 8.0.2
+      identity-obj-proxy:
+        specifier: ^3.0.0
+        version: 3.0.0
+      jest:
+        specifier: 29.x
+        version: 29.3.1_odkjkoia5xunhxkdrka32ib6vi
+      jison:
+        specifier: ^0.4.18
+        version: 0.4.18
+      jsdom:
+        specifier: ^20.0.1
+        version: 20.0.2
+      lint-staged:
+        specifier: ^13.0.3
+        version: 13.0.3
+      markdown-it:
+        specifier: ^13.0.1
+        version: 13.0.1
+      pnpm:
+        specifier: ^7.15.0
+        version: 7.15.0
+      prettier:
+        specifier: ^2.7.1
+        version: 2.7.1
+      prettier-plugin-jsdoc:
+        specifier: ^0.4.2
+        version: 0.4.2_prettier@2.7.1
+      remark:
+        specifier: ^14.0.2
+        version: 14.0.2
+      rimraf:
+        specifier: ^3.0.2
+        version: 3.0.2
+      start-server-and-test:
+        specifier: ^1.14.0
+        version: 1.14.0
+      ts-node:
+        specifier: ^10.9.1
+        version: 10.9.1_cbe7ovvae6zqfnmtgctpgpys54
+      typescript:
+        specifier: ^4.8.4
+        version: 4.8.4
+      unist-util-flatmap:
+        specifier: ^1.0.0
+        version: 1.0.0
+      vite:
+        specifier: ^3.1.4
+        version: 3.2.3_@types+node@18.11.9
+      vitepress:
+        specifier: ^1.0.0-alpha.19
+        version: 1.0.0-alpha.28_ysryt2e75uhznkanan6iyjk4mi
+      vitepress-plugin-mermaid:
+        specifier: ^2.0.8
+        version: 2.0.8_2q5vfj2vm6nj3r62ddjdsi7aoe
+      vitepress-plugin-search:
+        specifier: ^1.0.4-alpha.11
+        version: 1.0.4-alpha.15_pb3anlaclwt5smse4ujf447uy4
+      vitest:
+        specifier: ^0.23.4
+        version: 0.23.4_upgr4zu6lczg6poy6g2njng6vm
 
   packages/mermaid:
-    specifiers:
-      '@applitools/eyes-cypress': ^3.25.7
-      '@braintree/sanitize-url': ^6.0.0
-      '@commitlint/cli': ^17.1.2
-      '@commitlint/config-conventional': ^17.0.0
-      '@types/d3': ^7.4.0
-      '@types/dompurify': ^2.3.4
-      '@types/eslint': ^8.4.6
-      '@types/express': ^4.17.13
-      '@types/jsdom': ^20.0.0
-      '@types/lodash': ^4.14.185
-      '@types/prettier': ^2.7.0
-      '@types/stylis': ^4.0.2
-      '@types/uuid': ^8.3.4
-      '@typescript-eslint/eslint-plugin': ^5.37.0
-      '@typescript-eslint/parser': ^5.37.0
-      concurrently: ^7.4.0
-      coveralls: ^3.1.1
-      d3: ^7.0.0
-      dagre: ^0.8.5
-      dagre-d3: ^0.6.4
-      documentation: 13.2.0
-      dompurify: 2.4.0
-      eslint: ^8.23.1
-      eslint-config-prettier: ^8.5.0
-      eslint-plugin-cypress: ^2.12.1
-      eslint-plugin-html: ^7.1.0
-      eslint-plugin-jest: ^27.0.4
-      eslint-plugin-jsdoc: ^39.3.6
-      eslint-plugin-json: ^3.1.0
-      eslint-plugin-markdown: ^3.0.0
-      fast-clone: ^1.5.13
-      graphlib: ^2.1.8
-      identity-obj-proxy: ^3.0.0
-      jison: ^0.4.18
-      js-base64: 3.7.2
-      jsdom: ^20.0.0
-      khroma: ^2.0.0
-      lodash: ^4.17.21
-      moment-mini: ^2.24.0
-      non-layered-tidy-tree-layout: ^2.0.2
-      remark: ^14.0.2
-      rimraf: ^3.0.2
-      start-server-and-test: ^1.12.6
-      stylis: ^4.1.2
-      ts-node: ^10.9.1
-      typescript: ^4.8.3
-      unist-util-flatmap: ^1.0.0
-      uuid: ^9.0.0
     dependencies:
-      '@braintree/sanitize-url': 6.0.0
-      d3: 7.6.1
-      dagre: 0.8.5
-      dagre-d3: 0.6.4
-      dompurify: 2.4.0
-      fast-clone: 1.5.13
-      graphlib: 2.1.8
-      khroma: 2.0.0
-      lodash: 4.17.21
-      moment-mini: 2.29.4
-      non-layered-tidy-tree-layout: 2.0.2
-      stylis: 4.1.2
-      uuid: 9.0.0
+      '@braintree/sanitize-url':
+        specifier: ^6.0.0
+        version: 6.0.0
+      d3:
+        specifier: ^7.0.0
+        version: 7.6.1
+      dagre:
+        specifier: ^0.8.5
+        version: 0.8.5
+      dagre-d3:
+        specifier: ^0.6.4
+        version: 0.6.4
+      dompurify:
+        specifier: 2.4.0
+        version: 2.4.0
+      fast-clone:
+        specifier: ^1.5.13
+        version: 1.5.13
+      graphlib:
+        specifier: ^2.1.8
+        version: 2.1.8
+      khroma:
+        specifier: ^2.0.0
+        version: 2.0.0
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      moment-mini:
+        specifier: ^2.24.0
+        version: 2.29.4
+      non-layered-tidy-tree-layout:
+        specifier: ^2.0.2
+        version: 2.0.2
+      stylis:
+        specifier: ^4.1.2
+        version: 4.1.2
+      uuid:
+        specifier: ^9.0.0
+        version: 9.0.0
     devDependencies:
-      '@applitools/eyes-cypress': 3.27.1
-      '@commitlint/cli': 17.1.2
-      '@commitlint/config-conventional': 17.1.0
-      '@types/d3': 7.4.0
-      '@types/dompurify': 2.3.4
-      '@types/eslint': 8.4.6
-      '@types/express': 4.17.14
-      '@types/jsdom': 20.0.0
-      '@types/lodash': 4.14.185
-      '@types/prettier': 2.7.0
-      '@types/stylis': 4.0.2
-      '@types/uuid': 8.3.4
-      '@typescript-eslint/eslint-plugin': 5.38.0_wsb62dxj2oqwgas4kadjymcmry
-      '@typescript-eslint/parser': 5.38.0_irgkl5vooow2ydyo6aokmferha
-      concurrently: 7.4.0
-      coveralls: 3.1.1
-      documentation: 13.2.0
-      eslint: 8.23.1
-      eslint-config-prettier: 8.5.0_eslint@8.23.1
-      eslint-plugin-cypress: 2.12.1_eslint@8.23.1
-      eslint-plugin-html: 7.1.0
-      eslint-plugin-jest: 27.0.4_w7j56xfuh6bbmrubefdaspmpla
-      eslint-plugin-jsdoc: 39.3.6_eslint@8.23.1
-      eslint-plugin-json: 3.1.0
-      eslint-plugin-markdown: 3.0.0_eslint@8.23.1
-      identity-obj-proxy: 3.0.0
-      jison: 0.4.18
-      js-base64: 3.7.2
-      jsdom: 20.0.0
-      remark: 14.0.2
-      rimraf: 3.0.2
-      start-server-and-test: 1.14.0
-      ts-node: 10.9.1_h6wsvvmh4l7tb54yk3ecr4mgtm
-      typescript: 4.8.3
-      unist-util-flatmap: 1.0.0
+      '@applitools/eyes-cypress':
+        specifier: ^3.25.7
+        version: 3.27.1
+      '@commitlint/cli':
+        specifier: ^17.1.2
+        version: 17.1.2
+      '@commitlint/config-conventional':
+        specifier: ^17.0.0
+        version: 17.1.0
+      '@types/d3':
+        specifier: ^7.4.0
+        version: 7.4.0
+      '@types/dompurify':
+        specifier: ^2.3.4
+        version: 2.3.4
+      '@types/eslint':
+        specifier: ^8.4.6
+        version: 8.4.6
+      '@types/express':
+        specifier: ^4.17.13
+        version: 4.17.14
+      '@types/jsdom':
+        specifier: ^20.0.0
+        version: 20.0.0
+      '@types/lodash':
+        specifier: ^4.14.185
+        version: 4.14.185
+      '@types/prettier':
+        specifier: ^2.7.0
+        version: 2.7.0
+      '@types/stylis':
+        specifier: ^4.0.2
+        version: 4.0.2
+      '@types/uuid':
+        specifier: ^8.3.4
+        version: 8.3.4
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^5.37.0
+        version: 5.38.0_wsb62dxj2oqwgas4kadjymcmry
+      '@typescript-eslint/parser':
+        specifier: ^5.37.0
+        version: 5.38.0_irgkl5vooow2ydyo6aokmferha
+      concurrently:
+        specifier: ^7.4.0
+        version: 7.4.0
+      coveralls:
+        specifier: ^3.1.1
+        version: 3.1.1
+      documentation:
+        specifier: 13.2.0
+        version: 13.2.0
+      eslint:
+        specifier: ^8.23.1
+        version: 8.23.1
+      eslint-config-prettier:
+        specifier: ^8.5.0
+        version: 8.5.0_eslint@8.23.1
+      eslint-plugin-cypress:
+        specifier: ^2.12.1
+        version: 2.12.1_eslint@8.23.1
+      eslint-plugin-html:
+        specifier: ^7.1.0
+        version: 7.1.0
+      eslint-plugin-jest:
+        specifier: ^27.0.4
+        version: 27.0.4_w7j56xfuh6bbmrubefdaspmpla
+      eslint-plugin-jsdoc:
+        specifier: ^39.3.6
+        version: 39.3.6_eslint@8.23.1
+      eslint-plugin-json:
+        specifier: ^3.1.0
+        version: 3.1.0
+      eslint-plugin-markdown:
+        specifier: ^3.0.0
+        version: 3.0.0_eslint@8.23.1
+      identity-obj-proxy:
+        specifier: ^3.0.0
+        version: 3.0.0
+      jison:
+        specifier: ^0.4.18
+        version: 0.4.18
+      js-base64:
+        specifier: 3.7.2
+        version: 3.7.2
+      jsdom:
+        specifier: ^20.0.0
+        version: 20.0.0
+      remark:
+        specifier: ^14.0.2
+        version: 14.0.2
+      rimraf:
+        specifier: ^3.0.2
+        version: 3.0.2
+      start-server-and-test:
+        specifier: ^1.12.6
+        version: 1.14.0
+      ts-node:
+        specifier: ^10.9.1
+        version: 10.9.1_h6wsvvmh4l7tb54yk3ecr4mgtm
+      typescript:
+        specifier: ^4.8.3
+        version: 4.8.3
+      unist-util-flatmap:
+        specifier: ^1.0.0
+        version: 1.0.0
 
   packages/mermaid-example-diagram:
-    specifiers:
-      concurrently: ^7.4.0
-      rimraf: ^3.0.2
     devDependencies:
-      concurrently: 7.4.0
-      rimraf: 3.0.2
+      concurrently:
+        specifier: ^7.4.0
+        version: 7.4.0
+      rimraf:
+        specifier: ^3.0.2
+        version: 3.0.2
 
   packages/mermaid-mindmap:
-    specifiers:
-      '@braintree/sanitize-url': ^6.0.0
-      concurrently: ^7.4.0
-      cytoscape: ^3.23.0
-      cytoscape-cose-bilkent: ^4.1.0
-      cytoscape-fcose: ^2.1.0
-      d3: ^7.0.0
-      khroma: ^2.0.0
-      mermaid: workspace:*
-      non-layered-tidy-tree-layout: ^2.0.2
-      rimraf: ^3.0.2
     dependencies:
-      '@braintree/sanitize-url': 6.0.0
-      cytoscape: 3.23.0
-      cytoscape-cose-bilkent: 4.1.0_cytoscape@3.23.0
-      cytoscape-fcose: 2.1.0_cytoscape@3.23.0
-      d3: 7.6.1
-      khroma: 2.0.0
-      non-layered-tidy-tree-layout: 2.0.2
+      '@braintree/sanitize-url':
+        specifier: ^6.0.0
+        version: 6.0.0
+      cytoscape:
+        specifier: ^3.23.0
+        version: 3.23.0
+      cytoscape-cose-bilkent:
+        specifier: ^4.1.0
+        version: 4.1.0_cytoscape@3.23.0
+      cytoscape-fcose:
+        specifier: ^2.1.0
+        version: 2.1.0_cytoscape@3.23.0
+      d3:
+        specifier: ^7.0.0
+        version: 7.6.1
+      khroma:
+        specifier: ^2.0.0
+        version: 2.0.0
+      non-layered-tidy-tree-layout:
+        specifier: ^2.0.2
+        version: 2.0.2
     devDependencies:
-      concurrently: 7.4.0
-      mermaid: link:../mermaid
-      rimraf: 3.0.2
+      concurrently:
+        specifier: ^7.4.0
+        version: 7.4.0
+      mermaid:
+        specifier: workspace:*
+        version: link:../mermaid
+      rimraf:
+        specifier: ^3.0.2
+        version: 3.0.2
 
   tests/webpack:
-    specifiers:
-      '@mermaid-js/mermaid-mindmap': workspace:*
-      mermaid: workspace:*
-      webpack: ^5.74.0
-      webpack-cli: ^4.10.0
-      webpack-dev-server: ^4.11.1
     dependencies:
-      '@mermaid-js/mermaid-mindmap': link:../../packages/mermaid-mindmap
-      mermaid: link:../../packages/mermaid
+      '@mermaid-js/mermaid-mindmap':
+        specifier: workspace:*
+        version: link:../../packages/mermaid-mindmap
+      mermaid:
+        specifier: workspace:*
+        version: link:../../packages/mermaid
     devDependencies:
-      webpack: 5.75.0_webpack-cli@4.10.0
-      webpack-cli: 4.10.0_uaydpeuxkjjcxdbyfgk36cjdxi
-      webpack-dev-server: 4.11.1_pda42hcaj7d62cr262fr632kue
+      webpack:
+        specifier: ^5.74.0
+        version: 5.75.0_webpack-cli@4.10.0
+      webpack-cli:
+        specifier: ^4.10.0
+        version: 4.10.0_uaydpeuxkjjcxdbyfgk36cjdxi
+      webpack-dev-server:
+        specifier: ^4.11.1
+        version: 4.11.1_pda42hcaj7d62cr262fr632kue
 
 packages:
 
