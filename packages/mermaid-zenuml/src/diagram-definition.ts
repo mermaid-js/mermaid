@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { injectUtils } from './mermaidUtils';
-import zenUmlRenderer from './zenumlRenderer';
+import parser from './parser';
+import db from './db';
+import renderer from './zenumlRenderer';
 
 export const diagram = {
-  db: { clear: () => {} },
-  renderer: zenUmlRenderer,
-  parser: { parser: { parse: () => {} }, parse: () => {} },
+  db,
+  renderer,
+  parser,
   styles: () => {},
   injectUtils,
 };
