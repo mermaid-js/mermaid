@@ -1,13 +1,11 @@
-# Contributing to Mermaid 🙌
+# Contributing to Mermaid
 
 ## Contents
-
 - [Technical Requirements and Setup](#technical-requirements-and-setup)
-- [Development Installation](#development-installation)
 - [Contributing Code](#contributing-code)
 - [Contributing Documentation](#contributing-documentation)
-- [Have Questions or Suggestions?](#have-questions-or-suggestions)
-- [Last Words](#6-last-words)
+- [Questions or Suggestions?](#questions-or-suggestions)
+- [Last Words](#last-words)
 
 ---
 
@@ -19,12 +17,12 @@ Here are a few things to get you started on the right path.
 
 ## Technical Requirements and Setup
 
-These are the main tools we use for working with the code and information (including documentation):
+These are the main tools we use for working with the code and documentation:
 
 - [volta](https://volta.sh/) to manage node versions.
 - [Node.js](https://nodejs.org/en/). `volta install node`
 - [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
-- [npx](https://docs.npmjs.com/cli/v8/commands/npx) the packaged executor in npm; needed to install pnpm (see below)
+- [npx](https://docs.npmjs.com/cli/v8/commands/npx) the packaged executor in npm. This is needed [to install pnpm.](#2-install-pnpm)
 
 ### 1. Fork and clone the repository
 
@@ -66,7 +64,7 @@ The basic steps for contributing code are:
 3. **Let users know** that things have changed or been added in the documents! This is often overlooked, but _critical_
 4. **Submit** your code as a _pull request._
 
-### 1. Create a git branch for your work
+### 1. Checkout a git branch 
 
 Mermaid uses a [Git Flow](https://guides.github.com/introduction/flow/)–inspired approach to branching.
 [TODO - mermaid git diagram here]
@@ -85,7 +83,6 @@ Once the release happens we merge the `release` branch with `master` and delete 
 2. Check out the `develop` branch
 3. Create a new branch for your work. Please name the branch following our naming convention below.
 
-[TODO what about just changing documentation? how about docs/.... ]
 
 We use the follow naming convention for branches:
 
@@ -99,21 +96,19 @@ We use the follow naming convention for branches:
 - followed by an underscore ('\_')
 - followed by a short text description (but use dashes ('-') or underscores ('\_') instead of spaces)
 
-** Ex: A new feature described in issue 2945 that adds a new arrow type called 'florbs':**
+**Ex: A new feature described in issue 2945 that adds a new arrow type called 'florbs' to state diagrams**
 
-`feature/2945_state_diagrams_arrow_florbs`
+`feature/2945_state_diagram_arrow_florbs`
 
-** Ex: A bug described in issue 1123 that causes random ugly red text:**
-`bug/1123_random_ugly_red_text`
+**Ex: A bug described in issue 1123 that causes random ugly red text**
+`bug/1123_fix_random_ugly_red_text`
 
-### 2. Tests
+### 2. Write Tests
 
 Tests ensure that each function, module, or part of code does what it says it will do. This is critically
 important when other changes are made to ensure that existing code is not broken (no regression).
 
-The contents of <https://mermaid-js.github.io/mermaid/> are based on the docs from the `master` branch. Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid-js.github.io/mermaid/) once released.
-
-Just as important, the tests act as _specifications:_ they specify (or describe) what the code does (or should do).
+Just as important, the tests act as _specifications:_ they specify what the code does (or should do).
 Whenever someone is new to a section of code, they should be able to read the tests to get a thorough understanding of what it does and why.
 
 If you are fixing a bug, you should add tests to ensure that your code has actually fixed the bug, to specify/describe what the code is doing, and to ensure the bug doesn't happen again.
@@ -169,7 +164,7 @@ it('should render forks and joins', () => {
 [TODO - how to generate new screenshots]
 ....
 
-### 3. Documentation
+### 3. Update Documentation
 
 If the users have no way to know that things have changed, then you haven't really _fixed_ anything for the users; you've just added to making Mermaid feel broken.
 Likewise, if users don't know that there is a new feature that you've implemented, it will forever remain unknown and unused.
@@ -186,17 +181,19 @@ When it feels hard to write stuff out, explaining it to someone and having that 
 
 When in doubt, write up and submit what you can. It can be clarified and refined later. (With documentation, something is better than nothing!)
 
-### 4. Submitting your code as a pull request
+### 4. Submit your pull request
 
-We make all changes via Pull Requests. As we have many Pull Requests from developers new to mermaid, \
-we have put in place a process, wherein _knsv, Knut Sveidqvist_ is the primary reviewer of changes and merging pull requests. The process is as follows:
+We make all changes via Pull Requests (PRs). As we have many Pull Requests from developers new to Mermaid, \
+we have put in place a process wherein _knsv, Knut Sveidqvist_ is the primary reviewer of changes and merging pull requests. The process is as follows:
 
 - Large changes are reviewed by knsv or other developer asked to review by knsv
 - Smaller, low-risk changes like dependencies, documentation, etc. can be reviewed and merged by active collaborators
 
-**Reminder: Pull Requests should be directed to the develop branch.**
+**Reminder: Pull Requests should be submitted to the develop branch.**
 
 ## Contributing Documentation
+
+[TODO: This section is still a WIP. It still needs revision.]
 
 If it is not in the documentation, it's like it never happened. Wouldn't that be sad? With all the effort that was put into the feature?
 
@@ -213,6 +210,8 @@ Updates committed to the `master` branch are reflected in the [Mermaid Docs](htt
 We are a little less strict here, it is OK to commit directly in the `develop` branch if you are a collaborator.
 
 The documentation is located in the `src/docs` directory and organized according to relevant subfolder.
+
+The contents of <https://mermaid-js.github.io/mermaid/> are based on the docs from the `master` branch. Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid-js.github.io/mermaid/) once released.
 
 **The Docs Structure is dictated by [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/src/docs/_sidebar.md)**
 
@@ -253,7 +252,7 @@ To edit Docs on GitHub:
 5.  Submit your changes by clicking the button **Propose file change** at the bottom (by automatic creation of a fork and a new branch).
 6.  Create a Pull Request of your newly forked branch by clicking the green **Create Pull Request** button.
 
-## Have Questions or Suggestions?
+## Questions or Suggestions?
 
 #### First search to see if someone has already asked (and hopefully been answered) or suggested the same thing.
 
