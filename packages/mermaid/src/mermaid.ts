@@ -12,7 +12,7 @@ import { isDetailedError, type DetailedError } from './utils';
 import { registerDiagram } from './diagram-api/diagramAPI';
 import { ExternalDiagramDefinition } from './diagram-api/types';
 
-export type { MermaidConfig, DetailedError, ExternalDiagramDefinition };
+export type { MermaidConfig, DetailedError, ExternalDiagramDefinition, ParseErrorFunction };
 
 let externalDiagramsRegistered = false;
 /**
@@ -379,7 +379,7 @@ if (typeof document !== 'undefined') {
  * This is provided for environments where the mermaid object can't directly have a new member added
  * to it (eg. dart interop wrapper). (Initially there is no parseError member of mermaid).
  *
- * @param newParseErrorHandler - New parseError() callback.
+ * @param newParseErrorHandler New parseError() callback.
  */
 const setParseErrorHandler = function (newParseErrorHandler: (err: any, hash: any) => void) {
   mermaid.parseError = newParseErrorHandler;

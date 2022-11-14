@@ -15,14 +15,16 @@
     "git graph"
   ],
   "scripts": {
-    "build:vite": "ts-node-esm --transpileOnly --project=.vite/tsconfig.json .vite/build.ts",
+    "build:mermaid": "ts-node-esm --transpileOnly .vite/build.ts --mermaid",
+    "build:vite": "ts-node-esm --transpileOnly .vite/build.ts",
     "build:types": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-mindmap/tsconfig.json --emitDeclarationOnly",
     "build:watch": "pnpm build:vite --watch",
     "build": "pnpm run -r clean && concurrently \"pnpm build:vite\" \"pnpm build:types\"",
     "dev": "concurrently \"pnpm build:vite --watch\" \"ts-node-esm .vite/server.ts\"",
     "release": "pnpm build",
-    "lint": "eslint --cache --ignore-path .gitignore . && pnpm --filter mermaid run lint:jison && prettier --check .",
+    "lint": "eslint --cache --ignore-path .gitignore . && pnpm lint:jison && prettier --check .",
     "lint:fix": "eslint --fix --ignore-path .gitignore . && prettier --write . && ts-node-esm scripts/fixCSpell.ts",
+    "lint:jison": "ts-node-esm ./scripts/jison/lint.mts",
     "cypress": "cypress run",
     "cypress:open": "cypress open",
     "e2e": "start-server-and-test dev http://localhost:9000/ cypress",
@@ -32,6 +34,7 @@
     "test:coverage": "vitest --coverage",
     "prepublishOnly": "pnpm build && pnpm test",
     "prepare": "concurrently \"husky install\" \"pnpm build\"",
+    "postinstall": "./scripts/fixPnpmLock.sh",
     "pre-commit": "lint-staged"
   },
   "repository": {
@@ -50,24 +53,6 @@
       "page"
     ]
   },
-  "dependencies": {
-    "@braintree/sanitize-url": "6.0.2",
-    "@types/node": "18.11.9",
-    "@types/uuid": "8.3.4",
-    "d3": "7.6.1",
-    "dagre": "0.8.5",
-    "dagre-d3": "0.6.4",
-    "dompurify": "2.4.1",
-    "fast-clone": "1.5.13",
-    "graphlib": "2.1.8",
-    "khroma": "2.0.0",
-    "lodash": "4.17.21",
-    "moment-mini": "2.29.4",
-    "non-layered-tidy-tree-layout": "2.0.2",
-    "rollup": "2.79.1",
-    "stylis": "4.1.3",
-    "uuid": "9.0.0"
-  },
   "devDependencies": {
     "@applitools/eyes-cypress": "3.27.6",
     "@commitlint/cli": "17.2.0",
@@ -80,8 +65,10 @@
     "@types/jsdom": "20.0.1",
     "@types/lodash": "4.14.188",
     "@types/mdast": "3.0.10",
+    "@types/node": "^18.11.9",
     "@types/prettier": "2.7.1",
     "@types/stylis": "4.0.2",
+    "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "5.42.1",
     "@typescript-eslint/parser": "5.42.1",
     "@vitest/coverage-c8": "0.25.1",
