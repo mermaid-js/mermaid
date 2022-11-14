@@ -83,7 +83,7 @@
     "@commitlint/cli": "17.2.0",
     "@commitlint/config-conventional": "17.2.0",
     "@types/d3": "7.4.0",
-    "@types/dompurify": "2.3.4",
+    "@types/dompurify": "2.4.0",
     "@types/eslint": "8.4.10",
     "@types/express": "4.17.14",
     "@types/jsdom": "20.0.1",
