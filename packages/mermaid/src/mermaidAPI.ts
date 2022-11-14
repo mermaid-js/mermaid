@@ -32,7 +32,7 @@ import { evaluate } from './diagrams/common/common';
 import { isEmpty } from 'lodash';
 
 // diagram names that support classDef statements
-const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram'];
+const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram', 'stateDiagram-v2'];
 
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
   'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
