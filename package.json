@@ -34,7 +34,6 @@
     "test:coverage": "vitest --coverage",
     "prepublishOnly": "pnpm build && pnpm test",
     "prepare": "concurrently \"husky install\" \"pnpm build\"",
-    "postinstall": "./scripts/fixPnpmLock.sh",
     "pre-commit": "lint-staged"
   },
   "repository": {
