@@ -83,9 +83,8 @@ function parse(text: string, parseError?: ParseErrorFunction): boolean {
 }
 
 /**
- *
- * @param text
- * @param parseError
+ * @param text - The mermaid diagram definition.
+ * @param parseError - If set, handles errors.
  */
 async function parseAsync(text: string, parseError?: ParseErrorFunction): Promise<boolean> {
   addDiagrams();

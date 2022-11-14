@@ -217,7 +217,7 @@ const loadExternalDiagrams = async (diagrams: ExternalDiagramDefinition[]) => {
 };
 
 /**
- * Equivalent to {@link init()}, except an error will be thrown on error.
+ * Equivalent to {@link init}, except an error will be thrown on error.
  *
  * @alpha
  * @deprecated This is an internal function and will very likely be modified in v10, or earlier.
@@ -306,7 +306,9 @@ const initThrowsErrorsAsync = async function (
           if (typeof callback !== 'undefined') {
             callback(id);
           }
-          if (bindFunctions) bindFunctions(element);
+          if (bindFunctions) {
+            bindFunctions(element);
+          }
         },
         element
       );
@@ -327,8 +329,7 @@ const initialize = function (config: MermaidConfig) {
 /**
  * Used to register external diagram types.
  * @param diagrams - Array of {@link ExternalDiagramDefinition}.
- * @param opts
- * @param opts.lazyLoad - If true, the diagram will be loaded on demand.
+ * @param opts - If opts.lazyLoad is true, the diagram will be loaded on demand.
  */
 const registerExternalDiagrams = async (
   diagrams: ExternalDiagramDefinition[],
@@ -379,7 +380,7 @@ if (typeof document !== 'undefined') {
  * This is provided for environments where the mermaid object can't directly have a new member added
  * to it (eg. dart interop wrapper). (Initially there is no parseError member of mermaid).
  *
- * @param newParseErrorHandler New parseError() callback.
+ * @param newParseErrorHandler - New parseError() callback.
  */
 const setParseErrorHandler = function (newParseErrorHandler: (err: any, hash: any) => void) {
   mermaid.parseError = newParseErrorHandler;
@@ -410,7 +411,7 @@ const executeQueue = async () => {
 };
 
 /**
- * @param txt
+ * @param txt - The mermaid code to be parsed.
  * @deprecated This is an internal function and should not be used. Will be removed in v10.
  */
 const parseAsync = (txt: string): Promise<boolean> => {
@@ -438,44 +439,7 @@ const parseAsync = (txt: string): Promise<boolean> => {
   });
 };
 
-// const asynco = (id: string, delay: number) =>
-//   new Promise((res) => {
-//     setTimeout(() => {
-//       // This resolves for the promise for the queue handling
-//       res(id);
-//     }, delay);
-//   });
-
 /**
- * @param txt
- * @param id
- * @param delay
- * @deprecated This is an internal function and should not be used. Will be removed in v10.
- */
-// const test1 = (id: string, delay: number) => {
-//   const p = new Promise((resolve, reject) => {
-//     // This promise will resolve when the mermaidAPI.render call is done.
-//     // It will be queued first and will be executed when it is first in line
-//     const performCall = () =>
-//       new Promise((res) => {
-//         asynco(id, delay).then((r) => {
-//           // This resolves for the promise for the queue handling
-//           res(r);
-//           // This fullfills the promise sent to the value back to the original caller
-//           resolve(r + ' result to caller');
-//         });
-//       });
-//     executionQueue.push(performCall);
-//   });
-//   return p;
-// };
-
-/**
- * @param txt
- * @param id
- * @param text
- * @param cb
- * @param container
  * @deprecated This is an internal function and should not be used. Will be removed in v10.
  */
 const renderAsync = (
@@ -493,7 +457,7 @@ const renderAsync = (
           (r) => {
             // This resolves for the promise for the queue handling
             res(r);
-            // This fullfills the promise sent to the value back to the original caller
+            // This fulfills the promise sent to the value back to the original caller
             resolve(r);
           },
           (e) => {
