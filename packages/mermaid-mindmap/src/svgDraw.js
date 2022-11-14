@@ -159,7 +159,6 @@ const roundedRectBkg = function (elem, node) {
 /**
  * @param {object} elem The D3 dom element in which the node is to be added
  * @param {object} node The node to be added
- * @param section
  * @param fullSection
  * @param {object} conf The configuration object
  * @returns {number} The height nodes dom element
