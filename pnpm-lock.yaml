@@ -67,7 +67,7 @@ importers:
       prettier-plugin-jsdoc: 0.4.2
       remark: 14.0.2
       rimraf: 3.0.2
-      rollup: 2.79.1
+      rollup: 3.3.0
       start-server-and-test: 1.14.0
       stylis: 4.1.3
       ts-node: 10.9.1
@@ -93,7 +93,7 @@ importers:
       lodash: 4.17.21
       moment-mini: 2.29.4
       non-layered-tidy-tree-layout: 2.0.2
-      rollup: 2.79.1
+      rollup: 3.3.0
       stylis: 4.1.3
       uuid: 9.0.0
     devDependencies:
@@ -3123,7 +3123,7 @@ packages:
       fp-ts: 2.13.1
       inferred-types: 0.22.8_iyb77cyw3lw7duusvxyjdsflhu
       markdown-it: 13.0.1
-      vite-plugin-md: 0.20.4_ssclijsxphu2vue5hnv6ywl23u
+      vite-plugin-md: 0.20.4_krtt2tiffmjktlbkmj4b37llue
     transitivePeerDependencies:
       - '@edge-runtime/vm'
       - '@vitest/browser'
@@ -11370,6 +11370,14 @@ packages:
     hasBin: true
     optionalDependencies:
       fsevents: 2.3.2
+    dev: true
+
+  /rollup/3.3.0:
+    resolution: {integrity: sha512-wqOV/vUJCYEbWsXvwCkgGWvgaEnsbn4jxBQWKpN816CqsmCimDmCNJI83c6if7QVD4v/zlyRzxN7U2yDT5rfoA==}
+    engines: {node: '>=14.18.0', npm: '>=8.0.0'}
+    hasBin: true
+    optionalDependencies:
+      fsevents: 2.3.2
 
   /rsvp/4.8.5:
     resolution: {integrity: sha512-nfMOlASu9OnRJo1mbEk2cz0D56a1MBNrJ7orjRZQG10XDyuvwksKbuXNp6qa+kbn839HwjwhBzhFmdsaEAfauA==}
@@ -12937,7 +12945,7 @@ packages:
       replace-ext: 1.0.1
     dev: true
 
-  /vite-plugin-md/0.20.4_ssclijsxphu2vue5hnv6ywl23u:
+  /vite-plugin-md/0.20.4_krtt2tiffmjktlbkmj4b37llue:
     resolution: {integrity: sha512-W3Z59/ROS2X6OIwPwV2PjE+QkfW0UVGxyf3Z2JR0OLqGJ+Iy2SGA503m/vmATJv+C3DjeU8Oy8diQx1R+IyRwQ==}
     peerDependencies:
       '@rollup/pluginutils': ^4.2.1
@@ -12948,7 +12956,7 @@ packages:
       '@yankeeinlondon/happy-wrapper': 2.6.0_iyb77cyw3lw7duusvxyjdsflhu
       gray-matter: 4.0.3
       markdown-it: 13.0.1
-      rollup: 2.79.1
+      rollup: 3.3.0
       source-map-js: 1.0.2
     transitivePeerDependencies:
       - '@edge-runtime/vm'
@@ -13009,7 +13017,7 @@ packages:
       vitepress: ^0.21.6 || ^1.0.0 || ^1.0.0-alpha
     dependencies:
       mermaid: 9.1.7
-      vite-plugin-md: 0.20.4_ssclijsxphu2vue5hnv6ywl23u
+      vite-plugin-md: 0.20.4_krtt2tiffmjktlbkmj4b37llue
       vitepress: 1.0.0-alpha.28_ysryt2e75uhznkanan6iyjk4mi
     dev: true
 
