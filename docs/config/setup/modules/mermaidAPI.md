@@ -16,7 +16,7 @@ Renames and re-exports [mermaidAPI](mermaidAPI.md#mermaidapi)
 
 ### mermaidAPI
 
-• `Const` **mermaidAPI**: `Readonly`<{ `defaultConfig`: `MermaidConfig` = configApi.defaultConfig; `getConfig`: () => `MermaidConfig` = configApi.getConfig; `getSiteConfig`: () => `MermaidConfig` = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`options`: `MermaidConfig`) => `Promise`<`void`> ; `parse`: (`text`: `string`, `parseError?`: `ParseErrorFunction`) => `boolean` ; `parseDirective`: (`p`: `any`, `statement`: `string`, `context`: `string`, `type`: `string`) => `void` ; `render`: (`id`: `string`, `text`: `string`, `cb`: (`svgCode`: `string`, `bindFunctions?`: (`element`: `Element`) => `void`) => `void`, `container?`: `Element`) => `Promise`<`void`> ; `reset`: () => `void` ; `setConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.setConfig; `updateSiteConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.updateSiteConfig }>
+• `Const` **mermaidAPI**: `Readonly`<{ `defaultConfig`: `MermaidConfig` = configApi.defaultConfig; `getConfig`: () => `MermaidConfig` = configApi.getConfig; `getSiteConfig`: () => `MermaidConfig` = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`options`: `MermaidConfig`) => `Promise`<`void`> ; `parse`: (`text`: `string`, `parseError?`: `ParseErrorFunction`) => `boolean` ; `parseDirective`: (`p`: `any`, `statement`: `string`, `context`: `string`, `type`: `string`) => `void` ; `render`: (`id`: `string`, `text`: `string`, `cb`: (`svgCode`: `string`, `bindFunctions?`: (`element`: `Element`) => `void`) => `void`, `svgContainingElement?`: `Element`) => `Promise`<`void`> ; `reset`: () => `void` ; `setConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.setConfig; `updateSiteConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.updateSiteConfig }>
 
 ## mermaidAPI configuration defaults
 
@@ -80,19 +80,105 @@ mermaid.initialize(config);
 
 #### Defined in
 
-[mermaidAPI.ts:546](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L546)
+[mermaidAPI.ts:740](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L740)
 
 ## Functions
 
-### decodeEntities
+### appendDivSvgG
 
-▸ **decodeEntities**(`text`): `string`
+▸ **appendDivSvgG**(`parentRoot`, `id`, `enclosingDivId`, `divStyle?`, `svgXlink?`): `any`
+
+Append an enclosing div, then svg, then g (group) to the d3 parentRoot. Set attributes.
+Only set the style attribute on the enclosing div if divStyle is given.
+Only set the xmlns:xlink attribute on svg if svgXlink is given.
+Return the last node appended
 
 #### Parameters
 
-| Name   | Type     |
-| :----- | :------- |
-| `text` | `string` |
+| Name             | Type     | Description                                      |
+| :--------------- | :------- | :----------------------------------------------- |
+| `parentRoot`     | `any`    | the d3 node to append things to                  |
+| `id`             | `string` | the value to set the id attr to                  |
+| `enclosingDivId` | `string` | the id to set the enclosing div to               |
+| `divStyle?`      | `string` | if given, the style to set the enclosing div to  |
+| `svgXlink?`      | `string` | if given, the link to set the new svg element to |
+
+#### Returns
+
+`any`
+
+- returns the parentRoot that had nodes appended
+
+#### Defined in
+
+[mermaidAPI.ts:283](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L283)
+
+---
+
+### cleanUpSvgCode
+
+▸ **cleanUpSvgCode**(`svgCode?`, `inSandboxMode`, `useArrowMarkerUrls`): `string`
+
+Clean up svgCode. Do replacements needed
+
+#### Parameters
+
+| Name                 | Type      | Default value | Description                                                 |
+| :------------------- | :-------- | :------------ | :---------------------------------------------------------- |
+| `svgCode`            | `string`  | `''`          | the code to clean up                                        |
+| `inSandboxMode`      | `boolean` | `undefined`   | security level                                              |
+| `useArrowMarkerUrls` | `boolean` | `undefined`   | should arrow marker's use full urls? (vs. just the anchors) |
+
+#### Returns
+
+`string`
+
+the cleaned up svgCode
+
+#### Defined in
+
+[mermaidAPI.ts:234](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L234)
+
+---
+
+### createCssStyles
+
+▸ **createCssStyles**(`config`, `graphType`, `classDefs?`): `string`
+
+Create the user styles
+
+#### Parameters
+
+| Name        | Type            | Description                                            |
+| :---------- | :-------------- | :----------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| `config`    | `MermaidConfig` | configuration that has style and theme settings to use |
+| `graphType` | `string`        | used for checking if classDefs should be applied       |
+| `classDefs` | `undefined`     | `null`                                                 | `Record`<`string`, `DiagramStyleClassDef`> | the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...) |
+
+#### Returns
+
+`string`
+
+the string with all the user styles
+
+#### Defined in
+
+[mermaidAPI.ts:161](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L161)
+
+---
+
+### createUserStyles
+
+▸ **createUserStyles**(`config`, `graphType`, `classDefs`, `svgId`): `string`
+
+#### Parameters
+
+| Name        | Type                                       |
+| :---------- | :----------------------------------------- |
+| `config`    | `MermaidConfig`                            |
+| `graphType` | `string`                                   |
+| `classDefs` | `Record`<`string`, `DiagramStyleClassDef`> |
+| `svgId`     | `string`                                   |
 
 #### Returns
 
@@ -100,7 +186,54 @@ mermaid.initialize(config);
 
 #### Defined in
 
-[mermaidAPI.ts:72](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L72)
+[mermaidAPI.ts:211](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L211)
+
+---
+
+### cssImportantStyles
+
+▸ **cssImportantStyles**(`cssClass`, `element`, `cssClasses?`): `string`
+
+Create a CSS style that starts with the given class name, then the element,
+with an enclosing block that has each of the cssClasses followed by !important;
+
+#### Parameters
+
+| Name         | Type        | Default value | Description                                    |
+| :----------- | :---------- | :------------ | :--------------------------------------------- |
+| `cssClass`   | `string`    | `undefined`   | CSS class name                                 |
+| `element`    | `string`    | `undefined`   | CSS element                                    |
+| `cssClasses` | `string`\[] | `[]`          | list of CSS styles to append after the element |
+
+#### Returns
+
+`string`
+
+- the constructed string
+
+#### Defined in
+
+[mermaidAPI.ts:145](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L145)
+
+---
+
+### decodeEntities
+
+▸ **decodeEntities**(`text`): `string`
+
+#### Parameters
+
+| Name   | Type     | Description        |
+| :----- | :------- | :----------------- |
+| `text` | `string` | text to be decoded |
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[mermaidAPI.ts:119](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L119)
 
 ---
 
@@ -110,9 +243,9 @@ mermaid.initialize(config);
 
 #### Parameters
 
-| Name   | Type     |
-| :----- | :------- |
-| `text` | `string` |
+| Name   | Type     | Description        |
+| :----- | :------- | :----------------- |
+| `text` | `string` | text to be encoded |
 
 #### Returns
 
@@ -120,4 +253,56 @@ mermaid.initialize(config);
 
 #### Defined in
 
-[mermaidAPI.ts:46](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L46)
+[mermaidAPI.ts:90](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L90)
+
+---
+
+### putIntoIFrame
+
+▸ **putIntoIFrame**(`svgCode?`, `svgElement?`): `string`
+
+Put the svgCode into an iFrame. Return the iFrame code
+
+#### Parameters
+
+| Name          | Type     | Default value | Description                                                                  |
+| :------------ | :------- | :------------ | :--------------------------------------------------------------------------- |
+| `svgCode`     | `string` | `''`          | the svg code to put inside the iFrame                                        |
+| `svgElement?` | `any`    | `undefined`   | the d3 node that has the current svgElement so we can get the height from it |
+
+#### Returns
+
+`string`
+
+- the code with the iFrame that now contains the svgCode
+  TODO replace btoa(). Replace with buf.toString('base64')?
+
+#### Defined in
+
+[mermaidAPI.ts:262](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L262)
+
+---
+
+### removeExistingElements
+
+▸ **removeExistingElements**(`doc`, `isSandboxed`, `id`, `divSelector`, `iFrameSelector`): `void`
+
+Remove any existing elements from the given document
+
+#### Parameters
+
+| Name             | Type       | Description                                     |
+| :--------------- | :--------- | :---------------------------------------------- |
+| `doc`            | `Document` | the document to removed elements from           |
+| `isSandboxed`    | `boolean`  | whether or not we are in sandboxed mode         |
+| `id`             | `string`   | id for any existing SVG element                 |
+| `divSelector`    | `string`   | selector for any existing enclosing div element |
+| `iFrameSelector` | `string`   | selector for any existing iFrame element        |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[mermaidAPI.ts:334](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L334)
