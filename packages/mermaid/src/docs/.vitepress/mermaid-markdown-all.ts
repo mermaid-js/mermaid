@@ -1,5 +1,5 @@
 import type { MarkdownRenderer } from 'vitepress';
-import shiki from 'shiki';
+import { getHighlighter } from 'shiki';
 
 const MermaidExample = async (md: MarkdownRenderer) => {
   const defaultRenderer = md.renderer.rules.fence;
@@ -8,7 +8,7 @@ const MermaidExample = async (md: MarkdownRenderer) => {
     throw new Error('defaultRenderer is undefined');
   }
 
-  const highlighter = await shiki.getHighlighter({
+  const highlighter = await getHighlighter({
     theme: 'material-palenight',
     langs: ['mermaid'],
   });
@@ -28,8 +28,20 @@ const MermaidExample = async (md: MarkdownRenderer) => {
           <button class="copy"></button>
           <span class="lang">mermaid</span>
 ${highlight}
-          </div>
-          <h5>Diagram:</h5>`;
+          </div>`;
+    } else if (token.info.trim() === 'mermaid') {
+      const key = index;
+      return ` ${key}
+      <Suspense> 
+      <template #default>
+      <Mermaid id="mermaid-${key}"  graph="${encodeURIComponent(token.content)}"></Mermaid>
+      </template>
+        <!-- loading state via #fallback slot -->
+        <template #fallback>
+          Loading...
+        </template>
+      </Suspense>
+`;
     }
     if (token.info.trim() === 'warning') {
       return `<div class="warning custom-block"><p class="custom-block-title">WARNING</p><p>${token.content}}</p></div>`;

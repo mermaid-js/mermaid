@@ -1,12 +1,11 @@
 import DefaultTheme from 'vitepress/theme';
-// @ts-ignore
-import Mermaid from 'vitepress-plugin-mermaid/Mermaid.vue';
 import './custom.css';
-
+import Mermaid from './Mermaid.vue';
 export default {
   ...DefaultTheme,
-  enhanceApp({ app }) {
+  enhanceApp(ctx) {
     // register global components
-    app.component('Mermaid', Mermaid);
+    DefaultTheme.enhanceApp(ctx);
+    ctx.app.component('Mermaid', Mermaid);
   },
 };
