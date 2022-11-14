@@ -152,13 +152,70 @@ function sidebarCommunity() {
       collapsible: true,
       items: [
         { text: 'Overview for Beginners', link: '/community/n00b-overview' },
-        {
-          text: 'Development and Contribution',
-          link: '/community/development',
-        },
+        ...sidebarCommunityDevelopContribute(),
         { text: 'Adding Diagrams', link: '/community/newDiagram' },
         { text: 'Security', link: '/community/security' },
       ],
     },
   ];
+}
+
+// Development and Contributing
+function sidebarCommunityDevelopContribute() {
+  const PAGE_PATH = '/community/development';
+  return [
+    {
+      text: 'Contributing to Mermaid',
+      link: PAGE_PATH + '#contributing-to-mermaid',
+      collapsible: true,
+      items: [
+        {
+          text: 'Technical Requirements and Setup',
+          link: pathToId(PAGE_PATH, 'technical-requirements-and-setup'),
+        },
+        {
+          text: 'Contributing Code',
+          link: pathToId(PAGE_PATH, 'contributing-code'),
+          collapsible: true,
+          items: [
+            {
+              text: '1. Checkout a git branch',
+              link: pathToId(PAGE_PATH, '_1-checkout-a-git-branch'),
+            },
+            { text: '2. Write Tests', link: pathToId(PAGE_PATH, '_2-write-tests') },
+            {
+              text: '3. Update Documentation',
+              link: pathToId(PAGE_PATH, '_3-update-documentation'),
+            },
+            {
+              text: '4. Submit your pull request',
+              link: pathToId(PAGE_PATH, '_4-submit-your-pull-request'),
+            },
+          ],
+        },
+        {
+          text: 'Contributing Documentation',
+          link: pathToId(PAGE_PATH, 'contributing-documentation'),
+        },
+        {
+          text: 'Questions or Suggestions?',
+          link: pathToId(PAGE_PATH, 'questions-or-suggestions'),
+        },
+        {
+          text: 'Last Words',
+          link: pathToId(PAGE_PATH, 'last-words'),
+        },
+      ],
+    },
+  ];
+}
+
+/**
+ * Return a string that puts together the pagePage, a '#', then the given id
+ * @param  pagePath
+ * @param  id
+ * @returns  the fully formed path
+ */
+function pathToId(pagePath: string, id = ''): string {
+  return pagePath + '#' + id;
 }
