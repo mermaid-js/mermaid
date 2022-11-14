@@ -19,12 +19,6 @@ importers:
       '@cspell/eslint-plugin':
         specifier: 6.14.2
         version: 6.14.2
-      '@types/d3':
-        specifier: 7.4.0
-        version: 7.4.0
-      '@types/dompurify':
-        specifier: 2.4.0
-        version: 2.4.0
       '@types/eslint':
         specifier: 8.4.10
         version: 8.4.10
@@ -46,12 +40,6 @@ importers:
       '@types/prettier':
         specifier: 2.7.1
         version: 2.7.1
-      '@types/stylis':
-        specifier: 4.0.2
-        version: 4.0.2
-      '@types/uuid':
-        specifier: ^8.3.4
-        version: 8.3.4
       '@typescript-eslint/eslint-plugin':
         specifier: 5.42.1
         version: 5.42.1_2udltptbznfmezdozpdoa2aemq
@@ -133,9 +121,6 @@ importers:
       lint-staged:
         specifier: 13.0.3
         version: 13.0.3
-      markdown-it:
-        specifier: 13.0.1
-        version: 13.0.1
       path-browserify:
         specifier: 1.0.1
         version: 1.0.1
@@ -148,9 +133,6 @@ importers:
       prettier-plugin-jsdoc:
         specifier: 0.4.2
         version: 0.4.2_prettier@2.7.1
-      remark:
-        specifier: 14.0.2
-        version: 14.0.2
       rimraf:
         specifier: 3.0.2
         version: 3.0.2
@@ -163,9 +145,6 @@ importers:
       typescript:
         specifier: 4.8.4
         version: 4.8.4
-      unist-util-flatmap:
-        specifier: 1.0.0
-        version: 1.0.0
       vite:
         specifier: 3.2.3
         version: 3.2.3_@types+node@18.11.9
@@ -224,27 +203,12 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
     devDependencies:
-      '@applitools/eyes-cypress':
-        specifier: 3.27.6
-        version: 3.27.6
-      '@commitlint/cli':
-        specifier: 17.2.0
-        version: 17.2.0
-      '@commitlint/config-conventional':
-        specifier: 17.2.0
-        version: 17.2.0
       '@types/d3':
         specifier: 7.4.0
         version: 7.4.0
       '@types/dompurify':
         specifier: 2.4.0
         version: 2.4.0
-      '@types/eslint':
-        specifier: 8.4.10
-        version: 8.4.10
-      '@types/express':
-        specifier: 4.17.14
-        version: 4.17.14
       '@types/jsdom':
         specifier: 20.0.1
         version: 20.0.1
@@ -278,33 +242,6 @@ importers:
       coveralls:
         specifier: 3.1.1
         version: 3.1.1
-      eslint:
-        specifier: 8.27.0
-        version: 8.27.0
-      eslint-config-prettier:
-        specifier: 8.5.0
-        version: 8.5.0_eslint@8.27.0
-      eslint-plugin-cypress:
-        specifier: 2.12.1
-        version: 2.12.1_eslint@8.27.0
-      eslint-plugin-html:
-        specifier: 7.1.0
-        version: 7.1.0
-      eslint-plugin-jest:
-        specifier: 27.1.5
-        version: 27.1.5_dh5zoy5tprom2j3yddxus2umce
-      eslint-plugin-jsdoc:
-        specifier: 39.6.2
-        version: 39.6.2_eslint@8.27.0
-      eslint-plugin-json:
-        specifier: 3.1.0
-        version: 3.1.0
-      eslint-plugin-markdown:
-        specifier: 3.0.0
-        version: 3.0.0_eslint@8.27.0
-      express:
-        specifier: 4.18.2
-        version: 4.18.2
       globby:
         specifier: 13.1.2
         version: 13.1.2
@@ -320,9 +257,6 @@ importers:
       jsdom:
         specifier: 20.0.2
         version: 20.0.2
-      lint-staged:
-        specifier: 13.0.3
-        version: 13.0.3
       micromatch:
         specifier: ^4.0.5
         version: 4.0.5
@@ -335,9 +269,6 @@ importers:
       prettier:
         specifier: 2.7.1
         version: 2.7.1
-      prettier-plugin-jsdoc:
-        specifier: 0.4.2
-        version: 0.4.2_prettier@2.7.1
       remark:
         specifier: 14.0.2
         version: 14.0.2
@@ -350,9 +281,6 @@ importers:
       start-server-and-test:
         specifier: 1.14.0
         version: 1.14.0
-      ts-node:
-        specifier: 10.9.1
-        version: 10.9.1_cbe7ovvae6zqfnmtgctpgpys54
       typedoc:
         specifier: 0.23.18
         version: 0.23.18_typescript@4.8.4
@@ -5571,27 +5499,6 @@ packages:
     resolution: {integrity: sha512-fNLRraV/e6j8e3XYOC9xgND4j+U7b1Rq+OygMlLcMg+wI/IpVbF+ubQa3R78EjKB9njT6TQOlcK5rFKBVVtdfg==}
     dependencies:
       htmlparser2: 8.0.1
-    dev: true
-
-  /eslint-plugin-jest/27.1.5_dh5zoy5tprom2j3yddxus2umce:
-    resolution: {integrity: sha512-CK2dekZ5VBdzsOSOH5Fc1rwC+cWXjkcyrmf1RV714nDUDKu+o73TTJiDxpbILG8PtPPpAAl3ywzh5QA7Ft0mjA==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    peerDependencies:
-      '@typescript-eslint/eslint-plugin': ^5.0.0
-      eslint: ^7.0.0 || ^8.0.0
-      jest: '*'
-    peerDependenciesMeta:
-      '@typescript-eslint/eslint-plugin':
-        optional: true
-      jest:
-        optional: true
-    dependencies:
-      '@typescript-eslint/eslint-plugin': 5.42.1_2udltptbznfmezdozpdoa2aemq
-      '@typescript-eslint/utils': 5.42.1_rmayb2veg2btbq6mbmnyivgasy
-      eslint: 8.27.0
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
     dev: true
 
   /eslint-plugin-jest/27.1.5_kdswgjmqcx7mthqz7ow2zlfevy:

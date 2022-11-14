@@ -80,7 +80,7 @@ mermaid.initialize(config);
 
 #### Defined in
 
-[mermaidAPI.ts:950](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L950)
+[mermaidAPI.ts:949](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L949)
 
 ## Functions
 
@@ -111,7 +111,7 @@ Return the last node appended
 
 #### Defined in
 
-[mermaidAPI.ts:293](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L293)
+[mermaidAPI.ts:292](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L292)
 
 ---
 
@@ -137,7 +137,7 @@ the cleaned up svgCode
 
 #### Defined in
 
-[mermaidAPI.ts:244](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L244)
+[mermaidAPI.ts:243](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L243)
 
 ---
 
@@ -163,7 +163,7 @@ the string with all the user styles
 
 #### Defined in
 
-[mermaidAPI.ts:171](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L171)
+[mermaidAPI.ts:170](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L170)
 
 ---
 
@@ -186,7 +186,7 @@ the string with all the user styles
 
 #### Defined in
 
-[mermaidAPI.ts:221](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L221)
+[mermaidAPI.ts:220](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L220)
 
 ---
 
@@ -213,7 +213,7 @@ with an enclosing block that has each of the cssClasses followed by !important;
 
 #### Defined in
 
-[mermaidAPI.ts:155](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L155)
+[mermaidAPI.ts:154](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L154)
 
 ---
 
@@ -233,7 +233,7 @@ with an enclosing block that has each of the cssClasses followed by !important;
 
 #### Defined in
 
-[mermaidAPI.ts:129](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L129)
+[mermaidAPI.ts:128](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L128)
 
 ---
 
@@ -253,7 +253,7 @@ with an enclosing block that has each of the cssClasses followed by !important;
 
 #### Defined in
 
-[mermaidAPI.ts:100](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L100)
+[mermaidAPI.ts:99](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L99)
 
 ---
 
@@ -279,7 +279,7 @@ Put the svgCode into an iFrame. Return the iFrame code
 
 #### Defined in
 
-[mermaidAPI.ts:272](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L272)
+[mermaidAPI.ts:271](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L271)
 
 ---
 
@@ -305,4 +305,4 @@ Remove any existing elements from the given document
 
 #### Defined in
 
-[mermaidAPI.ts:344](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L344)
+[mermaidAPI.ts:343](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L343)
