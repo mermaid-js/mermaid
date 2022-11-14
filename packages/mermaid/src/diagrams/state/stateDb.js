@@ -31,9 +31,15 @@ const FILL_KEYWORD = 'fill';
 const BG_FILL = 'bgFill';
 const STYLECLASS_SEP = ',';
 
+// Returns a new list of classes.
+// In the future, this can be replaced with a class common to all diagrams.
+function newClassesList() {
+  return {};
+}
+
 let direction = DEFAULT_DIAGRAM_DIRECTION;
 let rootDoc = [];
-let classes = []; // style classes defined by a classDef
+let classes = newClassesList(); // style classes defined by a classDef
 
 const newDoc = () => {
   return {
@@ -274,7 +280,7 @@ export const clear = function (saveCommon) {
 
   // number of start and end nodes; used to construct ids
   startEndCount = 0;
-  classes = [];
+  classes = newClassesList();
   if (!saveCommon) {
     commonClear();
   }
