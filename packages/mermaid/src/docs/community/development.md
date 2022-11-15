@@ -59,7 +59,12 @@ The `test` script and others are in the top-level `package.json` file.
 
 The basic steps for contributing code are:
 
-1. **Create** a git branch and work on your code in the branch
+```mermaid
+graph LR
+    git[1. Checkout a  git branch] --> codeTest[2. write tests and code] --> doc[3. update documentation] --> submit[4.submit a PR]
+```
+
+1. **Create** and checkout a git branch and work on your code in the branch
 2. Write and update **tests** (unit and perhaps even integration (e2e) tests) (If you do TDD/BDD, the order might be different.)
 3. **Let users know** that things have changed or been added in the documents! This is often overlooked, but _critical_
 4. **Submit** your code as a _pull request._
@@ -67,7 +72,6 @@ The basic steps for contributing code are:
 ### 1. Checkout a git branch 
 
 Mermaid uses a [Git Flow](https://guides.github.com/introduction/flow/)–inspired approach to branching.
-[TODO - mermaid git diagram here]
 
 Development is done in the `develop` branch.
 
@@ -82,7 +86,6 @@ Once the release happens we merge the `release` branch with `master` and delete 
 1. Make sure you have the most up to date version of the `develop` branch. (fetch or pull to update it)
 2. Check out the `develop` branch
 3. Create a new branch for your work. Please name the branch following our naming convention below.
-
 
 We use the follow naming convention for branches:
 
