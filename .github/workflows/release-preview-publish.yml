@@ -10,21 +10,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
+          cache: pnpm
           node-version: 18.x
-      - name: Install Yarn
-        run: npm i yarn --global
+
+      - name: Install Packages
+        run: |
+          pnpm install --frozen-lockfile
+        env:
+          CYPRESS_CACHE_FOLDER: .cache/Cypress
 
       - name: Install Json
         run: npm i json --global
 
-      - name: Install Packages
-        run: yarn install --frozen-lockfile
-
       - name: Publish
         run: |
+          cd packages/mermaid
           PREVIEW_VERSION=8
           VERSION=$(echo ${{github.ref}} | tail -c +20)-preview.$PREVIEW_VERSION
           echo $VERSION
