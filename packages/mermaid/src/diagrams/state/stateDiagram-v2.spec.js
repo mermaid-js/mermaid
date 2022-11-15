@@ -1,23 +1,6 @@
-import { expectTypeOf } from 'vitest';
-
 import { parser } from './parser/stateDiagram';
 import stateDb from './stateDb';
 import stateDiagram from './parser/stateDiagram.jison';
-import stateRendererV2 from './stateRenderer-v2';
-
-// Can use this instead of having to register diagrams and load/orchestrate them, etc.
-class FauxDiagramObj {
-  db = stateDb;
-  parser = parser;
-  renderer = stateRendererV2;
-
-  constructor(options = { db: stateDb, parser: parser, renderer: stateRendererV2 }) {
-    this.db = options.db;
-    this.parser = options.parser;
-    this.renderer = options.renderer;
-    this.parser.yy = this.db;
-  }
-}
 
 describe('state diagram V2, ', function () {
   // TODO - these examples should be put into ./parser/stateDiagram.spec.js
@@ -439,18 +422,6 @@ describe('state diagram V2, ', function () {
       expect(rel_Inactive_Idle.relationTitle).toEqual('ACT');
       const rel_Active_Active = rels.find((rel) => rel.id1 === 'Active' && rel.id2 === 'Active');
       expect(rel_Active_Active.relationTitle).toEqual('LOG');
-    });
-  });
-
-  describe('stateRenderer-v2', () => {
-    describe('getClasses', () => {
-      const diagramText = 'statediagram-v2\n';
-      const fauxStateDiagram = new FauxDiagramObj();
-
-      it('returns a {}', () => {
-        const result = stateRendererV2.getClasses(diagramText, fauxStateDiagram);
-        expectTypeOf(result).toBeObject();
-      });
     });
   });
 });
