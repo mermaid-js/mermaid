@@ -58,7 +58,6 @@ const G_EDGE_LABELTYPE = 'text';
 const G_EDGE_THICKNESS = 'normal';
 
 // --------------------------------------
-let diagramStates = [];
 // List of nodes created from the parsed diagram statement items
 let nodeDb = {};
 
@@ -91,7 +90,6 @@ export const getClasses = function (text, diagramObj) {
     diagramObj.parser.parse(text);
     // must run extract() to turn the parsed statements into states, relationships, classes, etc.
     diagramObj.db.extract(diagramObj.db.getRootDocV2());
-
     return diagramObj.db.getClasses();
   } catch (e) {
     return e;
@@ -99,7 +97,7 @@ export const getClasses = function (text, diagramObj) {
 };
 
 /**
- * Get classes from the db info item.
+ * Get classes from the db for the info item.
  * If there aren't any or if dbInfoItem isn't defined, return an empty string.
  * Else create 1 string from the list of classes found
  *
@@ -124,7 +122,7 @@ function getClassesFromDbInfo(dbInfoItem) {
  *
  * @param itemId
  * @param counter
- * @param type
+ * @param {string | null} type
  * @param typeSpacer
  * @returns {string}
  */
@@ -139,10 +137,11 @@ export function stateDomId(itemId = '', counter = 0, type = '', typeSpacer = DOM
  * @param g - graph
  * @param {object} parent
  * @param {object} parsedItem - parsed statement item
+ * @param {object[]} diagramStates - the list of all known  states for the diagram
  * @param {object} diagramDb
  * @param {boolean} altFlag - for clusters, add the "statediagram-cluster-alt" CSS class
  */
-const setupNode = (g, parent, parsedItem, diagramDb, altFlag) => {
+const setupNode = (g, parent, parsedItem, diagramStates, diagramDb, altFlag) => {
   const itemId = parsedItem.id;
   const classStr = getClassesFromDbInfo(diagramStates[itemId]);
 
@@ -299,7 +298,7 @@ const setupNode = (g, parent, parsedItem, diagramDb, altFlag) => {
   }
   if (parsedItem.doc) {
     log.trace('Adding nodes children ');
-    setupDoc(g, parsedItem, parsedItem.doc, diagramDb, !altFlag);
+    setupDoc(g, parsedItem, parsedItem.doc, diagramStates, diagramDb, !altFlag);
   }
 };
 
@@ -310,25 +309,26 @@ const setupNode = (g, parent, parsedItem, diagramDb, altFlag) => {
  * @param g
  * @param parentParsedItem - parsed Item that is the parent of this document (doc)
  * @param doc - the document to set up
+ * @param {object} diagramStates - the list of all known  states for the diagram
  * @param diagramDb
- * @param altFlag
+ * @param {boolean} altFlag
  * @todo This duplicates some of what is done in stateDb.js extract method
  */
-const setupDoc = (g, parentParsedItem, doc, diagramDb, altFlag) => {
+const setupDoc = (g, parentParsedItem, doc, diagramStates, diagramDb, altFlag) => {
   // graphItemCount = 0;
   log.trace('items', doc);
   doc.forEach((item) => {
     switch (item.stmt) {
       case STMT_STATE:
-        setupNode(g, parentParsedItem, item, diagramDb, altFlag);
+        setupNode(g, parentParsedItem, item, diagramStates, diagramDb, altFlag);
         break;
       case DEFAULT_STATE_TYPE:
-        setupNode(g, parentParsedItem, item, diagramDb, altFlag);
+        setupNode(g, parentParsedItem, item, diagramStates, diagramDb, altFlag);
         break;
       case STMT_RELATION:
         {
-          setupNode(g, parentParsedItem, item.state1, diagramDb, altFlag);
-          setupNode(g, parentParsedItem, item.state2, diagramDb, altFlag);
+          setupNode(g, parentParsedItem, item.state1, diagramStates, diagramDb, altFlag);
+          setupNode(g, parentParsedItem, item.state2, diagramStates, diagramDb, altFlag);
           const edgeData = {
             id: 'edge' + graphItemCount,
             arrowhead: 'normal',
@@ -417,7 +417,7 @@ export const draw = function (text, id, _version, diag) {
       return {};
     });
 
-  setupNode(g, undefined, diag.db.getRootDocV2(), diag.db, true);
+  setupNode(g, undefined, diag.db.getRootDocV2(), diagramStates, diag.db, true);
 
   // Set up an SVG group so that we can translate the final graph.
   let sandboxElement;
