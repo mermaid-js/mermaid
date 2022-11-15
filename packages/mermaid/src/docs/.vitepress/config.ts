@@ -30,6 +30,7 @@ export default defineConfig({
   },
 });
 
+// Top (across the page) menu
 function nav() {
   return [
     { text: 'Intro', link: '/intro/', activeMatch: '/intro/' },
@@ -54,7 +55,7 @@ function nav() {
         },
         {
           text: 'Contributing',
-          link: 'https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md',
+          link: '/community/development',
         },
       ],
     },
