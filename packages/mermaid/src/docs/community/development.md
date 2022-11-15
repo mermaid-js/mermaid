@@ -197,6 +197,8 @@ When in doubt, write up and submit what you can. It can be clarified and refined
 
 ### 4. Submit your pull request
 
+[TODO - PR titles should start with (fix | feat | ....)]
+
 We make all changes via Pull Requests (PRs). As we have many Pull Requests from developers new to Mermaid, \
 we have put in place a process wherein _knsv, Knut Sveidqvist_ is the primary reviewer of changes and merging pull requests. The process is as follows:
 
