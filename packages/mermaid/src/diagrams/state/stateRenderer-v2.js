@@ -58,11 +58,7 @@ const G_EDGE_LABELTYPE = 'text';
 const G_EDGE_THICKNESS = 'normal';
 
 // --------------------------------------
-// When information is parsed and processed (extracted) by stateDb.extract()
-// These are globals so the information can be accessed as needed (e.g. in setUpNode, etc.)
 let diagramStates = [];
-let diagramClasses = [];
-
 // List of nodes created from the parsed diagram statement items
 let nodeDb = {};
 
@@ -81,18 +77,14 @@ export const setConf = function (cnf) {
 };
 
 /**
- * Returns the all the styles from classDef statements in the graph definition.
+ * Returns the all the classdef styles (a.k.a. classes) from classDef statements in the graph definition.
  *
  * @param {string} text - the diagram text to be parsed
- * @param {Diagram} diagramObj
- * @returns {object} ClassDef styles
+ * @param diagramObj
+ * @returns {object} ClassDef styles (a Map with keys = strings, values = )
  */
 export const getClasses = function (text, diagramObj) {
   log.trace('Extracting classes');
-  if (diagramClasses.length > 0) {
-    return diagramClasses; // we have already extracted the classes
-  }
-
   diagramObj.db.clear();
   try {
     // Parse the graph definition
@@ -407,8 +399,7 @@ export const draw = function (text, id, _version, diag) {
   diag.db.extract(diag.db.getRootDocV2());
   log.info(diag.db.getRootDocV2());
 
-  diagramStates = diag.db.getStates();
-  diagramClasses = diag.db.getClasses();
+  const diagramStates = diag.db.getStates();
 
   // Create the input mermaid.graph
   const g = new graphlib.Graph({
