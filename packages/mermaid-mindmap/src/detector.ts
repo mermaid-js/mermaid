@@ -1,10 +1,20 @@
-export const id = 'mindmap';
+import type { ExternalDiagramDefinition } from 'mermaid';
 
-export const detector = (txt: string) => {
+const id = 'mindmap';
+
+const detector = (txt: string) => {
   return txt.match(/^\s*mindmap/) !== null;
 };
 
-export const loadDiagram = async () => {
+const loader = async () => {
   const { diagram } = await import('./diagram-definition');
   return { id, diagram };
 };
+
+const plugin: ExternalDiagramDefinition = {
+  id,
+  detector,
+  loader,
+};
+
+export default plugin;

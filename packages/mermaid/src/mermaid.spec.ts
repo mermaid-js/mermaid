@@ -54,6 +54,88 @@ describe('when using mermaid and ', function () {
       expect(mermaidAPI.render).toHaveBeenCalled();
     });
   });
+  describe('when using #registerExternalDiagrams', function () {
+    it('should throw error (but still render) if registerExternalDiagrams fails', async () => {
+      const node = document.createElement('div');
+      node.appendChild(document.createTextNode('graph TD;\na;'));
+
+      await expect(
+        mermaid.registerExternalDiagrams(
+          [
+            {
+              id: 'dummy',
+              detector: (text) => /dummy/.test(text),
+              loader: () => Promise.reject('error'),
+            },
+          ],
+          { lazyLoad: false }
+        )
+      ).rejects.toThrow('Failed to load 1 external diagrams');
+
+      expect(() => mermaid.initThrowsErrorsAsync(undefined, node)).not.toThrow();
+      // should still render, even if lazyLoadedDiagrams fails
+      expect(mermaidAPI.renderAsync).toHaveBeenCalled();
+    });
+
+    it('should defer diagram load based on parameter', async () => {
+      let loaded = false;
+      const dummyDiagram = {
+        db: {},
+        renderer: () => {
+          // do nothing
+        },
+        parser: () => {
+          // do nothing
+        },
+        styles: () => {
+          // do nothing
+        },
+      };
+      await expect(
+        mermaid.registerExternalDiagrams(
+          [
+            {
+              id: 'dummy',
+              detector: (text) => /dummy/.test(text),
+              loader: () => {
+                loaded = true;
+                return Promise.resolve({
+                  id: 'dummy',
+                  diagram: dummyDiagram,
+                });
+              },
+            },
+          ],
+          { lazyLoad: true }
+        )
+      ).resolves.toBe(undefined);
+      expect(loaded).toBe(false);
+      await expect(
+        mermaid.registerExternalDiagrams(
+          [
+            {
+              id: 'dummy2',
+              detector: (text) => /dummy2/.test(text),
+              loader: () => {
+                loaded = true;
+                return Promise.resolve({
+                  id: 'dummy2',
+                  diagram: dummyDiagram,
+                });
+              },
+            },
+          ],
+          { lazyLoad: false }
+        )
+      ).resolves.toBe(undefined);
+      expect(loaded).toBe(true);
+    });
+
+    afterEach(() => {
+      // we modify mermaid config in some tests, so we need to make sure to reset them
+      mermaidAPI.reset();
+    });
+  });
 
   describe('checking validity of input ', function () {
     it('should throw for an invalid definition', function () {

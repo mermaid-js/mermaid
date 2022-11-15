@@ -83,7 +83,16 @@ function parse(text: string, parseError?: ParseErrorFunction): boolean {
 }
 
 /**
- *
+ * @param text - The mermaid diagram definition.
+ * @param parseError - If set, handles errors.
+ */
+async function parseAsync(text: string, parseError?: ParseErrorFunction): Promise<boolean> {
+  addDiagrams();
+  const diagram = await getDiagramFromText(text, parseError);
+  return diagram.parse(text, parseError);
+}
+
+/**
  * @param  text - text to be encoded
  * @returns
  */
@@ -370,19 +379,218 @@ export const removeExistingElements = (
  * @param id - The id for the SVG element (the element to be rendered)
  * @param text - The text for the graph definition
  * @param cb - Callback which is called after rendering is finished with the svg code as in param.
- * @param svgContainingElement - HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
+ * @param container - HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
  *   If no svgContainingElement is provided then the SVG element will be appended to the body.
  *    Selector to element in which a div with the graph temporarily will be
  *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
  *   element will be removed when rendering is completed.
- * @returns - Resolves when finished rendering.
+ * @returns Returns the rendered element as a string containing the SVG definition.
  */
-const render = async function (
+const render = function (
   id: string,
   text: string,
-  cb: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
+  cb?: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
   svgContainingElement?: Element
-): Promise<void> {
+): string {
+  addDiagrams();
+
+  configApi.reset();
+
+  // Add Directives. Must do this before getting the config and before creating the diagram.
+  const graphInit = utils.detectInit(text);
+  if (graphInit) {
+    directiveSanitizer(graphInit);
+    configApi.addDirective(graphInit);
+  }
+
+  const config = configApi.getConfig();
+  log.debug(config);
+
+  // Check the maximum allowed text size
+  // TODO: Remove magic number
+  if (text.length > (config?.maxTextSize ?? 50000)) {
+    text = MAX_TEXTLENGTH_EXCEEDED_MSG;
+  }
+
+  // clean up text CRLFs
+  text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
+
+  const idSelector = '#' + id;
+  const iFrameID = 'i' + id;
+  const iFrameID_selector = '#' + iFrameID;
+  const enclosingDivID = 'd' + id;
+  const enclosingDivID_selector = '#' + enclosingDivID;
+
+  let root: any = select('body');
+
+  const isSandboxed = config.securityLevel === SECURITY_LVL_SANDBOX;
+  const isLooseSecurityLevel = config.securityLevel === SECURITY_LVL_LOOSE;
+
+  const fontFamily = config.fontFamily;
+
+  // -------------------------------------------------------------------------------
+  // Define the root d3 node
+  // In regular execution the svgContainingElement will be the element with a mermaid class
+
+  if (typeof svgContainingElement !== 'undefined') {
+    if (svgContainingElement) {
+      svgContainingElement.innerHTML = '';
+    }
+
+    if (isSandboxed) {
+      // If we are in sandboxed mode, we do everything mermaid related in a (sandboxed )iFrame
+      const iframe = sandboxedIframe(select(svgContainingElement), iFrameID);
+      root = select(iframe.nodes()[0]!.contentDocument!.body);
+      root.node().style.margin = 0;
+    } else {
+      root = select(svgContainingElement);
+    }
+    appendDivSvgG(root, id, enclosingDivID, `font-family: ${fontFamily}`, XMLNS_XLINK_STD);
+  } else {
+    // No svgContainingElement was provided
+
+    // If there is an existing element with the id, we remove it. This likely a previously rendered diagram
+    removeExistingElements(document, isSandboxed, id, iFrameID_selector, enclosingDivID_selector);
+
+    // Add the temporary div used for rendering with the enclosingDivID.
+    // This temporary div will contain a svg with the id == id
+
+    if (isSandboxed) {
+      // If we are in sandboxed mode, we do everything mermaid related in a (sandboxed) iFrame
+      const iframe = sandboxedIframe(select('body'), iFrameID);
+      root = select(iframe.nodes()[0]!.contentDocument!.body);
+      root.node().style.margin = 0;
+    } else {
+      root = select('body');
+    }
+
+    appendDivSvgG(root, id, enclosingDivID);
+  }
+
+  text = encodeEntities(text);
+
+  // -------------------------------------------------------------------------------
+  // Create the diagram
+
+  // Important that we do not create the diagram until after the directives have been included
+  let diag;
+  let parseEncounteredException;
+
+  try {
+    // diag = new Diagram(text);
+    diag = getDiagramFromText(text);
+    if ('then' in diag) {
+      throw new Error('Diagram is a promise. Use renderAsync.');
+    }
+  } catch (error) {
+    diag = new Diagram('error');
+    parseEncounteredException = error;
+  }
+
+  // Get the temporary div element containing the svg
+  const element = root.select(enclosingDivID_selector).node();
+  const graphType = diag.type;
+
+  // -------------------------------------------------------------------------------
+  // Create and insert the styles (user styles, theme styles, config styles)
+
+  // Insert an element into svg. This is where we put the styles
+  const svg = element.firstChild;
+  const firstChild = svg.firstChild;
+  const diagramClassDefs = CLASSDEF_DIAGRAMS.includes(graphType)
+    ? diag.renderer.getClasses(text, diag)
+    : {};
+
+  const rules = createUserStyles(
+    config,
+    graphType,
+    // @ts-ignore convert renderer to TS.
+    diagramClassDefs,
+    idSelector
+  );
+
+  const style1 = document.createElement('style');
+  style1.innerHTML = `${idSelector} ` + rules;
+  svg.insertBefore(style1, firstChild);
+
+  // -------------------------------------------------------------------------------
+  // Draw the diagram with the renderer
+  try {
+    diag.renderer.draw(text, id, pkg.version, diag);
+  } catch (e) {
+    errorRenderer.draw(text, id, pkg.version);
+    throw e;
+  }
+
+  // -------------------------------------------------------------------------------
+  // Clean up SVG code
+  root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
+
+  // Fix for when the base tag is used
+  let svgCode = root.select(enclosingDivID_selector).node().innerHTML;
+
+  log.debug('config.arrowMarkerAbsolute', config.arrowMarkerAbsolute);
+  svgCode = cleanUpSvgCode(svgCode, isSandboxed, evaluate(config.arrowMarkerAbsolute));
+
+  if (isSandboxed) {
+    const svgEl = root.select(enclosingDivID_selector + ' svg').node();
+    svgCode = putIntoIFrame(svgCode, svgEl);
+  } else if (isLooseSecurityLevel) {
+    // Sanitize the svgCode using DOMPurify
+    svgCode = DOMPurify.sanitize(svgCode, {
+      ADD_TAGS: DOMPURE_TAGS,
+      ADD_ATTR: DOMPURE_ATTR,
+    });
+  }
+
+  // -------------------------------------------------------------------------------
+  // Do any callbacks (cb = callback)
+  if (typeof cb !== 'undefined') {
+    switch (graphType) {
+      case 'flowchart':
+      case 'flowchart-v2':
+        cb(svgCode, flowDb.bindFunctions);
+        break;
+      case 'gantt':
+        cb(svgCode, ganttDb.bindFunctions);
+        break;
+      case 'class':
+      case 'classDiagram':
+        cb(svgCode, classDb.bindFunctions);
+        break;
+      default:
+        cb(svgCode);
+    }
+  } else {
+    log.debug('CB = undefined!');
+  }
+  attachFunctions();
+
+  // -------------------------------------------------------------------------------
+  // Remove the temporary element if appropriate
+  const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
+  const node = select(tmpElementSelector).node();
+  if (node && 'remove' in node) {
+    node.remove();
+  }
+
+  if (parseEncounteredException) {
+    throw parseEncounteredException;
+  }
+
+  return svgCode;
+};
+
+/**
+ * @deprecated This is an internal function and should not be used. Will be removed in v10.
+ */
+
+const renderAsync = async function (
+  id: string,
+  text: string,
+  cb?: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
+  svgContainingElement?: Element
+): Promise<string> {
   addDiagrams();
 
   configApi.reset();
@@ -506,7 +714,7 @@ const render = async function (
   try {
     await diag.renderer.draw(text, id, pkg.version, diag);
   } catch (e) {
-    await errorRenderer.draw(text, id, pkg.version);
+    errorRenderer.draw(text, id, pkg.version);
     throw e;
   }
 
@@ -648,8 +856,8 @@ const handleDirective = function (p: any, directive: any, type: string): void {
 
 /**
  * @param  options - Initial Mermaid options
- * */
-async function initialize(options: MermaidConfig) {
+ */
+function initialize(options: MermaidConfig = {}) {
   // Handle legacy location of font-family configuration
   if (options?.fontFamily) {
     if (!options.themeVariables?.fontFamily) {
@@ -737,9 +945,12 @@ async function initialize(options: MermaidConfig) {
  *   mermaid.initialize(config);
  * ```
  */
+
 export const mermaidAPI = Object.freeze({
   render,
+  renderAsync,
   parse,
+  parseAsync,
   parseDirective,
   initialize,
   getConfig: configApi.getConfig,
@@ -757,5 +968,4 @@ export const mermaidAPI = Object.freeze({
 
 setLogLevel(configApi.getConfig().logLevel);
 configApi.reset(configApi.getConfig());
-
 export default mermaidAPI;

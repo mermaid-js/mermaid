@@ -3,7 +3,10 @@
 import DOMPurify from 'dompurify';
 
 export interface MermaidConfig {
+  /** @deprecated use mermaid.registerLazyDiagrams instead */
   lazyLoadedDiagrams?: string[];
+  /** @deprecated use mermaid.registerLazyDiagrams instead */
+  loadExternalDiagramsAtStartup?: boolean;
   theme?: string;
   themeVariables?: any;
   themeCSS?: string;
