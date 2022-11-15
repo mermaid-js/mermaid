@@ -309,7 +309,7 @@ export const getRelations = function () {
  * else return the given id
  *
  * @param {string} id
- * @returns {{id: string, type: string}} - the id and type that should be used
+ * @returns {string} - the id (original or constructed)
  */
 function startIdIfNeeded(id = '') {
   let fixedId = id;
@@ -338,7 +338,7 @@ function startTypeIfNeeded(id = '', type = DEFAULT_STATE_TYPE) {
  * else return the given id
  *
  * @param {string} id
- * @returns {{id: string, type: string}} - the id and type that should be used
+ * @returns {string} - the id (original or constructed)
  */
 function endIdIfNeeded(id = '') {
   let fixedId = id;
@@ -451,7 +451,7 @@ const getDividerId = () => {
  * @example classDef my-style fill:#f96;
  *
  * @param {string} id - the id of this (style) class
- * @param  {string} styleAttributes - the string with 1 or more style attributes (each separated by a comma)
+ * @param  {string | null} styleAttributes - the string with 1 or more style attributes (each separated by a comma)
  */
 export const addStyleClass = function (id, styleAttributes = '') {
   // create a new style class object with this id
