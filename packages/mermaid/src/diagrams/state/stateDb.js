@@ -36,7 +36,7 @@ const STYLECLASS_SEP = ',';
  * In the future, this can be replaced with a class common to all diagrams.
  * ClassDef information = { id: id, styles: [], textStyles: [] }
  *
- * @return {{}}
+ * @returns {{}}
  */
 function newClassesList() {
   return {};
