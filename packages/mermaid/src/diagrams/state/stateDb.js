@@ -31,8 +31,13 @@ const FILL_KEYWORD = 'fill';
 const BG_FILL = 'bgFill';
 const STYLECLASS_SEP = ',';
 
-// Returns a new list of classes.
-// In the future, this can be replaced with a class common to all diagrams.
+/**
+ * Returns a new list of classes.
+ * In the future, this can be replaced with a class common to all diagrams.
+ * ClassDef information = { id: id, styles: [], textStyles: [] }
+ *
+ * @return {{}}
+ */
 function newClassesList() {
   return {};
 }
@@ -276,8 +281,6 @@ export const clear = function (saveCommon) {
   };
   currentDocument = documents.root;
 
-  currentDocument = documents.root;
-
   // number of start and end nodes; used to construct ids
   startEndCount = 0;
   classes = newClassesList();
@@ -453,7 +456,7 @@ const getDividerId = () => {
 export const addStyleClass = function (id, styleAttributes = '') {
   // create a new style class object with this id
   if (typeof classes[id] === 'undefined') {
-    classes[id] = { id: id, styles: [], textStyles: [] };
+    classes[id] = { id: id, styles: [], textStyles: [] }; // This is a classDef
   }
   const foundClass = classes[id];
   if (typeof styleAttributes !== 'undefined') {
