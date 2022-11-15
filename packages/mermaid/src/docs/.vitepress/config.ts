@@ -163,48 +163,32 @@ function sidebarCommunity() {
 
 // Development and Contributing
 function sidebarCommunityDevelopContribute() {
-  const PAGE_PATH = '/community/development';
+  const page_path = '/community/development';
   return [
     {
       text: 'Contributing to Mermaid',
-      link: PAGE_PATH + '#contributing-to-mermaid',
+      link: page_path + '#contributing-to-mermaid',
       collapsible: true,
       items: [
         {
           text: 'Technical Requirements and Setup',
-          link: pathToId(PAGE_PATH, 'technical-requirements-and-setup'),
+          link: pathToId(page_path, 'technical-requirements-and-setup'),
         },
         {
           text: 'Contributing Code',
-          link: pathToId(PAGE_PATH, 'contributing-code'),
-          collapsible: true,
-          items: [
-            {
-              text: '1. Checkout a git branch',
-              link: pathToId(PAGE_PATH, '_1-checkout-a-git-branch'),
-            },
-            { text: '2. Write Tests', link: pathToId(PAGE_PATH, '_2-write-tests') },
-            {
-              text: '3. Update Documentation',
-              link: pathToId(PAGE_PATH, '_3-update-documentation'),
-            },
-            {
-              text: '4. Submit your pull request',
-              link: pathToId(PAGE_PATH, '_4-submit-your-pull-request'),
-            },
-          ],
+          link: pathToId(page_path, 'contributing-code'),
         },
         {
           text: 'Contributing Documentation',
-          link: pathToId(PAGE_PATH, 'contributing-documentation'),
+          link: pathToId(page_path, 'contributing-documentation'),
         },
         {
           text: 'Questions or Suggestions?',
-          link: pathToId(PAGE_PATH, 'questions-or-suggestions'),
+          link: pathToId(page_path, 'questions-or-suggestions'),
         },
         {
           text: 'Last Words',
-          link: pathToId(PAGE_PATH, 'last-words'),
+          link: pathToId(page_path, 'last-words'),
         },
       ],
     },
