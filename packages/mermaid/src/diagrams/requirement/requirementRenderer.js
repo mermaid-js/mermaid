@@ -6,7 +6,7 @@ import { configureSvgSize } from '../../setupGraphViewbox';
 import common from '../common/common';
 import markers from './requirementMarkers';
 import { getConfig } from '../../config';
-import addSVGAccessibilityFields from '../../accessibility';
+import { addSVGa11yTitleDescription } from '../../accessibility';
 
 let conf = {};
 let relCnt = 0;
@@ -364,7 +364,7 @@ export const draw = (text, id, _version, diagObj) => {
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
   // Adds title and description to the requirements diagram
-  addSVGAccessibilityFields(diagObj.db, svg, id);
+  addSVGa11yTitleDescription(diagObj.db, svg, id);
 };
 
 export default {

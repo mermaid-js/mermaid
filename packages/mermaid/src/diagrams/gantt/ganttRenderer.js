@@ -19,7 +19,7 @@ import {
 import common from '../common/common';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import addSVGAccessibilityFields from '../../accessibility';
+import { addSVGa11yTitleDescription } from '../../accessibility';
 
 export const setConf = function () {
   log.debug('Something is calling, setConf, remove the call');
@@ -116,7 +116,7 @@ export const draw = function (text, id, version, diagObj) {
     .attr('y', conf.titleTopMargin)
     .attr('class', 'titleText');
 
-  addSVGAccessibilityFields(diagObj.db, svg, id);
+  addSVGa11yTitleDescription(diagObj.db, svg, id);
 
   /**
    * @param tasks

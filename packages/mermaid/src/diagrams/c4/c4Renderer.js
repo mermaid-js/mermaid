@@ -8,7 +8,7 @@ import * as configApi from '../../config';
 import assignWithDepth from '../../assignWithDepth';
 import { wrapLabel, calculateTextWidth, calculateTextHeight } from '../../utils';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import addSVGAccessibilityFields from '../../accessibility';
+import { addSVGa11yTitleDescription } from '../../accessibility';
 
 let globalBoundaryMaxX = 0,
   globalBoundaryMaxY = 0;
@@ -676,7 +676,7 @@ export const draw = function (_text, id, _version, diagObj) {
       (height + extraVertForTitle)
   );
 
-  addSVGAccessibilityFields(parser.yy, diagram, id);
+  addSVGa11yTitleDescription(parser.yy, diagram, id);
   log.debug(`models:`, box);
 };
 

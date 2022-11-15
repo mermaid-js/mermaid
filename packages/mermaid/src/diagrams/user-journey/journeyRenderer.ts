@@ -3,7 +3,8 @@ import { select } from 'd3';
 import svgDraw from './svgDraw';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import addSVGAccessibilityFields from '../../accessibility';
+import { addSVGa11yTitleDescription } from '../../accessibility';
+// FIXME insert a11y title and desc
 
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);

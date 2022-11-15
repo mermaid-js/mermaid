@@ -9,8 +9,10 @@ import * as configApi from '../../config';
 import assignWithDepth from '../../assignWithDepth';
 import utils from '../../utils';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import addSVGAccessibilityFields from '../../accessibility';
+import { addSVGa11yTitleDescription } from '../../accessibility';
 import Diagram from '../../Diagram';
+
+// FIXME insert a11y title and desc
 
 let conf = {};
 

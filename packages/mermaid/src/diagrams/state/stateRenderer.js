@@ -6,7 +6,7 @@ import common from '../common/common';
 import { drawState, addTitleAndBox, drawEdge } from './shapes';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import addSVGAccessibilityFields from '../../accessibility';
+import { addSVGa11yTitleDescription } from '../../accessibility';
 
 // TODO Move conf object to main conf in mermaidAPI
 let conf;
@@ -97,7 +97,7 @@ export const draw = function (text, id, _version, diagObj) {
     'viewBox',
     `${bounds.x - conf.padding}  ${bounds.y - conf.padding} ` + width + ' ' + height
   );
-  addSVGAccessibilityFields(diagObj.db, diagram, id);
+  addSVGa11yTitleDescription(diagObj.db, diagram, id);
 };
 const getLabelWidth = (text) => {
   return text ? text.length * conf.fontSizeFactor : 1;

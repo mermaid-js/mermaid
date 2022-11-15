@@ -5,7 +5,7 @@ import { getConfig } from '../../config';
 import { log } from '../../logger';
 import erMarkers from './erMarkers';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import addSVGAccessibilityFields from '../../accessibility';
+import { addSVGa11yTitleDescription } from '../../accessibility';
 import { parseGenericTypes } from '../common/common';
 import { v4 as uuid4 } from 'uuid';
 
@@ -657,7 +657,7 @@ export const draw = function (text, id, _version, diagObj) {
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
 
-  addSVGAccessibilityFields(diagObj.db, svg, id);
+  addSVGa11yTitleDescription(diagObj.db, svg, id);
 }; // draw
 
 /**
