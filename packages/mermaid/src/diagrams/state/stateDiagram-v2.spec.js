@@ -1,3 +1,5 @@
+import { expectTypeOf } from 'vitest';
+
 import { parser } from './parser/stateDiagram';
 import stateDb from './stateDb';
 import stateDiagram from './parser/stateDiagram.jison';
