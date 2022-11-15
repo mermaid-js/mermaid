@@ -39,7 +39,7 @@ It is a relatively straightforward solution to a significant hurdle with the sof
 
 **Nodes**
 
-> These are the boxes that contain text or otherwise discrete pieces of each diagram, separated generally by arrows, except for Gantt Charts and User Journey Diagrams. They will be referred often in the instructions. Read for Diagram Specific [Syntax](../intro/n00b-syntaxReference)
+> These are the boxes that contain text or otherwise discrete pieces of each diagram, separated generally by arrows, except for Gantt Charts and User Journey Diagrams. They will be referred often in the instructions. Read for Diagram Specific [Syntax](../intro/n00b-syntaxReference.md)
 
 ## Advantages of using Mermaid
 
