@@ -17,14 +17,21 @@ Here are a few things to get you started on the right path.
 
 ## Technical Requirements and Setup
 
-These are the main tools we use for working with the code and documentation:
+### Technical Requirements
+These are the tools we use for working with the code and documentation.
 
 - [volta](https://volta.sh/) to manage node versions.
 - [Node.js](https://nodejs.org/en/). `volta install node`
 - [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
 - [npx](https://docs.npmjs.com/cli/v8/commands/npx) the packaged executor in npm. This is needed [to install pnpm.](#2-install-pnpm)
 
-### 1. Fork and clone the repository
+Follow [the setup steps below](#setup) to install them and verify they are working
+
+### Setup
+
+Follow these steps to set up the environment you need to work on code and/or documentation.
+
+#### 1. Fork and clone the repository
 
 In GitHub, you first _fork_ a repository when you are going to make changes and submit pull requests.
 
@@ -32,9 +39,9 @@ Then you _clone_ a copy to your local development machine (e.g. where you code) 
 
 [Here is a GitHub document that gives an overview of the process.](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
 
-### 2. Install pnpm
+#### 2. Install pnpm
 
-Once you have cloned the repository onto your development machine, change into the `mermaid` folder so that you can install `pnpm`. You will need `npx` to install pnpm because volta doesn't support it yet.
+Once you have cloned the repository onto your development machine, change into the `mermaid` project folder so that you can install `pnpm`. You will need `npx` to install pnpm because volta doesn't support it yet.
 
 Ex:
 
@@ -45,7 +52,7 @@ cd mermaid
 npx pnpm install
 ```
 
-### 3. Verify Everything Is Working
+#### 3. Verify Everything Is Working
 
 Once you have installed pnpm, you can run the `test` script to verify that pnpm is working _and_ that the repository has been cloned correctly:
 
@@ -54,6 +61,8 @@ pnpm test
 ```
 
 The `test` script and others are in the top-level `package.json` file.
+
+All tests should run sucessfully without any errors or failures.  (You might see _lint_ or _formatting_ warnings; those are ok during this step.)
 
 ## Contributing Code
 
@@ -93,17 +102,19 @@ We use the follow naming convention for branches:
    [feature | bug | chore | docs]/[issue number]_[short description using dashes ('-') or underscores ('_') instead of spaces]
 ```
 
-- The first part is the _type_ of change: a feature, bug, chore, or documentation change ('docs')
-- followed by a slash (which helps to group like types together in many git tools)
-- followed by the issue number
-- followed by an underscore ('\_')
+- The first part is the **type** of change: a feature, bug, chore, or documentation change ('docs')
+- followed by a _slash_ (which helps to group like types together in many git tools)
+- followed by the **issue number**
+- followed by an _underscore_ ('\_')
 - followed by a short text description (but use dashes ('-') or underscores ('\_') instead of spaces)
+
+If your work is specific to a single diagram type, it is a good idea to put the diagram type at the start of the dscription. This will help use keep release notes organized: it will help us keep changes for a diagram type together.
 
 **Ex: A new feature described in issue 2945 that adds a new arrow type called 'florbs' to state diagrams**
 
-`feature/2945_state_diagram_arrow_florbs`
+`feature/2945_state-diagram-new-arrow-florbs`
 
-**Ex: A bug described in issue 1123 that causes random ugly red text**
+**Ex: A bug described in issue 1123 that causes random ugly red text in multiple diagram types**
 `bug/1123_fix_random_ugly_red_text`
 
 ### 2. Write Tests
