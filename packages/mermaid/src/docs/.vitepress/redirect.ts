@@ -1,3 +1,7 @@
+/**
+ * Extracts the base slug from the old URL.
+ * @param link - The old URL.
+ */
 export const getBaseFile = (link: string): string => {
   const url = new URL(link);
   if (
@@ -59,6 +63,11 @@ const redirectMap: Record<string, string> = {
   'user-journey': 'syntax/userJourney',
 };
 
+/**
+ *
+ * @param link - The old documentation URL.
+ * @returns The new documentation path.
+ */
 export const getRedirect = (link: string): string | undefined => {
   const base = getBaseFile(link);
   return redirectMap[base];
