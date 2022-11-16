@@ -31,7 +31,7 @@ jobs:
       - name: Publish
         working-directory: ./packages/mermaid
         run: |
-          PREVIEW_VERSION=8
+          PREVIEW_VERSION=$(git log --oneline "origin/$GITHUB_REF_NAME" ^"origin/master" | wc -l)
           VERSION=$(echo ${{github.ref}} | tail -c +20)-preview.$PREVIEW_VERSION
           echo $VERSION
           npm version --no-git-tag-version --allow-same-version $VERSION
