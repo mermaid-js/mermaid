@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: |
-          git fetch --no-tags --prune origin +refs/heads/master:refs/remotes/origin/master
+        with:
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v2
 
