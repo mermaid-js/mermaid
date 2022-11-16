@@ -1,5 +1,7 @@
 import type { MarkdownRenderer } from 'vitepress';
-import shiki from 'shiki';
+
+// Note: using "import shiki from 'shiki' and then "const highlighter = await shiki.getHighlighter(...) does not work 2022-11-15
+import { getHighlighter } from 'shiki';
 
 const MermaidExample = async (md: MarkdownRenderer) => {
   const defaultRenderer = md.renderer.rules.fence;
@@ -8,7 +10,7 @@ const MermaidExample = async (md: MarkdownRenderer) => {
     throw new Error('defaultRenderer is undefined');
   }
 
-  const highlighter = await shiki.getHighlighter({
+  const highlighter = await getHighlighter({
     theme: 'material-palenight',
     langs: ['mermaid'],
   });
