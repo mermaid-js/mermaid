@@ -1,8 +1,13 @@
+export interface Redirect {
+  path: string;
+  id?: string;
+}
+
 /**
  * Extracts the base slug from the old URL.
  * @param link - The old URL.
  */
-export const getBaseFile = (link: string): string => {
+const getBaseFile = (link: string): Redirect => {
   const url = new URL(link);
   if (
     (url.hostname !== 'mermaid-js.github.io' && url.hostname !== 'localhost') ||
@@ -10,13 +15,20 @@ export const getBaseFile = (link: string): string => {
   ) {
     throw new Error('Not mermaidjs url');
   }
-  const hash = url.hash
+  const [path, params, ...rest] = url.hash
     .toLowerCase()
     .replace('.md', '')
     .replace(/^#\/?/g, '')
     .replace(/^\.\//g, '')
-    .split('?')[0];
-  return hash;
+    .split('?');
+
+  // Find id in params
+  const id = params
+    ?.split('&')
+    .find((param) => param.startsWith('id='))
+    ?.split('=')[1];
+
+  return { path, id };
 };
 
 const redirectMap: Record<string, string> = {
@@ -53,7 +65,7 @@ const redirectMap: Record<string, string> = {
   requirementdiagram: 'syntax/requirementDiagram',
   security: 'community/security',
   sequencediagram: 'syntax/sequenceDiagram',
-  setup: '',
+  setup: 'config/setup/README',
   statediagram: 'syntax/stateDiagram',
   themes: 'config/theming',
   theming: 'config/theming',
@@ -69,6 +81,9 @@ const redirectMap: Record<string, string> = {
  * @returns The new documentation path.
  */
 export const getRedirect = (link: string): string | undefined => {
-  const base = getBaseFile(link);
-  return redirectMap[base];
+  const { path, id } = getBaseFile(link);
+  if (!(path in redirectMap)) {
+    return;
+  }
+  return `${redirectMap[path]}.html${id ? `#${id}` : ''}`;
 };
