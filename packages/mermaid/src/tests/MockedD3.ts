@@ -1,11 +1,17 @@
 /**
  * This is a mocked/stubbed version of the d3 Selection type. Each of the main functions are all
  * mocked (via vi.fn()) so you can track if they have been called, etc.
+ *
+ * Note that node() returns a HTML Element with tag 'svg'. It is an empty element (no innerHTML, no children, etc).
+ * This potentially allows testing of mermaidAPI render().
  */
+
 export class MockedD3 {
   public attribs = new Map<string, string | null>();
   public id: string | undefined = '';
   _children: MockedD3[] = [];
+
+  _containingHTMLdoc = new Document();
 
   constructor(givenId = 'mock-id') {
     this.id = givenId;
@@ -27,6 +33,11 @@ export class MockedD3 {
     const matchedSurrounds = select_str.match(stripSurroundRegexp);
     const cleanId = matchedSurrounds ? matchedSurrounds[1] : select_str;
     return new MockedD3(cleanId);
+  });
+
+  // This has the same implementation as select(). (It calls it.)
+  selectAll = vi.fn().mockImplementation(({ select_str = '' }): MockedD3 => {
+    return this.select(select_str);
   });
 
   append = vi
@@ -87,9 +98,18 @@ export class MockedD3 {
     this.attribs.set('text', attrValue);
     return this;
   }
-  // NOTE: Arbitrarily returns an empty object. The return value could be something different with a mockReturnValue() or mockImplementation()
-  public node = vi.fn().mockReturnValue({});
 
+  // NOTE: Returns a HTML ELement with tag 'svg' that has _another_ 'svg' element child.
+  // This allows different tests to succeed -- some need a top level 'svg' and some need a 'svg' element to be the firstChild
+  // Real implementation returns an HTML Element
+  public node = vi.fn().mockImplementation(() => {
+    const topElem = this._containingHTMLdoc.createElement('svg');
+    const elem_svgChild = this._containingHTMLdoc.createElement('svg'); // another svg element
+    topElem.appendChild(elem_svgChild);
+    return topElem;
+  });
+
+  // TODO Is this correct? shouldn't it return a list of HTML Elements?
   nodes = vi.fn().mockImplementation(function (this: MockedD3): MockedD3[] {
     return this._children;
   });
