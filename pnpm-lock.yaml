@@ -275,9 +275,6 @@ importers:
       rimraf:
         specifier: ^3.0.2
         version: 3.0.2
-      shiki:
-        specifier: ^0.11.1
-        version: 0.11.1
       start-server-and-test:
         specifier: ^1.14.0
         version: 1.14.0
