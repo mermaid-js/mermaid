@@ -5,7 +5,6 @@ import { render } from '../../dagre-wrapper/index.js';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import common from '../common/common';
-import { addSVGa11yTitleDescription } from '../../accessibility';
 import {
   DEFAULT_DIAGRAM_DIRECTION,
   DEFAULT_NESTED_DOC_DIR,
@@ -472,7 +471,6 @@ export const draw = function (text, id, _version, diag) {
     label.insertBefore(rect, label.firstChild);
     // }
   }
-  addSVGa11yTitleDescription(diag.db, svg, id);
 };
 
 export default {

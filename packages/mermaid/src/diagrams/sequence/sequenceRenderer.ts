@@ -9,10 +9,7 @@ import * as configApi from '../../config';
 import assignWithDepth from '../../assignWithDepth';
 import utils from '../../utils';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import { addSVGa11yTitleDescription } from '../../accessibility';
 import Diagram from '../../Diagram';
-
-// FIXME insert a11y title and desc
 
 let conf = {};
 
@@ -906,7 +903,6 @@ export const draw = function (_text: string, id: string, _version: string, diagO
       (height + extraVertForTitle)
   );
 
-  addSVGAccessibilityFields(diagObj.db, diagram, id);
   log.debug(`models:`, bounds.models);
 };
 

@@ -5,7 +5,6 @@ import { getConfig } from '../../config';
 import { log } from '../../logger';
 import erMarkers from './erMarkers';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import { addSVGa11yTitleDescription } from '../../accessibility';
 import { parseGenericTypes } from '../common/common';
 import { v4 as uuid4 } from 'uuid';
 
@@ -656,8 +655,6 @@ export const draw = function (text, id, _version, diagObj) {
   configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
-
-  addSVGa11yTitleDescription(diagObj.db, svg, id);
 }; // draw
 
 /**

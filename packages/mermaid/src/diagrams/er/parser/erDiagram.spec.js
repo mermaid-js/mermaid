@@ -337,22 +337,6 @@ describe('when parsing ER diagram it...', function () {
     expect(erDb.getAccDescription()).toBe('this graph is about stuff');
   });
 
-  it('should allow for a accessibility title and multi line description (accDescr)', function () {
-    const teacherRole = 'is teacher of';
-    const line1 = `TEACHER }o--o{ STUDENT : "${teacherRole}"`;
-
-    erDiagram.parser.parse(
-      `erDiagram
-      accTitle: graph title
-      accDescr {
-        this graph is about stuff
-      }\n
-      ${line1}`
-    );
-    expect(erDb.getAccTitle()).toBe('graph title');
-    expect(erDb.getAccDescription()).toBe('this graph is about stuff');
-  });
-
   it('should allow more than one relationship between the same two entities', function () {
     const line1 = 'CAR ||--o{ PERSON : "insured for"';
     const line2 = 'CAR }o--|| PERSON : "owned by"';

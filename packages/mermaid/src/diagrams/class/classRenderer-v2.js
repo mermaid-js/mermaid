@@ -7,7 +7,6 @@ import { curveLinear } from 'd3';
 import { interpolateToCurve, getStylesFromArray } from '../../utils';
 import { setupGraphViewbox } from '../../setupGraphViewbox';
 import common from '../common/common';
-import { addSVGa11yTitleDescription } from '../../accessibility';
 
 let idCache = {};
 
@@ -452,7 +451,6 @@ export const draw = function (text, id, _version, diagObj) {
     }
   }
 
-  addSVGa11yTitleDescription(diagObj.db, svg, id);
   // If node has a link, wrap it in an anchor SVG object.
   // const keys = Object.keys(classes);
   // keys.forEach(function(key) {

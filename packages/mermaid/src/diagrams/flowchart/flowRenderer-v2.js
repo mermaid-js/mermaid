@@ -10,7 +10,6 @@ import { log } from '../../logger';
 import common, { evaluate } from '../common/common';
 import { interpolateToCurve, getStylesFromArray } from '../../utils';
 import { setupGraphViewbox } from '../../setupGraphViewbox';
-import { addSVGa11yTitleDescription } from '../../accessibility';
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -429,9 +428,6 @@ export const draw = function (text, id, _version, diagObj) {
 
   // Set up an SVG group so that we can translate the final graph.
   const svg = root.select(`[id="${id}"]`);
-
-  // Adds title and description to the flow chart
-  addSVGa11yTitleDescription(diagObj.db, svg, id);
 
   // Run the renderer. This is what draws the final graph.
   const element = root.select('#' + id + ' g');

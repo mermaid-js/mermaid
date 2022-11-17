@@ -1,7 +1,6 @@
 import { select } from 'd3';
 import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI';
 import { log } from '../../logger';
-import { addSVGa11yTitleDescription } from '../../accessibility';
 
 let allCommitsDict = {};
 
@@ -511,9 +510,6 @@ export const draw = function (txt, id, ver, diagObj) {
   });
 
   const diagram = select(`[id="${id}"]`);
-
-  // Adds title and description to the flow chart
-  addSVGa11yTitleDescription(diagObj.db, diagram, id);
 
   drawCommits(diagram, allCommitsDict, false);
   if (gitGraphConfig.showBranches) {
