@@ -1,8 +1,5 @@
 lockfileVersion: 5.4-inlineSpecifiers
 
-overrides:
-  d3: ^7.6.1
-
 importers:
 
   .:
@@ -167,14 +164,11 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
       d3:
-        specifier: ^7.6.1
+        specifier: ^7.0.0
         version: 7.6.1
-      dagre:
-        specifier: ^0.8.5
-        version: 0.8.5
-      dagre-d3:
-        specifier: ^0.6.4
-        version: 0.6.4
+      dagre-d3-es:
+        specifier: 7.0.2
+        version: 7.0.2
       dompurify:
         specifier: 2.4.1
         version: 2.4.1
@@ -318,7 +312,7 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0_cytoscape@3.23.0
       d3:
-        specifier: ^7.6.1
+        specifier: ^7.0.0
         version: 7.6.1
       khroma:
         specifier: ^2.0.0
@@ -4800,20 +4794,11 @@ packages:
       d3-zoom: 3.0.0
     dev: false
 
-  /dagre-d3/0.6.4:
-    resolution: {integrity: sha512-e/6jXeCP7/ptlAM48clmX4xTZc5Ek6T6kagS7Oz2HrYSdqcLZFLqpAfh7ldbZRFfxCZVyh61NEPR08UQRVxJzQ==}
+  /dagre-d3-es/7.0.2:
+    resolution: {integrity: sha512-m9+5yhzkf9gyklDMdWlQC/8bayGVlTF8GspmN6XC6nnZjas6kAmffvh0c/EcyFhQ+fp4QIl0fMpNdv76AJGlVQ==}
     dependencies:
       d3: 7.6.1
-      dagre: 0.8.5
-      graphlib: 2.1.8
-      lodash: 4.17.21
-    dev: false
-
-  /dagre/0.8.5:
-    resolution: {integrity: sha512-/aTqmnRta7x7MCCpExk7HQL2O4owCT2h8NT//9I1OQ9vt29Pa0BzSAkR5lwFUcQ7491yVi/3CXU9jQ5o0Mn2Sw==}
-    dependencies:
-      graphlib: 2.1.8
-      lodash: 4.17.21
+      lodash-es: 4.17.21
     dev: false
 
   /dargs/7.0.0:
@@ -7904,6 +7889,10 @@ packages:
     dependencies:
       p-locate: 5.0.0
     dev: true
+
+  /lodash-es/4.17.21:
+    resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
+    dev: false
 
   /lodash.merge/4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}

@@ -5,7 +5,7 @@ import flowDb from './flowDb';
 import { getConfig } from '../../config';
 
 import { render } from '../../dagre-wrapper/index.js';
-import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
+import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
 import { log } from '../../logger';
 import common, { evaluate } from '../common/common';
 import { interpolateToCurve, getStylesFromArray } from '../../utils';

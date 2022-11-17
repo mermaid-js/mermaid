@@ -54,8 +54,7 @@
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.0",
     "d3": "^7.0.0",
-    "dagre": "^0.8.5",
-    "dagre-d3": "^0.6.4",
+    "dagre-d3-es": "7.0.2",
     "dompurify": "2.4.1",
     "fast-clone": "^1.5.13",
     "graphlib": "^2.1.8",
@@ -97,9 +96,6 @@
     "typedoc-plugin-markdown": "^3.13.6",
     "typescript": "^4.8.4",
     "unist-util-flatmap": "^1.0.0"
-  },
-  "resolutions": {
-    "d3": "^7.0.0"
   },
   "files": [
     "dist",

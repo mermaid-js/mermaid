@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import dagre from 'dagre';
+import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import graphlib from 'graphlib';
 import { log } from '../../logger';
 import svgDraw from './svgDraw';
@@ -238,7 +238,7 @@ export const draw = function (text, id, _version, diagObj) {
     }
   });
 
-  dagre.layout(g);
+  dagreLayout(g);
   g.nodes().forEach(function (v) {
     if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
       log.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
