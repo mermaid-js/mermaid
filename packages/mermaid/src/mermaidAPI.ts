@@ -29,6 +29,8 @@ import utils, { directiveSanitizer } from './utils';
 import DOMPurify from 'dompurify';
 import { MermaidConfig } from './config.type';
 import { evaluate } from './diagrams/common/common';
+import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility';
+
 import { isEmpty } from 'lodash';
 
 // diagram names that support classDef statements
@@ -487,12 +489,13 @@ const render = function (
     parseEncounteredException = error;
   }
 
-  // Get the temporary div element containing the svg
+  // Get the temporary div element containing the svg (the parent HTML Element)
   const element = root.select(enclosingDivID_selector).node();
   const graphType = diag.type;
 
   // -------------------------------------------------------------------------------
   // Create and insert the styles (user styles, theme styles, config styles)
+  //  These are dealing with HTML Elements, not d3 nodes.
 
   // Insert an element into svg. This is where we put the styles
   const svg = element.firstChild;
@@ -509,6 +512,7 @@ const render = function (
     idSelector
   );
 
+  // svg is a HTML element (not a d3 node)
   const style1 = document.createElement('style');
   style1.innerHTML = `${idSelector} ` + rules;
   svg.insertBefore(style1, firstChild);
@@ -521,6 +525,13 @@ const render = function (
     errorRenderer.draw(text, id, pkg.version);
     throw e;
   }
+
+  // This is the d3 node for the svg element
+  const svgNode = root.select(`${enclosingDivID_selector} svg`);
+  setA11yDiagramInfo(svgNode, graphType);
+  const a11yTitle = diag.db.getAccTitle !== undefined ? diag.db.getAccTitle() : null;
+  const a11yDescr = diag.db.getAccDescription !== undefined ? diag.db.getAccDescription() : null;
+  addSVGa11yTitleDescription(svgNode, a11yTitle, a11yDescr, svgNode.attr('id'));
 
   // -------------------------------------------------------------------------------
   // Clean up SVG code
@@ -763,7 +774,7 @@ const renderAsync = async function (
   attachFunctions();
 
   // -------------------------------------------------------------------------------
-  // Remove the temporary element if appropriate
+  // Remove the temporary HTML element if appropriate
   const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
   const node = select(tmpElementSelector).node();
   if (node && 'remove' in node) {

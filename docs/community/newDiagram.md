@@ -214,7 +214,9 @@ The functions for setting title and description are provided by a common module.
       clear as commonClear,
     } from '../../commonDb';
 
-For rendering the accessibility tags you have again an existing function you can use.
+Starting with Mermaid version, the accessibility tags are inserted into the SVG element in the `render` function in mermaidAPI.
+
+In version \_\_\_ and before, you need to insert the accessibility tags in your renderer:
 
 **In the renderer:**
 
