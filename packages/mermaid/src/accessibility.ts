@@ -40,14 +40,15 @@ export function addSVGa11yTitleDescription(
     return;
   }
 
-  const titleId = a11yTitle ? 'chart-title-' + baseId : null;
-  const descId = a11yDesc ? 'chart-desc-' + baseId : null;
   if (a11yTitle || a11yDesc) {
-    svg.attr('aria-labelledby', compact([titleId, descId]).join(' '));
     if (a11yDesc) {
+      const descId = 'chart-desc-' + baseId;
+      svg.attr('aria-describedby', descId);
       svg.insert('desc', ':first-child').attr('id', descId).text(a11yDesc);
     }
     if (a11yTitle) {
+      const titleId = 'chart-title-' + baseId;
+      svg.attr('aria-labelledby', titleId);
       svg.insert('title', ':first-child').attr('id', titleId).text(a11yTitle);
     }
   } else {
