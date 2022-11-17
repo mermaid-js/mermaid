@@ -47,9 +47,9 @@
     "non-layered-tidy-tree-layout": "^2.0.2"
   },
   "devDependencies": {
-    "concurrently": "7.5.0",
+    "concurrently": "^7.5.0",
     "mermaid": "workspace:*",
-    "rimraf": "3.0.2"
+    "rimraf": "^3.0.2"
   },
   "resolutions": {
     "d3": "^7.0.0"
