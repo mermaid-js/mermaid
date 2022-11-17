@@ -322,4 +322,15 @@ describe('Git Graph diagram', () => {
       {}
     );
   });
+  it('1433: should render a simple gitgraph with a title', () => {
+    imgSnapshotTest(
+      `---
+      title: simple gitGraph
+      ---
+      gitGraph
+       commit
+      `,
+      {}
+    );
+  });
 });

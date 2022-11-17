@@ -10,6 +10,8 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
+  setDiagramTitle,
+  getDiagramTitle,
 } from '../../commonDb';
 
 const MERMAID_DOM_ID_PREFIX = 'classid-';
@@ -408,4 +410,6 @@ export default {
   getTooltip,
   setTooltip,
   lookUpDomId,
+  setDiagramTitle,
+  getDiagramTitle,
 };

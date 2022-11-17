@@ -663,4 +663,15 @@ flowchart RL
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
+  it('1433: should render a titled flowchart with titleTopMargin set to 0', () => {
+    imgSnapshotTest(
+      `---
+      title: Simple flowchart
+      ---
+      flowchart TD
+      A --> B
+      `,
+      { titleTopMargin: 0 }
+    );
+  });
 });

@@ -496,4 +496,16 @@ describe('Class diagram V2', () => {
     );
     cy.get('svg');
   });
+
+  it('1433: should render a simple class with a title', () => {
+    imgSnapshotTest(
+      `---
+       title: simple class diagram
+       ---
+       classDiagram-v2
+       class Class10
+      `,
+      {}
+    );
+  });
 });

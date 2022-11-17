@@ -7,6 +7,9 @@ These kind of diagram are particularly helpful to developers and devops teams to
 Mermaid can render Git diagrams
 
 ```mermaid-example
+    ---
+    title: Example Git diagram
+    ---
     gitGraph
        commit
        commit

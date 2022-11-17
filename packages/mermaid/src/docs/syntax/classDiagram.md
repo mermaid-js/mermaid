@@ -8,6 +8,9 @@ The class diagram is the main building block of object-oriented modeling. It is 
 Mermaid can render class diagrams.
 
 ```mermaid-example
+---
+title: Animal example
+---
 classDiagram
     note "From Duck till Zebra"
     Animal <|-- Duck
@@ -45,6 +48,9 @@ A single instance of a class in the diagram contains three compartments:
 - The bottom compartment contains the operations the class can execute. They are also left-aligned and the first letter is lowercase.
 
 ```mermaid-example
+---
+title: Bank example
+---
 classDiagram
     class BankAccount
     BankAccount : +String owner
