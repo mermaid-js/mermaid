@@ -2,10 +2,10 @@ import { build, InlineConfig } from 'vite';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import jisonPlugin from './jisonPlugin.js';
-import pkg from '../package.json' assert { type: 'json' };
+import { readFileSync } from 'fs';
 
-const { dependencies } = pkg;
 const watch = process.argv.includes('--watch');
+const mermaidOnly = process.argv.includes('--mermaid');
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 type OutputOptions = Exclude<
@@ -22,11 +22,6 @@ const packageOptions = {
   'mermaid-mindmap': {
     name: 'mermaid-mindmap',
     packageName: 'mermaid-mindmap',
-    file: 'diagram-definition.ts',
-  },
-  'mermaid-mindmap-detector': {
-    name: 'mermaid-mindmap-detector',
-    packageName: 'mermaid-mindmap',
     file: 'detector.ts',
   },
   'mermaid-zenuml': {
@@ -34,20 +29,10 @@ const packageOptions = {
     packageName: 'mermaid-zenuml',
     file: 'diagram-definition.ts',
   },
-  'mermaid-zenuml-detector': {
-    name: 'mermaid-zenuml-detector',
-    packageName: 'mermaid-zenuml',
-    file: 'detector.ts',
-  },
   'mermaid-example-diagram': {
     name: 'mermaid-example-diagram',
     packageName: 'mermaid-example-diagram',
     file: 'diagram-definition.ts',
-  },
-  'mermaid-example-diagram-detector': {
-    name: 'mermaid-example-diagram-detector',
-    packageName: 'mermaid-example-diagram',
-    file: 'detector.ts',
   },
 };
 
@@ -78,6 +63,9 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
   ];
 
   if (core) {
+    const { dependencies } = JSON.parse(
+      readFileSync(resolve(__dirname, `../packages/${packageName}/package.json`), 'utf-8')
+    );
     // Core build is used to generate file without bundled dependencies.
     // This is used by downstream projects to bundle dependencies themselves.
     external.push(...Object.keys(dependencies));
@@ -121,7 +109,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
         'packages/mermaid-zenuml/src/**',
         'packages/mermaid-mindmap/src/**',
         'packages/mermaid/src/**',
-        'packages/mermaid-example-diagram/src/**',
+        // 'packages/mermaid-example-diagram/src/**',
       ],
     };
   }
@@ -145,10 +133,12 @@ const main = async () => {
 };
 
 if (watch) {
-  build(getBuildConfig({ minify: false, watch, entryName: 'mermaid' }));
-  build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-mindmap' }));
-  build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
-  build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-zenuml' }));
+  build(getBuildConfig({ minify: false, watch, core: true, entryName: 'mermaid' }));
+  if (!mermaidOnly) {
+    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-mindmap' }));
+    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-zenuml' }));
+    // build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
+  }
 } else {
   void main();
 }

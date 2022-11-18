@@ -1,0 +1,45 @@
+# This Link Checker is run on all documentation files once per week.
+
+# references:
+# - https://github.com/lycheeverse/lychee-action
+# - https://github.com/lycheeverse/lychee
+
+name: Link Checker
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+  pull_request:
+    branches:
+      - develop
+      - master
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: '30 8 * * 5'
+
+jobs:
+  linkChecker:
+    runs-on: ubuntu-latest
+    permissions:
+      # lychee only uses the GITHUB_TOKEN to avoid rate-limiting
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Restore lychee cache
+        uses: actions/cache@v3
+        with:
+          path: .lycheecache
+          key: cache-lychee-${{ github.sha }}
+          restore-keys: cache-lychee-
+
+      - name: Link Checker
+        uses: lycheeverse/lychee-action@v1.5.2
+        with:
+          args: --verbose --no-progress --cache --max-cache-age 1d packages/mermaid/src/docs/**/*.md README.md README.zh-CN.md
+          fail: true
+          jobSummary: true
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

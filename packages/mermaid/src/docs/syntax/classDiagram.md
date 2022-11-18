@@ -166,16 +166,16 @@ A relationship is a general term covering the specific types of logical connecti
 
 There are eight different types of relations defined for classes under UML which are currently supported:
 
-| Type  | Description   |
-| ----- | ------------- |
-| <\|-- | Inheritance   |
-| \*--  | Composition   |
-| o--   | Aggregation   |
-| -->   | Association   |
-| --    | Link (Solid)  |
-| ..>   | Dependency    |
-| ..\|> | Realization   |
-| ..    | Link (Dashed) |
+| Type    | Description   |
+| ------- | ------------- |
+| `<\|--` | Inheritance   |
+| `\*--`  | Composition   |
+| `o--`   | Aggregation   |
+| `-->`   | Association   |
+| `--`    | Link (Solid)  |
+| `..>`   | Dependency    |
+| `..\|>` | Realization   |
+| `..`    | Link (Dashed) |
 
 ```mermaid-example
 classDiagram
@@ -237,14 +237,14 @@ Here is the syntax:
 
 Where `Relation Type` can be one of:
 
-| Type | Description |
-| ---- | ----------- |
-| <\|  | Inheritance |
-| \*   | Composition |
-| o    | Aggregation |
-| >    | Association |
-| <    | Association |
-| \|>  | Realization |
+| Type  | Description |
+| ----- | ----------- |
+| `<\|` | Inheritance |
+| `\*`  | Composition |
+| `o`   | Aggregation |
+| `>`   | Association |
+| `<`   | Association |
+| `\|>` | Realization |
 
 And `Link` can be one of:
 

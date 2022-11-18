@@ -72,7 +72,7 @@ flowchart LR
 If you want to preview the whole documentation site on your machine:
 
 ```sh
-cd mermaid
+cd packages/mermaid
 pnpm i
 pnpm docs:dev
 ```

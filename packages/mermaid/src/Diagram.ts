@@ -83,27 +83,30 @@ export class Diagram {
   }
 }
 
-export const getDiagramFromText = async (
+export const getDiagramFromText = (
   txt: string,
   parseError?: ParseErrorFunction
-): Promise<Diagram> => {
+): Diagram | Promise<Diagram> => {
   const type = detectType(txt, configApi.getConfig());
   try {
     // Trying to find the diagram
     getDiagram(type);
+    return new Diagram(txt, parseError);
   } catch (error) {
     const loader = getDiagramLoader(type);
     if (!loader) {
       throw new Error(`Diagram ${type} not found.`);
     }
-    // Diagram not available, loading it
-    const { diagram } = await loader();
-    registerDiagram(type, diagram, undefined, diagram.injectUtils);
-    // new diagram will try getDiagram again and if fails then it is a valid throw
+    // TODO: Uncomment for v10
+    // // Diagram not available, loading it
+    // const { diagram } = await loader();
+    // registerDiagram(type, diagram, undefined, diagram.injectUtils);
+    // // new diagram will try getDiagram again and if fails then it is a valid throw
+    return loader().then(({ diagram }) => {
+      registerDiagram(type, diagram, undefined);
+      return new Diagram(txt, parseError);
+    });
   }
-  // If either of the above worked, we have the diagram
-  // logic and can continue
-  return new Diagram(txt, parseError);
 };
 
 export default Diagram;

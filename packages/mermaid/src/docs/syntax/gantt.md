@@ -137,7 +137,7 @@ More info in: https://momentjs.com/docs/#/parsing/string-format/
 
 ### Output date format on the axis
 
-The default output date format is YYYY-MM-DD. You can define your custom `axisFormat`, like `2020-Q1` for the first quarter of the year 2020.
+The default output date format is `YYYY-MM-DD`. You can define your custom `axisFormat`, like `2020-Q1` for the first quarter of the year 2020.
 
 ```
 axisFormat  %Y-%m-%d
@@ -172,7 +172,7 @@ The following formatting strings are supported:
 %% - a literal "%" character.
 ```
 
-More info in: https://github.com/mbostock/d3/wiki/Time-Formatting
+More info in: [https://github.com/d3/d3-time-format/tree/v4.0.0#locale_format](https://github.com/d3/d3-time-format/tree/v4.0.0#locale_format)
 
 ### Axis ticks
 
@@ -291,7 +291,7 @@ todayMarker off
 It is possible to adjust the margins for rendering the gantt diagram.
 
 This is done by defining the `ganttConfig` part of the configuration object.
-How to use the CLI is described in the [mermaidCLI](../config/mermaidCLI) page.
+How to use the CLI is described in the [mermaidCLI](../config/mermaidCLI.md) page.
 
 mermaid.ganttConfig can be set to a JSON string with config parameters or the corresponding object.
 
