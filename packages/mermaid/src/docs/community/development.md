@@ -173,9 +173,9 @@ it('should render forks and joins', () => {
 });
 ```
 
-[TODO - running the tests against what is expected in development. ]
+**_[TODO - running the tests against what is expected in development. ]_**
 
-[TODO - how to generate new screenshots]
+**_[TODO - how to generate new screenshots]_**
 ....
 
 ### 3. Update Documentation
@@ -187,7 +187,7 @@ The documentation has to be updated to users know that things have changed and a
 
 We know it can sometimes be hard to code _and_ write user documentation.
 
-[TODO - how to submit documentation changes -- see [Contributing Documentation](#contributing-documentation)
+_**[TODO - how to submit documentation changes.** A few words plus a link to  [Contributing Documentation](#contributing-documentation)_
 
 Create another issue specifically for the documentation.  
 You will need to help with the PR, but definitely ask for help if you feel stuck.
@@ -197,7 +197,7 @@ When in doubt, write up and submit what you can. It can be clarified and refined
 
 ### 4. Submit your pull request
 
-[TODO - PR titles should start with (fix | feat | ....)]
+**[TODO - PR titles should start with (fix | feat | ....)]**
 
 We make all changes via Pull Requests (PRs). As we have many Pull Requests from developers new to Mermaid, \
 we have put in place a process wherein _knsv, Knut Sveidqvist_ is the primary reviewer of changes and merging pull requests. The process is as follows:
@@ -209,7 +209,7 @@ we have put in place a process wherein _knsv, Knut Sveidqvist_ is the primary re
 
 ## Contributing Documentation
 
-[TODO: This section is still a WIP. It still needs revision.]
+**_[TODO: This section is still a WIP. It still needs revision.]_**
 
 If it is not in the documentation, it's like it never happened. Wouldn't that be sad? With all the effort that was put into the feature?
 
@@ -245,7 +245,7 @@ The source files for documentation are in `/packages/mermaid/docs` and are writt
 
 **[The mermaid documentation site](https://mermaid-js.github.io/mermaid/) is powered by [Docsify](https://docsify.js.org), a simple documentation site generator.**
 
-[TODO - how to preview the documents on a local machine? how to run VitePress?]
+**_[TODO - how to preview the documents on a local machine? how to run VitePress?]_**
 
 If you want to preview the whole documentation site on your machine, you need to install `docsify-cli`:
 
@@ -276,7 +276,7 @@ To edit Docs on GitHub:
 - search in the open Issues
 
 If you find an open issue or discussion thread that is similar to your question but isn't answered,
-you can let us know that you are also interested in it. [TODO: describe +1, upvote]
+you can let us know that you are also interested in it. **_[TODO: describe  upvoting]_**
 This helps the team know the relative interest in something and helps them set priorities and assignments.
 
 Feel free to add to the discussion on the issue or topic.
