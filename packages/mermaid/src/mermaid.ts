@@ -13,7 +13,6 @@ import { ExternalDiagramDefinition } from './diagram-api/types';
 
 export type { MermaidConfig, DetailedError, ExternalDiagramDefinition };
 
-let externalDiagramsRegistered = false;
 /**
  * ## init
  *
@@ -50,12 +49,7 @@ const init = async function (
   callback?: Function
 ) {
   try {
-    // Not really sure if we need to check this, or simply call initThrowsErrorsAsync directly.
-    if (externalDiagramsRegistered) {
-      await initThrowsErrorsAsync(config, nodes, callback);
-    } else {
-      initThrowsErrors(config, nodes, callback);
-    }
+    await initThrowsErrorsAsync(config, nodes, callback);
   } catch (e) {
     log.warn('Syntax Error rendering');
     if (isDetailedError(e)) {
@@ -343,7 +337,6 @@ const registerExternalDiagrams = async (
   } else {
     await loadExternalDiagrams(diagrams);
   }
-  externalDiagramsRegistered = true;
 };
 
 /**

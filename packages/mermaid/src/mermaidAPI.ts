@@ -18,12 +18,7 @@ import { compile, serialize, stringify } from 'stylis';
 import pkg from '../package.json';
 import * as configApi from './config';
 import { addDiagrams } from './diagram-api/diagram-orchestration';
-import classDb from './diagrams/class/classDb';
-import flowDb from './diagrams/flowchart/flowDb';
-import flowRenderer from './diagrams/flowchart/flowRenderer';
-import ganttDb from './diagrams/gantt/ganttDb';
 import Diagram, { getDiagramFromText } from './Diagram';
-import errorRenderer from './diagrams/error/errorRenderer';
 import { attachFunctions } from './interactionDb';
 import { log, setLogLevel } from './logger';
 import getStyles from './styles';
@@ -32,6 +27,7 @@ import utils, { directiveSanitizer } from './utils';
 import DOMPurify from 'dompurify';
 import { MermaidConfig } from './config.type';
 import { evaluate } from './diagrams/common/common';
+import errorRenderer from './diagrams/error/errorRenderer';
 
 /**
  * @param text
@@ -271,7 +267,7 @@ const render = function (
 
   // classDef
   if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
-    const classes: any = flowRenderer.getClasses(text, diag);
+    const classes: any = diag.renderer.getClasses(text, diag);
     const htmlLabels = cnf.htmlLabels || cnf.flowchart?.htmlLabels;
     for (const className in classes) {
       if (htmlLabels) {
@@ -364,14 +360,10 @@ const render = function (
     switch (graphType) {
       case 'flowchart':
       case 'flowchart-v2':
-        cb(svgCode, flowDb.bindFunctions);
-        break;
       case 'gantt':
-        cb(svgCode, ganttDb.bindFunctions);
-        break;
       case 'class':
       case 'classDiagram':
-        cb(svgCode, classDb.bindFunctions);
+        cb(svgCode, diag.db.bindFunctions);
         break;
       default:
         cb(svgCode);
@@ -544,7 +536,7 @@ const renderAsync = async function (
 
   // classDef
   if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
-    const classes: any = flowRenderer.getClasses(text, diag);
+    const classes: any = diag.renderer.getClasses(text, diag);
     const htmlLabels = cnf.htmlLabels || cnf.flowchart?.htmlLabels;
     for (const className in classes) {
       if (htmlLabels) {
@@ -637,14 +629,10 @@ const renderAsync = async function (
     switch (graphType) {
       case 'flowchart':
       case 'flowchart-v2':
-        cb(svgCode, flowDb.bindFunctions);
-        break;
       case 'gantt':
-        cb(svgCode, ganttDb.bindFunctions);
-        break;
       case 'class':
       case 'classDiagram':
-        cb(svgCode, classDb.bindFunctions);
+        cb(svgCode, diag.db.bindFunctions);
         break;
       default:
         cb(svgCode);
