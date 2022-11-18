@@ -70,7 +70,7 @@ pnpm test
 
 The `test` script and others are in the top-level `package.json` file.
 
-All tests should run sucessfully without any errors or failures. (You might see _lint_ or _formatting_ warnings; those are ok during this step.)
+All tests should run successfully without any errors or failures. (You might see _lint_ or _formatting_ warnings; those are ok during this step.)
 
 ## Contributing Code
 
@@ -97,15 +97,15 @@ Mermaid uses a [Git Flow](https://guides.github.com/introduction/flow/)–inspir
 
 Development is done in the `develop` branch.
 
-Once development is done we branch a `release` branch from `develop` for testing.
+Once development is done we create a `release/vX.X.X` branch from `develop` for testing.
 
-Once the release happens we merge the `release` branch with `master` and delete the `release` branch. The live product and on-line documentation are what is in the `master` branch.
+Once the release happens we add a tag to the `release` branch and merge it with `master`. The live product and on-line documentation are what is in the `master` branch.
 
 **All new work should be based on the `develop` branch.**
 
 **When you are ready to do work, always, ALWAYS:**
 
-1.  Make sure you have the most up to date version of the `develop` branch. (fetch or pull to update it)
+1.  Make sure you have the most up-to-date version of the `develop` branch. (fetch or pull to update it)
 2.  Check out the `develop` branch
 3.  Create a new branch for your work. Please name the branch following our naming convention below.
 
@@ -121,7 +121,7 @@ We use the follow naming convention for branches:
 - followed by an _underscore_ ('\_')
 - followed by a short text description (but use dashes ('-') or underscores ('\_') instead of spaces)
 
-If your work is specific to a single diagram type, it is a good idea to put the diagram type at the start of the dscription. This will help use keep release notes organized: it will help us keep changes for a diagram type together.
+If your work is specific to a single diagram type, it is a good idea to put the diagram type at the start of the description. This will help use keep release notes organized: it will help us keep changes for a diagram type together.
 
 **Ex: A new feature described in issue 2945 that adds a new arrow type called 'florbs' to state diagrams**
 
@@ -200,7 +200,7 @@ The documentation has to be updated to users know that things have changed and a
 
 We know it can sometimes be hard to code _and_ write user documentation.
 
-**\*\[TODO - how to submit documentation changes.** A few words plus a link to [Contributing Documentation](#contributing-documentation)\*
+**\*\[TODO - how to submit documentation changes.** A few words plus a link to [Contributing Documentation](#contributing-documentation)]\*
 
 Create another issue specifically for the documentation.\
 You will need to help with the PR, but definitely ask for help if you feel stuck.
@@ -226,7 +226,7 @@ we have put in place a process wherein _knsv, Knut Sveidqvist_ is the primary re
 
 If it is not in the documentation, it's like it never happened. Wouldn't that be sad? With all the effort that was put into the feature?
 
-The docs are located in the `src/docs` folder and are written in Markdown. Just pick the right section and start typing.
+The docs are located in the `packages/mermaid/src/docs` folder and are written in Markdown. Just pick the right section and start typing.
 If you want to propose changes to the structure of the documentation, such as adding a new section or a new file you do that via the **[sidebar](https://github.com/mermaid-js/mermaid/edit/develop/src/docs/_sidebar.md)**.
 
 > **All the documents displayed in the GitHub.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/src/docs/_sidebar.md)**.
@@ -238,25 +238,25 @@ Updates committed to the `master` branch are reflected in the [Mermaid Docs](htt
 
 We are a little less strict here, it is OK to commit directly in the `develop` branch if you are a collaborator.
 
-The documentation is located in the `src/docs` directory and organized according to relevant subfolder.
+The documentation is located in the `packages/mermaid/src/docs` directory and organized according to relevant subfolder.
 
 The contents of <https://mermaid-js.github.io/mermaid/> are based on the docs from the `master` branch. Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid-js.github.io/mermaid/) once released.
 
 **The Docs Structure is dictated by [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/src/docs/_sidebar.md)**
 
-The `docs` folder will be automatically generated when committing to `src/docs` and should not be edited manually.
+The `docs` folder will be automatically generated when committing to `packages/mermaid/src/docs` and should not be edited manually.
 
-We encourage contributions to the documentation at [mermaid-js/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/src/docs). We publish documentation using GitHub Pages with [Docsify](https://www.youtube.com/watch?v=TV88lp7egMw&t=3s)
+We encourage contributions to the documentation at [mermaid-js/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/src/docs). We publish documentation to GitHub Pages with [Docsify](https://www.youtube.com/watch?v=TV88lp7egMw&t=3s)
 
-- Documentation (we encourage updates to the `src/docs` folder; you can submit them via direct commits)
-
-The source files for documentation are in `/packages/mermaid/docs` and are written in markdown.
+- Documentation (we encourage updates to the `packages/mermaid/src/docs` folder; you can submit them via direct commits)
 
 **_DO NOT CHANGE FILES IN `/docs`_**
 
+The source files for documentation are in `/packages/mermaid/docs` and are written in markdown.
+
 ### The official documentation site
 
-**[The mermaid documentation site](https://mermaid-js.github.io/mermaid/) is powered by [Docsify](https://docsify.js.org), a simple documentation site generator.**
+**[The mermaid documentation site](https://mermaid-js.github.io/mermaid/) is powered by [Vitepress](https://vitepress.vuejs.org/).**
 
 **_\[TODO - how to preview the documents on a local machine? how to run VitePress?]_**
 
@@ -266,10 +266,12 @@ Markdown is used to format the text, for more information about Markdown [see th
 
 To edit Docs on your computer:
 
-1.  Find the Markdown file (.md) to edit in the [mermaid-js/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/src/docs) directory in the `develop` branch.
-2.  Create a fork of the develop branch.
+_\[TODO: need to keep this in sync with [check out a git branch in Contributing Code above](#1-checkout-a-git-branch) ]_
+
+1.  Create a fork of the develop branch to work on.
+2.  Find the Markdown file (.md) to edit in the `packages/mermaid/src/docs` directory.
 3.  Make changes or add new documentation.
-4.  Commit changes to your fork and push it to GitHub.
+4.  Commit changes to your branch and push it to GitHub (which should create a new branch).
 5.  Create a Pull Request of your fork.
 
 To edit Docs on GitHub:
@@ -285,8 +287,9 @@ To edit Docs on GitHub:
 
 #### First search to see if someone has already asked (and hopefully been answered) or suggested the same thing.
 
-- search in the Discussions
-- search in the open Issues
+- Search in the Discussions
+- Search in the open Issues
+- Search in the closed Issues
 
 If you find an open issue or discussion thread that is similar to your question but isn't answered,
 you can let us know that you are also interested in it. **_\[TODO: describe upvoting]_**
