@@ -274,8 +274,9 @@ To edit Docs on GitHub:
 
 #### First search to see if someone has already asked (and hopefully been answered) or suggested the same thing.
 
-- search in the Discussions
-- search in the open Issues
+- Search in Discussions
+- Search in open Issues
+- Search in closed Issues
 
 If you find an open issue or discussion thread that is similar to your question but isn't answered,
 you can let us know that you are also interested in it. **_[TODO: describe upvoting]_**
