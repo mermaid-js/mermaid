@@ -1,4 +1,7 @@
 import { registerDiagram } from './diagramAPI';
+import c4 from '../diagrams/c4/c4Detector';
+import flowchart from '../diagrams/flowchart/flowDetector';
+import flowchartV2 from '../diagrams/flowchart/flowDetector-v2';
 
 // @ts-ignore: TODO Fix ts errors
 import gitGraphParser from '../diagrams/git/parser/gitGraph';
@@ -6,13 +9,6 @@ import { gitGraphDetector } from '../diagrams/git/gitGraphDetector';
 import gitGraphDb from '../diagrams/git/gitGraphAst';
 import gitGraphRenderer from '../diagrams/git/gitGraphRenderer';
 import gitGraphStyles from '../diagrams/git/styles';
-
-// @ts-ignore: TODO Fix ts errors
-import c4Parser from '../diagrams/c4/parser/c4Diagram';
-import { c4Detector } from '../diagrams/c4/c4Detector';
-import c4Db from '../diagrams/c4/c4Db';
-import c4Renderer from '../diagrams/c4/c4Renderer';
-import c4Styles from '../diagrams/c4/styles';
 
 // @ts-ignore: TODO Fix ts errors
 import classParser from '../diagrams/class/parser/classDiagram';
@@ -29,15 +25,6 @@ import { erDetector } from '../diagrams/er/erDetector';
 import erDb from '../diagrams/er/erDb';
 import erRenderer from '../diagrams/er/erRenderer';
 import erStyles from '../diagrams/er/styles';
-
-// @ts-ignore: TODO Fix ts errors
-import flowParser from '../diagrams/flowchart/parser/flow';
-import { flowDetector } from '../diagrams/flowchart/flowDetector';
-import { flowDetectorV2 } from '../diagrams/flowchart/flowDetector-v2';
-import flowDb from '../diagrams/flowchart/flowDb';
-import flowRenderer from '../diagrams/flowchart/flowRenderer';
-import flowRendererV2 from '../diagrams/flowchart/flowRenderer-v2';
-import flowStyles from '../diagrams/flowchart/styles';
 
 // @ts-ignore: TODO Fix ts errors
 import ganttParser from '../diagrams/gantt/parser/gantt';
@@ -89,10 +76,10 @@ import { journeyDetector } from '../diagrams/user-journey/journeyDetector';
 import journeyDb from '../diagrams/user-journey/journeyDb';
 import journeyRenderer from '../diagrams/user-journey/journeyRenderer';
 import journeyStyles from '../diagrams/user-journey/styles';
-import { setConfig } from '../config';
 
 import errorRenderer from '../diagrams/error/errorRenderer';
 import errorStyles from '../diagrams/error/styles';
+import { addDiagram } from './detectType';
 
 let hasLoadedDiagrams = false;
 export const addDiagrams = () => {
@@ -125,20 +112,7 @@ export const addDiagrams = () => {
     },
     (text) => text.toLowerCase().trim() === 'error'
   );
-
-  registerDiagram(
-    'c4',
-    {
-      parser: c4Parser,
-      db: c4Db,
-      renderer: c4Renderer,
-      styles: c4Styles,
-      init: (cnf) => {
-        c4Renderer.setConf(cnf.c4);
-      },
-    },
-    c4Detector
-  );
+  addDiagram(c4);
   registerDiagram(
     'class',
     {
@@ -295,47 +269,9 @@ export const addDiagrams = () => {
     journeyDetector
   );
 
-  registerDiagram(
-    'flowchart',
-    {
-      parser: flowParser,
-      db: flowDb,
-      renderer: flowRendererV2,
-      styles: flowStyles,
-      init: (cnf) => {
-        if (!cnf.flowchart) {
-          cnf.flowchart = {};
-        }
-        // TODO, broken as of 2022-09-14 (13809b50251845475e6dca65cc395761be38fbd2)
-        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        flowRenderer.setConf(cnf.flowchart);
-        flowDb.clear();
-        flowDb.setGen('gen-1');
-      },
-    },
-    flowDetector
-  );
-  registerDiagram(
-    'flowchart-v2',
-    {
-      parser: flowParser,
-      db: flowDb,
-      renderer: flowRendererV2,
-      styles: flowStyles,
-      init: (cnf) => {
-        if (!cnf.flowchart) {
-          cnf.flowchart = {};
-        }
-        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        // flowchart-v2 uses dagre-wrapper, which doesn't have access to flowchart cnf
-        setConfig({ flowchart: { arrowMarkerAbsolute: cnf.arrowMarkerAbsolute } });
-        flowRendererV2.setConf(cnf.flowchart);
-        flowDb.clear();
-        flowDb.setGen('gen-2');
-      },
-    },
-    flowDetectorV2
-  );
+  addDiagram(flowchart);
+  addDiagram(flowchartV2);
+
   registerDiagram(
     'gitGraph',
     { parser: gitGraphParser, db: gitGraphDb, renderer: gitGraphRenderer, styles: gitGraphStyles },

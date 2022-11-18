@@ -1,6 +1,7 @@
 import { MermaidConfig } from '../config.type';
 import { log } from '../logger';
 import { DetectorRecord, DiagramDetector, DiagramLoader } from './types';
+import { ExternalDiagramDefinition } from '../diagram-api/types';
 
 const directive =
   /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
@@ -41,6 +42,10 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
   }
 
   throw new Error(`No diagram type detected for text: ${text}`);
+};
+
+export const addDiagram = ({ id, detector, loader }: ExternalDiagramDefinition) => {
+  addDetector(id, detector, loader);
 };
 
 export const addDetector = (key: string, detector: DiagramDetector, loader?: DiagramLoader) => {
