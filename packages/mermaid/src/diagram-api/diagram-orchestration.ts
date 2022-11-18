@@ -11,15 +11,8 @@ import requirement from '../diagrams/requirement/requirementDetector';
 import sequence from '../diagrams/sequence/sequenceDetector';
 import classDiagram from '../diagrams/class/classDetector';
 import classDiagramV2 from '../diagrams/class/classDetector-V2';
-
-// @ts-ignore: TODO Fix ts errors
-import stateParser from '../diagrams/state/parser/stateDiagram';
-import { stateDetector } from '../diagrams/state/stateDetector';
-import { stateDetectorV2 } from '../diagrams/state/stateDetector-V2';
-import stateDb from '../diagrams/state/stateDb';
-import stateRenderer from '../diagrams/state/stateRenderer';
-import stateRendererV2 from '../diagrams/state/stateRenderer-v2';
-import stateStyles from '../diagrams/state/styles';
+import state from '../diagrams/state/stateDetector';
+import stateV2 from '../diagrams/state/stateDetector-V2';
 
 // @ts-ignore: TODO Fix ts errors
 import journeyParser from '../diagrams/user-journey/parser/journey';
@@ -75,41 +68,8 @@ export const addDiagrams = () => {
   addDiagram(flowchart);
   addDiagram(flowchartV2);
   addDiagram(git);
-
-  registerDiagram(
-    'state',
-    {
-      parser: stateParser,
-      db: stateDb,
-      renderer: stateRenderer,
-      styles: stateStyles,
-      init: (cnf) => {
-        if (!cnf.state) {
-          cnf.state = {};
-        }
-        cnf.state.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        stateDb.clear();
-      },
-    },
-    stateDetector
-  );
-  registerDiagram(
-    'stateDiagram',
-    {
-      parser: stateParser,
-      db: stateDb,
-      renderer: stateRendererV2,
-      styles: stateStyles,
-      init: (cnf) => {
-        if (!cnf.state) {
-          cnf.state = {};
-        }
-        cnf.state.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        stateDb.clear();
-      },
-    },
-    stateDetectorV2
-  );
+  addDiagram(state);
+  addDiagram(stateV2);
   registerDiagram(
     'journey',
     {
