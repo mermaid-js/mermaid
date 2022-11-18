@@ -4,8 +4,9 @@ import c4Db from './c4Db';
 import c4Renderer from './c4Renderer';
 import c4Styles from './styles';
 import { MermaidConfig } from '../../config.type';
+import { DiagramDefinition } from '../../diagram-api/types';
 
-export const diagram = {
+export const diagram: DiagramDefinition = {
   parser: c4Parser,
   db: c4Db,
   renderer: c4Renderer,
