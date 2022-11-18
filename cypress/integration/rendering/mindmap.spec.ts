@@ -1,12 +1,32 @@
 import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
 
+/**
+ * Check whether the SVG Element has a Mindmap root
+ *
+ * Sometimes, Cypress takes a snapshot before the mermaid mindmap has finished
+ * generating the SVG.
+ *
+ * @param $p - The element to check.
+ */
+function shouldHaveRoot($p: JQuery<SVGSVGElement>) {
+  // get HTML Element from jquery element
+  const svgElement = $p[0];
+  expect(svgElement.nodeName).equal('svg');
+
+  const sectionRoots = svgElement.getElementsByClassName('mindmap-node section-root');
+  // mindmap should have at least one root section
+  expect(sectionRoots).to.have.lengthOf.at.least(1);
+}
+
 describe('Mindmaps', () => {
   it('Only a root', () => {
     imgSnapshotTest(
       `mindmap
 root
     `,
-      {}
+      {},
+      undefined,
+      shouldHaveRoot
     );
   });
 
@@ -15,7 +35,9 @@ root
       `mindmap
 root[root]
     `,
-      {}
+      {},
+      undefined,
+      shouldHaveRoot
     );
   });
 
@@ -24,7 +46,9 @@ root[root]
       `mindmap
 root[A root with a long text that wraps to keep the node size in check]
     `,
-      {}
+      {},
+      undefined,
+      shouldHaveRoot
     );
   });
 
@@ -34,7 +58,9 @@ root[A root with a long text that wraps to keep the node size in check]
 root[root]
 ::icon(mdi mdi-fire)
     `,
-      {}
+      {},
+      undefined,
+      shouldHaveRoot
     );
   });
 
@@ -48,7 +74,9 @@ root))bang((
   a)A cloud(
   ::icon(mdi mdi-fire)
     `,
-      {}
+      {},
+      undefined,
+      shouldHaveRoot
     );
   });
 
@@ -60,7 +88,9 @@ root))bang((
   a))Another bang((
   a)A cloud(
     `,
-      {}
+      {},
+      undefined,
+      shouldHaveRoot
     );
   });
 
@@ -78,7 +108,9 @@ root
       grandchild 5
       grandchild 6
     `,
-      {}
+      {},
+      undefined,
+      shouldHaveRoot
     );
   });
 
@@ -98,7 +130,9 @@ root
       gc6((grand<br/>child 6))
       ::icon(mdi mdi-fire)
     `,
-      {}
+      {},
+      undefined,
+      shouldHaveRoot
     );
   });
   it('text shouhld wrap with icon', () => {
@@ -107,7 +141,9 @@ root
 root
   Child3(A node with an icon and with a long text that wraps to keep the node size in check)
     `,
-      {}
+      {},
+      undefined,
+      shouldHaveRoot
     );
   });
   it('square shape', () => {
@@ -118,7 +154,9 @@ mindmap
       The root
     ]
       `,
-      {}
+      {},
+      undefined,
+      shouldHaveRoot
     );
     cy.get('svg');
   });
@@ -130,7 +168,9 @@ mindmap
       The root
     ))
       `,
-      {}
+      {},
+      undefined,
+      shouldHaveRoot
     );
     cy.get('svg');
   });
@@ -142,7 +182,9 @@ mindmap
       The root
     )
       `,
-      {}
+      {},
+      undefined,
+      shouldHaveRoot
     );
     cy.get('svg');
   });
@@ -152,7 +194,9 @@ mindmap
 mindmap
   The root
       `,
-      {}
+      {},
+      undefined,
+      shouldHaveRoot
     );
     cy.get('svg');
   });
@@ -164,7 +208,9 @@ mindmap
     child1
     child2
       `,
-      {}
+      {},
+      undefined,
+      shouldHaveRoot
     );
     cy.get('svg');
   });
@@ -177,7 +223,9 @@ mindmap
       child2
       child3
       `,
-      {}
+      {},
+      undefined,
+      shouldHaveRoot
     );
     cy.get('svg');
   });
