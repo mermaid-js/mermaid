@@ -1,7 +1,6 @@
 import { version } from '../../package.json';
 import ExampleMarkdown from './mermaid-markdown-all';
 import { defineConfig } from 'vitepress';
-import { update } from 'lodash';
 
 export default defineConfig({
   lang: 'en-US',
