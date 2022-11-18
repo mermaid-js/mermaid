@@ -13,13 +13,7 @@ import classDiagram from '../diagrams/class/classDetector';
 import classDiagramV2 from '../diagrams/class/classDetector-V2';
 import state from '../diagrams/state/stateDetector';
 import stateV2 from '../diagrams/state/stateDetector-V2';
-
-// @ts-ignore: TODO Fix ts errors
-import journeyParser from '../diagrams/user-journey/parser/journey';
-import { journeyDetector } from '../diagrams/user-journey/journeyDetector';
-import journeyDb from '../diagrams/user-journey/journeyDb';
-import journeyRenderer from '../diagrams/user-journey/journeyRenderer';
-import journeyStyles from '../diagrams/user-journey/styles';
+import journey from '../diagrams/user-journey/journeyDetector';
 
 import errorRenderer from '../diagrams/error/errorRenderer';
 import errorStyles from '../diagrams/error/styles';
@@ -70,18 +64,5 @@ export const addDiagrams = () => {
   addDiagram(git);
   addDiagram(state);
   addDiagram(stateV2);
-  registerDiagram(
-    'journey',
-    {
-      parser: journeyParser,
-      db: journeyDb,
-      renderer: journeyRenderer,
-      styles: journeyStyles,
-      init: (cnf) => {
-        journeyRenderer.setConf(cnf.journey);
-        journeyDb.clear();
-      },
-    },
-    journeyDetector
-  );
+  addDiagram(journey);
 };
