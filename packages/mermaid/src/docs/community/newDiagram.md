@@ -56,9 +56,9 @@ Place the renderer in the diagram folder.
 ### Step 3: Detection of the new diagram type
 
 The second thing to do is to add the capability to detect the new new diagram to type to the detectType in utils.js. The detection should return a key for the new diagram type.
-[This key will be used to as the aria roledescription](#aria-roledescription), so it should be a word that clearly describes the diagram type. 
+[This key will be used to as the aria roledescription](#aria-roledescription), so it should be a word that clearly describes the diagram type.
 For example, if your new diagram use a UML deployment diagram, a good key would be "UMLDeploymentDiagram" because assistive technologies such as a screen reader
-would voice that as "U-M-L Deployment diagram."  Another good key would be "deploymentDiagram" because that would be voiced as "Deployment Diagram." A bad key would be "deployment" because that would not sufficiently describe the diagram.
+would voice that as "U-M-L Deployment diagram." Another good key would be "deploymentDiagram" because that would be voiced as "Deployment Diagram." A bad key would be "deployment" because that would not sufficiently describe the diagram.
 
 Note that the diagram type key does not have to be the same as the diagram keyword chosen for the [grammar](#grammar), but it is helpful if they are the same.
 
@@ -169,10 +169,10 @@ It is probably a good idea to keep the handling similar to this in your new diag
 ## Accessibility
 
 Mermaid automatically adds the following accessibility information for the diagram SVG HTML element:
-- aria-roledescription 
+
+- aria-roledescription
 - accessible title
 - accessible description
-
 
 ### aria-roledescription
 
@@ -223,7 +223,6 @@ import {
 ```
 
 The accessibility title and description are inserted into the SVG element in the `render` function in mermaidAPI.
-
 
 ## Theming
 

@@ -7,15 +7,22 @@ Now with Mermaid library in much wider use, we have started to work towards more
 Adding accessibility means that the rich information communicated by visual diagrams can be made available to those using assistive technologies (and of course to search engines).
 [Read more about Accessible Rich Internet Applications and the W3 standards.](https://www.w3.org/WAI/standards-guidelines/aria/)
 
-Mermaid will automatically insert the [aria-roledescription](#aria-roledescription) and, if provided in the diagram text by the diagram author, the [accessible title and description.](#accessible-title-and-description) 
+Mermaid will automatically insert the [aria-roledescription](#aria-roledescription) and, if provided in the diagram text by the diagram author, the [accessible title and description.](#accessible-title-and-description)
 
 ### aria-roledescription
 
-The [aria-roledescription](https://www.w3.org/TR/wai-aria-1.1/#aria-roledescription) for the SVG HTML element is set to the diagram type key.  (Note this may be slightly different than the keyword used for the diagram in the diagram text.)
+The [aria-roledescription](https://www.w3.org/TR/wai-aria-1.1/#aria-roledescription) for the SVG HTML element is set to the diagram type key. (Note this may be slightly different than the keyword used for the diagram in the diagram text.)
 
 For example: The diagram type key for a state diagram is "stateDiagram". Here (a part of) the HTML of the SVG tag that shows the automatically inserted aria-roledscription set to "stateDiagram". _(Note that some of the SVG attributes and the SVG contents are omitted for clarity.):_
+
 ```html
-<svg aria-roledescription="stateDiagram"  class="statediagram" xmlns="http://www.w3.org/2000/svg" width="100%" id="mermaid-1668720491568">
+<svg
+  aria-roledescription="stateDiagram"
+  class="statediagram"
+  xmlns="http://www.w3.org/2000/svg"
+  width="100%"
+  id="mermaid-1668720491568"
+></svg>
 ```
 
 ### Accessible Title and Description
@@ -32,22 +39,28 @@ and the accessible description element (text = "This is an accessible descriptio
 _(Note that some of the SVG attributes and the SVG contents are omitted for clarity.)_
 
 ```html
-<svg aria-labelledby="chart-title-mermaid-1668725057758" aria-describedby="chart-desc-mermaid-1668725057758"  xmlns="http://www.w3.org/2000/svg" width="100%" id="mermaid-1668725057758">
+<svg
+  aria-labelledby="chart-title-mermaid-1668725057758"
+  aria-describedby="chart-desc-mermaid-1668725057758"
+  xmlns="http://www.w3.org/2000/svg"
+  width="100%"
+  id="mermaid-1668725057758"
+>
   <title id="chart-title-mermaid-1668725057758">This is the accessible title</title>
   <desc id="chart-desc-mermaid-1668725057758">This is an accessible description</desc>
+</svg>
 ```
 
 Details for the syntax follow.
 
-
 #### accessible title
+
 The **accessible title** is specified with the **accTitle** _keyword_, followed by a colon (`:`), and the string value for the title.
 The string value ends at the end of the line. (It can only be a single line.)
- 
-Ex: `accTitle: This is a single line title` 
+
+Ex: `accTitle: This is a single line title`
 
 See [the accTitle and accDescr usage examples](#acctitle-and-accdescr-usage-examples) for how this can be used in a diagram and the resulting HTML generated.
-
 
 #### accessible description
 
@@ -60,6 +73,7 @@ Ex: `accDescr: This is a single line description.`
 A **multiple line accessible description** _does not have a colon (`:`) after the accDescr keyword_ and is surrounded by curly brackets (`{}`).
 
 Ex:
+
 ```
 accDescr { The official Bob's Burgers corporate processes that are used
         for making very, very big decisions.
@@ -67,7 +81,6 @@ accDescr { The official Bob's Burgers corporate processes that are used
 ```
 
 See [the accTitle and accDescr usage examples](#acctitle-and-accdescr-usage-examples) for how this can be used in a diagram and the resulting HTML generated.
-
 
 #### accTitle and accDescr Usage Examples
 
@@ -82,14 +95,22 @@ See [the accTitle and accDescr usage examples](#acctitle-and-accdescr-usage-exam
 ```
 
 Here is the HTML generated for the SVG element: _(Note that some of the SVG attributes and the SVG contents are omitted for clarity.):_
+
 ```html
-<svg aria-labelledby="chart-title-mermaid_382ee221" aria-describedby="chart-desc-mermaid_382ee221" aria-roledescription="flowchart-v2"  xmlns="http://www.w3.org/2000/svg" width="100%" id="mermaid_382ee221">
+<svg
+  aria-labelledby="chart-title-mermaid_382ee221"
+  aria-describedby="chart-desc-mermaid_382ee221"
+  aria-roledescription="flowchart-v2"
+  xmlns="http://www.w3.org/2000/svg"
+  width="100%"
+  id="mermaid_382ee221"
+>
   <title id="chart-title-mermaid_382ee221">Big decisions</title>
   <desc id="chart-desc-mermaid_382ee221">Bob's Burgers process for making big decisions</desc>
-
+</svg>
 ```
 
-* Flowchart with the accessible title "Bob's Burger's Making Big Decisions" and the multiple line accessible description "The official Bob's Burgers corporate processes that are used
+- Flowchart with the accessible title "Bob's Burger's Making Big Decisions" and the multiple line accessible description "The official Bob's Burgers corporate processes that are used
   for making very, very big decisions.
   This is actually a very simple flow: identify the big decision and then make the big decision."
 
@@ -106,15 +127,24 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 ```
 
 Here is the HTML generated for the SVG element: _(Note that some of the SVG attributes and the SVG contents are omitted for clarity.):_
+
 ```html
-<svg aria-labelledby="chart-title-mermaid_382ee221" aria-describedby="chart-desc-mermaid_382ee221" aria-roledescription="flowchart-v2"  xmlns="http://www.w3.org/2000/svg" width="100%" id="mermaid_382ee221">
+<svg
+  aria-labelledby="chart-title-mermaid_382ee221"
+  aria-describedby="chart-desc-mermaid_382ee221"
+  aria-roledescription="flowchart-v2"
+  xmlns="http://www.w3.org/2000/svg"
+  width="100%"
+  id="mermaid_382ee221"
+>
   <title id="chart-title-mermaid_382ee221">Big decisions</title>
-  <desc id="chart-desc-mermaid_382ee221">The official Bob's Burgers corporate processes that are used
-    for making very, very big decisions.
-    This is actually a very simple flow: identify the big decision and then make the big decision.</desc>
-
+  <desc id="chart-desc-mermaid_382ee221">
+    The official Bob's Burgers corporate processes that are used for making very, very big
+    decisions. This is actually a very simple flow: identify the big decision and then make the big
+    decision.
+  </desc>
+</svg>
 ```
-
 
 #### Sample Code Snippets for other diagram types
 
@@ -238,7 +268,6 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
        s1 --> s2
 
 ```
-
 
 ##### User Journey Diagram
 
