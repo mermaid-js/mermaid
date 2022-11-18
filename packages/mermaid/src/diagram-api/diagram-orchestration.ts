@@ -2,64 +2,15 @@ import { registerDiagram } from './diagramAPI';
 import c4 from '../diagrams/c4/c4Detector';
 import flowchart from '../diagrams/flowchart/flowDetector';
 import flowchartV2 from '../diagrams/flowchart/flowDetector-v2';
-
-// @ts-ignore: TODO Fix ts errors
-import gitGraphParser from '../diagrams/git/parser/gitGraph';
-import { gitGraphDetector } from '../diagrams/git/gitGraphDetector';
-import gitGraphDb from '../diagrams/git/gitGraphAst';
-import gitGraphRenderer from '../diagrams/git/gitGraphRenderer';
-import gitGraphStyles from '../diagrams/git/styles';
-
-// @ts-ignore: TODO Fix ts errors
-import classParser from '../diagrams/class/parser/classDiagram';
-import { classDetector } from '../diagrams/class/classDetector';
-import { classDetectorV2 } from '../diagrams/class/classDetector-V2';
-import classDb from '../diagrams/class/classDb';
-import classRenderer from '../diagrams/class/classRenderer';
-import classRendererV2 from '../diagrams/class/classRenderer-v2';
-import classStyles from '../diagrams/class/styles';
-
-// @ts-ignore: TODO Fix ts errors
-import erParser from '../diagrams/er/parser/erDiagram';
-import { erDetector } from '../diagrams/er/erDetector';
-import erDb from '../diagrams/er/erDb';
-import erRenderer from '../diagrams/er/erRenderer';
-import erStyles from '../diagrams/er/styles';
-
-// @ts-ignore: TODO Fix ts errors
-import ganttParser from '../diagrams/gantt/parser/gantt';
-import { ganttDetector } from '../diagrams/gantt/ganttDetector';
-import ganttDb from '../diagrams/gantt/ganttDb';
-import ganttRenderer from '../diagrams/gantt/ganttRenderer';
-import ganttStyles from '../diagrams/gantt/styles';
-
-// @ts-ignore: TODO Fix ts errors
-import infoParser from '../diagrams/info/parser/info';
-import infoDb from '../diagrams/info/infoDb';
-import infoRenderer from '../diagrams/info/infoRenderer';
-import { infoDetector } from '../diagrams/info/infoDetector';
-import infoStyles from '../diagrams/info/styles';
-
-// @ts-ignore: TODO Fix ts errors
-import pieParser from '../diagrams/pie/parser/pie';
-import { pieDetector } from '../diagrams/pie/pieDetector';
-import pieDb from '../diagrams/pie/pieDb';
-import pieRenderer from '../diagrams/pie/pieRenderer';
-import pieStyles from '../diagrams/pie/styles';
-
-// @ts-ignore: TODO Fix ts errors
-import requirementParser from '../diagrams/requirement/parser/requirementDiagram';
-import { requirementDetector } from '../diagrams/requirement/requirementDetector';
-import requirementDb from '../diagrams/requirement/requirementDb';
-import requirementRenderer from '../diagrams/requirement/requirementRenderer';
-import requirementStyles from '../diagrams/requirement/styles';
-
-// @ts-ignore: TODO Fix ts errors
-import sequenceParser from '../diagrams/sequence/parser/sequenceDiagram';
-import { sequenceDetector } from '../diagrams/sequence/sequenceDetector';
-import sequenceDb from '../diagrams/sequence/sequenceDb';
-import sequenceRenderer from '../diagrams/sequence/sequenceRenderer';
-import sequenceStyles from '../diagrams/sequence/styles';
+import er from '../diagrams/er/erDetector';
+import git from '../diagrams/git/gitGraphDetector';
+import gantt from '../diagrams/gantt/ganttDetector';
+import info from '../diagrams/info/infoDetector';
+import pie from '../diagrams/pie/pieDetector';
+import requirement from '../diagrams/requirement/requirementDetector';
+import sequence from '../diagrams/sequence/sequenceDetector';
+import classDiagram from '../diagrams/class/classDetector';
+import classDiagramV2 from '../diagrams/class/classDetector-V2';
 
 // @ts-ignore: TODO Fix ts errors
 import stateParser from '../diagrams/state/parser/stateDiagram';
@@ -113,113 +64,18 @@ export const addDiagrams = () => {
     (text) => text.toLowerCase().trim() === 'error'
   );
   addDiagram(c4);
-  registerDiagram(
-    'class',
-    {
-      parser: classParser,
-      db: classDb,
-      renderer: classRenderer,
-      styles: classStyles,
-      init: (cnf) => {
-        if (!cnf.class) {
-          cnf.class = {};
-        }
-        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        classDb.clear();
-      },
-    },
-    classDetector
-  );
-  registerDiagram(
-    'classDiagram',
-    {
-      parser: classParser,
-      db: classDb,
-      renderer: classRendererV2,
-      styles: classStyles,
-      init: (cnf) => {
-        if (!cnf.class) {
-          cnf.class = {};
-        }
-        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        classDb.clear();
-      },
-    },
-    classDetectorV2
-  );
-  registerDiagram(
-    'er',
-    {
-      parser: erParser,
-      db: erDb,
-      renderer: erRenderer,
-      styles: erStyles,
-    },
-    erDetector
-  );
-  registerDiagram(
-    'gantt',
-    {
-      parser: ganttParser,
-      db: ganttDb,
-      renderer: ganttRenderer,
-      styles: ganttStyles,
-    },
-    ganttDetector
-  );
-  registerDiagram(
-    'info',
-    {
-      parser: infoParser,
-      db: infoDb,
-      renderer: infoRenderer,
-      styles: infoStyles,
-    },
-    infoDetector
-  );
-  registerDiagram(
-    'pie',
-    {
-      parser: pieParser,
-      db: pieDb,
-      renderer: pieRenderer,
-      styles: pieStyles,
-    },
-    pieDetector
-  );
-  registerDiagram(
-    'requirement',
-    {
-      parser: requirementParser,
-      db: requirementDb,
-      renderer: requirementRenderer,
-      styles: requirementStyles,
-    },
-    requirementDetector
-  );
-  registerDiagram(
-    'sequence',
-    {
-      parser: sequenceParser,
-      db: sequenceDb,
-      renderer: sequenceRenderer,
-      styles: sequenceStyles,
-      init: (cnf) => {
-        if (!cnf.sequence) {
-          cnf.sequence = {};
-        }
-        cnf.sequence.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        if ('sequenceDiagram' in cnf) {
-          throw new Error(
-            '`mermaid config.sequenceDiagram` has been renamed to `config.sequence`. Please update your mermaid config.'
-          );
-        }
-        sequenceDb.setWrap(cnf.wrap);
-        sequenceRenderer.setConf(cnf.sequence);
-      },
-    },
-    sequenceDetector
-  );
+  addDiagram(classDiagram);
+  addDiagram(classDiagramV2);
+  addDiagram(er);
+  addDiagram(gantt);
+  addDiagram(info);
+  addDiagram(pie);
+  addDiagram(requirement);
+  addDiagram(sequence);
+  addDiagram(flowchart);
+  addDiagram(flowchartV2);
+  addDiagram(git);
+
   registerDiagram(
     'state',
     {
@@ -267,14 +123,5 @@ export const addDiagrams = () => {
       },
     },
     journeyDetector
-  );
-
-  addDiagram(flowchart);
-  addDiagram(flowchartV2);
-
-  registerDiagram(
-    'gitGraph',
-    { parser: gitGraphParser, db: gitGraphDb, renderer: gitGraphRenderer, styles: gitGraphStyles },
-    gitGraphDetector
   );
 };
