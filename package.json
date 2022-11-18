@@ -114,5 +114,8 @@
   ],
   "volta": {
     "node": "18.12.1"
+  },
+  "dependencies": {
+    "vue-sequence": "^1.0.272"
   }
 }

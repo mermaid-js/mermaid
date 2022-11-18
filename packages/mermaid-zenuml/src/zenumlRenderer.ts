@@ -1,10 +1,8 @@
 // @ts-nocheck TODO: fix file
-import { getConfig } from './mermaidUtils';
-import { VueSequence } from 'vue-sequence';
+import { getConfig, log } from './mermaidUtils';
+import ZenUml from 'vue-sequence';
 import { regexp } from './detector';
 import 'vue-sequence/dist/vue-sequence.css';
-
-const { Vue, Vuex } = VueSequence;
 
 // Load Zen UML CSS
 function loadCss(root: Document, url: string) {
@@ -40,7 +38,9 @@ function createForeignObject() {
  * @param text - The text of the diagram
  * @param id - The id of the diagram which will be used as a DOM element id¨
  */
-export const draw = function (text: string, id: string) {
+export const draw = async function (text: string, id: string) {
+  log.info('draw with Zen UML renderer', ZenUml);
+
   text = text.replace(regexp, '');
   const { securityLevel } = getConfig();
   // Handle root and Document for when rendering in sandbox mode
@@ -65,26 +65,17 @@ export const draw = function (text: string, id: string) {
   const { container, app } = createTemporaryZenumlContainer();
   document.body.appendChild(container);
 
-  Vue.use(Vuex);
-  const store = new Vuex.Store(VueSequence.Store());
-  store.dispatch('updateCode', { code: text });
+  const zenuml = new ZenUml(app);
+  await zenuml.render(text, 'default');
 
-  new Vue({
-    el: app,
-    store,
-    render: (h) => {
-      return h(VueSequence.DiagramFrame);
-    },
-  });
-
-  // The vue-sequence component is rendered in the Zen UML container, so we need to move the output dom to the svg container
-  setTimeout(() => {
-    const zenUml = document.querySelector('.zenuml');
-    foreignObject.appendChild(zenUml);
-    const { width, height } = window.getComputedStyle(zenUml);
-    svgContainer.setAttribute('style', `width: ${width}; height: ${height};`);
-    container.remove();
-  }, 1000);
+  const zenUml = document.querySelector('.zenuml');
+  log.info(zenUml, foreignObject);
+  const zenumlClone = zenUml.cloneNode(true);
+  foreignObject.appendChild(zenumlClone);
+  const { width, height } = window.getComputedStyle(zenumlClone);
+  log.debug('zenuml size', width, height);
+  svgContainer.setAttribute('style', `width: ${width}; height: ${height};`);
+  container.remove();
 };
 
 export default {

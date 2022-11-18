@@ -1,14 +1,14 @@
 {
   "name": "mermaid-zenuml",
-  "version": "9.2.0-rc2",
+  "version": "9.2.2",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid-zenuml.core.mjs",
   "module": "dist/mermaid-zenuml.core.mjs",
   "type": "module",
   "exports": {
     ".": {
-      "require": "./dist/mermaid-zenuml.min.js",
-      "import": "./dist/mermaid-zenuml.core.mjs"
+      "import": "./dist/mermaid-zenuml.core.mjs",
+      "types": "./dist/detector.d.ts"
     },
     "./*": "./*"
   },
@@ -45,7 +45,8 @@
   "homepage": "https://github.com/mermaid-js/mermaid#readme",
   "dependencies": {
     "d3": "7.6.1",
-    "vue-sequence": "^1.0.267"
+    "mermaid": "workspace:*",
+    "vue-sequence": "1.0.273"
   },
   "files": [
     "dist"

@@ -27,23 +27,12 @@
       }
 	</pre
     >
-    <script src="./mermaid.js"></script>
-    <script>
-      window.process = {
-        env: {},
-      };
-      mermaid.parseError = function (err, hash) {
-        console.error('In parse error:');
-        console.error(err);
-      };
-      mermaid.initialize({
-        maxTextSize: 900000,
-        startOnLoad: true,
-        securityLevel: 'loose',
-        logLevel: 0,
-        fontFamily: 'courier',
-        lazyLoadedDiagrams: ['./mermaid-zenuml-detector.esm.mjs'],
-      });
+    <script type="module">
+      import zenUml from '../../packages/mermaid-zenuml/src/detector';
+      import mermaid from '../../packages/mermaid/src/mermaid';
+      await mermaid.registerExternalDiagrams([zenUml]);
+      await mermaid.initialize({ logLevel: 0 });
+      await mermaid.initThrowsErrorsAsync();
     </script>
   </body>
 </html>
