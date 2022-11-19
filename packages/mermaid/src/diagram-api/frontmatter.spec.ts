@@ -5,12 +5,12 @@ const dbMock = () => ({ setDiagramTitle: vi.fn() });
 
 describe('extractFrontmatter', () => {
   it('returns text unchanged if no frontmatter', () => {
-    expect(extractFrontMatter('diagram', null)).toEqual('diagram');
+    expect(extractFrontMatter('diagram', dbMock())).toEqual('diagram');
   });
 
   it('returns text unchanged if frontmatter lacks closing delimiter', () => {
     const text = `---\ntitle: foo\ndiagram`;
-    expect(extractFrontMatter(text, null)).toEqual(text);
+    expect(extractFrontMatter(text, dbMock())).toEqual(text);
   });
 
   it('handles empty frontmatter', () => {
@@ -71,7 +71,7 @@ describe('extractFrontmatter', () => {
 
   it('throws exception for invalid YAML syntax', () => {
     const text = `---\n!!!\n---\ndiagram`;
-    expect(() => extractFrontMatter(text, null)).toThrow(
+    expect(() => extractFrontMatter(text, dbMock())).toThrow(
       'tag suffix cannot contain exclamation marks'
     );
   });

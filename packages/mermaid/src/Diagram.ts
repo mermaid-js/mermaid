@@ -56,7 +56,7 @@ export class Diagram {
     }
     try {
       text = text + '\n';
-      this.db.clear();
+      this.db.clear?.();
       this.parser.parse(text);
       return true;
     } catch (error) {
