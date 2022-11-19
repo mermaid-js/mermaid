@@ -239,11 +239,9 @@ We encourage contributions to the documentation at [mermaid-js/mermaid/src/docs]
 
 - Documentation (we encourage updates to the `packages/mermaid/src/docs` folder; you can submit them via direct commits)
 
-
 **_DO NOT CHANGE FILES IN `/docs`_**
 
 The source files for documentation are in `/packages/mermaid/docs` and are written in markdown.
-
 
 ### The official documentation site
 
@@ -257,7 +255,7 @@ Markdown is used to format the text, for more information about Markdown [see th
 
 To edit Docs on your computer:
 
-_[TODO: need to keep this in sync with  [check out a git branch in Contributing Code above](#1-checkout-a-git-branch) ]_
+_[TODO: need to keep this in sync with [check out a git branch in Contributing Code above](#1-checkout-a-git-branch) ]_
 
 1.  Create a fork of the develop branch to work on.
 2.  Find the Markdown file (.md) to edit in the `packages/mermaid/src/docs` directory.
