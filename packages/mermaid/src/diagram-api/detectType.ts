@@ -44,8 +44,10 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
   throw new Error(`No diagram type detected for text: ${text}`);
 };
 
-export const addDiagram = ({ id, detector, loader }: ExternalDiagramDefinition) => {
-  addDetector(id, detector, loader);
+export const registerLazyLoadedDiagrams = (...diagrams: ExternalDiagramDefinition[]) => {
+  for (const { id, detector, loader } of diagrams) {
+    addDetector(id, detector, loader);
+  }
 };
 
 export const addDetector = (key: string, detector: DiagramDetector, loader?: DiagramLoader) => {

@@ -6,7 +6,7 @@ import type { MermaidConfig } from './config.type';
 import { log } from './logger';
 import utils from './utils';
 import { mermaidAPI } from './mermaidAPI';
-import { addDetector } from './diagram-api/detectType';
+import { registerLazyLoadedDiagrams } from './diagram-api/detectType';
 import { isDetailedError, type DetailedError } from './utils';
 import { registerDiagram } from './diagram-api/diagramAPI';
 import { ExternalDiagramDefinition } from './diagram-api/types';
@@ -180,17 +180,6 @@ const initThrowsErrors = function (
  * @internal
  * @param diagrams - Array of {@link ExternalDiagramDefinition}.
  */
-const registerLazyLoadedDiagrams = (diagrams: ExternalDiagramDefinition[]) => {
-  for (const { id, detector, loader } of diagrams) {
-    addDetector(id, detector, loader);
-  }
-};
-
-/**
- * This is an internal function and should not be made public, as it will likely change.
- * @internal
- * @param diagrams - Array of {@link ExternalDiagramDefinition}.
- */
 const loadExternalDiagrams = async (diagrams: ExternalDiagramDefinition[]) => {
   log.debug(`Loading ${diagrams.length} external diagrams`);
   // Load all lazy loaded diagrams in parallel
@@ -333,7 +322,7 @@ const registerExternalDiagrams = async (
   } = {}
 ) => {
   if (lazyLoad) {
-    registerLazyLoadedDiagrams(diagrams);
+    registerLazyLoadedDiagrams(...diagrams);
   } else {
     await loadExternalDiagrams(diagrams);
   }

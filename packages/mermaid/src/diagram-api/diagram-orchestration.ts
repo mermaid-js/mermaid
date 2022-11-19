@@ -14,7 +14,7 @@ import state from '../diagrams/state/stateDetector';
 import stateV2 from '../diagrams/state/stateDetector-V2';
 import journey from '../diagrams/user-journey/journeyDetector';
 import error from '../diagrams/error/errorDetector';
-import { addDiagram } from './detectType';
+import { registerLazyLoadedDiagrams } from './detectType';
 
 let hasLoadedDiagrams = false;
 export const addDiagrams = () => {
@@ -24,20 +24,22 @@ export const addDiagrams = () => {
   // This is added here to avoid race-conditions.
   // We could optimize the loading logic somehow.
   hasLoadedDiagrams = true;
-  addDiagram(error);
-  addDiagram(c4);
-  addDiagram(classDiagram);
-  addDiagram(classDiagramV2);
-  addDiagram(er);
-  addDiagram(gantt);
-  addDiagram(info);
-  addDiagram(pie);
-  addDiagram(requirement);
-  addDiagram(sequence);
-  addDiagram(flowchart);
-  addDiagram(flowchartV2);
-  addDiagram(git);
-  addDiagram(state);
-  addDiagram(stateV2);
-  addDiagram(journey);
+  registerLazyLoadedDiagrams(
+    error,
+    c4,
+    classDiagram,
+    classDiagramV2,
+    er,
+    gantt,
+    info,
+    pie,
+    requirement,
+    sequence,
+    flowchart,
+    flowchartV2,
+    git,
+    state,
+    stateV2,
+    journey
+  );
 };
