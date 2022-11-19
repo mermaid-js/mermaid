@@ -1,3 +1,4 @@
+import { DiagramDb } from './types';
 // The "* as yaml" part is necessary for tree-shaking
 import * as yaml from 'js-yaml';
 
@@ -15,11 +16,11 @@ type FrontMatterMetadata = {
 /**
  * Extract and parse frontmatter from text, if present, and sets appropriate
  * properties in the provided db.
- * @param text -
- * @param db -
+ * @param text - The text that may have a YAML frontmatter.
+ * @param db - Diagram database, could be of any diagram.
  * @returns text with frontmatter stripped out
  */
-export function extractFrontMatter(text: string, db: any): string {
+export function extractFrontMatter(text: string, db: DiagramDb): string {
   const matches = text.match(frontMatterRegex);
   if (matches) {
     const parsed: FrontMatterMetadata = yaml.load(matches[1], {
@@ -28,8 +29,8 @@ export function extractFrontMatter(text: string, db: any): string {
       schema: yaml.FAILSAFE_SCHEMA,
     }) as FrontMatterMetadata;
 
-    if (parsed && parsed.title) {
-      db?.setDiagramTitle(parsed.title);
+    if (parsed?.title) {
+      db.setDiagramTitle?.(parsed.title);
     }
 
     return text.slice(matches[0].length);
