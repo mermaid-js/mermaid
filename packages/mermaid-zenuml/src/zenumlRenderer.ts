@@ -6,6 +6,11 @@ import 'vue-sequence/dist/vue-sequence.css';
 
 // Load Zen UML CSS
 function loadCss(root: Document, url: string) {
+  // Avoid loading the same CSS multiple times
+  if (root.querySelector(`link[href="${url}"]`)) {
+    return;
+  }
+
   const link = root.createElement('link');
   link.type = 'text/css';
   link.rel = 'stylesheet';
