@@ -121,7 +121,7 @@ We use the follow naming convention for branches:
 - followed by an _underscore_ ('\_')
 - followed by a short text description (but use dashes ('-') or underscores ('\_') instead of spaces)
 
-If your work is specific to a single diagram type, it is a good idea to put the diagram type at the start of the description. This will help use keep release notes organized: it will help us keep changes for a diagram type together.
+If your work is specific to a single diagram type, it is a good idea to put the diagram type at the start of the description. This will help us keep release notes organized: it will help us keep changes for a diagram type together.
 
 **Ex: A new feature described in issue 2945 that adds a new arrow type called 'florbs' to state diagrams**
 
@@ -287,9 +287,9 @@ To edit Docs on GitHub:
 
 #### First search to see if someone has already asked (and hopefully been answered) or suggested the same thing.
 
-- Search in the Discussions
-- Search in the open Issues
-- Search in the closed Issues
+- Search in Discussions
+- Search in open Issues
+- Search in closed Issues
 
 If you find an open issue or discussion thread that is similar to your question but isn't answered,
 you can let us know that you are also interested in it. **_\[TODO: describe upvoting]_**
