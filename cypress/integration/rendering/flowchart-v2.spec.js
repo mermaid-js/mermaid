@@ -666,11 +666,11 @@ flowchart RL
   it('1433: should render a titled flowchart with titleTopMargin set to 0', () => {
     imgSnapshotTest(
       `---
-      title: Simple flowchart
-      ---
-      flowchart TD
-      A --> B
-      `,
+title: Simple flowchart
+---
+flowchart TD
+A --> B
+`,
       { titleTopMargin: 0 }
     );
   });

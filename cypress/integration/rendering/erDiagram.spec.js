@@ -277,12 +277,12 @@ describe('Entity Relationship Diagram', () => {
   it('1433: should render a simple ER diagram with a title', () => {
     imgSnapshotTest(
       `---
-       title: simple ER diagram
-       ---
-       erDiagram
-       CUSTOMER ||--o{ ORDER : places
-       ORDER ||--|{ LINE-ITEM : contains
-      `,
+title: simple ER diagram
+---
+erDiagram
+CUSTOMER ||--o{ ORDER : places
+ORDER ||--|{ LINE-ITEM : contains
+`,
       {}
     );
   });

@@ -562,12 +562,12 @@ stateDiagram-v2
   it('1433: should render a simple state diagram with a title', () => {
     imgSnapshotTest(
       `---
-       title: simple state diagram
-       ---
-       stateDiagram-v2
-       [*] --> State1
-       State1 --> [*]
-      `,
+title: simple state diagram
+---
+stateDiagram-v2
+[*] --> State1
+State1 --> [*]
+`,
       {}
     );
   });

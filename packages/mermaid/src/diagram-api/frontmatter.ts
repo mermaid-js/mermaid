@@ -6,7 +6,7 @@ import * as yaml from 'js-yaml';
 // Note that JS doesn't support the "\A" anchor, which means we can't use
 // multiline mode.
 // Relevant YAML spec: https://yaml.org/spec/1.2.2/#914-explicit-documents
-export const frontMatterRegex = /^(?:\s*---\s*[\r\n])(.*?)(?:[\r\n]\s*---\s*[\r\n]+)/s;
+export const frontMatterRegex = /^(?:---\s*[\r\n])(.*?)(?:[\r\n]---\s*[\r\n]+)/s;
 
 type FrontMatterMetadata = {
   title?: string;

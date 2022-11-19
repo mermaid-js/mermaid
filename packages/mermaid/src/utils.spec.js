@@ -238,10 +238,9 @@ Alice->Bob: hi`;
     const type = detectType(str);
     expect(type).toBe('gitGraph');
   });
-  it('should handle frontmatter with leading spaces', function () {
+  it('should not allow frontmatter with leading spaces', function () {
     const str = '    ---\ntitle: foo\n---\n  gitGraph TB:\nbfs1:queue';
-    const type = detectType(str);
-    expect(type).toBe('gitGraph');
+    expect(() => detectType(str)).toThrow('No diagram type detected for text');
   });
 });
 describe('when finding substring in array ', function () {

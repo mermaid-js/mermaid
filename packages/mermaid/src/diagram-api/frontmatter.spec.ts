@@ -41,6 +41,13 @@ describe('extractFrontmatter', () => {
     expect(db.setDiagramTitle).toHaveBeenCalledWith('foo---bar');
   });
 
+  it('handles frontmatter with multi-line string and multiple delimiters', () => {
+    const db = dbMock();
+    const text = `---\ntitle: |\n   multi-line string\n   ---\n---\ndiagram`;
+    expect(extractFrontMatter(text, db)).toEqual('diagram');
+    expect(db.setDiagramTitle).toHaveBeenCalledWith('multi-line string\n---\n');
+  });
+
   it('handles frontmatter with title', () => {
     const db = dbMock();
     const text = `---\ntitle: foo\n---\ndiagram`;
