@@ -35,4 +35,4 @@ tsconfig.tsbuildinfo
 
 knsv*.html
 local*.html
-stats.html
+stats/
