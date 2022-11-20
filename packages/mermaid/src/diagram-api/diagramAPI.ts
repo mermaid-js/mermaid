@@ -68,7 +68,7 @@ export class DiagramNotFoundError extends Error {
  * @internal
  * @param diagrams - Array of {@link ExternalDiagramDefinition}.
  */
-export const loadExternalDiagrams = async (diagrams: ExternalDiagramDefinition[]) => {
+export const loadExternalDiagrams = async (...diagrams: ExternalDiagramDefinition[]) => {
   log.debug(`Loading ${diagrams.length} external diagrams`);
   // Load all lazy loaded diagrams in parallel
   const results = await Promise.allSettled(

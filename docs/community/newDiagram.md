@@ -174,8 +174,8 @@ The syntax for adding title and description looks like this:
     accDescr: The description
 
     accDescr {
-	Syntax for a description text
-	written on multiple lines.
+    	Syntax for a description text
+    	written on multiple lines.
     }
 
 In a similar way to the directives the jison syntax are quite similar between the diagrams.

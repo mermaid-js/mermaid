@@ -111,9 +111,9 @@ b. The importing of mermaid library through the `mermaid.esm.js` or `mermaid.esm
 <body>
   Here is a mermaid diagram:
   <pre class="mermaid">
-        graph TD
-        A[Client] --> B[Load Balancer]
-        B --> C[Server01]
+        graph TD 
+        A[Client] --> B[Load Balancer] 
+        B --> C[Server01] 
         B --> D[Server02]
   </pre>
 </body>
@@ -156,18 +156,18 @@ Please refer to the [Mindmap](./mindmap.md?id=integrating-with-your-librarywebsi
   <body>
     Here is one mermaid diagram:
     <pre class="mermaid">
-            graph TD
-            A[Client] --> B[Load Balancer]
-            B --> C[Server1]
+            graph TD 
+            A[Client] --> B[Load Balancer] 
+            B --> C[Server1] 
             B --> D[Server2]
     </pre>
 
     And here is another:
     <pre class="mermaid">
-            graph TD
+            graph TD 
             A[Client] -->|tcp_123| B
-            B(Load Balancer)
-            B -->|tcp_456| C[Server1]
+            B(Load Balancer) 
+            B -->|tcp_456| C[Server1] 
             B -->|tcp_456| D[Server2]
     </pre>
 
@@ -189,15 +189,15 @@ In this example mermaid.js is referenced in `src` as a separate JavaScript file,
   </head>
   <body>
     <pre class="mermaid">
-            graph LR
-            A --- B
-            B-->C[fa:fa-ban forbidden]
+            graph LR 
+            A --- B 
+            B-->C[fa:fa-ban forbidden] 
             B-->D(fa:fa-spinner);
     </pre>
     <pre class="mermaid">
-            graph TD
-            A[Client] --> B[Load Balancer]
-            B --> C[Server1]
+            graph TD 
+            A[Client] --> B[Load Balancer] 
+            B --> C[Server1] 
             B --> D[Server2]
     </pre>
     <script type="module">
