@@ -16,13 +16,13 @@ type OutputOptions = Exclude<
   undefined
 >['output'];
 
-const visualizerOptions = (packageName: string): PluginOption[] => {
+const visualizerOptions = (packageName: string, core = false): PluginOption[] => {
   if (packageName !== 'mermaid' || !visualize) {
     return [];
   }
   return ['network', 'treemap', 'sunburst'].map((chartType) =>
     visualizer({
-      filename: `./stats/${chartType}.html`,
+      filename: `./stats/${chartType}${core ? '.core' : ''}.html`,
       template: chartType as TemplateType,
       gzipSize: true,
       brotliSize: true,
@@ -112,7 +112,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     resolve: {
       extensions: ['.jison', '.js', '.ts', '.json'],
     },
-    plugins: [jisonPlugin(), ...visualizerOptions(packageName)],
+    plugins: [jisonPlugin(), ...visualizerOptions(packageName, core)],
   };
 
   if (watch && config.build) {
@@ -149,6 +149,9 @@ if (watch) {
     build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-mindmap' }));
     // build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
   }
+} else if (visualize) {
+  await build(getBuildConfig({ minify: false, core: true, entryName: 'mermaid' }));
+  await build(getBuildConfig({ minify: false, core: false, entryName: 'mermaid' }));
 } else {
   void main();
 }
