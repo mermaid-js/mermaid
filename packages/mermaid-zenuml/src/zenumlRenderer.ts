@@ -59,13 +59,14 @@ export const draw = async function (text: string, id: string) {
   const svgContainer = root?.querySelector(`svg#${id}`);
 
   if (!root || !svgContainer) {
+    log.error('Cannot find root or svgContainer');
     return;
   }
 
   loadCss(root, './style.css');
 
   const foreignObject = createForeignObject();
-  svgContainer?.appendChild(foreignObject);
+  svgContainer.appendChild(foreignObject);
 
   const { container, app } = createTemporaryZenumlContainer();
   document.body.appendChild(container);
