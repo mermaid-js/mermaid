@@ -1,5 +1,6 @@
 import { MockedD3 } from './tests/MockedD3';
 import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility';
+import { D3Element } from './mermaidAPI';
 
 describe('accessibility', () => {
   const fauxSvgNode = new MockedD3();
@@ -37,7 +38,7 @@ describe('accessibility', () => {
       // Convenience functions to DRY up the spec
 
       function expectAriaLabelledByIsTitleId(
-        svgD3Node: any,
+        svgD3Node: D3Element,
         title: string | null | undefined,
         desc: string | null | undefined,
         givenId: string
@@ -49,7 +50,7 @@ describe('accessibility', () => {
       }
 
       function expectAriaDescribedByIsDescId(
-        svgD3Node: any,
+        svgD3Node: D3Element,
         title: string | null | undefined,
         desc: string | null | undefined,
         givenId: string
@@ -61,7 +62,7 @@ describe('accessibility', () => {
       }
 
       function a11yTitleTagInserted(
-        svgD3Node: any,
+        svgD3Node: D3Element,
         title: string | null | undefined,
         desc: string | null | undefined,
         givenId: string,
@@ -71,7 +72,7 @@ describe('accessibility', () => {
       }
 
       function a11yDescTagInserted(
-        svgD3Node: any,
+        svgD3Node: D3Element,
         title: string | null | undefined,
         desc: string | null | undefined,
         givenId: string,
@@ -81,7 +82,7 @@ describe('accessibility', () => {
       }
 
       function a11yTagInserted(
-        svgD3Node: any,
+        svgD3Node: D3Element,
         title: string | null | undefined,
         desc: string | null | undefined,
         givenId: string,

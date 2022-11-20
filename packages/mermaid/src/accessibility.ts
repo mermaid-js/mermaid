@@ -2,11 +2,9 @@
  * Accessibility (a11y) functions, types, helpers
  *
  */
+import { D3Element } from './mermaidAPI';
 
-import { isEmpty, compact } from 'lodash';
-
-// This is just a convenience alias to make it clear the type is a d3 object. (It's easier to make it 'any' instead of the complete typing set in d3)
-type D3object = any;
+import { isEmpty } from 'lodash';
 
 /**
  * Add aria-roledescription to the svg element to the diagramType
@@ -14,7 +12,7 @@ type D3object = any;
  * @param svg - d3 object that contains the SVG HTML element
  * @param diagramType - diagram name for to the aria-roledescription
  */
-export function setA11yDiagramInfo(svg: D3object, diagramType: string | null | undefined) {
+export function setA11yDiagramInfo(svg: D3Element, diagramType: string | null | undefined) {
   if (!isEmpty(diagramType)) {
     svg.attr('aria-roledescription', diagramType);
   }
@@ -31,7 +29,7 @@ export function setA11yDiagramInfo(svg: D3object, diagramType: string | null | u
  * @param baseId - id used to construct the a11y title and description id
  */
 export function addSVGa11yTitleDescription(
-  svg: D3object,
+  svg: D3Element,
   a11yTitle: string | null | undefined,
   a11yDesc: string | null | undefined,
   baseId: string

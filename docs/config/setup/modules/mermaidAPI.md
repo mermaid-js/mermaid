@@ -12,6 +12,16 @@
 
 Renames and re-exports [mermaidAPI](mermaidAPI.md#mermaidapi)
 
+## Type Aliases
+
+### D3Element
+
+Ƭ **D3Element**: `any`
+
+#### Defined in
+
+[mermaidAPI.ts:73](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L73)
+
 ## Variables
 
 ### mermaidAPI

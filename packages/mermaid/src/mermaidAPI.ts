@@ -70,7 +70,7 @@ interface DiagramStyleClassDef {
 
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
 // @ts-ignore Could replicate the type definition in d3. This also makes it possible to use the untyped info from the js diagram files.
-type D3Element = any;
+export type D3Element = any;
 
 // ----------------------------------------------------------------------------
 
