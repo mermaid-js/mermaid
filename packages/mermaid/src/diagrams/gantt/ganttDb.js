@@ -17,6 +17,7 @@ import {
 
 let dateFormat = '';
 let axisFormat = '';
+let tickInterval = undefined;
 let todayMarker = '';
 let includes = [];
 let excludes = [];
@@ -47,6 +48,7 @@ export const clear = function () {
   rawTasks = [];
   dateFormat = '';
   axisFormat = '';
+  tickInterval = undefined;
   todayMarker = '';
   includes = [];
   excludes = [];
@@ -63,6 +65,14 @@ export const setAxisFormat = function (txt) {
 
 export const getAxisFormat = function () {
   return axisFormat;
+};
+
+export const setTickInterval = function (txt) {
+  tickInterval = txt;
+};
+
+export const getTickInterval = function () {
+  return tickInterval;
 };
 
 export const setTodayMarker = function (txt) {
@@ -153,7 +163,9 @@ export const isInvalidDate = function (date, dateFormat, excludes, includes) {
 };
 
 const checkTaskDates = function (task, dateFormat, excludes, includes) {
-  if (!excludes.length || task.manualEndTime) return;
+  if (!excludes.length || task.manualEndTime) {
+    return;
+  }
   let startTime = moment(task.startTime, dateFormat, true);
   startTime.add(1, 'd');
   let endTime = moment(task.endTime, dateFormat, true);
@@ -229,7 +241,7 @@ const getStartDate = function (prevTime, dateFormat, str) {
  * Parse a string as a moment duration.
  *
  * The string have to be compound by a value and a shorthand duration unit. For example `5d`
- * representes 5 days.
+ * represents 5 days.
  *
  * Shorthand unit supported are:
  *
@@ -645,6 +657,8 @@ export default {
   topAxisEnabled,
   setAxisFormat,
   getAxisFormat,
+  setTickInterval,
+  getTickInterval,
   setTodayMarker,
   getTodayMarker,
   setAccTitle,

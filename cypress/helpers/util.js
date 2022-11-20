@@ -47,7 +47,6 @@ export const imgSnapshotTest = (graphStr, _options, api = false, validation) => 
     options.fontSize = '16px';
   }
   const useAppli = Cypress.env('useAppli');
-  //const useAppli = false;
   cy.log('Hello ' + useAppli ? 'Appli' : 'image-snapshot');
   const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
@@ -64,7 +63,9 @@ export const imgSnapshotTest = (graphStr, _options, api = false, validation) => 
   const url = mermaidUrl(graphStr, options, api);
 
   cy.visit(url);
-  if (validation) cy.get('svg').should(validation);
+  if (validation) {
+    cy.get('svg').should(validation);
+  }
   cy.get('svg');
   // Default name to test title
 
@@ -117,7 +118,9 @@ export const urlSnapshotTest = (url, _options, api = false, validation) => {
   }
 
   cy.visit(url);
-  if (validation) cy.get('svg').should(validation);
+  if (validation) {
+    cy.get('svg').should(validation);
+  }
   cy.get('body');
   // Default name to test title
 

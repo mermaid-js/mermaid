@@ -122,9 +122,6 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
 const main = async () => {
   const packageNames = Object.keys(packageOptions) as (keyof typeof packageOptions)[];
   for (const pkg of packageNames) {
-    if (mermaidOnly && pkg !== 'mermaid') {
-      continue;
-    }
     await buildPackage(pkg);
   }
 };

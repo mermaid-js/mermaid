@@ -56,23 +56,12 @@
   <body>
     <div>Security check</div>
     <pre id="diagram" class="mermaid">
-classDiagram
-        direction LR
-        class Student {
-          -idCard : IdCard
-        }
-        class IdCard{
-          -id : int
-          -name : string
-        }
-        class Bike{
-          -id : int
-          -name : string
-        }
-        Student "1" --o "1" IdCard : carries
-        Student "1" --o "1" Bike : rides
+flowchart TD
+    A --> B
+    B --> C
+    A --> C
     </pre>
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 mindmap
   root
     child1((Circle))
@@ -88,8 +77,14 @@ mindmap
         ::icon(mdi mdi-fire)
           gc7((grand<br/>grand<br/>child 8))
         </pre>
-    <pre id="diagram" class="mermaid2">
-      example-diagram
+    <pre id="diagram" class="mermaid">
+      gantt
+        title Style today marker (vertical line should be 5px wide and half-transparent blue)
+        dateFormat YYYY-MM-DD
+        axisFormat %d
+        todayMarker stroke-width:5px,stroke:#00f,opacity:0.5
+        section Section1
+        Today: 1, -1h
     </pre>
 
     <!-- <div id="cy"></div> -->
@@ -103,16 +98,21 @@ mindmap
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'forest',
+        theme: 'base',
         startOnLoad: true,
         logLevel: 0,
-        // basePath: './packages/',
-        // themeVariables: { darkMode: true },
+        flowchart: {
+          useMaxWidth: false,
+          htmlLabels: true,
+        },
+        gantt: {
+          useMaxWidth: false,
+        },
+        useMaxWidth: false,
         lazyLoadedDiagrams: [
           './mermaid-mindmap-detector.esm.mjs',
           './mermaid-example-diagram-detector.esm.mjs',
         ],
-        // lazyLoadedDiagrams: ['../../mermaid-mindmap/registry.ts'],
       });
       function callback() {
         alert('It worked');
@@ -121,6 +121,10 @@ mindmap
         console.error('In parse error:');
         console.error(err);
       };
+      // mermaid.test1('first_slow', 1200).then((r) => console.info(r));
+      // mermaid.test1('second_fast', 200).then((r) => console.info(r));
+      // mermaid.test1('third_fast', 200).then((r) => console.info(r));
+      // mermaid.test1('forth_slow', 1200).then((r) => console.info(r));
     </script>
   </body>
 </html>

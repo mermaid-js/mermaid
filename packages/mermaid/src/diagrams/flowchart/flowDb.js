@@ -17,7 +17,7 @@ let vertexCounter = 0;
 let config = configApi.getConfig();
 let vertices = {};
 let edges = [];
-let classes = [];
+let classes = {};
 let subGraphs = [];
 let subGraphLookup = {};
 let tooltips = {};
@@ -119,7 +119,11 @@ export const addVertex = function (_id, text, type, style, classes, dir, props =
   if (typeof dir !== 'undefined') {
     vertices[id].dir = dir;
   }
-  vertices[id].props = props;
+  if (typeof vertices[id].props === 'undefined') {
+    vertices[id].props = props;
+  } else if (typeof props !== 'undefined') {
+    Object.assign(vertices[id].props, props);
+  }
 };
 
 /**
@@ -456,8 +460,8 @@ export const defaultStyle = function () {
 export const addSubGraph = function (_id, list, _title) {
   // console.log('addSubGraph', _id, list, _title);
   let id = _id.trim();
-  let title = _title.trim();
-  if (id === title && title.match(/\s/)) {
+  let title = _title;
+  if (_id === _title && _title.match(/\s/)) {
     id = undefined;
   }
   /** @param a */
@@ -674,10 +678,6 @@ const destructEndLink = (_str) => {
     stroke = 'thick';
   }
 
-  if (line[0] === '~') {
-    stroke = 'invisible';
-  }
-
   let dots = countChar('.', line);
 
   if (dots) {
@@ -703,7 +703,9 @@ const destructLink = (_str, _startStr) => {
       startInfo.type = info.type;
     } else {
       // x-- xyz -->  - not supported
-      if (startInfo.type !== info.type) return { type: 'INVALID', stroke: 'INVALID' };
+      if (startInfo.type !== info.type) {
+        return { type: 'INVALID', stroke: 'INVALID' };
+      }
 
       startInfo.type = 'double_' + startInfo.type;
     }

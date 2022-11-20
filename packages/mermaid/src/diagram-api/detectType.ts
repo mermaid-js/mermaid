@@ -10,10 +10,13 @@ const anyComment = /\s*%%.*\n/gm;
 const detectors: Record<string, DetectorRecord> = {};
 
 /**
- * @function detectType Detects the type of the graph text. Takes into consideration the possible
- *   existence of an %%init directive
+ * Detects the type of the graph text.
  *
- *   ```mermaid
+ * Takes into consideration the possible existence of an `%%init` directive
+ *
+ * @param text - The text defining the graph. For example:
+ *
+ * ```mermaid
  *   %%{initialize: {"startOnLoad": true, logLevel: "fatal" }}%%
  *   graph LR
  *    a-->b
@@ -24,13 +27,9 @@ const detectors: Record<string, DetectorRecord> = {};
  *    f-->g
  *    g-->h
  * ```
- * @param {string} text The text defining the graph
- * @param {{
- *   class: { defaultRenderer: string } | undefined;
- *   state: { defaultRenderer: string } | undefined;
- *   flowchart: { defaultRenderer: string } | undefined;
- * }} [config]
- * @returns {string} A graph definition key
+ *
+ * @param config - The mermaid config.
+ * @returns A graph definition key
  */
 export const detectType = function (text: string, config?: MermaidConfig): string {
   text = text.replace(directive, '').replace(anyComment, '\n');

@@ -120,7 +120,9 @@ const contentLoadedApi = function () {
         (svgCode, bindFunctions) => {
           div.innerHTML = svgCode;
 
-          if (bindFunctions) bindFunctions(div);
+          if (bindFunctions) {
+            bindFunctions(div);
+          }
         },
         div
       );

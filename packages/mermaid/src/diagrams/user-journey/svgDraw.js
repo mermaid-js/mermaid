@@ -218,7 +218,7 @@ export const drawSection = function (elem, section, conf) {
 
 let taskCount = -1;
 /**
- * Draws an actor in the diagram with the attaced line
+ * Draws an actor in the diagram with the attached line
  *
  * @param {any} elem The HTML element
  * @param {any} task The task to render

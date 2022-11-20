@@ -31,7 +31,9 @@ const addPopupInteraction = (id, actorCnt) => {
   addFunction(() => {
     const arr = document.querySelectorAll(id);
     // This will be the case when running in sandboxed mode
-    if (arr.length === 0) return;
+    if (arr.length === 0) {
+      return;
+    }
     arr[0].addEventListener('mouseover', function () {
       popupMenuUpFunc('actor' + actorCnt + '_popup');
     });
@@ -322,7 +324,9 @@ export const drawLabel = function (elem, txtObject) {
 let actorCnt = -1;
 
 export const fixLifeLineHeights = (diagram, bounds) => {
-  if (!diagram.selectAll) return;
+  if (!diagram.selectAll) {
+    return;
+  }
   diagram
     .selectAll('.actor-line')
     .attr('class', '200')
@@ -509,7 +513,7 @@ export const anchorElement = function (elem) {
  *
  * @param {any} elem - Element to append activation rect.
  * @param {any} bounds - Activation box bounds.
- * @param {any} verticalPos - Precise y cooridnate of bottom activation box edge.
+ * @param {any} verticalPos - Precise y coordinate of bottom activation box edge.
  * @param {any} conf - Sequence diagram config object.
  * @param {any} actorActivations - Number of activations on the actor.
  */
@@ -527,10 +531,10 @@ export const drawActivation = function (elem, bounds, verticalPos, conf, actorAc
 /**
  * Draws a loop in the diagram
  *
- * @param {any} elem - Elemenet to append the loop to.
+ * @param {any} elem - Element to append the loop to.
  * @param {any} loopModel - LoopModel of the given loop.
  * @param {any} labelText - Text within the loop.
- * @param {any} conf - Diagrom configuration
+ * @param {any} conf - Diagram configuration
  * @returns {any}
  */
 export const drawLoop = function (elem, loopModel, labelText, conf) {
@@ -748,7 +752,7 @@ export const insertSequenceNumber = function (elem) {
   // .style("fill", '#f00');
 };
 /**
- * Setup arrow head and define the marker. The result is appended to the svg.
+ * Setup cross head and define the marker. The result is appended to the svg.
  *
  * @param {any} elem
  */
@@ -760,26 +764,16 @@ export const insertArrowCrossHead = function (elem) {
     .attr('markerWidth', 15)
     .attr('markerHeight', 8)
     .attr('orient', 'auto')
-    .attr('refX', 16)
-    .attr('refY', 4);
-
-  // The arrow
-  marker
-    .append('path')
-    .attr('fill', 'black')
-    .attr('stroke', '#000000')
-    .style('stroke-dasharray', '0, 0')
-    .attr('stroke-width', '1px')
-    .attr('d', 'M 9,2 V 6 L16,4 Z');
-
+    .attr('refX', 4)
+    .attr('refY', 5);
   // The cross
   marker
     .append('path')
     .attr('fill', 'none')
     .attr('stroke', '#000000')
     .style('stroke-dasharray', '0, 0')
-    .attr('stroke-width', '1px')
-    .attr('d', 'M 0,1 L 6,7 M 6,1 L 0,7');
+    .attr('stroke-width', '1pt')
+    .attr('d', 'M 1,2 L 6,7 M 6,2 L 1,7');
   // this is actual shape for arrowhead
 };
 

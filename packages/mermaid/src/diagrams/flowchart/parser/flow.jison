@@ -120,7 +120,6 @@ that id.
 \s*[xo<]?\-\-+[-xo>]\s*     return 'LINK';
 \s*[xo<]?\=\=+[=xo>]\s*     return 'LINK';
 \s*[xo<]?\-?\.+\-[xo>]?\s*  return 'LINK';
-\s*\~\~[\~]+\s*  return 'LINK';
 \s*[xo<]?\-\-\s*            return 'START_LINK';
 \s*[xo<]?\=\=\s*            return 'START_LINK';
 \s*[xo<]?\-\.\s*            return 'START_LINK';

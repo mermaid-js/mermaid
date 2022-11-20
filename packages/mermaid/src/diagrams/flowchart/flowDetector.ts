@@ -3,9 +3,11 @@ import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-a
 const id = 'flowchart';
 
 const detector: DiagramDetector = (txt, config) => {
-  // If we have confirmed to only use new flow charts this function should always return false
+  // If we have conferred to only use new flow charts this function should always return false
   // as in not signalling true for a legacy flowchart
-  if (config?.flowchart?.defaultRenderer === 'dagre-wrapper') return false;
+  if (config?.flowchart?.defaultRenderer === 'dagre-wrapper') {
+    return false;
+  }
   return txt.match(/^\s*graph/) !== null;
 };
 

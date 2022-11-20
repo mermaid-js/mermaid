@@ -26,7 +26,7 @@ ${'2w'}   | ${moment.duration(2, 'w')}
 ```
 */
 
-export const convert = (template: TemplateStringsArray, ...params: any[]) => {
+export const convert = (template: TemplateStringsArray, ...params: unknown[]) => {
   const header = template[0]
     .trim()
     .split('|')

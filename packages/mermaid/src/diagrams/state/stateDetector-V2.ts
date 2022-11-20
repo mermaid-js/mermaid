@@ -3,9 +3,15 @@ import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-a
 const id = 'stateDiagram';
 
 const detector: DiagramDetector = (text, config) => {
-  if (text.match(/^\s*stateDiagram-v2/) !== null) return true;
-  if (text.match(/^\s*stateDiagram/) && config?.state?.defaultRenderer === 'dagre-wrapper')
+  if (text.match(/^\s*stateDiagram-v2/) !== null) {
     return true;
+  }
+  if (text.match(/^\s*stateDiagram/) && config?.state?.defaultRenderer === 'dagre-wrapper') {
+    return true;
+  }
+  if (text.match(/^\s*stateDiagram/) && config?.state?.defaultRenderer === 'dagre-wrapper') {
+    return true;
+  }
   return false;
 };
 

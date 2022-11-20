@@ -1,16 +1,17 @@
-/** Created by knut on 23-07-2022. */
+/** Created by knut on 14-12-11. */
 import { select } from 'd3';
 import { log, getConfig, setupGraphViewbox } from './mermaidUtils';
-import svgDraw, { getElementById, clearElementRefs } from './svgDraw';
+import svgDraw from './svgDraw';
 import cytoscape from 'cytoscape';
 import coseBilkent from 'cytoscape-cose-bilkent';
+import * as db from './mindmapDb';
 
 // Inject the layout algorithm into cytoscape
 cytoscape.use(coseBilkent);
 
 /**
  * @param {any} svg The svg element to draw the diagram onto
- * @param {object} mindmap The maindmap data and hierarchy
+ * @param {object} mindmap The mindmap data and hierarchy
  * @param section
  * @param {object} conf The configuration object
  */
@@ -24,16 +25,11 @@ function drawNodes(svg, mindmap, section, conf) {
 }
 
 /**
- * @param edgesElem
- * @param mindmap
- * @param parent
- * @param depth
- * @param section
  * @param edgesEl
  * @param cy
  */
 function drawEdges(edgesEl, cy) {
-  cy?.edges().map((edge, id) => {
+  cy.edges().map((edge, id) => {
     const data = edge.data();
     if (edge[0]._private.bodyBounds) {
       const bounds = edge[0]._private.rscratch;
@@ -50,11 +46,9 @@ function drawEdges(edgesEl, cy) {
 }
 
 /**
- * @param {any} svg The svg element to draw the diagram onto
- * @param {object} mindmap The maindmap data and hierarchy
- * @param section
+ * @param mindmap The mindmap data and hierarchy
  * @param cy
- * @param {object} conf The configuration object
+ * @param conf The configuration object
  * @param level
  */
 function addNodes(mindmap, cy, conf, level) {
@@ -95,14 +89,12 @@ function addNodes(mindmap, cy, conf, level) {
 /**
  * @param node
  * @param conf
- * @param cy
  */
 function layoutMindmap(node, conf) {
   return new Promise((resolve) => {
-    // if (node.children.length === 0) {
-    //   resolve(node);
-    //   return;
-    // }
+    if (node.children.length === 0) {
+      return node;
+    }
 
     // Add temporary render element
     const renderEl = select('body').append('div').attr('id', 'cy').attr('style', 'display:none');
@@ -121,7 +113,7 @@ function layoutMindmap(node, conf) {
     renderEl.remove();
     addNodes(node, cy, conf, 0);
 
-    // Make cytoscape care about the dimensisions of the nodes
+    // Make cytoscape care about the dimensions of the nodes
     cy.nodes().forEach(function (n) {
       n.layoutDimensions = () => {
         const data = n.data();
@@ -143,10 +135,7 @@ function layoutMindmap(node, conf) {
   });
 }
 /**
- * @param node
  * @param cy
- * @param positionedMindmap
- * @param conf
  */
 function positionNodes(cy) {
   cy.nodes().map((node, id) => {
@@ -154,7 +143,7 @@ function positionNodes(cy) {
     data.x = node.position().x;
     data.y = node.position().y;
     svgDraw.positionNode(data);
-    const el = getElementById(data.nodeId);
+    const el = db.getElementById(data.nodeId);
     log.info('Id:', id, 'Position: (', node.position().x, ', ', node.position().y, ')', data);
     el.attr(
       'transform',
@@ -178,14 +167,13 @@ export const draw = async (text, id, version, diagObj) => {
 
   // This is done only for throwing the error if the text is not valid.
   diagObj.db.clear();
-  clearElementRefs();
   // Parse the graph definition
   diagObj.parser.parse(text);
 
   log.debug('Renering info diagram\n' + text);
 
   const securityLevel = getConfig().securityLevel;
-  // Handle root and Document for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);

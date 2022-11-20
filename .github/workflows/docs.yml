@@ -16,12 +16,12 @@ jobs:
     name: 'Docs: Spellcheck'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         name: Check out the code
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         name: Setup node
         with:
-          node-version: '16'
+          node-version: '18'
       - run: npm install -g cspell
         name: Install cSpell
       - run: cspell --config ./cSpell.json "packages/mermaid/src/docs/**/*.md" --no-progress

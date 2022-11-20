@@ -10,6 +10,11 @@ import {
   axisBottom,
   axisTop,
   timeFormat,
+  timeMinute,
+  timeHour,
+  timeDay,
+  timeWeek,
+  timeMonth,
 } from 'd3';
 import common from '../common/common';
 import { getConfig } from '../../config';
@@ -27,7 +32,7 @@ export const draw = function (text, id, version, diagObj) {
   // parser.parse(text);
 
   const securityLevel = getConfig().securityLevel;
-  // Handle root and Document for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -427,7 +432,9 @@ export const draw = function (text, id, version, diagObj) {
     );
     const maxTime = tasks.reduce((max, { endTime }) => (max ? Math.max(max, endTime) : endTime), 0);
     const dateFormat = diagObj.db.getDateFormat();
-    if (!minTime || !maxTime) return;
+    if (!minTime || !maxTime) {
+      return;
+    }
 
     const excludeRanges = [];
     let range = null;
@@ -493,6 +500,33 @@ export const draw = function (text, id, version, diagObj) {
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
       .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
 
+    const reTickInterval = /^([1-9][0-9]*)(minute|hour|day|week|month)$/;
+    const resultTickInterval = reTickInterval.exec(
+      diagObj.db.getTickInterval() || conf.tickInterval
+    );
+
+    if (resultTickInterval !== null) {
+      const every = resultTickInterval[1];
+      const interval = resultTickInterval[2];
+      switch (interval) {
+        case 'minute':
+          bottomXAxis.ticks(timeMinute.every(every));
+          break;
+        case 'hour':
+          bottomXAxis.ticks(timeHour.every(every));
+          break;
+        case 'day':
+          bottomXAxis.ticks(timeDay.every(every));
+          break;
+        case 'week':
+          bottomXAxis.ticks(timeWeek.every(every));
+          break;
+        case 'month':
+          bottomXAxis.ticks(timeMonth.every(every));
+          break;
+      }
+    }
+
     svg
       .append('g')
       .attr('class', 'grid')
@@ -509,6 +543,28 @@ export const draw = function (text, id, version, diagObj) {
       let topXAxis = axisTop(timeScale)
         .tickSize(-h + theTopPad + conf.gridLineStartPadding)
         .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+
+      if (resultTickInterval !== null) {
+        const every = resultTickInterval[1];
+        const interval = resultTickInterval[2];
+        switch (interval) {
+          case 'minute':
+            topXAxis.ticks(timeMinute.every(every));
+            break;
+          case 'hour':
+            topXAxis.ticks(timeHour.every(every));
+            break;
+          case 'day':
+            topXAxis.ticks(timeDay.every(every));
+            break;
+          case 'week':
+            topXAxis.ticks(timeWeek.every(every));
+            break;
+          case 'month':
+            topXAxis.ticks(timeMonth.every(every));
+            break;
+        }
+      }
 
       svg
         .append('g')
@@ -552,7 +608,9 @@ export const draw = function (text, id, version, diagObj) {
           const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
           tspan.setAttribute('alignment-baseline', 'central');
           tspan.setAttribute('x', '10');
-          if (j > 0) tspan.setAttribute('dy', '1em');
+          if (j > 0) {
+            tspan.setAttribute('dy', '1em');
+          }
           tspan.textContent = rows[j];
           svgLabel.appendChild(tspan);
         }
@@ -610,7 +668,7 @@ export const draw = function (text, id, version, diagObj) {
   }
 
   /**
-   * From this stackexchange question:
+   * From this stack exchange question:
    * http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
    *
    * @param arr
@@ -629,7 +687,7 @@ export const draw = function (text, id, version, diagObj) {
   }
 
   /**
-   * From this stackexchange question:
+   * From this stack exchange question:
    * http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
    *
    * @param arr

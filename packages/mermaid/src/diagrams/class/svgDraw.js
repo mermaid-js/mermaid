@@ -9,13 +9,13 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
     switch (type) {
       case diagObj.db.relationType.AGGREGATION:
         return 'aggregation';
-      case diagObj.db.EXTENSION:
+      case diagObj.db.relationType.EXTENSION:
         return 'extension';
-      case diagObj.db.COMPOSITION:
+      case diagObj.db.relationType.COMPOSITION:
         return 'composition';
-      case diagObj.db.DEPENDENCY:
+      case diagObj.db.relationType.DEPENDENCY:
         return 'dependency';
-      case diagObj.db.LOLLIPOP:
+      case diagObj.db.relationType.LOLLIPOP:
         return 'lollipop';
     }
   };
@@ -54,6 +54,9 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
 
   if (relation.relation.lineType == 1) {
     svgPath.attr('class', 'relation dashed-line');
+  }
+  if (relation.relation.lineType == 10) {
+    svgPath.attr('class', 'relation dotted-line');
   }
   if (relation.relation.type1 !== 'none') {
     svgPath.attr(
@@ -190,7 +193,9 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
   let isFirst = true;
   classDef.annotations.forEach(function (member) {
     const titleText2 = title.append('tspan').text('«' + member + '»');
-    if (!isFirst) titleText2.attr('dy', conf.textHeight);
+    if (!isFirst) {
+      titleText2.attr('dy', conf.textHeight);
+    }
     isFirst = false;
   });
 
@@ -203,7 +208,9 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
   const classTitle = title.append('tspan').text(classTitleString).attr('class', 'title');
 
   // If class has annotations the title needs to have an offset of the text height
-  if (!isFirst) classTitle.attr('dy', conf.textHeight);
+  if (!isFirst) {
+    classTitle.attr('dy', conf.textHeight);
+  }
 
   const titleHeight = title.node().getBBox().height;
 
@@ -284,6 +291,69 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
   return classInfo;
 };
 
+/**
+ * Renders a note diagram
+ *
+ * @param {SVGSVGElement} elem The element to draw it into
+ * @param {{id: string; text: string; class: string;}} note
+ * @param conf
+ * @param diagObj
+ * @todo Add more information in the JSDOC here
+ */
+export const drawNote = function (elem, note, conf, diagObj) {
+  log.debug('Rendering note ', note, conf);
+
+  const id = note.id;
+  const noteInfo = {
+    id: id,
+    text: note.text,
+    width: 0,
+    height: 0,
+  };
+
+  // add class group
+  const g = elem.append('g').attr('id', id).attr('class', 'classGroup');
+
+  // add text
+  let text = g
+    .append('text')
+    .attr('y', conf.textHeight + conf.padding)
+    .attr('x', 0);
+
+  const lines = JSON.parse(`"${note.text}"`).split('\n');
+
+  lines.forEach(function (line) {
+    log.debug(`Adding line: ${line}`);
+    text.append('tspan').text(line).attr('class', 'title').attr('dy', conf.textHeight);
+  });
+
+  const noteBox = g.node().getBBox();
+
+  const rect = g
+    .insert('rect', ':first-child')
+    .attr('x', 0)
+    .attr('y', 0)
+    .attr('width', noteBox.width + 2 * conf.padding)
+    .attr(
+      'height',
+      noteBox.height + lines.length * conf.textHeight + conf.padding + 0.5 * conf.dividerMargin
+    );
+
+  const rectWidth = rect.node().getBBox().width;
+
+  // Center title
+  // We subtract the width of each text element from the class box width and divide it by 2
+  text.node().childNodes.forEach(function (x) {
+    x.setAttribute('x', (rectWidth - x.getBBox().width) / 2);
+  });
+
+  noteInfo.width = rectWidth;
+  noteInfo.height =
+    noteBox.height + lines.length * conf.textHeight + conf.padding + 0.5 * conf.dividerMargin;
+
+  return noteInfo;
+};
+
 export const parseMember = function (text) {
   const fieldRegEx = /^(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+) *(\*|\$)?$/;
   const methodRegEx = /^([+|\-|~|#])?(\w+) *\( *(.*)\) *(\*|\$)? *(\w*[~|[\]]*\s*\w*~?)$/;
@@ -347,7 +417,7 @@ const buildMethodDisplay = function (parsedText) {
 };
 
 const buildLegacyDisplay = function (text) {
-  // if for some reason we dont have any match, use old format to parse text
+  // if for some reason we don't have any match, use old format to parse text
   let displayText = '';
   let cssStyle = '';
   let memberText = '';
@@ -435,5 +505,6 @@ const parseClassifier = function (classifier) {
 export default {
   drawClass,
   drawEdge,
+  drawNote,
   parseMember,
 };

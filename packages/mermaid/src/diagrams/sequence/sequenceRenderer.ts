@@ -10,6 +10,7 @@ import assignWithDepth from '../../assignWithDepth';
 import utils from '../../utils';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
+import Diagram from '../../Diagram';
 
 let conf = {};
 
@@ -100,8 +101,8 @@ export const bounds = {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const _self = this;
     let cnt = 0;
-    /** @param {any} type */
-    function updateFn(type) {
+    /** @param type - Either `activation` or `undefined` */
+    function updateFn(type?: 'activation') {
       return function updateItemBounds(item) {
         cnt++;
         // The loop sequenceItems is a stack so the biggest margins in the beginning of the sequenceItems
@@ -200,15 +201,25 @@ export const bounds = {
   },
 };
 
+/** Options for drawing a note in {@link drawNote} */
+interface NoteModel {
+  /** x axis start position */
+  startx: number;
+  /** y axis position */
+  starty: number;
+  /** the message to be shown */
+  message: string;
+  /** Set this with a custom width to override the default configured width. */
+  width: number;
+}
+
 /**
  * Draws an note in the diagram with the attached line
  *
- * @param {any} elem - The diagram to draw to.
- * @param {{ x: number; y: number; message: string; width: number }} noteModel - Startx: x axis
- *   start position, verticalPos: y axis position, messsage: the message to be shown, width: Set
- *   this with a custom width to override the default configured width.
+ * @param elem - The diagram to draw to.
+ * @param noteModel - Note model options.
  */
-const drawNote = function (elem, noteModel) {
+const drawNote = function (elem: any, noteModel: NoteModel) {
   bounds.bumpVerticalPos(conf.boxMargin);
   noteModel.height = conf.boxMargin;
   noteModel.starty = bounds.getVerticalPos();
@@ -278,11 +289,11 @@ const actorFont = (cnf) => {
  * message so it can be drawn later. We do not draw the message at this point so the arrowhead can
  * be on top of the activation box.
  *
- * @param {any} diagram - The parent of the message element
- * @param {any} msgModel - The model containing fields describing a message
- * @returns {number} LineStarty - The Y coordinate at which the message line starts
+ * @param _diagram - The parent of the message element.
+ * @param msgModel - The model containing fields describing a message
+ * @returns `lineStartY` - The Y coordinate at which the message line starts
  */
-const boundMessage = function (diagram, msgModel) {
+function boundMessage(_diagram, msgModel): number {
   bounds.bumpVerticalPos(10);
   const { startx, stopx, message } = msgModel;
   const lines = common.splitBreaks(message).length;
@@ -292,15 +303,15 @@ const boundMessage = function (diagram, msgModel) {
 
   bounds.bumpVerticalPos(lineHeight);
 
-  let lineStarty;
+  let lineStartY;
   let totalOffset = textDims.height - 10;
   const textWidth = textDims.width;
 
   if (startx === stopx) {
-    lineStarty = bounds.getVerticalPos() + totalOffset;
+    lineStartY = bounds.getVerticalPos() + totalOffset;
     if (!conf.rightAngles) {
       totalOffset += conf.boxMargin;
-      lineStarty = bounds.getVerticalPos() + totalOffset;
+      lineStartY = bounds.getVerticalPos() + totalOffset;
     }
     totalOffset += 30;
     const dx = Math.max(textWidth / 2, conf.width / 2);
@@ -312,26 +323,26 @@ const boundMessage = function (diagram, msgModel) {
     );
   } else {
     totalOffset += conf.boxMargin;
-    lineStarty = bounds.getVerticalPos() + totalOffset;
-    bounds.insert(startx, lineStarty - 10, stopx, lineStarty);
+    lineStartY = bounds.getVerticalPos() + totalOffset;
+    bounds.insert(startx, lineStartY - 10, stopx, lineStartY);
   }
   bounds.bumpVerticalPos(totalOffset);
   msgModel.height += totalOffset;
   msgModel.stopy = msgModel.starty + msgModel.height;
   bounds.insert(msgModel.fromBounds, msgModel.starty, msgModel.toBounds, msgModel.stopy);
 
-  return lineStarty;
-};
+  return lineStartY;
+}
 
 /**
  * Draws a message. Note that the bounds have previously been updated by boundMessage.
  *
- * @param {any} diagram - The parent of the message element
- * @param {any} msgModel - The model containing fields describing a message
- * @param {number} lineStarty - The Y coordinate at which the message line starts
- * @param diagObj
+ * @param diagram - The parent of the message element
+ * @param msgModel - The model containing fields describing a message
+ * @param lineStartY - The Y coordinate at which the message line starts
+ * @param diagObj - The diagram object.
  */
-const drawMessage = function (diagram, msgModel, lineStarty, diagObj) {
+const drawMessage = function (diagram, msgModel, lineStartY: number, diagObj: Diagram) {
   const { startx, stopx, starty, message, type, sequenceIndex, sequenceVisible } = msgModel;
   const textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const textObj = svgDraw.getTextObj();
@@ -360,8 +371,8 @@ const drawMessage = function (diagram, msgModel, lineStarty, diagObj) {
         .append('path')
         .attr(
           'd',
-          `M  ${startx},${lineStarty} H ${startx + Math.max(conf.width / 2, textWidth / 2)} V ${
-            lineStarty + 25
+          `M  ${startx},${lineStartY} H ${startx + Math.max(conf.width / 2, textWidth / 2)} V ${
+            lineStartY + 25
           } H ${startx}`
         );
     } else {
@@ -372,27 +383,27 @@ const drawMessage = function (diagram, msgModel, lineStarty, diagObj) {
           'M ' +
             startx +
             ',' +
-            lineStarty +
+            lineStartY +
             ' C ' +
             (startx + 60) +
             ',' +
-            (lineStarty - 10) +
+            (lineStartY - 10) +
             ' ' +
             (startx + 60) +
             ',' +
-            (lineStarty + 30) +
+            (lineStartY + 30) +
             ' ' +
             startx +
             ',' +
-            (lineStarty + 20)
+            (lineStartY + 20)
         );
     }
   } else {
     line = diagram.append('line');
     line.attr('x1', startx);
-    line.attr('y1', lineStarty);
+    line.attr('y1', lineStartY);
     line.attr('x2', stopx);
-    line.attr('y2', lineStarty);
+    line.attr('y2', lineStartY);
   }
   // Make an SVG Container
   // Draw the line
@@ -440,7 +451,7 @@ const drawMessage = function (diagram, msgModel, lineStarty, diagObj) {
     diagram
       .append('text')
       .attr('x', startx)
-      .attr('y', lineStarty + 4)
+      .attr('y', lineStartY + 4)
       .attr('font-family', 'sans-serif')
       .attr('font-size', '12px')
       .attr('text-anchor', 'middle')
@@ -554,13 +565,6 @@ const activationBounds = function (actor, actors) {
   return [left, right];
 };
 
-/**
- * @param {any} loopWidths
- * @param {any} msg
- * @param {any} preMargin
- * @param {any} postMargin
- * @param {any} addLoopFn
- */
 function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoopFn) {
   bounds.bumpVerticalPos(preMargin);
   let heightAdjust = postMargin;
@@ -584,15 +588,15 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
 /**
  * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
  *
- * @param {any} _text The text of the diagram
- * @param {any} id The id of the diagram which will be used as a DOM element id¨
- * @param {any} _version Mermaid version from package.json
- * @param {any} diagObj A stanard diagram containing the db and the text and type etc of the diagram
+ * @param _text - The text of the diagram
+ * @param id - The id of the diagram which will be used as a DOM element id¨
+ * @param _version - Mermaid version from package.json
+ * @param diagObj - A standard diagram containing the db and the text and type etc of the diagram
  */
-export const draw = function (_text, id, _version, diagObj) {
+export const draw = function (_text: string, id: string, _version: string, diagObj: Diagram) {
   const { securityLevel, sequence } = configApi.getConfig();
   conf = sequence;
-  // Handle root and Document for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -632,10 +636,10 @@ export const draw = function (_text, id, _version, diagObj) {
   svgDraw.insertSequenceNumber(diagram);
 
   /**
-   * @param {any} msg
-   * @param {any} verticalPos
+   * @param msg - The message to draw.
+   * @param verticalPos - The vertical position of the message.
    */
-  function activeEnd(msg, verticalPos) {
+  function activeEnd(msg: any, verticalPos: number) {
     const activationData = bounds.endActivation(msg);
     if (activationData.starty + 18 > verticalPos) {
       activationData.starty = verticalPos - 6;
@@ -762,8 +766,11 @@ export const draw = function (_text, id, _version, diagObj) {
       case diagObj.db.LINETYPE.AUTONUMBER:
         sequenceIndex = msg.message.start || sequenceIndex;
         sequenceIndexStep = msg.message.step || sequenceIndexStep;
-        if (msg.message.visible) diagObj.db.enableSequenceNumbers();
-        else diagObj.db.disableSequenceNumbers();
+        if (msg.message.visible) {
+          diagObj.db.enableSequenceNumbers();
+        } else {
+          diagObj.db.disableSequenceNumbers();
+        }
         break;
       case diagObj.db.LINETYPE.CRITICAL_START:
         adjustLoopHeightForWrap(
@@ -811,8 +818,8 @@ export const draw = function (_text, id, _version, diagObj) {
           msgModel.starty = bounds.getVerticalPos();
           msgModel.sequenceIndex = sequenceIndex;
           msgModel.sequenceVisible = diagObj.db.showSequenceNumbers();
-          const lineStarty = boundMessage(diagram, msgModel);
-          messagesToDraw.push({ messageModel: msgModel, lineStarty: lineStarty });
+          const lineStartY = boundMessage(diagram, msgModel);
+          messagesToDraw.push({ messageModel: msgModel, lineStartY: lineStartY });
           bounds.models.addMessage(msgModel);
         } catch (e) {
           log.error('error while drawing message', e);
@@ -836,7 +843,7 @@ export const draw = function (_text, id, _version, diagObj) {
     }
   });
 
-  messagesToDraw.forEach((e) => drawMessage(diagram, e.messageModel, e.lineStarty, diagObj));
+  messagesToDraw.forEach((e) => drawMessage(diagram, e.messageModel, e.lineStartY, diagObj));
 
   if (conf.mirrorActors) {
     // Draw actors below diagram
@@ -907,12 +914,16 @@ export const draw = function (_text, id, _version, diagObj) {
  * It will enumerate each given message, and will determine its text width, in relation to the actor
  * it originates from, and destined to.
  *
- * @param {any} actors - The actors map
- * @param {Array} messages - A list of message objects to iterate
- * @param diagObj
- * @returns {any}
+ * @param actors - The actors map
+ * @param messages - A list of message objects to iterate
+ * @param diagObj - The diagram object.
+ * @returns The max message width of each actor.
  */
-const getMaxMessageWidthPerActor = function (actors, messages, diagObj) {
+function getMaxMessageWidthPerActor(
+  actors: { [id: string]: any },
+  messages: any[],
+  diagObj: Diagram
+): { [id: string]: number } {
   const maxMessageWidthPerActor = {};
 
   messages.forEach(function (msg) {
@@ -1005,7 +1016,7 @@ const getMaxMessageWidthPerActor = function (actors, messages, diagObj) {
 
   log.debug('maxMessageWidthPerActor:', maxMessageWidthPerActor);
   return maxMessageWidthPerActor;
-};
+}
 
 const getRequiredPopupWidth = function (actor) {
   let requiredPopupWidth = 0;
@@ -1022,15 +1033,19 @@ const getRequiredPopupWidth = function (actor) {
 };
 
 /**
- * This will calculate the optimal margin for each given actor, for a given actor->messageWidth map.
+ * This will calculate the optimal margin for each given actor,
+ * for a given actor → messageWidth map.
  *
  * An actor's margin is determined by the width of the actor, the width of the largest message that
  * originates from it, and the configured conf.actorMargin.
  *
- * @param {any} actors - The actors map to calculate margins for
- * @param {any} actorToMessageWidth - A map of actor key -> max message width it holds
+ * @param actors - The actors map to calculate margins for
+ * @param actorToMessageWidth - A map of actor key → max message width it holds
  */
-const calculateActorMargins = function (actors, actorToMessageWidth) {
+function calculateActorMargins(
+  actors: { [id: string]: any },
+  actorToMessageWidth: ReturnType<typeof getMaxMessageWidthPerActor>
+) {
   let maxHeight = 0;
   Object.keys(actors).forEach((prop) => {
     const actor = actors[prop];
@@ -1071,7 +1086,7 @@ const calculateActorMargins = function (actors, actorToMessageWidth) {
   }
 
   return Math.max(maxHeight, conf.height);
-};
+}
 
 const buildNoteModel = function (msg, actors, diagObj) {
   const startx = actors[msg.from].x;

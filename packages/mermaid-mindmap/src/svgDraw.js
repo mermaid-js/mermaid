@@ -159,7 +159,6 @@ const roundedRectBkg = function (elem, node) {
 /**
  * @param {object} elem The D3 dom element in which the node is to be added
  * @param {object} node The node to be added
- * @param section
  * @param fullSection
  * @param {object} conf The configuration object
  * @returns {number} The height nodes dom element
@@ -259,7 +258,7 @@ export const drawNode = function (elem, node, fullSection, conf) {
   // if (typeof node.x !== 'undefined' && typeof node.y !== 'undefined') {
   //   nodeElem.attr('transform', 'translate(' + node.x + ',' + node.y + ')');
   // }
-  setElementById(node.id, nodeElem);
+  db.setElementForId(node.id, nodeElem);
   return node.height;
 };
 
@@ -286,26 +285,12 @@ export const drawEdge = function drawEdge(edgesElem, mindmap, parent, depth, ful
 };
 
 export const positionNode = function (node) {
-  const nodeElem = getElementById(node.id);
+  const nodeElem = db.getElementById(node.id);
 
   const x = node.x || 0;
   const y = node.y || 0;
   // Position the node to its coordinate
   nodeElem.attr('transform', 'translate(' + x + ',' + y + ')');
-};
-
-let elements = {};
-
-const setElementById = (id, element) => {
-  elements[id] = element;
-};
-
-export const getElementById = (id) => {
-  return elements[id];
-};
-
-export const clearElementRefs = () => {
-  elements = {};
 };
 
 export default { drawNode, positionNode, drawEdge };

@@ -1,5 +1,3 @@
-import type { MermaidConfig } from 'mermaid';
-
 const warning = (s: string) => {
   // Todo remove debug code
   console.error('Log function was called before initialization', s); // eslint-disable-line
@@ -26,7 +24,7 @@ export const log: Record<keyof typeof LEVELS, typeof console.log> = {
 };
 
 export let setLogLevel: (level: keyof typeof LEVELS | number | string) => void;
-export let getConfig: () => MermaidConfig;
+export let getConfig: () => object;
 export let sanitizeText: (str: string) => string;
 // eslint-disable @typescript-eslint/no-explicit-any
 export let setupGraphViewbox: (
