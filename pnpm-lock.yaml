@@ -343,15 +343,19 @@ importers:
 
   packages/mermaid-zenuml:
     dependencies:
-      d3:
-        specifier: ^7.6.1
-        version: 7.6.1
-      mermaid:
-        specifier: workspace:*
-        version: link:../mermaid
       vue-sequence:
         specifier: 1.0.273
         version: 1.0.273
+    devDependencies:
+      concurrently:
+        specifier: ^7.5.0
+        version: 7.5.0
+      mermaid:
+        specifier: workspace:*
+        version: link:../mermaid
+      rimraf:
+        specifier: ^3.0.2
+        version: 3.0.2
 
   tests/webpack:
     dependencies:

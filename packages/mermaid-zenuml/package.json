@@ -4,6 +4,7 @@
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid-zenuml.core.mjs",
   "module": "dist/mermaid-zenuml.core.mjs",
+  "types": "dist/detector.d.ts",
   "type": "module",
   "exports": {
     ".": {
@@ -12,39 +13,45 @@
     },
     "./*": "./*"
   },
-  "scripts": {
-    "clean": "rimraf dist",
-    "build:code": "ts-node-esm --transpileOnly --project=tsconfig.json .vite/build.ts",
-    "build:types": "tsc -p ./tsconfig.json --emitDeclarationOnly",
-    "build:watch": "yarn build:code --watch",
-    "build:esbuild": "concurrently \"yarn build:code\" \"yarn build:types\"",
-    "build": "yarn clean; yarn build:esbuild",
-    "dev": "node .esbuild/serve.cjs",
-    "release": "yarn build",
-    "lint": "eslint --cache --ignore-path .gitignore . && prettier --check .",
-    "lint:fix": "eslint --fix --ignore-path .gitignore . && prettier --write ."
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mermaid-js/mermaid.git"
-  },
   "keywords": [
     "diagram",
     "markdown",
     "zenuml",
     "mermaid"
   ],
+  "scripts": {
+    "prepublishOnly": "pnpm -w run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mermaid-js/mermaid.git"
+  },
   "author": "",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/mermaid-js/mermaid/issues"
+  "standard": {
+    "ignore": [
+      "**/parser/*.js",
+      "dist/**/*.js",
+      "cypress/**/*.js"
+    ],
+    "globals": [
+      "page"
+    ]
   },
   "homepage": "https://github.com/mermaid-js/mermaid#readme",
   "dependencies": {
-    "mermaid": "workspace:*",
     "vue-sequence": "1.0.273"
+  },
+  "devDependencies": {
+    "concurrently": "^7.5.0",
+    "mermaid": "workspace:*",
+    "rimraf": "^3.0.2"
   },
   "files": [
     "dist"
+  ],
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
   ]
 }

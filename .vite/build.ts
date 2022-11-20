@@ -27,7 +27,7 @@ const packageOptions = {
   'mermaid-zenuml': {
     name: 'mermaid-zenuml',
     packageName: 'mermaid-zenuml',
-    file: 'diagram-definition.ts',
+    file: 'detector.ts',
   },
   'mermaid-example-diagram': {
     name: 'mermaid-example-diagram',
