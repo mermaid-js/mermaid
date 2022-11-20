@@ -1,6 +1,5 @@
 import { version } from '../../../package.json';
 import MermaidExample from './mermaid-markdown-all';
-import { MermaidMarkdown } from 'vitepress-plugin-mermaid';
 import { defineConfig, MarkdownOptions } from 'vitepress';
 
 const allMarkdownTransformers: MarkdownOptions = {
@@ -8,7 +7,6 @@ const allMarkdownTransformers: MarkdownOptions = {
   theme: 'github-dark',
   config: async (md) => {
     await MermaidExample(md);
-    MermaidMarkdown(md);
   },
 };
 

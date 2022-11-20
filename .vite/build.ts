@@ -1,8 +1,9 @@
-import { build, InlineConfig } from 'vite';
+import { build, InlineConfig, type PluginOption } from 'vite';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import jisonPlugin from './jisonPlugin.js';
 import { readFileSync } from 'fs';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 const watch = process.argv.includes('--watch');
 const mermaidOnly = process.argv.includes('--mermaid');
@@ -95,7 +96,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     resolve: {
       extensions: ['.jison', '.js', '.ts', '.json'],
     },
-    plugins: [jisonPlugin()],
+    plugins: [jisonPlugin(), visualizer({ template: 'network' }) as PluginOption],
   };
 
   if (watch && config.build) {
