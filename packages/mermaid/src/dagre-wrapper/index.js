@@ -1,5 +1,5 @@
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
-import graphlib from 'graphlib';
+import * as graphlibJson from 'dagre-d3-es/src/graphlib/json';
 import insertMarkers from './markers';
 import { updateNodeBounds } from './shapes/util';
 import {
@@ -15,7 +15,7 @@ import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } f
 import { log } from '../logger';
 
 const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
-  log.info('Graph in recursive render: XXX', graphlib.json.write(graph), parentCluster);
+  log.info('Graph in recursive render: XXX', graphlibJson.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
   log.trace('Dir in recursive render - dir:', dir);
 
@@ -96,7 +96,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   log.info('#############################################');
   log.info(graph);
   dagreLayout(graph);
-  log.info('Graph after layout:', graphlib.json.write(graph));
+  log.info('Graph after layout:', graphlibJson.write(graph));
   // Move the nodes to the correct place
   let diff = 0;
   sortNodesByHierarchy(graph).forEach(function (v) {
@@ -153,10 +153,10 @@ export const render = (elem, graph, markers, diagramtype, id) => {
   clearClusters();
   clearGraphlib();
 
-  log.warn('Graph at first:', graphlib.json.write(graph));
+  log.warn('Graph at first:', graphlibJson.write(graph));
   adjustClustersAndEdges(graph);
-  log.warn('Graph after:', graphlib.json.write(graph));
-  // log.warn('Graph ever  after:', graphlib.json.write(graph.node('A').graph));
+  log.warn('Graph after:', graphlibJson.write(graph));
+  // log.warn('Graph ever  after:', graphlibJson.write(graph.node('A').graph));
   recursiveRender(elem, graph, diagramtype);
 };
 

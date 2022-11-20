@@ -1,4 +1,4 @@
-import graphlib from 'graphlib';
+import * as graphlib from 'dagre-d3-es/src/graphlib';
 import { select } from 'd3';
 import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';
