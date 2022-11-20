@@ -54,7 +54,7 @@
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.0",
     "d3": "^7.0.0",
-    "dagre-d3-es": "7.0.2",
+    "dagre-d3-es": "7.0.4",
     "dompurify": "2.4.1",
     "fast-clone": "^1.5.13",
     "graphlib": "^2.1.8",
