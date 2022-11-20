@@ -14,6 +14,7 @@
     "bilkent",
     "bisheng",
     "brolin",
+    "brotli",
     "codedoc",
     "colour",
     "cpettitt",
@@ -70,6 +71,7 @@
     "substate",
     "sveidqvist",
     "techn",
+    "treemap",
     "ts-nocheck",
     "tuleap",
     "verdana",
@@ -116,5 +118,8 @@
     "Multi-line code blocks",
     "HTML Tags"
   ],
-  "ignorePaths": ["packages/mermaid/src/docs/CHANGELOG.md"]
+  "ignorePaths": [
+    "packages/mermaid/src/docs/CHANGELOG.md",
+    "packages/mermaid/src/docs/.vitepress/redirect.ts"
+  ]
 }

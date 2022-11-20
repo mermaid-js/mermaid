@@ -37,6 +37,9 @@ importers:
       '@types/prettier':
         specifier: ^2.7.1
         version: 2.7.1
+      '@types/rollup-plugin-visualizer':
+        specifier: ^4.2.1
+        version: 4.2.1
       '@typescript-eslint/eslint-plugin':
         specifier: ^5.42.1
         version: 5.42.1_2udltptbznfmezdozpdoa2aemq
@@ -133,6 +136,9 @@ importers:
       rimraf:
         specifier: ^3.0.2
         version: 3.0.2
+      rollup-plugin-visualizer:
+        specifier: ^5.8.3
+        version: 5.8.3_rollup@2.79.1
       start-server-and-test:
         specifier: ^1.14.0
         version: 1.14.0
@@ -269,9 +275,6 @@ importers:
       rimraf:
         specifier: ^3.0.2
         version: 3.0.2
-      shiki:
-        specifier: ^0.11.1
-        version: 0.11.1
       start-server-and-test:
         specifier: ^1.14.0
         version: 1.14.0
@@ -2581,6 +2584,13 @@ packages:
     resolution: {integrity: sha512-wWKOClTTiizcZhXnPY4wikVAwmdYHp8q6DmC+EJUzAMsycb7HB32Kh9RN4+0gExjmPmZSAQjgURXIGATPegAvA==}
     dev: true
 
+  /@types/rollup-plugin-visualizer/4.2.1:
+    resolution: {integrity: sha512-Fk4y0EgmsSbvbayYhtSI9+cGvgw1rcQ9RlbExkQt4ivXRdiEwFKuRpxNuJCr0JktXIvOPUuPR7GSmtyZu0dujQ==}
+    dependencies:
+      '@types/node': 18.11.9
+      rollup: 2.79.1
+    dev: true
+
   /@types/semver/7.3.12:
     resolution: {integrity: sha512-WwA1MW0++RfXmCr12xeYOOC5baSC9mSb0ZqCquFzKhcoF4TvHu5MKOuXsncgZcpVFhB1pXd5hZmM0ryAoCp12A==}
     dev: true
@@ -3531,7 +3541,7 @@ packages:
   /axios/0.21.4_debug@4.3.2:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.2
+      follow-redirects: 1.15.2_debug@4.3.2
     transitivePeerDependencies:
       - debug
     dev: true
@@ -6040,6 +6050,18 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
+    dev: true
+
+  /follow-redirects/1.15.2_debug@4.3.2:
+    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dependencies:
+      debug: 4.3.2
     dev: true
 
   /foreground-child/2.0.0:
@@ -9404,6 +9426,22 @@ packages:
     resolution: {integrity: sha512-ndEIpszUHiG4HtDsQLeIuMvRsDnn8c8rYStabochtUeCvfuvNptb5TUbVD68LRAILPX7p9nqQGh4xJgn3EHS/g==}
     dev: false
 
+  /rollup-plugin-visualizer/5.8.3_rollup@2.79.1:
+    resolution: {integrity: sha512-QGJk4Bqe4AOat5AjipOh8esZH1nck5X2KFpf4VytUdSUuuuSwvIQZjMGgjcxe/zXexltqaXp5Vx1V3LmnQH15Q==}
+    engines: {node: '>=14'}
+    hasBin: true
+    peerDependencies:
+      rollup: 2.x || 3.x
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      open: 8.4.0
+      rollup: 2.79.1
+      source-map: 0.7.4
+      yargs: 17.5.1
+    dev: true
+
   /rollup/2.79.1:
     resolution: {integrity: sha512-uKxbd0IhMZOhjAiD5oAFp7BqvkA4Dv47qpOCtaNvng4HBwdbWtdOh8f5nZNuk2rp51PMGk3bzfWu5oayNEuYnw==}
     engines: {node: '>=10.0.0'}
@@ -9758,6 +9796,11 @@ packages:
   /source-map/0.6.1:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
+    dev: true
+
+  /source-map/0.7.4:
+    resolution: {integrity: sha512-l3BikUxvPOcn5E74dZiq5BGsTb5yEwhaTSzccU6t4sDOH8NWJCstKO5QT2CvtFoK6F0saL7p9xHAqHOlCPJygA==}
+    engines: {node: '>= 8'}
     dev: true
 
   /sourcemap-codec/1.4.8:

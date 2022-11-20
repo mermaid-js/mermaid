@@ -90,7 +90,6 @@
     "prettier": "^2.7.1",
     "remark": "^14.0.2",
     "rimraf": "^3.0.2",
-    "shiki": "^0.11.1",
     "start-server-and-test": "^1.14.0",
     "typedoc": "^0.23.18",
     "typedoc-plugin-markdown": "^3.13.6",
