@@ -16,6 +16,7 @@ async function createServer() {
   // Create Vite server in middleware mode
   const vite = await createViteServer({
     configFile: './vite.config.ts',
+    mode: 'production',
     server: { middlewareMode: true },
     appType: 'custom', // don't include Vite's default HTML handling middlewares
   });

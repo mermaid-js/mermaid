@@ -4,7 +4,7 @@ import { getConfig as _getConfig } from '../config';
 import { sanitizeText as _sanitizeText } from '../diagrams/common/common';
 import { setupGraphViewbox as _setupGraphViewbox } from '../setupGraphViewbox';
 import { addStylesForDiagram } from '../styles';
-import { DiagramDefinition, DiagramDetector } from './types';
+import { DiagramDefinition, DiagramDetector, ExternalDiagramDefinition } from './types';
 
 /*
   Packaging and exposing resources for externa diagrams so that they can import
@@ -70,3 +70,27 @@ export class DiagramNotFoundError extends Error {
     super(`Diagram ${message} not found.`);
   }
 }
+
+/**
+ * This is an internal function and should not be made public, as it will likely change.
+ * @internal
+ * @param diagrams - Array of {@link ExternalDiagramDefinition}.
+ */
+export const loadExternalDiagrams = async (...diagrams: ExternalDiagramDefinition[]) => {
+  log.debug(`Loading ${diagrams.length} external diagrams`);
+  // Load all lazy loaded diagrams in parallel
+  const results = await Promise.allSettled(
+    diagrams.map(async ({ id, detector, loader }) => {
+      const { diagram } = await loader();
+      registerDiagram(id, diagram, detector);
+    })
+  );
+  const failed = results.filter((result) => result.status === 'rejected');
+  if (failed.length > 0) {
+    log.error(`Failed to load ${failed.length} external diagrams`);
+    for (const res of failed) {
+      log.error(res);
+    }
+    throw new Error(`Failed to load ${failed.length} external diagrams`);
+  }
+};

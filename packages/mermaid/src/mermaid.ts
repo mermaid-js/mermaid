@@ -8,7 +8,7 @@ import utils from './utils';
 import { mermaidAPI } from './mermaidAPI';
 import { registerLazyLoadedDiagrams } from './diagram-api/detectType';
 import { isDetailedError, type DetailedError } from './utils';
-import { registerDiagram } from './diagram-api/diagramAPI';
+import { loadExternalDiagrams } from './diagram-api/diagramAPI';
 import { ExternalDiagramDefinition } from './diagram-api/types';
 
 export type { MermaidConfig, DetailedError, ExternalDiagramDefinition };
@@ -176,30 +176,6 @@ const initThrowsErrors = function (
 };
 
 /**
- * This is an internal function and should not be made public, as it will likely change.
- * @internal
- * @param diagrams - Array of {@link ExternalDiagramDefinition}.
- */
-const loadExternalDiagrams = async (diagrams: ExternalDiagramDefinition[]) => {
-  log.debug(`Loading ${diagrams.length} external diagrams`);
-  // Load all lazy loaded diagrams in parallel
-  const results = await Promise.allSettled(
-    diagrams.map(async ({ id, detector, loader }) => {
-      const { diagram } = await loader();
-      registerDiagram(id, diagram, detector);
-    })
-  );
-  const failed = results.filter((result) => result.status === 'rejected');
-  if (failed.length > 0) {
-    log.error(`Failed to load ${failed.length} external diagrams`);
-    for (const res of failed) {
-      log.error(res);
-    }
-    throw new Error(`Failed to load ${failed.length} external diagrams`);
-  }
-};
-
-/**
  * Equivalent to {@link init()}, except an error will be thrown on error.
  *
  * @alpha
@@ -324,7 +300,7 @@ const registerExternalDiagrams = async (
   if (lazyLoad) {
     registerLazyLoadedDiagrams(...diagrams);
   } else {
-    await loadExternalDiagrams(diagrams);
+    await loadExternalDiagrams(...diagrams);
   }
 };
 
