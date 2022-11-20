@@ -529,8 +529,8 @@ const render = function (
   // This is the d3 node for the svg element
   const svgNode = root.select(`${enclosingDivID_selector} svg`);
   setA11yDiagramInfo(svgNode, graphType);
-  const a11yTitle = diag.db.getAccTitle !== undefined ? diag.db.getAccTitle() : null;
-  const a11yDescr = diag.db.getAccDescription !== undefined ? diag.db.getAccDescription() : null;
+  const a11yTitle = diag.db.getAccTitle?.();
+  const a11yDescr = diag.db.getAccDescription?.();
   addSVGa11yTitleDescription(svgNode, a11yTitle, a11yDescr, svgNode.attr('id'));
 
   // -------------------------------------------------------------------------------
