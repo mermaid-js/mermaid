@@ -510,7 +510,7 @@ const render = function (
   );
 
   const style1 = document.createElement('style');
-  style1.innerHTML = `${idSelector} ` + rules;
+  style1.innerHTML = rules;
   svg.insertBefore(style1, firstChild);
 
   // -------------------------------------------------------------------------------
@@ -706,7 +706,7 @@ const renderAsync = async function (
   );
 
   const style1 = document.createElement('style');
-  style1.innerHTML = `${idSelector} ` + rules;
+  style1.innerHTML = rules;
   svg.insertBefore(style1, firstChild);
 
   // -------------------------------------------------------------------------------
