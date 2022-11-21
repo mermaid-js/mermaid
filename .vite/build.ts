@@ -80,6 +80,8 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     );
     // Core build is used to generate file without bundled dependencies.
     // This is used by downstream projects to bundle dependencies themselves.
+    // Ignore dependencies and any dependencies of dependencies
+    // Adapted from the RegEx used by `rollup-plugin-node`
     external.push(new RegExp('^(?:' + Object.keys(dependencies).join('|') + ')(?:/.+)?$'));
     // This needs to be an array. Otherwise vite will build esm & umd with same name and overwrite esm with umd.
     output = [
