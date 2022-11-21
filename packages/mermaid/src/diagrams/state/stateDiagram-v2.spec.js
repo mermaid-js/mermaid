@@ -3,6 +3,7 @@ import stateDb from './stateDb';
 import stateDiagram from './parser/stateDiagram.jison';
 
 describe('state diagram V2, ', function () {
+  // TODO - these examples should be put into ./parser/stateDiagram.spec.js
   describe('when parsing an info graph it', function () {
     beforeEach(function () {
       parser.yy = stateDb;

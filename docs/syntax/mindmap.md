@@ -152,6 +152,18 @@ mindmap
     id)I am a cloud(
 ```
 
+### Hexagon
+
+```mermaid-example
+mindmap
+    id{{I am a hexagon}}
+```
+
+```mermaid
+mindmap
+    id{{I am a hexagon}}
+```
+
 ### Default
 
 ```mermaid-example

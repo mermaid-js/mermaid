@@ -25,11 +25,6 @@ function drawNodes(svg, mindmap, section, conf) {
 }
 
 /**
- * @param edgesElem
- * @param mindmap
- * @param parent
- * @param depth
- * @param section
  * @param edgesEl
  * @param cy
  */
@@ -51,11 +46,9 @@ function drawEdges(edgesEl, cy) {
 }
 
 /**
- * @param {any} svg The svg element to draw the diagram onto
- * @param {object} mindmap The mindmap data and hierarchy
- * @param section
+ * @param mindmap The mindmap data and hierarchy
  * @param cy
- * @param {object} conf The configuration object
+ * @param conf The configuration object
  * @param level
  */
 function addNodes(mindmap, cy, conf, level) {
@@ -99,10 +92,6 @@ function addNodes(mindmap, cy, conf, level) {
  */
 function layoutMindmap(node, conf) {
   return new Promise((resolve) => {
-    if (node.children.length === 0) {
-      return node;
-    }
-
     // Add temporary render element
     const renderEl = select('body').append('div').attr('id', 'cy').attr('style', 'display:none');
     const cy = cytoscape({

@@ -1,8 +1,9 @@
 import graphlib from 'graphlib';
 import { line, curveBasis, select } from 'd3';
-import dagre from 'dagre';
+import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import { getConfig } from '../../config';
 import { log } from '../../logger';
+import utils from '../../utils';
 import erMarkers from './erMarkers';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
@@ -210,9 +211,6 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       const typeRect = groupNode
         .insert('rect', '#' + attributeNode.tn.node().id)
         .classed(`er ${attribStyle}`, true)
-        .style('fill', conf.fill)
-        .style('fill-opacity', '100%')
-        .style('stroke', conf.stroke)
         .attr('x', 0)
         .attr('y', heightOffset)
         .attr('width', maxTypeWidth + widthPadding * 2 + spareColumnWidth)
@@ -230,9 +228,6 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       const nameRect = groupNode
         .insert('rect', '#' + attributeNode.nn.node().id)
         .classed(`er ${attribStyle}`, true)
-        .style('fill', conf.fill)
-        .style('fill-opacity', '100%')
-        .style('stroke', conf.stroke)
         .attr('x', nameXOffset)
         .attr('y', heightOffset)
         .attr('width', maxNameWidth + widthPadding * 2 + spareColumnWidth)
@@ -252,9 +247,6 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         const keyTypeRect = groupNode
           .insert('rect', '#' + attributeNode.kn.node().id)
           .classed(`er ${attribStyle}`, true)
-          .style('fill', conf.fill)
-          .style('fill-opacity', '100%')
-          .style('stroke', conf.stroke)
           .attr('x', keyTypeAndCommentXOffset)
           .attr('y', heightOffset)
           .attr('width', maxKeyWidth + widthPadding * 2 + spareColumnWidth)
@@ -275,9 +267,6 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         groupNode
           .insert('rect', '#' + attributeNode.cn.node().id)
           .classed(`er ${attribStyle}`, 'true')
-          .style('fill', conf.fill)
-          .style('fill-opacity', '100%')
-          .style('stroke', conf.stroke)
           .attr('x', keyTypeAndCommentXOffset)
           .attr('y', heightOffset)
           .attr('width', maxCommentWidth + widthPadding * 2 + spareColumnWidth)
@@ -347,9 +336,6 @@ const drawEntities = function (svgNode, entities, graph) {
     const rectNode = groupNode
       .insert('rect', '#' + textId)
       .classed('er entityBox', true)
-      .style('fill', conf.fill)
-      .style('fill-opacity', '100%')
-      .style('stroke', conf.stroke)
       .attr('x', 0)
       .attr('y', 0)
       .attr('width', entityWidth)
@@ -547,9 +533,7 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
     .attr('x', labelPoint.x - labelBBox.width / 2)
     .attr('y', labelPoint.y - labelBBox.height / 2)
     .attr('width', labelBBox.width)
-    .attr('height', labelBBox.height)
-    .style('fill', 'white')
-    .style('fill-opacity', '85%');
+    .attr('height', labelBBox.height);
 };
 
 /**
@@ -637,7 +621,7 @@ export const draw = function (text, id, _version, diagObj) {
   // Add all the relationships to the graph
   const relationships = addRelationships(diagObj.db.getRelationships(), g);
 
-  dagre.layout(g); // Node and edge positions will be updated
+  dagreLayout(g); // Node and edge positions will be updated
 
   // Adjust the positions of the entities so that they adhere to the layout
   adjustEntities(svg, g);
@@ -648,6 +632,8 @@ export const draw = function (text, id, _version, diagObj) {
   });
 
   const padding = conf.diagramPadding;
+
+  utils.insertTitle(svg, 'entityTitleText', conf.titleTopMargin, diagObj.db.getDiagramTitle());
 
   const svgBounds = svg.node().getBBox();
   const width = svgBounds.width + padding * 2;

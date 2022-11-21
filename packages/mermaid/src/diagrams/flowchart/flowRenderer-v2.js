@@ -3,9 +3,10 @@ import { select, curveLinear, selectAll } from 'd3';
 
 import flowDb from './flowDb';
 import { getConfig } from '../../config';
+import utils from '../../utils';
 
 import { render } from '../../dagre-wrapper/index.js';
-import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
+import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
 import { log } from '../../logger';
 import common, { evaluate } from '../common/common';
 import { interpolateToCurve, getStylesFromArray } from '../../utils';
@@ -436,6 +437,8 @@ export const draw = function (text, id, _version, diagObj) {
   // Run the renderer. This is what draws the final graph.
   const element = root.select('#' + id + ' g');
   render(element, g, ['point', 'circle', 'cross'], 'flowchart', id);
+
+  utils.insertTitle(svg, 'flowchartTitleText', conf.titleTopMargin, diagObj.db.getDiagramTitle());
 
   setupGraphViewbox(g, svg, conf.diagramPadding, conf.useMaxWidth);
 

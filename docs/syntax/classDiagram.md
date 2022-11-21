@@ -14,6 +14,9 @@ The class diagram is the main building block of object-oriented modeling. It is 
 Mermaid can render class diagrams.
 
 ```mermaid-example
+---
+title: Animal example
+---
 classDiagram
     note "From Duck till Zebra"
     Animal <|-- Duck
@@ -40,6 +43,9 @@ classDiagram
 ```
 
 ```mermaid
+---
+title: Animal example
+---
 classDiagram
     note "From Duck till Zebra"
     Animal <|-- Duck
@@ -77,6 +83,9 @@ A single instance of a class in the diagram contains three compartments:
 - The bottom compartment contains the operations the class can execute. They are also left-aligned and the first letter is lowercase.
 
 ```mermaid-example
+---
+title: Bank example
+---
 classDiagram
     class BankAccount
     BankAccount : +String owner
@@ -87,6 +96,9 @@ classDiagram
 ```
 
 ```mermaid
+---
+title: Bank example
+---
 classDiagram
     class BankAccount
     BankAccount : +String owner
@@ -255,16 +267,16 @@ A relationship is a general term covering the specific types of logical connecti
 
 There are eight different types of relations defined for classes under UML which are currently supported:
 
-| Type | Description   |
-| ---- | ------------- | ----------- |
-| <    | --            | Inheritance |
-| \*-- | Composition   |
-| o--  | Aggregation   |
-| -->  | Association   |
-| --   | Link (Solid)  |
-| ..>  | Dependency    |
-| ..   | >             | Realization |
-| ..   | Link (Dashed) |
+| Type    | Description   |
+| ------- | ------------- |
+| `<\|--` | Inheritance   |
+| `\*--`  | Composition   |
+| `o--`   | Aggregation   |
+| `-->`   | Association   |
+| `--`    | Link (Solid)  |
+| `..>`   | Dependency    |
+| `..\|>` | Realization   |
+| `..`    | Link (Dashed) |
 
 ```mermaid-example
 classDiagram
@@ -360,14 +372,14 @@ Here is the syntax:
 
 Where `Relation Type` can be one of:
 
-| Type | Description |
-| ---- | ----------- | ----------- |
-| <    |             | Inheritance |
-| \*   | Composition |
-| o    | Aggregation |
-| >    | Association |
-| <    | Association |
-|      | >           | Realization |
+| Type  | Description |
+| ----- | ----------- |
+| `<\|` | Inheritance |
+| `\*`  | Composition |
+| `o`   | Aggregation |
+| `>`   | Association |
+| `<`   | Association |
+| `\|>` | Realization |
 
 And `Link` can be one of:
 

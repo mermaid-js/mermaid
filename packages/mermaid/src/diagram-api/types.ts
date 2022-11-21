@@ -8,13 +8,27 @@ export interface InjectUtils {
   _setupGraphViewbox: any;
 }
 
+/**
+ * Generic Diagram DB that may apply to any diagram type.
+ */
+export interface DiagramDb {
+  clear?: () => void;
+  setDiagramTitle?: (title: string) => void;
+}
+
 export interface DiagramDefinition {
-  db: any;
+  db: DiagramDb;
   renderer: any;
   parser: any;
   styles: any;
   init?: (config: MermaidConfig) => void;
-  injectUtils?: (utils: InjectUtils) => void;
+  injectUtils?: (
+    _log: InjectUtils['_log'],
+    _setLogLevel: InjectUtils['_setLogLevel'],
+    _getConfig: InjectUtils['_getConfig'],
+    _sanitizeText: InjectUtils['_sanitizeText'],
+    _setupGraphViewbox: InjectUtils['_setupGraphViewbox']
+  ) => void;
 }
 
 export interface DetectorRecord {
@@ -22,5 +36,11 @@ export interface DetectorRecord {
   loader?: DiagramLoader;
 }
 
+export interface ExternalDiagramDefinition {
+  id: string;
+  detector: DiagramDetector;
+  loader: DiagramLoader;
+}
+
 export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
-export type DiagramLoader = (() => Promise<{ id: string; diagram: DiagramDefinition }>) | null;
+export type DiagramLoader = () => Promise<{ id: string; diagram: DiagramDefinition }>;

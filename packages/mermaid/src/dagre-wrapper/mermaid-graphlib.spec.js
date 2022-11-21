@@ -1,5 +1,4 @@
 import graphlib from 'graphlib';
-import dagre from 'dagre';
 import {
   validate,
   adjustClustersAndEdges,

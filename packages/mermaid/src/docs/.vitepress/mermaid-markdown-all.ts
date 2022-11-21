@@ -1,5 +1,4 @@
 import type { MarkdownRenderer } from 'vitepress';
-import shiki from 'shiki';
 
 const MermaidExample = async (md: MarkdownRenderer) => {
   const defaultRenderer = md.renderer.rules.fence;
@@ -8,26 +7,29 @@ const MermaidExample = async (md: MarkdownRenderer) => {
     throw new Error('defaultRenderer is undefined');
   }
 
-  const highlighter = await shiki.getHighlighter({
-    theme: 'material-palenight',
-    langs: ['mermaid'],
-  });
-
   md.renderer.rules.fence = (tokens, index, options, env, slf) => {
     const token = tokens[index];
 
     if (token.info.trim() === 'mermaid-example') {
-      const highlight = highlighter
-        .codeToHtml(token.content, { lang: 'mermaid' })
-        .replace(/<span/g, '<span v-pre')
-        .replace('#2e3440ff', 'transparent')
-        .replace('#292D3E', 'transparent');
+      if (!md.options.highlight) {
+        // this function is always created by vitepress, but we need to check it
+        // anyway to make TypeScript happy
+        throw new Error(
+          'Missing MarkdownIt highlight function (should be automatically created by vitepress'
+        );
+      }
 
+      // doing ```mermaid-example {line-numbers=5 highlight=14-17} is not supported
+      const langAttrs = '';
       return `<h5>Code:</h5>
           <div class="language-mermaid">
-          <button class="copy"></button>
-          <span class="lang">mermaid</span>
-${highlight}
+            <button class="copy"></button>
+            <span class="lang">mermaid</span>
+            ${
+              // html is pre-escaped by the highlight function
+              // (it also adds `v-pre` to ignore Vue template syntax)
+              md.options.highlight(token.content, 'mermaid', langAttrs)
+            }
           </div>
           <h5>Diagram:</h5>`;
     }

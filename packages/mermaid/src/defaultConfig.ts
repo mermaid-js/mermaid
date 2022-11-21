@@ -131,7 +131,6 @@ const config: Partial<MermaidConfig> = {
    * Default value: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
    */
   secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize'],
-  lazyLoadedDiagrams: [],
   /**
    * This option controls if the generated ids of nodes in the SVG are generated randomly or based
    * on a seed. If set to false, the IDs are generated based on the current date and thus are not
@@ -155,6 +154,17 @@ const config: Partial<MermaidConfig> = {
 
   /** The object containing configurations specific for flowcharts */
   flowchart: {
+    /**
+     * ### titleTopMargin
+     *
+     * | Parameter      | Description                                    | Type    | Required | Values             |
+     * | -------------- | ---------------------------------------------- | ------- | -------- | ------------------ |
+     * | titleTopMargin | Margin top for the text over the flowchart     | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 25
+     */
+    titleTopMargin: 25,
+
     /**
      * | Parameter      | Description                                     | Type    | Required | Values             |
      * | -------------- | ----------------------------------------------- | ------- | -------- | ------------------ |
@@ -852,6 +862,16 @@ const config: Partial<MermaidConfig> = {
     sectionColours: ['#fff'],
   },
   class: {
+    /**
+     * ### titleTopMargin
+     *
+     * | Parameter      | Description                                    | Type    | Required | Values             |
+     * | -------------- | ---------------------------------------------- | ------- | -------- | ------------------ |
+     * | titleTopMargin | Margin top for the text over the class diagram | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 25
+     */
+    titleTopMargin: 25,
     arrowMarkerAbsolute: false,
     dividerMargin: 10,
     padding: 5,
@@ -885,6 +905,16 @@ const config: Partial<MermaidConfig> = {
     defaultRenderer: 'dagre-wrapper',
   },
   state: {
+    /**
+     * ### titleTopMargin
+     *
+     * | Parameter      | Description                                    | Type    | Required | Values             |
+     * | -------------- | ---------------------------------------------- | ------- | -------- | ------------------ |
+     * | titleTopMargin | Margin top for the text over the state diagram | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 25
+     */
+    titleTopMargin: 25,
     dividerMargin: 10,
     sizeUnit: 5,
     padding: 8,
@@ -933,6 +963,17 @@ const config: Partial<MermaidConfig> = {
 
   /** The object containing configurations specific for entity relationship diagrams */
   er: {
+    /**
+     * ### titleTopMargin
+     *
+     * | Parameter      | Description                                    | Type    | Required | Values             |
+     * | -------------- | ---------------------------------------------- | ------- | -------- | ------------------ |
+     * | titleTopMargin | Margin top for the text over the diagram       | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 25
+     */
+    titleTopMargin: 25,
+
     /**
      * | Parameter      | Description                                     | Type    | Required | Values             |
      * | -------------- | ----------------------------------------------- | ------- | -------- | ------------------ |
@@ -1086,6 +1127,16 @@ const config: Partial<MermaidConfig> = {
     line_height: 20,
   },
   gitGraph: {
+    /**
+     * ### titleTopMargin
+     *
+     * | Parameter      | Description                                    | Type    | Required | Values             |
+     * | -------------- | ---------------------------------------------- | ------- | -------- | ------------------ |
+     * | titleTopMargin | Margin top for the text over the Git diagram   | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 25
+     */
+    titleTopMargin: 25,
     diagramPadding: 8,
     nodeLabel: {
       width: 75,

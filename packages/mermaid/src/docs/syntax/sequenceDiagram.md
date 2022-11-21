@@ -537,7 +537,7 @@ text.actor {
 Is it possible to adjust the margins for rendering the sequence diagram.
 
 This is done by defining `mermaid.sequenceConfig` or by the CLI to use a json file with the configuration.
-How to use the CLI is described in the [mermaidCLI](../config/mermaidCLI) page.
+How to use the CLI is described in the [mermaidCLI](../config/mermaidCLI.md) page.
 `mermaid.sequenceConfig` can be set to a JSON string with config parameters or the corresponding object.
 
 ```javascript

@@ -103,6 +103,12 @@ const getStyles = (options: FlowChartStyleOptions) =>
     pointer-events: none;
     z-index: 100;
   }
+
+  .flowchartTitleText {
+    text-anchor: middle;
+    font-size: 18px;
+    fill: ${options.textColor};
+  }
 `;
 
 export default getStyles;

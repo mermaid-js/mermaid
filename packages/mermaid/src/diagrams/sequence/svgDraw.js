@@ -752,7 +752,7 @@ export const insertSequenceNumber = function (elem) {
   // .style("fill", '#f00');
 };
 /**
- * Setup arrow head and define the marker. The result is appended to the svg.
+ * Setup cross head and define the marker. The result is appended to the svg.
  *
  * @param {any} elem
  */
@@ -764,26 +764,16 @@ export const insertArrowCrossHead = function (elem) {
     .attr('markerWidth', 15)
     .attr('markerHeight', 8)
     .attr('orient', 'auto')
-    .attr('refX', 16)
-    .attr('refY', 4);
-
-  // The arrow
-  marker
-    .append('path')
-    .attr('fill', 'black')
-    .attr('stroke', '#000000')
-    .style('stroke-dasharray', '0, 0')
-    .attr('stroke-width', '1px')
-    .attr('d', 'M 9,2 V 6 L16,4 Z');
-
+    .attr('refX', 4)
+    .attr('refY', 5);
   // The cross
   marker
     .append('path')
     .attr('fill', 'none')
     .attr('stroke', '#000000')
     .style('stroke-dasharray', '0, 0')
-    .attr('stroke-width', '1px')
-    .attr('d', 'M 0,1 L 6,7 M 6,1 L 0,7');
+    .attr('stroke-width', '1pt')
+    .attr('d', 'M 1,2 L 6,7 M 6,2 L 1,7');
   // this is actual shape for arrowhead
 };
 

@@ -2,6 +2,7 @@ import * as configApi from './config';
 import { log } from './logger';
 import { getDiagram, registerDiagram } from './diagram-api/diagramAPI';
 import { detectType, getDiagramLoader } from './diagram-api/detectType';
+import { extractFrontMatter } from './diagram-api/frontmatter';
 import { isDetailedError, type DetailedError } from './utils';
 
 export type ParseErrorFunction = (err: string | DetailedError, hash?: any) => void;
@@ -29,6 +30,16 @@ export class Diagram {
     this.db.clear?.();
     this.renderer = diagram.renderer;
     this.parser = diagram.parser;
+    const originalParse = this.parser.parse.bind(this.parser);
+    // Wrap the jison parse() method to handle extracting frontmatter.
+    //
+    // This can't be done in this.parse() because some code
+    // directly calls diagram.parser.parse(), bypassing this.parse().
+    //
+    // Similarly, we can't do this in getDiagramFromText() because some code
+    // calls diagram.db.clear(), which would reset anything set by
+    // extractFrontMatter().
+    this.parser.parse = (text: string) => originalParse(extractFrontMatter(text, this.db));
     this.parser.parser.yy = this.db;
     if (diagram.init) {
       diagram.init(cnf);
@@ -45,7 +56,7 @@ export class Diagram {
     }
     try {
       text = text + '\n';
-      this.db.clear();
+      this.db.clear?.();
       this.parser.parse(text);
       return true;
     } catch (error) {
@@ -83,27 +94,30 @@ export class Diagram {
   }
 }
 
-export const getDiagramFromText = async (
+export const getDiagramFromText = (
   txt: string,
   parseError?: ParseErrorFunction
-): Promise<Diagram> => {
+): Diagram | Promise<Diagram> => {
   const type = detectType(txt, configApi.getConfig());
   try {
     // Trying to find the diagram
     getDiagram(type);
+    return new Diagram(txt, parseError);
   } catch (error) {
     const loader = getDiagramLoader(type);
     if (!loader) {
       throw new Error(`Diagram ${type} not found.`);
     }
-    // Diagram not available, loading it
-    const { diagram } = await loader();
-    registerDiagram(type, diagram, undefined, diagram.injectUtils);
-    // new diagram will try getDiagram again and if fails then it is a valid throw
+    // TODO: Uncomment for v10
+    // // Diagram not available, loading it
+    // const { diagram } = await loader();
+    // registerDiagram(type, diagram, undefined, diagram.injectUtils);
+    // // new diagram will try getDiagram again and if fails then it is a valid throw
+    return loader().then(({ diagram }) => {
+      registerDiagram(type, diagram, undefined);
+      return new Diagram(txt, parseError);
+    });
   }
-  // If either of the above worked, we have the diagram
-  // logic and can continue
-  return new Diagram(txt, parseError);
 };
 
 export default Diagram;

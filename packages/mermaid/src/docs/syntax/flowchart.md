@@ -9,6 +9,9 @@ It can also accommodate different arrow types, multi directional arrows, and lin
 ### A node (default)
 
 ```mermaid-example
+---
+title: Node
+---
 flowchart LR
     id
 ```
@@ -22,6 +25,9 @@ found for the node that will be used. Also if you define edges for the node late
 one previously defined will be used when rendering the box.
 
 ```mermaid-example
+---
+title: Node with text
+---
 flowchart LR
     id1[This is the text in the box]
 ```
