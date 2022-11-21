@@ -194,7 +194,7 @@ export const createCssStyles = (
       const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
 
       const cssHtmlElements = ['> *', 'span']; // TODO make a constant
-      const cssShapeElements = ['rect', 'polygon', 'ellipse', 'circle']; // TODO make a constant
+      const cssShapeElements = ['rect', 'polygon', 'ellipse', 'circle', 'path']; // TODO make a constant
 
       const cssElements = htmlLabels ? cssHtmlElements : cssShapeElements;
 
