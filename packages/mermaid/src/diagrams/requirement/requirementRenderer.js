@@ -1,5 +1,5 @@
 import { line, select } from 'd3';
-import dagre from 'dagre';
+import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import graphlib from 'graphlib';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../setupGraphViewbox';
@@ -348,7 +348,7 @@ export const draw = (text, id, _version, diagObj) => {
   drawReqs(requirements, g, svg);
   drawElements(elements, g, svg);
   addRelationships(relationships, g);
-  dagre.layout(g);
+  dagreLayout(g);
   adjustEntities(svg, g);
 
   relationships.forEach(function (rel) {

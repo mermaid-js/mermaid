@@ -1,6 +1,6 @@
 import graphlib from 'graphlib';
 import { line, curveBasis, select } from 'd3';
-import dagre from 'dagre';
+import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import { getConfig } from '../../config';
 import { log } from '../../logger';
 import utils from '../../utils';
@@ -638,7 +638,7 @@ export const draw = function (text, id, _version, diagObj) {
   // Add all the relationships to the graph
   const relationships = addRelationships(diagObj.db.getRelationships(), g);
 
-  dagre.layout(g); // Node and edge positions will be updated
+  dagreLayout(g); // Node and edge positions will be updated
 
   // Adjust the positions of the entities so that they adhere to the layout
   adjustEntities(svg, g);

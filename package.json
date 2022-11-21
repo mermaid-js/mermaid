@@ -107,9 +107,6 @@
     "vitepress-plugin-search": "^1.0.4-alpha.15",
     "vitest": "^0.25.1"
   },
-  "resolutions": {
-    "d3": "^7.6.1"
-  },
   "sideEffects": [
     "**/*.css",
     "**/*.scss"
