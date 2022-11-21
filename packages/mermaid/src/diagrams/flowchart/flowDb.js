@@ -10,6 +10,8 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
+  setDiagramTitle,
+  getDiagramTitle,
 } from '../../commonDb';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
@@ -785,4 +787,6 @@ export default {
   },
   exists,
   makeUniq,
+  setDiagramTitle,
+  getDiagramTitle,
 };

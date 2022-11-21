@@ -885,6 +885,32 @@ export function getErrorMessage(error: unknown): string {
   return String(error);
 }
 
+/**
+ * Appends <text> element with the given title, centered.
+ *
+ * @param parent - d3 svg object to append title to
+ * @param cssClass - CSS class for the <text> element containing the title
+ * @param titleTopMargin - Margin in pixels between title and rest of the graph
+ * @param title - The title. If empty, returns immediately.
+ */
+export const insertTitle = (
+  parent,
+  cssClass: string,
+  titleTopMargin: number,
+  title?: string
+): void => {
+  if (!title) {
+    return;
+  }
+  const bounds = parent.node().getBBox();
+  parent
+    .append('text')
+    .text(title)
+    .attr('x', bounds.x + bounds.width / 2)
+    .attr('y', -titleTopMargin)
+    .attr('class', cssClass);
+};
+
 export default {
   assignWithDepth,
   wrapLabel,
@@ -907,4 +933,5 @@ export default {
   initIdGenerator: initIdGenerator,
   directiveSanitizer,
   sanitizeCss,
+  insertTitle,
 };

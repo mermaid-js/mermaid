@@ -1,6 +1,7 @@
 import { select } from 'd3';
 import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI';
 import { log } from '../../logger';
+import utils from '../../utils';
 import addSVGAccessibilityFields from '../../accessibility';
 
 let allCommitsDict = {};
@@ -521,6 +522,12 @@ export const draw = function (txt, id, ver, diagObj) {
   }
   drawArrows(diagram, allCommitsDict);
   drawCommits(diagram, allCommitsDict, true);
+  utils.insertTitle(
+    diagram,
+    'gitTitleText',
+    gitGraphConfig.titleTopMargin,
+    diagObj.db.getDiagramTitle()
+  );
 
   // Setup the view box and size of the svg element
   setupGraphViewbox(
