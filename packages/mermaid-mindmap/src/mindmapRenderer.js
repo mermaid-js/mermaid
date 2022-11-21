@@ -92,10 +92,6 @@ function addNodes(mindmap, cy, conf, level) {
  */
 function layoutMindmap(node, conf) {
   return new Promise((resolve) => {
-    if (node.children.length === 0) {
-      return node;
-    }
-
     // Add temporary render element
     const renderEl = select('body').append('div').attr('id', 'cy').attr('style', 'display:none');
     const cy = cytoscape({
