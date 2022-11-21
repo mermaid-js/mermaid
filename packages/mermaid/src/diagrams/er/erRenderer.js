@@ -3,6 +3,7 @@ import { line, curveBasis, select } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import { getConfig } from '../../config';
 import { log } from '../../logger';
+import utils from '../../utils';
 import erMarkers from './erMarkers';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
@@ -648,6 +649,8 @@ export const draw = function (text, id, _version, diagObj) {
   });
 
   const padding = conf.diagramPadding;
+
+  utils.insertTitle(svg, 'entityTitleText', conf.titleTopMargin, diagObj.db.getDiagramTitle());
 
   const svgBounds = svg.node().getBBox();
   const width = svgBounds.width + padding * 2;

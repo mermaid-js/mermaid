@@ -22,6 +22,9 @@ importers:
       '@types/express':
         specifier: ^4.17.14
         version: 4.17.14
+      '@types/js-yaml':
+        specifier: ^4.0.5
+        version: 4.0.5
       '@types/jsdom':
         specifier: ^20.0.1
         version: 20.0.1
@@ -115,6 +118,9 @@ importers:
       jison:
         specifier: ^0.4.18
         version: 0.4.18
+      js-yaml:
+        specifier: ^4.1.0
+        version: 4.1.0
       jsdom:
         specifier: ^20.0.2
         version: 20.0.2
@@ -2464,6 +2470,10 @@ packages:
     resolution: {integrity: sha512-c3mAZEuK0lvBp8tmuL74XRKn1+y2dcwOUpH7x4WrF6gk1GIgiluDRgMYQtw2OFcBvAJWlt6ASU3tSqxp0Uu0Aw==}
     dependencies:
       '@types/istanbul-lib-report': 3.0.0
+    dev: true
+
+  /@types/js-yaml/4.0.5:
+    resolution: {integrity: sha512-FhpRzf927MNQdRZP0J5DLIdTXhjLYzeUTmLAu69mnVksLH9CJY3IuSeEgbKUki7GQZm0WqDkGzyxju2EZGD2wA==}
     dev: true
 
   /@types/jsdom/20.0.1:

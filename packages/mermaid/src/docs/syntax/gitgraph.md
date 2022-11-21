@@ -7,17 +7,20 @@ These kind of diagram are particularly helpful to developers and devops teams to
 Mermaid can render Git diagrams
 
 ```mermaid-example
-    gitGraph
-       commit
-       commit
-       branch develop
-       checkout develop
-       commit
-       commit
-       checkout main
-       merge develop
-       commit
-       commit
+---
+title: Example Git diagram
+---
+gitGraph
+   commit
+   commit
+   branch develop
+   checkout develop
+   commit
+   commit
+   checkout main
+   merge develop
+   commit
+   commit
 ```
 
 In Mermaid, we support the basic git operations like:

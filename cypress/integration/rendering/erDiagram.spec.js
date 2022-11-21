@@ -273,4 +273,17 @@ describe('Entity Relationship Diagram', () => {
     );
     cy.get('svg');
   });
+
+  it('1433: should render a simple ER diagram with a title', () => {
+    imgSnapshotTest(
+      `---
+title: simple ER diagram
+---
+erDiagram
+CUSTOMER ||--o{ ORDER : places
+ORDER ||--|{ LINE-ITEM : contains
+`,
+      {}
+    );
+  });
 });

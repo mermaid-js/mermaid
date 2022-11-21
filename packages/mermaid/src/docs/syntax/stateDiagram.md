@@ -5,6 +5,9 @@
 Mermaid can render state diagrams. The syntax tries to be compliant with the syntax used in plantUml as this will make it easier for users to share diagrams between mermaid and plantUml.
 
 ```mermaid-example
+---
+title: Simple sample
+---
 stateDiagram-v2
     [*] --> Still
     Still --> [*]
