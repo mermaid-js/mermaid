@@ -39,6 +39,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [markdown-for-mermaid-plugin](https://github.com/jamieh-mongolian/markdown-for-mermaid-plugin)
 - [JetBrains IDE eg Pycharm](https://www.jetbrains.com/go/guide/tips/mermaid-js-support-in-markdown/)
 - [mermerd](https://github.com/KarnerTh/mermerd)
+- Visual Studio Code [Polyglot Interactive Notebooks](https://github.com/dotnet/interactive#net-interactive)
 
 ## CRM/ERP/Similar
 
