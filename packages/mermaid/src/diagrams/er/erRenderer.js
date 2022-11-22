@@ -211,9 +211,6 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       const typeRect = groupNode
         .insert('rect', '#' + attributeNode.tn.node().id)
         .classed(`er ${attribStyle}`, true)
-        .style('fill', conf.fill)
-        .style('fill-opacity', '100%')
-        .style('stroke', conf.stroke)
         .attr('x', 0)
         .attr('y', heightOffset)
         .attr('width', maxTypeWidth + widthPadding * 2 + spareColumnWidth)
@@ -231,9 +228,6 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       const nameRect = groupNode
         .insert('rect', '#' + attributeNode.nn.node().id)
         .classed(`er ${attribStyle}`, true)
-        .style('fill', conf.fill)
-        .style('fill-opacity', '100%')
-        .style('stroke', conf.stroke)
         .attr('x', nameXOffset)
         .attr('y', heightOffset)
         .attr('width', maxNameWidth + widthPadding * 2 + spareColumnWidth)
@@ -253,9 +247,6 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         const keyTypeRect = groupNode
           .insert('rect', '#' + attributeNode.kn.node().id)
           .classed(`er ${attribStyle}`, true)
-          .style('fill', conf.fill)
-          .style('fill-opacity', '100%')
-          .style('stroke', conf.stroke)
           .attr('x', keyTypeAndCommentXOffset)
           .attr('y', heightOffset)
           .attr('width', maxKeyWidth + widthPadding * 2 + spareColumnWidth)
@@ -276,9 +267,6 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         groupNode
           .insert('rect', '#' + attributeNode.cn.node().id)
           .classed(`er ${attribStyle}`, 'true')
-          .style('fill', conf.fill)
-          .style('fill-opacity', '100%')
-          .style('stroke', conf.stroke)
           .attr('x', keyTypeAndCommentXOffset)
           .attr('y', heightOffset)
           .attr('width', maxCommentWidth + widthPadding * 2 + spareColumnWidth)
@@ -348,9 +336,6 @@ const drawEntities = function (svgNode, entities, graph) {
     const rectNode = groupNode
       .insert('rect', '#' + textId)
       .classed('er entityBox', true)
-      .style('fill', conf.fill)
-      .style('fill-opacity', '100%')
-      .style('stroke', conf.stroke)
       .attr('x', 0)
       .attr('y', 0)
       .attr('width', entityWidth)
@@ -548,9 +533,7 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
     .attr('x', labelPoint.x - labelBBox.width / 2)
     .attr('y', labelPoint.y - labelBBox.height / 2)
     .attr('width', labelBBox.width)
-    .attr('height', labelBBox.height)
-    .style('fill', 'white')
-    .style('fill-opacity', '85%');
+    .attr('height', labelBBox.height);
 };
 
 /**

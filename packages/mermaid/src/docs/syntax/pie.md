@@ -22,7 +22,7 @@ Drawing a pie chart is really simple in mermaid.
 - Followed by dataSet. Pie slices will be ordered clockwise in the same order as the labels.
   - `label` for a section in the pie diagram within `" "` quotes.
   - Followed by `:` colon as separator
-  - Followed by `positive numeric value` (supported upto two decimal places)
+  - Followed by `positive numeric value` (supported up to two decimal places)
 
 [pie] [showData] (OPTIONAL)
 [title] [titlevalue] (OPTIONAL)
