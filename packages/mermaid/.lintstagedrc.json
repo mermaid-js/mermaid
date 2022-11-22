@@ -1,6 +1,5 @@
 {
   "src/docs/**": ["pnpm --filter mermaid run docs:build --git"],
   "src/docs.mts": ["pnpm --filter mermaid run docs:build --git"],
-  "src/(defaultConfig|config|mermaidAPI).ts": ["pnpm --filter mermaid run docs:build --git"],
-  "*.jison": ["pnpm run lint:jison"]
+  "src/(defaultConfig|config|mermaidAPI).ts": ["pnpm --filter mermaid run docs:build --git"]
 }
