@@ -559,7 +559,7 @@ You would define these actions on a separate line after all classes have been de
 
 ## Notes
 
-It is possible to add notes on digram using `note "line1\nline2"` or note for class using `note for class "line1\nline2"`
+It is possible to add notes on diagram using `note "line1\nline2"` or note for class using `note for class "line1\nline2"`
 
 ### Examples
 
