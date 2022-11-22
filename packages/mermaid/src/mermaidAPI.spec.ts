@@ -257,11 +257,11 @@ describe('mermaidAPI', function () {
     });
     it('gets the fontFamily from the config', () => {
       const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', {});
-      expect(styles).toMatch(/(.*)\n:root \{ --mermaid-font-family: serif(.*)/);
+      expect(styles).toMatch(/(.*)\n:root { --mermaid-font-family: serif(.*)/);
     });
     it('gets the alt fontFamily from the config', () => {
       const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', undefined);
-      expect(styles).toMatch(/(.*)\n:root \{ --mermaid-alt-font-family: sans-serif(.*)/);
+      expect(styles).toMatch(/(.*)\n:root { --mermaid-alt-font-family: sans-serif(.*)/);
     });
 
     describe('there are some classDefs', () => {
@@ -277,7 +277,7 @@ describe('mermaidAPI', function () {
 
         // prefix any special RegExp characters in the given string with a \ so we can use the literal character in a RegExp
         function escapeForRegexp(str: string) {
-          const strChars = str.split(''); // split into array of every char
+          const strChars = [...str]; // split into array of every char
           const strEscaped = strChars.map((char) => {
             if (REGEXP_SPECIALS.includes(char)) {
               return `\\${char}`;

@@ -11,7 +11,7 @@
  * @param id
  */
 export default function addSVGAccessibilityFields(yy_parser, svg, id) {
-  if (typeof svg.insert === 'undefined') {
+  if (svg.insert === undefined) {
     return;
   }
 
