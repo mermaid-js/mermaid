@@ -7,10 +7,6 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
     <link
-      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
-      rel="stylesheet"
-    />
-    <link
       href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"
     />
@@ -29,12 +25,6 @@
       }
       .mermaid svg {
         /* font-size: 18px !important; */
-        background-color: #eee;
-        background-image: radial-gradient(#fff 1%, transparent 11%),
-          radial-gradient(#fff 1%, transparent 11%);
-        background-size: 20px 20px;
-        background-position: 0 0, 10px 10px;
-        background-repeat: repeat;
       }
       .malware {
         position: fixed;
@@ -56,33 +46,29 @@
   <body>
     <div>Security check</div>
     <pre id="diagram" class="mermaid">
-bar title Pets adopted by volunteers
-    "Dogs" : 386
-    "Cats" : 85
-    "Rats" : 15
-    </pre>
-
-    <!-- <div id="cy"></div> -->
-    <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
-    <!-- <script src="./mermaid-example-diagram-detector.js"></script>    -->
-    <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.7/dist/mermaid.min.js"></script> -->
-    <script src="./mermaid.js"></script>
-
+flowchart LR
+A-->B
+        </pre
+    >
+    <pre id="diagram" class="mermaid2">
+            mindmap
+          root
+            ch1
+            ch2
+        </pre
+    >
+    <script src="./packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script>
+    <script src="./packages/mermaid-mindmap/dist/mermaid-example-diagram-detector.js"></script>
+    <script src="./packages/mermaid/dist/mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'forest',
         startOnLoad: true,
         logLevel: 0,
-        // basePath: './packages/',
-        // themeVariables: { darkMode: true },
-        lazyLoadedDiagrams: [
-          './mermaid-mindmap-detector.esm.mjs',
-          './mermaid-example-diagram-detector.esm.mjs',
-        ],
-        // lazyLoadedDiagrams: ['../../mermaid-mindmap/registry.ts'],
+        basePath: './packages/',
+        // themeVariables: {relationLabelColor: 'red'}
       });
       function callback() {
         alert('It worked');
