@@ -267,8 +267,8 @@ state or states in the diagram.
 
 **These are the current limitations with state diagram classDefs:**
 
-1. They cannot be applied to start or end states
-2. The cannot be applied to or within composite states
+1. Cannot be applied to start or end states
+2. Cannot be applied to or within composite states
 
 _These are in development and will be available in a future version._
 
