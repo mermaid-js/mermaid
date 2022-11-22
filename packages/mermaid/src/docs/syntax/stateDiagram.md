@@ -35,8 +35,8 @@ stateDiagram
 ```
 
 In state diagrams systems are described in terms of _states_ and how one _state_ can change to another _state_ via
-a _transition._ The example diagram above shows three states: **Still**, **Moving** and **Crash**. You start in the 
- **Still** state. From **Still** you can change to the **Moving** state. From **Moving** you can change either back to the **Still** state or to
+a _transition._ The example diagram above shows three states: **Still**, **Moving** and **Crash**. You start in the
+**Still** state. From **Still** you can change to the **Moving** state. From **Moving** you can change either back to the **Still** state or to
 the **Crash** state. There is no transition from **Still** to **Crash**. (You can't crash if you're still.)
 
 ## States
@@ -266,11 +266,11 @@ As with other diagrams (like flowcharts), you can define a style in the diagram 
 state or states in the diagram.
 
 **These are the current limitations with state diagram classDefs:**
+
 1. They cannot be applied to start or end states
 2. The cannot be applied to or within composite states
 
 _These are in development and will be available in a future version._
-
 
 You define a style using the `classDef` keyword, which is short for "class definition" (where "class" means something
 like a _CSS class_)
@@ -314,7 +314,6 @@ There are two ways to apply a `classDef` style to a state:
 2. use the `:::` operator to apply a classDef style to a state as it is being used in a transition statement (e.g. with an arrow
    to/from another state)
 
-
 #### 1. `class` statement
 
 A `class` statement tells Mermaid to apply the named classDef to one or more classes. The form is:
@@ -334,7 +333,6 @@ Here is an example applying the `movement` style to the two states `Moving` and 
 ```text
 class Moving, Crash movement
 ```
-
 
 Here is a diagram that shows the examples in use. Note that the `Crash` state has two classDef styles applied: `movement`
 and `badBadEvent`
@@ -392,8 +390,6 @@ stateDiagram
    Crash:::badBadEvent --> [*]
 ```
 
-
-
 ## Spaces in state names
 
 Spaces can be added to a state by first defining the state with an id and then referencing the id later.
@@ -402,10 +398,11 @@ In the following example there is a state with the id **yswsii** and description
 After it has been defined, **yswsii** is used in the diagram in the first transition (`[*] --> yswsii`)
 and also in the transition to **YetAnotherState** (`yswsii --> YetAnotherState`).  
 (**yswsii** has been styled so that it is different from the other states.)
+
 ```mermaid-example
 stateDiagram
     classDef yourState font-style:italic,font-weight:bold,fill:white
-    
+
     yswsii: Your state with spaces in it
     [*] --> yswsii:::yourState
     [*] --> SomeOtherState
