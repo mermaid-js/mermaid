@@ -21,7 +21,7 @@ mindmap
       Popularisation
         British popular psychology author Tony Buzan
     Research
-      On effectivness<br/>and eatures
+      On effectiveness<br/>and features
       On Automatic creation
         Uses
             Creative techniques
@@ -42,7 +42,7 @@ mindmap
       Popularisation
         British popular psychology author Tony Buzan
     Research
-      On effectivness<br/>and eatures
+      On effectiveness<br/>and features
       On Automatic creation
         Uses
             Creative techniques
