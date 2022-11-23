@@ -1,6 +1,6 @@
 import { select } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
-import graphlib from 'graphlib';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger';
 import common from '../common/common';
 import { drawState, addTitleAndBox, drawEdge } from './shapes';
