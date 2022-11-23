@@ -22,6 +22,7 @@ export const log: Record<keyof typeof LEVELS, typeof console.log> = {
 export let setLogLevel: (level: keyof typeof LEVELS | number | string) => void;
 export let getConfig: () => object;
 export let sanitizeText: (str: string) => string;
+export let commonDb: any;
 /**
  * Placeholder for the real function that will be injected by mermaid.
  */
@@ -41,15 +42,17 @@ export let setupGraphViewbox: (
  * @param _getConfig - getConfig from mermaid/src/diagramAPI.ts
  * @param _sanitizeText - sanitizeText from mermaid/src/diagramAPI.ts
  * @param _setupGraphViewbox - setupGraphViewbox from mermaid/src/diagramAPI.ts
+ * @param _commonDb
  */
 export const injectUtils = (
   _log: Record<keyof typeof LEVELS, typeof console.log>,
   _setLogLevel: typeof setLogLevel,
   _getConfig: typeof getConfig,
   _sanitizeText: typeof sanitizeText,
-  _setupGraphViewbox: typeof setupGraphViewbox
+  _setupGraphViewbox: typeof setupGraphViewbox,
+  _commonDb: any
 ) => {
-  _log.debug('Mermaid utils injected into example-diagram');
+  _log.info('Mermaid utils injected into timeline-diagram');
   log.trace = _log.trace;
   log.debug = _log.debug;
   log.info = _log.info;
@@ -60,4 +63,6 @@ export const injectUtils = (
   getConfig = _getConfig;
   sanitizeText = _sanitizeText;
   setupGraphViewbox = _setupGraphViewbox;
+  commonDb = _commonDb;
+
 };

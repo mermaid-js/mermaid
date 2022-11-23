@@ -6,6 +6,7 @@ export interface InjectUtils {
   _getConfig: any;
   _sanitizeText: any;
   _setupGraphViewbox: any;
+  _commonDb: any;
 }
 
 /**
@@ -27,7 +28,8 @@ export interface DiagramDefinition {
     _setLogLevel: InjectUtils['_setLogLevel'],
     _getConfig: InjectUtils['_getConfig'],
     _sanitizeText: InjectUtils['_sanitizeText'],
-    _setupGraphViewbox: InjectUtils['_setupGraphViewbox']
+    _setupGraphViewbox: InjectUtils['_setupGraphViewbox'],
+    _commonDb: InjectUtils['_commonDb']
   ) => void;
 }
 
