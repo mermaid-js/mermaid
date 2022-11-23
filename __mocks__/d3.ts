@@ -53,6 +53,18 @@ export const MockD3 = (name, parent) => {
     get __parent() {
       return parent;
     },
+    node() {
+      return {
+        getBBox() {
+          return {
+            x: 5,
+            y: 10,
+            height: 15,
+            width: 20,
+          };
+        },
+      };
+    },
   };
   elem.append = (name) => {
     const mockElem = MockD3(name, elem);

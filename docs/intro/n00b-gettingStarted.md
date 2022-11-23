@@ -53,7 +53,7 @@ graph TD
 
 In the `Code` section one can write or edit raw mermaid code, and instantly `Preview` the rendered result on the panel beside it.
 
-The `Configuration` Section is for changing the appearance and behavior of mermaid diagrams. An easy introduction to mermaid configuration is found in the [Advanced usage](../config/n00b-advanced.md) section. A complete configuration reference cataloging the default values can be found on the [mermaidAPI](../config/setup/README) page.
+The `Configuration` Section is for changing the appearance and behavior of mermaid diagrams. An easy introduction to mermaid configuration is found in the [Advanced usage](../config/n00b-advanced.md) section. A complete configuration reference cataloging the default values can be found on the [mermaidAPI](../config/setup/README.md) page.
 
 ![Code,Config and Preview](./img/Code-Preview-Config.png)
 

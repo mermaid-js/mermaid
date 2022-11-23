@@ -18,7 +18,7 @@ Please note that you can switch versions through the dropdown box at the top rig
 
 ## Using mermaid
 
-For the majority of users, Using the [Live Editor](https://mermaid.live/) would be sufficient, however you may also opt to deploy mermaid as a dependency or using the [Mermaid API](setup/README).
+For the majority of users, Using the [Live Editor](https://mermaid.live/) would be sufficient, however you may also opt to deploy mermaid as a dependency or using the [Mermaid API](./setup/README.md).
 
 We have compiled some Video [Tutorials](./Tutorials.md) on how to use the mermaid Live Editor.
 
@@ -41,7 +41,7 @@ We have compiled some Video [Tutorials](./Tutorials.md) on how to use the mermai
 
 **Hosting mermaid on a web page.**
 
-> Note:This topic explored in greater depth in the [User Guide for Beginners](../intro/n00b-gettingStarted)
+> Note:This topic explored in greater depth in the [User Guide for Beginners](../intro/n00b-gettingStarted.md)
 
 The easiest way to integrate mermaid on a web page requires two elements:
 
@@ -326,7 +326,7 @@ setting the options in mermaid.
 4.  Instantiation of the configuration using the **mermaid.init** call- **Deprecated**
 
 The list above has two ways too many of doing this. Three are deprecated and will eventually be removed. The list of
-configuration objects are described [in the mermaidAPI documentation](setup/README).
+configuration objects are described [in the mermaidAPI documentation](./setup/README.md).
 
 ## Using the `mermaidAPI.initialize`/`mermaid.initialize` call
 
@@ -348,7 +348,7 @@ on what kind of integration you use.
 
 ## Using the mermaid object
 
-Is it possible to set some configuration via the mermaid object. The two parameters that are supported using this
+It is possible to set some configuration via the mermaid object. The two parameters that are supported using this
 approach are:
 
 - mermaid.startOnLoad

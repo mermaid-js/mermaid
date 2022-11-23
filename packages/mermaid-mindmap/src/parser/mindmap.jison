@@ -33,11 +33,12 @@
 "))"               { yy.getLogger().trace('Explosion Bang'); this.begin('NODE');return 'NODE_DSTART'; }
 ")"               { yy.getLogger().trace('Cloud Bang'); this.begin('NODE');return 'NODE_DSTART'; }
 "(("               { this.begin('NODE');return 'NODE_DSTART'; }
+"{{"               { this.begin('NODE');return 'NODE_DSTART'; }
 "("                { this.begin('NODE');return 'NODE_DSTART'; }
 "["                { this.begin('NODE');return 'NODE_DSTART'; }
 [\s]+              return 'SPACELIST'                 /* skip all whitespace */    ;
 // !(-\()            return 'NODE_ID';
-[^\(\[\n\-\)]+         return 'NODE_ID';
+[^\(\[\n\-\)\{\}]+         return 'NODE_ID';
 <<EOF>>            return 'EOF';
 <NODE>["]          { yy.getLogger().trace('Starting NSTR');this.begin("NSTR");}
 <NSTR>[^"]+        { yy.getLogger().trace('description:', yytext); return "NODE_DESCR";}
@@ -45,11 +46,12 @@
 <NODE>[\)]\)         {this.popState();yy.getLogger().trace('node end ))');return "NODE_DEND";}
 <NODE>[\)]         {this.popState();yy.getLogger().trace('node end )');return "NODE_DEND";}
 <NODE>[\]]         {this.popState();yy.getLogger().trace('node end ...',yytext);return "NODE_DEND";}
+<NODE>"}}"         {this.popState();yy.getLogger().trace('node end ((');return "NODE_DEND";}
 <NODE>"(-"         {this.popState();yy.getLogger().trace('node end (-');return "NODE_DEND";}
 <NODE>"-)"         {this.popState();yy.getLogger().trace('node end (-');return "NODE_DEND";}
 <NODE>"(("         {this.popState();yy.getLogger().trace('node end ((');return "NODE_DEND";}
-<NODE>"("         {this.popState();yy.getLogger().trace('node end ((');return "NODE_DEND";}
-<NODE>[^\)\]\(]+     { yy.getLogger().trace('Long description:', yytext);   return 'NODE_DESCR';}
+<NODE>"("          {this.popState();yy.getLogger().trace('node end ((');return "NODE_DEND";}
+<NODE>[^\)\]\(\}]+     { yy.getLogger().trace('Long description:', yytext);   return 'NODE_DESCR';}
 <NODE>.+(?!\(\()     { yy.getLogger().trace('Long description:', yytext);   return 'NODE_DESCR';}
 // [\[]               return 'NODE_START';
 // .+                 return 'TXT' ;

@@ -109,6 +109,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <STATE>[^\n\s\{]+      {/*console.log('COMPOSIT_STATE', yytext);*/return 'COMPOSIT_STATE';}
 <STATE>\n      {this.popState();}
 <INITIAL,STATE>\{               {this.popState();this.pushState('struct'); /*console.log('begin struct', yytext);*/return 'STRUCT_START';}
+<struct>\%\%(?!\{)[^\n]*                                       /* skip comments inside state*/
 <struct>\}           { /*console.log('Ending struct');*/ this.popState(); return 'STRUCT_STOP';}}
 <struct>[\n]              /* nothing */
 

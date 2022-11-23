@@ -10,6 +10,8 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
+  setDiagramTitle,
+  getDiagramTitle,
 } from '../../commonDb';
 
 let mainBranchName = getConfig().gitGraph.mainBranchName;
@@ -529,5 +531,7 @@ export default {
   getAccTitle,
   getAccDescription,
   setAccDescription,
+  setDiagramTitle,
+  getDiagramTitle,
   commitType,
 };

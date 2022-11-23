@@ -13,6 +13,9 @@ Note that practitioners of ER modelling almost always refer to _entity types_ si
 Mermaid can render ER diagrams
 
 ```mermaid-example
+---
+title: Order example
+---
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains
@@ -20,6 +23,9 @@ erDiagram
 ```
 
 ```mermaid
+---
+title: Order example
+---
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains

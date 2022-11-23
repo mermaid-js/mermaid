@@ -9,6 +9,8 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
+  setDiagramTitle,
+  getDiagramTitle,
 } from '../../commonDb';
 
 import {
@@ -31,9 +33,20 @@ const FILL_KEYWORD = 'fill';
 const BG_FILL = 'bgFill';
 const STYLECLASS_SEP = ',';
 
+/**
+ * Returns a new list of classes.
+ * In the future, this can be replaced with a class common to all diagrams.
+ * ClassDef information = { id: id, styles: [], textStyles: [] }
+ *
+ * @returns {{}}
+ */
+function newClassesList() {
+  return {};
+}
+
 let direction = DEFAULT_DIAGRAM_DIRECTION;
 let rootDoc = [];
-let classes = []; // style classes defined by a classDef
+let classes = newClassesList(); // style classes defined by a classDef
 
 const newDoc = () => {
   return {
@@ -270,11 +283,9 @@ export const clear = function (saveCommon) {
   };
   currentDocument = documents.root;
 
-  currentDocument = documents.root;
-
   // number of start and end nodes; used to construct ids
   startEndCount = 0;
-  classes = [];
+  classes = newClassesList();
   if (!saveCommon) {
     commonClear();
   }
@@ -300,7 +311,7 @@ export const getRelations = function () {
  * else return the given id
  *
  * @param {string} id
- * @returns {{id: string, type: string}} - the id and type that should be used
+ * @returns {string} - the id (original or constructed)
  */
 function startIdIfNeeded(id = '') {
   let fixedId = id;
@@ -329,7 +340,7 @@ function startTypeIfNeeded(id = '', type = DEFAULT_STATE_TYPE) {
  * else return the given id
  *
  * @param {string} id
- * @returns {{id: string, type: string}} - the id and type that should be used
+ * @returns {string} - the id (original or constructed)
  */
 function endIdIfNeeded(id = '') {
   let fixedId = id;
@@ -442,12 +453,12 @@ const getDividerId = () => {
  * @example classDef my-style fill:#f96;
  *
  * @param {string} id - the id of this (style) class
- * @param  {string} styleAttributes - the string with 1 or more style attributes (each separated by a comma)
+ * @param  {string | null} styleAttributes - the string with 1 or more style attributes (each separated by a comma)
  */
 export const addStyleClass = function (id, styleAttributes = '') {
   // create a new style class object with this id
   if (typeof classes[id] === 'undefined') {
-    classes[id] = { id: id, styles: [], textStyles: [] };
+    classes[id] = { id: id, styles: [], textStyles: [] }; // This is a classDef
   }
   const foundClass = classes[id];
   if (typeof styleAttributes !== 'undefined') {
@@ -562,4 +573,6 @@ export default {
   addStyleClass,
   setCssClass,
   addDescription,
+  setDiagramTitle,
+  getDiagramTitle,
 };

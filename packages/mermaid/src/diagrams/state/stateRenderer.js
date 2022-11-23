@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import dagre from 'dagre';
+import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import graphlib from 'graphlib';
 import { log } from '../../logger';
 import common from '../common/common';
@@ -239,7 +239,7 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
     );
   });
 
-  dagre.layout(graph);
+  dagreLayout(graph);
 
   log.debug('Graph after layout', graph.nodes());
   const svgElem = diagram.node();

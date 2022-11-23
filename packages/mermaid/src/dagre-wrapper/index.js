@@ -1,4 +1,4 @@
-import dagre from 'dagre';
+import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import graphlib from 'graphlib';
 import insertMarkers from './markers';
 import { updateNodeBounds } from './shapes/util';
@@ -95,7 +95,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   log.info('###                Layout                 ###');
   log.info('#############################################');
   log.info(graph);
-  dagre.layout(graph);
+  dagreLayout(graph);
   log.info('Graph after layout:', graphlib.json.write(graph));
   // Move the nodes to the correct place
   let diff = 0;

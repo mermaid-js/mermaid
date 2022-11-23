@@ -145,6 +145,45 @@ const circleBkg = function (elem, node) {
     .attr('class', 'node-bkg node-' + db.type2Str(node.type))
     .attr('r', node.width / 2);
 };
+
+/**
+ *
+ * @param parent
+ * @param w
+ * @param h
+ * @param points
+ * @param node
+ */
+function insertPolygonShape(parent, w, h, points, node) {
+  return parent
+    .insert('polygon', ':first-child')
+    .attr(
+      'points',
+      points
+        .map(function (d) {
+          return d.x + ',' + d.y;
+        })
+        .join(' ')
+    )
+    .attr('transform', 'translate(' + (node.width - w) / 2 + ', ' + h + ')');
+}
+
+const hexagonBkg = function (elem, node) {
+  const h = node.height;
+  const f = 4;
+  const m = h / f;
+  const w = node.width - node.padding + 2 * m;
+  const points = [
+    { x: m, y: 0 },
+    { x: w - m, y: 0 },
+    { x: w, y: -h / 2 },
+    { x: w - m, y: -h },
+    { x: m, y: -h },
+    { x: 0, y: -h / 2 },
+  ];
+  const shapeSvg = insertPolygonShape(elem, w, h, points, node);
+};
+
 const roundedRectBkg = function (elem, node) {
   elem
     .append('rect')
@@ -251,6 +290,9 @@ export const drawNode = function (elem, node, fullSection, conf) {
       break;
     case db.nodeType.BANG:
       bangBkg(bkgElem, node, section, conf);
+      break;
+    case db.nodeType.HEXAGON:
+      hexagonBkg(bkgElem, node, section, conf);
       break;
   }
 
