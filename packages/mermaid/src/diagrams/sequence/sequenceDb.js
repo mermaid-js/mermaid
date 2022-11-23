@@ -219,7 +219,8 @@ export const addNote = function (actor, placement, message) {
   };
 
   // Coerce actor into a [to, from, ...] array
-  const actors = [actor, actor];
+  // eslint-disable-next-line unicorn/prefer-spread
+  const actors = [].concat(actor, actor);
 
   notes.push(note);
   messages.push({
