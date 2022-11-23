@@ -20,7 +20,7 @@ export default {
           // router.go isn't loading the ID properly.
           window.location.href = `/mermaid/${newPath}`;
         }
-      } catch (e) { }
+      } catch (e) {}
     };
   },
 } as typeof DefaultTheme;
