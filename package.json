@@ -110,12 +110,8 @@
     "vitepress": "^1.0.0-alpha.28",
     "vitepress-plugin-mermaid": "^2.0.8",
     "vitepress-plugin-search": "^1.0.4-alpha.15",
-    "vitest": "^0.25.1"
+    "vitest": "^0.25.3"
   },
-  "sideEffects": [
-    "**/*.css",
-    "**/*.scss"
-  ],
   "volta": {
     "node": "18.12.1"
   }
