@@ -348,7 +348,7 @@ on what kind of integration you use.
 
 ## Using the mermaid object
 
-Is it possible to set some configuration via the mermaid object. The two parameters that are supported using this
+It is possible to set some configuration via the mermaid object. The two parameters that are supported using this
 approach are:
 
 - mermaid.startOnLoad

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -17,6 +17,9 @@
     <h1>State diagram demos</h1>
     <h2>Very simple showing change from State1 to State2</h2>
     <pre class="mermaid">
+---
+title: Very simple diagram
+---
 		stateDiagram
 		  accTitle: This is the accessible title
       accDescr:This is an accessible description
@@ -30,8 +33,9 @@
     <p>
       <code>
         classDef notMoving fill:white<br />
-        classDef movement font-style:italic;<br />
-        classDef badBadEvent fill:#f00,color:white,font-weight:bold<br />
+        classDef movement font-style:italic<br />
+        classDef badBadEvent
+        fill:#f00,color:white,font-weight:bold,stroke-width:2px,stroke:yellow<br />
       </code>
     </p>
     <h4>And these are how they are applied:</h4>
@@ -43,15 +47,20 @@
       </code>
     </p>
     <pre class="mermaid">
-		stateDiagram-v2
+---
+title: Very simple diagram
+---
+		stateDiagram
+      direction TB
+
 		  accTitle: This is the accessible title
       accDescr: This is an accessible description
 
       classDef notMoving fill:white
-      classDef movement font-style:italic;
-      classDef badBadEvent fill:#f00,color:white,font-weight:bold
+      classDef movement font-style:italic
+      classDef badBadEvent fill:#f00,color:white,font-weight:bold,stroke-width:2px,stroke:yellow
 
-      [*] --> Still
+      [*]--> Still
       Still --> [*]
       Still --> Moving
       Moving --> Still
@@ -61,8 +70,55 @@
       class Still notMoving
       class Moving, Crash movement
       class Crash badBadEvent
+      class end badBadEvent
     </pre>
 
+    <hr />
+
+    <h2>Here is a diagram that uses the ::: operator to apply styles to states</h2>
+    <h4>Here are the <code>classDef</code> statements:</h4>
+    <p>
+      <code>
+        classDef notMoving fill:white<br />
+        classDef movement font-style:italic<br />
+        classDef badBadEvent
+        fill:#f00,color:white,font-weight:bold,stroke-width:2px,stroke:yellow<br />
+      </code>
+    </p>
+    <h4>And these are how they are applied:</h4>
+    <p>
+      <code>
+        [*] --> Still:::notMoving<br />
+        ...<br />
+        Still --> Moving:::movement<br />
+        ...<br />
+        Moving --> Crash:::movement<br />
+        Crash:::badBadEvent --> [*]<br />
+      </code>
+    </p>
+    <p>
+      Note that both the starting state and the end state have styles applied:<br />
+      The start state has the <i>start</i> classDef style<br />and the end state has the
+      <i>stop</i> classDef style applied.
+    </p>
+    <pre class="mermaid">
+    stateDiagram
+      direction TB
+
+		  accTitle: This is the accessible title
+      accDescr: This is an accessible description
+
+      classDef notMoving fill:white
+      classDef movement font-style:italic
+      classDef badBadEvent fill:#f00,color:white,font-weight:bold,stroke-width:2px,stroke:yellow
+
+      [*] --> Still:::notMoving
+      Still --> [*]
+      Still --> Moving:::movement
+      Moving --> Still
+      Moving --> Crash:::movement
+      Crash:::badBadEvent --> [*]
+    </pre>
     <hr />
 
     <pre class="mermaid">
@@ -70,6 +126,20 @@
       accTitle: very very simple state
       accDescr: This is a state diagram showing one state
       State1
+    </pre>
+    <hr />
+
+    <h2>States with spaces in them</h2>
+    <pre class="mermaid">
+      stateDiagram
+        classDef yourState font-style:italic,font-weight:bold,fill:white
+
+        yswsii: Your state with spaces in it
+        [*] --> yswsii:::yourState
+        [*] --> SomeOtherState
+        SomeOtherState --> YetAnotherState
+        yswsii --> YetAnotherState
+        YetAnotherState --> [*]
     </pre>
     <hr />
 
@@ -121,7 +191,7 @@
     <pre class="mermaid">
       stateDiagram-v2
       [*] --> S1
-      S1 --> S2: This long line uses a br tag<br/>to create multiple<br/>lines.
+      S1 --> S2: This long line uses a br tag<br />to create multiple<br />lines.
       S1 --> S3: This transition descripton uses \na newline character\nto create multiple\nlines.
 
     </pre>
@@ -133,7 +203,7 @@
       direction LR
       State1: A state with a note
       note right of State1
-        Important information!<br />You can write notes.<br/>And\nthey\ncan\nbe\nmulti-\nline.
+        Important information!<br />You can write notes.<br />And\nthey\ncan\nbe\nmulti-\nline.
       end note
       State1 --> State2
       note left of State2 : Notes can be to the left of a state\n(like this one).

@@ -1,8 +1,9 @@
 import { select } from 'd3';
-import graphlib from 'graphlib';
+import * as graphlib from 'dagre-d3-es/src/graphlib';
 import { log } from '../../logger';
 import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';
+import utils from '../../utils';
 import { curveLinear } from 'd3';
 import { interpolateToCurve, getStylesFromArray } from '../../utils';
 import { setupGraphViewbox } from '../../setupGraphViewbox';
@@ -427,6 +428,8 @@ export const draw = function (text, id, _version, diagObj) {
     'classDiagram',
     id
   );
+
+  utils.insertTitle(svg, 'classTitleText', conf.titleTopMargin, diagObj.db.getDiagramTitle());
 
   setupGraphViewbox(g, svg, conf.diagramPadding, conf.useMaxWidth);
 

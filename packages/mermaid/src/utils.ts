@@ -21,7 +21,7 @@ import { log } from './logger';
 import { detectType } from './diagram-api/detectType';
 import assignWithDepth from './assignWithDepth';
 import { MermaidConfig } from './config.type';
-import memoize from 'lodash/memoize';
+import memoize from 'lodash-es/memoize';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -561,54 +561,77 @@ export const drawSimpleText = function (
   return textElem;
 };
 
-export const wrapLabel = memoize(
-  (label, maxWidth, config) => {
-    if (!label) {
-      return label;
-    }
-    config = Object.assign(
-      { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: '<br/>' },
-      config
-    );
-    if (common.lineBreakRegex.test(label)) {
-      return label;
-    }
-    const words = label.split(' ');
-    const completedLines = [];
-    let nextLine = '';
-    words.forEach((word, index) => {
-      const wordLength = calculateTextWidth(`${word} `, config);
-      const nextLineLength = calculateTextWidth(nextLine, config);
-      if (wordLength > maxWidth) {
-        const { hyphenatedStrings, remainingWord } = breakString(word, maxWidth, '-', config);
-        completedLines.push(nextLine, ...hyphenatedStrings);
-        nextLine = remainingWord;
-      } else if (nextLineLength + wordLength >= maxWidth) {
-        completedLines.push(nextLine);
-        nextLine = word;
-      } else {
-        nextLine = [nextLine, word].filter(Boolean).join(' ');
-      }
-      const currentWord = index + 1;
-      const isLastWord = currentWord === words.length;
-      if (isLastWord) {
-        completedLines.push(nextLine);
-      }
-    });
-    return completedLines.filter((line) => line !== '').join(config.joinWith);
-  },
-  (label, maxWidth, config) =>
-    `${label}${maxWidth}${config.fontSize}${config.fontWeight}${config.fontFamily}${config.joinWith}`
-);
+interface WrapLabelConfig {
+  fontSize: number;
+  fontFamily: string;
+  fontWeight: number;
+  joinWith: string;
+}
 
-const breakString = memoize(
-  (word, maxWidth, hyphenCharacter = '-', config) => {
+export const wrapLabel: (label: string, maxWidth: string, config: WrapLabelConfig) => string =
+  memoize(
+    (label: string, maxWidth: string, config: WrapLabelConfig): string => {
+      if (!label) {
+        return label;
+      }
+      config = Object.assign(
+        { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: '<br/>' },
+        config
+      );
+      if (common.lineBreakRegex.test(label)) {
+        return label;
+      }
+      const words = label.split(' ');
+      const completedLines = [];
+      let nextLine = '';
+      words.forEach((word, index) => {
+        const wordLength = calculateTextWidth(`${word} `, config);
+        const nextLineLength = calculateTextWidth(nextLine, config);
+        if (wordLength > maxWidth) {
+          const { hyphenatedStrings, remainingWord } = breakString(word, maxWidth, '-', config);
+          completedLines.push(nextLine, ...hyphenatedStrings);
+          nextLine = remainingWord;
+        } else if (nextLineLength + wordLength >= maxWidth) {
+          completedLines.push(nextLine);
+          nextLine = word;
+        } else {
+          nextLine = [nextLine, word].filter(Boolean).join(' ');
+        }
+        const currentWord = index + 1;
+        const isLastWord = currentWord === words.length;
+        if (isLastWord) {
+          completedLines.push(nextLine);
+        }
+      });
+      return completedLines.filter((line) => line !== '').join(config.joinWith);
+    },
+    (label, maxWidth, config) =>
+      `${label}${maxWidth}${config.fontSize}${config.fontWeight}${config.fontFamily}${config.joinWith}`
+  );
+
+interface BreakStringOutput {
+  hyphenatedStrings: string[];
+  remainingWord: string;
+}
+
+const breakString: (
+  word: string,
+  maxWidth: number,
+  hyphenCharacter: string,
+  config: WrapLabelConfig
+) => BreakStringOutput = memoize(
+  (
+    word: string,
+    maxWidth: number,
+    hyphenCharacter = '-',
+    config: WrapLabelConfig
+  ): BreakStringOutput => {
     config = Object.assign(
       { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 0 },
       config
     );
     const characters = word.split('');
-    const lines = [];
+    const lines: string[] = [];
     let currentLine = '';
     characters.forEach((character, index) => {
       const nextLine = `${currentLine}${character}`;
@@ -667,6 +690,16 @@ export function calculateTextWidth(
   return calculateTextDimensions(text, config).width;
 }
 
+interface TextDimensionConfig {
+  fontSize?: number;
+  fontWeight?: number;
+  fontFamily?: string;
+}
+interface TextDimensions {
+  width: number;
+  height: number;
+  lineHeight?: number;
+}
 /**
  * This calculates the dimensions of the given text, font size, font family, font weight, and
  * margins.
@@ -676,15 +709,11 @@ export function calculateTextWidth(
  *   the resulting size
  * @returns The dimensions for the given text
  */
-export const calculateTextDimensions = memoize(
-  function (
-    text: string,
-    config: {
-      fontSize?: number;
-      fontWeight?: number;
-      fontFamily?: string;
-    }
-  ) {
+export const calculateTextDimensions: (
+  text: string,
+  config: TextDimensionConfig
+) => TextDimensions = memoize(
+  (text: string, config: TextDimensionConfig): TextDimensions => {
     config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial' }, config);
     const { fontSize, fontFamily, fontWeight } = config;
     if (!text) {
@@ -885,6 +914,32 @@ export function getErrorMessage(error: unknown): string {
   return String(error);
 }
 
+/**
+ * Appends <text> element with the given title, centered.
+ *
+ * @param parent - d3 svg object to append title to
+ * @param cssClass - CSS class for the <text> element containing the title
+ * @param titleTopMargin - Margin in pixels between title and rest of the graph
+ * @param title - The title. If empty, returns immediately.
+ */
+export const insertTitle = (
+  parent,
+  cssClass: string,
+  titleTopMargin: number,
+  title?: string
+): void => {
+  if (!title) {
+    return;
+  }
+  const bounds = parent.node().getBBox();
+  parent
+    .append('text')
+    .text(title)
+    .attr('x', bounds.x + bounds.width / 2)
+    .attr('y', -titleTopMargin)
+    .attr('class', cssClass);
+};
+
 export default {
   assignWithDepth,
   wrapLabel,
@@ -907,4 +962,5 @@ export default {
   initIdGenerator: initIdGenerator,
   directiveSanitizer,
   sanitizeCss,
+  insertTitle,
 };

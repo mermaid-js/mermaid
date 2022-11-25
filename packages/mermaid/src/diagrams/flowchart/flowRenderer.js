@@ -1,8 +1,9 @@
-import graphlib from 'graphlib';
+import * as graphlib from 'dagre-d3-es/src/graphlib';
 import { select, curveLinear, selectAll } from 'd3';
 import { getConfig } from '../../config';
-import dagreD3 from 'dagre-d3';
-import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
+import { render as Render } from 'dagre-d3-es';
+import { applyStyle } from 'dagre-d3-es/src/dagre-js/util.js';
+import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
 import { log } from '../../logger';
 import common, { evaluate } from '../common/common';
 import { interpolateToCurve, getStylesFromArray } from '../../utils';
@@ -369,7 +370,6 @@ export const draw = function (text, id, _version, diagObj) {
   addEdges(edges, g, diagObj);
 
   // Create the renderer
-  const Render = dagreD3.render;
   const render = new Render();
 
   // Add custom shapes
@@ -389,7 +389,7 @@ export const draw = function (text, id, _version, diagObj) {
       .attr('orient', 'auto');
 
     const path = marker.append('path').attr('d', 'M 0 0 L 0 0 L 0 0 z');
-    dagreD3.util.applyStyle(path, edge[type + 'Style']);
+    applyStyle(path, edge[type + 'Style']);
   };
 
   // Override normal arrowhead defined in d3. Remove style & add class to allow css styling.

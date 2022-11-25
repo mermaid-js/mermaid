@@ -4,7 +4,7 @@
  */
 import { D3Element } from './mermaidAPI';
 
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash-es/isEmpty';
 
 /**
  * Add aria-roledescription to the svg element to the diagramType

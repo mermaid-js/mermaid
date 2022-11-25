@@ -17,7 +17,7 @@ const genSections = (options) => {
     sections += `
     .section-${i - 1} rect, .section-${i - 1} path, .section-${i - 1} circle, .section-${
       i - 1
-    } path  {
+    } polygon, .section-${i - 1} path  {
       fill: ${options['cScale' + i]};
     }
     .section-${i - 1} text {
@@ -55,7 +55,7 @@ const getStyles = (options) =>
     stroke-width: 3;
   }
   ${genSections(options)}
-  .section-root rect, .section-root path, .section-root circle  {
+  .section-root rect, .section-root path, .section-root circle, .section-root polygon  {
     fill: ${options.git0};
   }
   .section-root text {
