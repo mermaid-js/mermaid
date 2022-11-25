@@ -1,10 +1,11 @@
-import graphlib from 'graphlib';
+import * as graphlib from 'dagre-d3-es/src/graphlib';
 import { select } from 'd3';
 import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import common from '../common/common';
+import utils from '../../utils';
 import addSVGAccessibilityFields from '../../accessibility';
 import {
   DEFAULT_DIAGRAM_DIRECTION,
@@ -437,8 +438,9 @@ export const draw = function (text, id, _version, diag) {
 
   const padding = 8;
 
-  const bounds = svg.node().getBBox();
+  utils.insertTitle(svg, 'statediagramTitleText', conf.titleTopMargin, diag.db.getDiagramTitle());
 
+  const bounds = svg.node().getBBox();
   const width = bounds.width + padding * 2;
   const height = bounds.height + padding * 2;
 

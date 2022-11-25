@@ -9,6 +9,8 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
+  setDiagramTitle,
+  getDiagramTitle,
 } from '../../commonDb';
 
 import {
@@ -571,4 +573,6 @@ export default {
   addStyleClass,
   setCssClass,
   addDescription,
+  setDiagramTitle,
+  getDiagramTitle,
 };

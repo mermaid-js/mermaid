@@ -29,7 +29,7 @@ import utils, { directiveSanitizer } from './utils';
 import DOMPurify from 'dompurify';
 import { MermaidConfig } from './config.type';
 import { evaluate } from './diagrams/common/common';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash-es/isEmpty';
 
 // diagram names that support classDef statements
 const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram', 'stateDiagram-v2'];
@@ -194,7 +194,7 @@ export const createCssStyles = (
       const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
 
       const cssHtmlElements = ['> *', 'span']; // TODO make a constant
-      const cssShapeElements = ['rect', 'polygon', 'ellipse', 'circle']; // TODO make a constant
+      const cssShapeElements = ['rect', 'polygon', 'ellipse', 'circle', 'path']; // TODO make a constant
 
       const cssElements = htmlLabels ? cssHtmlElements : cssShapeElements;
 

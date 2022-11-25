@@ -8,6 +8,8 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
+  setDiagramTitle,
+  getDiagramTitle,
 } from '../../commonDb';
 
 let entities = {};
@@ -94,4 +96,6 @@ export default {
   getAccTitle,
   setAccDescription,
   getAccDescription,
+  setDiagramTitle,
+  getDiagramTitle,
 };
