@@ -1,6 +1,7 @@
 /** Decorates with functions required by mermaids dagre-wrapper. */
 import { log } from '../logger';
-import graphlib from 'graphlib';
+import * as graphlibJson from 'dagre-d3-es/src/graphlib/json';
+import * as graphlib from 'dagre-d3-es/src/graphlib';
 
 export let clusterDb = {};
 let decendants = {};
@@ -322,7 +323,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
       graph.setEdge(v, w, edge, e.name);
     }
   });
-  log.warn('Adjusted Graph', graphlib.json.write(graph));
+  log.warn('Adjusted Graph', graphlibJson.write(graph));
   extractor(graph, 0);
 
   log.trace(clusterDb);
@@ -336,7 +337,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
 };
 
 export const extractor = (graph, depth) => {
-  log.warn('extractor - ', depth, graphlib.json.write(graph), graph.children('D'));
+  log.warn('extractor - ', depth, graphlibJson.write(graph), graph.children('D'));
   if (depth > 10) {
     log.error('Bailing out');
     return;
@@ -415,7 +416,7 @@ export const extractor = (graph, depth) => {
           return {};
         });
 
-      log.warn('Old graph before copy', graphlib.json.write(graph));
+      log.warn('Old graph before copy', graphlibJson.write(graph));
       copy(node, graph, clusterGraph, node);
       graph.setNode(node, {
         clusterNode: true,
@@ -424,8 +425,8 @@ export const extractor = (graph, depth) => {
         labelText: clusterDb[node].labelText,
         graph: clusterGraph,
       });
-      log.warn('New graph after copy node: (', node, ')', graphlib.json.write(clusterGraph));
-      log.debug('Old graph after copy', graphlib.json.write(graph));
+      log.warn('New graph after copy node: (', node, ')', graphlibJson.write(clusterGraph));
+      log.debug('Old graph after copy', graphlibJson.write(graph));
     } else {
       log.warn(
         'Cluster ** ',
