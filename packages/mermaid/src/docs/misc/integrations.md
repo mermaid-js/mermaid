@@ -116,7 +116,7 @@ They also serve as proof of concept, for the variety of things that can be built
 - [Draw.io](https://draw.io) - [Plugin](https://github.com/nopeslide/drawio_mermaid_plugin)
 - [Inkdrop](https://www.inkdrop.app) - [Plugin](https://github.com/inkdropapp/inkdrop-mermaid)
 - [Vim](https://www.vim.org)
-  - [Official Vim Syntax and ftplugin](https://github.com/craigmac/vim-mermaid) 
+  - [Official Vim Syntax and ftplugin](https://github.com/craigmac/vim-mermaid)
   - [Vim Diagram Syntax](https://github.com/zhaozg/vim-diagram)
 - [GNU Emacs](https://www.gnu.org/software/emacs/)
   - [Major mode for .mmd files](https://github.com/abrochard/mermaid-mode)
