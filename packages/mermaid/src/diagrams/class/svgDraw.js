@@ -355,6 +355,9 @@ export const drawNote = function (elem, note, conf, diagObj) {
 };
 
 export const parseMember = function (text) {
+  // Note: these two regular expressions don't parse the official UML syntax for attributes
+  // and methods. They parse a Java-style syntax of the form
+  // "String name" (for attributes) and "String name(int x)" for methods.
   const fieldRegEx = /^(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+) *(\*|\$)?$/;
   const methodRegEx = /^([+|\-|~|#])?(\w+) *\( *(.*)\) *(\*|\$)? *(\w*[~|[\]]*\s*\w*~?)$/;
 
@@ -422,32 +425,39 @@ const buildLegacyDisplay = function (text) {
   let cssStyle = '';
   let memberText = '';
   let returnType = '';
+  let visibility = '';
+  let firstChar = text.substring(0, 1);
+  if (!firstChar.match(/\w/)) {
+    // ignore unknown visibility
+    if (firstChar.match(/\+|-|~|#/)) {
+      visibility = firstChar;
+    }
+    text = text.substring(1, text.length);
+  }
+  let lastChar = text.substring(text.length - 1, text.length);
+  let noClassifierRe = /\s|\w|\)|~/;
+  if (!lastChar.match(noClassifierRe)) {
+    cssStyle = parseClassifier(lastChar);
+    text = text.substring(0, text.length - 1);
+  }
   let methodStart = text.indexOf('(');
   let methodEnd = text.indexOf(')');
 
   if (methodStart > 1 && methodEnd > methodStart && methodEnd <= text.length) {
-    let visibility = '';
-    let methodName = '';
-
-    let firstChar = text.substring(0, 1);
-    if (firstChar.match(/\w/)) {
-      methodName = text.substring(0, methodStart).trim();
-    } else {
-      if (firstChar.match(/\+|-|~|#/)) {
-        visibility = firstChar;
-      }
-
-      methodName = text.substring(1, methodStart).trim();
-    }
-
+    let methodName = text.substring(0, methodStart).trim();
     const parameters = text.substring(methodStart + 1, methodEnd);
-    const classifier = text.substring(methodEnd + 1, 1);
-    cssStyle = parseClassifier(text.substring(methodEnd + 1, methodEnd + 2));
 
     displayText = visibility + methodName + '(' + parseGenericTypes(parameters.trim()) + ')';
 
     if (methodEnd < text.length) {
-      returnType = text.substring(methodEnd + 2).trim();
+      // special case: classifier after the closing parenthesis
+      let potentialClassifier = text.substring(methodEnd + 1, methodEnd + 2);
+      if (cssStyle === '' && !potentialClassifier.match(noClassifierRe)) {
+        cssStyle = parseClassifier(potentialClassifier);
+        returnType = text.substring(methodEnd + 2).trim();
+      } else {
+        returnType = text.substring(methodEnd + 1).trim();
+      }
       if (returnType !== '') {
         returnType = ' : ' + parseGenericTypes(returnType);
         displayText += returnType;
@@ -455,7 +465,7 @@ const buildLegacyDisplay = function (text) {
     }
   } else {
     // finally - if all else fails, just send the text back as written (other than parsing for generic types)
-    displayText = parseGenericTypes(text);
+    displayText = visibility + parseGenericTypes(text);
   }
 
   return {

@@ -58,11 +58,27 @@ describe('class member Renderer, ', function () {
       expect(actual.cssStyle).toBe('font-style:italic;');
     });
 
+    it('should handle abstract method classifier with return type', function () {
+      const str = 'foo(name: String) int*';
+      let actual = svgDraw.parseMember(str);
+
+      expect(actual.displayText).toBe('foo(name: String) : int');
+      expect(actual.cssStyle).toBe('font-style:italic;');
+    });
+
     it('should handle static method classifier', function () {
       const str = 'foo()$';
       let actual = svgDraw.parseMember(str);
 
       expect(actual.displayText).toBe('foo()');
+      expect(actual.cssStyle).toBe('text-decoration:underline;');
+    });
+
+    it('should handle static method classifier with return type', function () {
+      const str = 'foo(name: String) int$';
+      let actual = svgDraw.parseMember(str);
+
+      expect(actual.displayText).toBe('foo(name: String) : int');
       expect(actual.cssStyle).toBe('text-decoration:underline;');
     });
 
@@ -164,11 +180,35 @@ describe('class member Renderer, ', function () {
       expect(actual.cssStyle).toBe('');
     });
 
+    it('should handle field declaration with generic type (name first)', function () {
+      const str = 'ids: List~List~int~~';
+      let actual = svgDraw.parseMember(str);
+
+      expect(actual.displayText).toBe('ids: List<List<int>>');
+      expect(actual.cssStyle).toBe('');
+    });
+
     it('should handle static field classifier', function () {
       const str = 'String foo$';
       let actual = svgDraw.parseMember(str);
 
       expect(actual.displayText).toBe('String foo');
+      expect(actual.cssStyle).toBe('text-decoration:underline;');
+    });
+
+    it('should handle static field classifier (name first)', function () {
+      const str = 'foo: String$';
+      let actual = svgDraw.parseMember(str);
+
+      expect(actual.displayText).toBe('foo: String');
+      expect(actual.cssStyle).toBe('text-decoration:underline;');
+    });
+
+    it('should handle static field classifier (name first, generics)', function () {
+      const str = 'foo: List~String~$';
+      let actual = svgDraw.parseMember(str);
+
+      expect(actual.displayText).toBe('foo: List<String>');
       expect(actual.cssStyle).toBe('text-decoration:underline;');
     });
   });

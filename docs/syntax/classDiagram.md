@@ -250,14 +250,17 @@ To describe the visibility (or encapsulation) of an attribute or method/function
 - `#` Protected
 - `~` Package/Internal
 
-> _note_ you can also include additional _classifiers_ to a method definition by adding the following notation to the _end_ of the method, i.e.: after the `()`:
+> _note_ you can also include additional _classifiers_ to a method
+> definition by adding the following notation to the _end_ of the method,
+> i.e.: after the `()` or after the return type.
 >
-> - `*` Abstract e.g.: `someAbstractMethod()*`
-> - `$` Static e.g.: `someStaticMethod()$`
+> - `*` Abstract e.g.: `someAbstractMethod()*` or `someAbstractMethod() int*`
+> - `$` Static e.g.: `someStaticMethod()$` or `someStaticMethod() String$`
 
-> _note_ you can also include additional _classifiers_ to a field definition by adding the following notation to the end of its name:
+> _note_ you can also include additional _classifiers_ to a field definition by adding the following notation to the very end:
 >
 > - `$` Static e.g.: `String someField$`
+> - `$` Static e.g.: `someField: String$`
 
 ## Defining Relationship
 
