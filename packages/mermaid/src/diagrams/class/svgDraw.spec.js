@@ -66,6 +66,14 @@ describe('class member Renderer, ', function () {
       expect(actual.cssStyle).toBe('font-style:italic;');
     });
 
+    it('should handle abstract method classifier after parenthesis with return type', function () {
+      const str = 'foo(name: String)* int';
+      let actual = svgDraw.parseMember(str);
+
+      expect(actual.displayText).toBe('foo(name: String) : int');
+      expect(actual.cssStyle).toBe('font-style:italic;');
+    });
+
     it('should handle static method classifier', function () {
       const str = 'foo()$';
       let actual = svgDraw.parseMember(str);
@@ -76,6 +84,14 @@ describe('class member Renderer, ', function () {
 
     it('should handle static method classifier with return type', function () {
       const str = 'foo(name: String) int$';
+      let actual = svgDraw.parseMember(str);
+
+      expect(actual.displayText).toBe('foo(name: String) : int');
+      expect(actual.cssStyle).toBe('text-decoration:underline;');
+    });
+
+    it('should handle static method classifier after parenthesis with return type', function () {
+      const str = 'foo(name: String)$ int';
       let actual = svgDraw.parseMember(str);
 
       expect(actual.displayText).toBe('foo(name: String) : int');
