@@ -459,6 +459,9 @@ const buildLegacyDisplay = function (text) {
         returnType = text.substring(methodEnd + 1).trim();
       }
       if (returnType !== '') {
+        if (returnType.charAt(0) === ':') {
+          returnType = returnType.substring(1).trim();
+        }
         returnType = ' : ' + parseGenericTypes(returnType);
         displayText += returnType;
       }

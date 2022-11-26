@@ -90,6 +90,14 @@ describe('class member Renderer, ', function () {
       expect(actual.cssStyle).toBe('text-decoration:underline;');
     });
 
+    it('should handle static method classifier with colon and return type', function () {
+      const str = 'foo(name: String): int$';
+      let actual = svgDraw.parseMember(str);
+
+      expect(actual.displayText).toBe('foo(name: String) : int');
+      expect(actual.cssStyle).toBe('text-decoration:underline;');
+    });
+
     it('should handle static method classifier after parenthesis with return type', function () {
       const str = 'foo(name: String)$ int';
       let actual = svgDraw.parseMember(str);
@@ -140,6 +148,14 @@ describe('class member Renderer, ', function () {
 
     it('should handle method declaration with return value', function () {
       const str = 'foo(id) int';
+      let actual = svgDraw.parseMember(str);
+
+      expect(actual.displayText).toBe('foo(id) : int');
+      expect(actual.cssStyle).toBe('');
+    });
+
+    it('should handle method declaration with colon return value', function () {
+      const str = 'foo(id) : int';
       let actual = svgDraw.parseMember(str);
 
       expect(actual.displayText).toBe('foo(id) : int');
