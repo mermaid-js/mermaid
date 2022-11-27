@@ -227,12 +227,15 @@ we have put in place a process wherein _knsv, Knut Sveidqvist_ is the primary re
 If it is not in the documentation, it's like it never happened. Wouldn't that be sad? With all the effort that was put into the feature?
 
 The docs are located in the `packages/mermaid/src/docs` folder and are written in Markdown. Just pick the right section and start typing.
-If you want to propose changes to the structure of the documentation, such as adding a new section or a new file you do that via the **[sidebar](https://github.com/mermaid-js/mermaid/edit/develop/src/docs/_sidebar.md)**.
-
-> **All the documents displayed in the GitHub.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/src/docs/_sidebar.md)**.
 
 The contents of <https://mermaid-js.github.io/mermaid/> are based on the docs from the `master` branch.
 Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid-js.github.io/mermaid/) once released.
+
+### Documentation organization: sidebar navigation
+
+If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation.**
+
+The sidebar navigation is defined in [the vitepress configuration file config.ts](../.vitepress/config.ts).
 
 ### How to Contribute to Documentation
 
@@ -241,8 +244,6 @@ We are a little less strict here, it is OK to commit directly in the `develop` b
 The documentation is located in the `packages/mermaid/src/docs` directory and organized according to relevant subfolder.
 
 The contents of <https://mermaid-js.github.io/mermaid/> are based on the docs from the `master` branch. Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid-js.github.io/mermaid/) once released.
-
-**The Docs Structure is dictated by [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/src/docs/_sidebar.md)**
 
 The `docs` folder will be automatically generated when committing to `packages/mermaid/src/docs` and should not be edited manually.
 
