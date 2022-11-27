@@ -99,7 +99,7 @@ export class MockedD3 {
     return this;
   }
 
-  // NOTE: Returns a HTML ELement with tag 'svg' that has _another_ 'svg' element child.
+  // NOTE: Returns a HTML Element with tag 'svg' that has _another_ 'svg' element child.
   // This allows different tests to succeed -- some need a top level 'svg' and some need a 'svg' element to be the firstChild
   // Real implementation returns an HTML Element
   public node = vi.fn().mockImplementation(() => {

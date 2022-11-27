@@ -915,7 +915,7 @@ export function getErrorMessage(error: unknown): string {
 }
 
 /**
- * Appends <text> element with the given title, centered.
+ * Appends <text> element with the given title and css class.
  *
  * @param parent - d3 svg object to append title to
  * @param cssClass - CSS class for the <text> element containing the title
