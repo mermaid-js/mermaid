@@ -2,6 +2,8 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code!
  */
+import dedent from 'ts-dedent';
+
 import { MermaidConfig } from './config.type';
 import { log } from './logger';
 import utils from './utils';
@@ -147,8 +149,7 @@ const initThrowsErrors = function (
     txt = element.innerHTML;
 
     // transforms the html to pure text
-    txt = utils
-      .entityDecode(txt)
+    txt = dedent(utils.entityDecode(txt)) // removes indentation, required for YAML parsing
       .trim()
       .replace(/<br\s*\/?>/gi, '<br/>');
 
@@ -288,8 +289,7 @@ const initThrowsErrorsAsync = async function (
     txt = element.innerHTML;
 
     // transforms the html to pure text
-    txt = utils
-      .entityDecode(txt)
+    txt = dedent(utils.entityDecode(txt)) // removes indentation, required for YAML parsing
       .trim()
       .replace(/<br\s*\/?>/gi, '<br/>');
 
