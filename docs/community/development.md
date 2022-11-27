@@ -222,7 +222,7 @@ we have put in place a process wherein _knsv, Knut Sveidqvist_ is the primary re
 
 ## Contributing Documentation
 
-**_\[TODO: This section is still a WIP. It still needs revision.]_**
+**_\[TODO: This section is still a WIP. It still needs MAJOR revision.]_**
 
 If it is not in the documentation, it's like it never happened. Wouldn't that be sad? With all the effort that was put into the feature?
 
