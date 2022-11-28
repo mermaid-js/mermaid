@@ -144,7 +144,7 @@ This ensures that the rendering of that feature in the e2e will be reviewed in t
 
 To start working with the e2e tests:
 
-1. Run `pnpm run dev` to start the dev server (or use the `pnpm dev` script)
+1. Run `pnpm dev` to start the dev server
 2. Start **Cypress** by running `pnpm cypress:open`.
 
 The rendering tests are very straightforward to create. There is a function `imgSnapshotTest`, which takes a diagram in text form and the mermaid options, and it renders that diagram in Cypress.
