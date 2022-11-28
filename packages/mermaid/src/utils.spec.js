@@ -386,7 +386,7 @@ describe('when inserting titles', function () {
     expect(title_attr_spy).toHaveBeenCalledWith('x', 10 + 100 / 2);
   });
 
-  it('y value is - given title top margin', () => {
+  it('y value is the negative of given title top margin', () => {
     vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
     const title_attr_spy = vi.spyOn(fauxTitle, 'attr');
 
