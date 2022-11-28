@@ -34,7 +34,7 @@ const MermaidExample = async (md: MarkdownRenderer) => {
       </div>`;
     } else if (token.info.trim() === 'mermaid') {
       const key = index;
-      return ` ${key}
+      return `
       <Suspense> 
       <template #default>
       <Mermaid id="mermaid-${key}"  graph="${encodeURIComponent(token.content)}"></Mermaid>

@@ -3,13 +3,8 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref, toRaw } from 'vue';
-import mermaid from 'mermaid';
-import mindmap from '@mermaid-js/mermaid-mindmap';
-import { useData } from 'vitepress';
-try {
-  await mermaid.registerExternalDiagrams([mindmap]);
-} catch (e) {}
+import { onMounted, onUnmounted, ref } from 'vue';
+import { render } from './mermaid';
 
 const props = defineProps({
   graph: {
@@ -25,10 +20,7 @@ const props = defineProps({
 const svg = ref(null);
 let mut = null;
 
-const { page } = useData();
-const { frontmatter } = toRaw(page.value);
-const mermaidPageTheme = frontmatter.mermaidTheme || '';
-let mermaidConfig = {
+const mermaidConfig = {
   securityLevel: 'loose',
   startOnLoad: false,
 };
@@ -65,14 +57,10 @@ onUnmounted(() => mut.disconnect());
 
 const renderChart = async () => {
   console.log('rendering chart' + props.id + props.graph);
-  let hasDarkClass = document.documentElement.classList.contains('dark');
-  mermaidConfig.theme = mermaidPageTheme || mermaidConfig.theme;
-  if (hasDarkClass) mermaidConfig.theme = 'dark';
+  const hasDarkClass = document.documentElement.classList.contains('dark');
+  mermaidConfig.theme = hasDarkClass ? 'dark' : 'default';
 
-  mermaid.initialize({
-    ...mermaidConfig,
-    theme: hasDarkClass ? 'dark' : mermaidPageTheme,
-  });
-  svg.value = await mermaid.renderAsync(props.id, decodeURIComponent(props.graph));
+  console.log({ mermaidConfig });
+  svg.value = await render(props.id, decodeURIComponent(props.graph), mermaidConfig);
 };
 </script>

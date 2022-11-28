@@ -36,7 +36,7 @@ Pushes in a directive to the configuration
 
 #### Defined in
 
-[config.ts:193](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L193)
+[config.ts:194](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L194)
 
 ---
 
@@ -60,7 +60,7 @@ The currentConfig
 
 #### Defined in
 
-[config.ts:138](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L138)
+[config.ts:139](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L139)
 
 ---
 
@@ -84,7 +84,7 @@ The siteConfig
 
 #### Defined in
 
-[config.ts:97](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L97)
+[config.ts:98](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L98)
 
 ---
 
@@ -118,7 +118,7 @@ The siteConfig
 
 #### Defined in
 
-[config.ts:225](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L225)
+[config.ts:226](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L226)
 
 ---
 
@@ -147,7 +147,7 @@ options in-place
 
 #### Defined in
 
-[config.ts:153](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L153)
+[config.ts:154](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L154)
 
 ---
 
@@ -167,7 +167,7 @@ options in-place
 
 #### Defined in
 
-[config.ts:76](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L76)
+[config.ts:77](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L77)
 
 ---
 
@@ -199,7 +199,7 @@ The currentConfig merged with the sanitized conf
 
 #### Defined in
 
-[config.ts:114](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L114)
+[config.ts:115](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L115)
 
 ---
 
@@ -273,4 +273,4 @@ The new siteConfig
 
 #### Defined in
 
-[config.ts:80](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L80)
+[config.ts:81](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L81)
