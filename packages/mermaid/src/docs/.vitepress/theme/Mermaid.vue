@@ -5,7 +5,11 @@
 <script setup>
 import { onMounted, onUnmounted, ref, toRaw } from 'vue';
 import mermaid from 'mermaid';
+import mindmap from '@mermaid-js/mermaid-mindmap';
 import { useData } from 'vitepress';
+try {
+  await mermaid.registerExternalDiagrams([mindmap]);
+} catch (e) {}
 
 const props = defineProps({
   graph: {
@@ -32,7 +36,7 @@ let mermaidConfig = {
 onMounted(async () => {
   mut = new MutationObserver(() => renderChart());
   mut.observe(document.documentElement, { attributes: true });
-  renderChart();
+  await renderChart();
 
   //refresh images on first render
   const hasImages = /<img([\w\W]+?)>/.exec(decodeURIComponent(props.graph))?.length > 0;
@@ -59,7 +63,7 @@ onMounted(async () => {
 
 onUnmounted(() => mut.disconnect());
 
-const renderChart = () => {
+const renderChart = async () => {
   console.log('rendering chart' + props.id + props.graph);
   let hasDarkClass = document.documentElement.classList.contains('dark');
   mermaidConfig.theme = mermaidPageTheme || mermaidConfig.theme;
@@ -69,6 +73,6 @@ const renderChart = () => {
     ...mermaidConfig,
     theme: hasDarkClass ? 'dark' : mermaidPageTheme,
   });
-  svg.value = mermaid.render(props.id, decodeURIComponent(props.graph));
+  svg.value = await mermaid.renderAsync(props.id, decodeURIComponent(props.graph));
 };
 </script>

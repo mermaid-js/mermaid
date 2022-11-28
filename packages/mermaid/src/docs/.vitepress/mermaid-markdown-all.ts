@@ -34,10 +34,17 @@ const MermaidExample = async (md: MarkdownRenderer) => {
       </div>`;
     } else if (token.info.trim() === 'mermaid') {
       const key = index;
-      return `
-      ${key}
+      return ` ${key}
+      <Suspense> 
+      <template #default>
       <Mermaid id="mermaid-${key}"  graph="${encodeURIComponent(token.content)}"></Mermaid>
-      `;
+      </template>
+        <!-- loading state via #fallback slot -->
+        <template #fallback>
+          Loading...
+        </template>
+      </Suspense>
+`;
     }
     if (token.info.trim() === 'warning') {
       return `<div class="warning custom-block"><p class="custom-block-title">WARNING</p><p>${token.content}}</p></div>`;
