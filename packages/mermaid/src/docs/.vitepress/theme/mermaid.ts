@@ -9,8 +9,6 @@ try {
 
 export const render = async (id: string, code: string, config: MermaidConfig): Promise<string> => {
   mermaid.initialize(config);
-  // console.log('rendering', id, code);
   const svg = await mermaid.renderAsync(id, code);
-  // console.log('rendered', id, code);
   return svg;
 };
