@@ -247,7 +247,7 @@ The contents of <https://mermaid-js.github.io/mermaid/> are based on the docs fr
 
 The `docs` folder will be automatically generated when committing to `packages/mermaid/src/docs` and should not be edited manually.
 
-We encourage contributions to the documentation at [mermaid-js/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/src/docs). We publish documentation to GitHub Pages with [Docsify](https://www.youtube.com/watch?v=TV88lp7egMw&t=3s)
+We encourage contributions to the documentation at [packages/mermaid/src/docs in the _develop_ branch](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs). We publish documentation to GitHub Pages with [Docsify](https://www.youtube.com/watch?v=TV88lp7egMw&t=3s)
 
 - Documentation (we encourage updates to the `packages/mermaid/src/docs` folder; you can submit them via direct commits)
 
@@ -278,7 +278,7 @@ _\[TODO: need to keep this in sync with [check out a git branch in Contributing 
 To edit Docs on GitHub:
 
 1.  Login to [GitHub.com](https://www.github.com).
-2.  Navigate to [mermaid-js/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/src/docs).
+2.  Navigate to [packages/mermaid/src/docs in the mermaid-js repository](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs).
 3.  To edit a file, click the pencil icon at the top-right of the file contents panel.
 4.  Describe what you changed in the **Propose file change** section, located at the bottom of the page.
 5.  Submit your changes by clicking the button **Propose file change** at the bottom (by automatic creation of a fork and a new branch).
