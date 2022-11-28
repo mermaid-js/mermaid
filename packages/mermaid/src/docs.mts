@@ -35,7 +35,7 @@ import { exec } from 'child_process';
 import { globby } from 'globby';
 import { JSDOM } from 'jsdom';
 import type { Code, Root } from 'mdast';
-import { posix, dirname, relative } from 'path';
+import { posix, dirname, relative, join } from 'path';
 import prettier from 'prettier';
 import { remark } from 'remark';
 import chokidar from 'chokidar';
@@ -66,6 +66,9 @@ const LOGMSG_COPIED = `, and copied to ${FINAL_DOCS_DIR}`;
 const WARN_DOCSDIR_DOESNT_MATCH = `Changed files were transformed in ${SOURCE_DOCS_DIR} but do not match the files in ${FINAL_DOCS_DIR}. Please run 'pnpm --filter mermaid run docs:build' after making changes to ${SOURCE_DOCS_DIR} to update the ${FINAL_DOCS_DIR} directory with the transformed files.`;
 
 const prettierConfig = prettier.resolveConfig.sync('.') ?? {};
+// From https://github.com/vuejs/vitepress/blob/428eec3750d6b5648a77ac52d88128df0554d4d1/src/node/markdownToVue.ts#L20-L21
+const includesRE = /<!--\s*@include:\s*(.*?)\s*-->/g;
+const includedFiles: Set<string> = new Set();
 
 let filesWereTransformed = false;
 
@@ -151,6 +154,19 @@ const transformToBlockQuote = (content: string, type: string) => {
 const injectPlaceholders = (text: string): string =>
   text.replace(/<MERMAID_VERSION>/g, MERMAID_MAJOR_VERSION).replace(/<CDN_URL>/g, CDN_URL);
 
+const transformIncludeStatements = (file: string, text: string): string => {
+  // resolve includes - src https://github.com/vuejs/vitepress/blob/428eec3750d6b5648a77ac52d88128df0554d4d1/src/node/markdownToVue.ts#L65-L76
+  return text.replace(includesRE, (m, m1) => {
+    try {
+      const includePath = join(dirname(file), m1);
+      const content = readSyncedUTF8file(includePath);
+      includedFiles.add(changeToFinalDocDir(includePath));
+      return content;
+    } catch (error) {
+      throw new Error(`Failed to resolve include "${m1}" in "${file}": ${error}`);
+    }
+  });
+};
 /**
  * Transform a markdown file and write the transformed file to the directory for published
  * documentation
@@ -164,8 +180,7 @@ const injectPlaceholders = (text: string): string =>
  * @param file {string} name of the file that will be verified
  */
 const transformMarkdown = (file: string) => {
-  const doc = injectPlaceholders(readSyncedUTF8file(file));
-
+  const doc = injectPlaceholders(transformIncludeStatements(file, readSyncedUTF8file(file)));
   const ast: Root = remark.parse(doc);
   const out = flatmap(ast, (c: Code) => {
     if (c.type !== 'code' || !c.lang) {
@@ -269,6 +284,11 @@ const getFilesFromGlobs = async (globs: string[]): Promise<string[]> => {
   const mdFiles = await getFilesFromGlobs(mdFileGlobs);
   console.log(`${action} ${mdFiles.length} markdown files...`);
   mdFiles.forEach(transformMarkdown);
+
+  for (const includedFile of includedFiles) {
+    rmSync(includedFile);
+    console.log(`Removed ${includedFile} as it was used inside an @include block.`);
+  }
 
   const htmlFileGlobs = getGlobs([posix.join(sourceDirGlob, '*.html')]);
   const htmlFiles = await getFilesFromGlobs(htmlFileGlobs);
