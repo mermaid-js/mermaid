@@ -57,7 +57,6 @@
     "d3": "^7.0.0",
     "dagre-d3-es": "7.0.4",
     "dompurify": "2.4.1",
-    "graphlib": "^2.1.8",
     "khroma": "^2.0.0",
     "lodash-es": "^4.17.21",
     "moment-mini": "^2.24.0",
