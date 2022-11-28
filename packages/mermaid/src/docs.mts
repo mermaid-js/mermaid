@@ -70,7 +70,7 @@ const prettierConfig = prettier.resolveConfig.sync('.') ?? {};
 const includesRE = /<!--\s*@include:\s*(.*?)\s*-->/g;
 const includedFiles: Set<string> = new Set();
 
-let filesWereTransformed = false;
+const filesTransformed: Set<string> = new Set();
 
 const generateHeader = (file: string): string => {
   // path from file in docs/* to repo root, e.g ../ or ../../ */
@@ -120,10 +120,10 @@ const logWasOrShouldBeTransformed = (filename: string, wasCopied: boolean) => {
  * transformed contents to the final documentation directory if the doCopy flag is true. Log
  * messages to the console.
  *
- * @param {string} filename Name of the file that will be verified
- * @param {boolean} [doCopy=false] Whether we should copy that transformedContents to the final
+ * @param filename Name of the file that will be verified
+ * @param doCopy?=false Whether we should copy that transformedContents to the final
  *   documentation directory. Default is `false`
- * @param {string} [transformedContent] New contents for the file
+ * @param transformedContent? New contents for the file
  */
 const copyTransformedContents = (filename: string, doCopy = false, transformedContent?: string) => {
   const fileInFinalDocDir = changeToFinalDocDir(filename);
@@ -135,7 +135,7 @@ const copyTransformedContents = (filename: string, doCopy = false, transformedCo
     return; // Files are same, skip.
   }
 
-  filesWereTransformed = true;
+  filesTransformed.add(fileInFinalDocDir);
   if (doCopy) {
     writeFileSync(fileInFinalDocDir, newBuffer);
   }
@@ -286,7 +286,8 @@ const getFilesFromGlobs = async (globs: string[]): Promise<string[]> => {
   mdFiles.forEach(transformMarkdown);
 
   for (const includedFile of includedFiles) {
-    rmSync(includedFile);
+    rmSync(includedFile, { force: true });
+    filesTransformed.delete(includedFile);
     console.log(`Removed ${includedFile} as it was used inside an @include block.`);
   }
 
@@ -302,7 +303,7 @@ const getFilesFromGlobs = async (globs: string[]): Promise<string[]> => {
     copyTransformedContents(file, !verifyOnly); // no transformation
   });
 
-  if (filesWereTransformed) {
+  if (filesTransformed.size > 0) {
     if (verifyOnly) {
       console.log(WARN_DOCSDIR_DOESNT_MATCH);
       process.exit(1);
