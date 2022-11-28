@@ -364,41 +364,41 @@ describe('when inserting titles', function () {
   });
 
   it('does nothing if the title is empty', function () {
-    const svg_append_spy = vi.spyOn(svg, 'append');
+    const svgAppendSpy = vi.spyOn(svg, 'append');
     utils.insertTitle(svg, 'testClass', 0, '');
-    expect(svg_append_spy).not.toHaveBeenCalled();
+    expect(svgAppendSpy).not.toHaveBeenCalled();
   });
 
   it('appends the title as a text item with the given title text', function () {
-    const svg_append_spy = vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
-    const title_text_spy = vi.spyOn(fauxTitle, 'text');
+    const svgAppendSpy = vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
+    const titleTextSpy = vi.spyOn(fauxTitle, 'text');
 
     utils.insertTitle(svg, 'testClass', 5, 'test title');
-    expect(svg_append_spy).toHaveBeenCalled();
-    expect(title_text_spy).toHaveBeenCalledWith('test title');
+    expect(svgAppendSpy).toHaveBeenCalled();
+    expect(titleTextSpy).toHaveBeenCalledWith('test title');
   });
 
   it('x value is the bounds x position + half of the bounds width', () => {
     vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
-    const title_attr_spy = vi.spyOn(fauxTitle, 'attr');
+    const titleAttrSpy = vi.spyOn(fauxTitle, 'attr');
 
     utils.insertTitle(svg, 'testClass', 5, 'test title');
-    expect(title_attr_spy).toHaveBeenCalledWith('x', 10 + 100 / 2);
+    expect(titleAttrSpy).toHaveBeenCalledWith('x', 10 + 100 / 2);
   });
 
   it('y value is the negative of given title top margin', () => {
     vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
-    const title_attr_spy = vi.spyOn(fauxTitle, 'attr');
+    const titleAttrSpy = vi.spyOn(fauxTitle, 'attr');
 
     utils.insertTitle(svg, 'testClass', 5, 'test title');
-    expect(title_attr_spy).toHaveBeenCalledWith('y', -5);
+    expect(titleAttrSpy).toHaveBeenCalledWith('y', -5);
   });
 
   it('class is the given css class', () => {
     vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
-    const title_attr_spy = vi.spyOn(fauxTitle, 'attr');
+    const titleAttrSpy = vi.spyOn(fauxTitle, 'attr');
 
     utils.insertTitle(svg, 'testClass', 5, 'test title');
-    expect(title_attr_spy).toHaveBeenCalledWith('class', 'testClass');
+    expect(titleAttrSpy).toHaveBeenCalledWith('class', 'testClass');
   });
 });

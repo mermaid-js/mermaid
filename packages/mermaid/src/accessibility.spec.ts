@@ -8,16 +8,16 @@ describe('accessibility', () => {
   describe('setA11yDiagramInfo', () => {
     it('sets the aria-roledescription to the diagram type', () => {
       // @ts-ignore  Required to easily handle the d3 select types
-      const svg_attr_spy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
+      const svgAttrSpy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
       setA11yDiagramInfo(fauxSvgNode, 'flowchart');
-      expect(svg_attr_spy).toHaveBeenCalledWith('aria-roledescription', 'flowchart');
+      expect(svgAttrSpy).toHaveBeenCalledWith('aria-roledescription', 'flowchart');
     });
 
     it('does nothing if the diagram type is empty', () => {
       // @ts-ignore  Required to easily handle the d3 select types
-      const svg_attr_spy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
+      const svgAttrSpy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
       setA11yDiagramInfo(fauxSvgNode, '');
-      expect(svg_attr_spy).not.toHaveBeenCalled();
+      expect(svgAttrSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -29,9 +29,9 @@ describe('accessibility', () => {
         const noInsertSvg = {
           attr: vi.fn(),
         };
-        const noInsert_attr_spy = vi.spyOn(noInsertSvg, 'attr').mockReturnValue(noInsertSvg);
+        const noInsertAttrSpy = vi.spyOn(noInsertSvg, 'attr').mockReturnValue(noInsertSvg);
         addSVGa11yTitleDescription(noInsertSvg, 'some title', 'some desc', givenId);
-        expect(noInsert_attr_spy).not.toHaveBeenCalled();
+        expect(noInsertAttrSpy).not.toHaveBeenCalled();
       });
 
       // ----------------
@@ -44,9 +44,9 @@ describe('accessibility', () => {
         givenId: string
       ) {
         // @ts-ignore Required to easily handle the d3 select types
-        const svg_attr_spy = vi.spyOn(svgD3Node, 'attr').mockReturnValue(svgD3Node);
+        const svgAttrSpy = vi.spyOn(svgD3Node, 'attr').mockReturnValue(svgD3Node);
         addSVGa11yTitleDescription(svgD3Node, title, desc, givenId);
-        expect(svg_attr_spy).toHaveBeenCalledWith('aria-labelledby', `chart-title-${givenId}`);
+        expect(svgAttrSpy).toHaveBeenCalledWith('aria-labelledby', `chart-title-${givenId}`);
       }
 
       function expectAriaDescribedByIsDescId(
@@ -56,9 +56,9 @@ describe('accessibility', () => {
         givenId: string
       ) {
         // @ts-ignore Required to easily handle the d3 select types
-        const svg_attr_spy = vi.spyOn(svgD3Node, 'attr').mockReturnValue(svgD3Node);
+        const svgAttrSpy = vi.spyOn(svgD3Node, 'attr').mockReturnValue(svgD3Node);
         addSVGa11yTitleDescription(svgD3Node, title, desc, givenId);
-        expect(svg_attr_spy).toHaveBeenCalledWith('aria-describedby', `chart-desc-${givenId}`);
+        expect(svgAttrSpy).toHaveBeenCalledWith('aria-describedby', `chart-desc-${givenId}`);
       }
 
       function a11yTitleTagInserted(
@@ -90,16 +90,16 @@ describe('accessibility', () => {
         expectedPrefix: string,
         expectedText: string | null | undefined
       ) {
-        const faux_insertedD3 = new MockedD3();
-        const svg_insert_spy = vi.spyOn(fauxSvgNode, 'insert').mockReturnValue(faux_insertedD3);
+        const fauxInsertedD3 = new MockedD3();
+        const svgInsertSpy = vi.spyOn(fauxSvgNode, 'insert').mockReturnValue(fauxInsertedD3);
         // @ts-ignore  Required to easily handle the d3 select types
-        const title_attr_spy = vi.spyOn(faux_insertedD3, 'attr').mockReturnValue(faux_insertedD3);
-        const title_text_spy = vi.spyOn(faux_insertedD3, 'text');
+        const titleAttrSpy = vi.spyOn(fauxInsertedD3, 'attr').mockReturnValue(fauxInsertedD3);
+        const titleTextSpy = vi.spyOn(fauxInsertedD3, 'text');
 
         addSVGa11yTitleDescription(fauxSvgNode, title, desc, givenId);
-        expect(svg_insert_spy).toHaveBeenCalledWith(expectedPrefix, ':first-child');
-        expect(title_attr_spy).toHaveBeenCalledWith('id', `chart-${expectedPrefix}-${givenId}`);
-        expect(title_text_spy).toHaveBeenNthCalledWith(callNumber, expectedText);
+        expect(svgInsertSpy).toHaveBeenCalledWith(expectedPrefix, ':first-child');
+        expect(titleAttrSpy).toHaveBeenCalledWith('id', `chart-${expectedPrefix}-${givenId}`);
+        expect(titleTextSpy).toHaveBeenNthCalledWith(callNumber, expectedText);
       }
       // ----------------
 
@@ -135,9 +135,9 @@ describe('accessibility', () => {
 
           it('no aria-describedby is set', () => {
             // @ts-ignore Required to easily handle the d3 select types
-            const svg_attr_spy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
+            const svgAttrSpy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
             addSVGa11yTitleDescription(fauxSvgNode, a11yTitle, a11yDesc, givenId);
-            expect(svg_attr_spy).not.toHaveBeenCalledWith('aria-describedby', expect.anything());
+            expect(svgAttrSpy).not.toHaveBeenCalledWith('aria-describedby', expect.anything());
           });
 
           it('inserts a title tag as the first child with the text set to the accTitle given', () => {
@@ -145,10 +145,10 @@ describe('accessibility', () => {
           });
 
           it('no description tag is inserted', () => {
-            const faux_title = new MockedD3();
-            const svg_insert_spy = vi.spyOn(fauxSvgNode, 'insert').mockReturnValue(faux_title);
+            const fauxTitle = new MockedD3();
+            const svgInsertSpy = vi.spyOn(fauxSvgNode, 'insert').mockReturnValue(fauxTitle);
             addSVGa11yTitleDescription(fauxSvgNode, a11yTitle, a11yDesc, givenId);
-            expect(svg_insert_spy).not.toHaveBeenCalledWith('desc', ':first-child');
+            expect(svgInsertSpy).not.toHaveBeenCalledWith('desc', ':first-child');
           });
         });
       });
@@ -161,16 +161,16 @@ describe('accessibility', () => {
 
           it('no aria-labelledby is set', () => {
             // @ts-ignore Required to easily handle the d3 select types
-            const svg_attr_spy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
+            const svgAttrSpy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
             addSVGa11yTitleDescription(fauxSvgNode, a11yTitle, a11yDesc, givenId);
-            expect(svg_attr_spy).not.toHaveBeenCalledWith('aria-labelledby', expect.anything());
+            expect(svgAttrSpy).not.toHaveBeenCalledWith('aria-labelledby', expect.anything());
           });
 
           it('no title tag inserted', () => {
-            const faux_title = new MockedD3();
-            const svg_insert_spy = vi.spyOn(fauxSvgNode, 'insert').mockReturnValue(faux_title);
+            const fauxTitle = new MockedD3();
+            const svgInsertSpy = vi.spyOn(fauxSvgNode, 'insert').mockReturnValue(fauxTitle);
             addSVGa11yTitleDescription(fauxSvgNode, a11yTitle, a11yDesc, givenId);
-            expect(svg_insert_spy).not.toHaveBeenCalledWith('title', ':first-child');
+            expect(svgInsertSpy).not.toHaveBeenCalledWith('title', ':first-child');
           });
 
           it('sets aria-describedby to the description id inserted as a child', () => {
@@ -187,30 +187,30 @@ describe('accessibility', () => {
 
           it('no aria-labelledby is set', () => {
             // @ts-ignore Required to easily handle the d3 select types
-            const svg_attr_spy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
+            const svgAttrSpy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
             addSVGa11yTitleDescription(fauxSvgNode, a11yTitle, a11yDesc, givenId);
-            expect(svg_attr_spy).not.toHaveBeenCalledWith('aria-labelledby', expect.anything());
+            expect(svgAttrSpy).not.toHaveBeenCalledWith('aria-labelledby', expect.anything());
           });
 
           it('no aria-describedby is set', () => {
             // @ts-ignore Required to easily handle the d3 select types
-            const svg_attr_spy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
+            const svgAttrSpy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
             addSVGa11yTitleDescription(fauxSvgNode, a11yTitle, a11yDesc, givenId);
-            expect(svg_attr_spy).not.toHaveBeenCalledWith('aria-describedby', expect.anything());
+            expect(svgAttrSpy).not.toHaveBeenCalledWith('aria-describedby', expect.anything());
           });
 
           it('no title tag inserted', () => {
-            const faux_title = new MockedD3();
-            const svg_insert_spy = vi.spyOn(fauxSvgNode, 'insert').mockReturnValue(faux_title);
+            const fauxTitle = new MockedD3();
+            const svgInsertSpy = vi.spyOn(fauxSvgNode, 'insert').mockReturnValue(fauxTitle);
             addSVGa11yTitleDescription(fauxSvgNode, a11yTitle, a11yDesc, givenId);
-            expect(svg_insert_spy).not.toHaveBeenCalledWith('title', ':first-child');
+            expect(svgInsertSpy).not.toHaveBeenCalledWith('title', ':first-child');
           });
 
           it('no description tag inserted', () => {
-            const faux_desc = new MockedD3();
-            const svg_insert_spy = vi.spyOn(fauxSvgNode, 'insert').mockReturnValue(faux_desc);
+            const fauxDesc = new MockedD3();
+            const svgInsertSpy = vi.spyOn(fauxSvgNode, 'insert').mockReturnValue(fauxDesc);
             addSVGa11yTitleDescription(fauxSvgNode, a11yTitle, a11yDesc, givenId);
-            expect(svg_insert_spy).not.toHaveBeenCalledWith('desc', ':first-child');
+            expect(svgInsertSpy).not.toHaveBeenCalledWith('desc', ':first-child');
           });
         });
       });
