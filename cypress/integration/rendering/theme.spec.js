@@ -25,6 +25,7 @@ describe('themeCSS balancing, it', () => {
   });
 });
 
+// TODO: Delete/Rename this describe, keeping the inner contents.
 describe('Pie Chart', () => {
   // beforeEach(()=>{
   //   cy.clock((new Date('2014-06-09')).getTime());
