@@ -53,7 +53,7 @@ const getStyles = (
   } else {
     log.warn(`No theme found for ${type}`);
   }
-  return ` {
+  return ` & {
     font-family: ${options.fontFamily};
     font-size: ${options.fontSize};
     fill: ${options.textColor}
@@ -61,40 +61,40 @@ const getStyles = (
 
   /* Classes common for multiple diagrams */
 
-  .error-icon {
+  & .error-icon {
     fill: ${options.errorBkgColor};
   }
-  .error-text {
+  & .error-text {
     fill: ${options.errorTextColor};
     stroke: ${options.errorTextColor};
   }
 
-  .edge-thickness-normal {
+  & .edge-thickness-normal {
     stroke-width: 2px;
   }
-  .edge-thickness-thick {
+  & .edge-thickness-thick {
     stroke-width: 3.5px
   }
-  .edge-pattern-solid {
+  & .edge-pattern-solid {
     stroke-dasharray: 0;
   }
 
-  .edge-pattern-dashed{
+  & .edge-pattern-dashed{
     stroke-dasharray: 3;
   }
   .edge-pattern-dotted {
     stroke-dasharray: 2;
   }
 
-  .marker {
+  & .marker {
     fill: ${options.lineColor};
     stroke: ${options.lineColor};
   }
-  .marker.cross {
+  & .marker.cross {
     stroke: ${options.lineColor};
   }
 
-  svg {
+  & svg {
     font-family: ${options.fontFamily};
     font-size: ${options.fontSize};
   }
