@@ -39,6 +39,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [markdown-for-mermaid-plugin](https://github.com/jamieh-mongolian/markdown-for-mermaid-plugin)
 - [JetBrains IDE eg Pycharm](https://www.jetbrains.com/go/guide/tips/mermaid-js-support-in-markdown/)
 - [mermerd](https://github.com/KarnerTh/mermerd)
+- Visual Studio Code [Polyglot Interactive Notebooks](https://github.com/dotnet/interactive#net-interactive)
 
 ## CRM/ERP/Similar
 
@@ -121,6 +122,7 @@ They also serve as proof of concept, for the variety of things that can be built
 - [Draw.io](https://draw.io) - [Plugin](https://github.com/nopeslide/drawio_mermaid_plugin)
 - [Inkdrop](https://www.inkdrop.app) - [Plugin](https://github.com/inkdropapp/inkdrop-mermaid)
 - [Vim](https://www.vim.org)
+  - [Official Vim Syntax and ftplugin](https://github.com/craigmac/vim-mermaid)
   - [Vim Diagram Syntax](https://github.com/zhaozg/vim-diagram)
 - [GNU Emacs](https://www.gnu.org/software/emacs/)
   - [Major mode for .mmd files](https://github.com/abrochard/mermaid-mode)

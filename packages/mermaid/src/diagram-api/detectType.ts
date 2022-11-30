@@ -2,9 +2,9 @@ import { MermaidConfig } from '../config.type';
 import { log } from '../logger';
 import { DetectorRecord, DiagramDetector, DiagramLoader } from './types';
 import { ExternalDiagramDefinition } from '../diagram-api/types';
+import { frontMatterRegex } from './frontmatter';
 
-const directive =
-  /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
+const directive = /%{2}{\s*(?:(\w+)\s*:|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;
 const anyComment = /\s*%%.*\n/gm;
 
 const detectors: Record<string, DetectorRecord> = {};
@@ -32,7 +32,7 @@ const detectors: Record<string, DetectorRecord> = {};
  * @returns A graph definition key
  */
 export const detectType = function (text: string, config?: MermaidConfig): string {
-  text = text.replace(directive, '').replace(anyComment, '\n');
+  text = text.replace(frontMatterRegex, '').replace(directive, '').replace(anyComment, '\n');
   for (const [key, { detector }] of Object.entries(detectors)) {
     const diagram = detector(text, config);
     if (diagram) {

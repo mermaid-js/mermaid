@@ -1,6 +1,6 @@
 import { select } from 'd3';
-import dagre from 'dagre';
-import graphlib from 'graphlib';
+import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger';
 import svgDraw from './svgDraw';
 import { configureSvgSize } from '../../setupGraphViewbox';
@@ -180,8 +180,8 @@ export const draw = function (text, id, _version, diagObj) {
   const classes = diagObj.db.getClasses();
   const keys = Object.keys(classes);
 
-  for (let i = 0; i < keys.length; i++) {
-    const classDef = classes[keys[i]];
+  for (const key of keys) {
+    const classDef = classes[key];
     const node = svgDraw.drawClass(diagram, classDef, conf, diagObj);
     idCache[node.id] = node;
 
@@ -238,9 +238,9 @@ export const draw = function (text, id, _version, diagObj) {
     }
   });
 
-  dagre.layout(g);
+  dagreLayout(g);
   g.nodes().forEach(function (v) {
-    if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
+    if (v !== undefined && g.node(v) !== undefined) {
       log.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
       root
         .select('#' + (diagObj.db.lookUpDomId(v) || v))
@@ -256,7 +256,7 @@ export const draw = function (text, id, _version, diagObj) {
   });
 
   g.edges().forEach(function (e) {
-    if (typeof e !== 'undefined' && typeof g.edge(e) !== 'undefined') {
+    if (e !== undefined && g.edge(e) !== undefined) {
       log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
       svgDraw.drawEdge(diagram, g.edge(e), g.edge(e).relation, conf, diagObj);
     }

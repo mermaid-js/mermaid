@@ -1,8 +1,9 @@
-import graphlib from 'graphlib';
+import * as graphlib from 'dagre-d3-es/src/graphlib';
 import { select, curveLinear, selectAll } from 'd3';
 import { getConfig } from '../../config';
-import dagreD3 from 'dagre-d3';
-import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
+import { render as Render } from 'dagre-d3-es';
+import { applyStyle } from 'dagre-d3-es/src/dagre-js/util.js';
+import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
 import { log } from '../../logger';
 import common, { evaluate } from '../common/common';
 import { interpolateToCurve, getStylesFromArray } from '../../utils';
@@ -13,8 +14,8 @@ import addSVGAccessibilityFields from '../../accessibility';
 const conf = {};
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
-  for (let i = 0; i < keys.length; i++) {
-    conf[keys[i]] = cnf[keys[i]];
+  for (const key of keys) {
+    conf[key] = cnf[key];
   }
 };
 
@@ -58,7 +59,7 @@ export const addVertices = function (vert, g, svgId, root, _doc, diagObj) {
       // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
       const node = {
         label: vertexText.replace(
-          /fa[lrsb]?:fa-[\w-]+/g,
+          /fa[blrs]?:fa-[\w-]+/g,
           (s) => `<i class='${s.replace(':', ' ')}'></i>`
         ),
       };
@@ -70,12 +71,12 @@ export const addVertices = function (vert, g, svgId, root, _doc, diagObj) {
 
       const rows = vertexText.split(common.lineBreakRegex);
 
-      for (let j = 0; j < rows.length; j++) {
+      for (const row of rows) {
         const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
         tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
         tspan.setAttribute('dy', '1em');
         tspan.setAttribute('x', '1');
-        tspan.textContent = rows[j];
+        tspan.textContent = row;
         svgLabel.appendChild(tspan);
       }
       vertexNode = svgLabel;
@@ -166,7 +167,7 @@ export const addEdges = function (edges, g, diagObj) {
   let defaultStyle;
   let defaultLabelStyle;
 
-  if (typeof edges.defaultStyle !== 'undefined') {
+  if (edges.defaultStyle !== undefined) {
     const defaultStyles = getStylesFromArray(edges.defaultStyle);
     defaultStyle = defaultStyles.style;
     defaultLabelStyle = defaultStyles.labelStyle;
@@ -192,7 +193,7 @@ export const addEdges = function (edges, g, diagObj) {
     let style = '';
     let labelStyle = '';
 
-    if (typeof edge.style !== 'undefined') {
+    if (edge.style !== undefined) {
       const styles = getStylesFromArray(edge.style);
       style = styles.style;
       labelStyle = styles.labelStyle;
@@ -200,10 +201,10 @@ export const addEdges = function (edges, g, diagObj) {
       switch (edge.stroke) {
         case 'normal':
           style = 'fill:none';
-          if (typeof defaultStyle !== 'undefined') {
+          if (defaultStyle !== undefined) {
             style = defaultStyle;
           }
-          if (typeof defaultLabelStyle !== 'undefined') {
+          if (defaultLabelStyle !== undefined) {
             labelStyle = defaultLabelStyle;
           }
           break;
@@ -219,16 +220,16 @@ export const addEdges = function (edges, g, diagObj) {
     edgeData.style = style;
     edgeData.labelStyle = labelStyle;
 
-    if (typeof edge.interpolate !== 'undefined') {
+    if (edge.interpolate !== undefined) {
       edgeData.curve = interpolateToCurve(edge.interpolate, curveLinear);
-    } else if (typeof edges.defaultInterpolate !== 'undefined') {
+    } else if (edges.defaultInterpolate !== undefined) {
       edgeData.curve = interpolateToCurve(edges.defaultInterpolate, curveLinear);
     } else {
       edgeData.curve = interpolateToCurve(conf.curve, curveLinear);
     }
 
-    if (typeof edge.text === 'undefined') {
-      if (typeof edge.style !== 'undefined') {
+    if (edge.text === undefined) {
+      if (edge.style !== undefined) {
         edgeData.arrowheadStyle = 'fill: #333';
       }
     } else {
@@ -240,14 +241,14 @@ export const addEdges = function (edges, g, diagObj) {
         edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}" style="${
           edgeData.labelStyle
         }">${edge.text.replace(
-          /fa[lrsb]?:fa-[\w-]+/g,
+          /fa[blrs]?:fa-[\w-]+/g,
           (s) => `<i class='${s.replace(':', ' ')}'></i>`
         )}</span>`;
       } else {
         edgeData.labelType = 'text';
         edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');
 
-        if (typeof edge.style === 'undefined') {
+        if (edge.style === undefined) {
           edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none';
         }
 
@@ -315,7 +316,7 @@ export const draw = function (text, id, _version, diagObj) {
 
   // Fetch the default direction, use TD if none was found
   let dir = diagObj.db.getDirection();
-  if (typeof dir === 'undefined') {
+  if (dir === undefined) {
     dir = 'TD';
   }
   const nodeSpacing = conf.nodeSpacing || 50;
@@ -370,7 +371,6 @@ export const draw = function (text, id, _version, diagObj) {
   addEdges(edges, g, diagObj);
 
   // Create the renderer
-  const Render = dagreD3.render;
   const render = new Render();
 
   // Add custom shapes
@@ -390,7 +390,7 @@ export const draw = function (text, id, _version, diagObj) {
       .attr('orient', 'auto');
 
     const path = marker.append('path').attr('d', 'M 0 0 L 0 0 L 0 0 z');
-    dagreD3.util.applyStyle(path, edge[type + 'Style']);
+    applyStyle(path, edge[type + 'Style']);
   };
 
   // Override normal arrowhead defined in d3. Remove style & add class to allow css styling.
@@ -459,9 +459,7 @@ export const draw = function (text, id, _version, diagObj) {
   // Add label rects for non html labels
   if (!conf.htmlLabels) {
     const labels = doc.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
-    for (let k = 0; k < labels.length; k++) {
-      const label = labels[k];
-
+    for (const label of labels) {
       // Get dimensions of label
       const dim = label.getBBox();
 

@@ -102,7 +102,7 @@ const initThrowsErrors = function (
   // if last argument is a function this is the callback function
   log.debug(`${!callback ? 'No ' : ''}Callback function found`);
   let nodesToProcess: ArrayLike<HTMLElement>;
-  if (typeof nodes === 'undefined') {
+  if (nodes === undefined) {
     nodesToProcess = document.querySelectorAll('.mermaid');
   } else if (typeof nodes === 'string') {
     nodesToProcess = document.querySelectorAll(nodes);
@@ -115,7 +115,7 @@ const initThrowsErrors = function (
   }
 
   log.debug(`Found ${nodesToProcess.length} diagrams`);
-  if (typeof config?.startOnLoad !== 'undefined') {
+  if (config?.startOnLoad !== undefined) {
     log.debug('Start On Load: ' + config?.startOnLoad);
     mermaidAPI.updateSiteConfig({ startOnLoad: config?.startOnLoad });
   }
@@ -127,6 +127,7 @@ const initThrowsErrors = function (
   const errors: DetailedError[] = [];
 
   // element is the current div with mermaid class
+  // eslint-disable-next-line unicorn/prefer-spread
   for (const element of Array.from(nodesToProcess)) {
     log.info('Rendering diagram: ' + element.id);
     /*! Check if previously processed */
@@ -156,7 +157,7 @@ const initThrowsErrors = function (
         txt,
         (svgCode: string, bindFunctions?: (el: Element) => void) => {
           element.innerHTML = svgCode;
-          if (typeof callback !== 'undefined') {
+          if (callback !== undefined) {
             callback(id);
           }
           if (bindFunctions) {
@@ -208,7 +209,7 @@ const initThrowsErrorsAsync = async function (
   // if last argument is a function this is the callback function
   log.debug(`${!callback ? 'No ' : ''}Callback function found`);
   let nodesToProcess: ArrayLike<HTMLElement>;
-  if (typeof nodes === 'undefined') {
+  if (nodes === undefined) {
     nodesToProcess = document.querySelectorAll('.mermaid');
   } else if (typeof nodes === 'string') {
     nodesToProcess = document.querySelectorAll(nodes);
@@ -221,7 +222,7 @@ const initThrowsErrorsAsync = async function (
   }
 
   log.debug(`Found ${nodesToProcess.length} diagrams`);
-  if (typeof config?.startOnLoad !== 'undefined') {
+  if (config?.startOnLoad !== undefined) {
     log.debug('Start On Load: ' + config?.startOnLoad);
     mermaidAPI.updateSiteConfig({ startOnLoad: config?.startOnLoad });
   }
@@ -233,6 +234,7 @@ const initThrowsErrorsAsync = async function (
   const errors: DetailedError[] = [];
 
   // element is the current div with mermaid class
+  // eslint-disable-next-line unicorn/prefer-spread
   for (const element of Array.from(nodesToProcess)) {
     log.info('Rendering diagram: ' + element.id);
     /*! Check if previously processed */
@@ -262,7 +264,7 @@ const initThrowsErrorsAsync = async function (
         txt,
         (svgCode: string, bindFunctions?: (el: Element) => void) => {
           element.innerHTML = svgCode;
-          if (typeof callback !== 'undefined') {
+          if (callback !== undefined) {
             callback(id);
           }
           if (bindFunctions) {

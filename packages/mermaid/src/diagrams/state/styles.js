@@ -194,6 +194,12 @@ g.stateGroup line {
   stroke: ${options.lineColor};
   stroke-width: 1;
 }
+
+.statediagramTitleText {
+  text-anchor: middle;
+  font-size: 18px;
+  fill: ${options.textColor};
+}
 `;
 
 export default getStyles;

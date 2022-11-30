@@ -51,6 +51,11 @@ const getStyles = (options) =>
   }
 
   .arrow { stroke-width: 8; stroke-linecap: round; fill: none}
+  .gitTitleText {
+    text-anchor: middle;
+    font-size: 18px;
+    fill: ${options.textColor};
+  }
   }
 `;
 

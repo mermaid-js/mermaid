@@ -1,9 +1,9 @@
-import graphlib from 'graphlib';
-import dagre from 'dagre';
+import * as graphlibJson from 'dagre-d3-es/src/graphlib/json';
+import * as graphlib from 'dagre-d3-es/src/graphlib';
 import {
   validate,
   adjustClustersAndEdges,
-  extractDecendants,
+  extractDescendants,
   sortNodesByHierarchy,
 } from './mermaid-graphlib';
 import { setLogLevel, log } from '../logger';
@@ -233,9 +233,9 @@ describe('Graphlib decorations', () => {
       g.setParent('D', 'C');
 
       // log.info('Graph before', g.node('D'))
-      // log.info('Graph before', graphlib.json.write(g))
+      // log.info('Graph before', graphlibJson.write(g))
       adjustClustersAndEdges(g);
-      // log.info('Graph after', graphlib.json.write(g), g.node('C').graph)
+      // log.info('Graph after', graphlibJson.write(g), g.node('C').graph)
 
       const CGraph = g.node('C').graph;
       const DGraph = CGraph.node('D').graph;
@@ -279,9 +279,9 @@ describe('Graphlib decorations', () => {
       g.setEdge('A', 'C', { data: 'link2' }, '2');
 
       log.info('Graph before', g.node('D'));
-      log.info('Graph before', graphlib.json.write(g));
+      log.info('Graph before', graphlibJson.write(g));
       adjustClustersAndEdges(g);
-      log.trace('Graph after', graphlib.json.write(g));
+      log.trace('Graph after', graphlibJson.write(g));
       expect(g.nodes()).toEqual(['C', 'B', 'A']);
       expect(g.nodes().length).toBe(3);
       expect(g.edges().length).toBe(2);
@@ -334,11 +334,11 @@ describe('Graphlib decorations', () => {
       g.setEdge('c', 'd', { data: 'link2' }, '2');
       g.setEdge('d', 'e', { data: 'link2' }, '2');
 
-      log.info('Graph before', graphlib.json.write(g));
+      log.info('Graph before', graphlibJson.write(g));
       adjustClustersAndEdges(g);
       const bGraph = g.node('b').graph;
-      // log.trace('Graph after', graphlib.json.write(g))
-      log.info('Graph after', graphlib.json.write(bGraph));
+      // log.trace('Graph after', graphlibJson.write(g))
+      log.info('Graph after', graphlibJson.write(bGraph));
       expect(bGraph.nodes().length).toBe(3);
       expect(bGraph.edges().length).toBe(2);
     });
@@ -360,13 +360,13 @@ describe('Graphlib decorations', () => {
       g.setParent('c', 'b');
       g.setParent('e', 'c');
 
-      log.info('Graph before', graphlib.json.write(g));
+      log.info('Graph before', graphlibJson.write(g));
       adjustClustersAndEdges(g);
       const aGraph = g.node('a').graph;
       const bGraph = aGraph.node('b').graph;
-      log.info('Graph after', graphlib.json.write(aGraph));
+      log.info('Graph after', graphlibJson.write(aGraph));
       const cGraph = bGraph.node('c').graph;
-      // log.trace('Graph after', graphlib.json.write(g))
+      // log.trace('Graph after', graphlibJson.write(g))
       expect(aGraph.nodes().length).toBe(1);
       expect(bGraph.nodes().length).toBe(1);
       expect(cGraph.nodes().length).toBe(1);
@@ -388,19 +388,19 @@ flowchart TB
     const exportedGraph = JSON.parse(
       '{"options":{"directed":true,"multigraph":true,"compound":true},"nodes":[{"v":"A","value":{"labelStyle":"","shape":"rect","labelText":"A","rx":0,"ry":0,"class":"default","style":"","id":"A","width":500,"type":"group","padding":15}},{"v":"B","value":{"labelStyle":"","shape":"rect","labelText":"B","rx":0,"ry":0,"class":"default","style":"","id":"B","width":500,"type":"group","padding":15},"parent":"A"},{"v":"b","value":{"labelStyle":"","shape":"rect","labelText":"b","rx":0,"ry":0,"class":"default","style":"","id":"b","padding":15},"parent":"A"},{"v":"c","value":{"labelStyle":"","shape":"rect","labelText":"c","rx":0,"ry":0,"class":"default","style":"","id":"c","padding":15},"parent":"B"},{"v":"a","value":{"labelStyle":"","shape":"rect","labelText":"a","rx":0,"ry":0,"class":"default","style":"","id":"a","padding":15},"parent":"A"}],"edges":[{"v":"b","w":"B","name":"1","value":{"minlen":1,"arrowhead":"normal","arrowTypeStart":"arrow_open","arrowTypeEnd":"arrow_point","thickness":"normal","pattern":"solid","style":"fill:none","labelStyle":"","arrowheadStyle":"fill: #333","labelpos":"c","labelType":"text","label":"","id":"L-b-B","classes":"flowchart-link LS-b LE-B"}},{"v":"a","w":"c","name":"2","value":{"minlen":1,"arrowhead":"normal","arrowTypeStart":"arrow_open","arrowTypeEnd":"arrow_point","thickness":"normal","pattern":"solid","style":"fill:none","labelStyle":"","arrowheadStyle":"fill: #333","labelpos":"c","labelType":"text","label":"","id":"L-a-c","classes":"flowchart-link LS-a LE-c"}}],"value":{"rankdir":"TB","nodesep":50,"ranksep":50,"marginx":8,"marginy":8}}'
     );
-    const gr = graphlib.json.read(exportedGraph);
+    const gr = graphlibJson.read(exportedGraph);
 
-    log.info('Graph before', graphlib.json.write(gr));
+    log.info('Graph before', graphlibJson.write(gr));
     adjustClustersAndEdges(gr);
     const aGraph = gr.node('A').graph;
     const bGraph = aGraph.node('B').graph;
-    log.info('Graph after', graphlib.json.write(aGraph));
-    // log.trace('Graph after', graphlib.json.write(g))
+    log.info('Graph after', graphlibJson.write(aGraph));
+    // log.trace('Graph after', graphlibJson.write(g))
     expect(aGraph.parent('c')).toBe('B');
     expect(aGraph.parent('B')).toBe(undefined);
   });
 });
-describe('extractDecendants', function () {
+describe('extractDescendants', function () {
   let g;
   beforeEach(function () {
     setLogLevel(1);
@@ -443,9 +443,9 @@ describe('extractDecendants', function () {
     g.setEdge('A', 'C', { data: 'link2' }, '2');
 
     // log.info(g.edges())
-    const d1 = extractDecendants('A', g);
-    const d2 = extractDecendants('B', g);
-    const d3 = extractDecendants('C', g);
+    const d1 = extractDescendants('A', g);
+    const d2 = extractDescendants('B', g);
+    const d3 = extractDescendants('C', g);
 
     expect(d1).toEqual(['a']);
     expect(d2).toEqual(['b']);

@@ -1,10 +1,11 @@
-import graphlib from 'graphlib';
+import * as graphlib from 'dagre-d3-es/src/graphlib';
 import { select } from 'd3';
 import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import common from '../common/common';
+import utils from '../../utils';
 import addSVGAccessibilityFields from '../../accessibility';
 import {
   DEFAULT_DIAGRAM_DIRECTION,
@@ -70,8 +71,8 @@ const conf = {};
 
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
-  for (let i = 0; i < keys.length; i++) {
-    conf[keys[i]] = cnf[keys[i]];
+  for (const key of keys) {
+    conf[key] = cnf[key];
   }
 };
 
@@ -105,7 +106,7 @@ export const getClasses = function (text, diagramObj) {
  * @returns {string}
  */
 function getClassesFromDbInfo(dbInfoItem) {
-  if (typeof dbInfoItem === 'undefined' || dbInfoItem === null) {
+  if (dbInfoItem === undefined || dbInfoItem === null) {
     return '';
   } else {
     if (dbInfoItem.classes) {
@@ -290,11 +291,9 @@ const setupNode = (g, parent, parsedItem, diagramStates, diagramDb, altFlag) => 
     }
   }
 
-  if (parent) {
-    if (parent.id !== 'root') {
-      log.trace('Setting node ', itemId, ' to be child of its parent ', parent.id);
-      g.setParent(itemId, parent.id);
-    }
+  if (parent && parent.id !== 'root') {
+    log.trace('Setting node ', itemId, ' to be child of its parent ', parent.id);
+    g.setParent(itemId, parent.id);
   }
   if (parsedItem.doc) {
     log.trace('Adding nodes children ');
@@ -385,7 +384,7 @@ export const draw = function (text, id, _version, diag) {
   nodeDb = {};
   // Fetch the default direction, use TD if none was found
   let dir = diag.db.getDirection();
-  if (typeof dir === 'undefined') {
+  if (dir === undefined) {
     dir = DEFAULT_DIAGRAM_DIRECTION;
   }
 
@@ -437,8 +436,9 @@ export const draw = function (text, id, _version, diag) {
 
   const padding = 8;
 
-  const bounds = svg.node().getBBox();
+  utils.insertTitle(svg, 'statediagramTitleText', conf.titleTopMargin, diag.db.getDiagramTitle());
 
+  const bounds = svg.node().getBBox();
   const width = bounds.width + padding * 2;
   const height = bounds.height + padding * 2;
 
@@ -457,9 +457,7 @@ export const draw = function (text, id, _version, diag) {
   // Add label rects for non html labels
   // if (!evaluate(conf.htmlLabels) || true) {
   const labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
-  for (let k = 0; k < labels.length; k++) {
-    const label = labels[k];
-
+  for (const label of labels) {
     // Get dimensions of label
     const dim = label.getBBox();
 

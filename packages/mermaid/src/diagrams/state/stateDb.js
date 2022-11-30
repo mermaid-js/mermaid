@@ -9,6 +9,8 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
+  setDiagramTitle,
+  getDiagramTitle,
 } from '../../commonDb';
 
 import {
@@ -92,11 +94,9 @@ const docTranslator = (parent, node, first) => {
     docTranslator(parent, node.state1, true);
     docTranslator(parent, node.state2, false);
   } else {
-    if (node.stmt === STMT_STATE) {
-      if (node.id === '[*]') {
-        node.id = first ? parent.id + '_start' : parent.id + '_end';
-        node.start = first;
-      }
+    if (node.stmt === STMT_STATE && node.id === '[*]') {
+      node.id = first ? parent.id + '_start' : parent.id + '_end';
+      node.start = first;
     }
 
     if (node.doc) {
@@ -216,7 +216,7 @@ export const addState = function (
   textStyles = null
 ) {
   // add the state if needed
-  if (typeof currentDocument.states[id] === 'undefined') {
+  if (currentDocument.states[id] === undefined) {
     log.info('Adding state ', id, descr);
     currentDocument.states[id] = {
       id: id,
@@ -455,25 +455,23 @@ const getDividerId = () => {
  */
 export const addStyleClass = function (id, styleAttributes = '') {
   // create a new style class object with this id
-  if (typeof classes[id] === 'undefined') {
+  if (classes[id] === undefined) {
     classes[id] = { id: id, styles: [], textStyles: [] }; // This is a classDef
   }
   const foundClass = classes[id];
-  if (typeof styleAttributes !== 'undefined') {
-    if (styleAttributes !== null) {
-      styleAttributes.split(STYLECLASS_SEP).forEach((attrib) => {
-        // remove any trailing ;
-        const fixedAttrib = attrib.replace(/([^;]*);/, '$1').trim();
+  if (styleAttributes !== undefined && styleAttributes !== null) {
+    styleAttributes.split(STYLECLASS_SEP).forEach((attrib) => {
+      // remove any trailing ;
+      const fixedAttrib = attrib.replace(/([^;]*);/, '$1').trim();
 
-        // replace some style keywords
-        if (attrib.match(COLOR_KEYWORD)) {
-          const newStyle1 = fixedAttrib.replace(FILL_KEYWORD, BG_FILL);
-          const newStyle2 = newStyle1.replace(COLOR_KEYWORD, FILL_KEYWORD);
-          foundClass.textStyles.push(newStyle2);
-        }
-        foundClass.styles.push(fixedAttrib);
-      });
-    }
+      // replace some style keywords
+      if (attrib.match(COLOR_KEYWORD)) {
+        const newStyle1 = fixedAttrib.replace(FILL_KEYWORD, BG_FILL);
+        const newStyle2 = newStyle1.replace(COLOR_KEYWORD, FILL_KEYWORD);
+        foundClass.textStyles.push(newStyle2);
+      }
+      foundClass.styles.push(fixedAttrib);
+    });
   }
 };
 
@@ -496,7 +494,7 @@ export const getClasses = function () {
 export const setCssClass = function (itemIds, cssClassName) {
   itemIds.split(',').forEach(function (id) {
     let foundState = getState(id);
-    if (typeof foundState === 'undefined') {
+    if (foundState === undefined) {
       const trimmedId = id.trim();
       addState(trimmedId);
       foundState = getState(trimmedId);
@@ -517,7 +515,7 @@ export const setCssClass = function (itemIds, cssClassName) {
  */
 export const setStyle = function (itemId, styleText) {
   const item = getState(itemId);
-  if (typeof item !== 'undefined') {
+  if (item !== undefined) {
     item.textStyles.push(styleText);
   }
 };
@@ -530,7 +528,7 @@ export const setStyle = function (itemId, styleText) {
  */
 export const setTextStyle = function (itemId, cssClassName) {
   const item = getState(itemId);
-  if (typeof item !== 'undefined') {
+  if (item !== undefined) {
     item.textStyles.push(cssClassName);
   }
 };
@@ -571,4 +569,6 @@ export default {
   addStyleClass,
   setCssClass,
   addDescription,
+  setDiagramTitle,
+  getDiagramTitle,
 };

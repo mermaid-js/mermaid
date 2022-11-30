@@ -318,7 +318,7 @@ UpdateRelStyle(customerA, bankA, $offsetY="60")
         Container(mobile, "Mobile App", "Xamarin", "Provides a limited subset of the Internet Banking functionality to customers via their mobile device.")
     }
 
-    Deployment_Node(comp, "Customer's computer", "Mircosoft Windows or Apple macOS"){
+    Deployment_Node(comp, "Customer's computer", "Microsoft Windows or Apple macOS"){
         Deployment_Node(browser, "Web Browser", "Google Chrome, Mozilla Firefox,<br/> Apple Safari or Microsoft Edge"){
             Container(spa, "Single Page Application", "JavaScript and Angular", "Provides all of the Internet Banking functionality to customers via their web browser.")
         }

@@ -310,8 +310,7 @@ function renderCommitHistory(svg, commitId, branches, direction) {
  * @param direction
  * @param branchColor
  */
-function renderLines(svg, commit, direction, branchColor) {
-  branchColor = branchColor || 0;
+function renderLines(svg, commit, direction, branchColor = 0) {
   while (commit.seq > 0 && !commit.lineDrawn) {
     if (typeof commit.parent === 'string') {
       svgDrawLineForCommits(svg, commit.id, commit.parent, direction, branchColor);

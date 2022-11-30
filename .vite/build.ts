@@ -16,13 +16,13 @@ type OutputOptions = Exclude<
   undefined
 >['output'];
 
-const visualizerOptions = (packageName: string): PluginOption[] => {
+const visualizerOptions = (packageName: string, core = false): PluginOption[] => {
   if (packageName !== 'mermaid' || !visualize) {
     return [];
   }
   return ['network', 'treemap', 'sunburst'].map((chartType) =>
     visualizer({
-      filename: `./stats/${chartType}.html`,
+      filename: `./stats/${chartType}${core ? '.core' : ''}.html`,
       template: chartType as TemplateType,
       gzipSize: true,
       brotliSize: true,
@@ -56,7 +56,7 @@ interface BuildOptions {
 }
 
 export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions): InlineConfig => {
-  const external = ['require', 'fs', 'path'];
+  const external: (string | RegExp)[] = ['require', 'fs', 'path'];
   console.log(entryName, packageOptions[entryName]);
   const { name, file, packageName } = packageOptions[entryName];
   let output: OutputOptions = [
@@ -80,7 +80,9 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     );
     // Core build is used to generate file without bundled dependencies.
     // This is used by downstream projects to bundle dependencies themselves.
-    external.push(...Object.keys(dependencies));
+    // Ignore dependencies and any dependencies of dependencies
+    // Adapted from the RegEx used by `rollup-plugin-node`
+    external.push(new RegExp('^(?:' + Object.keys(dependencies).join('|') + ')(?:/.+)?$'));
     // This needs to be an array. Otherwise vite will build esm & umd with same name and overwrite esm with umd.
     output = [
       {
@@ -112,7 +114,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     resolve: {
       extensions: ['.jison', '.js', '.ts', '.json'],
     },
-    plugins: [jisonPlugin(), ...visualizerOptions(packageName)],
+    plugins: [jisonPlugin(), ...visualizerOptions(packageName, core)],
   };
 
   if (watch && config.build) {
@@ -149,6 +151,9 @@ if (watch) {
     build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-mindmap' }));
     // build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
   }
+} else if (visualize) {
+  await build(getBuildConfig({ minify: false, core: true, entryName: 'mermaid' }));
+  await build(getBuildConfig({ minify: false, core: false, entryName: 'mermaid' }));
 } else {
   void main();
 }
