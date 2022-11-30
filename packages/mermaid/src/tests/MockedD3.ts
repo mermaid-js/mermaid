@@ -23,7 +23,7 @@ export class MockedD3 {
   select = vi.fn().mockImplementation(({ select_str = '' }): MockedD3 => {
     // Get the id from an argument string. if it is of the form [id='some-id'], strip off the
     // surrounding id[..]
-    const stripSurroundRegexp = /\[id='(.*)'\]/;
+    const stripSurroundRegexp = /\[id='(.*)']/;
     const matchedSurrounds = select_str.match(stripSurroundRegexp);
     const cleanId = matchedSurrounds ? matchedSurrounds[1] : select_str;
     return new MockedD3(cleanId);
