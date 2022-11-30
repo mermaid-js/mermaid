@@ -21,7 +21,16 @@
     "plugin:@cspell/recommended",
     "prettier"
   ],
-  "plugins": ["@typescript-eslint", "no-only-tests", "html", "jest", "jsdoc", "json", "@cspell"],
+  "plugins": [
+    "@typescript-eslint",
+    "no-only-tests",
+    "html",
+    "jest",
+    "jsdoc",
+    "json",
+    "@cspell",
+    "lodash"
+  ],
   "rules": {
     "curly": "error",
     "no-console": "error",
@@ -54,7 +63,8 @@
         "allowEmptyCatch": true
       }
     ],
-    "no-only-tests/no-only-tests": "error"
+    "no-only-tests/no-only-tests": "error",
+    "lodash/import-scope": ["error", "method"]
   },
   "overrides": [
     {

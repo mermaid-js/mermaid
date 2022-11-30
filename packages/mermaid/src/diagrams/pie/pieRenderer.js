@@ -157,11 +157,11 @@ export const draw = (txt, id, _version, diagObj) => {
       .append('g')
       .attr('class', 'legend')
       .attr('transform', function (d, i) {
-        var height = legendRectSize + legendSpacing;
-        var offset = (height * color.domain().length) / 2;
-        var horz = 12 * legendRectSize;
-        var vert = i * height - offset;
-        return 'translate(' + horz + ',' + vert + ')';
+        const height = legendRectSize + legendSpacing;
+        const offset = (height * color.domain().length) / 2;
+        const horizontal = 12 * legendRectSize;
+        const vertical = i * height - offset;
+        return 'translate(' + horizontal + ',' + vertical + ')';
       });
 
     legend

@@ -1,6 +1,6 @@
 import { select } from 'd3';
-import dagre from 'dagre';
-import graphlib from 'graphlib';
+import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger';
 import svgDraw from './svgDraw';
 import { configureSvgSize } from '../../setupGraphViewbox';
@@ -238,7 +238,7 @@ export const draw = function (text, id, _version, diagObj) {
     }
   });
 
-  dagre.layout(g);
+  dagreLayout(g);
   g.nodes().forEach(function (v) {
     if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
       log.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));

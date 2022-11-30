@@ -184,6 +184,27 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           });
         });
       });
+
+      describe('comments parsing', () => {
+        it('working inside states', function () {
+          let diagram = '';
+          diagram += 'stateDiagram-v2\n\n';
+          diagram += '[*] --> Moving\n';
+          diagram += 'Moving --> Still\n';
+          diagram += 'Moving --> Crash\n';
+          diagram += 'state Moving {\n';
+          diagram += '%% comment inside state\n';
+          diagram += 'slow  --> fast\n';
+          diagram += '}\n';
+
+          stateDiagram.parser.parse(diagram);
+          stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
+
+          const states = stateDiagram.parser.yy.getStates();
+
+          expect(states['Moving'].doc.length).toEqual(1);
+        });
+      });
     });
   });
 });

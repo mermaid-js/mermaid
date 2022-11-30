@@ -1,12 +1,12 @@
 import { version } from '../../../package.json';
 import MermaidExample from './mermaid-markdown-all';
-import { MermaidMarkdown } from 'vitepress-plugin-mermaid';
 import { defineConfig, MarkdownOptions } from 'vitepress';
 
 const allMarkdownTransformers: MarkdownOptions = {
+  // the shiki theme to highlight code blocks
+  theme: 'github-dark',
   config: async (md) => {
     await MermaidExample(md);
-    MermaidMarkdown(md);
   },
 };
 
@@ -35,7 +35,7 @@ function nav() {
     { text: 'Intro', link: '/intro/', activeMatch: '/intro/' },
     {
       text: 'Configuration',
-      link: '/config/Tutorials',
+      link: '/config/configuration',
       activeMatch: '/config/',
     },
     { text: 'Syntax', link: '/syntax/classDiagram', activeMatch: '/syntax/' },
@@ -106,6 +106,7 @@ function sidebarSyntax() {
         { text: 'Requirement Diagram', link: '/syntax/requirementDiagram' },
         { text: 'Gitgraph (Git) Diagram 🔥', link: '/syntax/gitgraph' },
         { text: 'C4C Diagram (Context) Diagram 🦺⚠️', link: '/syntax/c4c' },
+        { text: 'Mindmaps 🔥', link: '/syntax/mindmap' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
@@ -118,6 +119,7 @@ function sidebarConfig() {
       text: '⚙️ Deployment and Configuration',
       collapsible: true,
       items: [
+        { text: 'Configuration', link: '/config/configuration' },
         { text: 'Tutorials', link: '/config/Tutorials' },
         { text: 'API-Usage', link: '/config/usage' },
         { text: 'Mermaid API Configuration', link: '/config/setup/README' },
@@ -126,7 +128,6 @@ function sidebarConfig() {
         { text: 'Accessibility', link: '/config/accessibility' },
         { text: 'Mermaid CLI', link: '/config/mermaidCLI' },
         { text: 'Advanced usage', link: '/config/n00b-advanced' },
-        { text: 'Configuration', link: '/config/configuration' },
       ],
     },
   ];

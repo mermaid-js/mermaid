@@ -1,6 +1,6 @@
 import { select } from 'd3';
-import dagre from 'dagre';
-import graphlib from 'graphlib';
+import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger';
 import common from '../common/common';
 import { drawState, addTitleAndBox, drawEdge } from './shapes';
@@ -239,7 +239,7 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
     );
   });
 
-  dagre.layout(graph);
+  dagreLayout(graph);
 
   log.debug('Graph after layout', graph.nodes());
   const svgElem = diagram.node();

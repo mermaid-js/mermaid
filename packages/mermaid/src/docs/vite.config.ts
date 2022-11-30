@@ -31,6 +31,11 @@ export default defineConfig({
   resolve: {
     alias: {
       mermaid: path.join(__dirname, '../../dist/mermaid.esm.min.mjs'), // Use this one to build
+
+      '@mermaid-js/mermaid-mindmap': path.join(
+        __dirname,
+        '../../../mermaid-mindmap/dist/mermaid-mindmap.esm.min.mjs'
+      ), // Use this one to build
     },
   },
   server: {
