@@ -72,6 +72,9 @@ sequenceDiagram
     Bob-->>John: Jolly good!
 ```
 
+### [ZenUML diagram](../syntax/zenuml.md)
+TODO: add a static image here.
+
 ### [Gantt diagram](../syntax/gantt.md)
 
 ```mermaid-example
