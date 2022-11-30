@@ -37,10 +37,9 @@ const d3CurveTypes = {
   curveStepAfter: curveStepAfter,
   curveStepBefore: curveStepBefore,
 };
-const directive =
-  /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
+const directive = /%{2}{\s*(?:(\w+)\s*:|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;
 const directiveWithoutOpen =
-  /\s*(?:(?:(\w+)(?=:):|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
+  /\s*(?:(\w+)(?=:):|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;
 
 /**
  * Detects the init config object from the text
@@ -91,7 +90,7 @@ export const detectInit = function (text: string, config?: MermaidConfig): Merma
   if (results) {
     let type = detectType(text, config);
     ['config'].forEach((prop) => {
-      if (typeof results[prop] !== 'undefined') {
+      if (results[prop] !== undefined) {
         if (type === 'flowchart-v2') {
           type = 'flowchart';
         }
@@ -180,8 +179,8 @@ export const detectDirective = function (
  * @returns The array index containing the substring or -1 if not present
  */
 export const isSubstringInArray = function (str: string, arr: string[]): number {
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i].match(str)) {
+  for (const [i, element] of arr.entries()) {
+    if (element.match(str)) {
       return i;
     }
   }
@@ -460,13 +459,13 @@ export function getStylesFromArray(arr: string[]): { style: string; labelStyle: 
   let style = '';
   let labelStyle = '';
 
-  for (let i = 0; i < arr.length; i++) {
-    if (typeof arr[i] !== 'undefined') {
+  for (const element of arr) {
+    if (element !== undefined) {
       // add text properties to label style definition
-      if (arr[i].startsWith('color:') || arr[i].startsWith('text-align:')) {
-        labelStyle = labelStyle + arr[i] + ';';
+      if (element.startsWith('color:') || element.startsWith('text-align:')) {
+        labelStyle = labelStyle + element + ';';
       } else {
-        style = style + arr[i] + ';';
+        style = style + element + ';';
       }
     }
   }
@@ -549,7 +548,7 @@ export const drawSimpleText = function (
   textElem.style('font-size', textData.fontSize);
   textElem.style('font-weight', textData.fontWeight);
   textElem.attr('fill', textData.fill);
-  if (typeof textData.class !== 'undefined') {
+  if (textData.class !== undefined) {
     textElem.attr('class', textData.class);
   }
 
@@ -630,7 +629,7 @@ const breakString: (
       { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 0 },
       config
     );
-    const characters = word.split('');
+    const characters = [...word];
     const lines: string[] = [];
     let currentLine = '';
     characters.forEach((character, index) => {
@@ -822,34 +821,34 @@ export const directiveSanitizer = (args: any) => {
       // This is an object
       Object.keys(args).forEach((key) => {
         log.debug('Checking key', key);
-        if (key.indexOf('__') === 0) {
+        if (key.startsWith('__')) {
           log.debug('sanitize deleting __ option', key);
           delete args[key];
         }
 
-        if (key.indexOf('proto') >= 0) {
+        if (key.includes('proto')) {
           log.debug('sanitize deleting proto option', key);
           delete args[key];
         }
 
-        if (key.indexOf('constr') >= 0) {
+        if (key.includes('constr')) {
           log.debug('sanitize deleting constr option', key);
           delete args[key];
         }
 
-        if (key.indexOf('themeCSS') >= 0) {
+        if (key.includes('themeCSS')) {
           log.debug('sanitizing themeCss option');
           args[key] = sanitizeCss(args[key]);
         }
-        if (key.indexOf('fontFamily') >= 0) {
+        if (key.includes('fontFamily')) {
           log.debug('sanitizing fontFamily option');
           args[key] = sanitizeCss(args[key]);
         }
-        if (key.indexOf('altFontFamily') >= 0) {
+        if (key.includes('altFontFamily')) {
           log.debug('sanitizing altFontFamily option');
           args[key] = sanitizeCss(args[key]);
         }
-        if (configKeys.indexOf(key) < 0) {
+        if (!configKeys.includes(key)) {
           log.debug('sanitize deleting option', key);
           delete args[key];
         } else {
@@ -863,10 +862,9 @@ export const directiveSanitizer = (args: any) => {
   }
   if (args.themeVariables) {
     const kArr = Object.keys(args.themeVariables);
-    for (let i = 0; i < kArr.length; i++) {
-      const k = kArr[i];
+    for (const k of kArr) {
       const val = args.themeVariables[k];
-      if (val && val.match && !val.match(/^[a-zA-Z0-9#,";()%. ]+$/)) {
+      if (val && val.match && !val.match(/^[\d "#%(),.;A-Za-z]+$/)) {
         args.themeVariables[k] = '';
       }
     }
@@ -877,13 +875,13 @@ export const sanitizeCss = (str) => {
   let startCnt = 0;
   let endCnt = 0;
 
-  for (let i = 0; i < str.length; i++) {
+  for (const element of str) {
     if (startCnt < endCnt) {
       return '{ /* ERROR: Unbalanced CSS */ }';
     }
-    if (str[i] === '{') {
+    if (element === '{') {
       startCnt++;
-    } else if (str[i] === '}') {
+    } else if (element === '}') {
       endCnt++;
     }
   }

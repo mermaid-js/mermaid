@@ -284,7 +284,7 @@ const addRelationships = (relationships, g) => {
 
 const adjustEntities = function (svgNode, graph) {
   graph.nodes().forEach(function (v) {
-    if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
+    if (v !== undefined && graph.node(v) !== undefined) {
       svgNode.select('#' + v);
       svgNode
         .select('#' + v)

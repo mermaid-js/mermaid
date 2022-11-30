@@ -96,7 +96,7 @@ describe('Requirement diagram', () => {
     );
     cy.get('svg').should((svg) => {
       const el = svg.get(0);
-      const children = Array.from(el.children);
+      const children = [...el.children];
 
       const titleEl = children.find(function (node) {
         return node.tagName === 'title';
