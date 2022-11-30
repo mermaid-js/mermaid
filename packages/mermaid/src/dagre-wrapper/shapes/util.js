@@ -21,7 +21,7 @@ export const labelHelper = (parent, node, _classes, isNode) => {
 
   // Replace labelText with default value if undefined
   let labelText;
-  if (typeof node.labelText === 'undefined') {
+  if (node.labelText === undefined) {
     labelText = '';
   } else {
     labelText = typeof node.labelText === 'string' ? node.labelText : node.labelText[0];

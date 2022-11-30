@@ -48,7 +48,7 @@ class Bounds {
   }
 
   updateVal(obj, key, val, fun) {
-    if (typeof obj[key] === 'undefined') {
+    if (obj[key] === undefined) {
       obj[key] = val;
     } else {
       obj[key] = fun(val, obj[key]);
@@ -177,12 +177,12 @@ function calcC4ShapeTextWH(textType, c4Shape, c4ShapeTextWrap, textConf, textLim
       let lineHeight = 0;
       c4Shape[textType].height = 0;
       c4Shape[textType].width = 0;
-      for (let i = 0; i < lines.length; i++) {
+      for (const line of lines) {
         c4Shape[textType].width = Math.max(
-          calculateTextWidth(lines[i], textConf),
+          calculateTextWidth(line, textConf),
           c4Shape[textType].width
         );
-        lineHeight = calculateTextHeight(lines[i], textConf);
+        lineHeight = calculateTextHeight(line, textConf);
         c4Shape[textType].height = c4Shape[textType].height + lineHeight;
       }
       // c4Shapes[textType].height = c4Shapes[textType].textLines * textConf.fontSize;
@@ -212,9 +212,9 @@ export const drawC4ShapeArray = function (currentBounds, diagram, c4ShapeArray, 
   // Upper Y is relative point
   let Y = 0;
   // Draw the c4ShapeArray
-  for (let i = 0; i < c4ShapeKeys.length; i++) {
+  for (const c4ShapeKey of c4ShapeKeys) {
     Y = 0;
-    const c4Shape = c4ShapeArray[c4ShapeKeys[i]];
+    const c4Shape = c4ShapeArray[c4ShapeKey];
 
     // calc c4 shape type width and height
 
@@ -461,8 +461,7 @@ function drawInsideBoundary(
   //   conf.width * conf.c4ShapeInRow + conf.c4ShapeMargin * conf.c4ShapeInRow * 2,
   //   parentBounds.data.widthLimit / Math.min(conf.c4BoundaryInRow, currentBoundaries.length)
   // );
-  for (let i = 0; i < currentBoundaries.length; i++) {
-    let currentBoundary = currentBoundaries[i];
+  for (let [i, currentBoundary] of currentBoundaries.entries()) {
     let Y = 0;
     currentBoundary.image = { width: 0, height: 0, Y: 0 };
     if (currentBoundary.sprite) {

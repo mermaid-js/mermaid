@@ -324,7 +324,7 @@ const cutPathAtIntersect = (_points, boundryNode) => {
         pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
       });
       // // if (!pointPresent) {
-      if (!points.find((e) => e.x === inter.x && e.y === inter.y)) {
+      if (!points.some((e) => e.x === inter.x && e.y === inter.y)) {
         points.push(inter);
       } else {
         log.warn('abc88 no intersect', inter, points);

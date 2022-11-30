@@ -102,7 +102,7 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
     p2_card_y = cardinality_2_point.y;
   }
 
-  if (typeof relation.title !== 'undefined') {
+  if (relation.title !== undefined) {
     const g = elem.append('g').attr('class', 'classLabel');
     const label = g
       .append('text')
@@ -125,7 +125,7 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
   }
 
   log.info('Rendering relation ' + JSON.stringify(relation));
-  if (typeof relation.relationTitle1 !== 'undefined' && relation.relationTitle1 !== 'none') {
+  if (relation.relationTitle1 !== undefined && relation.relationTitle1 !== 'none') {
     const g = elem.append('g').attr('class', 'cardinality');
     g.append('text')
       .attr('class', 'type1')
@@ -135,7 +135,7 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
       .attr('font-size', '6')
       .text(relation.relationTitle1);
   }
-  if (typeof relation.relationTitle2 !== 'undefined' && relation.relationTitle2 !== 'none') {
+  if (relation.relationTitle2 !== undefined && relation.relationTitle2 !== 'none') {
     const g = elem.append('g').attr('class', 'cardinality');
     g.append('text')
       .attr('class', 'type2')
@@ -355,8 +355,8 @@ export const drawNote = function (elem, note, conf, diagObj) {
 };
 
 export const parseMember = function (text) {
-  const fieldRegEx = /^(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+) *(\*|\$)?$/;
-  const methodRegEx = /^([+|\-|~|#])?(\w+) *\( *(.*)\) *(\*|\$)? *(\w*[~|[\]]*\s*\w*~?)$/;
+  const fieldRegEx = /^([#+~-])?(\w+)(~\w+~|\[])?\s+(\w+) *([$*])?$/;
+  const methodRegEx = /^([#+|~-])?(\w+) *\( *(.*)\) *([$*])? *(\w*[[\]|~]*\s*\w*~?)$/;
 
   let fieldMatch = text.match(fieldRegEx);
   let methodMatch = text.match(methodRegEx);
@@ -420,7 +420,6 @@ const buildLegacyDisplay = function (text) {
   // if for some reason we don't have any match, use old format to parse text
   let displayText = '';
   let cssStyle = '';
-  let memberText = '';
   let returnType = '';
   let methodStart = text.indexOf('(');
   let methodEnd = text.indexOf(')');
@@ -433,7 +432,7 @@ const buildLegacyDisplay = function (text) {
     if (firstChar.match(/\w/)) {
       methodName = text.substring(0, methodStart).trim();
     } else {
-      if (firstChar.match(/\+|-|~|#/)) {
+      if (firstChar.match(/[#+~-]/)) {
         visibility = firstChar;
       }
 

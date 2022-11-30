@@ -4,27 +4,20 @@ import * as graphlibJson from 'dagre-d3-es/src/graphlib/json';
 import * as graphlib from 'dagre-d3-es/src/graphlib';
 
 export let clusterDb = {};
-let decendants = {};
+let descendants = {};
 let parents = {};
 
 export const clear = () => {
-  decendants = {};
+  descendants = {};
   parents = {};
   clusterDb = {};
 };
 
-const isDecendant = (id, ancenstorId) => {
+const isDescendant = (id, ancenstorId) => {
   // if (id === ancenstorId) return true;
 
-  log.trace(
-    'In isDecendant',
-    ancenstorId,
-    ' ',
-    id,
-    ' = ',
-    decendants[ancenstorId].indexOf(id) >= 0
-  );
-  if (decendants[ancenstorId].indexOf(id) >= 0) {
+  log.trace('In isDecendant', ancenstorId, ' ', id, ' = ', descendants[ancenstorId].includes(id));
+  if (descendants[ancenstorId].includes(id)) {
     return true;
   }
 
@@ -32,7 +25,7 @@ const isDecendant = (id, ancenstorId) => {
 };
 
 const edgeInCluster = (edge, clusterId) => {
-  log.info('Decendants of ', clusterId, ' is ', decendants[clusterId]);
+  log.info('Decendants of ', clusterId, ' is ', descendants[clusterId]);
   log.info('Edge is ', edge);
   // Edges to/from the cluster is not in the cluster, they are in the parent
   if (edge.v === clusterId) {
@@ -42,15 +35,15 @@ const edgeInCluster = (edge, clusterId) => {
     return false;
   }
 
-  if (!decendants[clusterId]) {
+  if (!descendants[clusterId]) {
     log.debug('Tilt, ', clusterId, ',not in decendants');
     return false;
   }
   return (
-    decendants[clusterId].indexOf(edge.v) >= 0 ||
-    isDecendant(edge.v, clusterId) ||
-    isDecendant(edge.w, clusterId) ||
-    decendants[clusterId].indexOf(edge.w) >= 0
+    descendants[clusterId].includes(edge.v) ||
+    isDescendant(edge.v, clusterId) ||
+    isDescendant(edge.w, clusterId) ||
+    descendants[clusterId].includes(edge.w)
   );
 };
 
@@ -132,14 +125,14 @@ const copy = (clusterId, graph, newGraph, rootId) => {
     graph.removeNode(node);
   });
 };
-export const extractDecendants = (id, graph) => {
+export const extractDescendants = (id, graph) => {
   // log.debug('Extracting ', id);
   const children = graph.children(id);
-  let res = [].concat(children);
+  let res = [...children];
 
-  for (let i = 0; i < children.length; i++) {
-    parents[children[i]] = id;
-    res = res.concat(extractDecendants(children[i], graph));
+  for (const child of children) {
+    parents[child] = id;
+    res = [...res, ...extractDescendants(child, graph)];
   }
 
   return res;
@@ -154,13 +147,13 @@ export const extractDecendants = (id, graph) => {
 export const validate = (graph) => {
   const edges = graph.edges();
   log.trace('Edges: ', edges);
-  for (let i = 0; i < edges.length; i++) {
-    if (graph.children(edges[i].v).length > 0) {
-      log.trace('The node ', edges[i].v, ' is part of and edge even though it has children');
+  for (const edge of edges) {
+    if (graph.children(edge.v).length > 0) {
+      log.trace('The node ', edge.v, ' is part of and edge even though it has children');
       return false;
     }
-    if (graph.children(edges[i].w).length > 0) {
-      log.trace('The node ', edges[i].w, ' is part of and edge even though it has children');
+    if (graph.children(edge.w).length > 0) {
+      log.trace('The node ', edge.w, ' is part of and edge even though it has children');
       return false;
     }
   }
@@ -183,8 +176,8 @@ export const findNonClusterChild = (id, graph) => {
     log.trace('This is a valid node', id);
     return id;
   }
-  for (let i = 0; i < children.length; i++) {
-    const _id = findNonClusterChild(children[i], graph);
+  for (const child of children) {
+    const _id = findNonClusterChild(child, graph);
     if (_id) {
       log.trace('Found replacement for', id, ' => ', _id);
       return _id;
@@ -226,7 +219,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
         ' Replacement id in edges: ',
         findNonClusterChild(id, graph)
       );
-      decendants[id] = extractDecendants(id, graph);
+      descendants[id] = extractDescendants(id, graph);
       clusterDb[id] = { id: findNonClusterChild(id, graph), clusterData: graph.node(id) };
     }
   });
@@ -236,7 +229,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
     const children = graph.children(id);
     const edges = graph.edges();
     if (children.length > 0) {
-      log.debug('Cluster identified', id, decendants);
+      log.debug('Cluster identified', id, descendants);
       edges.forEach((edge) => {
         // log.debug('Edge, decendants: ', edge, decendants[id]);
 
@@ -245,19 +238,19 @@ export const adjustClustersAndEdges = (graph, depth) => {
           // Any edge where either the one of the nodes is descending to the cluster but not the other
           // if (decendants[id].indexOf(edge.v) < 0 && decendants[id].indexOf(edge.w) < 0) {
 
-          const d1 = isDecendant(edge.v, id);
-          const d2 = isDecendant(edge.w, id);
+          const d1 = isDescendant(edge.v, id);
+          const d2 = isDescendant(edge.w, id);
 
           // d1 xor d2 - if either d1 is true and d2 is false or the other way around
           if (d1 ^ d2) {
             log.warn('Edge: ', edge, ' leaves cluster ', id);
-            log.warn('Decendants of XXX ', id, ': ', decendants[id]);
+            log.warn('Decendants of XXX ', id, ': ', descendants[id]);
             clusterDb[id].externalConnections = true;
           }
         }
       });
     } else {
-      log.debug('Not a cluster ', id, decendants);
+      log.debug('Not a cluster ', id, descendants);
     }
   });
 
@@ -277,7 +270,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
       'ids:',
       e.v,
       e.w,
-      'Translateing: ',
+      'Translating: ',
       clusterDb[e.v],
       ' --- ',
       clusterDb[e.w]
@@ -347,8 +340,7 @@ export const extractor = (graph, depth) => {
   // for (let i = 0;)
   let nodes = graph.nodes();
   let hasChildren = false;
-  for (let i = 0; i < nodes.length; i++) {
-    const node = nodes[i];
+  for (const node of nodes) {
     const children = graph.children(node);
     hasChildren = hasChildren || children.length > 0;
   }
@@ -360,9 +352,7 @@ export const extractor = (graph, depth) => {
   // const clusters = Object.keys(clusterDb);
   // clusters.forEach(clusterId => {
   log.debug('Nodes = ', nodes, depth);
-  for (let i = 0; i < nodes.length; i++) {
-    const node = nodes[i];
-
+  for (const node of nodes) {
     log.debug(
       'Extracting node',
       node,
@@ -394,11 +384,9 @@ export const extractor = (graph, depth) => {
 
       const graphSettings = graph.graph();
       let dir = graphSettings.rankdir === 'TB' ? 'LR' : 'TB';
-      if (clusterDb[node]) {
-        if (clusterDb[node].clusterData && clusterDb[node].clusterData.dir) {
-          dir = clusterDb[node].clusterData.dir;
-          log.warn('Fixing dir', clusterDb[node].clusterData.dir, dir);
-        }
+      if (clusterDb[node] && clusterDb[node].clusterData && clusterDb[node].clusterData.dir) {
+        dir = clusterDb[node].clusterData.dir;
+        log.warn('Fixing dir', clusterDb[node].clusterData.dir, dir);
       }
 
       const clusterGraph = new graphlib.Graph({
@@ -446,8 +434,7 @@ export const extractor = (graph, depth) => {
 
   nodes = graph.nodes();
   log.warn('New list of nodes', nodes);
-  for (let i = 0; i < nodes.length; i++) {
-    const node = nodes[i];
+  for (const node of nodes) {
     const data = graph.node(node);
     log.warn(' Now next level', node, data);
     if (data.clusterNode) {
@@ -464,7 +451,7 @@ const sorter = (graph, nodes) => {
   nodes.forEach((node) => {
     const children = graph.children(node);
     const sorted = sorter(graph, children);
-    result = result.concat(sorted);
+    result = [...result, ...sorted];
   });
 
   return result;

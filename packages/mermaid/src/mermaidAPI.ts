@@ -128,15 +128,9 @@ export const encodeEntities = function (text: string): string {
 export const decodeEntities = function (text: string): string {
   let txt = text;
 
-  txt = txt.replace(/ﬂ°°/g, function () {
-    return '&#';
-  });
-  txt = txt.replace(/ﬂ°/g, function () {
-    return '&';
-  });
-  txt = txt.replace(/¶ß/g, function () {
-    return ';';
-  });
+  txt = txt.replace(/ﬂ°°/g, '&#');
+  txt = txt.replace(/ﬂ°/g, '&');
+  txt = txt.replace(/¶ß/g, ';');
 
   return txt;
 };
@@ -189,28 +183,26 @@ export const createCssStyles = (
   }
 
   // classDefs defined in the diagram text
-  if (!isEmpty(classDefs)) {
-    if (CLASSDEF_DIAGRAMS.includes(graphType)) {
-      const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
+  if (!isEmpty(classDefs) && CLASSDEF_DIAGRAMS.includes(graphType)) {
+    const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
 
-      const cssHtmlElements = ['> *', 'span']; // TODO make a constant
-      const cssShapeElements = ['rect', 'polygon', 'ellipse', 'circle', 'path']; // TODO make a constant
+    const cssHtmlElements = ['> *', 'span']; // TODO make a constant
+    const cssShapeElements = ['rect', 'polygon', 'ellipse', 'circle', 'path']; // TODO make a constant
 
-      const cssElements = htmlLabels ? cssHtmlElements : cssShapeElements;
+    const cssElements = htmlLabels ? cssHtmlElements : cssShapeElements;
 
-      // create the CSS styles needed for each styleClass definition and css element
-      for (const classId in classDefs) {
-        const styleClassDef = classDefs[classId];
-        // create the css styles for each cssElement and the styles (only if there are styles)
-        if (!isEmpty(styleClassDef.styles)) {
-          cssElements.forEach((cssElement) => {
-            cssStyles += cssImportantStyles(styleClassDef.id, cssElement, styleClassDef.styles);
-          });
-        }
-        // create the css styles for the tspan element and the text styles (only if there are textStyles)
-        if (!isEmpty(styleClassDef.textStyles)) {
-          cssStyles += cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles);
-        }
+    // create the CSS styles needed for each styleClass definition and css element
+    for (const classId in classDefs) {
+      const styleClassDef = classDefs[classId];
+      // create the css styles for each cssElement and the styles (only if there are styles)
+      if (!isEmpty(styleClassDef.styles)) {
+        cssElements.forEach((cssElement) => {
+          cssStyles += cssImportantStyles(styleClassDef.id, cssElement, styleClassDef.styles);
+        });
+      }
+      // create the css styles for the tspan element and the text styles (only if there are textStyles)
+      if (!isEmpty(styleClassDef.textStyles)) {
+        cssStyles += cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles);
       }
     }
   }
@@ -432,7 +424,7 @@ const render = function (
   // Define the root d3 node
   // In regular execution the svgContainingElement will be the element with a mermaid class
 
-  if (typeof svgContainingElement !== 'undefined') {
+  if (svgContainingElement !== undefined) {
     if (svgContainingElement) {
       svgContainingElement.innerHTML = '';
     }
@@ -510,7 +502,7 @@ const render = function (
   );
 
   const style1 = document.createElement('style');
-  style1.innerHTML = `${idSelector} ` + rules;
+  style1.innerHTML = rules;
   svg.insertBefore(style1, firstChild);
 
   // -------------------------------------------------------------------------------
@@ -545,7 +537,7 @@ const render = function (
 
   // -------------------------------------------------------------------------------
   // Do any callbacks (cb = callback)
-  if (typeof cb !== 'undefined') {
+  if (cb !== undefined) {
     switch (graphType) {
       case 'flowchart':
       case 'flowchart-v2':
@@ -631,7 +623,7 @@ const renderAsync = async function (
   // Define the root d3 node
   // In regular execution the svgContainingElement will be the element with a mermaid class
 
-  if (typeof svgContainingElement !== 'undefined') {
+  if (svgContainingElement !== undefined) {
     if (svgContainingElement) {
       svgContainingElement.innerHTML = '';
     }
@@ -706,7 +698,7 @@ const renderAsync = async function (
   );
 
   const style1 = document.createElement('style');
-  style1.innerHTML = `${idSelector} ` + rules;
+  style1.innerHTML = rules;
   svg.insertBefore(style1, firstChild);
 
   // -------------------------------------------------------------------------------
@@ -741,7 +733,7 @@ const renderAsync = async function (
 
   // -------------------------------------------------------------------------------
   // Do any callbacks (cb = callback)
-  if (typeof cb !== 'undefined') {
+  if (cb !== undefined) {
     switch (graphType) {
       case 'flowchart':
       case 'flowchart-v2':
@@ -820,7 +812,7 @@ const handleDirective = function (p: any, directive: any, type: string): void {
     case 'init':
     case 'initialize': {
       ['config'].forEach((prop) => {
-        if (typeof directive.args[prop] !== 'undefined') {
+        if (directive.args[prop] !== undefined) {
           if (type === 'flowchart-v2') {
             type = 'flowchart';
           }
@@ -859,10 +851,8 @@ const handleDirective = function (p: any, directive: any, type: string): void {
  */
 function initialize(options: MermaidConfig = {}) {
   // Handle legacy location of font-family configuration
-  if (options?.fontFamily) {
-    if (!options.themeVariables?.fontFamily) {
-      options.themeVariables = { fontFamily: options.fontFamily };
-    }
+  if (options?.fontFamily && !options.themeVariables?.fontFamily) {
+    options.themeVariables = { fontFamily: options.fontFamily };
   }
 
   // Set default options
