@@ -34,7 +34,7 @@ export function addSVGa11yTitleDescription(
   a11yDesc: string | null | undefined,
   baseId: string
 ) {
-  if (typeof svg.insert === 'undefined') {
+  if (svg.insert === undefined) {
     return;
   }
 
