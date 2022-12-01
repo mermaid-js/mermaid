@@ -21,9 +21,9 @@ function loadCss(root: Document, url: string) {
 // Create a Zen UML container outside of the svg first for rendering, otherwise the Zen UML diagram cannot be rendered properly
 function createTemporaryZenumlContainer() {
   const container = document.createElement('div');
-  container.innerHTML = '<div id="app"></div>';
+  container.innerHTML = '<div id="zenUMLApp"></div>';
   container.style.display = 'none';
-  const app = container.querySelector('#app') as HTMLElement;
+  const app = container.querySelector('#zenUMLApp') as HTMLElement;
   return { container, app };
 }
 
