@@ -55,7 +55,7 @@ zenuml
 If you specifically want to use symbols instead of just rectangles with text you can do so by using the annotator syntax to declare participants as per below.
 
 ```mermaid-example
-sequenceDiagram
+zenuml
     @Actor Alice
     @Database Bob
     Alice->Bob: Hi Bob
@@ -63,7 +63,7 @@ sequenceDiagram
 ```
 
 ```mermaid
-sequenceDiagram
+zenuml
     @Actor Alice
     @Database Bob
     Alice->Bob: Hi Bob
@@ -78,7 +78,7 @@ Here are the available annotators:
 The participants can have a convenient identifier and a descriptive label.
 
 ```mermaid-example
-sequenceDiagram
+zenuml
     A as Alice
     J as John
     A->J: Hello John, how are you?
@@ -86,7 +86,7 @@ sequenceDiagram
 ```
 
 ```mermaid
-sequenceDiagram
+zenuml
     A as Alice
     J as John
     A->J: Hello John, how are you?

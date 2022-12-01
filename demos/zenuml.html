@@ -26,12 +26,16 @@
         }
       }
     </pre>
+    <pre class="mermaid">
+		zenuml
+			B.method() {
+      }
+    </pre>
     <script type="module">
       import zenUml from '../../packages/mermaid-zenuml/src/detector';
       import mermaid from '../../packages/mermaid/src/mermaid';
       await mermaid.registerExternalDiagrams([zenUml]);
       await mermaid.initialize({ logLevel: 0 });
-      await mermaid.initThrowsErrorsAsync();
     </script>
   </body>
 </html>

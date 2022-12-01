@@ -40,7 +40,7 @@
   },
   "homepage": "https://github.com/mermaid-js/mermaid#readme",
   "dependencies": {
-    "vue-sequence": "1.0.273"
+    "@zenuml/core": "^2.0.7"
   },
   "devDependencies": {
     "concurrently": "^7.5.0",

@@ -88,7 +88,8 @@
     "visio",
     "vitepress",
     "xlink",
-    "yash"
+    "yash",
+    "zenuml"
   ],
   "patterns": [
     { "name": "Markdown links", "pattern": "\\((.*)\\)", "description": "" },

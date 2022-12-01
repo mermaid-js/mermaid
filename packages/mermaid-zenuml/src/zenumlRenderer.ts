@@ -1,29 +1,16 @@
 // @ts-nocheck TODO: fix file
 import { getConfig, log } from './mermaidUtils';
-import ZenUml from 'vue-sequence';
+import ZenUml from '@zenuml/core';
 import { regexp } from './detector';
-import 'vue-sequence/dist/vue-sequence.css';
+import '@zenuml/core/dist/zenuml/core.css';
 
-// Load Zen UML CSS
-function loadCss(root: Document, url: string) {
-  // Avoid loading the same CSS multiple times
-  if (root.querySelector(`link[href="${url}"]`)) {
-    return;
-  }
-
-  const link = root.createElement('link');
-  link.type = 'text/css';
-  link.rel = 'stylesheet';
-  link.href = url;
-  root.getElementsByTagName('head')[0].appendChild(link);
-}
-
-// Create a Zen UML container outside of the svg first for rendering, otherwise the Zen UML diagram cannot be rendered properly
-function createTemporaryZenumlContainer() {
+// Create a Zen UML container outside the svg first for rendering, otherwise the Zen UML diagram cannot be rendered properly
+function createTemporaryZenumlContainer(id: string) {
   const container = document.createElement('div');
-  container.innerHTML = '<div id="zenUMLApp"></div>';
+  container.id = id;
+  container.innerHTML = `<div id="zenUMLApp-${id}"></div>`;
   container.style.display = 'none';
-  const app = container.querySelector('#zenUMLApp') as HTMLElement;
+  const app = container.querySelector(`#zenUMLApp-${id}`) as HTMLElement;
   return { container, app };
 }
 
@@ -63,19 +50,17 @@ export const draw = async function (text: string, id: string) {
     return;
   }
 
-  loadCss(root, './style.css');
-
   const foreignObject = createForeignObject();
   svgContainer.appendChild(foreignObject);
 
-  const { container, app } = createTemporaryZenumlContainer();
+  const { container, app } = createTemporaryZenumlContainer(id);
   document.body.appendChild(container);
 
   const zenuml = new ZenUml(app);
   await zenuml.render(text, 'default');
 
-  const zenUml = document.querySelector('.zenuml');
-  log.info(zenUml, foreignObject);
+  const zenUml = container.querySelector('.zenuml');
+  log.debug(zenUml, foreignObject);
   const zenumlClone = zenUml.cloneNode(true);
   foreignObject.appendChild(zenumlClone);
   const { width, height } = window.getComputedStyle(zenumlClone);
