@@ -143,6 +143,10 @@ Rendering in Mermaid is initialized by `mermaid.initialize()` call. You can plac
 | ----------- | --------------------------------- | ------- | ----------- |
 | startOnLoad | Toggle for Rendering upon loading | Boolean | true, false |
 
+### Adding external diagrams to mermaid
+
+Please refer to the [Mindmap](./mindmap.md?id=integrating-with-your-librarywebsite) section for more information.
+
 ### Working Examples
 
 **Here is a full working example of the mermaidAPI being called through the CDN:**
