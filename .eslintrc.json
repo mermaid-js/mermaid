@@ -55,7 +55,6 @@
         "checkIdentifiers": false,
         "checkStrings": false,
         "checkStringTemplates": false,
-        "customWordListFile": "./custom-word-list.txt"
       }
     ],
     "no-empty": [
