@@ -54,7 +54,7 @@
       {
         "checkIdentifiers": false,
         "checkStrings": false,
-        "checkStringTemplates": false,
+        "checkStringTemplates": false
       }
     ],
     "no-empty": [
