@@ -328,7 +328,7 @@ describe('Git Graph diagram', () => {
 title: simple gitGraph
 ---
 gitGraph
-  commit
+  commit id: "1-abcdefg"
 `,
       {}
     );

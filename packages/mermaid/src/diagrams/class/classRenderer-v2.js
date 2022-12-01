@@ -9,8 +9,6 @@ import { interpolateToCurve, getStylesFromArray } from '../../utils';
 import { setupGraphViewbox } from '../../setupGraphViewbox';
 import common from '../common/common';
 
-let idCache = {};
-
 const sanitizeText = (txt) => common.sanitizeText(txt, getConfig());
 
 let conf = {
@@ -274,16 +272,16 @@ export const addRelations = function (relations, g) {
     let style = '';
     let labelStyle = '';
 
-    if (typeof edge.style !== 'undefined') {
+    if (edge.style !== undefined) {
       const styles = getStylesFromArray(edge.style);
       style = styles.style;
       labelStyle = styles.labelStyle;
     } else {
       style = 'fill:none';
-      if (typeof defaultStyle !== 'undefined') {
+      if (defaultStyle !== undefined) {
         style = defaultStyle;
       }
-      if (typeof defaultLabelStyle !== 'undefined') {
+      if (defaultLabelStyle !== undefined) {
         labelStyle = defaultLabelStyle;
       }
     }
@@ -291,17 +289,17 @@ export const addRelations = function (relations, g) {
     edgeData.style = style;
     edgeData.labelStyle = labelStyle;
 
-    if (typeof edge.interpolate !== 'undefined') {
+    if (edge.interpolate !== undefined) {
       edgeData.curve = interpolateToCurve(edge.interpolate, curveLinear);
-    } else if (typeof relations.defaultInterpolate !== 'undefined') {
+    } else if (relations.defaultInterpolate !== undefined) {
       edgeData.curve = interpolateToCurve(relations.defaultInterpolate, curveLinear);
     } else {
       edgeData.curve = interpolateToCurve(conf.curve, curveLinear);
     }
 
     edge.text = edge.title;
-    if (typeof edge.text === 'undefined') {
-      if (typeof edge.style !== 'undefined') {
+    if (edge.text === undefined) {
+      if (edge.style !== undefined) {
         edgeData.arrowheadStyle = 'fill: #333';
       }
     } else {
@@ -315,7 +313,7 @@ export const addRelations = function (relations, g) {
         edgeData.labelType = 'text';
         edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');
 
-        if (typeof edge.style === 'undefined') {
+        if (edge.style === undefined) {
           edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none';
         }
 
@@ -437,9 +435,7 @@ export const draw = function (text, id, _version, diagObj) {
   if (!conf.htmlLabels) {
     const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
     const labels = doc.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
-    for (let k = 0; k < labels.length; k++) {
-      const label = labels[k];
-
+    for (const label of labels) {
       // Get dimensions of label
       const dim = label.getBBox();
 

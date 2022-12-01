@@ -10,7 +10,7 @@ import { parseGenericTypes } from '../common/common';
 import { v4 as uuid4 } from 'uuid';
 
 /** Regex used to remove chars from the entity name so the result can be used in an id */
-const BAD_ID_CHARS_REGEXP = /[^A-Za-z0-9]([\W])*/g;
+const BAD_ID_CHARS_REGEXP = /[^\dA-Za-z](\W)*/g;
 
 // Configuration
 let conf = {};
@@ -27,8 +27,8 @@ let entityNameIds = new Map();
  */
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
-  for (let i = 0; i < keys.length; i++) {
-    conf[keys[i]] = cnf[keys[i]];
+  for (const key of keys) {
+    conf[key] = cnf[key];
   }
 };
 
@@ -355,7 +355,7 @@ const drawEntities = function (svgNode, entities, graph) {
 
 const adjustEntities = function (svgNode, graph) {
   graph.nodes().forEach(function (v) {
-    if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
+    if (v !== undefined && graph.node(v) !== undefined) {
       svgNode
         .select('#' + v)
         .attr(
@@ -386,7 +386,7 @@ const getEdgeName = function (rel) {
  * Add each relationship to the graph
  *
  * @param relationships The relationships to be added
- * @param {Graph} g The graph
+ * @param g The graph
  * @returns {Array} The array of relationships
  */
 const addRelationships = function (relationships, g) {
@@ -649,10 +649,8 @@ export const draw = function (text, id, _version, diagObj) {
  * Although the official XML standard for ids says that many more characters are valid in the id,
  * this keeps things simple by accepting only A-Za-z0-9.
  *
- * @param {string} [str?=''] Given string to use as the basis for the id. Default is `''`
- * @param {string} [prefix?=''] String to put at the start, followed by '-'. Default is `''`
- * @param str
- * @param prefix
+ * @param {string} str Given string to use as the basis for the id. Default is `''`
+ * @param {string} prefix String to put at the start, followed by '-'. Default is `''`
  * @returns {string}
  * @see https://www.w3.org/TR/xml/#NT-Name
  */

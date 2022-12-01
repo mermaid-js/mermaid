@@ -143,7 +143,7 @@ export const bounds = {
     this.verticalPos = 0;
   },
   updateVal: function (obj, key, val, fun) {
-    if (typeof obj[key] === 'undefined') {
+    if (obj[key] === undefined) {
       obj[key] = val;
     } else {
       obj[key] = fun(val, obj[key]);
@@ -218,8 +218,7 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
   let num = 0;
 
   // Draw the tasks
-  for (let i = 0; i < tasks.length; i++) {
-    const task = tasks[i];
+  for (const [i, task] of tasks.entries()) {
     if (lastSection !== task.section) {
       fill = fills[sectionNumber % fills.length];
       num = sectionNumber % fills.length;

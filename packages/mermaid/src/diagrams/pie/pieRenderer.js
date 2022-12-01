@@ -38,14 +38,14 @@ export const draw = (txt, id, _version, diagObj) => {
     const elem = doc.getElementById(id);
     width = elem.parentElement.offsetWidth;
 
-    if (typeof width === 'undefined') {
+    if (width === undefined) {
       width = 1200;
     }
 
-    if (typeof conf.useWidth !== 'undefined') {
+    if (conf.useWidth !== undefined) {
       width = conf.useWidth;
     }
-    if (typeof conf.pie.useWidth !== 'undefined') {
+    if (conf.pie.useWidth !== undefined) {
       width = conf.pie.useWidth;
     }
 

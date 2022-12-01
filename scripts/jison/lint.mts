@@ -28,7 +28,7 @@ const lint = async (file: string): Promise<boolean> => {
     dot: true,
   });
   const lintResults = await Promise.all(jisonFiles.map(lint));
-  if (lintResults.some((result) => result === false)) {
+  if (lintResults.includes(false)) {
     process.exit(1);
   }
 })();

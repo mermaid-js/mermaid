@@ -1,6 +1,7 @@
 const warning = (s: string) => {
   // Todo remove debug code
-  console.error('Log function was called before initialization', s); // eslint-disable-line
+  // eslint-disable-next-line no-console
+  console.error('Log function was called before initialization', s);
 };
 
 export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';

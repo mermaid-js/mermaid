@@ -56,10 +56,11 @@
   <body>
     <div>Security check</div>
     <pre id="diagram" class="mermaid">
-flowchart TD
-    A --> B
-    B --> C
-    A --> C
+graph LR
+    subgraph external
+        inside
+    end
+    outside --> external
     </pre>
     <pre id="diagram" class="mermaid">
 mindmap
@@ -91,9 +92,13 @@ mindmap
     <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
     <!-- <script src="./mermaid-example-diagram-detector.js"></script>    -->
     <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.7/dist/mermaid.min.js"></script> -->
-    <script src="./mermaid.js"></script>
+    <!-- <script src="./mermaid.js"></script> -->
 
-    <script>
+    <script type="module">
+      import mindmap from '../../packages/mermaid-mindmap/src/detector';
+      // import example from '../../packages/mermaid-example-diagram/src/detector';
+      import mermaid from '../../packages/mermaid/src/mermaid';
+      await mermaid.registerExternalDiagrams([mindmap]);
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };

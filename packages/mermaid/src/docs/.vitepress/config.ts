@@ -1,6 +1,5 @@
 import { version } from '../../../package.json';
 import MermaidExample from './mermaid-markdown-all';
-import { MermaidMarkdown } from 'vitepress-plugin-mermaid';
 import { defineConfig, MarkdownOptions } from 'vitepress';
 
 const allMarkdownTransformers: MarkdownOptions = {
@@ -8,7 +7,6 @@ const allMarkdownTransformers: MarkdownOptions = {
   theme: 'github-dark',
   config: async (md) => {
     await MermaidExample(md);
-    MermaidMarkdown(md);
   },
 };
 
@@ -108,6 +106,7 @@ function sidebarSyntax() {
         { text: 'Requirement Diagram', link: '/syntax/requirementDiagram' },
         { text: 'Gitgraph (Git) Diagram 🔥', link: '/syntax/gitgraph' },
         { text: 'C4C Diagram (Context) Diagram 🦺⚠️', link: '/syntax/c4c' },
+        { text: 'Mindmaps 🔥', link: '/syntax/mindmap' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
