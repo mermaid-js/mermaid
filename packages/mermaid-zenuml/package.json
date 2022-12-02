@@ -1,7 +1,7 @@
 {
   "name": "mermaid-zenuml",
   "version": "9.2.2",
-  "description": "ZenUML is a text to sequence diagram renderer. For more information, please checkout https://ZenUML.com",
+  "description": "Mermaid integration for ZenUML, a text to sequence diagram renderer. For more information, please checkout https://ZenUML.com",
   "main": "dist/mermaid-zenuml.core.mjs",
   "module": "dist/mermaid-zenuml.core.mjs",
   "types": "dist/detector.d.ts",
