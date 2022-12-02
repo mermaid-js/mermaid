@@ -1,0 +1,24 @@
+import type { ExternalDiagramDefinition } from 'mermaid';
+
+const id = 'flowchart-v3';
+
+const detector = (txt: string, config) => {
+  // If we have configured to use dagre-wrapper then we should return true in this function for graph code thus making it use the new flowchart diagram
+  if (config?.flowchart?.defaultRenderer === 'cytoscape' && txt.match(/^\s*graph/) !== null) {
+    return true;
+  }
+  return txt.match(/^\s*cyto/) !== null;
+};
+
+const loader = async () => {
+  const { diagram } = await import('./diagram-definition');
+  return { id, diagram };
+};
+
+const plugin: ExternalDiagramDefinition = {
+  id,
+  detector,
+  loader,
+};
+
+export default plugin;

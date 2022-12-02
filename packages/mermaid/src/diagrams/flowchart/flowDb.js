@@ -684,7 +684,7 @@ const destructEndLink = (_str) => {
   return { type, stroke, length };
 };
 
-const destructLink = (_str, _startStr) => {
+export const destructLink = (_str, _startStr) => {
   const info = destructEndLink(_str);
   let startInfo;
   if (_startStr) {
@@ -744,6 +744,9 @@ const makeUniq = (sg, allSubgraphs) => {
   return { nodes: res };
 };
 
+export const lex = {
+  firstGraph,
+};
 export default {
   parseDirective,
   defaultConfig: () => configApi.defaultConfig.flowchart,
@@ -776,9 +779,7 @@ export default {
   indexNodes,
   getSubGraphs,
   destructLink,
-  lex: {
-    firstGraph,
-  },
+  lex,
   exists,
   makeUniq,
   setDiagramTitle,

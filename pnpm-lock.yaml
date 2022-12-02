@@ -300,6 +300,46 @@ importers:
         specifier: ^3.0.2
         version: 3.0.2
 
+  packages/mermaid-flowchart-v3:
+    dependencies:
+      '@braintree/sanitize-url':
+        specifier: ^6.0.0
+        version: 6.0.0
+      cytoscape:
+        specifier: ^3.23.0
+        version: 3.23.0
+      cytoscape-cose-bilkent:
+        specifier: ^4.1.0
+        version: 4.1.0_cytoscape@3.23.0
+      cytoscape-fcose:
+        specifier: ^2.1.0
+        version: 2.1.0_cytoscape@3.23.0
+      d3:
+        specifier: ^7.0.0
+        version: 7.6.1
+      dagre-d3-es:
+        specifier: 7.0.4
+        version: 7.0.4
+      graphlib:
+        specifier: ^2.1.0
+        version: 2.1.8
+      khroma:
+        specifier: ^2.0.0
+        version: 2.0.0
+      non-layered-tidy-tree-layout:
+        specifier: ^2.0.2
+        version: 2.0.2
+    devDependencies:
+      concurrently:
+        specifier: ^7.5.0
+        version: 7.5.0
+      mermaid:
+        specifier: workspace:*
+        version: link:../mermaid
+      rimraf:
+        specifier: ^3.0.2
+        version: 3.0.2
+
   packages/mermaid-mindmap:
     dependencies:
       '@braintree/sanitize-url':
@@ -3538,7 +3578,7 @@ packages:
   /axios/0.21.4_debug@4.3.2:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.2
+      follow-redirects: 1.15.2
     transitivePeerDependencies:
       - debug
     dev: true
@@ -6171,18 +6211,6 @@ packages:
         optional: true
     dev: true
 
-  /follow-redirects/1.15.2_debug@4.3.2:
-    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
-    dependencies:
-      debug: 4.3.2
-    dev: true
-
   /foreground-child/2.0.0:
     resolution: {integrity: sha512-dCIq9FpEcyQyXKCkyzmlPTFNgrCzPudOe+mhvJU5zAtlBnGVy2yKxtfsxK2tQBThwq225jcvBjpw1Gr40uzZCA==}
     engines: {node: '>=8.0.0'}
@@ -6517,6 +6545,12 @@ packages:
   /grapheme-splitter/1.0.4:
     resolution: {integrity: sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==}
     dev: true
+
+  /graphlib/2.1.8:
+    resolution: {integrity: sha512-jcLLfkpoVGmH7/InMC/1hIvOPSUh38oJtGhvrOFGzioE1DZ+0YW16RgmOJhHiuWTvGiJQ9Z1Ik43JvkRPRvE+A==}
+    dependencies:
+      lodash: 4.17.21
+    dev: false
 
   /handle-thing/2.0.1:
     resolution: {integrity: sha512-9Qn4yBxelxoh2Ow62nP+Ka/kMnOXRi8BXnRaUwezLNhqelnN49xKz4F/dPP8OYLxLxq6JDtZb2i9XznUQbNPTg==}

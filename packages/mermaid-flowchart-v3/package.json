@@ -1,0 +1,66 @@
+{
+  "name": "@mermaid-js/mermaid-mindmap",
+  "version": "9.2.2",
+  "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
+  "module": "dist/mermaid-mindmap.core.mjs",
+  "types": "dist/detector.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/mermaid-mindmap.core.mjs",
+      "types": "./dist/detector.d.ts"
+    },
+    "./*": "./*"
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "mindmap",
+    "mermaid"
+  ],
+  "scripts": {
+    "prepublishOnly": "pnpm -w run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid"
+  },
+  "author": "Knut Sveidqvist",
+  "license": "MIT",
+  "standard": {
+    "ignore": [
+      "**/parser/*.js",
+      "dist/**/*.js",
+      "cypress/**/*.js"
+    ],
+    "globals": [
+      "page"
+    ]
+  },
+  "dependencies": {
+    "@braintree/sanitize-url": "^6.0.0",
+    "cytoscape": "^3.23.0",
+    "cytoscape-cose-bilkent": "^4.1.0",
+    "cytoscape-fcose": "^2.1.0",
+    "graphlib": "^2.1.0",
+    "dagre-d3-es": "7.0.4",
+    "d3": "^7.0.0",
+    "khroma": "^2.0.0",
+    "non-layered-tidy-tree-layout": "^2.0.2"
+  },
+  "devDependencies": {
+    "concurrently": "^7.5.0",
+    "mermaid": "workspace:*",
+    "rimraf": "^3.0.2"
+  },
+  "resolutions": {
+    "d3": "^7.0.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ]
+}

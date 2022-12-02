@@ -56,14 +56,20 @@
   <body>
     <div>Security check</div>
     <pre id="diagram" class="mermaid">
-graph LR
-    subgraph external
-        inside
-    end
-    outside --> external
-    </pre>
-    <pre id="diagram" class="mermaid">
-mindmap
+cyto LR
+      subgraph test
+        inside1 --> inside2
+      end
+      subgraph test2
+        inside3 --> inside4
+      end
+      out
+</pre
+    >
+    a(letter a<br />a) ---> b(letter b)--> c(letter c) --> d -->e(letter e<br />e) --> a b <-->
+    d(letter b<br />d)
+    <pre id="diagram" class="mermaid2">
+      mindmap
   root
     child1((Circle))
         grandchild 1
@@ -78,7 +84,7 @@ mindmap
         ::icon(mdi mdi-fire)
           gc7((grand<br/>grand<br/>child 8))
         </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
       gantt
         title Style today marker (vertical line should be 5px wide and half-transparent blue)
         dateFormat YYYY-MM-DD
@@ -96,9 +102,10 @@ mindmap
 
     <script type="module">
       import mindmap from '../../packages/mermaid-mindmap/src/detector';
+      import flowV3 from '../../packages/mermaid-flowchart-v3/src/detector';
       // import example from '../../packages/mermaid-example-diagram/src/detector';
       import mermaid from '../../packages/mermaid/src/mermaid';
-      await mermaid.registerExternalDiagrams([mindmap]);
+      await mermaid.registerExternalDiagrams([mindmap, flowV3]);
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
