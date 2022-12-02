@@ -46,11 +46,6 @@ const packageOptions = {
     packageName: 'mermaid-zenuml',
     file: 'detector.ts',
   },
-  'mermaid-example-diagram': {
-    name: 'mermaid-example-diagram',
-    packageName: 'mermaid-example-diagram',
-    file: 'diagram-definition.ts',
-  },
 };
 
 interface BuildOptions {
