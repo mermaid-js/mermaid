@@ -74,32 +74,23 @@ registerDiagram(
 ### How the diagram is parsed?
 
 ZenUML manage parsing internally. It uses antlr4 to parse the DSL. The parser is
-defined in `https://github.com/ZenUml/vue-sequence/blob/main/src/parser/index.js`.
+defined in `https://github.com/ZenUml/core/blob/main/src/parser/index.js`.
 
 ### How the diagram is rendered?
 
-The renderer is using iframe to render the diagram. The iframe is created in
+The renderer uses `@zenuml/core` to render the diagram. Please find the source code at
 `src/packages/mermaid-zenuml/zenumlRenderer.js`.
 
 ZenUML has dependency on `vue` v2 and `vuex`.
 
 ```javascript
-import Vue from 'vue';
-import Vuex from 'vuex';
-import VueSequence from 'vue-sequence';
-import 'vue-sequence/dist/vue-sequence.css';
-
-Vue.use(Vuex);
+import ZenUml from '@zenuml/core';
+import '@zenuml/core/dist/zenuml/core.css';
 
 export const draw = async (text, id, version, diagObj) => {
   // ...
-  const store = VueSequence.Store();
-  store.state.code = text;
-
-  new Vue({
-    el: diagram._groups[0][0].parentNode,
-    store,
-    render: (h) => h(VueSequence.DiagramFrame),
-  });
+  const zenuml = new ZenUml(app); // app is a normal dom element
+  await zenuml.render(text, 'default');
+  // ...
 };
 ```
