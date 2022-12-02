@@ -128,7 +128,7 @@ Rendering in Mermaid is initialized by `mermaid.initialize()` call. You can plac
 
 ### Adding external diagrams to mermaid
 
-Please refer to the [Mindmap](./mindmap.md?id=integrating-with-your-librarywebsite) section for more information.
+Please refer to the [Mindmap](../syntax/mindmap.md?id=integrating-with-your-librarywebsite) section for more information.
 
 ### Working Examples
 

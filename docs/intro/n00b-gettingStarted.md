@@ -128,7 +128,7 @@ b. The importing of mermaid library through the `mermaid.esm.js` or `mermaid.esm
 ```html
 <body>
   <script type="module">
-    import mermaid from 'https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs';
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true });
   </script>
 </body>
@@ -145,7 +145,7 @@ Rendering in Mermaid is initialized by `mermaid.initialize()` call. You can plac
 
 ### Adding external diagrams to mermaid
 
-Please refer to the [Mindmap](./mindmap.md?id=integrating-with-your-librarywebsite) section for more information.
+Please refer to the [Mindmap](../syntax/mindmap.md?id=integrating-with-your-librarywebsite) section for more information.
 
 ### Working Examples
 
@@ -172,7 +172,7 @@ Please refer to the [Mindmap](./mindmap.md?id=integrating-with-your-librarywebsi
     </pre>
 
     <script type="module">
-      import mermaid from 'https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs';
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
       mermaid.initialize({ startOnLoad: true });
     </script>
   </body>
