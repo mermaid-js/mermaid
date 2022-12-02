@@ -7,21 +7,23 @@ import '@zenuml/core/dist/zenuml/core.css';
 // Create a Zen UML container outside the svg first for rendering, otherwise the Zen UML diagram cannot be rendered properly
 function createTemporaryZenumlContainer(id: string) {
   const container = document.createElement('div');
-  container.id = id;
+  container.id = `container-${id}`;
+  container.style.display = 'flex';
   container.innerHTML = `<div id="zenUMLApp-${id}"></div>`;
-  container.style.display = 'none';
   const app = container.querySelector(`#zenUMLApp-${id}`) as HTMLElement;
   return { container, app };
 }
 
 // Create a foreignObject to wrap the Zen UML container in the svg
-function createForeignObject() {
+function createForeignObject(id) {
   const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
   foreignObject.setAttribute('x', 0);
   foreignObject.setAttribute('y', 0);
   foreignObject.setAttribute('width', '100%');
   foreignObject.setAttribute('height', '100%');
-  return foreignObject;
+  const { container, app } = createTemporaryZenumlContainer(id);
+  foreignObject.appendChild(container);
+  return { foreignObject, container, app };
 }
 
 /**
@@ -50,23 +52,16 @@ export const draw = async function (text: string, id: string) {
     return;
   }
 
-  const foreignObject = createForeignObject();
+  const { foreignObject, container, app } = createForeignObject(id);
   svgContainer.appendChild(foreignObject);
 
-  const { container, app } = createTemporaryZenumlContainer(id);
-  document.body.appendChild(container);
-
   const zenuml = new ZenUml(app);
+  // default is a theme name. More themes to be added and will be configurable in the future
   await zenuml.render(text, 'default');
 
-  const zenUml = container.querySelector('.zenuml');
-  log.debug(zenUml, foreignObject);
-  const zenumlClone = zenUml.cloneNode(true);
-  foreignObject.appendChild(zenumlClone);
-  const { width, height } = window.getComputedStyle(zenumlClone);
-  log.debug('zenuml size', width, height);
+  const { width, height } = window.getComputedStyle(container);
+  log.debug('zenuml diagram size', width, height);
   svgContainer.setAttribute('style', `width: ${width}; height: ${height};`);
-  container.remove();
 };
 
 export default {
