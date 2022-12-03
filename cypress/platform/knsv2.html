@@ -56,29 +56,24 @@
   <body>
     <div>Security check</div>
     <pre id="diagram" class="mermaid">
-graph LR
+flowchart LR
     subgraph external
-        inside
+      subgraph internal
+          inside
+      end
     end
-    outside --> external
+    outside --> inside
     </pre>
     <pre id="diagram" class="mermaid">
-mindmap
-  root
-    child1((Circle))
-        grandchild 1
-        grandchild 2
-    child2(Round rectangle)
-        grandchild 3
-        grandchild 4
-    child3[Square]
-        grandchild 5
-        ::icon(mdi mdi-fire)
-        gc6((grand<br/>child 6))
-        ::icon(mdi mdi-fire)
-          gc7((grand<br/>grand<br/>child 8))
-        </pre>
-    <pre id="diagram" class="mermaid">
+flowchart LR
+    subgraph parent
+      subgraph childB
+        grandchild
+      end
+    end
+    foo --> childA        </pre
+    >
+    <pre id="diagram" class="mermaid2">
       gantt
         title Style today marker (vertical line should be 5px wide and half-transparent blue)
         dateFormat YYYY-MM-DD
@@ -103,7 +98,7 @@ mindmap
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'base',
+        theme: 'default',
         startOnLoad: true,
         logLevel: 0,
         flowchart: {
@@ -114,10 +109,6 @@ mindmap
           useMaxWidth: false,
         },
         useMaxWidth: false,
-        lazyLoadedDiagrams: [
-          './mermaid-mindmap-detector.esm.mjs',
-          './mermaid-example-diagram-detector.esm.mjs',
-        ],
       });
       function callback() {
         alert('It worked');
