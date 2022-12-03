@@ -61,6 +61,13 @@ const renderChart = async () => {
   mermaidConfig.theme = hasDarkClass ? 'dark' : 'default';
 
   console.log({ mermaidConfig });
-  svg.value = await render(props.id, decodeURIComponent(props.graph), mermaidConfig);
+  let svgCode = await render(props.id, decodeURIComponent(props.graph), mermaidConfig);
+  // This is a hack to force v-html to re-render, otherwise the diagram disappears
+  // when **switching themes** or **reloading the page**.
+  // The cause is that the diagram is deleted during rendering (out of Vue's knowledge).
+  // Because svgCode does NOT change, v-html does not re-render.
+  // This is not required for all diagrams, but it is required for c4c, mindmap and zenuml.
+  const salt = Math.random().toString(36).substring(7);
+  svg.value = `${svgCode} <span style="display: none">${salt}</span>`;
 };
 </script>
