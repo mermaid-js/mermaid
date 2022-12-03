@@ -44,6 +44,8 @@
     "cytoscape-fcose": "^2.1.0",
     "graphlib": "^2.1.0",
     "dagre-d3-es": "7.0.4",
+    "cytoscape-dagre": "^2.1.0",
+    "elkjs": "^0.8.2",
     "d3": "^7.0.0",
     "khroma": "^2.0.0",
     "non-layered-tidy-tree-layout": "^2.0.2"

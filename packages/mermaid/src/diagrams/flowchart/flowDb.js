@@ -439,7 +439,7 @@ export const clear = function (ver = 'gen-1') {
   commonClear();
 };
 export const setGen = (ver) => {
-  version = ver || 'gen-1';
+  version = ver || 'gen-2';
 };
 /** @returns {string} */
 export const defaultStyle = function () {

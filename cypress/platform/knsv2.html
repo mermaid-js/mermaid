@@ -57,17 +57,10 @@
     <div>Security check</div>
     <pre id="diagram" class="mermaid">
 cyto LR
-      subgraph test
-        inside1 --> inside2
-      end
-      subgraph test2
-        inside3 --> inside4
-      end
-      out
-</pre
-    >
-    a(letter a<br />a) ---> b(letter b)--> c(letter c) --> d -->e(letter e<br />e) --> a b <-->
-    d(letter b<br />d)
+    inside1 --> inside2 & inside3 & inside4 & inside5 & inside6
+    a(letter a<br />a) ---> b(letter b)--> c(letter c) --> d -->e(letter e<br />e) --> a
+    b <--> d(letter b<br />d)
+    </pre>
     <pre id="diagram" class="mermaid2">
       mindmap
   root

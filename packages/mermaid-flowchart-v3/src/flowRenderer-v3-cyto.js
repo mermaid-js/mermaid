@@ -4,18 +4,15 @@ import { log, getConfig, setupGraphViewbox } from './mermaidUtils';
 import { insertNode } from '../../mermaid/src/dagre-wrapper/nodes.js';
 import insertMarkers from '../../mermaid/src/dagre-wrapper/markers.js';
 import dagre from 'cytoscape-dagre';
+
 // Replace with other function to avoid dependency to dagre-d3
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
 
 import common, { evaluate } from '../../mermaid/src/diagrams/common/common';
 import { interpolateToCurve, getStylesFromArray } from '../../mermaid/src/utils';
 
-// import ELK from 'elkjs/lib/elk-api';
-// const elk = new ELK({
-//   workerUrl: './elk-worker.min.js',
-// });
-import ELK from 'elkjs/lib/elk.bundled.js';
-const elk = new ELK();
+import cytoscape from 'cytoscape';
+cytoscape.use(dagre);
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -24,8 +21,6 @@ export const setConf = function (cnf) {
     conf[key] = cnf[key];
   }
 };
-
-const nodeDb = {};
 
 // /**
 //  * Function that adds the vertices found during parsing to the graph to be rendered.
@@ -186,8 +181,7 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
       tooltip: diagObj.db.getTooltip(vertex.id) || '',
       domId: diagObj.db.lookUpDomId(vertex.id),
       haveCallback: vertex.haveCallback,
-      width: boundingBox.width,
-      height: boundingBox.height,
+      width: vertex.type === 'group' ? 500 : undefined,
       dir: vertex.dir,
       type: vertex.type,
       props: vertex.props,
@@ -197,11 +191,12 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
       parent: parentLookUpDb.parentById[vertex.id],
     };
     // if (!Object.keys(parentLookUpDb.childrenById).includes(vertex.id)) {
-    graph.children.push({
-      ...data,
+    graph.elements.nodes.push({
+      group: 'nodes',
+      // data,
+      data,
     });
     // }
-    nodeDb[node.id] = data;
     log.trace('setNode', {
       labelStyle: styles.labelStyle,
       shape: _shape,
@@ -363,13 +358,9 @@ export const addEdges = function (edges, diagObj, graph) {
     edgeData.classes = 'flowchart-link ' + linkNameStart + ' ' + linkNameEnd;
 
     // Add the edge to the graph
-    graph.edges.push({
-      id: 'e' + edge.start + edge.end,
-      sources: [edge.start],
-      targets: [edge.end],
-      edgeData,
-      targetPort: 'PortSide.NORTH',
-      // id: cnt,
+    graph.elements.edges.push({
+      group: 'edges',
+      data: { source: edge.start, target: edge.end, edgeData, id: cnt },
     });
   });
   return graph;
@@ -496,22 +487,23 @@ const addSubGraphs = function (db) {
   return parentLookUpDb;
 };
 
-const insertEdge = function (edgesEl, edge, edgeData, diagObj) {
-  const src = edge.sections[0].startPoint;
-  const dest = edge.sections[0].endPoint;
-  const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
+const insertEdge = function (edgesEl, edge, edgeData, bounds, diagObj) {
+  const src = edge.sourceEndpoint();
+  const segments = edge.segmentPoints();
   // const dest = edge.target().position();
-  // const dest = edge.targetEndpoint();
+  const dest = edge.targetEndpoint();
   const segPoints = segments.map((segment) => [segment.x, segment.y]);
-  const points = [[src.x, src.y], ...segPoints, [dest.x, dest.y]];
+  const points = [
+    [src.x, src.y],
+    [segments[0].x, segments[0].y],
+    [dest.x, dest.y],
+  ];
   // console.log('Edge ctrl points:', edge.segmentPoints(), 'Bounds:', bounds, edge.source(), points);
   // console.log('Edge ctrl points:', points);
-  // const curve = line().curve(curveCardinal);
-  const curve = line().curve(curveLinear);
+  const curve = line().curve(curveCardinal);
   const edge2 = edgesEl
     .insert('path')
     .attr('d', curve(points))
-    // .attr('d', points))
     .attr('class', 'path')
     .attr('fill', 'none');
   addmarkers(edge2, edgeData, diagObj.type, diagObj.arrowMarkerAbsolute);
@@ -556,21 +548,54 @@ export const draw = function (text, id, _version, diagObj) {
     const renderEl = select('body').append('div').attr('style', 'height:400px').attr('id', 'cy');
     // .attr('style', 'display:none')
     let graph = {
-      id: 'root',
-      layoutOptions: {
-        'elk.algorithm': 'layered',
-        'elk.direction': 'DOWN',
-        'elk.port.side': 'SOUTH',
-        // 'nodePlacement.strategy': 'SIMPLE',
-        'org.eclipse.elk.graphviz.concentrate': true,
-        // 'org.eclipse.elk.spacing.nodeNode': 120,
-        // 'org.eclipse.elk.spacing.edgeEdge': 120,
-        // 'org.eclipse.elk.spacing.edgeNode': 120,
-        // 'org.eclipse.elk.spacing.nodeEdge': 120,
-        'org.eclipse.elk.spacing.componentComponent': 120,
+      styleEnabled: true,
+      // animate: false,
+      // ready: function () {
+      //   log.info('Ready', this);
+      // },
+      container: document.getElementById('cy'), // container to render in
+
+      boxSelectionEnabled: false,
+
+      style: [
+        {
+          selector: 'node',
+          css: {
+            content: 'data(id)',
+            'text-valign': 'center',
+            'text-halign': 'center',
+          },
+        },
+        {
+          selector: ':parent',
+          css: {
+            'text-valign': 'top',
+            'text-halign': 'center',
+          },
+        },
+        {
+          selector: 'edge',
+          css: {
+            'curve-style': 'bezier',
+            'target-arrow-shape': 'triangle',
+          },
+        },
+      ],
+
+      elements: {
+        nodes: [
+          { data: { id: 'a', parent: 'b' } },
+          { data: { id: 'b' } },
+          { data: { id: 'c', parent: 'b' } },
+          { data: { id: 'd' } },
+          { data: { id: 'e' } },
+          { data: { id: 'f', parent: 'e' } },
+        ],
+        edges: [
+          { data: { id: 'ad', source: 'a', target: 'd' } },
+          { data: { id: 'eb', source: 'e', target: 'b' } },
+        ],
       },
-      children: [],
-      edges: [],
     };
     log.info('Drawing flowchart using v3 renderer');
     // Fetch the default direction, use TD if none was found
@@ -613,29 +638,112 @@ export const draw = function (text, id, _version, diagObj) {
     const edges = diagObj.db.getEdges();
     graph = addEdges(edges, diagObj, graph);
 
-    elk.layout(graph).then(function (g) {
-      g.children.forEach(function (node) {
-        const data = nodeDb[node.id];
-        if (data) {
-          data.el.attr(
-            'transform',
-            `translate(${node.x + node.width / 2}, ${node.y + node.height / 2})`
-          );
+    const cy = cytoscape(graph);
+
+    // c.style();
+    // Make cytoscape care about the dimensions of the nodes
+    cy.nodes().forEach(function (n) {
+      const boundingBox = n.data().boundingBox;
+      if (boundingBox) {
+        n.style('width', boundingBox.width);
+        n.style('height', boundingBox.height);
+      }
+      n.style('shape', 'rectangle');
+      // n.layoutDimensions = () => {
+      //   // console.log('Node dimensions', boundingBox.width, boundingBox.height);
+      //   if (boundingBox) {
+      //     return { w: boundingBox.width, h: boundingBox.height };
+      //   }
+      //   // return { w: boundingBox.width, h: boundingBox.height };
+
+      //   // const data = n.data();
+      //   // return { w: data.width, h: data.height };
+
+      //   return { w: 206, h: 160 };
+      // };
+    });
+
+    cy.layout({
+      // name: 'dagre',
+      // name: 'preset',
+      // name: 'cose',
+      // name: 'circle',
+      name: 'concentric',
+      headless: false,
+      styleEnabled: true,
+      animate: false,
+    }).run();
+
+    // function runLayouts(fit, callBack) {
+    //   // step-1 position child nodes
+    //   var parentNodes = cy.nodes(':parent');
+    //   var grid_layout = parentNodes.descendants().layout({
+    //     name: 'grid',
+    //     cols: 1,
+    //     fit: fit,
+    //   });
+    //   grid_layout.promiseOn('layoutstop').then(function (event) {
+    //     // step-2 position parent nodes
+    //     var dagre_layout = parentNodes.layout({
+    //       name: 'dagre',
+    //       rankDir: 'TB',
+    //       fit: fit,
+    //     });
+    //     dagre_layout.promiseOn('layoutstop').then(function (event) {
+    //       if (callBack) {
+    //         callBack.call(cy, event);
+    //       }
+    //     });
+    //     dagre_layout.run();
+    //   });
+    //   grid_layout.run();
+    // }
+    // runLayouts();
+
+    // log.info('Positions', cy.nodes().positions());
+    // window.cy = cy;
+    cy.ready((e) => {
+      log.info('Ready', e, cy.data());
+      //   // setTimeout(() => {
+      cy.nodes().map((node, id) => {
+        const data = node.data();
+
+        log.info(
+          'Position: (',
+          node.position().x,
+          ', ',
+          node.position().y,
+          ')',
+          data,
+          cy.elements()[0].renderedBoundingBox()
+        );
+        if (data.el) {
+          data.el.attr('transform', `translate(${node.position().x}, ${node.position().y})`);
           // document
           //   .querySelector(`[id="${data.domId}"]`)
           //   .setAttribute('transform', `translate(${node.position().x}, ${node.position().y})`);
           log.info('Id = ', data.domId, svg.select(`[id="${data.domId}"]`), data.el.node());
         }
+        // else {
+        //   // console.log('No element found for node', data, node.position(), node.size());
+        // }
       });
 
-      g.edges.map((edge, id) => {
-        insertEdge(edgesEl, edge, edge.edgeData, diagObj);
+      cy.edges().map((edge, id) => {
+        const data = edge.data();
+        if (edge[0]._private.bodyBounds) {
+          const bounds = edge[0]._private.rscratch;
+          // insertEdge(edgesEl, edge, data.edgeData, bounds, diagObj);
+        }
       });
+
+      log.info(cy.json());
       setupGraphViewbox({}, svg, conf.diagramPadding, conf.useMaxWidth);
+      // Remove element after layout
+      // renderEl.remove();
       resolve();
+      // }, 500);
     });
-    // Remove element after layout
-    // renderEl.remove();
   });
 };
 
