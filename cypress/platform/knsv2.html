@@ -57,22 +57,28 @@
     <div>Security check</div>
     <pre id="diagram" class="mermaid">
 flowchart LR
-    subgraph external
-      subgraph internal
-          inside
-      end
+    %% Actors
+    A
+    subgraph Sub
+        B --> C
     end
-    outside --> inside
+
+    %% Accusations
+    A --L --> Sub
+
+    %% Offense
+    B --> A
+
     </pre>
     <pre id="diagram" class="mermaid">
-flowchart LR
-    subgraph parent
-      subgraph childB
-        grandchild
-      end
-    end
-    foo --> childA        </pre
-    >
+      stateDiagram-v2
+
+      [*] --> S1
+      S1 --> S2: long line using<br/>should work
+      S1 --> S3: long line using <br>should work
+      S1 --> S4: long line using \\nshould work
+
+    </pre>
     <pre id="diagram" class="mermaid2">
       gantt
         title Style today marker (vertical line should be 5px wide and half-transparent blue)
