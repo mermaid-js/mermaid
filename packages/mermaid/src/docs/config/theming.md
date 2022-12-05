@@ -95,7 +95,7 @@ The theming engine will only recognize hex colors and not color names. So, the v
 
 | Variable             | Default value                      | Description                                                                                                                      |
 | -------------------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| darkMode             | false                              | Affects how derived colors are calculated. Set value to `true` for darkmode.                                                     |
+| darkMode             | false                              | Affects how derived colors are calculated. Set value to `true` for dark mode.                                                    |
 | background           | #f4f4f4                            | Used to calculate color for items that should either be background colored or contrasting to the background                      |
 | fontFamily           | trebuchet ms, verdana, arial       |                                                                                                                                  |
 | fontSize             | 16px                               | Font size in pixels                                                                                                              |
