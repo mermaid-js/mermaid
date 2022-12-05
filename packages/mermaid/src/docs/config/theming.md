@@ -49,8 +49,8 @@ To make a custom theme, modify `themeVariables` via `init`.
 
 You will need to use the [base](#available-themes) theme as it is the only modifiable theme.
 
-| Parameter      | Description                                                        | Type   | Properties                         |
-| -------------- | ------------------------------------------------------------------ | ------ | ---------------------------------- |
+| Parameter      | Description                          | Type   | Properties                                                                                          |
+| -------------- | ------------------------------------ | ------ | --------------------------------------------------------------------------------------------------- |
 | themeVariables | Modifiable with the `init` directive | Object | `primaryColor`, `primaryTextColor`, `lineColor` ([see full list](#theme-variables-reference-table)) |
 
 Example of modifying `themeVariables` using the `init` directive:
@@ -93,44 +93,44 @@ The theming engine will only recognize hex colors and not color names. So, the v
 
 ## Theme Variables
 
-| Variable             | Default value                          | Description                                                                                                                      |
-| -------------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| darkMode             | false                                  | Affects how derived colors are calculated. Set value to `true` for darkmode.                                                     |
-| background           | #f4f4f4                                | Used to calculate color for items that should either be background colored or contrasting to the background                      |
-| fontFamily           | trebuchet ms, verdana, arial           |                                                                                                                                  |
-| fontSize             | 16px                                   | Font size in pixels                                                                                                              |
-| primaryColor         | #fff4dd                                | Color to be used as background in nodes, other colors will be derived from this                                                  |
-| primaryBorderColor   | calculated from primaryColor           | Color to be used as border in nodes using `primaryColor`                                                                         |
-| primaryBorderColor   | calculated from primaryColor           | Color to be used as border in nodes using `primaryColor`                                                                         |
-| primaryTextColor     | calculated from darkMode #ddd/#333     | Color to be used as text color in nodes using `primaryColor`                                                                     |
-| secondaryColor       | calculated from primaryColor           |                                                                                                                                  |
-| primaryBorderColor   | calculated from primaryColor           | Color to be used as border in nodes using `primaryColor`                                                                         |
-| secondaryBorderColor | calculated from secondaryColor         | Color to be used as border in nodes using `secondaryColor`                                                                       |
-| primaryBorderColor   | calculated from primaryColor           | Color to be used as border in nodes using `primaryColor`                                                                         |
-| secondaryTextColor   | calculated from secondaryColor         | Color to be used as text color in nodes using `secondaryColor`                                                                   |
-| tertiaryColor        | calculated from primaryColor           |                                                                                                                                  |
-| tertiaryBorderColor  | calculated from tertiaryColor          | Color to be used as border in nodes using `tertiaryColor`                                                                        |
-| tertiaryTextColor    | calculated from tertiaryColor          | Color to be used as text color in nodes using `tertiaryColor`                                                                    |
-| noteBkgColor         | #fff5ad                                | Color used as background in notes                                                                                                |
-| noteTextColor        | #333                                   | Text color in note rectangles                                                                                                    |
-| noteBorderColor      | calculated from noteBkgColor           | Border color in note rectangles                                                                                                  |
-| lineColor            | calculated from background             |                                                                                                                                  |
-| textColor            | calculated from primaryTextColor       | Text in diagram over the background for instance text on labels and on signals in sequence diagram or the title in Gantt diagram |
-| mainBkg              | calculated from primaryColor           | Background in flowchart objects like rects/circles, class diagram classes, sequence diagram etc                                  |
-| errorBkgColor        | tertiaryColor                          | Color for syntax error message                                                                                                   |
-| errorTextColor       | tertiaryTextColor                      | Color for syntax error message                                                                                                   |
+| Variable             | Default value                      | Description                                                                                                                      |
+| -------------------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| darkMode             | false                              | Affects how derived colors are calculated. Set value to `true` for darkmode.                                                     |
+| background           | #f4f4f4                            | Used to calculate color for items that should either be background colored or contrasting to the background                      |
+| fontFamily           | trebuchet ms, verdana, arial       |                                                                                                                                  |
+| fontSize             | 16px                               | Font size in pixels                                                                                                              |
+| primaryColor         | #fff4dd                            | Color to be used as background in nodes, other colors will be derived from this                                                  |
+| primaryBorderColor   | calculated from primaryColor       | Color to be used as border in nodes using `primaryColor`                                                                         |
+| primaryBorderColor   | calculated from primaryColor       | Color to be used as border in nodes using `primaryColor`                                                                         |
+| primaryTextColor     | calculated from darkMode #ddd/#333 | Color to be used as text color in nodes using `primaryColor`                                                                     |
+| secondaryColor       | calculated from primaryColor       |                                                                                                                                  |
+| primaryBorderColor   | calculated from primaryColor       | Color to be used as border in nodes using `primaryColor`                                                                         |
+| secondaryBorderColor | calculated from secondaryColor     | Color to be used as border in nodes using `secondaryColor`                                                                       |
+| primaryBorderColor   | calculated from primaryColor       | Color to be used as border in nodes using `primaryColor`                                                                         |
+| secondaryTextColor   | calculated from secondaryColor     | Color to be used as text color in nodes using `secondaryColor`                                                                   |
+| tertiaryColor        | calculated from primaryColor       |                                                                                                                                  |
+| tertiaryBorderColor  | calculated from tertiaryColor      | Color to be used as border in nodes using `tertiaryColor`                                                                        |
+| tertiaryTextColor    | calculated from tertiaryColor      | Color to be used as text color in nodes using `tertiaryColor`                                                                    |
+| noteBkgColor         | #fff5ad                            | Color used as background in notes                                                                                                |
+| noteTextColor        | #333                               | Text color in note rectangles                                                                                                    |
+| noteBorderColor      | calculated from noteBkgColor       | Border color in note rectangles                                                                                                  |
+| lineColor            | calculated from background         |                                                                                                                                  |
+| textColor            | calculated from primaryTextColor   | Text in diagram over the background for instance text on labels and on signals in sequence diagram or the title in Gantt diagram |
+| mainBkg              | calculated from primaryColor       | Background in flowchart objects like rects/circles, class diagram classes, sequence diagram etc                                  |
+| errorBkgColor        | tertiaryColor                      | Color for syntax error message                                                                                                   |
+| errorTextColor       | tertiaryTextColor                  | Color for syntax error message                                                                                                   |
 
 ## Flowchart Variables
 
-| Variable            | Default value                    | Description                  |
-| ------------------- | -------------------------------- | ---------------------------- |
-| nodeBorder          | primaryBorderColor               | Node Border Color            |
-| clusterBkg          | tertiaryColor                    | Background in subgraphs      |
-| clusterBorder       | tertiaryBorderColor              | Cluster Border Color         |
-| defaultLinkColor    | lineColor                        | Link Color                   |
-| titleColor          | tertiaryTextColor                | Title Color                  |
-| edgeLabelBackground | calculated from secondaryColor   |                              |
-| nodeTextColor       | primaryTextColor                 | Color for text inside Nodes  |
+| Variable            | Default value                  | Description                 |
+| ------------------- | ------------------------------ | --------------------------- |
+| nodeBorder          | primaryBorderColor             | Node Border Color           |
+| clusterBkg          | tertiaryColor                  | Background in subgraphs     |
+| clusterBorder       | tertiaryBorderColor            | Cluster Border Color        |
+| defaultLinkColor    | lineColor                      | Link Color                  |
+| titleColor          | tertiaryTextColor              | Title Color                 |
+| edgeLabelBackground | calculated from secondaryColor |                             |
+| nodeTextColor       | primaryTextColor               | Color for text inside Nodes |
 
 ## Sequence Diagram Variables
 
@@ -145,7 +145,7 @@ The theming engine will only recognize hex colors and not color names. So, the v
 | labelBoxBkgColor      | actorBkg                       | Label Box Background Color  |
 | labelBoxBorderColor   | actorBorder                    | Label Box Border Color      |
 | labelTextColor        | actorTextColor                 | Label Text Color            |
-| loopTextColor         | actorTextColor                 | Loop Text Color              |
+| loopTextColor         | actorTextColor                 | Loop Text Color             |
 | activationBorderColor | calculated from secondaryColor | Activation Border Color     |
 | activationBkgColor    | secondaryColor                 | Activation Background Color |
 | sequenceNumberColor   | calculated from lineColor      | Sequence Number Color       |
