@@ -8,9 +8,7 @@ try {
 }
 
 export const render = async (id: string, code: string, config: MermaidConfig): Promise<string> => {
-  // make a clone of config, so we don't mutate the original
-  const mermaidConfig = { ...config };
-  mermaid.initialize(mermaidConfig);
+  mermaid.initialize(config);
   const svg = await mermaid.renderAsync(id, code);
   return svg;
 };

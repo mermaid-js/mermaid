@@ -20,11 +20,6 @@ const props = defineProps({
 const svg = ref(null);
 let mut = null;
 
-const mermaidConfig = {
-  securityLevel: 'loose',
-  startOnLoad: false,
-};
-
 onMounted(async () => {
   mut = new MutationObserver(() => renderChart());
   mut.observe(document.documentElement, { attributes: true });
@@ -58,7 +53,11 @@ onUnmounted(() => mut.disconnect());
 const renderChart = async () => {
   console.log('rendering chart' + props.id + props.graph);
   const hasDarkClass = document.documentElement.classList.contains('dark');
-  mermaidConfig.theme = hasDarkClass ? 'dark' : 'default';
+  const mermaidConfig = {
+        securityLevel: 'loose',
+        startOnLoad: false,
+        theme: hasDarkClass ? 'dark' : 'default',
+      };
 
   console.log({ mermaidConfig });
   let svgCode = await render(props.id, decodeURIComponent(props.graph), mermaidConfig);
