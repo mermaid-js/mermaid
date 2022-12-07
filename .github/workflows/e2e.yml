@@ -49,6 +49,7 @@ jobs:
         if: ${{ ( env.CYPRESS_RECORD_KEY != '' ) || ( matrix.containers == 1 ) }}
         with:
           start: pnpm run dev
+          browser: chrome
           wait-on: 'http://localhost:9000'
           # Disable recording if we don't have an API key
           # e.g. if this action was run from a fork

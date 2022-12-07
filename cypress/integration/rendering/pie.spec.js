@@ -54,7 +54,10 @@ describe('Pie Chart', () => {
       const style = svg.attr('style');
       expect(style).to.match(/^max-width: [\d.]+px;$/);
       const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-      expect(maxWidthValue).to.be.within(cy.viewport.width * 0.95, cy.viewport.width * 1.05);
+      expect(maxWidthValue).to.be.within(
+        Cypress.config().viewportWidth * 0.95,
+        Cypress.config().viewportWidth * 1.05
+      );
     });
   });
   it('should render a pie diagram when useMaxWidth is false', () => {
@@ -68,10 +71,11 @@ describe('Pie Chart', () => {
       { pie: { useMaxWidth: false } }
     );
     cy.get('svg').should((svg) => {
-      // const height = parseFloat(svg.attr('height'));
       const width = parseFloat(svg.attr('width'));
-      // expect(height).to.eq(450);
-      expect(width).to.be.within(cy.viewport.width * 0.95, cy.viewport.width * 1.05);
+      expect(width).to.be.within(
+        Cypress.config().viewportWidth * 0.95,
+        Cypress.config().viewportWidth * 1.05
+      );
       expect(svg).to.not.have.attr('style');
     });
   });

@@ -136,6 +136,5 @@ export const urlSnapshotTest = (url, _options, api = false, validation) => {
 
 export const renderGraph = (graphStr, options, api) => {
   const url = mermaidUrl(graphStr, options, api);
-
   cy.visit(url);
 };
