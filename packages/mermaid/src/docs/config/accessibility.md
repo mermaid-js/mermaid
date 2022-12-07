@@ -6,7 +6,7 @@ Now with Mermaid library in much wider use, we have started to work towards more
 
 To begin with, we have added a new feature to Mermaid library, which is to support accessibility options, **Accessibility Title** and **Accessibility Description**.
 
-This support for accessibility options is available for all the diagrams/chart types. Also, we have tired to keep the same format for the accessibility options, so that it is easy to understand and maintain.
+This support for accessibility options is available for all the diagrams/chart types. Also, we have tried to keep the same format for the accessibility options, so that it is easy to understand and maintain.
 
 ## Defining Accessibility Options
 
