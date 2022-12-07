@@ -28,9 +28,21 @@ jobs:
           cache: pnpm
           node-version: ${{ matrix.node-version }}
 
+      # Experiment with this step if we cannot check-in the snapshots to the repo.
+      # - name: Cache snapshots
+      #   id: cache-snapshot
+      #   uses: actions/cache@v3
+      #   with:
+      #     # npm cache files are stored in `~/.npm` on Linux/macOS
+      #     path: ./cypress/snapshots
+      #     key: ${{ runner.os }}-build-${env.GITHUB_REF}
+      #     restore-keys: |
+      #       ${{ runner.os }}-build-develop
+
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
+        id: cypress
         uses: cypress-io/github-action@v4
         # If CYPRESS_RECORD_KEY is set, run in parallel on all containers
         # Otherwise (e.g. if running from fork), we run on a single container only
@@ -44,3 +56,17 @@ jobs:
           parallel: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        if: ${{ failure() && steps.cypress.conclusion == 'failure' }}
+        with:
+          name: error-snapshots
+          path: cypress/snapshots/**/__diff_output__/*
+
+      # - name: Commit changes
+      #   uses: EndBug/add-and-commit@v9
+      #   if: ${{ steps.verifyDocs.outcome == 'failure' && github.event_name == 'push' }}
+      #   with:
+      #     message: 'Update docs'
+      #     add: 'docs/*'
