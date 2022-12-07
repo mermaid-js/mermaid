@@ -26,7 +26,7 @@ Gemfile.lock
 /.vs
 
 cypress/screenshots/
-cypress/snapshots/
+cypress/snapshots-dev/
 
 # eslint --cache file
 .eslintcache
