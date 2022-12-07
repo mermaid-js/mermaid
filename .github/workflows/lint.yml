@@ -41,7 +41,7 @@ jobs:
       - name: Verify Docs
         id: verifyDocs
         working-directory: ./packages/mermaid
-        continue-on-error: true
+        continue-on-error: ${{ github.event_name == 'push' }}
         run: pnpm run docs:verify
 
       - name: Rebuild Docs
