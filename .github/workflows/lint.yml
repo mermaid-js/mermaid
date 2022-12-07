@@ -9,7 +9,7 @@ on:
       - ready_for_review
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   lint:
@@ -39,5 +39,19 @@ jobs:
         run: pnpm run lint
 
       - name: Verify Docs
+        id: verifyDocs
         working-directory: ./packages/mermaid
+        continue-on-error: true
         run: pnpm run docs:verify
+
+      - name: Rebuild Docs
+        if: ${{ steps.verifyDocs.outcome == 'failure' && github.event_name == 'push' }}
+        run: |
+          yarn docs:build
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        if: ${{ steps.verifyDocs.outcome == 'failure' && github.event_name == 'push' }}
+        with:
+          message: 'Update docs'
+          add: 'docs/*'
