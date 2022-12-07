@@ -32,4 +32,5 @@ addMatchImageSnapshotCommand({
   comparisonMethod: 'ssim',
   failureThreshold: 0.01,
   failureThresholdType: 'percent',
+  customDiffConfig: { threshold: 0.02 },
 });
