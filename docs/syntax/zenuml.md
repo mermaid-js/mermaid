@@ -13,6 +13,7 @@ syntax than the original Sequence Diagram in mermaid.
 
 ```mermaid-example
 zenuml
+    title Demo
     Alice->John: Hello John, how are you?
     John->Alice: Great!
     Alice->John: See you later!
@@ -20,6 +21,7 @@ zenuml
 
 ```mermaid
 zenuml
+    title Demo
     Alice->John: Hello John, how are you?
     John->Alice: Great!
     Alice->John: See you later!
@@ -36,6 +38,7 @@ appearance by doing the following:
 
 ```mermaid-example
 zenuml
+    title Declare participant (optional)
     Bob
     Alice
     Alice->Bob: Hi Bob
@@ -44,6 +47,7 @@ zenuml
 
 ```mermaid
 zenuml
+    title Declare participant (optional)
     Bob
     Alice
     Alice->Bob: Hi Bob
@@ -56,6 +60,7 @@ If you specifically want to use symbols instead of just rectangles with text you
 
 ```mermaid-example
 zenuml
+    title Annotators
     @Actor Alice
     @Database Bob
     Alice->Bob: Hi Bob
@@ -64,6 +69,7 @@ zenuml
 
 ```mermaid
 zenuml
+    title Annotators
     @Actor Alice
     @Database Bob
     Alice->Bob: Hi Bob
@@ -79,6 +85,7 @@ The participants can have a convenient identifier and a descriptive label.
 
 ```mermaid-example
 zenuml
+    title Aliases
     A as Alice
     J as John
     A->J: Hello John, how are you?
@@ -87,6 +94,7 @@ zenuml
 
 ```mermaid
 zenuml
+    title Aliases
     A as Alice
     J as John
     A->J: Hello John, how are you?
@@ -106,23 +114,47 @@ Messages can be one of:
 
 You can think of a sync (blocking) method in a programming language.
 
+```mermaid-example
+zenuml
+    title Sync message
     A.SyncMessage
     A.SyncMessage(with, parameters) {
       B.nestedSyncMessage()
     }
+```
+
+```mermaid
+zenuml
+    title Sync message
+    A.SyncMessage
+    A.SyncMessage(with, parameters) {
+      B.nestedSyncMessage()
+    }
+```
 
 ### Async message
 
 You can think of an async (non-blocking) method in a programming language.
 Fire an event and forget about it.
 
+```mermaid-example
+zenuml
+    title Async message
     Alice->Bob: How are you?
+```
+
+```mermaid
+zenuml
+    title Async message
+    Alice->Bob: How are you?
+```
 
 ### Creation message
 
 We use `new` keyword to create an object.
 
-    new Object
+    new A1
+    new A2(with, parameters)
 
 ### Reply message
 
@@ -145,17 +177,37 @@ There are three ways to express a reply message:
 
 The third way `@return` is rarely used, but it is useful when you want to return to one level up.
 
+```mermaid-example
+zenuml
+    title Reply message
     Client->A.method() {
       B.method() {
         if(condition) {
           return x1
-          // mark a reply message from A to client and return early
+          // return early
           @return
           A->Client: x11
         }
       }
       return x2
     }
+```
+
+```mermaid
+zenuml
+    title Reply message
+    Client->A.method() {
+      B.method() {
+        if(condition) {
+          return x1
+          // return early
+          @return
+          A->Client: x11
+        }
+      }
+      return x2
+    }
+```
 
 ## Nesting
 
@@ -185,21 +237,11 @@ are ignored. Markdown is supported.
 
 See the example below:
 
-```mermaid-example
-zenuml
     // a comment on a participent will not be rendered
     BookService
-    // a comment on a message. **Markdown** is supported.
+    // a comment on a message.
+    // **Markdown** is supported.
     BookService.getBook()
-```
-
-```mermaid
-zenuml
-    // a comment on a participent will not be rendered
-    BookService
-    // a comment on a message. **Markdown** is supported.
-    BookService.getBook()
-```
 
 ## Loops
 
@@ -255,7 +297,7 @@ zenuml
     if(is_sick) {
       Bob->Alice: Not so good :(
     } else {
-      Bob->>Alice: Feeling fresh like a daisy
+      Bob->Alice: Feeling fresh like a daisy
     }
 ```
 
@@ -265,7 +307,7 @@ zenuml
     if(is_sick) {
       Bob->Alice: Not so good :(
     } else {
-      Bob->>Alice: Feeling fresh like a daisy
+      Bob->Alice: Feeling fresh like a daisy
     }
 ```
 

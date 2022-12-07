@@ -18,18 +18,35 @@
     <h1>Zen UML demos</h1>
     <pre class="mermaid">
 		zenuml
-			A.method() {
-        if(x) {
-          B.method() {
-            selfCall() { return X }
-          }
-        }
+      title Sync Messages (Design Pattern: Adapter)
+			@Starter(Client)
+      Adapter.interfaceMethod() {
+        translateParameter(parameter)
+
+        result = Implementation.implementationMethod()
+
+        translateResult()
+        return translatedResult
       }
     </pre>
     <pre class="mermaid">
 		zenuml
-			B.method() {
-      }
+      title Async Messages (SPA Authentication)
+      // ```
+      // GET https://${account.namespace}/authorize/?
+      // response_type=token
+      // &client_id=${account.clientId}
+      // &redirect_url=YOUR_CALLBACK_URL
+      // &state=VALUE_THAT_SURVIVES_REDIRECTS
+      // &scope=openid
+      // ```
+      Browser->Auth0: 1. initiate the authentication
+      Auth0->"Identity Provider": 2. OAuth2 / SAML, etc
+      "Identity Provider"->"Identity Provider": 3. user gets authenticated
+      Auth0->Browser: 4. redirect to ${YOUR_CALLBACK_URL}/#id_token=e68...
+      Browser->Auth0: 5. validate id_token and get user profile
+      Browser->"Your API": 6. call API sending JWT in Authorization header
+      "Your API"->"Your API": 7. validate token
     </pre>
     <script type="module">
       import zenUml from '../../packages/mermaid-zenuml/src/detector';

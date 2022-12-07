@@ -110,8 +110,5 @@
   },
   "volta": {
     "node": "18.12.1"
-  },
-  "dependencies": {
-    "@zenuml/core": "^2.0.6"
   }
 }

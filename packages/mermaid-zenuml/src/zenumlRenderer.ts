@@ -57,7 +57,7 @@ export const draw = async function (text: string, id: string) {
 
   const zenuml = new ZenUml(app);
   // default is a theme name. More themes to be added and will be configurable in the future
-  await zenuml.render(text, 'default');
+  await zenuml.render(text, 'theme-mermaid');
 
   const { width, height } = window.getComputedStyle(container);
   log.debug('zenuml diagram size', width, height);
