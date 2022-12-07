@@ -46,8 +46,8 @@ jobs:
 
       - name: Rebuild Docs
         if: ${{ steps.verifyDocs.outcome == 'failure' && github.event_name == 'push' }}
-        run: |
-          yarn docs:build
+        working-directory: ./packages/mermaid
+        run: pnpm run docs:build
 
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
