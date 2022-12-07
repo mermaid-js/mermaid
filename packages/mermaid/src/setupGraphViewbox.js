@@ -1,7 +1,7 @@
 import { log } from './logger';
 
 /**
- * Applys d3 attributes
+ * Applies d3 attributes
  *
  * @param {any} d3Elem D3 Element to apply the attributes onto
  * @param {[string, string][]} attrs Object.keys equivalent format of key to value mapping of attributes
@@ -26,6 +26,7 @@ export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
     attrs.set('width', '100%');
     attrs.set('style', `max-width: ${width}px;`);
   } else {
+    attrs.set('height', height);
     attrs.set('width', width);
   }
   return attrs;

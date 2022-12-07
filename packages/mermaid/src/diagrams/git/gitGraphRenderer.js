@@ -1,6 +1,7 @@
 import { select } from 'd3';
 import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI';
 import { log } from '../../logger';
+import utils from '../../utils';
 import addSVGAccessibilityFields from '../../accessibility';
 
 let allCommitsDict = {};
@@ -46,13 +47,13 @@ const drawText = (txt) => {
     rows = [];
   }
 
-  for (let j = 0; j < rows.length; j++) {
+  for (const row of rows) {
     const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
     tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
     tspan.setAttribute('dy', '1em');
     tspan.setAttribute('x', '0');
     tspan.setAttribute('class', 'row');
-    tspan.textContent = rows[j].trim();
+    tspan.textContent = row.trim();
     svgLabel.appendChild(tspan);
   }
   /**
@@ -90,7 +91,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
     if (modifyGraph) {
       let typeClass;
       let commitSymbolType =
-        typeof commit.customType !== 'undefined' && commit.customType !== ''
+        commit.customType !== undefined && commit.customType !== ''
           ? commit.customType
           : commit.type;
       switch (commitSymbolType) {
@@ -318,23 +319,16 @@ const hasOverlappingCommits = (commit1, commit2, allCommits) => {
  *
  * @param {any} y1
  * @param {any} y2
- * @param {any} _depth
+ * @param {any} depth
  * @returns {number} Y value between y1 and y2
  */
-const findLane = (y1, y2, _depth) => {
-  const depth = _depth || 0;
-
+const findLane = (y1, y2, depth = 0) => {
   const candidate = y1 + Math.abs(y1 - y2) / 2;
   if (depth > 5) {
     return candidate;
   }
 
-  let ok = true;
-  for (let i = 0; i < lanes.length; i++) {
-    if (Math.abs(lanes[i] - candidate) < 10) {
-      ok = false;
-    }
-  }
+  let ok = lanes.every((lane) => Math.abs(lane - candidate) >= 10);
   if (ok) {
     lanes.push(candidate);
     return candidate;
@@ -496,7 +490,7 @@ const drawBranches = (svg, branches) => {
 export const draw = function (txt, id, ver, diagObj) {
   clear();
   const conf = getConfig();
-  const gitGraphConfig = getConfig().gitGraph;
+  const gitGraphConfig = conf.gitGraph;
   // try {
   log.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver);
 
@@ -521,9 +515,20 @@ export const draw = function (txt, id, ver, diagObj) {
   }
   drawArrows(diagram, allCommitsDict);
   drawCommits(diagram, allCommitsDict, true);
+  utils.insertTitle(
+    diagram,
+    'gitTitleText',
+    gitGraphConfig.titleTopMargin,
+    diagObj.db.getDiagramTitle()
+  );
 
   // Setup the view box and size of the svg element
-  setupGraphViewbox(undefined, diagram, gitGraphConfig.diagramPadding, conf.useMaxWidth);
+  setupGraphViewbox(
+    undefined,
+    diagram,
+    gitGraphConfig.diagramPadding,
+    gitGraphConfig.useMaxWidth ?? conf.useMaxWidth
+  );
 };
 
 export default {

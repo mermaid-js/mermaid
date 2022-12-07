@@ -521,4 +521,54 @@ stateDiagram-v2
       { logLevel: 0, fontFamily: 'courier' }
     );
   });
+
+  describe('classDefs and applying classes', () => {
+    it('v2 states can have a class applied', () => {
+      imgSnapshotTest(
+        `
+          stateDiagram-v2
+          [*] --> A
+          A --> B: test({ foo#colon; 'far' })
+          B --> [*]
+            classDef badBadEvent fill:#f00,color:white,font-weight:bold 
+            class B badBadEvent
+           `,
+        { logLevel: 0, fontFamily: 'courier' }
+      );
+    });
+    it('v2 can have multiple classes applied to multiple states', () => {
+      imgSnapshotTest(
+        `
+          stateDiagram-v2
+          classDef notMoving fill:white
+          classDef movement font-style:italic;
+          classDef badBadEvent fill:#f00,color:white,font-weight:bold
+    
+          [*] --> Still
+          Still --> [*]
+          Still --> Moving
+          Moving --> Still
+          Moving --> Crash
+          Crash --> [*]
+    
+          class Still notMoving
+          class Moving, Crash movement
+          class Crash badBadEvent
+        `,
+        { logLevel: 0, fontFamily: 'courier' }
+      );
+    });
+  });
+  it('1433: should render a simple state diagram with a title', () => {
+    imgSnapshotTest(
+      `---
+title: simple state diagram
+---
+stateDiagram-v2
+[*] --> State1
+State1 --> [*]
+`,
+      {}
+    );
+  });
 });

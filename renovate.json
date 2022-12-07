@@ -1,0 +1,24 @@
+{
+  "extends": [
+    "config:base",
+    ":rebaseStalePrs",
+    "group:allNonMajor",
+    "schedule:earlyMondays",
+    ":automergeMinor",
+    ":automergeTesters",
+    ":automergeLinters",
+    ":automergeTypes",
+    ":automergePatch"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "automerge": true
+    }
+  ],
+  "dependencyDashboard": true,
+  "major": {
+    "dependencyDashboardApproval": true
+  },
+  "dependencyDashboardAutoclose": true
+}

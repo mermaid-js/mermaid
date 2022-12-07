@@ -17,6 +17,7 @@ import {
 
 let dateFormat = '';
 let axisFormat = '';
+let tickInterval = undefined;
 let todayMarker = '';
 let includes = [];
 let excludes = [];
@@ -47,6 +48,7 @@ export const clear = function () {
   rawTasks = [];
   dateFormat = '';
   axisFormat = '';
+  tickInterval = undefined;
   todayMarker = '';
   includes = [];
   excludes = [];
@@ -63,6 +65,14 @@ export const setAxisFormat = function (txt) {
 
 export const getAxisFormat = function () {
   return axisFormat;
+};
+
+export const setTickInterval = function (txt) {
+  tickInterval = txt;
+};
+
+export const getTickInterval = function () {
+  return tickInterval;
 };
 
 export const setTodayMarker = function (txt) {
@@ -140,20 +150,22 @@ export const getTasks = function () {
 };
 
 export const isInvalidDate = function (date, dateFormat, excludes, includes) {
-  if (includes.indexOf(date.format(dateFormat.trim())) >= 0) {
+  if (includes.includes(date.format(dateFormat.trim()))) {
     return false;
   }
-  if (date.isoWeekday() >= 6 && excludes.indexOf('weekends') >= 0) {
+  if (date.isoWeekday() >= 6 && excludes.includes('weekends')) {
     return true;
   }
-  if (excludes.indexOf(date.format('dddd').toLowerCase()) >= 0) {
+  if (excludes.includes(date.format('dddd').toLowerCase())) {
     return true;
   }
-  return excludes.indexOf(date.format(dateFormat.trim())) >= 0;
+  return excludes.includes(date.format(dateFormat.trim()));
 };
 
 const checkTaskDates = function (task, dateFormat, excludes, includes) {
-  if (!excludes.length || task.manualEndTime) return;
+  if (!excludes.length || task.manualEndTime) {
+    return;
+  }
   let startTime = moment(task.startTime, dateFormat, true);
   startTime.add(1, 'd');
   let endTime = moment(task.endTime, dateFormat, true);
@@ -190,7 +202,7 @@ const getStartDate = function (prevTime, dateFormat, str) {
     let latestEndingTask = null;
     afterStatement[1].split(' ').forEach(function (id) {
       let task = findTaskById(id);
-      if (typeof task !== 'undefined') {
+      if (task !== undefined) {
         if (!latestEndingTask) {
           latestEndingTask = task;
         } else {
@@ -217,17 +229,19 @@ const getStartDate = function (prevTime, dateFormat, str) {
   } else {
     log.debug('Invalid date:' + str);
     log.debug('With date format:' + dateFormat.trim());
+    const d = new Date(str);
+    if (d === undefined || isNaN(d.getTime())) {
+      throw new Error('Invalid date:' + str);
+    }
+    return d;
   }
-
-  // Default date - now
-  return new Date();
 };
 
 /**
  * Parse a string as a moment duration.
  *
  * The string have to be compound by a value and a shorthand duration unit. For example `5d`
- * representes 5 days.
+ * represents 5 days.
  *
  * Shorthand unit supported are:
  *
@@ -244,15 +258,14 @@ const getStartDate = function (prevTime, dateFormat, str) {
  *   string.
  */
 const parseDuration = function (str) {
-  const statement = /^(\d+(?:\.\d+)?)([yMwdhms]|ms)$/.exec(str.trim());
+  const statement = /^(\d+(?:\.\d+)?)([Mdhmswy]|ms)$/.exec(str.trim());
   if (statement !== null) {
     return moment.duration(Number.parseFloat(statement[1]), statement[2]);
   }
   return moment.duration.invalid();
 };
 
-const getEndDate = function (prevTime, dateFormat, str, inclusive) {
-  inclusive = inclusive || false;
+const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   str = str.trim();
 
   // Check for actual date
@@ -274,7 +287,7 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive) {
 
 let taskCnt = 0;
 const parseId = function (idStr) {
-  if (typeof idStr === 'undefined') {
+  if (idStr === undefined) {
     taskCnt = taskCnt + 1;
     return 'task' + taskCnt;
   }
@@ -496,10 +509,10 @@ const compileTasks = function () {
   };
 
   let allProcessed = true;
-  for (let i = 0; i < rawTasks.length; i++) {
+  for (const [i, rawTask] of rawTasks.entries()) {
     compileTask(i);
 
-    allProcessed = allProcessed && rawTasks[i].processed;
+    allProcessed = allProcessed && rawTask.processed;
   }
   return allProcessed;
 };
@@ -517,7 +530,7 @@ export const setLink = function (ids, _linkStr) {
   }
   ids.split(',').forEach(function (id) {
     let rawTask = findTaskById(id);
-    if (typeof rawTask !== 'undefined') {
+    if (rawTask !== undefined) {
       pushFun(id, () => {
         window.open(linkStr, '_self');
       });
@@ -536,7 +549,7 @@ export const setLink = function (ids, _linkStr) {
 export const setClass = function (ids, className) {
   ids.split(',').forEach(function (id) {
     let rawTask = findTaskById(id);
-    if (typeof rawTask !== 'undefined') {
+    if (rawTask !== undefined) {
       rawTask.classes.push(className);
     }
   });
@@ -546,7 +559,7 @@ const setClickFun = function (id, functionName, functionArgs) {
   if (configApi.getConfig().securityLevel !== 'loose') {
     return;
   }
-  if (typeof functionName === 'undefined') {
+  if (functionName === undefined) {
     return;
   }
 
@@ -571,7 +584,7 @@ const setClickFun = function (id, functionName, functionArgs) {
   }
 
   let rawTask = findTaskById(id);
-  if (typeof rawTask !== 'undefined') {
+  if (rawTask !== undefined) {
     pushFun(id, () => {
       utils.runFunc(functionName, ...argList);
     });
@@ -586,24 +599,26 @@ const setClickFun = function (id, functionName, functionArgs) {
  * @param callbackFunction A function to be executed when clicked on the task or the task's text
  */
 const pushFun = function (id, callbackFunction) {
-  funs.push(function () {
-    // const elem = d3.select(element).select(`[id="${id}"]`)
-    const elem = document.querySelector(`[id="${id}"]`);
-    if (elem !== null) {
-      elem.addEventListener('click', function () {
-        callbackFunction();
-      });
+  funs.push(
+    function () {
+      // const elem = d3.select(element).select(`[id="${id}"]`)
+      const elem = document.querySelector(`[id="${id}"]`);
+      if (elem !== null) {
+        elem.addEventListener('click', function () {
+          callbackFunction();
+        });
+      }
+    },
+    function () {
+      // const elem = d3.select(element).select(`[id="${id}-text"]`)
+      const elem = document.querySelector(`[id="${id}-text"]`);
+      if (elem !== null) {
+        elem.addEventListener('click', function () {
+          callbackFunction();
+        });
+      }
     }
-  });
-  funs.push(function () {
-    // const elem = d3.select(element).select(`[id="${id}-text"]`)
-    const elem = document.querySelector(`[id="${id}-text"]`);
-    if (elem !== null) {
-      elem.addEventListener('click', function () {
-        callbackFunction();
-      });
-    }
-  });
+  );
 };
 
 /**
@@ -643,6 +658,8 @@ export default {
   topAxisEnabled,
   setAxisFormat,
   getAxisFormat,
+  setTickInterval,
+  getTickInterval,
   setTodayMarker,
   getTodayMarker,
   setAccTitle,

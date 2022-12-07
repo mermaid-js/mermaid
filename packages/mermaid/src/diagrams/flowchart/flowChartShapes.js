@@ -1,4 +1,5 @@
-import dagreD3 from 'dagre-d3';
+import { intersectPolygon } from 'dagre-d3-es/src/dagre-js/intersect/intersect-polygon.js';
+import { intersectRect } from 'dagre-d3-es/src/dagre-js/intersect/intersect-rect.js';
 
 /**
  * @param parent
@@ -17,7 +18,7 @@ function question(parent, bbox, node) {
   ];
   const shapeSvg = insertPolygonShape(parent, s, s, points);
   node.intersect = function (point) {
-    return dagreD3.intersect.polygon(node, points, point);
+    return intersectPolygon(node, points, point);
   };
   return shapeSvg;
 }
@@ -42,7 +43,7 @@ function hexagon(parent, bbox, node) {
   ];
   const shapeSvg = insertPolygonShape(parent, w, h, points);
   node.intersect = function (point) {
-    return dagreD3.intersect.polygon(node, points, point);
+    return intersectPolygon(node, points, point);
   };
   return shapeSvg;
 }
@@ -64,7 +65,7 @@ function rect_left_inv_arrow(parent, bbox, node) {
   ];
   const shapeSvg = insertPolygonShape(parent, w, h, points);
   node.intersect = function (point) {
-    return dagreD3.intersect.polygon(node, points, point);
+    return intersectPolygon(node, points, point);
   };
   return shapeSvg;
 }
@@ -85,7 +86,7 @@ function lean_right(parent, bbox, node) {
   ];
   const shapeSvg = insertPolygonShape(parent, w, h, points);
   node.intersect = function (point) {
-    return dagreD3.intersect.polygon(node, points, point);
+    return intersectPolygon(node, points, point);
   };
   return shapeSvg;
 }
@@ -106,7 +107,7 @@ function lean_left(parent, bbox, node) {
   ];
   const shapeSvg = insertPolygonShape(parent, w, h, points);
   node.intersect = function (point) {
-    return dagreD3.intersect.polygon(node, points, point);
+    return intersectPolygon(node, points, point);
   };
   return shapeSvg;
 }
@@ -127,7 +128,7 @@ function trapezoid(parent, bbox, node) {
   ];
   const shapeSvg = insertPolygonShape(parent, w, h, points);
   node.intersect = function (point) {
-    return dagreD3.intersect.polygon(node, points, point);
+    return intersectPolygon(node, points, point);
   };
   return shapeSvg;
 }
@@ -148,7 +149,7 @@ function inv_trapezoid(parent, bbox, node) {
   ];
   const shapeSvg = insertPolygonShape(parent, w, h, points);
   node.intersect = function (point) {
-    return dagreD3.intersect.polygon(node, points, point);
+    return intersectPolygon(node, points, point);
   };
   return shapeSvg;
 }
@@ -170,7 +171,7 @@ function rect_right_inv_arrow(parent, bbox, node) {
   ];
   const shapeSvg = insertPolygonShape(parent, w, h, points);
   node.intersect = function (point) {
-    return dagreD3.intersect.polygon(node, points, point);
+    return intersectPolygon(node, points, point);
   };
   return shapeSvg;
 }
@@ -194,7 +195,7 @@ function stadium(parent, bbox, node) {
     .attr('height', h);
 
   node.intersect = function (point) {
-    return dagreD3.intersect.rect(node, point);
+    return intersectRect(node, point);
   };
   return shapeSvg;
 }
@@ -221,7 +222,7 @@ function subroutine(parent, bbox, node) {
   ];
   const shapeSvg = insertPolygonShape(parent, w, h, points);
   node.intersect = function (point) {
-    return dagreD3.intersect.polygon(node, points, point);
+    return intersectPolygon(node, points, point);
   };
   return shapeSvg;
 }
@@ -270,7 +271,7 @@ function cylinder(parent, bbox, node) {
     .attr('transform', 'translate(' + -w / 2 + ',' + -(h / 2 + ry) + ')');
 
   node.intersect = function (point) {
-    const pos = dagreD3.intersect.rect(node, point);
+    const pos = intersectRect(node, point);
     const x = pos.x - node.x;
 
     if (
@@ -279,11 +280,15 @@ function cylinder(parent, bbox, node) {
         (Math.abs(x) == node.width / 2 && Math.abs(pos.y - node.y) > node.height / 2 - ry))
     ) {
       // ellipsis equation: x*x / a*a + y*y / b*b = 1
-      // solve for y to get adjustion value for pos.y
+      // solve for y to get adjusted value for pos.y
       let y = ry * ry * (1 - (x * x) / (rx * rx));
-      if (y != 0) y = Math.sqrt(y);
+      if (y != 0) {
+        y = Math.sqrt(y);
+      }
       y = ry - y;
-      if (point.y - node.y > 0) y = -y;
+      if (point.y - node.y > 0) {
+        y = -y;
+      }
 
       pos.y += y;
     }

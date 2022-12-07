@@ -3,6 +3,10 @@
 import DOMPurify from 'dompurify';
 
 export interface MermaidConfig {
+  /** @deprecated use mermaid.registerLazyDiagrams instead */
+  lazyLoadedDiagrams?: string[];
+  /** @deprecated use mermaid.registerLazyDiagrams instead */
+  loadExternalDiagramsAtStartup?: boolean;
   theme?: string;
   themeVariables?: any;
   themeCSS?: string;
@@ -185,6 +189,7 @@ export interface C4DiagramConfig extends BaseDiagramConfig {
 }
 
 export interface GitGraphDiagramConfig extends BaseDiagramConfig {
+  titleTopMargin?: number;
   diagramPadding?: number;
   nodeLabel?: NodeLabel;
   mainBranchName?: string;
@@ -223,6 +228,7 @@ export interface MindmapDiagramConfig extends BaseDiagramConfig {
 export type PieDiagramConfig = BaseDiagramConfig;
 
 export interface ErDiagramConfig extends BaseDiagramConfig {
+  titleTopMargin?: number;
   diagramPadding?: number;
   layoutDirection?: string;
   minEntityWidth?: number;
@@ -234,6 +240,7 @@ export interface ErDiagramConfig extends BaseDiagramConfig {
 }
 
 export interface StateDiagramConfig extends BaseDiagramConfig {
+  titleTopMargin?: number;
   arrowMarkerAbsolute?: boolean;
   dividerMargin?: number;
   sizeUnit?: number;
@@ -254,6 +261,7 @@ export interface StateDiagramConfig extends BaseDiagramConfig {
 }
 
 export interface ClassDiagramConfig extends BaseDiagramConfig {
+  titleTopMargin?: number;
   arrowMarkerAbsolute?: boolean;
   dividerMargin?: number;
   padding?: number;
@@ -296,6 +304,7 @@ export interface GanttDiagramConfig extends BaseDiagramConfig {
   sectionFontSize?: string | number;
   numberSectionStyles?: number;
   axisFormat?: string;
+  tickInterval?: string;
   topAxis?: boolean;
 }
 
@@ -338,6 +347,7 @@ export interface SequenceDiagramConfig extends BaseDiagramConfig {
 }
 
 export interface FlowchartDiagramConfig extends BaseDiagramConfig {
+  titleTopMargin?: number;
   arrowMarkerAbsolute?: boolean;
   diagramPadding?: number;
   htmlLabels?: boolean;

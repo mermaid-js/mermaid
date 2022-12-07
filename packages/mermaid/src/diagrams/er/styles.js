@@ -27,6 +27,12 @@ const getStyles = (options) =>
     .relationshipLine {
       stroke: ${options.lineColor};
     }
+
+  .entityTitleText {
+    text-anchor: middle;
+    font-size: 18px;
+    fill: ${options.textColor};
+  }    
 `;
 
 export default getStyles;

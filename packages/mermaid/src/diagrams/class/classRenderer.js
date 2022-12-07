@@ -1,6 +1,6 @@
 import { select } from 'd3';
-import dagre from 'dagre';
-import graphlib from 'graphlib';
+import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger';
 import svgDraw from './svgDraw';
 import { configureSvgSize } from '../../setupGraphViewbox';
@@ -148,7 +148,7 @@ export const draw = function (text, id, _version, diagObj) {
   log.info('Rendering diagram ' + text);
 
   const securityLevel = getConfig().securityLevel;
-  // Handle root and Document for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -180,8 +180,8 @@ export const draw = function (text, id, _version, diagObj) {
   const classes = diagObj.db.getClasses();
   const keys = Object.keys(classes);
 
-  for (let i = 0; i < keys.length; i++) {
-    const classDef = classes[keys[i]];
+  for (const key of keys) {
+    const classDef = classes[key];
     const node = svgDraw.drawClass(diagram, classDef, conf, diagObj);
     idCache[node.id] = node;
 
@@ -208,12 +208,42 @@ export const draw = function (text, id, _version, diagObj) {
     );
   });
 
-  dagre.layout(g);
+  const notes = diagObj.db.getNotes();
+  notes.forEach(function (note) {
+    log.debug(`Adding note: ${JSON.stringify(note)}`);
+    const node = svgDraw.drawNote(diagram, note, conf, diagObj);
+    idCache[node.id] = node;
+
+    // Add nodes to the graph. The first argument is the node id. The second is
+    // metadata about the node. In this case we're going to add labels to each of
+    // our nodes.
+    g.setNode(node.id, node);
+    if (note.class && note.class in classes) {
+      g.setEdge(
+        note.id,
+        getGraphId(note.class),
+        {
+          relation: {
+            id1: note.id,
+            id2: note.class,
+            relation: {
+              type1: 'none',
+              type2: 'none',
+              lineType: 10,
+            },
+          },
+        },
+        'DEFAULT'
+      );
+    }
+  });
+
+  dagreLayout(g);
   g.nodes().forEach(function (v) {
-    if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
+    if (v !== undefined && g.node(v) !== undefined) {
       log.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
       root
-        .select('#' + diagObj.db.lookUpDomId(v))
+        .select('#' + (diagObj.db.lookUpDomId(v) || v))
         .attr(
           'transform',
           'translate(' +
@@ -226,7 +256,7 @@ export const draw = function (text, id, _version, diagObj) {
   });
 
   g.edges().forEach(function (e) {
-    if (typeof e !== 'undefined' && typeof g.edge(e) !== 'undefined') {
+    if (e !== undefined && g.edge(e) !== undefined) {
       log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
       svgDraw.drawEdge(diagram, g.edge(e), g.edge(e).relation, conf, diagObj);
     }

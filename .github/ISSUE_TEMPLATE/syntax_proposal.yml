@@ -1,0 +1,34 @@
+name: Syntax Proposal
+description: Suggest a new Syntax to add to Mermaid.js.
+labels:
+  - 'Status: Triage'
+  - 'Type: Enhancement'
+
+body:
+  - type: markdown
+    attributes:
+      value: |-
+        ## Before you submit...
+        First of all, thank you for proposing a new Syntax to us.
+        We are always happy about new ideas to improve Mermaid.js wherever possible.
+
+        To get the fastest and best response possible, make sure you do the following:
+
+        - Use a clear and concise title
+        - Fill out the text fields with as much detail as possible. Examples are always welcome.
+        - Never be shy to give us screenshots and/or code samples. It will help!
+  - type: textarea
+    attributes:
+      label: Proposal
+      description: A clear and concise description of what Syntax should be added to Mermaid.js.
+      placeholder: Mermaid.js should add ... because ...
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Example
+      description: If applicable, provide an example of the new Syntax.
+  - type: textarea
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to show possible examples of how the theme may look like.

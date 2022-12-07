@@ -48,7 +48,7 @@ class Bounds {
   }
 
   updateVal(obj, key, val, fun) {
-    if (typeof obj[key] === 'undefined') {
+    if (obj[key] === undefined) {
       obj[key] = val;
     } else {
       obj[key] = fun(val, obj[key]);
@@ -177,12 +177,12 @@ function calcC4ShapeTextWH(textType, c4Shape, c4ShapeTextWrap, textConf, textLim
       let lineHeight = 0;
       c4Shape[textType].height = 0;
       c4Shape[textType].width = 0;
-      for (let i = 0; i < lines.length; i++) {
+      for (const line of lines) {
         c4Shape[textType].width = Math.max(
-          calculateTextWidth(lines[i], textConf),
+          calculateTextWidth(line, textConf),
           c4Shape[textType].width
         );
-        lineHeight = calculateTextHeight(lines[i], textConf);
+        lineHeight = calculateTextHeight(line, textConf);
         c4Shape[textType].height = c4Shape[textType].height + lineHeight;
       }
       // c4Shapes[textType].height = c4Shapes[textType].textLines * textConf.fontSize;
@@ -212,9 +212,9 @@ export const drawC4ShapeArray = function (currentBounds, diagram, c4ShapeArray, 
   // Upper Y is relative point
   let Y = 0;
   // Draw the c4ShapeArray
-  for (let i = 0; i < c4ShapeKeys.length; i++) {
+  for (const c4ShapeKey of c4ShapeKeys) {
     Y = 0;
-    const c4Shape = c4ShapeArray[c4ShapeKeys[i]];
+    const c4Shape = c4ShapeArray[c4ShapeKey];
 
     // calc c4 shape type width and height
 
@@ -414,7 +414,9 @@ export const drawRels = function (diagram, rels, getC4ShapeObj, diagObj) {
     let relTextWrap = rel.wrap && conf.wrap;
     let relConf = messageFont(conf);
     let diagramType = diagObj.db.getC4Type();
-    if (diagramType === 'C4Dynamic') rel.label.text = i + ': ' + rel.label.text;
+    if (diagramType === 'C4Dynamic') {
+      rel.label.text = i + ': ' + rel.label.text;
+    }
     let textLimitWidth = calculateTextWidth(rel.label.text, relConf);
     calcC4ShapeTextWH('label', rel, relTextWrap, relConf, textLimitWidth);
 
@@ -441,20 +443,25 @@ export const drawRels = function (diagram, rels, getC4ShapeObj, diagObj) {
  * @param diagram
  * @param parentBoundaryAlias
  * @param parentBounds
- * @param currentBoundarys
+ * @param currentBoundaries
  * @param diagObj
  */
-function drawInsideBoundary(diagram, parentBoundaryAlias, parentBounds, currentBoundarys, diagObj) {
+function drawInsideBoundary(
+  diagram,
+  parentBoundaryAlias,
+  parentBounds,
+  currentBoundaries,
+  diagObj
+) {
   let currentBounds = new Bounds(diagObj);
-  // Calculate the width limit of the boundar.  label/type 的长度，
+  // Calculate the width limit of the boundary.  label/type 的长度，
   currentBounds.data.widthLimit =
-    parentBounds.data.widthLimit / Math.min(c4BoundaryInRow, currentBoundarys.length);
+    parentBounds.data.widthLimit / Math.min(c4BoundaryInRow, currentBoundaries.length);
   // Math.min(
   //   conf.width * conf.c4ShapeInRow + conf.c4ShapeMargin * conf.c4ShapeInRow * 2,
-  //   parentBounds.data.widthLimit / Math.min(conf.c4BoundaryInRow, currentBoundarys.length)
+  //   parentBounds.data.widthLimit / Math.min(conf.c4BoundaryInRow, currentBoundaries.length)
   // );
-  for (let i = 0; i < currentBoundarys.length; i++) {
-    let currentBoundary = currentBoundarys[i];
+  for (let [i, currentBoundary] of currentBoundaries.entries()) {
     let Y = 0;
     currentBoundary.image = { width: 0, height: 0, Y: 0 };
     if (currentBoundary.sprite) {
@@ -508,13 +515,13 @@ function drawInsideBoundary(diagram, parentBoundaryAlias, parentBounds, currentB
     }
 
     if (i == 0 || i % c4BoundaryInRow === 0) {
-      // Calculate the drawing start point of the currentBoundarys.
+      // Calculate the drawing start point of the currentBoundaries.
       let _x = parentBounds.data.startx + conf.diagramMarginX;
       let _y = parentBounds.data.stopy + conf.diagramMarginY + Y;
 
       currentBounds.setData(_x, _x, _y, _y);
     } else {
-      // Calculate the drawing start point of the currentBoundarys.
+      // Calculate the drawing start point of the currentBoundaries.
       let _x =
         currentBounds.data.stopx !== currentBounds.data.startx
           ? currentBounds.data.stopx + conf.diagramMarginX
@@ -540,8 +547,6 @@ function drawInsideBoundary(diagram, parentBoundaryAlias, parentBounds, currentB
 
     if (nextCurrentBoundarys.length > 0) {
       // draw boundary inside currentBoundary
-      // bounds.init();
-      // parentBoundaryWidthLimit = bounds.data.stopx - bounds.startx;
       drawInsideBoundary(
         diagram,
         parentBoundaryAlias,
@@ -551,7 +556,9 @@ function drawInsideBoundary(diagram, parentBoundaryAlias, parentBounds, currentB
       );
     }
     // draw boundary
-    if (currentBoundary.alias !== 'global') drawBoundary(diagram, currentBoundary, currentBounds);
+    if (currentBoundary.alias !== 'global') {
+      drawBoundary(diagram, currentBoundary, currentBounds);
+    }
     parentBounds.data.stopy = Math.max(
       currentBounds.data.stopy + conf.c4ShapeMargin,
       parentBounds.data.stopy
@@ -576,7 +583,7 @@ function drawInsideBoundary(diagram, parentBoundaryAlias, parentBounds, currentB
 export const draw = function (_text, id, _version, diagObj) {
   conf = configApi.getConfig().c4;
   const securityLevel = configApi.getConfig().securityLevel;
-  // Handle root and Document for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -616,10 +623,10 @@ export const draw = function (_text, id, _version, diagObj) {
   globalBoundaryMaxY = conf.diagramMarginY;
 
   const title = diagObj.db.getTitle();
-  let currentBoundarys = diagObj.db.getBoundarys('');
+  let currentBoundaries = diagObj.db.getBoundarys('');
   // switch (c4type) {
   //   case 'C4Context':
-  drawInsideBoundary(diagram, '', screenBounds, currentBoundarys, diagObj);
+  drawInsideBoundary(diagram, '', screenBounds, currentBoundaries, diagObj);
   //     break;
   // }
 

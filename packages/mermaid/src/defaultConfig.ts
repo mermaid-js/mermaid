@@ -8,19 +8,27 @@ import { MermaidConfig } from './config.type';
  *
  * These are the default options which can be overridden with the initialization call like so:
  *
- * **Example 1:**<pre> mermaid.initialize({ flowchart:{ htmlLabels: false } }); </pre>
+ * **Example 1:**
  *
- * **Example 2:**<pre> <script> var config = { startOnLoad:true, flowchart:{ useMaxWidth:true,
- * htmlLabels:true, curve:'cardinal', },
+ * ```js
+ * mermaid.initialize({ flowchart:{ htmlLabels: false } });
+ * ```
  *
- *     securityLevel:'loose',
+ * **Example 2:**
  *
- * }; mermaid.initialize(config); </script> </pre>
+ * ```html
+ * <script>
+ * const config = {
+ *   startOnLoad:true,
+ *   flowchart:{ useMaxWidth:true, htmlLabels:true, curve:'cardinal'},
+ *   securityLevel:'loose',
+ * };
+ * mermaid.initialize(config);
+ * </script>
+ * ```
  *
  * A summary of all options and their defaults is found [here](#mermaidapi-configuration-defaults).
  * A description of each option follows below.
- *
- * @name Configuration
  */
 const config: Partial<MermaidConfig> = {
   /**
@@ -30,8 +38,16 @@ const config: Partial<MermaidConfig> = {
    * | --------- | --------------- | ------ | -------- | ---------------------------------------------- |
    * | theme     | Built in Themes | string | Optional | 'default', 'forest', 'dark', 'neutral', 'null' |
    *
-   * **Notes:** To disable any pre-defined mermaid theme, use "null".<pre> "theme": "forest",
-   * "themeCSS": ".node rect { fill: red; }" </pre>
+   * **Notes:** To disable any pre-defined mermaid theme, use "null".
+   *
+   * @example
+   *
+   * ```js
+   * {
+   *   "theme": "forest",
+   *   "themeCSS": ".node rect { fill: red; }"
+   * }
+   * ```
    */
   theme: 'default',
   themeVariables: theme['default'].getThemeVariables(),
@@ -115,15 +131,14 @@ const config: Partial<MermaidConfig> = {
    * Default value: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
    */
   secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize'],
-
   /**
    * This option controls if the generated ids of nodes in the SVG are generated randomly or based
    * on a seed. If set to false, the IDs are generated based on the current date and thus are not
-   * deterministic. This is the default behaviour.
+   * deterministic. This is the default behavior.
    *
    * **Notes**:
    *
-   * This matters if your files are checked into sourcecontrol e.g. git and should not change unless
+   * This matters if your files are checked into source control e.g. git and should not change unless
    * content is changed.
    *
    * Default value: false
@@ -139,6 +154,17 @@ const config: Partial<MermaidConfig> = {
 
   /** The object containing configurations specific for flowcharts */
   flowchart: {
+    /**
+     * ### titleTopMargin
+     *
+     * | Parameter      | Description                                    | Type    | Required | Values             |
+     * | -------------- | ---------------------------------------------- | ------- | -------- | ------------------ |
+     * | titleTopMargin | Margin top for the text over the flowchart     | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 25
+     */
+    titleTopMargin: 25,
+
     /**
      * | Parameter      | Description                                     | Type    | Required | Values             |
      * | -------------- | ----------------------------------------------- | ------- | -------- | ------------------ |
@@ -633,9 +659,9 @@ const config: Partial<MermaidConfig> = {
     numberSectionStyles: 4,
 
     /**
-     * | Parameter  | Description                 | Type | Required | Values           |
-     * | ---------- | --------------------------- | ---- | -------- | ---------------- |
-     * | axisFormat | Datetime format of the axis | 3    | Required | Date in yy-mm-dd |
+     * | Parameter  | Description                  | Type | Required | Values           |
+     * | ---------- | ---------------------------- | ---- | -------- | ---------------- |
+     * | axisFormat | Date/time format of the axis | 3    | Required | Date in yy-mm-dd |
      *
      * **Notes:**
      *
@@ -644,6 +670,19 @@ const config: Partial<MermaidConfig> = {
      * Default value: '%Y-%m-%d'.
      */
     axisFormat: '%Y-%m-%d',
+
+    /**
+     * | Parameter    | Description | Type   | Required | Values  |
+     * | ------------ | ------------| ------ | -------- | ------- |
+     * | tickInterval | axis ticks  | string | Optional | string  |
+     *
+     * **Notes:**
+     *
+     * Pattern is /^([1-9][0-9]*)(minute|hour|day|week|month)$/
+     *
+     * Default value: undefined
+     */
+    tickInterval: undefined,
 
     /**
      * | Parameter   | Description | Type    | Required | Values      |
@@ -823,6 +862,16 @@ const config: Partial<MermaidConfig> = {
     sectionColours: ['#fff'],
   },
   class: {
+    /**
+     * ### titleTopMargin
+     *
+     * | Parameter      | Description                                    | Type    | Required | Values             |
+     * | -------------- | ---------------------------------------------- | ------- | -------- | ------------------ |
+     * | titleTopMargin | Margin top for the text over the class diagram | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 25
+     */
+    titleTopMargin: 25,
     arrowMarkerAbsolute: false,
     dividerMargin: 10,
     padding: 5,
@@ -856,6 +905,16 @@ const config: Partial<MermaidConfig> = {
     defaultRenderer: 'dagre-wrapper',
   },
   state: {
+    /**
+     * ### titleTopMargin
+     *
+     * | Parameter      | Description                                    | Type    | Required | Values             |
+     * | -------------- | ---------------------------------------------- | ------- | -------- | ------------------ |
+     * | titleTopMargin | Margin top for the text over the state diagram | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 25
+     */
+    titleTopMargin: 25,
     dividerMargin: 10,
     sizeUnit: 5,
     padding: 8,
@@ -904,6 +963,17 @@ const config: Partial<MermaidConfig> = {
 
   /** The object containing configurations specific for entity relationship diagrams */
   er: {
+    /**
+     * ### titleTopMargin
+     *
+     * | Parameter      | Description                                    | Type    | Required | Values             |
+     * | -------------- | ---------------------------------------------- | ------- | -------- | ------------------ |
+     * | titleTopMargin | Margin top for the text over the diagram       | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 25
+     */
+    titleTopMargin: 25,
+
     /**
      * | Parameter      | Description                                     | Type    | Required | Values             |
      * | -------------- | ----------------------------------------------- | ------- | -------- | ------------------ |
@@ -1057,6 +1127,16 @@ const config: Partial<MermaidConfig> = {
     line_height: 20,
   },
   gitGraph: {
+    /**
+     * ### titleTopMargin
+     *
+     * | Parameter      | Description                                    | Type    | Required | Values             |
+     * | -------------- | ---------------------------------------------- | ------- | -------- | ------------------ |
+     * | titleTopMargin | Margin top for the text over the Git diagram   | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 25
+     */
+    titleTopMargin: 25,
     diagramPadding: 8,
     nodeLabel: {
       width: 75,
@@ -1168,7 +1248,7 @@ const config: Partial<MermaidConfig> = {
      * | --------------- | ----------- | ------- | -------- | ------------------ |
      * | c4BoundaryInRow | See Notes   | Integer | Required | Any Positive Value |
      *
-     * **Notes:** How many boundarys to place in each row.
+     * **Notes:** How many boundaries to place in each row.
      *
      * Default value: 2
      */
@@ -1833,8 +1913,12 @@ const config: Partial<MermaidConfig> = {
   fontSize: 16,
 };
 
-if (config.class) config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-if (config.gitGraph) config.gitGraph.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+if (config.class) {
+  config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+}
+if (config.gitGraph) {
+  config.gitGraph.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+}
 
 const keyify = (obj: any, prefix = ''): string[] =>
   Object.keys(obj).reduce((res: string[], el): string[] => {

@@ -20,6 +20,8 @@ class Theme {
     this.noteBkgColor = '#fff5ad';
     this.noteTextColor = '#333';
 
+    this.THEME_COLOR_LIMIT = 12;
+
     // dark
 
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
@@ -122,6 +124,50 @@ class Theme {
     this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
     this.transitionColor = this.transitionColor || this.lineColor;
     this.specialStateColor = this.lineColor;
+
+    /* Color Scale */
+    /* Each color-set will have a background, a foreground and a border color */
+    this.cScale0 = this.cScale0 || this.primaryColor;
+    this.cScale1 = this.cScale1 || this.secondaryColor;
+    this.cScale2 = this.cScale2 || this.tertiaryColor;
+    this.cScale3 = this.cScale3 || adjust(this.primaryColor, { h: 30 });
+    this.cScale4 = this.cScale4 || adjust(this.primaryColor, { h: 60 });
+    this.cScale5 = this.cScale5 || adjust(this.primaryColor, { h: 90 });
+    this.cScale6 = this.cScale6 || adjust(this.primaryColor, { h: 120 });
+    this.cScale7 = this.cScale7 || adjust(this.primaryColor, { h: 150 });
+    this.cScale8 = this.cScale8 || adjust(this.primaryColor, { h: 210, l: 150 });
+    this.cScale9 = this.cScale9 || adjust(this.primaryColor, { h: 270 });
+    this.cScale10 = this.cScale10 || adjust(this.primaryColor, { h: 300 });
+    this.cScale11 = this.cScale11 || adjust(this.primaryColor, { h: 330 });
+    if (this.darkMode) {
+      for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+        this['cScale' + i] = darken(this['cScale' + i], 75);
+      }
+    } else {
+      for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+        this['cScale' + i] = darken(this['cScale' + i], 25);
+      }
+    }
+
+    // Setup the inverted color for the set
+    for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+      this['cScaleInv' + i] = this['cScaleInv' + i] || invert(this['cScale' + i]);
+    }
+    // Setup the peer color for the set, useful for borders
+    for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+      if (this.darkMode) {
+        this['cScalePeer' + i] = this['cScalePeer' + i] || lighten(this['cScale' + i], 10);
+      } else {
+        this['cScalePeer' + i] = this['cScalePeer' + i] || darken(this['cScale' + i], 10);
+      }
+    }
+
+    // Setup teh label color for the set
+    this.scaleLabelColor = this.scaleLabelColor || this.labelTextColor;
+
+    for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+      this['cScaleLabel' + i] = this['cScaleLabel' + i] || this.scaleLabelColor;
+    }
 
     /* class */
     this.classText = this.classText || this.textColor;

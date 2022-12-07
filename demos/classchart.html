@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -14,7 +14,12 @@
   </head>
 
   <body>
+    <h1>Class diagram demos</h1>
+
     <pre class="mermaid">
+---
+title: Demo Class Diagram
+---
 		classDiagram
       accTitle: Demo Class Diagram
       accDescr: This class diagram show the abstract Animal class, and 3 classes that inherit from it: Duck, Fish, and Zebra.
@@ -42,8 +47,8 @@
       }
 
     </pre>
-
     <hr />
+
     <pre class="mermaid">
     classDiagram
     Class01 <|-- AveryLongClass : Cool
@@ -68,6 +73,7 @@
       }
     </pre>
     <hr />
+
     <pre class="mermaid">
     classDiagram
     class Class01~T~
@@ -81,6 +87,7 @@
     }
     </pre>
     <hr />
+
     <pre class="mermaid">
     classDiagram
     Class01~T~ <|-- AveryLongClass : Cool
@@ -104,11 +111,13 @@
         }
     </pre>
     <hr />
+
     <pre class="mermaid">
     classDiagram
     Interface1 ()-- Interface1Impl
     </pre>
     <hr />
+
     <pre class="mermaid">
     classDiagram
     direction LR
@@ -117,6 +126,7 @@
     Dog : species()
     </pre>
     <hr />
+
     <pre class="mermaid">
     classDiagram
     direction RL

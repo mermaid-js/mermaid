@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
     steps:
       - uses: actions/checkout@v3
 
@@ -39,4 +39,5 @@ jobs:
         run: pnpm run lint
 
       - name: Verify Docs
+        working-directory: ./packages/mermaid
         run: pnpm run docs:verify

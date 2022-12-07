@@ -1,6 +1,7 @@
 const warning = (s: string) => {
   // Todo remove debug code
-  console.error('Log function was called before initialization', s); // eslint-disable-line
+  // eslint-disable-next-line no-console
+  console.error('Log function was called before initialization', s);
 };
 
 export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
@@ -53,29 +54,3 @@ export const injectUtils = (
   sanitizeText = _sanitizeText;
   setupGraphViewbox = _setupGraphViewbox;
 };
-
-/*
-const warning = (..._args: any[]) => {
-  console.error('Log function was called before initialization');
-};
-
-export let log = {
-  trace: warning,
-  debug: warning,
-  info: warning,
-  warn: warning,
-  error: warning,
-  fatal: warning,
-};
-export let setLogLevel;
-export let getConfig;
-export let sanitizeText;
-export let setupGraphViewbox;
-export const injectUtils = (_log, _setLogLevel, _getConfig, _sanitizeText, _setupGraphViewbox) => {
-  log = _log;
-  setLogLevel = _setLogLevel;
-  getConfig = _getConfig;
-  sanitizeText = _sanitizeText;
-  setupGraphViewbox = _setupGraphViewbox;
-};
-*/

@@ -1,4 +1,5 @@
 import mermaid2 from '../../packages/mermaid/src/mermaid';
+import mindmap from '../../packages/mermaid-mindmap/src/detector';
 
 function b64ToUtf8(str) {
   return decodeURIComponent(escape(window.atob(str)));
@@ -9,7 +10,7 @@ function b64ToUtf8(str) {
  * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the
  * page.
  */
-const contentLoaded = function () {
+const contentLoaded = async function () {
   let pos = document.location.href.indexOf('?graph=');
   if (pos > 0) {
     pos = pos + 7;
@@ -36,6 +37,7 @@ const contentLoaded = function () {
       document.getElementsByTagName('body')[0].appendChild(div);
     }
 
+    await mermaid2.registerExternalDiagrams([mindmap]);
     mermaid2.initialize(graphObj.mermaid);
     mermaid2.init();
   }
@@ -52,7 +54,7 @@ function merge(current, update) {
     if (
       current.hasOwnProperty(key) &&
       typeof current[key] === 'object' &&
-      !(current[key] instanceof Array)
+      !Array.isArray(current[key])
     ) {
       merge(current[key], update[key]);
 
@@ -118,7 +120,9 @@ const contentLoadedApi = function () {
         (svgCode, bindFunctions) => {
           div.innerHTML = svgCode;
 
-          if (bindFunctions) bindFunctions(div);
+          if (bindFunctions) {
+            bindFunctions(div);
+          }
         },
         div
       );

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -14,6 +14,7 @@
   </head>
 
   <body>
+    <h1>Sequence diagram demos</h1>
     <pre class="mermaid">
 		sequenceDiagram
 			accTitle: test the accTitle
@@ -59,7 +60,7 @@
 			Alice -->> John: Parallel message 2
 			end
 	</pre>
-
+    <hr />
     <pre class="mermaid">
     sequenceDiagram
       accTitle: Sequence diagram title is here
@@ -96,6 +97,8 @@
     Alice -->> John: Parallel message 2
     end
     </pre>
+    <hr />
+
     <pre class="mermaid">
     sequenceDiagram
     participant 1 as multiline<br>using #lt;br#gt;
@@ -111,6 +114,8 @@
     4->>1: multiline<br />using #lt;br /#gt;
     note right of 1: multiline<br />using #lt;br /#gt;
     </pre>
+    <hr />
+
     <pre class="mermaid">
     sequenceDiagram
     autonumber
@@ -121,6 +126,7 @@
     autonumber off
     John-->>Alice: I feel great!
     </pre>
+    <hr />
 
     <script src="./mermaid.js"></script>
     <script>

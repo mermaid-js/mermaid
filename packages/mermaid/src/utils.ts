@@ -4,6 +4,7 @@ import {
   curveBasis,
   curveBasisClosed,
   curveBasisOpen,
+  CurveFactory,
   curveLinear,
   curveLinearClosed,
   curveMonotoneX,
@@ -20,7 +21,7 @@ import { log } from './logger';
 import { detectType } from './diagram-api/detectType';
 import assignWithDepth from './assignWithDepth';
 import { MermaidConfig } from './config.type';
-import memoize from 'lodash/memoize';
+import memoize from 'lodash-es/memoize';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -36,19 +37,18 @@ const d3CurveTypes = {
   curveStepAfter: curveStepAfter,
   curveStepBefore: curveStepBefore,
 };
-const directive =
-  /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
+const directive = /%{2}{\s*(?:(\w+)\s*:|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;
 const directiveWithoutOpen =
-  /\s*(?:(?:(\w+)(?=:):|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
+  /\s*(?:(\w+)(?=:):|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;
 
 /**
- * @function detectInit Detects the init config object from the text
- * @param config
+ * Detects the init config object from the text
  *
- *   ```mermaid
+ * @param text - The text defining the graph. For example:
  *
- *   %%{init: {"theme": "debug", "logLevel": 1 }}%%
- *   graph LR
+ * ```mermaid
+ * %%{init: {"theme": "debug", "logLevel": 1 }}%%
+ * graph LR
  *      a-->b
  *      b-->c
  *      c-->d
@@ -58,11 +58,11 @@ const directiveWithoutOpen =
  *      g-->h
  * ```
  *
- *   Or
+ * Or
  *
- *   ```mermaid
- *   %%{initialize: {"theme": "dark", logLevel: "debug" }}%%
- *   graph LR
+ * ```mermaid
+ * %%{initialize: {"theme": "dark", logLevel: "debug" }}%%
+ * graph LR
  *    a-->b
  *    b-->c
  *    c-->d
@@ -71,8 +71,9 @@ const directiveWithoutOpen =
  *    f-->g
  *    g-->h
  * ```
- * @param {string} text The text defining the graph
- * @returns {object} The json object representing the init passed to mermaid.initialize()
+ *
+ * @param config - Optional mermaid configuration object.
+ * @returns The json object representing the init passed to mermaid.initialize()
  */
 export const detectInit = function (text: string, config?: MermaidConfig): MermaidConfig {
   const inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
@@ -89,7 +90,7 @@ export const detectInit = function (text: string, config?: MermaidConfig): Merma
   if (results) {
     let type = detectType(text, config);
     ['config'].forEach((prop) => {
-      if (typeof results[prop] !== 'undefined') {
+      if (results[prop] !== undefined) {
         if (type === 'flowchart-v2') {
           type = 'flowchart';
         }
@@ -104,12 +105,14 @@ export const detectInit = function (text: string, config?: MermaidConfig): Merma
 };
 
 /**
- * @function detectDirective Detects the directive from the text. Text can be single line or
- *   multiline. If type is null or omitted the first directive encountered in text will be returned
+ * Detects the directive from the text.
  *
- *   ```mermaid
- *   graph LR
- *    %%{somedirective}%%
+ * Text can be single line or multiline. If type is null or omitted,
+ * the first directive encountered in text will be returned
+ *
+ * ```mermaid
+ * graph LR
+ * %%{someDirective}%%
  *    a-->b
  *    b-->c
  *    c-->d
@@ -118,13 +121,16 @@ export const detectInit = function (text: string, config?: MermaidConfig): Merma
  *    f-->g
  *    g-->h
  * ```
- * @param {string} text The text defining the graph
- * @param {string | RegExp} type The directive to return (default: null)
- * @returns {object | Array} An object or Array representing the directive(s): { type: string, args:
- *   object|null } matched by the input type if a single directive was found, that directive object
- *   will be returned.
+ *
+ * @param text - The text defining the graph
+ * @param type - The directive to return (default: `null`)
+ * @returns An object or Array representing the directive(s) matched by the input type.
+ * If a single directive was found, that directive object will be returned.
  */
-export const detectDirective = function (text, type = null) {
+export const detectDirective = function (
+  text: string,
+  type: string | RegExp = null
+): { type?: string; args?: any } | { type?: string; args?: any }[] {
   try {
     const commentWithoutDirectives = new RegExp(
       `[%]{2}(?![{]${directiveWithoutOpen.source})(?=[}][%]{2}).*\n`,
@@ -166,14 +172,17 @@ export const detectDirective = function (text, type = null) {
 };
 
 /**
- * @function isSubstringInArray Detects whether a substring in present in a given array
- * @param {string} str The substring to detect
- * @param {Array} arr The array to search
- * @returns {number} The array index containing the substring or -1 if not present
+ * Detects whether a substring in present in a given array
+ *
+ * @param str - The substring to detect
+ * @param arr - The array to search
+ * @returns The array index containing the substring or -1 if not present
  */
-export const isSubstringInArray = function (str, arr) {
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i].match(str)) return i;
+export const isSubstringInArray = function (str: string, arr: string[]): number {
+  for (const [i, element] of arr.entries()) {
+    if (element.match(str)) {
+      return i;
+    }
   }
   return -1;
 };
@@ -181,26 +190,26 @@ export const isSubstringInArray = function (str, arr) {
 /**
  * Returns a d3 curve given a curve name
  *
- * @param {string | undefined} interpolate The interpolation name
- * @param {any} defaultCurve The default curve to return
- * @returns {import('d3-shape').CurveFactory} The curve factory to use
+ * @param interpolate - The interpolation name
+ * @param defaultCurve - The default curve to return
+ * @returns The curve factory to use
  */
-export const interpolateToCurve = (interpolate, defaultCurve) => {
+export function interpolateToCurve(interpolate?: string, defaultCurve: CurveFactory): CurveFactory {
   if (!interpolate) {
     return defaultCurve;
   }
   const curveName = `curve${interpolate.charAt(0).toUpperCase() + interpolate.slice(1)}`;
   return d3CurveTypes[curveName] || defaultCurve;
-};
+}
 
 /**
  * Formats a URL string
  *
- * @param {string} linkStr String of the URL
- * @param {{ securityLevel: string }} config Configuration passed to MermaidJS
- * @returns {string | undefined} The formatted URL
+ * @param linkStr - String of the URL
+ * @param config - Configuration passed to MermaidJS
+ * @returns The formatted URL or `undefined`.
  */
-export const formatUrl = (linkStr, config) => {
+export function formatUrl(linkStr: string, config: { securityLevel: string }): string | undefined {
   const url = linkStr.trim();
 
   if (url) {
@@ -210,15 +219,15 @@ export const formatUrl = (linkStr, config) => {
 
     return url;
   }
-};
+}
 
 /**
  * Runs a function
  *
- * @param {string} functionName A dot seperated path to the function relative to the `window`
- * @param {...any} params Parameters to pass to the function
+ * @param functionName - A dot separated path to the function relative to the `window`
+ * @param params - Parameters to pass to the function
  */
-export const runFunc = (functionName, ...params) => {
+export const runFunc = (functionName: string, ...params) => {
   const arrPaths = functionName.split('.');
 
   const len = arrPaths.length - 1;
@@ -227,34 +236,39 @@ export const runFunc = (functionName, ...params) => {
   let obj = window;
   for (let i = 0; i < len; i++) {
     obj = obj[arrPaths[i]];
-    if (!obj) return;
+    if (!obj) {
+      return;
+    }
   }
 
   obj[fnName](...params);
 };
 
-/**
- * @typedef {object} Point A (x, y) point
- * @property {number} x The x value
- * @property {number} y The y value
- */
+/** A (x, y) point */
+interface Point {
+  /** The x value */
+  x: number;
+  /** The y value */
+  y: number;
+}
 
 /**
  * Finds the distance between two points using the Distance Formula
  *
- * @param {Point} p1 The first point
- * @param {Point} p2 The second point
- * @returns {number} The distance
+ * @param p1 - The first point
+ * @param p2 - The second point
+ * @returns The distance between the two points.
  */
-const distance = (p1, p2) =>
-  p1 && p2 ? Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) : 0;
+function distance(p1: Point, p2: Point): number {
+  return p1 && p2 ? Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) : 0;
+}
 
 /**
- * @param {Point[]} points List of points
- * @returns {Point}
- * @todo Give this a description
+ * TODO: Give this a description
+ *
+ * @param points - List of points
  */
-const traverseEdge = (points) => {
+function traverseEdge(points: Point[]): Point {
   let prevPoint;
   let totalDistance = 0;
 
@@ -276,8 +290,12 @@ const traverseEdge = (points) => {
         // The point is remainingDistance from prevPoint in the vector between prevPoint and point
         // Calculate the coordinates
         const distanceRatio = remainingDistance / vectorDistance;
-        if (distanceRatio <= 0) center = prevPoint;
-        if (distanceRatio >= 1) center = { x: point.x, y: point.y };
+        if (distanceRatio <= 0) {
+          center = prevPoint;
+        }
+        if (distanceRatio >= 1) {
+          center = { x: point.x, y: point.y };
+        }
         if (distanceRatio > 0 && distanceRatio < 1) {
           center = {
             x: (1 - distanceRatio) * prevPoint.x + distanceRatio * point.x,
@@ -289,32 +307,24 @@ const traverseEdge = (points) => {
     prevPoint = point;
   });
   return center;
-};
+}
 
 /**
- * Alias for `traverseEdge`
- *
- * @param {Point[]} points List of points
- * @returns {Point} Return result of `transverseEdge`
+ * {@inheritdoc traverseEdge}
  */
-const calcLabelPosition = (points) => {
+function calcLabelPosition(points: Point[]): Point {
   if (points.length === 1) {
     return points[0];
   }
   return traverseEdge(points);
-};
+}
 
 const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition) => {
   let prevPoint;
-  log.info('our points', points);
+  log.info(`our points ${JSON.stringify(points)}`);
   if (points[0] !== initialPosition) {
     points = points.reverse();
   }
-  points.forEach((point) => {
-    totalDistance += distance(point, prevPoint);
-    prevPoint = point;
-  });
-
   // Traverse only 25 total distance along points to find cardinality point
   const distanceToCardinalityPoint = 25;
 
@@ -330,8 +340,12 @@ const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition)
         // The point is remainingDistance from prevPoint in the vector between prevPoint and point
         // Calculate the coordinates
         const distanceRatio = remainingDistance / vectorDistance;
-        if (distanceRatio <= 0) center = prevPoint;
-        if (distanceRatio >= 1) center = { x: point.x, y: point.y };
+        if (distanceRatio <= 0) {
+          center = prevPoint;
+        }
+        if (distanceRatio >= 1) {
+          center = { x: point.x, y: point.y };
+        }
         if (distanceRatio > 0 && distanceRatio < 1) {
           center = {
             x: (1 - distanceRatio) * prevPoint.x + distanceRatio * point.x,
@@ -354,14 +368,18 @@ const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition)
 };
 
 /**
- * Position ['start_left', 'start_right', 'end_left', 'end_right']
+ * Calculates the terminal label position.
  *
- * @param {any} terminalMarkerSize
- * @param {any} position
- * @param {any} _points
- * @returns {any}
+ * @param terminalMarkerSize - Terminal marker size.
+ * @param position - Position of label relative to points.
+ * @param _points - Array of points.
+ * @returns - The `cardinalityPosition`.
  */
-const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
+function calcTerminalLabelPosition(
+  terminalMarkerSize: number,
+  position: 'start_left' | 'start_right' | 'end_left' | 'end_right',
+  _points: Point[]
+): Point {
   // Todo looking to faster cloning method
   let points = JSON.parse(JSON.stringify(_points));
   let prevPoint;
@@ -389,8 +407,12 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
         // The point is remainingDistance from prevPoint in the vector between prevPoint and point
         // Calculate the coordinates
         const distanceRatio = remainingDistance / vectorDistance;
-        if (distanceRatio <= 0) center = prevPoint;
-        if (distanceRatio >= 1) center = { x: point.x, y: point.y };
+        if (distanceRatio <= 0) {
+          center = prevPoint;
+        }
+        if (distanceRatio >= 1) {
+          center = { x: point.x, y: point.y };
+        }
         if (distanceRatio > 0 && distanceRatio < 1) {
           center = {
             x: (1 - distanceRatio) * prevPoint.x + distanceRatio * point.x,
@@ -425,31 +447,31 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
     cardinalityPosition.y = -Math.cos(angle) * d + (points[0].y + center.y) / 2 - 5;
   }
   return cardinalityPosition;
-};
+}
 
 /**
  * Gets styles from an array of declarations
  *
- * @param {string[]} arr Declarations
- * @returns {{ style: string; labelStyle: string }} The styles grouped as strings
+ * @param arr - Declarations
+ * @returns The styles grouped as strings
  */
-export const getStylesFromArray = (arr) => {
+export function getStylesFromArray(arr: string[]): { style: string; labelStyle: string } {
   let style = '';
   let labelStyle = '';
 
-  for (let i = 0; i < arr.length; i++) {
-    if (typeof arr[i] !== 'undefined') {
+  for (const element of arr) {
+    if (element !== undefined) {
       // add text properties to label style definition
-      if (arr[i].startsWith('color:') || arr[i].startsWith('text-align:')) {
-        labelStyle = labelStyle + arr[i] + ';';
+      if (element.startsWith('color:') || element.startsWith('text-align:')) {
+        labelStyle = labelStyle + element + ';';
       } else {
-        style = style + arr[i] + ';';
+        style = style + element + ';';
       }
     }
   }
 
   return { style: style, labelStyle: labelStyle };
-};
+}
 
 let cnt = 0;
 export const generateId = () => {
@@ -458,10 +480,12 @@ export const generateId = () => {
 };
 
 /**
- * @param {any} length
- * @returns {any}
+ * Generates a random hexadecimal id of the given length.
+ *
+ * @param length - Length of ID.
+ * @returns The generated ID.
  */
-function makeid(length) {
+function makeid(length: number): string {
   let result = '';
   const characters = '0123456789abcdef';
   const charactersLength = characters.length;
@@ -494,22 +518,25 @@ export const getTextObj = function () {
 /**
  * Adds text to an element
  *
- * @param {SVGElement} elem Element to add text to
- * @param {{
- *   text: string;
- *   x: number;
- *   y: number;
- *   anchor: 'start' | 'middle' | 'end';
- *   fontFamily: string;
- *   fontSize: string | number;
- *   fontWeight: string | number;
- *   fill: string;
- *   class: string | undefined;
- *   textMargin: number;
- * }} textData
- * @returns {SVGTextElement} Text element with given styling and content
+ * @param elem - SVG Element to add text to
+ * @param textData - Text options.
+ * @returns Text element with given styling and content
  */
-export const drawSimpleText = function (elem, textData) {
+export const drawSimpleText = function (
+  elem: SVGElement,
+  textData: {
+    text: string;
+    x: number;
+    y: number;
+    anchor: 'start' | 'middle' | 'end';
+    fontFamily: string;
+    fontSize: string | number;
+    fontWeight: string | number;
+    fill: string;
+    class: string | undefined;
+    textMargin: number;
+  }
+): SVGTextElement {
   // Remove and ignore br:s
   const nText = textData.text.replace(common.lineBreakRegex, ' ');
 
@@ -521,7 +548,7 @@ export const drawSimpleText = function (elem, textData) {
   textElem.style('font-size', textData.fontSize);
   textElem.style('font-weight', textData.fontWeight);
   textElem.attr('fill', textData.fill);
-  if (typeof textData.class !== 'undefined') {
+  if (textData.class !== undefined) {
     textElem.attr('class', textData.class);
   }
 
@@ -533,54 +560,77 @@ export const drawSimpleText = function (elem, textData) {
   return textElem;
 };
 
-export const wrapLabel = memoize(
-  (label, maxWidth, config) => {
-    if (!label) {
-      return label;
-    }
-    config = Object.assign(
-      { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: '<br/>' },
-      config
-    );
-    if (common.lineBreakRegex.test(label)) {
-      return label;
-    }
-    const words = label.split(' ');
-    const completedLines = [];
-    let nextLine = '';
-    words.forEach((word, index) => {
-      const wordLength = calculateTextWidth(`${word} `, config);
-      const nextLineLength = calculateTextWidth(nextLine, config);
-      if (wordLength > maxWidth) {
-        const { hyphenatedStrings, remainingWord } = breakString(word, maxWidth, '-', config);
-        completedLines.push(nextLine, ...hyphenatedStrings);
-        nextLine = remainingWord;
-      } else if (nextLineLength + wordLength >= maxWidth) {
-        completedLines.push(nextLine);
-        nextLine = word;
-      } else {
-        nextLine = [nextLine, word].filter(Boolean).join(' ');
-      }
-      const currentWord = index + 1;
-      const isLastWord = currentWord === words.length;
-      if (isLastWord) {
-        completedLines.push(nextLine);
-      }
-    });
-    return completedLines.filter((line) => line !== '').join(config.joinWith);
-  },
-  (label, maxWidth, config) =>
-    `${label}${maxWidth}${config.fontSize}${config.fontWeight}${config.fontFamily}${config.joinWith}`
-);
+interface WrapLabelConfig {
+  fontSize: number;
+  fontFamily: string;
+  fontWeight: number;
+  joinWith: string;
+}
 
-const breakString = memoize(
-  (word, maxWidth, hyphenCharacter = '-', config) => {
+export const wrapLabel: (label: string, maxWidth: string, config: WrapLabelConfig) => string =
+  memoize(
+    (label: string, maxWidth: string, config: WrapLabelConfig): string => {
+      if (!label) {
+        return label;
+      }
+      config = Object.assign(
+        { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: '<br/>' },
+        config
+      );
+      if (common.lineBreakRegex.test(label)) {
+        return label;
+      }
+      const words = label.split(' ');
+      const completedLines = [];
+      let nextLine = '';
+      words.forEach((word, index) => {
+        const wordLength = calculateTextWidth(`${word} `, config);
+        const nextLineLength = calculateTextWidth(nextLine, config);
+        if (wordLength > maxWidth) {
+          const { hyphenatedStrings, remainingWord } = breakString(word, maxWidth, '-', config);
+          completedLines.push(nextLine, ...hyphenatedStrings);
+          nextLine = remainingWord;
+        } else if (nextLineLength + wordLength >= maxWidth) {
+          completedLines.push(nextLine);
+          nextLine = word;
+        } else {
+          nextLine = [nextLine, word].filter(Boolean).join(' ');
+        }
+        const currentWord = index + 1;
+        const isLastWord = currentWord === words.length;
+        if (isLastWord) {
+          completedLines.push(nextLine);
+        }
+      });
+      return completedLines.filter((line) => line !== '').join(config.joinWith);
+    },
+    (label, maxWidth, config) =>
+      `${label}${maxWidth}${config.fontSize}${config.fontWeight}${config.fontFamily}${config.joinWith}`
+  );
+
+interface BreakStringOutput {
+  hyphenatedStrings: string[];
+  remainingWord: string;
+}
+
+const breakString: (
+  word: string,
+  maxWidth: number,
+  hyphenCharacter: string,
+  config: WrapLabelConfig
+) => BreakStringOutput = memoize(
+  (
+    word: string,
+    maxWidth: number,
+    hyphenCharacter = '-',
+    config: WrapLabelConfig
+  ): BreakStringOutput => {
     config = Object.assign(
       { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 0 },
       config
     );
-    const characters = word.split('');
-    const lines = [];
+    const characters = [...word];
+    const lines: string[] = [];
     let currentLine = '';
     characters.forEach((character, index) => {
       const nextLine = `${currentLine}${character}`;
@@ -607,43 +657,62 @@ const breakString = memoize(
  *
  * If the wrapped text text has greater height, we extend the height, so it's value won't overflow.
  *
- * @param {any} text The text to measure
- * @param {any} config - The config for fontSize, fontFamily, and fontWeight all impacting the
+ * @param text - The text to measure
+ * @param config - The config for fontSize, fontFamily, and fontWeight all impacting the
  *   resulting size
- * @returns {any} - The height for the given text
+ * @returns The height for the given text
  */
-export const calculateTextHeight = function (text, config) {
+export function calculateTextHeight(
+  text: Parameters<typeof calculateTextDimensions>[0],
+  config: Parameters<typeof calculateTextDimensions>[1]
+): ReturnType<typeof calculateTextDimensions>['height'] {
   config = Object.assign(
     { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 15 },
     config
   );
   return calculateTextDimensions(text, config).height;
-};
+}
 
 /**
  * This calculates the width of the given text, font size and family.
  *
- * @param {any} text - The text to calculate the width of
- * @param {any} config - The config for fontSize, fontFamily, and fontWeight all impacting the
+ * @param text - The text to calculate the width of
+ * @param config - The config for fontSize, fontFamily, and fontWeight all impacting the
  *   resulting size
- * @returns {any} - The width for the given text
+ * @returns The width for the given text
  */
-export const calculateTextWidth = function (text, config) {
+export function calculateTextWidth(
+  text: Parameters<typeof calculateTextDimensions>[0],
+  config: Parameters<typeof calculateTextDimensions>[1]
+): ReturnType<typeof calculateTextDimensions>['width'] {
   config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial' }, config);
   return calculateTextDimensions(text, config).width;
-};
+}
 
+interface TextDimensionConfig {
+  fontSize?: number;
+  fontWeight?: number;
+  fontFamily?: string;
+}
+interface TextDimensions {
+  width: number;
+  height: number;
+  lineHeight?: number;
+}
 /**
  * This calculates the dimensions of the given text, font size, font family, font weight, and
  * margins.
  *
- * @param {any} text - The text to calculate the width of
- * @param {any} config - The config for fontSize, fontFamily, fontWeight, and margin all impacting
+ * @param text - The text to calculate the width of
+ * @param config - The config for fontSize, fontFamily, fontWeight, and margin all impacting
  *   the resulting size
- * @returns - The width for the given text
+ * @returns The dimensions for the given text
  */
-export const calculateTextDimensions = memoize(
-  function (text, config) {
+export const calculateTextDimensions: (
+  text: string,
+  config: TextDimensionConfig
+) => TextDimensions = memoize(
+  (text: string, config: TextDimensionConfig): TextDimensions => {
     config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial' }, config);
     const { fontSize, fontFamily, fontWeight } = config;
     if (!text) {
@@ -712,7 +781,9 @@ export const initIdGenerator = class iterator {
   }
 
   next() {
-    if (!this.deterministic) return Date.now();
+    if (!this.deterministic) {
+      return Date.now();
+    }
 
     return this.count++;
   }
@@ -723,10 +794,10 @@ let decoder;
 /**
  * Decodes HTML, source: {@link https://github.com/shrpne/entity-decode/blob/v2.0.1/browser.js}
  *
- * @param {string} html HTML as a string
- * @returns {string} Unescaped HTML
+ * @param html - HTML as a string
+ * @returns Unescaped HTML
  */
-export const entityDecode = function (html) {
+export const entityDecode = function (html: string): string {
   decoder = decoder || document.createElement('div');
   // Escape HTML before decoding for HTML Entities
   html = escape(html).replace(/%26/g, '&').replace(/%23/g, '#').replace(/%3B/g, ';');
@@ -738,9 +809,9 @@ export const entityDecode = function (html) {
 /**
  * Sanitizes directive objects
  *
- * @param {object} args Directive's JSON
+ * @param args - Directive's JSON
  */
-export const directiveSanitizer = (args) => {
+export const directiveSanitizer = (args: any) => {
   log.debug('directiveSanitizer called with', args);
   if (typeof args === 'object') {
     // check for array
@@ -750,34 +821,34 @@ export const directiveSanitizer = (args) => {
       // This is an object
       Object.keys(args).forEach((key) => {
         log.debug('Checking key', key);
-        if (key.indexOf('__') === 0) {
+        if (key.startsWith('__')) {
           log.debug('sanitize deleting __ option', key);
           delete args[key];
         }
 
-        if (key.indexOf('proto') >= 0) {
+        if (key.includes('proto')) {
           log.debug('sanitize deleting proto option', key);
           delete args[key];
         }
 
-        if (key.indexOf('constr') >= 0) {
+        if (key.includes('constr')) {
           log.debug('sanitize deleting constr option', key);
           delete args[key];
         }
 
-        if (key.indexOf('themeCSS') >= 0) {
+        if (key.includes('themeCSS')) {
           log.debug('sanitizing themeCss option');
           args[key] = sanitizeCss(args[key]);
         }
-        if (key.indexOf('fontFamily') >= 0) {
+        if (key.includes('fontFamily')) {
           log.debug('sanitizing fontFamily option');
           args[key] = sanitizeCss(args[key]);
         }
-        if (key.indexOf('altFontFamily') >= 0) {
+        if (key.includes('altFontFamily')) {
           log.debug('sanitizing altFontFamily option');
           args[key] = sanitizeCss(args[key]);
         }
-        if (configKeys.indexOf(key) < 0) {
+        if (!configKeys.includes(key)) {
           log.debug('sanitize deleting option', key);
           delete args[key];
         } else {
@@ -791,10 +862,9 @@ export const directiveSanitizer = (args) => {
   }
   if (args.themeVariables) {
     const kArr = Object.keys(args.themeVariables);
-    for (let i = 0; i < kArr.length; i++) {
-      const k = kArr[i];
+    for (const k of kArr) {
       const val = args.themeVariables[k];
-      if (val && val.match && !val.match(/^[a-zA-Z0-9#,";()%. ]+$/)) {
+      if (val && val.match && !val.match(/^[\d "#%(),.;A-Za-z]+$/)) {
         args.themeVariables[k] = '';
       }
     }
@@ -805,13 +875,13 @@ export const sanitizeCss = (str) => {
   let startCnt = 0;
   let endCnt = 0;
 
-  for (let i = 0; i < str.length; i++) {
+  for (const element of str) {
     if (startCnt < endCnt) {
       return '{ /* ERROR: Unbalanced CSS */ }';
     }
-    if (str[i] === '{') {
+    if (element === '{') {
       startCnt++;
-    } else if (str[i] === '}') {
+    } else if (element === '}') {
       endCnt++;
     }
   }
@@ -825,18 +895,48 @@ export const sanitizeCss = (str) => {
 export interface DetailedError {
   str: string;
   hash: any;
+  error?: any;
+  message?: string;
 }
 
-/** @param error */
+/** @param error - The error to check */
 export function isDetailedError(error: unknown): error is DetailedError {
   return 'str' in error;
 }
 
-/** @param error */
+/** @param error - The error to convert to an error message */
 export function getErrorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message;
+  if (error instanceof Error) {
+    return error.message;
+  }
   return String(error);
 }
+
+/**
+ * Appends <text> element with the given title, centered.
+ *
+ * @param parent - d3 svg object to append title to
+ * @param cssClass - CSS class for the <text> element containing the title
+ * @param titleTopMargin - Margin in pixels between title and rest of the graph
+ * @param title - The title. If empty, returns immediately.
+ */
+export const insertTitle = (
+  parent,
+  cssClass: string,
+  titleTopMargin: number,
+  title?: string
+): void => {
+  if (!title) {
+    return;
+  }
+  const bounds = parent.node().getBBox();
+  parent
+    .append('text')
+    .text(title)
+    .attr('x', bounds.x + bounds.width / 2)
+    .attr('y', -titleTopMargin)
+    .attr('class', cssClass);
+};
 
 export default {
   assignWithDepth,
@@ -860,4 +960,5 @@ export default {
   initIdGenerator: initIdGenerator,
   directiveSanitizer,
   sanitizeCss,
+  insertTitle,
 };

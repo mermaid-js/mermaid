@@ -8,7 +8,7 @@
 
 %%
 
-"info"		      return 'info'    ;
+"example-diagram"		      return 'example-diagram'    ;
 [\s\n\r]+         return 'NL'      ;
 [\s]+ 		      return 'space';
 "showInfo"		  return 'showInfo';
@@ -22,8 +22,8 @@
 %% /* language grammar */
 
 start
-// %{	: info document 'EOF' { return yy; } }
-	: info document 'EOF' { return yy; }
+// %{	: example-diagram document 'EOF' { return yy; } }
+	: example-diagram document 'EOF' { return yy; }
 	;
 
 document

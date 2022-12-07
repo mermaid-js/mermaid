@@ -21,7 +21,7 @@ export const draw = (txt, id, _version, diagObj) => {
     log.debug('Rendering info diagram\n' + txt);
 
     const securityLevel = configApi.getConfig().securityLevel;
-    // Handle root and Document for when rendering in sanbox mode
+    // Handle root and Document for when rendering in sandbox mode
     let sandboxElement;
     if (securityLevel === 'sandbox') {
       sandboxElement = select('#i' + id);
@@ -39,14 +39,14 @@ export const draw = (txt, id, _version, diagObj) => {
     const elem = doc.getElementById(id);
     width = elem.parentElement.offsetWidth;
 
-    if (typeof width === 'undefined') {
+    if (width === undefined) {
       width = 1200;
     }
 
-    if (typeof conf.useWidth !== 'undefined') {
+    if (conf.useWidth !== undefined) {
       width = conf.useWidth;
     }
-    if (typeof conf.pie.useWidth !== 'undefined') {
+    if (conf.pie.useWidth !== undefined) {
       width = conf.pie.useWidth;
     }
 
@@ -94,10 +94,22 @@ export const draw = (txt, id, _version, diagObj) => {
     var color = scaleOrdinal().range(myGeneratedColors);
 
     // Compute the position of each group on the pie:
-    var pie = d3pie().value(function (d) {
-      return d[1];
+    var pieData = Object.entries(data).map(function (el, idx) {
+      return {
+        order: idx,
+        name: el[0],
+        value: el[1],
+      };
     });
-    var dataReady = pie(Object.entries(data));
+    var pie = d3pie()
+      .value(function (d) {
+        return d.value;
+      })
+      .sort(function (a, b) {
+        // Sort slices in clockwise direction
+        return a.order - b.order;
+      });
+    var dataReady = pie(pieData);
 
     // Shape helper to build arcs:
     var arcGenerator = arc().innerRadius(0).outerRadius(radius);
@@ -110,7 +122,7 @@ export const draw = (txt, id, _version, diagObj) => {
       .append('path')
       .attr('d', arcGenerator)
       .attr('fill', function (d) {
-        return color(d.data[0]);
+        return color(d.data.name);
       })
       .attr('class', 'pieCircle');
 
@@ -122,7 +134,7 @@ export const draw = (txt, id, _version, diagObj) => {
       .enter()
       .append('text')
       .text(function (d) {
-        return ((d.data[1] / sum) * 100).toFixed(0) + '%';
+        return ((d.data.value / sum) * 100).toFixed(0) + '%';
       })
       .attr('transform', function (d) {
         return 'translate(' + arcGenerator.centroid(d) + ')';
@@ -145,11 +157,11 @@ export const draw = (txt, id, _version, diagObj) => {
       .append('g')
       .attr('class', 'legend')
       .attr('transform', function (d, i) {
-        var height = legendRectSize + legendSpacing;
-        var offset = (height * color.domain().length) / 2;
-        var horz = 12 * legendRectSize;
-        var vert = i * height - offset;
-        return 'translate(' + horz + ',' + vert + ')';
+        const height = legendRectSize + legendSpacing;
+        const offset = (height * color.domain().length) / 2;
+        const horizontal = 12 * legendRectSize;
+        const vertical = i * height - offset;
+        return 'translate(' + horizontal + ',' + vertical + ')';
       });
 
     legend
@@ -166,9 +178,9 @@ export const draw = (txt, id, _version, diagObj) => {
       .attr('y', legendRectSize - legendSpacing)
       .text(function (d) {
         if (diagObj.db.getShowData() || conf.showData || conf.pie.showData) {
-          return d.data[0] + ' [' + d.data[1] + ']';
+          return d.data.name + ' [' + d.data.value + ']';
         } else {
-          return d.data[0];
+          return d.data.name;
         }
       });
   } catch (e) {

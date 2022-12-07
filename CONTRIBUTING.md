@@ -6,12 +6,23 @@ So you want to help? That's great!
 
 Here are a few things to know to get you started on the right path.
 
+Below link will help you making a copy of the repository in your local system.
+
+https://docs.github.com/en/get-started/quickstart/fork-a-repo
+
+## Requirements
+
+- [volta](https://volta.sh/) to manage node versions.
+- [Node.js](https://nodejs.org/en/). `volta install node`
+- [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
+
 ## Development Installation
 
 ```bash
 git clone git@github.com:mermaid-js/mermaid.git
 cd mermaid
-pnpm install
+# npx is required for first install as volta support for pnpm is not added yet.
+npx pnpm install
 pnpm test
 ```
 
@@ -21,7 +32,7 @@ We make all changes via pull requests. As we have many pull requests from develo
 
 - Large changes reviewed by knsv or other developer asked to review by knsv
 - Smaller low-risk changes like dependencies, documentation, etc. can be merged by active collaborators
-- Documentation (updates to the `src/docs` folder is also allowed via direct commits)
+- Documentation (updates to the `package/mermaid/src/docs` folder is also allowed via direct commits)
 
 To commit code, create a branch, let it start with the type like feature or bug followed by the issue number for reference and some describing text.
 
@@ -39,16 +50,16 @@ Less strict here, it is OK to commit directly in the `develop` branch if you are
 
 The documentation is written in **Markdown**. For more information about Markdown [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
 
-### Documentation source files are in /src/docs
+### Documentation source files are in [`/packages/mermaid/src/docs`](packages/mermaid/src/docs)
 
-The source files for the project documentation are located in the `/src/docs` directory. This is where you should make changes.
-The files under `/src/docs` are processed to generate the published documentation, and the resulting files are put into the `/docs` directory.
+The source files for the project documentation are located in the [`/packages/mermaid/src/docs`](packages/mermaid/src/docs) directory. This is where you should make changes.
+The files under `/packages/mermaid/src/docs` are processed to generate the published documentation, and the resulting files are put into the `/docs` directory.
 
 ```mermaid
 flowchart LR
   classDef default fill:#fff,color:black,stroke:black
 
-  source["files in /src/docs\n(changes should be done here)"] -- automatic processing\nto generate the final documentation--> published["files in /docs\ndisplayed on the official documentation site"]
+  source["files in /packages/mermaid/src/docs\n(changes should be done here)"] -- automatic processing\nto generate the final documentation--> published["files in /docs\ndisplayed on the official documentation site"]
 
 ```
 
@@ -56,30 +67,21 @@ flowchart LR
 
 ### The official documentation site
 
-**[The mermaid documentation site](https://mermaid-js.github.io/mermaid/) is powered by [Docsify](https://docsify.js.org), a simple documentation site generator.**
+**[The mermaid documentation site](https://mermaid-js.github.io/mermaid/) is powered by [Vitepress](https://vitepress.vuejs.org/), a simple documentation site generator.**
 
-If you want to preview the whole documentation site on your machine, you need to install `docsify-cli`:
-
-```sh
-$ npm i docsify-cli -g
-```
-
-If you are more familiar with Yarn, you can use the following command:
+If you want to preview the whole documentation site on your machine:
 
 ```sh
-$ yarn global add docsify-cli
+cd packages/mermaid
+pnpm i
+pnpm docs:dev
 ```
 
-The above command will install `docsify-cli` globally.
-If the installation is successful, the command `docsify` will be available in your `PATH`.
-
-You can now run the following command to serve the documentation site:
+You can now build and serve the documentation site:
 
 ```sh
-$ docsify serve docs
+pnpm docs:serve
 ```
-
-Once the local HTTP server is listening, you can point your browser at http://localhost:3000.
 
 ## Branching
 
@@ -137,11 +139,11 @@ it('should render forks and joins', () => {
 
 Finally, if it is not in the documentation, no one will know about it and then **no one will use it**. Wouldn't that be sad? With all the effort that was put into the feature?
 
-The source files for documentation are in `/src/docs` and are written in markdown. Just pick the right section and start typing. See the [Committing Documentation](#committing-documentation) section for more about how the documentation is generated.
+The source files for documentation are in `/packages/mermaid/src/docs` and are written in markdown. Just pick the right section and start typing. See the [Committing Documentation](#committing-documentation) section for more about how the documentation is generated.
 
 #### Adding to or changing the documentation organization
 
-If you want to add a new section or change the organization (structure), then you need to make sure to **change the side navigation** in `src/docs/_sidebar.md`.
+If you want to add a new section or change the organization (structure), then you need to make sure to **change the side navigation** in `mermaid/src/docs/.vitepress/config.js`.
 
 When changes are committed and then released, they become part of the `master` branch and become part of the published documentation on https://mermaid-js.github.io/mermaid/
 

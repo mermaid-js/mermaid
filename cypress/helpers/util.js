@@ -2,6 +2,8 @@ const utf8ToB64 = (str) => {
   return window.btoa(unescape(encodeURIComponent(str)));
 };
 
+const batchId = 'mermid-batch' + new Date().getTime();
+
 export const mermaidUrl = (graphStr, options, api) => {
   const obj = {
     code: graphStr,
@@ -45,26 +47,32 @@ export const imgSnapshotTest = (graphStr, _options, api = false, validation) => 
     options.fontSize = '16px';
   }
   const useAppli = Cypress.env('useAppli');
-  //const useAppli = false;
   cy.log('Hello ' + useAppli ? 'Appli' : 'image-snapshot');
   const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
   if (useAppli) {
+    cy.log('Opening eyes ' + Cypress.spec.name + ' --- ' + name);
     cy.eyesOpen({
       appName: 'Mermaid',
       testName: name,
+      batchName: Cypress.spec.name,
+      batchId: batchId + Cypress.spec.name,
     });
   }
 
   const url = mermaidUrl(graphStr, options, api);
 
   cy.visit(url);
-  if (validation) cy.get('svg').should(validation);
+  if (validation) {
+    cy.get('svg').should(validation);
+  }
   cy.get('svg');
   // Default name to test title
 
   if (useAppli) {
+    cy.log('Check eyes' + Cypress.spec.name);
     cy.eyesCheckWindow('Click!');
+    cy.log('Closing eyes: ' + Cypress.spec.name);
     cy.eyesClose();
   } else {
     cy.matchImageSnapshot(name);
@@ -100,19 +108,26 @@ export const urlSnapshotTest = (url, _options, api = false, validation) => {
   const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
   if (useAppli) {
+    cy.log('Opening eyes 2' + Cypress.spec.name);
     cy.eyesOpen({
       appName: 'Mermaid',
       testName: name,
+      batchName: Cypress.spec.name,
+      batchId: batchId + Cypress.spec.name,
     });
   }
 
   cy.visit(url);
-  if (validation) cy.get('svg').should(validation);
+  if (validation) {
+    cy.get('svg').should(validation);
+  }
   cy.get('body');
   // Default name to test title
 
   if (useAppli) {
+    cy.log('Check eyes 2' + Cypress.spec.name);
     cy.eyesCheckWindow('Click!');
+    cy.log('Closing eyes 2' + Cypress.spec.name);
     cy.eyesClose();
   } else {
     cy.matchImageSnapshot(name);

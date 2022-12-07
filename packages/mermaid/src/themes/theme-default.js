@@ -36,6 +36,7 @@ class Theme {
     this.fontSize = '16px';
     this.labelBackground = '#e8e8e8';
     this.textColor = '#333';
+    this.THEME_COLOR_LIMIT = 12;
 
     /* Flowchart variables */
 
@@ -119,8 +120,48 @@ class Theme {
     this.updateColors();
   }
   updateColors() {
-    /* Flowchart variables */
+    /* Color Scale */
+    /* Each color-set will have a background, a foreground and a border color */
+    this.cScale0 = this.cScale0 || this.primaryColor;
+    this.cScale1 = this.cScale1 || this.secondaryColor;
+    this.cScale2 = this.cScale2 || this.tertiaryColor;
+    this.cScale3 = this.cScale3 || adjust(this.primaryColor, { h: 30 });
+    this.cScale4 = this.cScale4 || adjust(this.primaryColor, { h: 60 });
+    this.cScale5 = this.cScale5 || adjust(this.primaryColor, { h: 90 });
+    this.cScale6 = this.cScale6 || adjust(this.primaryColor, { h: 120 });
+    this.cScale7 = this.cScale7 || adjust(this.primaryColor, { h: 150 });
+    this.cScale8 = this.cScale8 || adjust(this.primaryColor, { h: 210 });
+    this.cScale9 = this.cScale9 || adjust(this.primaryColor, { h: 270 });
+    this.cScale10 = this.cScale10 || adjust(this.primaryColor, { h: 300 });
+    this.cScale11 = this.cScale11 || adjust(this.primaryColor, { h: 330 });
+    this['cScalePeer' + 1] = this['cScalePeer' + 1] || darken(this.secondaryColor, 45);
+    this['cScalePeer' + 2] = this['cScalePeer' + 2] || darken(this.tertiaryColor, 40);
+    for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+      // Setup the peer color for the set, useful for borders
+      this['cScale' + i] = darken(this['cScale' + i], 10);
+      this['cScalePeer' + i] = this['cScalePeer' + i] || darken(this['cScale' + i], 25);
+    }
 
+    // Setup the inverted color for the set
+    for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+      this['cScaleInv' + i] = this['cScaleInv' + i] || adjust(this['cScale' + i], { h: 180 });
+    }
+
+    // Setup the label color for the set
+    this.scaleLabelColor =
+      this.scaleLabelColor !== 'calculated' && this.scaleLabelColor
+        ? this.scaleLabelColor
+        : this.labelTextColor;
+
+    if (this.labelTextColor !== 'calculated') {
+      this.cScaleLabel0 = this.cScaleLabel0 || invert(this.labelTextColor);
+      this.cScaleLabel3 = this.cScaleLabel3 || invert(this.labelTextColor);
+      for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+        this['cScaleLabel' + i] = this['cScaleLabel' + i] || this.labelTextColor;
+      }
+    }
+
+    /* Flowchart variables */
     this.nodeBkg = this.mainBkg;
     this.nodeBorder = this.border1; // border 1
     this.clusterBkg = this.secondBkg;

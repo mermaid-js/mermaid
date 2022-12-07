@@ -29,6 +29,7 @@ class Theme {
     this.fontSize = '16px';
     this.labelBackground = '#181818';
     this.textColor = '#ccc';
+    this.THEME_COLOR_LIMIT = 12;
 
     /* Flowchart variables */
     this.nodeBkg = 'calculated';
@@ -157,19 +158,55 @@ class Theme {
     this.fillType6 = adjust(this.primaryColor, { h: 128 });
     this.fillType7 = adjust(this.secondaryColor, { h: 128 });
 
-    /* pie */
-    this.pie1 = this.pie1 || '#0b0000';
-    this.pie2 = this.pie2 || '#4d1037';
-    this.pie3 = this.pie3 || '#3f5258';
-    this.pie4 = this.pie4 || '#4f2f1b';
-    this.pie5 = this.pie5 || '#6e0a0a';
-    this.pie6 = this.pie6 || '#3b0048';
-    this.pie7 = this.pie7 || '#995a01';
-    this.pie8 = this.pie8 || '#154706';
-    this.pie9 = this.pie9 || '#161722';
-    this.pie10 = this.pie10 || '#00296f';
-    this.pie11 = this.pie11 || '#01629c';
-    this.pie12 = this.pie12 || '#010029';
+    /* cScale */
+    this.cScale1 = this.cScale1 || '#0b0000';
+    this.cScale2 = this.cScale2 || '#4d1037';
+    this.cScale3 = this.cScale3 || '#3f5258';
+    this.cScale4 = this.cScale4 || '#4f2f1b';
+    this.cScale5 = this.cScale5 || '#6e0a0a';
+    this.cScale6 = this.cScale6 || '#3b0048';
+    this.cScale7 = this.cScale7 || '#995a01';
+    this.cScale8 = this.cScale8 || '#154706';
+    this.cScale9 = this.cScale9 || '#161722';
+    this.cScale10 = this.cScale10 || '#00296f';
+    this.cScale11 = this.cScale11 || '#01629c';
+    this.cScale12 = this.cScale12 || '#010029';
+
+    /* Color Scale */
+    /* Each color-set will have a background, a foreground and a border color */
+    this.cScale0 = this.cScale0 || this.primaryColor;
+    this.cScale1 = this.cScale1 || this.secondaryColor;
+    this.cScale2 = this.cScale2 || this.tertiaryColor;
+    this.cScale3 = this.cScale3 || adjust(this.primaryColor, { h: 30 });
+    this.cScale4 = this.cScale4 || adjust(this.primaryColor, { h: 60 });
+    this.cScale5 = this.cScale5 || adjust(this.primaryColor, { h: 90 });
+    this.cScale6 = this.cScale6 || adjust(this.primaryColor, { h: 120 });
+    this.cScale7 = this.cScale7 || adjust(this.primaryColor, { h: 150 });
+    this.cScale8 = this.cScale8 || adjust(this.primaryColor, { h: 210 });
+    this.cScale9 = this.cScale9 || adjust(this.primaryColor, { h: 270 });
+    this.cScale10 = this.cScale10 || adjust(this.primaryColor, { h: 300 });
+    this.cScale11 = this.cScale11 || adjust(this.primaryColor, { h: 330 });
+
+    // Setup the inverted color for the set
+    for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+      this['cScaleInv' + i] = this['cScaleInv' + i] || invert(this['cScale' + i]);
+    }
+    // Setup the peer color for the set, useful for borders
+    for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+      this['cScalePeer' + i] = this['cScalePeer' + i] || lighten(this['cScale' + i], 10);
+    }
+
+    // Setup teh label color for the set
+    this.scaleLabelColor = this.scaleLabelColor || (this.darkMode ? 'black' : this.labelTextColor);
+
+    for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+      this['cScaleLabel' + i] = this['cScaleLabel' + i] || this.scaleLabelColor;
+    }
+
+    /* Pie diagram */
+    for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+      this['pie' + i] = this['cScale' + i];
+    }
     this.pieTitleTextSize = this.pieTitleTextSize || '25px';
     this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
     this.pieSectionTextSize = this.pieSectionTextSize || '17px';

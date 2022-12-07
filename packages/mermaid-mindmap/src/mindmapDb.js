@@ -42,6 +42,9 @@ export const addNode = (level, id, descr, type) => {
     case nodeType.RECT:
       node.padding = 2 * conf.mindmap.padding;
       break;
+    case nodeType.HEXAGON:
+      node.padding = 2 * conf.mindmap.padding;
+      break;
     default:
       node.padding = conf.mindmap.padding;
   }
@@ -79,6 +82,7 @@ export const nodeType = {
   CIRCLE: 3,
   CLOUD: 4,
   BANG: 5,
+  HEXAGON: 6,
 };
 
 export const getType = (startStr, endStr) => {
@@ -94,6 +98,8 @@ export const getType = (startStr, endStr) => {
       return nodeType.CLOUD;
     case '))':
       return nodeType.BANG;
+    case '{{':
+      return nodeType.HEXAGON;
     default:
       return nodeType.DEFAULT;
   }
@@ -127,16 +133,14 @@ export const type2Str = (type) => {
       return 'cloud';
     case nodeType.BANG:
       return 'bang';
+    case nodeType.HEXAGON:
+      return 'hexgon';
     default:
       return 'no-border';
   }
 };
 
-export let parseError; // = (str, hash)
-//  => {
-//   const error = { str, hash };
-//   throw error;
-// };
+export let parseError;
 export const setErrorHandler = (handler) => {
   parseError = handler;
 };
@@ -146,17 +150,3 @@ export const getLogger = () => log;
 
 export const getNodeById = (id) => nodes[id];
 export const getElementById = (id) => elements[id];
-// export default {
-// //   getMindmap,
-//   // addNode,
-//   // clear,
-//   // nodeType,
-//   // getType,
-//   // decorateNode,
-//   // setElementForId,
-//   getElementById: (id) => elements[id],
-//   // getNodeById: (id) => nodes.find((node) => node.id === id),
-//   getNodeById: (id) => nodes[id],
-//   // type2Str,
-//   // parseError
-// };

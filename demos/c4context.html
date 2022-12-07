@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -14,6 +14,7 @@
   </head>
 
   <body>
+    <h1>C4 context diagram demos</h1>
     <pre class="mermaid">
     C4Context
       accTitle: C4 context demo
@@ -62,6 +63,7 @@
       
       UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
     </pre>
+    <hr />
 
     <pre class="mermaid">
     C4Container
@@ -101,6 +103,7 @@
     Rel(backend_api, banking_system, "Uses", "sync/async, XML/HTTPS")
     UpdateRelStyle(backend_api, banking_system, $offsetY="-50", $offsetX="-140")
     </pre>
+    <hr />
 
     <pre class="mermaid">
     C4Component
@@ -140,6 +143,7 @@
         UpdateRelStyle(security, db, $offsetY="-40")
         UpdateRelStyle(mbsfacade, mbs, $offsetY="-40")
     </pre>
+    <hr />
 
     <pre class="mermaid">
     C4Dynamic
@@ -159,6 +163,7 @@
     UpdateRelStyle(c2, c3, $textColor="red", $offsetX="-40", $offsetY="60")
     UpdateRelStyle(c3, c4, $textColor="red", $offsetY="-40", $offsetX="10")
     </pre>
+    <hr />
 
     <pre class="mermaid">
     C4Deployment
@@ -210,7 +215,6 @@
     UpdateRelStyle(api, db2, $offsetX="-40", $offsetY="-20")
     UpdateRelStyle(db, db2, $offsetY="-10")
      </pre>
-
     <hr />
 
     <script src="./mermaid.js"></script>
@@ -273,7 +277,7 @@
     <script>
       function testClick(nodeId) {
         console.log('clicked', nodeId);
-        var originalBgColor = document.querySelector('body').style.backgroundColor;
+        let originalBgColor = document.querySelector('body').style.backgroundColor;
         document.querySelector('body').style.backgroundColor = 'yellow';
         setTimeout(function () {
           document.querySelector('body').style.backgroundColor = originalBgColor;

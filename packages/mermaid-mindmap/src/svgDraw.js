@@ -1,5 +1,6 @@
 import { select } from 'd3';
 import * as db from './mindmapDb';
+const MAX_SECTIONS = 12;
 
 /**
  * @param {string} text The text to be wrapped
@@ -144,6 +145,45 @@ const circleBkg = function (elem, node) {
     .attr('class', 'node-bkg node-' + db.type2Str(node.type))
     .attr('r', node.width / 2);
 };
+
+/**
+ *
+ * @param parent
+ * @param w
+ * @param h
+ * @param points
+ * @param node
+ */
+function insertPolygonShape(parent, w, h, points, node) {
+  return parent
+    .insert('polygon', ':first-child')
+    .attr(
+      'points',
+      points
+        .map(function (d) {
+          return d.x + ',' + d.y;
+        })
+        .join(' ')
+    )
+    .attr('transform', 'translate(' + (node.width - w) / 2 + ', ' + h + ')');
+}
+
+const hexagonBkg = function (elem, node) {
+  const h = node.height;
+  const f = 4;
+  const m = h / f;
+  const w = node.width - node.padding + 2 * m;
+  const points = [
+    { x: m, y: 0 },
+    { x: w - m, y: 0 },
+    { x: w, y: -h / 2 },
+    { x: w - m, y: -h },
+    { x: m, y: -h },
+    { x: 0, y: -h / 2 },
+  ];
+  const shapeSvg = insertPolygonShape(elem, w, h, points, node);
+};
+
 const roundedRectBkg = function (elem, node) {
   elem
     .append('rect')
@@ -158,17 +198,19 @@ const roundedRectBkg = function (elem, node) {
 /**
  * @param {object} elem The D3 dom element in which the node is to be added
  * @param {object} node The node to be added
- * @param section
+ * @param fullSection
  * @param {object} conf The configuration object
  * @returns {number} The height nodes dom element
  */
-export const drawNode = function (elem, node, section, conf) {
+export const drawNode = function (elem, node, fullSection, conf) {
+  const section = (fullSection % MAX_SECTIONS) - 1;
   const nodeElem = elem.append('g');
+  node.section = section;
   nodeElem.attr(
     'class',
     (node.class ? node.class + ' ' : '') +
       'mindmap-node ' +
-      (section === -1 ? 'section-root' : 'section-' + section)
+      (section < 0 ? 'section-root' : 'section-' + section)
   );
   const bkgElem = nodeElem.append('g');
 
@@ -249,17 +291,21 @@ export const drawNode = function (elem, node, section, conf) {
     case db.nodeType.BANG:
       bangBkg(bkgElem, node, section, conf);
       break;
+    case db.nodeType.HEXAGON:
+      hexagonBkg(bkgElem, node, section, conf);
+      break;
   }
 
   // Position the node to its coordinate
-  if (typeof node.x !== 'undefined' && typeof node.y !== 'undefined') {
-    nodeElem.attr('transform', 'translate(' + node.x + ',' + node.y + ')');
-  }
+  // if (typeof node.x !== 'undefined' && typeof node.y !== 'undefined') {
+  //   nodeElem.attr('transform', 'translate(' + node.x + ',' + node.y + ')');
+  // }
   db.setElementForId(node.id, nodeElem);
   return node.height;
 };
 
-export const drawEdge = function drawEdge(edgesElem, mindmap, parent, depth, section) {
+export const drawEdge = function drawEdge(edgesElem, mindmap, parent, depth, fullSection) {
+  const section = (fullSection % MAX_SECTIONS) - 1;
   const sx = parent.x + parent.width / 2;
   const sy = parent.y + parent.height / 2;
   const ex = mindmap.x + mindmap.width / 2;

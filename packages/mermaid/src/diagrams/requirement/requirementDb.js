@@ -53,7 +53,7 @@ export const parseDirective = function (statement, context, type) {
 };
 
 const addRequirement = (name, type) => {
-  if (typeof requirements[name] === 'undefined') {
+  if (requirements[name] === undefined) {
     requirements[name] = {
       name,
       type,
@@ -72,31 +72,31 @@ const addRequirement = (name, type) => {
 const getRequirements = () => requirements;
 
 const setNewReqId = (id) => {
-  if (typeof latestRequirement != 'undefined') {
+  if (latestRequirement !== undefined) {
     latestRequirement.id = id;
   }
 };
 
 const setNewReqText = (text) => {
-  if (typeof latestRequirement != 'undefined') {
+  if (latestRequirement !== undefined) {
     latestRequirement.text = text;
   }
 };
 
 const setNewReqRisk = (risk) => {
-  if (typeof latestRequirement != 'undefined') {
+  if (latestRequirement !== undefined) {
     latestRequirement.risk = risk;
   }
 };
 
 const setNewReqVerifyMethod = (verifyMethod) => {
-  if (typeof latestRequirement != 'undefined') {
+  if (latestRequirement !== undefined) {
     latestRequirement.verifyMethod = verifyMethod;
   }
 };
 
 const addElement = (name) => {
-  if (typeof elements[name] === 'undefined') {
+  if (elements[name] === undefined) {
     elements[name] = {
       name,
 
@@ -113,13 +113,13 @@ const addElement = (name) => {
 const getElements = () => elements;
 
 const setNewElementType = (type) => {
-  if (typeof latestElement != 'undefined') {
+  if (latestElement !== undefined) {
     latestElement.type = type;
   }
 };
 
 const setNewElementDocRef = (docRef) => {
-  if (typeof latestElement != 'undefined') {
+  if (latestElement !== undefined) {
     latestElement.docRef = docRef;
   }
 };

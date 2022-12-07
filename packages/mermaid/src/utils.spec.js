@@ -1,9 +1,10 @@
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi } from 'vitest';
 import utils from './utils';
 import assignWithDepth from './assignWithDepth';
 import { detectType } from './diagram-api/detectType';
 import { addDiagrams } from './diagram-api/diagram-orchestration';
-import memoize from 'lodash/memoize';
+import memoize from 'lodash-es/memoize';
+import { MockD3 } from 'd3';
 addDiagrams();
 
 describe('when assignWithDepth: should merge objects within objects', function () {
@@ -232,6 +233,15 @@ Alice->Bob: hi`;
     const type = detectType(str);
     expect(type).toBe('gitGraph');
   });
+  it('should handle frontmatter', function () {
+    const str = '---\ntitle: foo\n---\n  gitGraph TB:\nbfs1:queue';
+    const type = detectType(str);
+    expect(type).toBe('gitGraph');
+  });
+  it('should not allow frontmatter with leading spaces', function () {
+    const str = '    ---\ntitle: foo\n---\n  gitGraph TB:\nbfs1:queue';
+    expect(() => detectType(str)).toThrow('No diagram type detected for text');
+  });
 });
 describe('when finding substring in array ', function () {
   it('should return the array index that contains the substring', function () {
@@ -338,5 +348,25 @@ describe('when initializing the id generator', function () {
     const lastId = idGenerator.next();
     expect(start).toEqual(lastId);
     expect(idGenerator.next()).toEqual(lastId + 1);
+  });
+});
+
+describe('when inserting titles', function () {
+  it('should do nothing when title is empty', function () {
+    const svg = MockD3('svg');
+    utils.insertTitle(svg, 'testClass', 0, '');
+    expect(svg.__children.length).toBe(0);
+  });
+
+  it('should insert title centered', function () {
+    const svg = MockD3('svg');
+    utils.insertTitle(svg, 'testClass', 5, 'test title');
+    expect(svg.__children.length).toBe(1);
+    const text = svg.__children[0];
+    expect(text.__name).toBe('text');
+    expect(text.text).toHaveBeenCalledWith('test title');
+    expect(text.attr).toHaveBeenCalledWith('x', 15);
+    expect(text.attr).toHaveBeenCalledWith('y', -5);
+    expect(text.attr).toHaveBeenCalledWith('class', 'testClass');
   });
 });

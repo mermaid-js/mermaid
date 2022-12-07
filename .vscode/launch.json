@@ -12,6 +12,17 @@
       "args": ["run", "${relativeFile}"],
       "smartStep": true,
       "console": "integratedTerminal"
+    },
+    {
+      "name": "Docs generation",
+      "type": "node",
+      "request": "launch",
+      "args": ["src/docs.mts"],
+      "runtimeArgs": ["--loader", "ts-node/esm"],
+      "cwd": "${workspaceRoot}/packages/mermaid",
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+      "smartStep": true,
+      "internalConsoleOptions": "openOnSessionStart"
     }
   ]
 }

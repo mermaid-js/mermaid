@@ -23,6 +23,10 @@
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
+%x CLASSDEF
+%x CLASSDEFID
+%x CLASS
+%x CLASS_STYLE
 %x NOTE
 %x NOTE_ID
 %x NOTE_TEXT
@@ -38,6 +42,8 @@
 %x LINE
 
 %%
+
+"default"             return 'DEFAULT';
 
 .*direction\s+TB[^\n]*                                      return 'direction_tb';
 .*direction\s+BT[^\n]*                                      return 'direction_bt';
@@ -69,6 +75,20 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <acc_descr_multiline>[\}]                       { this.popState(); }
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 
+<INITIAL,struct>"classDef"\s+   { this.pushState('CLASSDEF'); return 'classDef'; }
+<CLASSDEF>DEFAULT\s+            { this.popState(); this.pushState('CLASSDEFID'); return 'DEFAULT_CLASSDEF_ID' }
+<CLASSDEF>\w+\s+                { this.popState(); this.pushState('CLASSDEFID'); return 'CLASSDEF_ID' }
+<CLASSDEFID>[^\n]*              { this.popState(); return 'CLASSDEF_STYLEOPTS' }
+
+<INITIAL,struct>"class"\s+      { this.pushState('CLASS'); return 'class'; }
+<CLASS>(\w+)+((","\s*\w+)*)       { this.popState(); this.pushState('CLASS_STYLE'); return 'CLASSENTITY_IDS' }
+<CLASS_STYLE>[^\n]*             { this.popState(); return 'STYLECLASS' }
+
+"scale"\s+            { this.pushState('SCALE'); /* console.log('Got scale', yytext);*/ return 'scale'; }
+<SCALE>\d+            return 'WIDTH';
+<SCALE>\s+"width"     {this.popState();}
+
+
 <INITIAL,struct>"state"\s+            { /*console.log('Starting STATE zxzx'+yy.getDirection());*/this.pushState('STATE'); }
 <STATE>.*"<<fork>>"                   {this.popState();yytext=yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
 <STATE>.*"<<join>>"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yytext);*/return 'JOIN';}
@@ -89,6 +109,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <STATE>[^\n\s\{]+      {/*console.log('COMPOSIT_STATE', yytext);*/return 'COMPOSIT_STATE';}
 <STATE>\n      {this.popState();}
 <INITIAL,STATE>\{               {this.popState();this.pushState('struct'); /*console.log('begin struct', yytext);*/return 'STRUCT_START';}
+<struct>\%\%(?!\{)[^\n]*                                       /* skip comments inside state*/
 <struct>\}           { /*console.log('Ending struct');*/ this.popState(); return 'STRUCT_STOP';}}
 <struct>[\n]              /* nothing */
 
@@ -111,10 +132,12 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <INITIAL,struct>[^:\n\s\-\{]+                { /*console.log('=>ID=',yytext);*/ return 'ID';}
 // <INITIAL,struct>\s*":"[^\+\->:\n;]+      { yytext = yytext.trim(); /*console.log('Descr = ', yytext);*/ return 'DESCR'; }
 <INITIAL,struct>\s*":"[^:\n;]+      { yytext = yytext.trim(); /*console.log('Descr = ', yytext);*/ return 'DESCR'; }
+
 <INITIAL,struct>"-->"             return '-->';
-<struct>"--"        return 'CONCURRENT';
-<<EOF>>           return 'NL';
-.                 return 'INVALID';
+<struct>"--"                      return 'CONCURRENT';
+":::"                             return 'STYLE_SEPARATOR';
+<<EOF>>                           return 'NL';
+.                                 return 'INVALID';
 
 /lex
 
@@ -124,20 +147,23 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 
 %% /* language grammar */
 
+/* $$ is the value of the symbol being evaluated (= what is to the left of the : in the rule */
+
 start
 	: SPACE start
 	| NL start
 	| directive start
-	| SD document { /*console.warn('Root document', $2);*/ yy.setRootDoc($2);return $2; }
+	| SD document { /* console.log('--> Root document', $2); */   yy.setRootDoc($2); return $2; }
 	;
 
 document
-	: /* empty */ { $$ = [] }
+	: /* empty */ { /*console.log('empty document'); */ $$ = [] }
 	| document line {
-        if($2!='nl'){
-            $1.push($2);$$ = $1
+        if($2 !='nl'){
+            /* console.log(' document: 1: ', $1, ' pushing 2: ', $2); */
+            $1.push($2); $$ = $1
         }
-        // console.warn('Got document',$1, $2);
+        /* console.log('Got document',$1, $2); */
     }
 	;
 
@@ -148,24 +174,34 @@ line
 	;
 
 statement
-	: idStatement { /*console.warn('got id and descr', $1);*/$$={ stmt: 'state', id: $1, type: 'default', description: ''};}
-	| idStatement DESCR { /*console.warn('got id and descr', $1, $2.trim());*/$$={ stmt: 'state', id: $1, type: 'default', description: yy.trimColon($2)};}
+	: classDefStatement
+    | cssClassStatement
+	| idStatement { /* console.log('got id', $1); */
+            $$=$1;
+	    }
+	| idStatement DESCR {
+            const stateStmt = $1;
+            stateStmt.description = yy.trimColon($2);
+            $$ = stateStmt;
+	    }
 	| idStatement '-->' idStatement
-    {
-        /*console.warn('got id', $1);yy.addRelation($1, $3);*/
-        $$={ stmt: 'relation', state1: { stmt: 'state', id: $1, type: 'default', description: '' }, state2:{ stmt: 'state', id: $3 ,type: 'default', description: ''}};
-    }
+        {
+            /* console.info('got ids: 1: ', $1, ' 2:', $2,'  3: ', $3); */
+            // console.log(' idStatement --> idStatement : state1 =', $1, ' state2 =', $3);
+            $$={ stmt: 'relation', state1: $1, state2: $3};
+        }
 	| idStatement '-->' idStatement DESCR
-    {
-        /*yy.addRelation($1, $3, $4.substr(1).trim());*/
-        $$={ stmt: 'relation', state1: { stmt: 'state', id: $1, type: 'default', description: '' }, state2:{ stmt: 'state', id: $3 ,type: 'default', description: ''}, description: $4.substr(1).trim()};
-    }
+        {
+            const relDescription = yy.trimColon($4);
+            /* console.log(' idStatement --> idStatement DESCR : state1 =', $1, ' state2stmt =', $3, '  description: ', relDescription); */
+            $$={ stmt: 'relation', state1: $1, state2: $3, description: relDescription};
+        }
     | HIDE_EMPTY
     | scale WIDTH
     | COMPOSIT_STATE
     | COMPOSIT_STATE STRUCT_START document STRUCT_STOP
     {
-        /* console.warn('Adding document for state without id ', $1);*/
+        /* console.log('Adding document for state without id ', $1); */
         $$={ stmt: 'state', id: $1, type: 'default', description: '', doc: $3 }
     }
     | STATE_DESCR AS ID {
@@ -181,7 +217,7 @@ statement
     }
     | STATE_DESCR AS ID STRUCT_START document STRUCT_STOP
     {
-         // console.warn('Adding document for state with id zxzx', $3, $4, yy.getDirection()); yy.addDocument($3);
+         /*  console.log('Adding document for state with id zxzx', $3, $4, yy.getDirection());  yy.addDocument($3);*/
          $$={ stmt: 'state', id: $3, type: 'default', description: $1, doc: $5 }
     }
     | FORK {
@@ -208,6 +244,23 @@ statement
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
     | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }    ;
 
+
+classDefStatement
+    : classDef CLASSDEF_ID CLASSDEF_STYLEOPTS {
+        $$ = { stmt: 'classDef', id: $2.trim(), classes: $3.trim() };
+        }
+    | classDef DEFAULT CLASSDEF_STYLEOPTS {
+        $$ = { stmt: 'classDef', id: $2.trim(), classes: $3.trim() };
+        }
+    ;
+
+cssClassStatement
+    : class CLASSENTITY_IDS STYLECLASS {
+        //console.log('apply class: id(s): ',$2, '  style class: ', $3);
+        $$={ stmt: 'applyClass', id: $2.trim(), styleClass: $3.trim() };
+        }
+    ;
+
 directive
     : openDirective typeDirective closeDirective
     | openDirective typeDirective ':' argDirective closeDirective
@@ -229,8 +282,22 @@ eol
     ;
 
 idStatement
-    : ID {$$=$1;}
-    | EDGE_STATE {$$=$1;}
+    : ID
+        {   /* console.log('idStatement id: ', $1); */
+            $$={ stmt: 'state', id: $1.trim(), type: 'default', description: '' };
+        }
+    | EDGE_STATE
+        {   /* console.log('idStatement id: ', $1); */
+            $$={ stmt: 'state', id: $1.trim(), type: 'default', description: '' };
+        }
+    | ID STYLE_SEPARATOR ID
+        {   /*console.log('idStatement ID STYLE_SEPARATOR ID'); */
+            $$={ stmt: 'state', id: $1.trim(), classes: [$3.trim()], type: 'default', description: '' };
+        }
+    | EDGE_STATE STYLE_SEPARATOR ID
+        {   /*console.log('idStatement EDGE_STATE STYLE_SEPARATOR ID'); */
+            $$={ stmt: 'state', id: $1.trim(), classes: [$3.trim()], type: 'default', description: '' };
+        }
     ;
 
 notePosition
