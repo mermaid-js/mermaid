@@ -734,4 +734,56 @@ describe('mermaidAPI', function () {
       });
     });
   });
+
+  describe('renderAsync', () => {
+    // Be sure to add async before each test (anonymous) method
+
+    // These are more like integration tests right now because nothing is mocked.
+    // But it is faster that a cypress test and there's no real reason to actually evaluate an image pixel by pixel.
+
+    // render(id, text, cb?, svgContainingElement?)
+
+    // Test all diagram types.  Note that old flowchart 'graph' type will invoke the flowRenderer-v2. (See the flowchart v2 detector.)
+    // We have to have both the specific textDiagramType and the expected type name because the expected type may be slightly different than was is put in the diagram text (ex: in -v2 diagrams)
+    const diagramTypesAndExpectations = [
+      { textDiagramType: 'C4Context', expectedType: 'c4' },
+      { textDiagramType: 'classDiagram', expectedType: 'classDiagram' },
+      { textDiagramType: 'classDiagram-v2', expectedType: 'classDiagram' },
+      { textDiagramType: 'erDiagram', expectedType: 'er' },
+      { textDiagramType: 'graph', expectedType: 'flowchart-v2' },
+      { textDiagramType: 'flowchart', expectedType: 'flowchart-v2' },
+      { textDiagramType: 'gitGraph', expectedType: 'gitGraph' },
+      { textDiagramType: 'gantt', expectedType: 'gantt' },
+      { textDiagramType: 'journey', expectedType: 'journey' },
+      { textDiagramType: 'pie', expectedType: 'pie' },
+      { textDiagramType: 'requirementDiagram', expectedType: 'requirement' },
+      { textDiagramType: 'sequenceDiagram', expectedType: 'sequence' },
+      { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
+    ];
+
+    describe('accessibility', () => {
+      const id = 'mermaid-fauxId';
+      const a11yTitle = 'a11y title';
+      const a11yDescr = 'a11y description';
+
+      diagramTypesAndExpectations.forEach((testedDiagram) => {
+        describe(`${testedDiagram.textDiagramType}`, () => {
+          const diagramType = testedDiagram.textDiagramType;
+          const diagramText = `${diagramType}\n accTitle: ${a11yTitle}\n accDescr: ${a11yDescr}\n`;
+          const expectedDiagramType = testedDiagram.expectedType;
+
+          it('aria-roledscription is set to the diagram type, addSVGa11yTitleDescription is called', async () => {
+            const a11yDiagramInfo_spy = vi.spyOn(accessibility, 'setA11yDiagramInfo');
+            const a11yTitleDesc_spy = vi.spyOn(accessibility, 'addSVGa11yTitleDescription');
+            await mermaidAPI.renderAsync(id, diagramText);
+            expect(a11yDiagramInfo_spy).toHaveBeenCalledWith(
+              expect.anything(),
+              expectedDiagramType
+            );
+            expect(a11yTitleDesc_spy).toHaveBeenCalled();
+          });
+        });
+      });
+    });
+  });
 });

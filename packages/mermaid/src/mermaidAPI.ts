@@ -519,10 +519,9 @@ const render = function (
 
   // This is the d3 node for the svg element
   const svgNode = root.select(`${enclosingDivID_selector} svg`);
-  setA11yDiagramInfo(svgNode, graphType);
   const a11yTitle = diag.db.getAccTitle?.();
   const a11yDescr = diag.db.getAccDescription?.();
-  addSVGa11yTitleDescription(svgNode, a11yTitle, a11yDescr, svgNode.attr('id'));
+  addA11yInfo(graphType, svgNode, a11yTitle, a11yDescr);
 
   // -------------------------------------------------------------------------------
   // Clean up SVG code
@@ -720,6 +719,12 @@ const renderAsync = async function (
     throw e;
   }
 
+  // This is the d3 node for the svg element
+  const svgNode = root.select(`${enclosingDivID_selector} svg`);
+  const a11yTitle = diag.db.getAccTitle?.();
+  const a11yDescr = diag.db.getAccDescription?.();
+  addA11yInfo(graphType, svgNode, a11yTitle, a11yDescr);
+
   // -------------------------------------------------------------------------------
   // Clean up SVG code
   root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
@@ -882,6 +887,20 @@ function initialize(options: MermaidConfig = {}) {
 
   setLogLevel(config.logLevel);
   addDiagrams();
+}
+
+/**
+ * Add accessibility (a11y) information to the diagram.
+ *
+ */
+function addA11yInfo(
+  graphType: string,
+  svgNode: D3Element,
+  a11yTitle: string | undefined,
+  a11yDescr: string | undefined
+) {
+  setA11yDiagramInfo(svgNode, graphType);
+  addSVGa11yTitleDescription(svgNode, a11yTitle, a11yDescr, svgNode.attr('id'));
 }
 
 /**
