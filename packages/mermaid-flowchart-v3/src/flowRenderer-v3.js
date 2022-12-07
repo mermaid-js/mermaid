@@ -37,7 +37,7 @@ const nodeDb = {};
 //  * @param doc
 //  * @param diagObj
 //  */
-export const addVertices = function (vert, svgId, root, doc, diagObj, parentLookUpDb, graph) {
+export const addVertices = function (vert, svgId, root, doc, diagObj, parentLookupDb, graph) {
   const svg = root.select(`[id="${svgId}"]`);
   const nodes = svg.insert('g').attr('class', 'nodes');
   const keys = Object.keys(vert);
@@ -170,55 +170,60 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
       props: vertex.props,
       padding: getConfig().flowchart.padding,
     };
-    const nodeEl = insertNode(nodes, node, vertex.dir);
-    const boundingBox = nodeEl.node().getBBox();
+    let boundingBox;
+    let nodeEl;
+    if (node.type !== 'group') {
+      nodeEl = insertNode(nodes, node, vertex.dir);
+      boundingBox = nodeEl.node().getBBox();
+    }
     const data = {
       id: vertex.id,
-      labelStyle: styles.labelStyle,
-      shape: _shape,
-      labelText: vertexText,
-      rx: radious,
-      ry: radious,
-      class: classStr,
-      style: styles.style,
-      link: vertex.link,
-      linkTarget: vertex.linkTarget,
-      tooltip: diagObj.db.getTooltip(vertex.id) || '',
+      // labelStyle: styles.labelStyle,
+      // shape: _shape,
+      // labelText: vertexText,
+      labels: [{ text: vertexText }, { text: vertexText }],
+      // rx: radious,
+      // ry: radious,
+      // class: classStr,
+      // style: styles.style,
+      // link: vertex.link,
+      // linkTarget: vertex.linkTarget,
+      // tooltip: diagObj.db.getTooltip(vertex.id) || '',
       domId: diagObj.db.lookUpDomId(vertex.id),
-      haveCallback: vertex.haveCallback,
-      width: boundingBox.width,
-      height: boundingBox.height,
-      dir: vertex.dir,
+      // haveCallback: vertex.haveCallback,
+      width: boundingBox?.width,
+      height: boundingBox?.height,
+      // dir: vertex.dir,
       type: vertex.type,
-      props: vertex.props,
-      padding: getConfig().flowchart.padding,
-      boundingBox,
+      // props: vertex.props,
+      // padding: getConfig().flowchart.padding,
+      // boundingBox,
       el: nodeEl,
-      parent: parentLookUpDb.parentById[vertex.id],
+      parent: parentLookupDb.parentById[vertex.id],
     };
-    // if (!Object.keys(parentLookUpDb.childrenById).includes(vertex.id)) {
-    graph.children.push({
-      ...data,
-    });
+    // if (!Object.keys(parentLookupDb.childrenById).includes(vertex.id)) {
+    // graph.children.push({
+    //   ...data,
+    // });
     // }
     nodeDb[node.id] = data;
-    log.trace('setNode', {
-      labelStyle: styles.labelStyle,
-      shape: _shape,
-      labelText: vertexText,
-      rx: radious,
-      ry: radious,
-      class: classStr,
-      style: styles.style,
-      id: vertex.id,
-      domId: diagObj.db.lookUpDomId(vertex.id),
-      width: vertex.type === 'group' ? 500 : undefined,
-      type: vertex.type,
-      dir: vertex.dir,
-      props: vertex.props,
-      padding: getConfig().flowchart.padding,
-      parent: parentLookUpDb.parentById[vertex.id],
-    });
+    // log.trace('setNode', {
+    //   labelStyle: styles.labelStyle,
+    //   shape: _shape,
+    //   labelText: vertexText,
+    //   rx: radious,
+    //   ry: radious,
+    //   class: classStr,
+    //   style: styles.style,
+    //   id: vertex.id,
+    //   domId: diagObj.db.lookUpDomId(vertex.id),
+    //   width: vertex.type === 'group' ? 500 : undefined,
+    //   type: vertex.type,
+    //   dir: vertex.dir,
+    //   props: vertex.props,
+    //   padding: getConfig().flowchart.padding,
+    //   parent: parentLookupDb.parentById[vertex.id],
+    // });
   });
   return graph;
 };
@@ -368,7 +373,7 @@ export const addEdges = function (edges, diagObj, graph) {
       sources: [edge.start],
       targets: [edge.end],
       edgeData,
-      targetPort: 'PortSide.NORTH',
+      // targetPort: 'PortSide.NORTH',
       // id: cnt,
     });
   });
@@ -470,40 +475,69 @@ export const getClasses = function (text, diagObj) {
 };
 
 const addSubGraphs = function (db) {
-  const parentLookUpDb = { parentById: {}, childrenById: {} };
+  const parentLookupDb = { parentById: {}, childrenById: {} };
   const subgraphs = db.getSubGraphs();
   log.info('Subgraphs - ', subgraphs);
   subgraphs.forEach(function (subgraph) {
     subgraph.nodes.forEach(function (node) {
-      parentLookUpDb.parentById[node] = subgraph.id;
-      if (parentLookUpDb.childrenById[subgraph.id] === undefined) {
-        parentLookUpDb.childrenById[subgraph.id] = [];
+      parentLookupDb.parentById[node] = subgraph.id;
+      if (parentLookupDb.childrenById[subgraph.id] === undefined) {
+        parentLookupDb.childrenById[subgraph.id] = [];
       }
-      parentLookUpDb.childrenById[subgraph.id].push(node);
+      parentLookupDb.childrenById[subgraph.id].push(node);
     });
   });
 
   subgraphs.forEach(function (subgraph) {
     const data = { id: subgraph.id };
-    if (parentLookUpDb.parentById[subgraph.id] !== undefined) {
-      data.parent = parentLookUpDb.parentById[subgraph.id];
+    if (parentLookupDb.parentById[subgraph.id] !== undefined) {
+      data.parent = parentLookupDb.parentById[subgraph.id];
     }
     // cy.add({
     //   group: 'nodes',
     //   data,
     // });
   });
-  return parentLookUpDb;
+  return parentLookupDb;
+};
+
+/* Reverse engineered with trial and error */
+const calcOffset = function (src, dest, sourceId, targetId) {
+  if (src === dest) {
+    return src;
+  }
+  return 0;
 };
 
 const insertEdge = function (edgesEl, edge, edgeData, diagObj) {
+  const srcOffset = nodeDb[edge.sources[0]].offset;
+  const targetOffset = nodeDb[edge.targets[0]].offset;
+  const offset = {
+    x: calcOffset(
+      srcOffset.x,
+      targetOffset.x,
+      nodeDb[edge.sources[0]].id,
+      nodeDb[edge.targets[0]].id
+    ),
+    y: calcOffset(
+      srcOffset.y,
+      targetOffset.y,
+      nodeDb[edge.sources[0]].id,
+      nodeDb[edge.targets[0]].id
+    ),
+  };
+  // console.log('srcOffset', srcOffset.x, targetOffset.x, srcOffset.y, targetOffset.y);
   const src = edge.sections[0].startPoint;
   const dest = edge.sections[0].endPoint;
   const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
   // const dest = edge.target().position();
   // const dest = edge.targetEndpoint();
-  const segPoints = segments.map((segment) => [segment.x, segment.y]);
-  const points = [[src.x, src.y], ...segPoints, [dest.x, dest.y]];
+  const segPoints = segments.map((segment) => [segment.x + offset.x, segment.y + offset.y]);
+  const points = [
+    [src.x + offset.x, src.y + offset.y],
+    ...segPoints,
+    [dest.x + offset.x, dest.y + offset.y],
+  ];
   // console.log('Edge ctrl points:', edge.segmentPoints(), 'Bounds:', bounds, edge.source(), points);
   // console.log('Edge ctrl points:', points);
   // const curve = line().curve(curveCardinal);
@@ -539,6 +573,28 @@ const insertEdge = function (edgesEl, edge, edgeData, diagObj) {
 };
 
 /**
+ *
+ * @param {*} graph
+ * @param nodeArray
+ * @param parentLookupDb
+ */
+const insertChildren = (nodeArray, parentLookupDb) => {
+  nodeArray.forEach((node) => {
+    if (!node.children) {
+      node.children = [];
+    }
+    const childIds = parentLookupDb.childrenById[node.id];
+    // console.log('UGH', node.id, childIds);
+    if (childIds) {
+      childIds.forEach((childId) => {
+        node.children.push(nodeDb[childId]);
+      });
+    }
+    insertChildren(node.children, parentLookupDb);
+  });
+};
+
+/**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  *
  * @param text
@@ -558,16 +614,18 @@ export const draw = function (text, id, _version, diagObj) {
     let graph = {
       id: 'root',
       layoutOptions: {
-        'elk.algorithm': 'layered',
-        'elk.direction': 'DOWN',
-        'elk.port.side': 'SOUTH',
+        'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+        //   'elk.algorithm': 'layered',
+        //   'elk.direction': 'DOWN',
+        //   'elk.port.side': 'SOUTH',
         // 'nodePlacement.strategy': 'SIMPLE',
-        'org.eclipse.elk.graphviz.concentrate': true,
+        // 'org.eclipse.elk.spacing.labelLabel': 120,
+        // 'org.eclipse.elk.graphviz.concentrate': true,
         // 'org.eclipse.elk.spacing.nodeNode': 120,
         // 'org.eclipse.elk.spacing.edgeEdge': 120,
         // 'org.eclipse.elk.spacing.edgeNode': 120,
         // 'org.eclipse.elk.spacing.nodeEdge': 120,
-        'org.eclipse.elk.spacing.componentComponent': 120,
+        // 'org.eclipse.elk.spacing.componentComponent': 120,
       },
       children: [],
       edges: [],
@@ -606,29 +664,59 @@ export const draw = function (text, id, _version, diagObj) {
       log.info('Subgraph - ', subG);
       diagObj.db.addVertex(subG.id, subG.title, 'group', undefined, subG.classes, subG.dir);
     }
+    const subGraphsEl = svg.insert('g').attr('class', 'subgraphs');
 
-    const parentLookUpDb = addSubGraphs(diagObj.db);
-    graph = addVertices(vert, id, root, doc, diagObj, parentLookUpDb, graph);
+    const parentLookupDb = addSubGraphs(diagObj.db);
+    graph = addVertices(vert, id, root, doc, diagObj, parentLookupDb, graph);
     const edgesEl = svg.insert('g').attr('class', 'edges edgePath');
     const edges = diagObj.db.getEdges();
     graph = addEdges(edges, diagObj, graph);
 
+    // Iterate through all nodes and add the top level nodes to the graph
+    const nodes = Object.keys(nodeDb);
+    nodes.forEach((nodeId) => {
+      const node = nodeDb[nodeId];
+      if (!node.parent) {
+        graph.children.push(node);
+      }
+      if (parentLookupDb.childrenById[nodeId] !== undefined) {
+        // console.log('UGH node', node);
+        delete node.x;
+        delete node.y;
+        delete node.width;
+        delete node.height;
+      }
+    });
+    insertChildren(graph.children, parentLookupDb);
+    // console.log('Graph (UGH)- ', JSON.parse(JSON.stringify(graph)), JSON.stringify(graph));
+    // const graph2 = {
+    //   id: 'root',
+    //   layoutOptions: { 'elk.algorithm': 'layered' },
+    //   children: [
+    //     {
+    //       id: 'N1',
+    //       width: 30,
+    //       height: 30,
+    //       padding: 12,
+    //       children: [
+    //         { id: 'n1', width: 30, height: 30 },
+    //         { id: 'n2', width: 30, height: 30 },
+    //         { id: 'n3', width: 30, height: 30 },
+    //       ],
+    //     },
+    //   ],
+    //   edges: [
+    //     { id: 'e1', sources: ['n1'], targets: ['n2'] },
+    //     { id: 'e2', sources: ['n1'], targets: ['n3'] },
+    //   ],
+    // };
     elk.layout(graph).then(function (g) {
-      g.children.forEach(function (node) {
-        const data = nodeDb[node.id];
-        if (data) {
-          data.el.attr(
-            'transform',
-            `translate(${node.x + node.width / 2}, ${node.y + node.height / 2})`
-          );
-          // document
-          //   .querySelector(`[id="${data.domId}"]`)
-          //   .setAttribute('transform', `translate(${node.position().x}, ${node.position().y})`);
-          log.info('Id = ', data.domId, svg.select(`[id="${data.domId}"]`), data.el.node());
-        }
-      });
+      // elk.layout(graph2).then(function (g) {
+      // console.log('Layout (UGH)- ', g);
+      drawNodes(0, 0, g.children, svg, subGraphsEl, diagObj);
 
       g.edges.map((edge, id) => {
+        // console.log('Edge (UGH)- ', edge);
         insertEdge(edgesEl, edge, edge.edgeData, diagObj);
       });
       setupGraphViewbox({}, svg, conf.diagramPadding, conf.useMaxWidth);
@@ -636,6 +724,41 @@ export const draw = function (text, id, _version, diagObj) {
     });
     // Remove element after layout
     // renderEl.remove();
+  });
+};
+
+const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, diagObj) => {
+  nodeArray.forEach(function (node) {
+    if (node) {
+      if (node.type === 'group') {
+        subgraphsEl
+          .insert('rect')
+          .attr('class', 'subgraph node')
+          .attr('style', 'fill:#ccc;stroke:black;stroke-width:1')
+          .attr('x', node.x + relX)
+          .attr('y', node.y + relY)
+          .attr('width', node.width)
+          .attr('height', node.height);
+        log.info('Id (UGH)= ', node.type, node.domId, svg.select(`[id="${node.domId}"]`));
+      } else {
+        log.info('Id (UGH)= ', node.id);
+        node.el.attr(
+          'transform',
+          `translate(${node.x + relX + node.width / 2}, ${node.y + relY + node.height / 2})`
+        );
+      }
+      nodeDb[node.id].offset = {
+        posX: node.x + relX,
+        posY: node.y + relY,
+        x: relX,
+        y: relY,
+      };
+    }
+  });
+  nodeArray.forEach(function (node) {
+    if (node && node.type === 'group') {
+      drawNodes(relX + node.x, relY + node.y, node.children, svg, subgraphsEl, diagObj);
+    }
   });
 };
 

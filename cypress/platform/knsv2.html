@@ -56,11 +56,77 @@
   <body>
     <div>Security check</div>
     <pre id="diagram" class="mermaid">
+cyto TD
+  %% I could not figure out how to use double quotes in labels in Mermaid
+  subgraph ibm[IBM Espresso CPU]
+    core0[IBM PowerPC Broadway Core 0]
+    core1[IBM PowerPC Broadway Core 1]
+    core2[IBM PowerPC Broadway Core 2]
+
+    rom[16 KB ROM]
+
+    core0 --- core2
+
+    rom --> core2
+  end
+
+  subgraph amd[AMD Latte GPU]
+    mem[Memory & I/O Bridge]
+    dram[DRAM Controller]
+    edram[32 MB EDRAM MEM1]
+    rom[512 B SEEPROM]
+
+    sata[SATA IF]
+    exi[EXI]
+
+    subgraph gx[GX]
+      sram[3 MB 1T-SRAM]
+    end
+
+    radeon[AMD Radeon R7xx GX2]
+
+    mem --- gx
+    mem --- radeon
+
+    rom --- mem
+
+    mem --- sata
+    mem --- exi
+
+    dram --- sata
+    dram --- exi
+  end
+
+  ddr3[2 GB DDR3 RAM MEM2]
+
+  mem --- ddr3
+  dram --- ddr3
+  edram --- ddr3
+
+  core1 --- mem
+
+  exi --- rtc
+</pre
+    >
+    <pre id="diagram" class="mermaid2">
 cyto LR
-    inside1 --> inside2 & inside3 & inside4 & inside5 & inside6
-    a(letter a<br />a) ---> b(letter b)--> c(letter c) --> d -->e(letter e<br />e) --> a
-    b <--> d(letter b<br />d)
-    </pre>
+subgraph TOP
+    direction LR
+    subgraph B1
+        direction RL
+        i1 -->f1
+    end
+    subgraph B2
+        direction BT
+        i2 -->f2
+    end
+  end
+  B1 --> B2
+  F --> f1
+  </pre
+    >
+    inside1 --> inside2 & inside3 & inside4 & inside5 & inside6 a(letter a<br />a) ---> b(letter
+    b)--> c(letter c) --> d -->e(letter e<br />e) --> a b <--> d(letter b<br />d)
     <pre id="diagram" class="mermaid2">
       mindmap
   root
