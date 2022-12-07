@@ -35,183 +35,6 @@ export const drawImage = function (elem, width, height, x, y, link) {
   imageElem.attr('xlink:href', sanitizedLink);
 };
 
-export const drawEmbeddedImage = function (elem, x, y, link) {
-  const imageElem = elem.append('use');
-  imageElem.attr('x', x);
-  imageElem.attr('y', y);
-  var sanitizedLink = sanitizeUrl(link);
-  imageElem.attr('xlink:href', '#' + sanitizedLink);
-};
-
-export const drawText = function (elem, textData) {
-  let prevTextHeight = 0,
-    textHeight = 0;
-  const lines = textData.text.split(common.lineBreakRegex);
-
-  let textElems = [];
-  let dy = 0;
-  let yfunc = () => textData.y;
-  if (
-    textData.valign !== undefined &&
-    textData.textMargin !== undefined &&
-    textData.textMargin > 0
-  ) {
-    switch (textData.valign) {
-      case 'top':
-      case 'start':
-        yfunc = () => Math.round(textData.y + textData.textMargin);
-        break;
-      case 'middle':
-      case 'center':
-        yfunc = () =>
-          Math.round(textData.y + (prevTextHeight + textHeight + textData.textMargin) / 2);
-        break;
-      case 'bottom':
-      case 'end':
-        yfunc = () =>
-          Math.round(
-            textData.y +
-              (prevTextHeight + textHeight + 2 * textData.textMargin) -
-              textData.textMargin
-          );
-        break;
-    }
-  }
-  if (
-    textData.anchor !== undefined &&
-    textData.textMargin !== undefined &&
-    textData.width !== undefined
-  ) {
-    switch (textData.anchor) {
-      case 'left':
-      case 'start':
-        textData.x = Math.round(textData.x + textData.textMargin);
-        textData.anchor = 'start';
-        textData.dominantBaseline = 'text-after-edge';
-        textData.alignmentBaseline = 'middle';
-        break;
-      case 'middle':
-      case 'center':
-        textData.x = Math.round(textData.x + textData.width / 2);
-        textData.anchor = 'middle';
-        textData.dominantBaseline = 'middle';
-        textData.alignmentBaseline = 'middle';
-        break;
-      case 'right':
-      case 'end':
-        textData.x = Math.round(textData.x + textData.width - textData.textMargin);
-        textData.anchor = 'end';
-        textData.dominantBaseline = 'text-before-edge';
-        textData.alignmentBaseline = 'middle';
-        break;
-    }
-  }
-  for (let [i, line] of lines.entries()) {
-    if (
-      textData.textMargin !== undefined &&
-      textData.textMargin === 0 &&
-      textData.fontSize !== undefined
-    ) {
-      dy = i * textData.fontSize;
-    }
-
-    const textElem = elem.append('text');
-    textElem.attr('x', textData.x);
-    textElem.attr('y', yfunc());
-    if (textData.anchor !== undefined) {
-      textElem
-        .attr('text-anchor', textData.anchor)
-        .attr('dominant-baseline', textData.dominantBaseline)
-        .attr('alignment-baseline', textData.alignmentBaseline);
-    }
-    if (textData.fontFamily !== undefined) {
-      textElem.style('font-family', textData.fontFamily);
-    }
-    if (textData.fontSize !== undefined) {
-      textElem.style('font-size', textData.fontSize);
-    }
-    if (textData.fontWeight !== undefined) {
-      textElem.style('font-weight', textData.fontWeight);
-    }
-    if (textData.fill !== undefined) {
-      textElem.attr('fill', textData.fill);
-    }
-    if (textData.class !== undefined) {
-      textElem.attr('class', textData.class);
-    }
-    if (textData.dy !== undefined) {
-      textElem.attr('dy', textData.dy);
-    } else if (dy !== 0) {
-      textElem.attr('dy', dy);
-    }
-
-    if (textData.tspan) {
-      const span = textElem.append('tspan');
-      span.attr('x', textData.x);
-      if (textData.fill !== undefined) {
-        span.attr('fill', textData.fill);
-      }
-      span.text(line);
-    } else {
-      textElem.text(line);
-    }
-    if (
-      textData.valign !== undefined &&
-      textData.textMargin !== undefined &&
-      textData.textMargin > 0
-    ) {
-      textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
-      prevTextHeight = textHeight;
-    }
-
-    textElems.push(textElem);
-  }
-
-  return textElems;
-};
-
-export const drawLabel = function (elem, txtObject) {
-  /**
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} cut
-   * @returns {any}
-   */
-  function genPoints(x, y, width, height, cut) {
-    return (
-      x +
-      ',' +
-      y +
-      ' ' +
-      (x + width) +
-      ',' +
-      y +
-      ' ' +
-      (x + width) +
-      ',' +
-      (y + height - cut) +
-      ' ' +
-      (x + width - cut * 1.2) +
-      ',' +
-      (y + height) +
-      ' ' +
-      x +
-      ',' +
-      (y + height)
-    );
-  }
-  const polygon = elem.append('polygon');
-  polygon.attr('points', genPoints(txtObject.x, txtObject.y, txtObject.width, txtObject.height, 7));
-  polygon.attr('class', 'labelBox');
-
-  txtObject.y = txtObject.y + txtObject.height / 2;
-
-  drawText(elem, txtObject);
-  return polygon;
-};
-
 export const drawRels = (elem, rels, conf) => {
   const relsElem = elem.append('g');
   let i = 0;
@@ -744,23 +567,6 @@ export const insertArrowCrossHead = function (elem) {
   // this is actual shape for arrowhead
 };
 
-export const getTextObj = function () {
-  return {
-    x: 0,
-    y: 0,
-    fill: undefined,
-    anchor: undefined,
-    style: '#666',
-    width: undefined,
-    height: undefined,
-    textMargin: 0,
-    rx: 0,
-    ry: 0,
-    tspan: true,
-    valign: undefined,
-  };
-};
-
 export const getNoteRect = function () {
   return {
     x: 0,
@@ -895,13 +701,10 @@ const _drawTextCandidateFunc = (function () {
 
 export default {
   drawRect,
-  drawText,
-  drawLabel,
   drawBoundary,
   drawC4Shape,
   drawRels,
   drawImage,
-  drawEmbeddedImage,
   insertArrowHead,
   insertArrowEnd,
   insertArrowFilledHead,
@@ -910,7 +713,6 @@ export default {
   insertDatabaseIcon,
   insertComputerIcon,
   insertClockIcon,
-  getTextObj,
   getNoteRect,
-  sanitizeUrl,
+  sanitizeUrl, // TODO why is this exported?
 };
