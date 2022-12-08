@@ -63,6 +63,7 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
 
     // We create a SVG label, either by delegating to addHtmlLabel or manually
     let vertexNode;
+    const labelData = { width: 0, height: 0 };
     if (evaluate(getConfig().flowchart.htmlLabels)) {
       // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
       const node = {
@@ -72,6 +73,10 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
         ),
       };
       vertexNode = addHtmlLabel(svg, node).node();
+      const bbox = vertexNode.getBBox();
+      labelData.width = bbox.width;
+      labelData.height = bbox.height;
+      labelData.labelNode = vertexNode;
       vertexNode.parentNode.removeChild(vertexNode);
     } else {
       const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -88,6 +93,10 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
         svgLabel.appendChild(tspan);
       }
       vertexNode = svgLabel;
+      const bbox = vertexNode.getBBox();
+      labelData.width = bbox.width;
+      labelData.height = bbox.height;
+      labelData.labelNode = vertexNode;
     }
 
     let radious = 0;
@@ -176,12 +185,14 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
       nodeEl = insertNode(nodes, node, vertex.dir);
       boundingBox = nodeEl.node().getBBox();
     }
+
     const data = {
       id: vertex.id,
       // labelStyle: styles.labelStyle,
       // shape: _shape,
-      // labelText: vertexText,
-      labels: [{ text: vertexText }, { text: vertexText }],
+      labelText: vertexText,
+      labelData,
+      // labels: [{ text: vertexText }],
       // rx: radious,
       // ry: radious,
       // class: classStr,
@@ -615,8 +626,12 @@ export const draw = function (text, id, _version, diagObj) {
       id: 'root',
       layoutOptions: {
         'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+        'org.eclipse.elk.padding': '[top=100, left=100, bottom=110, right=110]',
+        // 'org.eclipse.elk.layered.spacing.nodeNodeBetweenLayers': 120,
+        // 'elk.layered.spacing.nodeNodeBetweenLayers': '140',
+        'elk.layered.spacing.edgeNodeBetweenLayers': '30',
         //   'elk.algorithm': 'layered',
-        //   'elk.direction': 'DOWN',
+        'elk.direction': 'DOWN',
         //   'elk.port.side': 'SOUTH',
         // 'nodePlacement.strategy': 'SIMPLE',
         // 'org.eclipse.elk.spacing.labelLabel': 120,
@@ -679,8 +694,20 @@ export const draw = function (text, id, _version, diagObj) {
       if (!node.parent) {
         graph.children.push(node);
       }
+      // node.nodePadding = [120, 50, 50, 50];
+      // node['org.eclipse.elk.spacing.nodeNode'] = 120;
+      // Subgraph
       if (parentLookupDb.childrenById[nodeId] !== undefined) {
-        // console.log('UGH node', node);
+        node.labels = [
+          {
+            text: node.labelText,
+            layoutOptions: {
+              'nodeLabels.placement': '[H_CENTER, V_TOP, INSIDE]',
+            },
+            width: node.labelData.width,
+            height: node.labelData.height,
+          },
+        ];
         delete node.x;
         delete node.y;
         delete node.width;
@@ -730,8 +757,15 @@ export const draw = function (text, id, _version, diagObj) {
 const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, diagObj) => {
   nodeArray.forEach(function (node) {
     if (node) {
+      nodeDb[node.id].offset = {
+        posX: node.x + relX,
+        posY: node.y + relY,
+        x: relX,
+        y: relY,
+      };
       if (node.type === 'group') {
-        subgraphsEl
+        const subgraphEl = subgraphsEl.insert('g').attr('class', 'subgraph');
+        subgraphEl
           .insert('rect')
           .attr('class', 'subgraph node')
           .attr('style', 'fill:#ccc;stroke:black;stroke-width:1')
@@ -739,7 +773,14 @@ const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, diagObj) => {
           .attr('y', node.y + relY)
           .attr('width', node.width)
           .attr('height', node.height);
-        log.info('Id (UGH)= ', node.type, node.domId, svg.select(`[id="${node.domId}"]`));
+        const label = subgraphEl.insert('g').attr('class', 'label');
+        label.attr(
+          'transform',
+          `translate(${node.labels[0].x + relX + node.x}, ${node.labels[0].y + relY + node.y})`
+        );
+        label.node().appendChild(node.labelData.labelNode);
+
+        log.info('Id (UGH)= ', node.type, node.labels);
       } else {
         log.info('Id (UGH)= ', node.id);
         node.el.attr(
@@ -747,12 +788,6 @@ const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, diagObj) => {
           `translate(${node.x + relX + node.width / 2}, ${node.y + relY + node.height / 2})`
         );
       }
-      nodeDb[node.id].offset = {
-        posX: node.x + relX,
-        posY: node.y + relY,
-        x: relX,
-        y: relY,
-      };
     }
   });
   nodeArray.forEach(function (node) {
