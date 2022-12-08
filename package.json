@@ -1,7 +1,7 @@
 {
   "name": "mermaid-monorepo",
   "private": true,
-  "version": "9.2.2",
+  "version": "9.3.0-rc1",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
   "packageManager": "pnpm@7.17.1",
