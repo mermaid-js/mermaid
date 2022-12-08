@@ -536,7 +536,7 @@ const render = function (
   if (isSandboxed) {
     const svgEl = root.select(enclosingDivID_selector + ' svg').node();
     svgCode = putIntoIFrame(svgCode, svgEl);
-  } else if (isLooseSecurityLevel) {
+  } else if (!isLooseSecurityLevel) {
     // Sanitize the svgCode using DOMPurify
     svgCode = DOMPurify.sanitize(svgCode, {
       ADD_TAGS: DOMPURE_TAGS,
@@ -738,7 +738,7 @@ const renderAsync = async function (
   if (isSandboxed) {
     const svgEl = root.select(enclosingDivID_selector + ' svg').node();
     svgCode = putIntoIFrame(svgCode, svgEl);
-  } else if (isLooseSecurityLevel) {
+  } else if (!isLooseSecurityLevel) {
     // Sanitize the svgCode using DOMPurify
     svgCode = DOMPurify.sanitize(svgCode, {
       ADD_TAGS: DOMPURE_TAGS,

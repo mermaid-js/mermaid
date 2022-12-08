@@ -7,6 +7,10 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
     <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
       href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"
     />
@@ -14,7 +18,7 @@
       body {
         /* background: rgb(221, 208, 208); */
         /* background:#333; */
-        font-family: 'Courier New', Courier, monospace;
+        font-family: 'Arial';
         /* font-size: 18px !important; */
       }
       h1 {
@@ -23,235 +27,77 @@
       .mermaid2 {
         display: none;
       }
-      .mermaid {
-        border: 1px solid red;
-        font-family: 'Courier New', Courier, monospace;
+      .mermaid svg {
         /* font-size: 18px !important; */
+        background-color: #eee;
+        background-image: radial-gradient(#fff 1%, transparent 11%),
+          radial-gradient(#fff 1%, transparent 11%);
+        background-size: 20px 20px;
+        background-position: 0 0, 10px 10px;
+        background-repeat: repeat;
+      }
+      .malware {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 150px;
+        background: red;
+        color: black;
+        display: flex;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: monospace;
+        font-size: 72px;
       }
     </style>
   </head>
   <body>
-    <div>info below</div>
-    <div class="">
-      <pre class="mermaid2" style="width: 100%; height: 400px">
-flowchart TB;subgraph "number as labels";1;end;
-      </pre>
-      <pre class="mermaid2" style="width: 100%; height: 400px">
-flowchart TB;a[APA];
-      </pre>
-      <pre class="mermaid2" style="margin-left: 100px">
-graph TD
-      work --> sleep
-      sleep --> work
-      eat --> sleep
-      work --> eat
-      </pre>
-      <pre class="mermaid2" style="margin-left: 100px">
-flowchart TD
-      work --> sleep
-      sleep --> work
-      eat --> sleep
-      work --> eat
-      </pre>
-      <pre class="mermaid2" style="">
- graph TB
-      A
-      B
-      subgraph foo[Foo SubGraph]
-        C
-        D
-      end
-      subgraph bar[Bar SubGraph]
-        E
-        F
-      end
-      G
-
-      A-->B
-      B-->C
-      C-->D
-      B-->D
-      D-->E
-      E-->A
-      E-->F
-      F-->D
-      F-->G
-      B-->G
-      G-->D
-
-      style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
-      style bar fill:#999,stroke-width:2px,stroke:#0F0,color:blue
-      </pre>
-      <pre class="mermaid2" style="">
-      graph TB
-%%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
-      A
-      B
-      subgraph foo[Foo SubGraph]
-        C
-        D
-      end
-      subgraph bar[Bar SubGraph]
-        E
-        F
-      end
-      G
-
-      A-->B
-      B-->C
-      C-->D
-      B-->D
-      D-->E
-      E-->A
-      E-->F
-      F-->D
-      F-->G
-      B-->G
-      G-->D
-
-      style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
-      style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
-      </pre>
-      <pre class="mermaid2" style="">
+    <div>Security check</div>
+    <pre id="diagram" class="mermaid">
       graph TD
-        A[Christmas] ==> D
-        A[Christmas] -->|Get money| B(Go shopping)
-        A[Christmas] ==> C
-      </pre>
-      <pre class="mermaid2" style="">
-      graph TD
-%%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
-        A[Christmas] ==> D
-        A[Christmas] -->|Get money| B(Go shopping)
-        A[Christmas] ==> C
-      </pre>
-      <pre class="mermaid2" style="">
-      flowchart TD
-        A[Christmas] ==> D
-        A[Christmas] -->|Get money| B(Go shopping)
-        A[Christmas] ==> C
-      </pre>
-      <pre class="mermaid2" style="">
-      flowchart TD
-%%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
-        A[Christmas] ==> D
-        A[Christmas] -->|Get money| B(Go shopping)
-        A[Christmas] ==> C
-      </pre>
-      <pre class="mermaid2" style="">
-flowchart LR
-        a["<strong>Haiya</strong>"]---->b
-      </pre>
-      <pre class="mermaid" style="">
-flowchart LR
-%%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
-        a["<strong>Haiya</strong>"]---->b
-      </pre>
-      <pre class="mermaid2" style="">
-      flowchart TD
-        A[Christmas] ==> D
-        A[Christmas] -->|Get money| B(Go shopping)
-        A[Christmas] ==> C
-      </pre>
-      <pre class="mermaid2" style="">
-      flowchart TD
-%%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
-        A[Christmas] ==> D
-        A[Christmas] -->|Get money| B(Go shopping)
-        A[Christmas] ==> C
-      </pre>
-      <pre class="mermaid2" style="">
-      %%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
-classDiagram-v2
-      Class01 <|-- AveryLongClass : Cool
-      &lt;&lt;interface&gt;&gt; Class01
-      Class03 *-- Class04
-      Class05 o-- Class06
-      Class07 .. Class08
-      Class09 --> C2 : Where am i?
-      Class09 --* C3
-      Class09 --|> Class07
-      Class12 <|.. Class08
-      Class11 ..>Class12
-      Class07 : equals()
-      Class07 : Object[] elementData
-      Class01 : size()
-      Class01 : int chimp
-      Class01 : int gorilla
-      Class01 : -int privateChimp
-      Class01 : +int publicGorilla
-      Class01 : #int protectedMarmoset
-      Class08 <--> C2: Cool label
-      class Class10 {
-        &lt;&lt;service&gt;&gt;
-        int id
-        test()
-      }
-      </pre>
-      <pre class="mermaid2" style="">
-classDiagram-v2
-      Class01 <|-- AveryLongClass : Cool
-      &lt;&lt;interface&gt;&gt; Class01
-      Class03 *-- Class04
-      Class05 o-- Class06
-      Class07 .. Class08
-      Class09 --> C2 : Where am i?
-      Class09 --* C3
-      Class09 --|> Class07
-      Class12 <|.. Class08
-      Class11 ..>Class12
-      Class07 : equals()
-      Class07 : Object[] elementData
-      Class01 : size()
-      Class01 : int chimp
-      Class01 : int gorilla
-      Class01 : -int privateChimp
-      Class01 : +int publicGorilla
-      Class01 : #int protectedMarmoset
-      Class08 <--> C2: Cool label
-      class Class10 {
-        &lt;&lt;service&gt;&gt;
-        int id
-        test()
-      }
-      </pre>
-      <pre class="mermaid" style="">
-flowchart BT
-   subgraph S1
-    sub1 -->sub2
-   end
-  subgraph S2
-    sub4
-   end
-   S1 --> S2
-   sub1 --> sub4
-      </pre>
-    </div>
-    <script src="./mermaid.js"></script>
-    <script>
+        A["test"] --"<p><style> * { display : none}</style>test</p>"--> B
+    </pre>
+
+    <!-- <div id="cy"></div> -->
+    <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
+    <!-- <script src="./mermaid-example-diagram-detector.js"></script>    -->
+    <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.7/dist/mermaid.min.js"></script> -->
+    <!-- <script src="./mermaid.js"></script> -->
+
+    <script type="module">
+      import mindmap from '../../packages/mermaid-mindmap/src/detector';
+      // import example from '../../packages/mermaid-example-diagram/src/detector';
+      import mermaid from '../../packages/mermaid/src/mermaid';
+      await mermaid.registerExternalDiagrams([mindmap]);
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        // theme: 'neutral',
-        // arrowMarkerAbsolute: true,
-        // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
+        theme: 'default',
+        startOnLoad: true,
         logLevel: 0,
-        flowchart: { curve: 'cardinal', htmlLabels: false },
-        // htmlLabels: true,
-        // gantt: { axisFormat: '%m/%d/%Y' },
-        // sequence: { actorFontFamily: 'courier', actorMargin: 50, showSequenceNumbers: false },
-        // sequenceDiagram: { actorMargin: 300 } // deprecated
-        // fontFamily: '"times", sans-serif',
-        fontFamily: 'courier',
-        // fontSize: 18,
-        // curve: 'cardinal',
-        securityLevel: 'loose',
-        // themeVariables: {relationLabelColor: 'red'}
+        flowchart: {
+          useMaxWidth: false,
+          htmlLabels: true,
+        },
+        gantt: {
+          useMaxWidth: false,
+        },
+        useMaxWidth: false,
       });
       function callback() {
         alert('It worked');
       }
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+      // mermaid.test1('first_slow', 1200).then((r) => console.info(r));
+      // mermaid.test1('second_fast', 200).then((r) => console.info(r));
+      // mermaid.test1('third_fast', 200).then((r) => console.info(r));
+      // mermaid.test1('forth_slow', 1200).then((r) => console.info(r));
     </script>
   </body>
 </html>
