@@ -2,7 +2,6 @@ import { select } from 'd3';
 import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI';
 import { log } from '../../logger';
 import utils from '../../utils';
-import addSVGAccessibilityFields from '../../accessibility';
 
 let allCommitsDict = {};
 
@@ -505,9 +504,6 @@ export const draw = function (txt, id, ver, diagObj) {
   });
 
   const diagram = select(`[id="${id}"]`);
-
-  // Adds title and description to the flow chart
-  addSVGAccessibilityFields(diagObj.db, diagram, id);
 
   drawCommits(diagram, allCommitsDict, false);
   if (gitGraphConfig.showBranches) {

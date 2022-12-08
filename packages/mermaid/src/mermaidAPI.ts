@@ -30,6 +30,7 @@ import DOMPurify from 'dompurify';
 import { MermaidConfig } from './config.type';
 import { evaluate } from './diagrams/common/common';
 import isEmpty from 'lodash-es/isEmpty';
+import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility';
 
 // diagram names that support classDef statements
 const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram', 'stateDiagram-v2'];
@@ -68,7 +69,7 @@ interface DiagramStyleClassDef {
 
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
 // @ts-ignore Could replicate the type definition in d3. This also makes it possible to use the untyped info from the js diagram files.
-type D3Element = any;
+export type D3Element = any;
 
 // ----------------------------------------------------------------------------
 
@@ -371,7 +372,7 @@ export const removeExistingElements = (
  * @param id - The id for the SVG element (the element to be rendered)
  * @param text - The text for the graph definition
  * @param cb - Callback which is called after rendering is finished with the svg code as in param.
- * @param container - HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
+ * @param svgContainingElement - HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
  *   If no svgContainingElement is provided then the SVG element will be appended to the body.
  *    Selector to element in which a div with the graph temporarily will be
  *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
@@ -479,12 +480,13 @@ const render = function (
     parseEncounteredException = error;
   }
 
-  // Get the temporary div element containing the svg
+  // Get the temporary div element containing the svg (the parent HTML Element)
   const element = root.select(enclosingDivID_selector).node();
   const graphType = diag.type;
 
   // -------------------------------------------------------------------------------
   // Create and insert the styles (user styles, theme styles, config styles)
+  //  These are dealing with HTML Elements, not d3 nodes.
 
   // Insert an element into svg. This is where we put the styles
   const svg = element.firstChild;
@@ -501,6 +503,7 @@ const render = function (
     idSelector
   );
 
+  // svg is a HTML element (not a d3 node)
   const style1 = document.createElement('style');
   style1.innerHTML = rules;
   svg.insertBefore(style1, firstChild);
@@ -513,6 +516,12 @@ const render = function (
     errorRenderer.draw(text, id, pkg.version);
     throw e;
   }
+
+  // This is the d3 node for the svg element
+  const svgNode = root.select(`${enclosingDivID_selector} svg`);
+  const a11yTitle = diag.db.getAccTitle?.();
+  const a11yDescr = diag.db.getAccDescription?.();
+  addA11yInfo(graphType, svgNode, a11yTitle, a11yDescr);
 
   // -------------------------------------------------------------------------------
   // Clean up SVG code
@@ -710,6 +719,12 @@ const renderAsync = async function (
     throw e;
   }
 
+  // This is the d3 node for the svg element
+  const svgNode = root.select(`${enclosingDivID_selector} svg`);
+  const a11yTitle = diag.db.getAccTitle?.();
+  const a11yDescr = diag.db.getAccDescription?.();
+  addA11yInfo(graphType, svgNode, a11yTitle, a11yDescr);
+
   // -------------------------------------------------------------------------------
   // Clean up SVG code
   root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
@@ -755,7 +770,7 @@ const renderAsync = async function (
   attachFunctions();
 
   // -------------------------------------------------------------------------------
-  // Remove the temporary element if appropriate
+  // Remove the temporary HTML element if appropriate
   const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
   const node = select(tmpElementSelector).node();
   if (node && 'remove' in node) {
@@ -872,6 +887,20 @@ function initialize(options: MermaidConfig = {}) {
 
   setLogLevel(config.logLevel);
   addDiagrams();
+}
+
+/**
+ * Add accessibility (a11y) information to the diagram.
+ *
+ */
+function addA11yInfo(
+  graphType: string,
+  svgNode: D3Element,
+  a11yTitle: string | undefined,
+  a11yDescr: string | undefined
+) {
+  setA11yDiagramInfo(svgNode, graphType);
+  addSVGa11yTitleDescription(svgNode, a11yTitle, a11yDescr, svgNode.attr('id'));
 }
 
 /**

@@ -6,7 +6,7 @@ import { log } from '../../logger';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import common from '../common/common';
 import utils from '../../utils';
-import addSVGAccessibilityFields from '../../accessibility';
+
 import {
   DEFAULT_DIAGRAM_DIRECTION,
   DEFAULT_NESTED_DOC_DIR,
@@ -470,7 +470,6 @@ export const draw = function (text, id, _version, diag) {
     label.insertBefore(rect, label.firstChild);
     // }
   }
-  addSVGAccessibilityFields(diag.db, svg, id);
 };
 
 export default {
