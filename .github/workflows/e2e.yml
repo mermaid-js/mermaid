@@ -65,9 +65,9 @@ jobs:
           name: error-snapshots
           path: cypress/snapshots/**/__diff_output__/*
 
-      # - name: Commit changes
-      #   uses: EndBug/add-and-commit@v9
-      #   if: ${{ steps.verifyDocs.outcome == 'failure' && github.event_name == 'push' }}
-      #   with:
-      #     message: 'Update docs'
-      #     add: 'docs/*'
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        if: ${{ failure() && github.event_name == 'push' }}
+        with:
+          message: 'Update snapshots'
+          add: 'cypress/snapshots/*'
