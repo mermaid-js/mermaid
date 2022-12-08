@@ -3,7 +3,7 @@ name: E2E
 on: [push, pull_request]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
