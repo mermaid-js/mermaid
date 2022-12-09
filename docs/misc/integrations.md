@@ -109,10 +109,10 @@ They also serve as proof of concept, for the variety of things that can be built
   - [md-it-mermaid](https://github.com/iamcco/md-it-mermaid)
   - [markdown-it-mermaid-fence-new](https://github.com/Revomatico/markdown-it-mermaid-fence-new)
   - [markdown-it-mermaid-less](https://github.com/searKing/markdown-it-mermaid-less)
-- [Atom](https://atom.io)
-  - [Markdown Preview Enhanced](https://atom.io/packages/markdown-preview-enhanced)
-  - [Atom Mermaid](https://atom.io/packages/atom-mermaid)
-  - [Language Mermaid Syntax Highlighter](https://atom.io/packages/language-mermaid)
+- Atom _(Atom has been [archived.](https://github.blog/2022-06-08-sunsetting-atom/))_
+  - Markdown Preview Enhanced
+  - [Atom Mermaid](https://github.com/y-takey/atom-mermaid)
+  - Language Mermaid Syntax Highlighter
 - [Sublime Text 3](https://sublimetext.com)
   - [Mermaid Package](https://packagecontrol.io/packages/Mermaid)
 - [Astah](https://astah.net)
