@@ -65,14 +65,14 @@
 \%%[^\n]*                        /* skip comments */
 "scale"\s+            { this.pushState('SCALE'); /* console.log('Got scale', yytext);*/ return 'scale'; }
 <SCALE>\d+            return 'WIDTH';
-<SCALE>\s+"width"     {this.popState();}
+<SCALE>\s+"width"     {this.popState(); }
 
 accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
 <acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
 accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
 <acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
-accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
-<acc_descr_multiline>[\}]                       { this.popState(); }
+accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline"); }
+<acc_descr_multiline>[\}]                        { this.popState(); }
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 
 <INITIAL,struct>"classDef"\s+   { this.pushState('CLASSDEF'); return 'classDef'; }
@@ -81,57 +81,60 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <CLASSDEFID>[^\n]*              { this.popState(); return 'CLASSDEF_STYLEOPTS' }
 
 <INITIAL,struct>"class"\s+      { this.pushState('CLASS'); return 'class'; }
-<CLASS>(\w+)+((","\s*\w+)*)       { this.popState(); this.pushState('CLASS_STYLE'); return 'CLASSENTITY_IDS' }
+<CLASS>(\w+)+((","\s*\w+)*)     { this.popState(); this.pushState('CLASS_STYLE'); return 'CLASSENTITY_IDS' }
 <CLASS_STYLE>[^\n]*             { this.popState(); return 'STYLECLASS' }
 
 "scale"\s+            { this.pushState('SCALE'); /* console.log('Got scale', yytext);*/ return 'scale'; }
 <SCALE>\d+            return 'WIDTH';
 <SCALE>\s+"width"     {this.popState();}
 
+<INITIAL,struct>"state"\s+  { /* console.log('Starting STATE '); */ this.pushState('STATE'); }
 
-<INITIAL,struct>"state"\s+            { /*console.log('Starting STATE zxzx'+yy.getDirection());*/this.pushState('STATE'); }
 <STATE>.*"<<fork>>"                   {this.popState();yytext=yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
 <STATE>.*"<<join>>"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yytext);*/return 'JOIN';}
-<STATE>.*"<<choice>>"                   {this.popState();yytext=yytext.slice(0,-10).trim();/*console.warn('Fork Join: ',yytext);*/return 'CHOICE';}
+<STATE>.*"<<choice>>"                 {this.popState();yytext=yytext.slice(0,-10).trim();/*console.warn('Fork Join: ',yytext);*/return 'CHOICE';}
 <STATE>.*"[[fork]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
 <STATE>.*"[[join]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yytext);*/return 'JOIN';}
-<STATE>.*"[[choice]]"                   {this.popState();yytext=yytext.slice(0,-10).trim();/*console.warn('Fork Join: ',yytext);*/return 'CHOICE';}
+<STATE>.*"[[choice]]"                 {this.popState();yytext=yytext.slice(0,-10).trim();/*console.warn('Fork Join: ',yytext);*/return 'CHOICE';}
+
 <struct>.*direction\s+TB[^\n]*            { return 'direction_tb';}
 <struct>.*direction\s+BT[^\n]*            { return 'direction_bt';}
 <struct>.*direction\s+RL[^\n]*            { return 'direction_rl';}
 <struct>.*direction\s+LR[^\n]*            { return 'direction_lr';}
 
-<STATE>["]                   { /*console.log('Starting STATE_STRING zxzx');*/this.begin("STATE_STRING");}
-<STATE>\s*"as"\s+         {this.popState();this.pushState('STATE_ID');return "AS";}
-<STATE_ID>[^\n\{]*         {this.popState();/* console.log('STATE_ID', yytext);*/return "ID";}
-<STATE_STRING>["]              this.popState();
-<STATE_STRING>[^"]*         { /*console.log('Long description:', yytext);*/return "STATE_DESCR";}
-<STATE>[^\n\s\{]+      {/*console.log('COMPOSIT_STATE', yytext);*/return 'COMPOSIT_STATE';}
-<STATE>\n      {this.popState();}
-<INITIAL,STATE>\{               {this.popState();this.pushState('struct'); /*console.log('begin struct', yytext);*/return 'STRUCT_START';}
-<struct>\%\%(?!\{)[^\n]*                                       /* skip comments inside state*/
-<struct>\}           { /*console.log('Ending struct');*/ this.popState(); return 'STRUCT_STOP';}}
-<struct>[\n]              /* nothing */
+<STATE>["]                 { /* console.log('Starting STATE_STRING'); */ this.pushState("STATE_STRING"); }
+<STATE>\s*"as"\s+          { this.pushState('STATE_ID'); /* console.log('pushState(STATE_ID)'); */ return "AS"; }
+<STATE_ID>[^\n\{]*         { this.popState(); /* console.log('STATE_ID', yytext); */ return "ID"; }
+<STATE_STRING>["]          { this.popState(); }
+<STATE_STRING>[^"]*        { /* console.log('Long description:', yytext); */ return "STATE_DESCR"; }
+<STATE>[^\n\s\{]+          { /* console.log('COMPOSIT_STATE', yytext); */ return 'COMPOSIT_STATE'; }
+<STATE>\n                  { this.popState(); }
+<INITIAL,STATE>\{          { this.popState(); this.pushState('struct'); /* console.log('begin struct', yytext); */ return 'STRUCT_START'; }
+<struct>\%\%(?!\{)[^\n]*   /* skip comments inside state*/
+<struct>\}                 { /*console.log('Ending struct');*/ this.popState(); return 'STRUCT_STOP';} }
+<struct>[\n]               /* nothing */
 
 <INITIAL,struct>"note"\s+           { this.begin('NOTE'); return 'note'; }
-<NOTE>"left of"                     { this.popState();this.pushState('NOTE_ID');return 'left_of';}
-<NOTE>"right of"                    { this.popState();this.pushState('NOTE_ID');return 'right_of';}
-<NOTE>\"                            { this.popState();this.pushState('FLOATING_NOTE');}
-<FLOATING_NOTE>\s*"as"\s*       {this.popState();this.pushState('FLOATING_NOTE_ID');return "AS";}
-<FLOATING_NOTE>["]         /**/
-<FLOATING_NOTE>[^"]*         { /*console.log('Floating note text: ', yytext);*/return "NOTE_TEXT";}
-<FLOATING_NOTE_ID>[^\n]*         {this.popState();/*console.log('Floating note ID', yytext);*/return "ID";}
-<NOTE_ID>\s*[^:\n\s\-]+                { this.popState();this.pushState('NOTE_TEXT');/*console.log('Got ID for note', yytext);*/return 'ID';}
-<NOTE_TEXT>\s*":"[^:\n;]+       { this.popState();/*console.log('Got NOTE_TEXT for note',yytext);*/yytext = yytext.substr(2).trim();return 'NOTE_TEXT';}
-<NOTE_TEXT>[\s\S]*?"end note"       { this.popState();/*console.log('Got NOTE_TEXT for note',yytext);*/yytext = yytext.slice(0,-8).trim();return 'NOTE_TEXT';}
+<NOTE>"left of"                     { this.popState(); this.pushState('NOTE_ID'); return 'left_of'; }
+<NOTE>"right of"                    { this.popState(); this.pushState('NOTE_ID'); return 'right_of'; }
+<NOTE>\"                            { this.popState(); this.pushState('FLOATING_NOTE'); }
+<FLOATING_NOTE>\s*"as"\s*           { this.popState(); this.pushState('FLOATING_NOTE_ID'); return "AS"; }
+<FLOATING_NOTE>["]                  /**/
+<FLOATING_NOTE>[^"]*                { /* console.log('Floating note text: ', yytext); */ return "NOTE_TEXT"; }
+<FLOATING_NOTE_ID>[^\n]*            { this.popState(); /* console.log('Floating note ID', yytext);*/ return "ID"; }
+<NOTE_ID>\s*[^:\n\s\-]+             { this.popState(); this.pushState('NOTE_TEXT'); /*console.log('Got ID for note', yytext);*/ return 'ID'; }
+<NOTE_TEXT>\s*":"[^:\n;]+           { this.popState(); /* console.log('Got NOTE_TEXT for note',yytext);*/yytext = yytext.substr(2).trim(); return 'NOTE_TEXT'; }
+<NOTE_TEXT>[\s\S]*?"end note"       { this.popState(); /* console.log('Got NOTE_TEXT for note',yytext);*/yytext = yytext.slice(0,-8).trim(); return 'NOTE_TEXT'; }
 
-"stateDiagram"\s+                   { /*console.log('Got state diagram', yytext,'#');*/return 'SD'; }
-"stateDiagram-v2"\s+                   { /*console.log('Got state diagram', yytext,'#');*/return 'SD'; }
-"hide empty description"    { /*console.log('HIDE_EMPTY', yytext,'#');*/return 'HIDE_EMPTY'; }
-<INITIAL,struct>"[*]"                   { /*console.log('EDGE_STATE=',yytext);*/ return 'EDGE_STATE';}
-<INITIAL,struct>[^:\n\s\-\{]+                { /*console.log('=>ID=',yytext);*/ return 'ID';}
-// <INITIAL,struct>\s*":"[^\+\->:\n;]+      { yytext = yytext.trim(); /*console.log('Descr = ', yytext);*/ return 'DESCR'; }
-<INITIAL,struct>\s*":"[^:\n;]+      { yytext = yytext.trim(); /*console.log('Descr = ', yytext);*/ return 'DESCR'; }
+"stateDiagram"\s+                   { /* console.log('Got state diagram', yytext,'#'); */ return 'SD'; }
+"stateDiagram-v2"\s+                { /* console.log('Got state diagram', yytext,'#'); */ return 'SD'; }
+
+"hide empty description"      { /* console.log('HIDE_EMPTY', yytext,'#'); */ return 'HIDE_EMPTY'; }
+
+<INITIAL,struct>"[*]"                   { /* console.log('EDGE_STATE=',yytext); */ return 'EDGE_STATE'; }
+<INITIAL,struct>[^:\n\s\-\{]+           { /* console.log('=>ID=',yytext); */ return 'ID'; }
+// <INITIAL,struct>\s*":"[^\+\->:\n;]+  { yytext = yytext.trim(); /* console.log('Descr = ', yytext); */ return 'DESCR'; }
+<INITIAL,struct>\s*":"[^:\n;]+          { yytext = yytext.trim(); /* console.log('Descr = ', yytext); */ return 'DESCR'; }
 
 <INITIAL,struct>"-->"             return '-->';
 <struct>"--"                      return 'CONCURRENT';
@@ -201,7 +204,7 @@ statement
     | COMPOSIT_STATE
     | COMPOSIT_STATE STRUCT_START document STRUCT_STOP
     {
-        /* console.log('Adding document for state without id ', $1); */
+        // console.log('Adding document for state without id ', $1);
         $$={ stmt: 'state', id: $1, type: 'default', description: '', doc: $3 }
     }
     | STATE_DESCR AS ID {
@@ -217,7 +220,7 @@ statement
     }
     | STATE_DESCR AS ID STRUCT_START document STRUCT_STOP
     {
-         /*  console.log('Adding document for state with id zxzx', $3, $4, yy.getDirection());  yy.addDocument($3);*/
+         // console.log('state with id ', $3,' document = ', $5, );
          $$={ stmt: 'state', id: $3, type: 'default', description: $1, doc: $5 }
     }
     | FORK {
