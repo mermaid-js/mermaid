@@ -110,9 +110,9 @@ They also serve as proof of concept, for the variety of things that can be built
   - [markdown-it-mermaid-fence-new](https://github.com/Revomatico/markdown-it-mermaid-fence-new)
   - [markdown-it-mermaid-less](https://github.com/searKing/markdown-it-mermaid-less)
 - Atom _(Atom has been [archived.](https://github.blog/2022-06-08-sunsetting-atom/))_
-  - Markdown Preview Enhanced
+  - [Markdown Preview Enhanced](https://github.com/shd101wyy/markdown-preview-enhanced)
   - [Atom Mermaid](https://github.com/y-takey/atom-mermaid)
-  - Language Mermaid Syntax Highlighter
+  - [Language Mermaid Syntax Highlighter](https://github.com/ytisf/language-mermaid)
 - [Sublime Text 3](https://sublimetext.com)
   - [Mermaid Package](https://packagecontrol.io/packages/Mermaid)
 - [Astah](https://astah.net)
