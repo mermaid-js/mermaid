@@ -55,7 +55,7 @@
   </head>
   <body>
     <div>Security check</div>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 cyto TD
   %% I could not figure out how to use double quotes in labels in Mermaid
   subgraph ibm[IBM Espresso CPU]
@@ -109,21 +109,10 @@ cyto TD
   rtc{{rtc}}
 </pre
     >
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 cyto LR
-subgraph TOP
-    direction LR
-    subgraph B1
-        direction RL
-        i1 -->f1
-    end
-    subgraph B2
-        direction BT
-        i2 -->f2
-    end
-  end
-  B1 --> B2
-  F --> f1
+  B1 --be be--> B2
+  B1 --bo bo--> B3
   </pre
     >
     inside1 --> inside2 & inside3 & inside4 & inside5 & inside6 a(letter a<br />a) ---> b(letter

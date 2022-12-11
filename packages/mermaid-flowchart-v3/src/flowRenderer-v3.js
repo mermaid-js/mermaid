@@ -3,6 +3,7 @@ import { select, line, curveLinear, curveCardinal, curveBasis, selectAll } from 
 import { log, getConfig, setupGraphViewbox } from './mermaidUtils';
 import { insertNode } from '../../mermaid/src/dagre-wrapper/nodes.js';
 import insertMarkers from '../../mermaid/src/dagre-wrapper/markers.js';
+import createLabel from '../../mermaid/src/dagre-wrapper/createLabel';
 import dagre from 'cytoscape-dagre';
 // Replace with other function to avoid dependency to dagre-d3
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
@@ -247,9 +248,11 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
  * @param cy
  * @param diagObj
  * @param graph
+ * @param svg
  */
-export const addEdges = function (edges, diagObj, graph) {
+export const addEdges = function (edges, diagObj, graph, svg) {
   // log.info('abc78 edges = ', edges);
+  const labelsEl = svg.insert('g').attr('class', 'edgeLabels');
   let cnt = 0;
   let linkIdCnt = {};
 
@@ -378,11 +381,30 @@ export const addEdges = function (edges, diagObj, graph) {
     edgeData.id = linkId;
     edgeData.classes = 'flowchart-link ' + linkNameStart + ' ' + linkNameEnd;
 
+    const labelEl = createLabel(edgeData.label, edgeData.labelStyle);
+    labelsEl.node().appendChild(labelEl);
+    const labelBox = labelEl.firstChild.getBoundingClientRect();
+    // console.log('labelEl', labelEl);
     // Add the edge to the graph
     graph.edges.push({
       id: 'e' + edge.start + edge.end,
       sources: [edge.start],
       targets: [edge.end],
+      labelEl: labelEl,
+      labels: [
+        {
+          width: labelBox.width,
+          // width: 80,
+          height: labelBox.height,
+          orgWidth: labelBox.width,
+          orgHeight: labelBox.height,
+          text: edgeData.label,
+          layoutOptions: {
+            'edgeLabels.inline': 'true',
+            'edgeLabels.placement': 'CENTER',
+          },
+        },
+      ],
       edgeData,
       // targetPort: 'PortSide.NORTH',
       // id: cnt,
@@ -553,13 +575,24 @@ const insertEdge = function (edgesEl, edge, edgeData, diagObj) {
   // console.log('Edge ctrl points:', points);
   // const curve = line().curve(curveCardinal);
   const curve = line().curve(curveLinear);
-  const edge2 = edgesEl
+  const edgePath = edgesEl
     .insert('path')
     .attr('d', curve(points))
     // .attr('d', points))
     .attr('class', 'path')
     .attr('fill', 'none');
-  addmarkers(edge2, edgeData, diagObj.type, diagObj.arrowMarkerAbsolute);
+  const edgeG = edgesEl.insert('g').attr('class', 'edgeLabel');
+  const edgeEl = select(edgeG.node().appendChild(edge.labelEl));
+  // console.log('Edge label', edgeEl, edge);
+  const box = edgeEl.node().firstChild.getBoundingClientRect();
+  edgeEl.attr('width', box.width);
+  edgeEl.attr('height', box.height);
+  // edgeEl.height = 24;
+  edgeG.attr(
+    'transform',
+    `translate(${edge.labels[0].x - box.width / 2}, ${edge.labels[0].y - box.height / 2})`
+  );
+  addmarkers(edgesEl, edgeData, diagObj.type, diagObj.arrowMarkerAbsolute);
   // edgesEl
   //   .append('circle')
   //   .style('stroke', 'red')
@@ -631,7 +664,7 @@ export const draw = function (text, id, _version, diagObj) {
         // 'elk.layered.spacing.nodeNodeBetweenLayers': '140',
         'elk.layered.spacing.edgeNodeBetweenLayers': '30',
         //   'elk.algorithm': 'layered',
-        'elk.direction': 'DOWN',
+        'elk.direction': 'WEST',
         //   'elk.port.side': 'SOUTH',
         // 'nodePlacement.strategy': 'SIMPLE',
         // 'org.eclipse.elk.spacing.labelLabel': 120,
@@ -685,7 +718,7 @@ export const draw = function (text, id, _version, diagObj) {
     graph = addVertices(vert, id, root, doc, diagObj, parentLookupDb, graph);
     const edgesEl = svg.insert('g').attr('class', 'edges edgePath');
     const edges = diagObj.db.getEdges();
-    graph = addEdges(edges, diagObj, graph);
+    graph = addEdges(edges, diagObj, graph, svg);
 
     // Iterate through all nodes and add the top level nodes to the graph
     const nodes = Object.keys(nodeDb);
@@ -739,7 +772,7 @@ export const draw = function (text, id, _version, diagObj) {
     // };
     elk.layout(graph).then(function (g) {
       // elk.layout(graph2).then(function (g) {
-      // console.log('Layout (UGH)- ', g);
+      // console.log('Layout (UGH)- ', g, JSON.stringify(g));
       drawNodes(0, 0, g.children, svg, subGraphsEl, diagObj);
 
       g.edges.map((edge, id) => {
