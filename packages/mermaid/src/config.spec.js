@@ -1,3 +1,4 @@
+import isObject from 'lodash-es/isObject.js';
 import * as configApi from './config.js';
 
 describe('when working with site config', function () {
@@ -52,5 +53,41 @@ describe('when working with site config', function () {
     configApi.reset();
     let config_4 = configApi.getConfig();
     expect(config_4.foobar).toBeUndefined();
+  });
+
+  it('test new default config', async function () {
+    const { default: oldDefault } = await import('./oldDefaultConfig.js');
+    // gitGraph used to not have this option (aka it was `undefined`)
+    oldDefault.gitGraph.useMaxWidth = false;
+
+    // class diagrams used to not have these options set (aka they were `undefined`)
+    oldDefault.class.htmlLabels = false;
+
+    const { default: newDefault } = await import('./defaultConfig.js');
+
+    // check subsets of the objects, to improve vitest error messages
+    // we can't just use `expect(newDefault).to.deep.equal(oldDefault);`
+    // because the functions in the config won't be the same
+    expect(new Set(Object.keys(newDefault))).to.deep.equal(new Set(Object.keys(oldDefault)));
+
+    for (const key in newDefault) {
+      // recurse through object, since we want to treat functions differently
+      if (!Array.isArray(newDefault[key]) && isObject(newDefault[key])) {
+        expect(new Set(Object.keys(newDefault[key]))).to.deep.equal(
+          new Set(Object.keys(oldDefault[key]))
+        );
+        for (const key2 in newDefault[key]) {
+          if (typeof newDefault[key][key2] === 'function') {
+            expect(newDefault[key][key2].toString()).to.deep.equal(
+              oldDefault[key][key2].toString()
+            );
+          } else {
+            expect(newDefault[key]).to.have.deep.property(key2, oldDefault[key][key2]);
+          }
+        }
+      } else {
+        expect(newDefault[key]).to.deep.equal(oldDefault[key]);
+      }
+    }
   });
 });
