@@ -1,7 +1,7 @@
 /** Decorates with functions required by mermaids dagre-wrapper. */
 import { log } from '../logger';
 import * as graphlibJson from 'dagre-d3-es/src/graphlib/json';
-import * as graphlib from 'dagre-d3-es/src/graphlib';
+import * as graphlib from 'dagre-d3-es/src/graphlib.js';
 
 export let clusterDb = {};
 let descendants = {};

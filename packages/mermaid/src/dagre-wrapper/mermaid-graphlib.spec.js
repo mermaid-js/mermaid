@@ -1,5 +1,5 @@
 import * as graphlibJson from 'dagre-d3-es/src/graphlib/json';
-import * as graphlib from 'dagre-d3-es/src/graphlib';
+import * as graphlib from 'dagre-d3-es/src/graphlib.js';
 import {
   validate,
   adjustClustersAndEdges,
