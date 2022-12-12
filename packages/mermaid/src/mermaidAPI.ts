@@ -29,7 +29,7 @@ import utils, { directiveSanitizer } from './utils';
 import DOMPurify from 'dompurify';
 import { MermaidConfig } from './config.type';
 import { evaluate } from './diagrams/common/common';
-import isEmpty from 'lodash-es/isEmpty';
+import isEmpty from 'lodash-es/isEmpty.js';
 import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility';
 
 // diagram names that support classDef statements
@@ -55,8 +55,8 @@ const IFRAME_SANDBOX_OPTS = 'allow-top-navigation-by-user-activation allow-popup
 const IFRAME_NOT_SUPPORTED_MSG = 'The "iframe" tag is not supported by your browser.';
 
 // DOMPurify settings for svgCode
-const DOMPURE_TAGS = ['foreignobject'];
-const DOMPURE_ATTR = ['dominant-baseline'];
+const DOMPURIFY_TAGS = ['foreignobject'];
+const DOMPURIFY_ATTR = ['dominant-baseline'];
 
 // This is what is returned from getClasses(...) methods.
 // It is slightly renamed to ..StyleClassDef instead of just ClassDef because "class" is a greatly ambiguous and overloaded word.
@@ -539,8 +539,8 @@ const render = function (
   } else if (!isLooseSecurityLevel) {
     // Sanitize the svgCode using DOMPurify
     svgCode = DOMPurify.sanitize(svgCode, {
-      ADD_TAGS: DOMPURE_TAGS,
-      ADD_ATTR: DOMPURE_ATTR,
+      ADD_TAGS: DOMPURIFY_TAGS,
+      ADD_ATTR: DOMPURIFY_ATTR,
     });
   }
 
@@ -741,8 +741,8 @@ const renderAsync = async function (
   } else if (!isLooseSecurityLevel) {
     // Sanitize the svgCode using DOMPurify
     svgCode = DOMPurify.sanitize(svgCode, {
-      ADD_TAGS: DOMPURE_TAGS,
-      ADD_ATTR: DOMPURE_ATTR,
+      ADD_TAGS: DOMPURIFY_TAGS,
+      ADD_ATTR: DOMPURIFY_ATTR,
     });
   }
 
