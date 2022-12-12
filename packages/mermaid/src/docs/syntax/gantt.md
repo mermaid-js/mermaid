@@ -104,33 +104,34 @@ Final milestone : milestone, m2, 18:14, 2min
 
 The default input date format is `YYYY-MM-DD`. You can define your custom `dateFormat`.
 
-```
+```markdown
 dateFormat YYYY-MM-DD
 ```
 
 The following formatting options are supported:
 
-```
-Input       Example             Description:
-YYYY        2014                4 digit year
-YY          14                  2 digit year
-Q           1..4                Quarter of year. Sets month to first month in quarter.
-M MM        1..12               Month number
-MMM MMMM    January..Dec        Month name in locale set by moment.locale()
-D DD        1..31               Day of month
-Do          1st..31st           Day of month with ordinal
-DDD DDDD    1..365              Day of year
-X           1410715640.579      Unix timestamp
-x           1410715640579       Unix ms timestamp
-H HH        0..23               24 hour time
-h hh        1..12               12 hour time used with a A.
-a A         am pm               Post or ante meridiem
-m mm        0..59               Minutes
-s ss        0..59               Seconds
-S           0..9                Tenths of a second
-SS          0..99               Hundreds of a second
-SSS         0..999              Thousandths of a second
-Z ZZ        +12:00              Offset from UTC as +-HH:mm, +-HHmm, or Z
+```markdown
+Input Example Description:
+
+YYYY 2014 4 digit year
+YY 14 2 digit year
+Q 1..4 Quarter of year. Sets month to first month in quarter.
+M MM 1..12 Month number
+MMM MMMM January..Dec Month name in locale set by moment.locale()
+D DD 1..31 Day of month
+Do 1st..31st Day of month with ordinal
+DDD DDDD 1..365 Day of year
+X 1410715640.579 Unix timestamp
+x 1410715640579 Unix ms timestamp
+H HH 0..23 24 hour time
+h hh 1..12 12 hour time used with a A.
+a A am pm Post or ante meridiem
+m mm 0..59 Minutes
+s ss 0..59 Seconds
+S 0..9 Tenths of a second
+SS 0..99 Hundreds of a second
+SSS 0..999 Thousandths of a second
+Z ZZ +12:00 Offset from UTC as +-HH:mm, +-HHmm, or Z
 ```
 
 More info in: https://momentjs.com/docs/#/parsing/string-format/
@@ -139,20 +140,20 @@ More info in: https://momentjs.com/docs/#/parsing/string-format/
 
 The default output date format is `YYYY-MM-DD`. You can define your custom `axisFormat`, like `2020-Q1` for the first quarter of the year 2020.
 
-```
-axisFormat  %Y-%m-%d
+```markdown
+axisFormat %Y-%m-%d
 ```
 
 The following formatting strings are supported:
 
-```
+```markdown
 %a - abbreviated weekday name.
 %A - full weekday name.
 %b - abbreviated month name.
 %B - full month name.
 %c - date and time, as "%a %b %e %H:%M:%S %Y".
 %d - zero-padded day of the month as a decimal number [01,31].
-%e - space-padded day of the month as a decimal number [ 1,31]; equivalent to %_d.
+%e - space-padded day of the month as a decimal number [ 1,31]; equivalent to %\_d.
 %H - hour (24-hour clock) as a decimal number [00,23].
 %I - hour (12-hour clock) as a decimal number [01,12].
 %j - day of the year as a decimal number [001,366].
@@ -178,14 +179,14 @@ More info in: [https://github.com/d3/d3-time-format/tree/v4.0.0#locale_format](h
 
 The default output ticks are auto. You can custom your `tickInterval`, like `1day` or `1week`.
 
-```
+```markdown
 tickInterval 1day
 ```
 
 The pattern is:
 
-```
-/^([1-9][0-9]*)(minute|hour|day|week|month)$/
+```markdown
+/^([1-9][0-9]\*)(minute|hour|day|week|month)$/
 ```
 
 More info in: [https://github.com/d3/d3-time#interval_every](https://github.com/d3/d3-time#interval_every)
