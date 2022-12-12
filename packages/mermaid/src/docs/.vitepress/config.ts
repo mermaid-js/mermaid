@@ -32,19 +32,13 @@ export default defineConfig({
 
 function nav() {
   return [
-    { text: 'Intro', link: '/intro/', activeMatch: '/intro/' },
+    { text: 'Docs', link: '/intro/', activeMatch: '/intro/' },
     {
-      text: 'Configuration',
+      text: 'Tutorials',
       link: '/config/Tutorials',
       activeMatch: '/config/',
     },
-    { text: 'Syntax', link: '/syntax/classDiagram', activeMatch: '/syntax/' },
-    { text: 'Misc', link: '/misc/integrations', activeMatch: '/misc/' },
-    {
-      text: 'Community',
-      link: '/community/n00b-overview',
-      activeMatch: '/community/',
-    },
+    { text: 'Integrations', link: '/misc/integrations', activeMatch: '/misc/' },
     {
       text: version,
       items: [
@@ -61,6 +55,14 @@ function nav() {
     {
       text: '💻 Live Editor',
       link: 'https://mermaid.live',
+    },
+    {
+      text: 'Slack',
+      link: 'https://mermaid-talk.slack.com',
+    },
+    {
+      text: 'GitHub',
+      link: 'https://github.com/mermaid-js/mermaid',
     },
   ];
 }
