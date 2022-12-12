@@ -214,6 +214,19 @@ describe('when parsing ER diagram it...', function () {
     expect(entities[entity].attributes.length).toBe(2);
   });
 
+  it('should allow an entity with attribute that is a limited length string', function () {
+    const entity = 'BOOK';
+    const attribute1 = 'character(10) isbn FK';
+    const attribute2 = 'varchar(5) postal_code "Five digits"';
+
+    erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n}`);
+    const entities = erDb.getEntities();
+    expect(Object.keys(entities).length).toBe(1);
+    expect(entities[entity].attributes.length).toBe(2);
+    expect(entities[entity].attributes[0].attributeType).toBe('character(10)');
+    expect(entities[entity].attributes[1].attributeType).toBe('varchar(5)');
+  });
+
   it('should allow an entity with multiple attributes to be defined', function () {
     const entity = 'BOOK';
     const attribute1 = 'string title';
