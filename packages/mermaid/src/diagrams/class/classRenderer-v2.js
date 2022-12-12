@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import * as graphlib from 'dagre-d3-es/src/graphlib.js';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger';
 import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';

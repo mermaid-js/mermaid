@@ -1,4 +1,4 @@
-import * as graphlib from 'dagre-d3-es/src/graphlib.js';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select, curveLinear, selectAll } from 'd3';
 
 import flowDb from './flowDb';

@@ -1,4 +1,4 @@
-import * as graphlib from 'dagre-d3-es/src/graphlib.js';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { line, curveBasis, select } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import { getConfig } from '../../config';
