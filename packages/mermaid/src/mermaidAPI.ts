@@ -328,29 +328,22 @@ function sandboxedIframe(parentNode: D3Element, iFrameId: string): D3Element {
  * Remove any existing elements from the given document
  *
  * @param doc - the document to removed elements from
- * @param isSandboxed - whether or not we are in sandboxed mode
  * @param id - id for any existing SVG element
  * @param divSelector - selector for any existing enclosing div element
  * @param iFrameSelector - selector for any existing iFrame element
  */
 export const removeExistingElements = (
   doc: Document,
-  isSandboxed: boolean,
   id: string,
-  divSelector: string,
-  iFrameSelector: string
+  divId: string,
+  iFrameId: string
 ) => {
   // Remove existing SVG element if it exists
-  const existingSvg = doc.getElementById(id);
-  if (existingSvg) {
-    existingSvg.remove();
-  }
-
+  doc.getElementById(id)?.remove();
   // Remove previous temporary element if it exists
-  const element = isSandboxed ? doc.querySelector(iFrameSelector) : doc.querySelector(divSelector);
-  if (element) {
-    element.remove();
-  }
+  // Both div and iframe needs to be cleared in case there is a config change happening between renders.
+  doc.getElementById(divId)?.remove();
+  doc.getElementById(iFrameId)?.remove();
 };
 
 /**
@@ -443,7 +436,7 @@ const render = function (
     // No svgContainingElement was provided
 
     // If there is an existing element with the id, we remove it. This likely a previously rendered diagram
-    removeExistingElements(document, isSandboxed, id, iFrameID_selector, enclosingDivID_selector);
+    removeExistingElements(document, id, enclosingDivID, iFrameID);
 
     // Add the temporary div used for rendering with the enclosingDivID.
     // This temporary div will contain a svg with the id == id
@@ -650,7 +643,7 @@ const renderAsync = async function (
     // No svgContainingElement was provided
 
     // If there is an existing element with the id, we remove it. This likely a previously rendered diagram
-    removeExistingElements(document, isSandboxed, id, iFrameID_selector, enclosingDivID_selector);
+    removeExistingElements(document, id, enclosingDivID, iFrameID);
 
     // Add the temporary div used for rendering with the enclosingDivID.
     // This temporary div will contain a svg with the id == id
