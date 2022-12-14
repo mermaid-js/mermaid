@@ -173,8 +173,8 @@ importers:
         specifier: ^7.0.0
         version: 7.6.1
       dagre-d3-es:
-        specifier: 7.0.4
-        version: 7.0.4
+        specifier: 7.0.5
+        version: 7.0.5
       dompurify:
         specifier: 2.4.1
         version: 2.4.1
@@ -4899,8 +4899,8 @@ packages:
       d3-zoom: 3.0.0
     dev: false
 
-  /dagre-d3-es/7.0.4:
-    resolution: {integrity: sha512-fQL8ldFR9UYpecz48d1smrXNJ9zGUK38Vl5OzX6Fhn9LR+oQh0GzHRPQylP5kWawmMTKm1QtqcHMVySMJ5CYaQ==}
+  /dagre-d3-es/7.0.5:
+    resolution: {integrity: sha512-E42LEJ3KFzXCwNlYkY69HOlksJ2g+uuRIZkHd09Fe0yxOJqzHIzVn78Myjv8ZwFpFt9Izax2KHOK6B/GHfawTA==}
     dependencies:
       d3: 7.6.1
       lodash-es: 4.17.21
@@ -6161,16 +6161,6 @@ packages:
     resolution: {integrity: sha512-XGozTsMPYkm+6b5QL3Z9wQcJjNYxp0CYn3U1gO7dwD6PAqU1SVWZxI9CCg3z+ml3YfqdPnrBehaBrnH2AGKbNA==}
     dev: true
 
-  /follow-redirects/1.15.2:
-    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
-    dev: true
-
   /follow-redirects/1.15.2_debug@4.3.2:
     resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
     engines: {node: '>=4.0'}
@@ -6715,7 +6705,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.2
+      follow-redirects: 1.15.2_debug@4.3.2
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
