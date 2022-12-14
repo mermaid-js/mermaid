@@ -21,17 +21,30 @@ const MermaidExample = async (md: MarkdownRenderer) => {
 
       // doing ```mermaid-example {line-numbers=5 highlight=14-17} is not supported
       const langAttrs = '';
-      return `<h5>Code:</h5>
-          <div class="language-mermaid">
-            <button class="copy"></button>
-            <span class="lang">mermaid</span>
-            ${
-              // html is pre-escaped by the highlight function
-              // (it also adds `v-pre` to ignore Vue template syntax)
-              md.options.highlight(token.content, 'mermaid', langAttrs)
-            }
-          </div>
-          <h5>Diagram:</h5>`;
+      return `
+      <h5>Code:</h5>
+      <div class="language-mermaid">
+        <button class="copy"></button>
+        <span class="lang">mermaid</span>
+        ${
+          // html is pre-escaped by the highlight function
+          // (it also adds `v-pre` to ignore Vue template syntax)
+          md.options.highlight(token.content, 'mermaid', langAttrs)
+        }
+      </div>`;
+    } else if (token.info.trim() === 'mermaid') {
+      const key = index;
+      return `
+      <Suspense> 
+      <template #default>
+      <Mermaid id="mermaid-${key}"  graph="${encodeURIComponent(token.content)}"></Mermaid>
+      </template>
+        <!-- loading state via #fallback slot -->
+        <template #fallback>
+          Loading...
+        </template>
+      </Suspense>
+`;
     }
     if (token.info.trim() === 'warning') {
       return `<div class="warning custom-block"><p class="custom-block-title">WARNING</p><p>${token.content}}</p></div>`;

@@ -32,7 +32,7 @@ export const parseDirective = function (statement, context, type) {
 };
 
 const addEntity = function (name) {
-  if (typeof entities[name] === 'undefined') {
+  if (entities[name] === undefined) {
     entities[name] = { attributes: [] };
     log.info('Added new entity :', name);
   }

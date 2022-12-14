@@ -59,11 +59,9 @@ const rect = (parent, node) => {
   // Center the label
   label.attr(
     'transform',
-    'translate(' +
-      (node.x - bbox.width / 2) +
-      ', ' +
-      (node.y - node.height / 2 + node.padding / 3) +
-      ')'
+    // This puts the labal on top of the box instead of inside it
+    // 'translate(' + (node.x - bbox.width / 2) + ', ' + (node.y - node.height / 2 - bbox.height) + ')'
+    'translate(' + (node.x - bbox.width / 2) + ', ' + (node.y - node.height / 2) + ')'
   );
 
   const rectBox = rect.node().getBBox();

@@ -13,7 +13,7 @@ export const drawRect = function (elem, rectData) {
   rectElem.attr('rx', rectData.rx);
   rectElem.attr('ry', rectData.ry);
 
-  if (typeof rectData.class !== 'undefined') {
+  if (rectData.class !== undefined) {
     rectElem.attr('class', rectData.class);
   }
 
@@ -62,7 +62,7 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   g.attr('display', displayValue);
   addPopupInteraction('#actor' + actorCnt + '_popup', actorCnt);
   var actorClass = '';
-  if (typeof rectData.class !== 'undefined') {
+  if (rectData.class !== undefined) {
     actorClass = ' ' + rectData.class;
   }
 
@@ -160,8 +160,8 @@ export const drawText = function (elem, textData) {
   let dy = 0;
   let yfunc = () => textData.y;
   if (
-    typeof textData.valign !== 'undefined' &&
-    typeof textData.textMargin !== 'undefined' &&
+    textData.valign !== undefined &&
+    textData.textMargin !== undefined &&
     textData.textMargin > 0
   ) {
     switch (textData.valign) {
@@ -186,9 +186,9 @@ export const drawText = function (elem, textData) {
     }
   }
   if (
-    typeof textData.anchor !== 'undefined' &&
-    typeof textData.textMargin !== 'undefined' &&
-    typeof textData.width !== 'undefined'
+    textData.anchor !== undefined &&
+    textData.textMargin !== undefined &&
+    textData.width !== undefined
   ) {
     switch (textData.anchor) {
       case 'left':
@@ -214,12 +214,11 @@ export const drawText = function (elem, textData) {
         break;
     }
   }
-  for (let i = 0; i < lines.length; i++) {
-    let line = lines[i];
+  for (let [i, line] of lines.entries()) {
     if (
-      typeof textData.textMargin !== 'undefined' &&
+      textData.textMargin !== undefined &&
       textData.textMargin === 0 &&
-      typeof textData.fontSize !== 'undefined'
+      textData.fontSize !== undefined
     ) {
       dy = i * textData.fontSize;
     }
@@ -227,28 +226,28 @@ export const drawText = function (elem, textData) {
     const textElem = elem.append('text');
     textElem.attr('x', textData.x);
     textElem.attr('y', yfunc());
-    if (typeof textData.anchor !== 'undefined') {
+    if (textData.anchor !== undefined) {
       textElem
         .attr('text-anchor', textData.anchor)
         .attr('dominant-baseline', textData.dominantBaseline)
         .attr('alignment-baseline', textData.alignmentBaseline);
     }
-    if (typeof textData.fontFamily !== 'undefined') {
+    if (textData.fontFamily !== undefined) {
       textElem.style('font-family', textData.fontFamily);
     }
-    if (typeof textData.fontSize !== 'undefined') {
+    if (textData.fontSize !== undefined) {
       textElem.style('font-size', textData.fontSize);
     }
-    if (typeof textData.fontWeight !== 'undefined') {
+    if (textData.fontWeight !== undefined) {
       textElem.style('font-weight', textData.fontWeight);
     }
-    if (typeof textData.fill !== 'undefined') {
+    if (textData.fill !== undefined) {
       textElem.attr('fill', textData.fill);
     }
-    if (typeof textData.class !== 'undefined') {
+    if (textData.class !== undefined) {
       textElem.attr('class', textData.class);
     }
-    if (typeof textData.dy !== 'undefined') {
+    if (textData.dy !== undefined) {
       textElem.attr('dy', textData.dy);
     } else if (dy !== 0) {
       textElem.attr('dy', dy);
@@ -257,7 +256,7 @@ export const drawText = function (elem, textData) {
     if (textData.tspan) {
       const span = textElem.append('tspan');
       span.attr('x', textData.x);
-      if (typeof textData.fill !== 'undefined') {
+      if (textData.fill !== undefined) {
         span.attr('fill', textData.fill);
       }
       span.text(line);
@@ -265,8 +264,8 @@ export const drawText = function (elem, textData) {
       textElem.text(line);
     }
     if (
-      typeof textData.valign !== 'undefined' &&
-      typeof textData.textMargin !== 'undefined' &&
+      textData.valign !== undefined &&
+      textData.textMargin !== undefined &&
       textData.textMargin > 0
     ) {
       textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
@@ -561,7 +560,7 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
   drawLoopLine(loopModel.stopx, loopModel.starty, loopModel.stopx, loopModel.stopy);
   drawLoopLine(loopModel.startx, loopModel.stopy, loopModel.stopx, loopModel.stopy);
   drawLoopLine(loopModel.startx, loopModel.starty, loopModel.startx, loopModel.stopy);
-  if (typeof loopModel.sections !== 'undefined') {
+  if (loopModel.sections !== undefined) {
     loopModel.sections.forEach(function (item) {
       drawLoopLine(loopModel.startx, item.y, loopModel.stopx, item.y).style(
         'stroke-dasharray',
@@ -601,7 +600,7 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
 
   let textElem = drawText(g, txt);
 
-  if (typeof loopModel.sectionTitles !== 'undefined') {
+  if (loopModel.sectionTitles !== undefined) {
     loopModel.sectionTitles.forEach(function (item, idx) {
       if (item.message) {
         txt.text = item.message;

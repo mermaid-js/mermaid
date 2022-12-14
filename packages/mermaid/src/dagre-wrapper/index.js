@@ -37,7 +37,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   // to the abstract node and is later used by dagre for the layout
   graph.nodes().forEach(function (v) {
     const node = graph.node(v);
-    if (typeof parentCluster !== 'undefined') {
+    if (parentCluster !== undefined) {
       const data = JSON.parse(JSON.stringify(parentCluster.clusterData));
       // data.clusterPositioning = true;
       log.info('Setting data for cluster XXX (', v, ') ', data, parentCluster);

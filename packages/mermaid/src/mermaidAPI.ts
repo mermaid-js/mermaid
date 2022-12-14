@@ -30,6 +30,7 @@ import DOMPurify from 'dompurify';
 import { MermaidConfig } from './config.type';
 import { evaluate } from './diagrams/common/common';
 import isEmpty from 'lodash-es/isEmpty';
+import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility';
 
 // diagram names that support classDef statements
 const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram', 'stateDiagram-v2'];
@@ -68,7 +69,7 @@ interface DiagramStyleClassDef {
 
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
 // @ts-ignore Could replicate the type definition in d3. This also makes it possible to use the untyped info from the js diagram files.
-type D3Element = any;
+export type D3Element = any;
 
 // ----------------------------------------------------------------------------
 
@@ -128,15 +129,9 @@ export const encodeEntities = function (text: string): string {
 export const decodeEntities = function (text: string): string {
   let txt = text;
 
-  txt = txt.replace(/ﬂ°°/g, function () {
-    return '&#';
-  });
-  txt = txt.replace(/ﬂ°/g, function () {
-    return '&';
-  });
-  txt = txt.replace(/¶ß/g, function () {
-    return ';';
-  });
+  txt = txt.replace(/ﬂ°°/g, '&#');
+  txt = txt.replace(/ﬂ°/g, '&');
+  txt = txt.replace(/¶ß/g, ';');
 
   return txt;
 };
@@ -189,28 +184,26 @@ export const createCssStyles = (
   }
 
   // classDefs defined in the diagram text
-  if (!isEmpty(classDefs)) {
-    if (CLASSDEF_DIAGRAMS.includes(graphType)) {
-      const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
+  if (!isEmpty(classDefs) && CLASSDEF_DIAGRAMS.includes(graphType)) {
+    const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
 
-      const cssHtmlElements = ['> *', 'span']; // TODO make a constant
-      const cssShapeElements = ['rect', 'polygon', 'ellipse', 'circle', 'path']; // TODO make a constant
+    const cssHtmlElements = ['> *', 'span']; // TODO make a constant
+    const cssShapeElements = ['rect', 'polygon', 'ellipse', 'circle', 'path']; // TODO make a constant
 
-      const cssElements = htmlLabels ? cssHtmlElements : cssShapeElements;
+    const cssElements = htmlLabels ? cssHtmlElements : cssShapeElements;
 
-      // create the CSS styles needed for each styleClass definition and css element
-      for (const classId in classDefs) {
-        const styleClassDef = classDefs[classId];
-        // create the css styles for each cssElement and the styles (only if there are styles)
-        if (!isEmpty(styleClassDef.styles)) {
-          cssElements.forEach((cssElement) => {
-            cssStyles += cssImportantStyles(styleClassDef.id, cssElement, styleClassDef.styles);
-          });
-        }
-        // create the css styles for the tspan element and the text styles (only if there are textStyles)
-        if (!isEmpty(styleClassDef.textStyles)) {
-          cssStyles += cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles);
-        }
+    // create the CSS styles needed for each styleClass definition and css element
+    for (const classId in classDefs) {
+      const styleClassDef = classDefs[classId];
+      // create the css styles for each cssElement and the styles (only if there are styles)
+      if (!isEmpty(styleClassDef.styles)) {
+        cssElements.forEach((cssElement) => {
+          cssStyles += cssImportantStyles(styleClassDef.id, cssElement, styleClassDef.styles);
+        });
+      }
+      // create the css styles for the tspan element and the text styles (only if there are textStyles)
+      if (!isEmpty(styleClassDef.textStyles)) {
+        cssStyles += cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles);
       }
     }
   }
@@ -379,7 +372,7 @@ export const removeExistingElements = (
  * @param id - The id for the SVG element (the element to be rendered)
  * @param text - The text for the graph definition
  * @param cb - Callback which is called after rendering is finished with the svg code as in param.
- * @param container - HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
+ * @param svgContainingElement - HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
  *   If no svgContainingElement is provided then the SVG element will be appended to the body.
  *    Selector to element in which a div with the graph temporarily will be
  *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
@@ -432,7 +425,7 @@ const render = function (
   // Define the root d3 node
   // In regular execution the svgContainingElement will be the element with a mermaid class
 
-  if (typeof svgContainingElement !== 'undefined') {
+  if (svgContainingElement !== undefined) {
     if (svgContainingElement) {
       svgContainingElement.innerHTML = '';
     }
@@ -487,12 +480,13 @@ const render = function (
     parseEncounteredException = error;
   }
 
-  // Get the temporary div element containing the svg
+  // Get the temporary div element containing the svg (the parent HTML Element)
   const element = root.select(enclosingDivID_selector).node();
   const graphType = diag.type;
 
   // -------------------------------------------------------------------------------
   // Create and insert the styles (user styles, theme styles, config styles)
+  //  These are dealing with HTML Elements, not d3 nodes.
 
   // Insert an element into svg. This is where we put the styles
   const svg = element.firstChild;
@@ -509,8 +503,9 @@ const render = function (
     idSelector
   );
 
+  // svg is a HTML element (not a d3 node)
   const style1 = document.createElement('style');
-  style1.innerHTML = `${idSelector} ` + rules;
+  style1.innerHTML = rules;
   svg.insertBefore(style1, firstChild);
 
   // -------------------------------------------------------------------------------
@@ -521,6 +516,12 @@ const render = function (
     errorRenderer.draw(text, id, pkg.version);
     throw e;
   }
+
+  // This is the d3 node for the svg element
+  const svgNode = root.select(`${enclosingDivID_selector} svg`);
+  const a11yTitle = diag.db.getAccTitle?.();
+  const a11yDescr = diag.db.getAccDescription?.();
+  addA11yInfo(graphType, svgNode, a11yTitle, a11yDescr);
 
   // -------------------------------------------------------------------------------
   // Clean up SVG code
@@ -545,7 +546,7 @@ const render = function (
 
   // -------------------------------------------------------------------------------
   // Do any callbacks (cb = callback)
-  if (typeof cb !== 'undefined') {
+  if (cb !== undefined) {
     switch (graphType) {
       case 'flowchart':
       case 'flowchart-v2':
@@ -631,7 +632,7 @@ const renderAsync = async function (
   // Define the root d3 node
   // In regular execution the svgContainingElement will be the element with a mermaid class
 
-  if (typeof svgContainingElement !== 'undefined') {
+  if (svgContainingElement !== undefined) {
     if (svgContainingElement) {
       svgContainingElement.innerHTML = '';
     }
@@ -706,7 +707,7 @@ const renderAsync = async function (
   );
 
   const style1 = document.createElement('style');
-  style1.innerHTML = `${idSelector} ` + rules;
+  style1.innerHTML = rules;
   svg.insertBefore(style1, firstChild);
 
   // -------------------------------------------------------------------------------
@@ -717,6 +718,12 @@ const renderAsync = async function (
     errorRenderer.draw(text, id, pkg.version);
     throw e;
   }
+
+  // This is the d3 node for the svg element
+  const svgNode = root.select(`${enclosingDivID_selector} svg`);
+  const a11yTitle = diag.db.getAccTitle?.();
+  const a11yDescr = diag.db.getAccDescription?.();
+  addA11yInfo(graphType, svgNode, a11yTitle, a11yDescr);
 
   // -------------------------------------------------------------------------------
   // Clean up SVG code
@@ -741,7 +748,7 @@ const renderAsync = async function (
 
   // -------------------------------------------------------------------------------
   // Do any callbacks (cb = callback)
-  if (typeof cb !== 'undefined') {
+  if (cb !== undefined) {
     switch (graphType) {
       case 'flowchart':
       case 'flowchart-v2':
@@ -763,7 +770,7 @@ const renderAsync = async function (
   attachFunctions();
 
   // -------------------------------------------------------------------------------
-  // Remove the temporary element if appropriate
+  // Remove the temporary HTML element if appropriate
   const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
   const node = select(tmpElementSelector).node();
   if (node && 'remove' in node) {
@@ -820,7 +827,7 @@ const handleDirective = function (p: any, directive: any, type: string): void {
     case 'init':
     case 'initialize': {
       ['config'].forEach((prop) => {
-        if (typeof directive.args[prop] !== 'undefined') {
+        if (directive.args[prop] !== undefined) {
           if (type === 'flowchart-v2') {
             type = 'flowchart';
           }
@@ -859,10 +866,8 @@ const handleDirective = function (p: any, directive: any, type: string): void {
  */
 function initialize(options: MermaidConfig = {}) {
   // Handle legacy location of font-family configuration
-  if (options?.fontFamily) {
-    if (!options.themeVariables?.fontFamily) {
-      options.themeVariables = { fontFamily: options.fontFamily };
-    }
+  if (options?.fontFamily && !options.themeVariables?.fontFamily) {
+    options.themeVariables = { fontFamily: options.fontFamily };
   }
 
   // Set default options
@@ -882,6 +887,20 @@ function initialize(options: MermaidConfig = {}) {
 
   setLogLevel(config.logLevel);
   addDiagrams();
+}
+
+/**
+ * Add accessibility (a11y) information to the diagram.
+ *
+ */
+function addA11yInfo(
+  graphType: string,
+  svgNode: D3Element,
+  a11yTitle: string | undefined,
+  a11yDescr: string | undefined
+) {
+  setA11yDiagramInfo(svgNode, graphType);
+  addSVGa11yTitleDescription(svgNode, a11yTitle, a11yDescr, svgNode.attr('id'));
 }
 
 /**
