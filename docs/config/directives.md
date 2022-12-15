@@ -32,9 +32,8 @@ Mermaid basically supports two types of configuration options to be overridden b
 
 **NOTE:** These options listed here are not all the configuration options. To get hold of all the configuration options, please refer to the [defaultConfig.ts](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/defaultConfig.ts) in the source code.
 
-::: info
-We plan to publish a complete list of top-level configurations & all the diagram specific configurations, with their possible values in the docs soon.
-:::
+> **Note**
+> We plan to publish a complete list of top-level configurations & all the diagram specific configurations, with their possible values in the docs soon.
 
 ## Declaring directives
 
