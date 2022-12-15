@@ -105,10 +105,10 @@ const compileTasks = function () {
   };
 
   let allProcessed = true;
-  for (let i = 0; i < rawTasks.length; i++) {
+  for (const [i, rawTask] of rawTasks.entries()) {
     compileTask(i);
 
-    allProcessed = allProcessed && rawTasks[i].processed;
+    allProcessed = allProcessed && rawTask.processed;
   }
   return allProcessed;
 };

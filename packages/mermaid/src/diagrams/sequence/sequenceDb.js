@@ -26,7 +26,9 @@ export const parseDirective = function (statement, context, type) {
 export const addActor = function (id, name, description, type) {
   // Don't allow description nulling
   const old = actors[id];
-  if (old && name === old.name && description == null) return;
+  if (old && name === old.name && description == null) {
+    return;
+  }
 
   // Don't allow null descriptions, either
   if (description == null || description.text == null) {
@@ -58,15 +60,11 @@ const activationCount = (part) => {
   let i;
   let count = 0;
   for (i = 0; i < messages.length; i++) {
-    if (messages[i].type === LINETYPE.ACTIVE_START) {
-      if (messages[i].from.actor === part) {
-        count++;
-      }
+    if (messages[i].type === LINETYPE.ACTIVE_START && messages[i].from.actor === part) {
+      count++;
     }
-    if (messages[i].type === LINETYPE.ACTIVE_END) {
-      if (messages[i].from.actor === part) {
-        count--;
-      }
+    if (messages[i].type === LINETYPE.ACTIVE_END && messages[i].from.actor === part) {
+      count--;
     }
   }
   return count;
@@ -141,7 +139,7 @@ export const setWrap = function (wrapSetting) {
 export const autoWrap = () => {
   // if setWrap has been called, use that value, otherwise use the value from the config
   // TODO: refactor, always use the config value let setWrap update the config value
-  if (typeof wrapEnabled !== 'undefined') {
+  if (wrapEnabled !== undefined) {
     return wrapEnabled;
   }
   return configApi.getConfig().sequence.wrap;
@@ -157,11 +155,11 @@ export const clear = function () {
 export const parseMessage = function (str) {
   const _str = str.trim();
   const message = {
-    text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
+    text: _str.replace(/^:?(?:no)?wrap:/, '').trim(),
     wrap:
-      _str.match(/^[:]?wrap:/) !== null
+      _str.match(/^:?wrap:/) !== null
         ? true
-        : _str.match(/^[:]?nowrap:/) !== null
+        : _str.match(/^:?nowrap:/) !== null
         ? false
         : undefined,
   };
@@ -221,6 +219,7 @@ export const addNote = function (actor, placement, message) {
   };
 
   // Coerce actor into a [to, from, ...] array
+  // eslint-disable-next-line unicorn/prefer-spread
   const actors = [].concat(actor, actor);
 
   notes.push(note);
@@ -335,7 +334,7 @@ export const addDetails = function (actorId, text) {
 };
 
 export const getActorProperty = function (actor, key) {
-  if (typeof actor !== 'undefined' && typeof actor.properties !== 'undefined') {
+  if (actor !== undefined && actor.properties !== undefined) {
     return actor.properties[key];
   }
 
@@ -343,7 +342,7 @@ export const getActorProperty = function (actor, key) {
 };
 
 export const apply = function (param) {
-  if (param instanceof Array) {
+  if (Array.isArray(param)) {
     param.forEach(function (item) {
       apply(item);
     });

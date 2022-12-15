@@ -2,16 +2,17 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code!
  */
-import type { MermaidConfig } from './config.type';
+import { MermaidConfig } from './config.type';
 import { log } from './logger';
 import utils from './utils';
 import { mermaidAPI } from './mermaidAPI';
 import { addDetector } from './diagram-api/detectType';
+import type { ParseErrorFunction } from './Diagram';
 import { isDetailedError, type DetailedError } from './utils';
 import { registerDiagram } from './diagram-api/diagramAPI';
 import { ExternalDiagramDefinition } from './diagram-api/types';
 
-export type { MermaidConfig, DetailedError, ExternalDiagramDefinition };
+export type { MermaidConfig, DetailedError, ExternalDiagramDefinition, ParseErrorFunction };
 
 let externalDiagramsRegistered = false;
 /**
@@ -23,12 +24,6 @@ let externalDiagramsRegistered = false;
  * elements with the attribute already set. This way the init function can be triggered several
  * times.
  *
- * Optionally, `init` can accept in the second argument one of the following:
- *
- * - A DOM Node
- * - An array of DOM nodes (as would come from a jQuery selector)
- * - A W3C selector, a la `.mermaid`
- *
  * ```mermaid
  * graph LR;
  *  a(Find elements)-->b{Processed}
@@ -38,9 +33,12 @@ let externalDiagramsRegistered = false;
  *
  * Renders the mermaid diagrams
  *
- * @param config
- * @param nodes
- * @param callback
+ * @param config - **Deprecated**, please set configuration in {@link initialize}.
+ * @param nodes - **Default**: `.mermaid`. One of the following:
+ * - A DOM Node
+ * - An array of DOM nodes (as would come from a jQuery selector)
+ * - A W3C selector, a la `.mermaid`
+ * @param callback - Called once for each rendered diagram's id.
  */
 const init = async function (
   config?: MermaidConfig,
@@ -62,7 +60,7 @@ const init = async function (
       log.warn(e.str);
     }
     if (mermaid.parseError) {
-      mermaid.parseError(e);
+      mermaid.parseError(e as string);
     }
   }
 };
@@ -110,7 +108,7 @@ const initThrowsErrors = function (
   // if last argument is a function this is the callback function
   log.debug(`${!callback ? 'No ' : ''}Callback function found`);
   let nodesToProcess: ArrayLike<HTMLElement>;
-  if (typeof nodes === 'undefined') {
+  if (nodes === undefined) {
     nodesToProcess = document.querySelectorAll('.mermaid');
   } else if (typeof nodes === 'string') {
     nodesToProcess = document.querySelectorAll(nodes);
@@ -123,7 +121,7 @@ const initThrowsErrors = function (
   }
 
   log.debug(`Found ${nodesToProcess.length} diagrams`);
-  if (typeof config?.startOnLoad !== 'undefined') {
+  if (config?.startOnLoad !== undefined) {
     log.debug('Start On Load: ' + config?.startOnLoad);
     mermaidAPI.updateSiteConfig({ startOnLoad: config?.startOnLoad });
   }
@@ -135,6 +133,7 @@ const initThrowsErrors = function (
   const errors: DetailedError[] = [];
 
   // element is the current div with mermaid class
+  // eslint-disable-next-line unicorn/prefer-spread
   for (const element of Array.from(nodesToProcess)) {
     log.info('Rendering diagram: ' + element.id);
     /*! Check if previously processed */
@@ -164,10 +163,12 @@ const initThrowsErrors = function (
         txt,
         (svgCode: string, bindFunctions?: (el: Element) => void) => {
           element.innerHTML = svgCode;
-          if (typeof callback !== 'undefined') {
+          if (callback !== undefined) {
             callback(id);
           }
-          if (bindFunctions) bindFunctions(element);
+          if (bindFunctions) {
+            bindFunctions(element);
+          }
         },
         element
       );
@@ -217,7 +218,7 @@ const loadExternalDiagrams = async (diagrams: ExternalDiagramDefinition[]) => {
 };
 
 /**
- * Equivalent to {@link init()}, except an error will be thrown on error.
+ * Equivalent to {@link init}, except an error will be thrown on error.
  *
  * @alpha
  * @deprecated This is an internal function and will very likely be modified in v10, or earlier.
@@ -249,7 +250,7 @@ const initThrowsErrorsAsync = async function (
   // if last argument is a function this is the callback function
   log.debug(`${!callback ? 'No ' : ''}Callback function found`);
   let nodesToProcess: ArrayLike<HTMLElement>;
-  if (typeof nodes === 'undefined') {
+  if (nodes === undefined) {
     nodesToProcess = document.querySelectorAll('.mermaid');
   } else if (typeof nodes === 'string') {
     nodesToProcess = document.querySelectorAll(nodes);
@@ -262,7 +263,7 @@ const initThrowsErrorsAsync = async function (
   }
 
   log.debug(`Found ${nodesToProcess.length} diagrams`);
-  if (typeof config?.startOnLoad !== 'undefined') {
+  if (config?.startOnLoad !== undefined) {
     log.debug('Start On Load: ' + config?.startOnLoad);
     mermaidAPI.updateSiteConfig({ startOnLoad: config?.startOnLoad });
   }
@@ -274,6 +275,7 @@ const initThrowsErrorsAsync = async function (
   const errors: DetailedError[] = [];
 
   // element is the current div with mermaid class
+  // eslint-disable-next-line unicorn/prefer-spread
   for (const element of Array.from(nodesToProcess)) {
     log.info('Rendering diagram: ' + element.id);
     /*! Check if previously processed */
@@ -303,10 +305,12 @@ const initThrowsErrorsAsync = async function (
         txt,
         (svgCode: string, bindFunctions?: (el: Element) => void) => {
           element.innerHTML = svgCode;
-          if (typeof callback !== 'undefined') {
+          if (callback !== undefined) {
             callback(id);
           }
-          if (bindFunctions) bindFunctions(element);
+          if (bindFunctions) {
+            bindFunctions(element);
+          }
         },
         element
       );
@@ -327,8 +331,7 @@ const initialize = function (config: MermaidConfig) {
 /**
  * Used to register external diagram types.
  * @param diagrams - Array of {@link ExternalDiagramDefinition}.
- * @param opts
- * @param opts.lazyLoad - If true, the diagram will be loaded on demand.
+ * @param opts - If opts.lazyLoad is true, the diagram will be loaded on demand.
  */
 const registerExternalDiagrams = async (
   diagrams: ExternalDiagramDefinition[],
@@ -379,7 +382,7 @@ if (typeof document !== 'undefined') {
  * This is provided for environments where the mermaid object can't directly have a new member added
  * to it (eg. dart interop wrapper). (Initially there is no parseError member of mermaid).
  *
- * @param newParseErrorHandler New parseError() callback.
+ * @param newParseErrorHandler - New parseError() callback.
  */
 const setParseErrorHandler = function (newParseErrorHandler: (err: any, hash: any) => void) {
   mermaid.parseError = newParseErrorHandler;
@@ -410,7 +413,7 @@ const executeQueue = async () => {
 };
 
 /**
- * @param txt
+ * @param txt - The mermaid code to be parsed.
  * @deprecated This is an internal function and should not be used. Will be removed in v10.
  */
 const parseAsync = (txt: string): Promise<boolean> => {
@@ -438,44 +441,7 @@ const parseAsync = (txt: string): Promise<boolean> => {
   });
 };
 
-// const asynco = (id: string, delay: number) =>
-//   new Promise((res) => {
-//     setTimeout(() => {
-//       // This resolves for the promise for the queue handling
-//       res(id);
-//     }, delay);
-//   });
-
 /**
- * @param txt
- * @param id
- * @param delay
- * @deprecated This is an internal function and should not be used. Will be removed in v10.
- */
-// const test1 = (id: string, delay: number) => {
-//   const p = new Promise((resolve, reject) => {
-//     // This promise will resolve when the mermaidAPI.render call is done.
-//     // It will be queued first and will be executed when it is first in line
-//     const performCall = () =>
-//       new Promise((res) => {
-//         asynco(id, delay).then((r) => {
-//           // This resolves for the promise for the queue handling
-//           res(r);
-//           // This fullfills the promise sent to the value back to the original caller
-//           resolve(r + ' result to caller');
-//         });
-//       });
-//     executionQueue.push(performCall);
-//   });
-//   return p;
-// };
-
-/**
- * @param txt
- * @param id
- * @param text
- * @param cb
- * @param container
  * @deprecated This is an internal function and should not be used. Will be removed in v10.
  */
 const renderAsync = (
@@ -493,7 +459,7 @@ const renderAsync = (
           (r) => {
             // This resolves for the promise for the queue handling
             res(r);
-            // This fullfills the promise sent to the value back to the original caller
+            // This fulfills the promise sent to the value back to the original caller
             resolve(r);
           },
           (e) => {
@@ -511,8 +477,7 @@ const renderAsync = (
 const mermaid: {
   startOnLoad: boolean;
   diagrams: any;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  parseError?: Function;
+  parseError?: ParseErrorFunction;
   mermaidAPI: typeof mermaidAPI;
   parse: typeof parse;
   parseAsync: typeof parseAsync;

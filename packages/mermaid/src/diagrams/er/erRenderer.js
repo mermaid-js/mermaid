@@ -1,16 +1,16 @@
-import graphlib from 'graphlib';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { line, curveBasis, select } from 'd3';
-import dagre from 'dagre';
+import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import { getConfig } from '../../config';
 import { log } from '../../logger';
+import utils from '../../utils';
 import erMarkers from './erMarkers';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import addSVGAccessibilityFields from '../../accessibility';
 import { parseGenericTypes } from '../common/common';
 import { v4 as uuid4 } from 'uuid';
 
 /** Regex used to remove chars from the entity name so the result can be used in an id */
-const BAD_ID_CHARS_REGEXP = /[^A-Za-z0-9]([\W])*/g;
+const BAD_ID_CHARS_REGEXP = /[^\dA-Za-z](\W)*/g;
 
 // Configuration
 let conf = {};
@@ -27,8 +27,8 @@ let entityNameIds = new Map();
  */
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
-  for (let i = 0; i < keys.length; i++) {
-    conf[keys[i]] = cnf[keys[i]];
+  for (const key of keys) {
+    conf[key] = cnf[key];
   }
 };
 
@@ -77,31 +77,27 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
     // Add a text node for the attribute type
     const typeNode = groupNode
       .append('text')
-      .attr('class', 'er entityLabel')
+      .classed('er entityLabel', true)
       .attr('id', `${attrPrefix}-type`)
       .attr('x', 0)
       .attr('y', 0)
-      .attr('dominant-baseline', 'middle')
-      .attr('text-anchor', 'left')
-      .attr(
-        'style',
-        'font-family: ' + getConfig().fontFamily + '; font-size: ' + attrFontSize + 'px'
-      )
+      .style('dominant-baseline', 'middle')
+      .style('text-anchor', 'left')
+      .style('font-family', getConfig().fontFamily)
+      .style('font-size', attrFontSize + 'px')
       .text(attributeType);
 
     // Add a text node for the attribute name
     const nameNode = groupNode
       .append('text')
-      .attr('class', 'er entityLabel')
+      .classed('er entityLabel', true)
       .attr('id', `${attrPrefix}-name`)
       .attr('x', 0)
       .attr('y', 0)
-      .attr('dominant-baseline', 'middle')
-      .attr('text-anchor', 'left')
-      .attr(
-        'style',
-        'font-family: ' + getConfig().fontFamily + '; font-size: ' + attrFontSize + 'px'
-      )
+      .style('dominant-baseline', 'middle')
+      .style('text-anchor', 'left')
+      .style('font-family', getConfig().fontFamily)
+      .style('font-size', attrFontSize + 'px')
       .text(item.attributeName);
 
     const attributeNode = {};
@@ -118,16 +114,14 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
     if (hasKeyType) {
       const keyTypeNode = groupNode
         .append('text')
-        .attr('class', 'er entityLabel')
+        .classed('er entityLabel', true)
         .attr('id', `${attrPrefix}-key`)
         .attr('x', 0)
         .attr('y', 0)
-        .attr('dominant-baseline', 'middle')
-        .attr('text-anchor', 'left')
-        .attr(
-          'style',
-          'font-family: ' + getConfig().fontFamily + '; font-size: ' + attrFontSize + 'px'
-        )
+        .style('dominant-baseline', 'middle')
+        .style('text-anchor', 'left')
+        .style('font-family', getConfig().fontFamily)
+        .style('font-size', attrFontSize + 'px')
         .text(item.attributeKeyType || '');
 
       attributeNode.kn = keyTypeNode;
@@ -139,16 +133,14 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
     if (hasComment) {
       const commentNode = groupNode
         .append('text')
-        .attr('class', 'er entityLabel')
+        .classed('er entityLabel', true)
         .attr('id', `${attrPrefix}-comment`)
         .attr('x', 0)
         .attr('y', 0)
-        .attr('dominant-baseline', 'middle')
-        .attr('text-anchor', 'left')
-        .attr(
-          'style',
-          'font-family: ' + getConfig().fontFamily + '; font-size: ' + attrFontSize + 'px'
-        )
+        .style('dominant-baseline', 'middle')
+        .style('text-anchor', 'left')
+        .style('font-family', getConfig().fontFamily)
+        .style('font-size', attrFontSize + 'px')
         .text(item.attributeComment || '');
 
       attributeNode.cn = commentNode;
@@ -217,10 +209,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       // Insert a rectangle for the type
       const typeRect = groupNode
         .insert('rect', '#' + attributeNode.tn.node().id)
-        .attr('class', `er ${attribStyle}`)
-        .attr('fill', conf.fill)
-        .attr('fill-opacity', '100%')
-        .attr('stroke', conf.stroke)
+        .classed(`er ${attribStyle}`, true)
         .attr('x', 0)
         .attr('y', heightOffset)
         .attr('width', maxTypeWidth + widthPadding * 2 + spareColumnWidth)
@@ -237,10 +226,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       // Insert a rectangle for the name
       const nameRect = groupNode
         .insert('rect', '#' + attributeNode.nn.node().id)
-        .attr('class', `er ${attribStyle}`)
-        .attr('fill', conf.fill)
-        .attr('fill-opacity', '100%')
-        .attr('stroke', conf.stroke)
+        .classed(`er ${attribStyle}`, true)
         .attr('x', nameXOffset)
         .attr('y', heightOffset)
         .attr('width', maxNameWidth + widthPadding * 2 + spareColumnWidth)
@@ -259,10 +245,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         // Insert a rectangle for the key type
         const keyTypeRect = groupNode
           .insert('rect', '#' + attributeNode.kn.node().id)
-          .attr('class', `er ${attribStyle}`)
-          .attr('fill', conf.fill)
-          .attr('fill-opacity', '100%')
-          .attr('stroke', conf.stroke)
+          .classed(`er ${attribStyle}`, true)
           .attr('x', keyTypeAndCommentXOffset)
           .attr('y', heightOffset)
           .attr('width', maxKeyWidth + widthPadding * 2 + spareColumnWidth)
@@ -282,10 +265,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         // Insert a rectangle for the comment
         groupNode
           .insert('rect', '#' + attributeNode.cn.node().id)
-          .attr('class', `er ${attribStyle}`)
-          .attr('fill', conf.fill)
-          .attr('fill-opacity', '100%')
-          .attr('stroke', conf.stroke)
+          .classed(`er ${attribStyle}`, 'true')
           .attr('x', keyTypeAndCommentXOffset)
           .attr('y', heightOffset)
           .attr('width', maxCommentWidth + widthPadding * 2 + spareColumnWidth)
@@ -335,16 +315,14 @@ const drawEntities = function (svgNode, entities, graph) {
     const textId = 'text-' + entityId;
     const textNode = groupNode
       .append('text')
-      .attr('class', 'er entityLabel')
+      .classed('er entityLabel', true)
       .attr('id', textId)
       .attr('x', 0)
       .attr('y', 0)
-      .attr('dominant-baseline', 'middle')
-      .attr('text-anchor', 'middle')
-      .attr(
-        'style',
-        'font-family: ' + getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
-      )
+      .style('dominant-baseline', 'middle')
+      .style('text-anchor', 'middle')
+      .style('font-family', getConfig().fontFamily)
+      .style('font-size', conf.fontSize + 'px')
       .text(entityName);
 
     const { width: entityWidth, height: entityHeight } = drawAttributes(
@@ -356,10 +334,7 @@ const drawEntities = function (svgNode, entities, graph) {
     // Draw the rectangle - insert it before the text so that the text is not obscured
     const rectNode = groupNode
       .insert('rect', '#' + textId)
-      .attr('class', 'er entityBox')
-      .attr('fill', conf.fill)
-      .attr('fill-opacity', '100%')
-      .attr('stroke', conf.stroke)
+      .classed('er entityBox', true)
       .attr('x', 0)
       .attr('y', 0)
       .attr('width', entityWidth)
@@ -380,7 +355,7 @@ const drawEntities = function (svgNode, entities, graph) {
 
 const adjustEntities = function (svgNode, graph) {
   graph.nodes().forEach(function (v) {
-    if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
+    if (v !== undefined && graph.node(v) !== undefined) {
       svgNode
         .select('#' + v)
         .attr(
@@ -411,7 +386,7 @@ const getEdgeName = function (rel) {
  * Add each relationship to the graph
  *
  * @param relationships The relationships to be added
- * @param {Graph} g The graph
+ * @param g The graph
  * @returns {Array} The array of relationships
  */
 const addRelationships = function (relationships, g) {
@@ -460,10 +435,10 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
   // Insert the line at the right place
   const svgPath = svg
     .insert('path', '#' + insert)
-    .attr('class', 'er relationshipLine')
+    .classed('er relationshipLine', true)
     .attr('d', lineFunction(edge.points))
-    .attr('stroke', conf.stroke)
-    .attr('fill', 'none');
+    .style('stroke', conf.stroke)
+    .style('fill', 'none');
 
   // ...and with dashes if necessary
   if (rel.relSpec.relType === diagObj.db.Identification.NON_IDENTIFYING) {
@@ -537,16 +512,14 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
 
   const labelNode = svg
     .append('text')
-    .attr('class', 'er relationshipLabel')
+    .classed('er relationshipLabel', true)
     .attr('id', labelId)
     .attr('x', labelPoint.x)
     .attr('y', labelPoint.y)
-    .attr('text-anchor', 'middle')
-    .attr('dominant-baseline', 'middle')
-    .attr(
-      'style',
-      'font-family: ' + getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
-    )
+    .style('text-anchor', 'middle')
+    .style('dominant-baseline', 'middle')
+    .style('font-family', getConfig().fontFamily)
+    .style('font-size', conf.fontSize + 'px')
     .text(rel.roleA);
 
   // Figure out how big the opaque 'container' rectangle needs to be
@@ -555,13 +528,11 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
   // Insert the opaque rectangle before the text label
   svg
     .insert('rect', '#' + labelId)
-    .attr('class', 'er relationshipLabelBox')
+    .classed('er relationshipLabelBox', true)
     .attr('x', labelPoint.x - labelBBox.width / 2)
     .attr('y', labelPoint.y - labelBBox.height / 2)
     .attr('width', labelBBox.width)
-    .attr('height', labelBBox.height)
-    .attr('fill', 'white')
-    .attr('fill-opacity', '85%');
+    .attr('height', labelBBox.height);
 };
 
 /**
@@ -644,12 +615,12 @@ export const draw = function (text, id, _version, diagObj) {
   // inserted - this represents the insertion point for relationship paths
   const firstEntity = drawEntities(svg, diagObj.db.getEntities(), g);
 
-  // TODO: externalise the addition of entities to the graph - it's a bit 'buried' in the above
+  // TODO: externalize the addition of entities to the graph - it's a bit 'buried' in the above
 
   // Add all the relationships to the graph
   const relationships = addRelationships(diagObj.db.getRelationships(), g);
 
-  dagre.layout(g); // Node and edge positions will be updated
+  dagreLayout(g); // Node and edge positions will be updated
 
   // Adjust the positions of the entities so that they adhere to the layout
   adjustEntities(svg, g);
@@ -661,6 +632,8 @@ export const draw = function (text, id, _version, diagObj) {
 
   const padding = conf.diagramPadding;
 
+  utils.insertTitle(svg, 'entityTitleText', conf.titleTopMargin, diagObj.db.getDiagramTitle());
+
   const svgBounds = svg.node().getBBox();
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
@@ -668,8 +641,6 @@ export const draw = function (text, id, _version, diagObj) {
   configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
-
-  addSVGAccessibilityFields(diagObj.db, svg, id);
 }; // draw
 
 /**
@@ -678,10 +649,8 @@ export const draw = function (text, id, _version, diagObj) {
  * Although the official XML standard for ids says that many more characters are valid in the id,
  * this keeps things simple by accepting only A-Za-z0-9.
  *
- * @param {string} [str?=''] Given string to use as the basis for the id. Default is `''`
- * @param {string} [prefix?=''] String to put at the start, followed by '-'. Default is `''`
- * @param str
- * @param prefix
+ * @param {string} str Given string to use as the basis for the id. Default is `''`
+ * @param {string} prefix String to put at the start, followed by '-'. Default is `''`
  * @returns {string}
  * @see https://www.w3.org/TR/xml/#NT-Name
  */

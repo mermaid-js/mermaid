@@ -80,6 +80,10 @@ g.classGroup line {
   stroke-dasharray: 3;
 }
 
+.dotted-line{
+  stroke-dasharray: 1 2;
+}
+
 #compositionStart, .composition {
   fill: ${options.lineColor} !important;
   stroke: ${options.lineColor} !important;
@@ -105,13 +109,13 @@ g.classGroup line {
 }
 
 #extensionStart, .extension {
-  fill: ${options.lineColor} !important;
+  fill: ${options.mainBkg} !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
 #extensionEnd, .extension {
-  fill: ${options.lineColor} !important;
+  fill: ${options.mainBkg} !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
@@ -144,6 +148,11 @@ g.classGroup line {
   font-size: 11px;
 }
 
+.classTitleText {
+  text-anchor: middle;
+  font-size: 18px;
+  fill: ${options.textColor};
+}
 `;
 
 export default getStyles;

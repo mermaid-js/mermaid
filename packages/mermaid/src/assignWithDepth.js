@@ -32,20 +32,20 @@ const assignWithDepth = function (dst, src, config) {
     return dst;
   } else if (Array.isArray(src) && Array.isArray(dst)) {
     src.forEach((s) => {
-      if (dst.indexOf(s) === -1) {
+      if (!dst.includes(s)) {
         dst.push(s);
       }
     });
     return dst;
   }
-  if (typeof dst === 'undefined' || depth <= 0) {
+  if (dst === undefined || depth <= 0) {
     if (dst !== undefined && dst !== null && typeof dst === 'object' && typeof src === 'object') {
       return Object.assign(dst, src);
     } else {
       return src;
     }
   }
-  if (typeof src !== 'undefined' && typeof dst === 'object' && typeof src === 'object') {
+  if (src !== undefined && typeof dst === 'object' && typeof src === 'object') {
     Object.keys(src).forEach((key) => {
       if (
         typeof src[key] === 'object' &&

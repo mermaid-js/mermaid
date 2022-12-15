@@ -291,11 +291,15 @@ const cylinder = (parent, node) => {
         (Math.abs(x) == node.width / 2 && Math.abs(pos.y - node.y) > node.height / 2 - ry))
     ) {
       // ellipsis equation: x*x / a*a + y*y / b*b = 1
-      // solve for y to get adjustion value for pos.y
+      // solve for y to get adjusted value for pos.y
       let y = ry * ry * (1 - (x * x) / (rx * rx));
-      if (y != 0) y = Math.sqrt(y);
+      if (y != 0) {
+        y = Math.sqrt(y);
+      }
       y = ry - y;
-      if (point.y - node.y > 0) y = -y;
+      if (point.y - node.y > 0) {
+        y = -y;
+      }
 
       pos.y += y;
     }
@@ -387,12 +391,10 @@ const labelRect = (parent, node) => {
 function applyNodePropertyBorders(rect, borders, totalWidth, totalHeight) {
   const strokeDashArray = [];
   const addBorder = (length) => {
-    strokeDashArray.push(length);
-    strokeDashArray.push(0);
+    strokeDashArray.push(length, 0);
   };
   const skipBorder = (length) => {
-    strokeDashArray.push(0);
-    strokeDashArray.push(length);
+    strokeDashArray.push(0, length);
   };
   if (borders.includes('t')) {
     log.debug('add top border');
