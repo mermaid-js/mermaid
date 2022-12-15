@@ -44,7 +44,7 @@ const packageOptions = {
   'mermaid-timeline': {
     name: 'mermaid-timeline',
     packageName: 'mermaid-timeline',
-    file: 'diagram-definition.ts',
+    file: 'detector.ts',
   },
   // 'mermaid-timeline-detector': {
   //   name: 'mermaid-timeline-detector',

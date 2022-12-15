@@ -39,12 +39,12 @@ export let setupGraphViewbox: (
 
 /**
  * Function called by mermaid that injects utility functions that help the diagram to be a good citizen.
- * @param _log
- * @param _setLogLevel
- * @param _getConfig
- * @param _sanitizeText
- * @param _setupGraphViewbox
- * @param _commonDb
+ * @param _log - The log function to use
+ * @param _setLogLevel - The function to set the log level
+ * @param _getConfig - The function to get the configuration
+ * @param _sanitizeText - The function to sanitize text
+ * @param _setupGraphViewbox - The function to setup the graph view-box
+ * @param _commonDb - The common database
  */
 export const injectUtils = (
   _log: Record<keyof typeof LEVELS, typeof console.log>,

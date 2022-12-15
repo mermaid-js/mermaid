@@ -38,6 +38,10 @@ const genSections = (options) => {
       stroke-width: 3;
     }
 
+    .lineWrapper line{
+      stroke: ${options['cScaleLabel' + i]} ;
+    }
+
     .disabled, .disabled circle, .disabled text {
       fill: lightgray;
     }
@@ -72,7 +76,6 @@ const getStyles = (options) =>
   }
   .eventWrapper  {
    filter: brightness(120%);
-
   }
 `;
 export default getStyles;

@@ -1,7 +1,6 @@
 // @ts-nocheck TODO: fix file
 import { select } from 'd3';
 import svgDraw from './svgDraw';
-import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
 
 import { log, getConfig, setupGraphViewbox } from './mermaidUtils';
@@ -91,8 +90,7 @@ export const draw = function (text, id, version, diagObj) {
   log.info('tasks.length', tasks.length);
    //calculate max task height
   // for loop till tasks.length
-  for (let i = 0; i < tasks.length; i++) {
-    const task = tasks[i];
+  for (const [i, task] of tasks.entries()) {
 
     const taskNode = {
       number: i,
@@ -190,9 +188,11 @@ export const draw = function (text, id, version, diagObj) {
       .attr('y', 20);
   }
   //5. Draw the diagram
- depthY = hasSections?maxSectionHeight + maxTaskHeight + 150: maxTaskHeight + 100;
+  depthY = hasSections ? maxSectionHeight + maxTaskHeight + 150 : maxTaskHeight + 100;
+
+   const lineWrapper = svg.append('g').attr('class', 'lineWrapper');
  // Draw activity line
-  svg
+  lineWrapper
     .append('line')
     .attr('x1', LEFT_MARGIN)
     .attr('y1', depthY) // One section head + one task + margins
@@ -211,9 +211,7 @@ export const draw = function (text, id, version, diagObj) {
 
 export const drawTasks = function (diagram, tasks, sectionColor, masterX, masterY, maxTaskHeight,conf,maxEventCount,maxEventLineLength,maxSectionHeight, isWithoutSections) {
   // Draw the tasks
-  for (let i = 0; i < tasks.length; i++) {
-
-    const task = tasks[i];
+  for (const task of tasks) {
     // create node from task
     const taskNode = {
       descr: task.task,
@@ -283,8 +281,7 @@ export const drawEvents = function (diagram, events, sectionColor, masterX, mast
   const eventBeginY = masterY;
   masterY = masterY + 100
   // Draw the events
-  for (let i = 0; i < events.length; i++) {
-    const event = events[i];
+  for (const event of events) {
     // create node from event
     const eventNode = {
       descr: event,
