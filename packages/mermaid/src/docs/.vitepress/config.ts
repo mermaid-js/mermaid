@@ -159,6 +159,7 @@ function sidebarCommunity() {
         },
         { text: 'Adding Diagrams', link: '/community/newDiagram' },
         { text: 'Security', link: '/community/security' },
+        { text: 'The Official Guide to Mermaid.js Book', link: '/landing/' },
       ],
     },
   ];
