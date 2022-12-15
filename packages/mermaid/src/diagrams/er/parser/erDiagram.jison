@@ -29,7 +29,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "erDiagram"                     return 'ER_DIAGRAM';
 "{"                             { this.begin("block"); return 'BLOCK_START'; }
 <block>\s+                      /* skip whitespace in block */
-<block>\b((?:PK)|(?:FK))\b      return 'ATTRIBUTE_KEY'
+<block>\b((?:PK)|(?:FK)|(?:UK))\b      return 'ATTRIBUTE_KEY'
 <block>(.*?)[~](.*?)*[~]        return 'ATTRIBUTE_WORD';
 <block>[A-Za-z][A-Za-z0-9\-_\[\]]*  return 'ATTRIBUTE_WORD'
 <block>\"[^"]*\"                return 'COMMENT';
