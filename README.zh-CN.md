@@ -10,7 +10,7 @@
 
 **感谢所有参与进来提交 PR，解答疑问的人们! 🙏**
 
-<a href="https://mermaid-js.github.io/mermaid/landing/"><img src="https://github.com/mermaid-js/mermaid/blob/master/docs/img/book-banner-pre-release.jpg" alt="Explore Mermaid.js in depth, with real-world examples, tips & tricks from the creator... The first official book on Mermaid is available for purchase. Check it out!"></a>
+[![Explore Mermaid.js in depth, with real-world examples, tips & tricks from the creator... The first official book on Mermaid is available for purchase. Check it out!](./docs/intro/img/book-banner-post-release.jpg)](./docs/landing/index.md)
 
 ## 关于 Mermaid
 
