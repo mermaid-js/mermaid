@@ -71,3 +71,4 @@ jobs:
         with:
           message: 'Update snapshots'
           add: 'cypress/snapshots/*'
+          pull: '--rebase --autostash'
