@@ -4,83 +4,151 @@
 
 Now with Mermaid library in much wider use, we have started to work towards more accessible features, based on the feedback from the community.
 
-To begin with, we have added a new feature to Mermaid library, which is to support accessibility options, **Accessibility Title** and **Accessibility Description**.
+Adding accessibility means that the rich information communicated by visual diagrams can be made available to those using assistive technologies (and of course to search engines).
+[Read more about Accessible Rich Internet Applications and the W3 standards.](https://www.w3.org/WAI/standards-guidelines/aria/)
 
-This support for accessibility options is available for all the diagrams/chart types. Also, we have tired to keep the same format for the accessibility options, so that it is easy to understand and maintain.
+Mermaid will automatically insert the [aria-roledescription](#aria-roledescription) and, if provided in the diagram text by the diagram author, the [accessible title and description.](#accessible-title-and-description)
 
-## Defining Accessibility Options
+### aria-roledescription
 
-### Single line accessibility values
+The [aria-roledescription](https://www.w3.org/TR/wai-aria-1.1/#aria-roledescription) for the SVG HTML element is set to the diagram type key. (Note this may be slightly different than the keyword used for the diagram in the diagram text.)
 
-The diagram authors can now add the accessibility options in the diagram definition, using the `accTitle` and `accDescr` keywords, where each keyword is followed by `:` and the string value for title and description like:
+For example: The diagram type key for a state diagram is "stateDiagram". Here (a part of) the HTML of the SVG tag that shows the automatically inserted aria-roledscription set to "stateDiagram". _(Note that some of the SVG attributes and the SVG contents are omitted for clarity.):_
 
-- `accTitle: "Your Accessibility Title"` or
-- `accDescr: "Your Accessibility Description"`
-
-**When these two options are defined, they will add a corresponding `<title>` and `<desc>` tag in the SVG.**
-
-Let us take a look at the following example with a flowchart diagram:
-
-```mermaid-example
-   graph LR
-      accTitle: Big decisions
-      accDescr: Flow chart of the decision making process
-      A[Hard] -->|Text| B(Round)
-      B --> C{Decision}
-      C -->|One| D[Result 1]
-
+```html
+<svg
+  aria-roledescription="stateDiagram"
+  class="statediagram"
+  xmlns="http://www.w3.org/2000/svg"
+  width="100%"
+  id="mermaid-1668720491568"
+></svg>
 ```
 
-See in the code snippet above, the `accTitle` and `accDescr` are defined in the diagram definition. They result in the following tags in SVG code:
+### Accessible Title and Description
 
-![Accessibility options rendered inside SVG](img/accessibility-div-example.png)
+Support for accessible titles and descriptions is available for all diagrams/chart types. We have tried to keep the same keywords and format for all diagrams so that it is easy to understand and maintain.
 
-### Multi-line Accessibility title/description
+The accessible title and description will add `<title>` and `<desc>` elements within the SVG element and the [aria-labelledby](https://www.w3.org/TR/wai-aria/#aria-labelledby) and [aria-describedby](https://www.w3.org/TR/wai-aria/#aria-describedby) attributes in the SVG tag.
 
-You can also define the accessibility options in a multi-line format, where the keyword is followed by opening curly bracket `{` and then multiple lines, followed by a closing `}`.
+Here is HTML that is generated, showing that the SVG element is labelled by the accessible title (id = `chart-title-mermaid-1668725057758`)
+and described by the accessible description (id = `chart-desc-mermaid-1668725057758` );
+and the accessible title element (text = "This is the accessible title")
+and the accessible description element (text = "This is an accessible description").
 
-`accTitle: My single line title value` (**_single line format_**)
+_(Note that some of the SVG attributes and the SVG contents are omitted for clarity.)_
 
-vs
+```html
+<svg
+  aria-labelledby="chart-title-mermaid-1668725057758"
+  aria-describedby="chart-desc-mermaid-1668725057758"
+  xmlns="http://www.w3.org/2000/svg"
+  width="100%"
+  id="mermaid-1668725057758"
+>
+  <title id="chart-title-mermaid-1668725057758">This is the accessible title</title>
+  <desc id="chart-desc-mermaid-1668725057758">This is an accessible description</desc>
+</svg>
+```
 
-`accDescr: { My multi-line description of the diagram }` (**_multi-line format_**)
+Details for the syntax follow.
 
-Let us look at it in the following example, with same flowchart:
+#### accessible title
+
+The **accessible title** is specified with the **accTitle** _keyword_, followed by a colon (`:`), and the string value for the title.
+The string value ends at the end of the line. (It can only be a single line.)
+
+Ex: `accTitle: This is a single line title`
+
+See [the accTitle and accDescr usage examples](#acctitle-and-accdescr-usage-examples) for how this can be used in a diagram and the resulting HTML generated.
+
+#### accessible description
+
+An accessible description can be 1 line long (a single line) or many lines long.
+
+The **single line accessible description** is specified with the **accDescr** _keyword_, followed by a colon (`:`), followed by the string value for the description.
+
+Ex: `accDescr: This is a single line description.`
+
+A **multiple line accessible description** _does not have a colon (`:`) after the accDescr keyword_ and is surrounded by curly brackets (`{}`).
+
+Ex:
+
+```
+accDescr { The official Bob's Burgers corporate processes that are used
+        for making very, very big decisions.
+        This is actually a very simple flow: see the big decision and then make the big decision.}
+```
+
+See [the accTitle and accDescr usage examples](#acctitle-and-accdescr-usage-examples) for how this can be used in a diagram and the resulting HTML generated.
+
+#### accTitle and accDescr Usage Examples
+
+- Flowchart with the accessible title "Big Decisions" and the single-line accessible description "Bob's Burgers process for making big decisions"
 
 ```mermaid-example
-   graph LR
-      accTitle: Big decisions
+  graph LR
+      accTitle: Big Decisions
+      accDescr: Bob's Burgers process for making big decisions
+      A[Identify Big Descision] --> B{Make Big Decision}
+      B --> D[Be done]
+```
 
+Here is the HTML generated for the SVG element: _(Note that some of the SVG attributes and the SVG contents are omitted for clarity.):_
+
+```html
+<svg
+  aria-labelledby="chart-title-mermaid_382ee221"
+  aria-describedby="chart-desc-mermaid_382ee221"
+  aria-roledescription="flowchart-v2"
+  xmlns="http://www.w3.org/2000/svg"
+  width="100%"
+  id="mermaid_382ee221"
+>
+  <title id="chart-title-mermaid_382ee221">Big decisions</title>
+  <desc id="chart-desc-mermaid_382ee221">Bob's Burgers process for making big decisions</desc>
+</svg>
+```
+
+- Flowchart with the accessible title "Bob's Burger's Making Big Decisions" and the multiple line accessible description "The official Bob's Burgers corporate processes that are used
+  for making very, very big decisions.
+  This is actually a very simple flow: identify the big decision and then make the big decision."
+
+```mermaid-example
+  graph LR
+      accTitle: Bob's Burger's Making Big Decisions
       accDescr {
-        My multi-line description
-        of the diagram
-      }
-
-      A[Hard] -->|Text| B(Round)
-      B --> C{Decision}
-      C -->|One| D[Result 1]
-
+        The official Bob's Burgers corporate processes that are used
+        for making very, very big decisions.
+        This is actually a very simple flow: identify the big decision and then make the big decision.
+         }
+      A[Identify Big Descision] --> B{Make Big Decision}
+      B --> D[Be done]
 ```
 
-See in the code snippet above, the `accTitle` and `accDescr` are defined in the diagram definition. They result in the following tags in SVG code:
+Here is the HTML generated for the SVG element: _(Note that some of the SVG attributes and the SVG contents are omitted for clarity.):_
 
-![Accessibility options rendered inside SVG](img/accessibility-div-example-2.png)
-
-### Sample Code Snippet for other diagram types
-
-#### Sequence Diagram
-
-```mermaid-example
-   sequenceDiagram
-      accTitle: My Sequence Diagram
-      accDescr: My Sequence Diagram Description
-
-      Alice->>John: Hello John, how are you?
-      John-->>Alice: Great!
-      Alice-)John: See you later!
+```html
+<svg
+  aria-labelledby="chart-title-mermaid_382ee221"
+  aria-describedby="chart-desc-mermaid_382ee221"
+  aria-roledescription="flowchart-v2"
+  xmlns="http://www.w3.org/2000/svg"
+  width="100%"
+  id="mermaid_382ee221"
+>
+  <title id="chart-title-mermaid_382ee221">Big decisions</title>
+  <desc id="chart-desc-mermaid_382ee221">
+    The official Bob's Burgers corporate processes that are used for making very, very big
+    decisions. This is actually a very simple flow: identify the big decision and then make the big
+    decision.
+  </desc>
+</svg>
 ```
 
-#### Class Diagram
+#### Sample Code Snippets for other diagram types
+
+##### Class Diagram
 
 ```mermaid-example
    classDiagram
@@ -90,18 +158,7 @@ See in the code snippet above, the `accTitle` and `accDescr` are defined in the 
       Vehicle <|-- Car
 ```
 
-#### State Diagram
-
-```mermaid-example
-   stateDiagram
-      accTitle: My State Diagram
-      accDescr: My State Diagram Description
-
-       s1 --> s2
-
-```
-
-#### Entity Relationship Diagram
+##### Entity Relationship Diagram
 
 ```mermaid-example
    erDiagram
@@ -114,25 +171,7 @@ See in the code snippet above, the `accTitle` and `accDescr` are defined in the 
 
 ```
 
-#### User Journey Diagram
-
-```mermaid-example
-  journey
-      accTitle: My User Journey Diagram
-      accDescr: My User Journey Diagram Description
-
-      title My working day
-      section Go to work
-        Make tea: 5: Me
-        Go upstairs: 3: Me
-        Do work: 1: Me, Cat
-      section Go home
-        Go downstairs: 5: Me
-        Sit down: 5: Me
-
-```
-
-#### Gantt Chart
+##### Gantt Chart
 
 ```mermaid-example
    gantt
@@ -150,7 +189,27 @@ See in the code snippet above, the `accTitle` and `accDescr` are defined in the 
 
 ```
 
-#### Pie Chart
+##### Gitgraph
+
+```mermaid-example
+  gitGraph
+      accTitle: My Gitgraph Accessibility Title
+      accDescr: My Gitgraph Accessibility Description
+
+     commit
+     commit
+     branch develop
+     checkout develop
+     commit
+     commit
+     checkout main
+     merge develop
+     commit
+     commit
+
+```
+
+##### Pie Chart
 
 ```mermaid-example
    pie
@@ -165,7 +224,7 @@ See in the code snippet above, the `accTitle` and `accDescr` are defined in the 
 
 ```
 
-#### Requirement Diagram
+##### Requirement Diagram
 
 ```mermaid-example
   requirementDiagram
@@ -187,22 +246,43 @@ See in the code snippet above, the `accTitle` and `accDescr` are defined in the 
 
 ```
 
-#### Gitgraph
+##### Sequence Diagram
 
 ```mermaid-example
-  gitGraph
-      accTitle: My Gitgraph Accessibility Title
-      accDescr: My Gitgraph Accessibility Description
+   sequenceDiagram
+      accTitle: My Sequence Diagram
+      accDescr: My Sequence Diagram Description
 
-     commit
-     commit
-     branch develop
-     checkout develop
-     commit
-     commit
-     checkout main
-     merge develop
-     commit
-     commit
+      Alice->>John: Hello John, how are you?
+      John-->>Alice: Great!
+      Alice-)John: See you later!
+```
+
+##### State Diagram
+
+```mermaid-example
+   stateDiagram
+      accTitle: My State Diagram
+      accDescr: My State Diagram Description
+
+       s1 --> s2
+
+```
+
+##### User Journey Diagram
+
+```mermaid-example
+  journey
+      accTitle: My User Journey Diagram
+      accDescr: My User Journey Diagram Description
+
+      title My working day
+      section Go to work
+        Make tea: 5: Me
+        Go upstairs: 3: Me
+        Do work: 1: Me, Cat
+      section Go home
+        Go downstairs: 5: Me
+        Sit down: 5: Me
 
 ```

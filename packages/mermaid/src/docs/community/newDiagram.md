@@ -8,8 +8,8 @@ This would be to define a jison grammar for the new diagram type. That should st
 
 For instance:
 
-- the flowchart starts with the keyword graph.
-- the sequence diagram starts with the keyword sequenceDiagram
+- the flowchart starts with the keyword _graph_
+- the sequence diagram starts with the keyword _sequenceDiagram_
 
 #### Store data found during parsing
 
@@ -56,6 +56,11 @@ Place the renderer in the diagram folder.
 ### Step 3: Detection of the new diagram type
 
 The second thing to do is to add the capability to detect the new new diagram to type to the detectType in utils.js. The detection should return a key for the new diagram type.
+[This key will be used to as the aria roledescription](#aria-roledescription), so it should be a word that clearly describes the diagram type.
+For example, if your new diagram use a UML deployment diagram, a good key would be "UMLDeploymentDiagram" because assistive technologies such as a screen reader
+would voice that as "U-M-L Deployment diagram." Another good key would be "deploymentDiagram" because that would be voiced as "Deployment Diagram." A bad key would be "deployment" because that would not sufficiently describe the diagram.
+
+Note that the diagram type key does not have to be the same as the diagram keyword chosen for the [grammar](#grammar), but it is helpful if they are the same.
 
 ### Step 4: The final piece - triggering the rendering
 
@@ -163,19 +168,23 @@ It is probably a good idea to keep the handling similar to this in your new diag
 
 ## Accessibility
 
-The syntax for adding title and description looks like this:
+Mermaid automatically adds the following accessibility information for the diagram SVG HTML element:
 
-```
-accTitle: The title
-accDescr: The description
+- aria-roledescription
+- accessible title
+- accessible description
 
-accDescr {
-	Syntax for a description text
-	written on multiple lines.
-}
-```
+### aria-roledescription
 
-In a similar way to the directives the jison syntax are quite similar between the diagrams.
+The aria-roledescription is automatically set to [the diagram type](#step-3--detection-of-the-new-diagram-type) and inserted into the SVG element.
+
+See [the definition of aria-roledescription](https://www.w3.org/TR/wai-aria-1.1/#aria-roledescription) in [the Accessible Rich Internet Applications W3 standard.](https://www.w3.org/WAI/standards-guidelines/aria/)
+
+### accessible title and description
+
+The syntax for accessible titles and descriptions is described in [the Accessibility documenation section.](../config/accessibility.md)
+
+In a similar way to the directives, the jison syntax are quite similar between the diagrams.
 
 ```jison
 
@@ -213,18 +222,7 @@ import {
 } from '../../commonDb';
 ```
 
-For rendering the accessibility tags you have again an existing function you can use.
-
-**In the renderer:**
-
-```js
-import addSVGAccessibilityFields from '../../accessibility';
-
-/* ... */
-
-// Adds title and description to the flow chart
-addSVGAccessibilityFields(parser.yy, svg, id);
-```
+The accessibility title and description are inserted into the SVG element in the `render` function in mermaidAPI.
 
 ## Theming
 
