@@ -56,28 +56,30 @@
   <body>
     <div>Security check</div>
     <pre id="diagram" class="mermaid">
-flowchart TD
-    A --> B
-    B --> C
-    A --> C
+flowchart LR
+    %% Actors
+    A
+    subgraph Sub
+        B --> C
+    end
+
+    %% Accusations
+    A --L --> Sub
+
+    %% Offense
+    B --> A
+
     </pre>
     <pre id="diagram" class="mermaid">
-mindmap
-  root
-    child1((Circle))
-        grandchild 1
-        grandchild 2
-    child2(Round rectangle)
-        grandchild 3
-        grandchild 4
-    child3[Square]
-        grandchild 5
-        ::icon(mdi mdi-fire)
-        gc6((grand<br/>child 6))
-        ::icon(mdi mdi-fire)
-          gc7((grand<br/>grand<br/>child 8))
-        </pre>
-    <pre id="diagram" class="mermaid">
+      stateDiagram-v2
+
+      [*] --> S1
+      S1 --> S2: long line using<br/>should work
+      S1 --> S3: long line using <br>should work
+      S1 --> S4: long line using \\nshould work
+
+    </pre>
+    <pre id="diagram" class="mermaid2">
       gantt
         title Style today marker (vertical line should be 5px wide and half-transparent blue)
         dateFormat YYYY-MM-DD
@@ -91,14 +93,18 @@ mindmap
     <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
     <!-- <script src="./mermaid-example-diagram-detector.js"></script>    -->
     <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.7/dist/mermaid.min.js"></script> -->
-    <script src="./mermaid.js"></script>
+    <!-- <script src="./mermaid.js"></script> -->
 
-    <script>
+    <script type="module">
+      import mindmap from '../../packages/mermaid-mindmap/src/detector';
+      // import example from '../../packages/mermaid-example-diagram/src/detector';
+      import mermaid from '../../packages/mermaid/src/mermaid';
+      await mermaid.registerExternalDiagrams([mindmap]);
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'base',
+        theme: 'default',
         startOnLoad: true,
         logLevel: 0,
         flowchart: {
@@ -109,10 +115,6 @@ mindmap
           useMaxWidth: false,
         },
         useMaxWidth: false,
-        lazyLoadedDiagrams: [
-          './mermaid-mindmap-detector.esm.mjs',
-          './mermaid-example-diagram-detector.esm.mjs',
-        ],
       });
       function callback() {
         alert('It worked');

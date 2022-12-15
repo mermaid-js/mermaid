@@ -3,7 +3,6 @@ import { select } from 'd3';
 import svgDraw from './svgDraw';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import addSVGAccessibilityFields from '../../accessibility';
 
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
@@ -121,8 +120,6 @@ export const draw = function (text, id, version, diagObj) {
   diagram.attr('viewBox', `${box.startx} -25 ${width} ${height + extraVertForTitle}`);
   diagram.attr('preserveAspectRatio', 'xMinYMin meet');
   diagram.attr('height', height + extraVertForTitle + 25);
-
-  addSVGAccessibilityFields(diagObj.db, diagram, id);
 };
 
 export const bounds = {
@@ -146,7 +143,7 @@ export const bounds = {
     this.verticalPos = 0;
   },
   updateVal: function (obj, key, val, fun) {
-    if (typeof obj[key] === 'undefined') {
+    if (obj[key] === undefined) {
       obj[key] = val;
     } else {
       obj[key] = fun(val, obj[key]);
@@ -221,8 +218,7 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
   let num = 0;
 
   // Draw the tasks
-  for (let i = 0; i < tasks.length; i++) {
-    const task = tasks[i];
+  for (const [i, task] of tasks.entries()) {
     if (lastSection !== task.section) {
       fill = fills[sectionNumber % fills.length];
       num = sectionNumber % fills.length;

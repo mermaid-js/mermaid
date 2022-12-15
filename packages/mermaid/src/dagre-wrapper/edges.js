@@ -130,9 +130,21 @@ export const positionEdgeLabel = (edge, paths) => {
     if (path) {
       //   // debugger;
       const pos = utils.calcLabelPosition(path);
-      log.info('Moving label from (', x, ',', y, ') to (', pos.x, ',', pos.y, ') abc78');
-      // x = pos.x;
-      // y = pos.y;
+      log.info(
+        'Moving label ' + edge.label + ' from (',
+        x,
+        ',',
+        y,
+        ') to (',
+        pos.x,
+        ',',
+        pos.y,
+        ') abc78'
+      );
+      if (paths.updatedPath) {
+        x = pos.x;
+        y = pos.y;
+      }
     }
     el.attr('transform', 'translate(' + x + ', ' + y + ')');
   }
@@ -324,7 +336,7 @@ const cutPathAtIntersect = (_points, boundryNode) => {
         pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
       });
       // // if (!pointPresent) {
-      if (!points.find((e) => e.x === inter.x && e.y === inter.y)) {
+      if (!points.some((e) => e.x === inter.x && e.y === inter.y)) {
         points.push(inter);
       } else {
         log.warn('abc88 no intersect', inter, points);
@@ -463,7 +475,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     .attr('style', edge.style);
 
   // DEBUG code, adds a red circle at each edge coordinate
-  // edge.points.forEach(point => {
+  // edge.points.forEach((point) => {
   //   elem
   //     .append('circle')
   //     .style('stroke', 'red')

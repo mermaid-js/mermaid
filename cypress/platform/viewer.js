@@ -54,7 +54,7 @@ function merge(current, update) {
     if (
       current.hasOwnProperty(key) &&
       typeof current[key] === 'object' &&
-      !(current[key] instanceof Array)
+      !Array.isArray(current[key])
     ) {
       merge(current[key], update[key]);
 

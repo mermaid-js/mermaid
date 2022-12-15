@@ -2,7 +2,7 @@
 // Update https://github.com/mermaid-js/mermaid/blob/18c27c6f1d0537a738cbd95898df301b83c38ffc/packages/mermaid/src/docs.mts#L246 once fixed
 
 import { expect, test } from 'vitest';
-import { getRedirect } from './.vitepress/theme/redirect';
+import { getRedirect } from './redirect';
 
 test.each([
   ['http://localhost:1234/mermaid/#/flowchart.md', 'syntax/flowchart.html'],

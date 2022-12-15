@@ -15,6 +15,8 @@ export interface InjectUtils {
 export interface DiagramDb {
   clear?: () => void;
   setDiagramTitle?: (title: string) => void;
+  getAccTitle?: () => string;
+  getAccDescription?: () => string;
 }
 
 export interface DiagramDefinition {
