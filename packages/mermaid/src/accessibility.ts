@@ -1,5 +1,8 @@
 /**
  * Accessibility (a11y) functions, types, helpers
+ * @see https://www.w3.org/WAI/
+ * @see https://www.w3.org/TR/wai-aria-1.1/
+ * @see https://www.w3.org/TR/svg-aam-1.0/
  *
  */
 import { D3Element } from './mermaidAPI';
@@ -7,12 +10,24 @@ import { D3Element } from './mermaidAPI';
 import isEmpty from 'lodash-es/isEmpty';
 
 /**
- * Add aria-roledescription to the svg element to the diagramType
+ * SVG element role:
+ * The SVG element role _should_ be set to 'graphics-document' per SVG standard
+ * but in practice is not always done by browsers, etc. (As of 2022-12-08).
+ * A fallback role of 'document' should be set for those browsers, etc., that only support ARIA 1.0.
+ *
+ * @see https://www.w3.org/TR/svg-aam-1.0/#roleMappingGeneralRules
+ * @see https://www.w3.org/TR/graphics-aria-1.0/#graphics-document
+ */
+const SVG_ROLE = 'graphics-document document';
+
+/**
+ * Add role and aria-roledescription to the svg element
  *
  * @param svg - d3 object that contains the SVG HTML element
  * @param diagramType - diagram name for to the aria-roledescription
  */
 export function setA11yDiagramInfo(svg: D3Element, diagramType: string | null | undefined) {
+  svg.attr('role', SVG_ROLE);
   if (!isEmpty(diagramType)) {
     svg.attr('aria-roledescription', diagramType);
   }
