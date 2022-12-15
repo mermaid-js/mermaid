@@ -470,61 +470,48 @@ describe('mermaidAPI', function () {
     svgElement.id = svgId;
     const tempDivElement = givenDocument.createElement('div'); // doesn't matter what the tag is in the test
     tempDivElement.id = tempDivId;
-    const tempiFrameElement = givenDocument.createElement('div'); // doesn't matter what the tag is in the test
+    const tempiFrameElement = givenDocument.createElement('iframe'); // doesn't matter what the tag is in the test
     tempiFrameElement.id = tempIframeId;
 
     it('removes an existing element with given id', () => {
       rootHtml.appendChild(svgElement);
+      rootHtml.append(tempDivElement);
+      rootHtml.append(tempiFrameElement);
+
       expect(givenDocument.getElementById(svgElement.id)).toEqual(svgElement);
-      removeExistingElements(givenDocument, false, svgId, tempDivId, tempIframeId);
+      expect(givenDocument.getElementById(tempDivElement.id)).toEqual(tempDivElement);
+      expect(givenDocument.getElementById(tempiFrameElement.id)).toEqual(tempiFrameElement);
+      removeExistingElements(givenDocument, svgId, tempDivId, tempIframeId);
       expect(givenDocument.getElementById(svgElement.id)).toBeNull();
+      expect(givenDocument.getElementById(tempDivElement.id)).toBeNull();
+      expect(givenDocument.getElementById(tempiFrameElement.id)).toBeNull();
     });
 
-    describe('is in sandboxed mode', () => {
-      const inSandboxedMode = true;
+    it('removes an existing iframe element even if div element is absent', () => {
+      tempiFrameElement.append(svgElement);
+      rootHtml.append(tempiFrameElement);
 
-      it('removes an existing element with the given iFrame selector', () => {
-        tempiFrameElement.append(svgElement);
-        rootHtml.append(tempiFrameElement);
-        rootHtml.append(tempDivElement);
-
-        expect(givenDocument.getElementById(tempIframeId)).toEqual(tempiFrameElement);
-        expect(givenDocument.getElementById(tempDivId)).toEqual(tempDivElement);
-        expect(givenDocument.getElementById(svgId)).toEqual(svgElement);
-        removeExistingElements(
-          givenDocument,
-          inSandboxedMode,
-          svgId,
-          '#' + tempDivId,
-          '#' + tempIframeId
-        );
-        expect(givenDocument.getElementById(tempDivId)).toEqual(tempDivElement);
-        expect(givenDocument.getElementById(tempIframeId)).toBeNull();
-        expect(givenDocument.getElementById(svgId)).toBeNull();
-      });
+      expect(givenDocument.getElementById(tempIframeId)).toEqual(tempiFrameElement);
+      expect(givenDocument.getElementById(tempDivId)).toBeNull();
+      expect(givenDocument.getElementById(svgId)).toEqual(svgElement);
+      removeExistingElements(givenDocument, svgId, tempDivId, tempIframeId);
+      expect(givenDocument.getElementById(tempDivId)).toBeNull();
+      expect(givenDocument.getElementById(tempIframeId)).toBeNull();
+      expect(givenDocument.getElementById(svgId)).toBeNull();
     });
-    describe('not in sandboxed mode', () => {
-      const inSandboxedMode = false;
 
-      it('removes an existing element with the given enclosing div selector', () => {
-        tempDivElement.append(svgElement);
-        rootHtml.append(tempDivElement);
-        rootHtml.append(tempiFrameElement);
+    it('removes both existing div and iframe elements when both are present', () => {
+      tempDivElement.append(svgElement);
+      rootHtml.append(tempDivElement);
+      rootHtml.append(tempiFrameElement);
 
-        expect(givenDocument.getElementById(tempIframeId)).toEqual(tempiFrameElement);
-        expect(givenDocument.getElementById(tempDivId)).toEqual(tempDivElement);
-        expect(givenDocument.getElementById(svgId)).toEqual(svgElement);
-        removeExistingElements(
-          givenDocument,
-          inSandboxedMode,
-          svgId,
-          '#' + tempDivId,
-          '#' + tempIframeId
-        );
-        expect(givenDocument.getElementById(tempIframeId)).toEqual(tempiFrameElement);
-        expect(givenDocument.getElementById(tempDivId)).toBeNull();
-        expect(givenDocument.getElementById(svgId)).toBeNull();
-      });
+      expect(givenDocument.getElementById(tempIframeId)).toEqual(tempiFrameElement);
+      expect(givenDocument.getElementById(tempDivId)).toEqual(tempDivElement);
+      expect(givenDocument.getElementById(svgId)).toEqual(svgElement);
+      removeExistingElements(givenDocument, svgId, tempDivId, tempIframeId);
+      expect(givenDocument.getElementById(tempIframeId)).toBeNull();
+      expect(givenDocument.getElementById(tempDivId)).toBeNull();
+      expect(givenDocument.getElementById(svgId)).toBeNull();
     });
   });
 

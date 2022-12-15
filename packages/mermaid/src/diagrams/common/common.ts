@@ -47,7 +47,9 @@ export const sanitizeText = (text: string, config: MermaidConfig): string => {
   if (config.dompurifyConfig) {
     text = DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig).toString();
   } else {
-    text = DOMPurify.sanitize(sanitizeMore(text, config));
+    text = DOMPurify.sanitize(sanitizeMore(text, config), {
+      FORBID_TAGS: ['style'],
+    }).toString();
   }
   return text;
 };

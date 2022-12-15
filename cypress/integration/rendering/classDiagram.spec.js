@@ -414,7 +414,6 @@ describe('Class diagram', () => {
     classDiagram
       note "I love this diagram!\nDo you love it?"
       class Class10 {
-        <<service>>
         int id
         size()
       }

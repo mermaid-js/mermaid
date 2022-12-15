@@ -3,7 +3,7 @@ import utils from './utils';
 import assignWithDepth from './assignWithDepth';
 import { detectType } from './diagram-api/detectType';
 import { addDiagrams } from './diagram-api/diagram-orchestration';
-import memoize from 'lodash-es/memoize';
+import memoize from 'lodash-es/memoize.js';
 import { MockedD3 } from './tests/MockedD3';
 
 addDiagrams();
