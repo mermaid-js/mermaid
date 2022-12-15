@@ -643,11 +643,20 @@ export const draw = function (text, id, _version, diagObj) {
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
 }; // draw
 
-/** UUID namespace for ER diagram IDs */
-const MERMAID_ERDIAGRAM_UUID = uuid5(
-  'https://mermaid-js.github.io/mermaid/syntax/entityRelationshipDiagram.html',
-  uuid5.URL
-);
+/**
+ * UUID namespace for ER diagram IDs
+ *
+ * This can be generated via running:
+ *
+ * ```js
+ * const { v5: uuid5 } = await import('uuid');
+ * uuid5(
+ *   'https://mermaid-js.github.io/mermaid/syntax/entityRelationshipDiagram.html',
+ *   uuid5.URL
+ * );
+ * ```
+ */
+const MERMAID_ERDIAGRAM_UUID = '28e9f9db-3c8d-5aa5-9faf-44286ae5937c';
 
 /**
  * Return a unique id based on the given string. Start with the prefix, then a hyphen, then the
