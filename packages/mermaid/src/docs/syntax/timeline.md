@@ -13,9 +13,6 @@ timeline
     2004 : Facebook : Google
     2005 : Youtube
     2006 : Twitter
-    2007 : Tumblr
-    2008 : Instagram
-    2010 : Pinterest
 ```
 
 
@@ -54,9 +51,6 @@ timeline
     2004 : Facebook : Google
     2005 : Youtube
     2006 : Twitter
-    2007 : Tumblr
-    2008 : Instagram
-    2010 : Pinterest
 ```
 
 In this way we can use a text outline to generate a timeline diagram.
@@ -83,7 +77,6 @@ timeline
     section 21st century
         Industry 4.0 : Internet, Robotics, Internet of Things
         Industry 5.0 : Artificial intelligence, Big data,3D printing
-        Industry 6.0 : Quantum computing, Nanotechnology : Human-Cyber Interface
 ```
 As you can see, the time periods are placed in the sections, and the sections are placed in the order they are defined.
 
@@ -125,9 +118,7 @@ However, if there is no section defined, then we have two possibilities:
           2004 : Facebook : Google
           2005 : Youtube
           2006 : Twitter
-          2007 : Tumblr
-          2008 : Instagram
-          2010 : Pinterest
+
 ```
 Note that this is no, section defined, and each time period and its corresponding events will have its own color scheme.
 
@@ -156,9 +147,7 @@ let us look at same example, where we have disabled the multiColor option.
           2004 : Facebook : Google
           2005 : Youtube
           2006 : Twitter
-          2007 : Tumblr
-          2008 : Instagram
-          2010 : Pinterest
+
 ```
 ### Customizing Color scheme
 
@@ -292,7 +281,7 @@ Timeline uses the experimental lazy loading & async rendering features which cou
 ```html
 <script type="module">
   import mermaid from '<CDN_URL>/mermaid@<MERMAID_VERSION>/dist/mermaid.esm.min.mjs';
-  import mindmap from '<CDN_URL>/@mermaid-js/mermaid-mindmap@<MERMAID_VERSION>/dist/mermaid-timeline.esm.min.mjs';
+  import timeline from '<CDN_URL>/@mermaid-js/mermaid-timeline@<MERMAID_VERSION>/dist/mermaid-timeline.esm.min.mjs';
   await mermaid.registerExternalDiagrams([timeline]);
 </script>
 ```
