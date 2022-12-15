@@ -7,7 +7,7 @@ import utils from '../../utils';
 import erMarkers from './erMarkers';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import { parseGenericTypes } from '../common/common';
-import { v4 as uuid4 } from 'uuid';
+import { v5 as uuid5 } from 'uuid';
 
 /** Regex used to remove chars from the entity name so the result can be used in an id */
 const BAD_ID_CHARS_REGEXP = /[^\dA-Za-z](\W)*/g;
@@ -643,9 +643,15 @@ export const draw = function (text, id, _version, diagObj) {
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
 }; // draw
 
+/** UUID namespace for ER diagram IDs */
+const MERMAID_ERDIAGRAM_UUID = uuid5(
+  'https://mermaid-js.github.io/mermaid/syntax/entityRelationshipDiagram.html',
+  uuid5.URL
+);
+
 /**
  * Return a unique id based on the given string. Start with the prefix, then a hyphen, then the
- * simplified str, then a hyphen, then a unique uuid. (Hyphens are only included if needed.)
+ * simplified str, then a hyphen, then a unique uuid based on the str. (Hyphens are only included if needed.)
  * Although the official XML standard for ids says that many more characters are valid in the id,
  * this keeps things simple by accepting only A-Za-z0-9.
  *
@@ -656,7 +662,11 @@ export const draw = function (text, id, _version, diagObj) {
  */
 export function generateId(str = '', prefix = '') {
   const simplifiedStr = str.replace(BAD_ID_CHARS_REGEXP, '');
-  return `${strWithHyphen(prefix)}${strWithHyphen(simplifiedStr)}${uuid4()}`;
+  // we use `uuid v5` so that UUIDs are consistent given a string.
+  return `${strWithHyphen(prefix)}${strWithHyphen(simplifiedStr)}${uuid5(
+    str,
+    MERMAID_ERDIAGRAM_UUID
+  )}`;
 }
 
 /**
