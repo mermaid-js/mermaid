@@ -323,34 +323,34 @@ describe('when parsing ER diagram it...', function () {
     expect(Object.keys(erDb.getEntities()).length).toBe(1);
   });
 
-  it('should allow for a accessibility title and description (accDescr)', function () {
+  describe('accessible title and description', () => {
     const teacherRole = 'is teacher of';
     const line1 = `TEACHER }o--o{ STUDENT : "${teacherRole}"`;
 
-    erDiagram.parser.parse(
-      `erDiagram
+    it('should allow for a accessibility title and description (accDescr)', function () {
+      erDiagram.parser.parse(
+        `erDiagram
       accTitle: graph title
       accDescr: this graph is about stuff
       ${line1}`
-    );
-    expect(erDb.getAccTitle()).toBe('graph title');
-    expect(erDb.getAccDescription()).toBe('this graph is about stuff');
-  });
+      );
+      expect(erDb.getAccTitle()).toBe('graph title');
+      expect(erDb.getAccDescription()).toBe('this graph is about stuff');
+    });
 
-  it('should allow for a accessibility title and multi line description (accDescr)', function () {
-    const teacherRole = 'is teacher of';
-    const line1 = `TEACHER }o--o{ STUDENT : "${teacherRole}"`;
-
-    erDiagram.parser.parse(
-      `erDiagram
+    it('parses a multi line description (accDescr)', function () {
+      erDiagram.parser.parse(
+        `erDiagram
       accTitle: graph title
-      accDescr {
-        this graph is about stuff
-      }\n
+      accDescr { this graph is
+        about
+        stuff
+        }\n
       ${line1}`
-    );
-    expect(erDb.getAccTitle()).toBe('graph title');
-    expect(erDb.getAccDescription()).toBe('this graph is about stuff');
+      );
+      expect(erDb.getAccTitle()).toEqual('graph title');
+      expect(erDb.getAccDescription()).toEqual('this graph is\nabout\nstuff');
+    });
   });
 
   it('should allow more than one relationship between the same two entities', function () {

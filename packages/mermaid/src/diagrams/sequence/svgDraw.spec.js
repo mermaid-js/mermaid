@@ -1,5 +1,31 @@
+import { vi } from 'vitest';
 import svgDraw from './svgDraw';
-import { MockD3 } from 'd3';
+
+// This is the only place that uses this mock
+export const MockD3 = (name, parent) => {
+  const children = [];
+  const elem = {
+    get __children() {
+      return children;
+    },
+    get __name() {
+      return name;
+    },
+    get __parent() {
+      return parent;
+    },
+  };
+  elem.append = (name) => {
+    const mockElem = MockD3(name, elem);
+    children.push(mockElem);
+    return mockElem;
+  };
+  elem.lower = vi.fn(() => elem);
+  elem.attr = vi.fn(() => elem);
+  elem.text = vi.fn(() => elem);
+  elem.style = vi.fn(() => elem);
+  return elem;
+};
 
 describe('svgDraw', function () {
   describe('drawRect', function () {

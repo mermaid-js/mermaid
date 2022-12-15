@@ -328,7 +328,7 @@ describe('State diagram', () => {
       }
     );
   });
-  it('v2 it should be possibel to use a choice', () => {
+  it('v2 it should be possible to use a choice', () => {
     imgSnapshotTest(
       `
   stateDiagram-v2
