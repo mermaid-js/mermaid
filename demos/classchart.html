@@ -138,7 +138,20 @@ title: Demo Class Diagram
     Pineapple : -int leafCount()
     Pineapple : -int spikeCount()
     </pre>
+    <hr />
 
+    <pre class="mermaid">
+    classDiagram
+      class Person {
+        +Id : Guid
+        +FirstName : string
+        +LastName : string
+        -privateProperty : string
+        #ProtectedProperty : string
+        ~InternalProperty : string
+        ~AnotherInternalProperty : List~MyType~
+      }
+    </pre>
     <hr />
 
     <script src="./mermaid.js"></script>
