@@ -65,7 +65,7 @@
 \%%[^\n]*                        /* skip comments */
 "scale"\s+            { this.pushState('SCALE'); /* console.log('Got scale', yytext);*/ return 'scale'; }
 <SCALE>\d+            return 'WIDTH';
-<SCALE>\s+"width"     {this.popState(); }
+<SCALE>\s+"width"     { this.popState(); }
 
 accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
 <acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
