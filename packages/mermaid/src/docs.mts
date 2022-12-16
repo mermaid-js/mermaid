@@ -260,7 +260,7 @@ const transformHtml = (filename: string) => {
 };
 
 const getGlobs = (globs: string[]): string[] => {
-  globs.push('!**/dist', '!**/redirect.spec.ts');
+  globs.push('!**/dist', '!**/redirect.spec.ts', '!**/landing');
   if (!vitepress) {
     globs.push('!**/.vitepress', '!**/vite.config.ts', '!src/docs/index.md');
   }

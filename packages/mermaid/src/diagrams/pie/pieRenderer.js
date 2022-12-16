@@ -3,7 +3,6 @@ import { select, scaleOrdinal, pie as d3pie, arc } from 'd3';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import * as configApi from '../../config';
-import addSVGAccessibilityFields from '../../accessibility';
 
 let conf = configApi.getConfig();
 
@@ -53,7 +52,6 @@ export const draw = (txt, id, _version, diagObj) => {
     const diagram = root.select('#' + id);
     configureSvgSize(diagram, height, width, conf.pie.useMaxWidth);
 
-    addSVGAccessibilityFields(diagObj.db, diagram, id);
     // Set viewBox
     elem.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
 

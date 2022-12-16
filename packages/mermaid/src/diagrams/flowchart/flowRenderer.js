@@ -1,4 +1,4 @@
-import * as graphlib from 'dagre-d3-es/src/graphlib';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select, curveLinear, selectAll } from 'd3';
 import { getConfig } from '../../config';
 import { render as Render } from 'dagre-d3-es';
@@ -9,7 +9,6 @@ import common, { evaluate } from '../common/common';
 import { interpolateToCurve, getStylesFromArray } from '../../utils';
 import { setupGraphViewbox } from '../../setupGraphViewbox';
 import flowChartShapes from './flowChartShapes';
-import addSVGAccessibilityFields from '../../accessibility';
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -416,9 +415,6 @@ export const draw = function (text, id, _version, diagObj) {
 
   // Set up an SVG group so that we can translate the final graph.
   const svg = root.select(`[id="${id}"]`);
-
-  // Adds title and description to the flow chart
-  addSVGAccessibilityFields(diagObj.db, svg, id);
 
   // Run the renderer. This is what draws the final graph.
   const element = root.select('#' + id + ' g');

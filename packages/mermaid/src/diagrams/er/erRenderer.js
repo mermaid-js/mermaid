@@ -1,4 +1,4 @@
-import * as graphlib from 'dagre-d3-es/src/graphlib';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { line, curveBasis, select } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import { getConfig } from '../../config';
@@ -6,7 +6,6 @@ import { log } from '../../logger';
 import utils from '../../utils';
 import erMarkers from './erMarkers';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import addSVGAccessibilityFields from '../../accessibility';
 import { parseGenericTypes } from '../common/common';
 import { v4 as uuid4 } from 'uuid';
 
@@ -642,8 +641,6 @@ export const draw = function (text, id, _version, diagObj) {
   configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
-
-  addSVGAccessibilityFields(diagObj.db, svg, id);
 }; // draw
 
 /**
