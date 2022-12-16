@@ -1,0 +1,101 @@
+$participant-background: #2097F7;
+$participant-box-shadow: #83c4f8;
+
+$lifeline: #2097F7;
+
+$line: #2097F7;
+$font-color: #5452F6;
+$occurrence-background: #E5FDE8;
+$occurrence-border: #65BF73;
+$occurrence-box-shadow: #93C69B;
+
+$fragment-border: #2097F7;
+$fragment-label-background: #5452F6;
+$fragment-condition-label: #FFFFFF;
+$fragment-condition-label-background: #65BF73;
+
+.blue-river .sequence-diagram {
+  color: $font-color;
+  .life-line-layer {
+    .lifeline.actor {
+      .participant::before {
+        // see https://codepen.io/sosuke/pen/Pjoqqp for how it works
+        filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
+      }
+    }
+    .participant {
+      background: $participant-background;
+      box-shadow: 4px 4px 0 $participant-box-shadow;
+      border-radius: 9px;
+      color: white;
+      .interface {
+        font-size: 0.8em;
+      }
+    }
+    .line {
+      border-left-color: $lifeline;
+    }
+  }
+  .message-layer {
+    .message {
+      border-bottom-color: $line;
+      svg.arrow polyline {
+        stroke: $line;
+        fill: $line;
+      }
+    }
+    .message.self {
+      svg.arrow polyline {
+        fill: none;
+      }
+      svg.arrow polyline.head {
+        fill: $line;
+      }
+    }
+    .occurrence {
+      background: $occurrence-background;
+      border-color: $occurrence-border;
+      box-shadow: 4px 4px 0 $occurrence-box-shadow;
+    }
+    .fragment {
+      border-color: $fragment-border;
+      .header {
+        .name {
+          label {
+            display: inline-block;
+            min-width: 50px;
+            background: $fragment-label-background;
+            color: white;
+            padding: 2px 0 2px 10px;
+          }
+        }
+        .name::after {
+          content: "SO";
+          display: inline-block;
+          background: $fragment-label-background;
+          margin-left: -23px;
+          width: 34px;
+          transform: translateY(-2px);
+          height: 22px;
+          clip-path: polygon(66% 0, 100% 0, 100% 66%, 66% 100%);
+        }
+
+        >label {
+          display: inline-block;
+          min-width: 50px;
+          font-weight: bold;
+          color: $fragment-condition-label;
+          background: $fragment-condition-label-background;
+        }
+      }
+      .comments {
+        border-color: inherit;
+      }
+      .divider {
+        border-bottom-color: inherit;
+      }
+
+    }
+
+  }
+}

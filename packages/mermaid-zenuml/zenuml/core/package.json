@@ -1,0 +1,139 @@
+{
+  "name": "@zenuml/core",
+  "version": "2.0.0",
+  "private": false,
+  "repository": {
+    "url": "https://github.com/ZenUml/core.git"
+  },
+  "scripts": {
+    "build:site": "vue-cli-service build",
+    "build": "vue-cli-service build --target lib --inline-vue --name zenuml/core ./src/core.ts",
+    "build:report": "vue-cli-service build --report --target lib --inline-vue --name zenuml/core ./src/core.ts",
+    "test:unit": "vue-cli-service test:unit",
+    "test:unit:watch": "yarn antlr && vue-cli-service test:unit --watch",
+    "cy": "cypress run",
+    "lint": "vue-cli-service lint",
+    "antlr:setup": "python3 -m pip install antlr4-tools",
+    "antlr:generate": "pwd && cd ./src/g4-units/hello-world && antlr4 Hello.g4",
+    "antlr:javac": "pwd && cd ./src/g4-units/hello-world && CLASSPATH=\"../../../antlr/antlr-4.11.1-complete.jar:$CLASSPATH\" javac *.java",
+    "antlr:grun": "pwd && cd ./src/g4-units/hello-world && grun Hello r -tokens",
+    "antlr": "yarn antlr:lexer && yarn antlr:parser",
+    "antlr:clear": "rm -rf src/generated-parser/*",
+    "antlr:lexer": "java -Duser.dir=$(pwd)/src/g4 -cp $(pwd)/antlr/antlr-4.11.1-complete.jar org.antlr.v4.Tool -o ./src/generated-parser -Dlanguage=JavaScript sequenceLexer.g4",
+    "antlr:parser": "java -Duser.dir=$(pwd)/src/g4 -cp $(pwd)/antlr/antlr-4.11.1-complete.jar org.antlr.v4.Tool -o ./src/generated-parser -Dlanguage=JavaScript sequenceParser.g4",
+    "build-crx": "vue-cli-service build --mode production --target lib --name zenuml/core ./src/index.js",
+    "start": "vue-cli-service serve",
+    "git:branch:clean:gone": "git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -d",
+    "git:branch:clean:merged": "git branch --merged|egrep -v \"(\\*|master|main|dev|skip_branch_name)\" | xargs git branch -d",
+    "git:branch:safe-delete": "echo '> git log --graph --left-right --cherry --oneline another-branch...main'",
+    "git:forget": "git rm -r --cached . && git add . && git commit -m \"Forget all ignored files\"",
+    "test:specs": "echo \"Error: test:specs is not supported\""
+  },
+  "main": "./dist/zenuml/core.umd.min.js",
+  "types": "./types/index.d.ts",
+  "dependencies": {
+    "@types/assert": "^1.5.4",
+    "@types/ramda": "^0.28.0",
+    "antlr4": "^4.11.0",
+    "color-string": "1.5.2",
+    "dom-to-image-more": "^2.9.5",
+    "file-saver": "^2.0.5",
+    "highlight.js": "^10.1.1",
+    "html-to-image": "^1.9.0",
+    "lodash": "^4.17.20",
+    "marked": "^2.0.0",
+    "pino": "^8.7.0",
+    "postcss": "^8.4.19",
+    "ramda": "^0.28.0",
+    "tailwindcss": "^3.2.4",
+    "vue": "2.6.12",
+    "vue-gtag": "^1.16.1",
+    "vue-template-compiler": "2.6.12",
+    "vuex": "^3.6.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.10.4",
+    "@babel/core": "^7.10.4",
+    "@babel/plugin-proposal-optional-chaining": "^7.10.1",
+    "@babel/plugin-transform-arrow-functions": "^7.10.1",
+    "@babel/plugin-transform-modules-commonjs": "^7.10.1",
+    "@babel/polyfill": "^7.10.1",
+    "@babel/preset-env": "^7.13.5",
+    "@babel/runtime-corejs2": "^7.12.13",
+    "@types/antlr4": "^4.11.2",
+    "@types/color-string": "^1.5.2",
+    "@types/jest": "^24.0.19",
+    "@types/lodash": "^4.14.168",
+    "@types/node": "latest",
+    "@typescript-eslint/eslint-plugin": "^2.33.0",
+    "@typescript-eslint/parser": "^2.33.0",
+    "@vue/cli": "^5.0.8",
+    "@vue/cli-plugin-babel": "~5.0.8",
+    "@vue/cli-plugin-eslint": "~5.0.8",
+    "@vue/cli-plugin-typescript": "~5.0.8",
+    "@vue/cli-plugin-unit-jest": "~5.0.8",
+    "@vue/cli-service": "~5.0.8",
+    "@vue/eslint-config-typescript": "^5.0.2",
+    "@vue/test-utils": "^1.1.3",
+    "@vue/vue2-jest": "^29.1.1",
+    "autoprefixer": "^10.4.13",
+    "babel-eslint": "^10.1.0",
+    "core-js": "^3.8.3",
+    "cypress": "^9.4.1",
+    "cypress-plugin-snapshots": "^1.4.4",
+    "eslint": "7.32.0",
+    "eslint-plugin-vue": "^7.6.0",
+    "global-jsdom": "^8.6.0",
+    "jest": "^27.1.0",
+    "jsdom": "^20.0.2",
+    "node-sass": "^5.0.0",
+    "regenerator-runtime": "^0.13.7",
+    "sass-loader": "^10.1.0",
+    "svg-url-loader": "^6.0.0",
+    "terser-webpack-plugin": "^3.0.6",
+    "ts-jest": "^27.0.4",
+    "typescript": "^4.7.4",
+    "vue-cli-plugin-tailwind": "~3.0.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended",
+      "@vue/typescript"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "@typescript-eslint/parser"
+    },
+    "overrides": [
+      {
+        "files": [
+          "**/__tests__/*.{j,t}s?(x)",
+          "**/*.spec.{j,t}s?(x)"
+        ],
+        "env": {
+          "jest": true
+        }
+      }
+    ]
+  },
+  "postcss": {
+    "plugins": {
+      "tailwindcss": {},
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "last 2 years"
+  ],
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "volta": {
+    "node": "14.21.1"
+  }
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_Amazon-Glacier_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#1B660F" offset="0%"></stop>
+            <stop stop-color="#6CAE3E" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_Amazon-Glacier_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Storage" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <polygon id="Amazon-Glacier_Icon_16_Squid" fill="#FFFFFF" points="18.3212076 12 20 13.6022806 19.2789148 14.2914755 17.3889984 12.4867195 13.3827429 12.4867195 15.3858707 15.7973856 17.9683144 16.4573773 17.7051744 17.3977194 15.4103488 16.8107356 14.7963555 19 13.8100904 18.7488527 14.5026178 16.2831317 12.50051 12.973439 10.4984021 16.2831317 11.1909295 18.7488527 10.2046644 19 9.58965119 16.8107356 7.29482559 17.3977194 7.03270551 16.4573773 9.61514925 15.7973856 11.618277 12.4867195 7.61202149 12.4867195 5.7210852 14.2914755 5 13.6022806 6.67981233 12 5 10.3977194 5.7210852 9.70852454 7.61202149 11.5132805 11.618277 11.5132805 9.61514925 8.20261438 7.03270551 7.54262272 7.29482559 6.60228063 9.58965119 7.18926436 10.2046644 5 11.1909295 5.25114727 10.4984021 7.71686831 12.50051 11.026561 14.5026178 7.71686831 13.8100904 5.25114727 14.7963555 5 15.4103488 7.18926436 17.7051744 6.60228063 17.9683144 7.54262272 15.3858707 8.20261438 13.3827429 11.5132805 17.3889984 11.5132805 19.2789148 9.70852454 20 10.3977194"></polygon>
+    </g>
+</svg>

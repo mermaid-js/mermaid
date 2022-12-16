@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_AWS-Training-Certification_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#2E27AD" offset="0%"></stop>
+            <stop stop-color="#527FFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-Training-Certification_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Customer-Enablement" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M13,18 C13,17.204 12.76,16.465 12.357,15.841 L11.334,16.864 L10.627,16.157 L11.709,15.075 C10.995,14.414 10.048,14 9,14 C6.795,14 5,15.794 5,18 L13,18 Z M9,13 C10.104,13 11,12.103 11,11 C11,9.897 10.104,9 9,9 C7.896,9 7,9.897 7,11 C7,12.103 7.896,13 9,13 L9,13 Z M13.075,15.122 C13.653,15.937 14,16.927 14,18 L14,18.5 C14,18.776 13.776,19 13.5,19 L4.5,19 C4.224,19 4,18.776 4,18.5 L4,18 C4,15.891 5.317,14.092 7.168,13.358 C6.463,12.809 6,11.961 6,11 C6,9.346 7.346,8 9,8 C10.654,8 12,9.346 12,11 C12,11.961 11.537,12.809 10.832,13.358 C11.425,13.593 11.958,13.938 12.415,14.368 L15.637,11.146 L16.344,11.854 L13.075,15.122 Z M20,6.5 L20,14.5 C20,14.776 19.776,15 19.5,15 L16,15 L17,14 L19,14 L19,7 L5,7 L5,13 L4,13 L4,6.5 C4,6.224 4.224,6 4.5,6 L19.5,6 C19.776,6 20,6.224 20,6.5 L20,6.5 Z" id="AWS-Training-Certification_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

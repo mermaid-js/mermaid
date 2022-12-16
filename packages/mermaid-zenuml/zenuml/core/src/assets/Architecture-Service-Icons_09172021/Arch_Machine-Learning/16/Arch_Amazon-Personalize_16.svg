@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_Amazon-Personalize_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#055F4E" offset="0%"></stop>
+            <stop stop-color="#56C0A7" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_Amazon-Personalize_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Machine-Learning" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M11.997,8.5 C11.17,8.5 10.497,9.173 10.497,10 C10.497,10.827 11.17,11.5 11.997,11.5 C12.824,11.5 13.497,10.827 13.497,10 C13.497,9.173 12.824,8.5 11.997,8.5 M11.976,12.5 C9.883,12.5 9.354,14.145 9.221,15 L14.776,15 C14.647,14.132 14.119,12.5 11.976,12.5 M11.997,7.5 C13.376,7.5 14.497,8.622 14.497,10 C14.497,10.736 14.172,11.392 13.663,11.85 C14.026,12.015 14.359,12.226 14.643,12.51 C15.809,13.68 15.817,15.428 15.817,15.501 C15.816,15.777 15.593,16 15.317,16 L8.676,16 C8.399,16 8.176,15.776 8.176,15.5 C8.176,14.418 8.667,12.587 10.316,11.838 C9.816,11.381 9.497,10.729 9.497,10 C9.497,8.622 10.618,7.5 11.997,7.5 M6,12 L5,12 C5,14.612 6.437,16.988 8.752,18.202 L9.217,17.316 C7.232,16.276 6,14.239 6,12 M12,6 L12,5 C9.393,5 7.018,6.435 5.802,8.744 L6.686,9.209 C7.729,7.23 9.766,6 12,6 M18,12 L19,12 C19,9.397 17.569,7.024 15.266,5.807 L14.799,6.691 C16.773,7.734 18,9.769 18,12 M17.309,14.799 L18.193,15.266 C16.976,17.569 14.602,19 12,19 L12,18 C14.231,18 16.266,16.773 17.309,14.799" id="Amazon-Personalize-Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

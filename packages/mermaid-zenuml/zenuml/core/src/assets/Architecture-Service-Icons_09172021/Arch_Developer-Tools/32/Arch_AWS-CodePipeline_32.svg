@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/32/Arch_AWS-CodePipeline_32</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#2E27AD" offset="0%"></stop>
+            <stop stop-color="#527FFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/32/Arch_AWS-CodePipeline_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/32/Developer-Tools" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="40" height="40"></rect>
+        </g>
+        <path d="M14,14 L17,14 L17,13 L14,13 L14,14 Z M18.952,29.799 L18.022,29.433 L21.611,20.307 L22.541,20.673 L18.952,29.799 Z M23.195,27.366 L25.848,25.04 L23.198,22.743 L23.853,21.987 L26.936,24.66 C27.045,24.754 27.108,24.892 27.108,25.036 C27.108,25.181 27.047,25.318 26.938,25.414 L23.855,28.118 L23.195,27.366 Z M13.617,25.285 C13.517,25.188 13.462,25.054 13.465,24.915 C13.468,24.775 13.529,24.644 13.634,24.552 L16.706,21.836 L17.368,22.585 L14.7,24.943 L17.374,27.537 L16.679,28.255 L13.617,25.285 Z M33,13 L19,13 L19,14 L33,14 L33,15.251 C33,16.216 32.216,17 31.251,17 L9.108,17 C7.946,17 7,16.054 7,14.891 L7,14 L12,14 L12,13 L7,13 L7,9.109 C7,7.946 7.946,7 9.108,7 L31.012,7 C32.108,7 33,7.892 33,8.989 L33,13 Z M11,33 L29,33 L29,18 L11,18 L11,33 Z M31.012,6 L9.108,6 C7.395,6 6,7.395 6,9.109 L6,14.891 C6,16.605 7.395,18 9.108,18 L10,18 L10,33.5 C10,33.776 10.224,34 10.5,34 L29.5,34 C29.776,34 30,33.776 30,33.5 L30,18 L31.251,18 C32.767,18 34,16.767 34,15.251 L34,8.989 C34,7.341 32.659,6 31.012,6 L31.012,6 Z" id="AWS-CodePipeline_Icon_32_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

@@ -1,0 +1,21 @@
+<svg version="1.1" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+	 x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" overflow="visible" xml:space="preserve">
+<g >
+	<rect y="0" fill="none" width="24" height="24"/>
+	<g transform="translate(2.000000, 2.000000)">
+		<path fill-rule="evenodd" fill="#85A4E6" d="M-0.5-0.5v21H10v-21H-0.5z M4,5.5H1.8V3.2H4V5.5L4,5.5z M4,9.2H1.8V7H4V9.2L4,9.2z
+			 M4,13H1.8v-2.2H4V13L4,13z M4,16.8H1.8v-2.2H4V16.8L4,16.8z M7.8,5.5H5.5V3.2h2.2V5.5L7.8,5.5z M7.8,9.2H5.5V7h2.2V9.2L7.8,9.2z
+			 M7.8,13H5.5v-2.2h2.2V13L7.8,13z M7.8,16.8H5.5v-2.2h2.2V16.8L7.8,16.8z"/>
+		<path fill-rule="evenodd" fill="#5C85DE" d="M4.8-0.5v21H10v-21H4.8z M7.8,5.5H5.5V3.2h2.2V5.5L7.8,5.5z M7.8,9.2H5.5V7h2.2V9.2
+			L7.8,9.2z M7.8,13H5.5v-2.2h2.2V13L7.8,13z M7.8,16.8H5.5v-2.2h2.2V16.8L7.8,16.8z"/>
+		<path fill-rule="evenodd" fill="#85A4E6" d="M10,8.5v12h10.5v-12H10z M14.5,13h-2.2v-2.2h2.2V13L14.5,13z M14.5,16.8h-2.2v-2.2
+			h2.2V16.8L14.5,16.8z M18.2,13H16v-2.2h2.2V13L18.2,13z M18.2,16.8H16v-2.2h2.2V16.8L18.2,16.8z"/>
+		<path fill-rule="evenodd" fill="#5C85DE" d="M15.2,8.5v12h5.2v-12H15.2z M18.2,13H16v-2.2h2.2V13L18.2,13z M18.2,16.8H16v-2.2h2.2
+			V16.8L18.2,16.8z"/>
+		<rect x="10" y="6.2" fill-rule="evenodd" fill="#85A4E6" width="10.5" height="2.2"/>
+			<rect x="10" y="8.5" fill-rule="evenodd" fill="#5C85DE" width="10.5" height="0.8"/>
+			<rect x="10" y="6.2" fill-rule="evenodd" fill="#3367D6" width="0.8" height="2.2"/>
+			<rect x="10" y="8.5" fill-rule="evenodd" fill="#3367D6" width="0.8" height="12"/>
+	</g>
+</g>
+</svg>

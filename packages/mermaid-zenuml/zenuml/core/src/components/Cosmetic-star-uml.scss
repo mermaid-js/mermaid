@@ -1,0 +1,30 @@
+$borderColor: #b94065;
+$backgroundColor: #fffec8;
+.theme-star-uml {
+  .sequence-diagram {
+    .lifeline {
+      .participant {
+        border-color: $borderColor;
+        background-color: $backgroundColor;
+      }
+      .line {
+        border-left-color: $borderColor;
+      }
+    }
+    .message {
+      border-bottom-color: $borderColor;
+      svg {
+        polyline {
+          stroke: $borderColor;
+        }
+        polyline.head {
+          fill: $borderColor;
+        }
+      }
+    }
+    .occurrence {
+      background-color: $backgroundColor;
+      border-color: $borderColor;
+    }
+  }
+}

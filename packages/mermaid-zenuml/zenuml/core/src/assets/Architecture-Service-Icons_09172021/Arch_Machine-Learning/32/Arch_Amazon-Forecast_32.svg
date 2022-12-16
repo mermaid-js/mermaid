@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/32/Arch_Amazon-Forecast_32</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#055F4E" offset="0%"></stop>
+            <stop stop-color="#56C0A7" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/32/Arch_Amazon-Forecast_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/32/Machine-Learning" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="40" height="40"></rect>
+        </g>
+        <path d="M25,30 L28,30 L28,15 L25,15 L25,30 Z M24,31 L29,31 L29,14 L24,14 L24,31 Z M17,30 L20,30 L20,19 L17,19 L17,30 Z M16,31 L21,31 L21,18 L16,18 L16,31 Z M10,30 L13,30 L13,24 L10,24 L10,30 Z M9,31 L14,31 L14,23 L9,23 L9,31 Z M30,8 L30,9 L32.138,9 L28.601,12 L23.342,12 C23.161,12 22.994,12.098 22.905,12.256 L20.811,16 L15.631,16 C15.431,16 15.249,16.12 15.171,16.304 L13.599,20 L9,20 L9,21 L13.93,21 C14.13,21 14.312,20.88 14.39,20.696 L15.962,17 L21.104,17 C21.284,17 21.451,16.902 21.54,16.744 L23.635,13 L28.784,13 C28.902,13 29.018,12.958 29.107,12.881 L33,9.58 L33,12 L34,12 L34,8 L30,8 Z M31,14 L32,14 L32,33 L6,33 L6,9 L27,9 L27,10 L7,10 L7,32 L31,32 L31,14 Z" id="Amazon-Forecast_Icon_32_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

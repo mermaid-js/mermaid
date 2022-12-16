@@ -1,0 +1,72 @@
+$fragmentBorderColor: rgba(0, 0, 0, 0.30);
+$nameBackgroundColor: rgba(0, 0, 0, 0.07);
+$messageLineColor: #000;
+$occurrenceBorderColor: #000;
+$occurrenceBackgroundColor: #F5F5F5;
+$participantLineColor: rgba(0, 0, 0, 0.40);
+$participantBorderColor: #000;
+$participantBackgroundColor: #fff;
+$dividerBackgroundColor: #000;
+$dividerBorderColor: #000;
+
+.theme-black-white .sequence-diagram {
+  .divider {
+    .name {
+      border-radius: 0;
+      border-color: $dividerBorderColor;
+      box-shadow: 2px 2px 0 $dividerBorderColor;
+    }
+
+    .left {
+      background: $dividerBackgroundColor;
+    }
+
+    .right {
+      background: $dividerBackgroundColor;
+    }
+  }
+
+  .lifeline {
+    .participant {
+      border-color: $participantBorderColor;
+      background: $participantBackgroundColor;
+      box-shadow: 2px 2px 0 $participantBorderColor;
+    }
+
+    .line {
+      border-left-color: $participantLineColor;
+    }
+  }
+
+  .message {
+    .name {
+      color: $messageLineColor;
+    }
+
+    border-bottom-color: $messageLineColor;
+
+    svg {
+      polyline {
+        stroke: $messageLineColor;
+      }
+      polyline.head {
+        fill: $messageLineColor;
+      }
+    }
+  }
+
+  .occurrence {
+    border-color: $occurrenceBorderColor;
+    background-color: $occurrenceBackgroundColor;
+  }
+
+  .fragment {
+    border-color: $fragmentBorderColor;
+
+    .header {
+      .name {
+        background: $nameBackgroundColor;
+      }
+    }
+  }
+}

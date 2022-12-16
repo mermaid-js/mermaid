@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/64/Arch_AWS-CodePipeline_64</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#2E27AD" offset="0%"></stop>
+            <stop stop-color="#527FFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/64/Arch_AWS-CodePipeline_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/64/Developer-Tools" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <path d="M30,31 L35,31 L35,29 L30,29 L30,31 Z M36.667,61.166 L34.817,60.407 L42.409,41.885 L44.259,42.644 L36.667,61.166 Z M45.571,55.78 L51.068,50.958 L45.575,46.197 L46.886,44.685 L53.245,50.198 C53.463,50.387 53.589,50.662 53.590006,50.951 C53.591,51.24 53.467,51.515 53.249,51.706 L46.89,57.284 L45.571,55.78 Z M25.508976,51.048 C25.507,50.759 25.63,50.484 25.847,50.293 L32.184,44.691 L33.508,46.19 L28.029,51.033 L33.478,55.73 L32.171,57.245 L25.855,51.799 C25.637,51.611 25.511,51.337 25.508976,51.048 L25.508976,51.048 Z M62.535,35 L18.465,35 C16.555,35 15,33.446 15,31.536 L15,31 L27,31 L27,29 L15,29 L15,18.464 C15,16.554 16.555,15 18.465,15 L62.535,15 C64.445,15 66,16.554 66,18.464 L66,29 L38,29 L38,31 L66,31 L66,31.536 C66,33.446 64.445,35 62.535,35 L62.535,35 Z M22,66 L58,66 L58,37 L22,37 L22,66 Z M62.535,13 L18.465,13 C15.451,13 13,15.451 13,18.464 L13,31.536 C13,34.549 15.451,37 18.465,37 L20,37 L20,67 C20,67.552 20.447,68 21,68 L59,68 C59.553,68 60,67.552 60,67 L60,37 L62.535,37 C65.549,37 68,34.549 68,31.536 L68,18.464 C68,15.451 65.549,13 62.535,13 L62.535,13 Z" id="AWS-CodePipeline_Icon_64_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

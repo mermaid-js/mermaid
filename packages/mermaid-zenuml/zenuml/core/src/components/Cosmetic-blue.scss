@@ -1,0 +1,74 @@
+$fragmentBorderColor: rgba(4, 46, 110, 0.30);
+$nameBackgroundColor: rgba(4, 46, 110, 0.10);
+$labelTextColor: #032C72;
+$messageLineColor: #032C72;
+$occurrenceBorderColor: #032C72;
+$occurrenceBackgroundColor: #fff;
+$participantLineColor: #032C72;
+$participantBorderColor: #032C72;
+$participantTextColor: #032C72;
+$participantBackgroundColor: rgba(146, 192, 240, 0.30);
+$dividerBackgroundColor: #E28553;
+$dividerBorderColor: #E28553;
+$dividerTextColor: #E28553;
+
+.theme-blue {
+  .sequence-diagram {
+    .divider {
+      .name {
+        border-radius: 4px;
+        border: 1px solid $dividerBorderColor;
+        color: $dividerTextColor;
+      }
+      .left {
+        background: $dividerBackgroundColor;
+      }
+      .right {
+        background: $dividerBackgroundColor;
+      }
+    }
+    .lifeline {
+      .participant {
+        border-color: $participantBorderColor;
+        background: $participantBackgroundColor;
+        label {
+          color: $participantTextColor;
+        }
+      }
+      .line {
+        border-left-color: $participantLineColor;
+      }
+    }
+    .message {
+      .name {
+        color: $messageLineColor;
+      }
+      border-bottom-color: $messageLineColor;
+      svg {
+        polyline {
+          stroke: $messageLineColor;
+        }
+        polyline.head {
+          fill: $messageLineColor;
+        }
+      }
+    }
+
+    .occurrence {
+      border-color: $occurrenceBorderColor;
+      background-color: $occurrenceBackgroundColor;
+    }
+    .fragment {
+      border-radius: 4px;
+      border-color: $fragmentBorderColor;
+      .header {
+        .name {
+          background: $nameBackgroundColor;
+        }
+        label {
+          color: $labelTextColor;
+        }
+      }
+    }
+  }
+}

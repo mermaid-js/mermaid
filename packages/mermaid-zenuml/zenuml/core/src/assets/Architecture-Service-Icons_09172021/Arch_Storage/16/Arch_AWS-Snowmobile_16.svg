@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_AWS-Snowmobile_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#1B660F" offset="0%"></stop>
+            <stop stop-color="#6CAE3E" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-Snowmobile_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Storage" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M4,12 L6,12 L6,11 L4,11 L4,12 Z M4,10 L6,10 L6,9 L4,9 L4,10 Z M19,13 L16,13 L16,10 L17.779,10 C18.498,10 19,10.685 19,11.667 L19,13 Z M18,14.5 C18,14.776 17.775,15 17.5,15 C17.225,15 17,14.776 17,14.5 C17,14.224 17.225,14 17.5,14 C17.775,14 18,14.224 18,14.5 L18,14.5 Z M13.5,13 L9,13 L8,13 L8,8 L15,8 L15,9 L15,10 L15,13 L13.5,13 Z M14,14.5 C14,14.776 13.775,15 13.5,15 C13.225,15 13,14.776 13,14.5 C13,14.224 13.225,14 13.5,14 C13.775,14 14,14.224 14,14.5 L14,14.5 Z M10,14.5 C10,14.776 9.775,15 9.5,15 C9.225,15 9,14.776 9,14.5 C9,14.224 9.225,14 9.5,14 C9.775,14 10,14.224 10,14.5 L10,14.5 Z M17.779,9 L16,9 L16,7.5 C16,7.224 15.776,7 15.5,7 L7.5,7 C7.224,7 7,7.224 7,7.5 L7,13.5 C7,13.776 7.224,14 7.5,14 L8,14 L8.092,14 C8.036,14.157 8,14.324 8,14.5 C8,15.327 8.673,16 9.5,16 C10.327,16 11,15.327 11,14.5 C11,14.324 10.964,14.157 10.908,14 L12.092,14 C12.036,14.157 12,14.324 12,14.5 C12,15.327 12.673,16 13.5,16 C14.327,16 15,15.327 15,14.5 C15,14.324 14.964,14.157 14.908,14 L15,14 L15.5,14 L16.092,14 C16.036,14.157 16,14.324 16,14.5 C16,15.327 16.673,16 17.5,16 C18.327,16 19,15.327 19,14.5 C19,14.324 18.964,14.157 18.908,14 L19.5,14 C19.776,14 20,13.776 20,13.5 L20,11.667 C20,10.122 19.066,9 17.779,9 L17.779,9 Z" id="Fill-7" fill="#FFFFFF"></path>
+    </g>
+</svg>

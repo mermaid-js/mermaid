@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon-Architecture/16/Arch_Application-Auto-Scaling_16</title>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#B0084D" offset="0%"></stop>
+            <stop stop-color="#FF4F8B" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_Application-Auto-Scaling_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle" fill="url(#linearGradient-1)">
+            <rect x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <g id="Icon-Service/16/AWS-Application-Auto-Scaling_16" transform="translate(4.000000, 4.000000)" fill="#FFFFFF">
+            <path d="M6,9.00025 L9,9.00025 L9,6.00025 L6,6.00025 L6,9.00025 Z M10,5.50025 L10,9.50025 C10,9.77625 9.776,10.00025 9.5,10.00025 L5.5,10.00025 C5.224,10.00025 5,9.77625 5,9.50025 L5,5.50025 C5,5.22425 5.224,5.00025 5.5,5.00025 L9.5,5.00025 C9.776,5.00025 10,5.22425 10,5.50025 L10,5.50025 Z M8,13.29325 L8,11.00025 L7,11.00025 L7,13.29325 L5.854,12.14625 L5.146,12.85425 L7.146,14.85425 C7.244,14.95125 7.372,15.00025 7.5,15.00025 C7.628,15.00025 7.756,14.95125 7.854,14.85425 L9.854,12.85425 L9.146,12.14625 L8,13.29325 Z M15,7.00025 L12.707,7.00025 L13.854,5.85425 L13.146,5.14625 L11.146,7.14625 C10.951,7.34225 10.951,7.65825 11.146,7.85425 L13.146,9.85425 L13.854,9.14625 L12.707,8.00025 L15,8.00025 L15,7.00025 Z M1.854,5.14625 L1.146,5.85425 L2.293,7.00025 L0,7.00025 L0,8.00025 L2.293,8.00025 L1.146,9.14625 L1.854,9.85425 L3.854,7.85425 C4.049,7.65825 4.049,7.34225 3.854,7.14625 L1.854,5.14625 Z M5.854,2.85425 L5.146,2.14625 L7.146,0.14625 C7.342,-0.04875 7.658,-0.04875 7.854,0.14625 L9.854,2.14625 L9.146,2.85425 L8,1.70725 L8,4.00025 L7,4.00025 L7,1.70725 L5.854,2.85425 Z" id="AWS-Application-Auto-Scaling_16_Squid"></path>
+        </g>
+    </g>
+</svg>

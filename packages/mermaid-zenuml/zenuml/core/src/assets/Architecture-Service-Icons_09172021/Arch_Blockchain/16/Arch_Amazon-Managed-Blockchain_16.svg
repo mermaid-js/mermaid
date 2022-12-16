@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_Amazon-Managed-Blockchain_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#C8511B" offset="0%"></stop>
+            <stop stop-color="#FF9900" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_Amazon-Managed-Blockchain_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Blockchain" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M7.235,9.75 L6.37,9.249 C7.529,7.245 9.686,6 12,6 C14.313,6 16.47,7.245 17.63,9.249 L16.764,9.75 C15.783,8.053 13.958,7 12,7 C10.042,7 8.216,8.053 7.235,9.75 L7.235,9.75 Z M16.764,15.249 L17.63,15.75 C16.47,17.754 14.313,19 12,19 C9.686,19 7.529,17.754 6.37,15.75 L7.235,15.249 C8.216,16.946 10.042,18 12,18 C13.958,18 15.783,16.946 16.764,15.249 L16.764,15.249 Z M12,13.5 L14,13.5 L14,11.5 L12,11.5 L12,13.5 Z M6,13.5 L8,13.5 L8,11.5 L6,11.5 L6,13.5 Z M19.894,12.2 L18.4,10.2 L17.599,10.799 L18.496,12 L15,12 L15,11 C15,10.723 14.776,10.5 14.5,10.5 L11.5,10.5 C11.223,10.5 11,10.723 11,11 L11,12 L9,12 L9,11 C9,10.723 8.776,10.5 8.5,10.5 L5.5,10.5 C5.223,10.5 5,10.723 5,11 L5,14 C5,14.276 5.223,14.5 5.5,14.5 L8.5,14.5 C8.776,14.5 9,14.276 9,14 L9,13 L11,13 L11,14 C11,14.276 11.223,14.5 11.5,14.5 L14.5,14.5 C14.776,14.5 15,14.276 15,14 L15,13 L18.496,13 L17.599,14.2 L18.4,14.799 L19.894,12.799 C20.027,12.621 20.027,12.378 19.894,12.2 L19.894,12.2 Z" id="Amazon-Managed-Blockchain-Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

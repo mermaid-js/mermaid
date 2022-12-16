@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Creation component</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+    />
+    <link rel="stylesheet" href="https://app.zenuml.com/14da99332500382455b6a2d96a34a523.css" />
+  </head>
+  <body class="zenuml">
+    <main class="m-1">
+      <p>Creation (like all other messages) gets a fixed width calculated.</p>
+      <!-- Give the whole message a width -->
+      <div
+        data-signature="«create»"
+        class="interaction creation sync text-center"
+        style="width: 161px"
+      >
+        <!-- items-center aligns the message on the left along the center vertically -->
+        <div class="flex items-center h-10">
+          <!-- height:0 to so items-center set the border bottom line in the middle -->
+          <div
+            class="message invocation text-center border-b-2 border-dashed"
+            data-to="B"
+            data-type="creation"
+            style="width: calc(100% - 40px); height: 1rem; transform: translateY(-0.5rem)"
+          >
+            <!-- Force line-height to 1em and then shift it up by one line. Do not use inline-block here. -->
+            <div class="name" style="padding-left: 10px; line-height: 1rem">«create»</div>
+          </div>
+          <div
+            class="participant border-2 border-red-900 flex flex-col justify-center"
+            style="margin-right: -50px"
+          >
+            <div class="h-5 flex flex-col justify-center"><label class="name">B</label></div>
+          </div>
+        </div>
+        <div
+          data-el-type="occurrence"
+          data-belongs-to="B"
+          data-x-offset="0"
+          data-debug-center-of="273"
+          class="occurrence border-2 relative"
+        >
+          <!---->
+        </div>
+        <!---->
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon-Architecture/16/Arch_AWS-Elemental-Live_16</title>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#C8511B" offset="0%"></stop>
+            <stop stop-color="#FF9900" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-Elemental-Live_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle" fill="url(#linearGradient-1)">
+            <rect x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M13.276,15.219 L12,15.949 L10.723,15.219 L10.723,13.766 L12,13.036 L13.276,13.766 L13.276,15.219 Z M14.276,13.476 C14.276,13.297 14.18,13.131 14.024,13.042 L12.248,12.026 C12.093,11.938 11.906,11.938 11.752,12.026 L9.975,13.042 C9.819,13.131 9.723,13.297 9.723,13.476 L9.723,14 L5,14 L5,15 L9.723,15 L9.723,15.509 C9.723,15.688 9.819,15.854 9.975,15.943 L11.5,16.816 L11.5,19 L12.5,19 L12.5,16.816 L14.024,15.943 C14.18,15.854 14.276,15.688 14.276,15.509 L14.276,15 L19,15 L19,14 L14.276,14 L14.276,13.476 Z M6,9 L8,9 L8,8 L6,8 L6,9 Z M13,9 L18,9 L18,8 L13,8 L13,9 Z M5,10 L19,10 L19,6 L5,6 L5,10 Z M19.5,5 L4.5,5 C4.223,5 4,5.224 4,5.5 L4,10.5 C4,10.777 4.223,11 4.5,11 L19.5,11 C19.776,11 20,10.777 20,10.5 L20,5.5 C20,5.224 19.776,5 19.5,5 L19.5,5 Z" id="AWS-Elemental-Live_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>
