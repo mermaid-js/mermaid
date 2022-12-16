@@ -28,7 +28,7 @@
     "docs:build": "rimraf ../../docs && pnpm docs:spellcheck && pnpm docs:code && ts-node-esm src/docs.mts",
     "docs:verify": "pnpm docs:spellcheck && pnpm docs:code && ts-node-esm src/docs.mts --verify",
     "docs:pre:vitepress": "rimraf src/vitepress && pnpm docs:code && ts-node-esm src/docs.mts --vitepress",
-    "docs:build:vitepress": "pnpm docs:pre:vitepress && vitepress build src/vitepress && cpy --flat src/docs/landing/ ./src/vitepress/.vitepress/dist/landing",
+    "docs:build:vitepress": "pnpm docs:pre:vitepress && vitepress build src/vitepress && cpy --flat src/docs/landing/ ./src/vitepress/.vitepress/dist/landing && cpy --flat src/docs/CNAME ./src/vitepress/.vitepress/dist/",
     "docs:dev": "pnpm docs:pre:vitepress && concurrently \"vitepress dev src/vitepress\" \"ts-node-esm src/docs.mts --watch --vitepress\"",
     "docs:serve": "pnpm docs:build:vitepress && vitepress serve src/vitepress",
     "docs:spellcheck": "cspell --config ../../cSpell.json \"src/docs/**/*.md\"",
