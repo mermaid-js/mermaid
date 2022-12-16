@@ -164,14 +164,14 @@ The `type` and `name` values must begin with an alphabetic character and may con
 
 #### Attribute Keys and Comments
 
-Attributes may also have a `key` or comment defined. Keys can be "PK" or "FK", for Primary Key or Foreign Key. And a `comment` is defined by double quotes at the end of an attribute. Comments themselves cannot have double-quote characters in them.
+Attributes may also have a `key` or comment defined. Keys can be "PK", "FK" or "UK", for Primary Key, Foreign Key or Unique Key. And a `comment` is defined by double quotes at the end of an attribute. Comments themselves cannot have double-quote characters in them.
 
 ```mermaid-example
 erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {
         string allowedDriver FK "The license of the allowed driver"
-        string registrationNumber
+        string registrationNumber UK
         string make
         string model
         string[] parts
