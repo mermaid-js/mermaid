@@ -56,7 +56,7 @@
   <body>
     <div>Security check</div>
     <pre id="diagram" class="mermaid2">
-cyto TD
+cyto TB
   %% I could not figure out how to use double quotes in labels in Mermaid
   subgraph ibm[IBM Espresso CPU]
     core0[IBM PowerPC Broadway Core 0]
@@ -111,8 +111,35 @@ cyto TD
     >
     <pre id="diagram" class="mermaid">
 cyto LR
-  B1 --be be--> B2
-  B1 --bo bo--> B3
+  B1 --be be--x B2
+  B1 --bo bo--o B3
+  subgraph Ugge
+      B2
+      B3
+      subgraph inner
+          B4
+          B5
+      end
+      subgraph inner2
+        subgraph deeper
+          C4
+          C5
+        end
+        C6
+      end
+
+      B4 --> C4
+
+      B3 -- X --> B4
+      B2 --> inner
+
+      C4 --> C5
+  end
+
+  subgraph outer
+      B6
+  end
+  B6 --> B5
   </pre
     >
     inside1 --> inside2 & inside3 & inside4 & inside5 & inside6 a(letter a<br />a) ---> b(letter
@@ -159,7 +186,7 @@ cyto LR
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'base',
+        theme: 'dark',
         startOnLoad: true,
         logLevel: 0,
         flowchart: {

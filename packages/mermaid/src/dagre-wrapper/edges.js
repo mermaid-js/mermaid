@@ -107,6 +107,7 @@ export const insertEdgeLabel = (elem, edge) => {
     terminalLabels[edge.id].endRight = endEdgeLabelRight;
     setTerminalWidth(fo, edge.endLabelRight);
   }
+  return labelElement;
 };
 
 /**
@@ -463,7 +464,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     .attr('style', edge.style);
 
   // DEBUG code, adds a red circle at each edge coordinate
-  // edge.points.forEach(point => {
+  // edge.points.forEach((point) => {
   //   elem
   //     .append('circle')
   //     .style('stroke', 'red')

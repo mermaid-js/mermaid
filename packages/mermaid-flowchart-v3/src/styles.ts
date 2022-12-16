@@ -15,6 +15,20 @@ export interface FlowChartStyleOptions {
   titleColor: string;
 }
 
+const genSections = (options) => {
+  let sections = '';
+
+  for (let i = 0; i < 5; i++) {
+    sections += `
+      .subgraph-lvl-${i} {
+        fill: ${options[`surface${i}`]};
+        stroke: ${options[`surfacePeer${i}`]};
+      }
+    `;
+  }
+  return sections;
+};
+
 const getStyles = (options: FlowChartStyleOptions) =>
   `.label {
     font-family: ${options.fontFamily};
@@ -109,6 +123,15 @@ const getStyles = (options: FlowChartStyleOptions) =>
     font-size: 18px;
     fill: ${options.textColor};
   }
+  .subgraph {
+    stroke-width:2;
+    rx:3;
+  }
+  // .subgraph-lvl-1 {
+  //   fill:#ccc;
+  //   // stroke:black;
+  // }
+  ${genSections(options)}
 `;
 
 export default getStyles;

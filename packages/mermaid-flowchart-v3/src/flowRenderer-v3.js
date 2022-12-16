@@ -4,7 +4,8 @@ import { log, getConfig, setupGraphViewbox } from './mermaidUtils';
 import { insertNode } from '../../mermaid/src/dagre-wrapper/nodes.js';
 import insertMarkers from '../../mermaid/src/dagre-wrapper/markers.js';
 import createLabel from '../../mermaid/src/dagre-wrapper/createLabel';
-import dagre from 'cytoscape-dagre';
+import { insertEdgeLabel, positionEdgeLabel } from '../../mermaid/src/dagre-wrapper/edges.js';
+import { findCommonAncestor } from './render-utils';
 // Replace with other function to avoid dependency to dagre-d3
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
 
@@ -26,7 +27,7 @@ export const setConf = function (cnf) {
   }
 };
 
-const nodeDb = {};
+let nodeDb = {};
 
 // /**
 //  * Function that adds the vertices found during parsing to the graph to be rendered.
@@ -381,10 +382,9 @@ export const addEdges = function (edges, diagObj, graph, svg) {
     edgeData.id = linkId;
     edgeData.classes = 'flowchart-link ' + linkNameStart + ' ' + linkNameEnd;
 
-    const labelEl = createLabel(edgeData.label, edgeData.labelStyle);
-    labelsEl.node().appendChild(labelEl);
-    const labelBox = labelEl.firstChild.getBoundingClientRect();
-    // console.log('labelEl', labelEl);
+    const edgesNode = select(edges);
+    const labelEl = insertEdgeLabel(labelsEl, edgeData);
+    // console.log('labelEl', labelEl, edgeData.width);
     // Add the edge to the graph
     graph.edges.push({
       id: 'e' + edge.start + edge.end,
@@ -393,11 +393,11 @@ export const addEdges = function (edges, diagObj, graph, svg) {
       labelEl: labelEl,
       labels: [
         {
-          width: labelBox.width,
+          width: edgeData.width,
           // width: 80,
-          height: labelBox.height,
-          orgWidth: labelBox.width,
-          orgHeight: labelBox.height,
+          height: edgeData.height,
+          orgWidth: edgeData.width,
+          orgHeight: edgeData.height,
           text: edgeData.label,
           layoutOptions: {
             'edgeLabels.inline': 'true',
@@ -413,9 +413,19 @@ export const addEdges = function (edges, diagObj, graph, svg) {
   return graph;
 };
 
-const addmarkers = function (svgPath, edgeData, diagramType, arrowMarkerAbsolute) {
-  // // TODO: Can we load this config only from the rendered graph type?
-  let url;
+// TODO: break out and share with dagre wrapper. The current code in dagre wrapper also adds
+// adds the line to the graph, but we don't need that here. This is why we cant use the dagre
+// wrapper directly for this
+/**
+ * Add the markers to the edge depending on the type of arrow is
+ * @param svgPath
+ * @param edgeData
+ * @param diagramType
+ * @param arrowMarkerAbsolute
+ */
+const addMarkersToEdge = function (svgPath, edgeData, diagramType, arrowMarkerAbsolute) {
+  let url = '';
+  // Check configuration for absolute path
   if (arrowMarkerAbsolute) {
     url =
       window.location.protocol +
@@ -426,6 +436,8 @@ const addmarkers = function (svgPath, edgeData, diagramType, arrowMarkerAbsolute
     url = url.replace(/\(/g, '\\(');
     url = url.replace(/\)/g, '\\)');
   }
+
+  // look in edge data and decide which marker to use
   switch (edgeData.arrowTypeStart) {
     case 'arrow_cross':
       svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-crossStart' + ')');
@@ -526,114 +538,104 @@ const addSubGraphs = function (db) {
     if (parentLookupDb.parentById[subgraph.id] !== undefined) {
       data.parent = parentLookupDb.parentById[subgraph.id];
     }
-    // cy.add({
-    //   group: 'nodes',
-    //   data,
-    // });
   });
   return parentLookupDb;
 };
 
 /* Reverse engineered with trial and error */
-const calcOffset = function (src, dest, sourceId, targetId) {
-  if (src === dest) {
+const calcOffsetOld = function (src, dest, sourceId, targetId, srcDepth, targetDepth, so, to) {
+  // if (src === dest) {
+  //   return src;
+  // }
+  // if (sourceId === 'B6') {
+  //   return 0;
+  // }
+  // if (sourceId === 'B4') {
+  //   return 318;
+  // }
+  if (srcDepth < targetDepth) {
     return src;
   }
+  if (srcDepth > targetDepth) {
+    return dest;
+  }
+  if (srcDepth === targetDepth) {
+    return src;
+  }
+  // if (src < dest) {
+  //   return dest + src;
+  // }
   return 0;
 };
 
-const insertEdge = function (edgesEl, edge, edgeData, diagObj) {
+const calcOffset = function (src, dest, parentLookupDb) {
+  const ancestor = findCommonAncestor(src, dest, parentLookupDb);
+  if (ancestor === undefined || ancestor === 'root') {
+    return { x: 0, y: 0 };
+  }
+
+  const ancestoprOffset = nodeDb[ancestor].offset;
+  return { x: ancestoprOffset.posX, y: ancestoprOffset.posY };
+};
+
+const insertEdge = function (edgesEl, edge, edgeData, diagObj, parentLookupDb) {
   const srcOffset = nodeDb[edge.sources[0]].offset;
   const targetOffset = nodeDb[edge.targets[0]].offset;
-  const offset = {
-    x: calcOffset(
-      srcOffset.x,
-      targetOffset.x,
-      nodeDb[edge.sources[0]].id,
-      nodeDb[edge.targets[0]].id
-    ),
-    y: calcOffset(
-      srcOffset.y,
-      targetOffset.y,
-      nodeDb[edge.sources[0]].id,
-      nodeDb[edge.targets[0]].id
-    ),
-  };
-  // console.log('srcOffset', srcOffset.x, targetOffset.x, srcOffset.y, targetOffset.y);
+  const offset = calcOffset(edge.sources[0], edge.targets[0], parentLookupDb);
+
   const src = edge.sections[0].startPoint;
   const dest = edge.sections[0].endPoint;
   const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
-  // const dest = edge.target().position();
-  // const dest = edge.targetEndpoint();
+
   const segPoints = segments.map((segment) => [segment.x + offset.x, segment.y + offset.y]);
   const points = [
     [src.x + offset.x, src.y + offset.y],
     ...segPoints,
     [dest.x + offset.x, dest.y + offset.y],
   ];
-  // console.log('Edge ctrl points:', edge.segmentPoints(), 'Bounds:', bounds, edge.source(), points);
-  // console.log('Edge ctrl points:', points);
-  // const curve = line().curve(curveCardinal);
+
+  // const curve = line().curve(curveBasis);
   const curve = line().curve(curveLinear);
   const edgePath = edgesEl
     .insert('path')
     .attr('d', curve(points))
-    // .attr('d', points))
     .attr('class', 'path')
     .attr('fill', 'none');
   const edgeG = edgesEl.insert('g').attr('class', 'edgeLabel');
-  const edgeEl = select(edgeG.node().appendChild(edge.labelEl));
-  // console.log('Edge label', edgeEl, edge);
-  const box = edgeEl.node().firstChild.getBoundingClientRect();
-  edgeEl.attr('width', box.width);
-  edgeEl.attr('height', box.height);
-  // edgeEl.height = 24;
+  const edgeWithLabel = select(edgeG.node().appendChild(edge.labelEl));
+  const box = edgeWithLabel.node().firstChild.getBoundingClientRect();
+  edgeWithLabel.attr('width', box.width);
+  edgeWithLabel.attr('height', box.height);
+
   edgeG.attr(
     'transform',
-    `translate(${edge.labels[0].x - box.width / 2}, ${edge.labels[0].y - box.height / 2})`
+    `translate(${edge.labels[0].x + offset.x}, ${edge.labels[0].y + offset.y})`
   );
-  addmarkers(edgesEl, edgeData, diagObj.type, diagObj.arrowMarkerAbsolute);
-  // edgesEl
-  //   .append('circle')
-  //   .style('stroke', 'red')
-  //   .style('fill', 'red')
-  //   .attr('r', 1)
-  //   .attr('cx', src.x)
-  //   .attr('cy', src.y);
-  // edgesEl
-  //   .append('circle')
-  //   .style('stroke', 'white')
-  //   .style('fill', 'white')
-  //   .attr('r', 1)
-  //   .attr('cx', segments[0].x)
-  //   .attr('cy', segments[0].y);
-  // edgesEl
-  //   .append('circle')
-  //   .style('stroke', 'pink')
-  //   .style('fill', 'pink')
-  //   .attr('r', 1)
-  //   .attr('cx', dest.x)
-  //   .attr('cy', dest.y);
+  addMarkersToEdge(edgePath, edgeData, diagObj.type, diagObj.arrowMarkerAbsolute);
 };
 
 /**
- *
+ * Recursive function that iterates over an array of nodes and inserts the children of each node.
+ * It also recursively populates the inserts the children of the children and so on.
  * @param {*} graph
  * @param nodeArray
  * @param parentLookupDb
  */
 const insertChildren = (nodeArray, parentLookupDb) => {
   nodeArray.forEach((node) => {
+    // Check if we have reached the end of the tree
     if (!node.children) {
       node.children = [];
     }
+    // Check if the node has children
     const childIds = parentLookupDb.childrenById[node.id];
-    // console.log('UGH', node.id, childIds);
+    // If the node has children, add them to the node
     if (childIds) {
       childIds.forEach((childId) => {
         node.children.push(nodeDb[childId]);
       });
     }
+    // Recursive call
     insertChildren(node.children, parentLookupDb);
   });
 };
@@ -648,6 +650,7 @@ const insertChildren = (nodeArray, parentLookupDb) => {
 export const draw = function (text, id, _version, diagObj) {
   // Add temporary render element
   diagObj.db.clear();
+  nodeDb = {};
   diagObj.db.setGen('gen-2');
   // Parse the graph definition
   diagObj.parser.parse(text);
@@ -659,12 +662,13 @@ export const draw = function (text, id, _version, diagObj) {
       id: 'root',
       layoutOptions: {
         'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+        // 'elk.hierarchyHandling': 'SEPARATE_CHILDREN',
         'org.eclipse.elk.padding': '[top=100, left=100, bottom=110, right=110]',
         // 'org.eclipse.elk.layered.spacing.nodeNodeBetweenLayers': 120,
         // 'elk.layered.spacing.nodeNodeBetweenLayers': '140',
         'elk.layered.spacing.edgeNodeBetweenLayers': '30',
         //   'elk.algorithm': 'layered',
-        'elk.direction': 'WEST',
+        'elk.direction': 'DOWN',
         //   'elk.port.side': 'SOUTH',
         // 'nodePlacement.strategy': 'SIMPLE',
         // 'org.eclipse.elk.spacing.labelLabel': 120,
@@ -679,14 +683,27 @@ export const draw = function (text, id, _version, diagObj) {
       edges: [],
     };
     log.info('Drawing flowchart using v3 renderer');
+
+    // Set the direction,
     // Fetch the default direction, use TD if none was found
     let dir = diagObj.db.getDirection();
-    if (dir === undefined) {
-      dir = 'TD';
+    switch (dir) {
+      case 'BT':
+        graph.layoutOptions['elk.direction'] = 'UP';
+        break;
+      case 'TB':
+        graph.layoutOptions['elk.direction'] = 'DOWN';
+        break;
+      case 'LR':
+        graph.layoutOptions['elk.direction'] = 'RIGHT';
+        break;
+      case 'RL':
+        graph.layoutOptions['elk.direction'] = 'LEFT';
+        break;
     }
-
     const { securityLevel, flowchart: conf } = getConfig();
 
+    // Find the root dom node to ne used in rendering
     // Handle root and document for when rendering in sandbox mode
     let sandboxElement;
     if (securityLevel === 'sandbox') {
@@ -699,25 +716,46 @@ export const draw = function (text, id, _version, diagObj) {
     const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
     const svg = root.select(`[id="${id}"]`);
+
+    // Define the supported markers for the diagram
     const markers = ['point', 'circle', 'cross'];
+
+    // Add the marker definitions to the svg as marker tags
     insertMarkers(svg, markers, diagObj.type, diagObj.arrowMarkerAbsolute);
+
     // Fetch the vertices/nodes and edges/links from the parsed graph definition
     const vert = diagObj.db.getVertices();
 
+    // Setup nodes from the subgraphs with type group, these will be used
+    // as nodes with children in the subgraph
     let subG;
     const subGraphs = diagObj.db.getSubGraphs();
     log.info('Subgraphs - ', subGraphs);
     for (let i = subGraphs.length - 1; i >= 0; i--) {
       subG = subGraphs[i];
-      log.info('Subgraph - ', subG);
       diagObj.db.addVertex(subG.id, subG.title, 'group', undefined, subG.classes, subG.dir);
     }
+
+    // Add an element in the svg to be used to hold the subgraphs container
+    // elements
     const subGraphsEl = svg.insert('g').attr('class', 'subgraphs');
 
+    // Create the lookup db for the subgraphs and their children to used when creating
+    // the tree structured graph
     const parentLookupDb = addSubGraphs(diagObj.db);
+
+    // Add the nodes to the graph, this will entail creating the actual nodes
+    // in order to get the size of the node. You can't get the size of a node
+    // that is not in the dom so we need to add it to the dom, get the size
+    // we will position the nodes when we get the layout from elkjs
     graph = addVertices(vert, id, root, doc, diagObj, parentLookupDb, graph);
+
+    // Time for the edges, we start with adding an element in the node to hold the edges
     const edgesEl = svg.insert('g').attr('class', 'edges edgePath');
+    // Fetch the edges form the parsed graph definition
     const edges = diagObj.db.getEdges();
+
+    // Add the edges to the graph, this will entail creating the actual edges
     graph = addEdges(edges, diagObj, graph, svg);
 
     // Iterate through all nodes and add the top level nodes to the graph
@@ -748,46 +786,21 @@ export const draw = function (text, id, _version, diagObj) {
       }
     });
     insertChildren(graph.children, parentLookupDb);
-    // console.log('Graph (UGH)- ', JSON.parse(JSON.stringify(graph)), JSON.stringify(graph));
-    // const graph2 = {
-    //   id: 'root',
-    //   layoutOptions: { 'elk.algorithm': 'layered' },
-    //   children: [
-    //     {
-    //       id: 'N1',
-    //       width: 30,
-    //       height: 30,
-    //       padding: 12,
-    //       children: [
-    //         { id: 'n1', width: 30, height: 30 },
-    //         { id: 'n2', width: 30, height: 30 },
-    //         { id: 'n3', width: 30, height: 30 },
-    //       ],
-    //     },
-    //   ],
-    //   edges: [
-    //     { id: 'e1', sources: ['n1'], targets: ['n2'] },
-    //     { id: 'e2', sources: ['n1'], targets: ['n3'] },
-    //   ],
-    // };
     elk.layout(graph).then(function (g) {
-      // elk.layout(graph2).then(function (g) {
-      // console.log('Layout (UGH)- ', g, JSON.stringify(g));
-      drawNodes(0, 0, g.children, svg, subGraphsEl, diagObj);
+      drawNodes(0, 0, g.children, svg, subGraphsEl, diagObj, 0);
 
       g.edges.map((edge, id) => {
-        // console.log('Edge (UGH)- ', edge);
-        insertEdge(edgesEl, edge, edge.edgeData, diagObj);
+        insertEdge(edgesEl, edge, edge.edgeData, diagObj, parentLookupDb);
       });
       setupGraphViewbox({}, svg, conf.diagramPadding, conf.useMaxWidth);
       resolve();
     });
     // Remove element after layout
-    // renderEl.remove();
+    renderEl.remove();
   });
 };
 
-const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, diagObj) => {
+const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, diagObj, depth) => {
   nodeArray.forEach(function (node) {
     if (node) {
       nodeDb[node.id].offset = {
@@ -795,13 +808,15 @@ const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, diagObj) => {
         posY: node.y + relY,
         x: relX,
         y: relY,
+        depth,
+        width: node.width,
+        height: node.height,
       };
       if (node.type === 'group') {
         const subgraphEl = subgraphsEl.insert('g').attr('class', 'subgraph');
         subgraphEl
           .insert('rect')
-          .attr('class', 'subgraph node')
-          .attr('style', 'fill:#ccc;stroke:black;stroke-width:1')
+          .attr('class', 'subgraph subgraph-lvl-' + (depth % 5) + ' node')
           .attr('x', node.x + relX)
           .attr('y', node.y + relY)
           .attr('width', node.width)
@@ -825,7 +840,7 @@ const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, diagObj) => {
   });
   nodeArray.forEach(function (node) {
     if (node && node.type === 'group') {
-      drawNodes(relX + node.x, relY + node.y, node.children, svg, subgraphsEl, diagObj);
+      drawNodes(relX + node.x, relY + node.y, node.children, svg, subgraphsEl, diagObj, depth + 1);
     }
   });
 };
