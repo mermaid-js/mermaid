@@ -41,6 +41,7 @@ export default class ZenUml implements IZenUml {
     });
   }
 
+  // @ts-ignore
   async render(code: string | undefined, theme: string | undefined): Promise<IZenUml> {
     logger.debug('rendering', code, theme);
     this._code = code || this._code;

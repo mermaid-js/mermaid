@@ -1,5 +1,6 @@
 import parentLogger from './logger/logger';
-import ZenUml from '@/core';
+// @ts-ignore
+import ZenUml from './core';
 const logger = parentLogger.child({ name: 'main' });
 
 // find the fist element with tag `pre` and class `zenuml`

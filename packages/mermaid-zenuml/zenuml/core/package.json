@@ -30,23 +30,36 @@
     "git:forget": "git rm -r --cached . && git add . && git commit -m \"Forget all ignored files\"",
     "test:specs": "echo \"Error: test:specs is not supported\""
   },
-  "main": "./dist/zenuml/core.umd.min.js",
+  "main": "./dist/zenuml/core.common.js",
+  "exports": {
+    ".": {
+      "import": "./dist/zenuml/core.common.js",
+      "types": "./dist/detector.d.ts"
+    },
+    "./*": "./*"
+  },
   "types": "./types/index.d.ts",
   "dependencies": {
     "@types/assert": "^1.5.4",
     "@types/ramda": "^0.28.0",
     "antlr4": "^4.11.0",
+    "color-name": "^2.0.0",
     "color-string": "1.5.2",
     "dom-to-image-more": "^2.9.5",
     "file-saver": "^2.0.5",
     "highlight.js": "^10.1.1",
     "html-to-image": "^1.9.0",
+    "is-arrayish": "^0.3.2",
     "lodash": "^4.17.20",
     "marked": "^2.0.0",
     "pino": "^8.7.0",
     "postcss": "^8.4.19",
+    "quick-format-unescaped": "^4.0.4",
     "ramda": "^0.28.0",
+    "sass": "^1.56.2",
+    "simple-swizzle": "^0.2.2",
     "tailwindcss": "^3.2.4",
+    "tslib": "^2.4.1",
     "vue": "2.6.12",
     "vue-gtag": "^1.16.1",
     "vue-template-compiler": "2.6.12",
