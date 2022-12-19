@@ -18,7 +18,7 @@ export default {
         if (newPath) {
           console.log(`Redirecting to ${newPath} from ${window.location}`);
           // router.go isn't loading the ID properly.
-          window.location.href = `/mermaid/${newPath}`;
+          window.location.href = `/${newPath}`;
         }
       } catch (e) {}
     };
