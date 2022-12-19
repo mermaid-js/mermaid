@@ -146,7 +146,7 @@ const main = async () => {
 };
 
 if (watch) {
-  build(getBuildConfig({ minify: false, watch, core: true, entryName: 'mermaid' }));
+  build(getBuildConfig({ minify: false, watch, core: false, entryName: 'mermaid' }));
   if (!mermaidOnly) {
     build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-mindmap' }));
     // build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
