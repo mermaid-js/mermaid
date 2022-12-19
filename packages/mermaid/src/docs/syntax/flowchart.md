@@ -9,6 +9,9 @@ It can also accommodate different arrow types, multi directional arrows, and lin
 ### A node (default)
 
 ```mermaid-example
+---
+title: Node
+---
 flowchart LR
     id
 ```
@@ -22,6 +25,9 @@ found for the node that will be used. Also if you define edges for the node late
 one previously defined will be used when rendering the box.
 
 ```mermaid-example
+---
+title: Node with text
+---
 flowchart LR
     id1[This is the text in the box]
 ```
@@ -665,7 +671,7 @@ flowchart LR
 
 ## Configuration...
 
-Is it possible to adjust the width of the rendered flowchart.
+It is possible to adjust the width of the rendered flowchart.
 
 This is done by defining **mermaid.flowchartConfig** or by the CLI to use a JSON file with the configuration. How to use the CLI is described in the mermaidCLI page.
 mermaid.flowchartConfig can be set to a JSON string with config parameters or the corresponding object.

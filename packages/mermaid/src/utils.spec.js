@@ -3,7 +3,9 @@ import utils from './utils';
 import assignWithDepth from './assignWithDepth';
 import { detectType } from './diagram-api/detectType';
 import { addDiagrams } from './diagram-api/diagram-orchestration';
-import memoize from 'lodash/memoize';
+import memoize from 'lodash-es/memoize.js';
+import { MockedD3 } from './tests/MockedD3';
+
 addDiagrams();
 
 describe('when assignWithDepth: should merge objects within objects', function () {
@@ -232,6 +234,15 @@ Alice->Bob: hi`;
     const type = detectType(str);
     expect(type).toBe('gitGraph');
   });
+  it('should handle frontmatter', function () {
+    const str = '---\ntitle: foo\n---\n  gitGraph TB:\nbfs1:queue';
+    const type = detectType(str);
+    expect(type).toBe('gitGraph');
+  });
+  it('should not allow frontmatter with leading spaces', function () {
+    const str = '    ---\ntitle: foo\n---\n  gitGraph TB:\nbfs1:queue';
+    expect(() => detectType(str)).toThrow('No diagram type detected for text');
+  });
 });
 describe('when finding substring in array ', function () {
   it('should return the array index that contains the substring', function () {
@@ -338,5 +349,56 @@ describe('when initializing the id generator', function () {
     const lastId = idGenerator.next();
     expect(start).toEqual(lastId);
     expect(idGenerator.next()).toEqual(lastId + 1);
+  });
+});
+
+describe('when inserting titles', function () {
+  const svg = new MockedD3('svg');
+  const mockedElement = {
+    getBBox: vi.fn().mockReturnValue({ x: 10, y: 11, width: 100, height: 200 }),
+  };
+  const fauxTitle = new MockedD3('title');
+
+  beforeEach(() => {
+    svg.node = vi.fn().mockReturnValue(mockedElement);
+  });
+
+  it('does nothing if the title is empty', function () {
+    const svgAppendSpy = vi.spyOn(svg, 'append');
+    utils.insertTitle(svg, 'testClass', 0, '');
+    expect(svgAppendSpy).not.toHaveBeenCalled();
+  });
+
+  it('appends the title as a text item with the given title text', function () {
+    const svgAppendSpy = vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
+    const titleTextSpy = vi.spyOn(fauxTitle, 'text');
+
+    utils.insertTitle(svg, 'testClass', 5, 'test title');
+    expect(svgAppendSpy).toHaveBeenCalled();
+    expect(titleTextSpy).toHaveBeenCalledWith('test title');
+  });
+
+  it('x value is the bounds x position + half of the bounds width', () => {
+    vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
+    const titleAttrSpy = vi.spyOn(fauxTitle, 'attr');
+
+    utils.insertTitle(svg, 'testClass', 5, 'test title');
+    expect(titleAttrSpy).toHaveBeenCalledWith('x', 10 + 100 / 2);
+  });
+
+  it('y value is the negative of given title top margin', () => {
+    vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
+    const titleAttrSpy = vi.spyOn(fauxTitle, 'attr');
+
+    utils.insertTitle(svg, 'testClass', 5, 'test title');
+    expect(titleAttrSpy).toHaveBeenCalledWith('y', -5);
+  });
+
+  it('class is the given css class', () => {
+    vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
+    const titleAttrSpy = vi.spyOn(fauxTitle, 'attr');
+
+    utils.insertTitle(svg, 'testClass', 5, 'test title');
+    expect(titleAttrSpy).toHaveBeenCalledWith('class', 'testClass');
   });
 });

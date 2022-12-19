@@ -33,6 +33,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [markdown-for-mermaid-plugin](https://github.com/jamieh-mongolian/markdown-for-mermaid-plugin)
 - [JetBrains IDE eg Pycharm](https://www.jetbrains.com/go/guide/tips/mermaid-js-support-in-markdown/)
 - [mermerd](https://github.com/KarnerTh/mermerd)
+- Visual Studio Code [Polyglot Interactive Notebooks](https://github.com/dotnet/interactive#net-interactive)
 
 ## CRM/ERP/Similar
 
@@ -102,10 +103,10 @@ They also serve as proof of concept, for the variety of things that can be built
   - [md-it-mermaid](https://github.com/iamcco/md-it-mermaid)
   - [markdown-it-mermaid-fence-new](https://github.com/Revomatico/markdown-it-mermaid-fence-new)
   - [markdown-it-mermaid-less](https://github.com/searKing/markdown-it-mermaid-less)
-- [Atom](https://atom.io)
-  - [Markdown Preview Enhanced](https://atom.io/packages/markdown-preview-enhanced)
-  - [Atom Mermaid](https://atom.io/packages/atom-mermaid)
-  - [Language Mermaid Syntax Highlighter](https://atom.io/packages/language-mermaid)
+- Atom _(Atom has been [archived.](https://github.blog/2022-06-08-sunsetting-atom/))_
+  - [Markdown Preview Enhanced](https://github.com/shd101wyy/markdown-preview-enhanced)
+  - [Atom Mermaid](https://github.com/y-takey/atom-mermaid)
+  - [Language Mermaid Syntax Highlighter](https://github.com/ytisf/language-mermaid)
 - [Sublime Text 3](https://sublimetext.com)
   - [Mermaid Package](https://packagecontrol.io/packages/Mermaid)
 - [Astah](https://astah.net)
@@ -115,6 +116,7 @@ They also serve as proof of concept, for the variety of things that can be built
 - [Draw.io](https://draw.io) - [Plugin](https://github.com/nopeslide/drawio_mermaid_plugin)
 - [Inkdrop](https://www.inkdrop.app) - [Plugin](https://github.com/inkdropapp/inkdrop-mermaid)
 - [Vim](https://www.vim.org)
+  - [Official Vim Syntax and ftplugin](https://github.com/craigmac/vim-mermaid)
   - [Vim Diagram Syntax](https://github.com/zhaozg/vim-diagram)
 - [GNU Emacs](https://www.gnu.org/software/emacs/)
   - [Major mode for .mmd files](https://github.com/abrochard/mermaid-mode)

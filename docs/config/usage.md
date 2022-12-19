@@ -62,7 +62,7 @@ Example:
 
 ```html
 <script type="module">
-  import mermaid from 'https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs';
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad: true });
 </script>
 ```
@@ -85,7 +85,7 @@ Example:
       B-->D(fa:fa-spinner);
     </pre>
     <script type="module">
-      import mermaid from 'https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs';
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
       mermaid.initialize({ startOnLoad: true });
     </script>
   </body>
@@ -348,7 +348,7 @@ on what kind of integration you use.
 
 ## Using the mermaid object
 
-Is it possible to set some configuration via the mermaid object. The two parameters that are supported using this
+It is possible to set some configuration via the mermaid object. The two parameters that are supported using this
 approach are:
 
 - mermaid.startOnLoad

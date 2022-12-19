@@ -21,7 +21,7 @@ mindmap
       Popularisation
         British popular psychology author Tony Buzan
     Research
-      On effectivness<br/>and eatures
+      On effectiveness<br/>and features
       On Automatic creation
         Uses
             Creative techniques
@@ -42,7 +42,7 @@ mindmap
       Popularisation
         British popular psychology author Tony Buzan
     Research
-      On effectivness<br/>and eatures
+      On effectiveness<br/>and features
       On Automatic creation
         Uses
             Creative techniques
@@ -152,6 +152,18 @@ mindmap
     id)I am a cloud(
 ```
 
+### Hexagon
+
+```mermaid-example
+mindmap
+    id{{I am a hexagon}}
+```
+
+```mermaid
+mindmap
+    id{{I am a hexagon}}
+```
+
 ### Default
 
 ```mermaid-example
@@ -168,7 +180,7 @@ More shapes will be added, beginning with the shapes available in flowcharts.
 
 # Icons and classes
 
-## icons
+## Icons
 
 As with flowcharts you can add icons to your nodes but with an updated syntax. The styling for the font based icons are added during the integration so that they are available for the web page. _This is not something a diagram author can do but has to be done with the site administrator or the integrator_. Once the icon fonts are in place you add them to the mind map nodes using the `::icon()` syntax. You place the classes for the icon within the parenthesis like in the following example where icons for material design and fontawesome 4 are displayed. The intention is that this approach should be used for all diagrams supporting icons. **Experimental feature:** This wider scope is also the reason Mindmaps are experimental as this syntax and approach could change.
 
@@ -241,3 +253,17 @@ Root
         B
       C
 ```
+
+## Integrating with your library/website.
+
+Mindmap uses the experimental lazy loading & async rendering features which could change in the future.
+
+```html
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
+  import mindmap from 'https://cdn.jsdelivr.net/npm/@mermaid-js/mermaid-mindmap@9/dist/mermaid-mindmap.esm.min.mjs';
+  await mermaid.registerExternalDiagrams([mindmap]);
+</script>
+```
+
+You can also refer the implementation in the live editor [here](https://github.com/mermaid-js/mermaid-live-editor/blob/fcf53c98c25604c90a218104268c339be53035a6/src/lib/util/mermaid.ts) to see how the async loading is done.

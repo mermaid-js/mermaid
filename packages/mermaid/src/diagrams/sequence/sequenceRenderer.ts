@@ -9,7 +9,6 @@ import * as configApi from '../../config';
 import assignWithDepth from '../../assignWithDepth';
 import utils from '../../utils';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import addSVGAccessibilityFields from '../../accessibility';
 import Diagram from '../../Diagram';
 
 let conf = {};
@@ -91,7 +90,7 @@ export const bounds = {
     setConf(configApi.getConfig());
   },
   updateVal: function (obj, key, val, fun) {
-    if (typeof obj[key] === 'undefined') {
+    if (obj[key] === undefined) {
       obj[key] = val;
     } else {
       obj[key] = fun(val, obj[key]);
@@ -481,8 +480,8 @@ export const drawActors = function (
   let prevWidth = 0;
   let prevMargin = 0;
   let maxHeight = 0;
-  for (let i = 0; i < actorKeys.length; i++) {
-    const actor = actors[actorKeys[i]];
+  for (const actorKey of actorKeys) {
+    const actor = actors[actorKey];
 
     // Add some rendering data to the object
     actor.width = actor.width || conf.width;
@@ -509,8 +508,8 @@ export const drawActors = function (
 export const drawActorsPopup = function (diagram, actors, actorKeys, doc) {
   let maxHeight = 0;
   let maxWidth = 0;
-  for (let i = 0; i < actorKeys.length; i++) {
-    const actor = actors[actorKeys[i]];
+  for (const actorKey of actorKeys) {
+    const actor = actors[actorKey];
     const minMenuWidth = getRequiredPopupWidth(actor);
     const menuDimensions = svgDraw.drawPopup(
       diagram,
@@ -904,7 +903,6 @@ export const draw = function (_text: string, id: string, _version: string, diagO
       (height + extraVertForTitle)
   );
 
-  addSVGAccessibilityFields(diagObj.db, diagram, id);
   log.debug(`models:`, bounds.models);
 };
 
@@ -1180,7 +1178,7 @@ const buildMessageModel = function (msg, actors, diagObj) {
   const toBounds = activationBounds(msg.to, actors);
   const fromIdx = fromBounds[0] <= toBounds[0] ? 1 : 0;
   const toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
-  const allBounds = fromBounds.concat(toBounds);
+  const allBounds = [...fromBounds, ...toBounds];
   const boundedWidth = Math.abs(toBounds[toIdx] - fromBounds[fromIdx]);
   if (msg.wrap && msg.message) {
     msg.message = utils.wrapLabel(

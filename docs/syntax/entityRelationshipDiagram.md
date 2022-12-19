@@ -13,6 +13,9 @@ Note that practitioners of ER modelling almost always refer to _entity types_ si
 Mermaid can render ER diagrams
 
 ```mermaid-example
+---
+title: Order example
+---
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains
@@ -20,6 +23,9 @@ erDiagram
 ```
 
 ```mermaid
+---
+title: Order example
+---
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains
@@ -224,25 +230,26 @@ erDiagram
     }
 ```
 
-The `type` and `name` values must begin with an alphabetic character and may contain digits, hyphens or underscores. Other than that, there are no restrictions, and there is no implicit set of valid data types.
+The `type` and `name` values must begin with an alphabetic character and may contain digits, hyphens, underscores, parentheses and square brackets. Other than that, there are no restrictions, and there is no implicit set of valid data types.
 
 #### Attribute Keys and Comments
 
-Attributes may also have a `key` or comment defined. Keys can be "PK" or "FK", for Primary Key or Foreign Key. And a `comment` is defined by double quotes at the end of an attribute. Comments themselves cannot have double-quote characters in them.
+Attributes may also have a `key` or comment defined. Keys can be "PK", "FK" or "UK", for Primary Key, Foreign Key or Unique Key. And a `comment` is defined by double quotes at the end of an attribute. Comments themselves cannot have double-quote characters in them.
 
 ```mermaid-example
 erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {
         string allowedDriver FK "The license of the allowed driver"
-        string registrationNumber
+        string registrationNumber UK
         string make
         string model
+        string[] parts
     }
     PERSON ||--o{ NAMED-DRIVER : is
     PERSON {
         string driversLicense PK "The license #"
-        string firstName
+        string(99) firstName "Only 99 characters are allowed"
         string lastName
         int age
     }
@@ -254,14 +261,15 @@ erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {
         string allowedDriver FK "The license of the allowed driver"
-        string registrationNumber
+        string registrationNumber UK
         string make
         string model
+        string[] parts
     }
     PERSON ||--o{ NAMED-DRIVER : is
     PERSON {
         string driversLicense PK "The license #"
-        string firstName
+        string(99) firstName "Only 99 characters are allowed"
         string lastName
         int age
     }

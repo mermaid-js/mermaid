@@ -8,8 +8,18 @@ export interface InjectUtils {
   _setupGraphViewbox: any;
 }
 
+/**
+ * Generic Diagram DB that may apply to any diagram type.
+ */
+export interface DiagramDb {
+  clear?: () => void;
+  setDiagramTitle?: (title: string) => void;
+  getAccTitle?: () => string;
+  getAccDescription?: () => string;
+}
+
 export interface DiagramDefinition {
-  db: any;
+  db: DiagramDb;
   renderer: any;
   parser: any;
   styles: any;

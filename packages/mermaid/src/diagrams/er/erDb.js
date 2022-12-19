@@ -8,6 +8,8 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
+  setDiagramTitle,
+  getDiagramTitle,
 } from '../../commonDb';
 
 let entities = {};
@@ -30,7 +32,7 @@ export const parseDirective = function (statement, context, type) {
 };
 
 const addEntity = function (name) {
-  if (typeof entities[name] === 'undefined') {
+  if (entities[name] === undefined) {
     entities[name] = { attributes: [] };
     log.info('Added new entity :', name);
   }
@@ -94,4 +96,6 @@ export default {
   getAccTitle,
   setAccDescription,
   getAccDescription,
+  setDiagramTitle,
+  getDiagramTitle,
 };

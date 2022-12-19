@@ -148,6 +148,11 @@ g.classGroup line {
   font-size: 11px;
 }
 
+.classTitleText {
+  text-anchor: middle;
+  font-size: 18px;
+  fill: ${options.textColor};
+}
 `;
 
 export default getStyles;

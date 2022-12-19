@@ -391,12 +391,10 @@ const labelRect = (parent, node) => {
 function applyNodePropertyBorders(rect, borders, totalWidth, totalHeight) {
   const strokeDashArray = [];
   const addBorder = (length) => {
-    strokeDashArray.push(length);
-    strokeDashArray.push(0);
+    strokeDashArray.push(length, 0);
   };
   const skipBorder = (length) => {
-    strokeDashArray.push(0);
-    strokeDashArray.push(length);
+    strokeDashArray.push(0, length);
   };
   if (borders.includes('t')) {
     log.debug('add top border');

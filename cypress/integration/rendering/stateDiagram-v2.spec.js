@@ -328,7 +328,7 @@ describe('State diagram', () => {
       }
     );
   });
-  it('v2 it should be possibel to use a choice', () => {
+  it('v2 it should be possible to use a choice', () => {
     imgSnapshotTest(
       `
   stateDiagram-v2
@@ -558,5 +558,17 @@ stateDiagram-v2
         { logLevel: 0, fontFamily: 'courier' }
       );
     });
+  });
+  it('1433: should render a simple state diagram with a title', () => {
+    imgSnapshotTest(
+      `---
+title: simple state diagram
+---
+stateDiagram-v2
+[*] --> State1
+State1 --> [*]
+`,
+      {}
+    );
   });
 });

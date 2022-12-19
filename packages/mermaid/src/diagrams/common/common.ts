@@ -47,7 +47,9 @@ export const sanitizeText = (text: string, config: MermaidConfig): string => {
   if (config.dompurifyConfig) {
     text = DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig).toString();
   } else {
-    text = DOMPurify.sanitize(sanitizeMore(text, config));
+    text = DOMPurify.sanitize(sanitizeMore(text, config), {
+      FORBID_TAGS: ['style'],
+    }).toString();
   }
   return text;
 };
@@ -152,7 +154,7 @@ export const evaluate = (val?: string | boolean): boolean =>
 export const parseGenericTypes = function (text: string): string {
   let cleanedText = text;
 
-  if (text.indexOf('~') !== -1) {
+  if (text.includes('~')) {
     cleanedText = cleanedText.replace(/~([^~].*)/, '<$1');
     cleanedText = cleanedText.replace(/~([^~]*)$/, '>$1');
 

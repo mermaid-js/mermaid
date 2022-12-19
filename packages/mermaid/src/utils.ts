@@ -21,7 +21,7 @@ import { log } from './logger';
 import { detectType } from './diagram-api/detectType';
 import assignWithDepth from './assignWithDepth';
 import { MermaidConfig } from './config.type';
-import memoize from 'lodash/memoize';
+import memoize from 'lodash-es/memoize.js';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -37,10 +37,9 @@ const d3CurveTypes = {
   curveStepAfter: curveStepAfter,
   curveStepBefore: curveStepBefore,
 };
-const directive =
-  /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
+const directive = /%{2}{\s*(?:(\w+)\s*:|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;
 const directiveWithoutOpen =
-  /\s*(?:(?:(\w+)(?=:):|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
+  /\s*(?:(\w+)(?=:):|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;
 
 /**
  * Detects the init config object from the text
@@ -91,7 +90,7 @@ export const detectInit = function (text: string, config?: MermaidConfig): Merma
   if (results) {
     let type = detectType(text, config);
     ['config'].forEach((prop) => {
-      if (typeof results[prop] !== 'undefined') {
+      if (results[prop] !== undefined) {
         if (type === 'flowchart-v2') {
           type = 'flowchart';
         }
@@ -180,8 +179,8 @@ export const detectDirective = function (
  * @returns The array index containing the substring or -1 if not present
  */
 export const isSubstringInArray = function (str: string, arr: string[]): number {
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i].match(str)) {
+  for (const [i, element] of arr.entries()) {
+    if (element.match(str)) {
       return i;
     }
   }
@@ -195,7 +194,10 @@ export const isSubstringInArray = function (str: string, arr: string[]): number 
  * @param defaultCurve - The default curve to return
  * @returns The curve factory to use
  */
-export function interpolateToCurve(interpolate?: string, defaultCurve: CurveFactory): CurveFactory {
+export function interpolateToCurve(
+  interpolate: string | undefined,
+  defaultCurve: CurveFactory
+): CurveFactory {
   if (!interpolate) {
     return defaultCurve;
   }
@@ -460,13 +462,13 @@ export function getStylesFromArray(arr: string[]): { style: string; labelStyle: 
   let style = '';
   let labelStyle = '';
 
-  for (let i = 0; i < arr.length; i++) {
-    if (typeof arr[i] !== 'undefined') {
+  for (const element of arr) {
+    if (element !== undefined) {
       // add text properties to label style definition
-      if (arr[i].startsWith('color:') || arr[i].startsWith('text-align:')) {
-        labelStyle = labelStyle + arr[i] + ';';
+      if (element.startsWith('color:') || element.startsWith('text-align:')) {
+        labelStyle = labelStyle + element + ';';
       } else {
-        style = style + arr[i] + ';';
+        style = style + element + ';';
       }
     }
   }
@@ -549,7 +551,7 @@ export const drawSimpleText = function (
   textElem.style('font-size', textData.fontSize);
   textElem.style('font-weight', textData.fontWeight);
   textElem.attr('fill', textData.fill);
-  if (typeof textData.class !== 'undefined') {
+  if (textData.class !== undefined) {
     textElem.attr('class', textData.class);
   }
 
@@ -561,54 +563,77 @@ export const drawSimpleText = function (
   return textElem;
 };
 
-export const wrapLabel = memoize(
-  (label, maxWidth, config) => {
-    if (!label) {
-      return label;
-    }
-    config = Object.assign(
-      { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: '<br/>' },
-      config
-    );
-    if (common.lineBreakRegex.test(label)) {
-      return label;
-    }
-    const words = label.split(' ');
-    const completedLines = [];
-    let nextLine = '';
-    words.forEach((word, index) => {
-      const wordLength = calculateTextWidth(`${word} `, config);
-      const nextLineLength = calculateTextWidth(nextLine, config);
-      if (wordLength > maxWidth) {
-        const { hyphenatedStrings, remainingWord } = breakString(word, maxWidth, '-', config);
-        completedLines.push(nextLine, ...hyphenatedStrings);
-        nextLine = remainingWord;
-      } else if (nextLineLength + wordLength >= maxWidth) {
-        completedLines.push(nextLine);
-        nextLine = word;
-      } else {
-        nextLine = [nextLine, word].filter(Boolean).join(' ');
-      }
-      const currentWord = index + 1;
-      const isLastWord = currentWord === words.length;
-      if (isLastWord) {
-        completedLines.push(nextLine);
-      }
-    });
-    return completedLines.filter((line) => line !== '').join(config.joinWith);
-  },
-  (label, maxWidth, config) =>
-    `${label}${maxWidth}${config.fontSize}${config.fontWeight}${config.fontFamily}${config.joinWith}`
-);
+interface WrapLabelConfig {
+  fontSize: number;
+  fontFamily: string;
+  fontWeight: number;
+  joinWith: string;
+}
 
-const breakString = memoize(
-  (word, maxWidth, hyphenCharacter = '-', config) => {
+export const wrapLabel: (label: string, maxWidth: string, config: WrapLabelConfig) => string =
+  memoize(
+    (label: string, maxWidth: string, config: WrapLabelConfig): string => {
+      if (!label) {
+        return label;
+      }
+      config = Object.assign(
+        { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: '<br/>' },
+        config
+      );
+      if (common.lineBreakRegex.test(label)) {
+        return label;
+      }
+      const words = label.split(' ');
+      const completedLines = [];
+      let nextLine = '';
+      words.forEach((word, index) => {
+        const wordLength = calculateTextWidth(`${word} `, config);
+        const nextLineLength = calculateTextWidth(nextLine, config);
+        if (wordLength > maxWidth) {
+          const { hyphenatedStrings, remainingWord } = breakString(word, maxWidth, '-', config);
+          completedLines.push(nextLine, ...hyphenatedStrings);
+          nextLine = remainingWord;
+        } else if (nextLineLength + wordLength >= maxWidth) {
+          completedLines.push(nextLine);
+          nextLine = word;
+        } else {
+          nextLine = [nextLine, word].filter(Boolean).join(' ');
+        }
+        const currentWord = index + 1;
+        const isLastWord = currentWord === words.length;
+        if (isLastWord) {
+          completedLines.push(nextLine);
+        }
+      });
+      return completedLines.filter((line) => line !== '').join(config.joinWith);
+    },
+    (label, maxWidth, config) =>
+      `${label}${maxWidth}${config.fontSize}${config.fontWeight}${config.fontFamily}${config.joinWith}`
+  );
+
+interface BreakStringOutput {
+  hyphenatedStrings: string[];
+  remainingWord: string;
+}
+
+const breakString: (
+  word: string,
+  maxWidth: number,
+  hyphenCharacter: string,
+  config: WrapLabelConfig
+) => BreakStringOutput = memoize(
+  (
+    word: string,
+    maxWidth: number,
+    hyphenCharacter = '-',
+    config: WrapLabelConfig
+  ): BreakStringOutput => {
     config = Object.assign(
       { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 0 },
       config
     );
-    const characters = word.split('');
-    const lines = [];
+    const characters = [...word];
+    const lines: string[] = [];
     let currentLine = '';
     characters.forEach((character, index) => {
       const nextLine = `${currentLine}${character}`;
@@ -667,6 +692,16 @@ export function calculateTextWidth(
   return calculateTextDimensions(text, config).width;
 }
 
+interface TextDimensionConfig {
+  fontSize?: number;
+  fontWeight?: number;
+  fontFamily?: string;
+}
+interface TextDimensions {
+  width: number;
+  height: number;
+  lineHeight?: number;
+}
 /**
  * This calculates the dimensions of the given text, font size, font family, font weight, and
  * margins.
@@ -676,15 +711,11 @@ export function calculateTextWidth(
  *   the resulting size
  * @returns The dimensions for the given text
  */
-export const calculateTextDimensions = memoize(
-  function (
-    text: string,
-    config: {
-      fontSize?: number;
-      fontWeight?: number;
-      fontFamily?: string;
-    }
-  ) {
+export const calculateTextDimensions: (
+  text: string,
+  config: TextDimensionConfig
+) => TextDimensions = memoize(
+  (text: string, config: TextDimensionConfig): TextDimensions => {
     config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial' }, config);
     const { fontSize, fontFamily, fontWeight } = config;
     if (!text) {
@@ -793,34 +824,34 @@ export const directiveSanitizer = (args: any) => {
       // This is an object
       Object.keys(args).forEach((key) => {
         log.debug('Checking key', key);
-        if (key.indexOf('__') === 0) {
+        if (key.startsWith('__')) {
           log.debug('sanitize deleting __ option', key);
           delete args[key];
         }
 
-        if (key.indexOf('proto') >= 0) {
+        if (key.includes('proto')) {
           log.debug('sanitize deleting proto option', key);
           delete args[key];
         }
 
-        if (key.indexOf('constr') >= 0) {
+        if (key.includes('constr')) {
           log.debug('sanitize deleting constr option', key);
           delete args[key];
         }
 
-        if (key.indexOf('themeCSS') >= 0) {
+        if (key.includes('themeCSS')) {
           log.debug('sanitizing themeCss option');
           args[key] = sanitizeCss(args[key]);
         }
-        if (key.indexOf('fontFamily') >= 0) {
+        if (key.includes('fontFamily')) {
           log.debug('sanitizing fontFamily option');
           args[key] = sanitizeCss(args[key]);
         }
-        if (key.indexOf('altFontFamily') >= 0) {
+        if (key.includes('altFontFamily')) {
           log.debug('sanitizing altFontFamily option');
           args[key] = sanitizeCss(args[key]);
         }
-        if (configKeys.indexOf(key) < 0) {
+        if (!configKeys.includes(key)) {
           log.debug('sanitize deleting option', key);
           delete args[key];
         } else {
@@ -834,10 +865,9 @@ export const directiveSanitizer = (args: any) => {
   }
   if (args.themeVariables) {
     const kArr = Object.keys(args.themeVariables);
-    for (let i = 0; i < kArr.length; i++) {
-      const k = kArr[i];
+    for (const k of kArr) {
       const val = args.themeVariables[k];
-      if (val && val.match && !val.match(/^[a-zA-Z0-9#,";()%. ]+$/)) {
+      if (val && val.match && !val.match(/^[\d "#%(),.;A-Za-z]+$/)) {
         args.themeVariables[k] = '';
       }
     }
@@ -848,13 +878,13 @@ export const sanitizeCss = (str) => {
   let startCnt = 0;
   let endCnt = 0;
 
-  for (let i = 0; i < str.length; i++) {
+  for (const element of str) {
     if (startCnt < endCnt) {
       return '{ /* ERROR: Unbalanced CSS */ }';
     }
-    if (str[i] === '{') {
+    if (element === '{') {
       startCnt++;
-    } else if (str[i] === '}') {
+    } else if (element === '}') {
       endCnt++;
     }
   }
@@ -885,6 +915,32 @@ export function getErrorMessage(error: unknown): string {
   return String(error);
 }
 
+/**
+ * Appends <text> element with the given title and css class.
+ *
+ * @param parent - d3 svg object to append title to
+ * @param cssClass - CSS class for the <text> element containing the title
+ * @param titleTopMargin - Margin in pixels between title and rest of the graph
+ * @param title - The title. If empty, returns immediately.
+ */
+export const insertTitle = (
+  parent,
+  cssClass: string,
+  titleTopMargin: number,
+  title?: string
+): void => {
+  if (!title) {
+    return;
+  }
+  const bounds = parent.node().getBBox();
+  parent
+    .append('text')
+    .text(title)
+    .attr('x', bounds.x + bounds.width / 2)
+    .attr('y', -titleTopMargin)
+    .attr('class', cssClass);
+};
+
 export default {
   assignWithDepth,
   wrapLabel,
@@ -907,4 +963,5 @@ export default {
   initIdGenerator: initIdGenerator,
   directiveSanitizer,
   sanitizeCss,
+  insertTitle,
 };

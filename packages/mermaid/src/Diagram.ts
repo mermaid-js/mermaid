@@ -2,6 +2,7 @@ import * as configApi from './config';
 import { log } from './logger';
 import { getDiagram, registerDiagram } from './diagram-api/diagramAPI';
 import { detectType, getDiagramLoader } from './diagram-api/detectType';
+import { extractFrontMatter } from './diagram-api/frontmatter';
 import { isDetailedError, type DetailedError } from './utils';
 
 export type ParseErrorFunction = (err: string | DetailedError, hash?: any) => void;
@@ -29,6 +30,16 @@ export class Diagram {
     this.db.clear?.();
     this.renderer = diagram.renderer;
     this.parser = diagram.parser;
+    const originalParse = this.parser.parse.bind(this.parser);
+    // Wrap the jison parse() method to handle extracting frontmatter.
+    //
+    // This can't be done in this.parse() because some code
+    // directly calls diagram.parser.parse(), bypassing this.parse().
+    //
+    // Similarly, we can't do this in getDiagramFromText() because some code
+    // calls diagram.db.clear(), which would reset anything set by
+    // extractFrontMatter().
+    this.parser.parse = (text: string) => originalParse(extractFrontMatter(text, this.db));
     this.parser.parser.yy = this.db;
     if (diagram.init) {
       diagram.init(cnf);
@@ -45,7 +56,7 @@ export class Diagram {
     }
     try {
       text = text + '\n';
-      this.db.clear();
+      this.db.clear?.();
       this.parser.parse(text);
       return true;
     } catch (error) {
@@ -91,7 +102,6 @@ export const getDiagramFromText = (
   try {
     // Trying to find the diagram
     getDiagram(type);
-    return new Diagram(txt, parseError);
   } catch (error) {
     const loader = getDiagramLoader(type);
     if (!loader) {
@@ -107,6 +117,7 @@ export const getDiagramFromText = (
       return new Diagram(txt, parseError);
     });
   }
+  return new Diagram(txt, parseError);
 };
 
 export default Diagram;

@@ -21,7 +21,17 @@
     "plugin:@cspell/recommended",
     "prettier"
   ],
-  "plugins": ["@typescript-eslint", "no-only-tests", "html", "jest", "jsdoc", "json", "@cspell"],
+  "plugins": [
+    "@typescript-eslint",
+    "no-only-tests",
+    "html",
+    "jest",
+    "jsdoc",
+    "json",
+    "@cspell",
+    "lodash",
+    "unicorn"
+  ],
   "rules": {
     "curly": "error",
     "no-console": "error",
@@ -53,7 +63,30 @@
         "allowEmptyCatch": true
       }
     ],
-    "no-only-tests/no-only-tests": "error"
+    "no-only-tests/no-only-tests": "error",
+    "lodash/import-scope": ["error", "method"],
+    "unicorn/better-regex": "error",
+    "unicorn/no-abusive-eslint-disable": "error",
+    "unicorn/no-array-push-push": "error",
+    "unicorn/no-for-loop": "error",
+    "unicorn/no-instanceof-array": "error",
+    "unicorn/no-typeof-undefined": "error",
+    "unicorn/no-unnecessary-await": "error",
+    "unicorn/no-unsafe-regex": "warn",
+    "unicorn/no-useless-promise-resolve-reject": "error",
+    "unicorn/prefer-array-find": "error",
+    "unicorn/prefer-array-flat-map": "error",
+    "unicorn/prefer-array-index-of": "error",
+    "unicorn/prefer-array-some": "error",
+    "unicorn/prefer-default-parameters": "error",
+    "unicorn/prefer-includes": "error",
+    "unicorn/prefer-negative-index": "error",
+    "unicorn/prefer-object-from-entries": "error",
+    "unicorn/prefer-string-starts-ends-with": "error",
+    "unicorn/prefer-string-trim-start-end": "error",
+    "unicorn/string-content": "error",
+    "unicorn/prefer-spread": "error",
+    "unicorn/no-lonely-if": "error"
   },
   "overrides": [
     {

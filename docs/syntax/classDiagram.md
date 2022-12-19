@@ -7,13 +7,17 @@
 # Class diagrams
 
 > "In software engineering, a class diagram in the Unified Modeling Language (UML) is a type of static structure diagram that describes the structure of a system by showing the system's classes, their attributes, operations (or methods), and the relationships among objects."
-> Wikipedia
+>
+> \-Wikipedia
 
 The class diagram is the main building block of object-oriented modeling. It is used for general conceptual modeling of the structure of the application, and for detailed modeling to translate the models into programming code. Class diagrams can also be used for data modeling. The classes in a class diagram represent both the main elements, interactions in the application, and the classes to be programmed.
 
 Mermaid can render class diagrams.
 
 ```mermaid-example
+---
+title: Animal example
+---
 classDiagram
     note "From Duck till Zebra"
     Animal <|-- Duck
@@ -40,6 +44,9 @@ classDiagram
 ```
 
 ```mermaid
+---
+title: Animal example
+---
 classDiagram
     note "From Duck till Zebra"
     Animal <|-- Duck
@@ -77,6 +84,9 @@ A single instance of a class in the diagram contains three compartments:
 - The bottom compartment contains the operations the class can execute. They are also left-aligned and the first letter is lowercase.
 
 ```mermaid-example
+---
+title: Bank example
+---
 classDiagram
     class BankAccount
     BankAccount : +String owner
@@ -87,6 +97,9 @@ classDiagram
 ```
 
 ```mermaid
+---
+title: Bank example
+---
 classDiagram
     class BankAccount
     BankAccount : +String owner
@@ -224,10 +237,6 @@ Square : -List~string~ messages
 Square : +setMessages(List~string~ messages)
 Square : +getMessages() List~string~
 ```
-
-#### Return Type
-
-Optionally you can end the method/function definition with the data type that will be returned.
 
 #### Visibility
 
@@ -559,7 +568,7 @@ You would define these actions on a separate line after all classes have been de
 
 ## Notes
 
-It is possible to add notes on digram using `note "line1\nline2"` or note for class using `note for class "line1\nline2"`
+It is possible to add notes on diagram using `note "line1\nline2"` or note for class using `note for class "line1\nline2"`
 
 ### Examples
 

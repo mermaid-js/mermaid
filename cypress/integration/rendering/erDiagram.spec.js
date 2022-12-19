@@ -182,6 +182,20 @@ describe('Entity Relationship Diagram', () => {
     cy.get('svg');
   });
 
+  it('should render entities with length in attributes type', () => {
+    renderGraph(
+      `
+    erDiagram
+        CLUSTER {
+          varchar(99) name
+          string(255) description 
+        }
+      `,
+      { logLevel: 1 }
+    );
+    cy.get('svg');
+  });
+
   it('should render entities and attributes with big and small entity names', () => {
     renderGraph(
       `
@@ -272,5 +286,18 @@ describe('Entity Relationship Diagram', () => {
       { logLevel: 1 }
     );
     cy.get('svg');
+  });
+
+  it('1433: should render a simple ER diagram with a title', () => {
+    imgSnapshotTest(
+      `---
+title: simple ER diagram
+---
+erDiagram
+CUSTOMER ||--o{ ORDER : places
+ORDER ||--|{ LINE-ITEM : contains
+`,
+      {}
+    );
   });
 });

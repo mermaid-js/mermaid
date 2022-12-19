@@ -1,6 +1,5 @@
 import flowDb from '../flowDb';
 import flow from './flow';
-import filter from 'lodash/filter';
 import { setConfig } from '../../../config';
 
 setConfig({
@@ -79,8 +78,8 @@ describe('when parsing directions', function () {
     const subgraphs = flow.parser.yy.getSubGraphs();
     expect(subgraphs.length).toBe(2);
 
-    const subgraphA = filter(subgraphs, (o) => o.id === 'A')[0];
-    const subgraphB = filter(subgraphs, (o) => o.id === 'B')[0];
+    const subgraphA = subgraphs.find((o) => o.id === 'A');
+    const subgraphB = subgraphs.find((o) => o.id === 'B');
 
     expect(subgraphB.nodes[0]).toBe('c');
     expect(subgraphB.dir).toBe('LR');

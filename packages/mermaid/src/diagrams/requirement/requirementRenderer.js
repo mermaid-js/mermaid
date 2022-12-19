@@ -1,12 +1,11 @@
 import { line, select } from 'd3';
-import dagre from 'dagre';
-import graphlib from 'graphlib';
+import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import common from '../common/common';
 import markers from './requirementMarkers';
 import { getConfig } from '../../config';
-import addSVGAccessibilityFields from '../../accessibility';
 
 let conf = {};
 let relCnt = 0;
@@ -284,7 +283,7 @@ const addRelationships = (relationships, g) => {
 
 const adjustEntities = function (svgNode, graph) {
   graph.nodes().forEach(function (v) {
-    if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
+    if (v !== undefined && graph.node(v) !== undefined) {
       svgNode.select('#' + v);
       svgNode
         .select('#' + v)
@@ -348,7 +347,7 @@ export const draw = (text, id, _version, diagObj) => {
   drawReqs(requirements, g, svg);
   drawElements(elements, g, svg);
   addRelationships(relationships, g);
-  dagre.layout(g);
+  dagreLayout(g);
   adjustEntities(svg, g);
 
   relationships.forEach(function (rel) {
@@ -363,8 +362,6 @@ export const draw = (text, id, _version, diagObj) => {
   configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
-  // Adds title and description to the requirements diagram
-  addSVGAccessibilityFields(diagObj.db, svg, id);
 };
 
 export default {

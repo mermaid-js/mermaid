@@ -10,6 +10,8 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
+  setDiagramTitle,
+  getDiagramTitle,
 } from '../../commonDb';
 
 const MERMAID_DOM_ID_PREFIX = 'classid-';
@@ -50,7 +52,7 @@ const splitClassNameAndType = function (id) {
 export const addClass = function (id) {
   let classId = splitClassNameAndType(id);
   // Only add class if not exists
-  if (typeof classes[classId.className] !== 'undefined') {
+  if (classes[classId.className] !== undefined) {
     return;
   }
 
@@ -75,9 +77,9 @@ export const addClass = function (id) {
  */
 export const lookUpDomId = function (id) {
   const classKeys = Object.keys(classes);
-  for (let i = 0; i < classKeys.length; i++) {
-    if (classes[classKeys[i]].id === id) {
-      return classes[classKeys[i]].domId;
+  for (const classKey of classKeys) {
+    if (classes[classKey].id === id) {
+      return classes[classKey].domId;
     }
   }
 };
@@ -205,7 +207,7 @@ export const setCssClass = function (ids, className) {
     if (_id[0].match(/\d/)) {
       id = MERMAID_DOM_ID_PREFIX + id;
     }
-    if (typeof classes[id] !== 'undefined') {
+    if (classes[id] !== undefined) {
       classes[id].cssClasses.push(className);
     }
   });
@@ -220,7 +222,7 @@ export const setCssClass = function (ids, className) {
 const setTooltip = function (ids, tooltip) {
   const config = configApi.getConfig();
   ids.split(',').forEach(function (id) {
-    if (typeof tooltip !== 'undefined') {
+    if (tooltip !== undefined) {
       classes[id].tooltip = common.sanitizeText(tooltip, config);
     }
   });
@@ -242,7 +244,7 @@ export const setLink = function (ids, linkStr, target) {
     if (_id[0].match(/\d/)) {
       id = MERMAID_DOM_ID_PREFIX + id;
     }
-    if (typeof classes[id] !== 'undefined') {
+    if (classes[id] !== undefined) {
       classes[id].link = utils.formatUrl(linkStr, config);
       if (config.securityLevel === 'sandbox') {
         classes[id].linkTarget = '_top';
@@ -279,10 +281,10 @@ const setClickFunc = function (domId, functionName, functionArgs) {
   if (config.securityLevel !== 'loose') {
     return;
   }
-  if (typeof functionName === 'undefined') {
+  if (functionName === undefined) {
     return;
   }
-  if (typeof classes[id] !== 'undefined') {
+  if (classes[id] !== undefined) {
     let argList = [];
     if (typeof functionArgs === 'string') {
       /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
@@ -408,4 +410,6 @@ export default {
   getTooltip,
   setTooltip,
   lookUpDomId,
+  setDiagramTitle,
+  getDiagramTitle,
 };
