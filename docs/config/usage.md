@@ -12,7 +12,7 @@ Diagrams can be re-rendered/modified by modifying their descriptions.
 
 ### CDN
 
-<https://unpkg.com/mermaid/>
+<https://www.jsdelivr.com/package/npm/mermaid>
 
 Please note that you can switch versions through the dropdown box at the top right.
 

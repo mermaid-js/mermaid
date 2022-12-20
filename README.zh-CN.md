@@ -28,7 +28,7 @@ Mermaid 甚至能让非程序员也能通过 [Mermaid Live Editor](https://merma
 
 如果想要查看关于 Mermaid 更详细的介绍及基础使用方式，可以查看 [入门指引](./docs/community/n00b-overview.md), [用法](./docs/config/usage.md) 和 [教程](./docs/config/Tutorials.md).
 
-🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [文档](https://mermaidjs.github.io) | 🙌 [贡献](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md) | 📜 [更新日志](./docs/CHANGELOG.md)
+🌐 [CDN](https://www.jsdelivr.com/package/npm/mermaid) | 📖 [文档](https://mermaidjs.github.io) | 🙌 [贡献](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md) | 📜 [更新日志](./docs/CHANGELOG.md)
 
 <!-- </Main description> -->
 
