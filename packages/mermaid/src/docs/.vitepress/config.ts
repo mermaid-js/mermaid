@@ -23,10 +23,13 @@ export default defineConfig({
       pattern: 'https://github.com/mermaid-js/mermaid/edit/develop/packages/mermaid/src/docs/:path',
       text: 'Edit this page on GitHub',
     },
-
     sidebar: {
       '/': sidebarAll(),
     },
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/mermaid-js/mermaid' },
+      { icon: 'slack', link: 'https://mermaid-talk.slack.com' },
+    ],
   },
 });
 
@@ -55,14 +58,6 @@ function nav() {
     {
       text: '💻 Live Editor',
       link: 'https://mermaid.live',
-    },
-    {
-      text: 'Slack',
-      link: 'https://mermaid-talk.slack.com',
-    },
-    {
-      text: 'GitHub',
-      link: 'https://github.com/mermaid-js/mermaid',
     },
   ];
 }
