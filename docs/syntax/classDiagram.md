@@ -267,7 +267,7 @@ There are eight different types of relations defined for classes under UML which
 | Type    | Description   |
 | ------- | ------------- |
 | `<\|--` | Inheritance   |
-| `\*--`  | Composition   |
+| `*--`   | Composition   |
 | `o--`   | Aggregation   |
 | `-->`   | Association   |
 | `--`    | Link (Solid)  |
