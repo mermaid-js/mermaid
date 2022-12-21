@@ -238,10 +238,6 @@ Square : +setMessages(List~string~ messages)
 Square : +getMessages() List~string~
 ```
 
-#### Return Type
-
-Optionally you can end the method/function definition with the data type that will be returned.
-
 #### Visibility
 
 To describe the visibility (or encapsulation) of an attribute or method/function that is a part of a class (i.e. a class member), optional notation may be placed before that members' name:
@@ -271,7 +267,7 @@ There are eight different types of relations defined for classes under UML which
 | Type    | Description   |
 | ------- | ------------- |
 | `<\|--` | Inheritance   |
-| `\*--`  | Composition   |
+| `*--`   | Composition   |
 | `o--`   | Aggregation   |
 | `-->`   | Association   |
 | `--`    | Link (Solid)  |

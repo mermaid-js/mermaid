@@ -21,7 +21,7 @@ import { log } from './logger';
 import { detectType } from './diagram-api/detectType';
 import assignWithDepth from './assignWithDepth';
 import { MermaidConfig } from './config.type';
-import memoize from 'lodash-es/memoize';
+import memoize from 'lodash-es/memoize.js';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -194,7 +194,10 @@ export const isSubstringInArray = function (str: string, arr: string[]): number 
  * @param defaultCurve - The default curve to return
  * @returns The curve factory to use
  */
-export function interpolateToCurve(interpolate?: string, defaultCurve: CurveFactory): CurveFactory {
+export function interpolateToCurve(
+  interpolate: string | undefined,
+  defaultCurve: CurveFactory
+): CurveFactory {
   if (!interpolate) {
     return defaultCurve;
   }
