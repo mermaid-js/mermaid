@@ -62,6 +62,7 @@
     "mitigations",
     "mkdocs",
     "mult",
+    "ohmyfetch",
     "orlandoni",
     "phpbb",
     "plantuml",
@@ -99,7 +100,11 @@
     "yash"
   ],
   "patterns": [
-    { "name": "Markdown links", "pattern": "\\((.*)\\)", "description": "" },
+    {
+      "name": "Markdown links",
+      "pattern": "\\((.*)\\)",
+      "description": ""
+    },
     {
       "name": "Markdown code blocks",
       "pattern": "/^(\\s*`{3,}).*[\\s\\S]*?^\\1/gmx",
@@ -110,14 +115,25 @@
       "pattern": "\\`([^\\`\\r\\n]+?)\\`",
       "description": "https://stackoverflow.com/questions/41274241/how-to-capture-inline-markdown-code-but-not-a-markdown-code-fence-with-regex"
     },
-    { "name": "Link contents", "pattern": "\\<a(.*)\\>", "description": "" },
-    { "name": "Snippet references", "pattern": "-- snippet:(.*)", "description": "" },
+    {
+      "name": "Link contents",
+      "pattern": "\\<a(.*)\\>",
+      "description": ""
+    },
+    {
+      "name": "Snippet references",
+      "pattern": "-- snippet:(.*)",
+      "description": ""
+    },
     {
       "name": "Snippet references 2",
       "pattern": "\\<\\[sample:(.*)",
       "description": "another kind of snippet reference"
     },
-    { "name": "Multi-line code blocks", "pattern": "/^\\s*```[\\s\\S]*?^\\s*```/gm" },
+    {
+      "name": "Multi-line code blocks",
+      "pattern": "/^\\s*```[\\s\\S]*?^\\s*```/gm"
+    },
     {
       "name": "HTML Tags",
       "pattern": "<[^>]*>",
@@ -136,6 +152,7 @@
   ],
   "ignorePaths": [
     "packages/mermaid/src/docs/CHANGELOG.md",
-    "packages/mermaid/src/docs/.vitepress/redirect.ts"
+    "packages/mermaid/src/docs/.vitepress/redirect.ts",
+    "packages/mermaid/src/docs/.vitepress/contributor-names.json"
   ]
 }
