@@ -10,8 +10,9 @@ export interface Redirect {
 const getBaseFile = (link: string): Redirect => {
   const url = new URL(link);
   if (
-    (url.hostname !== 'mermaid-js.github.io' && url.hostname !== 'localhost') ||
-    url.pathname !== '/mermaid/'
+    url.hostname !== 'mermaid-js.github.io' &&
+    url.hostname !== 'mermaid.js.org' &&
+    url.hostname !== 'localhost'
   ) {
     throw new Error('Not mermaidjs url');
   }

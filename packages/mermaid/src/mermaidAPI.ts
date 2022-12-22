@@ -29,7 +29,8 @@ import utils, { directiveSanitizer } from './utils';
 import DOMPurify from 'dompurify';
 import { MermaidConfig } from './config.type';
 import { evaluate } from './diagrams/common/common';
-import isEmpty from 'lodash-es/isEmpty';
+import isEmpty from 'lodash-es/isEmpty.js';
+import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility';
 
 // diagram names that support classDef statements
 const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram', 'stateDiagram-v2'];
@@ -54,8 +55,8 @@ const IFRAME_SANDBOX_OPTS = 'allow-top-navigation-by-user-activation allow-popup
 const IFRAME_NOT_SUPPORTED_MSG = 'The "iframe" tag is not supported by your browser.';
 
 // DOMPurify settings for svgCode
-const DOMPURE_TAGS = ['foreignobject'];
-const DOMPURE_ATTR = ['dominant-baseline'];
+const DOMPURIFY_TAGS = ['foreignobject'];
+const DOMPURIFY_ATTR = ['dominant-baseline'];
 
 // This is what is returned from getClasses(...) methods.
 // It is slightly renamed to ..StyleClassDef instead of just ClassDef because "class" is a greatly ambiguous and overloaded word.
@@ -68,7 +69,7 @@ interface DiagramStyleClassDef {
 
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
 // @ts-ignore Could replicate the type definition in d3. This also makes it possible to use the untyped info from the js diagram files.
-type D3Element = any;
+export type D3Element = any;
 
 // ----------------------------------------------------------------------------
 
@@ -327,29 +328,22 @@ function sandboxedIframe(parentNode: D3Element, iFrameId: string): D3Element {
  * Remove any existing elements from the given document
  *
  * @param doc - the document to removed elements from
- * @param isSandboxed - whether or not we are in sandboxed mode
  * @param id - id for any existing SVG element
  * @param divSelector - selector for any existing enclosing div element
  * @param iFrameSelector - selector for any existing iFrame element
  */
 export const removeExistingElements = (
   doc: Document,
-  isSandboxed: boolean,
   id: string,
-  divSelector: string,
-  iFrameSelector: string
+  divId: string,
+  iFrameId: string
 ) => {
   // Remove existing SVG element if it exists
-  const existingSvg = doc.getElementById(id);
-  if (existingSvg) {
-    existingSvg.remove();
-  }
-
+  doc.getElementById(id)?.remove();
   // Remove previous temporary element if it exists
-  const element = isSandboxed ? doc.querySelector(iFrameSelector) : doc.querySelector(divSelector);
-  if (element) {
-    element.remove();
-  }
+  // Both div and iframe needs to be cleared in case there is a config change happening between renders.
+  doc.getElementById(divId)?.remove();
+  doc.getElementById(iFrameId)?.remove();
 };
 
 /**
@@ -371,7 +365,7 @@ export const removeExistingElements = (
  * @param id - The id for the SVG element (the element to be rendered)
  * @param text - The text for the graph definition
  * @param cb - Callback which is called after rendering is finished with the svg code as in param.
- * @param container - HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
+ * @param svgContainingElement - HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
  *   If no svgContainingElement is provided then the SVG element will be appended to the body.
  *    Selector to element in which a div with the graph temporarily will be
  *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
@@ -442,7 +436,7 @@ const render = function (
     // No svgContainingElement was provided
 
     // If there is an existing element with the id, we remove it. This likely a previously rendered diagram
-    removeExistingElements(document, isSandboxed, id, iFrameID_selector, enclosingDivID_selector);
+    removeExistingElements(document, id, enclosingDivID, iFrameID);
 
     // Add the temporary div used for rendering with the enclosingDivID.
     // This temporary div will contain a svg with the id == id
@@ -479,12 +473,13 @@ const render = function (
     parseEncounteredException = error;
   }
 
-  // Get the temporary div element containing the svg
+  // Get the temporary div element containing the svg (the parent HTML Element)
   const element = root.select(enclosingDivID_selector).node();
   const graphType = diag.type;
 
   // -------------------------------------------------------------------------------
   // Create and insert the styles (user styles, theme styles, config styles)
+  //  These are dealing with HTML Elements, not d3 nodes.
 
   // Insert an element into svg. This is where we put the styles
   const svg = element.firstChild;
@@ -501,6 +496,7 @@ const render = function (
     idSelector
   );
 
+  // svg is a HTML element (not a d3 node)
   const style1 = document.createElement('style');
   style1.innerHTML = rules;
   svg.insertBefore(style1, firstChild);
@@ -513,6 +509,12 @@ const render = function (
     errorRenderer.draw(text, id, pkg.version);
     throw e;
   }
+
+  // This is the d3 node for the svg element
+  const svgNode = root.select(`${enclosingDivID_selector} svg`);
+  const a11yTitle = diag.db.getAccTitle?.();
+  const a11yDescr = diag.db.getAccDescription?.();
+  addA11yInfo(graphType, svgNode, a11yTitle, a11yDescr);
 
   // -------------------------------------------------------------------------------
   // Clean up SVG code
@@ -527,11 +529,11 @@ const render = function (
   if (isSandboxed) {
     const svgEl = root.select(enclosingDivID_selector + ' svg').node();
     svgCode = putIntoIFrame(svgCode, svgEl);
-  } else if (isLooseSecurityLevel) {
+  } else if (!isLooseSecurityLevel) {
     // Sanitize the svgCode using DOMPurify
     svgCode = DOMPurify.sanitize(svgCode, {
-      ADD_TAGS: DOMPURE_TAGS,
-      ADD_ATTR: DOMPURE_ATTR,
+      ADD_TAGS: DOMPURIFY_TAGS,
+      ADD_ATTR: DOMPURIFY_ATTR,
     });
   }
 
@@ -641,7 +643,7 @@ const renderAsync = async function (
     // No svgContainingElement was provided
 
     // If there is an existing element with the id, we remove it. This likely a previously rendered diagram
-    removeExistingElements(document, isSandboxed, id, iFrameID_selector, enclosingDivID_selector);
+    removeExistingElements(document, id, enclosingDivID, iFrameID);
 
     // Add the temporary div used for rendering with the enclosingDivID.
     // This temporary div will contain a svg with the id == id
@@ -710,6 +712,12 @@ const renderAsync = async function (
     throw e;
   }
 
+  // This is the d3 node for the svg element
+  const svgNode = root.select(`${enclosingDivID_selector} svg`);
+  const a11yTitle = diag.db.getAccTitle?.();
+  const a11yDescr = diag.db.getAccDescription?.();
+  addA11yInfo(graphType, svgNode, a11yTitle, a11yDescr);
+
   // -------------------------------------------------------------------------------
   // Clean up SVG code
   root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
@@ -723,11 +731,11 @@ const renderAsync = async function (
   if (isSandboxed) {
     const svgEl = root.select(enclosingDivID_selector + ' svg').node();
     svgCode = putIntoIFrame(svgCode, svgEl);
-  } else if (isLooseSecurityLevel) {
+  } else if (!isLooseSecurityLevel) {
     // Sanitize the svgCode using DOMPurify
     svgCode = DOMPurify.sanitize(svgCode, {
-      ADD_TAGS: DOMPURE_TAGS,
-      ADD_ATTR: DOMPURE_ATTR,
+      ADD_TAGS: DOMPURIFY_TAGS,
+      ADD_ATTR: DOMPURIFY_ATTR,
     });
   }
 
@@ -755,7 +763,7 @@ const renderAsync = async function (
   attachFunctions();
 
   // -------------------------------------------------------------------------------
-  // Remove the temporary element if appropriate
+  // Remove the temporary HTML element if appropriate
   const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
   const node = select(tmpElementSelector).node();
   if (node && 'remove' in node) {
@@ -872,6 +880,20 @@ function initialize(options: MermaidConfig = {}) {
 
   setLogLevel(config.logLevel);
   addDiagrams();
+}
+
+/**
+ * Add accessibility (a11y) information to the diagram.
+ *
+ */
+function addA11yInfo(
+  graphType: string,
+  svgNode: D3Element,
+  a11yTitle: string | undefined,
+  a11yDescr: string | undefined
+) {
+  setA11yDiagramInfo(svgNode, graphType);
+  addSVGa11yTitleDescription(svgNode, a11yTitle, a11yDescr, svgNode.attr('id'));
 }
 
 /**

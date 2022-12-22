@@ -46,7 +46,7 @@ import flatmap from 'unist-util-flatmap';
 const MERMAID_MAJOR_VERSION = (
   JSON.parse(readFileSync('../mermaid/package.json', 'utf8')).version as string
 ).split('.')[0];
-const CDN_URL = 'https://unpkg.com'; // https://cdn.jsdelivr.net/npm
+const CDN_URL = 'https://cdn.jsdelivr.net/npm'; // 'https://unpkg.com';
 
 const verifyOnly: boolean = process.argv.includes('--verify');
 const git: boolean = process.argv.includes('--git');
@@ -260,7 +260,7 @@ const transformHtml = (filename: string) => {
 };
 
 const getGlobs = (globs: string[]): string[] => {
-  globs.push('!**/dist', '!**/redirect.spec.ts');
+  globs.push('!**/dist', '!**/redirect.spec.ts', '!**/landing');
   if (!vitepress) {
     globs.push('!**/.vitepress', '!**/vite.config.ts', '!src/docs/index.md');
   }

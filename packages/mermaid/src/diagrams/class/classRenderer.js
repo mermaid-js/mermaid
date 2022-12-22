@@ -5,7 +5,6 @@ import { log } from '../../logger';
 import svgDraw from './svgDraw';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import { getConfig } from '../../config';
-import addSVGAccessibilityFields from '../../accessibility';
 
 let idCache = {};
 const padding = 20;
@@ -272,7 +271,6 @@ export const draw = function (text, id, _version, diagObj) {
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
   log.debug(`viewBox ${vBox}`);
   diagram.attr('viewBox', vBox);
-  addSVGAccessibilityFields(diagObj.db, diagram, id);
 };
 
 export default {

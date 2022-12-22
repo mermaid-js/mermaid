@@ -33,29 +33,43 @@
         "Person . CUSTOMER" }|..|{ "Address//StreetAddress::[DELIVERY ADDRESS]" : uses
 
         "Address//StreetAddress::[DELIVERY ADDRESS]" {
-            int customerID FK
-            string line1 "this is the first address line comment"
-            string line2
-            string city
-            string region
-            string state
-            string postal_code
-            string country
-            }
+          int customerID FK
+          string line1 "this is the first address line comment"
+          string line2
+          string city
+          string region
+          string state
+          string(5) postal_code
+          string country
+        }
 
-            "a_~`!@#$^&*()-_=+[]{}|/;:'.?¡⁄™€£‹¢›∞ﬁ§‡•°ª·º‚≠±œŒ∑„®†ˇ¥Á¨ˆˆØπ∏“«»åÅßÍ∂ÎƒÏ©˙Ó∆Ô˚¬Ò…ÚæÆΩ¸≈π˛çÇ√◊∫ı˜µÂ≤¯≥˘÷¿" {
-              string name "this is an entity with an absurd name just to show characters that are now acceptable as long as the name is in double quotes"
-            }
+        "a_~`!@#$^&*()-_=+[]{}|/;:'.?¡⁄™€£‹¢›∞ﬁ§‡•°ª·º‚≠±œŒ∑„®†ˇ¥Á¨ˆˆØπ∏“«»åÅßÍ∂ÎƒÏ©˙Ó∆Ô˚¬Ò…ÚæÆΩ¸≈π˛çÇ√◊∫ı˜µÂ≤¯≥˘÷¿" {
+          string name "this is an entity with an absurd name just to show characters that are now acceptable as long as the name is in double quotes"
+        }
 
-            "€£LINE_ITEM ¥" {
-              int orderID FK
-              int currencyId FK
-              number price
-              number quantity
-              number adjustment
-              number final_price
-            }
+        "€£LINE_ITEM ¥" {
+          int orderID FK
+          int currencyId FK
+          number price
+          number quantity
+          number adjustment
+          number final_price
+        }
     </pre>
+    <hr />
+
+    <pre class="mermaid">
+    erDiagram
+      "HOSPITAL" {
+        int id PK
+        int doctor_id FK
+        string address UK
+        string name
+        string phone_number
+        string fax_number
+      }
+    </pre>
+    <hr />
 
     <script src="./mermaid.js"></script>
     <script type="module">

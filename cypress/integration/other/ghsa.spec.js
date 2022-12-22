@@ -7,4 +7,10 @@ describe('CSS injections', () => {
       flowchart: { htmlLabels: false },
     });
   });
+  it('should not allow adding styletags affecting the page', () => {
+    urlSnapshotTest('http://localhost:9000/ghsa3.html', {
+      logLevel: 1,
+      flowchart: { htmlLabels: false },
+    });
+  });
 });
