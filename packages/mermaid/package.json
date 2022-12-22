@@ -74,6 +74,7 @@
     "web-worker": "^1.2.0"
   },
   "devDependencies": {
+    "@adobe/jsonschema2md": "^7.1.4",
     "@types/cytoscape": "^3.19.9",
     "@types/d3": "^7.4.0",
     "@types/d3-sankey": "^0.12.1",
@@ -109,6 +110,7 @@
     "typedoc-plugin-markdown": "^3.15.2",
     "typescript": "^5.0.4",
     "unist-util-flatmap": "^1.0.0",
+    "unist-util-visit": "^4.1.2",
     "vitepress": "^1.0.0-alpha.72",
     "vitepress-plugin-search": "^1.0.4-alpha.20"
   },
