@@ -55,8 +55,9 @@
   </head>
   <body>
     <div>Security check</div>
-    <pre id="diagram" class="mermaid2">
-cyto TB
+    <pre id="diagram" class="mermaid">
+%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
+flowchart TB
   %% I could not figure out how to use double quotes in labels in Mermaid
   subgraph ibm[IBM Espresso CPU]
     core0[IBM PowerPC Broadway Core 0]
@@ -109,8 +110,65 @@ cyto TB
   rtc{{rtc}}
 </pre
     >
+    <br />
     <pre id="diagram" class="mermaid">
-cyto LR
+flowchart TB
+  %% I could not figure out how to use double quotes in labels in Mermaid
+  subgraph ibm[IBM Espresso CPU]
+    core0[IBM PowerPC Broadway Core 0]
+    core1[IBM PowerPC Broadway Core 1]
+    core2[IBM PowerPC Broadway Core 2]
+
+    rom[16 KB ROM]
+
+    core0 --- core2
+
+    rom --> core2
+  end
+
+  subgraph amd[AMD Latte GPU]
+    mem[Memory & I/O Bridge]
+    dram[DRAM Controller]
+    edram[32 MB EDRAM MEM1]
+    rom[512 B SEEPROM]
+
+    sata[SATA IF]
+    exi[EXI]
+
+    subgraph gx[GX]
+      sram[3 MB 1T-SRAM]
+    end
+
+    radeon[AMD Radeon R7xx GX2]
+
+    mem --- gx
+    mem --- radeon
+
+    rom --- mem
+
+    mem --- sata
+    mem --- exi
+
+    dram --- sata
+    dram --- exi
+  end
+
+  ddr3[2 GB DDR3 RAM MEM2]
+
+  mem --- ddr3
+  dram --- ddr3
+  edram --- ddr3
+
+  core1 --- mem
+
+  exi --- rtc
+  rtc{{rtc}}
+</pre
+    >
+    <br />
+    &nbsp;
+    <pre id="diagram" class="mermaid2">
+      flowchart LR
   B1 --be be--x B2
   B1 --bo bo--o B3
   subgraph Ugge
@@ -142,24 +200,19 @@ cyto LR
   B6 --> B5
   </pre
     >
-    inside1 --> inside2 & inside3 & inside4 & inside5 & inside6 a(letter a<br />a) ---> b(letter
-    b)--> c(letter c) --> d -->e(letter e<br />e) --> a b <--> d(letter b<br />d)
     <pre id="diagram" class="mermaid2">
-      mindmap
-  root
-    child1((Circle))
-        grandchild 1
-        grandchild 2
-    child2(Round rectangle)
-        grandchild 3
-        grandchild 4
-    child3[Square]
-        grandchild 5
-        ::icon(mdi mdi-fire)
-        gc6((grand<br/>child 6))
-        ::icon(mdi mdi-fire)
-          gc7((grand<br/>grand<br/>child 8))
-        </pre>
+sequenceDiagram
+    Customer->>+Stripe: Makes a payment request
+    Stripe->>+Bank: Forwards the payment request to the bank
+    Bank->>+Customer: Asks for authorization
+    Customer->>+Bank: Provides authorization
+    Bank->>+Stripe: Sends a response with payment details
+    Stripe->>+Merchant: Sends a notification of payment receipt
+    Merchant->>+Stripe: Confirms the payment
+    Stripe->>+Customer: Sends a confirmation of payment
+    Customer->>+Merchant: Receives goods or services
+        </pre
+    >
     <pre id="diagram" class="mermaid2">
       gantt
         title Style today marker (vertical line should be 5px wide and half-transparent blue)
@@ -186,10 +239,11 @@ cyto LR
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'dark',
+        // theme: 'forest',
         startOnLoad: true,
         logLevel: 0,
         flowchart: {
+          // defaultRenderer: 'elk',
           useMaxWidth: false,
           htmlLabels: true,
         },
