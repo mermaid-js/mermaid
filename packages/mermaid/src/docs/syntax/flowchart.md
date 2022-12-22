@@ -669,7 +669,21 @@ flowchart LR
     C -->|Two| E[Result two]
 ```
 
-## Configuration...
+## Configuration
+
+### Renderer
+
+The layout of the flowchart diagram can be don in multiple ways. The default rendering is done using an algorithm called dagre. It is possible to use another algorithm called **elk** for rendering flowcharts which is better for large and more complex diagrams. This is an expermental feature but worth exploring.
+
+This can be enabled using directives by adding this in the diagram code:
+
+```
+%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
+```
+
+Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
+
+### Width
 
 It is possible to adjust the width of the rendered flowchart.
 
