@@ -4,8 +4,8 @@
 
 A more condensed html code can be achieved by embedding the mermaid code in its own .js file, which is referenced like so:
 
-```
-stuff stuff
+```html
+...
   </div>
   </body>
 </html>
@@ -13,12 +13,12 @@ stuff stuff
 
 The actual mermaid file could for example look like this:
 
+```javascript
+mermaid content ...
 ```
-mermaid content...
-```
-
----
 
 ## mermaid configuration options
 
-...
+```markdown
+(coming soon)
+```
