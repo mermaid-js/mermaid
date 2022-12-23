@@ -123,7 +123,7 @@ class BankAccount{
 
 #### Generic Types
 
-Members can be defined using generic types, such as `List<int>`, for fields, parameters, and return types by enclosing the type within `~` (**tilde**). Note: **nested** type declarations such as `List<List<int>>` are not currently supported.
+Members can be defined using generic types, such as `List<int>`, for fields, parameters, and return types by enclosing the type within `~` (**tilde**). **Nested** type declarations such as `List<List<int>>` are supported.
 
 Generics can be represented as part of a class definition and also in the parameters or the return value of a method/function:
 
@@ -139,6 +139,7 @@ class Square~Shape~{
 Square : -List~string~ messages
 Square : +setMessages(List~string~ messages)
 Square : +getMessages() List~string~
+Square : +getDistanceMatrix() List~List~int~~
 ```
 
 #### Visibility
