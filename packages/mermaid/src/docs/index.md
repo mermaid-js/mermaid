@@ -163,7 +163,7 @@ const members = [
     margin: 1rem auto;
     max-width: 100%;
     width: 100%;
-  }
+}
 
   .dark .image-src{
     filter: invert(1) hue-rotate(217deg)  contrast(0.72);
@@ -174,7 +174,7 @@ const members = [
     align-items: center;
     flex-direction: column;
     display: flex;
-    margin-top: 2.5rem;
+    margin: 1.5rem;
   }
 
   .vp-doc h2 {
