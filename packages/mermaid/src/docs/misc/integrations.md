@@ -15,6 +15,7 @@ They also serve as proof of concept, for the variety of things that can be built
 - [Azure Devops](https://docs.microsoft.com/en-us/azure/devops/project/wiki/wiki-markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) (**Native support**)
 - [Tuleap](https://docs.tuleap.org/user-guide/writing-in-tuleap.html#graphs) (**Native support**)
 - [Joplin](https://joplinapp.org) (**Native support**)
+- [Swimm](https://swimm.io) (**Native support**)
 - [Notion](https://notion.so) (**Native support**)
 - [Observable](https://observablehq.com/@observablehq/mermaid) (**Native support**)
 - [Obsidian](https://help.obsidian.md/How+to/Format+your+notes#Diagram) (**Native support**)

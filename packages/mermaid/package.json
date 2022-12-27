@@ -61,6 +61,7 @@
     "moment-mini": "^2.24.0",
     "non-layered-tidy-tree-layout": "^2.0.2",
     "stylis": "^4.1.2",
+    "ts-dedent": "^2.2.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

@@ -8,6 +8,7 @@ test.each([
   ['http://localhost:1234/mermaid/#/flowchart.md', 'syntax/flowchart.html'],
   ['http://localhost/mermaid/#/flowchart.md', 'syntax/flowchart.html'],
   ['https://mermaid-js.github.io/mermaid/#/flowchart.md', 'syntax/flowchart.html'],
+  ['https://mermaid.js.org/#/flowchart.md', 'syntax/flowchart.html'],
   ['https://mermaid-js.github.io/mermaid/#/./flowchart', 'syntax/flowchart.html'],
   ['https://mermaid-js.github.io/mermaid/#/flowchart', 'syntax/flowchart.html'],
   ['https://mermaid-js.github.io/mermaid/#flowchart', 'syntax/flowchart.html'],
@@ -31,7 +32,4 @@ test.each([
 test('should throw for invalid URL', () => {
   // Not mermaid domain
   expect(() => getRedirect('https://www.google.com')).toThrowError();
-
-  // Not `/mermaid/` path
-  expect(() => getRedirect('http://localhost/#/flowchart.md')).toThrowError();
 });

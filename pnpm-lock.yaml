@@ -196,6 +196,9 @@ importers:
       stylis:
         specifier: ^4.1.2
         version: 4.1.2
+      ts-dedent:
+        specifier: ^2.2.0
+        version: 2.2.0
       uuid:
         specifier: ^9.0.0
         version: 9.0.0
@@ -15790,6 +15793,11 @@ packages:
       typescript: 4.8.4
       yargs-parser: 20.2.9
     dev: true
+
+  /ts-dedent/2.2.0:
+    resolution: {integrity: sha512-q5W7tVM71e2xjHZTlgfTDoPF/SmqKG5hddq9SzR49CH2hayqRKJtQ4mtRlSxKaJlR/+9rEM+mnBHf7I2/BQcpQ==}
+    engines: {node: '>=6.10'}
+    dev: false
 
   /ts-node/10.9.1_cbe7ovvae6zqfnmtgctpgpys54:
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}

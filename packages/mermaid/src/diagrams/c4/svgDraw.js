@@ -371,12 +371,12 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
   textFontConf = conf[c4Shape.typeC4Shape.text + 'Font']();
   textFontConf.fontColor = fontColor;
 
-  if (c4Shape.thchn && c4Shape.thchn.text !== '') {
+  if (c4Shape.techn && c4Shape.techn?.text !== '') {
     _drawTextCandidateFunc(conf)(
-      c4Shape.thchn.text,
+      c4Shape.techn.text,
       c4ShapeElem,
       c4Shape.x,
-      c4Shape.y + c4Shape.thchn.Y,
+      c4Shape.y + c4Shape.techn.Y,
       c4Shape.width,
       c4Shape.height,
       { fill: fontColor, 'font-style': 'italic' },

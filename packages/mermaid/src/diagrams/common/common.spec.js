@@ -68,5 +68,7 @@ describe('generic parser', function () {
     expect(parseGenericTypes('test ~Array~Array~string[]~~~')).toEqual(
       'test <Array<Array<string[]>>>'
     );
+    expect(parseGenericTypes('~test')).toEqual('~test');
+    expect(parseGenericTypes('~test Array~string~')).toEqual('~test Array<string>');
   });
 });
