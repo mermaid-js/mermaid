@@ -7,7 +7,7 @@
 </template>
 
 <script type="text/babel">
-  import marked from 'marked'
+  import {marked} from 'marked'
   import highlightjs from 'highlight.js/lib/core'
 
   // Languages import
@@ -58,7 +58,7 @@
     props: ['comment', 'commentObj'],
     computed: {
       markedComment() {
-        return (this.commentObj?.text && marked(this.commentObj?.text)) || (this.comment && marked(this.comment))
+        return (this.commentObj?.text && marked.parse(this.commentObj?.text)) || (this.comment && marked.parse(this.comment))
       },
       color() {
         return this.commentObj?.color
