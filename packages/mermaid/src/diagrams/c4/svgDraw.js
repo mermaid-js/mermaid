@@ -234,7 +234,7 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
   const c4ShapeElem = elem.append('g');
   c4ShapeElem.attr('class', 'person-man');
 
-  // <rect fill="#08427B" height="119.2188" rx="2.5" ry="2.5" stroke="#073B6F" stroke-width=0.5" width="110" x="120" y="7"/>
+  // <rect fill="#08427B" height="119.2188" rx="2.5" ry="2.5" stroke="#073B6F" stroke-width="0.5" width="110" x="120" y="7"/>
   // draw rect of c4Shape
   const rect = getNoteRect();
   switch (c4Shape.typeC4Shape.text) {
