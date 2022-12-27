@@ -14,48 +14,6 @@ yarn build
 yarn build:site
 ....
 
-=== Customize vue.config.js
-
-==== Inline SVG
-When we build the library, SVG must be inlined.
-
-An inlined SVG looks like this:
-....
-<img src='data:image/svg+xml;base64,<svg ... > ... </svg>'>
-....
-
-[NOTE]
-====
-[TODO] Note that we use the `base64` encoding as it is the default behaviour of webpack 5
-asset module `asset/inline`. However, `utf8` has https://www.npmjs.com/package/svg-url-loader[the following advantages]:
-
-1. Resulting string is shorter (can be ~2 times shorter for 2K-sized icons);
-2. Resulting string will be compressed better when using gzip compression;
-3. Browser parses utf-8 encoded string faster than its base64 equivalent.
-
-This can be implemented with https://webpack.js.org/guides/asset-modules/#custom-data-uri-generator[custom data URI generator].
-====
-The default loader build in vue cli service for svg files will not inline the SVG,
-but give a url (relative path) to the svg resource like this:
-....
-<img src="/assets/arrow.svg">
-....
-Client applications will not be able to load the SVG properly.
-
-To inline the SVG, we need to use https://webpack.js.org/guides/asset-modules/#inlining-assets[asset module `asset/inline`].
-
-
-[source, javascript]
-....
-const svgRule = config.module.rule('svg')
-svgRule.store.clear();
-svgRule
-    .test(/\.svg$/)  // required because of store.clear()
-    .type('asset/inline')  // <1>
-    .end()
-....
-<1> `asset/inline` exports a data URI of the asset. Previously achievable by using `url-loader`. https://webpack.js.org/guides/asset-modules/#inlining-assets[See more]
-
 == Demo pages
 In the public folder, there are some demo pages for testing the library.
 

@@ -1,8 +1,8 @@
 import { Participants } from './Participants';
 
-const antlr4 = require('antlr4');
-const sequenceParserListener = require('../generated-parser/sequenceParserListener').default;
-const sequenceParser = require('../generated-parser/sequenceParser').default;
+import antlr4 from 'antlr4';
+import { default as sequenceParserListener } from '../generated-parser/sequenceParserListener';
+import { default as sequenceParser } from '../generated-parser/sequenceParser';
 const seqParser = sequenceParser;
 const ProgContext = seqParser.ProgContext;
 
@@ -94,7 +94,7 @@ ToCollector.enterRet = function (ctx) {
   participants.Add(ctx.ReturnTo());
 };
 
-const walker = antlr4.default.tree.ParseTreeWalker.DEFAULT;
+const walker = antlr4.tree.ParseTreeWalker.DEFAULT;
 
 ToCollector.getParticipants = function (context, withStarter) {
   participants = new Participants();
@@ -105,4 +105,4 @@ ToCollector.getParticipants = function (context, withStarter) {
   return participants;
 };
 
-module.exports = ToCollector;
+export default ToCollector;

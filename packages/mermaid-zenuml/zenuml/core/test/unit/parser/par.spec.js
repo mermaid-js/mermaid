@@ -1,4 +1,5 @@
-const { Fixture } = require('./fixture/Fixture');
+import { expect, test } from 'vitest';
+import { Fixture } from './fixture/Fixture';
 
 test('Empty `par`', () => {
   let par = Fixture.firstStatement('par {}').par();

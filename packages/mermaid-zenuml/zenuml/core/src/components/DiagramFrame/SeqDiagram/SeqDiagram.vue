@@ -12,8 +12,8 @@
   import LifeLineLayer from './LifeLineLayer/LifeLineLayer.vue'
   import MessageLayer from './MessageLayer/MessageLayer.vue'
   import {mapGetters} from 'vuex'
-  import {Depth} from "@/parser";
-  import {FRAGMENT_LEFT_BASE_OFFSET, FRAGMENT_RIGHT_BASE_OFFSET} from "@/components/DiagramFrame/SeqDiagram/MessageLayer/Block/Statement/Fragment/FragmentMixin";
+  import {Depth} from "../../../parser";
+  import {FRAGMENT_LEFT_BASE_OFFSET, FRAGMENT_RIGHT_BASE_OFFSET} from "./MessageLayer/Block/Statement/Fragment/FragmentMixin";
 
   export default {
     name: 'seq-diagram',

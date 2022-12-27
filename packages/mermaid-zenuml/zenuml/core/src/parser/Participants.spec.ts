@@ -1,4 +1,5 @@
-import { Participants } from '@/parser/Participants';
+import { describe, expect, test } from 'vitest';
+import { Participants } from '../parser/Participants';
 
 describe('Participants', () => {
   test('Get implicitly declared participants', () => {

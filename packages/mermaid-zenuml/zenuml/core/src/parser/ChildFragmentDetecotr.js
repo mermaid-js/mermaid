@@ -1,5 +1,5 @@
-var antlr4 = require('antlr4').default;
-var sequenceParserListener = require('../generated-parser/sequenceParserListener').default;
+import antlr4 from 'antlr4';
+import sequenceParserListener from '../generated-parser/sequenceParserListener';
 
 const walker = antlr4.tree.ParseTreeWalker.DEFAULT;
 
@@ -56,4 +56,4 @@ ChildFragmentDetector.depth = function (me) {
   };
 };
 
-module.exports = ChildFragmentDetector;
+export default ChildFragmentDetector;

@@ -12,7 +12,7 @@
 </template>
 
 <script type="text/babel">
-  import Point from './Point/Point'
+  import Point from './Point/Point.vue'
 
   // async: open arrow head.
   // sync: filled arrow head.

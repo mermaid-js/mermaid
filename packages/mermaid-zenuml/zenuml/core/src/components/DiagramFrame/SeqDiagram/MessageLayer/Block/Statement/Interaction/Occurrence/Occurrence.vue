@@ -30,9 +30,11 @@ import {mapState, mapGetters} from 'vuex'
         }
       },
     },
-    components: {
-      Block: () => import('../../../Block')
-    },
+    // The following code will cause the Block to be created and mounted AFTER the occurrence (and upto DiagramFrame) is updated.
+    // Block must be defined globally to ensure that it is rendered in the same time cycle as the whole diagram.
+    // components: {
+    //   Block: () => import('../../../Block.vue')
+    // },
   }
 </script>
 

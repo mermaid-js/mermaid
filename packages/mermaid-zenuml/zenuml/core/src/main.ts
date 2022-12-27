@@ -1,5 +1,4 @@
 import parentLogger from './logger/logger';
-// @ts-ignore
 import ZenUml from './core';
 const logger = parentLogger.child({ name: 'main' });
 

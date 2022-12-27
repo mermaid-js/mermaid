@@ -1,4 +1,5 @@
-const { Fixture } = require('./fixture/Fixture');
+import { expect, test } from 'vitest';
+import { Fixture } from './fixture/Fixture';
 
 test('Empty `opt`', () => {
   let opt = Fixture.firstStatement('opt {}').opt();

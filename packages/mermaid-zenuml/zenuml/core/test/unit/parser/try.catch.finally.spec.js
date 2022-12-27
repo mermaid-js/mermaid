@@ -1,6 +1,6 @@
 import { Fixture } from './fixture/Fixture';
 
-let seqDsl = require('../../../src/parser/index');
+import { describe, expect, test } from 'vitest';
 
 test('Empty `try`', () => {
   let tcf = Fixture.firstStatement('try {}').tcf();

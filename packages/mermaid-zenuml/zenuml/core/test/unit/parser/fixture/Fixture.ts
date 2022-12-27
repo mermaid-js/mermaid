@@ -1,11 +1,10 @@
-import { WidthFunc } from '@/positioning/Coordinate';
-
-let seqDsl = require('../../../../src/parser/index');
+import { WidthFunc } from '../../../../src/positioning/Coordinate';
+import { RootContext } from '../../../../src/parser/index';
 
 export class Fixture {
   static firstStatement(code: string) {
-    let rootContext = seqDsl.RootContext(code);
-    return rootContext.block().stat()[0];
+    let rootContext = RootContext(code);
+    return rootContext && rootContext.block().stat()[0];
   }
 
   static firstChild(code: string) {

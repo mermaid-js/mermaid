@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Message from "../SeqDiagram/MessageLayer/Block/Statement/Message/Message";
+import Message from "../SeqDiagram/MessageLayer/Block/Statement/Message/Message.vue";
 export default {
   name: "WidthProvider",
   components: {Message},

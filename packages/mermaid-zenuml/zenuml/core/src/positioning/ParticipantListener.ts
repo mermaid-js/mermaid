@@ -1,7 +1,6 @@
 import sequenceParser from '../generated-parser/sequenceParser';
-export const antlr4 = require('antlr4');
-export let seqDsl = require('../parser/index');
-import sequenceParserListener from '@/generated-parser/sequenceParserListener';
+import sequenceParserListener from '../generated-parser/sequenceParserListener';
+
 const seqParser = sequenceParser;
 
 export interface IParticipantModel {
@@ -129,3 +128,5 @@ export class ParticipantListener extends sequenceParserListener {
     );
   }
 }
+
+export default {};

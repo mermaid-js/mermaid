@@ -1,6 +1,7 @@
+import antlr4 from 'antlr4';
 import { MessageContextListener } from '../../../src/positioning/MessageContextListener';
-let seqDsl = require('../../../src/parser/index');
-const antlr4 = require('antlr4').default;
+import { describe, expect, it } from 'vitest';
+import { RootContext } from '../../../src/parser/index';
 
 describe('MessageListener', () => {
   it('can handle Message and Creation', () => {
@@ -11,7 +12,7 @@ describe('MessageListener', () => {
     new B
     C->D: message
     `;
-    let rootContext = seqDsl.RootContext(code);
+    let rootContext = RootContext(code);
     const walker = antlr4.tree.ParseTreeWalker.DEFAULT;
 
     const messageContextListener = new MessageContextListener();
@@ -48,7 +49,7 @@ describe('MessageListener', () => {
   it('ignores expression in parameters', () => {
     const code = `A.m(new B,
      C.m)`;
-    let rootContext = seqDsl.RootContext(code);
+    let rootContext = RootContext(code);
     const walker = antlr4.tree.ParseTreeWalker.DEFAULT;
 
     const messageContextListener = new MessageContextListener();
@@ -66,7 +67,7 @@ describe('MessageListener', () => {
 
   it('ignores expression in conditions', () => {
     const code = `if(A.isGood()) {B.m}`;
-    let rootContext = seqDsl.RootContext(code);
+    let rootContext = RootContext(code);
     const walker = antlr4.tree.ParseTreeWalker.DEFAULT;
 
     const messageContextListener = new MessageContextListener();

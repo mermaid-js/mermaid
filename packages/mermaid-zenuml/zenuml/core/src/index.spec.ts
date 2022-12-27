@@ -1,6 +1,7 @@
+import { describe, expect, it } from 'vitest';
 import vue from 'vue';
 import vuex from 'vuex';
-import { VueSequence } from '@/index';
+import { VueSequence } from './index';
 vue.use(vuex);
 
 describe('index (store)', () => {

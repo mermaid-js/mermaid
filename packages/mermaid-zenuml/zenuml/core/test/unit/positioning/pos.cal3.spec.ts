@@ -1,7 +1,7 @@
+import { describe, expect, it } from 'vitest';
 import { Coordinates } from '../../../src/positioning/Coordinates';
 import { stubWidthProvider } from '../parser/fixture/Fixture';
-
-let seqDsl = require('../../../src/parser/index');
+import { RootContext } from '../../../src/parser/index';
 
 describe('PosCal3', () => {
   it('true', () => {
@@ -30,7 +30,7 @@ describe('PosCal3', () => {
 });
 
 function assertParticipantHasGap(code: string, participant: string, gap: number) {
-  let rootContext = seqDsl.RootContext(code);
+  let rootContext = RootContext(code);
   let coordinates2 = Coordinates.walkThrough(rootContext, stubWidthProvider);
 
   const coordinate2 = coordinates2.find((c) => c.participant === participant);

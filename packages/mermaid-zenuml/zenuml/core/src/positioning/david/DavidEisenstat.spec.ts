@@ -1,4 +1,5 @@
-import { find_optimal } from '@/positioning/david/DavidEisenstat';
+import { describe, expect, it } from 'vitest';
+import { find_optimal } from './DavidEisenstat';
 
 describe('DavidEisenstat', () => {
   it.each([

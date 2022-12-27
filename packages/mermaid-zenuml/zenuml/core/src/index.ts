@@ -13,9 +13,9 @@ import './components/theme-blue-river.scss';
 import Store from './store/Store';
 
 // @ts-ignore
-const Version = VERSION || '';
+const Version = import.meta.env.VERSION || '';
 // @ts-ignore
-const BuildTime = BUILD_TIME || '';
+const BuildTime = import.meta.env.BUILD_TIME || '';
 const VueSequence = {
   Vue,
   Vuex,

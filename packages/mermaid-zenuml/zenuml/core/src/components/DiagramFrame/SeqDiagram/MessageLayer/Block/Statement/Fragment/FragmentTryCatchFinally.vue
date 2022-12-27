@@ -64,9 +64,9 @@
         return ctx?.braceBlock()?.block()
       }
     },
-    beforeCreate: function () {
-      this.$options.components.Block = require('../../Block.vue').default
-      this.$options.components.Comment = require('../Comment/Comment.vue').default
+    components: {
+      Block: () => import('../../Block.vue'),
+      Comment: () => import('../Comment/Comment.vue')
     }
   }
 </script>

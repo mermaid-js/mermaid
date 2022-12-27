@@ -1,5 +1,6 @@
-let seqDsl = require('../../../src/parser/index');
-const { Fixture } = require('./fixture/Fixture');
+import { expect, test } from 'vitest';
+
+import { Fixture } from './fixture/Fixture';
 
 test('chain method', () => {
   expect(Fixture.firstStatement('B.method().toString()').message().SignatureText()).toBe(

@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { Fixture } from '../../../../test/unit/parser/fixture/Fixture';
 
 describe('get closest ancestors', () => {

@@ -21,11 +21,11 @@
   // Return is defined with `RETURN expr? SCOL?` or `ANNOTATION_RET asyncMessage EVENT_END?`.
   // It is rare that you need the latter format. Probably only when you have two consecutive returns.
   import Comment from '../Comment/Comment.vue'
-  import Message from '../Message/Message'
+  import Message from '../Message/Message.vue'
   import {mapGetters} from "vuex";
-  import {CodeRange} from '@/parser/CodeRange'
-  import WidthProviderOnBrowser from "@/positioning/WidthProviderFunc";
-  import {TextType} from "@/positioning/Coordinate";
+  import {CodeRange} from '../../../../../../../parser/CodeRange'
+  import WidthProviderOnBrowser from "../../../../../../../positioning/WidthProviderFunc";
+  import {TextType} from "../../../../../../../positioning/Coordinate";
   export default {
     name: 'return',
     props: ['context', 'comment'],

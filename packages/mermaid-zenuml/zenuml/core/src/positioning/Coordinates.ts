@@ -1,10 +1,10 @@
-import { ARROW_HEAD_WIDTH, MARGIN, MIN_PARTICIPANT_WIDTH, MINI_GAP } from '@/positioning/Constants';
-import { TextType, WidthFunc } from '@/positioning/Coordinate';
-import { OrderedParticipants } from '@/positioning/OrderedParticipants';
-import { IParticipantModel } from '@/positioning/ParticipantListener';
-import { find_optimal } from '@/positioning/david/DavidEisenstat';
-import { AllMessages } from '@/positioning/MessageContextListener';
-import { OwnableMessage, OwnableMessageType } from '@/positioning/OwnableMessage';
+import { ARROW_HEAD_WIDTH, MARGIN, MIN_PARTICIPANT_WIDTH, MINI_GAP } from './Constants';
+import { TextType, WidthFunc } from './Coordinate';
+import { OrderedParticipants } from './OrderedParticipants';
+import { IParticipantModel } from './ParticipantListener';
+import { find_optimal } from './david/DavidEisenstat';
+import { AllMessages } from './MessageContextListener';
+import { OwnableMessage, OwnableMessageType } from './OwnableMessage';
 
 export class Coordinates {
   private m: Array<Array<number>> = [];

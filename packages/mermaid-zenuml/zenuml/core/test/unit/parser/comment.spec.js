@@ -1,4 +1,5 @@
-const { Fixture } = require('./fixture/Fixture');
+import { expect, test } from 'vitest';
+import { Fixture } from './fixture/Fixture';
 test('one line of comment', () => {
   expect(Fixture.firstStatement('//C1\nA.m').getComment()).toBe('C1\n');
 });

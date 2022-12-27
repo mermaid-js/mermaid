@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import ZenUml from './core';
 describe('@ZenUML/core', function () {
   it('should render and cache the code and theme', async () => {

@@ -1,4 +1,5 @@
-import { formatText } from '@/utils/StringUtil';
+import { describe, expect, it } from 'vitest';
+import { formatText } from './StringUtil';
 
 describe('StringUtil', () => {
   it.each([

@@ -7,8 +7,10 @@
 </template>
 
 <script>
+import parentLogger from '../../../../logger/logger'
+
 import {mapGetters, mapMutations} from 'vuex'
-  import Block from './Block/Block'
+const logger = parentLogger.child({name: 'MessageLayer'})
 
   export default {
     name: 'message-layer',
@@ -38,9 +40,17 @@ import {mapGetters, mapMutations} from 'vuex'
         return this.participants.Names()
       },
     },
-    components: {
-      Block
-    }
+    // Block is rengered in core.ts. See Occurrence.vue for the reason.
+    // components: {
+    //   Block
+    // },
+    updated() {
+      logger.debug('MessageLayer updated');
+    },
+    mounted() {
+      logger.debug('MessageLayer mounted');
+    },
+
   }
 </script>
 

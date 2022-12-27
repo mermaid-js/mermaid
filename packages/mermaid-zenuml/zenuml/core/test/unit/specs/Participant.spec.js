@@ -1,7 +1,8 @@
+import { describe, expect, it } from 'vitest';
 import { mount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
-import { VueSequence } from '@/index';
-import Participant from '@/components/DiagramFrame/SeqDiagram/LifeLineLayer/Participant.vue';
+import { VueSequence } from '../../../src/index';
+import Participant from '../../../src/components/DiagramFrame/SeqDiagram/LifeLineLayer/Participant.vue';
 const localVue = createLocalVue();
 localVue.use(Vuex);
 const storeConfig = VueSequence.Store();

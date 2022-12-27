@@ -10,8 +10,8 @@
 </template>
 
 <script>
-const commitHash = process.env.VUE_APP_GIT_HASH;
-const gitBranch = process.env.VUE_APP_GIT_BRANCH;
+const commitHash = 'process.env.VUE_APP_GIT_HASH';
+const gitBranch = 'process.env.VUE_APP_GIT_BRANCH';
 export default {
   name: "Debug",
   data() {

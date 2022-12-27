@@ -1,10 +1,9 @@
 import now from 'lodash/now';
-import debounce from 'lodash/debounce';
 import { RootContext, Participants, GroupContext, ParticipantContext } from '../parser/index.js';
 
-import WidthProviderOnBrowser from '@/positioning/WidthProviderFunc';
-import { Coordinates } from '@/positioning/Coordinates';
-import { CodeRange } from '@/parser/CodeRange';
+import WidthProviderOnBrowser from '../positioning/WidthProviderFunc';
+import { Coordinates } from '../positioning/Coordinates';
+import { CodeRange } from '../parser/CodeRange';
 
 let storeInitiationTime: number = 0;
 setTimeout(function () {
@@ -27,8 +26,8 @@ export interface StoreState {
   showTips: boolean;
   onElementClick: (codeRange: CodeRange) => void;
 }
-
-const Store = (debounceTime?: number) => {
+// vuex 101: Deal with sync in mutation, async in actions
+const Store = () => {
   storeInitiationTime = now();
   return {
     state: {
@@ -102,14 +101,14 @@ const Store = (debounceTime?: number) => {
     actions: {
       // Why debounce is here instead of mutation 'code'?
       // Both code and cursor must be mutated together, especially during typing.
-      updateCode: debounce(function ({ commit, getters }: any, payload: any) {
+      updateCode: function ({ commit, getters }: any, payload: any) {
         if (typeof payload === 'string') {
           throw Error(
             'You are using a old version of vue-sequence. New version requires {code, cursor}.'
           );
         }
         commit('code', payload.code);
-      }, debounceTime || 1000),
+      },
     },
     // TODO: Enable strict for development?
     strict: false,

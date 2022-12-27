@@ -1,4 +1,4 @@
-const sequenceParser = require('../generated-parser/sequenceParser').default;
+import sequenceParser from '../generated-parser/sequenceParser';
 
 const seqParser = sequenceParser;
 const TitleContext = seqParser.TitleContext;
@@ -9,3 +9,5 @@ TitleContext.prototype.content = function () {
     return this.children[1].getText().trim();
   }
 };
+
+export default TitleContext;

@@ -1,5 +1,5 @@
-let seqDsl = require('../../../src/parser/index');
-const { Fixture } = require('./fixture/Fixture');
+import { describe, expect, test } from 'vitest';
+import { Fixture } from './fixture/Fixture';
 
 describe('Async Message', () => {
   test.each([

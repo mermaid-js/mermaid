@@ -116,7 +116,7 @@ A.method() {
 </template>
 
 <script>
-import IconList from "@/components/DiagramFrame/Tutorial/IconList";
+import IconList from "./IconList.vue";
 
 export default {
   name: "TipsDialog",

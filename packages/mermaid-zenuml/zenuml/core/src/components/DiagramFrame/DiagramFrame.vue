@@ -21,7 +21,7 @@
           </div>
         </div>
         <div>
-          <div v-show="showTips" class="fixed z-40 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+          <div v-if="showTips" class="fixed z-40 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <TipsDialog />
           </div>
         </div>
@@ -45,13 +45,13 @@
 
 <script>
 import {mapState, mapGetters, mapMutations} from "vuex";
-import Privacy from "@/components/DiagramFrame/Privacy/Privacy.vue";
-import DiagramTitle from "@/components/DiagramFrame/DiagramTitle/DiagramTitle";
-import SeqDiagram from "./SeqDiagram/SeqDiagram";
-import TipsDialog from "@/components/DiagramFrame/Tutorial/TipsDialog";
-import WidthProvider from "@/components/DiagramFrame/Positioning/WidthProvider";
+import Privacy from "./Privacy/Privacy.vue";
+import DiagramTitle from "./DiagramTitle/DiagramTitle.vue";
+import SeqDiagram from "./SeqDiagram/SeqDiagram.vue";
+import TipsDialog from "./Tutorial/TipsDialog.vue";
+import WidthProvider from "./Positioning/WidthProvider.vue";
 import * as htmlToImage from 'html-to-image'
-import Debug from "@/components/DiagramFrame/Debug/Debug";
+import Debug from "./Debug/Debug.vue";
 
 export default {
   name: "DiagramFrame",

@@ -30,8 +30,8 @@
   import Comment from '../Comment/Comment.vue'
   import Message from '../Message/Message.vue'
   import Occurrence from '../Interaction/Occurrence/Occurrence.vue'
-  import {CodeRange} from '@/parser/CodeRange'
-  import Participant from '@/components/DiagramFrame/SeqDiagram/LifeLineLayer/Participant'
+  import {CodeRange} from '../../../../../../../parser/CodeRange'
+  import Participant from '../../../../../../../components/DiagramFrame/SeqDiagram/LifeLineLayer/Participant.vue'
 
   const logger = parentLogger.child({name: 'Creation'})
 

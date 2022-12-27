@@ -1,4 +1,4 @@
-const sequenceParser = require('../generated-parser/sequenceParser').default;
+import { default as sequenceParser } from '../generated-parser/sequenceParser';
 
 const StatContext = sequenceParser.StatContext;
 const ProgContext = sequenceParser.ProgContext;

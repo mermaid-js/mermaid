@@ -1,4 +1,5 @@
-const { Fixture } = require('./fixture/Fixture');
+import { describe, expect, it } from 'vitest';
+import { Fixture } from './fixture/Fixture';
 
 describe('isCurrent', () => {
   it.each([

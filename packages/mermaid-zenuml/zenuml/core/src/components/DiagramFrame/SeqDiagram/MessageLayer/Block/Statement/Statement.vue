@@ -17,7 +17,7 @@
   import FragmentPar from './Fragment/FragmentPar.vue'
   import FragmentLoop from './Fragment/FragmentLoop.vue'
   import FragmentOpt from './Fragment/FragmentOpt.vue'
-  import FragmentTryCatchFinally from "./Fragment/FragmentTryCatchFinally"
+  import FragmentTryCatchFinally from "./Fragment/FragmentTryCatchFinally.vue"
   import Return from './Return/Return.vue'
   import Divider from './Divider/Divider.vue'
   import Comment from '../../../../../Comment/Comment'

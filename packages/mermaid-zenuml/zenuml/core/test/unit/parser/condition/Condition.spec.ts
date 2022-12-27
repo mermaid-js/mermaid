@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { Fixture } from '../fixture/Fixture';
 
 describe('Conditions', () => {

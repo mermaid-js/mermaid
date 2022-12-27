@@ -6,13 +6,16 @@
     "url": "https://github.com/ZenUml/core.git"
   },
   "scripts": {
-    "build:site": "vue-cli-service build",
-    "build": "vue-cli-service build --target lib --inline-vue --name zenuml/core ./src/core.ts",
+    "dev": "vite dev --port 8080",
+    "build:site": "vite build",
+    "build": "vite build -c vite.config.lib.js",
     "build:report": "vue-cli-service build --report --target lib --inline-vue --name zenuml/core ./src/core.ts",
-    "test:unit": "vue-cli-service test:unit",
+    "test:unit": "jest",
+    "test": "vitest",
     "test:unit:watch": "pnpm run antlr && vue-cli-service test:unit --watch",
     "cy": "cypress run",
     "cy:open": "cypress open",
+    "cy:smoke": "cypress run --spec cypress/e2e/smoke.spec.js",
     "lint": "vue-cli-service lint",
     "antlr:setup": "python3 -m pip install antlr4-tools",
     "antlr:generate": "pwd && cd ./src/g4-units/hello-world && antlr4 Hello.g4",
@@ -30,50 +33,30 @@
     "git:forget": "git rm -r --cached . && git add . && git commit -m \"Forget all ignored files\"",
     "test:specs": "echo \"Error: test:specs is not supported\""
   },
-  "main": "./dist/zenuml/core.common.js",
-  "exports": {
-    ".": {
-      "import": "./dist/zenuml/core.common.js",
-      "types": "./dist/detector.d.ts"
-    },
-    "./*": "./*"
-  },
+  "main": "./dist/zenuml-core.mjs",
   "types": "./types/index.d.ts",
   "dependencies": {
     "@types/assert": "^1.5.4",
     "@types/ramda": "^0.28.0",
     "antlr4": "^4.11.0",
-    "color-name": "^2.0.0",
     "color-string": "1.5.2",
     "dom-to-image-more": "^2.9.5",
     "file-saver": "^2.0.5",
     "highlight.js": "^10.1.1",
     "html-to-image": "^1.9.0",
-    "is-arrayish": "^0.3.2",
     "lodash": "^4.17.20",
     "marked": "^2.0.0",
     "pino": "^8.7.0",
     "postcss": "^8.4.19",
-    "quick-format-unescaped": "^4.0.4",
     "ramda": "^0.28.0",
-    "sass": "^1.56.2",
-    "simple-swizzle": "^0.2.2",
     "tailwindcss": "^3.2.4",
-    "tslib": "^2.4.1",
-    "vue": "2.6.12",
+    "vue": "2.7.14",
     "vue-gtag": "^1.16.1",
-    "vue-template-compiler": "2.6.12",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.10.4",
-    "@babel/core": "^7.10.4",
-    "@babel/plugin-proposal-optional-chaining": "^7.10.1",
-    "@babel/plugin-transform-arrow-functions": "^7.10.1",
-    "@babel/plugin-transform-modules-commonjs": "^7.10.1",
-    "@babel/polyfill": "^7.10.1",
-    "@babel/preset-env": "^7.13.5",
-    "@babel/runtime-corejs2": "^7.12.13",
+    "@babel/eslint-parser": "^7.19.1",
+    "@babel/preset-env": "^7.20.2",
     "@types/antlr4": "^4.11.2",
     "@types/color-string": "^1.5.2",
     "@types/jest": "^27.5.2",
@@ -81,35 +64,31 @@
     "@types/node": "latest",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
     "@typescript-eslint/parser": "^5.46.1",
-    "@vue/cli": "^5.0.8",
-    "@vue/cli-plugin-babel": "~5.0.8",
-    "@vue/cli-plugin-eslint": "~5.0.8",
-    "@vue/cli-plugin-typescript": "~5.0.8",
-    "@vue/cli-plugin-unit-jest": "~5.0.8",
-    "@vue/cli-service": "~5.0.8",
-    "@vue/eslint-config-typescript": "^8.0.0",
-    "@vue/test-utils": "^1.1.3",
+    "@vue/test-utils": "1.3.3",
     "@vue/vue2-jest": "^27.0.0",
     "autoprefixer": "^10.4.13",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^27.5.1",
-    "core-js": "^3.8.3",
-    "cypress": "^9.4.1",
+    "concurrently": "^7.5.0",
+    "cypress": "10",
     "cypress-plugin-snapshots": "^1.4.4",
-    "eslint": "7.32.0",
-    "eslint-plugin-vue": "^7.6.0",
+    "eslint": "^8.30.0",
+    "eslint-plugin-vue": "^8.7.1",
     "global-jsdom": "^8.6.0",
     "jest": "^27.5.1",
     "jsdom": "^20.0.2",
     "node-sass": "^6.0.0",
     "regenerator-runtime": "^0.13.7",
-    "sass-loader": "^10.1.0",
+    "sass": "^1.26.5",
     "svg-url-loader": "^6.0.0",
     "terser-webpack-plugin": "^3.0.6",
     "ts-jest": "^27.1.5",
+    "ts-node": "^10.9.1",
     "typescript": "^4.7.4",
-    "vue-cli-plugin-tailwind": "~3.0.0",
-    "webpack": "^5.64.4"
+    "vite": "^4.0.1",
+    "vite-plugin-vue2": "^2.0.2",
+    "vitest": "^0.26.1",
+    "vue-template-compiler": "^2.7.14"
   },
   "eslintConfig": {
     "root": true,
@@ -118,8 +97,7 @@
     },
     "extends": [
       "plugin:vue/essential",
-      "eslint:recommended",
-      "@vue/typescript"
+      "eslint:recommended"
     ],
     "rules": {},
     "parserOptions": {
@@ -146,10 +124,11 @@
   "browserslist": [
     "last 2 years"
   ],
+  "packageManager": "pnpm@7.18.1",
   "engines": {
     "node": ">=12.0.0"
   },
   "volta": {
-    "node": "14.21.1"
+    "node": "18.12.1"
   }
 }

@@ -16,12 +16,13 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": ["webpack-env", "jest"],
+    "types": ["webpack-env", "jest", "vitest/globals"],
     "paths": {
       "@/*": ["src/*"]
     },
     "lib": ["es2019", "es2016", "dom", "dom.iterable", "scripthost"]
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "tests/**/*.ts", "tests/**/*.tsx"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "files": ["types/index.d.ts", "types/svg.d.ts"]
 }

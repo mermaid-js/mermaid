@@ -1,6 +1,7 @@
+import { describe, expect, test, it } from 'vitest';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
 import Vuex from 'vuex';
-import Interaction from './Interaction';
+import Interaction from './Interaction.vue';
 import { VueSequence } from '../../../../../../../index';
 
 const localVue = createLocalVue();

@@ -1,4 +1,5 @@
-let seqDsl = require('../../../src/parser/index');
+import { test } from 'vitest';
+import { RootContext } from '../../../src/parser/index';
 
 // Performance base line 1.966 ~ 2.1s on My MBP.
 // 2021-02-14: Improved to 1.4s.
@@ -17,7 +18,7 @@ let seqDsl = require('../../../src/parser/index');
 test('Profiling sync message', () => {
   var t0 = performance.now();
   for (let i = 0; i < 100; i++) {
-    let rootContext = seqDsl.RootContext('x = B."method. {a,b} 1"(1,2)');
+    let rootContext = RootContext('x = B."method. {a,b} 1"(1,2)');
   }
   var t1 = performance.now();
   console.log('parsing', t1 - t0);
@@ -29,7 +30,7 @@ test('Profiling sync message', () => {
 test('Profiling async message', () => {
   var t0 = performance.now();
   for (let i = 0; i < 1000; i++) {
-    let rootContext = seqDsl.RootContext('A->B:m');
+    let rootContext = RootContext('A->B:m');
   }
   var t1 = performance.now();
   console.log('parsing', t1 - t0);
@@ -42,7 +43,7 @@ test('Profiling async message', () => {
 test('Profiling prog.head', () => {
   var t0 = performance.now();
   for (let i = 0; i < 100; i++) {
-    let rootContext = seqDsl.RootContext('<<>> A group B {C} @Starter(D)');
+    let rootContext = RootContext('<<>> A group B {C} @Starter(D)');
   }
   var t1 = performance.now();
   console.log('parsing', t1 - t0);
@@ -59,7 +60,7 @@ test('Profiling prog.head', () => {
 test('Profiling if/else', () => {
   const t0 = performance.now();
   for (let i = 0; i < 100; i++) {
-    let rootContext = seqDsl.RootContext('if(x>1){A.m} else if(y>1){B.m}else{C.m}');
+    let rootContext = RootContext('if(x>1){A.m} else if(y>1){B.m}else{C.m}');
   }
   const t1 = performance.now();
   console.log('parsing', t1 - t0);

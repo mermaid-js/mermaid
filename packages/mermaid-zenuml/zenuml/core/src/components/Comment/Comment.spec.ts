@@ -1,4 +1,5 @@
-import Comment from '@/components/Comment/Comment';
+import { describe, expect, test } from 'vitest';
+import Comment from '../Comment/Comment';
 
 describe('Comment', function () {
   test.each([

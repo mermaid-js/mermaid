@@ -35,12 +35,12 @@
  * A B @Starter(C) C.m    => C, A, B
  * A B @Starter(B) C.m    => A, B, C
  */
-
-import { seqDsl } from '@/positioning/ParticipantListener';
+import { describe, expect, it } from 'vitest';
+import { RootContext } from '../../../../src/parser/index';
 import { OrderedParticipants } from '../../../../src/positioning/OrderedParticipants';
 
 function getFlattenedParticipants(code: string) {
-  const rootContext = seqDsl.RootContext(code);
+  const rootContext = RootContext(code);
   return OrderedParticipants(rootContext);
 }
 

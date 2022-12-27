@@ -27,11 +27,11 @@
 <script type="text/babel">
   import Comment from '../Comment/Comment.vue'
   import Occurrence from './Occurrence/Occurrence.vue'
-  import Message from '../Message/Message'
+  import Message from '../Message/Message.vue'
   import {mapGetters} from "vuex";
-  import SelfInvocation from './SelfInvocation/SelfInvocation'
-  import {CodeRange} from '@/parser/CodeRange'
-  import {ProgContext} from '@/parser'
+  import SelfInvocation from './SelfInvocation/SelfInvocation.vue'
+  import {CodeRange} from '../../../../../../../parser/CodeRange'
+  import {ProgContext} from '../../../../../../../parser'
 
   export default {
     name: 'interaction',

@@ -1,4 +1,5 @@
-let seqDsl = require('../../../src/parser/index');
+import { describe, expect, test } from 'vitest';
+import { RootContext } from '../../../src/parser/index';
 
 describe('Starter', () => {
   test.each([
@@ -17,7 +18,7 @@ describe('Starter', () => {
     ['@starter(A) A1->B.m', 'A'],
     ['A1 @starter(A) A2->B.m', 'A'],
   ])('For code: %s, starter is %s', (code, starter) => {
-    let rootContext = seqDsl.RootContext(code);
+    let rootContext = RootContext(code);
     let actualStarter = rootContext.Starter();
     expect(actualStarter).toBe(starter);
   });

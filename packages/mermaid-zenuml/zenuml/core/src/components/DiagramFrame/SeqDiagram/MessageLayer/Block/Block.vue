@@ -7,7 +7,7 @@
 </template>
 
 <script>
-  import Statement from './Statement/Statement'
+  import Statement from './Statement/Statement.vue'
 
   export default {
     name: 'block',

@@ -21,11 +21,11 @@
 </template>
 
 <script>
-import parentLogger from '@/logger/logger'
-import {GroupContext, ParticipantContext, Participants} from '@/parser'
+import parentLogger from '../../../../logger/logger'
+import {GroupContext, ParticipantContext, Participants} from '../../../../parser'
 import {mapGetters, mapMutations} from 'vuex'
 import LifeLine from './LifeLine.vue'
-import LifeLineGroup from './LifeLineGroup'
+import LifeLineGroup from './LifeLineGroup.vue'
 const logger = parentLogger.child({name: 'LifeLineLayer'})
 
 export default {

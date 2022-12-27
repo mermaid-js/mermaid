@@ -1,8 +1,9 @@
-let seqDsl = require('../../../src/parser/index');
+import { describe, expect, test } from 'vitest';
+import { RootContext, Depth } from '../../../src/parser/index';
 
 function getDepth(code) {
-  let rootContext = seqDsl.RootContext(code);
-  return seqDsl.Depth(rootContext);
+  let rootContext = RootContext(code);
+  return Depth(rootContext);
 }
 
 test('get depth 0', () => {

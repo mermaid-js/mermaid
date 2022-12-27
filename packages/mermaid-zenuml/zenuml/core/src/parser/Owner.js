@@ -1,5 +1,4 @@
-// Owner is the `to` for a message or the name in the creation.
-const sequenceParser = require('../generated-parser/sequenceParser').default;
+import { default as sequenceParser } from '../generated-parser/sequenceParser';
 
 const seqParser = sequenceParser;
 const CreationContext = seqParser.CreationContext;

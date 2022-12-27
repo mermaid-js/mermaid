@@ -14,10 +14,10 @@
 
 <script type="text/babel">
   import Comment from '../Comment/Comment.vue'
-  import SelfInvocationAsync from './SelfInvocationAsync/SelfInvocation-async'
-  import Message from '../Message/Message'
+  import SelfInvocationAsync from './SelfInvocationAsync/SelfInvocation-async.vue'
+  import Message from '../Message/Message.vue'
   import {mapGetters} from "vuex"
-  import {CodeRange} from '@/parser/CodeRange'
+  import {CodeRange} from '../../../../../../../parser/CodeRange'
 
   function isNullOrUndefined(value) {
     return value === null || value === undefined
