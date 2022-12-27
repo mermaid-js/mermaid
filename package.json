@@ -69,6 +69,7 @@
     "@types/rollup-plugin-visualizer": "^4.2.1",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
+    "@vitejs/plugin-vue2": "^2.2.0",
     "@vitest/coverage-c8": "^0.25.1",
     "@vitest/ui": "^0.25.1",
     "concurrently": "^7.5.0",

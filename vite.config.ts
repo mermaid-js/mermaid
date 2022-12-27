@@ -1,3 +1,4 @@
+import vue from '@vitejs/plugin-vue2';
 import jison from './.vite/jisonPlugin';
 import { defineConfig } from 'vitest/config';
 
@@ -5,7 +6,7 @@ export default defineConfig({
   resolve: {
     extensions: ['.jison', '.js', '.ts', '.json'],
   },
-  plugins: [jison()],
+  plugins: [jison(), vue()],
   test: {
     environment: 'jsdom',
     globals: true,

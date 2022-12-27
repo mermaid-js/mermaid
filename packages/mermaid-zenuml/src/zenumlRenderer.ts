@@ -2,7 +2,7 @@
 import { getConfig, log } from './mermaidUtils';
 import ZenUml from '@zenuml/core';
 import { regexp } from './detector';
-import '@zenuml/core/dist/zenuml/core.css';
+import '@zenuml/core/dist/style.css';
 
 // Create a Zen UML container outside the svg first for rendering, otherwise the Zen UML diagram cannot be rendered properly
 function createTemporaryZenumlContainer(id: string) {
