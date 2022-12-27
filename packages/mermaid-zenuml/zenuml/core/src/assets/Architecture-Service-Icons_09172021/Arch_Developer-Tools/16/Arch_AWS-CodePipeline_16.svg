@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_AWS-CodePipeline_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#2E27AD" offset="0%"></stop>
+            <stop stop-color="#527FFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-CodePipeline_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Developer-Tools" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M9,9 L10,9 L10,8 L9,8 L9,9 Z M12.496,12.401 L13.426,12.768 L11.498,17.668 L10.568,17.302 L12.496,12.401 Z M16.327,14.648 C16.437,14.743 16.5,14.88 16.5,15.025 C16.5,15.169 16.438,15.307 16.33,15.402 L14.675,16.855 L14.015,16.103 L15.239,15.029 L14.018,13.969 L14.672,13.213 L16.327,14.648 Z M8.735,14.984 L9.992,16.203 L9.295,16.92 L7.651,15.326 C7.552,15.229 7.497,15.094 7.5,14.955 C7.503,14.816 7.564,14.685 7.669,14.592 L9.318,13.134 L9.98,13.883 L8.735,14.984 Z M19,8 L11,8 L11,9 L18.825,9 C18.544,9.589 17.947,10 17.251,10 L7.108,10 C6.354,10 5.695,9.598 5.323,9 L8,9 L8,8 L5.011,8 C5.009,7.963 5,7.928 5,7.891 L5,7.109 C5,5.946 5.946,5 7.108,5 L17.012,5 C18.108,5 19,5.892 19,6.989 L19,8 Z M6.914,19 L6.914,10.98 C6.979,10.984 7.042,11 7.108,11 L17.018,11 L17.018,19 L6.914,19 Z M17.012,4 L7.108,4 C5.395,4 4,5.395 4,7.109 L4,7.891 C4,9.182 4.791,10.291 5.914,10.76 L5.914,19.5 C5.914,19.776 6.138,20 6.414,20 L17.518,20 C17.794,20 18.018,19.776 18.018,19.5 L18.018,10.878 C19.159,10.543 20,9.499 20,8.251 L20,6.989 C20,5.341 18.659,4 17.012,4 L17.012,4 Z" id="AWS-CodePipeline_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

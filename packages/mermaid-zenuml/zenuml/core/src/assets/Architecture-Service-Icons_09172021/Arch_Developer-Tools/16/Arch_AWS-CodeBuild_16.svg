@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_Amazon-CodeBuild_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#2E27AD" offset="0%"></stop>
+            <stop stop-color="#527FFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_Amazon-CodeBuild_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Developer-Tools" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M12.146,14.854 C11.951,14.659 11.951,14.342 12.146,14.147 L13.146,13.147 L13.853,13.854 L13.207,14.5 L13.853,15.147 L13.146,15.854 L12.146,14.854 Z M15.985,16.622 L15.014,16.379 L16.014,12.379 L16.985,12.622 L15.985,16.622 Z M11,17 L19,17 L19,12 L11,12 L11,17 Z M14.522,10.048 L16.903,11 L12.618,11 L14.522,10.048 Z M5,7 L5,5 L17.232,5 L18.565,7 L5,7 Z M6,19 L8,19 L8,8 L6,8 L6,19 Z M19.684,11.038 L19.685,11.036 L15,9.162 L15,8 L19.5,8 C19.684,8 19.853,7.899 19.94,7.736 C20.028,7.574 20.018,7.376 19.916,7.223 L17.916,4.223 C17.823,4.084 17.667,4 17.5,4 L4.5,4 C4.223,4 4,4.224 4,4.5 L4,7.5 C4,7.777 4.223,8 4.5,8 L5,8 L5,19.5 C5,19.777 5.223,20 5.5,20 L8.5,20 C8.776,20 9,19.777 9,19.5 L9,8 L14,8 L14,9.191 L10.276,11.053 L10.278,11.058 C10.115,11.14 10,11.305 10,11.5 L10,17.5 C10,17.777 10.223,18 10.5,18 L19.5,18 C19.776,18 20,17.777 20,17.5 L20,11.5 C20,11.29 19.869,11.111 19.684,11.038 L19.684,11.038 Z" id="Amazon-CodeBuild_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon-Architecture/64/Arch_AWS-Elemental-Delta_64</title>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#C8511B" offset="0%"></stop>
+            <stop stop-color="#FF9900" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/64/Arch_AWS-Elemental-Delta_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle" fill="url(#linearGradient-1)">
+            <rect x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <path d="M45.99,51.42 L40,54.848 L34.01,51.42 L34.01,44.58 L40,41.152 L45.99,44.58 L45.99,51.42 Z M47.99,44 C47.99,43.642 47.798,43.31 47.487,43.132 L40.497,39.132 C40.188,38.956 39.811,38.956 39.503,39.132 L32.512,43.132 C32.202,43.31 32.01,43.642 32.01,44 L32.01,47 L14,47 L14,49 L32.01,49 L32.01,52 C32.01,52.358 32.202,52.69 32.512,52.868 L39,56.581 L39,64 L41,64 L41,56.581 L47.487,52.868 C47.798,52.69 47.99,52.358 47.99,52 L47.99,49 L66,49 L66,47 L47.99,47 L47.99,44 Z M18,27 L24,27 L24,25 L18,25 L18,27 Z M47,27 L62,27 L62,25 L47,25 L47,27 Z M14,34 L66,34 L66,18 L14,18 L14,34 Z M67,16 L13,16 C12.447,16 12,16.448 12,17 L12,35 C12,35.552 12.447,36 13,36 L67,36 C67.552,36 68,35.552 68,35 L68,17 C68,16.448 67.552,16 67,16 L67,16 Z" id="AWS-Elemental-Delta_Icon_64_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

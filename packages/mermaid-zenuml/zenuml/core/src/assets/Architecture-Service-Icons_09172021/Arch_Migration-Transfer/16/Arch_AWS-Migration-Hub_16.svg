@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_AWS-Migration-Hub_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#055F4E" offset="0%"></stop>
+            <stop stop-color="#56C0A7" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-Migration-Hub_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Migration-Transfer" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M11.646,11.026 L8.646,14.026 L9.353,14.733 L12,12.087 L14.646,14.733 L15.353,14.026 L12.353,11.026 C12.158,10.831 11.841,10.831 11.646,11.026 L11.646,11.026 Z M9.353,11.733 L12,9.087 L14.646,11.733 L15.353,11.026 L12.353,8.026 C12.158,7.831 11.841,7.831 11.646,8.026 L8.646,11.026 L9.353,11.733 Z M12,17.82 L8.223,15.932 L7.776,16.827 L11.776,18.827 C11.846,18.862 11.923,18.88 12,18.88 C12.076,18.88 12.153,18.862 12.223,18.827 L16.223,16.827 L15.776,15.932 L12,17.82 Z M18.825,8 L15.325,5 L14.674,5.759 L18,8.609 L18,12.38 L19,12.38 L19,8.38 C19,8.234 18.936,8.095 18.825,8 L18.825,8 Z M9.325,5.759 L6,8.609 L6,12.38 L5,12.38 L5,8.38 C5,8.234 5.063,8.095 5.174,8 L8.674,5 L9.325,5.759 Z" id="AWS-Migration-Hub_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

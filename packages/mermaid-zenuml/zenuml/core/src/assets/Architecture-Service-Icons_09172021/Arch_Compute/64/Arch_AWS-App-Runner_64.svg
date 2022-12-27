@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon-Architecture/64/Arch_AWS-Fusion_64</title>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#C8511B" offset="0%"></stop>
+            <stop stop-color="#FF9900" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/64/Arch_AWS-Fusion_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle" fill="url(#linearGradient-1)">
+            <rect x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <g id="Icon-Service/64/AWS-Fusion_64" transform="translate(8.000000, 8.000000)" fill="#FFFFFF">
+            <path d="M19.707,45.707 L18.293,44.293 L6,56.586 L6,50 L4,50 L4,59 C4,59.552 4.447,60 5,60 L14,60 L14,58 L7.414,58 L19.707,45.707 Z M59,4 L50,4 L50,6 L56.586,6 L44.293,18.293 L45.707,19.707 L58,7.414 L58,14 L60,14 L60,5 C60,4.448 59.553,4 59,4 L59,4 Z M35,51 L51,51 L51,35 L35,35 L35,51 Z M53,34 L53,52 C53,52.552 52.553,53 52,53 L34,53 C33.447,53 33,52.552 33,52 L33,34 C33,33.448 33.447,33 34,33 L52,33 C52.553,33 53,33.448 53,34 L53,34 Z M13,29 L29,29 L29,13 L13,13 L13,29 Z M31,12 L31,30 C31,30.552 30.553,31 30,31 L12,31 C11.447,31 11,30.552 11,30 L11,12 C11,11.448 11.447,11 12,11 L30,11 C30.553,11 31,11.448 31,12 L31,12 Z M30,33 L12,33 C11.447,33 11,33.448 11,34 L11,48.757 L13,46.757 L13,35 L29,35 L29,51 L17.242,51 L15.242,53 L30,53 C30.553,53 31,52.552 31,52 L31,34 C31,33.448 30.553,33 30,33 L30,33 Z M51,17.242 L53,15.242 L53,30 C53,30.552 52.553,31 52,31 L34,31 C33.447,31 33,30.552 33,30 L33,12 C33,11.448 33.447,11 34,11 L48.758,11 L46.758,13 L35,13 L35,29 L51,29 L51,17.242 Z" id="Fill-5"></path>
+        </g>
+    </g>
+</svg>

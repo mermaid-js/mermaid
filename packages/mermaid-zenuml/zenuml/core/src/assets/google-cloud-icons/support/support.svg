@@ -1,0 +1,12 @@
+<svg version="1.1" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+	 x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" overflow="visible" xml:space="preserve">
+<g >
+	<rect y="0" fill="none" width="24" height="24"/>
+	<g transform="translate(2.000000, 1.000000)">
+		<path fill-rule="evenodd" fill="#5C85DE" d="M10-0.2c1.7,0,3,1.4,3,3s-1.3,3-3,3s-3-1.3-3-3S8.4-0.2,10-0.2L10-0.2z M13.8,9.5v12
+			h-3v-6H9.2v6h-3v-12h-6.8v-3h21v3H13.8z"/>
+		<path fill-rule="evenodd" fill="#3367D6" d="M13.8,9.5v12h-3v-6H10v-9h10.5v3H13.8z M10,5.8v-6c1.7,0,3,1.4,3,3S11.7,5.8,10,5.8z"
+			/>
+	</g>
+</g>
+</svg>

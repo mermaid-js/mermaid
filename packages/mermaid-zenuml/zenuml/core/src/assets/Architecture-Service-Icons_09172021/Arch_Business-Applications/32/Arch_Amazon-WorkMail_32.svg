@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/32/Arch_Amazon-WorkMail_32</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#BD0816" offset="0%"></stop>
+            <stop stop-color="#FF5252" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/32/Arch_Amazon-WorkMail_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/32/Business-Applications" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="40" height="40"></rect>
+        </g>
+        <path d="M7.00021433,32.9998214 L7.00021433,7.70730488 L19.6469243,20.3535631 C19.7399443,20.4475799 19.8669715,20.4995892 20,20.4995892 C20.1330285,20.4995892 20.2600557,20.4475799 20.3540759,20.3535631 L32.9997857,7.70730488 L32.9997857,32.9998214 L7.00021433,32.9998214 Z M32.2926341,7.0001786 L20,19.2923736 L7.70736586,7.0001786 L32.2926341,7.0001786 Z M33.4998928,6 L6.50010717,6 C6.22404801,6 6,6.22404001 6,6.5000893 L6,33.4999107 C6,33.77596 6.22404801,34 6.50010717,34 L33.4998928,34 C33.7769522,34 34,33.77596 34,33.4999107 L34,6.5000893 C34,6.22404001 33.7769522,6 33.4998928,6 L33.4998928,6 Z" id="Amazon-WorkMail_Icon_32_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

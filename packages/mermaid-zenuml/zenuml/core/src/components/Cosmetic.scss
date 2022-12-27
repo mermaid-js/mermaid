@@ -1,0 +1,74 @@
+// This file provides basic but essential styling for the diagram.
+.zenuml {
+  // Choose a safe font, or make sure it is available at the target device.
+  // https://web.mit.edu/jmorzins/www/fonts.html.
+  // https://visme.co/blog/infographic-font/
+  font-family: Helvetica, Verdana, serif;
+  // In most modern browsers (all that @zenuml/core supports), the default font size is 16px.
+  // We reset it to 16px in case the user has changed it.
+  font-size: 16px;
+  .frame {
+    .sequence-diagram {
+      .comments {
+
+        code {
+          background-color: #f9f2f4;
+          padding: 2px;
+          margin: 1px 0;
+          border-radius: 2px;
+        }
+
+        .rest-api .http-method-post {
+          color: #0d4b3b;
+        }
+
+        .rest-api .http-method-get {
+          color: #2f3d89;
+        }
+
+        .rest-api .http-method-delete {
+          color: #7e1e23;
+        }
+
+        ol {
+          margin: 0;
+          padding-left: 20px;
+        }
+
+        ul {
+          margin: 0;
+          padding-left: 20px;
+
+          li {
+            list-style-type: none;
+
+            input[type="checkbox"] {
+              margin-left: -1em;
+            }
+          }
+        }
+
+        table {
+          /* Remove spacing between table cells (from Normalize.css) */
+          border-collapse: collapse;
+          border-spacing: 0;
+          empty-cells: show;
+          border-color: #cbcbcb;
+
+          td, th {
+            padding: 0.5em;
+          }
+
+          thead {
+            background-color: #e0e0e0;
+          }
+
+          td {
+            background-color: transparent;
+          }
+        }
+      }
+    }
+  }
+}
+

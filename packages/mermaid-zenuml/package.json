@@ -40,7 +40,7 @@
   },
   "homepage": "https://github.com/mermaid-js/mermaid#readme",
   "dependencies": {
-    "@zenuml/core": "^2.0.12"
+    "@zenuml/core": "link:zenuml/core"
   },
   "devDependencies": {
     "concurrently": "^7.5.0",

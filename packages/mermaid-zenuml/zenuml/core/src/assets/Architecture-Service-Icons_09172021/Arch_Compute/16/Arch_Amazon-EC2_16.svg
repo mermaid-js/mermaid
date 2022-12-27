@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_Amazon-EC2_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#C8511B" offset="0%"></stop>
+            <stop stop-color="#FF9900" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_Amazon-EC2_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Compute" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M15,9 L14,9 L13,9 L12,9 L11,9 L10,9 L10,10 L10,11 L10,12 L10,13 L10,14 L11,14 L12,14 L13,14 L14,14 L15,14 L15,13 L15,12 L15,11 L15,10 L15,9 Z M16,9 L17,9 L17,10 L16,10 L16,11 L17,11 L17,12 L16,12 L16,13 L17,13 L17,14 L16,14 L16,14.308 C16,14.689 15.689,15 15.308,15 L15,15 L15,16 L14,16 L14,15 L13,15 L13,16 L12,16 L12,15 L11,15 L11,16 L10,16 L10,15 L9.692,15 C9.311,15 9,14.689 9,14.308 L9,14 L8,14 L8,13 L9,13 L9,12 L8,12 L8,11 L9,11 L9,10 L8,10 L8,9 L9,9 L9,8.692 C9,8.311 9.311,8 9.692,8 L10,8 L10,7 L11,7 L11,8 L12,8 L12,7 L13,7 L13,8 L14,8 L14,7 L15,7 L15,8 L15.308,8 C15.689,8 16,8.311 16,8.692 L16,9 Z M12,19 L5,19 L5,13 L7,13 L7,12 L4.8,12 C4.358,12 4,12.342 4,12.762 L4,19.219 C4,19.65 4.351,20 4.781,20 L12.2,20 C12.642,20 13,19.658 13,19.238 L13,17 L12,17 L12,19 Z M20,4.781 L20,12.219 C20,12.65 19.649,13 19.219,13 L18,13 L18,12 L19,12 L19,5 L12,5 L12,6 L11,6 L11,4.781 C11,4.35 11.351,4 11.781,4 L19.219,4 C19.649,4 20,4.35 20,4.781 L20,4.781 Z" id="Amazon-EC2_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

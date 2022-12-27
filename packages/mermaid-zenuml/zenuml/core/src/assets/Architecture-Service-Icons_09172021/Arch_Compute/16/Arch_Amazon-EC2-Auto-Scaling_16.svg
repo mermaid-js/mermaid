@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_Amazon-EC2-Auto-Scaling_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#C8511B" offset="0%"></stop>
+            <stop stop-color="#FF9900" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_Amazon-EC2-Auto-Scaling_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Compute" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M12,6.92503688 L12,8.72837602 L13,8.72837602 L13,6.92503688 L13.646,7.57476197 L14.354,6.86368513 L12.5,5 L10.646,6.86368513 L11.354,7.57476197 L12,6.92503688 Z M20,11.7456752 L17.707,11.7456752 L18.354,11.0949443 L17.646,10.3838675 L15.793,12.2485584 L17.646,14.1122435 L18.354,13.4011667 L17.707,12.7514416 L20,12.7514416 L20,11.7456752 Z M6.646,11.0949443 L7.293,11.7456752 L5,11.7456752 L5,12.7514416 L7.293,12.7514416 L6.646,13.4011667 L7.354,14.1122435 L9.207,12.2485584 L7.354,10.3838675 L6.646,11.0949443 Z M11,13.757208 L14,13.757208 L14,10.7399088 L11,10.7399088 L11,13.757208 Z M10,14.7629744 L15,14.7629744 L15,9.73414242 L10,9.73414242 L10,14.7629744 Z M13.646,17.4242323 L14.354,18.1353091 L12.5,20 L10.646,18.1353091 L11.354,17.4242323 L12,18.0749631 L12,15.7687408 L13,15.7687408 L13,18.0749631 L13.646,17.4242323 Z" id="Amazon-EC2-Auto-Scaling_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_AWS-Step-Functions_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#B0084D" offset="0%"></stop>
+            <stop stop-color="#FF4F8B" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-Step-Functions_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Application-Integration" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M14,13 L19,13 L19,11 L14,11 L14,13 Z M16,15 L8,15 L8,13 L10.5,13 C10.776,13 11,12.776 11,12.5 L11,10.5 C11,10.224 10.776,10 10.5,10 L8,10 L8,9 L16,9 L16,10 L13.5,10 C13.224,10 13,10.224 13,10.5 L13,13.5 C13,13.776 13.224,14 13.5,14 L16,14 L16,15 Z M5,12 L10,12 L10,11 L5,11 L5,12 Z M12.5,19 C12.225,19 12,18.776 12,18.5 C12,18.224 12.225,18 12.5,18 C12.775,18 13,18.224 13,18.5 C13,18.776 12.775,19 12.5,19 L12.5,19 Z M12.5,5 C12.775,5 13,5.224 13,5.5 C13,5.776 12.775,6 12.5,6 C12.225,6 12,5.776 12,5.5 C12,5.224 12.225,5 12.5,5 L12.5,5 Z M19.5,10 L17,10 L17,8.5 C17,8.224 16.776,8 16.5,8 L13,8 L13,6.908 C13.581,6.701 14,6.151 14,5.5 C14,4.673 13.327,4 12.5,4 C11.673,4 11,4.673 11,5.5 C11,6.151 11.419,6.701 12,6.908 L12,8 L7.5,8 C7.224,8 7,8.224 7,8.5 L7,10 L4.5,10 C4.224,10 4,10.224 4,10.5 L4,12.5 C4,12.776 4.224,13 4.5,13 L7,13 L7,15.5 C7,15.776 7.224,16 7.5,16 L12,16 L12,17.092 C11.419,17.299 11,17.849 11,18.5 C11,19.327 11.673,20 12.5,20 C13.327,20 14,19.327 14,18.5 C14,17.849 13.581,17.299 13,17.092 L13,16 L16.5,16 C16.776,16 17,15.776 17,15.5 L17,14 L19.5,14 C19.776,14 20,13.776 20,13.5 L20,10.5 C20,10.224 19.776,10 19.5,10 L19.5,10 Z" id="AWS_Step_Functions_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

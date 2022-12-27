@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/64/Arch_AWS-Database-Migration_64</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#2E27AD" offset="0%"></stop>
+            <stop stop-color="#527FFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/64/Arch_AWS-Database-Migration_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/64/Database" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <path d="M44,67 L46,67 L46,60 L44,60 L44,67 Z M35,66.86 L37,66.86 L37,60 L35,60 L35,66.86 Z M53,65 L55,65 L55,59 L53,59 L53,65 Z M26,65 L28,65 L28,59 L26,59 L26,65 Z M40,35 C32.489,35 28,32.966 28,31 L28,23.359 C30.32,25.022 34.533,26 40,26 C44.983,26 50.225,25.106 53,23.2 L53,31 C53,32.932 47.777,35 40,35 L40,35 Z M40,45 C32.489,45 28,42.966 28,41 L28,34.359 C30.32,36.022 34.533,37 40,37 C44.983,37 50.225,36.106 53,34.2 L53,41 C53,42.932 47.777,45 40,45 L40,45 Z M40,55 C32.206,55 28,52.939 28,51 L28,44.359 C30.32,46.022 34.533,47 40,47 C44.983,47 50.225,46.106 53,44.2 L53,51 C53,52.932 47.777,55 40,55 L40,55 Z M40,16 C47.661,16 53,18.108 53,20 C53,21.892 47.661,24 40,24 C32.489,24 28,21.966 28,20 C28,18.034 32.489,16 40,16 L40,16 Z M40,14 C31.495,14 26,16.355 26,20 L26,51 C26,54.645 31.495,57 40,57 C47.225,57 55,55.123 55,51 L55,20 C55,15.877 47.225,14 40,14 L40,14 Z" id="AWS-Database-Migration_Icon_64_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

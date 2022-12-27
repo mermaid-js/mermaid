@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon-Architecture/32/Arch_TorchServe_32</title>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#055F4E" offset="0%"></stop>
+            <stop stop-color="#56C0A7" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/32/Arch_TorchServe_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle" fill="url(#linearGradient-1)">
+            <rect x="0" y="0" width="40" height="40"></rect>
+        </g>
+        <g id="Icon-Service/32/TorchServe_32" transform="translate(4.000000, 4.000000)" fill="#FFFFFF">
+            <path d="M19.772,6.785 C19.772,7.336 20.22,7.785 20.772,7.785 C21.324,7.785 21.772,7.336 21.772,6.785 C21.772,6.234 21.324,5.785 20.772,5.785 C20.22,5.785 19.772,6.234 19.772,6.785 M18.772,6.785 C18.772,5.682 19.669,4.785 20.772,4.785 C21.875,4.785 22.772,5.682 22.772,6.785 C22.772,7.888 21.875,8.785 20.772,8.785 C19.669,8.785 18.772,7.888 18.772,6.785 M27.544,17.936 C27.544,24.428 22.263,29.708 15.772,29.708 C9.281,29.708 4,24.428 4,17.936 C4,14.713 5.277,11.705 7.596,9.466 L15.398,2 L16.089,2.723 L8.29,10.187 C6.168,12.234 5,14.987 5,17.936 C5,23.876 9.832,28.708 15.772,28.708 C21.712,28.708 26.544,23.876 26.544,17.936 C26.544,14.957 25.355,12.185 23.196,10.131 L23.885,9.406 C26.245,11.651 27.544,14.681 27.544,17.936" id="TorchServe-Icon_32_Squid"></path>
+        </g>
+    </g>
+</svg>

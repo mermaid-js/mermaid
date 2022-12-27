@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_AWS-Tools-and-SDK_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#2E27AD" offset="0%"></stop>
+            <stop stop-color="#527FFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-Tools-and-SDK_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Developer-Tools" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M17,15.17575 L11.5,18.35175 L6,15.17575 L6,9.04875 L11.5,6.06975 L17,9.04875 L17,15.17575 Z M17.738,8.31075 L11.738,5.06075 C11.59,4.97975 11.41,4.97975 11.262,5.06075 L5.262,8.31075 C5.101,8.39875 5,8.56675 5,8.75075 L5,15.46475 C5,15.64275 5.096,15.80775 5.25,15.89775 L11.25,19.36175 C11.327,19.40575 11.414,19.42875 11.5,19.42875 C11.586,19.42875 11.673,19.40575 11.75,19.36175 L17.75,15.89775 C17.904,15.80775 18,15.64275 18,15.46475 L18,8.75075 C18,8.56675 17.899,8.39875 17.738,8.31075 L17.738,8.31075 Z M13.366,10.34575 L11.625,11.35275 L9.764,10.27675 L11.5,9.34375 L13.366,10.34575 Z M12,15.16375 L12,12.29075 L14,11.13475 L14,14.08975 L12,15.16375 Z M9,10.99075 L11,12.14675 L11,15.16375 L9,14.08975 L9,10.99075 Z M11.264,8.33575 L8.264,9.94775 C8.102,10.03475 8,10.20375 8,10.38775 L8,14.38775 C8,14.57175 8.102,14.74175 8.264,14.82875 L11.264,16.44075 C11.337,16.48075 11.419,16.50075 11.5,16.50075 C11.581,16.50075 11.663,16.48075 11.736,16.44075 L14.736,14.82875 C14.898,14.74175 15,14.57175 15,14.38775 L15,10.38775 C15,10.20375 14.898,10.03475 14.736,9.94775 L11.736,8.33575 C11.59,8.25675 11.41,8.25675 11.264,8.33575 L11.264,8.33575 Z" id="AWS-Tools-and-SDK_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

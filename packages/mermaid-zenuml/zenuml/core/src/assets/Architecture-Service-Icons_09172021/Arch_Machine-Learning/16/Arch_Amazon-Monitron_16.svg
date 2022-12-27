@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon-Architecture/16/Arch_Amazon-Monitron_16</title>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#055F4E" offset="0%"></stop>
+            <stop stop-color="#56C0A7" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_Amazon-Monitron_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle" fill="url(#linearGradient-1)">
+            <rect x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <g id="Icon-Service/16/Amazon-Monitron_16" transform="translate(4.000000, 4.000000)" fill="#FFFFFF">
+            <path d="M8,15 C4.48,15 1.567,12.387 1.08,9 L4.549,9 L6.095,12.744 C6.172,12.931 6.354,13.053 6.557,13.053 C6.563,13.053 6.569,13.053 6.575,13.052 C6.784,13.044 6.967,12.907 7.032,12.708 L9.568,4.961 L10.567,7.673 C10.64,7.869 10.826,8 11.036,8 L15,8 C15,11.86 11.859,15 8,15 M8,1 C11.52,1 14.433,3.613 14.92,7 L11.385,7 L10.01,3.267 C9.937,3.067 9.737,2.947 9.532,2.939 C9.319,2.943 9.132,3.082 9.065,3.284 L6.502,11.112 L5.345,8.309 C5.268,8.122 5.085,8 4.883,8 L1,8 C1,4.14 4.141,1 8,1 M8,0 C3.589,0 0,3.589 0,8 C0,12.411 3.589,16 8,16 C12.411,16 16,12.411 16,8 C16,3.589 12.411,0 8,0" id="Fill-7"></path>
+        </g>
+    </g>
+</svg>

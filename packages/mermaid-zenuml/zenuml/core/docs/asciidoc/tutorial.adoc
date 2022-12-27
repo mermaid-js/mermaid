@@ -1,0 +1,22 @@
+= User's guide
+
+== Audience
+This document is written for end users of the software. If you want to integrate
+ZenUML into your own application, please refer to the integration guide. If you
+want to contribute to the development of ZenUML, please refer to the contributor's
+guide.
+
+== Introduction
+> A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order.
+
+ZenUML is a tool for creating sequence diagrams from text. It runs completely
+in the browser, so you don't need to worry about data privacy or security. See
+https://link[data privacy and security] for more information.
+
+++++
+<iframe src="https://embed.zenuml.com/smoke-creation.html"></iframe>
+++++
+
+== Syntax
+
+=== Participants

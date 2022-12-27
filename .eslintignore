@@ -4,3 +4,5 @@ docs/Setup.md
 cypress.config.js
 cypress/plugins/index.js
 coverage
+# temporarily ignore this folder.
+packages/mermaid-zenuml/zenuml/core/**

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon-Architecture/32/Arch_CN-Habañero_32</title>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#4D27A8" offset="0%"></stop>
+            <stop stop-color="#A166FF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/32/Arch_CN-Habañero_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle" fill="url(#linearGradient-1)">
+            <rect x="0" y="0" width="40" height="40"></rect>
+        </g>
+        <g id="Icon-Service/32/CN-Habañero_32" transform="translate(4.000000, 4.000000)" fill="#FFFFFF">
+            <path d="M23,25 L23,11.782 L21,10.452 L21,25 L23,25 Z M20,25 L20,9.787 L18,8.457 L18,25 L20,25 Z M17,25 L17,7.792 L16,7.127 L15,7.792 L15,25 L17,25 Z M14,25 L14,8.457 L12,9.787 L12,25 L14,25 Z M11,25 L11,10.452 L9,11.782 L9,25 L11,25 Z M27,26 L5,26 L5,25 L8,25 L8,12.447 L5.754,13.94 L5.2,13.107 L15.723,6.11 C15.891,5.999 16.109,5.999 16.277,6.11 L26.8,13.107 L26.246,13.94 L24,12.447 L24,25 L27,25 L27,26 Z M4,28 L9,28 L9,27 L4,27 L4,28 Z M11,28 L21,28 L21,27 L11,27 L11,28 Z M23,28 L28,28 L28,27 L23,27 L23,28 Z M2,30 L15,30 L15,29 L2,29 L2,30 Z M17,30 L30,30 L30,29 L17,29 L17,30 Z M3.277,12.083 L2.723,11.25 L15.723,2.584 C15.891,2.472 16.109,2.472 16.277,2.584 L29.277,11.25 L28.723,12.083 L16,3.601 L3.277,12.083 Z" id="Fill-1"></path>
+        </g>
+    </g>
+</svg>

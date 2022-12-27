@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/64/Arch_Amazon-Elastic-Block-Store_64</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#1B660F" offset="0%"></stop>
+            <stop stop-color="#6CAE3E" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/64/Arch_Amazon-Elastic-Block-Store_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/64/Storage" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <path d="M66,58 L68,58 L68,68 L58,68 L58,66 L64.586,66 L56.293,57.707 L57.707,56.293 L66,64.586 L66,58 Z M23.707,57.707 L15.414,66 L22,66 L22,68 L12,68 L12,58 L14,58 L14,64.586 L22.293,56.293 L23.707,57.707 Z M68,12 L68,22 L66,22 L66,15.414 L57.707,23.707 L56.293,22.293 L64.586,14 L58,14 L58,12 L68,12 Z M15.414,14 L23.707,22.293 L22.293,23.707 L14,15.414 L14,22 L12,22 L12,12 L22,12 L22,14 L15.414,14 Z M50.678,53.661 C49.521,54.848 45.635,56.046 39.563,56.046 C32.168,56.046 28.031,54.23 28,53 L28,29.857 C30.603,31.395 35.32,32 39.563,32 C43.756,32 48.418,31.397 51,29.867 L51,53.025 C51.002,53.099 51.008,53.323 50.678,53.661 L50.678,53.661 Z M39.563,24 C45.663,24 49.545,25.181 50.686,26.352 C51.008,26.682 51.002,26.902 51,26.975 L51,27 C51,28.226 46.927,30 39.563,30 C32.422,30 28.032,28.265 28.003,27.013 C28.061,25.746 32.093,24 39.563,24 L39.563,24 Z M52.999,27 C53.007,26.482 52.858,25.716 52.118,24.956 C50.313,23.105 45.62,22 39.563,22 C33.365,22 26.094,23.303 26,27 L26,53.025 C26.095,56.731 33.365,58.046 39.563,58.046 C44.22,58.046 49.962,57.261 52.11,55.057 C52.869,54.278 53.013,53.495 53,53 L53,27.011 L53,27.004 L53,27 L52.999,27 Z" id="Amazon-Elastic-Block-Store_Icon_64_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

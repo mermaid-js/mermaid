@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/64/Arch_Amazon-Kinesis_64</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#4D27A8" offset="0%"></stop>
+            <stop stop-color="#A166FF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/64/Arch_Amazon-Kinesis_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/64/Analytics" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <path d="M19,62 L21,62 C21,53.594 26.465,45 67,45 L67,43 C24.703,43 19,52.604 19,62 M25,68 L27,68 C27,60.434 27,49 67,49 L67,47 C48.663,47 36.728,49.359 30.51,54.212 C25,58.512 25,63.996 25,68 M15,26 L13,26 C13,33.396 23.039,38.08 42.893,40 C23.039,41.92 13,46.604 13,54 L15,54 C15,49.145 21.756,41 67,41 L67,39 C21.756,39 15,30.855 15,26 M21,18 L19,18 C19,27.396 24.703,37 67,37 L67,35 C26.465,35 21,26.406 21,18 M67,31 L67,33 C48.663,33 36.728,30.641 30.51,25.788 C25,21.488 25,16.004 25,12 L27,12 C27,19.566 27,31 67,31" id="Amazon-Kinesis_Icon_64_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

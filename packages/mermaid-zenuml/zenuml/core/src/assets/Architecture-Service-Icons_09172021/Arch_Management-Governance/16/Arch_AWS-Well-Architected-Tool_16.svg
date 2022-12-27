@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_AWS-Well-Architect-Tool_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#B0084D" offset="0%"></stop>
+            <stop stop-color="#FF4F8B" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-Well-Architect-Tool_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Management-Governance" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M16.33575,11.5 L14.45875,8.25 C14.36975,8.095 14.20475,8 14.02575,8 L9.98475,8 C9.80675,8 9.64175,8.095 9.55275,8.25 L7.67575,11.5 L5.36575,11.5 L8.54175,6 L15.46975,6 L18.64575,11.5 L16.33575,11.5 Z M15.68175,17.634 L14.52575,15.634 L16.33575,12.5 L18.64575,12.5 L15.68175,17.634 Z M12.04175,18 L10.88675,16 L13.58275,16 L14.73775,18 L12.04175,18 Z M8.55975,11.97 L10.27375,9 L13.73675,9 L15.46975,12 L13.73675,15 L10.30975,15 L8.55975,11.97 Z M8.54175,18 L5.36575,12.5 L7.67575,12.5 L9.55275,15.75 C9.58175,15.802 9.62075,15.847 9.66475,15.884 L10.88675,18 L8.54175,18 Z M19.94375,11.75 L16.19075,5.25 C16.10275,5.095 15.93775,5 15.75875,5 L8.25275,5 C8.07375,5 7.90875,5.095 7.81975,5.25 L4.06675,11.75 C3.97775,11.905 3.97775,12.095 4.06675,12.25 L7.81975,18.75 C7.90875,18.905 8.07375,19 8.25275,19 L15.75875,19 C15.93775,19 16.10275,18.905 16.19075,18.75 L19.94375,12.25 C20.03375,12.095 20.03375,11.905 19.94375,11.75 L19.94375,11.75 Z" id="AWS-Well-Architect-Tool_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

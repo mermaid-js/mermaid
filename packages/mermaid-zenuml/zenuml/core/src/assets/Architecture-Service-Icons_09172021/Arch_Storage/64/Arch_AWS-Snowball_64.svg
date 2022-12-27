@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/64/Arch_AWS-Snowball_64</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#1B660F" offset="0%"></stop>
+            <stop stop-color="#6CAE3E" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/64/Arch_AWS-Snowball_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/64/Storage" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <path d="M36,24 L44,24 L44,22 L36,22 L36,24 Z M26,47 L55,47 L55,35 L26,35 L26,47 Z M56,33 L25,33 C24.447,33 24,33.448 24,34 L24,48 C24,48.552 24.447,49 25,49 L56,49 C56.553,49 57,48.552 57,48 L57,34 C57,33.448 56.553,33 56,33 L56,33 Z M66,55.847 C66,58.137 64.238,60 62.072,60 L17.928,60 C15.762,60 14,58.137 14,55.847 L14,24.153 C14,21.863 15.762,20 17.928,20 L62.072,20 C64.238,20 66,21.863 66,24.153 L66,55.847 Z M62.072,18 L17.928,18 C14.659,18 12,20.76 12,24.153 L12,55.847 C12,59.24 14.659,62 17.928,62 L62.072,62 C65.341,62 68,59.24 68,55.847 L68,24.153 C68,20.76 65.341,18 62.072,18 L62.072,18 Z M62,53.52 C62,54.336 61.329,55 60.505,55 L19.495,55 C18.671,55 18,54.336 18,53.52 L18,25.48 C18,24.664 18.671,24 19.495,24 L30.219,24 L31.03,27.243 C31.142,27.687 31.541,28 32,28 L48,28 C48.459,28 48.858,27.687 48.97,27.243 L49.781,24 L60.505,24 C61.329,24 62,24.664 62,25.48 L62,53.52 Z M60.505,22 L49,22 C48.541,22 48.142,22.312 48.03,22.757 L47.219,26 L32.781,26 L31.97,22.757 C31.858,22.312 31.459,22 31,22 L19.495,22 C17.568,22 16,23.562 16,25.48 L16,53.52 C16,55.438 17.568,57 19.495,57 L60.505,57 C62.432,57 64,55.438 64,53.52 L64,25.48 C64,23.562 62.432,22 60.505,22 L60.505,22 Z" id="Fill-1" fill="#FFFFFF"></path>
+    </g>
+</svg>

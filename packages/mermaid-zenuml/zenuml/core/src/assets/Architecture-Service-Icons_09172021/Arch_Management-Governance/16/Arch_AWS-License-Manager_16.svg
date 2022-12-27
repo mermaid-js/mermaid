@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_AWS-License-Manager_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#B0084D" offset="0%"></stop>
+            <stop stop-color="#FF4F8B" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-License-Manager_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Management-Governance" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M12,17.498 C10.621,17.498 9.5,16.376 9.5,14.998 C9.5,13.62 10.621,12.498 12,12.498 C12.532,12.498 13.023,12.668 13.43,12.953 L11.922,15.213 L11.354,14.644 L10.646,15.352 L11.646,16.352 C11.74,16.446 11.868,16.498 12,16.498 C12.017,16.498 12.033,16.497 12.049,16.496 C12.198,16.481 12.333,16.4 12.416,16.275 L14.129,13.706 C14.359,14.084 14.5,14.523 14.5,14.998 C14.5,16.376 13.379,17.498 12,17.498 L12,17.498 Z M12,11.498 C10.07,11.498 8.5,13.068 8.5,14.998 C8.5,16.928 10.07,18.498 12,18.498 C13.93,18.498 15.5,16.928 15.5,14.998 C15.5,13.068 13.93,11.498 12,11.498 L12,11.498 Z M8,9.998 L16,9.998 L16,8.998 L8,8.998 L8,9.998 Z M8,7.998 L11,7.998 L11,6.998 L8,6.998 L8,7.998 Z M7,18.998 L7,5 L14.023,5 L14.023,7.451 C14.023,7.727 14.247,7.951 14.523,7.951 L17,7.951 L17,18.998 L7,18.998 Z M15.023,5.7 L16.285,6.951 L15.023,6.951 L15.023,5.7 Z M17.852,7.096 L14.875,4.145 C14.782,4.052 14.655,4 14.523,4 L6.5,4 C6.224,4 6,4.224 6,4.5 L6,19.498 C6,19.774 6.224,19.998 6.5,19.998 L17.5,19.998 C17.776,19.998 18,19.774 18,19.498 L18,7.451 C18,7.318 17.946,7.19 17.852,7.096 L17.852,7.096 Z" id="AWS-License-Manager_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

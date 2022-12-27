@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/32/Arch_Reserved-Instance-Reporting_32</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#1B660F" offset="0%"></stop>
+            <stop stop-color="#6CAE3E" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/32/Arch_Reserved-Instance-Reporting_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/32/AWS-Cost-Management" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="40" height="40"></rect>
+        </g>
+        <path d="M28.379,27.672 L24.854,24.147 L24.147,24.854 L27.67,28.378 L20.503,31.349 L13.328,28.379 L16.854,24.854 L16.147,24.147 L12.623,27.671 L9.651,20.503 L12.621,13.328 L16.147,16.854 L16.854,16.147 L13.33,12.623 L20.497,9.651 L27.672,12.621 L24.147,16.147 L24.854,16.854 L28.377,13.33 L31.349,20.497 L28.379,27.672 Z M34,21 L34,20 L32.225,20 L29.143,12.564 L30.854,10.854 L30.147,10.147 L28.438,11.856 L21,8.777 L21,7 L20,7 L20,8.776 L12.565,11.857 L10.854,10.147 L10.147,10.854 L11.856,12.563 L8.777,20 L7,20 L7,21 L8.775,21 L11.858,28.436 L10.147,30.147 L10.854,30.854 L12.563,29.145 L20,32.223 L20,34 L21,34 L21,32.225 L28.436,29.143 L30.147,30.854 L30.854,30.147 L29.145,28.438 L32.223,21 L34,21 Z M20.5,23.24 C18.989,23.24 17.76,22.011 17.76,20.5 C17.76,18.989 18.989,17.76 20.5,17.76 C22.011,17.76 23.24,18.989 23.24,20.5 C23.24,22.011 22.011,23.24 20.5,23.24 L20.5,23.24 Z M20.5,16.76 C18.438,16.76 16.76,18.438 16.76,20.5 C16.76,22.563 18.438,24.24 20.5,24.24 C22.563,24.24 24.24,22.563 24.24,20.5 C24.24,18.438 22.563,16.76 20.5,16.76 L20.5,16.76 Z" id="Reserved-Instance-Reporting_Icon_32_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>
