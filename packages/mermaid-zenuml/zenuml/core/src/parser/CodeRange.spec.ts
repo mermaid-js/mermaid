@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { Fixture } from '../../test/unit/parser/fixture/Fixture';
 import { CodeRange } from './CodeRange';
 

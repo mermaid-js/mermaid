@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import WidthProviderOnBrowser from '../../../src/positioning/WidthProviderFunc';
 import { TextType } from '../../../src/positioning/Coordinate';
 

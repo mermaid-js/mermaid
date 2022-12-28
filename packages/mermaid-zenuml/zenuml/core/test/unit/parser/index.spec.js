@@ -1,4 +1,3 @@
-import { expect, test } from 'vitest';
 import { RootContext, Participants } from '../../../src/parser/index';
 
 import { Fixture } from './fixture/Fixture';

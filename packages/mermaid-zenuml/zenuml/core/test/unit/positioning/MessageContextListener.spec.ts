@@ -1,6 +1,5 @@
 import antlr4 from 'antlr4';
 import { MessageContextListener } from '../../../src/positioning/MessageContextListener';
-import { describe, expect, it } from 'vitest';
 import { RootContext } from '../../../src/parser/index';
 
 describe('MessageListener', () => {

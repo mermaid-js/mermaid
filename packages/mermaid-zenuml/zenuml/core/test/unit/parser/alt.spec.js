@@ -1,7 +1,5 @@
 import { Fixture } from './fixture/Fixture';
 
-import { describe, expect, test } from 'vitest';
-
 test('Empty `if`', () => {
   let alt = Fixture.firstStatement('if(x) {}').alt();
   expectText(alt).toBe('if(x){}');

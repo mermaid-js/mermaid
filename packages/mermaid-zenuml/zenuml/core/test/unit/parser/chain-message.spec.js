@@ -1,5 +1,3 @@
-import { expect, test } from 'vitest';
-
 import { Fixture } from './fixture/Fixture';
 
 test('chain method', () => {

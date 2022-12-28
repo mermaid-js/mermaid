@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { brightnessIgnoreAlpha } from '../utils/Color';
 describe('Color', () => {
   it.each([

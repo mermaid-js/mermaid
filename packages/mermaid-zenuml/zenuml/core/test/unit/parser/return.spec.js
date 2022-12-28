@@ -1,6 +1,5 @@
 import { Fixture } from './fixture/Fixture';
 
-import { expect, test } from 'vitest';
 import { RootContext } from '../../../src/parser/index';
 
 test('Keyword "return" - in method block', () => {

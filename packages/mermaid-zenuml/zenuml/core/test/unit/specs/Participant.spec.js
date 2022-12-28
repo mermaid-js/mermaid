@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { mount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import { VueSequence } from '../../../src/index';

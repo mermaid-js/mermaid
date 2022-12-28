@@ -35,7 +35,6 @@
  * A B @Starter(C) C.m    => C, A, B
  * A B @Starter(B) C.m    => A, B, C
  */
-import { describe, expect, it } from 'vitest';
 import { RootContext } from '../../../../src/parser/index';
 import { OrderedParticipants } from '../../../../src/positioning/OrderedParticipants';
 

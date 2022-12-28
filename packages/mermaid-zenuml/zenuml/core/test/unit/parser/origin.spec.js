@@ -1,4 +1,3 @@
-import { describe, expect, test } from 'vitest';
 import { Fixture } from './fixture/Fixture';
 
 // This spec shows how we get `Origin` from the context.

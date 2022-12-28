@@ -1,6 +1,5 @@
 import { Fixture } from './fixture/Fixture';
 
-import { describe, expect, test } from 'vitest';
 import { RootContext } from '../../../src/parser/index';
 
 import ToCollector from '../../../src/parser/ToCollector';

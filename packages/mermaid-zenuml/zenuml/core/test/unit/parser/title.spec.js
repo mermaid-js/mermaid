@@ -1,4 +1,3 @@
-import { expect, test } from 'vitest';
 import { RootContext } from '../../../src/parser/index';
 
 test('`if` with a block', () => {

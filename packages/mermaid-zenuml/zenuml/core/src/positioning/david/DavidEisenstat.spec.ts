@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { find_optimal } from './DavidEisenstat';
 
 describe('DavidEisenstat', () => {

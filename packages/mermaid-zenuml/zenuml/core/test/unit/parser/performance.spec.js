@@ -1,4 +1,3 @@
-import { test } from 'vitest';
 import { RootContext } from '../../../src/parser/index';
 
 // Performance base line 1.966 ~ 2.1s on My MBP.

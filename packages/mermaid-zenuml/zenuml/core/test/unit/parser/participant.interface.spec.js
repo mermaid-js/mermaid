@@ -1,4 +1,3 @@
-import { describe, expect, test } from 'vitest';
 import { RootContext } from '../../../src/parser/index';
 
 test('<<Person>> Bob', () => {

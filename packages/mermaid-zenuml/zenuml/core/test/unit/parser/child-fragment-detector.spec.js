@@ -1,4 +1,3 @@
-import { describe, expect, test } from 'vitest';
 import { RootContext, Depth } from '../../../src/parser/index';
 
 function getDepth(code) {

@@ -1,7 +1,5 @@
 import { Fixture } from './fixture/Fixture';
 
-import { describe, expect, test } from 'vitest';
-
 test('Empty `try`', () => {
   let tcf = Fixture.firstStatement('try {}').tcf();
   expectText(tcf).toBe('try{}');

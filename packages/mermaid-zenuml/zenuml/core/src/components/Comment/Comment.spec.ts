@@ -1,4 +1,3 @@
-import { describe, expect, test } from 'vitest';
 import Comment from '../Comment/Comment';
 
 describe('Comment', function () {

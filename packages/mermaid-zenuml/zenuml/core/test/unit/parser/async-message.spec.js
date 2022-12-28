@@ -1,4 +1,3 @@
-import { describe, expect, test } from 'vitest';
 import { Fixture } from './fixture/Fixture';
 
 describe('Async Message', () => {
