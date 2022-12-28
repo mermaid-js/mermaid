@@ -17,7 +17,7 @@ import { RootContext } from '../../../src/parser/index';
 test('Profiling sync message', () => {
   var t0 = performance.now();
   for (let i = 0; i < 100; i++) {
-    let rootContext = RootContext('x = B."method. {a,b} 1"(1,2)');
+    RootContext('x = B."method. {a,b} 1"(1,2)');
   }
   var t1 = performance.now();
   console.log('parsing', t1 - t0);
@@ -29,7 +29,7 @@ test('Profiling sync message', () => {
 test('Profiling async message', () => {
   var t0 = performance.now();
   for (let i = 0; i < 1000; i++) {
-    let rootContext = RootContext('A->B:m');
+    RootContext('A->B:m');
   }
   var t1 = performance.now();
   console.log('parsing', t1 - t0);
@@ -42,7 +42,7 @@ test('Profiling async message', () => {
 test('Profiling prog.head', () => {
   var t0 = performance.now();
   for (let i = 0; i < 100; i++) {
-    let rootContext = RootContext('<<>> A group B {C} @Starter(D)');
+    RootContext('<<>> A group B {C} @Starter(D)');
   }
   var t1 = performance.now();
   console.log('parsing', t1 - t0);
@@ -59,7 +59,7 @@ test('Profiling prog.head', () => {
 test('Profiling if/else', () => {
   const t0 = performance.now();
   for (let i = 0; i < 100; i++) {
-    let rootContext = RootContext('if(x>1){A.m} else if(y>1){B.m}else{C.m}');
+    RootContext('if(x>1){A.m} else if(y>1){B.m}else{C.m}');
   }
   const t1 = performance.now();
   console.log('parsing', t1 - t0);
