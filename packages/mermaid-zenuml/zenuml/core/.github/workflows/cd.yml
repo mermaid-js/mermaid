@@ -1,0 +1,122 @@
+# Simple workflow for deploying static content to GitHub Pages
+name: Build, Test, npm Publish, and Deploy
+
+on:
+  push:
+    paths-ignore:
+      - 'docs/**'
+      - 'integration/**'
+      - '*.md'
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - 'integration/**'
+      - '*.md'
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  # Test
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run tests
+        run: pnpm test
+
+  npm-publish:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/add-jest-to-vite'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: pnpm
+      - run: pnpm install
+      - name: Build
+        run: pnpm build
+      - name: Publish
+        uses: mikeal/merge-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+
+  # Build the site for embed view and other demo
+  build-site:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/add-jest-to-vite'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build the site for demo page and embed view
+        run: pnpm build:site
+      - name: Upload artifact for pages # upload zipped artifact named 'gh-pages' for actions/deploy-pages@v1
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./dist
+      - name: Upload artifact for embed view # upload unzipped artifact named 'zenuml-embed' for cpina/github-action-push-to-another-repository@main
+        uses: actions/upload-artifact@v3
+        with:
+          name: zenuml-embed
+          path: ./dist
+  # Single deploy job since we're just deploying
+  publish-to-gh-pages:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build-site
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
+
+  push-to-zenuml-embed:
+    environment:
+      name: github-pages # use the same environment as publish-to-gh-pages on purpose
+      url: https://github.com/ZenUml/zenuml-embed
+    runs-on: ubuntu-latest
+    needs: build-site
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: zenuml-embed
+          path: ./dist
+      - name: Pushes to another repository
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
+        with:
+          source-directory: './dist'
+          destination-github-username: 'zenuml'
+          destination-repository-name: 'zenuml-embed'
+          user-email: github.bot@zenuml.com
+          target-branch: main

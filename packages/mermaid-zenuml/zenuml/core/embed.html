@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html style="height: 100%; width: 100%">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="application-name" content="ZenUML" />
+    <meta name="apple-mobile-web-app-title" content="ZenUML" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ZenUML</title>
+    <meta
+      name="Description"
+      content="ZenUML is a free online diagram application for generating sequence diagrams from text."
+    />
+    <meta name="Keywords" content="diagram, online, sequence diagram, uml" />
+  </head>
+  <body style="height: 100%; width: 100%">
+    <noscript>
+      <strong
+        >We're sorry but ZenUML doesn't work properly without JavaScript enabled. Please enable it
+        to continue.</strong
+      >
+    </noscript>
+    <script>
+      (() => {
+        async function handle_message(ev) {
+          let { action, cmd_id } = ev.data;
+          const send_message = (payload) => parent.postMessage({ ...payload }, ev.origin);
+          const send_reply = (payload) => send_message({ ...payload, cmd_id });
+          const send_ok = () => send_reply({ action: 'cmd_ok' });
+          const send_error = (message, stack) =>
+            send_reply({ action: 'cmd_error', message, stack });
+
+          if (action === 'eval') {
+            try {
+              let { code, theme, style, css } = ev.data.args;
+              await zenUml.render(code, theme);
+              send_ok();
+            } catch (e) {
+              send_error(e.message, e.stack);
+            }
+          }
+
+          if (action === 'catch_clicks') {
+            try {
+              const top_origin = ev.origin;
+              document.body.addEventListener('click', (event) => {
+                if (event.which !== 1) return;
+                if (event.metaKey || event.ctrlKey || event.shiftKey) return;
+                if (event.defaultPrevented) return;
+
+                // ensure target is a link
+                let el = event.target;
+                while (el && el.nodeName !== 'A') el = el.parentNode;
+                if (!el || el.nodeName !== 'A') return;
+
+                if (
+                  el.hasAttribute('download') ||
+                  el.getAttribute('rel') === 'external' ||
+                  el.target
+                )
+                  return;
+
+                event.preventDefault();
+
+                if (el.href.startsWith(top_origin)) {
+                  const url = new URL(el.href);
+                  if (url.hash[0] === '#') {
+                    window.location.hash = url.hash;
+                    return;
+                  }
+                }
+
+                window.open(el.href, '_blank');
+              });
+              send_ok();
+            } catch (e) {
+              send_error(e.message, e.stack);
+            }
+          }
+        }
+
+        window.addEventListener('message', handle_message, false);
+
+        window.onerror = function (msg, url, lineNo, columnNo, error) {
+          if (msg.includes('module specifier “vue”')) {
+            // firefox only error, ignore
+            return false;
+          }
+          try {
+            parent.postMessage({ action: 'error', value: error }, '*');
+          } catch (e) {
+            parent.postMessage({ action: 'error', value: msg }, '*');
+          }
+        };
+
+        window.addEventListener('unhandledrejection', (event) => {
+          if (event.reason.message.includes('Cross-origin')) {
+            event.preventDefault();
+            return;
+          }
+          try {
+            parent.postMessage({ action: 'unhandledrejection', value: event.reason }, '*');
+          } catch (e) {
+            parent.postMessage({ action: 'unhandledrejection', value: event.reason.message }, '*');
+          }
+        });
+
+        let previous = { level: null, args: null };
+
+        ['clear', 'log', 'info', 'dir', 'warn', 'error', 'table'].forEach((level) => {
+          const original = console[level];
+          console[level] = (...args) => {
+            const msg = String(args[0]);
+            if (
+              msg.includes('You are running a development build of Vue') ||
+              msg.includes('You are running the esm-bundler build of Vue')
+            ) {
+              return;
+            }
+            const stringifiedArgs = stringify(args);
+            if (previous.level === level && previous.args && previous.args === stringifiedArgs) {
+              parent !== window &&
+                parent.postMessage({ action: 'console', level, duplicate: true }, '*');
+            } else {
+              previous = { level, args: stringifiedArgs };
+
+              try {
+                parent !== window && parent.postMessage({ action: 'console', level, args }, '*');
+              } catch (err) {
+                parent !== window &&
+                  parent.postMessage(
+                    {
+                      action: 'console',
+                      level,
+                      args: args.map((a) => {
+                        return a instanceof Error ? a.message : String(a);
+                      }),
+                    },
+                    '*'
+                  );
+              }
+            }
+
+            original(...args);
+          };
+        });
+        [
+          { method: 'group', action: 'console_group' },
+          { method: 'groupEnd', action: 'console_group_end' },
+          { method: 'groupCollapsed', action: 'console_group_collapsed' },
+        ].forEach((group_action) => {
+          const original = console[group_action.method];
+          console[group_action.method] = (label) => {
+            parent.postMessage({ action: group_action.action, label }, '*');
+            console.log('group_action', group_action);
+            original(label);
+          };
+        });
+
+        const original_trace = console.trace;
+
+        console.trace = (...args) => {
+          const stack = new Error().stack;
+          parent.postMessage({ action: 'console', level: 'trace', args, stack }, '*');
+          original_trace(...args);
+        };
+
+        function stringify(args) {
+          try {
+            return JSON.stringify(args);
+          } catch (error) {
+            return null;
+          }
+        }
+      })();
+    </script>
+
+    <div id="diagram" class="diagram">
+      <pre class="zenuml"></pre>
+    </div>
+    <script type="module" src="src/main.ts"></script>
+  </body>
+</html>
