@@ -11,10 +11,10 @@
 </template>
 
 <script>
-import DiagramFrame from "@/components/DiagramFrame";
-import { saveAs } from "file-saver";
+import DiagramFrame from '@/components/DiagramFrame';
+import { saveAs } from 'file-saver';
 export default {
-  name: "Demo",
+  name: 'Demo',
   methods: {
     async exportPng() {
       const png = await this.$refs.diagram.toPng();
@@ -31,13 +31,10 @@ export default {
     async exportSvg() {
       const svg = await this.$refs.diagram.toSvg();
       saveAs(svg, 'diagram-svg.svg');
-    }
+    },
   },
-  components: {DiagramFrame}
-
-}
+  components: { DiagramFrame },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

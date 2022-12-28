@@ -3,16 +3,26 @@
        Override background color if it is defined in participant declaration (e.g. A #FFFFFF).
        TODO: Add a default .selected style
    -->
-  <div class="participant bg-skin-participant border-skin-participant text-skin-participant rounded text-base leading-4 relative flex flex-col justify-center z-10 h-10"
-       :class="{'selected': selected, 'border-transparent': !!icon}"
-       ref="participant"
-       :style="{backgroundColor: backgroundColor, color: color}"
-       @click="onSelect">
-    <div v-if="!!icon" v-html="icon" class="absolute left-1/2 transform -translate-x-1/2 -translate-y-full h-8 [&>svg]:w-full [&>svg]:h-full" :alt="`icon for ${entity.name}`"></div>
+  <div
+    class="participant bg-skin-participant border-skin-participant text-skin-participant rounded text-base leading-4 relative flex flex-col justify-center z-10 h-10"
+    :class="{ selected: selected, 'border-transparent': !!icon }"
+    ref="participant"
+    :style="{ backgroundColor: backgroundColor, color: color }"
+    @click="onSelect"
+  >
+    <div
+      v-if="!!icon"
+      v-html="icon"
+      class="absolute left-1/2 transform -translate-x-1/2 -translate-y-full h-8 [&>svg]:w-full [&>svg]:h-full"
+      :alt="`icon for ${entity.name}`"
+    ></div>
     <!-- Put in a div to give it a fixed height, because stereotype is dynamic. -->
     <div class="h-5 group flex flex-col justify-center">
-      <span v-if="!!comment" class="absolute hidden rounded-lg transform -translate-y-8 bg-gray-400 px-2 py-1 text-center text-sm text-white group-hover:flex">
-        {{comment}}
+      <span
+        v-if="!!comment"
+        class="absolute hidden rounded-lg transform -translate-y-8 bg-gray-400 px-2 py-1 text-center text-sm text-white group-hover:flex"
+      >
+        {{ comment }}
       </span>
       <label class="interface leading-4" v-if="stereotype">«{{ stereotype }}»</label>
       <label class="name leading-4">{{ entity.label || entity.name }}</label>
@@ -21,21 +31,21 @@
 </template>
 
 <script>
-import {brightnessIgnoreAlpha, removeAlpha} from '../../../../utils/Color'
-import iconPath from '../../Tutorial/Icons'
+import { brightnessIgnoreAlpha, removeAlpha } from '../../../../utils/Color';
+import iconPath from '../../Tutorial/Icons';
 
 export default {
-  name: "Participant",
+  name: 'Participant',
   props: {
     entity: {
       type: Object,
-      required: true
+      required: true,
     },
   },
   data() {
     return {
-      color: undefined
-    }
+      color: undefined,
+    };
   },
   mounted() {
     this.updateFontColor();
@@ -44,17 +54,17 @@ export default {
     this.updateFontColor();
   },
   computed: {
-    selected () {
-      return this.$store.state.selected.includes(this.entity.name)
+    selected() {
+      return this.$store.state.selected.includes(this.entity.name);
     },
-    stereotype () {
-      return this.entity.stereotype
+    stereotype() {
+      return this.entity.stereotype;
     },
     comment() {
-      return this.entity.comment
+      return this.entity.comment;
     },
     icon() {
-      return iconPath[this.entity.type?.toLowerCase()]
+      return iconPath[this.entity.type?.toLowerCase()];
     },
     backgroundColor() {
       // Returning `undefined` so that background-color is not set at all in the style attribute
@@ -76,25 +86,25 @@ export default {
     },
   },
   methods: {
-    onSelect () {
-      this.$store.commit('onSelect', this.entity.name)
+    onSelect() {
+      this.$store.commit('onSelect', this.entity.name);
     },
-    updateFontColor () {
+    updateFontColor() {
       // Returning `undefined` so that background-color is not set at all in the style attribute
       if (!this.backgroundColor) {
         return undefined;
       }
-      let bgColor = window.getComputedStyle(this.$refs.participant).getPropertyValue('background-color');
+      let bgColor = window
+        .getComputedStyle(this.$refs.participant)
+        .getPropertyValue('background-color');
       if (!bgColor) {
         return undefined;
       }
       let b = brightnessIgnoreAlpha(bgColor);
       this.color = b > 128 ? '#000' : '#fff';
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

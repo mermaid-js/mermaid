@@ -7,22 +7,23 @@
       <!--TODO: What is the below line used for?-->
       <!--<polyline class="closed" points="28,32 28,18"></polyline>-->
     </svg>
-    <label class="name px-px hover:text-skin-message-hover hover:bg-skin-message-hover">{{content}}</label>
+    <label class="name px-px hover:text-skin-message-hover hover:bg-skin-message-hover">{{
+      content
+    }}</label>
   </div>
 </template>
 
 <script type="text/babel">
-  export default {
-    name: 'self-invocation-async',
-    props: ['content']
-  }
+export default {
+  name: 'self-invocation-async',
+  props: ['content'],
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .message.self {
-    /* InteractionBorderWidth */
-    transform: translateX(-5px);
-  }
-
+.message.self {
+  /* InteractionBorderWidth */
+  transform: translateX(-5px);
+}
 </style>

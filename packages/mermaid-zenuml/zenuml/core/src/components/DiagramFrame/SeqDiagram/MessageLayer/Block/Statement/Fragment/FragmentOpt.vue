@@ -4,33 +4,34 @@
     <div class="header bg-skin-fragment-header text-skin-fragment-header text-base leading-4">
       <div class="name font-semibold p-1 border-b"><label>Opt</label></div>
     </div>
-    <block :style="{paddingLeft: `${offsetX}px`}"
-           :context="opt.braceBlock().block()"
-           :selfCallIndent="selfCallIndent"
+    <block
+      :style="{ paddingLeft: `${offsetX}px` }"
+      :context="opt.braceBlock().block()"
+      :selfCallIndent="selfCallIndent"
     ></block>
   </div>
 </template>
 
 <script>
-  import fragment from './FragmentMixin'
+import fragment from './FragmentMixin';
 
-  export default {
-    name: 'fragment-opt',
-    props: ['context', 'comment', 'selfCallIndent'],
-    mixins: [fragment],
-    computed: {
-      from: function() {
-        return this.context.Origin()
-      },
-      opt: function () {
-        return this.context.opt()
-      }
+export default {
+  name: 'fragment-opt',
+  props: ['context', 'comment', 'selfCallIndent'],
+  mixins: [fragment],
+  computed: {
+    from: function () {
+      return this.context.Origin();
     },
-    components: {
-      Block: () => import('../../Block.vue'),
-      Comment: () => import('../Comment/Comment.vue')
-    }
-  }
+    opt: function () {
+      return this.context.opt();
+    },
+  },
+  components: {
+    Block: () => import('../../Block.vue'),
+    Comment: () => import('../Comment/Comment.vue'),
+  },
+};
 </script>
 
 <style scoped>

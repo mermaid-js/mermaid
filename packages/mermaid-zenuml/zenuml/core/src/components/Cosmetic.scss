@@ -10,7 +10,6 @@
   .frame {
     .sequence-diagram {
       .comments {
-
         code {
           background-color: #f9f2f4;
           padding: 2px;
@@ -42,7 +41,7 @@
           li {
             list-style-type: none;
 
-            input[type="checkbox"] {
+            input[type='checkbox'] {
               margin-left: -1em;
             }
           }
@@ -55,7 +54,8 @@
           empty-cells: show;
           border-color: #cbcbcb;
 
-          td, th {
+          td,
+          th {
             padding: 0.5em;
           }
 
@@ -71,4 +71,3 @@
     }
   }
 }
-

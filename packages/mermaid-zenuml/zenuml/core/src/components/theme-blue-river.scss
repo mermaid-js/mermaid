@@ -1,18 +1,18 @@
-$participant-background: #2097F7;
+$participant-background: #2097f7;
 $participant-box-shadow: #83c4f8;
 
-$lifeline: #2097F7;
+$lifeline: #2097f7;
 
-$line: #2097F7;
-$font-color: #5452F6;
-$occurrence-background: #E5FDE8;
-$occurrence-border: #65BF73;
-$occurrence-box-shadow: #93C69B;
+$line: #2097f7;
+$font-color: #5452f6;
+$occurrence-background: #e5fde8;
+$occurrence-border: #65bf73;
+$occurrence-box-shadow: #93c69b;
 
-$fragment-border: #2097F7;
-$fragment-label-background: #5452F6;
-$fragment-condition-label: #FFFFFF;
-$fragment-condition-label-background: #65BF73;
+$fragment-border: #2097f7;
+$fragment-label-background: #5452f6;
+$fragment-condition-label: #ffffff;
+$fragment-condition-label-background: #65bf73;
 
 .blue-river .sequence-diagram {
   color: $font-color;
@@ -20,7 +20,8 @@ $fragment-condition-label-background: #65BF73;
     .lifeline.actor {
       .participant::before {
         // see https://codepen.io/sosuke/pen/Pjoqqp for how it works
-        filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
+        filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%)
+          contrast(103%);
       }
     }
     .participant {
@@ -70,7 +71,7 @@ $fragment-condition-label-background: #65BF73;
           }
         }
         .name::after {
-          content: "SO";
+          content: 'SO';
           display: inline-block;
           background: $fragment-label-background;
           margin-left: -23px;
@@ -80,7 +81,7 @@ $fragment-condition-label-background: #65BF73;
           clip-path: polygon(66% 0, 100% 0, 100% 66%, 66% 100%);
         }
 
-        >label {
+        > label {
           display: inline-block;
           min-width: 50px;
           font-weight: bold;
@@ -94,8 +95,6 @@ $fragment-condition-label-background: #65BF73;
       .divider {
         border-bottom-color: inherit;
       }
-
     }
-
   }
 }

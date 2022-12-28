@@ -1,18 +1,18 @@
 <template>
-<div class="invisible">
-  <message :content="text" rtl="false" type="sync" />
-</div>
+  <div class="invisible">
+    <message :content="text" rtl="false" type="sync" />
+  </div>
 </template>
 
 <script>
-import Message from "../SeqDiagram/MessageLayer/Block/Statement/Message/Message.vue";
+import Message from '../SeqDiagram/MessageLayer/Block/Statement/Message/Message.vue';
 export default {
-  name: "WidthProvider",
-  components: {Message},
+  name: 'WidthProvider',
+  components: { Message },
   data: function () {
     return {
       text: 'abcd',
-    }
+    };
   },
   methods: {
     width: function (text, type) {
@@ -23,10 +23,8 @@ export default {
   },
   mounted() {
     this.$store.state.widthProvider = this;
-  }
-}
+  },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
