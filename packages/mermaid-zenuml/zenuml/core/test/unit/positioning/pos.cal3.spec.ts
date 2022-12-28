@@ -1,7 +1,3 @@
-import { Coordinates } from '../../../src/positioning/Coordinates';
-import { stubWidthProvider } from '../parser/fixture/Fixture';
-import { RootContext } from '../../../src/parser/index';
-
 describe('PosCal3', () => {
   it('true', () => {
     expect(1).toBe(1);
@@ -27,11 +23,3 @@ describe('PosCal3', () => {
   //   assertParticipantHasGap('A500.m100 B600.m200', 'B600', 570);
   // });
 });
-
-function assertParticipantHasGap(code: string, participant: string, gap: number) {
-  let rootContext = RootContext(code);
-  let coordinates2 = Coordinates.walkThrough(rootContext, stubWidthProvider);
-
-  const coordinate2 = coordinates2.find((c) => c.participant === participant);
-  expect(coordinate2?.gap).toEqual(gap);
-}
