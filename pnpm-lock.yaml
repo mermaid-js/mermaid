@@ -163,6 +163,9 @@ importers:
       vite:
         specifier: ^3.2.3
         version: 3.2.3_@types+node@18.11.9
+      vite-plugin-vue2:
+        specifier: ^2.0.2
+        version: 2.0.3_jwcaqoarnxpz6kkg2xgl4rfiqa
       vitest:
         specifier: ^0.25.3
         version: 0.25.3_oullksb5ic6y72oh2wekoaiuii
@@ -4637,10 +4640,6 @@ packages:
     resolution: {integrity: sha512-6u+36Dj3aDzhfBVUf/mfmc92OEdzQ2kx2jcXGdigfl70E/neV21ZHE6UCz4MDzTRcVqGAM27fk+DLXvyDsn3Jw==}
     dev: true
 
-  /@types/node/18.11.15:
-    resolution: {integrity: sha512-VkhBbVo2+2oozlkdHXLrb3zjsRkpdnaU2bXmX8Wgle3PUi569eLRaHGlgETQHR7lLL1w7GiG3h9SnePhxNDecw==}
-    dev: true
-
   /@types/node/18.11.18:
     resolution: {integrity: sha512-DHQpWGjyQKSHj3ebjFI/wRKcqQcdR+MoFBygntYOZytCqNfkd2ZC4ARDJ2DQqhjH5p85Nnd3jhUJIXrszFX/JA==}
 
@@ -4687,7 +4686,7 @@ packages:
   /@types/rollup-plugin-visualizer/4.2.1:
     resolution: {integrity: sha512-Fk4y0EgmsSbvbayYhtSI9+cGvgw1rcQ9RlbExkQt4ivXRdiEwFKuRpxNuJCr0JktXIvOPUuPR7GSmtyZu0dujQ==}
     dependencies:
-      '@types/node': 18.11.15
+      '@types/node': 18.11.18
       rollup: 2.79.1
     dev: true
 
@@ -5315,6 +5314,75 @@ packages:
     dependencies:
       '@vue/compiler-dom': 3.2.45
       '@vue/shared': 3.2.45
+    dev: true
+
+  /@vue/component-compiler-utils/3.3.0:
+    resolution: {integrity: sha512-97sfH2mYNU+2PzGrmK2haqffDpVASuib9/w2/noxiFi31Z54hW+q3izKQXXQZSNhtiUpAI36uSuYepeBe4wpHQ==}
+    dependencies:
+      consolidate: 0.15.1
+      hash-sum: 1.0.2
+      lru-cache: 4.1.5
+      merge-source-map: 1.1.0
+      postcss: 7.0.39
+      postcss-selector-parser: 6.0.11
+      source-map: 0.6.1
+      vue-template-es2015-compiler: 1.9.1
+    optionalDependencies:
+      prettier: 2.7.1
+    transitivePeerDependencies:
+      - arc-templates
+      - atpl
+      - babel-core
+      - bracket-template
+      - coffee-script
+      - dot
+      - dust
+      - dustjs-helpers
+      - dustjs-linkedin
+      - eco
+      - ect
+      - ejs
+      - haml-coffee
+      - hamlet
+      - hamljs
+      - handlebars
+      - hogan.js
+      - htmling
+      - jade
+      - jazz
+      - jqtpl
+      - just
+      - liquid-node
+      - liquor
+      - lodash
+      - marko
+      - mote
+      - mustache
+      - nunjucks
+      - plates
+      - pug
+      - qejs
+      - ractive
+      - razor-tmpl
+      - react
+      - react-dom
+      - slm
+      - squirrelly
+      - swig
+      - swig-templates
+      - teacup
+      - templayed
+      - then-jade
+      - then-pug
+      - tinyliquid
+      - toffee
+      - twig
+      - twing
+      - underscore
+      - vash
+      - velocityjs
+      - walrus
+      - whiskers
     dev: true
 
   /@vue/component-compiler-utils/3.3.0_lodash@4.17.21:
@@ -7086,6 +7154,174 @@ packages:
     resolution: {integrity: sha512-ty/fTekppD2fIwRvnZAVdeOiGd1c7YXEixbgJTNzqcxJWKQnjJ/V1bNEEE6hygpM3WjwHFUVK6HTjWSzV4a8sQ==}
     dev: true
 
+  /consolidate/0.15.1:
+    resolution: {integrity: sha512-DW46nrsMJgy9kqAbPt5rKaCr7uFtpo4mSUvLHIUbJEjm0vo+aY5QLwBUq3FK4tRnJr/X0Psc0C4jf/h+HtXSMw==}
+    engines: {node: '>= 0.10.0'}
+    peerDependencies:
+      arc-templates: ^0.5.3
+      atpl: '>=0.7.6'
+      babel-core: ^6.26.3
+      bracket-template: ^1.1.5
+      coffee-script: ^1.12.7
+      dot: ^1.1.3
+      dust: ^0.3.0
+      dustjs-helpers: ^1.7.4
+      dustjs-linkedin: ^2.7.5
+      eco: ^1.1.0-rc-3
+      ect: ^0.5.9
+      ejs: ^3.1.5
+      haml-coffee: ^1.14.1
+      hamlet: ^0.3.3
+      hamljs: ^0.6.2
+      handlebars: ^4.7.6
+      hogan.js: ^3.0.2
+      htmling: ^0.0.8
+      jade: ^1.11.0
+      jazz: ^0.0.18
+      jqtpl: ~1.1.0
+      just: ^0.1.8
+      liquid-node: ^3.0.1
+      liquor: ^0.0.5
+      lodash: ^4.17.20
+      marko: ^3.14.4
+      mote: ^0.2.0
+      mustache: ^3.0.0
+      nunjucks: ^3.2.2
+      plates: ~0.4.11
+      pug: ^3.0.0
+      qejs: ^3.0.5
+      ractive: ^1.3.12
+      razor-tmpl: ^1.3.1
+      react: ^16.13.1
+      react-dom: ^16.13.1
+      slm: ^2.0.0
+      squirrelly: ^5.1.0
+      swig: ^1.4.2
+      swig-templates: ^2.0.3
+      teacup: ^2.0.0
+      templayed: '>=0.2.3'
+      then-jade: '*'
+      then-pug: '*'
+      tinyliquid: ^0.2.34
+      toffee: ^0.3.6
+      twig: ^1.15.2
+      twing: ^5.0.2
+      underscore: ^1.11.0
+      vash: ^0.13.0
+      velocityjs: ^2.0.1
+      walrus: ^0.10.1
+      whiskers: ^0.4.0
+    peerDependenciesMeta:
+      arc-templates:
+        optional: true
+      atpl:
+        optional: true
+      babel-core:
+        optional: true
+      bracket-template:
+        optional: true
+      coffee-script:
+        optional: true
+      dot:
+        optional: true
+      dust:
+        optional: true
+      dustjs-helpers:
+        optional: true
+      dustjs-linkedin:
+        optional: true
+      eco:
+        optional: true
+      ect:
+        optional: true
+      ejs:
+        optional: true
+      haml-coffee:
+        optional: true
+      hamlet:
+        optional: true
+      hamljs:
+        optional: true
+      handlebars:
+        optional: true
+      hogan.js:
+        optional: true
+      htmling:
+        optional: true
+      jade:
+        optional: true
+      jazz:
+        optional: true
+      jqtpl:
+        optional: true
+      just:
+        optional: true
+      liquid-node:
+        optional: true
+      liquor:
+        optional: true
+      lodash:
+        optional: true
+      marko:
+        optional: true
+      mote:
+        optional: true
+      mustache:
+        optional: true
+      nunjucks:
+        optional: true
+      plates:
+        optional: true
+      pug:
+        optional: true
+      qejs:
+        optional: true
+      ractive:
+        optional: true
+      razor-tmpl:
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+      slm:
+        optional: true
+      squirrelly:
+        optional: true
+      swig:
+        optional: true
+      swig-templates:
+        optional: true
+      teacup:
+        optional: true
+      templayed:
+        optional: true
+      then-jade:
+        optional: true
+      then-pug:
+        optional: true
+      tinyliquid:
+        optional: true
+      toffee:
+        optional: true
+      twig:
+        optional: true
+      twing:
+        optional: true
+      underscore:
+        optional: true
+      vash:
+        optional: true
+      velocityjs:
+        optional: true
+      walrus:
+        optional: true
+      whiskers:
+        optional: true
+    dependencies:
+      bluebird: 3.7.2
+    dev: true
+
   /consolidate/0.15.1_lodash@4.17.21:
     resolution: {integrity: sha512-DW46nrsMJgy9kqAbPt5rKaCr7uFtpo4mSUvLHIUbJEjm0vo+aY5QLwBUq3FK4tRnJr/X0Psc0C4jf/h+HtXSMw==}
     engines: {node: '>= 0.10.0'}
@@ -7253,6 +7489,174 @@ packages:
     dependencies:
       bluebird: 3.7.2
       lodash: 4.17.21
+    dev: true
+
+  /consolidate/0.16.0:
+    resolution: {integrity: sha512-Nhl1wzCslqXYTJVDyJCu3ODohy9OfBMB5uD2BiBTzd7w+QY0lBzafkR8y8755yMYHAaMD4NuzbAw03/xzfw+eQ==}
+    engines: {node: '>= 0.10.0'}
+    peerDependencies:
+      arc-templates: ^0.5.3
+      atpl: '>=0.7.6'
+      babel-core: ^6.26.3
+      bracket-template: ^1.1.5
+      coffee-script: ^1.12.7
+      dot: ^1.1.3
+      dust: ^0.3.0
+      dustjs-helpers: ^1.7.4
+      dustjs-linkedin: ^2.7.5
+      eco: ^1.1.0-rc-3
+      ect: ^0.5.9
+      ejs: ^3.1.5
+      haml-coffee: ^1.14.1
+      hamlet: ^0.3.3
+      hamljs: ^0.6.2
+      handlebars: ^4.7.6
+      hogan.js: ^3.0.2
+      htmling: ^0.0.8
+      jade: ^1.11.0
+      jazz: ^0.0.18
+      jqtpl: ~1.1.0
+      just: ^0.1.8
+      liquid-node: ^3.0.1
+      liquor: ^0.0.5
+      lodash: ^4.17.20
+      marko: ^3.14.4
+      mote: ^0.2.0
+      mustache: ^4.0.1
+      nunjucks: ^3.2.2
+      plates: ~0.4.11
+      pug: ^3.0.0
+      qejs: ^3.0.5
+      ractive: ^1.3.12
+      razor-tmpl: ^1.3.1
+      react: ^16.13.1
+      react-dom: ^16.13.1
+      slm: ^2.0.0
+      squirrelly: ^5.1.0
+      swig: ^1.4.2
+      swig-templates: ^2.0.3
+      teacup: ^2.0.0
+      templayed: '>=0.2.3'
+      then-jade: '*'
+      then-pug: '*'
+      tinyliquid: ^0.2.34
+      toffee: ^0.3.6
+      twig: ^1.15.2
+      twing: ^5.0.2
+      underscore: ^1.11.0
+      vash: ^0.13.0
+      velocityjs: ^2.0.1
+      walrus: ^0.10.1
+      whiskers: ^0.4.0
+    peerDependenciesMeta:
+      arc-templates:
+        optional: true
+      atpl:
+        optional: true
+      babel-core:
+        optional: true
+      bracket-template:
+        optional: true
+      coffee-script:
+        optional: true
+      dot:
+        optional: true
+      dust:
+        optional: true
+      dustjs-helpers:
+        optional: true
+      dustjs-linkedin:
+        optional: true
+      eco:
+        optional: true
+      ect:
+        optional: true
+      ejs:
+        optional: true
+      haml-coffee:
+        optional: true
+      hamlet:
+        optional: true
+      hamljs:
+        optional: true
+      handlebars:
+        optional: true
+      hogan.js:
+        optional: true
+      htmling:
+        optional: true
+      jade:
+        optional: true
+      jazz:
+        optional: true
+      jqtpl:
+        optional: true
+      just:
+        optional: true
+      liquid-node:
+        optional: true
+      liquor:
+        optional: true
+      lodash:
+        optional: true
+      marko:
+        optional: true
+      mote:
+        optional: true
+      mustache:
+        optional: true
+      nunjucks:
+        optional: true
+      plates:
+        optional: true
+      pug:
+        optional: true
+      qejs:
+        optional: true
+      ractive:
+        optional: true
+      razor-tmpl:
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+      slm:
+        optional: true
+      squirrelly:
+        optional: true
+      swig:
+        optional: true
+      swig-templates:
+        optional: true
+      teacup:
+        optional: true
+      templayed:
+        optional: true
+      then-jade:
+        optional: true
+      then-pug:
+        optional: true
+      tinyliquid:
+        optional: true
+      toffee:
+        optional: true
+      twig:
+        optional: true
+      twing:
+        optional: true
+      underscore:
+        optional: true
+      vash:
+        optional: true
+      velocityjs:
+        optional: true
+      walrus:
+        optional: true
+      whiskers:
+        optional: true
+    dependencies:
+      bluebird: 3.7.2
     dev: true
 
   /consolidate/0.16.0_lodash@4.17.21:
@@ -15556,7 +15960,7 @@ packages:
       schema-utils: 3.1.1
       serialize-javascript: 6.0.0
       terser: 5.15.1
-      webpack: 5.75.0_webpack-cli@4.10.0
+      webpack: 5.75.0
     dev: true
 
   /terser/4.8.1:
@@ -16390,6 +16794,101 @@ packages:
       - whiskers
     dev: true
 
+  /vite-plugin-vue2/2.0.3_jwcaqoarnxpz6kkg2xgl4rfiqa:
+    resolution: {integrity: sha512-t3Tu93GWsMHbpeIv66MTO5e/rRAo8/+/eWoUtFYuAdKDMyEnn1dqsrXh+CfG+SJAlxJvcTP8U0eXkzhLjKNyMg==}
+    peerDependencies:
+      vite: ^2.0.0 || ^3.0.0 || ^4.0.0
+      vue-template-compiler: ^2.2.0
+    dependencies:
+      '@babel/core': 7.20.5
+      '@babel/parser': 7.20.5
+      '@babel/plugin-proposal-class-properties': 7.18.6_@babel+core@7.20.5
+      '@babel/plugin-proposal-decorators': 7.20.5_@babel+core@7.20.5
+      '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6_@babel+core@7.20.5
+      '@babel/plugin-proposal-object-rest-spread': 7.20.2_@babel+core@7.20.5
+      '@babel/plugin-proposal-optional-chaining': 7.18.9_@babel+core@7.20.5
+      '@babel/plugin-transform-arrow-functions': 7.18.6_@babel+core@7.20.5
+      '@babel/plugin-transform-block-scoping': 7.20.5_@babel+core@7.20.5
+      '@babel/plugin-transform-computed-properties': 7.18.9_@babel+core@7.20.5
+      '@babel/plugin-transform-destructuring': 7.20.2_@babel+core@7.20.5
+      '@babel/plugin-transform-parameters': 7.20.5_@babel+core@7.20.5
+      '@babel/plugin-transform-spread': 7.19.0_@babel+core@7.20.5
+      '@babel/plugin-transform-typescript': 7.20.2_@babel+core@7.20.5
+      '@rollup/pluginutils': 4.2.1
+      '@vue/babel-helper-vue-jsx-merge-props': 1.4.0
+      '@vue/babel-preset-jsx': 1.4.0_irtg5bf5mab3inz6zbdi3hxawe
+      '@vue/component-compiler-utils': 3.3.0
+      consolidate: 0.16.0
+      debug: 4.3.4
+      fs-extra: 10.1.0
+      hash-sum: 2.0.0
+      magic-string: 0.26.7
+      prettier: 2.7.1
+      querystring: 0.2.1
+      rollup: 2.79.1
+      slash: 3.0.0
+      source-map: 0.7.4
+      vite: 3.2.3_@types+node@18.11.9
+      vue-template-babel-compiler: 1.2.0_s72bufat24j4xi363kb5czieqe
+      vue-template-compiler: 2.7.14
+    transitivePeerDependencies:
+      - arc-templates
+      - atpl
+      - babel-core
+      - bracket-template
+      - coffee-script
+      - dot
+      - dust
+      - dustjs-helpers
+      - dustjs-linkedin
+      - eco
+      - ect
+      - ejs
+      - haml-coffee
+      - hamlet
+      - hamljs
+      - handlebars
+      - hogan.js
+      - htmling
+      - jade
+      - jazz
+      - jqtpl
+      - just
+      - liquid-node
+      - liquor
+      - lodash
+      - marko
+      - mote
+      - mustache
+      - nunjucks
+      - plates
+      - pug
+      - qejs
+      - ractive
+      - razor-tmpl
+      - react
+      - react-dom
+      - slm
+      - squirrelly
+      - supports-color
+      - swig
+      - swig-templates
+      - teacup
+      - templayed
+      - then-jade
+      - then-pug
+      - tinyliquid
+      - toffee
+      - twig
+      - twing
+      - underscore
+      - vash
+      - velocityjs
+      - vue
+      - walrus
+      - whiskers
+    dev: true
+
   /vite/3.2.3:
     resolution: {integrity: sha512-h8jl1TZ76eGs3o2dIBSsvXDLb1m/Ec1iej8ZMdz+PsaFUsftZeWe2CZOI3qogEsMNaywc17gu0q6cQDzh/weCQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -16415,40 +16914,6 @@ packages:
       terser:
         optional: true
     dependencies:
-      esbuild: 0.15.13
-      postcss: 8.4.20
-      resolve: 1.22.1
-      rollup: 2.79.1
-    optionalDependencies:
-      fsevents: 2.3.2
-    dev: true
-
-  /vite/3.2.3_@types+node@18.11.15:
-    resolution: {integrity: sha512-h8jl1TZ76eGs3o2dIBSsvXDLb1m/Ec1iej8ZMdz+PsaFUsftZeWe2CZOI3qogEsMNaywc17gu0q6cQDzh/weCQ==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': '>= 14'
-      less: '*'
-      sass: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.4.0
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      less:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-    dependencies:
-      '@types/node': 18.11.15
       esbuild: 0.15.13
       postcss: 8.4.20
       resolve: 1.22.1
@@ -16709,7 +17174,7 @@ packages:
     dependencies:
       '@types/chai': 4.3.3
       '@types/chai-subset': 1.3.3
-      '@types/node': 18.11.15
+      '@types/node': 18.11.18
       '@vitest/ui': 0.25.1
       acorn: 8.8.0
       acorn-walk: 8.2.0
@@ -16722,7 +17187,7 @@ packages:
       tinybench: 2.3.1
       tinypool: 0.3.0
       tinyspy: 1.0.2
-      vite: 3.2.3_@types+node@18.11.15
+      vite: 3.2.3_@types+node@18.11.18
     transitivePeerDependencies:
       - less
       - sass
