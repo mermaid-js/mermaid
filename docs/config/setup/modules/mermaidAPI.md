@@ -159,11 +159,11 @@ Create the user styles
 
 #### Parameters
 
-| Name        | Type            | Description                                            |
-| :---------- | :-------------- | :----------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| `config`    | `MermaidConfig` | configuration that has style and theme settings to use |
-| `graphType` | `string`        | used for checking if classDefs should be applied       |
-| `classDefs` | `undefined`     | `null`                                                 | `Record`<`string`, `DiagramStyleClassDef`> | the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...) |
+| Name        | Type                                                                | Description                                                                                                               |
+| :---------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
+| `config`    | `MermaidConfig`                                                     | configuration that has style and theme settings to use                                                                    |
+| `graphType` | `string`                                                            | used for checking if classDefs should be applied                                                                          |
+| `classDefs` | `undefined` \| `null` \| `Record`<`string`, `DiagramStyleClassDef`> | the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...) |
 
 #### Returns
 

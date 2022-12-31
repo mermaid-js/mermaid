@@ -130,121 +130,121 @@ The number of shapes per row and the number of boundaries can be adjusted using 
 
 The following unfinished features are not supported in the short term.
 
-- \[ ] sprite
+- [ ] sprite
 
-- \[ ] tags
+- [ ] tags
 
-- \[ ] link
+- [ ] link
 
-- \[ ] Legend
+- [ ] Legend
 
-- \[x] System Context
+- [x] System Context
 
-- - \[x] Person(alias, label, ?descr, ?sprite, ?tags, $link)
+- - [x] Person(alias, label, ?descr, ?sprite, ?tags, $link)
 
-- - \[x] Person_Ext
+- - [x] Person_Ext
 
-- - \[x] System(alias, label, ?descr, ?sprite, ?tags, $link)
+- - [x] System(alias, label, ?descr, ?sprite, ?tags, $link)
 
-- - \[x] SystemDb
+- - [x] SystemDb
 
-- - \[x] SystemQueue
+- - [x] SystemQueue
 
-- - \[x] System_Ext
+- - [x] System_Ext
 
-- - \[x] SystemDb_Ext
+- - [x] SystemDb_Ext
 
-- - \[x] SystemQueue_Ext
+- - [x] SystemQueue_Ext
 
-- - \[x] Boundary(alias, label, ?type, ?tags, $link)
+- - [x] Boundary(alias, label, ?type, ?tags, $link)
 
-- - \[x] Enterprise_Boundary(alias, label, ?tags, $link)
+- - [x] Enterprise_Boundary(alias, label, ?tags, $link)
 
-- - \[x] System_Boundary
+- - [x] System_Boundary
 
-- \[x] Container diagram
+- [x] Container diagram
 
-- - \[x] Container(alias, label, ?techn, ?descr, ?sprite, ?tags, $link)
+- - [x] Container(alias, label, ?techn, ?descr, ?sprite, ?tags, $link)
 
-- - \[x] ContainerDb
+- - [x] ContainerDb
 
-- - \[x] ContainerQueue
+- - [x] ContainerQueue
 
-- - \[x] Container_Ext
+- - [x] Container_Ext
 
-- - \[x] ContainerDb_Ext
+- - [x] ContainerDb_Ext
 
-- - \[x] ContainerQueue_Ext
+- - [x] ContainerQueue_Ext
 
-- - \[x] Container_Boundary(alias, label, ?tags, $link)
+- - [x] Container_Boundary(alias, label, ?tags, $link)
 
-- \[x] Component diagram
+- [x] Component diagram
 
-- - \[x] Component(alias, label, ?techn, ?descr, ?sprite, ?tags, $link)
+- - [x] Component(alias, label, ?techn, ?descr, ?sprite, ?tags, $link)
 
-- - \[x] ComponentDb
+- - [x] ComponentDb
 
-- - \[x] ComponentQueue
+- - [x] ComponentQueue
 
-- - \[x] Component_Ext
+- - [x] Component_Ext
 
-- - \[x] ComponentDb_Ext
+- - [x] ComponentDb_Ext
 
-- - \[x] ComponentQueue_Ext
+- - [x] ComponentQueue_Ext
 
-- \[x] Dynamic diagram
+- [x] Dynamic diagram
 
-- - \[x] RelIndex(index, from, to, label, ?tags, $link)
+- - [x] RelIndex(index, from, to, label, ?tags, $link)
 
-- \[x] Deployment diagram
+- [x] Deployment diagram
 
-- - \[x] Deployment_Node(alias, label, ?type, ?descr, ?sprite, ?tags, $link)
+- - [x] Deployment_Node(alias, label, ?type, ?descr, ?sprite, ?tags, $link)
 
-- - \[x] Node(alias, label, ?type, ?descr, ?sprite, ?tags, $link): short name of Deployment_Node()
+- - [x] Node(alias, label, ?type, ?descr, ?sprite, ?tags, $link): short name of Deployment_Node()
 
-- - \[x] Node_L(alias, label, ?type, ?descr, ?sprite, ?tags, $link): left aligned Node()
+- - [x] Node_L(alias, label, ?type, ?descr, ?sprite, ?tags, $link): left aligned Node()
 
-- - \[x] Node_R(alias, label, ?type, ?descr, ?sprite, ?tags, $link): right aligned Node()
+- - [x] Node_R(alias, label, ?type, ?descr, ?sprite, ?tags, $link): right aligned Node()
 
-- \[x] Relationship Types
+- [x] Relationship Types
 
-- - \[x] Rel(from, to, label, ?techn, ?descr, ?sprite, ?tags, $link)
+- - [x] Rel(from, to, label, ?techn, ?descr, ?sprite, ?tags, $link)
 
-- - \[x] BiRel (bidirectional relationship)
+- - [x] BiRel (bidirectional relationship)
 
-- - \[x] Rel_U, Rel_Up
+- - [x] Rel_U, Rel_Up
 
-- - \[x] Rel_D, Rel_Down
+- - [x] Rel_D, Rel_Down
 
-- - \[x] Rel_L, Rel_Left
+- - [x] Rel_L, Rel_Left
 
-- - \[x] Rel_R, Rel_Right
+- - [x] Rel_R, Rel_Right
 
-- - \[x] Rel_Back
+- - [x] Rel_Back
 
-- - \[x] RelIndex \* Compatible with C4-Plantuml syntax, but ignores the index parameter. The sequence number is determined by the order in which the rel statements are written.
+- - [x] RelIndex \* Compatible with C4-Plantuml syntax, but ignores the index parameter. The sequence number is determined by the order in which the rel statements are written.
 
-- \[ ] Custom tags/stereotypes support and skin param updates
+- [ ] Custom tags/stereotypes support and skin param updates
 
-- - \[ ] AddElementTag(tagStereo, ?bgColor, ?fontColor, ?borderColor, ?shadowing, ?shape, ?sprite, ?techn, ?legendText, ?legendSprite): Introduces a new element tag. The styles of the tagged elements are updated and the tag is displayed in the calculated legend.
+- - [ ] AddElementTag(tagStereo, ?bgColor, ?fontColor, ?borderColor, ?shadowing, ?shape, ?sprite, ?techn, ?legendText, ?legendSprite): Introduces a new element tag. The styles of the tagged elements are updated and the tag is displayed in the calculated legend.
 
-- - \[ ] AddRelTag(tagStereo, ?textColor, ?lineColor, ?lineStyle, ?sprite, ?techn, ?legendText, ?legendSprite): Introduces a new Relationship tag. The styles of the tagged relationships are updated and the tag is displayed in the calculated legend.
+- - [ ] AddRelTag(tagStereo, ?textColor, ?lineColor, ?lineStyle, ?sprite, ?techn, ?legendText, ?legendSprite): Introduces a new Relationship tag. The styles of the tagged relationships are updated and the tag is displayed in the calculated legend.
 
-- - \[x] UpdateElementStyle(elementName, ?bgColor, ?fontColor, ?borderColor, ?shadowing, ?shape, ?sprite, ?techn, ?legendText, ?legendSprite): This call updates the default style of the elements (component, ...) and creates no additional legend entry.
+- - [x] UpdateElementStyle(elementName, ?bgColor, ?fontColor, ?borderColor, ?shadowing, ?shape, ?sprite, ?techn, ?legendText, ?legendSprite): This call updates the default style of the elements (component, ...) and creates no additional legend entry.
 
-- - \[x] UpdateRelStyle(from, to, ?textColor, ?lineColor, ?offsetX, ?offsetY): This call updates the default relationship colors and creates no additional legend entry. Two new parameters, offsetX and offsetY, are added to set the offset of the original position of the text.
+- - [x] UpdateRelStyle(from, to, ?textColor, ?lineColor, ?offsetX, ?offsetY): This call updates the default relationship colors and creates no additional legend entry. Two new parameters, offsetX and offsetY, are added to set the offset of the original position of the text.
 
-- - \[ ] RoundedBoxShape(): This call returns the name of the rounded box shape and can be used as ?shape argument.
+- - [ ] RoundedBoxShape(): This call returns the name of the rounded box shape and can be used as ?shape argument.
 
-- - \[ ] EightSidedShape(): This call returns the name of the eight sided shape and can be used as ?shape argument.
+- - [ ] EightSidedShape(): This call returns the name of the eight sided shape and can be used as ?shape argument.
 
-- - \[ ] DashedLine(): This call returns the name of the dashed line and can be used as ?lineStyle argument.
+- - [ ] DashedLine(): This call returns the name of the dashed line and can be used as ?lineStyle argument.
 
-- - \[ ] DottedLine(): This call returns the name of the dotted line and can be used as ?lineStyle argument.
+- - [ ] DottedLine(): This call returns the name of the dotted line and can be used as ?lineStyle argument.
 
-- - \[ ] BoldLine(): This call returns the name of the bold line and can be used as ?lineStyle argument.
+- - [ ] BoldLine(): This call returns the name of the bold line and can be used as ?lineStyle argument.
 
-- - \[x] UpdateLayoutConfig(?c4ShapeInRow, ?c4BoundaryInRow): New. This call updates the default c4ShapeInRow(4) and c4BoundaryInRow(2).
+- - [x] UpdateLayoutConfig(?c4ShapeInRow, ?c4BoundaryInRow): New. This call updates the default c4ShapeInRow(4) and c4BoundaryInRow(2).
 
 There are two ways to assign parameters with question marks. One uses the non-named parameter assignment method in the order of the parameters, and the other uses the named parameter assignment method, where the name must start with a $ symbol.
 
