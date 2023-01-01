@@ -33,7 +33,7 @@
     "git:forget": "git rm -r --cached . && git add . && git commit -m \"Forget all ignored files\"",
     "test:specs": "echo \"Error: test:specs is not supported\""
   },
-  "main": "./dist/zenuml-core.mjs",
+  "main": "./dist/zenuml.esm.mjs",
   "types": "./types/index.d.ts",
   "dependencies": {
     "@types/assert": "^1.5.4",
