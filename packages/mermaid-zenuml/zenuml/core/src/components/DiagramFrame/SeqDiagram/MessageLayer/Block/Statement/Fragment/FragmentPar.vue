@@ -29,10 +29,6 @@ export default {
       return this.context.par();
     },
   },
-  components: {
-    Block: () => import('../../Block.vue'),
-    Comment: () => import('../Comment/Comment.vue'),
-  },
 };
 </script>
 <style scoped>

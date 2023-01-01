@@ -38,10 +38,6 @@ export default {
       return this.loop?.parExpr()?.condition()?.getFormattedText();
     },
   },
-  components: {
-    Block: () => import('../../Block.vue'),
-    Comment: () => import('../Comment/Comment.vue'),
-  },
 };
 </script>
 <style scoped>

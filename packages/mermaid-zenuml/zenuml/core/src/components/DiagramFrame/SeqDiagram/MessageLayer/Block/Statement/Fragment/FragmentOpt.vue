@@ -27,10 +27,6 @@ export default {
       return this.context.opt();
     },
   },
-  components: {
-    Block: () => import('../../Block.vue'),
-    Comment: () => import('../Comment/Comment.vue'),
-  },
 };
 </script>
 
