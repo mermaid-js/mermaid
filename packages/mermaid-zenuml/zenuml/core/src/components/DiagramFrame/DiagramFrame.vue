@@ -179,8 +179,10 @@ export default {
       // if url contains github.com or githubusercontent.com, we fetch the raw content and set the style
       if (url.includes('https://github.com') || url.includes('https://githubusercontent.com')) {
         fetch(url.replace('github.com', 'raw.githubusercontent.com').replace('blob/', ''))
-            .then((response) => response.text())
-            .then((text) => { this.setStyle(text) })
+          .then((response) => response.text())
+          .then((text) => {
+            this.setStyle(text);
+          });
         return;
       }
 
