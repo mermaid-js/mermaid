@@ -18,7 +18,7 @@ specifiers:
   autoprefixer: ^10.4.13
   babel-eslint: ^10.1.0
   babel-jest: ^27.5.1
-  color-string: 1.5.5
+  color-string: ^1.5.5
   concurrently: ^7.5.0
   cypress: '10'
   cypress-plugin-snapshots: ^1.4.4
@@ -32,7 +32,7 @@ specifiers:
   jest: ^27.5.1
   jsdom: ^20.0.2
   lodash: ^4.17.20
-  marked: 4.0.10
+  marked: ^4.0.10
   node-sass: ^6.0.0
   pino: ^8.7.0
   postcss: ^8.4.19
