@@ -175,18 +175,16 @@ export default {
       styleElement.textContent = style;
     },
     setRemoteCss(url) {
+      const hostname = new URL(url).hostname;
+
       // if url is from github, we fetch the raw content and set the style
       // if url contains github.com or githubusercontent.com, we fetch the raw content and set the style
-      if (url.includes('https://github.com') || url.includes('https://githubusercontent.com')) {
+      if (hostname === 'https://github.com' || hostname === 'https://githubusercontent.com') {
         fetch(url.replace('github.com', 'raw.githubusercontent.com').replace('blob/', ''))
-          .then((response) => response.text())
-          .then((text) => {
-            this.setStyle(text);
-          });
+            .then((response) => response.text())
+            .then((text) => { this.setStyle(text) })
         return;
       }
-
-      console.log('setRemoteCss', url);
       const remoteCssUrlId = 'zenuml-remote-css';
       // check if remote css element exists
       let remoteCssElement = document.getElementById(remoteCssUrlId);
