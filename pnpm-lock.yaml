@@ -345,24 +345,6 @@ importers:
       '@braintree/sanitize-url':
         specifier: ^6.0.0
         version: 6.0.0
-      cytoscape:
-        specifier: ^3.23.0
-        version: 3.23.0
-      cytoscape-cose-bilkent:
-        specifier: ^4.1.0
-        version: 4.1.0_cytoscape@3.23.0
-      cytoscape-fcose:
-        specifier: ^2.1.0
-        version: 2.1.0_cytoscape@3.23.0
-      d3:
-        specifier: ^7.0.0
-        version: 7.7.0
-      khroma:
-        specifier: ^2.0.0
-        version: 2.0.0
-      non-layered-tidy-tree-layout:
-        specifier: ^2.0.2
-        version: 2.0.2
     devDependencies:
       concurrently:
         specifier: ^7.5.0
