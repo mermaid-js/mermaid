@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <!-- <link rel="stylesheet" href="https://unpkg.com/vue-sequence/dist/vue-sequence.css" /> -->
+    <style>
+      div.mermaid {
+        /* font-family: 'trebuchet ms', verdana, arial; */
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Zen UML demos</h1>
+    <pre class="mermaid">
+		zenuml
+      title Sync Messages (Design Pattern: Adapter)
+			@Starter(Client)
+      Adapter.interfaceMethod() {
+        translateParameter(parameter)
+
+        result = Implementation.implementationMethod()
+
+        translateResult()
+        return translatedResult
+      }
+    </pre>
+    <pre class="mermaid">
+		zenuml
+      title Async Messages (SPA Authentication)
+      // ```
+      // GET https://${account.namespace}/authorize/?
+      // response_type=token
+      // &client_id=${account.clientId}
+      // &redirect_url=YOUR_CALLBACK_URL
+      // &state=VALUE_THAT_SURVIVES_REDIRECTS
+      // &scope=openid
+      // ```
+      Browser->Auth0: 1. initiate the authentication
+      Auth0->"Identity Provider": 2. OAuth2 / SAML, etc
+      "Identity Provider"->"Identity Provider": 3. user gets authenticated
+      Auth0->Browser: 4. redirect to ${YOUR_CALLBACK_URL}/#id_token=e68...
+      Browser->Auth0: 5. validate id_token and get user profile
+      Browser->"Your API": 6. call API sending JWT in Authorization header
+      "Your API"->"Your API": 7. validate token
+    </pre>
+    <script type="module">
+      import zenUml from '../packages/mermaid-zenuml/src/detector';
+      import mermaid from '../packages/mermaid/src/mermaid';
+      await mermaid.registerExternalDiagrams([zenUml]);
+      await mermaid.initialize({ logLevel: 0 });
+    </script>
+  </body>
+</html>
