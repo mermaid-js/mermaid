@@ -36,6 +36,10 @@ export default defineConfig({
         __dirname,
         '../../../mermaid-mindmap/dist/mermaid-mindmap.esm.min.mjs'
       ), // Use this one to build
+      '@mermaid-js/mermaid-zenuml': path.join(
+        __dirname,
+        '../../../mermaid-zenuml/dist/mermaid-zenuml.esm.min.mjs'
+      ), // Use this one to build
     },
   },
   server: {
