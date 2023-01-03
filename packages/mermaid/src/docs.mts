@@ -38,14 +38,17 @@ import type { Code, Root } from 'mdast';
 import { posix, dirname, relative, join } from 'path';
 import prettier from 'prettier';
 import { remark as remarkBuilder } from 'remark';
+import remarkFrontmatter from 'remark-frontmatter';
 import remarkGfm from 'remark-gfm';
 import chokidar from 'chokidar';
 import mm from 'micromatch';
 // @ts-ignore No typescript declaration file
 import flatmap from 'unist-util-flatmap';
 
-// support tables and other GitHub Flavored Markdown syntax in markdown
-const remark = remarkBuilder().use(remarkGfm);
+const remark = remarkBuilder()
+  // support tables and other GitHub Flavored Markdown syntax in markdown
+  .use(remarkGfm)
+  .use(remarkFrontmatter, ['yaml']); // support YAML front-matter in Markdown
 
 const MERMAID_MAJOR_VERSION = (
   JSON.parse(readFileSync('../mermaid/package.json', 'utf8')).version as string
