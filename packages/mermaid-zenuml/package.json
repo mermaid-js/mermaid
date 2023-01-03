@@ -1,0 +1,55 @@
+{
+  "name": "@mermaid-js/mermaid-zenuml",
+  "version": "9.3.0",
+  "description": "ZenUML diagram module for MermaidJS.",
+  "module": "dist/mermaid-zenuml.core.mjs",
+  "types": "dist/detector.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/mermaid-zenuml.core.mjs",
+      "types": "./dist/detector.d.ts"
+    },
+    "./*": "./*"
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "zenuml",
+    "mermaid"
+  ],
+  "scripts": {
+    "prepublishOnly": "pnpm -w run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid"
+  },
+  "author": "Peng Xiao",
+  "license": "MIT",
+  "standard": {
+    "ignore": [
+      "**/parser/*.js",
+      "dist/**/*.js",
+      "cypress/**/*.js"
+    ],
+    "globals": [
+      "page"
+    ]
+  },
+  "dependencies": {
+    "@braintree/sanitize-url": "^6.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^7.5.0",
+    "mermaid": "workspace:*",
+    "rimraf": "^3.0.2"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ]
+}

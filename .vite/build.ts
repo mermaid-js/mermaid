@@ -41,6 +41,11 @@ const packageOptions = {
     packageName: 'mermaid-mindmap',
     file: 'detector.ts',
   },
+  'mermaid-zenuml': {
+    name: 'mermaid-zenuml',
+    packageName: 'mermaid-zenuml',
+    file: 'detector.ts',
+  },
   // 'mermaid-example-diagram-detector': {
   //   name: 'mermaid-example-diagram-detector',
   //   packageName: 'mermaid-example-diagram',
