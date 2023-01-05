@@ -124,25 +124,7 @@ erDiagram
 
 ### Attributes
 
-Attributes can be defined for entities by specifying the entity name followed by a block containing multiple `type name` pairs, where a block is delimited by an opening `{` and a closing `}`. For example:
-
-```mermaid-example
-erDiagram
-    CAR ||--o{ NAMED-DRIVER : allows
-    CAR {
-        string registrationNumber
-        string make
-        string model
-    }
-    PERSON ||--o{ NAMED-DRIVER : is
-    PERSON {
-        string firstName
-        string lastName
-        int age
-    }
-```
-
-The attributes are rendered inside the entity boxes:
+Attributes can be defined for entities by specifying the entity name followed by a block containing multiple `type name` pairs, where a block is delimited by an opening `{` and a closing `}`. The attributes are rendered inside the entity boxes. For example:
 
 ```mermaid-example
 erDiagram
