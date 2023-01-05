@@ -3,6 +3,45 @@
 import { imgSnapshotTest, renderGraph } from '../../helpers/util';
 
 context('Sequence diagram', () => {
+  it('should render a sequence diagram with boxes', () => {
+    renderGraph(
+      `
+    sequenceDiagram
+      box LightGrey Alice and Bob
+      participant Alice
+      participant Bob
+      end
+      participant John as John<br/>Second Line
+      Alice ->> Bob: Hello Bob, how are you?
+      Bob-->>John: How about you John?
+      Bob--x Alice: I am good thanks!
+      Bob-x John: I am good thanks!
+      Note right of John: Bob thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
+      Bob-->Alice: Checking with John...
+      alt either this
+        Alice->>John: Yes
+        else or this
+        Alice->>John: No
+        else or this will happen
+        Alice->John: Maybe
+      end
+      par this happens in parallel
+      Alice -->> Bob: Parallel message 1
+      and
+      Alice -->> John: Parallel message 2
+      end
+    `,
+      { sequence: { useMaxWidth: false } }
+    );
+    cy.get('svg').should((svg) => {
+      // const height = parseFloat(svg.attr('height'));
+      const width = parseFloat(svg.attr('width'));
+      // expect(height).to.be.within(920, 971);
+      // use within because the absolute value can be slightly different depending on the environment ±5%
+      expect(width).to.be.within(830 * 0.95, 830 * 1.05);
+      expect(svg).to.not.have.attr('style');
+    });
+  });
   it('should render a simple sequence diagram', () => {
     imgSnapshotTest(
       `

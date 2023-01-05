@@ -14,20 +14,52 @@ import {
 
 let prevActor = undefined;
 let actors = {};
+let boxes = [];
 let messages = [];
 const notes = [];
 let sequenceNumbersEnabled = false;
 let wrapEnabled;
+let currentBox = undefined;
 
 export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
 };
 
+export const addBox = function (data) {
+  boxes.push({
+    name: data.text,
+    wrap: (data.wrap === undefined && autoWrap()) || !!data.wrap,
+    fill: data.color,
+    actorKeys: [],
+  });
+  currentBox = boxes.slice(-1)[0];
+};
+
 export const addActor = function (id, name, description, type) {
-  // Don't allow description nulling
+  let assignedBox = currentBox;
   const old = actors[id];
-  if (old && name === old.name && description == null) {
-    return;
+  if (old) {
+    // If already set and trying to set to a new one throw error
+    if (currentBox && old.box && currentBox !== old.box) {
+      throw new Error(
+        'A same participant should only be defined in one Box: ' +
+          old.name +
+          " can't be in '" +
+          old.box.name +
+          "' and in '" +
+          currentBox.name +
+          "' at the same time."
+      );
+    }
+
+    // Don't change the box if already
+    assignedBox = old.box ? old.box : currentBox;
+    old.box = assignedBox;
+
+    // Don't allow description nulling
+    if (old && name === old.name && description == null) {
+      return;
+    }
   }
 
   // Don't allow null descriptions, either
@@ -39,6 +71,7 @@ export const addActor = function (id, name, description, type) {
   }
 
   actors[id] = {
+    box: assignedBox,
     name: name,
     description: description.text,
     wrap: (description.wrap === undefined && autoWrap()) || !!description.wrap,
@@ -53,6 +86,9 @@ export const addActor = function (id, name, description, type) {
     actors[prevActor].nextActor = id;
   }
 
+  if (currentBox) {
+    currentBox.actorKeys.push(id);
+  }
   prevActor = id;
 };
 
@@ -111,10 +147,21 @@ export const addSignal = function (
   return true;
 };
 
+export const hasAtLeastOneBox = function () {
+  return boxes.length > 0;
+};
+
+export const hasAtLeastOneBoxWithTitle = function () {
+  return boxes.some((b) => b.name);
+};
+
 export const getMessages = function () {
   return messages;
 };
 
+export const getBoxes = function () {
+  return boxes;
+};
 export const getActors = function () {
   return actors;
 };
@@ -147,6 +194,7 @@ export const autoWrap = () => {
 
 export const clear = function () {
   actors = {};
+  boxes = [];
   messages = [];
   sequenceNumbersEnabled = false;
   commonClear();
@@ -165,6 +213,37 @@ export const parseMessage = function (str) {
   };
   log.debug('parseMessage:', message);
   return message;
+};
+
+// We expect the box statement to be color first then description
+// The color can be rgb,rgba,hsl,hsla, or css code names  #hex codes are not supported for now because of the way the char # is handled
+// We extract first segment as color, the rest of the line is considered as text
+export const parseBoxData = function (str) {
+  const match = str.match(/^((?:rgba?|hsla?)\s*\(.*\)|\w*)(.*)$/);
+  let color = match != null && match[1] ? match[1].trim() : 'transparent';
+  let title = match != null && match[2] ? match[2].trim() : undefined;
+
+  // check that the string is a color
+  var s = new Option().style;
+  s.color = color;
+  if (s.color !== color) {
+    color = 'transparent';
+    title = str.trim();
+  }
+
+  const boxData = {
+    color: color,
+    text: title !== undefined ? title.replace(/^:?(?:no)?wrap:/, '') : undefined,
+    wrap:
+      title !== undefined
+        ? title.match(/^:?wrap:/) !== null
+          ? true
+          : title.match(/^:?nowrap:/) !== null
+          ? false
+          : undefined
+        : undefined,
+  };
+  return boxData;
 };
 
 export const LINETYPE = {
@@ -311,6 +390,21 @@ function insertProperties(actor, properties) {
   }
 }
 
+/**
+ *
+ * @param boxId
+ */
+function boxStart(boxId) {
+  currentBox = boxes[boxId];
+}
+
+/**
+ *
+ */
+function boxEnd() {
+  currentBox = undefined;
+}
+
 export const addDetails = function (actorId, text) {
   // find the actor
   const actor = getActor(actorId);
@@ -391,6 +485,12 @@ export const apply = function (param) {
       case 'addMessage':
         addSignal(param.from, param.to, param.msg, param.signalType);
         break;
+      case 'boxStart':
+        addBox(param.boxData);
+        break;
+      case 'boxEnd':
+        boxEnd();
+        break;
       case 'loopStart':
         addSignal(undefined, undefined, param.loopText, param.signalType);
         break;
@@ -467,12 +567,14 @@ export default {
   getActorKeys,
   getActorProperty,
   getAccTitle,
+  getBoxes,
   getDiagramTitle,
   setDiagramTitle,
   parseDirective,
   getConfig: () => configApi.getConfig().sequence,
   clear,
   parseMessage,
+  parseBoxData,
   LINETYPE,
   ARROWTYPE,
   PLACEMENT,
@@ -481,4 +583,6 @@ export default {
   apply,
   setAccDescription,
   getAccDescription,
+  hasAtLeastOneBox,
+  hasAtLeastOneBoxWithTitle,
 };

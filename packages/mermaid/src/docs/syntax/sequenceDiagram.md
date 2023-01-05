@@ -58,6 +58,38 @@ sequenceDiagram
     J->>A: Great!
 ```
 
+### Grouping / Box
+
+The actor(s) can be grouped in vertical boxes. You can define a color (if not it will be transparent) and/or a descriptive label using the following notation:
+
+```
+box lightgreen Group Number 1
+... actors ...
+end
+box Another Group
+... actors ...
+end
+box rgb(33,66,99)
+... actors ...
+end
+```
+
+```mermaid-example
+    sequenceDiagram
+    box lightgreen Alice & John
+    participant A
+    participant J
+    end
+    box Another Group
+    participant B
+    participant C
+    end
+    A->>J: Hello John, how are you?
+    J->>A: Great!
+    A->>B: Hello Bob, how is Charly ?
+    B->>C: Hello Charly, how are you?
+```
+
 ## Messages
 
 Messages can be of two displayed either solid or with a dotted line.
