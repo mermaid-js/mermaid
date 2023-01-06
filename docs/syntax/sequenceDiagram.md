@@ -198,6 +198,20 @@ sequenceDiagram
     Note over Alice,John: A typical interaction
 ```
 
+It is also possible to add a line break (applies to text input in general):
+
+```mermaid-example
+sequenceDiagram
+    Alice->John: Hello John, how are you?
+    Note over Alice,John: A typical interaction<br/>But now in two lines
+```
+
+```mermaid
+sequenceDiagram
+    Alice->John: Hello John, how are you?
+    Note over Alice,John: A typical interaction<br/>But now in two lines
+```
+
 ## Loops
 
 It is possible to express loops in a sequence diagram. This is done by the notation
