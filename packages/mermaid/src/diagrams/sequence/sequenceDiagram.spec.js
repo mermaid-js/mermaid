@@ -1312,8 +1312,53 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
     expect(boxes[0].actorKeys).toEqual(['a', 'b']);
     expect(boxes[0].fill).toEqual('green');
   });
-});
 
+  it('should handle box without color', function () {
+    const str = `
+  sequenceDiagram
+  box Group 1
+  participant a as Alice
+  participant b as Bob
+  end
+  participant c as Charlie
+  links a: { "Repo": "https://repo.contoso.com/", "Dashboard": "https://dashboard.contoso.com/" }
+  links b: { "Dashboard": "https://dashboard.contoso.com/" }
+  links a: { "On-Call": "https://oncall.contoso.com/?svc=alice" }
+  link a: Endpoint @ https://alice.contoso.com
+  link a: Swagger @ https://swagger.contoso.com
+  link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
+  `;
+
+    mermaidAPI.parse(str);
+    const boxes = diagram.db.getBoxes();
+    expect(boxes[0].name).toEqual('Group 1');
+    expect(boxes[0].actorKeys).toEqual(['a', 'b']);
+    expect(boxes[0].fill).toEqual('transparent');
+  });
+
+  it('should handle box without description', function () {
+    const str = `
+  sequenceDiagram
+  box Aqua
+  participant a as Alice
+  participant b as Bob
+  end
+  participant c as Charlie
+  links a: { "Repo": "https://repo.contoso.com/", "Dashboard": "https://dashboard.contoso.com/" }
+  links b: { "Dashboard": "https://dashboard.contoso.com/" }
+  links a: { "On-Call": "https://oncall.contoso.com/?svc=alice" }
+  link a: Endpoint @ https://alice.contoso.com
+  link a: Swagger @ https://swagger.contoso.com
+  link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
+  `;
+
+    mermaidAPI.parse(str);
+    const boxes = diagram.db.getBoxes();
+    expect(boxes[0].name).toBeFalsy();
+    expect(boxes[0].actorKeys).toEqual(['a', 'b']);
+    expect(boxes[0].fill).toEqual('Aqua');
+  });
+});
 describe('when checking the bounds in a sequenceDiagram', function () {
   beforeAll(() => {
     let conf = {

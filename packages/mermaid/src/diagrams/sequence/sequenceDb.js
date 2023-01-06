@@ -224,9 +224,18 @@ export const parseBoxData = function (str) {
   let title = match != null && match[2] ? match[2].trim() : undefined;
 
   // check that the string is a color
-  if (!CSS.supports('color', color)) {
-    color = 'transparent';
-    title = str.trim();
+  if (window && window.CSS) {
+    if (!window.CSS.supports('color', color)) {
+      color = 'transparent';
+      title = str.trim();
+    }
+  } else {
+    var s = new Option().style;
+    s.color = color;
+    if (s.color !== color) {
+      color = 'transparent';
+      title = str.trim();
+    }
   }
 
   const boxData = {
