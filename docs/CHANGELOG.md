@@ -517,7 +517,7 @@ mermaidAPI.initialize({
 - About Markpad integration [#323](https://github.com/knsv/mermaid/issues/323)
 - How to link backwards in flowchart? [#321](https://github.com/knsv/mermaid/issues/321)
 - Help with editor [#310](https://github.com/knsv/mermaid/issues/310)
-- +1 [#293](https://github.com/knsv/mermaid/issues/293)
+- \+1 [#293](https://github.com/knsv/mermaid/issues/293)
 - Basic chart does not render on Chome, but does in Firefox [#290](https://github.com/knsv/mermaid/issues/290)
 - Live editor is broken [#285](https://github.com/knsv/mermaid/issues/285)
 - "No such file or directory" trying to run mermaid 0.5.7 on OS X [#284](https://github.com/knsv/mermaid/issues/284)
