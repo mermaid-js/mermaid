@@ -63,10 +63,10 @@ sequenceDiagram
 The actor(s) can be grouped in vertical boxes. You can define a color (if not it will be transparent) and/or a descriptive label using the following notation:
 
 ```
-box lightgreen Group Number 1
+box Aqua Group Description
 ... actors ...
 end
-box Another Group
+box Group whithout description
 ... actors ...
 end
 box rgb(33,66,99)
@@ -74,9 +74,19 @@ box rgb(33,66,99)
 end
 ```
 
+```note
+If your group name is a color you can force the color to be transparent:
+```
+
+```
+box transparent Aqua
+... actors ...
+end
+```
+
 ```mermaid-example
     sequenceDiagram
-    box lightgreen Alice & John
+    box Purple Alice & John
     participant A
     participant J
     end
