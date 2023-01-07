@@ -10,7 +10,8 @@ import utils from './utils';
 import { mermaidAPI } from './mermaidAPI';
 import { addDetector } from './diagram-api/detectType';
 import type { ParseErrorFunction } from './Diagram';
-import { isDetailedError, type DetailedError } from './utils';
+import { isDetailedError } from './utils';
+import type { DetailedError } from './utils';
 import { registerDiagram } from './diagram-api/diagramAPI';
 import { ExternalDiagramDefinition } from './diagram-api/types';
 
