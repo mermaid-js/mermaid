@@ -176,8 +176,8 @@ importers:
         specifier: 7.0.6
         version: 7.0.6
       dompurify:
-        specifier: 2.4.1
-        version: 2.4.1
+        specifier: 2.4.3
+        version: 2.4.3
       khroma:
         specifier: ^2.0.0
         version: 2.0.0
@@ -5491,8 +5491,8 @@ packages:
       domelementtype: 2.3.0
     dev: true
 
-  /dompurify/2.4.1:
-    resolution: {integrity: sha512-ewwFzHzrrneRjxzmK6oVz/rZn9VWspGFRDb4/rRtIsM1n36t9AKma/ye8syCpcw+XJ25kOK/hOG7t1j2I2yBqA==}
+  /dompurify/2.4.3:
+    resolution: {integrity: sha512-q6QaLcakcRjebxjg8/+NP+h0rPfatOgOzc46Fst9VAA3jF2ApfKBNKMzdP4DYTqtUMXSCd5pRS/8Po/OmoCHZQ==}
     dev: false
 
   /domutils/3.0.1:
