@@ -142,7 +142,7 @@ const point = (elem, type) => {
     .append('marker')
     .attr('id', type + '-pointEnd')
     .attr('class', 'marker ' + type)
-    .attr('viewBox', '0 0 10 10')
+    .attr('viewBox', '0 0 12 20')
     .attr('refX', 10)
     .attr('refY', 5)
     .attr('markerUnits', 'userSpaceOnUse')

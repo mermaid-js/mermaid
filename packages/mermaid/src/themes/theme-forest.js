@@ -130,6 +130,13 @@ class Theme {
       this['cScaleLabel' + i] = this['cScaleLabel' + i] || this.scaleLabelColor;
     }
 
+    for (let i = 0; i < 5; i++) {
+      this['surface' + i] =
+        this['surface' + i] || adjust(this.mainBkg, { h: 30, s: -30, l: -(5 + i * 5) });
+      this['surfacePeer' + i] =
+        this['surfacePeer' + i] || adjust(this.mainBkg, { h: 30, s: -30, l: -(8 + i * 5) });
+    }
+
     /* Flowchart variables */
 
     this.nodeBkg = this.mainBkg;
