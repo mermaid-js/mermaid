@@ -1,4 +1,4 @@
-import * as graphlib from 'dagre-d3-es/src/graphlib';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { line, curveBasis, select } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import { getConfig } from '../../config';
@@ -6,9 +6,8 @@ import { log } from '../../logger';
 import utils from '../../utils';
 import erMarkers from './erMarkers';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import addSVGAccessibilityFields from '../../accessibility';
 import { parseGenericTypes } from '../common/common';
-import { v4 as uuid4 } from 'uuid';
+import { v5 as uuid5 } from 'uuid';
 
 /** Regex used to remove chars from the entity name so the result can be used in an id */
 const BAD_ID_CHARS_REGEXP = /[^\dA-Za-z](\W)*/g;
@@ -642,13 +641,26 @@ export const draw = function (text, id, _version, diagObj) {
   configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
-
-  addSVGAccessibilityFields(diagObj.db, svg, id);
 }; // draw
 
 /**
+ * UUID namespace for ER diagram IDs
+ *
+ * This can be generated via running:
+ *
+ * ```js
+ * const { v5: uuid5 } = await import('uuid');
+ * uuid5(
+ *   'https://mermaid-js.github.io/mermaid/syntax/entityRelationshipDiagram.html',
+ *   uuid5.URL
+ * );
+ * ```
+ */
+const MERMAID_ERDIAGRAM_UUID = '28e9f9db-3c8d-5aa5-9faf-44286ae5937c';
+
+/**
  * Return a unique id based on the given string. Start with the prefix, then a hyphen, then the
- * simplified str, then a hyphen, then a unique uuid. (Hyphens are only included if needed.)
+ * simplified str, then a hyphen, then a unique uuid based on the str. (Hyphens are only included if needed.)
  * Although the official XML standard for ids says that many more characters are valid in the id,
  * this keeps things simple by accepting only A-Za-z0-9.
  *
@@ -659,7 +671,11 @@ export const draw = function (text, id, _version, diagObj) {
  */
 export function generateId(str = '', prefix = '') {
   const simplifiedStr = str.replace(BAD_ID_CHARS_REGEXP, '');
-  return `${strWithHyphen(prefix)}${strWithHyphen(simplifiedStr)}${uuid4()}`;
+  // we use `uuid v5` so that UUIDs are consistent given a string.
+  return `${strWithHyphen(prefix)}${strWithHyphen(simplifiedStr)}${uuid5(
+    str,
+    MERMAID_ERDIAGRAM_UUID
+  )}`;
 }
 
 /**

@@ -102,7 +102,6 @@ export const getDiagramFromText = (
   try {
     // Trying to find the diagram
     getDiagram(type);
-    return new Diagram(txt, parseError);
   } catch (error) {
     const loader = getDiagramLoader(type);
     if (!loader) {
@@ -118,6 +117,7 @@ export const getDiagramFromText = (
       return new Diagram(txt, parseError);
     });
   }
+  return new Diagram(txt, parseError);
 };
 
 export default Diagram;

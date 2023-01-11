@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import * as graphlib from 'dagre-d3-es/src/graphlib';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger';
 import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';
@@ -8,7 +8,6 @@ import { curveLinear } from 'd3';
 import { interpolateToCurve, getStylesFromArray } from '../../utils';
 import { setupGraphViewbox } from '../../setupGraphViewbox';
 import common from '../common/common';
-import addSVGAccessibilityFields from '../../accessibility';
 
 const sanitizeText = (txt) => common.sanitizeText(txt, getConfig());
 
@@ -451,7 +450,6 @@ export const draw = function (text, id, _version, diagObj) {
     }
   }
 
-  addSVGAccessibilityFields(diagObj.db, svg, id);
   // If node has a link, wrap it in an anchor SVG object.
   // const keys = Object.keys(classes);
   // keys.forEach(function(key) {

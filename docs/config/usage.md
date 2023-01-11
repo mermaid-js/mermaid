@@ -22,24 +22,21 @@ For the majority of users, Using the [Live Editor](https://mermaid.live/) would 
 
 We have compiled some Video [Tutorials](./Tutorials.md) on how to use the mermaid Live Editor.
 
-**Installing and Hosting Mermaid on a Webpage**
+### Installing and Hosting Mermaid on a Webpage
 
-**Using the npm package**
+**Using the npm package:**
 
-    1. You will need to install node v16, which would have npm.
+1.  You will need to install `node v16`, which would have npm.
 
-    2. download yarn using npm.
+2.  Download `yarn` using npm.
 
-    3. enter the following command:
-        yarn add mermaid
+3.  Enter the following command: `yarn add mermaid`.
 
-    4. At this point, you can add mermaid as a dev dependency using this command:
-        yarn add --dev mermaid
+4.  At this point, you can add mermaid as a dev dependency using this command: `yarn add --dev mermaid`.
 
-    5. Alternatively, you can also deploy mermaid using the script tag in an HTML file with mermaid diagram descriptions.
-        as is shown in the example below
+5.  Alternatively, you can also deploy mermaid using the script tag in an HTML file with mermaid diagram descriptions as is shown in the example below.
 
-**Hosting mermaid on a web page.**
+**Hosting mermaid on a web page:**
 
 > Note:This topic explored in greater depth in the [User Guide for Beginners](../intro/n00b-gettingStarted.md)
 
@@ -62,7 +59,7 @@ Example:
 
 ```html
 <script type="module">
-  import mermaid from 'https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs';
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad: true });
 </script>
 ```
@@ -85,7 +82,7 @@ Example:
       B-->D(fa:fa-spinner);
     </pre>
     <script type="module">
-      import mermaid from 'https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs';
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
       mermaid.initialize({ startOnLoad: true });
     </script>
   </body>
