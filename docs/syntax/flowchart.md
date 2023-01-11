@@ -994,9 +994,12 @@ flowchart LR
 
 ### Renderer
 
-The layout of the flowchart diagram can be don in multiple ways. The default rendering is done using an algorithm called dagre. It is possible to use another algorithm called **elk** for rendering flowcharts which is better for large and more complex diagrams. This is an expermental feature but worth exploring.
+The layout of the diagram is done with the renderer. The default renderer is dagre.
 
-This can be enabled using directives by adding this in the diagram code:
+Starting with Mermaid version 9.4, you can use an alternate renderer named elk. The elk renderer is better for larger and/or more complex diagrams.
+
+The _elk_ renderer is an experimenal feature.
+You can change the renderer to elk by adding this directive:
 
     %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 
