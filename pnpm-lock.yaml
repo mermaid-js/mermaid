@@ -311,18 +311,6 @@ importers:
       '@braintree/sanitize-url':
         specifier: ^6.0.0
         version: 6.0.0
-      cytoscape:
-        specifier: ^3.23.0
-        version: 3.23.0
-      cytoscape-cose-bilkent:
-        specifier: ^4.1.0
-        version: 4.1.0_cytoscape@3.23.0
-      cytoscape-dagre:
-        specifier: ^2.1.0
-        version: 2.5.0_cytoscape@3.23.0
-      cytoscape-fcose:
-        specifier: ^2.1.0
-        version: 2.1.0_cytoscape@3.23.0
       d3:
         specifier: ^7.0.0
         version: 7.6.1
@@ -4946,15 +4934,6 @@ packages:
       cytoscape: 3.23.0
     dev: false
 
-  /cytoscape-dagre/2.5.0_cytoscape@3.23.0:
-    resolution: {integrity: sha512-VG2Knemmshop4kh5fpLO27rYcyUaaDkRw+6PiX4bstpB+QFt0p2oauMrsjVbUamGWQ6YNavh7x2em2uZlzV44g==}
-    peerDependencies:
-      cytoscape: ^3.2.22
-    dependencies:
-      cytoscape: 3.23.0
-      dagre: 0.8.5
-    dev: false
-
   /cytoscape-fcose/2.1.0_cytoscape@3.23.0:
     resolution: {integrity: sha512-Q3apPl66jf8/2sMsrCjNP247nbDkyIPjA9g5iPMMWNLZgP3/mn9aryF7EFY/oRPEpv7bKJ4jYmCoU5r5/qAc1Q==}
     peerDependencies:
@@ -5268,13 +5247,6 @@ packages:
     dependencies:
       d3: 7.7.0
       lodash-es: 4.17.21
-    dev: false
-
-  /dagre/0.8.5:
-    resolution: {integrity: sha512-/aTqmnRta7x7MCCpExk7HQL2O4owCT2h8NT//9I1OQ9vt29Pa0BzSAkR5lwFUcQ7491yVi/3CXU9jQ5o0Mn2Sw==}
-    dependencies:
-      graphlib: 2.1.8
-      lodash: 4.17.21
     dev: false
 
   /dargs/7.0.0:

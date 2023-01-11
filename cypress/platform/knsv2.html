@@ -54,7 +54,14 @@
     </style>
   </head>
   <body>
-    <div>Security check</div>
+    <pre id="diagram" class="mermaid">
+%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
+graph TB
+      a --> b
+      a --> c
+      b --> d
+      c --> d
+    </pre>
     <pre id="diagram" class="mermaid">
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 flowchart TB

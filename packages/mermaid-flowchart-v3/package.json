@@ -1,8 +1,8 @@
 {
   "name": "@mermaid-js/mermaid-flowchart-v3",
   "version": "9.4.0",
-  "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
-  "module": "dist/mermaid-mindmap.core.mjs",
+  "description": "An extension for the Mermaid diagramming library that utilizes elkjs for layout, enabling the creation of visually appealing and easy-to-understand flowcharts.",
+  "module": "dist/mermaid-flowchart-v3.core.mjs",
   "types": "dist/detector.d.ts",
   "type": "module",
   "exports": {
@@ -15,8 +15,9 @@
   "keywords": [
     "diagram",
     "markdown",
-    "mindmap",
-    "mermaid"
+    "flowchart",
+    "mermaid",
+    "elkjs"
   ],
   "scripts": {
     "prepublishOnly": "pnpm -w run build"
@@ -39,12 +40,8 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.0",
-    "cytoscape": "^3.23.0",
-    "cytoscape-cose-bilkent": "^4.1.0",
-    "cytoscape-fcose": "^2.1.0",
     "graphlib": "^2.1.0",
     "dagre-d3-es": "7.0.4",
-    "cytoscape-dagre": "^2.1.0",
     "elkjs": "^0.8.2",
     "d3": "^7.0.0",
     "khroma": "^2.0.0",
