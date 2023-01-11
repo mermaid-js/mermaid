@@ -53,13 +53,13 @@ export default {
   padding: 16px 0 16px 5px;
 }
 
->>> >.statement-container:last-child > .interaction.return:last-of-type {
+> .statement-container:last-child > .interaction.return:last-of-type {
   margin-bottom: 0;
   border-bottom: 0;
   transform: translateY(1px);
 }
 
->>> >.statement-container:last-child > .interaction.return:last-of-type > .message {
+> .statement-container:last-child > .interaction.return:last-of-type > .message {
   bottom: -17px; /* Move the absolutely positioned return message to the bottom. -17 to offset the padding of Occurrence. */
   height: 0;
 }

@@ -2,8 +2,8 @@ import { shallowMount } from '@vue/test-utils';
 import { createStore } from 'vuex';
 import { VueSequence } from '../../../../index';
 import MessageLayer from './MessageLayer.vue';
-import Block from './Block/Block.vue'
-import { ProgContextFixture } from '../../../../parser/ContextsFixture'
+import Block from './Block/Block.vue';
+import { ProgContextFixture } from '../../../../parser/ContextsFixture';
 const storeConfig = VueSequence.Store();
 storeConfig.state.code = 'a';
 storeConfig.getters.centerOf = function () {
@@ -18,11 +18,11 @@ describe('MessageLayer', () => {
       plugins: [store],
     },
     props: {
-      context: ProgContextFixture('A->B.method()').block()
+      context: ProgContextFixture('A->B.method()').block(),
     },
     components: {
-      Block
-    }
+      Block,
+    },
   });
   it('should have a width', async () => {
     expect(messageLayerWrapper.find('.message-layer').exists()).toBeTruthy();

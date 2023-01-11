@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import {createStore} from 'vuex';
+import { createStore } from 'vuex';
 import { VueSequence } from '../../../../../../../index';
 import Creation from './Creation.vue';
 import { Fixture } from '../../../../../../../../test/unit/parser/fixture/Fixture';

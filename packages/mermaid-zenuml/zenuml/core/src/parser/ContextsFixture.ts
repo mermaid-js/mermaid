@@ -13,17 +13,18 @@ function createParser(code: any) {
   return parser;
 }
 
+// eslint-disable-next-line no-unused-vars
 function createParseFunction(parseMethod: (parser: sequenceParser) => any) {
   return (code: string) => {
     const parser = createParser(code);
     return parseMethod(parser);
-  }
+  };
 }
 
-export const ProgContextFixture = createParseFunction(parser => parser.prog());
-export const StatContextFixture = createParseFunction(parser => parser.stat());
-export const AsyncMessageContextFixture = createParseFunction(parser => parser.asyncMessage());
-export const DividerContextFixture = createParseFunction(parser => parser.divider());
-export const CreationContextFixture = createParseFunction(parser => parser.creation());
+export const ProgContextFixture = createParseFunction((parser) => parser.prog());
+export const StatContextFixture = createParseFunction((parser) => parser.stat());
+export const AsyncMessageContextFixture = createParseFunction((parser) => parser.asyncMessage());
+export const DividerContextFixture = createParseFunction((parser) => parser.divider());
+export const CreationContextFixture = createParseFunction((parser) => parser.creation());
 
-export const RetContextFixture = createParseFunction(parser => parser.ret());
+export const RetContextFixture = createParseFunction((parser) => parser.ret());

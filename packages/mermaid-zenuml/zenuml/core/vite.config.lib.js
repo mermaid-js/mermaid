@@ -1,8 +1,8 @@
 /* eslint-env es6 */
-import { resolve } from 'path'
+import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import { createVuePlugin as vue } from 'vite-plugin-vue2';
-import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 
 export default defineConfig({
   build: {
@@ -27,13 +27,13 @@ export default defineConfig({
           entryFileNames: `zenuml.esm.mjs`,
         },
         {
-          name: 'zenuml',  //  it is the global variable name representing your bundle. https://rollupjs.org/guide/en/#outputname
+          name: 'zenuml', //  it is the global variable name representing your bundle. https://rollupjs.org/guide/en/#outputname
           format: 'umd',
           sourcemap: true,
           entryFileNames: `zenuml.js`,
         },
-      ]
-    }
+      ],
+    },
   },
   plugins: [vue(), cssInjectedByJsPlugin()],
   test: {

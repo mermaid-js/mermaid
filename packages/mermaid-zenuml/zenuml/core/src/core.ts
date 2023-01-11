@@ -1,6 +1,6 @@
 import parentLogger from './logger/logger';
-import {createApp} from 'vue';
-import {createStore} from 'vuex';
+import { createApp } from 'vue';
+import { createStore } from 'vuex';
 import Store from './store/Store';
 import DiagramFrame from './components/DiagramFrame/DiagramFrame.vue';
 import SeqDiagram from './components/DiagramFrame/SeqDiagram/SeqDiagram.vue';
@@ -17,12 +17,12 @@ import Block from './components/DiagramFrame/SeqDiagram/MessageLayer/Block/Block
 import Comment from './components/DiagramFrame/SeqDiagram/MessageLayer/Block/Statement/Comment/Comment.vue';
 const logger = parentLogger.child({ name: 'core' });
 
-
 interface IZenUml {
   get code(): string | undefined;
   get theme(): string | undefined;
   // Resolve after rendering is finished.
-  render: (code: string | undefined, theme: string | undefined) => Promise<IZenUml>;
+  // eslint-disable-next-line no-unused-vars
+  render(code: string | undefined, theme: string | undefined): Promise<IZenUml>;
 }
 
 export default class ZenUml implements IZenUml {

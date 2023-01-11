@@ -2,7 +2,7 @@ import { shallowMount } from '@vue/test-utils';
 import { createStore } from 'vuex';
 import Interaction from './Interaction.vue';
 import { VueSequence } from '../../../../../../../index';
-import { ProgContextFixture } from '../../../../../../../parser/ContextsFixture'
+import { ProgContextFixture } from '../../../../../../../parser/ContextsFixture';
 
 describe('Highlight current interact based on position of cursor', () => {
   test.each([
@@ -57,7 +57,7 @@ describe('Interaction width', () => {
         },
         props: {
           selfCallIndent: selfCallIndent,
-          context: ProgContextFixture('A->B.method()').block().stat()[0]
+          context: ProgContextFixture('A->B.method()').block().stat()[0],
         },
       });
       expect(wrapper.vm.interactionWidth).toBe(width);

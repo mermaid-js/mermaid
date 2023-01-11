@@ -15,7 +15,8 @@
     "git graph"
   ],
   "scripts": {
-    "build:vite": "ts-node-esm --transpileOnly .vite/build.ts",
+    "build:zenuml:parser": "(cd packages/mermaid-zenuml/zenuml/core && pnpm antlr)",
+    "build:vite": "pnpm build:zenuml:parser && ts-node-esm --transpileOnly .vite/build.ts",
     "build:mermaid": "pnpm build:vite --mermaid",
     "build:viz": "pnpm build:mermaid --visualize",
     "build:types": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-mindmap/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-zenuml/tsconfig.json --emitDeclarationOnly",

@@ -1,4 +1,4 @@
-import {  shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import { createStore } from 'vuex';
 import Statement from './Statement.vue';
 import { VueSequence } from '../../../../../../index';

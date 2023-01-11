@@ -1,11 +1,23 @@
 import jison from './.vite/jisonPlugin';
 import { defineConfig } from 'vitest/config';
+import createVuePlugin from '@vitejs/plugin-vue';
 
 export default defineConfig({
   resolve: {
     extensions: ['.jison', '.js', '.ts', '.json'],
   },
-  plugins: [jison()],
+  plugins: [
+    jison(),
+    createVuePlugin({
+      template: {
+        compilerOptions: {
+          compatConfig: {
+            MODE: 2,
+          },
+        },
+      },
+    }),
+  ],
   test: {
     environment: 'jsdom',
     globals: true,
