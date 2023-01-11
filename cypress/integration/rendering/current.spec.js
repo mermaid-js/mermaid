@@ -1,6 +1,6 @@
 import { imgSnapshotTest } from '../../helpers/util';
 
-describe('State diagram', () => {
+describe('Current diagram', () => {
   it('should render a state with states in it', () => {
     imgSnapshotTest(
       `

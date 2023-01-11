@@ -14,37 +14,34 @@ export default defineConfig({
   lang: 'en-US',
   title: 'Mermaid',
   description: 'Create diagrams and visualizations using text and code.',
-  base: '/mermaid/',
+  base: '/',
   markdown: allMarkdownTransformers,
-  head: [['link', { rel: 'icon', type: 'image/x-icon', href: '/mermaid/favicon.ico' }]],
+  head: [['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]],
   themeConfig: {
     nav: nav(),
     editLink: {
       pattern: 'https://github.com/mermaid-js/mermaid/edit/develop/packages/mermaid/src/docs/:path',
       text: 'Edit this page on GitHub',
     },
-
     sidebar: {
       '/': sidebarAll(),
     },
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/mermaid-js/mermaid' },
+      { icon: 'slack', link: 'https://mermaid-talk.slack.com' },
+    ],
   },
 });
 
 function nav() {
   return [
-    { text: 'Intro', link: '/intro/', activeMatch: '/intro/' },
+    { text: 'Docs', link: '/intro/', activeMatch: '/intro/' },
     {
-      text: 'Configuration',
-      link: '/config/configuration',
+      text: 'Tutorials',
+      link: '/config/Tutorials',
       activeMatch: '/config/',
     },
-    { text: 'Syntax', link: '/syntax/classDiagram', activeMatch: '/syntax/' },
-    { text: 'Misc', link: '/misc/integrations', activeMatch: '/misc/' },
-    {
-      text: 'Community',
-      link: '/community/n00b-overview',
-      activeMatch: '/community/',
-    },
+    { text: 'Integrations', link: '/misc/integrations', activeMatch: '/misc/' },
     {
       text: version,
       items: [

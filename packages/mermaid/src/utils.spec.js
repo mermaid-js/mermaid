@@ -3,7 +3,7 @@ import utils from './utils';
 import assignWithDepth from './assignWithDepth';
 import { detectType } from './diagram-api/detectType';
 import { addDiagrams } from './diagram-api/diagram-orchestration';
-import memoize from 'lodash-es/memoize';
+import memoize from 'lodash-es/memoize.js';
 import { MockedD3 } from './tests/MockedD3';
 
 addDiagrams();
@@ -239,9 +239,9 @@ Alice->Bob: hi`;
     const type = detectType(str);
     expect(type).toBe('gitGraph');
   });
-  it('should not allow frontmatter with leading spaces', function () {
+  it('should handle malformed frontmatter (with leading spaces) with `---` error graphtype', function () {
     const str = '    ---\ntitle: foo\n---\n  gitGraph TB:\nbfs1:queue';
-    expect(() => detectType(str)).toThrow('No diagram type detected for text');
+    expect(detectType(str)).toBe('---');
   });
 });
 describe('when finding substring in array ', function () {

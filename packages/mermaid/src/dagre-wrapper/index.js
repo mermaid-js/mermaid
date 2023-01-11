@@ -1,5 +1,5 @@
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
-import * as graphlibJson from 'dagre-d3-es/src/graphlib/json';
+import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
 import insertMarkers from './markers';
 import { updateNodeBounds } from './shapes/util';
 import {

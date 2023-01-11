@@ -1,6 +1,5 @@
 import flowDb from '../flowDb';
 import flow from './flow';
-import filter from 'lodash-es/filter';
 import { setConfig } from '../../../config';
 
 setConfig({

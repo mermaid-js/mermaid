@@ -17,10 +17,10 @@
     <h1>Class diagram demos</h1>
 
     <pre class="mermaid">
----
-title: Demo Class Diagram
----
-		classDiagram
+    ---
+    title: Demo Class Diagram
+    ---
+    classDiagram
       accTitle: Demo Class Diagram
       accDescr: This class diagram show the abstract Animal class, and 3 classes that inherit from it: Duck, Fish, and Zebra.
 
@@ -138,7 +138,20 @@ title: Demo Class Diagram
     Pineapple : -int leafCount()
     Pineapple : -int spikeCount()
     </pre>
+    <hr />
 
+    <pre class="mermaid">
+    classDiagram
+      class Person {
+        +Id : Guid
+        +FirstName : string
+        +LastName : string
+        -privateProperty : string
+        #ProtectedProperty : string
+        ~InternalProperty : string
+        ~AnotherInternalProperty : List~List~string~~
+      }
+    </pre>
     <hr />
 
     <script src="./mermaid.js"></script>

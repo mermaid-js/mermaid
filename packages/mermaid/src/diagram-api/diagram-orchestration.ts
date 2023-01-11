@@ -125,6 +125,33 @@ export const addDiagrams = () => {
     },
     (text) => text.toLowerCase().trim() === 'error'
   );
+  registerDiagram(
+    '---',
+    // --- diagram type may appear if YAML front-matter is not parsed correctly
+    {
+      db: {
+        clear: () => {
+          // Quite ok, clear needs to be there for --- to work as a regular diagram
+        },
+      },
+      styles: errorStyles, // should never be used
+      renderer: errorRenderer, // should never be used
+      parser: {
+        parser: { yy: {} },
+        parse: () => {
+          throw new Error(
+            'Diagrams beginning with --- are not valid. ' +
+              'If you were trying to use a YAML front-matter, please ensure that ' +
+              "you've correctly opened and closed the YAML front-matter with unindented `---` blocks"
+          );
+        },
+      },
+      init: () => null, // no op
+    },
+    (text) => {
+      return text.toLowerCase().trimStart().startsWith('---');
+    }
+  );
 
   registerDiagram(
     'c4',

@@ -90,7 +90,7 @@ mermaid.initialize(config);
 
 #### Defined in
 
-[mermaidAPI.ts:968](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L968)
+[mermaidAPI.ts:961](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L961)
 
 ## Functions
 
@@ -295,19 +295,18 @@ Put the svgCode into an iFrame. Return the iFrame code
 
 ### removeExistingElements
 
-▸ **removeExistingElements**(`doc`, `isSandboxed`, `id`, `divSelector`, `iFrameSelector`): `void`
+▸ **removeExistingElements**(`doc`, `id`, `divId`, `iFrameId`): `void`
 
 Remove any existing elements from the given document
 
 #### Parameters
 
-| Name             | Type       | Description                                     |
-| :--------------- | :--------- | :---------------------------------------------- |
-| `doc`            | `Document` | the document to removed elements from           |
-| `isSandboxed`    | `boolean`  | whether or not we are in sandboxed mode         |
-| `id`             | `string`   | id for any existing SVG element                 |
-| `divSelector`    | `string`   | selector for any existing enclosing div element |
-| `iFrameSelector` | `string`   | selector for any existing iFrame element        |
+| Name       | Type       | Description                           |
+| :--------- | :--------- | :------------------------------------ |
+| `doc`      | `Document` | the document to removed elements from |
+| `id`       | `string`   | id for any existing SVG element       |
+| `divId`    | `string`   | -                                     |
+| `iFrameId` | `string`   | -                                     |
 
 #### Returns
 
@@ -315,4 +314,4 @@ Remove any existing elements from the given document
 
 #### Defined in
 
-[mermaidAPI.ts:336](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L336)
+[mermaidAPI.ts:335](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L335)

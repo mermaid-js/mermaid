@@ -146,9 +146,22 @@ const readSyncedUTF8file = (filename: string): string => {
   return readFileSync(filename, 'utf8');
 };
 
-const transformToBlockQuote = (content: string, type: string) => {
-  const title = type === 'warning' ? 'Warning' : 'Note';
-  return `> **${title}** \n> ${content.replace(/\n/g, '\n> ')}`;
+const blockIcons: Record<string, string> = {
+  tip: '💡 ',
+  danger: '‼️ ',
+};
+
+const capitalize = (word: string) => word[0].toUpperCase() + word.slice(1);
+
+const transformToBlockQuote = (content: string, type: string, customTitle?: string | null) => {
+  if (vitepress) {
+    const vitepressType = type === 'note' ? 'info' : type;
+    return `::: ${vitepressType} ${customTitle || ''}\n${content}\n:::`;
+  } else {
+    const icon = blockIcons[type] || '';
+    const title = `${icon}${customTitle || capitalize(type)}`;
+    return `> **${title}** \n> ${content.replace(/\n/g, '\n> ')}`;
+  }
 };
 
 const injectPlaceholders = (text: string): string =>
@@ -194,8 +207,8 @@ const transformMarkdown = (file: string) => {
     }
 
     // Transform codeblocks into block quotes.
-    if (['note', 'tip', 'warning'].includes(c.lang)) {
-      return [remark.parse(transformToBlockQuote(c.value, c.lang))];
+    if (['note', 'tip', 'warning', 'danger'].includes(c.lang)) {
+      return [remark.parse(transformToBlockQuote(c.value, c.lang, c.meta))];
     }
 
     return [c];
@@ -260,7 +273,7 @@ const transformHtml = (filename: string) => {
 };
 
 const getGlobs = (globs: string[]): string[] => {
-  globs.push('!**/dist', '!**/redirect.spec.ts');
+  globs.push('!**/dist', '!**/redirect.spec.ts', '!**/landing');
   if (!vitepress) {
     globs.push('!**/.vitepress', '!**/vite.config.ts', '!src/docs/index.md');
   }
