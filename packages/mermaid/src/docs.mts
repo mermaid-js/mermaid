@@ -48,14 +48,26 @@ const MERMAID_MAJOR_VERSION = (
 ).split('.')[0];
 const CDN_URL = 'https://cdn.jsdelivr.net/npm'; // 'https://unpkg.com';
 
+const MERMAID_KEYWORD = 'mermaid';
+const MERMAID_CODE_ONLY_KEYWORD = 'mermaid-example';
+
+// These keywords will produce both a mermaid diagram and a code block with the diagram source
+const MERMAID_EXAMPLE_KEYWORDS = [MERMAID_KEYWORD, 'mmd', MERMAID_CODE_ONLY_KEYWORD]; // 'mmd' is an old keyword that used to be used
+
+// This keyword will only produce a mermaid diagram
+const MERMAID_DIAGRAM_ONLY = 'mermaid-nocode';
+
+// These will be transformed into block quotes
+const BLOCK_QUOTE_KEYWORDS = ['note', 'tip', 'warning', 'danger'];
+
+// options for running the main command
 const verifyOnly: boolean = process.argv.includes('--verify');
 const git: boolean = process.argv.includes('--git');
 const watch: boolean = process.argv.includes('--watch');
 const vitepress: boolean = process.argv.includes('--vitepress');
 const noHeader: boolean = process.argv.includes('--noHeader') || vitepress;
 
-// These paths are from the root of the mono-repo, not from the
-// mermaid sub-directory
+// These paths are from the root of the mono-repo, not from the mermaid subdirectory
 const SOURCE_DOCS_DIR = 'src/docs';
 const FINAL_DOCS_DIR = vitepress ? 'src/vitepress' : '../../docs';
 
@@ -153,7 +165,11 @@ const blockIcons: Record<string, string> = {
 
 const capitalize = (word: string) => word[0].toUpperCase() + word.slice(1);
 
-const transformToBlockQuote = (content: string, type: string, customTitle?: string | null) => {
+export const transformToBlockQuote = (
+  content: string,
+  type: string,
+  customTitle?: string | null
+) => {
   if (vitepress) {
     const vitepressType = type === 'note' ? 'info' : type;
     return `::: ${vitepressType} ${customTitle || ''}\n${content}\n:::`;
@@ -180,41 +196,67 @@ const transformIncludeStatements = (file: string, text: string): string => {
     }
   });
 };
+
+/**
+ * Transform code blocks in a Markdown file.
+ * Use remark.parse() to turn the given content (a String) into an AST.
+ * For any AST node that is a code block: transform it as needed:
+ * - blocks marked as MERMAID_DIAGRAM_ONLY will be set to a 'mermaid' code block so it will be rendered as (only) a diagram
+ * - blocks marked as MERMAID_EXAMPLE_KEYWORDS will be copied and the original node will be a code only block and the copy with be rendered as the diagram
+ * - blocks marked as BLOCK_QUOTE_KEYWORDS will be transformed into block quotes
+ *
+ * Convert the AST back to a string and return it.
+ *
+ * @param content - the contents of a Markdown file
+ * @returns the contents with transformed code blocks
+ */
+export const transformBlocks = (content: string): string => {
+  const ast: Root = remark.parse(content);
+  const astWithTransformedBlocks = flatmap(ast, (node: Code) => {
+    if (node.type !== 'code' || !node.lang) {
+      return [node]; // no transformation if this is not a code block
+    }
+
+    if (node.lang === MERMAID_DIAGRAM_ONLY) {
+      // Set the lang to 'mermaid' so it will be rendered as a diagram.
+      node.lang = MERMAID_KEYWORD;
+      return [node];
+    } else if (MERMAID_EXAMPLE_KEYWORDS.includes(node.lang)) {
+      // Return 2 nodes:
+      //   1. the original node with the language now set to 'mermaid-example' (will be rendered as code), and
+      //   2. a copy of the original node with the language set to 'mermaid' (will be rendered as a diagram)
+      node.lang = MERMAID_CODE_ONLY_KEYWORD;
+      return [node, Object.assign({}, node, { lang: MERMAID_KEYWORD })];
+    }
+
+    // Transform these blocks into block quotes.
+    if (BLOCK_QUOTE_KEYWORDS.includes(node.lang)) {
+      return [remark.parse(transformToBlockQuote(node.value, node.lang, node.meta))];
+    }
+
+    return [node]; // default is to do nothing to the node
+  });
+
+  return remark.stringify(astWithTransformedBlocks);
+};
+
 /**
  * Transform a markdown file and write the transformed file to the directory for published
  * documentation
  *
- * 1. Add a `mermaid-example` block before every `mermaid` or `mmd` block On the docsify site (one
- *    place where the documentation is published), this will show the code used for the mermaid
- *    diagram
- * 2. Add the text that says the file is automatically generated
- * 3. Use prettier to format the file Verify that the file has been changed and write out the changes
+ * 1. include any included files (copy and insert the source)
+ * 2. Add a `mermaid-example` block before every `mermaid` or `mmd` block On the main documentation site (one
+ *    place where the documentation is published), this will show the code for the mermaid diagram
+ * 3. Transform blocks to block quotes as needed
+ * 4. Add the text that says the file is automatically generated
+ * 5. Use prettier to format the file.
+ * 6. Verify that the file has been changed and write out the changes
  *
  * @param file {string} name of the file that will be verified
  */
 const transformMarkdown = (file: string) => {
   const doc = injectPlaceholders(transformIncludeStatements(file, readSyncedUTF8file(file)));
-  const ast: Root = remark.parse(doc);
-  const out = flatmap(ast, (c: Code) => {
-    if (c.type !== 'code' || !c.lang) {
-      return [c];
-    }
-
-    // Convert mermaid code blocks to mermaid-example blocks
-    if (['mermaid', 'mmd', 'mermaid-example'].includes(c.lang)) {
-      c.lang = 'mermaid-example';
-      return [c, Object.assign({}, c, { lang: 'mermaid' })];
-    }
-
-    // Transform codeblocks into block quotes.
-    if (['note', 'tip', 'warning', 'danger'].includes(c.lang)) {
-      return [remark.parse(transformToBlockQuote(c.value, c.lang, c.meta))];
-    }
-
-    return [c];
-  });
-
-  let transformed = remark.stringify(out);
+  let transformed = transformBlocks(doc);
   if (!noHeader) {
     // Add the header to the start of the file
     transformed = `${generateHeader(file)}\n${transformed}`;
