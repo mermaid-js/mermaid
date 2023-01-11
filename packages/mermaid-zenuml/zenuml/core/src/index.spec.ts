@@ -1,4 +1,3 @@
-import vue from 'vue';
 import { createStore } from 'vuex';
 import { VueSequence } from './index';
 

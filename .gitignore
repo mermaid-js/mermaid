@@ -36,3 +36,6 @@ tsconfig.tsbuildinfo
 knsv*.html
 local*.html
 stats/
+
+packages/mermaid-zenuml/zenuml/core/reports
+packages/mermaid-zenuml/zenuml/core/src/generated-parser
