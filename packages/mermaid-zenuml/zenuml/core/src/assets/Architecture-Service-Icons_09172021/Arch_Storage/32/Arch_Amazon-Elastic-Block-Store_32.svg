@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/32/Arch_Amazon-Elastic-Block-Store_32</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#1B660F" offset="0%"></stop>
+            <stop stop-color="#6CAE3E" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/32/Arch_Amazon-Elastic-Block-Store_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/32/Storage" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="40" height="40"></rect>
+        </g>
+        <path d="M33,28 L34,28 L34,34 L28,34 L28,33 L32.293,33 L27.646,28.354 L28.354,27.646 L33,32.293 L33,28 Z M13.354,28.354 L8.707,33 L13,33 L13,34 L7,34 L7,28 L8,28 L8,32.293 L12.646,27.646 L13.354,28.354 Z M34,6 L34,12 L33,12 L33,7.707 L28.354,12.354 L27.646,11.646 L32.293,7 L28,7 L28,6 L34,6 Z M8.707,7 L13.354,11.646 L12.646,12.354 L8,7.707 L8,12 L7,12 L7,6 L13,6 L13,7 L8.707,7 Z M20.5,15.5 C16.928,15.5 15,14.46 15,14.036 L15,14 C15,13.374 17.093,12.5 20.5,12.5 C23.907,12.5 26,13.374 26,14 L26,14.036 C26,14.46 24.072,15.5 20.5,15.5 L20.5,15.5 Z M20.5,27.5 C17.093,27.5 15,26.626 15,26 L15,15.389 C16.228,16.116 18.404,16.5 20.5,16.5 C22.596,16.5 24.772,16.116 26,15.389 L26,26 C26,26.626 23.907,27.5 20.5,27.5 L20.5,27.5 Z M20.5,11.5 C17.265,11.5 14,12.273 14,14 L14,26 C14,27.727 17.265,28.5 20.5,28.5 C23.735,28.5 27,27.727 27,26 L27,14 C27,12.273 23.735,11.5 20.5,11.5 L20.5,11.5 Z" id="Amazon-Elastic-Block-Store_Icon_32_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

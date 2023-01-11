@@ -1,0 +1,4 @@
+<svg width="4" height="100">
+  <line fill="#000000" stroke="#FF0000" stroke-dasharray="10, 5" x1="1" y1="1" x2="1" y2="100"
+        style="stroke-width: 1px;"></line>
+</svg>

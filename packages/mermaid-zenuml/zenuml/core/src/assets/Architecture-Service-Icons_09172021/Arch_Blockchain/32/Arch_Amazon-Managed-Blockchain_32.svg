@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/32/Arch_Amazon-Managed-Blockchain_32</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#C8511B" offset="0%"></stop>
+            <stop stop-color="#FF9900" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/32/Arch_Amazon-Managed-Blockchain_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/32/Blockchain" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="40" height="40"></rect>
+        </g>
+        <path d="M10.29,16.7 L9.374,16.3 C11.046,12.472 14.824,10 19,10 C23.176,10 26.954,12.472 28.626,16.3 L27.71,16.7 C26.197,13.237 22.778,11 19,11 C15.222,11 11.803,13.237 10.29,16.7 L10.29,16.7 Z M27.229,25.249 L28.095,25.75 C26.222,28.988 22.736,31 19,31 C15.264,31 11.778,28.988 9.905,25.75 L10.77,25.249 C12.466,28.179 15.619,30 19,30 C22.381,30 25.534,28.179 27.229,25.249 L27.229,25.249 Z M26,22.5 L23,22.5 L23,19.5 L26,19.5 L26,20.5 L26,21.5 L26,22.5 Z M16,22.5 L19,22.5 L19,19.5 L16,19.5 L16,22.5 Z M9,22.5 L12,22.5 L12,19.5 L9,19.5 L9,22.5 Z M32.175,20.7 L30.4,18.325 L29.6,18.924 L30.777,20.5 L27,20.5 L27,19 C27,18.723 26.776,18.5 26.5,18.5 L22.5,18.5 C22.224,18.5 22,18.723 22,19 L22,20.5 L20,20.5 L20,19 C20,18.723 19.776,18.5 19.5,18.5 L15.5,18.5 C15.224,18.5 15,18.723 15,19 L15,20.5 L13,20.5 L13,19 C13,18.723 12.776,18.5 12.5,18.5 L8.5,18.5 C8.224,18.5 8,18.723 8,19 L8,23 C8,23.276 8.224,23.5 8.5,23.5 L12.5,23.5 C12.776,23.5 13,23.276 13,23 L13,21.5 L15,21.5 L15,23 C15,23.276 15.224,23.5 15.5,23.5 L19.5,23.5 C19.776,23.5 20,23.276 20,23 L20,21.5 L22,21.5 L22,23 C22,23.276 22.224,23.5 22.5,23.5 L26.5,23.5 C26.776,23.5 27,23.276 27,23 L27,21.5 L30.777,21.5 L29.6,23.075 L30.4,23.674 L32.175,21.299 C32.308,21.121 32.308,20.878 32.175,20.7 L32.175,20.7 Z" id="Amazon-Managed-Blockchain-Icon_32_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

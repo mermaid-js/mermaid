@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon-Architecture/16/Arch_AWS-ThinkBox-Sequoia_16</title>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#C8511B" offset="0%"></stop>
+            <stop stop-color="#FF9900" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-ThinkBox-Sequoia_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle" fill="url(#linearGradient-1)">
+            <rect x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <g id="Icon-Service/16/AWS-ThinkBox-Sequoia_16" transform="translate(4.000000, 4.000000)" fill="#FFFFFF">
+            <path d="M15,4.5 L15,11.5 C15,11.684 14.899,11.853 14.737,11.94 L8.237,15.44 C8.163,15.48 8.081,15.5 8,15.5 C7.919,15.5 7.837,15.48 7.763,15.44 L1.263,11.94 C1.101,11.853 1,11.684 1,11.5 L1,4.5 C1,4.316 1.101,4.147 1.263,4.06 L2.763,3.252 L3.237,4.133 L2,4.799 L2,11.201 L8,14.432 L14,11.201 L14,4.799 L12.763,4.133 L13.237,3.252 L14.737,4.06 C14.899,4.147 15,4.316 15,4.5 L15,4.5 Z M5.237,3.056 L4.763,2.175 L7.763,0.56 C7.911,0.48 8.089,0.48 8.237,0.56 L11.237,2.175 L10.763,3.056 L8,1.568 L5.237,3.056 Z M8,6.772 C8.469,7.971 9.267,9.022 10.388,9.918 L8,11.411 L5.612,9.918 C6.733,9.022 7.531,7.971 8,6.772 L8,6.772 Z M7.735,12.424 C7.816,12.475 7.908,12.5 8,12.5 C8.092,12.5 8.184,12.475 8.265,12.424 L11.541,10.376 C11.685,10.287 11.772,10.131 11.776,9.963 C11.779,9.794 11.697,9.635 11.559,9.54 C9.529,8.154 8.5,6.29 8.5,4 C8.5,3.724 8.276,3.5 8,3.5 C7.724,3.5 7.5,3.724 7.5,4 C7.5,6.29 6.471,8.154 4.441,9.54 C4.303,9.635 4.221,9.794 4.224,9.963 C4.228,10.131 4.315,10.287 4.459,10.376 L7.735,12.424 Z" id="AWS-ThinkBox-Sequoia_16_Squid"></path>
+        </g>
+    </g>
+</svg>

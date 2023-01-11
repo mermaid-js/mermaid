@@ -1,0 +1,19 @@
+<svg version="1.1" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+	 x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" overflow="visible" xml:space="preserve">
+<g >
+	<rect y="0" fill="none" width="24" height="24"/>
+	<g transform="translate(0.000000, 5.000000)">
+		<path fill-rule="evenodd" fill="#85A4E6" d="M22.5,15.2h-21c-0.8,0-1.5-0.7-1.5-1.5V0.2c0-0.8,0.7-1.5,1.5-1.5h21
+			c0.8,0,1.5,0.7,1.5,1.5v13.5C24,14.6,23.3,15.2,22.5,15.2L22.5,15.2z"/>
+		<path fill-rule="evenodd" fill="#5C85DE" d="M22.5,15.2H12V-1.2h10.5c0.8,0,1.5,0.7,1.5,1.5v13.5C24,14.6,23.3,15.2,22.5,15.2
+			L22.5,15.2z"/>
+		<rect y="1" fill-rule="evenodd" fill="#5C85DE" width="24" height="3"/>
+			<rect id="Rectangle-path_00000135674211772856346760000002730362558129152162_" x="12" y="1" fill-rule="evenodd" fill="#3367D6" width="12" height="3"/>
+			<rect id="Rectangle-path_00000127732411686421387230000005866310280904328323_" x="2.2" y="5.5" fill-rule="evenodd" fill="#FFFFFF" width="19.5" height="2.2"/>
+			<rect id="Rectangle-path_00000144336547962367256270000004601864478366739619_" x="2.2" y="10" fill-rule="evenodd" fill="#5C85DE" width="4.5" height="3"/>
+			<rect id="Rectangle-path_00000167372342969776731770000010922900929549315211_" x="13.5" y="10.8" fill-rule="evenodd" fill="#FFFFFF" width="1.5" height="1.5"/>
+			<rect id="Rectangle-path_00000026865061745408398040000018034195747439422142_" x="16.5" y="10.8" fill-rule="evenodd" fill="#FFFFFF" width="1.5" height="1.5"/>
+			<rect id="Rectangle-path_00000169543108220145060960000001220724486439157930_" x="19.5" y="10.8" fill-rule="evenodd" fill="#FFFFFF" width="1.5" height="1.5"/>
+	</g>
+</g>
+</svg>

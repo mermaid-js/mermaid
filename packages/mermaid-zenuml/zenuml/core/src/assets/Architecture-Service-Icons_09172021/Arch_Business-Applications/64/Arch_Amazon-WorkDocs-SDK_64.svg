@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon-Architecture/64/Arch_Amazon-WorkDocs-SDK_64</title>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#BD0816" offset="0%"></stop>
+            <stop stop-color="#FF5252" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/64/Arch_Amazon-WorkDocs-SDK_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle" fill="url(#linearGradient-1)">
+            <rect x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <g id="Icon-Service/64/Amazon-WorkDocs" transform="translate(8.000000, 8.000000)" fill="#FFFFFF">
+            <path d="M25,33 L28,33 L28,31 L25,31 L25,33 Z M31,53 L33,53 L33,50 L31,50 L31,53 Z M31,48 L33,48 L33,45 L31,45 L31,48 Z M31,38 L33,38 L33,35 L31,35 L31,38 Z M31,43 L33,43 L33,40 L31,40 L31,43 Z M20,33 L23,33 L23,31 L20,31 L20,33 Z M15,33 L18,33 L18,31 L15,31 L15,33 Z M10,33 L13,33 L13,31 L10,31 L10,33 Z M33,58 L33,55 L31,55 L31,58 L6,58 L6,33 L8,33 L8,31 L6,31 L6,6 L31,6 L31,31 L30,31 L30,33 L32,33 L33,33 L58,33 L58,58 L33,58 Z M33,7.414 L56.586,31 L33,31 L33,7.414 Z M60,32 C60,31.74 59.898,31.484 59.707,31.293 L32.707,4.293 C32.515,4.102 32.26,4 32,4 L5,4 C4.447,4 4,4.448 4,5 L4,59 C4,59.552 4.447,60 5,60 L59,60 C59.552,60 60,59.552 60,59 L60,32 Z" id="Amazon-WorkDocs_Icon_64_Squid"></path>
+        </g>
+    </g>
+</svg>

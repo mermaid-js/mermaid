@@ -1,0 +1,18 @@
+<svg version="1.1" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+	 x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" overflow="visible" xml:space="preserve">
+<g >
+	<rect y="0" fill="none" width="24" height="24"/>
+	<g transform="translate(1.000000, 1.000000)">
+		<polygon id="Fill-1" fill-rule="evenodd" fill="#5C85DE" points="8.8,20.8 13.2,20.8 13.2,19.2 8.8,19.2 		"/>
+		<polygon id="Fill-2" fill-rule="evenodd" fill="#3367D6" points="11,20.8 13.2,20.8 13.2,19.2 11,19.2 		"/>
+		<polygon id="Fill-3" fill-rule="evenodd" fill="#5C85DE" points="18.7,22.2 21.6,14.1 17.7,11.9 15.3,19.3 16.7,22.2 		"/>
+		<polygon id="Fill-4" fill-rule="evenodd" fill="#3367D6" points="17.7,11.9 15.3,19.3 16.7,22.2 		"/>
+		<polygon id="Fill-5" fill-rule="evenodd" fill="#85A4E6" points="3.3,22.2 0.4,14.1 4.3,11.9 6.7,19.3 5.3,22.2 		"/>
+		<polygon id="Fill-6" fill-rule="evenodd" fill="#5C85DE" points="4.3,11.9 6.7,19.3 5.3,22.2 		"/>
+		<path id="Fill-7" fill-rule="evenodd" fill="#85A4E6" d="M11,10.5c-1.4,0-2.5-1.1-2.5-2.5S9.6,5.5,11,5.5s2.5,1.1,2.5,2.5
+			S12.4,10.5,11,10.5L11,10.5z M11-0.2L5.8,5v5.5l2.3,8h5.8l2.3-8V5L11-0.2z"/>
+		<path id="Fill-9" fill-rule="evenodd" fill="#5C85DE" d="M11-0.2v5.8c1.4,0,2.5,1.1,2.5,2.5s-1.1,2.5-2.5,2.5v8h2.9l2.3-8V5
+			L11-0.2z"/>
+	</g>
+</g>
+</svg>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64px" height="64px" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/48/Arch_Amazon-Kinesis_48</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#4D27A8" offset="0%"></stop>
+            <stop stop-color="#A166FF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/48/Arch_Amazon-Kinesis_48" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/48/Analytics" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="64" height="64"></rect>
+        </g>
+        <path d="M16,48 L18,48 C18,42.434 20.779,37 54,37 L54,35 C38.449,35 28.121,36.219 22.427,38.728 C16.764,41.223 16,44.815 16,48 M20.99997,53.876 L20.99997,54 L23,54 L23,53.876 C22.999,50.756 22.999,47.809 26.556,45.42 C30.984,42.446 39.961,41 54,41 L54,39 C39.552,39 30.21,40.557 25.44,43.76 C20.998,46.743 20.999,50.698 20.99997,53.876 M13,23 L11,23 C11,26.614 13.747,30.285 30.012,32 C13.747,33.715 11,37.386 11,41 L13,41 C13,35.617 26.411,33 54,33 L54,31 C26.411,31 13,28.383 13,23 M18,16 L16,16 C16,24.233 22.218,29 54,29 L54,27 C20.779,27 18,21.566 18,16 M54,23 L54,25 C39.552,25 30.21,23.443 25.44,20.24 C20.998,17.257 20.999,13.302 20.99997,10.124 L20.99997,10 L23,10 L23,10.124 C22.999,13.244 22.999,16.191 26.556,18.58 C30.984,21.554 39.961,23 54,23" id="Amazon-Kinesis_Icon_48_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

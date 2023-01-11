@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_AWS-Key-Management-Services_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#BD0816" offset="0%"></stop>
+            <stop stop-color="#FF5252" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-Key-Management-Services_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Security-Identity-Compliance" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M13.022,15.453 L15.022,15.453 L15.022,14.453 L13.022,14.453 L13.022,15.453 Z M10.022,15.453 L12.022,15.453 L12.022,14.453 L10.022,14.453 L10.022,15.453 Z M19.022,9.953 L19.022,16.953 C19.022,17.229 18.799,17.453 18.522,17.453 L10.022,17.453 L10.022,16.453 L18.022,16.453 L18.022,10.453 L12.022,10.453 L12.022,9.453 L18.522,9.453 C18.799,9.453 19.022,9.677 19.022,9.953 L19.022,9.953 Z M7.483,10.968 C6.114,10.968 5,9.854 5,8.484 C5,7.115 6.114,6 7.483,6 C8.854,6 9.968,7.115 9.968,8.484 C9.968,9.854 8.854,10.968 7.483,10.968 L7.483,10.968 Z M7.483,5 C5.562,5 4,6.563 4,8.484 C4,10.234 5.301,11.672 6.983,11.917 L6.983,16.453 L5.022,16.453 L5.022,17.453 L6.983,17.453 L6.983,19.453 L7.983,19.453 L7.983,11.917 C9.666,11.673 10.968,10.234 10.968,8.484 C10.968,6.563 9.404,5 7.483,5 Z" id="AWS-Key-Management-Services_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

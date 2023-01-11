@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_Amazon-ElastiCache_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#2E27AD" offset="0%"></stop>
+            <stop stop-color="#527FFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_Amazon-ElastiCache_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Database" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M10,13 L15,13 L15,11 L10,11 L10,13 Z M10,16 L15,16 L15,14 L10,14 L10,16 Z M10,19 L15,19 L15,17 L10,17 L10,19 Z M16,10.5 L16,19.5 C16,19.777 15.776,20 15.5,20 L9.5,20 C9.224,20 9,19.777 9,19.5 L9,10.5 C9,10.224 9.224,10 9.5,10 L15.5,10 C15.776,10 16,10.224 16,10.5 L16,10.5 Z M17,12 L18,12 L18,6.5 C18,6.224 17.776,6 17.5,6 L15.5,6 C15.224,6 15,6.224 15,6.5 L15,9 L16,9 L16,7 L17,7 L17,12 Z M14,9 L14,6.5 C14,6.224 13.776,6 13.5,6 L11.5,6 C11.224,6 11,6.224 11,6.5 L11,9 L12,9 L12,7 L13,7 L13,9 L14,9 Z M9,9 L10,9 L10,6.5 C10,6.224 9.776,6 9.5,6 L7.5,6 C7.224,6 7,6.224 7,6.5 L7,12 L8,12 L8,7 L9,7 L9,9 Z M20,4.5 L20,14.5 C20,14.777 19.776,15 19.5,15 L17,15 L17,14 L19,14 L19,5 L6,5 L6,14 L8,14 L8,15 L5.5,15 C5.224,15 5,14.777 5,14.5 L5,4.5 C5,4.224 5.224,4 5.5,4 L19.5,4 C19.776,4 20,4.224 20,4.5 L20,4.5 Z" id="Amazon-ElastiCache_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

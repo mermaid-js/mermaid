@@ -1,0 +1,126 @@
+/* palette */
+
+:root {
+  /* mostly from https://github.com/dracula/dracula-theme#color-palette */
+  --background: #282a36;
+  --hover: #2b2b2b; /* I made this up */
+  --occurance-border: #6e7191; /* I made this up */
+  --border: #585b74; /* I made this up */
+  --white: #f8f8f2; /* the "foreground" */
+  --current: #44475a;
+  --comment: #6272a4;
+  --cyan: #8be9fd;
+  --green: #50fa7b;
+  --orange: #ffb86c;
+  --pink: #ff79c6;
+  --purple: #bd93f9;
+  --red: #ff5555;
+  --yellow: #f1fa8c;
+  --crayola: #a9b7c6;
+}
+
+body .zenuml.theme-dark {
+  background-color: var(--background);
+}
+
+/* participant */
+
+.zenuml.theme-dark .header {
+  color: var(--crayola);
+  font-weight: bold;
+}
+
+.zenuml.theme-dark .sequence-diagram .lifeline-group:hover {
+  background-color: #223049;
+}
+
+.zenuml.theme-dark .sequence-diagram .lifeline .participant {
+  border-color: var(--border);
+  border-radius: 2px;
+  background: var(--background);
+}
+
+.zenuml.theme-dark .sequence-diagram .lifeline .participant label {
+  color: var(--cyan);
+}
+
+.zenuml.theme-dark .sequence-diagram .lifeline .line {
+  background: var(--border);
+}
+
+/* fragment */
+
+.zenuml.theme-dark .fragment > .header > .condition {
+  color: var(--crayola);
+  padding: 6px;
+}
+.zenuml.theme-dark .sequence-diagram .fragment .header label {
+  color: var(--crayola);
+  padding: 6px;
+}
+.zenuml.theme-dark .sequence-diagram .fragment .header .name {
+  border-bottom-color: var(--border);
+}
+.zenuml.theme-dark .sequence-diagram .fragment .header .name label {
+  color: var(--pink);
+  font-weight: 400;
+}
+.zenuml.theme-dark .sequence-diagram .fragment {
+  border-color: var(--border);
+}
+.zenuml.theme-dark .sequence-diagram .comments {
+  border: none;
+  background: transparent;
+  color: var(--comment);
+}
+.zenuml.theme-dark .sequence-diagram .fragment .segment:not(:first-child) {
+  border-top-color: var(--border);
+}
+
+/* interaction */
+.zenuml.theme-dark .sequence-diagram .interaction {
+  color: var(--orange);
+}
+
+/* message */
+
+.zenuml.theme-dark .sequence-diagram .message {
+  border-bottom-color: var(--border);
+}
+
+.zenuml.theme-dark .sequence-diagram .message .name:hover {
+  color: var(--crayola);
+}
+
+.zenuml.theme-dark .sequence-diagram .message svg polyline {
+  fill: var(--border);
+  stroke: var(--border);
+}
+.zenuml.theme-dark .sequence-diagram .message.self svg > polyline:not(.head) {
+  fill: none;
+}
+
+/* occurance */
+
+.zenuml.theme-dark .sequence-diagram .occurrence {
+  background-color: var(--current);
+  box-shadow: 0 0 0 1px var(--occurance-border);
+  border-radius: 2px;
+}
+
+/* divider */
+
+.zenuml.theme-dark .sequence-diagram .divider .left,
+.zenuml.theme-dark .sequence-diagram .divider .right {
+  background: var(--border);
+}
+
+.zenuml.theme-dark .sequence-diagram .divider .name {
+  color: var(--comment);
+}
+
+/* hover */
+.zenuml.theme-dark .interaction .message > .name:hover {
+  background-color: forestgreen; /* 40% */
+  color: white;
+}

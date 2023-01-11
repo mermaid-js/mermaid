@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Integration ZenUML Library with Vanilla JavaScript</title>
+    <script src="https://unpkg.com/vue@2.6.14"></script>
+    <script src="https://unpkg.com/@zenuml/core@2.0.1/dist/zenuml/core.umd.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@zenuml/core@2.0.1/dist/zenuml/core.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      const ZenUml = window['zenuml/core'].default;
+      const zenuml = new ZenUml(document.getElementById('app'));
+      const code = `
+  @EC2 BookService
+  @DynamoDB BookRepository
+  BookService.saveBook(1) {
+    BookRepository.storeBook()
+  }
+  `;
+      zenuml.render(code, 'theme-blue');
+    </script>
+  </body>
+</html>

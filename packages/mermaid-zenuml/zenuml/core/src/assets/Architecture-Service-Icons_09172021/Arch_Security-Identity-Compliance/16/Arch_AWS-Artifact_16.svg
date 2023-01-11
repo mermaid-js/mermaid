@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_AWS-Artifact_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#BD0816" offset="0%"></stop>
+            <stop stop-color="#FF5252" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-Artifact_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Security-Identity-Compliance" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M13.242,17.108 L13.935,17.829 L11.958,19.733 C11.864,19.844 11.725,19.912 11.575,19.912 C11.431,19.912 11.297,19.85 11.203,19.748 L9.218,17.828 L9.913,17.109 L11.075,18.233 L11.075,15.968 L12.075,15.968 L12.075,18.232 L13.242,17.108 Z M19.056,11.528 C19.056,13.919 18.074,16.077 16.361,17.448 L15.736,16.668 C17.211,15.487 18.056,13.614 18.056,11.528 C18.056,7.929 15.128,5 11.528,5 C7.929,5 5,7.929 5,11.528 C5,13.531 5.986,15.4 7.706,16.654 L7.116,17.462 C5.136,16.017 4,13.854 4,11.528 C4,7.377 7.377,4 11.528,4 C15.68,4 19.056,7.377 19.056,11.528 L19.056,11.528 Z M10.077,10.912 L12.077,10.912 L12.077,9.912 L10.077,9.912 L10.077,10.912 Z M10.077,12.912 L13.077,12.912 L13.077,11.912 L10.077,11.912 L10.077,12.912 Z M9.061,13.989 L14.077,13.989 L14.077,8.015 L9.061,8.015 L9.061,13.989 Z M14.577,7.015 L8.561,7.015 C8.285,7.015 8.061,7.239 8.061,7.515 L8.061,14.489 C8.061,14.766 8.285,14.989 8.561,14.989 L14.577,14.989 C14.853,14.989 15.077,14.766 15.077,14.489 L15.077,7.515 C15.077,7.239 14.853,7.015 14.577,7.015 L14.577,7.015 Z" id="AWS-Artifact_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

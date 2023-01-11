@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon-Architecture/16/Arch_AWS-Fusion_16</title>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#C8511B" offset="0%"></stop>
+            <stop stop-color="#FF9900" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-Fusion_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle" fill="url(#linearGradient-1)">
+            <rect x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <g id="Icon-Service/16/AWS-Fusion_16" transform="translate(4.000000, 4.000000)" fill="#FFFFFF">
+            <path d="M10,6 L12,6 L12,4 L10,4 L10,6 Z M15.5,0 L12,0 L12,1 L14.293,1 L12.293,3 L9.5,3 C9.224,3 9,3.224 9,3.5 L9,6.5 C9,6.776 9.224,7 9.5,7 L12.5,7 C12.776,7 13,6.776 13,6.5 L13,3.707 L15,1.707 L15,4 L16,4 L16,0.5 C16,0.224 15.776,0 15.5,0 L15.5,0 Z M10,12 L12,12 L12,10 L10,10 L10,12 Z M12.5,9 L9.5,9 C9.224,9 9,9.224 9,9.5 L9,12.5 C9,12.776 9.224,13 9.5,13 L12.5,13 C12.776,13 13,12.776 13,12.5 L13,9.5 C13,9.224 12.776,9 12.5,9 L12.5,9 Z M4,6 L6,6 L6,4 L4,4 L4,6 Z M6.5,3 L3.5,3 C3.224,3 3,3.224 3,3.5 L3,6.5 C3,6.776 3.224,7 3.5,7 L6.5,7 C6.776,7 7,6.776 7,6.5 L7,3.5 C7,3.224 6.776,3 6.5,3 L6.5,3 Z M4,12 L6,12 L6,10 L4,10 L4,12 Z M6.5,9 L3.5,9 C3.224,9 3,9.224 3,9.5 L3,12.293 L1,14.293 L1,12 L0,12 L0,15.5 C0,15.776 0.224,16 0.5,16 L4,16 L4,15 L1.707,15 L3.707,13 L6.5,13 C6.776,13 7,12.776 7,12.5 L7,9.5 C7,9.224 6.776,9 6.5,9 L6.5,9 Z" id="Fill-1"></path>
+        </g>
+    </g>
+</svg>

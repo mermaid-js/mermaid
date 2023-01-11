@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon-Architecture/16/Arch_AWS-Snowcone_16</title>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#1B660F" offset="0%"></stop>
+            <stop stop-color="#6CAE3E" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-Snowcone_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle" fill="url(#linearGradient-1)">
+            <rect x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <g id="Icon-Service/16/AWS-Snowcone_16" transform="translate(4.000000, 4.000000)" fill="#FFFFFF">
+            <path d="M13,8.5 L13,11.5 C13,11.776 12.776,12 12.5,12 L3.5,12 C3.224,12 3,11.776 3,11.5 L3,8.5 C3,8.224 3.224,8 3.5,8 L5,8 L5,9 L4,9 L4,11 L12,11 L12,9 L11,9 L11,8 L12.5,8 C12.776,8 13,8.224 13,8.5 L13,8.5 Z M15.042,13 L8.072,13 L1,13 L1,6.485 C1,6.218 1.218,6 1.485,6 L14.557,6 C14.824,6 15,6.218 15,6.485 L15.042,13 Z M3.562,3.197 L3.655,3.104 C3.695,3.064 3.744,3.015 3.842,3 L12.238,3.004 C12.256,3.015 12.305,3.064 12.345,3.104 L13.878,5 L2.115,5 L3.562,3.197 Z M15.355,5.237 L13.132,2.476 L13.053,2.398 C12.866,2.211 12.655,2 12.158,2 L3.842,2 C3.345,2 3.134,2.211 2.947,2.398 L0.582,5.314 C0.23,5.586 6.39488462e-13,6.007 6.39488462e-13,6.485 L6.39488462e-13,13.157 C6.39488462e-13,13.622 0.374,14 0.833,14 L15.208,14 C15.668,14 16.042,13.622 16.042,13.157 L16.042,6.485 C16.042,5.961 15.768,5.501 15.355,5.237 L15.355,5.237 Z M7,9 L9,9 L9,8 L7,8 L7,9 Z M6.5,10 L9.5,10 C9.776,10 10,9.776 10,9.5 L10,7.5 C10,7.224 9.776,7 9.5,7 L6.5,7 C6.224,7 6,7.224 6,7.5 L6,9.5 C6,9.776 6.224,10 6.5,10 L6.5,10 Z" id="AWS-Snowcone_16_Squid"></path>
+        </g>
+    </g>
+</svg>

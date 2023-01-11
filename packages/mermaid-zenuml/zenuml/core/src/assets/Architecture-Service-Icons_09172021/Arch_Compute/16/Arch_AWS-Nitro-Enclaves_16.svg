@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_AWS-Nitro-Enclaves_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#C8511B" offset="0%"></stop>
+            <stop stop-color="#FF9900" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-Nitro-Enclaves_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Compute" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M13.923,13.765 C14.031,13.613 14.046,13.412 13.96,13.245 C13.874,13.079 13.703,12.974 13.516,12.974 L11.5,12.974 L13.407,10.289 L12.593,9.71 L10.124,13.185 C10.016,13.337 10.001,13.537 10.087,13.704 C10.173,13.87 10.344,13.974 10.531,13.974 L12.545,13.974 L10.593,16.709 L11.407,17.29 L13.923,13.765 Z M7,19 L17,19 L17,8.5 C17,8.223 17.224,8 17.5,8 L19,8 L19,5 L17,5 L17,6.5 C17,6.776 16.777,7 16.5,7 L13.5,7 C13.224,7 13,6.776 13,6.5 L13,5 L11,5 L11,6.5 C11,6.776 10.777,7 10.5,7 L7.5,7 C7.224,7 7,6.776 7,6.5 L7,5 L5,5 L5,8 L6.5,8 C6.777,8 7,8.223 7,8.5 L7,19 Z M17.5,20 L6.5,20 C6.224,20 6,19.776 6,19.5 L6,9 L4.5,9 C4.224,9 4,8.776 4,8.5 L4,4.5 C4,4.223 4.224,4 4.5,4 L7.5,4 C7.777,4 8,4.223 8,4.5 L8,6 L10,6 L10,4.5 C10,4.223 10.224,4 10.5,4 L13.5,4 C13.777,4 14,4.223 14,4.5 L14,6 L16,6 L16,4.5 C16,4.223 16.224,4 16.5,4 L19.5,4 C19.777,4 20,4.223 20,4.5 L20,8.5 C20,8.776 19.777,9 19.5,9 L18,9 L18,19.5 C18,19.776 17.777,20 17.5,20 L17.5,20 Z" id="AWS-Nitro-Enclaves_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

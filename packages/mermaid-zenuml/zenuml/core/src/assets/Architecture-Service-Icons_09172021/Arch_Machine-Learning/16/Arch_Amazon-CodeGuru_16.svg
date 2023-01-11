@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_Amazon-CodeGuru_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#055F4E" offset="0%"></stop>
+            <stop stop-color="#56C0A7" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_Amazon-CodeGuru_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Machine-Learning" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M9,20 L15,20 L15,19 L9,19 L9,20 Z M10,14.895 C10,14.707 9.895,14.535 9.728,14.449 C8.045,13.588 7,11.883 7,10 C7,7.243 9.243,5 12,5 C14.757,5 17,7.243 17,10 C17,11.883 15.955,13.588 14.272,14.449 C14.105,14.535 14,14.707 14,14.895 L14,17 L10,17 L10,14.895 Z M15,17.5 L15,15.191 C16.858,14.119 18,12.157 18,10 C18,6.691 15.309,4 12,4 C8.691,4 6,6.691 6,10 C6,12.157 7.142,14.119 9,15.191 L9,17.5 C9,17.776 9.224,18 9.5,18 L14.5,18 C14.776,18 15,17.776 15,17.5 L15,17.5 Z M12.912,7.182 L11.922,7.041 L11.006,13.452 L11.996,13.593 L12.912,7.182 Z M15.565,10.617 C15.698,10.439 15.698,10.195 15.565,10.017 L14.191,8.185 L13.391,8.785 L14.54,10.317 L13.391,11.849 L14.191,12.449 L15.565,10.617 Z M9.728,12.449 L8.354,10.617 C8.221,10.439 8.221,10.195 8.354,10.017 L9.728,8.185 L10.528,8.785 L9.379,10.317 L10.528,11.849 L9.728,12.449 Z" id="Amazon-CodeGuru_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

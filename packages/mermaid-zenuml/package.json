@@ -38,7 +38,7 @@
     ]
   },
   "dependencies": {
-    "@braintree/sanitize-url": "^6.0.0"
+    "@zenuml/core": "link:zenuml/core"
   },
   "devDependencies": {
     "concurrently": "^7.5.0",

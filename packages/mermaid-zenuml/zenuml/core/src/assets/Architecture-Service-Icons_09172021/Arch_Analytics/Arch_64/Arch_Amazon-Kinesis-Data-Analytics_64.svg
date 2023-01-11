@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/64/Arch_Amazon-Kinesis-Data-Analytics_64</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#4D27A8" offset="0%"></stop>
+            <stop stop-color="#A166FF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/64/Arch_Amazon-Kinesis-Data-Analytics_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/64/Analytics" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <g id="Icon-Service/64/Amazon-Kinesis-Data-Analytics" transform="translate(8.000000, 8.000000)" fill="#FFFFFF">
+            <path d="M11,54 L13,54 C13,49.013 14.699,43.493 27.016,40.106 L27.016,38.039 C12.849,41.788 11,48.521 11,54 L11,54 Z M17,60 L19,60 C19,55.399 19.016,49.733 27.016,45.781 L27.016,43.565 C17.008,48.052 17,54.942 17,60 L17,60 Z M57,39 L31,39 L31,58 L33,58 L33,49 C33,48.448 33.447,48 34,48 L38,48 C38.553,48 39,48.448 39,49 L39,58 L41,58 L41,46 C41,45.448 41.447,45 42,45 L46,45 C46.553,45 47,45.448 47,46 L47,58 L49,58 L49,43 C49,42.448 49.447,42 50,42 L54,42 C54.553,42 55,42.448 55,43 L55,58 L57,58 L57,39 Z M51,58 L53,58 L53,44 L51,44 L51,58 Z M43,58 L45,58 L45,47 L43,47 L43,58 Z M35,58 L37,58 L37,50 L35,50 L35,58 Z M59,38 L59,59 C59,59.552 58.553,60 58,60 L30,60 C29.447,60 29,59.552 29,59 L29,38 C29,37.448 29.447,37 30,37 L58,37 C58.553,37 59,37.448 59,38 L59,38 Z M7,18 L5,18 C5,25.396 15.039,30.08 34.893,32 C15.039,33.92 5,38.604 5,46 L7,46 C7,41.145 13.756,33 59,33 L59,31 C13.756,31 7,22.855 7,18 L7,18 Z M13,10 L11,10 C11,19.396 16.703,29 59,29 L59,27 C18.465,27 13,18.406 13,10 L13,10 Z M59,23 L59,25 C40.663,25 28.728,22.641 22.51,17.788 C17,13.488 17,8.004 17,4 L19,4 C19,11.566 19,23 59,23 L59,23 Z" id="Amazon-Kinesis-Data-Analytics_Icon_64_Squid"></path>
+        </g>
+    </g>
+</svg>

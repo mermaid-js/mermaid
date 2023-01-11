@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/32/Arch_Elastic-Load-Balancing_32</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#4D27A8" offset="0%"></stop>
+            <stop stop-color="#A166FF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/32/Arch_Elastic-Load-Balancing_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/32/Networking-Content-Delivery" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="40" height="40"></rect>
+        </g>
+        <path d="M15,27 C11.141,27 8,23.86 8,20 C8,16.14 11.141,13 15,13 C18.859,13 22,16.14 22,20 C22,23.86 18.859,27 15,27 M29,28 C30.103,28 31,28.897 31,30 C31,31.103 30.103,32 29,32 C27.897,32 27,31.103 27,30 C27,28.897 27.897,28 29,28 M29,8 C30.103,8 31,8.897 31,10 C31,11.103 30.103,12 29,12 C27.897,12 27,11.103 27,10 C27,8.897 27.897,8 29,8 M30,18.5 C31.103,18.5 32,19.397 32,20.5 C32,21.603 31.103,22.5 30,22.5 C28.897,22.5 28,21.603 28,20.5 C28,19.397 28.897,18.5 30,18.5 M22.931,21 L27.051,21 C27.29,22.416 28.517,23.5 30,23.5 C31.654,23.5 33,22.154 33,20.5 C33,18.846 31.654,17.5 30,17.5 C28.517,17.5 27.29,18.584 27.051,20 L23,20 C23,18.511 22.584,17.12 21.872,15.925 L26.699,11.902 C27.25,12.567 28.071,13 29,13 C30.654,13 32,11.654 32,10 C32,8.346 30.654,7 29,7 C27.346,7 26,8.346 26,10 C26,10.361 26.074,10.702 26.191,11.022 L21.306,15.094 C19.84,13.215 17.562,12 15,12 C10.589,12 7,15.589 7,20 C7,24.411 10.589,28 15,28 C17.562,28 19.84,26.785 21.306,24.906 L26.191,28.978 C26.074,29.298 26,29.639 26,30 C26,31.654 27.346,33 29,33 C30.654,33 32,31.654 32,30 C32,28.346 30.654,27 29,27 C28.071,27 27.25,27.433 26.699,28.098 L21.872,24.075 C22.422,23.152 22.791,22.113 22.931,21" id="Elastic-Load-Balancing_Icon_32_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/64/Arch_Amazon-App-Stream_64</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#055F4E" offset="0%"></stop>
+            <stop stop-color="#56C0A7" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/64/Arch_Amazon-App-Stream_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/64/End-User-Computing" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <path d="M40.062455,39 L40.062455,63.711 L15.4065738,39 L40.062455,39 Z M41.4423702,67.049 C41.815536,66.894 42.0579939,66.529 42.0579939,66.125 L42.0579939,38 C42.0579939,37.448 41.611991,37 41.0602245,37 L12.9979583,37 C12.5948594,37 12.2296758,37.244 12.0760193,37.617 C11.921365,37.991 12.0071732,38.421 12.2925353,38.707 L40.3548015,66.832 C40.5453754,67.023 40.8008044,67.125 41.0602245,67.125 C41.1889367,67.125 41.3186468,67.1 41.4423702,67.049 L41.4423702,67.049 Z M67.0022305,68 C66.7428105,68 66.4873815,67.898 66.2968075,67.707 L46.0919759,47.457 L47.5028219,46.043 L66.0044611,64.586 L66.0044611,14 L15.531295,14 L34.0329341,32.543 L32.6220881,33.957 L12.4172565,13.707 C12.1318944,13.421 12.0460862,12.991 12.2007405,12.617 C12.354397,12.244 12.7195806,12 13.1226795,12 L67.0022305,12 C67.553997,12 68,12.448 68,13 L68,67 C68,67.404 67.757542,67.769 67.3843762,67.924 C67.2606528,67.975 67.1309428,68 67.0022305,68 L67.0022305,68 Z" id="Amazon-App-Stream_Icon_64_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>
