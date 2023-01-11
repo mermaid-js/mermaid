@@ -1,9 +1,10 @@
 import mermaid, { type MermaidConfig } from 'mermaid';
-import mindmap from '@mermaid-js/mermaid-mindmap';
+import mindmap from '../../../../../mermaid-mindmap';
+import zenuml from '../../../../../mermaid-zenuml';
 
 const init = (async () => {
   try {
-    await mermaid.registerExternalDiagrams([mindmap]);
+    await mermaid.registerExternalDiagrams([mindmap, zenuml]);
   } catch (e) {
     console.error(e);
   }
