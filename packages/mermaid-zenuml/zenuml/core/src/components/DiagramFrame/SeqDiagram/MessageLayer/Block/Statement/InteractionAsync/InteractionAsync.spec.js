@@ -1,5 +1,5 @@
 import { shallowMount } from '@vue/test-utils';
-import { createStore } from 'vuex'
+import { createStore } from 'vuex';
 import InteractionAsync from './Interaction-async.vue';
 import { VueSequence } from '../../../../../../../index';
 
@@ -9,7 +9,7 @@ function renderCode(code) {
   const store = createStore(storeConfig);
   return shallowMount(InteractionAsync, {
     global: {
-      plugins: [store]
+      plugins: [store],
     },
     props: {
       context: store.getters.rootContext.block().stat()[0],

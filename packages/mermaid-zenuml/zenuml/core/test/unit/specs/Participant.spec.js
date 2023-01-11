@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { createStore } from 'vuex'
+import { createStore } from 'vuex';
 import { VueSequence } from '../../../src/index';
 import Participant from '../../../src/components/DiagramFrame/SeqDiagram/LifeLineLayer/Participant.vue';
 
@@ -15,7 +15,7 @@ describe('select a participant', () => {
       },
     };
     const props = { entity: { name: 'A' } };
-    let participantWrapper = mount(Participant, { global: { plugins: [store]}, props });
+    let participantWrapper = mount(Participant, { global: { plugins: [store] }, props });
     expect(participantWrapper.vm.selected).toBeFalsy();
     expect(participantWrapper.find('.selected').exists()).toBeFalsy();
 

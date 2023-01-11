@@ -21,18 +21,20 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      vue: '@vue/compat'
-    }
+      vue: '@vue/compat',
+    },
   },
-  plugins: [createVuePlugin({
-    template: {
-      compilerOptions: {
-        compatConfig: {
-          MODE: 2,
+  plugins: [
+    createVuePlugin({
+      template: {
+        compilerOptions: {
+          compatConfig: {
+            MODE: 2,
+          },
         },
-      }
-    }
-  })],
+      },
+    }),
+  ],
   test: {
     environment: 'jsdom',
     globals: true,
