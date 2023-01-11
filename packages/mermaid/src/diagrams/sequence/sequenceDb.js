@@ -240,7 +240,10 @@ export const parseBoxData = function (str) {
 
   const boxData = {
     color: color,
-    text: title !== undefined ? title.replace(/^:?(?:no)?wrap:/, '') : undefined,
+    text:
+      title !== undefined
+        ? sanitizeText(title.replace(/^:?(?:no)?wrap:/, ''), configApi.getConfig())
+        : undefined,
     wrap:
       title !== undefined
         ? title.match(/^:?wrap:/) !== null
