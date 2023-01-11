@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/32/Arch_Amazon-EC2_32</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#C8511B" offset="0%"></stop>
+            <stop stop-color="#FF9900" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/32/Arch_Amazon-EC2_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/32/Compute" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="40" height="40"></rect>
+        </g>
+        <path d="M26.052,27 L26,13.948 L13,14 L13,27.052 L26.052,27 Z M27,14 L29,14 L29,15 L27,15 L27,17 L29,17 L29,18 L27,18 L27,20 L29,20 L29,21 L27,21 L27,23 L29,23 L29,24 L27,24 L27,26 L29,26 L29,27 L27,27 L27,27.052 C27,27.575 26.574,28 26.052,28 L26,28 L26,30 L25,30 L25,28 L23,28 L23,30 L22,30 L22,28 L20,28 L20,30 L19,30 L19,28 L17,28 L17,30 L16,30 L16,28 L14,28 L14,30 L13,30 L13,28 L12.948,28 C12.426,28 12,27.575 12,27.052 L12,27 L10,27 L10,26 L12,26 L12,24 L10,24 L10,23 L12,23 L12,21 L10,21 L10,20 L12,20 L12,18 L10,18 L10,17 L12,17 L12,15 L10,15 L10,14 L12,14 L12,13.948 C12,13.425 12.426,13 12.948,13 L13,13 L13,11 L14,11 L14,13 L16,13 L16,11 L17,11 L17,13 L19,13 L19,11 L20,11 L20,13 L22,13 L22,11 L23,11 L23,13 L25,13 L25,11 L26,11 L26,13 L26.052,13 C26.574,13 27,13.425 27,13.948 L27,14 Z M21,33 L7,33 L7,19 L9,19 L9,18 L7.062,18 C6.477,18 6,18.477 6,19.062 L6,32.938 C6,33.523 6.477,34 7.062,34 L20.939,34 C21.524,34 22,33.523 22,32.938 L22,31 L21,31 L21,33 Z M34,7.062 L34,20.938 C34,21.523 33.524,22 32.939,22 L30,22 L30,21 L33,21 L33,7 L19,7 L19,10 L18,10 L18,7.062 C18,6.477 18.477,6 19.062,6 L32.939,6 C33.524,6 34,6.477 34,7.062 L34,7.062 Z" id="Amazon-EC2_Icon_32_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

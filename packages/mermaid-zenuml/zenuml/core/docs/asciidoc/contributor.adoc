@@ -1,0 +1,54 @@
+== Audience
+:icons: font
+
+This document is written for the contributors. If you want to integrate ZenUML in your application,
+you should read index.adoc; if you want to create themes, you should read create-my-own-theme.adoc.
+
+== Build
+This project is built with vue cli. It has two types of target: the web application and the library.
+
+....
+# to build the library
+yarn build
+# to build the web application
+yarn build:site
+....
+
+== Demo pages
+In the public folder, there are some demo pages for testing the library.
+
+=== How do they work?
+
+The demo pages^1^ are built with vue cli service. On the page, there needs to be a `pre`
+element with class `zenuml` and the content being the ZenUML DSL code.
+
+For example:
+[source, html]
+....
+<pre class="zenuml">
+A.method
+</pre>
+....
+
+The entry point of the demo pages is `src/main.ts`. It will find all the `pre` elements with
+class `zenuml` and render the ZenUML DSL code in it.
+
+== Parser
+
+We use antlr4 to parse the ZenUML DSL code. The grammar files are:
+
+1. Parser: `./src/g4/sequenceParser.g4`
+2. Lexer: `./src/g4/sequenceLexer.g4`
+
+=== How to generate the parser and lexer
+
+Run `yarn antlr4` to generate the parser and lexer.
+
+=== Setup local development environment
+
+Run `yarn antlr:setup` (`python3 -m pip install antlr4-tools`) to install the antlr4 command and the runtime.
+
+To test the setup, go to `src/g4-unit/hello-world` folder, and run:
+
+1.
+

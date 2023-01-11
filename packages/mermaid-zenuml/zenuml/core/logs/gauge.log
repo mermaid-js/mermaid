@@ -1,0 +1,97 @@
+28-08-2021 13:58:46.471 [Gauge] [DEBUG] Created gauge_screenshots_dir at /Users/pengxiao/workspaces/zenuml/vue-sequence/.gauge/screenshots
+28-08-2021 13:58:46.471 [Gauge] [INFO] Compatible version of plugin ts not found. Installing plugin ts...
+28-08-2021 13:58:46.471 [Gauge] [DEBUG] Gathering metadata for ts
+28-08-2021 13:58:46.471 [Gauge] [DEBUG] Downloading https://downloads.gauge.org/plugin/ts?l=ts&p=&o=darwin&a=arm64
+28-08-2021 13:58:47.039 [Gauge] [DEBUG] Downloading https://github.com/BugDiver/gauge-ts/releases/download/v0.1.0/gauge-ts-0.1.0.zip
+28-08-2021 13:58:47.751 [Gauge] [DEBUG] Installing plugin ts 0.1.0
+28-08-2021 13:58:47.754 [Gauge] [INFO] Successfully installed plugin 'ts' version 0.1.0
+28-08-2021 13:58:47.754 [Gauge] [INFO] Compatible version of plugin html-report not found. Installing plugin html-report...
+28-08-2021 13:58:47.754 [Gauge] [DEBUG] Gathering metadata for html-report
+28-08-2021 13:58:47.755 [Gauge] [DEBUG] Downloading https://downloads.gauge.org/plugin/html-report?l=ts&p=ts&o=darwin&a=arm64
+28-08-2021 13:58:47.823 [Gauge] [DEBUG] Downloading https://github.com/getgauge/html-report/releases/download/v4.1.2/html-report-4.1.2-darwin.arm64.zip
+28-08-2021 13:58:51.699 [Gauge] [DEBUG] Installing plugin html-report 4.1.2
+28-08-2021 13:58:51.726 [Gauge] [INFO] Successfully installed plugin 'html-report' version 4.1.2
+28-08-2021 13:58:51.726 [Gauge] [INFO] Installing required plugins.
+28-08-2021 13:58:51.726 [Gauge] [DEBUG] Installing plugin 'screenshot'
+28-08-2021 13:58:51.726 [Gauge] [DEBUG] Gathering metadata for screenshot
+28-08-2021 13:58:51.726 [Gauge] [DEBUG] Downloading https://downloads.gauge.org/plugin/screenshot?l=ts&p=html-report,ts&o=darwin&a=arm64
+28-08-2021 13:58:51.790 [Gauge] [DEBUG] Downloading https://github.com/getgauge/gauge_screenshot/releases/download/v0.1.0/screenshot-0.1.0-darwin.x86_64.zip
+28-08-2021 13:58:52.543 [Gauge] [DEBUG] Checking updates...
+28-08-2021 13:58:52.544 [Gauge] [DEBUG] Downloading https://downloads.gauge.org/plugin/html-report?l=ts&p=html-report,ts&o=darwin&a=arm64
+28-08-2021 13:58:52.662 [Gauge] [DEBUG] Downloading https://downloads.gauge.org/plugin/ts?l=ts&p=html-report,ts&o=darwin&a=arm64
+28-08-2021 13:58:52.959 [Gauge] [DEBUG] Installing plugin screenshot 0.1.0
+28-08-2021 13:58:52.964 [Gauge] [INFO] Successfully installed plugin 'screenshot' version 0.1.0
+28-08-2021 13:58:52.964 [Gauge] [DEBUG] Parsing started.
+28-08-2021 13:58:52.964 [Gauge] [DEBUG] Started concepts parsing.
+28-08-2021 13:58:54.006 [Gauge] [DEBUG] 0 concepts parsing completed.
+28-08-2021 13:58:54.006 [Gauge] [DEBUG] Started specifications parsing.
+28-08-2021 13:58:54.007 [Gauge] [DEBUG] 2 specifications parsing completed.
+28-08-2021 13:58:54.007 [Gauge] [DEBUG] Parsing completed.
+28-08-2021 13:58:55.591 [Gauge] [DEBUG] Attempting to connect to grpc server at port: 49710
+28-08-2021 13:58:55.593 [Gauge] [DEBUG] Successfully made the connection with runner with port: 49710
+28-08-2021 13:58:55.593 [Gauge] [DEBUG] Validation started.
+28-08-2021 13:58:55.601 [Gauge] [ERROR] [ValidationError] /Users/pengxiao/workspaces/zenuml/vue-sequence/specs/participant.spec:9 Step implementation not found => 'Extract participants from DSL <table>'
+28-08-2021 13:58:55.601 [Gauge] [ERROR] [ValidationError] /Users/pengxiao/workspaces/zenuml/vue-sequence/specs/participant.spec:23 Step implementation not found => 'Extract participants from DSL <table>'
+28-08-2021 13:58:55.601 [Gauge] [INFO] Add the following missing implementations to fix `Step implementation not found` errors.
+28-08-2021 13:58:55.601 [Gauge] [INFO] @Step("Extract participants from DSL <table>")
+public async implementatione6a0d991d2dd3553ffa5(arg0: any) {
+	throw new Error("Method not implemented.");
+}
+28-08-2021 13:58:55.602 [Gauge] [DEBUG] Run started
+28-08-2021 13:58:55.602 [Gauge] [DEBUG] Starting Html Report plugin
+28-08-2021 13:58:55.918 [Gauge] [DEBUG] Attempting to connect to grpc server at port: 49715
+28-08-2021 13:58:55.920 [Gauge] [DEBUG] Successfully made the connection with plugin with port: 49715
+28-08-2021 13:58:55.920 [Gauge] [DEBUG] Initialising suite data store.
+28-08-2021 13:59:16.416 [Gauge] [INFO] # Getting Started with Gauge
+28-08-2021 13:59:16.419 [Gauge] [INFO] ## Display number of items
+28-08-2021 13:59:16.420 [Gauge] [DEBUG] * Open todo application
+
+28-08-2021 13:59:17.532 [Gauge] [DEBUG] * Add task "first task"
+28-08-2021 13:59:17.747 [Gauge] [DEBUG] * Must display "1 item left"
+28-08-2021 13:59:17.762 [Gauge] [DEBUG] * Add task "second task"
+28-08-2021 13:59:18.001 [Gauge] [DEBUG] * Must display "2 items left"
+
+28-08-2021 13:59:18.016 [Gauge] [DEBUG] * Clear all tasks
+28-08-2021 13:59:18.136 [Gauge] [INFO] ## Must list only active tasks
+28-08-2021 13:59:18.137 [Gauge] [DEBUG] * Open todo application
+
+28-08-2021 13:59:18.278 [Gauge] [DEBUG] * Add tasks 
+
+   |description|
+   |-----------|
+   |first task |
+   |second task|
+   |third task |
+   |fourth task|
+   |fifth task |
+28-08-2021 13:59:19.440 [Gauge] [DEBUG] * Complete tasks 
+
+   |description|
+   |-----------|
+   |second task|
+   |fifth task |
+28-08-2021 13:59:19.723 [Gauge] [DEBUG] * View "Active" tasks
+28-08-2021 13:59:19.766 [Gauge] [DEBUG] * Must have 
+
+   |description|
+   |-----------|
+   |first task |
+   |third task |
+   |fourth task|
+28-08-2021 13:59:19.780 [Gauge] [DEBUG] * Must not have 
+
+   |description|
+   |-----------|
+   |second task|
+   |fifth task |
+28-08-2021 13:59:19.789 [Gauge] [DEBUG] * Clear all tasks
+28-08-2021 13:59:19.900 [Gauge] [INFO] # Participant
+28-08-2021 13:59:19.920 [html-report] [DEBUG] Transformed SuiteResult to report structure
+28-08-2021 13:59:19.952 [html-report] [INFO] Successfully generated html-report to => /Users/pengxiao/workspaces/zenuml/vue-sequence/reports/html-report/index.html
+28-08-2021 13:59:19.952 [html-report] [DEBUG] Done generating HTML report using theme from /Users/pengxiao/.gauge/plugins/html-report/4.1.2/themes/default
+28-08-2021 13:59:19.952 [Gauge] [DEBUG] Sending kill message to Html Report plugin.
+28-08-2021 13:59:20.163 [Gauge] [DEBUG] Runner with PID:66441 has exited
+28-08-2021 13:59:20.163 [Gauge] [INFO] Specifications:	1 executed	1 passed	0 failed	1 skipped
+28-08-2021 13:59:20.163 [Gauge] [INFO] Scenarios:	2 executed	2 passed	0 failed	2 skipped
+28-08-2021 13:59:20.163 [Gauge] [INFO] 
+Total time taken: 24.319s

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/64/Arch_AWS-WorkLink_64</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#055F4E" offset="0%"></stop>
+            <stop stop-color="#56C0A7" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/64/Arch_AWS-WorkLink_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/64/End-User-Computing" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <path d="M30,50 L50,50 L50,30 L30,30 L30,50 Z M50.852,52 L29.149,52 C28.516,52 28,51.485 28,50.852 L28,29.148 C28,28.515 28.516,28 29.149,28 L50.852,28 C51.485,28 52,28.515 52,29.148 L52,50.852 C52,51.485 51.485,52 50.852,52 L50.852,52 Z M66.872,30 L55,30 L55,32 L66,32 L66,66 L32,66 L32,55 L30,55 L30,66.873 C30,67.494 30.506,68 31.127,68 L66.872,68 C67.494,68 68,67.494 68,66.873 L68,31.127 C68,30.506 67.494,30 66.872,30 L66.872,30 Z M14,48 L25,48 L25,50 L13.137,50 C12.51,50 12,49.49 12,48.863 L12,13.137 C12,12.51 12.51,12 13.137,12 L48.863,12 C49.49,12 50,12.51 50,13.137 L50,25 L48,25 L48,14 L14,14 L14,48 Z" id="AWS-WorkLink_Icon_64_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

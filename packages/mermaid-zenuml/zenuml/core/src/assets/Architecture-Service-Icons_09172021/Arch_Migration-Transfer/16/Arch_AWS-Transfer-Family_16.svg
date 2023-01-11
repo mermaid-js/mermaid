@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_AWS-Transfer-Family_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#055F4E" offset="0%"></stop>
+            <stop stop-color="#56C0A7" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-Transfer-Family_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Migration-Transfer" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M9.186,13.857 L11.222,15.857 C11.316,15.949 11.442,16 11.573,16 C11.728,16.025 11.835,15.946 11.929,15.85 L13.893,13.85 L13.18,13.15 L12.073,14.277 L12.073,9.5 L11.073,9.5 L11.073,14.308 L9.887,13.143 L9.186,13.857 Z M14,6.723 L14,11.5 L15,11.5 L15,6.692 L16.186,7.857 L16.887,7.143 L14.851,5.143 C14.757,5.051 14.631,5 14.5,5 C14.404,5.021 14.239,5.054 14.144,5.15 L12.18,7.15 L12.893,7.85 L14,6.723 Z M19,9 L19,18 C19,18.276 18.777,18.5 18.5,18.5 L5.5,18.5 C5.224,18.5 5,18.276 5,18 L5,8 C5,7.724 5.224,7.5 5.5,7.5 L7,7.5 C7.141,7.5 7.276,7.56 7.371,7.664 L8.129,8.5 L9.797,8.5 L9.797,9.5 L7.908,9.5 C7.767,9.5 7.632,9.44 7.538,9.336 L6.779,8.5 L6,8.5 L6,17.5 L18,17.5 L18,9.5 L16,9.5 L16,8.5 L18.5,8.5 C18.777,8.5 19,8.724 19,9 L19,9 Z" id="AWS-Transfer-Family_Icon-16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

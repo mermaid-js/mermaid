@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_AWS-Directory-Service_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#BD0816" offset="0%"></stop>
+            <stop stop-color="#FF5252" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-Directory-Service_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Security-Identity-Compliance" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M6,15 L8,15 L8,14 L6,14 L6,15 Z M6,13 L9,13 L9,12 L6,12 L6,13 Z M5,17 L5,11 L10,11 L10,15.5 C10,15.776 10.224,16 10.5,16 L17.5,16 C17.776,16 18,15.776 18,15.5 L18,11 L19,11 L19,17 L5,17 Z M17,14.409 C16.701,13.824 16.197,13.345 15.527,13.017 C15.761,12.69 15.903,12.304 15.903,11.889 C15.903,10.799 15.011,9.913 13.914,9.913 C12.817,9.913 11.926,10.799 11.926,11.889 C11.926,12.306 12.07,12.694 12.304,13.022 C11.746,13.299 11.301,13.682 11,14.149 L11,9 L17,9 L17,10 L17,11 L17,14.409 Z M13.22,13.722 C13.443,13.805 13.675,13.862 13.914,13.862 C14.153,13.862 14.388,13.804 14.611,13.72 C15.063,13.861 15.853,14.223 16.17,15 L11.684,15 C11.983,14.234 12.728,13.875 13.22,13.722 L13.22,13.722 Z M14.393,12.74 C14.392,12.74 14.392,12.74 14.392,12.74 C14.093,12.903 13.731,12.901 13.434,12.74 C13.12,12.569 12.926,12.243 12.926,11.889 C12.926,11.351 13.369,10.913 13.914,10.913 C14.46,10.913 14.903,11.351 14.903,11.889 C14.903,12.243 14.708,12.569 14.393,12.74 L14.393,12.74 Z M19,7 L19,10 L18,10 L18,8.5 C18,8.224 17.776,8 17.5,8 L10.5,8 C10.224,8 10,8.224 10,8.5 L10,10 L5,10 L5,7 L19,7 Z M19.5,6 L4.5,6 C4.224,6 4,6.224 4,6.5 L4,17.5 C4,17.776 4.224,18 4.5,18 L19.5,18 C19.776,18 20,17.776 20,17.5 L20,6.5 C20,6.224 19.776,6 19.5,6 L19.5,6 Z" id="AWS-Directory-Service_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

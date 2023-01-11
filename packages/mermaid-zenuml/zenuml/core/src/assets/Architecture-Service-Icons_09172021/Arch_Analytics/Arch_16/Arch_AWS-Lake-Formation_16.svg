@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_AWS-Lake-Formation_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#4D27A8" offset="0%"></stop>
+            <stop stop-color="#A166FF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-Lake-Formation_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Analytics" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M14.146,15.146 L14.853,15.853 L12.853,17.853 C12.755,17.951 12.627,18 12.5,18 C12.372,18 12.244,17.951 12.146,17.853 L10.146,15.853 L10.853,15.146 L12,16.292 L12,14.5 L13,14.5 L13,16.292 L14.146,15.146 Z M12.5,19 C8.916,19 6,16.083 6,12.5 C6,8.916 8.916,6 12.5,6 C16.083,6 19,8.916 19,12.5 C19,16.083 16.083,19 12.5,19 L12.5,19 Z M12.5,5 C8.364,5 5,8.364 5,12.5 C5,16.635 8.364,20 12.5,20 C16.635,20 20,16.635 20,12.5 C20,8.364 16.635,5 12.5,5 L12.5,5 Z M13.535,11.298 C13.5,11.368 13.482,11.444 13.482,11.522 L13.482,13 L11.517,13 L11.517,11.522 C11.517,11.444 11.499,11.368 11.464,11.298 L10.31,9 L14.689,9 L13.535,11.298 Z M15.5,8 L9.5,8 C9.326,8 9.165,8.089 9.074,8.237 C8.983,8.385 8.975,8.569 9.052,8.724 L10.517,11.641 L10.517,13.5 C10.517,13.776 10.741,14 11.017,14 L13.982,14 C14.258,14 14.482,13.776 14.482,13.5 L14.482,11.641 L15.947,8.724 C16.024,8.569 16.016,8.385 15.925,8.237 C15.834,8.089 15.673,8 15.5,8 L15.5,8 Z" id="AWS-Lake-Formation_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

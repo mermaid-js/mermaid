@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_Reserved-Instance-Reporting_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#1B660F" offset="0%"></stop>
+            <stop stop-color="#6CAE3E" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_Reserved-Instance-Reporting_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/AWS-Cost-Management" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M16.815,16.109 L15.875,15.168 L15.168,15.875 L16.108,16.816 L12.511,18.306 L8.912,16.816 L9.853,15.875 L9.146,15.168 L8.206,16.109 L6.714,12.512 L8.205,8.912 L9.177,9.885 L9.884,9.178 L8.912,8.206 L12.508,6.715 L16.109,8.205 L15.157,9.157 L15.864,9.864 L16.815,8.913 L18.305,12.509 L16.815,16.109 Z M19.957,13.011 L19.957,12.011 L19.181,12.011 L17.581,8.148 L18.842,6.885 L18.135,6.178 L16.875,7.44 L13.01,5.841 L13.01,5 L12.01,5 L12.01,5.839 L8.147,7.441 L6.864,6.157 L6.157,6.864 L7.439,8.147 L5.839,12.011 L5,12.011 L5,13.011 L5.839,13.011 L7.44,16.874 L6.146,18.168 L6.853,18.875 L8.147,17.582 L12.01,19.181 L12.01,19.936 L13.01,19.936 L13.01,19.182 L16.874,17.581 L18.135,18.843 L18.842,18.136 L17.581,16.875 L19.179,13.011 L19.957,13.011 Z M12.51,13.813 C11.792,13.813 11.208,13.229 11.208,12.511 C11.208,11.793 11.792,11.208 12.51,11.208 C13.228,11.208 13.812,11.793 13.812,12.511 C13.812,13.229 13.228,13.813 12.51,13.813 L12.51,13.813 Z M12.51,10.208 C11.241,10.208 10.208,11.241 10.208,12.511 C10.208,13.78 11.241,14.813 12.51,14.813 C13.78,14.813 14.812,13.78 14.812,12.511 C14.812,11.241 13.78,10.208 12.51,10.208 L12.51,10.208 Z" id="Reserved-Instance-Reporting_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

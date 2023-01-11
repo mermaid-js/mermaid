@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon-Architecture/32/Arch_AWS-Activate_32</title>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#2E27AD" offset="0%"></stop>
+            <stop stop-color="#527FFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/32/Arch_AWS-Activate_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle" fill="url(#linearGradient-1)">
+            <rect x="0" y="0" width="40" height="40"></rect>
+        </g>
+        <g id="Icon-Service/32/AWS-Activate_32" transform="translate(4.000000, 4.000000)" fill="#FFFFFF">
+            <path d="M29,15.972 C29,21.262 25.82,25.815 21.275,27.843 L21.275,26.734 C25.251,24.777 28,20.695 28,15.972 C28,10.383 24.153,5.687 18.972,4.36 L18.48,3.216 C24.466,4.378 29,9.653 29,15.972 L29,15.972 Z M10.725,26.734 L10.725,27.843 C6.181,25.815 3,21.262 3,15.972 C3,9.655 7.531,4.382 13.512,3.217 L13.021,4.362 C7.843,5.692 4,10.385 4,15.972 C4,20.695 6.749,24.777 10.725,26.734 L10.725,26.734 Z M12,29.972 L13,29.972 L13,19.972 L12,19.972 L12,29.972 Z M19,29.972 L20,29.972 L20,19.972 L19,19.972 L19,29.972 Z M15.5,27.972 L16.5,27.972 L16.5,16.972 L15.5,16.972 L15.5,27.972 Z M16,3.669 L21.206,15.847 L16.305,12.11 C16.147,11.99 15.863,12.019 15.689,12.115 L10.794,15.847 L16,3.669 Z M9.281,17.789 C9.462,17.928 9.713,17.93 9.892,17.792 L15.996,13.132 L22.108,17.792 C22.197,17.86 22.305,17.894 22.411,17.894 C22.52,17.894 22.628,17.859 22.719,17.789 C22.897,17.649 22.96,17.407 22.871,17.198 L16.492,2.276 C16.334,1.908 15.666,1.908 15.508,2.276 L9.129,17.198 C9.04,17.407 9.103,17.649 9.281,17.789 L9.281,17.789 Z" id="AWS-Activate_32_Squid"></path>
+        </g>
+    </g>
+</svg>

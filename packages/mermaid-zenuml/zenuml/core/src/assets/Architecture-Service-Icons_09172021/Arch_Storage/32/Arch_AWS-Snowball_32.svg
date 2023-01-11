@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/32/Arch_AWS-Snowball_32</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#1B660F" offset="0%"></stop>
+            <stop stop-color="#6CAE3E" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/32/Arch_AWS-Snowball_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/32/AWS-Snowball">
+            <g id="Icon-Architecture-BG/32/Storage" fill="url(#linearGradient-1)">
+                <rect id="Rectangle" x="0" y="0" width="40" height="40"></rect>
+            </g>
+            <path d="M18,12 L22,12 L22,11 L18,11 L18,12 Z M14,23 L26,23 L26,18 L14,18 L14,23 Z M26.5,17 L13.5,17 C13.224,17 13,17.224 13,17.5 L13,23.5 C13,23.776 13.224,24 13.5,24 L26.5,24 C26.776,24 27,23.776 27,23.5 L27,17.5 C27,17.224 26.776,17 26.5,17 L26.5,17 Z M33,27.923 C33,29.068 32.119,30 31.036,30 L8.964,30 C7.881,30 7,29.068 7,27.923 L7,12.077 C7,10.932 7.881,10 8.964,10 L31.036,10 C32.119,10 33,10.932 33,12.077 L33,27.923 Z M31.036,9 L8.964,9 C7.33,9 6,10.38 6,12.077 L6,27.923 C6,29.62 7.33,31 8.964,31 L31.036,31 C32.67,31 34,29.62 34,27.923 L34,12.077 C34,10.38 32.67,9 31.036,9 L31.036,9 Z M30,26.373 C30,26.719 29.713,27 29.36,27 L10.64,27 C10.287,27 10,26.719 10,26.373 L10,13.627 C10,13.281 10.287,13 10.64,13 L15.191,13 L16.053,14.724 C16.138,14.893 16.311,15 16.5,15 L23.5,15 C23.689,15 23.862,14.893 23.947,14.724 L24.809,13 L29.36,13 C29.713,13 30,13.281 30,13.627 L30,26.373 Z M29.36,12 L24.5,12 C24.311,12 24.138,12.107 24.053,12.276 L23.191,14 L16.809,14 L15.947,12.276 C15.862,12.107 15.689,12 15.5,12 L10.64,12 C9.735,12 9,12.73 9,13.627 L9,26.373 C9,27.27 9.735,28 10.64,28 L29.36,28 C30.265,28 31,27.27 31,26.373 L31,13.627 C31,12.73 30.265,12 29.36,12 L29.36,12 Z" id="Fill-4" fill="#FFFFFF"></path>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>vue-sequence smoke 1</title>
+    <style>
+      body {
+        margin: 0; /* mostly for demo on mobile */
+      }
+    </style>
+  </head>
+  <body>
+    <div id="diagram" class="diagram">
+      <pre class="zenuml">
+title Title 1
+A.m1 {
+  new B(1,2,3,4) {
+    if(x) {
+      C.m2
+    }
+    while(y) {
+      D.m3
+    }
+    par {
+      E.m4
+      F.m5
+    }
+    opt {
+      G.m6
+    }
+  }
+}</pre
+      >
+    </div>
+    <!-- built files will be auto injected -->
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

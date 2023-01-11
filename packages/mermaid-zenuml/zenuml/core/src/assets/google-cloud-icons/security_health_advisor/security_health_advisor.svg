@@ -1,0 +1,39 @@
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<g >
+	<g >
+		<g transform="translate(16.000000, 4.000800)">
+			<g >
+			</g>
+			<defs>
+				<filter id="Adobe_OpacityMaskFilter" filterUnits="userSpaceOnUse" x="-9" y="-6" width="17" height="28">
+					<feColorMatrix  type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/>
+				</filter>
+			</defs>
+				<mask maskUnits="userSpaceOnUse" x="-9" y="-6" width="17" height="28" id="mask-2_00000012429945198013312710000015587883788154311359_">
+				<g filter="url(#Adobe_OpacityMaskFilter)">
+						<path id="path-1_00000047752391953833547770000011231090727836387712_" fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" d="M3,6H1l0-2.6l-5-2.2V-1l7,3L3,6z M3,7l0,0.7C3,12.1-0.7,17-4,17c0,0,0,0,0,0v-2h0h0c2,0,5-3.9,5-7.3L1,7H3z"/>
+				</g>
+			</mask>
+				<polygon id="Fill-1" mask="url(#mask-2_00000012429945198013312710000015587883788154311359_)" fill-rule="evenodd" clip-rule="evenodd" fill="#AECBFA" points="-9,22 8,22 8,-6 -9,-6 "/>
+		</g>
+		<g transform="translate(6.666667, 4.000800)">
+			<g >
+			</g>
+			<defs>
+					<filter id="Adobe_OpacityMaskFilter_00000108295202808614269600000001025277755243565713_" filterUnits="userSpaceOnUse" x="-6.7" y="-6" width="17" height="28">
+					<feColorMatrix  type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/>
+				</filter>
+			</defs>
+				<mask maskUnits="userSpaceOnUse" x="-6.7" y="-6" width="17" height="28" id="mask-4_00000003090632042672560440000013286235027329688470_">
+				<g filter="url(#Adobe_OpacityMaskFilter_00000108295202808614269600000001025277755243565713_)">
+						<path id="path-3_00000114037859665426280490000011599186370655849357_" fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" d="M0.5,9h-2c-0.1-0.4-0.1-0.9-0.1-1.3l0-5.7l7-3l0,0v2.2l0,0l-5,2.2l0,4.4C0.3,8.1,0.4,8.6,0.5,9z M0.7,10c0.9,2.6,3.1,5,4.6,5v2 c-2.7,0-5.7-3.4-6.7-7H0.7z"/>
+				</g>
+			</mask>
+				<polygon mask="url(#mask-4_00000003090632042672560440000013286235027329688470_)" fill-rule="evenodd" clip-rule="evenodd" fill="#669DF6" points="-6.7,22 10.3,22 10.3,-6 -6.7,-6 			"/>
+		</g>
+		<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#4285F4" points="7.8,12 2,12 2,13 8.3,13 10,10.5 13,16.6 15.3,12 22,12 22,11 14.7,11 13,14.4 10.1,8.5 		"/>
+		<rect x="0" y="0" fill="none" width="24" height="24"/>
+	</g>
+</g>
+</svg>

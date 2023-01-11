@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon-Architecture/16/Arch_Amazon-Honeycode_16</title>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#BD0816" offset="0%"></stop>
+            <stop stop-color="#FF5252" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_Amazon-Honeycode_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle" fill="url(#linearGradient-1)">
+            <rect x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <g id="Icon-Service/16/Amazon-Honeycode_16" transform="translate(4.000000, 4.000000)" fill="#FFFFFF">
+            <path d="M7.953,0 L1,3.82 L1,12.385 L7.929,15.961 L15,12.385 L15,3.796 L7.953,0 Z M11.999,5.632 L5.836,2.29 L7.953,1.139 L13.928,4.391 L13.928,8.334 L11.999,9.403 L11.999,5.632 Z M1.999,11.773 L1.999,4.415 L4.792,2.857 L6.913,4.02 L3.999,5.644 L3.999,12.794 L1.999,11.773 Z M4.999,9.929 L4.999,6.239 L7.955,4.593 L10.999,6.224 L10.999,9.938 L7.93,11.54 L4.999,9.929 Z M13.999,9.467 L13.999,11.773 L7.929,14.838 L4.999,13.306 L4.999,11.065 L7.927,12.675 L13.999,9.467 Z" id="Fill-4"></path>
+        </g>
+    </g>
+</svg>

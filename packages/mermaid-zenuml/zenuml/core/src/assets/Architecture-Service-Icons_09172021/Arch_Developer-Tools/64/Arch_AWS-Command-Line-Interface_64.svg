@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/64/Arch_AWS-Command-Line-Interface_64</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#2E27AD" offset="0%"></stop>
+            <stop stop-color="#527FFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/64/Arch_AWS-Command-Line-Interface_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/64/Developer-Tools" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <path d="M12,13 L12,67 L46,67 L46,65 L14,65 L14,23 L66,23 L66,65 L59,65 L59,67 L68,67 L68,13 L12,13 Z M14,21 L66,21 L66,15 L14,15 L14,21 Z M25,19 L27.001,19 L27.001,16.999 L25,16.999 L25,19 Z M21,19 L23,19 L23,16.999 L21,16.999 L21,19 Z M17,19 L19,19 L19,16.999 L17,16.999 L17,19 Z M23.326,33.432 L33.406,43.514 L23.326,53.594 L24.74,55.008 L36.234,43.514 L24.74,32.018 L23.326,33.432 Z M38,51 L55,51 L55,49 L38,49 L38,51 Z" id="AWS-Command-Line-Interface_Icon_64_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon-Architecture/16/Arch_TorchServe_16</title>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#055F4E" offset="0%"></stop>
+            <stop stop-color="#56C0A7" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_TorchServe_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle" fill="url(#linearGradient-1)">
+            <rect x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <g id="Icon-Service/16/TorchServe_16" transform="translate(4.000000, 4.000000)" fill="#FFFFFF">
+            <path d="M9.7236,3.273 C9.7236,3.549 9.9486,3.773 10.2236,3.773 C10.4986,3.773 10.7236,3.549 10.7236,3.273 C10.7236,2.997 10.4986,2.773 10.2236,2.773 C9.9486,2.773 9.7236,2.997 9.7236,3.273 M8.7236,3.273 C8.7236,2.446 9.3966,1.773 10.2236,1.773 C11.0506,1.773 11.7236,2.446 11.7236,3.273 C11.7236,4.1 11.0506,4.773 10.2236,4.773 C9.3966,4.773 8.7236,4.1 8.7236,3.273 M14.4476,8.961 C14.4476,12.669 11.4306,15.685 7.7236,15.685 C4.0166,15.685 0.9996,12.669 0.9996,8.961 C0.9996,7.12 1.7296,5.401 3.0536,4.123 L7.3626,0 L8.0536,0.723 L3.7466,4.844 C2.6206,5.931 1.9996,7.394 1.9996,8.961 C1.9996,12.117 4.5676,14.685 7.7236,14.685 C10.8796,14.685 13.4476,12.117 13.4476,8.961 C13.4476,7.377 12.8156,5.904 11.6676,4.813 L12.3576,4.088 C13.7046,5.37 14.4476,7.1 14.4476,8.961" id="TorchServe-Icon_16_Squid"></path>
+        </g>
+    </g>
+</svg>

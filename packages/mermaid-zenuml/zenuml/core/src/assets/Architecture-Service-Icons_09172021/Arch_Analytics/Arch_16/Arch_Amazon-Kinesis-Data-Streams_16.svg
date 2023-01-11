@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_Amazon-Kinesis-Data-Streams_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#4D27A8" offset="0%"></stop>
+            <stop stop-color="#A166FF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_Amazon-Kinesis-Data-Streams_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Analytics" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <g id="Icon-Service/16/Amazon-Kinesis-Data-Streams" transform="translate(4.000000, 4.000000)" fill="#FFFFFF">
+            <path d="M13.359,11.942 C13.359,10.257 11.989,8.887 10.304,8.887 C9.529,8.887 8.828,9.187 8.289,9.665 L10.749,9.665 L10.749,10.665 L7.539,10.665 C7.358,11.054 7.25,11.484 7.25,11.942 C7.25,13.627 8.62,14.997 10.304,14.997 C11.112,14.997 11.841,14.676 12.388,14.163 L9.86,14.163 L9.86,13.163 L13.1,13.163 C13.265,12.789 13.359,12.377 13.359,11.942 M14.359,11.942 C14.359,14.178 12.54,15.997 10.304,15.997 C8.069,15.997 6.25,14.178 6.25,11.942 C6.25,9.706 8.069,7.887 10.304,7.887 C12.54,7.887 14.359,9.706 14.359,11.942 M8.23,7.344 C3.877,8.132 3.314,9.907 3.314,11.368 L4.314,11.368 C4.314,10.782 4.324,9.705 6.286,8.91 C6.794,8.239 7.456,7.695 8.23,7.344 M3,2.155 L2,2.155 C2,3.603 2.722,4.975 6.765,5.684 C2.722,6.392 2,7.764 2,9.213 L3,9.213 C3,8.306 3,6.184 14.36,6.184 L14.36,5.184 C3,5.184 3,3.061 3,2.155 M14.36,3.46 L14.36,4.46 C4.627,4.46 3.314,2.205 3.314,-5.68434189e-14 L4.314,-5.68434189e-14 C4.314,1.035 4.314,3.46 14.36,3.46" id="Amazon-Kinesis-Data-Streams_Icon_16_Squid"></path>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,121 @@
+= Integration Guide
+:icons: font
+
+== Audience
+This document is written for those want to integrate ZenUML to their applications. If you are an end
+user, please read tutorials; if your would like to contribute, please read contributor's guide.
+
+
+== Integration
+An important goal of this project is to be easily integrated into other projects.
+There are mainly two ways to do this.
+
+=== As a library
+
+ZenUML Core exposes a simple API for integration:
+
+[source, typescript]
+----
+interface IZenUml {
+  get code(): string | undefined;
+  get theme(): string | undefined;
+  // Resolve after rendering is finished.
+  render: (code: string | undefined, theme: string | undefined) => Promise<IZenUml>
+}
+
+// client code
+import ZenUml from '@ZenUML/core'
+const zenUml = new ZenUml(el)
+await zenUml.render('A.method', 'theme-blue')
+----
+
+==== When rendering is finished
+When rendering is finished, the `render` method will return a promise that resolves to the
+instance of `IZenUml`. The `html` properties of the instance will be updated to the rendered
+HTML.
+
+[NOTE]
+====
+Vue's reactive system works against the `data`, `props` and `computed` properties of a component.
+This means a parent component is not necessarily be notified when a child component is `mounted` or `updated`.
+So this means we can not use the `mounted` or `updated` hook on `LifelineLayer` to emit `rendered` event.
+====
+
+It is tricky to know when the rendering is finished. The `Lifeline` components used `$nextTick`
+in their `mounted` and `updated` hooks to set the top when a `creation` message is sent to it.
+We have to wait until all those `$nextTick` calls are finished.
+
+[NOTE]
+====
+It seems that (to be confirmed) the `$nextTick` calls are queued and executed in ONE tick. This
+makes it easier to control the timing when to resolve the `render` promise. We only need to wait
+ONE `$nextTick` call to be finished.
+====
+
+The diagram is rendered in the following steps:
+
+1. The lifeline layer;
+2. The message layer;
+3. Update lifeline layer with `setTimeout` for `creation` messages.
+
+=== As an iframe
+
+You can embed the ZenUML core renderer as an application within another app, where you store the diagram
+data in the host app. It takes around 5 minutes to get a basic example running.
+
+==== Quick test
+To test this out open `https://embed.zenuml.com/embed.html`. In the developer console, type in the
+following command.
+
+[source,js]
+----
+window.postMessage( {action: 'eval', args: { code: 'ZenUML.Hello' }})
+----
+==== The protocol
+
+The protocol is a simple JSON object with the following fields.
+
+[source,json]
+----
+{
+  "action": "eval",
+  "args": {
+    "code": "ZenUML.Hello",
+    "style": "#diagram { background-color: red; }",
+    "theme": "blue",
+    "css": "https://github.com/abruzzi/zenuml-css-overrides/blob/master/zenuml-override.css"
+  }
+}
+----
+
+==== Example
+
+[source,html]
+----
+<iframe src="https://embed.zenuml.com/embed.html" id="zenuml-iframe"
+        style="width: 100%; height: 100%; border: none;">
+
+</iframe>
+<script>
+  const iframe = document.getElementById('zenuml-iframe');
+  const message = {
+    action: 'eval',
+    args: {
+      code: 'ZenUML.Hello',
+      style: '#diagram { background-color: red; }',
+      theme: 'blue',
+      css: ''
+    }
+  };
+  setTimeout(() => {
+    iframe.contentWindow.postMessage(message, '*');
+  }, 1000);
+</script>
+----
+
+[source,js]
+----
+document.getElementsByTagName('iframe')[0] // get iframe
+    .contentWindow  // get target window
+    .postMessage({action: "eval", args: { code: 'A.m' }})
+----

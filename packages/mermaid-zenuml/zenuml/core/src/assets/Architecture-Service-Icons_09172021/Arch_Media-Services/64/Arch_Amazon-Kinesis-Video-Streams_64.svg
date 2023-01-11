@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/64/Arch_Amazon-Kinesis-Video-Streams_64</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#C8511B" offset="0%"></stop>
+            <stop stop-color="#FF9900" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/64/Arch_Amazon-Kinesis-Video-Streams_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/64/Media-Services" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <path d="M37,45.553 L37,47.602 C22.938,50.908 21,56.719 21,62 L19,62 C19,56.23 21.077,49.18 37,45.553 L37,45.553 Z M37,50.76 L37,52.898 C27.007,56.854 27,63.011 27,68 L25,68 C25,62.879 25.009,55.191 37,50.76 L37,50.76 Z M65,61.575 C65,62.361 64.361,63 63.575,63 L42.425,63 C41.639,63 41,62.361 41,61.575 L41,48.424 C41,47.639 41.639,47 42.425,47 L63.575,47 C64.361,47 65,47.639 65,48.424 L65,61.575 Z M63.575,45 L42.425,45 C40.536,45 39,46.536 39,48.424 L39,61.575 C39,63.464 40.536,65 42.425,65 L63.575,65 C65.464,65 67,63.464 67,61.575 L67,48.424 C67,46.536 65.464,45 63.575,45 L63.575,45 Z M67,39 L67,41 C21.756,41 15,49.145 15,54 L13,54 C13,46.604 23.039,41.92 42.893,40 C23.039,38.079 13,33.395 13,26 L15,26 C15,30.855 21.756,39 67,39 L67,39 Z M67,35 L67,37 C24.703,37 19,27.395 19,18 L21,18 C21,26.406 26.465,35 67,35 L67,35 Z M67,31 L67,33 C48.663,33 36.728,30.641 30.51,25.788 C25,21.488 25,16.004 25,12 L27,12 C27,19.566 27,31 67,31 L67,31 Z M51,57.277 L51,52.723 L54.984,55 L51,57.277 Z M57.496,54.132 L50.496,50.132 C50.187,49.954 49.806,49.956 49.498,50.135 C49.189,50.314 49,50.643 49,51 L49,59 C49,59.356 49.189,59.686 49.498,59.865 C49.653,59.955 49.826,60 50,60 C50.171,60 50.343,59.956 50.496,59.868 L57.496,55.868 C57.808,55.69 58,55.359 58,55 C58,54.641 57.808,54.309 57.496,54.132 L57.496,54.132 Z" id="Amazon-Kinesis-Video-Streams_64_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

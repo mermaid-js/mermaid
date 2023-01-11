@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/32/Arch_AWS-Budgets_32</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#1B660F" offset="0%"></stop>
+            <stop stop-color="#6CAE3E" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/32/Arch_AWS-Budgets_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/32/AWS-Cost-Management" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="40" height="40"></rect>
+        </g>
+        <path d="M23.971,13.969 L23.971,11.627 L20.559,15.039 C20.38,15.219 20.093,15.236 19.893,15.075 L17.873,13.459 L14.872,16.46 L14.165,15.753 L17.483,12.436 C17.663,12.256 17.95,12.24 18.149,12.399 L20.168,14.015 L23.264,10.92 L21.019,10.92 L21.019,9.92 L24.471,9.92 C24.747,9.92 24.971,10.144 24.971,10.42 L24.971,13.969 L23.971,13.969 Z M13.05,20.969 L12.05,20.969 L12.05,6.5 C12.05,6.224 12.274,6 12.55,6 L27.55,6 C27.826,6 28.05,6.224 28.05,6.5 L28.05,20.969 L27.05,20.969 L27.05,7 L13.05,7 L13.05,20.969 Z M8,32.131 L8,20.914 L14.184,25.12 L8,32.131 Z M20.019,28.985 C20.117,28.985 20.215,28.956 20.3,28.898 L24.961,25.727 L31.42,32.953 L8.608,32.953 L15.017,25.687 L19.738,28.898 C19.823,28.956 19.92,28.985 20.019,28.985 L20.019,28.985 Z M25.796,25.16 L32.037,20.914 L32.037,32.143 L25.796,25.16 Z M32.862,19.589 L29.343,16.589 L28.695,17.349 L31.714,19.924 L20.019,27.88 L8.324,19.924 L11.343,17.349 L10.695,16.589 L7.176,19.589 C7.065,19.683 7,19.823 7,19.969 L7,33.453 C7,33.73 7.224,33.953 7.5,33.953 L32.537,33.953 C32.814,33.953 33.037,33.73 33.037,33.453 L33.037,19.969 C33.037,19.823 32.973,19.683 32.862,19.589 L32.862,19.589 Z" id="AWS-Budgets_Icon_32_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_AWS-Security-Hub_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#BD0816" offset="0%"></stop>
+            <stop stop-color="#FF5252" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-Security-Hub_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Security-Identity-Compliance" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M12,18 C8.691,18 6,15.309 6,12 C6,8.691 8.691,6 12,6 C15.309,6 18,8.691 18,12 C18,15.309 15.309,18 12,18 L12,18 Z M12,5 C8.141,5 5,8.14 5,12 C5,15.86 8.141,19 12,19 C15.859,19 19,15.86 19,12 C19,8.14 15.859,5 12,5 L12,5 Z M14.446,12.563 C14.446,12.67 14.419,14.995 12.5,15.343 L12.5,8.622 L14.446,9.465 L14.446,12.563 Z M9.554,12.554 L9.554,9.465 L11.5,8.622 L11.5,15.343 C9.594,14.992 9.555,12.66 9.554,12.554 L9.554,12.554 Z M15.146,8.678 L12.199,7.401 C12.072,7.346 11.928,7.346 11.801,7.401 L8.854,8.678 C8.672,8.757 8.554,8.937 8.554,9.137 L8.554,12.554 C8.554,13.881 9.274,16.391 12,16.391 C14.726,16.391 15.446,13.887 15.446,12.563 L15.446,9.137 C15.446,8.937 15.328,8.757 15.146,8.678 L15.146,8.678 Z" id="AWS-Security-Hub_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

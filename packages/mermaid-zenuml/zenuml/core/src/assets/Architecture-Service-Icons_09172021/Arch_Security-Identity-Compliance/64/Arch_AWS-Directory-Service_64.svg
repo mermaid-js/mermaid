@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/64/Arch_AWS-Directory-Service_64</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#BD0816" offset="0%"></stop>
+            <stop stop-color="#FF5252" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/64/Arch_AWS-Directory-Service_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/64/Security-Identity-Compliance" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <path d="M34,51 L37,51 L37,49 L34,49 L34,51 Z M25,51 L32,51 L32,49 L25,49 L25,51 Z M25,46 L36,46 L36,44 L25,44 L25,46 Z M65,58 L65,39 L63,39 L63,53 C63,53.552 62.553,54 62,54 L42,54 C41.447,54 41,53.552 41,53 L41,39 L22,39 L22,58 L65,58 Z M44.074,52 L59.918,52 C59.48,48.983 57.178,46.284 54.152,45.325 C53.455,45.619 52.705,45.779 51.951,45.779 C51.197,45.779 50.451,45.622 49.756,45.332 C46.72,46.299 44.482,48.951 44.074,52 L44.074,52 Z M53.709,43.33 C54.872,42.699 55.594,41.494 55.594,40.185 C55.594,38.198 53.96,36.581 51.951,36.581 C49.943,36.581 48.31,38.198 48.31,40.185 C48.31,41.493 49.029,42.698 50.187,43.331 C51.268,43.918 52.613,43.926 53.709,43.33 L53.709,43.33 Z M61,33 L43,33 L43,48.75 C44.001,46.696 45.696,44.987 47.808,43.966 C46.864,42.948 46.31,41.61 46.31,40.185 C46.31,37.095 48.841,34.581 51.951,34.581 C55.062,34.581 57.594,37.095 57.594,40.185 C57.594,41.604 57.042,42.937 56.104,43.952 C58.258,44.979 59.985,46.708 61,48.787 L61,33 Z M22,28 L22,37 L41,37 L41,32 C41,31.448 41.447,31 42,31 L62,31 C62.553,31 63,31.448 63,32 L63,37 L65,37 L65,28 L22,28 Z M67,27 L67,59 C67,59.552 66.553,60 66,60 L21,60 C20.447,60 20,59.552 20,59 L20,27 C20,26.448 20.447,26 21,26 L66,26 C66.553,26 67,26.448 67,27 L67,27 Z M16,52 L18,52 L18,54 L15,54 C14.447,54 14,53.552 14,53 L14,21 C14,20.448 14.447,20 15,20 L61,20 C61.553,20 62,20.448 62,21 L62,24 L60,24 L60,22 L16,22 L16,52 Z" id="AWS-Directory-Service_Icon_64_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

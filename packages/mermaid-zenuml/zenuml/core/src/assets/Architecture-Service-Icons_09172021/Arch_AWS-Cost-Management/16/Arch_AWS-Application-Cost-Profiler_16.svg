@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon-Architecture/16/Arch_AWS-Application-Cost-Profiler_16</title>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#1B660F" offset="0%"></stop>
+            <stop stop-color="#6CAE3E" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-Application-Cost-Profiler_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle" fill="url(#linearGradient-1)">
+            <rect x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <g id="Icon-Service/16/AWS-Application-Cost-Profiler_16" transform="translate(4.000000, 4.000000)" fill="#FFFFFF">
+            <path d="M8,15 C4.141,15 1,11.86 1,8 C1,4.504 3.591,1.567 6.993,1.077 L6.993,4.023 C5.209,4.476 3.898,6.096 3.898,8 C3.898,10.263 5.739,12.104 8.003,12.104 C10.267,12.104 12.107,10.263 12.107,8 L11.107,8 C11.107,9.711 9.715,11.104 8.003,11.104 C6.291,11.104 4.898,9.711 4.898,8 C4.898,6.65 5.773,5.5 6.993,5.077 L6.993,8 L7.993,8 L7.993,0 L6.993,0 L6.993,0.072 C3.034,0.571 0,3.956 0,8 C0,12.411 3.589,16 8,16 C12.411,16 16,12.411 16,8 L15,8 C15,11.86 11.859,15 8,15 L8,15 Z M15,7 L16,7 L16,0 L15,0 L15,7 Z M10.993,6 L11.993,6 L11.993,1 L10.993,1 L10.993,6 Z" id="Fill-5"></path>
+        </g>
+    </g>
+</svg>

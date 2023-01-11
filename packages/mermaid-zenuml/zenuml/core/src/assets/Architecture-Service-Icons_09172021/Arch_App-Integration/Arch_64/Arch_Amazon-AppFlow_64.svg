@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon-Architecture/64/Arch_Amazon-AppFlow_64</title>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#B0084D" offset="0%"></stop>
+            <stop stop-color="#FF4F8B" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/64/Arch_Amazon-AppFlow_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle" fill="url(#linearGradient-1)">
+            <rect x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <g id="Icon-Service/64/AWS-AppFlow_64" transform="translate(8.000000, 8.000000)" fill="#FFFFFF">
+            <path d="M33.657,11 L17.963,37.387 L16.925,33.515 L14.994,34.033 L16.948,41.327 L24.242,39.372 L23.725,37.441 L19.6,38.545 L34.794,13.001 L49.809,13.001 L57.315,26 L49.809,39 L41.963,39 L41.963,41.001 L50.963,41.001 L59.624,26 L50.963,11 L33.657,11 Z M38.541,24.628 L39.059,26.56 L43.232,25.441 L28.815,51.001 L13.815,51.001 L6.309,38 L13.815,25 L19.964,25 L19.964,23.001 L12.661,23.001 L4,38 L12.661,53 L29.983,53 L44.837,26.669 L45.859,30.485 L47.791,29.967 L45.836,22.674 L38.541,24.628 Z" id="AWS-AppFlow_64"></path>
+        </g>
+    </g>
+</svg>

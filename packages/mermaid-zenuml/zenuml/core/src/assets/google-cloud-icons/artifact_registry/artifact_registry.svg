@@ -1,0 +1,30 @@
+<svg version="1.1" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+	 x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" overflow="visible" xml:space="preserve">
+<g >
+	<rect y="0" fill="none" width="24" height="24"/>
+	<polygon fill-rule="evenodd" fill="#5C85DE" points="6,2.4 0.8,5.4 0.8,19.1 6,22.1 6,19.5 3,17.8 3,6.7 6,5 	"/>
+	<polygon fill-rule="evenodd" fill="#3367D6" points="0.8,8 0.8,16.5 3,17.8 3,6.7 	"/>
+	<polygon fill-rule="evenodd" fill="#3367D6" points="0.8,8 3,7.5 3,6.7 	"/>
+	<polygon fill-rule="evenodd" fill="#5C85DE" points="18,2.4 18,5 21,6.7 21,17.8 18,19.5 18,22.1 23.2,19.1 23.2,5.4 	"/>
+	<polygon fill-rule="evenodd" fill="#3367D6" points="21,17.8 23.2,16.5 23.2,8 21,6.7 	"/>
+	<polygon fill-rule="evenodd" fill="#3367D6" points="21,7.5 23.2,8 21,6.7 	"/>
+	<polygon fill-rule="evenodd" fill="#3367D6" points="21,17.1 21,17.8 23.2,16.5 	"/>
+	<g transform="translate(6.860000, 6.500000)">
+		<g transform="translate(4.540000, 0.000000)">
+			<polygon fill-rule="evenodd" fill="#5C85DE" points="0.6,-1 -2.4,0.6 0.6,2.2 3.6,0.6 			"/>
+			<polygon fill-rule="evenodd" fill="#3367D6" points="1,5.9 3.9,4.3 3.9,1.2 1,2.8 			"/>
+			<polygon fill-rule="evenodd" fill="#3367D6" points="0.3,2.8 -2.7,1.2 -2.7,4.3 0.3,5.9 			"/>
+		</g>
+		<g transform="translate(0.000000, 7.976190)">
+			<polygon fill-rule="evenodd" fill="#5C85DE" points="1.7,-3.1 -1.2,-1.5 1.7,0.1 4.5,-1.5 			"/>
+			<polygon fill-rule="evenodd" fill="#3367D6" points="1.9,3.8 4.8,2.2 4.8,-1 1.9,0.6 			"/>
+			<polygon fill-rule="evenodd" fill="#3367D6" points="1.4,0.6 -1.5,-1 -1.5,2.2 1.4,3.8 			"/>
+		</g>
+		<g transform="translate(9.360000, 7.976190)">
+			<polygon fill-rule="evenodd" fill="#5C85DE" points="-0.7,-3.1 -3.6,-1.5 -0.7,0.1 2.2,-1.5 			"/>
+			<polygon fill-rule="evenodd" fill="#3367D6" points="-0.4,3.8 2.5,2.2 2.5,-1 -0.4,0.6 			"/>
+			<polygon fill-rule="evenodd" fill="#3367D6" points="-1,0.6 -3.9,-1 -3.9,2.2 -1,3.8 			"/>
+		</g>
+	</g>
+</g>
+</svg>

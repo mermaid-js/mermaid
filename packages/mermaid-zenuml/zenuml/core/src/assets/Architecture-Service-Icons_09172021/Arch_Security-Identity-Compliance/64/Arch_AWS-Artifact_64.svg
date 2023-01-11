@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/64/Arch_AWS-Artifact_64</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#BD0816" offset="0%"></stop>
+            <stop stop-color="#FF5252" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/64/Arch_AWS-Artifact_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/64/Security-Identity-Compliance" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <path d="M40,12 C24.561,12 12,24.561 12,40 C12,52.375 21.147,63.717 33.75,66.968 L34.25,65.032 C22.517,62.004 14,51.477 14,40 C14,25.664 25.663,14 40,14 C54.337,14 66,25.664 66,40 C66,52.346 58.837,62.171 47.75,65.032 L48.25,66.968 C60.248,63.873 68,53.287 68,40 C68,24.561 55.439,12 40,12 L40,12 Z M32,30 L41,30 L41,28 L32,28 L32,30 Z M32,45 L43,45 L43,43 L32,43 L32,45 Z M32,40 L38,40 L38,38 L32,38 L32,40 Z M32,35 L50,35 L50,33 L32,33 L32,35 Z M46,30 C45.447,30 45,29.552 45,29 L45,22 L30,22 L30,51 L53,51 L53,30 L46,30 Z M47,28 L51.586,28 L47,23.414 L47,28 Z M46,20 L46,20 C46.26,20 46.516,20.102 46.707,20.293 L54.707,28.293 C54.836,28.422 54.918,28.582 54.961,28.75 L55,28.75 L55,52 C55,52.552 54.553,53 54,53 L29,53 C28.447,53 28,52.552 28,52 L28,21 C28,20.448 28.447,20 29,20 L46,20 Z M48.707,60.707 L41.707,67.707 C41.512,67.902 41.256,68 41,68 C40.744,68 40.488,67.902 40.293,67.707 L33.293,60.707 C33.007,60.421 32.921,59.991 33.076,59.617 C33.23,59.244 33.596,59 34,59 L37,59 L37,55 L39,55 L39,60 C39,60.552 38.553,61 38,61 L36.414,61 L41,65.586 L45.586,61 L44,61 C43.447,61 43,60.552 43,60 L43,55 L45,55 L45,59 L48,59 C48.404,59 48.77,59.244 48.924,59.617 C49.079,59.991 48.993,60.421 48.707,60.707 L48.707,60.707 Z" id="AWS-Artifact_Icon_64_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

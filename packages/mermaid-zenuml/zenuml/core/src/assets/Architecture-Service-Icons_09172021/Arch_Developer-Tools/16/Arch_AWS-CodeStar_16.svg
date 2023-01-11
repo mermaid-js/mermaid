@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_Amazon-Codestar_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#2E27AD" offset="0%"></stop>
+            <stop stop-color="#527FFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_Amazon-Codestar_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Developer-Tools" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M19,12 C19,15.86 15.859,19 12,19 C8.141,19 5,15.86 5,12 C5,8.14 8.141,5 12,5 C15.859,5 19,8.14 19,12 L19,12 Z M20,12 C20,7.589 16.411,4 12,4 C7.589,4 4,7.589 4,12 C4,16.411 7.589,20 12,20 C16.411,20 20,16.411 20,12 L20,12 Z M13.96,8.697 L13.04,8.303 L10.04,15.303 L10.96,15.697 L13.96,8.697 Z M17.707,11.5 L15.354,9.146 L14.646,9.854 L16.293,11.5 L14.646,13.146 L15.354,13.854 L17.707,11.5 Z M9.646,13.854 L7.293,11.5 L9.646,9.146 L10.354,9.854 L8.707,11.5 L10.354,13.146 L9.646,13.854 Z" id="Amazon-Codestar_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

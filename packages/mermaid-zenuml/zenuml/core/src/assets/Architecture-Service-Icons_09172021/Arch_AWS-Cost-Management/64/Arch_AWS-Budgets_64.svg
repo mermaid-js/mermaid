@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/64/Arch_AWS-Budgets_64</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#1B660F" offset="0%"></stop>
+            <stop stop-color="#6CAE3E" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/64/Arch_AWS-Budgets_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/64/AWS-Cost-Management" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <path d="M49,30 L49,25.414 L41.707,32.707 C41.346,33.069 40.772,33.098 40.375,32.781 L36.074,29.34 L29.707,35.707 L28.293,34.293 L35.293,27.293 C35.654,26.932 36.228,26.901 36.625,27.219 L40.926,30.66 L47.586,24 L43,24 L43,22 L50,22 C50.553,22 51,22.448 51,23 L51,30 L49,30 Z M26,43 L24,43 L24,13 C24,12.448 24.447,12 25,12 L55,12 C55.553,12 56,12.448 56,13 L56,43 L54,43 L54,14 L26,14 L26,43 Z M15,64.471 L15,42.061 L27.74,50.881 L15,64.471 Z M40,59.125 C40.224,59.125 40.447,59.058 40.641,58.925 L50.597,52.032 L63.691,66 L16.309,66 L29.403,52.032 L39.359,58.925 C39.553,59.058 39.776,59.125 40,59.125 L40,59.125 Z M52.26,50.881 L65,42.061 L65,64.471 L52.26,50.881 Z M66.658,39.248 L58.658,32.248 L57.342,33.752 L64.279,39.823 L40,56.632 L15.721,39.823 L22.658,33.752 L21.342,32.248 L13.342,39.248 C13.124,39.438 13,39.711 13,40 L13,67 C13,67.552 13.447,68 14,68 L66,68 C66.553,68 67,67.552 67,67 L67,40 C67,39.711 66.876,39.438 66.658,39.248 L66.658,39.248 Z" id="AWS-Budgets_Icon_64_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

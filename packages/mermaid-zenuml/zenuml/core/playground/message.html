@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Message component</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://app.zenuml.com/14da99332500382455b6a2d96a34a523.css" />
+  </head>
+  <body class="zenuml">
+    <main class="m-1">
+      <p>Creation (like all other messages) gets a fixed width calculated.</p>
+      <!-- Give the whole message a width -->
+      <div
+        data-signature="«create»"
+        class="interaction creation sync text-center"
+        style="width: 161px"
+      >
+        <!-- items-center aligns the message on the left along the center vertically -->
+        <div class="flex items-center h-10">
+          <!-- height:0 to so items-center set the border bottom line in the middle -->
+          <div
+            data-v-61d2d687=""
+            data-v-152fbe62=""
+            class="message flex hover:bg-yellow-300 h-0 invocation text-center"
+            data-to="A"
+            data-type="creation"
+            style="border-bottom-style: dashed; width: calc(100% - 40px)"
+          >
+            <div
+              data-v-61d2d687=""
+              class="name grow"
+              style="padding-left: 10px; line-height: 1em; transform: translateY(-1em)"
+            >
+              «create»
+            </div>
+            <div data-v-4c06f990="" data-v-61d2d687="" class="point no-fill">
+              <svg data-v-4c06f990="" height="20" class="arrow">
+                <polyline data-v-4c06f990="" points="0,7 10,13 0,19" class="right head"></polyline>
+                <polyline data-v-4c06f990="" points="10,7 0,13 10,19" class="left head"></polyline>
+              </svg>
+            </div>
+          </div>
+          <div
+            class="participant border-2 border-red-900 flex flex-col justify-center"
+            style="margin-right: -50px"
+          >
+            <div class="h-5 flex flex-col justify-center"><label class="name">B</label></div>
+          </div>
+        </div>
+        <div
+          data-el-type="occurrence"
+          data-belongs-to="B"
+          data-x-offset="0"
+          data-debug-center-of="273"
+          class="occurrence border-2 relative"
+        >
+          <!---->
+        </div>
+        <!---->
+      </div>
+    </main>
+  </body>
+</html>

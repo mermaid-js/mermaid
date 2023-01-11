@@ -1,0 +1,26 @@
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<g transform="translate(0.000000, 1.000000)">
+	<g >
+		<rect y="0" fill="none" width="24" height="24"/>
+		<g transform="translate(2.000000, 7.000000)">
+			<g >
+			</g>
+			<defs>
+				<filter id="Adobe_OpacityMaskFilter" filterUnits="userSpaceOnUse" x="-2" y="-7" width="24" height="24">
+					<feColorMatrix  type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/>
+				</filter>
+			</defs>
+				<mask maskUnits="userSpaceOnUse" x="-2" y="-7" width="24" height="24" id="mask-2_00000060711828738252312490000013807154105866559643_">
+				<g filter="url(#Adobe_OpacityMaskFilter)">
+						<path id="path-1_00000107547131941502402830000003049394669516948412_" fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" d="
+						M16.4,3.5c2.3,0.2,4.1,2,4.1,4.3c0,2.4-2,4.3-4.4,4.3H4.8c-2.9,0-5.2-2.3-5.2-5.2c0-2.7,2-4.9,4.7-5.1C5.3-0.3,7.5-1.8,10-1.8
+						C13.2-1.8,15.8,0.5,16.4,3.5z M16.1,10.3c1.5,0,2.6-1.2,2.6-2.6s-1.2-2.6-2.6-2.6h-1.3V4.7C14.8,2.1,12.7,0,10,0
+						C7.8,0,5.9,1.4,5.4,3.4H4.8C2.8,3.4,1.2,5,1.2,6.9s1.6,3.4,3.5,3.4H16.1z"/>
+				</g>
+			</mask>
+				<polygon id="Fill-5" mask="url(#mask-2_00000060711828738252312490000013807154105866559643_)" fill-rule="evenodd" clip-rule="evenodd" fill="#5C85DE" points="
+				-2,17 22,17 22,-7 -2,-7 			"/>
+		</g>
+	</g>
+</g>
+</svg>

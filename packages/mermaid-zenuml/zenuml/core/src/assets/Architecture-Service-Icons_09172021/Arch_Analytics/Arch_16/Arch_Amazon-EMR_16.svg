@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Architecture/16/Arch_Amazon-EMR_16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#4D27A8" offset="0%"></stop>
+            <stop stop-color="#A166FF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_Amazon-EMR_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-Architecture-BG/16/Analytics" fill="url(#linearGradient-1)">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <path d="M16.5,16 C15.673,16 15,16.673 15,17.5 C15,18.327 15.673,19 16.5,19 C17.327,19 18,18.327 18,17.5 C18,16.673 17.327,16 16.5,16 L16.5,16 Z M14.693,15.781 C15.088,15.366 15.623,15.096 16.223,15.028 L16.781,8.882 C16.386,8.763 16.027,8.558 15.741,8.273 L12.481,10.447 C12.802,11.065 13,11.757 13,12.5 C13,13.197 12.827,13.849 12.543,14.438 L14.693,15.781 Z M12,12.5 C12,10.57 10.43,9 8.5,9 C6.57,9 5,10.57 5,12.5 C5,14.43 6.57,16 8.5,16 C10.43,16 12,14.43 12,12.5 L12,12.5 Z M16,6.5 C16,7.327 16.673,8 17.5,8 C18.327,8 19,7.327 19,6.5 C19,5.673 18.327,5 17.5,5 C16.673,5 16,5.673 16,6.5 L16,6.5 Z M17.777,8.972 L17.219,15.118 C18.246,15.429 19,16.373 19,17.5 C19,18.878 17.879,20 16.5,20 C15.121,20 14,18.878 14,17.5 C14,17.193 14.063,16.902 14.165,16.63 L12.009,15.283 C11.184,16.321 9.926,17 8.5,17 C6.019,17 4,14.981 4,12.5 C4,10.019 6.019,8 8.5,8 C9.879,8 11.099,8.636 11.925,9.616 L15.188,7.441 C15.068,7.15 15,6.833 15,6.5 C15,5.122 16.121,4 17.5,4 C18.879,4 20,5.122 20,6.5 C20,7.783 19.024,8.832 17.777,8.972 L17.777,8.972 Z M9,12 L10,12 L10,13 L9,13 L9,14 L8,14 L8,13 L7,13 L7,12 L8,12 L8,11 L9,11 L9,12 Z" id="Amazon-EMR_Icon_16_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon-Architecture/32/Arch_AWS-Elemental-Delta_32</title>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#C8511B" offset="0%"></stop>
+            <stop stop-color="#FF9900" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/32/Arch_AWS-Elemental-Delta_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle" fill="url(#linearGradient-1)">
+            <rect x="0" y="0" width="40" height="40"></rect>
+        </g>
+        <path d="M22.941,26.044 L20.5,27.441 L18.058,26.044 L18.058,23.257 L20.5,21.86 L22.941,23.257 L22.941,26.044 Z M23.941,22.967 C23.941,22.788 23.845,22.623 23.689,22.533 L20.748,20.85 C20.595,20.762 20.404,20.762 20.252,20.85 L17.31,22.533 C17.154,22.623 17.058,22.788 17.058,22.967 L17.058,24.046 L8,24.046 L8,25.046 L17.058,25.046 L17.058,26.334 C17.058,26.513 17.154,26.679 17.31,26.768 L20,28.307 L20,31.984 L21,31.984 L21,28.307 L23.689,26.768 C23.845,26.679 23.941,26.513 23.941,26.334 L23.941,25.046 L33,25.046 L33,24.046 L23.941,24.046 L23.941,22.967 Z M10,14 L13,14 L13,13 L10,13 L10,14 Z M23,14 L31,14 L31,13 L23,13 L23,14 Z M8,17 L33,17 L33,9 L8,9 L8,17 Z M33.5,8 L7.5,8 C7.223,8 7,8.223 7,8.5 L7,17.5 C7,17.776 7.223,18 7.5,18 L33.5,18 C33.776,18 34,17.776 34,17.5 L34,8.5 C34,8.223 33.776,8 33.5,8 L33.5,8 Z" id="AWS-Elemental-Delta_Icon_32_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>

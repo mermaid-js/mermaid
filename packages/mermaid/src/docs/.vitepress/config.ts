@@ -104,6 +104,7 @@ function sidebarSyntax() {
         { text: 'Gitgraph (Git) Diagram 🔥', link: '/syntax/gitgraph' },
         { text: 'C4C Diagram (Context) Diagram 🦺⚠️', link: '/syntax/c4c' },
         { text: 'Mindmaps 🔥', link: '/syntax/mindmap' },
+        { text: 'ZenUML 🔥', link: '/syntax/zenuml' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },

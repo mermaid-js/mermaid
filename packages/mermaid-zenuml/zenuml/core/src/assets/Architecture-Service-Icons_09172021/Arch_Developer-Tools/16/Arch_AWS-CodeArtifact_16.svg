@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon-Architecture/16/Arch_AWS-CodeArtifact_16</title>
+    <defs>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#2E27AD" offset="0%"></stop>
+            <stop stop-color="#527FFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Icon-Architecture/16/Arch_AWS-CodeArtifact_16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle" fill="url(#linearGradient-1)">
+            <rect x="0" y="0" width="24" height="24"></rect>
+        </g>
+        <g id="Icon-Service/16/AWS-CodeArtifact_16" transform="translate(4.000000, 4.000000)" fill="#FFFFFF">
+            <path d="M6.2827,10.6499 L8.8377,4.9419 L9.7497,5.3499 L7.1947,11.0579 L6.2827,10.6499 Z M11.2187,8.0939 L9.9227,6.7799 L10.6357,6.0779 L12.3377,7.8049 C12.4387,7.9089 12.4907,8.0519 12.4787,8.1969 C12.4677,8.3419 12.3927,8.4739 12.2757,8.5599 L10.3377,9.9749 L9.7477,9.1679 L11.2187,8.0939 Z M6.1317,6.8239 L4.6387,7.9139 L5.9387,9.2279 L5.2277,9.9309 L3.5197,8.2039 C3.4177,8.1009 3.3657,7.9579 3.3777,7.8129 C3.3887,7.6679 3.4637,7.5349 3.5807,7.4489 L5.5417,6.0169 L6.1317,6.8239 Z M13.8557,11.4569 L7.8977,14.8449 L2.0007,11.3889 L2.0007,4.5409 L7.8877,1.1549 L13.8557,4.6149 L13.8557,11.4569 Z M7.8897,-0.0001 L1.0007,3.9619 L1.0007,11.9619 L7.8897,15.9999 L14.8557,12.0389 L14.8557,4.0389 L7.8897,-0.0001 Z" id="AWS-CodeArtifact_Icon_16_Squid"></path>
+        </g>
+    </g>
+</svg>
