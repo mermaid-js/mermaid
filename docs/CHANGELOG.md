@@ -497,7 +497,7 @@ mermaidAPI.initialize({
 - Clarify the need for a CSS stylesheet [#413](https://github.com/knsv/mermaid/pull/413) ([sifb](https://github.com/sifb))
 - Added hads downstream project [#412](https://github.com/knsv/mermaid/pull/412) ([sinedied](https://github.com/sinedied))
 - update usage and fix #273 [#406](https://github.com/knsv/mermaid/pull/406) ([jinntrance](https://github.com/jinntrance))
-- Add https://github.com/raghur/mermaid-filter to downstream projects docs page [#404](https://github.com/knsv/mermaid/pull/404) ([raghur](https://github.com/raghur))
+- Add <https://github.com/raghur/mermaid-filter> to downstream projects docs page [#404](https://github.com/knsv/mermaid/pull/404) ([raghur](https://github.com/raghur))
 - New neutral theme [#395](https://github.com/knsv/mermaid/pull/395) ([sinedied](https://github.com/sinedied))
 - fix cli issues [#390](https://github.com/knsv/mermaid/pull/390) ([ben-page](https://github.com/ben-page))
 - Add missing space for 'Labels out of bounds' section [#386](https://github.com/knsv/mermaid/pull/386) ([The-Alchemist](https://github.com/The-Alchemist))
@@ -661,7 +661,7 @@ mermaidAPI.initialize({
 
 **Closed issues:**
 
-- Installing “atom-mermaid@0.1.3” failed [#218](https://github.com/knsv/mermaid/issues/218)
+- Installing “atom-mermaid\@0.1.3” failed [#218](https://github.com/knsv/mermaid/issues/218)
 - node feature request [#211](https://github.com/knsv/mermaid/issues/211)
 - Please add prefix for styles [#208](https://github.com/knsv/mermaid/issues/208)
 - Bad handling of block arguments [#207](https://github.com/knsv/mermaid/issues/207)
@@ -671,7 +671,7 @@ mermaidAPI.initialize({
 - Broken CLI Graphs? (v0.5.1) [#196](https://github.com/knsv/mermaid/issues/196)
 - Static site does not render under HTTPS [#194](https://github.com/knsv/mermaid/issues/194)
 - Error on simple graph [#192](https://github.com/knsv/mermaid/issues/192)
-- Escape "~" [#191](https://github.com/knsv/mermaid/issues/191)
+- Escape "\~" [#191](https://github.com/knsv/mermaid/issues/191)
 - Trying to add link using 'click' to flowchart [#188](https://github.com/knsv/mermaid/issues/188)
 - cli: no lines and arrowheads rendered / only dotted lines [#187](https://github.com/knsv/mermaid/issues/187)
 - text of mermaid div displayed on page [#186](https://github.com/knsv/mermaid/issues/186)
@@ -793,7 +793,7 @@ mermaidAPI.initialize({
 **Closed issues:**
 
 - subgraph background is black in rendered flowchart PNG via CLI [#121](https://github.com/knsv/mermaid/issues/121)
-- Integrate editor at https://github.com/naseer/mermaid-webapp [#110](https://github.com/knsv/mermaid/issues/110)
+- Integrate editor at <https://github.com/naseer/mermaid-webapp> [#110](https://github.com/knsv/mermaid/issues/110)
 - Internet Explorer Support [#99](https://github.com/knsv/mermaid/issues/99)
 
 ## [0.3.5](https://github.com/knsv/mermaid/tree/0.3.5) (2015-02-15)
