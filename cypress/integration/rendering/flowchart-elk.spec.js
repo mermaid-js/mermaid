@@ -109,7 +109,7 @@ describe('Flowchart ELK', () => {
       const style = svg.attr('style');
       expect(style).to.match(/^max-width: [\d.]+px;$/);
       const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-      expect(maxWidthValue).to.be.within(290 * 0.95 - 1, 290 * 1.05);
+      expect(maxWidthValue).to.be.within(230 * 0.95, 230 * 1.05);
     });
   });
   it('8-elk: should render a flowchart when useMaxWidth is false', () => {
@@ -128,7 +128,7 @@ describe('Flowchart ELK', () => {
       const width = parseFloat(svg.attr('width'));
       // use within because the absolute value can be slightly different depending on the environment ±5%
       // expect(height).to.be.within(446 * 0.95, 446 * 1.05);
-      expect(width).to.be.within(290 * 0.95 - 1, 290 * 1.05);
+      expect(width).to.be.within(230 * 0.95, 230 * 1.05);
       expect(svg).to.not.have.attr('style');
     });
   });
