@@ -94,6 +94,9 @@ import { setConfig } from '../config';
 import errorRenderer from '../diagrams/error/errorRenderer';
 import errorStyles from '../diagrams/error/styles';
 
+import flowchartElk from '../diagrams/flowchart/elk/detector';
+import { registerLazyLoadedDiagrams } from './detectType';
+
 let hasLoadedDiagrams = false;
 export const addDiagrams = () => {
   if (hasLoadedDiagrams) {
@@ -102,6 +105,8 @@ export const addDiagrams = () => {
   // This is added here to avoid race-conditions.
   // We could optimize the loading logic somehow.
   hasLoadedDiagrams = true;
+  registerLazyLoadedDiagrams(flowchartElk);
+
   registerDiagram(
     'error',
     // Special diagram with error messages but setup as a regular diagram

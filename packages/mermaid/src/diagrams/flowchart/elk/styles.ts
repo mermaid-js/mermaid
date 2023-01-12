@@ -13,9 +13,10 @@ export interface FlowChartStyleOptions {
   tertiaryColor: string;
   textColor: string;
   titleColor: string;
+  [key: string]: string;
 }
 
-const genSections = (options) => {
+const genSections = (options: FlowChartStyleOptions) => {
   let sections = '';
 
   for (let i = 0; i < 5; i++) {

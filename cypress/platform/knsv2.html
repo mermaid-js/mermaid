@@ -63,6 +63,13 @@ graph TB
       c --> d
     </pre>
     <pre id="diagram" class="mermaid">
+flowchart-elk TB
+      a --> b
+      a --> c
+      b --> d
+      c --> d
+    </pre>
+    <pre id="diagram" class="mermaid">
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 flowchart TB
   %% I could not figure out how to use double quotes in labels in Mermaid
@@ -238,10 +245,9 @@ sequenceDiagram
 
     <script type="module">
       import mindmap from '../../packages/mermaid-mindmap/src/detector';
-      import flowV3 from '../../packages/mermaid-flowchart-v3/src/detector';
       // import example from '../../packages/mermaid-example-diagram/src/detector';
       import mermaid from '../../packages/mermaid/src/mermaid';
-      await mermaid.registerExternalDiagrams([mindmap, flowV3]);
+      await mermaid.registerExternalDiagrams([mindmap]);
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
