@@ -4,7 +4,7 @@
   "version": "9.3.0-rc1",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
-  "packageManager": "pnpm@7.18.2",
+  "packageManager": "pnpm@7.24.3",
   "keywords": [
     "diagram",
     "markdown",
@@ -69,8 +69,8 @@
     "@types/rollup-plugin-visualizer": "^4.2.1",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
-    "@vitest/coverage-c8": "^0.25.1",
-    "@vitest/ui": "^0.25.1",
+    "@vitest/coverage-c8": "^0.27.0",
+    "@vitest/ui": "^0.27.0",
     "concurrently": "^7.5.0",
     "coveralls": "^3.1.1",
     "cypress": "^10.11.0",
@@ -109,6 +109,6 @@
     "vitest": "^0.27.1"
   },
   "volta": {
-    "node": "18.12.1"
+    "node": "18.13.0"
   }
 }
