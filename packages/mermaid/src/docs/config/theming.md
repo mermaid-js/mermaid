@@ -136,13 +136,10 @@ The theming engine will only recognize hex colors and not color names. So, the v
 | fontFamily           | trebuchet ms, verdana, arial       |                                                                                                                                  |
 | fontSize             | 16px                               | Font size in pixels                                                                                                              |
 | primaryColor         | #fff4dd                            | Color to be used as background in nodes, other colors will be derived from this                                                  |
-| primaryBorderColor   | calculated from primaryColor       | Color to be used as border in nodes using `primaryColor`                                                                         |
-| primaryBorderColor   | calculated from primaryColor       | Color to be used as border in nodes using `primaryColor`                                                                         |
 | primaryTextColor     | calculated from darkMode #ddd/#333 | Color to be used as text color in nodes using `primaryColor`                                                                     |
 | secondaryColor       | calculated from primaryColor       |                                                                                                                                  |
 | primaryBorderColor   | calculated from primaryColor       | Color to be used as border in nodes using `primaryColor`                                                                         |
 | secondaryBorderColor | calculated from secondaryColor     | Color to be used as border in nodes using `secondaryColor`                                                                       |
-| primaryBorderColor   | calculated from primaryColor       | Color to be used as border in nodes using `primaryColor`                                                                         |
 | secondaryTextColor   | calculated from secondaryColor     | Color to be used as text color in nodes using `secondaryColor`                                                                   |
 | tertiaryColor        | calculated from primaryColor       |                                                                                                                                  |
 | tertiaryBorderColor  | calculated from tertiaryColor      | Color to be used as border in nodes using `tertiaryColor`                                                                        |
