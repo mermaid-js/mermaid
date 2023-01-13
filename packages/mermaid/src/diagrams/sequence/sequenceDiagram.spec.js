@@ -48,9 +48,19 @@ vi.mock('d3', () => {
       return new NewD3();
     },
 
+    // TODO: In d3 these are CurveFactory types, not strings
     curveBasis: 'basis',
+    curveBasisClosed: 'basisClosed',
+    curveBasisOpen: 'basisOpen',
     curveLinear: 'linear',
     curveCardinal: 'cardinal',
+    curveLinearClosed: 'linearClosed',
+    curveMonotoneX: 'monotoneX',
+    curveMonotoneY: 'monotoneY',
+    curveNatural: 'natural',
+    curveStep: 'step',
+    curveStepAfter: 'stepAfter',
+    curveStepBefore: 'stepBefore',
   };
 });
 // -------------------------------

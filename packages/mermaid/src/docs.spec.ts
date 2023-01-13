@@ -1,6 +1,21 @@
 import { transformBlocks, transformToBlockQuote } from './docs.mjs';
-import { remark } from 'remark'; // import it this way so we can mock it
-vi.mock('remark');
+import { remark as remarkBuilder } from 'remark'; // import it this way so we can mock it
+import { vi, afterEach, describe, it, expect } from 'vitest';
+
+const remark = remarkBuilder();
+
+vi.mock('remark', async (importOriginal) => {
+  const { remark: originalRemarkBuilder } = (await importOriginal()) as {
+    remark: typeof remarkBuilder;
+  };
+
+  // make sure that both `docs.mts` and this test file are using the same remark
+  // object so that we can mock it
+  const sharedRemark = originalRemarkBuilder();
+  return {
+    remark: () => sharedRemark,
+  };
+});
 
 afterEach(() => {
   vi.restoreAllMocks();
