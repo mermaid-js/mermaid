@@ -37,18 +37,13 @@ import { JSDOM } from 'jsdom';
 import type { Code, Root } from 'mdast';
 import { posix, dirname, relative, join } from 'path';
 import prettier from 'prettier';
-import { remark as remarkBuilder } from 'remark';
+import { remark } from 'remark';
 import remarkFrontmatter from 'remark-frontmatter';
 import remarkGfm from 'remark-gfm';
 import chokidar from 'chokidar';
 import mm from 'micromatch';
 // @ts-ignore No typescript declaration file
 import flatmap from 'unist-util-flatmap';
-
-const remark = remarkBuilder()
-  // support tables and other GitHub Flavored Markdown syntax in markdown
-  .use(remarkGfm)
-  .use(remarkFrontmatter, ['yaml']); // support YAML front-matter in Markdown
 
 const MERMAID_MAJOR_VERSION = (
   JSON.parse(readFileSync('../mermaid/package.json', 'utf8')).version as string
@@ -205,47 +200,45 @@ const transformIncludeStatements = (file: string, text: string): string => {
 };
 
 /**
- * Transform code blocks in a Markdown file.
- * Use remark.parse() to turn the given content (a String) into an AST.
+ * Remark plugin that transforms code blocks in a Markdown file.
+ *
  * For any AST node that is a code block: transform it as needed:
  * - blocks marked as MERMAID_DIAGRAM_ONLY will be set to a 'mermaid' code block so it will be rendered as (only) a diagram
  * - blocks marked as MERMAID_EXAMPLE_KEYWORDS will be copied and the original node will be a code only block and the copy with be rendered as the diagram
  * - blocks marked as BLOCK_QUOTE_KEYWORDS will be transformed into block quotes
  *
- * Convert the AST back to a string and return it.
- *
- * @param content - the contents of a Markdown file
- * @returns the contents with transformed code blocks
+ * @returns plugin function for Remark
  */
-export const transformBlocks = (content: string): string => {
-  const ast: Root = remark.parse(content);
-  const astWithTransformedBlocks = flatmap(ast, (node: Code) => {
-    if (node.type !== 'code' || !node.lang) {
-      return [node]; // no transformation if this is not a code block
-    }
+export function transformMarkdownAst() {
+  return (tree: Root, _file?: any): Root => {
+    const astWithTransformedBlocks = flatmap(tree, (node: Code) => {
+      if (node.type !== 'code' || !node.lang) {
+        return [node]; // no transformation if this is not a code block
+      }
 
-    if (node.lang === MERMAID_DIAGRAM_ONLY) {
-      // Set the lang to 'mermaid' so it will be rendered as a diagram.
-      node.lang = MERMAID_KEYWORD;
-      return [node];
-    } else if (MERMAID_EXAMPLE_KEYWORDS.includes(node.lang)) {
-      // Return 2 nodes:
-      //   1. the original node with the language now set to 'mermaid-example' (will be rendered as code), and
-      //   2. a copy of the original node with the language set to 'mermaid' (will be rendered as a diagram)
-      node.lang = MERMAID_CODE_ONLY_KEYWORD;
-      return [node, Object.assign({}, node, { lang: MERMAID_KEYWORD })];
-    }
+      if (node.lang === MERMAID_DIAGRAM_ONLY) {
+        // Set the lang to 'mermaid' so it will be rendered as a diagram.
+        node.lang = MERMAID_KEYWORD;
+        return [node];
+      } else if (MERMAID_EXAMPLE_KEYWORDS.includes(node.lang)) {
+        // Return 2 nodes:
+        //   1. the original node with the language now set to 'mermaid-example' (will be rendered as code), and
+        //   2. a copy of the original node with the language set to 'mermaid' (will be rendered as a diagram)
+        node.lang = MERMAID_CODE_ONLY_KEYWORD;
+        return [node, Object.assign({}, node, { lang: MERMAID_KEYWORD })];
+      }
 
-    // Transform these blocks into block quotes.
-    if (BLOCK_QUOTE_KEYWORDS.includes(node.lang)) {
-      return [remark.parse(transformToBlockQuote(node.value, node.lang, node.meta))];
-    }
+      // Transform these blocks into block quotes.
+      if (BLOCK_QUOTE_KEYWORDS.includes(node.lang)) {
+        return [remark.parse(transformToBlockQuote(node.value, node.lang, node.meta))];
+      }
 
-    return [node]; // default is to do nothing to the node
-  });
+      return [node]; // default is to do nothing to the node
+    });
 
-  return remark.stringify(astWithTransformedBlocks);
-};
+    return astWithTransformedBlocks;
+  };
+}
 
 /**
  * Transform a markdown file and write the transformed file to the directory for published
@@ -263,7 +256,13 @@ export const transformBlocks = (content: string): string => {
  */
 const transformMarkdown = (file: string) => {
   const doc = injectPlaceholders(transformIncludeStatements(file, readSyncedUTF8file(file)));
-  let transformed = transformBlocks(doc);
+
+  let transformed = remark()
+    .use(remarkGfm)
+    .use(remarkFrontmatter, ['yaml']) // support YAML front-matter in Markdown
+    .use(transformMarkdownAst) // mermaid project specific plugin
+    .processSync(doc).toString();
+
   if (!noHeader) {
     // Add the header to the start of the file
     transformed = `${generateHeader(file)}\n${transformed}`;
