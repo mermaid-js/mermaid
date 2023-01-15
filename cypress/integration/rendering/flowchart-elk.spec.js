@@ -133,7 +133,7 @@ describe('Flowchart ELK', () => {
     });
   });
 
-  it('V2 - 16: Render Stadium shape', () => {
+  it('V2 elk - 16: Render Stadium shape', () => {
     imgSnapshotTest(
       ` flowchart-elk TD
       A([stadium shape test])
