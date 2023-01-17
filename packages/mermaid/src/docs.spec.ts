@@ -1,6 +1,6 @@
 import { transformBlocks, transformToBlockQuote } from './docs.mjs';
-
 import { remark as remarkBuilder } from 'remark'; // import it this way so we can mock it
+import { vi, afterEach, describe, it, expect } from 'vitest';
 
 const remark = remarkBuilder();
 

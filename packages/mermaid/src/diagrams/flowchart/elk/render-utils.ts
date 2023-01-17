@@ -1,4 +1,9 @@
-export const findCommonAncestor = (id1, id2, treeData) => {
+export interface TreeData {
+  parentById: Record<string, string>;
+  childrenById: Record<string, string[]>;
+}
+
+export const findCommonAncestor = (id1: string, id2: string, treeData: TreeData) => {
   const { parentById } = treeData;
   const visited = new Set();
   let currentId = id1;
