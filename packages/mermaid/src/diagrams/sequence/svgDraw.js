@@ -218,7 +218,11 @@ export const drawText = function (elem, textData) {
     }
   }
   for (let [i, line] of lines.entries()) {
-    if (textData.textMargin !== undefined && textData.textMargin === 0 && _textFontSize !== null) {
+    if (
+      textData.textMargin !== undefined &&
+      textData.textMargin === 0 &&
+      _textFontSize !== undefined
+    ) {
       dy = i * _textFontSize;
     }
 
@@ -234,7 +238,7 @@ export const drawText = function (elem, textData) {
     if (textData.fontFamily !== undefined) {
       textElem.style('font-family', textData.fontFamily);
     }
-    if (_textFontSizePx !== null) {
+    if (_textFontSizePx !== undefined) {
       textElem.style('font-size', _textFontSizePx);
     }
     if (textData.fontWeight !== undefined) {

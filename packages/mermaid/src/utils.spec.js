@@ -421,10 +421,10 @@ describe('when parsing font sizes', function () {
   });
 
   it('handles undefined input', function () {
-    expect(utils.parseFontSize(undefined)).toEqual([null, null]);
+    expect(utils.parseFontSize(undefined)).toEqual([undefined, undefined]);
   });
 
   it('handles unparseable input', function () {
-    expect(utils.parseFontSize({ fontSize: 14 })).toEqual([null, null]);
+    expect(utils.parseFontSize({ fontSize: 14 })).toEqual([undefined, undefined]);
   });
 });

@@ -962,7 +962,7 @@ export const parseFontSize = (fontSize: string | number | undefined): [number?, 
   const fontSizeNumber = parseInt(fontSize, 10);
   if (Number.isNaN(fontSizeNumber)) {
     // if a number value can't be parsed, return null for both values
-    return [null, null];
+    return [undefined, undefined];
   } else if (fontSize === String(fontSizeNumber)) {
     // if a string input doesn't contain any units, assume px units
     return [fontSizeNumber, fontSize + 'px'];
