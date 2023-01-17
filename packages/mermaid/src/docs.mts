@@ -331,7 +331,7 @@ const getFilesFromGlobs = async (globs: string[]): Promise<string[]> => {
 };
 
 /** Main method (entry point) */
-(async () => {
+const main = async () => {
   if (verifyOnly) {
     console.log('Verifying that all files are in sync with the source files');
   }
@@ -400,4 +400,6 @@ const getFilesFromGlobs = async (globs: string[]): Promise<string[]> => {
         }
       });
   }
-})();
+};
+
+void main();

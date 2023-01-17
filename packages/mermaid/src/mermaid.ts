@@ -17,7 +17,6 @@ import { ExternalDiagramDefinition } from './diagram-api/types';
 
 export type { MermaidConfig, DetailedError, ExternalDiagramDefinition, ParseErrorFunction };
 
-let externalDiagramsRegistered = false;
 /**
  * ## init
  *
@@ -51,12 +50,7 @@ const init = async function (
   callback?: Function
 ) {
   try {
-    // Not really sure if we need to check this, or simply call initThrowsErrorsAsync directly.
-    if (externalDiagramsRegistered) {
-      await initThrowsErrorsAsync(config, nodes, callback);
-    } else {
-      initThrowsErrors(config, nodes, callback);
-    }
+    await initThrowsErrorsAsync(config, nodes, callback);
   } catch (e) {
     log.warn('Syntax Error rendering');
     if (isDetailedError(e)) {
@@ -68,8 +62,7 @@ const init = async function (
   }
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-const handleError = (error: unknown, errors: DetailedError[], parseError?: Function) => {
+const handleError = (error: unknown, errors: DetailedError[], parseError?: ParseErrorFunction) => {
   log.warn(error);
   if (isDetailedError(error)) {
     // handle case where error string and hash were
@@ -225,7 +218,6 @@ const loadExternalDiagrams = async (...diagrams: ExternalDiagramDefinition[]) =>
  */
 const initThrowsErrorsAsync = async function (
   config?: MermaidConfig,
-  // eslint-disable-next-line no-undef
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
   // eslint-disable-next-line @typescript-eslint/ban-types
   callback?: Function
@@ -336,7 +328,6 @@ const registerExternalDiagrams = async (
   } else {
     await loadExternalDiagrams(...diagrams);
   }
-  externalDiagramsRegistered = true;
 };
 
 /**
@@ -348,7 +339,7 @@ const contentLoaded = function () {
   if (mermaid.startOnLoad) {
     const { startOnLoad } = mermaidAPI.getConfig();
     if (startOnLoad) {
-      mermaid.init();
+      void mermaid.init();
     }
   }
 };
@@ -427,7 +418,7 @@ const parseAsync = (txt: string): Promise<boolean> => {
         );
       });
     executionQueue.push(performCall);
-    executeQueue();
+    void executeQueue();
   });
 };
 
@@ -460,7 +451,7 @@ const renderAsync = (
         );
       });
     executionQueue.push(performCall);
-    executeQueue();
+    void executeQueue();
   });
 };
 
