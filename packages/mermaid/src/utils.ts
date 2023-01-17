@@ -123,13 +123,13 @@ export const detectInit = function (text: string, config?: MermaidConfig): Merma
  * ```
  *
  * @param text - The text defining the graph
- * @param type - The directive to return (default: `null`)
+ * @param type - The directive to return (default: `undefined`)
  * @returns An object or Array representing the directive(s) matched by the input type.
  * If a single directive was found, that directive object will be returned.
  */
 export const detectDirective = function (
   text: string,
-  type: string | RegExp = null
+  type: string | RegExp = undefined
 ): { type?: string; args?: any } | { type?: string; args?: any }[] {
   try {
     const commentWithoutDirectives = new RegExp(
@@ -153,12 +153,12 @@ export const detectDirective = function (
         (type && match[2] && match[2].match(type))
       ) {
         const type = match[1] ? match[1] : match[2];
-        const args = match[3] ? match[3].trim() : match[4] ? JSON.parse(match[4].trim()) : null;
+        const args = match[3] ? match[3].trim() : match[4] ? JSON.parse(match[4].trim()) : undefined;
         result.push({ type, args });
       }
     }
     if (result.length === 0) {
-      result.push({ type: text, args: null });
+      result.push({ type: text, args: undefined });
     }
 
     return result.length === 1 ? result[0] : result;
@@ -167,7 +167,7 @@ export const detectDirective = function (
       `ERROR: ${error.message} - Unable to parse directive
       ${type !== null ? ' type:' + type : ''} based on the text:${text}`
     );
-    return { type: null, args: null };
+    return { type: undefined, args: undefined };
   }
 };
 
@@ -762,11 +762,11 @@ export const calculateTextDimensions: (
 
     const index =
       isNaN(dims[1].height) ||
-      isNaN(dims[1].width) ||
-      isNaN(dims[1].lineHeight) ||
-      (dims[0].height > dims[1].height &&
-        dims[0].width > dims[1].width &&
-        dims[0].lineHeight > dims[1].lineHeight)
+        isNaN(dims[1].width) ||
+        isNaN(dims[1].lineHeight) ||
+        (dims[0].height > dims[1].height &&
+          dims[0].width > dims[1].width &&
+          dims[0].lineHeight > dims[1].lineHeight)
         ? 0
         : 1;
     return dims[index];

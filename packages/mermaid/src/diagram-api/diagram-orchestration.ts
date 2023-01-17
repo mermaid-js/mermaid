@@ -141,12 +141,12 @@ export const addDiagrams = () => {
         parse: () => {
           throw new Error(
             'Diagrams beginning with --- are not valid. ' +
-              'If you were trying to use a YAML front-matter, please ensure that ' +
-              "you've correctly opened and closed the YAML front-matter with unindented `---` blocks"
+            'If you were trying to use a YAML front-matter, please ensure that ' +
+            "you've correctly opened and closed the YAML front-matter with unindented `---` blocks"
           );
         },
       },
-      init: () => null, // no op
+      init: () => undefined, // no op
     },
     (text) => {
       return text.toLowerCase().trimStart().startsWith('---');

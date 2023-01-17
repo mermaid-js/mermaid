@@ -196,24 +196,24 @@ const extract = (_doc) => {
 /**
  * Function called by parser when a node definition has been found.
  *
- * @param {null | string} id
- * @param {null | string} type
- * @param {null | string} doc
- * @param {null | string | string[]} descr - description for the state. Can be a string or a list or strings
- * @param {null | string} note
- * @param {null | string | string[]} classes - class styles to apply to this state. Can be a string (1 style) or an array of styles. If it's just 1 class, convert it to an array of that 1 class.
- * @param {null | string | string[]} styles - styles to apply to this state. Can be a string (1 style) or an array of styles. If it's just 1 style, convert it to an array of that 1 style.
- * @param {null | string | string[]} textStyles - text styles to apply to this state. Can be a string (1 text test) or an array of text styles. If it's just 1 text style, convert it to an array of that 1 text style.
+ * @param {undefined | string} id
+ * @param {undefined | string} type
+ * @param {undefined | string} doc
+ * @param {undefined | string | string[]} descr - description for the state. Can be a string or a list or strings
+ * @param {undefined | string} note
+ * @param {undefined | string | string[]} classes - class styles to apply to this state. Can be a string (1 style) or an array of styles. If it's just 1 class, convert it to an array of that 1 class.
+ * @param {undefined | string | string[]} styles - styles to apply to this state. Can be a string (1 style) or an array of styles. If it's just 1 style, convert it to an array of that 1 style.
+ * @param {undefined | string | string[]} textStyles - text styles to apply to this state. Can be a string (1 text test) or an array of text styles. If it's just 1 text style, convert it to an array of that 1 text style.
  */
 export const addState = function (
   id,
   type = DEFAULT_STATE_TYPE,
-  doc = null,
-  descr = null,
-  note = null,
-  classes = null,
-  styles = null,
-  textStyles = null
+  doc = undefined,
+  descr = undefined,
+  note = undefined,
+  classes = undefined,
+  styles = undefined,
+  textStyles = undefined
 ) {
   // add the state if needed
   if (currentDocument.states[id] === undefined) {

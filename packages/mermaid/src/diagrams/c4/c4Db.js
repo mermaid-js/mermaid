@@ -12,8 +12,8 @@ let boundarys = [
     alias: 'global',
     label: { text: 'global' },
     type: { text: 'global' },
-    tags: null,
-    link: null,
+    tags: undefined,
+    link: undefined,
     parentBoundary: '',
   },
 ];
@@ -728,8 +728,8 @@ export const clear = function () {
       alias: 'global',
       label: { text: 'global' },
       type: { text: 'global' },
-      tags: null,
-      link: null,
+      tags: undefined,
+      link: undefined,
       parentBoundary: '',
     },
   ];

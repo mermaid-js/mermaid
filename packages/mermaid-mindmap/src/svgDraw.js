@@ -19,7 +19,7 @@ function wrap(text, width) {
       y = text.attr('y'),
       dy = parseFloat(text.attr('dy')),
       tspan = text
-        .text(null)
+        .text(undefined)
         .append('tspan')
         .attr('x', 0)
         .attr('y', y)

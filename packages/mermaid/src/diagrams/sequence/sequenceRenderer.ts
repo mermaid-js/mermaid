@@ -27,7 +27,7 @@ export const bounds = {
     getHeight: function () {
       return (
         Math.max.apply(
-          null,
+          undefined,
           this.actors.length === 0 ? [0] : this.actors.map((actor) => actor.height || 0)
         ) +
         (this.loops.length === 0
@@ -370,8 +370,7 @@ const drawMessage = function (diagram, msgModel, lineStartY: number, diagObj: Di
         .append('path')
         .attr(
           'd',
-          `M  ${startx},${lineStartY} H ${startx + Math.max(conf.width / 2, textWidth / 2)} V ${
-            lineStartY + 25
+          `M  ${startx},${lineStartY} H ${startx + Math.max(conf.width / 2, textWidth / 2)} V ${lineStartY + 25
           } H ${startx}`
         );
     } else {
@@ -380,21 +379,21 @@ const drawMessage = function (diagram, msgModel, lineStartY: number, diagObj: Di
         .attr(
           'd',
           'M ' +
-            startx +
-            ',' +
-            lineStartY +
-            ' C ' +
-            (startx + 60) +
-            ',' +
-            (lineStartY - 10) +
-            ' ' +
-            (startx + 60) +
-            ',' +
-            (lineStartY + 30) +
-            ' ' +
-            startx +
-            ',' +
-            (lineStartY + 20)
+          startx +
+          ',' +
+          lineStartY +
+          ' C ' +
+          (startx + 60) +
+          ',' +
+          (lineStartY - 10) +
+          ' ' +
+          (startx + 60) +
+          ',' +
+          (lineStartY + 30) +
+          ' ' +
+          startx +
+          ',' +
+          (lineStartY + 20)
         );
     }
   } else {
@@ -894,13 +893,13 @@ export const draw = function (_text: string, id: string, _version: string, diagO
   diagram.attr(
     'viewBox',
     box.startx -
-      conf.diagramMarginX +
-      ' -' +
-      (conf.diagramMarginY + extraVertForTitle) +
-      ' ' +
-      width +
-      ' ' +
-      (height + extraVertForTitle)
+    conf.diagramMarginX +
+    ' -' +
+    (conf.diagramMarginY + extraVertForTitle) +
+    ' ' +
+    width +
+    ' ' +
+    (height + extraVertForTitle)
   );
 
   log.debug(`models:`, bounds.models);
@@ -1110,17 +1109,17 @@ const buildNoteModel = function (msg, actors, diagObj) {
     noteModel.width = shouldWrap
       ? Math.max(conf.width, textDimensions.width)
       : Math.max(
-          actors[msg.from].width / 2 + actors[msg.to].width / 2,
-          textDimensions.width + 2 * conf.noteMargin
-        );
+        actors[msg.from].width / 2 + actors[msg.to].width / 2,
+        textDimensions.width + 2 * conf.noteMargin
+      );
     noteModel.startx = startx + (actors[msg.from].width + conf.actorMargin) / 2;
   } else if (msg.placement === diagObj.db.PLACEMENT.LEFTOF) {
     noteModel.width = shouldWrap
       ? Math.max(conf.width, textDimensions.width + 2 * conf.noteMargin)
       : Math.max(
-          actors[msg.from].width / 2 + actors[msg.to].width / 2,
-          textDimensions.width + 2 * conf.noteMargin
-        );
+        actors[msg.from].width / 2 + actors[msg.to].width / 2,
+        textDimensions.width + 2 * conf.noteMargin
+      );
     noteModel.startx = startx - noteModel.width + (actors[msg.from].width - conf.actorMargin) / 2;
   } else if (msg.to === msg.from) {
     textDimensions = utils.calculateTextDimensions(
@@ -1203,8 +1202,8 @@ const buildMessageModel = function (msg, actors, diagObj) {
     message: msg.message,
     type: msg.type,
     wrap: msg.wrap,
-    fromBounds: Math.min.apply(null, allBounds),
-    toBounds: Math.max.apply(null, allBounds),
+    fromBounds: Math.min.apply(undefined, allBounds),
+    toBounds: Math.max.apply(undefined, allBounds),
   };
 };
 

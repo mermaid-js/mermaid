@@ -434,7 +434,7 @@ export const draw = function (text, id, version, diagObj) {
     }
 
     const excludeRanges = [];
-    let range = null;
+    let range = undefined;
     let d = moment(minTime);
     while (d.valueOf() <= maxTime) {
       if (diagObj.db.isInvalidDate(d, dateFormat, excludes, includes)) {
@@ -449,7 +449,7 @@ export const draw = function (text, id, version, diagObj) {
       } else {
         if (range) {
           excludeRanges.push(range);
-          range = null;
+          range = undefined;
         }
       }
       d.add(1, 'd');

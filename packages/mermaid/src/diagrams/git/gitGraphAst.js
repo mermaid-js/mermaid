@@ -17,7 +17,7 @@ import {
 let mainBranchName = getConfig().gitGraph.mainBranchName;
 let mainBranchOrder = getConfig().gitGraph.mainBranchOrder;
 let commits = {};
-let head = null;
+let head = undefined;
 let branchesConfig = {};
 branchesConfig[mainBranchName] = { name: mainBranchName, order: mainBranchOrder };
 let branches = {};
@@ -120,7 +120,7 @@ export const commit = function (msg, id, type, tag) {
     seq: seq++,
     type: type ? type : commitType.NORMAL,
     tag: tag ? tag : '',
-    parents: head == null ? [] : [head.id],
+    parents: head == undefined ? [] : [head.id],
     branch: curBranch,
   };
   head = commit;
@@ -246,7 +246,7 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
     id: custom_id ? custom_id : seq + '-' + getId(),
     message: 'merged branch ' + otherBranch + ' into ' + curBranch,
     seq: seq++,
-    parents: [head == null ? null : head.id, branches[otherBranch]],
+    parents: [head?.id, branches[otherBranch]],
     branch: curBranch,
     type: commitType.MERGE,
     customType: override_type,
@@ -330,7 +330,7 @@ export const cherryPick = function (sourceId, targetId, tag) {
       id: seq + '-' + getId(),
       message: 'cherry-picked ' + sourceCommit + ' into ' + curBranch,
       seq: seq++,
-      parents: [head == null ? null : head.id, sourceCommit.id],
+      parents: [head?.id, sourceCommit.id],
       branch: curBranch,
       type: commitType.CHERRY_PICK,
       tag: tag ?? 'cherry-pick:' + sourceCommit.id,
@@ -443,7 +443,7 @@ export const prettyPrint = function () {
 
 export const clear = function () {
   commits = {};
-  head = null;
+  head = undefined;
   let mainBranch = getConfig().gitGraph.mainBranchName;
   let mainBranchOrder = getConfig().gitGraph.mainBranchOrder;
   branches = {};

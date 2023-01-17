@@ -123,8 +123,8 @@ describe('mermaidAPI', function () {
       const result = encodeEntities(text);
       expect(result).toEqual(
         'style this; is ; everything :something#not-nothing; and this too \n' +
-          'classDef this; is ; everything :something#not-nothing; and this too \n' +
-          'Hello ﬂ°there¶ß ﬂ°andHere¶ßﬂ°°77653¶ß'
+        'classDef this; is ; everything :something#not-nothing; and this too \n' +
+        'Hello ﬂ°there¶ß ﬂ°andHere¶ßﬂ°°77653¶ß'
       );
     });
   });
@@ -287,7 +287,7 @@ describe('mermaidAPI', function () {
     };
 
     it('gets the cssStyles from the theme', () => {
-      const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', null);
+      const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', undefined);
       expect(styles).toMatch(/^\ndefault(.*)/);
     });
     it('gets the fontFamily from the config', () => {
@@ -663,8 +663,8 @@ describe('mermaidAPI', function () {
       `)
       ).toThrow(
         'Diagrams beginning with --- are not valid. ' +
-          'If you were trying to use a YAML front-matter, please ensure that ' +
-          "you've correctly opened and closed the YAML front-matter with unindented `---` blocks"
+        'If you were trying to use a YAML front-matter, please ensure that ' +
+        "you've correctly opened and closed the YAML front-matter with unindented `---` blocks"
       );
     });
     it('does not throw for a valid definition', function () {

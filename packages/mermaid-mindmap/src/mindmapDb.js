@@ -17,11 +17,11 @@ const getParent = function (level) {
     }
   }
   // No parent found
-  return null;
+  return undefined;
 };
 
 export const getMindmap = () => {
-  return nodes.length > 0 ? nodes[0] : null;
+  return nodes.length > 0 ? nodes[0] : undefined;
 };
 export const addNode = (level, id, descr, type) => {
   log.info('addNode', level, id, descr, type);

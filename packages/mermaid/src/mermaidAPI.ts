@@ -166,7 +166,7 @@ export const cssImportantStyles = (
 export const createCssStyles = (
   config: MermaidConfig,
   graphType: string,
-  classDefs: Record<string, DiagramStyleClassDef> | null | undefined = {}
+  classDefs: Record<string, DiagramStyleClassDef> | undefined = {}
 ): string => {
   let cssStyles = '';
 

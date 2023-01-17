@@ -78,7 +78,7 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   rectElem.attr('height', rectData.height);
   rectElem.attr('rx', rectData.rx);
   rectElem.attr('ry', rectData.ry);
-  if (links != null) {
+  if (links != undefined) {
     var linkY = 20;
     for (let key in links) {
       var linkElem = g.append('a');
@@ -140,14 +140,14 @@ export const popdownMenu = function (popid) {
 
 const popupMenuUpFunc = function (popupId) {
   var pu = document.getElementById(popupId);
-  if (pu != null) {
+  if (pu !== null) {
     pu.style.display = 'block';
   }
 };
 
 const popupMenuDownFunc = function (popupId) {
   var pu = document.getElementById(popupId);
-  if (pu != null) {
+  if (pu !== null) {
     pu.style.display = 'none';
   }
 };
@@ -360,7 +360,7 @@ const drawActorTypeParticipant = function (elem, actor, conf) {
     g = boxpluslineGroup.append('g');
     actor.actorCnt = actorCnt;
 
-    if (actor.links != null) {
+    if (actor.links != undefined) {
       g.attr('id', 'root-' + actorCnt);
       addPopupInteraction('#root-' + actorCnt, actorCnt);
     }
@@ -368,8 +368,8 @@ const drawActorTypeParticipant = function (elem, actor, conf) {
 
   const rect = getNoteRect();
   var cssclass = 'actor';
-  if (actor.properties != null && actor.properties['class']) {
-    cssclass = actor.properties['class'];
+  if (actor?.properties?.class) {
+    cssclass = actor.properties.class;
   } else {
     rect.fill = '#eaeaea';
   }
@@ -383,7 +383,7 @@ const drawActorTypeParticipant = function (elem, actor, conf) {
   const rectElem = drawRect(g, rect);
   actor.rectData = rect;
 
-  if (actor.properties != null && actor.properties['icon']) {
+  if (actor.properties?.icon) {
     const iconSrc = actor.properties['icon'].trim();
     if (iconSrc.charAt(0) === '@') {
       drawEmbeddedImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc.substr(1));

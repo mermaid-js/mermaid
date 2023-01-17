@@ -69,6 +69,7 @@
     "unicorn/no-abusive-eslint-disable": "error",
     "unicorn/no-array-push-push": "error",
     "unicorn/no-for-loop": "error",
+    "unicorn/no-null": "error",
     "unicorn/no-instanceof-array": "error",
     "unicorn/no-typeof-undefined": "error",
     "unicorn/no-unnecessary-await": "error",

@@ -176,7 +176,7 @@ const checkTaskDates = function (task, dateFormat, excludes, includes) {
 
 const fixTaskDates = function (startTime, endTime, dateFormat, excludes, includes) {
   let invalid = false;
-  let renderEndTime = null;
+  let renderEndTime = undefined;
   while (startTime <= endTime) {
     if (!invalid) {
       renderEndTime = endTime.toDate();
@@ -199,7 +199,7 @@ const getStartDate = function (prevTime, dateFormat, str) {
 
   if (afterStatement !== null) {
     // check all after ids and take the latest
-    let latestEndingTask = null;
+    let latestEndingTask = undefined;
     afterStatement[1].split(' ').forEach(function (id) {
       let task = findTaskById(id);
       if (task !== undefined) {
@@ -419,7 +419,7 @@ export const addTask = function (descr, data) {
     type: currentSection,
     processed: false,
     manualEndTime: false,
-    renderEndTime: null,
+    renderEndTime: undefined,
     raw: { data: data },
     task: descr,
     classes: [],

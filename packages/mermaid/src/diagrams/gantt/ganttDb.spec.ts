@@ -191,7 +191,7 @@ describe('when using the ganttDb', function () {
 
     expect(tasks[3].startTime).toEqual(moment('2019-02-01', 'YYYY-MM-DD').toDate());
     expect(tasks[3].endTime).toEqual(moment('2019-02-20', 'YYYY-MM-DD').toDate());
-    expect(tasks[3].renderEndTime).toBeNull(); // Fixed end
+    expect(tasks[3].renderEndTime).toBeUndefined(); // Fixed end
     expect(tasks[3].id).toEqual('id4');
     expect(tasks[3].task).toEqual('test4');
 
@@ -360,13 +360,13 @@ describe('when using the ganttDb', function () {
 
     expect(tasks[0].startTime).toEqual(moment('2019-09-30', 'YYYY-MM-DD').toDate());
     expect(tasks[0].endTime).toEqual(moment('2019-10-11', 'YYYY-MM-DD').toDate());
-    expect(tasks[1].renderEndTime).toBeNull(); // Fixed end
+    expect(tasks[1].renderEndTime).toBeUndefined(); // Fixed end
     expect(tasks[0].id).toEqual('id1');
     expect(tasks[0].task).toEqual('test1');
 
     expect(tasks[1].startTime).toEqual(moment('2019-10-11', 'YYYY-MM-DD').toDate());
     expect(tasks[1].endTime).toEqual(moment('2019-10-31', 'YYYY-MM-DD').toDate());
-    expect(tasks[1].renderEndTime).toBeNull(); // Fixed end
+    expect(tasks[1].renderEndTime).toBeUndefined(); // Fixed end
     expect(tasks[1].id).toEqual('id2');
     expect(tasks[1].task).toEqual('test2');
   });
@@ -387,7 +387,7 @@ describe('when using the ganttDb', function () {
 
       expect(tasks[1].startTime).toEqual(moment('2019-02-01', 'YYYY-MM-DD').toDate());
       expect(tasks[1].endTime).toEqual(moment('2019-02-04', 'YYYY-MM-DD').toDate());
-      expect(tasks[1].renderEndTime).toBeNull(); // Fixed end
+      expect(tasks[1].renderEndTime).toBeUndefined(); // Fixed end
       expect(tasks[1].manualEndTime).toBeTruthy();
       expect(tasks[1].id).toEqual('id2');
       expect(tasks[1].task).toEqual('test2');

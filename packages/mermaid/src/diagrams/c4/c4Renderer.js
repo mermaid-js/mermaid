@@ -347,7 +347,7 @@ let getIntersectPoint = function (fromNode, endPoint) {
 
   let fromDYX = fromNode.height / fromNode.width;
 
-  let returnPoint = null;
+  let returnPoint = undefined;
 
   if (y1 == y2 && x1 < x2) {
     returnPoint = new Point(x1 + fromNode.width, fromCenterY);
@@ -599,7 +599,7 @@ export const draw = function (_text, id, _version, diagObj) {
   c4ShapeInRow = db.getC4ShapeInRow();
   c4BoundaryInRow = db.getC4BoundaryInRow();
 
-  log.debug(`C:${JSON.stringify(conf, null, 2)}`);
+  log.debug(`C:${JSON.stringify(conf, undefined, 2)}`);
 
   const diagram =
     securityLevel === 'sandbox' ? root.select(`[id="${id}"]`) : select(`[id="${id}"]`);

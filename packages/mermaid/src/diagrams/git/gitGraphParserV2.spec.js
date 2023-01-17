@@ -851,15 +851,9 @@ describe('when parsing a gitGraph', function () {
     merge test1
     `;
 
-    try {
-      parser.parse(str);
-      // Fail test if above expression doesn't throw anything.
-      expect(true).toBe(false);
-    } catch (e) {
-      expect(e.message).toBe(
-        'Incorrect usage of "merge". Branch to be merged (test1) has no commits'
-      );
-    }
+    expect(() => parser.parse(str)).to.throw(
+      'Incorrect usage of "merge". Branch to be merged (test1) has no commits'
+    );
   });
   describe('accessibility', () => {
     it('should handle a title and a description (accDescr)', () => {

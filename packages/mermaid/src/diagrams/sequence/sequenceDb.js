@@ -26,16 +26,16 @@ export const parseDirective = function (statement, context, type) {
 export const addActor = function (id, name, description, type) {
   // Don't allow description nulling
   const old = actors[id];
-  if (old && name === old.name && description == null) {
+  if (old && name === old.name && description == undefined) {
     return;
   }
 
   // Don't allow null descriptions, either
-  if (description == null || description.text == null) {
-    description = { text: name, wrap: null, type };
+  if (description == undefined || description.text == undefined) {
+    description = { text: name, wrap: undefined, type };
   }
-  if (type == null || description.text == null) {
-    description = { text: name, wrap: null, type };
+  if (type == undefined || description.text == undefined) {
+    description = { text: name, wrap: undefined, type };
   }
 
   actors[id] = {
@@ -45,8 +45,8 @@ export const addActor = function (id, name, description, type) {
     prevActor: prevActor,
     links: {},
     properties: {},
-    actorCnt: null,
-    rectData: null,
+    actorCnt: undefined,
+    rectData: undefined,
     type: type || 'participant',
   };
   if (prevActor && actors[prevActor]) {
@@ -274,13 +274,10 @@ export const addALink = function (actorId, text) {
  * @param {any} links
  */
 function insertLinks(actor, links) {
-  if (actor.links == null) {
-    actor.links = links;
-  } else {
-    for (let key in links) {
-      actor.links[key] = links[key];
-    }
-  }
+  actor.links = {
+    ...actor.links,
+    ...links,
+  };
 }
 
 export const addProperties = function (actorId, text) {
@@ -302,7 +299,7 @@ export const addProperties = function (actorId, text) {
  * @param {any} properties
  */
 function insertProperties(actor, properties) {
-  if (actor.properties == null) {
+  if (actor.properties == undefined) {
     actor.properties = properties;
   } else {
     for (let key in properties) {

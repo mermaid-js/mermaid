@@ -1,4 +1,4 @@
-const warning = () => null;
+const warning = () => undefined;
 
 export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 

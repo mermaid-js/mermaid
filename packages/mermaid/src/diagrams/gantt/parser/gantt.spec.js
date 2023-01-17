@@ -125,6 +125,7 @@ describe('when parsing a gantt diagram it', function () {
       'click cl2 call ganttTestClick()\n';
 
     expect(parserFnConstructor(str)).not.toThrow();
+    // eslint-disable-next-line unicorn/no-null
     expect(ganttDb.setClickEvent).toHaveBeenCalledWith('cl2', 'ganttTestClick', null);
   });
   it('should parse callback specifier with arbitrary number of args', function () {
