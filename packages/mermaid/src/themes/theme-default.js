@@ -147,6 +147,11 @@ class Theme {
       this['cScaleInv' + i] = this['cScaleInv' + i] || adjust(this['cScale' + i], { h: 180 });
     }
 
+    for (let i = 0; i < 5; i++) {
+      this['surface' + i] = this['surface' + i] || adjust(this.mainBkg, { h: 30, l: -(5 + i * 5) });
+      this['surfacePeer' + i] =
+        this['surfacePeer' + i] || adjust(this.mainBkg, { h: 30, l: -(7 + i * 5) });
+    }
     // Setup the label color for the set
     this.scaleLabelColor =
       this.scaleLabelColor !== 'calculated' && this.scaleLabelColor

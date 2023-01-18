@@ -155,16 +155,16 @@ Messages can be of two displayed either solid or with a dotted line.
 
 There are six types of arrows currently supported:
 
-| Type | Description                                      |
-| ---- | ------------------------------------------------ |
-| ->   | Solid line without arrow                         |
-| -->  | Dotted line without arrow                        |
-| ->>  | Solid line with arrowhead                        |
-| -->> | Dotted line with arrowhead                       |
-| -x   | Solid line with a cross at the end               |
-| --x  | Dotted line with a cross at the end.             |
-| -)   | Solid line with an open arrow at the end (async) |
-| --)  | Dotted line with a open arrow at the end (async) |
+| Type   | Description                                      |
+| ------ | ------------------------------------------------ |
+| `->`   | Solid line without arrow                         |
+| `-->`  | Dotted line without arrow                        |
+| `->>`  | Solid line with arrowhead                        |
+| `-->>` | Dotted line with arrowhead                       |
+| `-x`   | Solid line with a cross at the end               |
+| `--x`  | Dotted line with a cross at the end.             |
+| `-)`   | Solid line with an open arrow at the end (async) |
+| `--)`  | Dotted line with a open arrow at the end (async) |
 
 ## Activations
 
@@ -249,6 +249,20 @@ sequenceDiagram
 sequenceDiagram
     Alice->John: Hello John, how are you?
     Note over Alice,John: A typical interaction
+```
+
+It is also possible to add a line break (applies to text input in general):
+
+```mermaid-example
+sequenceDiagram
+    Alice->John: Hello John, how are you?
+    Note over Alice,John: A typical interaction<br/>But now in two lines
+```
+
+```mermaid
+sequenceDiagram
+    Alice->John: Hello John, how are you?
+    Note over Alice,John: A typical interaction<br/>But now in two lines
 ```
 
 ## Loops

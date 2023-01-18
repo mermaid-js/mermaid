@@ -247,12 +247,13 @@ const config: Partial<MermaidConfig> = {
     /**
      * | Parameter       | Description | Type    | Required | Values                  |
      * | --------------- | ----------- | ------- | -------- | ----------------------- |
-     * | defaultRenderer | See notes   | boolean | 4        | dagre-d3, dagre-wrapper |
+     * | defaultRenderer | See notes   | boolean | 4        | dagre-d3, dagre-wrapper, elk |
      *
      * **Notes:**
      *
      * Decides which rendering engine that is to be used for the rendering. Legal values are:
-     * dagre-d3 dagre-wrapper - wrapper for dagre implemented in mermaid
+     * dagre-d3 dagre-wrapper - wrapper for dagre implemented in mermaid, elk for layout using
+     * elkjs
      *
      * Default value: 'dagre-wrapper'
      */

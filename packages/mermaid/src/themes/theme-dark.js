@@ -196,6 +196,13 @@ class Theme {
       this['cScalePeer' + i] = this['cScalePeer' + i] || lighten(this['cScale' + i], 10);
     }
 
+    for (let i = 0; i < 5; i++) {
+      this['surface' + i] =
+        this['surface' + i] || adjust(this.mainBkg, { h: 30, s: -30, l: -(-10 + i * 4) });
+      this['surfacePeer' + i] =
+        this['surfacePeer' + i] || adjust(this.mainBkg, { h: 30, s: -30, l: -(-7 + i * 4) });
+    }
+
     // Setup teh label color for the set
     this.scaleLabelColor = this.scaleLabelColor || (this.darkMode ? 'black' : this.labelTextColor);
 
