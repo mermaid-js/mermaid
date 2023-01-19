@@ -347,4 +347,16 @@ root
     expect(child.children.length).toEqual(2);
     expect(child.children[1].nodeId).toEqual('b');
   });
+  it('MMP-23 Rows with only spaces should not interfere', function () {
+    let str = 'mindmap\nroot\n A\n \n\n B';
+    mindmap.parse(str);
+    const mm = mindmap.yy.getMindmap();
+    expect(mm.nodeId).toEqual('root');
+    expect(mm.children.length).toEqual(2);
+
+    const child = mm.children[0];
+    expect(child.nodeId).toEqual('A');
+    const child2 = mm.children[1];
+    expect(child2.nodeId).toEqual('B');
+  });
 });

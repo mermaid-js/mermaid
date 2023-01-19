@@ -25,6 +25,7 @@
 <CLASS>\n				   { this.popState();}
 // [\s]*"::icon("   { this.begin('ICON'); }
 "::icon("   { yy.getLogger().trace('Begin icon');this.begin('ICON'); }
+[\s]+[\n]     {yy.getLogger().trace('SPACELINE');return 'SPACELINE'                 /* skip all whitespace */    ;}
 [\n]+               return 'NL';
 <ICON>[^\)]+			 { return 'ICON'; }
 <ICON>\)				   {yy.getLogger().trace('end icon');this.popState();}
@@ -72,6 +73,7 @@ start
 stop
   : NL {yy.getLogger().trace('Stop NL ');}
   | EOF {yy.getLogger().trace('Stop EOF ');}
+  | SPACELINE
   | stop NL {yy.getLogger().trace('Stop NL2 ');}
   | stop EOF {yy.getLogger().trace('Stop EOF2 ');}
   ;
@@ -81,9 +83,10 @@ document
 	;
 
 statement
-	: SPACELIST node       { yy.getLogger().trace('Node: ',$2.id);yy.addNode($1.length, $2.id, $2.descr, $2.type);  }
+	: SPACELIST node       { yy.getLogger().info('Node: ',$2.id);yy.addNode($1.length, $2.id, $2.descr, $2.type);  }
 	| SPACELIST ICON       { yy.getLogger().trace('Icon: ',$2);yy.decorateNode({icon: $2}); }
 	| SPACELIST CLASS      { yy.decorateNode({class: $2}); }
+  | SPACELINE { yy.getLogger().trace('SPACELIST');}
 	| node					       { yy.getLogger().trace('Node: ',$1.id);yy.addNode(0, $1.id, $1.descr, $1.type);  }
 	| ICON                 { yy.decorateNode({icon: $1}); }
 	| CLASS                { yy.decorateNode({class: $1}); }
