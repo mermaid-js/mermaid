@@ -314,6 +314,7 @@ export interface TimelineDiagramConfig extends BaseDiagramConfig {
   actorColours?: string[];
   sectionFills?: string[];
   sectionColours?: string[];
+  disableMulticolor?: boolean;
 }
 
 export interface GanttDiagramConfig extends BaseDiagramConfig {

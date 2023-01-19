@@ -7,6 +7,7 @@ export interface InjectUtils {
   _sanitizeText: any;
   _setupGraphViewbox: any;
   _commonDb: any;
+  _parseDirective: any;
 }
 
 /**
@@ -31,7 +32,8 @@ export interface DiagramDefinition {
     _getConfig: InjectUtils['_getConfig'],
     _sanitizeText: InjectUtils['_sanitizeText'],
     _setupGraphViewbox: InjectUtils['_setupGraphViewbox'],
-    _commonDb: InjectUtils['_commonDb']
+    _commonDb: InjectUtils['_commonDb'],
+    _parseDirective: InjectUtils['_parseDirective'],
   ) => void;
 }
 

@@ -17,7 +17,8 @@ export const draw = function (text, id, version, diagObj) {
   //1. Fetch the configuration
   const conf = getConfig();
   const LEFT_MARGIN = conf.leftMargin?conf.leftMargin:50;
-
+  //log conf
+  log.info('conf', conf);
   //2. Clear the diagram db before parsing
   diagObj.db.clear();
 

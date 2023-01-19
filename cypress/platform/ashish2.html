@@ -55,7 +55,7 @@
   </head>
   <body>
     <div>Security check</div>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
  timeline
         title My day
         section section with no tasks
@@ -71,7 +71,7 @@
           I am a big big big tasks
           I am not so big tasks
     </pre>
-     <pre id="diagram" class="mermaid">
+     <pre id="diagram" class="mermaid2">
  timeline
         title England's History Timeline
         section Stone Age
@@ -85,21 +85,7 @@
 
     </pre>
     <pre id="diagram" class="mermaid">
- timeline
-        title History of Social Media Platform
-        section Rise of Social Media
-          2002 : LinkedIn
-          2004 : Facebook : Google : Pixar
-          2005 : Youtube
-          2006 : Twitter
-          2007 : Tumblr
-          2008s : Instagram
-          2010 : Pinterest
-    </pre>
-    <pre id="diagram" class="mermaid">
----
-timeline:disableMulticolor: true
----
+      %%{init: { 'logLevel': 'debug', 'theme': 'default', 'timeline': {'disableMulticolor':false} } }%%
  timeline
         title History of Social Media Platform
           2002 : LinkedIn
@@ -111,6 +97,22 @@ timeline:disableMulticolor: true
           2010 : Pinterest
     </pre>
     <pre id="diagram" class="mermaid">
+      %%{init: { 'logLevel': 'debug', 'theme': 'default', 'themeVariables': {
+              'cScale0': '#ffffff',
+              'cScale1': '#00ff00',
+              'cScale2': '#0000ff',
+              } } }%%
+ timeline
+        title History of Social Media Platform
+          2002 : LinkedIn
+          2004 : Facebook : Google : Pixar
+          2005 : Youtube
+          2006 : Twitter
+          2007 : Tumblr
+          2008s : Instagram
+          2010 : Pinterest
+    </pre>
+    <pre id="diagram" class="mermaid2">
  timeline
         title History of Social Media Platform
           2002 : LinkedIn

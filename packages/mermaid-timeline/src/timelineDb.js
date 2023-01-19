@@ -1,4 +1,4 @@
-import { getCommonDb as _getCommonDb,log  } from './mermaidUtils';
+import { getCommonDb as _getCommonDb, parseDirective as _parseDirective ,log  } from './mermaidUtils';
 
 let currentSection = '';
 let currentTaskId = 0;
@@ -8,6 +8,10 @@ const tasks = [];
 const rawTasks = [];
 
 export const getCommonDb = _getCommonDb;
+
+export const parseDirective = ( statement, context, type) => {
+  _parseDirective(this, statement, context, type);
+};
 
 export const clear = function () {
   sections.length = 0;
@@ -79,14 +83,14 @@ const compileTasks = function () {
   };
 
   let allProcessed = true;
-  for (let i = 0; i < rawTasks.length; i++) {
+  for (const [i, rawTask] of rawTasks.entries()) {
     compileTask(i);
 
-    allProcessed = allProcessed && rawTasks[i].processed;
+    allProcessed = allProcessed && rawTask.processed;
   }
   return allProcessed;
 };
-
+log.info('456 parseDirective',parseDirective);
 export default {
   clear,
   getCommonDb,
@@ -96,5 +100,6 @@ export default {
   addTask,
   addTaskOrg,
   addEvent,
+  parseDirective
 };
 

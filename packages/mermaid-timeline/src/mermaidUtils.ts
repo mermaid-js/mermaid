@@ -23,7 +23,10 @@ export const log: Record<keyof typeof LEVELS, typeof console.log> = {
 export let setLogLevel: (level: keyof typeof LEVELS | number | string) => void;
 export let getConfig: () => object;
 export let sanitizeText: (str: string) => string;
-export const getCommonDb=() => localCommonDb;
+export const getCommonDb = () => localCommonDb;
+export let parseDirective = (p: any, statement: string, context: string, type: string) => {
+  return;
+}
 /**
  * Placeholder for the real function that will be injected by mermaid.
  */
@@ -52,9 +55,11 @@ export const injectUtils = (
   _getConfig: any,
   _sanitizeText: any,
   _setupGraphViewbox: any,
-  _commonDb: any
+  _commonDb: any,
+  _parseDirective: any
 ) => {
   _log.info('Mermaid utils injected into timeline-diagram');
+  _log.info('123 ' , _parseDirective);
   log.trace = _log.trace;
   log.debug = _log.debug;
   log.info = _log.info;
@@ -66,5 +71,6 @@ export const injectUtils = (
   sanitizeText = _sanitizeText;
   setupGraphViewbox = _setupGraphViewbox;
   localCommonDb = _commonDb;
+  parseDirective = _parseDirective;
 
 };

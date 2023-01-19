@@ -984,6 +984,8 @@ const config: Partial<MermaidConfig> = {
      */
     useMaxWidth: true,
 
+
+
     /**
      * | Parameter   | Description                       | Type | Required | Values      |
      * | ----------- | --------------------------------- | ---- | -------- | ----------- |
@@ -1009,6 +1011,7 @@ const config: Partial<MermaidConfig> = {
 
     sectionFills: ['#191970', '#8B008B', '#4B0082', '#2F4F4F', '#800000', '#8B4513', '#00008B'],
     sectionColours: ['#fff'],
+    disableMulticolor: false,
   },
   class: {
     /**
