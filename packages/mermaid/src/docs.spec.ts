@@ -7,13 +7,15 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
+const originalFilename = 'example-input-filename.md';
+
 describe('docs.mts', () => {
   describe('transformMarkdownAst', () => {
     describe('checks each AST node', () => {
       it('does no transformation if there are no code blocks', async () => {
         const contents = 'Markdown file contents\n';
         const result = (
-          await remarkBuilder().use(transformMarkdownAst).process(contents)
+          await remarkBuilder().use(transformMarkdownAst, { originalFilename }).process(contents)
         ).toString();
         expect(result).toEqual(contents);
       });
@@ -28,7 +30,9 @@ describe('docs.mts', () => {
 
           it('changes the language to "mermaid"', async () => {
             const result = (
-              await remarkBuilder().use(transformMarkdownAst).process(contents)
+              await remarkBuilder()
+                .use(transformMarkdownAst, { originalFilename })
+                .process(contents)
             ).toString();
             expect(result).toEqual(
               beforeCodeLine + '\n' + '```' + 'mermaid' + '\n' + diagram_text + '\n```\n'
@@ -45,7 +49,9 @@ describe('docs.mts', () => {
 
             it('changes the language to "mermaid-example" and adds a copy of the code block with language = "mermaid"', async () => {
               const result = (
-                await remarkBuilder().use(transformMarkdownAst).process(contents)
+                await remarkBuilder()
+                  .use(transformMarkdownAst, { originalFilename })
+                  .process(contents)
               ).toString();
               expect(result).toEqual(
                 beforeCodeLine +
@@ -67,7 +73,7 @@ describe('docs.mts', () => {
             beforeCodeLine + '```' + lang_keyword + '\n' + 'This is the text\n' + '```\n';
 
           const result = (
-            await remarkBuilder().use(transformMarkdownAst).process(contents)
+            await remarkBuilder().use(transformMarkdownAst, { originalFilename }).process(contents)
           ).toString();
           expect(result).toEqual(beforeCodeLine + '\n> **Note**\n' + '> This is the text\n');
         });
