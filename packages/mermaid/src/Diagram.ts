@@ -3,7 +3,8 @@ import { log } from './logger';
 import { getDiagram, registerDiagram } from './diagram-api/diagramAPI';
 import { detectType, getDiagramLoader } from './diagram-api/detectType';
 import { extractFrontMatter } from './diagram-api/frontmatter';
-import { isDetailedError, type DetailedError } from './utils';
+import { isDetailedError } from './utils';
+import type { DetailedError } from './utils';
 
 export type ParseErrorFunction = (err: string | DetailedError, hash?: any) => void;
 

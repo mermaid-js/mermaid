@@ -94,6 +94,9 @@
       // document.querySelector('#diagram').innerHTML = diagram;
       mermaid.render('diagram', diagram, (res) => {
         document.querySelector('#res').innerHTML = res;
+        if (window.Cypress) {
+          window.rendered = true;
+        }
       });
     </script>
   </body>

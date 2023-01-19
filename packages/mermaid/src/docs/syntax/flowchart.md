@@ -669,7 +669,24 @@ flowchart LR
     C -->|Two| E[Result two]
 ```
 
-## Configuration...
+## Configuration
+
+### Renderer
+
+The layout of the diagram is done with the renderer. The default renderer is dagre.
+
+Starting with Mermaid version 9.4, you can use an alternate renderer named elk. The elk renderer is better for larger and/or more complex diagrams.
+
+The _elk_ renderer is an experimenal feature.
+You can change the renderer to elk by adding this directive:
+
+```
+%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
+```
+
+Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
+
+### Width
 
 It is possible to adjust the width of the rendered flowchart.
 

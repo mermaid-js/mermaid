@@ -1,5 +1,6 @@
 import common from '../common/common';
 import { addFunction } from '../../interactionDb';
+import { parseFontSize } from '../../utils';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 
 export const drawRect = function (elem, rectData) {
@@ -156,6 +157,8 @@ export const drawText = function (elem, textData) {
     textHeight = 0;
   const lines = textData.text.split(common.lineBreakRegex);
 
+  const [_textFontSize, _textFontSizePx] = parseFontSize(textData.fontSize);
+
   let textElems = [];
   let dy = 0;
   let yfunc = () => textData.y;
@@ -218,9 +221,9 @@ export const drawText = function (elem, textData) {
     if (
       textData.textMargin !== undefined &&
       textData.textMargin === 0 &&
-      textData.fontSize !== undefined
+      _textFontSize !== undefined
     ) {
-      dy = i * textData.fontSize;
+      dy = i * _textFontSize;
     }
 
     const textElem = elem.append('text');
@@ -235,8 +238,8 @@ export const drawText = function (elem, textData) {
     if (textData.fontFamily !== undefined) {
       textElem.style('font-family', textData.fontFamily);
     }
-    if (textData.fontSize !== undefined) {
-      textElem.style('font-size', textData.fontSize);
+    if (_textFontSizePx !== undefined) {
+      textElem.style('font-size', _textFontSizePx);
     }
     if (textData.fontWeight !== undefined) {
       textElem.style('font-weight', textData.fontWeight);
@@ -840,8 +843,7 @@ const _drawTextCandidateFunc = (function () {
   function byTspan(content, g, x, y, width, height, textAttrs, conf) {
     const { actorFontSize, actorFontFamily, actorFontWeight } = conf;
 
-    let _actorFontSize =
-      actorFontSize && actorFontSize.replace ? actorFontSize.replace('px', '') : actorFontSize;
+    const [_actorFontSize, _actorFontSizePx] = parseFontSize(actorFontSize);
 
     const lines = content.split(common.lineBreakRegex);
     for (let i = 0; i < lines.length; i++) {
@@ -851,7 +853,7 @@ const _drawTextCandidateFunc = (function () {
         .attr('x', x + width / 2)
         .attr('y', y)
         .style('text-anchor', 'middle')
-        .style('font-size', actorFontSize)
+        .style('font-size', _actorFontSizePx)
         .style('font-weight', actorFontWeight)
         .style('font-family', actorFontFamily);
       text

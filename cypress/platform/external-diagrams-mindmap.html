@@ -44,6 +44,9 @@ mindmap
       await mermaid.registerExternalDiagrams([mindmap]);
       await mermaid.initialize({ logLevel: 0 });
       await mermaid.initThrowsErrorsAsync();
+      if (window.Cypress) {
+        window.rendered = true;
+      }
     </script>
   </body>
 </html>

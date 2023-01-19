@@ -5,6 +5,13 @@ function b64ToUtf8(str) {
   return decodeURIComponent(escape(window.atob(str)));
 }
 
+// Adds a rendered flag to window when rendering is done, so cypress can wait for it.
+function markRendered() {
+  if (window.Cypress) {
+    window.rendered = true;
+  }
+}
+
 /**
  * ##contentLoaded Callback function that is called when page is loaded. This functions fetches
  * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the
@@ -39,7 +46,8 @@ const contentLoaded = async function () {
 
     await mermaid2.registerExternalDiagrams([mindmap]);
     mermaid2.initialize(graphObj.mermaid);
-    mermaid2.init();
+    await mermaid2.init();
+    markRendered();
   }
 };
 
@@ -128,6 +136,7 @@ const contentLoadedApi = function () {
       );
     }
   }
+  markRendered();
 };
 
 if (typeof document !== 'undefined') {
