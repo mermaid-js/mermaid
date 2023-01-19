@@ -58,8 +58,7 @@ export const injectUtils = (
   _commonDb: any,
   _parseDirective: any
 ) => {
-  _log.info('Mermaid utils injected into timeline-diagram');
-  _log.info('123 ' , _parseDirective);
+  _log.debug('Mermaid utils injected into timeline-diagram');
   log.trace = _log.trace;
   log.debug = _log.debug;
   log.info = _log.info;

@@ -1,8 +1,6 @@
 // @ts-nocheck TODO: fix file
 import { select } from 'd3';
 import svgDraw from './svgDraw';
-import addSVGAccessibilityFields from '../../accessibility';
-
 import { log, getConfig, setupGraphViewbox } from './mermaidUtils';
 
 export const setConf = function (cnf) {
@@ -17,15 +15,14 @@ export const draw = function (text, id, version, diagObj) {
   //1. Fetch the configuration
   const conf = getConfig();
   const LEFT_MARGIN = conf.leftMargin?conf.leftMargin:50;
-  //log conf
-  log.info('conf', conf);
+
   //2. Clear the diagram db before parsing
   diagObj.db.clear();
 
   //3. Parse the diagram text
   diagObj.parser.parse(text + '\n');
 
-  log.info('timeline', diagObj.db);
+  log.debug('timeline', diagObj.db);
 
   const securityLevel = conf.securityLevel;
   // Handle root and Document for when rendering in sandbox mode
@@ -45,17 +42,14 @@ export const draw = function (text, id, version, diagObj) {
   //4. Fetch the diagram data
   const tasks = diagObj.db.getTasks();
   const title = diagObj.db.getCommonDb().getDiagramTitle();
-
-  //log tasks
-  log.info(tasks);
+  log.debug('task',tasks);
 
   //5. Initialize the diagram
   svgDraw.initGraphics(svg);
 
   // fetch Sections
   const sections = diagObj.db.getSections();
-  // log sections
-  log.info(sections);
+  log.debug('sections', sections);
 
   let maxSectionHeight = 0;
   let maxTaskHeight = 0;
@@ -81,14 +75,14 @@ export const draw = function (text, id, version, diagObj) {
       maxHeight: maxSectionHeight,
     };
     const sectionHeight = svgDraw.getVirtualNodeHeight(svg, sectionNode, conf);
-    log.info('sectionHeight before draw', sectionHeight);
+    log.debug('sectionHeight before draw', sectionHeight);
     maxSectionHeight = Math.max(maxSectionHeight, sectionHeight +20);
   });
 
 //tasks length and maxEventCount
   let maxEventCount = 0;
   let maxEventLineLength = 0;
-  log.info('tasks.length', tasks.length);
+  log.debug('tasks.length', tasks.length);
    //calculate max task height
   // for loop till tasks.length
   for (const [i, task] of tasks.entries()) {
@@ -102,7 +96,7 @@ export const draw = function (text, id, version, diagObj) {
       maxHeight: maxTaskHeight,
     };
     const taskHeight = svgDraw.getVirtualNodeHeight(svg, taskNode, conf);
-    log.info('taskHeight before draw', taskHeight);
+    log.debug('taskHeight before draw', taskHeight);
     maxTaskHeight = Math.max(maxTaskHeight, taskHeight + 20);
 
     //calculate maxEventCount
@@ -126,8 +120,8 @@ export const draw = function (text, id, version, diagObj) {
   }
 
 
-  log.info('maxSectionHeight before draw', maxSectionHeight);
-  log.info('maxTaskHeight before draw', maxTaskHeight);
+  log.debug('maxSectionHeight before draw', maxSectionHeight);
+  log.debug('maxTaskHeight before draw', maxTaskHeight);
 
   if (sections && sections.length > 0) {
     sections.forEach((section) => {
@@ -140,11 +134,10 @@ export const draw = function (text, id, version, diagObj) {
         padding: 20,
         maxHeight: maxSectionHeight,
       };
-      //log section node
-      log.info('sectionNode', sectionNode);
+      log.debug('sectionNode', sectionNode);
       const sectionNodeWrapper = svg.append('g');
       const node = svgDraw.drawNode(sectionNodeWrapper, sectionNode, sectionNumber, conf);
-      log.info('sectionNode output', node);
+      log.debug('sectionNode output', node);
 
       sectionNodeWrapper.attr(
         'transform',
@@ -177,7 +170,7 @@ export const draw = function (text, id, version, diagObj) {
 
 // Get BBox of the diagram
   const box = svg.node().getBBox();
-  log.info('bounds', box);
+  log.debug('bounds', box);
 
   if (title) {
     svg
@@ -223,14 +216,13 @@ export const drawTasks = function (diagram, tasks, sectionColor, masterX, master
       maxHeight: maxTaskHeight,
     };
 
-    //log task node
-    log.info('taskNode', taskNode);
+    log.debug('taskNode', taskNode);
     // create task wrapper
     const taskWrapper = diagram.append('g').attr('class', 'taskWrapper');
     const node = svgDraw.drawNode(taskWrapper, taskNode, sectionColor, conf);
     const taskHeight = node.height;
     //log task height
-    log.info('taskHeight after draw', taskHeight);
+    log.debug('taskHeight after draw', taskHeight);
     taskWrapper.attr(
       'transform',
       `translate(${masterX}, ${masterY})`
@@ -294,7 +286,7 @@ export const drawEvents = function (diagram, events, sectionColor, masterX, mast
     };
 
     //log task node
-    log.info('eventNode', eventNode);
+    log.debug('eventNode', eventNode);
     // create event wrapper
     const eventWrapper = diagram.append('g').attr('class', 'eventWrapper');
     const node = svgDraw.drawNode(eventWrapper, eventNode, sectionColor, conf)

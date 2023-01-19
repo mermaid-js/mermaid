@@ -140,7 +140,7 @@ mermaid.initialize({
 
 let us look at same example, where we have disabled the multiColor option.
 ```mermaid-example
-   %%{init: { 'logLevel': 'debug', 'theme': 'base', 'timeline': {'disableMulticolor': true}}%%
+   %%{init: { 'logLevel': 'debug', 'theme': 'base', 'timeline': {'disableMulticolor': true}}}%%
     timeline
         title History of Social Media Platform
           2002 : LinkedIn
@@ -164,7 +164,7 @@ Now let's override the default values for the `cScale0` to `cScale2` variables:
     %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
               'cScale0': '#ff0000',
               'cScale1': '#00ff00',
-              'cScale2': '#0000ff',
+              'cScale2': '#0000ff'
        } } }%%
        timeline
         title History of Social Media Platform

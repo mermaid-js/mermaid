@@ -51,8 +51,6 @@ export const registerDiagram = (
   addStylesForDiagram(id, diagram.styles);
 
   if (diagram.injectUtils) {
-    console.log('parseDirective', parseDirective);
-
     diagram.injectUtils(log, setLogLevel, getConfig, sanitizeText, setupGraphViewbox,getCommonDb(),parseDirective);
   }
 };

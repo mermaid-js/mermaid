@@ -90,7 +90,7 @@ const compileTasks = function () {
   }
   return allProcessed;
 };
-log.info('456 parseDirective',parseDirective);
+
 export default {
   clear,
   getCommonDb,

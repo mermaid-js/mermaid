@@ -519,7 +519,7 @@ export const drawNode = function (elem, node, fullSection, conf) {
     'class',
     (node.class ? node.class + ' ' : '') +
       'timeline-node ' +
-      (section < 0 ? 'section-root' : 'section-' + section)
+      ('section-' + section)
   );
   const bkgElem = nodeElem.append('g');
 

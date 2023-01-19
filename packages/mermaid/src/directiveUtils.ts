@@ -8,7 +8,7 @@ import { directiveSanitizer } from './utils';
 let currentDirective: { type?: string; args?: any } | undefined = {};
 
 export const parseDirective = function (p: any, statement: string, context: string, type: string): void {
-  log.info('parseDirective is being called', statement, context, type);
+  log.debug('parseDirective is being called', statement, context, type);
   try {
     if (statement !== undefined) {
       statement = statement.trim();
