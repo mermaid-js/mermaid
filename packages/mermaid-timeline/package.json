@@ -1,14 +1,14 @@
 {
   "name": "@mermaid-js/mermaid-timeline",
-  "version": "9.2.0-rc2",
-  "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
-  "main": "dist/mermaid-timeline.core.mjs",
+  "version": "9.4.0",
+  "description": "Timeline diagram module for Mermaid.js.",
   "module": "dist/mermaid-timeline.core.mjs",
+  "types": "dist/detector.d.ts",
   "type": "module",
   "exports": {
     ".": {
-      "require": "./dist/mermaid-timeline.min.js",
-      "import": "./dist/mermaid-timeline.core.mjs"
+      "import": "./dist/mermaid-timeline.core.mjs",
+      "types": "./dist/detector.d.ts"
     },
     "./*": "./*"
   },
@@ -19,24 +19,13 @@
     "mermaid"
   ],
   "scripts": {
-    "clean": "rimraf dist",
-    "build:types": "tsc -p ./tsconfig.json --emitDeclarationOnly",
-    "build:watch": "yarn build:code --watch",
-    "build:esbuild": "concurrently \"yarn build:code\" \"yarn build:types\"",
-    "build": "yarn clean; yarn build:esbuild",
-    "dev": "node .esbuild/serve.cjs",
-    "release": "yarn build",
-    "lint": "eslint --cache --ignore-path .gitignore . && yarn lint:jison && prettier --check .",
-    "lint:fix": "eslint --fix --ignore-path .gitignore . && prettier --write .",
-    "lint:jison": "ts-node-esm src/jison/lint.mts",
-    "todo-prepare": "concurrently \"husky install ../../.husky\" \"yarn build\"",
-    "todo-pre-commit": "lint-staged"
+    "prepublishOnly": "pnpm -w run build"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/mermaid-js/mermaid"
   },
-  "author": "Knut Sveidqvist",
+  "author": "Ashish Jain",
   "license": "MIT",
   "standard": {
     "ignore": [
