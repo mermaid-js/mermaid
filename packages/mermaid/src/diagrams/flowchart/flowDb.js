@@ -155,6 +155,7 @@ export const addSingleLink = function (_start, _end, type, linkText) {
     edge.type = type.type;
     edge.stroke = type.stroke;
     edge.length = type.length;
+    edge.reversed = type.reversed;
   }
   edges.push(edge);
 };
@@ -670,6 +671,11 @@ const destructEndLink = (_str) => {
   let stroke = 'normal';
   let length = line.length - 1;
 
+  const reversed = line.includes('\\');
+  if (reversed) {
+    length = length - 1;
+  }
+
   if (line[0] === '=') {
     stroke = 'thick';
   }
@@ -681,7 +687,7 @@ const destructEndLink = (_str) => {
     length = dots;
   }
 
-  return { type, stroke, length };
+  return { type, stroke, length, reversed };
 };
 
 export const destructLink = (_str, _startStr) => {
@@ -710,6 +716,7 @@ export const destructLink = (_str, _startStr) => {
       startInfo.type = 'double_arrow_point';
     }
 
+    startInfo.reversed = info.reversed;
     startInfo.length = info.length;
     return startInfo;
   }

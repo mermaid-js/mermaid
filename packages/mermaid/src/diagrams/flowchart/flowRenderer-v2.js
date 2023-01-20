@@ -255,6 +255,13 @@ export const addEdges = function (edges, g, diagObj) {
         break;
     }
 
+    if (edge.reversed) {
+      [edgeData.arrowTypeStart, edgeData.arrowTypeEnd] = [
+        edgeData.arrowTypeEnd,
+        edgeData.arrowTypeStart,
+      ];
+    }
+
     let style = '';
     let labelStyle = '';
 

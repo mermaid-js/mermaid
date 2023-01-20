@@ -118,9 +118,9 @@ that id.
 ";"                   return 'SEMI';
 ","                   return 'COMMA';
 "*"                   return 'MULT';
-\s*[xo<]?\-\-+[-xo>]\s*     return 'LINK';
-\s*[xo<]?\=\=+[=xo>]\s*     return 'LINK';
-\s*[xo<]?\-?\.+\-[xo>]?\s*  return 'LINK';
+\s*[xo<]?\-\\?\-+[-xo>]\s*     return 'LINK';
+\s*[xo<]?\=\\?\=+[=xo>]\s*     return 'LINK';
+\s*[xo<]?\-?\.+\\?\-[xo>]?\s*  return 'LINK';
 \s*[xo<]?\-\-\s*            return 'START_LINK';
 \s*[xo<]?\=\=\s*            return 'START_LINK';
 \s*[xo<]?\-\.\s*            return 'START_LINK';
@@ -420,11 +420,11 @@ link: linkStatement arrowText
     | linkStatement
     {$$ = $1;}
     | START_LINK text LINK
-        {var inf = yy.destructLink($3, $1); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$2};}
+        {var inf = yy.destructLink($3, $1); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$2,"reversed":inf.reversed};}
     ;
 
 linkStatement: LINK
-        {var inf = yy.destructLink($1);$$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length};}
+        {var inf = yy.destructLink($1);$$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"reversed":inf.reversed};}
         ;
 
 arrowText:
