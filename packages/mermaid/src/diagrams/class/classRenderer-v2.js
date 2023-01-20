@@ -1,15 +1,13 @@
 import { select } from 'd3';
-import graphlib from 'graphlib';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger';
 import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';
+import utils from '../../utils';
 import { curveLinear } from 'd3';
 import { interpolateToCurve, getStylesFromArray } from '../../utils';
 import { setupGraphViewbox } from '../../setupGraphViewbox';
 import common from '../common/common';
-import addSVGAccessibilityFields from '../../accessibility';
-
-let idCache = {};
 
 const sanitizeText = (txt) => common.sanitizeText(txt, getConfig());
 
@@ -64,6 +62,7 @@ export const addClasses = function (classes, g, _id, diagObj) {
     // if (evaluate(getConfig().flowchart.htmlLabels)) {
     //   const node = {
     //     label: vertexText.replace(
+    // eslint-disable-next-line @cspell/spellchecker
     //       /fa[lrsb]?:fa-[\w-]+/g,
     //       s => `<i class='${s.replace(':', ' ')}'></i>`
     //     )
@@ -134,6 +133,99 @@ export const addClasses = function (classes, g, _id, diagObj) {
 };
 
 /**
+ * Function that adds the additional vertices (notes) found during parsing to the graph to be rendered.
+ *
+ * @param {{text: string; class: string; placement: number}[]} notes
+ *   Object containing the additional vertices (notes).
+ * @param {SVGGElement} g The graph that is to be drawn.
+ * @param {number} startEdgeId starting index for note edge
+ * @param classes
+ */
+export const addNotes = function (notes, g, startEdgeId, classes) {
+  log.info(notes);
+
+  // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
+  notes.forEach(function (note, i) {
+    const vertex = note;
+
+    /**
+     * Variable for storing the classes for the vertex
+     *
+     * @type {string}
+     */
+    let cssNoteStr = '';
+
+    const styles = { labelStyle: '', style: '' };
+
+    // Use vertex id as text in the box if no text is provided by the graph definition
+    let vertexText = vertex.text;
+
+    let radious = 0;
+    let _shape = 'note';
+    // Add the node
+    g.setNode(vertex.id, {
+      labelStyle: styles.labelStyle,
+      shape: _shape,
+      labelText: sanitizeText(vertexText),
+      noteData: vertex,
+      rx: radious,
+      ry: radious,
+      class: cssNoteStr,
+      style: styles.style,
+      id: vertex.id,
+      domId: vertex.id,
+      tooltip: '',
+      type: 'note',
+      padding: getConfig().flowchart.padding,
+    });
+
+    log.info('setNode', {
+      labelStyle: styles.labelStyle,
+      shape: _shape,
+      labelText: vertexText,
+      rx: radious,
+      ry: radious,
+      style: styles.style,
+      id: vertex.id,
+      type: 'note',
+      padding: getConfig().flowchart.padding,
+    });
+
+    if (!vertex.class || !(vertex.class in classes)) {
+      return;
+    }
+    const edgeId = startEdgeId + i;
+    const edgeData = {};
+    //Set relationship style and line type
+    edgeData.classes = 'relation';
+    edgeData.pattern = 'dotted';
+
+    edgeData.id = `edgeNote${edgeId}`;
+    // Set link type for rendering
+    edgeData.arrowhead = 'none';
+
+    log.info(`Note edge: ${JSON.stringify(edgeData)}, ${JSON.stringify(vertex)}`);
+    //Set edge extra labels
+    edgeData.startLabelRight = '';
+    edgeData.endLabelLeft = '';
+
+    //Set relation arrow types
+    edgeData.arrowTypeStart = 'none';
+    edgeData.arrowTypeEnd = 'none';
+    let style = 'fill:none';
+    let labelStyle = '';
+
+    edgeData.style = style;
+    edgeData.labelStyle = labelStyle;
+
+    edgeData.curve = interpolateToCurve(conf.curve, curveLinear);
+
+    // Add the edge to the graph
+    g.setEdge(vertex.id, vertex.class, edgeData, edgeId);
+  });
+};
+
+/**
  * Add edges to graph based on parsed graph definition
  *
  * @param relations
@@ -180,16 +272,16 @@ export const addRelations = function (relations, g) {
     let style = '';
     let labelStyle = '';
 
-    if (typeof edge.style !== 'undefined') {
+    if (edge.style !== undefined) {
       const styles = getStylesFromArray(edge.style);
       style = styles.style;
       labelStyle = styles.labelStyle;
     } else {
       style = 'fill:none';
-      if (typeof defaultStyle !== 'undefined') {
+      if (defaultStyle !== undefined) {
         style = defaultStyle;
       }
-      if (typeof defaultLabelStyle !== 'undefined') {
+      if (defaultLabelStyle !== undefined) {
         labelStyle = defaultLabelStyle;
       }
     }
@@ -197,17 +289,17 @@ export const addRelations = function (relations, g) {
     edgeData.style = style;
     edgeData.labelStyle = labelStyle;
 
-    if (typeof edge.interpolate !== 'undefined') {
+    if (edge.interpolate !== undefined) {
       edgeData.curve = interpolateToCurve(edge.interpolate, curveLinear);
-    } else if (typeof relations.defaultInterpolate !== 'undefined') {
+    } else if (relations.defaultInterpolate !== undefined) {
       edgeData.curve = interpolateToCurve(relations.defaultInterpolate, curveLinear);
     } else {
       edgeData.curve = interpolateToCurve(conf.curve, curveLinear);
     }
 
     edge.text = edge.title;
-    if (typeof edge.text === 'undefined') {
-      if (typeof edge.style !== 'undefined') {
+    if (edge.text === undefined) {
+      if (edge.style !== undefined) {
         edgeData.arrowheadStyle = 'fill: #333';
       }
     } else {
@@ -221,7 +313,7 @@ export const addRelations = function (relations, g) {
         edgeData.labelType = 'text';
         edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');
 
-        if (typeof edge.style === 'undefined') {
+        if (edge.style === undefined) {
           edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none';
         }
 
@@ -304,10 +396,12 @@ export const draw = function (text, id, _version, diagObj) {
   // Fetch the vertices/nodes and edges/links from the parsed graph definition
   const classes = diagObj.db.getClasses();
   const relations = diagObj.db.getRelations();
+  const notes = diagObj.db.getNotes();
 
   log.info(relations);
   addClasses(classes, g, id, diagObj);
   addRelations(relations, g);
+  addNotes(notes, g, relations.length + 1, classes);
 
   // Add custom shapes
   // flowChartShapes.addToRenderV2(addShape);
@@ -333,15 +427,15 @@ export const draw = function (text, id, _version, diagObj) {
     id
   );
 
+  utils.insertTitle(svg, 'classTitleText', conf.titleTopMargin, diagObj.db.getDiagramTitle());
+
   setupGraphViewbox(g, svg, conf.diagramPadding, conf.useMaxWidth);
 
   // Add label rects for non html labels
   if (!conf.htmlLabels) {
     const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
     const labels = doc.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
-    for (let k = 0; k < labels.length; k++) {
-      const label = labels[k];
-
+    for (const label of labels) {
       // Get dimensions of label
       const dim = label.getBBox();
 
@@ -356,7 +450,6 @@ export const draw = function (text, id, _version, diagObj) {
     }
   }
 
-  addSVGAccessibilityFields(diagObj.db, svg, id);
   // If node has a link, wrap it in an anchor SVG object.
   // const keys = Object.keys(classes);
   // keys.forEach(function(key) {

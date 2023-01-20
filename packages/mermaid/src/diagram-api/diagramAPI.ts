@@ -7,9 +7,9 @@ import { addStylesForDiagram } from '../styles';
 import { DiagramDefinition, DiagramDetector } from './types';
 
 /*
-  Packaging and exposing resources for externa diagrams so that they can import
-  diagramAPI and have access to selct parts of mermaid common code reqiored to
-  create diagrams worling like the internal diagrams.
+  Packaging and exposing resources for external diagrams so that they can import
+  diagramAPI and have access to select parts of mermaid common code required to
+  create diagrams working like the internal diagrams.
 */
 export const log = _log;
 export const setLogLevel = _setLogLevel;
@@ -36,14 +36,8 @@ export const registerDiagram = (
   diagram: DiagramDefinition,
   detector?: DiagramDetector
 ) => {
-  log.debug(`Registering diagram ${id}`);
   if (diagrams[id]) {
-    log.warn(`Diagram ${id} already registered.`);
-    // The error throw is commented out to as it breaks pages where you have multiple diagrams,
-    // it can happen that rendering of the same type of diagram is initiated while the previous
-    // one is still being imported. import deals with this and only one diagram is imported in
-    // the end.
-    // throw new Error(`Diagram ${id} already registered.`);
+    throw new Error(`Diagram ${id} already registered.`);
   }
   diagrams[id] = diagram;
   if (detector) {
@@ -54,19 +48,11 @@ export const registerDiagram = (
   if (diagram.injectUtils) {
     diagram.injectUtils(log, setLogLevel, getConfig, sanitizeText, setupGraphViewbox);
   }
-  log.debug(`Registered diagram ${id}. ${Object.keys(diagrams).join(', ')} diagrams registered.`);
 };
 
 export const getDiagram = (name: string): DiagramDefinition => {
-  log.debug(`Getting diagram ${name}. ${Object.keys(diagrams).join(', ')} diagrams registered.`);
   if (name in diagrams) {
     return diagrams[name];
   }
-  throw new DiagramNotFoundError(name);
+  throw new Error(`Diagram ${name} not found.`);
 };
-
-export class DiagramNotFoundError extends Error {
-  constructor(message: string) {
-    super(`Diagram ${message} not found.`);
-  }
-}

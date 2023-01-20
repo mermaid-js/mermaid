@@ -323,34 +323,34 @@ describe('when parsing ER diagram it...', function () {
     expect(Object.keys(erDb.getEntities()).length).toBe(1);
   });
 
-  it('should allow for a accessibility title and description (accDescr)', function () {
+  describe('accessible title and description', () => {
     const teacherRole = 'is teacher of';
     const line1 = `TEACHER }o--o{ STUDENT : "${teacherRole}"`;
 
-    erDiagram.parser.parse(
-      `erDiagram
+    it('should allow for a accessibility title and description (accDescr)', function () {
+      erDiagram.parser.parse(
+        `erDiagram
       accTitle: graph title
       accDescr: this graph is about stuff
       ${line1}`
-    );
-    expect(erDb.getAccTitle()).toBe('graph title');
-    expect(erDb.getAccDescription()).toBe('this graph is about stuff');
-  });
+      );
+      expect(erDb.getAccTitle()).toBe('graph title');
+      expect(erDb.getAccDescription()).toBe('this graph is about stuff');
+    });
 
-  it('should allow for a accessibility title and multi line description (accDescr)', function () {
-    const teacherRole = 'is teacher of';
-    const line1 = `TEACHER }o--o{ STUDENT : "${teacherRole}"`;
-
-    erDiagram.parser.parse(
-      `erDiagram
+    it('parses a multi line description (accDescr)', function () {
+      erDiagram.parser.parse(
+        `erDiagram
       accTitle: graph title
-      accDescr {
-        this graph is about stuff
-      }\n
+      accDescr { this graph is
+        about
+        stuff
+        }\n
       ${line1}`
-    );
-    expect(erDb.getAccTitle()).toBe('graph title');
-    expect(erDb.getAccDescription()).toBe('this graph is about stuff');
+      );
+      expect(erDb.getAccTitle()).toEqual('graph title');
+      expect(erDb.getAccDescription()).toEqual('this graph is\nabout\nstuff');
+    });
   });
 
   it('should allow more than one relationship between the same two entities', function () {
@@ -532,14 +532,96 @@ describe('when parsing ER diagram it...', function () {
     expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ONE_OR_MORE);
   });
 
+  it('should handle zero-or-one-to-zero-or-more relationships (aliases "one or zero" and "zero or many")', function () {
+    erDiagram.parser.parse('erDiagram\nA one or zero to many B : has');
+    const rels = erDb.getRelationships();
+
+    expect(Object.keys(erDb.getEntities()).length).toBe(2);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ZERO_OR_MORE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ZERO_OR_ONE);
+  });
+
+  it('should handle one-or-more-to-zero-or-one relationships (aliases "one or many" and "zero or one")', function () {
+    erDiagram.parser.parse('erDiagram\nA one or many optionally to zero or one B : has');
+    const rels = erDb.getRelationships();
+
+    expect(Object.keys(erDb.getEntities()).length).toBe(2);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ZERO_OR_ONE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ONE_OR_MORE);
+  });
+
+  it('should handle zero-or-more-to-zero-or-more relationships (aliases "zero or more" and "zero or many")', function () {
+    erDiagram.parser.parse('erDiagram\nA zero or more to zero or many B : has');
+    const rels = erDb.getRelationships();
+
+    expect(Object.keys(erDb.getEntities()).length).toBe(2);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ZERO_OR_MORE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ZERO_OR_MORE);
+  });
+
+  it('should handle zero-or-more-to-one-or-more relationships (aliases "many(0)" and "many(1)")', function () {
+    erDiagram.parser.parse('erDiagram\nA many(0) to many(1) B : has');
+    const rels = erDb.getRelationships();
+
+    expect(Object.keys(erDb.getEntities()).length).toBe(2);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ONE_OR_MORE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ZERO_OR_MORE);
+  });
+
+  it('should handle zero-or-more-to-only-one relationships (aliases "many(0)" and "many(1)")', function () {
+    erDiagram.parser.parse('erDiagram\nA many optionally to one B : has');
+    const rels = erDb.getRelationships();
+
+    expect(Object.keys(erDb.getEntities()).length).toBe(2);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ONLY_ONE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ZERO_OR_MORE);
+  });
+
+  it('should handle only-one-to-only-one relationships (aliases "only one" and  "1+")', function () {
+    erDiagram.parser.parse('erDiagram\nA only one optionally to 1+ B : has');
+    const rels = erDb.getRelationships();
+
+    expect(Object.keys(erDb.getEntities()).length).toBe(2);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ONE_OR_MORE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ONLY_ONE);
+  });
+
+  it('should handle zero-or-more-to-only-one relationships (aliases "0+" and  "1")', function () {
+    erDiagram.parser.parse('erDiagram\nA 0+ optionally to 1 B : has');
+    const rels = erDb.getRelationships();
+
+    expect(Object.keys(erDb.getEntities()).length).toBe(2);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ONLY_ONE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ZERO_OR_MORE);
+  });
+
   it('should represent identifying relationships properly', function () {
     erDiagram.parser.parse('erDiagram\nHOUSE ||--|{ ROOM : contains');
     const rels = erDb.getRelationships();
     expect(rels[0].relSpec.relType).toBe(erDb.Identification.IDENTIFYING);
   });
 
+  it('should represent identifying relationships properly (alias "to")', function () {
+    erDiagram.parser.parse('erDiagram\nHOUSE one to one ROOM : contains');
+    const rels = erDb.getRelationships();
+    expect(rels[0].relSpec.relType).toBe(erDb.Identification.IDENTIFYING);
+  });
+
   it('should represent non-identifying relationships properly', function () {
     erDiagram.parser.parse('erDiagram\n PERSON ||..o{ POSSESSION : owns');
+    const rels = erDb.getRelationships();
+    expect(rels[0].relSpec.relType).toBe(erDb.Identification.NON_IDENTIFYING);
+  });
+
+  it('should represent non-identifying relationships properly (alias "optionally to")', function () {
+    erDiagram.parser.parse('erDiagram\n PERSON many optionally to many POSSESSION : owns');
     const rels = erDb.getRelationships();
     expect(rels[0].relSpec.relType).toBe(erDb.Identification.NON_IDENTIFYING);
   });

@@ -1,8 +1,62 @@
+import { vi } from 'vitest';
+
 import * as configApi from '../../config';
 import mermaidAPI from '../../mermaidAPI';
 import Diagram from '../../Diagram';
 import { addDiagrams } from '../../diagram-api/diagram-orchestration';
+
+/**
+ * Sequence diagrams require their own very special version of a mocked d3 module
+ * diagrams/sequence/svgDraw uses statements like this with d3 nodes: (note the [0][0])
+ *
+ *   // in drawText(...)
+ *   textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
+ */
+vi.mock('d3', () => {
+  const NewD3 = function () {
+    function returnThis() {
+      return this;
+    }
+    return {
+      append: function () {
+        return NewD3();
+      },
+      lower: returnThis,
+      attr: returnThis,
+      style: returnThis,
+      text: returnThis,
+      // [0][0] (below) is required by drawText() in packages/mermaid/src/diagrams/sequence/svgDraw.js
+      0: {
+        0: {
+          getBBox: function () {
+            return {
+              height: 10,
+              width: 20,
+            };
+          },
+        },
+      },
+    };
+  };
+
+  return {
+    select: function () {
+      return new NewD3();
+    },
+
+    selectAll: function () {
+      return new NewD3();
+    },
+
+    curveBasis: 'basis',
+    curveLinear: 'linear',
+    curveCardinal: 'cardinal',
+  };
+});
+// -------------------------------
+
 addDiagrams();
+
 /**
  * @param conf
  * @param key
@@ -130,7 +184,7 @@ Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
     mermaidAPI.parse(str);
-    diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility autonumbers
+    diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility auto numbers
     expect(diagram.db.showSequenceNumbers()).toBe(false);
   });
   it('should show sequence numbers when autonumber is enabled', function () {
@@ -142,7 +196,7 @@ Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
     mermaidAPI.parse(str);
-    diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility autonumbers
+    diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility auto numbers
     expect(diagram.db.showSequenceNumbers()).toBe(true);
   });
   it('should handle a sequenceDiagram definition with a title:', function () {
@@ -1871,7 +1925,7 @@ Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
     mermaidAPI.parse(str1, diagram);
-    diagram.renderer.draw(str1, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility autonumbers
+    diagram.renderer.draw(str1, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility auto numbers
     expect(diagram.db.showSequenceNumbers()).toBe(true);
 
     const str2 = `

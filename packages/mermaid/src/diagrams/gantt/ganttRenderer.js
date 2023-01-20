@@ -10,11 +10,15 @@ import {
   axisBottom,
   axisTop,
   timeFormat,
+  timeMinute,
+  timeHour,
+  timeDay,
+  timeWeek,
+  timeMonth,
 } from 'd3';
 import common from '../common/common';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import addSVGAccessibilityFields from '../../accessibility';
 
 export const setConf = function () {
   log.debug('Something is calling, setConf, remove the call');
@@ -27,7 +31,7 @@ export const draw = function (text, id, version, diagObj) {
   // parser.parse(text);
 
   const securityLevel = getConfig().securityLevel;
-  // Handle root and Document for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -41,11 +45,11 @@ export const draw = function (text, id, version, diagObj) {
   const elem = doc.getElementById(id);
   w = elem.parentElement.offsetWidth;
 
-  if (typeof w === 'undefined') {
+  if (w === undefined) {
     w = 1200;
   }
 
-  if (typeof conf.useWidth !== 'undefined') {
+  if (conf.useWidth !== undefined) {
     w = conf.useWidth;
   }
 
@@ -72,8 +76,8 @@ export const draw = function (text, id, version, diagObj) {
 
   let categories = [];
 
-  for (let i = 0; i < taskArray.length; i++) {
-    categories.push(taskArray[i].type);
+  for (const element of taskArray) {
+    categories.push(element.type);
   }
 
   const catsUnfiltered = categories; // for vert labels
@@ -110,8 +114,6 @@ export const draw = function (text, id, version, diagObj) {
     .attr('x', w / 2)
     .attr('y', conf.titleTopMargin)
     .attr('class', 'titleText');
-
-  addSVGAccessibilityFields(diagObj.db, svg, id);
 
   /**
    * @param tasks
@@ -173,8 +175,8 @@ export const draw = function (text, id, version, diagObj) {
       })
       .attr('height', theGap)
       .attr('class', function (d) {
-        for (let i = 0; i < categories.length; i++) {
-          if (d.type === categories[i]) {
+        for (const [i, category] of categories.entries()) {
+          if (d.type === category) {
             return 'section section' + (i % conf.numberSectionStyles);
           }
         }
@@ -242,8 +244,8 @@ export const draw = function (text, id, version, diagObj) {
         }
 
         let secNum = 0;
-        for (let i = 0; i < categories.length; i++) {
-          if (d.type === categories[i]) {
+        for (const [i, category] of categories.entries()) {
+          if (d.type === category) {
             secNum = i % conf.numberSectionStyles;
           }
         }
@@ -334,8 +336,8 @@ export const draw = function (text, id, version, diagObj) {
         }
 
         let secNum = 0;
-        for (let i = 0; i < categories.length; i++) {
-          if (d.type === categories[i]) {
+        for (const [i, category] of categories.entries()) {
+          if (d.type === category) {
             secNum = i % conf.numberSectionStyles;
           }
         }
@@ -395,7 +397,7 @@ export const draw = function (text, id, version, diagObj) {
 
       rectangles
         .filter(function (d) {
-          return typeof links[d.id] !== 'undefined';
+          return links[d.id] !== undefined;
         })
         .each(function (o) {
           var taskRect = doc.querySelector('#' + o.id);
@@ -427,7 +429,9 @@ export const draw = function (text, id, version, diagObj) {
     );
     const maxTime = tasks.reduce((max, { endTime }) => (max ? Math.max(max, endTime) : endTime), 0);
     const dateFormat = diagObj.db.getDateFormat();
-    if (!minTime || !maxTime) return;
+    if (!minTime || !maxTime) {
+      return;
+    }
 
     const excludeRanges = [];
     let range = null;
@@ -493,6 +497,33 @@ export const draw = function (text, id, version, diagObj) {
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
       .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
 
+    const reTickInterval = /^([1-9]\d*)(minute|hour|day|week|month)$/;
+    const resultTickInterval = reTickInterval.exec(
+      diagObj.db.getTickInterval() || conf.tickInterval
+    );
+
+    if (resultTickInterval !== null) {
+      const every = resultTickInterval[1];
+      const interval = resultTickInterval[2];
+      switch (interval) {
+        case 'minute':
+          bottomXAxis.ticks(timeMinute.every(every));
+          break;
+        case 'hour':
+          bottomXAxis.ticks(timeHour.every(every));
+          break;
+        case 'day':
+          bottomXAxis.ticks(timeDay.every(every));
+          break;
+        case 'week':
+          bottomXAxis.ticks(timeWeek.every(every));
+          break;
+        case 'month':
+          bottomXAxis.ticks(timeMonth.every(every));
+          break;
+      }
+    }
+
     svg
       .append('g')
       .attr('class', 'grid')
@@ -509,6 +540,28 @@ export const draw = function (text, id, version, diagObj) {
       let topXAxis = axisTop(timeScale)
         .tickSize(-h + theTopPad + conf.gridLineStartPadding)
         .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+
+      if (resultTickInterval !== null) {
+        const every = resultTickInterval[1];
+        const interval = resultTickInterval[2];
+        switch (interval) {
+          case 'minute':
+            topXAxis.ticks(timeMinute.every(every));
+            break;
+          case 'hour':
+            topXAxis.ticks(timeHour.every(every));
+            break;
+          case 'day':
+            topXAxis.ticks(timeDay.every(every));
+            break;
+          case 'week':
+            topXAxis.ticks(timeWeek.every(every));
+            break;
+          case 'month':
+            topXAxis.ticks(timeMonth.every(every));
+            break;
+        }
+      }
 
       svg
         .append('g')
@@ -532,8 +585,8 @@ export const draw = function (text, id, version, diagObj) {
     const numOccurances = [];
     let prevGap = 0;
 
-    for (let i = 0; i < categories.length; i++) {
-      numOccurances[i] = [categories[i], getCount(categories[i], catsUnfiltered)];
+    for (const [i, category] of categories.entries()) {
+      numOccurances[i] = [category, getCount(category, catsUnfiltered)];
     }
 
     svg
@@ -548,12 +601,14 @@ export const draw = function (text, id, version, diagObj) {
         const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
         svgLabel.setAttribute('dy', dy + 'em');
 
-        for (let j = 0; j < rows.length; j++) {
+        for (const [j, row] of rows.entries()) {
           const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
           tspan.setAttribute('alignment-baseline', 'central');
           tspan.setAttribute('x', '10');
-          if (j > 0) tspan.setAttribute('dy', '1em');
-          tspan.textContent = rows[j];
+          if (j > 0) {
+            tspan.setAttribute('dy', '1em');
+          }
+          tspan.textContent = row;
           svgLabel.appendChild(tspan);
         }
         return svgLabel;
@@ -572,8 +627,8 @@ export const draw = function (text, id, version, diagObj) {
       .attr('font-size', conf.sectionFontSize)
       .attr('font-size', conf.sectionFontSize)
       .attr('class', function (d) {
-        for (let i = 0; i < categories.length; i++) {
-          if (d[0] === categories[i]) {
+        for (const [i, category] of categories.entries()) {
+          if (d[0] === category) {
             return 'sectionTitle sectionTitle' + (i % conf.numberSectionStyles);
           }
         }
@@ -610,7 +665,7 @@ export const draw = function (text, id, version, diagObj) {
   }
 
   /**
-   * From this stackexchange question:
+   * From this stack exchange question:
    * http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
    *
    * @param arr
@@ -629,7 +684,7 @@ export const draw = function (text, id, version, diagObj) {
   }
 
   /**
-   * From this stackexchange question:
+   * From this stack exchange question:
    * http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
    *
    * @param arr

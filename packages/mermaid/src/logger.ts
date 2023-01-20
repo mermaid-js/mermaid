@@ -27,11 +27,9 @@ export const log: Record<keyof typeof LEVELS, typeof console.log> = {
 /**
  * Sets a log level
  *
- * @param {LogLevel} [level="fatal"] The level to set the logging to. Default is `"fatal"`
+ * @param level - The level to set the logging to. Default is `"fatal"`
  */
 export const setLogLevel = function (level: keyof typeof LEVELS | number | string = 'fatal') {
-  // TODO: Even if we call initialize with loglevel 0, many initial logs are skipped as LL is set to 5 initially.
-
   let numericLevel: number = LEVELS.fatal;
   if (typeof level === 'string') {
     level = level.toLowerCase();
@@ -41,7 +39,6 @@ export const setLogLevel = function (level: keyof typeof LEVELS | number | strin
   } else if (typeof level === 'number') {
     numericLevel = level;
   }
-
   log.trace = () => {};
   log.debug = () => {};
   log.info = () => {};
@@ -84,10 +81,10 @@ export const setLogLevel = function (level: keyof typeof LEVELS | number | strin
 /**
  * Returns a format with the timestamp and the log level
  *
- * @param {LogLevel} level The level for the log format
- * @returns {string} The format with the timestamp and log level
+ * @param level - The level for the log format
+ * @returns The format with the timestamp and log level
  */
-const format = (level: string): string => {
+const format = (level: Uppercase<LogLevel>): string => {
   const time = moment().format('ss.SSS');
   return `%c${time} : ${level} : `;
 };

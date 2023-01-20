@@ -10,6 +10,8 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
+  setDiagramTitle,
+  getDiagramTitle,
 } from '../../commonDb';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
@@ -17,7 +19,7 @@ let vertexCounter = 0;
 let config = configApi.getConfig();
 let vertices = {};
 let edges = [];
-let classes = [];
+let classes = {};
 let subGraphs = [];
 let subGraphLookup = {};
 let tooltips = {};
@@ -44,9 +46,9 @@ export const parseDirective = function (statement, context, type) {
  */
 export const lookUpDomId = function (id) {
   const veritceKeys = Object.keys(vertices);
-  for (let i = 0; i < veritceKeys.length; i++) {
-    if (vertices[veritceKeys[i]].id === id) {
-      return vertices[veritceKeys[i]].domId;
+  for (const veritceKey of veritceKeys) {
+    if (vertices[veritceKey].id === id) {
+      return vertices[veritceKey].domId;
     }
   }
   return id;
@@ -66,7 +68,7 @@ export const lookUpDomId = function (id) {
 export const addVertex = function (_id, text, type, style, classes, dir, props = {}) {
   let txt;
   let id = _id;
-  if (typeof id === 'undefined') {
+  if (id === undefined) {
     return;
   }
   if (id.trim().length === 0) {
@@ -75,7 +77,7 @@ export const addVertex = function (_id, text, type, style, classes, dir, props =
 
   // if (id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
-  if (typeof vertices[id] === 'undefined') {
+  if (vertices[id] === undefined) {
     vertices[id] = {
       id: id,
       domId: MERMAID_DOM_ID_PREFIX + id + '-' + vertexCounter,
@@ -84,7 +86,7 @@ export const addVertex = function (_id, text, type, style, classes, dir, props =
     };
   }
   vertexCounter++;
-  if (typeof text !== 'undefined') {
+  if (text !== undefined) {
     config = configApi.getConfig();
     txt = sanitizeText(text.trim());
 
@@ -95,31 +97,31 @@ export const addVertex = function (_id, text, type, style, classes, dir, props =
 
     vertices[id].text = txt;
   } else {
-    if (typeof vertices[id].text === 'undefined') {
+    if (vertices[id].text === undefined) {
       vertices[id].text = _id;
     }
   }
-  if (typeof type !== 'undefined') {
+  if (type !== undefined) {
     vertices[id].type = type;
   }
-  if (typeof style !== 'undefined') {
-    if (style !== null) {
-      style.forEach(function (s) {
-        vertices[id].styles.push(s);
-      });
-    }
+  if (style !== undefined && style !== null) {
+    style.forEach(function (s) {
+      vertices[id].styles.push(s);
+    });
   }
-  if (typeof classes !== 'undefined') {
-    if (classes !== null) {
-      classes.forEach(function (s) {
-        vertices[id].classes.push(s);
-      });
-    }
+  if (classes !== undefined && classes !== null) {
+    classes.forEach(function (s) {
+      vertices[id].classes.push(s);
+    });
   }
-  if (typeof dir !== 'undefined') {
+  if (dir !== undefined) {
     vertices[id].dir = dir;
   }
-  vertices[id].props = props;
+  if (vertices[id].props === undefined) {
+    vertices[id].props = props;
+  } else if (props !== undefined) {
+    Object.assign(vertices[id].props, props);
+  }
 };
 
 /**
@@ -128,9 +130,9 @@ export const addVertex = function (_id, text, type, style, classes, dir, props =
  * @param _start
  * @param _end
  * @param type
- * @param linktext
+ * @param linkText
  */
-export const addSingleLink = function (_start, _end, type, linktext) {
+export const addSingleLink = function (_start, _end, type, linkText) {
   let start = _start;
   let end = _end;
   // if (start[0].match(/\d/)) start = MERMAID_DOM_ID_PREFIX + start;
@@ -138,18 +140,18 @@ export const addSingleLink = function (_start, _end, type, linktext) {
   // log.info('Got edge...', start, end);
 
   const edge = { start: start, end: end, type: undefined, text: '' };
-  linktext = type.text;
+  linkText = type.text;
 
-  if (typeof linktext !== 'undefined') {
-    edge.text = sanitizeText(linktext.trim());
+  if (linkText !== undefined) {
+    edge.text = sanitizeText(linkText.trim());
 
-    // strip quotes if string starts and exnds with a quote
+    // strip quotes if string starts and ends with a quote
     if (edge.text[0] === '"' && edge.text[edge.text.length - 1] === '"') {
       edge.text = edge.text.substring(1, edge.text.length - 1);
     }
   }
 
-  if (typeof type !== 'undefined') {
+  if (type !== undefined) {
     edge.type = type.type;
     edge.stroke = type.stroke;
     edge.length = type.length;
@@ -201,21 +203,19 @@ export const updateLink = function (positions, style) {
 };
 
 export const addClass = function (id, style) {
-  if (typeof classes[id] === 'undefined') {
+  if (classes[id] === undefined) {
     classes[id] = { id: id, styles: [], textStyles: [] };
   }
 
-  if (typeof style !== 'undefined') {
-    if (style !== null) {
-      style.forEach(function (s) {
-        if (s.match('color')) {
-          const newStyle1 = s.replace('fill', 'bgFill');
-          const newStyle2 = newStyle1.replace('color', 'fill');
-          classes[id].textStyles.push(newStyle2);
-        }
-        classes[id].styles.push(s);
-      });
-    }
+  if (style !== undefined && style !== null) {
+    style.forEach(function (s) {
+      if (s.match('color')) {
+        const newStyle1 = s.replace('fill', 'bgFill');
+        const newStyle2 = newStyle1.replace('color', 'fill');
+        classes[id].textStyles.push(newStyle2);
+      }
+      classes[id].styles.push(s);
+    });
   }
 };
 
@@ -251,11 +251,11 @@ export const setClass = function (ids, className) {
     // let id = version === 'gen-2' ? lookUpDomId(_id) : _id;
     let id = _id;
     // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
-    if (typeof vertices[id] !== 'undefined') {
+    if (vertices[id] !== undefined) {
       vertices[id].classes.push(className);
     }
 
-    if (typeof subGraphLookup[id] !== 'undefined') {
+    if (subGraphLookup[id] !== undefined) {
       subGraphLookup[id].classes.push(className);
     }
   });
@@ -263,7 +263,7 @@ export const setClass = function (ids, className) {
 
 const setTooltip = function (ids, tooltip) {
   ids.split(',').forEach(function (id) {
-    if (typeof tooltip !== 'undefined') {
+    if (tooltip !== undefined) {
       tooltips[version === 'gen-1' ? lookUpDomId(id) : id] = sanitizeText(tooltip);
     }
   });
@@ -275,7 +275,7 @@ const setClickFun = function (id, functionName, functionArgs) {
   if (configApi.getConfig().securityLevel !== 'loose') {
     return;
   }
-  if (typeof functionName === 'undefined') {
+  if (functionName === undefined) {
     return;
   }
   let argList = [];
@@ -298,7 +298,7 @@ const setClickFun = function (id, functionName, functionArgs) {
     argList.push(id);
   }
 
-  if (typeof vertices[id] !== 'undefined') {
+  if (vertices[id] !== undefined) {
     vertices[id].haveCallback = true;
     funs.push(function () {
       const elem = document.querySelector(`[id="${domId}"]`);
@@ -324,7 +324,7 @@ const setClickFun = function (id, functionName, functionArgs) {
  */
 export const setLink = function (ids, linkStr, target) {
   ids.split(',').forEach(function (id) {
-    if (typeof vertices[id] !== 'undefined') {
+    if (vertices[id] !== undefined) {
       vertices[id].link = utils.formatUrl(linkStr, config);
       vertices[id].linkTarget = target;
     }
@@ -456,8 +456,8 @@ export const defaultStyle = function () {
 export const addSubGraph = function (_id, list, _title) {
   // console.log('addSubGraph', _id, list, _title);
   let id = _id.trim();
-  let title = _title.trim();
-  if (id === title && title.match(/\s/)) {
+  let title = _title;
+  if (_id === _title && _title.match(/\s/)) {
     id = undefined;
   }
   /** @param a */
@@ -478,7 +478,7 @@ export const addSubGraph = function (_id, list, _title) {
       if (type in prims) {
         return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true);
       } else {
-        return objs.indexOf(item) >= 0 ? false : objs.push(item);
+        return objs.includes(item) ? false : objs.push(item);
       }
     });
     return { nodeList, dir };
@@ -524,8 +524,8 @@ export const addSubGraph = function (_id, list, _title) {
 };
 
 const getPosForId = function (id) {
-  for (let i = 0; i < subGraphs.length; i++) {
-    if (subGraphs[i].id === id) {
+  for (const [i, subGraph] of subGraphs.entries()) {
+    if (subGraph.id === id) {
       return i;
     }
   }
@@ -616,11 +616,11 @@ const destructStartLink = (_str) => {
 
   let stroke = 'normal';
 
-  if (str.indexOf('=') !== -1) {
+  if (str.includes('=')) {
     stroke = 'thick';
   }
 
-  if (str.indexOf('.') !== -1) {
+  if (str.includes('.')) {
     stroke = 'dotted';
   }
 
@@ -674,10 +674,6 @@ const destructEndLink = (_str) => {
     stroke = 'thick';
   }
 
-  if (line[0] === '~') {
-    stroke = 'invisible';
-  }
-
   let dots = countChar('.', line);
 
   if (dots) {
@@ -703,7 +699,9 @@ const destructLink = (_str, _startStr) => {
       startInfo.type = info.type;
     } else {
       // x-- xyz -->  - not supported
-      if (startInfo.type !== info.type) return { type: 'INVALID', stroke: 'INVALID' };
+      if (startInfo.type !== info.type) {
+        return { type: 'INVALID', stroke: 'INVALID' };
+      }
 
       startInfo.type = 'double_' + startInfo.type;
     }
@@ -783,4 +781,6 @@ export default {
   },
   exists,
   makeUniq,
+  setDiagramTitle,
+  getDiagramTitle,
 };

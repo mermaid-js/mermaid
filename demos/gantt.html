@@ -74,22 +74,22 @@
     <pre class="mermaid">
     gantt
     title Hide today marker (vertical line should not be visible)
-    dateFormat YYYY-MM-DD
-    axisFormat %d
+    dateFormat Z
+    axisFormat %d/%m
     todayMarker off
     section Section1
-    Today: 1, -1h
+    Today: 1, -01:00, 5min
     </pre>
     <hr />
 
     <pre class="mermaid">
     gantt
     title Style today marker (vertical line should be 5px wide and half-transparent blue)
-    dateFormat YYYY-MM-DD
-    axisFormat %d
+    dateFormat Z
+    axisFormat %d/%m
     todayMarker stroke-width:5px,stroke:#00f,opacity:0.5
     section Section1
-    Today: 1, -1h
+    Today: 1, -01:00, 5min
     </pre>
     <hr />
 

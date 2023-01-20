@@ -44,7 +44,9 @@ function addHtmlLabel(node) {
 
 const createLabel = (_vertexText, style, isTitle, isNode) => {
   let vertexText = _vertexText || '';
-  if (typeof vertexText === 'object') vertexText = vertexText[0];
+  if (typeof vertexText === 'object') {
+    vertexText = vertexText[0];
+  }
   if (evaluate(getConfig().flowchart.htmlLabels)) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
     vertexText = vertexText.replace(/\\n|\n/g, '<br />');
@@ -52,7 +54,7 @@ const createLabel = (_vertexText, style, isTitle, isNode) => {
     const node = {
       isNode,
       label: decodeEntities(vertexText).replace(
-        /fa[lrsb]?:fa-[\w-]+/g,
+        /fa[blrs]?:fa-[\w-]+/g,
         (s) => `<i class='${s.replace(':', ' ')}'></i>`
       ),
       labelStyle: style.replace('fill:', 'color:'),
@@ -72,7 +74,7 @@ const createLabel = (_vertexText, style, isTitle, isNode) => {
       rows = [];
     }
 
-    for (let j = 0; j < rows.length; j++) {
+    for (const row of rows) {
       const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
       tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
       tspan.setAttribute('dy', '1em');
@@ -82,7 +84,7 @@ const createLabel = (_vertexText, style, isTitle, isNode) => {
       } else {
         tspan.setAttribute('class', 'row');
       }
-      tspan.textContent = rows[j].trim();
+      tspan.textContent = row.trim();
       svgLabel.appendChild(tspan);
     }
     return svgLabel;

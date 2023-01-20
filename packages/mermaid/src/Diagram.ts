@@ -1,16 +1,19 @@
 import * as configApi from './config';
 import { log } from './logger';
-import { DiagramNotFoundError, getDiagram, registerDiagram } from './diagram-api/diagramAPI';
+import { getDiagram, registerDiagram } from './diagram-api/diagramAPI';
 import { detectType, getDiagramLoader } from './diagram-api/detectType';
-import { isDetailedError } from './utils';
+import { extractFrontMatter } from './diagram-api/frontmatter';
+import { isDetailedError, type DetailedError } from './utils';
+
+export type ParseErrorFunction = (err: string | DetailedError, hash?: any) => void;
+
 export class Diagram {
   type = 'graph';
   parser;
   renderer;
   db;
   private detectTypeFailed = false;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  constructor(public txt: string, parseError?: Function) {
+  constructor(public txt: string, parseError?: ParseErrorFunction) {
     const cnf = configApi.getConfig();
     this.txt = txt;
     try {
@@ -27,6 +30,16 @@ export class Diagram {
     this.db.clear?.();
     this.renderer = diagram.renderer;
     this.parser = diagram.parser;
+    const originalParse = this.parser.parse.bind(this.parser);
+    // Wrap the jison parse() method to handle extracting frontmatter.
+    //
+    // This can't be done in this.parse() because some code
+    // directly calls diagram.parser.parse(), bypassing this.parse().
+    //
+    // Similarly, we can't do this in getDiagramFromText() because some code
+    // calls diagram.db.clear(), which would reset anything set by
+    // extractFrontMatter().
+    this.parser.parse = (text: string) => originalParse(extractFrontMatter(text, this.db));
     this.parser.parser.yy = this.db;
     if (diagram.init) {
       diagram.init(cnf);
@@ -37,14 +50,13 @@ export class Diagram {
     this.parse(this.txt, parseError);
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  parse(text: string, parseError?: Function): boolean {
+  parse(text: string, parseError?: ParseErrorFunction): boolean {
     if (this.detectTypeFailed) {
       return false;
     }
     try {
       text = text + '\n';
-      this.db.clear();
+      this.db.clear?.();
       this.parser.parse(text);
       return true;
     } catch (error) {
@@ -53,23 +65,24 @@ export class Diagram {
     return false;
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  handleError(error: unknown, parseError?: Function) {
-    // Is this the correct way to access mermiad's parseError()
+  handleError(error: unknown, parseError?: ParseErrorFunction) {
+    // Is this the correct way to access mermaid's parseError()
     // method ? (or global.mermaid.parseError()) ?
-    if (parseError) {
-      if (isDetailedError(error)) {
-        // handle case where error string and hash were
-        // wrapped in object like`const error = { str, hash };`
-        parseError(error.str, error.hash);
-      } else {
-        // assume it is just error string and pass it on
-        parseError(error);
-      }
-    } else {
+
+    if (parseError === undefined) {
       // No mermaid.parseError() handler defined, so re-throw it
       throw error;
     }
+
+    if (isDetailedError(error)) {
+      // Handle case where error string and hash were
+      // wrapped in object like`const error = { str, hash };`
+      parseError(error.str, error.hash);
+      return;
+    }
+
+    // Otherwise, assume it is just an error string and pass it on
+    parseError(error as string);
   }
 
   getParser() {
@@ -83,22 +96,16 @@ export class Diagram {
 
 export const getDiagramFromText = (
   txt: string,
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  parseError?: Function
+  parseError?: ParseErrorFunction
 ): Diagram | Promise<Diagram> => {
   const type = detectType(txt, configApi.getConfig());
   try {
     // Trying to find the diagram
     getDiagram(type);
-    return new Diagram(txt, parseError);
   } catch (error) {
-    if (!(error instanceof DiagramNotFoundError)) {
-      log.error(error);
-      throw error;
-    }
     const loader = getDiagramLoader(type);
     if (!loader) {
-      throw new Error(`Loader for ${type} not found.`);
+      throw new Error(`Diagram ${type} not found.`);
     }
     // TODO: Uncomment for v10
     // // Diagram not available, loading it
@@ -110,6 +117,7 @@ export const getDiagramFromText = (
       return new Diagram(txt, parseError);
     });
   }
+  return new Diagram(txt, parseError);
 };
 
 export default Diagram;

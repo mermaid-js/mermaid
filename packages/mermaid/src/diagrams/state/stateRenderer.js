@@ -1,12 +1,11 @@
 import { select } from 'd3';
-import dagre from 'dagre';
-import graphlib from 'graphlib';
+import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger';
 import common from '../common/common';
 import { drawState, addTitleAndBox, drawEdge } from './shapes';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import addSVGAccessibilityFields from '../../accessibility';
 
 // TODO Move conf object to main conf in mermaidAPI
 let conf;
@@ -47,7 +46,7 @@ const insertMarkers = function (elem) {
 export const draw = function (text, id, _version, diagObj) {
   conf = getConfig().state;
   const securityLevel = getConfig().securityLevel;
-  // Handle root and Document for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -97,7 +96,6 @@ export const draw = function (text, id, _version, diagObj) {
     'viewBox',
     `${bounds.x - conf.padding}  ${bounds.y - conf.padding} ` + width + ' ' + height
   );
-  addSVGAccessibilityFields(diagObj.db, diagram, id);
 };
 const getLabelWidth = (text) => {
   return text ? text.length * conf.fontSizeFactor : 1;
@@ -120,7 +118,7 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
   }
 
   // Set an object for the graph label
-  if (parentId)
+  if (parentId) {
     graph.setGraph({
       rankdir: 'LR',
       multigraph: true,
@@ -133,7 +131,7 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
       // ranksep: 5,
       // nodesep: 1
     });
-  else {
+  } else {
     graph.setGraph({
       rankdir: 'TB',
       multigraph: true,
@@ -162,8 +160,8 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
 
   let first = true;
 
-  for (let i = 0; i < keys.length; i++) {
-    const stateDef = states[keys[i]];
+  for (const key of keys) {
+    const stateDef = states[key];
 
     if (parentId) {
       stateDef.parentId = parentId;
@@ -239,13 +237,13 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
     );
   });
 
-  dagre.layout(graph);
+  dagreLayout(graph);
 
   log.debug('Graph after layout', graph.nodes());
   const svgElem = diagram.node();
 
   graph.nodes().forEach(function (v) {
-    if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
+    if (v !== undefined && graph.node(v) !== undefined) {
       log.warn('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
       root
         .select('#' + svgElem.id + ' #' + v)
@@ -268,7 +266,9 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
         let pWidth = 0;
         let pShift = 0;
         if (parent) {
-          if (parent.parentElement) pWidth = parent.parentElement.getBBox().width;
+          if (parent.parentElement) {
+            pWidth = parent.parentElement.getBBox().width;
+          }
           pShift = parseInt(parent.getAttribute('data-x-shift'), 10);
           if (Number.isNaN(pShift)) {
             pShift = 0;
@@ -285,7 +285,7 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
   let stateBox = svgElem.getBBox();
 
   graph.edges().forEach(function (e) {
-    if (typeof e !== 'undefined' && typeof graph.edge(e) !== 'undefined') {
+    if (e !== undefined && graph.edge(e) !== undefined) {
       log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
       drawEdge(diagram, graph.edge(e), graph.edge(e).relation);
     }

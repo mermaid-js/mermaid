@@ -49,8 +49,9 @@ export const addRel = function (type, from, to, label, techn, descr, sprite, tag
     to === null ||
     label === undefined ||
     label === null
-  )
+  ) {
     return;
+  }
 
   let rel = {};
   const old = rels.find((rel) => rel.from === from && rel.to === to);
@@ -111,7 +112,9 @@ export const addRel = function (type, from, to, label, techn, descr, sprite, tag
 //type, alias, label, ?descr, ?sprite, ?tags, $link
 export const addPersonOrSystem = function (typeC4Shape, alias, label, descr, sprite, tags, link) {
   // Don't allow label nulling
-  if (alias === null || label === null) return;
+  if (alias === null || label === null) {
+    return;
+  }
 
   let personOrSystem = {};
   const old = c4ShapeArray.find((personOrSystem) => personOrSystem.alias === alias);
@@ -166,7 +169,9 @@ export const addPersonOrSystem = function (typeC4Shape, alias, label, descr, spr
 //type, alias, label, ?techn, ?descr ?sprite, ?tags, $link
 export const addContainer = function (typeC4Shape, alias, label, techn, descr, sprite, tags, link) {
   // Don't allow label nulling
-  if (alias === null || label === null) return;
+  if (alias === null || label === null) {
+    return;
+  }
 
   let container = {};
   const old = c4ShapeArray.find((container) => container.alias === alias);
@@ -232,7 +237,9 @@ export const addContainer = function (typeC4Shape, alias, label, techn, descr, s
 //type, alias, label, ?techn, ?descr ?sprite, ?tags, $link
 export const addComponent = function (typeC4Shape, alias, label, techn, descr, sprite, tags, link) {
   // Don't allow label nulling
-  if (alias === null || label === null) return;
+  if (alias === null || label === null) {
+    return;
+  }
 
   let component = {};
   const old = c4ShapeArray.find((component) => component.alias === alias);
@@ -300,7 +307,9 @@ export const addPersonOrSystemBoundary = function (alias, label, type, tags, lin
   // if (parentBoundary === null) return;
 
   // Don't allow label nulling
-  if (alias === null || label === null) return;
+  if (alias === null || label === null) {
+    return;
+  }
 
   let boundary = {};
   const old = boundarys.find((boundary) => boundary.alias === alias);
@@ -354,7 +363,9 @@ export const addContainerBoundary = function (alias, label, type, tags, link) {
   // if (parentBoundary === null) return;
 
   // Don't allow label nulling
-  if (alias === null || label === null) return;
+  if (alias === null || label === null) {
+    return;
+  }
 
   let boundary = {};
   const old = boundarys.find((boundary) => boundary.alias === alias);
@@ -417,7 +428,9 @@ export const addDeploymentNode = function (
   // if (parentBoundary === null) return;
 
   // Don't allow label nulling
-  if (alias === null || label === null) return;
+  if (alias === null || label === null) {
+    return;
+  }
 
   let boundary = {};
   const old = boundarys.find((boundary) => boundary.alias === alias);
@@ -646,8 +659,12 @@ export const updateLayoutConfig = function (typeC4Shape, c4ShapeInRowParam, c4Bo
     c4BoundaryInRowValue = parseInt(c4BoundaryInRowParam);
   }
 
-  if (c4ShapeInRowValue >= 1) c4ShapeInRow = c4ShapeInRowValue;
-  if (c4BoundaryInRowValue >= 1) c4BoundaryInRow = c4BoundaryInRowValue;
+  if (c4ShapeInRowValue >= 1) {
+    c4ShapeInRow = c4ShapeInRowValue;
+  }
+  if (c4BoundaryInRowValue >= 1) {
+    c4BoundaryInRow = c4BoundaryInRowValue;
+  }
 };
 
 export const getC4ShapeInRow = function () {
@@ -665,11 +682,13 @@ export const getParentBoundaryParse = function () {
 };
 
 export const getC4ShapeArray = function (parentBoundary) {
-  if (parentBoundary === undefined || parentBoundary === null) return c4ShapeArray;
-  else
+  if (parentBoundary === undefined || parentBoundary === null) {
+    return c4ShapeArray;
+  } else {
     return c4ShapeArray.filter((personOrSystem) => {
       return personOrSystem.parentBoundary === parentBoundary;
     });
+  }
 };
 export const getC4Shape = function (alias) {
   return c4ShapeArray.find((personOrSystem) => personOrSystem.alias === alias);
@@ -679,8 +698,11 @@ export const getC4ShapeKeys = function (parentBoundary) {
 };
 
 export const getBoundarys = function (parentBoundary) {
-  if (parentBoundary === undefined || parentBoundary === null) return boundarys;
-  else return boundarys.filter((boundary) => boundary.parentBoundary === parentBoundary);
+  if (parentBoundary === undefined || parentBoundary === null) {
+    return boundarys;
+  } else {
+    return boundarys.filter((boundary) => boundary.parentBoundary === parentBoundary);
+  }
 };
 
 export const getRels = function () {

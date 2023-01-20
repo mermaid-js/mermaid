@@ -172,6 +172,18 @@ root
       expect(mm.children.length).toEqual(0);
       expect(mm.type).toEqual(mindmap.yy.nodeType.BANG);
     });
+
+    it('MMP-12-a mutiple types (hexagon)', function () {
+      let str = `mindmap
+ root{{the root}}
+`;
+
+      mindmap.parse(str);
+      const mm = mindmap.yy.getMindmap();
+      expect(mm.type).toEqual(mindmap.yy.nodeType.HEXAGON);
+      expect(mm.descr).toEqual('the root');
+      expect(mm.children.length).toEqual(0);
+    });
   });
   describe('decorations', function () {
     it('MMP-13 should be possible to set an icon for the node', function () {

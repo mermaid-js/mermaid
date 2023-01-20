@@ -11,7 +11,7 @@ export const drawRect = function (elem, rectData) {
   rectElem.attr('rx', rectData.rx);
   rectElem.attr('ry', rectData.ry);
 
-  if (typeof rectData.class !== 'undefined') {
+  if (rectData.class !== undefined) {
     rectElem.attr('class', rectData.class);
   }
 
@@ -116,11 +116,11 @@ export const drawCircle = function (element, circleData) {
   circleElement.attr('stroke', circleData.stroke);
   circleElement.attr('r', circleData.r);
 
-  if (typeof circleElement.class !== 'undefined') {
+  if (circleElement.class !== undefined) {
     circleElement.attr('class', circleElement.class);
   }
 
-  if (typeof circleData.title !== 'undefined') {
+  if (circleData.title !== undefined) {
     circleElement.append('title').text(circleData.title);
   }
 
@@ -138,7 +138,7 @@ export const drawText = function (elem, textData) {
 
   textElem.style('text-anchor', textData.anchor);
 
-  if (typeof textData.class !== 'undefined') {
+  if (textData.class !== undefined) {
     textElem.attr('class', textData.class);
   }
 
@@ -218,7 +218,7 @@ export const drawSection = function (elem, section, conf) {
 
 let taskCount = -1;
 /**
- * Draws an actor in the diagram with the attaced line
+ * Draws an actor in the diagram with the attached line
  *
  * @param {any} elem The HTML element
  * @param {any} task The task to render
