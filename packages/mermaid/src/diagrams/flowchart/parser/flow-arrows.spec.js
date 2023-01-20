@@ -24,6 +24,7 @@ describe('[Arrows] when parsing', () => {
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
     expect(edges[0].type).toBe('arrow_point');
+    expect(edges[0].reversed).toBe(false);
     expect(edges[0].text).toBe('');
     expect(edges[0].stroke).toBe('normal');
     expect(edges[0].length).toBe(1);
@@ -44,6 +45,7 @@ describe('[Arrows] when parsing', () => {
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
     expect(edges[0].type).toBe('arrow_point');
+    expect(edges[0].reversed).toBe(false);
     expect(edges[0].text).toBe('');
     expect(edges[0].stroke).toBe('normal');
     expect(edges[0].length).toBe(1);
@@ -64,6 +66,7 @@ describe('[Arrows] when parsing', () => {
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
     expect(edges[0].type).toBe('arrow_point');
+    expect(edges[0].reversed).toBe(false);
     expect(edges[0].text).toBe('');
     expect(edges[0].stroke).toBe('normal');
     expect(edges[0].length).toBe(1);
@@ -85,6 +88,7 @@ describe('[Arrows] when parsing', () => {
     expect(edges[0].end).toBe('B');
     expect(edges[0].length).toBe(1);
     expect(edges[0].type).toBe('arrow_point');
+    expect(edges[0].reversed).toBe(false);
     expect(edges[0].text).toBe('');
     expect(edges[0].stroke).toBe('normal');
     expect(edges[0].length).toBe(1);
@@ -105,6 +109,7 @@ describe('[Arrows] when parsing', () => {
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
     expect(edges[0].type).toBe('arrow_point');
+    expect(edges[0].reversed).toBe(false);
     expect(edges[0].text).toBe('');
     expect(edges[0].stroke).toBe('normal');
     expect(edges[0].length).toBe(1);
@@ -122,6 +127,7 @@ describe('[Arrows] when parsing', () => {
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
     expect(edges[0].type).toBe('arrow_point');
+    expect(edges[0].reversed).toBe(false);
     expect(edges[0].text).toBe('');
     expect(edges[0].stroke).toBe('normal');
     expect(edges[0].length).toBe(1);
@@ -139,6 +145,7 @@ describe('[Arrows] when parsing', () => {
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
     expect(edges[0].type).toBe('arrow_point');
+    expect(edges[0].reversed).toBe(false);
     expect(edges[0].text).toBe('');
     expect(edges[0].stroke).toBe('normal');
     expect(edges[0].length).toBe(1);
@@ -156,6 +163,7 @@ describe('[Arrows] when parsing', () => {
     expect(edges[1].start).toBe('B');
     expect(edges[1].end).toBe('C');
     expect(edges[0].type).toBe('arrow_point');
+    expect(edges[0].reversed).toBe(false);
     expect(edges[0].text).toBe('');
     expect(edges[0].stroke).toBe('normal');
     expect(edges[0].length).toBe(1);
@@ -175,6 +183,7 @@ describe('[Arrows] when parsing', () => {
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
         expect(edges[0].type).toBe('double_arrow_point');
+        expect(edges[0].reversed).toBe(false);
         expect(edges[0].text).toBe('');
         expect(edges[0].stroke).toBe('normal');
         expect(edges[0].length).toBe(1);
@@ -192,6 +201,7 @@ describe('[Arrows] when parsing', () => {
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
         expect(edges[0].type).toBe('double_arrow_point');
+        expect(edges[0].reversed).toBe(false);
         expect(edges[0].text).toBe('text');
         expect(edges[0].stroke).toBe('normal');
         expect(edges[0].length).toBe(1);
@@ -209,6 +219,7 @@ describe('[Arrows] when parsing', () => {
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
         expect(edges[0].type).toBe('double_arrow_point');
+        expect(edges[0].reversed).toBe(false);
         expect(edges[0].text).toBe('');
         expect(edges[0].stroke).toBe('thick');
         expect(edges[0].length).toBe(1);
@@ -226,6 +237,7 @@ describe('[Arrows] when parsing', () => {
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
         expect(edges[0].type).toBe('double_arrow_point');
+        expect(edges[0].reversed).toBe(false);
         expect(edges[0].text).toBe('text');
         expect(edges[0].stroke).toBe('thick');
         expect(edges[0].length).toBe(1);
@@ -243,6 +255,7 @@ describe('[Arrows] when parsing', () => {
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
         expect(edges[0].type).toBe('double_arrow_point');
+        expect(edges[0].reversed).toBe(false);
         expect(edges[0].text).toBe('');
         expect(edges[0].stroke).toBe('dotted');
         expect(edges[0].length).toBe(1);
@@ -260,6 +273,7 @@ describe('[Arrows] when parsing', () => {
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
         expect(edges[0].type).toBe('double_arrow_point');
+        expect(edges[0].reversed).toBe(false);
         expect(edges[0].text).toBe('text');
         expect(edges[0].stroke).toBe('dotted');
         expect(edges[0].length).toBe(1);
