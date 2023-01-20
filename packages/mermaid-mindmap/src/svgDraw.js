@@ -203,14 +203,12 @@ const roundedRectBkg = function (elem, node) {
  * @returns {number} The height nodes dom element
  */
 export const drawNode = function (elem, node, fullSection, conf) {
-  const section = (fullSection % MAX_SECTIONS) - 1;
+  const section = fullSection % MAX_SECTIONS;
   const nodeElem = elem.append('g');
   node.section = section;
   nodeElem.attr(
     'class',
-    (node.class ? node.class + ' ' : '') +
-      'mindmap-node ' +
-      (section < 0 ? 'section-root' : 'section-' + section)
+    (node.class ? node.class + ' ' : '') + 'mindmap-node ' + ('section-' + section)
   );
   const bkgElem = nodeElem.append('g');
 
