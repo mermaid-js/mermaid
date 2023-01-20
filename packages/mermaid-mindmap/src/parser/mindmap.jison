@@ -67,8 +67,15 @@ start
 // %{	: info document 'EOF' { return yy; } }
 	: MINDMAP document  { return yy; }
 	| MINDMAP NL document  { return yy; }
-  |	SPACELIST MINDMAP document  { return yy; }
+  |	spaceLines MINDMAP document  { return yy; }
+  |	spaceLines MINDMAP NL document  { return yy; }
 	;
+
+spaceLines
+  : SPACELINE
+  | spaceLines SPACELINE
+  | spaceLines NL
+  ;
 
 stop
   : NL {yy.getLogger().trace('Stop NL ');}
