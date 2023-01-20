@@ -266,4 +266,225 @@ describe('[Arrows] when parsing', () => {
       });
     });
   });
+
+  describe('it should handle reversed arrows', function () {
+    describe('should handle arrow type variations', function () {
+      it('should handle reversed point arrow', function () {
+        const res = flow.parser.parse('graph TD;\nA-\\->B;');
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow_point');
+        expect(edges[0].reversed).toBe(true);
+        expect(edges[0].text).toBe('');
+        expect(edges[0].stroke).toBe('normal');
+        expect(edges[0].length).toBe(1);
+      });
+
+      it('should handle reversed point arrow with text', function () {
+        const res = flow.parser.parse('graph TD;\nA-- text -\\->B;');
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow_point');
+        expect(edges[0].reversed).toBe(true);
+        expect(edges[0].text).toBe('text');
+        expect(edges[0].stroke).toBe('normal');
+        expect(edges[0].length).toBe(1);
+      });
+
+      it('should handle reversed cross arrows', function () {
+        const res = flow.parser.parse('graph TD;\nA-\\-xB;');
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow_cross');
+        expect(edges[0].reversed).toBe(true);
+        expect(edges[0].text).toBe('');
+        expect(edges[0].stroke).toBe('normal');
+        expect(edges[0].length).toBe(1);
+      });
+
+      it('should handle reversed cross arrows with text', function () {
+        const res = flow.parser.parse('graph TD;\nA-- text -\\-xB;');
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow_cross');
+        expect(edges[0].reversed).toBe(true);
+        expect(edges[0].text).toBe('text');
+        expect(edges[0].stroke).toBe('normal');
+        expect(edges[0].length).toBe(1);
+      });
+
+      it('should handle reversed circle arrow', function () {
+        const res = flow.parser.parse('graph TD;\nA-\\-oB;');
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow_circle');
+        expect(edges[0].reversed).toBe(true);
+        expect(edges[0].text).toBe('');
+        expect(edges[0].stroke).toBe('normal');
+        expect(edges[0].length).toBe(1);
+      });
+
+      it('should handle reversed circle arrow with text', function () {
+        const res = flow.parser.parse('graph TD;\nA-- text -\\-oB;');
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow_circle');
+        expect(edges[0].reversed).toBe(true);
+        expect(edges[0].text).toBe('text');
+        expect(edges[0].stroke).toBe('normal');
+        expect(edges[0].length).toBe(1);
+      });
+    });
+    describe('should handle stroke variations', function () {
+      it('should handle reversed simple arrow', function () {
+        const res = flow.parser.parse('graph TD;\nA-\\->B;');
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow_point');
+        expect(edges[0].reversed).toBe(true);
+        expect(edges[0].text).toBe('');
+        expect(edges[0].stroke).toBe('normal');
+        expect(edges[0].length).toBe(1);
+      });
+
+      it('should handle reversed double edged nodes with text', function () {
+        const res = flow.parser.parse('graph TD;\nA-- text -\\->B;');
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow_point');
+        expect(edges[0].reversed).toBe(true);
+        expect(edges[0].text).toBe('text');
+        expect(edges[0].stroke).toBe('normal');
+        expect(edges[0].length).toBe(1);
+      });
+
+      it('should handle reversed thick arrows', function () {
+        const res = flow.parser.parse('graph TD;\nA=\\=>B;');
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow_point');
+        expect(edges[0].reversed).toBe(true);
+        expect(edges[0].text).toBe('');
+        expect(edges[0].stroke).toBe('thick');
+        expect(edges[0].length).toBe(1);
+      });
+
+      it('should handle reversed thick arrows with text', function () {
+        const res = flow.parser.parse('graph TD;\nA== text =\\=>B;');
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow_point');
+        expect(edges[0].reversed).toBe(true);
+        expect(edges[0].text).toBe('text');
+        expect(edges[0].stroke).toBe('thick');
+        expect(edges[0].length).toBe(1);
+      });
+
+      it('should handle reversed dotted arrow', function () {
+        const res = flow.parser.parse('graph TD;\nA.\\->B;');
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow_point');
+        expect(edges[0].reversed).toBe(true);
+        expect(edges[0].text).toBe('');
+        expect(edges[0].stroke).toBe('dotted');
+        expect(edges[0].length).toBe(1);
+      });
+
+      it('should handle reversed dotted arrow with text', function () {
+        const res = flow.parser.parse('graph TD;\nA-. text .\\->B;');
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow_point');
+        expect(edges[0].reversed).toBe(true);
+        expect(edges[0].text).toBe('text');
+        expect(edges[0].stroke).toBe('dotted');
+        expect(edges[0].length).toBe(1);
+      });
+    });
+  });
 });
