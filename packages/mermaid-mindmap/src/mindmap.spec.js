@@ -371,4 +371,16 @@ root
     const child2 = mm.children[1];
     expect(child2.nodeId).toEqual('B');
   });
+  it('MMP-25 Handle rows above the mindmap declarations, no space', function () {
+    let str = '\n\n\nmindmap\nroot\n A\n \n\n B';
+    mindmap.parse(str);
+    const mm = mindmap.yy.getMindmap();
+    expect(mm.nodeId).toEqual('root');
+    expect(mm.children.length).toEqual(2);
+
+    const child = mm.children[0];
+    expect(child.nodeId).toEqual('A');
+    const child2 = mm.children[1];
+    expect(child2.nodeId).toEqual('B');
+  });
 });

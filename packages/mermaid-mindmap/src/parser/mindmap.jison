@@ -65,16 +65,19 @@
 
 start
 // %{	: info document 'EOF' { return yy; } }
-	: MINDMAP document  { return yy; }
-	| MINDMAP NL document  { return yy; }
-  |	spaceLines MINDMAP document  { return yy; }
-  |	spaceLines MINDMAP NL document  { return yy; }
-	;
+	: mindMap
+  |	spaceLines mindMap
+  ;
 
 spaceLines
   : SPACELINE
   | spaceLines SPACELINE
   | spaceLines NL
+  ;
+
+mindMap
+  : MINDMAP document  { return yy; }
+  | MINDMAP NL document  { return yy; }
   ;
 
 stop
