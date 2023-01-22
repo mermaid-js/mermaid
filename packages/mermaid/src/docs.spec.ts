@@ -1,6 +1,7 @@
 import { transformMarkdownAst, transformToBlockQuote } from './docs.mjs';
 
-import { remark as remarkBuilder } from 'remark'; // import it this way so we can mock it
+import { remark } from 'remark'; // import it this way so we can mock it
+import remarkFrontmatter from 'remark-frontmatter';
 import { vi, afterEach, describe, it, expect } from 'vitest';
 
 afterEach(() => {
@@ -8,6 +9,7 @@ afterEach(() => {
 });
 
 const originalFilename = 'example-input-filename.md';
+const remarkBuilder = remark().use(remarkFrontmatter, ['yaml']); // support YAML front-matter in Markdown
 
 describe('docs.mts', () => {
   describe('transformMarkdownAst', () => {
@@ -78,6 +80,28 @@ describe('docs.mts', () => {
           expect(result).toEqual(beforeCodeLine + '\n> **Note**\n' + '> This is the text\n');
         });
       });
+    });
+
+    it('should remove YAML if `removeYAML` is true', async () => {
+      const contents = `---
+title: Flowcharts Syntax
+---
+
+This Markdown should be kept.
+`;
+      const withYaml = (
+        await remarkBuilder().use(transformMarkdownAst, { originalFilename }).process(contents)
+      ).toString();
+      // no change
+      expect(withYaml).toEqual(contents);
+
+      const withoutYaml = (
+        await remarkBuilder()
+          .use(transformMarkdownAst, { originalFilename, removeYAML: true })
+          .process(contents)
+      ).toString();
+      // no change
+      expect(withoutYaml).toEqual('This Markdown should be kept.\n');
     });
   });
 
