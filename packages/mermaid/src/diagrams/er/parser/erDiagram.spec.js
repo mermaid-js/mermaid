@@ -190,6 +190,22 @@ describe('when parsing ER diagram it...', function () {
     expect(entities[entity].attributes.length).toBe(4);
   });
 
+  it('should allow an entity with attributes that have many constraints and comments', function () {
+    const entity = 'BOOK';
+    const attribute1 = 'int customer_number PK,FK "comment"';
+    const attribute2 = 'datetime customer_status_start_datetime PK,UK';
+    const attribute3 = 'string customer_name';
+
+    erDiagram.parser.parse(
+      `erDiagram\n${entity} {\n${attribute1} \n\n${attribute2}\n${attribute3}\n}`
+    );
+    const entities = erDb.getEntities();
+    expect(entities[entity].attributes[0].attributeKeyTypeList).toEqual(['PK', 'FK']);
+    expect(entities[entity].attributes[0].attributeComment).toBe('comment');
+    expect(entities[entity].attributes[1].attributeKeyTypeList).toEqual(['PK', 'UK']);
+    expect(entities[entity].attributes[2].attributeKeyTypeList).toBeUndefined();
+  });
+
   it('should allow an entity with attribute that has a generic type', function () {
     const entity = 'BOOK';
     const attribute1 = 'type~T~ type';
