@@ -339,8 +339,7 @@ const contentLoaded = function () {
   if (mermaid.startOnLoad) {
     const { startOnLoad } = mermaidAPI.getConfig();
     if (startOnLoad) {
-      // eslint-disable-next-line no-console
-      mermaid.init().catch((err) => console.error('Mermaid failed to initialize', err));
+      mermaid.init().catch((err) => log.error('Mermaid failed to initialize', err));
     }
   }
 };
