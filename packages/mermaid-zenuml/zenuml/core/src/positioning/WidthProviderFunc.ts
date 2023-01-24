@@ -1,6 +1,6 @@
-import { TextType } from '@/positioning/Coordinate';
+// import { TextType } from '@/positioning/Coordinate';
 
-export default function WidthProviderOnBrowser(text: string, type: TextType): number {
+export default function WidthProviderOnBrowser(text: string /*, type: TextType */): number {
   let hiddenDiv = document.querySelector('.textarea-hidden-div') as HTMLDivElement;
   if (!hiddenDiv) {
     const newDiv = document.createElement('div');
@@ -26,7 +26,7 @@ export default function WidthProviderOnBrowser(text: string, type: TextType): nu
   }
   // hiddenDiv.className = 'textarea-hidden-div ' + (type === TextType.ParticipantName ? 'participant' : 'message');
 
-  hiddenDiv.innerHTML = text;
+  hiddenDiv.textContent = text;
   const scrollWidth = hiddenDiv.scrollWidth;
   return scrollWidth;
 }
