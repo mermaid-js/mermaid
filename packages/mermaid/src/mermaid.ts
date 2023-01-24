@@ -339,7 +339,8 @@ const contentLoaded = function () {
   if (mermaid.startOnLoad) {
     const { startOnLoad } = mermaidAPI.getConfig();
     if (startOnLoad) {
-      void mermaid.init();
+      // eslint-disable-next-line no-console
+      mermaid.init().catch((err) => console.error('Mermaid failed to initialize', err));
     }
   }
 };
@@ -418,7 +419,7 @@ const parseAsync = (txt: string): Promise<boolean> => {
         );
       });
     executionQueue.push(performCall);
-    void executeQueue();
+    executeQueue().catch(reject);
   });
 };
 
@@ -451,7 +452,7 @@ const renderAsync = (
         );
       });
     executionQueue.push(performCall);
-    void executeQueue();
+    executeQueue().catch(reject);
   });
 };
 
