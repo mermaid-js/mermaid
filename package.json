@@ -4,7 +4,7 @@
   "version": "9.3.0-rc1",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
-  "packageManager": "pnpm@7.25.0",
+  "packageManager": "pnpm@7.25.1",
   "keywords": [
     "diagram",
     "markdown",
