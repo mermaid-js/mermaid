@@ -19,9 +19,6 @@ timeline
     2004 : Facebook : Google
     2005 : Youtube
     2006 : Twitter
-    2007 : Tumblr
-    2008 : Instagram
-    2010 : Pinterest
 ```
 
 ```mermaid
@@ -31,9 +28,6 @@ timeline
     2004 : Facebook : Google
     2005 : Youtube
     2006 : Twitter
-    2007 : Tumblr
-    2008 : Instagram
-    2010 : Pinterest
 ```
 
 ## Syntax
@@ -73,9 +67,6 @@ timeline
     2004 : Facebook : Google
     2005 : Youtube
     2006 : Twitter
-    2007 : Tumblr
-    2008 : Instagram
-    2010 : Pinterest
 ```
 
 ```mermaid
@@ -85,9 +76,6 @@ timeline
     2004 : Facebook : Google
     2005 : Youtube
     2006 : Twitter
-    2007 : Tumblr
-    2008 : Instagram
-    2010 : Pinterest
 ```
 
 In this way we can use a text outline to generate a timeline diagram.
@@ -115,7 +103,6 @@ timeline
     section 21st century
         Industry 4.0 : Internet, Robotics, Internet of Things
         Industry 5.0 : Artificial intelligence, Big data,3D printing
-        Industry 6.0 : Quantum computing, Nanotechnology : Human-Cyber Interface
 ```
 
 ```mermaid
@@ -128,7 +115,6 @@ timeline
     section 21st century
         Industry 4.0 : Internet, Robotics, Internet of Things
         Industry 5.0 : Artificial intelligence, Big data,3D printing
-        Industry 6.0 : Quantum computing, Nanotechnology : Human-Cyber Interface
 ```
 
 As you can see, the time periods are placed in the sections, and the sections are placed in the order they are defined.
@@ -171,6 +157,32 @@ timeline
 
 ```
 
+```mermaid-example
+timeline
+        title MermaidChart 2023 Timeline
+        section 2023 Q1 <br> Release Personal Tier
+          Buttet 1 : sub-point 1a : sub-point 1b
+               : sub-point 1c
+          Bullet 2 : sub-point 2a : sub-point 2b
+        section 2023 Q2 <br> Release XYZ Tier
+          Buttet 3 : sub-point <br> 3a : sub-point 3b
+               : sub-point 3c
+          Bullet 4 : sub-point 4a : sub-point 4b
+```
+
+```mermaid
+timeline
+        title MermaidChart 2023 Timeline
+        section 2023 Q1 <br> Release Personal Tier
+          Buttet 1 : sub-point 1a : sub-point 1b
+               : sub-point 1c
+          Bullet 2 : sub-point 2a : sub-point 2b
+        section 2023 Q2 <br> Release XYZ Tier
+          Buttet 3 : sub-point <br> 3a : sub-point 3b
+               : sub-point 3c
+          Bullet 4 : sub-point 4a : sub-point 4b
+```
+
 ## Styling of time periods and events
 
 As explained earlier, each section has a color scheme, and each time period and event under a section follow the similar color scheme.
@@ -186,9 +198,7 @@ However, if there is no section defined, then we have two possibilities:
           2004 : Facebook : Google
           2005 : Youtube
           2006 : Twitter
-          2007 : Tumblr
-          2008 : Instagram
-          2010 : Pinterest
+
 ```
 
 ```mermaid
@@ -198,9 +208,7 @@ However, if there is no section defined, then we have two possibilities:
           2004 : Facebook : Google
           2005 : Youtube
           2006 : Twitter
-          2007 : Tumblr
-          2008 : Instagram
-          2010 : Pinterest
+
 ```
 
 Note that this is no, section defined, and each time period and its corresponding events will have its own color scheme.
@@ -224,29 +232,25 @@ mermaid.initialize({
 let us look at same example, where we have disabled the multiColor option.
 
 ```mermaid-example
-   %%{init: { 'logLevel': 'debug', 'theme': 'base', 'timeline': {'disableMulticolor': true}}%%
+   %%{init: { 'logLevel': 'debug', 'theme': 'base', 'timeline': {'disableMulticolor': true}}}%%
     timeline
         title History of Social Media Platform
           2002 : LinkedIn
           2004 : Facebook : Google
           2005 : Youtube
           2006 : Twitter
-          2007 : Tumblr
-          2008 : Instagram
-          2010 : Pinterest
+
 ```
 
 ```mermaid
-   %%{init: { 'logLevel': 'debug', 'theme': 'base', 'timeline': {'disableMulticolor': true}}%%
+   %%{init: { 'logLevel': 'debug', 'theme': 'base', 'timeline': {'disableMulticolor': true}}}%%
     timeline
         title History of Social Media Platform
           2002 : LinkedIn
           2004 : Facebook : Google
           2005 : Youtube
           2006 : Twitter
-          2007 : Tumblr
-          2008 : Instagram
-          2010 : Pinterest
+
 ```
 
 ### Customizing Color scheme
@@ -264,7 +268,7 @@ Now let's override the default values for the `cScale0` to `cScale2` variables:
     %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
               'cScale0': '#ff0000',
               'cScale1': '#00ff00',
-              'cScale2': '#0000ff',
+              'cScale2': '#0000ff'
        } } }%%
        timeline
         title History of Social Media Platform
@@ -282,7 +286,7 @@ Now let's override the default values for the `cScale0` to `cScale2` variables:
     %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
               'cScale0': '#ff0000',
               'cScale1': '#00ff00',
-              'cScale2': '#0000ff',
+              'cScale2': '#0000ff'
        } } }%%
        timeline
         title History of Social Media Platform
@@ -460,7 +464,7 @@ Timeline uses the experimental lazy loading & async rendering features which cou
 ```html
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
-  import mindmap from 'https://cdn.jsdelivr.net/npm/@mermaid-js/mermaid-mindmap@9/dist/mermaid-timeline.esm.min.mjs';
+  import timeline from 'https://cdn.jsdelivr.net/npm/@mermaid-js/mermaid-timeline@9/dist/mermaid-timeline.esm.min.mjs';
   await mermaid.registerExternalDiagrams([timeline]);
 </script>
 ```
