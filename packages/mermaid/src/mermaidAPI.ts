@@ -779,7 +779,6 @@ const renderAsync = async function (
   return svgCode;
 };
 
-
 /**
  * @param  options - Initial Mermaid options
  */

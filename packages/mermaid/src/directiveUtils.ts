@@ -1,5 +1,3 @@
-
-
 import * as configApi from './config';
 
 import { log } from './logger';
@@ -7,7 +5,12 @@ import { directiveSanitizer } from './utils';
 
 let currentDirective: { type?: string; args?: any } | undefined = {};
 
-export const parseDirective = function (p: any, statement: string, context: string, type: string): void {
+export const parseDirective = function (
+  p: any,
+  statement: string,
+  context: string,
+  type: string
+): void {
   log.debug('parseDirective is being called', statement, context, type);
   try {
     if (statement !== undefined) {

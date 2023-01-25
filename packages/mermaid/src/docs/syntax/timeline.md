@@ -15,7 +15,6 @@ timeline
     2006 : Twitter
 ```
 
-
 ## Syntax
 
 The syntax for creating Timeline diagram is simple. You always start with the `timeline` keyword to let mermaid know that you want to create a timeline diagram.
@@ -24,15 +23,18 @@ After that there is a possibility to add a title to the timeline. This is done b
 
 Then you add the timeline data, where you always start with a time period, followed by a colon and then the text for the event. Optionally you can add a second colon and then the text for the event. So, you can have one or more events per time period.
 
-
 ```json
 {time period} : {event}
 ```
+
 or
+
 ```json
 {time period} : {event} : {event}
 ```
+
 or
+
 ```json
 {time period} : {event}
               : {event}
@@ -40,7 +42,6 @@ or
 ```
 
 NOTE: Both time period and event are simple text, and not limited to numbers.
-
 
 Let us look at the syntax for the example above.
 
@@ -59,6 +60,7 @@ The sequence of time period and events is important, as it will be used to draw 
 Similarly, the first event will be placed at the top for that specific time period, and the last event will be placed at the bottom.
 
 ## Grouping of time periods in sections/ages
+
 You can group time periods in sections/ages. This is done by adding a line with the keyword `section` followed by the section name.
 
 All subsequent time periods will be placed in this section until a new section is defined.
@@ -78,12 +80,13 @@ timeline
         Industry 4.0 : Internet, Robotics, Internet of Things
         Industry 5.0 : Artificial intelligence, Big data,3D printing
 ```
+
 As you can see, the time periods are placed in the sections, and the sections are placed in the order they are defined.
 
 All time periods and events under a given section follow a similar color scheme. This is done to make it easier to see the relationship between time periods and events.
 
-
 ## Wrapping of text for long time-periods or events
+
 By default, the text for time-periods and events will be wrapped if it is too long. This is done to avoid that the text is drawn outside the diagram.
 
 You can also use `<br>` to force a line break.
@@ -120,6 +123,7 @@ However, if there is no section defined, then we have two possibilities:
           2006 : Twitter
 
 ```
+
 Note that this is no, section defined, and each time period and its corresponding events will have its own color scheme.
 
 2. Disable the multiColor option using the `disableMultiColor` option. This will make all time periods and events follow the same color scheme.
@@ -139,6 +143,7 @@ mermaid.initialize({
 ```
 
 let us look at same example, where we have disabled the multiColor option.
+
 ```mermaid-example
    %%{init: { 'logLevel': 'debug', 'theme': 'base', 'timeline': {'disableMulticolor': true}}}%%
     timeline
@@ -149,6 +154,7 @@ let us look at same example, where we have disabled the multiColor option.
           2006 : Twitter
 
 ```
+
 ### Customizing Color scheme
 
 You can customize the color scheme using the `cScale0` to `cScale11` theme variables. Mermaid allows you to set unique colors for up-to 12, where `cScale0` variable will drive the value of the first section or time-period, `cScale1` will drive the value of the second section and so on.
@@ -180,8 +186,8 @@ Now let's override the default values for the `cScale0` to `cScale2` variables:
 
 See how the colors are changed to the values specified in the theme variables.
 
-
 ## Themes
+
 Mermaid supports a bunch of pre-defined themes which you can use to find the right one for you. PS: you can actually override an existing theme's variable to get your own custom theme going. Learn more about theming your diagram [here](../config/theming.md).
 
 The following are the different pre-defined theme options:
@@ -269,10 +275,6 @@ Let's put them to use, and see how our sample diagram looks in different themes:
           2008 : Instagram
           2010 : Pinterest
 ```
-
-
-
-
 
 ## Integrating with your library/website.
 

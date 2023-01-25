@@ -1,4 +1,8 @@
-import { getCommonDb as _getCommonDb, parseDirective as _parseDirective ,log  } from './mermaidUtils';
+import {
+  getCommonDb as _getCommonDb,
+  parseDirective as _parseDirective,
+  log,
+} from './mermaidUtils';
 
 let currentSection = '';
 let currentTaskId = 0;
@@ -9,7 +13,7 @@ const rawTasks = [];
 
 export const getCommonDb = _getCommonDb;
 
-export const parseDirective = ( statement, context, type) => {
+export const parseDirective = (statement, context, type) => {
   _parseDirective(this, statement, context, type);
 };
 
@@ -45,26 +49,24 @@ export const getTasks = function () {
 };
 
 export const addTask = function (period, length, event) {
-
   const rawTask = {
     id: currentTaskId++,
     section: currentSection,
     type: currentSection,
     task: period,
-    score : length?length:0,
+    score: length ? length : 0,
     //if event is defined, then add it the events array
-    events: event?[event]:[],
+    events: event ? [event] : [],
   };
   rawTasks.push(rawTask);
 };
 
 export const addEvent = function (event) {
- // fetch current task with currnetTaskId
+  // fetch current task with currnetTaskId
   const currentTask = rawTasks.find((task) => task.id === currentTaskId - 1);
   //add event to the events array
   currentTask.events.push(event);
 };
-
 
 export const addTaskOrg = function (descr) {
   const newTask = {
@@ -100,6 +102,5 @@ export default {
   addTask,
   addTaskOrg,
   addEvent,
-  parseDirective
+  parseDirective,
 };
-

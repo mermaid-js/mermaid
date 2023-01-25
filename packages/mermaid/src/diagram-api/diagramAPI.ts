@@ -5,9 +5,8 @@ import { sanitizeText as _sanitizeText } from '../diagrams/common/common';
 import { setupGraphViewbox as _setupGraphViewbox } from '../setupGraphViewbox';
 import { addStylesForDiagram } from '../styles';
 import { DiagramDefinition, DiagramDetector } from './types';
-import * as  _commonDb from '../commonDb';
-import { parseDirective as _parseDirective} from '../directiveUtils';
-
+import * as _commonDb from '../commonDb';
+import { parseDirective as _parseDirective } from '../directiveUtils';
 
 /*
   Packaging and exposing resources for external diagrams so that they can import
@@ -19,8 +18,11 @@ export const setLogLevel = _setLogLevel;
 export const getConfig = _getConfig;
 export const sanitizeText = (text: string) => _sanitizeText(text, getConfig());
 export const setupGraphViewbox = _setupGraphViewbox;
-export const getCommonDb = () => { return _commonDb };
-export const parseDirective =  (p: any, statement: string, context: string, type: string)=>_parseDirective(p, statement, context, type);
+export const getCommonDb = () => {
+  return _commonDb;
+};
+export const parseDirective = (p: any, statement: string, context: string, type: string) =>
+  _parseDirective(p, statement, context, type);
 
 const diagrams: Record<string, DiagramDefinition> = {};
 export interface Detectors {
@@ -51,7 +53,15 @@ export const registerDiagram = (
   addStylesForDiagram(id, diagram.styles);
 
   if (diagram.injectUtils) {
-    diagram.injectUtils(log, setLogLevel, getConfig, sanitizeText, setupGraphViewbox,getCommonDb(),parseDirective);
+    diagram.injectUtils(
+      log,
+      setLogLevel,
+      getConfig,
+      sanitizeText,
+      setupGraphViewbox,
+      getCommonDb(),
+      parseDirective
+    );
   }
 };
 

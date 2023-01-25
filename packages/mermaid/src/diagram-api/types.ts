@@ -33,7 +33,7 @@ export interface DiagramDefinition {
     _sanitizeText: InjectUtils['_sanitizeText'],
     _setupGraphViewbox: InjectUtils['_setupGraphViewbox'],
     _commonDb: InjectUtils['_commonDb'],
-    _parseDirective: InjectUtils['_parseDirective'],
+    _parseDirective: InjectUtils['_parseDirective']
   ) => void;
 }
 

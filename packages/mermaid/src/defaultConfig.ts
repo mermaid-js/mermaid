@@ -985,8 +985,6 @@ const config: Partial<MermaidConfig> = {
      */
     useMaxWidth: true,
 
-
-
     /**
      * | Parameter   | Description                       | Type | Required | Values      |
      * | ----------- | --------------------------------- | ---- | -------- | ----------- |

@@ -42,7 +42,7 @@ export let setupGraphViewbox: (
  * @param _getConfig - getConfig from mermaid/src/diagramAPI.ts
  * @param _sanitizeText - sanitizeText from mermaid/src/diagramAPI.ts
  * @param _setupGraphViewbox - setupGraphViewbox from mermaid/src/diagramAPI.ts
- * @param _commonDb
+ * @param _commonDb -`commonDb` from mermaid/src/diagramAPI.ts
  */
 export const injectUtils = (
   _log: Record<keyof typeof LEVELS, typeof console.log>,
@@ -64,5 +64,4 @@ export const injectUtils = (
   sanitizeText = _sanitizeText;
   setupGraphViewbox = _setupGraphViewbox;
   commonDb = _commonDb;
-
 };

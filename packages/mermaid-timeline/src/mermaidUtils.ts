@@ -26,7 +26,7 @@ export let sanitizeText: (str: string) => string;
 export const getCommonDb = () => localCommonDb;
 export let parseDirective = (p: any, statement: string, context: string, type: string) => {
   return;
-}
+};
 /**
  * Placeholder for the real function that will be injected by mermaid.
  */
@@ -37,8 +37,6 @@ export let setupGraphViewbox: (
   padding: any,
   useMaxWidth: boolean
 ) => void;
-
-
 
 /**
  * Function called by mermaid that injects utility functions that help the diagram to be a good citizen.
@@ -71,5 +69,4 @@ export const injectUtils = (
   setupGraphViewbox = _setupGraphViewbox;
   localCommonDb = _commonDb;
   parseDirective = _parseDirective;
-
 };

@@ -4,7 +4,7 @@ import timeline from '@mermaid-js/mermaid-timeline';
 
 const init = (async () => {
   try {
-    await mermaid.registerExternalDiagrams([mindmap,timeline]);
+    await mermaid.registerExternalDiagrams([mindmap, timeline]);
   } catch (e) {
     console.error(e);
   }

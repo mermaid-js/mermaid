@@ -55,5 +55,5 @@ export const injectUtils = (
   getConfig = _getConfig;
   sanitizeText = _sanitizeText;
   setupGraphViewbox = _setupGraphViewbox;
-  commonDb= _commonDb;
+  commonDb = _commonDb;
 };

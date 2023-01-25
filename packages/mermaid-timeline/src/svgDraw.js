@@ -1,4 +1,4 @@
-import { arc as d3arc , select} from 'd3';
+import { arc as d3arc, select } from 'd3';
 const MAX_SECTIONS = 12;
 
 export const drawRect = function (elem, rectData) {
@@ -12,7 +12,7 @@ export const drawRect = function (elem, rectData) {
   rectElem.attr('rx', rectData.rx);
   rectElem.attr('ry', rectData.ry);
 
-  if (typeof rectData.class !== 'undefined') {
+  if (rectData.class !== undefined) {
     rectElem.attr('class', rectData.class);
   }
 
@@ -117,11 +117,11 @@ export const drawCircle = function (element, circleData) {
   circleElement.attr('stroke', circleData.stroke);
   circleElement.attr('r', circleData.r);
 
-  if (typeof circleElement.class !== 'undefined') {
+  if (circleElement.class !== undefined) {
     circleElement.attr('class', circleElement.class);
   }
 
-  if (typeof circleData.title !== 'undefined') {
+  if (circleData.title !== undefined) {
     circleElement.append('title').text(circleData.title);
   }
 
@@ -139,7 +139,7 @@ export const drawText = function (elem, textData) {
 
   textElem.style('text-anchor', textData.anchor);
 
-  if (typeof textData.class !== 'undefined') {
+  if (textData.class !== undefined) {
     textElem.attr('class', textData.class);
   }
 
@@ -517,9 +517,7 @@ export const drawNode = function (elem, node, fullSection, conf) {
   node.section = section;
   nodeElem.attr(
     'class',
-    (node.class ? node.class + ' ' : '') +
-      'timeline-node ' +
-      ('section-' + section)
+    (node.class ? node.class + ' ' : '') + 'timeline-node ' + ('section-' + section)
   );
   const bkgElem = nodeElem.append('g');
 
@@ -535,7 +533,8 @@ export const drawNode = function (elem, node, fullSection, conf) {
     .attr('text-anchor', 'middle')
     .call(wrap, node.width);
   const bbox = txt.node().getBBox();
-  const fontSize = conf.fontSize && conf.fontSize.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
+  const fontSize =
+    conf.fontSize && conf.fontSize.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
   node.height = bbox.height + fontSize * 1.1 * 0.5 + node.padding;
   node.height = Math.max(node.height, node.maxHeight);
   node.width = node.width + 2 * node.padding;
@@ -545,13 +544,12 @@ export const drawNode = function (elem, node, fullSection, conf) {
   // Create the background element
   defaultBkg(bkgElem, node, section, conf);
 
-
   return node;
 };
 
- export const getVirtualNodeHeight = function (elem,node,conf) {
- const textElem = elem.append('g');
-    const txt = textElem
+export const getVirtualNodeHeight = function (elem, node, conf) {
+  const textElem = elem.append('g');
+  const txt = textElem
     .append('text')
     .text(node.descr)
     .attr('dy', '1em')
@@ -560,11 +558,11 @@ export const drawNode = function (elem, node, fullSection, conf) {
     .attr('text-anchor', 'middle')
     .call(wrap, node.width);
   const bbox = txt.node().getBBox();
-  const fontSize = conf.fontSize && conf.fontSize.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
+  const fontSize =
+    conf.fontSize && conf.fontSize.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
   textElem.remove();
   return bbox.height + fontSize * 1.1 * 0.5 + node.padding;
 };
-
 
 const defaultBkg = function (elem, node, section) {
   const rd = 5;

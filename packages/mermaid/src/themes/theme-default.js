@@ -139,7 +139,7 @@ class Theme {
     this['cScalePeer' + 2] = this['cScalePeer' + 2] || darken(this.tertiaryColor, 40);
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
       // Setup the peer color for the set, useful for borders
-       this['cScale' + i] = darken(this['cScale' + i], 10);
+      this['cScale' + i] = darken(this['cScale' + i], 10);
       this['cScalePeer' + i] = this['cScalePeer' + i] || darken(this['cScale' + i], 25);
     }
     // Setup the inverted color for the set

@@ -71,7 +71,21 @@
           I am a big big big tasks
           I am not so big tasks
     </pre>
-     <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
+ timeline
+        title MermaidChart 2023 Timeline
+        section 2023 Q1 &lt;br&gt; Release Personal Tier
+          Buttet 1 : sub-point 1a : sub-point 1b
+               : sub-point 1c
+          Bullet 2 : sub-point 2a : sub-point 2b
+        section 2023 Q2 <br> Release XYZ Tier
+          Buttet 3 : sub-point <br/> 3a : sub-point 3b
+               : sub-point 3c
+          Bullet 4 : sub-point 4a : sub-point 4b
+
+    </pre>
+
+    <pre id="diagram" class="mermaid2">
  timeline
         title England's History Timeline
         section Stone Age
@@ -96,7 +110,7 @@
           2008s : Instagram
           2010 : Pinterest
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
       %%{init: { 'logLevel': 'debug', 'theme': 'base', 'themeVariables': {
               'cScale0': '#ff0000',
               'cScale1': '#00ff00',
@@ -113,7 +127,7 @@
           2010 : Pinterest
     </pre>
 
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
           %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
               'cScale0': '#ff0000',
               'cScale1': '#00ff00',
@@ -173,11 +187,11 @@ mindmap
     <!-- <script src="./mermaid-example-diagram-detector.js"></script>    -->
     <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.7/dist/mermaid.min.js"></script> -->
     <script type="module">
-      import mindmap from '../../packages/mermaid-mindmap/src/detector';
+      //import mindmap from '../../packages/mermaid-mindmap/src/detector';
       // import example from '../../packages/mermaid-example-diagram/src/detector';
       import timeline from '../../packages/mermaid-timeline/src/detector';
       import mermaid from '../../packages/mermaid/src/mermaid';
-      await mermaid.registerExternalDiagrams([mindmap, timeline]);
+      await mermaid.registerExternalDiagrams([timeline]);
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
@@ -187,7 +201,7 @@ mindmap
         logLevel: 0,
         flowchart: {
           useMaxWidth: false,
-          htmlLabels: true,
+          htmlLabels: false,
         },
         gantt: {
           useMaxWidth: false,
@@ -195,7 +209,7 @@ mindmap
         timeline: {
           disableMulticolor: false,
         },
-        useMaxWidth: false,
+        useMaxWidth: true,
         lazyLoadedDiagrams: [
           // './mermaid-mindmap-detector.esm.mjs',
           // './mermaid-example-diagram-detector.esm.mjs',

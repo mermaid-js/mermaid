@@ -166,8 +166,8 @@ if (watch) {
   if (!mermaidOnly) {
     build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-mindmap' }));
     // build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
-  build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-timeline' }));
-  //build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-timeline-detector' }));
+    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-timeline' }));
+    //build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-timeline-detector' }));
   }
 } else if (visualize) {
   await build(getBuildConfig({ minify: false, core: true, entryName: 'mermaid' }));
