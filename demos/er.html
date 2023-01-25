@@ -75,7 +75,7 @@
       erDiagram
         "HOSPITAL" {
           int id PK
-          int doctor_id PK,FK
+          int doctor_id PK, FK
           string address UK
           string name
           string phone_number
@@ -103,7 +103,7 @@
           int age
         }
         NAMED-DRIVER {
-          string carRegistrationNumber PK,FK
+          string carRegistrationNumber PK, FK
           string driverLicence PK,FK
         }
         MANUFACTURER only one to zero or more CAR : makes
