@@ -135,6 +135,37 @@ describe('when parsing ER diagram it...', function () {
     });
   });
 
+  describe('attribute name', () => {
+    it('should allow alphanumeric characters, dashes, underscores and brackets (not leading chars)', function () {
+      const entity = 'BOOK';
+      const attribute1 = 'string myBookTitle';
+      const attribute2 = 'string MYBOOKSUBTITLE_1';
+      const attribute3 = 'string author-ref[name](1)';
+
+      erDiagram.parser.parse(
+        `erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n${attribute3}\n}`
+      );
+      const entities = erDb.getEntities();
+
+      expect(Object.keys(entities).length).toBe(1);
+      expect(entities[entity].attributes.length).toBe(3);
+      expect(entities[entity].attributes[0].attributeName).toBe('myBookTitle');
+      expect(entities[entity].attributes[1].attributeName).toBe('MYBOOKSUBTITLE_1');
+      expect(entities[entity].attributes[2].attributeName).toBe('author-ref[name](1)');
+    });
+
+    it('should not allow leading numbers, dashes or brackets', function () {
+      const entity = 'BOOK';
+      const nonLeadingChars = '0-[]()';
+      [...nonLeadingChars].forEach((nonLeadingChar) => {
+        expect(() => {
+          const attribute = `string ${nonLeadingChar}author`;
+          erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
+        }).toThrow();
+      });
+    });
+  });
+
   it('should allow an entity with a single attribute to be defined', function () {
     const entity = 'BOOK';
     const attribute = 'string title';
