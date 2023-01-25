@@ -81,11 +81,17 @@ statement
   | acc_descr acc_descr_value  { $$=$2.trim();yy.getCommonDb().setAccDescription($$); }
   | acc_descr_multiline_value { $$=$1.trim();yy.getCommonDb().setAccDescription($$); }
   | section {yy.addSection($1.substr(8));$$=$1.substr(8);}
-  | period {yy.addTask($1,0,'');$$=$1;}
-  | period event {yy.addTask($1,0,$2.substr(2));$$=$1;}
-  | event {yy.addEvent($1.substr(2));$$=$1;}
+  | period_statement
+  | event_statement
   | directive
   ;
+period_statement
+  : period {yy.addTask($1,0,'');$$=$1;}
+;
+event_statement
+  : event {yy.addEvent($1.substr(2));$$=$1;}
+;
+
 
 openDirective
   : open_directive { yy.parseDirective('%%{', 'open_directive'); }
