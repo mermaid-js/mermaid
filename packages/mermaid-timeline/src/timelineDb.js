@@ -79,6 +79,12 @@ export const addTaskOrg = function (descr) {
   tasks.push(newTask);
 };
 
+/**
+ * Compiles the raw tasks into a list of tasks with events
+ * @returns {boolean} true if all items are processed
+ * @private
+ * @memberof timelineDb
+ */
 const compileTasks = function () {
   const compileTask = function (pos) {
     return rawTasks[pos].processed;

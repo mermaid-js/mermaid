@@ -107,13 +107,27 @@ timeline
 
 ```
 
+```mermaid-example
+timeline
+        title MermaidChart 2023 Timeline
+        section 2023 Q1 <br> Release Personal Tier
+          Buttet 1 : sub-point 1a : sub-point 1b
+               : sub-point 1c
+          Bullet 2 : sub-point 2a : sub-point 2b
+        section 2023 Q2 <br> Release XYZ Tier
+          Buttet 3 : sub-point <br> 3a : sub-point 3b
+               : sub-point 3c
+          Bullet 4 : sub-point 4a : sub-point 4b
+```
 
 ## Styling of time periods and events
+
 As explained earlier, each section has a color scheme, and each time period and event under a section follow the similar color scheme.
 
 However, if there is no section defined, then we have two possibilities:
 
 1. Style time periods individually, i.e. each time period(and its coressponding events) will have its own color scheme. This is the DEFAULT behavior.
+
 ```mermaid-example
     timeline
         title History of Social Media Platform
