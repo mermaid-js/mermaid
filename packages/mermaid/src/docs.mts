@@ -110,7 +110,6 @@ const generateHeader = (file: string): string => {
  */
 const changeToFinalDocDir = (file: string): string => {
   const newDir = file.replace(SOURCE_DOCS_DIR, FINAL_DOCS_DIR);
-  console.log('Replacing in ' + file + ' > ' + newDir);
   mkdirSync(dirname(newDir), { recursive: true });
   return newDir;
 };

@@ -96,12 +96,12 @@ sequenceDiagram
 
 ### Grouping / Box
 
-The actor(s) can be grouped in vertical boxes. You can define a color (if not it will be transparent) and/or a descriptive label using the following notation:
+The actor(s) can be grouped in vertical boxes. You can define a color (if not, it will be transparent) and/or a descriptive label using the following notation:
 
     box Aqua Group Description
     ... actors ...
     end
-    box Group whithout description
+    box Group without description
     ... actors ...
     end
     box rgb(33,66,99)

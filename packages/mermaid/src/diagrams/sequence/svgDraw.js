@@ -512,7 +512,7 @@ export const drawActor = function (elem, actor, conf, isFooter) {
 
 export const drawBox = function (elem, box, conf) {
   const boxplustextGroup = elem.append('g');
-  var g = boxplustextGroup;
+  const g = boxplustextGroup;
   drawBackgroundRect(g, box);
   if (box.name) {
     _drawTextCandidateFunc(conf)(

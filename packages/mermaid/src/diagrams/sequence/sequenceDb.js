@@ -230,9 +230,9 @@ export const parseBoxData = function (str) {
       title = str.trim();
     }
   } else {
-    var s = new Option().style;
-    s.color = color;
-    if (s.color !== color) {
+    const style = new Option().style;
+    style.color = color;
+    if (style.color !== color) {
       color = 'transparent';
       title = str.trim();
     }
@@ -398,14 +398,6 @@ function insertProperties(actor, properties) {
       actor.properties[key] = properties[key];
     }
   }
-}
-
-/**
- *
- * @param boxId
- */
-function boxStart(boxId) {
-  currentBox = boxes[boxId];
 }
 
 /**
