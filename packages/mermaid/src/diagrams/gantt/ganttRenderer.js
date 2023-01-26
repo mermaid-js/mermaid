@@ -1,4 +1,5 @@
-import moment from 'moment-mini';
+import * as _moment from 'moment-mini';
+const moment = _moment;
 import { log } from '../../logger';
 import {
   select,
