@@ -1,3 +1,8 @@
+---
+title: Flowcharts Syntax
+outline: 'deep' # shows all h3 headings in outline in Vitepress
+---
+
 # Flowcharts - Basic Syntax
 
 All Flowcharts are composed of **nodes**, the geometric shapes and **edges**, the arrows or lines. The mermaid code defines the way that these **nodes** and **edges** are made and interact.

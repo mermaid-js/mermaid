@@ -23,7 +23,7 @@ const lint = async (file: string): Promise<boolean> => {
   return result.errorCount === 0;
 };
 
-(async () => {
+const main = async () => {
   const jisonFiles = await globby(['./packages/**/*.jison', '!./**/node_modules/**'], {
     dot: true,
   });
@@ -31,4 +31,6 @@ const lint = async (file: string): Promise<boolean> => {
   if (lintResults.includes(false)) {
     process.exit(1);
   }
-})();
+};
+
+void main();

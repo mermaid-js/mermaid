@@ -6,7 +6,7 @@ import { extractFrontMatter } from './diagram-api/frontmatter';
 import { isDetailedError } from './utils';
 import type { DetailedError } from './utils';
 
-export type ParseErrorFunction = (err: string | DetailedError, hash?: any) => void;
+export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
 
 export class Diagram {
   type = 'graph';

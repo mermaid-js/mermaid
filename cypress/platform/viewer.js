@@ -151,7 +151,7 @@ if (typeof document !== 'undefined') {
         contentLoadedApi();
       } else {
         this.console.log('Not using api');
-        contentLoaded();
+        void contentLoaded();
       }
     },
     false

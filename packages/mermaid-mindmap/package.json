@@ -47,6 +47,7 @@
     "non-layered-tidy-tree-layout": "^2.0.2"
   },
   "devDependencies": {
+    "@types/cytoscape": "^3.19.9",
     "concurrently": "^7.5.0",
     "mermaid": "workspace:*",
     "rimraf": "^3.0.2"
