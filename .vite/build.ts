@@ -41,11 +41,11 @@ const packageOptions = {
     packageName: 'mermaid-mindmap',
     file: 'detector.ts',
   },
-  'mermaid-timeline': {
-    name: 'mermaid-timeline',
-    packageName: 'mermaid-timeline',
-    file: 'detector.ts',
-  },
+  // 'mermaid-timeline': {
+  //   name: 'mermaid-timeline',
+  //   packageName: 'mermaid-timeline',
+  //   file: 'detector.ts',
+  // },
   // 'mermaid-timeline-detector': {
   //   name: 'mermaid-timeline-detector',
   //   packageName: 'mermaid-timeline',
@@ -138,7 +138,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
         'packages/mermaid-mindmap/src/**',
         'packages/mermaid/src/**',
         // 'packages/mermaid-example-diagram/src/**',
-        'packages/mermaid-timeline/src/**',
+        // 'packages/mermaid-timeline/src/**',
       ],
     };
   }
@@ -166,7 +166,7 @@ if (watch) {
   if (!mermaidOnly) {
     build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-mindmap' }));
     // build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
-    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-timeline' }));
+    //build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-timeline' }));
     //build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-timeline-detector' }));
   }
 } else if (visualize) {

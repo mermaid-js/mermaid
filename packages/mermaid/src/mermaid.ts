@@ -336,9 +336,9 @@ const registerExternalDiagrams = async (
   } else {
     await loadExternalDiagrams(...diagrams);
   }
-  externalDiagramsRegistered = true;
 };
 
+externalDiagramsRegistered = true;
 /**
  * ##contentLoaded Callback function that is called when page is loaded. This functions fetches
  * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the

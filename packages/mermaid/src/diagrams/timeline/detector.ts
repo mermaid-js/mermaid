@@ -1,4 +1,4 @@
-import type { ExternalDiagramDefinition } from 'mermaid';
+import type { ExternalDiagramDefinition } from '../../diagram-api/types';
 
 const id = 'timeline';
 

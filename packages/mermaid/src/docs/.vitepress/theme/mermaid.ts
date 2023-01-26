@@ -1,6 +1,6 @@
 import mermaid, { type MermaidConfig } from 'mermaid';
 import mindmap from '@mermaid-js/mermaid-mindmap';
-import timeline from '@mermaid-js/mermaid-timeline';
+// import timeline from '@mermaid-js/mermaid-timeline';
 
 const init = (async () => {
   try {

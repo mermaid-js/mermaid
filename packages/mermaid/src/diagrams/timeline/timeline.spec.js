@@ -1,8 +1,8 @@
 import { parser as timeline } from './parser/timeline';
 import * as timelineDB from './timelineDb';
 import { injectUtils } from './mermaidUtils';
-import * as _commonDb from '../../mermaid/src/commonDb';
-import { parseDirective as _parseDirective } from '../../mermaid/src/directiveUtils';
+import * as _commonDb from '../../commonDb';
+import { parseDirective as _parseDirective } from '../../directiveUtils';
 
 import {
   log,
@@ -10,7 +10,7 @@ import {
   getConfig,
   sanitizeText,
   setupGraphViewBox,
-} from '../../mermaid/src/diagram-api/diagramAPI';
+} from '../../diagram-api/diagramAPI';
 
 injectUtils(
   log,

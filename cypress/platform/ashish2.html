@@ -74,18 +74,18 @@
     <pre id="diagram" class="mermaid">
  timeline
         title MermaidChart 2023 Timeline
-        section 2023 Q1 &lt;br&gt; Release Personal Tier
+        section 2023 Q1 <br> Release Personal Tier
           Buttet 1 : sub-point 1a : sub-point 1b
                : sub-point 1c
           Bullet 2 : sub-point 2a : sub-point 2b
         section 2023 Q2 <br> Release XYZ Tier
-          Buttet 3 : sub-point <br/> 3a : sub-point 3b
+          Buttet 3 : sub-point <br> 3a : sub-point 3b
                : sub-point 3c
           Bullet 4 : sub-point 4a : sub-point 4b
 
     </pre>
 
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
  timeline
         title England's History Timeline
         section Stone Age
@@ -173,13 +173,11 @@ mindmap
           gc7((grand<br/>grand<br/>child 8))
         </pre>
     <pre id="diagram" class="mermaid2">
-      gantt
-        title Style today marker (vertical line should be 5px wide and half-transparent blue)
-        dateFormat YYYY-MM-DD
-        axisFormat %d
-        todayMarker stroke-width:5px,stroke:#00f,opacity:0.5
-        section Section1
-        Today: 1, -1h
+      flowchart-elk TB
+      a --> b
+      a --> c
+      b --> d
+      c --> d
     </pre>
 
     <!-- <div id="cy"></div> -->
@@ -189,9 +187,9 @@ mindmap
     <script type="module">
       //import mindmap from '../../packages/mermaid-mindmap/src/detector';
       // import example from '../../packages/mermaid-example-diagram/src/detector';
-      import timeline from '../../packages/mermaid-timeline/src/detector';
+      // import timeline from '../../packages/mermaid-timeline/src/detector';
       import mermaid from '../../packages/mermaid/src/mermaid';
-      await mermaid.registerExternalDiagrams([timeline]);
+      // await mermaid.registerExternalDiagrams([]);
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
@@ -201,13 +199,14 @@ mindmap
         logLevel: 0,
         flowchart: {
           useMaxWidth: false,
-          htmlLabels: false,
+          htmlLabels: true,
         },
         gantt: {
           useMaxWidth: false,
         },
         timeline: {
           disableMulticolor: false,
+          htmlLabels: false,
         },
         useMaxWidth: true,
         lazyLoadedDiagrams: [

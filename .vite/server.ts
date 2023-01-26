@@ -24,7 +24,7 @@ async function createServer() {
   app.use(express.static('./packages/mermaid/dist'));
   app.use(express.static('./packages/mermaid-example-diagram/dist'));
   app.use(express.static('./packages/mermaid-mindmap/dist'));
-  app.use(express.static('./packages/mermaid-timeline/dist'));
+  //app.use(express.static('./packages/mermaid-timeline/dist'));
   app.use(vite.middlewares);
   app.use(express.static('demos'));
   app.use(express.static('cypress/platform'));
