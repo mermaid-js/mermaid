@@ -55,7 +55,7 @@ In this way we can use a text outline to generate a hierarchical mindmap.
 
 ## Different shapes
 
-Mermaids mindmaps can show node using different shapes. When specifying a shape for a node the syntax for the is similar to flowchart nodes, with an id followed by the shape definition and with the text within the shape delimiters. Where possible we try/will try to keep the same shapes as for flowcharts even though they are not all supported from the start.
+Mermaid mindmaps can show nodes using different shapes. When specifying a shape for a node the syntax is similar to flowchart nodes, with an id followed by the shape definition and with the text within the shape delimiters. Where possible we try/will try to keep the same shapes as for flowcharts, even though they are not all supported from the start.
 
 Mindmap can show the following shapes:
 
