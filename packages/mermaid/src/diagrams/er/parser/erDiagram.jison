@@ -32,7 +32,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <block>\s+                      /* skip whitespace in block */
 <block>\b((?:PK)|(?:FK)|(?:UK))\b      return 'ATTRIBUTE_KEY'
 <block>(.*?)[~](.*?)*[~]        return 'ATTRIBUTE_WORD';
-<block>[A-Za-z][A-Za-z0-9\-_\[\]\(\)]*  return 'ATTRIBUTE_WORD'
+<block>[A-Za-z_][A-Za-z0-9\-_\[\]\(\)]*  return 'ATTRIBUTE_WORD'
 <block>\"[^"]*\"                return 'COMMENT';
 <block>[\n]+                    /* nothing */
 <block>"}"                      { this.popState(); return 'BLOCK_STOP'; }
@@ -81,7 +81,7 @@ start
 
 document
 	: /* empty */ { $$ = [] }
-	| document line {$1.push($2);$$ = $1}
+	| document line {$1.push($2);$$ = $1} 
 	;
 
 line
