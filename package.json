@@ -23,7 +23,7 @@
     "build": "pnpm run -r clean && concurrently \"pnpm build:vite\" \"pnpm build:types\"",
     "dev": "concurrently \"pnpm build:vite --watch\" \"ts-node-esm .vite/server.ts\"",
     "release": "pnpm build",
-    "lint": "eslint --cache --ignore-path .gitignore . && pnpm lint:jison && prettier --check .",
+    "lint": "eslint --cache --ignore-path .gitignore . && pnpm lint:jison && prettier --cache --check .",
     "lint:fix": "eslint --fix --ignore-path .gitignore . && prettier --write . && ts-node-esm scripts/fixCSpell.ts",
     "lint:jison": "ts-node-esm ./scripts/jison/lint.mts",
     "cypress": "cypress run",
