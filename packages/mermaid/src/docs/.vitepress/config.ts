@@ -77,6 +77,7 @@ function sidebarAll() {
       ],
     },
     ...sidebarSyntax(),
+    ...sidebarShowcase(),
     ...sidebarConfig(),
     ...sidebarMisc(),
     ...sidebarCommunity(),
@@ -126,6 +127,16 @@ function sidebarConfig() {
         { text: 'Mermaid CLI', link: '/config/mermaidCLI' },
         { text: 'Advanced usage', link: '/config/n00b-advanced' },
       ],
+    },
+  ];
+}
+
+function sidebarShowcase() {
+  return [
+    {
+      text: '🎉 Showcase',
+      collapsible: true,
+      items: [{ text: 'Up-to-date diagrams with Swimm', link: '/showcase/swimm' }],
     },
   ];
 }
