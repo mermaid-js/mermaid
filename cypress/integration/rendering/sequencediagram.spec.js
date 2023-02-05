@@ -34,10 +34,7 @@ context('Sequence diagram', () => {
       { sequence: { useMaxWidth: false } }
     );
     cy.get('svg').should((svg) => {
-      // const height = parseFloat(svg.attr('height'));
       const width = parseFloat(svg.attr('width'));
-      // expect(height).to.be.within(920, 971);
-      // use within because the absolute value can be slightly different depending on the environment ±5%
       expect(width).to.be.within(830 * 0.95, 830 * 1.05);
       expect(svg).to.not.have.attr('style');
     });
