@@ -79,7 +79,6 @@ function sidebarAll() {
     ...sidebarSyntax(),
     ...sidebarShowcase(),
     ...sidebarConfig(),
-    ...sidebarMisc(),
     ...sidebarCommunity(),
   ];
 }
@@ -126,6 +125,7 @@ function sidebarConfig() {
         { text: 'Accessibility', link: '/config/accessibility' },
         { text: 'Mermaid CLI', link: '/config/mermaidCLI' },
         { text: 'Advanced usage', link: '/config/n00b-advanced' },
+        { text: 'FAQ', link: '/config/faq' },
       ],
     },
   ];
@@ -148,7 +148,6 @@ function sidebarMisc() {
       collapsible: true,
       items: [
         { text: 'Use-Cases and Integrations', link: '/misc/integrations' },
-        { text: 'FAQ', link: '/misc/faq' },
       ],
     },
   ];
