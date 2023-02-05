@@ -77,7 +77,7 @@ function sidebarAll() {
       ],
     },
     ...sidebarSyntax(),
-    ...sidebarShowcase(),
+    ...sidebarEcosystem(),
     ...sidebarConfig(),
     ...sidebarCommunity(),
   ];
@@ -131,23 +131,14 @@ function sidebarConfig() {
   ];
 }
 
-function sidebarShowcase() {
+function sidebarEcosystem() {
   return [
     {
-      text: '🎉 Showcase',
-      collapsible: true,
-      items: [{ text: 'Up-to-date diagrams with Swimm', link: '/showcase/swimm' }],
-    },
-  ];
-}
-
-function sidebarMisc() {
-  return [
-    {
-      text: '📚 Misc',
+      text: '📚 Ecosystem',
       collapsible: true,
       items: [
-        { text: 'Use-Cases and Integrations', link: '/misc/integrations' },
+        { text: 'Showcases', link: '/ecosystem/showcases' },
+        { text: 'Use-Cases and Integrations', link: '/ecosystem/integrations' },
       ],
     },
   ];
