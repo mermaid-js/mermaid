@@ -54,7 +54,7 @@
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.0",
     "d3": "^7.0.0",
-    "dagre-d3-es": "7.0.6",
+    "dagre-d3-es": "7.0.8",
     "dompurify": "2.4.3",
     "elkjs": "^0.8.2",
     "khroma": "^2.0.0",
