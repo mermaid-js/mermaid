@@ -552,8 +552,8 @@ linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
 ### Styling line curves
 
 It is possible to style the type of curve used for lines between items, if the default method does not meet your needs.
-Available curve styles include `basis`, `bump`, `linear`, `monotoneX`, `monotoneY`, `natural`, `step`, `stepAfter`,
-and `stepBefore`.
+Available curve styles include `basis`, `bumpX`, `bumpY`, `cardinal`, `catmullRom`, `linear`, `monotoneX`, `monotoneY`,
+`natural`, `step`, `stepAfter`, and `stepBefore`.
 
 In this example, a left-to-right graph uses the `stepBefore` curve style:
 
