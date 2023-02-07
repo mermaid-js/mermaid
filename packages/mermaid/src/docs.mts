@@ -88,7 +88,7 @@ const filesTransformed: Set<string> = new Set();
 
 const generateHeader = (file: string): string => {
   // path from file in docs/* to repo root, e.g ../ or ../../ */
-  const relativePath = relative(file, SOURCE_DOCS_DIR);
+  const relativePath = relative(file, SOURCE_DOCS_DIR).replaceAll('\\', '/');
   const filePathFromRoot = posix.join('/packages/mermaid', file);
   const sourcePathRelativeToGenerated = posix.join(relativePath, filePathFromRoot);
   return `
@@ -189,7 +189,7 @@ const transformIncludeStatements = (file: string, text: string): string => {
   // resolve includes - src https://github.com/vuejs/vitepress/blob/428eec3750d6b5648a77ac52d88128df0554d4d1/src/node/markdownToVue.ts#L65-L76
   return text.replace(includesRE, (m, m1) => {
     try {
-      const includePath = join(dirname(file), m1);
+      const includePath = join(dirname(file), m1).replaceAll('\\', '/');
       const content = readSyncedUTF8file(includePath);
       includedFiles.add(changeToFinalDocDir(includePath));
       return content;

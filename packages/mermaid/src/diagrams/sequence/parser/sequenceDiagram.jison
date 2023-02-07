@@ -35,8 +35,9 @@
 \%%(?!\{)[^\n]*                                                 /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */
 [0-9]+(?=[ \n]+)       											return 'NUM';
+"box"															{ this.begin('LINE'); return 'box'; }
 "participant"                                                   { this.begin('ID'); return 'participant'; }
-"actor"                                                   	{ this.begin('ID'); return 'participant_actor'; }
+"actor"                                                   		{ this.begin('ID'); return 'participant_actor'; }
 <ID>[^\->:\n,;]+?([\-]*[^\->:\n,;]+?)*?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)     { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 <ALIAS>"as"                                                     { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
 <ALIAS>(?:)                                                     { this.popState(); this.popState(); return 'NEWLINE'; }
@@ -117,16 +118,30 @@ line
 	| NEWLINE { $$=[]; }
 	;
 
+box_section
+	: /* empty */ { $$ = [] }
+	| box_section box_line {$1.push($2);$$ = $1}
+	;
+
+box_line
+	: SPACE participant_statement { $$ = $2 }
+	| participant_statement { $$ = $1 }
+	| NEWLINE { $$=[]; }
+	;
+
+
 directive
   : openDirective typeDirective closeDirective 'NEWLINE'
   | openDirective typeDirective ':' argDirective closeDirective 'NEWLINE'
   ;
 
 statement
-	: 'participant' actor 'AS' restOfLine 'NEWLINE' {$2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
-	| 'participant' actor 'NEWLINE' {$2.type='addParticipant';$$=$2;}
-	| 'participant_actor' actor 'AS' restOfLine 'NEWLINE' {$2.type='addActor';$2.description=yy.parseMessage($4); $$=$2;}
-	| 'participant_actor' actor 'NEWLINE' {$2.type='addActor'; $$=$2;}
+	: participant_statement
+	| 'box' restOfLine box_section end
+	{
+		$3.unshift({type: 'boxStart', boxData:yy.parseBoxData($2) });
+		$3.push({type: 'boxEnd', boxText:$2});
+		$$=$3;}
 	| signal 'NEWLINE'
 	| autonumber NUM NUM 'NEWLINE' { $$= {type:'sequenceIndex',sequenceIndex: Number($2), sequenceIndexStep:Number($3), sequenceVisible:true, signalType:yy.LINETYPE.AUTONUMBER};}
 	| autonumber NUM 'NEWLINE' { $$ = {type:'sequenceIndex',sequenceIndex: Number($2), sequenceIndexStep:1, sequenceVisible:true, signalType:yy.LINETYPE.AUTONUMBER};}
@@ -207,6 +222,13 @@ else_sections
 	: document
 	| document else restOfLine else_sections
 	{ $$ = $1.concat([{type: 'else', altText:yy.parseMessage($3), signalType: yy.LINETYPE.ALT_ELSE}, $4]); }
+	;
+
+participant_statement
+	: 'participant' actor 'AS' restOfLine 'NEWLINE' {$2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant' actor 'NEWLINE' {$2.type='addParticipant';$$=$2;}
+	| 'participant_actor' actor 'AS' restOfLine 'NEWLINE' {$2.type='addActor';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant_actor' actor 'NEWLINE' {$2.type='addActor'; $$=$2;}
 	;
 
 note_statement
