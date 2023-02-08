@@ -203,15 +203,14 @@ const roundedRectBkg = function (elem, node) {
  * @returns {number} The height nodes dom element
  */
 export const drawNode = function (elem, node, fullSection, conf) {
-  const section = (fullSection % MAX_SECTIONS) - 1;
+  const section = fullSection % (MAX_SECTIONS - 1);
   const nodeElem = elem.append('g');
   node.section = section;
-  nodeElem.attr(
-    'class',
-    (node.class ? node.class + ' ' : '') +
-      'mindmap-node ' +
-      (section < 0 ? 'section-root' : 'section-' + section)
-  );
+  let sectionClass = 'section-' + section;
+  if (section < 0) {
+    sectionClass += ' section-root';
+  }
+  nodeElem.attr('class', (node.class ? node.class + ' ' : '') + 'mindmap-node ' + sectionClass);
   const bkgElem = nodeElem.append('g');
 
   // Create the wrapped text element
@@ -305,7 +304,7 @@ export const drawNode = function (elem, node, fullSection, conf) {
 };
 
 export const drawEdge = function drawEdge(edgesElem, mindmap, parent, depth, fullSection) {
-  const section = (fullSection % MAX_SECTIONS) - 1;
+  const section = fullSection % (MAX_SECTIONS - 1);
   const sx = parent.x + parent.width / 2;
   const sy = parent.y + parent.height / 2;
   const ex = mindmap.x + mindmap.width / 2;

@@ -27,6 +27,7 @@ export const log: Record<keyof typeof LEVELS, typeof console.log> = {
 export let setLogLevel: (level: keyof typeof LEVELS | number | string) => void;
 export let getConfig: () => object;
 export let sanitizeText: (str: string) => string;
+export let commonDb: () => object;
 // eslint-disable @typescript-eslint/no-explicit-any
 export let setupGraphViewbox: (
   graph: any,
@@ -40,7 +41,8 @@ export const injectUtils = (
   _setLogLevel: any,
   _getConfig: any,
   _sanitizeText: any,
-  _setupGraphViewbox: any
+  _setupGraphViewbox: any,
+  _commonDb: any
 ) => {
   _log.info('Mermaid utils injected');
   log.trace = _log.trace;
@@ -53,4 +55,5 @@ export const injectUtils = (
   getConfig = _getConfig;
   sanitizeText = _sanitizeText;
   setupGraphViewbox = _setupGraphViewbox;
+  commonDb = _commonDb;
 };

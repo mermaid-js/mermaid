@@ -349,6 +349,22 @@ importers:
         specifier: ^3.0.2
         version: 3.0.2
 
+  packages/mermaid-timeline:
+    dependencies:
+      d3:
+        specifier: ^7.0.0
+        version: 7.6.1
+      khroma:
+        specifier: ^2.0.0
+        version: 2.0.0
+    devDependencies:
+      concurrently:
+        specifier: ^7.4.0
+        version: 7.5.0
+      rimraf:
+        specifier: ^3.0.2
+        version: 3.0.2
+
   tests/webpack:
     dependencies:
       '@mermaid-js/mermaid-mindmap':
