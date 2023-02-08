@@ -1,6 +1,6 @@
 import { parser as timeline } from './parser/timeline';
 import * as timelineDB from './timelineDb';
-import { injectUtils } from './mermaidUtils';
+// import { injectUtils } from './mermaidUtils';
 import * as _commonDb from '../../commonDb';
 import { parseDirective as _parseDirective } from '../../directiveUtils';
 
@@ -12,15 +12,15 @@ import {
   setupGraphViewBox,
 } from '../../diagram-api/diagramAPI';
 
-injectUtils(
-  log,
-  setLogLevel,
-  getConfig,
-  sanitizeText,
-  setupGraphViewBox,
-  _commonDb,
-  _parseDirective
-);
+// injectUtils(
+//   log,
+//   setLogLevel,
+//   getConfig,
+//   sanitizeText,
+//   setupGraphViewBox,
+//   _commonDb,
+//   _parseDirective
+// );
 
 describe('when parsing a timeline ', function () {
   beforeEach(function () {
