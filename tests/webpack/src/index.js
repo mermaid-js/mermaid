@@ -13,8 +13,8 @@ const load = async () => {
   await mermaid.registerExternalDiagrams([mindmap]);
   await render('info');
 
-  setTimeout(async () => {
-    await render(`mindmap
+  setTimeout(() => {
+    void render(`mindmap
   root((mindmap))
     Origins
       Long history
@@ -35,4 +35,4 @@ const load = async () => {
   }, 2500);
 };
 
-window.addEventListener('load', load, false);
+window.addEventListener('load', () => void load(), false);

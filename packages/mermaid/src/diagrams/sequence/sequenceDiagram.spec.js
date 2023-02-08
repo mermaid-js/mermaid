@@ -52,8 +52,16 @@ vi.mock('d3', () => {
     curveBasis: 'basis',
     curveBasisClosed: 'basisClosed',
     curveBasisOpen: 'basisOpen',
-    curveLinear: 'linear',
+    curveBumpX: 'bumpX',
+    curveBumpY: 'bumpY',
+    curveBundle: 'bundle',
+    curveCardinalClosed: 'cardinalClosed',
+    curveCardinalOpen: 'cardinalOpen',
     curveCardinal: 'cardinal',
+    curveCatmullRomClosed: 'catmullRomClosed',
+    curveCatmullRomOpen: 'catmullRomOpen',
+    curveCatmullRom: 'catmullRom',
+    curveLinear: 'linear',
     curveLinearClosed: 'linearClosed',
     curveMonotoneX: 'monotoneX',
     curveMonotoneY: 'monotoneY',
@@ -1299,8 +1307,76 @@ properties b: {"class": "external-service-actor", "icon": "@computer"}
     expect(actors.b.properties['icon']).toBe('@computer');
     expect(actors.c.properties['class']).toBe(undefined);
   });
-});
 
+  it('should handle box', function () {
+    const str = `
+sequenceDiagram
+box green Group 1
+participant a as Alice
+participant b as Bob
+end
+participant c as Charlie
+links a: { "Repo": "https://repo.contoso.com/", "Dashboard": "https://dashboard.contoso.com/" }
+links b: { "Dashboard": "https://dashboard.contoso.com/" }
+links a: { "On-Call": "https://oncall.contoso.com/?svc=alice" }
+link a: Endpoint @ https://alice.contoso.com
+link a: Swagger @ https://swagger.contoso.com
+link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
+`;
+
+    mermaidAPI.parse(str);
+    const boxes = diagram.db.getBoxes();
+    expect(boxes[0].name).toEqual('Group 1');
+    expect(boxes[0].actorKeys).toEqual(['a', 'b']);
+    expect(boxes[0].fill).toEqual('green');
+  });
+
+  it('should handle box without color', function () {
+    const str = `
+  sequenceDiagram
+  box Group 1
+  participant a as Alice
+  participant b as Bob
+  end
+  participant c as Charlie
+  links a: { "Repo": "https://repo.contoso.com/", "Dashboard": "https://dashboard.contoso.com/" }
+  links b: { "Dashboard": "https://dashboard.contoso.com/" }
+  links a: { "On-Call": "https://oncall.contoso.com/?svc=alice" }
+  link a: Endpoint @ https://alice.contoso.com
+  link a: Swagger @ https://swagger.contoso.com
+  link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
+  `;
+
+    mermaidAPI.parse(str);
+    const boxes = diagram.db.getBoxes();
+    expect(boxes[0].name).toEqual('Group 1');
+    expect(boxes[0].actorKeys).toEqual(['a', 'b']);
+    expect(boxes[0].fill).toEqual('transparent');
+  });
+
+  it('should handle box without description', function () {
+    const str = `
+  sequenceDiagram
+  box Aqua
+  participant a as Alice
+  participant b as Bob
+  end
+  participant c as Charlie
+  links a: { "Repo": "https://repo.contoso.com/", "Dashboard": "https://dashboard.contoso.com/" }
+  links b: { "Dashboard": "https://dashboard.contoso.com/" }
+  links a: { "On-Call": "https://oncall.contoso.com/?svc=alice" }
+  link a: Endpoint @ https://alice.contoso.com
+  link a: Swagger @ https://swagger.contoso.com
+  link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
+  `;
+
+    mermaidAPI.parse(str);
+    const boxes = diagram.db.getBoxes();
+    expect(boxes[0].name).toBeFalsy();
+    expect(boxes[0].actorKeys).toEqual(['a', 'b']);
+    expect(boxes[0].fill).toEqual('Aqua');
+  });
+});
 describe('when checking the bounds in a sequenceDiagram', function () {
   beforeAll(() => {
     let conf = {
@@ -1572,6 +1648,24 @@ Alice->Bob: Hello Bob, how are you?`;
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
     expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
+  });
+  it('should handle two actors in a box', function () {
+    const str = `
+sequenceDiagram
+box rgb(34, 56, 0) Group1
+participant Alice
+participant Bob
+end
+Alice->Bob: Hello Bob, how are you?`;
+
+    mermaidAPI.parse(str);
+    diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+
+    const { bounds, models } = diagram.renderer.bounds.getBounds();
+    expect(bounds.startx).toBe(0);
+    expect(bounds.starty).toBe(0);
+    expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin + conf.boxTextMargin * 2);
+    expect(bounds.stopy).toBe(models.lastMessage().stopy + 20);
   });
   it('should handle two actors with init directive', function () {
     const str = `
