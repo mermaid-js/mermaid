@@ -41,26 +41,6 @@ const packageOptions = {
     packageName: 'mermaid-mindmap',
     file: 'detector.ts',
   },
-  // 'mermaid-timeline': {
-  //   name: 'mermaid-timeline',
-  //   packageName: 'mermaid-timeline',
-  //   file: 'detector.ts',
-  // },
-  // 'mermaid-timeline-detector': {
-  //   name: 'mermaid-timeline-detector',
-  //   packageName: 'mermaid-timeline',
-  //   file: 'detector.ts',
-  // },
-  // 'mermaid-example-diagram': {
-  //   name: 'mermaid-example-diagram',
-  //   packageName: 'mermaid-example-diagram',
-  //   file: 'diagram-definition.ts',
-  // },
-  // 'mermaid-example-diagram-detector': {
-  //   name: 'mermaid-example-diagram-detector',
-  //   packageName: 'mermaid-example-diagram',
-  //   file: 'detector.ts',
-  // },
 };
 
 interface BuildOptions {
@@ -134,12 +114,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
 
   if (watch && config.build) {
     config.build.watch = {
-      include: [
-        'packages/mermaid-mindmap/src/**',
-        'packages/mermaid/src/**',
-        // 'packages/mermaid-example-diagram/src/**',
-        // 'packages/mermaid-timeline/src/**',
-      ],
+      include: ['packages/mermaid-mindmap/src/**', 'packages/mermaid/src/**'],
     };
   }
 
@@ -165,9 +140,6 @@ if (watch) {
   build(getBuildConfig({ minify: false, watch, core: false, entryName: 'mermaid' }));
   if (!mermaidOnly) {
     build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-mindmap' }));
-    // build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
-    //build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-timeline' }));
-    //build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-timeline-detector' }));
   }
 } else if (visualize) {
   await build(getBuildConfig({ minify: false, core: true, entryName: 'mermaid' }));

@@ -1,6 +1,6 @@
 /** mermaid
  *  https://mermaidjs.github.io/
- *  (c) 2015 Knut Sveidqvist
+ *  (c) 2023 Knut Sveidqvist
  *  MIT license.
  */
 %lex
