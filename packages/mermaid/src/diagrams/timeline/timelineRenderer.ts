@@ -1,7 +1,9 @@
 // @ts-nocheck TODO: fix file
 import { select } from 'd3';
 import svgDraw from './svgDraw';
-import { log, getConfig, setupGraphViewbox } from './mermaidUtils';
+import { log } from '../../logger';
+import { getConfig } from '../../config';
+import { setupGraphViewbox } from '../../setupGraphViewbox';
 
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);

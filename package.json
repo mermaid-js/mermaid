@@ -110,5 +110,8 @@
   },
   "volta": {
     "node": "18.13.0"
+  },
+  "dependencies": {
+    "remark-frontmatter": "^4.0.1"
   }
 }

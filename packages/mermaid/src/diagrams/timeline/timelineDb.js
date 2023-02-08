@@ -1,9 +1,5 @@
-import {
-  getCommonDb as _getCommonDb,
-  parseDirective as _parseDirective,
-  log,
-} from './mermaidUtils';
-
+import { parseDirective as _parseDirective } from '../../directiveUtils';
+import * as commonDb from '../../commonDb';
 let currentSection = '';
 let currentTaskId = 0;
 
@@ -11,7 +7,7 @@ const sections = [];
 const tasks = [];
 const rawTasks = [];
 
-export const getCommonDb = _getCommonDb;
+export const getCommonDb = () => commonDb;
 
 export const parseDirective = (statement, context, type) => {
   _parseDirective(this, statement, context, type);
@@ -22,7 +18,7 @@ export const clear = function () {
   tasks.length = 0;
   currentSection = '';
   rawTasks.length = 0;
-  _getCommonDb().clear();
+  commonDb.clear();
 };
 
 export const addSection = function (txt) {
