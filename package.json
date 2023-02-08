@@ -24,7 +24,7 @@
     "dev": "concurrently \"pnpm build:vite --watch\" \"ts-node-esm .vite/server.ts\"",
     "release": "pnpm build",
     "lint": "eslint --cache --cache-strategy content --ignore-path .gitignore . && pnpm lint:jison && prettier --cache --check .",
-    "lint:fix": "eslint --fix --ignore-path .gitignore . && prettier --write . && ts-node-esm scripts/fixCSpell.ts",
+    "lint:fix": "eslint --cache --cache-strategy content --fix --ignore-path .gitignore . && prettier --write . && ts-node-esm scripts/fixCSpell.ts",
     "lint:jison": "ts-node-esm ./scripts/jison/lint.mts",
     "cypress": "cypress run",
     "cypress:open": "cypress open",
