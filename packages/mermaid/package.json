@@ -73,7 +73,7 @@
     "@types/micromatch": "^4.0.2",
     "@types/prettier": "^2.7.1",
     "@types/stylis": "^4.0.2",
-    "@types/uuid": "^8.3.4",
+    "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
     "chokidar": "^3.5.3",
