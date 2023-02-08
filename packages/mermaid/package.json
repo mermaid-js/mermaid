@@ -53,6 +53,9 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.0",
+    "cytoscape": "^3.23.0",
+    "cytoscape-cose-bilkent": "^4.1.0",
+    "cytoscape-fcose": "^2.1.0",
     "d3": "^7.0.0",
     "dagre-d3-es": "7.0.8",
     "dompurify": "2.4.3",
@@ -66,6 +69,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/cytoscape": "^3.19.9",
     "@types/d3": "^7.4.0",
     "@types/dompurify": "^2.4.0",
     "@types/jsdom": "^20.0.1",

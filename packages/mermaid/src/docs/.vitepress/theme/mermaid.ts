@@ -1,10 +1,10 @@
 import mermaid, { type MermaidConfig } from 'mermaid';
-import mindmap from '@mermaid-js/mermaid-mindmap';
+// import mindmap from '@mermaid-js/mermaid-mindmap';
 // import timeline from '@mermaid-js/mermaid-timeline';
 
 const init = (async () => {
   try {
-    await mermaid.registerExternalDiagrams([mindmap, timeline]);
+    await mermaid.registerExternalDiagrams([]);
   } catch (e) {
     console.error(e);
   }

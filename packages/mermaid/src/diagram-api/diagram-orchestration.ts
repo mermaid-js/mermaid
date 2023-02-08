@@ -96,7 +96,10 @@ import errorStyles from '../diagrams/error/styles';
 import flowchartElk from '../diagrams/flowchart/elk/detector';
 import { registerLazyLoadedDiagrams } from './detectType';
 
+// Lazy loaded diagrams
 import timelineDetector from '../diagrams/timeline/detector';
+import mindmapDetector from '../diagrams/mindmap/detector';
+
 let hasLoadedDiagrams = false;
 export const addDiagrams = () => {
   if (hasLoadedDiagrams) {
@@ -105,7 +108,7 @@ export const addDiagrams = () => {
   // This is added here to avoid race-conditions.
   // We could optimize the loading logic somehow.
   hasLoadedDiagrams = true;
-  registerLazyLoadedDiagrams(flowchartElk, timelineDetector);
+  registerLazyLoadedDiagrams(flowchartElk, timelineDetector, mindmapDetector);
 
   registerDiagram(
     'error',
