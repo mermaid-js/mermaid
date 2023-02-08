@@ -59,7 +59,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
 
   // Check to see if any of the attributes has a key or a comment
   attributes.forEach((item) => {
-    if (item.attributeKeyType !== undefined) {
+    if (item.attributeKeyTypeList !== undefined && item.attributeKeyTypeList.length > 0) {
       hasKeyType = true;
     }
 
@@ -112,6 +112,9 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
     nodeHeight = Math.max(typeBBox.height, nameBBox.height);
 
     if (hasKeyType) {
+      const keyTypeNodeText =
+        item.attributeKeyTypeList !== undefined ? item.attributeKeyTypeList.join(',') : '';
+
       const keyTypeNode = groupNode
         .append('text')
         .classed('er entityLabel', true)
@@ -122,7 +125,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         .style('text-anchor', 'left')
         .style('font-family', getConfig().fontFamily)
         .style('font-size', attrFontSize + 'px')
-        .text(item.attributeKeyType || '');
+        .text(keyTypeNodeText);
 
       attributeNode.kn = keyTypeNode;
       const keyTypeBBox = keyTypeNode.node().getBBox();

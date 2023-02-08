@@ -135,6 +135,37 @@ describe('when parsing ER diagram it...', function () {
     });
   });
 
+  describe('attribute name', () => {
+    it('should allow alphanumeric characters, dashes, underscores and brackets (not leading chars)', function () {
+      const entity = 'BOOK';
+      const attribute1 = 'string myBookTitle';
+      const attribute2 = 'string MYBOOKSUBTITLE_1';
+      const attribute3 = 'string author-ref[name](1)';
+
+      erDiagram.parser.parse(
+        `erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n${attribute3}\n}`
+      );
+      const entities = erDb.getEntities();
+
+      expect(Object.keys(entities).length).toBe(1);
+      expect(entities[entity].attributes.length).toBe(3);
+      expect(entities[entity].attributes[0].attributeName).toBe('myBookTitle');
+      expect(entities[entity].attributes[1].attributeName).toBe('MYBOOKSUBTITLE_1');
+      expect(entities[entity].attributes[2].attributeName).toBe('author-ref[name](1)');
+    });
+
+    it('should not allow leading numbers, dashes or brackets', function () {
+      const entity = 'BOOK';
+      const nonLeadingChars = '0-[]()';
+      [...nonLeadingChars].forEach((nonLeadingChar) => {
+        expect(() => {
+          const attribute = `string ${nonLeadingChar}author`;
+          erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
+        }).toThrow();
+      });
+    });
+  });
+
   it('should allow an entity with a single attribute to be defined', function () {
     const entity = 'BOOK';
     const attribute = 'string title';
@@ -188,6 +219,28 @@ describe('when parsing ER diagram it...', function () {
     );
     const entities = erDb.getEntities();
     expect(entities[entity].attributes.length).toBe(4);
+  });
+
+  it('should allow an entity with attributes that have many constraints and comments', function () {
+    const entity = 'CUSTOMER';
+    const attribute1 = 'int customer_number PK, FK "comment1"';
+    const attribute2 = 'datetime customer_status_start_datetime PK,UK, FK';
+    const attribute3 = 'datetime customer_status_end_datetime PK , UK "comment3"';
+    const attribute4 = 'string customer_firstname';
+    const attribute5 = 'string customer_lastname "comment5"';
+
+    erDiagram.parser.parse(
+      `erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n${attribute3}\n${attribute4}\n${attribute5}\n}`
+    );
+    const entities = erDb.getEntities();
+    expect(entities[entity].attributes[0].attributeKeyTypeList).toEqual(['PK', 'FK']);
+    expect(entities[entity].attributes[0].attributeComment).toBe('comment1');
+    expect(entities[entity].attributes[1].attributeKeyTypeList).toEqual(['PK', 'UK', 'FK']);
+    expect(entities[entity].attributes[2].attributeKeyTypeList).toEqual(['PK', 'UK']);
+    expect(entities[entity].attributes[2].attributeComment).toBe('comment3');
+    expect(entities[entity].attributes[3].attributeKeyTypeList).toBeUndefined();
+    expect(entities[entity].attributes[4].attributeKeyTypeList).toBeUndefined();
+    expect(entities[entity].attributes[4].attributeComment).toBe('comment5');
   });
 
   it('should allow an entity with attribute that has a generic type', function () {

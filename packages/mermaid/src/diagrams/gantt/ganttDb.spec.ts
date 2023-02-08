@@ -1,5 +1,5 @@
 // @ts-nocheck TODO: Fix TS
-import moment from 'moment-mini';
+import moment from 'moment';
 import ganttDb from './ganttDb';
 import { convert } from '../../tests/util';
 

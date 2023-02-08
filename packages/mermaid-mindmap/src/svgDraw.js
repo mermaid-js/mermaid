@@ -206,10 +206,11 @@ export const drawNode = function (elem, node, fullSection, conf) {
   const section = fullSection % (MAX_SECTIONS - 1);
   const nodeElem = elem.append('g');
   node.section = section;
-  nodeElem.attr(
-    'class',
-    (node.class ? node.class + ' ' : '') + 'mindmap-node ' + ('section-' + section)
-  );
+  let sectionClass = 'section-' + section;
+  if (section < 0) {
+    sectionClass += ' section-root';
+  }
+  nodeElem.attr('class', (node.class ? node.class + ' ' : '') + 'mindmap-node ' + sectionClass);
   const bkgElem = nodeElem.append('g');
 
   // Create the wrapped text element
