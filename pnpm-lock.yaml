@@ -26,8 +26,8 @@ importers:
         specifier: ^4.0.5
         version: 4.0.5
       '@types/jsdom':
-        specifier: ^20.0.1
-        version: 20.0.1
+        specifier: ^21.0.0
+        version: 21.1.0
       '@types/lodash':
         specifier: ^4.14.188
         version: 4.14.188
@@ -51,7 +51,7 @@ importers:
         version: 5.48.2_yygwinqv3a2io74xmwofqb7uka
       '@vitest/coverage-c8':
         specifier: ^0.28.4
-        version: 0.28.4_ppxbkcip27yigfcjmn2ppf4tvu
+        version: 0.28.4_vun5xzxu3tkrssf3erdbijyyki
       '@vitest/spy':
         specifier: ^0.28.4
         version: 0.28.4
@@ -128,8 +128,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
       jsdom:
-        specifier: ^20.0.2
-        version: 20.0.2
+        specifier: ^21.0.0
+        version: 21.1.0
       lint-staged:
         specifier: ^13.0.3
         version: 13.0.3
@@ -165,7 +165,7 @@ importers:
         version: 3.2.3_@types+node@18.11.9
       vitest:
         specifier: ^0.28.4
-        version: 0.28.4_ppxbkcip27yigfcjmn2ppf4tvu
+        version: 0.28.4_vun5xzxu3tkrssf3erdbijyyki
 
   packages/mermaid:
     dependencies:
@@ -213,8 +213,8 @@ importers:
         specifier: ^2.4.0
         version: 2.4.0
       '@types/jsdom':
-        specifier: ^20.0.1
-        version: 20.0.1
+        specifier: ^21.0.0
+        version: 21.1.0
       '@types/lodash-es':
         specifier: ^4.17.6
         version: 4.17.6
@@ -261,8 +261,8 @@ importers:
         specifier: ^3.7.2
         version: 3.7.2
       jsdom:
-        specifier: ^20.0.2
-        version: 20.0.2
+        specifier: ^21.0.0
+        version: 21.1.0
       micromatch:
         specifier: ^4.0.5
         version: 4.0.5
@@ -2936,8 +2936,8 @@ packages:
     resolution: {integrity: sha512-FhpRzf927MNQdRZP0J5DLIdTXhjLYzeUTmLAu69mnVksLH9CJY3IuSeEgbKUki7GQZm0WqDkGzyxju2EZGD2wA==}
     dev: true
 
-  /@types/jsdom/20.0.1:
-    resolution: {integrity: sha512-d0r18sZPmMQr1eG35u12FZfhIXNrnsPU/g5wvRKCUf/tOGilKKwYMYGqh33BNR6ba+2gkHw1EUiHoN3mn7E5IQ==}
+  /@types/jsdom/21.1.0:
+    resolution: {integrity: sha512-leWreJOdnuIxq9Y70tBVm/bvTuh31DSlF/r4l7Cfi4uhVQqLHD0Q4v301GMisEMwwbMgF7ZKxuZ+Jbd4NcdmRw==}
     dependencies:
       '@types/node': 18.11.9
       '@types/tough-cookie': 4.0.2
@@ -3411,13 +3411,13 @@ packages:
       vue: 3.2.45
     dev: true
 
-  /@vitest/coverage-c8/0.28.4_ppxbkcip27yigfcjmn2ppf4tvu:
+  /@vitest/coverage-c8/0.28.4_vun5xzxu3tkrssf3erdbijyyki:
     resolution: {integrity: sha512-btelLBxaWhHnywXRQxDlrvPhGdnuIaD3XulsxcZRIcnpLPbFu39dNTT0IYu2QWP2ZZrV0AmNtdLIfD4c77zMAg==}
     dependencies:
       c8: 7.12.0
       picocolors: 1.0.0
       std-env: 3.3.2
-      vitest: 0.28.4_ppxbkcip27yigfcjmn2ppf4tvu
+      vitest: 0.28.4_vun5xzxu3tkrssf3erdbijyyki
     transitivePeerDependencies:
       - '@edge-runtime/vm'
       - '@vitest/browser'
@@ -5719,6 +5719,10 @@ packages:
 
   /decimal.js/10.4.1:
     resolution: {integrity: sha512-F29o+vci4DodHYT9UrR5IEbfBw9pE5eSapIJdTqXK5+6hq+t8VRxwQyKlW2i+KDKFkkJQRvFyI/QXD83h8LyQw==}
+    dev: true
+
+  /decimal.js/10.4.3:
+    resolution: {integrity: sha512-VBBaLc1MgL5XpzgIP7ny5Z6Nx3UrRkIViUkPUdtl9aya5amy3De1gsUUSB1g3+3sExYNjCAsAznmukyxCb1GRA==}
     dev: true
 
   /decode-named-character-reference/1.0.2:
@@ -8420,8 +8424,8 @@ packages:
     engines: {node: '>=12.0.0'}
     dev: true
 
-  /jsdom/20.0.2:
-    resolution: {integrity: sha512-AHWa+QO/cgRg4N+DsmHg1Y7xnz+8KU3EflM0LVDTdmrYOc1WWTSkOjtpUveQH+1Bqd5rtcVnb/DuxV/UjDO4rA==}
+  /jsdom/21.1.0:
+    resolution: {integrity: sha512-m0lzlP7qOtthD918nenK3hdItSd2I+V3W9IrBcB36sqDwG+KnUs66IF5GY7laGWUnlM9vTsD0W1QwSEBYWWcJg==}
     engines: {node: '>=14'}
     peerDependencies:
       canvas: ^2.5.0
@@ -8430,12 +8434,12 @@ packages:
         optional: true
     dependencies:
       abab: 2.0.6
-      acorn: 8.8.0
+      acorn: 8.8.1
       acorn-globals: 7.0.1
       cssom: 0.5.0
       cssstyle: 2.3.0
       data-urls: 3.0.2
-      decimal.js: 10.4.1
+      decimal.js: 10.4.3
       domexception: 4.0.0
       escodegen: 2.0.0
       form-data: 4.0.0
@@ -8448,12 +8452,12 @@ packages:
       saxes: 6.0.0
       symbol-tree: 3.2.4
       tough-cookie: 4.1.2
-      w3c-xmlserializer: 3.0.0
+      w3c-xmlserializer: 4.0.0
       webidl-conversions: 7.0.0
       whatwg-encoding: 2.0.0
       whatwg-mimetype: 3.0.0
       whatwg-url: 11.0.0
-      ws: 8.9.0
+      ws: 8.12.0
       xml-name-validator: 4.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -12015,7 +12019,7 @@ packages:
       - terser
     dev: true
 
-  /vitest/0.28.4_ppxbkcip27yigfcjmn2ppf4tvu:
+  /vitest/0.28.4_vun5xzxu3tkrssf3erdbijyyki:
     resolution: {integrity: sha512-sfWIy0AdlbyGRhunm+TLQEJrFH9XuRPdApfubsyLcDbCRrUX717BRQKInTgzEfyl2Ipi1HWoHB84Nqtcwxogcg==}
     engines: {node: '>=v14.16.0'}
     hasBin: true
@@ -12050,7 +12054,7 @@ packages:
       cac: 6.7.14
       chai: 4.3.7
       debug: 4.3.4
-      jsdom: 20.0.2
+      jsdom: 21.1.0
       local-pkg: 0.4.2
       pathe: 1.1.0
       picocolors: 1.0.0
@@ -12150,6 +12154,13 @@ packages:
   /w3c-xmlserializer/3.0.0:
     resolution: {integrity: sha512-3WFqGEgSXIyGhOmAFtlicJNMjEps8b1MG31NCA0/vOF9+nKMUW1ckhi9cnNHmf88Rzw5V+dwIwsm2C7X8k9aQg==}
     engines: {node: '>=12'}
+    dependencies:
+      xml-name-validator: 4.0.0
+    dev: true
+
+  /w3c-xmlserializer/4.0.0:
+    resolution: {integrity: sha512-d+BFHzbiCx6zGfz0HyQ6Rg69w9k19nviJspaj4yNscGjrHu94sVP+aRm75yEbCh+r2/yR+7q6hux9LVtbuTGBw==}
+    engines: {node: '>=14'}
     dependencies:
       xml-name-validator: 4.0.0
     dev: true
@@ -12496,6 +12507,19 @@ packages:
     peerDependencies:
       bufferutil: ^4.0.1
       utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+    dev: true
+
+  /ws/8.12.0:
+    resolution: {integrity: sha512-kU62emKIdKVeEIOIKVegvqpXMSTAMLJozpHZaJNDYqBjzlSYXQGviYwN1osDLJ9av68qHd4a2oSjd7yD4pacig==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
     peerDependenciesMeta:
       bufferutil:
         optional: true
