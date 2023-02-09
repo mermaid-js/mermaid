@@ -146,8 +146,8 @@ importers:
         specifier: ^0.4.2
         version: 0.4.2_prettier@2.7.1
       rimraf:
-        specifier: ^3.0.2
-        version: 3.0.2
+        specifier: ^4.0.0
+        version: 4.1.2
       rollup-plugin-visualizer:
         specifier: ^5.8.3
         version: 5.8.3
@@ -282,8 +282,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1
       rimraf:
-        specifier: ^3.0.2
-        version: 3.0.2
+        specifier: ^4.0.0
+        version: 4.1.2
       start-server-and-test:
         specifier: ^1.14.0
         version: 1.14.0
@@ -312,8 +312,8 @@ importers:
         specifier: ^7.5.0
         version: 7.5.0
       rimraf:
-        specifier: ^3.0.2
-        version: 3.0.2
+        specifier: ^4.0.0
+        version: 4.1.2
 
   packages/mermaid-mindmap:
     dependencies:
@@ -349,8 +349,8 @@ importers:
         specifier: workspace:*
         version: link:../mermaid
       rimraf:
-        specifier: ^3.0.2
-        version: 3.0.2
+        specifier: ^4.0.0
+        version: 4.1.2
 
   tests/webpack:
     dependencies:
@@ -10544,6 +10544,12 @@ packages:
     hasBin: true
     dependencies:
       glob: 7.2.3
+    dev: true
+
+  /rimraf/4.1.2:
+    resolution: {integrity: sha512-BlIbgFryTbw3Dz6hyoWFhKk+unCcHMSkZGrTFVAx2WmttdBSonsdtRlwiuTbDqTKr+UlXIUqJVS4QT5tUzGENQ==}
+    engines: {node: '>=14'}
+    hasBin: true
     dev: true
 
   /robust-predicates/3.0.1:
