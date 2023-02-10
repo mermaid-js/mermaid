@@ -352,23 +352,11 @@ importers:
         specifier: ^3.0.2
         version: 3.0.2
 
-  packages/mermaid-example-diagram-new:
-    devDependencies:
-      concurrently:
-        specifier: ^7.5.0
-        version: 7.5.0
-      mermaid:
-        specifier: workspace:*
-        version: link:../mermaid
-      rimraf:
-        specifier: ^3.0.2
-        version: 3.0.2
-
   tests/webpack:
     dependencies:
       '@mermaid-js/mermaid-example-diagram':
         specifier: workspace:*
-        version: link:../../packages/mermaid-example-diagram-new
+        version: link:../../packages/mermaid-example-diagram
       mermaid:
         specifier: workspace:*
         version: link:../../packages/mermaid
