@@ -33,7 +33,7 @@
     "docs:serve": "pnpm docs:build:vitepress && vitepress serve src/vitepress",
     "docs:spellcheck": "cspell --config ../../cSpell.json \"src/docs/**/*.md\"",
     "release": "pnpm build",
-    "prepublishOnly": "pnpm -w run build"
+    "prepublishOnly": "cpy '../../README.*' ./ --cwd=. && pnpm -w run build"
   },
   "repository": {
     "type": "git",
