@@ -29,16 +29,18 @@ export const draw = (_text: string, id: string, mermaidVersion: string, error: E
     const svg = select('#' + id);
 
     const g = svg.append('g');
-
-    if (error && error.message.includes('KaTeX')) {
+    if (error && error.message?.includes('KaTeX')) {
       const title = error.message.split(': ')[0];
       const body = error.message.replace(/[A-z]*:/, '').replace('KaTeX parse ', '');
       g.append('foreignObject')
-        .attr('width', 2000)
-        .attr('height', 500)
+        .attr('height', 100)
+        .attr('width', 500)
         .append('xhtml:div')
-        .style('font-size', '70px')
-        .html(`<h1>${title}</h1><p>${body}</p>`);
+        .style('font-size', '18px')
+        .style('color', '#552222')
+        .html(`<div style="font-size: 26px; margin-bottom: 8px">${title}</div><div>${body}</div>`);
+      svg.attr('height', 100);
+      svg.attr('width', 500);
     } else {
       g.append('path')
         .attr('class', 'error-icon')
