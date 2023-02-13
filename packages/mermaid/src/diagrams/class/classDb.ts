@@ -13,33 +13,12 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../../commonDb';
+import { ClassRelation, ClassNode, ClassNote, ClassMap } from './classTypes';
 
-const MERMAID_DOM_ID_PREFIX = 'classid-';
-
-interface ClassNode {
-  id: string;
-  type: string;
-  cssClasses: string[];
-  methods: string[];
-  members: string[];
-  annotations: string[];
-  domId: string;
-  link?: string;
-  linkTarget?: string;
-  haveCallback?: boolean;
-  tooltip?: string;
-}
-
-interface ClassNote {
-  id: string;
-  class: string;
-  text: string;
-}
-
-type ClassRelation = any;
+const MERMAID_DOM_ID_PREFIX = 'classId-';
 
 let relations: ClassRelation[] = [];
-let classes: Record<string, ClassNode> = {};
+let classes: ClassMap = {};
 let notes: ClassNote[] = [];
 let classCounter = 0;
 
@@ -58,9 +37,8 @@ const splitClassNameAndType = function (id: string) {
 
   if (id.indexOf('~') > 0) {
     const split = id.split('~');
-    className = split[0];
-
-    genericType = common.sanitizeText(split[1], configApi.getConfig());
+    className = sanitizeText(split[0]);
+    genericType = sanitizeText(split[1]);
   }
 
   return { className: className, type: genericType };
@@ -70,18 +48,24 @@ const splitClassNameAndType = function (id: string) {
  * Function called by parser when a node definition has been found.
  *
  * @param id - Id of the class to add
+ * @param label - Optional label of the class
  * @public
  */
-export const addClass = function (id: string) {
+export const addClass = function (id: string, label?: string) {
   const classId = splitClassNameAndType(id);
   // Only add class if not exists
   if (classes[classId.className] !== undefined) {
     return;
   }
 
+  if (label) {
+    label = sanitizeText(label);
+  }
+
   classes[classId.className] = {
     id: classId.className,
     type: classId.type,
+    label: label ?? classId.className,
     cssClasses: [],
     methods: [],
     members: [],
@@ -121,7 +105,7 @@ export const getClasses = function () {
   return classes;
 };
 
-export const getRelations = function () {
+export const getRelations = function (): ClassRelation[] {
   return relations;
 };
 
@@ -182,7 +166,6 @@ export const addMember = function (className: string, member: string) {
 
     if (memberString.startsWith('<<') && memberString.endsWith('>>')) {
       // Remove leading and trailing brackets
-      // theClass.annotations.push(memberString.substring(2, memberString.length - 2));
       theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
     } else if (memberString.indexOf(')') > 0) {
       theClass.methods.push(sanitizeText(memberString));
@@ -359,8 +342,7 @@ export const relationType = {
 };
 
 const setupToolTips = function (element: Element) {
-  let tooltipElem: Selection<HTMLDivElement, unknown, HTMLElement, unknown> =
-    select('.mermaidTooltip');
+  let tooltipElem: Selection<HTMLDivElement, unknown, HTMLElement, unknown> = select('.mermaidTooltip');
   // @ts-ignore - _groups is a dynamic property
   if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
     tooltipElem = select('body').append('div').attr('class', 'mermaidTooltip').style('opacity', 0);

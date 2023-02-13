@@ -8,7 +8,7 @@ import { curveLinear } from 'd3';
 import { interpolateToCurve, getStylesFromArray } from '../../utils';
 import { setupGraphViewbox } from '../../setupGraphViewbox';
 import common from '../common/common';
-import { ClassRelation, ClassNode, ClassNote, ClassMap, EdgeData } from './classTypes';
+import { ClassRelation, ClassNote, ClassMap, EdgeData } from './classTypes';
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
 

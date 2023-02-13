@@ -772,7 +772,7 @@ const class_box = (parent, node) => {
     maxWidth += interfaceBBox.width;
   }
 
-  let classTitleString = node.classData.id;
+  let classTitleString = node.classData.label;
 
   if (node.classData.type !== undefined && node.classData.type !== '') {
     if (getConfig().flowchart.htmlLabels) {
