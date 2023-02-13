@@ -1,4 +1,4 @@
-import { select } from 'd3';
+import { select, Selection } from 'd3';
 import { log } from '../../logger';
 import * as configApi from '../../config';
 import common from '../common/common';
@@ -16,25 +16,48 @@ import {
 
 const MERMAID_DOM_ID_PREFIX = 'classid-';
 
-let relations = [];
-let classes = {};
-let notes = [];
+interface ClassNode {
+  id: string;
+  type: string;
+  cssClasses: string[];
+  methods: string[];
+  members: string[];
+  annotations: string[];
+  domId: string;
+  link?: string;
+  linkTarget?: string;
+  haveCallback?: boolean;
+  tooltip?: string;
+}
+
+interface ClassNote {
+  id: string;
+  class: string;
+  text: string;
+}
+
+type ClassRelation = any;
+
+let relations: ClassRelation[] = [];
+let classes: Record<string, ClassNode> = {};
+let notes: ClassNote[] = [];
 let classCounter = 0;
 
-let funs = [];
+let functions: any[] = [];
 
-const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
+const sanitizeText = (txt: string) => common.sanitizeText(txt, configApi.getConfig());
 
-export const parseDirective = function (statement, context, type) {
+export const parseDirective = function (statement: string, context: string, type: string) {
+  // @ts-ignore Don't wanna mess it up
   mermaidAPI.parseDirective(this, statement, context, type);
 };
 
-const splitClassNameAndType = function (id) {
+const splitClassNameAndType = function (id: string) {
   let genericType = '';
   let className = id;
 
   if (id.indexOf('~') > 0) {
-    let split = id.split('~');
+    const split = id.split('~');
     className = split[0];
 
     genericType = common.sanitizeText(split[1], configApi.getConfig());
@@ -46,11 +69,11 @@ const splitClassNameAndType = function (id) {
 /**
  * Function called by parser when a node definition has been found.
  *
- * @param id
+ * @param id - Id of the class to add
  * @public
  */
-export const addClass = function (id) {
-  let classId = splitClassNameAndType(id);
+export const addClass = function (id: string) {
+  const classId = splitClassNameAndType(id);
   // Only add class if not exists
   if (classes[classId.className] !== undefined) {
     return;
@@ -64,7 +87,7 @@ export const addClass = function (id) {
     members: [],
     annotations: [],
     domId: MERMAID_DOM_ID_PREFIX + classId.className + '-' + classCounter,
-  };
+  } as ClassNode;
 
   classCounter++;
 };
@@ -72,28 +95,26 @@ export const addClass = function (id) {
 /**
  * Function to lookup domId from id in the graph definition.
  *
- * @param id
+ * @param id - class ID to lookup
  * @public
  */
-export const lookUpDomId = function (id) {
-  const classKeys = Object.keys(classes);
-  for (const classKey of classKeys) {
-    if (classes[classKey].id === id) {
-      return classes[classKey].domId;
-    }
+export const lookUpDomId = function (id: string): string {
+  if (id in classes) {
+    return classes[id].domId;
   }
+  throw new Error('Class not found: ' + id);
 };
 
 export const clear = function () {
   relations = [];
   classes = {};
   notes = [];
-  funs = [];
-  funs.push(setupToolTips);
+  functions = [];
+  functions.push(setupToolTips);
   commonClear();
 };
 
-export const getClass = function (id) {
+export const getClass = function (id: string) {
   return classes[id];
 };
 export const getClasses = function () {
@@ -108,7 +129,7 @@ export const getNotes = function () {
   return notes;
 };
 
-export const addRelation = function (relation) {
+export const addRelation = function (relation: ClassRelation) {
   log.debug('Adding relation: ' + JSON.stringify(relation));
   addClass(relation.id1);
   addClass(relation.id2);
@@ -133,11 +154,11 @@ export const addRelation = function (relation) {
  * Adds an annotation to the specified class Annotations mark special properties of the given type
  * (like 'interface' or 'service')
  *
- * @param className The class name
- * @param annotation The name of the annotation without any brackets
+ * @param className - The class name
+ * @param annotation - The name of the annotation without any brackets
  * @public
  */
-export const addAnnotation = function (className, annotation) {
+export const addAnnotation = function (className: string, annotation: string) {
   const validatedClassName = splitClassNameAndType(className).className;
   classes[validatedClassName].annotations.push(annotation);
 };
@@ -145,13 +166,13 @@ export const addAnnotation = function (className, annotation) {
 /**
  * Adds a member to the specified class
  *
- * @param className The class name
- * @param member The full name of the member. If the member is enclosed in <<brackets>> it is
+ * @param className - The class name
+ * @param member - The full name of the member. If the member is enclosed in `<<brackets>>` it is
  *   treated as an annotation If the member is ending with a closing bracket ) it is treated as a
  *   method Otherwise the member will be treated as a normal property
  * @public
  */
-export const addMember = function (className, member) {
+export const addMember = function (className: string, member: string) {
   const validatedClassName = splitClassNameAndType(className).className;
   const theClass = classes[validatedClassName];
 
@@ -171,14 +192,14 @@ export const addMember = function (className, member) {
   }
 };
 
-export const addMembers = function (className, members) {
+export const addMembers = function (className: string, members: string[]) {
   if (Array.isArray(members)) {
     members.reverse();
     members.forEach((member) => addMember(className, member));
   }
 };
 
-export const addNote = function (text, className) {
+export const addNote = function (text: string, className: string) {
   const note = {
     id: `note${notes.length}`,
     class: className,
@@ -187,21 +208,20 @@ export const addNote = function (text, className) {
   notes.push(note);
 };
 
-export const cleanupLabel = function (label) {
-  if (label.substring(0, 1) === ':') {
-    return common.sanitizeText(label.substr(1).trim(), configApi.getConfig());
-  } else {
-    return sanitizeText(label.trim());
+export const cleanupLabel = function (label: string) {
+  if (label.startsWith(':')) {
+    label = label.substring(1);
   }
+  return sanitizeText(label.trim());
 };
 
 /**
  * Called by parser when a special node is found, e.g. a clickable element.
  *
- * @param ids Comma separated list of ids
- * @param className Class to add
+ * @param ids - Comma separated list of ids
+ * @param className - Class to add
  */
-export const setCssClass = function (ids, className) {
+export const setCssClass = function (ids: string, className: string) {
   ids.split(',').forEach(function (_id) {
     let id = _id;
     if (_id[0].match(/\d/)) {
@@ -216,28 +236,27 @@ export const setCssClass = function (ids, className) {
 /**
  * Called by parser when a tooltip is found, e.g. a clickable element.
  *
- * @param ids Comma separated list of ids
- * @param tooltip Tooltip to add
+ * @param ids - Comma separated list of ids
+ * @param tooltip - Tooltip to add
  */
-const setTooltip = function (ids, tooltip) {
-  const config = configApi.getConfig();
+const setTooltip = function (ids: string, tooltip?: string) {
   ids.split(',').forEach(function (id) {
     if (tooltip !== undefined) {
-      classes[id].tooltip = common.sanitizeText(tooltip, config);
+      classes[id].tooltip = sanitizeText(tooltip);
     }
   });
 };
-export const getTooltip = function (id) {
+export const getTooltip = function (id: string) {
   return classes[id].tooltip;
 };
 /**
  * Called by parser when a link is found. Adds the URL to the vertex data.
  *
- * @param ids Comma separated list of ids
- * @param linkStr URL to create a link for
- * @param target Target of the link, _blank by default as originally defined in the svgDraw.js file
+ * @param ids - Comma separated list of ids
+ * @param linkStr - URL to create a link for
+ * @param target - Target of the link, _blank by default as originally defined in the svgDraw.js file
  */
-export const setLink = function (ids, linkStr, target) {
+export const setLink = function (ids: string, linkStr: string, target: string) {
   const config = configApi.getConfig();
   ids.split(',').forEach(function (_id) {
     let id = _id;
@@ -261,11 +280,11 @@ export const setLink = function (ids, linkStr, target) {
 /**
  * Called by parser when a click definition is found. Registers an event handler.
  *
- * @param ids Comma separated list of ids
- * @param functionName Function to be called on click
- * @param functionArgs Function args the function should be called with
+ * @param ids - Comma separated list of ids
+ * @param functionName - Function to be called on click
+ * @param functionArgs - Function args the function should be called with
  */
-export const setClickEvent = function (ids, functionName, functionArgs) {
+export const setClickEvent = function (ids: string, functionName: string, functionArgs: string) {
   ids.split(',').forEach(function (id) {
     setClickFunc(id, functionName, functionArgs);
     classes[id].haveCallback = true;
@@ -273,19 +292,19 @@ export const setClickEvent = function (ids, functionName, functionArgs) {
   setCssClass(ids, 'clickable');
 };
 
-const setClickFunc = function (domId, functionName, functionArgs) {
+const setClickFunc = function (domId: string, functionName: string, functionArgs: string) {
   const config = configApi.getConfig();
-  let id = domId;
-  let elemId = lookUpDomId(id);
-
   if (config.securityLevel !== 'loose') {
     return;
   }
   if (functionName === undefined) {
     return;
   }
+
+  const id = domId;
   if (classes[id] !== undefined) {
-    let argList = [];
+    const elemId = lookUpDomId(id);
+    let argList: string[] = [];
     if (typeof functionArgs === 'string') {
       /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
       argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
@@ -305,7 +324,7 @@ const setClickFunc = function (domId, functionName, functionArgs) {
       argList.push(elemId);
     }
 
-    funs.push(function () {
+    functions.push(function () {
       const elem = document.querySelector(`[id="${elemId}"]`);
       if (elem !== null) {
         elem.addEventListener(
@@ -320,8 +339,8 @@ const setClickFunc = function (domId, functionName, functionArgs) {
   }
 };
 
-export const bindFunctions = function (element) {
-  funs.forEach(function (fun) {
+export const bindFunctions = function (element: Element) {
+  functions.forEach(function (fun) {
     fun(element);
   });
 };
@@ -339,8 +358,10 @@ export const relationType = {
   LOLLIPOP: 4,
 };
 
-const setupToolTips = function (element) {
-  let tooltipElem = select('.mermaidTooltip');
+const setupToolTips = function (element: Element) {
+  let tooltipElem: Selection<HTMLDivElement, unknown, HTMLElement, unknown> =
+    select('.mermaidTooltip');
+  // @ts-ignore - _groups is a dynamic property
   if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
     tooltipElem = select('body').append('div').attr('class', 'mermaidTooltip').style('opacity', 0);
   }
@@ -352,10 +373,11 @@ const setupToolTips = function (element) {
     .on('mouseover', function () {
       const el = select(this);
       const title = el.attr('title');
-      // Dont try to draw a tooltip if no data is provided
+      // Don't try to draw a tooltip if no data is provided
       if (title === null) {
         return;
       }
+      // @ts-ignore - getBoundingClientRect is not part of the d3 type definition
       const rect = this.getBoundingClientRect();
 
       tooltipElem.transition().duration(200).style('opacity', '.9');
@@ -372,11 +394,11 @@ const setupToolTips = function (element) {
       el.classed('hover', false);
     });
 };
-funs.push(setupToolTips);
+functions.push(setupToolTips);
 
 let direction = 'TB';
 const getDirection = () => direction;
-const setDirection = (dir) => {
+const setDirection = (dir: string) => {
   direction = dir;
 };
 
