@@ -1,6 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { createServer as createViteServer } from 'vite';
-// import { getBuildConfig } from './build';
 
 const cors = (req: Request, res: Response, next: NextFunction) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -22,7 +21,7 @@ async function createServer() {
 
   app.use(cors);
   app.use(express.static('./packages/mermaid/dist'));
-  app.use(express.static('./packages/mermaid-example-diagram/dist'));
+  // app.use(express.static('./packages/mermaid-example-diagram/dist'));
   app.use(express.static('./packages/mermaid-mindmap/dist'));
   app.use(vite.middlewares);
   app.use(express.static('demos'));
@@ -33,5 +32,4 @@ async function createServer() {
   });
 }
 
-// build(getBuildConfig({ minify: false, watch: true }));
 createServer();

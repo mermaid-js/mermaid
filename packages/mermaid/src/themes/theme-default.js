@@ -122,6 +122,7 @@ class Theme {
   updateColors() {
     /* Color Scale */
     /* Each color-set will have a background, a foreground and a border color */
+
     this.cScale0 = this.cScale0 || this.primaryColor;
     this.cScale1 = this.cScale1 || this.secondaryColor;
     this.cScale2 = this.cScale2 || this.tertiaryColor;
@@ -141,7 +142,6 @@ class Theme {
       this['cScale' + i] = darken(this['cScale' + i], 10);
       this['cScalePeer' + i] = this['cScalePeer' + i] || darken(this['cScale' + i], 25);
     }
-
     // Setup the inverted color for the set
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
       this['cScaleInv' + i] = this['cScaleInv' + i] || adjust(this['cScale' + i], { h: 180 });

@@ -44,7 +44,7 @@ export class Diagram {
     this.parser.parser.yy = this.db;
     if (diagram.init) {
       diagram.init(cnf);
-      log.debug('Initialized diagram ' + this.type, cnf);
+      log.info('Initialized diagram ' + this.type, cnf);
     }
     this.txt += '\n';
 

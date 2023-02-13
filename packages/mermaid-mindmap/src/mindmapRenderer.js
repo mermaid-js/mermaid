@@ -89,6 +89,7 @@ function addNodes(mindmap, cy, conf, level) {
 /**
  * @param node
  * @param conf
+ * @param cy
  */
 function layoutMindmap(node, conf) {
   return new Promise((resolve) => {
@@ -131,7 +132,10 @@ function layoutMindmap(node, conf) {
   });
 }
 /**
+ * @param node
  * @param cy
+ * @param positionedMindmap
+ * @param conf
  */
 function positionNodes(cy) {
   cy.nodes().map((node, id) => {

@@ -54,7 +54,7 @@
     </style>
   </head>
   <body>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 graph TB
       a --> b
@@ -62,14 +62,14 @@ graph TB
       b --> d
       c --> d
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 flowchart-elk TB
       a --> b
       a --> c
       b --> d
       c --> d
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 flowchart TB
   %% I could not figure out how to use double quotes in labels in Mermaid
@@ -125,7 +125,7 @@ flowchart TB
 </pre
     >
     <br />
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 flowchart TB
   %% I could not figure out how to use double quotes in labels in Mermaid
   subgraph ibm[IBM Espresso CPU]
@@ -227,14 +227,24 @@ sequenceDiagram
     Customer->>+Merchant: Receives goods or services
         </pre
     >
-    <pre id="diagram" class="mermaid2">
-      gantt
-        title Style today marker (vertical line should be 5px wide and half-transparent blue)
-        dateFormat YYYY-MM-DD
-        axisFormat %d
-        todayMarker stroke-width:5px,stroke:#00f,opacity:0.5
-        section Section1
-        Today: 1, -1h
+    <pre id="diagram" class="mermaid">
+mindmap
+  root((mindmap))
+    Origins
+      Long history
+      ::icon(fa fa-book)
+      Popularisation
+        British popular psychology author Tony Buzan
+    Research
+      On effectiveness<br/>and features
+      On Automatic creation
+        Uses
+            Creative techniques
+            Strategic planning
+            Argument mapping
+    Tools
+      Pen and paper
+      Mermaid
     </pre>
 
     <!-- <div id="cy"></div> -->
@@ -252,7 +262,7 @@ sequenceDiagram
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        // theme: 'forest',
+        theme: 'dark',
         startOnLoad: true,
         logLevel: 0,
         flowchart: {
