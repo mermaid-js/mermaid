@@ -268,6 +268,10 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
   padding?: number;
   textHeight?: number;
   defaultRenderer?: string;
+  nodeSpacing?: number;
+  rankSpacing?: number;
+  diagramPadding?: number;
+  htmlLabels?: boolean;
 }
 
 export interface JourneyDiagramConfig extends BaseDiagramConfig {
@@ -391,4 +395,4 @@ export interface FontConfig {
 
 export type FontCalculator = () => Partial<FontConfig>;
 
-export {};
+export { };
