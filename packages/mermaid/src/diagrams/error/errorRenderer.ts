@@ -22,7 +22,12 @@ export const setConf = function (cnf: any) {
  * @param mermaidVersion - The version
  * @param error - The caught error
  */
-export const draw = (_text: string, id: string, mermaidVersion: string, error: Error | null = null) => {
+export const draw = (
+  _text: string,
+  id: string,
+  mermaidVersion: string,
+  error: Error | null = null
+) => {
   try {
     log.debug('Renering svg for syntax error\n');
 

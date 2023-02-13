@@ -58,13 +58,13 @@ export const addVertices = function (vert, g, svgId, root, _doc, diagObj) {
     if (evaluate(getConfig().flowchart.htmlLabels)) {
       // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
       const node = {
-        label: vertexText.replace(
-          /fa[blrs]?:fa-[\w-]+/g,
-          (s) => `<i class='${s.replace(':', ' ')}'></i>`
-        ).replace(/\$\$(.*)\$\$/g, (r, c) =>
+        label: vertexText
+          .replace(/fa[blrs]?:fa-[\w-]+/g, (s) => `<i class='${s.replace(':', ' ')}'></i>`)
+          .replace(/\$\$(.*)\$\$/g, (r, c) =>
             katex
               .renderToString(c, { throwOnError: true, displayMode: true, output: 'mathml' })
-              .replace(/\n/g, ' ').replace(/<annotation.*<\/annotation>/g, '')
+              .replace(/\n/g, ' ')
+              .replace(/<annotation.*<\/annotation>/g, '')
           ),
       };
       vertexNode = addHtmlLabel(svg, node).node();
@@ -244,14 +244,14 @@ export const addEdges = function (edges, g, diagObj) {
         edgeData.labelType = 'html';
         edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}" style="${
           edgeData.labelStyle
-        }">${edge.text.replace(
-          /fa[blrs]?:fa-[\w-]+/g,
-          (s) => `<i class='${s.replace(':', ' ')}'></i>`
-        ).replace(/\$\$(.*)\$\$/g, (r, c) =>
-        katex
-          .renderToString(c, { throwOnError: true, displayMode: true, output: 'mathml' })
-          .replace(/\n/g, ' ').replace(/<annotation.*<\/annotation>/g, '')
-      )}</span>`;
+        }">${edge.text
+          .replace(/fa[blrs]?:fa-[\w-]+/g, (s) => `<i class='${s.replace(':', ' ')}'></i>`)
+          .replace(/\$\$(.*)\$\$/g, (r, c) =>
+            katex
+              .renderToString(c, { throwOnError: true, displayMode: true, output: 'mathml' })
+              .replace(/\n/g, ' ')
+              .replace(/<annotation.*<\/annotation>/g, '')
+          )}</span>`;
       } else {
         edgeData.labelType = 'text';
         edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');

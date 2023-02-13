@@ -59,12 +59,14 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
     if (evaluate(getConfig().flowchart.htmlLabels)) {
       // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
       const node = {
-        label: vertexText.replace(
-          /fa[blrs]?:fa-[\w-]+/g,
-          (s) => `<i class='${s.replace(':', ' ')}'></i>`
-        ).replace(/\$\$(.*)\$\$/g, (r, c) =>
-        katex.renderToString(c, { throwOnError: true, displayMode: true, output: 'mathml' }).replace(/\n/g, ' ').replace(/<annotation.*<\/annotation>/g, '')
-      ),
+        label: vertexText
+          .replace(/fa[blrs]?:fa-[\w-]+/g, (s) => `<i class='${s.replace(':', ' ')}'></i>`)
+          .replace(/\$\$(.*)\$\$/g, (r, c) =>
+            katex
+              .renderToString(c, { throwOnError: true, displayMode: true, output: 'mathml' })
+              .replace(/\n/g, ' ')
+              .replace(/<annotation.*<\/annotation>/g, '')
+          ),
       };
       vertexNode = addHtmlLabel(svg, node).node();
       vertexNode.parentNode.removeChild(vertexNode);
@@ -147,7 +149,8 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
     const labelText = vertexText.replace(/\$\$(.*)\$\$/g, (r, c) =>
       katex
         .renderToString(c, { throwOnError: true, displayMode: true, output: 'mathml' })
-        .replace(/\n/g, ' ').replace(/<annotation.*<\/annotation>/g, '')
+        .replace(/\n/g, ' ')
+        .replace(/<annotation.*<\/annotation>/g, '')
     );
     // Add the node
     g.setNode(vertex.id, {
@@ -319,7 +322,10 @@ export const addEdges = function (edges, g, diagObj) {
     edgeData.label = edge.text
       .replace(common.lineBreakRegex, '\n')
       .replace(/\$\$(.*)\$\$/g, (r, c) =>
-        katex.renderToString(c, { throwOnError: true, displayMode: true, output: 'mathml' }).replace(/\n/g, ' ').replace(/<annotation.*<\/annotation>/g, '')
+        katex
+          .renderToString(c, { throwOnError: true, displayMode: true, output: 'mathml' })
+          .replace(/\n/g, ' ')
+          .replace(/<annotation.*<\/annotation>/g, '')
       );
 
     if (edge.style === undefined) {
