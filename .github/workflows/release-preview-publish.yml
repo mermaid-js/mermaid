@@ -9,29 +9,36 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.x
-    - name: Install Yarn
-      run: npm i yarn --global
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-    - name: Install Json
-      run: npm i json --global
+      - uses: pnpm/action-setup@v2
 
-    - name: Install Packages
-      run: yarn install --frozen-lockfile
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          cache: pnpm
+          node-version: 18.x
 
-    - name: Publish
-      run: |
-        PREVIEW_VERSION=8
-        VERSION=$(echo ${{github.ref}} | tail -c +20)-preview.$PREVIEW_VERSION
-        echo $VERSION
-        npm version --no-git-tag-version --allow-same-version $VERSION
-        npm set //npm.pkg.github.com/:_authToken ${{ secrets.GITHUB_TOKEN }}
-        npm set registry https://npm.pkg.github.com/mermaid-js
-        json -I -f package.json -e 'this.name="@mermaid-js/mermaid"' # Package name needs to be set to a scoped one because GitHub registry requires this
-        json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"' # Repo url needs to have a specific format too
-        npm publish
+      - name: Install Packages
+        run: |
+          pnpm install --frozen-lockfile
+        env:
+          CYPRESS_CACHE_FOLDER: .cache/Cypress
 
+      - name: Install Json
+        run: npm i json --global
+
+      - name: Publish
+        working-directory: ./packages/mermaid
+        run: |
+          PREVIEW_VERSION=$(git log --oneline "origin/$GITHUB_REF_NAME" ^"origin/master" | wc -l)
+          VERSION=$(echo ${{github.ref}} | tail -c +20)-preview.$PREVIEW_VERSION
+          echo $VERSION
+          npm version --no-git-tag-version --allow-same-version $VERSION
+          npm set //npm.pkg.github.com/:_authToken ${{ secrets.GITHUB_TOKEN }}
+          npm set registry https://npm.pkg.github.com/mermaid-js
+          json -I -f package.json -e 'this.name="@mermaid-js/mermaid"' # Package name needs to be set to a scoped one because GitHub registry requires this
+          json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"' # Repo url needs to have a specific format too
+          npm publish

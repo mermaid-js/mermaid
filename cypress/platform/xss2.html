@@ -1,15 +1,12 @@
 <html>
   <head>
-    <link
-      href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
     <style>
       .malware {
         position: fixed;
-        bottom:0;
-        left:0;
-        right:0;
+        bottom: 0;
+        left: 0;
+        right: 0;
         height: 150px;
         background: red;
         color: black;
@@ -28,38 +25,38 @@
         div.className = 'malware';
         div.innerHTML = 'XSS Succeeded';
         document.getElementsByTagName('body')[0].appendChild(div);
-        throw new Error('XSS Succeded');
+        throw new Error('XSS Succeeded');
       }
     </script>
   </head>
   <body>
-    <div class="mermaid">
+    <pre class="mermaid">
       %%{init: { 'theme':'base', '__proto__': {'polluted': 'asdf'}} }%%
       graph LR
           A --> B
-    </div>
-    <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
       %%{init: { 'theme':'base', '__proto__': {'polluted': 'asdf'}} }%%
       %%{init: { 'theme':'base', '__proto__': {'polluted': 'asdf'}} }%%
       graph LR
           A --> B
-    </div>
-    <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
       %%{init: { 'prototype': {'__proto__': {'polluted': 'test'}}} }%%
       %%{init: { 'prototype': {'__proto__': {'polluted': 'test'}}} }%%
       sequenceDiagram
       Alice->>Bob: Hi Bob
       Bob->>Alice: Hi Alice
-    </div>
+    </pre>
     <script src="./mermaid.js"></script>
     <script>
       mermaid.initialize({
         startOnLoad: true,
         useMaxWidth: true,
       });
-      var cnt = 0;
-      var a;
-      var handler = setInterval(() => {
+      let cnt = 0;
+      let a;
+      const handler = setInterval(() => {
         cnt++;
         a = {};
         if (typeof a.polluted !== 'undefined') {

@@ -1,0 +1,82 @@
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        /* background: rgb(221, 208, 208); */
+        /* background:#333; */
+        font-family: 'Arial';
+        /* font-size: 18px !important; */
+      }
+      h1 {
+        color: grey;
+      }
+      .mermaid2 {
+        display: none;
+      }
+      .mermaid svg {
+        /* font-size: 18px !important; */
+      }
+      .malware {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 150px;
+        background: red;
+        color: black;
+        display: flex;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: monospace;
+        font-size: 72px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>Security check</div>
+    <pre id="diagram" class="mermaid">
+flowchart LR
+A-->B
+        </pre
+    >
+    <pre id="diagram" class="mermaid2">
+            mindmap
+          root
+            ch1
+            ch2
+        </pre
+    >
+    <script src="./packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script>
+    <script src="./packages/mermaid-mindmap/dist/mermaid-example-diagram-detector.js"></script>
+    <script src="./packages/mermaid/dist/mermaid.js"></script>
+    <script>
+      mermaid.parseError = function (err, hash) {
+        // console.error('Mermaid error: ', err);
+      };
+      mermaid.initialize({
+        startOnLoad: true,
+        logLevel: 0,
+        basePath: './packages/',
+        // themeVariables: {relationLabelColor: 'red'}
+      });
+      function callback() {
+        alert('It worked');
+      }
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+    </script>
+  </body>
+</html>

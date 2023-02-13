@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>States Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        /* font-family: 'trebuchet ms', verdana, arial; */
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>State diagram demos</h1>
+    <h2>Very simple showing change from State1 to State2</h2>
+    <pre class="mermaid">
+    ---
+    title: Very simple diagram
+    ---
+    stateDiagram
+      accTitle: This is the accessible title
+      accDescr:This is an accessible description
+      State1 --> State2
+    </pre>
+
+    <hr />
+
+    <h2>This has classDef statements to apply style classes to specific states</h2>
+    <h4>Here are the <code>classDef</code> statements:</h4>
+    <p>
+      <code>
+        classDef notMoving fill:white<br />
+        classDef movement font-style:italic<br />
+        classDef badBadEvent
+        fill:#f00,color:white,font-weight:bold,stroke-width:2px,stroke:yellow<br />
+      </code>
+    </p>
+    <h4>And these are how they are applied:</h4>
+    <p>
+      <code>
+        class Still notMoving<br />
+        class Moving, Crash movement<br />
+        class Crash badBadEvent<br />
+      </code>
+    </p>
+    <pre class="mermaid">
+    ---
+    title: Very simple diagram
+    ---
+    stateDiagram
+      direction TB
+
+      accTitle: This is the accessible title
+      accDescr: This is an accessible description
+
+      classDef notMoving fill:white
+      classDef movement font-style:italic
+      classDef badBadEvent fill:#f00,color:white,font-weight:bold,stroke-width:2px,stroke:yellow
+
+      [*]--> Still
+      Still --> [*]
+      Still --> Moving
+      Moving --> Still
+      Moving --> Crash
+      Crash --> [*]
+
+      class Still notMoving
+      class Moving, Crash movement
+      class Crash badBadEvent
+      class end badBadEvent
+    </pre>
+
+    <hr />
+
+    <h2>Here is a diagram that uses the ::: operator to apply styles to states</h2>
+    <h4>Here are the <code>classDef</code> statements:</h4>
+    <p>
+      <code>
+        classDef notMoving fill:white<br />
+        classDef movement font-style:italic<br />
+        classDef badBadEvent
+        fill:#f00,color:white,font-weight:bold,stroke-width:2px,stroke:yellow<br />
+      </code>
+    </p>
+    <h4>And these are how they are applied:</h4>
+    <p>
+      <code>
+        [*] --> Still:::notMoving<br />
+        ...<br />
+        Still --> Moving:::movement<br />
+        ...<br />
+        Moving --> Crash:::movement<br />
+        Crash:::badBadEvent --> [*]<br />
+      </code>
+    </p>
+    <p>
+      Note that both the starting state and the end state have styles applied:<br />
+      The start state has the <i>start</i> classDef style<br />and the end state has the
+      <i>stop</i> classDef style applied.
+    </p>
+    <pre class="mermaid">
+    stateDiagram
+      direction TB
+
+		  accTitle: This is the accessible title
+      accDescr: This is an accessible description
+
+      classDef notMoving fill:white
+      classDef movement font-style:italic
+      classDef badBadEvent fill:#f00,color:white,font-weight:bold,stroke-width:2px,stroke:yellow
+
+      [*] --> Still:::notMoving
+      Still --> [*]
+      Still --> Moving:::movement
+      Moving --> Still
+      Moving --> Crash:::movement
+      Crash:::badBadEvent --> [*]
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+    stateDiagram-v2
+      accTitle: very very simple state
+      accDescr: This is a state diagram showing one state
+      State1
+    </pre>
+    <hr />
+
+    <h2>States with spaces in them</h2>
+    <pre class="mermaid">
+      stateDiagram
+        classDef yourState font-style:italic,font-weight:bold,fill:white
+
+        yswsii: Your state with spaces in it
+        [*] --> yswsii:::yourState
+        [*] --> SomeOtherState
+        SomeOtherState --> YetAnotherState
+        yswsii --> YetAnotherState
+        YetAnotherState --> [*]
+    </pre>
+    <hr />
+
+    <h2>You can label the relationships</h2>
+    <pre class="mermaid">
+    stateDiagram-v2
+    [*] --> State1
+    State1 --> State2 : Transition 1
+    State1 --> State3 : Transition 2
+    State1 --> State4 : Transition 3
+    State1 --> [*]
+    </pre>
+    <hr />
+
+    <h2>This shows Composite states</h2>
+    <pre class="mermaid">
+    stateDiagram-v2
+    [*] --> First
+    First --> Second
+    First --> Third
+
+    state "the first composite" as First {
+        [*] --> 1st
+        state innerFirst {
+          state "1 in innerFirst" as 1st1st
+          1st2nd: 2 in innerFirst
+          [*] --> 1st1st
+          1st1st --> 1st2nd
+          %% 1st2nd --> 1st
+        }
+        1st --> innerFirst
+        innerFirst --> 2nd
+    }
+    state Second {
+        2nd --> [*]
+    }
+    state Third {
+        [*] --> 3rd
+        3rd --> [*]
+    }
+    </pre>
+    <hr />
+
+    <h2>Compsite states can link to themselves</h2>
+    <pre class="mermaid">
+      stateDiagram-v2
+            state Active {
+              Idle
+            }
+            Inactive --> Idle: ACT
+            Active --> Active: LOG
+    </pre>
+    <hr />
+
+    <h2>transition labels can span multiple lines using "br" tags or \n</h2>
+    <pre class="mermaid">
+      stateDiagram-v2
+      [*] --> S1
+      S1 --> S2: This long line uses a br tag<br />to create multiple<br />lines.
+      S1 --> S3: This transition descripton uses \na newline character\nto create multiple\nlines.
+
+    </pre>
+    <hr />
+
+    <h2>You can add Notes</h2>
+    <pre class="mermaid">
+    stateDiagram-v2
+      direction LR
+      State1: A state with a note
+      note right of State1
+        Important information!<br />You can write notes.<br />And\nthey\ncan\nbe\nmulti-\nline.
+      end note
+      State1 --> State2
+      note left of State2 : Notes can be to the left of a state\n(like this one).
+      note right of State2 : Notes can be to the right of a state\n(like this one).
+    </pre>
+    <hr />
+
+    <script src="./mermaid.js"></script>
+    <script>
+      mermaid.initialize({
+        theme: 'default',
+        // themeCSS: '.node rect { fill: red; }',
+        logLevel: 3,
+        securityLevel: 'loose',
+        flowchart: { curve: 'basis' },
+        gantt: { axisFormat: '%m/%d/%Y' },
+        sequence: { actorMargin: 50 },
+        // sequenceDiagram: { actorMargin: 300 } // deprecated
+      });
+    </script>
+  </body>
+</html>

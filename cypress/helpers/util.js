@@ -1,4 +1,8 @@
-import { Base64 } from 'js-base64';
+const utf8ToB64 = (str) => {
+  return window.btoa(unescape(encodeURIComponent(str)));
+};
+
+const batchId = 'mermaid-batch' + new Date().getTime();
 
 export const mermaidUrl = (graphStr, options, api) => {
   const obj = {
@@ -6,7 +10,7 @@ export const mermaidUrl = (graphStr, options, api) => {
     mermaid: options,
   };
   const objStr = JSON.stringify(obj);
-  let url = 'http://localhost:9000/e2e.html?graph=' + Base64.encodeURI(objStr);
+  let url = 'http://localhost:9000/e2e.html?graph=' + utf8ToB64(objStr);
   if (api) {
     url = 'http://localhost:9000/xss.html?graph=' + graphStr;
   }
@@ -18,7 +22,7 @@ export const mermaidUrl = (graphStr, options, api) => {
   return url;
 };
 
-export const imgSnapshotTest = (graphStr, _options, api) => {
+export const imgSnapshotTest = (graphStr, _options, api = false, validation) => {
   cy.log(_options);
   const options = Object.assign(_options);
   if (!options.fontFamily) {
@@ -42,20 +46,48 @@ export const imgSnapshotTest = (graphStr, _options, api) => {
   if (!options.fontSize) {
     options.fontSize = '16px';
   }
-  cy.log(options);
   const url = mermaidUrl(graphStr, options, api);
+  openURLAndVerifyRendering(url, options, validation);
+};
 
-  cy.visit(url);
-  cy.get('svg');
-  // cy.percySnapshot();
-  // Default name to test title
-  const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
-
-  cy.matchImageSnapshot(name);
+export const urlSnapshotTest = (url, _options, api = false, validation) => {
+  const options = Object.assign(_options);
+  openURLAndVerifyRendering(url, options, validation);
 };
 
 export const renderGraph = (graphStr, options, api) => {
   const url = mermaidUrl(graphStr, options, api);
+  openURLAndVerifyRendering(url, options);
+};
+
+const openURLAndVerifyRendering = (url, options, validation = undefined) => {
+  const useAppli = Cypress.env('useAppli');
+  const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
+
+  if (useAppli) {
+    cy.log('Opening eyes ' + Cypress.spec.name + ' --- ' + name);
+    cy.eyesOpen({
+      appName: 'Mermaid',
+      testName: name,
+      batchName: Cypress.spec.name,
+      batchId: batchId + Cypress.spec.name,
+    });
+  }
 
   cy.visit(url);
+  cy.window().should('have.property', 'rendered', true);
+  cy.get('svg').should('be.visible');
+
+  if (validation) {
+    cy.get('svg').should(validation);
+  }
+
+  if (useAppli) {
+    cy.log('Check eyes' + Cypress.spec.name);
+    cy.eyesCheckWindow('Click!');
+    cy.log('Closing eyes' + Cypress.spec.name);
+    cy.eyesClose();
+  } else {
+    cy.matchImageSnapshot(name);
+  }
 };

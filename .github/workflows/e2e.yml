@@ -2,51 +2,53 @@ name: E2E
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
+        containers: [1, 2, 3, 4]
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        cache: yarn
-        node-version: ${{ matrix.node-version }}
+      - uses: pnpm/action-setup@v2
+        # uses version from "packageManager" field in package.json
 
-    - name: Install Yarn
-      run: npm i yarn --global
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        # Need to skip setup if Cypress run is skipped, otherwise an error
+        # is thrown since the pnpm cache step fails
+        if: ${{ ( env.CYPRESS_RECORD_KEY != '' ) || ( matrix.containers == 1 ) }}
+        with:
+          cache: pnpm
+          node-version: ${{ matrix.node-version }}
 
-    - name: Install Packages
-      run: |
-        yarn install --frozen-lockfile
-      env:
-        CYPRESS_CACHE_FOLDER: .cache/Cypress
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        id: cypress
+        # If CYPRESS_RECORD_KEY is set, run in parallel on all containers
+        # Otherwise (e.g. if running from fork), we run on a single container only
+        if: ${{ ( env.CYPRESS_RECORD_KEY != '' ) || ( matrix.containers == 1 ) }}
+        with:
+          start: pnpm run dev
+          wait-on: 'http://localhost:9000'
+          # Disable recording if we don't have an API key
+          # e.g. if this action was run from a fork
+          record: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
+          parallel: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
 
-    - name: Run Build
-      run: yarn build
-
-    # - name: Run e2e Tests
-    #   run: |
-    #     yarn e2e
-
-    #- name: Upload Test Results
-    #  uses: coverallsapp/github-action@v1.0.1
-    #  with:
-    #    github-token: ${{ secrets.GITHUB_TOKEN }}
-    #    parallel: true
-
-    - name: Run E2E Tests
-      run: yarn e2e
-      env:
-        PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
-        CYPRESS_CACHE_FOLDER: .cache/Cypress
-
-    #- name: Post Upload Test Results
-    #  uses: coverallsapp/github-action@master
-    #  with:
-    #    github-token: ${{ secrets.GITHUB_TOKEN }}
-    #    parallel-finished: true
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        if: ${{ failure() && steps.cypress.conclusion == 'failure' }}
+        with:
+          name: error-snapshots
+          path: cypress/snapshots/**/__diff_output__/*

@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Mermaid Quick Test Page</title>
-  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
-</head>
-<body>
-  <div id="FirstLine" class="mermaid">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+  </head>
+  <body>
+    <pre id="FirstLine" class="mermaid">
     graph TB
-      Function-->URL
-      click Function clickByFlow "Add a div"
-      click URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
-</div>
-<div id="FirstLine" class="mermaid">
+      Function1-->URL1
+      click Function1 clickByFlow "Add a div"
+      click URL1 "http://localhost:9000/empty.html" "Visit <strong>mermaid docs</strong>"
+    </pre>
+    <pre id="FirstLine" class="mermaid">
   graph TB
     1Function-->2URL
     click 1Function clickByFlow "Add a div"
-    click 2URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
-</div>
+    click 2URL "http://localhost:9000/empty.html" "Visit <strong>mermaid docs</strong>"
+    </pre>
 
-<div class="mermaid">
+    <pre class="mermaid">
     gantt
     dateFormat  YYYY-MM-DD
     axisFormat  %d/%m
@@ -50,34 +50,34 @@
     Visit mermaidjs               :active, cl1, 2014-01-07,2014-01-10
     Calling a Callback (look at the console log) :cl2, after cl1, 3d
 
-    click cl1 href "http://localhost:9000/webpackUsage.html"
+    click cl1 href "http://localhost:9000/empty.html"
     click cl2 call clickByGantt("test", test, test)
 
     section Last section
     Describe gantt syntax               :after doc1, 3d
     Add gantt diagram to demo page      : 20h
     Add another diagram to demo page    : 48h
-      </div>
+    </pre>
 
-  <script src="./mermaid.js"></script>
-  <script>
-  function clickByFlow(elemName) {
-    const div = document.createElement('div');
-    div.className = 'created-by-click';
-    div.style = 'padding: 20px; background: green; color: white;';
-    div.innerText = 'Clicked By Flow';
+    <script src="./mermaid.js"></script>
+    <script>
+      function clickByFlow(elemName) {
+        const div = document.createElement('div');
+        div.className = 'created-by-click';
+        div.style = 'padding: 20px; background: green; color: white;';
+        div.innerText = 'Clicked By Flow';
 
-    document.getElementsByTagName('body')[0].appendChild(div);
-  }
-  function clickByGantt(elemName) {
-    const div = document.createElement('div');
-    div.className = 'created-by-gant-click';
-    div.style = 'padding: 20px; background: green; color: white;';
-    div.innerText = 'Clicked By Gant';
+        document.getElementsByTagName('body')[0].appendChild(div);
+      }
+      function clickByGantt(elemName) {
+        const div = document.createElement('div');
+        div.className = 'created-by-gant-click';
+        div.style = 'padding: 20px; background: green; color: white;';
+        div.innerText = 'Clicked By Gant';
 
-    document.getElementsByTagName('body')[0].appendChild(div);
-  }
-  mermaid.initialize({ startOnLoad: true, securityLevel: 'strct', logLevel: 1 });
-  </script>
-</body>
+        document.getElementsByTagName('body')[0].appendChild(div);
+      }
+      mermaid.initialize({ startOnLoad: true, securityLevel: 'strct', logLevel: 1 });
+    </script>
+  </body>
 </html>

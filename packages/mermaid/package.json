@@ -1,0 +1,112 @@
+{
+  "name": "mermaid",
+  "version": "9.3.0",
+  "description": "Markdown-ish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
+  "main": "./dist/mermaid.min.js",
+  "module": "./dist/mermaid.core.mjs",
+  "types": "./dist/mermaid.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/mermaid.min.js",
+      "import": "./dist/mermaid.core.mjs",
+      "types": "./dist/mermaid.d.ts"
+    },
+    "./*": "./*"
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "flowchart",
+    "sequence diagram",
+    "gantt",
+    "class diagram",
+    "git graph"
+  ],
+  "scripts": {
+    "clean": "rimraf dist",
+    "docs:code": "typedoc src/defaultConfig.ts src/config.ts src/mermaidAPI.ts && prettier --write ./src/docs/config/setup",
+    "docs:build": "rimraf ../../docs && pnpm docs:spellcheck && pnpm docs:code && ts-node-esm src/docs.mts",
+    "docs:verify": "pnpm docs:spellcheck && pnpm docs:code && ts-node-esm src/docs.mts --verify",
+    "docs:pre:vitepress": "rimraf src/vitepress && pnpm docs:code && ts-node-esm src/docs.mts --vitepress",
+    "docs:build:vitepress": "pnpm docs:pre:vitepress && vitepress build src/vitepress && cpy --flat src/docs/landing/ ./src/vitepress/.vitepress/dist/landing",
+    "docs:dev": "pnpm docs:pre:vitepress && concurrently \"vitepress dev src/vitepress\" \"ts-node-esm src/docs.mts --watch --vitepress\"",
+    "docs:serve": "pnpm docs:build:vitepress && vitepress serve src/vitepress",
+    "docs:spellcheck": "cspell --config ../../cSpell.json \"src/docs/**/*.md\"",
+    "release": "pnpm build",
+    "prepublishOnly": "pnpm -w run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid"
+  },
+  "author": "Knut Sveidqvist",
+  "license": "MIT",
+  "standard": {
+    "ignore": [
+      "**/parser/*.js",
+      "dist/**/*.js",
+      "cypress/**/*.js"
+    ],
+    "globals": [
+      "page"
+    ]
+  },
+  "dependencies": {
+    "@braintree/sanitize-url": "^6.0.0",
+    "d3": "^7.0.0",
+    "dagre-d3-es": "7.0.8",
+    "dompurify": "2.4.3",
+    "elkjs": "^0.8.2",
+    "katex": "^0.15.2",
+    "khroma": "^2.0.0",
+    "lodash-es": "^4.17.21",
+    "moment": "^2.29.4",
+    "non-layered-tidy-tree-layout": "^2.0.2",
+    "stylis": "^4.1.2",
+    "ts-dedent": "^2.2.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.0",
+    "@types/dompurify": "^2.4.0",
+    "@types/jsdom": "^20.0.1",
+    "@types/lodash-es": "^4.17.6",
+    "@types/micromatch": "^4.0.2",
+    "@types/prettier": "^2.7.1",
+    "@types/stylis": "^4.0.2",
+    "@types/uuid": "^8.3.4",
+    "@typescript-eslint/eslint-plugin": "^5.42.1",
+    "@typescript-eslint/parser": "^5.42.1",
+    "chokidar": "^3.5.3",
+    "concurrently": "^7.5.0",
+    "coveralls": "^3.1.1",
+    "cpy-cli": "^4.2.0",
+    "cspell": "^6.14.3",
+    "globby": "^13.1.2",
+    "jison": "^0.4.18",
+    "js-base64": "^3.7.2",
+    "jsdom": "^20.0.2",
+    "micromatch": "^4.0.5",
+    "path-browserify": "^1.0.1",
+    "prettier": "^2.7.1",
+    "remark": "^14.0.2",
+    "remark-frontmatter": "^4.0.1",
+    "remark-gfm": "^3.0.1",
+    "rimraf": "^3.0.2",
+    "start-server-and-test": "^1.14.0",
+    "typedoc": "^0.23.18",
+    "typedoc-plugin-markdown": "^3.13.6",
+    "typescript": "^4.8.4",
+    "unist-util-flatmap": "^1.0.0",
+    "vitepress": "^1.0.0-alpha.31",
+    "vitepress-plugin-search": "^1.0.4-alpha.16"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ]
+}

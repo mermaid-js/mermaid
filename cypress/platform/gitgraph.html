@@ -1,49 +1,85 @@
 <html>
   <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
     <link
-      href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet">
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        background:#111;
+        /* background:#111; */
         /* background:#333; */
         font-family: 'Arial';
-        }
+      }
       /* h1 { color: white;} */
       .mermaid2 {
         display: none;
       }
-      .customCss > rect, .customCss{
-        fill:#FF0000 !important;
-        stroke:#FFFF00 !important;
-        stroke-width:4px !important;
-    }
+      .customCss > rect,
+      .customCss {
+        fill: #ff0000 !important;
+        stroke: #ffff00 !important;
+        stroke-width: 4px !important;
+      }
     </style>
   </head>
   <body>
     <h1>info below</h1>
-    <div class="mermaid2" style="width: 100%; height: 20%;">
-      %%{init: { 'logLevel': 'debug', 'theme': 'neutral' } }%%
+
+    <pre class="mermaid" style="width: 100%; height: 20%">
+  %%{init: { "logLevel": "debug", "theme": "default" , "gitGraph" : {"showBranches":"false","rotateCommitLabel":"true"},"themeVariables": {
+              "gitBranchLabel0": "#ff0000",
+              "gitBranchLabel1": "#00ff00",
+              "gitBranchLabel2": "#0000ff",
+              "git0": "#550055"
+       } } }%%
+    gitGraph
+      commit
+       branch develop
+       commit
+       commit
+       branch release/1.0.0
+       checkout release/1.0.0
+       commit tag:"1.0.0-beta1"
+       checkout develop
+       commit
+       commit
+       commit
+       commit
+       checkout release/1.0.0
+       merge develop tag: "1.0.0-beta2"
+    </pre>
+    <pre class="mermaid2" style="width: 100%; height: 20%">
+    %%{init: { "logLevel": "debug", "theme": "default" , "gitGraph" : {"showBranches":"false"},"themeVariables": {
+              "gitBranchLabel0": "#ff0000",
+              "gitBranchLabel1": "#00ff00",
+              "gitBranchLabel2": "#0000ff",
+              "git0": "#550055"
+       } } }%%
        gitGraph
-       commit "Ashish"
-       branch newbranch
-       checkout newbranch
-       commit id:"1111"
-       commit tag:"test"
+      accTitle: "Git Graph"
+      accDescr {
+        Git Graph description.
+        Multiline description
+      }
+       commit
+       branch develop
+       commit tag:"v1.0.0"
+       commit
        checkout main
        commit type: HIGHLIGHT
        commit
-       merge newbranch
+       merge develop
        commit
-       branch b2
+       branch featureA
        commit
-
-    </div>
-    <div class="mermaid" style="width: 100%; height: 20%;">
+    </pre>
+    <pre class="mermaid2" style="width: 100%; height: 20%">
       gitGraph
       commit type:HIGHLIGHT
       branch hotfix
@@ -85,40 +121,41 @@
       merge main
       checkout develop
       merge release
-
-   </div>
-    <div class="mermaid2" style="width: 100%; height: 20%;">
+    </pre>
+    <pre class="mermaid2" style="width: 100%; height: 20%">
       gitGraph:
       commit
       commit
       branch newbranch
       commit
       merge main
-    </div>
-      <script src="./mermaid.js"></script>
+    </pre>
+    <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'dark',
-  //     themeVariables: {
-  //       primaryColor: '#9400D3',
-  //       darkMode: true,
-  //       background: '#222',
-  //       //   textColor: 'white',
-  //       //   primaryTextColor: '#f4f4f4',
+        //theme: 'dark',
+        themeVariables: {
+          commitLabelColor: '#9400D3',
+          commitLabelBackground: '#FFFFFF',
+          //       darkMode: true,
+          //       background: '#222',
+          //       //   textColor: 'white',
+          //       //   primaryTextColor: '#f4f4f4',
 
-  //       //   // nodeBkg: '#ff0000',
-  //       //   // mainBkg: '#0000ff',
-  // //   // tertiaryColor: '#ffffcc',
-  //     },
+          //       //   // nodeBkg: '#ff0000',
+          //       //   // mainBkg: '#0000ff',
+          // //   // tertiaryColor: '#ffffcc',
+        },
         // theme: 'forest',
         // theme: 'neutral',
         // theme: 'dark',
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 1,
+        gitGraph: { rotateCommitLabel: false },
         flowchart: { curve: 'linear', htmlLabels: true },
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50, showSequenceNumbers: true },
@@ -131,8 +168,8 @@
         securityLevel: 'loose',
       });
       function callback() {
-  alert('It worked');
-}
+        alert('It worked');
+      }
     </script>
   </body>
 </html>
