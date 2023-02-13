@@ -154,7 +154,7 @@ export const addNotes = function (notes: ClassNote[], g: graphlib.Graph, startEd
 /**
  * Add edges to graph based on parsed graph definition
  *
- * @param relations -
+ * @param relations - 
  * @param g - The graph object
  */
 export const addRelations = function (relations: ClassRelation[], g: graphlib.Graph) {
@@ -234,7 +234,7 @@ export const setConf = function (cnf: any) {
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  *
- * @param text -
+ * @param text - 
  * @param id -
  * @param _version -
  * @param diagObj -
