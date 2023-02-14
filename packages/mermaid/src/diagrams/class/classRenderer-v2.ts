@@ -16,7 +16,7 @@ let conf = {
   dividerMargin: 10,
   padding: 5,
   textHeight: 10,
-  curve: undefined
+  curve: undefined,
 };
 
 /**
@@ -27,7 +27,12 @@ let conf = {
  * @param _id - id of the graph
  * @param diagObj - The diagram object
  */
-export const addClasses = function (classes: ClassMap, g: graphlib.Graph, _id: string, diagObj: any) {
+export const addClasses = function (
+  classes: ClassMap,
+  g: graphlib.Graph,
+  _id: string,
+  diagObj: any
+) {
   const keys = Object.keys(classes);
   log.info('keys:', keys);
   log.info(classes);
@@ -83,7 +88,12 @@ export const addClasses = function (classes: ClassMap, g: graphlib.Graph, _id: s
  * @param startEdgeId - starting index for note edge
  * @param classes - Classes
  */
-export const addNotes = function (notes: ClassNote[], g: graphlib.Graph, startEdgeId: number, classes: ClassMap) {
+export const addNotes = function (
+  notes: ClassNote[],
+  g: graphlib.Graph,
+  startEdgeId: number,
+  classes: ClassMap
+) {
   log.info(notes);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
@@ -154,7 +164,7 @@ export const addNotes = function (notes: ClassNote[], g: graphlib.Graph, startEd
 /**
  * Add edges to graph based on parsed graph definition
  *
- * @param relations - 
+ * @param relations -
  * @param g - The graph object
  */
 export const addRelations = function (relations: ClassRelation[], g: graphlib.Graph) {
@@ -178,18 +188,16 @@ export const addRelations = function (relations: ClassRelation[], g: graphlib.Gr
       arrowTypeEnd: getArrowMarker(edge.relation.type2),
       style: 'fill:none',
       labelStyle: '',
-      curve: interpolateToCurve(conf?.curve, curveLinear)
-    }
+      curve: interpolateToCurve(conf?.curve, curveLinear),
+    };
 
     log.info(edgeData, edge);
-
 
     if (edge.style !== undefined) {
       const styles = getStylesFromArray(edge.style);
       edgeData.style = styles.style;
       edgeData.labelStyle = styles.labelStyle;
     }
-
 
     edge.text = edge.title;
     if (edge.text === undefined) {
@@ -227,14 +235,15 @@ export const addRelations = function (relations: ClassRelation[], g: graphlib.Gr
  */
 export const setConf = function (cnf: any) {
   conf = {
-    ...conf, ...cnf
-  }
+    ...conf,
+    ...cnf,
+  };
 };
 
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  *
- * @param text - 
+ * @param text -
  * @param id -
  * @param _version -
  * @param diagObj -
@@ -281,9 +290,9 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   }
   const root =
     securityLevel === 'sandbox'
-      // @ts-ignore Ignore type error for now
+      ? // @ts-ignore Ignore type error for now
 
-      ? select(sandboxElement.nodes()[0].contentDocument.body)
+        select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
   // @ts-ignore Ignore type error for now
   const svg = root.select(`[id="${id}"]`);

@@ -395,4 +395,4 @@ export interface FontConfig {
 
 export type FontCalculator = () => Partial<FontConfig>;
 
-export { };
+export {};

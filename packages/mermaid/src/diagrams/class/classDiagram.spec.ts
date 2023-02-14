@@ -1024,7 +1024,6 @@ C1 -->  C2
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.cssClasses.length).toBe(1);
       expect(c1.cssClasses[0]).toBe('styleClass');
-
     });
 
     it('should parse a class with text label and css class', () => {
@@ -1040,7 +1039,6 @@ cssClass "C1" styleClass
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.cssClasses.length).toBe(1);
       expect(c1.cssClasses[0]).toBe('styleClass');
-
     });
 
     it('should parse two classes with text labels and css classes', () => {
@@ -1130,7 +1128,7 @@ class C13["With Città foreign language"]
       expect(classDb.getClass('C9').label).toBe('With - dash');
       expect(classDb.getClass('C10').label).toBe('With _ underscore');
       expect(classDb.getClass('C11').label).toBe("With ' single quote");
-      expect(classDb.getClass('C12').label).toBe("With ~!@#$%^&*()_+=-/?");
+      expect(classDb.getClass('C12').label).toBe('With ~!@#$%^&*()_+=-/?');
       expect(classDb.getClass('C13').label).toBe('With Città foreign language');
     });
   });
