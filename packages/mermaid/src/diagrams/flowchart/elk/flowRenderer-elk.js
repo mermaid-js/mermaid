@@ -313,6 +313,7 @@ const getNextPosition = (position, edgeDirection, graphDirection) => {
       },
     },
   };
+  portPos.TD = portPos.TB;
   log.info('abc88', graphDirection, edgeDirection, position);
   return portPos[graphDirection][edgeDirection][position];
   // return 'south';
@@ -323,6 +324,7 @@ const getNextPort = (node, edgeDirection, graphDirection) => {
   if (!portPos[node]) {
     switch (graphDirection) {
       case 'TB':
+      case 'TD':
         portPos[node] = {
           inPosition: 'north',
           outPosition: 'south',

@@ -238,6 +238,9 @@ export const setDirection = function (dir) {
   if (direction.match(/.*v/)) {
     direction = 'TB';
   }
+  if (direction === 'TD') {
+    direction = 'TB';
+  }
 };
 
 /**
