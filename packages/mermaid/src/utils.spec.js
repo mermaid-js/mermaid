@@ -239,9 +239,9 @@ Alice->Bob: hi`;
     const type = detectType(str);
     expect(type).toBe('gitGraph');
   });
-  it('should not allow frontmatter with leading spaces', function () {
+  it('should handle malformed frontmatter (with leading spaces) with `---` error graphtype', function () {
     const str = '    ---\ntitle: foo\n---\n  gitGraph TB:\nbfs1:queue';
-    expect(() => detectType(str)).toThrow('No diagram type detected for text');
+    expect(detectType(str)).toBe('---');
   });
 });
 describe('when finding substring in array ', function () {
@@ -400,5 +400,31 @@ describe('when inserting titles', function () {
 
     utils.insertTitle(svg, 'testClass', 5, 'test title');
     expect(titleAttrSpy).toHaveBeenCalledWith('class', 'testClass');
+  });
+});
+
+describe('when parsing font sizes', function () {
+  it('parses number inputs', function () {
+    expect(utils.parseFontSize(14)).toEqual([14, '14px']);
+  });
+
+  it('parses string em inputs', function () {
+    expect(utils.parseFontSize('14em')).toEqual([14, '14em']);
+  });
+
+  it('parses string px inputs', function () {
+    expect(utils.parseFontSize('14px')).toEqual([14, '14px']);
+  });
+
+  it('parses string inputs without units', function () {
+    expect(utils.parseFontSize('14')).toEqual([14, '14px']);
+  });
+
+  it('handles undefined input', function () {
+    expect(utils.parseFontSize(undefined)).toEqual([undefined, undefined]);
+  });
+
+  it('handles unparseable input', function () {
+    expect(utils.parseFontSize({ fontSize: 14 })).toEqual([undefined, undefined]);
   });
 });

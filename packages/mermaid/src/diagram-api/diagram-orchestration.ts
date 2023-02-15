@@ -1,5 +1,4 @@
 import { registerDiagram } from './diagramAPI';
-
 // @ts-ignore: TODO Fix ts errors
 import gitGraphParser from '../diagrams/git/parser/gitGraph';
 import { gitGraphDetector } from '../diagrams/git/gitGraphDetector';
@@ -94,6 +93,13 @@ import { setConfig } from '../config';
 import errorRenderer from '../diagrams/error/errorRenderer';
 import errorStyles from '../diagrams/error/styles';
 
+import flowchartElk from '../diagrams/flowchart/elk/detector';
+import { registerLazyLoadedDiagrams } from './detectType';
+
+// Lazy loaded diagrams
+import timelineDetector from '../diagrams/timeline/detector';
+import mindmapDetector from '../diagrams/mindmap/detector';
+
 let hasLoadedDiagrams = false;
 export const addDiagrams = () => {
   if (hasLoadedDiagrams) {
@@ -102,6 +108,8 @@ export const addDiagrams = () => {
   // This is added here to avoid race-conditions.
   // We could optimize the loading logic somehow.
   hasLoadedDiagrams = true;
+  registerLazyLoadedDiagrams(flowchartElk, timelineDetector, mindmapDetector);
+
   registerDiagram(
     'error',
     // Special diagram with error messages but setup as a regular diagram
@@ -124,6 +132,33 @@ export const addDiagrams = () => {
       },
     },
     (text) => text.toLowerCase().trim() === 'error'
+  );
+  registerDiagram(
+    '---',
+    // --- diagram type may appear if YAML front-matter is not parsed correctly
+    {
+      db: {
+        clear: () => {
+          // Quite ok, clear needs to be there for --- to work as a regular diagram
+        },
+      },
+      styles: errorStyles, // should never be used
+      renderer: errorRenderer, // should never be used
+      parser: {
+        parser: { yy: {} },
+        parse: () => {
+          throw new Error(
+            'Diagrams beginning with --- are not valid. ' +
+              'If you were trying to use a YAML front-matter, please ensure that ' +
+              "you've correctly opened and closed the YAML front-matter with unindented `---` blocks"
+          );
+        },
+      },
+      init: () => null, // no op
+    },
+    (text) => {
+      return text.toLowerCase().trimStart().startsWith('---');
+    }
   );
 
   registerDiagram(

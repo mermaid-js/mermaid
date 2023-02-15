@@ -1,5 +1,6 @@
 import common from '../common/common';
 import { addFunction } from '../../interactionDb';
+import { parseFontSize } from '../../utils';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 
 export const drawRect = function (elem, rectData) {
@@ -156,6 +157,8 @@ export const drawText = function (elem, textData) {
     textHeight = 0;
   const lines = textData.text.split(common.lineBreakRegex);
 
+  const [_textFontSize, _textFontSizePx] = parseFontSize(textData.fontSize);
+
   let textElems = [];
   let dy = 0;
   let yfunc = () => textData.y;
@@ -218,9 +221,9 @@ export const drawText = function (elem, textData) {
     if (
       textData.textMargin !== undefined &&
       textData.textMargin === 0 &&
-      textData.fontSize !== undefined
+      _textFontSize !== undefined
     ) {
-      dy = i * textData.fontSize;
+      dy = i * _textFontSize;
     }
 
     const textElem = elem.append('text');
@@ -235,8 +238,8 @@ export const drawText = function (elem, textData) {
     if (textData.fontFamily !== undefined) {
       textElem.style('font-family', textData.fontFamily);
     }
-    if (textData.fontSize !== undefined) {
-      textElem.style('font-size', textData.fontSize);
+    if (_textFontSizePx !== undefined) {
+      textElem.style('font-size', _textFontSizePx);
     }
     if (textData.fontWeight !== undefined) {
       textElem.style('font-weight', textData.fontWeight);
@@ -338,19 +341,21 @@ export const fixLifeLineHeights = (diagram, bounds) => {
  * @param {any} elem - The diagram we'll draw to.
  * @param {any} actor - The actor to draw.
  * @param {any} conf - DrawText implementation discriminator object
+ * @param {boolean} isFooter - If the actor is the footer one
  */
-const drawActorTypeParticipant = function (elem, actor, conf) {
+const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   const center = actor.x + actor.width / 2;
+  const centerY = actor.y + 5;
 
   const boxpluslineGroup = elem.append('g');
   var g = boxpluslineGroup;
 
-  if (actor.y === 0) {
+  if (!isFooter) {
     actorCnt++;
     g.append('line')
       .attr('id', 'actor' + actorCnt)
       .attr('x1', center)
-      .attr('y1', 5)
+      .attr('y1', centerY)
       .attr('x2', center)
       .attr('y2', 2000)
       .attr('class', 'actor-line')
@@ -413,16 +418,17 @@ const drawActorTypeParticipant = function (elem, actor, conf) {
   return height;
 };
 
-const drawActorTypeActor = function (elem, actor, conf) {
+const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   const center = actor.x + actor.width / 2;
+  const centerY = actor.y + 80;
 
-  if (actor.y === 0) {
+  if (!isFooter) {
     actorCnt++;
     elem
       .append('line')
       .attr('id', 'actor' + actorCnt)
       .attr('x1', center)
-      .attr('y1', 80)
+      .attr('y1', centerY)
       .attr('x2', center)
       .attr('y2', 2000)
       .attr('class', 'actor-line')
@@ -495,13 +501,32 @@ const drawActorTypeActor = function (elem, actor, conf) {
   return actor.height;
 };
 
-export const drawActor = function (elem, actor, conf) {
+export const drawActor = function (elem, actor, conf, isFooter) {
   switch (actor.type) {
     case 'actor':
-      return drawActorTypeActor(elem, actor, conf);
+      return drawActorTypeActor(elem, actor, conf, isFooter);
     case 'participant':
-      return drawActorTypeParticipant(elem, actor, conf);
+      return drawActorTypeParticipant(elem, actor, conf, isFooter);
   }
+};
+
+export const drawBox = function (elem, box, conf) {
+  const boxplustextGroup = elem.append('g');
+  const g = boxplustextGroup;
+  drawBackgroundRect(g, box);
+  if (box.name) {
+    _drawTextCandidateFunc(conf)(
+      box.name,
+      g,
+      box.x,
+      box.y + (box.textMaxHeight || 0) / 2,
+      box.width,
+      0,
+      { class: 'text' },
+      conf
+    );
+  }
+  g.lower();
 };
 
 export const anchorElement = function (elem) {
@@ -642,6 +667,7 @@ export const drawBackgroundRect = function (elem, bounds) {
     width: bounds.stopx - bounds.startx,
     height: bounds.stopy - bounds.starty,
     fill: bounds.fill,
+    stroke: bounds.stroke,
     class: 'rect',
   });
   rectElem.lower();
@@ -840,8 +866,7 @@ const _drawTextCandidateFunc = (function () {
   function byTspan(content, g, x, y, width, height, textAttrs, conf) {
     const { actorFontSize, actorFontFamily, actorFontWeight } = conf;
 
-    let _actorFontSize =
-      actorFontSize && actorFontSize.replace ? actorFontSize.replace('px', '') : actorFontSize;
+    const [_actorFontSize, _actorFontSizePx] = parseFontSize(actorFontSize);
 
     const lines = content.split(common.lineBreakRegex);
     for (let i = 0; i < lines.length; i++) {
@@ -851,7 +876,7 @@ const _drawTextCandidateFunc = (function () {
         .attr('x', x + width / 2)
         .attr('y', y)
         .style('text-anchor', 'middle')
-        .style('font-size', actorFontSize)
+        .style('font-size', _actorFontSizePx)
         .style('font-weight', actorFontWeight)
         .style('font-family', actorFontFamily);
       text
@@ -1035,6 +1060,7 @@ export default {
   drawText,
   drawLabel,
   drawActor,
+  drawBox,
   drawPopup,
   drawImage,
   drawEmbeddedImage,

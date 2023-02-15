@@ -1,3 +1,8 @@
+---
+title: Flowcharts Syntax
+outline: 'deep' # shows all h3 headings in outline in Vitepress
+---
+
 # Flowcharts - Basic Syntax
 
 All Flowcharts are composed of **nodes**, the geometric shapes and **edges**, the arrows or lines. The mermaid code defines the way that these **nodes** and **edges** are made and interact.
@@ -547,8 +552,8 @@ linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
 ### Styling line curves
 
 It is possible to style the type of curve used for lines between items, if the default method does not meet your needs.
-Available curve styles include `basis`, `bump`, `linear`, `monotoneX`, `monotoneY`, `natural`, `step`, `stepAfter`,
-and `stepBefore`.
+Available curve styles include `basis`, `bumpX`, `bumpY`, `cardinal`, `catmullRom`, `linear`, `monotoneX`, `monotoneY`,
+`natural`, `step`, `stepAfter`, and `stepBefore`.
 
 In this example, a left-to-right graph uses the `stepBefore` curve style:
 
@@ -669,7 +674,24 @@ flowchart LR
     C -->|Two| E[Result two]
 ```
 
-## Configuration...
+## Configuration
+
+### Renderer
+
+The layout of the diagram is done with the renderer. The default renderer is dagre.
+
+Starting with Mermaid version 9.4, you can use an alternate renderer named elk. The elk renderer is better for larger and/or more complex diagrams.
+
+The _elk_ renderer is an experimenal feature.
+You can change the renderer to elk by adding this directive:
+
+```
+%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
+```
+
+Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
+
+### Width
 
 It is possible to adjust the width of the rendered flowchart.
 

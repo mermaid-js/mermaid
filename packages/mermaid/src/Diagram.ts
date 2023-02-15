@@ -3,9 +3,10 @@ import { log } from './logger';
 import { getDiagram, registerDiagram } from './diagram-api/diagramAPI';
 import { detectType, getDiagramLoader } from './diagram-api/detectType';
 import { extractFrontMatter } from './diagram-api/frontmatter';
-import { isDetailedError, type DetailedError } from './utils';
+import { isDetailedError } from './utils';
+import type { DetailedError } from './utils';
 
-export type ParseErrorFunction = (err: string | DetailedError, hash?: any) => void;
+export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
 
 export class Diagram {
   type = 'graph';
@@ -43,7 +44,7 @@ export class Diagram {
     this.parser.parser.yy = this.db;
     if (diagram.init) {
       diagram.init(cnf);
-      log.debug('Initialized diagram ' + this.type, cnf);
+      log.info('Initialized diagram ' + this.type, cnf);
     }
     this.txt += '\n';
 

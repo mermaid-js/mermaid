@@ -6,6 +6,13 @@ describe('accessibility', () => {
   const fauxSvgNode = new MockedD3();
 
   describe('setA11yDiagramInfo', () => {
+    it('sets the svg element role to "graphics-document document"', () => {
+      // @ts-ignore  Required to easily handle the d3 select types
+      const svgAttrSpy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
+      setA11yDiagramInfo(fauxSvgNode, 'flowchart');
+      expect(svgAttrSpy).toHaveBeenCalledWith('role', 'graphics-document document');
+    });
+
     it('sets the aria-roledescription to the diagram type', () => {
       // @ts-ignore  Required to easily handle the d3 select types
       const svgAttrSpy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
@@ -13,11 +20,12 @@ describe('accessibility', () => {
       expect(svgAttrSpy).toHaveBeenCalledWith('aria-roledescription', 'flowchart');
     });
 
-    it('does nothing if the diagram type is empty', () => {
+    it('does not set the aria-roledescription if the diagram type is empty', () => {
       // @ts-ignore  Required to easily handle the d3 select types
       const svgAttrSpy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
       setA11yDiagramInfo(fauxSvgNode, '');
-      expect(svgAttrSpy).not.toHaveBeenCalled();
+      expect(svgAttrSpy).toHaveBeenCalledTimes(1);
+      expect(svgAttrSpy).toHaveBeenCalledWith('role', expect.anything()); // only called to set the role
     });
   });
 

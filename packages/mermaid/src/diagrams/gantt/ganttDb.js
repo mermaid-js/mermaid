@@ -1,4 +1,4 @@
-import moment from 'moment-mini';
+import moment from 'moment';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import { log } from '../../logger';
 import * as configApi from '../../config';

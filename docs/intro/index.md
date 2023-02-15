@@ -367,7 +367,7 @@ _Unfortunately you can not have a cake and eat it at the same time which in this
 
 ## Reporting vulnerabilities
 
-To report a vulnerability, please e-mail security@mermaid.live with a description of the issue, the steps you took to create the issue, affected versions, and if known, mitigations for the issue.
+To report a vulnerability, please e-mail <security@mermaid.live> with a description of the issue, the steps you took to create the issue, affected versions, and if known, mitigations for the issue.
 
 ## Appreciation
 

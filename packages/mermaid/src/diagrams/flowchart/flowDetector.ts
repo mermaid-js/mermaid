@@ -6,5 +6,8 @@ export const flowDetector: DiagramDetector = (txt, config) => {
   if (config?.flowchart?.defaultRenderer === 'dagre-wrapper') {
     return false;
   }
+  if (config?.flowchart?.defaultRenderer === 'elk') {
+    return false;
+  }
   return txt.match(/^\s*graph/) !== null;
 };

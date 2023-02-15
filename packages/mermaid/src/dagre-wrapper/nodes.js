@@ -1007,6 +1007,7 @@ const class_box = (parent, node) => {
 };
 
 const shapes = {
+  rhombus: question,
   question,
   rect,
   labelRect,
@@ -1064,6 +1065,7 @@ export const insertNode = (elem, node, dir) => {
   if (node.haveCallback) {
     nodeElems[node.id].attr('class', nodeElems[node.id].attr('class') + ' clickable');
   }
+  return newEl;
 };
 export const setNodeElem = (elem, node) => {
   nodeElems[node.id] = elem;

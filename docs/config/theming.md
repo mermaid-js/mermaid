@@ -12,15 +12,15 @@ Themes can now be customized at the site-wide level, or on individual Mermaid di
 
 ## Available Themes
 
-1.  **default** - This is the default theme for all diagrams.
+1.  [**default**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-default.js) - This is the default theme for all diagrams.
 
-2.  **neutral** - This theme is great for black and white documents that will be printed.
+2.  [**neutral**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-neutral.js) - This theme is great for black and white documents that will be printed.
 
-3.  **dark** - This theme goes well with dark-colored elements or dark-mode.
+3.  [**dark**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-dark.js) - This theme goes well with dark-colored elements or dark-mode.
 
-4.  **forest** - This theme contains shades of green.
+4.  [**forest**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-forest.js) - This theme contains shades of green.
 
-5.  **base** - This is the only theme that can be modified. Use this theme as the base for customizations.
+5.  [**base**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-base.js) - This is the only theme that can be modified. Use this theme as the base for customizations.
 
 ## Site-wide Theme
 
@@ -40,6 +40,18 @@ mermaidAPI.initialize({
 To customize the theme of an individual diagram, use the `init` directive.
 
 Example of `init` directive setting the `theme` to `forest`:
+
+```mermaid-example
+%%{init: {'theme':'forest'}}%%
+  graph TD
+    a --> b
+```
+
+```mermaid
+%%{init: {'theme':'forest'}}%%
+  graph TD
+    a --> b
+```
 
 ```mermaid-example
 %%{init: {'theme':'forest'}}%%
@@ -127,6 +139,66 @@ Example of modifying `themeVariables` using the `init` directive:
           end
 ```
 
+```mermaid-example
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#BB2528',
+      'primaryTextColor': '#fff',
+      'primaryBorderColor': '#7C0000',
+      'lineColor': '#F8B229',
+      'secondaryColor': '#006100',
+      'tertiaryColor': '#fff'
+    }
+  }
+}%%
+        graph TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
+```
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#BB2528',
+      'primaryTextColor': '#fff',
+      'primaryBorderColor': '#7C0000',
+      'lineColor': '#F8B229',
+      'secondaryColor': '#006100',
+      'tertiaryColor': '#fff'
+    }
+  }
+}%%
+        graph TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
+```
+
 ## Color and Color Calculation
 
 To ensure diagram readability, the default value of certain variables is calculated or derived from other variables. For example, `primaryBorderColor` is derived from the `primaryColor` variable. So if the `primaryColor` variable is customized, Mermaid will adjust `primaryBorderColor` automatically. Adjustments can mean a color inversion, a hue change, a darkening/lightening by 10%, etc.
@@ -142,13 +214,10 @@ The theming engine will only recognize hex colors and not color names. So, the v
 | fontFamily           | trebuchet ms, verdana, arial       |                                                                                                                                  |
 | fontSize             | 16px                               | Font size in pixels                                                                                                              |
 | primaryColor         | #fff4dd                            | Color to be used as background in nodes, other colors will be derived from this                                                  |
-| primaryBorderColor   | calculated from primaryColor       | Color to be used as border in nodes using `primaryColor`                                                                         |
-| primaryBorderColor   | calculated from primaryColor       | Color to be used as border in nodes using `primaryColor`                                                                         |
 | primaryTextColor     | calculated from darkMode #ddd/#333 | Color to be used as text color in nodes using `primaryColor`                                                                     |
 | secondaryColor       | calculated from primaryColor       |                                                                                                                                  |
 | primaryBorderColor   | calculated from primaryColor       | Color to be used as border in nodes using `primaryColor`                                                                         |
 | secondaryBorderColor | calculated from secondaryColor     | Color to be used as border in nodes using `secondaryColor`                                                                       |
-| primaryBorderColor   | calculated from primaryColor       | Color to be used as border in nodes using `primaryColor`                                                                         |
 | secondaryTextColor   | calculated from secondaryColor     | Color to be used as text color in nodes using `secondaryColor`                                                                   |
 | tertiaryColor        | calculated from primaryColor       |                                                                                                                                  |
 | tertiaryBorderColor  | calculated from tertiaryColor      | Color to be used as border in nodes using `tertiaryColor`                                                                        |

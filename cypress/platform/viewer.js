@@ -1,8 +1,15 @@
 import mermaid2 from '../../packages/mermaid/src/mermaid';
-import mindmap from '../../packages/mermaid-mindmap/src/detector';
+import externalExample from '../../packages/mermaid-example-diagram/src/detector';
 
 function b64ToUtf8(str) {
   return decodeURIComponent(escape(window.atob(str)));
+}
+
+// Adds a rendered flag to window when rendering is done, so cypress can wait for it.
+function markRendered() {
+  if (window.Cypress) {
+    window.rendered = true;
+  }
 }
 
 /**
@@ -37,9 +44,10 @@ const contentLoaded = async function () {
       document.getElementsByTagName('body')[0].appendChild(div);
     }
 
-    await mermaid2.registerExternalDiagrams([mindmap]);
+    await mermaid2.registerExternalDiagrams([externalExample]);
     mermaid2.initialize(graphObj.mermaid);
-    mermaid2.init();
+    await mermaid2.init();
+    markRendered();
   }
 };
 
@@ -128,6 +136,7 @@ const contentLoadedApi = function () {
       );
     }
   }
+  markRendered();
 };
 
 if (typeof document !== 'undefined') {
@@ -142,7 +151,7 @@ if (typeof document !== 'undefined') {
         contentLoadedApi();
       } else {
         this.console.log('Not using api');
-        contentLoaded();
+        void contentLoaded();
       }
     },
     false

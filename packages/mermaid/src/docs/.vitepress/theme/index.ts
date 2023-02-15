@@ -10,9 +10,6 @@ export default {
     // register global components
     app.component('Mermaid', Mermaid);
     router.onBeforeRouteChange = (to) => {
-      if (router.route.path !== '/') {
-        return;
-      }
       try {
         const newPath = getRedirect(to);
         if (newPath) {

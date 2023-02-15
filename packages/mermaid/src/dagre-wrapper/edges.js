@@ -107,6 +107,7 @@ export const insertEdgeLabel = (elem, edge) => {
     terminalLabels[edge.id].endRight = endEdgeLabelRight;
     setTerminalWidth(fo, edge.endLabelRight);
   }
+  return labelElement;
 };
 
 /**

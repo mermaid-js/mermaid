@@ -125,6 +125,30 @@ describe('svgDraw', function () {
       expect(text3.attr).toHaveBeenCalledWith('y', 10);
       expect(text3.text).toHaveBeenCalledWith('fine lines');
     });
+    it('should work with numeral font sizes', function () {
+      const svg = MockD3('svg');
+      svgDraw.drawText(svg, {
+        x: 10,
+        y: 10,
+        dy: '1em',
+        text: 'One fine text message',
+        class: 'noteText',
+        fontFamily: 'courier',
+        fontSize: 10,
+        fontWeight: '500',
+      });
+      expect(svg.__children.length).toBe(1);
+      const text = svg.__children[0];
+      expect(text.__name).toBe('text');
+      expect(text.attr).toHaveBeenCalledWith('x', 10);
+      expect(text.attr).toHaveBeenCalledWith('y', 10);
+      expect(text.attr).toHaveBeenCalledWith('dy', '1em');
+      expect(text.attr).toHaveBeenCalledWith('class', 'noteText');
+      expect(text.text).toHaveBeenCalledWith('One fine text message');
+      expect(text.style).toHaveBeenCalledWith('font-family', 'courier');
+      expect(text.style).toHaveBeenCalledWith('font-size', '10px');
+      expect(text.style).toHaveBeenCalledWith('font-weight', '500');
+    });
   });
   describe('drawBackgroundRect', function () {
     it('should append a rect before the previous element within a given bound', function () {

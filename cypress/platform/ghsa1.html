@@ -21,6 +21,9 @@
       const diagram = document.getElementById('diagram');
       const svg = mermaid.render('diagram-svg', graph);
       diagram.innerHTML = svg;
+      if (window.Cypress) {
+        window.rendered = true;
+      }
     </script>
   </body>
 </html>

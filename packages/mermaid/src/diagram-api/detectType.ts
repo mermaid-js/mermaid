@@ -1,6 +1,11 @@
 import { MermaidConfig } from '../config.type';
 import { log } from '../logger';
-import { DetectorRecord, DiagramDetector, DiagramLoader } from './types';
+import type {
+  DetectorRecord,
+  DiagramDetector,
+  DiagramLoader,
+  ExternalDiagramDefinition,
+} from './types';
 import { frontMatterRegex } from './frontmatter';
 
 const directive = /%{2}{\s*(?:(\w+)\s*:|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;
@@ -42,11 +47,18 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
   throw new Error(`No diagram type detected for text: ${text}`);
 };
 
+export const registerLazyLoadedDiagrams = (...diagrams: ExternalDiagramDefinition[]) => {
+  for (const { id, detector, loader } of diagrams) {
+    addDetector(id, detector, loader);
+  }
+};
+
 export const addDetector = (key: string, detector: DiagramDetector, loader?: DiagramLoader) => {
   if (detectors[key]) {
-    throw new Error(`Detector with key ${key} already exists`);
+    log.error(`Detector with key ${key} already exists`);
+  } else {
+    detectors[key] = { detector, loader };
   }
-  detectors[key] = { detector, loader };
   log.debug(`Detector with key ${key} added${loader ? ' with loader' : ''}`);
 };
 

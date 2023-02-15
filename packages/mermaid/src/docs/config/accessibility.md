@@ -74,10 +74,11 @@ A **multiple line accessible description** _does not have a colon (`:`) after th
 
 Ex:
 
-```
-accDescr { The official Bob's Burgers corporate processes that are used
-        for making very, very big decisions.
-        This is actually a very simple flow: see the big decision and then make the big decision.}
+```markdown
+accDescr {
+This is a multiple line accessible description.
+It does not have a colon and is surrounded by curly brackets.
+}
 ```
 
 See [the accTitle and accDescr usage examples](#acctitle-and-accdescr-usage-examples) for how this can be used in a diagram and the resulting HTML generated.

@@ -2,19 +2,21 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code!
  */
+import dedent from 'ts-dedent';
+
 import { MermaidConfig } from './config.type';
 import { log } from './logger';
 import utils from './utils';
 import { mermaidAPI } from './mermaidAPI';
-import { addDetector } from './diagram-api/detectType';
+import { registerLazyLoadedDiagrams } from './diagram-api/detectType';
 import type { ParseErrorFunction } from './Diagram';
-import { isDetailedError, type DetailedError } from './utils';
+import { isDetailedError } from './utils';
+import type { DetailedError } from './utils';
 import { registerDiagram } from './diagram-api/diagramAPI';
 import { ExternalDiagramDefinition } from './diagram-api/types';
 
 export type { MermaidConfig, DetailedError, ExternalDiagramDefinition, ParseErrorFunction };
 
-let externalDiagramsRegistered = false;
 /**
  * ## init
  *
@@ -48,12 +50,7 @@ const init = async function (
   callback?: Function
 ) {
   try {
-    // Not really sure if we need to check this, or simply call initThrowsErrorsAsync directly.
-    if (externalDiagramsRegistered) {
-      await initThrowsErrorsAsync(config, nodes, callback);
-    } else {
-      initThrowsErrors(config, nodes, callback);
-    }
+    await initThrowsErrorsAsync(config, nodes, callback);
   } catch (e) {
     log.warn('Syntax Error rendering');
     if (isDetailedError(e)) {
@@ -65,8 +62,7 @@ const init = async function (
   }
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-const handleError = (error: unknown, errors: DetailedError[], parseError?: Function) => {
+const handleError = (error: unknown, errors: DetailedError[], parseError?: ParseErrorFunction) => {
   log.warn(error);
   if (isDetailedError(error)) {
     // handle case where error string and hash were
@@ -148,8 +144,7 @@ const initThrowsErrors = function (
     txt = element.innerHTML;
 
     // transforms the html to pure text
-    txt = utils
-      .entityDecode(txt)
+    txt = dedent(utils.entityDecode(txt)) // removes indentation, required for YAML parsing
       .trim()
       .replace(/<br\s*\/?>/gi, '<br/>');
 
@@ -187,18 +182,7 @@ const initThrowsErrors = function (
  * @internal
  * @param diagrams - Array of {@link ExternalDiagramDefinition}.
  */
-const registerLazyLoadedDiagrams = (diagrams: ExternalDiagramDefinition[]) => {
-  for (const { id, detector, loader } of diagrams) {
-    addDetector(id, detector, loader);
-  }
-};
-
-/**
- * This is an internal function and should not be made public, as it will likely change.
- * @internal
- * @param diagrams - Array of {@link ExternalDiagramDefinition}.
- */
-const loadExternalDiagrams = async (diagrams: ExternalDiagramDefinition[]) => {
+const loadExternalDiagrams = async (...diagrams: ExternalDiagramDefinition[]) => {
   log.debug(`Loading ${diagrams.length} external diagrams`);
   // Load all lazy loaded diagrams in parallel
   const results = await Promise.allSettled(
@@ -234,7 +218,6 @@ const loadExternalDiagrams = async (diagrams: ExternalDiagramDefinition[]) => {
  */
 const initThrowsErrorsAsync = async function (
   config?: MermaidConfig,
-  // eslint-disable-next-line no-undef
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
   // eslint-disable-next-line @typescript-eslint/ban-types
   callback?: Function
@@ -290,8 +273,7 @@ const initThrowsErrorsAsync = async function (
     txt = element.innerHTML;
 
     // transforms the html to pure text
-    txt = utils
-      .entityDecode(txt)
+    txt = dedent(utils.entityDecode(txt)) // removes indentation, required for YAML parsing
       .trim()
       .replace(/<br\s*\/?>/gi, '<br/>');
 
@@ -342,11 +324,10 @@ const registerExternalDiagrams = async (
   } = {}
 ) => {
   if (lazyLoad) {
-    registerLazyLoadedDiagrams(diagrams);
+    registerLazyLoadedDiagrams(...diagrams);
   } else {
-    await loadExternalDiagrams(diagrams);
+    await loadExternalDiagrams(...diagrams);
   }
-  externalDiagramsRegistered = true;
 };
 
 /**
@@ -358,7 +339,7 @@ const contentLoaded = function () {
   if (mermaid.startOnLoad) {
     const { startOnLoad } = mermaidAPI.getConfig();
     if (startOnLoad) {
-      mermaid.init();
+      mermaid.init().catch((err) => log.error('Mermaid failed to initialize', err));
     }
   }
 };
@@ -437,7 +418,7 @@ const parseAsync = (txt: string): Promise<boolean> => {
         );
       });
     executionQueue.push(performCall);
-    executeQueue();
+    executeQueue().catch(reject);
   });
 };
 
@@ -470,7 +451,7 @@ const renderAsync = (
         );
       });
     executionQueue.push(performCall);
-    executeQueue();
+    executeQueue().catch(reject);
   });
 };
 

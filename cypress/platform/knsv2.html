@@ -54,39 +54,205 @@
     </style>
   </head>
   <body>
-    <div>Security check</div>
     <pre id="diagram" class="mermaid">
-flowchart LR
-    %% Actors
-    A
-    subgraph Sub
-        B --> C
-    end
-
-    %% Accusations
-    A --L --> Sub
-
-    %% Offense
-    B --> A
-
-    </pre>
-    <pre id="diagram" class="mermaid">
-      stateDiagram-v2
-
-      [*] --> S1
-      S1 --> S2: long line using<br/>should work
-      S1 --> S3: long line using <br>should work
-      S1 --> S4: long line using \\nshould work
-
+%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
+graph BT
+a{The cat in the hat} -- 1o --> b
+a -- 2o --> c
+a -- 3o --> d
+g --2i--> a
+d --1i--> a
+h --3i -->a
+b --> d(The dog in the hog)
+c --> d
     </pre>
     <pre id="diagram" class="mermaid2">
-      gantt
-        title Style today marker (vertical line should be 5px wide and half-transparent blue)
-        dateFormat YYYY-MM-DD
-        axisFormat %d
-        todayMarker stroke-width:5px,stroke:#00f,opacity:0.5
-        section Section1
-        Today: 1, -1h
+flowchart-elk TB
+      a --> b
+      a --> c
+      b --> d
+      c --> d
+    </pre>
+    <pre id="diagram" class="mermaid2">
+%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
+flowchart TB
+  %% I could not figure out how to use double quotes in labels in Mermaid
+  subgraph ibm[IBM Espresso CPU]
+    core0[IBM PowerPC Broadway Core 0]
+    core1[IBM PowerPC Broadway Core 1]
+    core2[IBM PowerPC Broadway Core 2]
+
+    rom[16 KB ROM]
+
+    core0 --- core2
+
+    rom --> core2
+  end
+
+  subgraph amd[AMD Latte GPU]
+    mem[Memory & I/O Bridge]
+    dram[DRAM Controller]
+    edram[32 MB EDRAM MEM1]
+    rom[512 B SEEPROM]
+
+    sata[SATA IF]
+    exi[EXI]
+
+    subgraph gx[GX]
+      sram[3 MB 1T-SRAM]
+    end
+
+    radeon[AMD Radeon R7xx GX2]
+
+    mem --- gx
+    mem --- radeon
+
+    rom --- mem
+
+    mem --- sata
+    mem --- exi
+
+    dram --- sata
+    dram --- exi
+  end
+
+  ddr3[2 GB DDR3 RAM MEM2]
+
+  mem --- ddr3
+  dram --- ddr3
+  edram --- ddr3
+
+  core1 --- mem
+
+  exi --- rtc
+  rtc{{rtc}}
+</pre
+    >
+    <br />
+    <pre id="diagram" class="mermaid2">
+flowchart TB
+  %% I could not figure out how to use double quotes in labels in Mermaid
+  subgraph ibm[IBM Espresso CPU]
+    core0[IBM PowerPC Broadway Core 0]
+    core1[IBM PowerPC Broadway Core 1]
+    core2[IBM PowerPC Broadway Core 2]
+
+    rom[16 KB ROM]
+
+    core0 --- core2
+
+    rom --> core2
+  end
+
+  subgraph amd[AMD Latte GPU]
+    mem[Memory & I/O Bridge]
+    dram[DRAM Controller]
+    edram[32 MB EDRAM MEM1]
+    rom[512 B SEEPROM]
+
+    sata[SATA IF]
+    exi[EXI]
+
+    subgraph gx[GX]
+      sram[3 MB 1T-SRAM]
+    end
+
+    radeon[AMD Radeon R7xx GX2]
+
+    mem --- gx
+    mem --- radeon
+
+    rom --- mem
+
+    mem --- sata
+    mem --- exi
+
+    dram --- sata
+    dram --- exi
+  end
+
+  ddr3[2 GB DDR3 RAM MEM2]
+
+  mem --- ddr3
+  dram --- ddr3
+  edram --- ddr3
+
+  core1 --- mem
+
+  exi --- rtc
+  rtc{{rtc}}
+</pre
+    >
+    <br />
+    &nbsp;
+    <pre id="diagram" class="mermaid2">
+      flowchart LR
+  B1 --be be--x B2
+  B1 --bo bo--o B3
+  subgraph Ugge
+      B2
+      B3
+      subgraph inner
+          B4
+          B5
+      end
+      subgraph inner2
+        subgraph deeper
+          C4
+          C5
+        end
+        C6
+      end
+
+      B4 --> C4
+
+      B3 -- X --> B4
+      B2 --> inner
+
+      C4 --> C5
+  end
+
+  subgraph outer
+      B6
+  end
+  B6 --> B5
+  </pre
+    >
+    <pre id="diagram" class="mermaid2">
+sequenceDiagram
+    Customer->>+Stripe: Makes a payment request
+    Stripe->>+Bank: Forwards the payment request to the bank
+    Bank->>+Customer: Asks for authorization
+    Customer->>+Bank: Provides authorization
+    Bank->>+Stripe: Sends a response with payment details
+    Stripe->>+Merchant: Sends a notification of payment receipt
+    Merchant->>+Stripe: Confirms the payment
+    Stripe->>+Customer: Sends a confirmation of payment
+    Customer->>+Merchant: Receives goods or services
+        </pre
+    >
+    <pre id="diagram" class="mermaid2">
+mindmap
+  root((mindmap))
+    Origins
+      Long history
+      ::icon(fa fa-book)
+      Popularisation
+        British popular psychology author Tony Buzan
+    Research
+      On effectiveness<br/>and features
+      On Automatic creation
+        Uses
+            Creative techniques
+            Strategic planning
+            Argument mapping
+    Tools
+      Pen and paper
+      Mermaid
+    </pre>
+    <br />
+    <pre id="diagram" class="mermaid2">
+  example-diagram
     </pre>
 
     <!-- <div id="cy"></div> -->
@@ -96,18 +262,19 @@ flowchart LR
     <!-- <script src="./mermaid.js"></script> -->
 
     <script type="module">
-      import mindmap from '../../packages/mermaid-mindmap/src/detector';
-      // import example from '../../packages/mermaid-example-diagram/src/detector';
+      // import mindmap from '../../packages/mermaid-mindmap/src/detector';
+      import example from '../../packages/mermaid-example-diagram/src/detector';
       import mermaid from '../../packages/mermaid/src/mermaid';
-      await mermaid.registerExternalDiagrams([mindmap]);
+      await mermaid.registerExternalDiagrams([example]);
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'default',
+        theme: 'forest',
         startOnLoad: true,
-        logLevel: 0,
+        logLevel: 5,
         flowchart: {
+          // defaultRenderer: 'elk',
           useMaxWidth: false,
           htmlLabels: true,
         },

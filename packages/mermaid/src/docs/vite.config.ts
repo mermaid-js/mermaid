@@ -32,10 +32,14 @@ export default defineConfig({
     alias: {
       mermaid: path.join(__dirname, '../../dist/mermaid.esm.min.mjs'), // Use this one to build
 
-      '@mermaid-js/mermaid-mindmap': path.join(
+      '@mermaid-js/mermaid-example-diagram': path.join(
         __dirname,
-        '../../../mermaid-mindmap/dist/mermaid-mindmap.esm.min.mjs'
+        '../../../mermaid-example-diagram/dist/mermaid-example-diagram.esm.min.mjs'
       ), // Use this one to build
+      // '@mermaid-js/mermaid-timeline': path.join(
+      //   __dirname,
+      //   '../../../mermaid-timeline/dist/mermaid-timeline.esm.min.mjs'
+      // ),
     },
   },
   server: {

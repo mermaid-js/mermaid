@@ -32,15 +32,15 @@ Examples are provided in [Getting Started](../intro/n00b-gettingStarted.md)
 
 **CodePen Examples:**
 
-https://codepen.io/CarlBoneri/pen/BQwZzq
+<https://codepen.io/CarlBoneri/pen/BQwZzq>
 
-https://codepen.io/tdkn/pen/vZxQzd
+<https://codepen.io/tdkn/pen/vZxQzd>
 
-https://codepen.io/janzeteachesit/pen/OWWZKN
+<https://codepen.io/janzeteachesit/pen/OWWZKN>
 
 ## Mermaid with Text Area
 
-https://codepen.io/Ryuno-Ki/pen/LNxwgR
+<https://codepen.io/Ryuno-Ki/pen/LNxwgR>
 
 ## Mermaid in open source docs
 

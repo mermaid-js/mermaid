@@ -654,6 +654,19 @@ describe('mermaidAPI', function () {
       expect(mermaid.parseError).toEqual(undefined);
       expect(() => mermaidAPI.parse('this is not a mermaid diagram definition')).toThrow();
     });
+    it('throws for a nicer error for a invalid definition starting with `---`', function () {
+      expect(mermaid.parseError).toEqual(undefined);
+      expect(() =>
+        mermaidAPI.parse(`
+      ---
+      title: a malformed YAML front-matter
+      `)
+      ).toThrow(
+        'Diagrams beginning with --- are not valid. ' +
+          'If you were trying to use a YAML front-matter, please ensure that ' +
+          "you've correctly opened and closed the YAML front-matter with unindented `---` blocks"
+      );
+    });
     it('does not throw for a valid definition', function () {
       expect(() => mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).not.toThrow();
     });

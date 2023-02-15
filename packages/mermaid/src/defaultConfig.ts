@@ -247,12 +247,13 @@ const config: Partial<MermaidConfig> = {
     /**
      * | Parameter       | Description | Type    | Required | Values                  |
      * | --------------- | ----------- | ------- | -------- | ----------------------- |
-     * | defaultRenderer | See notes   | boolean | 4        | dagre-d3, dagre-wrapper |
+     * | defaultRenderer | See notes   | boolean | 4        | dagre-d3, dagre-wrapper, elk |
      *
      * **Notes:**
      *
      * Decides which rendering engine that is to be used for the rendering. Legal values are:
-     * dagre-d3 dagre-wrapper - wrapper for dagre implemented in mermaid
+     * dagre-d3 dagre-wrapper - wrapper for dagre implemented in mermaid, elk for layout using
+     * elkjs
      *
      * Default value: 'dagre-wrapper'
      */
@@ -860,6 +861,156 @@ const config: Partial<MermaidConfig> = {
 
     sectionFills: ['#191970', '#8B008B', '#4B0082', '#2F4F4F', '#800000', '#8B4513', '#00008B'],
     sectionColours: ['#fff'],
+  },
+  /** The object containing configurations specific for timeline diagrams */
+  timeline: {
+    /**
+     * | Parameter      | Description                                          | Type    | Required | Values             |
+     * | -------------- | ---------------------------------------------------- | ------- | -------- | ------------------ |
+     * | diagramMarginX | Margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 50
+     */
+    diagramMarginX: 50,
+
+    /**
+     * | Parameter      | Description                                        | Type    | Required | Values             |
+     * | -------------- | -------------------------------------------------- | ------- | -------- | ------------------ |
+     * | diagramMarginY | Margin to the over and under the sequence diagram. | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 10
+     */
+    diagramMarginY: 10,
+
+    /**
+     * | Parameter   | Description           | Type    | Required | Values             |
+     * | ----------- | --------------------- | ------- | -------- | ------------------ |
+     * | actorMargin | Margin between actors | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 50
+     */
+    leftMargin: 150,
+
+    /**
+     * | Parameter | Description          | Type    | Required | Values             |
+     * | --------- | -------------------- | ------- | -------- | ------------------ |
+     * | width     | Width of actor boxes | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 150
+     */
+    width: 150,
+
+    /**
+     * | Parameter | Description           | Type    | Required | Values             |
+     * | --------- | --------------------- | ------- | -------- | ------------------ |
+     * | height    | Height of actor boxes | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 65
+     */
+    height: 50,
+
+    /**
+     * | Parameter | Description              | Type    | Required | Values             |
+     * | --------- | ------------------------ | ------- | -------- | ------------------ |
+     * | boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 10
+     */
+    boxMargin: 10,
+
+    /**
+     * | Parameter     | Description                                  | Type    | Required | Values             |
+     * | ------------- | -------------------------------------------- | ------- | -------- | ------------------ |
+     * | boxTextMargin | Margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 5
+     */
+    boxTextMargin: 5,
+
+    /**
+     * | Parameter  | Description         | Type    | Required | Values             |
+     * | ---------- | ------------------- | ------- | -------- | ------------------ |
+     * | noteMargin | Margin around notes | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 10
+     */
+    noteMargin: 10,
+
+    /**
+     * | Parameter     | Description             | Type    | Required | Values             |
+     * | ------------- | ----------------------- | ------- | -------- | ------------------ |
+     * | messageMargin | Space between messages. | Integer | Required | Any Positive Value |
+     *
+     * **Notes:**
+     *
+     * Space between messages.
+     *
+     * Default value: 35
+     */
+    messageMargin: 35,
+
+    /**
+     * | Parameter    | Description                 | Type | Required | Values                    |
+     * | ------------ | --------------------------- | ---- | -------- | ------------------------- |
+     * | messageAlign | Multiline message alignment | 3    | 4        | 'left', 'center', 'right' |
+     *
+     * **Notes:** Default value: 'center'
+     */
+    messageAlign: 'center',
+
+    /**
+     * | Parameter       | Description                                | Type    | Required | Values             |
+     * | --------------- | ------------------------------------------ | ------- | -------- | ------------------ |
+     * | bottomMarginAdj | Prolongs the edge of the diagram downwards | Integer | 4        | Any Positive Value |
+     *
+     * **Notes:**
+     *
+     * Depending on css styling this might need adjustment.
+     *
+     * Default value: 1
+     */
+    bottomMarginAdj: 1,
+
+    /**
+     * | Parameter   | Description | Type    | Required | Values      |
+     * | ----------- | ----------- | ------- | -------- | ----------- |
+     * | useMaxWidth | See notes   | boolean | 4        | true, false |
+     *
+     * **Notes:**
+     *
+     * When this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used.
+     *
+     * Default value: true
+     */
+    useMaxWidth: true,
+
+    /**
+     * | Parameter   | Description                       | Type | Required | Values      |
+     * | ----------- | --------------------------------- | ---- | -------- | ----------- |
+     * | rightAngles | Curved Arrows become Right Angles | 3    | 4        | true, false |
+     *
+     * **Notes:**
+     *
+     * This will display arrows that start and begin at the same node as right angles, rather than a
+     * curves
+     *
+     * Default value: false
+     */
+    rightAngles: false,
+    taskFontSize: 14,
+    taskFontFamily: '"Open Sans", sans-serif',
+    taskMargin: 50,
+    // width of activation box
+    activationWidth: 10,
+
+    // text placement as: tspan | fo | old only text as before
+    textPlacement: 'fo',
+    actorColours: ['#8FBC8F', '#7CFC00', '#00FFFF', '#20B2AA', '#B0E0E6', '#FFFFE0'],
+
+    sectionFills: ['#191970', '#8B008B', '#4B0082', '#2F4F4F', '#800000', '#8B4513', '#00008B'],
+    sectionColours: ['#fff'],
+    disableMulticolor: false,
   },
   class: {
     /**
