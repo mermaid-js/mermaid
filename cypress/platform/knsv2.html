@@ -56,7 +56,7 @@
   <body>
     <pre id="diagram" class="mermaid">
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
-graph RL
+graph BT
 a{The cat in the hat} -- 1o --> b
 a -- 2o --> c
 a -- 3o --> d
@@ -272,7 +272,7 @@ mindmap
       mermaid.initialize({
         theme: 'forest',
         startOnLoad: true,
-        logLevel: 0,
+        logLevel: 5,
         flowchart: {
           // defaultRenderer: 'elk',
           useMaxWidth: false,

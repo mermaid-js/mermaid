@@ -270,80 +270,122 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
   return graph;
 };
 
-const getNextPosition = (position, direction) => {
-  if (direction === 'in') {
-    // switch (position) {
-    //   case 'north':
-    //     return 'east';
-    //   case 'east':
-    //     return 'west';
-    //   case 'west':
-    //     return 'south';
-    //   case 'south':
-    //     return 'north';
-    //   default:
-    //     return 'north';
-    // }
-    return 'north';
-  } else {
-    switch (position) {
-      case 'south':
-        return 'west';
-      case 'west':
-        return 'east';
-      case 'east':
-        return 'south';
-      // case 'north':
-      //   return 'south';
-      default:
-        return 'south';
-    }
-  }
+const getNextPosition = (position, edgeDirection, graphDirection) => {
+  const portPos = {
+    TB: {
+      in: {
+        north: 'north',
+      },
+      out: {
+        south: 'west',
+        west: 'east',
+        east: 'south',
+      },
+    },
+    LR: {
+      in: {
+        west: 'west',
+      },
+      out: {
+        east: 'south',
+        south: 'north',
+        north: 'east',
+      },
+    },
+    RL: {
+      in: {
+        east: 'east',
+      },
+      out: {
+        west: 'north',
+        north: 'south',
+        south: 'west',
+      },
+    },
+    BT: {
+      in: {
+        south: 'south',
+      },
+      out: {
+        north: 'east',
+        east: 'west',
+        west: 'north',
+      },
+    },
+  };
+  log.info('abc88', graphDirection, edgeDirection, position);
+  return portPos[graphDirection][edgeDirection][position];
+  // return 'south';
 };
 
-const getNextPort = (node, direction) => {
+const getNextPort = (node, edgeDirection, graphDirection) => {
+  log.info('getNextPort abc88', { node, edgeDirection, graphDirection });
   if (!portPos[node]) {
-    portPos[node] = {
-      inPosition: 'north',
-      outPosition: 'south',
-    };
+    switch (graphDirection) {
+      case 'TB':
+        portPos[node] = {
+          inPosition: 'north',
+          outPosition: 'south',
+        };
+        break;
+      case 'BT':
+        portPos[node] = {
+          inPosition: 'south',
+          outPosition: 'north',
+        };
+        break;
+      case 'RL':
+        portPos[node] = {
+          inPosition: 'east',
+          outPosition: 'west',
+        };
+        break;
+      case 'LR':
+        portPos[node] = {
+          inPosition: 'west',
+          outPosition: 'east',
+        };
+        break;
+    }
   }
-  const result = direction === 'in' ? portPos[node].inPosition : portPos[node].outPosition;
+  const result = edgeDirection === 'in' ? portPos[node].inPosition : portPos[node].outPosition;
 
-  if (direction === 'in') {
-    portPos[node].inPosition = getNextPosition(portPos[node].inPosition, direction);
+  if (edgeDirection === 'in') {
+    portPos[node].inPosition = getNextPosition(
+      portPos[node].inPosition,
+      edgeDirection,
+      graphDirection
+    );
   } else {
-    portPos[node].outPosition = getNextPosition(portPos[node].outPosition, direction);
+    portPos[node].outPosition = getNextPosition(
+      portPos[node].outPosition,
+      edgeDirection,
+      graphDirection
+    );
   }
   return result;
 };
 
-const getEdgeStartEndPoint = (edge) => {
+const getEdgeStartEndPoint = (edge, dir) => {
   let source = edge.start;
   let target = edge.end;
 
   const startNode = nodeDb[source];
   const endNode = nodeDb[target];
-  console.log('getEdgeStartEndPoint abc77', { source, target, startNode, endNode });
 
   if (!startNode || !endNode) {
     return { source, target };
   }
 
   if (startNode.type === 'diamond') {
-    source = `${source}-${getNextPort(source, 'out')}`;
+    source = `${source}-${getNextPort(source, 'out', dir)}`;
   }
 
   if (endNode.type === 'diamond') {
-    target = `${target}-${getNextPort(target, 'in')}`;
+    target = `${target}-${getNextPort(target, 'in', dir)}`;
   }
 
   // Add the edge to the graph
-  // graph.edges.push({
-  //   id: 'e' + edge.start + edge.end,
-  //   sources: [edge.start],
-  //   targets: [edge.end],
-  console.log('getEdgeStartEndPoint abc78', { source, target });
   return { source, target };
 };
 
@@ -358,10 +400,10 @@ const getEdgeStartEndPoint = (edge) => {
  * @param svg
  */
 export const addEdges = function (edges, diagObj, graph, svg) {
-  // log.info('abc78 edges = ', edges);
+  log.info('abc78 edges = ', edges);
   const labelsEl = svg.insert('g').attr('class', 'edgeLabels');
   let linkIdCnt = {};
-
+  let dir = diagObj.db.getDirection();
   let defaultStyle;
   let defaultLabelStyle;
 
@@ -486,11 +528,10 @@ export const addEdges = function (edges, diagObj, graph, svg) {
     edgeData.classes = 'flowchart-link ' + linkNameStart + ' ' + linkNameEnd;
 
     const labelEl = insertEdgeLabel(labelsEl, edgeData);
-    // console.log('labelEl', labelEl, edgeData.width);
 
     // calculate start and end points of the edge
-    const { source, target } = getEdgeStartEndPoint(edge);
-    log.info('abc78 source and target', source, target);
+    const { source, target } = getEdgeStartEndPoint(edge, dir);
+    log.debug('abc78 source and target', source, target);
     // Add the edge to the graph
     graph.edges.push({
       id: 'e' + edge.start + edge.end,
@@ -500,7 +541,6 @@ export const addEdges = function (edges, diagObj, graph, svg) {
       labels: [
         {
           width: edgeData.width,
-          // width: 80,
           height: edgeData.height,
           orgWidth: edgeData.width,
           orgHeight: edgeData.height,
@@ -512,8 +552,6 @@ export const addEdges = function (edges, diagObj, graph, svg) {
         },
       ],
       edgeData,
-      // targetPort: 'PortSide.NORTH',
-      // id: cnt,
     });
   });
   return graph;
@@ -850,39 +888,6 @@ export const draw = async function (text, id, _version, diagObj) {
     }
   });
   insertChildren(graph.children, parentLookupDb);
-  // graph.children[0].shape = 'rhombus';
-  // graph.children[0].ports = [
-  //   {
-  //     id: 'a-p1',
-  //     layoutOptions: {
-  //       'port.side': 'WEST',
-  //     },
-  //   },
-  //   {
-  //     id: 'a-p2',
-  //     layoutOptions: {
-  //       'port.side': 'EAST',
-  //     },
-  //   },
-  //   {
-  //     id: 'a-p3',
-  //     layoutOptions: {
-  //       'port.side': 'SOUTH',
-  //     },
-  //   },
-  //   {
-  //     id: 'a-p4',
-  //     layoutOptions: {
-  //       'port.side': 'NORTH',
-  //     },
-  //   },
-  // ];
-  // graph.children[0].layoutOptions = {
-  //   portConstraints: 'FIXED_SIDE',
-  // };
-  // graph.edges[0].sources[0] = 'a-south';
-  // graph.edges[1].sources[0] = 'a-west';
-  // graph.edges[2].targets[0] = 'a-east';
   log.info('after layout', JSON.stringify(graph, null, 2));
   const g = await elk.layout(graph);
   drawNodes(0, 0, g.children, svg, subGraphsEl, diagObj, 0);
