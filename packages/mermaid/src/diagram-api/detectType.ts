@@ -55,9 +55,10 @@ export const registerLazyLoadedDiagrams = (...diagrams: ExternalDiagramDefinitio
 
 export const addDetector = (key: string, detector: DiagramDetector, loader?: DiagramLoader) => {
   if (detectors[key]) {
-    throw new Error(`Detector with key ${key} already exists`);
+    log.error(`Detector with key ${key} already exists`);
+  } else {
+    detectors[key] = { detector, loader };
   }
-  detectors[key] = { detector, loader };
   log.debug(`Detector with key ${key} added${loader ? ' with loader' : ''}`);
 };
 

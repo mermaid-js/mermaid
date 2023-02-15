@@ -56,20 +56,24 @@
   <body>
     <pre id="diagram" class="mermaid">
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
-graph TB
-      a --> b
-      a --> c
-      b --> d
-      c --> d
+graph BT
+a{The cat in the hat} -- 1o --> b
+a -- 2o --> c
+a -- 3o --> d
+g --2i--> a
+d --1i--> a
+h --3i -->a
+b --> d(The dog in the hog)
+c --> d
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 flowchart-elk TB
       a --> b
       a --> c
       b --> d
       c --> d
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 flowchart TB
   %% I could not figure out how to use double quotes in labels in Mermaid
@@ -125,7 +129,7 @@ flowchart TB
 </pre
     >
     <br />
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 flowchart TB
   %% I could not figure out how to use double quotes in labels in Mermaid
   subgraph ibm[IBM Espresso CPU]
@@ -228,13 +232,27 @@ sequenceDiagram
         </pre
     >
     <pre id="diagram" class="mermaid2">
-      gantt
-        title Style today marker (vertical line should be 5px wide and half-transparent blue)
-        dateFormat YYYY-MM-DD
-        axisFormat %d
-        todayMarker stroke-width:5px,stroke:#00f,opacity:0.5
-        section Section1
-        Today: 1, -1h
+mindmap
+  root((mindmap))
+    Origins
+      Long history
+      ::icon(fa fa-book)
+      Popularisation
+        British popular psychology author Tony Buzan
+    Research
+      On effectiveness<br/>and features
+      On Automatic creation
+        Uses
+            Creative techniques
+            Strategic planning
+            Argument mapping
+    Tools
+      Pen and paper
+      Mermaid
+    </pre>
+    <br />
+    <pre id="diagram" class="mermaid2">
+  example-diagram
     </pre>
 
     <!-- <div id="cy"></div> -->
@@ -244,17 +262,17 @@ sequenceDiagram
     <!-- <script src="./mermaid.js"></script> -->
 
     <script type="module">
-      import mindmap from '../../packages/mermaid-mindmap/src/detector';
-      // import example from '../../packages/mermaid-example-diagram/src/detector';
+      // import mindmap from '../../packages/mermaid-mindmap/src/detector';
+      import example from '../../packages/mermaid-example-diagram/src/detector';
       import mermaid from '../../packages/mermaid/src/mermaid';
-      await mermaid.registerExternalDiagrams([mindmap]);
+      await mermaid.registerExternalDiagrams([example]);
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        // theme: 'forest',
+        theme: 'forest',
         startOnLoad: true,
-        logLevel: 0,
+        logLevel: 5,
         flowchart: {
           // defaultRenderer: 'elk',
           useMaxWidth: false,

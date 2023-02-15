@@ -77,8 +77,8 @@ function sidebarAll() {
       ],
     },
     ...sidebarSyntax(),
+    ...sidebarEcosystem(),
     ...sidebarConfig(),
-    ...sidebarMisc(),
     ...sidebarCommunity(),
   ];
 }
@@ -104,6 +104,7 @@ function sidebarSyntax() {
         { text: 'Gitgraph (Git) Diagram 🔥', link: '/syntax/gitgraph' },
         { text: 'C4C Diagram (Context) Diagram 🦺⚠️', link: '/syntax/c4c' },
         { text: 'Mindmaps 🔥', link: '/syntax/mindmap' },
+        { text: 'Timeline 🔥', link: '/syntax/timeline' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
@@ -125,19 +126,20 @@ function sidebarConfig() {
         { text: 'Accessibility', link: '/config/accessibility' },
         { text: 'Mermaid CLI', link: '/config/mermaidCLI' },
         { text: 'Advanced usage', link: '/config/n00b-advanced' },
+        { text: 'FAQ', link: '/config/faq' },
       ],
     },
   ];
 }
 
-function sidebarMisc() {
+function sidebarEcosystem() {
   return [
     {
-      text: '📚 Misc',
+      text: '📚 Ecosystem',
       collapsible: true,
       items: [
-        { text: 'Use-Cases and Integrations', link: '/misc/integrations' },
-        { text: 'FAQ', link: '/misc/faq' },
+        { text: 'Showcases', link: '/ecosystem/showcases' },
+        { text: 'Use-Cases and Integrations', link: '/ecosystem/integrations' },
       ],
     },
   ];

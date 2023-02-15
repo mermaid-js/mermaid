@@ -1,6 +1,8 @@
 /** Created by knut on 14-12-11. */
 import { select } from 'd3';
-import { log, getConfig, setupGraphViewbox } from './mermaidUtils';
+import { log } from '../../logger';
+import { getConfig } from '../../config';
+import { setupGraphViewbox } from '../../setupGraphViewbox';
 import svgDraw from './svgDraw';
 import cytoscape from 'cytoscape';
 import coseBilkent from 'cytoscape-cose-bilkent';
@@ -89,6 +91,7 @@ function addNodes(mindmap, cy, conf, level) {
 /**
  * @param node
  * @param conf
+ * @param cy
  */
 function layoutMindmap(node, conf) {
   return new Promise((resolve) => {
@@ -131,7 +134,10 @@ function layoutMindmap(node, conf) {
   });
 }
 /**
+ * @param node
  * @param cy
+ * @param positionedMindmap
+ * @param conf
  */
 function positionNodes(cy) {
   cy.nodes().map((node, id) => {

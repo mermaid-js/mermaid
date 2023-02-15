@@ -46,13 +46,9 @@
     <pre class="mermaid" style="width: 100%; height: 20%">
       %%{init: {'theme': 'base',  'fontFamily': 'courier', 'themeVariables': {  'primaryColor': '#fff000'}}}%%
       classDiagram-v2
-       class BankAccount{
-        +String owner
-        +BigDecimal balance
-        +deposit(amount) bool
-        +withdrawl(amount) int
-       }
-       cssClass "BankAccount" customCss
+classA <|-- classB : implements
+classC *-- classD : composition
+classE o-- classF : aggregation
     </pre>
     <pre class="mermaid2" style="width: 100%; height: 20%">
         %%{init: {'theme': 'base',  'fontFamily': 'courier', 'themeVariables': {  'primaryColor': '#fff000'}}}%%
