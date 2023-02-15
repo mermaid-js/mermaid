@@ -631,6 +631,9 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
 export const draw = function (_text: string, id: string, _version: string, diagObj: Diagram) {
   const { securityLevel, sequence } = configApi.getConfig();
   conf = sequence;
+  diagObj.db.clear();
+  // Parse the graph definition
+  diagObj.parser.parse(_text);
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {

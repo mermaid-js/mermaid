@@ -1,5 +1,8 @@
-/** Created by knut on 15-01-14. */
-import { sanitizeText, getConfig, log } from './mermaidUtils';
+import { getConfig } from '../../config';
+import { sanitizeText as _sanitizeText } from '../../diagrams/common/common';
+import { log } from '../../logger';
+
+export const sanitizeText = (text) => _sanitizeText(text, getConfig());
 
 let nodes = [];
 let cnt = 0;

@@ -54,13 +54,17 @@
     </style>
   </head>
   <body>
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
-graph TB
-      a --> b
-      a --> c
-      b --> d
-      c --> d
+graph BT
+a{The cat in the hat} -- 1o --> b
+a -- 2o --> c
+a -- 3o --> d
+g --2i--> a
+d --1i--> a
+h --3i -->a
+b --> d(The dog in the hog)
+c --> d
     </pre>
     <pre id="diagram" class="mermaid2">
 flowchart-elk TB
@@ -227,7 +231,7 @@ sequenceDiagram
     Customer->>+Merchant: Receives goods or services
         </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 mindmap
   root((mindmap))
     Origins
@@ -246,6 +250,10 @@ mindmap
       Pen and paper
       Mermaid
     </pre>
+    <br />
+    <pre id="diagram" class="mermaid2">
+  example-diagram
+    </pre>
 
     <!-- <div id="cy"></div> -->
     <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
@@ -254,17 +262,17 @@ mindmap
     <!-- <script src="./mermaid.js"></script> -->
 
     <script type="module">
-      import mindmap from '../../packages/mermaid-mindmap/src/detector';
-      // import example from '../../packages/mermaid-example-diagram/src/detector';
+      // import mindmap from '../../packages/mermaid-mindmap/src/detector';
+      import example from '../../packages/mermaid-example-diagram/src/detector';
       import mermaid from '../../packages/mermaid/src/mermaid';
-      await mermaid.registerExternalDiagrams([mindmap]);
+      await mermaid.registerExternalDiagrams([example]);
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'dark',
+        theme: 'forest',
         startOnLoad: true,
-        logLevel: 0,
+        logLevel: 5,
         flowchart: {
           // defaultRenderer: 'elk',
           useMaxWidth: false,

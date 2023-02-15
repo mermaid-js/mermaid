@@ -172,6 +172,15 @@ importers:
       '@braintree/sanitize-url':
         specifier: ^6.0.0
         version: 6.0.0
+      cytoscape:
+        specifier: ^3.23.0
+        version: 3.23.0
+      cytoscape-cose-bilkent:
+        specifier: ^4.1.0
+        version: 4.1.0_cytoscape@3.23.0
+      cytoscape-fcose:
+        specifier: ^2.1.0
+        version: 2.1.0_cytoscape@3.23.0
       d3:
         specifier: ^7.0.0
         version: 7.6.1
@@ -206,6 +215,9 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
     devDependencies:
+      '@types/cytoscape':
+        specifier: ^3.19.9
+        version: 3.19.9
       '@types/d3':
         specifier: ^7.4.0
         version: 7.4.0
@@ -307,15 +319,6 @@ importers:
         version: 1.0.4-alpha.16_ifjhkyx3os4sbm7zdnvthc52am
 
   packages/mermaid-example-diagram:
-    devDependencies:
-      concurrently:
-        specifier: ^7.5.0
-        version: 7.5.0
-      rimraf:
-        specifier: ^4.0.0
-        version: 4.1.2
-
-  packages/mermaid-mindmap:
     dependencies:
       '@braintree/sanitize-url':
         specifier: ^6.0.0
@@ -331,7 +334,7 @@ importers:
         version: 2.1.0_cytoscape@3.23.0
       d3:
         specifier: ^7.0.0
-        version: 7.6.1
+        version: 7.8.2
       khroma:
         specifier: ^2.0.0
         version: 2.0.0
@@ -354,9 +357,9 @@ importers:
 
   tests/webpack:
     dependencies:
-      '@mermaid-js/mermaid-mindmap':
+      '@mermaid-js/mermaid-example-diagram':
         specifier: workspace:*
-        version: link:../../packages/mermaid-mindmap
+        version: link:../../packages/mermaid-example-diagram
       mermaid:
         specifier: workspace:*
         version: link:../../packages/mermaid

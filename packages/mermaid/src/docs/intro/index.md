@@ -62,7 +62,7 @@ To select a version:
 
 Replace `<version>` with the desired version number.
 
-Latest Version: [https://unpkg.com/browse/mermaid@8.8.0/](https://unpkg.com/browse/mermaid@8.8.0/)
+Latest Version: [<CDN_URL>/mermaid@<MERMAID_VERSION>](<CDN_URL>/mermaid@<MERMAID_VERSION>)
 
 ## Deploying Mermaid
 

@@ -249,7 +249,7 @@ To select a version:
 
 Replace `<version>` with the desired version number.
 
-Latest Version: <https://unpkg.com/browse/mermaid@8.8.0/>
+Latest Version: <https://cdn.jsdelivr.net/npm/mermaid@9>
 
 ## Deploying Mermaid
 

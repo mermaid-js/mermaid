@@ -36,9 +36,9 @@ const packageOptions = {
     packageName: 'mermaid',
     file: 'mermaid.ts',
   },
-  'mermaid-mindmap': {
-    name: 'mermaid-mindmap',
-    packageName: 'mermaid-mindmap',
+  'mermaid-example-diagram': {
+    name: 'mermaid-example-diagram',
+    packageName: 'mermaid-example-diagram',
     file: 'detector.ts',
   },
 };
@@ -114,7 +114,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
 
   if (watch && config.build) {
     config.build.watch = {
-      include: ['packages/mermaid-mindmap/src/**', 'packages/mermaid/src/**'],
+      include: ['packages/mermaid-example-diagram/src/**', 'packages/mermaid/src/**'],
     };
   }
 
@@ -139,7 +139,7 @@ const main = async () => {
 if (watch) {
   build(getBuildConfig({ minify: false, watch, core: false, entryName: 'mermaid' }));
   if (!mermaidOnly) {
-    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-mindmap' }));
+    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
   }
 } else if (visualize) {
   await build(getBuildConfig({ minify: false, core: true, entryName: 'mermaid' }));
