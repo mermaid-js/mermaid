@@ -633,7 +633,7 @@ export const draw = function (_text: string, id: string, _version: string, diagO
   conf = sequence;
   diagObj.db.clear();
   // Parse the graph definition
-  diagObj.parser.parse(text);
+  diagObj.parser.parse(_text);
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
