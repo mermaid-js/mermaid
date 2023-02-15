@@ -54,13 +54,17 @@
     </style>
   </head>
   <body>
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
-graph TB
-      a --> b
-      a --> c
-      b --> d
-      c --> d
+graph RL
+a{The cat in the hat} -- 1o --> b
+a -- 2o --> c
+a -- 3o --> d
+g --2i--> a
+d --1i--> a
+h --3i -->a
+b --> d(The dog in the hog)
+c --> d
     </pre>
     <pre id="diagram" class="mermaid2">
 flowchart-elk TB
@@ -227,7 +231,7 @@ sequenceDiagram
     Customer->>+Merchant: Receives goods or services
         </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 mindmap
   root((mindmap))
     Origins
@@ -247,7 +251,7 @@ mindmap
       Mermaid
     </pre>
     <br />
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
   example-diagram
     </pre>
 

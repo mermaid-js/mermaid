@@ -13,6 +13,8 @@ import { interpolateToCurve, getStylesFromArray } from '../../../utils';
 import ELK from 'elkjs/lib/elk.bundled.js';
 const elk = new ELK();
 
+const portPos = {};
+
 const conf = {};
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
@@ -95,8 +97,36 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
       labelData.labelNode = vertexNode;
     }
 
+    const ports = [
+      {
+        id: vertex.id + '-west',
+        layoutOptions: {
+          'port.side': 'WEST',
+        },
+      },
+      {
+        id: vertex.id + '-east',
+        layoutOptions: {
+          'port.side': 'EAST',
+        },
+      },
+      {
+        id: vertex.id + '-south',
+        layoutOptions: {
+          'port.side': 'SOUTH',
+        },
+      },
+      {
+        id: vertex.id + '-north',
+        layoutOptions: {
+          'port.side': 'NORTH',
+        },
+      },
+    ];
+
     let radious = 0;
     let _shape = '';
+    let layoutOptions = {};
     // Set the shape based parameters
     switch (vertex.type) {
       case 'round':
@@ -108,6 +138,9 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
         break;
       case 'diamond':
         _shape = 'question';
+        layoutOptions = {
+          portConstraints: 'FIXED_SIDE',
+        };
         break;
       case 'hexagon':
         _shape = 'hexagon';
@@ -184,8 +217,10 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
 
     const data = {
       id: vertex.id,
+      ports: vertex.type === 'diamond' ? ports : [],
       // labelStyle: styles.labelStyle,
       // shape: _shape,
+      layoutOptions,
       labelText: vertexText,
       labelData,
       // labels: [{ text: vertexText }],
@@ -233,6 +268,83 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
     // });
   });
   return graph;
+};
+
+const getNextPosition = (position, direction) => {
+  if (direction === 'in') {
+    // switch (position) {
+    //   case 'north':
+    //     return 'east';
+    //   case 'east':
+    //     return 'west';
+    //   case 'west':
+    //     return 'south';
+    //   case 'south':
+    //     return 'north';
+    //   default:
+    //     return 'north';
+    // }
+    return 'north';
+  } else {
+    switch (position) {
+      case 'south':
+        return 'west';
+      case 'west':
+        return 'east';
+      case 'east':
+        return 'south';
+      // case 'north':
+      //   return 'south';
+      default:
+        return 'south';
+    }
+  }
+};
+
+const getNextPort = (node, direction) => {
+  if (!portPos[node]) {
+    portPos[node] = {
+      inPosition: 'north',
+      outPosition: 'south',
+    };
+  }
+  const result = direction === 'in' ? portPos[node].inPosition : portPos[node].outPosition;
+
+  if (direction === 'in') {
+    portPos[node].inPosition = getNextPosition(portPos[node].inPosition, direction);
+  } else {
+    portPos[node].outPosition = getNextPosition(portPos[node].outPosition, direction);
+  }
+  return result;
+};
+
+const getEdgeStartEndPoint = (edge) => {
+  let source = edge.start;
+  let target = edge.end;
+
+  const startNode = nodeDb[source];
+  const endNode = nodeDb[target];
+  console.log('getEdgeStartEndPoint abc77', { source, target, startNode, endNode });
+
+  if (!startNode || !endNode) {
+    return { source, target };
+  }
+
+  if (startNode.type === 'diamond') {
+    source = `${source}-${getNextPort(source, 'out')}`;
+  }
+
+  if (endNode.type === 'diamond') {
+    target = `${target}-${getNextPort(target, 'in')}`;
+  }
+
+  // Add the edge to the graph
+  // graph.edges.push({
+  //   id: 'e' + edge.start + edge.end,
+  //   sources: [edge.start],
+  //   targets: [edge.end],
+  console.log('getEdgeStartEndPoint abc78', { source, target });
+  return { source, target };
 };
 
 /**
@@ -375,11 +487,15 @@ export const addEdges = function (edges, diagObj, graph, svg) {
 
     const labelEl = insertEdgeLabel(labelsEl, edgeData);
     // console.log('labelEl', labelEl, edgeData.width);
+
+    // calculate start and end points of the edge
+    const { source, target } = getEdgeStartEndPoint(edge);
+    log.info('abc78 source and target', source, target);
     // Add the edge to the graph
     graph.edges.push({
       id: 'e' + edge.start + edge.end,
-      sources: [edge.start],
-      targets: [edge.end],
+      sources: [source],
+      targets: [target],
       labelEl: labelEl,
       labels: [
         {
@@ -624,12 +740,15 @@ export const draw = async function (text, id, _version, diagObj) {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
       'org.eclipse.elk.padding': '[top=100, left=100, bottom=110, right=110]',
       'elk.layered.spacing.edgeNodeBetweenLayers': '30',
+      // 'elk.layered.mergeEdges': 'true',
       'elk.direction': 'DOWN',
+      // 'elk.ports.sameLayerEdges': true,
+      // 'nodePlacement.strategy': 'SIMPLE',
     },
     children: [],
     edges: [],
   };
-  log.info('Drawing flowchart using v3 renderer');
+  log.info('Drawing flowchart using v3 renderer', elk);
 
   // Set the direction,
   // Fetch the default direction, use TD if none was found
@@ -731,8 +850,43 @@ export const draw = async function (text, id, _version, diagObj) {
     }
   });
   insertChildren(graph.children, parentLookupDb);
+  // graph.children[0].shape = 'rhombus';
+  // graph.children[0].ports = [
+  //   {
+  //     id: 'a-p1',
+  //     layoutOptions: {
+  //       'port.side': 'WEST',
+  //     },
+  //   },
+  //   {
+  //     id: 'a-p2',
+  //     layoutOptions: {
+  //       'port.side': 'EAST',
+  //     },
+  //   },
+  //   {
+  //     id: 'a-p3',
+  //     layoutOptions: {
+  //       'port.side': 'SOUTH',
+  //     },
+  //   },
+  //   {
+  //     id: 'a-p4',
+  //     layoutOptions: {
+  //       'port.side': 'NORTH',
+  //     },
+  //   },
+  // ];
+  // graph.children[0].layoutOptions = {
+  //   portConstraints: 'FIXED_SIDE',
+  // };
+  // graph.edges[0].sources[0] = 'a-south';
+  // graph.edges[1].sources[0] = 'a-west';
+  // graph.edges[2].targets[0] = 'a-east';
+  log.info('after layout', JSON.stringify(graph, null, 2));
   const g = await elk.layout(graph);
   drawNodes(0, 0, g.children, svg, subGraphsEl, diagObj, 0);
+  log.info('after layout', g);
   g.edges?.map((edge) => {
     insertEdge(edgesEl, edge, edge.edgeData, diagObj, parentLookupDb);
   });
