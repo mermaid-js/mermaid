@@ -74,7 +74,7 @@
     "@vitest/ui": "^0.28.4",
     "concurrently": "^7.5.0",
     "coveralls": "^3.1.1",
-    "cypress": "^10.11.0",
+    "cypress": "^12.0.0",
     "cypress-image-snapshot": "^4.0.1",
     "esbuild": "^0.17.0",
     "eslint": "^8.32.0",
