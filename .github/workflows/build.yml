@@ -17,6 +17,8 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
+    env:
+      NODE_OPTIONS: '--max_old_space_size=4096'
     steps:
       - uses: actions/checkout@v3
 
