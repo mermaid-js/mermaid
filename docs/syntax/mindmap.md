@@ -270,11 +270,13 @@ You can still use the pre 9.4.0 method to add mermaid with mindmaps to a web pag
 
 From version 9.4.0 you can simplify this code to:
 
-    <script type="module">
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
-    </script>
+```html
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
+</script>
+```
 
-or is you prefere not using an esm package:
+or if you prefer not using the ESM package:
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.min.js"></script>
@@ -282,4 +284,4 @@ or is you prefere not using an esm package:
 
 Note that more complex integrations that use the **render** function directly need to use the **renderAsync** method instead in order to render mind maps.
 
-You can also refer the implementation in the live editor [here](https://github.com/mermaid-js/mermaid-live-editor/blob/fcf53c98c25604c90a218104268c339be53035a6/src/lib/util/mermaid.ts) to see how the async loading is done.
+You can also refer the implementation in the live editor [here](https://github.com/mermaid-js/mermaid-live-editor/blob/develop/src/lib/util/mermaid.ts) to see how the async loading is done.

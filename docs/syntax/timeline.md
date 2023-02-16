@@ -469,6 +469,6 @@ You can use this method to add mermaid including the timeline diagram to a web p
 <script src="https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.min.js"></script>
 ```
 
-Note that more complex integrations that the **render** function directly need to use the **renderAsync** method instead in order to render mind maps.
+Note that more complex integrations that the **render** function directly need to use the **renderAsync** method instead in order to render timeline.
 
-You can also refer the implementation in the live editor [here](https://github.com/mermaid-js/mermaid-live-editor/blob/fcf53c98c25604c90a218104268c339be53035a6/src/lib/util/mermaid.ts) to see how the async loading is done.
+You can also refer the implementation in the live editor [here](https://github.com/mermaid-js/mermaid-live-editor/blob/develop/src/lib/util/mermaid.ts) to see how the async loading is done.
