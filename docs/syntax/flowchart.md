@@ -30,7 +30,8 @@ flowchart LR
     id
 ```
 
-> **Note** The id is what is displayed in the box.
+> **Note**
+> The id is what is displayed in the box.
 
 ### A node with text
 

@@ -945,6 +945,7 @@ const class_box = (parent, node) => {
 };
 
 const shapes = {
+  rhombus: question,
   question,
   rect,
   labelRect,
