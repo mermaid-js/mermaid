@@ -766,7 +766,7 @@ const insertChildren = (nodeArray, parentLookupDb) => {
 
 export const draw = async function (text, id, _version, diagObj) {
   if (!elk) {
-    const ELK = await import('elkjs/lib/elk.bundled.js');
+    const ELK = (await import('elkjs/lib/elk.bundled.js')).default;
     elk = new ELK();
   }
   // Add temporary render element
