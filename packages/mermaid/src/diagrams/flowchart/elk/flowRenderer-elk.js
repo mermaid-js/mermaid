@@ -9,7 +9,6 @@ import { log } from '../../../logger';
 import { setupGraphViewbox } from '../../../setupGraphViewbox';
 import common, { evaluate } from '../../common/common';
 import { interpolateToCurve, getStylesFromArray } from '../../../utils';
-import ELK from 'elkjs/lib/elk.bundled.js';
 
 let elk;
 
@@ -767,6 +766,7 @@ const insertChildren = (nodeArray, parentLookupDb) => {
 
 export const draw = async function (text, id, _version, diagObj) {
   if (!elk) {
+    const ELK = await import('elkjs/lib/elk.bundled.js');
     elk = new ELK();
   }
   // Add temporary render element
