@@ -1,5 +1,5 @@
 // @ts-nocheck TODO: Fix TS
-import moment from 'moment-mini';
+import dayjs from 'dayjs';
 import ganttDb from './ganttDb';
 import { convert } from '../../tests/util';
 
@@ -9,7 +9,7 @@ describe('when using the ganttDb', function () {
   });
 
   describe('when using duration', function () {
-    it.each([{ str: '1d', expected: moment.duration(1, 'd') }])(
+    it.each([{ str: '1d', expected: [1, 'd'] }])(
       'should %s resulting in $o duration',
       ({ str, expected }) => {
         expect(ganttDb.parseDuration(str)).toEqual(expected);
@@ -19,11 +19,11 @@ describe('when using the ganttDb', function () {
     it.each(
       convert`
       str       | expected
-      ${'1d'}   | ${moment.duration(1, 'd')}
-      ${'2w'}   | ${moment.duration(2, 'w')}
-      ${'1ms'}  | ${moment.duration(1, 'ms')}
-      ${'0.1s'} | ${moment.duration(100, 'ms')}
-      ${'1f'}   | ${moment.duration.invalid()}
+      ${'1d'}   | ${[1, 'd']}
+      ${'2w'}   | ${[2, 'w']}
+      ${'1ms'}  | ${[1, 'ms']}
+      ${'0.1s'} | ${[0.1, 's']}
+      ${'1f'}   | ${[NaN, 'ms']}
     `
     )('should $str resulting in $expected duration', ({ str, expected }) => {
       expect(ganttDb.parseDuration(str)).toEqual(expected);
@@ -171,44 +171,44 @@ describe('when using the ganttDb', function () {
 
     const tasks = ganttDb.getTasks();
 
-    expect(tasks[0].startTime).toEqual(moment('2019-02-01', 'YYYY-MM-DD').toDate());
-    expect(tasks[0].endTime).toEqual(moment('2019-02-04', 'YYYY-MM-DD').toDate());
-    expect(tasks[0].renderEndTime).toEqual(moment('2019-02-02', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].startTime).toEqual(dayjs('2019-02-01', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].endTime).toEqual(dayjs('2019-02-04', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].renderEndTime).toEqual(dayjs('2019-02-02', 'YYYY-MM-DD').toDate());
     expect(tasks[0].id).toEqual('id1');
     expect(tasks[0].task).toEqual('test1');
 
-    expect(tasks[1].startTime).toEqual(moment('2019-02-04', 'YYYY-MM-DD').toDate());
-    expect(tasks[1].endTime).toEqual(moment('2019-02-07', 'YYYY-MM-DD').toDate());
-    expect(tasks[1].renderEndTime).toEqual(moment('2019-02-06', 'YYYY-MM-DD').toDate());
+    expect(tasks[1].startTime).toEqual(dayjs('2019-02-04', 'YYYY-MM-DD').toDate());
+    expect(tasks[1].endTime).toEqual(dayjs('2019-02-07', 'YYYY-MM-DD').toDate());
+    expect(tasks[1].renderEndTime).toEqual(dayjs('2019-02-06', 'YYYY-MM-DD').toDate());
     expect(tasks[1].id).toEqual('id2');
     expect(tasks[1].task).toEqual('test2');
 
-    expect(tasks[2].startTime).toEqual(moment('2019-02-07', 'YYYY-MM-DD').toDate());
-    expect(tasks[2].endTime).toEqual(moment('2019-02-20', 'YYYY-MM-DD').toDate());
-    expect(tasks[2].renderEndTime).toEqual(moment('2019-02-20', 'YYYY-MM-DD').toDate());
+    expect(tasks[2].startTime).toEqual(dayjs('2019-02-07', 'YYYY-MM-DD').toDate());
+    expect(tasks[2].endTime).toEqual(dayjs('2019-02-20', 'YYYY-MM-DD').toDate());
+    expect(tasks[2].renderEndTime).toEqual(dayjs('2019-02-20', 'YYYY-MM-DD').toDate());
     expect(tasks[2].id).toEqual('id3');
     expect(tasks[2].task).toEqual('test3');
 
-    expect(tasks[3].startTime).toEqual(moment('2019-02-01', 'YYYY-MM-DD').toDate());
-    expect(tasks[3].endTime).toEqual(moment('2019-02-20', 'YYYY-MM-DD').toDate());
+    expect(tasks[3].startTime).toEqual(dayjs('2019-02-01', 'YYYY-MM-DD').toDate());
+    expect(tasks[3].endTime).toEqual(dayjs('2019-02-20', 'YYYY-MM-DD').toDate());
     expect(tasks[3].renderEndTime).toBeNull(); // Fixed end
     expect(tasks[3].id).toEqual('id4');
     expect(tasks[3].task).toEqual('test4');
 
-    expect(tasks[4].startTime).toEqual(moment('2019-02-20', 'YYYY-MM-DD').toDate());
-    expect(tasks[4].endTime).toEqual(moment('2019-02-21', 'YYYY-MM-DD').toDate());
-    expect(tasks[4].renderEndTime).toEqual(moment('2019-02-21', 'YYYY-MM-DD').toDate());
+    expect(tasks[4].startTime).toEqual(dayjs('2019-02-20', 'YYYY-MM-DD').toDate());
+    expect(tasks[4].endTime).toEqual(dayjs('2019-02-21', 'YYYY-MM-DD').toDate());
+    expect(tasks[4].renderEndTime).toEqual(dayjs('2019-02-21', 'YYYY-MM-DD').toDate());
     expect(tasks[4].id).toEqual('id5');
     expect(tasks[4].task).toEqual('test5');
 
-    expect(tasks[5].startTime).toEqual(moment('2019-02-13', 'YYYY-MM-DD').toDate());
-    expect(tasks[5].endTime).toEqual(moment('2019-02-18', 'YYYY-MM-DD').toDate());
-    expect(tasks[5].renderEndTime).toEqual(moment('2019-02-15', 'YYYY-MM-DD').toDate());
+    expect(tasks[5].startTime).toEqual(dayjs('2019-02-13', 'YYYY-MM-DD').toDate());
+    expect(tasks[5].endTime).toEqual(dayjs('2019-02-18', 'YYYY-MM-DD').toDate());
+    expect(tasks[5].renderEndTime).toEqual(dayjs('2019-02-15', 'YYYY-MM-DD').toDate());
     expect(tasks[5].id).toEqual('id6');
     expect(tasks[5].task).toEqual('test6');
 
-    expect(tasks[6].startTime).toEqual(moment('2019-02-18', 'YYYY-MM-DD').toDate());
-    expect(tasks[6].endTime).toEqual(moment('2019-02-19', 'YYYY-MM-DD').toDate());
+    expect(tasks[6].startTime).toEqual(dayjs('2019-02-18', 'YYYY-MM-DD').toDate());
+    expect(tasks[6].endTime).toEqual(dayjs('2019-02-19', 'YYYY-MM-DD').toDate());
     expect(tasks[6].id).toEqual('id7');
     expect(tasks[6].task).toEqual('test7');
   });
@@ -243,109 +243,103 @@ describe('when using the ganttDb', function () {
     const tasks = ganttDb.getTasks();
 
     // Section - A section
-    expect(tasks[0].startTime).toEqual(moment('2014-01-06', 'YYYY-MM-DD').toDate());
-    expect(tasks[0].endTime).toEqual(moment('2014-01-08', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].startTime).toEqual(dayjs('2014-01-06', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].endTime).toEqual(dayjs('2014-01-08', 'YYYY-MM-DD').toDate());
     expect(tasks[0].order).toEqual(0);
     expect(tasks[0].id).toEqual('des1');
     expect(tasks[0].task).toEqual('Completed task');
 
-    expect(tasks[1].startTime).toEqual(moment('2014-01-09', 'YYYY-MM-DD').toDate());
-    expect(tasks[1].endTime).toEqual(moment('2014-01-12', 'YYYY-MM-DD').toDate());
+    expect(tasks[1].startTime).toEqual(dayjs('2014-01-09', 'YYYY-MM-DD').toDate());
+    expect(tasks[1].endTime).toEqual(dayjs('2014-01-12', 'YYYY-MM-DD').toDate());
     expect(tasks[1].order).toEqual(1);
     expect(tasks[1].id).toEqual('des2');
     expect(tasks[1].task).toEqual('Active task');
 
-    expect(tasks[2].startTime).toEqual(moment('2014-01-12', 'YYYY-MM-DD').toDate());
-    expect(tasks[2].endTime).toEqual(moment('2014-01-17', 'YYYY-MM-DD').toDate());
+    expect(tasks[2].startTime).toEqual(dayjs('2014-01-12', 'YYYY-MM-DD').toDate());
+    expect(tasks[2].endTime).toEqual(dayjs('2014-01-17', 'YYYY-MM-DD').toDate());
     expect(tasks[2].order).toEqual(2);
     expect(tasks[2].id).toEqual('des3');
     expect(tasks[2].task).toEqual('Future task');
 
-    expect(tasks[3].startTime).toEqual(moment('2014-01-17', 'YYYY-MM-DD').toDate());
-    expect(tasks[3].endTime).toEqual(moment('2014-01-22', 'YYYY-MM-DD').toDate());
+    expect(tasks[3].startTime).toEqual(dayjs('2014-01-17', 'YYYY-MM-DD').toDate());
+    expect(tasks[3].endTime).toEqual(dayjs('2014-01-22', 'YYYY-MM-DD').toDate());
     expect(tasks[3].order).toEqual(3);
     expect(tasks[3].id).toEqual('des4');
     expect(tasks[3].task).toEqual('Future task2');
 
     // Section - Critical tasks
-    expect(tasks[4].startTime).toEqual(moment('2014-01-06', 'YYYY-MM-DD').toDate());
-    expect(tasks[4].endTime).toEqual(moment('2014-01-07', 'YYYY-MM-DD').toDate());
+    expect(tasks[4].startTime).toEqual(dayjs('2014-01-06', 'YYYY-MM-DD').toDate());
+    expect(tasks[4].endTime).toEqual(dayjs('2014-01-07', 'YYYY-MM-DD').toDate());
     expect(tasks[4].order).toEqual(4);
     expect(tasks[4].id).toEqual('task1');
     expect(tasks[4].task).toEqual('Completed task in the critical line');
 
-    expect(tasks[5].startTime).toEqual(moment('2014-01-08', 'YYYY-MM-DD').toDate());
-    expect(tasks[5].endTime).toEqual(moment('2014-01-10', 'YYYY-MM-DD').toDate());
+    expect(tasks[5].startTime).toEqual(dayjs('2014-01-08', 'YYYY-MM-DD').toDate());
+    expect(tasks[5].endTime).toEqual(dayjs('2014-01-10', 'YYYY-MM-DD').toDate());
     expect(tasks[5].order).toEqual(5);
     expect(tasks[5].id).toEqual('task2');
     expect(tasks[5].task).toEqual('Implement parser and jison');
 
-    expect(tasks[6].startTime).toEqual(moment('2014-01-10', 'YYYY-MM-DD').toDate());
-    expect(tasks[6].endTime).toEqual(moment('2014-01-13', 'YYYY-MM-DD').toDate());
+    expect(tasks[6].startTime).toEqual(dayjs('2014-01-10', 'YYYY-MM-DD').toDate());
+    expect(tasks[6].endTime).toEqual(dayjs('2014-01-13', 'YYYY-MM-DD').toDate());
     expect(tasks[6].order).toEqual(6);
     expect(tasks[6].id).toEqual('task3');
     expect(tasks[6].task).toEqual('Create tests for parser');
 
-    expect(tasks[7].startTime).toEqual(moment('2014-01-13', 'YYYY-MM-DD').toDate());
-    expect(tasks[7].endTime).toEqual(moment('2014-01-18', 'YYYY-MM-DD').toDate());
+    expect(tasks[7].startTime).toEqual(dayjs('2014-01-13', 'YYYY-MM-DD').toDate());
+    expect(tasks[7].endTime).toEqual(dayjs('2014-01-18', 'YYYY-MM-DD').toDate());
     expect(tasks[7].order).toEqual(7);
     expect(tasks[7].id).toEqual('task4');
     expect(tasks[7].task).toEqual('Future task in critical line');
 
-    expect(tasks[8].startTime).toEqual(moment('2014-01-18', 'YYYY-MM-DD').toDate());
-    expect(tasks[8].endTime).toEqual(moment('2014-01-20', 'YYYY-MM-DD').toDate());
+    expect(tasks[8].startTime).toEqual(dayjs('2014-01-18', 'YYYY-MM-DD').toDate());
+    expect(tasks[8].endTime).toEqual(dayjs('2014-01-20', 'YYYY-MM-DD').toDate());
     expect(tasks[8].order).toEqual(8);
     expect(tasks[8].id).toEqual('task5');
     expect(tasks[8].task).toEqual('Create tests for renderer');
 
-    expect(tasks[9].startTime).toEqual(moment('2014-01-20', 'YYYY-MM-DD').toDate());
-    expect(tasks[9].endTime).toEqual(moment('2014-01-21', 'YYYY-MM-DD').toDate());
+    expect(tasks[9].startTime).toEqual(dayjs('2014-01-20', 'YYYY-MM-DD').toDate());
+    expect(tasks[9].endTime).toEqual(dayjs('2014-01-21', 'YYYY-MM-DD').toDate());
     expect(tasks[9].order).toEqual(9);
     expect(tasks[9].id).toEqual('task6');
     expect(tasks[9].task).toEqual('Add to mermaid');
 
     // Section - Documentation
-    expect(tasks[10].startTime).toEqual(moment('2014-01-08', 'YYYY-MM-DD').toDate());
-    expect(tasks[10].endTime).toEqual(moment('2014-01-11', 'YYYY-MM-DD').toDate());
+    expect(tasks[10].startTime).toEqual(dayjs('2014-01-08', 'YYYY-MM-DD').toDate());
+    expect(tasks[10].endTime).toEqual(dayjs('2014-01-11', 'YYYY-MM-DD').toDate());
     expect(tasks[10].order).toEqual(10);
     expect(tasks[10].id).toEqual('a1');
     expect(tasks[10].task).toEqual('Describe gantt syntax');
 
-    expect(tasks[11].startTime).toEqual(moment('2014-01-11', 'YYYY-MM-DD').toDate());
-    expect(tasks[11].endTime).toEqual(
-      moment('2014-01-11 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate()
-    );
+    expect(tasks[11].startTime).toEqual(dayjs('2014-01-11', 'YYYY-MM-DD').toDate());
+    expect(tasks[11].endTime).toEqual(dayjs('2014-01-11 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate());
     expect(tasks[11].order).toEqual(11);
     expect(tasks[11].id).toEqual('task7');
     expect(tasks[11].task).toEqual('Add gantt diagram to demo page');
 
-    expect(tasks[12].startTime).toEqual(moment('2014-01-11', 'YYYY-MM-DD').toDate());
-    expect(tasks[12].endTime).toEqual(moment('2014-01-13', 'YYYY-MM-DD').toDate());
+    expect(tasks[12].startTime).toEqual(dayjs('2014-01-11', 'YYYY-MM-DD').toDate());
+    expect(tasks[12].endTime).toEqual(dayjs('2014-01-13', 'YYYY-MM-DD').toDate());
     expect(tasks[12].order).toEqual(12);
     expect(tasks[12].id).toEqual('doc1');
     expect(tasks[12].task).toEqual('Add another diagram to demo page');
 
     // Section - Last section
-    expect(tasks[13].startTime).toEqual(moment('2014-01-13', 'YYYY-MM-DD').toDate());
-    expect(tasks[13].endTime).toEqual(moment('2014-01-16', 'YYYY-MM-DD').toDate());
+    expect(tasks[13].startTime).toEqual(dayjs('2014-01-13', 'YYYY-MM-DD').toDate());
+    expect(tasks[13].endTime).toEqual(dayjs('2014-01-16', 'YYYY-MM-DD').toDate());
     expect(tasks[13].order).toEqual(13);
     expect(tasks[13].id).toEqual('task8');
     expect(tasks[13].task).toEqual('Describe gantt syntax');
 
-    expect(tasks[14].startTime).toEqual(moment('2014-01-16', 'YYYY-MM-DD').toDate());
-    expect(tasks[14].endTime).toEqual(
-      moment('2014-01-16 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate()
-    );
+    expect(tasks[14].startTime).toEqual(dayjs('2014-01-16', 'YYYY-MM-DD').toDate());
+    expect(tasks[14].endTime).toEqual(dayjs('2014-01-16 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate());
     expect(tasks[14].order).toEqual(14);
     expect(tasks[14].id).toEqual('task9');
     expect(tasks[14].task).toEqual('Add gantt diagram to demo page');
 
     expect(tasks[15].startTime).toEqual(
-      moment('2014-01-16 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate()
+      dayjs('2014-01-16 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate()
     );
-    expect(tasks[15].endTime).toEqual(
-      moment('2014-01-18 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate()
-    );
+    expect(tasks[15].endTime).toEqual(dayjs('2014-01-18 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate());
     expect(tasks[15].order).toEqual(15);
     expect(tasks[15].id).toEqual('task10');
     expect(tasks[15].task).toEqual('Add another diagram to demo page');
@@ -358,14 +352,14 @@ describe('when using the ganttDb', function () {
     ganttDb.addTask('test2', 'id2,after id1,20d');
     const tasks = ganttDb.getTasks();
 
-    expect(tasks[0].startTime).toEqual(moment('2019-09-30', 'YYYY-MM-DD').toDate());
-    expect(tasks[0].endTime).toEqual(moment('2019-10-11', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].startTime).toEqual(dayjs('2019-09-30', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].endTime).toEqual(dayjs('2019-10-11', 'YYYY-MM-DD').toDate());
     expect(tasks[1].renderEndTime).toBeNull(); // Fixed end
     expect(tasks[0].id).toEqual('id1');
     expect(tasks[0].task).toEqual('test1');
 
-    expect(tasks[1].startTime).toEqual(moment('2019-10-11', 'YYYY-MM-DD').toDate());
-    expect(tasks[1].endTime).toEqual(moment('2019-10-31', 'YYYY-MM-DD').toDate());
+    expect(tasks[1].startTime).toEqual(dayjs('2019-10-11', 'YYYY-MM-DD').toDate());
+    expect(tasks[1].endTime).toEqual(dayjs('2019-10-31', 'YYYY-MM-DD').toDate());
     expect(tasks[1].renderEndTime).toBeNull(); // Fixed end
     expect(tasks[1].id).toEqual('id2');
     expect(tasks[1].task).toEqual('test2');
@@ -414,13 +408,13 @@ describe('when using the ganttDb', function () {
     });
     it('should automatically add one day to all end dates', function () {
       const tasks = ganttDb.getTasks();
-      expect(tasks[0].startTime).toEqual(moment('2019-02-01', 'YYYY-MM-DD').toDate());
-      expect(tasks[0].endTime).toEqual(moment('2019-02-02', 'YYYY-MM-DD').toDate());
+      expect(tasks[0].startTime).toEqual(dayjs('2019-02-01', 'YYYY-MM-DD').toDate());
+      expect(tasks[0].endTime).toEqual(dayjs('2019-02-02', 'YYYY-MM-DD').toDate());
       expect(tasks[0].id).toEqual('id1');
       expect(tasks[0].task).toEqual('test1');
 
-      expect(tasks[1].startTime).toEqual(moment('2019-02-01', 'YYYY-MM-DD').toDate());
-      expect(tasks[1].endTime).toEqual(moment('2019-02-04', 'YYYY-MM-DD').toDate());
+      expect(tasks[1].startTime).toEqual(dayjs('2019-02-01', 'YYYY-MM-DD').toDate());
+      expect(tasks[1].endTime).toEqual(dayjs('2019-02-04', 'YYYY-MM-DD').toDate());
       expect(tasks[1].renderEndTime).toBeNull(); // Fixed end
       expect(tasks[1].manualEndTime).toBeTruthy();
       expect(tasks[1].id).toEqual('id2');

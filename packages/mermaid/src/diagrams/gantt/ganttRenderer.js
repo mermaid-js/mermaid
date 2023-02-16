@@ -1,4 +1,4 @@
-import moment from 'moment-mini';
+import dayjs from 'dayjs';
 import { log } from '../../logger';
 import {
   select,
@@ -435,16 +435,16 @@ export const draw = function (text, id, version, diagObj) {
 
     const excludeRanges = [];
     let range = null;
-    let d = moment(minTime);
+    let d = dayjs(minTime);
     while (d.valueOf() <= maxTime) {
       if (diagObj.db.isInvalidDate(d, dateFormat, excludes, includes)) {
         if (!range) {
           range = {
-            start: d.clone(),
-            end: d.clone(),
+            start: d,
+            end: d,
           };
         } else {
-          range.end = d.clone();
+          range.end = d;
         }
       } else {
         if (range) {
@@ -452,7 +452,7 @@ export const draw = function (text, id, version, diagObj) {
           range = null;
         }
       }
-      d.add(1, 'd');
+      d = d.add(1, 'd');
     }
 
     const rectangles = svg.append('g').selectAll('rect').data(excludeRanges).enter();
@@ -467,7 +467,7 @@ export const draw = function (text, id, version, diagObj) {
       })
       .attr('y', conf.gridLineStartPadding)
       .attr('width', function (d) {
-        const renderEnd = d.end.clone().add(1, 'day');
+        const renderEnd = d.end.add(1, 'day');
         return timeScale(renderEnd) - timeScale(d.start);
       })
       .attr('height', h - theTopPad - conf.gridLineStartPadding)
