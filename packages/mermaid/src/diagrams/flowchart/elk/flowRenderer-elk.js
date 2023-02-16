@@ -186,7 +186,7 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
       default:
         _shape = 'rect';
     }
-    // // Add the node
+    // Add the node
     const node = {
       labelStyle: styles.labelStyle,
       shape: _shape,
