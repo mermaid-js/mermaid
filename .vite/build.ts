@@ -20,13 +20,14 @@ const visualizerOptions = (packageName: string, core = false): PluginOption[] =>
   if (packageName !== 'mermaid' || !visualize) {
     return [];
   }
-  return ['network', 'treemap', 'sunburst'].map((chartType) =>
-    visualizer({
-      filename: `./stats/${chartType}${core ? '.core' : ''}.html`,
-      template: chartType as TemplateType,
-      gzipSize: true,
-      brotliSize: true,
-    })
+  return ['network', 'treemap', 'sunburst'].map(
+    (chartType) =>
+      visualizer({
+        filename: `./stats/${chartType}${core ? '.core' : ''}.html`,
+        template: chartType as TemplateType,
+        gzipSize: true,
+        brotliSize: true,
+      }) as PluginOption
   );
 };
 
