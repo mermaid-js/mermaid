@@ -123,11 +123,9 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
 };
 
 const buildPackage = async (entryName: keyof typeof packageOptions) => {
-  return Promise.allSettled([
-    build(getBuildConfig({ minify: false, entryName })),
-    build(getBuildConfig({ minify: 'esbuild', entryName })),
-    build(getBuildConfig({ minify: false, core: true, entryName })),
-  ]);
+  await build(getBuildConfig({ minify: false, entryName }));
+  await build(getBuildConfig({ minify: 'esbuild', entryName }));
+  await build(getBuildConfig({ minify: false, core: true, entryName }));
 };
 
 const main = async () => {
