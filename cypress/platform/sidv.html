@@ -65,7 +65,7 @@ graph TB
     <pre id="diagram" class="mermaid">
 flowchart-elk LR
   subgraph A
-  a -->b
+  a --> b
   end
   subgraph B
   b
@@ -246,10 +246,7 @@ sequenceDiagram
     <!-- <script src="./mermaid.js"></script> -->
 
     <script type="module">
-      import mindmap from '../../packages/mermaid-mindmap/src/detector';
-      // import example from '../../packages/mermaid-example-diagram/src/detector';
       import mermaid from '../../packages/mermaid/src/mermaid';
-      await mermaid.registerExternalDiagrams([mindmap]);
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };

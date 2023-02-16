@@ -49,8 +49,8 @@
   "devDependencies": {
     "@types/cytoscape": "^3.19.9",
     "concurrently": "^7.5.0",
-    "mermaid": "workspace:*",
-    "rimraf": "^3.0.2"
+    "rimraf": "^4.0.0",
+    "mermaid": "workspace:*"
   },
   "resolutions": {
     "d3": "^7.0.0"

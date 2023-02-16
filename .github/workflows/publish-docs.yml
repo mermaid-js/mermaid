@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+  pull_request:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -24,8 +25,6 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
-    env:
-      NODE_OPTIONS: '--max_old_space_size=4096'
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -54,6 +53,7 @@ jobs:
 
   # Deployment job
   deploy:
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     environment:
       name: github-pages
     runs-on: ubuntu-latest
