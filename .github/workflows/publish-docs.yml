@@ -54,6 +54,7 @@ jobs:
 
   # Deployment job
   deploy:
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     environment:
       name: github-pages
     runs-on: ubuntu-latest

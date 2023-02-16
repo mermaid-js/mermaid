@@ -16,7 +16,7 @@ const detector: DiagramDetector = (txt: string, config?: MermaidConfig): boolean
 };
 
 const loader = async () => {
-  const { diagram } = await import('./diagram-definition');
+  const { diagram } = await import('./diagram-definition.js');
   return { id, diagram };
 };
 
