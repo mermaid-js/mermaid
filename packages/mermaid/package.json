@@ -101,8 +101,8 @@
     "typedoc-plugin-markdown": "^3.13.6",
     "typescript": "^4.8.4",
     "unist-util-flatmap": "^1.0.0",
-    "vitepress": "^1.0.0-alpha.31",
-    "vitepress-plugin-search": "^1.0.4-alpha.16"
+    "vitepress": "^1.0.0-alpha.46",
+    "vitepress-plugin-search": "^1.0.4-alpha.19"
   },
   "files": [
     "dist",
