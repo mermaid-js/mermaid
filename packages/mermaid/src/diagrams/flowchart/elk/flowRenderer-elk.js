@@ -9,7 +9,7 @@ import { log } from '../../../logger';
 import { setupGraphViewbox } from '../../../setupGraphViewbox';
 import common, { evaluate } from '../../common/common';
 import { interpolateToCurve, getStylesFromArray } from '../../../utils';
-import ELK from 'elkjs';
+import ELK from 'elkjs/lib/elk.bundled.js';
 
 let elk;
 
