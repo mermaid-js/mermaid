@@ -318,19 +318,19 @@ There are two ways to apply a `classDef` style to a state:
 
 A `class` statement tells Mermaid to apply the named classDef to one or more classes. The form is:
 
-```
+```txt
     class [one or more state names, separated by commas] [name of a style defined with classDef]
 ```
 
 Here is an example applying the `badBadEvent` style to a state named `Crash`:
 
-```
+```txt
 class Crash badBadEvent
 ```
 
 Here is an example applying the `movement` style to the two states `Moving` and `Crash`:
 
-```
+```txt
 class Moving, Crash movement
 ```
 
@@ -365,7 +365,7 @@ and `badBadEvent`
 
 You can apply a classDef style to a state using the `:::` (three colons) operator. The syntax is
 
-```
+```txt
 [state]:::[style name]
 ```
 
