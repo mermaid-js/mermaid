@@ -11,18 +11,21 @@ jobs:
       - uses: actions/checkout@v3
       - uses: fregante/setup-git-user@v1
 
-      - name: Setup Node.js
+      - uses: pnpm/action-setup@v2
+        # uses version from "packageManager" field in package.json
+
+      - name: Setup Node.js v18
         uses: actions/setup-node@v3
         with:
+          cache: pnpm
           node-version: 18.x
-      - name: Install Yarn
-        run: npm i yarn --global
-
-      - name: Install Json
-        run: npm i json --global
 
       - name: Install Packages
-        run: yarn install --frozen-lockfile
+        run: |
+          pnpm install --frozen-lockfile
+          npm i json --global
+        env:
+          CYPRESS_CACHE_FOLDER: .cache/Cypress
 
       - name: Prepare release
         run: |
