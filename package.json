@@ -20,7 +20,7 @@
     "build:viz": "pnpm build:mermaid --visualize",
     "build:types": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-example-diagram/tsconfig.json --emitDeclarationOnly",
     "build:watch": "pnpm build:vite --watch",
-    "build": "pnpm run -r clean && pnpm build:types && pnpm build:vite",
+    "build": "pnpm run -r clean && concurrently \"pnpm build:vite\" \"pnpm build:types\"",
     "dev": "concurrently \"pnpm build:vite --watch\" \"ts-node-esm .vite/server.ts\"",
     "release": "pnpm build",
     "lint": "eslint --cache --cache-strategy content --ignore-path .gitignore . && pnpm lint:jison && prettier --cache --check .",
