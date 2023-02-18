@@ -62,7 +62,7 @@
     "elkjs": "^0.8.2",
     "khroma": "^2.0.0",
     "lodash-es": "^4.17.21",
-    "moment": "^2.29.4",
+    "moment-mini": "^2.29.4",
     "non-layered-tidy-tree-layout": "^2.0.2",
     "stylis": "^4.1.2",
     "ts-dedent": "^2.2.0",

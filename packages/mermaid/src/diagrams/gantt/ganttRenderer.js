@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-mini';
 import { log } from '../../logger';
 import {
   select,
