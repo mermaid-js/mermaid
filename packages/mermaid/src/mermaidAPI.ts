@@ -13,7 +13,7 @@
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 // @ts-ignore: TODO Fix ts errors
-import pkg from '../package.json';
+import { version } from '../package.json';
 import * as configApi from './config';
 import { addDiagrams } from './diagram-api/diagram-orchestration';
 import classDb from './diagrams/class/classDb';
@@ -506,9 +506,9 @@ const render = function (
   // -------------------------------------------------------------------------------
   // Draw the diagram with the renderer
   try {
-    diag.renderer.draw(text, id, pkg.version, diag);
+    diag.renderer.draw(text, id, version, diag);
   } catch (e) {
-    errorRenderer.draw(text, id, pkg.version);
+    errorRenderer.draw(text, id, version);
     throw e;
   }
 
@@ -708,9 +708,9 @@ const renderAsync = async function (
   // -------------------------------------------------------------------------------
   // Draw the diagram with the renderer
   try {
-    await diag.renderer.draw(text, id, pkg.version, diag);
+    await diag.renderer.draw(text, id, version, diag);
   } catch (e) {
-    errorRenderer.draw(text, id, pkg.version);
+    errorRenderer.draw(text, id, version);
     throw e;
   }
 
