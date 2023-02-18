@@ -34,7 +34,7 @@
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
     "prepublishOnly": "pnpm build && pnpm test",
-    "prepare": "concurrently \"husky install\" \"pnpm build\"",
+    "prepare": "husky install && pnpm build",
     "pre-commit": "lint-staged"
   },
   "repository": {
@@ -103,11 +103,11 @@
     "prettier-plugin-jsdoc": "^0.4.2",
     "rimraf": "^4.0.0",
     "rollup-plugin-visualizer": "^5.8.3",
-    "start-server-and-test": "^1.14.0",
+    "start-server-and-test": "^1.15.4",
     "ts-node": "^10.9.1",
     "typescript": "^4.8.4",
-    "vite": "^3.2.3",
-    "vitest": "^0.28.4"
+    "vite": "^4.1.1",
+    "vitest": "^0.28.5"
   },
   "volta": {
     "node": "18.14.0"
