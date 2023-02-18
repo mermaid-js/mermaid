@@ -1,4 +1,5 @@
-import moment from 'moment';
+import dayjs from '../common/dayjs';
+
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import { log } from '../../logger';
 import * as configApi from '../../config';
@@ -166,9 +167,9 @@ const checkTaskDates = function (task, dateFormat, excludes, includes) {
   if (!excludes.length || task.manualEndTime) {
     return;
   }
-  let startTime = moment(task.startTime, dateFormat, true);
+  let startTime = dayjs(task.startTime, dateFormat, true);
   startTime.add(1, 'd');
-  let endTime = moment(task.endTime, dateFormat, true);
+  let endTime = dayjs(task.endTime, dateFormat, true);
   let renderEndTime = fixTaskDates(startTime, endTime, dateFormat, excludes, includes);
   task.endTime = endTime.toDate();
   task.renderEndTime = renderEndTime;
@@ -223,7 +224,7 @@ const getStartDate = function (prevTime, dateFormat, str) {
   }
 
   // Check for actual date set
-  let mDate = moment(str, dateFormat.trim(), true);
+  let mDate = dayjs(str, dateFormat.trim(), true);
   if (mDate.isValid()) {
     return mDate.toDate();
   } else {
@@ -238,7 +239,7 @@ const getStartDate = function (prevTime, dateFormat, str) {
 };
 
 /**
- * Parse a string as a moment duration.
+ * Parse a string as a dayjs duration.
  *
  * The string have to be compound by a value and a shorthand duration unit. For example `5d`
  * represents 5 days.
@@ -254,22 +255,22 @@ const getStartDate = function (prevTime, dateFormat, str) {
  * - `ms` for milliseconds
  *
  * @param {string} str - A string representing the duration.
- * @returns {moment.Duration} A moment duration, including an invalid moment for invalid input
+ * @returns {duration.Duration | undefined} A dayjs duration, including an invalid duration for invalid input
  *   string.
  */
 const parseDuration = function (str) {
   const statement = /^(\d+(?:\.\d+)?)([Mdhmswy]|ms)$/.exec(str.trim());
   if (statement !== null) {
-    return moment.duration(Number.parseFloat(statement[1]), statement[2]);
+    return dayjs.duration(Number.parseFloat(statement[1]), statement[2]);
   }
-  return moment.duration.invalid();
+  return undefined;
 };
 
 const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   str = str.trim();
 
   // Check for actual date
-  let mDate = moment(str, dateFormat.trim(), true);
+  let mDate = dayjs(str, dateFormat.trim(), true);
   if (mDate.isValid()) {
     if (inclusive) {
       mDate.add(1, 'd');
@@ -277,10 +278,10 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
     return mDate.toDate();
   }
 
-  const endTime = moment(prevTime);
-  const duration = parseDuration(str);
-  if (duration.isValid()) {
-    endTime.add(duration);
+  const endTime = dayjs(prevTime);
+  const timeDuration = parseDuration(str);
+  if (timeDuration) {
+    endTime.add(timeDuration);
   }
   return endTime.toDate();
 };
@@ -346,7 +347,7 @@ const compileData = function (prevTask, dataStr) {
 
   if (endTimeData) {
     task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates);
-    task.manualEndTime = moment(endTimeData, 'YYYY-MM-DD', true).isValid();
+    task.manualEndTime = dayjs(endTimeData, 'YYYY-MM-DD', true).isValid();
     checkTaskDates(task, dateFormat, excludes, includes);
   }
 
@@ -496,7 +497,7 @@ const compileTasks = function () {
       );
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true;
-        rawTasks[pos].manualEndTime = moment(
+        rawTasks[pos].manualEndTime = dayjs(
           rawTasks[pos].raw.endTime.data,
           'YYYY-MM-DD',
           true

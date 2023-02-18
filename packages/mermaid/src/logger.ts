@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-console */
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
@@ -85,6 +85,6 @@ export const setLogLevel = function (level: keyof typeof LEVELS | number | strin
  * @returns The format with the timestamp and log level
  */
 const format = (level: Uppercase<LogLevel>): string => {
-  const time = moment().format('ss.SSS');
+  const time = dayjs().format('ss.SSS');
   return `%c${time} : ${level} : `;
 };
