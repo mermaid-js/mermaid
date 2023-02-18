@@ -466,7 +466,9 @@ Timeline uses experimental lazy loading & async rendering features which could c
 You can use this method to add mermaid including the timeline diagram to a web page:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+</script>
 ```
 
 Note that more complex integrations that the **render** function directly need to use the **renderAsync** method instead in order to render timeline.
