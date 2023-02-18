@@ -17,7 +17,7 @@ example-diagram
 
       await mermaid.registerExternalDiagrams([exampleDiagram]);
       await mermaid.initialize({ logLevel: 0 });
-      await mermaid.initThrowsErrorsAsync();
+      await mermaid.initThrowsErrors();
       if (window.Cypress) {
         window.rendered = true;
       }

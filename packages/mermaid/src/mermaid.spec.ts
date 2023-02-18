@@ -48,7 +48,7 @@ describe('when using mermaid and ', function () {
       const node = document.createElement('div');
       node.appendChild(document.createTextNode('graph TD;\na;'));
 
-      mermaid.initThrowsErrors(undefined, node);
+      await mermaid.initThrowsErrors(undefined, node);
       // mermaidAPI.render function has been mocked, since it doesn't yet work
       // in Node.JS (only works in browser)
       expect(mermaidAPI.render).toHaveBeenCalled();
@@ -72,9 +72,9 @@ describe('when using mermaid and ', function () {
         )
       ).rejects.toThrow('Failed to load 1 external diagrams');
 
-      expect(() => mermaid.initThrowsErrorsAsync(undefined, node)).not.toThrow();
+      expect(() => mermaid.initThrowsErrors(undefined, node)).not.toThrow();
       // should still render, even if lazyLoadedDiagrams fails
-      expect(mermaidAPI.renderAsync).toHaveBeenCalled();
+      expect(mermaidAPI.render).toHaveBeenCalled();
     });
 
     it('should defer diagram load based on parameter', async () => {

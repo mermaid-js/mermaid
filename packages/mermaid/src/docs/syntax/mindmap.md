@@ -184,6 +184,4 @@ From version 9.4.0 you can simplify this code to:
 </script>
 ```
 
-Note that more complex integrations that use the **render** function directly need to use the **renderAsync** method instead in order to render mind maps.
-
 You can also refer the implementation in the live editor [here](https://github.com/mermaid-js/mermaid-live-editor/blob/develop/src/lib/util/mermaid.ts) to see how the async loading is done.

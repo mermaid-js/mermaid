@@ -26,7 +26,7 @@ Renames and re-exports [mermaidAPI](mermaidAPI.md#mermaidapi)
 
 ### mermaidAPI
 
-• `Const` **mermaidAPI**: `Readonly`<{ `defaultConfig`: `MermaidConfig` = configApi.defaultConfig; `getConfig`: () => `MermaidConfig` = configApi.getConfig; `getSiteConfig`: () => `MermaidConfig` = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`options`: `MermaidConfig`) => `void` ; `parse`: (`text`: `string`, `parseError?`: `ParseErrorFunction`) => `boolean` ; `parseAsync`: (`text`: `string`, `parseError?`: `ParseErrorFunction`) => `Promise`<`boolean`> ; `parseDirective`: (`p`: `any`, `statement`: `string`, `context`: `string`, `type`: `string`) => `void` ; `render`: (`id`: `string`, `text`: `string`, `cb?`: (`svgCode`: `string`, `bindFunctions?`: (`element`: `Element`) => `void`) => `void`, `svgContainingElement?`: `Element`) => `string` ; `renderAsync`: (`id`: `string`, `text`: `string`, `cb?`: (`svgCode`: `string`, `bindFunctions?`: (`element`: `Element`) => `void`) => `void`, `svgContainingElement?`: `Element`) => `Promise`<`string`> ; `reset`: () => `void` ; `setConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.setConfig; `updateSiteConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.updateSiteConfig }>
+• `Const` **mermaidAPI**: `Readonly`<{ `defaultConfig`: `MermaidConfig` = configApi.defaultConfig; `getConfig`: () => `MermaidConfig` = configApi.getConfig; `getSiteConfig`: () => `MermaidConfig` = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`options`: `MermaidConfig`) => `void` ; `parse`: (`text`: `string`, `parseError?`: `ParseErrorFunction`) => `Promise`<`boolean`> ; `parseDirective`: (`p`: `any`, `statement`: `string`, `context`: `string`, `type`: `string`) => `void` ; `render`: (`id`: `string`, `text`: `string`, `cb?`: (`svgCode`: `string`, `bindFunctions?`: (`element`: `Element`) => `void`) => `void`, `svgContainingElement?`: `Element`) => `Promise`<`string`> ; `reset`: () => `void` ; `setConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.setConfig; `updateSiteConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.updateSiteConfig }>
 
 ## mermaidAPI configuration defaults
 
@@ -90,7 +90,7 @@ mermaid.initialize(config);
 
 #### Defined in
 
-[mermaidAPI.ts:887](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L887)
+[mermaidAPI.ts:671](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L671)
 
 ## Functions
 
@@ -121,7 +121,7 @@ Return the last node appended
 
 #### Defined in
 
-[mermaidAPI.ts:288](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L288)
+[mermaidAPI.ts:278](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L278)
 
 ---
 
@@ -147,7 +147,7 @@ the cleaned up svgCode
 
 #### Defined in
 
-[mermaidAPI.ts:239](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L239)
+[mermaidAPI.ts:229](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L229)
 
 ---
 
@@ -173,7 +173,7 @@ the string with all the user styles
 
 #### Defined in
 
-[mermaidAPI.ts:168](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L168)
+[mermaidAPI.ts:158](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L158)
 
 ---
 
@@ -196,7 +196,7 @@ the string with all the user styles
 
 #### Defined in
 
-[mermaidAPI.ts:216](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L216)
+[mermaidAPI.ts:206](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L206)
 
 ---
 
@@ -223,7 +223,7 @@ with an enclosing block that has each of the cssClasses followed by !important;
 
 #### Defined in
 
-[mermaidAPI.ts:152](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L152)
+[mermaidAPI.ts:142](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L142)
 
 ---
 
@@ -243,7 +243,7 @@ with an enclosing block that has each of the cssClasses followed by !important;
 
 #### Defined in
 
-[mermaidAPI.ts:132](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L132)
+[mermaidAPI.ts:122](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L122)
 
 ---
 
@@ -263,7 +263,7 @@ with an enclosing block that has each of the cssClasses followed by !important;
 
 #### Defined in
 
-[mermaidAPI.ts:103](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L103)
+[mermaidAPI.ts:93](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L93)
 
 ---
 
@@ -289,7 +289,7 @@ Put the svgCode into an iFrame. Return the iFrame code
 
 #### Defined in
 
-[mermaidAPI.ts:267](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L267)
+[mermaidAPI.ts:257](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L257)
 
 ---
 
@@ -314,4 +314,4 @@ Remove any existing elements from the given document
 
 #### Defined in
 
-[mermaidAPI.ts:338](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L338)
+[mermaidAPI.ts:328](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L328)

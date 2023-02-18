@@ -720,10 +720,10 @@ describe('mermaidAPI', function () {
           const diagramText = `${diagramType}\n accTitle: ${a11yTitle}\n accDescr: ${a11yDescr}\n`;
           const expectedDiagramType = testedDiagram.expectedType;
 
-          it('aria-roledscription is set to the diagram type, addSVGa11yTitleDescription is called', () => {
+          it('aria-roledscription is set to the diagram type, addSVGa11yTitleDescription is called', async () => {
             const a11yDiagramInfo_spy = vi.spyOn(accessibility, 'setA11yDiagramInfo');
             const a11yTitleDesc_spy = vi.spyOn(accessibility, 'addSVGa11yTitleDescription');
-            mermaidAPI.render(id, diagramText);
+            await mermaidAPI.render(id, diagramText);
             expect(a11yDiagramInfo_spy).toHaveBeenCalledWith(
               expect.anything(),
               expectedDiagramType
@@ -735,7 +735,7 @@ describe('mermaidAPI', function () {
     });
   });
 
-  describe('renderAsync', () => {
+  describe('render', () => {
     // Be sure to add async before each test (anonymous) method
 
     // These are more like integration tests right now because nothing is mocked.
@@ -775,7 +775,7 @@ describe('mermaidAPI', function () {
           it('aria-roledscription is set to the diagram type, addSVGa11yTitleDescription is called', async () => {
             const a11yDiagramInfo_spy = vi.spyOn(accessibility, 'setA11yDiagramInfo');
             const a11yTitleDesc_spy = vi.spyOn(accessibility, 'addSVGa11yTitleDescription');
-            await mermaidAPI.renderAsync(id, diagramText);
+            await mermaidAPI.render(id, diagramText);
             expect(a11yDiagramInfo_spy).toHaveBeenCalledWith(
               expect.anything(),
               expectedDiagramType

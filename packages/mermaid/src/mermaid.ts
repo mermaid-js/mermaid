@@ -50,7 +50,7 @@ const init = async function (
   callback?: Function
 ) {
   try {
-    await initThrowsErrorsAsync(config, nodes, callback);
+    await initThrowsErrors(config, nodes, callback);
   } catch (e) {
     log.warn('Syntax Error rendering');
     if (isDetailedError(e)) {
@@ -87,96 +87,6 @@ const handleError = (error: unknown, errors: DetailedError[], parseError?: Parse
   }
 };
 
-const initThrowsErrors = function (
-  config?: MermaidConfig,
-  // eslint-disable-next-line no-undef
-  nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  callback?: Function
-) {
-  const conf = mermaidAPI.getConfig();
-  if (config) {
-    // This is a legacy way of setting config. It is not documented and should be removed in the future.
-    // @ts-ignore: TODO Fix ts errors
-    mermaid.sequenceConfig = config;
-  }
-
-  // if last argument is a function this is the callback function
-  log.debug(`${!callback ? 'No ' : ''}Callback function found`);
-  let nodesToProcess: ArrayLike<HTMLElement>;
-  if (nodes === undefined) {
-    nodesToProcess = document.querySelectorAll('.mermaid');
-  } else if (typeof nodes === 'string') {
-    nodesToProcess = document.querySelectorAll(nodes);
-  } else if (nodes instanceof HTMLElement) {
-    nodesToProcess = [nodes];
-  } else if (nodes instanceof NodeList) {
-    nodesToProcess = nodes;
-  } else {
-    throw new Error('Invalid argument nodes for mermaid.init');
-  }
-
-  log.debug(`Found ${nodesToProcess.length} diagrams`);
-  if (config?.startOnLoad !== undefined) {
-    log.debug('Start On Load: ' + config?.startOnLoad);
-    mermaidAPI.updateSiteConfig({ startOnLoad: config?.startOnLoad });
-  }
-
-  // generate the id of the diagram
-  const idGenerator = new utils.initIdGenerator(conf.deterministicIds, conf.deterministicIDSeed);
-
-  let txt: string;
-  const errors: DetailedError[] = [];
-
-  // element is the current div with mermaid class
-  // eslint-disable-next-line unicorn/prefer-spread
-  for (const element of Array.from(nodesToProcess)) {
-    log.info('Rendering diagram: ' + element.id);
-    /*! Check if previously processed */
-    if (element.getAttribute('data-processed')) {
-      continue;
-    }
-    element.setAttribute('data-processed', 'true');
-
-    const id = `mermaid-${idGenerator.next()}`;
-
-    // Fetch the graph definition including tags
-    txt = element.innerHTML;
-
-    // transforms the html to pure text
-    txt = dedent(utils.entityDecode(txt)) // removes indentation, required for YAML parsing
-      .trim()
-      .replace(/<br\s*\/?>/gi, '<br/>');
-
-    const init = utils.detectInit(txt);
-    if (init) {
-      log.debug('Detected early reinit: ', init);
-    }
-    try {
-      mermaidAPI.render(
-        id,
-        txt,
-        (svgCode: string, bindFunctions?: (el: Element) => void) => {
-          element.innerHTML = svgCode;
-          if (callback !== undefined) {
-            callback(id);
-          }
-          if (bindFunctions) {
-            bindFunctions(element);
-          }
-        },
-        element
-      );
-    } catch (error) {
-      handleError(error, errors, mermaid.parseError);
-    }
-  }
-  if (errors.length > 0) {
-    // TODO: We should be throwing an error object.
-    throw errors[0];
-  }
-};
-
 /**
  * This is an internal function and should not be made public, as it will likely change.
  * @internal
@@ -204,10 +114,6 @@ const loadExternalDiagrams = async (...diagrams: ExternalDiagramDefinition[]) =>
 /**
  * Equivalent to {@link init}, except an error will be thrown on error.
  *
- * @alpha
- * @deprecated This is an internal function and will very likely be modified in v10, or earlier.
- * We recommend staying with {@link initThrowsErrors} if you don't need `lazyLoadedDiagrams`.
- *
  * @param config - **Deprecated** Mermaid sequenceConfig.
  * @param nodes - One of:
  * - A DOM Node
@@ -216,7 +122,7 @@ const loadExternalDiagrams = async (...diagrams: ExternalDiagramDefinition[]) =>
  * @param callback - Function that is called with the id of each generated mermaid diagram.
  * @returns Resolves on success, otherwise the {@link Promise} will be rejected.
  */
-const initThrowsErrorsAsync = async function (
+const initThrowsErrors = async function (
   config?: MermaidConfig,
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -282,7 +188,7 @@ const initThrowsErrorsAsync = async function (
       log.debug('Detected early reinit: ', init);
     }
     try {
-      await mermaidAPI.renderAsync(
+      await mermaidAPI.render(
         id,
         txt,
         (svgCode: string, bindFunctions?: (el: Element) => void) => {
@@ -369,10 +275,6 @@ const setParseErrorHandler = function (newParseErrorHandler: (err: any, hash: an
   mermaid.parseError = newParseErrorHandler;
 };
 
-const parse = (txt: string) => {
-  return mermaidAPI.parse(txt, mermaid.parseError);
-};
-
 const executionQueue: (() => Promise<unknown>)[] = [];
 let executionQueueRunning = false;
 const executeQueue = async () => {
@@ -395,15 +297,14 @@ const executeQueue = async () => {
 
 /**
  * @param txt - The mermaid code to be parsed.
- * @deprecated This is an internal function and should not be used. Will be removed in v10.
  */
-const parseAsync = (txt: string): Promise<boolean> => {
+const parse = (txt: string): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the mermaidAPI.render call is done.
     // It will be queued first and will be executed when it is first in line
     const performCall = () =>
       new Promise((res, rej) => {
-        mermaidAPI.parseAsync(txt, mermaid.parseError).then(
+        mermaidAPI.parse(txt, mermaid.parseError).then(
           (r) => {
             // This resolves for the promise for the queue handling
             res(r);
@@ -422,10 +323,7 @@ const parseAsync = (txt: string): Promise<boolean> => {
   });
 };
 
-/**
- * @deprecated This is an internal function and should not be used. Will be removed in v10.
- */
-const renderAsync = (
+const render = (
   id: string,
   text: string,
   cb?: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
@@ -436,7 +334,7 @@ const renderAsync = (
     // It will be queued first and will be executed when it is first in line
     const performCall = () =>
       new Promise((res, rej) => {
-        mermaidAPI.renderAsync(id, text, cb, container).then(
+        mermaidAPI.render(id, text, cb, container).then(
           (r) => {
             // This resolves for the promise for the queue handling
             res(r);
@@ -461,12 +359,9 @@ const mermaid: {
   parseError?: ParseErrorFunction;
   mermaidAPI: typeof mermaidAPI;
   parse: typeof parse;
-  parseAsync: typeof parseAsync;
-  render: typeof mermaidAPI.render;
-  renderAsync: typeof renderAsync;
+  render: typeof render;
   init: typeof init;
   initThrowsErrors: typeof initThrowsErrors;
-  initThrowsErrorsAsync: typeof initThrowsErrorsAsync;
   registerExternalDiagrams: typeof registerExternalDiagrams;
   initialize: typeof initialize;
   contentLoaded: typeof contentLoaded;
@@ -476,12 +371,9 @@ const mermaid: {
   diagrams: {},
   mermaidAPI,
   parse,
-  parseAsync,
-  render: mermaidAPI.render,
-  renderAsync,
+  render,
   init,
   initThrowsErrors,
-  initThrowsErrorsAsync,
   registerExternalDiagrams,
   initialize,
   parseError: undefined,
