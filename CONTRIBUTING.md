@@ -63,6 +63,28 @@ flowchart LR
 
 ```
 
+You can use `note`, `tip`, `warning` and `danger` in triple backticks to add a note, tip, warning or danger box.
+Do not use vitepress specific markdown syntax `::: warning` as it will not be processed correctly.
+
+````
+```note
+Note content
+```
+
+```tip
+Tip content
+```
+
+```warning
+Warning content
+```
+
+```danger
+Danger content
+```
+
+````
+
 **_DO NOT CHANGE FILES IN `/docs`_**
 
 ### The official documentation site
