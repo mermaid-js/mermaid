@@ -10,6 +10,7 @@
  *
  * In addition to the render function, a number of behavioral configuration options are available.
  */
+// @ts-ignore TODO: Investigate D3 issue
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 // @ts-ignore: TODO Fix ts errors
