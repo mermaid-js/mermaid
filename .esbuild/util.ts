@@ -23,6 +23,7 @@ export const packageOptions = {
 interface MermaidBuildOptions {
   minify: boolean;
   core?: boolean;
+  metafile?: boolean;
   entryName: keyof typeof packageOptions;
 }
 
@@ -58,7 +59,12 @@ const jisonPlugin = {
   },
 };
 
-export const getBuildConfig = ({ minify, core, entryName }: MermaidBuildOptions): BuildOptions => {
+export const getBuildConfig = ({
+  minify,
+  core,
+  entryName,
+  metafile,
+}: MermaidBuildOptions): BuildOptions => {
   const external: string[] = ['require', 'fs', 'path'];
   const { name, file, packageName } = packageOptions[entryName];
   let output: BuildOptions = buildOptions({
@@ -66,6 +72,7 @@ export const getBuildConfig = ({ minify, core, entryName }: MermaidBuildOptions)
     entryPoints: {
       [`${name}.esm${core ? '.core' : ''}${minify ? '.min' : ''}`]: `src/${file}`,
     },
+    metafile,
   });
 
   if (core) {
@@ -78,12 +85,5 @@ export const getBuildConfig = ({ minify, core, entryName }: MermaidBuildOptions)
     external.push(...Object.keys(dependencies));
     output.external = external;
   }
-
-  // if (watch && config.build) {
-  //   config.build.watch = {
-  //     include: ['packages/mermaid-example-diagram/src/**', 'packages/mermaid/src/**'],
-  //   };
-  // }
-
   return output;
 };

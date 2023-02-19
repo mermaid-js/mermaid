@@ -1,12 +1,18 @@
-import { build } from 'esbuild';
+import { build, context } from 'esbuild';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { getBuildConfig, packageOptions } from './util.js';
-import { context } from 'esbuild';
 
 const shouldWatch = process.argv.includes('--watch');
+const shouldVisualize = process.argv.includes('--visualize');
 
 const buildPackage = async (entryName: keyof typeof packageOptions) => {
   await build(getBuildConfig({ entryName, minify: false }));
-  await build(getBuildConfig({ entryName, minify: true }));
+  const { metafile } = await build(
+    getBuildConfig({ entryName, minify: true, metafile: shouldVisualize })
+  );
+  if (metafile) {
+    await writeFile(`stats/meta-${entryName}.json`, JSON.stringify(metafile));
+  }
   await build(getBuildConfig({ entryName, minify: false, core: true }));
 };
 
@@ -16,6 +22,7 @@ const handler = (e) => {
 };
 
 const main = async () => {
+  await mkdir('stats');
   const packageNames = Object.keys(packageOptions) as (keyof typeof packageOptions)[];
   for (const pkg of packageNames) {
     await buildPackage(pkg).catch(handler);
