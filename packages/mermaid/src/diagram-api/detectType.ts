@@ -7,6 +7,7 @@ import type {
   ExternalDiagramDefinition,
 } from './types';
 import { frontMatterRegex } from './frontmatter';
+import { UnknownDiagramError } from '../errors';
 
 const directive = /%{2}{\s*(?:(\w+)\s*:|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;
 const anyComment = /\s*%%.*\n/gm;
@@ -44,7 +45,7 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
     }
   }
 
-  throw new Error(`No diagram type detected for text: ${text}`);
+  throw new UnknownDiagramError(`No diagram type detected for text: ${text}`);
 };
 
 export const registerLazyLoadedDiagrams = (...diagrams: ExternalDiagramDefinition[]) => {

@@ -17,11 +17,7 @@ import { compile, serialize, stringify } from 'stylis';
 import { version } from '../package.json';
 import * as configApi from './config';
 import { addDiagrams } from './diagram-api/diagram-orchestration';
-import classDb from './diagrams/class/classDb';
-import flowDb from './diagrams/flowchart/flowDb';
-import ganttDb from './diagrams/gantt/ganttDb';
-import Diagram, { getDiagramFromText } from './Diagram';
-import type { ParseErrorFunction } from './Diagram';
+import { Diagram, getDiagramFromText } from './Diagram';
 import errorRenderer from './diagrams/error/errorRenderer';
 import { attachFunctions } from './interactionDb';
 import { log, setLogLevel } from './logger';
@@ -37,7 +33,7 @@ import { parseDirective } from './directiveUtils';
 
 // diagram names that support classDef statements
 const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram', 'stateDiagram-v2'];
-
+const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
   'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
 
@@ -74,16 +70,34 @@ interface DiagramStyleClassDef {
 // @ts-ignore Could replicate the type definition in d3. This also makes it possible to use the untyped info from the js diagram files.
 export type D3Element = any;
 
-// ----------------------------------------------------------------------------
-
 /**
+ * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
- * @param parseError - If set, handles errors.
+ * @param parseOptions - Options for parsing.
+ * @returns true if the diagram is valid, false otherwise if parseOptions.silent is true.
+ * @throws Error if the diagram is invalid and parseOptions.silent is false.
  */
-async function parse(text: string, parseError?: ParseErrorFunction): Promise<boolean> {
+
+async function parse(
+  text: string,
+  parseOptions?: {
+    silent?: boolean;
+  }
+): Promise<boolean | void> {
   addDiagrams();
-  const diagram = await getDiagramFromText(text, parseError);
-  return diagram.parse(text, parseError);
+  let error;
+  try {
+    const diagram = await getDiagramFromText(text);
+    diagram.parse();
+  } catch (err) {
+    error = err;
+  }
+  if (parseOptions?.silent) {
+    return error === undefined;
+  }
+  if (error) {
+    throw error;
+  }
 }
 
 /**
@@ -366,12 +380,16 @@ export const removeExistingElements = (
  * @returns Returns the rendered element as a string containing the SVG definition.
  */
 
+export interface RenderResult {
+  svg: string;
+  bindFunctions?: (element: Element) => void;
+}
+
 const render = async function (
   id: string,
   text: string,
-  cb?: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
   svgContainingElement?: Element
-): Promise<string> {
+): Promise<RenderResult> {
   addDiagrams();
 
   configApi.reset();
@@ -387,8 +405,7 @@ const render = async function (
   log.debug(config);
 
   // Check the maximum allowed text size
-  // TODO: Remove magic number
-  if (text.length > (config?.maxTextSize ?? 50000)) {
+  if (text.length > (config?.maxTextSize ?? MAX_TEXTLENGTH)) {
     text = MAX_TEXTLENGTH_EXCEEDED_MSG;
   }
 
@@ -453,11 +470,10 @@ const render = async function (
   // Create the diagram
 
   // Important that we do not create the diagram until after the directives have been included
-  let diag;
+  let diag: Diagram;
   let parseEncounteredException;
 
   try {
-    // diag = new Diagram(text);
     diag = await getDiagramFromText(text);
   } catch (error) {
     diag = new Diagram('error');
@@ -510,7 +526,7 @@ const render = async function (
   root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
 
   // Fix for when the base tag is used
-  let svgCode = root.select(enclosingDivID_selector).node().innerHTML;
+  let svgCode: string = root.select(enclosingDivID_selector).node().innerHTML;
 
   log.debug('config.arrowMarkerAbsolute', config.arrowMarkerAbsolute);
   svgCode = cleanUpSvgCode(svgCode, isSandboxed, evaluate(config.arrowMarkerAbsolute));
@@ -526,27 +542,6 @@ const render = async function (
     });
   }
 
-  // -------------------------------------------------------------------------------
-  // Do any callbacks (cb = callback)
-  if (cb !== undefined) {
-    switch (graphType) {
-      case 'flowchart':
-      case 'flowchart-v2':
-        cb(svgCode, flowDb.bindFunctions);
-        break;
-      case 'gantt':
-        cb(svgCode, ganttDb.bindFunctions);
-        break;
-      case 'class':
-      case 'classDiagram':
-        cb(svgCode, classDb.bindFunctions);
-        break;
-      default:
-        cb(svgCode);
-    }
-  } else {
-    log.debug('CB = undefined!');
-  }
   attachFunctions();
 
   // -------------------------------------------------------------------------------
@@ -561,7 +556,10 @@ const render = async function (
     throw parseEncounteredException;
   }
 
-  return svgCode;
+  return {
+    svg: svgCode,
+    bindFunctions: diag.db.bindFunctions,
+  };
 };
 
 /**

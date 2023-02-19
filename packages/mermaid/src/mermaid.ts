@@ -7,7 +7,7 @@ import dedent from 'ts-dedent';
 import { MermaidConfig } from './config.type';
 import { log } from './logger';
 import utils from './utils';
-import { mermaidAPI } from './mermaidAPI';
+import { mermaidAPI, RenderResult } from './mermaidAPI';
 import { registerLazyLoadedDiagrams } from './diagram-api/detectType';
 import type { ParseErrorFunction } from './Diagram';
 import { isDetailedError } from './utils';
@@ -44,10 +44,8 @@ export type { MermaidConfig, DetailedError, ExternalDiagramDefinition, ParseErro
  */
 const init = async function (
   config?: MermaidConfig,
-  // eslint-disable-next-line no-undef
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  callback?: Function
+  callback?: (id: string) => unknown
 ) {
   try {
     await initThrowsErrors(config, nodes, callback);
@@ -125,8 +123,7 @@ const loadExternalDiagrams = async (...diagrams: ExternalDiagramDefinition[]) =>
 const initThrowsErrors = async function (
   config?: MermaidConfig,
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  callback?: Function
+  callback?: (id: string) => unknown
 ) {
   const conf = mermaidAPI.getConfig();
 
@@ -188,20 +185,14 @@ const initThrowsErrors = async function (
       log.debug('Detected early reinit: ', init);
     }
     try {
-      await mermaidAPI.render(
-        id,
-        txt,
-        (svgCode: string, bindFunctions?: (el: Element) => void) => {
-          element.innerHTML = svgCode;
-          if (callback !== undefined) {
-            callback(id);
-          }
-          if (bindFunctions) {
-            bindFunctions(element);
-          }
-        },
-        element
-      );
+      const { svg, bindFunctions } = await mermaidAPI.render(id, txt, element);
+      element.innerHTML = svg;
+      if (callback) {
+        callback(id);
+      }
+      if (bindFunctions) {
+        bindFunctions(element);
+      }
     } catch (error) {
       handleError(error, errors, mermaid.parseError);
     }
@@ -296,15 +287,24 @@ const executeQueue = async () => {
 };
 
 /**
- * @param txt - The mermaid code to be parsed.
+ * Parse the text and validate the syntax.
+ * @param text - The mermaid diagram definition.
+ * @param parseOptions - Options for parsing.
+ * @returns true if the diagram is valid, false otherwise if parseOptions.silent is true.
+ * @throws Error if the diagram is invalid and parseOptions.silent is false.
  */
-const parse = (txt: string): Promise<boolean> => {
+const parse = async (
+  text: string,
+  parseOptions?: {
+    silent?: boolean;
+  }
+): Promise<boolean | void> => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the mermaidAPI.render call is done.
     // It will be queued first and will be executed when it is first in line
     const performCall = () =>
       new Promise((res, rej) => {
-        mermaidAPI.parse(txt, mermaid.parseError).then(
+        mermaidAPI.parse(text, parseOptions).then(
           (r) => {
             // This resolves for the promise for the queue handling
             res(r);
@@ -313,6 +313,7 @@ const parse = (txt: string): Promise<boolean> => {
           },
           (e) => {
             log.error('Error parsing', e);
+            mermaid.parseError?.(e);
             rej(e);
             reject(e);
           }
@@ -323,18 +324,13 @@ const parse = (txt: string): Promise<boolean> => {
   });
 };
 
-const render = (
-  id: string,
-  text: string,
-  cb?: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
-  container?: Element
-): Promise<string> => {
+const render = (id: string, text: string, container?: Element): Promise<RenderResult> => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the mermaidAPI.render call is done.
     // It will be queued first and will be executed when it is first in line
     const performCall = () =>
       new Promise((res, rej) => {
-        mermaidAPI.render(id, text, cb, container).then(
+        mermaidAPI.render(id, text, container).then(
           (r) => {
             // This resolves for the promise for the queue handling
             res(r);
@@ -343,6 +339,7 @@ const render = (
           },
           (e) => {
             log.error('Error parsing', e);
+            mermaid.parseError?.(e);
             rej(e);
             reject(e);
           }
@@ -355,7 +352,6 @@ const render = (
 
 const mermaid: {
   startOnLoad: boolean;
-  diagrams: any;
   parseError?: ParseErrorFunction;
   mermaidAPI: typeof mermaidAPI;
   parse: typeof parse;
@@ -368,7 +364,6 @@ const mermaid: {
   setParseErrorHandler: typeof setParseErrorHandler;
 } = {
   startOnLoad: true,
-  diagrams: {},
   mermaidAPI,
   parse,
   render,
