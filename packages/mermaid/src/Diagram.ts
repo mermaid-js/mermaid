@@ -78,7 +78,7 @@ export const getDiagramFromText = async (txt: string): Promise<Diagram> => {
     if (!loader) {
       throw new UnknownDiagramError(`Diagram ${type} not found.`);
     }
-    // Diagram not available, loading it
+    // Diagram not available, loading it.
     // new diagram will try getDiagram again and if fails then it is a valid throw
     const { id, diagram } = await loader();
     registerDiagram(id, diagram);
