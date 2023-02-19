@@ -23,7 +23,7 @@ const handler = (e) => {
 };
 
 const main = async () => {
-  await mkdir('stats');
+  await mkdir('stats').catch(() => {});
   const packageNames = Object.keys(packageOptions) as (keyof typeof packageOptions)[];
   for (const pkg of packageNames) {
     await buildPackage(pkg).catch(handler);

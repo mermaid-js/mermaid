@@ -1,7 +1,12 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <script src="./viewer.js" type="module"></script>
+    <script type="module">
+      import { init } from './viewer.js';
+      import mermaid from './mermaid.esm.mjs';
+      import external from './mermaid-example-diagram.esm.mjs';
+      init(mermaid, external);
+    </script>
     <link
       href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"

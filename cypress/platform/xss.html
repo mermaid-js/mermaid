@@ -1,6 +1,15 @@
 <html>
   <head>
-    <script src="./viewer.js" type="module"></script>
+    <script type="module">
+      import { init } from './viewer.js';
+      import mermaid from './mermaid.esm.mjs';
+      import external from './mermaid-example-diagram.esm.mjs';
+      mermaid.initialize({
+        startOnLoad: false,
+        useMaxWidth: true,
+      });
+      init(mermaid, external);
+    </script>
     <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
     <style>
       .malware {
@@ -32,13 +41,5 @@
       }
     </script>
   </head>
-  <body>
-    <script type="module">
-      import mermaid from './mermaid.esm.mjs';
-      mermaid.initialize({
-        startOnLoad: false,
-        useMaxWidth: true,
-      });
-    </script>
-  </body>
+  <body></body>
 </html>
