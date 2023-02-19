@@ -65,7 +65,7 @@ element will be removed when rendering is completed.
 
 #### Defined in
 
-[mermaidAPI.ts:387](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L387)
+[mermaidAPI.ts:384](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L384)
 
 ---
 
@@ -75,4 +75,4 @@ element will be removed when rendering is completed.
 
 #### Defined in
 
-[mermaidAPI.ts:386](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L386)
+[mermaidAPI.ts:383](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L383)
