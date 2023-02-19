@@ -7,11 +7,10 @@ import { MermaidConfig } from './config.type';
 import { log } from './logger';
 import utils from './utils';
 import { mermaidAPI, ParseOptions, RenderResult } from './mermaidAPI';
-import { registerLazyLoadedDiagrams } from './diagram-api/detectType';
+import { registerLazyLoadedDiagrams, loadRegisteredDiagrams } from './diagram-api/detectType';
 import type { ParseErrorFunction } from './Diagram';
 import { isDetailedError } from './utils';
 import type { DetailedError } from './utils';
-import { registerDiagram } from './diagram-api/diagramAPI';
 import { ExternalDiagramDefinition } from './diagram-api/types';
 
 export type {
@@ -61,30 +60,6 @@ const handleError = (error: unknown, errors: DetailedError[], parseError?: Parse
         error,
       });
     }
-  }
-};
-
-/**
- * This is an internal function and should not be made public, as it will likely change.
- * @internal
- * @param diagrams - Array of {@link ExternalDiagramDefinition}.
- */
-const loadExternalDiagrams = async (...diagrams: ExternalDiagramDefinition[]) => {
-  log.debug(`Loading ${diagrams.length} external diagrams`);
-  // Load all lazy loaded diagrams in parallel
-  const results = await Promise.allSettled(
-    diagrams.map(async ({ id, detector, loader }) => {
-      const { diagram } = await loader();
-      registerDiagram(id, diagram, detector);
-    })
-  );
-  const failed = results.filter((result) => result.status === 'rejected');
-  if (failed.length > 0) {
-    log.error(`Failed to load ${failed.length} external diagrams`);
-    for (const res of failed) {
-      log.error(res);
-    }
-    throw new Error(`Failed to load ${failed.length} external diagrams`);
   }
 };
 
@@ -251,7 +226,7 @@ const init = async function (
 /**
  * Used to register external diagram types.
  * @param diagrams - Array of {@link ExternalDiagramDefinition}.
- * @param opts - If opts.lazyLoad is true, the diagram will be loaded on demand.
+ * @param opts - If opts.lazyLoad is false, the diagrams will be loaded immediately.
  */
 const registerExternalDiagrams = async (
   diagrams: ExternalDiagramDefinition[],
@@ -261,10 +236,9 @@ const registerExternalDiagrams = async (
     lazyLoad?: boolean;
   } = {}
 ) => {
-  if (lazyLoad) {
-    registerLazyLoadedDiagrams(...diagrams);
-  } else {
-    await loadExternalDiagrams(...diagrams);
+  registerLazyLoadedDiagrams(...diagrams);
+  if (lazyLoad === false) {
+    await loadRegisteredDiagrams();
   }
 };
 
