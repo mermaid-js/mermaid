@@ -11,8 +11,7 @@ example-diagram
     <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.7/dist/mermaid.min.js"></script> -->
     <!-- <script type="module" src="./external-diagrams-mindmap.mjs" /> -->
     <script type="module">
-      import exampleDiagram from '../../packages/mermaid-example-diagram/src/detector';
-      // import example from '../../packages/mermaid-example-diagram/src/detector';
+      import exampleDiagram from './mermaid-example-diagram.esm.mjs';
       import mermaid from './mermaid.esm.mjs';
 
       await mermaid.registerExternalDiagrams([exampleDiagram]);
