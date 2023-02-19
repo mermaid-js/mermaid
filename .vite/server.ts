@@ -1,13 +1,7 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
+import cors from 'cors';
 import { createServer as createViteServer } from 'vite';
 
-const cors = (req: Request, res: Response, next: NextFunction) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-
-  next();
-};
 
 async function createServer() {
   const app = express();

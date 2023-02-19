@@ -331,8 +331,8 @@ The future proof way of setting the configuration is by using the initialization
 on what kind of integration you use.
 
 ```html
-<script src="../dist/mermaid.js"></script>
-<script>
+<script type="module">
+  import mermaid from './mermaid.esm.mjs';
   let config = { startOnLoad: true, flowchart: { useMaxWidth: false, htmlLabels: true } };
   mermaid.initialize(config);
 </script>

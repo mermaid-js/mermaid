@@ -8,8 +8,8 @@
     </div>
     <svg id="diagram"></svg>
 
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({ startOnLoad: false, logLevel: 0 });
 
       const graph = `
@@ -19,7 +19,7 @@
             `;
 
       const diagram = document.getElementById('diagram');
-      const svg = mermaid.render('diagram-svg', graph);
+      const { svg } = await mermaid.render('diagram-svg', graph);
       diagram.innerHTML = svg;
       if (window.Cypress) {
         window.rendered = true;
