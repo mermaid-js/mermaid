@@ -11,6 +11,7 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
     getBuildConfig({ entryName, minify: true, metafile: shouldVisualize })
   );
   if (metafile) {
+    // Upload metafile into https://esbuild.github.io/analyze/
     await writeFile(`stats/meta-${entryName}.json`, JSON.stringify(metafile));
   }
   await build(getBuildConfig({ entryName, minify: false, core: true }));
