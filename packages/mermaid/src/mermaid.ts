@@ -7,7 +7,7 @@ import dedent from 'ts-dedent';
 import { MermaidConfig } from './config.type';
 import { log } from './logger';
 import utils from './utils';
-import { mermaidAPI, RenderResult } from './mermaidAPI';
+import { mermaidAPI, ParseOptions, RenderResult } from './mermaidAPI';
 import { registerLazyLoadedDiagrams } from './diagram-api/detectType';
 import type { ParseErrorFunction } from './Diagram';
 import { isDetailedError } from './utils';
@@ -18,47 +18,20 @@ import { ExternalDiagramDefinition } from './diagram-api/types';
 export type { MermaidConfig, DetailedError, ExternalDiagramDefinition, ParseErrorFunction };
 
 /**
- * ## init
+ * The options used when running mermaid.
  *
- * Function that goes through the document to find the chart definitions in there and render them.
- *
- * The function tags the processed attributes with the attribute data-processed and ignores found
- * elements with the attribute already set. This way the init function can be triggered several
- * times.
- *
- * ```mermaid
- * graph LR;
- *  a(Find elements)-->b{Processed}
- *  b-->|Yes|c(Leave element)
- *  b-->|No |d(Transform)
- * ```
- *
- * Renders the mermaid diagrams
- *
- * @param config - **Deprecated**, please set configuration in {@link initialize}.
- * @param nodes - **Default**: `.mermaid`. One of the following:
- * - A DOM Node
- * - An array of DOM nodes (as would come from a jQuery selector)
- * - A W3C selector, a la `.mermaid`
- * @param callback - Called once for each rendered diagram's id.
+ * @param querySelector - The query selector to use when finding elements to render. Default: .mermaid
+ * @param nodes - The nodes to render. If this is set, querySelector will be ignored.
+ * @param postRenderCallback - A callback to call after each diagram is rendered.
+ * @param suppressErrors - If true, errors will be logged to the console, but not thrown. Default: false
  */
-const init = async function (
-  config?: MermaidConfig,
-  nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
-  callback?: (id: string) => unknown
-) {
-  try {
-    await initThrowsErrors(config, nodes, callback);
-  } catch (e) {
-    log.warn('Syntax Error rendering');
-    if (isDetailedError(e)) {
-      log.warn(e.str);
-    }
-    if (mermaid.parseError) {
-      mermaid.parseError(e as string);
-    }
-  }
-};
+export interface RunOptions {
+  // Default: .mermaid
+  querySelector?: string;
+  nodes?: ArrayLike<HTMLElement>;
+  postRenderCallback?: (id: string) => unknown;
+  suppressErrors?: boolean;
+}
 
 const handleError = (error: unknown, errors: DetailedError[], parseError?: ParseErrorFunction) => {
   log.warn(error);
@@ -110,48 +83,68 @@ const loadExternalDiagrams = async (...diagrams: ExternalDiagramDefinition[]) =>
 };
 
 /**
- * Equivalent to {@link init}, except an error will be thrown on error.
+ * ## run
  *
- * @param config - **Deprecated** Mermaid sequenceConfig.
- * @param nodes - One of:
- * - A DOM Node
- * - An array of DOM nodes (as would come from a jQuery selector)
- * - A W3C selector, a la `.mermaid` (default)
- * @param callback - Function that is called with the id of each generated mermaid diagram.
- * @returns Resolves on success, otherwise the {@link Promise} will be rejected.
+ * Function that goes through the document to find the chart definitions in there and render them.
+ *
+ * The function tags the processed attributes with the attribute data-processed and ignores found
+ * elements with the attribute already set. This way the init function can be triggered several
+ * times.
+ *
+ * ```mermaid
+ * graph LR;
+ *  a(Find elements)-->b{Processed}
+ *  b-->|Yes|c(Leave element)
+ *  b-->|No |d(Transform)
+ * ```
+ *
+ * Renders the mermaid diagrams
+ *
+ * @param options - Optional runtime configs
  */
-const initThrowsErrors = async function (
-  config?: MermaidConfig,
-  nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
-  callback?: (id: string) => unknown
+const run = async function (
+  options: RunOptions = {
+    querySelector: '.mermaid',
+  }
+) {
+  try {
+    await runThrowsErrors(options);
+  } catch (e) {
+    if (isDetailedError(e)) {
+      log.error(e.str);
+    }
+    if (mermaid.parseError) {
+      mermaid.parseError(e as string);
+    }
+    if (!options.suppressErrors) {
+      log.error('Use the suppressErrors option to suppress these errors');
+      throw e;
+    }
+  }
+};
+
+const runThrowsErrors = async function (
+  { postRenderCallback, querySelector, nodes }: Omit<RunOptions, 'suppressErrors'> = {
+    querySelector: '.mermaid',
+  }
 ) {
   const conf = mermaidAPI.getConfig();
 
-  if (config) {
-    // This is a legacy way of setting config. It is not documented and should be removed in the future.
-    // @ts-ignore: TODO Fix ts errors
-    mermaid.sequenceConfig = config;
-  }
+  log.debug(`${!postRenderCallback ? 'No ' : ''}Callback function found`);
 
-  // if last argument is a function this is the callback function
-  log.debug(`${!callback ? 'No ' : ''}Callback function found`);
   let nodesToProcess: ArrayLike<HTMLElement>;
-  if (nodes === undefined) {
-    nodesToProcess = document.querySelectorAll('.mermaid');
-  } else if (typeof nodes === 'string') {
-    nodesToProcess = document.querySelectorAll(nodes);
-  } else if (nodes instanceof HTMLElement) {
-    nodesToProcess = [nodes];
-  } else if (nodes instanceof NodeList) {
+  if (nodes) {
     nodesToProcess = nodes;
+  } else if (querySelector) {
+    nodesToProcess = document.querySelectorAll(querySelector);
   } else {
-    throw new Error('Invalid argument nodes for mermaid.init');
+    throw new Error('Nodes and querySelector are both undefined');
   }
 
   log.debug(`Found ${nodesToProcess.length} diagrams`);
-  if (config?.startOnLoad !== undefined) {
-    log.debug('Start On Load: ' + config?.startOnLoad);
-    mermaidAPI.updateSiteConfig({ startOnLoad: config?.startOnLoad });
+  if (conf?.startOnLoad !== undefined) {
+    log.debug('Start On Load: ' + conf?.startOnLoad);
+    mermaidAPI.updateSiteConfig({ startOnLoad: conf?.startOnLoad });
   }
 
   // generate the id of the diagram
@@ -187,8 +180,8 @@ const initThrowsErrors = async function (
     try {
       const { svg, bindFunctions } = await mermaidAPI.render(id, txt, element);
       element.innerHTML = svg;
-      if (callback) {
-        callback(id);
+      if (postRenderCallback) {
+        await postRenderCallback(id);
       }
       if (bindFunctions) {
         bindFunctions(element);
@@ -203,8 +196,50 @@ const initThrowsErrors = async function (
   }
 };
 
+/**
+ * Used to set configurations for mermaid.
+ * This function should be called before the run function.
+ * @param config - Configuration object for mermaid.
+ */
+
 const initialize = function (config: MermaidConfig) {
   mermaidAPI.initialize(config);
+};
+
+/**
+ * ## init
+ *
+ * @deprecated Use {@link initialize} and {@link run} instead.
+ *
+ * Renders the mermaid diagrams
+ *
+ * @param config - **Deprecated**, please set configuration in {@link initialize}.
+ * @param nodes - **Default**: `.mermaid`. One of the following:
+ * - A DOM Node
+ * - An array of DOM nodes (as would come from a jQuery selector)
+ * - A W3C selector, a la `.mermaid`
+ * @param callback - Called once for each rendered diagram's id.
+ */
+const init = async function (
+  config?: MermaidConfig,
+  nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
+  callback?: (id: string) => unknown
+) {
+  log.warn('mermaid.init is deprecated. Please use run instead.');
+  if (config) {
+    initialize(config);
+  }
+  const runOptions: RunOptions = { postRenderCallback: callback, querySelector: '.mermaid' };
+  if (typeof nodes === 'string') {
+    runOptions.querySelector = nodes;
+  } else if (nodes) {
+    if (nodes instanceof HTMLElement) {
+      runOptions.nodes = [nodes];
+    } else {
+      runOptions.nodes = nodes;
+    }
+  }
+  await run(runOptions);
 };
 
 /**
@@ -236,7 +271,7 @@ const contentLoaded = function () {
   if (mermaid.startOnLoad) {
     const { startOnLoad } = mermaidAPI.getConfig();
     if (startOnLoad) {
-      mermaid.init().catch((err) => log.error('Mermaid failed to initialize', err));
+      mermaid.run().catch((err) => log.error('Mermaid failed to initialize', err));
     }
   }
 };
@@ -260,10 +295,10 @@ if (typeof document !== 'undefined') {
  * This is provided for environments where the mermaid object can't directly have a new member added
  * to it (eg. dart interop wrapper). (Initially there is no parseError member of mermaid).
  *
- * @param newParseErrorHandler - New parseError() callback.
+ * @param parseErrorHandler - New parseError() callback.
  */
-const setParseErrorHandler = function (newParseErrorHandler: (err: any, hash: any) => void) {
-  mermaid.parseError = newParseErrorHandler;
+const setParseErrorHandler = function (parseErrorHandler: (err: any, hash: any) => void) {
+  mermaid.parseError = parseErrorHandler;
 };
 
 const executionQueue: (() => Promise<unknown>)[] = [];
@@ -290,15 +325,10 @@ const executeQueue = async () => {
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
  * @param parseOptions - Options for parsing.
- * @returns true if the diagram is valid, false otherwise if parseOptions.silent is true.
- * @throws Error if the diagram is invalid and parseOptions.silent is false.
+ * @returns true if the diagram is valid, false otherwise if parseOptions.suppressErrors is true.
+ * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false.
  */
-const parse = async (
-  text: string,
-  parseOptions?: {
-    silent?: boolean;
-  }
-): Promise<boolean | void> => {
+const parse = async (text: string, parseOptions?: ParseOptions): Promise<boolean | void> => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the mermaidAPI.render call is done.
     // It will be queued first and will be executed when it is first in line
@@ -357,7 +387,7 @@ const mermaid: {
   parse: typeof parse;
   render: typeof render;
   init: typeof init;
-  initThrowsErrors: typeof initThrowsErrors;
+  run: typeof run;
   registerExternalDiagrams: typeof registerExternalDiagrams;
   initialize: typeof initialize;
   contentLoaded: typeof contentLoaded;
@@ -368,7 +398,7 @@ const mermaid: {
   parse,
   render,
   init,
-  initThrowsErrors,
+  run,
   registerExternalDiagrams,
   initialize,
   parseError: undefined,

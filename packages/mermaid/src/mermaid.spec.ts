@@ -14,41 +14,43 @@ describe('when using mermaid and ', () => {
     it('should not start rendering with mermaid.startOnLoad set to false', async () => {
       mermaid.startOnLoad = false;
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
-      spyOn(mermaid, 'init');
+      spyOn(mermaid, 'run');
       mermaid.contentLoaded();
-      expect(mermaid.init).not.toHaveBeenCalled();
+      expect(mermaid.run).not.toHaveBeenCalled();
     });
 
     it('should start rendering with both startOnLoad set', async () => {
       mermaid.startOnLoad = true;
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
-      spyOn(mermaid, 'init');
+      spyOn(mermaid, 'run');
       mermaid.contentLoaded();
-      expect(mermaid.init).toHaveBeenCalled();
+      expect(mermaid.run).toHaveBeenCalled();
     });
 
     it('should start rendering with mermaid.startOnLoad', async () => {
       mermaid.startOnLoad = true;
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
-      spyOn(mermaid, 'init');
+      spyOn(mermaid, 'run');
       mermaid.contentLoaded();
-      expect(mermaid.init).toHaveBeenCalled();
+      expect(mermaid.run).toHaveBeenCalled();
     });
 
     it('should start rendering as a default with no changes performed', async () => {
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
-      spyOn(mermaid, 'init');
+      spyOn(mermaid, 'run');
       mermaid.contentLoaded();
-      expect(mermaid.init).toHaveBeenCalled();
+      expect(mermaid.run).toHaveBeenCalled();
     });
   });
 
-  describe('when using #initThrowsErrors', () => {
+  describe('when using #run', () => {
     it('should accept single node', async () => {
       const node = document.createElement('div');
       node.appendChild(document.createTextNode('graph TD;\na;'));
 
-      await mermaid.initThrowsErrors(undefined, node);
+      await mermaid.run({
+        nodes: [node],
+      });
       // mermaidAPI.render function has been mocked, since it doesn't yet work
       // in Node.JS (only works in browser)
       expect(mermaidAPI.render).toHaveBeenCalled();
@@ -73,7 +75,11 @@ describe('when using mermaid and ', () => {
         )
       ).rejects.toThrow('Failed to load 1 external diagrams');
 
-      expect(() => mermaid.initThrowsErrors(undefined, node)).not.toThrow();
+      await expect(
+        mermaid.run({
+          nodes: [node],
+        })
+      ).resolves.not.toThrow();
       // should still render, even if lazyLoadedDiagrams fails
       expect(mermaidAPI.render).toHaveBeenCalled();
     });

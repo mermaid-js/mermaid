@@ -2,7 +2,7 @@
 
 ## Async
 
-`init`, `parse`, `render` are now async.
+`parse`, `render` are now async.
 
 ## Lazy loading and asynchronisity
 
@@ -22,4 +22,37 @@ try {
 } catch (err) {
   parseError(err);
 }
+```
+
+## Init deprecated and InitThrowsErrors removed
+
+The config passed to `init` was not being used eariler.
+It will now be used.
+The `init` function is deprecated and will be removed in the next major release.
+init currently works as a wrapper to `initialize` and `run`.
+
+```js
+//< v10.0.0
+mermaid.init(config, selector, cb);
+
+//>= v10.0.0
+mermaid.initialize(config);
+mermaid.run({
+  querySelector: selector,
+  postRenderCallback: cb,
+  suppressErrors: true,
+});
+```
+
+```js
+//< v10.0.0
+mermaid.initThrowsErrors(config, selector, cb);
+
+//>= v10.0.0
+mermaid.initialize(config);
+mermaid.run({
+  querySelector: selector,
+  postRenderCallback: cb,
+  suppressErrors: false,
+});
 ```

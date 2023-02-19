@@ -7,7 +7,7 @@ const detector = (txt: string) => {
 };
 
 const loader = async () => {
-  const { diagram } = await import('./diagram-definition.js');
+  const { diagram } = await import('./timeline-definition.js');
   return { id, diagram };
 };
 

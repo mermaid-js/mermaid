@@ -683,7 +683,7 @@ describe('mermaidAPI', () => {
     });
     it('returns false for invalid definition with silent option', async () => {
       await expect(
-        mermaidAPI.parse('this is not a mermaid diagram definition', { silent: true })
+        mermaidAPI.parse('this is not a mermaid diagram definition', { suppressErrors: true })
       ).resolves.toBe(false);
     });
     it('resolves for valid definition', async () => {
@@ -693,7 +693,7 @@ describe('mermaidAPI', () => {
     });
     it('returns true for valid definition with silent option', async () => {
       await expect(
-        mermaidAPI.parse('graph TD;A--x|text including URL space|B;', { silent: true })
+        mermaidAPI.parse('graph TD;A--x|text including URL space|B;', { suppressErrors: true })
       ).resolves.toBe(true);
     });
   });
