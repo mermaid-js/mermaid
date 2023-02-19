@@ -66,6 +66,10 @@ interface DiagramStyleClassDef {
   textStyles?: string[];
 }
 
+export interface ParseOptions {
+  suppressErrors?: boolean;
+}
+
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
 // @ts-ignore Could replicate the type definition in d3. This also makes it possible to use the untyped info from the js diagram files.
 export type D3Element = any;
@@ -74,16 +78,11 @@ export type D3Element = any;
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
  * @param parseOptions - Options for parsing.
- * @returns true if the diagram is valid, false otherwise if parseOptions.silent is true.
- * @throws Error if the diagram is invalid and parseOptions.silent is false.
+ * @returns true if the diagram is valid, false otherwise if parseOptions.suppressErrors is true.
+ * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false.
  */
 
-async function parse(
-  text: string,
-  parseOptions?: {
-    silent?: boolean;
-  }
-): Promise<boolean | void> {
+async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean | void> {
   addDiagrams();
   let error;
   try {
@@ -92,7 +91,7 @@ async function parse(
   } catch (err) {
     error = err;
   }
-  if (parseOptions?.silent) {
+  if (parseOptions?.suppressErrors) {
     return error === undefined;
   }
   if (error) {
