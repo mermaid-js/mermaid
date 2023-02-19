@@ -182,3 +182,6 @@ They also serve as proof of concept, for the variety of things that can be built
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
 - [ExDoc](https://github.com/elixir-lang/ex_doc)
   - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)
+- [NiceGUI: Let any browser be the frontend of your Python code](https://nicegui.io)
+  - [ui.mermaid(...)](https://nicegui.io/reference#mermaid_diagrams)
+  - [ui.markdown(..., extras=['mermaid'])](https://nicegui.io/reference#markdown_element)
