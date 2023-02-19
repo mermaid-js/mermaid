@@ -396,7 +396,7 @@ Spaces can be added to a state by first defining the state with an id and then r
 
 In the following example there is a state with the id **yswsii** and description **Your state with spaces in it**.
 After it has been defined, **yswsii** is used in the diagram in the first transition (`[*] --> yswsii`)
-and also in the transition to **YetAnotherState** (`yswsii --> YetAnotherState`).
+and also in the transition to **YetAnotherState** (`yswsii --> YetAnotherState`).  
 (**yswsii** has been styled so that it is different from the other states.)
 
 ```mermaid-example

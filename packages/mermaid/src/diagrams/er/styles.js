@@ -32,7 +32,7 @@ const getStyles = (options) =>
     text-anchor: middle;
     font-size: 18px;
     fill: ${options.textColor};
-  }
+  }    
 `;
 
 export default getStyles;

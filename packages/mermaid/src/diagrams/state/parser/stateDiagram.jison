@@ -241,7 +241,7 @@ statement
         $$={ stmt: 'state', id: $3.trim(), note:{position: $2.trim(), text: $4.trim()}};
     }
     | note NOTE_TEXT AS ID
-	| directive
+  	| directive
     | direction
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }

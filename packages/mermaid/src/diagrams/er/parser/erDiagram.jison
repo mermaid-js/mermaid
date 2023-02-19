@@ -76,12 +76,12 @@ o\{                             return 'ZERO_OR_MORE';
 
 start
     : 'ER_DIAGRAM' document 'EOF' { /*console.log('finished parsing');*/ }
-	| directive start
+  	| directive start
     ;
 
 document
 	: /* empty */ { $$ = [] }
-	| document line {$1.push($2);$$ = $1}
+	| document line {$1.push($2);$$ = $1} 
 	;
 
 line

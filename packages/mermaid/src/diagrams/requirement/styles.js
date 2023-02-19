@@ -20,7 +20,7 @@ const getStyles = (options) => `
     stroke: ${options.requirementBorderColor};
     stroke-width: ${options.requirementBorderSize};
   }
-
+  
   .reqTitle, .reqLabel{
     fill:  ${options.requirementTextColor};
   }
