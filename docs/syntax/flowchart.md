@@ -183,6 +183,20 @@ flowchart LR
 
 ### A hexagon node
 
+Code:
+
+```mermaid-example
+flowchart LR
+    id1{{This is the text in the box}}
+```
+
+```mermaid
+flowchart LR
+    id1{{This is the text in the box}}
+```
+
+Render:
+
 ```mermaid-example
 flowchart LR
     id1{{This is the text in the box}}
