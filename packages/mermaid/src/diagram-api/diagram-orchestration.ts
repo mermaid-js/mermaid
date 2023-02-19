@@ -19,7 +19,6 @@ import timeline from '../diagrams/timeline/detector';
 import mindmap from '../diagrams/mindmap/detector';
 import { registerLazyLoadedDiagrams } from './detectType';
 
-
 let hasLoadedDiagrams = false;
 export const addDiagrams = () => {
   if (hasLoadedDiagrams) {
