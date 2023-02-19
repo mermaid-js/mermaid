@@ -1,4 +1,4 @@
-import { transformJison } from './jisonTransformer.js';
+import { transformJison } from '../.esbuild/jisonTransformer.js';
 const fileRegex = /\.(jison)$/;
 
 export default function jison() {

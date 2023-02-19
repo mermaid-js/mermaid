@@ -25,6 +25,9 @@ importers:
       '@types/express':
         specifier: ^4.17.17
         version: 4.17.17
+      '@types/express-http-proxy':
+        specifier: ^1.6.3
+        version: 1.6.3
       '@types/js-yaml':
         specifier: ^4.0.5
         version: 4.0.5
@@ -61,6 +64,9 @@ importers:
       '@vitest/ui':
         specifier: ^0.28.4
         version: 0.28.4
+      chokidar:
+        specifier: ^3.5.3
+        version: 3.5.3
       concurrently:
         specifier: ^7.5.0
         version: 7.5.0
@@ -118,6 +124,9 @@ importers:
       express:
         specifier: ^4.18.2
         version: 4.18.2
+      express-http-proxy:
+        specifier: ^1.6.3
+        version: 1.6.3
       globby:
         specifier: ^13.1.2
         version: 13.1.2
@@ -2880,6 +2889,12 @@ packages:
 
   /@types/estree/1.0.0:
     resolution: {integrity: sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ==}
+    dev: true
+
+  /@types/express-http-proxy/1.6.3:
+    resolution: {integrity: sha512-dX3+Cb0HNPtqhC5JUWzzuODHRlgJRZx7KvwKVVwkOvm+8vOtpsh3qy8+qLv5X1hs4vdVHWKyXf86DwJot5H8pg==}
+    dependencies:
+      '@types/express': 4.17.17
     dev: true
 
   /@types/express-serve-static-core/4.17.31:
@@ -5736,6 +5751,17 @@ packages:
       ms: 2.0.0
     dev: true
 
+  /debug/3.2.7:
+    resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+    dependencies:
+      ms: 2.1.3
+    dev: true
+
   /debug/3.2.7_supports-color@8.1.1:
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
     peerDependencies:
@@ -6090,6 +6116,10 @@ packages:
 
   /es-module-lexer/0.9.3:
     resolution: {integrity: sha512-1HQ2M2sPtxwnvOvT1ZClHyQDiggdNjURWpY2we6aMKCQiUVxTmVs2UYPLIrD84sS+kMdUwfBSylbJPwNnBrnHQ==}
+    dev: true
+
+  /es6-promise/4.2.8:
+    resolution: {integrity: sha512-HJDGx5daxeIvxdBxvG2cb9g4tEvwIk3i8+nhX0yGrYmZUzbkdg8QbDevheDB8gd0//uPj4c1EQua8Q+MViT0/w==}
     dev: true
 
   /esbuild/0.16.17:
@@ -6612,6 +6642,17 @@ packages:
       jest-matcher-utils: 29.3.1
       jest-message-util: 29.3.1
       jest-util: 29.3.1
+    dev: true
+
+  /express-http-proxy/1.6.3:
+    resolution: {integrity: sha512-/l77JHcOUrDUX8V67E287VEUQT0lbm71gdGVoodnlWBziarYKgMcpqT7xvh/HM8Jv52phw8Bd8tY+a7QjOr7Yg==}
+    engines: {node: '>=6.0.0'}
+    dependencies:
+      debug: 3.2.7
+      es6-promise: 4.2.8
+      raw-body: 2.5.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /express/4.18.2:
