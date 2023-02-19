@@ -1,9 +1,9 @@
 {
   "name": "mermaid",
-  "version": "10.0.0-rc.1",
+  "version": "10.0.0-rc.3",
   "description": "Markdown-ish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
-  "module": "./dist/mermaid.core.mjs",
   "type": "module",
+  "module": "./dist/mermaid.core.mjs",
   "types": "./dist/mermaid.d.ts",
   "exports": {
     ".": {
@@ -108,8 +108,5 @@
     "dist",
     "README.md"
   ],
-  "sideEffects": [
-    "**/*.css",
-    "**/*.scss"
-  ]
+  "sideEffects": false
 }

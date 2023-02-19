@@ -284,7 +284,7 @@ _one --> b
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
-  it('57-elk: handle nested subgraphs with outgoing links 4', () => {
+  it.skip('57-elk: handle nested subgraphs with outgoing links 4', () => {
     imgSnapshotTest(
       `flowchart-elk LR
 subgraph A

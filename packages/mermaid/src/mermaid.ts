@@ -3,7 +3,6 @@
  * functionality and to render the diagrams to svg code!
  */
 import dedent from 'ts-dedent';
-
 import { MermaidConfig } from './config.type';
 import { log } from './logger';
 import utils from './utils';
@@ -15,7 +14,14 @@ import type { DetailedError } from './utils';
 import { registerDiagram } from './diagram-api/diagramAPI';
 import { ExternalDiagramDefinition } from './diagram-api/types';
 
-export type { MermaidConfig, DetailedError, ExternalDiagramDefinition, ParseErrorFunction };
+export type {
+  MermaidConfig,
+  DetailedError,
+  ExternalDiagramDefinition,
+  ParseErrorFunction,
+  RenderResult,
+  ParseOptions,
+};
 
 /**
  * The options used when running mermaid.
