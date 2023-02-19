@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Mermaid Quick Test Page</title>
+    <title>Gantt | Mermaid Quick Test Page</title>
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
     <style>
       div.mermaid {
@@ -13,25 +13,177 @@
   </head>
 
   <body>
+    <h1>Gantt chart diagram demos</h1>
     <!-- accDescription Tasks for Q4 -->
     <pre class="mermaid">
-gantt
-  title A Gantt Diagram
-  accDescription Remaining Q4 Tasks
-  dateFormat  YYYY-MM-DD
-  section Section
-  A task           :a1, 2014-01-01, 30d
-  Another task     :after a1  , 20d
-  section Another
-  Task in sec      :2014-01-12  , 12d
-  another task      : 24d
+      gantt
+        title A Gantt Diagram
+        accTitle: A simple sample gantt diagram
+        accDescr: 2 sections with 2 tasks each, from 2014
+        dateFormat  YYYY-MM-DD
+        section Section
+        A task           :a1, 2014-01-01, 30d
+        Another task     :after a1  , 20d
+        section Another
+        Task in sec      :2014-01-12  , 12d
+        another task      : 24d
+    </pre>
+    <hr />
 
+    <pre class="mermaid">
+    gantt
+      title Airworks roadmap
+      dateFormat YYYY-MM-DD
+      axisFormat %m-%d %a
+      excludes	weekends, 2021-10-01,2021-10-04,2021-10-05,2021-10-06,2021-10-07
+      includes 2021-10-09
 
-</pre
-    >
+      section Airworks 3.4.1
+      开发	:b, 2021-10-07, 5d
+      测试	:after b, 4d
+      OK  :milestore
+      section Airworks 3.4.2
+      开发	:a, 2021-10-09, 4d
+      测试	:after a, 4d
+    </pre>
+    <hr />
 
-    <script src="./mermaid.js"></script>
+    <pre class="mermaid">
+    gantt
+    title Exclusive end dates (Manual date should end on 3d)
+    dateFormat YYYY-MM-DD
+    axisFormat %d
+    section Section1
+    2 Days: 1, 2019-01-01,2d
+    Manual Date: 2, 2019-01-01,2019-01-03
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+    gantt
+    title Inclusive end dates (Manual date should end on 4th)
+    dateFormat YYYY-MM-DD
+    axisFormat %d
+    inclusiveEndDates
+    section Section1
+    2 Days: 1, 2019-01-01,2d
+    Manual Date: 2, 2019-01-01,2019-01-03
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+    gantt
+    title Hide today marker (vertical line should not be visible)
+    dateFormat Z
+    axisFormat %d/%m
+    todayMarker off
+    section Section1
+    Today: 1, -01:00, 5min
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+    gantt
+    title Style today marker (vertical line should be 5px wide and half-transparent blue)
+    dateFormat Z
+    axisFormat %d/%m
+    todayMarker stroke-width:5px,stroke:#00f,opacity:0.5
+    section Section1
+    Today: 1, -01:00, 5min
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+    gantt
+    dateFormat YYYY-MM-DD
+    axisFormat %d/%m
+    title Adding GANTT diagram to mermaid
+    excludes weekdays 2014-01-10
+
+    section A section
+    Completed task :done, des1, 2014-01-06,2014-01-08
+    Active task :active, des2, 2014-01-09, 3d
+    Future task : des3, after des2, 5d
+    Future task2 : des4, after des3, 5d
+
+    section Critical tasks
+    Completed task in the critical line :crit, done, 2014-01-06,24h
+    Implement parser and jison :crit, done, after des1, 2d
+    Create tests for parser :crit, active, 3d
+    Future task in critical line :crit, 5d
+    Create tests for renderer :2d
+    Add to mermaid :1d
+
+    section Documentation
+    Describe gantt syntax :active, a1, after des1, 3d
+    Add gantt diagram to demo page :after a1 , 20h
+    Add another diagram to demo page :doc1, after a1 , 48h
+
+    section Clickable
+    Visit mermaidjs :active, cl1, 2014-01-07,2014-01-10
+    Calling a Callback (look at the console log) :cl2, after cl1, 3d
+
+    click cl1 href "https://mermaidjs.github.io/"
+    click cl2 call ganttTestClick("test", test, test)
+
+    section Last section
+    Describe gantt syntax :after doc1, 3d
+    Add gantt diagram to demo page : 20h
+    Add another diagram to demo page : 48h
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+    gantt
+    dateFormat YYYY-MM-DD
+    axisFormat %d/%m
+    title GANTT diagram with multiline section titles
+    excludes weekdays 2014-01-10
+
+    section A section<br>multiline
+    Completed task : done, des1, 2014-01-06,2014-01-08
+    Active task : active, des2, 2014-01-09, 3d
+    Future task : des3, after des2, 5d
+    Future task2 : des4, after des3, 5d
+
+    section Critical tasks<br />multiline
+    Completed task in the critical line : crit, done, 2014-01-06, 24h
+    Implement parser and jison : crit, done, after des1, 2d
+    Create tests for parser : crit, active, 3d
+    Future task in critical line : crit, 5d
+    Create tests for renderer : 2d
+    Add to mermaid : 1d
+
+    section Documentation<br />multiline
+    Describe gantt syntax : active, a1, after des1, 3d
+    Add gantt diagram to demo page : after a1, 20h
+    Add another diagram to demo page : doc1, after a1, 48h
+
+    section Last section<br />multiline
+    Describe gantt syntax : after doc1, 3d
+    Add gantt diagram to demo page : 20h
+    Add another diagram to demo page : 48h
+    </pre>
+    <hr />
+
     <script>
+      function ganttTestClick(a, b, c) {
+        console.log('a:', a);
+        console.log('b:', b);
+        console.log('c:', c);
+      }
+      function testClick(nodeId) {
+        console.log('clicked', nodeId);
+        let originalBgColor = document.querySelector('body').style.backgroundColor;
+        document.querySelector('body').style.backgroundColor = 'yellow';
+        setTimeout(function () {
+          document.querySelector('body').style.backgroundColor = originalBgColor;
+        }, 100);
+      }
+    </script>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         logLevel: 3,
         securityLevel: 'loose',

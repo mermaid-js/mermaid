@@ -180,7 +180,48 @@ describe('Git Graph diagram', () => {
       {}
     );
   });
-
+  it('11: should render a gitgraph with cherry pick commit with custom tag', () => {
+    imgSnapshotTest(
+      `
+    gitGraph
+       commit id: "ZERO"
+       branch develop
+       commit id:"A"
+       checkout main
+       commit id:"ONE"
+       checkout develop
+       commit id:"B"
+       checkout main
+       commit id:"TWO"
+       cherry-pick id:"A" tag: "snapshot"
+       commit id:"THREE"
+       checkout develop
+       commit id:"C"
+      `,
+      {}
+    );
+  });
+  it('11: should render a gitgraph with cherry pick commit with no tag', () => {
+    imgSnapshotTest(
+      `
+    gitGraph
+       commit id: "ZERO"
+       branch develop
+       commit id:"A"
+       checkout main
+       commit id:"ONE"
+       checkout develop
+       commit id:"B"
+       checkout main
+       commit id:"TWO"
+       cherry-pick id:"A" tag: ""
+       commit id:"THREE"
+       checkout develop
+       commit id:"C"
+      `,
+      {}
+    );
+  });
   it('11: should render a simple gitgraph with two cherry pick commit', () => {
     imgSnapshotTest(
       `
@@ -207,7 +248,6 @@ describe('Git Graph diagram', () => {
       {}
     );
   });
-
   it('12: should render commits for more than 8 branches', () => {
     imgSnapshotTest(
       `
@@ -279,6 +319,17 @@ describe('Git Graph diagram', () => {
        checkout main
        commit id: "9"
       `,
+      {}
+    );
+  });
+  it('1433: should render a simple gitgraph with a title', () => {
+    imgSnapshotTest(
+      `---
+title: simple gitGraph
+---
+gitGraph
+  commit id: "1-abcdefg"
+`,
       {}
     );
   });

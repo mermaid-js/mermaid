@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Mermaid Quick Test Page</title>
+    <title>Data Flow Mermaid Quick Test Page</title>
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
     <style>
       div.mermaid {
@@ -13,11 +13,15 @@
     </style>
   </head>
   <body>
-    <h2>Data Flow Diagram Example</h2>
+    <h1>Data Flow Diagram demos</h1>
     <pre class="mermaid">
     flowchart LR
+      accTitle: A simple linear flowchart.
+      accDescr: A Database has input to a circle System has output to a square Customer.
       DataStore[|borders:tb|Database] -->|input| Process((System)) -->|output| Entity[Customer];
     </pre>
+
+    <hr />
 
     <h2>Borders Example</h2>
     <pre class="mermaid">
@@ -30,8 +34,8 @@
       noSide[|borders:no| stroke no side ];
     </pre>
 
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         theme: 'forest',
         logLevel: 3,
@@ -42,7 +46,7 @@
     <script>
       function testClick(nodeId) {
         console.log('clicked', nodeId);
-        var originalBgColor = document.querySelector('body').style.backgroundColor;
+        let originalBgColor = document.querySelector('body').style.backgroundColor;
         document.querySelector('body').style.backgroundColor = 'yellow';
         setTimeout(function () {
           document.querySelector('body').style.backgroundColor = originalBgColor;

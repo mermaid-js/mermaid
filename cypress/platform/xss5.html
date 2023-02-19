@@ -49,8 +49,8 @@
       <div id="diagram" class="mermaid"></div>
       <div id="res" class=""></div>
     </div>
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
@@ -92,17 +92,16 @@
         document.getElementsByTagName('body')[0].appendChild(div);
         throw new Error('XSS Succeeded');
       }
-      var diagram = 'graph LR\n';
+      let diagram = 'graph LR\n';
       diagram += 'B-->D("<img onerror=location=`java';
       // diagram += "script\u003aalert\u0028document.domain\u0029\` src=x>\"\);\n";
       diagram += 'script\x3a;xssAttack\u0028\u0029` src=x>");\n';
 
       console.log(diagram);
       // document.querySelector('#diagram').innerHTML = diagram;
-      mermaid.render('diagram', diagram, (res) => {
-        console.log(res);
-        document.querySelector('#res').innerHTML = res;
-      });
+      const { svg } = await mermaid.render('diagram', diagram);
+      console.log(res);
+      document.querySelector('#res').innerHTML = svg;
     </script>
   </body>
 </html>

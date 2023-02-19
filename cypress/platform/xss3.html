@@ -36,15 +36,15 @@
       graph LR
           A --> B
     </pre>
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         startOnLoad: true,
         useMaxWidth: true,
       });
-      var cnt = 0;
-      var a;
-      var handler = setInterval(() => {
+      let cnt = 0;
+      let a;
+      const handler = setInterval(() => {
         cnt++;
         a = {};
         if (typeof a.polluted !== 'undefined') {

@@ -49,8 +49,8 @@
       <div id="diagram" class="mermaid"></div>
       <div id="res" class=""></div>
     </div>
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
@@ -85,7 +85,7 @@
         alert('It worked');
       }
 
-      var diagram = '%%{init: {"flowchart": {"htmlLabels": "true"}} }%%\n';
+      let diagram = '%%{init: {"flowchart": {"htmlLabels": "true"}} }%%\n';
       diagram += 'flowchart\n';
       diagram += 'A["<ifra';
       diagram += "me srcdoc='<scrip";
@@ -95,9 +95,8 @@
 
       console.log(diagram);
       // document.querySelector('#diagram').innerHTML = diagram;
-      mermaid.render('diagram', diagram, (res) => {
-        document.querySelector('#res').innerHTML = res;
-      });
+      const { svg } = await mermaid.render('diagram', diagram);
+      document.querySelector('#res').innerHTML = svg;
     </script>
   </body>
 </html>

@@ -478,4 +478,33 @@ describe('Class diagram V2', () => {
     );
     cy.get('svg');
   });
+
+  it('18: should render a simple class diagram with notes', () => {
+    imgSnapshotTest(
+      `
+      classDiagram-v2
+        note "I love this diagram!\nDo you love it?"
+        class Class10 {
+            int id
+          size()
+        }
+        note for Class10 "Cool class\nI said it's very cool class!"
+
+        `,
+      { logLevel: 1, flowchart: { htmlLabels: false } }
+    );
+    cy.get('svg');
+  });
+
+  it('1433: should render a simple class with a title', () => {
+    imgSnapshotTest(
+      `---
+title: simple class diagram
+---
+classDiagram-v2
+class Class10
+`,
+      {}
+    );
+  });
 });

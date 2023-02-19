@@ -7,6 +7,10 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
     <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
       href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"
     />
@@ -25,6 +29,12 @@
       }
       .mermaid svg {
         /* font-size: 18px !important; */
+        background-color: #eee;
+        background-image: radial-gradient(#fff 1%, transparent 11%),
+          radial-gradient(#fff 1%, transparent 11%);
+        background-size: 20px 20px;
+        background-position: 0 0, 10px 10px;
+        background-repeat: repeat;
       }
       .malware {
         position: fixed;
@@ -44,42 +54,246 @@
     </style>
   </head>
   <body>
-    <div>Security check</div>
-    <div class="flex">
-      <pre id="diagram" class="mermaid">
-    flowchart TD
-    A[myClass1] --> B[default] & C[default]
-    B[default] & C[default] --> D[myClass2]
-    classDef default stroke-width:2px,fill:none,stroke:silver
-    classDef node color:red
-    classDef myClass1 color:#0000ff
-    classDef myClass2 stroke:#0000ff,fill:#ccccff
-    class A myClass1
-    class D myClass2
+    <pre id="diagram" class="mermaid">
+%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
+graph BT
+a{The cat in the hat} -- 1o --> b
+a -- 2o --> c
+a -- 3o --> d
+g --2i--> a
+d --1i--> a
+h --3i -->a
+b --> d(The dog in the hog)
+c --> d
+    </pre>
+    <pre id="diagram" class="mermaid2">
+flowchart-elk TB
+      a --> b
+      a --> c
+      b --> d
+      c --> d
+    </pre>
+    <pre id="diagram" class="mermaid2">
+%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
+flowchart TB
+  %% I could not figure out how to use double quotes in labels in Mermaid
+  subgraph ibm[IBM Espresso CPU]
+    core0[IBM PowerPC Broadway Core 0]
+    core1[IBM PowerPC Broadway Core 1]
+    core2[IBM PowerPC Broadway Core 2]
+
+    rom[16 KB ROM]
+
+    core0 --- core2
+
+    rom --> core2
+  end
+
+  subgraph amd[AMD Latte GPU]
+    mem[Memory & I/O Bridge]
+    dram[DRAM Controller]
+    edram[32 MB EDRAM MEM1]
+    rom[512 B SEEPROM]
+
+    sata[SATA IF]
+    exi[EXI]
+
+    subgraph gx[GX]
+      sram[3 MB 1T-SRAM]
+    end
+
+    radeon[AMD Radeon R7xx GX2]
+
+    mem --- gx
+    mem --- radeon
+
+    rom --- mem
+
+    mem --- sata
+    mem --- exi
+
+    dram --- sata
+    dram --- exi
+  end
+
+  ddr3[2 GB DDR3 RAM MEM2]
+
+  mem --- ddr3
+  dram --- ddr3
+  edram --- ddr3
+
+  core1 --- mem
+
+  exi --- rtc
+  rtc{{rtc}}
+</pre
+    >
+    <br />
+    <pre id="diagram" class="mermaid2">
+flowchart TB
+  %% I could not figure out how to use double quotes in labels in Mermaid
+  subgraph ibm[IBM Espresso CPU]
+    core0[IBM PowerPC Broadway Core 0]
+    core1[IBM PowerPC Broadway Core 1]
+    core2[IBM PowerPC Broadway Core 2]
+
+    rom[16 KB ROM]
+
+    core0 --- core2
+
+    rom --> core2
+  end
+
+  subgraph amd[AMD Latte GPU]
+    mem[Memory & I/O Bridge]
+    dram[DRAM Controller]
+    edram[32 MB EDRAM MEM1]
+    rom[512 B SEEPROM]
+
+    sata[SATA IF]
+    exi[EXI]
+
+    subgraph gx[GX]
+      sram[3 MB 1T-SRAM]
+    end
+
+    radeon[AMD Radeon R7xx GX2]
+
+    mem --- gx
+    mem --- radeon
+
+    rom --- mem
+
+    mem --- sata
+    mem --- exi
+
+    dram --- sata
+    dram --- exi
+  end
+
+  ddr3[2 GB DDR3 RAM MEM2]
+
+  mem --- ddr3
+  dram --- ddr3
+  edram --- ddr3
+
+  core1 --- mem
+
+  exi --- rtc
+  rtc{{rtc}}
+</pre
+    >
+    <br />
+    &nbsp;
+    <pre id="diagram" class="mermaid2">
+      flowchart LR
+  B1 --be be--x B2
+  B1 --bo bo--o B3
+  subgraph Ugge
+      B2
+      B3
+      subgraph inner
+          B4
+          B5
+      end
+      subgraph inner2
+        subgraph deeper
+          C4
+          C5
+        end
+        C6
+      end
+
+      B4 --> C4
+
+      B3 -- X --> B4
+      B2 --> inner
+
+      C4 --> C5
+  end
+
+  subgraph outer
+      B6
+  end
+  B6 --> B5
   </pre
-      >
-      <div id="res" class=""></div>
-    </div>
-    <script src="./mermaid.js"></script>
-    <script>
+    >
+    <pre id="diagram" class="mermaid2">
+sequenceDiagram
+    Customer->>+Stripe: Makes a payment request
+    Stripe->>+Bank: Forwards the payment request to the bank
+    Bank->>+Customer: Asks for authorization
+    Customer->>+Bank: Provides authorization
+    Bank->>+Stripe: Sends a response with payment details
+    Stripe->>+Merchant: Sends a notification of payment receipt
+    Merchant->>+Stripe: Confirms the payment
+    Stripe->>+Customer: Sends a confirmation of payment
+    Customer->>+Merchant: Receives goods or services
+        </pre
+    >
+    <pre id="diagram" class="mermaid2">
+mindmap
+  root((mindmap))
+    Origins
+      Long history
+      ::icon(fa fa-book)
+      Popularisation
+        British popular psychology author Tony Buzan
+    Research
+      On effectiveness<br/>and features
+      On Automatic creation
+        Uses
+            Creative techniques
+            Strategic planning
+            Argument mapping
+    Tools
+      Pen and paper
+      Mermaid
+    </pre>
+    <br />
+    <pre id="diagram" class="mermaid2">
+  example-diagram
+    </pre>
+
+    <!-- <div id="cy"></div> -->
+    <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
+    <!-- <script src="./mermaid-example-diagram-detector.js"></script>    -->
+    <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.7/dist/mermaid.min.js"></script> -->
+    <!-- <script src="./mermaid.js"></script> -->
+
+    <script type="module">
+      // import mindmap from '../../packages/mermaid-mindmap/src/detector';
+      import example from '../../packages/mermaid-example-diagram/src/detector';
+      import mermaid from '../../packages/mermaid/src/mermaid';
+      await mermaid.registerExternalDiagrams([example]);
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        startOnLoad: false,
-        logLevel: 0,
-        // themeVariables: {relationLabelColor: 'red'}
+        theme: 'forest',
+        startOnLoad: true,
+        logLevel: 5,
+        flowchart: {
+          // defaultRenderer: 'elk',
+          useMaxWidth: false,
+          htmlLabels: true,
+        },
+        gantt: {
+          useMaxWidth: false,
+        },
+        useMaxWidth: false,
       });
       function callback() {
         alert('It worked');
       }
-
-      // document.querySelector('#diagram').innerHTML = diagram;
-      try {
-        mermaid.initThrowsErrors(undefined, '#diagram');
-      } catch (err) {
-        console.log('Caught error:', err);
-      }
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+      // mermaid.test1('first_slow', 1200).then((r) => console.info(r));
+      // mermaid.test1('second_fast', 200).then((r) => console.info(r));
+      // mermaid.test1('third_fast', 200).then((r) => console.info(r));
+      // mermaid.test1('forth_slow', 1200).then((r) => console.info(r));
     </script>
   </body>
 </html>

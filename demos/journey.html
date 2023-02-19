@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -14,21 +14,26 @@
   </head>
 
   <body>
+    <h1>Journey diagram demo</h1>
     <pre class="mermaid">
-        journey
-        title My day
-        accDescription A user journey diagram of a typical day in my life
-        section Go to work
-          Make tea: 5: Me
-          Go upstairs: 3: Me
-          Do work: 1: Me, Cat
-        section Go home
-          Go downstairs: 5: Me
-          Sit down: 5: Me
+    ---
+    title: My working day
+    ---
+     journey
+      accTitle: Very simple journey demo
+      accDescr: 2 main sections: work and home, each with just a few tasks
+
+    section Go to work
+      Make tea: 5: Me
+      Go upstairs: 3: Me
+      Do work: 1: Me, Cat
+    section Go home
+      Go downstairs: 5: Me
+      Sit down: 3: Me
 				</pre>
 
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         theme: 'forest',
         logLevel: 3,

@@ -1,0 +1,65 @@
+{
+  "name": "@mermaid-js/mermaid-example-diagram",
+  "version": "9.3.0",
+  "description": "Example of external diagram module for MermaidJS.",
+  "module": "dist/mermaid-example-diagram.core.mjs",
+  "types": "dist/detector.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/mermaid-example-diagram.core.mjs",
+      "types": "./dist/detector.d.ts"
+    },
+    "./*": "./*"
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "example",
+    "mermaid"
+  ],
+  "scripts": {
+    "prepublishOnly": "pnpm -w run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid"
+  },
+  "author": "Knut Sveidqvist",
+  "license": "MIT",
+  "standard": {
+    "ignore": [
+      "**/parser/*.js",
+      "dist/**/*.js",
+      "cypress/**/*.js"
+    ],
+    "globals": [
+      "page"
+    ]
+  },
+  "dependencies": {
+    "@braintree/sanitize-url": "^6.0.0",
+    "cytoscape": "^3.23.0",
+    "cytoscape-cose-bilkent": "^4.1.0",
+    "cytoscape-fcose": "^2.1.0",
+    "d3": "^7.0.0",
+    "khroma": "^2.0.0",
+    "non-layered-tidy-tree-layout": "^2.0.2"
+  },
+  "devDependencies": {
+    "@types/cytoscape": "^3.19.9",
+    "concurrently": "^7.5.0",
+    "rimraf": "^4.0.0",
+    "mermaid": "workspace:*"
+  },
+  "resolutions": {
+    "d3": "^7.0.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ]
+}

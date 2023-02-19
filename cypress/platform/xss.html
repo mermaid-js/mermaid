@@ -1,6 +1,6 @@
 <html>
   <head>
-    <script src="/e2e.js"></script>
+    <script src="./viewer.js" type="module"></script>
     <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
     <style>
       .malware {
@@ -33,8 +33,8 @@
     </script>
   </head>
   <body>
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         startOnLoad: false,
         useMaxWidth: true,

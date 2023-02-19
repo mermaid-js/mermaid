@@ -1,16 +1,28 @@
-import { Base64 } from 'js-base64';
-import mermaid2 from '../../src/mermaid';
+import mermaid2 from '../../packages/mermaid/src/mermaid';
+import externalExample from '../../packages/mermaid-example-diagram/src/detector';
+
+function b64ToUtf8(str) {
+  return decodeURIComponent(escape(window.atob(str)));
+}
+
+// Adds a rendered flag to window when rendering is done, so cypress can wait for it.
+function markRendered() {
+  if (window.Cypress) {
+    window.rendered = true;
+  }
+}
 
 /**
  * ##contentLoaded Callback function that is called when page is loaded. This functions fetches
- * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the page.
+ * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the
+ * page.
  */
-const contentLoaded = function () {
+const contentLoaded = async function () {
   let pos = document.location.href.indexOf('?graph=');
   if (pos > 0) {
     pos = pos + 7;
     const graphBase64 = document.location.href.substr(pos);
-    const graphObj = JSON.parse(Base64.decode(graphBase64));
+    const graphObj = JSON.parse(b64ToUtf8(graphBase64));
     if (graphObj.mermaid && graphObj.mermaid.theme === 'dark') {
       document.body.style.background = '#3f3f3f';
     }
@@ -32,8 +44,10 @@ const contentLoaded = function () {
       document.getElementsByTagName('body')[0].appendChild(div);
     }
 
-    global.mermaid.initialize(graphObj.mermaid);
-    global.mermaid.init();
+    await mermaid2.registerExternalDiagrams([externalExample]);
+    mermaid2.initialize(graphObj.mermaid);
+    await mermaid2.init();
+    markRendered();
   }
 };
 
@@ -48,7 +62,7 @@ function merge(current, update) {
     if (
       current.hasOwnProperty(key) &&
       typeof current[key] === 'object' &&
-      !(current[key] instanceof Array)
+      !Array.isArray(current[key])
     ) {
       merge(current[key], update[key]);
 
@@ -61,12 +75,12 @@ function merge(current, update) {
   return current;
 }
 
-const contentLoadedApi = function () {
+const contentLoadedApi = async function () {
   let pos = document.location.href.indexOf('?graph=');
   if (pos > 0) {
     pos = pos + 7;
     const graphBase64 = document.location.href.substr(pos);
-    const graphObj = JSON.parse(Base64.decode(graphBase64));
+    const graphObj = JSON.parse(b64ToUtf8(graphBase64));
     // const graph = 'hello'
     if (Array.isArray(graphObj.code)) {
       const numCodes = graphObj.code.length;
@@ -88,38 +102,28 @@ const contentLoadedApi = function () {
       mermaid2.initialize(cnf);
 
       for (let i = 0; i < numCodes; i++) {
-        mermaid2.render(
+        const { svg, bindFunctions } = await mermaid2.render(
           'newid' + i,
           graphObj.code[i],
-          (svgCode, bindFunctions) => {
-            div.innerHTML = svgCode;
-
-            bindFunctions(div);
-          },
           divs[i]
         );
+        div.innerHTML = svg;
+        bindFunctions(div);
       }
     } else {
       const div = document.createElement('div');
       div.id = 'block';
       div.className = 'mermaid';
-      // div.innerHTML = graphObj.code
       console.warn('graphObj.mermaid', graphObj.mermaid);
       document.getElementsByTagName('body')[0].appendChild(div);
       mermaid2.initialize(graphObj.mermaid);
 
-      mermaid2.render(
-        'newid',
-        graphObj.code,
-        (svgCode, bindFunctions) => {
-          div.innerHTML = svgCode;
-
-          if (bindFunctions) bindFunctions(div);
-        },
-        div
-      );
+      const { svg, bindFunctions } = await mermaid2.render('newid', graphObj.code, div);
+      div.innerHTML = svg;
+      bindFunctions(div);
     }
   }
+  markRendered();
 };
 
 if (typeof document !== 'undefined') {
@@ -131,10 +135,10 @@ if (typeof document !== 'undefined') {
     function () {
       if (this.location.href.match('xss.html')) {
         this.console.log('Using api');
-        contentLoadedApi();
+        void contentLoadedApi();
       } else {
         this.console.log('Not using api');
-        contentLoaded();
+        void contentLoaded();
       }
     },
     false

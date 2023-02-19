@@ -92,7 +92,7 @@ describe('Gantt diagram', () => {
       {}
     );
   });
-  it('should render a gantt chart for issue #1060', () => {
+  it('should FAIL redering a gantt chart for issue #1060 with invalid date', () => {
     imgSnapshotTest(
       `
       gantt
@@ -310,35 +310,129 @@ describe('Gantt diagram', () => {
     );
   });
 
-  it('should render accessibility tags', function () {
-    const expectedTitle = 'Gantt Diagram';
-    const expectedAccDescription = 'Tasks for Q4';
-    renderGraph(
+  it('should render a gantt diagram with tick is 15 minutes', () => {
+    imgSnapshotTest(
       `
       gantt
-      accTitle: ${expectedTitle}
-      accDescr: ${expectedAccDescription}
-      dateFormat  YYYY-MM-DD
-      section Section
-      A task :a1, 2014-01-01, 30d
+        title A Gantt Diagram
+        dateFormat   YYYY-MM-DD
+        axisFormat   %H:%M
+        tickInterval 15minute
+        excludes     weekends
+
+        section Section
+        A task           : a1, 2022-10-03, 6h
+        Another task     : after a1, 6h
+        section Another
+        Task in sec      : 2022-10-03, 3h
+        another task     : 3h
       `,
       {}
     );
-    cy.get('svg').should((svg) => {
-      const el = svg.get(0);
-      const children = Array.from(el.children);
+  });
 
-      const titleEl = children.find(function (node) {
-        return node.tagName === 'title';
-      });
-      const descriptionEl = children.find(function (node) {
-        return node.tagName === 'desc';
-      });
+  it('should render a gantt diagram with tick is 6 hours', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title A Gantt Diagram
+        dateFormat   YYYY-MM-DD
+        axisFormat   %d %H:%M
+        tickInterval 6hour
+        excludes     weekends
 
-      expect(titleEl).to.exist;
-      expect(titleEl.textContent).to.equal(expectedTitle);
-      expect(descriptionEl).to.exist;
-      expect(descriptionEl.textContent).to.equal(expectedAccDescription);
-    });
+        section Section
+        A task           : a1, 2022-10-03, 1d
+        Another task     : after a1, 2d
+        section Another
+        Task in sec      : 2022-10-04, 2d
+        another task     : 2d
+      `,
+      {}
+    );
+  });
+
+  it('should render a gantt diagram with tick is 1 day', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title A Gantt Diagram
+        dateFormat   YYYY-MM-DD
+        axisFormat   %m-%d
+        tickInterval 1day
+        excludes     weekends
+
+        section Section
+        A task           : a1, 2022-10-01, 30d
+        Another task     : after a1, 20d
+        section Another
+        Task in sec      : 2022-10-20, 12d
+        another task     : 24d
+      `,
+      {}
+    );
+  });
+
+  it('should render a gantt diagram with tick is 1 week', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title A Gantt Diagram
+        dateFormat   YYYY-MM-DD
+        axisFormat   %m-%d
+        tickInterval 1week
+        excludes     weekends
+
+        section Section
+        A task           : a1, 2022-10-01, 30d
+        Another task     : after a1, 20d
+        section Another
+        Task in sec      : 2022-10-20, 12d
+        another task     : 24d
+      `,
+      {}
+    );
+  });
+
+  it('should render a gantt diagram with tick is 1 month', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title A Gantt Diagram
+        dateFormat   YYYY-MM-DD
+        axisFormat   %m-%d
+        tickInterval 1month
+        excludes     weekends
+
+        section Section
+        A task           : a1, 2022-10-01, 30d
+        Another task     : after a1, 20d
+        section Another
+        Task in sec      : 2022-10-20, 12d
+        another task     : 24d
+      `,
+      {}
+    );
+  });
+
+  it('should render a gantt diagram with tick is 1 day and topAxis is true', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title A Gantt Diagram
+        dateFormat   YYYY-MM-DD
+        axisFormat   %m-%d
+        tickInterval 1day
+        excludes     weekends
+
+        section Section
+        A task           : a1, 2022-10-01, 30d
+        Another task     : after a1, 20d
+        section Another
+        Task in sec      : 2022-10-20, 12d
+        another task     : 24d
+      `,
+      { gantt: { topAxis: true } }
+    );
   });
 });

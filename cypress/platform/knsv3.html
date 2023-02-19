@@ -1,257 +1,111 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
-    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
-      rel="stylesheet"
-    />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mindmap Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
     <style>
-      body {
-        /* background: rgb(221, 208, 208); */
-        /* background:#333; */
-        font-family: 'Courier New', Courier, monospace;
-        /* font-size: 18px !important; */
-      }
-      h1 {
-        color: grey;
-      }
-      .mermaid2 {
-        display: none;
-      }
-      .mermaid {
-        border: 1px solid red;
-        font-family: 'Courier New', Courier, monospace;
-        /* font-size: 18px !important; */
+      div.mermaid {
+        /* font-family: 'trebuchet ms', verdana, arial; */
+        font-family: 'Courier New', Courier, monospace !important;
       }
     </style>
   </head>
+
   <body>
-    <div>info below</div>
-    <div class="">
-      <pre class="mermaid2" style="width: 100%; height: 400px">
-flowchart TB;subgraph "number as labels";1;end;
-      </pre>
-      <pre class="mermaid2" style="width: 100%; height: 400px">
-flowchart TB;a[APA];
-      </pre>
-      <pre class="mermaid2" style="margin-left: 100px">
-graph TD
-      work --> sleep
-      sleep --> work
-      eat --> sleep
-      work --> eat
-      </pre>
-      <pre class="mermaid2" style="margin-left: 100px">
-flowchart TD
-      work --> sleep
-      sleep --> work
-      eat --> sleep
-      work --> eat
-      </pre>
-      <pre class="mermaid2" style="">
- graph TB
-      A
-      B
-      subgraph foo[Foo SubGraph]
-        C
-        D
-      end
-      subgraph bar[Bar SubGraph]
-        E
-        F
-      end
-      G
+    <h1>Mindmap diagram demo</h1>
+    <pre class="mermaid">
+        mindmap
+        root
+            child1((Circle))
+                grandchild 1
+                grandchild 2
+            child2(Round rectangle)
+                grandchild 3
+                grandchild 4
+            child3[Square]
+                grandchild 5
+                ::icon(mdi mdi-fire)
+                gc6((grand<br/>child 6))
+                ::icon(mdi mdi-fire)
+                gc7((grand<br/>grand<br/>child 8))
+    </pre>
 
-      A-->B
-      B-->C
-      C-->D
-      B-->D
-      D-->E
-      E-->A
-      E-->F
-      F-->D
-      F-->G
-      B-->G
-      G-->D
+    <h2>Mindmap with root wrapping text and a shape</h2>
+    <pre class="mermaid">
+        mindmap
+            root[A root with a long text that wraps to keep the node size in check]
+    </pre>
 
-      style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
-      style bar fill:#999,stroke-width:2px,stroke:#0F0,color:blue
-      </pre>
-      <pre class="mermaid2" style="">
-      graph TB
-%%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
-      A
-      B
-      subgraph foo[Foo SubGraph]
-        C
-        D
-      end
-      subgraph bar[Bar SubGraph]
-        E
-        F
-      end
-      G
+    <script type="module">
+      // import mermaid from './mermaid.esm.mjs';
+      import mermaid from '../../packages/mermaid/src/mermaid';
+      // import mermaidMindmap from './mermaid-mindmap.esm.mjs';
 
-      A-->B
-      B-->C
-      C-->D
-      B-->D
-      D-->E
-      E-->A
-      E-->F
-      F-->D
-      F-->G
-      B-->G
-      G-->D
+      // import mermaidMindmap from 'https://cdn.jsdelivr.net/npm/@mermaid-js/mermaid-mindmap@9.3.0/+esm';
+      // await mermaid.registerExternalDiagrams([mermaidMindmap]);
 
-      style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
-      style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
-      </pre>
-      <pre class="mermaid2" style="">
-      graph TD
-        A[Christmas] ==> D
-        A[Christmas] -->|Get money| B(Go shopping)
-        A[Christmas] ==> C
-      </pre>
-      <pre class="mermaid2" style="">
-      graph TD
-%%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
-        A[Christmas] ==> D
-        A[Christmas] -->|Get money| B(Go shopping)
-        A[Christmas] ==> C
-      </pre>
-      <pre class="mermaid2" style="">
-      flowchart TD
-        A[Christmas] ==> D
-        A[Christmas] -->|Get money| B(Go shopping)
-        A[Christmas] ==> C
-      </pre>
-      <pre class="mermaid2" style="">
-      flowchart TD
-%%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
-        A[Christmas] ==> D
-        A[Christmas] -->|Get money| B(Go shopping)
-        A[Christmas] ==> C
-      </pre>
-      <pre class="mermaid2" style="">
-flowchart LR
-        a["<strong>Haiya</strong>"]---->b
-      </pre>
-      <pre class="mermaid" style="">
-flowchart LR
-%%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
-        a["<strong>Haiya</strong>"]---->b
-      </pre>
-      <pre class="mermaid2" style="">
-      flowchart TD
-        A[Christmas] ==> D
-        A[Christmas] -->|Get money| B(Go shopping)
-        A[Christmas] ==> C
-      </pre>
-      <pre class="mermaid2" style="">
-      flowchart TD
-%%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
-        A[Christmas] ==> D
-        A[Christmas] -->|Get money| B(Go shopping)
-        A[Christmas] ==> C
-      </pre>
-      <pre class="mermaid2" style="">
-      %%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
-classDiagram-v2
-      Class01 <|-- AveryLongClass : Cool
-      &lt;&lt;interface&gt;&gt; Class01
-      Class03 *-- Class04
-      Class05 o-- Class06
-      Class07 .. Class08
-      Class09 --> C2 : Where am i?
-      Class09 --* C3
-      Class09 --|> Class07
-      Class12 <|.. Class08
-      Class11 ..>Class12
-      Class07 : equals()
-      Class07 : Object[] elementData
-      Class01 : size()
-      Class01 : int chimp
-      Class01 : int gorilla
-      Class01 : -int privateChimp
-      Class01 : +int publicGorilla
-      Class01 : #int protectedMarmoset
-      Class08 <--> C2: Cool label
-      class Class10 {
-        &lt;&lt;service&gt;&gt;
-        int id
-        test()
-      }
-      </pre>
-      <pre class="mermaid2" style="">
-classDiagram-v2
-      Class01 <|-- AveryLongClass : Cool
-      &lt;&lt;interface&gt;&gt; Class01
-      Class03 *-- Class04
-      Class05 o-- Class06
-      Class07 .. Class08
-      Class09 --> C2 : Where am i?
-      Class09 --* C3
-      Class09 --|> Class07
-      Class12 <|.. Class08
-      Class11 ..>Class12
-      Class07 : equals()
-      Class07 : Object[] elementData
-      Class01 : size()
-      Class01 : int chimp
-      Class01 : int gorilla
-      Class01 : -int privateChimp
-      Class01 : +int publicGorilla
-      Class01 : #int protectedMarmoset
-      Class08 <--> C2: Cool label
-      class Class10 {
-        &lt;&lt;service&gt;&gt;
-        int id
-        test()
-      }
-      </pre>
-      <pre class="mermaid" style="">
-flowchart BT
-   subgraph S1
-    sub1 -->sub2
-   end
-  subgraph S2
-    sub4
-   end
-   S1 --> S2
-   sub1 --> sub4
-      </pre>
-    </div>
-    <script src="./mermaid.js"></script>
-    <script>
+      const ALLOWED_TAGS = [
+        'a',
+        'b',
+        'blockquote',
+        'br',
+        'dd',
+        'div',
+        'dl',
+        'dt',
+        'em',
+        'foreignObject',
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'h6',
+        'h7',
+        'h8',
+        'hr',
+        'i',
+        'li',
+        'ul',
+        'ol',
+        'p',
+        'pre',
+        'span',
+        'strike',
+        'strong',
+        'table',
+        'tbody',
+        'td',
+        'tfoot',
+        'th',
+        'thead',
+        'tr',
+      ];
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        // theme: 'neutral',
-        // arrowMarkerAbsolute: true,
-        // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
+        theme: 'base',
+        startOnLoad: true,
         logLevel: 0,
-        flowchart: { curve: 'cardinal', htmlLabels: false },
-        // htmlLabels: true,
-        // gantt: { axisFormat: '%m/%d/%Y' },
-        // sequence: { actorFontFamily: 'courier', actorMargin: 50, showSequenceNumbers: false },
-        // sequenceDiagram: { actorMargin: 300 } // deprecated
-        // fontFamily: '"times", sans-serif',
-        fontFamily: 'courier',
-        // fontSize: 18,
-        // curve: 'cardinal',
-        securityLevel: 'loose',
-        // themeVariables: {relationLabelColor: 'red'}
+        flowchart: {
+          useMaxWidth: false,
+          htmlLabels: true,
+        },
+        gantt: {
+          useMaxWidth: false,
+        },
+        useMaxWidth: false,
       });
       function callback() {
         alert('It worked');
       }
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
     </script>
   </body>
 </html>

@@ -1,0 +1,30 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
+@import url('https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css');
+
+:root {
+  --vp-c-brand: #ff3670;
+  --vp-c-brand-light: #ff5e8c;
+  --vp-c-brand-lighter: #ff85a8;
+  --vp-c-brand-lightest: #ff9bb7;
+  --vp-c-brand-dark: #bd34fe;
+  --vp-c-brand-darker: #9339bd;
+  --vp-c-brand-dimm: rgba(100, 108, 255, 0.08);
+}
+
+:root {
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #bd34fe 30%, #ff3670);
+
+  --vp-home-hero-image-background-image: linear-gradient(-45deg, #bd34fe 50%, #ff3670 50%);
+  --vp-home-hero-image-filter: blur(72px);
+}
+
+.vp-doc > div {
+  width: 100%;
+}
+
+a.edit {
+  margin: 12px;
+  position: relative;
+  top: 10px;
+}

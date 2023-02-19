@@ -9,20 +9,20 @@
   <body>
     <div id="graph"></div>
 
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.init({ startOnLoad: false });
       mermaid.mermaidAPI.initialize();
 
-      rerender('XMas');
-
-      function rerender(text) {
-        var graphText = `graph TD
+      async function rerender(text) {
+        const graphText = `graph TD
         A[${text}] -->|Get money| B(Go shopping)`;
-        var graph = mermaid.mermaidAPI.render('id', graphText);
-        console.log('\x1b[35m%s\x1b[0m', '>> graph', graph);
-        document.getElementById('graph').innerHTML = graph;
+        const { svg } = await mermaid.mermaidAPI.render('id', graphText);
+        console.log('\x1b[35m%s\x1b[0m', '>> graph', svg);
+        document.getElementById('graph').innerHTML = svg;
       }
+      window.rerender = rerender;
+      await rerender('XMas');
     </script>
     <button id="rerender" onclick="rerender('Saturday')">Rerender</button>
   </body>

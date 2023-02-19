@@ -9,15 +9,15 @@
   <body>
     <pre id="FirstLine" class="mermaid">
     graph TB
-      Function-->URL
-      click Function clickByFlow "Add a div"
-      click URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
+      Function1-->URL1
+      click Function1 clickByFlow "Add a div"
+      click URL1 "http://localhost:9000/empty.html" "Visit <strong>mermaid docs</strong>"
     </pre>
     <pre id="FirstLine" class="mermaid">
   graph TB
     1Function-->2URL
     click 1Function clickByFlow "Add a div"
-    click 2URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
+    click 2URL "http://localhost:9000/empty.html" "Visit <strong>mermaid docs</strong>"
     </pre>
 
     <pre class="mermaid">
@@ -51,7 +51,7 @@
     Calling a Callback (look at the console log) :cl2, after cl1, 3d
     Calling a Callback with args :cl3, after cl1, 3d
 
-    click cl1 href "http://localhost:9000/webpackUsage.html"
+    click cl1 href "http://localhost:9000/empty.html"
     click cl2 call clickByGantt()
     click cl3 call clickByGantt("test1", test2, test3)
 
@@ -61,8 +61,8 @@
     Add another diagram to demo page    : 48h
     </pre>
 
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       function clickByFlow(elemName) {
         const div = document.createElement('div');
         div.className = 'created-by-click';

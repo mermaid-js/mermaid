@@ -7,6 +7,10 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
     <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
       href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"
     />
@@ -40,11 +44,15 @@
   <body>
     <pre class="mermaid2" style="width: 50%">
 flowchart LR
-  a ---
-    </pre>
-    <pre class="mermaid" style="width: 50%">
-flowchart LR
-  a2 ---
+  subgraph one
+    direction LR
+    A[myClass1] --> B[default]
+    subgraph two
+      direction BT
+      C[myClass2] --> D[default]
+    end
+  end
+
     </pre>
     <pre class="mermaid2" style="width: 50%">
 flowchart LR
@@ -79,7 +87,7 @@ flowchart TD
     end
     end
     </pre>
-    <pre class="mermaid" style="width: 50%">
+    <pre class="mermaid2" style="width: 50%">
 flowchart TD
 
   release-branch[Create Release Branch]:::relClass
@@ -131,7 +139,7 @@ flowchart TD
       class A someclass;
       class C someclass;
     </pre>
-    <pre class="mermaid" style="width: 50%">
+    <pre class="mermaid2" style="width: 50%">
    sequenceDiagram
       title: My Sequence Diagram Title
       accTitle: My Acc Sequence Diagram
@@ -141,14 +149,14 @@ flowchart TD
       John-->>Alice: Great!
       Alice-)John: See you later!
     </pre>
-    <pre class="mermaid" style="width: 50%">
+    <pre class="mermaid2" style="width: 50%">
 graph TD
     A -->|000| B
     B -->|111| C
 
     linkStyle 1 stroke:#ff3,stroke-width:4px,color:red;
     </pre>
-    <pre class="mermaid" style="width: 100%">
+    <pre class="mermaid2" style="width: 100%">
   journey
       accTitle: My User Journey Diagram
       accDescr: My User Journey Diagram Description
@@ -162,10 +170,10 @@ graph TD
         Go downstairs: 5: Me
         Sit down: 5: Me
     </pre>
-    <pre class="mermaid" style="width: 100%">
+    <pre class="mermaid2" style="width: 100%">
         info
     </pre>
-    <pre class="mermaid" style="width: 100%">
+    <pre class="mermaid2" style="width: 100%">
 requirementDiagram
       accTitle: My req Diagram
       accDescr: My req Diagram Description
@@ -206,7 +214,7 @@ requirementDiagram
     test_req - contains -> test_req3
     test_req <- copies - test_entity2
     </pre>
-    <pre class="mermaid" style="width: 100%">
+    <pre class="mermaid2" style="width: 100%">
 gantt
     dateFormat  YYYY-MM-DD
     title       Adding GANTT diagram functionality to mermaid
@@ -238,7 +246,7 @@ gantt
     Add gantt diagram to demo page      :20h
     Add another diagram to demo page    :48h
     </pre>
-    <pre class="mermaid" style="width: 100%">
+    <pre class="mermaid2" style="width: 100%">
 stateDiagram
   state Active {
     Idle
@@ -266,7 +274,7 @@ stateDiagram
           end
           B ->> A: Return
     </pre>
-    <pre class="mermaid" style="width: 100%">
+    <pre class="mermaid2" style="width: 100%">
 classDiagram
 accTitle: My class diagram
 accDescr: My class diagram Description
@@ -291,7 +299,7 @@ class Class10 {
         A->>Bob: Hola
         Bob-->A: Pasten !
     </pre>
-    <pre class="mermaid" style="width: 100%">
+    <pre class="mermaid2" style="width: 100%">
       gitGraph
        commit id: "ZERO"
        branch develop
@@ -320,7 +328,7 @@ flowchart TD
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
     </pre>
-    <pre class="mermaid" style="width: 100%">
+    <pre class="mermaid2" style="width: 100%">
         classDiagram
           Animal "1" <|-- Duck
           Animal <|-- Fish
@@ -343,7 +351,7 @@ flowchart TD
             +run()
           }
     </pre>
-    <pre class="mermaid" style="width: 100%">
+    <pre class="mermaid2" style="width: 100%">
         erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {
@@ -359,6 +367,7 @@ flowchart TD
     }
     </pre>
 
+    <!-- <script src="./mermaid.js"></script> -->
     <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
@@ -376,6 +385,7 @@ flowchart TD
           htmlLabels: false,
           fontFamily: 'courier',
         },
+        lazyLoadedDiagrams: ['./mermaid-mindmap-detector.js'],
       });
       function callback() {
         alert('It worked');

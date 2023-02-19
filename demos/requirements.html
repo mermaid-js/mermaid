@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Mermaid Quick Test Page</title>
+    <title>Requirements Mermaid Quick Test Page</title>
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
     <style>
       div.mermaid {
@@ -14,9 +14,12 @@
   </head>
 
   <body>
+    <h1>Requirement diagram demos</h1>
     <pre class="mermaid">
 	requirementDiagram
-	title This is a title
+	  accTitle: Requirments demo in black and white
+		accDescr: A series of requirement boxes showing relationships among them. Has meaningless task names
+
 	requirement test_req {
 	id: 1
 	text: the test text.
@@ -84,11 +87,82 @@
 	test_req <- copies - test_entity2
 		</pre
     >
+    <hr />
 
-    <script src="./mermaid.js"></script>
-    <script>
+    <pre class="mermaid">
+    requirementDiagram
+
+    requirement An Example {
+    id: 1
+    text: the test text.
+    risk: high
+    verifymethod: test
+    }
+
+    functionalRequirement Random Name {
+    id: 1.1
+    text: the second test text.
+    risk: low
+    verifymethod: inspection
+    }
+
+    performanceRequirement Something Else {
+    id: 1.2
+    text: the third test text.
+    risk: medium
+    verifymethod: demonstration
+    }
+
+    interfaceRequirement test_req4 {
+    id: 1.2.1
+    text: the fourth test text.
+    risk: medium
+    verifymethod: analysis
+    }
+
+    physicalRequirement test_req5 {
+    id: 1.2.2
+    text: the fifth test text.
+    risk: medium
+    verifymethod: analysis
+    }
+
+    designConstraint test_req6 {
+    id: 1.2.3
+    text: really long text to test overflow. really long text to test overflow. really long text to test overflow.
+    risk: medium
+    verifymethod: analysis
+    }
+
+    element test_entity {
+    type: simulation
+    }
+
+    element test_entity2 {
+    type: word doc
+    docRef: reqs/test_entity
+    }
+
+    element test_entity3 {
+    type: "test suite"
+    docRef: github.com/all_the_tests
+    }
+
+
+    test_entity - satisfies -> Random Name
+    An Example - traces -> Random Name
+    An Example - contains -> Something Else
+    Something Else - contains -> test_req4
+    test_req4 - derives -> test_req5
+    test_req5 - refines -> test_req6
+    test_entity3 - verifies -> test_req5
+    An Example <- copies - test_entity2
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
-        theme: 'forest',
+        theme: 'neutral',
         // themeCSS: '.node rect { fill: red; }',
         logLevel: 3,
         securityLevel: 'loose',
