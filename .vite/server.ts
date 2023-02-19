@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import { createServer as createViteServer } from 'vite';
 
-
 async function createServer() {
   const app = express();
 
