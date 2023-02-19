@@ -119,7 +119,7 @@ const contentLoadedApi = async function () {
       mermaid2.initialize(graphObj.mermaid);
       const { svg, bindFunctions } = await mermaid2.render('newid', graphObj.code, div);
       div.innerHTML = svg;
-      console.log(svg);
+      console.log(div.innerHTML);
       bindFunctions(div);
     }
   }
