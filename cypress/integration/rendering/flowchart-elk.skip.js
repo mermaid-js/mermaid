@@ -133,7 +133,7 @@ describe('Flowchart ELK', () => {
     });
   });
 
-  it.skip('V2 elk - 16: Render Stadium shape', () => {
+  it('V2 elk - 16: Render Stadium shape', () => {
     imgSnapshotTest(
       ` flowchart-elk TD
       A([stadium shape test])
@@ -284,7 +284,7 @@ _one --> b
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
-  it.skip('57-elk: handle nested subgraphs with outgoing links 4', () => {
+  it('57-elk: handle nested subgraphs with outgoing links 4', () => {
     imgSnapshotTest(
       `flowchart-elk LR
 subgraph A
