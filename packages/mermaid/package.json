@@ -108,8 +108,5 @@
     "dist",
     "README.md"
   ],
-  "sideEffects": [
-    "**/*.css",
-    "**/*.scss"
-  ]
+  "sideEffects": false
 }
