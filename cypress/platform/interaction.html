@@ -17,20 +17,20 @@
     graph TB
       Function-->URL
       click Function clickByFlow "Add a div"
-      click URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
+      click URL "http://localhost:9000/info.html" "Visit <strong>mermaid docs</strong>"
       </pre>
       <pre id="FirstLine" class="mermaid2">
   graph TB
     1Function-->2URL
     click 1Function clickByFlow "Add a div"
-    click 2URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
+    click 2URL "http://localhost:9000/info.html" "Visit <strong>mermaid docs</strong>"
       </pre>
 
       <pre id="FirstLine" class="mermaid2">
   classDiagram
     class Test
     class ShapeLink
-    link ShapeLink "http://localhost:9000/webpackUsage.html" "This is a tooltip for a link"
+    link ShapeLink "http://localhost:9000/info.html" "This is a tooltip for a link"
     class ShapeCallback
     callback ShapeCallback "clickByClass" "This is a tooltip for a callback"
       </pre>
@@ -42,7 +42,7 @@
       <pre id="FirstLine" class="mermaid">
   classDiagram-v2
     class ShapeLink
-    link ShapeLink "http://localhost:9000/webpackUsage.html" "This is a tooltip for a link"
+    link ShapeLink "http://localhost:9000/info.html" "This is a tooltip for a link"
       </pre>
     </div>
 
@@ -77,7 +77,7 @@
     Calling a Callback (look at the console log) :cl2, after cl1, 3d
     Calling a Callback with args :cl3, after cl1, 3d
 
-    click cl1 href "http://localhost:9000/webpackUsage.html"
+    click cl1 href "http://localhost:9000/info.html"
     click cl2 call clickByGantt()
     click cl3 call clickByGantt("test1", test2, test3)
 
@@ -102,9 +102,15 @@
         div.className = 'created-by-gant-click';
         div.style = 'padding: 20px; background: green; color: white;';
         div.innerText = 'Clicked By Gant';
-        if (arg1) div.innerText += ' ' + arg1;
-        if (arg2) div.innerText += ' ' + arg2;
-        if (arg3) div.innerText += ' ' + arg3;
+        if (arg1) {
+          div.innerText += ' ' + arg1;
+        }
+        if (arg2) {
+          div.innerText += ' ' + arg2;
+        }
+        if (arg3) {
+          div.innerText += ' ' + arg3;
+        }
 
         document.getElementsByTagName('body')[0].appendChild(div);
       }

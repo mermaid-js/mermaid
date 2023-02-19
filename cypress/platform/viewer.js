@@ -114,12 +114,12 @@ const contentLoadedApi = async function () {
       const div = document.createElement('div');
       div.id = 'block';
       div.className = 'mermaid';
-      console.warn('graphObj.mermaid', graphObj.mermaid);
+      console.warn('graphObj', graphObj);
       document.getElementsByTagName('body')[0].appendChild(div);
       mermaid2.initialize(graphObj.mermaid);
-
       const { svg, bindFunctions } = await mermaid2.render('newid', graphObj.code, div);
       div.innerHTML = svg;
+      console.log(svg);
       bindFunctions(div);
     }
   }
