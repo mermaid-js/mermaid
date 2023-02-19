@@ -11,6 +11,7 @@ const { dependencies } = require('../package.json');
 const buildOptions = (override = {}) => {
   return {
     bundle: true,
+    splitting: true,
     minify: true,
     keepNames: true,
     banner: { js: '"use strict";' },

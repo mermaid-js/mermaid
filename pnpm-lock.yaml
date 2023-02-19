@@ -272,6 +272,9 @@ importers:
       cspell:
         specifier: ^6.14.3
         version: 6.14.3
+      esbuild:
+        specifier: ^0.17.0
+        version: 0.17.0
       globby:
         specifier: ^13.1.2
         version: 13.1.2
@@ -4243,7 +4246,7 @@ packages:
   /axios/0.21.4_debug@4.3.2:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.2
+      follow-redirects: 1.15.2_debug@4.3.4
     transitivePeerDependencies:
       - debug
     dev: true
