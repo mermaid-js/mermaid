@@ -29,7 +29,6 @@ const buildOptions = (override = {}) => {
 const getOutFiles = (extension) => {
   return {
     [`mermaid${extension}`]: 'src/mermaid.ts',
-    [`diagramAPI${extension}`]: 'src/diagram-api/diagramAPI.ts',
   };
 };
 /**
@@ -65,22 +64,6 @@ exports.esmCoreBuild = (override) => {
     outExtension: { '.js': '.mjs' },
     external: ['require', 'fs', 'path', ...Object.keys(dependencies)],
     platform: 'neutral',
-    ...override,
-  });
-};
-
-/**
- * Build options for mermaid.js build.
- *
- * For IIFE browser use (where ESM is not yet supported).
- *
- * @param {Options} override - Override options.
- * @returns {Options} ESBuild build options.
- */
-exports.iifeBuild = (override = { minify: true }) => {
-  return buildOptions({
-    entryPoints: getOutFiles(override.minify ? '.min' : ''),
-    format: 'iife',
     ...override,
   });
 };
