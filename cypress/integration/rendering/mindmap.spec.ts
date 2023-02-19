@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
+import { imgSnapshotTest } from '../../helpers/util.js';
 
 /**
  * Check whether the SVG Element has a Mindmap root
@@ -158,7 +158,6 @@ mindmap
       undefined,
       shouldHaveRoot
     );
-    cy.get('svg');
   });
   it('rounded rect shape', () => {
     imgSnapshotTest(
@@ -172,7 +171,6 @@ mindmap
       undefined,
       shouldHaveRoot
     );
-    cy.get('svg');
   });
   it('circle shape', () => {
     imgSnapshotTest(
@@ -186,7 +184,6 @@ mindmap
       undefined,
       shouldHaveRoot
     );
-    cy.get('svg');
   });
   it('default shape', () => {
     imgSnapshotTest(
@@ -198,7 +195,6 @@ mindmap
       undefined,
       shouldHaveRoot
     );
-    cy.get('svg');
   });
   it('adding children', () => {
     imgSnapshotTest(
@@ -212,7 +208,6 @@ mindmap
       undefined,
       shouldHaveRoot
     );
-    cy.get('svg');
   });
   it('adding grand children', () => {
     imgSnapshotTest(
@@ -227,7 +222,6 @@ mindmap
       undefined,
       shouldHaveRoot
     );
-    cy.get('svg');
   });
   /* The end */
 });

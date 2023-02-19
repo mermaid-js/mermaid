@@ -6,7 +6,7 @@ Diagrams can be re-rendered/modified by modifying their descriptions.
 
 ### CDN
 
-[https://unpkg.com/mermaid/](https://unpkg.com/mermaid/)
+[https://www.jsdelivr.com/package/npm/mermaid](https://www.jsdelivr.com/package/npm/mermaid)
 
 Please note that you can switch versions through the dropdown box at the top right.
 
@@ -16,26 +16,21 @@ For the majority of users, Using the [Live Editor](https://mermaid.live/) would 
 
 We have compiled some Video [Tutorials](./Tutorials.md) on how to use the mermaid Live Editor.
 
-**Installing and Hosting Mermaid on a Webpage**
+### Installing and Hosting Mermaid on a Webpage
 
-**Using the npm package**
+**Using the npm package:**
 
-```
-1. You will need to install node v16, which would have npm.
+1. You will need to install `node v16`, which would have npm.
 
-2. download yarn using npm.
+2. Download `yarn` using npm.
 
-3. enter the following command:
-    yarn add mermaid
+3. Enter the following command: `yarn add mermaid`.
 
-4. At this point, you can add mermaid as a dev dependency using this command:
-    yarn add --dev mermaid
+4. At this point, you can add mermaid as a dev dependency using this command: `yarn add --dev mermaid`.
 
-5. Alternatively, you can also deploy mermaid using the script tag in an HTML file with mermaid diagram descriptions.
-    as is shown in the example below
-```
+5. Alternatively, you can also deploy mermaid using the script tag in an HTML file with mermaid diagram descriptions as is shown in the example below.
 
-**Hosting mermaid on a web page.**
+**Hosting mermaid on a web page:**
 
 > Note:This topic explored in greater depth in the [User Guide for Beginners](../intro/n00b-gettingStarted.md)
 
@@ -332,8 +327,8 @@ The future proof way of setting the configuration is by using the initialization
 on what kind of integration you use.
 
 ```html
-<script src="../dist/mermaid.js"></script>
-<script>
+<script type="module">
+  import mermaid from './mermaid.esm.mjs';
   let config = { startOnLoad: true, flowchart: { useMaxWidth: false, htmlLabels: true } };
   mermaid.initialize(config);
 </script>

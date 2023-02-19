@@ -4,23 +4,26 @@
   </script>
   <body>
     <div id="target">
-      <h1>This element does not belong to the SVG but we can style it</h1>
+      <h1>Background should be yellow!!!</h1>
     </div>
     <svg id="diagram"></svg>
 
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({ startOnLoad: false, logLevel: 0 });
 
       const graph = `
-     %%{ init: { "themeVariables" : { "textColor": "green;} #target { background-color: crimson }", "mainBkg": "#fff000" } } }%%
-            graph TD
-                A[Goose]
-            `;
+      %%{ init: { "themeVariables" : { "textColor": "green;} #target { background-color: crimson }", "mainBkg": "#fff000" } } }%%
+             graph TD
+                 A[Goose]
+             `;
 
       const diagram = document.getElementById('diagram');
-      const svg = mermaid.render('diagram-svg', graph);
+      const { svg } = await mermaid.render('diagram-svg', graph);
       diagram.innerHTML = svg;
+      if (window.Cypress) {
+        window.rendered = true;
+      }
     </script>
   </body>
 </html>

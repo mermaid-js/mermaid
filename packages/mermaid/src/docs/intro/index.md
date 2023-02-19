@@ -26,11 +26,11 @@ Mermaid addresses this problem by enabling users to create easily modifiable dia
 <br/>
 Mermaid allows even non-programmers to easily create detailed and diagrams through the [Mermaid Live Editor](https://mermaid.live/).<br/>
 [Tutorials](../config/Tutorials.md) has video tutorials.
-Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](../misc/integrations.md).
+Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](../ecosystem/integrations.md).
 
 For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](../community/n00b-overview.md) and [Usage](../config/usage.md).
 
-🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](../community/development.md) | 🔌 [Plug-Ins](../misc/integrations.md)
+🌐 [CDN](https://www.jsdelivr.com/package/npm/mermaid) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](../community/development.md) | 🔌 [Plug-Ins](../ecosystem/integrations.md)
 
 > 🖖 Keep a steady pulse: mermaid needs more Collaborators, [Read More](https://github.com/knsv/mermaid/issues/866).
 
@@ -55,14 +55,14 @@ In our release process we rely heavily on visual regression tests using [applito
 ### CDN
 
 ```
-https://unpkg.com/mermaid@<version>/dist/
+<CDN_URL>/mermaid@<version>/dist/
 ```
 
 To select a version:
 
 Replace `<version>` with the desired version number.
 
-Latest Version: [https://unpkg.com/browse/mermaid@8.8.0/](https://unpkg.com/browse/mermaid@8.8.0/)
+Latest Version: [<CDN_URL>/mermaid@<MERMAID_VERSION>](<CDN_URL>/mermaid@<MERMAID_VERSION>)
 
 ## Deploying Mermaid
 

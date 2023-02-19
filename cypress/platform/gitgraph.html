@@ -130,8 +130,8 @@
       commit
       merge main
     </pre>
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };

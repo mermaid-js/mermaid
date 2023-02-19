@@ -6,17 +6,32 @@
 
 # Module: mermaidAPI
 
+## Interfaces
+
+- [ParseOptions](../interfaces/mermaidAPI.ParseOptions.md)
+- [RenderResult](../interfaces/mermaidAPI.RenderResult.md)
+
 ## References
 
 ### default
 
 Renames and re-exports [mermaidAPI](mermaidAPI.md#mermaidapi)
 
+## Type Aliases
+
+### D3Element
+
+Ƭ **D3Element**: `any`
+
+#### Defined in
+
+[mermaidAPI.ts:75](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L75)
+
 ## Variables
 
 ### mermaidAPI
 
-• `Const` **mermaidAPI**: `Readonly`<{ `defaultConfig`: `MermaidConfig` = configApi.defaultConfig; `getConfig`: () => `MermaidConfig` = configApi.getConfig; `getSiteConfig`: () => `MermaidConfig` = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`options`: `MermaidConfig`) => `void` ; `parse`: (`text`: `string`, `parseError?`: `ParseErrorFunction`) => `boolean` ; `parseAsync`: (`text`: `string`, `parseError?`: `ParseErrorFunction`) => `Promise`<`boolean`> ; `parseDirective`: (`p`: `any`, `statement`: `string`, `context`: `string`, `type`: `string`) => `void` ; `render`: (`id`: `string`, `text`: `string`, `cb?`: (`svgCode`: `string`, `bindFunctions?`: (`element`: `Element`) => `void`) => `void`, `svgContainingElement?`: `Element`) => `string` ; `renderAsync`: (`id`: `string`, `text`: `string`, `cb?`: (`svgCode`: `string`, `bindFunctions?`: (`element`: `Element`) => `void`) => `void`, `svgContainingElement?`: `Element`) => `Promise`<`string`> ; `reset`: () => `void` ; `setConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.setConfig; `updateSiteConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.updateSiteConfig }>
+• `Const` **mermaidAPI**: `Readonly`<{ `defaultConfig`: `MermaidConfig` = configApi.defaultConfig; `getConfig`: () => `MermaidConfig` = configApi.getConfig; `getSiteConfig`: () => `MermaidConfig` = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`options`: `MermaidConfig`) => `void` ; `parse`: (`text`: `string`, `parseOptions?`: [`ParseOptions`](../interfaces/mermaidAPI.ParseOptions.md)) => `Promise`<`boolean` | `void`> ; `parseDirective`: (`p`: `any`, `statement`: `string`, `context`: `string`, `type`: `string`) => `void` ; `render`: (`id`: `string`, `text`: `string`, `svgContainingElement?`: `Element`) => `Promise`<[`RenderResult`](../interfaces/mermaidAPI.RenderResult.md)> ; `reset`: () => `void` ; `setConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.setConfig; `updateSiteConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.updateSiteConfig }>
 
 ## mermaidAPI configuration defaults
 
@@ -80,7 +95,7 @@ mermaid.initialize(config);
 
 #### Defined in
 
-[mermaidAPI.ts:939](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L939)
+[mermaidAPI.ts:668](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L668)
 
 ## Functions
 
@@ -111,7 +126,7 @@ Return the last node appended
 
 #### Defined in
 
-[mermaidAPI.ts:284](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L284)
+[mermaidAPI.ts:291](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L291)
 
 ---
 
@@ -137,7 +152,7 @@ the cleaned up svgCode
 
 #### Defined in
 
-[mermaidAPI.ts:235](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L235)
+[mermaidAPI.ts:242](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L242)
 
 ---
 
@@ -149,11 +164,11 @@ Create the user styles
 
 #### Parameters
 
-| Name        | Type            | Description                                            |
-| :---------- | :-------------- | :----------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| `config`    | `MermaidConfig` | configuration that has style and theme settings to use |
-| `graphType` | `string`        | used for checking if classDefs should be applied       |
-| `classDefs` | `undefined`     | `null`                                                 | `Record`<`string`, `DiagramStyleClassDef`> | the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...) |
+| Name        | Type                                                                | Description                                                                                                               |
+| :---------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
+| `config`    | `MermaidConfig`                                                     | configuration that has style and theme settings to use                                                                    |
+| `graphType` | `string`                                                            | used for checking if classDefs should be applied                                                                          |
+| `classDefs` | `undefined` \| `null` \| `Record`<`string`, `DiagramStyleClassDef`> | the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...) |
 
 #### Returns
 
@@ -163,7 +178,7 @@ the string with all the user styles
 
 #### Defined in
 
-[mermaidAPI.ts:164](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L164)
+[mermaidAPI.ts:171](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L171)
 
 ---
 
@@ -186,7 +201,7 @@ the string with all the user styles
 
 #### Defined in
 
-[mermaidAPI.ts:212](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L212)
+[mermaidAPI.ts:219](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L219)
 
 ---
 
@@ -213,7 +228,7 @@ with an enclosing block that has each of the cssClasses followed by !important;
 
 #### Defined in
 
-[mermaidAPI.ts:148](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L148)
+[mermaidAPI.ts:155](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L155)
 
 ---
 
@@ -233,7 +248,7 @@ with an enclosing block that has each of the cssClasses followed by !important;
 
 #### Defined in
 
-[mermaidAPI.ts:125](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L125)
+[mermaidAPI.ts:135](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L135)
 
 ---
 
@@ -253,7 +268,7 @@ with an enclosing block that has each of the cssClasses followed by !important;
 
 #### Defined in
 
-[mermaidAPI.ts:96](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L96)
+[mermaidAPI.ts:106](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L106)
 
 ---
 
@@ -279,25 +294,24 @@ Put the svgCode into an iFrame. Return the iFrame code
 
 #### Defined in
 
-[mermaidAPI.ts:263](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L263)
+[mermaidAPI.ts:270](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L270)
 
 ---
 
 ### removeExistingElements
 
-▸ **removeExistingElements**(`doc`, `isSandboxed`, `id`, `divSelector`, `iFrameSelector`): `void`
+▸ **removeExistingElements**(`doc`, `id`, `divId`, `iFrameId`): `void`
 
 Remove any existing elements from the given document
 
 #### Parameters
 
-| Name             | Type       | Description                                     |
-| :--------------- | :--------- | :---------------------------------------------- |
-| `doc`            | `Document` | the document to removed elements from           |
-| `isSandboxed`    | `boolean`  | whether or not we are in sandboxed mode         |
-| `id`             | `string`   | id for any existing SVG element                 |
-| `divSelector`    | `string`   | selector for any existing enclosing div element |
-| `iFrameSelector` | `string`   | selector for any existing iFrame element        |
+| Name       | Type       | Description                           |
+| :--------- | :--------- | :------------------------------------ |
+| `doc`      | `Document` | the document to removed elements from |
+| `id`       | `string`   | id for any existing SVG element       |
+| `divId`    | `string`   | -                                     |
+| `iFrameId` | `string`   | -                                     |
 
 #### Returns
 
@@ -305,4 +319,4 @@ Remove any existing elements from the given document
 
 #### Defined in
 
-[mermaidAPI.ts:335](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L335)
+[mermaidAPI.ts:341](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L341)

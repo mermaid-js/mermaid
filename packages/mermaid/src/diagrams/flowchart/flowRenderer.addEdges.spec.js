@@ -1,7 +1,7 @@
 import flowDb from './flowDb';
 import flowParser from './parser/flow';
 import flowRenderer from './flowRenderer';
-import Diagram from '../../Diagram';
+import { Diagram } from '../../Diagram';
 import { addDiagrams } from '../../diagram-api/diagram-orchestration';
 addDiagrams();
 

@@ -7,7 +7,8 @@
 # Class diagrams
 
 > "In software engineering, a class diagram in the Unified Modeling Language (UML) is a type of static structure diagram that describes the structure of a system by showing the system's classes, their attributes, operations (or methods), and the relationships among objects."
-> Wikipedia
+>
+> \-Wikipedia
 
 The class diagram is the main building block of object-oriented modeling. It is used for general conceptual modeling of the structure of the application, and for detailed modeling to translate the models into programming code. Class diagrams can also be used for data modeling. The classes in a class diagram represent both the main elements, interactions in the application, and the classes to be programmed.
 
@@ -205,7 +206,7 @@ class BankAccount{
 
 #### Generic Types
 
-Members can be defined using generic types, such as `List<int>`, for fields, parameters, and return types by enclosing the type within `~` (**tilde**). Note: **nested** type declarations such as `List<List<int>>` are not currently supported.
+Members can be defined using generic types, such as `List<int>`, for fields, parameters, and return types by enclosing the type within `~` (**tilde**). **Nested** type declarations such as `List<List<int>>` are supported.
 
 Generics can be represented as part of a class definition and also in the parameters or the return value of a method/function:
 
@@ -221,6 +222,7 @@ class Square~Shape~{
 Square : -List~string~ messages
 Square : +setMessages(List~string~ messages)
 Square : +getMessages() List~string~
+Square : +getDistanceMatrix() List~List~int~~
 ```
 
 ```mermaid
@@ -235,11 +237,8 @@ class Square~Shape~{
 Square : -List~string~ messages
 Square : +setMessages(List~string~ messages)
 Square : +getMessages() List~string~
+Square : +getDistanceMatrix() List~List~int~~
 ```
-
-#### Return Type
-
-Optionally you can end the method/function definition with the data type that will be returned.
 
 #### Visibility
 
@@ -270,7 +269,7 @@ There are eight different types of relations defined for classes under UML which
 | Type    | Description   |
 | ------- | ------------- |
 | `<\|--` | Inheritance   |
-| `\*--`  | Composition   |
+| `*--`   | Composition   |
 | `o--`   | Aggregation   |
 | `-->`   | Association   |
 | `--`    | Link (Solid)  |

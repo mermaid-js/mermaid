@@ -1,4 +1,4 @@
-import * as graphlib from 'dagre-d3-es/src/graphlib';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select } from 'd3';
 import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';
@@ -6,7 +6,7 @@ import { log } from '../../logger';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import common from '../common/common';
 import utils from '../../utils';
-import addSVGAccessibilityFields from '../../accessibility';
+
 import {
   DEFAULT_DIAGRAM_DIRECTION,
   DEFAULT_NESTED_DOC_DIR,
@@ -307,8 +307,8 @@ const setupNode = (g, parent, parsedItem, diagramStates, diagramDb, altFlag) => 
  *
  * @param g
  * @param parentParsedItem - parsed Item that is the parent of this document (doc)
- * @param doc - the document to set up
- * @param {object} diagramStates - the list of all known  states for the diagram
+ * @param doc - the document to set up; it is a list of parsed statements
+ * @param {object[]} diagramStates - the list of all known states for the diagram
  * @param diagramDb
  * @param {boolean} altFlag
  * @todo This duplicates some of what is done in stateDb.js extract method
@@ -470,7 +470,6 @@ export const draw = function (text, id, _version, diag) {
     label.insertBefore(rect, label.firstChild);
     // }
   }
-  addSVGAccessibilityFields(diag.db, svg, id);
 };
 
 export default {

@@ -14,7 +14,11 @@ import state from '../diagrams/state/stateDetector';
 import stateV2 from '../diagrams/state/stateDetector-V2';
 import journey from '../diagrams/user-journey/journeyDetector';
 import error from '../diagrams/error/errorDetector';
+import flowchartElk from '../diagrams/flowchart/elk/detector';
+import timeline from '../diagrams/timeline/detector';
+import mindmap from '../diagrams/mindmap/detector';
 import { registerLazyLoadedDiagrams } from './detectType';
+
 
 let hasLoadedDiagrams = false;
 export const addDiagrams = () => {
@@ -37,6 +41,9 @@ export const addDiagrams = () => {
     sequence,
     flowchart,
     flowchartV2,
+    flowchartElk,
+    mindmap,
+    timeline,
     git,
     state,
     stateV2,

@@ -14,37 +14,34 @@ export default defineConfig({
   lang: 'en-US',
   title: 'Mermaid',
   description: 'Create diagrams and visualizations using text and code.',
-  base: '/mermaid/',
+  base: '/',
   markdown: allMarkdownTransformers,
-  head: [['link', { rel: 'icon', type: 'image/x-icon', href: '/mermaid/favicon.ico' }]],
+  head: [['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]],
   themeConfig: {
     nav: nav(),
     editLink: {
       pattern: 'https://github.com/mermaid-js/mermaid/edit/develop/packages/mermaid/src/docs/:path',
       text: 'Edit this page on GitHub',
     },
-
     sidebar: {
       '/': sidebarAll(),
     },
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/mermaid-js/mermaid' },
+      { icon: 'slack', link: 'https://mermaid-talk.slack.com' },
+    ],
   },
 });
 
 function nav() {
   return [
-    { text: 'Intro', link: '/intro/', activeMatch: '/intro/' },
+    { text: 'Docs', link: '/intro/', activeMatch: '/intro/' },
     {
-      text: 'Configuration',
-      link: '/config/configuration',
+      text: 'Tutorials',
+      link: '/config/Tutorials',
       activeMatch: '/config/',
     },
-    { text: 'Syntax', link: '/syntax/classDiagram', activeMatch: '/syntax/' },
-    { text: 'Misc', link: '/misc/integrations', activeMatch: '/misc/' },
-    {
-      text: 'Community',
-      link: '/community/n00b-overview',
-      activeMatch: '/community/',
-    },
+    { text: 'Integrations', link: '/ecosystem/integrations', activeMatch: '/ecosystem/' },
     {
       text: version,
       items: [
@@ -80,8 +77,8 @@ function sidebarAll() {
       ],
     },
     ...sidebarSyntax(),
+    ...sidebarEcosystem(),
     ...sidebarConfig(),
-    ...sidebarMisc(),
     ...sidebarCommunity(),
   ];
 }
@@ -107,6 +104,7 @@ function sidebarSyntax() {
         { text: 'Gitgraph (Git) Diagram 🔥', link: '/syntax/gitgraph' },
         { text: 'C4C Diagram (Context) Diagram 🦺⚠️', link: '/syntax/c4c' },
         { text: 'Mindmaps 🔥', link: '/syntax/mindmap' },
+        { text: 'Timeline 🔥', link: '/syntax/timeline' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
@@ -128,19 +126,20 @@ function sidebarConfig() {
         { text: 'Accessibility', link: '/config/accessibility' },
         { text: 'Mermaid CLI', link: '/config/mermaidCLI' },
         { text: 'Advanced usage', link: '/config/n00b-advanced' },
+        { text: 'FAQ', link: '/config/faq' },
       ],
     },
   ];
 }
 
-function sidebarMisc() {
+function sidebarEcosystem() {
   return [
     {
-      text: '📚 Misc',
+      text: '📚 Ecosystem',
       collapsible: true,
       items: [
-        { text: 'Use-Cases and Integrations', link: '/misc/integrations' },
-        { text: 'FAQ', link: '/misc/faq' },
+        { text: 'Showcases', link: '/ecosystem/showcases' },
+        { text: 'Use-Cases and Integrations', link: '/ecosystem/integrations' },
       ],
     },
   ];

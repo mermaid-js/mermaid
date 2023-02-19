@@ -59,8 +59,8 @@
     Add another diagram to demo page    : 48h
     </pre>
 
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       function clickByFlow(elemName) {
         const div = document.createElement('div');
         div.className = 'created-by-click';

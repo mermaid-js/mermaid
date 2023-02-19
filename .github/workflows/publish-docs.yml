@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+  pull_request:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -40,7 +41,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Setup Pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v3
 
       - name: Run Build
         run: pnpm --filter mermaid run docs:build:vitepress
@@ -52,6 +53,7 @@ jobs:
 
   # Deployment job
   deploy:
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     environment:
       name: github-pages
     runs-on: ubuntu-latest

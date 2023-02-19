@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import * as graphlib from 'dagre-d3-es/src/graphlib';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger';
 import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';
@@ -8,7 +8,6 @@ import { curveLinear } from 'd3';
 import { interpolateToCurve, getStylesFromArray } from '../../utils';
 import { setupGraphViewbox } from '../../setupGraphViewbox';
 import common from '../common/common';
-import addSVGAccessibilityFields from '../../accessibility';
 
 const sanitizeText = (txt) => common.sanitizeText(txt, getConfig());
 
@@ -349,19 +348,6 @@ export const setConf = function (cnf) {
  */
 export const draw = function (text, id, _version, diagObj) {
   log.info('Drawing class - ', id);
-  // diagObj.db.clear();
-  // const parser = diagObj.db.parser;
-  // parser.yy = classDb;
-
-  // Parse the graph definition
-  // try {
-  // parser.parse(text);
-  // } catch (err) {
-  // log.debug('Parsing failed');
-  // }
-
-  // Fetch the default direction, use TD if none was found
-  //let dir = 'TD';
 
   const conf = getConfig().flowchart;
   const securityLevel = getConfig().securityLevel;
@@ -384,15 +370,6 @@ export const draw = function (text, id, _version, diagObj) {
     .setDefaultEdgeLabel(function () {
       return {};
     });
-
-  // let subG;
-  // const subGraphs = flowDb.getSubGraphs();
-  // log.info('Subgraphs - ', subGraphs);
-  // for (let i = subGraphs.length - 1; i >= 0; i--) {
-  //   subG = subGraphs[i];
-  //   log.info('Subgraph - ', subG);
-  //   flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes);
-  // }
 
   // Fetch the vertices/nodes and edges/links from the parsed graph definition
   const classes = diagObj.db.getClasses();
@@ -451,7 +428,6 @@ export const draw = function (text, id, _version, diagObj) {
     }
   }
 
-  addSVGAccessibilityFields(diagObj.db, svg, id);
   // If node has a link, wrap it in an anchor SVG object.
   // const keys = Object.keys(classes);
   // keys.forEach(function(key) {

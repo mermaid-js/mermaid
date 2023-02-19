@@ -32,6 +32,7 @@ jobs:
       # and run all Cypress tests
       - name: Cypress run
         uses: cypress-io/github-action@v4
+        id: cypress
         # If CYPRESS_RECORD_KEY is set, run in parallel on all containers
         # Otherwise (e.g. if running from fork), we run on a single container only
         if: ${{ ( env.CYPRESS_RECORD_KEY != '' ) || ( matrix.containers == 1 ) }}
@@ -44,3 +45,10 @@ jobs:
           parallel: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        if: ${{ failure() && steps.cypress.conclusion == 'failure' }}
+        with:
+          name: error-snapshots
+          path: cypress/snapshots/**/__diff_output__/*

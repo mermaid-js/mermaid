@@ -124,7 +124,7 @@ erDiagram
 
 ### Attributes
 
-Attributes can be defined for entities by specifying the entity name followed by a block containing multiple `type name` pairs, where a block is delimited by an opening `{` and a closing `}`. For example:
+Attributes can be defined for entities by specifying the entity name followed by a block containing multiple `type name` pairs, where a block is delimited by an opening `{` and a closing `}`. The attributes are rendered inside the entity boxes. For example:
 
 ```mermaid-example
 erDiagram
@@ -142,47 +142,34 @@ erDiagram
     }
 ```
 
-The attributes are rendered inside the entity boxes:
-
-```mermaid-example
-erDiagram
-    CAR ||--o{ NAMED-DRIVER : allows
-    CAR {
-        string registrationNumber
-        string make
-        string model
-    }
-    PERSON ||--o{ NAMED-DRIVER : is
-    PERSON {
-        string firstName
-        string lastName
-        int age
-    }
-```
-
-The `type` and `name` values must begin with an alphabetic character and may contain digits, hyphens or underscores. Other than that, there are no restrictions, and there is no implicit set of valid data types.
+The `type` and `name` values must begin with an alphabetic character and may contain digits, hyphens, underscores, parentheses and square brackets. Other than that, there are no restrictions, and there is no implicit set of valid data types.
 
 #### Attribute Keys and Comments
 
-Attributes may also have a `key` or comment defined. Keys can be "PK" or "FK", for Primary Key or Foreign Key. And a `comment` is defined by double quotes at the end of an attribute. Comments themselves cannot have double-quote characters in them.
+Attributes may also have a `key` or comment defined. Keys can be `PK`, `FK` or `UK`, for Primary Key, Foreign Key or Unique Key. To specify multiple key constraints on a single attribute, separate them with a comma (e.g., `PK, FK`).. A `comment` is defined by double quotes at the end of an attribute. Comments themselves cannot have double-quote characters in them.
 
 ```mermaid-example
 erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {
-        string allowedDriver FK "The license of the allowed driver"
-        string registrationNumber
+        string registrationNumber PK
         string make
         string model
+        string[] parts
     }
     PERSON ||--o{ NAMED-DRIVER : is
     PERSON {
         string driversLicense PK "The license #"
-        string firstName
+        string(99) firstName "Only 99 characters are allowed"
         string lastName
+        string phone UK
         int age
     }
-    MANUFACTURER only one to zero or more CAR
+    NAMED-DRIVER {
+        string carRegistrationNumber PK, FK
+        string driverLicence PK, FK
+    }
+    MANUFACTURER only one to zero or more CAR : makes
 ```
 
 ### Other Things

@@ -88,7 +88,7 @@ In this way we can use a text outline to generate a hierarchical mindmap.
 
 ## Different shapes
 
-Mermaids mindmaps can show node using different shapes. When specifying a shape for a node the syntax for the is similar to flowchart nodes, with an id followed by the shape definition and with the text within the shape delimiters. Where possible we try/will try to keep the same shapes as for flowcharts even though they are not all supported from the start.
+Mermaid mindmaps can show nodes using different shapes. When specifying a shape for a node the syntax is similar to flowchart nodes, with an id followed by the shape definition and with the text within the shape delimiters. Where possible we try/will try to keep the same shapes as for flowcharts, even though they are not all supported from the start.
 
 Mindmap can show the following shapes:
 
@@ -180,7 +180,7 @@ More shapes will be added, beginning with the shapes available in flowcharts.
 
 # Icons and classes
 
-## icons
+## Icons
 
 As with flowcharts you can add icons to your nodes but with an updated syntax. The styling for the font based icons are added during the integration so that they are available for the web page. _This is not something a diagram author can do but has to be done with the site administrator or the integrator_. Once the icon fonts are in place you add them to the mind map nodes using the `::icon()` syntax. You place the classes for the icon within the parenthesis like in the following example where icons for material design and fontawesome 4 are displayed. The intention is that this approach should be used for all diagrams supporting icons. **Experimental feature:** This wider scope is also the reason Mindmaps are experimental as this syntax and approach could change.
 
@@ -256,14 +256,24 @@ Root
 
 ## Integrating with your library/website.
 
-Mindmap uses the experimental lazy loading & async rendering features which could change in the future.
+Mindmap uses the experimental lazy loading & async rendering features which could change in the future. From version 9.4.0 this diagram is included in mermaid but use lazy loading in order to keep the size of mermaid down. This is important in order to be able to add additional diagrams going forward.
+
+You can still use the pre 9.4.0 method to add mermaid with mindmaps to a web page:
 
 ```html
 <script type="module">
-  import mermaid from 'https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs';
-  import mindmap from 'https://unpkg.com/@mermaid-js/mermaid-mindmap@9/dist/mermaid-mindmap.esm.min.mjs';
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9.3.0/dist/mermaid.esm.min.mjs';
+  import mindmap from 'https://cdn.jsdelivr.net/npm/@mermaid-js/mermaid-mindmap@9.3.0/dist/mermaid-mindmap.esm.min.mjs';
   await mermaid.registerExternalDiagrams([mindmap]);
 </script>
 ```
 
-You can also refer the implementation in the live editor [here](https://github.com/mermaid-js/mermaid-live-editor/blob/fcf53c98c25604c90a218104268c339be53035a6/src/lib/util/mermaid.ts) to see how the async loading is done.
+From version 9.4.0 you can simplify this code to:
+
+```html
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+</script>
+```
+
+You can also refer the implementation in the live editor [here](https://github.com/mermaid-js/mermaid-live-editor/blob/develop/src/lib/util/mermaid.ts) to see how the async loading is done.
