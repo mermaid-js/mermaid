@@ -188,7 +188,7 @@ describe('Entity Relationship Diagram', () => {
     erDiagram
         CLUSTER {
           varchar(99) name
-          string(255) description
+          string(255) description 
         }
       `,
       { logLevel: 1 }

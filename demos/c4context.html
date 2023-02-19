@@ -49,7 +49,7 @@
             }
           }
         }
-
+      
       BiRel(customerA, SystemAA, "Uses")
       BiRel(SystemAA, SystemE, "Uses")
       Rel(SystemAA, SystemC, "Sends e-mails", "SMTP")
@@ -60,7 +60,7 @@
       UpdateRelStyle(SystemAA, SystemE, $textColor="blue", $lineColor="blue", $offsetY="-10")
       UpdateRelStyle(SystemAA, SystemC, $textColor="blue", $lineColor="blue", $offsetY="-40", $offsetX="-50")
       UpdateRelStyle(SystemC, customerA, $textColor="red", $lineColor="red", $offsetX="-50", $offsetY="20")
-
+      
       UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
     </pre>
     <hr />
@@ -84,22 +84,22 @@
     System_Ext(banking_system, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
 
     Rel(customer, web_app, "Uses", "HTTPS")
-    UpdateRelStyle(customer, web_app, $offsetY="60", $offsetX="90")
+    UpdateRelStyle(customer, web_app, $offsetY="60", $offsetX="90")     
     Rel(customer, spa, "Uses", "HTTPS")
-    UpdateRelStyle(customer, spa, $offsetY="-40")
+    UpdateRelStyle(customer, spa, $offsetY="-40")    
     Rel(customer, mobile_app, "Uses")
-    UpdateRelStyle(customer, mobile_app, $offsetY="-30")
+    UpdateRelStyle(customer, mobile_app, $offsetY="-30") 
 
     Rel(web_app, spa, "Delivers")
-    UpdateRelStyle(web_app, spa, $offsetX="130")
+    UpdateRelStyle(web_app, spa, $offsetX="130") 
     Rel(spa, backend_api, "Uses", "async, JSON/HTTPS")
     Rel(mobile_app, backend_api, "Uses", "async, JSON/HTTPS")
     Rel_Back(database, backend_api, "Reads from and writes to", "sync, JDBC")
 
     Rel(email_system, customer, "Sends e-mails to")
-    UpdateRelStyle(email_system, customer, $offsetX="-45")
+    UpdateRelStyle(email_system, customer, $offsetX="-45")    
     Rel(backend_api, email_system, "Sends e-mails using", "sync, SMTP")
-    UpdateRelStyle(backend_api, email_system, $offsetY="-60")
+    UpdateRelStyle(backend_api, email_system, $offsetY="-60")    
     Rel(backend_api, banking_system, "Uses", "sync/async, XML/HTTPS")
     UpdateRelStyle(backend_api, banking_system, $offsetY="-50", $offsetX="-140")
     </pre>
@@ -132,7 +132,7 @@
     Rel(ma, sign, "Uses", "JSON/HTTPS")
     Rel(ma, accounts, "Uses", "JSON/HTTPS")
 
-    UpdateRelStyle(spa, sign, $offsetY="-40")
+    UpdateRelStyle(spa, sign, $offsetY="-40") 
     UpdateRelStyle(spa, accounts, $offsetX="40", $offsetY="40")
 
     UpdateRelStyle(ma, sign, $offsetX="-90", $offsetY="40")
