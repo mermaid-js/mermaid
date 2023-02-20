@@ -70,7 +70,7 @@ export const loadRegisteredDiagrams = async () => {
             registerDiagram(id, diagram, detector);
           } catch (err) {
             // Remove failed diagram from detectors
-            log.error(`Failed to load external diagram with key ${key}. Remozing from detectors.`);
+            log.error(`Failed to load external diagram with key ${key}. Removing from detectors.`);
             delete detectors[key];
             throw err;
           }
