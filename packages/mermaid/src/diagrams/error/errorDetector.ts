@@ -1,13 +1,13 @@
 import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types';
 
-const id = 'requirement';
+const id = 'error';
 
-const detector: DiagramDetector = (txt) => {
-  return txt.match(/^\s*requirement(Diagram)?/) !== null;
+const detector: DiagramDetector = (text) => {
+  return text.toLowerCase().trim() === 'error';
 };
 
 const loader = async () => {
-  const { diagram } = await import('./requirementDiagram');
+  const { diagram } = await import('./errorDiagram');
   return { id, diagram };
 };
 
