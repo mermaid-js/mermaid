@@ -23,19 +23,22 @@ export type {
   ParseOptions,
 };
 
-/**
- * The options used when running mermaid.
- *
- * @param querySelector - The query selector to use when finding elements to render. Default: .mermaid
- * @param nodes - The nodes to render. If this is set, querySelector will be ignored.
- * @param postRenderCallback - A callback to call after each diagram is rendered.
- * @param suppressErrors - If true, errors will be logged to the console, but not thrown. Default: false
- */
 export interface RunOptions {
-  // Default: .mermaid
+  /**
+   * The query selector to use when finding elements to render. Default: `".mermaid"`.
+   */
   querySelector?: string;
+  /**
+   * The nodes to render. If this is set, `querySelector` will be ignored.
+   */
   nodes?: ArrayLike<HTMLElement>;
+  /**
+   * A callback to call after each diagram is rendered.
+   */
   postRenderCallback?: (id: string) => unknown;
+  /**
+   * If `true`, errors will be logged to the console, but not thrown. Default: `false`
+   */
   suppressErrors?: boolean;
 }
 
