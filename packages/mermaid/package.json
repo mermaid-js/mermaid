@@ -33,7 +33,7 @@
     "docs:serve": "pnpm docs:build:vitepress && vitepress serve src/vitepress",
     "docs:spellcheck": "cspell --config ../../cSpell.json \"src/docs/**/*.md\"",
     "release": "pnpm build",
-    "prepublishOnly": "pnpm -w run build"
+    "prepublishOnly": "cpy '../../README.*' ./ --cwd=. && pnpm -w run build"
   },
   "repository": {
     "type": "git",
@@ -66,18 +66,19 @@
     "non-layered-tidy-tree-layout": "^2.0.2",
     "stylis": "^4.1.2",
     "ts-dedent": "^2.2.0",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "web-worker": "^1.2.0"
   },
   "devDependencies": {
     "@types/cytoscape": "^3.19.9",
     "@types/d3": "^7.4.0",
     "@types/dompurify": "^2.4.0",
-    "@types/jsdom": "^20.0.1",
+    "@types/jsdom": "^21.0.0",
     "@types/lodash-es": "^4.17.6",
     "@types/micromatch": "^4.0.2",
     "@types/prettier": "^2.7.1",
     "@types/stylis": "^4.0.2",
-    "@types/uuid": "^8.3.4",
+    "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
     "chokidar": "^3.5.3",
@@ -88,21 +89,21 @@
     "globby": "^13.1.2",
     "jison": "^0.4.18",
     "js-base64": "^3.7.2",
-    "jsdom": "^20.0.2",
+    "jsdom": "^21.0.0",
     "micromatch": "^4.0.5",
     "path-browserify": "^1.0.1",
     "prettier": "^2.7.1",
     "remark": "^14.0.2",
     "remark-frontmatter": "^4.0.1",
     "remark-gfm": "^3.0.1",
-    "rimraf": "^3.0.2",
+    "rimraf": "^4.0.0",
     "start-server-and-test": "^1.14.0",
     "typedoc": "^0.23.18",
     "typedoc-plugin-markdown": "^3.13.6",
     "typescript": "^4.8.4",
     "unist-util-flatmap": "^1.0.0",
-    "vitepress": "^1.0.0-alpha.31",
-    "vitepress-plugin-search": "^1.0.4-alpha.16"
+    "vitepress": "^1.0.0-alpha.46",
+    "vitepress-plugin-search": "^1.0.4-alpha.19"
   },
   "files": [
     "dist",

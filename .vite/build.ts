@@ -20,13 +20,14 @@ const visualizerOptions = (packageName: string, core = false): PluginOption[] =>
   if (packageName !== 'mermaid' || !visualize) {
     return [];
   }
-  return ['network', 'treemap', 'sunburst'].map((chartType) =>
-    visualizer({
-      filename: `./stats/${chartType}${core ? '.core' : ''}.html`,
-      template: chartType as TemplateType,
-      gzipSize: true,
-      brotliSize: true,
-    })
+  return ['network', 'treemap', 'sunburst'].map(
+    (chartType) =>
+      visualizer({
+        filename: `./stats/${chartType}${core ? '.core' : ''}.html`,
+        template: chartType as TemplateType,
+        gzipSize: true,
+        brotliSize: true,
+      }) as PluginOption
   );
 };
 
@@ -122,11 +123,9 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
 };
 
 const buildPackage = async (entryName: keyof typeof packageOptions) => {
-  return Promise.allSettled([
-    build(getBuildConfig({ minify: false, entryName })),
-    build(getBuildConfig({ minify: 'esbuild', entryName })),
-    build(getBuildConfig({ minify: false, core: true, entryName })),
-  ]);
+  await build(getBuildConfig({ minify: false, entryName }));
+  await build(getBuildConfig({ minify: 'esbuild', entryName }));
+  await build(getBuildConfig({ minify: false, core: true, entryName }));
 };
 
 const main = async () => {
