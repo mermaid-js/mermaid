@@ -674,4 +674,15 @@ A --> B
       { titleTopMargin: 0 }
     );
   });
+  it('3192: It should be possieble to render flowcharts with invisisble edges', () => {
+    imgSnapshotTest(
+      `---
+title: Simple flowchart with invisisble edges
+---
+flowchart TD
+A ~~~ B
+`,
+      { titleTopMargin: 0 }
+    );
+  });
 });
