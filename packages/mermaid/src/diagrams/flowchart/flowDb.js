@@ -677,6 +677,10 @@ const destructEndLink = (_str) => {
     stroke = 'thick';
   }
 
+  if (line[0] === '~') {
+    stroke = 'invisible';
+  }
+
   let dots = countChar('.', line);
 
   if (dots) {

@@ -2,15 +2,12 @@
 import { select, selectAll } from 'd3';
 import svgDraw, { drawText, fixLifeLineHeights } from './svgDraw';
 import { log } from '../../logger';
-// import { parser } from './parser/sequenceDiagram';
 import common from '../common/common';
-// import sequenceDb from './sequenceDb';
 import * as configApi from '../../config';
 import assignWithDepth from '../../assignWithDepth';
 import utils from '../../utils';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import Diagram from '../../Diagram';
-import { convert } from '../../tests/util';
+import { Diagram } from '../../Diagram';
 
 let conf = {};
 

@@ -453,6 +453,9 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     case 'thick':
       strokeClasses = 'edge-thickness-thick';
       break;
+    case 'invisible':
+      strokeClasses = 'edge-thickness-thick';
+      break;
     default:
       strokeClasses = '';
   }

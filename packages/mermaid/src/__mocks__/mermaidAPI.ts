@@ -5,24 +5,14 @@
  */
 import * as configApi from '../config';
 import { vi } from 'vitest';
-import { addDiagrams } from '../diagram-api/diagram-orchestration';
-import Diagram, { type ParseErrorFunction } from '../Diagram';
-
-// Normally, we could just do the following to get the original `parse()`
-// implementation, however, requireActual returns a promise and it's not documented how to use withing mock file.
-
-/** {@inheritDoc mermaidAPI.parse} */
-function parse(text: string, parseError?: ParseErrorFunction): boolean {
-  addDiagrams();
-  const diagram = new Diagram(text, parseError);
-  return diagram.parse(text, parseError);
-}
+import { mermaidAPI as mAPI } from '../mermaidAPI';
 
 // original version cannot be modified since it was frozen with `Object.freeze()`
 export const mermaidAPI = {
-  render: vi.fn(),
-  renderAsync: vi.fn(),
-  parse,
+  render: vi.fn().mockResolvedValue({
+    svg: '<svg></svg>',
+  }),
+  parse: mAPI.parse,
   parseDirective: vi.fn(),
   initialize: vi.fn(),
   getConfig: configApi.getConfig,

@@ -59,7 +59,7 @@ Example:
 
 ```html
 <script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad: true });
 </script>
 ```
@@ -82,7 +82,7 @@ Example:
       B-->D(fa:fa-spinner);
     </pre>
     <script type="module">
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       mermaid.initialize({ startOnLoad: true });
     </script>
   </body>
@@ -331,8 +331,8 @@ The future proof way of setting the configuration is by using the initialization
 on what kind of integration you use.
 
 ```html
-<script src="../dist/mermaid.js"></script>
-<script>
+<script type="module">
+  import mermaid from './mermaid.esm.mjs';
   let config = { startOnLoad: true, flowchart: { useMaxWidth: false, htmlLabels: true } };
   mermaid.initialize(config);
 </script>

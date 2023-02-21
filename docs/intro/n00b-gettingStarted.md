@@ -128,14 +128,14 @@ b. The importing of mermaid library through the `mermaid.esm.js` or `mermaid.esm
 ```html
 <body>
   <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true });
   </script>
 </body>
 ```
 
 **Notes**:
-Rendering in Mermaid is initialized by `mermaid.initialize()` call. You can place `mermaid.initialize()` inside `mermaid.min.js` for brevity. However, doing the opposite lets you control when it starts looking for `<div>`tags inside the web page with `mermaid.initialize()`. This is useful when you think that not all `<div>` tags may have loaded on the execution of `mermaid.min.js` file.
+Rendering in Mermaid is initialized by `mermaid.initialize()` call. You can place `mermaid.initialize()` inside `mermaid.esm.min.mjs` for brevity. However, doing the opposite lets you control when it starts looking for `<div>`tags inside the web page with `mermaid.initialize()`. This is useful when you think that not all `<div>` tags may have loaded on the execution of `mermaid.esm.min.mjs` file.
 
 `startOnLoad` is one of the parameters that can be defined by `mermaid.initialize()`
 
@@ -172,7 +172,7 @@ Please refer to the [Mindmap](../syntax/mindmap.md?id=integrating-with-your-libr
     </pre>
 
     <script type="module">
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       mermaid.initialize({ startOnLoad: true });
     </script>
   </body>
