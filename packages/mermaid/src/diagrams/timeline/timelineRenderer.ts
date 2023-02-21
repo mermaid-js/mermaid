@@ -141,11 +141,14 @@ export const draw = function (text: string, id: string, version: string, diagObj
 
   if (sections && sections.length > 0) {
     sections.forEach((section) => {
+      //filter task where tasks.section == section
+      const tasksForSection = tasks.filter((task) => task.section === section);
+
       const sectionNode: Block<string, number> = {
         number: sectionNumber,
         descr: section,
         section: sectionNumber,
-        width: 150,
+        width: 200 * Math.max(tasksForSection.length, 1) - 50,
         padding: 20,
         maxHeight: maxSectionHeight,
       };
@@ -159,8 +162,6 @@ export const draw = function (text: string, id: string, version: string, diagObj
       masterY += maxSectionHeight + 50;
 
       //draw tasks for this section
-      //filter task where tasks.section == section
-      const tasksForSection = tasks.filter((task) => task.section === section);
       if (tasksForSection.length > 0) {
         drawTasks(
           svg,
