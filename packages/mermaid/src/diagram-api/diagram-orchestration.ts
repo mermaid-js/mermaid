@@ -45,7 +45,7 @@ export const addDiagrams = () => {
           throw new Error(
             'Diagrams beginning with --- are not valid. ' +
               'If you were trying to use a YAML front-matter, please ensure that ' +
-              "you've correctly opened and closed the YAML front-matter with unindented `---` blocks"
+              "you've correctly opened and closed the YAML front-matter with un-indented `---` blocks"
           );
         },
       },
@@ -55,25 +55,28 @@ export const addDiagrams = () => {
       return text.toLowerCase().trimStart().startsWith('---');
     }
   );
+  // Ordering of detectors is important. The first one to return true will be used.
   registerLazyLoadedDiagrams(
     error,
     c4,
-    classDiagram,
     classDiagramV2,
+    classDiagram,
     er,
     gantt,
     info,
     pie,
     requirement,
     sequence,
+    flowchartElk,
+    // TODO @knsv: Should v2 come before flowchart?
+    // This will fail few unit tests as they expect graph to be detected as flowchart, but it is detected as flowchart-v2.
     flowchart,
     flowchartV2,
-    flowchartElk,
     mindmap,
     timeline,
     git,
-    state,
     stateV2,
+    state,
     journey
   );
 };

@@ -666,7 +666,7 @@ describe('mermaidAPI', () => {
       ).rejects.toThrow(
         'Diagrams beginning with --- are not valid. ' +
           'If you were trying to use a YAML front-matter, please ensure that ' +
-          "you've correctly opened and closed the YAML front-matter with unindented `---` blocks"
+          "you've correctly opened and closed the YAML front-matter with un-indented `---` blocks"
       );
     });
     it('does not throw for a valid definition', async () => {
