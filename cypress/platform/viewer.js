@@ -46,7 +46,7 @@ const contentLoaded = async function () {
 
     await mermaid2.registerExternalDiagrams([externalExample]);
     mermaid2.initialize(graphObj.mermaid);
-    await mermaid2.init();
+    await mermaid2.run();
     markRendered();
   }
 };
