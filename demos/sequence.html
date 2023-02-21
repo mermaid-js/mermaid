@@ -144,8 +144,8 @@
     >
     <hr />
 
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         theme: 'base',
         // themeCSS: '.node rect { fill: red; }',

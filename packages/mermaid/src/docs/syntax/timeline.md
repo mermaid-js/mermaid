@@ -291,4 +291,16 @@ Let's put them to use, and see how our sample diagram looks in different themes:
           2010 : Pinterest
 ```
 
-You can also refer the implementation in the live editor [here](https://github.com/mermaid-js/mermaid-live-editor/blob/fcf53c98c25604c90a218104268c339be53035a6/src/lib/util/mermaid.ts) to see how the async loading is done.
+## Integrating with your library/website.
+
+Timeline uses experimental lazy loading & async rendering features which could change in the future.The lazy loading is important in order to be able to add additional diagrams going forward.
+
+You can use this method to add mermaid including the timeline diagram to a web page:
+
+```html
+<script type="module">
+  import mermaid from '<CDN_URL>/mermaid@<MERMAID_VERSION>/dist/mermaid.esm.min.mjs';
+</script>
+```
+
+You can also refer the implementation in the live editor [here](https://github.com/mermaid-js/mermaid-live-editor/blob/develop/src/lib/util/mermaid.ts) to see how the async loading is done.

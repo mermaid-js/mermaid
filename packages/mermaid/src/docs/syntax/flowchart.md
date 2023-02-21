@@ -21,7 +21,9 @@ flowchart LR
     id
 ```
 
-> **Note** The id is what is displayed in the box.
+```note
+The id is what is displayed in the box.
+```
 
 ### A node with text
 
@@ -241,6 +243,15 @@ flowchart LR
 ```mermaid-example
 flowchart LR
    A == text ==> B
+```
+
+### An invisible link
+
+This can be a useful tool in some instances where you want to alter the default positioning of a node.
+
+```mermaid-example
+flowchart LR
+    A ~~~ B
 ```
 
 ### Chaining of links

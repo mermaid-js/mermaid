@@ -10,8 +10,7 @@ import { setupGraphViewbox } from '../../../setupGraphViewbox';
 import common, { evaluate } from '../../common/common';
 import { interpolateToCurve, getStylesFromArray } from '../../../utils';
 
-import ELK from 'elkjs/lib/elk.bundled.js';
-const elk = new ELK();
+let elk;
 
 const portPos = {};
 
@@ -187,7 +186,7 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
       default:
         _shape = 'rect';
     }
-    // // Add the node
+    // Add the node
     const node = {
       labelStyle: styles.labelStyle,
       shape: _shape,
@@ -766,6 +765,10 @@ const insertChildren = (nodeArray, parentLookupDb) => {
  */
 
 export const draw = async function (text, id, _version, diagObj) {
+  if (!elk) {
+    const ELK = (await import('elkjs/lib/elk.bundled.js')).default;
+    elk = new ELK();
+  }
   // Add temporary render element
   diagObj.db.clear();
   nodeDb = {};

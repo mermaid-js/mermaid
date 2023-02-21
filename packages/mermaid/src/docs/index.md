@@ -28,7 +28,7 @@ features:
     link: ../../config/Tutorials.html
   - title: 🧩 Integrations available!
     details: Use Mermaid with your favorite applications, check out the integrations list.
-    link: ../../misc/integrations.md
+    link: ../../ecosystem/integrations.md
   - title: 🏆 Award winning!
     details: 2019 JavaScript Open Source Award winner for "The Most Exciting Use of Technology".
     link: https://osawards.com/javascript/2019

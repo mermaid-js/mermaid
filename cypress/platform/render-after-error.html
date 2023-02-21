@@ -9,19 +9,19 @@
   <body>
     <div id="graph"></div>
 
-    <script src="./mermaid.js"></script>
-    <script>
-      mermaid.init({ startOnLoad: false });
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      await mermaid.initialize({ startOnLoad: false });
+      await mermaid.run();
 
-      mermaid.mermaidAPI.initialize({ securityLevel: 'strict' });
+      await mermaid.mermaidAPI.initialize({ securityLevel: 'strict' });
       try {
         console.log('rendering');
-        mermaid.mermaidAPI.render('graphDiv', `>`);
+        await mermaid.mermaidAPI.render('graphDiv', `>`);
       } catch (e) {}
 
-      mermaid.mermaidAPI.render('graphDiv', `graph LR\n a --> b`, (html) => {
-        document.getElementById('graph').innerHTML = html;
-      });
+      const { svg } = await mermaid.mermaidAPI.render('graphDiv', `graph LR\n a --> b`);
+      document.getElementById('graph').innerHTML = svg;
     </script>
   </body>
 </html>

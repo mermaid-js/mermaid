@@ -41,7 +41,7 @@ function nav() {
       link: '/config/Tutorials',
       activeMatch: '/config/',
     },
-    { text: 'Integrations', link: '/misc/integrations', activeMatch: '/misc/' },
+    { text: 'Integrations', link: '/ecosystem/integrations', activeMatch: '/ecosystem/' },
     {
       text: version,
       items: [

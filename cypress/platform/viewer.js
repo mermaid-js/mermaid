@@ -75,7 +75,7 @@ function merge(current, update) {
   return current;
 }
 
-const contentLoadedApi = function () {
+const contentLoadedApi = async function () {
   let pos = document.location.href.indexOf('?graph=');
   if (pos > 0) {
     pos = pos + 7;
@@ -102,38 +102,25 @@ const contentLoadedApi = function () {
       mermaid2.initialize(cnf);
 
       for (let i = 0; i < numCodes; i++) {
-        mermaid2.render(
+        const { svg, bindFunctions } = await mermaid2.render(
           'newid' + i,
           graphObj.code[i],
-          (svgCode, bindFunctions) => {
-            div.innerHTML = svgCode;
-
-            bindFunctions(div);
-          },
           divs[i]
         );
+        div.innerHTML = svg;
+        bindFunctions(div);
       }
     } else {
       const div = document.createElement('div');
       div.id = 'block';
       div.className = 'mermaid';
-      // div.innerHTML = graphObj.code
       console.warn('graphObj.mermaid', graphObj.mermaid);
       document.getElementsByTagName('body')[0].appendChild(div);
       mermaid2.initialize(graphObj.mermaid);
 
-      mermaid2.render(
-        'newid',
-        graphObj.code,
-        (svgCode, bindFunctions) => {
-          div.innerHTML = svgCode;
-
-          if (bindFunctions) {
-            bindFunctions(div);
-          }
-        },
-        div
-      );
+      const { svg, bindFunctions } = await mermaid2.render('newid', graphObj.code, div);
+      div.innerHTML = svg;
+      bindFunctions(div);
     }
   }
   markRendered();
@@ -148,7 +135,7 @@ if (typeof document !== 'undefined') {
     function () {
       if (this.location.href.match('xss.html')) {
         this.console.log('Using api');
-        contentLoadedApi();
+        void contentLoadedApi();
       } else {
         this.console.log('Not using api');
         void contentLoaded();

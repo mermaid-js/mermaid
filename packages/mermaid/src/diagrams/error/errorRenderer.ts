@@ -1,4 +1,5 @@
 /** Created by knut on 14-12-11. */
+// @ts-ignore TODO: Investigate D3 issue
 import { select } from 'd3';
 import { log } from '../../logger';
 import { getErrorMessage } from '../../utils';
