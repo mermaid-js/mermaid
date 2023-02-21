@@ -1,4 +1,4 @@
-// @ts-expect-error - db not typed yet
+// @ts-ignore - db not typed yet
 import { select, Selection } from 'd3';
 import svgDraw from './svgDraw';
 import { log } from '../../logger';
@@ -46,9 +46,11 @@ export const draw = function (text: string, id: string, version: string, diagObj
   }
   const root =
     securityLevel === 'sandbox'
-      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      ? // @ts-ignore d3 types are wrong
+        select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
 
+  // @ts-ignore d3 types are wrong
   const svg = root.select('#' + id);
 
   svg.append('g');
