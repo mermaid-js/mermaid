@@ -295,6 +295,7 @@ export interface TimelineDiagramConfig extends BaseDiagramConfig {
   leftMargin?: number;
   width?: number;
   height?: number;
+  padding?: number;
   boxMargin?: number;
   boxTextMargin?: number;
   noteMargin?: number;
@@ -311,6 +312,7 @@ export interface TimelineDiagramConfig extends BaseDiagramConfig {
   sectionFills?: string[];
   sectionColours?: string[];
   disableMulticolor?: boolean;
+  useMaxWidth?: boolean;
 }
 
 export interface GanttDiagramConfig extends BaseDiagramConfig {
