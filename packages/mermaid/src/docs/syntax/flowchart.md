@@ -247,7 +247,7 @@ flowchart LR
 
 ### An invisible link
 
-This can be a useful tool in some instances where you want to alter the default positining of a node.
+This can be a useful tool in some instances where you want to alter the default positioning of a node.
 
 ```mermaid-example
 flowchart LR
