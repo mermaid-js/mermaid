@@ -26,7 +26,7 @@ element.innerHTML = svg;
 bindFunctions?.(element);
 
 // >= v10 with promise.then
-mermaid.render('graph TD;A-->B').then(({ svg, bindFunctions }) => {
+mermaid.render('id', 'graph TD;A-->B').then(({ svg, bindFunctions }) => {
   element.innerHTML = svg;
   bindFunctions?.(element);
 });
