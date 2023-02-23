@@ -20,13 +20,14 @@ const visualizerOptions = (packageName: string, core = false): PluginOption[] =>
   if (packageName !== 'mermaid' || !visualize) {
     return [];
   }
-  return ['network', 'treemap', 'sunburst'].map((chartType) =>
-    visualizer({
-      filename: `./stats/${chartType}${core ? '.core' : ''}.html`,
-      template: chartType as TemplateType,
-      gzipSize: true,
-      brotliSize: true,
-    })
+  return ['network', 'treemap', 'sunburst'].map(
+    (chartType) =>
+      visualizer({
+        filename: `./stats/${chartType}${core ? '.core' : ''}.html`,
+        template: chartType as TemplateType,
+        gzipSize: true,
+        brotliSize: true,
+      }) as PluginOption
   );
 };
 
@@ -36,9 +37,9 @@ const packageOptions = {
     packageName: 'mermaid',
     file: 'mermaid.ts',
   },
-  'mermaid-mindmap': {
-    name: 'mermaid-mindmap',
-    packageName: 'mermaid-mindmap',
+  'mermaid-example-diagram': {
+    name: 'mermaid-example-diagram',
+    packageName: 'mermaid-example-diagram',
     file: 'detector.ts',
   },
 };
@@ -60,12 +61,6 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
       format: 'esm',
       sourcemap: true,
       entryFileNames: `${name}.esm${minify ? '.min' : ''}.mjs`,
-    },
-    {
-      name,
-      format: 'umd',
-      sourcemap: true,
-      entryFileNames: `${name}${minify ? '.min' : ''}.js`,
     },
   ];
 
@@ -114,7 +109,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
 
   if (watch && config.build) {
     config.build.watch = {
-      include: ['packages/mermaid-mindmap/src/**', 'packages/mermaid/src/**'],
+      include: ['packages/mermaid-example-diagram/src/**', 'packages/mermaid/src/**'],
     };
   }
 
@@ -122,11 +117,9 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
 };
 
 const buildPackage = async (entryName: keyof typeof packageOptions) => {
-  return Promise.allSettled([
-    build(getBuildConfig({ minify: false, entryName })),
-    build(getBuildConfig({ minify: 'esbuild', entryName })),
-    build(getBuildConfig({ minify: false, core: true, entryName })),
-  ]);
+  await build(getBuildConfig({ minify: false, entryName }));
+  await build(getBuildConfig({ minify: 'esbuild', entryName }));
+  await build(getBuildConfig({ minify: false, core: true, entryName }));
 };
 
 const main = async () => {
@@ -139,7 +132,7 @@ const main = async () => {
 if (watch) {
   build(getBuildConfig({ minify: false, watch, core: false, entryName: 'mermaid' }));
   if (!mermaidOnly) {
-    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-mindmap' }));
+    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
   }
 } else if (visualize) {
   await build(getBuildConfig({ minify: false, core: true, entryName: 'mermaid' }));

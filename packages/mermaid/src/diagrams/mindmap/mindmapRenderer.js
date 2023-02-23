@@ -1,14 +1,12 @@
 /** Created by knut on 14-12-11. */
 import { select } from 'd3';
-import { log, getConfig, setupGraphViewbox } from './mermaidUtils';
+import { log } from '../../logger';
+import { getConfig } from '../../config';
+import { setupGraphViewbox } from '../../setupGraphViewbox';
 import svgDraw from './svgDraw';
-import cytoscape from 'cytoscape';
-import coseBilkent from 'cytoscape-cose-bilkent';
 import * as db from './mindmapDb';
 
-// Inject the layout algorithm into cytoscape
-cytoscape.use(coseBilkent);
-
+let cytoscape;
 /**
  * @param {any} svg The svg element to draw the diagram onto
  * @param {object} mindmap The mindmap data and hierarchy
@@ -91,7 +89,14 @@ function addNodes(mindmap, cy, conf, level) {
  * @param conf
  * @param cy
  */
-function layoutMindmap(node, conf) {
+async function layoutMindmap(node, conf) {
+  if (!cytoscape) {
+    cytoscape = (await import('cytoscape')).default;
+    const coseBilkent = (await import('cytoscape-cose-bilkent')).default;
+    // Inject the layout algorithm into cytoscape
+    cytoscape.use(coseBilkent);
+  }
+
   return new Promise((resolve) => {
     // Add temporary render element
     const renderEl = select('body').append('div').attr('id', 'cy').attr('style', 'display:none');

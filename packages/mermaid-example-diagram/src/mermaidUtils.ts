@@ -1,4 +1,8 @@
-const warning = () => null;
+const warning = (s: string) => {
+  // Todo remove debug code
+  // eslint-disable-next-line no-console
+  console.error('Log function was called before initialization', s);
+};
 
 export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
@@ -19,13 +23,11 @@ export const log: Record<keyof typeof LEVELS, typeof console.log> = {
   error: warning,
   fatal: warning,
 };
+
 export let setLogLevel: (level: keyof typeof LEVELS | number | string) => void;
 export let getConfig: () => object;
 export let sanitizeText: (str: string) => string;
-export let commonDb: any;
-/**
- * Placeholder for the real function that will be injected by mermaid.
- */
+export let commonDb: () => object;
 // eslint-disable @typescript-eslint/no-explicit-any
 export let setupGraphViewbox: (
   graph: any,
@@ -34,25 +36,15 @@ export let setupGraphViewbox: (
   useMaxWidth: boolean
 ) => void;
 
-/**
- * Function called by mermaid that injects utility functions that help the diagram to be a good citizen.
- *
- * @param _log - log from mermaid/src/diagramAPI.ts
- * @param _setLogLevel - setLogLevel from mermaid/src/diagramAPI.ts
- * @param _getConfig - getConfig from mermaid/src/diagramAPI.ts
- * @param _sanitizeText - sanitizeText from mermaid/src/diagramAPI.ts
- * @param _setupGraphViewbox - setupGraphViewbox from mermaid/src/diagramAPI.ts
- * @param _commonDb -`commonDb` from mermaid/src/diagramAPI.ts
- */
 export const injectUtils = (
   _log: Record<keyof typeof LEVELS, typeof console.log>,
-  _setLogLevel: typeof setLogLevel,
-  _getConfig: typeof getConfig,
-  _sanitizeText: typeof sanitizeText,
-  _setupGraphViewbox: typeof setupGraphViewbox,
+  _setLogLevel: any,
+  _getConfig: any,
+  _sanitizeText: any,
+  _setupGraphViewbox: any,
   _commonDb: any
 ) => {
-  _log.info('Mermaid utils injected into timeline-diagram');
+  _log.info('Mermaid utils injected');
   log.trace = _log.trace;
   log.debug = _log.debug;
   log.info = _log.info;

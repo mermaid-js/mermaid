@@ -2,15 +2,12 @@
 import { select, selectAll } from 'd3';
 import svgDraw, { drawText, fixLifeLineHeights } from './svgDraw';
 import { log } from '../../logger';
-// import { parser } from './parser/sequenceDiagram';
 import common from '../common/common';
-// import sequenceDb from './sequenceDb';
 import * as configApi from '../../config';
 import assignWithDepth from '../../assignWithDepth';
 import utils from '../../utils';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import Diagram from '../../Diagram';
-import { convert } from '../../tests/util';
+import { Diagram } from '../../Diagram';
 
 let conf = {};
 
@@ -631,6 +628,9 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
 export const draw = function (_text: string, id: string, _version: string, diagObj: Diagram) {
   const { securityLevel, sequence } = configApi.getConfig();
   conf = sequence;
+  diagObj.db.clear();
+  // Parse the graph definition
+  diagObj.parser.parse(_text);
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {

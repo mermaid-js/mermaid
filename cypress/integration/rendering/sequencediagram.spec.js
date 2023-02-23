@@ -116,7 +116,11 @@ context('Sequence diagram', () => {
         loop Loopy
             Bob->>Alice: Pasten
         end      `,
-      { wrap: true }
+      {
+        sequence: {
+          wrap: true,
+        },
+      }
     );
   });
   context('font settings', () => {

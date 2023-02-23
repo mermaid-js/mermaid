@@ -238,6 +238,9 @@ export const setDirection = function (dir) {
   if (direction.match(/.*v/)) {
     direction = 'TB';
   }
+  if (direction === 'TD') {
+    direction = 'TB';
+  }
 };
 
 /**
@@ -672,6 +675,10 @@ const destructEndLink = (_str) => {
 
   if (line[0] === '=') {
     stroke = 'thick';
+  }
+
+  if (line[0] === '~') {
+    stroke = 'invisible';
   }
 
   let dots = countChar('.', line);

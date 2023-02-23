@@ -348,19 +348,6 @@ export const setConf = function (cnf) {
  */
 export const draw = function (text, id, _version, diagObj) {
   log.info('Drawing class - ', id);
-  // diagObj.db.clear();
-  // const parser = diagObj.db.parser;
-  // parser.yy = classDb;
-
-  // Parse the graph definition
-  // try {
-  // parser.parse(text);
-  // } catch (err) {
-  // log.debug('Parsing failed');
-  // }
-
-  // Fetch the default direction, use TD if none was found
-  //let dir = 'TD';
 
   const conf = getConfig().flowchart;
   const securityLevel = getConfig().securityLevel;
@@ -383,15 +370,6 @@ export const draw = function (text, id, _version, diagObj) {
     .setDefaultEdgeLabel(function () {
       return {};
     });
-
-  // let subG;
-  // const subGraphs = flowDb.getSubGraphs();
-  // log.info('Subgraphs - ', subGraphs);
-  // for (let i = subGraphs.length - 1; i >= 0; i--) {
-  //   subG = subGraphs[i];
-  //   log.info('Subgraph - ', subG);
-  //   flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes);
-  // }
 
   // Fetch the vertices/nodes and edges/links from the parsed graph definition
   const classes = diagObj.db.getClasses();

@@ -1558,8 +1558,8 @@
 
     <h1 id="link-clicked">Anchor for "link-clicked" test</h1>
 
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         theme: 'forest',
         logLevel: 3,

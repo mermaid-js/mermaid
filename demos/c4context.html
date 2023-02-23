@@ -217,8 +217,8 @@
      </pre>
     <hr />
 
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       const ALLOWED_TAGS = [
         'a',
         'b',
@@ -273,8 +273,7 @@
         },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
       });
-    </script>
-    <script>
+
       function testClick(nodeId) {
         console.log('clicked', nodeId);
         let originalBgColor = document.querySelector('body').style.backgroundColor;
@@ -283,21 +282,18 @@
           document.querySelector('body').style.backgroundColor = originalBgColor;
         }, 100);
       }
-    </script>
-    <script>
-      const testLineEndings = (test, input) => {
+
+      const testLineEndings = async (test, input) => {
         try {
-          mermaid.render(test, input, () => {
-            //no-op
-          });
+          await mermaid.render(test, input);
         } catch (err) {
           console.error('Error in %s:\n\n%s', test, err);
         }
       };
 
-      testLineEndings('CR', 'graph LR\rsubgraph CR\rA --> B\rend');
-      testLineEndings('LF', 'graph LR\nsubgraph LF\nA --> B\nend');
-      testLineEndings('CRLF', 'graph LR\r\nsubgraph CRLF\r\nA --> B\r\nend');
+      await testLineEndings('CR', 'graph LR\rsubgraph CR\rA --> B\rend');
+      await testLineEndings('LF', 'graph LR\nsubgraph LF\nA --> B\nend');
+      await testLineEndings('CRLF', 'graph LR\r\nsubgraph CRLF\r\nA --> B\r\nend');
     </script>
   </body>
 </html>

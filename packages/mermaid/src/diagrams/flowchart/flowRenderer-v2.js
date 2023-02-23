@@ -291,6 +291,11 @@ export const addEdges = function (edges, g, diagObj) {
         edgeData.pattern = 'solid';
         edgeData.style = 'stroke-width: 3.5px;fill:none;';
         break;
+      case 'invisible':
+        edgeData.thickness = 'invisible';
+        edgeData.pattern = 'solid';
+        edgeData.style = 'stroke-width: 0;fill:none;';
+        break;
     }
     if (edge.style !== undefined) {
       const styles = getStylesFromArray(edge.style);

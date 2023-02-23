@@ -1,7 +1,7 @@
 {
   "name": "mermaid-monorepo",
   "private": true,
-  "version": "9.3.0-rc1",
+  "version": "9.4.0",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
   "packageManager": "pnpm@7.27.0",
@@ -18,9 +18,9 @@
     "build:vite": "ts-node-esm --transpileOnly .vite/build.ts",
     "build:mermaid": "pnpm build:vite --mermaid",
     "build:viz": "pnpm build:mermaid --visualize",
-    "build:types": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-mindmap/tsconfig.json --emitDeclarationOnly",
+    "build:types": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-example-diagram/tsconfig.json --emitDeclarationOnly",
     "build:watch": "pnpm build:vite --watch",
-    "build": "pnpm run -r clean && concurrently \"pnpm build:vite\" \"pnpm build:types\"",
+    "build": "pnpm run -r clean && pnpm build:types && pnpm build:vite",
     "dev": "concurrently \"pnpm build:vite --watch\" \"ts-node-esm .vite/server.ts\"",
     "release": "pnpm build",
     "lint": "eslint --cache --cache-strategy content --ignore-path .gitignore . && pnpm lint:jison && prettier --cache --check .",
@@ -34,7 +34,7 @@
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
     "prepublishOnly": "pnpm build && pnpm test",
-    "prepare": "concurrently \"husky install\" \"pnpm build\"",
+    "prepare": "husky install && pnpm build",
     "pre-commit": "lint-staged"
   },
   "repository": {
@@ -58,8 +58,9 @@
     "@commitlint/cli": "^17.2.0",
     "@commitlint/config-conventional": "^17.2.0",
     "@cspell/eslint-plugin": "^6.14.2",
+    "@types/cors": "^2.8.13",
     "@types/eslint": "^8.4.10",
-    "@types/express": "^4.17.14",
+    "@types/express": "^4.17.17",
     "@types/js-yaml": "^4.0.5",
     "@types/jsdom": "^21.0.0",
     "@types/lodash": "^4.14.188",
@@ -73,8 +74,9 @@
     "@vitest/spy": "^0.28.4",
     "@vitest/ui": "^0.28.4",
     "concurrently": "^7.5.0",
+    "cors": "^2.8.5",
     "coveralls": "^3.1.1",
-    "cypress": "^10.11.0",
+    "cypress": "^12.0.0",
     "cypress-image-snapshot": "^4.0.1",
     "esbuild": "^0.17.0",
     "eslint": "^8.32.0",
@@ -103,11 +105,11 @@
     "prettier-plugin-jsdoc": "^0.4.2",
     "rimraf": "^4.0.0",
     "rollup-plugin-visualizer": "^5.8.3",
-    "start-server-and-test": "^1.14.0",
+    "start-server-and-test": "^1.15.4",
     "ts-node": "^10.9.1",
     "typescript": "^4.8.4",
-    "vite": "^3.2.3",
-    "vitest": "^0.28.4"
+    "vite": "^4.1.1",
+    "vitest": "^0.28.5"
   },
   "volta": {
     "node": "18.14.0"

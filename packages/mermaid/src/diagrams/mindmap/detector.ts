@@ -1,5 +1,4 @@
-import type { ExternalDiagramDefinition } from 'mermaid';
-
+import type { ExternalDiagramDefinition } from '../../diagram-api/types';
 const id = 'mindmap';
 
 const detector = (txt: string) => {
@@ -7,7 +6,7 @@ const detector = (txt: string) => {
 };
 
 const loader = async () => {
-  const { diagram } = await import('./diagram-definition');
+  const { diagram } = await import('./mindmap-definition.js');
   return { id, diagram };
 };
 
