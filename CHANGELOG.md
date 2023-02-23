@@ -2,6 +2,17 @@
 
 ## [10.0.0](https://github.com/mermaid-js/mermaid/releases/tag/v10.0.0)
 
+### Mermaid is ESM only!
+
+We've dropped the CJS support. So you will have to update your import scripts as follows.
+
+```html
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+```
+
 ### mermaid.render is async and doesn't accept callbacks
 
 ```js
