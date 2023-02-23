@@ -7,8 +7,8 @@
   "types": "./dist/mermaid.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/mermaid.core.mjs",
-      "types": "./dist/mermaid.d.ts"
+      "types": "./dist/mermaid.d.ts",
+      "import": "./dist/mermaid.core.mjs"
     },
     "./*": "./*"
   },
