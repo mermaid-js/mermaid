@@ -3,10 +3,6 @@
 import DOMPurify from 'dompurify';
 
 export interface MermaidConfig {
-  /** @deprecated use mermaid.registerLazyDiagrams instead */
-  lazyLoadedDiagrams?: string[];
-  /** @deprecated use mermaid.registerLazyDiagrams instead */
-  loadExternalDiagramsAtStartup?: boolean;
   theme?: string;
   themeVariables?: any;
   themeCSS?: string;
@@ -26,6 +22,7 @@ export interface MermaidConfig {
   sequence?: SequenceDiagramConfig;
   gantt?: GanttDiagramConfig;
   journey?: JourneyDiagramConfig;
+  timeline?: TimelineDiagramConfig;
   class?: ClassDiagramConfig;
   state?: StateDiagramConfig;
   er?: ErDiagramConfig;
@@ -290,6 +287,30 @@ export interface JourneyDiagramConfig extends BaseDiagramConfig {
   actorColours?: string[];
   sectionFills?: string[];
   sectionColours?: string[];
+}
+
+export interface TimelineDiagramConfig extends BaseDiagramConfig {
+  diagramMarginX?: number;
+  diagramMarginY?: number;
+  leftMargin?: number;
+  width?: number;
+  height?: number;
+  boxMargin?: number;
+  boxTextMargin?: number;
+  noteMargin?: number;
+  messageMargin?: number;
+  messageAlign?: string;
+  bottomMarginAdj?: number;
+  rightAngles?: boolean;
+  taskFontSize?: string | number;
+  taskFontFamily?: string;
+  taskMargin?: number;
+  activationWidth?: number;
+  textPlacement?: string;
+  actorColours?: string[];
+  sectionFills?: string[];
+  sectionColours?: string[];
+  disableMulticolor?: boolean;
 }
 
 export interface GanttDiagramConfig extends BaseDiagramConfig {

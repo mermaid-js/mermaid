@@ -280,6 +280,11 @@ export const addEdges = function (edges, g, diagObj) {
         edgeData.pattern = 'solid';
         edgeData.style = 'stroke-width: 3.5px;fill:none;';
         break;
+      case 'invisible':
+        edgeData.thickness = 'invisible';
+        edgeData.pattern = 'solid';
+        edgeData.style = 'stroke-width: 0;fill:none;';
+        break;
     }
     if (edge.style !== undefined) {
       const styles = getStylesFromArray(edge.style);
@@ -408,7 +413,7 @@ export const draw = function (text, id, _version, diagObj) {
 
   const edges = diagObj.db.getEdges();
 
-  log.info(edges);
+  log.info('Edges', edges);
   let i = 0;
   for (i = subGraphs.length - 1; i >= 0; i--) {
     // for (let i = 0; i < subGraphs.length; i++) {

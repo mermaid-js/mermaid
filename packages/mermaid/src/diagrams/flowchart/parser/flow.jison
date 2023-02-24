@@ -82,6 +82,7 @@ that id.
 <click>[\s\n]           this.popState();
 <click>[^\s\n]*         return 'CLICK';
 
+"flowchart-elk"        {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "graph"                {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "flowchart"            {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"            return 'subgraph';
@@ -120,6 +121,7 @@ that id.
 \s*[xo<]?\-\-+[-xo>]\s*     return 'LINK';
 \s*[xo<]?\=\=+[=xo>]\s*     return 'LINK';
 \s*[xo<]?\-?\.+\-[xo>]?\s*  return 'LINK';
+\s*\~\~[\~]+\s*  return 'LINK';
 \s*[xo<]?\-\-\s*            return 'START_LINK';
 \s*[xo<]?\=\=\s*            return 'START_LINK';
 \s*[xo<]?\-\.\s*            return 'START_LINK';

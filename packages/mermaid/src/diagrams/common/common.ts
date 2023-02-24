@@ -154,11 +154,17 @@ export const evaluate = (val?: string | boolean): boolean =>
 export const parseGenericTypes = function (text: string): string {
   let cleanedText = text;
 
-  if (text.includes('~')) {
-    cleanedText = cleanedText.replace(/~([^~].*)/, '<$1');
-    cleanedText = cleanedText.replace(/~([^~]*)$/, '>$1');
+  if (text.split('~').length - 1 >= 2) {
+    let newCleanedText = cleanedText;
 
-    return parseGenericTypes(cleanedText);
+    // use a do...while loop instead of replaceAll to detect recursion
+    // e.g. Array~Array~T~~
+    do {
+      cleanedText = newCleanedText;
+      newCleanedText = cleanedText.replace(/~([^\s,:;]+)~/, '<$1>');
+    } while (newCleanedText != cleanedText);
+
+    return parseGenericTypes(newCleanedText);
   } else {
     return cleanedText;
   }

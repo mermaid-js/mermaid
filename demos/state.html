@@ -17,11 +17,11 @@
     <h1>State diagram demos</h1>
     <h2>Very simple showing change from State1 to State2</h2>
     <pre class="mermaid">
----
-title: Very simple diagram
----
-		stateDiagram
-		  accTitle: This is the accessible title
+    ---
+    title: Very simple diagram
+    ---
+    stateDiagram
+      accTitle: This is the accessible title
       accDescr:This is an accessible description
       State1 --> State2
     </pre>
@@ -47,13 +47,13 @@ title: Very simple diagram
       </code>
     </p>
     <pre class="mermaid">
----
-title: Very simple diagram
----
-		stateDiagram
+    ---
+    title: Very simple diagram
+    ---
+    stateDiagram
       direction TB
 
-		  accTitle: This is the accessible title
+      accTitle: This is the accessible title
       accDescr: This is an accessible description
 
       classDef notMoving fill:white
@@ -161,12 +161,19 @@ title: Very simple diagram
     First --> Second
     First --> Third
 
-    state First {
+    state "the first composite" as First {
         [*] --> 1st
-        1st --> [*]
+        state innerFirst {
+          state "1 in innerFirst" as 1st1st
+          1st2nd: 2 in innerFirst
+          [*] --> 1st1st
+          1st1st --> 1st2nd
+          %% 1st2nd --> 1st
+        }
+        1st --> innerFirst
+        innerFirst --> 2nd
     }
     state Second {
-        [*] --> 2nd
         2nd --> [*]
     }
     state Third {
@@ -211,8 +218,8 @@ title: Very simple diagram
     </pre>
     <hr />
 
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         theme: 'default',
         // themeCSS: '.node rect { fill: red; }',

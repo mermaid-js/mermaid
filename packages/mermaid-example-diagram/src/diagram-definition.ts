@@ -12,5 +12,3 @@ export const diagram = {
   styles,
   injectUtils,
 };
-
-export { detector, id } from './detector';

@@ -1,6 +1,105 @@
-# Change Log
+# Changelog
 
-// TODO: Populate changelog
+## [10.0.0](https://github.com/mermaid-js/mermaid/releases/tag/v10.0.0)
+
+### Mermaid is ESM only!
+
+We've dropped CJS support. So, you will have to update your import scripts as follows.
+
+```html
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+```
+
+You can keep using v9 by adding the `@9` in the CDN URL.
+
+```diff
+- <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.js"></script>
++ <script src="https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.js"></script>
+```
+
+### mermaid.render is async and doesn't accept callbacks
+
+```js
+// < v10
+mermaid.render('id', 'graph TD;\nA-->B', (svg, bindFunctions) => {
+  element.innerHTML = svg;
+  if (bindFunctions) {
+    bindFunctions(element);
+  }
+});
+
+// Shorter syntax
+if (bindFunctions) {
+  bindFunctions(element);
+}
+// can be replaced with the `?.` shorthand
+bindFunctions?.(element);
+
+// >= v10 with async/await
+const { svg, bindFunctions } = await mermaid.render('id', 'graph TD;\nA-->B');
+element.innerHTML = svg;
+bindFunctions?.(element);
+
+// >= v10 with promise.then
+mermaid.render('id', 'graph TD;A-->B').then(({ svg, bindFunctions }) => {
+  element.innerHTML = svg;
+  bindFunctions?.(element);
+});
+```
+
+### mermaid.parse is async and ParseError is removed
+
+```js
+// < v10
+mermaid.parse(text, parseError);
+
+//>= v10
+await mermaid.parse(text).catch(parseError);
+// or
+try {
+  await mermaid.parse(text);
+} catch (err) {
+  parseError(err);
+}
+```
+
+### Init deprecated and InitThrowsErrors removed
+
+The config passed to `init` was not being used eariler.
+It will now be used.
+The `init` function is deprecated and will be removed in the next major release.
+init currently works as a wrapper to `initialize` and `run`.
+
+```js
+// < v10
+mermaid.init(config, selector, cb);
+
+//>= v10
+mermaid.initialize(config);
+mermaid.run({
+  querySelector: selector,
+  postRenderCallback: cb,
+  suppressErrors: true,
+});
+```
+
+```js
+// < v10
+mermaid.initThrowsErrors(config, selector, cb);
+
+//>= v10
+mermaid.initialize(config);
+mermaid.run({
+  querySelector: selector,
+  postRenderCallback: cb,
+  suppressErrors: false,
+});
+```
+
+// TODO: Populate changelog pre v10
 
 - Config has a lot of changes
 - globalReset resets to `defaultConfig` instead of current config. Use `reset` instead.

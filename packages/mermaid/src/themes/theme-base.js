@@ -13,7 +13,6 @@ class Theme {
      *   deducing colors for instance line color. Default value is #f4f4f4.
      */
     this.background = '#f4f4f4';
-    this.darkMode = false;
 
     this.primaryColor = '#fff4dd';
 
@@ -167,6 +166,16 @@ class Theme {
 
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
       this['cScaleLabel' + i] = this['cScaleLabel' + i] || this.scaleLabelColor;
+    }
+
+    const multiplier = this.darkMode ? -4 : -1;
+    for (let i = 0; i < 5; i++) {
+      this['surface' + i] =
+        this['surface' + i] ||
+        adjust(this.mainBkg, { h: 180, s: -15, l: multiplier * (5 + i * 3) });
+      this['surfacePeer' + i] =
+        this['surfacePeer' + i] ||
+        adjust(this.mainBkg, { h: 180, s: -15, l: multiplier * (8 + i * 3) });
     }
 
     /* class */

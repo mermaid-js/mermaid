@@ -107,6 +107,7 @@ export const insertEdgeLabel = (elem, edge) => {
     terminalLabels[edge.id].endRight = endEdgeLabelRight;
     setTerminalWidth(fo, edge.endLabelRight);
   }
+  return labelElement;
 };
 
 /**
@@ -450,6 +451,9 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
       strokeClasses = 'edge-thickness-normal';
       break;
     case 'thick':
+      strokeClasses = 'edge-thickness-thick';
+      break;
+    case 'invisible':
       strokeClasses = 'edge-thickness-thick';
       break;
     default:

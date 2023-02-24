@@ -17,9 +17,9 @@
     <h2>Sample 1</h2>
     <h3>graph</h3>
     <pre class="mermaid">
----
-title: This is a complicated flow
----
+    ---
+    title: This is a complicated flow
+    ---
     graph LR
       accTitle: This is a complicated flow
       accDescr: This is the descriptoin for the complicated flow.
@@ -224,9 +224,9 @@ title: This is a complicated flow
     <h2>Sample 2</h2>
     <h3>graph</h3>
     <pre class="mermaid">
----
-title: What to buy
----
+    ---
+    title: What to buy
+    ---
     graph TD
       accTitle: What to buy
       accDescr: Options of what to buy with Christmas money
@@ -1507,8 +1507,8 @@ title: What to buy
 
     <h1 id="link-clicked">Anchor for "link-clicked" test</h1>
 
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         theme: 'forest',
         logLevel: 3,

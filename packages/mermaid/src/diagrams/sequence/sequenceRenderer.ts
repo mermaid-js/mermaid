@@ -2,14 +2,12 @@
 import { select, selectAll } from 'd3';
 import svgDraw, { drawText, fixLifeLineHeights } from './svgDraw';
 import { log } from '../../logger';
-// import { parser } from './parser/sequenceDiagram';
 import common from '../common/common';
-// import sequenceDb from './sequenceDb';
 import * as configApi from '../../config';
 import assignWithDepth from '../../assignWithDepth';
 import utils from '../../utils';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import Diagram from '../../Diagram';
+import { Diagram } from '../../Diagram';
 
 let conf = {};
 
@@ -43,9 +41,13 @@ export const bounds = {
     },
     clear: function () {
       this.actors = [];
+      this.boxes = [];
       this.loops = [];
       this.messages = [];
       this.notes = [];
+    },
+    addBox: function (boxModel) {
+      this.boxes.push(boxModel);
     },
     addActor: function (actorModel) {
       this.actors.push(actorModel);
@@ -72,6 +74,7 @@ export const bounds = {
       return this.notes[this.notes.length - 1];
     },
     actors: [],
+    boxes: [],
     loops: [],
     messages: [],
     notes: [],
@@ -465,7 +468,8 @@ export const drawActors = function (
   actorKeys,
   verticalPos,
   configuration,
-  messages
+  messages,
+  isFooter
 ) {
   if (configuration.hideUnusedParticipants === true) {
     const newActors = new Set();
@@ -480,8 +484,28 @@ export const drawActors = function (
   let prevWidth = 0;
   let prevMargin = 0;
   let maxHeight = 0;
+  let prevBox = undefined;
+
   for (const actorKey of actorKeys) {
     const actor = actors[actorKey];
+    const box = actor.box;
+
+    // end of box
+    if (prevBox && prevBox != box) {
+      if (!isFooter) {
+        bounds.models.addBox(prevBox);
+      }
+      prevMargin += conf.boxMargin + prevBox.margin;
+    }
+
+    // new box
+    if (box && box != prevBox) {
+      if (!isFooter) {
+        box.x = prevWidth + prevMargin;
+        box.y = verticalPos;
+      }
+      prevMargin += box.margin;
+    }
 
     // Add some rendering data to the object
     actor.width = actor.width || conf.width;
@@ -489,16 +513,25 @@ export const drawActors = function (
     actor.margin = actor.margin || conf.actorMargin;
 
     actor.x = prevWidth + prevMargin;
-    actor.y = verticalPos;
+    actor.y = bounds.getVerticalPos();
 
     // Draw the box with the attached line
-    const height = svgDraw.drawActor(diagram, actor, conf);
+    const height = svgDraw.drawActor(diagram, actor, conf, isFooter);
     maxHeight = Math.max(maxHeight, height);
     bounds.insert(actor.x, verticalPos, actor.x + actor.width, actor.height);
 
-    prevWidth += actor.width;
-    prevMargin += actor.margin;
+    prevWidth += actor.width + prevMargin;
+    if (actor.box) {
+      actor.box.width = prevWidth + box.margin - actor.box.x;
+    }
+    prevMargin = actor.margin;
+    prevBox = actor.box;
     bounds.models.addActor(actor);
+  }
+
+  // end of box
+  if (prevBox && !isFooter) {
+    bounds.models.addBox(prevBox);
   }
 
   // Add a margin between the actor boxes and the first arrow
@@ -595,6 +628,9 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
 export const draw = function (_text: string, id: string, _version: string, diagObj: Diagram) {
   const { securityLevel, sequence } = configApi.getConfig();
   conf = sequence;
+  diagObj.db.clear();
+  // Parse the graph definition
+  diagObj.parser.parse(_text);
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
@@ -614,18 +650,27 @@ export const draw = function (_text: string, id: string, _version: string, diagO
 
   // Fetch data from the parsing
   const actors = diagObj.db.getActors();
+  const boxes = diagObj.db.getBoxes();
   const actorKeys = diagObj.db.getActorKeys();
   const messages = diagObj.db.getMessages();
   const title = diagObj.db.getDiagramTitle();
-
+  const hasBoxes = diagObj.db.hasAtLeastOneBox();
+  const hasBoxTitles = diagObj.db.hasAtLeastOneBoxWithTitle();
   const maxMessageWidthPerActor = getMaxMessageWidthPerActor(actors, messages, diagObj);
-  conf.height = calculateActorMargins(actors, maxMessageWidthPerActor);
+  conf.height = calculateActorMargins(actors, maxMessageWidthPerActor, boxes);
 
   svgDraw.insertComputerIcon(diagram);
   svgDraw.insertDatabaseIcon(diagram);
   svgDraw.insertClockIcon(diagram);
 
-  drawActors(diagram, actors, actorKeys, 0, conf, messages);
+  if (hasBoxes) {
+    bounds.bumpVerticalPos(conf.boxMargin);
+    if (hasBoxTitles) {
+      bounds.bumpVerticalPos(boxes[0].textMaxHeight);
+    }
+  }
+
+  drawActors(diagram, actors, actorKeys, 0, conf, messages, false);
   const loopWidths = calculateLoopBounds(messages, actors, maxMessageWidthPerActor, diagObj);
 
   // The arrow head definition is attached to the svg once
@@ -847,9 +892,24 @@ export const draw = function (_text: string, id: string, _version: string, diagO
   if (conf.mirrorActors) {
     // Draw actors below diagram
     bounds.bumpVerticalPos(conf.boxMargin * 2);
-    drawActors(diagram, actors, actorKeys, bounds.getVerticalPos(), conf, messages);
+    drawActors(diagram, actors, actorKeys, bounds.getVerticalPos(), conf, messages, true);
     bounds.bumpVerticalPos(conf.boxMargin);
     fixLifeLineHeights(diagram, bounds.getVerticalPos());
+  }
+
+  bounds.models.boxes.forEach(function (box) {
+    box.height = bounds.getVerticalPos() - box.y;
+    bounds.insert(box.x, box.y, box.x + box.width, box.height);
+    box.startx = box.x;
+    box.starty = box.y;
+    box.stopx = box.startx + box.width;
+    box.stopy = box.starty + box.height;
+    box.stroke = 'rgb(0,0,0, 0.5)';
+    svgDraw.drawBox(diagram, box, conf);
+  });
+
+  if (hasBoxes) {
+    bounds.bumpVerticalPos(conf.boxMargin);
   }
 
   // only draw popups for the top row of actors.
@@ -1039,10 +1099,12 @@ const getRequiredPopupWidth = function (actor) {
  *
  * @param actors - The actors map to calculate margins for
  * @param actorToMessageWidth - A map of actor key → max message width it holds
+ * @param boxes - The boxes around the actors if any
  */
 function calculateActorMargins(
   actors: { [id: string]: any },
-  actorToMessageWidth: ReturnType<typeof getMaxMessageWidthPerActor>
+  actorToMessageWidth: ReturnType<typeof getMaxMessageWidthPerActor>,
+  boxes
 ) {
   let maxHeight = 0;
   Object.keys(actors).forEach((prop) => {
@@ -1074,6 +1136,9 @@ function calculateActorMargins(
 
     // No need to space out an actor that doesn't have a next link
     if (!nextActor) {
+      const messageWidth = actorToMessageWidth[actorKey];
+      const actorWidth = messageWidth + conf.actorMargin - actor.width / 2;
+      actor.margin = Math.max(actorWidth, conf.actorMargin);
       continue;
     }
 
@@ -1082,6 +1147,29 @@ function calculateActorMargins(
 
     actor.margin = Math.max(actorWidth, conf.actorMargin);
   }
+
+  let maxBoxHeight = 0;
+  boxes.forEach((box) => {
+    const textFont = messageFont(conf);
+    let totalWidth = box.actorKeys.reduce((total, aKey) => {
+      return (total += actors[aKey].width + (actors[aKey].margin || 0));
+    }, 0);
+
+    totalWidth -= 2 * conf.boxTextMargin;
+    if (box.wrap) {
+      box.name = utils.wrapLabel(box.name, totalWidth - 2 * conf.wrapPadding, textFont);
+    }
+
+    const boxMsgDimensions = utils.calculateTextDimensions(box.name, textFont);
+    maxBoxHeight = Math.max(boxMsgDimensions.height, maxBoxHeight);
+    const minWidth = Math.max(totalWidth, boxMsgDimensions.width + 2 * conf.wrapPadding);
+    box.margin = conf.boxTextMargin;
+    if (totalWidth < minWidth) {
+      const missing = (minWidth - totalWidth) / 2;
+      box.margin += missing;
+    }
+  });
+  boxes.forEach((box) => (box.textMaxHeight = maxBoxHeight));
 
   return Math.max(maxHeight, conf.height);
 }

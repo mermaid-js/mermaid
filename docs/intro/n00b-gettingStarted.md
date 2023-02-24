@@ -17,7 +17,7 @@ This section talks about the different ways to deploy Mermaid. Learning the [Syn
 ## Four ways of using mermaid:
 
 1.  Using the Mermaid Live Editor at [mermaid.live](https://mermaid.live).
-2.  Using [mermaid plugins](../misc/integrations.md) with programs you are familiar with.
+2.  Using [mermaid plugins](../ecosystem/integrations.md) with programs you are familiar with.
 3.  Calling the Mermaid JavaScript API.
 4.  Deploying Mermaid as a dependency.
 
@@ -79,13 +79,13 @@ Editing is as easy as pasting your **Diagram code**, into the `code` section of 
 
 The Gist you create should have a code.mmd file and optionally a config.json. [Example](https://gist.github.com/sidharthv96/6268a23e673a533dcb198f241fd7012a)
 
-To load a gist into the Editor, you can use https://mermaid.live/edit?gist=https://gist.github.com/sidharthv96/6268a23e673a533dcb198f241fd7012a
+To load a gist into the Editor, you can use <https://mermaid.live/edit?gist=https://gist.github.com/sidharthv96/6268a23e673a533dcb198f241fd7012a>
 
-and to View, https://mermaid.live/view?gist=https://gist.github.com/sidharthv96/6268a23e673a533dcb198f241fd7012a
+and to View, <https://mermaid.live/view?gist=https://gist.github.com/sidharthv96/6268a23e673a533dcb198f241fd7012a>
 
 ## 2. Using Mermaid Plugins:
 
-You can generate mermaid diagrams from within popular applications using plug-ins. It can be done in the same way, you would use the Live Editor. Here's a list of [Mermaid Plugins](../misc/integrations.md).
+You can generate mermaid diagrams from within popular applications using plug-ins. It can be done in the same way, you would use the Live Editor. Here's a list of [Mermaid Plugins](../ecosystem/integrations.md).
 
 **This is covered in greater detail in the [Usage section](../config/usage.md)**
 
@@ -103,7 +103,7 @@ When writing the .html file, we give two instructions inside the html code to th
 
 a. The mermaid code for the diagram we want to create.
 
-b. The importing of mermaid library through the `mermaid.esm.js` or `mermaid.esm.min.mjs` and the `mermaid.initialize()` call, which dictates the appearance of diagrams and also starts the rendering process .
+b. The importing of mermaid library through the `mermaid.esm.mjs` or `mermaid.esm.min.mjs` and the `mermaid.initialize()` call, which dictates the appearance of diagrams and also starts the rendering process .
 
 **a. The embedded mermaid diagram definition inside a `<pre class="mermaid">`:**
 
@@ -128,24 +128,20 @@ b. The importing of mermaid library through the `mermaid.esm.js` or `mermaid.esm
 ```html
 <body>
   <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true });
   </script>
 </body>
 ```
 
 **Notes**:
-Rendering in Mermaid is initialized by `mermaid.initialize()` call. You can place `mermaid.initialize()` inside `mermaid.min.js` for brevity. However, doing the opposite lets you control when it starts looking for `<div>`tags inside the web page with `mermaid.initialize()`. This is useful when you think that not all `<div>` tags may have loaded on the execution of `mermaid.min.js` file.
+Rendering in Mermaid is initialized by `mermaid.initialize()` call. However, doing the opposite lets you control when it starts looking for `<pre>` tags inside the web page with `mermaid.initialize()`. This is useful when you think that not all `<pre>` tags may have loaded on the execution of `mermaid.esm.min.mjs` file.
 
 `startOnLoad` is one of the parameters that can be defined by `mermaid.initialize()`
 
 | Parameter   | Description                       | Type    | Values      |
 | ----------- | --------------------------------- | ------- | ----------- |
 | startOnLoad | Toggle for Rendering upon loading | Boolean | true, false |
-
-### Adding external diagrams to mermaid
-
-Please refer to the [Mindmap](../syntax/mindmap.md?id=integrating-with-your-librarywebsite) section for more information.
 
 ### Working Examples
 
@@ -172,7 +168,7 @@ Please refer to the [Mindmap](../syntax/mindmap.md?id=integrating-with-your-libr
     </pre>
 
     <script type="module">
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       mermaid.initialize({ startOnLoad: true });
     </script>
   </body>

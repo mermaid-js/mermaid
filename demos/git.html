@@ -16,9 +16,9 @@
   <body>
     <h1>Git diagram demo</h1>
     <pre class="mermaid">
----
-title: Simple Git diagram
----
+    ---
+    title: Simple Git diagram
+    ---
     gitGraph:
     options
     {
@@ -38,8 +38,8 @@ title: Simple Git diagram
     merge newbranch
     </pre>
 
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       const ALLOWED_TAGS = [
         'a',
         'b',

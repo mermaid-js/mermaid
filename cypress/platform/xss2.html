@@ -48,8 +48,8 @@
       Alice->>Bob: Hi Bob
       Bob->>Alice: Hi Alice
     </pre>
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         startOnLoad: true,
         useMaxWidth: true,
@@ -59,7 +59,7 @@
       const handler = setInterval(() => {
         cnt++;
         a = {};
-        if (typeof a.polluted !== 'undefined') {
+        if (a.polluted !== undefined) {
           clearInterval(handler);
           xssAttack();
         }

@@ -21,13 +21,17 @@ hero:
 
 features:
   - title: ➕ Easy to use!
-    details: Mermaid allows even non-programmers to easily create detailed and diagrams through the Mermaid Live Editor.
+    details: Easily create and render detailed diagrams and charts with the Mermaid Live Editor.
+    link: https://mermaid.live/
   - title: 🎥 Video Tutorials!
-    details: Has video tutorials for beginners and advanced users.
-  - title: 🏆 Award winner!
-    details: Mermaid was nominated and won the JS Open Source Awards (2019) in the category "The most exciting use of technology"!!!
+    details: Curated list of video tutorials and examples created by the community.
+    link: ../../config/Tutorials.html
   - title: 🧩 Integrations available!
-    details: Use Mermaid with your favorite applications, check out the list of Integrations and Usages of Mermaid.
+    details: Use Mermaid with your favorite applications, check out the integrations list.
+    link: ../../ecosystem/integrations.md
+  - title: 🏆 Award winning!
+    details: 2019 JavaScript Open Source Award winner for "The Most Exciting Use of Technology".
+    link: https://osawards.com/javascript/2019
 ---
 
 <script setup>
@@ -159,7 +163,7 @@ const members = [
     margin: 1rem auto;
     max-width: 100%;
     width: 100%;
-  }
+}
 
   .dark .image-src{
     filter: invert(1) hue-rotate(217deg)  contrast(0.72);
@@ -170,7 +174,7 @@ const members = [
     align-items: center;
     flex-direction: column;
     display: flex;
-    margin-top: 2.5rem;
+    margin: 1.5rem;
   }
 
   .vp-doc h2 {

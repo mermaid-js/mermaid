@@ -4,6 +4,15 @@ import {
   curveBasis,
   curveBasisClosed,
   curveBasisOpen,
+  curveBumpX,
+  curveBumpY,
+  curveBundle,
+  curveCardinalClosed,
+  curveCardinalOpen,
+  curveCardinal,
+  curveCatmullRomClosed,
+  curveCatmullRomOpen,
+  curveCatmullRom,
   CurveFactory,
   curveLinear,
   curveLinearClosed,
@@ -28,6 +37,15 @@ const d3CurveTypes = {
   curveBasis: curveBasis,
   curveBasisClosed: curveBasisClosed,
   curveBasisOpen: curveBasisOpen,
+  curveBumpX: curveBumpX,
+  curveBumpY: curveBumpY,
+  curveBundle: curveBundle,
+  curveCardinalClosed: curveCardinalClosed,
+  curveCardinalOpen: curveCardinalOpen,
+  curveCardinal: curveCardinal,
+  curveCatmullRomClosed: curveCatmullRomClosed,
+  curveCatmullRomOpen: curveCatmullRomOpen,
+  curveCatmullRom: curveCatmullRom,
   curveLinear: curveLinear,
   curveLinearClosed: curveLinearClosed,
   curveMonotoneX: curveMonotoneX,
@@ -194,7 +212,10 @@ export const isSubstringInArray = function (str: string, arr: string[]): number 
  * @param defaultCurve - The default curve to return
  * @returns The curve factory to use
  */
-export function interpolateToCurve(interpolate?: string, defaultCurve: CurveFactory): CurveFactory {
+export function interpolateToCurve(
+  interpolate: string | undefined,
+  defaultCurve: CurveFactory
+): CurveFactory {
   if (!interpolate) {
     return defaultCurve;
   }
@@ -540,12 +561,14 @@ export const drawSimpleText = function (
   // Remove and ignore br:s
   const nText = textData.text.replace(common.lineBreakRegex, ' ');
 
+  const [, _fontSizePx] = parseFontSize(textData.fontSize);
+
   const textElem = elem.append('text');
   textElem.attr('x', textData.x);
   textElem.attr('y', textData.y);
   textElem.style('text-anchor', textData.anchor);
   textElem.style('font-family', textData.fontFamily);
-  textElem.style('font-size', textData.fontSize);
+  textElem.style('font-size', _fontSizePx);
   textElem.style('font-weight', textData.fontWeight);
   textElem.attr('fill', textData.fill);
   if (textData.class !== undefined) {
@@ -719,6 +742,8 @@ export const calculateTextDimensions: (
       return { width: 0, height: 0 };
     }
 
+    const [, _fontSizePx] = parseFontSize(fontSize);
+
     // We can't really know if the user supplied font family will render on the user agent;
     // thus, we'll take the max width between the user supplied font family, and a default
     // of sans-serif.
@@ -742,7 +767,7 @@ export const calculateTextDimensions: (
         const textObj = getTextObj();
         textObj.text = line;
         const textElem = drawSimpleText(g, textObj)
-          .style('font-size', fontSize)
+          .style('font-size', _fontSizePx)
           .style('font-weight', fontWeight)
           .style('font-family', fontFamily);
 
@@ -938,6 +963,32 @@ export const insertTitle = (
     .attr('class', cssClass);
 };
 
+/**
+ * Parses a raw fontSize configuration value into a number and string value.
+ *
+ * @param fontSize - a string or number font size configuration value
+ *
+ * @returns parsed number and string style font size values, or nulls if a number value can't
+ * be parsed from an input string.
+ */
+export const parseFontSize = (fontSize: string | number | undefined): [number?, string?] => {
+  // if the font size is a number, assume a px string representation
+  if (typeof fontSize === 'number') {
+    return [fontSize, fontSize + 'px'];
+  }
+
+  const fontSizeNumber = parseInt(fontSize, 10);
+  if (Number.isNaN(fontSizeNumber)) {
+    // if a number value can't be parsed, return null for both values
+    return [undefined, undefined];
+  } else if (fontSize === String(fontSizeNumber)) {
+    // if a string input doesn't contain any units, assume px units
+    return [fontSizeNumber, fontSize + 'px'];
+  } else {
+    return [fontSizeNumber, fontSize];
+  }
+};
+
 export default {
   assignWithDepth,
   wrapLabel,
@@ -961,4 +1012,5 @@ export default {
   directiveSanitizer,
   sanitizeCss,
   insertTitle,
+  parseFontSize,
 };
