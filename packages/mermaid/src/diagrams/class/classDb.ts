@@ -1,3 +1,4 @@
+// @ts-expect-error - d3 types issue
 import { select, Selection } from 'd3';
 import { log } from '../../logger';
 import * as configApi from '../../config';
@@ -44,28 +45,32 @@ const splitClassNameAndType = function (id: string) {
   return { className: className, type: genericType };
 };
 
+export const setClassLabel = function (id: string, label: string) {
+  if (label) {
+    label = sanitizeText(label);
+  }
+
+  const { className } = splitClassNameAndType(id);
+  classes[className].label = label;
+};
+
 /**
  * Function called by parser when a node definition has been found.
  *
  * @param id - Id of the class to add
- * @param label - Optional label of the class
  * @public
  */
-export const addClass = function (id: string, label?: string) {
+export const addClass = function (id: string) {
   const classId = splitClassNameAndType(id);
   // Only add class if not exists
   if (classes[classId.className] !== undefined) {
     return;
   }
 
-  if (label) {
-    label = sanitizeText(label);
-  }
-
   classes[classId.className] = {
     id: classId.className,
     type: classId.type,
-    label: label ?? classId.className,
+    label: classId.className,
     cssClasses: [],
     methods: [],
     members: [],
@@ -354,6 +359,7 @@ const setupToolTips = function (element: Element) {
   const nodes = svg.selectAll('g.node');
   nodes
     .on('mouseover', function () {
+      // @ts-expect-error - select is not part of the d3 type definition
       const el = select(this);
       const title = el.attr('title');
       // Don't try to draw a tooltip if no data is provided
@@ -373,6 +379,7 @@ const setupToolTips = function (element: Element) {
     })
     .on('mouseout', function () {
       tooltipElem.transition().duration(500).style('opacity', 0);
+      // @ts-expect-error - select is not part of the d3 type definition
       const el = select(this);
       el.classed('hover', false);
     });
@@ -417,4 +424,5 @@ export default {
   lookUpDomId,
   setDiagramTitle,
   getDiagramTitle,
+  setClassLabel,
 };

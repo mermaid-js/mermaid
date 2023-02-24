@@ -539,4 +539,13 @@ class C13["With Città foreign language"]
   `
     );
   });
+
+  it('should render classLabel if class has already been defined earlier', () => {
+    imgSnapshotTest(
+      `classDiagram
+  Animal <|-- Duck
+  class Duck["Duck with text label"]
+`
+    );
+  });
 });

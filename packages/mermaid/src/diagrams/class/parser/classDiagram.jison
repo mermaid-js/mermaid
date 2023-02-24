@@ -288,7 +288,7 @@ classStatement
 
 classIdentifier
     : CLASS className                                    {$$=$2; yy.addClass($2);}
-    | CLASS className classLabel                         {$$=$2; yy.addClass($2, $3);}
+    | CLASS className classLabel                         {$$=$2; yy.addClass($2);yy.setClassLabel($2, $3);}
     ;
 
 annotationStatement
