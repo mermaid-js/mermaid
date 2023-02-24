@@ -81,7 +81,7 @@ start
 
 document
 	: /* empty */ { $$ = [] }
-	| document line {$1.push($2);$$ = $1} 
+	| document line {$1.push($2);$$ = $1}
 	;
 
 line

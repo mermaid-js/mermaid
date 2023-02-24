@@ -68,8 +68,8 @@ export class Diagram {
   }
 }
 
-export const getDiagramFromText = async (txt: string): Promise<Diagram> => {
-  const type = detectType(txt, configApi.getConfig());
+export const getDiagramFromText = async (text: string): Promise<Diagram> => {
+  const type = detectType(text, configApi.getConfig());
   try {
     // Trying to find the diagram
     getDiagram(type);
@@ -83,5 +83,5 @@ export const getDiagramFromText = async (txt: string): Promise<Diagram> => {
     const { id, diagram } = await loader();
     registerDiagram(id, diagram);
   }
-  return new Diagram(txt);
+  return new Diagram(text);
 };

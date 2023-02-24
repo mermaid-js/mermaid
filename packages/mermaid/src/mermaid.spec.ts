@@ -1,6 +1,11 @@
 import mermaid from './mermaid';
 import { mermaidAPI } from './mermaidAPI';
 import './diagram-api/diagram-orchestration';
+import { addDiagrams } from './diagram-api/diagram-orchestration';
+
+beforeAll(async () => {
+  addDiagrams();
+});
 const spyOn = vi.spyOn;
 
 vi.mock('./mermaidAPI');
@@ -66,9 +71,9 @@ describe('when using mermaid and ', () => {
         mermaid.registerExternalDiagrams(
           [
             {
-              id: 'dummy',
-              detector: (text) => /dummy/.test(text),
-              loader: () => Promise.reject('error'),
+              id: 'dummyError',
+              detector: (text) => /dummyError/.test(text),
+              loader: () => Promise.reject('dummyError'),
             },
           ],
           { lazyLoad: false }

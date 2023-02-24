@@ -71,3 +71,9 @@ export const getDiagram = (name: string): DiagramDefinition => {
   }
   throw new Error(`Diagram ${name} not found.`);
 };
+
+export class DiagramNotFoundError extends Error {
+  constructor(message: string) {
+    super(`Diagram ${message} not found.`);
+  }
+}

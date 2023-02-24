@@ -2,8 +2,13 @@ import { vi } from 'vitest';
 
 import * as configApi from '../../config';
 import mermaidAPI from '../../mermaidAPI';
-import { Diagram } from '../../Diagram';
+import { Diagram, getDiagramFromText } from '../../Diagram';
 import { addDiagrams } from '../../diagram-api/diagram-orchestration';
+
+beforeAll(async () => {
+  // Is required to load the sequence diagram
+  await getDiagramFromText('sequenceDiagram');
+});
 
 /**
  * Sequence diagrams require their own very special version of a mocked d3 module
@@ -183,7 +188,7 @@ Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
-    await mermaidAPI.parse(str, diagram);
+    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.Alice.description).toBe('Alice');
     actors.Bob.description = 'Bob';

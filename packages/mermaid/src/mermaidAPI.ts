@@ -74,6 +74,23 @@ export interface ParseOptions {
 // @ts-ignore Could replicate the type definition in d3. This also makes it possible to use the untyped info from the js diagram files.
 export type D3Element = any;
 
+export interface RenderResult {
+  /**
+   * The svg code for the rendered graph.
+   */
+  svg: string;
+  /**
+   * Bind function to be called after the svg has been inserted into the DOM.
+   * This is necessary for adding event listeners to the elements in the svg.
+   * ```js
+   * const { svg, bindFunctions } = mermaidAPI.render('id1', 'graph TD;A-->B');
+   * div.innerHTML = svg;
+   * bindFunctions?.(div); // To call bindFunctions only if it's present.
+   * ```
+   */
+  bindFunctions?: (element: Element) => void;
+}
+
 /**
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
@@ -378,11 +395,6 @@ export const removeExistingElements = (
  *   element will be removed when rendering is completed.
  * @returns Returns the rendered element as a string containing the SVG definition.
  */
-
-export interface RenderResult {
-  svg: string;
-  bindFunctions?: (element: Element) => void;
-}
 
 const render = async function (
   id: string,

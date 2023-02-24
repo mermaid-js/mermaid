@@ -8,41 +8,6 @@
 
 [mermaidAPI](../modules/mermaidAPI.md).RenderResult
 
-Function that renders an svg with a graph from a chart definition. Usage example below.
-
-```javascript
-mermaidAPI.initialize({
-  startOnLoad: true,
-});
-$(function () {
-  const graphDefinition = 'graph TB\na-->b';
-  const cb = function (svgGraph) {
-    console.log(svgGraph);
-  };
-  mermaidAPI.render('id1', graphDefinition, cb);
-});
-```
-
-**`Param`**
-
-The id for the SVG element (the element to be rendered)
-
-**`Param`**
-
-The text for the graph definition
-
-**`Param`**
-
-Callback which is called after rendering is finished with the svg code as in param.
-
-**`Param`**
-
-HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
-If no svgContainingElement is provided then the SVG element will be appended to the body.
-Selector to element in which a div with the graph temporarily will be
-inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
-element will be removed when rendering is completed.
-
 ## Properties
 
 ### bindFunctions
@@ -52,6 +17,15 @@ element will be removed when rendering is completed.
 #### Type declaration
 
 ▸ (`element`): `void`
+
+Bind function to be called after the svg has been inserted into the DOM.
+This is necessary for adding event listeners to the elements in the svg.
+
+```js
+const { svg, bindFunctions } = mermaidAPI.render('id1', 'graph TD;A-->B');
+div.innerHTML = svg;
+bindFunctions?.(div); // To call bindFunctions only if it's present.
+```
 
 ##### Parameters
 
@@ -65,7 +39,7 @@ element will be removed when rendering is completed.
 
 #### Defined in
 
-[mermaidAPI.ts:384](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L384)
+[mermaidAPI.ts:91](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L91)
 
 ---
 
@@ -73,6 +47,8 @@ element will be removed when rendering is completed.
 
 • **svg**: `string`
 
+The svg code for the rendered graph.
+
 #### Defined in
 
-[mermaidAPI.ts:383](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L383)
+[mermaidAPI.ts:81](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L81)
