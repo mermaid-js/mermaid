@@ -86,7 +86,7 @@ When writing the .html file, we give two instructions inside the html code to th
 
 a. The mermaid code for the diagram we want to create.
 
-b. The importing of mermaid library through the `mermaid.esm.js` or `mermaid.esm.min.mjs` and the `mermaid.initialize()` call, which dictates the appearance of diagrams and also starts the rendering process .
+b. The importing of mermaid library through the `mermaid.esm.mjs` or `mermaid.esm.min.mjs` and the `mermaid.initialize()` call, which dictates the appearance of diagrams and also starts the rendering process .
 
 **a. The embedded mermaid diagram definition inside a `<pre class="mermaid">`:**
 
@@ -118,17 +118,13 @@ b. The importing of mermaid library through the `mermaid.esm.js` or `mermaid.esm
 ```
 
 **Notes**:
-Rendering in Mermaid is initialized by `mermaid.initialize()` call. You can place `mermaid.initialize()` inside `mermaid.min.js` for brevity. However, doing the opposite lets you control when it starts looking for `<div>`tags inside the web page with `mermaid.initialize()`. This is useful when you think that not all `<div>` tags may have loaded on the execution of `mermaid.min.js` file.
+Rendering in Mermaid is initialized by `mermaid.initialize()` call. However, doing the opposite lets you control when it starts looking for `<pre>` tags inside the web page with `mermaid.initialize()`. This is useful when you think that not all `<pre>` tags may have loaded on the execution of `mermaid.esm.min.mjs` file.
 
 `startOnLoad` is one of the parameters that can be defined by `mermaid.initialize()`
 
 | Parameter   | Description                       | Type    | Values      |
 | ----------- | --------------------------------- | ------- | ----------- |
 | startOnLoad | Toggle for Rendering upon loading | Boolean | true, false |
-
-### Adding external diagrams to mermaid
-
-Please refer to the [Mindmap](../syntax/mindmap.md?id=integrating-with-your-librarywebsite) section for more information.
 
 ### Working Examples
 

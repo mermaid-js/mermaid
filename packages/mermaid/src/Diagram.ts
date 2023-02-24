@@ -3,26 +3,24 @@ import { log } from './logger';
 import { getDiagram, registerDiagram } from './diagram-api/diagramAPI';
 import { detectType, getDiagramLoader } from './diagram-api/detectType';
 import { extractFrontMatter } from './diagram-api/frontmatter';
-import { isDetailedError } from './utils';
-import type { DetailedError } from './utils';
+import { UnknownDiagramError } from './errors';
+import { DetailedError } from './utils';
 
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
-
 export class Diagram {
   type = 'graph';
   parser;
   renderer;
   db;
-  private detectTypeFailed = false;
-  constructor(public txt: string, parseError?: ParseErrorFunction) {
+  private detectError?: UnknownDiagramError;
+  constructor(public text: string) {
+    this.text += '\n';
     const cnf = configApi.getConfig();
-    this.txt = txt;
     try {
-      this.type = detectType(txt, cnf);
+      this.type = detectType(text, cnf);
     } catch (e) {
-      this.handleError(e, parseError);
       this.type = 'error';
-      this.detectTypeFailed = true;
+      this.detectError = e as UnknownDiagramError;
     }
     const diagram = getDiagram(this.type);
     log.debug('Type ' + this.type);
@@ -46,44 +44,19 @@ export class Diagram {
       diagram.init(cnf);
       log.info('Initialized diagram ' + this.type, cnf);
     }
-    this.txt += '\n';
-
-    this.parse(this.txt, parseError);
+    this.parse();
   }
 
-  parse(text: string, parseError?: ParseErrorFunction): boolean {
-    if (this.detectTypeFailed) {
-      return false;
+  parse() {
+    if (this.detectError) {
+      throw this.detectError;
     }
-    try {
-      text = text + '\n';
-      this.db.clear?.();
-      this.parser.parse(text);
-      return true;
-    } catch (error) {
-      this.handleError(error, parseError);
-    }
-    return false;
+    this.db.clear?.();
+    this.parser.parse(this.text);
   }
 
-  handleError(error: unknown, parseError?: ParseErrorFunction) {
-    // Is this the correct way to access mermaid's parseError()
-    // method ? (or global.mermaid.parseError()) ?
-
-    if (parseError === undefined) {
-      // No mermaid.parseError() handler defined, so re-throw it
-      throw error;
-    }
-
-    if (isDetailedError(error)) {
-      // Handle case where error string and hash were
-      // wrapped in object like`const error = { str, hash };`
-      parseError(error.str, error.hash);
-      return;
-    }
-
-    // Otherwise, assume it is just an error string and pass it on
-    parseError(error as string);
+  async render(id: string, version: string) {
+    await this.renderer.draw(this.text, id, version, this);
   }
 
   getParser() {
@@ -95,30 +68,20 @@ export class Diagram {
   }
 }
 
-export const getDiagramFromText = (
-  txt: string,
-  parseError?: ParseErrorFunction
-): Diagram | Promise<Diagram> => {
-  const type = detectType(txt, configApi.getConfig());
+export const getDiagramFromText = async (text: string): Promise<Diagram> => {
+  const type = detectType(text, configApi.getConfig());
   try {
     // Trying to find the diagram
     getDiagram(type);
   } catch (error) {
     const loader = getDiagramLoader(type);
     if (!loader) {
-      throw new Error(`Diagram ${type} not found.`);
+      throw new UnknownDiagramError(`Diagram ${type} not found.`);
     }
-    // TODO: Uncomment for v10
-    // // Diagram not available, loading it
-    // const { diagram } = await loader();
-    // registerDiagram(type, diagram, undefined, diagram.injectUtils);
-    // // new diagram will try getDiagram again and if fails then it is a valid throw
-    return loader().then(({ diagram }) => {
-      registerDiagram(type, diagram, undefined);
-      return new Diagram(txt, parseError);
-    });
+    // Diagram not available, loading it.
+    // new diagram will try getDiagram again and if fails then it is a valid throw
+    const { id, diagram } = await loader();
+    registerDiagram(id, diagram);
   }
-  return new Diagram(txt, parseError);
+  return new Diagram(text);
 };
-
-export default Diagram;

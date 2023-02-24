@@ -1,14 +1,4 @@
 <html>
-  <head>
-    <script src="http://localhost:9000/mermaid.js"></script>
-    <script>
-      mermaid.initialize({
-        theme: 'base',
-        themeVariables: {},
-        startOnLoad: true,
-      });
-    </script>
-  </head>
   <body>
     <h1>Example</h1>
     <pre class="mermaid">
@@ -26,4 +16,12 @@ sequenceDiagram
     Note left of Ernie: Cookies are good
     </pre>
   </body>
+  <script type="module">
+    import mermaid from '/mermaid.esm.mjs';
+    mermaid.initialize({
+      theme: 'base',
+      themeVariables: {},
+      startOnLoad: true,
+    });
+  </script>
 </html>

@@ -8,7 +8,7 @@ Mermaid
 通过解析类 Markdown 的文本语法来实现图表的创建和动态修改。
 <p>
 <p align="center">
-  <a href="https://www.npmjs.com/package/vitest"><img src="https://img.shields.io/npm/v/mermaid?color=ff3670&label="></a>
+  <a href="https://www.npmjs.com/package/mermaid"><img src="https://img.shields.io/npm/v/mermaid?color=ff3670&label="></a>
 <p>
 
 <p align="center">

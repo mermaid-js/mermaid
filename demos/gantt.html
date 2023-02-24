@@ -182,8 +182,8 @@
       }
     </script>
 
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         logLevel: 3,
         securityLevel: 'loose',

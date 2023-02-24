@@ -4,7 +4,7 @@ const mermaid = require('mermaid');
 import mindmap from '@mermaid-js/mermaid-mindmap';
 
 const render = async (graph) => {
-  const svg = await mermaid.renderAsync('dummy', graph);
+  const svg = await mermaid.render('dummy', graph);
   console.log(svg);
   document.getElementById('graphDiv').innerHTML = svg;
 };

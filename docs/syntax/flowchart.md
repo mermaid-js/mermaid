@@ -391,6 +391,20 @@ flowchart LR
    A == text ==> B
 ```
 
+### An invisible link
+
+This can be a useful tool in some instances where you want to alter the default positioning of a node.
+
+```mermaid-example
+flowchart LR
+    A ~~~ B
+```
+
+```mermaid
+flowchart LR
+    A ~~~ B
+```
+
 ### Chaining of links
 
 It is possible declare many links in the same line as per below:

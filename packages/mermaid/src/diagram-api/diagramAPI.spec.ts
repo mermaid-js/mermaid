@@ -2,8 +2,12 @@ import { detectType } from './detectType';
 import { getDiagram, registerDiagram } from './diagramAPI';
 import { addDiagrams } from './diagram-orchestration';
 import { DiagramDetector } from './types';
+import { getDiagramFromText } from '../Diagram';
 
 addDiagrams();
+beforeAll(async () => {
+  await getDiagramFromText('sequenceDiagram');
+});
 
 describe('DiagramAPI', () => {
   it('should return default diagrams', () => {
