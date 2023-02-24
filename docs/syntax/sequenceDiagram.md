@@ -595,7 +595,7 @@ It is possible to get a sequence number attached to each arrow in a sequence dia
 </script>
 ```
 
-It can also be be turned on via the diagram code as in the diagram:
+It can also be turned on via the diagram code as in the diagram:
 
 ```mermaid-example
 sequenceDiagram
