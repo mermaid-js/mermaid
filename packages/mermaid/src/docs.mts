@@ -362,7 +362,7 @@ const transformHtml = (filename: string) => {
 };
 
 const getGlobs = (globs: string[]): string[] => {
-  globs.push('!**/dist', '!**/redirect.spec.ts', '!**/landing');
+  globs.push('!**/dist', '!**/redirect.spec.ts', '!**/landing', '!**/node_modules');
   if (!vitepress) {
     globs.push('!**/.vitepress', '!**/vite.config.ts', '!src/docs/index.md');
   }
