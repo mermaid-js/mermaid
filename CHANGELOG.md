@@ -2,7 +2,6 @@
 
 ## [10.0.0](https://github.com/mermaid-js/mermaid/releases/tag/v10.0.0)
 
-
 ### Mermaid is ESM only!
 
 We've dropped CJS support. So, you will have to update your import scripts as follows.
@@ -15,6 +14,7 @@ We've dropped CJS support. So, you will have to update your import scripts as fo
 ```
 
 You can keep using v9 by adding the `@9` in the CDN URL.
+
 ```diff
 - <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.js"></script>
 + <script src="https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.js"></script>
