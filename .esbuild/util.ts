@@ -70,7 +70,7 @@ export const getBuildConfig = ({
   let output: BuildOptions = buildOptions({
     absWorkingDir: resolve(__dirname, `../packages/${packageName}`),
     entryPoints: {
-      [`${name}.esm${core ? '.core' : ''}${minify ? '.min' : ''}`]: `src/${file}`,
+      [`${name}${core ? '.core' : '.esm'}${minify ? '.min' : ''}`]: `src/${file}`,
     },
     metafile,
   });
