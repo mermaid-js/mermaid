@@ -95,7 +95,7 @@ const contentLoadedApi = async function () {
         divs[i] = div;
       }
 
-      const defaultE2eCnf = { theme: 'forest' };
+      const defaultE2eCnf = { theme: 'forest', startOnLoad: false };
 
       const cnf = merge(defaultE2eCnf, graphObj.mermaid);
 
