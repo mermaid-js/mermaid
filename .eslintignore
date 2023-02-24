@@ -1,4 +1,4 @@
-dist/**
+**/dist/**
 .github/**
 docs/Setup.md
 cypress.config.js
