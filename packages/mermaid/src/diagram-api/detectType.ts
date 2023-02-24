@@ -97,4 +97,6 @@ export const addDetector = (key: string, detector: DiagramDetector, loader?: Dia
   log.debug(`Detector with key ${key} added${loader ? ' with loader' : ''}`);
 };
 
-export const getDiagramLoader = (key: string) => detectors[key].loader;
+export const getDiagramLoader = (key: string) => {
+  return detectors[key].loader;
+};

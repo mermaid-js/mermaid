@@ -15,13 +15,17 @@ describe('DiagramAPI', () => {
   });
 
   it('should throw error if diagram is not defined', () => {
-    expect(() => getDiagram('loki')).toThrow();
+    expect(() => getDiagram('loki')).toThrowErrorMatchingInlineSnapshot(
+      '"Diagram loki not found."'
+    );
   });
 
   it('should handle diagram registrations', () => {
-    expect(() => getDiagram('loki')).toThrow();
-    expect(() => detectType('loki diagram')).toThrow(
-      'No diagram type detected for text: loki diagram'
+    expect(() => getDiagram('loki')).toThrowErrorMatchingInlineSnapshot(
+      '"Diagram loki not found."'
+    );
+    expect(() => detectType('loki diagram')).toThrowErrorMatchingInlineSnapshot(
+      '"No diagram type detected for text: loki diagram"'
     );
     const detector: DiagramDetector = (str: string) => {
       return str.match('loki') !== null;

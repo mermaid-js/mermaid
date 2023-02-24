@@ -162,7 +162,7 @@ const runThrowsErrors = async function (
       log.debug('Detected early reinit: ', init);
     }
     try {
-      const { svg, bindFunctions } = await mermaidAPI.render(id, txt, element);
+      const { svg, bindFunctions } = await render(id, txt, element);
       element.innerHTML = svg;
       if (postRenderCallback) {
         await postRenderCallback(id);
@@ -313,7 +313,7 @@ const executeQueue = async () => {
  */
 const parse = async (text: string, parseOptions?: ParseOptions): Promise<boolean | void> => {
   return new Promise((resolve, reject) => {
-    // This promise will resolve when the mermaidAPI.render call is done.
+    // This promise will resolve when the render call is done.
     // It will be queued first and will be executed when it is first in line
     const performCall = () =>
       new Promise((res, rej) => {
