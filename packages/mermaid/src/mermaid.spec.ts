@@ -151,7 +151,11 @@ describe('when using mermaid and ', () => {
 
   describe('checking validity of input ', () => {
     it('should throw for an invalid definition', async () => {
-      await expect(mermaid.parse('this is not a mermaid diagram definition')).rejects.toThrow();
+      await expect(
+        mermaid.parse('this is not a mermaid diagram definition')
+      ).rejects.toThrowErrorMatchingInlineSnapshot(
+        '"No diagram type detected for text: this is not a mermaid diagram definition"'
+      );
     });
 
     it('should not throw for a valid flow definition', async () => {
@@ -160,7 +164,12 @@ describe('when using mermaid and ', () => {
       ).resolves.not.toThrow();
     });
     it('should throw for an invalid flow definition', async () => {
-      await expect(mermaid.parse('graph TQ;A--x|text including URL space|B;')).rejects.toThrow();
+      await expect(mermaid.parse('graph TQ;A--x|text including URL space|B;')).rejects
+        .toThrowErrorMatchingInlineSnapshot(`
+        "Lexical error on line 1. Unrecognized text.
+        graph TQ;A--x|text includ
+        -----^"
+      `);
     });
 
     it('should not throw for a valid sequenceDiagram definition (mmds1)', async () => {
@@ -188,7 +197,12 @@ describe('when using mermaid and ', () => {
         'else isSick\n' +
         'Bob-->Alice: Feel sick...\n' +
         'end';
-      await expect(mermaid.parse(text)).rejects.toThrow();
+      await expect(mermaid.parse(text)).rejects.toThrowErrorMatchingInlineSnapshot(`
+        "Parse error on line 2:
+        ...equenceDiagramAlice:->Bob: Hello Bob, h...
+        ----------------------^
+        Expecting 'SOLID_OPEN_ARROW', 'DOTTED_OPEN_ARROW', 'SOLID_ARROW', 'DOTTED_ARROW', 'SOLID_CROSS', 'DOTTED_CROSS', 'SOLID_POINT', 'DOTTED_POINT', got 'TXT'"
+      `);
     });
 
     it('should return false for invalid definition WITH a parseError() callback defined', async () => {
@@ -196,7 +210,11 @@ describe('when using mermaid and ', () => {
       mermaid.setParseErrorHandler(() => {
         parseErrorWasCalled = true;
       });
-      await expect(mermaid.parse('this is not a mermaid diagram definition')).rejects.toThrow();
+      await expect(
+        mermaid.parse('this is not a mermaid diagram definition')
+      ).rejects.toThrowErrorMatchingInlineSnapshot(
+        '"No diagram type detected for text: this is not a mermaid diagram definition"'
+      );
       expect(parseErrorWasCalled).toEqual(true);
     });
   });
