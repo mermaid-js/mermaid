@@ -68,10 +68,8 @@ export const addDiagrams = () => {
     requirement,
     sequence,
     flowchartElk,
-    // TODO @knsv: Should v2 come before flowchart?
-    // This will fail few unit tests as they expect graph to be detected as flowchart, but it is detected as flowchart-v2.
-    flowchart,
     flowchartV2,
+    flowchart,
     mindmap,
     timeline,
     git,

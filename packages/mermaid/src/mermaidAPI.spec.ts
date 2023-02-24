@@ -678,7 +678,7 @@ describe('mermaidAPI', () => {
       await expect(
         mermaidAPI.parse('this is not a mermaid diagram definition')
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        '"No diagram type detected for text: this is not a mermaid diagram definition"'
+        '"No diagram type detected matching given configuration for text: this is not a mermaid diagram definition"'
       );
     });
     it('returns false for invalid definition with silent option', async () => {

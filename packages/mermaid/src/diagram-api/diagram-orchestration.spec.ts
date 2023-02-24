@@ -41,5 +41,42 @@ describe('diagram-orchestration', () => {
         expect(detectType(text)).toBe(expected);
       }
     );
+
+    it('should detect proper flowchart type based on config', () => {
+      // graph & dagre-d3 => flowchart
+      expect(detectType('graph TD; A-->B')).toBe('flowchart');
+      // graph & dagre-d3 => flowchart
+      expect(detectType('graph TD; A-->B', { flowchart: { defaultRenderer: 'dagre-d3' } })).toBe(
+        'flowchart'
+      );
+      // flowchart & dagre-d3 => error
+      expect(() =>
+        detectType('flowchart TD; A-->B', { flowchart: { defaultRenderer: 'dagre-d3' } })
+      ).toThrowErrorMatchingInlineSnapshot(
+        '"No diagram type detected matching given configuration for text: flowchart TD; A-->B"'
+      );
+
+      // graph & dagre-wrapper => flowchart-v2
+      expect(
+        detectType('graph TD; A-->B', { flowchart: { defaultRenderer: 'dagre-wrapper' } })
+      ).toBe('flowchart-v2');
+      // flowchart ==> flowchart-v2
+      expect(detectType('flowchart TD; A-->B')).toBe('flowchart-v2');
+      // flowchart && dagre-wrapper ==> flowchart-v2
+      expect(
+        detectType('flowchart TD; A-->B', { flowchart: { defaultRenderer: 'dagre-wrapper' } })
+      ).toBe('flowchart-v2');
+      // flowchart && elk ==> flowchart-elk
+      expect(detectType('flowchart TD; A-->B', { flowchart: { defaultRenderer: 'elk' } })).toBe(
+        'flowchart-elk'
+      );
+    });
+
+    it('should not detect flowchart if pie contains flowchart', () => {
+      expect(
+        detectType(`pie title: "flowchart"
+      flowchart: 1 "pie" pie: 2 "pie"`)
+      ).toBe('pie');
+    });
   });
 });

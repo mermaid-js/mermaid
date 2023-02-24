@@ -46,7 +46,9 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
     }
   }
 
-  throw new UnknownDiagramError(`No diagram type detected for text: ${text}`);
+  throw new UnknownDiagramError(
+    `No diagram type detected matching given configuration for text: ${text}`
+  );
 };
 
 export const registerLazyLoadedDiagrams = (...diagrams: ExternalDiagramDefinition[]) => {
