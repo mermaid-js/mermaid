@@ -91,4 +91,16 @@ describe('Pie Chart', () => {
       expect(strokeWidth).to.eq(5);
     });
   });
+
+  it('should render a pie diagram when text-position is set', () => {
+    imgSnapshotTest(
+      `
+        pie
+          "Dogs": 50
+          "Cats": 25
+        `,
+      { logLevel: 1, pie: { textPosition: 0.9 } }
+    );
+    cy.get('svg');
+  });
 });

@@ -35,6 +35,7 @@ Drawing a pie chart is really simple in mermaid.
 ## Example
 
 ```mermaid-example
+%%{init: {"pie": {"textPosition": 0.8, "outerBorderWidth": 5}} }%%
 pie showData
     title Key elements in Product X
     "Calcium" : 42.96
@@ -42,3 +43,12 @@ pie showData
     "Magnesium" : 10.01
     "Iron" :  5
 ```
+
+## Configuration
+
+Possible pie diagram configuration parameters:
+
+| Parameter          | Description                                                                                                  | Default value |
+| ------------------ | ------------------------------------------------------------------------------------------------------------ | ------------- |
+| `outerBorderWidth` | The border width of the pie diagram's outside circle                                                         | `2`           |
+| `textPosition`     | The axial position of the pie slice labels, from 0.0 at the center to 1.0 at the outside edge of the circle. | `0.5`         |

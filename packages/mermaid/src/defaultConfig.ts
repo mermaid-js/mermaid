@@ -1247,6 +1247,24 @@ const config: Partial<MermaidConfig> = {
      * Default value: true
      */
     useMaxWidth: true,
+
+    /**
+     * | Parameter        | Description                                | Type    | Required | Values             |
+     * | ---------------- | ------------------------------------------ | ------- | -------- | ------------------ |
+     * | outerBorderWidth | Border width of the diagram's outer circle | Integer | Optional | Any Positive Value |
+     *
+     * **Notes:** Default value: 2
+     */
+    outerBorderWidth: 2,
+
+    /**
+     * | Parameter    | Description                                                                      | Type    | Required | Values              |
+     * | ------------ | -------------------------------------------------------------------------------- | ------- | -------- | ------------------- |
+     * | textPosition | Axial position of slice's label from zero at the center to 1 at the outside edge | Number  | Optional | Decimal from 0 to 1 |
+     *
+     * **Notes:** Default value: 0.5
+     */
+    textPosition: 0.5,
   },
 
   /** The object containing configurations specific for req diagrams */
