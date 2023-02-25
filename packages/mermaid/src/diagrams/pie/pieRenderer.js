@@ -88,6 +88,9 @@ export const draw = (txt, id, _version, diagObj) => {
       themeVariables.pie12,
     ];
 
+    var textPosition = conf.pie.textPosition == null ? 0.5 : conf.pie.textPosition;
+    var outerBorderWidth = conf.pie.outerBorderWidth == null ? 2 : conf.pie.outerBorderWidth;
+
     // Set the color scale
     var color = scaleOrdinal().range(myGeneratedColors);
 
@@ -111,6 +114,17 @@ export const draw = (txt, id, _version, diagObj) => {
 
     // Shape helper to build arcs:
     var arcGenerator = arc().innerRadius(0).outerRadius(radius);
+    var labelArcGenerator = arc()
+      .innerRadius(radius * textPosition)
+      .outerRadius(radius * textPosition);
+
+    svg
+      .append('circle')
+      .attr('cx', 0)
+      .attr('cy', 0)
+      .attr('r', radius + outerBorderWidth / 2)
+      .attr('stroke-width', outerBorderWidth)
+      .attr('class', 'pieOuterCircle');
 
     // Build the pie chart: each part of the pie is a path that we build using the arc function.
     svg
@@ -135,7 +149,7 @@ export const draw = (txt, id, _version, diagObj) => {
         return ((d.data.value / sum) * 100).toFixed(0) + '%';
       })
       .attr('transform', function (d) {
-        return 'translate(' + arcGenerator.centroid(d) + ')';
+        return 'translate(' + labelArcGenerator.centroid(d) + ')';
       })
       .style('text-anchor', 'middle')
       .attr('class', 'slice');

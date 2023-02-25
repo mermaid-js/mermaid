@@ -5,6 +5,10 @@ const getStyles = (options) =>
     stroke-width : ${options.pieStrokeWidth};
     opacity : ${options.pieOpacity};
   }
+  .pieOuterCircle{
+    stroke: ${options.pieOuterStrokeColor};
+    fill: none;
+  }
   .pieTitleText {
     text-anchor: middle;
     font-size: ${options.pieTitleTextSize};

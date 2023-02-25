@@ -222,7 +222,10 @@ export interface MindmapDiagramConfig extends BaseDiagramConfig {
   maxNodeWidth: number;
 }
 
-export type PieDiagramConfig = BaseDiagramConfig;
+export interface PieDiagramConfig extends BaseDiagramConfig {
+  outerBorderWidth?: number;
+  textPosition?: number;
+}
 
 export interface ErDiagramConfig extends BaseDiagramConfig {
   titleTopMargin?: number;

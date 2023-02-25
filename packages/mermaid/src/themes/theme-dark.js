@@ -222,6 +222,7 @@ class Theme {
     this.pieLegendTextColor = this.pieLegendTextColor || this.taskTextDarkColor;
     this.pieStrokeColor = this.pieStrokeColor || 'black';
     this.pieStrokeWidth = this.pieStrokeWidth || '2px';
+    this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
 
     /* class */
