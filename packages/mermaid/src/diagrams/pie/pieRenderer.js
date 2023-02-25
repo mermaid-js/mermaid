@@ -88,8 +88,8 @@ export const draw = (txt, id, _version, diagObj) => {
       themeVariables.pie12,
     ];
 
-    var textPosition = conf.pie.textPosition == null ? 0.5 : conf.pie.textPosition;
-    var outerBorderWidth = conf.pie.outerBorderWidth == null ? 2 : conf.pie.outerBorderWidth;
+    const textPosition = conf.pie?.textPosition ?? 0.5;
+    const outerBorderWidth = conf.pie?.outerBorderWidth ?? 2;
 
     // Set the color scale
     var color = scaleOrdinal().range(myGeneratedColors);
