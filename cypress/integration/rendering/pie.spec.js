@@ -92,7 +92,7 @@ describe('Pie Chart', () => {
     });
   });
 
-  it('should render a pie diagram when text-position is set', () => {
+  it('should render a pie diagram when textPosition is set', () => {
     imgSnapshotTest(
       `
         pie
