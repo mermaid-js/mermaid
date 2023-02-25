@@ -371,6 +371,40 @@ describe('when using the ganttDb', function () {
     expect(tasks[1].task).toEqual('test2');
   });
 
+  /**
+   * Unfortunately, Vitest has no way of modifying the timezone at runtime, so
+   * in order to test this, please run this test with
+   *
+   * ```bash
+   * TZ='America/Los_Angeles' pnpm exec vitest run ganttDb
+   * ```
+   */
+  /* c8 ignore start */ // tell code-coverage to ignore this block of code
+  describe.skipIf(process.env.TZ != 'America/Los_Angeles')(
+    'when using a timezone with daylight savings (only run if TZ="America/Los_Angeles")',
+    () => {
+      it('should add 1 day even on days with 25 hours', function () {
+        const startTime = new Date(2020, 10, 1);
+        expect(startTime.toISOString()).toBe('2020-11-01T07:00:00.000Z');
+
+        const endTime = new Date(2020, 10, 2);
+        expect(endTime.toISOString()).toBe('2020-11-02T08:00:00.000Z');
+
+        ganttDb.setDateFormat('YYYY-MM-DD');
+        ganttDb.addSection('Task handles 25 hour day');
+        ganttDb.addTask('daylight savings day', 'id1,2020-11-01,1d');
+        const tasks = ganttDb.getTasks();
+        expect(tasks[0].startTime).toEqual(startTime);
+        expect(tasks[0].endTime).toEqual(endTime);
+
+        // In USA states that use daylight savings, 2020-11-01 had 25 hours
+        const millisecondsIn25Hours = 25 * 60 * 60 * 1000;
+        expect(endTime - startTime).toEqual(millisecondsIn25Hours);
+      });
+    }
+  );
+  /* c8 ignore stop */
+
   describe('when setting inclusive end dates', function () {
     beforeEach(function () {
       ganttDb.setDateFormat('YYYY-MM-DD');
