@@ -345,13 +345,30 @@ async function transormJsonSchema(file: string) {
     schema: JSON_SCHEMA,
   });
 
+  /** Location of the `schema.yaml` files */
+  const SCHEMA_INPUT_DIR = 'src/schemas/';
+  /**
+   * Location to store the generated `schema.json` file for the website
+   *
+   * Because Vitepress doesn't handle bundling `.json` files properly, we need
+   * to instead place it into a `public/` subdirectory.
+   */
+  const SCHEMA_OUTPUT_DIR = 'src/docs/public/schemas/';
+  const VITEPRESS_PUBLIC_DIR = 'src/docs/public';
+  /**
+   * Location to store the generated Schema Markdown docs.
+   * Links to JSON Schemas should automatically be rewritten to point to
+   * `SCHEMA_OUTPUT_DIR`.
+   */
+  const SCHEMA_MARKDOWN_OUTPUT_DIR = join('src', 'docs', 'config', 'schema-docs');
+
   // write .schema.json files
   const jsonFileName = file
     .replace('.schema.yaml', '.schema.json')
-    .replace('src/schemas/', 'src/docs/schemas/');
+    .replace(SCHEMA_INPUT_DIR, SCHEMA_OUTPUT_DIR);
   copyTransformedContents(jsonFileName, !verifyOnly, JSON.stringify(jsonSchema, undefined, 2));
 
-  const schemas = traverseSchemas([schemaLoader()(file, jsonSchema)]);
+  const schemas = traverseSchemas([schemaLoader()(jsonFileName, jsonSchema)]);
 
   // ignore output of this function
   // for some reason, without calling this function, we get some broken links
@@ -365,6 +382,19 @@ async function transormJsonSchema(file: string) {
     includeProperties: ['tsType'], // Custom TypeScript type
     exampleFormat: 'json',
     // skipProperties,
+    /**
+     * Automatically rewrite schema paths passed to `schemaLoader`
+     * (e.g. src/docs/schemas/config.schema.json)
+     * to relative links (e.g. /schemas/config.schema.json)
+     *
+     * See https://vitepress.vuejs.org/guide/asset-handling
+     *
+     * @param origin - Original schema path (relative to this script).
+     * @returns New absolute Vitepress path to schema
+     */
+    rewritelinks: (origin: string) => {
+      return `/${relative(VITEPRESS_PUBLIC_DIR, origin)}`;
+    },
   })(schemas);
 
   for (const [name, markdownAst] of Object.entries(markdownFiles)) {
@@ -405,7 +435,7 @@ async function transormJsonSchema(file: string) {
       parser: 'markdown',
       ...prettierConfig,
     });
-    const newFileName = join('src', 'docs', 'config', 'schema-docs', `${name}.md`);
+    const newFileName = join(SCHEMA_MARKDOWN_OUTPUT_DIR, `${name}.md`);
     copyTransformedContents(newFileName, !verifyOnly, formatted);
   }
 }
