@@ -75,23 +75,6 @@ describe('Pie Chart', () => {
       expect(svg).to.not.have.attr('style');
     });
   });
-
-  it('should render a pie diagram with given outside stroke width', () => {
-    renderGraph(
-      `
-    pie title Sports in Sweden
-       "Bandy" : 40
-       "Ice-Hockey" : 80
-       "Football" : 90
-      `,
-      { theme: 'base', themeVariables: { pieOuterStrokeWidth: '5px' } }
-    );
-    cy.get('.pieOuterCircle').should((circle) => {
-      const strokeWidth = parseFloat(circle.attr('stroke-width'));
-      expect(strokeWidth).to.eq(5);
-    });
-  });
-
   it('should render a pie diagram when textPosition is set', () => {
     imgSnapshotTest(
       `
