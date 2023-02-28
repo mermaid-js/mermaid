@@ -4,7 +4,7 @@ import { log } from '../../logger';
 import { getConfig } from '../../config';
 import { setupGraphViewbox } from '../../setupGraphViewbox';
 import svgDraw from './svgDraw';
-import cytoscape from 'cytoscape';
+import cytoscape from 'cytoscape/dist/cytoscape.esm.js';
 import coseBilkent from 'cytoscape-cose-bilkent';
 import * as db from './mindmapDb';
 
