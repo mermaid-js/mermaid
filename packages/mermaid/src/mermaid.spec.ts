@@ -2,6 +2,7 @@ import mermaid from './mermaid';
 import { mermaidAPI } from './mermaidAPI';
 import './diagram-api/diagram-orchestration';
 import { addDiagrams } from './diagram-api/diagram-orchestration';
+import { beforeAll, describe, it, expect, vi } from 'vitest';
 
 beforeAll(async () => {
   addDiagrams();
