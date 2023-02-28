@@ -350,6 +350,9 @@ const parse = async (text: string, parseOptions?: ParseOptions): Promise<boolean
  *  bindFunctions?.(element);
  * ```
  *
+ * @remarks
+ * Multiple calls to this function will be enqueued to run serially.
+ *
  * @param id - The id for the SVG element (the element to be rendered)
  * @param text - The text for the graph definition
  * @param container - HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
