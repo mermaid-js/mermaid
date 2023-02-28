@@ -223,7 +223,6 @@ export interface MindmapDiagramConfig extends BaseDiagramConfig {
 }
 
 export interface PieDiagramConfig extends BaseDiagramConfig {
-  outerBorderWidth?: number;
   textPosition?: number;
 }
 

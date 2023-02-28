@@ -3,6 +3,7 @@ import { select, scaleOrdinal, pie as d3pie, arc } from 'd3';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import * as configApi from '../../config';
+import { parseFontSize } from '../../utils';
 
 let conf = configApi.getConfig();
 
@@ -88,8 +89,9 @@ export const draw = (txt, id, _version, diagObj) => {
       themeVariables.pie12,
     ];
 
-    const textPosition = conf.pie?.textPosition ?? 0.5;
-    const outerBorderWidth = conf.pie?.outerBorderWidth ?? 2;
+    const textPosition = conf.pie?.textPosition ?? 0.75;
+    let [outerStrokeWidth] = parseFontSize(themeVariables.pieOuterStrokeWidth);
+    outerStrokeWidth ??= 2;
 
     // Set the color scale
     var color = scaleOrdinal().range(myGeneratedColors);
@@ -122,8 +124,7 @@ export const draw = (txt, id, _version, diagObj) => {
       .append('circle')
       .attr('cx', 0)
       .attr('cy', 0)
-      .attr('r', radius + outerBorderWidth / 2)
-      .attr('stroke-width', outerBorderWidth)
+      .attr('r', radius + outerStrokeWidth / 2)
       .attr('class', 'pieOuterCircle');
 
     // Build the pie chart: each part of the pie is a path that we build using the arc function.

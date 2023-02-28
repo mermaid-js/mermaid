@@ -7,6 +7,7 @@ const getStyles = (options) =>
   }
   .pieOuterCircle{
     stroke: ${options.pieOuterStrokeColor};
+    stroke-width: ${options.pieOuterStrokeWidth};
     fill: none;
   }
   .pieTitleText {

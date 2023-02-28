@@ -84,7 +84,7 @@ describe('Pie Chart', () => {
        "Ice-Hockey" : 80
        "Football" : 90
       `,
-      { pie: { outerBorderWidth: 5 } }
+      { theme: 'base', themeVariables: { pieOuterStrokeWidth: '5px' } }
     );
     cy.get('.pieOuterCircle').should((circle) => {
       const strokeWidth = parseFloat(circle.attr('stroke-width'));
