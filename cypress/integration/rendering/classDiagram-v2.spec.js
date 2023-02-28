@@ -504,7 +504,7 @@ class Class10
     imgSnapshotTest(
       `classDiagram
   class C1["Class 1 with text label"] {
-    <<interface>>
+    &lt;&lt;interface&gt;&gt;
     +member1
   }
   C1 -->  C2`
