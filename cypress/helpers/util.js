@@ -22,7 +22,7 @@ export const mermaidUrl = (graphStr, options, api) => {
   return url;
 };
 
-export const imgSnapshotTest = (graphStr, _options, api = false, validation) => {
+export const imgSnapshotTest = (graphStr, _options = {}, api = false, validation = undefined) => {
   cy.log(_options);
   const options = Object.assign(_options);
   if (!options.fontFamily) {

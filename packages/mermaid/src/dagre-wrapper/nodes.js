@@ -772,7 +772,7 @@ const class_box = (parent, node) => {
     maxWidth += interfaceBBox.width;
   }
 
-  let classTitleString = node.classData.id;
+  let classTitleString = node.classData.label;
 
   if (node.classData.type !== undefined && node.classData.type !== '') {
     if (getConfig().flowchart.htmlLabels) {
@@ -927,61 +927,6 @@ const class_box = (parent, node) => {
     );
     verticalPos += classTitleBBox.height + rowPadding;
   });
-  //
-  // let bbox;
-  // if (evaluate(getConfig().flowchart.htmlLabels)) {
-  //   const div = interfaceLabel.children[0];
-  //   const dv = select(interfaceLabel);
-  //   bbox = div.getBoundingClientRect();
-  //   dv.attr('width', bbox.width);
-  //   dv.attr('height', bbox.height);
-  // }
-  // bbox = labelContainer.getBBox();
-
-  // log.info('Text 2', text2);
-  // const textRows = text2.slice(1, text2.length);
-  // let titleBox = text.getBBox();
-  // const descr = label
-  //   .node()
-  //   .appendChild(createLabel(textRows.join('<br/>'), node.labelStyle, true, true));
-
-  // if (evaluate(getConfig().flowchart.htmlLabels)) {
-  //   const div = descr.children[0];
-  //   const dv = select(descr);
-  //   bbox = div.getBoundingClientRect();
-  //   dv.attr('width', bbox.width);
-  //   dv.attr('height', bbox.height);
-  // }
-  // // bbox = label.getBBox();
-  // // log.info(descr);
-  // select(descr).attr(
-  //   'transform',
-  //   'translate( ' +
-  //     // (titleBox.width - bbox.width) / 2 +
-  //     (bbox.width > titleBox.width ? 0 : (titleBox.width - bbox.width) / 2) +
-  //     ', ' +
-  //     (titleBox.height + halfPadding + 5) +
-  //     ')'
-  // );
-  // select(text).attr(
-  //   'transform',
-  //   'translate( ' +
-  //     // (titleBox.width - bbox.width) / 2 +
-  //     (bbox.width < titleBox.width ? 0 : -(titleBox.width - bbox.width) / 2) +
-  //     ', ' +
-  //     0 +
-  //     ')'
-  // );
-  // // Get the size of the label
-
-  // // Bounding box for title and text
-  // bbox = label.node().getBBox();
-
-  // // Center the label
-  // label.attr(
-  //   'transform',
-  //   'translate(' + -bbox.width / 2 + ', ' + (-bbox.height / 2 - halfPadding + 3) + ')'
-  // );
 
   rect
     .attr('class', 'outer title-state')
@@ -989,13 +934,6 @@ const class_box = (parent, node) => {
     .attr('y', -(maxHeight / 2) - halfPadding)
     .attr('width', maxWidth + node.padding)
     .attr('height', maxHeight + node.padding);
-
-  // innerLine
-  //   .attr('class', 'divider')
-  //   .attr('x1', -bbox.width / 2 - halfPadding)
-  //   .attr('x2', bbox.width / 2 + halfPadding)
-  //   .attr('y1', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding)
-  //   .attr('y2', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding);
 
   updateNodeBounds(node, rect);
 
