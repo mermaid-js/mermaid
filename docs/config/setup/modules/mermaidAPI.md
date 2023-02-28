@@ -95,7 +95,7 @@ mermaid.initialize(config);
 
 #### Defined in
 
-[mermaidAPI.ts:680](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L680)
+[mermaidAPI.ts:683](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L683)
 
 ## Functions
 
