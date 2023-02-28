@@ -9,8 +9,8 @@ import { log } from '../../../logger';
 import { setupGraphViewbox } from '../../../setupGraphViewbox';
 import common, { evaluate } from '../../common/common';
 import { interpolateToCurve, getStylesFromArray } from '../../../utils';
-
-let elk;
+import ELK from 'elkjs/lib/elk.bundled.js';
+const elk = new ELK();
 
 const portPos = {};
 
@@ -765,10 +765,6 @@ const insertChildren = (nodeArray, parentLookupDb) => {
  */
 
 export const draw = async function (text, id, _version, diagObj) {
-  if (!elk) {
-    const ELK = (await import('elkjs/lib/elk.bundled.js')).default;
-    elk = new ELK();
-  }
   // Add temporary render element
   diagObj.db.clear();
   nodeDb = {};
