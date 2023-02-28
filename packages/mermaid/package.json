@@ -7,6 +7,7 @@
   "types": "./dist/mermaid.d.ts",
   "exports": {
     ".": {
+      "require": "./dist/mermaid.esm.mjs",
       "types": "./dist/mermaid.d.ts",
       "import": "./dist/mermaid.core.mjs"
     },
