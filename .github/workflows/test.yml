@@ -33,6 +33,14 @@ jobs:
         run: |
           pnpm run ci --coverage
 
+      - name: Run ganttDb tests using California timezone
+        env:
+          # Makes sure that gantt db works even in a timezone that has daylight savings
+          # since some days have 25 hours instead of 24.
+          TZ: America/Los_Angeles
+        run: |
+          pnpm exec vitest run ./packages/mermaid/src/diagrams/gantt/ganttDb.spec.ts
+
       - name: Upload Coverage to Coveralls
         # it feels a bit weird to use @master, but that's what the docs use
         # (coveralls also doesn't publish a @v1 we can use)

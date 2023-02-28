@@ -196,7 +196,10 @@ export const drawSection = function (elem, section, conf) {
   rect.x = section.x;
   rect.y = section.y;
   rect.fill = section.fill;
-  rect.width = conf.width;
+  // section width covers all nested tasks
+  rect.width =
+    conf.width * section.taskCount + // width of the tasks
+    conf.diagramMarginX * (section.taskCount - 1); // width of space between tasks
   rect.height = conf.height;
   rect.class = 'journey-section section-type-' + section.num;
   rect.rx = 3;
