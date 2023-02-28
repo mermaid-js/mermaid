@@ -5,10 +5,10 @@ const id = 'flowchart';
 const detector: DiagramDetector = (txt, config) => {
   // If we have conferred to only use new flow charts this function should always return false
   // as in not signalling true for a legacy flowchart
-  if (config?.flowchart?.defaultRenderer === 'dagre-wrapper') {
-    return false;
-  }
-  if (config?.flowchart?.defaultRenderer === 'elk') {
+  if (
+    config?.flowchart?.defaultRenderer === 'dagre-wrapper' ||
+    config?.flowchart?.defaultRenderer === 'elk'
+  ) {
     return false;
   }
   return txt.match(/^\s*graph/) !== null;

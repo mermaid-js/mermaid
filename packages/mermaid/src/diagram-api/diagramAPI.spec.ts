@@ -20,8 +20,8 @@ describe('DiagramAPI', () => {
 
   it('should handle diagram registrations', () => {
     expect(() => getDiagram('loki')).toThrow();
-    expect(() => detectType('loki diagram')).toThrow(
-      'No diagram type detected for text: loki diagram'
+    expect(() => detectType('loki diagram')).toThrowErrorMatchingInlineSnapshot(
+      '"No diagram type detected matching given configuration for text: loki diagram"'
     );
     const detector: DiagramDetector = (str: string) => {
       return str.match('loki') !== null;

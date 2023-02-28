@@ -12,6 +12,7 @@ import type { ParseErrorFunction } from './Diagram';
 import { isDetailedError } from './utils';
 import type { DetailedError } from './utils';
 import { ExternalDiagramDefinition } from './diagram-api/types';
+import { UnknownDiagramError } from './errors';
 
 export type {
   MermaidConfig,
@@ -20,6 +21,7 @@ export type {
   ParseErrorFunction,
   RenderResult,
   ParseOptions,
+  UnknownDiagramError,
 };
 
 export interface RunOptions {
