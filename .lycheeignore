@@ -14,3 +14,6 @@ https://twitter.com/mermaidjs_
 
 # Don't check files that are generated during the build via `pnpm docs:code`
 packages/mermaid/src/docs/config/setup/*
+
+# Network error: 502, since few days
+https://bundlephobia.com/

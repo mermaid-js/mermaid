@@ -76,6 +76,26 @@ classDiagram
 
 Naming convention: a class name should be composed only of alphanumeric characters (including unicode), and underscores.
 
+### Class labels
+
+In case you need to provide a label for a class, you can use the following syntax:
+
+```mermaid-example
+classDiagram
+    class Animal["Animal with a label"]
+    class Car["Car with *! symbols"]
+    Animal --> Car
+```
+
+You can also use backticks to escape special characters in the label:
+
+```mermaid-example
+classDiagram
+    class `Animal Class!`
+    class `Car Class`
+    `Animal Class!` --> `Car Class`
+```
+
 ## Defining Members of a class
 
 UML provides mechanisms to represent class members such as attributes and methods, as well as additional information about them.
@@ -477,11 +497,11 @@ Beginner's tip—a full example using interactive links in an HTML page:
 
 ### Styling a node
 
-It is possible to apply specific styles such as a thicker border or a different background color to individual nodes. This is done by predefining classes in css styles that can be applied from the graph definition:
+It is possible to apply specific styles such as a thicker border or a different background color to individual nodes. This is done by predefining classes in css styles that can be applied from the graph definition using the `cssClass` statement or the `:::` short hand.
 
 ```html
 <style>
-  .cssClass > rect {
+  .styleClass > rect {
     fill: #ff0000;
     stroke: #ffff00;
     stroke-width: 4px;
@@ -492,27 +512,27 @@ It is possible to apply specific styles such as a thicker border or a different 
 Then attaching that class to a specific node:
 
 ```
-    cssClass "nodeId1" cssClass;
+    cssClass "nodeId1" styleClass;
 ```
 
 It is also possible to attach a class to a list of nodes in one statement:
 
 ```
-    cssClass "nodeId1,nodeId2" cssClass;
+    cssClass "nodeId1,nodeId2" styleClass;
 ```
 
 A shorter form of adding a class is to attach the classname to the node using the `:::` operator:
 
 ```mermaid-example
 classDiagram
-    class Animal:::cssClass
+    class Animal:::styleClass
 ```
 
 Or:
 
 ```mermaid-example
 classDiagram
-    class Animal:::cssClass {
+    class Animal:::styleClass {
         -int sizeInFeet
         -canEat()
     }

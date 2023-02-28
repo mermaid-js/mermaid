@@ -230,7 +230,7 @@ export function interpolateToCurve(
  * @param config - Configuration passed to MermaidJS
  * @returns The formatted URL or `undefined`.
  */
-export function formatUrl(linkStr: string, config: { securityLevel: string }): string | undefined {
+export function formatUrl(linkStr: string, config: MermaidConfig): string | undefined {
   const url = linkStr.trim();
 
   if (url) {

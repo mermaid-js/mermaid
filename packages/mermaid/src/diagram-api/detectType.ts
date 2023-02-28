@@ -46,9 +46,24 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
     }
   }
 
-  throw new UnknownDiagramError(`No diagram type detected for text: ${text}`);
+  throw new UnknownDiagramError(
+    `No diagram type detected matching given configuration for text: ${text}`
+  );
 };
 
+/**
+ * Registers lazy-loaded diagrams to Mermaid.
+ *
+ * The diagram function is loaded asynchronously, so that diagrams are only loaded
+ * if the diagram is detected.
+ *
+ * @remarks
+ * Please note that the order of diagram detectors is important.
+ * The first detector to return `true` is the diagram that will be loaded
+ * and used, so put more specific detectors at the beginning!
+ *
+ * @param diagrams - Diagrams to lazy load, and their detectors, in order of importance.
+ */
 export const registerLazyLoadedDiagrams = (...diagrams: ExternalDiagramDefinition[]) => {
   for (const { id, detector, loader } of diagrams) {
     addDetector(id, detector, loader);
