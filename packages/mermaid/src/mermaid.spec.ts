@@ -154,7 +154,7 @@ describe('when using mermaid and ', () => {
       await expect(
         mermaid.parse('this is not a mermaid diagram definition')
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        '"No diagram type detected for text: this is not a mermaid diagram definition"'
+        '"No diagram type detected matching given configuration for text: this is not a mermaid diagram definition"'
       );
     });
 
@@ -213,7 +213,7 @@ describe('when using mermaid and ', () => {
       await expect(
         mermaid.parse('this is not a mermaid diagram definition')
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        '"No diagram type detected for text: this is not a mermaid diagram definition"'
+        '"No diagram type detected matching given configuration for text: this is not a mermaid diagram definition"'
       );
       expect(parseErrorWasCalled).toEqual(true);
     });
