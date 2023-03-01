@@ -1,8 +1,8 @@
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import dayjs from 'dayjs';
-import dayjsIsoWeek from 'dayjs/plugin/isoWeek';
-import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat';
-import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat';
+import dayjsIsoWeek from 'dayjs/plugin/isoWeek.js';
+import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat.js';
+import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
 import { log } from '../../logger';
 import * as configApi from '../../config';
 import utils from '../../utils';
