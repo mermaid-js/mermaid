@@ -1,25 +1,37 @@
-// @ts-nocheck TODO: fix file
-import { select } from 'd3';
+// @ts-ignore - db not typed yet
+import { select, Selection } from 'd3';
 import svgDraw from './svgDraw';
 import { log } from '../../logger';
 import { getConfig } from '../../config';
 import { setupGraphViewbox } from '../../setupGraphViewbox';
+import { Diagram } from '../../Diagram';
+import { MermaidConfig } from '../../config.type';
 
-export const setConf = function (cnf) {
-  const keys = Object.keys(cnf);
+interface Block<TDesc, TSection> {
+  number: number;
+  descr: TDesc;
+  section: TSection;
+  width: number;
+  padding: number;
+  maxHeight: number;
+}
 
-  keys.forEach(function (key) {
-    conf[key] = cnf[key];
-  });
-};
-
-export const draw = function (text, id, version, diagObj) {
+interface TimelineTask {
+  id: number;
+  section: string;
+  type: string;
+  task: string;
+  score: number;
+  events: string[];
+}
+export const draw = function (text: string, id: string, version: string, diagObj: Diagram) {
   //1. Fetch the configuration
   const conf = getConfig();
-  const LEFT_MARGIN = conf.leftMargin ? conf.leftMargin : 50;
+  // @ts-expect-error - wrong config?
+  const LEFT_MARGIN = conf.leftMargin ?? 50;
 
   //2. Clear the diagram db before parsing
-  diagObj.db.clear();
+  diagObj.db.clear?.();
 
   //3. Parse the diagram text
   diagObj.parser.parse(text + '\n');
@@ -34,15 +46,19 @@ export const draw = function (text, id, version, diagObj) {
   }
   const root =
     securityLevel === 'sandbox'
-      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      ? // @ts-ignore d3 types are wrong
+        select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
 
+  // @ts-ignore d3 types are wrong
   const svg = root.select('#' + id);
 
   svg.append('g');
 
   //4. Fetch the diagram data
-  const tasks = diagObj.db.getTasks();
+  // @ts-expect-error - db not typed yet
+  const tasks: TimelineTask[] = diagObj.db.getTasks();
+  // @ts-expect-error - db not typed yet
   const title = diagObj.db.getCommonDb().getDiagramTitle();
   log.debug('task', tasks);
 
@@ -50,7 +66,8 @@ export const draw = function (text, id, version, diagObj) {
   svgDraw.initGraphics(svg);
 
   // fetch Sections
-  const sections = diagObj.db.getSections();
+  // @ts-expect-error - db not typed yet
+  const sections: string[] = diagObj.db.getSections();
   log.debug('sections', sections);
 
   let maxSectionHeight = 0;
@@ -67,8 +84,8 @@ export const draw = function (text, id, version, diagObj) {
   let hasSections = true;
 
   //Calculate the max height of the sections
-  sections.forEach(function (section) {
-    const sectionNode = {
+  sections.forEach(function (section: string) {
+    const sectionNode: Block<string, number> = {
       number: sectionNumber,
       descr: section,
       section: sectionNumber,
@@ -87,8 +104,9 @@ export const draw = function (text, id, version, diagObj) {
   log.debug('tasks.length', tasks.length);
   //calculate max task height
   // for loop till tasks.length
+
   for (const [i, task] of tasks.entries()) {
-    const taskNode = {
+    const taskNode: Block<TimelineTask, string> = {
       number: i,
       descr: task,
       section: task.section,
@@ -124,11 +142,14 @@ export const draw = function (text, id, version, diagObj) {
 
   if (sections && sections.length > 0) {
     sections.forEach((section) => {
-      const sectionNode = {
+      //filter task where tasks.section == section
+      const tasksForSection = tasks.filter((task) => task.section === section);
+
+      const sectionNode: Block<string, number> = {
         number: sectionNumber,
         descr: section,
         section: sectionNumber,
-        width: 150,
+        width: 200 * Math.max(tasksForSection.length, 1) - 50,
         padding: 20,
         maxHeight: maxSectionHeight,
       };
@@ -142,8 +163,6 @@ export const draw = function (text, id, version, diagObj) {
       masterY += maxSectionHeight + 50;
 
       //draw tasks for this section
-      //filter task where tasks.section == section
-      const tasksForSection = tasks.filter((task) => task.section === section);
       if (tasksForSection.length > 0) {
         drawTasks(
           svg,
@@ -215,25 +234,25 @@ export const draw = function (text, id, version, diagObj) {
   setupGraphViewbox(
     undefined,
     svg,
-    conf.timeline.padding ? conf.timeline.padding : 50,
-    conf.timeline.useMaxWidth ? conf.timeline.useMaxWidth : false
+    conf.timeline?.padding ?? 50,
+    conf.timeline?.useMaxWidth ?? false
   );
 
   // addSVGAccessibilityFields(diagObj.db, diagram, id);
 };
 
 export const drawTasks = function (
-  diagram,
-  tasks,
-  sectionColor,
-  masterX,
-  masterY,
-  maxTaskHeight,
-  conf,
-  maxEventCount,
-  maxEventLineLength,
-  maxSectionHeight,
-  isWithoutSections
+  diagram: Selection<SVGElement, unknown, null, undefined>,
+  tasks: TimelineTask[],
+  sectionColor: number,
+  masterX: number,
+  masterY: number,
+  maxTaskHeight: number,
+  conf: MermaidConfig,
+  maxEventCount: number,
+  maxEventLineLength: number,
+  maxSectionHeight: number,
+  isWithoutSections: boolean
 ) {
   // Draw the tasks
   for (const task of tasks) {
@@ -249,6 +268,7 @@ export const drawTasks = function (
 
     log.debug('taskNode', taskNode);
     // create task wrapper
+
     const taskWrapper = diagram.append('g').attr('class', 'taskWrapper');
     const node = svgDraw.drawNode(taskWrapper, taskNode, sectionColor, conf);
     const taskHeight = node.height;
@@ -263,11 +283,11 @@ export const drawTasks = function (
     if (task.events) {
       // draw a line between the task and the events
       const lineWrapper = diagram.append('g').attr('class', 'lineWrapper');
-      let linelength = maxTaskHeight;
+      let lineLength = maxTaskHeight;
       //add margin to task
       masterY += 100;
-      linelength =
-        linelength + drawEvents(diagram, task.events, sectionColor, masterX, masterY, conf);
+      lineLength =
+        lineLength + drawEvents(diagram, task.events, sectionColor, masterX, masterY, conf);
       masterY -= 100;
 
       lineWrapper
@@ -290,7 +310,7 @@ export const drawTasks = function (
     }
 
     masterX = masterX + 200;
-    if (isWithoutSections && !getConfig().timeline.disableMulticolor) {
+    if (isWithoutSections && !conf.timeline?.disableMulticolor) {
       sectionColor++;
     }
   }
@@ -299,14 +319,21 @@ export const drawTasks = function (
   masterY = masterY - 10;
 };
 
-export const drawEvents = function (diagram, events, sectionColor, masterX, masterY, conf) {
+export const drawEvents = function (
+  diagram: Selection<SVGElement, unknown, null, undefined>,
+  events: string[],
+  sectionColor: number,
+  masterX: number,
+  masterY: number,
+  conf: MermaidConfig
+) {
   let maxEventHeight = 0;
   const eventBeginY = masterY;
   masterY = masterY + 100;
   // Draw the events
   for (const event of events) {
     // create node from event
-    const eventNode = {
+    const eventNode: Block<string, number> = {
       descr: event,
       section: sectionColor,
       number: sectionColor,
@@ -331,6 +358,8 @@ export const drawEvents = function (diagram, events, sectionColor, masterX, mast
 };
 
 export default {
-  setConf,
+  setConf: () => {
+    // no-op
+  },
   draw,
 };

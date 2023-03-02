@@ -264,6 +264,10 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
   padding?: number;
   textHeight?: number;
   defaultRenderer?: string;
+  nodeSpacing?: number;
+  rankSpacing?: number;
+  diagramPadding?: number;
+  htmlLabels?: boolean;
 }
 
 export interface JourneyDiagramConfig extends BaseDiagramConfig {
@@ -295,6 +299,7 @@ export interface TimelineDiagramConfig extends BaseDiagramConfig {
   leftMargin?: number;
   width?: number;
   height?: number;
+  padding?: number;
   boxMargin?: number;
   boxTextMargin?: number;
   noteMargin?: number;
@@ -311,6 +316,7 @@ export interface TimelineDiagramConfig extends BaseDiagramConfig {
   sectionFills?: string[];
   sectionColours?: string[];
   disableMulticolor?: boolean;
+  useMaxWidth?: boolean;
 }
 
 export interface GanttDiagramConfig extends BaseDiagramConfig {
