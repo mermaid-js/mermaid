@@ -18,7 +18,7 @@
     "build:vite": "ts-node-esm --transpileOnly .vite/build.ts",
     "build:mermaid": "pnpm build:vite --mermaid",
     "build:viz": "pnpm build:mermaid --visualize",
-    "build:types": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-example-diagram/tsconfig.json --emitDeclarationOnly",
+    "build:types": "tsc -p ./packages/mermaid/tsconfig.json && tsc -p ./packages/mermaid-example-diagram/tsconfig.json",
     "build:watch": "pnpm build:vite --watch",
     "build": "pnpm run -r clean && pnpm build:types && pnpm build:vite",
     "dev": "concurrently \"pnpm build:vite --watch\" \"ts-node-esm .vite/server.ts\"",
