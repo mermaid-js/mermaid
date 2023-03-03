@@ -1,7 +1,7 @@
 module.exports = {
-  node: require('./intersect-node'),
-  circle: require('./intersect-circle'),
-  ellipse: require('./intersect-ellipse'),
-  polygon: require('./intersect-polygon'),
-  rect: require('./intersect-rect'),
+  node: require('./intersect-node.js'),
+  circle: require('./intersect-circle.js'),
+  ellipse: require('./intersect-ellipse.js'),
+  polygon: require('./intersect-polygon.js'),
+  rect: require('./intersect-rect.js'),
 };

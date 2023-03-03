@@ -1,4 +1,4 @@
-import { getConfig } from '../../config';
+import { getConfig } from '../../config.js';
 
 export default (dir, _branches) => {
   const config = getConfig().gitGraph;

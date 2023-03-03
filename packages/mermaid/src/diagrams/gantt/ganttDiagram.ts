@@ -1,9 +1,9 @@
 // @ts-ignore: TODO Fix ts errors
-import ganttParser from './parser/gantt';
-import ganttDb from './ganttDb';
-import ganttRenderer from './ganttRenderer';
-import ganttStyles from './styles';
-import { DiagramDefinition } from '../../diagram-api/types';
+import ganttParser from './parser/gantt.jison';
+import ganttDb from './ganttDb.js';
+import ganttRenderer from './ganttRenderer.js';
+import ganttStyles from './styles.js';
+import { DiagramDefinition } from '../../diagram-api/types.js';
 
 export const diagram: DiagramDefinition = {
   parser: ganttParser,

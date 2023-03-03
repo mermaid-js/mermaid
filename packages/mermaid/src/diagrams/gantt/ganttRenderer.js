@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { log } from '../../logger';
+import { log } from '../../logger.js';
 import {
   select,
   scaleTime,
@@ -16,9 +16,9 @@ import {
   timeWeek,
   timeMonth,
 } from 'd3';
-import common from '../common/common';
-import { getConfig } from '../../config';
-import { configureSvgSize } from '../../setupGraphViewbox';
+import common from '../common/common.js';
+import { getConfig } from '../../config.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 export const setConf = function () {
   log.debug('Something is calling, setConf, remove the call');

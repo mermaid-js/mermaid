@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { extractFrontMatter } from './frontmatter';
+import { extractFrontMatter } from './frontmatter.js';
 
 const dbMock = () => ({ setDiagramTitle: vi.fn() });
 

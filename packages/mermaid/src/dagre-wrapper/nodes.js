@@ -1,12 +1,12 @@
 import { select } from 'd3';
-import { log } from '../logger';
-import { labelHelper, updateNodeBounds, insertPolygonShape } from './shapes/util';
-import { getConfig } from '../config';
+import { log } from '../logger.js';
+import { labelHelper, updateNodeBounds, insertPolygonShape } from './shapes/util.js';
+import { getConfig } from '../config.js';
 import intersect from './intersect/index.js';
-import createLabel from './createLabel';
-import note from './shapes/note';
-import { parseMember } from '../diagrams/class/svgDraw';
-import { evaluate } from '../diagrams/common/common';
+import createLabel from './createLabel.js';
+import note from './shapes/note.js';
+import { parseMember } from '../diagrams/class/svgDraw.js';
+import { evaluate } from '../diagrams/common/common.js';
 
 const question = (parent, node) => {
   const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);

@@ -1,8 +1,8 @@
-import createLabel from '../createLabel';
-import { getConfig } from '../../config';
-import { decodeEntities } from '../../mermaidAPI';
+import createLabel from '../createLabel.js';
+import { getConfig } from '../../config.js';
+import { decodeEntities } from '../../mermaidAPI.js';
 import { select } from 'd3';
-import { evaluate, sanitizeText } from '../../diagrams/common/common';
+import { evaluate, sanitizeText } from '../../diagrams/common/common.js';
 export const labelHelper = (parent, node, _classes, isNode) => {
   let classes;
   if (!_classes) {

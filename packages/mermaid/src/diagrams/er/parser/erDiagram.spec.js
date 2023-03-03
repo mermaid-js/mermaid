@@ -1,6 +1,6 @@
-import { setConfig } from '../../../config';
-import erDb from '../erDb';
-import erDiagram from './erDiagram'; // jison file
+import { setConfig } from '../../../config.js';
+import erDb from '../erDb.js';
+import erDiagram from './erDiagram.jison';
 
 setConfig({
   securityLevel: 'strict',

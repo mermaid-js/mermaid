@@ -1,4 +1,4 @@
-import type {} from '@vitest/spy/dist/index';
+import type {} from '@vitest/spy/dist/index.js';
 
 /**
  * This is a mocked/stubbed version of the d3 Selection type. Each of the main functions are all

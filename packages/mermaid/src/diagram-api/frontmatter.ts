@@ -1,4 +1,4 @@
-import { DiagramDb } from './types';
+import { DiagramDb } from './types.js';
 // The "* as yaml" part is necessary for tree-shaking
 import * as yaml from 'js-yaml';
 

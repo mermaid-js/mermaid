@@ -1,8 +1,8 @@
-import assignWithDepth from './assignWithDepth';
-import { log } from './logger';
-import theme from './themes';
-import config from './defaultConfig';
-import type { MermaidConfig } from './config.type';
+import assignWithDepth from './assignWithDepth.js';
+import { log } from './logger.js';
+import theme from './themes/index.js';
+import config from './defaultConfig.js';
+import type { MermaidConfig } from './config.type.js';
 
 export const defaultConfig: MermaidConfig = Object.freeze(config);
 

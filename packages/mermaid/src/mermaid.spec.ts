@@ -1,7 +1,7 @@
-import mermaid from './mermaid';
-import { mermaidAPI } from './mermaidAPI';
-import './diagram-api/diagram-orchestration';
-import { addDiagrams } from './diagram-api/diagram-orchestration';
+import mermaid from './mermaid.js';
+import { mermaidAPI } from './mermaidAPI.js';
+import './diagram-api/diagram-orchestration.js';
+import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import { beforeAll, describe, it, expect, vi } from 'vitest';
 
 beforeAll(async () => {

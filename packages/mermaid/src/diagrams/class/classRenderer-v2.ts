@@ -1,14 +1,14 @@
 // @ts-ignore d3 types are not available
 import { select, curveLinear } from 'd3';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
-import { log } from '../../logger';
-import { getConfig } from '../../config';
+import { log } from '../../logger.js';
+import { getConfig } from '../../config.js';
 import { render } from '../../dagre-wrapper/index.js';
-import utils from '../../utils';
-import { interpolateToCurve, getStylesFromArray } from '../../utils';
-import { setupGraphViewbox } from '../../setupGraphViewbox';
-import common from '../common/common';
-import { ClassRelation, ClassNote, ClassMap, EdgeData } from './classTypes';
+import utils from '../../utils.js';
+import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
+import { setupGraphViewbox } from '../../setupGraphViewbox.js';
+import common from '../common/common.js';
+import { ClassRelation, ClassNote, ClassMap, EdgeData } from './classTypes.js';
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
 

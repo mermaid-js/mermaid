@@ -1,4 +1,4 @@
-import svgDraw from './svgDraw';
+import svgDraw from './svgDraw.js';
 
 describe('class member Renderer, ', function () {
   describe('when parsing text to build method display string', function () {

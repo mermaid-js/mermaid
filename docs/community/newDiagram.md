@@ -223,7 +223,7 @@ The functions for setting title and description are provided by a common module.
       getAccDescription,
       setAccDescription,
       clear as commonClear,
-    } from '../../commonDb';
+    } from '../../commonDb.js';
 
 The accessibility title and description are inserted into the SVG element in the `render` function in mermaidAPI.
 

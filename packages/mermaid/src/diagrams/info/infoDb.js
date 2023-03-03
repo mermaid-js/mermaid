@@ -1,6 +1,6 @@
 /** Created by knut on 15-01-14. */
-import { log } from '../../logger';
-import { clear } from '../../commonDb';
+import { log } from '../../logger.js';
+import { clear } from '../../commonDb.js';
 
 var message = '';
 var info = false;

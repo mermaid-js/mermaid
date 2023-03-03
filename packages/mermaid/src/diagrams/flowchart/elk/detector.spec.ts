@@ -1,4 +1,4 @@
-import plugin from './detector';
+import plugin from './detector.js';
 import { describe, it } from 'vitest';
 
 const { detector } = plugin;

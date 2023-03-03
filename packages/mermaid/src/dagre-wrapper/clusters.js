@@ -1,9 +1,9 @@
-import intersectRect from './intersect/intersect-rect';
-import { log } from '../logger';
-import createLabel from './createLabel';
+import intersectRect from './intersect/intersect-rect.js';
+import { log } from '../logger.js';
+import createLabel from './createLabel.js';
 import { select } from 'd3';
-import { getConfig } from '../config';
-import { evaluate } from '../diagrams/common/common';
+import { getConfig } from '../config.js';
+import { evaluate } from '../diagrams/common/common.js';
 
 const rect = (parent, node) => {
   log.trace('Creating subgraph rect for ', node.id, node);
