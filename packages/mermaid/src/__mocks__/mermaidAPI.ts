@@ -3,9 +3,9 @@
  *
  * We can't easily use `vi.spyOn(mermaidAPI, "function")` since the object is frozen with `Object.freeze()`.
  */
-import * as configApi from '../config.js';
+import * as configApi from '../config.ts';
 import { vi } from 'vitest';
-import { mermaidAPI as mAPI } from '../mermaidAPI.js';
+import { mermaidAPI as mAPI } from '../mermaidAPI.ts';
 
 // original version cannot be modified since it was frozen with `Object.freeze()`
 export const mermaidAPI = {

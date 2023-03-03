@@ -3,7 +3,7 @@ import parser from './parser/exampleDiagram.jison';
 import * as db from './exampleDiagramDb.js';
 import renderer from './exampleDiagramRenderer.js';
 import styles from './styles.js';
-import { injectUtils } from './mermaidUtils.js';
+import { injectUtils } from './mermaidUtils.ts';
 
 export const diagram = {
   db,

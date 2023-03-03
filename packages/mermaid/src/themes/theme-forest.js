@@ -3,7 +3,7 @@ import { mkBorder } from './theme-helpers.js';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
-} from './erDiagram-oldHardcodedValues.js';
+} from './erDiagram-oldHardcodedValues.ts';
 
 class Theme {
   constructor() {

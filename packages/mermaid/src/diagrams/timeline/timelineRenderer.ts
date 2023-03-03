@@ -1,11 +1,11 @@
 // @ts-ignore - db not typed yet
 import { select, Selection } from 'd3';
 import svgDraw from './svgDraw.js';
-import { log } from '../../logger.js';
-import { getConfig } from '../../config.js';
+import { log } from '../../logger.ts';
+import { getConfig } from '../../config.ts';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
-import { Diagram } from '../../Diagram.js';
-import { MermaidConfig } from '../../config.type.js';
+import { Diagram } from '../../Diagram.ts';
+import { MermaidConfig } from '../../config.type.ts';
 
 interface Block<TDesc, TSection> {
   number: number;

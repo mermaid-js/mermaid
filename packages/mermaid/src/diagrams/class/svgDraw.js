@@ -1,7 +1,7 @@
 import { line, curveBasis } from 'd3';
-import utils from '../../utils.js';
-import { log } from '../../logger.js';
-import { parseGenericTypes } from '../common/common.js';
+import utils from '../../utils.ts';
+import { log } from '../../logger.ts';
+import { parseGenericTypes } from '../common/common.ts';
 
 let edgeCount = 0;
 export const drawEdge = function (elem, path, relation, conf, diagObj) {

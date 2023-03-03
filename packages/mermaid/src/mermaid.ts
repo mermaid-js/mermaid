@@ -3,20 +3,20 @@
  * functionality and to render the diagrams to svg code!
  */
 import { dedent } from 'ts-dedent';
-import { MermaidConfig } from './config.type.js';
-import { log } from './logger.js';
-import utils from './utils.js';
-import { mermaidAPI, ParseOptions, RenderResult } from './mermaidAPI.js';
+import { MermaidConfig } from './config.type.ts';
+import { log } from './logger.ts';
+import utils from './utils.ts';
+import { mermaidAPI, ParseOptions, RenderResult } from './mermaidAPI.ts';
 import {
   registerLazyLoadedDiagrams,
   loadRegisteredDiagrams,
   detectType,
-} from './diagram-api/detectType.js';
-import type { ParseErrorFunction } from './Diagram.js';
-import { isDetailedError } from './utils.js';
-import type { DetailedError } from './utils.js';
-import { ExternalDiagramDefinition } from './diagram-api/types.js';
-import { UnknownDiagramError } from './errors.js';
+} from './diagram-api/detectType.ts';
+import type { ParseErrorFunction } from './Diagram.ts';
+import { isDetailedError } from './utils.ts';
+import type { DetailedError } from './utils.ts';
+import { ExternalDiagramDefinition } from './diagram-api/types.ts';
+import { UnknownDiagramError } from './errors.ts';
 
 export type {
   MermaidConfig,

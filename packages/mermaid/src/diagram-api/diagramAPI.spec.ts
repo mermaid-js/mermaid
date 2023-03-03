@@ -1,8 +1,8 @@
-import { detectType } from './detectType.js';
-import { getDiagram, registerDiagram } from './diagramAPI.js';
-import { addDiagrams } from './diagram-orchestration.js';
-import { DiagramDetector } from './types.js';
-import { getDiagramFromText } from '../Diagram.js';
+import { detectType } from './detectType.ts';
+import { getDiagram, registerDiagram } from './diagramAPI.ts';
+import { addDiagrams } from './diagram-orchestration.ts';
+import { DiagramDetector } from './types.ts';
+import { getDiagramFromText } from '../Diagram.ts';
 import { it, describe, expect, beforeAll } from 'vitest';
 
 addDiagrams();

@@ -1,5 +1,5 @@
 import { updateNodeBounds, labelHelper } from './util.js';
-import { log } from '../../logger.js';
+import { log } from '../../logger.ts';
 import intersect from '../intersect/index.js';
 
 const note = (parent, node) => {

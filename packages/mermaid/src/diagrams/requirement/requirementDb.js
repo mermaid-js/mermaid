@@ -1,6 +1,6 @@
-import * as configApi from '../../config.js';
-import { log } from '../../logger.js';
-import mermaidAPI from '../../mermaidAPI.js';
+import * as configApi from '../../config.ts';
+import { log } from '../../logger.ts';
+import mermaidAPI from '../../mermaidAPI.ts';
 
 import {
   setAccTitle,
@@ -8,7 +8,7 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../../commonDb.js';
+} from '../../commonDb.ts';
 
 let relations = [];
 let latestRequirement = {};

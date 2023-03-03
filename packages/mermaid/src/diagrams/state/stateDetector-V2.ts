@@ -1,4 +1,4 @@
-import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types.js';
+import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types.ts';
 
 const id = 'stateDiagram';
 

@@ -2,14 +2,14 @@ import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select, curveLinear, selectAll } from 'd3';
 
 import flowDb from './flowDb.js';
-import { getConfig } from '../../config.js';
-import utils from '../../utils.js';
+import { getConfig } from '../../config.ts';
+import utils from '../../utils.ts';
 
 import { render } from '../../dagre-wrapper/index.js';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
-import { log } from '../../logger.js';
-import common, { evaluate } from '../common/common.js';
-import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
+import { log } from '../../logger.ts';
+import common, { evaluate } from '../common/common.ts';
+import { interpolateToCurve, getStylesFromArray } from '../../utils.ts';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 
 const conf = {};

@@ -1,12 +1,12 @@
-import { addDetector } from './detectType.js';
-import { log as _log, setLogLevel as _setLogLevel } from '../logger.js';
-import { getConfig as _getConfig } from '../config.js';
-import { sanitizeText as _sanitizeText } from '../diagrams/common/common.js';
+import { addDetector } from './detectType.ts';
+import { log as _log, setLogLevel as _setLogLevel } from '../logger.ts';
+import { getConfig as _getConfig } from '../config.ts';
+import { sanitizeText as _sanitizeText } from '../diagrams/common/common.ts';
 import { setupGraphViewbox as _setupGraphViewbox } from '../setupGraphViewbox.js';
-import { addStylesForDiagram } from '../styles.js';
-import { DiagramDefinition, DiagramDetector } from './types.js';
-import * as _commonDb from '../commonDb.js';
-import { parseDirective as _parseDirective } from '../directiveUtils.js';
+import { addStylesForDiagram } from '../styles.ts';
+import { DiagramDefinition, DiagramDetector } from './types.ts';
+import * as _commonDb from '../commonDb.ts';
+import { parseDirective as _parseDirective } from '../directiveUtils.ts';
 
 /*
   Packaging and exposing resources for external diagrams so that they can import

@@ -3,10 +3,10 @@ import dayjs from 'dayjs';
 import dayjsIsoWeek from 'dayjs/plugin/isoWeek.js';
 import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat.js';
 import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
-import { log } from '../../logger.js';
-import * as configApi from '../../config.js';
-import utils from '../../utils.js';
-import mermaidAPI from '../../mermaidAPI.js';
+import { log } from '../../logger.ts';
+import * as configApi from '../../config.ts';
+import utils from '../../utils.ts';
+import mermaidAPI from '../../mermaidAPI.ts';
 
 import {
   setAccTitle,
@@ -16,7 +16,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb.js';
+} from '../../commonDb.ts';
 
 dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);

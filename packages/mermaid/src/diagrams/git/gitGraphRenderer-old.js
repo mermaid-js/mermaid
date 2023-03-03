@@ -2,8 +2,8 @@ import { curveBasis, line, select } from 'd3';
 
 import db from './gitGraphAst.js';
 import gitGraphParser from './parser/gitGraph.jison';
-import { logger } from '../../logger.js';
-import { interpolateToCurve } from '../../utils.js';
+import { logger } from '../../logger.ts';
+import { interpolateToCurve } from '../../utils.ts';
 
 let allCommitsDict = {};
 let branchNum;

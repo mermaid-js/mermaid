@@ -1,12 +1,12 @@
 import { select } from 'd3';
 import svgDraw from './svgDraw.js';
-import { log } from '../../logger.js';
+import { log } from '../../logger.ts';
 import { parser } from './parser/c4Diagram.jison';
-import common from '../common/common.js';
+import common from '../common/common.ts';
 import c4Db from './c4Db.js';
-import * as configApi from '../../config.js';
+import * as configApi from '../../config.ts';
 import assignWithDepth from '../../assignWithDepth.js';
-import { wrapLabel, calculateTextWidth, calculateTextHeight } from '../../utils.js';
+import { wrapLabel, calculateTextWidth, calculateTextHeight } from '../../utils.ts';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 let globalBoundaryMaxX = 0,

@@ -1,8 +1,8 @@
 import { parser as timeline } from './parser/timeline.jison';
 import * as timelineDB from './timelineDb.js';
-// import { injectUtils } from './mermaidUtils.js';
-import * as _commonDb from '../../commonDb.js';
-import { parseDirective as _parseDirective } from '../../directiveUtils.js';
+// import { injectUtils } from './mermaidUtils.ts';
+import * as _commonDb from '../../commonDb.ts';
+import { parseDirective as _parseDirective } from '../../directiveUtils.ts';
 
 import {
   log,
@@ -10,7 +10,7 @@ import {
   getConfig,
   sanitizeText,
   setupGraphViewBox,
-} from '../../diagram-api/diagramAPI.js';
+} from '../../diagram-api/diagramAPI.ts';
 
 // injectUtils(
 //   log,

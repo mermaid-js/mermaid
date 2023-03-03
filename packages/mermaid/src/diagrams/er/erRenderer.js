@@ -1,12 +1,12 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { line, curveBasis, select } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
-import { getConfig } from '../../config.js';
-import { log } from '../../logger.js';
-import utils from '../../utils.js';
+import { getConfig } from '../../config.ts';
+import { log } from '../../logger.ts';
+import utils from '../../utils.ts';
 import erMarkers from './erMarkers.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { parseGenericTypes } from '../common/common.js';
+import { parseGenericTypes } from '../common/common.ts';
 import { v5 as uuid5 } from 'uuid';
 
 /** Regex used to remove chars from the entity name so the result can be used in an id */

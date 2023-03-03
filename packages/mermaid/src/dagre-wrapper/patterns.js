@@ -1,6 +1,6 @@
 /** Setup arrow head and define the marker. The result is appended to the svg. */
 
-// import { log } from '../logger.js';
+// import { log } from '../logger.ts';
 
 // Only add the number of markers that the diagram needs
 const insertPatterns = (elem, patternArray, type, id) => {

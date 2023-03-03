@@ -1,4 +1,4 @@
-import * as configApi from './config.js';
+import * as configApi from './config.ts';
 
 describe('when working with site config', function () {
   beforeEach(() => {

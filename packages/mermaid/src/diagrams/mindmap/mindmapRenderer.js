@@ -1,7 +1,7 @@
 /** Created by knut on 14-12-11. */
 import { select } from 'd3';
-import { log } from '../../logger.js';
-import { getConfig } from '../../config.js';
+import { log } from '../../logger.ts';
+import { getConfig } from '../../config.ts';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import svgDraw from './svgDraw.js';
 import cytoscape from 'cytoscape/dist/cytoscape.umd.js';

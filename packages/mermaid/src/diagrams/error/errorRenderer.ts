@@ -1,8 +1,8 @@
 /** Created by knut on 14-12-11. */
 // @ts-ignore TODO: Investigate D3 issue
 import { select } from 'd3';
-import { log } from '../../logger.js';
-import { getErrorMessage } from '../../utils.js';
+import { log } from '../../logger.ts';
+import { getErrorMessage } from '../../utils.ts';
 
 let conf = {};
 

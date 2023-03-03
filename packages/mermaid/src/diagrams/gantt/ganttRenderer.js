@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { log } from '../../logger.js';
+import { log } from '../../logger.ts';
 import {
   select,
   scaleTime,
@@ -16,8 +16,8 @@ import {
   timeWeek,
   timeMonth,
 } from 'd3';
-import common from '../common/common.js';
-import { getConfig } from '../../config.js';
+import common from '../common/common.ts';
+import { getConfig } from '../../config.ts';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 export const setConf = function () {

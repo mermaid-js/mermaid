@@ -15,21 +15,21 @@ import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 // @ts-ignore: TODO Fix ts errors
 import { version } from '../package.json';
-import * as configApi from './config.js';
-import { addDiagrams } from './diagram-api/diagram-orchestration.js';
-import { Diagram, getDiagramFromText } from './Diagram.js';
+import * as configApi from './config.ts';
+import { addDiagrams } from './diagram-api/diagram-orchestration.ts';
+import { Diagram, getDiagramFromText } from './Diagram.ts';
 import errorRenderer from './diagrams/error/errorRenderer.js';
-import { attachFunctions } from './interactionDb.js';
-import { log, setLogLevel } from './logger.js';
-import getStyles from './styles.js';
+import { attachFunctions } from './interactionDb.ts';
+import { log, setLogLevel } from './logger.ts';
+import getStyles from './styles.ts';
 import theme from './themes/index.js';
-import utils, { directiveSanitizer } from './utils.js';
+import utils, { directiveSanitizer } from './utils.ts';
 import DOMPurify from 'dompurify';
-import { MermaidConfig } from './config.type.js';
-import { evaluate } from './diagrams/common/common.js';
+import { MermaidConfig } from './config.type.ts';
+import { evaluate } from './diagrams/common/common.ts';
 import { isEmpty } from 'lodash-es';
-import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
-import { parseDirective } from './directiveUtils.js';
+import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.ts';
+import { parseDirective } from './directiveUtils.ts';
 
 // diagram names that support classDef statements
 const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram', 'stateDiagram-v2'];

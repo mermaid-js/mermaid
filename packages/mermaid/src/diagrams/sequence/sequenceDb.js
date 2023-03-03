@@ -1,7 +1,7 @@
-import mermaidAPI from '../../mermaidAPI.js';
-import * as configApi from '../../config.js';
-import { log } from '../../logger.js';
-import { sanitizeText } from '../common/common.js';
+import mermaidAPI from '../../mermaidAPI.ts';
+import * as configApi from '../../config.ts';
+import { log } from '../../logger.ts';
+import { sanitizeText } from '../common/common.ts';
 import {
   setAccTitle,
   getAccTitle,
@@ -10,7 +10,7 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../../commonDb.js';
+} from '../../commonDb.ts';
 
 let prevActor = undefined;
 let actors = {};

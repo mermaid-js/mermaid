@@ -1,5 +1,5 @@
 import { parser } from './parser/classDiagram.jison';
-import classDb from './classDb.js';
+import classDb from './classDb.ts';
 
 describe('class diagram, ', function () {
   describe('when parsing data from a classDiagram it', function () {

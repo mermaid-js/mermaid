@@ -1,4 +1,4 @@
-import { sanitizeText, removeScript, parseGenericTypes } from './common.js';
+import { sanitizeText, removeScript, parseGenericTypes } from './common.ts';
 
 describe('when securityLevel is antiscript, all script must be removed', function () {
   /**

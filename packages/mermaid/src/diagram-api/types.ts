@@ -1,4 +1,4 @@
-import { MermaidConfig } from '../config.type.js';
+import { MermaidConfig } from '../config.type.ts';
 
 export interface InjectUtils {
   _log: any;

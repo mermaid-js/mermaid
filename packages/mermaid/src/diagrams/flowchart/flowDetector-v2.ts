@@ -1,5 +1,5 @@
-import type { DiagramDetector } from '../../diagram-api/types.js';
-import type { ExternalDiagramDefinition } from '../../diagram-api/types.js';
+import type { DiagramDetector } from '../../diagram-api/types.ts';
+import type { ExternalDiagramDefinition } from '../../diagram-api/types.ts';
 
 const id = 'flowchart-v2';
 

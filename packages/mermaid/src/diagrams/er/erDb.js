@@ -1,6 +1,6 @@
-import { log } from '../../logger.js';
-import mermaidAPI from '../../mermaidAPI.js';
-import * as configApi from '../../config.js';
+import { log } from '../../logger.ts';
+import mermaidAPI from '../../mermaidAPI.ts';
+import * as configApi from '../../config.ts';
 
 import {
   setAccTitle,
@@ -10,7 +10,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb.js';
+} from '../../commonDb.ts';
 
 let entities = {};
 let relationships = [];

@@ -1,6 +1,6 @@
 import { parser } from './parser/exampleDiagram.jison';
 import * as db from './exampleDiagramDb.js';
-import { injectUtils } from './mermaidUtils.js';
+import { injectUtils } from './mermaidUtils.ts';
 // Todo fix utils functions for tests
 import {
   log,
@@ -8,7 +8,7 @@ import {
   getConfig,
   sanitizeText,
   setupGraphViewBox,
-} from '../../mermaid/src/diagram-api/diagramAPI.js';
+} from '../../mermaid/src/diagram-api/diagramAPI.ts';
 
 injectUtils(log, setLogLevel, getConfig, sanitizeText, setupGraphViewBox);
 

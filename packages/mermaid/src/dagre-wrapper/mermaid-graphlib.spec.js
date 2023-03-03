@@ -6,7 +6,7 @@ import {
   extractDescendants,
   sortNodesByHierarchy,
 } from './mermaid-graphlib.js';
-import { setLogLevel, log } from '../logger.js';
+import { setLogLevel, log } from '../logger.ts';
 
 describe('Graphlib decorations', () => {
   let g;

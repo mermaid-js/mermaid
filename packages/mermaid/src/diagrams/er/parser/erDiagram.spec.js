@@ -1,4 +1,4 @@
-import { setConfig } from '../../../config.js';
+import { setConfig } from '../../../config.ts';
 import erDb from '../erDb.js';
 import erDiagram from './erDiagram.jison';
 

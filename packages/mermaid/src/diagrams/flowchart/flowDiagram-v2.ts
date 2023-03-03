@@ -2,9 +2,9 @@
 import flowParser from './parser/flow.jison';
 import flowDb from './flowDb.js';
 import flowRendererV2 from './flowRenderer-v2.js';
-import flowStyles from './styles.js';
-import { MermaidConfig } from '../../config.type.js';
-import { setConfig } from '../../config.js';
+import flowStyles from './styles.ts';
+import { MermaidConfig } from '../../config.type.ts';
+import { setConfig } from '../../config.ts';
 
 export const diagram = {
   parser: flowParser,

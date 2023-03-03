@@ -1,4 +1,4 @@
-import type { ExternalDiagramDefinition } from '../../diagram-api/types.js';
+import type { ExternalDiagramDefinition } from '../../diagram-api/types.ts';
 const id = 'mindmap';
 
 const detector = (txt: string) => {

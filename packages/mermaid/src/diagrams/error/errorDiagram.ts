@@ -1,4 +1,4 @@
-import { DiagramDefinition } from '../../diagram-api/types.js';
+import { DiagramDefinition } from '../../diagram-api/types.ts';
 import styles from './styles.js';
 import renderer from './errorRenderer.js';
 export const diagram: DiagramDefinition = {

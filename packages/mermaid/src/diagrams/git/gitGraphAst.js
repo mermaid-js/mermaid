@@ -1,9 +1,9 @@
-import { log } from '../../logger.js';
-import { random } from '../../utils.js';
-import mermaidAPI from '../../mermaidAPI.js';
-import * as configApi from '../../config.js';
-import { getConfig } from '../../config.js';
-import common from '../common/common.js';
+import { log } from '../../logger.ts';
+import { random } from '../../utils.ts';
+import mermaidAPI from '../../mermaidAPI.ts';
+import * as configApi from '../../config.ts';
+import { getConfig } from '../../config.ts';
+import common from '../common/common.ts';
 import {
   setAccTitle,
   getAccTitle,
@@ -12,7 +12,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb.js';
+} from '../../commonDb.ts';
 
 let mainBranchName = getConfig().gitGraph.mainBranchName;
 let mainBranchOrder = getConfig().gitGraph.mainBranchOrder;

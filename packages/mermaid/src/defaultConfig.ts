@@ -1,5 +1,5 @@
 import theme from './themes/index.js';
-import { MermaidConfig } from './config.type.js';
+import { MermaidConfig } from './config.type.ts';
 /**
  * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click
  * here](8.6.0_docs.md)].**

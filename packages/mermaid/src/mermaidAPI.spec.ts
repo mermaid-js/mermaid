@@ -4,15 +4,15 @@ import { vi } from 'vitest';
 // -------------------------------------
 //  Mocks and mocking
 
-import { MockedD3 } from './tests/MockedD3.js';
+import { MockedD3 } from './tests/MockedD3.ts';
 
 // Note: If running this directly from within an IDE, the mocks directory must be at packages/mermaid/mocks
 vi.mock('d3');
 vi.mock('dagre-d3');
 
 // mermaidAPI.spec.ts:
-import * as accessibility from './accessibility.js'; // Import it this way so we can use spyOn(accessibility,...)
-vi.mock('./accessibility.js', () => ({
+import * as accessibility from './accessibility.ts'; // Import it this way so we can use spyOn(accessibility,...)
+vi.mock('./accessibility.ts', () => ({
   setA11yDiagramInfo: vi.fn(),
   addSVGa11yTitleDescription: vi.fn(),
 }));
@@ -34,9 +34,9 @@ vi.mock('./diagrams/state/stateRenderer-v2.js');
 // -------------------------------------
 
 import mermaid from './mermaid.js';
-import { MermaidConfig } from './config.type.js';
+import { MermaidConfig } from './config.type.ts';
 
-import mermaidAPI, { removeExistingElements } from './mermaidAPI.js';
+import mermaidAPI, { removeExistingElements } from './mermaidAPI.ts';
 import {
   encodeEntities,
   decodeEntities,
@@ -45,20 +45,20 @@ import {
   appendDivSvgG,
   cleanUpSvgCode,
   putIntoIFrame,
-} from './mermaidAPI.js';
+} from './mermaidAPI.ts';
 
 import assignWithDepth from './assignWithDepth.js';
 
 // --------------
 // Mocks
 //   To mock a module, first define a mock for it, then (if used explicitly in the tests) import it. Be sure the path points to exactly the same file as is imported in mermaidAPI (the module being tested)
-vi.mock('./styles.js', () => {
+vi.mock('./styles.ts', () => {
   return {
     addStylesForDiagram: vi.fn(),
     default: vi.fn().mockReturnValue(' .userStyle { font-weight:bold; }'),
   };
 });
-import getStyles from './styles.js';
+import getStyles from './styles.ts';
 
 vi.mock('stylis', () => {
   return {

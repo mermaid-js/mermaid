@@ -1,5 +1,5 @@
 // @ts-nocheck TODO: Fix TS
-import { MockedD3 } from '../packages/mermaid/src/tests/MockedD3.js';
+import { MockedD3 } from '../packages/mermaid/src/tests/MockedD3.ts';
 
 export const select = function () {
   return new MockedD3();

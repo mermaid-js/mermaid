@@ -1,7 +1,7 @@
-import utils from './utils.js';
+import utils from './utils.ts';
 import assignWithDepth from './assignWithDepth.js';
-import { detectType } from './diagram-api/detectType.js';
-import { addDiagrams } from './diagram-api/diagram-orchestration.js';
+import { detectType } from './diagram-api/detectType.ts';
+import { addDiagrams } from './diagram-api/diagram-orchestration.ts';
 import { calculateSvgSizeAttrs } from './setupGraphViewbox.js';
 addDiagrams();
 

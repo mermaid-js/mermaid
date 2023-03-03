@@ -1,5 +1,5 @@
-import type { MermaidConfig } from '../../../config.type.js';
-import type { ExternalDiagramDefinition, DiagramDetector } from '../../../diagram-api/types.js';
+import type { MermaidConfig } from '../../../config.type.ts';
+import type { ExternalDiagramDefinition, DiagramDetector } from '../../../diagram-api/types.ts';
 
 const id = 'flowchart-elk';
 

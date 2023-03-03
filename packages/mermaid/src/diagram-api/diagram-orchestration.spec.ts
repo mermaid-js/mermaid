@@ -1,6 +1,6 @@
 import { it, describe, expect } from 'vitest';
-import { detectType } from './detectType.js';
-import { addDiagrams } from './diagram-orchestration.js';
+import { detectType } from './detectType.ts';
+import { addDiagrams } from './diagram-orchestration.ts';
 
 describe('diagram-orchestration', () => {
   it('should register diagrams', () => {

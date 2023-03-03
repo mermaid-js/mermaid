@@ -1,4 +1,4 @@
-import { log } from './logger.js';
+import { log } from './logger.ts';
 
 /**
  * Applies d3 attributes

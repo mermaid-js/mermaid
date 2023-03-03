@@ -1,4 +1,4 @@
-import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types.js';
+import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types.ts';
 
 const id = 'flowchart';
 
@@ -15,7 +15,7 @@ const detector: DiagramDetector = (txt, config) => {
 };
 
 const loader = async () => {
-  const { diagram } = await import('./flowDiagram.js');
+  const { diagram } = await import('./flowDiagram.ts');
   return { id, diagram };
 };
 

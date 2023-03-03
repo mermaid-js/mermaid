@@ -3,8 +3,8 @@ import c4Parser from './parser/c4Diagram.jison';
 import c4Db from './c4Db.js';
 import c4Renderer from './c4Renderer.js';
 import c4Styles from './styles.js';
-import { MermaidConfig } from '../../config.type.js';
-import { DiagramDefinition } from '../../diagram-api/types.js';
+import { MermaidConfig } from '../../config.type.ts';
+import { DiagramDefinition } from '../../diagram-api/types.ts';
 
 export const diagram: DiagramDefinition = {
   parser: c4Parser,

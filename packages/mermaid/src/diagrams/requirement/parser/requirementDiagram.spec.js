@@ -1,4 +1,4 @@
-import { setConfig } from '../../../config.js';
+import { setConfig } from '../../../config.ts';
 import requirementDb from '../requirementDb.js';
 import reqDiagram from './requirementDiagram.jison';
 

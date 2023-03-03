@@ -1,4 +1,4 @@
-import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types.js';
+import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types.ts';
 
 const id = 'class';
 
@@ -12,7 +12,7 @@ const detector: DiagramDetector = (txt, config) => {
 };
 
 const loader = async () => {
-  const { diagram } = await import('./classDiagram.js');
+  const { diagram } = await import('./classDiagram.ts');
   return { id, diagram };
 };
 

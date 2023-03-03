@@ -1,11 +1,11 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select } from 'd3';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../config.ts';
 import { render } from '../../dagre-wrapper/index.js';
-import { log } from '../../logger.js';
+import { log } from '../../logger.ts';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import common from '../common/common.js';
-import utils from '../../utils.js';
+import common from '../common/common.ts';
+import utils from '../../utils.ts';
 
 import {
   DEFAULT_DIAGRAM_DIRECTION,
@@ -14,7 +14,7 @@ import {
   STMT_RELATION,
   DEFAULT_STATE_TYPE,
   DIVIDER_TYPE,
-} from './stateCommon.js';
+} from './stateCommon.ts';
 
 // --------------------------------------
 // Shapes

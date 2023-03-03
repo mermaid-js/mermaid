@@ -1,10 +1,10 @@
 import { line, curveBasis } from 'd3';
 import idCache from './id-cache.js';
 import stateDb from './stateDb.js';
-import utils from '../../utils.js';
-import common from '../common/common.js';
-import { getConfig } from '../../config.js';
-import { log } from '../../logger.js';
+import utils from '../../utils.ts';
+import common from '../common/common.ts';
+import { getConfig } from '../../config.ts';
+import { log } from '../../logger.ts';
 
 /**
  * Draws a start state as a black circle

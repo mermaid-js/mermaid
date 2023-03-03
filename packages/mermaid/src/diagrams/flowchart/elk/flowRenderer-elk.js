@@ -2,13 +2,13 @@ import { select, line, curveLinear } from 'd3';
 import { insertNode } from '../../../dagre-wrapper/nodes.js';
 import insertMarkers from '../../../dagre-wrapper/markers.js';
 import { insertEdgeLabel } from '../../../dagre-wrapper/edges.js';
-import { findCommonAncestor } from './render-utils.js';
+import { findCommonAncestor } from './render-utils.ts';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
-import { getConfig } from '../../../config.js';
-import { log } from '../../../logger.js';
+import { getConfig } from '../../../config.ts';
+import { log } from '../../../logger.ts';
 import { setupGraphViewbox } from '../../../setupGraphViewbox.js';
-import common, { evaluate } from '../../common/common.js';
-import { interpolateToCurve, getStylesFromArray } from '../../../utils.js';
+import common, { evaluate } from '../../common/common.ts';
+import { interpolateToCurve, getStylesFromArray } from '../../../utils.ts';
 import ELK from 'elkjs/lib/elk.bundled.js';
 const elk = new ELK();
 

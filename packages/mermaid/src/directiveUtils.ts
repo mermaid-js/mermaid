@@ -1,7 +1,7 @@
-import * as configApi from './config.js';
+import * as configApi from './config.ts';
 
-import { log } from './logger.js';
-import { directiveSanitizer } from './utils.js';
+import { log } from './logger.ts';
+import { directiveSanitizer } from './utils.ts';
 
 let currentDirective: { type?: string; args?: any } | undefined = {};
 

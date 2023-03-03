@@ -17,8 +17,8 @@ import error from '../diagrams/error/errorDetector.js';
 import flowchartElk from '../diagrams/flowchart/elk/detector.js';
 import timeline from '../diagrams/timeline/detector.js';
 import mindmap from '../diagrams/mindmap/detector.js';
-import { registerLazyLoadedDiagrams } from './detectType.js';
-import { registerDiagram } from './diagramAPI.js';
+import { registerLazyLoadedDiagrams } from './detectType.ts';
+import { registerDiagram } from './diagramAPI.ts';
 
 let hasLoadedDiagrams = false;
 export const addDiagrams = () => {

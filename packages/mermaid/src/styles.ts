@@ -1,5 +1,5 @@
-import type { FlowChartStyleOptions } from './diagrams/flowchart/styles.js';
-import { log } from './logger.js';
+import type { FlowChartStyleOptions } from './diagrams/flowchart/styles.ts';
+import { log } from './logger.ts';
 
 const themes: Record<string, any> = {};
 

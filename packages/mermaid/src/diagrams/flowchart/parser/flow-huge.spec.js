@@ -1,6 +1,6 @@
 import flowDb from '../flowDb.js';
 import flow from './flow.jison';
-import { setConfig } from '../../../config.js';
+import { setConfig } from '../../../config.ts';
 
 setConfig({
   securityLevel: 'strict',

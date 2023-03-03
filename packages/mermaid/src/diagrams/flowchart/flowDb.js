@@ -1,9 +1,9 @@
 import { select } from 'd3';
-import utils from '../../utils.js';
-import * as configApi from '../../config.js';
-import common from '../common/common.js';
-import mermaidAPI from '../../mermaidAPI.js';
-import { log } from '../../logger.js';
+import utils from '../../utils.ts';
+import * as configApi from '../../config.ts';
+import common from '../common/common.ts';
+import mermaidAPI from '../../mermaidAPI.ts';
+import { log } from '../../logger.ts';
 import {
   setAccTitle,
   getAccTitle,
@@ -12,7 +12,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb.js';
+} from '../../commonDb.ts';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;

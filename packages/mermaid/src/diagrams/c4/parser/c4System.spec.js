@@ -1,6 +1,6 @@
 import c4Db from '../c4Db.js';
 import c4 from './c4Diagram.jison';
-import { setConfig } from '../../../config.js';
+import { setConfig } from '../../../config.ts';
 
 setConfig({
   securityLevel: 'strict',
