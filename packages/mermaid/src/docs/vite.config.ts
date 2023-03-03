@@ -1,5 +1,6 @@
 import { defineConfig, type PluginOption, searchForWorkspaceRoot } from 'vite';
 import path from 'path';
+// @ts-expect-error vitepress-plugin-search doesn't expose their `types` in the new Node16 way
 import { SearchPlugin } from 'vitepress-plugin-search';
 
 const virtualModuleId = 'virtual:mermaid-config';

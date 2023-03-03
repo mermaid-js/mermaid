@@ -27,7 +27,7 @@ import utils, { directiveSanitizer } from './utils.js';
 import DOMPurify from 'dompurify';
 import { MermaidConfig } from './config.type.js';
 import { evaluate } from './diagrams/common/common.js';
-import isEmpty from 'lodash-es/isEmpty.js';
+import { isEmpty } from 'lodash-es';
 import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
 import { parseDirective } from './directiveUtils.js';
 

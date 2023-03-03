@@ -2,7 +2,7 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code!
  */
-import dedent from 'ts-dedent';
+import { dedent } from 'ts-dedent';
 import { MermaidConfig } from './config.type.js';
 import { log } from './logger.js';
 import utils from './utils.js';

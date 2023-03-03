@@ -72,7 +72,15 @@ module.exports = {
       },
     ],
     'no-only-tests/no-only-tests': 'error',
-    'lodash/import-scope': ['error', 'method'],
+    'lodash/import-scope': [
+      /**
+       * Use `import {xxx} from 'lodash-es'`, due to TypeScript issues.
+       *
+       * Thanks to the magic of ESM, this is exactly the same as `import xxx from 'lodash-es/xxx'`
+       */
+      'error',
+      'member',
+    ],
     'unicorn/better-regex': 'error',
     'unicorn/no-abusive-eslint-disable': 'error',
     'unicorn/no-array-push-push': 'error',
