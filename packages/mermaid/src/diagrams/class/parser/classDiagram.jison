@@ -283,7 +283,7 @@ classStatement
     : classIdentifier                                    
     | classIdentifier STYLE_SEPARATOR alphaNumToken      {yy.setCssClass($1, $3);}
     | classIdentifier STRUCT_START members STRUCT_STOP   {yy.addMembers($1,$3);}
-    | classIdentifier STYLE_SEPARATOR alphaNumToken STRUCT_START members STRUCT_STOP {yy.setCssClass($1, $3);yy.addMembers($1,$3);}
+    | classIdentifier STYLE_SEPARATOR alphaNumToken STRUCT_START members STRUCT_STOP {yy.setCssClass($1, $3);yy.addMembers($1,$5);}
     ;
 
 classIdentifier
