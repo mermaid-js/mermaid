@@ -370,30 +370,9 @@ export const removeExistingElements = (
 };
 
 /**
- * Function that renders an svg with a graph from a chart definition. Usage example below.
+ * @deprecated - use the `mermaid.render` function instead of `mermaid.mermaidAPI.render`
  *
- * ```javascript
- * mermaidAPI.initialize({
- *   startOnLoad: true,
- * });
- * $(function () {
- *   const graphDefinition = 'graph TB\na-->b';
- *   const cb = function (svgGraph) {
- *     console.log(svgGraph);
- *   };
- *   mermaidAPI.render('id1', graphDefinition, cb);
- * });
- * ```
- *
- * @param id - The id for the SVG element (the element to be rendered)
- * @param text - The text for the graph definition
- * @param cb - Callback which is called after rendering is finished with the svg code as in param.
- * @param svgContainingElement - HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
- *   If no svgContainingElement is provided then the SVG element will be appended to the body.
- *    Selector to element in which a div with the graph temporarily will be
- *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
- *   element will be removed when rendering is completed.
- * @returns Returns the rendered element as a string containing the SVG definition.
+ * Deprecated for external use.
  */
 
 const render = async function (
@@ -579,7 +558,10 @@ const render = async function (
 function initialize(options: MermaidConfig = {}) {
   // Handle legacy location of font-family configuration
   if (options?.fontFamily && !options.themeVariables?.fontFamily) {
-    options.themeVariables = { fontFamily: options.fontFamily };
+    if (!options.themeVariables) {
+      options.themeVariables = {};
+    }
+    options.themeVariables.fontFamily = options.fontFamily;
   }
 
   // Set default options
