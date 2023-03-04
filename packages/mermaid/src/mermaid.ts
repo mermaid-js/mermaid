@@ -12,6 +12,7 @@ import type { ParseErrorFunction } from './Diagram';
 import { isDetailedError } from './utils';
 import type { DetailedError } from './utils';
 import { ExternalDiagramDefinition } from './diagram-api/types';
+import { UnknownDiagramError } from './errors';
 
 export type {
   MermaidConfig,
@@ -20,6 +21,7 @@ export type {
   ParseErrorFunction,
   RenderResult,
   ParseOptions,
+  UnknownDiagramError,
 };
 
 export interface RunOptions {
@@ -341,27 +343,24 @@ const parse = async (text: string, parseOptions?: ParseOptions): Promise<boolean
  * Function that renders an svg with a graph from a chart definition. Usage example below.
  *
  * ```javascript
- * mermaid.initialize({
- *   startOnLoad: true,
- * });
- * $(function () {
- *   const graphDefinition = 'graph TB\na-->b';
- *   const cb = function (svgGraph) {
- *     console.log(svgGraph);
- *   };
- *   mermaid.render('id1', graphDefinition, cb);
- * });
+ *  element = document.querySelector('#graphDiv');
+ *  const graphDefinition = 'graph TB\na-->b';
+ *  const { svg, bindFunctions } = await mermaid.render('graphDiv', graphDefinition);
+ *  element.innerHTML = svg;
+ *  bindFunctions?.(element);
  * ```
+ *
+ * @remarks
+ * Multiple calls to this function will be enqueued to run serially.
  *
  * @param id - The id for the SVG element (the element to be rendered)
  * @param text - The text for the graph definition
- * @param cb - Callback which is called after rendering is finished with the svg code as in param.
- * @param svgContainingElement - HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
+ * @param container - HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
  *   If no svgContainingElement is provided then the SVG element will be appended to the body.
  *    Selector to element in which a div with the graph temporarily will be
  *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
  *   element will be removed when rendering is completed.
- * @returns Returns the rendered element as a string containing the SVG definition.
+ * @returns Returns the SVG Definition and BindFunctions.
  */
 const render = (id: string, text: string, container?: Element): Promise<RenderResult> => {
   return new Promise((resolve, reject) => {

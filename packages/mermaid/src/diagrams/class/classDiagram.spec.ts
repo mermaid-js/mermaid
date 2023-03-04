@@ -1,10 +1,11 @@
+// @ts-expect-error Jison doesn't export types
 import { parser } from './parser/classDiagram';
 import classDb from './classDb';
-import { vi } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 const spyOn = vi.spyOn;
 
 describe('class diagram, ', function () {
-  describe('when parsing an info graph it', function () {
+  describe('when parsing a class diagram', function () {
     beforeEach(function () {
       parser.yy = classDb;
     });
@@ -187,6 +188,37 @@ describe('class diagram, ', function () {
         'Car -- Person : < owns';
 
       parser.parse(str);
+    });
+
+    it('should handle cssClass shorthand with members', () => {
+      parser.parse(`classDiagram-v2
+      class Class10:::exClass2 {
+        int[] id
+        List~int~ ids
+        test(List~int~ ids) List~bool~
+        testArray() bool[]
+      }`);
+
+      expect(classDb.getClass('Class10')).toMatchInlineSnapshot(`
+        {
+          "annotations": [],
+          "cssClasses": [
+            "exClass2",
+          ],
+          "domId": "classId-Class10-27",
+          "id": "Class10",
+          "label": "Class10",
+          "members": [
+            "int[] id",
+            "List~int~ ids",
+          ],
+          "methods": [
+            "test(List~int~ ids) List~bool~",
+            "testArray() bool[]",
+          ],
+          "type": "",
+        }
+      `);
     });
 
     it('should handle method statements', function () {
@@ -541,7 +573,7 @@ foo()
     });
   });
 
-  describe('when fetching data from a classDiagram graph it', function () {
+  describe('when fetching data from a classDiagram it', function () {
     beforeEach(function () {
       parser.yy = classDb;
       parser.yy.clear();
@@ -944,6 +976,193 @@ foo()
 
       expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
       expect(classDb.setTooltip).toHaveBeenCalledWith('Class1', 'A tooltip');
+    });
+  });
+
+  describe('when parsing classDiagram with text labels', () => {
+    beforeEach(function () {
+      parser.yy = classDb;
+      parser.yy.clear();
+    });
+
+    it('should parse a class with a text label', () => {
+      parser.parse(`classDiagram
+  class C1["Class 1 with text label"]
+  C1 -->  C2
+      `);
+      const c1 = classDb.getClass('C1');
+      expect(c1.label).toBe('Class 1 with text label');
+      const c2 = classDb.getClass('C2');
+      expect(c2.label).toBe('C2');
+    });
+
+    it('should parse two classes with text labels', () => {
+      parser.parse(`classDiagram
+  class C1["Class 1 with text label"]
+  class C2["Class 2 with chars @?"]
+  C1 -->  C2
+      `);
+      const c1 = classDb.getClass('C1');
+      expect(c1.label).toBe('Class 1 with text label');
+      const c2 = classDb.getClass('C2');
+      expect(c2.label).toBe('Class 2 with chars @?');
+    });
+
+    it('should parse a class with a text label and members', () => {
+      parser.parse(`classDiagram
+  class C1["Class 1 with text label"] {
+    +member1
+  }
+  C1 -->  C2
+      `);
+      const c1 = classDb.getClass('C1');
+      expect(c1.label).toBe('Class 1 with text label');
+      expect(c1.members.length).toBe(1);
+      expect(c1.members[0]).toBe('+member1');
+
+      const c2 = classDb.getClass('C2');
+      expect(c2.label).toBe('C2');
+    });
+
+    it('should parse a class with a text label, members and annotation', () => {
+      parser.parse(`classDiagram
+  class C1["Class 1 with text label"] {
+    <<interface>>
+    +member1
+  }
+  C1 -->  C2
+      `);
+      const c1 = classDb.getClass('C1');
+      expect(c1.label).toBe('Class 1 with text label');
+      expect(c1.members.length).toBe(1);
+      expect(c1.members[0]).toBe('+member1');
+      expect(c1.annotations.length).toBe(1);
+      expect(c1.annotations[0]).toBe('interface');
+
+      const c2 = classDb.getClass('C2');
+      expect(c2.label).toBe('C2');
+    });
+
+    it('should parse a class with text label and css class shorthand', () => {
+      parser.parse(`classDiagram
+class C1["Class 1 with text label"]:::styleClass {
+  +member1
+}
+C1 -->  C2
+  `);
+
+      const c1 = classDb.getClass('C1');
+      expect(c1.label).toBe('Class 1 with text label');
+      expect(c1.cssClasses.length).toBe(1);
+      expect(c1.members[0]).toBe('+member1');
+      expect(c1.cssClasses[0]).toBe('styleClass');
+    });
+
+    it('should parse a class with text label and css class', () => {
+      parser.parse(`classDiagram
+class C1["Class 1 with text label"] {
+  +member1
+}
+C1 --> C2
+cssClass "C1" styleClass
+  `);
+
+      const c1 = classDb.getClass('C1');
+      expect(c1.label).toBe('Class 1 with text label');
+      expect(c1.cssClasses.length).toBe(1);
+      expect(c1.members[0]).toBe('+member1');
+      expect(c1.cssClasses[0]).toBe('styleClass');
+    });
+
+    it('should parse two classes with text labels and css classes', () => {
+      parser.parse(`classDiagram
+class C1["Class 1 with text label"] {
+  +member1
+}
+class C2["Long long long long long long long long long long label"]
+C1 --> C2
+cssClass "C1,C2" styleClass
+  `);
+
+      const c1 = classDb.getClass('C1');
+      expect(c1.label).toBe('Class 1 with text label');
+      expect(c1.cssClasses.length).toBe(1);
+      expect(c1.cssClasses[0]).toBe('styleClass');
+
+      const c2 = classDb.getClass('C2');
+      expect(c2.label).toBe('Long long long long long long long long long long label');
+      expect(c2.cssClasses.length).toBe(1);
+      expect(c2.cssClasses[0]).toBe('styleClass');
+    });
+
+    it('should parse two classes with text labels and css class shorthands', () => {
+      parser.parse(`classDiagram
+class C1["Class 1 with text label"]:::styleClass1 {
+  +member1
+}
+class C2["Class 2 !@#$%^&*() label"]:::styleClass2
+C1 --> C2
+  `);
+
+      const c1 = classDb.getClass('C1');
+      expect(c1.label).toBe('Class 1 with text label');
+      expect(c1.cssClasses.length).toBe(1);
+      expect(c1.cssClasses[0]).toBe('styleClass1');
+
+      const c2 = classDb.getClass('C2');
+      expect(c2.label).toBe('Class 2 !@#$%^&*() label');
+      expect(c2.cssClasses.length).toBe(1);
+      expect(c2.cssClasses[0]).toBe('styleClass2');
+    });
+
+    it('should parse multiple classes with same text labels', () => {
+      parser.parse(`classDiagram
+class C1["Class with text label"]
+class C2["Class with text label"]
+class C3["Class with text label"]
+C1 --> C2
+C3 ..> C2
+  `);
+
+      const c1 = classDb.getClass('C1');
+      expect(c1.label).toBe('Class with text label');
+
+      const c2 = classDb.getClass('C2');
+      expect(c2.label).toBe('Class with text label');
+
+      const c3 = classDb.getClass('C3');
+      expect(c3.label).toBe('Class with text label');
+    });
+
+    it('should parse classes with different text labels', () => {
+      parser.parse(`classDiagram
+class C1["OneWord"]
+class C2["With, Comma"]
+class C3["With (Brackets)"]
+class C4["With [Brackets]"]
+class C5["With {Brackets}"]
+class C6[" "]
+class C7["With 1 number"]
+class C8["With . period..."]
+class C9["With - dash"]
+class C10["With _ underscore"]
+class C11["With ' single quote"]
+class C12["With ~!@#$%^&*()_+=-/?"]
+class C13["With Città foreign language"]
+`);
+      expect(classDb.getClass('C1').label).toBe('OneWord');
+      expect(classDb.getClass('C2').label).toBe('With, Comma');
+      expect(classDb.getClass('C3').label).toBe('With (Brackets)');
+      expect(classDb.getClass('C4').label).toBe('With [Brackets]');
+      expect(classDb.getClass('C5').label).toBe('With {Brackets}');
+      expect(classDb.getClass('C6').label).toBe(' ');
+      expect(classDb.getClass('C7').label).toBe('With 1 number');
+      expect(classDb.getClass('C8').label).toBe('With . period...');
+      expect(classDb.getClass('C9').label).toBe('With - dash');
+      expect(classDb.getClass('C10').label).toBe('With _ underscore');
+      expect(classDb.getClass('C11').label).toBe("With ' single quote");
+      expect(classDb.getClass('C12').label).toBe('With ~!@#$%^&*()_+=-/?');
+      expect(classDb.getClass('C13').label).toBe('With Città foreign language');
     });
   });
 });

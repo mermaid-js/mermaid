@@ -3,6 +3,7 @@ import { getDiagram, registerDiagram } from './diagramAPI';
 import { addDiagrams } from './diagram-orchestration';
 import { DiagramDetector } from './types';
 import { getDiagramFromText } from '../Diagram';
+import { it, describe, expect, beforeAll } from 'vitest';
 
 addDiagrams();
 beforeAll(async () => {
@@ -25,7 +26,7 @@ describe('DiagramAPI', () => {
       '"Diagram loki not found."'
     );
     expect(() => detectType('loki diagram')).toThrowErrorMatchingInlineSnapshot(
-      '"No diagram type detected for text: loki diagram"'
+      '"No diagram type detected matching given configuration for text: loki diagram"'
     );
     const detector: DiagramDetector = (str: string) => {
       return str.match('loki') !== null;

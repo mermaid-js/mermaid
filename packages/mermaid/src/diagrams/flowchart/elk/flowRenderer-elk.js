@@ -9,8 +9,8 @@ import { log } from '../../../logger';
 import { setupGraphViewbox } from '../../../setupGraphViewbox';
 import common, { evaluate } from '../../common/common';
 import { interpolateToCurve, getStylesFromArray } from '../../../utils';
-
-let elk;
+import ELK from 'elkjs/lib/elk.bundled.js';
+const elk = new ELK();
 
 const portPos = {};
 
@@ -371,6 +371,10 @@ const getEdgeStartEndPoint = (edge, dir) => {
   let source = edge.start;
   let target = edge.end;
 
+  // Save the original source and target
+  const sourceId = source;
+  const targetId = target;
+
   const startNode = nodeDb[source];
   const endNode = nodeDb[target];
 
@@ -387,7 +391,7 @@ const getEdgeStartEndPoint = (edge, dir) => {
   }
 
   // Add the edge to the graph
-  return { source, target };
+  return { source, target, sourceId, targetId };
 };
 
 /**
@@ -530,14 +534,17 @@ export const addEdges = function (edges, diagObj, graph, svg) {
 
     const labelEl = insertEdgeLabel(labelsEl, edgeData);
 
-    // calculate start and end points of the edge
-    const { source, target } = getEdgeStartEndPoint(edge, dir);
+    // calculate start and end points of the edge, note that the source and target
+    // can be modified for shapes that have ports
+    const { source, target, sourceId, targetId } = getEdgeStartEndPoint(edge, dir);
     log.debug('abc78 source and target', source, target);
     // Add the edge to the graph
     graph.edges.push({
       id: 'e' + edge.start + edge.end,
       sources: [source],
       targets: [target],
+      sourceId,
+      targetId,
       labelEl: labelEl,
       labels: [
         {
@@ -698,7 +705,7 @@ const calcOffset = function (src, dest, parentLookupDb) {
 };
 
 const insertEdge = function (edgesEl, edge, edgeData, diagObj, parentLookupDb) {
-  const offset = calcOffset(edge.sources[0], edge.targets[0], parentLookupDb);
+  const offset = calcOffset(edge.sourceId, edge.targetId, parentLookupDb);
 
   const src = edge.sections[0].startPoint;
   const dest = edge.sections[0].endPoint;
@@ -765,10 +772,6 @@ const insertChildren = (nodeArray, parentLookupDb) => {
  */
 
 export const draw = async function (text, id, _version, diagObj) {
-  if (!elk) {
-    const ELK = (await import('elkjs/lib/elk.bundled.js')).default;
-    elk = new ELK();
-  }
   // Add temporary render element
   diagObj.db.clear();
   nodeDb = {};

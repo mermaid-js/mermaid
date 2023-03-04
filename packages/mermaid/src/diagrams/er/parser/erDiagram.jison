@@ -35,6 +35,8 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <block>[A-Za-z_][A-Za-z0-9\-_\[\]\(\)]*  return 'ATTRIBUTE_WORD'
 <block>\"[^"]*\"                return 'COMMENT';
 <block>[\n]+                    /* nothing */
+<block>\%%(?!\{)[^\n]*          /* skip comments in attribute block */
+<block>[^\}]\%\%[^\n]*          /* skip comments in attribute block */
 <block>"}"                      { this.popState(); return 'BLOCK_STOP'; }
 <block>.                        return yytext[0];
 
