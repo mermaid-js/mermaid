@@ -14,7 +14,7 @@ They also serve as proof of concept, for the variety of things that can be built
 - [Gitea](https://gitea.io) (**Native support**)
 - [Azure Devops](https://docs.microsoft.com/en-us/azure/devops/project/wiki/wiki-markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) (**Native support**)
 - [Tuleap](https://docs.tuleap.org/user-guide/writing-in-tuleap.html#graphs) (**Native support**)
-- [Mermaid Flow Visual Editor](www.mermaidflow.app) (**Native support**)
+- [Mermaid Flow Visual Editor](https://www.mermaidflow.app) (**Native support**)
 - [Deepdwn](https://billiam.itch.io/deepdwn) (**Native support**)
 - [Joplin](https://joplinapp.org) (**Native support**)
 - [Swimm](https://swimm.io) (**Native support**)
