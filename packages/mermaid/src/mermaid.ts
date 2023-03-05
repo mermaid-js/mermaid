@@ -7,7 +7,11 @@ import { MermaidConfig } from './config.type';
 import { log } from './logger';
 import utils from './utils';
 import { mermaidAPI, ParseOptions, RenderResult } from './mermaidAPI';
-import { registerLazyLoadedDiagrams, loadRegisteredDiagrams } from './diagram-api/detectType';
+import {
+  registerLazyLoadedDiagrams,
+  loadRegisteredDiagrams,
+  detectType,
+} from './diagram-api/detectType';
 import type { ParseErrorFunction } from './Diagram';
 import { isDetailedError } from './utils';
 import type { DetailedError } from './utils';
@@ -400,6 +404,7 @@ const mermaid: {
   initialize: typeof initialize;
   contentLoaded: typeof contentLoaded;
   setParseErrorHandler: typeof setParseErrorHandler;
+  detectType: typeof detectType;
 } = {
   startOnLoad: true,
   mermaidAPI,
@@ -412,6 +417,7 @@ const mermaid: {
   parseError: undefined,
   contentLoaded,
   setParseErrorHandler,
+  detectType,
 };
 
 export default mermaid;
