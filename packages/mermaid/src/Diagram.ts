@@ -76,7 +76,7 @@ export class Diagram {
 /**
  * Parse the text asynchronously and generate a Diagram object asynchronously.
  * **Warning:** This function may be changed in the future.
- * @internal
+ * @alpha
  * @param text - The mermaid diagram definition.
  * @returns A the Promise of a Diagram object.
  * @throws {@link UnknownDiagramError} if the diagram type can not be found.
