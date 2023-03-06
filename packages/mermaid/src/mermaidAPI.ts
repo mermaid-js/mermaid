@@ -660,6 +660,7 @@ export const mermaidAPI = Object.freeze({
   render,
   parse,
   parseDirective,
+  getDiagramFromText,
   initialize,
   getConfig: configApi.getConfig,
   setConfig: configApi.setConfig,

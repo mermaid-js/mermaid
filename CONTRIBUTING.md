@@ -55,6 +55,8 @@ The documentation is written in **Markdown**. For more information about Markdow
 The source files for the project documentation are located in the [`/packages/mermaid/src/docs`](packages/mermaid/src/docs) directory. This is where you should make changes.
 The files under `/packages/mermaid/src/docs` are processed to generate the published documentation, and the resulting files are put into the `/docs` directory.
 
+After editing files in the [`/packages/mermaid/src/docs`](packages/mermaid/src/docs) directory, be sure to run `pnpm install` and `pnpm run --filter mermaid docs:build` locally to build the `/docs` directory.
+
 ```mermaid
 flowchart LR
   classDef default fill:#fff,color:black,stroke:black
