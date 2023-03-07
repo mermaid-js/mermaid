@@ -62,6 +62,12 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
       sourcemap: true,
       entryFileNames: `${name}.esm${minify ? '.min' : ''}.mjs`,
     },
+    {
+      name,
+      format: 'umd',
+      sourcemap: true,
+      entryFileNames: `${name}${minify ? '.min' : ''}.js`,
+    },
   ];
 
   if (core) {
