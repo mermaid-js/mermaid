@@ -99,21 +99,18 @@ export interface RenderResult {
  * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false.
  */
 
-async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean | void> {
+async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean> {
   addDiagrams();
-  let error;
   try {
     const diagram = await getDiagramFromText(text);
     diagram.parse();
-  } catch (err) {
-    error = err;
-  }
-  if (parseOptions?.suppressErrors) {
-    return error === undefined;
-  }
-  if (error) {
+  } catch (error) {
+    if (parseOptions?.suppressErrors) {
+      return false;
+    }
     throw error;
   }
+  return true;
 }
 
 /**
