@@ -10,7 +10,7 @@ async function createServer() {
     configFile: './vite.config.ts',
     mode: 'production',
     server: { middlewareMode: true },
-    appType: 'custom', // don't include Vite's default HTML handling middlewares
+    appType: 'custom', // don't include Vite's default HTML handling middleware
   });
 
   app.use(cors());
