@@ -21,6 +21,8 @@
 %x acc_descr_multiline
 %x class
 %x class-body
+%x namespace
+%x namespace-body
 %%
 \%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
 .*direction\s+TB[^\n]*                                          return 'direction_tb';
@@ -48,9 +50,20 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "classDiagram"          return 'CLASS_DIAGRAM';
 "[*]"                   return 'EDGE_STATE';
 
-"class"                     { this.begin('class'); return 'CLASS';}
+<INITIAL,namespace>"namespace"  { this.begin('namespace'); return 'NAMESPACE'; }
+<namespace>\s*(\r?\n)+          { this.popState(); return 'NEWLINE'; }
+<namespace>\s+                  /* skip whitespace */
+<namespace>[{]                  { this.begin("namespace-body"); return 'STRUCT_START';}
+<namespace-body>[}]             { this.popState(); return 'STRUCT_STOP'; }
+<namespace-body><<EOF>>         return "EOF_IN_STRUCT";
+<namespace-body>\s*(\r?\n)+     return 'NEWLINE';
+<namespace-body>\s+             /* skip whitespace */
+<namespace-body>"[*]"           return 'EDGE_STATE';
+
+<INITIAL,namespace-body>"class"     { this.begin('class'); return 'CLASS';}
 <class>\s*(\r?\n)+          { this.popState(); return 'NEWLINE'; }
 <class>\s+                  /* skip whitespace */
+<class>[}]                  { this.popState(); this.popState(); return 'STRUCT_STOP';}
 <class>[{]                  { this.begin("class-body"); return 'STRUCT_START';}
 <class-body>[}]             { this.popState(); return 'STRUCT_STOP'; }
 <class-body><<EOF>>         return "EOF_IN_STRUCT";
@@ -264,6 +277,11 @@ classLabel
     : SQS STR SQE { $$=$2; }
     ;
 
+namespaceName
+    : alphaNumToken { $$=$1; }
+    | alphaNumToken namespaceName { $$=$1+$2; }
+    ;
+
 className
     : alphaNumToken { $$=$1; }
     | classLiteralName { $$=$1; }
@@ -275,6 +293,7 @@ className
 statement
     : relationStatement       { yy.addRelation($1); }
     | relationStatement LABEL { $1.title =  yy.cleanupLabel($2); yy.addRelation($1);        }
+    | namespaceStatement
     | classStatement
     | methodStatement
     | annotationStatement
@@ -286,6 +305,21 @@ statement
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
     | acc_descr_multiline_value  { $$=$1.trim();yy.setAccDescription($$); }
+    ;
+
+namespaceStatement
+    : namespaceIdentifier STRUCT_START classStatements STRUCT_STOP          {yy.addClassesToNamespace($1, $3);}
+    | namespaceIdentifier STRUCT_START NEWLINE classStatements STRUCT_STOP  {yy.addClassesToNamespace($1, $4);}
+    ;
+
+namespaceIdentifier
+    : NAMESPACE namespaceName   {$$=$2; yy.addNamespace($2);}
+    ;
+
+classStatements
+    : classStatement                            {$$=[$1]}
+    | classStatement NEWLINE                    {$$=[$1]}
+    | classStatement NEWLINE classStatements    {$3.unshift($1); $$=$3}
     ;
 
 classStatement

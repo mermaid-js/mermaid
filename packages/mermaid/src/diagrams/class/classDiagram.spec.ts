@@ -571,6 +571,37 @@ foo()
       const str = 'classDiagram\n' + 'note "test"\n';
       parser.parse(str);
     });
+
+    it('should handle "namespace"', function () {
+      const str = `classDiagram
+namespace Namespace1 { class Class1 }
+namespace Namespace2 { class Class1
+}
+namespace Namespace3 {
+class Class1 {
+int : test
+string : foo
+test()
+foo()
+}
+}
+namespace Namespace4 {
+class Class1 {
+int : test
+string : foo
+test()
+foo()
+}
+class Class2 {
+int : test
+string : foo
+test()
+foo()
+}
+}
+`;
+      parser.parse(str);
+    });
   });
 
   describe('when fetching data from a classDiagram it', function () {

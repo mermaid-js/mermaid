@@ -392,6 +392,29 @@ const setDirection = (dir: string) => {
   direction = dir;
 };
 
+/**
+ * Function called by parser when a namespace keyword has been found.
+ *
+ * @param id - Id of the namespace to add
+ * @public
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const addNamespace = function (id: string) {
+  // TODO: Implement here
+};
+
+/**
+ * Function called by parser when a namespace definition has been found.
+ *
+ * @param id - Id of the namespace to add
+ * @param classNames - Ids of the class to add
+ * @public
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const addClassesToNamespace = function (id: string, classNames: string[]) {
+  // TODO: Implement here
+};
+
 export default {
   parseDirective,
   setAccTitle,
@@ -425,4 +448,6 @@ export default {
   setDiagramTitle,
   getDiagramTitle,
   setClassLabel,
+  addNamespace,
+  addClassesToNamespace,
 };
