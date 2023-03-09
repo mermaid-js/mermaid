@@ -133,6 +133,24 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should default to showing today marker', () => {
+    // This test only works if the environment thinks today is 1010-10-10
+    imgSnapshotTest(
+      `
+      gantt
+        title Show today marker (vertical line should be visible)
+        dateFormat YYYY-MM-DD
+        axisFormat %d
+        %% Should default to being on
+        %% todayMarker on
+        section Section1
+         Yesterday: 1010-10-09, 1d
+         Today: 1010-10-10, 1d
+      `,
+      {}
+    );
+  });
+
   it('should hide today marker', () => {
     imgSnapshotTest(
       `
@@ -142,7 +160,8 @@ describe('Gantt diagram', () => {
         axisFormat %d
         todayMarker off
         section Section1
-         Today: 1, -1h
+         Yesterday: 1010-10-09, 1d
+         Today: 1010-10-10, 1d
       `,
       {}
     );
@@ -157,7 +176,8 @@ describe('Gantt diagram', () => {
       axisFormat %d
       todayMarker stroke-width:5px,stroke:#00f,opacity:0.5
       section Section1
-       Today: 1, -1h
+       Yesterday: 1010-10-09, 1d
+       Today: 1010-10-10, 1d
       `,
       {}
     );
