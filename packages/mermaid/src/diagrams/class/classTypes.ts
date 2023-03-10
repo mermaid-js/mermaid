@@ -52,4 +52,13 @@ export type ClassRelation = {
     lineType: number;
   };
 };
+
+export interface NamespaceNode {
+  id: string;
+  domId: string;
+  classes: ClassMap;
+  children: NamespaceMap;
+}
+
 export type ClassMap = Record<string, ClassNode>;
+export type NamespaceMap = Record<string, NamespaceNode>;

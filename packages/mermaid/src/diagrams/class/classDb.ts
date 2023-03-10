@@ -14,7 +14,14 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../../commonDb';
-import { ClassRelation, ClassNode, ClassNote, ClassMap } from './classTypes';
+import {
+  ClassRelation,
+  ClassNode,
+  ClassNote,
+  ClassMap,
+  NamespaceMap,
+  NamespaceNode,
+} from './classTypes';
 
 const MERMAID_DOM_ID_PREFIX = 'classId-';
 
@@ -22,6 +29,8 @@ let relations: ClassRelation[] = [];
 let classes: ClassMap = {};
 let notes: ClassNote[] = [];
 let classCounter = 0;
+let namespaces: NamespaceMap = {};
+let namespaceCounter = 0;
 
 let functions: any[] = [];
 
@@ -100,6 +109,8 @@ export const clear = function () {
   notes = [];
   functions = [];
   functions.push(setupToolTips);
+  namespaces = {};
+  namespaceCounter = 0;
   commonClear();
 };
 
@@ -393,14 +404,28 @@ const setDirection = (dir: string) => {
 };
 
 /**
- * Function called by parser when a namespace keyword has been found.
+ * Function called by parser when a namespace definition has been found.
  *
  * @param id - Id of the namespace to add
  * @public
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const addNamespace = function (id: string) {
-  // TODO: Implement here
+export const addNamespace = function (name: string) {
+  namespaces[name] = {
+    id: name,
+    domId: MERMAID_DOM_ID_PREFIX + name + '-' + namespaceCounter,
+    classes: {},
+    children: {},
+  };
+
+  namespaceCounter++;
+};
+
+const getNamespace = function (name: string): NamespaceNode {
+  return namespaces[name];
+};
+
+const getNamespaces = function (): NamespaceMap {
+  return namespaces;
 };
 
 /**
@@ -410,9 +435,14 @@ export const addNamespace = function (id: string) {
  * @param classNames - Ids of the class to add
  * @public
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const addClassesToNamespace = function (id: string, classNames: string[]) {
-  // TODO: Implement here
+  if (namespaces[id] !== undefined) {
+    classNames.map((className) => {
+      namespaces[id].classes[className] = classes[className];
+      delete classes[className];
+      classCounter--;
+    });
+  }
 };
 
 export default {
@@ -450,4 +480,6 @@ export default {
   setClassLabel,
   addNamespace,
   addClassesToNamespace,
+  getNamespace,
+  getNamespaces,
 };

@@ -1008,6 +1008,25 @@ foo()
       expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
       expect(classDb.setTooltip).toHaveBeenCalledWith('Class1', 'A tooltip');
     });
+
+    it('should add classes namespaces', function () {
+      const str = `classDiagram
+namespace Namespace1 {
+class Class1 {
+int : test
+string : foo
+test()
+foo()
+}
+class Class2
+}`;
+      parser.parse(str);
+
+      const testNamespace = parser.yy.getNamespace('Namespace1');
+      expect(Object.keys(testNamespace.classes).length).toBe(2);
+      expect(Object.keys(testNamespace.children).length).toBe(0);
+      expect(testNamespace.classes['Class1'].id).toBe('Class1');
+    });
   });
 
   describe('when parsing classDiagram with text labels', () => {
