@@ -548,4 +548,18 @@ class C13["With Città foreign language"]
 `
     );
   });
+  it('should add classes namespaces', function () {
+    imgSnapshotTest(
+      `
+      classDiagram
+      namespace Namespace1 {
+        class C1
+        class C2
+      }
+      C1 --> C2
+      class C3
+      class C4
+      `
+    );
+  });
 });

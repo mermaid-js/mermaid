@@ -245,7 +245,11 @@ const setTooltip = function (ids: string, tooltip?: string) {
     }
   });
 };
-export const getTooltip = function (id: string) {
+export const getTooltip = function (id: string, namespace?: string) {
+  if (namespace) {
+    return namespaces[namespace].classes[id].tooltip;
+  }
+
   return classes[id].tooltip;
 };
 /**
@@ -409,13 +413,17 @@ const setDirection = (dir: string) => {
  * @param id - Id of the namespace to add
  * @public
  */
-export const addNamespace = function (name: string) {
-  namespaces[name] = {
-    id: name,
-    domId: MERMAID_DOM_ID_PREFIX + name + '-' + namespaceCounter,
+export const addNamespace = function (id: string) {
+  if (namespaces[id] !== undefined) {
+    return;
+  }
+
+  namespaces[id] = {
+    id: id,
     classes: {},
     children: {},
-  };
+    domId: MERMAID_DOM_ID_PREFIX + id + '-' + namespaceCounter,
+  } as NamespaceNode;
 
   namespaceCounter++;
 };
