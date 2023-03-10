@@ -129,13 +129,6 @@ flowchart LR
     id1{{This is the text in the box}}
 ```
 
-Render:
-
-```mermaid
-flowchart LR
-    id1{{This is the text in the box}}
-```
-
 ### Parallelogram
 
 ```mermaid-example
