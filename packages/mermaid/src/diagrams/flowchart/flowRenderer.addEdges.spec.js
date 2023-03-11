@@ -1,5 +1,5 @@
 import flowDb from './flowDb.js';
-import { parser } from './parser/flow.js';
+import { parser } from './parser/flow.jison';
 import flowRenderer from './flowRenderer.js';
 import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
 

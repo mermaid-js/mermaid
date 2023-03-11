@@ -1,4 +1,4 @@
-import { parser } from './parser/info.js';
+import { parser } from './parser/info.jison';
 import infoDb from './infoDb.js';
 describe('when parsing an info graph it', function () {
   let ex;

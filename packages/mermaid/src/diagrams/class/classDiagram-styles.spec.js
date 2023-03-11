@@ -1,4 +1,4 @@
-import { parser } from './parser/classDiagram.js';
+import { parser } from './parser/classDiagram.jison';
 import classDb from './classDb.js';
 
 describe('class diagram, ', function () {

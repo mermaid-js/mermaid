@@ -1,4 +1,4 @@
-import { parser as mindmap } from './parser/mindmap.js';
+import { parser as mindmap } from './parser/mindmap.jison';
 import * as mindmapDB from './mindmapDb.js';
 // Todo fix utils functions for tests
 import { setLogLevel } from '../../diagram-api/diagramAPI.js';

@@ -1,4 +1,4 @@
-import { parser } from './journey.js';
+import { parser } from './journey.jison';
 import journeyDb from '../journeyDb.js';
 
 const parserFnConstructor = (str) => {

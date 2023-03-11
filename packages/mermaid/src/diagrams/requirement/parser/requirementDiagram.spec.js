@@ -1,6 +1,6 @@
 import { setConfig } from '../../../config.js';
 import requirementDb from '../requirementDb.js';
-import reqDiagram from './requirementDiagram.js';
+import reqDiagram from './requirementDiagram.jison';
 
 setConfig({
   securityLevel: 'strict',

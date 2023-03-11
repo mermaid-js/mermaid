@@ -1,6 +1,6 @@
 import { expectTypeOf } from 'vitest';
 
-import { parser } from './parser/stateDiagram.js';
+import { parser } from './parser/stateDiagram.jison';
 import stateDb from './stateDb.js';
 import stateRendererV2 from './stateRenderer-v2.js';
 

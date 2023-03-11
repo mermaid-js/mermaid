@@ -107,7 +107,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     },
     plugins: [
       jisonPlugin(),
-      // @ts-expect-error
+      // @ts-expect-error According to the type definitions, rollup plugins are incompatible with vite
       typescript({ compilerOptions: { declaration: false } }),
       ...visualizerOptions(packageName, core),
     ],

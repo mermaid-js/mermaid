@@ -1,4 +1,4 @@
-import { parser as timeline } from './parser/timeline.js';
+import { parser as timeline } from './parser/timeline.jison';
 import * as timelineDB from './timelineDb.js';
 // import { injectUtils } from './mermaidUtils.js';
 import * as _commonDb from '../../commonDb.js';

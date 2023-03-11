@@ -1,5 +1,5 @@
 import pieDb from '../pieDb.js';
-import pie from './pie.js';
+import pie from './pie.jison';
 import { setConfig } from '../../../config.js';
 
 setConfig({

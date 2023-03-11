@@ -1,4 +1,4 @@
-import { parser } from './parser/exampleDiagram.js';
+import { parser } from './parser/exampleDiagram.jison';
 import * as db from './exampleDiagramDb.js';
 import { injectUtils } from './mermaidUtils.js';
 // Todo fix utils functions for tests

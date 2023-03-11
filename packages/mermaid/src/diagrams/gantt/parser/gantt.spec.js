@@ -1,4 +1,4 @@
-import { parser } from './gantt.js';
+import { parser } from './gantt.jison';
 import ganttDb from '../ganttDb.js';
 import { convert } from '../../../tests/util.js';
 import { vi } from 'vitest';

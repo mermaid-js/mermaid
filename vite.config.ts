@@ -1,11 +1,16 @@
 import jison from './.vite/jisonPlugin.js';
+import typescript from '@rollup/plugin-typescript';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   resolve: {
-    extensions: [],
+    extensions: ['.js'],
   },
-  plugins: [jison()],
+  plugins: [
+    jison(),
+    // @ts-expect-error According to the type definitions, rollup plugins are incompatible with vite
+    typescript({ compilerOptions: { declaration: false } }),
+  ],
   test: {
     environment: 'jsdom',
     globals: true,
