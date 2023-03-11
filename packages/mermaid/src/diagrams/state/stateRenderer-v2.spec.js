@@ -1,8 +1,8 @@
 import { expectTypeOf } from 'vitest';
 
-import { parser } from './parser/stateDiagram';
-import stateDb from './stateDb';
-import stateRendererV2 from './stateRenderer-v2';
+import { parser } from './parser/stateDiagram.js';
+import stateDb from './stateDb.js';
+import stateRendererV2 from './stateRenderer-v2.js';
 
 // Can use this instead of having to register diagrams and load/orchestrate them, etc.
 class FauxDiagramObj {

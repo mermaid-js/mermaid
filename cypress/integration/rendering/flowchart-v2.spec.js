@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
 
 describe('Flowchart v2', () => {
   it('1: should render a simple flowchart', () => {

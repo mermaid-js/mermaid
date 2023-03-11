@@ -1,6 +1,6 @@
 // @ts-expect-error Jison doesn't export types
-import { parser } from './parser/classDiagram';
-import classDb from './classDb';
+import { parser } from './parser/classDiagram.js';
+import classDb from './classDb.js';
 import { vi, describe, it, expect } from 'vitest';
 const spyOn = vi.spyOn;
 

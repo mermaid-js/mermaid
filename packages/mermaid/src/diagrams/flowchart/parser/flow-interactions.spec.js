@@ -1,6 +1,6 @@
-import flowDb from '../flowDb';
-import flow from './flow';
-import { setConfig } from '../../../config';
+import flowDb from '../flowDb.js';
+import flow from './flow.js';
+import { setConfig } from '../../../config.js';
 import { vi } from 'vitest';
 const spyOn = vi.spyOn;
 

@@ -1,5 +1,5 @@
-import { parser } from './parser/stateDiagram';
-import stateDb from './stateDb';
+import { parser } from './parser/stateDiagram.js';
+import stateDb from './stateDb.js';
 
 describe('state diagram, ', function () {
   describe('when parsing an info graph it', function () {

@@ -1,18 +1,18 @@
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
-import insertMarkers from './markers';
-import { updateNodeBounds } from './shapes/util';
+import insertMarkers from './markers.js';
+import { updateNodeBounds } from './shapes/util.js';
 import {
   clear as clearGraphlib,
   clusterDb,
   adjustClustersAndEdges,
   findNonClusterChild,
   sortNodesByHierarchy,
-} from './mermaid-graphlib';
-import { insertNode, positionNode, clear as clearNodes, setNodeElem } from './nodes';
-import { insertCluster, clear as clearClusters } from './clusters';
-import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } from './edges';
-import { log } from '../logger';
+} from './mermaid-graphlib.js';
+import { insertNode, positionNode, clear as clearNodes, setNodeElem } from './nodes.js';
+import { insertCluster, clear as clearClusters } from './clusters.js';
+import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } from './edges.js';
+import { log } from '../logger.js';
 
 const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   log.info('Graph in recursive render: XXX', graphlibJson.write(graph), parentCluster);

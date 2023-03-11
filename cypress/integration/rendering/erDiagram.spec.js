@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
 
 describe('Entity Relationship Diagram', () => {
   it('should render a simple ER diagram', () => {

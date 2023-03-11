@@ -1,7 +1,7 @@
-import { parser as mindmap } from './parser/mindmap';
-import * as mindmapDB from './mindmapDb';
+import { parser as mindmap } from './parser/mindmap.js';
+import * as mindmapDB from './mindmapDb.js';
 // Todo fix utils functions for tests
-import { setLogLevel } from '../../diagram-api/diagramAPI';
+import { setLogLevel } from '../../diagram-api/diagramAPI.js';
 
 describe('when parsing a mindmap ', function () {
   beforeEach(function () {

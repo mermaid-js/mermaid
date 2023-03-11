@@ -15,21 +15,21 @@ import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 // @ts-ignore: TODO Fix ts errors
 import { version } from '../package.json';
-import * as configApi from './config';
-import { addDiagrams } from './diagram-api/diagram-orchestration';
-import { Diagram, getDiagramFromText } from './Diagram';
-import errorRenderer from './diagrams/error/errorRenderer';
-import { attachFunctions } from './interactionDb';
-import { log, setLogLevel } from './logger';
-import getStyles from './styles';
-import theme from './themes';
-import utils, { directiveSanitizer } from './utils';
+import * as configApi from './config.js';
+import { addDiagrams } from './diagram-api/diagram-orchestration.js';
+import { Diagram, getDiagramFromText } from './Diagram.js';
+import errorRenderer from './diagrams/error/errorRenderer.js';
+import { attachFunctions } from './interactionDb.js';
+import { log, setLogLevel } from './logger.js';
+import getStyles from './styles.js';
+import theme from './themes/index.js';
+import utils, { directiveSanitizer } from './utils.js';
 import DOMPurify from 'dompurify';
-import { MermaidConfig } from './config.type';
-import { evaluate } from './diagrams/common/common';
+import { MermaidConfig } from './config.type.js';
+import { evaluate } from './diagrams/common/common.js';
 import isEmpty from 'lodash-es/isEmpty.js';
-import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility';
-import { parseDirective } from './directiveUtils';
+import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
+import { parseDirective } from './directiveUtils.js';
 
 // diagram names that support classDef statements
 const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram', 'stateDiagram-v2'];
@@ -204,6 +204,7 @@ export const createCssStyles = (
   }
 
   // classDefs defined in the diagram text
+  // @ts-expect-error https://github.com/DefinitelyTyped/DefinitelyTyped/pull/64684
   if (!isEmpty(classDefs) && CLASSDEF_DIAGRAMS.includes(graphType)) {
     const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
 
@@ -216,12 +217,14 @@ export const createCssStyles = (
     for (const classId in classDefs) {
       const styleClassDef = classDefs[classId];
       // create the css styles for each cssElement and the styles (only if there are styles)
+      // @ts-expect-error https://github.com/DefinitelyTyped/DefinitelyTyped/pull/64684
       if (!isEmpty(styleClassDef.styles)) {
         cssElements.forEach((cssElement) => {
           cssStyles += cssImportantStyles(styleClassDef.id, cssElement, styleClassDef.styles);
         });
       }
       // create the css styles for the tspan element and the text styles (only if there are textStyles)
+      // @ts-expect-error https://github.com/DefinitelyTyped/DefinitelyTyped/pull/64684
       if (!isEmpty(styleClassDef.textStyles)) {
         cssStyles += cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles);
       }

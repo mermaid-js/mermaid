@@ -1,5 +1,5 @@
 import { version } from '../../../package.json';
-import MermaidExample from './mermaid-markdown-all';
+import MermaidExample from './mermaid-markdown-all.js';
 import { defineConfig, MarkdownOptions } from 'vitepress';
 
 const allMarkdownTransformers: MarkdownOptions = {

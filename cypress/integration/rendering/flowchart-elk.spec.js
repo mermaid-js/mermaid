@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
 
 describe.skip('Flowchart ELK', () => {
   it('1-elk: should render a simple flowchart', () => {

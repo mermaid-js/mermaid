@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import * as db from './mindmapDb';
+import * as db from './mindmapDb.js';
 const MAX_SECTIONS = 12;
 
 /**

@@ -1,9 +1,9 @@
-import { log } from '../logger';
-import createLabel from './createLabel';
+import { log } from '../logger.js';
+import createLabel from './createLabel.js';
 import { line, curveBasis, select } from 'd3';
-import { getConfig } from '../config';
-import utils from '../utils';
-import { evaluate } from '../diagrams/common/common';
+import { getConfig } from '../config.js';
+import utils from '../utils.js';
+import { evaluate } from '../diagrams/common/common.js';
 
 let edgeLabels = {};
 let terminalLabels = {};

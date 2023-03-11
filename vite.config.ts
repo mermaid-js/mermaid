@@ -1,9 +1,9 @@
-import jison from './.vite/jisonPlugin';
+import jison from './.vite/jisonPlugin.js';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   resolve: {
-    extensions: ['.jison', '.js', '.ts', '.json'],
+    extensions: [],
   },
   plugins: [jison()],
   test: {

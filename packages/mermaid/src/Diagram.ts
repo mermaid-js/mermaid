@@ -1,10 +1,10 @@
-import * as configApi from './config';
-import { log } from './logger';
-import { getDiagram, registerDiagram } from './diagram-api/diagramAPI';
-import { detectType, getDiagramLoader } from './diagram-api/detectType';
-import { extractFrontMatter } from './diagram-api/frontmatter';
-import { UnknownDiagramError } from './errors';
-import { DetailedError } from './utils';
+import * as configApi from './config.js';
+import { log } from './logger.js';
+import { getDiagram, registerDiagram } from './diagram-api/diagramAPI.js';
+import { detectType, getDiagramLoader } from './diagram-api/detectType.js';
+import { extractFrontMatter } from './diagram-api/frontmatter.js';
+import { UnknownDiagramError } from './errors.js';
+import { DetailedError } from './utils.js';
 
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
 

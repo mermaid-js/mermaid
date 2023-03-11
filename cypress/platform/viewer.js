@@ -1,5 +1,5 @@
-import mermaid2 from '../../packages/mermaid/src/mermaid';
-import externalExample from '../../packages/mermaid-example-diagram/src/detector';
+import mermaid2 from '../../packages/mermaid/src/mermaid.js';
+import externalExample from '../../packages/mermaid-example-diagram/src/detector.js';
 
 function b64ToUtf8(str) {
   return decodeURIComponent(escape(window.atob(str)));

@@ -1,7 +1,7 @@
 /* eslint-env jasmine */
 // Todo reintroduce without cryptoRandomString
-import gitGraphAst from './gitGraphAst';
-import { parser } from './parser/gitGraph';
+import gitGraphAst from './gitGraphAst.js';
+import { parser } from './parser/gitGraph.js';
 //import randomString from 'crypto-random-string';
 //import cryptoRandomString from 'crypto-random-string';
 

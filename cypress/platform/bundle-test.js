@@ -1,4 +1,4 @@
-import mermaid from '../../packages/mermaid/src/mermaid';
+import mermaid from '../../packages/mermaid/src/mermaid.js';
 
 let code = `flowchart LR
 Power_Supply --> Transmitter_A
