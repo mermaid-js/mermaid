@@ -57,7 +57,7 @@
     "cytoscape-cose-bilkent": "^4.1.0",
     "cytoscape-fcose": "^2.1.0",
     "d3": "^7.4.0",
-    "dagre-d3-es": "7.0.9",
+    "dagre-d3-es": "7.0.10",
     "dayjs": "^1.11.7",
     "dompurify": "2.4.5",
     "elkjs": "^0.8.2",
