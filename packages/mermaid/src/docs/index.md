@@ -149,6 +149,12 @@ const members = [
     title: "Developer",
     links: [{ icon: "github", link: "https://github.com/spopida" }],
   },
+    {
+    avatar: "https://avatars.githubusercontent.com/u/35910788?v=4",
+    name: "Steph Huynh",
+    title: "Developer",
+    links: [{ icon: "github", link: "https://github.com/huynhicode" }],
+  },
 ];
 
 </script>
