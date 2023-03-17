@@ -204,7 +204,6 @@ export const createCssStyles = (
   }
 
   // classDefs defined in the diagram text
-  // @ts-expect-error https://github.com/DefinitelyTyped/DefinitelyTyped/pull/64684
   if (!isEmpty(classDefs) && CLASSDEF_DIAGRAMS.includes(graphType)) {
     const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
 
@@ -217,14 +216,12 @@ export const createCssStyles = (
     for (const classId in classDefs) {
       const styleClassDef = classDefs[classId];
       // create the css styles for each cssElement and the styles (only if there are styles)
-      // @ts-expect-error https://github.com/DefinitelyTyped/DefinitelyTyped/pull/64684
       if (!isEmpty(styleClassDef.styles)) {
         cssElements.forEach((cssElement) => {
           cssStyles += cssImportantStyles(styleClassDef.id, cssElement, styleClassDef.styles);
         });
       }
       // create the css styles for the tspan element and the text styles (only if there are textStyles)
-      // @ts-expect-error https://github.com/DefinitelyTyped/DefinitelyTyped/pull/64684
       if (!isEmpty(styleClassDef.textStyles)) {
         cssStyles += cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles);
       }

@@ -4,7 +4,7 @@
   "version": "10.0.2",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
-  "packageManager": "pnpm@7.29.0",
+  "packageManager": "pnpm@7.29.1",
   "keywords": [
     "diagram",
     "markdown",
@@ -113,6 +113,6 @@
     "vitest": "^0.29.0"
   },
   "volta": {
-    "node": "18.14.2"
+    "node": "18.15.0"
   }
 }

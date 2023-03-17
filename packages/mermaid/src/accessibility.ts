@@ -28,7 +28,6 @@ const SVG_ROLE = 'graphics-document document';
  */
 export function setA11yDiagramInfo(svg: D3Element, diagramType: string | null | undefined) {
   svg.attr('role', SVG_ROLE);
-  // @ts-expect-error https://github.com/DefinitelyTyped/DefinitelyTyped/pull/64684
   if (!isEmpty(diagramType)) {
     svg.attr('aria-roledescription', diagramType);
   }
