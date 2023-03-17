@@ -165,6 +165,13 @@ class Class10 {
   int id
   size()
 }
+namespace Namespace01 {
+  class Class11
+  class Class12 {
+    int id
+    size()
+  }
+}
 ```
 
 ```mermaid
@@ -183,6 +190,13 @@ class Class10 {
   <<service>>
   int id
   size()
+}
+namespace Namespace01 {
+  class Class11
+  class Class12 {
+    int id
+    size()
+  }
 }
 ```
 
