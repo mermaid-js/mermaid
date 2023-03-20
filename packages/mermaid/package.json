@@ -53,6 +53,7 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.0",
+    "@khanacademy/simple-markdown": "^0.8.6",
     "cytoscape": "^3.23.0",
     "cytoscape-cose-bilkent": "^4.1.0",
     "cytoscape-fcose": "^2.1.0",

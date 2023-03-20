@@ -33,7 +33,7 @@ export const addNode = (level, id, descr, type) => {
     id: cnt++,
     nodeId: sanitizeText(id),
     level,
-    descr: sanitizeText(descr).replace(/\n/g, '<br />'),
+    descr: sanitizeText(descr),
     type,
     children: [],
     width: getConfig().mindmap.maxNodeWidth,

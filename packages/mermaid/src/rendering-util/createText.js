@@ -3,7 +3,7 @@ import { log } from '../logger';
 import { getConfig } from '../config';
 import { evaluate } from '../diagrams/common/common';
 import { decodeEntities } from '../mermaidAPI';
-
+import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text';
 /**
  * @param dom
  * @param styleFn
@@ -51,48 +51,76 @@ function addHtmlSpan(element, node) {
 }
 
 /**
- * @param {string} text The text to be wrapped
- * @param {number} width The max width of the text
+ * Creates a tspan element with the specified attributes for text positioning.
+ *
+ * @param {object} textElement - The parent text element to append the tspan element.
+ * @param {number} lineIndex - The index of the current line in the structuredText array.
+ * @param {number} lineHeight - The line height value for the text.
+ * @returns {object} The created tspan element.
  */
-function wrap(text, width) {
-  text.each(function () {
-    var text = select(this),
-      words = text
-        .text()
-        .split(/(\s+|<br\/>)/)
-        .reverse(),
-      word,
-      line = [],
-      lineHeight = 1.1, // ems
-      y = text.attr('y'),
-      dy = parseFloat(text.attr('dy')),
-      tspan = text
-        .text(null)
-        .append('tspan')
-        .attr('x', 0)
-        .attr('y', y)
-        .attr('dy', dy + 'em');
-    for (let j = 0; j < words.length; j++) {
-      word = words[words.length - 1 - j];
-      line.push(word);
-      tspan.text(line.join(' ').trim());
-      if (tspan.node().getComputedTextLength() > width || word === '<br/>') {
-        line.pop();
-        tspan.text(line.join(' ').trim());
-        if (word === '<br/>') {
-          line = [''];
-        } else {
-          line = [word];
-        }
+function createTspan(textElement, lineIndex, lineHeight) {
+  return textElement
+    .append('tspan')
+    .attr('x', 0)
+    .attr('y', lineIndex * lineHeight + 'em')
+    .attr('dy', lineHeight + 'em');
+}
 
-        tspan = text
-          .append('tspan')
-          .attr('x', 0)
-          .attr('y', y)
-          .attr('dy', lineHeight + 'em')
-          .text(word);
+/**
+ * Creates a formatted text element by breaking lines and applying styles based on
+ * the given structuredText.
+ *
+ * @param {number} width - The maximum allowed width of the text.
+ * @param {object} g - The parent group element to append the formatted text.
+ * @param {Array} structuredText - The structured text data to format.
+ */
+function createFormattedText(width, g, structuredText) {
+  const lineHeight = 1.1;
+
+  const textElement = g.append('text');
+
+  structuredText.forEach((line, lineIndex) => {
+    let tspan = createTspan(textElement, lineIndex, lineHeight);
+
+    let words = [...line].reverse();
+    let currentWord;
+    let wrappedLine = [];
+
+    while (words.length) {
+      currentWord = words.pop();
+      wrappedLine.push(currentWord);
+
+      updateTextContentAndStyles(tspan, wrappedLine);
+
+      if (tspan.node().getComputedTextLength() > width) {
+        wrappedLine.pop();
+        words.push(currentWord);
+
+        updateTextContentAndStyles(tspan, wrappedLine);
+
+        wrappedLine = [];
+        tspan = createTspan(textElement, ++lineIndex, lineHeight);
       }
     }
+  });
+}
+
+/**
+ * Updates the text content and styles of the given tspan element based on the
+ * provided wrappedLine data.
+ *
+ * @param {object} tspan - The tspan element to update.
+ * @param {Array} wrappedLine - The line data to apply to the tspan element.
+ */
+function updateTextContentAndStyles(tspan, wrappedLine) {
+  tspan.text('');
+
+  wrappedLine.forEach((word) => {
+    tspan
+      .append('tspan')
+      .attr('font-style', word.type === 'em' ? 'italic' : 'normal')
+      .attr('font-weight', word.type === 'strong' ? 'bold' : 'normal')
+      .text(word.content + ' ');
   });
 }
 
@@ -114,15 +142,17 @@ function wrap(text, width) {
 export const createText = (
   el,
   text = '',
-  { style = '', isTitle = false, classes = '', useHtmlLabels = true, isNode = true } = {}
+  { style = '', isTitle = false, classes = '', useHtmlLabels = true, isNode = true, width } = {}
 ) => {
+  log.info('createText', text, style, isTitle, classes, useHtmlLabels, isNode);
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
-    text = text.replace(/\\n|\n/g, '<br />');
-    log.info('text' + text);
+    // text = text.replace(/\\n|\n/g, '<br />');
+    const htmlText = markdownToHTML(text);
+    // log.info('markdo  wnToHTML' + text, markdownToHTML(text));
     const node = {
       isNode,
-      label: decodeEntities(text).replace(
+      label: decodeEntities(htmlText).replace(
         /fa[blrs]?:fa-[\w-]+/g,
         (s) => `<i class='${s.replace(':', ' ')}'></i>`
       ),
@@ -131,31 +161,7 @@ export const createText = (
     let vertexNode = addHtmlSpan(el, node);
     return vertexNode;
   } else {
-    const svgText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    svgText.setAttribute('style', style.replace('color:', 'fill:'));
-    // el.attr('style', style.replace('color:', 'fill:'));
-    let rows = [];
-    if (typeof text === 'string') {
-      rows = text.split(/\\n|\n|<br\s*\/?>/gi);
-    } else if (Array.isArray(text)) {
-      rows = text;
-    } else {
-      rows = [];
-    }
-
-    for (const row of rows) {
-      const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-      tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
-      tspan.setAttribute('dy', '1em');
-      tspan.setAttribute('x', '0');
-      if (isTitle) {
-        tspan.setAttribute('class', 'title-row');
-      } else {
-        tspan.setAttribute('class', 'row');
-      }
-      tspan.textContent = row.trim();
-      svgText.appendChild(tspan);
-    }
-    return svgText;
+    const structuredText = markdownToLines(text);
+    return createFormattedText(width, el, structuredText);
   }
 };

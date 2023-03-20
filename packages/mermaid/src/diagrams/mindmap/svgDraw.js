@@ -1,6 +1,6 @@
 import { select } from 'd3';
 import * as db from './mindmapDb';
-import { createText, setSize } from '../../rendering-util/createText';
+import { createText } from '../../rendering-util/createText';
 const MAX_SECTIONS = 12;
 
 /**
@@ -217,9 +217,8 @@ export const drawNode = function (elem, node, fullSection, conf) {
 
   // Create the wrapped text element
   const textElem = nodeElem.append('g');
-
-  const newEl = createText(textElem, node.descr, { useHtmlLabels: htmlLabels });
-  const txt = textElem.node().appendChild(newEl);
+  const newEl = createText(textElem, node.descr, { useHtmlLabels: htmlLabels, width: node.width });
+  // const txt = textElem.node().appendChild(newEl);
   // const txt = textElem.append(newEl);
   // const txt = textElem
   //   .append('text')

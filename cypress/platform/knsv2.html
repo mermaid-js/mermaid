@@ -68,6 +68,14 @@ c --> d
     </pre>
     <pre id="diagram" class="mermaid">
 mindmap
+    id1["`Start`"]
+      id2["`Child **with bold** text`"]
+      id3["`Children of which some
+      is using *italic type of* text`"]
+      id4[Child]
+    </pre>
+    <pre id="diagram" class="mermaid2">
+mindmap
     id1["`Start
 second line 😎`"]
       id2[Child]
@@ -273,12 +281,14 @@ mindmap
       mermaid.initialize({
         theme: 'forest',
         startOnLoad: true,
-        logLevel: 5,
+        logLevel: 0,
         flowchart: {
           // defaultRenderer: 'elk',
           useMaxWidth: false,
+          // htmlLabels: false,
           htmlLabels: true,
         },
+        htmlLabels: true,
         gantt: {
           useMaxWidth: false,
         },
