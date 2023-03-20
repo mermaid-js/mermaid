@@ -1,4 +1,4 @@
-import mermaid2 from '../../packages/mermaid/dist/mermaid.esm.mjs';
+import mermaid2 from './mermaid.esm.mjs';
 import externalExample from '../../packages/mermaid-example-diagram/dist/mermaid-example-diagram.core.mjs';
 
 function b64ToUtf8(str) {

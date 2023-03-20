@@ -13,7 +13,7 @@ example-diagram
     <script type="module">
       import exampleDiagram from '../../packages/mermaid-example-diagram/dist/mermaid-example-diagram.core.mjs';
       // import example from '../../packages/mermaid-example-diagram/src/detector';
-      import mermaid from '../../packages/mermaid/dist/mermaid.esm.mjs';
+      import mermaid from './mermaid.esm.mjs';
 
       await mermaid.registerExternalDiagrams([exampleDiagram]);
       await mermaid.initialize({ logLevel: 0 });
