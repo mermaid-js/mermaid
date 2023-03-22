@@ -24,12 +24,31 @@ export const setConf = function () {
   log.debug('Something is calling, setConf, remove the call');
 };
 
+const getMaxIntersections = (tasks, orderOffset) => {
+  let timeline = [...tasks].map(() => 0);
+  let sorted = [...tasks].sort((a, b) => a.startTime - b.startTime || a.order - b.order);
+  let maxIntersections = 0;
+  for (const element of sorted) {
+    for (let j = 0; j < timeline.length; j++) {
+      if (element.startTime >= timeline[j]) {
+        timeline[j] = element.endTime;
+        element.order = j + orderOffset;
+        if (j > maxIntersections) {
+          maxIntersections = j;
+        }
+        break;
+      }
+    }
+  }
+
+  return maxIntersections;
+};
+
 let w;
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().gantt;
   // diagObj.db.clear();
   // parser.parse(text);
-
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
@@ -56,7 +75,41 @@ export const draw = function (text, id, version, diagObj) {
   const taskArray = diagObj.db.getTasks();
 
   // Set height based on number of tasks
-  const h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding;
+
+  conf.verticalDisplayMode = 'compact';
+
+  let categories = [];
+
+  for (const element of taskArray) {
+    categories.push(element.type);
+  }
+
+  const catsUnfiltered = categories; // for vert labels
+
+  categories = checkUnique(categories);
+  const categoryHeights = {};
+
+  let h = 2 * conf.topPadding;
+  if (conf.verticalDisplayMode === undefined || conf.verticalDisplayMode === 'default') {
+    h = taskArray.length * (conf.barHeight + conf.barGap);
+  } else if (conf.verticalDisplayMode === 'compact') {
+    const categoryElements = {};
+    for (const element of taskArray) {
+      if (categoryElements[element.section] === undefined) {
+        categoryElements[element.section] = [element];
+      } else {
+        categoryElements[element.section].push(element);
+      }
+    }
+
+    let intersections = 0;
+    for (const category of Object.keys(categoryElements)) {
+      const categoryHeight = getMaxIntersections(categoryElements[category], intersections) + 1;
+      intersections += categoryHeight;
+      h += categoryHeight * (conf.barHeight + conf.barGap);
+      categoryHeights[category] = categoryHeight;
+    }
+  }
 
   // Set viewBox
   elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
@@ -73,16 +126,6 @@ export const draw = function (text, id, version, diagObj) {
       }),
     ])
     .rangeRound([0, w - conf.leftPadding - conf.rightPadding]);
-
-  let categories = [];
-
-  for (const element of taskArray) {
-    categories.push(element.type);
-  }
-
-  const catsUnfiltered = categories; // for vert labels
-
-  categories = checkUnique(categories);
 
   /**
    * @param a
@@ -158,10 +201,14 @@ export const draw = function (text, id, version, diagObj) {
    */
   function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w) {
     // Draw background rects covering the entire width of the graph, these form the section rows.
+
+    const uniqueTaskOrderIds = [...new Set(theArray.map((item) => item.order))];
+    const uniqueTasks = uniqueTaskOrderIds.map((id) => theArray.find((item) => item.order === id));
+
     svg
       .append('g')
       .selectAll('rect')
-      .data(theArray)
+      .data(uniqueTasks)
       .enter()
       .append('rect')
       .attr('x', 0)
@@ -582,12 +629,9 @@ export const draw = function (text, id, version, diagObj) {
    * @param theTopPad
    */
   function vertLabels(theGap, theTopPad) {
-    const numOccurances = [];
     let prevGap = 0;
 
-    for (const [i, category] of categories.entries()) {
-      numOccurances[i] = [category, getCount(category, catsUnfiltered)];
-    }
+    const numOccurances = Object.keys(categoryHeights).map((d) => [d, categoryHeights[d]]);
 
     svg
       .append('g') // without doing this, impossible to put grid lines behind text

@@ -335,6 +335,7 @@ export interface GanttDiagramConfig extends BaseDiagramConfig {
   axisFormat?: string;
   tickInterval?: string;
   topAxis?: boolean;
+  verticalDisplayMode?: 'default' | 'merged' | 'compact';
 }
 
 export interface SequenceDiagramConfig extends BaseDiagramConfig {
