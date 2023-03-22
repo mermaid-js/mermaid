@@ -95,6 +95,47 @@ test('markdownToLines - Only bold formatting', () => {
   expect(output).toEqual(expectedOutput);
 });
 
+test('markdownToLines - paragraph 1', () => {
+  const input = `**Start** with
+    a second line`;
+
+  const expectedOutput = [
+    [
+      { content: 'Start', type: 'strong' },
+      { content: 'with', type: 'normal' },
+    ],
+    [
+      { content: 'a', type: 'normal' },
+      { content: 'second', type: 'normal' },
+      { content: 'line', type: 'normal' },
+    ],
+  ];
+
+  const output = markdownToLines(input);
+  expect(output).toEqual(expectedOutput);
+});
+
+test('markdownToLines - paragraph', () => {
+  const input = `**Start** with
+
+    a second line`;
+
+  const expectedOutput = [
+    [
+      { content: 'Start', type: 'strong' },
+      { content: 'with', type: 'normal' },
+    ],
+    [
+      { content: 'a', type: 'normal' },
+      { content: 'second', type: 'normal' },
+      { content: 'line', type: 'normal' },
+    ],
+  ];
+
+  const output = markdownToLines(input);
+  expect(output).toEqual(expectedOutput);
+});
+
 test('markdownToLines - Only italic formatting', () => {
   const input = `This is an *italic* test`;
 
@@ -134,7 +175,7 @@ Here is a new line
 There is some words **with a bold** section
 Here is a line *with an italic* section`;
 
-  const expectedOutput = `<p>This is regular text<br>Here is a new line<br>There is some words <strong>with a bold</strong> section<br>Here is a line <em>with an italic</em> section</p>`;
+  const expectedOutput = `<p>This is regular text<br/>Here is a new line<br/>There is some words <strong>with a bold</strong> section<br/>Here is a line <em>with an italic</em> section</p>`;
 
   const output = markdownToHTML(input);
   expect(output).toEqual(expectedOutput);
@@ -151,7 +192,7 @@ test('markdownToHTML - No formatting', () => {
   const input = `This is a simple test
 with no formatting`;
 
-  const expectedOutput = `<p>This is a simple test<br>with no formatting</p>`;
+  const expectedOutput = `<p>This is a simple test<br/>with no formatting</p>`;
   const output = markdownToHTML(input);
   expect(output).toEqual(expectedOutput);
 });

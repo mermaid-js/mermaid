@@ -17,19 +17,22 @@ function applyStyle(dom, styleFn) {
 /**
  * @param element
  * @param {any} node
+ * @param width
+ * @param classes
  * @returns {SVGForeignObjectElement} Node
  */
-function addHtmlSpan(element, node) {
+function addHtmlSpan(element, node, width, classes) {
   const fo = element.append('foreignObject');
-  const newEl = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+  // const newEl = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+  // const newEl = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
   const div = fo.append('xhtml:div');
+  // const div = body.append('div');
+  // const div = fo.append('div');
 
   const label = node.label;
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
   div.html(
-    '<span class="' +
-      labelClass +
-      '" ' +
+    `<span class="${labelClass} ${classes}" ` +
       (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') +
       '>' +
       label +
@@ -37,16 +40,22 @@ function addHtmlSpan(element, node) {
   );
 
   applyStyle(div, node.labelStyle);
-  div.style('display', 'inline-block');
-  const bbox = div.node().getBoundingClientRect();
+  div.style('display', 'table-cell');
+  div.style('white-space', 'nowrap');
+  div.style('max-width', width + 'px');
+  div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
+
+  let bbox = div.node().getBoundingClientRect();
+  if (bbox.width === width) {
+    div.style('display', 'table');
+    div.style('white-space', 'break-spaces');
+    div.style('width', '200px');
+    bbox = div.node().getBoundingClientRect();
+  }
+
   fo.style('width', bbox.width);
   fo.style('height', bbox.height);
 
-  const divNode = div.node();
-  window.divNode = divNode;
-  // Fix for firefox
-  div.style('white-space', 'nowrap');
-  div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
   return fo.node();
 }
 
@@ -158,7 +167,7 @@ export const createText = (
       ),
       labelStyle: style.replace('fill:', 'color:'),
     };
-    let vertexNode = addHtmlSpan(el, node);
+    let vertexNode = addHtmlSpan(el, node, width, classes);
     return vertexNode;
   } else {
     const structuredText = markdownToLines(text);

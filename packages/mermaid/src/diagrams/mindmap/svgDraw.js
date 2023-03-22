@@ -204,7 +204,7 @@ const roundedRectBkg = function (elem, node) {
  * @returns {number} The height nodes dom element
  */
 export const drawNode = function (elem, node, fullSection, conf) {
-  const htmlLabels = false;
+  const htmlLabels = conf.htmlLabels;
   const section = fullSection % (MAX_SECTIONS - 1);
   const nodeElem = elem.append('g');
   node.section = section;
@@ -217,19 +217,12 @@ export const drawNode = function (elem, node, fullSection, conf) {
 
   // Create the wrapped text element
   const textElem = nodeElem.append('g');
-  const newEl = createText(textElem, node.descr, { useHtmlLabels: htmlLabels, width: node.width });
-  // const txt = textElem.node().appendChild(newEl);
-  // const txt = textElem.append(newEl);
-  // const txt = textElem
-  //   .append('text')
-  //   .text(node.descr)
-  //   .attr('dy', '1em')
-  //   .attr('alignment-baseline', 'middle')
-  //   .attr('dominant-baseline', 'middle')
-  //   .attr('text-anchor', 'middle')
-  //   .call(wrap, node.width);
-  // const newerEl = textElem.node().appendChild(newEl);
-  // setSize(textElem);
+  const newEl = createText(textElem, node.descr, {
+    useHtmlLabels: htmlLabels,
+    width: node.width,
+    classes: 'mindmap-node-label',
+  });
+
   if (!htmlLabels) {
     textElem
       .attr('dy', '1em')

@@ -4,9 +4,22 @@ import SimpleMarkdown from '@khanacademy/simple-markdown';
  *
  * @param markdown
  */
+function preprocessMarkdown(markdown) {
+  // Replace multiple newlines with a single newline
+  const withoutMultipleNewlines = markdown.replace(/\n{2,}/g, '\n');
+  // Remove extra spaces at the beginning of each line
+  const withoutExtraSpaces = withoutMultipleNewlines.replace(/^\s+/gm, '');
+  return withoutExtraSpaces;
+}
+
+/**
+ *
+ * @param markdown
+ */
 export function markdownToLines(markdown) {
+  const preprocessedMarkdown = preprocessMarkdown(markdown);
   const mdParse = SimpleMarkdown.defaultBlockParse;
-  const syntaxTree = mdParse(markdown);
+  const syntaxTree = mdParse(preprocessedMarkdown);
 
   let lines = [[]];
   let currentLine = 0;
@@ -19,6 +32,7 @@ export function markdownToLines(markdown) {
   function processNode(node, parentType) {
     if (node.type === 'text') {
       const textLines = node.content.split('\n');
+
       textLines.forEach((textLine, index) => {
         if (index !== 0) {
           currentLine++;
@@ -62,7 +76,7 @@ export function markdownToHTML(markdown) {
    */
   function output(node) {
     if (node.type === 'text') {
-      return node.content.replace(/\n/g, '<br>');
+      return node.content.replace(/\n/g, '<br/>');
     } else if (node.type === 'strong') {
       return `<strong>${node.content.map(output).join('')}</strong>`;
     } else if (node.type === 'em') {
