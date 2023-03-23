@@ -210,11 +210,11 @@ export const draw = function (text, id, version, diagObj) {
    * @param w
    */
   function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w) {
-    // Draw background rects covering the entire width of the graph, these form the section rows.
-
+    // Get unique task orders. Required to draw the background rects when compact flag is enabled.
     const uniqueTaskOrderIds = [...new Set(theArray.map((item) => item.order))];
     const uniqueTasks = uniqueTaskOrderIds.map((id) => theArray.find((item) => item.order === id));
 
+    // Draw background rects covering the entire width of the graph, these form the section rows.
     svg
       .append('g')
       .selectAll('rect')
