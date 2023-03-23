@@ -686,6 +686,20 @@ const config: Partial<MermaidConfig> = {
     tickInterval: undefined,
 
     /**
+     * | Parameter | Description               | Type    | Required | Values      |
+     * | --------- | ------------------------- | ------- | -------- | ----------- |
+     * | compact   | displays in compact mode  | boolean | Optional | true, false |
+     *
+     * **Notes:**
+     *
+     * When this flag is set to true, it allows multiple tasks to be displayed on the same
+     * row.
+     *
+     * Default value: false
+     */
+    compact: undefined,
+
+    /**
      * | Parameter   | Description | Type    | Required | Values      |
      * | ----------- | ----------- | ------- | -------- | ----------- |
      * | useMaxWidth | See notes   | boolean | 4        | true, false |

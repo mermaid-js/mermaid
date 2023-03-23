@@ -24,26 +24,6 @@ export const setConf = function () {
   log.debug('Something is calling, setConf, remove the call');
 };
 
-const getMaxIntersections = (tasks, orderOffset) => {
-  let timeline = [...tasks].map(() => 0);
-  let sorted = [...tasks].sort((a, b) => a.startTime - b.startTime || a.order - b.order);
-  let maxIntersections = 0;
-  for (const element of sorted) {
-    for (let j = 0; j < timeline.length; j++) {
-      if (element.startTime >= timeline[j]) {
-        timeline[j] = element.endTime;
-        element.order = j + orderOffset;
-        if (j > maxIntersections) {
-          maxIntersections = j;
-        }
-        break;
-      }
-    }
-  }
-
-  return maxIntersections;
-};
-
 let w;
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().gantt;
@@ -76,23 +56,17 @@ export const draw = function (text, id, version, diagObj) {
 
   // Set height based on number of tasks
 
-  conf.verticalDisplayMode = 'compact';
-
   let categories = [];
 
   for (const element of taskArray) {
     categories.push(element.type);
   }
 
-  const catsUnfiltered = categories; // for vert labels
-
   categories = checkUnique(categories);
   const categoryHeights = {};
 
   let h = 2 * conf.topPadding;
-  if (conf.verticalDisplayMode === undefined || conf.verticalDisplayMode === 'default') {
-    h = taskArray.length * (conf.barHeight + conf.barGap);
-  } else if (conf.verticalDisplayMode === 'compact') {
+  if (diagObj.db.compactEnabled()) {
     const categoryElements = {};
     for (const element of taskArray) {
       if (categoryElements[element.section] === undefined) {
@@ -108,6 +82,11 @@ export const draw = function (text, id, version, diagObj) {
       intersections += categoryHeight;
       h += categoryHeight * (conf.barHeight + conf.barGap);
       categoryHeights[category] = categoryHeight;
+    }
+  } else {
+    h += taskArray.length * (conf.barHeight + conf.barGap);
+    for (const category of categories) {
+      categoryHeights[category] = taskArray.filter((task) => task.type === category).length;
     }
   }
 
@@ -669,7 +648,6 @@ export const draw = function (text, id, version, diagObj) {
         }
       })
       .attr('font-size', conf.sectionFontSize)
-      .attr('font-size', conf.sectionFontSize)
       .attr('class', function (d) {
         for (const [i, category] of categories.entries()) {
           if (d[0] === category) {
@@ -728,29 +706,35 @@ export const draw = function (text, id, version, diagObj) {
   }
 
   /**
-   * From this stack exchange question:
-   * http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
+   * For this issue:
+   * https://github.com/mermaid-js/mermaid/issues/1618
    *
-   * @param arr
+   * Finds the number of intersections between tasks that happen at any point in time.
+   * Used to figure out how many rows are needed to display the tasks when the compact
+   * flag is set to true.
+   *
+   * @param tasks
+   * @param orderOffset
    */
-  function getCounts(arr) {
-    let i = arr.length; // const to loop over
-    const obj = {}; // obj to store results
-    while (i) {
-      obj[arr[--i]] = (obj[arr[i]] || 0) + 1; // count occurrences
+  const getMaxIntersections = (tasks, orderOffset) => {
+    let timeline = [...tasks].map(() => -1);
+    let sorted = [...tasks].sort((a, b) => a.startTime - b.startTime || a.order - b.order);
+    let maxIntersections = 0;
+    for (const element of sorted) {
+      for (let j = 0; j < timeline.length; j++) {
+        if (element.startTime >= timeline[j]) {
+          timeline[j] = element.endTime;
+          element.order = j + orderOffset;
+          if (j > maxIntersections) {
+            maxIntersections = j;
+          }
+          break;
+        }
+      }
     }
-    return obj;
-  }
 
-  /**
-   * Get specific from everything
-   *
-   * @param word
-   * @param arr
-   */
-  function getCount(word, arr) {
-    return getCounts(arr)[word] || 0;
-  }
+    return maxIntersections;
+  };
 };
 
 export default {

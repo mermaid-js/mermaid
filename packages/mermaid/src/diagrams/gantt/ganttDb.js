@@ -25,6 +25,7 @@ dayjs.extend(dayjsAdvancedFormat);
 let dateFormat = '';
 let axisFormat = '';
 let tickInterval = undefined;
+let compact = false;
 let todayMarker = '';
 let includes = [];
 let excludes = [];
@@ -56,6 +57,7 @@ export const clear = function () {
   dateFormat = '';
   axisFormat = '';
   tickInterval = undefined;
+  compact = false;
   todayMarker = '';
   includes = [];
   excludes = [];
@@ -80,6 +82,14 @@ export const setTickInterval = function (txt) {
 
 export const getTickInterval = function () {
   return tickInterval;
+};
+
+export const enableCompact = function () {
+  compact = true;
+};
+
+export const compactEnabled = function () {
+  return compact;
 };
 
 export const setTodayMarker = function (txt) {
@@ -713,6 +723,8 @@ export default {
   getAxisFormat,
   setTickInterval,
   getTickInterval,
+  enableCompact,
+  compactEnabled,
   setTodayMarker,
   getTodayMarker,
   setAccTitle,
