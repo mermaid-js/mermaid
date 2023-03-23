@@ -34,6 +34,7 @@ describe('when using the ganttDb', function () {
     beforeEach(function () {
       ganttDb.setDateFormat('YYYY-MM-DD');
       ganttDb.enableInclusiveEndDates();
+      ganttDb.enableCompact();
       ganttDb.setTodayMarker('off');
       ganttDb.setExcludes('weekends 2019-02-06,friday');
       ganttDb.addSection('weekends skip test');
@@ -53,6 +54,7 @@ describe('when using the ganttDb', function () {
       ${'getExcludes'}          | ${[]}
       ${'getSections'}          | ${[]}
       ${'endDatesAreInclusive'} | ${false}
+      ${'enabledCompact'}       | ${false}
     `)('should clear $fn', ({ fn, expected }) => {
       expect(ganttDb[fn]()).toEqual(expected);
     });

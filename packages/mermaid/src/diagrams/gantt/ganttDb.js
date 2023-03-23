@@ -153,11 +153,11 @@ export const getSections = function () {
 };
 
 export const getTasks = function () {
-  let allItemsPricessed = compileTasks();
+  let allItemsProcessed = compileTasks();
   const maxDepth = 10;
   let iterationCount = 0;
-  while (!allItemsPricessed && iterationCount < maxDepth) {
-    allItemsPricessed = compileTasks();
+  while (!allItemsProcessed && iterationCount < maxDepth) {
+    allItemsProcessed = compileTasks();
     iterationCount++;
   }
 
