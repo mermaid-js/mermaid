@@ -36,7 +36,7 @@ export const setConf = function () {
  * @param orderOffset
  */
 const getMaxIntersections = (tasks, orderOffset) => {
-  let timeline = [...tasks].map(() => -1);
+  let timeline = [...tasks].map(() => -Infinity);
   let sorted = [...tasks].sort((a, b) => a.startTime - b.startTime || a.order - b.order);
   let maxIntersections = 0;
   for (const element of sorted) {
