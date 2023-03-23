@@ -24,6 +24,37 @@ export const setConf = function () {
   log.debug('Something is calling, setConf, remove the call');
 };
 
+/**
+ * For this issue:
+ * https://github.com/mermaid-js/mermaid/issues/1618
+ *
+ * Finds the number of intersections between tasks that happen at any point in time.
+ * Used to figure out how many rows are needed to display the tasks when the compact
+ * flag is set to true.
+ *
+ * @param tasks
+ * @param orderOffset
+ */
+const getMaxIntersections = (tasks, orderOffset) => {
+  let timeline = [...tasks].map(() => -1);
+  let sorted = [...tasks].sort((a, b) => a.startTime - b.startTime || a.order - b.order);
+  let maxIntersections = 0;
+  for (const element of sorted) {
+    for (let j = 0; j < timeline.length; j++) {
+      if (element.startTime >= timeline[j]) {
+        timeline[j] = element.endTime;
+        element.order = j + orderOffset;
+        if (j > maxIntersections) {
+          maxIntersections = j;
+        }
+        break;
+      }
+    }
+  }
+
+  return maxIntersections;
+};
+
 let w;
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().gantt;
@@ -704,37 +735,6 @@ export const draw = function (text, id, version, diagObj) {
     }
     return result;
   }
-
-  /**
-   * For this issue:
-   * https://github.com/mermaid-js/mermaid/issues/1618
-   *
-   * Finds the number of intersections between tasks that happen at any point in time.
-   * Used to figure out how many rows are needed to display the tasks when the compact
-   * flag is set to true.
-   *
-   * @param tasks
-   * @param orderOffset
-   */
-  const getMaxIntersections = (tasks, orderOffset) => {
-    let timeline = [...tasks].map(() => -1);
-    let sorted = [...tasks].sort((a, b) => a.startTime - b.startTime || a.order - b.order);
-    let maxIntersections = 0;
-    for (const element of sorted) {
-      for (let j = 0; j < timeline.length; j++) {
-        if (element.startTime >= timeline[j]) {
-          timeline[j] = element.endTime;
-          element.order = j + orderOffset;
-          if (j > maxIntersections) {
-            maxIntersections = j;
-          }
-          break;
-        }
-      }
-    }
-
-    return maxIntersections;
-  };
 };
 
 export default {
