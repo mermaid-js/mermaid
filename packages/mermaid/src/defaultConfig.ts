@@ -697,7 +697,7 @@ const config: Partial<MermaidConfig> = {
      *
      * Default value: false
      */
-    compact: undefined,
+    compact: false,
 
     /**
      * | Parameter   | Description | Type    | Required | Values      |
