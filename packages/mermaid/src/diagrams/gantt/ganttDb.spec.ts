@@ -54,7 +54,7 @@ describe('when using the ganttDb', function () {
       ${'getExcludes'}          | ${[]}
       ${'getSections'}          | ${[]}
       ${'endDatesAreInclusive'} | ${false}
-      ${'enabledCompact'}       | ${false}
+      ${'compactEnabled'}       | ${false}
     `)('should clear $fn', ({ fn, expected }) => {
       expect(ganttDb[fn]()).toEqual(expected);
     });
