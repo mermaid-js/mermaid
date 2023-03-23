@@ -97,7 +97,7 @@ export const draw = function (text, id, version, diagObj) {
   const categoryHeights = {};
 
   let h = 2 * conf.topPadding;
-  if (diagObj.db.compactEnabled()) {
+  if (diagObj.db.compactEnabled() || conf.compact) {
     const categoryElements = {};
     for (const element of taskArray) {
       if (categoryElements[element.section] === undefined) {

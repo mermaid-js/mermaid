@@ -688,7 +688,7 @@ const config: Partial<MermaidConfig> = {
     /**
      * | Parameter | Description               | Type    | Required | Values      |
      * | --------- | ------------------------- | ------- | -------- | ----------- |
-     * | compact   | displays in compact mode  | boolean | Optional | true, false |
+     * | compact   | displays in compact mode  | boolean | 4        | True, False |
      *
      * **Notes:**
      *

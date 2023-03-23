@@ -25,7 +25,6 @@ dayjs.extend(dayjsAdvancedFormat);
 let dateFormat = '';
 let axisFormat = '';
 let tickInterval = undefined;
-let compact = false;
 let todayMarker = '';
 let includes = [];
 let excludes = [];
@@ -37,6 +36,7 @@ const tags = ['active', 'done', 'crit', 'milestone'];
 let funs = [];
 let inclusiveEndDates = false;
 let topAxis = false;
+let compact = false;
 
 // The serial order of the task in the script
 let lastOrder = 0;
@@ -57,12 +57,12 @@ export const clear = function () {
   dateFormat = '';
   axisFormat = '';
   tickInterval = undefined;
-  compact = false;
   todayMarker = '';
   includes = [];
   excludes = [];
   inclusiveEndDates = false;
   topAxis = false;
+  compact = false;
   lastOrder = 0;
   links = {};
   commonClear();
@@ -82,14 +82,6 @@ export const setTickInterval = function (txt) {
 
 export const getTickInterval = function () {
   return tickInterval;
-};
-
-export const enableCompact = function () {
-  compact = true;
-};
-
-export const compactEnabled = function () {
-  return compact;
 };
 
 export const setTodayMarker = function (txt) {
@@ -118,6 +110,14 @@ export const enableTopAxis = function () {
 
 export const topAxisEnabled = function () {
   return topAxis;
+};
+
+export const enableCompact = function () {
+  compact = true;
+};
+
+export const compactEnabled = function () {
+  return compact;
 };
 
 export const getDateFormat = function () {
