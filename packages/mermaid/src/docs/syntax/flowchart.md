@@ -122,9 +122,7 @@ flowchart LR
 
 ### A hexagon node
 
-Code:
-
-```mmd
+```mermaid-example
 flowchart LR
     id1{{This is the text in the box}}
 ```
