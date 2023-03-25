@@ -32,11 +32,11 @@ let links = {};
 let sections = [];
 let tasks = [];
 let currentSection = '';
+let displayMode = '';
 const tags = ['active', 'done', 'crit', 'milestone'];
 let funs = [];
 let inclusiveEndDates = false;
 let topAxis = false;
-let compact = false;
 
 // The serial order of the task in the script
 let lastOrder = 0;
@@ -56,13 +56,13 @@ export const clear = function () {
   rawTasks = [];
   dateFormat = '';
   axisFormat = '';
+  displayMode = '';
   tickInterval = undefined;
   todayMarker = '';
   includes = [];
   excludes = [];
   inclusiveEndDates = false;
   topAxis = false;
-  compact = false;
   lastOrder = 0;
   links = {};
   commonClear();
@@ -112,12 +112,12 @@ export const topAxisEnabled = function () {
   return topAxis;
 };
 
-export const enableCompact = function () {
-  compact = true;
+export const setDisplayMode = function (txt) {
+  displayMode = txt;
 };
 
-export const compactEnabled = function () {
-  return compact;
+export const getDisplayMode = function () {
+  return displayMode;
 };
 
 export const getDateFormat = function () {
@@ -723,14 +723,14 @@ export default {
   getAxisFormat,
   setTickInterval,
   getTickInterval,
-  enableCompact,
-  compactEnabled,
   setTodayMarker,
   getTodayMarker,
   setAccTitle,
   getAccTitle,
   setDiagramTitle,
   getDiagramTitle,
+  setDisplayMode,
+  getDisplayMode,
   setAccDescription,
   getAccDescription,
   addSection,

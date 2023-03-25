@@ -650,7 +650,7 @@ function addA11yInfo(
  *       numberSectionStyles: 4,
  *       axisFormat: '%Y-%m-%d',
  *       topAxis: false,
- *       compact: false,
+ *       displayMode: '',
  *     },
  *   };
  *   mermaid.initialize(config);

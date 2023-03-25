@@ -29,8 +29,8 @@ export const setConf = function () {
  * https://github.com/mermaid-js/mermaid/issues/1618
  *
  * Finds the number of intersections between tasks that happen at any point in time.
- * Used to figure out how many rows are needed to display the tasks when the compact
- * flag is set to true.
+ * Used to figure out how many rows are needed to display the tasks when the display
+ * mode is set to 'compact'.
  *
  * @param tasks
  * @param orderOffset
@@ -58,6 +58,7 @@ const getMaxIntersections = (tasks, orderOffset) => {
 let w;
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().gantt;
+
   // diagObj.db.clear();
   // parser.parse(text);
   const securityLevel = getConfig().securityLevel;
@@ -97,7 +98,7 @@ export const draw = function (text, id, version, diagObj) {
   const categoryHeights = {};
 
   let h = 2 * conf.topPadding;
-  if (diagObj.db.compactEnabled() || conf.compact) {
+  if (diagObj.db.getDisplayMode() === 'compact' || conf.displayMode === 'compact') {
     const categoryElements = {};
     for (const element of taskArray) {
       if (categoryElements[element.section] === undefined) {
@@ -210,7 +211,7 @@ export const draw = function (text, id, version, diagObj) {
    * @param w
    */
   function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w) {
-    // Get unique task orders. Required to draw the background rects when compact flag is enabled.
+    // Get unique task orders. Required to draw the background rects when display mode is compact.
     const uniqueTaskOrderIds = [...new Set(theArray.map((item) => item.order))];
     const uniqueTasks = uniqueTaskOrderIds.map((id) => theArray.find((item) => item.order === id));
 

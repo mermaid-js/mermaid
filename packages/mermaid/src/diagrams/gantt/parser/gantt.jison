@@ -79,7 +79,6 @@ that id.
 
 "gantt"                     return 'gantt';
 "dateFormat"\s[^#\n;]+      return 'dateFormat';
-"compact"                   return 'compact';
 "inclusiveEndDates"         return 'inclusiveEndDates';
 "topAxis"                   return 'topAxis';
 "axisFormat"\s[^#\n;]+      return 'axisFormat';
@@ -132,7 +131,6 @@ statement
   | includes {yy.setIncludes($1.substr(9));$$=$1.substr(9);}
   | todayMarker {yy.setTodayMarker($1.substr(12));$$=$1.substr(12);}
   | title {yy.setDiagramTitle($1.substr(6));$$=$1.substr(6);}
-  | compact { yy.enableCompact();$$=$1.substr(8); }
   | acc_title acc_title_value { $$=$2.trim();yy.setAccTitle($$); }
   | acc_descr acc_descr_value { $$=$2.trim();yy.setAccDescription($$); }
   | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }

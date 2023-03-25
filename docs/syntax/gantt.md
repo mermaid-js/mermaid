@@ -259,13 +259,15 @@ More info in: <https://github.com/d3/d3-time#interval_every>
 
 ## Output in compact mode
 
-The compact mode allows you to display multiple tasks in the same row. Compact mode can be enabled for a gantt chart by adding the compact flag to the gantt chart.
+The compact mode allows you to display multiple tasks in the same row. Compact mode can be enabled for a gantt chart by setting the display mode of the graph via preceeding YAML settings.
 
 ```mermaid-example
+---
+displayMode: compact
+---
 gantt
     title A Gantt Diagram
     dateFormat  YYYY-MM-DD
-    compact
 
     section Section
     A task           :a1, 2014-01-01, 30d
@@ -274,10 +276,12 @@ gantt
 ```
 
 ```mermaid
+---
+displayMode: compact
+---
 gantt
     title A Gantt Diagram
     dateFormat  YYYY-MM-DD
-    compact
 
     section Section
     A task           :a1, 2014-01-01, 30d

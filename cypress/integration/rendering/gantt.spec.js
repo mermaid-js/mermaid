@@ -439,11 +439,13 @@ describe('Gantt diagram', () => {
   it('should render when compact is true', () => {
     imgSnapshotTest(
       `
+      ---
+      displayMode: compact
+      ---
       gantt
         title GANTT compact
         dateFormat  HH:mm:ss
         axisFormat  %Hh%M
-        compact
 
         section DB Clean
         Clean: 12:00:00, 10m
