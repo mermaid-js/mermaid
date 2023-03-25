@@ -399,6 +399,8 @@ const render = async function (
   // clean up text CRLFs
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
 
+  text = text.replace(/\s*%%.*\n/gm, '\n'); // remove comments from text to avoid issues with parser
+
   const idSelector = '#' + id;
   const iFrameID = 'i' + id;
   const iFrameID_selector = '#' + iFrameID;
