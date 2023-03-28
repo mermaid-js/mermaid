@@ -399,6 +399,9 @@ const render = async function (
   // clean up text CRLFs
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
 
+  // eslint-disable-next-line unicorn/better-regex
+  text = text.replace(/\s*%%[^{\ninit].*\n/gm, '\n'); // remove comments from text to avoid issues with parser
+
   const idSelector = '#' + id;
   const iFrameID = 'i' + id;
   const iFrameID_selector = '#' + iFrameID;
