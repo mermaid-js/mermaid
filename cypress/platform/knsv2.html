@@ -51,6 +51,9 @@
         font-family: monospace;
         font-size: 72px;
       }
+      /* tspan {
+        font-size: 6px !important;
+      } */
     </style>
   </head>
   <body>
@@ -58,7 +61,7 @@
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 %%
 graph BT
-a{The cat in the hat} -- 1o --> b
+a("`The **cat** in the hat} -- 1o --> b
 a -- 2o --> c
 a -- 3o --> d
 g --2i--> a
@@ -66,8 +69,47 @@ d --1i--> a
 h --3i -->a
 b --> d(The dog in the hog)
 c --> d
+%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
     </pre>
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
+flowchart LR
+b("`The dog in **the** hog... a a a a *very long text* about it
+Word!
+
+Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. `")
+</pre
+    >
+    <pre id="diagram" class="mermaid">
+      %%{init: {"flowchart": {"htmlLabels": true}} }%%
+flowchart LR
+b("`The dog in **the** hog... a a a a *very long text* about it
+Word!
+Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. `")
+</pre
+    >
+    <pre id="diagram" class="mermaid">
+      %%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+b("The dog in the hog... a very<br/>long text about it<br/>Word!")
+</pre>
+    <pre id="diagram" class="mermaid">
+      %%{init: {"flowchart": {"htmlLabels": true}} }%%
+flowchart LR
+b("The dog in the hog... a very<br/>long text about it<br/>Word!")
+</pre>
+    <pre id="diagram" class="mermaid">
+flowchart LR
+subgraph "One"
+  a("`The **cat**
+  in the hat`") -- 1o --> b{{"`The **dog** in the hog`"}}
+end
+subgraph "`**Two**`"
+  c("`The **cat**
+  in the hat`") -- "`1o **ipa**`" --> d("The dog in the hog")
+end
+</pre
+    >
+    <pre id="diagram" class="mermaid">
 mindmap
     id1["`**Start2**
     second line 😎 with long text that is wrapping to the next line`"]
@@ -83,8 +125,9 @@ mindmap
     <pre id="diagram" class="mermaid">
 mindmap
     id1["`**Start** with
-
     a second line 😎`"]
+      id2["`The dog in **the** hog... a *very long text* about it
+Word!`"]
     </pre>
     <pre id="diagram" class="mermaid2">
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
@@ -290,9 +333,9 @@ mindmap
           // defaultRenderer: 'elk',
           useMaxWidth: false,
           // htmlLabels: false,
-          htmlLabels: true,
+          htmlLabels: false,
         },
-        htmlLabels: true,
+        htmlLabels: false,
         gantt: {
           useMaxWidth: false,
         },

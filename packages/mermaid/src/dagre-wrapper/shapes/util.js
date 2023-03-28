@@ -1,4 +1,5 @@
 import createLabel from '../createLabel';
+import { createText } from '../../rendering-util/createText';
 import { getConfig } from '../../config';
 import { decodeEntities } from '../../mermaidAPI';
 import { select } from 'd3';
@@ -27,9 +28,17 @@ export const labelHelper = (parent, node, _classes, isNode) => {
     labelText = typeof node.labelText === 'string' ? node.labelText : node.labelText[0];
   }
 
-  const text = label
-    .node()
-    .appendChild(
+  const textNode = label.node();
+  let text;
+  if (node.labelType === 'markdown') {
+    // text = textNode;
+    text = createText(label, sanitizeText(decodeEntities(labelText), getConfig()), {
+      useHtmlLabels: getConfig().flowchart.htmlLabels,
+      width: node.width || 200,
+      classes: 'markdown-node-label',
+    });
+  } else {
+    text = textNode.appendChild(
       createLabel(
         sanitizeText(decodeEntities(labelText), getConfig()),
         node.labelStyle,
@@ -37,6 +46,7 @@ export const labelHelper = (parent, node, _classes, isNode) => {
         isNode
       )
     );
+  }
 
   // Get the size of the label
   let bbox = text.getBBox();
@@ -52,7 +62,11 @@ export const labelHelper = (parent, node, _classes, isNode) => {
   const halfPadding = node.padding / 2;
 
   // Center the label
-  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
+  if (getConfig().flowchart.htmlLabels) {
+    label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
+  } else {
+    label.attr('transform', 'translate(' + 0 + ', ' + -bbox.height / 2 + ')');
+  }
 
   return { shapeSvg, bbox, halfPadding, label };
 };

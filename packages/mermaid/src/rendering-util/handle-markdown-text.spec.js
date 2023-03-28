@@ -169,6 +169,37 @@ it('markdownToLines - Mixed formatting', () => {
   expect(output).toEqual(expectedOutput);
 });
 
+it('markdownToLines - Mixed formatting', () => {
+  const input = `The dog in **the** hog... a *very long text* about it
+Word!`;
+
+  const expectedOutput = [
+    [
+      { content: 'The', type: 'normal' },
+      { content: 'dog', type: 'normal' },
+      { content: 'in', type: 'normal' },
+      { content: 'the', type: 'strong' },
+      { content: 'hog', type: 'normal' },
+      { content: '.', type: 'normal' },
+      { content: '.', type: 'normal' },
+      { content: '.', type: 'normal' },
+      { content: 'a', type: 'normal' },
+      { content: 'very', type: 'em' },
+      { content: 'long', type: 'em' },
+      { content: 'text', type: 'em' },
+      { content: 'about', type: 'normal' },
+      { content: 'it', type: 'normal' },
+    ],
+    [
+      { content: 'Word', type: 'normal' },
+      { content: '!', type: 'normal' },
+    ],
+  ];
+
+  const output = markdownToLines(input);
+  expect(output).toEqual(expectedOutput);
+});
+
 test('markdownToHTML - Basic test', () => {
   const input = `This is regular text
 Here is a new line

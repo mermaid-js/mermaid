@@ -49,7 +49,7 @@ function addHtmlSpan(element, node, width, classes) {
   if (bbox.width === width) {
     div.style('display', 'table');
     div.style('white-space', 'break-spaces');
-    div.style('width', '200px');
+    div.style('width', width + 'px');
     bbox = div.node().getBoundingClientRect();
   }
 
@@ -70,8 +70,9 @@ function addHtmlSpan(element, node, width, classes) {
 function createTspan(textElement, lineIndex, lineHeight) {
   return textElement
     .append('tspan')
+    .attr('class', 'text-outer-tspan')
     .attr('x', 0)
-    .attr('y', lineIndex * lineHeight + 'em')
+    .attr('y', lineIndex * lineHeight - 0.1 + 'em')
     .attr('dy', lineHeight + 'em');
 }
 
@@ -86,9 +87,13 @@ function createTspan(textElement, lineIndex, lineHeight) {
 function createFormattedText(width, g, structuredText) {
   const lineHeight = 1.1;
 
-  const textElement = g.append('text');
-
-  structuredText.forEach((line, lineIndex) => {
+  const textElement = g.append('text').attr('y', '-10.1');
+  // .attr('dominant-baseline', 'middle')
+  // .attr('text-anchor', 'middle');
+  // .attr('text-anchor', 'middle');
+  let lineIndex = -1;
+  structuredText.forEach((line) => {
+    lineIndex++;
     let tspan = createTspan(textElement, lineIndex, lineHeight);
 
     let words = [...line].reverse();
@@ -108,10 +113,13 @@ function createFormattedText(width, g, structuredText) {
         updateTextContentAndStyles(tspan, wrappedLine);
 
         wrappedLine = [];
-        tspan = createTspan(textElement, ++lineIndex, lineHeight);
+        lineIndex++;
+        tspan = createTspan(textElement, lineIndex, lineHeight);
       }
     }
   });
+  return textElement.node();
+  // return g.node();
 }
 
 /**
@@ -124,12 +132,36 @@ function createFormattedText(width, g, structuredText) {
 function updateTextContentAndStyles(tspan, wrappedLine) {
   tspan.text('');
 
-  wrappedLine.forEach((word) => {
-    tspan
+  wrappedLine.forEach((word, index) => {
+    const innerTspan = tspan
       .append('tspan')
       .attr('font-style', word.type === 'em' ? 'italic' : 'normal')
-      .attr('font-weight', word.type === 'strong' ? 'bold' : 'normal')
-      .text(word.content + ' ');
+      .attr('class', 'text-inner-tspan')
+      .attr('font-weight', word.type === 'strong' ? 'bold' : 'normal');
+    const special = [
+      '<',
+      '>',
+      '&',
+      '"',
+      "'",
+      '.',
+      ',',
+      ':',
+      ';',
+      '!',
+      '?',
+      '(',
+      ')',
+      '[',
+      ']',
+      '{',
+      '}',
+    ];
+    if (index !== 0 && special.includes(word.content)) {
+      innerTspan.text(word.content);
+    } else {
+      innerTspan.text(' ' + word.content);
+    }
   });
 }
 

@@ -313,19 +313,18 @@ const cylinder = (parent, node) => {
 const rect = (parent, node) => {
   const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'node ' + node.classes, true);
 
-  log.trace('Classes = ', node.classes);
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 
-  const totalWidth = bbox.width + node.padding;
-  const totalHeight = bbox.height + node.padding;
+  const totalWidth = bbox.width + node.padding * 2;
+  const totalHeight = bbox.height + node.padding * 2;
   rect
     .attr('class', 'basic label-container')
     .attr('style', node.style)
     .attr('rx', node.rx)
     .attr('ry', node.ry)
-    .attr('x', -bbox.width / 2 - halfPadding)
-    .attr('y', -bbox.height / 2 - halfPadding)
+    .attr('x', -bbox.width / 2 - node.padding)
+    .attr('y', -bbox.height / 2 - node.padding)
     .attr('width', totalWidth)
     .attr('height', totalHeight);
 
@@ -352,7 +351,7 @@ const rect = (parent, node) => {
 const labelRect = (parent, node) => {
   const { shapeSvg } = labelHelper(parent, node, 'label', true);
 
-  log.trace('Classes = ', node.classes);
+  log.info('Classes = ', node.classes);
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 

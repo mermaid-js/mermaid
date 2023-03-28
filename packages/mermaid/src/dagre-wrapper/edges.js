@@ -1,5 +1,6 @@
 import { log } from '../logger';
 import createLabel from './createLabel';
+import { createText } from '../rendering-util/createText';
 import { line, curveBasis, select } from 'd3';
 import { getConfig } from '../config';
 import utils from '../utils';
@@ -14,8 +15,13 @@ export const clear = () => {
 };
 
 export const insertEdgeLabel = (elem, edge) => {
+  const useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
   // Create the actual text element
-  const labelElement = createLabel(edge.label, edge.labelStyle);
+  const labelElement =
+    edge.labelType === 'markdown'
+      ? createText(elem, edge.label, { style: edge.labelStyle, useHtmlLabels })
+      : createLabel(edge.label, edge.labelStyle);
+  log.info('abc82', edge, edge.labelType);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
   const edgeLabel = elem.insert('g').attr('class', 'edgeLabel');
@@ -26,7 +32,7 @@ export const insertEdgeLabel = (elem, edge) => {
 
   // Center the label
   let bbox = labelElement.getBBox();
-  if (evaluate(getConfig().flowchart.htmlLabels)) {
+  if (useHtmlLabels) {
     const div = labelElement.children[0];
     const dv = select(labelElement);
     bbox = div.getBoundingClientRect();
