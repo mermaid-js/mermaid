@@ -5,3 +5,5 @@
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/news/announcements.md](../../packages/mermaid/src/docs/news/announcements.md).
 
 # Announcements
+
+Stay tuned for some exciting announcements!
