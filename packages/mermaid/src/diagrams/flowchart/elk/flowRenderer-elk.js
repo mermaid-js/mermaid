@@ -13,7 +13,7 @@ import { interpolateToCurve, getStylesFromArray } from '../../../utils';
 import ELK from 'elkjs/lib/elk.bundled.js';
 const elk = new ELK();
 
-const portPos = {};
+let portPos = {};
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -767,6 +767,7 @@ export const draw = async function (text, id, _version, diagObj) {
   // Add temporary render element
   diagObj.db.clear();
   nodeDb = {};
+  portPos = {};
   diagObj.db.setGen('gen-2');
   // Parse the graph definition
   diagObj.parser.parse(text);
