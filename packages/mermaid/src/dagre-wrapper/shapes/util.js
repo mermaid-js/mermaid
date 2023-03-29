@@ -34,7 +34,7 @@ export const labelHelper = (parent, node, _classes, isNode) => {
     // text = textNode;
     text = createText(label, sanitizeText(decodeEntities(labelText), getConfig()), {
       useHtmlLabels: getConfig().flowchart.htmlLabels,
-      width: node.width || 200,
+      width: node.width || getConfig().flowchart.wrappingWidth,
       classes: 'markdown-node-label',
     });
   } else {
@@ -67,7 +67,7 @@ export const labelHelper = (parent, node, _classes, isNode) => {
   } else {
     label.attr('transform', 'translate(' + 0 + ', ' + -bbox.height / 2 + ')');
   }
-
+  label.insert('rect', ':first-child');
   return { shapeSvg, bbox, halfPadding, label };
 };
 

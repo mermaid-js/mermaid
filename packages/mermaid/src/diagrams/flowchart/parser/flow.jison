@@ -438,13 +438,13 @@ arrowText:
     ;
 
 text: textToken
-    {$$={text:$1, type: 'text'};}
+    { $$={text:$1, type: 'text'};}
     | text textToken
-    {$$={text:$1.text+''+$2, type: 'text'};}
+    { $$={text:$1.text+''+$2, type: $1.type};}
     | STR
-    {$$={text: $1, type: 'text'};}
+    { $$={text: $1, type: 'text'};}
     | MD_STR
-    {$$={text: $1, type: 'markdown'};}
+    { $$={text: $1, type: 'markdown'};}
     ;
 
 

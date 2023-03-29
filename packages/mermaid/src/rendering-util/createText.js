@@ -83,11 +83,13 @@ function createTspan(textElement, lineIndex, lineHeight) {
  * @param {number} width - The maximum allowed width of the text.
  * @param {object} g - The parent group element to append the formatted text.
  * @param {Array} structuredText - The structured text data to format.
+ * @param addBackground
  */
-function createFormattedText(width, g, structuredText) {
+function createFormattedText(width, g, structuredText, addBackground = false) {
   const lineHeight = 1.1;
-
-  const textElement = g.append('text').attr('y', '-10.1');
+  const labelGroup = g.append('g');
+  let bkg = labelGroup.insert('rect').attr('class', 'background');
+  const textElement = labelGroup.append('text').attr('y', '-10.1');
   // .attr('dominant-baseline', 'middle')
   // .attr('text-anchor', 'middle');
   // .attr('text-anchor', 'middle');
@@ -118,8 +120,20 @@ function createFormattedText(width, g, structuredText) {
       }
     }
   });
-  return textElement.node();
-  // return g.node();
+  if (addBackground) {
+    const bbox = textElement.node().getBBox();
+    const padding = 2;
+    bkg
+      .attr('x', -padding)
+      .attr('y', -padding)
+      .attr('width', bbox.width + 2 * padding)
+      .attr('height', bbox.height + 2 * padding);
+    // .style('fill', 'red');
+
+    return labelGroup.node();
+  } else {
+    return textElement.node();
+  }
 }
 
 /**
@@ -183,9 +197,17 @@ function updateTextContentAndStyles(tspan, wrappedLine) {
 export const createText = (
   el,
   text = '',
-  { style = '', isTitle = false, classes = '', useHtmlLabels = true, isNode = true, width } = {}
+  {
+    style = '',
+    isTitle = false,
+    classes = '',
+    useHtmlLabels = true,
+    isNode = true,
+    width,
+    addSvgBackground = false,
+  } = {}
 ) => {
-  log.info('createText', text, style, isTitle, classes, useHtmlLabels, isNode);
+  log.info('createText', text, style, isTitle, classes, useHtmlLabels, isNode, addSvgBackground);
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
     // text = text.replace(/\\n|\n/g, '<br />');
@@ -203,6 +225,8 @@ export const createText = (
     return vertexNode;
   } else {
     const structuredText = markdownToLines(text);
-    return createFormattedText(width, el, structuredText);
+
+    const svgLabel = createFormattedText(width, el, structuredText, addSvgBackground);
+    return svgLabel;
   }
 };

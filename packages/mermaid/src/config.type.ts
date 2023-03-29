@@ -385,6 +385,7 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
   curve?: string;
   padding?: number;
   defaultRenderer?: string;
+  wrappingWidth?: number;
 }
 
 export interface FontConfig {

@@ -19,7 +19,11 @@ export const insertEdgeLabel = (elem, edge) => {
   // Create the actual text element
   const labelElement =
     edge.labelType === 'markdown'
-      ? createText(elem, edge.label, { style: edge.labelStyle, useHtmlLabels })
+      ? createText(elem, edge.label, {
+          style: edge.labelStyle,
+          useHtmlLabels,
+          addSvgBackground: true,
+        })
       : createLabel(edge.label, edge.labelStyle);
   log.info('abc82', edge, edge.labelType);
 

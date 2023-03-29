@@ -57,51 +57,64 @@
     </style>
   </head>
   <body>
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 %%
-graph BT
-a("`The **cat** in the hat} -- 1o --> b
-a -- 2o --> c
-a -- 3o --> d
-g --2i--> a
-d --1i--> a
-h --3i -->a
-b --> d(The dog in the hog)
-c --> d
-%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
-    </pre>
+graph LR
+  a{"`The **cat** in the hat`"} -- 1o --> b
+  a -- 2o --> c
+  a -- 3o --> d
+  g --2i--> a
+  d --1i--> a
+  h --3i -->a
+  b --> d(The dog in the hog)
+  c --> d
+</pre
+    >
     <pre id="diagram" class="mermaid">
+      %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 flowchart LR
-b("`The dog in **the** hog... a a a a *very long text* about it
+b("`The dog in **the** hog.(1)
+NL`") --"`1o **bold**`"--> c
+</pre
+    >
+    <pre id="diagram" class="mermaid">
+flowchart-elk LR
+b("`The dog in **the** hog.(1)
+NL`") --"`1o **bold**`"--> c
+</pre
+    >
+    <pre id="diagram" class="mermaid">
+flowchart-elk LR
+b("`The dog in **the** hog.(1).. a a a a *very long text* about it
 Word!
 
-Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. `")
+Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. `") --> c
 </pre
     >
     <pre id="diagram" class="mermaid">
       %%{init: {"flowchart": {"htmlLabels": true}} }%%
-flowchart LR
-b("`The dog in **the** hog... a a a a *very long text* about it
+flowchart-elk LR
+b("`The dog in **the** hog(2)... a a a a *very long text* about it
 Word!
 Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. `")
 </pre
     >
     <pre id="diagram" class="mermaid">
       %%{init: {"flowchart": {"htmlLabels": false}} }%%
-flowchart LR
+flowchart-elk LR
 b("The dog in the hog... a very<br/>long text about it<br/>Word!")
 </pre>
     <pre id="diagram" class="mermaid">
       %%{init: {"flowchart": {"htmlLabels": true}} }%%
-flowchart LR
+flowchart-elk LR
 b("The dog in the hog... a very<br/>long text about it<br/>Word!")
 </pre>
     <pre id="diagram" class="mermaid">
-flowchart LR
+flowchart-elk LR
 subgraph "One"
   a("`The **cat**
-  in the hat`") -- 1o --> b{{"`The **dog** in the hog`"}}
+  in the hat`") -- "1o" --> b{{"`The **dog** in the hog`"}}
 end
 subgraph "`**Two**`"
   c("`The **cat**
@@ -129,7 +142,7 @@ mindmap
       id2["`The dog in **the** hog... a *very long text* about it
 Word!`"]
     </pre>
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 flowchart TB
   %% I could not figure out how to use double quotes in labels in Mermaid
@@ -185,7 +198,7 @@ flowchart TB
 </pre
     >
     <br />
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 flowchart TB
   %% I could not figure out how to use double quotes in labels in Mermaid
   subgraph ibm[IBM Espresso CPU]
@@ -241,7 +254,7 @@ flowchart TB
     >
     <br />
     &nbsp;
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
       flowchart LR
   B1 --be be--x B2
   B1 --bo bo--o B3
@@ -274,7 +287,7 @@ flowchart TB
   B6 --> B5
   </pre
     >
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 sequenceDiagram
     Customer->>+Stripe: Makes a payment request
     Stripe->>+Bank: Forwards the payment request to the bank
@@ -287,7 +300,7 @@ sequenceDiagram
     Customer->>+Merchant: Receives goods or services
         </pre
     >
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 mindmap
   root((mindmap))
     Origins
@@ -307,7 +320,7 @@ mindmap
       Mermaid
     </pre>
     <br />
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
   example-diagram
     </pre>
 
@@ -332,8 +345,8 @@ mindmap
         flowchart: {
           // defaultRenderer: 'elk',
           useMaxWidth: false,
-          // htmlLabels: false,
           htmlLabels: false,
+          // htmlLabels: true,
         },
         htmlLabels: false,
         gantt: {

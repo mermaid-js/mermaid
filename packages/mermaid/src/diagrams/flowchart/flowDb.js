@@ -143,6 +143,7 @@ export const addSingleLink = function (_start, _end, type) {
   // log.info('Got edge...', start, end);
 
   const edge = { start: start, end: end, type: undefined, text: '', labelType: 'text' };
+  log.info('abc78 Got edge...', edge);
   const linkTextObj = type.text;
 
   if (linkTextObj !== undefined) {
@@ -163,6 +164,7 @@ export const addSingleLink = function (_start, _end, type) {
   edges.push(edge);
 };
 export const addLink = function (_start, _end, type) {
+  log.info('addLink (abc78)', _start, _end, type);
   let i, j;
   for (i = 0; i < _start.length; i++) {
     for (j = 0; j < _end.length; j++) {
