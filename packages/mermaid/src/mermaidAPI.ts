@@ -534,16 +534,16 @@ const render = async function (
 
   attachFunctions();
 
+  if (parseEncounteredException) {
+    throw parseEncounteredException;
+  }
+
   // -------------------------------------------------------------------------------
   // Remove the temporary HTML element if appropriate
   const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
   const node = select(tmpElementSelector).node();
   if (node && 'remove' in node) {
     node.remove();
-  }
-
-  if (parseEncounteredException) {
-    throw parseEncounteredException;
   }
 
   return {
