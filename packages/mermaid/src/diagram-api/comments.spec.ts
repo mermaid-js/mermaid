@@ -29,6 +29,7 @@ graph TD
 
 %% This is another comment
 %%{init: {'theme': 'forest'}}%%
+%%{ init: {'theme': 'space before init'}}%%
 %%{init: {'theme': 'space after ending'}}%% 
 graph TD
 	A-->B
@@ -37,17 +38,18 @@ graph TD
 %% This is a comment
 `;
     expect(cleanupComments(text)).toMatchInlineSnapshot(`
-			"
+      "
 
-			%%{init: {'theme': 'forest'}}%%
-			%%{init: {'theme': 'space after ending'}}%% 
-			graph TD
-				A-->B
+      %%{init: {'theme': 'forest'}}%%
+      %%{ init: {'theme': 'space before init'}}%%
+      %%{init: {'theme': 'space after ending'}}%% 
+      graph TD
+      	A-->B
 
-				B-->C
+      	B-->C
 
-			"
-		`);
+      "
+    `);
   });
 
   it('should remove indented comments', () => {
