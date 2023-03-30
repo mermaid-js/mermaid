@@ -14,11 +14,8 @@ graph TD
 %% This is a comment
 `;
     expect(cleanupComments(text)).toMatchInlineSnapshot(`
-      "
-
-      graph TD
+      "graph TD
       	A-->B
-
       "
     `);
   });
@@ -38,16 +35,13 @@ graph TD
 %% This is a comment
 `;
     expect(cleanupComments(text)).toMatchInlineSnapshot(`
-      "
-
-      %%{init: {'theme': 'forest'}}%%
+      "%%{init: {'theme': 'forest'}}%%
       %%{ init: {'theme': 'space before init'}}%%
       %%{init: {'theme': 'space after ending'}}%% 
       graph TD
       	A-->B
 
       	B-->C
-
       "
     `);
   });
@@ -61,11 +55,39 @@ graph TD
 	C-->D
 `;
     expect(cleanupComments(text)).toMatchInlineSnapshot(`
+      "graph TD
+	A-->B
+	C-->D
       "
-      graph TD
-      	A-->B
+    `);
+  });
 
-      	C-->D
+  it('should remove empty newlines from start', () => {
+    const text = `
+
+
+
+
+%% This is a comment
+graph TD
+	A-->B
+`;
+    expect(cleanupComments(text)).toMatchInlineSnapshot(`
+      "graph TD
+      	A-->B
+      "
+    `);
+  });
+
+  it('should remove comments at end of text with no newline', () => {
+    const text = `
+graph TD
+	A-->B
+%% This is a comment`;
+
+    expect(cleanupComments(text)).toMatchInlineSnapshot(`
+      "graph TD
+	A-->B
       "
     `);
   });

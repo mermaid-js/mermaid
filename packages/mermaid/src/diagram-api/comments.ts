@@ -4,5 +4,5 @@
  * @returns cleaned text
  */
 export const cleanupComments = (text: string): string => {
-  return text.trimStart().replace(/^\s*%%(?!{)[^\n]+/gm, '');
+  return text.trimStart().replace(/^\s*%%(?!{)[^\n]+\n?/gm, '');
 };
