@@ -3,6 +3,7 @@ import { select, selectAll } from 'd3';
 import svgDraw, { drawText, fixLifeLineHeights } from './svgDraw';
 import { log } from '../../logger';
 import common from '../common/common';
+import * as svgDrawCommon from '../common/svgDrawCommon';
 import * as configApi from '../../config';
 import assignWithDepth from '../../assignWithDepth';
 import utils from '../../utils';
@@ -225,7 +226,7 @@ const drawNote = function (elem: any, noteModel: NoteModel) {
   bounds.bumpVerticalPos(conf.boxMargin);
   noteModel.height = conf.boxMargin;
   noteModel.starty = bounds.getVerticalPos();
-  const rect = svgDraw.getNoteRect();
+  const rect = svgDrawCommon.getNoteRect();
   rect.x = noteModel.startx;
   rect.y = noteModel.starty;
   rect.width = noteModel.width || conf.width;
@@ -233,7 +234,7 @@ const drawNote = function (elem: any, noteModel: NoteModel) {
 
   const g = elem.append('g');
   const rectElem = svgDraw.drawRect(g, rect);
-  const textObj = svgDraw.getTextObj();
+  const textObj = svgDrawCommon.getTextObj();
   textObj.x = noteModel.startx;
   textObj.y = noteModel.starty;
   textObj.width = rect.width;
@@ -347,7 +348,7 @@ function boundMessage(_diagram, msgModel): number {
 const drawMessage = function (diagram, msgModel, lineStartY: number, diagObj: Diagram) {
   const { startx, stopx, starty, message, type, sequenceIndex, sequenceVisible } = msgModel;
   const textDims = utils.calculateTextDimensions(message, messageFont(conf));
-  const textObj = svgDraw.getTextObj();
+  const textObj = svgDrawCommon.getTextObj();
   textObj.x = startx;
   textObj.y = starty + 10;
   textObj.width = stopx - startx;

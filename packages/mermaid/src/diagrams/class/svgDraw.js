@@ -440,7 +440,6 @@ const buildLegacyDisplay = function (text) {
     }
 
     const parameters = text.substring(methodStart + 1, methodEnd);
-    const classifier = text.substring(methodEnd + 1, 1);
     cssStyle = parseClassifier(text.substring(methodEnd + 1, methodEnd + 2));
 
     displayText = visibility + methodName + '(' + parseGenericTypes(parameters.trim()) + ')';
@@ -462,6 +461,7 @@ const buildLegacyDisplay = function (text) {
     cssStyle,
   };
 };
+
 /**
  * Adds a <tspan> for a member in a diagram
  *

@@ -174,16 +174,4 @@ describe('svgDraw', function () {
       expect(rect.lower).toHaveBeenCalled();
     });
   });
-  describe('sanitizeUrl', function () {
-    it('should sanitize malicious urls', function () {
-      const maliciousStr = 'javascript:script:alert(1)';
-      const result = svgDraw.sanitizeUrl(maliciousStr);
-      expect(result).not.toContain('javascript:alert(1)');
-    });
-    it('should not sanitize non dangerous urls', function () {
-      const maliciousStr = 'javajavascript:script:alert(1)';
-      const result = svgDraw.sanitizeUrl(maliciousStr);
-      expect(result).not.toContain('javascript:alert(1)');
-    });
-  });
 });
