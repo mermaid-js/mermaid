@@ -14,13 +14,13 @@ graph TD
 %% This is a comment
 `;
     expect(cleanupComments(text)).toMatchInlineSnapshot(`
-			"
+      "
 
-			graph TD
-				A-->B
+      graph TD
+      	A-->B
 
-			"
-		`);
+      "
+    `);
   });
 
   it('should keep init statements when removing comments', () => {
@@ -61,12 +61,12 @@ graph TD
 	C-->D
 `;
     expect(cleanupComments(text)).toMatchInlineSnapshot(`
-			"
-			graph TD
-				A-->B
+      "
+      graph TD
+      	A-->B
 
-				C-->D
-			"
-		`);
+      	C-->D
+      "
+    `);
   });
 });
