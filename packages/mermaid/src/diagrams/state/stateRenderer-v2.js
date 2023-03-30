@@ -382,7 +382,7 @@ const getDir = (parsedItem, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
  * @param _version
  * @param diag
  */
-export const draw = function (text, id, _version, diag) {
+export const draw = async function (text, id, _version, diag) {
   log.info('Drawing state diagram (v2)', id);
   // diag.sb.clear();
   nodeDb = {};
@@ -436,7 +436,7 @@ export const draw = function (text, id, _version, diag) {
   // Run the renderer. This is what draws the final graph.
 
   const element = root.select('#' + id + ' g');
-  render(element, g, ['barb'], CSS_DIAGRAM, id);
+  await render(element, g, ['barb'], CSS_DIAGRAM, id);
 
   const padding = 8;
 
