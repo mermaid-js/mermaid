@@ -226,6 +226,48 @@ pie
 
 ### Git graph [experimental - <a href="https://mermaid.live/edit#pako:eNqNkMFugzAMhl8F-VyVAR1tOW_aA-zKxSSGRCMJCk6lCvHuNZPKZdM0n-zf3_8r8QIqaIIGMqnB8kfEybQ--y4VnLP8-9RF9Mpkmm40hmlnDKmvkPiH_kfS7nFo_VN0FAf6XwocQGgxa_nGsm1bYEOOWmik1dRjGrmF1q-Cpkkj07u2HCI0PY4zHQATh8-7V9BwTPSE3iwOEd1OjQE1iWkBvk_bzQY7s0Sq4Hs7bHqKo8iGeZqbPN_WR7mpSd1RHpvPVhuMbG7XOq_L-oJlRfW5wteq0qorrpe-PBW9Pr8UJcK6rg-BLYPQ">live editor</a>]
 
+### Bar chart (using gantt chart) [<a href="https://mermaid-js.github.io/mermaid/#/gantt">docs</a> - <a href="https://mermaid.live/edit#pako:eNpdkc1qxCAQgF9FhMIWls2P2WSTY2n7Ar30kMusmkRINOikdFny7tVNUth40PHzY3Bm7pQbIWlFW9CItSZ-ocJekjewhHdgkRwE3BxxSnNJenBIplEAytfFDuGnsQMgId8Lgl_lVvTiar1AJzkqo0lSxnm6oCIhFYmP_twrWbwilvvtIYVor7FVyv6l7FkpsmxNVG5KCHZ5WBwv5LxJ551RbP9JNiOhRzpIX6MSvnv38FpT7OQga1r5UMgGph5rWuvZqzCh-bppTiu0kzzSpYXvCloLwzP8EAqNpVUDvfOwNyCkv94p3sbHpJRDn5Eb3ag28Mn2HneIo6uiKDyfWoXddD1xM0ROiTDF7qfMozzNL5AymRcMzowJfk3KS5NmSSN8hSnQeZ7_AEPUmyE">live editor</a>]
+
+```
+gantt
+    title Bar chart (days since last update)
+    dateFormat  X
+    axisFormat %s
+
+    section 19062
+    71   : 0, 71
+    section 19401
+    36   : 0, 36
+    section 193
+    34   : 0, 34
+    section 7441
+    9    : 0, 9
+    section 1300
+    5    : 0, 5
+    section 1701
+    1    : 0, 1
+```
+
+```mermaid
+gantt
+    title Bar chart (days since last update)
+    dateFormat  X
+    axisFormat %s
+
+    section 19062
+    71   : 0, 71
+    section 19401
+    36   : 0, 36
+    section 193
+    34   : 0, 34
+    section 7441
+    9    : 0, 9
+    section 1300
+    5    : 0, 5
+    section 1701
+    1    : 0, 1
+```
+
 ### User Journey diagram [<a href="https://mermaid-js.github.io/mermaid/#/user-journey">docs</a> - <a href="https://mermaid.live/edit#pako:eNplkMFuwjAQRH9l5TMiTVIC-FqqnjhxzWWJN4khsSN7XRSh_HsdKBVt97R6Mzsj-yoqq0hIAXCywRkaSwNxWHNHsB_hYt1ZmwYUfiueKtbWwIcFtjf5zgH2eCZgQgkrCXt64GgMg2fUzkvIn5Xd_V5COtMFvCH_62ht_5yk7MU8sn61HDTfxD8VYiF6cj1qFd94nWkpuKWYKWRcFdUYOi5FaaZoDYNCpnel2Toha-w8LQQGtofRVEKyC_Qw7TQ2DvsfV2dRUTy6Ch6H-UMb7TlGVtbUupl5cF3ELfPgZZLM8rLR3IbjsrJ94rVq0XH7uS2SIis2mOVUrHNc5bmqjul2U2evaa3WL2mGYpqmL2BGiho">live editor</a>]
 
 ```
@@ -322,64 +364,6 @@ BiRel(customerA, SystemAA, "Uses")
 BiRel(SystemAA, SystemE, "Uses")
 Rel(SystemAA, SystemC, "Sends e-mails", "SMTP")
 Rel(SystemC, customerA, "Sends e-mails to")
-```
-
-### Bar chart (using gantt chart) [<a href="https://mermaid-js.github.io/mermaid/#/gantt">docs</a> - <a href="https://mermaid.live/edit#pako:eNplks1qxCAQgF9FhMIWls2Pbv6Ope0L9NJDLrNqEiHRJU5KlyXvXtMkC5t4kPHzY4YZvVNhpaIFrcEglob4hRpbRd6gJ6KBHslBws0Rp41QpAWHZLhKQPU621P4afsOkJDvGcGvdgt6caWZoVMCtTUkysMknlEa-a0g4dFHe2lBafiQwq3Ew0ViySqx5FlKwyzfOz7a5mKLxR8W32TifKmWr0q-zxPxbCbZKmUbg4VLH-fVOG8MHi2F4tWI94XStffHECN6pJ3yY9fSP-h9ui0pNqpTJS18KFUFQ4slLc3oVRjQft2MoAX2gzrS-VXfNdQ9dM_wQ2q0PS0qaJ2HrQWp_PFO8Xb9_zzaoc8orKl0PfGhbz1uEK-uCILp-lRrbIbLSdgucFpOH6v5yZMgiZMMYqaSlMGZMSkuUZ5VMY8q6TuMgY7j-AcU470_">live editor</a>]
-
-```
-gantt
-    title Bar chart (days since last update)
-    dateFormat  X
-    axisFormat %s
-
-    section 19062
-    71   : 0, 71
-    section 19061
-    70   : 0, 70
-    section 19401
-    36   : 0, 36
-    section 7089
-    36   : 0, 36   
-    section 193
-    34   : 0, 34
-    section 7441
-    9   : 0, 9   
-    section 1148
-    8   : 0, 8
-    section 1300
-    5   : 0, 5
-    section 1411
-    2   : 0, 2   
-    section 1701
-    1   : 0, 1
-```
-
-```mermaid
-gantt
-    title Bar chart (days since last update)
-    dateFormat  X
-    axisFormat %s
-
-    section 19062
-    71   : 0, 71
-    section 19061
-    70   : 0, 70
-    section 19401
-    36   : 0, 36
-    section 7089
-    36   : 0, 36   
-    section 193
-    34   : 0, 34
-    section 7441
-    9   : 0, 9   
-    section 1148
-    8   : 0, 8
-    section 1300
-    5   : 0, 5
-    section 1411
-    2   : 0, 2   
-    section 1701
-    1   : 0, 1
 ```
 
 ## Release
