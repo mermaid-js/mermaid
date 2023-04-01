@@ -257,9 +257,41 @@ The pattern is:
 
 More info in: <https://github.com/d3/d3-time#interval_every>
 
+## Output in compact mode
+
+The compact mode allows you to display multiple tasks in the same row. Compact mode can be enabled for a gantt chart by setting the display mode of the graph via preceeding YAML settings.
+
+```mermaid-example
+---
+displayMode: compact
+---
+gantt
+    title A Gantt Diagram
+    dateFormat  YYYY-MM-DD
+
+    section Section
+    A task           :a1, 2014-01-01, 30d
+    Another task     :a2, 2014-01-20, 25d
+    Another one      :a3, 2014-02-10, 20d
+```
+
+```mermaid
+---
+displayMode: compact
+---
+gantt
+    title A Gantt Diagram
+    dateFormat  YYYY-MM-DD
+
+    section Section
+    A task           :a1, 2014-01-01, 30d
+    Another task     :a2, 2014-01-20, 25d
+    Another one      :a3, 2014-02-10, 20d
+```
+
 ## Comments
 
-Comments can be entered within a gantt chart, which will be ignored by the parser. Comments need to be on their own line and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
+Comments can be entered within a gantt chart, which will be ignored by the parser. Comments need to be on their own line and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax.
 
 ```mermaid-example
 gantt

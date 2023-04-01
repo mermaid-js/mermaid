@@ -10,7 +10,6 @@ describe('Entity Relationship Diagram', () => {
       `,
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('should render an ER diagram with a recursive relationship', () => {
@@ -23,7 +22,6 @@ describe('Entity Relationship Diagram', () => {
       `,
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('should render an ER diagram with multiple relationships between the same two entities', () => {
@@ -35,7 +33,6 @@ describe('Entity Relationship Diagram', () => {
       `,
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('should render a cyclical ER diagram', () => {
@@ -48,7 +45,6 @@ describe('Entity Relationship Diagram', () => {
       `,
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('should render a not-so-simple ER diagram', () => {
@@ -66,7 +62,6 @@ describe('Entity Relationship Diagram', () => {
       `,
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('should render multiple ER diagrams', () => {
@@ -85,7 +80,6 @@ describe('Entity Relationship Diagram', () => {
       ],
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('should render an ER diagram with blank or empty labels', () => {
@@ -98,7 +92,6 @@ describe('Entity Relationship Diagram', () => {
       `,
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('should render an ER diagrams when useMaxWidth is true (default)', () => {
@@ -151,7 +144,6 @@ describe('Entity Relationship Diagram', () => {
       `,
       { er: { useMaxWidth: false } }
     );
-    cy.get('svg');
   });
 
   it('should render entities with and without attributes', () => {
@@ -164,7 +156,6 @@ describe('Entity Relationship Diagram', () => {
       `,
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('should render entities with generic and array attributes', () => {
@@ -179,7 +170,6 @@ describe('Entity Relationship Diagram', () => {
       `,
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('should render entities with length in attributes type', () => {
@@ -193,7 +183,6 @@ describe('Entity Relationship Diagram', () => {
       `,
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('should render entities and attributes with big and small entity names', () => {
@@ -209,7 +198,6 @@ describe('Entity Relationship Diagram', () => {
       `,
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('should render entities with keys', () => {
@@ -228,7 +216,6 @@ describe('Entity Relationship Diagram', () => {
       `,
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('should render entities with comments', () => {
@@ -247,7 +234,6 @@ describe('Entity Relationship Diagram', () => {
       `,
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('should render entities with keys and comments', () => {
@@ -267,7 +253,6 @@ describe('Entity Relationship Diagram', () => {
       `,
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('should render entities with aliases', () => {
@@ -285,7 +270,6 @@ describe('Entity Relationship Diagram', () => {
       `,
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('1433: should render a simple ER diagram with a title', () => {

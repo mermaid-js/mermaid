@@ -13,7 +13,7 @@ import classDiagramV2 from '../diagrams/class/classDetector-V2.js';
 import state from '../diagrams/state/stateDetector.js';
 import stateV2 from '../diagrams/state/stateDetector-V2.js';
 import journey from '../diagrams/user-journey/journeyDetector.js';
-import error from '../diagrams/error/errorDetector.js';
+import errorDiagram from '../diagrams/error/errorDiagram.js';
 import flowchartElk from '../diagrams/flowchart/elk/detector.js';
 import timeline from '../diagrams/timeline/detector.js';
 import mindmap from '../diagrams/mindmap/detector.js';
@@ -28,6 +28,9 @@ export const addDiagrams = () => {
   // This is added here to avoid race-conditions.
   // We could optimize the loading logic somehow.
   hasLoadedDiagrams = true;
+  registerDiagram('error', errorDiagram, (text) => {
+    return text.toLowerCase().trim() === 'error';
+  });
   registerDiagram(
     '---',
     // --- diagram type may appear if YAML front-matter is not parsed correctly
@@ -57,7 +60,6 @@ export const addDiagrams = () => {
   );
   // Ordering of detectors is important. The first one to return true will be used.
   registerLazyLoadedDiagrams(
-    error,
     c4,
     classDiagramV2,
     classDiagram,

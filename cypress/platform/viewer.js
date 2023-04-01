@@ -47,7 +47,6 @@ const contentLoaded = async function () {
     await mermaid2.registerExternalDiagrams([externalExample]);
     mermaid2.initialize(graphObj.mermaid);
     await mermaid2.run();
-    markRendered();
   }
 };
 
@@ -123,7 +122,6 @@ const contentLoadedApi = async function () {
       bindFunctions(div);
     }
   }
-  markRendered();
 };
 
 if (typeof document !== 'undefined') {
@@ -135,10 +133,10 @@ if (typeof document !== 'undefined') {
     function () {
       if (this.location.href.match('xss.html')) {
         this.console.log('Using api');
-        void contentLoadedApi();
+        void contentLoadedApi().finally(markRendered);
       } else {
         this.console.log('Not using api');
-        void contentLoaded();
+        void contentLoaded().finally(markRendered);
       }
     },
     false

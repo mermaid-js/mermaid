@@ -16,6 +16,7 @@ export interface InjectUtils {
 export interface DiagramDb {
   clear?: () => void;
   setDiagramTitle?: (title: string) => void;
+  setDisplayMode?: (title: string) => void;
   getAccTitle?: () => string;
   getAccDescription?: () => string;
   bindFunctions?: (element: Element) => void;
