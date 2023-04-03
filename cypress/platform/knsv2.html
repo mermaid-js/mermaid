@@ -60,9 +60,9 @@
     <pre id="diagram" class="mermaid">
       %%{init: {"flowchart": {"htmlLabels": false}} }%%
 flowchart-elk LR
-b(`The dog in **the** hog(2)... a a a a *very long text* about it
+b("`The dog in **the** hog(2)... a a a a *very long text* about it
 Word!
-Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. `)
+Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. `")
 </pre
     >
     <pre id="diagram" class="mermaid2">
@@ -89,10 +89,12 @@ mindmap
     </pre>
     <pre id="diagram" class="mermaid">
 mindmap
-    id1["`**Start** with
-    a second line 😎`"]
-      id2["`The dog in **the** hog... a *very long text* about it
-Word!`"]
+    id1["`**Root** with
+a second line
+Unicode works too: 🤓`"]
+      id2["`The dog in **the** hog... a *very long text* that wraps to a new line`"]
+      id3[Regular labels still works]
+
     </pre>
     <pre id="diagram" class="mermaid2">
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
