@@ -58,91 +58,23 @@
   </head>
   <body>
     <pre id="diagram" class="mermaid">
-flowchart LR
-    A:::someclass --> B[`The **cat** in the hat`]:::someclass
-    id1(Start)-->id2(Stop)
-    style id1 fill:#f9f,stroke:#333,stroke-width:4px
-    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
-    classDef someclass fill:#f96
-</pre
-    >
-    <pre id="diagram" class="mermaid">
-%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
-%%
-flowchart LR
-    A:::someclass --> B[`The **cat** in the hat`]:::someclass
-    id1(Start)-->id2(Stop)
-    style id1 fill:#f9f,stroke:#333,stroke-width:4px
-    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
-    classDef someclass fill:#f96
-</pre
-    >
-    <pre id="diagram" class="mermaid">
-%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
-%%
-graph LR
-  a{`The **cat** in the hat`} -- 1o --> b
-  a -- 2o --> c
-  a -- 3o --> d
-  g --2i--> a
-  d --1i--> a
-  h --3i -->a
-  b --> d(The dog in the hog)
-  c --> d
-</pre
-    >
-    <pre id="diagram" class="mermaid">
-      %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
-flowchart LR
-b(`The dog in **the** hog.(1)
-NL`) --`1o **bold**`--> c
-</pre
-    >
-    <pre id="diagram" class="mermaid">
-flowchart-elk LR
-b(`The dog in **the** hog.(1)
-NL`) --`1o **bold**`--> c
-</pre
-    >
-    <pre id="diagram" class="mermaid">
-flowchart-elk LR
-b(`The dog in **the** hog.(1).. a a a a *very long text* about it
-Word!
-
-Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. `) --> c
-</pre
-    >
-    <pre id="diagram" class="mermaid">
-      %%{init: {"flowchart": {"htmlLabels": true}} }%%
+      %%{init: {"flowchart": {"htmlLabels": false}} }%%
 flowchart-elk LR
 b(`The dog in **the** hog(2)... a a a a *very long text* about it
 Word!
 Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. `)
 </pre
     >
-    <pre id="diagram" class="mermaid">
-      %%{init: {"flowchart": {"htmlLabels": false}} }%%
+    <pre id="diagram" class="mermaid2">
 flowchart-elk LR
 b("The dog in the hog... a very<br/>long text about it<br/>Word!")
 </pre>
-    <pre id="diagram" class="mermaid">
-      %%{init: {"flowchart": {"htmlLabels": true}} }%%
+    <pre id="diagram" class="mermaid2">
 flowchart-elk LR
 b("The dog in the hog... a very<br/>long text about it<br/>Word!")
 </pre>
-    <pre id="diagram" class="mermaid">
-flowchart-elk LR
-subgraph "One"
-  a(`The **cat**
-  in the hat`) -- "1o" --> b{{`The **dog** in the hog`}}
-end
-subgraph `**Two**`
-  c(`The **cat**
-  in the hat`) -- `1o **ipa**` --> d("The dog in the hog")
-end
-</pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 mindmap
     id1[`**Start2**
     second line 😎 with long text that is wrapping to the next line`]
@@ -157,12 +89,12 @@ mindmap
     </pre>
     <pre id="diagram" class="mermaid">
 mindmap
-    id1[`**Start** with
-    a second line 😎`]
-      id2[`The dog in **the** hog... a *very long text* about it
-Word!`]
+    id1["`**Start** with
+    a second line 😎`"]
+      id2["`The dog in **the** hog... a *very long text* about it
+Word!`"]
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 flowchart TB
   %% I could not figure out how to use double quotes in labels in Mermaid
@@ -218,7 +150,7 @@ flowchart TB
 </pre
     >
     <br />
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 flowchart TB
   %% I could not figure out how to use double quotes in labels in Mermaid
   subgraph ibm[IBM Espresso CPU]
@@ -274,7 +206,7 @@ flowchart TB
     >
     <br />
     &nbsp;
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
       flowchart LR
   B1 --be be--x B2
   B1 --bo bo--o B3
@@ -307,7 +239,7 @@ flowchart TB
   B6 --> B5
   </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 sequenceDiagram
     Customer->>+Stripe: Makes a payment request
     Stripe->>+Bank: Forwards the payment request to the bank
@@ -320,7 +252,7 @@ sequenceDiagram
     Customer->>+Merchant: Receives goods or services
         </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 mindmap
   root((mindmap))
     Origins
@@ -340,7 +272,7 @@ mindmap
       Mermaid
     </pre>
     <br />
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
   example-diagram
     </pre>
 
@@ -368,7 +300,7 @@ mindmap
           htmlLabels: false,
           // htmlLabels: true,
         },
-        htmlLabels: false,
+        // htmlLabels: true,
         gantt: {
           useMaxWidth: false,
         },

@@ -42,9 +42,9 @@
 // !(-\()            return 'NODE_ID';
 [^\(\[\n\-\)\{\}]+         return 'NODE_ID';
 <<EOF>>            return 'EOF';
-<NODE>[`]          { this.begin("NSTR2");}
-<NSTR2>[^`]+        { return "NODE_DESCR";}
-<NSTR2>[`]          { this.popState();}
+<NODE>["][`]          { this.begin("NSTR2");}
+<NSTR2>[^`"]+        { return "NODE_DESCR";}
+<NSTR2>[`]["]          { this.popState();}
 <NODE>["]          { yy.getLogger().trace('Starting NSTR');this.begin("NSTR");}
 <NSTR>[^"]+        { yy.getLogger().trace('description:', yytext); return "NODE_DESCR";}
 <NSTR>["]          {this.popState();}
