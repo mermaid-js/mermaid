@@ -6,6 +6,12 @@
 
 # Blog
 
+## [Automatic text wrapping in flowcharts is here!](https://wwww.mermaidchart.com/blog/posts/automatic-text-wrapping-in-flowcharts-is-here)
+
+3 April 2023 · 3 mins
+
+Markdown Strings reduce the hassle # Starting from v10.
+
 ## [Mermaid Chart officially launched with sharable diagram links and presentation mode](https://www.mermaidchart.com/blog/posts/mermaid-chart-officially-launched-with-sharable-diagram-links-and-presentation-mode/)
 
 27 March 2023 · 2 mins
