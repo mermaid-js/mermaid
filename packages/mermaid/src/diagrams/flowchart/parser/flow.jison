@@ -38,9 +38,9 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <acc_descr_multiline>[\}]                       { this.popState(); }
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 // <acc_descr_multiline>.*[^\n]*                    {  return "acc_descr_line"}
-["][`]          { this.begin("md_string");}
-<md_string>[^`"]+        { return "MD_STR";}
-<md_string>[`]["]          { this.popState();}
+[`]          { this.begin("md_string");}
+<md_string>[^`]+        { return "MD_STR";}
+<md_string>[`]          { this.popState();}
 ["]                     this.begin("string");
 <string>["]             this.popState();
 <string>[^"]*           return "STR";

@@ -997,7 +997,6 @@ export const insertNode = (elem, node, dir) => {
     el.attr('class', 'node default ' + node.class);
   }
 
-  /* MC: 7e790808-9c49-4f74-93de-15c22872377f */
   nodeElems[node.id] = newEl;
 
   if (node.haveCallback) {
