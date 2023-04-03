@@ -32,7 +32,14 @@ import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility'
 import { parseDirective } from './directiveUtils';
 
 // diagram names that support classDef statements
-const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram', 'stateDiagram-v2'];
+const CLASSDEF_DIAGRAMS = [
+  'graph',
+  'flowchart',
+  'flowchart-v2',
+  'flowchart-elk',
+  'stateDiagram',
+  'stateDiagram-v2',
+];
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
   'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';

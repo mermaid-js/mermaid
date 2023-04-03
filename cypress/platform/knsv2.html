@@ -51,27 +51,48 @@
         font-family: monospace;
         font-size: 72px;
       }
+      /* tspan {
+        font-size: 6px !important;
+      } */
     </style>
   </head>
   <body>
     <pre id="diagram" class="mermaid">
-%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
-graph BT
-a{The cat in the hat} -- 1o --> b
-a -- 2o --> c
-a -- 3o --> d
-g --2i--> a
-d --1i--> a
-h --3i -->a
-b --> d(The dog in the hog)
-c --> d
-    </pre>
+      %%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart-elk LR
+b(`The dog in **the** hog(2)... a a a a *very long text* about it
+Word!
+Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. `)
+</pre
+    >
     <pre id="diagram" class="mermaid2">
-flowchart-elk TB
-      a --> b
-      a --> c
-      b --> d
-      c --> d
+flowchart-elk LR
+b("The dog in the hog... a very<br/>long text about it<br/>Word!")
+</pre>
+    <pre id="diagram" class="mermaid2">
+flowchart-elk LR
+b("The dog in the hog... a very<br/>long text about it<br/>Word!")
+</pre>
+    >
+    <pre id="diagram" class="mermaid2">
+mindmap
+    id1[`**Start2**
+    second line 😎 with long text that is wrapping to the next line`]
+      id2[`Child **with bold** text`]
+      id3[`Children of which some
+      is using *italic type of* text`]
+      id4[Child]
+      id5[`Child
+      Row
+      and another
+      `]
+    </pre>
+    <pre id="diagram" class="mermaid">
+mindmap
+    id1["`**Start** with
+    a second line 😎`"]
+      id2["`The dog in **the** hog... a *very long text* about it
+Word!`"]
     </pre>
     <pre id="diagram" class="mermaid2">
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
@@ -272,12 +293,14 @@ mindmap
       mermaid.initialize({
         theme: 'forest',
         startOnLoad: true,
-        logLevel: 5,
+        logLevel: 0,
         flowchart: {
           // defaultRenderer: 'elk',
           useMaxWidth: false,
-          htmlLabels: true,
+          htmlLabels: false,
+          // htmlLabels: true,
         },
+        // htmlLabels: true,
         gantt: {
           useMaxWidth: false,
         },

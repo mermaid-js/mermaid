@@ -3,6 +3,7 @@ import { insertNode } from '../../../dagre-wrapper/nodes.js';
 import insertMarkers from '../../../dagre-wrapper/markers.js';
 import { insertEdgeLabel } from '../../../dagre-wrapper/edges.js';
 import { findCommonAncestor } from './render-utils';
+import { labelHelper } from '../../../dagre-wrapper/shapes/util';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
 import { getConfig } from '../../../config';
 import { log } from '../../../logger';
@@ -12,7 +13,7 @@ import { interpolateToCurve, getStylesFromArray } from '../../../utils';
 import ELK from 'elkjs/lib/elk.bundled.js';
 const elk = new ELK();
 
-const portPos = {};
+let portPos = {};
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -52,7 +53,7 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
     if (vertex.classes.length > 0) {
       classStr = vertex.classes.join(' ');
     }
-
+    classStr = classStr + ' flowchart-label';
     const styles = getStylesFromArray(vertex.styles);
 
     // Use vertex id as text in the box if no text is provided by the graph definition
@@ -61,40 +62,6 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
     // We create a SVG label, either by delegating to addHtmlLabel or manually
     let vertexNode;
     const labelData = { width: 0, height: 0 };
-    if (evaluate(getConfig().flowchart.htmlLabels)) {
-      // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
-      const node = {
-        label: vertexText.replace(
-          /fa[blrs]?:fa-[\w-]+/g,
-          (s) => `<i class='${s.replace(':', ' ')}'></i>`
-        ),
-      };
-      vertexNode = addHtmlLabel(svg, node).node();
-      const bbox = vertexNode.getBBox();
-      labelData.width = bbox.width;
-      labelData.height = bbox.height;
-      labelData.labelNode = vertexNode;
-      vertexNode.parentNode.removeChild(vertexNode);
-    } else {
-      const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
-      svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
-
-      const rows = vertexText.split(common.lineBreakRegex);
-
-      for (const row of rows) {
-        const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-        tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
-        tspan.setAttribute('dy', '1em');
-        tspan.setAttribute('x', '1');
-        tspan.textContent = row;
-        svgLabel.appendChild(tspan);
-      }
-      vertexNode = svgLabel;
-      const bbox = vertexNode.getBBox();
-      labelData.width = bbox.width;
-      labelData.height = bbox.height;
-      labelData.labelNode = vertexNode;
-    }
 
     const ports = [
       {
@@ -186,11 +153,13 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
       default:
         _shape = 'rect';
     }
+
     // Add the node
     const node = {
       labelStyle: styles.labelStyle,
       shape: _shape,
       labelText: vertexText,
+      labelType: vertex.labelType,
       rx: radious,
       ry: radious,
       class: classStr,
@@ -209,10 +178,33 @@ export const addVertices = function (vert, svgId, root, doc, diagObj, parentLook
     };
     let boundingBox;
     let nodeEl;
+
+    // Add the element to the DOM
     if (node.type !== 'group') {
       nodeEl = insertNode(nodes, node, vertex.dir);
       boundingBox = nodeEl.node().getBBox();
+    } else {
+      const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
+      // svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
+      // const rows = vertexText.split(common.lineBreakRegex);
+      // for (const row of rows) {
+      //   const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+      //   tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
+      //   tspan.setAttribute('dy', '1em');
+      //   tspan.setAttribute('x', '1');
+      //   tspan.textContent = row;
+      //   svgLabel.appendChild(tspan);
+      // }
+      // vertexNode = svgLabel;
+      // const bbox = vertexNode.getBBox();
+      const { shapeSvg, bbox } = labelHelper(nodes, node, undefined, true);
+      labelData.width = bbox.width;
+      labelData.wrappingWidth = getConfig().flowchart.wrappingWidth;
+      labelData.height = bbox.height;
+      labelData.labelNode = shapeSvg.node();
+      node.labelData = labelData;
     }
+    // const { shapeSvg, bbox } = labelHelper(svg, node, undefined, true);
 
     const data = {
       id: vertex.id,
@@ -520,7 +512,7 @@ export const addEdges = function (edges, diagObj, graph, svg) {
       edgeData.labelpos = 'c';
     }
 
-    edgeData.labelType = 'text';
+    edgeData.labelType = edge.labelType;
     edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');
 
     if (edge.style === undefined) {
@@ -775,6 +767,7 @@ export const draw = async function (text, id, _version, diagObj) {
   // Add temporary render element
   diagObj.db.clear();
   nodeDb = {};
+  portPos = {};
   diagObj.db.setGen('gen-2');
   // Parse the graph definition
   diagObj.parser.parse(text);
@@ -845,9 +838,17 @@ export const draw = async function (text, id, _version, diagObj) {
   log.info('Subgraphs - ', subGraphs);
   for (let i = subGraphs.length - 1; i >= 0; i--) {
     subG = subGraphs[i];
-    diagObj.db.addVertex(subG.id, subG.title, 'group', undefined, subG.classes, subG.dir);
+    diagObj.db.addVertex(
+      subG.id,
+      { text: subG.title, type: subG.labelType },
+      'group',
+      undefined,
+      subG.classes,
+      subG.dir
+    );
   }
 
+  // debugger;
   // Add an element in the svg to be used to hold the subgraphs container
   // elements
   const subGraphsEl = svg.insert('g').attr('class', 'subgraphs');
@@ -860,7 +861,7 @@ export const draw = async function (text, id, _version, diagObj) {
   // in order to get the size of the node. You can't get the size of a node
   // that is not in the dom so we need to add it to the dom, get the size
   // we will position the nodes when we get the layout from elkjs
-  graph = addVertices(vert, id, root, doc, diagObj, parentLookupDb, graph);
+  graph = addVertices(vert, id, root, doc, diagObj, parentLookupDb, graph, svg);
 
   // Time for the edges, we start with adding an element in the node to hold the edges
   const edgesEl = svg.insert('g').attr('class', 'edges edgePath');
@@ -887,6 +888,8 @@ export const draw = async function (text, id, _version, diagObj) {
           },
           width: node.labelData.width,
           height: node.labelData.height,
+          // width: 100,
+          // height: 100,
         },
       ];
       delete node.x;
@@ -895,6 +898,7 @@ export const draw = async function (text, id, _version, diagObj) {
       delete node.height;
     }
   });
+
   insertChildren(graph.children, parentLookupDb);
   log.info('after layout', JSON.stringify(graph, null, 2));
   const g = await elk.layout(graph);
