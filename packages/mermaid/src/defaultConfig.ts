@@ -672,6 +672,17 @@ const config: Partial<MermaidConfig> = {
     numberSectionStyles: 4,
 
     /**
+     * | Parameter   | Description               | Type   | Required | Values    |
+     * | ----------- | ------------------------- | ------ | -------- | --------- |
+     * | displayMode | Controls the display mode | string | 4        | 'compact' |
+     *
+     * **Notes**:
+     *
+     * - **compact**: Enables displaying multiple tasks on the same row.
+     */
+    displayMode: '',
+
+    /**
      * | Parameter  | Description                  | Type | Required | Values           |
      * | ---------- | ---------------------------- | ---- | -------- | ---------------- |
      * | axisFormat | Date/time format of the axis | 3    | Required | Date in yy-mm-dd |
@@ -696,7 +707,6 @@ const config: Partial<MermaidConfig> = {
      * Default value: undefined
      */
     tickInterval: undefined,
-
     /**
      * | Parameter   | Description | Type    | Required | Values      |
      * | ----------- | ----------- | ------- | -------- | ----------- |

@@ -88,6 +88,7 @@ const config = {
     numberSectionStyles: 4,
     axisFormat: '%Y-%m-%d',
     topAxis: false,
+    displayMode: '',
   },
 };
 mermaid.initialize(config);

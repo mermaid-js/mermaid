@@ -392,7 +392,7 @@ const render = (id: string, text: string, container?: Element): Promise<RenderRe
   });
 };
 
-const mermaid: {
+export interface Mermaid {
   startOnLoad: boolean;
   parseError?: ParseErrorFunction;
   mermaidAPI: typeof mermaidAPI;
@@ -405,7 +405,9 @@ const mermaid: {
   contentLoaded: typeof contentLoaded;
   setParseErrorHandler: typeof setParseErrorHandler;
   detectType: typeof detectType;
-} = {
+}
+
+const mermaid: Mermaid = {
   startOnLoad: true,
   mermaidAPI,
   parse,

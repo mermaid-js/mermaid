@@ -19,3 +19,5 @@ export const diagram: DiagramDefinition = {
     // no op
   },
 };
+
+export default diagram;

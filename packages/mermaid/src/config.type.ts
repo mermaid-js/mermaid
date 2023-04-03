@@ -335,6 +335,7 @@ export interface GanttDiagramConfig extends BaseDiagramConfig {
   axisFormat?: string;
   tickInterval?: string;
   topAxis?: boolean;
+  displayMode?: string;
 }
 
 export interface SequenceDiagramConfig extends BaseDiagramConfig {

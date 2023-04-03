@@ -5,6 +5,7 @@ import { detectType, getDiagramLoader } from './diagram-api/detectType';
 import { extractFrontMatter } from './diagram-api/frontmatter';
 import { UnknownDiagramError } from './errors';
 import { DetailedError } from './utils';
+import { cleanupComments } from './diagram-api/comments';
 
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
 
@@ -43,15 +44,9 @@ export class Diagram {
     // Similarly, we can't do this in getDiagramFromText() because some code
     // calls diagram.db.clear(), which would reset anything set by
     // extractFrontMatter().
-    this.parser.parse = (text: string) => originalParse(extractFrontMatter(text, this.db));
-    // this.parser.parse = (text: string) => {
-    //   console.log('parse called');
-    //   try {
-    //     originalParse(extractFrontMatter(text, this.db));
-    //   } catch (e) {
-    //     console.log('parse called', e);
-    //   }
-    // };
+
+    this.parser.parse = (text: string) =>
+      originalParse(cleanupComments(extractFrontMatter(text, this.db)));
 
     this.parser.parser.yy = this.db;
     if (diagram.init) {
