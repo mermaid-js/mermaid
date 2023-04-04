@@ -57,12 +57,12 @@
     </style>
   </head>
   <body>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 flowchart LR
     A[A text that needs to be wrapped wraps to another line]
     B[A text that needs to be<br/>wrapped wraps to another line]
     C["`A text that needs to be wrapped to another line`"]</pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 flowchart LR
     C["`A text
         that needs
@@ -71,11 +71,21 @@ flowchart LR
         way`"]
   </pre
     >
-    <pre id="diagram" class="mermaid2">
-flowchart-elk LR
-b("The dog in the hog... a very<br/>long text about it<br/>Word!")
-</pre>
+    <pre id="diagram" class="mermaid">
+mindmap
+root
+  Child3(A node with an icon and with a long text that wraps to keep the node size in check)
+</pre
     >
+    <pre id="diagram" class="mermaid">
+      %%{init: {"theme": "forest"} }%%
+mindmap
+    id1[**Start2**<br/>end]
+      id2[**Start2**<br />end]
+      %% Another comment
+      id3[**Start2**<br>end] %% Comment
+      id4[**Start2**<br >end<br    >the very end]
+    </pre>
     <pre id="diagram" class="mermaid2">
 mindmap
     id1[`**Start2**
@@ -89,7 +99,7 @@ mindmap
       and another
       `]
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 mindmap
     id1("`**Root**`"]
       id2["`A formatted text... with **bold** and *italics*`"]
