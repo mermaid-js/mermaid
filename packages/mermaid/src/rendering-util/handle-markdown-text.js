@@ -38,6 +38,8 @@ export function markdownToLines(markdown) {
           currentLine++;
           lines.push([]);
         }
+
+        // textLine.split(/ (?=[^!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+)/).forEach((word) => {
         textLine.split(' ').forEach((word) => {
           if (word) {
             lines[currentLine].push({ content: word, type: parentType || 'normal' });

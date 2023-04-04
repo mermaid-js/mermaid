@@ -57,6 +57,25 @@
     </style>
   </head>
   <body>
+    <pre id="diagram" class="mermaid">
+flowchart RL
+    subgraph "`one`"
+      a1 -- l1 --> a2
+      a1 -- l2 --> a2
+    end
+    </pre>
+    <pre id="diagram" class="mermaid">
+      %%{init: {"flowchart": {"htmlLabels":false}} }%%
+flowchart RL
+    subgraph "`one`"
+      a1 -- l1 --> a2
+      a1 -- l2 --> a2
+    end
+    </pre>
+    <pre id="diagram" class="mermaid">
+flowchart
+id["`A root with a long text that wraps to keep the node size in check. A root with a long text that wraps to keep the node size in check`"]</pre
+    >
     <pre id="diagram" class="mermaid2">
 flowchart LR
     A[A text that needs to be wrapped wraps to another line]
@@ -71,13 +90,18 @@ flowchart LR
         way`"]
   </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
+      classDiagram-v2
+        note "I love this diagram!\nDo you love it?"
+</pre
+    >
+    <pre id="diagram" class="mermaid2">
 mindmap
 root
   Child3(A node with an icon and with a long text that wraps to keep the node size in check)
 </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
       %%{init: {"theme": "forest"} }%%
 mindmap
     id1[**Start2**<br/>end]
@@ -88,16 +112,16 @@ mindmap
     </pre>
     <pre id="diagram" class="mermaid2">
 mindmap
-    id1[`**Start2**
-    second line 😎 with long text that is wrapping to the next line`]
-      id2[`Child **with bold** text`]
-      id3[`Children of which some
-      is using *italic type of* text`]
+    id1["`**Start2**
+    second line 😎 with long text that is wrapping to the next line`"]
+      id2["`Child **with bold** text`"]
+      id3["`Children of which some
+      is using *italic type of* text`"]
       id4[Child]
-      id5[`Child
+      id5["`Child
       Row
       and another
-      `]
+      `"]
     </pre>
     <pre id="diagram" class="mermaid2">
 mindmap
@@ -108,7 +132,7 @@ mindmap
       शान्तिः سلام  和平 `"]
 
     </pre>
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 flowchart TB
   %% I could not figure out how to use double quotes in labels in Mermaid
@@ -124,7 +148,7 @@ flowchart TB
     rom --> core2
   end
 
-  subgraph amd[AMD Latte GPU]
+  subgraph amd["`**AMD** Latte GPU`"]
     mem[Memory & I/O Bridge]
     dram[DRAM Controller]
     edram[32 MB EDRAM MEM1]
@@ -163,8 +187,64 @@ flowchart TB
   rtc{{rtc}}
 </pre
     >
+    <pre id="diagram" class="mermaid">
+%%{init: {"flowchart": {"defaultRenderer": "elk", "htmlLabels": false}} }%%
+flowchart TB
+  %% I could not figure out how to use double quotes in labels in Mermaid
+  subgraph ibm[IBM Espresso CPU]
+    core0[IBM PowerPC Broadway Core 0]
+    core1[IBM PowerPC Broadway Core 1]
+    core2[IBM PowerPC Broadway Core 2]
+
+    rom[16 KB ROM]
+
+    core0 --- core2
+
+    rom --> core2
+  end
+
+  subgraph amd["`**AMD** Latte GPU`"]
+    mem[Memory & I/O Bridge]
+    dram[DRAM Controller]
+    edram[32 MB EDRAM MEM1]
+    rom[512 B SEEPROM]
+
+    sata[SATA IF]
+    exi[EXI]
+
+    subgraph gx[GX]
+      sram[3 MB 1T-SRAM]
+    end
+
+    radeon[AMD Radeon R7xx GX2]
+
+    mem --- gx
+    mem --- radeon
+
+    rom --- mem
+
+    mem --- sata
+    mem --- exi
+
+    dram --- sata
+    dram --- exi
+  end
+
+  ddr3[2 GB DDR3 RAM MEM2]
+
+  mem --- ddr3
+  dram --- ddr3
+  edram --- ddr3
+
+  core1 --- mem
+
+  exi --- rtc
+  rtc{{rtc}}
+</pre
+    >
+
     <br />
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 flowchart TB
   %% I could not figure out how to use double quotes in labels in Mermaid
   subgraph ibm[IBM Espresso CPU]
@@ -220,7 +300,7 @@ flowchart TB
     >
     <br />
     &nbsp;
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
       flowchart LR
   B1 --be be--x B2
   B1 --bo bo--o B3
@@ -311,7 +391,7 @@ mindmap
         flowchart: {
           // defaultRenderer: 'elk',
           useMaxWidth: false,
-          htmlLabels: false,
+          htmlLabels: true,
           // htmlLabels: true,
         },
         // htmlLabels: true,

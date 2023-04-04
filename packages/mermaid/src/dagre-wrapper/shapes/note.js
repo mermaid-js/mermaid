@@ -12,7 +12,7 @@ const note = (parent, node) => {
   rect
     .attr('rx', node.rx)
     .attr('ry', node.ry)
-    .attr('x', -bbox.width / 2 - halfPadding)
+    .attr('x', -halfPadding)
     .attr('y', -bbox.height / 2 - halfPadding)
     .attr('width', bbox.width + node.padding)
     .attr('height', bbox.height + node.padding);
