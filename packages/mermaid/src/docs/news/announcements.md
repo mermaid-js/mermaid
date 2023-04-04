@@ -1,3 +1,7 @@
 # Announcements
 
-Stay tuned for some exciting announcements!
+## [Automatic text wrapping in flowcharts is here!](https://wwww.mermaidchart.com/blog/posts/automatic-text-wrapping-in-flowcharts-is-here)
+
+3 April 2023 · 3 mins
+
+Markdown Strings reduce the hassle # Starting from v10.
