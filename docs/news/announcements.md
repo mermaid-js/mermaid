@@ -6,7 +6,7 @@
 
 # Announcements
 
-## [Automatic text wrapping in flowcharts is here!](https://wwww.mermaidchart.com/blog/posts/automatic-text-wrapping-in-flowcharts-is-here)
+## [Automatic text wrapping in flowcharts is here!](https://www.mermaidchart.com/blog/posts/automatic-text-wrapping-in-flowcharts-is-here)
 
 3 April 2023 · 3 mins
 
