@@ -29,9 +29,9 @@
       }
       .mermaid svg {
         /* font-size: 18px !important; */
-        background-color: #eee;
-        background-image: radial-gradient(#fff 1%, transparent 11%),
-          radial-gradient(#fff 1%, transparent 11%);
+        background-color: #efefef;
+        background-image: radial-gradient(#fff 51%, transparent 91%),
+          radial-gradient(#fff 51%, transparent 91%);
         background-size: 20px 20px;
         background-position: 0 0, 10px 10px;
         background-repeat: repeat;
@@ -58,17 +58,19 @@
   </head>
   <body>
     <pre id="diagram" class="mermaid">
-      %%{init: {"flowchart": {"htmlLabels": false}} }%%
-flowchart-elk LR
-b("`The dog in **the** hog(2)... a a a a *very long text* about it
-Word!
-Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. `")
-</pre
+flowchart LR
+    A[A text that needs to be wrapped wraps to another line]
+    B[A text that needs to be<br/>wrapped wraps to another line]
+    C["`A text that needs to be wrapped to another line`"]</pre>
+    <pre id="diagram" class="mermaid">
+flowchart LR
+    C["`A text
+        that needs
+        to be wrapped
+        in another
+        way`"]
+  </pre
     >
-    <pre id="diagram" class="mermaid2">
-flowchart-elk LR
-b("The dog in the hog... a very<br/>long text about it<br/>Word!")
-</pre>
     <pre id="diagram" class="mermaid2">
 flowchart-elk LR
 b("The dog in the hog... a very<br/>long text about it<br/>Word!")
@@ -89,11 +91,11 @@ mindmap
     </pre>
     <pre id="diagram" class="mermaid">
 mindmap
-    id1["`**Root** with
-a second line
-Unicode works too: 🤓`"]
-      id2["`The dog in **the** hog... a *very long text* that wraps to a new line`"]
-      id3[Regular labels still works]
+    id1("`**Root**`"]
+      id2["`A formatted text... with **bold** and *italics*`"]
+      id3[Regular labels works as usual]
+      id4["`Emojis and unicode works too: 🤓
+      शान्तिः سلام  和平 `"]
 
     </pre>
     <pre id="diagram" class="mermaid2">
@@ -293,7 +295,7 @@ mindmap
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'forest',
+        // theme: 'forest',
         startOnLoad: true,
         logLevel: 0,
         flowchart: {
