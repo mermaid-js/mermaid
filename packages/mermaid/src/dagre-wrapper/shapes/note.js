@@ -1,8 +1,13 @@
 import { updateNodeBounds, labelHelper } from './util';
 import { log } from '../../logger';
+import { getConfig } from '../../config';
 import intersect from '../intersect/index.js';
 
 const note = (parent, node) => {
+  const useHtmlLabels = node.useHtmlLabels || getConfig().flowchart.htmlLabels;
+  if (!useHtmlLabels) {
+    node.centerLabel = true;
+  }
   const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'node ' + node.classes, true);
 
   log.info('Classes = ', node.classes);
@@ -12,7 +17,7 @@ const note = (parent, node) => {
   rect
     .attr('rx', node.rx)
     .attr('ry', node.ry)
-    .attr('x', -halfPadding)
+    .attr('x', -bbox.width / 2 - halfPadding)
     .attr('y', -bbox.height / 2 - halfPadding)
     .attr('width', bbox.width + node.padding)
     .attr('height', bbox.height + node.padding);

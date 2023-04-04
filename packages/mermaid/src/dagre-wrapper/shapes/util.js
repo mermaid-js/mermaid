@@ -6,6 +6,7 @@ import { select } from 'd3';
 import { evaluate, sanitizeText } from '../../diagrams/common/common';
 export const labelHelper = (parent, node, _classes, isNode) => {
   let classes;
+  const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig().flowchart.htmlLabels);
   if (!_classes) {
     classes = 'node default';
   } else {
@@ -33,7 +34,7 @@ export const labelHelper = (parent, node, _classes, isNode) => {
   if (node.labelType === 'markdown') {
     // text = textNode;
     text = createText(label, sanitizeText(decodeEntities(labelText), getConfig()), {
-      useHtmlLabels: getConfig().flowchart.htmlLabels,
+      useHtmlLabels,
       width: node.width || getConfig().flowchart.wrappingWidth,
       classes: 'markdown-node-label',
     });
@@ -62,10 +63,13 @@ export const labelHelper = (parent, node, _classes, isNode) => {
   const halfPadding = node.padding / 2;
 
   // Center the label
-  if (getConfig().flowchart.htmlLabels) {
+  if (useHtmlLabels) {
     label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
   } else {
     label.attr('transform', 'translate(' + 0 + ', ' + -bbox.height / 2 + ')');
+  }
+  if (node.centerLabel) {
+    label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
   }
   label.insert('rect', ':first-child');
   return { shapeSvg, bbox, halfPadding, label };

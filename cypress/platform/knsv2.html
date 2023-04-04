@@ -58,6 +58,15 @@
   </head>
   <body>
     <pre id="diagram" class="mermaid">
+stateDiagram-v2
+    [*] --> Still
+    Still --> [*]
+    Still --> Moving
+    Moving --> Still
+    Moving --> Crash
+    Crash --> [*]    </pre
+    >
+    <pre id="diagram" class="mermaid2">
 flowchart RL
     subgraph "`one`"
       a1 -- l1 --> a2
@@ -65,14 +74,13 @@ flowchart RL
     end
     </pre>
     <pre id="diagram" class="mermaid">
-      %%{init: {"flowchart": {"htmlLabels":false}} }%%
 flowchart RL
     subgraph "`one`"
       a1 -- l1 --> a2
       a1 -- l2 --> a2
     end
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 flowchart
 id["`A root with a long text that wraps to keep the node size in check. A root with a long text that wraps to keep the node size in check`"]</pre
     >
@@ -90,10 +98,17 @@ flowchart LR
         way`"]
   </pre
     >
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
       classDiagram-v2
         note "I love this diagram!\nDo you love it?"
-</pre
+    </pre>
+    <pre id="diagram" class="mermaid">
+    stateDiagram-v2
+    State1: The state with a note with minus - and plus + in it
+    note left of State1
+      Important information! You can write
+      notes with . and  in them.
+    end note    </pre
     >
     <pre id="diagram" class="mermaid2">
 mindmap
@@ -187,7 +202,7 @@ flowchart TB
   rtc{{rtc}}
 </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 %%{init: {"flowchart": {"defaultRenderer": "elk", "htmlLabels": false}} }%%
 flowchart TB
   %% I could not figure out how to use double quotes in labels in Mermaid
@@ -244,7 +259,7 @@ flowchart TB
     >
 
     <br />
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 flowchart TB
   %% I could not figure out how to use double quotes in labels in Mermaid
   subgraph ibm[IBM Espresso CPU]
@@ -300,7 +315,7 @@ flowchart TB
     >
     <br />
     &nbsp;
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
       flowchart LR
   B1 --be be--x B2
   B1 --bo bo--o B3
@@ -391,10 +406,10 @@ mindmap
         flowchart: {
           // defaultRenderer: 'elk',
           useMaxWidth: false,
+          // htmlLabels: false,
           htmlLabels: true,
-          // htmlLabels: true,
         },
-        // htmlLabels: true,
+        // htmlLabels: false,
         gantt: {
           useMaxWidth: false,
         },
