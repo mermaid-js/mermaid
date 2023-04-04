@@ -364,7 +364,7 @@ Beginner's tip—a full example using interactive links in an html context:
 ```mermaid-example
 gantt
     title Git Issues - days since last update
-    dateFormat  X
+    dateFormat X
     axisFormat %s
     section Issue19062
     71   : 0, 71
