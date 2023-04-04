@@ -232,6 +232,9 @@ const setupNode = (g, parent, parsedItem, diagramStates, diagramDb, altFlag) => 
       type: newNode.type,
       padding: 15, //getConfig().flowchart.padding
     };
+    // if (useHtmlLabels) {
+    nodeData.centerLabel = true;
+    // }
 
     if (parsedItem.note) {
       // Todo: set random id
@@ -240,6 +243,7 @@ const setupNode = (g, parent, parsedItem, diagramStates, diagramDb, altFlag) => 
         shape: SHAPE_NOTE,
         labelText: parsedItem.note.text,
         classes: CSS_DIAGRAM_NOTE,
+        // useHtmlLabels: false,
         style: '', // styles.style,
         id: itemId + NOTE_ID + '-' + graphItemCount,
         domId: stateDomId(itemId, graphItemCount, NOTE),

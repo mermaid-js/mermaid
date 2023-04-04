@@ -685,4 +685,149 @@ A ~~~ B
       { titleTopMargin: 0 }
     );
   });
+  describe('Markdown strings flowchart (#4220)', () => {
+    describe('html labels', () => {
+      it('With styling and classes', () => {
+        imgSnapshotTest(
+          `%%{init: {"flowchart": {"htmlLabels": true}} }%%
+flowchart LR
+    A:::someclass --> B["\`The **cat** in the hat\`"]:::someclass
+    id1(Start)-->id2(Stop)
+    style id1 fill:#f9f,stroke:#333,stroke-width:4px
+    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+    classDef someclass fill:#f96
+`,
+          { titleTopMargin: 0 }
+        );
+      });
+      it('With formatting in a node', () => {
+        imgSnapshotTest(
+          `%%{init: {"flowchart": {"htmlLabels": true}} }%%
+flowchart LR
+  a{"\`The **cat** in the hat\`"} -- 1o --> b
+  a -- 2o --> c
+  a -- 3o --> d
+  g --2i--> a
+  d --1i--> a
+  h --3i -->a
+  b --> d(The dog in the hog)
+  c --> d
+`,
+          { titleTopMargin: 0 }
+        );
+      });
+      it('New line in node and formatted edge label', () => {
+        imgSnapshotTest(
+          `%%{init: {"flowchart": {"htmlLabels": true}} }%%
+flowchart LR
+b("\`The dog in **the** hog.(1)
+NL\`") --"\`1o **bold**\`"--> c
+`,
+          { titleTopMargin: 0 }
+        );
+      });
+      it('Wrapping long text with a new line', () => {
+        imgSnapshotTest(
+          `%%{init: {"flowchart": {"htmlLabels": true}} }%%
+flowchart LR
+b("\`The dog in **the** hog.(1).. a a a a *very long text* about it
+Word!
+
+Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. \`") --> c
+
+`,
+          { titleTopMargin: 0 }
+        );
+      });
+      it('Sub graphs and markdown strings', () => {
+        imgSnapshotTest(
+          `%%{init: {"flowchart": {"htmlLabels": true}} }%%
+flowchart LR
+subgraph "One"
+  a("\`The **cat**
+  in the hat\`") -- "1o" --> b{{"\`The **dog** in the hog\`"}}
+end
+subgraph "\`**Two**\`"
+  c("\`The **cat**
+  in the hat\`") -- "\`1o **ipa**\`" --> d("The dog in the hog")
+end
+
+`,
+          { titleTopMargin: 0 }
+        );
+      });
+    });
+
+    describe('svg text labels', () => {
+      it('With styling and classes', () => {
+        imgSnapshotTest(
+          `%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+    A:::someclass --> B["\`The **cat** in the hat\`"]:::someclass
+    id1(Start)-->id2(Stop)
+    style id1 fill:#f9f,stroke:#333,stroke-width:4px
+    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+    classDef someclass fill:#f96
+`,
+          { titleTopMargin: 0 }
+        );
+      });
+      it('With formatting in a node', () => {
+        imgSnapshotTest(
+          `%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+  a{"\`The **cat** in the hat\`"} -- 1o --> b
+  a -- 2o --> c
+  a -- 3o --> d
+  g --2i--> a
+  d --1i--> a
+  h --3i -->a
+  b --> d(The dog in the hog)
+  c --> d
+`,
+          { titleTopMargin: 0 }
+        );
+      });
+      it('New line in node and formatted edge label', () => {
+        imgSnapshotTest(
+          `%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+b("\`The dog in **the** hog.(1)
+NL\`") --"\`1o **bold**\`"--> c
+`,
+          { titleTopMargin: 0 }
+        );
+      });
+      it('Wrapping long text with a new line', () => {
+        imgSnapshotTest(
+          `%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+b("\`The dog in **the** hog.(1).. a a a a *very long text* about it
+Word!
+
+Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. \`") --> c
+
+`,
+          { titleTopMargin: 0 }
+        );
+      });
+      it('Sub graphs and markdown strings', () => {
+        imgSnapshotTest(
+          `%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+subgraph "One"
+  a("\`The **cat**
+  in the hat\`") -- "1o" --> b{{"\`The **dog** in the hog\`"}}
+end
+subgraph "\`**Two**\`"
+  c("\`The **cat**
+  in the hat\`") -- "\`1o **ipa**\`" --> d("The dog in the hog")
+end
+
+`,
+          { titleTopMargin: 0 }
+        );
+      });
+    });
+  });
 });

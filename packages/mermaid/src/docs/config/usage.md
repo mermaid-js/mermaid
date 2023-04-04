@@ -244,6 +244,23 @@ The example below show an outline of how this could be used. The example just lo
 </script>
 ```
 
+To determine the type of diagram present in a given text, you can utilize the `mermaid.detectType` function, as demonstrated in the example below.
+
+```html
+<script type="module">
+  import mermaid from './mermaid.esm.mjs';
+  const graphDefinition = `sequenceDiagram
+    Pumbaa->>Timon:I ate like a pig.
+    Timon->>Pumbaa:Pumbaa, you ARE a pig.`;
+  try {
+    const type = mermaid.detectType(graphDefinition);
+    console.log(type); // 'sequence'
+  } catch (error) {
+    // UnknownDiagramError
+  }
+</script>
+```
+
 ### Binding events
 
 Sometimes the generated graph also has defined interactions like tooltip and click events. When using the API one must

@@ -1,10 +1,12 @@
 import createLabel from '../createLabel';
+import { createText } from '../../rendering-util/createText';
 import { getConfig } from '../../config';
 import { decodeEntities } from '../../mermaidAPI';
 import { select } from 'd3';
 import { evaluate, sanitizeText } from '../../diagrams/common/common';
 export const labelHelper = (parent, node, _classes, isNode) => {
   let classes;
+  const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig().flowchart.htmlLabels);
   if (!_classes) {
     classes = 'node default';
   } else {
@@ -27,9 +29,17 @@ export const labelHelper = (parent, node, _classes, isNode) => {
     labelText = typeof node.labelText === 'string' ? node.labelText : node.labelText[0];
   }
 
-  const text = label
-    .node()
-    .appendChild(
+  const textNode = label.node();
+  let text;
+  if (node.labelType === 'markdown') {
+    // text = textNode;
+    text = createText(label, sanitizeText(decodeEntities(labelText), getConfig()), {
+      useHtmlLabels,
+      width: node.width || getConfig().flowchart.wrappingWidth,
+      classes: 'markdown-node-label',
+    });
+  } else {
+    text = textNode.appendChild(
       createLabel(
         sanitizeText(decodeEntities(labelText), getConfig()),
         node.labelStyle,
@@ -37,6 +47,7 @@ export const labelHelper = (parent, node, _classes, isNode) => {
         isNode
       )
     );
+  }
 
   // Get the size of the label
   let bbox = text.getBBox();
@@ -52,8 +63,15 @@ export const labelHelper = (parent, node, _classes, isNode) => {
   const halfPadding = node.padding / 2;
 
   // Center the label
-  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
-
+  if (useHtmlLabels) {
+    label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
+  } else {
+    label.attr('transform', 'translate(' + 0 + ', ' + -bbox.height / 2 + ')');
+  }
+  if (node.centerLabel) {
+    label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
+  }
+  label.insert('rect', ':first-child');
   return { shapeSvg, bbox, halfPadding, label };
 };
 

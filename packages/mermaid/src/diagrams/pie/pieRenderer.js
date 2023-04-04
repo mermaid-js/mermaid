@@ -3,6 +3,7 @@ import { select, scaleOrdinal, pie as d3pie, arc } from 'd3';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import * as configApi from '../../config';
+import { parseFontSize } from '../../utils';
 
 let conf = configApi.getConfig();
 
@@ -88,6 +89,10 @@ export const draw = (txt, id, _version, diagObj) => {
       themeVariables.pie12,
     ];
 
+    const textPosition = conf.pie?.textPosition ?? 0.75;
+    let [outerStrokeWidth] = parseFontSize(themeVariables.pieOuterStrokeWidth);
+    outerStrokeWidth ??= 2;
+
     // Set the color scale
     var color = scaleOrdinal().range(myGeneratedColors);
 
@@ -111,6 +116,16 @@ export const draw = (txt, id, _version, diagObj) => {
 
     // Shape helper to build arcs:
     var arcGenerator = arc().innerRadius(0).outerRadius(radius);
+    var labelArcGenerator = arc()
+      .innerRadius(radius * textPosition)
+      .outerRadius(radius * textPosition);
+
+    svg
+      .append('circle')
+      .attr('cx', 0)
+      .attr('cy', 0)
+      .attr('r', radius + outerStrokeWidth / 2)
+      .attr('class', 'pieOuterCircle');
 
     // Build the pie chart: each part of the pie is a path that we build using the arc function.
     svg
@@ -135,7 +150,7 @@ export const draw = (txt, id, _version, diagObj) => {
         return ((d.data.value / sum) * 100).toFixed(0) + '%';
       })
       .attr('transform', function (d) {
-        return 'translate(' + arcGenerator.centroid(d) + ')';
+        return 'translate(' + labelArcGenerator.centroid(d) + ')';
       })
       .style('text-anchor', 'middle')
       .attr('class', 'slice');

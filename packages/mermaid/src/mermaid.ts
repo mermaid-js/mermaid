@@ -7,7 +7,11 @@ import { MermaidConfig } from './config.type';
 import { log } from './logger';
 import utils from './utils';
 import { mermaidAPI, ParseOptions, RenderResult } from './mermaidAPI';
-import { registerLazyLoadedDiagrams, loadRegisteredDiagrams } from './diagram-api/detectType';
+import {
+  registerLazyLoadedDiagrams,
+  loadRegisteredDiagrams,
+  detectType,
+} from './diagram-api/detectType';
 import type { ParseErrorFunction } from './Diagram';
 import { isDetailedError } from './utils';
 import type { DetailedError } from './utils';
@@ -388,7 +392,7 @@ const render = (id: string, text: string, container?: Element): Promise<RenderRe
   });
 };
 
-const mermaid: {
+export interface Mermaid {
   startOnLoad: boolean;
   parseError?: ParseErrorFunction;
   mermaidAPI: typeof mermaidAPI;
@@ -400,7 +404,10 @@ const mermaid: {
   initialize: typeof initialize;
   contentLoaded: typeof contentLoaded;
   setParseErrorHandler: typeof setParseErrorHandler;
-} = {
+  detectType: typeof detectType;
+}
+
+const mermaid: Mermaid = {
   startOnLoad: true,
   mermaidAPI,
   parse,
@@ -412,6 +419,7 @@ const mermaid: {
   parseError: undefined,
   contentLoaded,
   setParseErrorHandler,
+  detectType,
 };
 
 export default mermaid;
