@@ -4,16 +4,8 @@
 # Network error: Forbidden
 https://codepen.io
 
-# Network error: The certificate was not trusted
-https://mkdocs.org/
-https://osawards.com/javascript/#nominees
-https://osawards.com/javascript/2019
-
 # Timeout error, maybe Twitter has anti-bot defenses against GitHub's CI servers?
 https://twitter.com/mermaidjs_
 
 # Don't check files that are generated during the build via `pnpm docs:code`
 packages/mermaid/src/docs/config/setup/*
-
-# Network error: 502, since few days
-https://bundlephobia.com/

@@ -224,7 +224,7 @@ mindmap
         C
 ```
 
-_These classes needs top be supplied by the site administrator._
+_These classes need to be supplied by the site administrator._
 
 ## Unclear indentation
 

@@ -14,6 +14,7 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch:
   schedule:
     # * is a special character in YAML so you have to quote this string
     - cron: '30 8 * * *'
@@ -37,7 +38,14 @@ jobs:
       - name: Link Checker
         uses: lycheeverse/lychee-action@v1.6.1
         with:
-          args: --verbose --no-progress --cache --max-cache-age 1d packages/mermaid/src/docs/**/*.md README.md README.zh-CN.md
+          args: >-
+            --verbose
+            --no-progress
+            --cache
+            --max-cache-age 1d
+            packages/mermaid/src/docs/**/*.md
+            README.md
+            README.zh-CN.md
           fail: true
           jobSummary: true
         env:

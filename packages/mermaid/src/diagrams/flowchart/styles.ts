@@ -41,6 +41,15 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke: ${options.nodeBorder};
     stroke-width: 1px;
   }
+  .flowchart-label text {
+    text-anchor: middle;
+  }
+  // .flowchart-label .text-outer-tspan {
+  //   text-anchor: middle;
+  // }
+  // .flowchart-label .text-inner-tspan {
+  //   text-anchor: start;
+  // }
 
   .node .label {
     text-align: center;

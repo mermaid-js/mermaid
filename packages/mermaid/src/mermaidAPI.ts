@@ -32,7 +32,14 @@ import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility'
 import { parseDirective } from './directiveUtils';
 
 // diagram names that support classDef statements
-const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram', 'stateDiagram-v2'];
+const CLASSDEF_DIAGRAMS = [
+  'graph',
+  'flowchart',
+  'flowchart-v2',
+  'flowchart-elk',
+  'stateDiagram',
+  'stateDiagram-v2',
+];
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
   'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -99,21 +106,18 @@ export interface RenderResult {
  * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false.
  */
 
-async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean | void> {
+async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean> {
   addDiagrams();
-  let error;
   try {
     const diagram = await getDiagramFromText(text);
     diagram.parse();
-  } catch (err) {
-    error = err;
-  }
-  if (parseOptions?.suppressErrors) {
-    return error === undefined;
-  }
-  if (error) {
+  } catch (error) {
+    if (parseOptions?.suppressErrors) {
+      return false;
+    }
     throw error;
   }
+  return true;
 }
 
 /**
@@ -534,16 +538,16 @@ const render = async function (
 
   attachFunctions();
 
+  if (parseEncounteredException) {
+    throw parseEncounteredException;
+  }
+
   // -------------------------------------------------------------------------------
   // Remove the temporary HTML element if appropriate
   const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
   const node = select(tmpElementSelector).node();
   if (node && 'remove' in node) {
     node.remove();
-  }
-
-  if (parseEncounteredException) {
-    throw parseEncounteredException;
   }
 
   return {
@@ -653,6 +657,7 @@ function addA11yInfo(
  *       numberSectionStyles: 4,
  *       axisFormat: '%Y-%m-%d',
  *       topAxis: false,
+ *       displayMode: '',
  *     },
  *   };
  *   mermaid.initialize(config);

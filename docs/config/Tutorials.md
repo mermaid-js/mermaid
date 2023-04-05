@@ -6,7 +6,7 @@
 
 # Tutorials
 
-This is list of publicly available Tutorials for using Mermaid.JS . This is intended as a basic introduction for the use of the Live Editor for generating diagrams, and deploying Mermaid.JS through HTML.
+This is a list of publicly available Tutorials for using Mermaid.JS and is intended as a basic introduction for the use of the Live Editor for generating diagrams, and deploying Mermaid.JS through HTML.
 
 **Note that these tutorials might display an older interface, but the usage of the live-editor will largely be the same.**
 
