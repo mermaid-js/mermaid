@@ -473,8 +473,8 @@ Beginner's tip—a full example using interactive links in an html context:
 gantt
     title Git Issues - days since last update
     dateFormat X
-    axisFormat %s 
-    section Issue19062 
+    axisFormat %s
+    section Issue19062
     71   : 0, 71
     section Issue19401
     36   : 0, 36
@@ -494,8 +494,8 @@ gantt
     section Issue19062
     71   : 0, 71
     section Issue19401
-    36   : 0, 36     
-    section Issue193 
+    36   : 0, 36
+    section Issue193
     34   : 0, 34
     section Issue7441
     9    : 0, 9
