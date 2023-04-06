@@ -934,9 +934,12 @@ const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, diagObj, depth) => {
           .attr('width', node.width)
           .attr('height', node.height);
         const label = subgraphEl.insert('g').attr('class', 'label');
+        const labelCentering = getConfig().flowchart.htmlLabels ? node.labelData.width / 2 : 0;
         label.attr(
           'transform',
-          `translate(${node.labels[0].x + relX + node.x}, ${node.labels[0].y + relY + node.y})`
+          `translate(${node.labels[0].x + relX + node.x + labelCentering}, ${
+            node.labels[0].y + relY + node.y + 3
+          })`
         );
         label.node().appendChild(node.labelData.labelNode);
 

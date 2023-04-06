@@ -63,13 +63,20 @@ const rect = (parent, node) => {
     .attr('width', width)
     .attr('height', node.height + padding);
 
+  if (useHtmlLabels) {
+    label.attr(
+      'transform',
+      // This puts the labal on top of the box instead of inside it
+      'translate(' + (node.x - bbox.width / 2) + ', ' + (node.y - node.height / 2) + ')'
+    );
+  } else {
+    label.attr(
+      'transform',
+      // This puts the labal on top of the box instead of inside it
+      'translate(' + node.x + ', ' + (node.y - node.height / 2) + ')'
+    );
+  }
   // Center the label
-  label.attr(
-    'transform',
-    // This puts the labal on top of the box instead of inside it
-    // 'translate(' + (node.x - bbox.width / 2) + ', ' + (node.y - node.height / 2 - bbox.height) + ')'
-    'translate(' + node.x + ', ' + (node.y - node.height / 2) + ')'
-  );
 
   const rectBox = rect.node().getBBox();
   node.width = rectBox.width;

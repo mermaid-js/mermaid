@@ -175,7 +175,7 @@ export const draw = async (text, id, version, diagObj) => {
   // Parse the graph definition
   diagObj.parser.parse(text);
 
-  log.debug('Renering mindmap diagram\n' + text, diagObj);
+  log.debug('Rendering mindmap diagram\n' + text, diagObj.parser);
 
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
