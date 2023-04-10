@@ -6,6 +6,12 @@ import * as configApi from '../../config.js';
 import { parseFontSize } from '../../utils.js';
 
 let conf = configApi.getConfig();
+// https://stackoverflow.com/a/35373030/3469145
+const getTextWidth = (function () {
+  const canvas = document.createElement('canvas')
+  const context = canvas.getContext('2d')
+  return text => context.measureText(text).width * window.devicePixelRatio
+})();
 
 /**
  * Draws a Pie Chart with the data given in text.
@@ -72,6 +78,18 @@ export const draw = (txt, id, _version, diagObj) => {
     Object.keys(data).forEach(function (key) {
       sum += data[key];
     });
+
+    const legendShowData = diagObj.db.getShowData() || conf.showData || conf.pie.showData;
+    const legendTexts = Object.keys(data).map(key => {
+      if (!legendShowData) {
+        return key;
+      }
+      return key + ' [' + data[key] + ']';
+    })
+    const legendTextWidths = legendTexts.map(v => getTextWidth(v)).sort((a, b) => a - b);
+    const longestTextWidth = parseInt(legendTextWidths.pop());
+    const newWidth = width + margin + legendRectSize + legendSpacing + longestTextWidth;
+    elem.setAttribute("viewBox", "0 0 " + newWidth + " " + height);
 
     const themeVariables = conf.themeVariables;
     var myGeneratedColors = [
