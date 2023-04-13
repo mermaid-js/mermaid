@@ -1,9 +1,19 @@
 import { updateNodeBounds, labelHelper } from './util.js';
 import { log } from '../../logger.js';
+import { getConfig } from '../../config.js';
 import intersect from '../intersect/index.js';
 
-const note = (parent, node) => {
-  const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'node ' + node.classes, true);
+const note = async (parent, node) => {
+  const useHtmlLabels = node.useHtmlLabels || getConfig().flowchart.htmlLabels;
+  if (!useHtmlLabels) {
+    node.centerLabel = true;
+  }
+  const { shapeSvg, bbox, halfPadding } = await labelHelper(
+    parent,
+    node,
+    'node ' + node.classes,
+    true
+  );
 
   log.info('Classes = ', node.classes);
   // add the rect

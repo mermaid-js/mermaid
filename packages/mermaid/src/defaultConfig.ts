@@ -258,6 +258,18 @@ const config: Partial<MermaidConfig> = {
      * Default value: 'dagre-wrapper'
      */
     defaultRenderer: 'dagre-wrapper',
+    /**
+     * | Parameter       | Description | Type    | Required | Values                  |
+     * | --------------- | ----------- | ------- | -------- | ----------------------- |
+     * | wrappingWidth   | See notes   | number  | 4        | width of nodes where text is wrapped |
+     *
+     * **Notes:**
+     *
+     * When using markdown strings the text ius wrapped automatically, this
+     * value sets the max width of a text before it continues on a new line.
+     * Default value: 'dagre-wrapper'
+     */
+    wrappingWidth: 200,
   },
 
   /** The object containing configurations specific for sequence diagrams */

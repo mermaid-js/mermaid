@@ -12,12 +12,13 @@
 %}
 %x NODE
 %x NSTR
+%x NSTR2
 %x ICON
 %x CLASS
 
 %%
 
-\s*\%\%.*          {yy.getLogger().trace('Found comment',yytext);}
+\s*\%\%.*          {yy.getLogger().trace('Found comment',yytext); return 'SPACELINE';}
 // \%\%[^\n]*\n                             /* skip comments */
 "mindmap"		       return 'MINDMAP';
 ":::"              { this.begin('CLASS'); }
@@ -41,6 +42,9 @@
 // !(-\()            return 'NODE_ID';
 [^\(\[\n\-\)\{\}]+         return 'NODE_ID';
 <<EOF>>            return 'EOF';
+<NODE>["][`]          { this.begin("NSTR2");}
+<NSTR2>[^`"]+        { return "NODE_DESCR";}
+<NSTR2>[`]["]          { this.popState();}
 <NODE>["]          { yy.getLogger().trace('Starting NSTR');this.begin("NSTR");}
 <NSTR>[^"]+        { yy.getLogger().trace('description:', yytext); return "NODE_DESCR";}
 <NSTR>["]          {this.popState();}

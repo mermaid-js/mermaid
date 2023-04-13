@@ -167,12 +167,15 @@ function positionNodes(cy) {
 export const draw = async (text, id, version, diagObj) => {
   const conf = getConfig();
 
+  // console.log('Config: ', conf);
+  conf.htmlLabels = false;
+
   // This is done only for throwing the error if the text is not valid.
   diagObj.db.clear();
   // Parse the graph definition
   diagObj.parser.parse(text);
 
-  log.debug('Renering info diagram\n' + text);
+  log.debug('Rendering mindmap diagram\n' + text, diagObj.parser);
 
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode

@@ -17,6 +17,7 @@ They also serve as proof of concept, for the variety of things that can be built
 - [Mermaid Flow Visual Editor](https://www.mermaidflow.app) (**Native support**)
 - [Deepdwn](https://billiam.itch.io/deepdwn) (**Native support**)
 - [Joplin](https://joplinapp.org) (**Native support**)
+- [Slab](https://slab.com) (**Native support**)
 - [Swimm](https://swimm.io) (**Native support**)
 - [Notion](https://notion.so) (**Native support**)
 - [Observable](https://observablehq.com/@observablehq/mermaid) (**Native support**)

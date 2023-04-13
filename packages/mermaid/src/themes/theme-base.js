@@ -46,7 +46,11 @@ class Theme {
     this.secondaryTextColor = this.secondaryTextColor || invert(this.secondaryColor);
     this.tertiaryTextColor = this.tertiaryTextColor || invert(this.tertiaryColor);
     this.lineColor = this.lineColor || invert(this.background);
+    this.arrowheadColor = this.arrowheadColor || invert(this.background);
     this.textColor = this.textColor || this.primaryTextColor;
+
+    // TODO: should this instead default to secondaryBorderColor?
+    this.border2 = this.border2 || this.tertiaryBorderColor;
 
     /* Flowchart variables */
     this.nodeBkg = this.nodeBkg || this.primaryColor;
@@ -219,7 +223,7 @@ class Theme {
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;
     this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
-    this.requirementBorderSize = this.requirementBorderSize || this.primaryBorderColor;
+    this.requirementBorderSize = this.requirementBorderSize || '1';
     this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
     this.relationColor = this.relationColor || this.lineColor;
     this.relationLabelBackground =

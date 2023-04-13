@@ -14,7 +14,7 @@ import { insertCluster, clear as clearClusters } from './clusters.js';
 import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } from './edges.js';
 import { log } from '../logger.js';
 
-const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
+const recursiveRender = async (_elem, graph, diagramtype, parentCluster) => {
   log.info('Graph in recursive render: XXX', graphlibJson.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
   log.trace('Dir in recursive render - dir:', dir);
@@ -35,44 +35,46 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
 
   // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
   // to the abstract node and is later used by dagre for the layout
-  graph.nodes().forEach(function (v) {
-    const node = graph.node(v);
-    if (parentCluster !== undefined) {
-      const data = JSON.parse(JSON.stringify(parentCluster.clusterData));
-      // data.clusterPositioning = true;
-      log.info('Setting data for cluster XXX (', v, ') ', data, parentCluster);
-      graph.setNode(parentCluster.id, data);
-      if (!graph.parent(v)) {
-        log.trace('Setting parent', v, parentCluster.id);
-        graph.setParent(v, parentCluster.id, data);
+  await Promise.all(
+    graph.nodes().map(async function (v) {
+      const node = graph.node(v);
+      if (parentCluster !== undefined) {
+        const data = JSON.parse(JSON.stringify(parentCluster.clusterData));
+        // data.clusterPositioning = true;
+        log.info('Setting data for cluster XXX (', v, ') ', data, parentCluster);
+        graph.setNode(parentCluster.id, data);
+        if (!graph.parent(v)) {
+          log.trace('Setting parent', v, parentCluster.id);
+          graph.setParent(v, parentCluster.id, data);
+        }
       }
-    }
-    log.info('(Insert) Node XXX' + v + ': ' + JSON.stringify(graph.node(v)));
-    if (node && node.clusterNode) {
-      // const children = graph.children(v);
-      log.info('Cluster identified', v, node.width, graph.node(v));
-      const o = recursiveRender(nodes, node.graph, diagramtype, graph.node(v));
-      const newEl = o.elem;
-      updateNodeBounds(node, newEl);
-      node.diff = o.diff || 0;
-      log.info('Node bounds (abc123)', v, node, node.width, node.x, node.y);
-      setNodeElem(newEl, node);
+      log.info('(Insert) Node XXX' + v + ': ' + JSON.stringify(graph.node(v)));
+      if (node && node.clusterNode) {
+        // const children = graph.children(v);
+        log.info('Cluster identified', v, node.width, graph.node(v));
+        const o = await recursiveRender(nodes, node.graph, diagramtype, graph.node(v));
+        const newEl = o.elem;
+        updateNodeBounds(node, newEl);
+        node.diff = o.diff || 0;
+        log.info('Node bounds (abc123)', v, node, node.width, node.x, node.y);
+        setNodeElem(newEl, node);
 
-      log.warn('Recursive render complete ', newEl, node);
-    } else {
-      if (graph.children(v).length > 0) {
-        // This is a cluster but not to be rendered recursively
-        // Render as before
-        log.info('Cluster - the non recursive path XXX', v, node.id, node, graph);
-        log.info(findNonClusterChild(node.id, graph));
-        clusterDb[node.id] = { id: findNonClusterChild(node.id, graph), node };
-        // insertCluster(clusters, graph.node(v));
+        log.warn('Recursive render complete ', newEl, node);
       } else {
-        log.info('Node - the non recursive path', v, node.id, node);
-        insertNode(nodes, graph.node(v), dir);
+        if (graph.children(v).length > 0) {
+          // This is a cluster but not to be rendered recursively
+          // Render as before
+          log.info('Cluster - the non recursive path XXX', v, node.id, node, graph);
+          log.info(findNonClusterChild(node.id, graph));
+          clusterDb[node.id] = { id: findNonClusterChild(node.id, graph), node };
+          // insertCluster(clusters, graph.node(v));
+        } else {
+          log.info('Node - the non recursive path', v, node.id, node);
+          await insertNode(nodes, graph.node(v), dir);
+        }
       }
-    }
-  });
+    })
+  );
 
   // Insert labels, this will insert them into the dom so that the width can be calculated
   // Also figure out which edges point to/from clusters and adjust them accordingly
@@ -146,7 +148,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   return { elem, diff };
 };
 
-export const render = (elem, graph, markers, diagramtype, id) => {
+export const render = async (elem, graph, markers, diagramtype, id) => {
   insertMarkers(elem, markers, diagramtype, id);
   clearNodes();
   clearEdges();
@@ -157,7 +159,7 @@ export const render = (elem, graph, markers, diagramtype, id) => {
   adjustClustersAndEdges(graph);
   log.warn('Graph after:', graphlibJson.write(graph));
   // log.warn('Graph ever  after:', graphlibJson.write(graph.node('A').graph));
-  recursiveRender(elem, graph, diagramtype);
+  await recursiveRender(elem, graph, diagramtype);
 };
 
 // const shapeDefinitions = {};

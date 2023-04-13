@@ -248,7 +248,7 @@ export const setConf = function (cnf: any) {
  * @param _version -
  * @param diagObj -
  */
-export const draw = function (text: string, id: string, _version: string, diagObj: any) {
+export const draw = async function (text: string, id: string, _version: string, diagObj: any) {
   log.info('Drawing class - ', id);
 
   // TODO V10: Why flowchart? Might be a mistake when copying.
@@ -300,7 +300,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   // Run the renderer. This is what draws the final graph.
   // @ts-ignore Ignore type error for now
   const element = root.select('#' + id + ' g');
-  render(
+  await render(
     element,
     g,
     ['aggregation', 'extension', 'composition', 'dependency', 'lollipop'],
