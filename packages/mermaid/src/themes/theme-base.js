@@ -49,6 +49,9 @@ class Theme {
     this.arrowheadColor = this.arrowheadColor || invert(this.background);
     this.textColor = this.textColor || this.primaryTextColor;
 
+    // TODO: should this instead default to secondaryBorderColor?
+    this.border2 = this.border2 || this.tertiaryBorderColor;
+
     /* Flowchart variables */
     this.nodeBkg = this.nodeBkg || this.primaryColor;
     this.mainBkg = this.mainBkg || this.primaryColor;
