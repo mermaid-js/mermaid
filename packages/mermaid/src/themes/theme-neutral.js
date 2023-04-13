@@ -108,6 +108,22 @@ class Theme {
     this.secondBkg = lighten(this.contrast, 55);
     this.border2 = this.contrast;
 
+    /* Sequence Diagram variables */
+
+    this.actorBorder = lighten(this.border1, 23);
+    this.actorBkg = this.mainBkg;
+    this.actorTextColor = this.text;
+    this.actorLineColor = this.lineColor;
+    this.signalColor = this.text;
+    this.signalTextColor = this.text;
+    this.labelBoxBkgColor = this.actorBkg;
+    this.labelBoxBorderColor = this.actorBorder;
+    this.labelTextColor = this.text;
+    this.loopTextColor = this.text;
+    this.noteBorderColor = '#999';
+    this.noteBkgColor = '#666';
+    this.noteTextColor = '#fff';
+
     /* Color Scale */
     /* Each color-set will have a background, a foreground and a border color */
 
@@ -160,22 +176,6 @@ class Theme {
     this.clusterBorder = this.border2;
     this.defaultLinkColor = this.lineColor;
     this.titleColor = this.text;
-
-    /* Sequence Diagram variables */
-
-    this.actorBorder = lighten(this.border1, 23);
-    this.actorBkg = this.mainBkg;
-    this.actorTextColor = this.text;
-    this.actorLineColor = this.lineColor;
-    this.signalColor = this.text;
-    this.signalTextColor = this.text;
-    this.labelBoxBkgColor = this.actorBkg;
-    this.labelBoxBorderColor = this.actorBorder;
-    this.labelTextColor = this.text;
-    this.loopTextColor = this.text;
-    this.noteBorderColor = '#999';
-    this.noteBkgColor = '#666';
-    this.noteTextColor = '#fff';
 
     /* Gantt chart variables */
 

@@ -93,6 +93,15 @@ class Theme {
     this.errorTextColor = '#552222';
   }
   updateColors() {
+    /* Sequence Diagram variables */
+    this.actorBorder = darken(this.mainBkg, 20);
+    this.actorBkg = this.mainBkg;
+    this.labelBoxBkgColor = this.actorBkg;
+    this.labelTextColor = this.actorTextColor;
+    this.loopTextColor = this.actorTextColor;
+    this.noteBorderColor = this.border2;
+    this.noteTextColor = this.actorTextColor;
+
     /* Each color-set will have a background, a foreground and a border color */
     this.cScale0 = this.cScale0 || this.primaryColor;
     this.cScale1 = this.cScale1 || this.secondaryColor;
@@ -143,16 +152,6 @@ class Theme {
     this.clusterBkg = this.secondBkg;
     this.clusterBorder = this.border2;
     this.defaultLinkColor = this.lineColor;
-
-    /* Sequence Diagram variables */
-
-    this.actorBorder = darken(this.mainBkg, 20);
-    this.actorBkg = this.mainBkg;
-    this.labelBoxBkgColor = this.actorBkg;
-    this.labelTextColor = this.actorTextColor;
-    this.loopTextColor = this.actorTextColor;
-    this.noteBorderColor = this.border2;
-    this.noteTextColor = this.actorTextColor;
 
     /* Gantt chart variables */
 
