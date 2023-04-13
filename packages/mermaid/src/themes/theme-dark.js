@@ -81,9 +81,8 @@ class Theme {
     this.todayLineColor = '#DB5757';
 
     /* C4 Context Diagram variables */
-
-    this.personBorder = 'calculated';
-    this.personBkg = 'calculated';
+    this.personBorder = this.primaryBorderColor;
+    this.personBkg = this.mainBkg;
 
     /* state colors */
     this.labelColor = 'calculated';
