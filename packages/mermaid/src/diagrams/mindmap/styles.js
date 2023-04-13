@@ -70,5 +70,12 @@ const getStyles = (options) =>
   .edge {
     fill: none;
   }
+  .mindmap-node-label {
+    dy: 1em;
+    alignment-baseline: middle;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    text-align: center;
+  }
 `;
 export default getStyles;

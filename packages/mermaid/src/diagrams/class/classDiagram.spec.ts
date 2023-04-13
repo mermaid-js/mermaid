@@ -190,6 +190,37 @@ describe('class diagram, ', function () {
       parser.parse(str);
     });
 
+    it('should handle cssClass shorthand with members', () => {
+      parser.parse(`classDiagram-v2
+      class Class10:::exClass2 {
+        int[] id
+        List~int~ ids
+        test(List~int~ ids) List~bool~
+        testArray() bool[]
+      }`);
+
+      expect(classDb.getClass('Class10')).toMatchInlineSnapshot(`
+        {
+          "annotations": [],
+          "cssClasses": [
+            "exClass2",
+          ],
+          "domId": "classId-Class10-27",
+          "id": "Class10",
+          "label": "Class10",
+          "members": [
+            "int[] id",
+            "List~int~ ids",
+          ],
+          "methods": [
+            "test(List~int~ ids) List~bool~",
+            "testArray() bool[]",
+          ],
+          "type": "",
+        }
+      `);
+    });
+
     it('should handle method statements', function () {
       const str =
         'classDiagram\n' +
@@ -1023,6 +1054,7 @@ C1 -->  C2
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.cssClasses.length).toBe(1);
+      expect(c1.members[0]).toBe('+member1');
       expect(c1.cssClasses[0]).toBe('styleClass');
     });
 
@@ -1038,6 +1070,7 @@ cssClass "C1" styleClass
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.cssClasses.length).toBe(1);
+      expect(c1.members[0]).toBe('+member1');
       expect(c1.cssClasses[0]).toBe('styleClass');
     });
 

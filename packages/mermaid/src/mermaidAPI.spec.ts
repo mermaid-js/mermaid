@@ -689,7 +689,7 @@ describe('mermaidAPI', () => {
     it('resolves for valid definition', async () => {
       await expect(
         mermaidAPI.parse('graph TD;A--x|text including URL space|B;')
-      ).resolves.not.toThrow();
+      ).resolves.toBeTruthy();
     });
     it('returns true for valid definition with silent option', async () => {
       await expect(

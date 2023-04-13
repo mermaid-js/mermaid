@@ -5,8 +5,14 @@ import { detectType, getDiagramLoader } from './diagram-api/detectType';
 import { extractFrontMatter } from './diagram-api/frontmatter';
 import { UnknownDiagramError } from './errors';
 import { DetailedError } from './utils';
+import { cleanupComments } from './diagram-api/comments';
 
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
+
+/**
+ * An object representing a parsed mermaid diagram definition.
+ * @privateRemarks This is exported as part of the public mermaidAPI.
+ */
 export class Diagram {
   type = 'graph';
   parser;
@@ -38,7 +44,10 @@ export class Diagram {
     // Similarly, we can't do this in getDiagramFromText() because some code
     // calls diagram.db.clear(), which would reset anything set by
     // extractFrontMatter().
-    this.parser.parse = (text: string) => originalParse(extractFrontMatter(text, this.db));
+
+    this.parser.parse = (text: string) =>
+      originalParse(cleanupComments(extractFrontMatter(text, this.db)));
+
     this.parser.parser.yy = this.db;
     if (diagram.init) {
       diagram.init(cnf);
@@ -68,6 +77,15 @@ export class Diagram {
   }
 }
 
+/**
+ * Parse the text asynchronously and generate a Diagram object asynchronously.
+ * **Warning:** This function may be changed in the future.
+ * @alpha
+ * @param text - The mermaid diagram definition.
+ * @returns A the Promise of a Diagram object.
+ * @throws {@link UnknownDiagramError} if the diagram type can not be found.
+ * @privateRemarks This is exported as part of the public mermaidAPI.
+ */
 export const getDiagramFromText = async (text: string): Promise<Diagram> => {
   const type = detectType(text, configApi.getConfig());
   try {

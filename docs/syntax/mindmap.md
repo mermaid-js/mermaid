@@ -224,7 +224,7 @@ mindmap
         C
 ```
 
-_These classes needs top be supplied by the site administrator._
+_These classes need to be supplied by the site administrator._
 
 ## Unclear indentation
 
@@ -253,6 +253,34 @@ Root
         B
       C
 ```
+
+## Markdown Strings
+
+The "Markdown Strings" feature enhances mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
+
+```mermaid-example
+mindmap
+    id1["`**Root** with
+a second line
+Unicode works too: 🤓`"]
+      id2["`The dog in **the** hog... a *very long text* that wraps to a new line`"]
+      id3[Regular labels still works]
+```
+
+```mermaid
+mindmap
+    id1["`**Root** with
+a second line
+Unicode works too: 🤓`"]
+      id2["`The dog in **the** hog... a *very long text* that wraps to a new line`"]
+      id3[Regular labels still works]
+```
+
+Formatting:
+
+- For bold text, use double asterisks \*\* before and after the text.
+- For italics, use single asterisks \* before and after the text.
+- With traditional strings, you needed to add <br> tags for text to wrap in nodes. However, markdown strings automatically wrap text when it becomes too long and allows you to start a new line by simply using a newline character instead of a <br> tag.
 
 ## Integrating with your library/website.
 

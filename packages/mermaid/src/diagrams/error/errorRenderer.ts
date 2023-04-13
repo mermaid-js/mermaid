@@ -4,15 +4,13 @@ import { select } from 'd3';
 import { log } from '../../logger';
 import { getErrorMessage } from '../../utils';
 
-let conf = {};
-
 /**
  * Merges the value of `conf` with the passed `cnf`
  *
  * @param cnf - Config to merge
  */
-export const setConf = function (cnf: any) {
-  conf = { ...conf, ...cnf };
+export const setConf = function () {
+  // no-op
 };
 
 /**

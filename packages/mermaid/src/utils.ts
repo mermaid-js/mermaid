@@ -772,6 +772,9 @@ export const calculateTextDimensions: (
           .style('font-family', fontFamily);
 
         const bBox = (textElem._groups || textElem)[0][0].getBBox();
+        if (bBox.width === 0 && bBox.height === 0) {
+          throw new Error('svg element not in render tree');
+        }
         dim.width = Math.round(Math.max(dim.width, bBox.width));
         cheight = Math.round(bBox.height);
         dim.height += cheight;
