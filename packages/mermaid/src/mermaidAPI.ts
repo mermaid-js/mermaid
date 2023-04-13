@@ -406,6 +406,12 @@ const render = async function (
   // clean up text CRLFs
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
 
+  // clean up html tags so that all attributes use single quotes, parser throws error on double quotes
+  text = text.replace(
+    /<(\w+)([^>]*)>/g,
+    (match, tag, attributes) => '<' + tag + attributes.replace(/="([^"]*)"/g, "='$1'") + '>'
+  );
+
   const idSelector = '#' + id;
   const iFrameID = 'i' + id;
   const iFrameID_selector = '#' + iFrameID;

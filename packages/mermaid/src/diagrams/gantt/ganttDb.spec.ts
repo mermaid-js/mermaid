@@ -1,5 +1,5 @@
 // @ts-nocheck TODO: Fix TS
-import dayjs from 'dayjs';
+import dayjs from 'dayjs/esm/index.js';
 import ganttDb from './ganttDb';
 import { convert } from '../../tests/util';
 

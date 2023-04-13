@@ -362,7 +362,7 @@ export const getClasses = function (text, diagObj) {
  * @param id
  */
 
-export const draw = function (text, id, _version, diagObj) {
+export const draw = async function (text, id, _version, diagObj) {
   log.info('Drawing flowchart');
   diagObj.db.clear();
   flowDb.setGen('gen-2');
@@ -451,7 +451,7 @@ export const draw = function (text, id, _version, diagObj) {
 
   // Run the renderer. This is what draws the final graph.
   const element = root.select('#' + id + ' g');
-  render(element, g, ['point', 'circle', 'cross'], 'flowchart', id);
+  await render(element, g, ['point', 'circle', 'cross'], 'flowchart', id);
 
   utils.insertTitle(svg, 'flowchartTitleText', conf.titleTopMargin, diagObj.db.getDiagramTitle());
 

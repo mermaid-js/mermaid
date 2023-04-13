@@ -23,11 +23,11 @@ const getStyles = (options: FlowChartStyleOptions) =>
   .cluster-label text {
     fill: ${options.titleColor};
   }
-  .cluster-label span {
+  .cluster-label span,p {
     color: ${options.titleColor};
   }
 
-  .label text,span {
+  .label text,span,p {
     fill: ${options.nodeTextColor || options.textColor};
     color: ${options.nodeTextColor || options.textColor};
   }
@@ -92,7 +92,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
     fill: ${options.titleColor};
   }
 
-  .cluster span {
+  .cluster span,p {
     color: ${options.titleColor};
   }
   /* .cluster div {

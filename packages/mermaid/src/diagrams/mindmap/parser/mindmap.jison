@@ -18,7 +18,7 @@
 
 %%
 
-\s*\%\%.*          {yy.getLogger().trace('Found comment',yytext);}
+\s*\%\%.*          {yy.getLogger().trace('Found comment',yytext); return 'SPACELINE';}
 // \%\%[^\n]*\n                             /* skip comments */
 "mindmap"		       return 'MINDMAP';
 ":::"              { this.begin('CLASS'); }

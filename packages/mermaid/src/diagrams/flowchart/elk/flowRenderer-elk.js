@@ -35,229 +35,231 @@ let nodeDb = {};
 //  * @param doc
 //  * @param diagObj
 //  */
-export const addVertices = function (vert, svgId, root, doc, diagObj, parentLookupDb, graph) {
+export const addVertices = async function (vert, svgId, root, doc, diagObj, parentLookupDb, graph) {
   const svg = root.select(`[id="${svgId}"]`);
   const nodes = svg.insert('g').attr('class', 'nodes');
   const keys = Object.keys(vert);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
-  keys.forEach(function (id) {
-    const vertex = vert[id];
+  await Promise.all(
+    keys.map(async function (id) {
+      const vertex = vert[id];
 
-    /**
-     * Variable for storing the classes for the vertex
-     *
-     * @type {string}
-     */
-    let classStr = 'default';
-    if (vertex.classes.length > 0) {
-      classStr = vertex.classes.join(' ');
-    }
-    classStr = classStr + ' flowchart-label';
-    const styles = getStylesFromArray(vertex.styles);
+      /**
+       * Variable for storing the classes for the vertex
+       *
+       * @type {string}
+       */
+      let classStr = 'default';
+      if (vertex.classes.length > 0) {
+        classStr = vertex.classes.join(' ');
+      }
+      classStr = classStr + ' flowchart-label';
+      const styles = getStylesFromArray(vertex.styles);
 
-    // Use vertex id as text in the box if no text is provided by the graph definition
-    let vertexText = vertex.text !== undefined ? vertex.text : vertex.id;
+      // Use vertex id as text in the box if no text is provided by the graph definition
+      let vertexText = vertex.text !== undefined ? vertex.text : vertex.id;
 
-    // We create a SVG label, either by delegating to addHtmlLabel or manually
-    let vertexNode;
-    const labelData = { width: 0, height: 0 };
+      // We create a SVG label, either by delegating to addHtmlLabel or manually
+      let vertexNode;
+      const labelData = { width: 0, height: 0 };
 
-    const ports = [
-      {
-        id: vertex.id + '-west',
-        layoutOptions: {
-          'port.side': 'WEST',
+      const ports = [
+        {
+          id: vertex.id + '-west',
+          layoutOptions: {
+            'port.side': 'WEST',
+          },
         },
-      },
-      {
-        id: vertex.id + '-east',
-        layoutOptions: {
-          'port.side': 'EAST',
+        {
+          id: vertex.id + '-east',
+          layoutOptions: {
+            'port.side': 'EAST',
+          },
         },
-      },
-      {
-        id: vertex.id + '-south',
-        layoutOptions: {
-          'port.side': 'SOUTH',
+        {
+          id: vertex.id + '-south',
+          layoutOptions: {
+            'port.side': 'SOUTH',
+          },
         },
-      },
-      {
-        id: vertex.id + '-north',
-        layoutOptions: {
-          'port.side': 'NORTH',
+        {
+          id: vertex.id + '-north',
+          layoutOptions: {
+            'port.side': 'NORTH',
+          },
         },
-      },
-    ];
+      ];
 
-    let radious = 0;
-    let _shape = '';
-    let layoutOptions = {};
-    // Set the shape based parameters
-    switch (vertex.type) {
-      case 'round':
-        radious = 5;
-        _shape = 'rect';
-        break;
-      case 'square':
-        _shape = 'rect';
-        break;
-      case 'diamond':
-        _shape = 'question';
-        layoutOptions = {
-          portConstraints: 'FIXED_SIDE',
-        };
-        break;
-      case 'hexagon':
-        _shape = 'hexagon';
-        break;
-      case 'odd':
-        _shape = 'rect_left_inv_arrow';
-        break;
-      case 'lean_right':
-        _shape = 'lean_right';
-        break;
-      case 'lean_left':
-        _shape = 'lean_left';
-        break;
-      case 'trapezoid':
-        _shape = 'trapezoid';
-        break;
-      case 'inv_trapezoid':
-        _shape = 'inv_trapezoid';
-        break;
-      case 'odd_right':
-        _shape = 'rect_left_inv_arrow';
-        break;
-      case 'circle':
-        _shape = 'circle';
-        break;
-      case 'ellipse':
-        _shape = 'ellipse';
-        break;
-      case 'stadium':
-        _shape = 'stadium';
-        break;
-      case 'subroutine':
-        _shape = 'subroutine';
-        break;
-      case 'cylinder':
-        _shape = 'cylinder';
-        break;
-      case 'group':
-        _shape = 'rect';
-        break;
-      case 'doublecircle':
-        _shape = 'doublecircle';
-        break;
-      default:
-        _shape = 'rect';
-    }
+      let radious = 0;
+      let _shape = '';
+      let layoutOptions = {};
+      // Set the shape based parameters
+      switch (vertex.type) {
+        case 'round':
+          radious = 5;
+          _shape = 'rect';
+          break;
+        case 'square':
+          _shape = 'rect';
+          break;
+        case 'diamond':
+          _shape = 'question';
+          layoutOptions = {
+            portConstraints: 'FIXED_SIDE',
+          };
+          break;
+        case 'hexagon':
+          _shape = 'hexagon';
+          break;
+        case 'odd':
+          _shape = 'rect_left_inv_arrow';
+          break;
+        case 'lean_right':
+          _shape = 'lean_right';
+          break;
+        case 'lean_left':
+          _shape = 'lean_left';
+          break;
+        case 'trapezoid':
+          _shape = 'trapezoid';
+          break;
+        case 'inv_trapezoid':
+          _shape = 'inv_trapezoid';
+          break;
+        case 'odd_right':
+          _shape = 'rect_left_inv_arrow';
+          break;
+        case 'circle':
+          _shape = 'circle';
+          break;
+        case 'ellipse':
+          _shape = 'ellipse';
+          break;
+        case 'stadium':
+          _shape = 'stadium';
+          break;
+        case 'subroutine':
+          _shape = 'subroutine';
+          break;
+        case 'cylinder':
+          _shape = 'cylinder';
+          break;
+        case 'group':
+          _shape = 'rect';
+          break;
+        case 'doublecircle':
+          _shape = 'doublecircle';
+          break;
+        default:
+          _shape = 'rect';
+      }
 
-    // Add the node
-    const node = {
-      labelStyle: styles.labelStyle,
-      shape: _shape,
-      labelText: vertexText,
-      labelType: vertex.labelType,
-      rx: radious,
-      ry: radious,
-      class: classStr,
-      style: styles.style,
-      id: vertex.id,
-      link: vertex.link,
-      linkTarget: vertex.linkTarget,
-      tooltip: diagObj.db.getTooltip(vertex.id) || '',
-      domId: diagObj.db.lookUpDomId(vertex.id),
-      haveCallback: vertex.haveCallback,
-      width: vertex.type === 'group' ? 500 : undefined,
-      dir: vertex.dir,
-      type: vertex.type,
-      props: vertex.props,
-      padding: getConfig().flowchart.padding,
-    };
-    let boundingBox;
-    let nodeEl;
+      // Add the node
+      const node = {
+        labelStyle: styles.labelStyle,
+        shape: _shape,
+        labelText: vertexText,
+        labelType: vertex.labelType,
+        rx: radious,
+        ry: radious,
+        class: classStr,
+        style: styles.style,
+        id: vertex.id,
+        link: vertex.link,
+        linkTarget: vertex.linkTarget,
+        tooltip: diagObj.db.getTooltip(vertex.id) || '',
+        domId: diagObj.db.lookUpDomId(vertex.id),
+        haveCallback: vertex.haveCallback,
+        width: vertex.type === 'group' ? 500 : undefined,
+        dir: vertex.dir,
+        type: vertex.type,
+        props: vertex.props,
+        padding: getConfig().flowchart.padding,
+      };
+      let boundingBox;
+      let nodeEl;
 
-    // Add the element to the DOM
-    if (node.type !== 'group') {
-      nodeEl = insertNode(nodes, node, vertex.dir);
-      boundingBox = nodeEl.node().getBBox();
-    } else {
-      const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
-      // svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
-      // const rows = vertexText.split(common.lineBreakRegex);
-      // for (const row of rows) {
-      //   const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-      //   tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
-      //   tspan.setAttribute('dy', '1em');
-      //   tspan.setAttribute('x', '1');
-      //   tspan.textContent = row;
-      //   svgLabel.appendChild(tspan);
+      // Add the element to the DOM
+      if (node.type !== 'group') {
+        nodeEl = insertNode(nodes, node, vertex.dir);
+        boundingBox = nodeEl.node().getBBox();
+      } else {
+        const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
+        // svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
+        // const rows = vertexText.split(common.lineBreakRegex);
+        // for (const row of rows) {
+        //   const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+        //   tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
+        //   tspan.setAttribute('dy', '1em');
+        //   tspan.setAttribute('x', '1');
+        //   tspan.textContent = row;
+        //   svgLabel.appendChild(tspan);
+        // }
+        // vertexNode = svgLabel;
+        // const bbox = vertexNode.getBBox();
+        const { shapeSvg, bbox } = await labelHelper(nodes, node, undefined, true);
+        labelData.width = bbox.width;
+        labelData.wrappingWidth = getConfig().flowchart.wrappingWidth;
+        labelData.height = bbox.height;
+        labelData.labelNode = shapeSvg.node();
+        node.labelData = labelData;
+      }
+      // const { shapeSvg, bbox } = await labelHelper(svg, node, undefined, true);
+
+      const data = {
+        id: vertex.id,
+        ports: vertex.type === 'diamond' ? ports : [],
+        // labelStyle: styles.labelStyle,
+        // shape: _shape,
+        layoutOptions,
+        labelText: vertexText,
+        labelData,
+        // labels: [{ text: vertexText }],
+        // rx: radius,
+        // ry: radius,
+        // class: classStr,
+        // style: styles.style,
+        // link: vertex.link,
+        // linkTarget: vertex.linkTarget,
+        // tooltip: diagObj.db.getTooltip(vertex.id) || '',
+        domId: diagObj.db.lookUpDomId(vertex.id),
+        // haveCallback: vertex.haveCallback,
+        width: boundingBox?.width,
+        height: boundingBox?.height,
+        // dir: vertex.dir,
+        type: vertex.type,
+        // props: vertex.props,
+        // padding: getConfig().flowchart.padding,
+        // boundingBox,
+        el: nodeEl,
+        parent: parentLookupDb.parentById[vertex.id],
+      };
+      // if (!Object.keys(parentLookupDb.childrenById).includes(vertex.id)) {
+      // graph.children.push({
+      //   ...data,
+      // });
       // }
-      // vertexNode = svgLabel;
-      // const bbox = vertexNode.getBBox();
-      const { shapeSvg, bbox } = labelHelper(nodes, node, undefined, true);
-      labelData.width = bbox.width;
-      labelData.wrappingWidth = getConfig().flowchart.wrappingWidth;
-      labelData.height = bbox.height;
-      labelData.labelNode = shapeSvg.node();
-      node.labelData = labelData;
-    }
-    // const { shapeSvg, bbox } = labelHelper(svg, node, undefined, true);
-
-    const data = {
-      id: vertex.id,
-      ports: vertex.type === 'diamond' ? ports : [],
-      // labelStyle: styles.labelStyle,
-      // shape: _shape,
-      layoutOptions,
-      labelText: vertexText,
-      labelData,
-      // labels: [{ text: vertexText }],
-      // rx: radius,
-      // ry: radius,
-      // class: classStr,
-      // style: styles.style,
-      // link: vertex.link,
-      // linkTarget: vertex.linkTarget,
-      // tooltip: diagObj.db.getTooltip(vertex.id) || '',
-      domId: diagObj.db.lookUpDomId(vertex.id),
-      // haveCallback: vertex.haveCallback,
-      width: boundingBox?.width,
-      height: boundingBox?.height,
-      // dir: vertex.dir,
-      type: vertex.type,
-      // props: vertex.props,
-      // padding: getConfig().flowchart.padding,
-      // boundingBox,
-      el: nodeEl,
-      parent: parentLookupDb.parentById[vertex.id],
-    };
-    // if (!Object.keys(parentLookupDb.childrenById).includes(vertex.id)) {
-    // graph.children.push({
-    //   ...data,
-    // });
-    // }
-    nodeDb[node.id] = data;
-    // log.trace('setNode', {
-    //   labelStyle: styles.labelStyle,
-    //   shape: _shape,
-    //   labelText: vertexText,
-    //   rx: radius,
-    //   ry: radius,
-    //   class: classStr,
-    //   style: styles.style,
-    //   id: vertex.id,
-    //   domId: diagObj.db.lookUpDomId(vertex.id),
-    //   width: vertex.type === 'group' ? 500 : undefined,
-    //   type: vertex.type,
-    //   dir: vertex.dir,
-    //   props: vertex.props,
-    //   padding: getConfig().flowchart.padding,
-    //   parent: parentLookupDb.parentById[vertex.id],
-    // });
-  });
+      nodeDb[node.id] = data;
+      // log.trace('setNode', {
+      //   labelStyle: styles.labelStyle,
+      //   shape: _shape,
+      //   labelText: vertexText,
+      //   rx: radius,
+      //   ry: radius,
+      //   class: classStr,
+      //   style: styles.style,
+      //   id: vertex.id,
+      //   domId: diagObj.db.lookUpDomId(vertex.id),
+      //   width: vertex.type === 'group' ? 500 : undefined,
+      //   type: vertex.type,
+      //   dir: vertex.dir,
+      //   props: vertex.props,
+      //   padding: getConfig().flowchart.padding,
+      //   parent: parentLookupDb.parentById[vertex.id],
+      // });
+    })
+  );
   return graph;
 };
 
@@ -861,7 +863,7 @@ export const draw = async function (text, id, _version, diagObj) {
   // in order to get the size of the node. You can't get the size of a node
   // that is not in the dom so we need to add it to the dom, get the size
   // we will position the nodes when we get the layout from elkjs
-  graph = addVertices(vert, id, root, doc, diagObj, parentLookupDb, graph, svg);
+  graph = await addVertices(vert, id, root, doc, diagObj, parentLookupDb, graph);
 
   // Time for the edges, we start with adding an element in the node to hold the edges
   const edgesEl = svg.insert('g').attr('class', 'edges edgePath');
@@ -934,9 +936,12 @@ const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, diagObj, depth) => {
           .attr('width', node.width)
           .attr('height', node.height);
         const label = subgraphEl.insert('g').attr('class', 'label');
+        const labelCentering = getConfig().flowchart.htmlLabels ? node.labelData.width / 2 : 0;
         label.attr(
           'transform',
-          `translate(${node.labels[0].x + relX + node.x}, ${node.labels[0].y + relY + node.y})`
+          `translate(${node.labels[0].x + relX + node.x + labelCentering}, ${
+            node.labels[0].y + relY + node.y + 3
+          })`
         );
         label.node().appendChild(node.labelData.labelNode);
 
