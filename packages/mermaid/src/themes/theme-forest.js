@@ -261,6 +261,14 @@ class Theme {
     this.gitInv5 = this.gitInv5 || invert(this.git5);
     this.gitInv6 = this.gitInv6 || invert(this.git6);
     this.gitInv7 = this.gitInv7 || invert(this.git7);
+    this.gitBranchLabel0 = this.gitBranchLabel0 || invert(this.labelTextColor);
+    this.gitBranchLabel1 = this.gitBranchLabel1 || this.labelTextColor;
+    this.gitBranchLabel2 = this.gitBranchLabel2 || this.labelTextColor;
+    this.gitBranchLabel3 = this.gitBranchLabel3 || invert(this.labelTextColor);
+    this.gitBranchLabel4 = this.gitBranchLabel4 || this.labelTextColor;
+    this.gitBranchLabel5 = this.gitBranchLabel5 || this.labelTextColor;
+    this.gitBranchLabel6 = this.gitBranchLabel6 || this.labelTextColor;
+    this.gitBranchLabel7 = this.gitBranchLabel7 || this.labelTextColor;
 
     this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
     this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;
