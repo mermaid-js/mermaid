@@ -46,6 +46,7 @@ class Theme {
     this.secondaryTextColor = this.secondaryTextColor || invert(this.secondaryColor);
     this.tertiaryTextColor = this.tertiaryTextColor || invert(this.tertiaryColor);
     this.lineColor = this.lineColor || invert(this.background);
+    this.arrowheadColor = this.arrowheadColor || invert(this.background);
     this.textColor = this.textColor || this.primaryTextColor;
 
     /* Flowchart variables */
