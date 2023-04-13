@@ -403,9 +403,25 @@ click className href "url" "tooltip"
 
 ## Notes
 
-It is possible to add notes on diagram using `note "line1\nline2"` or note for class using `note for class "line1\nline2"`
+It is possible to add notes on the diagram using `note "line1\nline2"`. A note can be added for a specific class using `note for <CLASS NAME> "line1\nline2"`.
 
 ### Examples
+
+```mmd
+classDiagram
+    note "This is a general note"
+    note for MyClass "This is a note for a class"
+    class MyClass{
+    }
+```
+
+```mermaid
+classDiagram
+    note "This is a general note"
+    note for MyClass "This is a note for a class"
+    class MyClass{
+    }
+```
 
 _URL Link:_
 
