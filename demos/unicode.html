@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Unicode Flowchart Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        /* font-family: 'trebuchet ms', verdana, arial; */
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h3>flowchart</h3>
+    <pre class="mermaid">
+    flowchart TD
+      accTitle: What to buy
+      accDescr: Options of what to buy with Christmas money
+      A[u:u-gear] -->|u:u-staff-of-hermes| B(u:u-basket)
+      B --> C{Wrong title: u:u-wrong<br/>Correct title : u:u-pencil <br/>}
+      C -->|u:u-face-with-cold-sweat| D[u:u-notebook]
+      C -->|u:u-smile| E[u:u-mobile-phone]
+      C -->|Three| F[u:u-police-car]
+  </pre>
+    <hr />
+  </body>
+
+  <script type="module">
+    import mermaid from './mermaid.esm.mjs';
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      securityLevel: 'loose',
+      flowchart: { curve: 'basis' },
+    });
+  </script>
+</html>
