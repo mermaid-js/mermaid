@@ -9,7 +9,7 @@ beforeAll(async () => {
 });
 const spyOn = vi.spyOn;
 
-vi.mock('./mermaidAPI');
+vi.mock('./mermaidAPI.js');
 
 afterEach(() => {
   vi.clearAllMocks();
