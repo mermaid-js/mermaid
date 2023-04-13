@@ -1,10 +1,10 @@
-import intersectRect from './intersect/intersect-rect';
-import { log } from '../logger';
-import createLabel from './createLabel';
-import { createText } from '../rendering-util/createText';
+import intersectRect from './intersect/intersect-rect.js';
+import { log } from '../logger.js';
+import createLabel from './createLabel.js';
+import { createText } from '../rendering-util/createText.js';
 import { select } from 'd3';
-import { getConfig } from '../config';
-import { evaluate } from '../diagrams/common/common';
+import { getConfig } from '../config.js';
+import { evaluate } from '../diagrams/common/common.js';
 
 const rect = (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);

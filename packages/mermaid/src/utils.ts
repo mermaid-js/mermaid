@@ -24,12 +24,12 @@ import {
   curveStepBefore,
   select,
 } from 'd3';
-import common from './diagrams/common/common';
-import { configKeys } from './defaultConfig';
-import { log } from './logger';
-import { detectType } from './diagram-api/detectType';
-import assignWithDepth from './assignWithDepth';
-import { MermaidConfig } from './config.type';
+import common from './diagrams/common/common.js';
+import { configKeys } from './defaultConfig.js';
+import { log } from './logger.js';
+import { detectType } from './diagram-api/detectType.js';
+import assignWithDepth from './assignWithDepth.js';
+import { MermaidConfig } from './config.type.js';
 import memoize from 'lodash-es/memoize.js';
 
 // Effectively an enum of the supported curve types, accessible by name

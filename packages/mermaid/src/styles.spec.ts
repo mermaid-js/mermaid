@@ -4,8 +4,8 @@ import { vi } from 'vitest';
 import { validate } from 'csstree-validator';
 import { compile, serialize, stringify } from 'stylis';
 
-import { getConfig } from './config';
-import theme from './themes';
+import { getConfig } from './config.js';
+import theme from './themes/index.js';
 
 /**
  * Import the getStyles function from each diagram.
@@ -14,23 +14,23 @@ import theme from './themes';
  * because many of the diagrams have a circular dependency import error
  * (they import mermaidAPI.js, which imports diagramOrchestrator.js, which causes a loop)
  */
-import c4 from './diagrams/c4/styles';
-import classDiagram from './diagrams/class/styles';
-import flowchart from './diagrams/flowchart/styles';
-import flowchartElk from './diagrams/flowchart/elk/styles';
-import er from './diagrams/er/styles';
-import error from './diagrams/error/styles';
-import git from './diagrams/git/styles';
-import gantt from './diagrams/gantt/styles';
-import info from './diagrams/info/styles';
-import pie from './diagrams/pie/styles';
-import requirement from './diagrams/requirement/styles';
-import sequence from './diagrams/sequence/styles';
-import state from './diagrams/state/styles';
-import journey from './diagrams/user-journey/styles';
-import timeline from './diagrams/timeline/styles';
-import mindmap from './diagrams/mindmap/styles';
-import themes from './themes';
+import c4 from './diagrams/c4/styles.js';
+import classDiagram from './diagrams/class/styles.js';
+import flowchart from './diagrams/flowchart/styles.js';
+import flowchartElk from './diagrams/flowchart/elk/styles.js';
+import er from './diagrams/er/styles.js';
+import error from './diagrams/error/styles.js';
+import git from './diagrams/git/styles.js';
+import gantt from './diagrams/gantt/styles.js';
+import info from './diagrams/info/styles.js';
+import pie from './diagrams/pie/styles.js';
+import requirement from './diagrams/requirement/styles.js';
+import sequence from './diagrams/sequence/styles.js';
+import state from './diagrams/state/styles.js';
+import journey from './diagrams/user-journey/styles.js';
+import timeline from './diagrams/timeline/styles.js';
+import mindmap from './diagrams/mindmap/styles.js';
+import themes from './themes/index.js';
 
 async function checkValidStylisCSSStyleSheet(stylisString: string) {
   const cssString = serialize(compile(`#my-svg-id{${stylisString}}`), stringify);
@@ -67,7 +67,7 @@ describe('styles', () => {
 
   describe('getStyles', () => {
     test('should return a valid style for an empty type', async () => {
-      const { default: getStyles, addStylesForDiagram } = await import('./styles');
+      const { default: getStyles, addStylesForDiagram } = await import('./styles.js');
 
       const diagramType = 'my-custom-mocked-type-with-no-styles';
       const myTypeGetStylesFunc = vi.fn().mockReturnValue('');
@@ -102,7 +102,7 @@ describe('styles', () => {
         timeline,
       })) {
         test(`should return a valid style for diagram ${diagramId} and theme ${themeId}`, async () => {
-          const { default: getStyles, addStylesForDiagram } = await import('./styles');
+          const { default: getStyles, addStylesForDiagram } = await import('./styles.js');
 
           addStylesForDiagram(diagramId, getDiagramStyles);
           const styles = getStyles(

@@ -1,9 +1,9 @@
 import { invert, lighten, rgba, adjust, darken } from 'khroma';
-import { mkBorder } from './theme-helpers';
+import { mkBorder } from './theme-helpers.js';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
-} from './erDiagram-oldHardcodedValues';
+} from './erDiagram-oldHardcodedValues.js';
 
 class Theme {
   constructor() {

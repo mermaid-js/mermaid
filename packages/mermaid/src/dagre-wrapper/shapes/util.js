@@ -1,9 +1,9 @@
-import createLabel from '../createLabel';
-import { createText } from '../../rendering-util/createText';
-import { getConfig } from '../../config';
-import { decodeEntities } from '../../mermaidAPI';
+import createLabel from '../createLabel.js';
+import { createText } from '../../rendering-util/createText.js';
+import { getConfig } from '../../config.js';
+import { decodeEntities } from '../../mermaidAPI.js';
 import { select } from 'd3';
-import { evaluate, sanitizeText } from '../../diagrams/common/common';
+import { evaluate, sanitizeText } from '../../diagrams/common/common.js';
 
 export const labelHelper = async (parent, node, _classes, isNode) => {
   let classes;

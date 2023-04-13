@@ -1,12 +1,12 @@
 // tests to check that comments are removed
 
-import { cleanupComments } from './comments';
+import { cleanupComments } from './comments.js';
 import { describe, it, expect } from 'vitest';
 
 describe('comments', () => {
   it('should remove comments', () => {
     const text = `
-		
+
 %% This is a comment
 %% This is another comment
 graph TD
@@ -27,7 +27,7 @@ graph TD
 %% This is another comment
 %%{init: {'theme': 'forest'}}%%
 %%{ init: {'theme': 'space before init'}}%%
-%%{init: {'theme': 'space after ending'}}%% 
+%%{init: {'theme': 'space after ending'}}%%
 graph TD
 	A-->B
 
@@ -37,7 +37,7 @@ graph TD
     expect(cleanupComments(text)).toMatchInlineSnapshot(`
       "%%{init: {'theme': 'forest'}}%%
       %%{ init: {'theme': 'space before init'}}%%
-      %%{init: {'theme': 'space after ending'}}%% 
+      %%{init: {'theme': 'space after ending'}}%%
       graph TD
       	A-->B
 

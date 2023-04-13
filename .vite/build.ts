@@ -3,6 +3,7 @@ import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import jisonPlugin from './jisonPlugin.js';
 import { readFileSync } from 'fs';
+import typescript from '@rollup/plugin-typescript';
 import { visualizer } from 'rollup-plugin-visualizer';
 import type { TemplateType } from 'rollup-plugin-visualizer/dist/plugin/template-types.js';
 
@@ -102,9 +103,14 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
       },
     },
     resolve: {
-      extensions: ['.jison', '.js', '.ts', '.json'],
+      extensions: [],
     },
-    plugins: [jisonPlugin(), ...visualizerOptions(packageName, core)],
+    plugins: [
+      jisonPlugin(),
+      // @ts-expect-error According to the type definitions, rollup plugins are incompatible with vite
+      typescript({ compilerOptions: { declaration: false } }),
+      ...visualizerOptions(packageName, core),
+    ],
   };
 
   if (watch && config.build) {

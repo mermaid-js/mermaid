@@ -1,4 +1,4 @@
-import { urlSnapshotTest } from '../../helpers/util';
+import { urlSnapshotTest } from '../../helpers/util.js';
 
 describe('CSS injections', () => {
   it('should not allow CSS injections outside of the diagram', () => {

@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
-import { Diagram, getDiagramFromText } from './Diagram';
-import { addDetector } from './diagram-api/detectType';
-import { addDiagrams } from './diagram-api/diagram-orchestration';
+import { Diagram, getDiagramFromText } from './Diagram.js';
+import { addDetector } from './diagram-api/detectType.js';
+import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 
 addDiagrams();
 

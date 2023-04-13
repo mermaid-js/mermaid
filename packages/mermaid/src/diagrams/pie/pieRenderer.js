@@ -1,9 +1,9 @@
 /** Created by AshishJ on 11-09-2019. */
 import { select, scaleOrdinal, pie as d3pie, arc } from 'd3';
-import { log } from '../../logger';
-import { configureSvgSize } from '../../setupGraphViewbox';
-import * as configApi from '../../config';
-import { parseFontSize } from '../../utils';
+import { log } from '../../logger.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
+import * as configApi from '../../config.js';
+import { parseFontSize } from '../../utils.js';
 
 let conf = configApi.getConfig();
 

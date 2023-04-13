@@ -1,5 +1,5 @@
 import { invert, lighten, darken, rgba, adjust } from 'khroma';
-import { mkBorder } from './theme-helpers';
+import { mkBorder } from './theme-helpers.js';
 
 class Theme {
   constructor() {

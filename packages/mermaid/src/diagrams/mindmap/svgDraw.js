@@ -1,6 +1,6 @@
 import { select } from 'd3';
-import * as db from './mindmapDb';
-import { createText } from '../../rendering-util/createText';
+import * as db from './mindmapDb.js';
+import { createText } from '../../rendering-util/createText.js';
 const MAX_SECTIONS = 12;
 
 /**

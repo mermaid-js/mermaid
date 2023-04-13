@@ -1,5 +1,5 @@
-import { parser } from './parser/info';
-import infoDb from './infoDb';
+import { parser } from './parser/info.jison';
+import infoDb from './infoDb.js';
 describe('when parsing an info graph it', function () {
   let ex;
   beforeEach(function () {

@@ -1,7 +1,7 @@
 /** Created by knut on 14-12-11. */
 import { select } from 'd3';
-import { log } from '../../logger';
-import { getConfig } from '../../config';
+import { log } from '../../logger.js';
+import { getConfig } from '../../config.js';
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
