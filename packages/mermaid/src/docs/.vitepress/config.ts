@@ -1,5 +1,5 @@
 import { version } from '../../../package.json';
-import MermaidExample from './mermaid-markdown-all';
+import MermaidExample from './mermaid-markdown-all.js';
 import { defineConfig, MarkdownOptions } from 'vitepress';
 
 const allMarkdownTransformers: MarkdownOptions = {
@@ -28,7 +28,16 @@ export default defineConfig({
     },
     socialLinks: [
       { icon: 'github', link: 'https://github.com/mermaid-js/mermaid' },
-      { icon: 'slack', link: 'https://mermaid-talk.slack.com' },
+      {
+        icon: 'slack',
+        link: 'https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE',
+      },
+      {
+        icon: {
+          svg: '<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490.16 490.16"><defs><mask id="Mask"><rect x="0" y="0" width="490.16" height="490.16" fill="white" /><path fill="black" d="M407.48,111.18A165.2,165.2,0,0,0,245.08,220,165.2,165.2,0,0,0,82.68,111.18a165.5,165.5,0,0,0,72.06,143.64,88.81,88.81,0,0,1,38.53,73.45v50.86H296.9V328.27a88.8,88.8,0,0,1,38.52-73.45,165.41,165.41,0,0,0,72.06-143.64Z"/><path fill="black" d="M160.63,328.27a56.09,56.09,0,0,0-24.27-46.49,198.74,198.74,0,0,1-28.54-23.66A196.87,196.87,0,0,1,82.53,227V379.13h78.1Z"/><path fill="black" d="M329.53,328.27a56.09,56.09,0,0,1,24.27-46.49,198.74,198.74,0,0,0,28.54-23.66A196.87,196.87,0,0,0,407.63,227V379.13h-78.1Z"/></mask><style>.cls-1{fill:#76767B;}.cls-1:hover{fill:#FF3570}</style></defs><rect class="cls-1" width="490.16" height="490.16" rx="84.61" mask="url(#Mask)" /></svg>',
+        },
+        link: 'https://www.mermaidchart.com/',
+      },
     ],
   },
 });
@@ -42,6 +51,11 @@ function nav() {
       activeMatch: '/config/',
     },
     { text: 'Integrations', link: '/ecosystem/integrations', activeMatch: '/ecosystem/' },
+    {
+      text: 'Latest News',
+      link: '/news/announcements',
+      activeMatch: '/announcements',
+    },
     {
       text: version,
       items: [
@@ -80,6 +94,7 @@ function sidebarAll() {
     ...sidebarEcosystem(),
     ...sidebarConfig(),
     ...sidebarCommunity(),
+    ...sidebarNews(),
   ];
 }
 
@@ -158,6 +173,19 @@ function sidebarCommunity() {
         },
         { text: 'Adding Diagrams', link: '/community/newDiagram' },
         { text: 'Security', link: '/community/security' },
+      ],
+    },
+  ];
+}
+
+function sidebarNews() {
+  return [
+    {
+      text: '📰 Latest News',
+      collapsible: true,
+      items: [
+        { text: 'Announcements', link: '/news/announcements' },
+        { text: 'Blog', link: '/news/blog' },
       ],
     },
   ];

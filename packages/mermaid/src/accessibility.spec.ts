@@ -1,6 +1,6 @@
-import { MockedD3 } from './tests/MockedD3';
-import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility';
-import { D3Element } from './mermaidAPI';
+import { MockedD3 } from './tests/MockedD3.js';
+import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
+import { D3Element } from './mermaidAPI.js';
 
 describe('accessibility', () => {
   const fauxSvgNode = new MockedD3();

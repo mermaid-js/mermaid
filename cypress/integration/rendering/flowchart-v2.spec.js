@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
 
 describe('Flowchart v2', () => {
   it('1: should render a simple flowchart', () => {
@@ -683,6 +683,16 @@ flowchart TD
 A ~~~ B
 `,
       { titleTopMargin: 0 }
+    );
+  });
+  it('4023: Should render html labels with images and-or text correctly', () => {
+    imgSnapshotTest(
+      `flowchart TD
+    B[<img src='https://mermaid.js.org/mermaid-logo.svg'>]
+    B-->C[<img src="https://mermaid.js.org/mermaid-logo.svg"> more text <img src='https://mermaid.js.org/mermaid-logo.svg'>]
+    B-->D(<img src='https://mermaid.js.org/mermaid-logo.svg'> some text)
+    B-->E(plain)`,
+      {}
     );
   });
   describe('Markdown strings flowchart (#4220)', () => {

@@ -1,4 +1,4 @@
-import flowDb from './flowDb';
+import flowDb from './flowDb.js';
 
 describe('flow db subgraphs', () => {
   let subgraphs;

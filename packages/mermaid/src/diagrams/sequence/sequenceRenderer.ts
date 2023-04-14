@@ -1,13 +1,13 @@
 // @ts-nocheck TODO: fix file
 import { select, selectAll } from 'd3';
-import svgDraw, { drawText, fixLifeLineHeights } from './svgDraw';
-import { log } from '../../logger';
-import common from '../common/common';
-import * as configApi from '../../config';
-import assignWithDepth from '../../assignWithDepth';
-import utils from '../../utils';
-import { configureSvgSize } from '../../setupGraphViewbox';
-import { Diagram } from '../../Diagram';
+import svgDraw, { drawText, fixLifeLineHeights } from './svgDraw.js';
+import { log } from '../../logger.js';
+import common from '../common/common.js';
+import * as configApi from '../../config.js';
+import assignWithDepth from '../../assignWithDepth.js';
+import utils from '../../utils.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { Diagram } from '../../Diagram.js';
 
 let conf = {};
 

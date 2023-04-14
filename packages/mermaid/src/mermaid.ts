@@ -2,21 +2,21 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code!
  */
-import dedent from 'ts-dedent';
-import { MermaidConfig } from './config.type';
-import { log } from './logger';
-import utils from './utils';
-import { mermaidAPI, ParseOptions, RenderResult } from './mermaidAPI';
+import { dedent } from 'ts-dedent';
+import { MermaidConfig } from './config.type.js';
+import { log } from './logger.js';
+import utils from './utils.js';
+import { mermaidAPI, ParseOptions, RenderResult } from './mermaidAPI.js';
 import {
   registerLazyLoadedDiagrams,
   loadRegisteredDiagrams,
   detectType,
-} from './diagram-api/detectType';
-import type { ParseErrorFunction } from './Diagram';
-import { isDetailedError } from './utils';
-import type { DetailedError } from './utils';
-import { ExternalDiagramDefinition } from './diagram-api/types';
-import { UnknownDiagramError } from './errors';
+} from './diagram-api/detectType.js';
+import type { ParseErrorFunction } from './Diagram.js';
+import { isDetailedError } from './utils.js';
+import type { DetailedError } from './utils.js';
+import { ExternalDiagramDefinition } from './diagram-api/types.js';
+import { UnknownDiagramError } from './errors.js';
 
 export type {
   MermaidConfig,

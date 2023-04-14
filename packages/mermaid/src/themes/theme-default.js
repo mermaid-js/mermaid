@@ -1,9 +1,9 @@
 import { invert, lighten, rgba, adjust, darken } from 'khroma';
-import { mkBorder } from './theme-helpers';
+import { mkBorder } from './theme-helpers.js';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
-} from './erDiagram-oldHardcodedValues';
+} from './erDiagram-oldHardcodedValues.js';
 
 class Theme {
   constructor() {
@@ -109,9 +109,8 @@ class Theme {
     this.todayLineColor = 'red';
 
     /* C4 Context Diagram variables */
-
-    this.personBorder = 'calculated';
-    this.personBkg = 'calculated';
+    this.personBorder = this.primaryBorderColor;
+    this.personBkg = this.mainBkg;
 
     /* state colors */
     this.labelColor = 'black';
@@ -251,7 +250,7 @@ class Theme {
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;
     this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
-    this.requirementBorderSize = this.requirementBorderSize || this.primaryBorderColor;
+    this.requirementBorderSize = this.requirementBorderSize || '1';
     this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
     this.relationColor = this.relationColor || this.lineColor;
     this.relationLabelBackground = this.relationLabelBackground || this.labelBackground;

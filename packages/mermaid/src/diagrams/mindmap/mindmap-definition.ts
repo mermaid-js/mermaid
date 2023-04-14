@@ -1,8 +1,8 @@
 // @ts-ignore: TODO Fix ts errors
-import mindmapParser from './parser/mindmap';
-import * as mindmapDb from './mindmapDb';
-import mindmapRenderer from './mindmapRenderer';
-import mindmapStyles from './styles';
+import mindmapParser from './parser/mindmap.jison';
+import * as mindmapDb from './mindmapDb.js';
+import mindmapRenderer from './mindmapRenderer.js';
+import mindmapStyles from './styles.js';
 
 export const diagram = {
   db: mindmapDb,

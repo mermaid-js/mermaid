@@ -1,5 +1,5 @@
 /** Created by knut on 15-01-14. */
-import { log } from './mermaidUtils';
+import { log } from './mermaidUtils.js';
 
 var message = '';
 var info = false;

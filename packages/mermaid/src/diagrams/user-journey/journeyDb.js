@@ -1,5 +1,5 @@
-import mermaidAPI from '../../mermaidAPI';
-import * as configApi from '../../config';
+import mermaidAPI from '../../mermaidAPI.js';
+import * as configApi from '../../config.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -8,7 +8,7 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../../commonDb';
+} from '../../commonDb.js';
 
 let currentSection = '';
 

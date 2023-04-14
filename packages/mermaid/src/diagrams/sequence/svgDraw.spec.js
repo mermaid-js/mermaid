@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import svgDraw from './svgDraw';
+import svgDraw from './svgDraw.js';
 
 // This is the only place that uses this mock
 export const MockD3 = (name, parent) => {
