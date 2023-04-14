@@ -63,14 +63,7 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
       if (evaluate(getConfig().flowchart.htmlLabels)) {
         // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
         const node = {
-          label: vertexText
-            .replace(/fa[blrs]?:fa-[\w-]+/g, (s) => `<i class='${s.replace(':', ' ')}'></i>`)
-            .replace(/\$\$(.*)\$\$/g, (r, c) =>
-              katex
-                .renderToString(c, { throwOnError: true, displayMode: true, output: 'mathml' })
-                .replace(/\n/g, ' ')
-                .replace(/<annotation.*<\/annotation>/g, '')
-            ),
+          label: vertexText,
         };
         vertexNode = addHtmlLabel(svg, node).node();
         vertexNode.parentNode.removeChild(vertexNode);
@@ -161,7 +154,7 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
     g.setNode(vertex.id, {
       labelStyle: styles.labelStyle,
       shape: _shape,
-      labelText: vertexText,
+      labelText,
       labelType: vertex.labelType,
       rx: radious,
       ry: radious,
@@ -329,7 +322,6 @@ export const addEdges = function (edges, g, diagObj) {
       edgeData.arrowheadStyle = 'fill: #333';
       edgeData.labelpos = 'c';
     }
-
     edgeData.labelType = edge.labelType;
     edgeData.label = edge.text
       .replace(common.lineBreakRegex, '\n')
