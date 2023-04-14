@@ -1,5 +1,5 @@
-import { sanitizeText as _sanitizeText } from './diagrams/common/common';
-import { getConfig } from './config';
+import { sanitizeText as _sanitizeText } from './diagrams/common/common.js';
+import { getConfig } from './config.js';
 let title = '';
 let diagramTitle = '';
 let description = '';

@@ -2,7 +2,7 @@ import DefaultTheme from 'vitepress/theme';
 import './custom.css';
 // @ts-ignore
 import Mermaid from './Mermaid.vue';
-import { getRedirect } from './redirect';
+import { getRedirect } from './redirect.js';
 
 export default {
   ...DefaultTheme,

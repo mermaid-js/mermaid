@@ -1,9 +1,9 @@
 import { select } from 'd3';
-import { log } from '../logger';
-import { getConfig } from '../config';
-import { evaluate } from '../diagrams/common/common';
-import { decodeEntities } from '../mermaidAPI';
-import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text';
+import { log } from '../logger.js';
+import { getConfig } from '../config.js';
+import { evaluate } from '../diagrams/common/common.js';
+import { decodeEntities } from '../mermaidAPI.js';
+import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
 /**
  * @param dom
  * @param styleFn

@@ -58,6 +58,7 @@
     "@commitlint/cli": "^17.2.0",
     "@commitlint/config-conventional": "^17.2.0",
     "@cspell/eslint-plugin": "^6.14.2",
+    "@rollup/plugin-typescript": "^11.0.0",
     "@types/cors": "^2.8.13",
     "@types/eslint": "^8.4.10",
     "@types/express": "^4.17.17",

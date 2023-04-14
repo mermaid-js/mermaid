@@ -1,15 +1,15 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select, curveLinear, selectAll } from 'd3';
 import katex from 'katex';
-import { getConfig } from '../../config';
+import { getConfig } from '../../config.js';
 import { render as Render } from 'dagre-d3-es';
 import { applyStyle } from 'dagre-d3-es/src/dagre-js/util.js';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
-import { log } from '../../logger';
-import common, { evaluate } from '../common/common';
-import { interpolateToCurve, getStylesFromArray } from '../../utils';
-import { setupGraphViewbox } from '../../setupGraphViewbox';
-import flowChartShapes from './flowChartShapes';
+import { log } from '../../logger.js';
+import common, { evaluate } from '../common/common.js';
+import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
+import { setupGraphViewbox } from '../../setupGraphViewbox.js';
+import flowChartShapes from './flowChartShapes.js';
 
 const conf = {};
 export const setConf = function (cnf) {
