@@ -4,10 +4,32 @@ import classDb from './classDb.js';
 import { vi, describe, it, expect } from 'vitest';
 const spyOn = vi.spyOn;
 
-describe('given a class diagram, ', function () {
+describe('given a basic class diagram, ', function () {
   describe('when parsing class definition', function () {
     beforeEach(function () {
       parser.yy = classDb;
+    });
+    it('should handle accTitle and accDescr', function () {
+      const str = `classDiagram
+            accTitle: My Title
+            accDescr: My Description`;
+
+      parser.parse(str);
+      expect(parser.yy.getAccTitle()).toBe('My Title');
+      expect(parser.yy.getAccDescription()).toBe('My Description');
+    });
+
+    it('should handle accTitle and multiline accDescr', function () {
+      const str = `classDiagram
+            accTitle: My Title
+            accDescr {
+              This is my multi
+              line description
+            }`;
+
+      parser.parse(str);
+      expect(parser.yy.getAccTitle()).toBe('My Title');
+      expect(parser.yy.getAccDescription()).toBe('This is my multi\nline description');
     });
 
     it.skip('should handle a leading newline', function () {
@@ -27,109 +49,16 @@ describe('given a class diagram, ', function () {
       parser.parse(str);
     });
 
+    it('should handle class names with dash', function () {
+      const str = 'classDiagram\n' + 'class Ca-r';
+
+      parser.parse(str);
+      const actual = classDb.getClass('Ca-r');
+      expect(actual.label).toBe('Ca-r');
+    });
+
     it('should handle class names with underscore', function () {
       const str = 'classDiagram\n' + 'class `A_Car`';
-
-      parser.parse(str);
-    });
-
-    it('should handle basic class definitions', function () {
-      const str =
-        'classDiagram\n' +
-        'class Car\n' +
-        'Driver -- Car : drives >\n' +
-        'Car *-- Wheel : have 4 >\n' +
-        'Car -- Person : < owns';
-
-      parser.parse(str);
-    });
-
-    it('should handle member definitions in brackets', function () {
-      const str = 'classDiagram\n' + 'class Car{\n' + '+int wheels\n' + '}';
-
-      parser.parse(str);
-    });
-
-    it('should handle method declaration in brackets', function () {
-      const str = 'classDiagram\n' + 'class Car{\n' + '+size()\n' + '}';
-
-      parser.parse(str);
-    });
-
-    it('should handle properties in brackets, and some outside', function () {
-      const str =
-        'classDiagram\n' + 'class Car{\n' + '+int wheels\n' + '}\n' + 'Car : +ArrayList size()\n';
-
-      parser.parse(str);
-    });
-
-    it('should handle method statements', function () {
-      const str =
-        'classDiagram\n' +
-        'Object <|-- ArrayList\n' +
-        'Object : equals()\n' +
-        'ArrayList : Object[] elementData\n' +
-        'ArrayList : size()';
-
-      parser.parse(str);
-    });
-
-    it('should handle visibility for methods and members', function () {
-      const str =
-        'classDiagram\n' +
-        'class actual\n' +
-        'actual : -int privateMember\n' +
-        'actual : +int publicMember\n' +
-        'actual : #int protectedMember\n' +
-        'actual : -privateMethod()\n' +
-        'actual : +publicMethod()\n' +
-        'actual : #protectedMethod()\n';
-
-      parser.parse(str);
-    });
-
-    it('should handle parsing of method statements grouped by brackets', function () {
-      const str =
-        'classDiagram\n' +
-        'class Dummy_Class {\n' +
-        'String data\n' +
-        '  void methods()\n' +
-        '}\n' +
-        '\n' +
-        'class Flight {\n' +
-        '   flightNumber : Integer\n' +
-        '   departureTime : Date\n' +
-        '}';
-
-      parser.parse(str);
-    });
-
-    it('should handle return types on methods', function () {
-      const str =
-        'classDiagram\n' +
-        'Object <|-- ArrayList\n' +
-        'Object : equals()\n' +
-        'Object : -Object[] objects\n' +
-        'Object : +getObjects() Object[]\n' +
-        'ArrayList : Dummy elementData\n' +
-        'ArrayList : getDummy() Dummy';
-
-      parser.parse(str);
-    });
-
-    it('should handle return types on methods grouped by brackets', function () {
-      const str =
-        'classDiagram\n' +
-        'class Dummy_Class {\n' +
-        'string data\n' +
-        'getDummy() Dummy\n' +
-        '}\n' +
-        '\n' +
-        'class Flight {\n' +
-        '   int flightNumber\n' +
-        '   datetime departureTime\n' +
-        '   getDepartureTime() datetime\n' +
-        '}';
 
       parser.parse(str);
     });
@@ -167,122 +96,90 @@ describe('given a class diagram, ', function () {
       parser.parse(str);
     });
 
-    it('should add bracket members in right order', function () {
-      const str =
-        'classDiagram\n' +
-        'class Class1 {\n' +
-        'int : test\n' +
-        'string : foo\n' +
-        'test()\n' +
-        'foo()\n' +
-        '}';
+    it('should parse a class with a text label', () => {
+      const str = 'classDiagram\n' + 'class C1["Class 1 with text label"]';
+
       parser.parse(str);
 
-      const actual = parser.yy.getClass('Class1');
-      expect(actual.members.length).toBe(2);
-      expect(actual.methods.length).toBe(2);
-      expect(actual.members[0]).toBe('int : test');
-      expect(actual.members[1]).toBe('string : foo');
-      expect(actual.methods[0]).toBe('test()');
-      expect(actual.methods[1]).toBe('foo()');
-    });
-
-    it('should parse a class with a text label', () => {
-      parser.parse(`classDiagram
-  class C1["Class 1 with text label"]
-  C1 -->  C2
-      `);
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
-      const c2 = classDb.getClass('C2');
-      expect(c2.label).toBe('C2');
     });
 
-    it('should parse two classes with text labels', () => {
-      parser.parse(`classDiagram
-  class C1["Class 1 with text label"]
-  class C2["Class 2 with chars @?"]
-  C1 -->  C2
-      `);
+    it('should parse two classes with text labels', function () {
+      const str =
+        'classDiagram\n' +
+        'class C1["Class 1 with text label"]\n' +
+        'class C2["Class 2 with chars @?"]\n';
+
+      parser.parse(str);
+
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       const c2 = classDb.getClass('C2');
       expect(c2.label).toBe('Class 2 with chars @?');
     });
 
-    it('should parse a class with a text label and members', () => {
-      parser.parse(`classDiagram
-  class C1["Class 1 with text label"] {
-    +member1
-  }
-  C1 -->  C2
-      `);
+    it('should parse a class with a text label and member', () => {
+      const str = 'classDiagram\n' + 'class C1["Class 1 with text label"]\n' + 'C1: member1';
+
+      parser.parse(str);
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.members.length).toBe(1);
-      expect(c1.members[0]).toBe('+member1');
-
-      const c2 = classDb.getClass('C2');
-      expect(c2.label).toBe('C2');
+      expect(c1.members[0]).toBe('member1');
     });
 
-    it('should parse a class with a text label, members and annotation', () => {
-      parser.parse(`classDiagram
-  class C1["Class 1 with text label"] {
-    <<interface>>
-    +member1
-  }
-  C1 -->  C2
-      `);
+    it('should parse a class with a text label, member and annotation', () => {
+      const str =
+        'classDiagram\n' +
+        'class C1["Class 1 with text label"]\n' +
+        '<<interface>> C1\n' +
+        'C1 : int member1';
+
+      parser.parse(str);
+
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.members.length).toBe(1);
-      expect(c1.members[0]).toBe('+member1');
+      expect(c1.members[0]).toBe('int member1');
       expect(c1.annotations.length).toBe(1);
       expect(c1.annotations[0]).toBe('interface');
-
-      const c2 = classDb.getClass('C2');
-      expect(c2.label).toBe('C2');
     });
 
     it('should parse a class with text label and css class shorthand', () => {
-      parser.parse(`classDiagram
-class C1["Class 1 with text label"]:::styleClass {
-  +member1
-}
-C1 -->  C2
-  `);
+      const str = 'classDiagram\n' + 'class C1["Class 1 with text label"]:::styleClass';
+
+      parser.parse(str);
 
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
-      expect(c1.members[0]).toBe('+member1');
       expect(c1.cssClasses[0]).toBe('styleClass');
     });
 
     it('should parse a class with text label and css class', () => {
-      parser.parse(`classDiagram
-class C1["Class 1 with text label"] {
-  +member1
-}
-C1 --> C2
-cssClass "C1" styleClass
-  `);
+      const str =
+        'classDiagram\n' +
+        'class C1["Class 1 with text label"]\n' +
+        'C1 : int member1\n' +
+        'cssClass "C1" styleClass';
+
+      parser.parse(str);
 
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
-      expect(c1.members[0]).toBe('+member1');
+      expect(c1.members[0]).toBe('int member1');
       expect(c1.cssClasses[0]).toBe('styleClass');
     });
 
     it('should parse two classes with text labels and css classes', () => {
-      parser.parse(`classDiagram
-class C1["Class 1 with text label"] {
-  +member1
-}
-class C2["Long long long long long long long long long long label"]
-C1 --> C2
-cssClass "C1,C2" styleClass
-  `);
+      const str =
+        'classDiagram\n' +
+        'class C1["Class 1 with text label"]\n' +
+        'C1 : int member1\n' +
+        'class C2["Long long long long long long long long long long label"]\n' +
+        'cssClass "C1,C2" styleClass';
+
+      parser.parse(str);
 
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
@@ -294,13 +191,12 @@ cssClass "C1,C2" styleClass
     });
 
     it('should parse two classes with text labels and css class shorthands', () => {
-      parser.parse(`classDiagram
-class C1["Class 1 with text label"]:::styleClass1 {
-  +member1
-}
-class C2["Class 2 !@#$%^&*() label"]:::styleClass2
-C1 --> C2
-  `);
+      const str =
+        'classDiagram\n' +
+        'class C1["Class 1 with text label"]:::styleClass1\n' +
+        'class C2["Class 2 !@#$%^&*() label"]:::styleClass2';
+
+      parser.parse(str);
 
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
@@ -315,10 +211,7 @@ C1 --> C2
       parser.parse(`classDiagram
 class C1["Class with text label"]
 class C2["Class with text label"]
-class C3["Class with text label"]
-C1 --> C2
-C3 ..> C2
-  `);
+class C3["Class with text label"]`);
 
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class with text label');
@@ -370,185 +263,96 @@ class C13["With Città foreign language"]
       const str = 'classDiagram\n' + 'note "test"\n';
       parser.parse(str);
     });
-
-    it('should handle accTitle and accDescr', function () {
-      const str = `classDiagram
-            accTitle: My Title
-            accDescr: My Description
-
-            Class1 <|-- Class02
-            `;
-
-      parser.parse(str);
-      expect(parser.yy.getAccTitle()).toBe('My Title');
-      expect(parser.yy.getAccDescription()).toBe('My Description');
-    });
-
-    it('should handle accTitle and multiline accDescr', function () {
-      const str = `classDiagram
-            accTitle: My Title
-            accDescr {
-              This is mu multi
-              line description
-            }
-
-            Class1 <|-- Class02
-            `;
-
-      parser.parse(str);
-      expect(parser.yy.getAccTitle()).toBe('My Title');
-      expect(parser.yy.getAccDescription()).toBe('This is mu multi\nline description');
-    });
   });
 
-  describe('when parsing method definition', function () {
+  describe('when parsing class defined in brackets', function () {
     beforeEach(function () {
       parser.yy = classDb;
     });
 
-    it('should handle abstract methods', function () {
-      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()*';
+    it('should handle member definitions', function () {
+      const str = 'classDiagram\n' + 'class Car{\n' + '+int wheels\n' + '}';
+
+      parser.parse(str);
+    });
+
+    it('should handle method definitions', function () {
+      const str = 'classDiagram\n' + 'class Car{\n' + '+size()\n' + '}';
+
+      parser.parse(str);
+    });
+
+    it('should handle a mix of members defined in and outside of brackets', function () {
+      const str =
+        'classDiagram\n' + 'class Car{\n' + '+int wheels\n' + '}\n' + 'Car : +ArrayList size()\n';
+
+      parser.parse(str);
+    });
+
+    it('should handle member and method definitions', () => {
+      const str =
+        'classDiagram\n' + 'class Dummy_Class {\n' + 'String data\n' + 'void methods()\n' + '}';
+
+      parser.parse(str);
+    });
+
+    it('should handle return types on methods', () => {
+      const str =
+        'classDiagram\n' +
+        'class Flight {\n' +
+        'int flightNumber\n' +
+        'datetime departureTime\n' +
+        'getDepartureTime() datetime\n' +
+        '}';
+
+      parser.parse(str);
+    });
+
+    it('should add bracket members in right order', () => {
+      const str =
+        'classDiagram\n' +
+        'class Class1 {\n' +
+        'int testMember\n' +
+        'string fooMember\n' +
+        'test()\n' +
+        'foo()\n' +
+        '}';
       parser.parse(str);
 
       const actual = parser.yy.getClass('Class1');
-      expect(actual.annotations.length).toBe(0);
-      expect(actual.members.length).toBe(0);
-      expect(actual.methods.length).toBe(1);
-      expect(actual.methods[0]).toBe('someMethod()*');
+      expect(actual.members.length).toBe(2);
+      expect(actual.methods.length).toBe(2);
+      expect(actual.members[0]).toBe('int testMember');
+      expect(actual.members[1]).toBe('string fooMember');
+      expect(actual.methods[0]).toBe('test()');
+      expect(actual.methods[1]).toBe('foo()');
     });
 
-    it('should handle static methods', function () {
-      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()$';
-      parser.parse(str);
-
-      const actual = parser.yy.getClass('Class1');
-      expect(actual.annotations.length).toBe(0);
-      expect(actual.members.length).toBe(0);
-      expect(actual.methods.length).toBe(1);
-      expect(actual.methods[0]).toBe('someMethod()$');
-    });
-
-    it('should handle generic types in members', function () {
-      const str =
-        'classDiagram\n' +
-        'class Car~T~\n' +
-        'Car : -List~Wheel~ wheels\n' +
-        'Car : +setWheels(List~Wheel~ wheels)\n' +
-        'Car : +getWheels() List~Wheel~';
+    it('should parse a class with a text label and members', () => {
+      const str = 'classDiagram\n' + 'class C1["Class 1 with text label"] {\n' + '+member1\n' + '}';
 
       parser.parse(str);
+      const c1 = classDb.getClass('C1');
+      expect(c1.label).toBe('Class 1 with text label');
+      expect(c1.members.length).toBe(1);
+      expect(c1.members[0]).toBe('+member1');
     });
 
-    it('should handle generic types in members in class with brackets', function () {
+    it('should parse a class with a text label, members and annotation', () => {
       const str =
         'classDiagram\n' +
-        'class Car {\n' +
-        'List~Wheel~ wheels\n' +
-        'setWheels(List~Wheel~ wheels)\n' +
-        '+getWheels() List~Wheel~\n' +
+        'class C1["Class 1 with text label"] {\n' +
+        '<<interface>>\n' +
+        '+member1\n' +
         '}';
 
       parser.parse(str);
-    });
-  });
-
-  describe('when parsing generics', function () {
-    beforeEach(function () {
-      parser.yy = classDb;
-    });
-
-    it('should handle generic class', function () {
-      const str =
-        'classDiagram\n' +
-        'class Car~T~\n' +
-        'Driver -- Car : drives >\n' +
-        'Car *-- Wheel : have 4 >\n' +
-        'Car -- Person : < owns';
-
-      parser.parse(str);
-    });
-
-    it('should handle generic class with a literal name', function () {
-      const str =
-        'classDiagram\n' +
-        'class `Car`~T~\n' +
-        'Driver -- `Car` : drives >\n' +
-        '`Car` *-- Wheel : have 4 >\n' +
-        '`Car` -- Person : < owns';
-
-      parser.parse(str);
-    });
-
-    it('should handle generic class with brackets', function () {
-      const str =
-        'classDiagram\n' +
-        'class Dummy_Class~T~ {\n' +
-        'String data\n' +
-        '  void methods()\n' +
-        '}\n' +
-        '\n' +
-        'class Flight {\n' +
-        '   flightNumber : Integer\n' +
-        '   departureTime : Date\n' +
-        '}';
-
-      parser.parse(str);
-    });
-
-    it('should handle generic class with brackets and a literal name', function () {
-      const str =
-        'classDiagram\n' +
-        'class `Dummy_Class`~T~ {\n' +
-        'String data\n' +
-        '  void methods()\n' +
-        '}\n' +
-        '\n' +
-        'class Flight {\n' +
-        '   flightNumber : Integer\n' +
-        '   departureTime : Date\n' +
-        '}';
-
-      parser.parse(str);
-    });
-
-    it('should break when another `{`is encountered before closing the first one while defining generic class with brackets', function () {
-      const str =
-        'classDiagram\n' +
-        'class Dummy_Class~T~ {\n' +
-        'String data\n' +
-        '  void methods()\n' +
-        '}\n' +
-        '\n' +
-        'class Dummy_Class {\n' +
-        'class Flight {\n' +
-        '   flightNumber : Integer\n' +
-        '   departureTime : Date\n' +
-        '}';
-      let testPassed = false;
-      try {
-        parser.parse(str);
-      } catch (error) {
-        testPassed = true;
-      }
-      expect(testPassed).toBe(true);
-    });
-
-    it('should break when EOF is encountered before closing the first `{` while defining generic class with brackets', function () {
-      const str =
-        'classDiagram\n' +
-        'class Dummy_Class~T~ {\n' +
-        'String data\n' +
-        '  void methods()\n' +
-        '}\n' +
-        '\n' +
-        'class Dummy_Class {\n';
-      let testPassed = false;
-      try {
-        parser.parse(str);
-      } catch (error) {
-        testPassed = true;
-      }
-      expect(testPassed).toBe(true);
+      const c1 = classDb.getClass('C1');
+      expect(c1.label).toBe('Class 1 with text label');
+      expect(c1.members.length).toBe(1);
+      expect(c1.members[0]).toBe('+member1');
+      expect(c1.annotations.length).toBe(1);
+      expect(c1.annotations[0]).toBe('interface');
     });
   });
 
@@ -638,180 +442,6 @@ foo()
         '}';
 
       parser.parse(str);
-    });
-  });
-
-  describe('when parsing relationships', function () {
-    beforeEach(function () {
-      parser.yy = classDb;
-    });
-
-    it('should handle relation definitions', function () {
-      const str =
-        'classDiagram\n' +
-        'Class1 <|-- Class02\n' +
-        'Class03 *-- Class04\n' +
-        'Class05 o-- Class06\n' +
-        'Class07 .. Class08\n' +
-        'Class09 -- Class1';
-
-      parser.parse(str);
-    });
-
-    it('should handle backquoted relation definitions', function () {
-      const str =
-        'classDiagram\n' +
-        '`Class1` <|-- Class02\n' +
-        'Class03 *-- Class04\n' +
-        'Class05 o-- Class06\n' +
-        'Class07 .. Class08\n' +
-        'Class09 -- Class1';
-
-      parser.parse(str);
-    });
-
-    it('should handle relation definitions EXTENSION', function () {
-      const str = 'classDiagram\n' + 'Class1 <|-- Class02';
-
-      parser.parse(str);
-
-      const relations = parser.yy.getRelations();
-
-      expect(parser.yy.getClass('Class1').id).toBe('Class1');
-      expect(parser.yy.getClass('Class02').id).toBe('Class02');
-      expect(relations[0].relation.type1).toBe(classDb.relationType.EXTENSION);
-      expect(relations[0].relation.type2).toBe('none');
-      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
-    });
-
-    it('should handle relation definition of different types and directions', function () {
-      const str =
-        'classDiagram\n' +
-        'Class11 <|.. Class12\n' +
-        'Class13 --> Class14\n' +
-        'Class15 ..> Class16\n' +
-        'Class17 ..|> Class18\n' +
-        'Class19 <--* Class20';
-
-      parser.parse(str);
-    });
-
-    it('should handle cardinality and labels', function () {
-      const str =
-        'classDiagram\n' +
-        'Class1 "1" *-- "many" Class02 : contains\n' +
-        'Class03 o-- Class04 : aggregation\n' +
-        'Class05 --> "1" Class06';
-
-      parser.parse(str);
-    });
-
-    it('should handle dashed relation definition of different types and directions', function () {
-      const str =
-        'classDiagram\n' +
-        'Class11 <|.. Class12\n' +
-        'Class13 <.. Class14\n' +
-        'Class15 ..|> Class16\n' +
-        'Class17 ..> Class18\n' +
-        'Class19 .. Class20';
-      parser.parse(str);
-    });
-
-    it('should handle relation definitions AGGREGATION and dotted line', function () {
-      const str = 'classDiagram\n' + 'Class1 o.. Class02';
-
-      parser.parse(str);
-
-      const relations = parser.yy.getRelations();
-
-      expect(parser.yy.getClass('Class1').id).toBe('Class1');
-      expect(parser.yy.getClass('Class02').id).toBe('Class02');
-      expect(relations[0].relation.type1).toBe(classDb.relationType.AGGREGATION);
-      expect(relations[0].relation.type2).toBe('none');
-      expect(relations[0].relation.lineType).toBe(classDb.lineType.DOTTED_LINE);
-    });
-
-    it('should handle relation definitions COMPOSITION on both sides', function () {
-      const str = 'classDiagram\n' + 'Class1 *--* Class02';
-
-      parser.parse(str);
-
-      const relations = parser.yy.getRelations();
-
-      expect(parser.yy.getClass('Class1').id).toBe('Class1');
-      expect(parser.yy.getClass('Class02').id).toBe('Class02');
-      expect(relations[0].relation.type1).toBe(classDb.relationType.COMPOSITION);
-      expect(relations[0].relation.type2).toBe(classDb.relationType.COMPOSITION);
-      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
-    });
-
-    it('should handle relation definitions no types', function () {
-      const str = 'classDiagram\n' + 'Class1 -- Class02';
-
-      parser.parse(str);
-
-      const relations = parser.yy.getRelations();
-
-      expect(parser.yy.getClass('Class1').id).toBe('Class1');
-      expect(parser.yy.getClass('Class02').id).toBe('Class02');
-      expect(relations[0].relation.type1).toBe('none');
-      expect(relations[0].relation.type2).toBe('none');
-      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
-    });
-
-    it('should handle relation definitions with type only on right side', function () {
-      const str = 'classDiagram\n' + 'Class1 --|> Class02';
-
-      parser.parse(str);
-
-      const relations = parser.yy.getRelations();
-
-      expect(parser.yy.getClass('Class1').id).toBe('Class1');
-      expect(parser.yy.getClass('Class02').id).toBe('Class02');
-      expect(relations[0].relation.type1).toBe('none');
-      expect(relations[0].relation.type2).toBe(classDb.relationType.EXTENSION);
-      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
-    });
-
-    it('should handle multiple classes and relation definitions', function () {
-      const str =
-        'classDiagram\n' +
-        'Class1 <|-- Class02\n' +
-        'Class03 *-- Class04\n' +
-        'Class05 o-- Class06\n' +
-        'Class07 .. Class08\n' +
-        'Class09 -- Class10';
-
-      parser.parse(str);
-
-      const relations = parser.yy.getRelations();
-
-      expect(parser.yy.getClass('Class1').id).toBe('Class1');
-      expect(parser.yy.getClass('Class10').id).toBe('Class10');
-
-      expect(relations.length).toBe(5);
-
-      expect(relations[0].relation.type1).toBe(classDb.relationType.EXTENSION);
-      expect(relations[0].relation.type2).toBe('none');
-      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
-      expect(relations[3].relation.type1).toBe('none');
-      expect(relations[3].relation.type2).toBe('none');
-      expect(relations[3].relation.lineType).toBe(classDb.lineType.DOTTED_LINE);
-    });
-
-    it('should handle generic class with relation definitions', function () {
-      const str = 'classDiagram\n' + 'Class1~T~ <|-- Class02';
-
-      parser.parse(str);
-
-      const relations = parser.yy.getRelations();
-
-      expect(parser.yy.getClass('Class1').id).toBe('Class1');
-      expect(parser.yy.getClass('Class1').type).toBe('T');
-      expect(parser.yy.getClass('Class02').id).toBe('Class02');
-      expect(relations[0].relation.type1).toBe(classDb.relationType.EXTENSION);
-      expect(relations[0].relation.type2).toBe('none');
-      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
     });
   });
 
@@ -984,6 +614,425 @@ foo()
       expect(actual.members.length).toBe(1);
       expect(actual.methods.length).toBe(1);
       expect(actual.annotations[0]).toBe('interface');
+    });
+  });
+});
+
+describe('given a class diagram with members and methods ', function () {
+  describe('when parsing members', function () {
+    beforeEach(function () {
+      parser.yy = classDb;
+      parser.yy.clear();
+    });
+
+    it('should handle simple member declaration', function () {
+      const str = 'classDiagram\n' + 'class Car\n' + 'Car : wheels';
+
+      parser.parse(str);
+    });
+
+    it('should handle simple member declaration with type', function () {
+      const str = 'classDiagram\n' + 'class Car\n' + 'Car : int wheels';
+
+      parser.parse(str);
+    });
+
+    it('should handle visibility', function () {
+      const str =
+        'classDiagram\n' +
+        'class actual\n' +
+        'actual : -int privateMember\n' +
+        'actual : +int publicMember\n' +
+        'actual : #int protectedMember';
+
+      parser.parse(str);
+    });
+
+    it('should handle generic types', function () {
+      const str = 'classDiagram\n' + 'class Car\n' + 'Car : -List~Wheel~ wheels';
+
+      parser.parse(str);
+    });
+  });
+
+  describe('when parsing method definition', function () {
+    beforeEach(function () {
+      parser.yy = classDb;
+    });
+
+    it('should handle method definition', function () {
+      const str = 'classDiagram\n' + 'class Car\n' + 'Car : GetSize()';
+
+      parser.parse(str);
+    });
+
+    it('should handle simple return types', function () {
+      const str = 'classDiagram\n' + 'class Object\n' + 'Object : getObject() Object';
+
+      parser.parse(str);
+    });
+
+    it('should handle return types as array', function () {
+      const str = 'classDiagram\n' + 'class Object\n' + 'Object : getObjects() Object[]';
+
+      parser.parse(str);
+    });
+
+    it('should handle visibility', function () {
+      const str =
+        'classDiagram\n' +
+        'class actual\n' +
+        'actual : -privateMethod()\n' +
+        'actual : +publicMethod()\n' +
+        'actual : #protectedMethod()\n';
+
+      parser.parse(str);
+    });
+
+    it('should handle abstract methods', function () {
+      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()*';
+      parser.parse(str);
+
+      const actual = parser.yy.getClass('Class1');
+      expect(actual.annotations.length).toBe(0);
+      expect(actual.members.length).toBe(0);
+      expect(actual.methods.length).toBe(1);
+      expect(actual.methods[0]).toBe('someMethod()*');
+    });
+
+    it('should handle static methods', function () {
+      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()$';
+      parser.parse(str);
+
+      const actual = parser.yy.getClass('Class1');
+      expect(actual.annotations.length).toBe(0);
+      expect(actual.members.length).toBe(0);
+      expect(actual.methods.length).toBe(1);
+      expect(actual.methods[0]).toBe('someMethod()$');
+    });
+
+    it('should handle generic types in arguments', function () {
+      const str = 'classDiagram\n' + 'class Car\n' + 'Car : +setWheels(List~Wheel~ wheels)';
+      parser.parse(str);
+    });
+
+    it('should handle generic return types', function () {
+      const str = 'classDiagram\n' + 'class Car\n' + 'Car : +getWheels() List~Wheel~';
+
+      parser.parse(str);
+    });
+
+    it('should handle generic types in members in class with brackets', function () {
+      const str =
+        'classDiagram\n' +
+        'class Car {\n' +
+        'List~Wheel~ wheels\n' +
+        'setWheels(List~Wheel~ wheels)\n' +
+        '+getWheels() List~Wheel~\n' +
+        '}';
+
+      parser.parse(str);
+    });
+  });
+});
+
+describe('given a class diagram with generics, ', function () {
+  describe('when parsing valid generic classes', function () {
+    beforeEach(function () {
+      parser.yy = classDb;
+    });
+
+    it('should handle generic class', function () {
+      const str = 'classDiagram\n' + 'class Car~T~';
+
+      parser.parse(str);
+    });
+
+    it('should handle generic class with relationships', function () {
+      const str =
+        'classDiagram\n' +
+        'class Car~T~\n' +
+        'Driver -- Car : drives >\n' +
+        'Car *-- Wheel : have 4 >\n' +
+        'Car -- Person : < owns';
+
+      parser.parse(str);
+    });
+
+    it('should handle generic class with a literal name', function () {
+      const str =
+        'classDiagram\n' +
+        'class `Car`~T~\n' +
+        'Driver -- `Car` : drives >\n' +
+        '`Car` *-- Wheel : have 4 >\n' +
+        '`Car` -- Person : < owns';
+
+      parser.parse(str);
+    });
+
+    it('should handle generic class with brackets', function () {
+      const str =
+        'classDiagram\n' +
+        'class Dummy_Class~T~ {\n' +
+        'String data\n' +
+        'void methods()\n' +
+        '}\n' +
+        '\n' +
+        'class Flight {\n' +
+        'Integer flightNumber\n' +
+        'Date departureTime\n' +
+        '}';
+
+      parser.parse(str);
+    });
+
+    it('should handle generic class with brackets and a literal name', function () {
+      const str =
+        'classDiagram\n' +
+        'class `Dummy_Class`~T~ {\n' +
+        'String data\n' +
+        '  void methods()\n' +
+        '}\n' +
+        '\n' +
+        'class Flight {\n' +
+        '   flightNumber : Integer\n' +
+        '   departureTime : Date\n' +
+        '}';
+
+      parser.parse(str);
+    });
+  });
+
+  describe('when parsing invalid generic classes', function () {
+    beforeEach(function () {
+      parser.yy = classDb;
+    });
+
+    it('should break when another `{`is encountered before closing the first one while defining generic class with brackets', function () {
+      const str =
+        'classDiagram\n' +
+        'class Dummy_Class~T~ {\n' +
+        'String data\n' +
+        '  void methods()\n' +
+        '}\n' +
+        '\n' +
+        'class Dummy_Class {\n' +
+        'class Flight {\n' +
+        '   flightNumber : Integer\n' +
+        '   departureTime : Date\n' +
+        '}';
+      let testPassed = false;
+      try {
+        parser.parse(str);
+      } catch (error) {
+        testPassed = true;
+      }
+      expect(testPassed).toBe(true);
+    });
+
+    it('should break when EOF is encountered before closing the first `{` while defining generic class with brackets', function () {
+      const str =
+        'classDiagram\n' +
+        'class Dummy_Class~T~ {\n' +
+        'String data\n' +
+        '  void methods()\n' +
+        '}\n' +
+        '\n' +
+        'class Dummy_Class {\n';
+      let testPassed = false;
+      try {
+        parser.parse(str);
+      } catch (error) {
+        testPassed = true;
+      }
+      expect(testPassed).toBe(true);
+    });
+  });
+});
+
+describe('given a class diagram with relationships, ', function () {
+  describe('when parsing basic relationships', function () {
+    beforeEach(function () {
+      parser.yy = classDb;
+    });
+
+    it('should handle all basic relationships', function () {
+      const str =
+        'classDiagram\n' +
+        'Class1 <|-- Class02\n' +
+        'Class03 *-- Class04\n' +
+        'Class05 o-- Class06\n' +
+        'Class07 .. Class08\n' +
+        'Class09 -- Class1';
+
+      parser.parse(str);
+    });
+
+    it('should handle backquoted class name', function () {
+      const str =
+        'classDiagram\n' +
+        '`Class1` <|-- Class02\n' +
+        'Class03 *-- Class04\n' +
+        'Class05 o-- Class06\n' +
+        'Class07 .. Class08\n' +
+        'Class09 -- Class1';
+
+      parser.parse(str);
+    });
+
+    it('should handle generics', function () {
+      const str = 'classDiagram\n' + 'Class1~T~ <|-- Class02';
+
+      parser.parse(str);
+
+      const relations = parser.yy.getRelations();
+
+      expect(parser.yy.getClass('Class1').id).toBe('Class1');
+      expect(parser.yy.getClass('Class1').type).toBe('T');
+      expect(parser.yy.getClass('Class02').id).toBe('Class02');
+      expect(relations[0].relation.type1).toBe(classDb.relationType.EXTENSION);
+      expect(relations[0].relation.type2).toBe('none');
+      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
+    });
+
+    it('should handle relationships with labels', function () {
+      const str =
+        'classDiagram\n' +
+        'class Car\n' +
+        'Driver -- Car : drives >\n' +
+        'Car *-- Wheel : have 4 >\n' +
+        'Car -- Person : < owns';
+
+      parser.parse(str);
+    });
+
+    it('should handle relation definitions EXTENSION', function () {
+      const str = 'classDiagram\n' + 'Class1 <|-- Class02';
+
+      parser.parse(str);
+
+      const relations = parser.yy.getRelations();
+
+      expect(parser.yy.getClass('Class1').id).toBe('Class1');
+      expect(parser.yy.getClass('Class02').id).toBe('Class02');
+      expect(relations[0].relation.type1).toBe(classDb.relationType.EXTENSION);
+      expect(relations[0].relation.type2).toBe('none');
+      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
+    });
+
+    it('should handle relation definition of different types and directions', function () {
+      const str =
+        'classDiagram\n' +
+        'Class11 <|.. Class12\n' +
+        'Class13 --> Class14\n' +
+        'Class15 ..> Class16\n' +
+        'Class17 ..|> Class18\n' +
+        'Class19 <--* Class20';
+
+      parser.parse(str);
+    });
+
+    it('should handle cardinality and labels', function () {
+      const str =
+        'classDiagram\n' +
+        'Class1 "1" *-- "many" Class02 : contains\n' +
+        'Class03 o-- Class04 : aggregation\n' +
+        'Class05 --> "1" Class06';
+
+      parser.parse(str);
+    });
+
+    it('should handle dashed relation definition of different types and directions', function () {
+      const str =
+        'classDiagram\n' +
+        'Class11 <|.. Class12\n' +
+        'Class13 <.. Class14\n' +
+        'Class15 ..|> Class16\n' +
+        'Class17 ..> Class18\n' +
+        'Class19 .. Class20';
+      parser.parse(str);
+    });
+
+    it('should handle relation definitions AGGREGATION and dotted line', function () {
+      const str = 'classDiagram\n' + 'Class1 o.. Class02';
+
+      parser.parse(str);
+
+      const relations = parser.yy.getRelations();
+
+      expect(parser.yy.getClass('Class1').id).toBe('Class1');
+      expect(parser.yy.getClass('Class02').id).toBe('Class02');
+      expect(relations[0].relation.type1).toBe(classDb.relationType.AGGREGATION);
+      expect(relations[0].relation.type2).toBe('none');
+      expect(relations[0].relation.lineType).toBe(classDb.lineType.DOTTED_LINE);
+    });
+
+    it('should handle relation definitions COMPOSITION on both sides', function () {
+      const str = 'classDiagram\n' + 'Class1 *--* Class02';
+
+      parser.parse(str);
+
+      const relations = parser.yy.getRelations();
+
+      expect(parser.yy.getClass('Class1').id).toBe('Class1');
+      expect(parser.yy.getClass('Class02').id).toBe('Class02');
+      expect(relations[0].relation.type1).toBe(classDb.relationType.COMPOSITION);
+      expect(relations[0].relation.type2).toBe(classDb.relationType.COMPOSITION);
+      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
+    });
+
+    it('should handle relation definitions with no types', function () {
+      const str = 'classDiagram\n' + 'Class1 -- Class02';
+
+      parser.parse(str);
+
+      const relations = parser.yy.getRelations();
+
+      expect(parser.yy.getClass('Class1').id).toBe('Class1');
+      expect(parser.yy.getClass('Class02').id).toBe('Class02');
+      expect(relations[0].relation.type1).toBe('none');
+      expect(relations[0].relation.type2).toBe('none');
+      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
+    });
+
+    it('should handle relation definitions with type only on right side', function () {
+      const str = 'classDiagram\n' + 'Class1 --|> Class02';
+
+      parser.parse(str);
+
+      const relations = parser.yy.getRelations();
+
+      expect(parser.yy.getClass('Class1').id).toBe('Class1');
+      expect(parser.yy.getClass('Class02').id).toBe('Class02');
+      expect(relations[0].relation.type1).toBe('none');
+      expect(relations[0].relation.type2).toBe(classDb.relationType.EXTENSION);
+      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
+    });
+
+    it('should handle multiple classes and relation definitions', function () {
+      const str =
+        'classDiagram\n' +
+        'Class1 <|-- Class02\n' +
+        'Class03 *-- Class04\n' +
+        'Class05 o-- Class06\n' +
+        'Class07 .. Class08\n' +
+        'Class09 -- Class10';
+
+      parser.parse(str);
+
+      const relations = parser.yy.getRelations();
+
+      expect(parser.yy.getClass('Class1').id).toBe('Class1');
+      expect(parser.yy.getClass('Class10').id).toBe('Class10');
+
+      expect(relations.length).toBe(5);
+
+      expect(relations[0].relation.type1).toBe(classDb.relationType.EXTENSION);
+      expect(relations[0].relation.type2).toBe('none');
+      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
+      expect(relations[3].relation.type1).toBe('none');
+      expect(relations[3].relation.type2).toBe('none');
+      expect(relations[3].relation.lineType).toBe(classDb.lineType.DOTTED_LINE);
     });
   });
 });
