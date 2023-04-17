@@ -624,22 +624,6 @@ classDiagram
     }
 ```
 
-```mermaid-example
-classDiagram
-    note "This is a general note"
-    note for MyClass "This is a note for a class"
-    class MyClass{
-    }
-```
-
-```mermaid
-classDiagram
-    note "This is a general note"
-    note for MyClass "This is a note for a class"
-    class MyClass{
-    }
-```
-
 _URL Link:_
 
 ```mermaid-example

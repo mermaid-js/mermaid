@@ -407,14 +407,6 @@ It is possible to add notes on the diagram using `note "line1\nline2"`. A note c
 
 ### Examples
 
-```mmd
-classDiagram
-    note "This is a general note"
-    note for MyClass "This is a note for a class"
-    class MyClass{
-    }
-```
-
 ```mermaid
 classDiagram
     note "This is a general note"
