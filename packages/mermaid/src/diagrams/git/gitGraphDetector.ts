@@ -1,5 +1,5 @@
-import type { DiagramDetector } from '../../diagram-api/types';
-import type { ExternalDiagramDefinition } from '../../diagram-api/types';
+import type { DiagramDetector } from '../../diagram-api/types.js';
+import type { ExternalDiagramDefinition } from '../../diagram-api/types.js';
 
 const id = 'gitGraph';
 
@@ -8,7 +8,7 @@ const detector: DiagramDetector = (txt) => {
 };
 
 const loader = async () => {
-  const { diagram } = await import('./gitGraphDiagram');
+  const { diagram } = await import('./gitGraphDiagram.js');
   return { id, diagram };
 };
 

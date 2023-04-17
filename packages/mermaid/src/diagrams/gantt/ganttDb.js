@@ -1,12 +1,12 @@
 import { sanitizeUrl } from '@braintree/sanitize-url';
-import dayjs from 'dayjs';
-import dayjsIsoWeek from 'dayjs/plugin/isoWeek.js';
-import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat.js';
-import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
-import { log } from '../../logger';
-import * as configApi from '../../config';
-import utils from '../../utils';
-import mermaidAPI from '../../mermaidAPI';
+import dayjs from 'dayjs/esm/index.js';
+import dayjsIsoWeek from 'dayjs/esm/plugin/isoWeek/index.js';
+import dayjsCustomParseFormat from 'dayjs/esm/plugin/customParseFormat/index.js';
+import dayjsAdvancedFormat from 'dayjs/esm/plugin/advancedFormat/index.js';
+import { log } from '../../logger.js';
+import * as configApi from '../../config.js';
+import utils from '../../utils.js';
+import mermaidAPI from '../../mermaidAPI.js';
 
 import {
   setAccTitle,
@@ -16,7 +16,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb';
+} from '../../commonDb.js';
 
 dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);
@@ -32,6 +32,7 @@ let links = {};
 let sections = [];
 let tasks = [];
 let currentSection = '';
+let displayMode = '';
 const tags = ['active', 'done', 'crit', 'milestone'];
 let funs = [];
 let inclusiveEndDates = false;
@@ -55,6 +56,7 @@ export const clear = function () {
   rawTasks = [];
   dateFormat = '';
   axisFormat = '';
+  displayMode = '';
   tickInterval = undefined;
   todayMarker = '';
   includes = [];
@@ -110,6 +112,14 @@ export const topAxisEnabled = function () {
   return topAxis;
 };
 
+export const setDisplayMode = function (txt) {
+  displayMode = txt;
+};
+
+export const getDisplayMode = function () {
+  return displayMode;
+};
+
 export const getDateFormat = function () {
   return dateFormat;
 };
@@ -143,11 +153,11 @@ export const getSections = function () {
 };
 
 export const getTasks = function () {
-  let allItemsPricessed = compileTasks();
+  let allItemsProcessed = compileTasks();
   const maxDepth = 10;
   let iterationCount = 0;
-  while (!allItemsPricessed && iterationCount < maxDepth) {
-    allItemsPricessed = compileTasks();
+  while (!allItemsProcessed && iterationCount < maxDepth) {
+    allItemsProcessed = compileTasks();
     iterationCount++;
   }
 
@@ -719,6 +729,8 @@ export default {
   getAccTitle,
   setDiagramTitle,
   getDiagramTitle,
+  setDisplayMode,
+  getDisplayMode,
   setAccDescription,
   getAccDescription,
   addSection,

@@ -1,8 +1,8 @@
-import utils from './utils';
-import assignWithDepth from './assignWithDepth';
-import { detectType } from './diagram-api/detectType';
-import { addDiagrams } from './diagram-api/diagram-orchestration';
-import { calculateSvgSizeAttrs } from './setupGraphViewbox';
+import utils from './utils.js';
+import assignWithDepth from './assignWithDepth.js';
+import { detectType } from './diagram-api/detectType.js';
+import { addDiagrams } from './diagram-api/diagram-orchestration.js';
+import { calculateSvgSizeAttrs } from './setupGraphViewbox.js';
 addDiagrams();
 
 describe('when calculating SVG size', function () {

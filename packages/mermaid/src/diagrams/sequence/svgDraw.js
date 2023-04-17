@@ -1,6 +1,6 @@
-import common from '../common/common';
-import { addFunction } from '../../interactionDb';
-import { parseFontSize } from '../../utils';
+import common from '../common/common.js';
+import { addFunction } from '../../interactionDb.js';
+import { parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 
 export const drawRect = function (elem, rectData) {

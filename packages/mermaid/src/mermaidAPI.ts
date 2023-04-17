@@ -15,24 +15,31 @@ import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 // @ts-ignore: TODO Fix ts errors
 import { version } from '../package.json';
-import * as configApi from './config';
-import { addDiagrams } from './diagram-api/diagram-orchestration';
-import { Diagram, getDiagramFromText } from './Diagram';
-import errorRenderer from './diagrams/error/errorRenderer';
-import { attachFunctions } from './interactionDb';
-import { log, setLogLevel } from './logger';
-import getStyles from './styles';
-import theme from './themes';
-import utils, { directiveSanitizer } from './utils';
+import * as configApi from './config.js';
+import { addDiagrams } from './diagram-api/diagram-orchestration.js';
+import { Diagram, getDiagramFromText } from './Diagram.js';
+import errorRenderer from './diagrams/error/errorRenderer.js';
+import { attachFunctions } from './interactionDb.js';
+import { log, setLogLevel } from './logger.js';
+import getStyles from './styles.js';
+import theme from './themes/index.js';
+import utils, { directiveSanitizer } from './utils.js';
 import DOMPurify from 'dompurify';
-import { MermaidConfig } from './config.type';
-import { evaluate } from './diagrams/common/common';
+import { MermaidConfig } from './config.type.js';
+import { evaluate } from './diagrams/common/common.js';
 import isEmpty from 'lodash-es/isEmpty.js';
-import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility';
-import { parseDirective } from './directiveUtils';
+import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
+import { parseDirective } from './directiveUtils.js';
 
 // diagram names that support classDef statements
-const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram', 'stateDiagram-v2'];
+const CLASSDEF_DIAGRAMS = [
+  'graph',
+  'flowchart',
+  'flowchart-v2',
+  'flowchart-elk',
+  'stateDiagram',
+  'stateDiagram-v2',
+];
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
   'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -399,6 +406,12 @@ const render = async function (
   // clean up text CRLFs
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
 
+  // clean up html tags so that all attributes use single quotes, parser throws error on double quotes
+  text = text.replace(
+    /<(\w+)([^>]*)>/g,
+    (match, tag, attributes) => '<' + tag + attributes.replace(/="([^"]*)"/g, "='$1'") + '>'
+  );
+
   const idSelector = '#' + id;
   const iFrameID = 'i' + id;
   const iFrameID_selector = '#' + iFrameID;
@@ -531,16 +544,16 @@ const render = async function (
 
   attachFunctions();
 
+  if (parseEncounteredException) {
+    throw parseEncounteredException;
+  }
+
   // -------------------------------------------------------------------------------
   // Remove the temporary HTML element if appropriate
   const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
   const node = select(tmpElementSelector).node();
   if (node && 'remove' in node) {
     node.remove();
-  }
-
-  if (parseEncounteredException) {
-    throw parseEncounteredException;
   }
 
   return {
@@ -650,6 +663,7 @@ function addA11yInfo(
  *       numberSectionStyles: 4,
  *       axisFormat: '%Y-%m-%d',
  *       topAxis: false,
+ *       displayMode: '',
  *     },
  *   };
  *   mermaid.initialize(config);

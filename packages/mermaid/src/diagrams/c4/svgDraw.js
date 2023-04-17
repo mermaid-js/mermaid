@@ -1,4 +1,4 @@
-import common from '../common/common';
+import common from '../common/common.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 
 export const drawRect = function (elem, rectData) {

@@ -1,10 +1,10 @@
 // @ts-expect-error - d3 types issue
 import { select, Selection } from 'd3';
-import { log } from '../../logger';
-import * as configApi from '../../config';
-import common from '../common/common';
-import utils from '../../utils';
-import mermaidAPI from '../../mermaidAPI';
+import { log } from '../../logger.js';
+import * as configApi from '../../config.js';
+import common from '../common/common.js';
+import utils from '../../utils.js';
+import mermaidAPI from '../../mermaidAPI.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -13,7 +13,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb';
+} from '../../commonDb.js';
 import {
   ClassRelation,
   ClassNode,
@@ -21,7 +21,7 @@ import {
   ClassMap,
   NamespaceMap,
   NamespaceNode,
-} from './classTypes';
+} from './classTypes.js';
 
 const MERMAID_DOM_ID_PREFIX = 'classId-';
 

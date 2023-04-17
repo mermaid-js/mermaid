@@ -1,7 +1,7 @@
-import flowDb from './flowDb';
-import { parser } from './parser/flow';
-import flowRenderer from './flowRenderer';
-import { addDiagrams } from '../../diagram-api/diagram-orchestration';
+import flowDb from './flowDb.js';
+import { parser } from './parser/flow.jison';
+import flowRenderer from './flowRenderer.js';
+import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
 
 const diag = {
   db: flowDb,

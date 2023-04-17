@@ -1,12 +1,13 @@
-import intersectRect from './intersect/intersect-rect';
-import { log } from '../logger';
-import createLabel from './createLabel';
+import intersectRect from './intersect/intersect-rect.js';
+import { log } from '../logger.js';
+import createLabel from './createLabel.js';
+import { createText } from '../rendering-util/createText.js';
 import { select } from 'd3';
-import { getConfig } from '../config';
-import { evaluate } from '../diagrams/common/common';
+import { getConfig } from '../config.js';
+import { evaluate } from '../diagrams/common/common.js';
 
 const rect = (parent, node) => {
-  log.trace('Creating subgraph rect for ', node.id, node);
+  log.info('Creating subgraph rect for ', node.id, node);
 
   // Add outer g element
   const shapeSvg = parent
@@ -17,12 +18,18 @@ const rect = (parent, node) => {
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 
+  const useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
+
   // Create the label and insert it after the rect
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');
 
-  const text = label
-    .node()
-    .appendChild(createLabel(node.labelText, node.labelStyle, undefined, true));
+  // const text = label
+  //   .node()
+  //   .appendChild(createLabel(node.labelText, node.labelStyle, undefined, true));
+  const text =
+    node.labelType === 'markdown'
+      ? createText(label, node.labelText, { style: node.labelStyle, useHtmlLabels })
+      : label.node().appendChild(createLabel(node.labelText, node.labelStyle, undefined, true));
 
   // Get the size of the label
   let bbox = text.getBBox();
@@ -56,13 +63,20 @@ const rect = (parent, node) => {
     .attr('width', width)
     .attr('height', node.height + padding);
 
+  if (useHtmlLabels) {
+    label.attr(
+      'transform',
+      // This puts the labal on top of the box instead of inside it
+      'translate(' + (node.x - bbox.width / 2) + ', ' + (node.y - node.height / 2) + ')'
+    );
+  } else {
+    label.attr(
+      'transform',
+      // This puts the labal on top of the box instead of inside it
+      'translate(' + node.x + ', ' + (node.y - node.height / 2) + ')'
+    );
+  }
   // Center the label
-  label.attr(
-    'transform',
-    // This puts the labal on top of the box instead of inside it
-    // 'translate(' + (node.x - bbox.width / 2) + ', ' + (node.y - node.height / 2 - bbox.height) + ')'
-    'translate(' + (node.x - bbox.width / 2) + ', ' + (node.y - node.height / 2) + ')'
-  );
 
   const rectBox = rect.node().getBBox();
   node.width = rectBox.width;

@@ -1,387 +1,275 @@
-lockfileVersion: 5.4-inlineSpecifiers
+lockfileVersion: 5.4
 
 importers:
 
   .:
+    specifiers:
+      '@applitools/eyes-cypress': ^3.27.6
+      '@commitlint/cli': ^17.2.0
+      '@commitlint/config-conventional': ^17.2.0
+      '@cspell/eslint-plugin': ^6.14.2
+      '@rollup/plugin-typescript': ^11.0.0
+      '@types/cors': ^2.8.13
+      '@types/eslint': ^8.4.10
+      '@types/express': ^4.17.17
+      '@types/js-yaml': ^4.0.5
+      '@types/jsdom': ^21.0.0
+      '@types/lodash': ^4.14.188
+      '@types/mdast': ^3.0.10
+      '@types/node': ^18.11.9
+      '@types/prettier': ^2.7.1
+      '@types/rollup-plugin-visualizer': ^4.2.1
+      '@typescript-eslint/eslint-plugin': ^5.48.2
+      '@typescript-eslint/parser': ^5.48.2
+      '@vitest/coverage-c8': ^0.29.0
+      '@vitest/spy': ^0.29.0
+      '@vitest/ui': ^0.29.0
+      concurrently: ^7.5.0
+      cors: ^2.8.5
+      coveralls: ^3.1.1
+      cypress: ^12.0.0
+      cypress-image-snapshot: ^4.0.1
+      esbuild: ^0.17.0
+      eslint: ^8.32.0
+      eslint-config-prettier: ^8.6.0
+      eslint-plugin-cypress: ^2.12.1
+      eslint-plugin-html: ^7.1.0
+      eslint-plugin-jest: ^27.1.5
+      eslint-plugin-jsdoc: ^39.6.2
+      eslint-plugin-json: ^3.1.0
+      eslint-plugin-lodash: ^7.4.0
+      eslint-plugin-markdown: ^3.0.0
+      eslint-plugin-no-only-tests: ^3.1.0
+      eslint-plugin-tsdoc: ^0.2.17
+      eslint-plugin-unicorn: ^45.0.0
+      express: ^4.18.2
+      globby: ^13.1.2
+      husky: ^8.0.2
+      jest: ^29.3.1
+      jison: ^0.4.18
+      js-yaml: ^4.1.0
+      jsdom: ^21.0.0
+      lint-staged: ^13.0.3
+      path-browserify: ^1.0.1
+      pnpm: ^7.15.0
+      prettier: ^2.7.1
+      prettier-plugin-jsdoc: ^0.4.2
+      rimraf: ^4.0.0
+      rollup-plugin-visualizer: ^5.8.3
+      start-server-and-test: ^1.15.4
+      ts-node: ^10.9.1
+      typescript: ^4.8.4
+      vite: ^4.1.1
+      vitest: ^0.29.0
     devDependencies:
-      '@applitools/eyes-cypress':
-        specifier: ^3.27.6
-        version: 3.27.6
-      '@commitlint/cli':
-        specifier: ^17.2.0
-        version: 17.2.0
-      '@commitlint/config-conventional':
-        specifier: ^17.2.0
-        version: 17.2.0
-      '@cspell/eslint-plugin':
-        specifier: ^6.14.2
-        version: 6.14.2
-      '@types/cors':
-        specifier: ^2.8.13
-        version: 2.8.13
-      '@types/eslint':
-        specifier: ^8.4.10
-        version: 8.4.10
-      '@types/express':
-        specifier: ^4.17.17
-        version: 4.17.17
-      '@types/js-yaml':
-        specifier: ^4.0.5
-        version: 4.0.5
-      '@types/jsdom':
-        specifier: ^21.0.0
-        version: 21.1.0
-      '@types/lodash':
-        specifier: ^4.14.188
-        version: 4.14.188
-      '@types/mdast':
-        specifier: ^3.0.10
-        version: 3.0.10
-      '@types/node':
-        specifier: ^18.11.9
-        version: 18.11.9
-      '@types/prettier':
-        specifier: ^2.7.1
-        version: 2.7.1
-      '@types/rollup-plugin-visualizer':
-        specifier: ^4.2.1
-        version: 4.2.1
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^5.48.2
-        version: 5.48.2_iljmjqxcygjq3saipl7gerxpvi
-      '@typescript-eslint/parser':
-        specifier: ^5.48.2
-        version: 5.48.2_yygwinqv3a2io74xmwofqb7uka
-      '@vitest/coverage-c8':
-        specifier: ^0.29.0
-        version: 0.29.2_vitest@0.29.2
-      '@vitest/spy':
-        specifier: ^0.29.0
-        version: 0.29.2
-      '@vitest/ui':
-        specifier: ^0.29.0
-        version: 0.29.2
-      concurrently:
-        specifier: ^7.5.0
-        version: 7.5.0
-      cors:
-        specifier: ^2.8.5
-        version: 2.8.5
-      coveralls:
-        specifier: ^3.1.1
-        version: 3.1.1
-      cypress:
-        specifier: ^12.0.0
-        version: 12.5.1
-      cypress-image-snapshot:
-        specifier: ^4.0.1
-        version: 4.0.1_cypress@12.5.1+jest@29.3.1
-      esbuild:
-        specifier: ^0.17.0
-        version: 0.17.0
-      eslint:
-        specifier: ^8.32.0
-        version: 8.32.0
-      eslint-config-prettier:
-        specifier: ^8.6.0
-        version: 8.6.0_eslint@8.32.0
-      eslint-plugin-cypress:
-        specifier: ^2.12.1
-        version: 2.12.1_eslint@8.32.0
-      eslint-plugin-html:
-        specifier: ^7.1.0
-        version: 7.1.0
-      eslint-plugin-jest:
-        specifier: ^27.1.5
-        version: 27.1.5_5rcd23qw3h5vuffwo2owxb3hw4
-      eslint-plugin-jsdoc:
-        specifier: ^39.6.2
-        version: 39.6.2_eslint@8.32.0
-      eslint-plugin-json:
-        specifier: ^3.1.0
-        version: 3.1.0
-      eslint-plugin-lodash:
-        specifier: ^7.4.0
-        version: 7.4.0_eslint@8.32.0
-      eslint-plugin-markdown:
-        specifier: ^3.0.0
-        version: 3.0.0_eslint@8.32.0
-      eslint-plugin-no-only-tests:
-        specifier: ^3.1.0
-        version: 3.1.0
-      eslint-plugin-tsdoc:
-        specifier: ^0.2.17
-        version: 0.2.17
-      eslint-plugin-unicorn:
-        specifier: ^45.0.0
-        version: 45.0.0_eslint@8.32.0
-      express:
-        specifier: ^4.18.2
-        version: 4.18.2
-      globby:
-        specifier: ^13.1.2
-        version: 13.1.2
-      husky:
-        specifier: ^8.0.2
-        version: 8.0.2
-      jest:
-        specifier: ^29.3.1
-        version: 29.3.1_odkjkoia5xunhxkdrka32ib6vi
-      jison:
-        specifier: ^0.4.18
-        version: 0.4.18
-      js-yaml:
-        specifier: ^4.1.0
-        version: 4.1.0
-      jsdom:
-        specifier: ^21.0.0
-        version: 21.1.0
-      lint-staged:
-        specifier: ^13.0.3
-        version: 13.0.3
-      path-browserify:
-        specifier: ^1.0.1
-        version: 1.0.1
-      pnpm:
-        specifier: ^7.15.0
-        version: 7.15.0
-      prettier:
-        specifier: ^2.7.1
-        version: 2.7.1
-      prettier-plugin-jsdoc:
-        specifier: ^0.4.2
-        version: 0.4.2_prettier@2.7.1
-      rimraf:
-        specifier: ^4.0.0
-        version: 4.1.2
-      rollup-plugin-visualizer:
-        specifier: ^5.8.3
-        version: 5.8.3
-      start-server-and-test:
-        specifier: ^1.15.4
-        version: 1.15.4
-      ts-node:
-        specifier: ^10.9.1
-        version: 10.9.1_cbe7ovvae6zqfnmtgctpgpys54
-      typescript:
-        specifier: ^4.8.4
-        version: 4.8.4
-      vite:
-        specifier: ^4.1.1
-        version: 4.1.1_@types+node@18.11.9
-      vitest:
-        specifier: ^0.29.0
-        version: 0.29.2_hjnfa4mohew6fc4mnpzgbfyvpa
+      '@applitools/eyes-cypress': 3.27.6
+      '@commitlint/cli': 17.2.0
+      '@commitlint/config-conventional': 17.2.0
+      '@cspell/eslint-plugin': 6.14.2
+      '@rollup/plugin-typescript': 11.0.0_typescript@4.8.4
+      '@types/cors': 2.8.13
+      '@types/eslint': 8.4.10
+      '@types/express': 4.17.17
+      '@types/js-yaml': 4.0.5
+      '@types/jsdom': 21.1.0
+      '@types/lodash': 4.14.188
+      '@types/mdast': 3.0.10
+      '@types/node': 18.11.9
+      '@types/prettier': 2.7.1
+      '@types/rollup-plugin-visualizer': 4.2.1
+      '@typescript-eslint/eslint-plugin': 5.48.2_iljmjqxcygjq3saipl7gerxpvi
+      '@typescript-eslint/parser': 5.48.2_yygwinqv3a2io74xmwofqb7uka
+      '@vitest/coverage-c8': 0.29.2_vitest@0.29.2
+      '@vitest/spy': 0.29.2
+      '@vitest/ui': 0.29.2
+      concurrently: 7.5.0
+      cors: 2.8.5
+      coveralls: 3.1.1
+      cypress: 12.5.1
+      cypress-image-snapshot: 4.0.1_cypress@12.5.1+jest@29.3.1
+      esbuild: 0.17.0
+      eslint: 8.32.0
+      eslint-config-prettier: 8.6.0_eslint@8.32.0
+      eslint-plugin-cypress: 2.12.1_eslint@8.32.0
+      eslint-plugin-html: 7.1.0
+      eslint-plugin-jest: 27.1.5_5rcd23qw3h5vuffwo2owxb3hw4
+      eslint-plugin-jsdoc: 39.6.2_eslint@8.32.0
+      eslint-plugin-json: 3.1.0
+      eslint-plugin-lodash: 7.4.0_eslint@8.32.0
+      eslint-plugin-markdown: 3.0.0_eslint@8.32.0
+      eslint-plugin-no-only-tests: 3.1.0
+      eslint-plugin-tsdoc: 0.2.17
+      eslint-plugin-unicorn: 45.0.0_eslint@8.32.0
+      express: 4.18.2
+      globby: 13.1.2
+      husky: 8.0.2
+      jest: 29.3.1_odkjkoia5xunhxkdrka32ib6vi
+      jison: 0.4.18
+      js-yaml: 4.1.0
+      jsdom: 21.1.0
+      lint-staged: 13.0.3
+      path-browserify: 1.0.1
+      pnpm: 7.15.0
+      prettier: 2.7.1
+      prettier-plugin-jsdoc: 0.4.2_prettier@2.7.1
+      rimraf: 4.1.2
+      rollup-plugin-visualizer: 5.8.3
+      start-server-and-test: 1.15.4
+      ts-node: 10.9.1_cbe7ovvae6zqfnmtgctpgpys54
+      typescript: 4.8.4
+      vite: 4.1.1_@types+node@18.11.9
+      vitest: 0.29.2_hjnfa4mohew6fc4mnpzgbfyvpa
 
   packages/mermaid:
+    specifiers:
+      '@braintree/sanitize-url': ^6.0.0
+      '@khanacademy/simple-markdown': ^0.8.6
+      '@types/cytoscape': ^3.19.9
+      '@types/d3': ^7.4.0
+      '@types/dompurify': ^2.4.0
+      '@types/jsdom': ^21.0.0
+      '@types/lodash-es': ^4.17.7
+      '@types/micromatch': ^4.0.2
+      '@types/prettier': ^2.7.1
+      '@types/stylis': ^4.0.2
+      '@types/uuid': ^9.0.0
+      '@typescript-eslint/eslint-plugin': ^5.42.1
+      '@typescript-eslint/parser': ^5.42.1
+      chokidar: ^3.5.3
+      concurrently: ^7.5.0
+      coveralls: ^3.1.1
+      cpy-cli: ^4.2.0
+      cspell: ^6.14.3
+      csstree-validator: ^3.0.0
+      cytoscape: ^3.23.0
+      cytoscape-cose-bilkent: ^4.1.0
+      cytoscape-fcose: ^2.1.0
+      d3: ^7.4.0
+      dagre-d3-es: 7.0.10
+      dayjs: ^1.11.7
+      dompurify: 2.4.5
+      elkjs: ^0.8.2
+      globby: ^13.1.2
+      jison: ^0.4.18
+      js-base64: ^3.7.2
+      jsdom: ^21.0.0
+      khroma: ^2.0.0
+      lodash-es: ^4.17.21
+      micromatch: ^4.0.5
+      non-layered-tidy-tree-layout: ^2.0.2
+      path-browserify: ^1.0.1
+      prettier: ^2.7.1
+      remark: ^14.0.2
+      remark-frontmatter: ^4.0.1
+      remark-gfm: ^3.0.1
+      rimraf: ^4.0.0
+      start-server-and-test: ^1.14.0
+      stylis: ^4.1.2
+      ts-dedent: ^2.2.0
+      typedoc: ^0.23.18
+      typedoc-plugin-markdown: ^3.13.6
+      typescript: ^4.8.4
+      unist-util-flatmap: ^1.0.0
+      uuid: ^9.0.0
+      vitepress: ^1.0.0-alpha.46
+      vitepress-plugin-search: ^1.0.4-alpha.19
+      web-worker: ^1.2.0
     dependencies:
-      '@braintree/sanitize-url':
-        specifier: ^6.0.0
-        version: 6.0.0
-      cytoscape:
-        specifier: ^3.23.0
-        version: 3.23.0
-      cytoscape-cose-bilkent:
-        specifier: ^4.1.0
-        version: 4.1.0_cytoscape@3.23.0
-      cytoscape-fcose:
-        specifier: ^2.1.0
-        version: 2.1.0_cytoscape@3.23.0
-      d3:
-        specifier: ^7.4.0
-        version: 7.8.2
-      dagre-d3-es:
-        specifier: 7.0.9
-        version: 7.0.9
-      dayjs:
-        specifier: ^1.11.7
-        version: 1.11.7
-      dompurify:
-        specifier: 2.4.5
-        version: 2.4.5
-      elkjs:
-        specifier: ^0.8.2
-        version: 0.8.2
-      khroma:
-        specifier: ^2.0.0
-        version: 2.0.0
-      lodash-es:
-        specifier: ^4.17.21
-        version: 4.17.21
-      non-layered-tidy-tree-layout:
-        specifier: ^2.0.2
-        version: 2.0.2
-      stylis:
-        specifier: ^4.1.2
-        version: 4.1.2
-      ts-dedent:
-        specifier: ^2.2.0
-        version: 2.2.0
-      uuid:
-        specifier: ^9.0.0
-        version: 9.0.0
-      web-worker:
-        specifier: ^1.2.0
-        version: 1.2.0
+      '@braintree/sanitize-url': 6.0.0
+      '@khanacademy/simple-markdown': 0.8.6_wcqkhtmu7mswc6yz4uyexck3ty
+      cytoscape: 3.23.0
+      cytoscape-cose-bilkent: 4.1.0_cytoscape@3.23.0
+      cytoscape-fcose: 2.1.0_cytoscape@3.23.0
+      d3: 7.8.2
+      dagre-d3-es: 7.0.10
+      dayjs: 1.11.7
+      dompurify: 2.4.5
+      elkjs: 0.8.2
+      khroma: 2.0.0
+      lodash-es: 4.17.21
+      non-layered-tidy-tree-layout: 2.0.2
+      stylis: 4.1.2
+      ts-dedent: 2.2.0
+      uuid: 9.0.0
+      web-worker: 1.2.0
     devDependencies:
-      '@types/cytoscape':
-        specifier: ^3.19.9
-        version: 3.19.9
-      '@types/d3':
-        specifier: ^7.4.0
-        version: 7.4.0
-      '@types/dompurify':
-        specifier: ^2.4.0
-        version: 2.4.0
-      '@types/jsdom':
-        specifier: ^21.0.0
-        version: 21.1.0
-      '@types/lodash-es':
-        specifier: ^4.17.6
-        version: 4.17.6
-      '@types/micromatch':
-        specifier: ^4.0.2
-        version: 4.0.2
-      '@types/prettier':
-        specifier: ^2.7.1
-        version: 2.7.1
-      '@types/stylis':
-        specifier: ^4.0.2
-        version: 4.0.2
-      '@types/uuid':
-        specifier: ^9.0.0
-        version: 9.0.0
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^5.42.1
-        version: 5.42.1_qxgr6oy2qtsmmpo3f6iejuryuq
-      '@typescript-eslint/parser':
-        specifier: ^5.42.1
-        version: 5.42.1_yygwinqv3a2io74xmwofqb7uka
-      chokidar:
-        specifier: ^3.5.3
-        version: 3.5.3
-      concurrently:
-        specifier: ^7.5.0
-        version: 7.5.0
-      coveralls:
-        specifier: ^3.1.1
-        version: 3.1.1
-      cpy-cli:
-        specifier: ^4.2.0
-        version: 4.2.0
-      cspell:
-        specifier: ^6.14.3
-        version: 6.14.3
-      globby:
-        specifier: ^13.1.2
-        version: 13.1.2
-      jison:
-        specifier: ^0.4.18
-        version: 0.4.18
-      js-base64:
-        specifier: ^3.7.2
-        version: 3.7.2
-      jsdom:
-        specifier: ^21.0.0
-        version: 21.1.0
-      micromatch:
-        specifier: ^4.0.5
-        version: 4.0.5
-      path-browserify:
-        specifier: ^1.0.1
-        version: 1.0.1
-      prettier:
-        specifier: ^2.7.1
-        version: 2.7.1
-      remark:
-        specifier: ^14.0.2
-        version: 14.0.2
-      remark-frontmatter:
-        specifier: ^4.0.1
-        version: 4.0.1
-      remark-gfm:
-        specifier: ^3.0.1
-        version: 3.0.1
-      rimraf:
-        specifier: ^4.0.0
-        version: 4.1.2
-      start-server-and-test:
-        specifier: ^1.14.0
-        version: 1.14.0
-      typedoc:
-        specifier: ^0.23.18
-        version: 0.23.18_typescript@4.8.4
-      typedoc-plugin-markdown:
-        specifier: ^3.13.6
-        version: 3.13.6_typedoc@0.23.18
-      typescript:
-        specifier: ^4.8.4
-        version: 4.8.4
-      unist-util-flatmap:
-        specifier: ^1.0.0
-        version: 1.0.0
-      vitepress:
-        specifier: ^1.0.0-alpha.46
-        version: 1.0.0-alpha.46_tbpndr44ulefs3hehwpi2mkf2y
-      vitepress-plugin-search:
-        specifier: ^1.0.4-alpha.19
-        version: 1.0.4-alpha.19_g67lr3vgasogkevpbew55lljzq
+      '@types/cytoscape': 3.19.9
+      '@types/d3': 7.4.0
+      '@types/dompurify': 2.4.0
+      '@types/jsdom': 21.1.0
+      '@types/lodash-es': 4.17.7
+      '@types/micromatch': 4.0.2
+      '@types/prettier': 2.7.1
+      '@types/stylis': 4.0.2
+      '@types/uuid': 9.0.0
+      '@typescript-eslint/eslint-plugin': 5.42.1_qxgr6oy2qtsmmpo3f6iejuryuq
+      '@typescript-eslint/parser': 5.42.1_yygwinqv3a2io74xmwofqb7uka
+      chokidar: 3.5.3
+      concurrently: 7.5.0
+      coveralls: 3.1.1
+      cpy-cli: 4.2.0
+      cspell: 6.14.3
+      csstree-validator: 3.0.0
+      globby: 13.1.2
+      jison: 0.4.18
+      js-base64: 3.7.2
+      jsdom: 21.1.0
+      micromatch: 4.0.5
+      path-browserify: 1.0.1
+      prettier: 2.7.1
+      remark: 14.0.2
+      remark-frontmatter: 4.0.1
+      remark-gfm: 3.0.1
+      rimraf: 4.1.2
+      start-server-and-test: 1.14.0
+      typedoc: 0.23.18_typescript@4.8.4
+      typedoc-plugin-markdown: 3.13.6_typedoc@0.23.18
+      typescript: 4.8.4
+      unist-util-flatmap: 1.0.0
+      vitepress: 1.0.0-alpha.46_hoyvfk3ab7nzsjkhptt6ai7rzq
+      vitepress-plugin-search: 1.0.4-alpha.19_g67lr3vgasogkevpbew55lljzq
 
   packages/mermaid-example-diagram:
+    specifiers:
+      '@braintree/sanitize-url': ^6.0.0
+      '@types/cytoscape': ^3.19.9
+      concurrently: ^7.5.0
+      cytoscape: ^3.23.0
+      cytoscape-cose-bilkent: ^4.1.0
+      cytoscape-fcose: ^2.1.0
+      d3: ^7.0.0
+      khroma: ^2.0.0
+      mermaid: workspace:*
+      non-layered-tidy-tree-layout: ^2.0.2
+      rimraf: ^4.0.0
     dependencies:
-      '@braintree/sanitize-url':
-        specifier: ^6.0.0
-        version: 6.0.0
-      cytoscape:
-        specifier: ^3.23.0
-        version: 3.23.0
-      cytoscape-cose-bilkent:
-        specifier: ^4.1.0
-        version: 4.1.0_cytoscape@3.23.0
-      cytoscape-fcose:
-        specifier: ^2.1.0
-        version: 2.1.0_cytoscape@3.23.0
-      d3:
-        specifier: ^7.0.0
-        version: 7.8.2
-      khroma:
-        specifier: ^2.0.0
-        version: 2.0.0
-      non-layered-tidy-tree-layout:
-        specifier: ^2.0.2
-        version: 2.0.2
+      '@braintree/sanitize-url': 6.0.0
+      cytoscape: 3.23.0
+      cytoscape-cose-bilkent: 4.1.0_cytoscape@3.23.0
+      cytoscape-fcose: 2.1.0_cytoscape@3.23.0
+      d3: 7.8.2
+      khroma: 2.0.0
+      non-layered-tidy-tree-layout: 2.0.2
     devDependencies:
-      '@types/cytoscape':
-        specifier: ^3.19.9
-        version: 3.19.9
-      concurrently:
-        specifier: ^7.5.0
-        version: 7.5.0
-      mermaid:
-        specifier: workspace:*
-        version: link:../mermaid
-      rimraf:
-        specifier: ^4.0.0
-        version: 4.1.2
+      '@types/cytoscape': 3.19.9
+      concurrently: 7.5.0
+      mermaid: link:../mermaid
+      rimraf: 4.1.2
 
   tests/webpack:
+    specifiers:
+      '@mermaid-js/mermaid-example-diagram': workspace:*
+      mermaid: workspace:*
+      webpack: ^5.74.0
+      webpack-cli: ^4.10.0
+      webpack-dev-server: ^4.11.1
     dependencies:
-      '@mermaid-js/mermaid-example-diagram':
-        specifier: workspace:*
-        version: link:../../packages/mermaid-example-diagram
-      mermaid:
-        specifier: workspace:*
-        version: link:../../packages/mermaid
+      '@mermaid-js/mermaid-example-diagram': link:../../packages/mermaid-example-diagram
+      mermaid: link:../../packages/mermaid
     devDependencies:
-      webpack:
-        specifier: ^5.74.0
-        version: 5.75.0_webpack-cli@4.10.0
-      webpack-cli:
-        specifier: ^4.10.0
-        version: 4.10.0_uaydpeuxkjjcxdbyfgk36cjdxi
-      webpack-dev-server:
-        specifier: ^4.11.1
-        version: 4.11.1_pda42hcaj7d62cr262fr632kue
+      webpack: 5.75.0_webpack-cli@4.10.0
+      webpack-cli: 4.10.0_uaydpeuxkjjcxdbyfgk36cjdxi
+      webpack-dev-server: 4.11.1_pda42hcaj7d62cr262fr632kue
 
 packages:
 
@@ -1705,10 +1593,10 @@ packages:
     resolution: {integrity: sha512-6SCwI7P8ao+se1TUsdZ7B4XzL+gqeQZnBc+2EONZlcVa0dVrk0NjETxozFKgMv0eEGH8QzP1fkN+A1rH61l4eg==}
     dev: true
 
-  /@docsearch/js/3.3.3_tbpndr44ulefs3hehwpi2mkf2y:
+  /@docsearch/js/3.3.3_hoyvfk3ab7nzsjkhptt6ai7rzq:
     resolution: {integrity: sha512-2xAv2GFuHzzmG0SSZgf8wHX0qZX8n9Y1ZirKUk5Wrdc+vH9CL837x2hZIUdwcPZI9caBA+/CzxsS68O4waYjUQ==}
     dependencies:
-      '@docsearch/react': 3.3.3_tbpndr44ulefs3hehwpi2mkf2y
+      '@docsearch/react': 3.3.3_hoyvfk3ab7nzsjkhptt6ai7rzq
       preact: 10.11.0
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -1717,7 +1605,7 @@ packages:
       - react-dom
     dev: true
 
-  /@docsearch/react/3.3.3_tbpndr44ulefs3hehwpi2mkf2y:
+  /@docsearch/react/3.3.3_hoyvfk3ab7nzsjkhptt6ai7rzq:
     resolution: {integrity: sha512-pLa0cxnl+G0FuIDuYlW+EBK6Rw2jwLw9B1RHIeS4N4s2VhsfJ/wzeCi3CWcs5yVfxLd5ZK50t//TMA5e79YT7Q==}
     peerDependencies:
       '@types/react': '>= 16.8.0 < 19.0.0'
@@ -1735,6 +1623,8 @@ packages:
       '@algolia/autocomplete-preset-algolia': 1.7.4_qs6lk5nhygj2o3hj4sf6xnr724
       '@docsearch/css': 3.3.3
       algoliasearch: 4.14.2
+      react: 16.14.0
+      react-dom: 16.14.0_react@16.14.0
     transitivePeerDependencies:
       - '@algolia/client-search'
     dev: true
@@ -2464,6 +2354,17 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
+  /@khanacademy/simple-markdown/0.8.6_wcqkhtmu7mswc6yz4uyexck3ty:
+    resolution: {integrity: sha512-mAUlR9lchzfqunR89pFvNI51jQKsMpJeWYsYWw0DQcUXczn/T/V6510utgvm7X0N3zN87j1SvuKk8cMbl9IAFw==}
+    peerDependencies:
+      react: 16.14.0
+      react-dom: 16.14.0
+    dependencies:
+      '@types/react': 18.0.33
+      react: 16.14.0
+      react-dom: 16.14.0_react@16.14.0
+    dev: false
+
   /@leichtgewicht/ip-codec/2.0.4:
     resolution: {integrity: sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==}
     dev: true
@@ -2504,6 +2405,38 @@ packages:
 
   /@polka/url/1.0.0-next.21:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
+    dev: true
+
+  /@rollup/plugin-typescript/11.0.0_typescript@4.8.4:
+    resolution: {integrity: sha512-goPyCWBiimk1iJgSTgsehFD5OOFHiAknrRJjqFCudcW8JtWiBlK284Xnn4flqMqg6YAjVG/EE+3aVzrL5qNSzQ==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^2.14.0||^3.0.0
+      tslib: '*'
+      typescript: '>=3.7.0'
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+      tslib:
+        optional: true
+    dependencies:
+      '@rollup/pluginutils': 5.0.2
+      resolve: 1.22.1
+      typescript: 4.8.4
+    dev: true
+
+  /@rollup/pluginutils/5.0.2:
+    resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@types/estree': 1.0.0
+      estree-walker: 2.0.2
+      picomatch: 2.3.1
     dev: true
 
   /@sideway/address/4.1.4:
@@ -2971,8 +2904,8 @@ packages:
     resolution: {integrity: sha512-HZQYqbiFVWufzCwexrvh694SOim8z2d+xJl5UNamcvQFejLY/2YUtzXHYi3cHdI7PMlS8ejH2slRAOJQ32aNbA==}
     dev: true
 
-  /@types/lodash-es/4.17.6:
-    resolution: {integrity: sha512-R+zTeVUKDdfoRxpAryaQNRKk3105Rrgx2CFRClIgRGaqDTdjsm8h6IYA8ir584W3ePzkZfst5xIgDwYrlh9HLg==}
+  /@types/lodash-es/4.17.7:
+    resolution: {integrity: sha512-z0ptr6UI10VlU6l5MYhGwS4mC8DZyYer2mCoyysZtSF7p26zOX8UpbrV0YpNYLGS8K4PUFIyEr62IMFFjveSiQ==}
     dependencies:
       '@types/lodash': 4.14.188
     dev: true
@@ -3047,6 +2980,10 @@ packages:
     resolution: {integrity: sha512-ri0UmynRRvZiiUJdiz38MmIblKK+oH30MztdBVR95dv/Ubw6neWSb8u1XpRb72L4qsZOhz+L+z9JD40SJmfWow==}
     dev: true
 
+  /@types/prop-types/15.7.5:
+    resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
+    dev: false
+
   /@types/qs/6.9.7:
     resolution: {integrity: sha512-FGa1F62FT09qcrueBA6qYTrJPVDzah9a+493+o2PCXsesWHIn27G98TsSMs3WPNbZIEj4+VJf6saSFpvD+3Zsw==}
     dev: true
@@ -3054,6 +2991,14 @@ packages:
   /@types/range-parser/1.2.4:
     resolution: {integrity: sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==}
     dev: true
+
+  /@types/react/18.0.33:
+    resolution: {integrity: sha512-sHxzVxeanvQyQ1lr8NSHaj0kDzcNiGpILEVt69g9S31/7PfMvNCKLKcsHw4lYKjs3cGNJjXSP4mYzX43QlnjNA==}
+    dependencies:
+      '@types/prop-types': 15.7.5
+      '@types/scheduler': 0.16.3
+      csstype: 3.1.2
+    dev: false
 
   /@types/responselike/1.0.0:
     resolution: {integrity: sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==}
@@ -3071,6 +3016,10 @@ packages:
       '@types/node': 18.11.9
       rollup: 2.79.1
     dev: true
+
+  /@types/scheduler/0.16.3:
+    resolution: {integrity: sha512-5cJ8CB4yAx7BH1oMvdU0Jh9lrEXyPkar6F9G/ERswkCuvP4KQZfZkSjcMbAICCpQTN4OuZn8tz0HiKv9TGZgrQ==}
+    dev: false
 
   /@types/semver/7.3.12:
     resolution: {integrity: sha512-WwA1MW0++RfXmCr12xeYOOC5baSC9mSb0ZqCquFzKhcoF4TvHu5MKOuXsncgZcpVFhB1pXd5hZmM0ryAoCp12A==}
@@ -3504,7 +3453,7 @@ packages:
       '@vue/shared': 3.2.45
       estree-walker: 2.0.2
       magic-string: 0.25.9
-      postcss: 8.4.20
+      postcss: 8.4.21
       source-map: 0.6.1
     dev: true
 
@@ -4596,6 +4545,13 @@ packages:
       jsonlint: 1.6.0
     dev: true
 
+  /clap/3.1.1:
+    resolution: {integrity: sha512-vp42956Ax06WwaaheYEqEOgXZ3VKJxgccZ0gJL0HpyiupkIS9RVJFo5eDU1BPeQAOqz+cclndZg4DCqG1sJReQ==}
+    engines: {node: ^12.20.0 || ^14.13.0 || >=15.0.0, npm: '>=7.0.0'}
+    dependencies:
+      ansi-colors: 4.1.3
+    dev: true
+
   /clean-regexp/1.0.0:
     resolution: {integrity: sha512-GfisEZEJvzKrmGWkvfhgzcz/BllN1USeqD2V6tg14OAOgaCD2Z/PUEuxnAZ/nPvmaHRG7a8y77p1T/IRQ4D1Hw==}
     engines: {node: '>=4'}
@@ -5229,6 +5185,14 @@ packages:
       source-map: 0.6.1
     dev: true
 
+  /css-tree/2.3.1:
+    resolution: {integrity: sha512-6Fv1DV/TYw//QF5IzQdqsNDjx/wc8TrMBZsqjL9eW01tWb7R7k/mq+/VXfJCl7SoD5emsJop9cOByJZfs8hYIw==}
+    engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0}
+    dependencies:
+      mdn-data: 2.0.30
+      source-map-js: 1.0.2
+    dev: true
+
   /cssom/0.3.8:
     resolution: {integrity: sha512-b0tGHbfegbhPJpxpiBPU2sCkigAqtM9O121le6bbOlgyV+NyGyCmVfJ6QW9eRjz8CpNfWEOYBIMIGRYkLwsIYg==}
     dev: true
@@ -5244,9 +5208,23 @@ packages:
       cssom: 0.3.8
     dev: true
 
+  /csstree-validator/3.0.0:
+    resolution: {integrity: sha512-Y5OSq3wI0Xz6L7DCgJQtQ97U+v99SkX9r663VjpvUMJPhEr0A149OxiAGqcnokB5bt81irgnMudspBzujzqn0w==}
+    engines: {node: ^12.20.0 || ^14.13.0 || >=15.0.0, npm: '>=7.0.0'}
+    hasBin: true
+    dependencies:
+      clap: 3.1.1
+      css-tree: 2.3.1
+      resolve: 1.22.1
+    dev: true
+
   /csstype/2.6.21:
     resolution: {integrity: sha512-Z1PhmomIfypOpoMjRQB70jfvy/wxT50qW08YXO5lMIJkrdq4yOTR+AW7FqutScmB9NkLwxo+jU+kZLbofZZq/w==}
     dev: true
+
+  /csstype/3.1.2:
+    resolution: {integrity: sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==}
+    dev: false
 
   /cypress-image-snapshot/4.0.1_cypress@12.5.1+jest@29.3.1:
     resolution: {integrity: sha512-PBpnhX/XItlx3/DAk5ozsXQHUi72exybBNH5Mpqj1DVmjq+S5Jd9WE5CRa4q5q0zuMZb2V2VpXHth6MjFpgj9Q==}
@@ -5589,8 +5567,8 @@ packages:
       d3-zoom: 3.0.0
     dev: false
 
-  /dagre-d3-es/7.0.9:
-    resolution: {integrity: sha512-rYR4QfVmy+sR44IBDvVtcAmOReGBvRCWDpO2QjYwqgh9yijw6eSHBqaPG/LIOEy7aBsniLvtMW6pg19qJhq60w==}
+  /dagre-d3-es/7.0.10:
+    resolution: {integrity: sha512-qTCQmEhcynucuaZgY5/+ti3X/rnszKZhEQH/ZdWdtP1tA/y3VoHJzcVrO9pjjJCNpigfscAtoUB5ONcd2wNn0A==}
     dependencies:
       d3: 7.8.2
       lodash-es: 4.17.21
@@ -8213,7 +8191,6 @@ packages:
 
   /js-tokens/4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
-    dev: true
 
   /js-yaml/3.14.1:
     resolution: {integrity: sha512-okMH7OXXJ7YrN9Ok3/SXrnu4iX9yOk+25nqX4imS2npuvTYDmo/QEZoqwZkYaIDk3jVvBOTOIEgEhaLOynBS9g==}
@@ -8621,6 +8598,12 @@ packages:
     resolution: {integrity: sha512-cHlYSUpL2s7Fb3394mYxwTYj8niTaNHUCLr0qdiCXQfSjfuA7CKofpX2uSwEfFDQ0EB7JcnMnm+GjbqqoinYYg==}
     dev: true
 
+  /loose-envify/1.4.0:
+    resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
+    hasBin: true
+    dependencies:
+      js-tokens: 4.0.0
+
   /loupe/2.3.6:
     resolution: {integrity: sha512-RaPMZKiMy8/JruncMU5Bt6na1eftNoo++R4Y+N2FrxkDVTrGvcyzFTsaGif4QTeKESheMGegbhw6iUAq+5A8zA==}
     dependencies:
@@ -8826,6 +8809,10 @@ packages:
 
   /mdast-util-to-string/3.1.0:
     resolution: {integrity: sha512-n4Vypz/DZgwo0iMHLQL49dJzlp7YtAJP+N07MZHpjPf/5XJuHUWstviF4Mn2jEiR/GNmtnRRqnwsXExk3igfFA==}
+    dev: true
+
+  /mdn-data/2.0.30:
+    resolution: {integrity: sha512-GaqWWShW4kv/G9IEucWScBx9G1/vsFZZJUO+tD26M8J8z3Kw5RDQjaoZe03YAClgeS/SWPOcb4nkFBTEi5DUEA==}
     dev: true
 
   /mdn-data/2.0.6:
@@ -9432,7 +9419,6 @@ packages:
   /object-assign/4.1.1:
     resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
     engines: {node: '>=0.10.0'}
-    dev: true
 
   /object-inspect/1.12.2:
     resolution: {integrity: sha512-z+cPxW0QGUp0mcqcsgQyLVRDoXFQbXOwBaqyF7VIgI4TWNQsDHrBpUQslRmIfAoYWdYzs6UlKJtB2XJpTaNSpQ==}
@@ -9856,15 +9842,6 @@ packages:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
     dev: true
 
-  /postcss/8.4.20:
-    resolution: {integrity: sha512-6Q04AXR1212bXr5fh03u8aAwbLxAQNGQ/Q1LNa0VfOI06ZAlhPHtQvE4OIdpj4kLThXilalPnmDSOD65DcHt+g==}
-    engines: {node: ^10 || ^12 || >=14}
-    dependencies:
-      nanoid: 3.3.4
-      picocolors: 1.0.0
-      source-map-js: 1.0.2
-    dev: true
-
   /postcss/8.4.21:
     resolution: {integrity: sha512-tP7u/Sn/dVxK2NnruI4H9BG+x+Wxz6oeZ1cJ8P6G/PZY0IKk4k/63TDsQf2kQq3+qoJeLm2kIBUNlZe3zgb4Zg==}
     engines: {node: ^10 || ^12 || >=14}
@@ -9942,6 +9919,13 @@ packages:
       kleur: 3.0.3
       sisteransi: 1.0.5
     dev: true
+
+  /prop-types/15.8.1:
+    resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      react-is: 16.13.1
 
   /proxy-addr/2.0.7:
     resolution: {integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==}
@@ -10055,6 +10039,20 @@ packages:
       unpipe: 1.0.0
     dev: true
 
+  /react-dom/16.14.0_react@16.14.0:
+    resolution: {integrity: sha512-1gCeQXDLoIqMgqD3IO2Ah9bnf0w9kzhwN5q4FGnHZ67hBm9yePzB5JJAIQCc8x3pFnNlwFq4RidZggNAAkzWWw==}
+    peerDependencies:
+      react: ^16.14.0
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      prop-types: 15.8.1
+      react: 16.14.0
+      scheduler: 0.19.1
+
+  /react-is/16.13.1:
+    resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
+
   /react-is/17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
     dev: true
@@ -10062,6 +10060,14 @@ packages:
   /react-is/18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
     dev: true
+
+  /react/16.14.0:
+    resolution: {integrity: sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g==}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      prop-types: 15.8.1
 
   /read-pkg-up/7.0.1:
     resolution: {integrity: sha512-zK0TB7Xd6JpCLmlLmufqykGE+/TlOePD6qKClNW7hHDKFh/J7/7gCWGR7joEQEW1bKq3a3yUZSObOoWLFQ4ohg==}
@@ -10470,6 +10476,12 @@ packages:
     dependencies:
       xmlchars: 2.2.0
     dev: true
+
+  /scheduler/0.19.1:
+    resolution: {integrity: sha512-n/zwRWRYSUj0/3g/otKDRPMh6qv2SYMWNq85IEa8iZyAv8od9zDYpGSnpBEjNgcMNq6Scbu5KfIPxNF72R/2EA==}
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
 
   /schema-utils/3.1.1:
     resolution: {integrity: sha512-Y5PQxS4ITlC+EahLuXaY86TXfR7Dc5lw294alXOq86JAHCihAIZfqv8nNCWvaEJvaC51uN9hbLGeV0cFBdH+Fw==}
@@ -11769,16 +11781,16 @@ packages:
       '@types/markdown-it': 12.2.3
       flexsearch: 0.7.31
       markdown-it: 13.0.1
-      vitepress: 1.0.0-alpha.46_tbpndr44ulefs3hehwpi2mkf2y
+      vitepress: 1.0.0-alpha.46_hoyvfk3ab7nzsjkhptt6ai7rzq
       vue: 3.2.45
     dev: true
 
-  /vitepress/1.0.0-alpha.46_tbpndr44ulefs3hehwpi2mkf2y:
+  /vitepress/1.0.0-alpha.46_hoyvfk3ab7nzsjkhptt6ai7rzq:
     resolution: {integrity: sha512-HiKiHzC0iTPsRsKs8XcsMeMzCpcCt5LWcX9mpDr288Ju+nQf1G8A2+Wm44ZkBsVv4EHxFK4ChmWyZrL1OJUXpg==}
     hasBin: true
     dependencies:
       '@docsearch/css': 3.3.3
-      '@docsearch/js': 3.3.3_tbpndr44ulefs3hehwpi2mkf2y
+      '@docsearch/js': 3.3.3_hoyvfk3ab7nzsjkhptt6ai7rzq
       '@vitejs/plugin-vue': 4.0.0_vite@4.1.1+vue@3.2.45
       '@vue/devtools-api': 6.5.0
       '@vueuse/core': 9.12.0_vue@3.2.45
