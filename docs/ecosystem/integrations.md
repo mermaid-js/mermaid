@@ -161,6 +161,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [codedoc-mermaid-plugin](https://www.npmjs.com/package/codedoc-mermaid-plugin)
 - [mdbook](https://rust-lang.github.io/mdBook/index.html)
   - [mdbook-mermaid](https://github.com/badboy/mdbook-mermaid)
+- [Quarto](https://quarto.org/)
 
 ## Browser Extensions
 
