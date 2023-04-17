@@ -7,6 +7,7 @@ const spyOn = vi.spyOn;
 describe('given a basic class diagram, ', function () {
   describe('when parsing class definition', function () {
     beforeEach(function () {
+      classDb.clear();
       parser.yy = classDb;
     });
     it('should handle accTitle and accDescr', function () {
@@ -267,6 +268,7 @@ class C13["With Città foreign language"]
 
   describe('when parsing class defined in brackets', function () {
     beforeEach(function () {
+      classDb.clear();
       parser.yy = classDb;
     });
 
@@ -358,6 +360,7 @@ class C13["With Città foreign language"]
 
   describe('when parsing comments', function () {
     beforeEach(function () {
+      classDb.clear();
       parser.yy = classDb;
     });
 
@@ -447,6 +450,7 @@ foo()
 
   describe('when parsing click statements', function () {
     beforeEach(function () {
+      classDb.clear();
       parser.yy = classDb;
     });
     it('should handle href link', function () {
@@ -557,8 +561,8 @@ foo()
 
   describe('when parsing annotations', function () {
     beforeEach(function () {
+      classDb.clear();
       parser.yy = classDb;
-      parser.yy.clear();
     });
 
     it('should handle class annotations', function () {
@@ -621,8 +625,8 @@ foo()
 describe('given a class diagram with members and methods ', function () {
   describe('when parsing members', function () {
     beforeEach(function () {
+      classDb.clear();
       parser.yy = classDb;
-      parser.yy.clear();
     });
 
     it('should handle simple member declaration', function () {
@@ -657,6 +661,7 @@ describe('given a class diagram with members and methods ', function () {
 
   describe('when parsing method definition', function () {
     beforeEach(function () {
+      classDb.clear();
       parser.yy = classDb;
     });
 
@@ -739,6 +744,7 @@ describe('given a class diagram with members and methods ', function () {
 describe('given a class diagram with generics, ', function () {
   describe('when parsing valid generic classes', function () {
     beforeEach(function () {
+      classDb.clear();
       parser.yy = classDb;
     });
 
@@ -805,6 +811,7 @@ describe('given a class diagram with generics, ', function () {
 
   describe('when parsing invalid generic classes', function () {
     beforeEach(function () {
+      classDb.clear();
       parser.yy = classDb;
     });
 
@@ -853,6 +860,7 @@ describe('given a class diagram with generics, ', function () {
 describe('given a class diagram with relationships, ', function () {
   describe('when parsing basic relationships', function () {
     beforeEach(function () {
+      classDb.clear();
       parser.yy = classDb;
     });
 
