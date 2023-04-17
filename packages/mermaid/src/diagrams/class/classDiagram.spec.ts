@@ -647,9 +647,18 @@ describe('given a class diagram with members and methods ', function () {
         'class actual\n' +
         'actual : -int privateMember\n' +
         'actual : +int publicMember\n' +
-        'actual : #int protectedMember';
+        'actual : #int protectedMember\n' +
+        'actual : ~int privatePackage';
 
       parser.parse(str);
+
+      const actual = parser.yy.getClass('actual');
+      expect(actual.members.length).toBe(4);
+      expect(actual.methods.length).toBe(0);
+      expect(actual.members[0]).toBe('-int privateMember');
+      expect(actual.members[1]).toBe('+int publicMember');
+      expect(actual.members[2]).toBe('#int protectedMember');
+      expect(actual.members[3]).toBe('~int privatePackage');
     });
 
     it('should handle generic types', function () {
