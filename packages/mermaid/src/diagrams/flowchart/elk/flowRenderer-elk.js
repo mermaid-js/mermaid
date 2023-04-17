@@ -182,7 +182,7 @@ export const addVertices = async function (vert, svgId, root, doc, diagObj, pare
 
       // Add the element to the DOM
       if (node.type !== 'group') {
-        nodeEl = insertNode(nodes, node, vertex.dir);
+        nodeEl = await insertNode(nodes, node, vertex.dir);
         boundingBox = nodeEl.node().getBBox();
       } else {
         const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
