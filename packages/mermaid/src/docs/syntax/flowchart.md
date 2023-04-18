@@ -465,9 +465,9 @@ end
 
 Formatting:
 
-- For bold text, use double asterisks \*\* before and after the text.
-- For italics, use single asterisks \* before and after the text.
-- With traditional strings, you needed to add <br> tags for text to wrap in nodes. However, markdown strings automatically wrap text when it becomes too long and allows you to start a new line by simply using a newline character instead of a <br> tag.
+- For bold text, use double asterisks (`**`) before and after the text.
+- For italics, use single asterisks (`*`) before and after the text.
+- With traditional strings, you needed to add `<br>` tags for text to wrap in nodes. However, markdown strings automatically wrap text when it becomes too long and allows you to start a new line by simply using a newline character instead of a `<br>` tag.
 
 This feature is applicable to node labels, edge labels, and subgraph labels.
 
