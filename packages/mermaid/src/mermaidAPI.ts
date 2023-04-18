@@ -30,40 +30,24 @@ import { evaluate } from './diagrams/common/common.js';
 import isEmpty from 'lodash-es/isEmpty.js';
 import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
 import { parseDirective } from './directiveUtils.js';
-
-// diagram names that support classDef statements
-const CLASSDEF_DIAGRAMS = [
-  'graph',
-  'flowchart',
-  'flowchart-v2',
-  'flowchart-elk',
-  'stateDiagram',
-  'stateDiagram-v2',
-];
-const MAX_TEXTLENGTH = 50_000;
-const MAX_TEXTLENGTH_EXCEEDED_MSG =
-  'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
-
-const SECURITY_LVL_SANDBOX = 'sandbox';
-const SECURITY_LVL_LOOSE = 'loose';
-
-const XMLNS_SVG_STD = 'http://www.w3.org/2000/svg';
-const XMLNS_XLINK_STD = 'http://www.w3.org/1999/xlink';
-const XMLNS_XHTML_STD = 'http://www.w3.org/1999/xhtml';
-
-// ------------------------------
-// iFrame
-const IFRAME_WIDTH = '100%';
-const IFRAME_HEIGHT = '100%';
-const IFRAME_STYLES = 'border:0;margin:0;';
-const IFRAME_BODY_STYLE = 'margin:0';
-const IFRAME_SANDBOX_OPTS = 'allow-top-navigation-by-user-activation allow-popups';
-const IFRAME_NOT_SUPPORTED_MSG = 'The "iframe" tag is not supported by your browser.';
-
-// DOMPurify settings for svgCode
-const DOMPURIFY_TAGS = ['foreignobject'];
-const DOMPURIFY_ATTR = ['dominant-baseline'];
-
+import {
+  CLASSDEF_DIAGRAMS,
+  MAX_TEXTLENGTH,
+  MAX_TEXTLENGTH_EXCEEDED_MSG,
+  SECURITY_LVL_SANDBOX,
+  SECURITY_LVL_LOOSE,
+  XMLNS_SVG_STD,
+  XMLNS_XLINK_STD,
+  XMLNS_XHTML_STD,
+  IFRAME_WIDTH,
+  IFRAME_HEIGHT,
+  IFRAME_STYLES,
+  IFRAME_BODY_STYLE,
+  IFRAME_SANDBOX_OPTS,
+  IFRAME_NOT_SUPPORTED_MSG,
+  DOMPURIFY_TAGS,
+  DOMPURIFY_ATTR,
+} from './constant.js';
 // This is what is returned from getClasses(...) methods.
 // It is slightly renamed to ..StyleClassDef instead of just ClassDef because "class" is a greatly ambiguous and overloaded word.
 // It makes it clear we're working with a style class definition, even though defining the type is currently difficult.
