@@ -35,7 +35,7 @@ importers:
       eslint-plugin-cypress: ^2.12.1
       eslint-plugin-html: ^7.1.0
       eslint-plugin-jest: ^27.1.5
-      eslint-plugin-jsdoc: ^39.6.2
+      eslint-plugin-jsdoc: ^43.0.0
       eslint-plugin-json: ^3.1.0
       eslint-plugin-lodash: ^7.4.0
       eslint-plugin-markdown: ^3.0.0
@@ -93,7 +93,7 @@ importers:
       eslint-plugin-cypress: 2.12.1_eslint@8.32.0
       eslint-plugin-html: 7.1.0
       eslint-plugin-jest: 27.1.5_5rcd23qw3h5vuffwo2owxb3hw4
-      eslint-plugin-jsdoc: 39.6.2_eslint@8.32.0
+      eslint-plugin-jsdoc: 43.0.7_eslint@8.32.0
       eslint-plugin-json: 3.1.0
       eslint-plugin-lodash: 7.4.0_eslint@8.32.0
       eslint-plugin-markdown: 3.0.0_eslint@8.32.0
@@ -1629,13 +1629,13 @@ packages:
       - '@algolia/client-search'
     dev: true
 
-  /@es-joy/jsdoccomment/0.36.0:
-    resolution: {integrity: sha512-u0XZyvUF6Urb2cSivSXA8qXIpT/CxkHcdtZKoWusAzgzmsTWpg0F2FpWXsolHmMUyVY3dLWaoy+0ccJ5uf2QjA==}
-    engines: {node: ^14 || ^16 || ^17 || ^18 || ^19}
+  /@es-joy/jsdoccomment/0.37.1:
+    resolution: {integrity: sha512-5vxWJ1gEkEF0yRd0O+uK6dHJf7adrxwQSX8PuRiPfFSAbNLnY0ZJfXaZucoz14Jj2N11xn2DnlEPwWRpYpvRjg==}
+    engines: {node: ^14 || ^16 || ^17 || ^18 || ^19 || ^20}
     dependencies:
       comment-parser: 1.3.1
-      esquery: 1.4.0
-      jsdoc-type-pratt-parser: 3.1.0
+      esquery: 1.5.0
+      jsdoc-type-pratt-parser: 4.0.0
     dev: true
 
   /@esbuild/android-arm/0.16.17:
@@ -3518,7 +3518,7 @@ packages:
       eslint: 8.32.0
       eslint-scope: 5.1.1
       eslint-utils: 3.0.0_eslint@8.32.0
-      semver: 7.3.8
+      semver: 7.5.0
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -3538,7 +3538,7 @@ packages:
       eslint: 8.32.0
       eslint-scope: 5.1.1
       eslint-utils: 3.0.0_eslint@8.32.0
-      semver: 7.3.8
+      semver: 7.5.0
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -4197,6 +4197,11 @@ packages:
 
   /arch/2.2.0:
     resolution: {integrity: sha512-Of/R0wqp83cgHozfIYLbBMnej79U/SVGOOyuB3VVFv1NRM/PSFMK12x9KVtiYzJqmnU5WR2qp0Z5rHb7sWGnFQ==}
+    dev: true
+
+  /are-docs-informative/0.0.2:
+    resolution: {integrity: sha512-ixiS0nLNNG5jNQzgZJNoUpBKdo9yTYZMGJ+QgT2jmjR7G7+QHRCc4v6LQ3NgE7EBJq+o0ams3waJwkrlBom8Ig==}
+    engines: {node: '>=14'}
     dev: true
 
   /arg/4.1.3:
@@ -6385,19 +6390,20 @@ packages:
       - typescript
     dev: true
 
-  /eslint-plugin-jsdoc/39.6.2_eslint@8.32.0:
-    resolution: {integrity: sha512-dvgY/W7eUFoAIIiaWHERIMI61ZWqcz9YFjEeyTzdPlrZc3TY/3aZm5aB91NUoTLWYZmO/vFlYSuQi15tF7uE5A==}
-    engines: {node: ^14 || ^16 || ^17 || ^18 || ^19}
+  /eslint-plugin-jsdoc/43.0.7_eslint@8.32.0:
+    resolution: {integrity: sha512-32Sx5I9VzO/bqbtslCu3L1GHIPo+QEliwqwjWq+qzbUv76wrkH6ifUEE0EbkuNEn+cHlSIOrg/IJ1PGNN72QZA==}
+    engines: {node: ^14 || ^16 || ^17 || ^18 || ^19 || ^20}
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0
     dependencies:
-      '@es-joy/jsdoccomment': 0.36.0
+      '@es-joy/jsdoccomment': 0.37.1
+      are-docs-informative: 0.0.2
       comment-parser: 1.3.1
       debug: 4.3.4
       escape-string-regexp: 4.0.0
       eslint: 8.32.0
-      esquery: 1.4.0
-      semver: 7.3.8
+      esquery: 1.5.0
+      semver: 7.5.0
       spdx-expression-parse: 3.0.1
     transitivePeerDependencies:
       - supports-color
@@ -6577,6 +6583,13 @@ packages:
 
   /esquery/1.4.0:
     resolution: {integrity: sha512-cCDispWt5vHHtwMY2YrAQ4ibFkAL8RbH5YGBnZBc90MolvvfkkQcJro/aZiAQUlQ3qgrYS6D6v8Gc5G5CQsc9w==}
+    engines: {node: '>=0.10'}
+    dependencies:
+      estraverse: 5.3.0
+    dev: true
+
+  /esquery/1.5.0:
+    resolution: {integrity: sha512-YQLXUplAwJgCydQ78IMJywZCceoqk1oH01OERdSAJc/7U2AylwjhSCLDEtqwg811idIS/9fIU5GjG73IgjKMVg==}
     engines: {node: '>=0.10'}
     dependencies:
       estraverse: 5.3.0
@@ -8284,7 +8297,7 @@ packages:
       jest-util: 29.3.1
       natural-compare: 1.4.0
       pretty-format: 29.3.1
-      semver: 7.3.8
+      semver: 7.5.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -8448,8 +8461,8 @@ packages:
     resolution: {integrity: sha512-UVU9dibq2JcFWxQPA6KCqj5O42VOmAY3zQUfEKxU0KpTGXwNoCjkX1e13eHNvw/xPynt6pU0rZ1htjWTNTSXsg==}
     dev: true
 
-  /jsdoc-type-pratt-parser/3.1.0:
-    resolution: {integrity: sha512-MgtD0ZiCDk9B+eI73BextfRrVQl0oyzRG8B2BjORts6jbunj4ScKPcyXGTbB6eXL4y9TzxCm6hyeLq/2ASzNdw==}
+  /jsdoc-type-pratt-parser/4.0.0:
+    resolution: {integrity: sha512-YtOli5Cmzy3q4dP26GraSOeAhqecewG04hoO8DY56CH4KJ9Fvv5qKWUCCo3HZob7esJQHCv6/+bnTy72xZZaVQ==}
     engines: {node: '>=12.0.0'}
     dev: true
 
@@ -9618,7 +9631,7 @@ packages:
     dependencies:
       hosted-git-info: 4.1.0
       is-core-module: 2.10.0
-      semver: 7.3.8
+      semver: 7.5.0
       validate-npm-package-license: 3.0.4
     dev: true
 
@@ -10780,6 +10793,14 @@ packages:
 
   /semver/7.3.8:
     resolution: {integrity: sha512-NB1ctGL5rlHrPJtFDVIVzTyQylMLu9N9VICA6HSFJo8MCGVTMW6gfpicwKmmK/dAjTOrqu5l63JJOpDSrAis3A==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dependencies:
+      lru-cache: 6.0.0
+    dev: true
+
+  /semver/7.5.0:
+    resolution: {integrity: sha512-+XC0AD/R7Q2mPSRuy2Id0+CGTZ98+8f+KvwirxOKIEyid+XSx6HbC63p+O4IndTHuX5Z+JxQ0TghCkO5Cg/2HA==}
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
