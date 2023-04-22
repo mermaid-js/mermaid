@@ -104,7 +104,7 @@
     "pnpm": "^7.15.0",
     "prettier": "^2.7.1",
     "prettier-plugin-jsdoc": "^0.4.2",
-    "rimraf": "^4.0.0",
+    "rimraf": "^5.0.0",
     "rollup-plugin-visualizer": "^5.8.3",
     "start-server-and-test": "^1.15.4",
     "ts-node": "^10.9.1",

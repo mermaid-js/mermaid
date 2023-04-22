@@ -98,7 +98,7 @@
     "remark": "^14.0.2",
     "remark-frontmatter": "^4.0.1",
     "remark-gfm": "^3.0.1",
-    "rimraf": "^4.0.0",
+    "rimraf": "^5.0.0",
     "start-server-and-test": "^1.14.0",
     "typedoc": "^0.23.18",
     "typedoc-plugin-markdown": "^3.13.6",
