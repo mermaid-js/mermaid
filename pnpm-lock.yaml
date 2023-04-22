@@ -41,7 +41,7 @@ importers:
       eslint-plugin-markdown: ^3.0.0
       eslint-plugin-no-only-tests: ^3.1.0
       eslint-plugin-tsdoc: ^0.2.17
-      eslint-plugin-unicorn: ^45.0.0
+      eslint-plugin-unicorn: ^46.0.0
       express: ^4.18.2
       globby: ^13.1.2
       husky: ^8.0.2
@@ -99,7 +99,7 @@ importers:
       eslint-plugin-markdown: 3.0.0_eslint@8.32.0
       eslint-plugin-no-only-tests: 3.1.0
       eslint-plugin-tsdoc: 0.2.17
-      eslint-plugin-unicorn: 45.0.0_eslint@8.32.0
+      eslint-plugin-unicorn: 46.0.0_eslint@8.32.0
       express: 4.18.2
       globby: 13.1.2
       husky: 8.0.2
@@ -2231,6 +2231,16 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@eslint-community/eslint-utils/4.4.0_eslint@8.32.0:
+    resolution: {integrity: sha512-1/sA4dwrzBAyeUoQ6oxahHKmrZvsnLCg4RfxW3ZFGGmQkSNQPFNLV9CUEFQP1x9EYXHTo5p6xdhZM1Ne9p/AfA==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    peerDependencies:
+      eslint: ^6.0.0 || ^7.0.0 || >=8.0.0
+    dependencies:
+      eslint: 8.32.0
+      eslint-visitor-keys: 3.3.0
+    dev: true
 
   /@eslint/eslintrc/1.4.1:
     resolution: {integrity: sha512-XXrH9Uarn0stsyldqDYq8r++mROmWRI1xKMXa640Bb//SY1+ECYX6VzT6Lcx5frD0V30XieqJ0oX9I2Xj5aoMA==}
@@ -6458,18 +6468,18 @@ packages:
       '@microsoft/tsdoc-config': 0.16.2
     dev: true
 
-  /eslint-plugin-unicorn/45.0.0_eslint@8.32.0:
-    resolution: {integrity: sha512-iP8cMRxXKHonKioOhnCoCcqVhoqhAp6rB+nsoLjXFDxTHz3btWMAp8xwzjHA0B1K6YV/U/Yvqn1bUXZt8sJPuQ==}
+  /eslint-plugin-unicorn/46.0.0_eslint@8.32.0:
+    resolution: {integrity: sha512-j07WkC+PFZwk8J33LYp6JMoHa1lXc1u6R45pbSAipjpfpb7KIGr17VE2D685zCxR5VL4cjrl65kTJflziQWMDA==}
     engines: {node: '>=14.18'}
     peerDependencies:
       eslint: '>=8.28.0'
     dependencies:
       '@babel/helper-validator-identifier': 7.19.1
+      '@eslint-community/eslint-utils': 4.4.0_eslint@8.32.0
       ci-info: 3.6.2
       clean-regexp: 1.0.0
       eslint: 8.32.0
-      eslint-utils: 3.0.0_eslint@8.32.0
-      esquery: 1.4.0
+      esquery: 1.5.0
       indent-string: 4.0.0
       is-builtin-module: 3.2.0
       jsesc: 3.0.2
@@ -6479,7 +6489,7 @@ packages:
       regexp-tree: 0.1.24
       regjsparser: 0.9.1
       safe-regex: 2.1.1
-      semver: 7.3.8
+      semver: 7.5.0
       strip-indent: 3.0.0
     dev: true
 
