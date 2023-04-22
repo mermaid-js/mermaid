@@ -4,7 +4,7 @@
   "version": "10.1.0",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
-  "packageManager": "pnpm@7.30.5",
+  "packageManager": "pnpm@8.3.1",
   "keywords": [
     "diagram",
     "markdown",
@@ -101,7 +101,7 @@
     "jsdom": "^21.0.0",
     "lint-staged": "^13.0.3",
     "path-browserify": "^1.0.1",
-    "pnpm": "^7.15.0",
+    "pnpm": "^8.0.0",
     "prettier": "^2.7.1",
     "prettier-plugin-jsdoc": "^0.4.2",
     "rimraf": "^5.0.0",
