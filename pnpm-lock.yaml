@@ -56,7 +56,7 @@ importers:
       prettier-plugin-jsdoc: ^0.4.2
       rimraf: ^5.0.0
       rollup-plugin-visualizer: ^5.8.3
-      start-server-and-test: ^1.15.4
+      start-server-and-test: ^2.0.0
       ts-node: ^10.9.1
       typescript: ^4.8.4
       vite: ^4.1.1
@@ -114,7 +114,7 @@ importers:
       prettier-plugin-jsdoc: 0.4.2_prettier@2.7.1
       rimraf: 5.0.0
       rollup-plugin-visualizer: 5.8.3
-      start-server-and-test: 1.15.4
+      start-server-and-test: 2.0.0
       ts-node: 10.9.1_cbe7ovvae6zqfnmtgctpgpys54
       typescript: 4.8.4
       vite: 4.1.1_@types+node@18.11.9
@@ -163,7 +163,7 @@ importers:
       remark-frontmatter: ^4.0.1
       remark-gfm: ^3.0.1
       rimraf: ^5.0.0
-      start-server-and-test: ^1.14.0
+      start-server-and-test: ^2.0.0
       stylis: ^4.1.2
       ts-dedent: ^2.2.0
       typedoc: ^0.23.18
@@ -221,7 +221,7 @@ importers:
       remark-frontmatter: 4.0.1
       remark-gfm: 3.0.1
       rimraf: 5.0.0
-      start-server-and-test: 1.14.0
+      start-server-and-test: 2.0.0
       typedoc: 0.23.18_typescript@4.8.4
       typedoc-plugin-markdown: 3.13.6_typedoc@0.23.18
       typescript: 4.8.4
@@ -2660,10 +2660,6 @@ packages:
       '@hapi/hoek': 9.3.0
     dev: true
 
-  /@sideway/formula/3.0.0:
-    resolution: {integrity: sha512-vHe7wZ4NOXVfkoRb8T5otiENVlT7a3IAiw7H5M2+GO+9CDgcVUUsX1zalAztCmwyOr2RUTGJdgB+ZvSVqmdHmg==}
-    dev: true
-
   /@sideway/formula/3.0.1:
     resolution: {integrity: sha512-/poHZJJVjx3L+zVD6g9KgHfYnb443oi7wLu/XKojDviHy6HOEOA6z1Trk5aR1dGcmPenJEgb2sK2I80LeS3MIg==}
     dev: true
@@ -4318,14 +4314,6 @@ packages:
     resolution: {integrity: sha512-xh1Rl34h6Fi1DC2WWKfxUTVqRsNnr6LsKz2+hfwDxQJWmrx8+c7ylaqBMcHfl1U1r2dsifOvKX3LQuLNZ+XSvA==}
     dev: true
 
-  /axios/0.21.4_debug@4.3.2:
-    resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
-    dependencies:
-      follow-redirects: 1.15.2_debug@4.3.2
-    transitivePeerDependencies:
-      - debug
-    dev: true
-
   /axios/0.27.2_debug@4.3.4:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
@@ -5860,18 +5848,6 @@ packages:
       supports-color: 8.1.1
     dev: true
 
-  /debug/4.3.2:
-    resolution: {integrity: sha512-mOp8wKcvj7XxC78zLgw/ZA+6TSgkoE2C/ienthhRD298T7UNwAg9diBpLRxC0mOezLl4B0xV7M0cCO6P/O0Xhw==}
-    engines: {node: '>=6.0'}
-    peerDependencies:
-      supports-color: '*'
-    peerDependenciesMeta:
-      supports-color:
-        optional: true
-    dependencies:
-      ms: 2.1.2
-    dev: true
-
   /debug/4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
     engines: {node: '>=6.0'}
@@ -6977,18 +6953,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dev: true
-
-  /follow-redirects/1.15.2_debug@4.3.2:
-    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
-    dependencies:
-      debug: 4.3.2
     dev: true
 
   /follow-redirects/1.15.2_debug@4.3.4:
@@ -8454,16 +8418,6 @@ packages:
     resolution: {integrity: sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==}
     dev: true
 
-  /joi/17.6.0:
-    resolution: {integrity: sha512-OX5dG6DTbcr/kbMFj0KGYxuew69HPcAE3K/sZpEV2nP6e/j/C0HV+HNiBPCASxdx5T7DMoa0s8UeHWMnb6n2zw==}
-    dependencies:
-      '@hapi/hoek': 9.3.0
-      '@hapi/topo': 5.1.0
-      '@sideway/address': 4.1.4
-      '@sideway/formula': 3.0.0
-      '@sideway/pinpoint': 2.0.0
-    dev: true
-
   /joi/17.8.3:
     resolution: {integrity: sha512-q5Fn6Tj/jR8PfrLrx4fpGH4v9qM6o+vDUfD4/3vxxyg34OmKcNqYZ1qn2mpLza96S8tL0p0rIw2gOZX+/cTg9w==}
     dependencies:
@@ -9565,7 +9519,7 @@ packages:
     resolution: {integrity: sha512-FP+p8RB8OWpF3YZBCrP5gtADmtXApB5AMLn+vdyA+PyxCjrCs00mjyUozssO33cwDeT3wNGdLxJ5M//YqtHAJw==}
     hasBin: true
     dependencies:
-      minimist: 1.2.6
+      minimist: 1.2.8
     dev: true
 
   /mlly/1.1.0:
@@ -11244,24 +11198,8 @@ packages:
     resolution: {integrity: sha512-1XMJE5fQo1jGH6Y/7ebnwPOBEkIEnT4QF32d5R1+VXdXveM0IBMJt8zfaxX1P3QhVwrYe+576+jkANtSS2mBbw==}
     dev: true
 
-  /start-server-and-test/1.14.0:
-    resolution: {integrity: sha512-on5ELuxO2K0t8EmNj9MtVlFqwBMxfWOhu4U7uZD1xccVpFlOQKR93CSe0u98iQzfNxRyaNTb/CdadbNllplTsw==}
-    engines: {node: '>=6'}
-    hasBin: true
-    dependencies:
-      bluebird: 3.7.2
-      check-more-types: 2.24.0
-      debug: 4.3.2
-      execa: 5.1.1
-      lazy-ass: 1.6.0
-      ps-tree: 1.2.0
-      wait-on: 6.0.0_debug@4.3.2
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /start-server-and-test/1.15.4:
-    resolution: {integrity: sha512-ucQtp5+UCr0m4aHlY+aEV2JSYNTiMZKdSKK/bsIr6AlmwAWDYDnV7uGlWWEtWa7T4XvRI5cPYcPcQgeLqpz+Tg==}
+  /start-server-and-test/2.0.0:
+    resolution: {integrity: sha512-UqKLw0mJbfrsG1jcRLTUlvuRi9sjNuUiDOLI42r7R5fA9dsFoywAy9DoLXNYys9B886E4RCKb+qM1Gzu96h7DQ==}
     engines: {node: '>=6'}
     hasBin: true
     dependencies:
@@ -12314,20 +12252,6 @@ packages:
     engines: {node: '>=14'}
     dependencies:
       xml-name-validator: 4.0.0
-    dev: true
-
-  /wait-on/6.0.0_debug@4.3.2:
-    resolution: {integrity: sha512-tnUJr9p5r+bEYXPUdRseolmz5XqJTTj98JgOsfBn7Oz2dxfE2g3zw1jE+Mo8lopM3j3et/Mq1yW7kKX6qw7RVw==}
-    engines: {node: '>=10.0.0'}
-    hasBin: true
-    dependencies:
-      axios: 0.21.4_debug@4.3.2
-      joi: 17.6.0
-      lodash: 4.17.21
-      minimist: 1.2.6
-      rxjs: 7.8.0
-    transitivePeerDependencies:
-      - debug
     dev: true
 
   /wait-on/7.0.1_debug@4.3.4:
