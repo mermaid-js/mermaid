@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { render } from './mermaid';
 
 const props = defineProps({
@@ -69,4 +69,6 @@ const renderChart = async () => {
   const salt = Math.random().toString(36).substring(7);
   svg.value = `${svgCode} <span style="display: none">${salt}</span>`;
 };
+
+watch(props, renderChart);
 </script>
