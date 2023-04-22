@@ -126,7 +126,7 @@ importers:
       '@khanacademy/simple-markdown': ^0.8.6
       '@types/cytoscape': ^3.19.9
       '@types/d3': ^7.4.0
-      '@types/dompurify': ^2.4.0
+      '@types/dompurify': ^3.0.0
       '@types/jsdom': ^21.0.0
       '@types/lodash-es': ^4.17.7
       '@types/micromatch': ^4.0.2
@@ -147,7 +147,7 @@ importers:
       d3: ^7.4.0
       dagre-d3-es: 7.0.10
       dayjs: ^1.11.7
-      dompurify: 2.4.5
+      dompurify: 3.0.2
       elkjs: ^0.8.2
       globby: ^13.1.2
       jison: ^0.4.18
@@ -183,7 +183,7 @@ importers:
       d3: 7.8.2
       dagre-d3-es: 7.0.10
       dayjs: 1.11.7
-      dompurify: 2.4.5
+      dompurify: 3.0.2
       elkjs: 0.8.2
       khroma: 2.0.0
       lodash-es: 4.17.21
@@ -195,7 +195,7 @@ importers:
     devDependencies:
       '@types/cytoscape': 3.19.9
       '@types/d3': 7.4.0
-      '@types/dompurify': 2.4.0
+      '@types/dompurify': 3.0.2
       '@types/jsdom': 21.1.0
       '@types/lodash-es': 4.17.7
       '@types/micromatch': 4.0.2
@@ -2982,8 +2982,8 @@ packages:
       '@types/ms': 0.7.31
     dev: true
 
-  /@types/dompurify/2.4.0:
-    resolution: {integrity: sha512-IDBwO5IZhrKvHFUl+clZxgf3hn2b/lU6H1KaBShPkQyGJUQ0xwebezIPSuiyGwfz1UzJWQl4M7BDxtHtCCPlTg==}
+  /@types/dompurify/3.0.2:
+    resolution: {integrity: sha512-YBL4ziFebbbfQfH5mlC+QTJsvh0oJUrWbmxKMyEdL7emlHJqGR2Qb34TEFKj+VCayBvjKy3xczMFNhugThUsfQ==}
     dependencies:
       '@types/trusted-types': 2.0.2
     dev: true
@@ -6067,8 +6067,8 @@ packages:
       domelementtype: 2.3.0
     dev: true
 
-  /dompurify/2.4.5:
-    resolution: {integrity: sha512-jggCCd+8Iqp4Tsz0nIvpcb22InKEBrGz5dw3EQJMs8HPJDsKbFIO3STYtAvCfDx26Muevn1MHVI0XxjgFfmiSA==}
+  /dompurify/3.0.2:
+    resolution: {integrity: sha512-B8c6JdiEpxAKnd8Dm++QQxJL4lfuc757scZtcapj6qjTjrQzyq5iAyznLKVvK+77eYNiFblHBlt7MM0fOeqoKw==}
     dev: false
 
   /domutils/3.0.1:
