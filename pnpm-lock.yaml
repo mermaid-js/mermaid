@@ -146,8 +146,8 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
       pnpm:
-        specifier: ^7.15.0
-        version: 7.15.0
+        specifier: ^8.0.0
+        version: 8.3.1
       prettier:
         specifier: ^2.7.1
         version: 2.7.1
@@ -10292,9 +10292,9 @@ packages:
     engines: {node: '>=12.13.0'}
     dev: true
 
-  /pnpm@7.15.0:
-    resolution: {integrity: sha512-GGQ5+MCwD0bpq+65uitpgO1+ZusZ1keO5ebG/CH6ciu1ohnZj5Y3X374Ow/CBApa+Jw2/NUifVRz2fW4JChftA==}
-    engines: {node: '>=14.6'}
+  /pnpm@8.3.1:
+    resolution: {integrity: sha512-0mT2ZAv08J3nz8xUdWhRW88GE89IWgPo/xZhb6acQXK2+aCikl7kT7Bg31ZcnJqOrwYXSed68xjLd/ZoSnBR8w==}
+    engines: {node: '>=16.14'}
     hasBin: true
     dev: true
 
