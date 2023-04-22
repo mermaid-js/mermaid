@@ -6,6 +6,7 @@
     "adamiecki",
     "alois",
     "antiscript",
+    "antlr",
     "appli",
     "applitools",
     "asciidoctor",
@@ -110,7 +111,8 @@
     "visio",
     "vitepress",
     "xlink",
-    "yash"
+    "yash",
+    "zenuml"
   ],
   "patterns": [
     { "name": "Markdown links", "pattern": "\\((.*)\\)", "description": "" },
