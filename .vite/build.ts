@@ -11,6 +11,7 @@ const visualize = process.argv.includes('--visualize');
 const watch = process.argv.includes('--watch');
 const mermaidOnly = process.argv.includes('--mermaid');
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const sourcemap = false;
 
 type OutputOptions = Exclude<
   Exclude<InlineConfig['build'], undefined>['rollupOptions'],
@@ -60,7 +61,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     {
       name,
       format: 'esm',
-      sourcemap: true,
+      sourcemap,
       entryFileNames: `${name}.esm${minify ? '.min' : ''}.mjs`,
     },
   ];
@@ -79,7 +80,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
       {
         name,
         format: 'esm',
-        sourcemap: true,
+        sourcemap,
         entryFileNames: `${name}.core.mjs`,
       },
     ];
