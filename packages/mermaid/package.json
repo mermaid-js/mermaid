@@ -108,8 +108,11 @@
     "vitepress-plugin-search": "^1.0.4-alpha.20"
   },
   "files": [
-    "dist",
+    "dist/",
     "README.md"
   ],
-  "sideEffects": false
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  }
 }
