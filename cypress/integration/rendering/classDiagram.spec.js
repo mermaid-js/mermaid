@@ -286,7 +286,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('15: should render a simple class diagram with css classes applied two multiple classes', () => {
+  it('15: should render a simple class diagram with css classes applied to multiple classes', () => {
     imgSnapshotTest(
       `
     classDiagram
