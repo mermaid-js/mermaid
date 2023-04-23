@@ -1,8 +1,8 @@
 // @ts-nocheck TODO: fix file
 import { select } from 'd3';
-import svgDraw from './svgDraw';
-import { getConfig } from '../../config';
-import { configureSvgSize } from '../../setupGraphViewbox';
+import svgDraw from './svgDraw.js';
+import { getConfig } from '../../config.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);

@@ -1,9 +1,9 @@
 import { vi } from 'vitest';
 
-import * as configApi from '../../config';
-import mermaidAPI from '../../mermaidAPI';
-import { Diagram, getDiagramFromText } from '../../Diagram';
-import { addDiagrams } from '../../diagram-api/diagram-orchestration';
+import * as configApi from '../../config.js';
+import mermaidAPI from '../../mermaidAPI.js';
+import { Diagram, getDiagramFromText } from '../../Diagram.js';
+import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
 
 beforeAll(async () => {
   // Is required to load the sequence diagram

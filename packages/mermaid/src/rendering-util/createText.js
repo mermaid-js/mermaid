@@ -1,9 +1,9 @@
 import { select } from 'd3';
-import { log } from '../logger';
-import { getConfig } from '../config';
-import { evaluate } from '../diagrams/common/common';
-import { decodeEntities } from '../mermaidAPI';
-import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text';
+import { log } from '../logger.js';
+import { getConfig } from '../config.js';
+import { evaluate } from '../diagrams/common/common.js';
+import { decodeEntities } from '../mermaidAPI.js';
+import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
 /**
  * @param dom
  * @param styleFn
@@ -152,26 +152,8 @@ function updateTextContentAndStyles(tspan, wrappedLine) {
       .attr('font-style', word.type === 'em' ? 'italic' : 'normal')
       .attr('class', 'text-inner-tspan')
       .attr('font-weight', word.type === 'strong' ? 'bold' : 'normal');
-    const special = [
-      '<',
-      '>',
-      '&',
-      '"',
-      "'",
-      '.',
-      ',',
-      ':',
-      ';',
-      '!',
-      '?',
-      '(',
-      ')',
-      '[',
-      ']',
-      '{',
-      '}',
-    ];
-    if (index !== 0 && special.includes(word.content)) {
+    const special = ['"', "'", '.', ',', ':', ';', '!', '?', '(', ')', '[', ']', '{', '}'];
+    if (index === 0) {
       innerTspan.text(word.content);
     } else {
       innerTspan.text(' ' + word.content);
@@ -225,7 +207,17 @@ export const createText = (
     return vertexNode;
   } else {
     const structuredText = markdownToLines(text);
-
+    const special = ['"', "'", '.', ',', ':', ';', '!', '?', '(', ')', '[', ']', '{', '}'];
+    let lastWord;
+    structuredText.forEach((line) => {
+      line.forEach((word) => {
+        if (special.includes(word.content) && lastWord) {
+          lastWord.content += word.content;
+          word.content = '';
+        }
+        lastWord = word;
+      });
+    });
     const svgLabel = createFormattedText(width, el, structuredText, addSvgBackground);
     return svgLabel;
   }

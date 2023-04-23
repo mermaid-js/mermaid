@@ -1,7 +1,7 @@
 import { select } from 'd3';
-import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI';
-import { log } from '../../logger';
-import utils from '../../utils';
+import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI.js';
+import { log } from '../../logger.js';
+import utils from '../../utils.js';
 
 let allCommitsDict = {};
 

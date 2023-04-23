@@ -1,7 +1,7 @@
-import flowDb from '../flowDb';
-import flow from './flow';
-import { setConfig } from '../../../config';
-import { cleanupComments } from '../../../diagram-api/comments';
+import flowDb from '../flowDb.js';
+import flow from './flow.jison';
+import { setConfig } from '../../../config.js';
+import { cleanupComments } from '../../../diagram-api/comments.js';
 
 setConfig({
   securityLevel: 'strict',

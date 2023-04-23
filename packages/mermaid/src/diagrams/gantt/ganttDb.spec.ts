@@ -1,7 +1,7 @@
 // @ts-nocheck TODO: Fix TS
-import dayjs from 'dayjs';
-import ganttDb from './ganttDb';
-import { convert } from '../../tests/util';
+import dayjs from 'dayjs/esm/index.js';
+import ganttDb from './ganttDb.js';
+import { convert } from '../../tests/util.js';
 
 describe('when using the ganttDb', function () {
   beforeEach(function () {

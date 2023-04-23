@@ -1,11 +1,11 @@
 import { select } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
-import { log } from '../../logger';
-import common from '../common/common';
-import { drawState, addTitleAndBox, drawEdge } from './shapes';
-import { getConfig } from '../../config';
-import { configureSvgSize } from '../../setupGraphViewbox';
+import { log } from '../../logger.js';
+import common from '../common/common.js';
+import { drawState, addTitleAndBox, drawEdge } from './shapes.js';
+import { getConfig } from '../../config.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 // TODO Move conf object to main conf in mermaidAPI
 let conf;

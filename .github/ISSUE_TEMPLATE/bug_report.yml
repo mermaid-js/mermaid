@@ -50,7 +50,7 @@ body:
     attributes:
       label: Setup
       description: |-
-        Please fill out the below info.
+        Please fill out the info below.
         Note that you only need to fill out the relevant section
       value: |-
         - Mermaid version: 

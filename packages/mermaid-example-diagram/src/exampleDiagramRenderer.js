@@ -1,6 +1,6 @@
 /** Created by knut on 14-12-11. */
 import { select } from 'd3';
-import { log, getConfig, setupGraphViewbox } from './mermaidUtils';
+import { log, getConfig, setupGraphViewbox } from './mermaidUtils.js';
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
