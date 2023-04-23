@@ -3,14 +3,12 @@
   "version": "10.1.0",
   "description": "Markdown-ish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
-  "main": "./dist/mermaid.min.js",
   "module": "./dist/mermaid.core.mjs",
   "types": "./dist/mermaid.d.ts",
   "exports": {
     ".": {
       "types": "./dist/mermaid.d.ts",
       "import": "./dist/mermaid.core.mjs",
-      "require": "./dist/mermaid.js",
       "default": "./dist/mermaid.core.mjs"
     },
     "./*": "./*"
