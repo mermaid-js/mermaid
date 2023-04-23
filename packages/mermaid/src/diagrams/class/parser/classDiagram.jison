@@ -200,7 +200,6 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 
 start
     : mermaidDoc
-    | direction
     | directive start
     | statements
     ;
@@ -272,6 +271,7 @@ statement
     | clickStatement
     | cssClassStatement
     | noteStatement
+    | direction
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
     | acc_descr_multiline_value  { $$=$1.trim();yy.setAccDescription($$); }
