@@ -67,7 +67,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     {
       name,
       format: 'umd',
-      sourcemap: true,
+      sourcemap,
       entryFileNames: `${name}${minify ? '.min' : ''}.js`,
     },
   ];
