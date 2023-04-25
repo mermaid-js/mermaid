@@ -21,7 +21,7 @@ They also serve as proof of concept, for the variety of things that can be built
 - [Swimm](https://swimm.io) (**Native support**)
 - [Notion](https://notion.so) (**Native support**)
 - [Observable](https://observablehq.com/@observablehq/mermaid) (**Native support**)
-- [Obsidian](https://help.obsidian.md/How+to/Format+your+notes#Diagram) (**Native support**)
+- [Obsidian](https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram) (**Native support**)
 - [GitBook](https://gitbook.com)
   - [Mermaid Plugin](https://github.com/JozoVilcek/gitbook-plugin-mermaid)
   - [Markdown with Mermaid CLI](https://github.com/miao1007/gitbook-plugin-mermaid-cli)
@@ -155,6 +155,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [codedoc-mermaid-plugin](https://www.npmjs.com/package/codedoc-mermaid-plugin)
 - [mdbook](https://rust-lang.github.io/mdBook/index.html)
   - [mdbook-mermaid](https://github.com/badboy/mdbook-mermaid)
+- [Quarto](https://quarto.org/)
 
 ## Browser Extensions
 

@@ -199,11 +199,7 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
     isFirst = false;
   });
 
-  let classTitleString = classDef.id;
-
-  if (classDef.type !== undefined && classDef.type !== '') {
-    classTitleString += '<' + classDef.type + '>';
-  }
+  let classTitleString = getClassTitleString(classDef);
 
   const classTitle = title.append('tspan').text(classTitleString).attr('class', 'title');
 
@@ -291,6 +287,16 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
   return classInfo;
 };
 
+export const getClassTitleString = function (classDef) {
+  let classTitleString = classDef.id;
+
+  if (classDef.type) {
+    classTitleString += '<' + classDef.type + '>';
+  }
+
+  return classTitleString;
+};
+
 /**
  * Renders a note diagram
  *
@@ -355,6 +361,9 @@ export const drawNote = function (elem, note, conf, diagObj) {
 };
 
 export const parseMember = function (text) {
+  // Note: these two regular expressions don't parse the official UML syntax for attributes
+  // and methods. They parse a Java-style syntax of the form
+  // "String name" (for attributes) and "String name(int x)" for methods
   const fieldRegEx = /^([#+~-])?(\w+)(~\w+~|\[])?\s+(\w+) *([$*])?$/;
   const methodRegEx = /^([#+|~-])?(\w+) *\( *(.*)\) *([$*])? *(\w*[[\]|~]*\s*\w*~?)$/;
 
@@ -421,33 +430,48 @@ const buildLegacyDisplay = function (text) {
   let displayText = '';
   let cssStyle = '';
   let returnType = '';
+
+  let visibility = '';
+  let firstChar = text.substring(0, 1);
+  let lastChar = text.substring(text.length - 1, text.length);
+
+  if (firstChar.match(/[#+~-]/)) {
+    visibility = firstChar;
+  }
+
+  let noClassifierRe = /[\s\w)~]/;
+  if (!lastChar.match(noClassifierRe)) {
+    cssStyle = parseClassifier(lastChar);
+  }
+
+  let startIndex = visibility === '' ? 0 : 1;
+  let endIndex = cssStyle === '' ? text.length : text.length - 1;
+  text = text.substring(startIndex, endIndex);
+
   let methodStart = text.indexOf('(');
   let methodEnd = text.indexOf(')');
 
   if (methodStart > 1 && methodEnd > methodStart && methodEnd <= text.length) {
-    let visibility = '';
-    let methodName = '';
-
-    let firstChar = text.substring(0, 1);
-    if (firstChar.match(/\w/)) {
-      methodName = text.substring(0, methodStart).trim();
-    } else {
-      if (firstChar.match(/[#+~-]/)) {
-        visibility = firstChar;
-      }
-
-      methodName = text.substring(1, methodStart).trim();
-    }
+    let methodName = text.substring(0, methodStart).trim();
 
     const parameters = text.substring(methodStart + 1, methodEnd);
-    const classifier = text.substring(methodEnd + 1, 1);
-    cssStyle = parseClassifier(text.substring(methodEnd + 1, methodEnd + 2));
 
     displayText = visibility + methodName + '(' + parseGenericTypes(parameters.trim()) + ')';
 
     if (methodEnd < text.length) {
-      returnType = text.substring(methodEnd + 2).trim();
+      // special case: classifier after the closing parenthesis
+      let potentialClassifier = text.substring(methodEnd + 1, methodEnd + 2);
+      if (cssStyle === '' && !potentialClassifier.match(noClassifierRe)) {
+        cssStyle = parseClassifier(potentialClassifier);
+        returnType = text.substring(methodEnd + 2).trim();
+      } else {
+        returnType = text.substring(methodEnd + 1).trim();
+      }
+
       if (returnType !== '') {
+        if (returnType.charAt(0) === ':') {
+          returnType = returnType.substring(1).trim();
+        }
         returnType = ' : ' + parseGenericTypes(returnType);
         displayText += returnType;
       }
@@ -502,6 +526,7 @@ const parseClassifier = function (classifier) {
 };
 
 export default {
+  getClassTitleString,
   drawClass,
   drawEdge,
   drawNote,

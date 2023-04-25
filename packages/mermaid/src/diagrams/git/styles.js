@@ -56,7 +56,6 @@ const getStyles = (options) =>
     font-size: 18px;
     fill: ${options.textColor};
   }
-  }
 `;
 
 export default getStyles;
