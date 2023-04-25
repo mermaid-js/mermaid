@@ -258,10 +258,10 @@ importers:
 
   packages/mermaid-zenuml:
     specifiers:
-      '@zenuml/core': ^2.0.36
+      '@zenuml/core': ^3.0.0
       mermaid: workspace:*
     dependencies:
-      '@zenuml/core': 2.0.36
+      '@zenuml/core': 3.0.0
     devDependencies:
       mermaid: link:../mermaid
 
@@ -3931,8 +3931,8 @@ packages:
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
     dev: true
 
-  /@zenuml/core/2.0.36:
-    resolution: {integrity: sha512-JcvSa3ZYlpQZGnt9pwv0veSoSay3raKis9Y9rvbvSY31qE2sZvAjjbfHC0oj6R5PVN9GKHf/7ETfNZ7oASakQg==}
+  /@zenuml/core/3.0.0:
+    resolution: {integrity: sha512-DLX3vFfrV66X0b2kv8MPy3//l4jSoEGuf/zK2m+4t4CvaQ3rArQgXOc5aywi8pRyF1GmCiqgnG9NMRZ6RfqboA==}
     engines: {node: '>=12.0.0'}
     dependencies:
       '@types/assert': 1.5.6
