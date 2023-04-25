@@ -106,6 +106,7 @@ export const clear = function () {
 export const getClass = function (id: string) {
   return classes[id];
 };
+
 export const getClasses = function () {
   return classes;
 };
@@ -170,9 +171,10 @@ export const addMember = function (className: string, member: string) {
     const memberString = member.trim();
 
     if (memberString.startsWith('<<') && memberString.endsWith('>>')) {
-      // Remove leading and trailing brackets
+      // its an annotation
       theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
     } else if (memberString.indexOf(')') > 0) {
+      //its a method
       theClass.methods.push(sanitizeText(memberString));
     } else if (memberString) {
       theClass.members.push(sanitizeText(memberString));
@@ -234,6 +236,7 @@ const setTooltip = function (ids: string, tooltip?: string) {
     }
   });
 };
+
 export const getTooltip = function (id: string) {
   return classes[id].tooltip;
 };

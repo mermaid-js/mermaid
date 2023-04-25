@@ -200,9 +200,8 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 
 start
     : mermaidDoc
-    | statments
-    | direction
     | directive start
+    | statements
     ;
 
 direction
@@ -259,8 +258,8 @@ className
     : alphaNumToken { $$=$1; }
     | classLiteralName { $$=$1; }
     | alphaNumToken className { $$=$1+$2; }
-    | alphaNumToken GENERICTYPE { $$=$1+'~'+$2; }
-    | classLiteralName GENERICTYPE { $$=$1+'~'+$2; }
+    | alphaNumToken GENERICTYPE { $$=$1+'~'+$2+'~'; }
+    | classLiteralName GENERICTYPE { $$=$1+'~'+$2+'~'; }
     ;
 
 statement
@@ -272,7 +271,6 @@ statement
     | clickStatement
     | cssClassStatement
     | noteStatement
-    | directive
     | direction
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
@@ -366,7 +364,7 @@ textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT | DEFA
 
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 
-alphaNumToken  : UNICODE_TEXT | NUM | ALPHA;
+alphaNumToken  : UNICODE_TEXT | NUM | ALPHA | MINUS;
 
 classLiteralName : BQUOTE_STR;
 
