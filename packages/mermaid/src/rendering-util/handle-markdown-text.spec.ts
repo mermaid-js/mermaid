@@ -379,10 +379,12 @@ with no formatting`;
   });
 
   test('Mixed formatting', () => {
-    const input = `*Italic* and **bold** formatting`;
+    expect(markdownToHTML(`*Italic* and **bold** formatting`)).toMatchInlineSnapshot(
+      '"<p><em>Italic</em> and <strong>bold</strong> formatting</p>"'
+    );
 
-    const expectedOutput = `<p><em>Italic</em> and <strong>bold</strong> formatting</p>`;
-    const output = markdownToHTML(input);
-    expect(output).toEqual(expectedOutput);
+    expect(markdownToHTML('special characters: `<p>hi</p>`')).toMatchInlineSnapshot(
+      '"<p>special characters: <code>&lt;p&gt;hi&lt;/p&gt;</code></p>"'
+    );
   });
 });
