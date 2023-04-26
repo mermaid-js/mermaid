@@ -1,61 +1,52 @@
-import SimpleMarkdown from '@khanacademy/simple-markdown';
+import { fromMarkdown } from 'mdast-util-from-markdown';
+import type { Content } from 'mdast';
+import { dedent } from 'ts-dedent';
 
-/**
- *
- * @param markdown
- */
-function preprocessMarkdown(markdown) {
+function preprocessMarkdown(markdown: string): string {
   // Replace multiple newlines with a single newline
   const withoutMultipleNewlines = markdown.replace(/\n{2,}/g, '\n');
   // Remove extra spaces at the beginning of each line
-  const withoutExtraSpaces = withoutMultipleNewlines.replace(/^\s+/gm, '');
+  const withoutExtraSpaces = dedent(withoutMultipleNewlines);
   return withoutExtraSpaces;
 }
 
-/**
- *
- * @param markdown
- */
-export function markdownToLines(markdown) {
-  const preprocessedMarkdown = preprocessMarkdown(markdown);
-  const mdParse = SimpleMarkdown.defaultBlockParse;
-  const syntaxTree = mdParse(preprocessedMarkdown);
+interface Word {
+  content: string;
+  type: string;
+}
 
-  let lines = [[]];
+type Line = Word[];
+
+export function markdownToLines(markdown: string): Line[] {
+  const preprocessedMarkdown = preprocessMarkdown(markdown);
+  const { children } = fromMarkdown(preprocessedMarkdown);
+  const lines: Line[] = [[]];
   let currentLine = 0;
 
-  /**
-   *
-   * @param node
-   * @param parentType
-   */
-  function processNode(node, parentType) {
+  function processNode(node: Content, parentType?: string) {
     if (node.type === 'text') {
-      const textLines = node.content.split('\n');
-
+      const textLines = node.value.split('\n');
       textLines.forEach((textLine, index) => {
         if (index !== 0) {
           currentLine++;
           lines.push([]);
         }
-
-        // textLine.split(/ (?=[^!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+)/).forEach((word) => {
         textLine.split(' ').forEach((word) => {
           if (word) {
             lines[currentLine].push({ content: word, type: parentType || 'normal' });
           }
         });
       });
-    } else if (node.type === 'strong' || node.type === 'em') {
-      node.content.forEach((contentNode) => {
+    } else if (node.type === 'strong' || node.type === 'emphasis') {
+      node.children.forEach((contentNode) => {
         processNode(contentNode, node.type);
       });
     }
   }
 
-  syntaxTree.forEach((treeNode) => {
+  children.forEach((treeNode) => {
     if (treeNode.type === 'paragraph') {
-      treeNode.content.forEach((contentNode) => {
+      treeNode.children.forEach((contentNode) => {
         processNode(contentNode);
       });
     }
@@ -64,31 +55,21 @@ export function markdownToLines(markdown) {
   return lines;
 }
 
-/**
- *
- * @param markdown
- */
-export function markdownToHTML(markdown) {
-  const mdParse = SimpleMarkdown.defaultBlockParse;
-  const syntaxTree = mdParse(markdown);
+export function markdownToHTML(markdown: string): string {
+  const { children } = fromMarkdown(markdown);
 
-  /**
-   *
-   * @param node
-   */
-  function output(node) {
+  function output(node: Content): string {
     if (node.type === 'text') {
-      return node.content.replace(/\n/g, '<br/>');
+      return node.value.replace(/\n/g, '<br/>');
     } else if (node.type === 'strong') {
-      return `<strong>${node.content.map(output).join('')}</strong>`;
-    } else if (node.type === 'em') {
-      return `<em>${node.content.map(output).join('')}</em>`;
+      return `<strong>${node.children.map(output).join('')}</strong>`;
+    } else if (node.type === 'emphasis') {
+      return `<em>${node.children.map(output).join('')}</em>`;
     } else if (node.type === 'paragraph') {
-      return `<p>${node.content.map(output).join('')}</p>`;
-    } else {
-      return '';
+      return `<p>${node.children.map(output).join('')}</p>`;
     }
+    return '';
   }
 
-  return syntaxTree.map(output).join('');
+  return children.map(output).join('');
 }

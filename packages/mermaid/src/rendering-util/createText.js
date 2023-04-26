@@ -1,7 +1,4 @@
-import { select } from 'd3';
 import { log } from '../logger.js';
-import { getConfig } from '../config.js';
-import { evaluate } from '../diagrams/common/common.js';
 import { decodeEntities } from '../mermaidAPI.js';
 import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
 /**
@@ -207,17 +204,6 @@ export const createText = (
     return vertexNode;
   } else {
     const structuredText = markdownToLines(text);
-    const special = ['"', "'", '.', ',', ':', ';', '!', '?', '(', ')', '[', ']', '{', '}'];
-    let lastWord;
-    structuredText.forEach((line) => {
-      line.forEach((word) => {
-        if (special.includes(word.content) && lastWord) {
-          lastWord.content += word.content;
-          word.content = '';
-        }
-        lastWord = word;
-      });
-    });
     const svgLabel = createFormattedText(width, el, structuredText, addSvgBackground);
     return svgLabel;
   }
