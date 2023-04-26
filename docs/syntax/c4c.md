@@ -122,11 +122,11 @@ updateElementStyle and UpdateElementStyle are written in the diagram last part. 
 The layout does not use a fully automated layout algorithm. The position of shapes is adjusted by changing the order in which statements are written. So there is no plan to support the following Layout statements.
 The number of shapes per row and the number of boundaries can be adjusted using UpdateLayoutConfig.
 
-- Layout
-- - Lay_U, Lay_Up
-- - Lay_D, Lay_Down
-- - Lay_L, Lay_Left
-- - Lay_R, Lay_Right
+- [ ] Layout
+- - [ ] Lay_U, Lay_Up
+- - [ ] Lay_D, Lay_Down
+- - [ ] Lay_L, Lay_Left
+- - [ ] Lay_R, Lay_Right
 
 The following unfinished features are not supported in the short term.
 
