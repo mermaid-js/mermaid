@@ -4,21 +4,10 @@ import remarkBreaks from 'remark-breaks';
 import remarkRehype from 'remark-rehype';
 import rehypeSanitize from 'rehype-sanitize';
 import rehypeStringify from 'rehype-stringify';
-import { fromMarkdown } from 'mdast-util-from-markdown';
 import type { Content } from 'mdast';
-import { dedent } from 'ts-dedent';
-
-function preprocessMarkdown(markdown: string): string {
-  // Replace multiple newlines with a single newline
-  const withoutMultipleNewlines = markdown.replace(/\n{2,}/g, '\n');
-  // Remove extra spaces at the beginning of each line
-  const withoutExtraSpaces = dedent(withoutMultipleNewlines);
-  return withoutExtraSpaces;
-}
 
 export function markdownToLines(markdown: string) {
-  const preprocessedMarkdown = preprocessMarkdown(markdown);
-  const { children } = fromMarkdown(preprocessedMarkdown);
+  const { children } = unified().use(remarkParse).use(remarkBreaks).parse(markdown);
   const lines: { content: string; type: string }[][] = [[]];
   let currentLine = 0;
 

@@ -211,9 +211,6 @@ importers:
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
-      mdast-util-from-markdown:
-        specifier: ^1.3.0
-        version: 1.3.0
       non-layered-tidy-tree-layout:
         specifier: ^2.0.2
         version: 2.0.2
@@ -402,7 +399,7 @@ importers:
     devDependencies:
       webpack:
         specifier: ^5.74.0
-        version: 5.75.0(esbuild@0.17.18)(webpack-cli@4.10.0)
+        version: 5.75.0(webpack-cli@4.10.0)
       webpack-cli:
         specifier: ^4.10.0
         version: 4.10.0(webpack-dev-server@4.11.1)(webpack@5.75.0)
@@ -3741,7 +3738,7 @@ packages:
       webpack: 4.x.x || 5.x.x
       webpack-cli: 4.x.x
     dependencies:
-      webpack: 5.75.0(esbuild@0.17.18)(webpack-cli@4.10.0)
+      webpack: 5.75.0(webpack-cli@4.10.0)
       webpack-cli: 4.10.0(webpack-dev-server@4.11.1)(webpack@5.75.0)
     dev: true
 
@@ -4185,7 +4182,7 @@ packages:
   /axios@0.27.2(debug@4.3.4):
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
-      follow-redirects: 1.15.2(debug@4.3.4)
+      follow-redirects: 1.15.2
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
@@ -6848,7 +6845,7 @@ packages:
     resolution: {integrity: sha512-XGozTsMPYkm+6b5QL3Z9wQcJjNYxp0CYn3U1gO7dwD6PAqU1SVWZxI9CCg3z+ml3YfqdPnrBehaBrnH2AGKbNA==}
     dev: true
 
-  /follow-redirects@1.15.2(debug@4.3.4):
+  /follow-redirects@1.15.2:
     resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
     engines: {node: '>=4.0'}
     peerDependencies:
@@ -6856,8 +6853,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dependencies:
-      debug: 4.3.4
     dev: true
 
   /foreground-child@2.0.0:
@@ -7511,7 +7506,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.2(debug@4.3.4)
+      follow-redirects: 1.15.2
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -11279,7 +11274,7 @@ packages:
   /spdy-transport@3.0.0:
     resolution: {integrity: sha512-hsLVFE5SjA6TCisWeJXFKniGGOpBgMLmerfO2aCyCU5s7nJ/rpAepqmFifv/GCbSbueEeAJJnmSQ2rKC/g8Fcw==}
     dependencies:
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4
       detect-node: 2.1.0
       hpack.js: 2.1.6
       obuf: 1.1.2
@@ -11293,7 +11288,7 @@ packages:
     resolution: {integrity: sha512-r46gZQZQV+Kl9oItvl1JZZqJKGr+oEkB08A6BzkiR7593/7IbtuncXHd2YoYeTsG4157ZssMu9KYvUHLcjcDoA==}
     engines: {node: '>=6.0.0'}
     dependencies:
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4
       handle-thing: 2.0.1
       http-deceiver: 1.2.7
       select-hose: 2.0.0
@@ -11582,7 +11577,7 @@ packages:
       iterm2-version: 4.2.0
     dev: true
 
-  /terser-webpack-plugin@5.3.6(esbuild@0.17.18)(webpack@5.75.0):
+  /terser-webpack-plugin@5.3.6(webpack@5.75.0):
     resolution: {integrity: sha512-kfLFk+PoLUQIbLmB1+PZDMRSZS99Mp+/MHqDNmMA6tOItzRt+Npe3E+fsMs5mfcM0wCtrrdU387UnV+vnSffXQ==}
     engines: {node: '>= 10.13.0'}
     peerDependencies:
@@ -11599,12 +11594,11 @@ packages:
         optional: true
     dependencies:
       '@jridgewell/trace-mapping': 0.3.15
-      esbuild: 0.17.18
       jest-worker: 27.5.1
       schema-utils: 3.1.1
       serialize-javascript: 6.0.0
       terser: 5.15.1
-      webpack: 5.75.0(esbuild@0.17.18)(webpack-cli@4.10.0)
+      webpack: 5.75.0(webpack-cli@4.10.0)
     dev: true
 
   /terser@5.15.1:
@@ -12572,7 +12566,7 @@ packages:
       import-local: 3.1.0
       interpret: 2.2.0
       rechoir: 0.7.1
-      webpack: 5.75.0(esbuild@0.17.18)(webpack-cli@4.10.0)
+      webpack: 5.75.0(webpack-cli@4.10.0)
       webpack-dev-server: 4.11.1(webpack-cli@4.10.0)(webpack@5.75.0)
       webpack-merge: 5.8.0
     dev: true
@@ -12588,7 +12582,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.0.0
-      webpack: 5.75.0(esbuild@0.17.18)(webpack-cli@4.10.0)
+      webpack: 5.75.0(webpack-cli@4.10.0)
     dev: true
 
   /webpack-dev-server@4.11.1(webpack-cli@4.10.0)(webpack@5.75.0):
@@ -12629,7 +12623,7 @@ packages:
       serve-index: 1.9.1
       sockjs: 0.3.24
       spdy: 4.0.2
-      webpack: 5.75.0(esbuild@0.17.18)(webpack-cli@4.10.0)
+      webpack: 5.75.0(webpack-cli@4.10.0)
       webpack-cli: 4.10.0(webpack-dev-server@4.11.1)(webpack@5.75.0)
       webpack-dev-middleware: 5.3.3(webpack@5.75.0)
       ws: 8.9.0
@@ -12653,7 +12647,7 @@ packages:
     engines: {node: '>=10.13.0'}
     dev: true
 
-  /webpack@5.75.0(esbuild@0.17.18)(webpack-cli@4.10.0):
+  /webpack@5.75.0(webpack-cli@4.10.0):
     resolution: {integrity: sha512-piaIaoVJlqMsPtX/+3KTTO6jfvrSYgauFVdt8cr9LTHKmcq/AMd4mhzsiP7ZF/PGRNPGA8336jldh9l2Kt2ogQ==}
     engines: {node: '>=10.13.0'}
     hasBin: true
@@ -12684,7 +12678,7 @@ packages:
       neo-async: 2.6.2
       schema-utils: 3.1.1
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.6(esbuild@0.17.18)(webpack@5.75.0)
+      terser-webpack-plugin: 5.3.6(webpack@5.75.0)
       watchpack: 2.4.0
       webpack-cli: 4.10.0(webpack-dev-server@4.11.1)(webpack@5.75.0)
       webpack-sources: 3.2.3
