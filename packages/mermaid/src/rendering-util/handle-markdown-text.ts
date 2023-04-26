@@ -1,4 +1,9 @@
-import { micromark } from 'micromark';
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkBreaks from 'remark-breaks';
+import remarkRehype from 'remark-rehype';
+import rehypeSanitize from 'rehype-sanitize';
+import rehypeStringify from 'rehype-stringify';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import type { Content } from 'mdast';
 import { dedent } from 'ts-dedent';
@@ -50,5 +55,15 @@ export function markdownToLines(markdown: string) {
 }
 
 export function markdownToHTML(markdown: string): string {
-  return micromark(preprocessMarkdown(markdown)).replaceAll('\n', '<br/>');
+  return (
+    unified()
+      .use(remarkParse)
+      .use(remarkBreaks)
+      .use(remarkRehype)
+      .use(rehypeSanitize)
+      // @ts-ignore - rehype-stringify types are incorrect
+      .use(rehypeStringify)
+      .processSync(markdown)
+      .toString()
+  );
 }

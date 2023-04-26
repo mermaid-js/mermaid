@@ -195,29 +195,32 @@ Word!`;
 test('markdownToHTML - Basic test', () => {
   const input = `This is regular text
 Here is a new line
+
 There is some words **with a bold** section
 Here is a line *with an italic* section`;
 
   const expectedOutput = `<p>This is regular text<br/>Here is a new line<br/>There is some words <strong>with a bold</strong> section<br/>Here is a line <em>with an italic</em> section</p>`;
 
-  const output = markdownToHTML(input);
-  expect(output).toEqual(expectedOutput);
+  expect(markdownToHTML(input)).toMatchInlineSnapshot(`
+    "<p>This is regular text<br>
+    Here is a new line</p>
+    <p>There is some words <strong>with a bold</strong> section<br>
+    Here is a line <em>with an italic</em> section</p>"
+  `);
 });
 
 test('markdownToHTML - Empty input', () => {
-  const input = '';
-  const expectedOutput = '';
-  const output = markdownToHTML(input);
-  expect(output).toEqual(expectedOutput);
+  expect(markdownToHTML('')).toEqual('');
 });
 
 test('markdownToHTML - No formatting', () => {
-  const input = `This is a simple test
-with no formatting`;
-
-  const expectedOutput = `<p>This is a simple test<br/>with no formatting</p>`;
-  const output = markdownToHTML(input);
-  expect(output).toEqual(expectedOutput);
+  expect(
+    markdownToHTML(`This is a simple test
+with no formatting`)
+  ).toMatchInlineSnapshot(`
+    "<p>This is a simple test<br>
+    with no formatting</p>"
+  `);
 });
 
 test('markdownToHTML - Only bold formatting', () => {
@@ -242,15 +245,22 @@ test('markdownToHTML - Mixed formatting', () => {
   );
 
   expect(markdownToHTML('special characters: `<p>hi</p>`')).toMatchInlineSnapshot(
-    '"<p>special characters: <code>&lt;p&gt;hi&lt;/p&gt;</code></p>"'
+    '"<p>special characters: <code>&#x3C;p>hi&#x3C;/p></code></p>"'
   );
 });
 
-test('markdownToHTML - Unsupported formatting', () => {
+test('markdownToHTML - List formatting', () => {
   expect(
     markdownToHTML(`Hello
   - l1
   - l2
   - l3`)
-  ).toMatchInlineSnapshot('"<p>Hello</p>Unsupported markdown: list"');
+  ).toMatchInlineSnapshot(`
+    "<p>Hello</p>
+    <ul>
+    <li>l1</li>
+    <li>l2</li>
+    <li>l3</li>
+    </ul>"
+  `);
 });
