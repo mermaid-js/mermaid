@@ -1,8 +1,11 @@
 import { fromMarkdown } from 'mdast-util-from-markdown';
-import type { Content } from 'mdast';
 import { dedent } from 'ts-dedent';
 
-function preprocessMarkdown(markdown: string): string {
+/**
+ * @param {string} markdown markdown to process
+ * @returns {string} processed markdown
+ */
+function preprocessMarkdown(markdown) {
   // Replace multiple newlines with a single newline
   const withoutMultipleNewlines = markdown.replace(/\n{2,}/g, '\n');
   // Remove extra spaces at the beginning of each line
@@ -10,20 +13,20 @@ function preprocessMarkdown(markdown: string): string {
   return withoutExtraSpaces;
 }
 
-interface Word {
-  content: string;
-  type: string;
-}
-
-type Line = Word[];
-
-export function markdownToLines(markdown: string): Line[] {
+/**
+ * @param {string} markdown markdown to split into lines
+ */
+export function markdownToLines(markdown) {
   const preprocessedMarkdown = preprocessMarkdown(markdown);
   const { children } = fromMarkdown(preprocessedMarkdown);
-  const lines: Line[] = [[]];
+  const lines = [[]];
   let currentLine = 0;
 
-  function processNode(node: Content, parentType?: string) {
+  /**
+   * @param {import('mdast').Content} node
+   * @param {string} [parentType]
+   */
+  function processNode(node, parentType = 'normal') {
     if (node.type === 'text') {
       const textLines = node.value.split('\n');
       textLines.forEach((textLine, index) => {
@@ -33,7 +36,7 @@ export function markdownToLines(markdown: string): Line[] {
         }
         textLine.split(' ').forEach((word) => {
           if (word) {
-            lines[currentLine].push({ content: word, type: parentType || 'normal' });
+            lines[currentLine].push({ content: word, type: parentType });
           }
         });
       });
@@ -55,10 +58,17 @@ export function markdownToLines(markdown: string): Line[] {
   return lines;
 }
 
-export function markdownToHTML(markdown: string): string {
+/**
+ * @param {string} markdown markdown to convert to HTML
+ * @returns {string} HTML
+ */
+export function markdownToHTML(markdown) {
   const { children } = fromMarkdown(markdown);
 
-  function output(node: Content): string {
+  /**
+   * @param {import('mdast').Content} node
+   */
+  function output(node) {
     if (node.type === 'text') {
       return node.value.replace(/\n/g, '<br/>');
     } else if (node.type === 'strong') {
