@@ -1,12 +1,13 @@
 import { micromark } from 'micromark';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import type { Content } from 'mdast';
+import { dedent } from 'ts-dedent';
 
 function preprocessMarkdown(markdown: string): string {
   // Replace multiple newlines with a single newline
   const withoutMultipleNewlines = markdown.replace(/\n{2,}/g, '\n');
   // Remove extra spaces at the beginning of each line
-  const withoutExtraSpaces = withoutMultipleNewlines.replace(/^\s+/gm, '');
+  const withoutExtraSpaces = dedent(withoutMultipleNewlines);
   return withoutExtraSpaces;
 }
 

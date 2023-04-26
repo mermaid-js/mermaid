@@ -237,10 +237,13 @@ test('markdownToHTML - Only italic formatting', () => {
 });
 
 test('markdownToHTML - Mixed formatting', () => {
-  const input = `*Italic* and **bold** formatting`;
-  const expectedOutput = `<p><em>Italic</em> and <strong>bold</strong> formatting</p>`;
-  const output = markdownToHTML(input);
-  expect(output).toEqual(expectedOutput);
+  expect(markdownToHTML(`*Italic* and **bold** formatting`)).toMatchInlineSnapshot(
+    '"<p><em>Italic</em> and <strong>bold</strong> formatting</p>"'
+  );
+
+  expect(markdownToHTML('special characters: `<p>hi</p>`')).toMatchInlineSnapshot(
+    '"<p>special characters: <code>&lt;p&gt;hi&lt;/p&gt;</code></p>"'
+  );
 });
 
 test('markdownToHTML - Unsupported formatting', () => {
