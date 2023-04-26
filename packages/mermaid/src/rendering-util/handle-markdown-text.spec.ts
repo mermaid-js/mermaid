@@ -242,3 +242,12 @@ test('markdownToHTML - Mixed formatting', () => {
   const output = markdownToHTML(input);
   expect(output).toEqual(expectedOutput);
 });
+
+test('markdownToHTML - Unsupported formatting', () => {
+  expect(
+    markdownToHTML(`Hello
+  - l1
+  - l2
+  - l3`)
+  ).toMatchInlineSnapshot('"<p>Hello</p>Unsupported markdown: list"');
+});

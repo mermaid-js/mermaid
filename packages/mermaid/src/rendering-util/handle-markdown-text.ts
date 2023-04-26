@@ -68,7 +68,7 @@ export function markdownToHTML(markdown: string): string {
     } else if (node.type === 'paragraph') {
       return `<p>${node.children.map(output).join('')}</p>`;
     }
-    return '';
+    return `Unsupported markdown: ${node.type}`;
   }
 
   return children.map(output).join('');
