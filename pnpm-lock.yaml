@@ -437,6 +437,67 @@ importers:
         specifier: ^6.5.4
         version: 6.5.4
 
+  packages/mermaid/src/vitepress:
+    dependencies:
+      '@vueuse/core':
+        specifier: ^10.1.0
+        version: 10.1.0(vue@3.2.47)
+      jiti:
+        specifier: ^1.18.2
+        version: 1.18.2
+      vue:
+        specifier: ^3.2.47
+        version: 3.2.47
+    devDependencies:
+      '@iconify-json/carbon':
+        specifier: ^1.1.16
+        version: 1.1.16
+      '@types/fs-extra':
+        specifier: ^11.0.1
+        version: 11.0.1
+      '@unocss/reset':
+        specifier: ^0.51.8
+        version: 0.51.8
+      '@vite-pwa/vitepress':
+        specifier: ^0.0.5
+        version: 0.0.5(vite-plugin-pwa@0.14.7)
+      '@vitejs/plugin-vue':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@4.3.3)(vue@3.2.47)
+      esno:
+        specifier: ^0.16.3
+        version: 0.16.3
+      fast-glob:
+        specifier: ^3.2.12
+        version: 3.2.12
+      fs-extra:
+        specifier: ^11.1.1
+        version: 11.1.1
+      https-localhost:
+        specifier: ^4.7.1
+        version: 4.7.1
+      pathe:
+        specifier: ^1.1.0
+        version: 1.1.0
+      unocss:
+        specifier: ^0.51.8
+        version: 0.51.8(postcss@8.4.23)(rollup@2.79.1)(vite@4.3.3)
+      unplugin-vue-components:
+        specifier: ^0.24.1
+        version: 0.24.1(rollup@2.79.1)(vue@3.2.47)
+      vite:
+        specifier: ^4.3.3
+        version: 4.3.3(@types/node@18.16.0)
+      vite-plugin-pwa:
+        specifier: ^0.14.7
+        version: 0.14.7(vite@4.3.3)(workbox-build@6.5.4)(workbox-window@6.5.4)
+      vitepress:
+        specifier: 1.0.0-alpha.74
+        version: 1.0.0-alpha.74(@algolia/client-search@4.14.2)(@types/node@18.16.0)
+      workbox-window:
+        specifier: ^6.5.4
+        version: 6.5.4
+
   tests/webpack:
     dependencies:
       '@mermaid-js/mermaid-example-diagram':
@@ -4729,17 +4790,6 @@ packages:
       vite-plugin-pwa: ^0.14.0
     dependencies:
       vite-plugin-pwa: 0.14.7(vite@4.3.3)(workbox-build@6.5.4)(workbox-window@6.5.4)
-    dev: true
-
-  /@vitejs/plugin-vue@4.2.1(vite@4.3.1)(vue@3.2.47):
-    resolution: {integrity: sha512-ZTZjzo7bmxTRTkb8GSTwkPOYDIP7pwuyV+RV53c9PYUouwcbkIZIvWvNWlX2b1dYZqtOv7D6iUAnJLVNGcLrSw==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    peerDependencies:
-      vite: ^4.0.0
-      vue: ^3.2.25
-    dependencies:
-      vite: 4.3.1(@types/node@18.16.0)
-      vue: 3.2.47
     dev: true
 
   /@vitejs/plugin-vue@4.2.1(vite@4.3.3)(vue@3.2.47):
@@ -14295,14 +14345,14 @@ packages:
     dependencies:
       '@docsearch/css': 3.3.3
       '@docsearch/js': 3.3.3(@algolia/client-search@4.14.2)(react-dom@16.14.0)(react@16.14.0)
-      '@vitejs/plugin-vue': 4.2.1(vite@4.3.1)(vue@3.2.47)
+      '@vitejs/plugin-vue': 4.2.1(vite@4.3.3)(vue@3.2.47)
       '@vue/devtools-api': 6.5.0
       '@vueuse/core': 10.1.0(vue@3.2.47)
       body-scroll-lock: 4.0.0-beta.0
       mark.js: 8.11.1
       minisearch: 6.0.1
       shiki: 0.14.1
-      vite: 4.3.1(@types/node@18.16.0)
+      vite: 4.3.3(@types/node@18.16.0)
       vue: 3.2.47
     transitivePeerDependencies:
       - '@algolia/client-search'
