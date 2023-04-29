@@ -32,7 +32,7 @@ async function fetchContributors() {
 
 async function generate() {
   const collaborators = await fetchContributors();
-  await writeFile(pathContributors, JSON.stringify(collaborators, null, 2), 'utf8');
+  await writeFile(pathContributors, JSON.stringify(collaborators, null, 2) + '\n', 'utf8');
 }
 
 void generate();
