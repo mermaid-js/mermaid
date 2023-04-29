@@ -511,7 +511,9 @@ const render = async function (
   try {
     await diag.renderer.draw(text, id, version, diag);
   } catch (e) {
-    errorRenderer.draw(text, id, version);
+    if (!config.suppressErrorRendering) {
+      errorRenderer.draw(text, id, version);
+    }
     throw e;
   }
 
@@ -617,6 +619,7 @@ function addA11yInfo(
  *     securityLevel: 'strict',
  *     startOnLoad: true,
  *     arrowMarkerAbsolute: false,
+ *     suppressErrorRendering: false,
  *
  *     er: {
  *       diagramPadding: 20,

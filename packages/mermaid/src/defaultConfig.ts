@@ -152,6 +152,14 @@ const config: Partial<MermaidConfig> = {
    */
   deterministicIDSeed: undefined,
 
+  /**
+   * This option suppresses inserting 'Syntax error' message in diagram. This option is useful when
+   * you want to control how to handle syntax error in your application.
+   *
+   * Default value: false
+   */
+  suppressErrorRendering: false,
+
   /** The object containing configurations specific for flowcharts */
   flowchart: {
     /**
