@@ -19,8 +19,6 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
 <type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
-\%%(?!\{)[^\n]*                                                 /* skip comments */
-[^\}]\%\%[^\n]*                                                 /* skip comments */
 [\n]+                           return 'NEWLINE';
 \s+                             /* skip whitespace */
 [\s]+                           return 'SPACE';

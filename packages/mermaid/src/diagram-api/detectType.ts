@@ -1,14 +1,14 @@
-import { MermaidConfig } from '../config.type';
-import { log } from '../logger';
+import { MermaidConfig } from '../config.type.js';
+import { log } from '../logger.js';
 import type {
   DetectorRecord,
   DiagramDetector,
   DiagramLoader,
   ExternalDiagramDefinition,
-} from './types';
-import { frontMatterRegex } from './frontmatter';
-import { getDiagram, registerDiagram } from './diagramAPI';
-import { UnknownDiagramError } from '../errors';
+} from './types.js';
+import { frontMatterRegex } from './frontmatter.js';
+import { getDiagram, registerDiagram } from './diagramAPI.js';
+import { UnknownDiagramError } from '../errors.js';
 
 const directive = /%{2}{\s*(?:(\w+)\s*:|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;
 const anyComment = /\s*%%.*\n/gm;
@@ -46,9 +46,24 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
     }
   }
 
-  throw new UnknownDiagramError(`No diagram type detected for text: ${text}`);
+  throw new UnknownDiagramError(
+    `No diagram type detected matching given configuration for text: ${text}`
+  );
 };
 
+/**
+ * Registers lazy-loaded diagrams to Mermaid.
+ *
+ * The diagram function is loaded asynchronously, so that diagrams are only loaded
+ * if the diagram is detected.
+ *
+ * @remarks
+ * Please note that the order of diagram detectors is important.
+ * The first detector to return `true` is the diagram that will be loaded
+ * and used, so put more specific detectors at the beginning!
+ *
+ * @param diagrams - Diagrams to lazy load, and their detectors, in order of importance.
+ */
 export const registerLazyLoadedDiagrams = (...diagrams: ExternalDiagramDefinition[]) => {
   for (const { id, detector, loader } of diagrams) {
     addDetector(id, detector, loader);
@@ -97,4 +112,6 @@ export const addDetector = (key: string, detector: DiagramDetector, loader?: Dia
   log.debug(`Detector with key ${key} added${loader ? ' with loader' : ''}`);
 };
 
-export const getDiagramLoader = (key: string) => detectors[key].loader;
+export const getDiagramLoader = (key: string) => {
+  return detectors[key].loader;
+};

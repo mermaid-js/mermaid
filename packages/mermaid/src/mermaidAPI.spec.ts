@@ -4,39 +4,39 @@ import { vi } from 'vitest';
 // -------------------------------------
 //  Mocks and mocking
 
-import { MockedD3 } from './tests/MockedD3';
+import { MockedD3 } from './tests/MockedD3.js';
 
 // Note: If running this directly from within an IDE, the mocks directory must be at packages/mermaid/mocks
 vi.mock('d3');
 vi.mock('dagre-d3');
 
 // mermaidAPI.spec.ts:
-import * as accessibility from './accessibility'; // Import it this way so we can use spyOn(accessibility,...)
-vi.mock('./accessibility', () => ({
+import * as accessibility from './accessibility.js'; // Import it this way so we can use spyOn(accessibility,...)
+vi.mock('./accessibility.js', () => ({
   setA11yDiagramInfo: vi.fn(),
   addSVGa11yTitleDescription: vi.fn(),
 }));
 
 // Mock the renderers specifically so we can test render(). Need to mock draw() for each renderer
-vi.mock('./diagrams/c4/c4Renderer');
-vi.mock('./diagrams/class/classRenderer');
-vi.mock('./diagrams/class/classRenderer-v2');
-vi.mock('./diagrams/er/erRenderer');
-vi.mock('./diagrams/flowchart/flowRenderer-v2');
-vi.mock('./diagrams/git/gitGraphRenderer');
-vi.mock('./diagrams/gantt/ganttRenderer');
-vi.mock('./diagrams/user-journey/journeyRenderer');
-vi.mock('./diagrams/pie/pieRenderer');
-vi.mock('./diagrams/requirement/requirementRenderer');
-vi.mock('./diagrams/sequence/sequenceRenderer');
-vi.mock('./diagrams/state/stateRenderer-v2');
+vi.mock('./diagrams/c4/c4Renderer.js');
+vi.mock('./diagrams/class/classRenderer.js');
+vi.mock('./diagrams/class/classRenderer-v2.js');
+vi.mock('./diagrams/er/erRenderer.js');
+vi.mock('./diagrams/flowchart/flowRenderer-v2.js');
+vi.mock('./diagrams/git/gitGraphRenderer.js');
+vi.mock('./diagrams/gantt/ganttRenderer.js');
+vi.mock('./diagrams/user-journey/journeyRenderer.js');
+vi.mock('./diagrams/pie/pieRenderer.js');
+vi.mock('./diagrams/requirement/requirementRenderer.js');
+vi.mock('./diagrams/sequence/sequenceRenderer.js');
+vi.mock('./diagrams/state/stateRenderer-v2.js');
 
 // -------------------------------------
 
-import mermaid from './mermaid';
-import { MermaidConfig } from './config.type';
+import mermaid from './mermaid.js';
+import { MermaidConfig } from './config.type.js';
 
-import mermaidAPI, { removeExistingElements } from './mermaidAPI';
+import mermaidAPI, { removeExistingElements } from './mermaidAPI.js';
 import {
   encodeEntities,
   decodeEntities,
@@ -45,20 +45,20 @@ import {
   appendDivSvgG,
   cleanUpSvgCode,
   putIntoIFrame,
-} from './mermaidAPI';
+} from './mermaidAPI.js';
 
-import assignWithDepth from './assignWithDepth';
+import assignWithDepth from './assignWithDepth.js';
 
 // --------------
 // Mocks
 //   To mock a module, first define a mock for it, then (if used explicitly in the tests) import it. Be sure the path points to exactly the same file as is imported in mermaidAPI (the module being tested)
-vi.mock('./styles', () => {
+vi.mock('./styles.js', () => {
   return {
     addStylesForDiagram: vi.fn(),
     default: vi.fn().mockReturnValue(' .userStyle { font-weight:bold; }'),
   };
 });
-import getStyles from './styles';
+import getStyles from './styles.js';
 
 vi.mock('stylis', () => {
   return {
@@ -666,7 +666,7 @@ describe('mermaidAPI', () => {
       ).rejects.toThrow(
         'Diagrams beginning with --- are not valid. ' +
           'If you were trying to use a YAML front-matter, please ensure that ' +
-          "you've correctly opened and closed the YAML front-matter with unindented `---` blocks"
+          "you've correctly opened and closed the YAML front-matter with un-indented `---` blocks"
       );
     });
     it('does not throw for a valid definition', async () => {
@@ -678,7 +678,7 @@ describe('mermaidAPI', () => {
       await expect(
         mermaidAPI.parse('this is not a mermaid diagram definition')
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        '"No diagram type detected for text: this is not a mermaid diagram definition"'
+        '"No diagram type detected matching given configuration for text: this is not a mermaid diagram definition"'
       );
     });
     it('returns false for invalid definition with silent option', async () => {
@@ -689,7 +689,7 @@ describe('mermaidAPI', () => {
     it('resolves for valid definition', async () => {
       await expect(
         mermaidAPI.parse('graph TD;A--x|text including URL space|B;')
-      ).resolves.not.toThrow();
+      ).resolves.toBeTruthy();
     });
     it('returns true for valid definition with silent option', async () => {
       await expect(

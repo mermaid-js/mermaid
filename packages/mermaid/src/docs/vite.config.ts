@@ -1,6 +1,7 @@
 import { defineConfig, searchForWorkspaceRoot } from 'vite';
 import type { PluginOption, Plugin } from 'vite';
 import path from 'path';
+// @ts-expect-error This package has an incorrect export map.
 import { SearchPlugin } from 'vitepress-plugin-search';
 import fs from 'fs'
 import Components from 'unplugin-vue-components/vite'

@@ -116,7 +116,7 @@ The following formatting options are supported:
 | `YY`       | 14             | 2 digit year                                           |
 | `Q`        | 1..4           | Quarter of year. Sets month to first month in quarter. |
 | `M MM`     | 1..12          | Month number                                           |
-| `MMM MMMM` | January..Dec   | Month name in locale set by `moment.locale()`          |
+| `MMM MMMM` | January..Dec   | Month name in locale set by `dayjs.locale()`           |
 | `D DD`     | 1..31          | Day of month                                           |
 | `Do`       | 1st..31st      | Day of month with ordinal                              |
 | `DDD DDDD` | 1..365         | Day of year                                            |
@@ -132,7 +132,7 @@ The following formatting options are supported:
 | `SSS`      | 0..999         | Thousandths of a second                                |
 | `Z ZZ`     | +12:00         | Offset from UTC as +-HH:mm, +-HHmm, or Z               |
 
-More info in: https://momentjs.com/docs/#/parsing/string-format/
+More info in: https://day.js.org/docs/en/parse/string-format/
 
 ### Output date format on the axis
 
@@ -189,9 +189,27 @@ The pattern is:
 
 More info in: [https://github.com/d3/d3-time#interval_every](https://github.com/d3/d3-time#interval_every)
 
+## Output in compact mode
+
+The compact mode allows you to display multiple tasks in the same row. Compact mode can be enabled for a gantt chart by setting the display mode of the graph via preceeding YAML settings.
+
+```mmd
+---
+displayMode: compact
+---
+gantt
+    title A Gantt Diagram
+    dateFormat  YYYY-MM-DD
+
+    section Section
+    A task           :a1, 2014-01-01, 30d
+    Another task     :a2, 2014-01-20, 25d
+    Another one      :a3, 2014-02-10, 20d
+```
+
 ## Comments
 
-Comments can be entered within a gantt chart, which will be ignored by the parser. Comments need to be on their own line and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
+Comments can be entered within a gantt chart, which will be ignored by the parser. Comments need to be on their own line and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax.
 
 ```mmd
 gantt
@@ -355,4 +373,25 @@ Beginner's tip—a full example using interactive links in an html context:
     mermaid.initialize(config);
   </script>
 </body>
+```
+
+## Examples
+
+### Bar chart (using gantt chart)
+
+```mermaid-example
+gantt
+    title Git Issues - days since last update
+    dateFormat X
+    axisFormat %s
+    section Issue19062
+    71   : 0, 71
+    section Issue19401
+    36   : 0, 36
+    section Issue193
+    34   : 0, 34
+    section Issue7441
+    9    : 0, 9
+    section Issue1300
+    5    : 0, 5
 ```

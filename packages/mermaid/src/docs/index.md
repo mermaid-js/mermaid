@@ -24,13 +24,13 @@ features:
   - title: ➕ Easy to use!
     details: Easily create and render detailed diagrams and charts with the Mermaid Live Editor.
     link: https://mermaid.live/
-  - title: 🎥 Video Tutorials!
-    details: Curated list of video tutorials and examples created by the community.
-    link: ../../config/Tutorials.html
   - title: 🧩 Integrations available!
     details: Use Mermaid with your favorite applications, check out the integrations list.
     link: ../../ecosystem/integrations.md
   - title: 🏆 Award winning!
     details: 2019 JavaScript Open Source Award winner for "The Most Exciting Use of Technology".
     link: https://osawards.com/javascript/2019
+  - title: 🥰 Mermaid + Mermaid Chart
+    details: Mermaid Chart is a major supporter of the Mermaid project.
+    link: https://www.mermaidchart.com/
 ---

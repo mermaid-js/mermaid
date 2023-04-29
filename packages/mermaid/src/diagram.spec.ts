@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
-import { Diagram, getDiagramFromText } from './Diagram';
-import { addDetector } from './diagram-api/detectType';
-import { addDiagrams } from './diagram-api/diagram-orchestration';
+import { Diagram, getDiagramFromText } from './Diagram.js';
+import { addDetector } from './diagram-api/detectType.js';
+import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 
 addDiagrams();
 
@@ -61,8 +61,8 @@ Expecting 'TXT', got 'NEWLINE'"
   });
 
   test('should throw the right error for unregistered diagrams', async () => {
-    await expect(getDiagramFromText('thor TD; A-->B')).rejects.toThrowError(
-      'No diagram type detected for text: thor TD; A-->B'
+    await expect(getDiagramFromText('thor TD; A-->B')).rejects.toThrowErrorMatchingInlineSnapshot(
+      '"No diagram type detected matching given configuration for text: thor TD; A-->B"'
     );
   });
 });

@@ -15,24 +15,31 @@ import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 // @ts-ignore: TODO Fix ts errors
 import { version } from '../package.json';
-import * as configApi from './config';
-import { addDiagrams } from './diagram-api/diagram-orchestration';
-import { Diagram, getDiagramFromText } from './Diagram';
-import errorRenderer from './diagrams/error/errorRenderer';
-import { attachFunctions } from './interactionDb';
-import { log, setLogLevel } from './logger';
-import getStyles from './styles';
-import theme from './themes';
-import utils, { directiveSanitizer } from './utils';
+import * as configApi from './config.js';
+import { addDiagrams } from './diagram-api/diagram-orchestration.js';
+import { Diagram, getDiagramFromText } from './Diagram.js';
+import errorRenderer from './diagrams/error/errorRenderer.js';
+import { attachFunctions } from './interactionDb.js';
+import { log, setLogLevel } from './logger.js';
+import getStyles from './styles.js';
+import theme from './themes/index.js';
+import utils, { directiveSanitizer } from './utils.js';
 import DOMPurify from 'dompurify';
-import { MermaidConfig } from './config.type';
-import { evaluate } from './diagrams/common/common';
+import { MermaidConfig } from './config.type.js';
+import { evaluate } from './diagrams/common/common.js';
 import isEmpty from 'lodash-es/isEmpty.js';
-import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility';
-import { parseDirective } from './directiveUtils';
+import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
+import { parseDirective } from './directiveUtils.js';
 
 // diagram names that support classDef statements
-const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram', 'stateDiagram-v2'];
+const CLASSDEF_DIAGRAMS = [
+  'graph',
+  'flowchart',
+  'flowchart-v2',
+  'flowchart-elk',
+  'stateDiagram',
+  'stateDiagram-v2',
+];
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
   'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -99,21 +106,18 @@ export interface RenderResult {
  * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false.
  */
 
-async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean | void> {
+async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean> {
   addDiagrams();
-  let error;
   try {
     const diagram = await getDiagramFromText(text);
     diagram.parse();
-  } catch (err) {
-    error = err;
-  }
-  if (parseOptions?.suppressErrors) {
-    return error === undefined;
-  }
-  if (error) {
+  } catch (error) {
+    if (parseOptions?.suppressErrors) {
+      return false;
+    }
     throw error;
   }
+  return true;
 }
 
 /**
@@ -370,30 +374,9 @@ export const removeExistingElements = (
 };
 
 /**
- * Function that renders an svg with a graph from a chart definition. Usage example below.
+ * @deprecated - use the `mermaid.render` function instead of `mermaid.mermaidAPI.render`
  *
- * ```javascript
- * mermaidAPI.initialize({
- *   startOnLoad: true,
- * });
- * $(function () {
- *   const graphDefinition = 'graph TB\na-->b';
- *   const cb = function (svgGraph) {
- *     console.log(svgGraph);
- *   };
- *   mermaidAPI.render('id1', graphDefinition, cb);
- * });
- * ```
- *
- * @param id - The id for the SVG element (the element to be rendered)
- * @param text - The text for the graph definition
- * @param cb - Callback which is called after rendering is finished with the svg code as in param.
- * @param svgContainingElement - HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
- *   If no svgContainingElement is provided then the SVG element will be appended to the body.
- *    Selector to element in which a div with the graph temporarily will be
- *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
- *   element will be removed when rendering is completed.
- * @returns Returns the rendered element as a string containing the SVG definition.
+ * Deprecated for external use.
  */
 
 const render = async function (
@@ -422,6 +405,12 @@ const render = async function (
 
   // clean up text CRLFs
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
+
+  // clean up html tags so that all attributes use single quotes, parser throws error on double quotes
+  text = text.replace(
+    /<(\w+)([^>]*)>/g,
+    (match, tag, attributes) => '<' + tag + attributes.replace(/="([^"]*)"/g, "='$1'") + '>'
+  );
 
   const idSelector = '#' + id;
   const iFrameID = 'i' + id;
@@ -555,16 +544,16 @@ const render = async function (
 
   attachFunctions();
 
+  if (parseEncounteredException) {
+    throw parseEncounteredException;
+  }
+
   // -------------------------------------------------------------------------------
   // Remove the temporary HTML element if appropriate
   const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
   const node = select(tmpElementSelector).node();
   if (node && 'remove' in node) {
     node.remove();
-  }
-
-  if (parseEncounteredException) {
-    throw parseEncounteredException;
   }
 
   return {
@@ -579,7 +568,10 @@ const render = async function (
 function initialize(options: MermaidConfig = {}) {
   // Handle legacy location of font-family configuration
   if (options?.fontFamily && !options.themeVariables?.fontFamily) {
-    options.themeVariables = { fontFamily: options.fontFamily };
+    if (!options.themeVariables) {
+      options.themeVariables = {};
+    }
+    options.themeVariables.fontFamily = options.fontFamily;
   }
 
   // Set default options
@@ -671,6 +663,7 @@ function addA11yInfo(
  *       numberSectionStyles: 4,
  *       axisFormat: '%Y-%m-%d',
  *       topAxis: false,
+ *       displayMode: '',
  *     },
  *   };
  *   mermaid.initialize(config);
@@ -681,6 +674,7 @@ export const mermaidAPI = Object.freeze({
   render,
   parse,
   parseDirective,
+  getDiagramFromText,
   initialize,
   getConfig: configApi.getConfig,
   setConfig: configApi.setConfig,

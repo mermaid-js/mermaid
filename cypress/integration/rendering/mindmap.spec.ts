@@ -223,5 +223,18 @@ mindmap
       shouldHaveRoot
     );
   });
+  describe('Markdown strings mindmaps (#4220)', () => {
+    it('Formatted label with linebreak and a wrapping label and emojis', () => {
+      imgSnapshotTest(
+        `mindmap
+    id1[\`**Start** with
+    a second line 😎\`]
+      id2[\`The dog in **the** hog... a *very long text* about it
+Word!\`]
+`,
+        { titleTopMargin: 0 }
+      );
+    });
+  });
   /* The end */
 });

@@ -23,11 +23,11 @@ const getStyles = (options: FlowChartStyleOptions) =>
   .cluster-label text {
     fill: ${options.titleColor};
   }
-  .cluster-label span {
+  .cluster-label span,p {
     color: ${options.titleColor};
   }
 
-  .label text,span {
+  .label text,span,p {
     fill: ${options.nodeTextColor || options.textColor};
     color: ${options.nodeTextColor || options.textColor};
   }
@@ -41,6 +41,15 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke: ${options.nodeBorder};
     stroke-width: 1px;
   }
+  .flowchart-label text {
+    text-anchor: middle;
+  }
+  // .flowchart-label .text-outer-tspan {
+  //   text-anchor: middle;
+  // }
+  // .flowchart-label .text-inner-tspan {
+  //   text-anchor: start;
+  // }
 
   .node .label {
     text-align: center;
@@ -83,7 +92,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
     fill: ${options.titleColor};
   }
 
-  .cluster span {
+  .cluster span,p {
     color: ${options.titleColor};
   }
   /* .cluster div {

@@ -263,7 +263,7 @@ To Deploy Mermaid:
 
 ### [Mermaid API](../config/setup/README.md):
 
-**To deploy mermaid without a bundler, one can insert a `script` tag with an absolute address and a `mermaid.initialize` call into the HTML like so:**
+**To deploy mermaid without a bundler, insert a `script` tag with an absolute address and a `mermaid.initialize` call into the HTML using the following example:**
 
 ```html
 <script type="module">
@@ -272,9 +272,9 @@ To Deploy Mermaid:
 </script>
 ```
 
-**Doing so will command the mermaid parser to look for the `<div>` or `<pre>` tags with `class="mermaid"`. From these tags mermaid will try to read the diagram/chart definitions and render them into SVG charts.**
+**Doing so commands the mermaid parser to look for the `<div>` or `<pre>` tags with `class="mermaid"`. From these tags, mermaid tries read the diagram/chart definitions and render them into SVG charts.**
 
-**Examples can be found at** [Other examples](../syntax/examples.md)
+**Examples can be found in** [Other examples](../syntax/examples.md)
 
 ## Sibling projects
 

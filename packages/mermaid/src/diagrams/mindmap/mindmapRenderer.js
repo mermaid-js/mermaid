@@ -1,12 +1,16 @@
 /** Created by knut on 14-12-11. */
 import { select } from 'd3';
-import { log } from '../../logger';
-import { getConfig } from '../../config';
-import { setupGraphViewbox } from '../../setupGraphViewbox';
-import svgDraw from './svgDraw';
-import * as db from './mindmapDb';
+import { log } from '../../logger.js';
+import { getConfig } from '../../config.js';
+import { setupGraphViewbox } from '../../setupGraphViewbox.js';
+import svgDraw from './svgDraw.js';
+import cytoscape from 'cytoscape/dist/cytoscape.umd.js';
+import coseBilkent from 'cytoscape-cose-bilkent';
+import * as db from './mindmapDb.js';
 
-let cytoscape;
+// Inject the layout algorithm into cytoscape
+cytoscape.use(coseBilkent);
+
 /**
  * @param {any} svg The svg element to draw the diagram onto
  * @param {object} mindmap The mindmap data and hierarchy
@@ -89,14 +93,7 @@ function addNodes(mindmap, cy, conf, level) {
  * @param conf
  * @param cy
  */
-async function layoutMindmap(node, conf) {
-  if (!cytoscape) {
-    cytoscape = (await import('cytoscape')).default;
-    const coseBilkent = (await import('cytoscape-cose-bilkent')).default;
-    // Inject the layout algorithm into cytoscape
-    cytoscape.use(coseBilkent);
-  }
-
+function layoutMindmap(node, conf) {
   return new Promise((resolve) => {
     // Add temporary render element
     const renderEl = select('body').append('div').attr('id', 'cy').attr('style', 'display:none');
@@ -170,12 +167,15 @@ function positionNodes(cy) {
 export const draw = async (text, id, version, diagObj) => {
   const conf = getConfig();
 
+  // console.log('Config: ', conf);
+  conf.htmlLabels = false;
+
   // This is done only for throwing the error if the text is not valid.
   diagObj.db.clear();
   // Parse the graph definition
   diagObj.parser.parse(text);
 
-  log.debug('Renering info diagram\n' + text);
+  log.debug('Rendering mindmap diagram\n' + text, diagObj.parser);
 
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode

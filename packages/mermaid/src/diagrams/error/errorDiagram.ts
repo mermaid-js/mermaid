@@ -1,6 +1,6 @@
-import { DiagramDefinition } from '../../diagram-api/types';
-import styles from './styles';
-import renderer from './errorRenderer';
+import { DiagramDefinition } from '../../diagram-api/types.js';
+import styles from './styles.js';
+import renderer from './errorRenderer.js';
 export const diagram: DiagramDefinition = {
   db: {
     clear: () => {
@@ -19,3 +19,5 @@ export const diagram: DiagramDefinition = {
     // no op
   },
 };
+
+export default diagram;

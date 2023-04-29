@@ -222,7 +222,9 @@ export interface MindmapDiagramConfig extends BaseDiagramConfig {
   maxNodeWidth: number;
 }
 
-export type PieDiagramConfig = BaseDiagramConfig;
+export interface PieDiagramConfig extends BaseDiagramConfig {
+  textPosition?: number;
+}
 
 export interface ErDiagramConfig extends BaseDiagramConfig {
   titleTopMargin?: number;
@@ -264,6 +266,10 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
   padding?: number;
   textHeight?: number;
   defaultRenderer?: string;
+  nodeSpacing?: number;
+  rankSpacing?: number;
+  diagramPadding?: number;
+  htmlLabels?: boolean;
 }
 
 export interface JourneyDiagramConfig extends BaseDiagramConfig {
@@ -295,6 +301,7 @@ export interface TimelineDiagramConfig extends BaseDiagramConfig {
   leftMargin?: number;
   width?: number;
   height?: number;
+  padding?: number;
   boxMargin?: number;
   boxTextMargin?: number;
   noteMargin?: number;
@@ -311,6 +318,7 @@ export interface TimelineDiagramConfig extends BaseDiagramConfig {
   sectionFills?: string[];
   sectionColours?: string[];
   disableMulticolor?: boolean;
+  useMaxWidth?: boolean;
 }
 
 export interface GanttDiagramConfig extends BaseDiagramConfig {
@@ -327,6 +335,7 @@ export interface GanttDiagramConfig extends BaseDiagramConfig {
   axisFormat?: string;
   tickInterval?: string;
   topAxis?: boolean;
+  displayMode?: string;
 }
 
 export interface SequenceDiagramConfig extends BaseDiagramConfig {
@@ -377,6 +386,7 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
   curve?: string;
   padding?: number;
   defaultRenderer?: string;
+  wrappingWidth?: number;
 }
 
 export interface FontConfig {

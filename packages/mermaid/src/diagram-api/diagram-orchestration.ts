@@ -1,24 +1,24 @@
-import c4 from '../diagrams/c4/c4Detector';
-import flowchart from '../diagrams/flowchart/flowDetector';
-import flowchartV2 from '../diagrams/flowchart/flowDetector-v2';
-import er from '../diagrams/er/erDetector';
-import git from '../diagrams/git/gitGraphDetector';
-import gantt from '../diagrams/gantt/ganttDetector';
-import info from '../diagrams/info/infoDetector';
-import pie from '../diagrams/pie/pieDetector';
-import requirement from '../diagrams/requirement/requirementDetector';
-import sequence from '../diagrams/sequence/sequenceDetector';
-import classDiagram from '../diagrams/class/classDetector';
-import classDiagramV2 from '../diagrams/class/classDetector-V2';
-import state from '../diagrams/state/stateDetector';
-import stateV2 from '../diagrams/state/stateDetector-V2';
-import journey from '../diagrams/user-journey/journeyDetector';
-import error from '../diagrams/error/errorDetector';
-import flowchartElk from '../diagrams/flowchart/elk/detector';
-import timeline from '../diagrams/timeline/detector';
-import mindmap from '../diagrams/mindmap/detector';
-import { registerLazyLoadedDiagrams } from './detectType';
-import { registerDiagram } from './diagramAPI';
+import c4 from '../diagrams/c4/c4Detector.js';
+import flowchart from '../diagrams/flowchart/flowDetector.js';
+import flowchartV2 from '../diagrams/flowchart/flowDetector-v2.js';
+import er from '../diagrams/er/erDetector.js';
+import git from '../diagrams/git/gitGraphDetector.js';
+import gantt from '../diagrams/gantt/ganttDetector.js';
+import info from '../diagrams/info/infoDetector.js';
+import pie from '../diagrams/pie/pieDetector.js';
+import requirement from '../diagrams/requirement/requirementDetector.js';
+import sequence from '../diagrams/sequence/sequenceDetector.js';
+import classDiagram from '../diagrams/class/classDetector.js';
+import classDiagramV2 from '../diagrams/class/classDetector-V2.js';
+import state from '../diagrams/state/stateDetector.js';
+import stateV2 from '../diagrams/state/stateDetector-V2.js';
+import journey from '../diagrams/user-journey/journeyDetector.js';
+import errorDiagram from '../diagrams/error/errorDiagram.js';
+import flowchartElk from '../diagrams/flowchart/elk/detector.js';
+import timeline from '../diagrams/timeline/detector.js';
+import mindmap from '../diagrams/mindmap/detector.js';
+import { registerLazyLoadedDiagrams } from './detectType.js';
+import { registerDiagram } from './diagramAPI.js';
 
 let hasLoadedDiagrams = false;
 export const addDiagrams = () => {
@@ -28,6 +28,9 @@ export const addDiagrams = () => {
   // This is added here to avoid race-conditions.
   // We could optimize the loading logic somehow.
   hasLoadedDiagrams = true;
+  registerDiagram('error', errorDiagram, (text) => {
+    return text.toLowerCase().trim() === 'error';
+  });
   registerDiagram(
     '---',
     // --- diagram type may appear if YAML front-matter is not parsed correctly
@@ -45,7 +48,7 @@ export const addDiagrams = () => {
           throw new Error(
             'Diagrams beginning with --- are not valid. ' +
               'If you were trying to use a YAML front-matter, please ensure that ' +
-              "you've correctly opened and closed the YAML front-matter with unindented `---` blocks"
+              "you've correctly opened and closed the YAML front-matter with un-indented `---` blocks"
           );
         },
       },
@@ -55,25 +58,25 @@ export const addDiagrams = () => {
       return text.toLowerCase().trimStart().startsWith('---');
     }
   );
+  // Ordering of detectors is important. The first one to return true will be used.
   registerLazyLoadedDiagrams(
-    error,
     c4,
-    classDiagram,
     classDiagramV2,
+    classDiagram,
     er,
     gantt,
     info,
     pie,
     requirement,
     sequence,
-    flowchart,
-    flowchartV2,
     flowchartElk,
+    flowchartV2,
+    flowchart,
     mindmap,
     timeline,
     git,
-    state,
     stateV2,
+    state,
     journey
   );
 };

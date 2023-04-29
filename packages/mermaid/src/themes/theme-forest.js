@@ -1,9 +1,9 @@
 import { darken, lighten, adjust, invert } from 'khroma';
-import { mkBorder } from './theme-helpers';
+import { mkBorder } from './theme-helpers.js';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
-} from './erDiagram-oldHardcodedValues';
+} from './erDiagram-oldHardcodedValues.js';
 
 class Theme {
   constructor() {
@@ -83,9 +83,8 @@ class Theme {
     this.todayLineColor = 'red';
 
     /* C4 Context Diagram variables */
-
-    this.personBorder = 'calculated';
-    this.personBkg = 'calculated';
+    this.personBorder = this.primaryBorderColor;
+    this.personBkg = this.mainBkg;
 
     /* state colors */
     this.labelColor = 'black';
@@ -94,6 +93,15 @@ class Theme {
     this.errorTextColor = '#552222';
   }
   updateColors() {
+    /* Sequence Diagram variables */
+    this.actorBorder = darken(this.mainBkg, 20);
+    this.actorBkg = this.mainBkg;
+    this.labelBoxBkgColor = this.actorBkg;
+    this.labelTextColor = this.actorTextColor;
+    this.loopTextColor = this.actorTextColor;
+    this.noteBorderColor = this.border2;
+    this.noteTextColor = this.actorTextColor;
+
     /* Each color-set will have a background, a foreground and a border color */
     this.cScale0 = this.cScale0 || this.primaryColor;
     this.cScale1 = this.cScale1 || this.secondaryColor;
@@ -144,16 +152,6 @@ class Theme {
     this.clusterBkg = this.secondBkg;
     this.clusterBorder = this.border2;
     this.defaultLinkColor = this.lineColor;
-
-    /* Sequence Diagram variables */
-
-    this.actorBorder = darken(this.mainBkg, 20);
-    this.actorBkg = this.mainBkg;
-    this.labelBoxBkgColor = this.actorBkg;
-    this.labelTextColor = this.actorTextColor;
-    this.loopTextColor = this.actorTextColor;
-    this.noteBorderColor = this.border2;
-    this.noteTextColor = this.actorTextColor;
 
     /* Gantt chart variables */
 
@@ -213,12 +211,14 @@ class Theme {
     this.pieLegendTextColor = this.pieLegendTextColor || this.taskTextDarkColor;
     this.pieStrokeColor = this.pieStrokeColor || 'black';
     this.pieStrokeWidth = this.pieStrokeWidth || '2px';
+    this.pieOuterStrokeWidth = this.pieOuterStrokeWidth || '2px';
+    this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
 
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;
     this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
-    this.requirementBorderSize = this.requirementBorderSize || this.primaryBorderColor;
+    this.requirementBorderSize = this.requirementBorderSize || '1';
     this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
     this.relationColor = this.relationColor || this.lineColor;
     this.relationLabelBackground = this.relationLabelBackground || this.edgeLabelBackground;
@@ -260,6 +260,14 @@ class Theme {
     this.gitInv5 = this.gitInv5 || invert(this.git5);
     this.gitInv6 = this.gitInv6 || invert(this.git6);
     this.gitInv7 = this.gitInv7 || invert(this.git7);
+    this.gitBranchLabel0 = this.gitBranchLabel0 || invert(this.labelTextColor);
+    this.gitBranchLabel1 = this.gitBranchLabel1 || this.labelTextColor;
+    this.gitBranchLabel2 = this.gitBranchLabel2 || this.labelTextColor;
+    this.gitBranchLabel3 = this.gitBranchLabel3 || invert(this.labelTextColor);
+    this.gitBranchLabel4 = this.gitBranchLabel4 || this.labelTextColor;
+    this.gitBranchLabel5 = this.gitBranchLabel5 || this.labelTextColor;
+    this.gitBranchLabel6 = this.gitBranchLabel6 || this.labelTextColor;
+    this.gitBranchLabel7 = this.gitBranchLabel7 || this.labelTextColor;
 
     this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
     this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;

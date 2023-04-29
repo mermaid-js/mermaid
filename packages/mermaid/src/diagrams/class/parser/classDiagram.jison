@@ -119,6 +119,8 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 "="                   return 'EQUALS';
 \=                    return 'EQUALS';
 \w+                   return 'ALPHA';
+"["                   return 'SQS';
+"]"                   return 'SQE';
 [!"#$%&'*+,-.`?\\/]   return 'PUNCTUATION';
 [0-9]+                return 'NUM';
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
@@ -198,9 +200,8 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 
 start
     : mermaidDoc
-    | statments
-    | direction
     | directive start
+    | statements
     ;
 
 direction
@@ -249,12 +250,16 @@ statements
     | statement NEWLINE statements
     ;
 
+classLabel
+    : SQS STR SQE { $$=$2; }
+    ;
+
 className
     : alphaNumToken { $$=$1; }
     | classLiteralName { $$=$1; }
     | alphaNumToken className { $$=$1+$2; }
-    | alphaNumToken GENERICTYPE { $$=$1+'~'+$2; }
-    | classLiteralName GENERICTYPE { $$=$1+'~'+$2; }
+    | alphaNumToken GENERICTYPE { $$=$1+'~'+$2+'~'; }
+    | classLiteralName GENERICTYPE { $$=$1+'~'+$2+'~'; }
     ;
 
 statement
@@ -266,7 +271,6 @@ statement
     | clickStatement
     | cssClassStatement
     | noteStatement
-    | directive
     | direction
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
@@ -274,10 +278,15 @@ statement
     ;
 
 classStatement
-    : CLASS className         {yy.addClass($2);}
-    | CLASS className STYLE_SEPARATOR alphaNumToken    {yy.addClass($2);yy.setCssClass($2, $4);}
-    | CLASS className STRUCT_START members STRUCT_STOP {/*console.log($2,JSON.stringify($4));*/yy.addClass($2);yy.addMembers($2,$4);}
-    | CLASS className STYLE_SEPARATOR alphaNumToken STRUCT_START members STRUCT_STOP {yy.addClass($2);yy.setCssClass($2, $4);yy.addMembers($2,$6);}
+    : classIdentifier                                    
+    | classIdentifier STYLE_SEPARATOR alphaNumToken      {yy.setCssClass($1, $3);}
+    | classIdentifier STRUCT_START members STRUCT_STOP   {yy.addMembers($1,$3);}
+    | classIdentifier STYLE_SEPARATOR alphaNumToken STRUCT_START members STRUCT_STOP {yy.setCssClass($1, $3);yy.addMembers($1,$5);}
+    ;
+
+classIdentifier
+    : CLASS className                                    {$$=$2; yy.addClass($2);}
+    | CLASS className classLabel                         {$$=$2; yy.addClass($2);yy.setClassLabel($2, $3);}
     ;
 
 annotationStatement
@@ -355,7 +364,7 @@ textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT | DEFA
 
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 
-alphaNumToken  : UNICODE_TEXT | NUM | ALPHA;
+alphaNumToken  : UNICODE_TEXT | NUM | ALPHA | MINUS;
 
 classLiteralName : BQUOTE_STR;
 

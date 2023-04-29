@@ -1,4 +1,4 @@
-import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types';
+import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types.js';
 
 const id = 'er';
 
@@ -7,7 +7,7 @@ const detector: DiagramDetector = (txt) => {
 };
 
 const loader = async () => {
-  const { diagram } = await import('./erDiagram');
+  const { diagram } = await import('./erDiagram.js');
   return { id, diagram };
 };
 

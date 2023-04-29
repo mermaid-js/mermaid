@@ -1,9 +1,9 @@
-import { DiagramDefinition } from '../../diagram-api/types';
+import { DiagramDefinition } from '../../diagram-api/types.js';
 // @ts-ignore: TODO Fix ts errors
-import parser from './parser/stateDiagram';
-import db from './stateDb';
-import styles from './styles';
-import renderer from './stateRenderer-v2';
+import parser from './parser/stateDiagram.jison';
+import db from './stateDb.js';
+import styles from './styles.js';
+import renderer from './stateRenderer-v2.js';
 
 export const diagram: DiagramDefinition = {
   parser,

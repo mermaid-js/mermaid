@@ -1,5 +1,6 @@
 import { select } from 'd3';
-import * as db from './mindmapDb';
+import * as db from './mindmapDb.js';
+import { createText } from '../../rendering-util/createText.js';
 const MAX_SECTIONS = 12;
 
 /**
@@ -11,7 +12,7 @@ function wrap(text, width) {
     var text = select(this),
       words = text
         .text()
-        .split(/(\s+|<br>)/)
+        .split(/(\s+|<br\/>)/)
         .reverse(),
       word,
       line = [],
@@ -28,10 +29,10 @@ function wrap(text, width) {
       word = words[words.length - 1 - j];
       line.push(word);
       tspan.text(line.join(' ').trim());
-      if (tspan.node().getComputedTextLength() > width || word === '<br>') {
+      if (tspan.node().getComputedTextLength() > width || word === '<br/>') {
         line.pop();
         tspan.text(line.join(' ').trim());
-        if (word === '<br>') {
+        if (word === '<br/>') {
           line = [''];
         } else {
           line = [word];
@@ -203,6 +204,7 @@ const roundedRectBkg = function (elem, node) {
  * @returns {number} The height nodes dom element
  */
 export const drawNode = function (elem, node, fullSection, conf) {
+  const htmlLabels = conf.htmlLabels;
   const section = fullSection % (MAX_SECTIONS - 1);
   const nodeElem = elem.append('g');
   node.section = section;
@@ -215,15 +217,22 @@ export const drawNode = function (elem, node, fullSection, conf) {
 
   // Create the wrapped text element
   const textElem = nodeElem.append('g');
-  const txt = textElem
-    .append('text')
-    .text(node.descr)
-    .attr('dy', '1em')
-    .attr('alignment-baseline', 'middle')
-    .attr('dominant-baseline', 'middle')
-    .attr('text-anchor', 'middle')
-    .call(wrap, node.width);
-  const bbox = txt.node().getBBox();
+  const description = node.descr.replace(/(<br\/*>)/g, '\n');
+  const newEl = createText(textElem, description, {
+    useHtmlLabels: htmlLabels,
+    width: node.width,
+    classes: 'mindmap-node-label',
+  });
+
+  if (!htmlLabels) {
+    textElem
+      .attr('dy', '1em')
+      .attr('alignment-baseline', 'middle')
+      .attr('dominant-baseline', 'middle')
+      .attr('text-anchor', 'middle');
+  }
+  // .call(wrap, node.width);
+  const bbox = textElem.node().getBBox();
   const fontSize = conf.fontSize.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
   node.height = bbox.height + fontSize * 1.1 * 0.5 + node.padding;
   node.width = bbox.width + 2 * node.padding;
@@ -267,7 +276,16 @@ export const drawNode = function (elem, node, fullSection, conf) {
       );
     }
   } else {
-    textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + node.padding / 2 + ')');
+    if (!htmlLabels) {
+      const dx = node.width / 2;
+      const dy = node.padding / 2;
+      textElem.attr('transform', 'translate(' + dx + ', ' + dy + ')');
+      // textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + node.padding / 2 + ')');
+    } else {
+      const dx = (node.width - bbox.width) / 2;
+      const dy = (node.height - bbox.height) / 2;
+      textElem.attr('transform', 'translate(' + dx + ', ' + dy + ')');
+    }
   }
 
   switch (node.type) {

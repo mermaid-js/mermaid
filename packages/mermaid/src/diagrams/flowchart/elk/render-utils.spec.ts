@@ -1,4 +1,4 @@
-import { findCommonAncestor, TreeData } from './render-utils';
+import { findCommonAncestor, TreeData } from './render-utils.js';
 describe('when rendering a flowchart using elk ', () => {
   let lookupDb: TreeData;
   beforeEach(() => {

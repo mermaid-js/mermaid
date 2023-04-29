@@ -3,6 +3,7 @@ import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import jisonPlugin from './jisonPlugin.js';
 import { readFileSync } from 'fs';
+import typescript from '@rollup/plugin-typescript';
 import { visualizer } from 'rollup-plugin-visualizer';
 import type { TemplateType } from 'rollup-plugin-visualizer/dist/plugin/template-types.js';
 
@@ -10,6 +11,7 @@ const visualize = process.argv.includes('--visualize');
 const watch = process.argv.includes('--watch');
 const mermaidOnly = process.argv.includes('--mermaid');
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const sourcemap = false;
 
 type OutputOptions = Exclude<
   Exclude<InlineConfig['build'], undefined>['rollupOptions'],
@@ -59,8 +61,14 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     {
       name,
       format: 'esm',
-      sourcemap: true,
+      sourcemap,
       entryFileNames: `${name}.esm${minify ? '.min' : ''}.mjs`,
+    },
+    {
+      name,
+      format: 'umd',
+      sourcemap,
+      entryFileNames: `${name}${minify ? '.min' : ''}.js`,
     },
   ];
 
@@ -78,7 +86,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
       {
         name,
         format: 'esm',
-        sourcemap: true,
+        sourcemap,
         entryFileNames: `${name}.core.mjs`,
       },
     ];
@@ -102,9 +110,14 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
       },
     },
     resolve: {
-      extensions: ['.jison', '.js', '.ts', '.json'],
+      extensions: [],
     },
-    plugins: [jisonPlugin(), ...visualizerOptions(packageName, core)],
+    plugins: [
+      jisonPlugin(),
+      // @ts-expect-error According to the type definitions, rollup plugins are incompatible with vite
+      typescript({ compilerOptions: { declaration: false } }),
+      ...visualizerOptions(packageName, core),
+    ],
   };
 
   if (watch && config.build) {

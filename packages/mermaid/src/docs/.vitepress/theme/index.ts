@@ -5,21 +5,20 @@ import Mermaid from './Mermaid.vue';
 // @ts-ignore
 import Contributors from '../components/Contributors.vue';
 // @ts-ignore
-import HomePage from '../components/HomePage.vue'
-import { getRedirect } from './redirect';
+import HomePage from '../components/HomePage.vue';
+import { getRedirect } from './redirect.js';
 
-import { h } from 'vue'
-import Theme from 'vitepress/theme'
-import '../style/main.css'
-import 'uno.css'
-
+import { h } from 'vue';
+import Theme from 'vitepress/theme';
+import '../style/main.css';
+import 'uno.css';
 
 export default {
   ...DefaultTheme,
   Layout() {
     return h(Theme.Layout, null, {
       'home-features-after': () => h(HomePage),
-    })
+    });
   },
   enhanceApp({ app, router }) {
     // register global components
@@ -33,8 +32,7 @@ export default {
           // router.go isn't loading the ID properly.
           window.location.href = `/${newPath}`;
         }
-      } catch (e) { }
+      } catch (e) {}
     };
   },
 };
-

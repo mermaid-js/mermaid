@@ -122,16 +122,7 @@ flowchart LR
 
 ### A hexagon node
 
-Code:
-
-```mmd
-flowchart LR
-    id1{{This is the text in the box}}
-```
-
-Render:
-
-```mermaid
+```mermaid-example
 flowchart LR
     id1{{This is the text in the box}}
 ```
@@ -455,6 +446,31 @@ flowchart LR
   B1 --> B2
 ```
 
+## Markdown Strings
+
+The "Markdown Strings" feature enhances flowcharts and mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
+
+```mermaid-example
+%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+subgraph "One"
+  a("`The **cat**
+  in the hat`") -- "edge label" --> b{{"`The **dog** in the hog`"}}
+end
+subgraph "`**Two**`"
+  c("`The **cat**
+  in the hat`") -- "`Bold **edge label**`" --> d("The dog in the hog")
+end
+```
+
+Formatting:
+
+- For bold text, use double asterisks (`**`) before and after the text.
+- For italics, use single asterisks (`*`) before and after the text.
+- With traditional strings, you needed to add `<br>` tags for text to wrap in nodes. However, markdown strings automatically wrap text when it becomes too long and allows you to start a new line by simply using a newline character instead of a `<br>` tag.
+
+This feature is applicable to node labels, edge labels, and subgraph labels.
+
 ## Interaction
 
 It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
@@ -667,7 +683,7 @@ flowchart TD
     B-->E(A fa:fa-camera-retro perhaps?)
 ```
 
-?> Mermaid is now only compatible with Font Awesome versions 4 and 5. Check that you are using the correct version of Font Awesome.
+Mermaid is compatible with Font Awesome up to verion 5, Free icons only. Check that the icons you use are from the [supported set of icons](https://fontawesome.com/v5/search?o=r&m=free).
 
 ## Graph declarations with spaces between vertices and link and without semicolon
 

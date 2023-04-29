@@ -5,10 +5,6 @@ on:
   push:
     branches:
       - master
-  pull_request:
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -53,7 +49,6 @@ jobs:
 
   # Deployment job
   deploy:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     environment:
       name: github-pages
     runs-on: ubuntu-latest
@@ -61,4 +56,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v2

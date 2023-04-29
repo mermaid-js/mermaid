@@ -2,16 +2,21 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code!
  */
-import dedent from 'ts-dedent';
-import { MermaidConfig } from './config.type';
-import { log } from './logger';
-import utils from './utils';
-import { mermaidAPI, ParseOptions, RenderResult } from './mermaidAPI';
-import { registerLazyLoadedDiagrams, loadRegisteredDiagrams } from './diagram-api/detectType';
-import type { ParseErrorFunction } from './Diagram';
-import { isDetailedError } from './utils';
-import type { DetailedError } from './utils';
-import { ExternalDiagramDefinition } from './diagram-api/types';
+import { dedent } from 'ts-dedent';
+import { MermaidConfig } from './config.type.js';
+import { log } from './logger.js';
+import utils from './utils.js';
+import { mermaidAPI, ParseOptions, RenderResult } from './mermaidAPI.js';
+import {
+  registerLazyLoadedDiagrams,
+  loadRegisteredDiagrams,
+  detectType,
+} from './diagram-api/detectType.js';
+import type { ParseErrorFunction } from './Diagram.js';
+import { isDetailedError } from './utils.js';
+import type { DetailedError } from './utils.js';
+import { ExternalDiagramDefinition } from './diagram-api/types.js';
+import { UnknownDiagramError } from './errors.js';
 
 export type {
   MermaidConfig,
@@ -20,6 +25,7 @@ export type {
   ParseErrorFunction,
   RenderResult,
   ParseOptions,
+  UnknownDiagramError,
 };
 
 export interface RunOptions {
@@ -162,7 +168,7 @@ const runThrowsErrors = async function (
       log.debug('Detected early reinit: ', init);
     }
     try {
-      const { svg, bindFunctions } = await mermaidAPI.render(id, txt, element);
+      const { svg, bindFunctions } = await render(id, txt, element);
       element.innerHTML = svg;
       if (postRenderCallback) {
         await postRenderCallback(id);
@@ -313,7 +319,7 @@ const executeQueue = async () => {
  */
 const parse = async (text: string, parseOptions?: ParseOptions): Promise<boolean | void> => {
   return new Promise((resolve, reject) => {
-    // This promise will resolve when the mermaidAPI.render call is done.
+    // This promise will resolve when the render call is done.
     // It will be queued first and will be executed when it is first in line
     const performCall = () =>
       new Promise((res, rej) => {
@@ -337,6 +343,29 @@ const parse = async (text: string, parseOptions?: ParseOptions): Promise<boolean
   });
 };
 
+/**
+ * Function that renders an svg with a graph from a chart definition. Usage example below.
+ *
+ * ```javascript
+ *  element = document.querySelector('#graphDiv');
+ *  const graphDefinition = 'graph TB\na-->b';
+ *  const { svg, bindFunctions } = await mermaid.render('graphDiv', graphDefinition);
+ *  element.innerHTML = svg;
+ *  bindFunctions?.(element);
+ * ```
+ *
+ * @remarks
+ * Multiple calls to this function will be enqueued to run serially.
+ *
+ * @param id - The id for the SVG element (the element to be rendered)
+ * @param text - The text for the graph definition
+ * @param container - HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
+ *   If no svgContainingElement is provided then the SVG element will be appended to the body.
+ *    Selector to element in which a div with the graph temporarily will be
+ *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
+ *   element will be removed when rendering is completed.
+ * @returns Returns the SVG Definition and BindFunctions.
+ */
 const render = (id: string, text: string, container?: Element): Promise<RenderResult> => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the mermaidAPI.render call is done.
@@ -363,7 +392,7 @@ const render = (id: string, text: string, container?: Element): Promise<RenderRe
   });
 };
 
-const mermaid: {
+export interface Mermaid {
   startOnLoad: boolean;
   parseError?: ParseErrorFunction;
   mermaidAPI: typeof mermaidAPI;
@@ -375,7 +404,10 @@ const mermaid: {
   initialize: typeof initialize;
   contentLoaded: typeof contentLoaded;
   setParseErrorHandler: typeof setParseErrorHandler;
-} = {
+  detectType: typeof detectType;
+}
+
+const mermaid: Mermaid = {
   startOnLoad: true,
   mermaidAPI,
   parse,
@@ -387,6 +419,7 @@ const mermaid: {
   parseError: undefined,
   contentLoaded,
   setParseErrorHandler,
+  detectType,
 };
 
 export default mermaid;
