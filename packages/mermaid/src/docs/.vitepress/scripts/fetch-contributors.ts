@@ -3,6 +3,8 @@
 import { writeFile } from 'node:fs/promises';
 import { $fetch } from 'ohmyfetch';
 
+const pathContributors = new URL('../contributor-names.json', import.meta.url);
+
 interface Contributor {
   login: string;
 }
@@ -30,11 +32,7 @@ async function fetchContributors() {
 
 async function generate() {
   const collaborators = await fetchContributors();
-  await writeFile(
-    './packages/mermaid/src/docs/.vitepress/contributor-names.json',
-    `${JSON.stringify(collaborators, null, 2)}\n`,
-    'utf8'
-  );
+  await writeFile(pathContributors, JSON.stringify(collaborators, null, 2), 'utf8');
 }
 
 void generate();
