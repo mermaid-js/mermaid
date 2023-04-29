@@ -4,12 +4,12 @@
   "type": "module",
   "scripts": {
     "dev": "vitepress --port 3333 --open",
-    "build": "nr prefetch && vitepress build",
+    "build": "pnpm prefetch && vitepress build",
     "build-no-prefetch": "vitepress build",
     "serve": "vitepress serve",
-    "preview-https": "pnpm run build && serve .vitepress/dist",
-    "preview-https-no-prefetch": "pnpm run build-no-prefetch && serve .vitepress/dist",
-    "prefetch": "pnpm run fetch-contributors && pnpm run fetch-avatars",
+    "preview-https": "pnpm build && serve .vitepress/dist",
+    "preview-https-no-prefetch": "pnpm build-no-prefetch && serve .vitepress/dist",
+    "prefetch": "pnpm fetch-contributors && pnpm fetch-avatars",
     "fetch-avatars": "esno .vitepress/scripts/fetch-avatars.ts",
     "fetch-contributors": "esno .vitepress/scripts/fetch-contributors.ts"
   },
