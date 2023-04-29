@@ -5,11 +5,11 @@
 // Read more: https://github.com/vuejs/core/pull/3399
 import '@vue/runtime-core'
 
-export {}
+export {};
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    Contributors: typeof import('./components/Contributors.vue')['default']
-    HomePage: typeof import('./components/HomePage.vue')['default']
+    Contributors: typeof import('./components/Contributors.vue')['default'];
+    HomePage: typeof import('./components/HomePage.vue')['default'];
   }
 }
