@@ -116,7 +116,7 @@ Relationships may be classified as either _identifying_ or _non-identifying_ and
 |      to       |   _identifying_   |
 | optionally to | _non-identifying_ |
 
-```mmd
+```mermaid
 erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     PERSON ||--o{ NAMED-DRIVER : is
