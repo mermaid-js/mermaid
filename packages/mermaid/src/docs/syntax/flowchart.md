@@ -9,7 +9,9 @@ All Flowcharts are composed of **nodes**, the geometric shapes and **edges**, th
 
 It can also accommodate different arrow types, multi directional arrows, and linking to and from subgraphs.
 
-> **Important note**: Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).
+```warning
+Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).
+```
 
 ### A node (default)
 
@@ -23,6 +25,10 @@ flowchart LR
 
 ```note
 The id is what is displayed in the box.
+```
+
+```tip
+Instead of `flowchart` one can also use `graph`.
 ```
 
 ### A node with text
@@ -473,7 +479,11 @@ This feature is applicable to node labels, edge labels, and subgraph labels.
 
 ## Interaction
 
-It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab.
+
+```info
+This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+```
 
 ```
 click nodeId callback
@@ -716,7 +726,9 @@ You can change the renderer to elk by adding this directive:
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 ```
 
+```info
 Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
+```
 
 ### Width
 
