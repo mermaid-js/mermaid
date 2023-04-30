@@ -476,6 +476,9 @@ const render = async function (
   try {
     diag = await getDiagramFromText(text);
   } catch (error) {
+    if (config.suppressErrorRendering) {
+      throw error;
+    }
     diag = new Diagram('error');
     parseEncounteredException = error;
   }
