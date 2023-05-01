@@ -60,6 +60,7 @@ export const addNamespaces = function (
       domId: vertex.domId,
       labelText: sanitizeText(vertex.id),
       labelStyle: '',
+      style: 'fill: none; stroke: black',
       // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release
       padding: getConfig().flowchart?.padding ?? getConfig().class?.padding,
     };
