@@ -79,6 +79,7 @@ export const addNamespaces = function (
  * @param g - The graph that is to be drawn.
  * @param _id - id of the graph
  * @param diagObj - The diagram object
+ * @param parent - id of the parent namespace, if it exists
  */
 export const addClasses = function (
   classes: ClassMap,
