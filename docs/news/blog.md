@@ -6,6 +6,12 @@
 
 # Blog
 
+## [Bad documentation can make your business fail](https://www.mermaidchart.com/blog/posts/bad-documentation-can-make-your-business-fail)
+
+26 April 2023 · 11 mins
+
+Documentation tends to be bad because companies and projects don’t fully realize the costs of bad documentation.
+
 ## [Mermaid Chart officially launched with sharable diagram links and presentation mode](https://www.mermaidchart.com/blog/posts/mermaid-chart-officially-launched-with-sharable-diagram-links-and-presentation-mode/)
 
 27 March 2023 · 2 mins
