@@ -391,9 +391,6 @@ importers:
       '@iconify-json/carbon':
         specifier: ^1.1.16
         version: 1.1.16
-      '@types/fs-extra':
-        specifier: ^11.0.1
-        version: 11.0.1
       '@unocss/reset':
         specifier: ^0.51.8
         version: 0.51.8
@@ -409,70 +406,6 @@ importers:
       fast-glob:
         specifier: ^3.2.12
         version: 3.2.12
-      fs-extra:
-        specifier: ^11.1.1
-        version: 11.1.1
-      https-localhost:
-        specifier: ^4.7.1
-        version: 4.7.1
-      pathe:
-        specifier: ^1.1.0
-        version: 1.1.0
-      unocss:
-        specifier: ^0.51.8
-        version: 0.51.8(postcss@8.4.23)(rollup@2.79.1)(vite@4.3.3)
-      unplugin-vue-components:
-        specifier: ^0.24.1
-        version: 0.24.1(rollup@2.79.1)(vue@3.2.47)
-      vite:
-        specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.0)
-      vite-plugin-pwa:
-        specifier: ^0.14.7
-        version: 0.14.7(vite@4.3.3)(workbox-build@6.5.4)(workbox-window@6.5.4)
-      vitepress:
-        specifier: 1.0.0-alpha.74
-        version: 1.0.0-alpha.74(@algolia/client-search@4.14.2)(@types/node@18.16.0)
-      workbox-window:
-        specifier: ^6.5.4
-        version: 6.5.4
-
-  packages/mermaid/src/vitepress:
-    dependencies:
-      '@vueuse/core':
-        specifier: ^10.1.0
-        version: 10.1.0(vue@3.2.47)
-      jiti:
-        specifier: ^1.18.2
-        version: 1.18.2
-      vue:
-        specifier: ^3.2.47
-        version: 3.2.47
-    devDependencies:
-      '@iconify-json/carbon':
-        specifier: ^1.1.16
-        version: 1.1.16
-      '@types/fs-extra':
-        specifier: ^11.0.1
-        version: 11.0.1
-      '@unocss/reset':
-        specifier: ^0.51.8
-        version: 0.51.8
-      '@vite-pwa/vitepress':
-        specifier: ^0.0.5
-        version: 0.0.5(vite-plugin-pwa@0.14.7)
-      '@vitejs/plugin-vue':
-        specifier: ^4.2.1
-        version: 4.2.1(vite@4.3.3)(vue@3.2.47)
-      esno:
-        specifier: ^0.16.3
-        version: 0.16.3
-      fast-glob:
-        specifier: ^3.2.12
-        version: 3.2.12
-      fs-extra:
-        specifier: ^11.1.1
-        version: 11.1.1
       https-localhost:
         specifier: ^4.7.1
         version: 4.7.1
@@ -4181,13 +4114,6 @@ packages:
     resolution: {integrity: sha512-HXwADeHEP4exXkCIwy2n1+i0f1ilP1ETQOH5KDOugjkTFZPntWo0Gr8stZOaebkxsdx+k0X/K6obU/+it07ocg==}
     dev: true
 
-  /@types/fs-extra@11.0.1:
-    resolution: {integrity: sha512-MxObHvNl4A69ofaTRU8DFqvgzzv8s9yRtaPPm5gud9HDNvpB3GPQFvNuTWAI59B9huVGV5jXYJwbCsmBsOGYWA==}
-    dependencies:
-      '@types/jsonfile': 6.1.1
-      '@types/node': 18.16.0
-    dev: true
-
   /@types/geojson@7946.0.10:
     resolution: {integrity: sha512-Nmh0K3iWQJzniTuPRcJn5hxXkfB1T1pgB89SBig5PlJQU5yocazeu4jATJlaA0GYFKWMqDdvYemoSnF2pXgLVA==}
     dev: true
@@ -4238,12 +4164,6 @@ packages:
 
   /@types/json-schema@7.0.11:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
-    dev: true
-
-  /@types/jsonfile@6.1.1:
-    resolution: {integrity: sha512-GSgiRCVeapDN+3pqA35IkQwasaCh/0YFH5dEF6S88iDvEn901DjOeH3/QPY+XYP1DFzDZPvIvfeEgk+7br5png==}
-    dependencies:
-      '@types/node': 18.16.0
     dev: true
 
   /@types/keyv@3.1.4:

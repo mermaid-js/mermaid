@@ -1,7 +1,6 @@
 // Adapted from https://github.dev/vitest-dev/vitest/blob/991ff33ab717caee85ef6cbe1c16dc514186b4cc/scripts/update-contributors.ts#L6
 
 import { writeFile } from 'node:fs/promises';
-import { $fetch } from 'ohmyfetch';
 
 const pathContributors = new URL('../contributor-names.json', import.meta.url);
 
@@ -14,16 +13,16 @@ async function fetchContributors() {
   let page = 1;
   let data: Contributor[] = [];
   do {
-    data =
-      (await $fetch<Contributor[]>(
-        `https://api.github.com/repos/mermaid-js/mermaid/contributors?per_page=100&page=${page}`,
-        {
-          method: 'get',
-          headers: {
-            'content-type': 'application/json',
-          },
-        }
-      )) || [];
+    const response = await fetch(
+      `https://api.github.com/repos/mermaid-js/mermaid/contributors?per_page=100&page=${page}`,
+      {
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+        },
+      }
+    );
+    data = await response.json();
     collaborators.push(...data.map((i) => i.login));
     page++;
   } while (data.length === 100);

@@ -20,13 +20,11 @@
   },
   "devDependencies": {
     "@iconify-json/carbon": "^1.1.16",
-    "@types/fs-extra": "^11.0.1",
     "@unocss/reset": "^0.51.8",
     "@vite-pwa/vitepress": "^0.0.5",
     "@vitejs/plugin-vue": "^4.2.1",
     "esno": "^0.16.3",
     "fast-glob": "^3.2.12",
-    "fs-extra": "^11.1.1",
     "https-localhost": "^4.7.1",
     "pathe": "^1.1.0",
     "unocss": "^0.51.8",
