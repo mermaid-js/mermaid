@@ -432,4 +432,10 @@ describe('when using the ganttDb', function () {
     ganttDb.setTodayMarker(expected);
     expect(ganttDb.getTodayMarker()).toEqual(expected);
   });
+
+  it('should reject dates with ridiculous years', function () {
+    ganttDb.setDateFormat('YYYYMMDD');
+    ganttDb.addTask('test1', 'id1,202304,1d');
+    expect(() => ganttDb.getTasks()).toThrowError('Invalid date:202304');
+  });
 });
