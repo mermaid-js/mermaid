@@ -148,6 +148,7 @@ const recursiveRender = async (_elem, graph, diagramtype, parentCluster) => {
   return { elem, diff };
 };
 
+
 export const render = async (elem, graph, markers, diagramtype, id) => {
   insertMarkers(elem, markers, diagramtype, id);
   clearNodes();

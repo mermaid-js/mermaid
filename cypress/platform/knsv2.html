@@ -59,14 +59,21 @@
   <body>
 
     <pre id="diagram" class="mermaid">
-swimlane RL
+flowchart LR
     subgraph "`one`"
-      a1 -- l1 --> a2
-      a1 -- l2 --> a2
-    end
+      start -- l1 --> cat --> rat
+      end
+    subgraph "`two`"
+      monkey -- l2 --> dog --> done2
+      end
+    subgraph "`three`"
+      cow -- l3 --> done3
+      end
     </pre>
 
-
+<!-- cat --> monkey
+    dog --> cat
+    monkey --> cow -->
     <!-- <div id="cy"></div> -->
     <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
     <!-- <script src="./mermaid-example-diagram-detector.js"></script>    -->
