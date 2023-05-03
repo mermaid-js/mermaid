@@ -14,6 +14,7 @@ import state from '../diagrams/state/stateDetector.js';
 import stateV2 from '../diagrams/state/stateDetector-V2.js';
 import journey from '../diagrams/user-journey/journeyDetector.js';
 import errorDiagram from '../diagrams/error/errorDiagram.js';
+import swimlane from '../diagrams/flowchart/swimlane/detector.js';
 import flowchartElk from '../diagrams/flowchart/elk/detector.js';
 import timeline from '../diagrams/timeline/detector.js';
 import mindmap from '../diagrams/mindmap/detector.js';
@@ -69,6 +70,7 @@ export const addDiagrams = () => {
     pie,
     requirement,
     sequence,
+    swimlane,
     flowchartElk,
     flowchartV2,
     flowchart,

@@ -84,6 +84,7 @@ that id.
 <click>[\s\n]           this.popState();
 <click>[^\s\n]*         return 'CLICK';
 
+"swimlane"        {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "flowchart-elk"        {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "graph"                {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "flowchart"            {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
