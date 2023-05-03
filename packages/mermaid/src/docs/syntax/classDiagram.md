@@ -277,6 +277,23 @@ And `Link` can be one of:
 | --   | Solid       |
 | ..   | Dashed      |
 
+## Define Namespace
+
+A namespace groups classes.
+
+Code:
+
+```mermaid-example
+classDiagram
+namespace BaseShapes {
+    class Triangle
+    class Rectangle {
+      double width
+      double height
+    }
+}
+```
+
 ## Cardinality / Multiplicity on relations
 
 Multiplicity or cardinality in class diagrams indicates the number of instances of one class that can be linked to an instance of the other class. For example, each company will have one or more employees (not zero), and each employee currently works for zero or one companies.
