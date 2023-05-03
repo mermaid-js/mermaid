@@ -1,7 +1,7 @@
-import common from '../common/common';
+import common from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon';
-import { addFunction } from '../../interactionDb';
-import { parseFontSize } from '../../utils';
+import { addFunction } from '../../interactionDb.js';
+import { parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 
 export const drawRect = function (elem, rectData) {

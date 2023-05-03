@@ -1,5 +1,5 @@
 import { invert, lighten, darken, rgba, adjust } from 'khroma';
-import { mkBorder } from './theme-helpers';
+import { mkBorder } from './theme-helpers.js';
 
 class Theme {
   constructor() {
@@ -64,6 +64,7 @@ class Theme {
     this.sectionBkgColor = darken('#EAE8D9', 30);
     this.altSectionBkgColor = 'calculated';
     this.sectionBkgColor2 = '#EAE8D9';
+    this.excludeBkgColor = darken(this.sectionBkgColor, 10);
     this.taskBorderColor = rgba(255, 255, 255, 70);
     this.taskBkgColor = 'calculated';
     this.taskTextColor = 'calculated';
@@ -81,9 +82,8 @@ class Theme {
     this.todayLineColor = '#DB5757';
 
     /* C4 Context Diagram variables */
-
-    this.personBorder = 'calculated';
-    this.personBkg = 'calculated';
+    this.personBorder = this.primaryBorderColor;
+    this.personBkg = this.mainBkg;
 
     /* state colors */
     this.labelColor = 'calculated';
@@ -232,7 +232,7 @@ class Theme {
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;
     this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
-    this.requirementBorderSize = this.requirementBorderSize || this.primaryBorderColor;
+    this.requirementBorderSize = this.requirementBorderSize || '1';
     this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
     this.relationColor = this.relationColor || this.lineColor;
     this.relationLabelBackground =
@@ -257,6 +257,14 @@ class Theme {
     this.gitInv5 = this.gitInv5 || invert(this.git5);
     this.gitInv6 = this.gitInv6 || invert(this.git6);
     this.gitInv7 = this.gitInv7 || invert(this.git7);
+    this.gitBranchLabel0 = this.gitBranchLabel0 || invert(this.labelTextColor);
+    this.gitBranchLabel1 = this.gitBranchLabel1 || this.labelTextColor;
+    this.gitBranchLabel2 = this.gitBranchLabel2 || this.labelTextColor;
+    this.gitBranchLabel3 = this.gitBranchLabel3 || invert(this.labelTextColor);
+    this.gitBranchLabel4 = this.gitBranchLabel4 || this.labelTextColor;
+    this.gitBranchLabel5 = this.gitBranchLabel5 || this.labelTextColor;
+    this.gitBranchLabel6 = this.gitBranchLabel6 || this.labelTextColor;
+    this.gitBranchLabel7 = this.gitBranchLabel7 || this.labelTextColor;
 
     this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
     this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;

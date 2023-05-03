@@ -1,10 +1,10 @@
 // @ts-expect-error - d3 types issue
 import { select, Selection } from 'd3';
-import { log } from '../../logger';
-import * as configApi from '../../config';
-import common from '../common/common';
-import utils from '../../utils';
-import mermaidAPI from '../../mermaidAPI';
+import { log } from '../../logger.js';
+import * as configApi from '../../config.js';
+import common from '../common/common.js';
+import utils from '../../utils.js';
+import mermaidAPI from '../../mermaidAPI.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -13,8 +13,8 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb';
-import { ClassRelation, ClassNode, ClassNote, ClassMap } from './classTypes';
+} from '../../commonDb.js';
+import { ClassRelation, ClassNode, ClassNote, ClassMap } from './classTypes.js';
 
 const MERMAID_DOM_ID_PREFIX = 'classId-';
 
@@ -106,6 +106,7 @@ export const clear = function () {
 export const getClass = function (id: string) {
   return classes[id];
 };
+
 export const getClasses = function () {
   return classes;
 };
@@ -170,9 +171,10 @@ export const addMember = function (className: string, member: string) {
     const memberString = member.trim();
 
     if (memberString.startsWith('<<') && memberString.endsWith('>>')) {
-      // Remove leading and trailing brackets
+      // its an annotation
       theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
     } else if (memberString.indexOf(')') > 0) {
+      //its a method
       theClass.methods.push(sanitizeText(memberString));
     } else if (memberString) {
       theClass.members.push(sanitizeText(memberString));
@@ -234,6 +236,7 @@ const setTooltip = function (ids: string, tooltip?: string) {
     }
   });
 };
+
 export const getTooltip = function (id: string) {
   return classes[id].tooltip;
 };

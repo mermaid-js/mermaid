@@ -1,5 +1,6 @@
 import { defineConfig, type PluginOption, searchForWorkspaceRoot } from 'vite';
 import path from 'path';
+// @ts-expect-error This package has an incorrect export map.
 import { SearchPlugin } from 'vitepress-plugin-search';
 
 const virtualModuleId = 'virtual:mermaid-config';

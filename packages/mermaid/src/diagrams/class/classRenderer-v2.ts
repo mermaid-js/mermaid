@@ -1,14 +1,14 @@
 // @ts-ignore d3 types are not available
 import { select, curveLinear } from 'd3';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
-import { log } from '../../logger';
-import { getConfig } from '../../config';
+import { log } from '../../logger.js';
+import { getConfig } from '../../config.js';
 import { render } from '../../dagre-wrapper/index.js';
-import utils from '../../utils';
-import { interpolateToCurve, getStylesFromArray } from '../../utils';
-import { setupGraphViewbox } from '../../setupGraphViewbox';
-import common from '../common/common';
-import { ClassRelation, ClassNote, ClassMap, EdgeData } from './classTypes';
+import utils from '../../utils.js';
+import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
+import { setupGraphViewbox } from '../../setupGraphViewbox.js';
+import common from '../common/common.js';
+import { ClassRelation, ClassNote, ClassMap, EdgeData } from './classTypes.js';
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
 
@@ -248,7 +248,7 @@ export const setConf = function (cnf: any) {
  * @param _version -
  * @param diagObj -
  */
-export const draw = function (text: string, id: string, _version: string, diagObj: any) {
+export const draw = async function (text: string, id: string, _version: string, diagObj: any) {
   log.info('Drawing class - ', id);
 
   // TODO V10: Why flowchart? Might be a mistake when copying.
@@ -300,7 +300,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   // Run the renderer. This is what draws the final graph.
   // @ts-ignore Ignore type error for now
   const element = root.select('#' + id + ' g');
-  render(
+  await render(
     element,
     g,
     ['aggregation', 'extension', 'composition', 'dependency', 'lollipop'],

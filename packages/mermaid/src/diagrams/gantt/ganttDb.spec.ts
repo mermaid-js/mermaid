@@ -1,7 +1,7 @@
 // @ts-nocheck TODO: Fix TS
-import dayjs from 'dayjs';
-import ganttDb from './ganttDb';
-import { convert } from '../../tests/util';
+import dayjs from 'dayjs/esm/index.js';
+import ganttDb from './ganttDb.js';
+import { convert } from '../../tests/util.js';
 
 describe('when using the ganttDb', function () {
   beforeEach(function () {
@@ -34,6 +34,7 @@ describe('when using the ganttDb', function () {
     beforeEach(function () {
       ganttDb.setDateFormat('YYYY-MM-DD');
       ganttDb.enableInclusiveEndDates();
+      ganttDb.setDisplayMode('compact');
       ganttDb.setTodayMarker('off');
       ganttDb.setExcludes('weekends 2019-02-06,friday');
       ganttDb.addSection('weekends skip test');
@@ -53,6 +54,7 @@ describe('when using the ganttDb', function () {
       ${'getExcludes'}          | ${[]}
       ${'getSections'}          | ${[]}
       ${'endDatesAreInclusive'} | ${false}
+      ${'getDisplayMode'}       | ${''}
     `)('should clear $fn', ({ fn, expected }) => {
       expect(ganttDb[fn]()).toEqual(expected);
     });
@@ -429,5 +431,11 @@ describe('when using the ganttDb', function () {
   `)('should ${type} today marker', ({ expected }) => {
     ganttDb.setTodayMarker(expected);
     expect(ganttDb.getTodayMarker()).toEqual(expected);
+  });
+
+  it('should reject dates with ridiculous years', function () {
+    ganttDb.setDateFormat('YYYYMMDD');
+    ganttDb.addTask('test1', 'id1,202304,1d');
+    expect(() => ganttDb.getTasks()).toThrowError('Invalid date:202304');
   });
 });

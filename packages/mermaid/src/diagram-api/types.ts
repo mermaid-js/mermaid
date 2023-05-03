@@ -1,4 +1,4 @@
-import { MermaidConfig } from '../config.type';
+import { MermaidConfig } from '../config.type.js';
 
 export interface InjectUtils {
   _log: any;
@@ -16,6 +16,7 @@ export interface InjectUtils {
 export interface DiagramDb {
   clear?: () => void;
   setDiagramTitle?: (title: string) => void;
+  setDisplayMode?: (title: string) => void;
   getAccTitle?: () => string;
   getAccDescription?: () => string;
   bindFunctions?: (element: Element) => void;

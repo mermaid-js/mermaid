@@ -1,9 +1,9 @@
 import { select } from 'd3';
-import utils from '../../utils';
-import * as configApi from '../../config';
-import common from '../common/common';
-import mermaidAPI from '../../mermaidAPI';
-import { log } from '../../logger';
+import utils from '../../utils.js';
+import * as configApi from '../../config.js';
+import common from '../common/common.js';
+import mermaidAPI from '../../mermaidAPI.js';
+import { log } from '../../logger.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -12,7 +12,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb';
+} from '../../commonDb.js';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
@@ -59,13 +59,14 @@ export const lookUpDomId = function (id) {
  *
  * @param _id
  * @param text
+ * @param textObj
  * @param type
  * @param style
  * @param classes
  * @param dir
  * @param props
  */
-export const addVertex = function (_id, text, type, style, classes, dir, props = {}) {
+export const addVertex = function (_id, textObj, type, style, classes, dir, props = {}) {
   let txt;
   let id = _id;
   if (id === undefined) {
@@ -80,16 +81,17 @@ export const addVertex = function (_id, text, type, style, classes, dir, props =
   if (vertices[id] === undefined) {
     vertices[id] = {
       id: id,
+      labelType: 'text',
       domId: MERMAID_DOM_ID_PREFIX + id + '-' + vertexCounter,
       styles: [],
       classes: [],
     };
   }
   vertexCounter++;
-  if (text !== undefined) {
+  if (textObj !== undefined) {
     config = configApi.getConfig();
-    txt = sanitizeText(text.trim());
-
+    txt = sanitizeText(textObj.text.trim());
+    vertices[id].labelType = textObj.type;
     // strip quotes if string starts and ends with a quote
     if (txt[0] === '"' && txt[txt.length - 1] === '"') {
       txt = txt.substring(1, txt.length - 1);
@@ -131,24 +133,27 @@ export const addVertex = function (_id, text, type, style, classes, dir, props =
  * @param _end
  * @param type
  * @param linkText
+ * @param linkTextObj
  */
-export const addSingleLink = function (_start, _end, type, linkText) {
+export const addSingleLink = function (_start, _end, type) {
   let start = _start;
   let end = _end;
   // if (start[0].match(/\d/)) start = MERMAID_DOM_ID_PREFIX + start;
   // if (end[0].match(/\d/)) end = MERMAID_DOM_ID_PREFIX + end;
   // log.info('Got edge...', start, end);
 
-  const edge = { start: start, end: end, type: undefined, text: '' };
-  linkText = type.text;
+  const edge = { start: start, end: end, type: undefined, text: '', labelType: 'text' };
+  log.info('abc78 Got edge...', edge);
+  const linkTextObj = type.text;
 
-  if (linkText !== undefined) {
-    edge.text = sanitizeText(linkText.trim());
+  if (linkTextObj !== undefined) {
+    edge.text = sanitizeText(linkTextObj.text.trim());
 
     // strip quotes if string starts and ends with a quote
     if (edge.text[0] === '"' && edge.text[edge.text.length - 1] === '"') {
       edge.text = edge.text.substring(1, edge.text.length - 1);
     }
+    edge.labelType = linkTextObj.type;
   }
 
   if (type !== undefined) {
@@ -158,11 +163,12 @@ export const addSingleLink = function (_start, _end, type, linkText) {
   }
   edges.push(edge);
 };
-export const addLink = function (_start, _end, type, linktext) {
+export const addLink = function (_start, _end, type) {
+  log.info('addLink (abc78)', _start, _end, type);
   let i, j;
   for (i = 0; i < _start.length; i++) {
     for (j = 0; j < _end.length; j++) {
-      addSingleLink(_start[i], _end[j], type, linktext);
+      addSingleLink(_start[i], _end[j], type);
     }
   }
 };
@@ -457,10 +463,9 @@ export const defaultStyle = function () {
  * @param _title
  */
 export const addSubGraph = function (_id, list, _title) {
-  // console.log('addSubGraph', _id, list, _title);
-  let id = _id.trim();
-  let title = _title;
-  if (_id === _title && _title.match(/\s/)) {
+  let id = _id.text.trim();
+  let title = _title.text;
+  if (_id === _title && _title.text.match(/\s/)) {
     id = undefined;
   }
   /** @param a */
@@ -502,7 +507,14 @@ export const addSubGraph = function (_id, list, _title) {
   title = title || '';
   title = sanitizeText(title);
   subCount = subCount + 1;
-  const subGraph = { id: id, nodes: nodeList, title: title.trim(), classes: [], dir };
+  const subGraph = {
+    id: id,
+    nodes: nodeList,
+    title: title.trim(),
+    classes: [],
+    dir,
+    labelType: _title.type,
+  };
 
   log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);
 
