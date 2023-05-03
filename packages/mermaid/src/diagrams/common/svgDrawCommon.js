@@ -77,7 +77,7 @@ export const drawEmbeddedImage = function (elem, x, y, link) {
   const imageElem = elem.append('use');
   imageElem.attr('x', x);
   imageElem.attr('y', y);
-  var sanitizedLink = sanitizeUrl(link);
+  const sanitizedLink = sanitizeUrl(link);
   imageElem.attr('xlink:href', '#' + sanitizedLink);
 };
 
@@ -111,12 +111,4 @@ export const getTextObj = function () {
     tspan: true,
     valign: undefined,
   };
-};
-
-export default {
-  drawRect,
-  drawImage,
-  drawText,
-  getNoteRect,
-  getTextObj,
 };
