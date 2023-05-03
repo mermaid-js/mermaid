@@ -9,7 +9,7 @@ Flowcharts are composed of **nodes** (geometric shapes) and **edges** (arrows or
 
 ```warning
 If you are using the word "end" in a Flowchart node, capitalize the entire word or any of the letters (e.g., "End" or "END"), or apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897). Typing "end" in all lowercase letters will break the Flowchart.
-\``` Remove the \ here. Suggestion didn't include the ending triplequote.
+```
 
 ### A node (default)
 
