@@ -3,6 +3,8 @@ import DOMPurify from 'dompurify';
 import katex from 'katex';
 import { MermaidConfig } from '../../config.type.js';
 
+export const lineBreakRegex = /<br\s*\/?>/gi;
+
 /**
  * Gets the rows of lines in a string
  *
@@ -66,8 +68,6 @@ export const sanitizeTextOrArray = (
   // TODO: Refactor to avoid flat.
   return a.flat().map((x: string) => sanitizeText(x, config));
 };
-
-export const lineBreakRegex = /<br\s*\/?>/gi;
 
 /**
  * Whether or not a text has any line breaks

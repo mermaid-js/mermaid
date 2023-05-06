@@ -213,7 +213,7 @@ export const addEdges = function (edges, g, diagObj) {
     cnt++;
 
     // Identify Link
-    var linkIdBase = 'L-' + edge.start + '-' + edge.end;
+    const linkIdBase = 'L-' + edge.start + '-' + edge.end;
     // count the links from+to the same node to give unique id
     if (linkIdCnt[linkIdBase] === undefined) {
       linkIdCnt[linkIdBase] = 0;
@@ -224,8 +224,8 @@ export const addEdges = function (edges, g, diagObj) {
     }
     let linkId = linkIdBase + '-' + linkIdCnt[linkIdBase];
     log.info('abc78 new link id to be used is', linkIdBase, linkId, linkIdCnt[linkIdBase]);
-    var linkNameStart = 'LS-' + edge.start;
-    var linkNameEnd = 'LE-' + edge.end;
+    const linkNameStart = 'LS-' + edge.start;
+    const linkNameEnd = 'LE-' + edge.end;
 
     const edgeData = { style: '', labelStyle: '' };
     edgeData.minlen = edge.length || 1;
