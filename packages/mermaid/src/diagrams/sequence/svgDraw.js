@@ -1,7 +1,8 @@
-import common from '../common/common.js';
+import common, { calculateMathMLDimensions, hasKatex, renderKatex } from '../common/common.js';
 import { addFunction } from '../../interactionDb.js';
 import { parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
+import * as configApi from '../../config.js';
 
 export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect');
@@ -152,6 +153,48 @@ const popupMenuDownFunc = function (popupId) {
     pu.style.display = 'none';
   }
 };
+
+export const drawKatex = function (elem, textData, msgModel = null) {
+  let textElem = elem.append('foreignObject');
+  const lines = renderKatex(textData.text, configApi.getConfig());
+
+  const divElem = textElem
+    .append('xhtml:div')
+    .attr('style', 'width: fit-content;')
+    .attr('xmlns', 'http://www.w3.org/1999/xhtml')
+    .html(lines);
+  const dim = divElem.node().getBoundingClientRect();
+
+  textElem.attr('height', Math.round(dim.height)).attr('width', Math.round(dim.width));
+
+  if (textData.class === 'noteText') {
+    const rectElem = elem.node().firstChild;
+
+    rectElem.setAttribute('height', dim.height + 2 * textData.textMargin);
+    const rectDim = rectElem.getBBox();
+
+    textElem
+      .attr('x', Math.round(rectDim.x + rectDim.width / 2 - dim.width / 2))
+      .attr('y', Math.round(rectDim.y + rectDim.height / 2 - dim.height / 2));
+  } else if (msgModel) {
+    let { startx, stopx, starty } = msgModel;
+    if (startx > stopx) {
+      const temp = startx;
+      startx = stopx;
+      stopx = temp;
+    }
+
+    textElem.attr('x', Math.round(startx + Math.abs(startx - stopx) / 2 - dim.width / 2))
+    if (textData.class === 'loopText') {
+      textElem.attr('y', Math.round(starty));
+    } else {
+      textElem.attr('y', Math.round(starty - dim.height));
+    }
+  }
+
+  return [textElem];
+};
+
 export const drawText = function (elem, textData) {
   let prevTextHeight = 0,
     textHeight = 0;
@@ -397,7 +440,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
     }
   }
 
-  _drawTextCandidateFunc(conf)(
+  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     g,
     rect.x,
@@ -487,7 +530,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   const bounds = actElem.node().getBBox();
   actor.height = bounds.height;
 
-  _drawTextCandidateFunc(conf)(
+  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     actElem,
     rect.x,
@@ -623,7 +666,8 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
   txt.fontWeight = fontWeight;
   txt.wrap = true;
 
-  let textElem = drawText(g, txt);
+
+  let textElem = hasKatex(txt.text) ? drawKatex(g, txt, loopModel) : drawText(g, txt);
 
   if (loopModel.sectionTitles !== undefined) {
     loopModel.sectionTitles.forEach(function (item, idx) {
@@ -639,7 +683,13 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
         txt.fontSize = fontSize;
         txt.fontWeight = fontWeight;
         txt.wrap = loopModel.wrap;
-        textElem = drawText(g, txt);
+
+        if (hasKatex(txt.text)) {
+          loopModel.starty = loopModel.sections[idx].y;
+          drawKatex(g, txt, loopModel);
+        } else {
+          drawText(g, txt);
+        }
         let sectionHeight = Math.round(
           textElem
             .map((te) => (te._groups || te)[0][0].getBBox().height)
@@ -930,6 +980,29 @@ const _drawTextCandidateFunc = (function () {
     _setTextAttrs(text, textAttrs);
   }
 
+  function byKatex(content, g, x, y, width, height, textAttrs, conf) {
+    // TODO duplicate render calls, optimize
+    const dim = calculateMathMLDimensions(content, configApi.getConfig());
+    const s = g.append('switch');
+    const f = s
+      .append('foreignObject')
+      .attr('x', x + width / 2 - dim.width / 2)
+      .attr('y', y + height / 2 - dim.height / 2)
+      .attr('width', dim.width)
+      .attr('height', dim.height);
+
+    const text = f.append('xhtml:div').style('height', '100%').style('width', '100%');
+
+    text
+      .append('div')
+      .style('text-align', 'center')
+      .style('vertical-align', 'middle')
+      .html(renderKatex(content, configApi.getConfig()));
+
+    byTspan(content, s, x, y, width, height, textAttrs, conf);
+    _setTextAttrs(text, textAttrs);
+  }
+
   /**
    * @param {any} toText
    * @param {any} fromTextAttrsDict
@@ -942,7 +1015,8 @@ const _drawTextCandidateFunc = (function () {
     }
   }
 
-  return function (conf) {
+  return function (conf, hasKatex = false) {
+    if (hasKatex) return byKatex;
     return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'old' ? byText : byTspan;
   };
 })();

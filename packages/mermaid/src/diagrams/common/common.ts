@@ -195,7 +195,8 @@ export const hasKatex = (text: string): boolean => (text.match(katexRegex)?.leng
  * @returns Object containing {width, height}
  */
 export const calculateMathMLDimensions = (text: string, config: MermaidConfig) => {
-  text = renderKatex(text, config).split(lineBreakRegex).map((text) => hasKatex(text) ? renderKatex(text, config) : `<div>${text}</div>`).join('');
+
+  text = renderKatex(text, config);
   const divElem = document.createElement('div')
   divElem.innerHTML = text;
   divElem.id = 'katex-temp';
@@ -209,6 +210,13 @@ export const calculateMathMLDimensions = (text: string, config: MermaidConfig) =
   return dim;
 }
 
+// export const temp = (text: string, config: MermaidConfig) => {
+//   return renderKatex(text, config).split(lineBreakRegex).map((text) =>
+//     hasKatex(text) ?
+//        `<div style="display: flex;">${text}</div>` :
+//        `<div>${text}</div>`).join('');
+// }
+
 /**
  * Attempts to render and return the KaTeX portion of a string with MathML
  *
@@ -218,14 +226,25 @@ export const calculateMathMLDimensions = (text: string, config: MermaidConfig) =
  */
 export const renderKatex = (text: string, config: MermaidConfig): string => {
   if (isMathMLSupported || (!isMathMLSupported && config.legacyMathML)) {
-    return text.replace(/\$\$(.*)\$\$/g, (r, c) =>
-      katex
-        .renderToString(c, { throwOnError: true, displayMode: true, output: isMathMLSupported ? 'mathml' : 'htmlAndMathml' })
-        .replace(/\n/g, ' ')
-        .replace(/<annotation.*<\/annotation>/g, '')
-    );
+    return text
+      .split(lineBreakRegex)
+        .map((line) => hasKatex(line) ?
+          `
+            <div style="display: flex; align-items: center; justify-content: center; white-space: nowrap;">
+              ${line}
+            </div>
+          ` :
+          `<div>${line}</div>`
+        )
+      .join('')
+      .replace(katexRegex, (r, c) =>
+        katex
+          .renderToString(c, { throwOnError: true, displayMode: true, output: isMathMLSupported ? 'mathml' : 'htmlAndMathml' })
+          .replace(/\n/g, ' ')
+          .replace(/<annotation.*<\/annotation>/g, '')
+      )
   }
-  return text.replace(/\$\$(.*)\$\$/g, (r, c) => 'MathML is unsupported in this environment.');
+  return text.replace(katexRegex, 'MathML is unsupported in this environment.');
 };
 
 export default {
