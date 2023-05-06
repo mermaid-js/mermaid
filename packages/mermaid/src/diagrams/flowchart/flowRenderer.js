@@ -1,12 +1,11 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select, curveLinear, selectAll } from 'd3';
-import katex from 'katex';
 import { getConfig } from '../../config.js';
 import { render as Render } from 'dagre-d3-es';
 import { applyStyle } from 'dagre-d3-es/src/dagre-js/util.js';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
 import { log } from '../../logger.js';
-import common, { evaluate } from '../common/common.js';
+import common, { evaluate, renderKatex } from '../common/common.js';
 import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import flowChartShapes from './flowChartShapes.js';
@@ -58,14 +57,12 @@ export const addVertices = function (vert, g, svgId, root, _doc, diagObj) {
     if (evaluate(getConfig().flowchart.htmlLabels)) {
       // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
       const node = {
-        label: vertexText
-          .replace(/fa[blrs]?:fa-[\w-]+/g, (s) => `<i class='${s.replace(':', ' ')}'></i>`)
-          .replace(/\$\$(.*)\$\$/g, (r, c) =>
-            katex
-              .renderToString(c, { throwOnError: true, displayMode: true, output: 'mathml' })
-              .replace(/\n/g, ' ')
-              .replace(/<annotation.*<\/annotation>/g, '')
-          ),
+        label: renderKatex(
+          vertexText.replace(
+            /fa[blrs]?:fa-[\w-]+/g,
+            (s) => `<i class='${s.replace(':', ' ')}'></i>`
+          )
+        ),
       };
       vertexNode = addHtmlLabel(svg, node).node();
       vertexNode.parentNode.removeChild(vertexNode);
@@ -244,14 +241,9 @@ export const addEdges = function (edges, g, diagObj) {
         edgeData.labelType = 'html';
         edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}" style="${
           edgeData.labelStyle
-        }">${edge.text
-          .replace(/fa[blrs]?:fa-[\w-]+/g, (s) => `<i class='${s.replace(':', ' ')}'></i>`)
-          .replace(/\$\$(.*)\$\$/g, (r, c) =>
-            katex
-              .renderToString(c, { throwOnError: true, displayMode: true, output: 'mathml' })
-              .replace(/\n/g, ' ')
-              .replace(/<annotation.*<\/annotation>/g, '')
-          )}</span>`;
+        }">${renderKatex(
+          edge.text.replace(/fa[blrs]?:fa-[\w-]+/g, (s) => `<i class='${s.replace(':', ' ')}'></i>`)
+        )}</span>`;
       } else {
         edgeData.labelType = 'text';
         edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');

@@ -132,6 +132,17 @@ const config: Partial<MermaidConfig> = {
    */
   secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize'],
   /**
+   * This option specifies if Mermaid can expected the dependnet to include KaTeX stylesheets for browsers
+   * without their own MathML implementation. If this option is disabled and MathML is not supported, the math
+   * equations are replaced with a warning. If this option is enabled and MathML is not supported, Mermaid will
+   * fall back to legacy rendering for KaTeX.
+   *
+   * **Notes**:
+   *
+   * Default value: false
+   */
+  legacyMathML: false,
+  /**
    * This option controls if the generated ids of nodes in the SVG are generated randomly or based
    * on a seed. If set to false, the IDs are generated based on the current date and thus are not
    * deterministic. This is the default behavior.

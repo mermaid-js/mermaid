@@ -34,6 +34,7 @@ export interface MermaidConfig {
   dompurifyConfig?: DOMPurify.Config;
   wrap?: boolean;
   fontSize?: number;
+  legacyMathML?: boolean;
 }
 
 // TODO: More configs needs to be moved in here

@@ -1,4 +1,6 @@
 import DOMPurify from 'dompurify';
+// @ts-ignore @types/katex does not work
+import katex from 'katex';
 import { MermaidConfig } from '../../config.type.js';
 
 /**
@@ -168,6 +170,62 @@ export const parseGenericTypes = function (text: string): string {
   } else {
     return cleanedText;
   }
+};
+
+
+// TODO: find a better method for detecting support. This interface was added in the MathML 4 spec.
+// Firefox versions between [4,71] (0.47%) and Safari versions between [5,13.4] (0.17%) don't have this interface implemented but MathML is supported
+export const isMathMLSupported = window.MathMLElement !== undefined;
+
+export const katexRegex = /\$\$(.*)\$\$/g;
+
+/**
+ * Whether or not a text has KaTeX delimiters
+ *
+ * @param text - The text to test
+ * @returns Whether or not the text has KaTeX delimiters
+ */
+export const hasKatex = (text: string): boolean => (text.match(katexRegex)?.length ?? 0) > 0;
+
+/**
+ * Computes the minimum dimensions needed to display a div contianing MathML
+ *
+ * @param text - The text to test
+ * @param config - Configuration for Mermaid
+ * @returns Object containing {width, height}
+ */
+export const calculateMathMLDimensions = (text: string, config: MermaidConfig) => {
+  text = renderKatex(text, config).split(lineBreakRegex).map((text) => hasKatex(text) ? renderKatex(text, config) : `<div>${text}</div>`).join('');
+  const divElem = document.createElement('div')
+  divElem.innerHTML = text;
+  divElem.id = 'katex-temp';
+  divElem.style.visibility = 'hidden';
+  divElem.style.position = 'absolute';
+  divElem.style.top = '0';
+  const body = document.querySelector('body');
+  body?.insertAdjacentElement('beforeend', divElem);
+  const dim = {width: divElem.clientWidth, height: divElem.clientHeight};
+  divElem.remove();
+  return dim;
+}
+
+/**
+ * Attempts to render and return the KaTeX portion of a string with MathML
+ *
+ * @param text - The text to test
+ * @param config - Configuration for Mermaid
+ * @returns String containing MathML if KaTeX is supported, or an error message if it is not and stylesheets aren't present
+ */
+export const renderKatex = (text: string, config: MermaidConfig): string => {
+  if (isMathMLSupported || (!isMathMLSupported && config.legacyMathML)) {
+    return text.replace(/\$\$(.*)\$\$/g, (r, c) =>
+      katex
+        .renderToString(c, { throwOnError: true, displayMode: true, output: isMathMLSupported ? 'mathml' : 'htmlAndMathml' })
+        .replace(/\n/g, ' ')
+        .replace(/<annotation.*<\/annotation>/g, '')
+    );
+  }
+  return text.replace(/\$\$(.*)\$\$/g, (r, c) => 'MathML is unsupported in this environment.');
 };
 
 export default {

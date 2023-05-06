@@ -1,6 +1,5 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select, curveLinear, selectAll } from 'd3';
-import katex from 'katex';
 
 import flowDb from './flowDb.js';
 import { getConfig } from '../../config.js';
@@ -9,7 +8,7 @@ import utils from '../../utils.js';
 import { render } from '../../dagre-wrapper/index.js';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
 import { log } from '../../logger.js';
-import common, { evaluate } from '../common/common.js';
+import common, { evaluate, renderKatex } from '../common/common.js';
 import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 
@@ -144,12 +143,8 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
       default:
         _shape = 'rect';
     }
-    const labelText = vertexText.replace(/\$\$(.*)\$\$/g, (r, c) =>
-      katex
-        .renderToString(c, { throwOnError: true, displayMode: true, output: 'mathml' })
-        .replace(/\n/g, ' ')
-        .replace(/<annotation.*<\/annotation>/g, '')
-    );
+    const labelText = renderKatex(vertexText, getConfig());
+
     // Add the node
     g.setNode(vertex.id, {
       labelStyle: styles.labelStyle,
@@ -323,14 +318,7 @@ export const addEdges = function (edges, g, diagObj) {
       edgeData.labelpos = 'c';
     }
     edgeData.labelType = edge.labelType;
-    edgeData.label = edge.text
-      .replace(common.lineBreakRegex, '\n')
-      .replace(/\$\$(.*)\$\$/g, (r, c) =>
-        katex
-          .renderToString(c, { throwOnError: true, displayMode: true, output: 'mathml' })
-          .replace(/\n/g, ' ')
-          .replace(/<annotation.*<\/annotation>/g, '')
-      );
+    edgeData.label = renderKatex(edge.text.replace(common.lineBreakRegex, '\n')), getConfig();
 
     if (edge.style === undefined) {
       edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none;';
