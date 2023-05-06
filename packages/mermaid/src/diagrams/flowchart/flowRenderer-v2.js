@@ -318,7 +318,7 @@ export const addEdges = function (edges, g, diagObj) {
       edgeData.labelpos = 'c';
     }
     edgeData.labelType = edge.labelType;
-    edgeData.label = renderKatex(edge.text.replace(common.lineBreakRegex, '\n')), getConfig();
+    edgeData.label = renderKatex(edge.text.replace(common.lineBreakRegex, '\n'), getConfig());
 
     if (edge.style === undefined) {
       edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none;';

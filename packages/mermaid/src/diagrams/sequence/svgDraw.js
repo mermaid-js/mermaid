@@ -149,7 +149,7 @@ export const drawKatex = function (elem, textData, msgModel = null) {
       stopx = temp;
     }
 
-    textElem.attr('x', Math.round(startx + Math.abs(startx - stopx) / 2 - dim.width / 2))
+    textElem.attr('x', Math.round(startx + Math.abs(startx - stopx) / 2 - dim.width / 2));
     if (textData.class === 'loopText') {
       textElem.attr('y', Math.round(starty));
     } else {
@@ -633,7 +633,6 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
   txt.fontWeight = fontWeight;
   txt.wrap = true;
 
-
   let textElem = hasKatex(txt.text) ? drawKatex(g, txt, loopModel) : drawText(g, txt);
 
   if (loopModel.sectionTitles !== undefined) {
@@ -910,6 +909,17 @@ const _drawTextCandidateFunc = (function () {
     _setTextAttrs(text, textAttrs);
   }
 
+  /**
+   *
+   * @param content
+   * @param g
+   * @param x
+   * @param y
+   * @param width
+   * @param height
+   * @param textAttrs
+   * @param conf
+   */
   function byKatex(content, g, x, y, width, height, textAttrs, conf) {
     // TODO duplicate render calls, optimize
     const dim = calculateMathMLDimensions(content, configApi.getConfig());
@@ -946,7 +956,9 @@ const _drawTextCandidateFunc = (function () {
   }
 
   return function (conf, hasKatex = false) {
-    if (hasKatex) return byKatex;
+    if (hasKatex) {
+      return byKatex;
+    }
     return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'old' ? byText : byTspan;
   };
 })();

@@ -132,7 +132,7 @@ const config: Partial<MermaidConfig> = {
    */
   secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize'],
   /**
-   * This option specifies if Mermaid can expected the dependnet to include KaTeX stylesheets for browsers
+   * This option specifies if Mermaid can expected the dependent to include KaTeX stylesheets for browsers
    * without their own MathML implementation. If this option is disabled and MathML is not supported, the math
    * equations are replaced with a warning. If this option is enabled and MathML is not supported, Mermaid will
    * fall back to legacy rendering for KaTeX.

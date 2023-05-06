@@ -172,7 +172,6 @@ export const parseGenericTypes = function (text: string): string {
   }
 };
 
-
 // TODO: find a better method for detecting support. This interface was added in the MathML 4 spec.
 // Firefox versions between [4,71] (0.47%) and Safari versions between [5,13.4] (0.17%) don't have this interface implemented but MathML is supported
 export const isMathMLSupported = window.MathMLElement !== undefined;
@@ -188,16 +187,15 @@ export const katexRegex = /\$\$(.*)\$\$/g;
 export const hasKatex = (text: string): boolean => (text.match(katexRegex)?.length ?? 0) > 0;
 
 /**
- * Computes the minimum dimensions needed to display a div contianing MathML
+ * Computes the minimum dimensions needed to display a div containing MathML
  *
  * @param text - The text to test
  * @param config - Configuration for Mermaid
- * @returns Object containing {width, height}
+ * @returns Object containing \{width, height\}
  */
 export const calculateMathMLDimensions = (text: string, config: MermaidConfig) => {
-
   text = renderKatex(text, config);
-  const divElem = document.createElement('div')
+  const divElem = document.createElement('div');
   divElem.innerHTML = text;
   divElem.id = 'katex-temp';
   divElem.style.visibility = 'hidden';
@@ -205,10 +203,10 @@ export const calculateMathMLDimensions = (text: string, config: MermaidConfig) =
   divElem.style.top = '0';
   const body = document.querySelector('body');
   body?.insertAdjacentElement('beforeend', divElem);
-  const dim = {width: divElem.clientWidth, height: divElem.clientHeight};
+  const dim = { width: divElem.clientWidth, height: divElem.clientHeight };
   divElem.remove();
   return dim;
-}
+};
 
 // export const temp = (text: string, config: MermaidConfig) => {
 //   return renderKatex(text, config).split(lineBreakRegex).map((text) =>
@@ -228,21 +226,26 @@ export const renderKatex = (text: string, config: MermaidConfig): string => {
   if (isMathMLSupported || (!isMathMLSupported && config.legacyMathML)) {
     return text
       .split(lineBreakRegex)
-        .map((line) => hasKatex(line) ?
-          `
+      .map((line) =>
+        hasKatex(line)
+          ? `
             <div style="display: flex; align-items: center; justify-content: center; white-space: nowrap;">
               ${line}
             </div>
-          ` :
-          `<div>${line}</div>`
-        )
+          `
+          : `<div>${line}</div>`
+      )
       .join('')
       .replace(katexRegex, (r, c) =>
         katex
-          .renderToString(c, { throwOnError: true, displayMode: true, output: isMathMLSupported ? 'mathml' : 'htmlAndMathml' })
+          .renderToString(c, {
+            throwOnError: true,
+            displayMode: true,
+            output: isMathMLSupported ? 'mathml' : 'htmlAndMathml',
+          })
           .replace(/\n/g, ' ')
           .replace(/<annotation.*<\/annotation>/g, '')
-      )
+      );
   }
   return text.replace(katexRegex, 'MathML is unsupported in this environment.');
 };
