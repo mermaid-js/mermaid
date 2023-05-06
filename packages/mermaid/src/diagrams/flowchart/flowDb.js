@@ -13,7 +13,6 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../../commonDb.js';
-import { getSymbolByTitle } from 'unicode-lookup';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
@@ -764,11 +763,6 @@ const makeUniq = (sg, allSubgraphs) => {
   return { nodes: res };
 };
 
-const replaceUnicodeTitleWithVal = (title) => {
-  const normalized = title.replace('u:u-', '').replaceAll('-', ' ').toUpperCase();
-  return getSymbolByTitle(normalized);
-};
-
 export const lex = {
   firstGraph,
 };
@@ -809,5 +803,4 @@ export default {
   makeUniq,
   setDiagramTitle,
   getDiagramTitle,
-  replaceUnicodeTitleWithVal,
 };

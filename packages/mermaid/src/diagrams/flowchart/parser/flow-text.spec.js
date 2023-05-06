@@ -340,20 +340,6 @@ describe('[Text] when parsing', () => {
 
       expect(vert['C'].text).toBe('Начало');
     });
-    it('should handle UnicodeData names of the symbols as unicode characters', () => {
-      const res = flow.parser.parse('graph TD;A-->C(u:u-flower u:u-staff-of-hermes);');
-
-      const vert = flow.parser.yy.getVertices();
-
-      expect(vert['C'].text).toBe('⚘ ⚚');
-    });
-    it('should handle unknown names of the symbols as capitalized spaced string', () => {
-      const res = flow.parser.parse('graph TD;A-->C(u:u-unknown-character u:u-staff-of-hermes);');
-
-      const vert = flow.parser.yy.getVertices();
-
-      expect(vert['C'].text).toBe('UNKNOWN CHARACTER ⚚');
-    });
     it('should handle backslask', function () {
       const res = flow.parser.parse('graph TD;A-->C(c:\\windows);');
 

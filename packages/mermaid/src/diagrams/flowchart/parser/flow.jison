@@ -150,7 +150,6 @@ that id.
 "^"                   return 'UP';
 "\|"                  return 'SEP';
 "v"                   return 'DOWN';
-u\:u\-([a-z]+\-?)+    return 'UNICODE_TITLE';
 [A-Za-z]+             return 'ALPHA';
 "\\]"                 return 'TRAPEND';
 "[/"                  return 'TRAPSTART';
@@ -546,11 +545,6 @@ alphaNum
     {$$=$1+''+$2;}
     ;
 
-unicodeTitleStatement
-  : UNICODE_TITLE
-    {$$=yy.replaceUnicodeTitleWithVal($1);}
-  ;
-
 alphaNumStatement
     : DIR
         {$$=$1;}
@@ -573,9 +567,9 @@ direction
     { $$={stmt:'dir', value:'LR'};}
     ;
 
-alphaNumToken  : PUNCTUATION | AMP | UNICODE_TEXT | unicodeTitleStatement | NUM| ALPHA | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT| UNDERSCORE ;
+alphaNumToken  : PUNCTUATION | AMP | UNICODE_TEXT | NUM| ALPHA | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT| UNDERSCORE ;
 
-idStringToken  : ALPHA|UNDERSCORE |UNICODE_TEXT | unicodeTitleStatement | NUM|  COLON | COMMA | PLUS | MINUS | DOWN |EQUALS | MULT | BRKT | DOT | PUNCTUATION | AMP | DEFAULT;
+idStringToken  : ALPHA|UNDERSCORE |UNICODE_TEXT | NUM|  COLON | COMMA | PLUS | MINUS | DOWN |EQUALS | MULT | BRKT | DOT | PUNCTUATION | AMP | DEFAULT;
 
 graphCodeTokens: STADIUMSTART | STADIUMEND | SUBROUTINESTART | SUBROUTINEEND | VERTEX_WITH_PROPS_START | CYLINDERSTART | CYLINDEREND | TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI;
 %%
