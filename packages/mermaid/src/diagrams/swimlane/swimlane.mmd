@@ -1,0 +1,69 @@
+swimlane
+  lane "Customer"
+    Start(Start) --> place-order[Place Order]
+    update-order[Update Order] --> place-order
+  end
+
+  lane "Sales Team"
+    completness[Check order for Completeness]
+    complete{Order complete?} --Yes--> forward[Forward order to Warehouse]
+    complete{Order complete?} --no--> request-changes[Request Changes]
+  end
+
+  lane "Inventory"
+    in-stock{Item in Stock?} --> ship[Ship Items] --> complete(Order Complete)
+  end
+
+  lane "CSD"
+    refund
+    cancelled
+  end
+
+  place-order -->completeness
+  request-changes --> order-update
+  forward --> in-stock --> refund
+  in-stock --> refund[Manage Refund] --> cancelled(Order cancelled)
+  request --> update-order
+
+
+elk.direction:DOWN
+cycleBreaking.strategy: INTERACTIVE
+layering.strategy: INTERACTIVE
+
+node n1 {
+  layout [position: 0, 0]
+  label "n1"
+}
+node n2 {
+  layout [position: 0, 50]
+  label "n2"
+}
+node n3 {
+  layout [position: 0, 100]
+  label "n3"
+}
+
+node n4 {
+  layout [position: 50, 0]
+  label "n4"
+}
+node n5 {
+  layout [position: 50, 50]
+  label "n5"
+}
+node n6 {
+  layout [position: 50, 100]
+  label "n6"
+}
+
+node n7 {
+  layout [position: 50, 100]
+  label "n7"
+}
+
+edge n1 -> n2
+edge n2 -> n3
+edge n2 -> n4
+edge n4 -> n5
+edge n5 -> n6
+edge n5 -> n7
