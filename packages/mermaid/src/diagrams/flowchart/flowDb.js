@@ -55,6 +55,23 @@ export const lookUpDomId = function (id) {
 };
 
 /**
+ * Function to lookup domId from id in the graph definition.
+ *
+ * @param id
+ * @param domId
+ * @public
+ */
+export const lookUpId = function (domId) {
+  const veritceKeys = Object.keys(vertices);
+  for (const veritceKey of veritceKeys) {
+    if (vertices[veritceKey].domId === domId) {
+      return vertices[veritceKey].id;
+    }
+  }
+  return domId;
+};
+
+/**
  * Function called by parser when a node definition has been found
  *
  * @param _id
@@ -775,6 +792,7 @@ export default {
   setAccDescription,
   addVertex,
   lookUpDomId,
+  lookUpId,
   addLink,
   updateLinkInterpolate,
   updateLink,

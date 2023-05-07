@@ -47,6 +47,7 @@ export const registerDiagram = (
     throw new Error(`Diagram ${id} already registered.`);
   }
   diagrams[id] = diagram;
+
   if (detector) {
     addDetector(id, detector);
   }
