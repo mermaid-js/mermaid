@@ -203,8 +203,8 @@ importers:
         specifier: ^1.11.7
         version: 1.11.7
       dompurify:
-        specifier: 3.0.2
-        version: 3.0.2
+        specifier: 3.0.3
+        version: 3.0.3
       elkjs:
         specifier: ^0.8.2
         version: 0.8.2
@@ -733,6 +733,7 @@ packages:
     dependencies:
       '@applitools/eg-frpc': 1.0.2
       '@applitools/eg-socks5-proxy-server': 0.5.4
+      '@applitools/execution-grid-tunnel': 1.0.24
       '@applitools/logger': 1.1.48
       dotenv: 16.0.3
       encoding: 0.1.13
@@ -5932,8 +5933,8 @@ packages:
       domelementtype: 2.3.0
     dev: true
 
-  /dompurify@3.0.2:
-    resolution: {integrity: sha512-B8c6JdiEpxAKnd8Dm++QQxJL4lfuc757scZtcapj6qjTjrQzyq5iAyznLKVvK+77eYNiFblHBlt7MM0fOeqoKw==}
+  /dompurify@3.0.3:
+    resolution: {integrity: sha512-axQ9zieHLnAnHh0sfAamKYiqXMJAVwu+LM/alQ7WDagoWessyWvMSFyW65CqF3owufNu8HBcE4cM2Vflu7YWcQ==}
     dev: false
 
   /domutils@3.0.1:
