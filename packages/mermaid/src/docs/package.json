@@ -10,8 +10,8 @@
     "preview-https": "pnpm build && serve .vitepress/dist",
     "preview-https-no-prefetch": "pnpm build-no-prefetch && serve .vitepress/dist",
     "prefetch": "pnpm fetch-contributors && pnpm fetch-avatars",
-    "fetch-avatars": "esno .vitepress/scripts/fetch-avatars.ts",
-    "fetch-contributors": "esno .vitepress/scripts/fetch-contributors.ts"
+    "fetch-avatars": "tsx .vitepress/scripts/fetch-avatars.ts",
+    "fetch-contributors": "tsx .vitepress/scripts/fetch-contributors.ts"
   },
   "dependencies": {
     "@vueuse/core": "^10.1.0",
@@ -23,7 +23,6 @@
     "@unocss/reset": "^0.51.8",
     "@vite-pwa/vitepress": "^0.0.5",
     "@vitejs/plugin-vue": "^4.2.1",
-    "esno": "^0.16.3",
     "fast-glob": "^3.2.12",
     "https-localhost": "^4.7.1",
     "pathe": "^1.1.0",
