@@ -246,6 +246,20 @@ class Theme {
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
 
+    /* quadrant-graph */
+    this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
+    this.quadrant2Fill = this.quadrant2Fill || adjust(this.quadrant1Fill, {r: 5, g: 5, b: 5});
+    this.quadrant3Fill = this.quadrant3Fill || adjust(this.quadrant1Fill, {r: 10, g: 10, b: 10});
+    this.quadrant4Fill = this.quadrant4Fill || adjust(this.quadrant1Fill, {r: 15, g: 15, b: 15});
+    this.quadrant1TextFill = this.quadrant1TextFill || this.primaryTextColor;
+    this.quadrant2TextFill = this.quadrant2TextFill || adjust(this.quadrant1TextFill, {r: -5, g: -5, b: -5});
+    this.quadrant3TextFill = this.quadrant3TextFill || adjust(this.quadrant1TextFill, {r: -10, g: -10, b: -10});
+    this.quadrant4TextFill = this.quadrant4TextFill || adjust(this.quadrant1TextFill, {r: -15, g: -15, b: -15});
+    this.quadrantPointFill = this.quadrantPointFill || this.secondaryColor;
+    this.quadrantPointTextFill = this.quadrantPointTextFill || this.secondaryTextColor;
+    this.quadrantXAxisTextFill = this.quadrantXAxisTextFill || this.primaryTextColor;
+    this.quadrantYAxisTextFill = this.quadrantYAxisTextFill || this.primaryTextColor;
+
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;
     this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;

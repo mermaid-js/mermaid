@@ -27,6 +27,7 @@ export interface MermaidConfig {
   state?: StateDiagramConfig;
   er?: ErDiagramConfig;
   pie?: PieDiagramConfig;
+  quadrantChart?: QuadrantChartConfig;
   requirement?: RequirementDiagramConfig;
   mindmap?: MindmapDiagramConfig;
   gitGraph?: GitGraphDiagramConfig;
@@ -224,6 +225,21 @@ export interface MindmapDiagramConfig extends BaseDiagramConfig {
 
 export interface PieDiagramConfig extends BaseDiagramConfig {
   textPosition?: number;
+}
+
+export interface QuadrantChartConfig extends BaseDiagramConfig {
+  quadrantPadding?: number;
+  xAxisLabelPadding?: number;
+  yAxisLabelPadding?: number;
+  xAxisLabelFontSize?: number;
+  yAxisLabelFontSize?: number;
+  quadrantLabelFontSize: number;
+  quadrantTextTopPadding: number;
+  pointTextPadding: number;
+  pointLabelFontSize: number;
+  pointRadius: number;
+  xAxisPosition: 'top' | 'bottom';
+  yAxisPosition: 'left' | 'right';
 }
 
 export interface ErDiagramConfig extends BaseDiagramConfig {
