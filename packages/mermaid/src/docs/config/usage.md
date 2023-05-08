@@ -345,10 +345,10 @@ mermaid.parseError = function (err, hash) {
   displayErrorInGui(err);
 };
 
-const textFieldUpdated = function () {
+const textFieldUpdated = async function () {
   const textStr = getTextFromFormField('code');
 
-  if (mermaid.parse(textStr)) {
+  if (await mermaid.parse(textStr)) {
     reRender(textStr);
   }
 };
