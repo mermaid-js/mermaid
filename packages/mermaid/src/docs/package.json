@@ -10,8 +10,8 @@
     "preview-https": "pnpm build && serve .vitepress/dist",
     "preview-https-no-prefetch": "pnpm build-no-prefetch && serve .vitepress/dist",
     "prefetch": "pnpm fetch-contributors && pnpm fetch-avatars",
-    "fetch-avatars": "tsx .vitepress/scripts/fetch-avatars.ts",
-    "fetch-contributors": "tsx .vitepress/scripts/fetch-contributors.ts"
+    "fetch-avatars": "ts-node-esm .vitepress/scripts/fetch-avatars.ts",
+    "fetch-contributors": "ts-node-esm .vitepress/scripts/fetch-contributors.ts"
   },
   "dependencies": {
     "@vueuse/core": "^10.1.0",

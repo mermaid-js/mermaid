@@ -6,6 +6,6 @@ export default {
     // https://prettier.io/docs/en/cli.html#--cache
     'prettier --write',
   ],
-  'cSpell.json': ['tsx scripts/fixCSpell.ts'],
+  'cSpell.json': ['ts-node-esm scripts/fixCSpell.ts'],
   '**/*.jison': ['pnpm -w run lint:jison'],
 };
