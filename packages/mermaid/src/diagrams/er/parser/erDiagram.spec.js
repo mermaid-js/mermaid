@@ -718,5 +718,14 @@ describe('when parsing ER diagram it...', function () {
       const rels = erDb.getRelationships();
       expect(rels[0].roleA).toBe('places');
     });
+
+    it('should represent parent-child relationship correctly', function () {
+      erDiagram.parser.parse('erDiagram\nPROJECT u--o{ TEAM_MEMBER : "parent"');
+      const rels = erDb.getRelationships();
+      expect(Object.keys(erDb.getEntities()).length).toBe(2);
+      expect(rels.length).toBe(1);
+      expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.MD_PARENT);
+      expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ZERO_OR_MORE);
+    });
   });
 });

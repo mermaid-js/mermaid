@@ -287,7 +287,17 @@ const getStartDate = function (prevTime, dateFormat, str) {
     log.debug('Invalid date:' + str);
     log.debug('With date format:' + dateFormat.trim());
     const d = new Date(str);
-    if (d === undefined || isNaN(d.getTime())) {
+    if (
+      d === undefined ||
+      isNaN(d.getTime()) ||
+      // WebKit browsers can mis-parse invalid dates to be ridiculously
+      // huge numbers, e.g. new Date('202304') gets parsed as January 1, 202304.
+      // This can cause virtually infinite loops while rendering, so for the
+      // purposes of Gantt charts we'll just treat any date beyond 10,000 AD/BC as
+      // invalid.
+      d.getFullYear() < -10000 ||
+      d.getFullYear() > 10000
+    ) {
       throw new Error('Invalid date:' + str);
     }
     return d;

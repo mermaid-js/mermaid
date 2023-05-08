@@ -19,6 +19,10 @@
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
+%x class
+%x class-body
+%x namespace
+%x namespace-body
 %%
 \%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
 .*direction\s+TB[^\n]*                                          return 'direction_tb';
@@ -41,35 +45,41 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 
 \s*(\r?\n)+                return 'NEWLINE';
 \s+                     /* skip whitespace */
+
 "classDiagram-v2"       return 'CLASS_DIAGRAM';
 "classDiagram"          return 'CLASS_DIAGRAM';
-[{]                     { this.begin("struct"); /*console.log('Starting struct');*/ return 'STRUCT_START';}
-<INITIAL,struct>"[*]"   { /*console.log('EDGE_STATE=',yytext);*/ return 'EDGE_STATE';}
-<struct><<EOF>>         return "EOF_IN_STRUCT";
-<struct>[{]             return "OPEN_IN_STRUCT";
-<struct>[}]             { /*console.log('Ending struct');*/this.popState(); return 'STRUCT_STOP';}}
-<struct>[\n]            /* nothing */
-<struct>[^{}\n]*        { /*console.log('lex-member: ' + yytext);*/  return "MEMBER";}
+"[*]"                   return 'EDGE_STATE';
 
-"class"               return 'CLASS';
-"cssClass"            return 'CSSCLASS';
-"callback"            return 'CALLBACK';
-"link"                return 'LINK';
-"click"               return 'CLICK';
-"note for"            return 'NOTE_FOR';
-"note"                return 'NOTE';
-"<<"                  return 'ANNOTATION_START';
-">>"                  return 'ANNOTATION_END';
-[~]                   this.begin("generic");
-<generic>[~]          this.popState();
-<generic>[^~]*        return "GENERICTYPE";
-["]                   this.begin("string");
-<string>["]           this.popState();
-<string>[^"]*         return "STR";
+<INITIAL,namespace>"namespace"  { this.begin('namespace'); return 'NAMESPACE'; }
+<namespace>\s*(\r?\n)+          { this.popState(); return 'NEWLINE'; }
+<namespace>\s+                  /* skip whitespace */
+<namespace>[{]                  { this.begin("namespace-body"); return 'STRUCT_START';}
+<namespace-body>[}]             { this.popState(); return 'STRUCT_STOP'; }
+<namespace-body><<EOF>>         return "EOF_IN_STRUCT";
+<namespace-body>\s*(\r?\n)+     return 'NEWLINE';
+<namespace-body>\s+             /* skip whitespace */
+<namespace-body>"[*]"           return 'EDGE_STATE';
 
-[`]                   this.begin("bqstring");
-<bqstring>[`]         this.popState();
-<bqstring>[^`]+       return "BQUOTE_STR";
+<INITIAL,namespace-body>"class"     { this.begin('class'); return 'CLASS';}
+<class>\s*(\r?\n)+          { this.popState(); return 'NEWLINE'; }
+<class>\s+                  /* skip whitespace */
+<class>[}]                  { this.popState(); this.popState(); return 'STRUCT_STOP';}
+<class>[{]                  { this.begin("class-body"); return 'STRUCT_START';}
+<class-body>[}]             { this.popState(); return 'STRUCT_STOP'; }
+<class-body><<EOF>>         return "EOF_IN_STRUCT";
+<class-body>"[*]"           { return 'EDGE_STATE';}
+<class-body>[{]             return "OPEN_IN_STRUCT";
+<class-body>[\n]            /* nothing */
+<class-body>[^{}\n]*        { return "MEMBER";}
+
+<*>"cssClass"           return 'CSSCLASS';
+<*>"callback"           return 'CALLBACK';
+<*>"link"               return 'LINK';
+<*>"click"              return 'CLICK';
+<*>"note for"           return 'NOTE_FOR';
+<*>"note"               return 'NOTE';
+<*>"<<"                 return 'ANNOTATION_START';
+<*>">>"                 return 'ANNOTATION_END';
 
 /*
 ---interactivity command---
@@ -77,7 +87,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 line was introduced with 'click'.
 'href "<link>"' attaches the specified link to the node that was specified by 'click'.
 */
-"href"[\s]+["]          this.begin("href");
+<*>"href"[\s]+["]       this.begin("href");
 <href>["]               this.popState();
 <href>[^"]*             return 'HREF';
 
@@ -89,41 +99,53 @@ the line was introduced with 'click'.
 arguments to the node that was specified by 'click'.
 Function arguments are optional: 'call <callback_name>()' simply executes 'callback_name' without any arguments.
 */
-"call"[\s]+              this.begin("callback_name");
+<*>"call"[\s]+              this.begin("callback_name");
 <callback_name>\([\s]*\) this.popState();
 <callback_name>\(        this.popState(); this.begin("callback_args");
 <callback_name>[^(]*     return 'CALLBACK_NAME';
 <callback_args>\)        this.popState();
 <callback_args>[^)]*     return 'CALLBACK_ARGS';
 
-"_self"               return 'LINK_TARGET';
-"_blank"              return 'LINK_TARGET';
-"_parent"             return 'LINK_TARGET';
-"_top"                return 'LINK_TARGET';
+<generic>[~]            this.popState();
+<generic>[^~]*          return "GENERICTYPE";
+<*>[~]                  this.begin("generic");
 
-\s*\<\|               return 'EXTENSION';
-\s*\|\>               return 'EXTENSION';
-\s*\>                 return 'DEPENDENCY';
-\s*\<                 return 'DEPENDENCY';
-\s*\*                 return 'COMPOSITION';
-\s*o                  return 'AGGREGATION';
-\s*\(\)               return 'LOLLIPOP';
-\-\-                  return 'LINE';
-\.\.                  return 'DOTTED_LINE';
-":"{1}[^:\n;]+        return 'LABEL';
-":"{3}                return 'STYLE_SEPARATOR';
-\-                    return 'MINUS';
-"."                   return 'DOT';
-\+                    return 'PLUS';
-\%                    return 'PCT';
-"="                   return 'EQUALS';
-\=                    return 'EQUALS';
-\w+                   return 'ALPHA';
-"["                   return 'SQS';
-"]"                   return 'SQE';
-[!"#$%&'*+,-.`?\\/]   return 'PUNCTUATION';
-[0-9]+                return 'NUM';
-[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
+<string>["]             this.popState();
+<string>[^"]*           return "STR";
+<*>["]                  this.begin("string");
+
+<bqstring>[`]           this.popState();
+<bqstring>[^`]+         return "BQUOTE_STR";
+<*>[`]                  this.begin("bqstring");
+
+<*>"_self"              return 'LINK_TARGET';
+<*>"_blank"             return 'LINK_TARGET';
+<*>"_parent"            return 'LINK_TARGET';
+<*>"_top"               return 'LINK_TARGET';
+
+<*>\s*\<\|              return 'EXTENSION';
+<*>\s*\|\>              return 'EXTENSION';
+<*>\s*\>                return 'DEPENDENCY';
+<*>\s*\<                return 'DEPENDENCY';
+<*>\s*\*                return 'COMPOSITION';
+<*>\s*o                 return 'AGGREGATION';
+<*>\s*\(\)              return 'LOLLIPOP';
+<*>\-\-                 return 'LINE';
+<*>\.\.                 return 'DOTTED_LINE';
+<*>":"{1}[^:\n;]+       return 'LABEL';
+<*>":"{3}               return 'STYLE_SEPARATOR';
+<*>\-                   return 'MINUS';
+<*>"."                  return 'DOT';
+<*>\+                   return 'PLUS';
+<*>\%                   return 'PCT';
+<*>"="                  return 'EQUALS';
+<*>\=                   return 'EQUALS';
+<*>\w+                  return 'ALPHA';
+<*>"["                  return 'SQS';
+<*>"]"                  return 'SQE';
+<*>[!"#$%&'*+,-.`?\\/]  return 'PUNCTUATION';
+<*>[0-9]+               return 'NUM';
+<*>[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
 [\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|
 [\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|
@@ -184,9 +206,9 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 [\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|
 [\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|
 [\uFFD2-\uFFD7\uFFDA-\uFFDC]
-                      return 'UNICODE_TEXT';
-\s                    return 'SPACE';
-<<EOF>>               return 'EOF';
+                        return 'UNICODE_TEXT';
+<*>\s                   return 'SPACE';
+<*><<EOF>>              return 'EOF';
 
 /lex
 
@@ -254,6 +276,11 @@ classLabel
     : SQS STR SQE { $$=$2; }
     ;
 
+namespaceName
+    : alphaNumToken { $$=$1; }
+    | alphaNumToken namespaceName { $$=$1+$2; }
+    ;
+
 className
     : alphaNumToken { $$=$1; }
     | classLiteralName { $$=$1; }
@@ -265,6 +292,7 @@ className
 statement
     : relationStatement       { yy.addRelation($1); }
     | relationStatement LABEL { $1.title =  yy.cleanupLabel($2); yy.addRelation($1);        }
+    | namespaceStatement
     | classStatement
     | methodStatement
     | annotationStatement
@@ -275,6 +303,21 @@ statement
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
     | acc_descr_multiline_value  { $$=$1.trim();yy.setAccDescription($$); }
+    ;
+
+namespaceStatement
+    : namespaceIdentifier STRUCT_START classStatements STRUCT_STOP          {yy.addClassesToNamespace($1, $3);}
+    | namespaceIdentifier STRUCT_START NEWLINE classStatements STRUCT_STOP  {yy.addClassesToNamespace($1, $4);}
+    ;
+
+namespaceIdentifier
+    : NAMESPACE namespaceName   {$$=$2; yy.addNamespace($2);}
+    ;
+
+classStatements
+    : classStatement                            {$$=[$1]}
+    | classStatement NEWLINE                    {$$=[$1]}
+    | classStatement NEWLINE classStatements    {$3.unshift($1); $$=$3}
     ;
 
 classStatement
