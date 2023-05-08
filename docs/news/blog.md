@@ -5,6 +5,17 @@
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/news/blog.md](../../packages/mermaid/src/docs/news/blog.md).
 
 # Blog
+## [Bad documentation is bad for developers](https://www.mermaidchart.com/blog/posts/bad-documentation-is-bad-for-developers)
+
+26 April 2023 · 11 mins
+
+Documentation tends to be bad because companies and projects don’t fully realize the costs of bad documentation.
+
+## [Automatic text wrapping in flowcharts is here!](https://www.mermaidchart.com/blog/posts/automatic-text-wrapping-in-flowcharts-is-here/)
+
+3 April 2023 · 3 mins
+
+Markdown Strings reduce the hassle # Starting from v10.
 
 ## [Mermaid Chart officially launched with sharable diagram links and presentation mode](https://www.mermaidchart.com/blog/posts/mermaid-chart-officially-launched-with-sharable-diagram-links-and-presentation-mode/)
 
