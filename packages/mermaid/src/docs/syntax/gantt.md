@@ -193,7 +193,7 @@ More info in: [https://github.com/d3/d3-time#interval_every](https://github.com/
 
 The compact mode allows you to display multiple tasks in the same row. Compact mode can be enabled for a gantt chart by setting the display mode of the graph via preceeding YAML settings.
 
-```mmd
+```mermaid
 ---
 displayMode: compact
 ---
@@ -211,7 +211,7 @@ gantt
 
 Comments can be entered within a gantt chart, which will be ignored by the parser. Comments need to be on their own line and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax.
 
-```mmd
+```mermaid
 gantt
     title A Gantt Diagram
     %% this is a comment

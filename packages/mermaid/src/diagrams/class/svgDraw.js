@@ -486,6 +486,7 @@ const buildLegacyDisplay = function (text) {
     cssStyle,
   };
 };
+
 /**
  * Adds a <tspan> for a member in a diagram
  *

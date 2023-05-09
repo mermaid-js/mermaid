@@ -5,11 +5,11 @@ outline: 'deep' # shows all h3 headings in outline in Vitepress
 
 # Flowcharts - Basic Syntax
 
-All Flowcharts are composed of **nodes**, the geometric shapes and **edges**, the arrows or lines. The mermaid code defines the way that these **nodes** and **edges** are made and interact.
+Flowcharts are composed of **nodes** (geometric shapes) and **edges** (arrows or lines). The Mermaid code defines how nodes and edges are made and accommodates different arrow types, multi-directional arrows, and any linking to and from subgraphs.
 
-It can also accommodate different arrow types, multi directional arrows, and linking to and from subgraphs.
-
-> **Important note**: Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).
+```warning
+If you are using the word "end" in a Flowchart node, capitalize the entire word or any of the letters (e.g., "End" or "END"), or apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897). Typing "end" in all lowercase letters will break the Flowchart.
+```
 
 ### A node (default)
 
@@ -294,7 +294,7 @@ word of warning, one could go overboard with this making the flowchart harder to
 markdown form. The Swedish word `lagom` comes to mind. It means, not too much and not too little.
 This goes for expressive syntaxes as well.
 
-```mmd
+```mermaid
 flowchart TB
     A --> C
     A --> D
@@ -578,7 +578,7 @@ Beginner's tip—a full example using interactive links in a html context:
 
 Comments can be entered within a flow diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any flow syntax
 
-```mmd
+```mermaid
 flowchart LR
 %% this is a comment A -- text --> B{node}
    A -- text --> B -- text2 --> C
@@ -704,7 +704,7 @@ flowchart TD
     B-->E(A fa:fa-camera-retro perhaps?)
 ```
 
-?> Mermaid is now only compatible with Font Awesome versions 4 and 5. Check that you are using the correct version of Font Awesome.
+Mermaid is compatible with Font Awesome up to verion 5, Free icons only. Check that the icons you use are from the [supported set of icons](https://fontawesome.com/v5/search?o=r&m=free).
 
 ## Graph declarations with spaces between vertices and link and without semicolon
 
