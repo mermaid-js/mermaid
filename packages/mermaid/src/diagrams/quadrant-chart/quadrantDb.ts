@@ -15,54 +15,55 @@ import { QuadrantBuilder } from './quadrantBuilder.js';
 
 const config = configApi.getConfig();
 
-function textSanitizer(text) {
+function textSanitizer(text: string) {
   return sanitizeText(text.trim(), config);
 }
 
+type LexTextObj = { text: string; type: 'text' | 'markdown' };
+
 const quadrantBuilder = new QuadrantBuilder();
 
-function setQuadrant1Text(textObj) {
+function setQuadrant1Text(textObj: LexTextObj) {
   quadrantBuilder.quadrant1Text = textSanitizer(textObj.text);
 }
 
-function setQuadrant2Text(textObj) {
+function setQuadrant2Text(textObj: LexTextObj) {
   quadrantBuilder.quadrant2Text = textSanitizer(textObj.text);
 }
 
-function setQuadrant3Text(textObj) {
+function setQuadrant3Text(textObj: LexTextObj) {
   quadrantBuilder.quadrant3Text = textSanitizer(textObj.text);
 }
 
-function setQuadrant4Text(textObj) {
+function setQuadrant4Text(textObj: LexTextObj) {
   quadrantBuilder.quadrant4Text = textSanitizer(textObj.text);
 }
 
-function setXAxisLeftText(textObj) {
+function setXAxisLeftText(textObj: LexTextObj) {
   quadrantBuilder.xAxisLeftText = textSanitizer(textObj.text);
 }
 
-function setXAxisRightText(textObj) {
+function setXAxisRightText(textObj: LexTextObj) {
   quadrantBuilder.xAxisRightText = textSanitizer(textObj.text);
 }
 
-function setYAxisTopText(textObj) {
+function setYAxisTopText(textObj: LexTextObj) {
   quadrantBuilder.yAxisTopText = textSanitizer(textObj.text);
 }
 
-function setYAxisBottomText(textObj) {
+function setYAxisBottomText(textObj: LexTextObj) {
   quadrantBuilder.yAxisBottomText = textSanitizer(textObj.text);
 }
 
-function addPoints(textObj, x, y) {
-  console.log(textObj, x, y);
+function addPoints(textObj: LexTextObj, x: number, y: number) {
   quadrantBuilder.addPoints([{ x, y, text: textSanitizer(textObj.text) }]);
 }
 
-function setWidth(width) {
+function setWidth(width: number) {
   quadrantBuilder.totalWidth = width;
 }
 
-function setHeight(height) {
+function setHeight(height: number) {
   quadrantBuilder.totalHeight = height;
 }
 
@@ -81,22 +82,25 @@ function getQuadrantData() {
   quadrantBuilder.pointTextFill = themeVariables.quadrantPointTextFill;
   quadrantBuilder.xAxisTextFill = themeVariables.quadrantXAxisTextFill;
   quadrantBuilder.yAxisTextFill = themeVariables.quadrantYAxisTextFill;
-  quadrantBuilder.quadrantPadding = quadrantChartConfig.quadrantPadding;
-  quadrantBuilder.xAxisLabelPadding = quadrantChartConfig.xAxisLabelPadding;
-  quadrantBuilder.yAxisLabelPadding = quadrantChartConfig.yAxisLabelPadding;
-  quadrantBuilder.xAxisLabelFontSize = quadrantChartConfig.xAxisLabelFontSize;
-  quadrantBuilder.yAxisLabelFontSize = quadrantChartConfig.yAxisLabelFontSize;
-  quadrantBuilder.quadrantLabelFontSize = quadrantChartConfig.quadrantLabelFontSize;
-  quadrantBuilder.quadrantTextTopPadding = quadrantChartConfig.quadrantTextTopPadding;
-  quadrantBuilder.pointTextPadding = quadrantChartConfig.pointTextPadding;
-  quadrantBuilder.pointLabelFontSize = quadrantChartConfig.pointLabelFontSize;
-  quadrantBuilder.pointRadius = quadrantChartConfig.pointRadius;
-  quadrantBuilder.xAxisPosition = quadrantChartConfig.xAxisPosition;
-  quadrantBuilder.yAxisPosition = quadrantChartConfig.yAxisPosition;
+  if (quadrantChartConfig) {
+    quadrantBuilder.quadrantPadding = quadrantChartConfig.quadrantPadding;
+    quadrantBuilder.xAxisLabelPadding = quadrantChartConfig.xAxisLabelPadding;
+    quadrantBuilder.yAxisLabelPadding = quadrantChartConfig.yAxisLabelPadding;
+    quadrantBuilder.xAxisLabelFontSize = quadrantChartConfig.xAxisLabelFontSize;
+    quadrantBuilder.yAxisLabelFontSize = quadrantChartConfig.yAxisLabelFontSize;
+    quadrantBuilder.quadrantLabelFontSize = quadrantChartConfig.quadrantLabelFontSize;
+    quadrantBuilder.quadrantTextTopPadding = quadrantChartConfig.quadrantTextTopPadding;
+    quadrantBuilder.pointTextPadding = quadrantChartConfig.pointTextPadding;
+    quadrantBuilder.pointLabelFontSize = quadrantChartConfig.pointLabelFontSize;
+    quadrantBuilder.pointRadius = quadrantChartConfig.pointRadius;
+    quadrantBuilder.xAxisPosition = quadrantChartConfig.xAxisPosition;
+    quadrantBuilder.yAxisPosition = quadrantChartConfig.yAxisPosition;
+  }
   return quadrantBuilder.build();
 }
 
-export const parseDirective = function (statement, context, type) {
+export const parseDirective = function (statement: string, context: string, type: string) {
+  // @ts-ignore: TODO Fix ts errors
   mermaidAPI.parseDirective(this, statement, context, type);
 };
 

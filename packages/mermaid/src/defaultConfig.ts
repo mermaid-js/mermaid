@@ -1284,6 +1284,24 @@ const config: Partial<MermaidConfig> = {
     /**
      * | Parameter       | Description                        | Type    | Required | Values              |
      * | --------------- | ---------------------------------- | ------- | -------- | ------------------- |
+     * | chartWidth      | Width of the chart                 | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 500
+     */
+    chartWidth: 500,
+    /**
+     * | Parameter       | Description                        | Type    | Required | Values              |
+     * | --------------- | ---------------------------------- | ------- | -------- | ------------------- |
+     * | chartHeight     | Height of the chart                | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 500
+     */
+    chartHeight: 500,
+    /**
+     * | Parameter       | Description                        | Type    | Required | Values              |
+     * | --------------- | ---------------------------------- | ------- | -------- | ------------------- |
      * | quadrantPadding | Padding around the quadrant square | number  | Optional | Any positive number |
      *
      * **Notes:**
@@ -1389,6 +1407,19 @@ const config: Partial<MermaidConfig> = {
      * Default value: left
      */
     yAxisPosition: 'left',
+    /**
+     * | Parameter   | Description | Type    | Required | Values      |
+     * | ----------- | ----------- | ------- | -------- | ----------- |
+     * | useMaxWidth | See Notes   | boolean | Required | true, false |
+     *
+     * **Notes:**
+     *
+     * When this flag is set to true, the diagram width is locked to 100% and scaled based on
+     * available space. If set to false, the diagram reserves its absolute width.
+     *
+     * Default value: true
+     */
+    useMaxWidth: true,
   },
 
   /** The object containing configurations specific for req diagrams */

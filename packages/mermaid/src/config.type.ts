@@ -228,11 +228,13 @@ export interface PieDiagramConfig extends BaseDiagramConfig {
 }
 
 export interface QuadrantChartConfig extends BaseDiagramConfig {
-  quadrantPadding?: number;
-  xAxisLabelPadding?: number;
-  yAxisLabelPadding?: number;
-  xAxisLabelFontSize?: number;
-  yAxisLabelFontSize?: number;
+  chartWidth: number;
+  chartHeight: number;
+  quadrantPadding: number;
+  xAxisLabelPadding: number;
+  yAxisLabelPadding: number;
+  xAxisLabelFontSize: number;
+  yAxisLabelFontSize: number;
   quadrantLabelFontSize: number;
   quadrantTextTopPadding: number;
   pointTextPadding: number;
