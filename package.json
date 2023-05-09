@@ -26,6 +26,7 @@
     "lint": "eslint --cache --cache-strategy content --ignore-path .gitignore . && pnpm lint:jison && prettier --cache --check .",
     "lint:fix": "eslint --cache --cache-strategy content --fix --ignore-path .gitignore . && prettier --write . && ts-node-esm scripts/fixCSpell.ts",
     "lint:jison": "ts-node-esm ./scripts/jison/lint.mts",
+    "contributors": "ts-node-esm scripts/updateContributors.ts",
     "cypress": "cypress run",
     "cypress:open": "cypress open",
     "e2e": "start-server-and-test dev http://localhost:9000/ cypress",
