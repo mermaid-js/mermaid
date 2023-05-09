@@ -23,6 +23,8 @@ async function fetchContributors() {
       }
     );
     data = await response.json();
+    console.log(response.status, response.statusText);
+    console.log(data);
     collaborators.push(...data.map((i) => i.login));
     page++;
   } while (data.length === 100);
