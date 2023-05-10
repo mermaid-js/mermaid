@@ -1,6 +1,6 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select, curveLinear, selectAll } from 'd3';
-import swimlaneLayout from './swimlane-layout.js';
+import { swimlaneLayout } from './swimlane-layout.js';
 
 import flowDb from '../flowDb.js';
 import { getConfig } from '../../../config.js';
