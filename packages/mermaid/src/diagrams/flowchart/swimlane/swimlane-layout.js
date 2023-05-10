@@ -67,8 +67,33 @@ export function assignRanks(graph, subgraphLookupTable) {
 /**
  *
  * @param graph
+ * @param diagObj
  */
-export function swimlaneLayout(graph) {
-  const ranks = assignRanks(graph);
-  return graph;
+export function swimlaneLayout(graph, diagObj) {
+  const subgraphLookupTable = getSubgraphLookupTable(diagObj);
+  const ranks = assignRanks(graph, subgraphLookupTable);
+
+  const subGraphs = diagObj.db.getSubGraphs();
+  const lanes = [];
+  const laneDb = {};
+  for (let i = subGraphs.length - 1; i >= 0; i--) {
+    const subG = subGraphs[i];
+    const lane = {
+      title: subG.title,
+      x: i * 200,
+      width: 200,
+    };
+    lanes.push(lane);
+    laneDb[subG.id] = lane;
+  }
+
+  // Basic layout
+  graph.nodes().forEach((nodeId) => {
+    const rank = ranks.get(nodeId);
+    const laneId = subgraphLookupTable[nodeId];
+    const lane = laneDb[laneId];
+    graph.setNode(nodeId, { y: rank * 200 + 50, x: lane.x + lane.width / 2 });
+  });
+
+  return { graph, lanes };
 }
