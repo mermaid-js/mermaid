@@ -576,6 +576,16 @@ In the example below the style defined in the linkStyle statement will belong to
 linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
 ```
 
+A new way is added to have the linkStyle attached to the previous connection, so you do not need to know the number of the link.
+Just replace the number with a minus.
+
+```
+A --> B
+linkStyle - stroke:red;
+B --> C
+linkStyle - stroke:green;
+```
+
 ### Styling line curves
 
 It is possible to style the type of curve used for lines between items, if the default method does not meet your needs.

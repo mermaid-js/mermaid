@@ -891,4 +891,23 @@ graph TD
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
+  it('66: should render a flowchart with linkStyle - no htmlLabels', () => {
+    imgSnapshotTest(
+      `      ---
+      title: Traffic light
+      ---
+      flowchart TD
+          Driving --> TrafficLight{ Orange? }
+          TrafficLight --> |No| Go{Green?}
+          linkStyle - stroke:blue;
+          TrafficLight ---> |Yes| SpeedUp
+          linkStyle - stroke:orange;
+          Go --> |Yes| JustCruise
+          linkStyle - stroke:green;
+          Go --> |No| Breaks[Hit the breaks]
+          linkStyle - stroke:red;
+      `,
+      { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
+    );
+  });
 });
