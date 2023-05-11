@@ -904,7 +904,7 @@ graph TD
           linkStyle - stroke:orange;
           Go --> |Yes| JustCruise
           linkStyle - stroke:green;
-          Go --> |No| Breaks[Hit the breaks]
+          Go --> |No| Breaks[Hit the brakes]
           linkStyle - stroke:red;
       `,
       { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
