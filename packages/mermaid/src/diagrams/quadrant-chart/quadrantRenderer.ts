@@ -7,6 +7,7 @@ import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { Diagram } from '../../Diagram.js';
 import {
   QuadrantBuildType,
+  QuadrantLineType,
   QuadrantPointType,
   QuadrantQuadrantsType,
   QuadrantTextType,
@@ -29,7 +30,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
 
   const conf = configApi.getConfig();
 
-  log.debug('Rendering info diagram\n' + txt);
+  log.debug('Rendering quadrant chart\n' + txt);
 
   const securityLevel = conf.securityLevel;
   // Handle root and Document for when rendering in sandbox mode
@@ -62,8 +63,37 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   const quadrantData: QuadrantBuildType = diagObj.db.getQuadrantData();
 
   const quadrantsGroup = group.append('g').attr('class', 'quadrants');
+  const borderGroup = group.append('g').attr('class', 'border');
   const dataPointGroup = group.append('g').attr('class', 'data-points');
   const labelGroup = group.append('g').attr('class', 'labels');
+  const titleGroup = group.append('g').attr('class', 'title');
+
+  if (quadrantData.title) {
+    titleGroup
+      .append('text')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('fill', quadrantData.title.fill)
+      .attr('font-size', quadrantData.title.fontSize)
+      .attr('dominant-baseline', getDominantBaseLine(quadrantData.title.horizontalPos))
+      .attr('text-anchor', getTextAnchor(quadrantData.title.verticalPos))
+      .attr('transform', getTransformation(quadrantData.title))
+      .text(quadrantData.title.text);
+  }
+
+  if (quadrantData.borderLines) {
+    borderGroup
+      .selectAll('line')
+      .data(quadrantData.borderLines)
+      .enter()
+      .append('line')
+      .attr('x1', (data: QuadrantLineType) => data.x1)
+      .attr('y1', (data: QuadrantLineType) => data.y1)
+      .attr('x2', (data: QuadrantLineType) => data.x2)
+      .attr('y2', (data: QuadrantLineType) => data.y2)
+      .style('stroke', (data: QuadrantLineType) => data.strokeFill)
+      .style('stroke-width', (data: QuadrantLineType) => data.strokeWidth);
+  }
 
   const quadrants = quadrantsGroup
     .selectAll('g.quadrant')

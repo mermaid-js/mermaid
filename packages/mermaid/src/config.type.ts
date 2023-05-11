@@ -230,6 +230,8 @@ export interface PieDiagramConfig extends BaseDiagramConfig {
 export interface QuadrantChartConfig extends BaseDiagramConfig {
   chartWidth: number;
   chartHeight: number;
+  titleFontSize: number;
+  titlePadding: number;
   quadrantPadding: number;
   xAxisLabelPadding: number;
   yAxisLabelPadding: number;
@@ -242,6 +244,8 @@ export interface QuadrantChartConfig extends BaseDiagramConfig {
   pointRadius: number;
   xAxisPosition: 'top' | 'bottom';
   yAxisPosition: 'left' | 'right';
+  quadrantInternalBorderStrokeWidth: number;
+  quadrantExternalBorderStrokeWidth: number;
 }
 
 export interface ErDiagramConfig extends BaseDiagramConfig {

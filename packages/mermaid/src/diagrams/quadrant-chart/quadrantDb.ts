@@ -24,78 +24,73 @@ type LexTextObj = { text: string; type: 'text' | 'markdown' };
 const quadrantBuilder = new QuadrantBuilder();
 
 function setQuadrant1Text(textObj: LexTextObj) {
-  quadrantBuilder.quadrant1Text = textSanitizer(textObj.text);
+  quadrantBuilder.setConfig({ quadrant1Text: textSanitizer(textObj.text) });
 }
 
 function setQuadrant2Text(textObj: LexTextObj) {
-  quadrantBuilder.quadrant2Text = textSanitizer(textObj.text);
+  quadrantBuilder.setConfig({ quadrant2Text: textSanitizer(textObj.text) });
 }
 
 function setQuadrant3Text(textObj: LexTextObj) {
-  quadrantBuilder.quadrant3Text = textSanitizer(textObj.text);
+  quadrantBuilder.setConfig({ quadrant3Text: textSanitizer(textObj.text) });
 }
 
 function setQuadrant4Text(textObj: LexTextObj) {
-  quadrantBuilder.quadrant4Text = textSanitizer(textObj.text);
+  quadrantBuilder.setConfig({ quadrant4Text: textSanitizer(textObj.text) });
 }
 
 function setXAxisLeftText(textObj: LexTextObj) {
-  quadrantBuilder.xAxisLeftText = textSanitizer(textObj.text);
+  quadrantBuilder.setConfig({ xAxisLeftText: textSanitizer(textObj.text) });
 }
 
 function setXAxisRightText(textObj: LexTextObj) {
-  quadrantBuilder.xAxisRightText = textSanitizer(textObj.text);
+  quadrantBuilder.setConfig({ xAxisRightText: textSanitizer(textObj.text) });
 }
 
 function setYAxisTopText(textObj: LexTextObj) {
-  quadrantBuilder.yAxisTopText = textSanitizer(textObj.text);
+  quadrantBuilder.setConfig({ yAxisTopText: textSanitizer(textObj.text) });
 }
 
 function setYAxisBottomText(textObj: LexTextObj) {
-  quadrantBuilder.yAxisBottomText = textSanitizer(textObj.text);
+  quadrantBuilder.setConfig({ yAxisBottomText: textSanitizer(textObj.text) });
 }
 
-function addPoints(textObj: LexTextObj, x: number, y: number) {
+function addPoint(textObj: LexTextObj, x: number, y: number) {
   quadrantBuilder.addPoints([{ x, y, text: textSanitizer(textObj.text) }]);
 }
 
 function setWidth(width: number) {
-  quadrantBuilder.totalWidth = width;
+  quadrantBuilder.setConfig({ chartWidth: width });
 }
 
 function setHeight(height: number) {
-  quadrantBuilder.totalHeight = height;
+  quadrantBuilder.setConfig({ chartHeight: height });
 }
 
 function getQuadrantData() {
   const config = configApi.getConfig();
   const { themeVariables, quadrantChart: quadrantChartConfig } = config;
-  quadrantBuilder.quadrant1Fill = themeVariables.quadrant1Fill;
-  quadrantBuilder.quadrant2Fill = themeVariables.quadrant2Fill;
-  quadrantBuilder.quadrant3Fill = themeVariables.quadrant3Fill;
-  quadrantBuilder.quadrant4Fill = themeVariables.quadrant4Fill;
-  quadrantBuilder.quadrant1TextFill = themeVariables.quadrant1TextFill;
-  quadrantBuilder.quadrant2TextFill = themeVariables.quadrant2TextFill;
-  quadrantBuilder.quadrant3TextFill = themeVariables.quadrant3TextFill;
-  quadrantBuilder.quadrant4TextFill = themeVariables.quadrant4TextFill;
-  quadrantBuilder.pointFill = themeVariables.quadrantPointFill;
-  quadrantBuilder.pointTextFill = themeVariables.quadrantPointTextFill;
-  quadrantBuilder.xAxisTextFill = themeVariables.quadrantXAxisTextFill;
-  quadrantBuilder.yAxisTextFill = themeVariables.quadrantYAxisTextFill;
   if (quadrantChartConfig) {
-    quadrantBuilder.quadrantPadding = quadrantChartConfig.quadrantPadding;
-    quadrantBuilder.xAxisLabelPadding = quadrantChartConfig.xAxisLabelPadding;
-    quadrantBuilder.yAxisLabelPadding = quadrantChartConfig.yAxisLabelPadding;
-    quadrantBuilder.xAxisLabelFontSize = quadrantChartConfig.xAxisLabelFontSize;
-    quadrantBuilder.yAxisLabelFontSize = quadrantChartConfig.yAxisLabelFontSize;
-    quadrantBuilder.quadrantLabelFontSize = quadrantChartConfig.quadrantLabelFontSize;
-    quadrantBuilder.quadrantTextTopPadding = quadrantChartConfig.quadrantTextTopPadding;
-    quadrantBuilder.pointTextPadding = quadrantChartConfig.pointTextPadding;
-    quadrantBuilder.pointLabelFontSize = quadrantChartConfig.pointLabelFontSize;
-    quadrantBuilder.pointRadius = quadrantChartConfig.pointRadius;
-    quadrantBuilder.xAxisPosition = quadrantChartConfig.xAxisPosition;
-    quadrantBuilder.yAxisPosition = quadrantChartConfig.yAxisPosition;
+    quadrantBuilder.setConfig(quadrantChartConfig);
   }
+  quadrantBuilder.setThemeConfig({
+    quadrant1Fill: themeVariables.quadrant1Fill,
+    quadrant2Fill: themeVariables.quadrant2Fill,
+    quadrant3Fill: themeVariables.quadrant3Fill,
+    quadrant4Fill: themeVariables.quadrant4Fill,
+    quadrant1TextFill: themeVariables.quadrant1TextFill,
+    quadrant2TextFill: themeVariables.quadrant2TextFill,
+    quadrant3TextFill: themeVariables.quadrant3TextFill,
+    quadrant4TextFill: themeVariables.quadrant4TextFill,
+    quadrantPointFill: themeVariables.quadrantPointFill,
+    quadrantPointTextFill: themeVariables.quadrantPointTextFill,
+    quadrantXAxisTextFill: themeVariables.quadrantXAxisTextFill,
+    quadrantYAxisTextFill: themeVariables.quadrantYAxisTextFill,
+    quadrantExternalBorderStrokeFill: themeVariables.quadrantExternalBorderStrokeFill,
+    quadrantInternalBorderStrokeFill: themeVariables.quadrantInternalBorderStrokeFill,
+    quadrantTitleFill: themeVariables.quadrantTitleFill,
+  });
+  quadrantBuilder.setConfig({ titleText: getDiagramTitle() });
   return quadrantBuilder.build();
 }
 
@@ -120,7 +115,7 @@ export default {
   setXAxisRightText,
   setYAxisTopText,
   setYAxisBottomText,
-  addPoints,
+  addPoint,
   getQuadrantData,
   parseDirective,
   clear,

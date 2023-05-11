@@ -44,7 +44,7 @@ accDescr\s*"{"\s*                        { this.begin("acc_descr_multiline");}
 
 \s*"x-axis"\s*                           return 'X-AXIS';
 \s*"y-axis"\s*                           return 'Y-AXIS';
-\s*\-\-\>\s*                             return 'AXIS-TEXT-DELIMITER'
+\s*\-\-+\>[^(\r?\n)\s]*                  return 'AXIS-TEXT-DELIMITER'
 \s*"quadrant-1"\s*                       return 'QUADRANT_1';
 \s*"quadrant-2"\s*                       return 'QUADRANT_2';
 \s*"quadrant-3"\s*                       return 'QUADRANT_3';
@@ -118,12 +118,14 @@ statement
 	;
 
 points
-  : text point_start point_x point_y {yy.addPoints($1, $3, $4);};
+  : text point_start point_x point_y {yy.addPoint($1, $3, $4);};
 
 axisDetails
   : X-AXIS text AXIS-TEXT-DELIMITER text {yy.setXAxisLeftText($2); yy.setXAxisRightText($4);}
+  | X-AXIS text AXIS-TEXT-DELIMITER {$2.text += $3; yy.setXAxisLeftText($2);}
   | X-AXIS text {yy.setXAxisLeftText($2);}
   | Y-AXIS text AXIS-TEXT-DELIMITER text {yy.setYAxisBottomText($2); yy.setYAxisTopText($4);}
+  | Y-AXIS text AXIS-TEXT-DELIMITER {$2.text += $3; yy.setYAxisBottomText($2);}
   | Y-AXIS text {yy.setYAxisBottomText($2);}
   ;
 

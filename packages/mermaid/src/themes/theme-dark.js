@@ -245,6 +245,11 @@ class Theme {
     this.quadrantPointTextFill = this.quadrantPointTextFill || this.primaryTextColor;
     this.quadrantXAxisTextFill = this.quadrantXAxisTextFill || this.primaryTextColor;
     this.quadrantYAxisTextFill = this.quadrantYAxisTextFill || this.primaryTextColor;
+    this.quadrantInternalBorderStrokeFill =
+      this.quadrantInternalBorderStrokeFill || this.primaryBorderColor;
+    this.quadrantExternalBorderStrokeFill =
+      this.quadrantExternalBorderStrokeFill || this.secondaryBorderColor;
+    this.quadrantTitleFill = this.quadrantTitleFill || this.primaryTextColor;
 
     /* class */
     this.classText = this.primaryTextColor;

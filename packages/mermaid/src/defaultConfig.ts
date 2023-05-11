@@ -1329,6 +1329,24 @@ const config: Partial<MermaidConfig> = {
     /**
      * | Parameter          | Description                        | Type    | Required | Values              |
      * | ------------------ | ---------------------------------- | ------- | -------- | ------------------- |
+     * | titlePadding       | Chart title top and bottom padding | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 5
+     */
+    titlePadding: 5,
+    /**
+     * | Parameter          | Description                        | Type    | Required | Values              |
+     * | ------------------ | ---------------------------------- | ------- | -------- | ------------------- |
+     * | titleFontSize      | Chart title font size              | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 20
+     */
+    titleFontSize: 20,
+    /**
+     * | Parameter          | Description                        | Type    | Required | Values              |
+     * | ------------------ | ---------------------------------- | ------- | -------- | ------------------- |
      * | xAxisLabelFontSize | x-axis label font size             | number  | Optional | Any positive number |
      *
      * **Notes:**
@@ -1407,6 +1425,24 @@ const config: Partial<MermaidConfig> = {
      * Default value: left
      */
     yAxisPosition: 'left',
+    /**
+     * | Parameter                         | Description                                                   | Type    | Required | Values              |
+     * | --------------------------------- | ------------------------------------------------------------- | ------- | -------- | ------------------- |
+     * | quadrantInternalBorderStrokeWidth | stroke width of edges of the box that are inside the quadrant | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 1
+     */
+    quadrantInternalBorderStrokeWidth: 1,
+    /**
+     * | Parameter                         | Description                                                    | Type    | Required | Values              |
+     * | --------------------------------- | -------------------------------------------------------------- | ------- | -------- | ------------------- |
+     * | quadrantExternalBorderStrokeWidth | stroke width of edges of the box that are outside the quadrant | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 2
+     */
+    quadrantExternalBorderStrokeWidth: 2,
     /**
      * | Parameter   | Description | Type    | Required | Values      |
      * | ----------- | ----------- | ------- | -------- | ----------- |
