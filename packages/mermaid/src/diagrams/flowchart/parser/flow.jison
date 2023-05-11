@@ -494,6 +494,8 @@ styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
 linkStyleStatement
     : LINKSTYLE SPACE DEFAULT SPACE stylesOpt
           {$$ = $1;yy.updateLink([$3],$5);}
+    | LINKSTYLE SPACE MINUS SPACE stylesOpt
+          {$$ = $1;yy.updateLink([yy.getEdges().length-1],$5);}
     | LINKSTYLE SPACE numList SPACE stylesOpt
           {$$ = $1;yy.updateLink($3,$5);}
     | LINKSTYLE SPACE DEFAULT SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
