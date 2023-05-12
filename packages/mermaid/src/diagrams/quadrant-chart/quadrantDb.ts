@@ -24,35 +24,35 @@ type LexTextObj = { text: string; type: 'text' | 'markdown' };
 const quadrantBuilder = new QuadrantBuilder();
 
 function setQuadrant1Text(textObj: LexTextObj) {
-  quadrantBuilder.setConfig({ quadrant1Text: textSanitizer(textObj.text) });
+  quadrantBuilder.setData({ quadrant1Text: textSanitizer(textObj.text) });
 }
 
 function setQuadrant2Text(textObj: LexTextObj) {
-  quadrantBuilder.setConfig({ quadrant2Text: textSanitizer(textObj.text) });
+  quadrantBuilder.setData({ quadrant2Text: textSanitizer(textObj.text) });
 }
 
 function setQuadrant3Text(textObj: LexTextObj) {
-  quadrantBuilder.setConfig({ quadrant3Text: textSanitizer(textObj.text) });
+  quadrantBuilder.setData({ quadrant3Text: textSanitizer(textObj.text) });
 }
 
 function setQuadrant4Text(textObj: LexTextObj) {
-  quadrantBuilder.setConfig({ quadrant4Text: textSanitizer(textObj.text) });
+  quadrantBuilder.setData({ quadrant4Text: textSanitizer(textObj.text) });
 }
 
 function setXAxisLeftText(textObj: LexTextObj) {
-  quadrantBuilder.setConfig({ xAxisLeftText: textSanitizer(textObj.text) });
+  quadrantBuilder.setData({ xAxisLeftText: textSanitizer(textObj.text) });
 }
 
 function setXAxisRightText(textObj: LexTextObj) {
-  quadrantBuilder.setConfig({ xAxisRightText: textSanitizer(textObj.text) });
+  quadrantBuilder.setData({ xAxisRightText: textSanitizer(textObj.text) });
 }
 
 function setYAxisTopText(textObj: LexTextObj) {
-  quadrantBuilder.setConfig({ yAxisTopText: textSanitizer(textObj.text) });
+  quadrantBuilder.setData({ yAxisTopText: textSanitizer(textObj.text) });
 }
 
 function setYAxisBottomText(textObj: LexTextObj) {
-  quadrantBuilder.setConfig({ yAxisBottomText: textSanitizer(textObj.text) });
+  quadrantBuilder.setData({ yAxisBottomText: textSanitizer(textObj.text) });
 }
 
 function addPoint(textObj: LexTextObj, x: number, y: number) {
@@ -90,7 +90,7 @@ function getQuadrantData() {
     quadrantInternalBorderStrokeFill: themeVariables.quadrantInternalBorderStrokeFill,
     quadrantTitleFill: themeVariables.quadrantTitleFill,
   });
-  quadrantBuilder.setConfig({ titleText: getDiagramTitle() });
+  quadrantBuilder.setData({ titleText: getDiagramTitle() });
   return quadrantBuilder.build();
 }
 

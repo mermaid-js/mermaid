@@ -2,7 +2,6 @@
 import { select } from 'd3';
 import * as configApi from '../../config.js';
 import { log } from '../../logger.js';
-
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { Diagram } from '../../Diagram.js';
 import {
@@ -16,8 +15,8 @@ import {
 } from './quadrantBuilder.js';
 
 export const draw = (txt: string, id: string, _version: string, diagObj: Diagram) => {
-  function getDominantBaseLine(horizintalPos: TextHorizontalPos) {
-    return horizintalPos === 'top' ? 'text-before-edge' : 'middle';
+  function getDominantBaseLine(horizontalPos: TextHorizontalPos) {
+    return horizontalPos === 'top' ? 'text-before-edge' : 'middle';
   }
 
   function getTextAnchor(verticalPos: TextVerticalPos) {

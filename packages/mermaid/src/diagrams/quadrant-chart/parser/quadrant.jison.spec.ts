@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-ignore: TODO Fix ts errors
 import { parser } from './quadrant.jison';
 import { Mock, vi } from 'vitest';
 
@@ -45,7 +45,7 @@ describe('Testing quadrantChart jison file', () => {
   });
 
   it('should be able to parse directive', () => {
-    let str =
+    const str =
       '%%{init: {"quadrantChart": {"chartWidth": 600, "chartHeight": 600} } }%%  \n quadrantChart';
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.parseDirective.mock.calls[0]).toEqual(['%%{', 'open_directive']);
@@ -242,7 +242,7 @@ describe('Testing quadrantChart jison file', () => {
   });
 
   it('should be able to parse the whole chart', () => {
-    let str = `%%{init: {"quadrantChart": {"chartWidth": 600, "chartHeight": 600} } }%%
+    const str = `%%{init: {"quadrantChart": {"chartWidth": 600, "chartHeight": 600} } }%%
     quadrantChart
       title Analytics and Business Intelligence Platforms
       x-axis "Completeness of Vision ❤" --> "x-axis-2"

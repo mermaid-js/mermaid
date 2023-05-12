@@ -2,33 +2,43 @@
 import { scaleLinear } from 'd3';
 import { log } from '../../logger.js';
 import { QuadrantChartConfig } from '../../config.type.js';
+import defaultConfig from '../../defaultConfig.js';
+import { getThemeVariables } from '../../themes/theme-default.js';
 
-export interface QuadrantPointInputType {
-  x: number;
-  y: number;
-  text: string;
-}
+const defaultThemeVariables = getThemeVariables();
 
 export type TextVerticalPos = 'left' | 'center' | 'right';
 export type TextHorizontalPos = 'top' | 'middle' | 'bottom';
 
-export interface QuadrantTextType {
-  text: string;
-  fill: string;
+export interface Point {
   x: number;
   y: number;
+}
+
+export interface QuadrantPointInputType extends Point {
+  text: string;
+}
+
+export interface QuadrantTextType extends Point {
+  text: string;
+  fill: string;
   verticalPos: TextVerticalPos;
   horizontalPos: TextHorizontalPos;
   fontSize: number;
   rotation: number;
 }
 
-export interface QuadrantPointType {
-  x: number;
-  y: number;
+export interface QuadrantPointType extends Point {
   fill: string;
   radius: number;
   text: QuadrantTextType;
+}
+
+export interface QuadrantQuadrantsType extends Point {
+  text: QuadrantTextType;
+  width: number;
+  height: number;
+  fill: string;
 }
 
 export interface QuadrantLineType {
@@ -40,15 +50,6 @@ export interface QuadrantLineType {
   y2: number;
 }
 
-export interface QuadrantQuadrantsType {
-  text: QuadrantTextType;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  fill: string;
-}
-
 export interface QuadrantBuildType {
   points: QuadrantPointType[];
   quadrants: QuadrantQuadrantsType[];
@@ -57,7 +58,7 @@ export interface QuadrantBuildType {
   borderLines?: QuadrantLineType[];
 }
 
-export interface QuadrantBuilderConfig extends QuadrantChartConfig {
+export interface quadrantBuilderData {
   titleText: string;
   quadrant1Text: string;
   quadrant2Text: string;
@@ -68,6 +69,9 @@ export interface QuadrantBuilderConfig extends QuadrantChartConfig {
   yAxisBottomText: string;
   yAxisTopText: string;
   points: QuadrantPointInputType[];
+}
+
+export interface QuadrantBuilderConfig extends QuadrantChartConfig {
   showXAxis: boolean;
   showYAxis: boolean;
   showTitle: boolean;
@@ -91,16 +95,40 @@ export interface QuadrantBuilderThemeConfig {
   quadrantExternalBorderStrokeFill: string;
 }
 
+interface CalculateSpaceData {
+  xAxisSpace: {
+    top: number;
+    bottom: number;
+  };
+  yAxisSpace: {
+    left: number;
+    right: number;
+  };
+  titleSpace: {
+    top: number;
+  };
+  quadrantSpace: {
+    quadrantLeft: number;
+    quadrantTop: number;
+    quadrantWidth: number;
+    quadrantHalfWidth: number;
+    quadrantHeight: number;
+    quadrantHalfHeight: number;
+  };
+}
+
 export class QuadrantBuilder {
   private config: QuadrantBuilderConfig;
   private themeConfig: QuadrantBuilderThemeConfig;
+  private data: quadrantBuilderData;
 
   constructor() {
     this.config = this.getDefaultConfig();
     this.themeConfig = this.getDefaultThemeConfig();
+    this.data = this.getDefaultData();
   }
 
-  getDefaultConfig(): QuadrantBuilderConfig {
+  getDefaultData(): quadrantBuilderData {
     return {
       titleText: '',
       quadrant1Text: '',
@@ -112,58 +140,70 @@ export class QuadrantBuilder {
       yAxisBottomText: '',
       yAxisTopText: '',
       points: [],
+    };
+  }
+
+  getDefaultConfig(): QuadrantBuilderConfig {
+    return {
       showXAxis: true,
       showYAxis: true,
       showTitle: true,
-      chartHeight: 500,
-      chartWidth: 500,
-      titlePadding: 5,
-      titleFontSize: 20,
-      quadrantPadding: 5,
-      xAxisLabelPadding: 5,
-      yAxisLabelPadding: 5,
-      xAxisLabelFontSize: 16,
-      yAxisLabelFontSize: 16,
-      quadrantLabelFontSize: 16,
-      quadrantTextTopPadding: 5,
-      pointTextPadding: 5,
-      pointLabelFontSize: 12,
-      pointRadius: 5,
-      xAxisPosition: 'top',
-      yAxisPosition: 'left',
-      quadrantInternalBorderStrokeWidth: 2,
-      quadrantExternalBorderStrokeWidth: 3,
+      chartHeight: defaultConfig.quadrantChart?.chartWidth || 500,
+      chartWidth: defaultConfig.quadrantChart?.chartHeight || 500,
+      titlePadding: defaultConfig.quadrantChart?.titlePadding || 5,
+      titleFontSize: defaultConfig.quadrantChart?.titleFontSize || 20,
+      quadrantPadding: defaultConfig.quadrantChart?.quadrantPadding || 5,
+      xAxisLabelPadding: defaultConfig.quadrantChart?.xAxisLabelPadding || 5,
+      yAxisLabelPadding: defaultConfig.quadrantChart?.yAxisLabelPadding || 5,
+      xAxisLabelFontSize: defaultConfig.quadrantChart?.xAxisLabelFontSize || 16,
+      yAxisLabelFontSize: defaultConfig.quadrantChart?.yAxisLabelFontSize || 16,
+      quadrantLabelFontSize: defaultConfig.quadrantChart?.quadrantLabelFontSize || 16,
+      quadrantTextTopPadding: defaultConfig.quadrantChart?.quadrantTextTopPadding || 5,
+      pointTextPadding: defaultConfig.quadrantChart?.pointTextPadding || 5,
+      pointLabelFontSize: defaultConfig.quadrantChart?.pointLabelFontSize || 12,
+      pointRadius: defaultConfig.quadrantChart?.pointRadius || 5,
+      xAxisPosition: defaultConfig.quadrantChart?.xAxisPosition || 'top',
+      yAxisPosition: defaultConfig.quadrantChart?.yAxisPosition || 'left',
+      quadrantInternalBorderStrokeWidth:
+        defaultConfig.quadrantChart?.quadrantInternalBorderStrokeWidth || 1,
+      quadrantExternalBorderStrokeWidth:
+        defaultConfig.quadrantChart?.quadrantExternalBorderStrokeWidth || 2,
     };
   }
 
   getDefaultThemeConfig(): QuadrantBuilderThemeConfig {
     return {
-      quadrant1Fill: '#8bc2f3',
-      quadrant2Fill: '#faebd7',
-      quadrant3Fill: '#00ffff',
-      quadrant4Fill: '#f0ffff',
-      quadrant1TextFill: '#93690e',
-      quadrant2TextFill: '#8644ff',
-      quadrant3TextFill: '#e3004d',
-      quadrant4TextFill: '#000000',
-      quadrantPointFill: '#60B19C',
-      quadrantPointTextFill: '#0000ff',
-      quadrantXAxisTextFill: '#000000',
-      quadrantYAxisTextFill: '#000000',
-      quadrantTitleFill: '#000000',
-      quadrantInternalBorderStrokeFill: '#000000',
-      quadrantExternalBorderStrokeFill: '#000000',
+      quadrant1Fill: defaultThemeVariables.quadrant1Fill,
+      quadrant2Fill: defaultThemeVariables.quadrant2Fill,
+      quadrant3Fill: defaultThemeVariables.quadrant3Fill,
+      quadrant4Fill: defaultThemeVariables.quadrant4Fill,
+      quadrant1TextFill: defaultThemeVariables.quadrant1TextFill,
+      quadrant2TextFill: defaultThemeVariables.quadrant2TextFill,
+      quadrant3TextFill: defaultThemeVariables.quadrant3TextFill,
+      quadrant4TextFill: defaultThemeVariables.quadrant4TextFill,
+      quadrantPointFill: defaultThemeVariables.quadrantPointFill,
+      quadrantPointTextFill: defaultThemeVariables.quadrantPointTextFill,
+      quadrantXAxisTextFill: defaultThemeVariables.quadrantXAxisTextFill,
+      quadrantYAxisTextFill: defaultThemeVariables.quadrantYAxisTextFill,
+      quadrantTitleFill: defaultThemeVariables.quadrantTitleFill,
+      quadrantInternalBorderStrokeFill: defaultThemeVariables.quadrantInternalBorderStrokeFill,
+      quadrantExternalBorderStrokeFill: defaultThemeVariables.quadrantExternalBorderStrokeFill,
     };
   }
 
   clear() {
     this.config = this.getDefaultConfig();
     this.themeConfig = this.getDefaultThemeConfig();
+    this.data = this.getDefaultData();
     log.info('clear called');
   }
 
+  setData(data: Partial<quadrantBuilderData>) {
+    this.data = { ...this.data, ...data };
+  }
+
   addPoints(points: QuadrantPointInputType[]) {
-    this.config.points = [...points, ...this.config.points];
+    this.data.points = [...points, ...this.data.points];
   }
 
   setConfig(config: Partial<QuadrantBuilderConfig>) {
@@ -176,20 +216,12 @@ export class QuadrantBuilder {
     this.themeConfig = { ...this.themeConfig, ...themeConfig };
   }
 
-  build(): QuadrantBuildType {
-    const showXAxis =
-      this.config.showXAxis && (this.config.xAxisLeftText || this.config.xAxisRightText);
-    const showYAxis =
-      this.config.showYAxis && (this.config.yAxisTopText || this.config.yAxisBottomText);
-    const showTitle = this.config.showTitle && this.config.titleText;
-
-    const halfExternalBorderWidth = this.config.quadrantExternalBorderStrokeWidth / 2;
-    const halfInternalBorderWidth = this.config.quadrantInternalBorderStrokeWidth / 2;
-
-    const xAxisPosition = this.config.points.length > 0 ? 'bottom' : this.config.xAxisPosition;
-
-    const drawAxisLabelInMiddle = this.config.points.length === 0;
-
+  calculateSpace(
+    xAxisPosition: typeof this.config.xAxisPosition,
+    showXAxis: boolean,
+    showYAxis: boolean,
+    showTitle: boolean
+  ): CalculateSpaceData {
     const xAxisSpaceCalculation =
       this.config.xAxisLabelPadding * 2 + this.config.xAxisLabelFontSize;
     const xAxisSpace = {
@@ -222,12 +254,44 @@ export class QuadrantBuilder {
 
     const quadrantHalfWidth = quadrantWidth / 2;
     const quadrantHalfHeight = quadrantHeight / 2;
+    const quadrantSpace = {
+      quadrantLeft,
+      quadrantTop,
+      quadrantWidth,
+      quadrantHalfWidth,
+      quadrantHeight,
+      quadrantHalfHeight,
+    };
 
+    return {
+      xAxisSpace,
+      yAxisSpace,
+      titleSpace,
+      quadrantSpace,
+    };
+  }
+
+  getAxisLabels(
+    xAxisPosition: typeof this.config.xAxisPosition,
+    showXAxis: boolean,
+    showYAxis: boolean,
+    spaceData: CalculateSpaceData
+  ): QuadrantTextType[] {
+    const { quadrantSpace, titleSpace } = spaceData;
+    const {
+      quadrantHalfHeight,
+      quadrantHeight,
+      quadrantLeft,
+      quadrantHalfWidth,
+      quadrantTop,
+      quadrantWidth,
+    } = quadrantSpace;
+    const drawAxisLabelInMiddle = this.data.points.length === 0;
     const axisLabels: QuadrantTextType[] = [];
 
-    if (this.config.xAxisLeftText && showXAxis) {
+    if (this.data.xAxisLeftText && showXAxis) {
       axisLabels.push({
-        text: this.config.xAxisLeftText,
+        text: this.data.xAxisLeftText,
         fill: this.themeConfig.quadrantXAxisTextFill,
         x: quadrantLeft + (drawAxisLabelInMiddle ? quadrantHalfWidth / 2 : 0),
         y:
@@ -240,9 +304,9 @@ export class QuadrantBuilder {
         rotation: 0,
       });
     }
-    if (this.config.xAxisRightText && showXAxis) {
+    if (this.data.xAxisRightText && showXAxis) {
       axisLabels.push({
-        text: this.config.xAxisRightText,
+        text: this.data.xAxisRightText,
         fill: this.themeConfig.quadrantXAxisTextFill,
         x: quadrantLeft + quadrantHalfWidth + (drawAxisLabelInMiddle ? quadrantHalfWidth / 2 : 0),
         y:
@@ -256,9 +320,9 @@ export class QuadrantBuilder {
       });
     }
 
-    if (this.config.yAxisBottomText && showYAxis) {
+    if (this.data.yAxisBottomText && showYAxis) {
       axisLabels.push({
-        text: this.config.yAxisBottomText,
+        text: this.data.yAxisBottomText,
         fill: this.themeConfig.quadrantYAxisTextFill,
         x:
           this.config.yAxisPosition === 'left'
@@ -271,9 +335,9 @@ export class QuadrantBuilder {
         rotation: -90,
       });
     }
-    if (this.config.yAxisTopText && showYAxis) {
+    if (this.data.yAxisTopText && showYAxis) {
       axisLabels.push({
-        text: this.config.yAxisTopText,
+        text: this.data.yAxisTopText,
         fill: this.themeConfig.quadrantYAxisTextFill,
         x:
           this.config.yAxisPosition === 'left'
@@ -286,11 +350,18 @@ export class QuadrantBuilder {
         rotation: -90,
       });
     }
+    return axisLabels;
+  }
+
+  getQuadrants(spaceData: CalculateSpaceData): QuadrantQuadrantsType[] {
+    const { quadrantSpace } = spaceData;
+
+    const { quadrantHalfHeight, quadrantLeft, quadrantHalfWidth, quadrantTop } = quadrantSpace;
 
     const quadrants: QuadrantQuadrantsType[] = [
       {
         text: {
-          text: this.config.quadrant1Text,
+          text: this.data.quadrant1Text,
           fill: this.themeConfig.quadrant1TextFill,
           x: 0,
           y: 0,
@@ -307,7 +378,7 @@ export class QuadrantBuilder {
       },
       {
         text: {
-          text: this.config.quadrant2Text,
+          text: this.data.quadrant2Text,
           fill: this.themeConfig.quadrant2TextFill,
           x: 0,
           y: 0,
@@ -324,7 +395,7 @@ export class QuadrantBuilder {
       },
       {
         text: {
-          text: this.config.quadrant3Text,
+          text: this.data.quadrant3Text,
           fill: this.themeConfig.quadrant3TextFill,
           x: 0,
           y: 0,
@@ -341,7 +412,7 @@ export class QuadrantBuilder {
       },
       {
         text: {
-          text: this.config.quadrant4Text,
+          text: this.data.quadrant4Text,
           fill: this.themeConfig.quadrant4TextFill,
           x: 0,
           y: 0,
@@ -360,7 +431,7 @@ export class QuadrantBuilder {
     for (const quadrant of quadrants) {
       quadrant.text.x = quadrant.x + quadrant.width / 2;
       // place the text in the center of the box
-      if (this.config.points.length === 0) {
+      if (this.data.points.length === 0) {
         quadrant.text.y = quadrant.y + quadrant.height / 2;
         quadrant.text.horizontalPos = 'middle';
         // place the text top of the quadrant square
@@ -370,6 +441,14 @@ export class QuadrantBuilder {
       }
     }
 
+    return quadrants;
+  }
+
+  getQuadrantPoints(spaceData: CalculateSpaceData): QuadrantPointType[] {
+    const { quadrantSpace } = spaceData;
+
+    const { quadrantHeight, quadrantLeft, quadrantTop, quadrantWidth } = quadrantSpace;
+
     const xAxis = scaleLinear()
       .domain([0, 1])
       .range([quadrantLeft, quadrantWidth + quadrantLeft]);
@@ -378,7 +457,7 @@ export class QuadrantBuilder {
       .domain([0, 1])
       .range([quadrantHeight + quadrantTop, quadrantTop]);
 
-    const points: QuadrantPointType[] = this.config.points.map((point) => {
+    const points: QuadrantPointType[] = this.data.points.map((point) => {
       const props: QuadrantPointType = {
         x: xAxis(point.x),
         y: yAxis(point.y),
@@ -397,6 +476,21 @@ export class QuadrantBuilder {
       };
       return props;
     });
+    return points;
+  }
+
+  getBorders(spaceData: CalculateSpaceData): QuadrantLineType[] {
+    const halfExternalBorderWidth = this.config.quadrantExternalBorderStrokeWidth / 2;
+    const { quadrantSpace } = spaceData;
+
+    const {
+      quadrantHalfHeight,
+      quadrantHeight,
+      quadrantLeft,
+      quadrantHalfWidth,
+      quadrantTop,
+      quadrantWidth,
+    } = quadrantSpace;
 
     const borderLines: QuadrantLineType[] = [
       // top border
@@ -454,17 +548,13 @@ export class QuadrantBuilder {
         y2: quadrantTop + quadrantHalfHeight,
       },
     ];
+    return borderLines;
+  }
 
-    const retVal: QuadrantBuildType = {
-      points,
-      quadrants,
-      axisLabels,
-      borderLines,
-    };
-
+  getTitle(showTitle: boolean): QuadrantTextType | undefined {
     if (showTitle) {
-      retVal.title = {
-        text: this.config.titleText,
+      return {
+        text: this.data.titleText,
         fill: this.themeConfig.quadrantTitleFill,
         fontSize: this.config.titleFontSize,
         horizontalPos: 'top',
@@ -474,7 +564,26 @@ export class QuadrantBuilder {
         x: this.config.chartWidth / 2,
       };
     }
+    return;
+  }
 
-    return retVal;
+  build(): QuadrantBuildType {
+    const showXAxis =
+      this.config.showXAxis && !!(this.data.xAxisLeftText || this.data.xAxisRightText);
+    const showYAxis =
+      this.config.showYAxis && !!(this.data.yAxisTopText || this.data.yAxisBottomText);
+    const showTitle = this.config.showTitle && !!this.data.titleText;
+
+    const xAxisPosition = this.data.points.length > 0 ? 'bottom' : this.config.xAxisPosition;
+
+    const calculatedSpace = this.calculateSpace(xAxisPosition, showXAxis, showYAxis, showTitle);
+
+    return {
+      points: this.getQuadrantPoints(calculatedSpace),
+      quadrants: this.getQuadrants(calculatedSpace),
+      axisLabels: this.getAxisLabels(xAxisPosition, showXAxis, showYAxis, calculatedSpace),
+      borderLines: this.getBorders(calculatedSpace),
+      title: this.getTitle(showTitle),
+    };
   }
 }

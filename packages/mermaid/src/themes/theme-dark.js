@@ -228,16 +228,16 @@ class Theme {
 
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
-    this.quadrant2Fill = this.quadrant2Fill || adjust(this.quadrant1Fill, { r: 5, g: 5, b: 5 });
-    this.quadrant3Fill = this.quadrant3Fill || adjust(this.quadrant1Fill, { r: 10, g: 10, b: 10 });
-    this.quadrant4Fill = this.quadrant4Fill || adjust(this.quadrant1Fill, { r: 15, g: 15, b: 15 });
+    this.quadrant2Fill = this.quadrant2Fill || adjust(this.primaryColor, { r: 5, g: 5, b: 5 });
+    this.quadrant3Fill = this.quadrant3Fill || adjust(this.primaryColor, { r: 10, g: 10, b: 10 });
+    this.quadrant4Fill = this.quadrant4Fill || adjust(this.primaryColor, { r: 15, g: 15, b: 15 });
     this.quadrant1TextFill = this.quadrant1TextFill || this.primaryTextColor;
     this.quadrant2TextFill =
-      this.quadrant2TextFill || adjust(this.quadrant1TextFill, { r: -5, g: -5, b: -5 });
+      this.quadrant2TextFill || adjust(this.primaryTextColor, { r: -5, g: -5, b: -5 });
     this.quadrant3TextFill =
-      this.quadrant3TextFill || adjust(this.quadrant1TextFill, { r: -10, g: -10, b: -10 });
+      this.quadrant3TextFill || adjust(this.primaryTextColor, { r: -10, g: -10, b: -10 });
     this.quadrant4TextFill =
-      this.quadrant4TextFill || adjust(this.quadrant1TextFill, { r: -15, g: -15, b: -15 });
+      this.quadrant4TextFill || adjust(this.primaryTextColor, { r: -15, g: -15, b: -15 });
     this.quadrantPointFill =
       this.quadrantPointFill || isDark(this.quadrant1Fill)
         ? lighten(this.quadrant1Fill)
@@ -248,7 +248,7 @@ class Theme {
     this.quadrantInternalBorderStrokeFill =
       this.quadrantInternalBorderStrokeFill || this.primaryBorderColor;
     this.quadrantExternalBorderStrokeFill =
-      this.quadrantExternalBorderStrokeFill || this.secondaryBorderColor;
+      this.quadrantExternalBorderStrokeFill || this.primaryBorderColor;
     this.quadrantTitleFill = this.quadrantTitleFill || this.primaryTextColor;
 
     /* class */

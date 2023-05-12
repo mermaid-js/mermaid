@@ -1,8 +1,3 @@
-/** mermaid
- *  https://knsv.github.io/mermaid
- *  (c) 2015 Knut Sveidqvist
- *  MIT license.
- */
 %lex
 %options case-insensitive
 
