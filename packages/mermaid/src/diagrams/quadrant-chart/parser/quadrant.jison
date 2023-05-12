@@ -42,13 +42,13 @@ accDescr\s*"{"\s*                        { this.begin("acc_descr_multiline");}
 <acc_descr_multiline>[\}]                { this.popState(); }
 <acc_descr_multiline>[^\}]*              return "acc_descr_multiline_value";
 
-\s*"x-axis"\s*                           return 'X-AXIS';
-\s*"y-axis"\s*                           return 'Y-AXIS';
-\s*\-\-+\>[^(\r?\n)\s]*                  return 'AXIS-TEXT-DELIMITER'
-\s*"quadrant-1"\s*                       return 'QUADRANT_1';
-\s*"quadrant-2"\s*                       return 'QUADRANT_2';
-\s*"quadrant-3"\s*                       return 'QUADRANT_3';
-\s*"quadrant-4"\s*                       return 'QUADRANT_4';
+" "*"x-axis"" "*                           return 'X-AXIS';
+" "*"y-axis"" "*                           return 'Y-AXIS';
+" "*\-\-+\>" "*                  return 'AXIS-TEXT-DELIMITER'
+" "*"quadrant-1"" "*                       return 'QUADRANT_1';
+" "*"quadrant-2"" "*                       return 'QUADRANT_2';
+" "*"quadrant-3"" "*                       return 'QUADRANT_3';
+" "*"quadrant-4"" "*                       return 'QUADRANT_4';
 
 ["][`]                                   { this.begin("md_string");}
 <md_string>[^`"]+                        { return "MD_STR";}
@@ -59,13 +59,12 @@ accDescr\s*"{"\s*                        { this.begin("acc_descr_multiline");}
 
 \s*\:\s*\[\s*                            {this.begin("point_start"); return 'point_start';}
 <point_start>(1)|(0(.\d+)?)              {this.begin('point_x'); return 'point_x';}
-<point_start>\s*\]                       {this.popState();}
+<point_start>\s*\]" "*                       {this.popState();}
 <point_x>\s*\,\s*                        {this.popState(); this.begin('point_y');}
 <point_y>(1)|(0(.\d+)?)                  {this.popState(); return 'point_y';}
 
-"quadrantChart"\s*		                   return 'QUADRANT';
+" "*"quadrantChart"" "*		                   return 'QUADRANT';
 
-\[[0-1].?[0-9]{5}\]                      return 'POINT_VALUE'
 [A-Za-z]+                                return 'ALPHA';
 ":"                                      return 'COLON';
 \+                                       return 'PLUS';
@@ -92,6 +91,7 @@ accDescr\s*"{"\s*                        { this.begin("acc_descr_multiline");}
 
 start
   : eol start
+  | SPACE start
   | directive start
 	| QUADRANT document
 	;
@@ -102,11 +102,12 @@ document
 	;
 
 line
-	: statement eol { $$ = $1 }
+	: statement eol
 	;
 
 statement
   :
+  | SPACE statement
   | axisDetails
   | quadrantDetails
   | points
@@ -118,7 +119,8 @@ statement
 	;
 
 points
-  : text point_start point_x point_y {yy.addPoint($1, $3, $4);};
+  : text point_start point_x point_y {yy.addPoint($1, $3, $4);}
+  ;
 
 axisDetails
   : X-AXIS text AXIS-TEXT-DELIMITER text {yy.setXAxisLeftText($2); yy.setXAxisRightText($4);}
@@ -160,10 +162,10 @@ argDirective
   ;
 
 closeDirective
-  : close_directive { yy.parseDirective('}%%', 'close_directive', 'pie'); }
+  : close_directive { yy.parseDirective('}%%', 'close_directive', 'quadrantChart'); }
   ;
 
-text: textNoTagsToken
+text: alphaNumToken
     { $$={text:$1, type: 'text'};}
     | text textNoTagsToken
     { $$={text:$1.text+''+$2, type: $1.type};}
