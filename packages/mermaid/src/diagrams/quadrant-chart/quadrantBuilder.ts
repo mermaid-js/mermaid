@@ -150,7 +150,7 @@ export class QuadrantBuilder {
       showTitle: true,
       chartHeight: defaultConfig.quadrantChart?.chartWidth || 500,
       chartWidth: defaultConfig.quadrantChart?.chartHeight || 500,
-      titlePadding: defaultConfig.quadrantChart?.titlePadding || 5,
+      titlePadding: defaultConfig.quadrantChart?.titlePadding || 10,
       titleFontSize: defaultConfig.quadrantChart?.titleFontSize || 20,
       quadrantPadding: defaultConfig.quadrantChart?.quadrantPadding || 5,
       xAxisLabelPadding: defaultConfig.quadrantChart?.xAxisLabelPadding || 5,
