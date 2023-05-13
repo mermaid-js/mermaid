@@ -16,7 +16,7 @@ import {
 
 export const draw = (txt: string, id: string, _version: string, diagObj: Diagram) => {
   function getDominantBaseLine(horizontalPos: TextHorizontalPos) {
-    return horizontalPos === 'top' ? 'text-before-edge' : 'middle';
+    return horizontalPos === 'top' ? 'hanging' : 'middle';
   }
 
   function getTextAnchor(verticalPos: TextVerticalPos) {

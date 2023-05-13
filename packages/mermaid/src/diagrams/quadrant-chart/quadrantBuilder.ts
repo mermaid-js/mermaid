@@ -297,7 +297,10 @@ export class QuadrantBuilder {
         y:
           xAxisPosition === 'top'
             ? this.config.xAxisLabelPadding + titleSpace.top
-            : this.config.xAxisLabelPadding + quadrantTop + quadrantHeight,
+            : this.config.xAxisLabelPadding +
+              quadrantTop +
+              quadrantHeight +
+              this.config.quadrantPadding,
         fontSize: this.config.xAxisLabelFontSize,
         verticalPos: drawAxisLabelInMiddle ? 'center' : 'left',
         horizontalPos: 'top',
@@ -312,7 +315,10 @@ export class QuadrantBuilder {
         y:
           xAxisPosition === 'top'
             ? this.config.xAxisLabelPadding + titleSpace.top
-            : this.config.xAxisLabelPadding + quadrantTop + quadrantHeight,
+            : this.config.xAxisLabelPadding +
+              quadrantTop +
+              quadrantHeight +
+              this.config.quadrantPadding,
         fontSize: this.config.xAxisLabelFontSize,
         verticalPos: drawAxisLabelInMiddle ? 'center' : 'left',
         horizontalPos: 'top',
@@ -327,7 +333,10 @@ export class QuadrantBuilder {
         x:
           this.config.yAxisPosition === 'left'
             ? this.config.yAxisLabelPadding
-            : this.config.yAxisLabelPadding + quadrantLeft + quadrantWidth,
+            : this.config.yAxisLabelPadding +
+              quadrantLeft +
+              quadrantWidth +
+              this.config.quadrantPadding,
         y: quadrantTop + quadrantHeight - (drawAxisLabelInMiddle ? quadrantHalfHeight / 2 : 0),
         fontSize: this.config.yAxisLabelFontSize,
         verticalPos: drawAxisLabelInMiddle ? 'center' : 'left',
@@ -342,7 +351,10 @@ export class QuadrantBuilder {
         x:
           this.config.yAxisPosition === 'left'
             ? this.config.yAxisLabelPadding
-            : this.config.yAxisLabelPadding + quadrantLeft + quadrantWidth,
+            : this.config.yAxisLabelPadding +
+              quadrantLeft +
+              quadrantWidth +
+              this.config.quadrantPadding,
         y: quadrantTop + quadrantHalfHeight - (drawAxisLabelInMiddle ? quadrantHalfHeight / 2 : 0),
         fontSize: this.config.yAxisLabelFontSize,
         verticalPos: drawAxisLabelInMiddle ? 'center' : 'left',
