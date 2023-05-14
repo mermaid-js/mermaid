@@ -228,7 +228,7 @@ mermaid fully supports webpack. Here is a [working demo](https://github.com/merm
 
 The main idea of the API is to be able to call a render function with the graph definition as a string. The render function will render the graph and call a callback with the resulting SVG code. With this approach it is up to the site creator to fetch the graph definition from the site (perhaps from a textarea), render it and place the graph somewhere in the site.
 
-The example below show an outline of how this could be used. The example just logs the resulting SVG to the JavaScript console.
+The example below shows an example of how this could be used. The example just logs the resulting SVG to the JavaScript console.
 
 ```html
 <script type="module">
