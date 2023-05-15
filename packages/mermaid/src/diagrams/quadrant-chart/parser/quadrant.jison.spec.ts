@@ -93,7 +93,7 @@ describe('Testing quadrantChart jison file', () => {
     str = 'quadrantChart\n       x-AxIs         "Urgent(* +=[❤"  --> ';
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setXAxisLeftText).toHaveBeenCalledWith({
-      text: 'Urgent(* +=[❤ ⭢ ',
+      text: 'Urgent(* +=[❤ ⟶ ',
       type: 'text',
     });
     expect(mockDB.setXAxisRightText).not.toHaveBeenCalled();
@@ -131,7 +131,7 @@ describe('Testing quadrantChart jison file', () => {
     str = 'quadrantChart\n       y-AxIs         "Urgent(* +=[❤"  --> ';
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setYAxisBottomText).toHaveBeenCalledWith({
-      text: 'Urgent(* +=[❤ ⭢ ',
+      text: 'Urgent(* +=[❤ ⟶ ',
       type: 'text',
     });
     expect(mockDB.setYAxisTopText).not.toHaveBeenCalled();
