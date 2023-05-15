@@ -633,7 +633,7 @@ flowchart TB
     end
 ```
 
-## flowcharts
+### flowcharts
 
 With the graphtype flowchart it is also possible to set edges to and from subgraphs as in the flowchart below.
 
@@ -671,7 +671,7 @@ flowchart TB
     two --> c2
 ```
 
-## Direction in subgraphs
+### Direction in subgraphs
 
 With the graphtype flowcharts you can use the direction statement to set the direction which the subgraph will render like in this example.
 
