@@ -1280,6 +1280,184 @@ const config: Partial<MermaidConfig> = {
     textPosition: 0.75,
   },
 
+  quadrantChart: {
+    /**
+     * | Parameter       | Description                        | Type    | Required | Values              |
+     * | --------------- | ---------------------------------- | ------- | -------- | ------------------- |
+     * | chartWidth      | Width of the chart                 | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 500
+     */
+    chartWidth: 500,
+    /**
+     * | Parameter       | Description                        | Type    | Required | Values              |
+     * | --------------- | ---------------------------------- | ------- | -------- | ------------------- |
+     * | chartHeight     | Height of the chart                | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 500
+     */
+    chartHeight: 500,
+    /**
+     * | Parameter          | Description                        | Type    | Required | Values              |
+     * | ------------------ | ---------------------------------- | ------- | -------- | ------------------- |
+     * | titlePadding       | Chart title top and bottom padding | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 10
+     */
+    titlePadding: 10,
+    /**
+     * | Parameter          | Description                        | Type    | Required | Values              |
+     * | ------------------ | ---------------------------------- | ------- | -------- | ------------------- |
+     * | titleFontSize      | Chart title font size              | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 20
+     */
+    titleFontSize: 20,
+    /**
+     * | Parameter       | Description                        | Type    | Required | Values              |
+     * | --------------- | ---------------------------------- | ------- | -------- | ------------------- |
+     * | quadrantPadding | Padding around the quadrant square | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 5
+     */
+    quadrantPadding: 5,
+    /**
+     * | Parameter              | Description                                                                | Type    | Required | Values              |
+     * | ---------------------- | -------------------------------------------------------------------------- | ------- | -------- | ------------------- |
+     * | quadrantTextTopPadding | quadrant title padding from top if the quadrant is rendered on top         | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 5
+     */
+    quadrantTextTopPadding: 5,
+    /**
+     * | Parameter             | Description                        | Type    | Required | Values              |
+     * | ------------------    | ---------------------------------- | ------- | -------- | ------------------- |
+     * | quadrantLabelFontSize | quadrant title font size           | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 16
+     */
+    quadrantLabelFontSize: 16,
+    /**
+     * | Parameter                         | Description                                                   | Type    | Required | Values              |
+     * | --------------------------------- | ------------------------------------------------------------- | ------- | -------- | ------------------- |
+     * | quadrantInternalBorderStrokeWidth | stroke width of edges of the box that are inside the quadrant | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 1
+     */
+    quadrantInternalBorderStrokeWidth: 1,
+    /**
+     * | Parameter                         | Description                                                    | Type    | Required | Values              |
+     * | --------------------------------- | -------------------------------------------------------------- | ------- | -------- | ------------------- |
+     * | quadrantExternalBorderStrokeWidth | stroke width of edges of the box that are outside the quadrant | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 2
+     */
+    quadrantExternalBorderStrokeWidth: 2,
+    /**
+     * | Parameter         | Description                        | Type    | Required | Values              |
+     * | ---------------   | ---------------------------------- | ------- | -------- | ------------------- |
+     * | xAxisLabelPadding | Padding around x-axis labels       | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 5
+     */
+    xAxisLabelPadding: 5,
+    /**
+     * | Parameter          | Description                        | Type    | Required | Values              |
+     * | ------------------ | ---------------------------------- | ------- | -------- | ------------------- |
+     * | xAxisLabelFontSize | x-axis label font size             | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 16
+     */
+    xAxisLabelFontSize: 16,
+    /**
+     * | Parameter     | Description                     | Type    | Required | Values              |
+     * | ------------- | ------------------------------- | ------- | -------- | ------------------- |
+     * | xAxisPosition | position of x-axis labels       | string  | Optional | 'top' or 'bottom'   |
+     *
+     * **Notes:**
+     * Default value: top
+     */
+    xAxisPosition: 'top',
+    /**
+     * | Parameter         | Description                        | Type    | Required | Values              |
+     * | ---------------   | ---------------------------------- | ------- | -------- | ------------------- |
+     * | yAxisLabelPadding | Padding around y-axis labels       | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 5
+     */
+    yAxisLabelPadding: 5,
+    /**
+     * | Parameter          | Description                        | Type    | Required | Values              |
+     * | ------------------ | ---------------------------------- | ------- | -------- | ------------------- |
+     * | yAxisLabelFontSize | y-axis label font size             | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 16
+     */
+    yAxisLabelFontSize: 16,
+    /**
+     * | Parameter     | Description                     | Type    | Required | Values              |
+     * | ------------- | ------------------------------- | ------- | -------- | ------------------- |
+     * | yAxisPosition | position of y-axis labels       | string  | Optional | 'left' or 'right'   |
+     *
+     * **Notes:**
+     * Default value: left
+     */
+    yAxisPosition: 'left',
+    /**
+     * | Parameter              | Description                            | Type    | Required | Values              |
+     * | ---------------------- | -------------------------------------- | ------- | -------- | ------------------- |
+     * | pointTextPadding       | padding between point and point label  | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 5
+     */
+    pointTextPadding: 5,
+    /**
+     * | Parameter              | Description            | Type    | Required | Values              |
+     * | ---------------------- | ---------------------- | ------- | -------- | ------------------- |
+     * | pointTextPadding       | point title font size  | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 12
+     */
+    pointLabelFontSize: 12,
+    /**
+     * | Parameter     | Description                     | Type    | Required | Values              |
+     * | ------------- | ------------------------------- | ------- | -------- | ------------------- |
+     * | pointRadius   | radius of the point to be drawn | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 5
+     */
+    pointRadius: 5,
+    /**
+     * | Parameter   | Description | Type    | Required | Values      |
+     * | ----------- | ----------- | ------- | -------- | ----------- |
+     * | useMaxWidth | See Notes   | boolean | Required | true, false |
+     *
+     * **Notes:**
+     *
+     * When this flag is set to true, the diagram width is locked to 100% and scaled based on
+     * available space. If set to false, the diagram reserves its absolute width.
+     *
+     * Default value: true
+     */
+    useMaxWidth: true,
+  },
+
   /** The object containing configurations specific for req diagrams */
   requirement: {
     useWidth: undefined,
