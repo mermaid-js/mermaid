@@ -66,6 +66,13 @@ describe('When doing a assigning ranks specific for swim lanes ', () => {
       const subgraphLookupTable = getSubgraphLookupTable(diagram);
       const { graph, lanes } = swimlaneLayout(g, diagram);
       expect(lanes.length).toBe(1);
+      const start = graph.node('start');
+      const cat = graph.node('cat');
+      const rat = graph.node('rat');
+      expect(start.y).toBe(50);
+      expect(cat.y).toBe(250);
+      expect(rat.y).toBe(450);
+      expect(rat.x).toBe(100);
     });
 
     it('should rank the nodes:', async () => {
@@ -81,9 +88,43 @@ describe('When doing a assigning ranks specific for swim lanes ', () => {
       const subgraphLookupTable = getSubgraphLookupTable(diagram);
       const { graph, lanes } = swimlaneLayout(g, diagram);
       expect(lanes.length).toBe(2);
-      // Check the coordinates of the start node
-      console.log('Nodes:', graph.nodes());
-      console.log('Start:', graph.node('start'));
+      const start = graph.node('start');
+      const cat = graph.node('cat');
+      const rat = graph.node('rat');
+      const monkey = graph.node('monkey');
+      const dog = graph.node('dog');
+      const done = graph.node('done');
+
+      expect(start.y).toBe(50);
+      expect(cat.y).toBe(250);
+      expect(rat.y).toBe(450);
+      expect(rat.x).toBe(100);
+      expect(monkey.y).toBe(250);
+      expect(dog.y).toBe(450);
+      expect(done.y).toBe(650);
+      expect(monkey.x).toBe(300);
+    });
+    it.only('should rank the nodes:', async () => {
+      const diagram = await getDiagramFromText(`swimlane LR
+    subgraph "\`one\`"
+      start --> cat --> rat & hat
+      end
+    `);
+      const g = setupGraph(diagram, 'swimmer', root, doc);
+      const subgraphLookupTable = getSubgraphLookupTable(diagram);
+      const { graph, lanes } = swimlaneLayout(g, diagram);
+      expect(lanes.length).toBe(1);
+      const start = graph.node('start');
+      const cat = graph.node('cat');
+      const rat = graph.node('rat');
+      const hat = graph.node('rat');
+
+      expect(start.y).toBe(50);
+      expect(cat.y).toBe(250);
+      expect(rat.y).toBe(450);
+      expect(rat.x).toBe(300);
+      expect(hat.y).toBe(450);
+      expect(hat.x).toBe(100);
     });
   });
 });

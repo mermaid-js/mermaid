@@ -87,11 +87,15 @@ export function swimlaneLayout(graph, diagObj) {
     laneDb[subG.id] = lane;
   }
 
+  const rankWidth = [];
   // Basic layout
   graph.nodes().forEach((nodeId) => {
     const rank = ranks.get(nodeId);
+    if (!rankWidth[rank]) {
     const laneId = subgraphLookupTable[nodeId];
     const lane = laneDb[laneId];
+    const n = graph.node(nodeId);
+    console.log('Node', nodeId, n);
     graph.setNode(nodeId, { y: rank * 200 + 50, x: lane.x + lane.width / 2 });
   });
 
