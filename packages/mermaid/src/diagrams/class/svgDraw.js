@@ -378,14 +378,15 @@ export const parseMember = function (text) {
     cssStyle = parseClassifier(lastChar);
   }
 
-  let startIndex = visibility === '' ? 0 : 1;
+  const startIndex = visibility === '' ? 0 : 1;
   let endIndex = cssStyle === '' ? text.length : text.length - 1;
   text = text.substring(startIndex, endIndex);
 
-  let methodStart = text.indexOf('(');
-  let methodEnd = text.indexOf(')');
+  const methodStart = text.indexOf('(');
+  const methodEnd = text.indexOf(')');
+  const isMethod = methodStart > 1 && methodEnd > methodStart && methodEnd <= text.length;
 
-  if (methodStart > 1 && methodEnd > methodStart && methodEnd <= text.length) {
+  if (isMethod) {
     let methodName = text.substring(0, methodStart).trim();
 
     const parameters = text.substring(methodStart + 1, methodEnd);
@@ -412,7 +413,7 @@ export const parseMember = function (text) {
     }
   } else {
     // finally - if all else fails, just send the text back as written (other than parsing for generic types)
-    displayText = parseGenericTypes(text);
+    displayText = visibility + parseGenericTypes(text);
   }
 
   return {
