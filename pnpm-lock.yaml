@@ -380,7 +380,7 @@ importers:
         version: 3.0.0(ts-node@10.9.1)
     devDependencies:
       mermaid:
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../mermaid
 
   tests/webpack:
