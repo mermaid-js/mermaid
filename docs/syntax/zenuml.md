@@ -466,7 +466,7 @@ You can use this method to add mermaid including the zenuml diagram to a web pag
 ```html
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-  import zenuml from 'https://cdn.jsdelivr.net/npm/@mermaid-js/mermaid-zenuml@00.1.0/dist/mermaid-zenuml.esm.min.mjs';
+  import zenuml from 'https://cdn.jsdelivr.net/npm/@mermaid-js/mermaid-zenuml@0.1.0/dist/mermaid-zenuml.esm.min.mjs';
   await mermaid.registerExternalDiagrams([zenuml]);
 </script>
 ```
