@@ -2,7 +2,7 @@
 
 > A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order.
 
-Mermaid can render sequence diagrams with ZenUML. Note that ZenUML uses a different
+Mermaid can render sequence diagrams with [ZenUML](https://zenuml.com). Note that ZenUML uses a different
 syntax than the original Sequence Diagram in mermaid.
 
 ```mermaid-example
@@ -97,30 +97,32 @@ zenuml
 
 We use `new` keyword to create an object.
 
-```
-new A1
-new A2(with, parameters)
+```mermaid-example
+zenuml
+    new A1
+    new A2(with, parameters)
 ```
 
 ### Reply message
 
 There are three ways to express a reply message:
 
-```
-// 1. assign a variable from a sync message.
-a = A.SyncMessage()
+```mermaid-example
+zenuml
+    // 1. assign a variable from a sync message.
+    a = A.SyncMessage()
 
-// 1.1. optionally give the variable a type
-SomeType a = A.SyncMessage()
+    // 1.1. optionally give the variable a type
+    SomeType a = A.SyncMessage()
 
-// 2. use return keyword
-A.SyncMessage() {
-  return result
-}
+    // 2. use return keyword
+    A.SyncMessage() {
+    return result
+    }
 
-// 3. use @return or @reply annotator on an async message
-@return
-A->B: result
+    // 3. use @return or @reply annotator on an async message
+    @return
+    A->B: result
 ```
 
 The third way `@return` is rarely used, but it is useful when you want to return to one level up.
@@ -161,12 +163,13 @@ are ignored. Markdown is supported.
 
 See the example below:
 
-```
-// a comment on a participent will not be rendered
-BookService
-// a comment on a message.
-// **Markdown** is supported.
-BookService.getBook()
+```mermaid-example
+zenuml
+    // a comment on a participant will not be rendered
+    BookService
+    // a comment on a message.
+    // **Markdown** is supported.
+    BookService.getBook()
 ```
 
 ## Loops
@@ -179,9 +182,9 @@ following notations:
 3. forEach, foreach
 4. loop
 
-```
+```zenuml
 while(condition) {
-  ...statements...
+    ...statements...
 }
 ```
 
@@ -199,13 +202,13 @@ zenuml
 
 It is possible to express alternative paths in a sequence diagram. This is done by the notation
 
-```
+```zenuml
 if(condition1) {
-  ...statements...
+    ...statements...
 } else if(condition2) {
-  ...statements...
+    ...statements...
 } else {
-  ...statements...
+    ...statements...
 }
 ```
 
@@ -225,7 +228,7 @@ zenuml
 
 It is possible to render an `opt` fragment. This is done by the notation
 
-```
+```zenuml
 opt {
   ...statements...
 }
@@ -248,7 +251,7 @@ It is possible to show actions that are happening in parallel.
 
 This is done by the notation
 
-```
+```zenuml
 par {
   statement1
   statement2
@@ -294,4 +297,18 @@ zenuml
     } finally {
       API->BookingService: rollback status
     }
+```
+
+## Integrating with your library/website.
+
+Zenuml uses the experimental lazy loading & async rendering features which could change in the future.
+
+You can use this method to add mermaid including the zenuml diagram to a web page:
+
+```html
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  import zenuml from 'https://cdn.jsdelivr.net/npm/@mermaid-js/mermaid-zenuml@00.1.0/dist/mermaid-zenuml.esm.min.mjs';
+  await mermaid.registerExternalDiagrams([zenuml]);
+</script>
 ```

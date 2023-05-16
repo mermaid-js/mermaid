@@ -1,7 +1,7 @@
 {
   "name": "@mermaid-js/mermaid-zenuml",
-  "version": "0.0.1",
-  "description": "Zenuml integration for MermaidJS.",
+  "version": "0.1.0",
+  "description": "MermaidJS plugin for ZenUML integration",
   "module": "dist/mermaid-zenuml.core.mjs",
   "types": "dist/detector.d.ts",
   "type": "module",
@@ -23,23 +23,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mermaid-js/mermaid"
+    "url": "https://github.com/mermaid-js/mermaid",
+    "directory": "packages/mermaid-zenuml"
   },
-  "author": "Peng Xiao",
+  "contributors": [
+    "Peng Xiao",
+    "Sidharth Vinod <github@sidharth.dev> (https://sidharth.dev)",
+    "Dong Cai"
+  ],
   "license": "MIT",
-  "standard": {
-    "ignore": [
-      "dist/**/*.js"
-    ],
-    "globals": [
-      "page"
-    ]
-  },
   "dependencies": {
     "@zenuml/core": "^3.0.0"
   },
   "devDependencies": {
-    "mermaid": "workspace:*"
+    "mermaid": "workspace:^"
+  },
+  "peerDependencies": {
+    "mermaid": "workspace:^"
   },
   "files": [
     "dist"
