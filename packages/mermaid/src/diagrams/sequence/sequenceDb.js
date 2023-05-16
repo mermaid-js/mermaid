@@ -286,6 +286,7 @@ export const LINETYPE = {
   CRITICAL_END: 29,
   BREAK_START: 30,
   BREAK_END: 31,
+  PAR_OVER_START: 32,
 };
 
 export const ARROWTYPE = {

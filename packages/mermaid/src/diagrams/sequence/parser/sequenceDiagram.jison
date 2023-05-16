@@ -47,6 +47,7 @@
 "alt"                                                           { this.begin('LINE'); return 'alt'; }
 "else"                                                          { this.begin('LINE'); return 'else'; }
 "par"                                                           { this.begin('LINE'); return 'par'; }
+"par_over" 														{ this.begin('LINE'); return 'par_over'; }
 "and"                                                           { this.begin('LINE'); return 'and'; }
 "critical"                                                      { this.begin('LINE'); return 'critical'; }
 "option"                                                        { this.begin('LINE'); return 'option'; }
@@ -186,6 +187,14 @@ statement
 	{
 		// Parallel start
 		$3.unshift({type: 'parStart', parText:yy.parseMessage($2), signalType: yy.LINETYPE.PAR_START});
+		// Content in par is already in $3
+		// End
+		$3.push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});
+		$$=$3;}
+	| par_over restOfLine par_sections end
+	{
+		// Parallel (overlapped) start
+		$3.unshift({type: 'parStart', parText:yy.parseMessage($2), signalType: yy.LINETYPE.PAR_OVER_START});
 		// Content in par is already in $3
 		// End
 		$3.push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});

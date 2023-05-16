@@ -112,10 +112,10 @@ A `securityLevel` configuration has to first be cleared. `securityLevel` sets th
 
 Values:
 
-- **strict**: (**default**) tags in text are encoded, click functionality is disabled
-- **loose**: tags in text are allowed, click functionality is enabled
-- **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
-- **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This prevent any JavaScript running in the context. This may hinder interactive functionality of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc.
+- **strict**: (**default**) HTML tags in the text are encoded and click functionality is disabled.
+- **antiscript**: HTML tags in text are allowed (only script elements are removed) and click functionality is enabled.
+- **loose**: HTML tags in text are allowed and click functionality is enabled.
+- **sandbox**: With this security level, all rendering takes place in a sandboxed iframe. This prevent any JavaScript from running in the context. This may hinder interactive functionality of the diagram, like scripts, popups in the sequence diagram, links to other tabs or targets, etc.
 
 > **Note**
 > This changes the default behaviour of mermaid so that after upgrade to 8.2, unless the `securityLevel` is not changed, tags in flowcharts are encoded as tags and clicking is disabled.
@@ -348,10 +348,10 @@ mermaid.parseError = function (err, hash) {
   displayErrorInGui(err);
 };
 
-const textFieldUpdated = function () {
+const textFieldUpdated = async function () {
   const textStr = getTextFromFormField('code');
 
-  if (mermaid.parse(textStr)) {
+  if (await mermaid.parse(textStr)) {
     reRender(textStr);
   }
 };
