@@ -1,7 +1,7 @@
 # Announcements
 
-## [Automatic text wrapping in flowcharts is here!](https://www.mermaidchart.com/blog/posts/automatic-text-wrapping-in-flowcharts-is-here)
+## [Bad documentation is bad for developers](https://www.mermaidchart.com/blog/posts/bad-documentation-is-bad-for-developers)
 
-3 April 2023 · 3 mins
+26 April 2023 · 11 mins
 
-Markdown Strings reduce the hassle # Starting from v10.
+Documentation tends to be bad because companies and projects don’t fully realize the costs of bad documentation.

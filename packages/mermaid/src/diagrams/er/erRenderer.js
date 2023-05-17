@@ -478,6 +478,9 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
     case diagObj.db.Cardinality.ONLY_ONE:
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_END + ')');
       break;
+    case diagObj.db.Cardinality.MD_PARENT:
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.MD_PARENT_END + ')');
+      break;
   }
 
   switch (rel.relSpec.cardB) {
@@ -501,6 +504,9 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
       break;
     case diagObj.db.Cardinality.ONLY_ONE:
       svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_START + ')');
+      break;
+    case diagObj.db.Cardinality.MD_PARENT:
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.MD_PARENT_START + ')');
       break;
   }
 
