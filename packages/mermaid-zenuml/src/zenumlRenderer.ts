@@ -53,7 +53,7 @@ export const draw = async function (text: string, id: string) {
 
   const { foreignObject, container, app } = createForeignObject(id);
   svgContainer.appendChild(foreignObject);
-
+  // @ts-expect-error @zenuml/core@3.0.0 exports the wrong type for ZenUml
   const zenuml = new ZenUml(app);
   // default is a theme name. More themes to be added and will be configurable in the future
   await zenuml.render(text, 'theme-mermaid');
