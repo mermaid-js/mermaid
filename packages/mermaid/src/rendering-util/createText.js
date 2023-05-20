@@ -129,7 +129,7 @@ function createFormattedText(width, g, structuredText, addBackground = false) {
         if (lastSpaceIndex > -1) {
           i = prevIndex + lastSpaceIndex + 1;
         }
-        linesUnderWidth.push(fullStr.slice(prevIndex, i));
+        linesUnderWidth.push(fullStr.slice(prevIndex, i).trim());
         prevIndex = i;
         tempStr = null;
       }
