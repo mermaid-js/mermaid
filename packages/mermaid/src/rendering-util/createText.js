@@ -77,6 +77,22 @@ function createTspan(textElement, lineIndex, lineHeight) {
 }
 
 /**
+ * Compute the width of rendered text
+ * @param {object} parentNode
+ * @param {number} lineHeight
+ * @param {string} text
+ * @returns {number}
+ */
+function testWidthOfText(parentNode, lineHeight, text) {
+  const testElement = parentNode.append('text').attr('y', '-10.1');
+  const testSpan = createTspan(testElement, 1, lineHeight);
+  updateTextContentAndStyles(testSpan, [{ content: text, type: 'normal' }]);
+  const val = testSpan.node().getComputedTextLength();
+  testElement.remove();
+  return val;
+}
+
+/**
  * Creates a formatted text element by breaking lines and applying styles based on
  * the given structuredText.
  *
@@ -93,31 +109,40 @@ function createFormattedText(width, g, structuredText, addBackground = false) {
   // .attr('dominant-baseline', 'middle')
   // .attr('text-anchor', 'middle');
   // .attr('text-anchor', 'middle');
-  let lineIndex = -1;
+  let lineIndex = 0;
   structuredText.forEach((line) => {
-    lineIndex++;
-    let tspan = createTspan(textElement, lineIndex, lineHeight);
-
-    let words = [...line].reverse();
-    let currentWord;
-    let wrappedLine = [];
-
-    while (words.length) {
-      currentWord = words.pop();
-      wrappedLine.push(currentWord);
-
-      updateTextContentAndStyles(tspan, wrappedLine);
-
-      if (tspan.node().getComputedTextLength() > width) {
-        wrappedLine.pop();
-        words.push(currentWord);
-
-        updateTextContentAndStyles(tspan, wrappedLine);
-
-        wrappedLine = [];
-        lineIndex++;
-        tspan = createTspan(textElement, lineIndex, lineHeight);
+    /**
+     * Preprocess raw string content of line data
+     * Creating an array of strings pre-split to satisfy width limit
+     */
+    let fullStr = line.map((data) => data.content).join(' ');
+    let tempStr = '';
+    let linesUnderWidth = [];
+    let prevIndex = 0;
+    for (let i = 0; i <= fullStr.length; i++) {
+      tempStr = fullStr.slice(prevIndex, i);
+      log.info(tempStr, prevIndex, i);
+      if (testWidthOfText(labelGroup, lineHeight, tempStr) > width) {
+        const subStr = fullStr.slice(prevIndex, i);
+        // Break at space if any
+        const lastSpaceIndex = subStr.lastIndexOf(' ');
+        if (lastSpaceIndex > -1) {
+          i = prevIndex + lastSpaceIndex + 1;
+        }
+        linesUnderWidth.push(fullStr.slice(prevIndex, i));
+        prevIndex = i;
+        tempStr = null;
       }
+    }
+    if (tempStr != null) {
+      linesUnderWidth.push(tempStr);
+    }
+    /** Add each prepared line as a tspan to the parent node */
+    const preparedLines = linesUnderWidth.map((w) => ({ content: w, type: line.type }));
+    for (const preparedLine of preparedLines) {
+      let tspan = createTspan(textElement, lineIndex, lineHeight);
+      updateTextContentAndStyles(tspan, [preparedLine]);
+      lineIndex++;
     }
   });
   if (addBackground) {
