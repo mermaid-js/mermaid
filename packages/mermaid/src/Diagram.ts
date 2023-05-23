@@ -6,7 +6,6 @@ import { extractFrontMatter } from './diagram-api/frontmatter.js';
 import { UnknownDiagramError } from './errors.js';
 import { DetailedError } from './utils.js';
 import { cleanupComments } from './diagram-api/comments.js';
-import { replaceUnicodeTitlesWithVals } from './diagram-api/unicode.js';
 
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
 
@@ -47,9 +46,7 @@ export class Diagram {
     // extractFrontMatter().
 
     this.parser.parse = (text: string) =>
-      originalParse(
-        cleanupComments(extractFrontMatter(replaceUnicodeTitlesWithVals(text), this.db))
-      );
+      originalParse(cleanupComments(extractFrontMatter(text, this.db)));
 
     this.parser.parser.yy = this.db;
     if (diagram.init) {
