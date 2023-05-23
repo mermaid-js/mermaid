@@ -27,9 +27,9 @@
     "directory": "packages/mermaid-zenuml"
   },
   "contributors": [
-    "Peng Xiao",
-    "Sidharth Vinod <github@sidharth.dev> (https://sidharth.dev)",
-    "Dong Cai"
+    "Peng Xiao (https://github.com/MrCoder)",
+    "Sidharth Vinod (https://sidharth.dev)",
+    "Dong Cai (https://github.com/dontry)"
   ],
   "license": "MIT",
   "dependencies": {
