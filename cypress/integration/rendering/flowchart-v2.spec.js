@@ -674,7 +674,19 @@ A --> B
       { titleTopMargin: 0 }
     );
   });
-  it('3192: It should be possieble to render flowcharts with invisible edges', () => {
+
+  it('4143: should show unicode symbols using "u:u-symbol-title" notation', () => {
+    imgSnapshotTest(
+      `---
+title: Simple flowchart with unicode symbols
+---
+flowchart TD
+A[u:u-gear] --> B[u:u-staff-of-hermes]
+`,
+      { titleTopMargin: 0 }
+    );
+  });
+  it('3192: It should be possible to render flowcharts with invisible edges', () => {
     imgSnapshotTest(
       `---
 title: Simple flowchart with invisible edges

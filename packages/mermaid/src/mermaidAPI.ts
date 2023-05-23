@@ -30,6 +30,7 @@ import { evaluate } from './diagrams/common/common.js';
 import isEmpty from 'lodash-es/isEmpty.js';
 import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
 import { parseDirective } from './directiveUtils.js';
+import { replaceUnicodeTitlesWithVals } from './diagram-api/unicode.js';
 
 // diagram names that support classDef statements
 const CLASSDEF_DIAGRAMS = [
@@ -276,6 +277,8 @@ export const cleanUpSvgCode = (
 
   // replace old br tags with newer style
   cleanedUpSvg = cleanedUpSvg.replace(/<br>/g, '<br/>');
+
+  cleanedUpSvg = replaceUnicodeTitlesWithVals(cleanedUpSvg);
 
   return cleanedUpSvg;
 };

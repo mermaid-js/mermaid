@@ -171,6 +171,10 @@ describe('mermaidAPI', () => {
       const result = cleanUpSvgCode('<br> brrrr<br>', true, true);
       expect(result).toEqual('<br/> brrrr<br/>');
     });
+
+    it('replaces unicode titles with symbols', () => {
+      expect(cleanUpSvgCode('u:u-arabic-sign-sindhi-postposition-men', true, true)).toEqual('۾');
+    });
   });
 
   describe('putIntoIFrame', () => {
