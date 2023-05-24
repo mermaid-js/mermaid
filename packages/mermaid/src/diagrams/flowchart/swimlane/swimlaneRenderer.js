@@ -1,14 +1,25 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select, curveLinear, selectAll } from 'd3';
 import { swimlaneLayout } from './swimlane-layout.js';
-
+import { insertNode } from '../../../dagre-wrapper/nodes.js';
 import flowDb from '../flowDb.js';
 import { getConfig } from '../../../config.js';
-import utils from '../../../utils.js';
+import {getStylesFromArray} from '../../../utils.js';
 import setupGraph, { addEdges, addVertices } from './setup-graph.js';
 import { render } from '../../../dagre-wrapper/index.js';
 import { log } from '../../../logger.js';
 import { setupGraphViewbox } from '../../../setupGraphViewbox.js';
+import common, { evaluate } from '../../common/common.js';
+import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
+import { insertEdge } from '../../../dagre-wrapper/edges.js';
+import {
+  clear as clearGraphlib,
+  clusterDb,
+  adjustClustersAndEdges,
+  findNonClusterChild,
+  sortNodesByHierarchy,
+} from '../../../dagre-wrapper/mermaid-graphlib.js';
+
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -26,43 +37,160 @@ export const setConf = function (cnf) {
  * @param elem
  * @param conf
  */
-function swimlaneRender(layout, elem, conf) {
+async function swimlaneRender(layout,vert, elem,g, id, conf) {
 
  // draw nodes from layout.graph to element
   const nodes = layout.graph.nodes();
 
+  const nodesElements = elem.insert('g').attr('class', 'nodes');
   // for each node, draw a rect, with a child text inside as label
   for (const node of nodes) {
-    const nodeElem = elem.append('g');
-  nodeElem.attr(
-    'class',
-    'swimlane-node-'+node+  + (' lane-' + node.lane)
-  );
+    const nodeFromLayout = layout.graph.node(node);
+    const vertex = vert[node];
+    //Initialise the node
+    /**
+     * Variable for storing the classes for the vertex
+     *
+     * @type {string}
+     */
+    let classStr = 'default';
+    if (vertex.classes.length > 0) {
+      classStr = vertex.classes.join(' ');
+    }
+    classStr = classStr + ' swimlane-label';
+    const styles = getStylesFromArray(vertex.styles);
 
-  // Create the wrapped text element
-  const textElem = nodeElem.append('g');
- console.log('node',node);
- console.log('node.x',layout.graph.node(node).x);
- console.log('node.y',layout.graph.node(node).y);
-  const txt = textElem
-    .append('text')
-    .text(node)
-    .attr('x', layout.graph.node(node).x)
-    .attr('y', layout.graph.node(node).y)
-    .attr('dy', '1em')
-    .attr('alignment-baseline', 'middle')
-    .attr('dominant-baseline', 'middle')
-    .attr('text-anchor', 'middle')
-  const bbox = txt.node().getBBox();
+    // Use vertex id as text in the box if no text is provided by the graph definition
+    let vertexText = vertex.text !== undefined ? vertex.text : vertex.id;
 
+    // We create a SVG label, either by delegating to addHtmlLabel or manually
+    let vertexNode;
+    log.info('vertex', vertex, vertex.labelType);
+    if (vertex.labelType === 'markdown') {
+      log.info('vertex', vertex, vertex.labelType);
+    } else {
+      if (evaluate(getConfig().flowchart.htmlLabels)) {
+        // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
+        const node = {
+          label: vertexText.replace(
+            /fa[blrs]?:fa-[\w-]+/g,
+            (s) => `<i class='${s.replace(':', ' ')}'></i>`
+          ),
+        };
+        vertexNode = addHtmlLabel(elem, node).node();
+        vertexNode.parentNode.removeChild(vertexNode);
+      } else {
+        const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
+        svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
 
-  textElem.attr('transform', 'translate(' + layout.graph.node(node).x/2 + ', ' + layout.graph.node(node).y/2 + ')');
+        const rows = vertexText.split(common.lineBreakRegex);
+
+        for (const row of rows) {
+          const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+          tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
+          tspan.setAttribute('dy', '1em');
+          tspan.setAttribute('x', '1');
+          tspan.textContent = row;
+          svgLabel.appendChild(tspan);
+        }
+        vertexNode = svgLabel;
+      }
+    }
+
+    let radious = 0;
+    let _shape = '';
+    // Set the shape based parameters
+    switch (vertex.type) {
+      case 'round':
+        radious = 5;
+        _shape = 'rect';
+        break;
+      case 'square':
+        _shape = 'rect';
+        break;
+      case 'diamond':
+        _shape = 'question';
+        break;
+      case 'hexagon':
+        _shape = 'hexagon';
+        break;
+      case 'odd':
+        _shape = 'rect_left_inv_arrow';
+        break;
+      case 'lean_right':
+        _shape = 'lean_right';
+        break;
+      case 'lean_left':
+        _shape = 'lean_left';
+        break;
+      case 'trapezoid':
+        _shape = 'trapezoid';
+        break;
+      case 'inv_trapezoid':
+        _shape = 'inv_trapezoid';
+        break;
+      case 'odd_right':
+        _shape = 'rect_left_inv_arrow';
+        break;
+      case 'circle':
+        _shape = 'circle';
+        break;
+      case 'ellipse':
+        _shape = 'ellipse';
+        break;
+      case 'stadium':
+        _shape = 'stadium';
+        break;
+      case 'subroutine':
+        _shape = 'subroutine';
+        break;
+      case 'cylinder':
+        _shape = 'cylinder';
+        break;
+      case 'group':
+        _shape = 'rect';
+        break;
+      case 'doublecircle':
+        _shape = 'doublecircle';
+        break;
+      default:
+        _shape = 'rect';
+    }
+    // Add the node
+    let nodeObj ={
+      labelStyle: styles.labelStyle,
+      shape: _shape,
+      labelText: vertexText,
+      labelType: vertex.labelType,
+      rx: radious,
+      ry: radious,
+      class: classStr,
+      style: styles.style,
+      id: vertex.id,
+      link: vertex.link,
+      linkTarget: vertex.linkTarget,
+      // tooltip: diagObj.db.getTooltip(vertex.id) || '',
+      // domId: diagObj.db.lookUpDomId(vertex.id),
+      haveCallback: vertex.haveCallback,
+      width: vertex.type === 'group' ? 500 : undefined,
+      dir: vertex.dir,
+      type: vertex.type,
+      props: vertex.props,
+      padding: getConfig().flowchart.padding,
+      x: nodeFromLayout.x,
+      y: nodeFromLayout.y,
+    };
+
+     let boundingBox;
+      let nodeEl;
+
+      // Add the element to the DOM
+
+        nodeEl = await insertNode(nodesElements, nodeObj, vertex.dir);
+        boundingBox = nodeEl.node().getBBox();
+        nodeEl.attr('transform', `translate(${nodeObj.x / 2}, ${nodeObj.y / 2})`);
 
   }
-
-
-
-
   return elem;
 }
 
@@ -136,28 +264,10 @@ export const draw = async function (text, id, _version, diagObj) {
   // Fetch the vertices/nodes and edges/links from the parsed graph definition
   const vert = diagObj.db.getVertices();
 
-  // const edges = diagObj.db.getEdges();
+  const edges = diagObj.db.getEdges();
 
-  // log.info('Edges', edges);
-  // let i = 0;
-  // for (i = subGraphs.length - 1; i >= 0; i--) {
-  //   // for (let i = 0; i < subGraphs.length; i++) {
-  //   subG = subGraphs[i];
+  log.info('Edges', edges);
 
-  //   selectAll('cluster').append('text');
-
-  //   for (let j = 0; j < subG.nodes.length; j++) {
-  //     log.info('Setting up subgraphs', subG.nodes[j], subG.id);
-  //     g.setParent(subG.nodes[j], subG.id);
-  //   }
-  // }
-  // setupGraph(diagObj, id, root, doc);
-
-  // Add custom shapes
-  // flowChartShapes.addToRenderV2(addShape);
-
-  // Set up an SVG group so that we can translate the final graph.
-  // const svg = root.select(`[id="${id}"]`);
   const svg = root.select('#' + id);
 
   svg.append('g');
@@ -167,72 +277,24 @@ export const draw = async function (text, id, _version, diagObj) {
 console.log('diagObj',diagObj);
   console.log('subGraphs', diagObj.db.getSubGraphs());
   const layout = swimlaneLayout(g, diagObj);
-  swimlaneRender(layout, svg, conf);
-  // await render(element, g, ['point', 'circle', 'cross'], 'flowchart', id);
+  console.log('custom layout',layout);
+ await swimlaneRender(layout,vert, svg,g,id, conf);
 
+  //  addEdges(edges, g, diagObj);
+
+  //   g.edges().forEach(function (e) {
+  //   const edge = g.edge(e);
+  //   log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
+  //   const edgePaths = svg.insert('g').attr('class', 'edgePaths');
+  //   const paths = insertEdge(edgePaths, e, edge, clusterDb, 'flowchart', g);
+  //   positionEdgeLabel(edge, paths);
+  // });
   // utils.insertTitle(svg, 'flowchartTitleText', conf.titleTopMargin, diagObj.db.getDiagramTitle());
 
   setupGraphViewbox(g, svg, conf.diagramPadding, conf.useMaxWidth);
-
-  // Index nodes
-  //    diagObj.db.indexNodes('subGraph' + i);
-
-  // Add label rects for non html labels
-  // if (!conf.htmlLabels) {
-  //   const labels = doc.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
-  //   for (const label of labels) {
-  //     // Get dimensions of label
-  //     const dim = label.getBBox();
-
-  //     const rect = doc.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  //     rect.setAttribute('rx', 0);
-  //     rect.setAttribute('ry', 0);
-  //     rect.setAttribute('width', dim.width);
-  //     rect.setAttribute('height', dim.height);
-
-  //     label.insertBefore(rect, label.firstChild);
-  //   }
-  // }
-
-  // If node has a link, wrap it in an anchor SVG object.
-  // const keys = Object.keys(vert);
-  // keys.forEach(function (key) {
-  //   const vertex = vert[key];
-
-    // if (vertex.link) {
-    //   const node = select('#' + id + ' [id="' + key + '"]');
-    //   if (node) {
-    //     const link = doc.createElementNS('http://www.w3.org/2000/svg', 'a');
-    //     link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.classes.join(' '));
-    //     link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertex.link);
-    //     link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
-    //     if (securityLevel === 'sandbox') {
-    //       link.setAttributeNS('http://www.w3.org/2000/svg', 'target', '_top');
-    //     } else if (vertex.linkTarget) {
-    //       link.setAttributeNS('http://www.w3.org/2000/svg', 'target', vertex.linkTarget);
-    //     }
-
-    //     const linkNode = node.insert(function () {
-    //       return link;
-    //     }, ':first-child');
-
-    //     const shape = node.select('.label-container');
-    //     if (shape) {
-    //       linkNode.append(function () {
-    //         return shape.node();
-    //       });
-    //     }
-
-    //     const label = node.select('.label');
-    //     if (label) {
-    //       linkNode.append(function () {
-    //         return label.node();
-    //       });
-    //     }
-    //   }
-    // }
-  //});
 };
+
+
 
 export default {
   setConf,
