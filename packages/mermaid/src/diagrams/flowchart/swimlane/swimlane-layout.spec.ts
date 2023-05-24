@@ -1,7 +1,6 @@
 import flowDb from '../flowDb.js';
 import { cleanupComments } from '../../../diagram-api/comments.js';
 import setupGraph from './setup-graph.js';
-import { select } from 'd3';
 import { swimlaneLayout, assignRanks, getSubgraphLookupTable } from './swimlane-layout.js';
 import { getDiagramFromText } from '../../../Diagram.js';
 import { addDiagrams } from '../../../diagram-api/diagram-orchestration.ts';

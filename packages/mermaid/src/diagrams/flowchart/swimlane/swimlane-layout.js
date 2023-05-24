@@ -26,43 +26,56 @@ export function assignRanks(graph, subgraphLookupTable) {
   const visited = new Set();
   const ranks = new Map();
 
-  // DFS function for graph traversal
-  /**
-   *
-   * @param nodeId
-   * @param currentRank
-   * @param previousNodeId
-   */
-  function dfs(nodeId, currentRank, previousNodeId) {
+  function dfs(nodeId, currentRank) {
     if (visited.has(nodeId)) {
       return;
     }
+    
     visited.add(nodeId);
-
-    // Assign the maximum rank between the current rank and previously assigned rank
     const existingRank = ranks.get(nodeId) || 0;
 
     ranks.set(nodeId, Math.max(existingRank, currentRank));
 
     graph.successors(nodeId).forEach((targetId) => {
-      // Special swimlane case if the previous node is from another swimlane, keep the rank
       if (subgraphLookupTable[targetId] !== subgraphLookupTable[nodeId]) {
-        dfs(targetId, currentRank, nodeId);
+        dfs(targetId, currentRank);
       } else {
-        dfs(targetId, currentRank + 1, nodeId);
+        dfs(targetId, currentRank + 1);
       }
     });
   }
 
-  // Start DFS from nodes with no incoming edges
   graph.nodes().forEach((nodeId) => {
     if (graph.predecessors(nodeId).length === 0) {
       dfs(nodeId, 0);
     }
   });
 
+  // Post-process the ranks
+  graph.nodes().forEach((nodeId) => {
+    if (graph.predecessors(nodeId).length === 0) {
+      graph.successors(nodeId).forEach((successorNodeId) => {
+        if (subgraphLookupTable[successorNodeId] !== subgraphLookupTable[nodeId]) {
+          const newRank = ranks.get(successorNodeId);
+          ranks.set(nodeId, newRank);
+
+          // Adjust ranks of successors in the same subgraph
+          graph.successors(nodeId).forEach((sameSubGraphSuccessorNodeId) => {
+            if (subgraphLookupTable[sameSubGraphSuccessorNodeId] === subgraphLookupTable[nodeId]) {
+              ranks.set(sameSubGraphSuccessorNodeId, newRank + 1);
+            }
+          });
+        }
+      });
+    }
+  });
+
   return ranks;
 }
+
+
+
+
 
 /**
  *
@@ -95,6 +108,7 @@ export function swimlaneLayout(graph, diagObj) {
       const laneId = subgraphLookupTable[nodeId];
       const lane = laneDb[laneId];
       const n = graph.node(nodeId);
+      console.log('Node', nodeId, n);
       graph.setNode(nodeId, { y: rank * 200 + 50, x: lane.x + lane.width / 2 });
     }
   });
