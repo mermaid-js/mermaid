@@ -82,6 +82,19 @@ const getStyles = (options: FlowChartStyleOptions) =>
     text-align: center;
   }
 
+  /* For html labels only */
+  .labelBkg {
+    background-color: ${options.edgeLabelBackground};
+    background-color: ${options.edgeLabelBackground};
+    opacity: 0.5;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+  }
+
   .cluster rect {
     fill: ${options.clusterBkg};
     stroke: ${options.clusterBorder};

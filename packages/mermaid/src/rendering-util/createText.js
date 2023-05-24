@@ -16,9 +16,10 @@ function applyStyle(dom, styleFn) {
  * @param {any} node
  * @param width
  * @param classes
+ * @param addBackground
  * @returns {SVGForeignObjectElement} Node
  */
-function addHtmlSpan(element, node, width, classes) {
+function addHtmlSpan(element, node, width, classes, addBackground = false) {
   const fo = element.append('foreignObject');
   // const newEl = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
   // const newEl = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
@@ -28,12 +29,15 @@ function addHtmlSpan(element, node, width, classes) {
 
   const label = node.label;
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
+  const bkgHtml = addBackground ? '<span class="labelBkg"></span>' : '';
   div.html(
-    `<span class="${labelClass} ${classes}" ` +
+    `<span>
+    ${bkgHtml}
+    <span class="${labelClass} ${classes}" ` +
       (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') +
       '>' +
       label +
-      '</span>'
+      '</span></span>'
   );
 
   applyStyle(div, node.labelStyle);
@@ -200,7 +204,7 @@ export const createText = (
       ),
       labelStyle: style.replace('fill:', 'color:'),
     };
-    let vertexNode = addHtmlSpan(el, node, width, classes);
+    let vertexNode = addHtmlSpan(el, node, width, classes, addSvgBackground);
     return vertexNode;
   } else {
     const structuredText = markdownToLines(text);
