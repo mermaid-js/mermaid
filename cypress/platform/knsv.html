@@ -43,6 +43,24 @@
   </head>
   <body>
     <pre class="mermaid" style="width: 50%">
+      %%{init: {"flowchart": {"htmlLabels": true}} }%%
+      flowchart LR
+      b("`The dog in **the** hog.(1).. a a a a *very long text* about it
+      Word!
+      
+      Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words.`") --apa--> c
+      
+          </pre
+    >
+    <pre class="mermaid" style="width: 50%">
+      classDiagram-v2
+
+      classA -- classB : Inheritance
+      classA -- classC : link
+      classC -- classD : link
+      classB -- classD
+    </pre>
+    <pre class="mermaid" style="width: 50%">
       sequenceDiagram
       Alice->>Bob: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
       loop Loopy

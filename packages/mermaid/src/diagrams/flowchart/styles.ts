@@ -1,3 +1,6 @@
+// import khroma from 'khroma';
+import * as khroma from 'khroma';
+
 /** Returns the styles given options */
 export interface FlowChartStyleOptions {
   arrowheadColor: string;
@@ -14,6 +17,18 @@ export interface FlowChartStyleOptions {
   textColor: string;
   titleColor: string;
 }
+
+const fade = (color: string, opacity: number) => {
+  // @ts-ignore TODO: incorrect types from khroma
+  const channel = khroma.channel;
+
+  const r = channel(color, 'r');
+  const g = channel(color, 'g');
+  const b = channel(color, 'b');
+
+  // @ts-ignore incorrect types from khroma
+  return khroma.rgba(r, g, b, opacity);
+};
 
 const getStyles = (options: FlowChartStyleOptions) =>
   `.label {
@@ -84,15 +99,8 @@ const getStyles = (options: FlowChartStyleOptions) =>
 
   /* For html labels only */
   .labelBkg {
-    background-color: ${options.edgeLabelBackground};
-    background-color: ${options.edgeLabelBackground};
-    opacity: 0.5;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
+    background-color: ${fade(options.edgeLabelBackground, 0.5)};
+    // background-color: 
   }
 
   .cluster rect {

@@ -29,15 +29,13 @@ function addHtmlSpan(element, node, width, classes, addBackground = false) {
 
   const label = node.label;
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
-  const bkgHtml = addBackground ? '<span class="labelBkg"></span>' : '';
   div.html(
-    `<span>
-    ${bkgHtml}
+    `
     <span class="${labelClass} ${classes}" ` +
       (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') +
       '>' +
       label +
-      '</span></span>'
+      '</span>'
   );
 
   applyStyle(div, node.labelStyle);
@@ -45,6 +43,9 @@ function addHtmlSpan(element, node, width, classes, addBackground = false) {
   div.style('white-space', 'nowrap');
   div.style('max-width', width + 'px');
   div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
+  if (addBackground) {
+    div.attr('class', 'labelBkg');
+  }
 
   let bbox = div.node().getBoundingClientRect();
   if (bbox.width === width) {
