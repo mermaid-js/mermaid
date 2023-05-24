@@ -42,368 +42,75 @@
     </style>
   </head>
   <body>
-    <pre class="mermaid2" style="width: 50%">
-flowchart LR
-  subgraph one
-    direction LR
-    A[myClass1] --> B[default]
-    subgraph two
-      direction BT
-      C[myClass2] --> D[default]
-    end
-  end
-
+    <pre class="mermaid" style="width: 50%">
+      sequenceDiagram
+      Alice->>Bob: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+      loop Loopy
+          Bob->>Alice: Pasten
+      end
     </pre>
-    <pre class="mermaid2" style="width: 50%">
-flowchart LR
-  classDef aPID stroke:#4e4403,fill:#fdde29,color:#4e4403,rx:5px,ry:5px;
-  classDef crm stroke:#333333,fill:#DCDCDC,color:#333333,rx:5px,ry:5px;
-  classDef type stroke:#502604,fill:#FAB565,color:#502604,rx:20px,ry:20px;;
-
-  O0("Joe")
-  class O0 aPID;
-
-  O1("Person")
-  class O1 crm;
-  O0 -- has type -->O1["Person"]
-
-  O2("aat:300411314")
-  class O2 type;
-  click O2 function "Sorry the newline html tags are not being processed correctly<br/> So all of this appears on the <br/> same line."
-  O0 -- has type -->O2["Bug"]
-  click O0 function "Lots of great info about Joe<br>Lots of great info about Joe<br>burt<br>fred";
-    </pre>
-    <pre class="mermaid2" style="width: 50%">
-flowchart TD
-    subgraph test
-    direction TB
-    subgraph test2
-      direction LR
-      F --> D
-    end
-    subgraph test3
-      direction TB
-      G --> H
-    end
-    end
-    </pre>
-    <pre class="mermaid2" style="width: 50%">
-flowchart TD
-
-  release-branch[Create Release Branch]:::relClass
-  develop-branch[Update Develop Branch]:::relClass
-  github-release-draft[GitHub Release Draft]:::relClass
-  trigger-pipeline[Trigger Jenkins pipeline]:::fixClass
-  github-release[GitHub Release]:::postClass
-
-  build-ready --> release-branch
-  build-ready --> develop-branch
-  release-branch --> jenkins-release-build
-  jenkins-release-build --> github-release-draft
-  jenkins-release-build --> install-release
-  install-release --> verify-release
-  jenkins-release-build --> announce
-  github-release-draft --> github-release
-  verify-release --> verify-check
-  verify-check -- Yes --> github-release
-  verify-check -- No --> release-fix
-  release-fix --> release-branch-pr
-  verify-check -- No --> delete-artifacts
-  release-branch-pr --> trigger-pipeline
-  delete-artifacts --> trigger-pipeline
-  trigger-pipeline --> jenkins-release-build
-
-
-    </pre>
-    <pre class="mermaid2" style="width: 50%">
-flowchart LR
-        a["<strong>Haiya</strong>"]===>b
-    </pre>
-    <pre class="mermaid2" style="width: 50%">
-flowchart TD
-    A --> B
-    A --> C
-    B --> C
-    </pre>
-    <pre class="mermaid2" style="width: 50%">
-flowchart TD
-      A([stadium shape test])
-      A -->|Get money| B([Go shopping])
-      B --> C([Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?])
-      C -->|One| D([Laptop])
-      C -->|Two| E([iPhone])
-      C -->|Three| F([Car<br/>wroom wroom])
-      click A "index.html#link-clicked" "link test"
-      click B testClick "click test"
-      classDef someclass fill:#f96;
-      class A someclass;
-      class C someclass;
-    </pre>
-    <pre class="mermaid2" style="width: 50%">
-   sequenceDiagram
-      title: My Sequence Diagram Title
-      accTitle: My Acc Sequence Diagram
-      accDescr: My Sequence Diagram Description
-
-      Alice->>John: Hello John, how are you?
-      John-->>Alice: Great!
-      Alice-)John: See you later!
-    </pre>
-    <pre class="mermaid2" style="width: 50%">
-graph TD
-    A -->|000| B
-    B -->|111| C
-
-    linkStyle 1 stroke:#ff3,stroke-width:4px,color:red;
-    </pre>
-    <pre class="mermaid2" style="width: 100%">
-  journey
-      accTitle: My User Journey Diagram
-      accDescr: My User Journey Diagram Description
-
-      title My working day
-      section Go to work
-        Make tea: 5: Me
-        Go upstairs: 3: Me
-        Do work: 1: Me, Cat
-      section Go home
-        Go downstairs: 5: Me
-        Sit down: 5: Me
-    </pre>
-    <pre class="mermaid2" style="width: 100%">
-        info
-    </pre>
-    <pre class="mermaid2" style="width: 100%">
-requirementDiagram
-      accTitle: My req Diagram
-      accDescr: My req Diagram Description
-
-    requirement test_req {
-    id: 1
-    text: the test text.
-    risk: high
-    verifymethod: test
-    }
-
-    functionalRequirement test_req2 {
-    id: 1.1
-    text: the second test text.
-    risk: low
-    verifymethod: inspection
-    }
-
-    performanceRequirement test_req3 {
-    id: 1.2
-    text: the third test text.
-    risk: medium
-    verifymethod: demonstration
-    }
-
-    element test_entity {
-    type: simulation
-    }
-
-    element test_entity2 {
-    type: word doc
-    docRef: reqs/test_entity
-    }
-
-
-    test_entity - satisfies -> test_req2
-    test_req - traces -> test_req2
-    test_req - contains -> test_req3
-    test_req <- copies - test_entity2
-    </pre>
-    <pre class="mermaid2" style="width: 100%">
-gantt
-    dateFormat  YYYY-MM-DD
-    title       Adding GANTT diagram functionality to mermaid
-    excludes    weekends
-    %% (`excludes` accepts specific dates in YYYY-MM-DD format, days of the week ("sunday") or "weekends", but not the word "weekdays".)
-
-    section A section
-    Completed task            :done,    des1, 2014-01-06,2014-01-08
-    Active task               :active,  des2, 2014-01-09, 3d
-    Future task               :         des3, after des2, 5d
-    Future task2              :         des4, after des3, 5d
-
-    section Critical tasks
-    Completed task in the critical line :crit, done, 2014-01-06,24h
-    Implement parser and jison          :crit, done, after des1, 2d
-    Create tests for parser             :crit, active, 3d
-    Future task in critical line        :crit, 5d
-    Create tests for renderer           :2d
-    Add to mermaid                      :1d
-    Functionality added                 :milestone, 2014-01-25, 0d
-
-    section Documentation
-    Describe gantt syntax               :active, a1, after des1, 3d
-    Add gantt diagram to demo page      :after a1  , 20h
-    Add another diagram to demo page    :doc1, after a1  , 48h
-
-    section Last section
-    Describe gantt syntax               :after doc1, 3d
-    Add gantt diagram to demo page      :20h
-    Add another diagram to demo page    :48h
-    </pre>
-    <pre class="mermaid2" style="width: 100%">
-stateDiagram
-  state Active {
-    Idle
-  }
-  Inactive --> Idle: ACT
-  Active --> Active: LOG
-    </pre>
-    <pre class="mermaid2" style="width: 100%">
-      flowchart TB
-        accTitle: My flowchart
-        accDescr: My flowchart Description
-        subgraph One
-          a1-->a2-->a3
+    <pre class="mermaid" style="width: 50%">
+      sequenceDiagram
+        participant Alice
+        participant Bob
+        participant John as John<br/>Second Line
+        Alice ->> Bob: Hello Bob, how are you?
+        Bob-->>John: How about you John?
+        Bob--x Alice: I am good thanks!
+        Bob-x John: I am good thanks!
+        Note right of John: Bob thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
+        Bob-->Alice: Checking with John...
+        alt either this
+          Alice->>John: Yes
+          else or this
+          Alice->>John: No
+          else or this will happen
+          Alice->John: Maybe
+        end
+        par this happens in parallel
+        Alice -->> Bob: Parallel message 1
+        and
+        Alice -->> John: Parallel message 2
         end
     </pre>
-    <pre class="mermaid2" style="width: 100%">
-        sequenceDiagram
-          A ->> B: 1
-          rect rgb(204, 0, 102)
-            break yes
-              rect rgb(0, 204, 204)
-                C ->> C: 0
-              end
-            end
-          end
-          B ->> A: Return
-    </pre>
-    <pre class="mermaid2" style="width: 100%">
-classDiagram
-accTitle: My class diagram
-accDescr: My class diagram Description
-Class01 <|-- AveryLongClass : Cool
-Class09 --> C2 : Where am i?
-Class09 --* C3
-Class09 --|> Class07
-Class07 : equals()
-Class07 : Object[] elementData
-Class01 : size()
-Class01 : int chimp
-Class01 : int gorilla
-class Class10 {
-  int id
-  size()
-}
-    </pre>
-    <pre class="mermaid2" style="width: 100%">
-%%{init: {'config': {'wrap': true }}}%%
-        sequenceDiagram
-        participant A as Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
-        A->>Bob: Hola
-        Bob-->A: Pasten !
-    </pre>
-    <pre class="mermaid2" style="width: 100%">
-      gitGraph
-       commit id: "ZERO"
-       branch develop
-       commit id:"A"
-       checkout main
-       commit id:"ONE"
-       checkout develop
-       commit id:"B"
-       branch featureA
-       commit id:"FIX"
-       commit id: "FIX-2"
-       checkout main
-       commit id:"TWO"
-       cherry-pick id:"A"
-       commit id:"THREE"
-       cherry-pick id:"FIX"
-       checkout develop
-       commit id:"C"
-       merge featureA
-    </pre>
-    <pre class="mermaid2" style="width: 100%">
-flowchart TD
-      A[Christmas] -->|Get money| B(Go shopping)
-      B --> C{Let me think}
-      C -->|One| D[Laptop]
-      C -->|Two| E[iPhone]
-      C -->|Three| F[fa:fa-car Car]
-    </pre>
-    <pre class="mermaid2" style="width: 100%">
-        classDiagram
-          Animal "1" <|-- Duck
-          Animal <|-- Fish
-          Animal <--o Zebra
-          Animal : +int age
-          Animal : +String gender
-          Animal: +isMammal()
-          Animal: +mate()
-          class Duck{
-            +String beakColor
-            +swim()
-            +quack()
-          }
-          class Fish{
-            -int sizeInFeet
-            -canEat()
-          }
-          class Zebra{
-            +bool is_wild
-            +run()
-          }
-    </pre>
-    <pre class="mermaid2" style="width: 100%">
-        erDiagram
-    CAR ||--o{ NAMED-DRIVER : allows
-    CAR {
-        string registrationNumber
-        string make
-        string model
-    }
-    PERSON ||--o{ NAMED-DRIVER : is
-    PERSON {
-        string firstName
-        string lastName
-        int age
-    }
-    </pre>
-
-    <!-- <script src="./mermaid.js"></script> -->
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      // import mindmap from '../../packages/mermaid-mindmap/src/detector';
+      // import example from '../../packages/mermaid-example-diagram/src/mermaid-example-diagram.core.mjs';
+      import mermaid from './mermaid.esm.mjs';
+      // await mermaid.registerExternalDiagrams([example]);
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        maxTextSize: 900000,
+        // theme: 'forest',
         startOnLoad: true,
-        securityLevel: 'loose',
         logLevel: 0,
-        fontFamily: 'courier',
         flowchart: {
-          // curve: 'curveLinear',
-          useMaxWidth: true,
-          htmlLabels: false,
-          fontFamily: 'courier',
+          // defaultRenderer: 'elk',
+          useMaxWidth: false,
+          // htmlLabels: false,
+          htmlLabels: true,
         },
-        lazyLoadedDiagrams: ['./mermaid-mindmap-detector.js'],
+        // htmlLabels: false,
+        gantt: {
+          useMaxWidth: false,
+        },
+        sequence: {
+          wrap: true,
+        },
+        useMaxWidth: false,
       });
       function callback() {
         alert('It worked');
       }
-
-      function clickByFlow(elemName) {
-        const div = document.createElement('div');
-        div.className = 'created-by-click';
-        div.style = 'padding: 20px; background: green; color: white;';
-        div.innerText = 'Clicked By Flow';
-
-        document.getElementsByTagName('body')[0].appendChild(div);
-      }
-
       mermaid.parseError = function (err, hash) {
         console.error('In parse error:');
         console.error(err);
       };
+      // mermaid.test1('first_slow', 1200).then((r) => console.info(r));
+      // mermaid.test1('second_fast', 200).then((r) => console.info(r));
+      // mermaid.test1('third_fast', 200).then((r) => console.info(r));
+      // mermaid.test1('forth_slow', 1200).then((r) => console.info(r));
     </script>
   </body>
 </html>

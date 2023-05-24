@@ -578,7 +578,7 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
   txt.class = 'labelText';
 
   drawLabel(g, txt);
-  txt = svgDrawCommon.getTextObj();
+  txt = getTextObj();
   txt.text = loopModel.title;
   txt.x = loopModel.startx + labelBoxWidth / 2 + (loopModel.stopx - loopModel.startx) / 2;
   txt.y = loopModel.starty + boxMargin + boxTextMargin;
@@ -762,6 +762,37 @@ export const insertArrowCrossHead = function (elem) {
     .attr('stroke-width', '1pt')
     .attr('d', 'M 1,2 L 6,7 M 6,2 L 1,7');
   // this is actual shape for arrowhead
+};
+
+export const getTextObj = function () {
+  return {
+    x: 0,
+    y: 0,
+    fill: undefined,
+    anchor: undefined,
+    style: '#666',
+    width: undefined,
+    height: undefined,
+    textMargin: 0,
+    rx: 0,
+    ry: 0,
+    tspan: true,
+    valign: undefined,
+  };
+};
+
+export const getNoteRect = function () {
+  return {
+    x: 0,
+    y: 0,
+    fill: '#EDF2AE',
+    stroke: '#666',
+    width: 100,
+    anchor: 'start',
+    height: 100,
+    rx: 0,
+    ry: 0,
+  };
 };
 
 const _drawTextCandidateFunc = (function () {
@@ -1004,6 +1035,8 @@ export default {
   insertDatabaseIcon,
   insertComputerIcon,
   insertClockIcon,
+  getTextObj,
+  getNoteRect,
   popupMenu,
   popdownMenu,
   fixLifeLineHeights,
