@@ -7,6 +7,8 @@ const ERMarkers = {
   ONE_OR_MORE_END: 'ONE_OR_MORE_END',
   ZERO_OR_MORE_START: 'ZERO_OR_MORE_START',
   ZERO_OR_MORE_END: 'ZERO_OR_MORE_END',
+  MD_PARENT_END: 'MD_PARENT_END',
+  MD_PARENT_START: 'MD_PARENT_START',
 };
 
 /**
@@ -17,6 +19,30 @@ const ERMarkers = {
  */
 const insertMarkers = function (elem, conf) {
   let marker;
+
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', ERMarkers.MD_PARENT_START)
+    .attr('refX', 0)
+    .attr('refY', 7)
+    .attr('markerWidth', 190)
+    .attr('markerHeight', 240)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
+
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', ERMarkers.MD_PARENT_END)
+    .attr('refX', 19)
+    .attr('refY', 7)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 28)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 
   elem
     .append('defs')

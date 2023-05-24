@@ -84,7 +84,7 @@ Here the directive declaration will set the `logLevel` to `debug` and the `theme
 
 Note: You can use 'init' or 'initialize' as both acceptable as init directives. Also note that `%%init%%` and `%%initialize%%` directives will be grouped together after they are parsed. This means:
 
-```mmd
+```mermaid
 %%{init: { 'logLevel': 'debug', 'theme': 'forest' } }%%
 %%{initialize: { 'logLevel': 'fatal', "theme":'dark', 'startOnLoad': true } }%%
 ...

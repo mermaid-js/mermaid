@@ -387,7 +387,7 @@ sequenceDiagram
 
 Comments can be entered within a sequence diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
 
-```mmd
+```mermaid
 sequenceDiagram
     Alice->>John: Hello John, how are you?
     %% this is a comment
@@ -443,7 +443,7 @@ This can be configured by adding one or more link lines with the format:
 link <actor>: <link-label> @ <link-url>
 ```
 
-```mmd
+```mermaid
 sequenceDiagram
     participant Alice
     participant John

@@ -1,0 +1,36 @@
+{
+  "name": "docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress --port 3333 --open",
+    "build": "pnpm prefetch && vitepress build",
+    "build-no-prefetch": "vitepress build",
+    "serve": "vitepress serve",
+    "preview-https": "pnpm build && serve .vitepress/dist",
+    "preview-https-no-prefetch": "pnpm build-no-prefetch && serve .vitepress/dist",
+    "prefetch": "pnpm fetch-contributors && pnpm fetch-avatars",
+    "fetch-avatars": "ts-node-esm .vitepress/scripts/fetch-avatars.ts",
+    "fetch-contributors": "ts-node-esm .vitepress/scripts/fetch-contributors.ts"
+  },
+  "dependencies": {
+    "@vueuse/core": "^10.1.0",
+    "jiti": "^1.18.2",
+    "vue": "^3.2.47"
+  },
+  "devDependencies": {
+    "@iconify-json/carbon": "^1.1.16",
+    "@unocss/reset": "^0.52.0",
+    "@vite-pwa/vitepress": "^0.0.5",
+    "@vitejs/plugin-vue": "^4.2.1",
+    "fast-glob": "^3.2.12",
+    "https-localhost": "^4.7.1",
+    "pathe": "^1.1.0",
+    "unocss": "^0.52.0",
+    "unplugin-vue-components": "^0.24.1",
+    "vite": "^4.3.3",
+    "vite-plugin-pwa": "^0.15.0",
+    "vitepress": "1.0.0-alpha.76",
+    "workbox-window": "^6.5.4"
+  }
+}
