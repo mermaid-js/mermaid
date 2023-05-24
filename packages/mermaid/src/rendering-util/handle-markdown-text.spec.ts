@@ -1,6 +1,5 @@
-// import { test } from 'vitest';
-import { markdownToLines, markdownToHTML } from './handle-markdown-text';
-import { test } from 'vitest';
+import { markdownToLines, markdownToHTML } from './handle-markdown-text.js';
+import { test, expect } from 'vitest';
 
 test('markdownToLines - Basic test', () => {
   const input = `This is regular text
@@ -37,9 +36,9 @@ Here is a line *with an italic* section`;
       { content: 'is', type: 'normal' },
       { content: 'a', type: 'normal' },
       { content: 'line', type: 'normal' },
-      { content: 'with', type: 'em' },
-      { content: 'an', type: 'em' },
-      { content: 'italic', type: 'em' },
+      { content: 'with', type: 'emphasis' },
+      { content: 'an', type: 'emphasis' },
+      { content: 'italic', type: 'emphasis' },
       { content: 'section', type: 'normal' },
     ],
   ];
@@ -117,7 +116,6 @@ test('markdownToLines - paragraph 1', () => {
 
 test('markdownToLines - paragraph', () => {
   const input = `**Start** with
-
     a second line`;
 
   const expectedOutput = [
@@ -144,7 +142,7 @@ test('markdownToLines - Only italic formatting', () => {
       { content: 'This', type: 'normal' },
       { content: 'is', type: 'normal' },
       { content: 'an', type: 'normal' },
-      { content: 'italic', type: 'em' },
+      { content: 'italic', type: 'emphasis' },
       { content: 'test', type: 'normal' },
     ],
   ];
@@ -158,7 +156,7 @@ it('markdownToLines - Mixed formatting', () => {
 
   const expectedOutput = [
     [
-      { content: 'Italic', type: 'em' },
+      { content: 'Italic', type: 'emphasis' },
       { content: 'and', type: 'normal' },
       { content: 'bold', type: 'strong' },
       { content: 'formatting', type: 'normal' },
@@ -179,21 +177,15 @@ Word!`;
       { content: 'dog', type: 'normal' },
       { content: 'in', type: 'normal' },
       { content: 'the', type: 'strong' },
-      { content: 'hog', type: 'normal' },
-      { content: '.', type: 'normal' },
-      { content: '.', type: 'normal' },
-      { content: '.', type: 'normal' },
+      { content: 'hog...', type: 'normal' },
       { content: 'a', type: 'normal' },
-      { content: 'very', type: 'em' },
-      { content: 'long', type: 'em' },
-      { content: 'text', type: 'em' },
+      { content: 'very', type: 'emphasis' },
+      { content: 'long', type: 'emphasis' },
+      { content: 'text', type: 'emphasis' },
       { content: 'about', type: 'normal' },
       { content: 'it', type: 'normal' },
     ],
-    [
-      { content: 'Word', type: 'normal' },
-      { content: '!', type: 'normal' },
-    ],
+    [{ content: 'Word!', type: 'normal' }],
   ];
 
   const output = markdownToLines(input);
@@ -246,8 +238,16 @@ test('markdownToHTML - Only italic formatting', () => {
 
 test('markdownToHTML - Mixed formatting', () => {
   const input = `*Italic* and **bold** formatting`;
-
   const expectedOutput = `<p><em>Italic</em> and <strong>bold</strong> formatting</p>`;
   const output = markdownToHTML(input);
   expect(output).toEqual(expectedOutput);
+});
+
+test('markdownToHTML - Unsupported formatting', () => {
+  expect(
+    markdownToHTML(`Hello
+  - l1
+  - l2
+  - l3`)
+  ).toMatchInlineSnapshot('"<p>Hello</p>Unsupported markdown: list"');
 });
