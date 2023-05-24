@@ -5,6 +5,7 @@
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/news/blog.md](../../packages/mermaid/src/docs/news/blog.md).
 
 # Blog
+
 ## [Bad documentation is bad for developers](https://www.mermaidchart.com/blog/posts/bad-documentation-is-bad-for-developers)
 
 26 April 2023 · 11 mins

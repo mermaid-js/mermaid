@@ -1,12 +1,12 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { line, curveBasis, select } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
-import { getConfig } from '../../config';
-import { log } from '../../logger';
-import utils from '../../utils';
-import erMarkers from './erMarkers';
-import { configureSvgSize } from '../../setupGraphViewbox';
-import { parseGenericTypes } from '../common/common';
+import { getConfig } from '../../config.js';
+import { log } from '../../logger.js';
+import utils from '../../utils.js';
+import erMarkers from './erMarkers.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { parseGenericTypes } from '../common/common.js';
 import { v5 as uuid5 } from 'uuid';
 
 /** Regex used to remove chars from the entity name so the result can be used in an id */
@@ -478,6 +478,9 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
     case diagObj.db.Cardinality.ONLY_ONE:
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_END + ')');
       break;
+    case diagObj.db.Cardinality.MD_PARENT:
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.MD_PARENT_END + ')');
+      break;
   }
 
   switch (rel.relSpec.cardB) {
@@ -501,6 +504,9 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
       break;
     case diagObj.db.Cardinality.ONLY_ONE:
       svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_START + ')');
+      break;
+    case diagObj.db.Cardinality.MD_PARENT:
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.MD_PARENT_START + ')');
       break;
   }
 

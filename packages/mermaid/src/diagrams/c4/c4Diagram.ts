@@ -1,10 +1,10 @@
 // @ts-ignore: TODO Fix ts errors
-import c4Parser from './parser/c4Diagram';
-import c4Db from './c4Db';
-import c4Renderer from './c4Renderer';
-import c4Styles from './styles';
-import { MermaidConfig } from '../../config.type';
-import { DiagramDefinition } from '../../diagram-api/types';
+import c4Parser from './parser/c4Diagram.jison';
+import c4Db from './c4Db.js';
+import c4Renderer from './c4Renderer.js';
+import c4Styles from './styles.js';
+import { MermaidConfig } from '../../config.type.js';
+import { DiagramDefinition } from '../../diagram-api/types.js';
 
 export const diagram: DiagramDefinition = {
   parser: c4Parser,

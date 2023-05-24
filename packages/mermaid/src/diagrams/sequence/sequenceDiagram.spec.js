@@ -1,9 +1,9 @@
 import { vi } from 'vitest';
 
-import * as configApi from '../../config';
-import mermaidAPI from '../../mermaidAPI';
-import { Diagram, getDiagramFromText } from '../../Diagram';
-import { addDiagrams } from '../../diagram-api/diagram-orchestration';
+import * as configApi from '../../config.js';
+import mermaidAPI from '../../mermaidAPI.js';
+import { Diagram, getDiagramFromText } from '../../Diagram.js';
+import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
 
 beforeAll(async () => {
   // Is required to load the sequence diagram
@@ -1125,6 +1125,29 @@ end`;
     expect(messages[0].message).toBe('Parallel one');
     expect(messages[1].from).toBe('Alice');
     expect(messages[2].from).toBe('Bob');
+  });
+  it('it should handle par_over statements', async () => {
+    const str = `
+sequenceDiagram
+par_over Parallel overlap
+Alice ->> Bob: Message
+Note left of Alice: Alice note
+Note right of Bob: Bob note
+end`;
+
+    await mermaidAPI.parse(str);
+    const actors = diagram.db.getActors();
+
+    expect(actors.Alice.description).toBe('Alice');
+    expect(actors.Bob.description).toBe('Bob');
+
+    const messages = diagram.db.getMessages();
+
+    expect(messages.length).toBe(5);
+    expect(messages[0].message).toBe('Parallel overlap');
+    expect(messages[1].from).toBe('Alice');
+    expect(messages[2].from).toBe('Alice');
+    expect(messages[3].from).toBe('Bob');
   });
   it('should handle special characters in signals', async () => {
     const str = 'sequenceDiagram\n' + 'Alice->Bob: -:<>,;# comment';

@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import svgDraw from './svgDraw';
+import svgDraw from './svgDraw.js';
 
 // This is the only place that uses this mock
 export const MockD3 = (name, parent) => {
@@ -172,18 +172,6 @@ describe('svgDraw', function () {
       expect(rect.attr).toHaveBeenCalledWith('fill', '#ccc');
       expect(rect.attr).toHaveBeenCalledWith('class', 'rect');
       expect(rect.lower).toHaveBeenCalled();
-    });
-  });
-  describe('sanitizeUrl', function () {
-    it('should sanitize malicious urls', function () {
-      const maliciousStr = 'javascript:script:alert(1)';
-      const result = svgDraw.sanitizeUrl(maliciousStr);
-      expect(result).not.toContain('javascript:alert(1)');
-    });
-    it('should not sanitize non dangerous urls', function () {
-      const maliciousStr = 'javajavascript:script:alert(1)';
-      const result = svgDraw.sanitizeUrl(maliciousStr);
-      expect(result).not.toContain('javascript:alert(1)');
     });
   });
 });

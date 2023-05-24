@@ -393,9 +393,9 @@ mindmap
 
     <script type="module">
       // import mindmap from '../../packages/mermaid-mindmap/src/detector';
-      import example from '../../packages/mermaid-example-diagram/src/detector';
-      import mermaid from '../../packages/mermaid/src/mermaid';
-      await mermaid.registerExternalDiagrams([example]);
+      // import example from '../../packages/mermaid-example-diagram/src/mermaid-example-diagram.core.mjs';
+      import mermaid from './mermaid.esm.mjs';
+      // await mermaid.registerExternalDiagrams([example]);
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };

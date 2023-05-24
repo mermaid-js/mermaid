@@ -1,14 +1,14 @@
 // @ts-ignore d3 types are not available
 import { select, curveLinear } from 'd3';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
-import { log } from '../../logger';
-import { getConfig } from '../../config';
+import { log } from '../../logger.js';
+import { getConfig } from '../../config.js';
 import { render } from '../../dagre-wrapper/index.js';
-import utils from '../../utils';
-import { interpolateToCurve, getStylesFromArray } from '../../utils';
-import { setupGraphViewbox } from '../../setupGraphViewbox';
-import common from '../common/common';
-import { ClassRelation, ClassNote, ClassMap, EdgeData } from './classTypes';
+import utils from '../../utils.js';
+import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
+import { setupGraphViewbox } from '../../setupGraphViewbox.js';
+import common from '../common/common.js';
+import { ClassRelation, ClassNote, ClassMap, EdgeData, NamespaceMap } from './classTypes.js';
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
 
@@ -19,6 +19,59 @@ let conf = {
   curve: undefined,
 };
 
+interface RectParameters {
+  id: string;
+  shape: 'rect';
+  labelStyle: string;
+  domId: string;
+  labelText: string;
+  padding: number | undefined;
+  style?: string;
+}
+
+/**
+ * Function that adds the vertices found during parsing to the graph to be rendered.
+ *
+ * @param namespaces - Object containing the vertices.
+ * @param g - The graph that is to be drawn.
+ * @param _id - id of the graph
+ * @param diagObj - The diagram object
+ */
+export const addNamespaces = function (
+  namespaces: NamespaceMap,
+  g: graphlib.Graph,
+  _id: string,
+  diagObj: any
+) {
+  const keys = Object.keys(namespaces);
+  log.info('keys:', keys);
+  log.info(namespaces);
+
+  // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
+  keys.forEach(function (id) {
+    const vertex = namespaces[id];
+
+    // parent node must be one of [rect, roundedWithTitle, noteGroup, divider]
+    const shape = 'rect';
+
+    const node: RectParameters = {
+      shape: shape,
+      id: vertex.id,
+      domId: vertex.domId,
+      labelText: sanitizeText(vertex.id),
+      labelStyle: '',
+      style: 'fill: none; stroke: black',
+      // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release
+      padding: getConfig().flowchart?.padding ?? getConfig().class?.padding,
+    };
+
+    g.setNode(vertex.id, node);
+    addClasses(vertex.classes, g, _id, diagObj, vertex.id);
+
+    log.info('setNode', node);
+  });
+};
+
 /**
  * Function that adds the vertices found during parsing to the graph to be rendered.
  *
@@ -26,12 +79,14 @@ let conf = {
  * @param g - The graph that is to be drawn.
  * @param _id - id of the graph
  * @param diagObj - The diagram object
+ * @param parent - id of the parent namespace, if it exists
  */
 export const addClasses = function (
   classes: ClassMap,
   g: graphlib.Graph,
   _id: string,
-  diagObj: any
+  diagObj: any,
+  parent?: string
 ) {
   const keys = Object.keys(classes);
   log.info('keys:', keys);
@@ -55,6 +110,7 @@ export const addClasses = function (
     const vertexText = vertex.label ?? vertex.id;
     const radius = 0;
     const shape = 'class_box';
+
     // Add the node
     const node = {
       labelStyle: styles.labelStyle,
@@ -67,7 +123,7 @@ export const addClasses = function (
       style: styles.style,
       id: vertex.id,
       domId: vertex.domId,
-      tooltip: diagObj.db.getTooltip(vertex.id) || '',
+      tooltip: diagObj.db.getTooltip(vertex.id, parent) || '',
       haveCallback: vertex.haveCallback,
       link: vertex.link,
       width: vertex.type === 'group' ? 500 : undefined,
@@ -76,6 +132,11 @@ export const addClasses = function (
       padding: getConfig().flowchart?.padding ?? getConfig().class?.padding,
     };
     g.setNode(vertex.id, node);
+
+    if (parent) {
+      g.setParent(vertex.id, parent);
+    }
+
     log.info('setNode', node);
   });
 };
@@ -248,7 +309,7 @@ export const setConf = function (cnf: any) {
  * @param _version -
  * @param diagObj -
  */
-export const draw = function (text: string, id: string, _version: string, diagObj: any) {
+export const draw = async function (text: string, id: string, _version: string, diagObj: any) {
   log.info('Drawing class - ', id);
 
   // TODO V10: Why flowchart? Might be a mistake when copying.
@@ -275,10 +336,12 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     });
 
   // Fetch the vertices/nodes and edges/links from the parsed graph definition
+  const namespaces: NamespaceMap = diagObj.db.getNamespaces();
   const classes: ClassMap = diagObj.db.getClasses();
   const relations: ClassRelation[] = diagObj.db.getRelations();
   const notes: ClassNote[] = diagObj.db.getNotes();
   log.info(relations);
+  addNamespaces(namespaces, g, id, diagObj);
   addClasses(classes, g, id, diagObj);
   addRelations(relations, g);
   addNotes(notes, g, relations.length + 1, classes);
@@ -300,7 +363,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   // Run the renderer. This is what draws the final graph.
   // @ts-ignore Ignore type error for now
   const element = root.select('#' + id + ' g');
-  render(
+  await render(
     element,
     g,
     ['aggregation', 'extension', 'composition', 'dependency', 'lollipop'],

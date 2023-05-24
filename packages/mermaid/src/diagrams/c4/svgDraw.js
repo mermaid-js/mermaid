@@ -1,28 +1,9 @@
-import common from '../common/common';
+import common from '../common/common.js';
+import * as svgDrawCommon from '../common/svgDrawCommon';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 
 export const drawRect = function (elem, rectData) {
-  const rectElem = elem.append('rect');
-  rectElem.attr('x', rectData.x);
-  rectElem.attr('y', rectData.y);
-  rectElem.attr('fill', rectData.fill);
-  rectElem.attr('stroke', rectData.stroke);
-  rectElem.attr('width', rectData.width);
-  rectElem.attr('height', rectData.height);
-  rectElem.attr('rx', rectData.rx);
-  rectElem.attr('ry', rectData.ry);
-
-  if (rectData.attrs !== 'undefined' && rectData.attrs !== null) {
-    for (let attrKey in rectData.attrs) {
-      rectElem.attr(attrKey, rectData.attrs[attrKey]);
-    }
-  }
-
-  if (rectData.class !== 'undefined') {
-    rectElem.attr('class', rectData.class);
-  }
-
-  return rectElem;
+  return svgDrawCommon.drawRect(elem, rectData);
 };
 
 export const drawImage = function (elem, width, height, x, y, link) {
@@ -236,7 +217,8 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
 
   // <rect fill="#08427B" height="119.2188" rx="2.5" ry="2.5" stroke="#073B6F" stroke-width="0.5" width="110" x="120" y="7"/>
   // draw rect of c4Shape
-  const rect = getNoteRect();
+  const rect = svgDrawCommon.getNoteRect();
+
   switch (c4Shape.typeC4Shape.text) {
     case 'person':
     case 'external_person':
@@ -479,6 +461,7 @@ export const insertArrowHead = function (elem) {
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 10 z'); // this is actual shape for arrowhead
 };
+
 export const insertArrowEnd = function (elem) {
   elem
     .append('defs')
@@ -493,6 +476,7 @@ export const insertArrowEnd = function (elem) {
     .append('path')
     .attr('d', 'M 10 0 L 0 5 L 10 10 z'); // this is actual shape for arrowhead
 };
+
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  *
@@ -511,6 +495,7 @@ export const insertArrowFilledHead = function (elem) {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
+
 /**
  * Setup node number. The result is appended to the svg.
  *
@@ -532,6 +517,7 @@ export const insertDynamicNumber = function (elem) {
     .attr('r', 6);
   // .style("fill", '#f00');
 };
+
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  *
@@ -566,20 +552,6 @@ export const insertArrowCrossHead = function (elem) {
     .attr('stroke-width', '1px')
     .attr('d', 'M 0,1 L 6,7 M 6,1 L 0,7');
   // this is actual shape for arrowhead
-};
-
-export const getNoteRect = function () {
-  return {
-    x: 0,
-    y: 0,
-    fill: '#EDF2AE',
-    stroke: '#666',
-    width: 100,
-    anchor: 'start',
-    height: 100,
-    rx: 0,
-    ry: 0,
-  };
 };
 
 const getC4ShapeFont = (cnf, typeC4Shape) => {
@@ -714,6 +686,4 @@ export default {
   insertDatabaseIcon,
   insertComputerIcon,
   insertClockIcon,
-  getNoteRect,
-  sanitizeUrl, // TODO why is this exported?
 };

@@ -17,10 +17,11 @@ They also serve as proof of concept, for the variety of things that can be built
 - [Mermaid Flow Visual Editor](https://www.mermaidflow.app) (**Native support**)
 - [Deepdwn](https://billiam.itch.io/deepdwn) (**Native support**)
 - [Joplin](https://joplinapp.org) (**Native support**)
+- [Slab](https://slab.com) (**Native support**)
 - [Swimm](https://swimm.io) (**Native support**)
 - [Notion](https://notion.so) (**Native support**)
 - [Observable](https://observablehq.com/@observablehq/mermaid) (**Native support**)
-- [Obsidian](https://help.obsidian.md/How+to/Format+your+notes#Diagram) (**Native support**)
+- [Obsidian](https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram) (**Native support**)
 - [GitBook](https://gitbook.com)
   - [Mermaid Plugin](https://github.com/JozoVilcek/gitbook-plugin-mermaid)
   - [Markdown with Mermaid CLI](https://github.com/miao1007/gitbook-plugin-mermaid-cli)
@@ -140,8 +141,12 @@ They also serve as proof of concept, for the variety of things that can be built
 
 - [Sphinx](https://www.sphinx-doc.org/en/master/)
   - [sphinxcontrib-mermaid](https://github.com/mgaitan/sphinxcontrib-mermaid)
-- [remark.js](https://remark.js.org/)
-  - [remark-mermaid](https://github.com/temando/remark-mermaid)
+- [remark](https://remark.js.org/)
+  - [remark-mermaidjs](https://github.com/remcohaszing/remark-mermaidjs)
+- [rehype](https://github.com/rehypejs/rehype)
+  - [rehype-mermaidjs](https://github.com/remcohaszing/rehype-mermaidjs)
+- [Gatsby](https://www.gatsbyjs.com/)
+  - [gatsby-remark-mermaid](https://github.com/remcohaszing/gatsby-remark-mermaid)
 - [jSDoc](https://jsdoc.app/)
   - [jsdoc-mermaid](https://github.com/Jellyvision/jsdoc-mermaid)
 - [MkDocs](https://www.mkdocs.org)
@@ -154,6 +159,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [codedoc-mermaid-plugin](https://www.npmjs.com/package/codedoc-mermaid-plugin)
 - [mdbook](https://rust-lang.github.io/mdBook/index.html)
   - [mdbook-mermaid](https://github.com/badboy/mdbook-mermaid)
+- [Quarto](https://quarto.org/)
 
 ## Browser Extensions
 
@@ -181,6 +187,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [bisheng-plugin-mermaid](https://github.com/yct21/bisheng-plugin-mermaid)
 - [Reveal CK](https://github.com/jedcn/reveal-ck)
   - [reveal-ck-mermaid-plugin](https://github.com/tmtm/reveal-ck-mermaid-plugin)
+- [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
 - [ExDoc](https://github.com/elixir-lang/ex_doc)
   - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)

@@ -1,32 +1,12 @@
-import common from '../common/common';
-import { addFunction } from '../../interactionDb';
-import { parseFontSize } from '../../utils';
+import common from '../common/common.js';
+import * as svgDrawCommon from '../common/svgDrawCommon';
+import { addFunction } from '../../interactionDb.js';
+import { parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 
 export const drawRect = function (elem, rectData) {
-  const rectElem = elem.append('rect');
-  rectElem.attr('x', rectData.x);
-  rectElem.attr('y', rectData.y);
-  rectElem.attr('fill', rectData.fill);
-  rectElem.attr('stroke', rectData.stroke);
-  rectElem.attr('width', rectData.width);
-  rectElem.attr('height', rectData.height);
-  rectElem.attr('rx', rectData.rx);
-  rectElem.attr('ry', rectData.ry);
-
-  if (rectData.class !== undefined) {
-    rectElem.attr('class', rectData.class);
-  }
-
-  return rectElem;
+  return svgDrawCommon.drawRect(elem, rectData);
 };
-
-// const sanitizeUrl = function (s) {
-//   return s
-//     .replace(/&/g, '&amp;')
-//     .replace(/</g, '&lt;')
-//     .replace(/javascript:/g, '');
-// };
 
 const addPopupInteraction = (id, actorCnt) => {
   addFunction(() => {
@@ -43,6 +23,7 @@ const addPopupInteraction = (id, actorCnt) => {
     });
   });
 };
+
 export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMenus) {
   if (actor.links === undefined || actor.links === null || Object.keys(actor.links).length === 0) {
     return { height: 0, width: 0 };
@@ -107,22 +88,6 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   return { height: rectData.height + linkY, width: menuWidth };
 };
 
-export const drawImage = function (elem, x, y, link) {
-  const imageElem = elem.append('image');
-  imageElem.attr('x', x);
-  imageElem.attr('y', y);
-  var sanitizedLink = sanitizeUrl(link);
-  imageElem.attr('xlink:href', sanitizedLink);
-};
-
-export const drawEmbeddedImage = function (elem, x, y, link) {
-  const imageElem = elem.append('use');
-  imageElem.attr('x', x);
-  imageElem.attr('y', y);
-  var sanitizedLink = sanitizeUrl(link);
-  imageElem.attr('xlink:href', '#' + sanitizedLink);
-};
-
 export const popupMenu = function (popid) {
   return (
     "var pu = document.getElementById('" +
@@ -152,9 +117,10 @@ const popupMenuDownFunc = function (popupId) {
     pu.style.display = 'none';
   }
 };
+
 export const drawText = function (elem, textData) {
-  let prevTextHeight = 0,
-    textHeight = 0;
+  let prevTextHeight = 0;
+  let textHeight = 0;
   const lines = textData.text.split(common.lineBreakRegex);
 
   const [_textFontSize, _textFontSizePx] = parseFontSize(textData.fontSize);
@@ -188,6 +154,7 @@ export const drawText = function (elem, textData) {
         break;
     }
   }
+
   if (
     textData.anchor !== undefined &&
     textData.textMargin !== undefined &&
@@ -217,6 +184,7 @@ export const drawText = function (elem, textData) {
         break;
     }
   }
+
   for (let [i, line] of lines.entries()) {
     if (
       textData.textMargin !== undefined &&
@@ -371,7 +339,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
     }
   }
 
-  const rect = getNoteRect();
+  const rect = svgDrawCommon.getNoteRect();
   var cssclass = 'actor';
   if (actor.properties != null && actor.properties['class']) {
     cssclass = actor.properties['class'];
@@ -391,9 +359,9 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   if (actor.properties != null && actor.properties['icon']) {
     const iconSrc = actor.properties['icon'].trim();
     if (iconSrc.charAt(0) === '@') {
-      drawEmbeddedImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc.substr(1));
+      svgDrawCommon.drawEmbeddedImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc.substr(1));
     } else {
-      drawImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc);
+      svgDrawCommon.drawImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc);
     }
   }
 
@@ -438,7 +406,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   const actElem = elem.append('g');
   actElem.attr('class', 'actor-man');
 
-  const rect = getNoteRect();
+  const rect = svgDrawCommon.getNoteRect();
   rect.x = actor.x;
   rect.y = actor.y;
   rect.fill = '#eaeaea';
@@ -447,7 +415,6 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   rect.class = 'actor';
   rect.rx = 3;
   rect.ry = 3;
-  // drawRect(actElem, rect);
 
   actElem
     .append('line')
@@ -532,6 +499,7 @@ export const drawBox = function (elem, box, conf) {
 export const anchorElement = function (elem) {
   return elem.append('g');
 };
+
 /**
  * Draws an activation in the diagram
  *
@@ -542,7 +510,7 @@ export const anchorElement = function (elem) {
  * @param {any} actorActivations - Number of activations on the actor.
  */
 export const drawActivation = function (elem, bounds, verticalPos, conf, actorActivations) {
-  const rect = getNoteRect();
+  const rect = svgDrawCommon.getNoteRect();
   const g = bounds.anchored;
   rect.x = bounds.startx;
   rect.y = bounds.starty;
@@ -594,7 +562,7 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
     });
   }
 
-  let txt = getTextObj();
+  let txt = svgDrawCommon.getTextObj();
   txt.text = labelText;
   txt.x = loopModel.startx;
   txt.y = loopModel.starty;
@@ -661,16 +629,7 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
  * @param {any} bounds Shape of the rectangle
  */
 export const drawBackgroundRect = function (elem, bounds) {
-  const rectElem = drawRect(elem, {
-    x: bounds.startx,
-    y: bounds.starty,
-    width: bounds.stopx - bounds.startx,
-    height: bounds.stopy - bounds.starty,
-    fill: bounds.fill,
-    stroke: bounds.stroke,
-    class: 'rect',
-  });
-  rectElem.lower();
+  svgDrawCommon.drawBackgroundRect(elem, bounds);
 };
 
 export const insertDatabaseIcon = function (elem) {
@@ -737,6 +696,7 @@ export const insertArrowHead = function (elem) {
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 10 z'); // this is actual shape for arrowhead
 };
+
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  *
@@ -755,6 +715,7 @@ export const insertArrowFilledHead = function (elem) {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
+
 /**
  * Setup node number. The result is appended to the svg.
  *
@@ -776,6 +737,7 @@ export const insertSequenceNumber = function (elem) {
     .attr('r', 6);
   // .style("fill", '#f00');
 };
+
 /**
  * Setup cross head and define the marker. The result is appended to the svg.
  *
@@ -1062,8 +1024,6 @@ export default {
   drawActor,
   drawBox,
   drawPopup,
-  drawImage,
-  drawEmbeddedImage,
   anchorElement,
   drawActivation,
   drawLoop,

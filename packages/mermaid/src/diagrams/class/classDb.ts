@@ -1,10 +1,10 @@
 // @ts-expect-error - d3 types issue
 import { select, Selection } from 'd3';
-import { log } from '../../logger';
-import * as configApi from '../../config';
-import common from '../common/common';
-import utils from '../../utils';
-import mermaidAPI from '../../mermaidAPI';
+import { log } from '../../logger.js';
+import * as configApi from '../../config.js';
+import common from '../common/common.js';
+import utils from '../../utils.js';
+import mermaidAPI from '../../mermaidAPI.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -13,8 +13,15 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb';
-import { ClassRelation, ClassNode, ClassNote, ClassMap } from './classTypes';
+} from '../../commonDb.js';
+import {
+  ClassRelation,
+  ClassNode,
+  ClassNote,
+  ClassMap,
+  NamespaceMap,
+  NamespaceNode,
+} from './classTypes.js';
 
 const MERMAID_DOM_ID_PREFIX = 'classId-';
 
@@ -22,6 +29,8 @@ let relations: ClassRelation[] = [];
 let classes: ClassMap = {};
 let notes: ClassNote[] = [];
 let classCounter = 0;
+let namespaces: NamespaceMap = {};
+let namespaceCounter = 0;
 
 let functions: any[] = [];
 
@@ -100,12 +109,15 @@ export const clear = function () {
   notes = [];
   functions = [];
   functions.push(setupToolTips);
+  namespaces = {};
+  namespaceCounter = 0;
   commonClear();
 };
 
 export const getClass = function (id: string) {
   return classes[id];
 };
+
 export const getClasses = function () {
   return classes;
 };
@@ -170,9 +182,10 @@ export const addMember = function (className: string, member: string) {
     const memberString = member.trim();
 
     if (memberString.startsWith('<<') && memberString.endsWith('>>')) {
-      // Remove leading and trailing brackets
+      // its an annotation
       theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
     } else if (memberString.indexOf(')') > 0) {
+      //its a method
       theClass.methods.push(sanitizeText(memberString));
     } else if (memberString) {
       theClass.members.push(sanitizeText(memberString));
@@ -234,7 +247,12 @@ const setTooltip = function (ids: string, tooltip?: string) {
     }
   });
 };
-export const getTooltip = function (id: string) {
+
+export const getTooltip = function (id: string, namespace?: string) {
+  if (namespace) {
+    return namespaces[namespace].classes[id].tooltip;
+  }
+
   return classes[id].tooltip;
 };
 /**
@@ -392,6 +410,52 @@ const setDirection = (dir: string) => {
   direction = dir;
 };
 
+/**
+ * Function called by parser when a namespace definition has been found.
+ *
+ * @param id - Id of the namespace to add
+ * @public
+ */
+export const addNamespace = function (id: string) {
+  if (namespaces[id] !== undefined) {
+    return;
+  }
+
+  namespaces[id] = {
+    id: id,
+    classes: {},
+    children: {},
+    domId: MERMAID_DOM_ID_PREFIX + id + '-' + namespaceCounter,
+  } as NamespaceNode;
+
+  namespaceCounter++;
+};
+
+const getNamespace = function (name: string): NamespaceNode {
+  return namespaces[name];
+};
+
+const getNamespaces = function (): NamespaceMap {
+  return namespaces;
+};
+
+/**
+ * Function called by parser when a namespace definition has been found.
+ *
+ * @param id - Id of the namespace to add
+ * @param classNames - Ids of the class to add
+ * @public
+ */
+export const addClassesToNamespace = function (id: string, classNames: string[]) {
+  if (namespaces[id] !== undefined) {
+    classNames.map((className) => {
+      namespaces[id].classes[className] = classes[className];
+      delete classes[className];
+      classCounter--;
+    });
+  }
+};
+
 export default {
   parseDirective,
   setAccTitle,
@@ -425,4 +489,8 @@ export default {
   setDiagramTitle,
   getDiagramTitle,
   setClassLabel,
+  addNamespace,
+  addClassesToNamespace,
+  getNamespace,
+  getNamespaces,
 };

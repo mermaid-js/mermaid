@@ -6,11 +6,10 @@
 
 # Flowcharts - Basic Syntax
 
-All Flowcharts are composed of **nodes**, the geometric shapes and **edges**, the arrows or lines. The mermaid code defines the way that these **nodes** and **edges** are made and interact.
+Flowcharts are composed of **nodes** (geometric shapes) and **edges** (arrows or lines). The Mermaid code defines how nodes and edges are made and accommodates different arrow types, multi-directional arrows, and any linking to and from subgraphs.
 
-It can also accommodate different arrow types, multi directional arrows, and linking to and from subgraphs.
-
-> **Important note**: Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).
+> **Warning**
+> If you are using the word "end" in a Flowchart node, capitalize the entire word or any of the letters (e.g., "End" or "END"), or apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897). Typing "end" in all lowercase letters will break the Flowchart.
 
 ### A node (default)
 
@@ -55,7 +54,45 @@ flowchart LR
     id1[This is the text in the box]
 ```
 
-## Graph
+#### Unicode text
+
+Use `"` to enclose the unicode text.
+
+```mermaid-example
+flowchart LR
+    id["This ❤ Unicode"]
+```
+
+```mermaid
+flowchart LR
+    id["This ❤ Unicode"]
+```
+
+#### Markdown formatting
+
+Use double quotes and backticks "\` text \`" to enclose the markdown text.
+
+```mermaid-example
+%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+    markdown["`This **is** _Markdown_`"]
+    newLines["`Line1
+    Line 2
+    Line 3`"]
+    markdown --> newLines
+```
+
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+    markdown["`This **is** _Markdown_`"]
+    newLines["`Line1
+    Line 2
+    Line 3`"]
+    markdown --> newLines
+```
+
+### Direction
 
 This statement declares the direction of the Flowchart.
 
@@ -83,15 +120,13 @@ flowchart LR
     Start --> Stop
 ```
 
-## Flowchart Orientation
-
 Possible FlowChart orientations are:
 
-- TB - top to bottom
-- TD - top-down/ same as top to bottom
-- BT - bottom to top
-- RL - right to left
-- LR - left to right
+- TB - Top to bottom
+- TD - Top-down/ same as top to bottom
+- BT - Bottom to top
+- RL - Right to left
+- LR - Left to right
 
 ## Node shapes
 
@@ -634,7 +669,7 @@ flowchart TB
     end
 ```
 
-## flowcharts
+### flowcharts
 
 With the graphtype flowchart it is also possible to set edges to and from subgraphs as in the flowchart below.
 
@@ -672,7 +707,7 @@ flowchart TB
     two --> c2
 ```
 
-## Direction in subgraphs
+### Direction in subgraphs
 
 With the graphtype flowcharts you can use the direction statement to set the direction which the subgraph will render like in this example.
 
@@ -742,9 +777,9 @@ end
 
 Formatting:
 
-- For bold text, use double asterisks \*\* before and after the text.
-- For italics, use single asterisks \* before and after the text.
-- With traditional strings, you needed to add <br> tags for text to wrap in nodes. However, markdown strings automatically wrap text when it becomes too long and allows you to start a new line by simply using a newline character instead of a <br> tag.
+- For bold text, use double asterisks (`**`) before and after the text.
+- For italics, use single asterisks (`*`) before and after the text.
+- With traditional strings, you needed to add `<br>` tags for text to wrap in nodes. However, markdown strings automatically wrap text when it becomes too long and allows you to start a new line by simply using a newline character instead of a `<br>` tag.
 
 This feature is applicable to node labels, edge labels, and subgraph labels.
 
@@ -1003,7 +1038,7 @@ flowchart TD
     B-->E(A fa:fa-camera-retro perhaps?)
 ```
 
-?> Mermaid is now only compatible with Font Awesome versions 4 and 5. Check that you are using the correct version of Font Awesome.
+Mermaid is compatible with Font Awesome up to verion 5, Free icons only. Check that the icons you use are from the [supported set of icons](https://fontawesome.com/v5/search?o=r&m=free).
 
 ## Graph declarations with spaces between vertices and link and without semicolon
 

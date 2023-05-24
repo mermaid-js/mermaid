@@ -1,7 +1,7 @@
-import mermaidAPI from '../../mermaidAPI';
-import * as configApi from '../../config';
-import { log } from '../../logger';
-import { sanitizeText } from '../common/common';
+import mermaidAPI from '../../mermaidAPI.js';
+import * as configApi from '../../config.js';
+import { log } from '../../logger.js';
+import { sanitizeText } from '../common/common.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -10,7 +10,7 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../../commonDb';
+} from '../../commonDb.js';
 
 let prevActor = undefined;
 let actors = {};
@@ -286,6 +286,7 @@ export const LINETYPE = {
   CRITICAL_END: 29,
   BREAK_START: 30,
   BREAK_END: 31,
+  PAR_OVER_START: 32,
 };
 
 export const ARROWTYPE = {

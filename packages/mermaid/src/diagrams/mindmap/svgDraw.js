@@ -1,6 +1,6 @@
 import { select } from 'd3';
-import * as db from './mindmapDb';
-import { createText } from '../../rendering-util/createText';
+import * as db from './mindmapDb.js';
+import { createText } from '../../rendering-util/createText.js';
 const MAX_SECTIONS = 12;
 
 /**
@@ -70,6 +70,7 @@ const defaultBkg = function (elem, node, section) {
     .attr('x2', node.width)
     .attr('y2', node.height);
 };
+
 const rectBkg = function (elem, node) {
   elem
     .append('rect')
@@ -78,6 +79,7 @@ const rectBkg = function (elem, node) {
     .attr('height', node.height)
     .attr('width', node.width);
 };
+
 const cloudBkg = function (elem, node) {
   const w = node.width;
   const h = node.height;
@@ -108,6 +110,7 @@ const cloudBkg = function (elem, node) {
     H0 V0 Z`
     );
 };
+
 const bangBkg = function (elem, node) {
   const w = node.width;
   const h = node.height;
@@ -139,6 +142,7 @@ const bangBkg = function (elem, node) {
     H0 V0 Z`
     );
 };
+
 const circleBkg = function (elem, node) {
   elem
     .append('circle')

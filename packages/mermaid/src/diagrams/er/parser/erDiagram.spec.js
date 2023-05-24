@@ -1,6 +1,6 @@
-import { setConfig } from '../../../config';
-import erDb from '../erDb';
-import erDiagram from './erDiagram'; // jison file
+import { setConfig } from '../../../config.js';
+import erDb from '../erDb.js';
+import erDiagram from './erDiagram.jison'; // jison file
 
 setConfig({
   securityLevel: 'strict',
@@ -717,6 +717,15 @@ describe('when parsing ER diagram it...', function () {
       erDiagram.parser.parse('erDiagram\nCUSTOMER ||--|{ ORDER : places');
       const rels = erDb.getRelationships();
       expect(rels[0].roleA).toBe('places');
+    });
+
+    it('should represent parent-child relationship correctly', function () {
+      erDiagram.parser.parse('erDiagram\nPROJECT u--o{ TEAM_MEMBER : "parent"');
+      const rels = erDb.getRelationships();
+      expect(Object.keys(erDb.getEntities()).length).toBe(2);
+      expect(rels.length).toBe(1);
+      expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.MD_PARENT);
+      expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ZERO_OR_MORE);
     });
   });
 });

@@ -1,5 +1,5 @@
-import type { DiagramDetector } from '../../diagram-api/types';
-import type { ExternalDiagramDefinition } from '../../diagram-api/types';
+import type { DiagramDetector } from '../../diagram-api/types.js';
+import type { ExternalDiagramDefinition } from '../../diagram-api/types.js';
 
 const id = 'flowchart-v2';
 
@@ -19,7 +19,7 @@ const detector: DiagramDetector = (txt, config) => {
 };
 
 const loader = async () => {
-  const { diagram } = await import('./flowDiagram-v2');
+  const { diagram } = await import('./flowDiagram-v2.js');
   return { id, diagram };
 };
 

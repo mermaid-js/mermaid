@@ -1,9 +1,9 @@
 // @ts-ignore: TODO Fix ts errors
-import gitGraphParser from './parser/gitGraph';
-import gitGraphDb from './gitGraphAst';
-import gitGraphRenderer from './gitGraphRenderer';
-import gitGraphStyles from './styles';
-import { DiagramDefinition } from '../../diagram-api/types';
+import gitGraphParser from './parser/gitGraph.jison';
+import gitGraphDb from './gitGraphAst.js';
+import gitGraphRenderer from './gitGraphRenderer.js';
+import gitGraphStyles from './styles.js';
+import { DiagramDefinition } from '../../diagram-api/types.js';
 
 export const diagram: DiagramDefinition = {
   parser: gitGraphParser,

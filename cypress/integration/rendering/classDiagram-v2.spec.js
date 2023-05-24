@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util';
+import { imgSnapshotTest } from '../../helpers/util.js';
 describe('Class diagram V2', () => {
   it('0: should render a simple class diagram', () => {
     imgSnapshotTest(
@@ -546,6 +546,20 @@ class C13["With Città foreign language"]
   Animal <|-- Duck
   class Duck["Duck with text label"]
 `
+    );
+  });
+  it('should add classes namespaces', function () {
+    imgSnapshotTest(
+      `
+      classDiagram
+      namespace Namespace1 {
+        class C1
+        class C2
+      }
+      C1 --> C2
+      class C3
+      class C4
+      `
     );
   });
 });

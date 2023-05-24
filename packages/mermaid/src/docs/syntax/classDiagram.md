@@ -74,7 +74,7 @@ classDiagram
     Vehicle <|-- Car
 ```
 
-Naming convention: a class name should be composed only of alphanumeric characters (including unicode), and underscores.
+Naming convention: a class name should be composed only of alphanumeric characters (including unicode), underscores, and dashes (-).
 
 ### Class labels
 
@@ -171,12 +171,12 @@ To describe the visibility (or encapsulation) of an attribute or method/function
 - `#` Protected
 - `~` Package/Internal
 
-> _note_ you can also include additional _classifiers_ to a method definition by adding the following notation to the _end_ of the method, i.e.: after the `()`:
+> _note_ you can also include additional _classifiers_ to a method definition by adding the following notation to the _end_ of the method, i.e.: after the `()` or after the return type:
 >
-> - `*` Abstract e.g.: `someAbstractMethod()*`
-> - `$` Static e.g.: `someStaticMethod()$`
+> - `*` Abstract e.g.: `someAbstractMethod()*` or `someAbstractMethod() int*`
+> - `$` Static e.g.: `someStaticMethod()$` or `someStaticMethod() String$`
 
-> _note_ you can also include additional _classifiers_ to a field definition by adding the following notation to the end of its name:
+> _note_ you can also include additional _classifiers_ to a field definition by adding the following notation to the very end:
 >
 > - `$` Static e.g.: `String someField$`
 
@@ -248,7 +248,7 @@ classE o-- classF : aggregation
 
 Relations can logically represent an N:M association:
 
-```mmd
+```mermaid
 classDiagram
     Animal <|--|> Zebra
 ```
@@ -276,6 +276,23 @@ And `Link` can be one of:
 | ---- | ----------- |
 | --   | Solid       |
 | ..   | Dashed      |
+
+## Define Namespace
+
+A namespace groups classes.
+
+Code:
+
+```mermaid-example
+classDiagram
+namespace BaseShapes {
+    class Triangle
+    class Rectangle {
+      double width
+      double height
+    }
+}
+```
 
 ## Cardinality / Multiplicity on relations
 
@@ -351,7 +368,7 @@ class Color{
 
 Comments can be entered within a class diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text until the next newline will be treated as a comment, including any class diagram syntax.
 
-```mmd
+```mermaid
 classDiagram
 %% This whole line is a comment classDiagram class Shape <<interface>>
 class Shape{
@@ -403,13 +420,21 @@ click className href "url" "tooltip"
 
 ## Notes
 
-It is possible to add notes on diagram using `note "line1\nline2"` or note for class using `note for class "line1\nline2"`
+It is possible to add notes on the diagram using `note "line1\nline2"`. A note can be added for a specific class using `note for <CLASS NAME> "line1\nline2"`.
 
 ### Examples
 
+```mermaid
+classDiagram
+    note "This is a general note"
+    note for MyClass "This is a note for a class"
+    class MyClass{
+    }
+```
+
 _URL Link:_
 
-```mmd
+```mermaid
 classDiagram
 class Shape
 link Shape "https://www.github.com" "This is a tooltip for a link"
@@ -419,7 +444,7 @@ click Shape2 href "https://www.github.com" "This is a tooltip for a link"
 
 _Callback:_
 
-```mmd
+```mermaid
 classDiagram
 class Shape
 callback Shape "callbackFunction" "This is a tooltip for a callback"

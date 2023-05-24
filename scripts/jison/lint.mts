@@ -14,11 +14,16 @@ const lint = async (file: string): Promise<boolean> => {
   console.log(`Linting ${file}`);
   const jisonCode = await readFile(file, 'utf8');
   // @ts-ignore no typings
-  const jsCode = new jison.Generator(jisonCode, { moduleType: 'amd' }).generate();
+  const generator = new jison.Generator(jisonCode, { moduleType: 'amd' });
+  const jsCode = generator.generate();
   const [result] = await linter.lintText(jsCode);
   if (result.errorCount > 0) {
     console.error(`Linting failed for ${file}`);
     console.error(result.messages);
+  }
+  if (generator.conflicts > 0) {
+    console.error(`Linting failed for ${file}. Conflicts found in grammar`);
+    return false;
   }
   return result.errorCount === 0;
 };
