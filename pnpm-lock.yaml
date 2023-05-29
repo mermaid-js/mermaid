@@ -419,60 +419,8 @@ importers:
         specifier: ^0.15.0
         version: 0.15.0(vite@4.3.3)(workbox-build@6.5.4)(workbox-window@6.5.4)
       vitepress:
-        specifier: 1.0.0-alpha.76
-        version: 1.0.0-alpha.76(@algolia/client-search@4.14.2)(@types/node@18.16.0)
-      workbox-window:
-        specifier: ^6.5.4
-        version: 6.5.4
-
-  packages/mermaid/src/vitepress:
-    dependencies:
-      '@vueuse/core':
-        specifier: ^10.1.0
-        version: 10.1.0(vue@3.2.47)
-      jiti:
-        specifier: ^1.18.2
-        version: 1.18.2
-      vue:
-        specifier: ^3.2.47
-        version: 3.2.47
-    devDependencies:
-      '@iconify-json/carbon':
-        specifier: ^1.1.16
-        version: 1.1.16
-      '@unocss/reset':
-        specifier: ^0.52.0
-        version: 0.52.0
-      '@vite-pwa/vitepress':
-        specifier: ^0.0.5
-        version: 0.0.5(vite-plugin-pwa@0.15.0)
-      '@vitejs/plugin-vue':
-        specifier: ^4.2.1
-        version: 4.2.1(vite@4.3.3)(vue@3.2.47)
-      fast-glob:
-        specifier: ^3.2.12
-        version: 3.2.12
-      https-localhost:
-        specifier: ^4.7.1
-        version: 4.7.1
-      pathe:
-        specifier: ^1.1.0
-        version: 1.1.0
-      unocss:
-        specifier: ^0.52.0
-        version: 0.52.0(postcss@8.4.23)(rollup@2.79.1)(vite@4.3.3)
-      unplugin-vue-components:
-        specifier: ^0.24.1
-        version: 0.24.1(rollup@2.79.1)(vue@3.2.47)
-      vite:
-        specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.0)
-      vite-plugin-pwa:
-        specifier: ^0.15.0
-        version: 0.15.0(vite@4.3.3)(workbox-build@6.5.4)(workbox-window@6.5.4)
-      vitepress:
-        specifier: 1.0.0-alpha.76
-        version: 1.0.0-alpha.76(@algolia/client-search@4.14.2)(@types/node@18.16.0)
+        specifier: 1.0.0-beta.1
+        version: 1.0.0-beta.1(@algolia/client-search@4.14.2)(@types/node@18.16.0)
       workbox-window:
         specifier: ^6.5.4
         version: 6.5.4
@@ -14364,8 +14312,8 @@ packages:
       - terser
     dev: true
 
-  /vitepress@1.0.0-alpha.76(@algolia/client-search@4.14.2)(@types/node@18.16.0):
-    resolution: {integrity: sha512-fzR1pDpGnSMeCJ+AnDdMe/ETD2G0Go+g6mTxDv9ps7Hmr1JjVqw97nasCyZg3jgfQxi2nt78EJ/bw7hY5n/rlw==}
+  /vitepress@1.0.0-beta.1(@algolia/client-search@4.14.2)(@types/node@18.16.0):
+    resolution: {integrity: sha512-V2yyCwQ+v9fh7rbnGDLp8M7vHa9sLElexXf/JHtBOsOwv7ed9wt1QI4WUagYgKR3TeoJT9v2s6f0UaQSne0EvQ==}
     hasBin: true
     dependencies:
       '@docsearch/css': 3.3.5
