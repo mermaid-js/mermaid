@@ -764,6 +764,9 @@ export const calculateTextDimensions: (
       let cheight = 0;
       const dim = { width: 0, height: 0, lineHeight: 0 };
       for (const line of lines) {
+        if (!line) {
+          continue;
+        }
         const textObj = getTextObj();
         textObj.text = line;
         const textElem = drawSimpleText(g, textObj)
