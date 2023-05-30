@@ -1,10 +1,10 @@
 import { parser } from './parser/classDiagram.jison';
-import classDb from './classDb.js';
+import classParser from './classParser.js';
 
 describe('class diagram, ', function () {
   describe('when parsing data from a classDiagram it', function () {
     beforeEach(function () {
-      parser.yy = classDb;
+      parser.yy = classParser;
       parser.yy.clear();
     });
 

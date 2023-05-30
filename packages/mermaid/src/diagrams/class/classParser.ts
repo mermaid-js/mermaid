@@ -255,6 +255,7 @@ export const getTooltip = function (id: string, namespace?: string) {
 
   return classes[id].tooltip;
 };
+
 /**
  * Called by parser when a link is found. Adds the URL to the vertex data.
  *

@@ -92,7 +92,6 @@ export const addClasses = function (
   log.info('keys:', keys);
   log.info(classes);
 
-  // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   keys.forEach(function (id) {
     const vertex = classes[id];
 
@@ -157,24 +156,17 @@ export const addNotes = function (
 ) {
   log.info(notes);
 
-  // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   notes.forEach(function (note, i) {
     const vertex = note;
 
-    /**
-     * Variable for storing the classes for the vertex
-     *
-     */
     const cssNoteStr = '';
 
     const styles = { labelStyle: '', style: '' };
 
-    // Use vertex id as text in the box if no text is provided by the graph definition
     const vertexText = vertex.text;
 
     const radius = 0;
     const shape = 'note';
-    // Add the node
     const node = {
       labelStyle: styles.labelStyle,
       shape: shape,
@@ -302,7 +294,7 @@ export const setConf = function (cnf: any) {
 };
 
 /**
- * Draws a flowchart in the tag with id: id based on the graph definition in text.
+ * Draws a class diagram in the tag with id: id based on the definition in text.
  *
  * @param text -
  * @param id -
@@ -353,9 +345,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   }
   const root =
     securityLevel === 'sandbox'
-      ? // @ts-ignore Ignore type error for now
-
-        select(sandboxElement.nodes()[0].contentDocument.body)
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
   // @ts-ignore Ignore type error for now
   const svg = root.select(`[id="${id}"]`);

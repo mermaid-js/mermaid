@@ -1,5 +1,5 @@
 import { setConfig } from '../../config.js';
-import classDB from './classDb.js';
+import classParser from './classParser.js';
 // @ts-ignore - no types in jison
 import classDiagram from './parser/classDiagram.jison';
 
@@ -9,7 +9,7 @@ setConfig({
 
 describe('when parsing class diagram', function () {
   beforeEach(function () {
-    classDiagram.parser.yy = classDB;
+    classDiagram.parser.yy = classParser;
     classDiagram.parser.yy.clear();
   });
 
@@ -30,8 +30,8 @@ describe('when parsing class diagram', function () {
         Student "1" --o "1" IdCard : carries
         Student "1" --o "1" Bike : rides`);
 
-    expect(Object.keys(classDB.getClasses()).length).toBe(3);
-    expect(classDB.getClasses().Student).toMatchInlineSnapshot(`
+    expect(Object.keys(classParser.getClasses()).length).toBe(3);
+    expect(classParser.getClasses().Student).toMatchInlineSnapshot(`
       {
         "annotations": [],
         "cssClasses": [],
@@ -45,8 +45,8 @@ describe('when parsing class diagram', function () {
         "type": "",
       }
     `);
-    expect(classDB.getRelations().length).toBe(2);
-    expect(classDB.getRelations()).toMatchInlineSnapshot(`
+    expect(classParser.getRelations().length).toBe(2);
+    expect(classParser.getRelations()).toMatchInlineSnapshot(`
       [
         {
           "id1": "Student",

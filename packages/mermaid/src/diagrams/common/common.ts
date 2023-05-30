@@ -178,13 +178,15 @@ export const getMin = function (...values: number[]): number {
  * @returns The converted string
  */
 export const parseGenericTypes = function (text: string): string {
+  if (!text) {
+    return '';
+  }
+
   let cleanedText = text;
 
   if (text.split('~').length - 1 >= 2) {
     let newCleanedText = cleanedText;
 
-    // use a do...while loop instead of replaceAll to detect recursion
-    // e.g. Array~Array~T~~
     do {
       cleanedText = newCleanedText;
       newCleanedText = cleanedText.replace(/~([^\s,:;]+)~/, '<$1>');

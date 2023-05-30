@@ -1,6 +1,6 @@
 import svgDraw from './svgDraw.js';
 
-describe('given a string representing class method, ', function () {
+describe('given a string representing a class, ', function () {
   it('should handle class names with generics', function () {
     const classDef = {
       id: 'Car',
@@ -11,8 +11,18 @@ describe('given a string representing class method, ', function () {
     let actual = svgDraw.getClassTitleString(classDef);
     expect(actual).toBe('Car<T>');
   });
+  it('should handle class names with nested generics', function () {
+    const classDef = {
+      id: 'Car',
+      type: 'T~TT~',
+      label: 'Car',
+    };
 
-  describe('when parsing base method declaration', function () {
+    let actual = svgDraw.getClassTitleString(classDef);
+    expect(actual).toBe('Car<T<T>>');
+  });
+
+  describe('when parsing member method', function () {
     it('should handle simple declaration', function () {
       const str = 'foo()';
       let actual = svgDraw.parseMember(str);
@@ -116,10 +126,8 @@ describe('given a string representing class method, ', function () {
       expect(actual.displayText).toBe('+foo(List<List<int>> ids) : List<List<Item>>');
       expect(actual.cssStyle).toBe('font-style:italic;');
     });
-  });
 
-  describe('when parsing method visibility', function () {
-    it('should correctly handle public', function () {
+    it('should correctly handle public visibility', function () {
       const str = '+foo()';
       let actual = svgDraw.parseMember(str);
 
@@ -127,7 +135,7 @@ describe('given a string representing class method, ', function () {
       expect(actual.cssStyle).toBe('');
     });
 
-    it('should correctly handle private', function () {
+    it('should correctly handle private visibility', function () {
       const str = '-foo()';
       let actual = svgDraw.parseMember(str);
 
@@ -135,7 +143,7 @@ describe('given a string representing class method, ', function () {
       expect(actual.cssStyle).toBe('');
     });
 
-    it('should correctly handle protected', function () {
+    it('should correctly handle protected visibility', function () {
       const str = '#foo()';
       let actual = svgDraw.parseMember(str);
 
@@ -143,16 +151,14 @@ describe('given a string representing class method, ', function () {
       expect(actual.cssStyle).toBe('');
     });
 
-    it('should correctly handle package/internal', function () {
+    it('should correctly handle package/internal visibility', function () {
       const str = '~foo()';
       let actual = svgDraw.parseMember(str);
 
       expect(actual.displayText).toBe('~foo()');
       expect(actual.cssStyle).toBe('');
     });
-  });
 
-  describe('when parsing method classifier', function () {
     it('should handle abstract method', function () {
       const str = 'foo()*';
       let actual = svgDraw.parseMember(str);
@@ -217,10 +223,8 @@ describe('given a string representing class method, ', function () {
       expect(actual.cssStyle).toBe('');
     });
   });
-});
 
-describe('given a string representing class member, ', function () {
-  describe('when parsing member declaration', function () {
+  describe('when parsing member field', function () {
     it('should handle simple field', function () {
       const str = 'id';
       let actual = svgDraw.parseMember(str);
@@ -276,9 +280,7 @@ describe('given a string representing class member, ', function () {
       expect(actual.displayText).toBe('ids: List<int>');
       expect(actual.cssStyle).toBe('');
     });
-  });
 
-  describe('when parsing classifiers', function () {
     it('should handle static field', function () {
       const str = 'String foo$';
       let actual = svgDraw.parseMember(str);
@@ -326,5 +328,14 @@ describe('given a string representing class member, ', function () {
       expect(actual.displayText).toBe('idLists: List<List<int>>');
       expect(actual.cssStyle).toBe('');
     });
+  });
+});
+
+describe('given a string representing class with no members, ', function () {
+  it('should have no members', function () {
+    const str = 'class Class10';
+    let actual = svgDraw.drawClass(str);
+
+    expect(actual.displayText).toBe('');
   });
 });

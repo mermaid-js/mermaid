@@ -172,7 +172,6 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
   // add class group
   const g = elem.append('g').attr('id', diagObj.db.lookUpDomId(id)).attr('class', 'classGroup');
 
-  // add title
   let title;
   if (classDef.link) {
     title = g
@@ -209,47 +208,56 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
   }
 
   const titleHeight = title.node().getBBox().height;
+  let membersLine;
+  let membersBox;
+  let methodsLine;
 
-  const membersLine = g
-    .append('line') // text label for the x axis
-    .attr('x1', 0)
-    .attr('y1', conf.padding + titleHeight + conf.dividerMargin / 2)
-    .attr('y2', conf.padding + titleHeight + conf.dividerMargin / 2);
+  // don't draw box if no members
+  if (classDef.members.length > 0) {
+    membersLine = g
+      .append('line') // text label for the x axis
+      .attr('x1', 0)
+      .attr('y1', conf.padding + titleHeight + conf.dividerMargin / 2)
+      .attr('y2', conf.padding + titleHeight + conf.dividerMargin / 2);
 
-  const members = g
-    .append('text') // text label for the x axis
-    .attr('x', conf.padding)
-    .attr('y', titleHeight + conf.dividerMargin + conf.textHeight)
-    .attr('fill', 'white')
-    .attr('class', 'classText');
+    const members = g
+      .append('text') // text label for the x axis
+      .attr('x', conf.padding)
+      .attr('y', titleHeight + conf.dividerMargin + conf.textHeight)
+      .attr('fill', 'white')
+      .attr('class', 'classText');
 
-  isFirst = true;
-  classDef.members.forEach(function (member) {
-    addTspan(members, member, isFirst, conf);
-    isFirst = false;
-  });
+    isFirst = true;
+    classDef.members.forEach(function (member) {
+      addTspan(members, member, isFirst, conf);
+      isFirst = false;
+    });
 
-  const membersBox = members.node().getBBox();
+    membersBox = members.node().getBBox();
+  }
 
-  const methodsLine = g
-    .append('line') // text label for the x axis
-    .attr('x1', 0)
-    .attr('y1', conf.padding + titleHeight + conf.dividerMargin + membersBox.height)
-    .attr('y2', conf.padding + titleHeight + conf.dividerMargin + membersBox.height);
+  // don't draw box if no methods
+  if (classDef.methods.length > 0) {
+    methodsLine = g
+      .append('line') // text label for the x axis
+      .attr('x1', 0)
+      .attr('y1', conf.padding + titleHeight + conf.dividerMargin + membersBox.height)
+      .attr('y2', conf.padding + titleHeight + conf.dividerMargin + membersBox.height);
 
-  const methods = g
-    .append('text') // text label for the x axis
-    .attr('x', conf.padding)
-    .attr('y', titleHeight + 2 * conf.dividerMargin + membersBox.height + conf.textHeight)
-    .attr('fill', 'white')
-    .attr('class', 'classText');
+    const methods = g
+      .append('text') // text label for the x axis
+      .attr('x', conf.padding)
+      .attr('y', titleHeight + 2 * conf.dividerMargin + membersBox.height + conf.textHeight)
+      .attr('fill', 'white')
+      .attr('class', 'classText');
 
-  isFirst = true;
+    isFirst = true;
 
-  classDef.methods.forEach(function (method) {
-    addTspan(methods, method, isFirst, conf);
-    isFirst = false;
-  });
+    classDef.methods.forEach(function (method) {
+      addTspan(methods, method, isFirst, conf);
+      isFirst = false;
+    });
+  }
 
   const classBox = g.node().getBBox();
   var cssClassStr = ' ';
@@ -278,8 +286,12 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
     title.insert('title').text(classDef.tooltip);
   }
 
-  membersLine.attr('x2', rectWidth);
-  methodsLine.attr('x2', rectWidth);
+  if (membersLine) {
+    membersLine.attr('x2', rectWidth);
+  }
+  if (methodsLine) {
+    methodsLine.attr('x2', rectWidth);
+  }
 
   classInfo.width = rectWidth;
   classInfo.height = classBox.height + conf.padding + 0.5 * conf.dividerMargin;
@@ -366,20 +378,20 @@ export const parseMember = function (text) {
   let returnType = '';
 
   let visibility = '';
-  let firstChar = text.substring(0, 1);
-  let lastChar = text.substring(text.length - 1, text.length);
+  const firstChar = text.substring(0, 1);
+  const lastChar = text.substring(text.length - 1, text.length);
 
   if (firstChar.match(/[#+~-]/)) {
     visibility = firstChar;
   }
 
-  let noClassifierRe = /[\s\w)~]/;
+  const noClassifierRe = /[\s\w)~]/;
   if (!lastChar.match(noClassifierRe)) {
     cssStyle = parseClassifier(lastChar);
   }
 
   const startIndex = visibility === '' ? 0 : 1;
-  let endIndex = cssStyle === '' ? text.length : text.length - 1;
+  const endIndex = cssStyle === '' ? text.length : text.length - 1;
   text = text.substring(startIndex, endIndex);
 
   const methodStart = text.indexOf('(');
@@ -387,8 +399,7 @@ export const parseMember = function (text) {
   const isMethod = methodStart > 1 && methodEnd > methodStart && methodEnd <= text.length;
 
   if (isMethod) {
-    let methodName = text.substring(0, methodStart).trim();
-
+    const methodName = text.substring(0, methodStart).trim();
     const parameters = text.substring(methodStart + 1, methodEnd);
 
     displayText = visibility + methodName + '(' + parseGenericTypes(parameters.trim()) + ')';

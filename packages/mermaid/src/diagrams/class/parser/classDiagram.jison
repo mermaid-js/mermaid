@@ -226,19 +226,12 @@ start
     | statements
     ;
 
-direction
-    : direction_tb
-    { yy.setDirection('TB');}
-    | direction_bt
-    { yy.setDirection('BT');}
-    | direction_rl
-    { yy.setDirection('RL');}
-    | direction_lr
-    { yy.setDirection('LR');}
-    ;
-
 mermaidDoc
     : graphConfig
+    ;
+
+graphConfig
+    : CLASS_DIAGRAM NEWLINE statements EOF
     ;
 
 directive
@@ -261,10 +254,6 @@ argDirective
 closeDirective
   : close_directive { yy.parseDirective('}%%', 'close_directive', 'class'); }
   ;
-
-graphConfig
-    : CLASS_DIAGRAM NEWLINE statements EOF
-    ;
 
 statements
     : statement
@@ -294,7 +283,7 @@ statement
     | relationStatement LABEL { $1.title =  yy.cleanupLabel($2); yy.addRelation($1);        }
     | namespaceStatement
     | classStatement
-    | methodStatement
+    | memberStatement
     | annotationStatement
     | clickStatement
     | cssClassStatement
@@ -341,7 +330,7 @@ members
     | MEMBER members { $2.push($1);$$=$2;}
     ;
 
-methodStatement
+memberStatement
     : className {/*console.log('Rel found',$1);*/}
     | className LABEL {yy.addMember($1,yy.cleanupLabel($2));}
     | MEMBER {/*console.warn('Member',$1);*/}
@@ -358,6 +347,17 @@ relationStatement
 noteStatement
     : NOTE_FOR className noteText  { yy.addNote($3, $2); }
     | NOTE noteText                { yy.addNote($2); }
+    ;
+
+direction
+    : direction_tb
+    { yy.setDirection('TB');}
+    | direction_bt
+    { yy.setDirection('BT');}
+    | direction_rl
+    { yy.setDirection('RL');}
+    | direction_lr
+    { yy.setDirection('LR');}
     ;
 
 relation
