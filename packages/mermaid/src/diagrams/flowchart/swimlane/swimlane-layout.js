@@ -1,4 +1,3 @@
-import { max } from 'lodash';
 import { log } from '../../../logger.js';
 import flowDb from '../flowDb.js';
 
@@ -170,8 +169,8 @@ export function swimlaneLayout(graph, diagObj) {
   const subGraphs = diagObj.db.getSubGraphs();
   const lanes = [];
   const laneDb = {};
-  const xPos = 0;
-  for (let i = subGraphs.length - 1; i >= 0; i--) {
+  let xPos = 0;
+  for (let i = 0; i < subGraphs.length; i++) {
     const subG = subGraphs[i];
     const maxAffinity = swimlaneMaxAffinity.get(subG.id);
     const lane = {

@@ -39,8 +39,14 @@ export const setConf = function (cnf) {
  */
 async function swimlaneRender(layout,vert, elem,g, id, conf) {
 
+  let max
  // draw nodes from layout.graph to element
   const nodes = layout.graph.nodes();
+
+  // lanes are the swimlanes
+  const lanes = layout.lanes;
+
+
 
   const nodesElements = elem.insert('g').attr('class', 'nodes');
   // for each node, draw a rect, with a child text inside as label
@@ -188,9 +194,11 @@ async function swimlaneRender(layout,vert, elem,g, id, conf) {
 
         nodeEl = await insertNode(nodesElements, nodeObj, vertex.dir);
         boundingBox = nodeEl.node().getBBox();
-        nodeEl.attr('transform', `translate(${nodeObj.x / 2}, ${nodeObj.y / 2})`);
+        nodeEl.attr('transform', `translate(${nodeObj.x}, ${nodeObj.y / 2})`);
 
   }
+
+
   return elem;
 }
 
@@ -278,6 +286,91 @@ console.log('diagObj',diagObj);
   console.log('subGraphs', diagObj.db.getSubGraphs());
   const layout = swimlaneLayout(g, diagObj);
   console.log('custom layout',layout);
+
+
+  // draw lanes as vertical lines
+  const lanesElements = svg.insert('g').attr('class', 'lanes');
+
+
+  let laneCount = 0;
+
+  for (const lane of layout.lanes) {
+
+    laneCount++;
+
+    //draw lane header as rectangle with lane title centered in it
+    const laneHeader = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+
+    // Set attributes for the rectangle
+    laneHeader.setAttribute("x",lane.x);         // x-coordinate of the top-left corner
+    laneHeader.setAttribute("y", -50);         // y-coordinate of the top-left corner
+    laneHeader.setAttribute("width", lane.width);    // width of the rectangle
+    laneHeader.setAttribute("height", "50");   // height of the rectangle
+    if(laneCount % 2 == 0){
+        //set light blue color for even lanes
+        laneHeader.setAttribute("fill", "blue");    // fill color of the rectangle
+      }else{
+        //set white color odd lanes
+        laneHeader.setAttribute("fill", "grey");    // fill color of the rectangle
+      }
+
+    laneHeader.setAttribute("stroke", "black"); // color of the stroke/border
+    laneHeader.setAttribute("stroke-width", "2"); // width of the stroke/border
+
+    // Append the rectangle to the SVG element
+    lanesElements.node().appendChild(laneHeader);
+
+    //draw lane title
+    const laneTitle = document.createElementNS("http://www.w3.org/2000/svg", "text");
+
+    // Set attributes for the rectangle
+    laneTitle.setAttribute("x",lane.x + lane.width/2);         // x-coordinate of the top-left corner
+    laneTitle.setAttribute("y", -50 + 50/2);         // y-coordinate of the top-left corner
+    laneTitle.setAttribute("width", lane.width);    // width of the rectangle
+    laneTitle.setAttribute("height", "50");   // height of the rectangle
+    laneTitle.setAttribute("fill", "white");    // fill color of the rectangle
+    laneTitle.setAttribute("stroke-width", "1"); // width of the stroke/border
+    laneTitle.setAttribute("text-anchor", "middle"); // width of the stroke/border
+    laneTitle.setAttribute("alignment-baseline", "middle"); // width of the stroke/border
+    laneTitle.setAttribute("font-size", "20"); // width of the stroke/border
+    laneTitle.textContent = lane.title;
+
+    // Append the rectangle to the SVG element
+    lanesElements.node().appendChild(laneTitle);
+
+    //draw lane
+
+      // Create a <rect> element
+      const rectangle = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+
+      // Set attributes for the rectangle
+      rectangle.setAttribute("x",lane.x);         // x-coordinate of the top-left corner
+      rectangle.setAttribute("y", 0);         // y-coordinate of the top-left corner
+      rectangle.setAttribute("width", lane.width);    // width of the rectangle
+      rectangle.setAttribute("height", "500");   // height of the rectangle
+
+      if(laneCount % 2 == 0){
+        //set light blue color for even lanes
+        rectangle.setAttribute("fill", "lightblue");    // fill color of the rectangle
+      }else{
+        //set white color odd lanes
+        rectangle.setAttribute("fill", "#ffffff");    // fill color of the rectangle
+      }
+
+      rectangle.setAttribute("stroke", "black"); // color of the stroke/border
+      rectangle.setAttribute("stroke-width", "2"); // width of the stroke/border
+
+      // Append the rectangle to the SVG element
+      lanesElements.node().appendChild(rectangle);
+  }
+
+  // append lanesElements to elem
+  svg.node().appendChild(lanesElements.node());
+
+  // add lane headers
+  const laneHeaders = svg.insert('g').attr('class', 'laneHeaders');
+
+
    addEdges(edges, g, diagObj);
 
     g.edges().forEach(function (e) {
@@ -298,8 +391,8 @@ console.log('diagObj',diagObj);
     targetNode.y = targetNode.y ;
 
      edge.points = [];
-     edge.points.push({ x: sourceNode.x/2, y: sourceNode.y/2 });
-      edge.points.push({ x: targetNode.x/2, y: targetNode.y/2 });
+     edge.points.push({ x: sourceNode.x, y: sourceNode.y/2 });
+      edge.points.push({ x: targetNode.x, y: targetNode.y/2 });
 
     const paths = insertEdge(edgePaths, e, edge, clusterDb, 'flowchart', g);
     //positionEdgeLabel(edge, paths);
