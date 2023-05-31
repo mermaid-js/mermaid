@@ -11,7 +11,7 @@ import { log } from '../../../logger.js';
 import { setupGraphViewbox } from '../../../setupGraphViewbox.js';
 import common, { evaluate } from '../../common/common.js';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
-import { insertEdge } from '../../../dagre-wrapper/edges.js';
+import { insertEdge,positionEdgeLabel } from '../../../dagre-wrapper/edges.js';
 import {
   clear as clearGraphlib,
   clusterDb,
@@ -278,17 +278,35 @@ console.log('diagObj',diagObj);
   console.log('subGraphs', diagObj.db.getSubGraphs());
   const layout = swimlaneLayout(g, diagObj);
   console.log('custom layout',layout);
+   addEdges(edges, g, diagObj);
+
+    g.edges().forEach(function (e) {
+    const edge = g.edge(e);
+    log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
+    const edgePaths = svg.insert('g').attr('class', 'edgePaths');
+     //create edge points based on start and end node
+
+    //get start node x, y coordinates
+    const sourceNode = layout.graph.node(e.v)
+    //get end node x, y coordinates
+    sourceNode.x = sourceNode.x ;
+    sourceNode.y = sourceNode.y ;
+
+
+    const targetNode =  layout.graph.node(e.w)
+    targetNode.x = targetNode.x ;
+    targetNode.y = targetNode.y ;
+
+     edge.points = [];
+     edge.points.push({ x: sourceNode.x/2, y: sourceNode.y/2 });
+      edge.points.push({ x: targetNode.x/2, y: targetNode.y/2 });
+
+    const paths = insertEdge(edgePaths, e, edge, clusterDb, 'flowchart', g);
+    //positionEdgeLabel(edge, paths);
+  });
  await swimlaneRender(layout,vert, svg,g,id, conf);
 
-  //  addEdges(edges, g, diagObj);
 
-  //   g.edges().forEach(function (e) {
-  //   const edge = g.edge(e);
-  //   log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
-  //   const edgePaths = svg.insert('g').attr('class', 'edgePaths');
-  //   const paths = insertEdge(edgePaths, e, edge, clusterDb, 'flowchart', g);
-  //   positionEdgeLabel(edge, paths);
-  // });
   // utils.insertTitle(svg, 'flowchartTitleText', conf.titleTopMargin, diagObj.db.getDiagramTitle());
 
   setupGraphViewbox(g, svg, conf.diagramPadding, conf.useMaxWidth);
