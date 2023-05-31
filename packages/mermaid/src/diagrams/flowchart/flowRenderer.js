@@ -61,7 +61,8 @@ export const addVertices = function (vert, g, svgId, root, _doc, diagObj) {
           vertexText.replace(
             /fa[blrs]?:fa-[\w-]+/g,
             (s) => `<i class='${s.replace(':', ' ')}'></i>`
-          )
+          ),
+          getConfig()
         ),
       };
       vertexNode = addHtmlLabel(svg, node).node();
@@ -242,7 +243,11 @@ export const addEdges = function (edges, g, diagObj) {
         edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}" style="${
           edgeData.labelStyle
         }">${renderKatex(
-          edge.text.replace(/fa[blrs]?:fa-[\w-]+/g, (s) => `<i class='${s.replace(':', ' ')}'></i>`)
+          edge.text.replace(
+            /fa[blrs]?:fa-[\w-]+/g,
+            (s) => `<i class='${s.replace(':', ' ')}'></i>`
+          ),
+          getConfig()
         )}</span>`;
       } else {
         edgeData.labelType = 'text';

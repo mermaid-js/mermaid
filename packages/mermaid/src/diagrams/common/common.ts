@@ -174,7 +174,7 @@ export const parseGenericTypes = function (text: string): string {
 
 // TODO: find a better method for detecting support. This interface was added in the MathML 4 spec.
 // Firefox versions between [4,71] (0.47%) and Safari versions between [5,13.4] (0.17%) don't have this interface implemented but MathML is supported
-export const isMathMLSupported = window.MathMLElement !== undefined;
+export const isMathMLSupported = () => window.MathMLElement !== undefined;
 
 export const katexRegex = /\$\$(.*)\$\$/g;
 
@@ -223,7 +223,7 @@ export const calculateMathMLDimensions = (text: string, config: MermaidConfig) =
  * @returns String containing MathML if KaTeX is supported, or an error message if it is not and stylesheets aren't present
  */
 export const renderKatex = (text: string, config: MermaidConfig): string => {
-  if (isMathMLSupported || (!isMathMLSupported && config.legacyMathML)) {
+  if (isMathMLSupported() || (!isMathMLSupported() && config.legacyMathML)) {
     return text
       .split(lineBreakRegex)
       .map((line) =>
@@ -241,7 +241,7 @@ export const renderKatex = (text: string, config: MermaidConfig): string => {
           .renderToString(c, {
             throwOnError: true,
             displayMode: true,
-            output: isMathMLSupported ? 'mathml' : 'htmlAndMathml',
+            output: isMathMLSupported() ? 'mathml' : 'htmlAndMathml',
           })
           .replace(/\n/g, ' ')
           .replace(/<annotation.*<\/annotation>/g, '')
