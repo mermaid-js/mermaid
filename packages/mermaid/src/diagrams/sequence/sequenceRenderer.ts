@@ -131,10 +131,10 @@ export const bounds = {
     this.activations.forEach(updateFn('activation'));
   },
   insert: function (startx, starty, stopx, stopy) {
-    const _startx = Math.min(startx, stopx);
-    const _stopx = Math.max(startx, stopx);
-    const _starty = Math.min(starty, stopy);
-    const _stopy = Math.max(starty, stopy);
+    const _startx = common.getMin(startx, stopx);
+    const _stopx = common.getMax(startx, stopx);
+    const _starty = common.getMin(starty, stopy);
+    const _stopy = common.getMax(starty, stopy);
 
     this.updateVal(bounds.data, 'startx', _startx, Math.min);
     this.updateVal(bounds.data, 'starty', _starty, Math.min);
@@ -184,6 +184,11 @@ export const bounds = {
   endLoop: function () {
     return this.sequenceItems.pop();
   },
+  isLoopOverlap: function () {
+    return this.sequenceItems.length
+      ? this.sequenceItems[this.sequenceItems.length - 1].overlap
+      : false;
+  },
   addSectionToLoop: function (message) {
     const loop = this.sequenceItems.pop();
     loop.sections = loop.sections || [];
@@ -192,9 +197,19 @@ export const bounds = {
     loop.sectionTitles.push(message);
     this.sequenceItems.push(loop);
   },
+  saveVerticalPos: function () {
+    if (this.isLoopOverlap()) {
+      this.savedVerticalPos = this.verticalPos;
+    }
+  },
+  resetVerticalPos: function () {
+    if (this.isLoopOverlap()) {
+      this.verticalPos = this.savedVerticalPos;
+    }
+  },
   bumpVerticalPos: function (bump) {
     this.verticalPos = this.verticalPos + bump;
-    this.data.stopy = this.verticalPos;
+    this.data.stopy = common.getMax(this.data.stopy, this.verticalPos);
   },
   getVerticalPos: function () {
     return this.verticalPos;
@@ -322,7 +337,7 @@ function boundMessage(_diagram, msgModel): number {
       lineStartY = bounds.getVerticalPos() + totalOffset;
     }
     totalOffset += 30;
-    const dx = Math.max(textWidth / 2, conf.width / 2);
+    const dx = common.getMax(textWidth / 2, conf.width / 2);
     bounds.insert(
       startx - dx,
       bounds.getVerticalPos() - 10 + totalOffset,
@@ -381,9 +396,9 @@ const drawMessage = function (diagram, msgModel, lineStartY: number, diagObj: Di
         .append('path')
         .attr(
           'd',
-          `M  ${startx},${lineStartY} H ${startx + Math.max(conf.width / 2, textWidth / 2)} V ${
-            lineStartY + 25
-          } H ${startx}`
+          `M  ${startx},${lineStartY} H ${
+            startx + common.getMax(conf.width / 2, textWidth / 2)
+          } V ${lineStartY + 25} H ${startx}`
         );
     } else {
       line = diagram
@@ -517,7 +532,7 @@ export const drawActors = function (
 
     // Add some rendering data to the object
     actor.width = actor.width || conf.width;
-    actor.height = Math.max(actor.height || conf.height, conf.height);
+    actor.height = common.getMax(actor.height || conf.height, conf.height);
     actor.margin = actor.margin || conf.actorMargin;
 
     actor.x = prevWidth + prevMargin;
@@ -525,7 +540,7 @@ export const drawActors = function (
 
     // Draw the box with the attached line
     const height = svgDraw.drawActor(diagram, actor, conf, isFooter);
-    maxHeight = Math.max(maxHeight, height);
+    maxHeight = common.getMax(maxHeight, height);
     bounds.insert(actor.x, verticalPos, actor.x + actor.width, actor.height);
 
     prevWidth += actor.width + prevMargin;
@@ -597,10 +612,10 @@ const activationBounds = function (actor, actors) {
   const activations = actorActivations(actor);
 
   const left = activations.reduce(function (acc, activation) {
-    return Math.min(acc, activation.startx);
+    return common.getMin(acc, activation.startx);
   }, actorObj.x + actorObj.width / 2);
   const right = activations.reduce(function (acc, activation) {
-    return Math.max(acc, activation.stopx);
+    return common.getMax(acc, activation.stopx);
   }, actorObj.x + actorObj.width / 2);
   return [left, right];
 };
@@ -617,7 +632,7 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
 
     // const lines = common.splitBreaks(msg.message).length;
     const textDims = utils.calculateTextDimensions(msg.message, textConf);
-    const totalOffset = Math.max(textDims.height, conf.labelBoxHeight);
+    const totalOffset = common.getMax(textDims.height, conf.labelBoxHeight);
     heightAdjust = postMargin + totalOffset;
     log.debug(`${totalOffset} - ${msg.message}`);
   }
@@ -717,6 +732,7 @@ export const draw = function (_text: string, id: string, _version: string, diagO
 
     switch (msg.type) {
       case diagObj.db.LINETYPE.NOTE:
+        bounds.resetVerticalPos();
         noteModel = msg.noteModel;
         drawNote(diagram, noteModel);
         break;
@@ -792,6 +808,7 @@ export const draw = function (_text: string, id: string, _version: string, diagO
         bounds.models.addLoop(loopModel);
         break;
       case diagObj.db.LINETYPE.PAR_START:
+      case diagObj.db.LINETYPE.PAR_OVER_START:
         adjustLoopHeightForWrap(
           loopWidths,
           msg,
@@ -799,6 +816,7 @@ export const draw = function (_text: string, id: string, _version: string, diagO
           conf.boxMargin + conf.boxTextMargin,
           (message) => bounds.newLoop(message)
         );
+        bounds.saveVerticalPos();
         break;
       case diagObj.db.LINETYPE.PAR_AND:
         adjustLoopHeightForWrap(
@@ -866,6 +884,7 @@ export const draw = function (_text: string, id: string, _version: string, diagO
       default:
         try {
           // lastMsg = msg
+          bounds.resetVerticalPos();
           msgModel = msg.msgModel;
           msgModel.starty = bounds.getVerticalPos();
           msgModel.sequenceIndex = sequenceIndex;
@@ -1035,45 +1054,45 @@ function getMaxMessageWidthPerActor(
        *     margin
        */
       if (isMessage && msg.from === actor.nextActor) {
-        maxMessageWidthPerActor[msg.to] = Math.max(
+        maxMessageWidthPerActor[msg.to] = common.getMax(
           maxMessageWidthPerActor[msg.to] || 0,
           messageWidth
         );
       } else if (isMessage && msg.from === actor.prevActor) {
-        maxMessageWidthPerActor[msg.from] = Math.max(
+        maxMessageWidthPerActor[msg.from] = common.getMax(
           maxMessageWidthPerActor[msg.from] || 0,
           messageWidth
         );
       } else if (isMessage && msg.from === msg.to) {
-        maxMessageWidthPerActor[msg.from] = Math.max(
+        maxMessageWidthPerActor[msg.from] = common.getMax(
           maxMessageWidthPerActor[msg.from] || 0,
           messageWidth / 2
         );
 
-        maxMessageWidthPerActor[msg.to] = Math.max(
+        maxMessageWidthPerActor[msg.to] = common.getMax(
           maxMessageWidthPerActor[msg.to] || 0,
           messageWidth / 2
         );
       } else if (msg.placement === diagObj.db.PLACEMENT.RIGHTOF) {
-        maxMessageWidthPerActor[msg.from] = Math.max(
+        maxMessageWidthPerActor[msg.from] = common.getMax(
           maxMessageWidthPerActor[msg.from] || 0,
           messageWidth
         );
       } else if (msg.placement === diagObj.db.PLACEMENT.LEFTOF) {
-        maxMessageWidthPerActor[actor.prevActor] = Math.max(
+        maxMessageWidthPerActor[actor.prevActor] = common.getMax(
           maxMessageWidthPerActor[actor.prevActor] || 0,
           messageWidth
         );
       } else if (msg.placement === diagObj.db.PLACEMENT.OVER) {
         if (actor.prevActor) {
-          maxMessageWidthPerActor[actor.prevActor] = Math.max(
+          maxMessageWidthPerActor[actor.prevActor] = common.getMax(
             maxMessageWidthPerActor[actor.prevActor] || 0,
             messageWidth / 2
           );
         }
 
         if (actor.nextActor) {
-          maxMessageWidthPerActor[msg.from] = Math.max(
+          maxMessageWidthPerActor[msg.from] = common.getMax(
             maxMessageWidthPerActor[msg.from] || 0,
             messageWidth / 2
           );
@@ -1132,10 +1151,10 @@ function calculateActorMargins(
 
     actor.width = actor.wrap
       ? conf.width
-      : Math.max(conf.width, actDims.width + 2 * conf.wrapPadding);
+      : common.getMax(conf.width, actDims.width + 2 * conf.wrapPadding);
 
-    actor.height = actor.wrap ? Math.max(actDims.height, conf.height) : conf.height;
-    maxHeight = Math.max(maxHeight, actor.height);
+    actor.height = actor.wrap ? common.getMax(actDims.height, conf.height) : conf.height;
+    maxHeight = common.getMax(maxHeight, actor.height);
   });
 
   for (const actorKey in actorToMessageWidth) {
@@ -1151,14 +1170,14 @@ function calculateActorMargins(
     if (!nextActor) {
       const messageWidth = actorToMessageWidth[actorKey];
       const actorWidth = messageWidth + conf.actorMargin - actor.width / 2;
-      actor.margin = Math.max(actorWidth, conf.actorMargin);
+      actor.margin = common.getMax(actorWidth, conf.actorMargin);
       continue;
     }
 
     const messageWidth = actorToMessageWidth[actorKey];
     const actorWidth = messageWidth + conf.actorMargin - actor.width / 2 - nextActor.width / 2;
 
-    actor.margin = Math.max(actorWidth, conf.actorMargin);
+    actor.margin = common.getMax(actorWidth, conf.actorMargin);
   }
 
   let maxBoxHeight = 0;
@@ -1174,8 +1193,8 @@ function calculateActorMargins(
     }
 
     const boxMsgDimensions = utils.calculateTextDimensions(box.name, textFont);
-    maxBoxHeight = Math.max(boxMsgDimensions.height, maxBoxHeight);
-    const minWidth = Math.max(totalWidth, boxMsgDimensions.width + 2 * conf.wrapPadding);
+    maxBoxHeight = common.getMax(boxMsgDimensions.height, maxBoxHeight);
+    const minWidth = common.getMax(totalWidth, boxMsgDimensions.width + 2 * conf.wrapPadding);
     box.margin = conf.boxTextMargin;
     if (totalWidth < minWidth) {
       const missing = (minWidth - totalWidth) / 2;
@@ -1184,7 +1203,7 @@ function calculateActorMargins(
   });
   boxes.forEach((box) => (box.textMaxHeight = maxBoxHeight));
 
-  return Math.max(maxHeight, conf.height);
+  return common.getMax(maxHeight, conf.height);
 }
 
 const buildNoteModel = function (msg, actors, diagObj) {
@@ -1201,7 +1220,7 @@ const buildNoteModel = function (msg, actors, diagObj) {
   const noteModel = {
     width: shouldWrap
       ? conf.width
-      : Math.max(conf.width, textDimensions.width + 2 * conf.noteMargin),
+      : common.getMax(conf.width, textDimensions.width + 2 * conf.noteMargin),
     height: 0,
     startx: actors[msg.from].x,
     stopx: 0,
@@ -1211,16 +1230,16 @@ const buildNoteModel = function (msg, actors, diagObj) {
   };
   if (msg.placement === diagObj.db.PLACEMENT.RIGHTOF) {
     noteModel.width = shouldWrap
-      ? Math.max(conf.width, textDimensions.width)
-      : Math.max(
+      ? common.getMax(conf.width, textDimensions.width)
+      : common.getMax(
           actors[msg.from].width / 2 + actors[msg.to].width / 2,
           textDimensions.width + 2 * conf.noteMargin
         );
     noteModel.startx = startx + (actors[msg.from].width + conf.actorMargin) / 2;
   } else if (msg.placement === diagObj.db.PLACEMENT.LEFTOF) {
     noteModel.width = shouldWrap
-      ? Math.max(conf.width, textDimensions.width + 2 * conf.noteMargin)
-      : Math.max(
+      ? common.getMax(conf.width, textDimensions.width + 2 * conf.noteMargin)
+      : common.getMax(
           actors[msg.from].width / 2 + actors[msg.to].width / 2,
           textDimensions.width + 2 * conf.noteMargin
         );
@@ -1228,13 +1247,21 @@ const buildNoteModel = function (msg, actors, diagObj) {
   } else if (msg.to === msg.from) {
     textDimensions = utils.calculateTextDimensions(
       shouldWrap
-        ? utils.wrapLabel(msg.message, Math.max(conf.width, actors[msg.from].width), noteFont(conf))
+        ? utils.wrapLabel(
+            msg.message,
+            common.getMax(conf.width, actors[msg.from].width),
+            noteFont(conf)
+          )
         : msg.message,
       noteFont(conf)
     );
     noteModel.width = shouldWrap
-      ? Math.max(conf.width, actors[msg.from].width)
-      : Math.max(actors[msg.from].width, conf.width, textDimensions.width + 2 * conf.noteMargin);
+      ? common.getMax(conf.width, actors[msg.from].width)
+      : common.getMax(
+          actors[msg.from].width,
+          conf.width,
+          textDimensions.width + 2 * conf.noteMargin
+        );
     noteModel.startx = startx + (actors[msg.from].width - noteModel.width) / 2;
   } else {
     noteModel.width =
@@ -1286,14 +1313,14 @@ const buildMessageModel = function (msg, actors, diagObj) {
   if (msg.wrap && msg.message) {
     msg.message = utils.wrapLabel(
       msg.message,
-      Math.max(boundedWidth + 2 * conf.wrapPadding, conf.width),
+      common.getMax(boundedWidth + 2 * conf.wrapPadding, conf.width),
       messageFont(conf)
     );
   }
   const msgDims = utils.calculateTextDimensions(msg.message, messageFont(conf));
 
   return {
-    width: Math.max(
+    width: common.getMax(
       msg.wrap ? 0 : msgDims.width + 2 * conf.wrapPadding,
       boundedWidth + 2 * conf.wrapPadding,
       conf.width
@@ -1323,6 +1350,7 @@ const calculateLoopBounds = function (messages, actors, _maxWidthPerActor, diagO
       case diagObj.db.LINETYPE.ALT_START:
       case diagObj.db.LINETYPE.OPT_START:
       case diagObj.db.LINETYPE.PAR_START:
+      case diagObj.db.LINETYPE.PAR_OVER_START:
       case diagObj.db.LINETYPE.CRITICAL_START:
       case diagObj.db.LINETYPE.BREAK_START:
         stack.push({
@@ -1382,10 +1410,10 @@ const calculateLoopBounds = function (messages, actors, _maxWidthPerActor, diagO
       msg.noteModel = noteModel;
       stack.forEach((stk) => {
         current = stk;
-        current.from = Math.min(current.from, noteModel.startx);
-        current.to = Math.max(current.to, noteModel.startx + noteModel.width);
+        current.from = common.getMin(current.from, noteModel.startx);
+        current.to = common.getMax(current.to, noteModel.startx + noteModel.width);
         current.width =
-          Math.max(current.width, Math.abs(current.from - current.to)) - conf.labelBoxWidth;
+          common.getMax(current.width, Math.abs(current.from - current.to)) - conf.labelBoxWidth;
       });
     } else {
       msgModel = buildMessageModel(msg, actors, diagObj);
@@ -1396,18 +1424,23 @@ const calculateLoopBounds = function (messages, actors, _maxWidthPerActor, diagO
           if (msgModel.startx === msgModel.stopx) {
             const from = actors[msg.from];
             const to = actors[msg.to];
-            current.from = Math.min(
+            current.from = common.getMin(
               from.x - msgModel.width / 2,
               from.x - from.width / 2,
               current.from
             );
-            current.to = Math.max(to.x + msgModel.width / 2, to.x + from.width / 2, current.to);
+            current.to = common.getMax(
+              to.x + msgModel.width / 2,
+              to.x + from.width / 2,
+              current.to
+            );
             current.width =
-              Math.max(current.width, Math.abs(current.to - current.from)) - conf.labelBoxWidth;
+              common.getMax(current.width, Math.abs(current.to - current.from)) -
+              conf.labelBoxWidth;
           } else {
-            current.from = Math.min(msgModel.startx, current.from);
-            current.to = Math.max(msgModel.stopx, current.to);
-            current.width = Math.max(current.width, msgModel.width) - conf.labelBoxWidth;
+            current.from = common.getMin(msgModel.startx, current.from);
+            current.to = common.getMax(msgModel.stopx, current.to);
+            current.width = common.getMax(current.width, msgModel.width) - conf.labelBoxWidth;
           }
         });
       }

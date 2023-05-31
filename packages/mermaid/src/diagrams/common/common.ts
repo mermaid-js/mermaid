@@ -141,6 +141,32 @@ export const evaluate = (val?: string | boolean): boolean =>
   val === false || ['false', 'null', '0'].includes(String(val).trim().toLowerCase()) ? false : true;
 
 /**
+ * Wrapper around Math.max which removes non-numeric values
+ * Returns the larger of a set of supplied numeric expressions.
+ * @param values - Numeric expressions to be evaluated
+ * @returns The smaller value
+ */
+export const getMax = function (...values: number[]): number {
+  const newValues: number[] = values.filter((value) => {
+    return !isNaN(value);
+  });
+  return Math.max(...newValues);
+};
+
+/**
+ * Wrapper around Math.min which removes non-numeric values
+ * Returns the smaller of a set of supplied numeric expressions.
+ * @param values - Numeric expressions to be evaluated
+ * @returns The smaller value
+ */
+export const getMin = function (...values: number[]): number {
+  const newValues: number[] = values.filter((value) => {
+    return !isNaN(value);
+  });
+  return Math.min(...newValues);
+};
+
+/**
  * Makes generics in typescript syntax
  *
  * @example
@@ -260,4 +286,6 @@ export default {
   removeScript,
   getUrl,
   evaluate,
+  getMax,
+  getMin,
 };

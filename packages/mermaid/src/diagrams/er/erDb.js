@@ -20,6 +20,7 @@ const Cardinality = {
   ZERO_OR_MORE: 'ZERO_OR_MORE',
   ONE_OR_MORE: 'ONE_OR_MORE',
   ONLY_ONE: 'ONLY_ONE',
+  MD_PARENT: 'MD_PARENT',
 };
 
 const Identification = {

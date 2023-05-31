@@ -123,6 +123,29 @@ context('Sequence diagram', () => {
       }
     );
   });
+  it('should render a sequence diagram with par_over', () => {
+    imgSnapshotTest(
+      `
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        participant John
+        par_over Section title
+          Alice ->> Bob: Message 1<br>Second line
+          Bob ->> John: Message 2
+        end
+        par_over Two line<br>section title
+          Note over Alice: Alice note
+          Note over Bob: Bob note<br>Second line
+          Note over John: John note
+        end
+        par_over Mixed section
+          Alice ->> Bob: Message 1
+          Note left of Bob: Alice/Bob Note
+        end
+      `
+    );
+  });
   context('font settings', () => {
     it('should render different note fonts when configured', () => {
       imgSnapshotTest(

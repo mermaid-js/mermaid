@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[defaultConfig.ts:2126](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L2126)
+[defaultConfig.ts:2304](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L2304)
 
 ---
 
