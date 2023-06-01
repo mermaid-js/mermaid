@@ -1,4 +1,4 @@
-import dayjs from 'dayjs/esm/index.js';
+import dayjs from 'dayjs';
 import { log } from '../../logger.js';
 import {
   select,
