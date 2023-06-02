@@ -1,4 +1,4 @@
-import { darken, lighten, adjust, invert, isDark } from 'khroma';
+import { darken, lighten, adjust, invert, isDark, toRgba } from 'khroma';
 import { mkBorder } from './theme-helpers.js';
 import {
   oldAttributeBackgroundColorEven,
