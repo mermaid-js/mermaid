@@ -93,20 +93,20 @@ export const addClasses = function (
   log.info(classes);
 
   keys.forEach(function (id) {
-    const vertex = classes[id];
+    const classNode = classes[id];
 
     /**
-     * Variable for storing the classes for the vertex
+     * Variable for storing the css classes for the vertex
      */
     let cssClassStr = '';
-    if (vertex.cssClasses.length > 0) {
-      cssClassStr = cssClassStr + ' ' + vertex.cssClasses.join(' ');
+    if (classNode.cssClasses.length > 0) {
+      cssClassStr = cssClassStr + ' ' + classNode.cssClasses.join(' ');
     }
 
     const styles = { labelStyle: '', style: '' }; //getStylesFromArray(vertex.styles);
 
     // Use vertex id as text in the box if no text is provided by the graph definition
-    const vertexText = vertex.label ?? vertex.id;
+    const nodeText = classNode.label ?? classNode.id;
     const radius = 0;
     const shape = 'class_box';
 
@@ -114,26 +114,26 @@ export const addClasses = function (
     const node = {
       labelStyle: styles.labelStyle,
       shape: shape,
-      labelText: sanitizeText(vertexText),
-      classData: vertex,
+      labelText: sanitizeText(nodeText),
+      classData: classNode,
       rx: radius,
       ry: radius,
       class: cssClassStr,
       style: styles.style,
-      id: vertex.id,
-      domId: vertex.domId,
-      tooltip: diagObj.db.getTooltip(vertex.id, parent) || '',
-      haveCallback: vertex.haveCallback,
-      link: vertex.link,
-      width: vertex.type === 'group' ? 500 : undefined,
-      type: vertex.type,
+      id: classNode.id,
+      domId: classNode.domId,
+      tooltip: diagObj.db.getTooltip(classNode.id, parent) || '',
+      haveCallback: classNode.haveCallback,
+      link: classNode.link,
+      width: classNode.type === 'group' ? 500 : undefined,
+      type: classNode.type,
       // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release
       padding: getConfig().flowchart?.padding ?? getConfig().class?.padding,
     };
-    g.setNode(vertex.id, node);
+    g.setNode(classNode.id, node);
 
     if (parent) {
-      g.setParent(vertex.id, parent);
+      g.setParent(classNode.id, parent);
     }
 
     log.info('setNode', node);

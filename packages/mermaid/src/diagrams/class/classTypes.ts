@@ -5,8 +5,8 @@ export interface ClassNode {
   type: string;
   label: string;
   cssClasses: string[];
-  methods: string[];
-  members: string[];
+  methods: ClassMember[];
+  members: ClassMember[];
   annotations: string[];
   domId: string;
   link?: string;

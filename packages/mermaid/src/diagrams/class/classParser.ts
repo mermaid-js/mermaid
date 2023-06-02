@@ -114,11 +114,11 @@ export const clear = function () {
   commonClear();
 };
 
-export const getClass = function (id: string) {
+export const getClass = function (id: string): ClassNode {
   return classes[id];
 };
 
-export const getClasses = function () {
+export const getClasses = function (): ClassMap {
   return classes;
 };
 

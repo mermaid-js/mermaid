@@ -1,7 +1,6 @@
 import { line, curveBasis } from 'd3';
 import utils from '../../utils.js';
 import { log } from '../../logger.js';
-import { parseGenericTypes } from '../common/common.js';
 
 let edgeCount = 0;
 export const drawEdge = function (elem, path, relation, conf, diagObj) {
@@ -372,81 +371,20 @@ export const drawNote = function (elem, note, conf, diagObj) {
   return noteInfo;
 };
 
-export const parseMember = function (text) {
-  let displayText = '';
-  let cssStyle = '';
-  let returnType = '';
-
-  let visibility = '';
-  const firstChar = text.substring(0, 1);
-  const lastChar = text.substring(text.length - 1, text.length);
-
-  if (firstChar.match(/[#+~-]/)) {
-    visibility = firstChar;
-  }
-
-  const noClassifierRe = /[\s\w)~]/;
-  if (!lastChar.match(noClassifierRe)) {
-    cssStyle = parseClassifier(lastChar);
-  }
-
-  const startIndex = visibility === '' ? 0 : 1;
-  const endIndex = cssStyle === '' ? text.length : text.length - 1;
-  text = text.substring(startIndex, endIndex);
-
-  const methodStart = text.indexOf('(');
-  const methodEnd = text.indexOf(')');
-  const isMethod = methodStart > 1 && methodEnd > methodStart && methodEnd <= text.length;
-
-  if (isMethod) {
-    const methodName = text.substring(0, methodStart).trim();
-    const parameters = text.substring(methodStart + 1, methodEnd);
-
-    displayText = visibility + methodName + '(' + parseGenericTypes(parameters.trim()) + ')';
-
-    if (methodEnd < text.length) {
-      // special case: classifier after the closing parenthesis
-      let potentialClassifier = text.substring(methodEnd + 1, methodEnd + 2);
-      if (cssStyle === '' && !potentialClassifier.match(noClassifierRe)) {
-        cssStyle = parseClassifier(potentialClassifier);
-        returnType = text.substring(methodEnd + 2).trim();
-      } else {
-        returnType = text.substring(methodEnd + 1).trim();
-      }
-
-      if (returnType !== '') {
-        if (returnType.charAt(0) === ':') {
-          returnType = returnType.substring(1).trim();
-        }
-        returnType = ' : ' + parseGenericTypes(returnType);
-        displayText += returnType;
-      }
-    }
-  } else {
-    // finally - if all else fails, just send the text back as written (other than parsing for generic types)
-    displayText = visibility + parseGenericTypes(text);
-  }
-
-  return {
-    displayText,
-    cssStyle,
-  };
-};
-
 /**
  * Adds a <tspan> for a member in a diagram
  *
  * @param {SVGElement} textEl The element to append to
- * @param {string} txt The member
+ * @param {string} member The member
  * @param {boolean} isFirst
  * @param {{ padding: string; textHeight: string }} conf The configuration for the member
  */
-const addTspan = function (textEl, txt, isFirst, conf) {
-  let member = parseMember(txt);
+const addTspan = function (textEl, member, isFirst, conf) {
+  const displayText = member.getDisplayDetails().displayText;
+  const cssStyle = member.getDisplayDetails().cssStyle;
+  const tSpan = textEl.append('tspan').attr('x', conf.padding).text(displayText);
 
-  const tSpan = textEl.append('tspan').attr('x', conf.padding).text(member.displayText);
-
-  if (member.cssStyle !== '') {
+  if (cssStyle !== '') {
     tSpan.attr('style', member.cssStyle);
   }
 
@@ -455,27 +393,9 @@ const addTspan = function (textEl, txt, isFirst, conf) {
   }
 };
 
-/**
- * Gives the styles for a classifier
- *
- * @param {'+' | '-' | '#' | '~' | '*' | '$'} classifier The classifier string
- * @returns {string} Styling for the classifier
- */
-const parseClassifier = function (classifier) {
-  switch (classifier) {
-    case '*':
-      return 'font-style:italic;';
-    case '$':
-      return 'text-decoration:underline;';
-    default:
-      return '';
-  }
-};
-
 export default {
   getClassTitleString,
   drawClass,
   drawEdge,
   drawNote,
-  parseMember,
 };
