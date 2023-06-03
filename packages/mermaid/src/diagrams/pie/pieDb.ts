@@ -1,7 +1,9 @@
-import { log } from '../../logger.js';
-import mermaidAPI from '../../mermaidAPI.js';
-import * as configApi from '../../config.js';
-import common from '../common/common.js';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+import { log } from '../../logger.ts';
+import mermaidAPI from '../../mermaidAPI.ts';
+import * as configApi from '../../config.ts';
+import common from '../common/common.ts';
 import {
   setAccTitle,
   getAccTitle,
@@ -10,7 +12,7 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../../commonDb.js';
+} from '../../commonDb.ts';
 
 let sections = {};
 let showData = false;
@@ -23,7 +25,7 @@ const addSection = function (id, value) {
   id = common.sanitizeText(id, configApi.getConfig());
   if (sections[id] === undefined) {
     sections[id] = value;
-    log.debug('Added new section :', id);
+    log.debug('Added new section : ', id, ' with value:', value);
   }
 };
 const getSections = () => sections;

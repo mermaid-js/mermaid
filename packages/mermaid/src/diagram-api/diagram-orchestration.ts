@@ -5,7 +5,7 @@ import er from '../diagrams/er/erDetector.js';
 import git from '../diagrams/git/gitGraphDetector.js';
 import gantt from '../diagrams/gantt/ganttDetector.js';
 import info from '../diagrams/info/infoDetector.js';
-import pie from '../diagrams/pie/pieDetector.js';
+// import pie from '../diagrams/pie/pieDetector.js';
 import quadrantChart from '../diagrams/quadrant-chart/quadrantDetector.js';
 import requirement from '../diagrams/requirement/requirementDetector.js';
 import sequence from '../diagrams/sequence/sequenceDetector.js';
@@ -67,7 +67,7 @@ export const addDiagrams = () => {
     er,
     gantt,
     info,
-    pie,
+    // pie,
     requirement,
     sequence,
     flowchartElk,
