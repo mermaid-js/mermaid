@@ -6,3 +6,5 @@ coverage
 pnpm-lock.yaml
 stats
 packages/mermaid/src/docs/.vitepress/components.d.ts
+# autogenereated by langium-cli
+generated/

@@ -39,3 +39,5 @@ stats/
 
 **/user-avatars/*
 **/contributor-names.json
+# autogenereated by langium-cli
+generated/

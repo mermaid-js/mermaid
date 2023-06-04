@@ -6,3 +6,5 @@ cypress/plugins/index.js
 coverage
 *.json
 node_modules
+# autogenereated by langium-cli
+generated/
