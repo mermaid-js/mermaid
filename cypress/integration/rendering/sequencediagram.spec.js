@@ -93,7 +93,7 @@ context('Sequence diagram', () => {
       `
       sequenceDiagram
       Alice->>John: Hello John<br/>
-      John-->>Alice: Great!
+      John-->>Alice: Great<br/><br/>day!
     `,
       {}
     );
