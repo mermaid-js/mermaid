@@ -133,6 +133,7 @@ export class MockedD3 {
   // --------------------------------------------------------------------------------
   // The following functions are here for completeness.  They simply return a vi.fn()
 
+  remove = vi.fn();
   insertBefore = vi.fn();
   curveBasis = vi.fn();
   curveBasisClosed = vi.fn();
