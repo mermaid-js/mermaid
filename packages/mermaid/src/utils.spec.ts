@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 import utils from './utils.js';
 import assignWithDepth from './assignWithDepth.js';
 import { detectType } from './diagram-api/detectType.js';
