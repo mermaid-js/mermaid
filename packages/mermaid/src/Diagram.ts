@@ -53,15 +53,15 @@ export class Diagram {
       diagram.init(cnf);
       log.info('Initialized diagram ' + this.type, cnf);
     }
-    this.parse();
   }
 
-  parse() {
+  async parse() {
     if (this.detectError) {
       throw this.detectError;
     }
     this.db.clear?.();
-    this.parser.parse(this.text);
+    await this.parser.parse(this.text);
+    return this;
   }
 
   async render(id: string, version: string) {
@@ -101,5 +101,5 @@ export const getDiagramFromText = async (text: string): Promise<Diagram> => {
     const { id, diagram } = await loader();
     registerDiagram(id, diagram);
   }
-  return new Diagram(text);
+  return new Diagram(text).parse();
 };

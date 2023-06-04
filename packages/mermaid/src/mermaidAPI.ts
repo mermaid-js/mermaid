@@ -109,8 +109,7 @@ export interface RenderResult {
 async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean> {
   addDiagrams();
   try {
-    const diagram = await getDiagramFromText(text);
-    diagram.parse();
+    await getDiagramFromText(text);
   } catch (error) {
     if (parseOptions?.suppressErrors) {
       return false;
@@ -470,7 +469,7 @@ const render = async function (
   try {
     diag = await getDiagramFromText(text);
   } catch (error) {
-    diag = new Diagram('error');
+    diag = await new Diagram('error').parse();
     parseEncounteredException = error;
   }
 
