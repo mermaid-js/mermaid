@@ -800,7 +800,7 @@ export const calculateTextDimensions: (
 );
 
 export const initIdGenerator = class iterator {
-  constructor(deterministic, seed) {
+  constructor(deterministic: boolean, seed?: string) {
     this.deterministic = deterministic;
     // TODO: Seed is only used for length?
     this.seed = seed;
