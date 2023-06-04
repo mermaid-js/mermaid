@@ -1,9 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import { log } from '../../logger.ts';
-import mermaidAPI from '../../mermaidAPI.ts';
-import * as configApi from '../../config.ts';
-import common from '../common/common.ts';
+import { log } from '../../logger.js';
+import mermaidAPI from '../../mermaidAPI.js';
+import * as configApi from '../../config.js';
+import common from '../common/common.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -12,7 +12,7 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../../commonDb.ts';
+} from '../../commonDb.js';
 
 let sections = {};
 let showData = false;
