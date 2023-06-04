@@ -1,5 +1,5 @@
 import pieDb from './pieDb.ts';
-import parse from './pieParser.ts';
+import { parse } from './pieParser.ts';
 import { setConfig } from '../../config.ts';
 
 setConfig({

@@ -28,7 +28,7 @@ function createParserServices<T extends AstNode = AstNode>() {
   return { services, parse };
 }
 
-export default async function parse(text: string) {
+export async function parse(text: string) {
   const { parse } = createParserServices<PieChart>();
   const { parseResult: result } = await parse(text);
 
