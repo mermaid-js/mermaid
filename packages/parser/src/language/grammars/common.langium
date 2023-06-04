@@ -1,6 +1,6 @@
 /* fragments */
 fragment TITLE_AND_ACCESSIBILITIES:
-    ((accDescr=ACC_DESCR | accTitle=ACC_TITLE | title=TITLE) NEWLINE*)+
+  ((accDescr=ACC_DESCR | accTitle=ACC_TITLE | title=TITLE) NEWLINE*)+
 ;
 
 /* terminals */
