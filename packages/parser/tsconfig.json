@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    // TODO: figure out how to remove these configs
+    "moduleResolution": "node",
+    "preserveSymlinks": false,
+    "strictPropertyInitialization": false
+  },
+  "include": ["./src/**/*.ts"],
+  "typeRoots": ["./src/types"]
+}
