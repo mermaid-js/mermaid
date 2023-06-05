@@ -218,8 +218,8 @@ importers:
         specifier: ^1.3.0
         version: 1.3.0
       mermaid-parser:
-        specifier: ^0.1.1
-        version: 0.1.1
+        specifier: ^0.2.0
+        version: 0.2.0
       non-layered-tidy-tree-layout:
         specifier: ^2.0.2
         version: 2.0.2
@@ -343,7 +343,7 @@ importers:
         version: 1.0.0-beta.1(@algolia/client-search@4.17.1)(@types/node@18.16.0)
       vitepress-plugin-search:
         specifier: ^1.0.4-alpha.20
-        version: 1.0.4-alpha.20(flexsearch@0.7.31)(vitepress@1.0.0-beta.1)(vue@3.2.47)
+        version: 1.0.4-alpha.20(flexsearch@0.7.31)(vitepress@1.0.0-beta.1)(vue@3.3.4)
 
   packages/mermaid-example-diagram:
     dependencies:
@@ -840,6 +840,7 @@ packages:
     dependencies:
       '@applitools/eg-frpc': 1.0.2
       '@applitools/eg-socks5-proxy-server': 0.5.4
+      '@applitools/execution-grid-tunnel': 1.0.24
       '@applitools/logger': 1.1.48
       dotenv: 16.1.3
       encoding: 0.1.13
@@ -11272,8 +11273,8 @@ packages:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
 
-  /mermaid-parser@0.1.1:
-    resolution: {integrity: sha512-3H25p62N5v99kEbzwk6Re361TDjZpp9A9B1evtSHi8GXTmEg1m6ISbl/OC0vhqBJy4hMSQuzpIgZ6ApKvnfs+w==}
+  /mermaid-parser@0.2.0:
+    resolution: {integrity: sha512-Dx19M/5UCuF6ojLSdPutPpUQJqhHycsL5qUihCD0x3cU8TB3ajVoq38glmiahc2jsgp02K8phTBTP/7rQgm6UA==}
     dependencies:
       chevrotain: 10.5.0
       langium: 1.2.0
@@ -14805,7 +14806,7 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitepress-plugin-search@1.0.4-alpha.20(flexsearch@0.7.31)(vitepress@1.0.0-beta.1)(vue@3.2.47):
+  /vitepress-plugin-search@1.0.4-alpha.20(flexsearch@0.7.31)(vitepress@1.0.0-beta.1)(vue@3.3.4):
     resolution: {integrity: sha512-zG+ev9pw1Mg7htABlFCNXb8XwnKN+qfTKw+vU0Ers6RIrABx+45EAAFBoaL1mEpl1FRFn1o/dQ7F4b8GP6HdGQ==}
     engines: {node: ^14.13.1 || ^16.7.0 || >=18}
     peerDependencies:
@@ -14819,7 +14820,7 @@ packages:
       glob-to-regexp: 0.4.1
       markdown-it: 13.0.1
       vitepress: 1.0.0-beta.1(@algolia/client-search@4.17.1)(@types/node@18.16.0)
-      vue: 3.2.47
+      vue: 3.3.4
     dev: true
 
   /vitepress@1.0.0-beta.1(@algolia/client-search@4.17.1)(@types/node@18.16.0):

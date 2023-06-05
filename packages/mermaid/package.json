@@ -65,7 +65,7 @@
     "langium": "^1.2.0",
     "lodash-es": "^4.17.21",
     "mdast-util-from-markdown": "^1.3.0",
-    "mermaid-parser": "^0.1.1",
+    "mermaid-parser": "^0.2.0",
     "non-layered-tidy-tree-layout": "^2.0.2",
     "stylis": "^4.1.3",
     "ts-dedent": "^2.2.0",
