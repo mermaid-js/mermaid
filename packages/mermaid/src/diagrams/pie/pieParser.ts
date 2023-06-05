@@ -1,4 +1,4 @@
-import { PieChart, createMermaidServices } from 'mermaid-parser';
+import { Pie, createMermaidServices } from 'mermaid-parser';
 import { AstNode, EmptyFileSystem } from 'langium';
 import { log } from '../../logger.js';
 import pieDb from './pieDb.js';
