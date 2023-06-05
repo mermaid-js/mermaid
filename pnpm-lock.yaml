@@ -457,8 +457,8 @@ importers:
         version: 1.2.0
     devDependencies:
       langium-cli:
-        specifier: ^1.2.0
-        version: 1.2.0
+        specifier: ^1.2.1
+        version: 1.2.1
       vscode-uri:
         specifier: ^3.0.7
         version: 3.0.7
@@ -10720,8 +10720,8 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
-  /langium-cli@1.2.0:
-    resolution: {integrity: sha512-DPyJUd4Hj8+OBNEcAQyJtW6e38+UPd758gTI7Ep0r/sDogrwJ/GJHx5nGA+r0ygpNcDPG+mS9Hw8Y05uCNNcoQ==}
+  /langium-cli@1.2.1:
+    resolution: {integrity: sha512-sbGucMXqfDfLmF6bvFsyv7f4/y2dNivVKpXD5j//OxMrBsF+N8fATVqq8bopUvAxxvb0dmaV0xpIxYr7b7Efjg==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:
