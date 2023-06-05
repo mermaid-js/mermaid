@@ -6,20 +6,20 @@ entry Timeline:
   NEWLINE*
   TIMELINE NEWLINE*
   TITLE_AND_ACCESSIBILITIES?
-  sections+=SECTION* | periods+=PERIOD*
+  sections+=TIMELINE_SECTION* | periods+=TIMELINE_PERIOD*
 ;
 
-SECTION:
-  title=SECTION_TITLE NEWLINE*
-  (periods+=PERIOD)*
+TIMELINE_SECTION:
+  title=TIMELINE_SECTION_TITLE NEWLINE*
+  (periods+=TIMELINE_PERIOD)*
 ;
 
-PERIOD:
-  title=PERIOD_TITLE NEWLINE* (":" events+=(EVENT | PERIOD_TITLE) NEWLINE*)*
+TIMELINE_PERIOD:
+  title=TIMELINE_PERIOD_TITLE NEWLINE* (":" events+=(TIMELINE_EVENT | TIMELINE_PERIOD_TITLE) NEWLINE*)*
 ;
 
 terminal TIMELINE: /timeline(?!\S)/;
-terminal SECTION_TITLE: /section/;
+terminal TIMELINE_SECTION_TITLE: /section/;
 // TODO: figue out how to prevent `PERIOD_TITLE` to consume `EVENT`
-terminal PERIOD_TITLE: /period/;
-terminal EVENT: /event/;
+terminal TIMELINE_PERIOD_TITLE: /period/;
+terminal TIMELINE_EVENT: /event/;

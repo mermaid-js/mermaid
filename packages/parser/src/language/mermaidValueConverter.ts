@@ -30,15 +30,15 @@ export class MermaidValueConverter extends DefaultValueConverter {
       }
 
       // timeline
-      case 'SECTION_TITLE': {
+      case 'TIMELINE_SECTION_TITLE': {
         regex = new RegExp(timelineSectionTitleRegex.source);
         break;
       }
-      case 'PERIOD_TITLE': {
+      case 'TIMELINE_PERIOD_TITLE': {
         regex = new RegExp(timelinePeroidTitleRegex.source);
         break;
       }
-      case 'EVENT': {
+      case 'TIMELINE_EVENT': {
         regex = new RegExp(timelineEventRegex.source);
         break;
       }

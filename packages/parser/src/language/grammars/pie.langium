@@ -5,10 +5,10 @@ entry Pie:
   NEWLINE*
   PIE showData?=SHOWDATA? NEWLINE*
   TITLE_AND_ACCESSIBILITIES?
-  (sections+=Section NEWLINE+)*
+  (sections+=PIE_SECTION NEWLINE+)*
 ;
 
-Section:
+PIE_SECTION:
   label=STRING ":" value=NUMBER
 ;
 

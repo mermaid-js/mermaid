@@ -36,18 +36,18 @@ export class MermiadTokenBuilder extends DefaultTokenBuilder {
       }
 
       // timeline
-      case 'SECTION_TITLE': {
+      case 'TIMELINE_SECTION_TITLE': {
         tokenType.LINE_BREAKS = false;
         tokenType.PATTERN = matchTimelineSectionTitle;
         tokenType.START_CHARS_HINT = ['section'];
         break;
       }
-      case 'PERIOD_TITLE': {
+      case 'TIMELINE_PERIOD_TITLE': {
         tokenType.LINE_BREAKS = false;
         tokenType.PATTERN = matchTimelinePeroidTitle;
         break;
       }
-      case 'EVENT': {
+      case 'TIMELINE_EVENT': {
         tokenType.LINE_BREAKS = false;
         tokenType.PATTERN = matchTimelineEventTitle;
         break;
