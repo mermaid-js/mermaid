@@ -220,7 +220,7 @@ export const drawC4ShapeArray = function (currentBounds, diagram, c4ShapeArray, 
     let c4ShapeTypeConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
     c4ShapeTypeConf.fontSize = c4ShapeTypeConf.fontSize - 2;
     c4Shape.typeC4Shape.width = calculateTextWidth(
-      '<<' + c4Shape.typeC4Shape.text + '>>',
+      '«' + c4Shape.typeC4Shape.text + '»',
       c4ShapeTypeConf
     );
     c4Shape.typeC4Shape.height = c4ShapeTypeConf.fontSize + 2;
@@ -665,13 +665,13 @@ export const draw = function (_text, id, _version, diagObj) {
   diagram.attr(
     'viewBox',
     box.startx -
-      conf.diagramMarginX +
-      ' -' +
-      (conf.diagramMarginY + extraVertForTitle) +
-      ' ' +
-      width +
-      ' ' +
-      (height + extraVertForTitle)
+    conf.diagramMarginX +
+    ' -' +
+    (conf.diagramMarginY + extraVertForTitle) +
+    ' ' +
+    width +
+    ' ' +
+    (height + extraVertForTitle)
   );
 
   log.debug(`models:`, box);
