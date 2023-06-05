@@ -3,7 +3,7 @@ export * from './generated/grammar.js';
 export * from './generated/module.js';
 
 export * from './validators/index.js';
-export * from './mermaid-module.js';
-export * from './mermaid-lexer.js';
-export * from './mermaid-token-builder.js';
-export * from './mermaid-value-converter.js';
+export * from './mermaidModule.js';
+export * from './mermaidLexer.js';
+export * from './mermaidTokenBuilder.js';
+export * from './mermaidValueConverter.js';
