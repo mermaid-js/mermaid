@@ -4,7 +4,6 @@
     "rootDir": "./src",
     "outDir": "./dist",
     // TODO: figure out how to remove these configs
-    "moduleResolution": "node",
     "preserveSymlinks": false,
     "strictPropertyInitialization": false
   },
