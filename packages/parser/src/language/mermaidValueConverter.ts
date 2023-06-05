@@ -47,15 +47,22 @@ export class MermaidValueConverter extends DefaultValueConverter {
       const match = regex.exec(input);
       if (match !== null) {
         if (match[1] !== undefined) {
+          let result = match[1];
           if (rule.name === 'EVENT') {
-            match[1] = match[1].replace('<br>', '\n');
+            result = result.replace('<br>', '\n');
           }
-          return match[1].trim().replace(/\s\s+/g, ' ') || undefined!;
+          return (
+            result
+              .trim()
+              .replaceAll(/[\t ]{2,}/gm, ' ')
+              .replaceAll(/[\n\r]{2,}/gm, '\n') || undefined!
+          );
         } else if (match[2] !== undefined) {
           const result = match[2]
             .replaceAll(/^\s*/gm, '')
             .replaceAll(/\s+$/gm, '')
-            .replace(/\s\s+/g, ' ');
+            .replaceAll(/[\t ]{2,}/gm, ' ')
+            .replaceAll(/[\n\r]{2,}/gm, '\n');
           return result || undefined!;
         }
         return undefined!;
