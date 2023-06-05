@@ -19,7 +19,7 @@ TIMELINE_PERIOD:
 ;
 
 terminal TIMELINE: /timeline(?!\S)/;
-terminal TIMELINE_SECTION_TITLE: /section/;
+terminal TIMELINE_SECTION_TITLE: /timeline-section/;
 // TODO: figue out how to prevent `PERIOD_TITLE` to consume `EVENT`
-terminal TIMELINE_PERIOD_TITLE: /period/;
-terminal TIMELINE_EVENT: /event/;
+terminal TIMELINE_PERIOD_TITLE: /timeline-period/;
+terminal TIMELINE_EVENT: /timeline-event/;
