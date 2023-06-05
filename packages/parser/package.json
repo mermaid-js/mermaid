@@ -25,7 +25,7 @@
     "url": "https://github.com/mermaid-js/mermaid.git",
     "directory": "packages/mermaid-parser"
   },
-  "license": "GPL-3.0-or-later",
+  "license": "MIT",
   "keywords": [
     "mermaid",
     "parser",
