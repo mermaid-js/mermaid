@@ -1,6 +1,6 @@
-import pieDb from './pieDb.ts';
-import { parse } from './pieParser.ts';
-import { setConfig } from '../../config.ts';
+import pieDb from './pieDb.js';
+import { parse } from './pieParser.js';
+import { setConfig } from '../../config.js';
 
 setConfig({
   securityLevel: 'strict',
