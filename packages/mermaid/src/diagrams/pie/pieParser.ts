@@ -29,7 +29,7 @@ function createParserServices<T extends AstNode = AstNode>() {
 }
 
 export async function parse(text: string) {
-  const { parse } = createParserServices<PieChart>();
+  const { parse } = createParserServices<Pie>();
   const { parseResult: result } = await parse(text);
 
   if (result.parserErrors.length > 0 || result.lexerErrors.length > 0) {
