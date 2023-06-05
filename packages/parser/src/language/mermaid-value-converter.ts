@@ -26,9 +26,12 @@ export class MermaidValueConverter extends DefaultValueConverter {
       const match = regex.exec(input);
       if (match !== null) {
         if (match[1] !== undefined) {
-          return match[1].trim() || undefined!;
+          return match[1].trim().replace(/\s\s+/g, ' ') || undefined!;
         } else if (match[2] !== undefined) {
-          const result = match[2].replaceAll(/^\s*/gm, '').replaceAll(/\s+$/gm, '');
+          const result = match[2]
+            .replaceAll(/^\s*/gm, '')
+            .replaceAll(/\s+$/gm, '')
+            .replace(/\s\s+/g, ' ');
           return result || undefined!;
         }
         return undefined!;
