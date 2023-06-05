@@ -14,31 +14,31 @@ import {
   clear as commonClear,
 } from '../../commonDb.js';
 
-let sections = {};
+let sections: Record<string, number> = {};
 let showData = false;
 
-export const parseDirective = function (statement, context, type) {
+export const parseDirective = function (statement, context, type): void {
   mermaidAPI.parseDirective(this, statement, context, type);
 };
 
-const addSection = function (id, value) {
+const addSection = function (id: string, value: number): void {
   id = common.sanitizeText(id, configApi.getConfig());
   if (sections[id] === undefined) {
     sections[id] = value;
     log.debug('Added new section : ', id, ' with value:', value);
   }
 };
-const getSections = () => sections;
+const getSections = (): Record<string, number> => sections;
 
-const setShowData = function (toggle) {
+const setShowData = function (toggle: boolean): void {
   showData = toggle;
 };
 
-const getShowData = function () {
+const getShowData = function (): boolean {
   return showData;
 };
 
-const cleanupValue = function (value) {
+const cleanupValue = function (value: string): number {
   if (value.substring(0, 1) === ':') {
     value = value.substring(1).trim();
     return Number(value.trim());
@@ -47,7 +47,7 @@ const cleanupValue = function (value) {
   }
 };
 
-const clear = function () {
+const clear = function (): void {
   sections = {};
   showData = false;
   commonClear();
