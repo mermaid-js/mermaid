@@ -3,6 +3,6 @@ import './pie'
 
 entry Mermaid:
   (
-    PieChart
+    Pie
   )
 ;

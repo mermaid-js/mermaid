@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { PieChart } from '../../src/language/index.js';
+import { Pie } from '../../src/language/index.js';
 import { createTestServices } from '../test-utils.js';
 
 describe('pie chart', () => {
-  const { parse } = createTestServices<PieChart>();
+  const { parse } = createTestServices<Pie>();
 
   it.each([
     `pie`,
@@ -21,7 +21,7 @@ describe('pie chart', () => {
     expect(result.lexerErrors).toHaveLength(0);
 
     const value = result.value;
-    expect(value.$type).toBe(PieChart);
+    expect(value.$type).toBe(Pie);
   });
 
   it.each([
@@ -39,7 +39,7 @@ describe('pie chart', () => {
     expect(result.lexerErrors).toHaveLength(0);
 
     const value = result.value;
-    expect(value.$type).toBe(PieChart);
+    expect(value.$type).toBe(Pie);
     expect(value.showData).toBeTruthy();
   });
 
@@ -58,7 +58,7 @@ describe('pie chart', () => {
     expect(result.lexerErrors).toHaveLength(0);
 
     const value = result.value;
-    expect(value.$type).toBe(PieChart);
+    expect(value.$type).toBe(Pie);
     expect(value.title).toBe('sample title');
   });
 
@@ -82,7 +82,7 @@ describe('pie chart', () => {
     expect(result.lexerErrors).toHaveLength(0);
 
     const value = result.value;
-    expect(value.$type).toBe(PieChart);
+    expect(value.$type).toBe(Pie);
     expect(value.title).toBe('sample title');
   });
 
@@ -96,7 +96,7 @@ describe('pie chart', () => {
     expect(result.lexerErrors).toHaveLength(0);
 
     const value = result.value;
-    expect(value.$type).toBe(PieChart);
+    expect(value.$type).toBe(Pie);
     expect(value.showData).toBeTruthy();
     expect(value.title).toBe('sample title');
   });
@@ -121,7 +121,7 @@ describe('pie chart', () => {
     expect(result.lexerErrors).toHaveLength(0);
 
     const value = result.value;
-    expect(value.$type).toBe(PieChart);
+    expect(value.$type).toBe(Pie);
     expect(value.showData).toBeTruthy();
     expect(value.title).toBe('sample title');
   });
@@ -151,7 +151,7 @@ describe('pie chart', () => {
         expect(result.lexerErrors).toHaveLength(0);
 
         const value = result.value;
-        expect(value.$type).toBe(PieChart);
+        expect(value.$type).toBe(Pie);
 
         const section0 = value.sections[0];
         expect(section0?.label).toBe('GitHub');
@@ -171,7 +171,7 @@ describe('pie chart', () => {
         expect(result.lexerErrors).toHaveLength(0);
 
         const value = result.value;
-        expect(value.$type).toBe(PieChart);
+        expect(value.$type).toBe(Pie);
         expect(value.showData).toBeTruthy();
 
         const section0 = value.sections[0];
@@ -192,7 +192,7 @@ describe('pie chart', () => {
         expect(result.lexerErrors).toHaveLength(0);
 
         const value = result.value;
-        expect(value.$type).toBe(PieChart);
+        expect(value.$type).toBe(Pie);
         expect(value.title).toBe('sample wow');
 
         const section0 = value.sections[0];
@@ -213,7 +213,7 @@ describe('pie chart', () => {
         expect(result.lexerErrors).toHaveLength(0);
 
         const value = result.value;
-        expect(value.$type).toBe(PieChart);
+        expect(value.$type).toBe(Pie);
         expect(value.accTitle).toBe('sample wow');
 
         const section0 = value.sections[0];
@@ -234,7 +234,7 @@ describe('pie chart', () => {
         expect(result.lexerErrors).toHaveLength(0);
 
         const value = result.value;
-        expect(value.$type).toBe(PieChart);
+        expect(value.$type).toBe(Pie);
         expect(value.accDescr).toBe('sample wow');
 
         const section0 = value.sections[0];
@@ -257,7 +257,7 @@ describe('pie chart', () => {
         expect(result.lexerErrors).toHaveLength(0);
 
         const value = result.value;
-        expect(value.$type).toBe(PieChart);
+        expect(value.$type).toBe(Pie);
         expect(value.accDescr).toBe('sample wow');
 
         const section0 = value.sections[0];
@@ -280,7 +280,7 @@ describe('pie chart', () => {
         expect(result.lexerErrors).toHaveLength(0);
 
         const value = result.value;
-        expect(value.$type).toBe(PieChart);
+        expect(value.$type).toBe(Pie);
 
         const section0 = value.sections[0];
         expect(section0?.label).toBe('GitHub');

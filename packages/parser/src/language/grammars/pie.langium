@@ -1,7 +1,7 @@
-grammar PieChart
+grammar Pie
 import "./common";
 
-entry PieChart:
+entry Pie:
   NEWLINE*
   PIE showData?=SHOWDATA? NEWLINE*
   TITLE_AND_ACCESSIBILITIES?
