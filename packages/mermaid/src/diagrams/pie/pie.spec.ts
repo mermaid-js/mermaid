@@ -6,13 +6,13 @@ setConfig({
   securityLevel: 'strict',
 });
 
-describe('when parsing pie', function () {
-  beforeEach(function () {
+describe('when parsing pie', () => {
+  beforeEach(() => {
     pieDb.clear();
   });
 
-  it('should handle simple pie', async function () {
-    await parse(`pie
+  it('should handle simple pie', () => {
+    parse(`pie
     "ash" : 100
     `);
     const sections = pieDb.getSections();
@@ -20,8 +20,8 @@ describe('when parsing pie', function () {
     expect(section1).toBe(100);
   });
 
-  it('should handle pie', async function () {
-    await parse(`pie
+  it('should handle pie', () => {
+    parse(`pie
     "ash" : 60
     "bat" : 40
     `);
@@ -30,9 +30,9 @@ describe('when parsing pie', function () {
     expect(section1).toBe(60);
   });
 
-  it('should handle pie with comments', async function () {
-    await parse(`pie
-      %% comments
+  it('should handle pie with comments', () => {
+    parse(`pie
+    %% comments
     "ash" : 60
     "bat" : 40
     `);
@@ -41,8 +41,8 @@ describe('when parsing pie', function () {
     expect(section1).toBe(60);
   });
 
-  it('should handle pie with a directive', async function () {
-    await parse(`%%{init: {'logLevel':0}}%%
+  it('should handle pie with a directive', () => {
+    parse(`%%{init: {'logLevel':0}}%%
     pie
     "ash" : 60
     "bat" : 40
@@ -52,8 +52,8 @@ describe('when parsing pie', function () {
     expect(section1).toBe(60);
   });
 
-  it('should handle pie with a title and emoji', async function () {
-    await parse(`pie title a 60/40 pie ❤️
+  it('should handle pie with a title and emoji', () => {
+    parse(`pie title a 60/40 pie ❤️
     "ash" : 60
     "bat" : 40
     `);
@@ -64,8 +64,8 @@ describe('when parsing pie', function () {
     expect(title).toBe('a 60/40 pie ❤️');
   });
 
-  it('should handle pie with an acc title  (accTitle)', async function () {
-    await parse(`pie title a neat chart
+  it('should handle pie with an acc title  (accTitle)', () => {
+    parse(`pie title a neat chart
     accTitle: Hello World
     "ash" : 60
     "bat" : 40
@@ -77,8 +77,8 @@ describe('when parsing pie', function () {
     expect(description).toBe('');
   });
 
-  it('should handle pie with an acc description (accDescr)', async function () {
-    await parse(`pie title a neat chart
+  it('should handle pie with an acc description (accDescr)', () => {
+    parse(`pie title a neat chart
     accDescr: a neat description
     "ash" : 60
     "bat" : 40
@@ -93,8 +93,8 @@ describe('when parsing pie', function () {
     expect(description).toBe('a neat description');
   });
 
-  it('should handle pie with a multiline acc description (accDescr)', async function () {
-    await parse(`pie title a neat chart
+  it('should handle pie with a multiline acc description (accDescr)', () => {
+    parse(`pie title a neat chart
     accDescr {
       a neat description
       on multiple lines
@@ -114,8 +114,8 @@ describe('when parsing pie', function () {
     expect(description).toBe('a neat description\non multiple lines');
   });
 
-  it('should handle pie with positive decimal', async function () {
-    await parse(`pie
+  it('should handle pie with positive decimal', () => {
+    parse(`pie
     "ash" : 60.67
     "bat" : 40
     `);
@@ -124,21 +124,21 @@ describe('when parsing pie', function () {
     expect(section1).toBe(60.67);
   });
 
-  it('should handle pie with invalid decimal', function () {
-    expect(async () => {
-      await parse(`pie
+  it('should handle pie with invalid decimal', () => {
+    expect(() => {
+      parse(`pie
       "ash" : 60.67
       "bat" : 40..12
       `);
-    }).rejects.toThrowError();
+    }).toThrowError();
   });
 
-  it('should handle pie with negative decimal', function () {
-    expect(async () => {
-      await parse(`pie
+  it('should handle pie with negative decimal', () => {
+    expect(() => {
+      parse(`pie
       "ash" : 60.67
       "bat" : -40.12
       `);
-    }).rejects.toThrowError();
+    }).toThrowError();
   });
 });

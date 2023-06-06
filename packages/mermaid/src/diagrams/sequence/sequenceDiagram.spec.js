@@ -97,7 +97,7 @@ let diagram;
 
 describe('more than one sequence diagram', () => {
   it('should not have duplicated messages', async () => {
-    const diagram1 = await new Diagram(`
+    const diagram1 = new Diagram(`
         sequenceDiagram
         Alice->Bob:Hello Bob, how are you?
         Bob-->Alice: I am good thanks!`).parse();
@@ -119,7 +119,7 @@ describe('more than one sequence diagram', () => {
         },
       ]
     `);
-    const diagram2 = await new Diagram(`
+    const diagram2 = new Diagram(`
         sequenceDiagram
         Alice->Bob:Hello Bob, how are you?
         Bob-->Alice: I am good thanks!`).parse();
@@ -144,7 +144,7 @@ describe('more than one sequence diagram', () => {
     `);
 
     // Add John actor
-    const diagram3 = await new Diagram(`
+    const diagram3 = new Diagram(`
         sequenceDiagram
         Alice->John:Hello John, how are you?
         John-->Alice: I am good thanks!`).parse();
@@ -174,7 +174,7 @@ describe('when parsing a sequenceDiagram', function () {
   beforeEach(async function () {
     // diagram.db = sequenceDb;
     // diagram.db.clear();
-    diagram = await new Diagram(`
+    diagram = new Diagram(`
 sequenceDiagram
 Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
@@ -1574,7 +1574,7 @@ describe('when rendering a sequenceDiagram APA', function () {
       mirrorActors: false,
     };
     configApi.setSiteConfig({ logLevel: 5, sequence: conf });
-    diagram = await new Diagram(`
+    diagram = new Diagram(`
 sequenceDiagram
 Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
@@ -2010,7 +2010,7 @@ sequenceDiagram
 %%{wrap}%%
 participant Alice
 `;
-    diagram = await new Diagram(str).parse();
+    diagram = new Diagram(str).parse();
 
     diagram.renderer.bounds.init();
     await mermaidAPI.parse(str);

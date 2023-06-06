@@ -1,36 +1,25 @@
-import { Pie, createMermaidServices } from 'mermaid-parser';
-import { AstNode, EmptyFileSystem } from 'langium';
+import { MermaidServices, Pie, createMermaidServices } from 'mermaid-parser';
+import { EmptyFileSystem, ParseResult } from 'langium';
 import { log } from '../../logger.js';
 import pieDb from './pieDb.js';
-import { URI } from 'vscode-uri';
 
-function createParserServices<T extends AstNode = AstNode>() {
+function createPieParserServices(): {
+  services: MermaidServices;
+  parse: (input: string) => ParseResult<Pie>;
+} {
   const services = createMermaidServices(EmptyFileSystem).Mermaid;
-  const metaData = services.LanguageMetaData;
+  const parser = services.parser.LangiumParser;
 
-  const workspace = services.shared.workspace;
-  const langiumDocuments = workspace.LangiumDocuments;
-  const documentBuilder = workspace.DocumentBuilder;
-  const initPromise = workspace.WorkspaceManager.initializeWorkspace([]);
-
-  let documentIndex = 1;
-
-  const parse = async (input: string, uri?: string) => {
-    await initPromise;
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    uri = uri ?? `${documentIndex++}${metaData.fileExtensions[0]}`;
-    const document = workspace.LangiumDocumentFactory.fromString<T>(input, URI.file(uri));
-    langiumDocuments.addDocument(document);
-    await documentBuilder.build([document]);
-    return document;
+  const parse = (input: string) => {
+    return parser.parse<Pie>(input);
   };
 
   return { services, parse };
 }
 
-export async function parse(text: string) {
-  const { parse } = createParserServices<Pie>();
-  const { parseResult: result } = await parse(text);
+export function parse(input: string) {
+  const { parse } = createPieParserServices();
+  const result = parse(input);
 
   if (result.parserErrors.length > 0 || result.lexerErrors.length > 0) {
     log.error(

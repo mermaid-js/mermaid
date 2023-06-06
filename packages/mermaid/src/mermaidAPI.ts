@@ -469,7 +469,7 @@ const render = async function (
   try {
     diag = await getDiagramFromText(text);
   } catch (error) {
-    diag = await new Diagram('error').parse();
+    diag = new Diagram('error').parse();
     parseEncounteredException = error;
   }
 

@@ -55,12 +55,12 @@ export class Diagram {
     }
   }
 
-  async parse() {
+  parse() {
     if (this.detectError) {
       throw this.detectError;
     }
     this.db.clear?.();
-    await this.parser.parse(this.text);
+    this.parser.parse(this.text);
     return this;
   }
 
