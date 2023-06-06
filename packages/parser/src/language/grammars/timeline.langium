@@ -5,16 +5,16 @@ import './common'
 entry Timeline:
   NEWLINE*
   TIMELINE NEWLINE*
-  TITLE_AND_ACCESSIBILITIES?
-  sections+=TIMELINE_SECTION* | periods+=TIMELINE_PERIOD*
+  TitleAndAccessibilities?
+  sections+=TimelineSection* | periods+=TimelinePeriod*
 ;
 
-TIMELINE_SECTION:
+TimelineSection:
   title=TIMELINE_SECTION_TITLE NEWLINE*
-  (periods+=TIMELINE_PERIOD)*
+  (periods+=TimelinePeriod)*
 ;
 
-TIMELINE_PERIOD:
+TimelinePeriod:
   title=TIMELINE_PERIOD_TITLE NEWLINE* (":" events+=(TIMELINE_EVENT | TIMELINE_PERIOD_TITLE) NEWLINE*)*
 ;
 

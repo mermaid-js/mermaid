@@ -1,5 +1,5 @@
 /* fragments */
-fragment TITLE_AND_ACCESSIBILITIES:
+fragment TitleAndAccessibilities:
   ((accDescr=ACC_DESCR | accTitle=ACC_TITLE | title=TITLE) NEWLINE*)+
 ;
 

@@ -4,11 +4,11 @@ import "./common";
 entry Pie:
   NEWLINE*
   PIE showData?=SHOWDATA? NEWLINE*
-  TITLE_AND_ACCESSIBILITIES?
-  (sections+=PIE_SECTION NEWLINE+)*
+  TitleAndAccessibilities?
+  (sections+=PieSection NEWLINE+)*
 ;
 
-PIE_SECTION:
+PieSection:
   label=STRING ":" value=NUMBER
 ;
 
