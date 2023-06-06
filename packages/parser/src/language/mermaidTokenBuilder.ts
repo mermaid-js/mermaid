@@ -1,6 +1,5 @@
 import type { TokenType } from 'chevrotain';
-import { DefaultTokenBuilder } from 'langium';
-import { TerminalRule } from 'langium/lib/grammar/generated/ast.js';
+import { DefaultTokenBuilder, GrammarAST } from 'langium';
 
 import {
   matchAccessibilityDescr,
@@ -12,7 +11,7 @@ import {
 } from './matchers/index.js';
 
 export class MermiadTokenBuilder extends DefaultTokenBuilder {
-  override buildTerminalToken(terminal: TerminalRule): TokenType {
+  override buildTerminalToken(terminal: GrammarAST.TerminalRule): TokenType {
     const tokenType = super.buildTerminalToken(terminal);
     switch (tokenType.name) {
       // common

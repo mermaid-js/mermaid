@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { CstNode, DefaultValueConverter, ValueType } from 'langium';
-import { AbstractRule } from 'langium/lib/grammar/generated/ast.js';
+import { CstNode, DefaultValueConverter, GrammarAST, ValueType } from 'langium';
 
 import {
   accessibilityDescrRegex,
@@ -12,7 +11,7 @@ import {
 } from './matchers/index.js';
 
 export class MermaidValueConverter extends DefaultValueConverter {
-  override runConverter(rule: AbstractRule, input: string, cstNode: CstNode): ValueType {
+  override runConverter(rule: GrammarAST.AbstractRule, input: string, cstNode: CstNode): ValueType {
     let regex: RegExp | undefined;
     switch (rule.name) {
       // common
