@@ -1,7 +1,6 @@
 grammar Timeline
 import './common'
 
-
 entry Timeline:
   NEWLINE*
   TIMELINE NEWLINE*
