@@ -14,7 +14,7 @@
     "./*": "./*"
   },
   "scripts": {
-    "build": "langium generate && tsc --emitDeclarationOnly",
+    "build": "langium generate && tsc",
     "clean": "rimraf dist src/language/generated",
     "langium:generate": "langium generate",
     "langium:watch": "langium generate --watch",
