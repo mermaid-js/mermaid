@@ -12,11 +12,11 @@ describe('pie chart', () => {
     `\tpie\t`,
     `
 
-        \tpie
+    \tpie
 
-        `,
-  ])('should handle regular pie', async (string_: string) => {
-    const { parseResult: result } = await parse(string_);
+    `,
+  ])('should handle regular pie', (context: string) => {
+    const result = parse(context);
     expect(result.parserErrors).toHaveLength(0);
     expect(result.lexerErrors).toHaveLength(0);
 
@@ -30,11 +30,11 @@ describe('pie chart', () => {
     `\tpie\tshowData\t`,
     `
 
-        pie\tshowData
+    pie\tshowData
 
-        `,
-  ])('should handle regular showData', async (string_: string) => {
-    const { parseResult: result } = await parse(string_);
+    `,
+  ])('should handle regular showData', (context: string) => {
+    const result = parse(context);
     expect(result.parserErrors).toHaveLength(0);
     expect(result.lexerErrors).toHaveLength(0);
 
@@ -49,11 +49,11 @@ describe('pie chart', () => {
     `\tpie\ttitle sample title\t`,
     `pie
 
-        \ttitle sample title
+    \ttitle sample title
 
-        `,
-  ])('should handle regular pie + title in same line', async (string_: string) => {
-    const { parseResult: result } = await parse(string_);
+    `,
+  ])('should handle regular pie + title in same line', (context: string) => {
+    const result = parse(context);
     expect(result.parserErrors).toHaveLength(0);
     expect(result.lexerErrors).toHaveLength(0);
 
@@ -64,20 +64,20 @@ describe('pie chart', () => {
 
   it.each([
     `pie
-        title sample title`,
+    title sample title`,
     `pie
-        title sample title
-        `,
-    `pie
-
-        title sample title`,
+    title sample title
+    `,
     `pie
 
-        title sample title
+    title sample title`,
+    `pie
 
-        `,
-  ])('should handle regular pie + title in different line', async (string_: string) => {
-    const { parseResult: result } = await parse(string_);
+    title sample title
+
+    `,
+  ])('should handle regular pie + title in different line', (context: string) => {
+    const result = parse(context);
     expect(result.parserErrors).toHaveLength(0);
     expect(result.lexerErrors).toHaveLength(0);
 
@@ -89,9 +89,9 @@ describe('pie chart', () => {
   it.each([
     `pie showData title sample title`,
     `pie showData title sample title
-        `,
-  ])('should handle regular pie + showData + title', async (string_: string) => {
-    const { parseResult: result } = await parse(string_);
+    `,
+  ])('should handle regular pie + showData + title', (context: string) => {
+    const result = parse(context);
     expect(result.parserErrors).toHaveLength(0);
     expect(result.lexerErrors).toHaveLength(0);
 
@@ -103,20 +103,20 @@ describe('pie chart', () => {
 
   it.each([
     `pie showData
-        title sample title`,
+    title sample title`,
     `pie showData
-        title sample title
-        `,
-    `pie showData
-
-        title sample title`,
+    title sample title
+    `,
     `pie showData
 
-        title sample title
+    title sample title`,
+    `pie showData
 
-        `,
-  ])('should handle regular showData + title in different line', async (string_: string) => {
-    const { parseResult: result } = await parse(string_);
+    title sample title
+
+    `,
+  ])('should handle regular showData + title in different line', (context: string) => {
+    const result = parse(context);
     expect(result.parserErrors).toHaveLength(0);
     expect(result.lexerErrors).toHaveLength(0);
 
@@ -130,23 +130,23 @@ describe('pie chart', () => {
     describe('normal', () => {
       it.each([
         `pie
-                "GitHub":100
-                "GitLab":50`,
+        "GitHub":100
+        "GitLab":50`,
         `pie
-                "GitHub"   :   100
-                "GitLab"   :   50`,
+        "GitHub"   :   100
+        "GitLab"   :   50`,
         `pie
-                "GitHub"\t:\t100
-                "GitLab"\t:\t50`,
+        "GitHub"\t:\t100
+        "GitLab"\t:\t50`,
         `pie
 
-                \t"GitHub" \t : \t 100
+        \t"GitHub" \t : \t 100
 
-                \t"GitLab" \t : \t  50
+        \t"GitLab" \t : \t  50
 
-                `,
-      ])('should handle regular secions', async (string_: string) => {
-        const { parseResult: result } = await parse(string_);
+        `,
+      ])('should handle regular secions', (context: string) => {
+        const result = parse(context);
         expect(result.parserErrors).toHaveLength(0);
         expect(result.lexerErrors).toHaveLength(0);
 
@@ -162,11 +162,11 @@ describe('pie chart', () => {
         expect(section1?.value).toBe(50);
       });
 
-      it('should handle sections with showData', async () => {
-        const string_ = `pie showData
-                "GitHub": 100
-                "GitLab": 50`;
-        const { parseResult: result } = await parse(string_);
+      it('should handle sections with showData', () => {
+        const context = `pie showData
+        "GitHub": 100
+        "GitLab": 50`;
+        const result = parse(context);
         expect(result.parserErrors).toHaveLength(0);
         expect(result.lexerErrors).toHaveLength(0);
 
@@ -183,11 +183,11 @@ describe('pie chart', () => {
         expect(section1?.value).toBe(50);
       });
 
-      it('should handle sections with title', async () => {
-        const string_ = `pie title sample wow
-                "GitHub": 100
-                "GitLab": 50`;
-        const { parseResult: result } = await parse(string_);
+      it('should handle sections with title', () => {
+        const context = `pie title sample wow
+        "GitHub": 100
+        "GitLab": 50`;
+        const result = parse(context);
         expect(result.parserErrors).toHaveLength(0);
         expect(result.lexerErrors).toHaveLength(0);
 
@@ -204,11 +204,11 @@ describe('pie chart', () => {
         expect(section1?.value).toBe(50);
       });
 
-      it('should handle sections with accTitle', async () => {
-        const string_ = `pie accTitle: sample wow
-                "GitHub": 100
-                "GitLab": 50`;
-        const { parseResult: result } = await parse(string_);
+      it('should handle sections with accTitle', () => {
+        const context = `pie accTitle: sample wow
+        "GitHub": 100
+        "GitLab": 50`;
+        const result = parse(context);
         expect(result.parserErrors).toHaveLength(0);
         expect(result.lexerErrors).toHaveLength(0);
 
@@ -225,11 +225,11 @@ describe('pie chart', () => {
         expect(section1?.value).toBe(50);
       });
 
-      it('should handle sections with single line accDescr', async () => {
-        const string_ = `pie accDescr: sample wow
-                "GitHub": 100
-                "GitLab": 50`;
-        const { parseResult: result } = await parse(string_);
+      it('should handle sections with single line accDescr', () => {
+        const context = `pie accDescr: sample wow
+        "GitHub": 100
+        "GitLab": 50`;
+        const result = parse(context);
         expect(result.parserErrors).toHaveLength(0);
         expect(result.lexerErrors).toHaveLength(0);
 
@@ -246,13 +246,13 @@ describe('pie chart', () => {
         expect(section1?.value).toBe(50);
       });
 
-      it('should handle sections with multi line accDescr', async () => {
-        const string_ = `pie accDescr {
-                    sample wow
-                }
-                "GitHub": 100
-                "GitLab": 50`;
-        const { parseResult: result } = await parse(string_);
+      it('should handle sections with multi line accDescr', () => {
+        const context = `pie accDescr {
+            sample wow
+        }
+        "GitHub": 100
+        "GitLab": 50`;
+        const result = parse(context);
         expect(result.parserErrors).toHaveLength(0);
         expect(result.lexerErrors).toHaveLength(0);
 
@@ -271,11 +271,11 @@ describe('pie chart', () => {
     });
 
     describe('duplicate', () => {
-      it('should handle duplicate sections', async () => {
-        const string_ = `pie
-                "GitHub": 100
-                "GitHub": 50`;
-        const { parseResult: result } = await parse(string_);
+      it('should handle duplicate sections', () => {
+        const context = `pie
+        "GitHub": 100
+        "GitHub": 50`;
+        const result = parse(context);
         expect(result.parserErrors).toHaveLength(0);
         expect(result.lexerErrors).toHaveLength(0);
 

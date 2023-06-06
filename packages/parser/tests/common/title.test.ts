@@ -16,8 +16,8 @@ describe('title', () => {
       title\t
 
       `,
-    ])('should handle empty title', async (string_: string) => {
-      const { parseResult: result } = await parse(string_);
+    ])('should handle empty title', (context: string) => {
+      const result = parse(context);
       expect(result.parserErrors).toHaveLength(0);
       expect(result.lexerErrors).toHaveLength(0);
 
@@ -34,8 +34,8 @@ describe('title', () => {
       title\t sample
 
       `,
-    ])('should handle regular title', async (string_: string) => {
-      const { parseResult: result } = await parse(string_);
+    ])('should handle regular title', (context: string) => {
+      const result = parse(context);
       expect(result.parserErrors).toHaveLength(0);
       expect(result.lexerErrors).toHaveLength(0);
 
@@ -43,9 +43,9 @@ describe('title', () => {
       expect(value.title).toBe('sample');
     });
 
-    it('should handle title with accTitle', async () => {
-      const string_ = `pie title sample + accTitle: test`;
-      const { parseResult: result } = await parse(string_);
+    it('should handle title with accTitle', () => {
+      const context = `pie title sample + accTitle: test`;
+      const result = parse(context);
       expect(result.parserErrors).toHaveLength(0);
       expect(result.lexerErrors).toHaveLength(0);
 
@@ -54,9 +54,9 @@ describe('title', () => {
       expect(value.accTitle).toBeUndefined();
     });
 
-    it('should handle title with single line accDescr', async () => {
-      const string_ = `pie title sample + accDescr: test`;
-      const { parseResult: result } = await parse(string_);
+    it('should handle title with single line accDescr', () => {
+      const context = `pie title sample + accDescr: test`;
+      const result = parse(context);
       expect(result.parserErrors).toHaveLength(0);
       expect(result.lexerErrors).toHaveLength(0);
 
@@ -65,9 +65,9 @@ describe('title', () => {
       expect(value.accDescr).toBeUndefined();
     });
 
-    it('should handle title with multi line accDescr', async () => {
-      const string_ = `pie title sample + accDescr {test}`;
-      const { parseResult: result } = await parse(string_);
+    it('should handle title with multi line accDescr', () => {
+      const context = `pie title sample + accDescr {test}`;
+      const result = parse(context);
       expect(result.parserErrors).toHaveLength(0);
       expect(result.lexerErrors).toHaveLength(0);
 
@@ -79,9 +79,9 @@ describe('title', () => {
 
   describe('duplicate', () => {
     describe('inside', () => {
-      it('should handle non-empty title inside title', async () => {
-        const string_ = `pie title title test`;
-        const { parseResult: result } = await parse(string_);
+      it('should handle non-empty title inside title', () => {
+        const context = `pie title title test`;
+        const result = parse(context);
         expect(result.parserErrors).toHaveLength(0);
         expect(result.lexerErrors).toHaveLength(0);
 
@@ -89,9 +89,9 @@ describe('title', () => {
         expect(value.title).toBe('title test');
       });
 
-      it('should handle empty title inside title', async () => {
-        const string_ = `pie title test title`;
-        const { parseResult: result } = await parse(string_);
+      it('should handle empty title inside title', () => {
+        const context = `pie title test title`;
+        const result = parse(context);
         expect(result.parserErrors).toHaveLength(0);
         expect(result.lexerErrors).toHaveLength(0);
 
@@ -101,10 +101,10 @@ describe('title', () => {
     });
 
     describe('after', () => {
-      it('should handle regular title after empty title', async () => {
-        const string_ = `pie title
+      it('should handle regular title after empty title', () => {
+        const context = `pie title
         title sample`;
-        const { parseResult: result } = await parse(string_);
+        const result = parse(context);
         expect(result.parserErrors).toHaveLength(0);
         expect(result.lexerErrors).toHaveLength(0);
 
@@ -112,10 +112,10 @@ describe('title', () => {
         expect(value.title).toBe('sample');
       });
 
-      it('should handle empty title after regular title', async () => {
-        const string_ = `pie title sample
+      it('should handle empty title after regular title', () => {
+        const context = `pie title sample
         title`;
-        const { parseResult: result } = await parse(string_);
+        const result = parse(context);
         expect(result.parserErrors).toHaveLength(0);
         expect(result.lexerErrors).toHaveLength(0);
 
@@ -123,10 +123,10 @@ describe('title', () => {
         expect(value.title).toBeUndefined();
       });
 
-      it('should handle regular title after regular title', async () => {
-        const string_ = `pie title test
+      it('should handle regular title after regular title', () => {
+        const context = `pie title test
         title sample`;
-        const { parseResult: result } = await parse(string_);
+        const result = parse(context);
         expect(result.parserErrors).toHaveLength(0);
         expect(result.lexerErrors).toHaveLength(0);
 

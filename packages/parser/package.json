@@ -37,8 +37,7 @@
     "langium": "^1.2.0"
   },
   "devDependencies": {
-    "langium-cli": "^1.2.1",
-    "vscode-uri": "^3.0.7"
+    "langium-cli": "^1.2.1"
   },
   "files": [
     "dist/"

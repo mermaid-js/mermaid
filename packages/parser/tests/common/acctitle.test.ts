@@ -16,8 +16,8 @@ describe('accTitle', () => {
       accTitle\t:
 
       `,
-    ])('should handle empty accTitle', async (string_: string) => {
-      const { parseResult: result } = await parse(string_);
+    ])('should handle empty accTitle', (context: string) => {
+      const result = parse(context);
       expect(result.parserErrors).toHaveLength(0);
       expect(result.lexerErrors).toHaveLength(0);
 
@@ -34,8 +34,8 @@ describe('accTitle', () => {
       accTitle\t: sample accessibility
 
       `,
-    ])('should handle regular accTitle', async (string_: string) => {
-      const { parseResult: result } = await parse(string_);
+    ])('should handle regular accTitle', (context: string) => {
+      const result = parse(context);
       expect(result.parserErrors).toHaveLength(0);
       expect(result.lexerErrors).toHaveLength(0);
 
@@ -43,9 +43,9 @@ describe('accTitle', () => {
       expect(value.accTitle).toBe('sample accessibility');
     });
 
-    it('should handle accTitle with title', async () => {
-      const string_ = `pie accTitle: sample accessibility + title test`;
-      const { parseResult: result } = await parse(string_);
+    it('should handle accTitle with title', () => {
+      const context = `pie accTitle: sample accessibility + title test`;
+      const result = parse(context);
       expect(result.parserErrors).toHaveLength(0);
       expect(result.lexerErrors).toHaveLength(0);
 
@@ -54,9 +54,9 @@ describe('accTitle', () => {
       expect(value.accTitle).toBe('sample accessibility + title test');
     });
 
-    it('should handle accTitle with single line accDescr', async () => {
-      const string_ = `pie accTitle: sample description + accDescr: test`;
-      const { parseResult: result } = await parse(string_);
+    it('should handle accTitle with single line accDescr', () => {
+      const context = `pie accTitle: sample description + accDescr: test`;
+      const result = parse(context);
       expect(result.parserErrors).toHaveLength(0);
       expect(result.lexerErrors).toHaveLength(0);
 
@@ -65,9 +65,9 @@ describe('accTitle', () => {
       expect(value.accTitle).toBe('sample description + accDescr: test');
     });
 
-    it('should handle accTitle with multi line accDescr', async () => {
-      const string_ = `pie accTitle: sample description + accDescr {test}`;
-      const { parseResult: result } = await parse(string_);
+    it('should handle accTitle with multi line accDescr', () => {
+      const context = `pie accTitle: sample description + accDescr {test}`;
+      const result = parse(context);
       expect(result.parserErrors).toHaveLength(0);
       expect(result.lexerErrors).toHaveLength(0);
 
@@ -79,9 +79,9 @@ describe('accTitle', () => {
 
   describe('duplicate', () => {
     describe('inside', () => {
-      it('should handle accTitle inside accTitle', async () => {
-        const string_ = `pie accTitle: accTitle: test`;
-        const { parseResult: result } = await parse(string_);
+      it('should handle accTitle inside accTitle', () => {
+        const context = `pie accTitle: accTitle: test`;
+        const result = parse(context);
         expect(result.parserErrors).toHaveLength(0);
         expect(result.lexerErrors).toHaveLength(0);
 
@@ -91,10 +91,10 @@ describe('accTitle', () => {
     });
 
     describe('after', () => {
-      it('should handle regular accTitle after empty accTitle', async () => {
-        const string_ = `pie accTitle:
+      it('should handle regular accTitle after empty accTitle', () => {
+        const context = `pie accTitle:
         accTitle: sample accessibility`;
-        const { parseResult: result } = await parse(string_);
+        const result = parse(context);
         expect(result.parserErrors).toHaveLength(0);
         expect(result.lexerErrors).toHaveLength(0);
 
@@ -102,10 +102,10 @@ describe('accTitle', () => {
         expect(value.accTitle).toBe('sample accessibility');
       });
 
-      it('should handle empty accTitle after regular accTitle', async () => {
-        const string_ = `pie accTitle: sample accessibility
+      it('should handle empty accTitle after regular accTitle', () => {
+        const context = `pie accTitle: sample accessibility
         accTitle:`;
-        const { parseResult: result } = await parse(string_);
+        const result = parse(context);
         expect(result.parserErrors).toHaveLength(0);
         expect(result.lexerErrors).toHaveLength(0);
 
@@ -113,10 +113,10 @@ describe('accTitle', () => {
         expect(value.accTitle).toBeUndefined();
       });
 
-      it('should handle regular accTitle after regular accTitle', async () => {
-        const string_ = `pie accTitle: test accessibility
+      it('should handle regular accTitle after regular accTitle', () => {
+        const context = `pie accTitle: test accessibility
         accTitle: sample accessibility`;
-        const { parseResult: result } = await parse(string_);
+        const result = parse(context);
         expect(result.parserErrors).toHaveLength(0);
         expect(result.lexerErrors).toHaveLength(0);
 

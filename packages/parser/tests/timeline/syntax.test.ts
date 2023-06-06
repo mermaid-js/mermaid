@@ -6,22 +6,22 @@ import { createTestServices } from '../test-utils.js';
 describe('timeline', () => {
   const { parse } = createTestServices<Timeline>();
 
-  it('TL-1 should handle a simple section definition abc-123', async () => {
+  it('TL-1 should handle a simple section definition abc-123', () => {
     const context = `timeline
     section abc-123`;
-    const { parseResult: result } = await parse(context);
+    const result = parse(context);
     expect(result.parserErrors).toHaveLength(0);
     expect(result.lexerErrors).toHaveLength(0);
 
     expect(result.value.sections[0].title).toBe('abc-123');
   });
 
-  it('TL-2 should handle a simple section and only two tasks', async () => {
+  it('TL-2 should handle a simple section and only two tasks', () => {
     const context = `timeline
     section abc-123
     task1
     task2`;
-    const { parseResult: result } = await parse(context);
+    const result = parse(context);
     expect(result.parserErrors).toHaveLength(0);
     expect(result.lexerErrors).toHaveLength(0);
 
@@ -30,7 +30,7 @@ describe('timeline', () => {
     expect(result.value.sections[0].periods[1].title).toBe('task2');
   });
 
-  it('TL-3 should handle a two section and two coressponding tasks', async () => {
+  it('TL-3 should handle a two section and two coressponding tasks', () => {
     const context = `timeline
     section abc-123
     task1
@@ -38,7 +38,7 @@ describe('timeline', () => {
     section abc-456
     task3
     task4`;
-    const { parseResult: result } = await parse(context);
+    const result = parse(context);
     expect(result.parserErrors).toHaveLength(0);
     expect(result.lexerErrors).toHaveLength(0);
 
@@ -51,12 +51,12 @@ describe('timeline', () => {
     expect(result.value.sections[1].periods[1].title).toBe('task4');
   });
 
-  it('TL-4 should handle a section, and task and its events', async () => {
+  it('TL-4 should handle a section, and task and its events', () => {
     const context = `timeline
     section abc-123
     task1: event1
     task2: event2: event3`;
-    const { parseResult: result } = await parse(context);
+    const result = parse(context);
     expect(result.parserErrors).toHaveLength(0);
     expect(result.lexerErrors).toHaveLength(0);
 
@@ -68,7 +68,7 @@ describe('timeline', () => {
     expect(result.value.sections[0].periods[1].events[1]).toBe('event3');
   });
 
-  it('TL-5 should handle a section, and task and its multi line events', async () => {
+  it('TL-5 should handle a section, and task and its multi line events', () => {
     const context = `timeline
     section abc-123
     task1: event1
@@ -76,7 +76,7 @@ describe('timeline', () => {
           : event4: event5
     `;
 
-    const { parseResult: result } = await parse(context);
+    const result = parse(context);
     expect(result.parserErrors).toHaveLength(0);
     expect(result.lexerErrors).toHaveLength(0);
 
