@@ -1,6 +1,9 @@
-import { EmptyFileSystem, ParseResult } from 'langium';
+import { EmptyFileSystem, LangiumParser, ParseResult } from 'langium';
 
 import { Mermaid, MermaidServices, createMermaidServices } from '../src/language/index.js';
+
+const services: MermaidServices = createMermaidServices(EmptyFileSystem).Mermaid;
+const parser: LangiumParser = services.parser.LangiumParser;
 
 /**
  * Create test services for unit testing.
@@ -23,9 +26,6 @@ export function createTestServices<T extends Mermaid = Mermaid>(): {
   services: MermaidServices;
   parse: (input: string) => ParseResult<T>;
 } {
-  const services = createMermaidServices(EmptyFileSystem).Mermaid;
-  const parser = services.parser.LangiumParser;
-
   const parse = (input: string) => {
     return parser.parse<T>(input);
   };
