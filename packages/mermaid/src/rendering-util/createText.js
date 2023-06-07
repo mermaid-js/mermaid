@@ -119,23 +119,27 @@ function createFormattedText(width, g, structuredText, addBackground = false) {
     let tempStr = '';
     let linesUnderWidth = [];
     let prevIndex = 0;
-    for (let i = 0; i <= fullStr.length; i++) {
-      tempStr = fullStr.slice(prevIndex, i);
-      log.info(tempStr, prevIndex, i);
-      if (computeWidthOfText(labelGroup, lineHeight, tempStr) > width) {
-        const subStr = fullStr.slice(prevIndex, i);
-        // Break at space if any
-        const lastSpaceIndex = subStr.lastIndexOf(' ');
-        if (lastSpaceIndex > -1) {
-          i = prevIndex + lastSpaceIndex + 1;
+    if (computeWidthOfText(labelGroup, lineHeight, fullStr) <= width) {
+      linesUnderWidth.push(fullStr);
+    } else {
+      for (let i = 0; i <= fullStr.length; i++) {
+        tempStr = fullStr.slice(prevIndex, i);
+        log.info(tempStr, prevIndex, i);
+        if (computeWidthOfText(labelGroup, lineHeight, tempStr) > width) {
+          const subStr = fullStr.slice(prevIndex, i);
+          // Break at space if any
+          const lastSpaceIndex = subStr.lastIndexOf(' ');
+          if (lastSpaceIndex > -1) {
+            i = prevIndex + lastSpaceIndex + 1;
+          }
+          linesUnderWidth.push(fullStr.slice(prevIndex, i).trim());
+          prevIndex = i;
+          tempStr = null;
         }
-        linesUnderWidth.push(fullStr.slice(prevIndex, i).trim());
-        prevIndex = i;
-        tempStr = null;
       }
-    }
-    if (tempStr != null) {
-      linesUnderWidth.push(tempStr);
+      if (tempStr != null) {
+        linesUnderWidth.push(tempStr);
+      }
     }
     /** Add each prepared line as a tspan to the parent node */
     const preparedLines = linesUnderWidth.map((w) => ({ content: w, type: line.type }));
