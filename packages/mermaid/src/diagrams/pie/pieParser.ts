@@ -7,7 +7,7 @@ const services: MermaidServices = createMermaidServices(EmptyFileSystem).Mermaid
 const parser: LangiumParser = services.parser.LangiumParser;
 
 export function parse(input: string): void {
-  const result: ParseResult<Pie> = parser.parse<Pie>(input);
+  const result: ParseResult<Pie> = parser.parse(input);
 
   if (result.parserErrors.length > 0 || result.lexerErrors.length > 0) {
     log.error(
