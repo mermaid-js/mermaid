@@ -10,6 +10,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Using code blocks](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) (**Native support**)
   - [GitHub action: Compile mermaid to image](https://github.com/neenjaw/compile-mermaid-markdown-action)
   - [svg-generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
+  - [GitHub Writer](https://github.com/ckeditor/github-writer)
 - [GitLab](https://docs.gitlab.com/ee/user/markdown.html#diagrams-and-flowcharts) (**Native support**)
 - [Gitea](https://gitea.io) (**Native support**)
 - [Azure Devops](https://docs.microsoft.com/en-us/azure/devops/project/wiki/wiki-markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) (**Native support**)
@@ -52,6 +53,8 @@ They also serve as proof of concept, for the variety of things that can be built
   - [hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams)
   - [hexo-tag-mermaid](https://github.com/JameChou/hexo-tag-mermaid)
   - [hexo-mermaid-diagrams](https://github.com/mslxl/hexo-mermaid-diagrams)
+- [Nextra](https://nextra.site/)
+  - [Mermaid](https://nextra.site/docs/guide/mermaid)
 
 ## CMS
 
@@ -136,6 +139,8 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Named block =Diagram](https://github.com/zag/podlite/tree/main/packages/podlite-diagrams)
 - [GNU Nano](https://www.nano-editor.org/)
   - [Nano Mermaid](https://github.com/Yash-Singh1/nano-mermaid)
+- [CKEditor](https://github.com/ckeditor/ckeditor5)
+  - [CKEditor 5 Mermaid plugin](https://github.com/ckeditor/ckeditor5-mermaid)
 
 ## Document Generation
 

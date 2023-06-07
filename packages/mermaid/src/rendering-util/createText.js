@@ -1,7 +1,4 @@
-import { select } from 'd3';
 import { log } from '../logger.js';
-import { getConfig } from '../config.js';
-import { evaluate } from '../diagrams/common/common.js';
 import { decodeEntities } from '../mermaidAPI.js';
 import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
 /**
@@ -19,9 +16,10 @@ function applyStyle(dom, styleFn) {
  * @param {any} node
  * @param width
  * @param classes
+ * @param addBackground
  * @returns {SVGForeignObjectElement} Node
  */
-function addHtmlSpan(element, node, width, classes) {
+function addHtmlSpan(element, node, width, classes, addBackground = false) {
   const fo = element.append('foreignObject');
   // const newEl = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
   // const newEl = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
@@ -32,7 +30,8 @@ function addHtmlSpan(element, node, width, classes) {
   const label = node.label;
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
   div.html(
-    `<span class="${labelClass} ${classes}" ` +
+    `
+    <span class="${labelClass} ${classes}" ` +
       (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') +
       '>' +
       label +
@@ -44,6 +43,9 @@ function addHtmlSpan(element, node, width, classes) {
   div.style('white-space', 'nowrap');
   div.style('max-width', width + 'px');
   div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
+  if (addBackground) {
+    div.attr('class', 'labelBkg');
+  }
 
   let bbox = div.node().getBoundingClientRect();
   if (bbox.width === width) {
@@ -232,21 +234,10 @@ export const createText = (
       ),
       labelStyle: style.replace('fill:', 'color:'),
     };
-    let vertexNode = addHtmlSpan(el, node, width, classes);
+    let vertexNode = addHtmlSpan(el, node, width, classes, addSvgBackground);
     return vertexNode;
   } else {
     const structuredText = markdownToLines(text);
-    const special = ['"', "'", '.', ',', ':', ';', '!', '?', '(', ')', '[', ']', '{', '}'];
-    let lastWord;
-    structuredText.forEach((line) => {
-      line.forEach((word) => {
-        if (special.includes(word.content) && lastWord) {
-          lastWord.content += word.content;
-          word.content = '';
-        }
-        lastWord = word;
-      });
-    });
     const svgLabel = createFormattedText(width, el, structuredText, addSvgBackground);
     return svgLabel;
   }

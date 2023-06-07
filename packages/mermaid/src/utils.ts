@@ -32,6 +32,8 @@ import assignWithDepth from './assignWithDepth.js';
 import { MermaidConfig } from './config.type.js';
 import memoize from 'lodash-es/memoize.js';
 
+export const ZERO_WIDTH_SPACE = '\u200b';
+
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
   curveBasis: curveBasis,
@@ -765,7 +767,7 @@ export const calculateTextDimensions: (
       const dim = { width: 0, height: 0, lineHeight: 0 };
       for (const line of lines) {
         const textObj = getTextObj();
-        textObj.text = line;
+        textObj.text = line || ZERO_WIDTH_SPACE;
         const textElem = drawSimpleText(g, textObj)
           .style('font-size', _fontSizePx)
           .style('font-weight', fontWeight)

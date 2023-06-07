@@ -1,7 +1,7 @@
 {
   "name": "mermaid-monorepo",
   "private": true,
-  "version": "10.1.0",
+  "version": "10.2.0",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
   "packageManager": "pnpm@8.5.1",
@@ -18,7 +18,7 @@
     "build:vite": "ts-node-esm --transpileOnly .vite/build.ts",
     "build:mermaid": "pnpm build:vite --mermaid",
     "build:viz": "pnpm build:mermaid --visualize",
-    "build:types": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-example-diagram/tsconfig.json --emitDeclarationOnly",
+    "build:types": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-zenuml/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-example-diagram/tsconfig.json --emitDeclarationOnly",
     "build:watch": "pnpm build:vite --watch",
     "build": "pnpm run -r clean && pnpm build:types && pnpm build:vite",
     "dev": "concurrently \"pnpm build:vite --watch\" \"ts-node-esm .vite/server.ts\"",
