@@ -209,7 +209,7 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       langium:
-        specifier: ^1.2.0
+        specifier: 1.2.0
         version: 1.2.0
       lodash-es:
         specifier: ^4.17.21
@@ -218,7 +218,7 @@ importers:
         specifier: ^1.3.0
         version: 1.3.0
       mermaid-parser:
-        specifier: ^0.2.0
+        specifier: workspace:*
         version: link:../parser
       non-layered-tidy-tree-layout:
         specifier: ^2.0.2
@@ -441,6 +441,58 @@ importers:
         specifier: ^6.5.4
         version: 6.5.4
 
+  packages/mermaid/src/vitepress:
+    dependencies:
+      '@vueuse/core':
+        specifier: ^10.1.0
+        version: 10.1.0(vue@3.2.47)
+      jiti:
+        specifier: ^1.18.2
+        version: 1.18.2
+      vue:
+        specifier: ^3.2.47
+        version: 3.2.47
+    devDependencies:
+      '@iconify-json/carbon':
+        specifier: ^1.1.16
+        version: 1.1.16
+      '@unocss/reset':
+        specifier: ^0.52.0
+        version: 0.52.0
+      '@vite-pwa/vitepress':
+        specifier: ^0.0.5
+        version: 0.0.5(vite-plugin-pwa@0.15.0)
+      '@vitejs/plugin-vue':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@4.3.3)(vue@3.2.47)
+      fast-glob:
+        specifier: ^3.2.12
+        version: 3.2.12
+      https-localhost:
+        specifier: ^4.7.1
+        version: 4.7.1
+      pathe:
+        specifier: ^1.1.0
+        version: 1.1.0
+      unocss:
+        specifier: ^0.52.0
+        version: 0.52.0(postcss@8.4.24)(rollup@2.79.1)(vite@4.3.3)
+      unplugin-vue-components:
+        specifier: ^0.24.1
+        version: 0.24.1(rollup@2.79.1)(vue@3.2.47)
+      vite:
+        specifier: ^4.3.3
+        version: 4.3.3(@types/node@18.16.0)
+      vite-plugin-pwa:
+        specifier: ^0.15.0
+        version: 0.15.0(vite@4.3.3)(workbox-build@6.6.0)(workbox-window@6.5.4)
+      vitepress:
+        specifier: 1.0.0-alpha.76
+        version: 1.0.0-alpha.76(@algolia/client-search@4.17.1)(@types/node@18.16.0)
+      workbox-window:
+        specifier: ^6.5.4
+        version: 6.5.4
+
   packages/parser:
     dependencies:
       '@chevrotain/types':
@@ -450,11 +502,11 @@ importers:
         specifier: ^10.5.0
         version: 10.5.0
       langium:
-        specifier: ^1.2.0
+        specifier: 1.2.0
         version: 1.2.0
     devDependencies:
       langium-cli:
-        specifier: ^1.2.1
+        specifier: 1.2.1
         version: 1.2.1
 
   tests/webpack:
@@ -14727,7 +14779,7 @@ packages:
       mlly: 1.3.0
       pathe: 1.1.0
       picocolors: 1.0.0
-      vite: 4.3.3(@types/node@18.16.0)
+      vite: 4.3.9(@types/node@18.16.0)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -14838,6 +14890,48 @@ packages:
       vue: 3.3.4
     dev: true
 
+  /vitepress@1.0.0-alpha.76(@algolia/client-search@4.17.1)(@types/node@18.16.0):
+    resolution: {integrity: sha512-fzR1pDpGnSMeCJ+AnDdMe/ETD2G0Go+g6mTxDv9ps7Hmr1JjVqw97nasCyZg3jgfQxi2nt78EJ/bw7hY5n/rlw==}
+    hasBin: true
+    dependencies:
+      '@docsearch/css': 3.4.0
+      '@docsearch/js': 3.4.0(@algolia/client-search@4.17.1)
+      '@vitejs/plugin-vue': 4.2.3(vite@4.3.9)(vue@3.3.4)
+      '@vue/devtools-api': 6.5.0
+      '@vueuse/core': 10.1.2(vue@3.3.4)
+      '@vueuse/integrations': 10.1.2(focus-trap@7.4.3)(vue@3.3.4)
+      body-scroll-lock: 4.0.0-beta.0
+      focus-trap: 7.4.3
+      mark.js: 8.11.1
+      minisearch: 6.1.0
+      shiki: 0.14.2
+      vite: 4.3.9(@types/node@18.16.0)
+      vue: 3.3.4
+    transitivePeerDependencies:
+      - '@algolia/client-search'
+      - '@types/node'
+      - '@types/react'
+      - '@vue/composition-api'
+      - async-validator
+      - axios
+      - change-case
+      - drauu
+      - fuse.js
+      - idb-keyval
+      - jwt-decode
+      - less
+      - nprogress
+      - qrcode
+      - react
+      - react-dom
+      - sass
+      - sortablejs
+      - stylus
+      - sugarss
+      - terser
+      - universal-cookie
+    dev: true
+
   /vitepress@1.0.0-beta.1(@algolia/client-search@4.17.1)(@types/node@18.16.0):
     resolution: {integrity: sha512-V2yyCwQ+v9fh7rbnGDLp8M7vHa9sLElexXf/JHtBOsOwv7ed9wt1QI4WUagYgKR3TeoJT9v2s6f0UaQSne0EvQ==}
     hasBin: true
@@ -14935,7 +15029,7 @@ packages:
       strip-literal: 1.0.1
       tinybench: 2.5.0
       tinypool: 0.5.0
-      vite: 4.3.3(@types/node@18.16.0)
+      vite: 4.3.9(@types/node@18.16.0)
       vite-node: 0.31.0(@types/node@18.16.0)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:

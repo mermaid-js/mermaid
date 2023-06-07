@@ -34,10 +34,10 @@
   "dependencies": {
     "@chevrotain/types": "^10.5.0",
     "chevrotain": "^10.5.0",
-    "langium": "^1.2.0"
+    "langium": "1.2.0"
   },
   "devDependencies": {
-    "langium-cli": "^1.2.1"
+    "langium-cli": "1.2.1"
   },
   "files": [
     "dist/"
