@@ -83,13 +83,13 @@ function createTspan(textElement, lineIndex, lineHeight) {
  * @param {string} text
  * @returns {number}
  */
-function testWidthOfText(parentNode, lineHeight, text) {
-  const testElement = parentNode.append('text').attr('y', '-10.1');
+function computeWidthOfText(parentNode, lineHeight, text) {
+  const testElement = parentNode.append('text');
   const testSpan = createTspan(testElement, 1, lineHeight);
   updateTextContentAndStyles(testSpan, [{ content: text, type: 'normal' }]);
-  const val = testSpan.node().getComputedTextLength();
+  const textLength = testSpan.node().getComputedTextLength();
   testElement.remove();
-  return val;
+  return textLength;
 }
 
 /**
@@ -122,7 +122,7 @@ function createFormattedText(width, g, structuredText, addBackground = false) {
     for (let i = 0; i <= fullStr.length; i++) {
       tempStr = fullStr.slice(prevIndex, i);
       log.info(tempStr, prevIndex, i);
-      if (testWidthOfText(labelGroup, lineHeight, tempStr) > width) {
+      if (computeWidthOfText(labelGroup, lineHeight, tempStr) > width) {
         const subStr = fullStr.slice(prevIndex, i);
         // Break at space if any
         const lastSpaceIndex = subStr.lastIndexOf(' ');
