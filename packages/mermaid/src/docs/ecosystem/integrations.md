@@ -53,6 +53,8 @@ They also serve as proof of concept, for the variety of things that can be built
   - [hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams)
   - [hexo-tag-mermaid](https://github.com/JameChou/hexo-tag-mermaid)
   - [hexo-mermaid-diagrams](https://github.com/mslxl/hexo-mermaid-diagrams)
+- [Nextra](https://nextra.site/)
+  - [Mermaid](https://nextra.site/docs/guide/mermaid)
 
 ## CMS
 
