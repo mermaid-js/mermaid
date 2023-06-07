@@ -1,6 +1,6 @@
 import jison from './.vite/jisonPlugin.js';
 import typescript from '@rollup/plugin-typescript';
-import { defineConfig } from 'vitest/config';
+import { defaultExclude, defineConfig } from 'vitest/config';
 
 export default defineConfig({
   resolve: {
@@ -17,6 +17,7 @@ export default defineConfig({
     // TODO: should we move this to a mermaid-core package?
     setupFiles: ['packages/mermaid/src/tests/setup.ts'],
     coverage: {
+      exclude: [...defaultExclude, '**/generated/'],
       reporter: ['text', 'json', 'html', 'lcov'],
     },
   },
