@@ -263,7 +263,10 @@ export const cleanUpSvgCode = (
 
   // Replace marker-end urls with just the # anchor (remove the preceding part of the URL)
   if (!useArrowMarkerUrls && !inSandboxMode) {
-    cleanedUpSvg = cleanedUpSvg.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#');
+    cleanedUpSvg = cleanedUpSvg.replace(
+      /marker-end="url\([\d+./:=?A-Za-z-]*?#/g,
+      'marker-end="url(#'
+    );
   }
 
   cleanedUpSvg = decodeEntities(cleanedUpSvg);

@@ -119,10 +119,10 @@ points
 
 axisDetails
   : X-AXIS text AXIS-TEXT-DELIMITER text {yy.setXAxisLeftText($2); yy.setXAxisRightText($4);}
-  | X-AXIS text AXIS-TEXT-DELIMITER {$2.text += $3; yy.setXAxisLeftText($2);}
+  | X-AXIS text AXIS-TEXT-DELIMITER {$2.text += " ⟶ "; yy.setXAxisLeftText($2);}
   | X-AXIS text {yy.setXAxisLeftText($2);}
   | Y-AXIS text AXIS-TEXT-DELIMITER text {yy.setYAxisBottomText($2); yy.setYAxisTopText($4);}
-  | Y-AXIS text AXIS-TEXT-DELIMITER {$2.text += $3; yy.setYAxisBottomText($2);}
+  | Y-AXIS text AXIS-TEXT-DELIMITER {$2.text += " ⟶ "; yy.setYAxisBottomText($2);}
   | Y-AXIS text {yy.setYAxisBottomText($2);}
   ;
 
