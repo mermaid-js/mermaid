@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { log } from '../../logger.js';
-import mermaidAPI from '../../mermaidAPI.js';
+import { parseDirective as _parseDirective } from '../../directiveUtils.js';
 import * as configApi from '../../config.js';
 import common from '../common/common.js';
 import {
@@ -13,12 +13,13 @@ import {
   setAccDescription,
   clear as commonClear,
 } from '../../commonDb.js';
+import { ParseDirectiveDefinition } from '../../diagram-api/types.js';
 
 let sections: Record<string, number> = {};
 let showData = false;
 
-export const parseDirective = function (statement, context, type): void {
-  mermaidAPI.parseDirective(this, statement, context, type);
+export const parseDirective: ParseDirectiveDefinition = (statement, context, type) => {
+  _parseDirective(this, statement, context, type);
 };
 
 const addSection = function (id: string, value: number): void {
