@@ -1,3 +1,4 @@
+import { Diagram } from '../Diagram.js';
 import { MermaidConfig } from '../config.type.js';
 
 export interface InjectUtils {
@@ -52,6 +53,10 @@ export interface ExternalDiagramDefinition {
 
 export interface ParseDirectiveDefinition {
   (statement: string, context: string, type: string): void;
+}
+
+export interface DrawDefinition {
+  (txt: string, id: string, _version: string, diagObj: Diagram): void;
 }
 
 export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;

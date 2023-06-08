@@ -20,6 +20,11 @@ export const parseDirective: ParseDirectiveDefinition = (statement, context, typ
   _parseDirective(this, statement, context, type);
 };
 
+/**
+ * Add section to the pie chart.
+ * @param id - section label.
+ * @param value - section value.
+ */
 const addSection = (id: string, value: number): void => {
   id = sanitizeText(id, configApi.getConfig());
   if (sections[id] === undefined) {
@@ -27,6 +32,7 @@ const addSection = (id: string, value: number): void => {
   }
   sections[id] = value;
 };
+
 const getSections = (): Record<string, number> => sections;
 
 const setShowData = (toggle: boolean): void => {
