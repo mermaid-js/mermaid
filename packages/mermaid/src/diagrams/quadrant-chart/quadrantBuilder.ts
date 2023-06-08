@@ -1,4 +1,3 @@
-// @ts-ignore: TODO Fix ts errors
 import { scaleLinear } from 'd3';
 import { log } from '../../logger.js';
 import type { BaseDiagramConfig, QuadrantChartConfig } from '../../config.type.js';
