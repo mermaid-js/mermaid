@@ -88,6 +88,16 @@ context('Sequence diagram', () => {
       {}
     );
   });
+  it('should handle empty lines', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      Alice->>John: Hello John<br/>
+      John-->>Alice: Great<br/><br/>day!
+    `,
+      {}
+    );
+  });
   it('should handle line breaks and wrap annotations', () => {
     imgSnapshotTest(
       `
