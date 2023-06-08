@@ -57,7 +57,7 @@
     </style>
   </head>
   <body>
-    <pre style="background:black;color:white">
+    <pre style="background: black; color: white">
       swimlane LR
           subgraph "`one`"
             start -- l1 --> cat --> rat
@@ -71,7 +71,8 @@
           end
           cat --> monkey
           cow --> dog
-          </pre>
+          </pre
+    >
     <pre id="diagram" class="mermaid">
 swimlane LR
     subgraph "`one`"
@@ -80,16 +81,31 @@ swimlane LR
     subgraph "`two`"
       monkey -- l2 --> dog --> done2
       end
-      subgraph "`three`"
+    subgraph "`three`"
       cow --> horse --> done3
       cow --> sheep --> done3
     end
+    subgraph "`four`"
+      panda -->
+      kangaroo --> done4
+    end
 cat --> monkey
     cow --> dog
+    kangaroo --> sheep
     </pre>
 
-
-    monkey dog --> cat monkey --> cow -->
+    <pre id="diagram" class="mermaid2">
+swimlane LR
+    subgraph "`three`"
+      bat --> cow
+      cow --> sheep
+    end
+    subgraph "`four`"
+      panda -->
+      kangaroo --> done4
+    end
+    kangaroo --> sheep
+    </pre>
     <!-- <div id="cy"></div> -->
     <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
     <!-- <script src="./mermaid-example-diagram-detector.js"></script>    -->
