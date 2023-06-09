@@ -15,7 +15,6 @@ import {
   MermaidLexer,
   MermaidGeneratedSharedModule,
   MermaidGeneratedModule,
-  registerValidationChecks,
 } from './index.js';
 
 /**
@@ -67,6 +66,5 @@ export function createMermaidServices(context: DefaultSharedModuleContext): {
   const shared = inject(createDefaultSharedModule(context), MermaidGeneratedSharedModule);
   const Mermaid = inject(createDefaultModule({ shared }), MermaidGeneratedModule, MermaidModule);
   shared.ServiceRegistry.register(Mermaid);
-  registerValidationChecks(Mermaid);
   return { shared, Mermaid };
 }
