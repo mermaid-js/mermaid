@@ -109,9 +109,6 @@ function createFormattedText(width, g, structuredText, addBackground = false) {
   const labelGroup = g.append('g');
   let bkg = labelGroup.insert('rect').attr('class', 'background');
   const textElement = labelGroup.append('text').attr('y', '-10.1');
-  // .attr('dominant-baseline', 'middle')
-  // .attr('text-anchor', 'middle');
-  // .attr('text-anchor', 'middle');
   let lineIndex = 0;
   structuredText.forEach((line) => {
     /**
@@ -139,7 +136,6 @@ function createFormattedText(width, g, structuredText, addBackground = false) {
       .attr('y', -padding)
       .attr('width', bbox.width + 2 * padding)
       .attr('height', bbox.height + 2 * padding);
-    // .style('fill', 'red');
 
     return labelGroup.node();
   } else {
