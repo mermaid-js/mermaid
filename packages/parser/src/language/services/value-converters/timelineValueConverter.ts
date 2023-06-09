@@ -10,7 +10,11 @@ import {
 
 export class TimelineValueConverter extends DefaultValueConverter {
   public runConverter(rule: GrammarAST.AbstractRule, input: string, cstNode: CstNode): ValueType {
-    const value = CommonValueConverter.customRunConverter(rule, input, cstNode);
+    let value = CommonValueConverter.customRunConverter(rule, input, cstNode);
+    if (value === null) {
+      value = TimelineValueConverter.customRunConverter(rule, input, cstNode);
+    }
+
     if (value === null) {
       return super.runConverter(rule, input, cstNode);
     } else {
