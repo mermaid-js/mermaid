@@ -69,6 +69,6 @@ In fact one can pick up the syntax for it quite easily from the examples given a
 
 ## Mermaid is for everyone.
 
-Video [Tutorials](https://mermaid-js.github.io/mermaid/#/../config/Tutorials) are also available for the mermaid [live editor](https://mermaid.live/).
+Video [Tutorials](https://mermaid-js.github.io/mermaid/#/./Tutorials) are also available for the mermaid [live editor](https://mermaid.live/).
 
 Alternatively you can use Mermaid [Plug-Ins](https://mermaid-js.github.io/mermaid/#/./integrations), with tools you already use, like Google Docs.
