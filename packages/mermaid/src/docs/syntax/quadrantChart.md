@@ -24,10 +24,6 @@ quadrantChart
 ## Syntax
 
 ```note
-In place of `<text>` you can use text like `this is a sample text` or inside **double quotes** like `"This type of text may contain unicode like ❤"`.
-```
-
-```note
 If there is no points available in the chart both **axis** text and **quadrant** will be rendered in the center of the respective quadrant.
 If there are points **x-axis** labels will rendered from left of the respective quadrant also they will be displayed in bottom of the chart, and **y-axis** lables will be rendered in bottom of the respective quadrant, the quadrant text will render at top of the respective quadrant.
 ```
@@ -134,7 +130,7 @@ Points are used to plot a circle inside the quadrantChart. The syntax is `<text>
 %%{init: {"quadrantChart": {"chartWidth": 400, "chartHeight": 400}, "themeVariables": {"quadrant1TextFill": "#ff0000"} }}%%
 quadrantChart
   x-axis Urgent --> Not Urgent
-  y-axis Not Important --> important
+  y-axis Not Important --> "Important ❤"
   quadrant-1 Plan
   quadrant-2 Do
   quadrant-3 Deligate

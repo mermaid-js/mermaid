@@ -121,6 +121,7 @@ function sidebarSyntax() {
         { text: 'C4C Diagram (Context) Diagram 🦺⚠️', link: '/syntax/c4c' },
         { text: 'Mindmaps 🔥', link: '/syntax/mindmap' },
         { text: 'Timeline 🔥', link: '/syntax/timeline' },
+        { text: 'Zenuml 🔥', link: '/syntax/zenuml' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
