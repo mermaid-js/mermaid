@@ -1,6 +1,7 @@
 import { log } from '../logger.js';
 import { decodeEntities } from '../mermaidAPI.js';
 import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
+import { splitLineToFitWidth } from './splitText.js';
 /**
  * @param dom
  * @param styleFn
@@ -118,31 +119,10 @@ function createFormattedText(width, g, structuredText, addBackground = false) {
      * Creating an array of strings pre-split to satisfy width limit
      */
     let fullStr = line.map((data) => data.content).join(' ');
-    let tempStr = '';
-    let linesUnderWidth = [];
-    let prevIndex = 0;
-    if (computeWidthOfText(labelGroup, lineHeight, fullStr) <= width) {
-      linesUnderWidth.push(fullStr);
-    } else {
-      for (let i = 0; i <= fullStr.length; i++) {
-        tempStr = fullStr.slice(prevIndex, i);
-        log.info(tempStr, prevIndex, i);
-        if (computeWidthOfText(labelGroup, lineHeight, tempStr) > width) {
-          const subStr = fullStr.slice(prevIndex, i);
-          // Break at space if any
-          const lastSpaceIndex = subStr.lastIndexOf(' ');
-          if (lastSpaceIndex > -1) {
-            i = prevIndex + lastSpaceIndex + 1;
-          }
-          linesUnderWidth.push(fullStr.slice(prevIndex, i).trim());
-          prevIndex = i;
-          tempStr = null;
-        }
-      }
-      if (tempStr != null) {
-        linesUnderWidth.push(tempStr);
-      }
-    }
+    const checkWidth = (str) => computeWidthOfText(labelGroup, lineHeight, str) <= width;
+    const linesUnderWidth = checkWidth(fullStr)
+      ? [fullStr]
+      : splitLineToFitWidth(fullStr, checkWidth);
     /** Add each prepared line as a tspan to the parent node */
     const preparedLines = linesUnderWidth.map((w) => ({ content: w, type: line.type }));
     for (const preparedLine of preparedLines) {
