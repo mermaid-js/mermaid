@@ -391,9 +391,6 @@ importers:
       jiti:
         specifier: ^1.18.2
         version: 1.18.2
-      plausible-tracker:
-        specifier: ^0.3.8
-        version: 0.3.8
       vue:
         specifier: ^3.2.47
         version: 3.2.47
@@ -446,12 +443,12 @@ importers:
       jiti:
         specifier: ^1.18.2
         version: 1.18.2
+      plausible-tracker:
+        specifier: ^0.3.8
+        version: 0.3.8
       vue:
         specifier: ^3.2.47
         version: 3.2.47
-      vue-plausible:
-        specifier: ^1.3.2
-        version: 1.3.2
     devDependencies:
       '@iconify-json/carbon':
         specifier: ^1.1.16
@@ -14850,12 +14847,6 @@ packages:
     dependencies:
       vue: 3.3.4
     dev: true
-
-  /vue-plausible@1.3.2:
-    resolution: {integrity: sha512-7hdLrDjw0+qjdM9hxowOirQSHPCljWwd8scW0tRFHyXAQSE/yBWrJ3EPuEiZlJUoth9ac0KLbHM+wSSkWHttiA==}
-    dependencies:
-      plausible-tracker: 0.3.8
-    dev: false
 
   /vue@3.2.47:
     resolution: {integrity: sha512-60188y/9Dc9WVrAZeUVSDxRQOZ+z+y5nO2ts9jWXSTkMvayiWxCWOWtBQoYjLeccfXkiiPZWAHcV+WTPhkqJHQ==}
