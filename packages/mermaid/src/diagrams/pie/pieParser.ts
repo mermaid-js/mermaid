@@ -1,9 +1,9 @@
-import { MermaidServices, Pie, createMermaidServices } from 'mermaid-parser';
+import { Pie, PieServices, createPieServices } from 'mermaid-parser';
 import { EmptyFileSystem, LangiumParser, ParseResult } from 'langium';
 import { log } from '../../logger.js';
 import pieDb from './pieDb.js';
 
-const services: MermaidServices = createMermaidServices(EmptyFileSystem).Mermaid;
+const services: PieServices = createPieServices(EmptyFileSystem).Pie;
 const parser: LangiumParser = services.parser.LangiumParser;
 
 export function parse(input: string): void {
