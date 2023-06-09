@@ -16,6 +16,7 @@
   "dependencies": {
     "@vueuse/core": "^10.1.0",
     "jiti": "^1.18.2",
+    "plausible-tracker": "^0.3.8",
     "vue": "^3.2.47"
   },
   "devDependencies": {

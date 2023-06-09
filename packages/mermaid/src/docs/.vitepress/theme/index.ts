@@ -9,6 +9,13 @@ import HomePage from '../components/HomePage.vue';
 import { getRedirect } from './redirect.js';
 
 import { h } from 'vue';
+import Plausible from 'plausible-tracker';
+// All tracked stats are public and available at https://p.mermaid.live/mermaid.js.org
+const { enableAutoPageviews } = Plausible({
+  apiHost: 'https://p.mermaid.live',
+});
+enableAutoPageviews();
+
 import Theme from 'vitepress/theme';
 import '../style/main.css';
 import 'uno.css';
