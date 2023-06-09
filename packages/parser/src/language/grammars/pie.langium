@@ -9,8 +9,9 @@ entry Pie:
 ;
 
 PieSection:
-  label=STRING ":" value=NUMBER
+  label=PIE_SECTION_LABEL ":" value=NUMBER
 ;
 
 terminal PIE: /pie(?!\S)/;
 terminal SHOWDATA: /showData(?!\S)/;
+terminal PIE_SECTION_LABEL: /"[^"]+"/;

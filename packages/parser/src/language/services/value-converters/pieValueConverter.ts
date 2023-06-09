@@ -22,13 +22,17 @@ export class PieValueConverter extends DefaultValueConverter {
    * @returns converted the value if it's pie rule or `null` if it's not.
    */
   public static customRunConverter(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     rule: GrammarAST.AbstractRule,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     input: string,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     cstNode: CstNode
   ): ValueType | null {
+    if (rule.name === 'PIE_SECTION_LABEL') {
+      return input
+        .replace(/"/g, '')
+        .trim()
+        .replaceAll(/[\t ]{2,}/gm, ' ');
+    }
     return null;
   }
 }

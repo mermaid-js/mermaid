@@ -17,5 +17,4 @@ terminal ACC_DESCR: /accDescr/;
 terminal ACC_TITLE: /accTitle/;
 terminal TITLE: /title/;
 
-terminal STRING: /"[^"]*"/;
 terminal NUMBER returns number: /(0|[1-9][0-9]*)(\.[0-9]+)?/;
