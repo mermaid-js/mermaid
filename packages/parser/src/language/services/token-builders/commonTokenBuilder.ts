@@ -1,20 +1,16 @@
 import type { TokenType } from 'chevrotain';
-import { DefaultTokenBuilder, GrammarAST } from 'langium';
+import { DefaultTokenBuilder, type GrammarAST } from 'langium';
 
 import {
   matchAccessibilityDescr,
   matchAccessibilityTitle,
-  matchTimelineEventTitle,
-  matchTimelinePeroidTitle,
-  matchTimelineSectionTitle,
   matchTitle,
-} from './matchers/index.js';
+} from '../matchers/common.js';
 
-export class MermiadTokenBuilder extends DefaultTokenBuilder {
+export class CommonTokenBuilder extends DefaultTokenBuilder {
   override buildTerminalToken(terminal: GrammarAST.TerminalRule): TokenType {
     const tokenType = super.buildTerminalToken(terminal);
     switch (tokenType.name) {
-      // common
       case 'ACC_DESCR': {
         tokenType.LINE_BREAKS = true;
         tokenType.PATTERN = matchAccessibilityDescr;
@@ -31,24 +27,6 @@ export class MermiadTokenBuilder extends DefaultTokenBuilder {
         tokenType.LINE_BREAKS = false;
         tokenType.PATTERN = matchTitle;
         tokenType.START_CHARS_HINT = ['title'];
-        break;
-      }
-
-      // timeline
-      case 'TIMELINE_SECTION_TITLE': {
-        tokenType.LINE_BREAKS = false;
-        tokenType.PATTERN = matchTimelineSectionTitle;
-        tokenType.START_CHARS_HINT = ['section'];
-        break;
-      }
-      case 'TIMELINE_PERIOD_TITLE': {
-        tokenType.LINE_BREAKS = false;
-        tokenType.PATTERN = matchTimelinePeroidTitle;
-        break;
-      }
-      case 'TIMELINE_EVENT': {
-        tokenType.LINE_BREAKS = false;
-        tokenType.PATTERN = matchTimelineEventTitle;
         break;
       }
     }
