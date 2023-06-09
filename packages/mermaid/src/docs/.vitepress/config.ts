@@ -16,7 +16,18 @@ export default defineConfig({
   description: 'Create diagrams and visualizations using text and code.',
   base: '/',
   markdown: allMarkdownTransformers,
-  head: [['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]],
+  head: [
+    ['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    [
+      'script',
+      {
+        defer: 'true',
+        'data-domain': 'mermaid.js.org',
+        // All tracked stats are public and available at https://p.mermaid.live/mermaid.js.org
+        src: 'https://p.mermaid.live/js/script.js',
+      },
+    ],
+  ],
   themeConfig: {
     nav: nav(),
     editLink: {
