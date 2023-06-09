@@ -1,4 +1,4 @@
-import { splitTextToChars, splitLineToFitWidthLoop, type CheckFitFunction } from './splitText.js';
+import { splitTextToChars, splitLineToFitWidth, type CheckFitFunction } from './splitText.js';
 import { describe, it, expect } from 'vitest';
 
 describe('splitText', () => {
@@ -6,6 +6,7 @@ describe('splitText', () => {
     { str: '', split: [] },
     { str: '🏳️‍⚧️🏳️‍🌈👩🏾‍❤️‍👨🏻', split: ['🏳️‍⚧️', '🏳️‍🌈', '👩🏾‍❤️‍👨🏻'] },
     { str: 'ok', split: ['o', 'k'] },
+    { str: 'abc', split: ['a', 'b', 'c'] },
   ])('should split $str into graphemes', ({ str, split }: { str: string; split: string[] }) => {
     expect(splitTextToChars(str)).toEqual(split);
   });
@@ -31,7 +32,7 @@ describe('split lines', () => {
       const checkFn: CheckFitFunction = (text: string) => {
         return splitTextToChars(text).length <= width;
       };
-      expect(splitLineToFitWidthLoop(str.split(' '), checkFn)).toEqual(split);
+      expect(splitLineToFitWidth(str, checkFn)).toEqual(split);
     }
   );
 });
