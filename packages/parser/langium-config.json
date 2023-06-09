@@ -5,6 +5,16 @@
       "id": "mermaid",
       "grammar": "src/language/grammars/mermaid.langium",
       "fileExtensions": [".mmd"]
+    },
+    {
+      "id": "pie",
+      "grammar": "src/language/grammars/pie.langium",
+      "fileExtensions": [".mmd"]
+    },
+    {
+      "id": "timeline",
+      "grammar": "src/language/grammars/timeline.langium",
+      "fileExtensions": [".mmd"]
     }
   ],
   "importExtension": ".js",
