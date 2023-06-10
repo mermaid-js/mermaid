@@ -11,6 +11,7 @@ import {
 import { IAxis } from '../axis/index.js';
 import { ChartComponent } from './../Interfaces.js';
 import { LinePlot } from './LinePlot.js';
+import { PlotBorder } from './PlotBorder.js';
 
 
 export interface IPlot extends ChartComponent {
@@ -59,7 +60,9 @@ export class Plot implements IPlot {
     if(!(this.xAxis && this.yAxis)) {
       throw Error("Axes must be passed to render Plots");
     }
-    const drawableElem: DrawableElem[] = [];
+    const drawableElem: DrawableElem[] = [
+      ...new PlotBorder(this.boundingRect).getDrawableElement()
+    ];
     for(const plot of this.chartData.plots) {
       switch(plot.type) {
         case ChartPlotEnum.LINE: {

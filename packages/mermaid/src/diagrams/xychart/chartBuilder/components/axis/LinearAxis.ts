@@ -1,8 +1,8 @@
 import { ScaleLinear, scaleLinear } from 'd3';
-import { AxisConfig, Dimension } from '../../Interfaces.js';
+import { log } from '../../../../../logger.js';
+import { AxisConfig } from '../../Interfaces.js';
 import { ITextDimensionCalculator } from '../../TextDimensionCalculator.js';
 import { BaseAxis } from './BaseAxis.js';
-import { log } from '../../../../../logger.js';
 
 export class LinearAxis extends BaseAxis {
   private scale: ScaleLinear<number, number>;
@@ -24,10 +24,11 @@ export class LinearAxis extends BaseAxis {
   }
 
   recalculateScale(): void {
+    const domain = [...this.domain]; // copy the array so if reverse is called twise it shouldnot cancel the reverse effect
     if (this.axisPosition === 'left') {
-      this.domain.reverse(); // since yaxis in svg start from top
+      domain.reverse(); // since yaxis in svg start from top
     }
-    this.scale = scaleLinear().domain(this.domain).range(this.getRange());
+    this.scale = scaleLinear().domain(domain).range(this.getRange());
     log.trace('Linear axis final domain, range: ', this.domain, this.getRange());
   }
 

@@ -1,20 +1,15 @@
-import {
-  Dimension,
-  Point,
-  DrawableElem,
-  BoundingRect,
-  AxisConfig,
-} from '../../Interfaces.js';
+import { Dimension, Point, DrawableElem, BoundingRect, AxisConfig } from '../../Interfaces.js';
 import { AxisPosition, IAxis } from './index.js';
 import { ITextDimensionCalculator } from '../../TextDimensionCalculator.js';
 import { log } from '../../../../../logger.js';
 
 export abstract class BaseAxis implements IAxis {
-  protected boundingRect: BoundingRect = {x: 0, y: 0, width: 0, height: 0};
+  protected boundingRect: BoundingRect = { x: 0, y: 0, width: 0, height: 0 };
   protected axisPosition: AxisPosition = 'left';
   private range: [number, number];
   protected showTitle = false;
   protected showLabel = false;
+  protected showTick = false;
   protected innerPadding = 0;
 
   constructor(
@@ -25,7 +20,6 @@ export abstract class BaseAxis implements IAxis {
     this.range = [0, 10];
     this.boundingRect = { x: 0, y: 0, width: 0, height: 0 };
     this.axisPosition = 'left';
-
   }
 
   setRange(range: [number, number]): void {
@@ -54,7 +48,7 @@ export abstract class BaseAxis implements IAxis {
     );
   }
 
-  private calculateSpaceIfDrawnVertical(availableSpace: Dimension) {
+  private calculateSpaceIfDrawnHorizontally(availableSpace: Dimension) {
     let availableHeight = availableSpace.height;
     if (this.axisConfig.showLabel) {
       const spaceRequired = this.getLabelDimension();
@@ -65,6 +59,10 @@ export abstract class BaseAxis implements IAxis {
         availableHeight -= heightRequired;
         this.showLabel = true;
       }
+    }
+    if (this.axisConfig.showTick && availableHeight >= this.axisConfig.tickLength) {
+      this.showTick = true;
+      availableHeight -= this.axisConfig.tickLength;
     }
     if (this.axisConfig.showTitle) {
       const spaceRequired = this.textDimensionCalculator.getDimension(
@@ -82,7 +80,7 @@ export abstract class BaseAxis implements IAxis {
     this.boundingRect.height = availableSpace.height - availableHeight;
   }
 
-  private calculateSpaceIfDrawnHorizontally(availableSpace: Dimension) {
+  private calculateSpaceIfDrawnVertical(availableSpace: Dimension) {
     let availableWidth = availableSpace.width;
     if (this.axisConfig.showLabel) {
       const spaceRequired = this.getLabelDimension();
@@ -93,6 +91,10 @@ export abstract class BaseAxis implements IAxis {
         availableWidth -= widthRequired;
         this.showLabel = true;
       }
+    }
+    if (this.axisConfig.showTick && availableWidth >= this.axisConfig.tickLength) {
+      this.showTick = true;
+      availableWidth -= this.axisConfig.tickLength;
     }
     if (this.axisConfig.showTitle) {
       const spaceRequired = this.textDimensionCalculator.getDimension(
@@ -116,9 +118,9 @@ export abstract class BaseAxis implements IAxis {
       return { width: 0, height: 0 };
     }
     if (this.axisPosition === 'left') {
-      this.calculateSpaceIfDrawnHorizontally(availableSpace);
-    } else {
       this.calculateSpaceIfDrawnVertical(availableSpace);
+    } else {
+      this.calculateSpaceIfDrawnHorizontally(availableSpace);
     }
     this.recalculateScale();
     return {
@@ -137,12 +139,16 @@ export abstract class BaseAxis implements IAxis {
     if (this.showLabel) {
       drawableElement.push({
         type: 'text',
-        groupText: 'left-axis-label',
+        groupTexts: ['left-axis', 'label'],
         data: this.getTickValues().map((tick) => ({
           text: tick.toString(),
-          x: this.boundingRect.x + this.boundingRect.width - this.axisConfig.lablePadding,
+          x:
+            this.boundingRect.x +
+            this.boundingRect.width -
+            this.axisConfig.lablePadding -
+            this.axisConfig.tickLength,
           y: this.getScaleValue(tick),
-          fill: this.axisConfig.labelColor,
+          fill: this.axisConfig.labelFill,
           fontSize: this.axisConfig.labelFontSize,
           rotation: 0,
           verticalPos: 'right',
@@ -150,21 +156,35 @@ export abstract class BaseAxis implements IAxis {
         })),
       });
     }
+    if (this.showTick) {
+      const x = this.boundingRect.x + this.boundingRect.width;
+      drawableElement.push({
+        type: 'path',
+        groupTexts: ['left-axis', 'ticks'],
+        data: this.getTickValues().map((tick) => ({
+          path: `M ${x},${this.getScaleValue(tick)} L ${x - this.axisConfig.tickLength},${this.getScaleValue(tick)}`,
+          strokeFill: this.axisConfig.tickFill,
+          strokeWidth: this.axisConfig.tickWidth,
+        })),
+      });
+    }
     if (this.showTitle) {
       drawableElement.push({
         type: 'text',
-        groupText: 'right-axis-label',
-        data: [{
-          text: this.title,
-          x: this.boundingRect.x + this.axisConfig.titlePadding,
-          y: this.range[0] + (this.range[1] - this.range[0])/2,
-          fill: this.axisConfig.titleColor,
-          fontSize: this.axisConfig.titleFontSize,
-          rotation: 270,
-          verticalPos: 'center',
-          horizontalPos: 'top',
-        }]
-      })
+        groupTexts: ['left-axis', 'title'],
+        data: [
+          {
+            text: this.title,
+            x: this.boundingRect.x + this.axisConfig.titlePadding,
+            y: this.range[0] + (this.range[1] - this.range[0]) / 2,
+            fill: this.axisConfig.titleFill,
+            fontSize: this.axisConfig.titleFontSize,
+            rotation: 270,
+            verticalPos: 'center',
+            horizontalPos: 'top',
+          },
+        ],
+      });
     }
     return drawableElement;
   }
@@ -173,12 +193,12 @@ export abstract class BaseAxis implements IAxis {
     if (this.showLabel) {
       drawableElement.push({
         type: 'text',
-        groupText: 'right-axis-lable',
+        groupTexts: ['bottom-axis', 'label'],
         data: this.getTickValues().map((tick) => ({
           text: tick.toString(),
           x: this.getScaleValue(tick),
-          y: this.boundingRect.y + this.axisConfig.lablePadding,
-          fill: this.axisConfig.labelColor,
+          y: this.boundingRect.y + this.axisConfig.lablePadding + this.axisConfig.tickLength,
+          fill: this.axisConfig.labelFill,
           fontSize: this.axisConfig.labelFontSize,
           rotation: 0,
           verticalPos: 'center',
@@ -186,21 +206,35 @@ export abstract class BaseAxis implements IAxis {
         })),
       });
     }
+    if (this.showTick) {
+      const y = this.boundingRect.y;
+      drawableElement.push({
+        type: 'path',
+        groupTexts: ['bottom-axis', 'ticks'],
+        data: this.getTickValues().map((tick) => ({
+          path: `M ${this.getScaleValue(tick)},${y} L ${this.getScaleValue(tick)},${y + this.axisConfig.tickLength}`,
+          strokeFill: this.axisConfig.tickFill,
+          strokeWidth: this.axisConfig.tickWidth,
+        })),
+      });
+    }
     if (this.showTitle) {
       drawableElement.push({
         type: 'text',
-        groupText: 'right-axis-label',
-        data: [{
-          text: this.title,
-          x: this.range[0] + (this.range[1] - this.range[0])/2,
-          y: this.boundingRect.y + this.boundingRect.height - this.axisConfig.titlePadding,
-          fill: this.axisConfig.titleColor,
-          fontSize: this.axisConfig.titleFontSize,
-          rotation: 0,
-          verticalPos: 'center',
-          horizontalPos: 'bottom',
-        }]
-      })
+        groupTexts: ['bottom-axis', 'title'],
+        data: [
+          {
+            text: this.title,
+            x: this.range[0] + (this.range[1] - this.range[0]) / 2,
+            y: this.boundingRect.y + this.boundingRect.height - this.axisConfig.titlePadding,
+            fill: this.axisConfig.titleFill,
+            fontSize: this.axisConfig.titleFontSize,
+            rotation: 0,
+            verticalPos: 'center',
+            horizontalPos: 'bottom',
+          },
+        ],
+      });
     }
     return drawableElement;
   }

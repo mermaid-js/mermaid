@@ -1,13 +1,13 @@
-import { select } from 'd3';
+import { select, Selection } from 'd3';
 import { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import {
-    DrawableElem,
-    TextElem,
-    TextHorizontalPos,
-    TextVerticalPos,
+  DrawableElem,
+  TextElem,
+  TextHorizontalPos,
+  TextVerticalPos,
 } from './chartBuilder/Interfaces.js';
 
 export const draw = (txt: string, id: string, _version: string, diagObj: Diagram) => {
@@ -54,6 +54,25 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   // @ts-ignore: TODO Fix ts errors
   const shapes: DrawableElem[] = diagObj.db.getDrawableElem();
 
+  const groups: Record<string, any> = {};
+
+  function getGroup(gList: string[]) {
+    let elem = group;
+    let prefix = '';
+    for (let i = 0; i < gList.length; i++) {
+      let parent = group;
+      if (i > 0 && groups[prefix]) {
+        parent = groups[prefix];
+      }
+      prefix += gList[i];
+      elem = groups[prefix];
+      if (!elem) {
+        elem = groups[prefix] = parent.append('g').attr('class', gList[i]);
+      }
+    }
+    return elem;
+  }
+
   for (const shape of shapes) {
     if (shape.data.length === 0) {
       log.trace(
@@ -69,7 +88,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
       `Drawing shape of type: ${shape.type} with data: ${JSON.stringify(shape.data, null, 2)}`
     );
 
-    const shapeGroup = group.append('g').attr('class', shape.groupText);
+    const shapeGroup = getGroup(shape.groupTexts);
 
     switch (shape.type) {
       case 'rect':

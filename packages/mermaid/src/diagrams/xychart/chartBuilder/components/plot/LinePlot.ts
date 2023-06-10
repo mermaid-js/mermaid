@@ -19,7 +19,7 @@ export class LinePlot {
     }
     return [
       {
-        groupText: 'line-plot',
+        groupTexts: ['plot', 'line-plot'],
         type: 'path',
         data: [
           {

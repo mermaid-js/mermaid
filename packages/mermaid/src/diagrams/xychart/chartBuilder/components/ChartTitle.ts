@@ -57,7 +57,7 @@ export class ChartTitle implements ChartComponent {
     const drawableElem: DrawableElem[] = [];
     if (this.boundingRect.height > 0 && this.boundingRect.width > 0) {
       drawableElem.push({
-        groupText: 'chart-title',
+        groupTexts: ['chart-title'],
         type: 'text',
         data: [
           {

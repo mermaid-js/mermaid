@@ -67,6 +67,15 @@ export class Orchestrator {
       chartHeight += availableHeight;
       availableHeight = 0;
     }
+    const plotBorderWidthHalf = this.chartConfig.plotBorderWidth/2;
+    chartX += plotBorderWidthHalf;
+    chartY += plotBorderWidthHalf;
+    chartWidth -= this.chartConfig.plotBorderWidth;
+    chartHeight -= this.chartConfig.plotBorderWidth;
+    this.componentStore.plot.calculateSpace({
+      width: chartWidth,
+      height: chartHeight,
+    });
 
     log.trace(
       `Final chart dimansion: x = ${chartX}, y = ${chartY}, width = ${chartWidth}, height = ${chartHeight}`

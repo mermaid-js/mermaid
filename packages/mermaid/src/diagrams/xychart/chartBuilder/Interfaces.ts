@@ -35,11 +35,15 @@ export interface AxisConfig {
   showLabel: boolean;
   labelFontSize: number;
   lablePadding: number;
-  labelColor: string;
+  labelFill: string;
   showTitle: boolean;
   titleFontSize: number;
   titlePadding: number;
-  titleColor: string;
+  titleFill: string;
+  showTick: boolean;
+  tickLength: number;
+  tickWidth: number;
+  tickFill: string;
 }
 
 export interface XYChartConfig {
@@ -52,6 +56,7 @@ export interface XYChartConfig {
   showtitle: boolean;
   xAxis: AxisConfig;
   yAxis: AxisConfig;
+  plotBorderWidth: number;
   chartOrientation: OrientationEnum;
   plotReservedSpacePercent: number;
 }
@@ -139,17 +144,17 @@ export interface PathElem {
 
 export type DrawableElem =
   | {
-      groupText: string;
+      groupTexts: string[];
       type: 'rect';
       data: RectElem[];
     }
   | {
-      groupText: string;
+      groupTexts: string[];
       type: 'text';
       data: TextElem[];
     }
   | {
-      groupText: string;
+      groupTexts: string[];
       type: 'path';
       data: PathElem[];
     };
