@@ -1,55 +1,37 @@
-import { scaleLinear, ScaleLinear } from 'd3';
-import {
-  Dimension,
-  Point,
-  DrawableElem,
-  BoundingRect,
-  OrientationEnum,
-  XYChartConfig,
-} from '../../Interfaces.js';
-import { IAxis } from './index.js';
+import { ScaleLinear, scaleLinear } from 'd3';
+import { AxisConfig, Dimension } from '../../Interfaces.js';
+import { ITextDimensionCalculator } from '../../TextDimensionCalculator.js';
+import { BaseAxis } from './BaseAxis.js';
+import { log } from '../../../../../logger.js';
 
-export class LinearAxis implements IAxis {
+export class LinearAxis extends BaseAxis {
   private scale: ScaleLinear<number, number>;
-  private boundingRect: BoundingRect;
-  private orientation: OrientationEnum;
   private domain: [number, number];
-  private range: [number, number];
 
-  constructor(private chartConfig: XYChartConfig, domain: [number, number]) {
+  constructor(
+    axisConfig: AxisConfig,
+    domain: [number, number],
+    title: string,
+    textDimensionCalculator: ITextDimensionCalculator
+  ) {
+    super(axisConfig, title, textDimensionCalculator);
     this.domain = domain;
-    this.range = [0, 10];
-    this.scale = scaleLinear().domain(this.domain).range(this.range);
-    this.boundingRect = { x: 0, y: 0, width: 0, height: 0 };
-    this.orientation = OrientationEnum.VERTICAL;
+    this.scale = scaleLinear().domain(this.domain).range(this.getRange());
   }
 
-  setRange(range: [number, number]): void {
-    this.range = range;
-    this.scale = scaleLinear().domain(this.domain).range(this.range);
+  getTickValues(): (string | number)[] {
+    return this.scale.ticks();
   }
 
-  setOrientation(orientation: OrientationEnum): void {
-    this.orientation = orientation;
+  recalculateScale(): void {
+    if (this.axisPosition === 'left') {
+      this.domain.reverse(); // since yaxis in svg start from top
+    }
+    this.scale = scaleLinear().domain(this.domain).range(this.getRange());
+    log.trace('Linear axis final domain, range: ', this.domain, this.getRange());
   }
 
   getScaleValue(value: number): number {
     return this.scale(value);
-  }
-
-  calculateSpace(availableSpace: Dimension): Dimension {
-    return {
-      width: availableSpace.width,
-      height: availableSpace.height,
-    };
-  }
-
-  setBoundingBoxXY(point: Point): void {
-    this.boundingRect.x = point.x;
-    this.boundingRect.y = point.y;
-  }
-
-  getDrawableElements(): DrawableElem[] {
-    return [];
   }
 }

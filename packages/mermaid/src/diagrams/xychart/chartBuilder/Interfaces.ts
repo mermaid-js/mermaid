@@ -31,6 +31,17 @@ export type VisibilityOption = {
   yAxisLabel: boolean;
 };
 
+export interface AxisConfig {
+  showLabel: boolean;
+  labelFontSize: number;
+  lablePadding: number;
+  labelColor: string;
+  showTitle: boolean;
+  titleFontSize: number;
+  titlePadding: number;
+  titleColor: string;
+}
+
 export interface XYChartConfig {
   width: number;
   height: number;
@@ -38,16 +49,9 @@ export interface XYChartConfig {
   titleFontSize: number;
   titleFill: string;
   titlePadding: number;
-  xAxisFontSize: number;
-  xAxisTitleFontSize: number;
-  yAxisFontSize: number;
-  yAxisTitleFontSize: number;
-  yAxisPosition: XYChartYAxisPosition;
-  showChartTitle: boolean;
-  showXAxisLable: boolean;
-  showXAxisTitle: boolean;
-  showYAxisLabel: boolean;
-  showYAxisTitle: boolean;
+  showtitle: boolean;
+  xAxis: AxisConfig;
+  yAxis: AxisConfig;
   chartOrientation: OrientationEnum;
   plotReservedSpacePercent: number;
 }

@@ -2,12 +2,11 @@
 import { defaultConfig } from '../../../config.js';
 import { log } from '../../../logger.js';
 import {
-  ChartPlotEnum,
-  DrawableElem,
-  XYChartConfig,
-  XYChartData,
-  OrientationEnum,
-  XYChartYAxisPosition,
+    ChartPlotEnum,
+    DrawableElem,
+    OrientationEnum,
+    XYChartConfig,
+    XYChartData
 } from './Interfaces.js';
 import { Orchestrator } from './Orchestrator.js';
 
@@ -17,22 +16,33 @@ export class XYChartBuilder {
 
   constructor() {
     this.config = {
-      width: 500,
+      width: 700,
       height: 500,
       fontFamily: defaultConfig.fontFamily || 'Sans',
       titleFontSize: 16,
       titleFill: '#000000',
       titlePadding: 5,
-      xAxisFontSize: 14,
-      xAxisTitleFontSize: 16,
-      yAxisFontSize: 14,
-      yAxisTitleFontSize: 16,
-      yAxisPosition: XYChartYAxisPosition.LEFT,
-      showChartTitle: true,
-      showXAxisLable: true,
-      showXAxisTitle: true,
-      showYAxisLabel: true,
-      showYAxisTitle: true,
+      showtitle: true,
+      yAxis: {
+        showLabel: true,
+        labelFontSize: 14,
+        lablePadding: 5,
+        labelColor: '#000000',
+        showTitle: true,
+        titleFontSize: 16,
+        titlePadding: 5,
+        titleColor: '#000000',
+      },
+      xAxis: {
+        showLabel: true,
+        labelFontSize: 14,
+        lablePadding: 5,
+        labelColor: '#000000',
+        showTitle: true,
+        titleFontSize: 16,
+        titlePadding: 5,
+        titleColor: '#000000',
+      },
       chartOrientation: OrientationEnum.HORIZONTAL,
       plotReservedSpacePercent: 50,
     };

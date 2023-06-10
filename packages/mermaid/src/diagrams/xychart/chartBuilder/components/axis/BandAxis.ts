@@ -1,54 +1,43 @@
 import { ScaleBand, scaleBand } from 'd3';
-import {
-  Dimension,
-  Point,
-  DrawableElem,
-  BoundingRect,
-  OrientationEnum,
-  XYChartConfig,
-} from '../../Interfaces.js';
-import { IAxis } from './index.js';
+import { AxisConfig } from '../../Interfaces.js';
+import { ITextDimensionCalculator } from '../../TextDimensionCalculator.js';
+import { BaseAxis } from './BaseAxis.js';
+import { log } from '../../../../../logger.js';
 
-export class BandAxis implements IAxis {
+export class BandAxis extends BaseAxis {
   private scale: ScaleBand<string>;
-  private range: [number, number];
-  private boundingRect: BoundingRect;
-  private orientation: OrientationEnum;
   private categories: string[];
 
-  constructor(private chartConfig: XYChartConfig, categories: string[]) {
-    this.range = [0, 10];
+  constructor(
+    axisConfig: AxisConfig,
+    categories: string[],
+    title: string,
+    textDimensionCalculator: ITextDimensionCalculator
+  ) {
+    super(axisConfig, title, textDimensionCalculator);
     this.categories = categories;
-    this.scale = scaleBand().domain(this.categories).range(this.range);
-    this.boundingRect = { x: 0, y: 0, width: 0, height: 0 };
-    this.orientation = OrientationEnum.VERTICAL;
+    this.scale = scaleBand().domain(this.categories).range(this.getRange());
   }
 
   setRange(range: [number, number]): void {
-    this.range = range;
-    this.scale = scaleBand().domain(this.categories).range(this.range);
+    super.setRange(range);
   }
-  setOrientation(orientation: OrientationEnum): void {
-    this.orientation = orientation;
+
+  recalculateScale(): void {
+    this.scale = scaleBand()
+      .domain(this.categories)
+      .range(this.getRange())
+      .paddingInner(1)
+      .paddingOuter(0)
+      .align(0.5);
+    log.trace('BandAxis axis final categories, range: ', this.categories, this.getRange());
+  }
+
+  getTickValues(): (string | number)[] {
+    return this.categories;
   }
 
   getScaleValue(value: string): number {
-    return this.scale(value) || this.range[0];
-  }
-
-  calculateSpace(availableSpace: Dimension): Dimension {
-    return {
-      width: availableSpace.width,
-      height: availableSpace.height,
-    };
-  }
-
-  setBoundingBoxXY(point: Point): void {
-    this.boundingRect.x = point.x;
-    this.boundingRect.y = point.y;
-  }
-
-  getDrawableElements(): DrawableElem[] {
-    return [];
+    return this.scale(value) || this.getRange()[0];
   }
 }

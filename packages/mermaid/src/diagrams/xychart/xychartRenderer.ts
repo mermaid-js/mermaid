@@ -1,13 +1,13 @@
-import { select, scaleOrdinal, scaleLinear, axisBottom, line } from 'd3';
+import { select } from 'd3';
+import { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { Diagram } from '../../Diagram.js';
 import {
-  DrawableElem,
-  TextElem,
-  TextHorizontalPos,
-  TextVerticalPos,
+    DrawableElem,
+    TextElem,
+    TextHorizontalPos,
+    TextVerticalPos,
 } from './chartBuilder/Interfaces.js';
 
 export const draw = (txt: string, id: string, _version: string, diagObj: Diagram) => {
@@ -16,7 +16,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   }
 
   function getTextAnchor(verticalPos: TextVerticalPos) {
-    return verticalPos === 'left' ? 'start' : 'middle';
+    return verticalPos === 'left' ? 'start' : verticalPos === 'right' ? 'end' : 'middle';
   }
 
   function getTextTransformation(data: TextElem) {
@@ -32,16 +32,13 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
   }
-  const root =
-    sandboxElement
-      ? sandboxElement
-      : select('body');
+  const root = sandboxElement ? sandboxElement : select('body');
 
   const svg = root.select(`[id="${id}"]`);
 
   const group = svg.append('g').attr('class', 'main');
 
-  const width = 500;
+  const width = 700;
   const height = 500;
 
   // @ts-ignore: TODO Fix ts errors
@@ -74,7 +71,6 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
 
     const shapeGroup = group.append('g').attr('class', shape.groupText);
 
-
     switch (shape.type) {
       case 'rect':
         shapeGroup
@@ -82,13 +78,13 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
           .data(shape.data)
           .enter()
           .append('rect')
-          .attr('x', data => data.x)
-          .attr('y', data => data.y)
-          .attr('width', data => data.width)
-          .attr('height', data => data.height)
-          .attr('fill', data => data.fill)
-          .attr('stroke', data => data.strokeFill)
-          .attr('stroke-width', data => data.strokeWidth);
+          .attr('x', (data) => data.x)
+          .attr('y', (data) => data.y)
+          .attr('width', (data) => data.width)
+          .attr('height', (data) => data.height)
+          .attr('fill', (data) => data.fill)
+          .attr('stroke', (data) => data.strokeFill)
+          .attr('stroke-width', (data) => data.strokeWidth);
         break;
       case 'text':
         shapeGroup
@@ -98,12 +94,12 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
           .append('text')
           .attr('x', 0)
           .attr('y', 0)
-          .attr('fill', data => data.fill)
-          .attr('font-size', data => data.fontSize)
-          .attr('dominant-baseline', data => getDominantBaseLine(data.horizontalPos))
-          .attr('text-anchor', data => getTextAnchor(data.verticalPos))
-          .attr('transform', data => getTextTransformation(data))
-          .text(data => data.text);
+          .attr('fill', (data) => data.fill)
+          .attr('font-size', (data) => data.fontSize)
+          .attr('dominant-baseline', (data) => getDominantBaseLine(data.horizontalPos))
+          .attr('text-anchor', (data) => getTextAnchor(data.verticalPos))
+          .attr('transform', (data) => getTextTransformation(data))
+          .text((data) => data.text);
         break;
       case 'path':
         shapeGroup
@@ -111,10 +107,10 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
           .data(shape.data)
           .enter()
           .append('path')
-          .attr('d', data => data.path)
-          .attr('fill', data => data.fill? data.fill: "none")
-          .attr('stroke', data => data.strokeFill)
-          .attr('stroke-width', data => data.strokeWidth)
+          .attr('d', (data) => data.path)
+          .attr('fill', (data) => (data.fill ? data.fill : 'none'))
+          .attr('stroke', (data) => data.strokeFill)
+          .attr('stroke-width', (data) => data.strokeWidth);
         break;
     }
   }

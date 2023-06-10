@@ -25,7 +25,7 @@ export class ChartTitle implements ChartComponent {
       width: 0,
       height: 0,
     };
-    this.showChartTitle = !!(this.chartData.title && this.chartConfig.showChartTitle);
+    this.showChartTitle = !!(this.chartData.title && this.chartConfig.showtitle);
     this.orientation = OrientationEnum.VERTICAL;
   }
   setOrientation(orientation: OrientationEnum): void {
@@ -36,7 +36,7 @@ export class ChartTitle implements ChartComponent {
     this.boundingRect.y = point.y;
   }
   calculateSpace(availableSpace: Dimension): Dimension {
-    const titleDimension = this.textDimensionCalculator.getDimension(this.chartData.title);
+    const titleDimension = this.textDimensionCalculator.getDimension([this.chartData.title], this.chartConfig.titleFontSize);
     const widthRequired = Math.max(titleDimension.width, availableSpace.width);
     const heightRequired = titleDimension.height + 2 * this.chartConfig.titlePadding;
     if (
@@ -81,9 +81,6 @@ export function getChartTitleComponent(
   chartConfig: XYChartConfig,
   chartData: XYChartData
 ): ChartComponent {
-  const textDimensionCalculator = new TextDimensionCalculator(
-    chartConfig.titleFontSize,
-    chartConfig.fontFamily
-  );
+  const textDimensionCalculator = new TextDimensionCalculator();
   return new ChartTitle(textDimensionCalculator, chartConfig, chartData);
 }

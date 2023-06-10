@@ -1,15 +1,15 @@
 import { Dimension } from './Interfaces.js';
 
 export interface ITextDimensionCalculator {
-  getDimension(text: string): Dimension;
+  getDimension(texts: string[], fontSize: number, fontFamily?: string ): Dimension;
 }
 
 export class TextDimensionCalculator implements ITextDimensionCalculator {
-  constructor(private fontSize: number, private fontFamily: string) {}
-  getDimension(text: string): Dimension {
+  constructor() {}
+  getDimension(texts: string[], fontSize: number): Dimension {
     return {
-      width: text.length * this.fontSize,
-      height: this.fontSize,
+      width: texts.reduce((acc, cur) => Math.max(cur.length, acc), 0) * fontSize,
+      height: fontSize,
     };
   }
 }
