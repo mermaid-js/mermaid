@@ -1,0 +1,40 @@
+#!/bin/bash
+RUN="docker-compose run --rm"
+command=$1
+args=${@:2}
+
+case $command in
+
+sh)
+$RUN mermaid sh $args
+;;
+
+install)
+$RUN mermaid sh -c "npx pnpm install"
+;;
+
+test)
+$RUN mermaid sh -c "npx pnpm test"
+;;
+
+lint)
+$RUN mermaid sh -c "npx pnpm -w run lint:fix"
+;;
+
+help)
+cat <<EOF
+Run commonly used commands within docker containers
+
+$0 install         # Equvalent of pnpm install 
+$0 lint            # Equvalent of pnpm -w run lint:fix
+$0 sh              # Open sh inside docker container for development
+
+$0 help            # Show this help
+EOF
+;;
+
+*)
+$0 help
+;;
+
+esac
