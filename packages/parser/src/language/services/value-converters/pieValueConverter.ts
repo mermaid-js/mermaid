@@ -4,7 +4,11 @@ import { DefaultValueConverter, type CstNode, type GrammarAST, type ValueType } 
 import { CommonValueConverter } from './commonValueConverters.js';
 
 export class PieValueConverter extends DefaultValueConverter {
-  public runConverter(rule: GrammarAST.AbstractRule, input: string, cstNode: CstNode): ValueType {
+  public override runConverter(
+    rule: GrammarAST.AbstractRule,
+    input: string,
+    cstNode: CstNode
+  ): ValueType {
     let value = CommonValueConverter.customRunConverter(rule, input, cstNode);
     if (value === null) {
       value = PieValueConverter.customRunConverter(rule, input, cstNode);

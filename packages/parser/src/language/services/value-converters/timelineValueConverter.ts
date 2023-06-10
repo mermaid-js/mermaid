@@ -9,7 +9,11 @@ import {
 } from '../matchers/timeline.js';
 
 export class TimelineValueConverter extends DefaultValueConverter {
-  public runConverter(rule: GrammarAST.AbstractRule, input: string, cstNode: CstNode): ValueType {
+  public override runConverter(
+    rule: GrammarAST.AbstractRule,
+    input: string,
+    cstNode: CstNode
+  ): ValueType {
     let value = CommonValueConverter.customRunConverter(rule, input, cstNode);
     if (value === null) {
       value = TimelineValueConverter.customRunConverter(rule, input, cstNode);
