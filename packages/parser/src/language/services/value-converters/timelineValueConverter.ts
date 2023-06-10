@@ -57,15 +57,12 @@ export class TimelineValueConverter extends DefaultValueConverter {
     }
     if (regex !== undefined) {
       const match = regex.exec(input);
-      if (match !== null) {
-        if (match[1] !== undefined) {
-          let result = match[1].trim().replaceAll(/[\t ]{2,}/gm, ' ');
-          if (rule.name === 'EVENT') {
-            result = result.replace('<br>', '\n');
-          }
-          return result.replaceAll(/[\n\r]{2,}/gm, '\n') || undefined!;
+      if (match !== null && match[1] !== undefined) {
+        let result = match[1].trim().replaceAll(/[\t ]{2,}/gm, ' ');
+        if (rule.name === 'EVENT') {
+          result = result.replace('<br>', '\n');
         }
-        return undefined!;
+        return result.replaceAll(/[\n\r]{2,}/gm, '\n') || undefined!;
       }
     }
     return null;
