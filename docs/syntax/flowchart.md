@@ -790,9 +790,8 @@ This feature is applicable to node labels, edge labels, and subgraph labels.
 
 It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab.
 
-```note
-This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
-```
+> **Note**
+> This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
 
     click nodeId callback
     click nodeId call callback()
@@ -1084,9 +1083,8 @@ You can change the renderer to elk by adding this directive:
 
     %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 
-```note
-Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
-```
+> **Note**
+> Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
 
 ### Width
 
