@@ -7,6 +7,7 @@
     "alois",
     "aloisklink",
     "antiscript",
+    "antlr",
     "appli",
     "applitools",
     "asciidoctor",
@@ -83,6 +84,7 @@
     "mkdocs",
     "mmorel",
     "mult",
+    "nextra",
     "orlandoni",
     "pathe",
     "pbrolin",
@@ -134,7 +136,8 @@
     "vitepress",
     "vueuse",
     "xlink",
-    "yash"
+    "yash",
+    "zenuml"
   ],
   "patterns": [
     { "name": "Markdown links", "pattern": "\\((.*)\\)", "description": "" },

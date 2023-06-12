@@ -361,72 +361,6 @@ export const drawNote = function (elem, note, conf, diagObj) {
 };
 
 export const parseMember = function (text) {
-  // Note: these two regular expressions don't parse the official UML syntax for attributes
-  // and methods. They parse a Java-style syntax of the form
-  // "String name" (for attributes) and "String name(int x)" for methods
-  const fieldRegEx = /^([#+~-])?(\w+)(~\w+~|\[])?\s+(\w+) *([$*])?$/;
-  const methodRegEx = /^([#+|~-])?(\w+) *\( *(.*)\) *([$*])? *(\w*[[\]|~]*\s*\w*~?)$/;
-
-  let fieldMatch = text.match(fieldRegEx);
-  let methodMatch = text.match(methodRegEx);
-
-  if (fieldMatch && !methodMatch) {
-    return buildFieldDisplay(fieldMatch);
-  } else if (methodMatch) {
-    return buildMethodDisplay(methodMatch);
-  } else {
-    return buildLegacyDisplay(text);
-  }
-};
-
-const buildFieldDisplay = function (parsedText) {
-  let cssStyle = '';
-  let displayText = '';
-
-  try {
-    let visibility = parsedText[1] ? parsedText[1].trim() : '';
-    let fieldType = parsedText[2] ? parsedText[2].trim() : '';
-    let genericType = parsedText[3] ? parseGenericTypes(parsedText[3].trim()) : '';
-    let fieldName = parsedText[4] ? parsedText[4].trim() : '';
-    let classifier = parsedText[5] ? parsedText[5].trim() : '';
-
-    displayText = visibility + fieldType + genericType + ' ' + fieldName;
-    cssStyle = parseClassifier(classifier);
-  } catch (err) {
-    displayText = parsedText;
-  }
-
-  return {
-    displayText: displayText,
-    cssStyle: cssStyle,
-  };
-};
-
-const buildMethodDisplay = function (parsedText) {
-  let cssStyle = '';
-  let displayText = '';
-
-  try {
-    let visibility = parsedText[1] ? parsedText[1].trim() : '';
-    let methodName = parsedText[2] ? parsedText[2].trim() : '';
-    let parameters = parsedText[3] ? parseGenericTypes(parsedText[3].trim()) : '';
-    let classifier = parsedText[4] ? parsedText[4].trim() : '';
-    let returnType = parsedText[5] ? ' : ' + parseGenericTypes(parsedText[5]).trim() : '';
-
-    displayText = visibility + methodName + '(' + parameters + ')' + returnType;
-    cssStyle = parseClassifier(classifier);
-  } catch (err) {
-    displayText = parsedText;
-  }
-
-  return {
-    displayText: displayText,
-    cssStyle: cssStyle,
-  };
-};
-
-const buildLegacyDisplay = function (text) {
-  // if for some reason we don't have any match, use old format to parse text
   let displayText = '';
   let cssStyle = '';
   let returnType = '';
@@ -444,14 +378,15 @@ const buildLegacyDisplay = function (text) {
     cssStyle = parseClassifier(lastChar);
   }
 
-  let startIndex = visibility === '' ? 0 : 1;
+  const startIndex = visibility === '' ? 0 : 1;
   let endIndex = cssStyle === '' ? text.length : text.length - 1;
   text = text.substring(startIndex, endIndex);
 
-  let methodStart = text.indexOf('(');
-  let methodEnd = text.indexOf(')');
+  const methodStart = text.indexOf('(');
+  const methodEnd = text.indexOf(')');
+  const isMethod = methodStart > 1 && methodEnd > methodStart && methodEnd <= text.length;
 
-  if (methodStart > 1 && methodEnd > methodStart && methodEnd <= text.length) {
+  if (isMethod) {
     let methodName = text.substring(0, methodStart).trim();
 
     const parameters = text.substring(methodStart + 1, methodEnd);
@@ -478,7 +413,7 @@ const buildLegacyDisplay = function (text) {
     }
   } else {
     // finally - if all else fails, just send the text back as written (other than parsing for generic types)
-    displayText = parseGenericTypes(text);
+    displayText = visibility + parseGenericTypes(text);
   }
 
   return {

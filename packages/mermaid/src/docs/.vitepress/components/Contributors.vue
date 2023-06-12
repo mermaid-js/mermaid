@@ -5,12 +5,12 @@ import { contributors } from '../contributors';
 <template>
   <div flex="~ wrap gap2" justify-center>
     <a
-      v-for="{ name, avatar } of contributors"
-      :key="name"
-      :href="`https://github.com/${name}`"
+      v-for="{ username, avatar } of contributors"
+      :key="username"
+      :href="`https://github.com/${username}`"
       m-0
       rel="noopener noreferrer"
-      :aria-label="`${name} on GitHub`"
+      :aria-label="`${username} on GitHub`"
     >
       <img
         loading="lazy"
@@ -20,7 +20,7 @@ import { contributors } from '../contributors';
         rounded-full
         h-12
         w-12
-        :alt="`${name}'s avatar`"
+        :alt="`${username}'s avatar`"
       />
     </a>
   </div>

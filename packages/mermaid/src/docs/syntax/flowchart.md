@@ -25,6 +25,10 @@ flowchart LR
 The id is what is displayed in the box.
 ```
 
+```tip
+Instead of `flowchart` one can also use `graph`.
+```
+
 ### A node with text
 
 It is also possible to set text in the box that differs from the id. If this is done several times, it is the last text
@@ -39,7 +43,30 @@ flowchart LR
     id1[This is the text in the box]
 ```
 
-## Graph
+#### Unicode text
+
+Use `"` to enclose the unicode text.
+
+```mermaid-example
+flowchart LR
+    id["This ❤ Unicode"]
+```
+
+#### Markdown formatting
+
+Use double quotes and backticks "\` text \`" to enclose the markdown text.
+
+```mermaid-example
+%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+    markdown["`This **is** _Markdown_`"]
+    newLines["`Line1
+    Line 2
+    Line 3`"]
+    markdown --> newLines
+```
+
+### Direction
 
 This statement declares the direction of the Flowchart.
 
@@ -57,15 +84,13 @@ flowchart LR
     Start --> Stop
 ```
 
-## Flowchart Orientation
-
 Possible FlowChart orientations are:
 
-- TB - top to bottom
-- TD - top-down/ same as top to bottom
-- BT - bottom to top
-- RL - right to left
-- LR - left to right
+- TB - Top to bottom
+- TD - Top-down/ same as top to bottom
+- BT - Bottom to top
+- RL - Right to left
+- LR - Left to right
 
 ## Node shapes
 
@@ -404,7 +429,7 @@ flowchart TB
     end
 ```
 
-## flowcharts
+### flowcharts
 
 With the graphtype flowchart it is also possible to set edges to and from subgraphs as in the flowchart below.
 
@@ -425,7 +450,7 @@ flowchart TB
     two --> c2
 ```
 
-## Direction in subgraphs
+### Direction in subgraphs
 
 With the graphtype flowcharts you can use the direction statement to set the direction which the subgraph will render like in this example.
 
@@ -473,7 +498,11 @@ This feature is applicable to node labels, edge labels, and subgraph labels.
 
 ## Interaction
 
-It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab.
+
+```note
+This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+```
 
 ```
 click nodeId callback
@@ -726,7 +755,9 @@ You can change the renderer to elk by adding this directive:
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 ```
 
+```note
 Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
+```
 
 ### Width
 
