@@ -23,9 +23,8 @@ async function fetchContributors() {
       }
     );
     data = await response.json();
-    console.log(response.status, response.statusText);
-    console.log(data);
     collaborators.push(...data.map((i) => i.login));
+    console.log(`Fetched page ${page}`);
     page++;
   } while (data.length === 100);
   return collaborators.filter((name) => !name.includes('[bot]'));
