@@ -5,7 +5,6 @@ import { getConfig } from '../config.js';
 import intersect from './intersect/index.js';
 import createLabel from './createLabel.js';
 import note from './shapes/note.js';
-import { parseMember } from '../diagrams/class/svgDraw.js';
 import { evaluate } from '../diagrams/common/common.js';
 
 const question = async (parent, node) => {
@@ -806,8 +805,8 @@ const class_box = (parent, node) => {
     maxWidth = classTitleBBox.width;
   }
   const classAttributes = [];
-  node.classData.members.forEach((str) => {
-    const parsedInfo = parseMember(str);
+  node.classData.members.forEach((member) => {
+    const parsedInfo = member.getDisplayDetails();
     let parsedText = parsedInfo.displayText;
     if (getConfig().flowchart.htmlLabels) {
       parsedText = parsedText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -840,8 +839,8 @@ const class_box = (parent, node) => {
   maxHeight += lineHeight;
 
   const classMethods = [];
-  node.classData.methods.forEach((str) => {
-    const parsedInfo = parseMember(str);
+  node.classData.methods.forEach((member) => {
+    const parsedInfo = member.getDisplayDetails();
     let displayText = parsedInfo.displayText;
     if (getConfig().flowchart.htmlLabels) {
       displayText = displayText.replace(/</g, '&lt;').replace(/>/g, '&gt;');

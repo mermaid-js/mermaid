@@ -39,7 +39,12 @@ describe('when parsing class diagram', function () {
         "id": "Student",
         "label": "Student",
         "members": [
-          "-idCard : IdCard",
+          ClassMember {
+            "classifier": "",
+            "id": "idCard : IdCard",
+            "memberType": "attribute",
+            "visibility": "-",
+          },
         ],
         "methods": [],
         "type": "",

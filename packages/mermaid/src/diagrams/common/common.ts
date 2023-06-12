@@ -189,7 +189,7 @@ export const parseGenericTypes = function (text: string): string {
 
     do {
       cleanedText = newCleanedText;
-      newCleanedText = cleanedText.replace(/~([^\s,:;]+)~/, '<$1>');
+      newCleanedText = cleanedText.replace(/~([^:;]+)~/, '<$1>');
     } while (newCleanedText != cleanedText);
 
     return parseGenericTypes(newCleanedText);

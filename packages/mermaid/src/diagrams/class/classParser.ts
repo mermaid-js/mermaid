@@ -21,6 +21,7 @@ import {
   ClassMap,
   NamespaceMap,
   NamespaceNode,
+  ClassMember,
 } from './classTypes.js';
 
 const MERMAID_DOM_ID_PREFIX = 'classId-';
@@ -186,9 +187,9 @@ export const addMember = function (className: string, member: string) {
       theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
     } else if (memberString.indexOf(')') > 0) {
       //its a method
-      theClass.methods.push(sanitizeText(memberString));
+      theClass.methods.push(new ClassMember(memberString, 'method'));
     } else if (memberString) {
-      theClass.members.push(sanitizeText(memberString));
+      theClass.members.push(new ClassMember(memberString, 'attribute'));
     }
   }
 };

@@ -26,13 +26,18 @@ export class ClassMember {
 
   constructor(input: string, memberType: string) {
     this.memberType = memberType;
+    this.visibility = '';
+    this.classifier = '';
     this.parseMember(input);
   }
 
   getDisplayDetails() {
     let displayText = this.visibility + parseGenericTypes(this.id);
     if (this.memberType === 'method') {
-      displayText += '(' + parseGenericTypes(this.parameters.trim()) + ')' + ' ' + this.returnType;
+      displayText += '(' + parseGenericTypes(this.parameters.trim()) + ')';
+      if (this.returnType) {
+        displayText += ' : ' + parseGenericTypes(this.returnType);
+      }
     }
 
     displayText = displayText.trim();
