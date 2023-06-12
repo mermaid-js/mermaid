@@ -68,3 +68,12 @@ export type DrawDefinition = (
   version: string,
   diagramObject: Diagram
 ) => void;
+
+/**
+ * Type for function parse directive from diagram code.
+ *
+ * @param statement -
+ * @param context -
+ * @param type -
+ */
+export type ParseDirectiveDefinition = (statement: string, context: string, type: string) => void;
