@@ -435,6 +435,58 @@ importers:
         specifier: ^6.5.4
         version: 6.5.4
 
+  packages/mermaid/src/vitepress:
+    dependencies:
+      '@vueuse/core':
+        specifier: ^10.1.0
+        version: 10.1.0(vue@3.2.47)
+      jiti:
+        specifier: ^1.18.2
+        version: 1.18.2
+      vue:
+        specifier: ^3.2.47
+        version: 3.2.47
+    devDependencies:
+      '@iconify-json/carbon':
+        specifier: ^1.1.16
+        version: 1.1.16
+      '@unocss/reset':
+        specifier: ^0.52.0
+        version: 0.52.0
+      '@vite-pwa/vitepress':
+        specifier: ^0.0.5
+        version: 0.0.5(vite-plugin-pwa@0.15.0)
+      '@vitejs/plugin-vue':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@4.3.3)(vue@3.2.47)
+      fast-glob:
+        specifier: ^3.2.12
+        version: 3.2.12
+      https-localhost:
+        specifier: ^4.7.1
+        version: 4.7.1
+      pathe:
+        specifier: ^1.1.0
+        version: 1.1.0
+      unocss:
+        specifier: ^0.52.0
+        version: 0.52.0(postcss@8.4.23)(rollup@2.79.1)(vite@4.3.3)
+      unplugin-vue-components:
+        specifier: ^0.24.1
+        version: 0.24.1(rollup@2.79.1)(vue@3.2.47)
+      vite:
+        specifier: ^4.3.3
+        version: 4.3.3(@types/node@18.16.0)
+      vite-plugin-pwa:
+        specifier: ^0.15.0
+        version: 0.15.0(vite@4.3.3)(workbox-build@6.5.4)(workbox-window@6.5.4)
+      vitepress:
+        specifier: 1.0.0-beta.1
+        version: 1.0.0-beta.1(@algolia/client-search@4.14.2)(@types/node@18.16.0)(search-insights@2.6.0)
+      workbox-window:
+        specifier: ^6.5.4
+        version: 6.5.4
+
   tests/webpack:
     dependencies:
       '@mermaid-js/mermaid-example-diagram':
@@ -1253,7 +1305,7 @@ packages:
       gensync: 1.0.0-beta.2
       json5: 2.2.1
       lodash: 4.17.21
-      resolve: 1.22.1
+      resolve: 1.22.2
       semver: 5.7.1
       source-map: 0.5.7
     transitivePeerDependencies:
@@ -10066,7 +10118,7 @@ packages:
       jest-pnp-resolver: 1.2.2(jest-resolve@29.5.0)
       jest-util: 29.5.0
       jest-validate: 29.5.0
-      resolve: 1.22.1
+      resolve: 1.22.2
       resolve.exports: 2.0.2
       slash: 3.0.0
     dev: true
@@ -11579,7 +11631,7 @@ packages:
     resolution: {integrity: sha512-/5CMN3T0R4XTj4DcGaexo+roZSdSFW/0AOOTROrjxzCG1wrWXEsGbRKevjlIL+ZDE4sZlJr5ED4YW0yqmkK+eA==}
     dependencies:
       hosted-git-info: 2.8.9
-      resolve: 1.22.1
+      resolve: 1.22.2
       semver: 5.7.1
       validate-npm-package-license: 3.0.4
     dev: true
@@ -12755,7 +12807,7 @@ packages:
   /resolve@1.19.0:
     resolution: {integrity: sha512-rArEXAgsBG4UgRGcynxWIWKFvh/XZCcS8UJdHhwy91zwAvCZIbcs+vAbflgBnNjYMs/i/i+/Ux6IZhML1yPvxg==}
     dependencies:
-      is-core-module: 2.10.0
+      is-core-module: 2.12.1
       path-parse: 1.0.7
     dev: true
 
@@ -14738,6 +14790,49 @@ packages:
       - terser
     dev: true
 
+  /vitepress@1.0.0-beta.1(@algolia/client-search@4.14.2)(@types/node@18.16.0)(search-insights@2.6.0):
+    resolution: {integrity: sha512-V2yyCwQ+v9fh7rbnGDLp8M7vHa9sLElexXf/JHtBOsOwv7ed9wt1QI4WUagYgKR3TeoJT9v2s6f0UaQSne0EvQ==}
+    hasBin: true
+    dependencies:
+      '@docsearch/css': 3.5.0
+      '@docsearch/js': 3.5.0(@algolia/client-search@4.14.2)(search-insights@2.6.0)
+      '@vitejs/plugin-vue': 4.2.3(vite@4.3.9)(vue@3.3.4)
+      '@vue/devtools-api': 6.5.0
+      '@vueuse/core': 10.1.2(vue@3.3.4)
+      '@vueuse/integrations': 10.1.2(focus-trap@7.4.3)(vue@3.3.4)
+      body-scroll-lock: 4.0.0-beta.0
+      focus-trap: 7.4.3
+      mark.js: 8.11.1
+      minisearch: 6.1.0
+      shiki: 0.14.2
+      vite: 4.3.9(@types/node@18.16.0)
+      vue: 3.3.4
+    transitivePeerDependencies:
+      - '@algolia/client-search'
+      - '@types/node'
+      - '@types/react'
+      - '@vue/composition-api'
+      - async-validator
+      - axios
+      - change-case
+      - drauu
+      - fuse.js
+      - idb-keyval
+      - jwt-decode
+      - less
+      - nprogress
+      - qrcode
+      - react
+      - react-dom
+      - sass
+      - search-insights
+      - sortablejs
+      - stylus
+      - sugarss
+      - terser
+      - universal-cookie
+    dev: true
+
   /vitepress@1.0.0-beta.2(@algolia/client-search@4.14.2)(@types/node@18.16.0)(search-insights@2.6.0):
     resolution: {integrity: sha512-DBXYjtYbm3W1IPPJ2TiCaK/XK+o/2XmL2+jslOGKm+txcbmG0kbeB+vadC5tCUZA9NdA+9Ywj3M4548c7t/SDg==}
     hasBin: true
@@ -14836,7 +14931,7 @@ packages:
       strip-literal: 1.0.1
       tinybench: 2.4.0
       tinypool: 0.5.0
-      vite: 4.3.8(@types/node@18.16.0)
+      vite: 4.3.9(@types/node@18.16.0)
       vite-node: 0.31.0(@types/node@18.16.0)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
