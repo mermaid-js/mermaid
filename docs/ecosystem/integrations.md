@@ -205,3 +205,14 @@ They also serve as proof of concept, for the variety of things that can be built
 - [NiceGUI: Let any browser be the frontend of your Python code](https://nicegui.io)
   - [ui.mermaid(...)](https://nicegui.io/reference#mermaid_diagrams)
   - [ui.markdown(..., extras=\['mermaid'\])](https://nicegui.io/reference#markdown_element)
+
+## Recommendations
+
+### File Extension
+
+Applications that support editing and saving mermaid files are encouraged to use the `.mmd` file extension.
+
+### MIME Type
+
+While not officially recognized by the [IANA](https://www.iana.org/assignments/media-types/media-types.xhtml),
+the recommended MIME type for mermaid media is `text/vnd.mermaid`.
