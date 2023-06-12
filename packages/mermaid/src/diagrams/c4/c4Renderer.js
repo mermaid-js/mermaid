@@ -665,13 +665,13 @@ export const draw = function (_text, id, _version, diagObj) {
   diagram.attr(
     'viewBox',
     box.startx -
-    conf.diagramMarginX +
-    ' -' +
-    (conf.diagramMarginY + extraVertForTitle) +
-    ' ' +
-    width +
-    ' ' +
-    (height + extraVertForTitle)
+      conf.diagramMarginX +
+      ' -' +
+      (conf.diagramMarginY + extraVertForTitle) +
+      ' ' +
+      width +
+      ' ' +
+      (height + extraVertForTitle)
   );
 
   log.debug(`models:`, box);
