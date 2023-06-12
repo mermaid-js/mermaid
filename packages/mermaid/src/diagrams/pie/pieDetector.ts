@@ -3,7 +3,7 @@ import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-a
 const id = 'pie';
 
 const detector: DiagramDetector = (txt) => {
-  return txt.match(/^\s*pie/) !== null;
+  return /^\s*pie/.test(txt);
 };
 
 const loader = async () => {

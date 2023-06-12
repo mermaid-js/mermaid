@@ -2,7 +2,7 @@ import type { ExternalDiagramDefinition } from '../../diagram-api/types.js';
 const id = 'mindmap';
 
 const detector = (txt: string) => {
-  return txt.match(/^\s*mindmap/) !== null;
+  return /^\s*mindmap/.test(txt);
 };
 
 const loader = async () => {

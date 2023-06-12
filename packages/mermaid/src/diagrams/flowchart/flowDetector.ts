@@ -11,7 +11,7 @@ const detector: DiagramDetector = (txt, config) => {
   ) {
     return false;
   }
-  return txt.match(/^\s*graph/) !== null;
+  return /^\s*graph/.test(txt);
 };
 
 const loader = async () => {

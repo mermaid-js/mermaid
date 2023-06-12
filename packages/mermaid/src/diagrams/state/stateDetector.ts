@@ -8,7 +8,7 @@ const detector: DiagramDetector = (txt, config) => {
   if (config?.state?.defaultRenderer === 'dagre-wrapper') {
     return false;
   }
-  return txt.match(/^\s*stateDiagram/) !== null;
+  return /^\s*stateDiagram/.test(txt);
 };
 
 const loader = async () => {

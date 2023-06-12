@@ -3,7 +3,7 @@ import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-a
 const id = 'er';
 
 const detector: DiagramDetector = (txt) => {
-  return txt.match(/^\s*erDiagram/) !== null;
+  return /^\s*erDiagram/.test(txt);
 };
 
 const loader = async () => {

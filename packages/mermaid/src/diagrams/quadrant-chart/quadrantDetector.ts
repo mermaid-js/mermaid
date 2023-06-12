@@ -3,7 +3,7 @@ import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-a
 const id = 'quadrantChart';
 
 const detector: DiagramDetector = (txt) => {
-  return txt.match(/^\s*quadrantChart/) !== null;
+  return /^\s*quadrantChart/.test(txt);
 };
 
 const loader = async () => {

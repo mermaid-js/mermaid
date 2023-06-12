@@ -3,7 +3,7 @@ import type { ExternalDiagramDefinition } from '../../diagram-api/types.js';
 const id = 'c4';
 
 const detector = (txt: string) => {
-  return txt.match(/^\s*C4Context|C4Container|C4Component|C4Dynamic|C4Deployment/) !== null;
+  return /^\s*C4Context|C4Container|C4Component|C4Dynamic|C4Deployment/.test(txt);
 };
 
 const loader = async () => {

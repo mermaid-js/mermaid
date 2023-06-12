@@ -3,7 +3,7 @@ import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-a
 const id = 'sequence';
 
 const detector: DiagramDetector = (txt) => {
-  return txt.match(/^\s*sequenceDiagram/) !== null;
+  return /^\s*sequenceDiagram/.test(txt);
 };
 
 const loader = async () => {
