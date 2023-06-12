@@ -1,9 +1,8 @@
-import type { MermaidConfig } from '../../../config.type.js';
 import type { ExternalDiagramDefinition, DiagramDetector } from '../../../diagram-api/types.js';
 
 const id = 'flowchart-elk';
 
-const detector: DiagramDetector = (txt: string, config?: MermaidConfig): boolean => {
+const detector: DiagramDetector = (txt, config): boolean => {
   if (
     // If diagram explicitly states flowchart-elk
     /^\s*flowchart-elk/.test(txt) ||

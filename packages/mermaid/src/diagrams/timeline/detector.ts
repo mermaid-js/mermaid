@@ -1,8 +1,8 @@
-import type { ExternalDiagramDefinition } from '../../diagram-api/types.js';
+import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types.js';
 
 const id = 'timeline';
 
-const detector = (txt: string) => {
+const detector: DiagramDetector = (txt) => {
   return /^\s*timeline/.test(txt);
 };
 
