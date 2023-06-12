@@ -1,3 +1,4 @@
+import { Diagram } from '../Diagram.js';
 import { MermaidConfig } from '../config.type.js';
 
 export interface InjectUtils {
@@ -52,3 +53,18 @@ export interface ExternalDiagramDefinition {
 
 export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
 export type DiagramLoader = () => Promise<{ id: string; diagram: DiagramDefinition }>;
+
+/**
+ * Type for function draws diagram in the tag with id: id based on the graph definition in text.
+ *
+ * @param text - The text of the diagram.
+ * @param id - The id of the diagram which will be used as a DOM element id.
+ * @param version - MermaidJS version from package.json.
+ * @param diagramObject - A standard diagram containing the DB and the text and type etc of the diagram.
+ */
+export type DrawDefinition = (
+  text: string,
+  id: string,
+  version: string,
+  diagramObject: Diagram
+) => void;
