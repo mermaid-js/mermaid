@@ -1,10 +1,10 @@
 import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 // @ts-ignore - no types
 import { LALRGenerator } from 'jison';
-import path from 'path';
 
 const getAbsolutePath = (relativePath: string) => {
-  return new URL(path.join(path.dirname(import.meta.url), relativePath)).pathname;
+  return fileURLToPath(new URL(relativePath, import.meta.url));
 };
 
 describe('class diagram grammar', function () {

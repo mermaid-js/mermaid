@@ -249,7 +249,7 @@ Comments can be entered within a state diagram chart, which will be ignored by t
 own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next
 newline will be treated as a comment, including any diagram syntax
 
-```mmd
+```mermaid
 stateDiagram-v2
     [*] --> Still
     Still --> [*]

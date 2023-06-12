@@ -1,7 +1,4 @@
-import { select } from 'd3';
 import { log } from '../logger.js';
-import { getConfig } from '../config.js';
-import { evaluate } from '../diagrams/common/common.js';
 import { decodeEntities } from '../mermaidAPI.js';
 import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
 /**
@@ -19,9 +16,10 @@ function applyStyle(dom, styleFn) {
  * @param {any} node
  * @param width
  * @param classes
+ * @param addBackground
  * @returns {SVGForeignObjectElement} Node
  */
-function addHtmlSpan(element, node, width, classes) {
+function addHtmlSpan(element, node, width, classes, addBackground = false) {
   const fo = element.append('foreignObject');
   // const newEl = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
   // const newEl = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
@@ -32,7 +30,8 @@ function addHtmlSpan(element, node, width, classes) {
   const label = node.label;
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
   div.html(
-    `<span class="${labelClass} ${classes}" ` +
+    `
+    <span class="${labelClass} ${classes}" ` +
       (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') +
       '>' +
       label +
@@ -44,6 +43,9 @@ function addHtmlSpan(element, node, width, classes) {
   div.style('white-space', 'nowrap');
   div.style('max-width', width + 'px');
   div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
+  if (addBackground) {
+    div.attr('class', 'labelBkg');
+  }
 
   let bbox = div.node().getBoundingClientRect();
   if (bbox.width === width) {
@@ -77,6 +79,22 @@ function createTspan(textElement, lineIndex, lineHeight) {
 }
 
 /**
+ * Compute the width of rendered text
+ * @param {object} parentNode
+ * @param {number} lineHeight
+ * @param {string} text
+ * @returns {number}
+ */
+function computeWidthOfText(parentNode, lineHeight, text) {
+  const testElement = parentNode.append('text');
+  const testSpan = createTspan(testElement, 1, lineHeight);
+  updateTextContentAndStyles(testSpan, [{ content: text, type: 'normal' }]);
+  const textLength = testSpan.node().getComputedTextLength();
+  testElement.remove();
+  return textLength;
+}
+
+/**
  * Creates a formatted text element by breaking lines and applying styles based on
  * the given structuredText.
  *
@@ -93,31 +111,44 @@ function createFormattedText(width, g, structuredText, addBackground = false) {
   // .attr('dominant-baseline', 'middle')
   // .attr('text-anchor', 'middle');
   // .attr('text-anchor', 'middle');
-  let lineIndex = -1;
+  let lineIndex = 0;
   structuredText.forEach((line) => {
-    lineIndex++;
-    let tspan = createTspan(textElement, lineIndex, lineHeight);
-
-    let words = [...line].reverse();
-    let currentWord;
-    let wrappedLine = [];
-
-    while (words.length) {
-      currentWord = words.pop();
-      wrappedLine.push(currentWord);
-
-      updateTextContentAndStyles(tspan, wrappedLine);
-
-      if (tspan.node().getComputedTextLength() > width) {
-        wrappedLine.pop();
-        words.push(currentWord);
-
-        updateTextContentAndStyles(tspan, wrappedLine);
-
-        wrappedLine = [];
-        lineIndex++;
-        tspan = createTspan(textElement, lineIndex, lineHeight);
+    /**
+     * Preprocess raw string content of line data
+     * Creating an array of strings pre-split to satisfy width limit
+     */
+    let fullStr = line.map((data) => data.content).join(' ');
+    let tempStr = '';
+    let linesUnderWidth = [];
+    let prevIndex = 0;
+    if (computeWidthOfText(labelGroup, lineHeight, fullStr) <= width) {
+      linesUnderWidth.push(fullStr);
+    } else {
+      for (let i = 0; i <= fullStr.length; i++) {
+        tempStr = fullStr.slice(prevIndex, i);
+        log.info(tempStr, prevIndex, i);
+        if (computeWidthOfText(labelGroup, lineHeight, tempStr) > width) {
+          const subStr = fullStr.slice(prevIndex, i);
+          // Break at space if any
+          const lastSpaceIndex = subStr.lastIndexOf(' ');
+          if (lastSpaceIndex > -1) {
+            i = prevIndex + lastSpaceIndex + 1;
+          }
+          linesUnderWidth.push(fullStr.slice(prevIndex, i).trim());
+          prevIndex = i;
+          tempStr = null;
+        }
       }
+      if (tempStr != null) {
+        linesUnderWidth.push(tempStr);
+      }
+    }
+    /** Add each prepared line as a tspan to the parent node */
+    const preparedLines = linesUnderWidth.map((w) => ({ content: w, type: line.type }));
+    for (const preparedLine of preparedLines) {
+      let tspan = createTspan(textElement, lineIndex, lineHeight);
+      updateTextContentAndStyles(tspan, [preparedLine]);
+      lineIndex++;
     }
   });
   if (addBackground) {
@@ -203,21 +234,10 @@ export const createText = (
       ),
       labelStyle: style.replace('fill:', 'color:'),
     };
-    let vertexNode = addHtmlSpan(el, node, width, classes);
+    let vertexNode = addHtmlSpan(el, node, width, classes, addSvgBackground);
     return vertexNode;
   } else {
     const structuredText = markdownToLines(text);
-    const special = ['"', "'", '.', ',', ':', ';', '!', '?', '(', ')', '[', ']', '{', '}'];
-    let lastWord;
-    structuredText.forEach((line) => {
-      line.forEach((word) => {
-        if (special.includes(word.content) && lastWord) {
-          lastWord.content += word.content;
-          word.content = '';
-        }
-        lastWord = word;
-      });
-    });
     const svgLabel = createFormattedText(width, el, structuredText, addSvgBackground);
     return svgLabel;
   }

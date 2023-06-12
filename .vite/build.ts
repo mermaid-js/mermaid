@@ -44,6 +44,11 @@ const packageOptions = {
     packageName: 'mermaid-example-diagram',
     file: 'detector.ts',
   },
+  'mermaid-zenuml': {
+    name: 'mermaid-zenuml',
+    packageName: 'mermaid-zenuml',
+    file: 'detector.ts',
+  },
 };
 
 interface BuildOptions {
@@ -146,6 +151,7 @@ if (watch) {
   build(getBuildConfig({ minify: false, watch, core: false, entryName: 'mermaid' }));
   if (!mermaidOnly) {
     build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
+    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-zenuml' }));
   }
 } else if (visualize) {
   await build(getBuildConfig({ minify: false, core: true, entryName: 'mermaid' }));

@@ -36,3 +36,6 @@ tsconfig.tsbuildinfo
 knsv*.html
 local*.html
 stats/
+
+**/user-avatars/*
+**/contributor-names.json
