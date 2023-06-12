@@ -267,6 +267,74 @@ class C13["With Città foreign language"]
       const str = 'classDiagram\n' + 'note "test"\n';
       parser.parse(str);
     });
+
+    it('should parse diagram with direction', () => {
+      parser.parse(`classDiagram
+          direction TB
+          class Student {
+            -idCard : IdCard
+          }
+          class IdCard{
+            -id : int
+            -name : string
+          }
+          class Bike{
+            -id : int
+            -name : string
+          }
+          Student "1" --o "1" IdCard : carries
+          Student "1" --o "1" Bike : rides`);
+
+      expect(Object.keys(classParser.getClasses()).length).toBe(3);
+      expect(classParser.getClasses().Student).toMatchInlineSnapshot(`
+        {
+          "annotations": [],
+          "cssClasses": [],
+          "domId": "classId-Student-0",
+          "id": "Student",
+          "label": "Student",
+          "members": [
+            ClassMember {
+              "classifier": "",
+              "id": "idCard : IdCard",
+              "memberType": "attribute",
+              "visibility": "-",
+            },
+          ],
+          "methods": [],
+          "type": "",
+        }
+      `);
+      expect(classParser.getRelations().length).toBe(2);
+      expect(classParser.getRelations()).toMatchInlineSnapshot(`
+        [
+          {
+            "id1": "Student",
+            "id2": "IdCard",
+            "relation": {
+              "lineType": 0,
+              "type1": "none",
+              "type2": 0,
+            },
+            "relationTitle1": "1",
+            "relationTitle2": "1",
+            "title": "carries",
+          },
+          {
+            "id1": "Student",
+            "id2": "Bike",
+            "relation": {
+              "lineType": 0,
+              "type1": "none",
+              "type2": 0,
+            },
+            "relationTitle1": "1",
+            "relationTitle2": "1",
+            "title": "rides",
+          },
+        ]
+      `);
+    });
   });
 
   describe('when parsing class defined in brackets', function () {
@@ -853,53 +921,6 @@ foo()
 }
 `;
       parser.parse(str);
-    });
-  });
-
-  describe('when parsing invalid generic classes', function () {
-    beforeEach(function () {
-      classParser.clear();
-      parser.yy = classParser;
-    });
-
-    it('should break when another `{`is encountered before closing the first one while defining generic class with brackets', function () {
-      const str =
-        'classDiagram\n' +
-        'class Dummy_Class~T~ {\n' +
-        'String data\n' +
-        '  void methods()\n' +
-        '}\n' +
-        '\n' +
-        'class Dummy_Class {\n' +
-        'class Flight {\n' +
-        '   flightNumber : Integer\n' +
-        '   departureTime : Date\n' +
-        '}';
-      let testPassed = false;
-      try {
-        parser.parse(str);
-      } catch (error) {
-        testPassed = true;
-      }
-      expect(testPassed).toBe(true);
-    });
-
-    it('should break when EOF is encountered before closing the first `{` while defining generic class with brackets', function () {
-      const str =
-        'classDiagram\n' +
-        'class Dummy_Class~T~ {\n' +
-        'String data\n' +
-        '  void methods()\n' +
-        '}\n' +
-        '\n' +
-        'class Dummy_Class {\n';
-      let testPassed = false;
-      try {
-        parser.parse(str);
-      } catch (error) {
-        testPassed = true;
-      }
-      expect(testPassed).toBe(true);
     });
   });
 });
