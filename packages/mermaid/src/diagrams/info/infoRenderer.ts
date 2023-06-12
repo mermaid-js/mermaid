@@ -42,12 +42,7 @@ export const draw: DrawDefinition = (text, id, version) => {
     svg.attr('height', 100);
     svg.attr('width', 400);
   } catch (e) {
-    log.error('Error while rendering info diagram');
-    if (e instanceof Error) {
-      log.error(e.message);
-    } else {
-      log.error('Unexpected error', e);
-    }
+    log.error('error while rendering info diagram', e);
   }
 };
 
