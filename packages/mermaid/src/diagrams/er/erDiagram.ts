@@ -1,4 +1,4 @@
-// @ts-ignore: TODO Fix ts errors
+// @ts-ignore: TODs Fix ts errors
 import erParser from './parser/erDiagram.jison';
 import erDb from './erDb.js';
 import erRenderer from './erRenderer.js';

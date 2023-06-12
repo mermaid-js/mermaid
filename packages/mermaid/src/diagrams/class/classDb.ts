@@ -367,7 +367,6 @@ export const relationType = {
 const setupToolTips = function (element: Element) {
   let tooltipElem: Selection<HTMLDivElement, unknown, HTMLElement, unknown> =
     select('.mermaidTooltip');
-  // @ts-ignore - _groups is a dynamic property
   if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
     tooltipElem = select('body').append('div').attr('class', 'mermaidTooltip').style('opacity', 0);
   }
