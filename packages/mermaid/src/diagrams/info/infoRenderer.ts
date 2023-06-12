@@ -1,19 +1,19 @@
 /** Created by knut on 14-12-11. */
+// @ts-ignore - TODO: why
 import { select } from 'd3';
 import { log } from '../../logger.js';
 import { getConfig } from '../../config.js';
+import { DrawDefinition } from '../../diagram-api/types.js';
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
  *
- * @param {any} text
- * @param {any} id
- * @param {any} version
+ * @param text - The text of the diagram.
+ * @param id - The id of the diagram which will be used as a DOM element id.
+ * @param version - MermaidJS version.
  */
-export const draw = (text, id, version) => {
+export const draw: DrawDefinition = (text, id, version) => {
   try {
-    // const parser = infoParser.parser;
-    // parser.yy = db;
     log.debug('Rendering info diagram\n' + text);
 
     const securityLevel = getConfig().securityLevel;
@@ -27,10 +27,6 @@ export const draw = (text, id, version) => {
         ? select(sandboxElement.nodes()[0].contentDocument.body)
         : select('body');
 
-    // Parse the graph definition
-    // parser.parse(text);
-    // log.debug('Parsed info diagram');
-    // Fetch the default direction, use TD if none was found
     const svg = root.select('#' + id);
 
     const g = svg.append('g');
@@ -45,13 +41,14 @@ export const draw = (text, id, version) => {
 
     svg.attr('height', 100);
     svg.attr('width', 400);
-    // svg.attr('viewBox', '0 0 300 150');
   } catch (e) {
     log.error('Error while rendering info diagram');
-    log.error(e.message);
+    if (e instanceof Error) {
+      log.error(e.message);
+    } else {
+      log.error('Unexpected error', e);
+    }
   }
 };
 
-export default {
-  draw,
-};
+export default draw;
