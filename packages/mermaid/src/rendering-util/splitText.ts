@@ -41,6 +41,8 @@ function splitWordToFitWidthRecursion(
   usedChars: string[],
   remainingChars: string[]
 ): [string, string] {
+  // eslint-disable-next-line no-console
+  console.error({ usedChars, remainingChars });
   if (remainingChars.length === 0) {
     return [usedChars.join(''), ''];
   }
@@ -62,6 +64,8 @@ function splitLineToFitWidthRecursion(
   lines: string[] = [],
   newLine = ''
 ): string[] {
+  // eslint-disable-next-line no-console
+  console.error({ words, lines, newLine });
   // Return if there is nothing left to split
   if (words.length === 0) {
     // If there is a new line, add it to the lines
