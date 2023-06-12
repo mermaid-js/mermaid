@@ -8,5 +8,4 @@ export const diagram: DiagramDefinition = {
   parser: parser,
   db: db,
   renderer: renderer,
-  styles: () => '',
 };
