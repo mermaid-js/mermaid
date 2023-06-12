@@ -1,4 +1,4 @@
-import { DiagramDefinition } from '../../diagram-api/types.js';
+import type { DiagramDefinition } from '../../diagram-api/types.js';
 // @ts-ignore: TODO Fix ts errors
 import parser from './parser/info.jison';
 import db from './infoDb.js';

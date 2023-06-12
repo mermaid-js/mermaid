@@ -1,4 +1,4 @@
-import { DiagramDb } from '../../diagram-api/types.js';
+import type { DiagramDb } from '../../diagram-api/types.js';
 
 /**
  * Info diagram DB.

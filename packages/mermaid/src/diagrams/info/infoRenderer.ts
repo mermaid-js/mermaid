@@ -3,7 +3,7 @@
 import { select } from 'd3';
 import { log } from '../../logger.js';
 import { getConfig } from '../../config.js';
-import { DrawDefinition } from '../../diagram-api/types.js';
+import type { DrawDefinition } from '../../diagram-api/types.js';
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.

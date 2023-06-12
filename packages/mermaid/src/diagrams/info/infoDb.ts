@@ -1,6 +1,6 @@
 /** Created by knut on 15-01-14. */
 import { clear } from '../../commonDb.js';
-import { InfoDb } from './infoTypes.js';
+import type { InfoDb } from './infoTypes.js';
 
 let info = false;
 
