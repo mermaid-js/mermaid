@@ -1,4 +1,8 @@
-import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types.js';
+import type {
+  DiagramDetector,
+  DiagramLoader,
+  ExternalDiagramDefinition,
+} from '../../diagram-api/types.js';
 
 const id = 'timeline';
 
@@ -6,7 +10,7 @@ const detector: DiagramDetector = (txt) => {
   return /^\s*timeline/.test(txt);
 };
 
-const loader = async () => {
+const loader: DiagramLoader = async () => {
   const { diagram } = await import('./timeline-definition.js');
   return { id, diagram };
 };

@@ -1,11 +1,15 @@
-import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types.js';
+import type {
+  DiagramDetector,
+  DiagramLoader,
+  ExternalDiagramDefinition,
+} from '../../diagram-api/types.js';
 const id = 'mindmap';
 
 const detector: DiagramDetector = (txt) => {
   return /^\s*mindmap/.test(txt);
 };
 
-const loader = async () => {
+const loader: DiagramLoader = async () => {
   const { diagram } = await import('./mindmap-definition.js');
   return { id, diagram };
 };

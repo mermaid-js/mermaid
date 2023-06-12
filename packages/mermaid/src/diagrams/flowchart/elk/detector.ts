@@ -1,4 +1,8 @@
-import type { ExternalDiagramDefinition, DiagramDetector } from '../../../diagram-api/types.js';
+import type {
+  ExternalDiagramDefinition,
+  DiagramDetector,
+  DiagramLoader,
+} from '../../../diagram-api/types.js';
 
 const id = 'flowchart-elk';
 
@@ -14,7 +18,7 @@ const detector: DiagramDetector = (txt, config): boolean => {
   return false;
 };
 
-const loader = async () => {
+const loader: DiagramLoader = async () => {
   const { diagram } = await import('./flowchart-elk-definition.js');
   return { id, diagram };
 };
