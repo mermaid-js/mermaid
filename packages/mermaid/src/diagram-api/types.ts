@@ -27,7 +27,7 @@ export interface DiagramDefinition {
   db: DiagramDb;
   renderer: any;
   parser: any;
-  styles: any;
+  styles?: any;
   init?: (config: MermaidConfig) => void;
   injectUtils?: (
     _log: InjectUtils['_log'],
