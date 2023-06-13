@@ -1,5 +1,6 @@
 import { Diagram } from '../Diagram.js';
 import { MermaidConfig } from '../config.type.js';
+import type * as d3 from 'd3';
 
 export interface InjectUtils {
   _log: any;
@@ -78,4 +79,6 @@ export type DrawDefinition = (
  */
 export type ParseDirectiveDefinition = (statement: string, context: string, type: string) => void;
 
-export type SVG = d3.Selection<HTMLFrameElement, unknown, HTMLElement, unknown>;
+export type HTML = d3.Selection<HTMLIFrameElement, unknown, Element, unknown>;
+
+export type SVG = d3.Selection<SVGSVGElement, unknown, Element, unknown>;
