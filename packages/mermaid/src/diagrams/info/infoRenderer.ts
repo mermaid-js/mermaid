@@ -2,7 +2,7 @@
 import { select } from 'd3';
 import { log } from '../../logger.js';
 import { getConfig } from '../../config.js';
-import type { DrawDefinition } from '../../diagram-api/types.js';
+import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
@@ -13,20 +13,25 @@ import type { DrawDefinition } from '../../diagram-api/types.js';
  */
 export const draw: DrawDefinition = (text, id, version) => {
   try {
-    log.debug('Rendering info diagram\n' + text);
+    log.debug('rendering info diagram\n' + text);
 
     const securityLevel = getConfig().securityLevel;
-    // Handle root and Document for when rendering in sandbox mode
-    let sandboxElement;
+    // handle root and document for when rendering in sandbox mode
+    let sandboxElement: SVG | undefined;
     if (securityLevel === 'sandbox') {
       sandboxElement = select('#i' + id);
     }
-    const root =
-      securityLevel === 'sandbox'
-        ? select(sandboxElement.nodes()[0].contentDocument.body)
-        : select('body');
+    let root;
+    if (securityLevel === 'sandbox' && sandboxElement !== undefined) {
+      root = select(sandboxElement.nodes()[0].contentDocument!.body);
+    } else {
+      root = select('body');
+    }
 
+    // @ts-ignore - TODO: figure out how to resolve this
     const svg = root.select('#' + id);
+    svg.attr('height', 100);
+    svg.attr('width', 400);
 
     const g = svg.append('g');
 
@@ -37,9 +42,6 @@ export const draw: DrawDefinition = (text, id, version) => {
       .attr('font-size', '32px')
       .style('text-anchor', 'middle')
       .text('v ' + version);
-
-    svg.attr('height', 100);
-    svg.attr('width', 400);
   } catch (e) {
     log.error('error while rendering info diagram', e);
   }

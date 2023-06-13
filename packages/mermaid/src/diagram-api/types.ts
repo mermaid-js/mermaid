@@ -77,3 +77,5 @@ export type DrawDefinition = (
  * @param type -
  */
 export type ParseDirectiveDefinition = (statement: string, context: string, type: string) => void;
+
+export type SVG = d3.Selection<HTMLFrameElement, unknown, HTMLElement, unknown>;
