@@ -4,8 +4,8 @@ import type { InfoDB } from './infoTypes.js';
 
 let info = false;
 
-export const setInfo = (inf: boolean): void => {
-  info = inf;
+export const setInfo = (toggle: boolean): void => {
+  info = toggle;
 };
 
 export const getInfo = (): boolean => info;
