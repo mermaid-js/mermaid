@@ -15,11 +15,17 @@ export function splitTextToChars(text: string): string[] {
  */
 function splitLineToWords(text: string): string[] {
   if (Intl.Segmenter) {
-    return [...new Intl.Segmenter(undefined, { granularity: 'word' }).segment(text)]
-      .map((s) => s.segment)
-      .filter((word) => word !== ' ');
+    return [...new Intl.Segmenter(undefined, { granularity: 'word' }).segment(text)].map(
+      (s) => s.segment
+    );
   }
-  return text.split(' ');
+  // Split by ' ' removes the ' 's from the result.
+  const words = text.split(' ');
+  // Add the ' 's back to the result.
+  const wordsWithSpaces = words.flatMap((s) => [s, ' ']);
+  // Remove last space.
+  wordsWithSpaces.pop();
+  return wordsWithSpaces;
 }
 
 /**
@@ -55,7 +61,11 @@ function splitWordToFitWidthRecursion(
 }
 
 export function splitLineToFitWidth(line: string, checkFit: CheckFitFunction): string[] {
-  return splitLineToFitWidthRecursion(splitLineToWords(line), checkFit);
+  if (line.includes('\n')) {
+    throw new Error('splitLineToFitWidth does not support newlines in the line');
+  }
+  const words = splitLineToWords(line);
+  return splitLineToFitWidthRecursion(words, checkFit);
 }
 
 function splitLineToFitWidthRecursion(
@@ -74,8 +84,15 @@ function splitLineToFitWidthRecursion(
     }
     return lines.length > 0 ? lines : [''];
   }
+  let joiner = '';
+  if (words[0] === ' ') {
+    joiner = ' ';
+    words.shift();
+  }
   const nextWord = words.shift() ?? ' ';
-  const lineWithNextWord = newLine ? `${newLine} ${nextWord}` : nextWord;
+
+  const nextWordWithJoiner = joiner + nextWord;
+  const lineWithNextWord = newLine ? `${newLine}${nextWordWithJoiner}` : nextWordWithJoiner;
   if (checkFit(lineWithNextWord)) {
     // nextWord fits, so we can add it to the new line and continue
     return splitLineToFitWidthRecursion(words, checkFit, lines, lineWithNextWord);
