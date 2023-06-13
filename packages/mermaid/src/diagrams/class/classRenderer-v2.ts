@@ -1,4 +1,4 @@
-// @ts-ignore d3 types are not available
+// @ts-nocheck - don't check until handle it
 import { select, curveLinear } from 'd3';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger.js';

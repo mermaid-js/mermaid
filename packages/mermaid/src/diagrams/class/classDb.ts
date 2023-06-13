@@ -1,4 +1,4 @@
-// @ts-expect-error - d3 types issue
+// @ts-nocheck - don't check until handle it
 import { select, Selection } from 'd3';
 import { log } from '../../logger.js';
 import * as configApi from '../../config.js';

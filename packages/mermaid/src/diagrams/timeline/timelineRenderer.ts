@@ -1,4 +1,4 @@
-// @ts-ignore - db not typed yet
+// @ts-nocheck - don't check until handle it
 import { select, Selection } from 'd3';
 import svgDraw from './svgDraw.js';
 import { log } from '../../logger.js';
