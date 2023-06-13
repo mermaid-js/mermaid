@@ -210,7 +210,7 @@ They also serve as proof of concept, for the variety of things that can be built
 
 ### File Extension
 
-Applications that support editing and saving mermaid files are encouraged to use the `.mmd` file extension.
+Applications that support editing and saving mermaid files are encouraged to use `.mermaid` or `.mmd` file extensions.
 
 ### MIME Type
 
