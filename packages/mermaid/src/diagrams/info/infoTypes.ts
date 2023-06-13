@@ -1,9 +1,6 @@
-import type { DiagramDb } from '../../diagram-api/types.js';
+import type { DiagramDB } from '../../diagram-api/types.js';
 
-/**
- * Info diagram DB.
- */
-export interface InfoDb extends DiagramDb {
+export interface InfoDB extends DiagramDB {
   clear: () => void;
   setInfo: (info: boolean) => void;
   getInfo: () => boolean;

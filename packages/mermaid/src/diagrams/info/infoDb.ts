@@ -1,6 +1,6 @@
 /** Created by knut on 15-01-14. */
 import { clear } from '../../commonDb.js';
-import type { InfoDb } from './infoTypes.js';
+import type { InfoDB } from './infoTypes.js';
 
 let info = false;
 
@@ -10,7 +10,7 @@ export const setInfo = (inf: boolean): void => {
 
 export const getInfo = (): boolean => info;
 
-const db: InfoDb = {
+const db: InfoDB = {
   clear,
   setInfo,
   getInfo,
