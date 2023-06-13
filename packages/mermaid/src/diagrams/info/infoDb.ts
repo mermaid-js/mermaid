@@ -1,4 +1,3 @@
-/** Created by knut on 15-01-14. */
 import { clear } from '../../commonDb.js';
 import type { InfoDB } from './infoTypes.js';
 

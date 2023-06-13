@@ -1,4 +1,3 @@
-/** Created by knut on 14-12-11. */
 // @ts-ignore - TODO: fix ts error from d3
 import { select } from 'd3';
 import { log } from '../../logger.js';
