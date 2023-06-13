@@ -1,6 +1,9 @@
-This is example of data for Sakey diagrams from d3 author:
-circular graph not supported
+# Sankey diagrams syntax proposal
 
+Circular graphs are not supported by d3. There are some alternatives for that.
+This is example of data for Sakey diagrams from d3 author (simple csv):
+
+```csv
 Berlin,Job Applications,102
 Barcelona,Job Applications,39
 Madrid,Job Applications,35
@@ -19,19 +22,53 @@ Responded,Interviewed,11,orange
 Interviewed,No Offer,8
 Interviewed,Declined Offer,2
 Interviewed,Accepted Offer,1,orange
+```
 
-Attributes for
+We also need graph and node attributes like this:
 
+```
 .nodeSort(null)
 .linkSort(null)
 .nodeWidth(4)
 .nodePadding(20)
 .extent([[0, 5], [width, height - 5]]) // margin?
+```
 
-berlin [label="asdf" color="red"] #node
+Also needed:
+* coloring strategy (source, target, transition)
+* graph alignment (left, right, width)
+
+Proposed syntax:
+```
+a -> 30 -> b
+a -> 40 -> c
+
+a -> {
+    30 -> b
+    40 -> c
+}
+
+{
+    a -> 30
+    b -> 40
+} -> c
 
 
-Berlin,Job,
-JobApplications[label="Job Applications"]
+a -> {
+    30
+    40
+} -> b
 
-madrid=35 ->
+a -> 30 -> {
+    b
+    c
+}
+
+a -> {
+    30
+    40
+} -> {
+    b
+    c
+}
+```
