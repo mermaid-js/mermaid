@@ -7,3 +7,5 @@ services:
     working_dir: /mermaid
     volumes:
       - ./:/mermaid
+    ports:
+      - 9000:9000

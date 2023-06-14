@@ -1,7 +1,11 @@
 #!/bin/bash
 RUN="docker-compose run --rm"
+# UP="docker-compose up"
+
+name=$(basename $0)
 command=$1
 args=${@:2}
+
 
 case $command in
 
@@ -17,24 +21,43 @@ test)
 $RUN mermaid sh -c "npx pnpm test"
 ;;
 
+e2e)
+$RUN mermaid sh -c "npx pnpm e2e"
+;;
+
 lint)
 $RUN mermaid sh -c "npx pnpm -w run lint:fix"
 ;;
 
+dev)
+$RUN --service-ports mermaid sh -c "npx pnpm run dev"
+# $UP --rm mermaid sh -c "npx pnpm run dev"
+;;
+
 help)
+usage=$(
 cat <<EOF
 Run commonly used commands within docker containers
 
-$0 install         # Equvalent of pnpm install 
-$0 lint            # Equvalent of pnpm -w run lint:fix
-$0 sh              # Open sh inside docker container for development
+\033[1m$name install\033[0m         # Equvalent of pnpm install 
+\033[1m$name run\033[0m             # Run dev server with examples, open http://localhost:9000
 
-$0 help            # Show this help
+$name lint            # Equvalent of pnpm -w run lint:fix
+$name test            # Run unit tests
+$name vitest          # Run watcher for unit tests
+$name e2e             # Run integration tests
+
+$name sh              # Open sh inside docker container for development
+
+$name help            # Show this help
 EOF
+)
+
+echo -n -e "$usage"
 ;;
 
 *)
-$0 help
+$name help
 ;;
 
 esac
