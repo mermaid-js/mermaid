@@ -12,13 +12,13 @@ const detector: DiagramDetector = (txt) => {
 
 const loader: DiagramLoader = async () => {
   const { diagram } = await import('./infoDiagram.js');
-  return { id, diagram };
+  return { id: id, diagram: diagram };
 };
 
 const plugin: ExternalDiagramDefinition = {
-  id,
-  detector,
-  loader,
+  id: id,
+  detector: detector,
+  loader: loader,
 };
 
 export default plugin;
