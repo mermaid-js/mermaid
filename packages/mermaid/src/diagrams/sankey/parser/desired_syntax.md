@@ -28,7 +28,7 @@ Interviewed,Declined Offer,2
 Interviewed,Accepted Offer,1,orange
 ```
 
-GoJS uses similar approach
+GoJS uses similar approach:
 ```json
 {
 "nodeDataArray": [
