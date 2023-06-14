@@ -2,7 +2,7 @@
 import { parser } from './parser/info.jison';
 import { db } from './infoDb.js';
 
-describe('info graph', () => {
+describe('info diagram', () => {
   beforeEach(() => {
     parser.yy = db;
     parser.yy.clear();
