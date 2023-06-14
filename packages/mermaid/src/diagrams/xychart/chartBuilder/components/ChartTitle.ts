@@ -8,7 +8,7 @@ import {
   Point,
   OrientationEnum,
 } from '../Interfaces.js';
-import { ChartComponent } from './Interfaces.js';
+import { ChartComponent } from '../Interfaces.js';
 
 export class ChartTitle implements ChartComponent {
   private boundingRect: BoundingRect;

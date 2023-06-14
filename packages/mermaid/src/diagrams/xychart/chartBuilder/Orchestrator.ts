@@ -1,7 +1,7 @@
 import { log } from '../../../logger.js';
 import { DrawableElem, XYChartConfig, XYChartData } from './Interfaces.js';
 import { getChartTitleComponent } from './components/ChartTitle.js';
-import { ChartComponent } from './components/Interfaces.js';
+import { ChartComponent } from './Interfaces.js';
 import { IAxis, getAxis } from './components/axis/index.js';
 import { IPlot, getPlotComponent } from './components/plot/index.js';
 

@@ -68,6 +68,14 @@ export class XYChartBuilder {
       title: 'this is a sample task',
       plots: [
         {
+          type: ChartPlotEnum.BAR,
+          data: [
+            ['category1', 23],
+            ['category2', 56],
+            ['category3', 34],
+          ],
+        },
+        {
           type: ChartPlotEnum.LINE,
           data: [
             ['category1', 33],

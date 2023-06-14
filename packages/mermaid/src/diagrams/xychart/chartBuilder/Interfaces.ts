@@ -1,35 +1,18 @@
 export enum ChartPlotEnum {
   LINE = 'line',
+  BAR = 'bar',
 }
 
-export enum ChartLayoutElem {
-  NULL = 'null',
-  CHART = 'chart',
-  TITLE = 'title',
-  XAXISLABEL = 'xaxislabel',
-  XAXISTITLE = 'xaxistitle',
-  YAXISLABEL = 'yaxislabel',
-  YAXISTITLE = 'yaxistitle',
-}
-export enum XYChartYAxisPosition {
-  LEFT = 'left',
-  RIGHT = 'right',
+export interface ChartComponent {
+  calculateSpace(availableSpace: Dimension): Dimension;
+  setBoundingBoxXY(point: Point): void;
+  getDrawableElements(): DrawableElem[];
 }
 
 export enum OrientationEnum {
   VERTICAL = 'vertical',
   HORIZONTAL = 'horizontal',
 }
-
-export type ChartLayout = ChartLayoutElem[][];
-
-export type VisibilityOption = {
-  chartTitle: boolean;
-  xAxisTitle: boolean;
-  xAxisLabel: boolean;
-  yAxisTitle: boolean;
-  yAxisLabel: boolean;
-};
 
 export interface AxisConfig {
   showLabel: boolean;
@@ -64,7 +47,7 @@ export interface XYChartConfig {
 export type SimplePlotDataType = [string | number, number][];
 
 export interface LinePlotData {
-  type: ChartPlotEnum.LINE;
+  type: ChartPlotEnum.LINE | ChartPlotEnum.BAR;
   data: SimplePlotDataType;
 }
 

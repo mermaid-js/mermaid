@@ -9,9 +9,10 @@ import {
   ChartPlotEnum,
 } from '../../Interfaces.js';
 import { IAxis } from '../axis/index.js';
-import { ChartComponent } from './../Interfaces.js';
+import { ChartComponent } from '../../Interfaces.js';
 import { LinePlot } from './LinePlot.js';
 import { PlotBorder } from './PlotBorder.js';
+import { BarPlot } from './BarPlot.js';
 
 
 export interface IPlot extends ChartComponent {
@@ -68,6 +69,11 @@ export class Plot implements IPlot {
         case ChartPlotEnum.LINE: {
           const linePlot = new LinePlot(plot.data, this.xAxis, this.yAxis);
           drawableElem.push(...linePlot.getDrawableElement())
+        }
+        break;
+        case ChartPlotEnum.BAR: {
+          const barPlot = new BarPlot(plot.data, this.boundingRect, this.xAxis, this.yAxis)
+          drawableElem.push(...barPlot.getDrawableElement());
         }
         break;
       }

@@ -41,6 +41,11 @@ export abstract class BaseAxis implements IAxis {
 
   abstract getTickValues(): Array<string | number>;
 
+  getTickInnerPadding(): number {
+    return this.innerPadding * 2;
+    // return Math.abs(this.range[0] - this.range[1]) / this.getTickValues().length;
+  }
+
   private getLabelDimension(): Dimension {
     return this.textDimensionCalculator.getDimension(
       this.getTickValues().map((tick) => tick.toString()),
@@ -162,7 +167,9 @@ export abstract class BaseAxis implements IAxis {
         type: 'path',
         groupTexts: ['left-axis', 'ticks'],
         data: this.getTickValues().map((tick) => ({
-          path: `M ${x},${this.getScaleValue(tick)} L ${x - this.axisConfig.tickLength},${this.getScaleValue(tick)}`,
+          path: `M ${x},${this.getScaleValue(tick)} L ${
+            x - this.axisConfig.tickLength
+          },${this.getScaleValue(tick)}`,
           strokeFill: this.axisConfig.tickFill,
           strokeWidth: this.axisConfig.tickWidth,
         })),
@@ -212,7 +219,9 @@ export abstract class BaseAxis implements IAxis {
         type: 'path',
         groupTexts: ['bottom-axis', 'ticks'],
         data: this.getTickValues().map((tick) => ({
-          path: `M ${this.getScaleValue(tick)},${y} L ${this.getScaleValue(tick)},${y + this.axisConfig.tickLength}`,
+          path: `M ${this.getScaleValue(tick)},${y} L ${this.getScaleValue(tick)},${
+            y + this.axisConfig.tickLength
+          }`,
           strokeFill: this.axisConfig.tickFill,
           strokeWidth: this.axisConfig.tickWidth,
         })),
