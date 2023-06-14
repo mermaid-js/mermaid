@@ -12,7 +12,7 @@ const detector: DiagramDetector = (txt) => {
 
 const loader: DiagramLoader = async () => {
   const { diagram } = await import('./infoDiagram.js');
-  return { id: id, diagram: diagram };
+  return { id, diagram };
 };
 
 const plugin: ExternalDiagramDefinition = {
