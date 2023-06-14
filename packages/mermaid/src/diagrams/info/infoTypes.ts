@@ -1,6 +1,10 @@
 import type { DiagramDB } from '../../diagram-api/types.js';
 
-export const DEFAULT_INFO_DB = {
+export interface InfoFields {
+  info: boolean;
+}
+
+export const DEFAULT_INFO_DB: InfoFields = {
   info: false,
 } as const;
 
