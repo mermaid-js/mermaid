@@ -14,7 +14,7 @@ export const draw: DrawDefinition = (text, id, version) => {
   try {
     log.debug('rendering info diagram\n' + text);
 
-    const securityLevel = getConfig().securityLevel;
+    const { securityLevel } = getConfig();
     // handle root and document for when rendering in sandbox mode
     let sandboxElement: HTML | undefined;
     let document: Document | null | undefined;
