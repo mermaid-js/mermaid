@@ -21,4 +21,4 @@ const plugin: ExternalDiagramDefinition = {
   loader,
 };
 
-export default plugin;
+export const info = plugin;

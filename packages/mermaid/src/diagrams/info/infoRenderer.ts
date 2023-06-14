@@ -47,4 +47,4 @@ export const draw: DrawDefinition = (text, id, version) => {
   }
 };
 
-export default { draw };
+export const renderer = { draw };
