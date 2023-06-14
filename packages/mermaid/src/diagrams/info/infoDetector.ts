@@ -16,9 +16,9 @@ const loader: DiagramLoader = async () => {
 };
 
 const plugin: ExternalDiagramDefinition = {
-  id: id,
-  detector: detector,
-  loader: loader,
+  id,
+  detector,
+  loader,
 };
 
 export default plugin;

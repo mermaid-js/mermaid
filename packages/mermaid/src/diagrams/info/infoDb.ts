@@ -17,9 +17,9 @@ const clear = (): void => {
 };
 
 const db: InfoDB = {
-  clear: clear,
-  setInfo: setInfo,
-  getInfo: getInfo,
+  clear,
+  setInfo,
+  getInfo,
 };
 
-export default db;
+export { db };
