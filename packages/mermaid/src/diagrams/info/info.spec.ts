@@ -1,10 +1,10 @@
 // @ts-ignore - jison doesn't export types
 import { parser } from './parser/info.jison';
-import infoDb from './infoDb.js';
+import { db } from './infoDb.js';
 
 describe('info graph', () => {
   beforeEach(() => {
-    parser.yy = infoDb;
+    parser.yy = db;
     parser.yy.clear();
   });
 
@@ -12,13 +12,13 @@ describe('info graph', () => {
     const str = `info`;
     parser.parse(str);
 
-    expect(infoDb.getInfo()).toBeFalsy();
+    expect(db.getInfo()).toBeFalsy();
   });
 
   it('should handle an info definition with showInfo', () => {
     const str = `info showInfo`;
     parser.parse(str);
 
-    expect(infoDb.getInfo()).toBeTruthy();
+    expect(db.getInfo()).toBeTruthy();
   });
 });
