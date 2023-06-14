@@ -1,4 +1,8 @@
-import { DEFAULT_INFO_DB, type InfoDB } from './infoTypes.js';
+import type { InfoFields, InfoDB } from './infoTypes.js';
+
+export const DEFAULT_INFO_DB: InfoFields = {
+  info: false,
+} as const;
 
 let info: boolean = DEFAULT_INFO_DB.info;
 
