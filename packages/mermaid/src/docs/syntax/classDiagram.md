@@ -13,26 +13,26 @@ Mermaid can render class diagrams.
 title: Animal example
 ---
 classDiagram
-    note "From Duck till Zebra"
+    note "From Duck to Zebra"
     Animal <|-- Duck
     note for Duck "can fly\ncan swim\ncan dive\ncan help in debugging"
     Animal <|-- Fish
     Animal <|-- Zebra
-    Animal : +int age
-    Animal : +String gender
+    Animal : +age int
+    Animal : +gender String
     Animal: +isMammal()
     Animal: +mate()
     class Duck{
-        +String beakColor
+        +beakColor : String
         +swim()
-        +quack()
+        +quack() : String
     }
     class Fish{
-        -int sizeInFeet
-        -canEat()
+        -sizeInFeet : int
+        -canEat() : bool
     }
     class Zebra{
-        +bool is_wild
+        +is_wild : bool
         +run()
     }
 ```
@@ -54,8 +54,8 @@ title: Bank example
 ---
 classDiagram
     class BankAccount
-    BankAccount : +String owner
-    BankAccount : +Bigdecimal balance
+    BankAccount : +owner : String
+    BankAccount : +balance : Bigdecimal
     BankAccount : +deposit(amount)
     BankAccount : +withdrawal(amount)
 
@@ -109,8 +109,8 @@ There are two ways to define the members of a class, and regardless of whichever
 ```mermaid-example
 classDiagram
 class BankAccount
-BankAccount : +String owner
-BankAccount : +BigDecimal balance
+BankAccount : +owner String
+BankAccount : +balance BigDecimal
 BankAccount : +deposit(amount)
 BankAccount : +withdrawal(amount)
 ```
@@ -120,8 +120,8 @@ BankAccount : +withdrawal(amount)
 ```mermaid-example
 classDiagram
 class BankAccount{
-    +String owner
-    +BigDecimal balance
+    +owner : String
+    +balance : BigDecimal
     +deposit(amount)
     +withdrawal(amount)
 }
@@ -134,10 +134,10 @@ Optionally you can end a method/function definition with the data type that will
 ```mermaid-example
 classDiagram
 class BankAccount{
-    +String owner
-    +BigDecimal balance
-    +deposit(amount) bool
-    +withdrawal(amount) int
+    +owner : String
+    +balance : BigDecimal
+    +deposit(amount) : bool
+    +withdrawal(amount) : int
 }
 ```
 
@@ -150,13 +150,13 @@ Generics can be represented as part of a class definition and also in the parame
 ```mermaid-example
 classDiagram
 class Square~Shape~{
-    int id
-    List~int~ position
+    id : int 
+    position : List~int~
     setPoints(List~int~ points)
     getPoints() List~int~
+    -messages : List~string~
 }
 
-Square : -List~string~ messages
 Square : +setMessages(List~string~ messages)
 Square : +getMessages() List~string~
 Square : +getDistanceMatrix() List~List~int~~
@@ -483,12 +483,12 @@ Beginner's tip—a full example using interactive links in an HTML page:
     Animal <|-- Duck
     Animal <|-- Fish
     Animal <|-- Zebra
-    Animal : +int age
-    Animal : +String gender
+    Animal : +age int
+    Animal : +gender String
     Animal: +isMammal()
     Animal: +mate()
     class Duck{
-      +String beakColor
+      +beakColor : String
       +swim()
       +quack()
       }
@@ -497,7 +497,7 @@ Beginner's tip—a full example using interactive links in an HTML page:
       -canEat()
       }
     class Zebra{
-      +bool is_wild
+      +is_wild : bool
       +run()
       }
 
