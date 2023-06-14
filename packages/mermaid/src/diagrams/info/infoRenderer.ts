@@ -10,7 +10,7 @@ import type { DrawDefinition, HTML, SVG } from '../../diagram-api/types.js';
  * @param id - The id of the diagram which will be used as a DOM element id.
  * @param version - MermaidJS version.
  */
-export const draw: DrawDefinition = (text, id, version) => {
+const draw: DrawDefinition = (text, id, version) => {
   try {
     log.debug('rendering info diagram\n' + text);
 
