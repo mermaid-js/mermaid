@@ -15,19 +15,18 @@
   <body>
     <h1>Info diagram demos</h1>
     <pre class="mermaid">
-    info
-  </pre
-    >
+        info
+    </pre>
 
     <hr />
     <pre class="mermaid">
-    info showInfo
-  </pre
-    >
+        info showInfo
+    </pre>
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
+        theme: 'forest',
         logLevel: 3,
         securityLevel: 'loose',
       });

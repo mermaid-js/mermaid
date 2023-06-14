@@ -5,18 +5,20 @@
   <body>
     <h1>info below</h1>
     <pre class="mermaid">
-info
+        info
     </pre>
+
+    <hr />
+    <pre class="mermaid">
+        info showInfo
+    </pre>
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         theme: 'forest',
-        // themeCSS: '.node rect { fill: red; }',
         logLevel: 3,
-        flowchart: { curve: 'linear' },
-        gantt: { axisFormat: '%m/%d/%Y' },
-        sequence: { actorMargin: 50 },
-        // sequenceDiagram: { actorMargin: 300 } // deprecated
+        securityLevel: 'loose',
       });
     </script>
   </body>
