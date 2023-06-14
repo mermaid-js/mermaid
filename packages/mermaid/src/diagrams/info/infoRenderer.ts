@@ -1,4 +1,3 @@
-// @ts-ignore - TODO: fix ts error from d3
 import { select } from 'd3';
 import { log } from '../../logger.js';
 import { getConfig } from '../../config.js';
