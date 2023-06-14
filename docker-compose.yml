@@ -7,5 +7,10 @@ services:
     working_dir: /mermaid
     volumes:
       - ./:/mermaid
+      - root_cache:/root/.cache
+      - root_local:/root/.local
     ports:
       - 9000:9000
+volumes:
+  root_cache:
+  root_local:

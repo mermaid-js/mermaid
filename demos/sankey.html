@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>States Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        /* font-family: 'trebuchet ms', verdana, arial; */
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Sankey diagram demos</h1>
+    <h2>Simple flow</h2>
+    <pre class="mermaid">
+      stateDiagram-v2
+      direction LR
+      State1: A state with a note
+      note right of State1
+        Important information!<br />You can write notes.<br />And\nthey\ncan\nbe\nmulti-\nline.
+      end note
+      State1 --> State2
+      note left of State2 : Notes can be to the left of a state\n(like this one).
+      note right of State2 : Notes can be to the right of a state\n(like this one).
+    </pre>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({
+        theme: 'default',
+        // themeCSS: '.node rect { fill: red; }',
+        logLevel: 3,
+        securityLevel: 'loose',
+        flowchart: { curve: 'basis' },
+        gantt: { axisFormat: '%m/%d/%Y' },
+        sequence: { actorMargin: 50 },
+        // sequenceDiagram: { actorMargin: 300 } // deprecated
+      });
+    </script>
+  </body>
+</html>
