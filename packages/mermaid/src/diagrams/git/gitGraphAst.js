@@ -1,9 +1,9 @@
-import { log } from '../../logger';
-import { random } from '../../utils';
-import mermaidAPI from '../../mermaidAPI';
-import * as configApi from '../../config';
-import { getConfig } from '../../config';
-import common from '../common/common';
+import { log } from '../../logger.js';
+import { random } from '../../utils.js';
+import mermaidAPI from '../../mermaidAPI.js';
+import * as configApi from '../../config.js';
+import { getConfig } from '../../config.js';
+import common from '../common/common.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -12,7 +12,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb';
+} from '../../commonDb.js';
 
 let mainBranchName = getConfig().gitGraph.mainBranchName;
 let mainBranchOrder = getConfig().gitGraph.mainBranchOrder;
@@ -131,7 +131,7 @@ export const commit = function (msg, id, type, tag) {
 
 export const branch = function (name, order) {
   name = common.sanitizeText(name, configApi.getConfig());
-  if (typeof branches[name] === 'undefined') {
+  if (branches[name] === undefined) {
     branches[name] = head != null ? head.id : null;
     branchesConfig[name] = { name, order: order ? parseInt(order, 10) : null };
     checkout(name);
@@ -169,7 +169,7 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
       expected: ['branch abc'],
     };
     throw error;
-  } else if (typeof currentCommit === 'undefined' || !currentCommit) {
+  } else if (currentCommit === undefined || !currentCommit) {
     let error = new Error(
       'Incorrect usage of "merge". Current branch (' + curBranch + ')has no commits'
     );
@@ -181,7 +181,7 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
       expected: ['commit'],
     };
     throw error;
-  } else if (typeof branches[otherBranch] === 'undefined') {
+  } else if (branches[otherBranch] === undefined) {
     let error = new Error(
       'Incorrect usage of "merge". Branch to be merged (' + otherBranch + ') does not exist'
     );
@@ -193,7 +193,7 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
       expected: ['branch ' + otherBranch],
     };
     throw error;
-  } else if (typeof otherCommit === 'undefined' || !otherCommit) {
+  } else if (otherCommit === undefined || !otherCommit) {
     let error = new Error(
       'Incorrect usage of "merge". Branch to be merged (' + otherBranch + ') has no commits'
     );
@@ -215,7 +215,7 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
       expected: ['branch abc'],
     };
     throw error;
-  } else if (custom_id && typeof commits[custom_id] !== 'undefined') {
+  } else if (custom_id && commits[custom_id] !== undefined) {
     let error = new Error(
       'Incorrect usage of "merge". Commit with id:' +
         custom_id +
@@ -267,7 +267,7 @@ export const cherryPick = function (sourceId, targetId, tag) {
   targetId = common.sanitizeText(targetId, configApi.getConfig());
   tag = common.sanitizeText(tag, configApi.getConfig());
 
-  if (!sourceId || typeof commits[sourceId] === 'undefined') {
+  if (!sourceId || commits[sourceId] === undefined) {
     let error = new Error(
       'Incorrect usage of "cherryPick". Source commit id should exist and provided'
     );
@@ -296,7 +296,7 @@ export const cherryPick = function (sourceId, targetId, tag) {
     };
     throw error;
   }
-  if (!targetId || typeof commits[targetId] === 'undefined') {
+  if (!targetId || commits[targetId] === undefined) {
     // cherry-pick source commit to current branch
 
     if (sourceCommitBranch === curBranch) {
@@ -313,7 +313,7 @@ export const cherryPick = function (sourceId, targetId, tag) {
       throw error;
     }
     const currentCommit = commits[branches[curBranch]];
-    if (typeof currentCommit === 'undefined' || !currentCommit) {
+    if (currentCommit === undefined || !currentCommit) {
       let error = new Error(
         'Incorrect usage of "cherry-pick". Current branch (' + curBranch + ')has no commits'
       );
@@ -344,7 +344,7 @@ export const cherryPick = function (sourceId, targetId, tag) {
 };
 export const checkout = function (branch) {
   branch = common.sanitizeText(branch, configApi.getConfig());
-  if (typeof branches[branch] === 'undefined') {
+  if (branches[branch] === undefined) {
     let error = new Error(
       'Trying to checkout branch which is not yet created. (Help try using "branch ' + branch + '")'
     );

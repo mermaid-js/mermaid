@@ -1,12 +1,12 @@
-import * as graphlibJson from 'dagre-d3-es/src/graphlib/json';
-import * as graphlib from 'dagre-d3-es/src/graphlib';
+import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import {
   validate,
   adjustClustersAndEdges,
-  extractDecendants,
+  extractDescendants,
   sortNodesByHierarchy,
-} from './mermaid-graphlib';
-import { setLogLevel, log } from '../logger';
+} from './mermaid-graphlib.js';
+import { setLogLevel, log } from '../logger.js';
 
 describe('Graphlib decorations', () => {
   let g;
@@ -400,7 +400,7 @@ flowchart TB
     expect(aGraph.parent('B')).toBe(undefined);
   });
 });
-describe('extractDecendants', function () {
+describe('extractDescendants', function () {
   let g;
   beforeEach(function () {
     setLogLevel(1);
@@ -443,9 +443,9 @@ describe('extractDecendants', function () {
     g.setEdge('A', 'C', { data: 'link2' }, '2');
 
     // log.info(g.edges())
-    const d1 = extractDecendants('A', g);
-    const d2 = extractDecendants('B', g);
-    const d3 = extractDecendants('C', g);
+    const d1 = extractDescendants('A', g);
+    const d2 = extractDescendants('B', g);
+    const d3 = extractDescendants('C', g);
 
     expect(d1).toEqual(['a']);
     expect(d2).toEqual(['b']);

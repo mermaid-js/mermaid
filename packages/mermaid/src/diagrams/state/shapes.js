@@ -1,10 +1,10 @@
 import { line, curveBasis } from 'd3';
 import idCache from './id-cache.js';
-import stateDb from './stateDb';
-import utils from '../../utils';
-import common from '../common/common';
-import { getConfig } from '../../config';
-import { log } from '../../logger';
+import stateDb from './stateDb.js';
+import utils from '../../utils.js';
+import common from '../common/common.js';
+import { getConfig } from '../../config.js';
+import { log } from '../../logger.js';
 
 /**
  * Draws a start state as a black circle
@@ -197,10 +197,8 @@ export const addTitleAndBox = (g, stateDef, altBkg) => {
   if (titleWidth > orgWidth) {
     startX = (orgWidth - width) / 2 + pad;
   }
-  if (Math.abs(orgX - graphBox.x) < pad) {
-    if (titleWidth > orgWidth) {
-      startX = orgX - (titleWidth - orgWidth) / 2;
-    }
+  if (Math.abs(orgX - graphBox.x) < pad && titleWidth > orgWidth) {
+    startX = orgX - (titleWidth - orgWidth) / 2;
   }
 
   const lineY = 1 - getConfig().state.textHeight;
@@ -301,7 +299,7 @@ export const drawText = function (elem, textData) {
   textElem.attr('y', textData.y);
   textElem.style('text-anchor', textData.anchor);
   textElem.attr('fill', textData.fill);
-  if (typeof textData.class !== 'undefined') {
+  if (textData.class !== undefined) {
     textElem.attr('class', textData.class);
   }
 
@@ -464,7 +462,7 @@ export const drawEdge = function (elem, path, relation) {
     'url(' + url + '#' + getRelationType(stateDb.relationType.DEPENDENCY) + 'End' + ')'
   );
 
-  if (typeof relation.title !== 'undefined') {
+  if (relation.title !== undefined) {
     const label = elem.append('g').attr('class', 'stateLabel');
 
     const { x, y } = utils.calcLabelPosition(path.points);

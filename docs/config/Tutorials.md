@@ -6,7 +6,7 @@
 
 # Tutorials
 
-This is list of publicly available Tutorials for using Mermaid.JS . This is intended as a basic introduction for the use of the Live Editor for generating diagrams, and deploying Mermaid.JS through HTML.
+This is a list of publicly available Tutorials for using Mermaid.JS and is intended as a basic introduction for the use of the Live Editor for generating diagrams, and deploying Mermaid.JS through HTML.
 
 **Note that these tutorials might display an older interface, but the usage of the live-editor will largely be the same.**
 
@@ -32,15 +32,15 @@ Examples are provided in [Getting Started](../intro/n00b-gettingStarted.md)
 
 **CodePen Examples:**
 
-https://codepen.io/CarlBoneri/pen/BQwZzq
+<https://codepen.io/CarlBoneri/pen/BQwZzq>
 
-https://codepen.io/tdkn/pen/vZxQzd
+<https://codepen.io/tdkn/pen/vZxQzd>
 
-https://codepen.io/janzeteachesit/pen/OWWZKN
+<https://codepen.io/janzeteachesit/pen/OWWZKN>
 
 ## Mermaid with Text Area
 
-https://codepen.io/Ryuno-Ki/pen/LNxwgR
+<https://codepen.io/Ryuno-Ki/pen/LNxwgR>
 
 ## Mermaid in open source docs
 

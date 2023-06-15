@@ -1,21 +1,8 @@
 import { arc as d3arc } from 'd3';
+import * as svgDrawCommon from '../common/svgDrawCommon';
 
 export const drawRect = function (elem, rectData) {
-  const rectElem = elem.append('rect');
-  rectElem.attr('x', rectData.x);
-  rectElem.attr('y', rectData.y);
-  rectElem.attr('fill', rectData.fill);
-  rectElem.attr('stroke', rectData.stroke);
-  rectElem.attr('width', rectData.width);
-  rectElem.attr('height', rectData.height);
-  rectElem.attr('rx', rectData.rx);
-  rectElem.attr('ry', rectData.ry);
-
-  if (typeof rectData.class !== 'undefined') {
-    rectElem.attr('class', rectData.class);
-  }
-
-  return rectElem;
+  return svgDrawCommon.drawRect(elem, rectData);
 };
 
 export const drawFace = function (element, faceData) {
@@ -116,11 +103,11 @@ export const drawCircle = function (element, circleData) {
   circleElement.attr('stroke', circleData.stroke);
   circleElement.attr('r', circleData.r);
 
-  if (typeof circleElement.class !== 'undefined') {
+  if (circleElement.class !== undefined) {
     circleElement.attr('class', circleElement.class);
   }
 
-  if (typeof circleData.title !== 'undefined') {
+  if (circleData.title !== undefined) {
     circleElement.append('title').text(circleData.title);
   }
 
@@ -128,25 +115,7 @@ export const drawCircle = function (element, circleData) {
 };
 
 export const drawText = function (elem, textData) {
-  // Remove and ignore br:s
-  const nText = textData.text.replace(/<br\s*\/?>/gi, ' ');
-
-  const textElem = elem.append('text');
-  textElem.attr('x', textData.x);
-  textElem.attr('y', textData.y);
-  textElem.attr('class', 'legend');
-
-  textElem.style('text-anchor', textData.anchor);
-
-  if (typeof textData.class !== 'undefined') {
-    textElem.attr('class', textData.class);
-  }
-
-  const span = textElem.append('tspan');
-  span.attr('x', textData.x + textData.textMargin * 2);
-  span.text(nText);
-
-  return textElem;
+  return svgDrawCommon.drawText(elem, textData);
 };
 
 export const drawLabel = function (elem, txtObject) {
@@ -192,11 +161,14 @@ export const drawLabel = function (elem, txtObject) {
 export const drawSection = function (elem, section, conf) {
   const g = elem.append('g');
 
-  const rect = getNoteRect();
+  const rect = svgDrawCommon.getNoteRect();
   rect.x = section.x;
   rect.y = section.y;
   rect.fill = section.fill;
-  rect.width = conf.width;
+  // section width covers all nested tasks
+  rect.width =
+    conf.width * section.taskCount + // width of the tasks
+    conf.diagramMarginX * (section.taskCount - 1); // width of space between tasks
   rect.height = conf.height;
   rect.class = 'journey-section section-type-' + section.num;
   rect.rx = 3;
@@ -246,7 +218,7 @@ export const drawTask = function (elem, task, conf) {
     score: task.score,
   });
 
-  const rect = getNoteRect();
+  const rect = svgDrawCommon.getNoteRect();
   rect.x = task.x;
   rect.y = task.y;
   rect.fill = task.fill;
@@ -295,41 +267,7 @@ export const drawTask = function (elem, task, conf) {
  * @param {any} bounds The bounds of the drawing
  */
 export const drawBackgroundRect = function (elem, bounds) {
-  const rectElem = drawRect(elem, {
-    x: bounds.startx,
-    y: bounds.starty,
-    width: bounds.stopx - bounds.startx,
-    height: bounds.stopy - bounds.starty,
-    fill: bounds.fill,
-    class: 'rect',
-  });
-  rectElem.lower();
-};
-
-export const getTextObj = function () {
-  return {
-    x: 0,
-    y: 0,
-    fill: undefined,
-    'text-anchor': 'start',
-    width: 100,
-    height: 100,
-    textMargin: 0,
-    rx: 0,
-    ry: 0,
-  };
-};
-
-export const getNoteRect = function () {
-  return {
-    x: 0,
-    y: 0,
-    width: 100,
-    anchor: 'start',
-    height: 100,
-    rx: 0,
-    ry: 0,
-  };
+  svgDrawCommon.drawBackgroundRect(elem, bounds);
 };
 
 const _drawTextCandidateFunc = (function () {
@@ -472,7 +410,5 @@ export default {
   drawLabel,
   drawTask,
   drawBackgroundRect,
-  getTextObj,
-  getNoteRect,
   initGraphics,
 };

@@ -11,7 +11,7 @@ This section talks about the different ways to deploy Mermaid. Learning the [Syn
 ## Four ways of using mermaid:
 
 1. Using the Mermaid Live Editor at [mermaid.live](https://mermaid.live).
-2. Using [mermaid plugins](../misc/integrations.md) with programs you are familiar with.
+2. Using [mermaid plugins](../ecosystem/integrations.md) with programs you are familiar with.
 3. Calling the Mermaid JavaScript API.
 4. Deploying Mermaid as a dependency.
 
@@ -68,7 +68,7 @@ and to View, https://mermaid.live/view?gist=https://gist.github.com/sidharthv96/
 
 ## 2. Using Mermaid Plugins:
 
-You can generate mermaid diagrams from within popular applications using plug-ins. It can be done in the same way, you would use the Live Editor. Here's a list of [Mermaid Plugins](../misc/integrations.md).
+You can generate mermaid diagrams from within popular applications using plug-ins. It can be done in the same way, you would use the Live Editor. Here's a list of [Mermaid Plugins](../ecosystem/integrations.md).
 
 **This is covered in greater detail in the [Usage section](../config/usage.md)**
 
@@ -86,7 +86,7 @@ When writing the .html file, we give two instructions inside the html code to th
 
 a. The mermaid code for the diagram we want to create.
 
-b. The importing of mermaid library through the `mermaid.esm.js` or `mermaid.esm.min.mjs` and the `mermaid.initialize()` call, which dictates the appearance of diagrams and also starts the rendering process .
+b. The importing of mermaid library through the `mermaid.esm.mjs` or `mermaid.esm.min.mjs` and the `mermaid.initialize()` call, which dictates the appearance of diagrams and also starts the rendering process .
 
 **a. The embedded mermaid diagram definition inside a `<pre class="mermaid">`:**
 
@@ -118,7 +118,7 @@ b. The importing of mermaid library through the `mermaid.esm.js` or `mermaid.esm
 ```
 
 **Notes**:
-Rendering in Mermaid is initialized by `mermaid.initialize()` call. You can place `mermaid.initialize()` inside `mermaid.min.js` for brevity. However, doing the opposite lets you control when it starts looking for `<div>`tags inside the web page with `mermaid.initialize()`. This is useful when you think that not all `<div>` tags may have loaded on the execution of `mermaid.min.js` file.
+Rendering in Mermaid is initialized by `mermaid.initialize()` call. However, doing the opposite lets you control when it starts looking for `<pre>` tags inside the web page with `mermaid.initialize()`. This is useful when you think that not all `<pre>` tags may have loaded on the execution of `mermaid.esm.min.mjs` file.
 
 `startOnLoad` is one of the parameters that can be defined by `mermaid.initialize()`
 

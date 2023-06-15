@@ -1,14 +1,50 @@
 <html>
   <body>
-    <pre class="mermaid">
-    none
-    hello world
+    <pre id="diagram" class="mermaid">
+graph TB
+      a --> b
+      a --> c
+      b --> d
+      c --> d
     </pre>
-    <script src="./mermaid.js"></script>
-    <script>
+
+    <div id="d2"></div>
+
+    <script type="module">
+      import mermaid from '/mermaid.esm.mjs';
+      mermaid.parseError = function (err, hash) {
+        // console.error('Mermaid error: ', err);
+      };
       mermaid.initialize({
-        logLevel: 1,
+        // theme: 'forest',
+        startOnLoad: true,
+        logLevel: 0,
+        flowchart: {
+          // defaultRenderer: 'elk',
+          useMaxWidth: false,
+          htmlLabels: true,
+        },
+        gantt: {
+          useMaxWidth: false,
+        },
+        useMaxWidth: false,
       });
+      function callback() {
+        alert('It worked');
+      }
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+      const value = `graph TD\nHello --> World`;
+      const el = document.getElementById('d2');
+      const { svg } = await mermaid.render('d22', value);
+      console.log(svg);
+      el.innerHTML = svg;
+      // mermaid.test1('first_slow', 1200).then((r) => console.info(r));
+      // mermaid.test1('second_fast', 200).then((r) => console.info(r));
+      // mermaid.test1('third_fast', 200).then((r) => console.info(r));
+      // mermaid.test1('forth_slow', 1200).then((r) => console.info(r));
     </script>
   </body>
 </html>

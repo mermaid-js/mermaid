@@ -1,9 +1,9 @@
 import { select } from 'd3';
-import utils from '../../utils';
-import * as configApi from '../../config';
-import common from '../common/common';
-import mermaidAPI from '../../mermaidAPI';
-import { log } from '../../logger';
+import utils from '../../utils.js';
+import * as configApi from '../../config.js';
+import common from '../common/common.js';
+import mermaidAPI from '../../mermaidAPI.js';
+import { log } from '../../logger.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -12,7 +12,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb';
+} from '../../commonDb.js';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
@@ -46,9 +46,9 @@ export const parseDirective = function (statement, context, type) {
  */
 export const lookUpDomId = function (id) {
   const veritceKeys = Object.keys(vertices);
-  for (let i = 0; i < veritceKeys.length; i++) {
-    if (vertices[veritceKeys[i]].id === id) {
-      return vertices[veritceKeys[i]].domId;
+  for (const veritceKey of veritceKeys) {
+    if (vertices[veritceKey].id === id) {
+      return vertices[veritceKey].domId;
     }
   }
   return id;
@@ -59,16 +59,17 @@ export const lookUpDomId = function (id) {
  *
  * @param _id
  * @param text
+ * @param textObj
  * @param type
  * @param style
  * @param classes
  * @param dir
  * @param props
  */
-export const addVertex = function (_id, text, type, style, classes, dir, props = {}) {
+export const addVertex = function (_id, textObj, type, style, classes, dir, props = {}) {
   let txt;
   let id = _id;
-  if (typeof id === 'undefined') {
+  if (id === undefined) {
     return;
   }
   if (id.trim().length === 0) {
@@ -77,19 +78,20 @@ export const addVertex = function (_id, text, type, style, classes, dir, props =
 
   // if (id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
-  if (typeof vertices[id] === 'undefined') {
+  if (vertices[id] === undefined) {
     vertices[id] = {
       id: id,
+      labelType: 'text',
       domId: MERMAID_DOM_ID_PREFIX + id + '-' + vertexCounter,
       styles: [],
       classes: [],
     };
   }
   vertexCounter++;
-  if (typeof text !== 'undefined') {
+  if (textObj !== undefined) {
     config = configApi.getConfig();
-    txt = sanitizeText(text.trim());
-
+    txt = sanitizeText(textObj.text.trim());
+    vertices[id].labelType = textObj.type;
     // strip quotes if string starts and ends with a quote
     if (txt[0] === '"' && txt[txt.length - 1] === '"') {
       txt = txt.substring(1, txt.length - 1);
@@ -97,33 +99,29 @@ export const addVertex = function (_id, text, type, style, classes, dir, props =
 
     vertices[id].text = txt;
   } else {
-    if (typeof vertices[id].text === 'undefined') {
+    if (vertices[id].text === undefined) {
       vertices[id].text = _id;
     }
   }
-  if (typeof type !== 'undefined') {
+  if (type !== undefined) {
     vertices[id].type = type;
   }
-  if (typeof style !== 'undefined') {
-    if (style !== null) {
-      style.forEach(function (s) {
-        vertices[id].styles.push(s);
-      });
-    }
+  if (style !== undefined && style !== null) {
+    style.forEach(function (s) {
+      vertices[id].styles.push(s);
+    });
   }
-  if (typeof classes !== 'undefined') {
-    if (classes !== null) {
-      classes.forEach(function (s) {
-        vertices[id].classes.push(s);
-      });
-    }
+  if (classes !== undefined && classes !== null) {
+    classes.forEach(function (s) {
+      vertices[id].classes.push(s);
+    });
   }
-  if (typeof dir !== 'undefined') {
+  if (dir !== undefined) {
     vertices[id].dir = dir;
   }
-  if (typeof vertices[id].props === 'undefined') {
+  if (vertices[id].props === undefined) {
     vertices[id].props = props;
-  } else if (typeof props !== 'undefined') {
+  } else if (props !== undefined) {
     Object.assign(vertices[id].props, props);
   }
 };
@@ -134,39 +132,43 @@ export const addVertex = function (_id, text, type, style, classes, dir, props =
  * @param _start
  * @param _end
  * @param type
- * @param linktext
+ * @param linkText
+ * @param linkTextObj
  */
-export const addSingleLink = function (_start, _end, type, linktext) {
+export const addSingleLink = function (_start, _end, type) {
   let start = _start;
   let end = _end;
   // if (start[0].match(/\d/)) start = MERMAID_DOM_ID_PREFIX + start;
   // if (end[0].match(/\d/)) end = MERMAID_DOM_ID_PREFIX + end;
   // log.info('Got edge...', start, end);
 
-  const edge = { start: start, end: end, type: undefined, text: '' };
-  linktext = type.text;
+  const edge = { start: start, end: end, type: undefined, text: '', labelType: 'text' };
+  log.info('abc78 Got edge...', edge);
+  const linkTextObj = type.text;
 
-  if (typeof linktext !== 'undefined') {
-    edge.text = sanitizeText(linktext.trim());
+  if (linkTextObj !== undefined) {
+    edge.text = sanitizeText(linkTextObj.text.trim());
 
-    // strip quotes if string starts and exnds with a quote
+    // strip quotes if string starts and ends with a quote
     if (edge.text[0] === '"' && edge.text[edge.text.length - 1] === '"') {
       edge.text = edge.text.substring(1, edge.text.length - 1);
     }
+    edge.labelType = linkTextObj.type;
   }
 
-  if (typeof type !== 'undefined') {
+  if (type !== undefined) {
     edge.type = type.type;
     edge.stroke = type.stroke;
     edge.length = type.length;
   }
   edges.push(edge);
 };
-export const addLink = function (_start, _end, type, linktext) {
+export const addLink = function (_start, _end, type) {
+  log.info('addLink (abc78)', _start, _end, type);
   let i, j;
   for (i = 0; i < _start.length; i++) {
     for (j = 0; j < _end.length; j++) {
-      addSingleLink(_start[i], _end[j], type, linktext);
+      addSingleLink(_start[i], _end[j], type);
     }
   }
 };
@@ -207,21 +209,19 @@ export const updateLink = function (positions, style) {
 };
 
 export const addClass = function (id, style) {
-  if (typeof classes[id] === 'undefined') {
+  if (classes[id] === undefined) {
     classes[id] = { id: id, styles: [], textStyles: [] };
   }
 
-  if (typeof style !== 'undefined') {
-    if (style !== null) {
-      style.forEach(function (s) {
-        if (s.match('color')) {
-          const newStyle1 = s.replace('fill', 'bgFill');
-          const newStyle2 = newStyle1.replace('color', 'fill');
-          classes[id].textStyles.push(newStyle2);
-        }
-        classes[id].styles.push(s);
-      });
-    }
+  if (style !== undefined && style !== null) {
+    style.forEach(function (s) {
+      if (s.match('color')) {
+        const newStyle1 = s.replace('fill', 'bgFill');
+        const newStyle2 = newStyle1.replace('color', 'fill');
+        classes[id].textStyles.push(newStyle2);
+      }
+      classes[id].styles.push(s);
+    });
   }
 };
 
@@ -244,6 +244,9 @@ export const setDirection = function (dir) {
   if (direction.match(/.*v/)) {
     direction = 'TB';
   }
+  if (direction === 'TD') {
+    direction = 'TB';
+  }
 };
 
 /**
@@ -257,11 +260,11 @@ export const setClass = function (ids, className) {
     // let id = version === 'gen-2' ? lookUpDomId(_id) : _id;
     let id = _id;
     // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
-    if (typeof vertices[id] !== 'undefined') {
+    if (vertices[id] !== undefined) {
       vertices[id].classes.push(className);
     }
 
-    if (typeof subGraphLookup[id] !== 'undefined') {
+    if (subGraphLookup[id] !== undefined) {
       subGraphLookup[id].classes.push(className);
     }
   });
@@ -269,7 +272,7 @@ export const setClass = function (ids, className) {
 
 const setTooltip = function (ids, tooltip) {
   ids.split(',').forEach(function (id) {
-    if (typeof tooltip !== 'undefined') {
+    if (tooltip !== undefined) {
       tooltips[version === 'gen-1' ? lookUpDomId(id) : id] = sanitizeText(tooltip);
     }
   });
@@ -281,7 +284,7 @@ const setClickFun = function (id, functionName, functionArgs) {
   if (configApi.getConfig().securityLevel !== 'loose') {
     return;
   }
-  if (typeof functionName === 'undefined') {
+  if (functionName === undefined) {
     return;
   }
   let argList = [];
@@ -304,7 +307,7 @@ const setClickFun = function (id, functionName, functionArgs) {
     argList.push(id);
   }
 
-  if (typeof vertices[id] !== 'undefined') {
+  if (vertices[id] !== undefined) {
     vertices[id].haveCallback = true;
     funs.push(function () {
       const elem = document.querySelector(`[id="${domId}"]`);
@@ -330,7 +333,7 @@ const setClickFun = function (id, functionName, functionArgs) {
  */
 export const setLink = function (ids, linkStr, target) {
   ids.split(',').forEach(function (id) {
-    if (typeof vertices[id] !== 'undefined') {
+    if (vertices[id] !== undefined) {
       vertices[id].link = utils.formatUrl(linkStr, config);
       vertices[id].linkTarget = target;
     }
@@ -445,7 +448,7 @@ export const clear = function (ver = 'gen-1') {
   commonClear();
 };
 export const setGen = (ver) => {
-  version = ver || 'gen-1';
+  version = ver || 'gen-2';
 };
 /** @returns {string} */
 export const defaultStyle = function () {
@@ -460,10 +463,9 @@ export const defaultStyle = function () {
  * @param _title
  */
 export const addSubGraph = function (_id, list, _title) {
-  // console.log('addSubGraph', _id, list, _title);
-  let id = _id.trim();
-  let title = _title;
-  if (_id === _title && _title.match(/\s/)) {
+  let id = _id.text.trim();
+  let title = _title.text;
+  if (_id === _title && _title.text.match(/\s/)) {
     id = undefined;
   }
   /** @param a */
@@ -484,7 +486,7 @@ export const addSubGraph = function (_id, list, _title) {
       if (type in prims) {
         return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true);
       } else {
-        return objs.indexOf(item) >= 0 ? false : objs.push(item);
+        return objs.includes(item) ? false : objs.push(item);
       }
     });
     return { nodeList, dir };
@@ -505,7 +507,14 @@ export const addSubGraph = function (_id, list, _title) {
   title = title || '';
   title = sanitizeText(title);
   subCount = subCount + 1;
-  const subGraph = { id: id, nodes: nodeList, title: title.trim(), classes: [], dir };
+  const subGraph = {
+    id: id,
+    nodes: nodeList,
+    title: title.trim(),
+    classes: [],
+    dir,
+    labelType: _title.type,
+  };
 
   log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);
 
@@ -530,8 +539,8 @@ export const addSubGraph = function (_id, list, _title) {
 };
 
 const getPosForId = function (id) {
-  for (let i = 0; i < subGraphs.length; i++) {
-    if (subGraphs[i].id === id) {
+  for (const [i, subGraph] of subGraphs.entries()) {
+    if (subGraph.id === id) {
       return i;
     }
   }
@@ -622,11 +631,11 @@ const destructStartLink = (_str) => {
 
   let stroke = 'normal';
 
-  if (str.indexOf('=') !== -1) {
+  if (str.includes('=')) {
     stroke = 'thick';
   }
 
-  if (str.indexOf('.') !== -1) {
+  if (str.includes('.')) {
     stroke = 'dotted';
   }
 
@@ -680,6 +689,10 @@ const destructEndLink = (_str) => {
     stroke = 'thick';
   }
 
+  if (line[0] === '~') {
+    stroke = 'invisible';
+  }
+
   let dots = countChar('.', line);
 
   if (dots) {
@@ -690,7 +703,7 @@ const destructEndLink = (_str) => {
   return { type, stroke, length };
 };
 
-const destructLink = (_str, _startStr) => {
+export const destructLink = (_str, _startStr) => {
   const info = destructEndLink(_str);
   let startInfo;
   if (_startStr) {
@@ -750,6 +763,9 @@ const makeUniq = (sg, allSubgraphs) => {
   return { nodes: res };
 };
 
+export const lex = {
+  firstGraph,
+};
 export default {
   parseDirective,
   defaultConfig: () => configApi.defaultConfig.flowchart,
@@ -782,9 +798,7 @@ export default {
   indexNodes,
   getSubGraphs,
   destructLink,
-  lex: {
-    firstGraph,
-  },
+  lex,
   exists,
   makeUniq,
   setDiagramTitle,

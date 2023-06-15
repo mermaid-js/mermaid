@@ -1,5 +1,5 @@
-import moment from 'moment-mini';
-import { log } from '../../logger';
+import dayjs from 'dayjs';
+import { log } from '../../logger.js';
 import {
   select,
   scaleTime,
@@ -16,21 +16,51 @@ import {
   timeWeek,
   timeMonth,
 } from 'd3';
-import common from '../common/common';
-import { getConfig } from '../../config';
-import { configureSvgSize } from '../../setupGraphViewbox';
-import addSVGAccessibilityFields from '../../accessibility';
+import common from '../common/common.js';
+import { getConfig } from '../../config.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 export const setConf = function () {
   log.debug('Something is calling, setConf, remove the call');
 };
 
+/**
+ * For this issue:
+ * https://github.com/mermaid-js/mermaid/issues/1618
+ *
+ * Finds the number of intersections between tasks that happen at any point in time.
+ * Used to figure out how many rows are needed to display the tasks when the display
+ * mode is set to 'compact'.
+ *
+ * @param tasks
+ * @param orderOffset
+ */
+const getMaxIntersections = (tasks, orderOffset) => {
+  let timeline = [...tasks].map(() => -Infinity);
+  let sorted = [...tasks].sort((a, b) => a.startTime - b.startTime || a.order - b.order);
+  let maxIntersections = 0;
+  for (const element of sorted) {
+    for (let j = 0; j < timeline.length; j++) {
+      if (element.startTime >= timeline[j]) {
+        timeline[j] = element.endTime;
+        element.order = j + orderOffset;
+        if (j > maxIntersections) {
+          maxIntersections = j;
+        }
+        break;
+      }
+    }
+  }
+
+  return maxIntersections;
+};
+
 let w;
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().gantt;
+
   // diagObj.db.clear();
   // parser.parse(text);
-
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
@@ -46,18 +76,51 @@ export const draw = function (text, id, version, diagObj) {
   const elem = doc.getElementById(id);
   w = elem.parentElement.offsetWidth;
 
-  if (typeof w === 'undefined') {
+  if (w === undefined) {
     w = 1200;
   }
 
-  if (typeof conf.useWidth !== 'undefined') {
+  if (conf.useWidth !== undefined) {
     w = conf.useWidth;
   }
 
   const taskArray = diagObj.db.getTasks();
 
   // Set height based on number of tasks
-  const h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding;
+
+  let categories = [];
+
+  for (const element of taskArray) {
+    categories.push(element.type);
+  }
+
+  categories = checkUnique(categories);
+  const categoryHeights = {};
+
+  let h = 2 * conf.topPadding;
+  if (diagObj.db.getDisplayMode() === 'compact' || conf.displayMode === 'compact') {
+    const categoryElements = {};
+    for (const element of taskArray) {
+      if (categoryElements[element.section] === undefined) {
+        categoryElements[element.section] = [element];
+      } else {
+        categoryElements[element.section].push(element);
+      }
+    }
+
+    let intersections = 0;
+    for (const category of Object.keys(categoryElements)) {
+      const categoryHeight = getMaxIntersections(categoryElements[category], intersections) + 1;
+      intersections += categoryHeight;
+      h += categoryHeight * (conf.barHeight + conf.barGap);
+      categoryHeights[category] = categoryHeight;
+    }
+  } else {
+    h += taskArray.length * (conf.barHeight + conf.barGap);
+    for (const category of categories) {
+      categoryHeights[category] = taskArray.filter((task) => task.type === category).length;
+    }
+  }
 
   // Set viewBox
   elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
@@ -74,16 +137,6 @@ export const draw = function (text, id, version, diagObj) {
       }),
     ])
     .rangeRound([0, w - conf.leftPadding - conf.rightPadding]);
-
-  let categories = [];
-
-  for (let i = 0; i < taskArray.length; i++) {
-    categories.push(taskArray[i].type);
-  }
-
-  const catsUnfiltered = categories; // for vert labels
-
-  categories = checkUnique(categories);
 
   /**
    * @param a
@@ -115,8 +168,6 @@ export const draw = function (text, id, version, diagObj) {
     .attr('x', w / 2)
     .attr('y', conf.titleTopMargin)
     .attr('class', 'titleText');
-
-  addSVGAccessibilityFields(diagObj.db, svg, id);
 
   /**
    * @param tasks
@@ -160,11 +211,15 @@ export const draw = function (text, id, version, diagObj) {
    * @param w
    */
   function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w) {
+    // Get unique task orders. Required to draw the background rects when display mode is compact.
+    const uniqueTaskOrderIds = [...new Set(theArray.map((item) => item.order))];
+    const uniqueTasks = uniqueTaskOrderIds.map((id) => theArray.find((item) => item.order === id));
+
     // Draw background rects covering the entire width of the graph, these form the section rows.
     svg
       .append('g')
       .selectAll('rect')
-      .data(theArray)
+      .data(uniqueTasks)
       .enter()
       .append('rect')
       .attr('x', 0)
@@ -178,8 +233,8 @@ export const draw = function (text, id, version, diagObj) {
       })
       .attr('height', theGap)
       .attr('class', function (d) {
-        for (let i = 0; i < categories.length; i++) {
-          if (d.type === categories[i]) {
+        for (const [i, category] of categories.entries()) {
+          if (d.type === category) {
             return 'section section' + (i % conf.numberSectionStyles);
           }
         }
@@ -247,8 +302,8 @@ export const draw = function (text, id, version, diagObj) {
         }
 
         let secNum = 0;
-        for (let i = 0; i < categories.length; i++) {
-          if (d.type === categories[i]) {
+        for (const [i, category] of categories.entries()) {
+          if (d.type === category) {
             secNum = i % conf.numberSectionStyles;
           }
         }
@@ -339,8 +394,8 @@ export const draw = function (text, id, version, diagObj) {
         }
 
         let secNum = 0;
-        for (let i = 0; i < categories.length; i++) {
-          if (d.type === categories[i]) {
+        for (const [i, category] of categories.entries()) {
+          if (d.type === category) {
             secNum = i % conf.numberSectionStyles;
           }
         }
@@ -400,7 +455,7 @@ export const draw = function (text, id, version, diagObj) {
 
       rectangles
         .filter(function (d) {
-          return typeof links[d.id] !== 'undefined';
+          return links[d.id] !== undefined;
         })
         .each(function (o) {
           var taskRect = doc.querySelector('#' + o.id);
@@ -438,16 +493,16 @@ export const draw = function (text, id, version, diagObj) {
 
     const excludeRanges = [];
     let range = null;
-    let d = moment(minTime);
+    let d = dayjs(minTime);
     while (d.valueOf() <= maxTime) {
       if (diagObj.db.isInvalidDate(d, dateFormat, excludes, includes)) {
         if (!range) {
           range = {
-            start: d.clone(),
-            end: d.clone(),
+            start: d,
+            end: d,
           };
         } else {
-          range.end = d.clone();
+          range.end = d;
         }
       } else {
         if (range) {
@@ -455,7 +510,7 @@ export const draw = function (text, id, version, diagObj) {
           range = null;
         }
       }
-      d.add(1, 'd');
+      d = d.add(1, 'd');
     }
 
     const rectangles = svg.append('g').selectAll('rect').data(excludeRanges).enter();
@@ -470,7 +525,7 @@ export const draw = function (text, id, version, diagObj) {
       })
       .attr('y', conf.gridLineStartPadding)
       .attr('width', function (d) {
-        const renderEnd = d.end.clone().add(1, 'day');
+        const renderEnd = d.end.add(1, 'day');
         return timeScale(renderEnd) - timeScale(d.start);
       })
       .attr('height', h - theTopPad - conf.gridLineStartPadding)
@@ -500,7 +555,7 @@ export const draw = function (text, id, version, diagObj) {
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
       .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
 
-    const reTickInterval = /^([1-9][0-9]*)(minute|hour|day|week|month)$/;
+    const reTickInterval = /^([1-9]\d*)(minute|hour|day|week|month)$/;
     const resultTickInterval = reTickInterval.exec(
       diagObj.db.getTickInterval() || conf.tickInterval
     );
@@ -585,12 +640,9 @@ export const draw = function (text, id, version, diagObj) {
    * @param theTopPad
    */
   function vertLabels(theGap, theTopPad) {
-    const numOccurances = [];
     let prevGap = 0;
 
-    for (let i = 0; i < categories.length; i++) {
-      numOccurances[i] = [categories[i], getCount(categories[i], catsUnfiltered)];
-    }
+    const numOccurances = Object.keys(categoryHeights).map((d) => [d, categoryHeights[d]]);
 
     svg
       .append('g') // without doing this, impossible to put grid lines behind text
@@ -604,14 +656,14 @@ export const draw = function (text, id, version, diagObj) {
         const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
         svgLabel.setAttribute('dy', dy + 'em');
 
-        for (let j = 0; j < rows.length; j++) {
+        for (const [j, row] of rows.entries()) {
           const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
           tspan.setAttribute('alignment-baseline', 'central');
           tspan.setAttribute('x', '10');
           if (j > 0) {
             tspan.setAttribute('dy', '1em');
           }
-          tspan.textContent = rows[j];
+          tspan.textContent = row;
           svgLabel.appendChild(tspan);
         }
         return svgLabel;
@@ -628,10 +680,9 @@ export const draw = function (text, id, version, diagObj) {
         }
       })
       .attr('font-size', conf.sectionFontSize)
-      .attr('font-size', conf.sectionFontSize)
       .attr('class', function (d) {
-        for (let i = 0; i < categories.length; i++) {
-          if (d[0] === categories[i]) {
+        for (const [i, category] of categories.entries()) {
+          if (d[0] === category) {
             return 'sectionTitle sectionTitle' + (i % conf.numberSectionStyles);
           }
         }
@@ -684,31 +735,6 @@ export const draw = function (text, id, version, diagObj) {
       }
     }
     return result;
-  }
-
-  /**
-   * From this stack exchange question:
-   * http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
-   *
-   * @param arr
-   */
-  function getCounts(arr) {
-    let i = arr.length; // const to loop over
-    const obj = {}; // obj to store results
-    while (i) {
-      obj[arr[--i]] = (obj[arr[i]] || 0) + 1; // count occurrences
-    }
-    return obj;
-  }
-
-  /**
-   * Get specific from everything
-   *
-   * @param word
-   * @param arr
-   */
-  function getCount(word, arr) {
-    return getCounts(arr)[word] || 0;
   }
 };
 

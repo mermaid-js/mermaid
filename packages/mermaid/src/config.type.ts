@@ -3,10 +3,6 @@
 import DOMPurify from 'dompurify';
 
 export interface MermaidConfig {
-  /** @deprecated use mermaid.registerLazyDiagrams instead */
-  lazyLoadedDiagrams?: string[];
-  /** @deprecated use mermaid.registerLazyDiagrams instead */
-  loadExternalDiagramsAtStartup?: boolean;
   theme?: string;
   themeVariables?: any;
   themeCSS?: string;
@@ -26,10 +22,12 @@ export interface MermaidConfig {
   sequence?: SequenceDiagramConfig;
   gantt?: GanttDiagramConfig;
   journey?: JourneyDiagramConfig;
+  timeline?: TimelineDiagramConfig;
   class?: ClassDiagramConfig;
   state?: StateDiagramConfig;
   er?: ErDiagramConfig;
   pie?: PieDiagramConfig;
+  quadrantChart?: QuadrantChartConfig;
   requirement?: RequirementDiagramConfig;
   mindmap?: MindmapDiagramConfig;
   gitGraph?: GitGraphDiagramConfig;
@@ -225,7 +223,30 @@ export interface MindmapDiagramConfig extends BaseDiagramConfig {
   maxNodeWidth: number;
 }
 
-export type PieDiagramConfig = BaseDiagramConfig;
+export interface PieDiagramConfig extends BaseDiagramConfig {
+  textPosition?: number;
+}
+
+export interface QuadrantChartConfig extends BaseDiagramConfig {
+  chartWidth: number;
+  chartHeight: number;
+  titleFontSize: number;
+  titlePadding: number;
+  quadrantPadding: number;
+  xAxisLabelPadding: number;
+  yAxisLabelPadding: number;
+  xAxisLabelFontSize: number;
+  yAxisLabelFontSize: number;
+  quadrantLabelFontSize: number;
+  quadrantTextTopPadding: number;
+  pointTextPadding: number;
+  pointLabelFontSize: number;
+  pointRadius: number;
+  xAxisPosition: 'top' | 'bottom';
+  yAxisPosition: 'left' | 'right';
+  quadrantInternalBorderStrokeWidth: number;
+  quadrantExternalBorderStrokeWidth: number;
+}
 
 export interface ErDiagramConfig extends BaseDiagramConfig {
   titleTopMargin?: number;
@@ -267,6 +288,10 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
   padding?: number;
   textHeight?: number;
   defaultRenderer?: string;
+  nodeSpacing?: number;
+  rankSpacing?: number;
+  diagramPadding?: number;
+  htmlLabels?: boolean;
 }
 
 export interface JourneyDiagramConfig extends BaseDiagramConfig {
@@ -292,6 +317,32 @@ export interface JourneyDiagramConfig extends BaseDiagramConfig {
   sectionColours?: string[];
 }
 
+export interface TimelineDiagramConfig extends BaseDiagramConfig {
+  diagramMarginX?: number;
+  diagramMarginY?: number;
+  leftMargin?: number;
+  width?: number;
+  height?: number;
+  padding?: number;
+  boxMargin?: number;
+  boxTextMargin?: number;
+  noteMargin?: number;
+  messageMargin?: number;
+  messageAlign?: string;
+  bottomMarginAdj?: number;
+  rightAngles?: boolean;
+  taskFontSize?: string | number;
+  taskFontFamily?: string;
+  taskMargin?: number;
+  activationWidth?: number;
+  textPlacement?: string;
+  actorColours?: string[];
+  sectionFills?: string[];
+  sectionColours?: string[];
+  disableMulticolor?: boolean;
+  useMaxWidth?: boolean;
+}
+
 export interface GanttDiagramConfig extends BaseDiagramConfig {
   titleTopMargin?: number;
   barHeight?: number;
@@ -306,6 +357,7 @@ export interface GanttDiagramConfig extends BaseDiagramConfig {
   axisFormat?: string;
   tickInterval?: string;
   topAxis?: boolean;
+  displayMode?: string;
 }
 
 export interface SequenceDiagramConfig extends BaseDiagramConfig {
@@ -356,6 +408,7 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
   curve?: string;
   padding?: number;
   defaultRenderer?: string;
+  wrappingWidth?: number;
 }
 
 export interface FontConfig {

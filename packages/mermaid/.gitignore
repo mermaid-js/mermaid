@@ -1,2 +1,6 @@
 src/vitepress
 src/docs/config/setup
+README.*
+src/docs/public/user-avatars/
+src/docs/.vitepress/cache
+src/docs/.vitepress/components.d.ts

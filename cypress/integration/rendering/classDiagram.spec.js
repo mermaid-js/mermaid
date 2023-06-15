@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
 
 describe('Class diagram', () => {
   it('1: should render a simple class diagram', () => {
@@ -286,7 +286,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('15: should render a simple class diagram with css classes applied two multiple classes', () => {
+  it('15: should render a simple class diagram with css classes applied to multiple classes', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -414,7 +414,6 @@ describe('Class diagram', () => {
     classDiagram
       note "I love this diagram!\nDo you love it?"
       class Class10 {
-        <<service>>
         int id
         size()
       }

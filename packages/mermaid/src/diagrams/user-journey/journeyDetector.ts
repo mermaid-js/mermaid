@@ -1,5 +1,20 @@
-import type { DiagramDetector } from '../../diagram-api/types';
+import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types.js';
 
-export const journeyDetector: DiagramDetector = (txt) => {
+const id = 'journey';
+
+const detector: DiagramDetector = (txt) => {
   return txt.match(/^\s*journey/) !== null;
 };
+
+const loader = async () => {
+  const { diagram } = await import('./journeyDiagram.js');
+  return { id, diagram };
+};
+
+const plugin: ExternalDiagramDefinition = {
+  id,
+  detector,
+  loader,
+};
+
+export default plugin;

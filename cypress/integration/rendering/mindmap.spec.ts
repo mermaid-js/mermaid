@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
+import { imgSnapshotTest } from '../../helpers/util.js';
 
 /**
  * Check whether the SVG Element has a Mindmap root
@@ -45,6 +45,17 @@ root[root]
     imgSnapshotTest(
       `mindmap
 root[A root with a long text that wraps to keep the node size in check]
+    `,
+      {},
+      undefined,
+      shouldHaveRoot
+    );
+  });
+
+  it('a root with wrapping text and long words that exceed width', () => {
+    imgSnapshotTest(
+      `mindmap
+root[A few smaller words but then averylongsetofcharacterswithoutwhitespacetoseparate that we expect to wrapontonextlinesandnotexceedwidthparameters]
     `,
       {},
       undefined,
@@ -158,7 +169,6 @@ mindmap
       undefined,
       shouldHaveRoot
     );
-    cy.get('svg');
   });
   it('rounded rect shape', () => {
     imgSnapshotTest(
@@ -172,7 +182,6 @@ mindmap
       undefined,
       shouldHaveRoot
     );
-    cy.get('svg');
   });
   it('circle shape', () => {
     imgSnapshotTest(
@@ -186,7 +195,6 @@ mindmap
       undefined,
       shouldHaveRoot
     );
-    cy.get('svg');
   });
   it('default shape', () => {
     imgSnapshotTest(
@@ -198,7 +206,6 @@ mindmap
       undefined,
       shouldHaveRoot
     );
-    cy.get('svg');
   });
   it('adding children', () => {
     imgSnapshotTest(
@@ -212,7 +219,6 @@ mindmap
       undefined,
       shouldHaveRoot
     );
-    cy.get('svg');
   });
   it('adding grand children', () => {
     imgSnapshotTest(
@@ -227,7 +233,19 @@ mindmap
       undefined,
       shouldHaveRoot
     );
-    cy.get('svg');
+  });
+  describe('Markdown strings mindmaps (#4220)', () => {
+    it('Formatted label with linebreak and a wrapping label and emojis', () => {
+      imgSnapshotTest(
+        `mindmap
+    id1[\`**Start** with
+    a second line 😎\`]
+      id2[\`The dog in **the** hog... a *very long text* about it
+Word!\`]
+`,
+        { titleTopMargin: 0 }
+      );
+    });
   });
   /* The end */
 });

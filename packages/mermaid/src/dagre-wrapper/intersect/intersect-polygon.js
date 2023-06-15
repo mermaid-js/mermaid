@@ -1,6 +1,6 @@
 /* eslint "no-console": off */
 
-import intersectLine from './intersect-line';
+import intersectLine from './intersect-line.js';
 
 export default intersectPolygon;
 

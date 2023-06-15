@@ -1,6 +1,6 @@
-import pieDb from '../pieDb';
-import pie from './pie';
-import { setConfig } from '../../../config';
+import pieDb from '../pieDb.js';
+import pie from './pie.jison';
+import { setConfig } from '../../../config.js';
 
 setConfig({
   securityLevel: 'strict',

@@ -1,31 +1,12 @@
-import common from '../common/common';
-import { addFunction } from '../../interactionDb';
+import common from '../common/common.js';
+import * as svgDrawCommon from '../common/svgDrawCommon';
+import { addFunction } from '../../interactionDb.js';
+import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 
 export const drawRect = function (elem, rectData) {
-  const rectElem = elem.append('rect');
-  rectElem.attr('x', rectData.x);
-  rectElem.attr('y', rectData.y);
-  rectElem.attr('fill', rectData.fill);
-  rectElem.attr('stroke', rectData.stroke);
-  rectElem.attr('width', rectData.width);
-  rectElem.attr('height', rectData.height);
-  rectElem.attr('rx', rectData.rx);
-  rectElem.attr('ry', rectData.ry);
-
-  if (typeof rectData.class !== 'undefined') {
-    rectElem.attr('class', rectData.class);
-  }
-
-  return rectElem;
+  return svgDrawCommon.drawRect(elem, rectData);
 };
-
-// const sanitizeUrl = function (s) {
-//   return s
-//     .replace(/&/g, '&amp;')
-//     .replace(/</g, '&lt;')
-//     .replace(/javascript:/g, '');
-// };
 
 const addPopupInteraction = (id, actorCnt) => {
   addFunction(() => {
@@ -42,6 +23,7 @@ const addPopupInteraction = (id, actorCnt) => {
     });
   });
 };
+
 export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMenus) {
   if (actor.links === undefined || actor.links === null || Object.keys(actor.links).length === 0) {
     return { height: 0, width: 0 };
@@ -62,7 +44,7 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   g.attr('display', displayValue);
   addPopupInteraction('#actor' + actorCnt + '_popup', actorCnt);
   var actorClass = '';
-  if (typeof rectData.class !== 'undefined') {
+  if (rectData.class !== undefined) {
     actorClass = ' ' + rectData.class;
   }
 
@@ -106,22 +88,6 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   return { height: rectData.height + linkY, width: menuWidth };
 };
 
-export const drawImage = function (elem, x, y, link) {
-  const imageElem = elem.append('image');
-  imageElem.attr('x', x);
-  imageElem.attr('y', y);
-  var sanitizedLink = sanitizeUrl(link);
-  imageElem.attr('xlink:href', sanitizedLink);
-};
-
-export const drawEmbeddedImage = function (elem, x, y, link) {
-  const imageElem = elem.append('use');
-  imageElem.attr('x', x);
-  imageElem.attr('y', y);
-  var sanitizedLink = sanitizeUrl(link);
-  imageElem.attr('xlink:href', '#' + sanitizedLink);
-};
-
 export const popupMenu = function (popid) {
   return (
     "var pu = document.getElementById('" +
@@ -151,17 +117,20 @@ const popupMenuDownFunc = function (popupId) {
     pu.style.display = 'none';
   }
 };
+
 export const drawText = function (elem, textData) {
-  let prevTextHeight = 0,
-    textHeight = 0;
+  let prevTextHeight = 0;
+  let textHeight = 0;
   const lines = textData.text.split(common.lineBreakRegex);
+
+  const [_textFontSize, _textFontSizePx] = parseFontSize(textData.fontSize);
 
   let textElems = [];
   let dy = 0;
   let yfunc = () => textData.y;
   if (
-    typeof textData.valign !== 'undefined' &&
-    typeof textData.textMargin !== 'undefined' &&
+    textData.valign !== undefined &&
+    textData.textMargin !== undefined &&
     textData.textMargin > 0
   ) {
     switch (textData.valign) {
@@ -185,10 +154,11 @@ export const drawText = function (elem, textData) {
         break;
     }
   }
+
   if (
-    typeof textData.anchor !== 'undefined' &&
-    typeof textData.textMargin !== 'undefined' &&
-    typeof textData.width !== 'undefined'
+    textData.anchor !== undefined &&
+    textData.textMargin !== undefined &&
+    textData.width !== undefined
   ) {
     switch (textData.anchor) {
       case 'left':
@@ -214,59 +184,60 @@ export const drawText = function (elem, textData) {
         break;
     }
   }
-  for (let i = 0; i < lines.length; i++) {
-    let line = lines[i];
+
+  for (let [i, line] of lines.entries()) {
     if (
-      typeof textData.textMargin !== 'undefined' &&
+      textData.textMargin !== undefined &&
       textData.textMargin === 0 &&
-      typeof textData.fontSize !== 'undefined'
+      _textFontSize !== undefined
     ) {
-      dy = i * textData.fontSize;
+      dy = i * _textFontSize;
     }
 
     const textElem = elem.append('text');
     textElem.attr('x', textData.x);
     textElem.attr('y', yfunc());
-    if (typeof textData.anchor !== 'undefined') {
+    if (textData.anchor !== undefined) {
       textElem
         .attr('text-anchor', textData.anchor)
         .attr('dominant-baseline', textData.dominantBaseline)
         .attr('alignment-baseline', textData.alignmentBaseline);
     }
-    if (typeof textData.fontFamily !== 'undefined') {
+    if (textData.fontFamily !== undefined) {
       textElem.style('font-family', textData.fontFamily);
     }
-    if (typeof textData.fontSize !== 'undefined') {
-      textElem.style('font-size', textData.fontSize);
+    if (_textFontSizePx !== undefined) {
+      textElem.style('font-size', _textFontSizePx);
     }
-    if (typeof textData.fontWeight !== 'undefined') {
+    if (textData.fontWeight !== undefined) {
       textElem.style('font-weight', textData.fontWeight);
     }
-    if (typeof textData.fill !== 'undefined') {
+    if (textData.fill !== undefined) {
       textElem.attr('fill', textData.fill);
     }
-    if (typeof textData.class !== 'undefined') {
+    if (textData.class !== undefined) {
       textElem.attr('class', textData.class);
     }
-    if (typeof textData.dy !== 'undefined') {
+    if (textData.dy !== undefined) {
       textElem.attr('dy', textData.dy);
     } else if (dy !== 0) {
       textElem.attr('dy', dy);
     }
 
+    const text = line || ZERO_WIDTH_SPACE;
     if (textData.tspan) {
       const span = textElem.append('tspan');
       span.attr('x', textData.x);
-      if (typeof textData.fill !== 'undefined') {
+      if (textData.fill !== undefined) {
         span.attr('fill', textData.fill);
       }
-      span.text(line);
+      span.text(text);
     } else {
-      textElem.text(line);
+      textElem.text(text);
     }
     if (
-      typeof textData.valign !== 'undefined' &&
-      typeof textData.textMargin !== 'undefined' &&
+      textData.valign !== undefined &&
+      textData.textMargin !== undefined &&
       textData.textMargin > 0
     ) {
       textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
@@ -339,19 +310,21 @@ export const fixLifeLineHeights = (diagram, bounds) => {
  * @param {any} elem - The diagram we'll draw to.
  * @param {any} actor - The actor to draw.
  * @param {any} conf - DrawText implementation discriminator object
+ * @param {boolean} isFooter - If the actor is the footer one
  */
-const drawActorTypeParticipant = function (elem, actor, conf) {
+const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   const center = actor.x + actor.width / 2;
+  const centerY = actor.y + 5;
 
   const boxpluslineGroup = elem.append('g');
   var g = boxpluslineGroup;
 
-  if (actor.y === 0) {
+  if (!isFooter) {
     actorCnt++;
     g.append('line')
       .attr('id', 'actor' + actorCnt)
       .attr('x1', center)
-      .attr('y1', 5)
+      .attr('y1', centerY)
       .attr('x2', center)
       .attr('y2', 2000)
       .attr('class', 'actor-line')
@@ -367,7 +340,7 @@ const drawActorTypeParticipant = function (elem, actor, conf) {
     }
   }
 
-  const rect = getNoteRect();
+  const rect = svgDrawCommon.getNoteRect();
   var cssclass = 'actor';
   if (actor.properties != null && actor.properties['class']) {
     cssclass = actor.properties['class'];
@@ -387,9 +360,9 @@ const drawActorTypeParticipant = function (elem, actor, conf) {
   if (actor.properties != null && actor.properties['icon']) {
     const iconSrc = actor.properties['icon'].trim();
     if (iconSrc.charAt(0) === '@') {
-      drawEmbeddedImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc.substr(1));
+      svgDrawCommon.drawEmbeddedImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc.substr(1));
     } else {
-      drawImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc);
+      svgDrawCommon.drawImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc);
     }
   }
 
@@ -414,16 +387,17 @@ const drawActorTypeParticipant = function (elem, actor, conf) {
   return height;
 };
 
-const drawActorTypeActor = function (elem, actor, conf) {
+const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   const center = actor.x + actor.width / 2;
+  const centerY = actor.y + 80;
 
-  if (actor.y === 0) {
+  if (!isFooter) {
     actorCnt++;
     elem
       .append('line')
       .attr('id', 'actor' + actorCnt)
       .attr('x1', center)
-      .attr('y1', 80)
+      .attr('y1', centerY)
       .attr('x2', center)
       .attr('y2', 2000)
       .attr('class', 'actor-line')
@@ -433,7 +407,7 @@ const drawActorTypeActor = function (elem, actor, conf) {
   const actElem = elem.append('g');
   actElem.attr('class', 'actor-man');
 
-  const rect = getNoteRect();
+  const rect = svgDrawCommon.getNoteRect();
   rect.x = actor.x;
   rect.y = actor.y;
   rect.fill = '#eaeaea';
@@ -442,7 +416,6 @@ const drawActorTypeActor = function (elem, actor, conf) {
   rect.class = 'actor';
   rect.rx = 3;
   rect.ry = 3;
-  // drawRect(actElem, rect);
 
   actElem
     .append('line')
@@ -496,18 +469,38 @@ const drawActorTypeActor = function (elem, actor, conf) {
   return actor.height;
 };
 
-export const drawActor = function (elem, actor, conf) {
+export const drawActor = function (elem, actor, conf, isFooter) {
   switch (actor.type) {
     case 'actor':
-      return drawActorTypeActor(elem, actor, conf);
+      return drawActorTypeActor(elem, actor, conf, isFooter);
     case 'participant':
-      return drawActorTypeParticipant(elem, actor, conf);
+      return drawActorTypeParticipant(elem, actor, conf, isFooter);
   }
+};
+
+export const drawBox = function (elem, box, conf) {
+  const boxplustextGroup = elem.append('g');
+  const g = boxplustextGroup;
+  drawBackgroundRect(g, box);
+  if (box.name) {
+    _drawTextCandidateFunc(conf)(
+      box.name,
+      g,
+      box.x,
+      box.y + (box.textMaxHeight || 0) / 2,
+      box.width,
+      0,
+      { class: 'text' },
+      conf
+    );
+  }
+  g.lower();
 };
 
 export const anchorElement = function (elem) {
   return elem.append('g');
 };
+
 /**
  * Draws an activation in the diagram
  *
@@ -518,7 +511,7 @@ export const anchorElement = function (elem) {
  * @param {any} actorActivations - Number of activations on the actor.
  */
 export const drawActivation = function (elem, bounds, verticalPos, conf, actorActivations) {
-  const rect = getNoteRect();
+  const rect = svgDrawCommon.getNoteRect();
   const g = bounds.anchored;
   rect.x = bounds.startx;
   rect.y = bounds.starty;
@@ -561,7 +554,7 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
   drawLoopLine(loopModel.stopx, loopModel.starty, loopModel.stopx, loopModel.stopy);
   drawLoopLine(loopModel.startx, loopModel.stopy, loopModel.stopx, loopModel.stopy);
   drawLoopLine(loopModel.startx, loopModel.starty, loopModel.startx, loopModel.stopy);
-  if (typeof loopModel.sections !== 'undefined') {
+  if (loopModel.sections !== undefined) {
     loopModel.sections.forEach(function (item) {
       drawLoopLine(loopModel.startx, item.y, loopModel.stopx, item.y).style(
         'stroke-dasharray',
@@ -570,7 +563,7 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
     });
   }
 
-  let txt = getTextObj();
+  let txt = svgDrawCommon.getTextObj();
   txt.text = labelText;
   txt.x = loopModel.startx;
   txt.y = loopModel.starty;
@@ -601,7 +594,7 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
 
   let textElem = drawText(g, txt);
 
-  if (typeof loopModel.sectionTitles !== 'undefined') {
+  if (loopModel.sectionTitles !== undefined) {
     loopModel.sectionTitles.forEach(function (item, idx) {
       if (item.message) {
         txt.text = item.message;
@@ -637,15 +630,7 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
  * @param {any} bounds Shape of the rectangle
  */
 export const drawBackgroundRect = function (elem, bounds) {
-  const rectElem = drawRect(elem, {
-    x: bounds.startx,
-    y: bounds.starty,
-    width: bounds.stopx - bounds.startx,
-    height: bounds.stopy - bounds.starty,
-    fill: bounds.fill,
-    class: 'rect',
-  });
-  rectElem.lower();
+  svgDrawCommon.drawBackgroundRect(elem, bounds);
 };
 
 export const insertDatabaseIcon = function (elem) {
@@ -712,6 +697,7 @@ export const insertArrowHead = function (elem) {
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 10 z'); // this is actual shape for arrowhead
 };
+
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  *
@@ -730,6 +716,7 @@ export const insertArrowFilledHead = function (elem) {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
+
 /**
  * Setup node number. The result is appended to the svg.
  *
@@ -751,6 +738,7 @@ export const insertSequenceNumber = function (elem) {
     .attr('r', 6);
   // .style("fill", '#f00');
 };
+
 /**
  * Setup cross head and define the marker. The result is appended to the svg.
  *
@@ -841,8 +829,7 @@ const _drawTextCandidateFunc = (function () {
   function byTspan(content, g, x, y, width, height, textAttrs, conf) {
     const { actorFontSize, actorFontFamily, actorFontWeight } = conf;
 
-    let _actorFontSize =
-      actorFontSize && actorFontSize.replace ? actorFontSize.replace('px', '') : actorFontSize;
+    const [_actorFontSize, _actorFontSizePx] = parseFontSize(actorFontSize);
 
     const lines = content.split(common.lineBreakRegex);
     for (let i = 0; i < lines.length; i++) {
@@ -852,7 +839,7 @@ const _drawTextCandidateFunc = (function () {
         .attr('x', x + width / 2)
         .attr('y', y)
         .style('text-anchor', 'middle')
-        .style('font-size', actorFontSize)
+        .style('font-size', _actorFontSizePx)
         .style('font-weight', actorFontWeight)
         .style('font-family', actorFontFamily);
       text
@@ -1036,9 +1023,8 @@ export default {
   drawText,
   drawLabel,
   drawActor,
+  drawBox,
   drawPopup,
-  drawImage,
-  drawEmbeddedImage,
   anchorElement,
   drawActivation,
   drawLoop,

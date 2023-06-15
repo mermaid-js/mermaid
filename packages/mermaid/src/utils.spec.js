@@ -1,10 +1,11 @@
 import { vi } from 'vitest';
-import utils from './utils';
-import assignWithDepth from './assignWithDepth';
-import { detectType } from './diagram-api/detectType';
-import { addDiagrams } from './diagram-api/diagram-orchestration';
-import memoize from 'lodash-es/memoize';
-import { MockD3 } from 'd3';
+import utils from './utils.js';
+import assignWithDepth from './assignWithDepth.js';
+import { detectType } from './diagram-api/detectType.js';
+import { addDiagrams } from './diagram-api/diagram-orchestration.js';
+import memoize from 'lodash-es/memoize.js';
+import { MockedD3 } from './tests/MockedD3.js';
+
 addDiagrams();
 
 describe('when assignWithDepth: should merge objects within objects', function () {
@@ -238,9 +239,9 @@ Alice->Bob: hi`;
     const type = detectType(str);
     expect(type).toBe('gitGraph');
   });
-  it('should not allow frontmatter with leading spaces', function () {
+  it('should handle malformed frontmatter (with leading spaces) with `---` error graphtype', function () {
     const str = '    ---\ntitle: foo\n---\n  gitGraph TB:\nbfs1:queue';
-    expect(() => detectType(str)).toThrow('No diagram type detected for text');
+    expect(detectType(str)).toBe('---');
   });
 });
 describe('when finding substring in array ', function () {
@@ -352,21 +353,78 @@ describe('when initializing the id generator', function () {
 });
 
 describe('when inserting titles', function () {
-  it('should do nothing when title is empty', function () {
-    const svg = MockD3('svg');
-    utils.insertTitle(svg, 'testClass', 0, '');
-    expect(svg.__children.length).toBe(0);
+  const svg = new MockedD3('svg');
+  const mockedElement = {
+    getBBox: vi.fn().mockReturnValue({ x: 10, y: 11, width: 100, height: 200 }),
+  };
+  const fauxTitle = new MockedD3('title');
+
+  beforeEach(() => {
+    svg.node = vi.fn().mockReturnValue(mockedElement);
   });
 
-  it('should insert title centered', function () {
-    const svg = MockD3('svg');
+  it('does nothing if the title is empty', function () {
+    const svgAppendSpy = vi.spyOn(svg, 'append');
+    utils.insertTitle(svg, 'testClass', 0, '');
+    expect(svgAppendSpy).not.toHaveBeenCalled();
+  });
+
+  it('appends the title as a text item with the given title text', function () {
+    const svgAppendSpy = vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
+    const titleTextSpy = vi.spyOn(fauxTitle, 'text');
+
     utils.insertTitle(svg, 'testClass', 5, 'test title');
-    expect(svg.__children.length).toBe(1);
-    const text = svg.__children[0];
-    expect(text.__name).toBe('text');
-    expect(text.text).toHaveBeenCalledWith('test title');
-    expect(text.attr).toHaveBeenCalledWith('x', 15);
-    expect(text.attr).toHaveBeenCalledWith('y', -5);
-    expect(text.attr).toHaveBeenCalledWith('class', 'testClass');
+    expect(svgAppendSpy).toHaveBeenCalled();
+    expect(titleTextSpy).toHaveBeenCalledWith('test title');
+  });
+
+  it('x value is the bounds x position + half of the bounds width', () => {
+    vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
+    const titleAttrSpy = vi.spyOn(fauxTitle, 'attr');
+
+    utils.insertTitle(svg, 'testClass', 5, 'test title');
+    expect(titleAttrSpy).toHaveBeenCalledWith('x', 10 + 100 / 2);
+  });
+
+  it('y value is the negative of given title top margin', () => {
+    vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
+    const titleAttrSpy = vi.spyOn(fauxTitle, 'attr');
+
+    utils.insertTitle(svg, 'testClass', 5, 'test title');
+    expect(titleAttrSpy).toHaveBeenCalledWith('y', -5);
+  });
+
+  it('class is the given css class', () => {
+    vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
+    const titleAttrSpy = vi.spyOn(fauxTitle, 'attr');
+
+    utils.insertTitle(svg, 'testClass', 5, 'test title');
+    expect(titleAttrSpy).toHaveBeenCalledWith('class', 'testClass');
+  });
+});
+
+describe('when parsing font sizes', function () {
+  it('parses number inputs', function () {
+    expect(utils.parseFontSize(14)).toEqual([14, '14px']);
+  });
+
+  it('parses string em inputs', function () {
+    expect(utils.parseFontSize('14em')).toEqual([14, '14em']);
+  });
+
+  it('parses string px inputs', function () {
+    expect(utils.parseFontSize('14px')).toEqual([14, '14px']);
+  });
+
+  it('parses string inputs without units', function () {
+    expect(utils.parseFontSize('14')).toEqual([14, '14px']);
+  });
+
+  it('handles undefined input', function () {
+    expect(utils.parseFontSize(undefined)).toEqual([undefined, undefined]);
+  });
+
+  it('handles unparseable input', function () {
+    expect(utils.parseFontSize({ fontSize: 14 })).toEqual([undefined, undefined]);
   });
 });

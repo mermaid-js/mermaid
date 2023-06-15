@@ -1,6 +1,6 @@
-import { setConfig } from '../../../config';
-import erDb from '../erDb';
-import erDiagram from './erDiagram'; // jison file
+import { setConfig } from '../../../config.js';
+import erDb from '../erDb.js';
+import erDiagram from './erDiagram.jison'; // jison file
 
 setConfig({
   securityLevel: 'strict',
@@ -135,6 +135,37 @@ describe('when parsing ER diagram it...', function () {
     });
   });
 
+  describe('attribute name', () => {
+    it('should allow alphanumeric characters, dashes, underscores and brackets (not leading chars)', function () {
+      const entity = 'BOOK';
+      const attribute1 = 'string myBookTitle';
+      const attribute2 = 'string MYBOOKSUBTITLE_1';
+      const attribute3 = 'string author-ref[name](1)';
+
+      erDiagram.parser.parse(
+        `erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n${attribute3}\n}`
+      );
+      const entities = erDb.getEntities();
+
+      expect(Object.keys(entities).length).toBe(1);
+      expect(entities[entity].attributes.length).toBe(3);
+      expect(entities[entity].attributes[0].attributeName).toBe('myBookTitle');
+      expect(entities[entity].attributes[1].attributeName).toBe('MYBOOKSUBTITLE_1');
+      expect(entities[entity].attributes[2].attributeName).toBe('author-ref[name](1)');
+    });
+
+    it('should not allow leading numbers, dashes or brackets', function () {
+      const entity = 'BOOK';
+      const nonLeadingChars = '0-[]()';
+      [...nonLeadingChars].forEach((nonLeadingChar) => {
+        expect(() => {
+          const attribute = `string ${nonLeadingChar}author`;
+          erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
+        }).toThrow();
+      });
+    });
+  });
+
   it('should allow an entity with a single attribute to be defined', function () {
     const entity = 'BOOK';
     const attribute = 'string title';
@@ -176,17 +207,40 @@ describe('when parsing ER diagram it...', function () {
     expect(entities[entity].attributes.length).toBe(1);
   });
 
-  it('should allow an entity with attribute starting with fk or pk and a comment', function () {
+  it('should allow an entity with attribute starting with fk, pk or uk and a comment', function () {
     const entity = 'BOOK';
     const attribute1 = 'int fk_title FK';
     const attribute2 = 'string pk_author PK';
-    const attribute3 = 'float pk_price PK "comment"';
+    const attribute3 = 'string uk_address UK';
+    const attribute4 = 'float pk_price PK "comment"';
 
     erDiagram.parser.parse(
-      `erDiagram\n${entity} {\n${attribute1} \n\n${attribute2}\n${attribute3}\n}`
+      `erDiagram\n${entity} {\n${attribute1} \n\n${attribute2}\n${attribute3}\n${attribute4}\n}`
     );
     const entities = erDb.getEntities();
-    expect(entities[entity].attributes.length).toBe(3);
+    expect(entities[entity].attributes.length).toBe(4);
+  });
+
+  it('should allow an entity with attributes that have many constraints and comments', function () {
+    const entity = 'CUSTOMER';
+    const attribute1 = 'int customer_number PK, FK "comment1"';
+    const attribute2 = 'datetime customer_status_start_datetime PK,UK, FK';
+    const attribute3 = 'datetime customer_status_end_datetime PK , UK "comment3"';
+    const attribute4 = 'string customer_firstname';
+    const attribute5 = 'string customer_lastname "comment5"';
+
+    erDiagram.parser.parse(
+      `erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n${attribute3}\n${attribute4}\n${attribute5}\n}`
+    );
+    const entities = erDb.getEntities();
+    expect(entities[entity].attributes[0].attributeKeyTypeList).toEqual(['PK', 'FK']);
+    expect(entities[entity].attributes[0].attributeComment).toBe('comment1');
+    expect(entities[entity].attributes[1].attributeKeyTypeList).toEqual(['PK', 'UK', 'FK']);
+    expect(entities[entity].attributes[2].attributeKeyTypeList).toEqual(['PK', 'UK']);
+    expect(entities[entity].attributes[2].attributeComment).toBe('comment3');
+    expect(entities[entity].attributes[3].attributeKeyTypeList).toBeUndefined();
+    expect(entities[entity].attributes[4].attributeKeyTypeList).toBeUndefined();
+    expect(entities[entity].attributes[4].attributeComment).toBe('comment5');
   });
 
   it('should allow an entity with attribute that has a generic type', function () {
@@ -212,6 +266,19 @@ describe('when parsing ER diagram it...', function () {
     const entities = erDb.getEntities();
     expect(Object.keys(entities).length).toBe(1);
     expect(entities[entity].attributes.length).toBe(2);
+  });
+
+  it('should allow an entity with attribute that is a limited length string', function () {
+    const entity = 'BOOK';
+    const attribute1 = 'character(10) isbn FK';
+    const attribute2 = 'varchar(5) postal_code "Five digits"';
+
+    erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n}`);
+    const entities = erDb.getEntities();
+    expect(Object.keys(entities).length).toBe(1);
+    expect(entities[entity].attributes.length).toBe(2);
+    expect(entities[entity].attributes[0].attributeType).toBe('character(10)');
+    expect(entities[entity].attributes[1].attributeType).toBe('varchar(5)');
   });
 
   it('should allow an entity with multiple attributes to be defined', function () {
@@ -323,34 +390,34 @@ describe('when parsing ER diagram it...', function () {
     expect(Object.keys(erDb.getEntities()).length).toBe(1);
   });
 
-  it('should allow for a accessibility title and description (accDescr)', function () {
+  describe('accessible title and description', () => {
     const teacherRole = 'is teacher of';
     const line1 = `TEACHER }o--o{ STUDENT : "${teacherRole}"`;
 
-    erDiagram.parser.parse(
-      `erDiagram
+    it('should allow for a accessibility title and description (accDescr)', function () {
+      erDiagram.parser.parse(
+        `erDiagram
       accTitle: graph title
       accDescr: this graph is about stuff
       ${line1}`
-    );
-    expect(erDb.getAccTitle()).toBe('graph title');
-    expect(erDb.getAccDescription()).toBe('this graph is about stuff');
-  });
+      );
+      expect(erDb.getAccTitle()).toBe('graph title');
+      expect(erDb.getAccDescription()).toBe('this graph is about stuff');
+    });
 
-  it('should allow for a accessibility title and multi line description (accDescr)', function () {
-    const teacherRole = 'is teacher of';
-    const line1 = `TEACHER }o--o{ STUDENT : "${teacherRole}"`;
-
-    erDiagram.parser.parse(
-      `erDiagram
+    it('parses a multi line description (accDescr)', function () {
+      erDiagram.parser.parse(
+        `erDiagram
       accTitle: graph title
-      accDescr {
-        this graph is about stuff
-      }\n
+      accDescr { this graph is
+        about
+        stuff
+        }\n
       ${line1}`
-    );
-    expect(erDb.getAccTitle()).toBe('graph title');
-    expect(erDb.getAccDescription()).toBe('this graph is about stuff');
+      );
+      expect(erDb.getAccTitle()).toEqual('graph title');
+      expect(erDb.getAccDescription()).toEqual('this graph is\nabout\nstuff');
+    });
   });
 
   it('should allow more than one relationship between the same two entities', function () {
@@ -650,6 +717,15 @@ describe('when parsing ER diagram it...', function () {
       erDiagram.parser.parse('erDiagram\nCUSTOMER ||--|{ ORDER : places');
       const rels = erDb.getRelationships();
       expect(rels[0].roleA).toBe('places');
+    });
+
+    it('should represent parent-child relationship correctly', function () {
+      erDiagram.parser.parse('erDiagram\nPROJECT u--o{ TEAM_MEMBER : "parent"');
+      const rels = erDb.getRelationships();
+      expect(Object.keys(erDb.getEntities()).length).toBe(2);
+      expect(rels.length).toBe(1);
+      expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.MD_PARENT);
+      expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ZERO_OR_MORE);
     });
   });
 });

@@ -1,0 +1,29 @@
+name: Build Vitepress docs
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          cache: pnpm
+          node-version: 18
+
+      - name: Install Packages
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Build
+        run: pnpm --filter mermaid run docs:build:vitepress

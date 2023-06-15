@@ -1,4 +1,5 @@
 packages:
-  # all packages in direct subdirs of packages/
   - 'packages/*'
+  - 'packages/mermaid/src/docs'
+  - 'packages/mermaid/src/vitepress'
   - 'tests/*'

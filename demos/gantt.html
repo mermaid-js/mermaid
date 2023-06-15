@@ -78,7 +78,7 @@
     axisFormat %d/%m
     todayMarker off
     section Section1
-    Today: 1, -01:00, 5min
+    Today: 1, 08-08-09-01:00, 5min
     </pre>
     <hr />
 
@@ -89,7 +89,7 @@
     axisFormat %d/%m
     todayMarker stroke-width:5px,stroke:#00f,opacity:0.5
     section Section1
-    Today: 1, -01:00, 5min
+    Today: 1, 08-08-09-01:00, 5min
     </pre>
     <hr />
 
@@ -166,6 +166,37 @@
     </pre>
     <hr />
 
+    <pre class="mermaid">
+    ---
+      displayMode: compact
+    ---
+    gantt
+    title GANTT compact
+    dateFormat  HH:mm:ss
+    axisFormat  %Hh%M
+
+    section DB Clean
+    Clean: 12:00:00, 10m
+    Clean: 12:30:00, 12m
+    Clean: 13:00:00, 8m
+    Clean: 13:30:00, 9m
+    Clean: 14:00:00, 13m
+    Clean: 14:30:00, 10m
+    Clean: 15:00:00, 11m
+
+    section Sessions
+    A: 12:00:00, 63m
+    B: 12:30:00, 12m
+    C: 13:05:00, 12m
+    D: 13:06:00, 33m
+    E: 13:15:00, 55m
+    F: 13:20:00, 12m
+    G: 13:32:00, 18m
+    H: 13:50:00, 20m
+    I: 14:10:00, 10m
+    </pre>
+    <hr />
+
     <script>
       function ganttTestClick(a, b, c) {
         console.log('a:', a);
@@ -182,8 +213,8 @@
       }
     </script>
 
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         logLevel: 3,
         securityLevel: 'loose',

@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
 
 describe('State diagram', () => {
   it('v2 should render a simple info', () => {
@@ -328,7 +328,7 @@ describe('State diagram', () => {
       }
     );
   });
-  it('v2 it should be possibel to use a choice', () => {
+  it('v2 it should be possible to use a choice', () => {
     imgSnapshotTest(
       `
   stateDiagram-v2
@@ -530,7 +530,7 @@ stateDiagram-v2
           [*] --> A
           A --> B: test({ foo#colon; 'far' })
           B --> [*]
-            classDef badBadEvent fill:#f00,color:white,font-weight:bold 
+            classDef badBadEvent fill:#f00,color:white,font-weight:bold
             class B badBadEvent
            `,
         { logLevel: 0, fontFamily: 'courier' }
@@ -543,14 +543,14 @@ stateDiagram-v2
           classDef notMoving fill:white
           classDef movement font-style:italic;
           classDef badBadEvent fill:#f00,color:white,font-weight:bold
-    
+
           [*] --> Still
           Still --> [*]
           Still --> Moving
           Moving --> Still
           Moving --> Crash
           Crash --> [*]
-    
+
           class Still notMoving
           class Moving, Crash movement
           class Crash badBadEvent

@@ -1,4 +1,4 @@
-import { DiagramDb } from './types';
+import { DiagramDb } from './types.js';
 // The "* as yaml" part is necessary for tree-shaking
 import * as yaml from 'js-yaml';
 
@@ -7,10 +7,12 @@ import * as yaml from 'js-yaml';
 // Note that JS doesn't support the "\A" anchor, which means we can't use
 // multiline mode.
 // Relevant YAML spec: https://yaml.org/spec/1.2.2/#914-explicit-documents
-export const frontMatterRegex = /^(?:---\s*[\r\n])(.*?)(?:[\r\n]---\s*[\r\n]+)/s;
+export const frontMatterRegex = /^-{3}\s*[\n\r](.*?)[\n\r]-{3}\s*[\n\r]+/s;
 
 type FrontMatterMetadata = {
   title?: string;
+  // Allows custom display modes. Currently used for compact mode in gantt charts.
+  displayMode?: string;
 };
 
 /**
@@ -31,6 +33,10 @@ export function extractFrontMatter(text: string, db: DiagramDb): string {
 
     if (parsed?.title) {
       db.setDiagramTitle?.(parsed.title);
+    }
+
+    if (parsed?.displayMode) {
+      db.setDisplayMode?.(parsed.displayMode);
     }
 
     return text.slice(matches[0].length);

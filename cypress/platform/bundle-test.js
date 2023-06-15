@@ -1,4 +1,5 @@
-import mermaid from '../../packages/mermaid/src/mermaid';
+// TODO: this file should be testing the ./mermaid.core.mjs file, as that's the file listed in the package.json file that users will use
+import mermaid from './mermaid.esm.mjs';
 
 let code = `flowchart LR
 Power_Supply --> Transmitter_A
@@ -49,13 +50,9 @@ mermaid.initialize({
     ],
   },
 });
-mermaid.render(
-  'the-id-of-the-svg',
-  code,
-  (svg) => {
-    console.log(svg);
-    const elem = document.querySelector('#graph-to-be');
-    elem.innerHTML = svg;
-  }
-  // ,document.querySelector('#tmp')
-);
+void (async () => {
+  const { svg } = await mermaid.render('the-id-of-the-svg', code);
+  console.log(svg);
+  const elem = document.querySelector('#graph-to-be');
+  elem.innerHTML = svg;
+})();

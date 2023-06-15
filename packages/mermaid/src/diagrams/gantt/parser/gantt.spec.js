@@ -1,6 +1,6 @@
-import { parser } from './gantt';
-import ganttDb from '../ganttDb';
-import { convert } from '../../../tests/util';
+import { parser } from './gantt.jison';
+import ganttDb from '../ganttDb.js';
+import { convert } from '../../../tests/util.js';
 import { vi } from 'vitest';
 const spyOn = vi.spyOn;
 const parserFnConstructor = (str) => {

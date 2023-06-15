@@ -58,6 +58,48 @@ sequenceDiagram
     J->>A: Great!
 ```
 
+### Grouping / Box
+
+The actor(s) can be grouped in vertical boxes. You can define a color (if not, it will be transparent) and/or a descriptive label using the following notation:
+
+```
+box Aqua Group Description
+... actors ...
+end
+box Group without description
+... actors ...
+end
+box rgb(33,66,99)
+... actors ...
+end
+```
+
+```note
+If your group name is a color you can force the color to be transparent:
+```
+
+```
+box transparent Aqua
+... actors ...
+end
+```
+
+```mermaid-example
+    sequenceDiagram
+    box Purple Alice & John
+    participant A
+    participant J
+    end
+    box Another Group
+    participant B
+    participant C
+    end
+    A->>J: Hello John, how are you?
+    J->>A: Great!
+    A->>B: Hello Bob, how is Charly ?
+    B->>C: Hello Charly, how are you?
+```
+
 ## Messages
 
 Messages can be of two displayed either solid or with a dotted line.
@@ -68,16 +110,16 @@ Messages can be of two displayed either solid or with a dotted line.
 
 There are six types of arrows currently supported:
 
-| Type | Description                                      |
-| ---- | ------------------------------------------------ |
-| ->   | Solid line without arrow                         |
-| -->  | Dotted line without arrow                        |
-| ->>  | Solid line with arrowhead                        |
-| -->> | Dotted line with arrowhead                       |
-| -x   | Solid line with a cross at the end               |
-| --x  | Dotted line with a cross at the end.             |
-| -)   | Solid line with an open arrow at the end (async) |
-| --)  | Dotted line with a open arrow at the end (async) |
+| Type   | Description                                      |
+| ------ | ------------------------------------------------ |
+| `->`   | Solid line without arrow                         |
+| `-->`  | Dotted line without arrow                        |
+| `->>`  | Solid line with arrowhead                        |
+| `-->>` | Dotted line with arrowhead                       |
+| `-x`   | Solid line with a cross at the end               |
+| `--x`  | Dotted line with a cross at the end.             |
+| `-)`   | Solid line with an open arrow at the end (async) |
+| `--)`  | Dotted line with a open arrow at the end (async) |
 
 ## Activations
 
@@ -128,6 +170,14 @@ It is also possible to create notes spanning two participants:
 sequenceDiagram
     Alice->John: Hello John, how are you?
     Note over Alice,John: A typical interaction
+```
+
+It is also possible to add a line break (applies to text input in general):
+
+```mermaid-example
+sequenceDiagram
+    Alice->John: Hello John, how are you?
+    Note over Alice,John: A typical interaction<br/>But now in two lines
 ```
 
 ## Loops
@@ -337,7 +387,7 @@ sequenceDiagram
 
 Comments can be entered within a sequence diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
 
-```mmd
+```mermaid
 sequenceDiagram
     Alice->>John: Hello John, how are you?
     %% this is a comment
@@ -368,7 +418,7 @@ It is possible to get a sequence number attached to each arrow in a sequence dia
 </script>
 ```
 
-It can also be be turned on via the diagram code as in the diagram:
+It can also be turned on via the diagram code as in the diagram:
 
 ```mermaid-example
 sequenceDiagram
@@ -393,7 +443,7 @@ This can be configured by adding one or more link lines with the format:
 link <actor>: <link-label> @ <link-url>
 ```
 
-```mmd
+```mermaid
 sequenceDiagram
     participant Alice
     participant John

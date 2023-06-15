@@ -38,14 +38,7 @@ jobs:
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          cache: pnpm
           node-version: ${{ matrix.node-version }}
-
-      - name: Install Packages
-        run: |
-          pnpm install --frozen-lockfile
-        env:
-          CYPRESS_CACHE_FOLDER: .cache/Cypress
 
       - if: ${{ env.USE_APPLI }}
         name: Notify applitools of new batch
@@ -54,19 +47,22 @@ jobs:
         env:
           # e.g. mermaid-js/mermaid/my-branch
           APPLITOOLS_BRANCH: ${{ github.repository }}/${{ github.ref_name }}
-          APPLITOOLS_PARENT_BRANCH: ${{ github.inputs.parent_branch }}
+          APPLITOOLS_PARENT_BRANCH: ${{ github.event.inputs.parent_branch }}
           APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
           APPLITOOLS_SERVER_URL: 'https://eyesapi.applitools.com'
 
-      - name: Run E2E Tests
-        run: pnpm run e2e
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        id: cypress
+        with:
+          start: pnpm run dev
+          wait-on: 'http://localhost:9000'
         env:
-          CYPRESS_CACHE_FOLDER: .cache/Cypress
           # Mermaid applitools.config.js uses this to pick batch name.
           APPLI_BRANCH: ${{ github.ref_name }}
           APPLITOOLS_BATCH_ID: ${{ github.sha }}
           # e.g. mermaid-js/mermaid/my-branch
           APPLITOOLS_BRANCH: ${{ github.repository }}/${{ github.ref_name }}
-          APPLITOOLS_PARENT_BRANCH: ${{ github.inputs.parent_branch }}
+          APPLITOOLS_PARENT_BRANCH: ${{ github.event.inputs.parent_branch }}
           APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
           APPLITOOLS_SERVER_URL: 'https://eyesapi.applitools.com'

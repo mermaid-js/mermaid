@@ -1,7 +1,7 @@
 import { line, curveBasis } from 'd3';
-import utils from '../../utils';
-import { log } from '../../logger';
-import { parseGenericTypes } from '../common/common';
+import utils from '../../utils.js';
+import { log } from '../../logger.js';
+import { parseGenericTypes } from '../common/common.js';
 
 let edgeCount = 0;
 export const drawEdge = function (elem, path, relation, conf, diagObj) {
@@ -102,7 +102,7 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
     p2_card_y = cardinality_2_point.y;
   }
 
-  if (typeof relation.title !== 'undefined') {
+  if (relation.title !== undefined) {
     const g = elem.append('g').attr('class', 'classLabel');
     const label = g
       .append('text')
@@ -125,7 +125,7 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
   }
 
   log.info('Rendering relation ' + JSON.stringify(relation));
-  if (typeof relation.relationTitle1 !== 'undefined' && relation.relationTitle1 !== 'none') {
+  if (relation.relationTitle1 !== undefined && relation.relationTitle1 !== 'none') {
     const g = elem.append('g').attr('class', 'cardinality');
     g.append('text')
       .attr('class', 'type1')
@@ -135,7 +135,7 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
       .attr('font-size', '6')
       .text(relation.relationTitle1);
   }
-  if (typeof relation.relationTitle2 !== 'undefined' && relation.relationTitle2 !== 'none') {
+  if (relation.relationTitle2 !== undefined && relation.relationTitle2 !== 'none') {
     const g = elem.append('g').attr('class', 'cardinality');
     g.append('text')
       .attr('class', 'type2')
@@ -199,11 +199,7 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
     isFirst = false;
   });
 
-  let classTitleString = classDef.id;
-
-  if (classDef.type !== undefined && classDef.type !== '') {
-    classTitleString += '<' + classDef.type + '>';
-  }
+  let classTitleString = getClassTitleString(classDef);
 
   const classTitle = title.append('tspan').text(classTitleString).attr('class', 'title');
 
@@ -291,6 +287,16 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
   return classInfo;
 };
 
+export const getClassTitleString = function (classDef) {
+  let classTitleString = classDef.id;
+
+  if (classDef.type) {
+    classTitleString += '<' + classDef.type + '>';
+  }
+
+  return classTitleString;
+};
+
 /**
  * Renders a note diagram
  *
@@ -355,107 +361,59 @@ export const drawNote = function (elem, note, conf, diagObj) {
 };
 
 export const parseMember = function (text) {
-  const fieldRegEx = /^(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+) *(\*|\$)?$/;
-  const methodRegEx = /^([+|\-|~|#])?(\w+) *\( *(.*)\) *(\*|\$)? *(\w*[~|[\]]*\s*\w*~?)$/;
-
-  let fieldMatch = text.match(fieldRegEx);
-  let methodMatch = text.match(methodRegEx);
-
-  if (fieldMatch && !methodMatch) {
-    return buildFieldDisplay(fieldMatch);
-  } else if (methodMatch) {
-    return buildMethodDisplay(methodMatch);
-  } else {
-    return buildLegacyDisplay(text);
-  }
-};
-
-const buildFieldDisplay = function (parsedText) {
-  let cssStyle = '';
-  let displayText = '';
-
-  try {
-    let visibility = parsedText[1] ? parsedText[1].trim() : '';
-    let fieldType = parsedText[2] ? parsedText[2].trim() : '';
-    let genericType = parsedText[3] ? parseGenericTypes(parsedText[3].trim()) : '';
-    let fieldName = parsedText[4] ? parsedText[4].trim() : '';
-    let classifier = parsedText[5] ? parsedText[5].trim() : '';
-
-    displayText = visibility + fieldType + genericType + ' ' + fieldName;
-    cssStyle = parseClassifier(classifier);
-  } catch (err) {
-    displayText = parsedText;
-  }
-
-  return {
-    displayText: displayText,
-    cssStyle: cssStyle,
-  };
-};
-
-const buildMethodDisplay = function (parsedText) {
-  let cssStyle = '';
-  let displayText = '';
-
-  try {
-    let visibility = parsedText[1] ? parsedText[1].trim() : '';
-    let methodName = parsedText[2] ? parsedText[2].trim() : '';
-    let parameters = parsedText[3] ? parseGenericTypes(parsedText[3].trim()) : '';
-    let classifier = parsedText[4] ? parsedText[4].trim() : '';
-    let returnType = parsedText[5] ? ' : ' + parseGenericTypes(parsedText[5]).trim() : '';
-
-    displayText = visibility + methodName + '(' + parameters + ')' + returnType;
-    cssStyle = parseClassifier(classifier);
-  } catch (err) {
-    displayText = parsedText;
-  }
-
-  return {
-    displayText: displayText,
-    cssStyle: cssStyle,
-  };
-};
-
-const buildLegacyDisplay = function (text) {
-  // if for some reason we don't have any match, use old format to parse text
   let displayText = '';
   let cssStyle = '';
-  let memberText = '';
   let returnType = '';
-  let methodStart = text.indexOf('(');
-  let methodEnd = text.indexOf(')');
 
-  if (methodStart > 1 && methodEnd > methodStart && methodEnd <= text.length) {
-    let visibility = '';
-    let methodName = '';
+  let visibility = '';
+  let firstChar = text.substring(0, 1);
+  let lastChar = text.substring(text.length - 1, text.length);
 
-    let firstChar = text.substring(0, 1);
-    if (firstChar.match(/\w/)) {
-      methodName = text.substring(0, methodStart).trim();
-    } else {
-      if (firstChar.match(/\+|-|~|#/)) {
-        visibility = firstChar;
-      }
+  if (firstChar.match(/[#+~-]/)) {
+    visibility = firstChar;
+  }
 
-      methodName = text.substring(1, methodStart).trim();
-    }
+  let noClassifierRe = /[\s\w)~]/;
+  if (!lastChar.match(noClassifierRe)) {
+    cssStyle = parseClassifier(lastChar);
+  }
+
+  const startIndex = visibility === '' ? 0 : 1;
+  let endIndex = cssStyle === '' ? text.length : text.length - 1;
+  text = text.substring(startIndex, endIndex);
+
+  const methodStart = text.indexOf('(');
+  const methodEnd = text.indexOf(')');
+  const isMethod = methodStart > 1 && methodEnd > methodStart && methodEnd <= text.length;
+
+  if (isMethod) {
+    let methodName = text.substring(0, methodStart).trim();
 
     const parameters = text.substring(methodStart + 1, methodEnd);
-    const classifier = text.substring(methodEnd + 1, 1);
-    cssStyle = parseClassifier(text.substring(methodEnd + 1, methodEnd + 2));
 
     displayText = visibility + methodName + '(' + parseGenericTypes(parameters.trim()) + ')';
 
     if (methodEnd < text.length) {
-      returnType = text.substring(methodEnd + 2).trim();
+      // special case: classifier after the closing parenthesis
+      let potentialClassifier = text.substring(methodEnd + 1, methodEnd + 2);
+      if (cssStyle === '' && !potentialClassifier.match(noClassifierRe)) {
+        cssStyle = parseClassifier(potentialClassifier);
+        returnType = text.substring(methodEnd + 2).trim();
+      } else {
+        returnType = text.substring(methodEnd + 1).trim();
+      }
+
       if (returnType !== '') {
+        if (returnType.charAt(0) === ':') {
+          returnType = returnType.substring(1).trim();
+        }
         returnType = ' : ' + parseGenericTypes(returnType);
         displayText += returnType;
       }
     }
   } else {
     // finally - if all else fails, just send the text back as written (other than parsing for generic types)
-    displayText = parseGenericTypes(text);
+    displayText = visibility + parseGenericTypes(text);
   }
 
   return {
@@ -463,6 +421,7 @@ const buildLegacyDisplay = function (text) {
     cssStyle,
   };
 };
+
 /**
  * Adds a <tspan> for a member in a diagram
  *
@@ -503,6 +462,7 @@ const parseClassifier = function (classifier) {
 };
 
 export default {
+  getClassTitleString,
   drawClass,
   drawEdge,
   drawNote,

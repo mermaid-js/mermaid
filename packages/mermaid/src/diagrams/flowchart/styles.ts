@@ -1,3 +1,6 @@
+// import khroma from 'khroma';
+import * as khroma from 'khroma';
+
 /** Returns the styles given options */
 export interface FlowChartStyleOptions {
   arrowheadColor: string;
@@ -15,6 +18,18 @@ export interface FlowChartStyleOptions {
   titleColor: string;
 }
 
+const fade = (color: string, opacity: number) => {
+  // @ts-ignore TODO: incorrect types from khroma
+  const channel = khroma.channel;
+
+  const r = channel(color, 'r');
+  const g = channel(color, 'g');
+  const b = channel(color, 'b');
+
+  // @ts-ignore incorrect types from khroma
+  return khroma.rgba(r, g, b, opacity);
+};
+
 const getStyles = (options: FlowChartStyleOptions) =>
   `.label {
     font-family: ${options.fontFamily};
@@ -23,11 +38,11 @@ const getStyles = (options: FlowChartStyleOptions) =>
   .cluster-label text {
     fill: ${options.titleColor};
   }
-  .cluster-label span {
+  .cluster-label span,p {
     color: ${options.titleColor};
   }
 
-  .label text,span {
+  .label text,span,p {
     fill: ${options.nodeTextColor || options.textColor};
     color: ${options.nodeTextColor || options.textColor};
   }
@@ -41,6 +56,15 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke: ${options.nodeBorder};
     stroke-width: 1px;
   }
+  .flowchart-label text {
+    text-anchor: middle;
+  }
+  // .flowchart-label .text-outer-tspan {
+  //   text-anchor: middle;
+  // }
+  // .flowchart-label .text-inner-tspan {
+  //   text-anchor: start;
+  // }
 
   .node .label {
     text-align: center;
@@ -73,6 +97,12 @@ const getStyles = (options: FlowChartStyleOptions) =>
     text-align: center;
   }
 
+  /* For html labels only */
+  .labelBkg {
+    background-color: ${fade(options.edgeLabelBackground, 0.5)};
+    // background-color: 
+  }
+
   .cluster rect {
     fill: ${options.clusterBkg};
     stroke: ${options.clusterBorder};
@@ -83,7 +113,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
     fill: ${options.titleColor};
   }
 
-  .cluster span {
+  .cluster span,p {
     color: ${options.titleColor};
   }
   /* .cluster div {

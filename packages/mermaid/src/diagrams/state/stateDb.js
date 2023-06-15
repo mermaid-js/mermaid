@@ -1,8 +1,8 @@
-import { log } from '../../logger';
-import { generateId } from '../../utils';
-import mermaidAPI from '../../mermaidAPI';
-import common from '../common/common';
-import * as configApi from '../../config';
+import { log } from '../../logger.js';
+import { generateId } from '../../utils.js';
+import mermaidAPI from '../../mermaidAPI.js';
+import common from '../common/common.js';
+import * as configApi from '../../config.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -11,7 +11,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb';
+} from '../../commonDb.js';
 
 import {
   DEFAULT_DIAGRAM_DIRECTION,
@@ -21,7 +21,7 @@ import {
   STMT_APPLYCLASS,
   DEFAULT_STATE_TYPE,
   DIVIDER_TYPE,
-} from './stateCommon';
+} from './stateCommon.js';
 
 const START_NODE = '[*]';
 const START_TYPE = 'start';
@@ -98,6 +98,9 @@ const docTranslator = (parent, node, first) => {
       if (node.id === '[*]') {
         node.id = first ? parent.id + '_start' : parent.id + '_end';
         node.start = first;
+      } else {
+        // This is just a plain state, not a start or end
+        node.id = node.id.trim();
       }
     }
 
@@ -172,7 +175,7 @@ const extract = (_doc) => {
     switch (item.stmt) {
       case STMT_STATE:
         addState(
-          item.id,
+          item.id.trim(),
           item.type,
           item.doc,
           item.description,
@@ -186,10 +189,10 @@ const extract = (_doc) => {
         addRelation(item.state1, item.state2, item.description);
         break;
       case STMT_CLASSDEF:
-        addStyleClass(item.id, item.classes);
+        addStyleClass(item.id.trim(), item.classes);
         break;
       case STMT_APPLYCLASS:
-        setCssClass(item.id, item.styleClass);
+        setCssClass(item.id.trim(), item.styleClass);
         break;
     }
   });
@@ -217,11 +220,12 @@ export const addState = function (
   styles = null,
   textStyles = null
 ) {
+  const trimmedId = id?.trim();
   // add the state if needed
-  if (typeof currentDocument.states[id] === 'undefined') {
-    log.info('Adding state ', id, descr);
-    currentDocument.states[id] = {
-      id: id,
+  if (currentDocument.states[trimmedId] === undefined) {
+    log.info('Adding state ', trimmedId, descr);
+    currentDocument.states[trimmedId] = {
+      id: trimmedId,
       descriptions: [],
       type,
       doc,
@@ -231,49 +235,49 @@ export const addState = function (
       textStyles: [],
     };
   } else {
-    if (!currentDocument.states[id].doc) {
-      currentDocument.states[id].doc = doc;
+    if (!currentDocument.states[trimmedId].doc) {
+      currentDocument.states[trimmedId].doc = doc;
     }
-    if (!currentDocument.states[id].type) {
-      currentDocument.states[id].type = type;
+    if (!currentDocument.states[trimmedId].type) {
+      currentDocument.states[trimmedId].type = type;
     }
   }
 
   if (descr) {
-    log.info('Setting state description', id, descr);
+    log.info('Setting state description', trimmedId, descr);
     if (typeof descr === 'string') {
-      addDescription(id, descr.trim());
+      addDescription(trimmedId, descr.trim());
     }
 
     if (typeof descr === 'object') {
-      descr.forEach((des) => addDescription(id, des.trim()));
+      descr.forEach((des) => addDescription(trimmedId, des.trim()));
     }
   }
 
   if (note) {
-    currentDocument.states[id].note = note;
-    currentDocument.states[id].note.text = common.sanitizeText(
-      currentDocument.states[id].note.text,
+    currentDocument.states[trimmedId].note = note;
+    currentDocument.states[trimmedId].note.text = common.sanitizeText(
+      currentDocument.states[trimmedId].note.text,
       configApi.getConfig()
     );
   }
 
   if (classes) {
-    log.info('Setting state classes', id, classes);
+    log.info('Setting state classes', trimmedId, classes);
     const classesList = typeof classes === 'string' ? [classes] : classes;
-    classesList.forEach((klass) => setCssClass(id, klass.trim()));
+    classesList.forEach((klass) => setCssClass(trimmedId, klass.trim()));
   }
 
   if (styles) {
-    log.info('Setting state styles', id, styles);
+    log.info('Setting state styles', trimmedId, styles);
     const stylesList = typeof styles === 'string' ? [styles] : styles;
-    stylesList.forEach((style) => setStyle(id, style.trim()));
+    stylesList.forEach((style) => setStyle(trimmedId, style.trim()));
   }
 
   if (textStyles) {
-    log.info('Setting state styles', id, styles);
+    log.info('Setting state styles', trimmedId, styles);
     const textStylesList = typeof textStyles === 'string' ? [textStyles] : textStyles;
-    textStylesList.forEach((textStyle) => setTextStyle(id, textStyle.trim()));
+    textStylesList.forEach((textStyle) => setTextStyle(trimmedId, textStyle.trim()));
   }
 };
 
@@ -370,10 +374,10 @@ function endTypeIfNeeded(id = '', type = DEFAULT_STATE_TYPE) {
  * @param relationTitle
  */
 export function addRelationObjs(item1, item2, relationTitle) {
-  let id1 = startIdIfNeeded(item1.id);
-  let type1 = startTypeIfNeeded(item1.id, item1.type);
-  let id2 = startIdIfNeeded(item2.id);
-  let type2 = startTypeIfNeeded(item2.id, item2.type);
+  let id1 = startIdIfNeeded(item1.id.trim());
+  let type1 = startTypeIfNeeded(item1.id.trim(), item1.type);
+  let id2 = startIdIfNeeded(item2.id.trim());
+  let type2 = startTypeIfNeeded(item2.id.trim(), item2.type);
 
   addState(
     id1,
@@ -414,9 +418,9 @@ export const addRelation = function (item1, item2, title) {
   if (typeof item1 === 'object') {
     addRelationObjs(item1, item2, title);
   } else {
-    const id1 = startIdIfNeeded(item1);
+    const id1 = startIdIfNeeded(item1.trim());
     const type1 = startTypeIfNeeded(item1);
-    const id2 = endIdIfNeeded(item2);
+    const id2 = endIdIfNeeded(item2.trim());
     const type2 = endTypeIfNeeded(item2);
 
     addState(id1, type1);
@@ -457,25 +461,23 @@ const getDividerId = () => {
  */
 export const addStyleClass = function (id, styleAttributes = '') {
   // create a new style class object with this id
-  if (typeof classes[id] === 'undefined') {
+  if (classes[id] === undefined) {
     classes[id] = { id: id, styles: [], textStyles: [] }; // This is a classDef
   }
   const foundClass = classes[id];
-  if (typeof styleAttributes !== 'undefined') {
-    if (styleAttributes !== null) {
-      styleAttributes.split(STYLECLASS_SEP).forEach((attrib) => {
-        // remove any trailing ;
-        const fixedAttrib = attrib.replace(/([^;]*);/, '$1').trim();
+  if (styleAttributes !== undefined && styleAttributes !== null) {
+    styleAttributes.split(STYLECLASS_SEP).forEach((attrib) => {
+      // remove any trailing ;
+      const fixedAttrib = attrib.replace(/([^;]*);/, '$1').trim();
 
-        // replace some style keywords
-        if (attrib.match(COLOR_KEYWORD)) {
-          const newStyle1 = fixedAttrib.replace(FILL_KEYWORD, BG_FILL);
-          const newStyle2 = newStyle1.replace(COLOR_KEYWORD, FILL_KEYWORD);
-          foundClass.textStyles.push(newStyle2);
-        }
-        foundClass.styles.push(fixedAttrib);
-      });
-    }
+      // replace some style keywords
+      if (attrib.match(COLOR_KEYWORD)) {
+        const newStyle1 = fixedAttrib.replace(FILL_KEYWORD, BG_FILL);
+        const newStyle2 = newStyle1.replace(COLOR_KEYWORD, FILL_KEYWORD);
+        foundClass.textStyles.push(newStyle2);
+      }
+      foundClass.styles.push(fixedAttrib);
+    });
   }
 };
 
@@ -498,7 +500,7 @@ export const getClasses = function () {
 export const setCssClass = function (itemIds, cssClassName) {
   itemIds.split(',').forEach(function (id) {
     let foundState = getState(id);
-    if (typeof foundState === 'undefined') {
+    if (foundState === undefined) {
       const trimmedId = id.trim();
       addState(trimmedId);
       foundState = getState(trimmedId);
@@ -519,7 +521,7 @@ export const setCssClass = function (itemIds, cssClassName) {
  */
 export const setStyle = function (itemId, styleText) {
   const item = getState(itemId);
-  if (typeof item !== 'undefined') {
+  if (item !== undefined) {
     item.textStyles.push(styleText);
   }
 };
@@ -532,7 +534,7 @@ export const setStyle = function (itemId, styleText) {
  */
 export const setTextStyle = function (itemId, cssClassName) {
   const item = getState(itemId);
-  if (typeof item !== 'undefined') {
+  if (item !== undefined) {
     item.textStyles.push(cssClassName);
   }
 };

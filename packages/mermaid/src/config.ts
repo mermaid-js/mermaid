@@ -1,8 +1,8 @@
-import assignWithDepth from './assignWithDepth';
-import { log } from './logger';
-import theme from './themes';
-import config from './defaultConfig';
-import type { MermaidConfig } from './config.type';
+import assignWithDepth from './assignWithDepth.js';
+import { log } from './logger.js';
+import theme from './themes/index.js';
+import config from './defaultConfig.js';
+import type { MermaidConfig } from './config.type.js';
 
 export const defaultConfig: MermaidConfig = Object.freeze(config);
 
@@ -18,8 +18,7 @@ export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: any[]) 
 
   // Join directives
   let sumOfDirectives: MermaidConfig = {};
-  for (let i = 0; i < _directives.length; i++) {
-    const d = _directives[i];
+  for (const d of _directives) {
     sanitize(d);
 
     // Apply the data from the directive where the the overrides the themeVariables
@@ -153,7 +152,7 @@ export const getConfig = (): MermaidConfig => {
 export const sanitize = (options: any) => {
   // Checking that options are not in the list of excluded options
   ['secure', ...(siteConfig.secure ?? [])].forEach((key) => {
-    if (typeof options[key] !== 'undefined') {
+    if (options[key] !== undefined) {
       // DO NOT attempt to print options[key] within `${}` as a malicious script
       // can exploit the logger's attempt to stringify the value and execute arbitrary code
       log.debug(`Denied attempt to modify a secure key ${key}`, options[key]);
@@ -170,14 +169,13 @@ export const sanitize = (options: any) => {
   // Check that there no attempts of xss, there should be no tags at all in the directive
   // blocking data urls as base64 urls can contain svg's with inline script tags
   Object.keys(options).forEach((key) => {
-    if (typeof options[key] === 'string') {
-      if (
-        options[key].indexOf('<') > -1 ||
-        options[key].indexOf('>') > -1 ||
-        options[key].indexOf('url(data:') > -1
-      ) {
-        delete options[key];
-      }
+    if (
+      typeof options[key] === 'string' &&
+      (options[key].includes('<') ||
+        options[key].includes('>') ||
+        options[key].includes('url(data:'))
+    ) {
+      delete options[key];
     }
     if (typeof options[key] === 'object') {
       sanitize(options[key]);
@@ -245,6 +243,7 @@ const checkConfig = (config: MermaidConfig) => {
   if (!config) {
     return;
   }
+  // @ts-expect-error Properties were removed in v10. Warning should exist.
   if (config.lazyLoadedDiagrams || config.loadExternalDiagramsAtStartup) {
     issueWarning('LAZY_LOAD_DEPRECATED');
   }

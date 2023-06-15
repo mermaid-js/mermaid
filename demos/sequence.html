@@ -128,8 +128,44 @@
     </pre>
     <hr />
 
-    <script src="./mermaid.js"></script>
-    <script>
+    <pre class="mermaid">
+      sequenceDiagram
+      box lightgreen Alice & John
+      participant A
+      participant J
+      end
+      box Another Group very very long description not wrapped
+      participant B
+      end
+      A->>J: Hello John, how are you?
+      J->>A: Great!
+      A->>B: Hello Bob, how are you ?
+      </pre
+    >
+    <hr />
+
+    <pre class="mermaid">
+      sequenceDiagram
+      participant Alice
+      participant Bob
+      participant John
+      par_over Section title
+        Alice ->> Bob: Message 1<br>Second line
+        Bob ->> John: Message 2
+      end
+      par_over Two line<br>section title
+        Note over Alice: Alice note
+        Note over Bob: Bob note<br>Second line
+        Note over John: John note
+      end
+      par_over Mixed section
+        Alice ->> Bob: Message 1
+        Note left of Bob: Alice/Bob Note
+      end
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         theme: 'base',
         // themeCSS: '.node rect { fill: red; }',

@@ -249,7 +249,7 @@ Comments can be entered within a state diagram chart, which will be ignored by t
 own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next
 newline will be treated as a comment, including any diagram syntax
 
-```mmd
+```mermaid
 stateDiagram-v2
     [*] --> Still
     Still --> [*]
@@ -318,19 +318,19 @@ There are two ways to apply a `classDef` style to a state:
 
 A `class` statement tells Mermaid to apply the named classDef to one or more classes. The form is:
 
-```text
+```txt
     class [one or more state names, separated by commas] [name of a style defined with classDef]
 ```
 
 Here is an example applying the `badBadEvent` style to a state named `Crash`:
 
-```text
+```txt
 class Crash badBadEvent
 ```
 
 Here is an example applying the `movement` style to the two states `Moving` and `Crash`:
 
-```text
+```txt
 class Moving, Crash movement
 ```
 
@@ -365,7 +365,7 @@ and `badBadEvent`
 
 You can apply a classDef style to a state using the `:::` (three colons) operator. The syntax is
 
-```text
+```txt
 [state]:::[style name]
 ```
 

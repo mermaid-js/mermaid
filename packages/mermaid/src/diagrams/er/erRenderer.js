@@ -1,17 +1,16 @@
-import * as graphlib from 'dagre-d3-es/src/graphlib';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { line, curveBasis, select } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
-import { getConfig } from '../../config';
-import { log } from '../../logger';
-import utils from '../../utils';
-import erMarkers from './erMarkers';
-import { configureSvgSize } from '../../setupGraphViewbox';
-import addSVGAccessibilityFields from '../../accessibility';
-import { parseGenericTypes } from '../common/common';
-import { v4 as uuid4 } from 'uuid';
+import { getConfig } from '../../config.js';
+import { log } from '../../logger.js';
+import utils from '../../utils.js';
+import erMarkers from './erMarkers.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { parseGenericTypes } from '../common/common.js';
+import { v5 as uuid5 } from 'uuid';
 
 /** Regex used to remove chars from the entity name so the result can be used in an id */
-const BAD_ID_CHARS_REGEXP = /[^A-Za-z0-9]([\W])*/g;
+const BAD_ID_CHARS_REGEXP = /[^\dA-Za-z](\W)*/g;
 
 // Configuration
 let conf = {};
@@ -28,8 +27,8 @@ let entityNameIds = new Map();
  */
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
-  for (let i = 0; i < keys.length; i++) {
-    conf[keys[i]] = cnf[keys[i]];
+  for (const key of keys) {
+    conf[key] = cnf[key];
   }
 };
 
@@ -60,7 +59,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
 
   // Check to see if any of the attributes has a key or a comment
   attributes.forEach((item) => {
-    if (item.attributeKeyType !== undefined) {
+    if (item.attributeKeyTypeList !== undefined && item.attributeKeyTypeList.length > 0) {
       hasKeyType = true;
     }
 
@@ -113,6 +112,9 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
     nodeHeight = Math.max(typeBBox.height, nameBBox.height);
 
     if (hasKeyType) {
+      const keyTypeNodeText =
+        item.attributeKeyTypeList !== undefined ? item.attributeKeyTypeList.join(',') : '';
+
       const keyTypeNode = groupNode
         .append('text')
         .classed('er entityLabel', true)
@@ -123,7 +125,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         .style('text-anchor', 'left')
         .style('font-family', getConfig().fontFamily)
         .style('font-size', attrFontSize + 'px')
-        .text(item.attributeKeyType || '');
+        .text(keyTypeNodeText);
 
       attributeNode.kn = keyTypeNode;
       const keyTypeBBox = keyTypeNode.node().getBBox();
@@ -356,7 +358,7 @@ const drawEntities = function (svgNode, entities, graph) {
 
 const adjustEntities = function (svgNode, graph) {
   graph.nodes().forEach(function (v) {
-    if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
+    if (v !== undefined && graph.node(v) !== undefined) {
       svgNode
         .select('#' + v)
         .attr(
@@ -387,7 +389,7 @@ const getEdgeName = function (rel) {
  * Add each relationship to the graph
  *
  * @param relationships The relationships to be added
- * @param {Graph} g The graph
+ * @param g The graph
  * @returns {Array} The array of relationships
  */
 const addRelationships = function (relationships, g) {
@@ -476,6 +478,9 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
     case diagObj.db.Cardinality.ONLY_ONE:
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_END + ')');
       break;
+    case diagObj.db.Cardinality.MD_PARENT:
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.MD_PARENT_END + ')');
+      break;
   }
 
   switch (rel.relSpec.cardB) {
@@ -499,6 +504,9 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
       break;
     case diagObj.db.Cardinality.ONLY_ONE:
       svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_START + ')');
+      break;
+    case diagObj.db.Cardinality.MD_PARENT:
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.MD_PARENT_START + ')');
       break;
   }
 
@@ -642,26 +650,41 @@ export const draw = function (text, id, _version, diagObj) {
   configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
-
-  addSVGAccessibilityFields(diagObj.db, svg, id);
 }; // draw
 
 /**
+ * UUID namespace for ER diagram IDs
+ *
+ * This can be generated via running:
+ *
+ * ```js
+ * const { v5: uuid5 } = await import('uuid');
+ * uuid5(
+ *   'https://mermaid-js.github.io/mermaid/syntax/entityRelationshipDiagram.html',
+ *   uuid5.URL
+ * );
+ * ```
+ */
+const MERMAID_ERDIAGRAM_UUID = '28e9f9db-3c8d-5aa5-9faf-44286ae5937c';
+
+/**
  * Return a unique id based on the given string. Start with the prefix, then a hyphen, then the
- * simplified str, then a hyphen, then a unique uuid. (Hyphens are only included if needed.)
+ * simplified str, then a hyphen, then a unique uuid based on the str. (Hyphens are only included if needed.)
  * Although the official XML standard for ids says that many more characters are valid in the id,
  * this keeps things simple by accepting only A-Za-z0-9.
  *
- * @param {string} [str?=''] Given string to use as the basis for the id. Default is `''`
- * @param {string} [prefix?=''] String to put at the start, followed by '-'. Default is `''`
- * @param str
- * @param prefix
+ * @param {string} str Given string to use as the basis for the id. Default is `''`
+ * @param {string} prefix String to put at the start, followed by '-'. Default is `''`
  * @returns {string}
  * @see https://www.w3.org/TR/xml/#NT-Name
  */
 export function generateId(str = '', prefix = '') {
   const simplifiedStr = str.replace(BAD_ID_CHARS_REGEXP, '');
-  return `${strWithHyphen(prefix)}${strWithHyphen(simplifiedStr)}${uuid4()}`;
+  // we use `uuid v5` so that UUIDs are consistent given a string.
+  return `${strWithHyphen(prefix)}${strWithHyphen(simplifiedStr)}${uuid5(
+    str,
+    MERMAID_ERDIAGRAM_UUID
+  )}`;
 }
 
 /**

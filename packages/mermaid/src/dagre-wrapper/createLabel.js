@@ -1,8 +1,8 @@
 import { select } from 'd3';
-import { log } from '../logger';
-import { getConfig } from '../config';
-import { evaluate } from '../diagrams/common/common';
-import { decodeEntities } from '../mermaidAPI';
+import { log } from '../logger.js';
+import { getConfig } from '../config.js';
+import { evaluate } from '../diagrams/common/common.js';
+import { decodeEntities } from '../mermaidAPI.js';
 
 /**
  * @param dom
@@ -41,7 +41,13 @@ function addHtmlLabel(node) {
   div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
   return fo.node();
 }
-
+/**
+ * @param _vertexText
+ * @param style
+ * @param isTitle
+ * @param isNode
+ * @deprecated svg-util/createText instead
+ */
 const createLabel = (_vertexText, style, isTitle, isNode) => {
   let vertexText = _vertexText || '';
   if (typeof vertexText === 'object') {
@@ -54,7 +60,7 @@ const createLabel = (_vertexText, style, isTitle, isNode) => {
     const node = {
       isNode,
       label: decodeEntities(vertexText).replace(
-        /fa[lrsb]?:fa-[\w-]+/g,
+        /fa[blrs]?:fa-[\w-]+/g,
         (s) => `<i class='${s.replace(':', ' ')}'></i>`
       ),
       labelStyle: style.replace('fill:', 'color:'),
@@ -74,7 +80,7 @@ const createLabel = (_vertexText, style, isTitle, isNode) => {
       rows = [];
     }
 
-    for (let j = 0; j < rows.length; j++) {
+    for (const row of rows) {
       const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
       tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
       tspan.setAttribute('dy', '1em');
@@ -84,7 +90,7 @@ const createLabel = (_vertexText, style, isTitle, isNode) => {
       } else {
         tspan.setAttribute('class', 'row');
       }
-      tspan.textContent = rows[j].trim();
+      tspan.textContent = row.trim();
       svgLabel.appendChild(tspan);
     }
     return svgLabel;

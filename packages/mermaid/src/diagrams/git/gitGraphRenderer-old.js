@@ -1,9 +1,9 @@
 import { curveBasis, line, select } from 'd3';
 
-import db from './gitGraphAst';
-import gitGraphParser from './parser/gitGraph';
-import { logger } from '../../logger';
-import { interpolateToCurve } from '../../utils';
+import db from './gitGraphAst.js';
+import gitGraphParser from './parser/gitGraph.js';
+import { logger } from '../../logger.js';
+import { interpolateToCurve } from '../../utils.js';
 
 let allCommitsDict = {};
 let branchNum;
@@ -310,8 +310,7 @@ function renderCommitHistory(svg, commitId, branches, direction) {
  * @param direction
  * @param branchColor
  */
-function renderLines(svg, commit, direction, branchColor) {
-  branchColor = branchColor || 0;
+function renderLines(svg, commit, direction, branchColor = 0) {
   while (commit.seq > 0 && !commit.lineDrawn) {
     if (typeof commit.parent === 'string') {
       svgDrawLineForCommits(svg, commit.id, commit.parent, direction, branchColor);

@@ -1,0 +1,231 @@
+﻿<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        /* background: rgb(221, 208, 208); */
+        /* background:#333; */
+        font-family: 'Arial';
+        /* font-size: 18px !important; */
+      }
+      h1 {
+        color: grey;
+      }
+      .mermaid2 {
+        display: none;
+      }
+      .mermaid svg {
+        /* font-size: 18px !important; */
+        background-color: #eee;
+        background-image: radial-gradient(#fff 1%, transparent 11%),
+          radial-gradient(#fff 1%, transparent 11%);
+        background-size: 20px 20px;
+        background-position: 0 0, 10px 10px;
+        background-repeat: repeat;
+      }
+      .malware {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 150px;
+        background: red;
+        color: black;
+        display: flex;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: monospace;
+        font-size: 72px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>Security check</div>
+    <pre id="diagram" class="mermaid2">
+ timeline
+        title My day
+        section section with no tasks
+        section Go to work at the dog office
+          1930 : first step : second step is a long step
+               : third step
+          1940 : fourth step : fifth step
+        section Go home
+          1950 : India got independent and already won war against Pakistan
+          1960 : India fights poverty, looses war to China and gets nuclear weapons from USA and USSR
+          1970 : Green Revolution comes to india
+        section Another section with no tasks
+          I am a big big big tasks
+          I am not so big tasks
+    </pre>
+    <pre id="diagram" class="mermaid">
+ timeline
+        title MermaidChart 2023 Timeline
+        section 2023 Q1 <br> Release Personal Tier
+          Buttet 1 : sub-point 1a : sub-point 1b
+               : sub-point 1c
+          Bullet 2 : sub-point 2a : sub-point 2b
+        section 2023 Q2 <br> Release XYZ Tier
+          Buttet 3 : sub-point <br> 3a : sub-point 3b
+               : sub-point 3c
+          Bullet 4 : sub-point 4a : sub-point 4b
+
+    </pre>
+
+    <pre id="diagram" class="mermaid">
+ timeline
+        title England's History Timeline
+        section Stone Age
+          7600 BC : Britain's oldest known house was built in Orkney, Scotland
+          6000 BC : Sea levels rise and Britain becomes an island. The people who live here are hunter-gatherers.
+        section Broze Age
+          2300 BC : People arrive from Europe and settle in Britain. They bring farming and metalworking.
+               : New styles of pottery and ways of burying the dead appear.
+          2200 BC : The last major building works are completed at Stonehenge. People now bury their dead in stone circles.
+                  : The first metal objects are made in Britain.Some other nice things happen. it is a good time to be alive.
+
+    </pre>
+    <pre id="diagram" class="mermaid2">
+      %%{'init': { 'logLevel': 'debug', 'theme': 'default', 'timeline': {'disableMulticolor':false} } }%%
+ timeline
+        title History of Social Media Platform
+          2002 : LinkedIn
+          2004 : Facebook : Google : Pixar
+          2005 : Youtube
+          2006 : Twitter
+          2007 : Tumblr
+          2008s : Instagram
+          2010 : Pinterest
+    </pre>
+    <pre id="diagram" class="mermaid2">
+      %%{init: { 'logLevel': 'debug', 'theme': 'base', 'themeVariables': {
+              'cScale0': '#ff0000',
+              'cScale1': '#00ff00',
+              'cScale2': '#ff0000'
+              } } }%%
+ timeline
+        title History of Social Media Platform
+          2002 : LinkedIn
+          2004 : Facebook : Google : Pixar
+          2005 : Youtube
+          2006 : Twitter
+          2007 : Tumblr
+          2008s : Instagram
+          2010 : Pinterest
+    </pre>
+
+    <pre id="diagram" class="mermaid2">
+          %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
+              'cScale0': '#ff0000',
+              'cScale1': '#00ff00',
+              'cScale2': '#0000ff'
+       } } }%%
+       timeline
+        title History of Social Media Platform
+          2002 : LinkedIn
+          2004 : Facebook : Google
+          2005 : Youtube
+          2006 : Twitter
+          2007 : Tumblr
+          2008 : Instagram
+          2010 : Pinterest
+
+    </pre>
+
+    <pre id="diagram" class="mermaid2">
+ timeline
+        title History of Social Media Platform
+          2002 : LinkedIn
+          2004 : Facebook : Google
+          2005 : Youtube
+          2006 : Twitter
+          2007 : Tumblr
+          2008s : Instagram
+          2010 : Pinterest
+    </pre>
+    <pre id="diagram" class="mermaid2">
+mindmap
+  root
+    child1((Circle))
+        grandchild 1
+        grandchild 2
+    child2(Round rectangle)
+        grandchild 3
+        grandchild 4
+    child3[Square]
+        grandchild 5
+        ::icon(mdi mdi-fire)
+        gc6((grand<br/>child 6))
+        ::icon(mdi mdi-fire)
+          gc7((grand<br/>grand<br/>child 8))
+        </pre>
+    <pre id="diagram" class="mermaid2">
+      flowchart-elk TB
+      a --> b
+      a --> c
+      b --> d
+      c --> d
+    </pre>
+
+    <!-- <div id="cy"></div> -->
+    <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
+    <!-- <script src="./mermaid-example-diagram-detector.js"></script>    -->
+    <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.7/dist/mermaid.min.js"></script> -->
+    <script type="module">
+      //import mindmap from '../../packages/mermaid-mindmap/src/detector';
+      // import example from '../../packages/mermaid-example-diagram/src/detector';
+      // import timeline from '../../packages/mermaid-timeline/src/detector';
+      import mermaid from './mermaid.esm.mjs';
+      // await mermaid.registerExternalDiagrams([]);
+      mermaid.parseError = function (err, hash) {
+        // console.error('Mermaid error: ', err);
+      };
+      mermaid.initialize({
+        theme: 'base',
+        startOnLoad: true,
+        logLevel: 0,
+        flowchart: {
+          useMaxWidth: false,
+          htmlLabels: true,
+        },
+        gantt: {
+          useMaxWidth: false,
+        },
+        timeline: {
+          disableMulticolor: false,
+          htmlLabels: false,
+        },
+        useMaxWidth: true,
+        lazyLoadedDiagrams: [
+          // './mermaid-mindmap-detector.esm.mjs',
+          // './mermaid-example-diagram-detector.esm.mjs',
+          //'./mermaid-timeline-detector.esm.mjs',
+        ],
+      });
+      function callback() {
+        alert('It worked');
+      }
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+      // mermaid.test1('first_slow', 1200).then((r) => console.info(r));
+      // mermaid.test1('second_fast', 200).then((r) => console.info(r));
+      // mermaid.test1('third_fast', 200).then((r) => console.info(r));
+      // mermaid.test1('forth_slow', 1200).then((r) => console.info(r));
+    </script>
+  </body>
+</html>

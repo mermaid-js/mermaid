@@ -35,9 +35,11 @@ import { exec } from 'child_process';
 import { globby } from 'globby';
 import { JSDOM } from 'jsdom';
 import type { Code, Root } from 'mdast';
-import { posix, dirname, relative } from 'path';
+import { posix, dirname, relative, join } from 'path';
 import prettier from 'prettier';
 import { remark } from 'remark';
+import remarkFrontmatter from 'remark-frontmatter';
+import remarkGfm from 'remark-gfm';
 import chokidar from 'chokidar';
 import mm from 'micromatch';
 // @ts-ignore No typescript declaration file
@@ -46,16 +48,28 @@ import flatmap from 'unist-util-flatmap';
 const MERMAID_MAJOR_VERSION = (
   JSON.parse(readFileSync('../mermaid/package.json', 'utf8')).version as string
 ).split('.')[0];
-const CDN_URL = 'https://unpkg.com'; // https://cdn.jsdelivr.net/npm
+const CDN_URL = 'https://cdn.jsdelivr.net/npm'; // 'https://unpkg.com';
 
+const MERMAID_KEYWORD = 'mermaid';
+const MERMAID_CODE_ONLY_KEYWORD = 'mermaid-example';
+
+// These keywords will produce both a mermaid diagram and a code block with the diagram source
+const MERMAID_EXAMPLE_KEYWORDS = [MERMAID_KEYWORD, 'mmd', MERMAID_CODE_ONLY_KEYWORD]; // 'mmd' is an old keyword that used to be used
+
+// This keyword will only produce a mermaid diagram
+const MERMAID_DIAGRAM_ONLY = 'mermaid-nocode';
+
+// These will be transformed into block quotes
+const BLOCK_QUOTE_KEYWORDS = ['note', 'tip', 'warning', 'danger'];
+
+// options for running the main command
 const verifyOnly: boolean = process.argv.includes('--verify');
 const git: boolean = process.argv.includes('--git');
 const watch: boolean = process.argv.includes('--watch');
 const vitepress: boolean = process.argv.includes('--vitepress');
 const noHeader: boolean = process.argv.includes('--noHeader') || vitepress;
 
-// These paths are from the root of the mono-repo, not from the
-// mermaid sub-directory
+// These paths are from the root of the mono-repo, not from the mermaid subdirectory
 const SOURCE_DOCS_DIR = 'src/docs';
 const FINAL_DOCS_DIR = vitepress ? 'src/vitepress' : '../../docs';
 
@@ -66,12 +80,15 @@ const LOGMSG_COPIED = `, and copied to ${FINAL_DOCS_DIR}`;
 const WARN_DOCSDIR_DOESNT_MATCH = `Changed files were transformed in ${SOURCE_DOCS_DIR} but do not match the files in ${FINAL_DOCS_DIR}. Please run 'pnpm --filter mermaid run docs:build' after making changes to ${SOURCE_DOCS_DIR} to update the ${FINAL_DOCS_DIR} directory with the transformed files.`;
 
 const prettierConfig = prettier.resolveConfig.sync('.') ?? {};
+// From https://github.com/vuejs/vitepress/blob/428eec3750d6b5648a77ac52d88128df0554d4d1/src/node/markdownToVue.ts#L20-L21
+const includesRE = /<!--\s*@include:\s*(.*?)\s*-->/g;
+const includedFiles: Set<string> = new Set();
 
-let filesWereTransformed = false;
+const filesTransformed: Set<string> = new Set();
 
 const generateHeader = (file: string): string => {
   // path from file in docs/* to repo root, e.g ../ or ../../ */
-  const relativePath = relative(file, SOURCE_DOCS_DIR);
+  const relativePath = relative(file, SOURCE_DOCS_DIR).replaceAll('\\', '/');
   const filePathFromRoot = posix.join('/packages/mermaid', file);
   const sourcePathRelativeToGenerated = posix.join(relativePath, filePathFromRoot);
   return `
@@ -117,10 +134,10 @@ const logWasOrShouldBeTransformed = (filename: string, wasCopied: boolean) => {
  * transformed contents to the final documentation directory if the doCopy flag is true. Log
  * messages to the console.
  *
- * @param {string} filename Name of the file that will be verified
- * @param {boolean} [doCopy=false] Whether we should copy that transformedContents to the final
+ * @param filename Name of the file that will be verified
+ * @param doCopy?=false Whether we should copy that transformedContents to the final
  *   documentation directory. Default is `false`
- * @param {string} [transformedContent] New contents for the file
+ * @param transformedContent? New contents for the file
  */
 const copyTransformedContents = (filename: string, doCopy = false, transformedContent?: string) => {
   const fileInFinalDocDir = changeToFinalDocDir(filename);
@@ -132,7 +149,7 @@ const copyTransformedContents = (filename: string, doCopy = false, transformedCo
     return; // Files are same, skip.
   }
 
-  filesWereTransformed = true;
+  filesTransformed.add(fileInFinalDocDir);
   if (doCopy) {
     writeFileSync(fileInFinalDocDir, newBuffer);
   }
@@ -143,54 +160,154 @@ const readSyncedUTF8file = (filename: string): string => {
   return readFileSync(filename, 'utf8');
 };
 
-const transformToBlockQuote = (content: string, type: string) => {
-  const title = type === 'warning' ? 'Warning' : 'Note';
-  return `> **${title}** \n> ${content.replace(/\n/g, '\n> ')}`;
+const blockIcons: Record<string, string> = {
+  tip: '💡 ',
+  danger: '‼️ ',
+};
+
+const capitalize = (word: string) => word[0].toUpperCase() + word.slice(1);
+
+export const transformToBlockQuote = (
+  content: string,
+  type: string,
+  customTitle?: string | null
+) => {
+  if (vitepress) {
+    const vitepressType = type === 'note' ? 'info' : type;
+    return `::: ${vitepressType} ${customTitle || ''}\n${content}\n:::`;
+  } else {
+    const icon = blockIcons[type] || '';
+    const title = `${icon}${customTitle || capitalize(type)}`;
+    return `> **${title}** \n> ${content.replace(/\n/g, '\n> ')}`;
+  }
 };
 
 const injectPlaceholders = (text: string): string =>
   text.replace(/<MERMAID_VERSION>/g, MERMAID_MAJOR_VERSION).replace(/<CDN_URL>/g, CDN_URL);
 
+const transformIncludeStatements = (file: string, text: string): string => {
+  // resolve includes - src https://github.com/vuejs/vitepress/blob/428eec3750d6b5648a77ac52d88128df0554d4d1/src/node/markdownToVue.ts#L65-L76
+  return text.replace(includesRE, (m, m1) => {
+    try {
+      const includePath = join(dirname(file), m1).replaceAll('\\', '/');
+      const content = readSyncedUTF8file(includePath);
+      includedFiles.add(changeToFinalDocDir(includePath));
+      return content;
+    } catch (error) {
+      throw new Error(`Failed to resolve include "${m1}" in "${file}": ${error}`);
+    }
+  });
+};
+
+/** Options for {@link transformMarkdownAst} */
+interface TransformMarkdownAstOptions {
+  /**
+   * Used to indicate the original/source file.
+   */
+  originalFilename: string;
+  /** If `true`, add a warning that the file is autogenerated */
+  addAutogeneratedWarning?: boolean;
+  /**
+   * If `true`, remove the YAML metadata from the Markdown input.
+   * Generally, YAML metadata is only used for Vitepress.
+   */
+  removeYAML?: boolean;
+}
+
+/**
+ * Remark plugin that transforms mermaid repo markdown to Vitepress/GFM markdown.
+ *
+ * For any AST node that is a code block: transform it as needed:
+ * - blocks marked as MERMAID_DIAGRAM_ONLY will be set to a 'mermaid' code block so it will be rendered as (only) a diagram
+ * - blocks marked as MERMAID_EXAMPLE_KEYWORDS will be copied and the original node will be a code only block and the copy with be rendered as the diagram
+ * - blocks marked as BLOCK_QUOTE_KEYWORDS will be transformed into block quotes
+ *
+ * If `addAutogeneratedWarning` is `true`, generates a header stating that this file is autogenerated.
+ *
+ * @returns plugin function for Remark
+ */
+export function transformMarkdownAst({
+  originalFilename,
+  addAutogeneratedWarning,
+  removeYAML,
+}: TransformMarkdownAstOptions) {
+  return (tree: Root, _file?: any): Root => {
+    const astWithTransformedBlocks = flatmap(tree, (node: Code) => {
+      if (node.type !== 'code' || !node.lang) {
+        return [node]; // no transformation if this is not a code block
+      }
+
+      if (node.lang === MERMAID_DIAGRAM_ONLY) {
+        // Set the lang to 'mermaid' so it will be rendered as a diagram.
+        node.lang = MERMAID_KEYWORD;
+        return [node];
+      } else if (MERMAID_EXAMPLE_KEYWORDS.includes(node.lang)) {
+        // Return 2 nodes:
+        //   1. the original node with the language now set to 'mermaid-example' (will be rendered as code), and
+        //   2. a copy of the original node with the language set to 'mermaid' (will be rendered as a diagram)
+        node.lang = MERMAID_CODE_ONLY_KEYWORD;
+        return [node, Object.assign({}, node, { lang: MERMAID_KEYWORD })];
+      }
+
+      // Transform these blocks into block quotes.
+      if (BLOCK_QUOTE_KEYWORDS.includes(node.lang)) {
+        return [remark.parse(transformToBlockQuote(node.value, node.lang, node.meta))];
+      }
+
+      return [node]; // default is to do nothing to the node
+    }) as Root;
+
+    if (addAutogeneratedWarning) {
+      // Add the header to the start of the file
+      const headerNode = remark.parse(generateHeader(originalFilename)).children[0];
+      if (astWithTransformedBlocks.children[0].type === 'yaml') {
+        // insert header after the YAML frontmatter if it exists
+        astWithTransformedBlocks.children.splice(1, 0, headerNode);
+      } else {
+        astWithTransformedBlocks.children.unshift(headerNode);
+      }
+    }
+
+    if (removeYAML) {
+      const firstNode = astWithTransformedBlocks.children[0];
+      if (firstNode.type == 'yaml') {
+        // YAML is currently only used for Vitepress metadata, so we should remove it for GFM output
+        astWithTransformedBlocks.children.shift();
+      }
+    }
+
+    return astWithTransformedBlocks;
+  };
+}
+
 /**
  * Transform a markdown file and write the transformed file to the directory for published
  * documentation
  *
- * 1. Add a `mermaid-example` block before every `mermaid` or `mmd` block On the docsify site (one
- *    place where the documentation is published), this will show the code used for the mermaid
- *    diagram
- * 2. Add the text that says the file is automatically generated
- * 3. Use prettier to format the file Verify that the file has been changed and write out the changes
+ * 1. include any included files (copy and insert the source)
+ * 2. Add a `mermaid-example` block before every `mermaid` or `mmd` block On the main documentation site (one
+ *    place where the documentation is published), this will show the code for the mermaid diagram
+ * 3. Transform blocks to block quotes as needed
+ * 4. Add the text that says the file is automatically generated
+ * 5. Use prettier to format the file.
+ * 6. Verify that the file has been changed and write out the changes
  *
  * @param file {string} name of the file that will be verified
  */
 const transformMarkdown = (file: string) => {
-  const doc = injectPlaceholders(readSyncedUTF8file(file));
+  const doc = injectPlaceholders(transformIncludeStatements(file, readSyncedUTF8file(file)));
 
-  const ast: Root = remark.parse(doc);
-  const out = flatmap(ast, (c: Code) => {
-    if (c.type !== 'code' || !c.lang) {
-      return [c];
-    }
-
-    // Convert mermaid code blocks to mermaid-example blocks
-    if (['mermaid', 'mmd', 'mermaid-example'].includes(c.lang)) {
-      c.lang = 'mermaid-example';
-      return [c, Object.assign({}, c, { lang: 'mermaid' })];
-    }
-
-    // Transform codeblocks into block quotes.
-    if (['note', 'tip', 'warning'].includes(c.lang)) {
-      return [remark.parse(transformToBlockQuote(c.value, c.lang))];
-    }
-
-    return [c];
-  });
-
-  let transformed = remark.stringify(out);
-  if (!noHeader) {
-    // Add the header to the start of the file
-    transformed = `${generateHeader(file)}\n${transformed}`;
-  }
+  let transformed = remark()
+    .use(remarkGfm)
+    .use(remarkFrontmatter, ['yaml']) // support YAML front-matter in Markdown
+    .use(transformMarkdownAst, {
+      // mermaid project specific plugin
+      originalFilename: file,
+      addAutogeneratedWarning: !noHeader,
+      removeYAML: !noHeader,
+    })
+    .processSync(doc)
+    .toString();
 
   if (vitepress && file === 'src/docs/index.md') {
     // Skip transforming index if vitepress is enabled
@@ -245,9 +362,15 @@ const transformHtml = (filename: string) => {
 };
 
 const getGlobs = (globs: string[]): string[] => {
-  globs.push('!**/dist', '!**/redirect.spec.ts');
+  globs.push(
+    '!**/dist',
+    '!**/redirect.spec.ts',
+    '!**/landing',
+    '!**/node_modules',
+    '!**/user-avatars'
+  );
   if (!vitepress) {
-    globs.push('!**/.vitepress', '!**/vite.config.ts', '!src/docs/index.md');
+    globs.push('!**/.vitepress', '!**/vite.config.ts', '!src/docs/index.md', '!**/package.json');
   }
   return globs;
 };
@@ -257,7 +380,7 @@ const getFilesFromGlobs = async (globs: string[]): Promise<string[]> => {
 };
 
 /** Main method (entry point) */
-(async () => {
+const main = async () => {
   if (verifyOnly) {
     console.log('Verifying that all files are in sync with the source files');
   }
@@ -269,6 +392,12 @@ const getFilesFromGlobs = async (globs: string[]): Promise<string[]> => {
   const mdFiles = await getFilesFromGlobs(mdFileGlobs);
   console.log(`${action} ${mdFiles.length} markdown files...`);
   mdFiles.forEach(transformMarkdown);
+
+  for (const includedFile of includedFiles) {
+    rmSync(includedFile, { force: true });
+    filesTransformed.delete(includedFile);
+    console.log(`Removed ${includedFile} as it was used inside an @include block.`);
+  }
 
   const htmlFileGlobs = getGlobs([posix.join(sourceDirGlob, '*.html')]);
   const htmlFiles = await getFilesFromGlobs(htmlFileGlobs);
@@ -282,7 +411,7 @@ const getFilesFromGlobs = async (globs: string[]): Promise<string[]> => {
     copyTransformedContents(file, !verifyOnly); // no transformation
   });
 
-  if (filesWereTransformed) {
+  if (filesTransformed.size > 0) {
     if (verifyOnly) {
       console.log(WARN_DOCSDIR_DOESNT_MATCH);
       process.exit(1);
@@ -320,4 +449,6 @@ const getFilesFromGlobs = async (globs: string[]): Promise<string[]> => {
         }
       });
   }
-})();
+};
+
+void main();

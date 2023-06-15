@@ -1,7 +1,7 @@
-import mermaidAPI from '../../mermaidAPI';
-import * as configApi from '../../config';
-import { log } from '../../logger';
-import { sanitizeText } from '../common/common';
+import mermaidAPI from '../../mermaidAPI.js';
+import * as configApi from '../../config.js';
+import { log } from '../../logger.js';
+import { sanitizeText } from '../common/common.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -10,24 +10,56 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../../commonDb';
+} from '../../commonDb.js';
 
 let prevActor = undefined;
 let actors = {};
+let boxes = [];
 let messages = [];
 const notes = [];
 let sequenceNumbersEnabled = false;
 let wrapEnabled;
+let currentBox = undefined;
 
 export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
 };
 
+export const addBox = function (data) {
+  boxes.push({
+    name: data.text,
+    wrap: (data.wrap === undefined && autoWrap()) || !!data.wrap,
+    fill: data.color,
+    actorKeys: [],
+  });
+  currentBox = boxes.slice(-1)[0];
+};
+
 export const addActor = function (id, name, description, type) {
-  // Don't allow description nulling
+  let assignedBox = currentBox;
   const old = actors[id];
-  if (old && name === old.name && description == null) {
-    return;
+  if (old) {
+    // If already set and trying to set to a new one throw error
+    if (currentBox && old.box && currentBox !== old.box) {
+      throw new Error(
+        'A same participant should only be defined in one Box: ' +
+          old.name +
+          " can't be in '" +
+          old.box.name +
+          "' and in '" +
+          currentBox.name +
+          "' at the same time."
+      );
+    }
+
+    // Don't change the box if already
+    assignedBox = old.box ? old.box : currentBox;
+    old.box = assignedBox;
+
+    // Don't allow description nulling
+    if (old && name === old.name && description == null) {
+      return;
+    }
   }
 
   // Don't allow null descriptions, either
@@ -39,6 +71,7 @@ export const addActor = function (id, name, description, type) {
   }
 
   actors[id] = {
+    box: assignedBox,
     name: name,
     description: description.text,
     wrap: (description.wrap === undefined && autoWrap()) || !!description.wrap,
@@ -53,6 +86,9 @@ export const addActor = function (id, name, description, type) {
     actors[prevActor].nextActor = id;
   }
 
+  if (currentBox) {
+    currentBox.actorKeys.push(id);
+  }
   prevActor = id;
 };
 
@@ -60,15 +96,11 @@ const activationCount = (part) => {
   let i;
   let count = 0;
   for (i = 0; i < messages.length; i++) {
-    if (messages[i].type === LINETYPE.ACTIVE_START) {
-      if (messages[i].from.actor === part) {
-        count++;
-      }
+    if (messages[i].type === LINETYPE.ACTIVE_START && messages[i].from.actor === part) {
+      count++;
     }
-    if (messages[i].type === LINETYPE.ACTIVE_END) {
-      if (messages[i].from.actor === part) {
-        count--;
-      }
+    if (messages[i].type === LINETYPE.ACTIVE_END && messages[i].from.actor === part) {
+      count--;
     }
   }
   return count;
@@ -115,10 +147,21 @@ export const addSignal = function (
   return true;
 };
 
+export const hasAtLeastOneBox = function () {
+  return boxes.length > 0;
+};
+
+export const hasAtLeastOneBoxWithTitle = function () {
+  return boxes.some((b) => b.name);
+};
+
 export const getMessages = function () {
   return messages;
 };
 
+export const getBoxes = function () {
+  return boxes;
+};
 export const getActors = function () {
   return actors;
 };
@@ -143,7 +186,7 @@ export const setWrap = function (wrapSetting) {
 export const autoWrap = () => {
   // if setWrap has been called, use that value, otherwise use the value from the config
   // TODO: refactor, always use the config value let setWrap update the config value
-  if (typeof wrapEnabled !== 'undefined') {
+  if (wrapEnabled !== undefined) {
     return wrapEnabled;
   }
   return configApi.getConfig().sequence.wrap;
@@ -151,6 +194,7 @@ export const autoWrap = () => {
 
 export const clear = function () {
   actors = {};
+  boxes = [];
   messages = [];
   sequenceNumbersEnabled = false;
   commonClear();
@@ -159,16 +203,57 @@ export const clear = function () {
 export const parseMessage = function (str) {
   const _str = str.trim();
   const message = {
-    text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
+    text: _str.replace(/^:?(?:no)?wrap:/, '').trim(),
     wrap:
-      _str.match(/^[:]?wrap:/) !== null
+      _str.match(/^:?wrap:/) !== null
         ? true
-        : _str.match(/^[:]?nowrap:/) !== null
+        : _str.match(/^:?nowrap:/) !== null
         ? false
         : undefined,
   };
   log.debug('parseMessage:', message);
   return message;
+};
+
+// We expect the box statement to be color first then description
+// The color can be rgb,rgba,hsl,hsla, or css code names  #hex codes are not supported for now because of the way the char # is handled
+// We extract first segment as color, the rest of the line is considered as text
+export const parseBoxData = function (str) {
+  const match = str.match(/^((?:rgba?|hsla?)\s*\(.*\)|\w*)(.*)$/);
+  let color = match != null && match[1] ? match[1].trim() : 'transparent';
+  let title = match != null && match[2] ? match[2].trim() : undefined;
+
+  // check that the string is a color
+  if (window && window.CSS) {
+    if (!window.CSS.supports('color', color)) {
+      color = 'transparent';
+      title = str.trim();
+    }
+  } else {
+    const style = new Option().style;
+    style.color = color;
+    if (style.color !== color) {
+      color = 'transparent';
+      title = str.trim();
+    }
+  }
+
+  const boxData = {
+    color: color,
+    text:
+      title !== undefined
+        ? sanitizeText(title.replace(/^:?(?:no)?wrap:/, ''), configApi.getConfig())
+        : undefined,
+    wrap:
+      title !== undefined
+        ? title.match(/^:?wrap:/) !== null
+          ? true
+          : title.match(/^:?nowrap:/) !== null
+          ? false
+          : undefined
+        : undefined,
+  };
+  return boxData;
 };
 
 export const LINETYPE = {
@@ -201,6 +286,7 @@ export const LINETYPE = {
   CRITICAL_END: 29,
   BREAK_START: 30,
   BREAK_END: 31,
+  PAR_OVER_START: 32,
 };
 
 export const ARROWTYPE = {
@@ -223,6 +309,7 @@ export const addNote = function (actor, placement, message) {
   };
 
   // Coerce actor into a [to, from, ...] array
+  // eslint-disable-next-line unicorn/prefer-spread
   const actors = [].concat(actor, actor);
 
   notes.push(note);
@@ -314,6 +401,13 @@ function insertProperties(actor, properties) {
   }
 }
 
+/**
+ *
+ */
+function boxEnd() {
+  currentBox = undefined;
+}
+
 export const addDetails = function (actorId, text) {
   // find the actor
   const actor = getActor(actorId);
@@ -337,7 +431,7 @@ export const addDetails = function (actorId, text) {
 };
 
 export const getActorProperty = function (actor, key) {
-  if (typeof actor !== 'undefined' && typeof actor.properties !== 'undefined') {
+  if (actor !== undefined && actor.properties !== undefined) {
     return actor.properties[key];
   }
 
@@ -345,7 +439,7 @@ export const getActorProperty = function (actor, key) {
 };
 
 export const apply = function (param) {
-  if (param instanceof Array) {
+  if (Array.isArray(param)) {
     param.forEach(function (item) {
       apply(item);
     });
@@ -393,6 +487,12 @@ export const apply = function (param) {
         break;
       case 'addMessage':
         addSignal(param.from, param.to, param.msg, param.signalType);
+        break;
+      case 'boxStart':
+        addBox(param.boxData);
+        break;
+      case 'boxEnd':
+        boxEnd();
         break;
       case 'loopStart':
         addSignal(undefined, undefined, param.loopText, param.signalType);
@@ -470,12 +570,14 @@ export default {
   getActorKeys,
   getActorProperty,
   getAccTitle,
+  getBoxes,
   getDiagramTitle,
   setDiagramTitle,
   parseDirective,
   getConfig: () => configApi.getConfig().sequence,
   clear,
   parseMessage,
+  parseBoxData,
   LINETYPE,
   ARROWTYPE,
   PLACEMENT,
@@ -484,4 +586,6 @@ export default {
   apply,
   setAccDescription,
   getAccDescription,
+  hasAtLeastOneBox,
+  hasAtLeastOneBoxWithTitle,
 };

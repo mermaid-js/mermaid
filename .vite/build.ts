@@ -3,6 +3,7 @@ import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import jisonPlugin from './jisonPlugin.js';
 import { readFileSync } from 'fs';
+import typescript from '@rollup/plugin-typescript';
 import { visualizer } from 'rollup-plugin-visualizer';
 import type { TemplateType } from 'rollup-plugin-visualizer/dist/plugin/template-types.js';
 
@@ -10,6 +11,7 @@ const visualize = process.argv.includes('--visualize');
 const watch = process.argv.includes('--watch');
 const mermaidOnly = process.argv.includes('--mermaid');
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const sourcemap = false;
 
 type OutputOptions = Exclude<
   Exclude<InlineConfig['build'], undefined>['rollupOptions'],
@@ -20,13 +22,14 @@ const visualizerOptions = (packageName: string, core = false): PluginOption[] =>
   if (packageName !== 'mermaid' || !visualize) {
     return [];
   }
-  return ['network', 'treemap', 'sunburst'].map((chartType) =>
-    visualizer({
-      filename: `./stats/${chartType}${core ? '.core' : ''}.html`,
-      template: chartType as TemplateType,
-      gzipSize: true,
-      brotliSize: true,
-    })
+  return ['network', 'treemap', 'sunburst'].map(
+    (chartType) =>
+      visualizer({
+        filename: `./stats/${chartType}${core ? '.core' : ''}.html`,
+        template: chartType as TemplateType,
+        gzipSize: true,
+        brotliSize: true,
+      }) as PluginOption
   );
 };
 
@@ -36,16 +39,16 @@ const packageOptions = {
     packageName: 'mermaid',
     file: 'mermaid.ts',
   },
-  'mermaid-mindmap': {
-    name: 'mermaid-mindmap',
-    packageName: 'mermaid-mindmap',
+  'mermaid-example-diagram': {
+    name: 'mermaid-example-diagram',
+    packageName: 'mermaid-example-diagram',
     file: 'detector.ts',
   },
-  // 'mermaid-example-diagram-detector': {
-  //   name: 'mermaid-example-diagram-detector',
-  //   packageName: 'mermaid-example-diagram',
-  //   file: 'detector.ts',
-  // },
+  'mermaid-zenuml': {
+    name: 'mermaid-zenuml',
+    packageName: 'mermaid-zenuml',
+    file: 'detector.ts',
+  },
 };
 
 interface BuildOptions {
@@ -63,13 +66,13 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     {
       name,
       format: 'esm',
-      sourcemap: true,
+      sourcemap,
       entryFileNames: `${name}.esm${minify ? '.min' : ''}.mjs`,
     },
     {
       name,
       format: 'umd',
-      sourcemap: true,
+      sourcemap,
       entryFileNames: `${name}${minify ? '.min' : ''}.js`,
     },
   ];
@@ -88,7 +91,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
       {
         name,
         format: 'esm',
-        sourcemap: true,
+        sourcemap,
         entryFileNames: `${name}.core.mjs`,
       },
     ];
@@ -112,18 +115,19 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
       },
     },
     resolve: {
-      extensions: ['.jison', '.js', '.ts', '.json'],
+      extensions: [],
     },
-    plugins: [jisonPlugin(), ...visualizerOptions(packageName, core)],
+    plugins: [
+      jisonPlugin(),
+      // @ts-expect-error According to the type definitions, rollup plugins are incompatible with vite
+      typescript({ compilerOptions: { declaration: false } }),
+      ...visualizerOptions(packageName, core),
+    ],
   };
 
   if (watch && config.build) {
     config.build.watch = {
-      include: [
-        'packages/mermaid-mindmap/src/**',
-        'packages/mermaid/src/**',
-        // 'packages/mermaid-example-diagram/src/**',
-      ],
+      include: ['packages/mermaid-example-diagram/src/**', 'packages/mermaid/src/**'],
     };
   }
 
@@ -131,11 +135,9 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
 };
 
 const buildPackage = async (entryName: keyof typeof packageOptions) => {
-  return Promise.allSettled([
-    build(getBuildConfig({ minify: false, entryName })),
-    build(getBuildConfig({ minify: 'esbuild', entryName })),
-    build(getBuildConfig({ minify: false, core: true, entryName })),
-  ]);
+  await build(getBuildConfig({ minify: false, entryName }));
+  await build(getBuildConfig({ minify: 'esbuild', entryName }));
+  await build(getBuildConfig({ minify: false, core: true, entryName }));
 };
 
 const main = async () => {
@@ -146,10 +148,10 @@ const main = async () => {
 };
 
 if (watch) {
-  build(getBuildConfig({ minify: false, watch, core: true, entryName: 'mermaid' }));
+  build(getBuildConfig({ minify: false, watch, core: false, entryName: 'mermaid' }));
   if (!mermaidOnly) {
-    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-mindmap' }));
-    // build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
+    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
+    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-zenuml' }));
   }
 } else if (visualize) {
   await build(getBuildConfig({ minify: false, core: true, entryName: 'mermaid' }));

@@ -7,9 +7,10 @@ on:
       - opened
       - synchronize
       - ready_for_review
+  workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   lint:
@@ -36,8 +37,35 @@ jobs:
           CYPRESS_CACHE_FOLDER: .cache/Cypress
 
       - name: Run Linting
-        run: pnpm run lint
+        shell: bash
+        run: |
+          if ! pnpm run lint; then
+              # print a nice error message on lint failure
+              ERROR_MESSAGE='Running `pnpm run lint` failed.'
+              ERROR_MESSAGE+=' Running `pnpm -w run lint:fix` may fix this issue. '
+              ERROR_MESSAGE+=" If this error doesn't occur on your local machine,"
+              ERROR_MESSAGE+=' make sure your packages are up-to-date by running `pnpm install`.'
+              ERROR_MESSAGE+=' You may also need to delete your prettier cache by running'
+              ERROR_MESSAGE+=' `rm ./node_modules/.cache/prettier/.prettier-cache`.'
+              echo "::error title=Lint failure::${ERROR_MESSAGE}"
+              # make sure to return an error exitcode so that GitHub actions shows a red-cross
+              exit 1
+          fi
 
       - name: Verify Docs
+        id: verifyDocs
         working-directory: ./packages/mermaid
+        continue-on-error: ${{ github.event_name == 'push' }}
         run: pnpm run docs:verify
+
+      - name: Rebuild Docs
+        if: ${{ steps.verifyDocs.outcome == 'failure' && github.event_name == 'push' }}
+        working-directory: ./packages/mermaid
+        run: pnpm run docs:build
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        if: ${{ steps.verifyDocs.outcome == 'failure' && github.event_name == 'push' }}
+        with:
+          message: 'Update docs'
+          add: 'docs/*'

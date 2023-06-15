@@ -1,10 +1,42 @@
 'use strict';
 import { vi } from 'vitest';
 
-import mermaid from './mermaid';
-import { MermaidConfig } from './config.type';
+// -------------------------------------
+//  Mocks and mocking
 
-import mermaidAPI, { removeExistingElements } from './mermaidAPI';
+import { MockedD3 } from './tests/MockedD3.js';
+
+// Note: If running this directly from within an IDE, the mocks directory must be at packages/mermaid/mocks
+vi.mock('d3');
+vi.mock('dagre-d3');
+
+// mermaidAPI.spec.ts:
+import * as accessibility from './accessibility.js'; // Import it this way so we can use spyOn(accessibility,...)
+vi.mock('./accessibility.js', () => ({
+  setA11yDiagramInfo: vi.fn(),
+  addSVGa11yTitleDescription: vi.fn(),
+}));
+
+// Mock the renderers specifically so we can test render(). Need to mock draw() for each renderer
+vi.mock('./diagrams/c4/c4Renderer.js');
+vi.mock('./diagrams/class/classRenderer.js');
+vi.mock('./diagrams/class/classRenderer-v2.js');
+vi.mock('./diagrams/er/erRenderer.js');
+vi.mock('./diagrams/flowchart/flowRenderer-v2.js');
+vi.mock('./diagrams/git/gitGraphRenderer.js');
+vi.mock('./diagrams/gantt/ganttRenderer.js');
+vi.mock('./diagrams/user-journey/journeyRenderer.js');
+vi.mock('./diagrams/pie/pieRenderer.js');
+vi.mock('./diagrams/requirement/requirementRenderer.js');
+vi.mock('./diagrams/sequence/sequenceRenderer.js');
+vi.mock('./diagrams/state/stateRenderer-v2.js');
+
+// -------------------------------------
+
+import mermaid from './mermaid.js';
+import { MermaidConfig } from './config.type.js';
+
+import mermaidAPI, { removeExistingElements } from './mermaidAPI.js';
 import {
   encodeEntities,
   decodeEntities,
@@ -13,20 +45,20 @@ import {
   appendDivSvgG,
   cleanUpSvgCode,
   putIntoIFrame,
-} from './mermaidAPI';
+} from './mermaidAPI.js';
 
-import assignWithDepth from './assignWithDepth';
+import assignWithDepth from './assignWithDepth.js';
 
 // --------------
 // Mocks
 //   To mock a module, first define a mock for it, then (if used explicitly in the tests) import it. Be sure the path points to exactly the same file as is imported in mermaidAPI (the module being tested)
-vi.mock('./styles', () => {
+vi.mock('./styles.js', () => {
   return {
     addStylesForDiagram: vi.fn(),
     default: vi.fn().mockReturnValue(' .userStyle { font-weight:bold; }'),
   };
 });
-import getStyles from './styles';
+import getStyles from './styles.js';
 
 vi.mock('stylis', () => {
   return {
@@ -37,11 +69,14 @@ vi.mock('stylis', () => {
 });
 import { compile, serialize } from 'stylis';
 
-import { MockedD3 } from './tests/MockedD3';
+/**
+ * @see https://vitest.dev/guide/mocking.html Mock part of a module
+ * To investigate how to mock just some methods from a module - call the actual implementation and then mock others, e.g. so they can be spied on
+ */
 
 // -------------------------------------------------------------------------------------
 
-describe('mermaidAPI', function () {
+describe('mermaidAPI', () => {
   describe('encodeEntities', () => {
     it('removes the ending ; from style [text1]:[optional word]#[text2]; with ', () => {
       const text = 'style this; is ; everything :something#not-nothing; and this too;';
@@ -257,11 +292,11 @@ describe('mermaidAPI', function () {
     });
     it('gets the fontFamily from the config', () => {
       const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', {});
-      expect(styles).toMatch(/(.*)\n:root \{ --mermaid-font-family: serif(.*)/);
+      expect(styles).toMatch(/(.*)\n:root { --mermaid-font-family: serif(.*)/);
     });
     it('gets the alt fontFamily from the config', () => {
       const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', undefined);
-      expect(styles).toMatch(/(.*)\n:root \{ --mermaid-alt-font-family: sans-serif(.*)/);
+      expect(styles).toMatch(/(.*)\n:root { --mermaid-alt-font-family: sans-serif(.*)/);
     });
 
     describe('there are some classDefs', () => {
@@ -277,7 +312,7 @@ describe('mermaidAPI', function () {
 
         // prefix any special RegExp characters in the given string with a \ so we can use the literal character in a RegExp
         function escapeForRegexp(str: string) {
-          const strChars = str.split(''); // split into array of every char
+          const strChars = [...str]; // split into array of every char
           const strEscaped = strChars.map((char) => {
             if (REGEXP_SPECIALS.includes(char)) {
               return `\\${char}`;
@@ -335,7 +370,8 @@ describe('mermaidAPI', function () {
             const htmlElements = ['> *', 'span'];
 
             it('creates CSS styles for every style and textStyle in every classDef', () => {
-              // @todo TODO Can't figure out how to spy on the cssImportantStyles method. That would be a much better approach than manually checking the result
+              // @todo TODO Can't figure out how to spy on the cssImportantStyles method.
+              //   That would be a much better approach than manually checking the result
 
               const styles = createCssStyles(mocked_config, graphType, classDefs);
               htmlElements.forEach((htmlElement) => {
@@ -373,7 +409,7 @@ describe('mermaidAPI', function () {
             const htmlElements = ['rect', 'polygon', 'ellipse', 'circle'];
 
             it('creates CSS styles for every style and textStyle in every classDef', () => {
-              // @todo TODO Can't figure out how to spy on the cssImportantStyles method. That would be a much better approach than manually checking the result
+              // TODO Can't figure out how to spy on the cssImportantStyles method. That would be a much better approach than manually checking the result.
 
               const styles = createCssStyles(mocked_config_no_htmlLabels, graphType, classDefs);
               htmlElements.forEach((htmlElement) => {
@@ -434,71 +470,58 @@ describe('mermaidAPI', function () {
     svgElement.id = svgId;
     const tempDivElement = givenDocument.createElement('div'); // doesn't matter what the tag is in the test
     tempDivElement.id = tempDivId;
-    const tempiFrameElement = givenDocument.createElement('div'); // doesn't matter what the tag is in the test
+    const tempiFrameElement = givenDocument.createElement('iframe'); // doesn't matter what the tag is in the test
     tempiFrameElement.id = tempIframeId;
 
     it('removes an existing element with given id', () => {
       rootHtml.appendChild(svgElement);
+      rootHtml.append(tempDivElement);
+      rootHtml.append(tempiFrameElement);
+
       expect(givenDocument.getElementById(svgElement.id)).toEqual(svgElement);
-      removeExistingElements(givenDocument, false, svgId, tempDivId, tempIframeId);
+      expect(givenDocument.getElementById(tempDivElement.id)).toEqual(tempDivElement);
+      expect(givenDocument.getElementById(tempiFrameElement.id)).toEqual(tempiFrameElement);
+      removeExistingElements(givenDocument, svgId, tempDivId, tempIframeId);
       expect(givenDocument.getElementById(svgElement.id)).toBeNull();
+      expect(givenDocument.getElementById(tempDivElement.id)).toBeNull();
+      expect(givenDocument.getElementById(tempiFrameElement.id)).toBeNull();
     });
 
-    describe('is in sandboxed mode', () => {
-      const inSandboxedMode = true;
+    it('removes an existing iframe element even if div element is absent', () => {
+      tempiFrameElement.append(svgElement);
+      rootHtml.append(tempiFrameElement);
 
-      it('removes an existing element with the given iFrame selector', () => {
-        tempiFrameElement.append(svgElement);
-        rootHtml.append(tempiFrameElement);
-        rootHtml.append(tempDivElement);
-
-        expect(givenDocument.getElementById(tempIframeId)).toEqual(tempiFrameElement);
-        expect(givenDocument.getElementById(tempDivId)).toEqual(tempDivElement);
-        expect(givenDocument.getElementById(svgId)).toEqual(svgElement);
-        removeExistingElements(
-          givenDocument,
-          inSandboxedMode,
-          svgId,
-          '#' + tempDivId,
-          '#' + tempIframeId
-        );
-        expect(givenDocument.getElementById(tempDivId)).toEqual(tempDivElement);
-        expect(givenDocument.getElementById(tempIframeId)).toBeNull();
-        expect(givenDocument.getElementById(svgId)).toBeNull();
-      });
+      expect(givenDocument.getElementById(tempIframeId)).toEqual(tempiFrameElement);
+      expect(givenDocument.getElementById(tempDivId)).toBeNull();
+      expect(givenDocument.getElementById(svgId)).toEqual(svgElement);
+      removeExistingElements(givenDocument, svgId, tempDivId, tempIframeId);
+      expect(givenDocument.getElementById(tempDivId)).toBeNull();
+      expect(givenDocument.getElementById(tempIframeId)).toBeNull();
+      expect(givenDocument.getElementById(svgId)).toBeNull();
     });
-    describe('not in sandboxed mode', () => {
-      const inSandboxedMode = false;
 
-      it('removes an existing element with the given enclosing div selector', () => {
-        tempDivElement.append(svgElement);
-        rootHtml.append(tempDivElement);
-        rootHtml.append(tempiFrameElement);
+    it('removes both existing div and iframe elements when both are present', () => {
+      tempDivElement.append(svgElement);
+      rootHtml.append(tempDivElement);
+      rootHtml.append(tempiFrameElement);
 
-        expect(givenDocument.getElementById(tempIframeId)).toEqual(tempiFrameElement);
-        expect(givenDocument.getElementById(tempDivId)).toEqual(tempDivElement);
-        expect(givenDocument.getElementById(svgId)).toEqual(svgElement);
-        removeExistingElements(
-          givenDocument,
-          inSandboxedMode,
-          svgId,
-          '#' + tempDivId,
-          '#' + tempIframeId
-        );
-        expect(givenDocument.getElementById(tempIframeId)).toEqual(tempiFrameElement);
-        expect(givenDocument.getElementById(tempDivId)).toBeNull();
-        expect(givenDocument.getElementById(svgId)).toBeNull();
-      });
+      expect(givenDocument.getElementById(tempIframeId)).toEqual(tempiFrameElement);
+      expect(givenDocument.getElementById(tempDivId)).toEqual(tempDivElement);
+      expect(givenDocument.getElementById(svgId)).toEqual(svgElement);
+      removeExistingElements(givenDocument, svgId, tempDivId, tempIframeId);
+      expect(givenDocument.getElementById(tempIframeId)).toBeNull();
+      expect(givenDocument.getElementById(tempDivId)).toBeNull();
+      expect(givenDocument.getElementById(svgId)).toBeNull();
     });
   });
 
-  describe('initialize', function () {
-    beforeEach(function () {
+  describe('initialize', () => {
+    beforeEach(() => {
       document.body.innerHTML = '';
       mermaidAPI.globalReset();
     });
 
-    it('copies a literal into the configuration', function () {
+    it('copies a literal into the configuration', () => {
       const orgConfig: any = mermaidAPI.getConfig();
       expect(orgConfig.testLiteral).toBe(undefined);
 
@@ -510,7 +533,7 @@ describe('mermaidAPI', function () {
       expect(config.testLiteral).toBe(true);
     });
 
-    it('copies a an object into the configuration', function () {
+    it('copies an object into the configuration', () => {
       const orgConfig: any = mermaidAPI.getConfig();
       expect(orgConfig.testObject).toBe(undefined);
 
@@ -536,7 +559,7 @@ describe('mermaidAPI', function () {
       expect(config.testObject.test3).toBe(true);
     });
 
-    it('resets mermaid config to global defaults', function () {
+    it('resets mermaid config to global defaults', () => {
       const config = {
         logLevel: 0,
         securityLevel: 'loose',
@@ -553,7 +576,7 @@ describe('mermaidAPI', function () {
       expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
     });
 
-    it('prevents changes to site defaults (sneaky)', function () {
+    it('prevents changes to site defaults (sneaky)', () => {
       const config: any = {
         logLevel: 0,
       };
@@ -561,7 +584,7 @@ describe('mermaidAPI', function () {
       const siteConfig = mermaidAPI.getSiteConfig();
       expect(mermaidAPI.getConfig().logLevel).toBe(0);
       config.secure = {
-        toString: function () {
+        toString: () => {
           mermaidAPI.initialize({ securityLevel: 'loose' });
         },
       };
@@ -572,7 +595,7 @@ describe('mermaidAPI', function () {
       expect(mermaidAPI.getSiteConfig()).toEqual(siteConfig);
       expect(mermaidAPI.getConfig()).toEqual(siteConfig);
     });
-    it('prevents clobbering global defaults (direct)', function () {
+    it('prevents clobbering global defaults (direct)', () => {
       const config = assignWithDepth({}, mermaidAPI.defaultConfig);
       assignWithDepth(config, { logLevel: 0 });
 
@@ -588,7 +611,7 @@ describe('mermaidAPI', function () {
       );
       expect(mermaidAPI.defaultConfig['logLevel']).toBe(5);
     });
-    it('prevents changes to global defaults (direct)', function () {
+    it('prevents changes to global defaults (direct)', () => {
       let error: any = { message: '' };
       try {
         mermaidAPI.defaultConfig['logLevel'] = 0;
@@ -600,7 +623,7 @@ describe('mermaidAPI', function () {
       );
       expect(mermaidAPI.defaultConfig['logLevel']).toBe(5);
     });
-    it('prevents sneaky changes to global defaults (assignWithDepth)', function () {
+    it('prevents sneaky changes to global defaults (assignWithDepth)', () => {
       const config = {
         logLevel: 0,
       };
@@ -616,34 +639,164 @@ describe('mermaidAPI', function () {
       expect(mermaidAPI.defaultConfig['logLevel']).toBe(5);
     });
   });
-  describe('dompurify config', function () {
-    it('allows dompurify config to be set', function () {
+
+  describe('dompurify config', () => {
+    it('allows dompurify config to be set', () => {
       mermaidAPI.initialize({ dompurifyConfig: { ADD_ATTR: ['onclick'] } });
 
       expect(mermaidAPI!.getConfig()!.dompurifyConfig!.ADD_ATTR).toEqual(['onclick']);
     });
   });
-  describe('parse', function () {
+
+  describe('parse', () => {
     mermaid.parseError = undefined; // ensure it parseError undefined
-    it('throws for an invalid definition (with no mermaid.parseError() defined)', function () {
+    it('throws for an invalid definition (with no mermaid.parseError() defined)', async () => {
       expect(mermaid.parseError).toEqual(undefined);
-      expect(() => mermaidAPI.parse('this is not a mermaid diagram definition')).toThrow();
+      await expect(
+        mermaidAPI.parse('this is not a mermaid diagram definition')
+      ).rejects.toThrowError();
     });
-    it('does not throw for a valid definition', function () {
-      expect(() => mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).not.toThrow();
+    it('throws for a nicer error for a invalid definition starting with `---`', async () => {
+      expect(mermaid.parseError).toEqual(undefined);
+      await expect(
+        mermaidAPI.parse(`
+      ---
+      title: a malformed YAML front-matter
+      `)
+      ).rejects.toThrow(
+        'Diagrams beginning with --- are not valid. ' +
+          'If you were trying to use a YAML front-matter, please ensure that ' +
+          "you've correctly opened and closed the YAML front-matter with un-indented `---` blocks"
+      );
     });
-    it('returns false for invalid definition WITH a parseError() callback defined', function () {
-      let parseErrorWasCalled = false;
-      // also test setParseErrorHandler() call working to set mermaid.parseError
-      expect(
-        mermaidAPI.parse('this is not a mermaid diagram definition', () => {
-          parseErrorWasCalled = true;
-        })
-      ).toEqual(false);
-      expect(parseErrorWasCalled).toEqual(true);
+    it('does not throw for a valid definition', async () => {
+      await expect(
+        mermaidAPI.parse('graph TD;A--x|text including URL space|B;')
+      ).resolves.not.toThrow();
     });
-    it('returns true for valid definition', function () {
-      expect(mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).toEqual(true);
+    it('throws for invalid definition', async () => {
+      await expect(
+        mermaidAPI.parse('this is not a mermaid diagram definition')
+      ).rejects.toThrowErrorMatchingInlineSnapshot(
+        '"No diagram type detected matching given configuration for text: this is not a mermaid diagram definition"'
+      );
+    });
+    it('returns false for invalid definition with silent option', async () => {
+      await expect(
+        mermaidAPI.parse('this is not a mermaid diagram definition', { suppressErrors: true })
+      ).resolves.toBe(false);
+    });
+    it('resolves for valid definition', async () => {
+      await expect(
+        mermaidAPI.parse('graph TD;A--x|text including URL space|B;')
+      ).resolves.toBeTruthy();
+    });
+    it('returns true for valid definition with silent option', async () => {
+      await expect(
+        mermaidAPI.parse('graph TD;A--x|text including URL space|B;', { suppressErrors: true })
+      ).resolves.toBe(true);
+    });
+  });
+
+  describe('render', () => {
+    // These are more like integration tests right now because nothing is mocked.
+    // But it is faster that a cypress test and there's no real reason to actually evaluate an image pixel by pixel.
+
+    // render(id, text, cb?, svgContainingElement?)
+
+    // Test all diagram types.  Note that old flowchart 'graph' type will invoke the flowRenderer-v2. (See the flowchart v2 detector.)
+    // We have to have both the specific textDiagramType and the expected type name because the expected type may be slightly different than was is put in the diagram text (ex: in -v2 diagrams)
+    const diagramTypesAndExpectations = [
+      { textDiagramType: 'C4Context', expectedType: 'c4' },
+      { textDiagramType: 'classDiagram', expectedType: 'classDiagram' },
+      { textDiagramType: 'classDiagram-v2', expectedType: 'classDiagram' },
+      { textDiagramType: 'erDiagram', expectedType: 'er' },
+      { textDiagramType: 'graph', expectedType: 'flowchart-v2' },
+      { textDiagramType: 'flowchart', expectedType: 'flowchart-v2' },
+      { textDiagramType: 'gitGraph', expectedType: 'gitGraph' },
+      { textDiagramType: 'gantt', expectedType: 'gantt' },
+      { textDiagramType: 'journey', expectedType: 'journey' },
+      { textDiagramType: 'pie', expectedType: 'pie' },
+      { textDiagramType: 'requirementDiagram', expectedType: 'requirement' },
+      { textDiagramType: 'sequenceDiagram', expectedType: 'sequence' },
+      { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
+    ];
+
+    describe('accessibility', () => {
+      const id = 'mermaid-fauxId';
+      const a11yTitle = 'a11y title';
+      const a11yDescr = 'a11y description';
+
+      diagramTypesAndExpectations.forEach((testedDiagram) => {
+        describe(`${testedDiagram.textDiagramType}`, () => {
+          const diagramType = testedDiagram.textDiagramType;
+          const diagramText = `${diagramType}\n accTitle: ${a11yTitle}\n accDescr: ${a11yDescr}\n`;
+          const expectedDiagramType = testedDiagram.expectedType;
+
+          it('aria-roledscription is set to the diagram type, addSVGa11yTitleDescription is called', async () => {
+            const a11yDiagramInfo_spy = vi.spyOn(accessibility, 'setA11yDiagramInfo');
+            const a11yTitleDesc_spy = vi.spyOn(accessibility, 'addSVGa11yTitleDescription');
+            await mermaidAPI.render(id, diagramText);
+            expect(a11yDiagramInfo_spy).toHaveBeenCalledWith(
+              expect.anything(),
+              expectedDiagramType
+            );
+            expect(a11yTitleDesc_spy).toHaveBeenCalled();
+          });
+        });
+      });
+    });
+  });
+
+  describe('render', () => {
+    // Be sure to add async before each test (anonymous) method
+
+    // These are more like integration tests right now because nothing is mocked.
+    // But it is faster that a cypress test and there's no real reason to actually evaluate an image pixel by pixel.
+
+    // render(id, text, cb?, svgContainingElement?)
+
+    // Test all diagram types.  Note that old flowchart 'graph' type will invoke the flowRenderer-v2. (See the flowchart v2 detector.)
+    // We have to have both the specific textDiagramType and the expected type name because the expected type may be slightly different than was is put in the diagram text (ex: in -v2 diagrams)
+    const diagramTypesAndExpectations = [
+      { textDiagramType: 'C4Context', expectedType: 'c4' },
+      { textDiagramType: 'classDiagram', expectedType: 'classDiagram' },
+      { textDiagramType: 'classDiagram-v2', expectedType: 'classDiagram' },
+      { textDiagramType: 'erDiagram', expectedType: 'er' },
+      { textDiagramType: 'graph', expectedType: 'flowchart-v2' },
+      { textDiagramType: 'flowchart', expectedType: 'flowchart-v2' },
+      { textDiagramType: 'gitGraph', expectedType: 'gitGraph' },
+      { textDiagramType: 'gantt', expectedType: 'gantt' },
+      { textDiagramType: 'journey', expectedType: 'journey' },
+      { textDiagramType: 'pie', expectedType: 'pie' },
+      { textDiagramType: 'requirementDiagram', expectedType: 'requirement' },
+      { textDiagramType: 'sequenceDiagram', expectedType: 'sequence' },
+      { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
+    ];
+
+    describe('accessibility', () => {
+      const id = 'mermaid-fauxId';
+      const a11yTitle = 'a11y title';
+      const a11yDescr = 'a11y description';
+
+      diagramTypesAndExpectations.forEach((testedDiagram) => {
+        describe(`${testedDiagram.textDiagramType}`, () => {
+          const diagramType = testedDiagram.textDiagramType;
+          const diagramText = `${diagramType}\n accTitle: ${a11yTitle}\n accDescr: ${a11yDescr}\n`;
+          const expectedDiagramType = testedDiagram.expectedType;
+
+          it('aria-roledscription is set to the diagram type, addSVGa11yTitleDescription is called', async () => {
+            const a11yDiagramInfo_spy = vi.spyOn(accessibility, 'setA11yDiagramInfo');
+            const a11yTitleDesc_spy = vi.spyOn(accessibility, 'addSVGa11yTitleDescription');
+            await mermaidAPI.render(id, diagramText);
+            expect(a11yDiagramInfo_spy).toHaveBeenCalledWith(
+              expect.anything(),
+              expectedDiagramType
+            );
+            expect(a11yTitleDesc_spy).toHaveBeenCalled();
+          });
+        });
+      });
     });
   });
 });

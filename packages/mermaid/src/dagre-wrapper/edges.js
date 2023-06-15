@@ -1,9 +1,10 @@
-import { log } from '../logger';
-import createLabel from './createLabel';
+import { log } from '../logger.js';
+import createLabel from './createLabel.js';
+import { createText } from '../rendering-util/createText.js';
 import { line, curveBasis, select } from 'd3';
-import { getConfig } from '../config';
-import utils from '../utils';
-import { evaluate } from '../diagrams/common/common';
+import { getConfig } from '../config.js';
+import utils from '../utils.js';
+import { evaluate } from '../diagrams/common/common.js';
 
 let edgeLabels = {};
 let terminalLabels = {};
@@ -14,8 +15,17 @@ export const clear = () => {
 };
 
 export const insertEdgeLabel = (elem, edge) => {
+  const useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
   // Create the actual text element
-  const labelElement = createLabel(edge.label, edge.labelStyle);
+  const labelElement =
+    edge.labelType === 'markdown'
+      ? createText(elem, edge.label, {
+          style: edge.labelStyle,
+          useHtmlLabels,
+          addSvgBackground: true,
+        })
+      : createLabel(edge.label, edge.labelStyle);
+  log.info('abc82', edge, edge.labelType);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
   const edgeLabel = elem.insert('g').attr('class', 'edgeLabel');
@@ -26,7 +36,7 @@ export const insertEdgeLabel = (elem, edge) => {
 
   // Center the label
   let bbox = labelElement.getBBox();
-  if (evaluate(getConfig().flowchart.htmlLabels)) {
+  if (useHtmlLabels) {
     const div = labelElement.children[0];
     const dv = select(labelElement);
     bbox = div.getBoundingClientRect();
@@ -107,6 +117,7 @@ export const insertEdgeLabel = (elem, edge) => {
     terminalLabels[edge.id].endRight = endEdgeLabelRight;
     setTerminalWidth(fo, edge.endLabelRight);
   }
+  return labelElement;
 };
 
 /**
@@ -130,9 +141,21 @@ export const positionEdgeLabel = (edge, paths) => {
     if (path) {
       //   // debugger;
       const pos = utils.calcLabelPosition(path);
-      log.info('Moving label from (', x, ',', y, ') to (', pos.x, ',', pos.y, ') abc78');
-      // x = pos.x;
-      // y = pos.y;
+      log.info(
+        'Moving label ' + edge.label + ' from (',
+        x,
+        ',',
+        y,
+        ') to (',
+        pos.x,
+        ',',
+        pos.y,
+        ') abc78'
+      );
+      if (paths.updatedPath) {
+        x = pos.x;
+        y = pos.y;
+      }
     }
     el.attr('transform', 'translate(' + x + ', ' + y + ')');
   }
@@ -324,7 +347,7 @@ const cutPathAtIntersect = (_points, boundryNode) => {
         pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
       });
       // // if (!pointPresent) {
-      if (!points.find((e) => e.x === inter.x && e.y === inter.y)) {
+      if (!points.some((e) => e.x === inter.x && e.y === inter.y)) {
         points.push(inter);
       } else {
         log.warn('abc88 no intersect', inter, points);
@@ -440,6 +463,9 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     case 'thick':
       strokeClasses = 'edge-thickness-thick';
       break;
+    case 'invisible':
+      strokeClasses = 'edge-thickness-thick';
+      break;
     default:
       strokeClasses = '';
   }
@@ -463,7 +489,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     .attr('style', edge.style);
 
   // DEBUG code, adds a red circle at each edge coordinate
-  // edge.points.forEach(point => {
+  // edge.points.forEach((point) => {
   //   elem
   //     .append('circle')
   //     .style('stroke', 'red')

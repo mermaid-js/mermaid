@@ -1,8 +1,44 @@
 /// <reference types="Cypress" />
 
-import { imgSnapshotTest, renderGraph } from '../../helpers/util';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
 
 context('Sequence diagram', () => {
+  it('should render a sequence diagram with boxes', () => {
+    renderGraph(
+      `
+    sequenceDiagram
+      box LightGrey Alice and Bob
+      participant Alice
+      participant Bob
+      end
+      participant John as John<br/>Second Line
+      Alice ->> Bob: Hello Bob, how are you?
+      Bob-->>John: How about you John?
+      Bob--x Alice: I am good thanks!
+      Bob-x John: I am good thanks!
+      Note right of John: Bob thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
+      Bob-->Alice: Checking with John...
+      alt either this
+        Alice->>John: Yes
+        else or this
+        Alice->>John: No
+        else or this will happen
+        Alice->John: Maybe
+      end
+      par this happens in parallel
+      Alice -->> Bob: Parallel message 1
+      and
+      Alice -->> John: Parallel message 2
+      end
+    `,
+      { sequence: { useMaxWidth: false } }
+    );
+    cy.get('svg').should((svg) => {
+      const width = parseFloat(svg.attr('width'));
+      expect(width).to.be.within(830 * 0.95, 830 * 1.05);
+      expect(svg).to.not.have.attr('style');
+    });
+  });
   it('should render a simple sequence diagram', () => {
     imgSnapshotTest(
       `
@@ -52,6 +88,16 @@ context('Sequence diagram', () => {
       {}
     );
   });
+  it('should handle empty lines', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      Alice->>John: Hello John<br/>
+      John-->>Alice: Great<br/><br/>day!
+    `,
+      {}
+    );
+  });
   it('should handle line breaks and wrap annotations', () => {
     imgSnapshotTest(
       `
@@ -80,7 +126,34 @@ context('Sequence diagram', () => {
         loop Loopy
             Bob->>Alice: Pasten
         end      `,
-      { wrap: true }
+      {
+        sequence: {
+          wrap: true,
+        },
+      }
+    );
+  });
+  it('should render a sequence diagram with par_over', () => {
+    imgSnapshotTest(
+      `
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        participant John
+        par_over Section title
+          Alice ->> Bob: Message 1<br>Second line
+          Bob ->> John: Message 2
+        end
+        par_over Two line<br>section title
+          Note over Alice: Alice note
+          Note over Bob: Bob note<br>Second line
+          Note over John: John note
+        end
+        par_over Mixed section
+          Alice ->> Bob: Message 1
+          Note left of Bob: Alice/Bob Note
+        end
+      `
     );
   });
   context('font settings', () => {

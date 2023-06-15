@@ -1,9 +1,8 @@
 // @ts-nocheck TODO: fix file
 import { select } from 'd3';
-import svgDraw from './svgDraw';
-import { getConfig } from '../../config';
-import { configureSvgSize } from '../../setupGraphViewbox';
-import addSVGAccessibilityFields from '../../accessibility';
+import svgDraw from './svgDraw.js';
+import { getConfig } from '../../config.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
@@ -121,8 +120,6 @@ export const draw = function (text, id, version, diagObj) {
   diagram.attr('viewBox', `${box.startx} -25 ${width} ${height + extraVertForTitle}`);
   diagram.attr('preserveAspectRatio', 'xMinYMin meet');
   diagram.attr('height', height + extraVertForTitle + 25);
-
-  addSVGAccessibilityFields(diagObj.db, diagram, id);
 };
 
 export const bounds = {
@@ -146,7 +143,7 @@ export const bounds = {
     this.verticalPos = 0;
   },
   updateVal: function (obj, key, val, fun) {
-    if (typeof obj[key] === 'undefined') {
+    if (obj[key] === undefined) {
       obj[key] = val;
     } else {
       obj[key] = fun(val, obj[key]);
@@ -221,12 +218,22 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
   let num = 0;
 
   // Draw the tasks
-  for (let i = 0; i < tasks.length; i++) {
-    const task = tasks[i];
+  for (const [i, task] of tasks.entries()) {
     if (lastSection !== task.section) {
       fill = fills[sectionNumber % fills.length];
       num = sectionNumber % fills.length;
       colour = textColours[sectionNumber % textColours.length];
+
+      // count how many consecutive tasks have the same section
+      let taskInSectionCount = 0;
+      const currentSection = task.section;
+      for (let taskIndex = i; taskIndex < tasks.length; taskIndex++) {
+        if (tasks[taskIndex].section == currentSection) {
+          taskInSectionCount = taskInSectionCount + 1;
+        } else {
+          break;
+        }
+      }
 
       const section = {
         x: i * conf.taskMargin + i * conf.width + LEFT_MARGIN,
@@ -235,6 +242,7 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
         fill,
         num,
         colour,
+        taskCount: taskInSectionCount,
       };
 
       svgDraw.drawSection(diagram, section, conf);

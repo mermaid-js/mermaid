@@ -1,4 +1,4 @@
-import { log } from './logger';
+import { log } from './logger.js';
 
 /**
  * Applies d3 attributes
@@ -70,7 +70,6 @@ export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth)
   height = sHeight + padding * 2;
   // }
 
-  // width =
   log.info(`Calculated bounds: ${width}x${height}`);
   configureSvgSize(svgElem, height, width, useMaxWidth);
 
