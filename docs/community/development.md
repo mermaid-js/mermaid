@@ -72,6 +72,15 @@ The `test` script and others are in the top-level `package.json` file.
 
 All tests should run successfully without any errors or failures. (You might see _lint_ or _formatting_ warnings; those are ok during this step.)
 
+### Docker
+
+If you are using docker and docker-compose, you have self-documented `run` bash script, which is a convenient alias for docker-compose commands:
+
+```bash
+./run install # npx pnpm install
+./run test # pnpm test
+```
+
 ## Contributing Code
 
 The basic steps for contributing code are:
