@@ -3,8 +3,10 @@
 node_modules/
 coverage/
 .idea/
+.pnpm-store/
 
 dist
+v8-compile-cache-0
 
 yarn-error.log
 .npmrc
@@ -39,3 +41,4 @@ stats/
 
 **/user-avatars/*
 **/contributor-names.json
+.pnpm-store
