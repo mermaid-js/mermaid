@@ -134,9 +134,25 @@ You may need to change existing tests if they were inaccurate.
 
 If you are adding a feature, you will definitely need to add tests. Depending on the size of your feature, you may need to add integration tests.
 
-#### Unit Tests for Parsing
+#### Unit Tests
 
-If you are adding or changing the text that describes a diagram (the _grammar_), you will need to add (or change) tests for the _parser._
+Unit tests are tests that test a single function or module. They are the easiest to write and the fastest to run.
+
+Unit tests are mandatory all code except the renderers. (The renderers are tested with integration tests.)
+
+We use [Vitest](https://vitest.dev) to run unit tests.
+
+You can use the following command to run the unit tests:
+
+```sh
+pnpm test
+```
+
+When writing new tests, it's easier to have the tests automatically run as you make changes. You can do this by running the following command:
+
+```sh
+pnpm test:watch
+```
 
 #### Integration/End-to-End (e2e) tests
 
@@ -222,12 +238,6 @@ The docs are located in the `packages/mermaid/src/docs` folder and are written i
 The contents of [mermaid.js.org](https://mermaid.js.org/) are based on the docs from the `master` branch.
 Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid.js.org/) once published.
 
-### Documentation organization: Sidebar navigation
-
-If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation.**
-
-The sidebar navigation is defined in [the vitepress configuration file config.ts](../.vitepress/config.ts).
-
 ### How to Contribute to Documentation
 
 We are a little less strict here, it is OK to commit directly in the `develop` branch if you are a collaborator.
@@ -235,6 +245,40 @@ We are a little less strict here, it is OK to commit directly in the `develop` b
 The documentation is located in the `packages/mermaid/src/docs` directory and organized according to relevant subfolder.
 
 The `docs` folder will be automatically generated when committing to `packages/mermaid/src/docs` and **should not** be edited manually.
+
+```mermaid
+flowchart LR
+  classDef default fill:#fff,color:black,stroke:black
+
+  source["files in /packages/mermaid/src/docs\n(changes should be done here)"] -- automatic processing\nto generate the final documentation--> published["files in /docs\ndisplayed on the official documentation site"]
+
+```
+
+You can use `note`, `tip`, `warning` and `danger` in triple backticks to add a note, tip, warning or danger box.
+Do not use vitepress specific markdown syntax `::: warning` as it will not be processed correctly.
+
+````
+```note
+Note content
+```
+
+```tip
+Tip content
+```
+
+```warning
+Warning content
+```
+
+```danger
+Danger content
+```
+
+````
+
+```note
+If the change is _only_ to the documentation, you can get your changes published to the site quicker by making a PR to the `master` branch.
+```
 
 We encourage contributions to the documentation at [packages/mermaid/src/docs in the _develop_ branch](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs).
 
@@ -270,6 +314,12 @@ To edit Docs on GitHub:
 5.  Submit your changes by clicking the button **Propose file change** at the bottom (by automatic creation of a fork and a new branch).
 6.  Visit the Actions tab in Github, `https://github.com/<Your Username>/mermaid/actions` and enable the actions for your fork. This will ensure that the documentation is built and updated in your fork.
 7.  Create a Pull Request of your newly forked branch by clicking the green **Create Pull Request** button.
+
+### Documentation organization: Sidebar navigation
+
+If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation.**
+
+The sidebar navigation is defined in [the vitepress configuration file config.ts](../.vitepress/config.ts).
 
 ## Questions or Suggestions?
 
