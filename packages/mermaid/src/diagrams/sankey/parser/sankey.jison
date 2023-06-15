@@ -1,21 +1,16 @@
-/** mermaid
- *  https://mermaidjs.github.io/
- *  (c) 2014-2015 Knut Sveidqvist
- *  MIT license.
- *
- *  Based on js sequence diagrams jison grammr
- *  https://bramp.github.io/js-sequence-diagrams/
- *  (c) 2012-2013 Andrew Brampton (bramp.net)
- *  Simplified BSD license.
- */
+/** mermaid */
 %lex
 
 %options case-insensitive
 
 %%
 "sankey" return 'SANKEY'
+"->" return 'ARROW'
 \w+ return 'NODE'
--> return 'ARROW'
+[\n]+ return 'NEWLINE';
+\s+ /* skip all whitespace */
+
+// TODO: check if jison will return 2 separate tokens (for nodes) while ignoring whitespace
 
 /lex
 
@@ -25,7 +20,7 @@
 
 start
 	: SPACE start
-	: SANKEY document
+	| SANKEY document
 	;
 
 document

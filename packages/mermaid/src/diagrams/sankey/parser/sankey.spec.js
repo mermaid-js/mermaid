@@ -12,7 +12,7 @@ describe('Sankey diagram', function () {
     });
 
     it('recognized its type', function() {
-      const str='sankey';
+      const str=`sankey`;
       
       parser.parse(str);
     });
