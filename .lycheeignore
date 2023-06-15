@@ -14,8 +14,10 @@ https://twitter.com/mermaidjs_
 
 https://bundlephobia.com/
 
+# Ignore localhost links
+
+http://localhost:3333/
+
 # Don't check files that are generated during the build via `pnpm docs:code`
 
 packages/mermaid/src/docs/config/setup/\*
-
-http://localhost
