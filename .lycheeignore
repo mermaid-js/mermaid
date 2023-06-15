@@ -1,14 +1,21 @@
 # These links are ignored by our link checker https://github.com/lycheeverse/lychee
+
 # The file allows you to list multiple regular expressions for exclusion (one pattern per line).
 
 # Network error: Forbidden
+
 https://codepen.io
 
 # Timeout error, maybe Twitter has anti-bot defenses against GitHub's CI servers?
+
 https://twitter.com/mermaidjs_
 
 # Site is down occasionally
+
 https://bundlephobia.com/
 
 # Don't check files that are generated during the build via `pnpm docs:code`
-packages/mermaid/src/docs/config/setup/*
+
+packages/mermaid/src/docs/config/setup/\*
+
+http://localhost
