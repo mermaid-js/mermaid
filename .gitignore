@@ -41,3 +41,4 @@ stats/
 
 **/user-avatars/*
 **/contributor-names.json
+.pnpm-store

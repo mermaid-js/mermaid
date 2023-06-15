@@ -17,6 +17,10 @@ export default defineConfig({
   base: '/',
   markdown: allMarkdownTransformers,
   head: [['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]],
+  ignoreDeadLinks: [
+    // ignore all localhost links
+    /^https?:\/\/localhost/,
+  ],
   themeConfig: {
     nav: nav(),
     editLink: {
@@ -42,6 +46,7 @@ export default defineConfig({
   },
 });
 
+// Top (across the page) menu
 function nav() {
   return [
     { text: 'Docs', link: '/intro/', activeMatch: '/intro/' },
@@ -65,7 +70,7 @@ function nav() {
         },
         {
           text: 'Contributing',
-          link: 'https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md',
+          link: '/community/development',
         },
       ],
     },
@@ -169,12 +174,43 @@ function sidebarCommunity() {
       collapsible: true,
       items: [
         { text: 'Overview for Beginners', link: '/community/n00b-overview' },
-        {
-          text: 'Development and Contribution',
-          link: '/community/development',
-        },
+        ...sidebarCommunityDevelopContribute(),
         { text: 'Adding Diagrams', link: '/community/newDiagram' },
         { text: 'Security', link: '/community/security' },
+      ],
+    },
+  ];
+}
+
+// Development and Contributing
+function sidebarCommunityDevelopContribute() {
+  const page_path = '/community/development';
+  return [
+    {
+      text: 'Contributing to Mermaid',
+      link: page_path + '#contributing-to-mermaid',
+      collapsible: true,
+      items: [
+        {
+          text: 'Technical Requirements and Setup',
+          link: pathToId(page_path, 'technical-requirements-and-setup'),
+        },
+        {
+          text: 'Contributing Code',
+          link: pathToId(page_path, 'contributing-code'),
+        },
+        {
+          text: 'Contributing Documentation',
+          link: pathToId(page_path, 'contributing-documentation'),
+        },
+        {
+          text: 'Questions or Suggestions?',
+          link: pathToId(page_path, 'questions-or-suggestions'),
+        },
+        {
+          text: 'Last Words',
+          link: pathToId(page_path, 'last-words'),
+        },
       ],
     },
   ];
@@ -191,4 +227,14 @@ function sidebarNews() {
       ],
     },
   ];
+}
+
+/**
+ * Return a string that puts together the pagePage, a '#', then the given id
+ * @param  pagePath
+ * @param  id
+ * @returns  the fully formed path
+ */
+function pathToId(pagePath: string, id = ''): string {
+  return pagePath + '#' + id;
 }
