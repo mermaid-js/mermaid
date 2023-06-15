@@ -24,7 +24,7 @@ start
 	;
 
 document
-	: document
+	: node document
 	| /* empty */
 	;
-
+	
