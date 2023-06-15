@@ -18,12 +18,26 @@ https://docs.github.com/en/get-started/quickstart/fork-a-repo
 
 ## Development Installation
 
+If you don't have direct access to push to mermaid repositories, make a fork first. Then clone. Or clone directly from mermaid-js:
+
 ```bash
 git clone git@github.com:mermaid-js/mermaid.git
 cd mermaid
+```
+
+Install required packages:
+
+```bash
 # npx is required for first install as volta support for pnpm is not added yet.
 npx pnpm install
 pnpm test
+```
+
+If you are using docker and docker-compose, you have self-documented `run` bash script, which is a convenient alias for docker-compose commands:
+
+```bash
+./run install # npx pnpm install
+./run test # pnpm test
 ```
 
 ## Committing code
