@@ -12,3 +12,6 @@ packages/mermaid/src/docs/config/setup/*
 
 # Ignore localhost
 http://localhost:3333/
+
+# Ignore slack invite
+https://join.slack.com/
