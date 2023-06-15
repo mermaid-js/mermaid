@@ -17,6 +17,10 @@ export default defineConfig({
   base: '/',
   markdown: allMarkdownTransformers,
   head: [['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]],
+  ignoreDeadLinks: [
+    // ignore all localhost links
+    /^https?:\/\/localhost/,
+  ],
   themeConfig: {
     nav: nav(),
     editLink: {
