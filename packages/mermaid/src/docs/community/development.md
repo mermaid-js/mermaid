@@ -72,13 +72,14 @@ The basic steps for contributing code are:
 
 ```mermaid
 graph LR
-    git[1. Checkout a  git branch] --> codeTest[2. write tests and code] --> doc[3. update documentation] --> submit[4.submit a PR]
+    git[1. Checkout a  git branch] --> codeTest[2. Write tests and code] --> doc[3. Update documentation] --> submit[4. Submit a PR] --> review[5. Review and merge]
 ```
 
 1. **Create** and checkout a git branch and work on your code in the branch
 2. Write and update **tests** (unit and perhaps even integration (e2e) tests) (If you do TDD/BDD, the order might be different.)
 3. **Let users know** that things have changed or been added in the documents! This is often overlooked, but _critical_
-4. **Submit** your code as a _pull request._
+4. **Submit** your code as a _pull request_.
+5. Maintainers will **review** your code. If there are no changes necessary, the PR will be merged. Otherwise, make the requested changes and repeat.
 
 ### 1. Checkout a git branch
 
@@ -189,11 +190,11 @@ The documentation has to be updated to users know that things have changed and a
 
 We know it can sometimes be hard to code _and_ write user documentation.
 
-_**[TODO - how to submit documentation changes.** A few words plus a link to [Contributing Documentation](#contributing-documentation)]_
+Our documentation is managed in `packages/mermaid/src/docs`. Details on how to edit is in the [Contributing Documentation](#contributing-documentation) section.
 
 Create another issue specifically for the documentation.  
 You will need to help with the PR, but definitely ask for help if you feel stuck.
-When it feels hard to write stuff out, explaining it to someone and having that person ask you clarifying questions can often be 80% of the work!]
+When it feels hard to write stuff out, explaining it to someone and having that person ask you clarifying questions can often be 80% of the work!
 
 When in doubt, write up and submit what you can. It can be clarified and refined later. (With documentation, something is better than nothing!)
 
@@ -201,11 +202,12 @@ When in doubt, write up and submit what you can. It can be clarified and refined
 
 **[TODO - PR titles should start with (fix | feat | ....)]**
 
-We make all changes via Pull Requests (PRs). As we have many Pull Requests from developers new to Mermaid, \
-we have put in place a process wherein _knsv, Knut Sveidqvist_ is the primary reviewer of changes and merging pull requests. The process is as follows:
+We make all changes via Pull Requests (PRs). As we have many Pull Requests from developers new to Mermaid, we have put in place a process wherein _knsv, Knut Sveidqvist_ is in charge of the final release process and the active maintainers are in charge of reviewing and merging most PRs.
 
-- Large changes are reviewed by knsv or other developer asked to review by knsv
-- Smaller, low-risk changes like dependencies, documentation, etc. can be reviewed and merged by active collaborators
+- PRs will be reviewed by active maintainers, who will provide feedback and request changes as needed.
+- The maintainers will request a review from knsv, if necessary.
+- Once the PR is approved, the maintainers will merge the PR into the `develop` branch.
+- When a release is ready, the `release/x.x.x` branch will be created, extensively tested and knsv will be in charge of the release process.
 
 **Reminder: Pull Requests should be submitted to the develop branch.**
 
@@ -217,10 +219,10 @@ If it is not in the documentation, it's like it never happened. Wouldn't that be
 
 The docs are located in the `packages/mermaid/src/docs` folder and are written in Markdown. Just pick the right section and start typing.
 
-The contents of [https://mermaid-js.github.io/mermaid/](https://mermaid-js.github.io/mermaid/) are based on the docs from the `master` branch.
-Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid-js.github.io/mermaid/) once released.
+The contents of [mermaid.js.org](https://mermaid.js.org/) are based on the docs from the `master` branch.
+Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid.js.org/) once published.
 
-### Documentation organization: sidebar navigation
+### Documentation organization: Sidebar navigation
 
 If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation.**
 
@@ -232,25 +234,20 @@ We are a little less strict here, it is OK to commit directly in the `develop` b
 
 The documentation is located in the `packages/mermaid/src/docs` directory and organized according to relevant subfolder.
 
-The contents of <https://mermaid-js.github.io/mermaid/> are based on the docs from the `master` branch. Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid-js.github.io/mermaid/) once released.
+The `docs` folder will be automatically generated when committing to `packages/mermaid/src/docs` and **should not** be edited manually.
 
-The `docs` folder will be automatically generated when committing to `packages/mermaid/src/docs` and should not be edited manually.
-
-We encourage contributions to the documentation at [packages/mermaid/src/docs in the _develop_ branch](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs). We publish documentation to GitHub Pages with [Docsify](https://www.youtube.com/watch?v=TV88lp7egMw&t=3s)
-
-- Documentation (we encourage updates to the `packages/mermaid/src/docs` folder; you can submit them via direct commits)
+We encourage contributions to the documentation at [packages/mermaid/src/docs in the _develop_ branch](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs).
 
 **_DO NOT CHANGE FILES IN `/docs`_**
 
-The source files for documentation are in `/packages/mermaid/docs` and are written in markdown.
-
 ### The official documentation site
 
-**[The mermaid documentation site](https://mermaid-js.github.io/mermaid/) is powered by [Vitepress](https://vitepress.vuejs.org/).**
+**[The mermaid documentation site](https://mermaid.js.org/) is powered by [Vitepress](https://vitepress.vuejs.org/).**
 
-**_[TODO - how to preview the documents on a local machine? how to run VitePress?]_**
+To run the documentation site locally:
 
-If you want to preview the whole documentation site on your machine, you need to install `docsify-cli`:
+1.  Run `pnpm --filter mermaid run docs:dev` to start the dev server. (Or `pnpm docs:dev` inside the `packages/mermaid` directory.)
+2.  Open [http://localhost:3333/](http://localhost:3333/) in your browser.
 
 Markdown is used to format the text, for more information about Markdown [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
 
@@ -267,11 +264,12 @@ _[TODO: need to keep this in sync with [check out a git branch in Contributing C
 To edit Docs on GitHub:
 
 1.  Login to [GitHub.com](https://www.github.com).
-2.  Navigate to [packages/mermaid/src/docs in the mermaid-js repository](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs).
+2.  Navigate to [packages/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs) in the mermaid-js repository.
 3.  To edit a file, click the pencil icon at the top-right of the file contents panel.
 4.  Describe what you changed in the **Propose file change** section, located at the bottom of the page.
 5.  Submit your changes by clicking the button **Propose file change** at the bottom (by automatic creation of a fork and a new branch).
-6.  Create a Pull Request of your newly forked branch by clicking the green **Create Pull Request** button.
+6.  Visit the Actions tab in Github, `https://github.com/<Your Username>/mermaid/actions` and enable the actions for your fork. This will ensure that the documentation is built and updated in your fork.
+7.  Create a Pull Request of your newly forked branch by clicking the green **Create Pull Request** button.
 
 ## Questions or Suggestions?
 
@@ -281,8 +279,9 @@ To edit Docs on GitHub:
 - Search in open Issues
 - Search in closed Issues
 
-If you find an open issue or discussion thread that is similar to your question but isn't answered,
-you can let us know that you are also interested in it. **_[TODO: describe upvoting]_**
+If you find an open issue or discussion thread that is similar to your question but isn't answered, you can let us know that you are also interested in it.
+Use the GitHub reactions to add a thumbs-up to the issue or discussion thread.
+
 This helps the team know the relative interest in something and helps them set priorities and assignments.
 
 Feel free to add to the discussion on the issue or topic.
