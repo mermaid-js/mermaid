@@ -35,7 +35,7 @@ export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
 /**
  * Applies attributes from `calculateSvgSizeAttrs`
  *
- * @param {SVGSVGElement} svgElem The SVG Element to configure
+ * @param {import('./diagram-api/types.js').SVG | SVGSVGElement} svgElem The SVG Element to configure
  * @param {number} height The height of the SVG
  * @param {number} width The width of the SVG
  * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
