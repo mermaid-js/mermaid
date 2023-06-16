@@ -30,31 +30,37 @@ describe('Sankey diagram', function () {
     it('recognizes multiple flows', () => {
       const str = `
       sankey
-      a -> 30 -> b -> 12 -> e
-      c -> 30 -> d -> 12 -> e
-      c -> 40 -> e -> 12 -> e
+      a -> 30 -> b -> 12 -> e;
+      c -> 30 -> d -> 12 -> e;
+      c -> 40 -> e -> 12 -> q;
       `;
       
       parser.parse(str);
     });
     
-    it('recognizes grouped values', () => {
+    it('recognizes a separate node with its attributes', () => {
       const str = `
       sankey
-      a -> {30} -> b
+      a[]
+      b[attr=1]
+      c[attr=2]
+      d[attrWithoutValue]
+      d[attr = 3]
       `;
       
       parser.parse(str);
     });
 
-    it('recognizes a separate node with its attributes', () => {
-      const str = `
-      sankey
-      c[]
-      `;
+    // it('recognizes grouped values', () => {
+    //   const str = `
+    //   sankey
+    //   a -> {30} -> b
+    //   `;
       
-      parser.parse(str);
-    });
+    //   parser.parse(str);
+    // });
+
+
 
     // it('recognizes intake group', () => {
     //   const str = `

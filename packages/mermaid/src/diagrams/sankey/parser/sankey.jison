@@ -3,20 +3,29 @@
 
 %options case-insensitive
 %s group
-// %x attributes
+%x attributes
+%x attribute
+%x value
 
 %%
-"{"       { this.pushState('group'); return 'OPEN_GROUP'; }
-<group>"}" { this.popState('group'); return 'CLOSE_GROUP'; }
 "sankey" return 'SANKEY'
-\d+    return 'VALUE'
+\d+      return 'AMOUNT'
 "->"     return 'ARROW'
 \w+      return 'NODE'
-"["             {/*this.pushState('attributes');*/ return 'OPEN_ATTRIBUTES'; }
-"]" { /* this.popState(); */ return 'CLOSE_ATTRIBUTES'; }
-(<<EOF>>|[\n;])+ return 'EOS' // end of statement
+(?:<<EOF>>|[\n;])+ { return 'EOS'; } // end of statement is ; \n or end of file
 \s+ // skip all whitespace
-// [\n]+ return 'NEWLINE';
+"{"             { this.pushState('group'); return 'OPEN_GROUP'; }
+<group>"}"      { this.popState('group'); return 'CLOSE_GROUP'; }
+"["             { this.pushState('attributes'); return 'OPEN_ATTRIBUTES'; }
+<attributes>"]" { this.popState(); return 'CLOSE_ATTRIBUTES'; }
+<attributes>\w+ { return 'ATTRIBUTE'; } // string followed by = sign is "attrName"
+<attributes>(?=\=s*)[\s\w] {return 'VALUE';}
+<attributes>\= { this.pushState('attribute'); return 'EQUAL'; }
+<attributes>\s+ // skip all whitespace
+<attribute>[\w]+ {this.popState(); return 'VALUE';}
+<attribute>\s+ //skip
+<attribute>\" { this.pushState('value'); return 'OPEN_VALUE'; }
+<value>\"  { this.popState(); return 'CLOSE_VALUE'; }
 
 // TODO: check if jison will return 2 separate tokens (for nodes) while ignoring whitespace
 
@@ -33,41 +42,26 @@ start
 
 document
 	: line document
-	| // empty
+	|
 	;
 
 line
-	// : node_with_attributes // one node with attributes
 	: flow EOS
 	| node_with_attributes EOS
 	| EOS
 	;
-	
 
-node_with_attributes
-	: NODE
-	| NODE attributes_group
-	;
+node_with_attributes: NODE OPEN_ATTRIBUTES attributes CLOSE_ATTRIBUTES;
 
-attributes_group
-	: OPEN_ATTRIBUTES attributes CLOSE_ATTRIBUTES
-	;
+attributes: attribute attributes | ;
+attribute: ATTRIBUTE EQUAL VALUE | ATTRIBUTE;
 
-attributes:
-	| // TODO
-	;
+// flow
+// 	: NODE ARROW value_or_values_group ARROW flow
+// 	| NODE
+// 	;
 
-flow
-	: NODE ARROW value_or_values_group ARROW flow
-	| NODE
-	;
+flow: n_chain_a;
 
-value_or_values_group
-	: OPEN_GROUP values CLOSE_GROUP
-	| VALUE
-	;
-
-values
-	: values VALUE
-	| /* empty */
-	;
+n_chain_a: NODE ARROW a_chain_n | NODE;
+a_chain_n: AMOUNT ARROW n_chain_a | AMOUNT;
