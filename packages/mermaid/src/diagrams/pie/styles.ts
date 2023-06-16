@@ -1,4 +1,6 @@
-const getStyles = (options) =>
+import { PieStyleOptions } from './pieTypes.js';
+
+const getStyles = (options: PieStyleOptions) =>
   `
   .pieCircle{
     stroke: ${options.pieStrokeColor};
