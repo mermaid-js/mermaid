@@ -65,7 +65,7 @@ const cleanupValue = (value: string): number => {
 };
 
 const clear = (): void => {
-  sections = DEFAULT_PIE_DB.sections;
+  sections = JSON.parse(JSON.stringify(DEFAULT_PIE_DB.sections));
   showData = DEFAULT_PIE_DB.showData;
   commonClear();
 };
