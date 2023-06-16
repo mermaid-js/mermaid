@@ -35,9 +35,7 @@
 	if(this.topState()==='value') this.popState();
 	return 'CLOSE_STRING';
 }
-<string>([^"\\]|\\\")+                    { console.log(this.state); return 'STRING'; }
-
-// TODO: check if jison will return 2 separate tokens (for nodes) while ignoring whitespace
+<string>([^"\\]|\\\")+           { return 'STRING'; }
 
 /lex
 
@@ -55,20 +53,28 @@ document
 	|
 	;
 
+	// : NODE exhaust intake exhaust_chain optional_attributes EOS
 line
-	: flow EOS
-	| node_with_attributes EOS
+	: stream optional_attributes EOS
+	| NODE optional_attributes EOS
 	| EOS
 	;
 
-node_with_attributes: NODE OPEN_ATTRIBUTES attributes CLOSE_ATTRIBUTES;
+optional_attributes: OPEN_ATTRIBUTES attributes CLOSE_ATTRIBUTES | ;
 
 attributes: attribute attributes | ;
 attribute: ATTRIBUTE EQUAL value | ATTRIBUTE;
 
 value: VALUE | OPEN_STRING STRING CLOSE_STRING;
 
-flow: n_chain_a;
+stream: NODE ARROW AMOUNT ARROW tail;
+tail: stream | NODE;
 
-n_chain_a: NODE ARROW a_chain_n | NODE;
-a_chain_n: AMOUNT ARROW n_chain_a | AMOUNT;
+// exhaust_chain: ARROW AMOUNT intake_chain | ;
+// intake_chain: ARROW NODE exhaust_chain | ;
+
+// exhaust: ARROW AMOUNT;
+// intake: ARROW NODE;
+
+// node_chain_amount: NODE ARROW amount_node_chain | NODE;
+// amount_node_chain: AMOUNT ARROW node_chain_amount | AMOUNT;
