@@ -86,9 +86,11 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
                 }
                 res(img);
               }
-              if (img.complete) {
-                setupImage();
-              }
+              setTimeout(() => {
+                if (img.complete) {
+                  setupImage();
+                }
+              });
               img.addEventListener('error', setupImage);
               img.addEventListener('load', setupImage);
             })
