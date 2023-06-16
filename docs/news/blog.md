@@ -6,6 +6,12 @@
 
 # Blog
 
+## [Sequence diagrams, the only good thing UML brought to software development](https://www.mermaidchart.com/blog/posts/sequence-diagrams-the-good-thing-uml-brought-to-software-development/)
+
+15 June 2023 · 12 mins
+
+Sequence diagrams really shine when you’re documenting different parts of a system and the various ways these parts interact with each other.
+
 ## [subhash-halder contributed quadrant charts so you can show your manager what to select - just like the strategy consultants at BCG do](https://www.mermaidchart.com/blog/posts/subhash-halder-contributed-quadrant-charts-so-you-can-show-your-manager-what-to-select-just-like-the-strategy-consultants-at-bcg-do/)
 
 8 June 2023 · 7 mins
