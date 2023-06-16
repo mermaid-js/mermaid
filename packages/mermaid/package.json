@@ -73,7 +73,9 @@
   "devDependencies": {
     "@types/cytoscape": "^3.19.9",
     "@types/d3": "^7.4.0",
+    "@types/d3-scale": "^4.0.3",
     "@types/d3-selection": "^3.0.5",
+    "@types/d3-shape": "^3.1.1",
     "@types/dompurify": "^3.0.2",
     "@types/jsdom": "^21.1.1",
     "@types/lodash-es": "^4.17.7",
@@ -83,6 +85,7 @@
     "@types/uuid": "^9.0.1",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
+    "@vanilla-extract/css": "^1.11.1",
     "chokidar": "^3.5.3",
     "concurrently": "^8.0.1",
     "coveralls": "^3.1.1",
