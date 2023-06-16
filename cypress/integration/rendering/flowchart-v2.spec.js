@@ -696,7 +696,7 @@ A ~~~ B
     );
   });
 
-  it('4439: Should the graph event if some images are missing', () => {
+  it('4439: Should render the graph even if some images are missing', () => {
     imgSnapshotTest(
       `flowchart TD
     B[<img>]
