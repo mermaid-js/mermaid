@@ -85,7 +85,6 @@
     "@types/uuid": "^9.0.1",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
-    "@vanilla-extract/css": "^1.11.1",
     "chokidar": "^3.5.3",
     "concurrently": "^8.0.1",
     "coveralls": "^3.1.1",
