@@ -67,10 +67,6 @@ attributes: attribute attributes | ;
 attribute: ATTRIBUTE EQUAL value | ATTRIBUTE;
 
 value: VALUE | OPEN_STRING STRING CLOSE_STRING;
-// flow
-// 	: NODE ARROW value_or_values_group ARROW flow
-// 	| NODE
-// 	;
 
 flow: n_chain_a;
 
