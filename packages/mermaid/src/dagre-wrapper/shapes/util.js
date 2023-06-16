@@ -66,8 +66,11 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
       await Promise.all(
         [...images].map(
           (img) =>
-            new Promise((res) =>
-              img.addEventListener('load', function () {
+            new Promise((res) => {
+              /**
+               *
+               */
+              function setupImage() {
                 img.style.display = 'flex';
                 img.style.flexDirection = 'column';
 
@@ -82,8 +85,13 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
                   img.style.width = '100%';
                 }
                 res(img);
-              })
-            )
+              }
+              if (img.complete) {
+                setupImage();
+              }
+              img.addEventListener('error', setupImage);
+              img.addEventListener('load', setupImage);
+            })
         )
       );
     }
