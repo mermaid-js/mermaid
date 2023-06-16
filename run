@@ -14,15 +14,19 @@ $RUN mermaid sh $args
 ;;
 
 i | install)
-$RUN mermaid sh -c "npx pnpm install"
+$RUN mermaid sh -c "npx pnpm install $args"
 ;;
 
 test)
-$RUN mermaid sh -c "npx pnpm test"
+$RUN mermaid sh -c "npx pnpm test $args"
+;;
+
+vitest)
+$RUN mermaid sh -c "npx pnpm vitest $args"
 ;;
 
 e2e)
-$RUN mermaid sh -c "npx pnpm e2e"
+$RUN mermaid sh -c "npx pnpm e2e $args"
 ;;
 
 lint)

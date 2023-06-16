@@ -1,6 +1,7 @@
 import diagram from './sankey.jison';
 import { parser } from './sankey.jison';
 import db from '../sankeyDB.js';
+// import { fail } from 'assert';
 
 describe('Sankey diagram', function () {
   // TODO - these examples should be put into ./parser/stateDiagram.spec.js
@@ -11,39 +12,104 @@ describe('Sankey diagram', function () {
       diagram.parser.yy.clear();
     });
 
-    it('recognized its type', function() {
+    it('recognizes its type', () => {
       const str=`sankey`;
       
       parser.parse(str);
     });
 
-    // it('one simple flow', function () {
+    it('recognizes one flow', () => {
+      const str = `
+      sankey
+      a -> 30 -> b -> 20 -> c
+      `;
+      
+      parser.parse(str);
+    });
+    
+    it('recognizes multiple flows', () => {
+      const str = `
+      sankey
+      a -> 30 -> b -> 12 -> e
+      c -> 30 -> d -> 12 -> e
+      c -> 40 -> e -> 12 -> e
+      `;
+      
+      parser.parse(str);
+    });
+    
+    it('recognizes grouped values', () => {
+      const str = `
+      sankey
+      a -> {30} -> b
+      `;
+      
+      parser.parse(str);
+    });
+
+    it('recognizes a separate node with its attributes', () => {
+      const str = `
+      sankey
+      c[]
+      `;
+      
+      parser.parse(str);
+    });
+
+    // it('recognizes intake group', () => {
     //   const str = `
     //   sankey
-    //   a -> 30 -> b
+    //   a -> {
+    //     30 -> b
+    //     40 -> c
+    //   }
     //   `;
-
+      
     //   parser.parse(str);
     // });
 
-    // it('multiple flows', function () {
+    // it('recognizes exhaust group', () => {
     //   const str = `
     //   sankey
-    //   a -> 30 -> b
-    //   c -> 30 -> d
-    //   c -> 40 -> e
+    //   {
+    //     b -> 30
+    //     c -> 40
+    //   } -> a
     //   `;
-
+      
     //   parser.parse(str);
     // });
 
-    // it('multiple flows', function () {
+    // it('what to do?', () => {
     //   const str = `
     //   sankey
-    //   a -> 30 -> b
-    //   c -> 30 -> d
+    //   {
+    //     b -> 30
+    //     c -> 40
+    //   } -> {
+    //     e
+    //     d
+    //   }
     //   `;
+      
+    //   parser.parse(str);
+    // });
 
+    // it('complex', () => {
+    //   const str = `
+    //   sankey
+    //   {
+    //     a -> 30
+    //     b -> 40
+    //   } -> c -> {
+    //     20 -> e -> 49
+    //     20 -> d -> 23
+    //   } -> k -> 20 -> i -> {
+    //     10 -> f
+    //     11 -> j
+    //   }
+    //   `;
+      
     //   parser.parse(str);
     // });
   });
