@@ -695,6 +695,15 @@ A ~~~ B
       {}
     );
   });
+
+  it('4439: Should the graph event if some images are missing', () => {
+    imgSnapshotTest(
+      `flowchart TD
+    B[<img>]
+    B-->C[<img>]`,
+      {}
+    );
+  });
   describe('Markdown strings flowchart (#4220)', () => {
     describe('html labels', () => {
       it('With styling and classes', () => {
