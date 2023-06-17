@@ -41,7 +41,13 @@ jobs:
           parallel: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-
+      - uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/cypress/coverage-final.json
+          flags: e2e
+          name: mermaid-codecov
+          fail_ci_if_error: true
+          verbose: true
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         if: ${{ failure() && steps.cypress.conclusion == 'failure' }}
