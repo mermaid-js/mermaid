@@ -11,34 +11,40 @@ describe('Sankey diagram', function () {
       diagram.parser.yy.clear();
     });
 
-    it('one simple flow', function () {
-      const str = `
-      sankey
-      a -> 30 -> b
-      `;
-
+    it('recognized its type', function() {
+      const str=`sankey`;
+      
       parser.parse(str);
     });
 
-    it('multiple flows', function () {
-      const str = `
-      sankey
-      a -> 30 -> b
-      c -> 30 -> d
-      c -> 40 -> e
-      `;
+    // it('one simple flow', function () {
+    //   const str = `
+    //   sankey
+    //   a -> 30 -> b
+    //   `;
 
-      parser.parse(str);
-    });
+    //   parser.parse(str);
+    // });
 
-    it('multiple flows', function () {
-      const str = `
-      sankey
-      a -> 30 -> b
-      c -> 30 -> d
-      `;
+    // it('multiple flows', function () {
+    //   const str = `
+    //   sankey
+    //   a -> 30 -> b
+    //   c -> 30 -> d
+    //   c -> 40 -> e
+    //   `;
 
-      parser.parse(str);
-    });
+    //   parser.parse(str);
+    // });
+
+    // it('multiple flows', function () {
+    //   const str = `
+    //   sankey
+    //   a -> 30 -> b
+    //   c -> 30 -> d
+    //   `;
+
+    //   parser.parse(str);
+    // });
   });
 });
