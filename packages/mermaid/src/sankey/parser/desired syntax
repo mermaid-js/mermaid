@@ -1,0 +1,37 @@
+This is example of data for Sakey diagrams from d3 author:
+circular graph not supported
+
+Berlin,Job Applications,102
+Barcelona,Job Applications,39
+Madrid,Job Applications,35
+Amsterdam,Job Applications,15
+Paris,Job Applications,14
+London,Job Applications,6
+Munich,Job Applications,5
+Brussels,Job Applications,4
+Dubai,Job Applications,3
+Dublin,Job Applications,3
+Other Cities,Job Applications,12
+Job Applications,No Response,189
+Job Applications,Responded,49,orange
+Responded,Rejected,38
+Responded,Interviewed,11,orange
+Interviewed,No Offer,8
+Interviewed,Declined Offer,2
+Interviewed,Accepted Offer,1,orange
+
+Attributes for
+
+.nodeSort(null)
+.linkSort(null)
+.nodeWidth(4)
+.nodePadding(20)
+.extent([[0, 5], [width, height - 5]]) // margin?
+
+berlin [label="asdf" color="red"] #node
+
+
+Berlin,Job,
+JobApplications[label="Job Applications"]
+
+madrid=35 ->
