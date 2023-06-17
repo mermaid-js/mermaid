@@ -2,10 +2,10 @@
 import { select, scaleOrdinal, pie as d3pie, arc } from 'd3';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import * as configApi from '../../config.js';
+import { getConfig } from '../../config.js';
 import { parseFontSize } from '../../utils.js';
-
-let conf = configApi.getConfig();
+import { DrawDefinition } from '../../diagram-api/types.js';
+import { PieDb, Sections } from './pieTypes.js';
 
 /**
  * Draws a Pie Chart with the data given in text.
@@ -13,15 +13,15 @@ let conf = configApi.getConfig();
  * @param text - pie chart code
  * @param id - diagram id
  */
-let width;
-const height = 450;
-export const draw = (txt, id, _version, diagObj) => {
+export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
   try {
-    conf = configApi.getConfig();
-    log.debug('Rendering info diagram\n' + txt);
+    log.debug('rendering pie chart\n' + txt);
 
-    const securityLevel = configApi.getConfig().securityLevel;
-    // Handle root and Document for when rendering in sandbox mode
+    let width: number;
+    const height = 450;
+    const config = getConfig();
+    const { securityLevel } = config;
+    // handle root and document for when rendering in sandbox mode
     let sandboxElement;
     if (securityLevel === 'sandbox') {
       sandboxElement = select('#i' + id);
@@ -31,32 +31,29 @@ export const draw = (txt, id, _version, diagObj) => {
         ? select(sandboxElement.nodes()[0].contentDocument.body)
         : select('body');
     const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
-
-    // Parse the Pie Chart definition
-    diagObj.db.clear();
-    diagObj.parser.parse(txt);
-    log.debug('Parsed info diagram');
     const elem = doc.getElementById(id);
     width = elem.parentElement.offsetWidth;
+
+    // Parse the Pie Chart definition
+    const db = diagramObject.db as PieDb;
+    db.clear();
+
+    log.debug('parsing pie chart');
+    diagramObject.parser.parse(txt);
 
     if (width === undefined) {
       width = 1200;
     }
-
-    if (conf.useWidth !== undefined) {
-      width = conf.useWidth;
-    }
-    if (conf.pie.useWidth !== undefined) {
-      width = conf.pie.useWidth;
+    if (config.pie?.useWidth !== undefined) {
+      width = config.pie.useWidth;
     }
 
     const diagram = root.select('#' + id);
-    configureSvgSize(diagram, height, width, conf.pie.useMaxWidth);
+    configureSvgSize(diagram, height, width, config.pie?.useMaxWidth ?? true);
 
     // Set viewBox
     elem.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
 
-    // Fetch the default direction, use TD if none was found
     const margin = 40;
     const legendRectSize = 18;
     const legendSpacing = 4;
@@ -67,13 +64,13 @@ export const draw = (txt, id, _version, diagObj) => {
       .append('g')
       .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
-    const data = diagObj.db.getSections();
+    const sections: Sections = db.getSections();
     let sum = 0;
-    Object.keys(data).forEach(function (key) {
-      sum += data[key];
+    Object.keys(sections).forEach((key: string): void => {
+      sum += sections[key];
     });
 
-    const themeVariables = conf.themeVariables;
+    const themeVariables = config.themeVariables;
     const myGeneratedColors = [
       themeVariables.pie1,
       themeVariables.pie2,
@@ -89,7 +86,7 @@ export const draw = (txt, id, _version, diagObj) => {
       themeVariables.pie12,
     ];
 
-    const textPosition = conf.pie?.textPosition ?? 0.75;
+    const textPosition = config.pie?.textPosition ?? 0.75;
     let [outerStrokeWidth] = parseFontSize(themeVariables.pieOuterStrokeWidth);
     outerStrokeWidth ??= 2;
 
@@ -97,7 +94,7 @@ export const draw = (txt, id, _version, diagObj) => {
     const color = scaleOrdinal().range(myGeneratedColors);
 
     // Compute the position of each group on the pie:
-    const pieData = Object.entries(data).map(function (el, idx) {
+    const pieData = Object.entries(sections).map(function (el, idx) {
       return {
         order: idx,
         name: el[0],
@@ -105,10 +102,10 @@ export const draw = (txt, id, _version, diagObj) => {
       };
     });
     const pie = d3pie()
-      .value(function (d) {
+      .value((d): number => {
         return d.value;
       })
-      .sort(function (a, b) {
+      .sort((a, b): number => {
         // Sort slices in clockwise direction
         return a.order - b.order;
       });
@@ -134,7 +131,7 @@ export const draw = (txt, id, _version, diagObj) => {
       .enter()
       .append('path')
       .attr('d', arcGenerator)
-      .attr('fill', function (d) {
+      .attr('fill', (d) => {
         return color(d.data.name);
       })
       .attr('class', 'pieCircle');
@@ -146,10 +143,10 @@ export const draw = (txt, id, _version, diagObj) => {
       .data(dataReady)
       .enter()
       .append('text')
-      .text(function (d) {
+      .text((d): string => {
         return ((d.data.value / sum) * 100).toFixed(0) + '%';
       })
-      .attr('transform', function (d) {
+      .attr('transform', (d): string => {
         return 'translate(' + labelArcGenerator.centroid(d) + ')';
       })
       .style('text-anchor', 'middle')
@@ -157,7 +154,7 @@ export const draw = (txt, id, _version, diagObj) => {
 
     svg
       .append('text')
-      .text(diagObj.db.getDiagramTitle())
+      .text(db.getDiagramTitle())
       .attr('x', 0)
       .attr('y', -(height - 50) / 2)
       .attr('class', 'pieTitleText');
@@ -169,11 +166,11 @@ export const draw = (txt, id, _version, diagObj) => {
       .enter()
       .append('g')
       .attr('class', 'legend')
-      .attr('transform', function (d, i) {
+      .attr('transform', (d, index: number): string => {
         const height = legendRectSize + legendSpacing;
         const offset = (height * color.domain().length) / 2;
         const horizontal = 12 * legendRectSize;
-        const vertical = i * height - offset;
+        const vertical = index * height - offset;
         return 'translate(' + horizontal + ',' + vertical + ')';
       });
 
@@ -189,16 +186,15 @@ export const draw = (txt, id, _version, diagObj) => {
       .append('text')
       .attr('x', legendRectSize + legendSpacing)
       .attr('y', legendRectSize - legendSpacing)
-      .text(function (d) {
-        if (diagObj.db.getShowData() || conf.showData || conf.pie.showData) {
+      .text((d): string => {
+        if (db.getShowData()) {
           return d.data.name + ' [' + d.data.value + ']';
         } else {
           return d.data.name;
         }
       });
   } catch (e) {
-    log.error('Error while rendering info diagram');
-    log.error(e);
+    log.error('error while rendering pie chart\n', e);
   }
 };
 
