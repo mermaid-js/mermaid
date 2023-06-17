@@ -41,7 +41,8 @@ jobs:
         run: |
           pnpm exec vitest run ./packages/mermaid/src/diagrams/gantt/ganttDb.spec.ts --coverage
 
-      - uses: codecov/codecov-action@v3
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v3
         with:
           files: ./coverage/vitest/lcov.info
           flags: unit
