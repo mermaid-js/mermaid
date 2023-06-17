@@ -9,10 +9,7 @@ import {
   // rgb as d3rgb,
   map as d3map,
 } from 'd3';
-import {
-  sankey as d3sankey,
-  sankeyLinkHorizontal
-} from 'd3-sankey';
+import { sankey as d3sankey, sankeyLinkHorizontal } from 'd3-sankey';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import sankeyDB from './sankeyDB.js';
 
@@ -25,12 +22,12 @@ import sankeyDB from './sankeyDB.js';
  * @param diagObj - A standard diagram containing the db and the text and type etc of the diagram
  */
 export const draw = function (text: string, id: string, _version: string, diagObj: Diagram): void {
-
   // First of all parse sankey language
   // Everything that is parsed will be stored in diagObj.DB
   // That is why we need to clear DB first
   //
-  if (typeof (diagObj?.db?.clear) !== 'undefined') { // why do we need to check for undefined? typescript complains
+  if (diagObj?.db?.clear !== undefined) {
+    // why do we need to check for undefined? typescript complains
     diagObj?.db?.clear();
   }
   // Launch parsing
@@ -75,21 +72,17 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //        { "source": "Bob", "target": "Carol", "value": 43 }
   //      ]
   //    };
-  // 
-  let graph = {
-    "nodes": [
-      { "id": "Alice" },
-      { "id": "Bob" },
-      { "id": "Carol" }
+  //
+  const graph = {
+    nodes: [{ id: 'Alice' }, { id: 'Bob' }, { id: 'Carol' }],
+    links: [
+      { source: 'Alice', target: 'Bob', value: 23 },
+      { source: 'Bob', target: 'Carol', value: 43 },
     ],
-    "links": [
-      { "source": "Alice", "target": "Bob", "value": 23 },
-      { "source": "Bob", "target": "Carol", "value": 43 }
-    ]
   };
 
   // Construct and configure a Sankey generator
-  // That will be a functino that calculates nodes and links dimentions
+  // That will be a function that calculates nodes and links dimensions
   //
   const sankey = d3sankey()
     .nodeId((d) => d.id) // we use 'id' property to identify node
@@ -102,10 +95,10 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //   .nodePadding(10)
   //   .extent([[1, 5], [width - 1, height - 5]]);
   // .nodeId(d => d['id'])
-  // 
+  //
 
   // Compute the Sankey layout
-  // Namely calalculate nodes and links positions
+  // Namely calculate nodes and links positions
   // Our `graph` object will be mutated by this
   //
   sankey(graph);
@@ -125,19 +118,19 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   // // .attr("stroke-opacity", nodeStrokeOpacity)
   // // .attr("stroke-linejoin", nodeStrokeLinejoin)
 
-  var color = d3scaleOrdinal(d3schemeTableau10);
+  const color = d3scaleOrdinal(d3schemeTableau10);
   // Creates the rects that represent the nodes.
-  const rect = svg.append("g")
-    .attr("stroke", "#000")
-    .selectAll("rect")
+  const rect = svg
+    .append('g')
+    .attr('stroke', '#000')
+    .selectAll('rect')
     .data(graph.nodes)
-    .join("rect")
-    .attr("x", d => d.x0)
-    .attr("y", d => d.y0)
-    .attr("height", d => d.y1 - d.y0)
-    .attr("width", d => d.x1 - d.x0)
-    .attr("fill", d => color(d.node));
-
+    .join('rect')
+    .attr('x', (d) => d.x0)
+    .attr('y', (d) => d.y0)
+    .attr('height', (d) => d.y1 - d.y0)
+    .attr('width', (d) => d.x1 - d.x0)
+    .attr('fill', (d) => color(d.node));
 
   // // add in the links
   // var link = svg.append("g")
@@ -163,7 +156,6 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //   //   .on("drag", dragmove))
   //   ;
 
-
   // // add the rectangles for the nodes
   // node
   //   .append("rect")
@@ -174,7 +166,6 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //   // Add hover text
   //   .append("title")
   //   .text(function (d) { return d.name + "\n" + "There is " + d.value + " stuff in this node"; });
-
 
   // // add in the title for the nodes
   // node

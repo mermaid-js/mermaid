@@ -412,7 +412,7 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
   wrappingWidth?: number;
 }
 
-export interface SankeyDiagramConfig extends BaseDiagramConfig {}
+export type SankeyDiagramConfig = BaseDiagramConfig;
 
 export interface FontConfig {
   fontSize?: string | number;
