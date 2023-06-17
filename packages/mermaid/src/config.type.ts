@@ -1,6 +1,7 @@
 // TODO: This was auto generated from defaultConfig. Needs to be verified.
 
 import DOMPurify from 'dompurify';
+import { PieDiagramConfig } from './diagrams/pie/pieTypes.js';
 
 export interface MermaidConfig {
   theme?: string;
@@ -221,10 +222,6 @@ export interface MindmapDiagramConfig extends BaseDiagramConfig {
   useMaxWidth: boolean;
   padding: number;
   maxNodeWidth: number;
-}
-
-export interface PieDiagramConfig extends BaseDiagramConfig {
-  textPosition?: number;
 }
 
 export interface QuadrantChartConfig extends BaseDiagramConfig {

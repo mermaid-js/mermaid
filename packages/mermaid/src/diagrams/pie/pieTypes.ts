@@ -1,5 +1,9 @@
-import type { PieDiagramConfig } from '../../config.type.js';
+import type { BaseDiagramConfig } from '../../config.type.js';
 import type { DiagramDB, ParseDirectiveDefinition } from '../../diagram-api/types.js';
+
+export interface PieDiagramConfig extends BaseDiagramConfig {
+  textPosition?: number;
+}
 
 export interface PieFields {
   sections: Sections;
