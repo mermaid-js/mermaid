@@ -43,7 +43,7 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
       - uses: codecov/codecov-action@v3
         with:
-          files: ./coverage/cypress/coverage-final.json
+          files: coverage/cypress/lcov.info
           flags: e2e
           name: mermaid-codecov
           fail_ci_if_error: true
