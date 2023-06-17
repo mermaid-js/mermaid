@@ -13,7 +13,7 @@ sh)
 $RUN mermaid sh $args
 ;;
 
-install)
+i | install)
 $RUN mermaid sh -c "npx pnpm install"
 ;;
 
@@ -40,7 +40,7 @@ cat <<EOF
 Run commonly used commands within docker containers
 
 \033[1m$name install\033[0m         # Equvalent of pnpm install 
-\033[1m$name run\033[0m             # Run dev server with examples, open http://localhost:9000
+\033[1m$name dev\033[0m             # Run dev server with examples, open http://localhost:9000
 
 $name lint            # Equvalent of pnpm -w run lint:fix
 $name test            # Run unit tests
