@@ -32,7 +32,7 @@
     "e2e": "start-server-and-test dev http://localhost:9000/ cypress",
     "e2e:coverage": "VITE_COVERAGE=true pnpm e2e",
     "coverage:merge": "ts-node-esm scripts/coverage.ts",
-    "coverage": "pnpm test:coverage && pnpm e2e:coverage && pnpm coverage:merge",
+    "coverage": "pnpm test:coverage --run && pnpm e2e:coverage && pnpm coverage:merge",
     "ci": "vitest run",
     "test": "pnpm lint && vitest run",
     "test:watch": "vitest --watch",
