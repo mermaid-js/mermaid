@@ -44,6 +44,7 @@ jobs:
           VITEST_COVERAGE: true
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v3
+        if: steps.cypress.conclusion == 'success'
         with:
           files: coverage/cypress/lcov.info
           flags: e2e
