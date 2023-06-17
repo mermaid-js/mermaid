@@ -1,12 +1,12 @@
-import { log } from '../../logger.js';
-import mermaidAPI from '../../mermaidAPI.js';
+// import { log } from '../../logger.js';
+// import mermaidAPI from '../../mermaidAPI.js';
 import * as configApi from '../../config.js';
 import common from '../common/common.js';
 import {
-  // setAccTitle,
-  // getAccTitle,
-  // getAccDescription,
-  // setAccDescription,
+  setAccTitle,
+  getAccTitle,
+  getAccDescription,
+  setAccDescription,
   setDiagramTitle,
   getDiagramTitle,
   clear as commonClear,
@@ -20,46 +20,54 @@ import {
 //   return text.trimStart().replace(/^\s*%%(?!{)[^\n]+\n?/gm, '');
 // };
 let links: Array<Link> = [];
-let nodes: { [id: string]: Node } = {};
+let nodes: Array<Node> = [];
+let nodesHash: Record<string, Node> = {};
 
-const clear = function () {
+const clear = () => {
   links = [];
-  nodes = {};
+  nodes = [];
+  nodesHash = {};
   commonClear();
 };
 
 type Nullable<T> = T | null;
 
+interface ILink {
+  source?: Node;
+  target?: Node;
+  amount?: number;
+}
+
 class Link {
-  sourceNode: Nullable<Node>;
-  targetNode: Nullable<Node>;
+  source: Nullable<Node>;
+  target: Nullable<Node>;
+  amount: Nullable<number>;
   constructor() {
-    this.sourceNode = null;
-    this.targetNode = null;
+    this.source = null;
+    this.target = null;
+    this.amount = 0;
   }
 }
 
 /**
- * Adds a stream between two elements on the diagram
+ * Adds a link between two elements on the diagram
  *
- * @param sourceNodeID - The id Node where the link starts
- * @param targetNodeID - The id Node where the link ends
+ * @param source - Node where the link starts
+ * @param target - Node where the link ends
+ * @param amount - number, float or integer, describes the amount to be passed
  */
-
-interface IAddLink {
-  sourceNodeID?: string;
-  targetNodeID?: string;
-  // amount?: number;
-}
-
-const addLink = ({ sourceNodeID, targetNodeID }: IAddLink = {}): Link => {
+// const addLink = ({ source, target, amount }: ILink = {}): Link => {
+const addLink = (source?: Node, target?: Node, amount?: number): Link => {
   const link: Link = new Link();
 
-  if (sourceNodeID !== undefined) {
-    link.sourceNode = addNode(sourceNodeID);
+  if (source !== undefined) {
+    link.source = source;
   }
-  if (targetNodeID !== undefined) {
-    link.targetNode = addNode(targetNodeID);
+  if (target !== undefined) {
+    link.target = target;
+  }
+  if (amount !== undefined) {
+    link.amount = amount;
   }
 
   links.push(link);
@@ -68,11 +76,11 @@ const addLink = ({ sourceNodeID, targetNodeID }: IAddLink = {}): Link => {
 };
 
 class Node {
-  id: string;
+  ID: string;
   title: string;
-  constructor(id: string) {
-    this.id = id;
-    this.title = id;
+  constructor(ID: string) {
+    this.ID = ID;
+    this.title = ID;
   }
 }
 
@@ -81,25 +89,28 @@ class Node {
  *
  * @param id - The id Node
  */
-const addNode = (id: string): Node => {
-  id = common.sanitizeText(id, configApi.getConfig());
-  if (nodes[id] === undefined) {
-    nodes[id] = new Node(id);
+const addNode = (ID: string): Node => {
+  ID = common.sanitizeText(ID, configApi.getConfig());
+  if (nodesHash[ID] === undefined) {
+    nodesHash[ID] = new Node(ID);
   }
-  const node = nodes[id];
+  const node = nodesHash[ID];
+  nodes.push(node);
+  // debugger;
   return node;
 };
 
 export default {
-  // sankey interface
+  nodesHash,
+  nodes,
+  links,
   addLink,
   addNode,
-  // common DB interface
   // TODO: If this is a must this probably should be an interface
-  // getAccTitle,
-  // setAccTitle,
-  // getAccDescription,
-  // setAccDescription,
+  getAccTitle,
+  setAccTitle,
+  getAccDescription,
+  setAccDescription,
   getDiagramTitle,
   setDiagramTitle,
   clear,

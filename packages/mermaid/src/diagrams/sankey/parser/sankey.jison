@@ -40,6 +40,7 @@
 /lex
 
 %start start
+%left ARROW
 
 %% // language grammar
 
@@ -66,10 +67,19 @@ attribute: ATTRIBUTE EQUAL value | ATTRIBUTE;
 
 value: VALUE | OPEN_STRING STRING CLOSE_STRING;
 
-stream: node ARROW AMOUNT ARROW tail { yy.addNode($1); yy.addLink(); };
-tail: stream | node;
+stream: node[source] ARROW amount ARROW tail[target] {
+	$$=$source;
+	yy.addLink($source, $target, $amount);
+};
 
-node: NODE { yy.addNode($1) };
+amount: AMOUNT { $$=parseFloat($AMOUNT); };
+
+tail
+	: stream { $$ = $stream }
+	| node { $$ = $node; }
+	;
+
+node: NODE { $$ = yy.addNode($NODE); };
 
 // : NODE exhaust intake exhaust_chain optional_attributes EOS
 // exhaust_chain: ARROW AMOUNT intake_chain | ;

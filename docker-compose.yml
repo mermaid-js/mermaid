@@ -13,8 +13,10 @@ services:
       - ./:/mermaid
       - root_cache:/root/.cache
       - root_local:/root/.local
+      - root_local:/root/.npm
     ports:
       - 9000:9000
 volumes:
   root_cache:
   root_local:
+  root_npm:

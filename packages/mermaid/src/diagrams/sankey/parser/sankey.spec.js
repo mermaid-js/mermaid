@@ -21,7 +21,7 @@ describe('Sankey diagram', function () {
     it('recognizes one flow', () => {
       const str = `
       sankey
-      a -> 30 -> b -> 20 -> c
+      node_a -> 30 -> node_b -> 20 -> node_c
       `;
 
       parser.parse(str);
@@ -30,9 +30,9 @@ describe('Sankey diagram', function () {
     it('recognizes multiple flows', () => {
       const str = `
       sankey
-      a -> 30 -> b -> 12 -> e
-      c -> 30 -> d -> 12 -> e
-      c -> 40 -> e -> 12 -> q
+      node_a -> 30 -> node_b -> 12 -> node_e
+      node_c -> 30 -> node_d -> 12 -> node_e
+      node_c -> 40 -> node_e -> 12 -> node_q
       `;
 
       parser.parse(str);
@@ -44,7 +44,7 @@ describe('Sankey diagram', function () {
         sankey
         node[]
         node[attr=1]
-        a -> 30 -> b
+        node_a -> 30 -> node_b
         node[attrWithoutValue]
         node[attr = 3]
         node[attr1 = 23413 attr2=1234]

@@ -32,6 +32,7 @@ export interface MermaidConfig {
   mindmap?: MindmapDiagramConfig;
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
+  sankey?: SankeyDiagramConfig;
   dompurifyConfig?: DOMPurify.Config;
   wrap?: boolean;
   fontSize?: number;
@@ -410,6 +411,8 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
   defaultRenderer?: string;
   wrappingWidth?: number;
 }
+
+export interface SankeyDiagramConfig extends BaseDiagramConfig {}
 
 export interface FontConfig {
   fontSize?: string | number;

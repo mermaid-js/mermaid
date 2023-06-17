@@ -10,23 +10,19 @@ args=${@:2}
 case $command in
 
 sh)
-$RUN mermaid sh $args
+$RUN --service-ports mermaid sh $args
 ;;
 
 i | install)
 $RUN mermaid sh -c "npx pnpm install $args"
 ;;
 
-test)
-$RUN mermaid sh -c "npx pnpm test $args"
+add)
+$RUN mermaid sh -c "npx pnpm -w add $args"
 ;;
 
-vitest)
-$RUN mermaid sh -c "npx pnpm vitest $args"
-;;
-
-e2e)
-$RUN mermaid sh -c "npx pnpm e2e $args"
+test | vitest | e2e )
+$RUN mermaid sh -c "npx pnpm $command $args"
 ;;
 
 lint)
@@ -46,6 +42,7 @@ Run commonly used commands within docker containers
 \033[1m$name install\033[0m         # Equvalent of pnpm install 
 \033[1m$name dev\033[0m             # Run dev server with examples, open http://localhost:9000
 
+$name add             # Add package, 'run add d3-sankey'
 $name lint            # Equvalent of pnpm -w run lint:fix
 $name test            # Run unit tests
 $name vitest          # Run watcher for unit tests

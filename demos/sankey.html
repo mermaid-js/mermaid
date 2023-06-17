@@ -17,22 +17,20 @@
     <h2>Simple flow</h2>
     <pre class="mermaid">
       sankey
-      a--10->b
-      c--20->b
-      b--15->d
-      a-- 7->d
+      node_a->10->node_b;
+      node_c->20->node_b;
+      node_b->15->node_d;
+      node_a-> 7->node_d;
     </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         theme: 'default',
-        // themeCSS: '.node rect { fill: red; }',
         logLevel: 3,
         securityLevel: 'loose',
         flowchart: { curve: 'basis' },
         gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50 },
-        // sequenceDiagram: { actorMargin: 300 } // deprecated
       });
     </script>
   </body>
