@@ -9,16 +9,15 @@ import { Diagram } from '../../Diagram.js';
  * @param diagObj - A standard diagram containing the db and the text and type etc of the diagram
  */
 export const draw = function (text: string, id: string, _version: string, diagObj: Diagram) {
-  
-  debugger;
+  // debugger;
   // diagObj.db.clear();
   diagObj.parser.parse(text);
-  
+
   // const elem = doc.getElementById(id);
 
-  debugger;
+  // debugger;
   return 'TEST';
-}
+};
 
 export default {
   draw,

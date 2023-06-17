@@ -5,6 +5,10 @@ services:
     stdin_open: true
     tty: true
     working_dir: /mermaid
+    # mem_reservation: "10M"
+    mem_limit: '8G'
+    environment:
+      - NODE_OPTIONS=--max_old_space_size=8192
     volumes:
       - ./:/mermaid
       - root_cache:/root/.cache

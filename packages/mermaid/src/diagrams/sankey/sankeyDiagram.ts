@@ -11,4 +11,3 @@ export const diagram: DiagramDefinition = {
   renderer,
   styles,
 };
-

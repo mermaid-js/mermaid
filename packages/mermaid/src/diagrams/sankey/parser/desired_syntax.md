@@ -29,6 +29,7 @@ Interviewed,Accepted Offer,1,orange
 ```
 
 GoJS uses similar approach:
+
 ```json
 {
 "nodeDataArray": [
@@ -47,30 +48,34 @@ GoJS uses similar approach:
 ## What do we need
 
 Mainly we need:
-* collection of nodes
-* collection of links
+
+- collection of nodes
+- collection of links
 
 We also need graph and node attributes like this:
-* link sort
-* node sort
-* coloring strategy for links (source, target, transition)
-* graph alignment (left, right, width)
-* node color
-* node title
-* node width
-* node padding
-* graph margin
+
+- link sort
+- node sort
+- coloring strategy for links (source, target, transition)
+- graph alignment (left, right, width)
+- node color
+- node title
+- node width
+- node padding
+- graph margin
 
 ## Desired syntax
 
 Graph is a list of flows (or links).
 Flow is a sequence `node -> value -> node -> value...`
+
 ```
 a -> 30 -> b
 a -> 40 -> b
 ```
 
 2 separate streams between 2 nodes they can be grouped as well:
+
 ```
 a -> {
     30
@@ -79,6 +84,7 @@ a -> {
 ```
 
 All outflows from the node can be grouped:
+
 ```
 a -> {
     30 -> b
@@ -87,6 +93,7 @@ a -> {
 ```
 
 All inflows to the node can be grouped too:
+
 ```
 {
     a -> 30
@@ -95,6 +102,7 @@ All inflows to the node can be grouped too:
 ```
 
 Chaining example:
+
 ```
 a -> {
     30
@@ -102,12 +110,13 @@ a -> {
 } -> b -> {
     20 -> d -> 11
     50 -> e -> 11
-} -> f -> 30 
+} -> f -> 30
 ```
 
 **Probably ambiguous!**
 
 Does the sample below mean that total outflow from "a" is 60?
+
 ```
 a -> 30 -> {
     b
@@ -116,6 +125,7 @@ a -> 30 -> {
 ```
 
 Or does this one mean that total outflow must be 140 (70 to "b" and "c" respectively)?
+
 ```
 a -> {
     30
@@ -129,6 +139,7 @@ a -> {
 **Overcomplicated**
 
 Nested:
+
 ```
 {
     {
