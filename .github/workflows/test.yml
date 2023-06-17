@@ -31,7 +31,7 @@ jobs:
 
       - name: Run Unit Tests
         run: |
-          pnpm run ci --coverage
+          pnpm test:coverage
 
       - name: Run ganttDb tests using California timezone
         env:
@@ -39,8 +39,15 @@ jobs:
           # since some days have 25 hours instead of 24.
           TZ: America/Los_Angeles
         run: |
-          pnpm exec vitest run ./packages/mermaid/src/diagrams/gantt/ganttDb.spec.ts
+          pnpm exec vitest run ./packages/mermaid/src/diagrams/gantt/ganttDb.spec.ts --coverage
 
+      - uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/vitest/lcov.info
+          flags: unit
+          name: mermaid-codecov
+          fail_ci_if_error: true
+          verbose: true
       # Coveralls is throwing 500. Disabled for now.
       # - name: Upload Coverage to Coveralls
       #   uses: coverallsapp/github-action@v2
