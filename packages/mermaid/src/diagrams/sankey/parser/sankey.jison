@@ -2,30 +2,36 @@
 %lex
 
 %options case-insensitive
+%options easy_keyword_rules
+
 %s group
+// when we are inside [] section we are defining attrubutes
 %x attributes
-%x attribute
-%x value
+// after attr= we are expecting a value without quotes
+%x value      
+// or if we use "" we are expecting a string containing value
+%x string    
 
 %%
-"sankey" return 'SANKEY'
-\d+      return 'AMOUNT'
-"->"     return 'ARROW'
-\w+      return 'NODE'
-(?:<<EOF>>|[\n;])+ { return 'EOS'; } // end of statement is ; \n or end of file
-\s+ // skip all whitespace
-"{"             { this.pushState('group'); return 'OPEN_GROUP'; }
-<group>"}"      { this.popState('group'); return 'CLOSE_GROUP'; }
-"["             { this.pushState('attributes'); return 'OPEN_ATTRIBUTES'; }
-<attributes>"]" { this.popState(); return 'CLOSE_ATTRIBUTES'; }
-<attributes>\w+ { return 'ATTRIBUTE'; } // string followed by = sign is "attrName"
-<attributes>(?=\=s*)[\s\w] {return 'VALUE';}
-<attributes>\= { this.pushState('attribute'); return 'EQUAL'; }
-<attributes>\s+ // skip all whitespace
-<attribute>[\w]+ {this.popState(); return 'VALUE';}
-<attribute>\s+ //skip
-<attribute>\" { this.pushState('value'); return 'OPEN_VALUE'; }
-<value>\"  { this.popState(); return 'CLOSE_VALUE'; }
+"sankey"                         { return 'SANKEY'; }
+\d+                              { return 'AMOUNT'; }
+"->"                             { return 'ARROW'; }
+\w+                              { return 'NODE'; }
+(?:<<EOF>>|[\n;])+               { return 'EOS'; } // end of statement is ; \n or end of file
+\s+                                                // skip all whitespace
+"{"                              { this.pushState('group'); return 'OPEN_GROUP'; }
+<group>"}"                       { this.popState('group'); return 'CLOSE_GROUP'; }
+"["                              { this.pushState('attributes'); return 'OPEN_ATTRIBUTES'; }
+<attributes>"]"                  { this.popState(); return 'CLOSE_ATTRIBUTES'; }
+<attributes>\w+                  { return 'ATTRIBUTE'; }
+<attributes>(?=\=s*)[\s\w]       { return 'VALUE';}
+<attributes>\=                   { this.pushState('value'); return 'EQUAL'; }
+<attributes>\s+                   // skip all whitespace
+<value>[\w]+                     { this.popState(); return 'VALUE';}
+<value>\s+                       //skip
+<value>\"                        { this.pushState('string'); return 'OPEN_STRING'; }
+<string>\"                       { this.popState(); return 'CLOSE_STRING'; }
+<string>[\w\s]+(?=\")            { return 'STRING'; }
 
 // TODO: check if jison will return 2 separate tokens (for nodes) while ignoring whitespace
 
