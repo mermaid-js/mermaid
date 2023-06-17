@@ -22,7 +22,6 @@
     "build:watch": "pnpm build:vite --watch",
     "build": "pnpm run -r clean && pnpm build:types && pnpm build:vite",
     "dev": "concurrently \"pnpm build:vite --watch\" \"ts-node-esm .vite/server.ts\"",
-    "dev:coverage": "VITE_COVERAGE=true pnpm dev",
     "release": "pnpm build",
     "lint": "eslint --cache --cache-strategy content --ignore-path .gitignore . && pnpm lint:jison && prettier --cache --check .",
     "lint:fix": "eslint --cache --cache-strategy content --fix --ignore-path .gitignore . && prettier --write . && ts-node-esm scripts/fixCSpell.ts",
@@ -32,14 +31,15 @@
     "cypress:open": "cypress open",
     "e2e": "start-server-and-test dev http://localhost:9000/ cypress",
     "e2e:coverage": "VITE_COVERAGE=true pnpm e2e",
+    "coverage:merge": "ts-node-esm scripts/coverage.ts",
+    "coverage": "pnpm test:coverage && pnpm e2e:coverage && pnpm coverage:merge",
     "ci": "vitest run",
     "test": "pnpm lint && vitest run",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
     "prepublishOnly": "pnpm build && pnpm test",
     "prepare": "husky install && pnpm build",
-    "pre-commit": "lint-staged",
-    "merge": "ts-node-esm scripts/coverage.ts"
+    "pre-commit": "lint-staged"
   },
   "repository": {
     "type": "git",
