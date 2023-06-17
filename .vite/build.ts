@@ -124,7 +124,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
       // @ts-expect-error According to the type definitions, rollup plugins are incompatible with vite
       typescript({ compilerOptions: { declaration: false } }),
       istanbul({
-        exclude: ['node_modules', 'test/'],
+        exclude: ['node_modules', 'test/', '__mocks__'],
         extension: ['.js', '.ts'],
         requireEnv: true,
         forceBuildInstrument: coverage,
