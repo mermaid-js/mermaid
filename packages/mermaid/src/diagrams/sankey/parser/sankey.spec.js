@@ -38,22 +38,35 @@ describe('Sankey diagram', function () {
       parser.parse(str);
     });
     
-    it('recognizes a separate node with its attributes', () => {
-      const str = `
-      sankey
-      node[]
-      node[attr=1]
-      node[attr=2]
-      a -> 30 -> b
-      node[attrWithoutValue]
-      node[attr = 3]
-      node[attr1 = 23413 attr2=1234]
-      node[x1dfqowie attr1 = 23413 attr2]
-      `;
-      
-      parser.parse(str);
+    describe('while attributes parsing', () => {
+      it('parses different quotless variations', () => {
+        const str = `
+        sankey
+        node[]
+        node[attr=1]
+        a -> 30 -> b
+        node[attrWithoutValue]
+        node[attr = 3]
+        node[attr1 = 23413 attr2=1234]
+        node[x1dfqowie attr1 = 23413 attr2]
+        `;
+        
+        parser.parse(str);
+      });
+
+      it('parses strings as values', () => {
+        const str = `
+        sankey
+        node[attr="hello, how are you?"]
+        node[attr="hello\\""]
+        `;
+        
+        parser.parse(str);
+      });
     });
 
+    
+    
     // it('recognizes grouped values', () => {
     //   const str = `
     //   sankey

@@ -20,7 +20,7 @@
 (?:<<EOF>>|[\n;])+               { return 'EOS'; } // end of statement is ; \n or end of file
 \s+                                                // skip all whitespace
 "{"                              { this.pushState('group'); return 'OPEN_GROUP'; }
-<group>"}"                       { this.popState('group'); return 'CLOSE_GROUP'; }
+<group>"}"                       { this.popState(); return 'CLOSE_GROUP'; }
 "["                              { this.pushState('attributes'); return 'OPEN_ATTRIBUTES'; }
 <attributes>"]"                  { this.popState(); return 'CLOSE_ATTRIBUTES'; }
 <attributes>\w+                  { return 'ATTRIBUTE'; }
@@ -30,8 +30,12 @@
 <value>[\w]+                     { this.popState(); return 'VALUE';}
 <value>\s+                       //skip
 <value>\"                        { this.pushState('string'); return 'OPEN_STRING'; }
-<string>\"                       { this.popState(); return 'CLOSE_STRING'; }
-<string>[\w\s]+(?=\")            { return 'STRING'; }
+<string>(?!\\)\" {
+	if(this.topState()==='string') this.popState();
+	if(this.topState()==='value') this.popState();
+	return 'CLOSE_STRING';
+}
+<string>([^"\\]|\\\")+                    { console.log(this.state); return 'STRING'; }
 
 // TODO: check if jison will return 2 separate tokens (for nodes) while ignoring whitespace
 
@@ -60,12 +64,9 @@ line
 node_with_attributes: NODE OPEN_ATTRIBUTES attributes CLOSE_ATTRIBUTES;
 
 attributes: attribute attributes | ;
-attribute: ATTRIBUTE EQUAL VALUE | ATTRIBUTE;
+attribute: ATTRIBUTE EQUAL value | ATTRIBUTE;
 
-// flow
-// 	: NODE ARROW value_or_values_group ARROW flow
-// 	| NODE
-// 	;
+value: VALUE | OPEN_STRING STRING CLOSE_STRING;
 
 flow: n_chain_a;
 
