@@ -30,9 +30,9 @@ describe('Sankey diagram', function () {
     it('recognizes multiple flows', () => {
       const str = `
       sankey
-      a -> 30 -> b -> 12 -> e;
-      c -> 30 -> d -> 12 -> e;
-      c -> 40 -> e -> 12 -> q;
+      a -> 30 -> b -> 12 -> e
+      c -> 30 -> d -> 12 -> e
+      c -> 40 -> e -> 12 -> q
       `;
       
       parser.parse(str);
@@ -58,81 +58,11 @@ describe('Sankey diagram', function () {
         const str = `
         sankey
         node[attr="hello, how are you?"]
-        node[attr="hello\\""]
+        node[attr="hello\\"afaasd"]
         `;
         
         parser.parse(str);
       });
-    });
-
-    
-    
-    // it('recognizes grouped values', () => {
-    //   const str = `
-    //   sankey
-    //   a -> {30} -> b
-    //   `;
-      
-    //   parser.parse(str);
-    // });
-
-
-
-    // it('recognizes intake group', () => {
-    //   const str = `
-    //   sankey
-    //   a -> {
-    //     30 -> b
-    //     40 -> c
-    //   }
-    //   `;
-      
-    //   parser.parse(str);
-    // });
-
-    // it('recognizes exhaust group', () => {
-    //   const str = `
-    //   sankey
-    //   {
-    //     b -> 30
-    //     c -> 40
-    //   } -> a
-    //   `;
-      
-    //   parser.parse(str);
-    // });
-
-    // it('what to do?', () => {
-    //   const str = `
-    //   sankey
-    //   {
-    //     b -> 30
-    //     c -> 40
-    //   } -> {
-    //     e
-    //     d
-    //   }
-    //   `;
-      
-    //   parser.parse(str);
-    // });
-
-    // it('complex', () => {
-    //   const str = `
-    //   sankey
-    //   {
-    //     a -> 30
-    //     b -> 40
-    //   } -> c -> {
-    //     20 -> e -> 49
-    //     20 -> d -> 23
-    //   } -> k -> 20 -> i -> {
-    //     10 -> f
-    //     11 -> j
-    //   }
-    //   `;
-      
-    //   parser.parse(str);
-    // });
+    });    
   });
 });
