@@ -20,6 +20,7 @@ export default defineConfig({
       provider: 'istanbul',
       reporter: ['text', 'json', 'html', 'lcov'],
       reportsDirectory: './coverage/vitest',
+      exclude: ['**/node_modules/**', '**/tests/**', '**/__mocks__/**'],
     },
   },
   build: {
