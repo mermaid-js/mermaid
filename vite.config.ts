@@ -18,6 +18,7 @@ export default defineConfig({
     setupFiles: ['packages/mermaid/src/tests/setup.ts'],
     coverage: {
       reporter: ['text', 'json', 'html', 'lcov'],
+      reportsDirectory: './coverage/vitest',
     },
   },
   build: {
