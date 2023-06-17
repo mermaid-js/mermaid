@@ -4,7 +4,7 @@ import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { getConfig } from '../../config.js';
 import { parseFontSize } from '../../utils.js';
-import { DrawDefinition } from '../../diagram-api/types.js';
+import { DrawDefinition, HTML } from '../../diagram-api/types.js';
 import { PieDb, Sections } from './pieTypes.js';
 
 /**
@@ -17,12 +17,12 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
   try {
     log.debug('rendering pie chart\n' + txt);
 
-    let width: number;
+    let width: number | undefined;
     const height = 450;
     const config = getConfig();
     const { securityLevel } = config;
     // handle root and document for when rendering in sandbox mode
-    let sandboxElement;
+    let sandboxElement: HTML | undefined;
     if (securityLevel === 'sandbox') {
       sandboxElement = select('#i' + id);
     }
@@ -31,8 +31,8 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
         ? select(sandboxElement.nodes()[0].contentDocument.body)
         : select('body');
     const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
-    const elem = doc.getElementById(id);
-    width = elem.parentElement.offsetWidth;
+    const elem = doc?.getElementById(id);
+    width = elem?.parentElement?.offsetWidth;
 
     // Parse the Pie Chart definition
     const db = diagramObject.db as PieDb;
@@ -52,7 +52,7 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
     configureSvgSize(diagram, height, width, config.pie?.useMaxWidth ?? true);
 
     // Set viewBox
-    elem.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
+    elem?.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
 
     const margin = 40;
     const legendRectSize = 18;
