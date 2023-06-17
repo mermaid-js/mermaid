@@ -58,7 +58,7 @@
     ]
   },
   "devDependencies": {
-    "@applitools/eyes-cypress": "^3.32.0",
+    "@applitools/eyes-cypress": "^3.33.1",
     "@commitlint/cli": "^17.6.1",
     "@commitlint/config-conventional": "^17.6.1",
     "@cspell/eslint-plugin": "^6.31.1",
