@@ -53,10 +53,9 @@ document
 	|
 	;
 
-	// : NODE exhaust intake exhaust_chain optional_attributes EOS
 line
 	: stream optional_attributes EOS
-	| NODE optional_attributes EOS
+	| node optional_attributes EOS
 	| EOS
 	;
 
@@ -67,9 +66,12 @@ attribute: ATTRIBUTE EQUAL value | ATTRIBUTE;
 
 value: VALUE | OPEN_STRING STRING CLOSE_STRING;
 
-stream: NODE ARROW AMOUNT ARROW tail;
-tail: stream | NODE;
+stream: node ARROW AMOUNT ARROW tail { yy.addNode($1); yy.addLink(); };
+tail: stream | node;
 
+node: NODE { yy.addNode($1) };
+
+// : NODE exhaust intake exhaust_chain optional_attributes EOS
 // exhaust_chain: ARROW AMOUNT intake_chain | ;
 // intake_chain: ARROW NODE exhaust_chain | ;
 

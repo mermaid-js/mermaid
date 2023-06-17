@@ -16,15 +16,11 @@
     <h1>Sankey diagram demos</h1>
     <h2>Simple flow</h2>
     <pre class="mermaid">
-      stateDiagram-v2
-      direction LR
-      State1: A state with a note
-      note right of State1
-        Important information!<br />You can write notes.<br />And\nthey\ncan\nbe\nmulti-\nline.
-      end note
-      State1 --> State2
-      note left of State2 : Notes can be to the left of a state\n(like this one).
-      note right of State2 : Notes can be to the right of a state\n(like this one).
+      sankey
+      a--10->b
+      c--20->b
+      b--15->d
+      a-- 7->d
     </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
