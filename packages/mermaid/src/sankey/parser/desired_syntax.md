@@ -1,6 +1,10 @@
 # Sankey diagrams syntax proposal
 
-Circular graphs are not supported by d3. There are some alternatives for that.
+## What is used now
+
+**Circular graphs are not supported by d3. There are some alternatives for that.**
+**Dropped flows are not supported by d3**
+
 This is example of data for Sakey diagrams from d3 author (simple csv):
 
 ```csv
@@ -24,46 +28,85 @@ Interviewed,Declined Offer,2
 Interviewed,Accepted Offer,1,orange
 ```
 
+GoJS uses similar approach
+```json
+{
+"nodeDataArray": [
+{"key":"Coal reserves", "text":"Coal reserves", "color":"#9d75c2"},
+{"key":"Coal imports", "text":"Coal imports", "color":"#9d75c2"},
+{"key":"Oil reserves", "text":"Oil\nreserves", "color":"#9d75c2"},
+{"key":"Oil imports", "text":"Oil imports", "color":"#9d75c2"}
+],
+"linkDataArray": [
+{"from":"Coal reserves", "to":"Coal", "width":31},
+{"from":"Coal imports", "to":"Coal", "width":86},
+{"from":"Oil reserves", "to":"Oil", "width":244}
+}
+```
+
+## What do we need
+
+Mainly we need:
+* collection of nodes
+* collection of links
+
 We also need graph and node attributes like this:
-
-```
-.nodeSort(null)
-.linkSort(null)
-.nodeWidth(4)
-.nodePadding(20)
-.extent([[0, 5], [width, height - 5]]) // margin?
-```
-
-Also needed:
-* coloring strategy (source, target, transition)
+* link sort
+* node sort
+* coloring strategy for links (source, target, transition)
 * graph alignment (left, right, width)
+* node color
+* node title
+* node width
+* node padding
+* graph margin
 
-Proposed syntax:
+## Desired syntax
+
+Graph is a list of flows (or links).
+Flow is a sequence `node -> value -> node -> value...`
 ```
 a -> 30 -> b
 a -> 40 -> c
+```
 
+All outflows from the node can be grouped:
+```
 a -> {
     30 -> b
     40 -> c
 }
+```
 
+All inflows to the node can be grouped too:
+```
 {
     a -> 30
     b -> 40
 } -> c
+```
 
+2 separate streams between 2 nodes they can be grouped as well:
 
+```
 a -> {
     30
     40
 } -> b
+```
 
+**Probably ambiguous!**
+
+Does the sample below mean that total outflow from "a" is 60?
+```
 a -> 30 -> {
     b
     c
 }
+```
 
+Or does this one mean that total outflow must be 140 (70 to "b" and "c" respectively)?
+```
 a -> {
     30
     40
@@ -71,4 +114,20 @@ a -> {
     b
     c
 }
+```
+
+**Overcomplicated**
+
+Nested:
+```
+{
+    {
+        a -> 30
+        b -> 40
+    } -> c -> 12
+    {
+        d -> 10
+        e -> 20
+    } -> f -> 43
+} -> g
 ```
