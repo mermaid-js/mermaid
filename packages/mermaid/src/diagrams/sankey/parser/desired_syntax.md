@@ -67,7 +67,15 @@ Graph is a list of flows (or links).
 Flow is a sequence `node -> value -> node -> value...`
 ```
 a -> 30 -> b
-a -> 40 -> c
+a -> 40 -> b
+```
+
+2 separate streams between 2 nodes they can be grouped as well:
+```
+a -> {
+    30
+    40
+} -> b
 ```
 
 All outflows from the node can be grouped:
@@ -86,13 +94,15 @@ All inflows to the node can be grouped too:
 } -> c
 ```
 
-2 separate streams between 2 nodes they can be grouped as well:
-
+Chaining example:
 ```
 a -> {
     30
     40
-} -> b
+} -> b -> {
+    20 -> d
+    50 -> e
+}
 ```
 
 **Probably ambiguous!**
