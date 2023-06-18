@@ -39,7 +39,7 @@
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
     "prepublishOnly": "pnpm build && pnpm test",
-    "prepare": "husky install && pnpm build",
+    "prepare": "husky install",
     "pre-commit": "lint-staged"
   },
   "repository": {
