@@ -42,7 +42,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   }
   // Launch parsing
   diagObj.parser.parse(text);
-  debugger;
+  // debugger;
   log.debug('Parsed sankey diagram');
 
   // Figure out what is happening there
@@ -86,20 +86,20 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //      ]
   //    };
   //
-  let graph = {
+  const graph = {
     nodes: [],
     links: []
   }
 
   diagObj.db.getNodes().forEach(node => {
-    graph.nodes.push({id: node.ID});
+    graph.nodes.push({ id: node.ID });
   });
 
   diagObj.db.getLinks().forEach(link => {
-    graph.links.push({source: link.source.ID, target: link.target.ID, value: link.value});
+    graph.links.push({ source: link.source.ID, target: link.target.ID, value: link.value });
   });
 
-  debugger;
+  // debugger;
   // const graph = {
   //   nodes: [
   //     { id: 'Alice' },
@@ -125,10 +125,10 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .nodePadding(10)
     .nodeAlign(d3SankeyJustify) // d3.sankeyLeft, etc.
     .size([width, height]);
-    // .extent([[5, 20], [width - 5, height - 20]]); alias for size
-    // paddings
-    
-    //["left", "sankeyLeft"], ["right", "sankeyRight"], ["center", "sankeyCenter"], ["justify", "sankeyJustify"]
+  // .extent([[5, 20], [width - 5, height - 20]]); alias for size
+  // paddings
+
+  //["left", "sankeyLeft"], ["right", "sankeyRight"], ["center", "sankeyCenter"], ["justify", "sankeyJustify"]
   // .nodeWidth(15)
   //   .nodePadding(10)
   //   .extent([[1, 5], [width - 1, height - 5]]);
@@ -148,45 +148,45 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   // Creates the groups for nodes
   svg
     .append('g')
-      .attr('class', 'nodes')
-      .attr('stroke', '#000')
+    .attr('class', 'nodes')
+    .attr('stroke', '#000')
     .selectAll('.node')
     .data(graph.nodes)
     .join('g')
-      .attr('class', 'node')
-      .attr("transform", function (d) { return "translate(" + d.x0 + "," + d.y0 + ")"; })
-      .attr('x', (d) => d.x0)
-      .attr('y', (d) => d.y0)
-      .append('rect')
-        .attr('height', (d) => {console.log(d); return (d.y1 - d.y0);})
-        .attr('width', (d) => d.x1 - d.x0)
-        .attr('fill', (d) => color(d.id));
+    .attr('class', 'node')
+    .attr("transform", function (d) { return "translate(" + d.x0 + "," + d.y0 + ")"; })
+    .attr('x', (d) => d.x0)
+    .attr('y', (d) => d.y0)
+    .append('rect')
+    .attr('height', (d) => { console.log(d); return (d.y1 - d.y0); })
+    .attr('width', (d) => d.x1 - d.x0)
+    .attr('fill', (d) => color(d.id));
 
   // Create text for nodes
   svg
     .append("g")
-      .attr('class', 'node-labels')
-      .attr("font-family", "sans-serif")
-      .attr("font-size", 14)
+    .attr('class', 'node-labels')
+    .attr("font-family", "sans-serif")
+    .attr("font-size", 14)
     .selectAll('text')
     .data(graph.nodes)
     .join('text')
-      .attr("x", d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
-      .attr("y", d => (d.y1 + d.y0) / 2)
-      .attr("dy", "0.35em")
-      .attr("text-anchor", d => d.x0 < width / 2 ? "start" : "end")
-      .text(d => d.id)
+    .attr("x", d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
+    .attr("y", d => (d.y1 + d.y0) / 2)
+    .attr("dy", "0.35em")
+    .attr("text-anchor", d => d.x0 < width / 2 ? "start" : "end")
+    .text(d => d.id)
 
   // Creates the paths that represent the links.
   const link_g = svg.append("g")
-      .attr('class', 'links')
-      .attr("fill", "none")
-      .attr("stroke-opacity", 0.5)
+    .attr('class', 'links')
+    .attr("fill", "none")
+    .attr("stroke-opacity", 0.5)
     .selectAll(".link")
     .data(graph.links)
     .join("g")
-      .attr('class', 'link')
-      .style("mix-blend-mode", "multiply");
+    .attr('class', 'link')
+    .style("mix-blend-mode", "multiply");
 
   link_g.append("path")
     .attr("d", d3SankeyLinkHorizontal())
