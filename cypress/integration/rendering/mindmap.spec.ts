@@ -52,6 +52,17 @@ root[A root with a long text that wraps to keep the node size in check]
     );
   });
 
+  it('a root with wrapping text and long words that exceed width', () => {
+    imgSnapshotTest(
+      `mindmap
+root[A few smaller words but then averylongsetofcharacterswithoutwhitespacetoseparate that we expect to wrapontonextlinesandnotexceedwidthparameters]
+    `,
+      {},
+      undefined,
+      shouldHaveRoot
+    );
+  });
+
   it('a root with an icon', () => {
     imgSnapshotTest(
       `mindmap

@@ -1,5 +1,23 @@
 # Blog
 
+## [subhash-halder contributed quadrant charts so you can show your manager what to select - just like the strategy consultants at BCG do](https://www.mermaidchart.com/blog/posts/subhash-halder-contributed-quadrant-charts-so-you-can-show-your-manager-what-to-select-just-like-the-strategy-consultants-at-bcg-do/)
+
+8 June 2023 · 7 mins
+
+A quadrant chart is a useful diagram that helps users visualize data and identify patterns in a data set.
+
+## [Bad documentation is bad for developers](https://www.mermaidchart.com/blog/posts/bad-documentation-is-bad-for-developers)
+
+26 April 2023 · 11 mins
+
+Documentation tends to be bad because companies and projects don’t fully realize the costs of bad documentation.
+
+## [Automatic text wrapping in flowcharts is here!](https://www.mermaidchart.com/blog/posts/automatic-text-wrapping-in-flowcharts-is-here/)
+
+3 April 2023 · 3 mins
+
+Markdown Strings reduce the hassle # Starting from v10.
+
 ## [Mermaid Chart officially launched with sharable diagram links and presentation mode](https://www.mermaidchart.com/blog/posts/mermaid-chart-officially-launched-with-sharable-diagram-links-and-presentation-mode/)
 
 27 March 2023 · 2 mins

@@ -78,7 +78,6 @@ export interface ParseOptions {
 }
 
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
-// @ts-ignore Could replicate the type definition in d3. This also makes it possible to use the untyped info from the js diagram files.
 export type D3Element = any;
 
 export interface RenderResult {
@@ -154,13 +153,7 @@ export const encodeEntities = function (text: string): string {
  * @returns
  */
 export const decodeEntities = function (text: string): string {
-  let txt = text;
-
-  txt = txt.replace(/ﬂ°°/g, '&#');
-  txt = txt.replace(/ﬂ°/g, '&');
-  txt = txt.replace(/¶ß/g, ';');
-
-  return txt;
+  return text.replace(/ﬂ°°/g, '&#').replace(/ﬂ°/g, '&').replace(/¶ß/g, ';');
 };
 
 // append !important; to each cssClass followed by a final !important, all enclosed in { }
@@ -269,7 +262,10 @@ export const cleanUpSvgCode = (
 
   // Replace marker-end urls with just the # anchor (remove the preceding part of the URL)
   if (!useArrowMarkerUrls && !inSandboxMode) {
-    cleanedUpSvg = cleanedUpSvg.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#');
+    cleanedUpSvg = cleanedUpSvg.replace(
+      /marker-end="url\([\d+./:=?A-Za-z-]*?#/g,
+      'marker-end="url(#'
+    );
   }
 
   cleanedUpSvg = decodeEntities(cleanedUpSvg);
@@ -497,13 +493,7 @@ const render = async function (
     ? diag.renderer.getClasses(text, diag)
     : {};
 
-  const rules = createUserStyles(
-    config,
-    graphType,
-    // @ts-ignore convert renderer to TS.
-    diagramClassDefs,
-    idSelector
-  );
+  const rules = createUserStyles(config, graphType, diagramClassDefs, idSelector);
 
   const style1 = document.createElement('style');
   style1.innerHTML = rules;

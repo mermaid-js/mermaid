@@ -51,7 +51,6 @@ describe('accessibility', () => {
         desc: string | null | undefined,
         givenId: string
       ) {
-        // @ts-ignore Required to easily handle the d3 select types
         const svgAttrSpy = vi.spyOn(svgD3Node, 'attr').mockReturnValue(svgD3Node);
         addSVGa11yTitleDescription(svgD3Node, title, desc, givenId);
         expect(svgAttrSpy).toHaveBeenCalledWith('aria-labelledby', `chart-title-${givenId}`);
@@ -63,7 +62,6 @@ describe('accessibility', () => {
         desc: string | null | undefined,
         givenId: string
       ) {
-        // @ts-ignore Required to easily handle the d3 select types
         const svgAttrSpy = vi.spyOn(svgD3Node, 'attr').mockReturnValue(svgD3Node);
         addSVGa11yTitleDescription(svgD3Node, title, desc, givenId);
         expect(svgAttrSpy).toHaveBeenCalledWith('aria-describedby', `chart-desc-${givenId}`);

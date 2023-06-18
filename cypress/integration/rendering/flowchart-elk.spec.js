@@ -684,6 +684,20 @@ A --> B
       { titleTopMargin: 0 }
     );
   });
+  it('elk: should include classes on the edges', () => {
+    renderGraph(
+      `flowchart-elk TD
+      A --> B --> C --> D
+      `,
+      {}
+    );
+    cy.get('svg').should((svg) => {
+      const edges = svg.querySelectorAll('.edges > path');
+      edges.forEach((edge) => {
+        expect(edge).to.have.class('flowchart-link');
+      });
+    });
+  });
   describe('Markdown strings flowchart-elk (#4220)', () => {
     describe('html labels', () => {
       it('With styling and classes', () => {

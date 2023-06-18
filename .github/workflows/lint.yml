@@ -42,7 +42,7 @@ jobs:
           if ! pnpm run lint; then
               # print a nice error message on lint failure
               ERROR_MESSAGE='Running `pnpm run lint` failed.'
-              ERROR_MESSAGE+=' Running `pnpm run lint:fix` may fix this issue. '
+              ERROR_MESSAGE+=' Running `pnpm -w run lint:fix` may fix this issue. '
               ERROR_MESSAGE+=" If this error doesn't occur on your local machine,"
               ERROR_MESSAGE+=' make sure your packages are up-to-date by running `pnpm install`.'
               ERROR_MESSAGE+=' You may also need to delete your prettier cache by running'

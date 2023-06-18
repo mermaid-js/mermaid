@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        /* font-family: 'trebuchet ms', verdana, arial; */
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Quadrant chart demos</h1>
+    <pre class="mermaid">
+    %%{init: {"quadrantChart": {"quadrantPadding": 10}, "theme": "forest", "themeVariables": {"quadrant1TextFill": "blue"}} }%%
+    quadrantChart
+      x-axis Urgent --> Not Urgent
+      y-axis Not Important --> important
+      quadrant-1 Plan
+      quadrant-2 Do
+      quadrant-3 Deligate
+      quadrant-4 Delete
+    </pre>
+
+    <pre class="mermaid">
+    %%{init: {"quadrantChart": {"chartWidth": 600, "chartHeight": 600} } }%%
+    quadrantChart
+      title Analytics and Business Intelligence Platforms
+      x-axis "Completeness of Vision ❤" -->
+      y-axis Ability to Execute
+      quadrant-1 Leaders
+      quadrant-2 Challengers
+      quadrant-3 Niche
+      quadrant-4 Visionaries
+      Microsoft: [0.75, 0.75]
+      Salesforce: [0.55, 0.60]
+      IBM: [0.51, 0.40]
+      Incorta: [0.20, 0.30]
+    </pre>
+    <hr />
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({
+        theme: 'default',
+        logLevel: 3,
+        securityLevel: 'loose',
+      });
+    </script>
+  </body>
+</html>

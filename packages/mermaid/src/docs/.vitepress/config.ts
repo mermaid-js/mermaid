@@ -16,7 +16,22 @@ export default defineConfig({
   description: 'Create diagrams and visualizations using text and code.',
   base: '/',
   markdown: allMarkdownTransformers,
-  head: [['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]],
+  ignoreDeadLinks: [
+    // ignore all localhost links
+    /^https?:\/\/localhost/,
+  ],
+  head: [
+    ['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    [
+      'script',
+      {
+        defer: 'true',
+        'data-domain': 'mermaid.js.org',
+        // All tracked stats are public and available at https://p.mermaid.live/mermaid.js.org
+        src: 'https://p.mermaid.live/js/script.js',
+      },
+    ],
+  ],
   themeConfig: {
     nav: nav(),
     editLink: {
@@ -42,6 +57,7 @@ export default defineConfig({
   },
 });
 
+// Top (across the page) menu
 function nav() {
   return [
     { text: 'Docs', link: '/intro/', activeMatch: '/intro/' },
@@ -65,7 +81,7 @@ function nav() {
         },
         {
           text: 'Contributing',
-          link: 'https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md',
+          link: '/community/development',
         },
       ],
     },
@@ -115,11 +131,13 @@ function sidebarSyntax() {
         { text: 'User Journey', link: '/syntax/userJourney' },
         { text: 'Gantt', link: '/syntax/gantt' },
         { text: 'Pie Chart', link: '/syntax/pie' },
+        { text: 'Quadrant Chart', link: '/syntax/quadrantChart' },
         { text: 'Requirement Diagram', link: '/syntax/requirementDiagram' },
         { text: 'Gitgraph (Git) Diagram 🔥', link: '/syntax/gitgraph' },
         { text: 'C4C Diagram (Context) Diagram 🦺⚠️', link: '/syntax/c4c' },
         { text: 'Mindmaps 🔥', link: '/syntax/mindmap' },
         { text: 'Timeline 🔥', link: '/syntax/timeline' },
+        { text: 'Zenuml 🔥', link: '/syntax/zenuml' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
@@ -167,12 +185,43 @@ function sidebarCommunity() {
       collapsible: true,
       items: [
         { text: 'Overview for Beginners', link: '/community/n00b-overview' },
-        {
-          text: 'Development and Contribution',
-          link: '/community/development',
-        },
+        ...sidebarCommunityDevelopContribute(),
         { text: 'Adding Diagrams', link: '/community/newDiagram' },
         { text: 'Security', link: '/community/security' },
+      ],
+    },
+  ];
+}
+
+// Development and Contributing
+function sidebarCommunityDevelopContribute() {
+  const page_path = '/community/development';
+  return [
+    {
+      text: 'Contributing to Mermaid',
+      link: page_path + '#contributing-to-mermaid',
+      collapsible: true,
+      items: [
+        {
+          text: 'Technical Requirements and Setup',
+          link: pathToId(page_path, 'technical-requirements-and-setup'),
+        },
+        {
+          text: 'Contributing Code',
+          link: pathToId(page_path, 'contributing-code'),
+        },
+        {
+          text: 'Contributing Documentation',
+          link: pathToId(page_path, 'contributing-documentation'),
+        },
+        {
+          text: 'Questions or Suggestions?',
+          link: pathToId(page_path, 'questions-or-suggestions'),
+        },
+        {
+          text: 'Last Words',
+          link: pathToId(page_path, 'last-words'),
+        },
       ],
     },
   ];
@@ -189,4 +238,14 @@ function sidebarNews() {
       ],
     },
   ];
+}
+
+/**
+ * Return a string that puts together the pagePage, a '#', then the given id
+ * @param  pagePath
+ * @param  id
+ * @returns  the fully formed path
+ */
+function pathToId(pagePath: string, id = ''): string {
+  return pagePath + '#' + id;
 }

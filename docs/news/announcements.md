@@ -6,8 +6,8 @@
 
 # Announcements
 
-## [Automatic text wrapping in flowcharts is here!](https://www.mermaidchart.com/blog/posts/automatic-text-wrapping-in-flowcharts-is-here)
+## [subhash-halder contributed quadrant charts so you can show your manager what to select - just like the strategy consultants at BCG do](https://www.mermaidchart.com/blog/posts/subhash-halder-contributed-quadrant-charts-so-you-can-show-your-manager-what-to-select-just-like-the-strategy-consultants-at-bcg-do/)
 
-3 April 2023 · 3 mins
+8 June 2023 · 7 mins
 
-Markdown Strings reduce the hassle # Starting from v10.
+A quadrant chart is a useful diagram that helps users visualize data and identify patterns in a data set.
