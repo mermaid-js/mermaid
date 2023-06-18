@@ -17,11 +17,11 @@ jobs:
       - id: set-test-chunks
         name: Set Chunks
         # get all spec files from the integration directory, group them to be at most 15 at a time and transform them to json
-        run: echo "::set-output name=test-chunks::$(find cypress/integration -type f -name "*.spec.*" | xargs -n15 | tr ' ' ',' | jq -R . | jq -s -cM .)"
+        run: echo "test-chunks=$(find cypress/integration -type f -name "*.spec.*" | xargs -n15 | tr ' ' ',' | jq -R . | jq -s -cM .)"  >> $GITHUB_OUTPUT
       - id: set-test-chunk-ids
         name: Set Chunk IDs
         # get the number of elements from the above array as an array of indexes
-        run: echo "::set-output name=test-chunk-ids::$(echo $CHUNKS | jq -cM 'to_entries | map(.key)')"
+        run: echo "test-chunk-ids=$(echo $CHUNKS | jq -cM 'to_entries | map(.key)')" >> $GITHUB_OUTPUT
         env:
           CHUNKS: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
 
