@@ -40,6 +40,12 @@ export interface PieStyleOptions {
 
 export type Sections = Record<string, number>;
 
+export interface D3Sections {
+  order: number;
+  label: string;
+  value: number;
+}
+
 export interface PieDb extends DiagramDB {
   clear: () => void;
   getConfig: () => PieDiagramConfig | undefined;

@@ -5,7 +5,7 @@ import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { getConfig } from '../../config.js';
 import { parseFontSize } from '../../utils.js';
 import { DrawDefinition, HTML } from '../../diagram-api/types.js';
-import { PieDb, Sections } from './pieTypes.js';
+import type { D3Sections, PieDb, Sections } from './pieTypes.js';
 
 /**
  * Draws a Pie Chart with the data given in text.
@@ -94,21 +94,20 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
     const color = scaleOrdinal().range(myGeneratedColors);
 
     // Compute the position of each group on the pie:
-    const pieData = Object.entries(sections).map(function (el, idx) {
-      return {
-        order: idx,
-        name: el[0],
-        value: el[1],
-      };
-    });
-    const pie = d3pie()
-      .value((d): number => {
-        return d.value;
+    const pieData: D3Sections[] = Object.entries(sections)
+      .map((element: [string, number], index: number): D3Sections => {
+        return {
+          order: index,
+          label: element[0],
+          value: element[1],
+        };
       })
-      .sort((a, b): number => {
+      .sort((a: D3Sections, b: D3Sections): number => {
         // Sort slices in clockwise direction
         return a.order - b.order;
       });
+    const pie = d3pie().value((d: unknown): number => d.value);
+    // @ts-ignore - figure out how to assign D3Section[] to PieArcDatum
     const dataReady = pie(pieData);
 
     // Shape helper to build arcs:
@@ -131,8 +130,8 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
       .enter()
       .append('path')
       .attr('d', arcGenerator)
-      .attr('fill', (d) => {
-        return color(d.data.name);
+      .attr('fill', (datum: { data: D3Sections }) => {
+        return color(datum.data.label);
       })
       .attr('class', 'pieCircle');
 
@@ -143,11 +142,11 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
       .data(dataReady)
       .enter()
       .append('text')
-      .text((d): string => {
-        return ((d.data.value / sum) * 100).toFixed(0) + '%';
+      .text((datum: { data: D3Sections }): string => {
+        return ((datum.data.value / sum) * 100).toFixed(0) + '%';
       })
-      .attr('transform', (d): string => {
-        return 'translate(' + labelArcGenerator.centroid(d) + ')';
+      .attr('transform', (datum: unknown): string => {
+        return 'translate(' + labelArcGenerator.centroid(datum) + ')';
       })
       .style('text-anchor', 'middle')
       .attr('class', 'slice');
@@ -166,7 +165,7 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
       .enter()
       .append('g')
       .attr('class', 'legend')
-      .attr('transform', (d, index: number): string => {
+      .attr('transform', (_datum: D3Sections, index: number): string => {
         const height = legendRectSize + legendSpacing;
         const offset = (height * color.domain().length) / 2;
         const horizontal = 12 * legendRectSize;
@@ -186,11 +185,11 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
       .append('text')
       .attr('x', legendRectSize + legendSpacing)
       .attr('y', legendRectSize - legendSpacing)
-      .text((d): string => {
+      .text((datum: { data: D3Sections }): string => {
         if (db.getShowData()) {
-          return d.data.name + ' [' + d.data.value + ']';
+          return datum.data.label + ' [' + datum.data.value + ']';
         } else {
-          return d.data.name;
+          return datum.data.label;
         }
       });
   } catch (e) {
