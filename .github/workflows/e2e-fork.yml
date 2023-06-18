@@ -1,29 +1,51 @@
-name: E2E - Fork
+name: E2E - Forks
 
-on: [push, pull_request]
-
-permissions:
-  contents: read
+on:
+  - pull_request
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  setup:
     if: github.event.pull_request.head.repo.full_name != github.repository
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [18.x]
-        containers: [1, 2, 3, 4]
+    runs-on: ubuntu-latest
+    outputs:
+      # will contain a json string with an array of n elements, each being a string of spec files delimited by ,
+      test-chunks: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
+      # json string with ids to use in the next job matrix depending on how many elements are in the above array, eg: [0,1]
+      test-chunk-ids: ${{ steps['set-test-chunk-ids'].outputs['test-chunk-ids'] }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
+      - id: set-test-chunks
+        name: Set Chunks
+        # get all spec files from the integration directory, group them to be at most 15 at a time and transform them to json
+        run: echo "::set-output name=test-chunks::$(find cypress/integration -type f -name "*.spec.*" | xargs -n15 | tr ' ' ',' | jq -R . | jq -s -cM .)"
+      - id: set-test-chunk-ids
+        name: Set Chunk IDs
+        # get the number of elements from the above array as an array of indexes
+        run: echo "::set-output name=test-chunk-ids::$(echo $CHUNKS | jq -cM 'to_entries | map(.key)')"
+        env:
+          CHUNKS: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
+
+  tests:
+    if: github.event.pull_request.head.repo.full_name != github.repository
+    needs:
+      - setup
+    runs-on: ubuntu-latest
+    name: test (chunk ${{ matrix.chunk }})
+    strategy:
+      matrix:
+        # will be for eg chunk: [0,1]
+        chunk: ${{ fromJson(needs.setup.outputs['test-chunk-ids']) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - uses: pnpm/action-setup@v2
         # uses version from "packageManager" field in package.json
 
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js 18.x
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 18.x
 
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
@@ -33,11 +55,12 @@ jobs:
         with:
           start: pnpm run dev:coverage
           wait-on: 'http://localhost:9000'
-          parallel: true
+          spec: ${{ fromJson(needs.setup.outputs['test-chunks'])[matrix.chunk] }}
         env:
           VITEST_COVERAGE: true
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v3
+        if: steps.cypress.conclusion == 'success'
         with:
           files: coverage/cypress/lcov.info
           flags: e2e
@@ -50,3 +73,13 @@ jobs:
         with:
           name: error-snapshots
           path: cypress/snapshots/**/__diff_output__/*
+
+  testsall:
+    if: ${{ github.event.pull_request.head.repo.full_name != github.repository && always() }}
+    runs-on: ubuntu-latest
+    name: Tests All
+    needs: tests
+    steps:
+      - name: Check tests matrix status
+        if: ${{ needs.tests.result != 'success' }}
+        run: exit 1
