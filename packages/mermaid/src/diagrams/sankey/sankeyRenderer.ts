@@ -7,9 +7,16 @@ import {
   scaleOrdinal as d3scaleOrdinal,
   schemeTableau10 as d3schemeTableau10,
   // rgb as d3rgb,
-  map as d3map,
+  // map as d3map,
 } from 'd3';
-import { sankey as d3Sankey, sankeyLinkHorizontal as d3SankeyLinkHorizontal } from 'd3-sankey';
+
+import {
+  sankey as d3Sankey,
+  sankeyLinkHorizontal as d3SankeyLinkHorizontal,
+  sankeyLeft as d3SankeyLeft,
+  sankeyRight as d3SankeyRight,
+  sankeyJustify as d3SankeyJustify,
+} from 'd3-sankey';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import sankeyDB from './sankeyDB.js';
 
@@ -53,7 +60,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //
   const elem = doc.getElementById(id);
   const width = elem.parentElement.offsetWidth;
-  const height = 100; // TODO calculate height?
+  const height = 300; // TODO calculate height?
 
   // FIX: using max width prevents height from being set
   configureSvgSize(svg, height, width, true);
@@ -76,10 +83,18 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //    };
   //
   const graph = {
-    nodes: [{ id: 'Alice' }, { id: 'Bob' }, { id: 'Carol' }],
+    nodes: [
+      { id: 'Alice' },
+      { id: 'Bob' },
+      { id: 'Carol' },
+      { id: 'Andrew' },
+      { id: 'Peter' }
+    ],
     links: [
+      { source: 'Alice', target: 'Andrew', value: 11 },
       { source: 'Alice', target: 'Bob', value: 23 },
       { source: 'Bob', target: 'Carol', value: 43 },
+      { source: 'Peter', target: 'Carol', value: 15 },
     ],
   };
 
@@ -88,11 +103,12 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //
   const sankey = d3Sankey()
     .nodeId((d) => d.id) // we use 'id' property to identify node
-    .nodeWidth(36)
-    .nodePadding(290)
+    .nodeWidth(10)
+    .nodePadding(10)
+    .nodeAlign(d3SankeyJustify) // d3.sankeyLeft, etc.
     .size([width, height]);
-
-  // .nodeAlign(d3Sankey.sankeyLeft) // d3.sankeyLeft, etc.
+    
+    //["left", "sankeyLeft"], ["right", "sankeyRight"], ["center", "sankeyCenter"], ["justify", "sankeyJustify"]
   // .nodeWidth(15)
   //   .nodePadding(10)
   //   .extent([[1, 5], [width - 1, height - 5]]);
@@ -105,20 +121,6 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   // and enriched with some properties
   //
   sankey(graph);
-
-
-  // const node = svg.append("g")
-  //   .selectAll("rect")
-  //   .data(graph.nodes)
-  //   .join("rect")
-  //   .attr("x", d => d.x0)
-  //   .attr("y", d => d.y0)
-  //   .attr("height", d => d.y1 - d.y0)
-  //   .attr("width", d => d.x1 - d.x0);
-  // // .attr("stroke", nodeStroke)
-  // // .attr("stroke-width", nodeStrokeWidth)
-  // // .attr("stroke-opacity", nodeStrokeOpacity)
-  // // .attr("stroke-linejoin", nodeStrokeLinejoin)
 
   // Get color scheme for the graph
   const color = d3scaleOrdinal(d3schemeTableau10);
@@ -145,7 +147,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .append("g")
       .attr('class', 'node-labels')
       .attr("font-family", "sans-serif")
-      .attr("font-size", 12)
+      .attr("font-size", 14)
     .selectAll('text')
     .data(graph.nodes)
     .join('text')
@@ -154,18 +156,6 @@ export const draw = function (text: string, id: string, _version: string, diagOb
       .attr("dy", "0.35em")
       .attr("text-anchor", d => d.x0 < width / 2 ? "start" : "end")
       .text(d => d.id)
-
-  // Add links
-  // svg
-  //   .append("g")
-  //   .selectAll(".link")
-  //   .data(graph.links)
-  //   .enter()
-  //     .append("path")
-  //     .attr("class", "link")
-  //     .attr("d", sankeyLinkHorizontal())
-  //     .style("stroke-width", function (d) { return Math.max(1, d.dy); })
-  //     .sort(function (a, b) { return b.dy - a.dy; });
 
   // Creates the paths that represent the links.
   const link_g = svg.append("g")
@@ -182,89 +172,6 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .attr("d", d3SankeyLinkHorizontal())
     .attr("stroke", d => color(d.source.id))
     .attr("stroke-width", d => Math.max(1, d.width));
-
-    // linkColor === "source-target" ? (d) => d.uid
-    // : linkColor === "source" ? (d) => color(d.source.category)
-    //   : linkColor === "target" ? (d) => color(d.target.category)
-    //     : linkColor
-
-    //   svg.append("g")
-    //   .attr("font-family", "sans-serif")
-    //   .attr("font-size", 10)
-    // .selectAll("text")
-    // .data(nodes)
-    // .join("text")
-    //   .attr("x", d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
-    //   .attr("y", d => (d.y1 + d.y0) / 2)
-    //   .attr("dy", "0.35em")
-    //   .attr("text-anchor", d => d.x0 < width / 2 ? "start" : "end")
-    //   .text(d => d.name);
-  
-    // Create links
-      // .attr("transform", null)
-    // .append("g")
-    //   .attr("font-family", "sans-serif")
-    //   .attr("font-size", 10)
-    // .selectAll("text")
-    // .data(nodes)
-    // .join("text")
-    //   .attr("x", d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
-    //   .attr("y", d => (d.y1 + d.y0) / 2)
-    //   .attr("dy", "0.35em")
-    //   .attr("text-anchor", d => d.x0 < width / 2 ? "start" : "end")
-    //   .text(d => d.name);
-  //   .attr("y", function (d) { return d.dy / 2; })
-  //   .attr("dy", ".35em")
-  //   .attr("text-anchor", "end")
-  //   .attr("transform", null)
-  //   .text(function (d) { return d.name; })
-  //   .filter(function (d) { return d.x < width / 2; })
-  //   .attr("x", 6 + generator.nodeWidth())
-  //   .attr("text-anchor", "start");
- 
-  // .selectAll('rect')
-
-
-  // // add in the nodes
-  // var node = svg.append("g")
-  //   .selectAll(".node")
-  //   .data(graph.nodes)
-  //   .enter().append("g")
-  //   .attr("class", "node")
-  //   .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; })
-  //   // .call(d3.drag()
-  //   //   .subject(function(d) { return d; })
-  //   //   .on("start", function() { this.parentNode.appendChild(this); })
-  //   //   .on("drag", dragmove))
-  //   ;
-
-  // // add the rectangles for the nodes
-  // node
-  //   .append("rect")
-  //   .attr("height", function (d) { return d.dy; })
-  //   .attr("width", generator.nodeWidth())
-  //   .style("fill", function (d) { return d.color = color(d.name.replace(/ .*/, "")); })
-  //   .style("stroke", function (d) { return d3rgb(d.color).darker(2); })
-  //   // Add hover text
-  //   .append("title")
-  //   .text(function (d) { return d.name + "\n" + "There is " + d.value + " stuff in this node"; });
-
-  // // add in the title for the nodes
-  // node
-  //   .append("text")
-  //   .attr("x", -6)
-  //   .attr("y", function (d) { return d.dy / 2; })
-  //   .attr("dy", ".35em")
-  //   .attr("text-anchor", "end")
-  //   .attr("transform", null)
-  //   .text(function (d) { return d.name; })
-  //   .filter(function (d) { return d.x < width / 2; })
-  //   .attr("x", 6 + generator.nodeWidth())
-  //   .attr("text-anchor", "start");
-
-  // console.log();
-  // debugger;
-  // .layout(1);
 
   // const { nodes, links } = generator({
   //   nodes: graph.nodes,
