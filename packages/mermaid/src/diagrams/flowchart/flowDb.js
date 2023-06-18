@@ -214,7 +214,7 @@ export const addClass = function (ids, style) {
       classes[id] = { id, styles: [], textStyles: [] };
     }
 
-    if (style) {
+    if (style !== undefined && style !== null) {
       style.forEach(function (s) {
         if (s.match('color')) {
           const newStyle = s.replace('fill', 'bgFill').replace('color', 'fill');
