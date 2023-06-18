@@ -1254,28 +1254,43 @@ const config: Partial<MermaidConfig> = {
 
   /** The object containing configurations specific for pie diagrams */
   pie: {
-    useWidth: undefined,
+    /**
+     * | Parameter | Description | Type   | Required | Values              |
+     * | --------- | ----------- | ------ | -------- | ------------------- |
+     * | useWidth  | See Notes   | number | Optional | Any positive number |
+     *
+     * **Notes:**
+     *
+     * Width of the chart.
+     *
+     * Default value: 1200
+     */
+    useWidth: 1200,
 
     /**
      * | Parameter   | Description | Type    | Required | Values      |
      * | ----------- | ----------- | ------- | -------- | ----------- |
-     * | useMaxWidth | See Notes   | boolean | Required | true, false |
+     * | useMaxWidth | See Notes   | boolean | Optional | true, false |
      *
      * **Notes:**
      *
-     * When this flag is set to true, the diagram width is locked to 100% and scaled based on
-     * available space. If set to false, the diagram reserves its absolute width.
+     * When this flag is set to true, the chart width is locked to 100% and scaled based on
+     * available space. If set to false, the chart reserves its absolute width.
      *
      * Default value: true
      */
     useMaxWidth: true,
 
     /**
-     * | Parameter    | Description                                                                      | Type    | Required | Values              |
-     * | ------------ | -------------------------------------------------------------------------------- | ------- | -------- | ------------------- |
-     * | textPosition | Axial position of slice's label from zero at the center to 1 at the outside edge | Number  | Optional | Decimal from 0 to 1 |
+     * | Parameter    | Description | Type    | Required | Values              |
+     * | ------------ | ----------- | ------- | -------- | ------------------- |
+     * | textPosition | See Notes   | number  | Optional | Decimal from 0 to 1 |
      *
-     * **Notes:** Default value: 0.75
+     * **Notes:**
+     *
+     * Axial position of slice's label from zero at the center to 1 at the outside edge.
+     *
+     * Default value: 0.75
      */
     textPosition: 0.75,
   },
