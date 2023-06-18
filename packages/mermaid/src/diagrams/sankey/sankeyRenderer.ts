@@ -99,7 +99,6 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     graph.links.push({source: link.source.ID, target: link.target.ID, value: link.value});
   });
 
-
   debugger;
   // const graph = {
   //   nodes: [

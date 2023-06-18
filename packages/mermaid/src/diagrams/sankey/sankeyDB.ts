@@ -92,12 +92,14 @@ class Node {
  */
 const addNode = function(ID: string): Node {
   ID = common.sanitizeText(ID, configApi.getConfig());
+  let node: Node;
   if (nodesHash[ID] === undefined) {
-    nodesHash[ID] = new Node(ID);
+    node = new Node(ID);
+    nodesHash[ID] = node;
+    nodes.push(node);
+  } else {
+    node = nodesHash[ID];
   }
-  const node = nodesHash[ID];
-  nodes.push(node);
-  // debugger;
   return node;
 };
 

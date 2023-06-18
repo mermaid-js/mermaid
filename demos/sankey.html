@@ -17,10 +17,12 @@
     <h2>Simple flow</h2>
     <pre class="mermaid">
       sankey
-      node_a->10->node_b;
-      node_c->20->node_b;
-      node_b->15->node_d;
-      node_a-> 7->node_d;
+      a->28->b->10->c
+      a->11->b
+      k->18->b->35->d->13->e->43->dd11
+      d->5->e
+      d->10->c
+      k->25->e
     </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
