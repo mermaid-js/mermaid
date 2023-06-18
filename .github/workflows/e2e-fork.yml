@@ -53,7 +53,7 @@ jobs:
         uses: cypress-io/github-action@v4
         id: cypress
         with:
-          start: pnpm build && pnpm run dev:coverage
+          start: pnpm run dev:coverage
           wait-on: 'http://localhost:9000'
           spec: ${{ fromJson(needs.setup.outputs['test-chunks'])[matrix.chunk] }}
         env:
