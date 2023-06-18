@@ -15,10 +15,13 @@ import {
   sankeyLinkHorizontal as d3SankeyLinkHorizontal,
   sankeyLeft as d3SankeyLeft,
   sankeyRight as d3SankeyRight,
+  sankeyCenter as d3SankeyCenter,
   sankeyJustify as d3SankeyJustify,
 } from 'd3-sankey';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import sankeyDB from './sankeyDB.js';
+import { db } from '../info/infoDb.js';
+import { debug } from 'console';
 
 /**
  * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
@@ -39,6 +42,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   }
   // Launch parsing
   diagObj.parser.parse(text);
+  debugger;
   log.debug('Parsed sankey diagram');
 
   // Figure out what is happening there
@@ -66,7 +70,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   configureSvgSize(svg, height, width, true);
   svg.attr('height', height); // that's why we need this line
 
-  // Prepare data for construction
+  // Prepare data for construction based on diagObj.db
   // This must be a mutable object with 2 properties:
   // `nodes` and `links`
   //
@@ -82,21 +86,36 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //      ]
   //    };
   //
-  const graph = {
-    nodes: [
-      { id: 'Alice' },
-      { id: 'Bob' },
-      { id: 'Carol' },
-      { id: 'Andrew' },
-      { id: 'Peter' }
-    ],
-    links: [
-      { source: 'Alice', target: 'Andrew', value: 11 },
-      { source: 'Alice', target: 'Bob', value: 23 },
-      { source: 'Bob', target: 'Carol', value: 43 },
-      { source: 'Peter', target: 'Carol', value: 15 },
-    ],
-  };
+  let graph = {
+    nodes: [],
+    links: []
+  }
+
+  diagObj.db.getNodes().forEach(node => {
+    graph.nodes.push({id: node.ID});
+  });
+
+  diagObj.db.getLinks().forEach(link => {
+    graph.links.push({source: link.source.ID, target: link.target.ID, value: link.value});
+  });
+
+
+  debugger;
+  // const graph = {
+  //   nodes: [
+  //     { id: 'Alice' },
+  //     { id: 'Bob' },
+  //     { id: 'Carol' },
+  //     { id: 'Andrew' },
+  //     { id: 'Peter' }
+  //   ],
+  //   links: [
+  //     { source: 'Alice', target: 'Andrew', value: 11 },
+  //     { source: 'Alice', target: 'Bob', value: 23 },
+  //     { source: 'Bob', target: 'Carol', value: 43 },
+  //     { source: 'Peter', target: 'Carol', value: 15 },
+  //   ],
+  // };
 
   // Construct and configure a Sankey generator
   // That will be a function that calculates nodes and links dimensions
@@ -107,6 +126,8 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .nodePadding(10)
     .nodeAlign(d3SankeyJustify) // d3.sankeyLeft, etc.
     .size([width, height]);
+    // .extent([[5, 20], [width - 5, height - 20]]); alias for size
+    // paddings
     
     //["left", "sankeyLeft"], ["right", "sankeyRight"], ["center", "sankeyCenter"], ["justify", "sankeyJustify"]
   // .nodeWidth(15)

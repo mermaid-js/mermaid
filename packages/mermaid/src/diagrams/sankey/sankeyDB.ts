@@ -23,7 +23,7 @@ let links: Array<Link> = [];
 let nodes: Array<Node> = [];
 let nodesHash: Record<string, Node> = {};
 
-const clear = () => {
+const clear = function() {
   links = [];
   nodes = [];
   nodesHash = {};
@@ -32,20 +32,20 @@ const clear = () => {
 
 type Nullable<T> = T | null;
 
-interface ILink {
-  source?: Node;
-  target?: Node;
-  amount?: number;
-}
+// interface ILink {
+//   source?: Node;
+//   target?: Node;
+//   value?: number;
+// }
 
 class Link {
   source: Nullable<Node>;
   target: Nullable<Node>;
-  amount: Nullable<number>;
+  value: Nullable<number>;
   constructor() {
     this.source = null;
     this.target = null;
-    this.amount = 0;
+    this.value = 0;
   }
 }
 
@@ -54,20 +54,21 @@ class Link {
  *
  * @param source - Node where the link starts
  * @param target - Node where the link ends
- * @param amount - number, float or integer, describes the amount to be passed
+ * @param value - number, float or integer, describes the amount to be passed
  */
 // const addLink = ({ source, target, amount }: ILink = {}): Link => {
-const addLink = (source?: Node, target?: Node, amount?: number): Link => {
+const addLink = function(source?: Node, target?: Node, value?: number): Link {
   const link: Link = new Link();
 
+  // TODO: make attribute setters
   if (source !== undefined) {
     link.source = source;
   }
   if (target !== undefined) {
     link.target = target;
   }
-  if (amount !== undefined) {
-    link.amount = amount;
+  if (value !== undefined) {
+    link.value = value;
   }
 
   links.push(link);
@@ -89,7 +90,7 @@ class Node {
  *
  * @param id - The id Node
  */
-const addNode = (ID: string): Node => {
+const addNode = function(ID: string): Node {
   ID = common.sanitizeText(ID, configApi.getConfig());
   if (nodesHash[ID] === undefined) {
     nodesHash[ID] = new Node(ID);
@@ -100,10 +101,14 @@ const addNode = (ID: string): Node => {
   return node;
 };
 
+const getNodes = () => nodes;
+const getLinks = () => links;
+
 export default {
   nodesHash,
-  nodes,
-  links,
+  getConfig: () => configApi.getConfig().sankey,
+  getNodes,
+  getLinks,
   addLink,
   addNode,
   // TODO: If this is a must this probably should be an interface
