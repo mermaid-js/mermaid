@@ -209,19 +209,18 @@ export const updateLink = function (positions, style) {
 };
 
 export const addClass = function (ids, style) {
-  ids.split(',').forEach(function (_id) {
-    if (classes[_id] === undefined) {
-      classes[_id] = { id: _id, styles: [], textStyles: [] };
+  ids.split(',').forEach(function (id) {
+    if (classes[id] === undefined) {
+      classes[id] = { id, styles: [], textStyles: [] };
     }
 
-    if (style !== undefined && style !== null) {
+    if (style) {
       style.forEach(function (s) {
         if (s.match('color')) {
-          const newStyle1 = s.replace('fill', 'bgFill');
-          const newStyle2 = newStyle1.replace('color', 'fill');
-          classes[_id].textStyles.push(newStyle2);
+          const newStyle = s.replace('fill', 'bgFill').replace('color', 'fill');
+          classes[id].textStyles.push(newStyle);
         }
-        classes[_id].styles.push(s);
+        classes[id].styles.push(s);
       });
     }
   });
