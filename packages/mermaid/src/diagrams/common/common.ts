@@ -1,5 +1,7 @@
 import DOMPurify from 'dompurify';
-import { MermaidConfig } from '../../config.type';
+import { MermaidConfig } from '../../config.type.js';
+
+export const lineBreakRegex = /<br\s*\/?>/gi;
 
 /**
  * Gets the rows of lines in a string
@@ -64,8 +66,6 @@ export const sanitizeTextOrArray = (
   // TODO: Refactor to avoid flat.
   return a.flat().map((x: string) => sanitizeText(x, config));
 };
-
-export const lineBreakRegex = /<br\s*\/?>/gi;
 
 /**
  * Whether or not a text has any line breaks
@@ -139,6 +139,32 @@ export const evaluate = (val?: string | boolean): boolean =>
   val === false || ['false', 'null', '0'].includes(String(val).trim().toLowerCase()) ? false : true;
 
 /**
+ * Wrapper around Math.max which removes non-numeric values
+ * Returns the larger of a set of supplied numeric expressions.
+ * @param values - Numeric expressions to be evaluated
+ * @returns The smaller value
+ */
+export const getMax = function (...values: number[]): number {
+  const newValues: number[] = values.filter((value) => {
+    return !isNaN(value);
+  });
+  return Math.max(...newValues);
+};
+
+/**
+ * Wrapper around Math.min which removes non-numeric values
+ * Returns the smaller of a set of supplied numeric expressions.
+ * @param values - Numeric expressions to be evaluated
+ * @returns The smaller value
+ */
+export const getMin = function (...values: number[]): number {
+  const newValues: number[] = values.filter((value) => {
+    return !isNaN(value);
+  });
+  return Math.min(...newValues);
+};
+
+/**
  * Makes generics in typescript syntax
  *
  * @example
@@ -154,11 +180,17 @@ export const evaluate = (val?: string | boolean): boolean =>
 export const parseGenericTypes = function (text: string): string {
   let cleanedText = text;
 
-  if (text.includes('~')) {
-    cleanedText = cleanedText.replace(/~([^~].*)/, '<$1');
-    cleanedText = cleanedText.replace(/~([^~]*)$/, '>$1');
+  if (text.split('~').length - 1 >= 2) {
+    let newCleanedText = cleanedText;
 
-    return parseGenericTypes(cleanedText);
+    // use a do...while loop instead of replaceAll to detect recursion
+    // e.g. Array~Array~T~~
+    do {
+      cleanedText = newCleanedText;
+      newCleanedText = cleanedText.replace(/~([^\s,:;]+)~/, '<$1>');
+    } while (newCleanedText != cleanedText);
+
+    return parseGenericTypes(newCleanedText);
   } else {
     return cleanedText;
   }
@@ -174,4 +206,6 @@ export default {
   removeScript,
   getUrl,
   evaluate,
+  getMax,
+  getMin,
 };

@@ -75,4 +75,15 @@ describe('Pie Chart', () => {
       expect(svg).to.not.have.attr('style');
     });
   });
+  it('should render a pie diagram when textPosition is set', () => {
+    imgSnapshotTest(
+      `
+        pie
+          "Dogs": 50
+          "Cats": 25
+        `,
+      { logLevel: 1, pie: { textPosition: 0.9 } }
+    );
+    cy.get('svg');
+  });
 });

@@ -1,11 +1,11 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select } from 'd3';
-import { getConfig } from '../../config';
+import { getConfig } from '../../config.js';
 import { render } from '../../dagre-wrapper/index.js';
-import { log } from '../../logger';
-import { configureSvgSize } from '../../setupGraphViewbox';
-import common from '../common/common';
-import utils from '../../utils';
+import { log } from '../../logger.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
+import common from '../common/common.js';
+import utils from '../../utils.js';
 
 import {
   DEFAULT_DIAGRAM_DIRECTION,
@@ -14,7 +14,7 @@ import {
   STMT_RELATION,
   DEFAULT_STATE_TYPE,
   DIVIDER_TYPE,
-} from './stateCommon';
+} from './stateCommon.js';
 
 // --------------------------------------
 // Shapes
@@ -232,6 +232,9 @@ const setupNode = (g, parent, parsedItem, diagramStates, diagramDb, altFlag) => 
       type: newNode.type,
       padding: 15, //getConfig().flowchart.padding
     };
+    // if (useHtmlLabels) {
+    nodeData.centerLabel = true;
+    // }
 
     if (parsedItem.note) {
       // Todo: set random id
@@ -240,6 +243,7 @@ const setupNode = (g, parent, parsedItem, diagramStates, diagramDb, altFlag) => 
         shape: SHAPE_NOTE,
         labelText: parsedItem.note.text,
         classes: CSS_DIAGRAM_NOTE,
+        // useHtmlLabels: false,
         style: '', // styles.style,
         id: itemId + NOTE_ID + '-' + graphItemCount,
         domId: stateDomId(itemId, graphItemCount, NOTE),
@@ -307,8 +311,8 @@ const setupNode = (g, parent, parsedItem, diagramStates, diagramDb, altFlag) => 
  *
  * @param g
  * @param parentParsedItem - parsed Item that is the parent of this document (doc)
- * @param doc - the document to set up
- * @param {object} diagramStates - the list of all known  states for the diagram
+ * @param doc - the document to set up; it is a list of parsed statements
+ * @param {object[]} diagramStates - the list of all known states for the diagram
  * @param diagramDb
  * @param {boolean} altFlag
  * @todo This duplicates some of what is done in stateDb.js extract method
@@ -378,7 +382,7 @@ const getDir = (parsedItem, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
  * @param _version
  * @param diag
  */
-export const draw = function (text, id, _version, diag) {
+export const draw = async function (text, id, _version, diag) {
   log.info('Drawing state diagram (v2)', id);
   // diag.sb.clear();
   nodeDb = {};
@@ -432,7 +436,7 @@ export const draw = function (text, id, _version, diag) {
   // Run the renderer. This is what draws the final graph.
 
   const element = root.select('#' + id + ' g');
-  render(element, g, ['barb'], CSS_DIAGRAM, id);
+  await render(element, g, ['barb'], CSS_DIAGRAM, id);
 
   const padding = 8;
 

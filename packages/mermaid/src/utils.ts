@@ -4,6 +4,15 @@ import {
   curveBasis,
   curveBasisClosed,
   curveBasisOpen,
+  curveBumpX,
+  curveBumpY,
+  curveBundle,
+  curveCardinalClosed,
+  curveCardinalOpen,
+  curveCardinal,
+  curveCatmullRomClosed,
+  curveCatmullRomOpen,
+  curveCatmullRom,
   CurveFactory,
   curveLinear,
   curveLinearClosed,
@@ -15,19 +24,30 @@ import {
   curveStepBefore,
   select,
 } from 'd3';
-import common from './diagrams/common/common';
-import { configKeys } from './defaultConfig';
-import { log } from './logger';
-import { detectType } from './diagram-api/detectType';
-import assignWithDepth from './assignWithDepth';
-import { MermaidConfig } from './config.type';
+import common from './diagrams/common/common.js';
+import { configKeys } from './defaultConfig.js';
+import { log } from './logger.js';
+import { detectType } from './diagram-api/detectType.js';
+import assignWithDepth from './assignWithDepth.js';
+import { MermaidConfig } from './config.type.js';
 import memoize from 'lodash-es/memoize.js';
+
+export const ZERO_WIDTH_SPACE = '\u200b';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
   curveBasis: curveBasis,
   curveBasisClosed: curveBasisClosed,
   curveBasisOpen: curveBasisOpen,
+  curveBumpX: curveBumpX,
+  curveBumpY: curveBumpY,
+  curveBundle: curveBundle,
+  curveCardinalClosed: curveCardinalClosed,
+  curveCardinalOpen: curveCardinalOpen,
+  curveCardinal: curveCardinal,
+  curveCatmullRomClosed: curveCatmullRomClosed,
+  curveCatmullRomOpen: curveCatmullRomOpen,
+  curveCatmullRom: curveCatmullRom,
   curveLinear: curveLinear,
   curveLinearClosed: curveLinearClosed,
   curveMonotoneX: curveMonotoneX,
@@ -212,7 +232,7 @@ export function interpolateToCurve(
  * @param config - Configuration passed to MermaidJS
  * @returns The formatted URL or `undefined`.
  */
-export function formatUrl(linkStr: string, config: { securityLevel: string }): string | undefined {
+export function formatUrl(linkStr: string, config: MermaidConfig): string | undefined {
   const url = linkStr.trim();
 
   if (url) {
@@ -543,12 +563,14 @@ export const drawSimpleText = function (
   // Remove and ignore br:s
   const nText = textData.text.replace(common.lineBreakRegex, ' ');
 
+  const [, _fontSizePx] = parseFontSize(textData.fontSize);
+
   const textElem = elem.append('text');
   textElem.attr('x', textData.x);
   textElem.attr('y', textData.y);
   textElem.style('text-anchor', textData.anchor);
   textElem.style('font-family', textData.fontFamily);
-  textElem.style('font-size', textData.fontSize);
+  textElem.style('font-size', _fontSizePx);
   textElem.style('font-weight', textData.fontWeight);
   textElem.attr('fill', textData.fill);
   if (textData.class !== undefined) {
@@ -722,6 +744,8 @@ export const calculateTextDimensions: (
       return { width: 0, height: 0 };
     }
 
+    const [, _fontSizePx] = parseFontSize(fontSize);
+
     // We can't really know if the user supplied font family will render on the user agent;
     // thus, we'll take the max width between the user supplied font family, and a default
     // of sans-serif.
@@ -743,13 +767,16 @@ export const calculateTextDimensions: (
       const dim = { width: 0, height: 0, lineHeight: 0 };
       for (const line of lines) {
         const textObj = getTextObj();
-        textObj.text = line;
+        textObj.text = line || ZERO_WIDTH_SPACE;
         const textElem = drawSimpleText(g, textObj)
-          .style('font-size', fontSize)
+          .style('font-size', _fontSizePx)
           .style('font-weight', fontWeight)
           .style('font-family', fontFamily);
 
         const bBox = (textElem._groups || textElem)[0][0].getBBox();
+        if (bBox.width === 0 && bBox.height === 0) {
+          throw new Error('svg element not in render tree');
+        }
         dim.width = Math.round(Math.max(dim.width, bBox.width));
         cheight = Math.round(bBox.height);
         dim.height += cheight;
@@ -941,6 +968,32 @@ export const insertTitle = (
     .attr('class', cssClass);
 };
 
+/**
+ * Parses a raw fontSize configuration value into a number and string value.
+ *
+ * @param fontSize - a string or number font size configuration value
+ *
+ * @returns parsed number and string style font size values, or nulls if a number value can't
+ * be parsed from an input string.
+ */
+export const parseFontSize = (fontSize: string | number | undefined): [number?, string?] => {
+  // if the font size is a number, assume a px string representation
+  if (typeof fontSize === 'number') {
+    return [fontSize, fontSize + 'px'];
+  }
+
+  const fontSizeNumber = parseInt(fontSize, 10);
+  if (Number.isNaN(fontSizeNumber)) {
+    // if a number value can't be parsed, return null for both values
+    return [undefined, undefined];
+  } else if (fontSize === String(fontSizeNumber)) {
+    // if a string input doesn't contain any units, assume px units
+    return [fontSizeNumber, fontSize + 'px'];
+  } else {
+    return [fontSizeNumber, fontSize];
+  }
+};
+
 export default {
   assignWithDepth,
   wrapLabel,
@@ -964,4 +1017,5 @@ export default {
   directiveSanitizer,
   sanitizeCss,
   insertTitle,
+  parseFontSize,
 };

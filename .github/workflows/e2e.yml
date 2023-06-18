@@ -21,22 +21,19 @@ jobs:
 
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
-        # Need to skip setup if Cypress run is skipped, otherwise an error
-        # is thrown since the pnpm cache step fails
-        if: ${{ ( env.CYPRESS_RECORD_KEY != '' ) || ( matrix.containers == 1 ) }}
         with:
-          cache: pnpm
           node-version: ${{ matrix.node-version }}
 
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
         uses: cypress-io/github-action@v4
+        id: cypress
         # If CYPRESS_RECORD_KEY is set, run in parallel on all containers
         # Otherwise (e.g. if running from fork), we run on a single container only
         if: ${{ ( env.CYPRESS_RECORD_KEY != '' ) || ( matrix.containers == 1 ) }}
         with:
-          start: pnpm run dev
+          start: pnpm run dev:coverage
           wait-on: 'http://localhost:9000'
           # Disable recording if we don't have an API key
           # e.g. if this action was run from a fork
@@ -44,3 +41,19 @@ jobs:
           parallel: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          VITEST_COVERAGE: true
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v3
+        if: steps.cypress.conclusion == 'success'
+        with:
+          files: coverage/cypress/lcov.info
+          flags: e2e
+          name: mermaid-codecov
+          fail_ci_if_error: true
+          verbose: true
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        if: ${{ failure() && steps.cypress.conclusion == 'failure' }}
+        with:
+          name: error-snapshots
+          path: cypress/snapshots/**/__diff_output__/*

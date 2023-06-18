@@ -214,13 +214,10 @@ The theming engine will only recognize hex colors and not color names. So, the v
 | fontFamily           | trebuchet ms, verdana, arial       |                                                                                                                                  |
 | fontSize             | 16px                               | Font size in pixels                                                                                                              |
 | primaryColor         | #fff4dd                            | Color to be used as background in nodes, other colors will be derived from this                                                  |
-| primaryBorderColor   | calculated from primaryColor       | Color to be used as border in nodes using `primaryColor`                                                                         |
-| primaryBorderColor   | calculated from primaryColor       | Color to be used as border in nodes using `primaryColor`                                                                         |
 | primaryTextColor     | calculated from darkMode #ddd/#333 | Color to be used as text color in nodes using `primaryColor`                                                                     |
 | secondaryColor       | calculated from primaryColor       |                                                                                                                                  |
 | primaryBorderColor   | calculated from primaryColor       | Color to be used as border in nodes using `primaryColor`                                                                         |
 | secondaryBorderColor | calculated from secondaryColor     | Color to be used as border in nodes using `secondaryColor`                                                                       |
-| primaryBorderColor   | calculated from primaryColor       | Color to be used as border in nodes using `primaryColor`                                                                         |
 | secondaryTextColor   | calculated from secondaryColor     | Color to be used as text color in nodes using `secondaryColor`                                                                   |
 | tertiaryColor        | calculated from primaryColor       |                                                                                                                                  |
 | tertiaryBorderColor  | calculated from tertiaryColor      | Color to be used as border in nodes using `tertiaryColor`                                                                        |
@@ -263,6 +260,34 @@ The theming engine will only recognize hex colors and not color names. So, the v
 | activationBorderColor | calculated from secondaryColor | Activation Border Color     |
 | activationBkgColor    | secondaryColor                 | Activation Background Color |
 | sequenceNumberColor   | calculated from lineColor      | Sequence Number Color       |
+
+## Pie Diagram Variables
+
+| Variable            | Default value                  | Description                                |
+| ------------------- | ------------------------------ | ------------------------------------------ |
+| pie1                | primaryColor                   | Fill for 1st section in pie diagram        |
+| pie2                | secondaryColor                 | Fill for 2nd section in pie diagram        |
+| pie3                | calculated from tertiary       | Fill for 3rd section in pie diagram        |
+| pie4                | calculated from primaryColor   | Fill for 4th section in pie diagram        |
+| pie5                | calculated from secondaryColor | Fill for 5th section in pie diagram        |
+| pie6                | calculated from tertiaryColor  | Fill for 6th section in pie diagram        |
+| pie7                | calculated from primaryColor   | Fill for 7th section in pie diagram        |
+| pie8                | calculated from primaryColor   | Fill for 8th section in pie diagram        |
+| pie9                | calculated from primaryColor   | Fill for 9th section in pie diagram        |
+| pie10               | calculated from primaryColor   | Fill for 10th section in pie diagram       |
+| pie11               | calculated from primaryColor   | Fill for 11th section in pie diagram       |
+| pie12               | calculated from primaryColor   | Fill for 12th section in pie diagram       |
+| pieTitleTextSize    | 25px                           | Title text size                            |
+| pieTitleTextColor   | taskTextDarkColor              | Title text color                           |
+| pieSectionTextSize  | 17px                           | Text size of individual section labels     |
+| pieSectionTextColor | textColor                      | Text color of individual section labels    |
+| pieLegendTextSize   | 17px                           | Text size of labels in diagram legend      |
+| pieLegendTextColor  | taskTextDarkColor              | Text color of labels in diagram legend     |
+| pieStrokeColor      | black                          | Border color of individual pie sections    |
+| pieStrokeWidth      | 2px                            | Border width of individual pie sections    |
+| pieOuterStrokeWidth | 2px                            | Border width of pie diagram's outer circle |
+| pieOuterStrokeColor | black                          | Border color of pie diagram's outer circle |
+| pieOpacity          | 0.7                            | Opacity of individual pie sections         |
 
 ## State Colors
 

@@ -1,10 +1,10 @@
 import { select } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
-import { log } from '../../logger';
-import svgDraw from './svgDraw';
-import { configureSvgSize } from '../../setupGraphViewbox';
-import { getConfig } from '../../config';
+import { log } from '../../logger.js';
+import svgDraw from './svgDraw.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { getConfig } from '../../config.js';
 
 let idCache = {};
 const padding = 20;

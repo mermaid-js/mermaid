@@ -16,9 +16,9 @@
   <body>
     <h1>Journey diagram demo</h1>
     <pre class="mermaid">
----
-title: My working day 
----
+    ---
+    title: My working day
+    ---
      journey
       accTitle: Very simple journey demo
       accDescr: 2 main sections: work and home, each with just a few tasks
@@ -32,8 +32,8 @@ title: My working day
       Sit down: 3: Me
 				</pre>
 
-    <script src="./mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         theme: 'forest',
         logLevel: 3,

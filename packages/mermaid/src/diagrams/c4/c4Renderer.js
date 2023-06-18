@@ -1,13 +1,13 @@
 import { select } from 'd3';
-import svgDraw from './svgDraw';
-import { log } from '../../logger';
-import { parser } from './parser/c4Diagram';
-import common from '../common/common';
-import c4Db from './c4Db';
-import * as configApi from '../../config';
-import assignWithDepth from '../../assignWithDepth';
-import { wrapLabel, calculateTextWidth, calculateTextHeight } from '../../utils';
-import { configureSvgSize } from '../../setupGraphViewbox';
+import svgDraw from './svgDraw.js';
+import { log } from '../../logger.js';
+import { parser } from './parser/c4Diagram.jison';
+import common from '../common/common.js';
+import c4Db from './c4Db.js';
+import * as configApi from '../../config.js';
+import assignWithDepth from '../../assignWithDepth.js';
+import { wrapLabel, calculateTextWidth, calculateTextHeight } from '../../utils.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 let globalBoundaryMaxX = 0,
   globalBoundaryMaxY = 0;
@@ -220,7 +220,7 @@ export const drawC4ShapeArray = function (currentBounds, diagram, c4ShapeArray, 
     let c4ShapeTypeConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
     c4ShapeTypeConf.fontSize = c4ShapeTypeConf.fontSize - 2;
     c4Shape.typeC4Shape.width = calculateTextWidth(
-      '<<' + c4Shape.typeC4Shape.text + '>>',
+      '«' + c4Shape.typeC4Shape.text + '»',
       c4ShapeTypeConf
     );
     c4Shape.typeC4Shape.height = c4ShapeTypeConf.fontSize + 2;

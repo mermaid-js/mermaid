@@ -1,0 +1,26 @@
+<html>
+  <body>
+    <h1>Should correctly load a third-party diagram using registerDiagram</h1>
+    <pre id="diagram" class="mermaid">
+example-diagram
+    </pre>
+
+    <!-- <div id="cy"></div> -->
+    <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
+    <!-- <script src="./mermaid-example-diagram-detector.js"></script>    -->
+    <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.7/dist/mermaid.min.js"></script> -->
+    <!-- <script type="module" src="./external-diagrams-mindmap.mjs" /> -->
+    <script type="module">
+      import exampleDiagram from '../../packages/mermaid-example-diagram/dist/mermaid-example-diagram.core.mjs';
+      // import example from '../../packages/mermaid-example-diagram/src/detector';
+      import mermaid from './mermaid.esm.mjs';
+
+      await mermaid.registerExternalDiagrams([exampleDiagram]);
+      await mermaid.initialize({ logLevel: 0 });
+      await mermaid.run();
+      if (window.Cypress) {
+        window.rendered = true;
+      }
+    </script>
+  </body>
+</html>

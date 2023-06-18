@@ -19,8 +19,6 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
 <type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
-\%%(?!\{)[^\n]*                                                 /* skip comments */
-[^\}]\%\%[^\n]*                                                 /* skip comments */
 [\n]+                           return 'NEWLINE';
 \s+                             /* skip whitespace */
 [\s]+                           return 'SPACE';
@@ -28,10 +26,11 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 \"[^"]*\"                       return 'WORD';
 "erDiagram"                     return 'ER_DIAGRAM';
 "{"                             { this.begin("block"); return 'BLOCK_START'; }
+<block>","                      return 'COMMA';
 <block>\s+                      /* skip whitespace in block */
 <block>\b((?:PK)|(?:FK)|(?:UK))\b      return 'ATTRIBUTE_KEY'
 <block>(.*?)[~](.*?)*[~]        return 'ATTRIBUTE_WORD';
-<block>[A-Za-z][A-Za-z0-9\-_\[\]\(\)]*  return 'ATTRIBUTE_WORD'
+<block>[A-Za-z_][A-Za-z0-9\-_\[\]\(\)]*  return 'ATTRIBUTE_WORD'
 <block>\"[^"]*\"                return 'COMMENT';
 <block>[\n]+                    /* nothing */
 <block>"}"                      { this.popState(); return 'BLOCK_STOP'; }
@@ -58,6 +57,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 o\|                             return 'ZERO_OR_ONE';
 o\{                             return 'ZERO_OR_MORE';
 \|\{                            return 'ONE_OR_MORE';
+\s*u                            return 'MD_PARENT';
 \.\.                            return 'NON_IDENTIFYING';
 \-\-                            return 'IDENTIFYING';
 "to"                            return 'IDENTIFYING';
@@ -131,10 +131,11 @@ attributes
 
 attribute
     : attributeType attributeName { $$ = { attributeType: $1, attributeName: $2 }; }
-    | attributeType attributeName attributeKeyType { $$ = { attributeType: $1, attributeName: $2, attributeKeyType: $3 }; }
+    | attributeType attributeName attributeKeyTypeList { $$ = { attributeType: $1, attributeName: $2, attributeKeyTypeList: $3 }; }
     | attributeType attributeName attributeComment { $$ = { attributeType: $1, attributeName: $2, attributeComment: $3 }; }
-    | attributeType attributeName attributeKeyType attributeComment { $$ = { attributeType: $1, attributeName: $2, attributeKeyType: $3, attributeComment: $4 }; }
+    | attributeType attributeName attributeKeyTypeList attributeComment { $$ = { attributeType: $1, attributeName: $2, attributeKeyTypeList: $3, attributeComment: $4 }; }
     ;
+
 
 attributeType
     : ATTRIBUTE_WORD { $$=$1; }
@@ -142,6 +143,11 @@ attributeType
 
 attributeName
     : ATTRIBUTE_WORD { $$=$1; }
+    ;
+
+attributeKeyTypeList
+    : attributeKeyType { $$ = [$1]; }
+    | attributeKeyTypeList COMMA attributeKeyType { $1.push($3); $$ = $1; }
     ;
 
 attributeKeyType
@@ -165,6 +171,7 @@ cardinality
     | 'ZERO_OR_MORE'                 { $$ = yy.Cardinality.ZERO_OR_MORE; }
     | 'ONE_OR_MORE'                  { $$ = yy.Cardinality.ONE_OR_MORE; }
     | 'ONLY_ONE'                     { $$ = yy.Cardinality.ONLY_ONE; }
+    | 'MD_PARENT'                     { $$ = yy.Cardinality.MD_PARENT; }
     ;
 
 relType

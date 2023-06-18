@@ -1,39 +1,7 @@
-import classDiagram from './diagrams/class/styles';
-import er from './diagrams/er/styles';
-import error from './diagrams/error/styles';
-import flowchart from './diagrams/flowchart/styles';
-import gantt from './diagrams/gantt/styles';
-// import gitGraph from './diagrams/git/styles';
-import info from './diagrams/info/styles';
-import pie from './diagrams/pie/styles';
-import requirement from './diagrams/requirement/styles';
-import sequence from './diagrams/sequence/styles';
-import stateDiagram from './diagrams/state/styles';
-import journey from './diagrams/user-journey/styles';
-import c4 from './diagrams/c4/styles';
-import { FlowChartStyleOptions } from './diagrams/flowchart/styles';
-import { log } from './logger';
+import type { FlowChartStyleOptions } from './diagrams/flowchart/styles.js';
+import { log } from './logger.js';
 
-// TODO @knut: Inject from registerDiagram.
-const themes: Record<string, any> = {
-  flowchart,
-  'flowchart-v2': flowchart,
-  sequence,
-  gantt,
-  classDiagram,
-  'classDiagram-v2': classDiagram,
-  class: classDiagram,
-  stateDiagram,
-  state: stateDiagram,
-  // gitGraph,
-  info,
-  pie,
-  er,
-  error,
-  journey,
-  requirement,
-  c4,
-};
+const themes: Record<string, any> = {};
 
 const getStyles = (
   type: string,

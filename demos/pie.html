@@ -26,6 +26,7 @@
 
     <hr />
     <pre class="mermaid">
+    %%{init: {"pie": {"textPosition": 0.9}, "themeVariables": {"pieOuterStrokeWidth": "5px"}} }%%
     pie
       title Key elements in Product X
         accTitle: Key elements in Product X
@@ -37,7 +38,7 @@
     </pre>
 
     <script type="module">
-      import mermaid from '../packages/mermaid';
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         theme: 'forest',
         // themeCSS: '.node rect { fill: red; }',

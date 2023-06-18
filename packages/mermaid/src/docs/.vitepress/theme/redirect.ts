@@ -1,4 +1,4 @@
-export interface Redirect {
+interface Redirect {
   path: string;
   id?: string;
 }
@@ -7,14 +7,7 @@ export interface Redirect {
  * Extracts the base slug from the old URL.
  * @param link - The old URL.
  */
-const getBaseFile = (link: string): Redirect => {
-  const url = new URL(link);
-  if (
-    (url.hostname !== 'mermaid-js.github.io' && url.hostname !== 'localhost') ||
-    url.pathname !== '/mermaid/'
-  ) {
-    throw new Error('Not mermaidjs url');
-  }
+const getBaseFile = (url: URL): Redirect => {
   const [path, params, ...rest] = url.hash
     .toLowerCase()
     .replace('.md', '')
@@ -31,14 +24,14 @@ const getBaseFile = (link: string): Redirect => {
   return { path, id };
 };
 
-const redirectMap: Record<string, string> = {
+const idRedirectMap: Record<string, string> = {
   '8.6.0_docs': '',
   accessibility: 'config/theming',
   breakingchanges: '',
   c4c: 'syntax/c4c',
   classdiagram: 'syntax/classDiagram',
   configuration: 'config/configuration',
-  demos: 'misc/integrations',
+  demos: 'ecosystem/integrations',
   development: 'community/development',
   directives: 'config/directives',
   entityrelationshipdiagram: 'syntax/entityRelationshipDiagram',
@@ -47,7 +40,7 @@ const redirectMap: Record<string, string> = {
   flowchart: 'syntax/flowchart',
   gantt: 'syntax/gantt',
   gitgraph: 'syntax/gitgraph',
-  integrations: 'misc/integrations',
+  integrations: 'ecosystem/integrations',
   'language-highlight': '',
   markdown: '',
   mermaidapi: 'config/usage',
@@ -75,15 +68,25 @@ const redirectMap: Record<string, string> = {
   'user-journey': 'syntax/userJourney',
 };
 
+const urlRedirectMap: Record<string, string> = {
+  '/misc/faq.html': 'configure/faq.html',
+};
+
 /**
  *
  * @param link - The old documentation URL.
  * @returns The new documentation path.
  */
 export const getRedirect = (link: string): string | undefined => {
-  const { path, id } = getBaseFile(link);
-  if (!(path in redirectMap)) {
-    return;
+  const url = new URL(link);
+  // Redirects for deprecated vitepress URLs
+  if (url.pathname in urlRedirectMap) {
+    return `${urlRedirectMap[url.pathname]}${url.hash}`;
   }
-  return `${redirectMap[path]}.html${id ? `#${id}` : ''}`;
+
+  // Redirects for old docs URLs
+  const { path, id } = getBaseFile(url);
+  if (path in idRedirectMap) {
+    return `${idRedirectMap[path]}.html${id ? `#${id}` : ''}`;
+  }
 };

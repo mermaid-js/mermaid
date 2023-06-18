@@ -7,6 +7,7 @@
 /* lexical grammar */
 %lex
 %x string
+%x md_string
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
@@ -27,8 +28,6 @@
 <type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
 <type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
-\%\%(?!\{)[^\n]*                                                /* skip comments */
-[^\}]\%\%[^\n]*                                                 /* skip comments */
 accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
 <acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
 accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
@@ -37,6 +36,9 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <acc_descr_multiline>[\}]                       { this.popState(); }
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 // <acc_descr_multiline>.*[^\n]*                    {  return "acc_descr_line"}
+["][`]          { this.begin("md_string");}
+<md_string>[^`"]+        { return "MD_STR";}
+<md_string>[`]["]          { this.popState();}
 ["]                     this.begin("string");
 <string>["]             this.popState();
 <string>[^"]*           return "STR";
@@ -82,6 +84,7 @@ that id.
 <click>[\s\n]           this.popState();
 <click>[^\s\n]*         return 'CLICK';
 
+"flowchart-elk"        {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "graph"                {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "flowchart"            {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"            return 'subgraph';
@@ -120,6 +123,7 @@ that id.
 \s*[xo<]?\-\-+[-xo>]\s*     return 'LINK';
 \s*[xo<]?\=\=+[=xo>]\s*     return 'LINK';
 \s*[xo<]?\-?\.+\-[xo>]?\s*  return 'LINK';
+\s*\~\~[\~]+\s*  return 'LINK';
 \s*[xo<]?\-\-\s*            return 'START_LINK';
 \s*[xo<]?\=\=\s*            return 'START_LINK';
 \s*[xo<]?\-\.\s*            return 'START_LINK';
@@ -432,11 +436,13 @@ arrowText:
     ;
 
 text: textToken
-    {$$=$1;}
+    { $$={text:$1, type: 'text'};}
     | text textToken
-    {$$=$1+''+$2;}
+    { $$={text:$1.text+''+$2, type: $1.type};}
     | STR
-    {$$=$1;}
+    { $$={text: $1, type: 'text'};}
+    | MD_STR
+    { $$={text: $1, type: 'markdown'};}
     ;
 
 

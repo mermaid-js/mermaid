@@ -1,5 +1,5 @@
-import journeyDb from './journeyDb';
-import { convert } from '../../tests/util';
+import journeyDb from './journeyDb.js';
+import { convert } from '../../tests/util.js';
 
 describe('when using the journeyDb', function () {
   beforeEach(function () {

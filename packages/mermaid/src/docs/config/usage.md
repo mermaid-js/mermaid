@@ -6,7 +6,7 @@ Diagrams can be re-rendered/modified by modifying their descriptions.
 
 ### CDN
 
-[https://unpkg.com/mermaid/](https://unpkg.com/mermaid/)
+[https://www.jsdelivr.com/package/npm/mermaid](https://www.jsdelivr.com/package/npm/mermaid)
 
 Please note that you can switch versions through the dropdown box at the top right.
 
@@ -14,34 +14,34 @@ Please note that you can switch versions through the dropdown box at the top rig
 
 For the majority of users, Using the [Live Editor](https://mermaid.live/) would be sufficient, however you may also opt to deploy mermaid as a dependency or using the [Mermaid API](./setup/README.md).
 
-We have compiled some Video [Tutorials](./Tutorials.md) on how to use the mermaid Live Editor.
+We have compiled some Video [Tutorials](./Tutorials.md) on how to use the Mermaid Live Editor.
 
-**Installing and Hosting Mermaid on a Webpage**
+### Installing and Hosting Mermaid on a Webpage
 
-**Using the npm package**
+**Using the npm package:**
 
-```
-1. You will need to install node v16, which would have npm.
+Requirements:
 
-2. download yarn using npm.
+- Node >= 16
 
-3. enter the following command:
-    yarn add mermaid
-
-4. At this point, you can add mermaid as a dev dependency using this command:
-    yarn add --dev mermaid
-
-5. Alternatively, you can also deploy mermaid using the script tag in an HTML file with mermaid diagram descriptions.
-    as is shown in the example below
+```bash
+# NPM
+npm install mermaid
+# Yarn
+yarn add mermaid
+# PNPM
+pnpm add mermaid
 ```
 
-**Hosting mermaid on a web page.**
+**Hosting mermaid on a web page:**
 
 > Note:This topic explored in greater depth in the [User Guide for Beginners](../intro/n00b-gettingStarted.md)
 
 The easiest way to integrate mermaid on a web page requires two elements:
 
-- A graph definition, inside `<pre>` tags labeled `class=mermaid`. Example:
+- A graph definition, inside `<pre>` tags labeled `class=mermaid`.
+
+Example:
 
 ```html
 <pre class="mermaid">
@@ -52,14 +52,13 @@ The easiest way to integrate mermaid on a web page requires two elements:
 </pre>
 ```
 
-- Inclusion of the mermaid address in the html page body using a `script` tag as an ESM import, and the `mermaidAPI` call.
+- The mermaid js script. Added using a `script` tag as an ESM import.
 
 Example:
 
 ```html
 <script type="module">
   import mermaid from '<CDN_URL>/mermaid@<MERMAID_VERSION>/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({ startOnLoad: true });
 </script>
 ```
 
@@ -70,9 +69,6 @@ Example:
 ```html
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-  </head>
   <body>
     <pre class="mermaid">
   graph LR
@@ -82,7 +78,6 @@ Example:
     </pre>
     <script type="module">
       import mermaid from '<CDN_URL>/mermaid@<MERMAID_VERSION>/dist/mermaid.esm.min.mjs';
-      mermaid.initialize({ startOnLoad: true });
     </script>
   </body>
 </html>
@@ -94,11 +89,12 @@ An id attribute is also added to mermaid tags without one.
 
 Mermaid can load multiple diagrams, in the same page.
 
-> Try it out, save this code as HTML and load it using any browser.(Except Internet Explorer, please don't use Internet Explorer.)
+> Try it out, save this code as HTML and load it using any browser.
+> (Except Internet Explorer, please don't use Internet Explorer.)
 
 ## Enabling Click Event and Tags in Nodes
 
-A `securityLevel` configuration has to first be cleared, `securityLevel` sets the level of trust for the parsed diagrams and limits click functionality. This was introduce in version 8.2 as a security improvement, aimed at preventing malicious use.
+A `securityLevel` configuration has to first be cleared. `securityLevel` sets the level of trust for the parsed diagrams and limits click functionality. This was introduce in version 8.2 as a security improvement, aimed at preventing malicious use.
 
 **It is the site owner's responsibility to discriminate between trustworthy and untrustworthy user-bases and we encourage the use of discretion.**
 
@@ -106,14 +102,14 @@ A `securityLevel` configuration has to first be cleared, `securityLevel` sets th
 
 | Parameter     | Description                       | Type   | Required | Values                                     |
 | ------------- | --------------------------------- | ------ | -------- | ------------------------------------------ |
-| securityLevel | Level of trust for parsed diagram | String | Required | 'sandbox', 'strict', 'loose', 'antiscript' |
+| securityLevel | Level of trust for parsed diagram | String | Optional | 'sandbox', 'strict', 'loose', 'antiscript' |
 
 Values:
 
-- **strict**: (**default**) tags in text are encoded, click functionality is disabled
-- **loose**: tags in text are allowed, click functionality is enabled
-- **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
-- **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This prevent any JavaScript running in the context. This may hinder interactive functionality of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc.
+- **strict**: (**default**) HTML tags in the text are encoded and click functionality is disabled.
+- **antiscript**: HTML tags in text are allowed (only script elements are removed) and click functionality is enabled.
+- **loose**: HTML tags in text are allowed and click functionality is enabled.
+- **sandbox**: With this security level, all rendering takes place in a sandboxed iframe. This prevent any JavaScript from running in the context. This may hinder interactive functionality of the diagram, like scripts, popups in the sequence diagram, links to other tabs or targets, etc.
 
 ```note
 This changes the default behaviour of mermaid so that after upgrade to 8.2, unless the `securityLevel` is not changed, tags in flowcharts are encoded as tags and clicking is disabled.
@@ -122,26 +118,17 @@ This changes the default behaviour of mermaid so that after upgrade to 8.2, unle
 
 **If you are taking responsibility for the diagram source security you can set the `securityLevel` to a value of your choosing . This allows clicks and tags are allowed.**
 
-**To change `securityLevel`, you have to call `mermaidAPI.initialize`:**
+**To change `securityLevel`, you have to call `mermaid.initialize`:**
 
 ```javascript
-mermaidAPI.initialize({
+mermaid.initialize({
   securityLevel: 'loose',
 });
 ```
 
 ### Labels out of bounds
 
-If you use dynamically loaded fonts that are loaded through CSS, such as Google fonts, mermaid should wait for the
-whole page to load (dom + assets, particularly the fonts file).
-
-```javascript
-$(document).load(function () {
-  mermaid.initialize();
-});
-```
-
-or
+If you use dynamically loaded fonts that are loaded through CSS, such as fonts, mermaid should wait for the whole page to load (dom + assets, particularly the fonts file).
 
 ```javascript
 $(document).ready(function () {
@@ -154,12 +141,55 @@ Not doing so will most likely result in mermaid rendering graphs that have label
 If your page has other fonts in its body those might be used instead of the mermaid font. Specifying the font in your styling is a workaround for this.
 
 ```css
-div.mermaid {
+pre.mermaid {
   font-family: 'trebuchet ms', verdana, arial;
 }
 ```
 
-### Calling `mermaid.init`
+### Using `mermaid.run`
+
+mermaid.run was added in v10 and is the preferred way of handling more complex integration.
+By default, `mermaid.run` will be called when the document is ready, rendering all elements with `class="mermaid"`.
+
+You can customize that behavior by calling `await mermaid.run(<config>)`.
+
+`mermaid.initialize({startOnLoad: false})` will prevent `mermaid.run` from being called automatically after load.
+
+Render all elements with querySelector ".someOtherClass"
+
+```js
+mermaid.initialize({ startOnLoad: false });
+await mermaid.run({
+  querySelector: '.someOtherClass',
+});
+```
+
+Render all elements passed as an array
+
+```js
+mermaid.initialize({ startOnLoad: false });
+await mermaid.run({
+  nodes: [document.getElementById('someId'), document.getElementById('anotherId')],
+});
+await mermaid.run({
+  nodes: document.querySelectorAll('.yetAnotherClass'),
+});
+```
+
+Render all `.mermaid` elements while suppressing any error
+
+```js
+mermaid.initialize({ startOnLoad: false });
+await mermaid.run({
+  suppressErrors: true,
+});
+```
+
+### Calling `mermaid.init` - Deprecated
+
+```warning
+mermaid.init is deprecated in v10 and will be removed in v11. Please use mermaid.run instead.
+```
 
 By default, `mermaid.init` will be called when the document is ready, finding all elements with
 `class="mermaid"`. If you are adding content after mermaid is loaded, or otherwise need
@@ -193,25 +223,41 @@ mermaid fully supports webpack. Here is a [working demo](https://github.com/merm
 
 ## API usage
 
-The main idea of the API is to be able to call a render function with the graph definition as a string. The render function
-will render the graph and call a callback with the resulting SVG code. With this approach it is up to the site creator to
-fetch the graph definition from the site (perhaps from a textarea), render it and place the graph somewhere in the site.
+The main idea of the API is to be able to call a render function with the graph definition as a string. The render function will render the graph and call a callback with the resulting SVG code. With this approach it is up to the site creator to fetch the graph definition from the site (perhaps from a textarea), render it and place the graph somewhere in the site.
 
 The example below show an outline of how this could be used. The example just logs the resulting SVG to the JavaScript console.
 
 ```html
 <script type="module">
-  import mermaid from './mermaid.mjs';
-  mermaid.mermaidAPI.initialize({ startOnLoad: false });
-  $(async function () {
-    // Example of using the API var
+  import mermaid from './mermaid.esm.mjs';
+  mermaid.initialize({ startOnLoad: false });
+
+  // Example of using the render function
+  const drawDiagram = async function () {
     element = document.querySelector('#graphDiv');
-    const insertSvg = function (svgCode, bindFunctions) {
-      element.innerHTML = svgCode;
-    };
     const graphDefinition = 'graph TB\na-->b';
-    const graph = await mermaid.mermaidAPI.render('graphDiv', graphDefinition, insertSvg);
-  });
+    const { svg } = await mermaid.render('graphDiv', graphDefinition);
+    element.innerHTML = svg;
+  };
+
+  await drawDiagram();
+</script>
+```
+
+To determine the type of diagram present in a given text, you can utilize the `mermaid.detectType` function, as demonstrated in the example below.
+
+```html
+<script type="module">
+  import mermaid from './mermaid.esm.mjs';
+  const graphDefinition = `sequenceDiagram
+    Pumbaa->>Timon:I ate like a pig.
+    Timon->>Pumbaa:Pumbaa, you ARE a pig.`;
+  try {
+    const type = mermaid.detectType(graphDefinition);
+    console.log(type); // 'sequence'
+  } catch (error) {
+    // UnknownDiagramError
+  }
 </script>
 ```
 
@@ -224,17 +270,17 @@ The example code below is an extract of what mermaid does when using the API. Th
 bind events to an SVG when using the API for rendering.
 
 ```javascript
-const insertSvg = function (svgCode, bindFunctions) {
-  element.innerHTML = svgCode;
-  if (typeof callback !== 'undefined') {
-    callback(id);
+// Example of using the bindFunctions
+const drawDiagram = async function () {
+  element = document.querySelector('#graphDiv');
+  const graphDefinition = 'graph TB\na-->b';
+  const { svg, bindFunctions } = await mermaid.render('graphDiv', graphDefinition);
+  element.innerHTML = svg;
+  // This can also be written as `bindFunctions?.(element);` using the `?` shorthand.
+  if (bindFunctions) {
+    bindFunctions(element);
   }
-  bindFunctions(element);
 };
-
-const id = 'theGraph';
-
-mermaidAPI.render(id, txt, insertSvg, element);
 ```
 
 1. The graph is generated using the render call.
@@ -299,10 +345,10 @@ mermaid.parseError = function (err, hash) {
   displayErrorInGui(err);
 };
 
-const textFieldUpdated = function () {
+const textFieldUpdated = async function () {
   const textStr = getTextFromFormField('code');
 
-  if (mermaid.parse(textStr)) {
+  if (await mermaid.parse(textStr)) {
     reRender(textStr);
   }
 };
@@ -332,8 +378,8 @@ The future proof way of setting the configuration is by using the initialization
 on what kind of integration you use.
 
 ```html
-<script src="../dist/mermaid.js"></script>
-<script>
+<script type="module">
+  import mermaid from './mermaid.esm.mjs';
   let config = { startOnLoad: true, flowchart: { useMaxWidth: false, htmlLabels: true } };
   mermaid.initialize(config);
 </script>

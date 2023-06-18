@@ -1,6 +1,6 @@
-import { MockedD3 } from './tests/MockedD3';
-import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility';
-import { D3Element } from './mermaidAPI';
+import { MockedD3 } from './tests/MockedD3.js';
+import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
+import { D3Element } from './mermaidAPI.js';
 
 describe('accessibility', () => {
   const fauxSvgNode = new MockedD3();
@@ -51,7 +51,6 @@ describe('accessibility', () => {
         desc: string | null | undefined,
         givenId: string
       ) {
-        // @ts-ignore Required to easily handle the d3 select types
         const svgAttrSpy = vi.spyOn(svgD3Node, 'attr').mockReturnValue(svgD3Node);
         addSVGa11yTitleDescription(svgD3Node, title, desc, givenId);
         expect(svgAttrSpy).toHaveBeenCalledWith('aria-labelledby', `chart-title-${givenId}`);
@@ -63,7 +62,6 @@ describe('accessibility', () => {
         desc: string | null | undefined,
         givenId: string
       ) {
-        // @ts-ignore Required to easily handle the d3 select types
         const svgAttrSpy = vi.spyOn(svgD3Node, 'attr').mockReturnValue(svgD3Node);
         addSVGa11yTitleDescription(svgD3Node, title, desc, givenId);
         expect(svgAttrSpy).toHaveBeenCalledWith('aria-describedby', `chart-desc-${givenId}`);

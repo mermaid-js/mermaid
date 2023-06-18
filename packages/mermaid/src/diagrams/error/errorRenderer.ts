@@ -1,17 +1,16 @@
 /** Created by knut on 14-12-11. */
+// @ts-ignore TODO: Investigate D3 issue
 import { select } from 'd3';
-import { log } from '../../logger';
-import { getErrorMessage } from '../../utils';
-
-let conf = {};
+import { log } from '../../logger.js';
+import { getErrorMessage } from '../../utils.js';
 
 /**
  * Merges the value of `conf` with the passed `cnf`
  *
  * @param cnf - Config to merge
  */
-export const setConf = function (cnf: any) {
-  conf = { ...conf, ...cnf };
+export const setConf = function () {
+  // no-op
 };
 
 /**
@@ -77,7 +76,7 @@ export const draw = (_text: string, id: string, mermaidVersion: string) => {
       .attr('y', 250)
       .attr('font-size', '150px')
       .style('text-anchor', 'middle')
-      .text('Syntax error in graph');
+      .text('Syntax error in text');
     g.append('text') // text label for the x axis
       .attr('class', 'error-text')
       .attr('x', 1250)

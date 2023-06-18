@@ -1,17 +1,11 @@
 import mermaid, { type MermaidConfig } from 'mermaid';
-import mindmap from '@mermaid-js/mermaid-mindmap';
+import zenuml from '../../../../../mermaid-zenuml/dist/mermaid-zenuml.core.mjs';
 
-const init = (async () => {
-  try {
-    await mermaid.registerExternalDiagrams([mindmap]);
-  } catch (e) {
-    console.error(e);
-  }
-})();
+const init = mermaid.registerExternalDiagrams([zenuml]);
 
 export const render = async (id: string, code: string, config: MermaidConfig): Promise<string> => {
   await init;
   mermaid.initialize(config);
-  const svg = await mermaid.renderAsync(id, code);
+  const { svg } = await mermaid.render(id, code);
   return svg;
 };

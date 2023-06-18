@@ -1,9 +1,9 @@
-import { invert, darken, lighten, adjust } from 'khroma';
-import { mkBorder } from './theme-helpers';
+import { invert, darken, lighten, adjust, isDark } from 'khroma';
+import { mkBorder } from './theme-helpers.js';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
-} from './erDiagram-oldHardcodedValues';
+} from './erDiagram-oldHardcodedValues.js';
 
 // const Color = require ( 'khroma/dist/color' ).default
 // Color.format.hex.stringify(Color.parse('hsl(210, 66.6666666667%, 95%)')); // => "#EAF2FB"
@@ -95,9 +95,8 @@ class Theme {
     this.todayLineColor = 'calculated';
 
     /* C4 Context Diagram variables */
-
-    this.personBorder = 'calculated';
-    this.personBkg = 'calculated';
+    this.personBorder = this.primaryBorderColor;
+    this.personBkg = this.mainBkg;
 
     /* state colors */
     this.labelColor = 'black';
@@ -108,6 +107,22 @@ class Theme {
   updateColors() {
     this.secondBkg = lighten(this.contrast, 55);
     this.border2 = this.contrast;
+
+    /* Sequence Diagram variables */
+
+    this.actorBorder = lighten(this.border1, 23);
+    this.actorBkg = this.mainBkg;
+    this.actorTextColor = this.text;
+    this.actorLineColor = this.lineColor;
+    this.signalColor = this.text;
+    this.signalTextColor = this.text;
+    this.labelBoxBkgColor = this.actorBkg;
+    this.labelBoxBorderColor = this.actorBorder;
+    this.labelTextColor = this.text;
+    this.loopTextColor = this.text;
+    this.noteBorderColor = '#999';
+    this.noteBkgColor = '#666';
+    this.noteTextColor = '#fff';
 
     /* Color Scale */
     /* Each color-set will have a background, a foreground and a border color */
@@ -147,6 +162,12 @@ class Theme {
       this['cScaleLabel' + i] = this['cScaleLabel' + i] || this.scaleLabelColor;
     }
 
+    for (let i = 0; i < 5; i++) {
+      this['surface' + i] = this['surface' + i] || adjust(this.mainBkg, { l: -(5 + i * 5) });
+      this['surfacePeer' + i] =
+        this['surfacePeer' + i] || adjust(this.mainBkg, { l: -(8 + i * 5) });
+    }
+
     /* Flowchart variables */
 
     this.nodeBkg = this.mainBkg;
@@ -155,22 +176,6 @@ class Theme {
     this.clusterBorder = this.border2;
     this.defaultLinkColor = this.lineColor;
     this.titleColor = this.text;
-
-    /* Sequence Diagram variables */
-
-    this.actorBorder = lighten(this.border1, 23);
-    this.actorBkg = this.mainBkg;
-    this.actorTextColor = this.text;
-    this.actorLineColor = this.lineColor;
-    this.signalColor = this.text;
-    this.signalTextColor = this.text;
-    this.labelBoxBkgColor = this.actorBkg;
-    this.labelBoxBorderColor = this.actorBorder;
-    this.labelTextColor = this.text;
-    this.loopTextColor = this.text;
-    this.noteBorderColor = '#999';
-    this.noteBkgColor = '#666';
-    this.noteTextColor = '#fff';
 
     /* Gantt chart variables */
 
@@ -237,12 +242,39 @@ class Theme {
     this.pieLegendTextColor = this.pieLegendTextColor || this.taskTextDarkColor;
     this.pieStrokeColor = this.pieStrokeColor || 'black';
     this.pieStrokeWidth = this.pieStrokeWidth || '2px';
+    this.pieOuterStrokeWidth = this.pieOuterStrokeWidth || '2px';
+    this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
+
+    /* quadrant-graph */
+    this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
+    this.quadrant2Fill = this.quadrant2Fill || adjust(this.primaryColor, { r: 5, g: 5, b: 5 });
+    this.quadrant3Fill = this.quadrant3Fill || adjust(this.primaryColor, { r: 10, g: 10, b: 10 });
+    this.quadrant4Fill = this.quadrant4Fill || adjust(this.primaryColor, { r: 15, g: 15, b: 15 });
+    this.quadrant1TextFill = this.quadrant1TextFill || this.primaryTextColor;
+    this.quadrant2TextFill =
+      this.quadrant2TextFill || adjust(this.primaryTextColor, { r: -5, g: -5, b: -5 });
+    this.quadrant3TextFill =
+      this.quadrant3TextFill || adjust(this.primaryTextColor, { r: -10, g: -10, b: -10 });
+    this.quadrant4TextFill =
+      this.quadrant4TextFill || adjust(this.primaryTextColor, { r: -15, g: -15, b: -15 });
+    this.quadrantPointFill =
+      this.quadrantPointFill || isDark(this.quadrant1Fill)
+        ? lighten(this.quadrant1Fill)
+        : darken(this.quadrant1Fill);
+    this.quadrantPointTextFill = this.quadrantPointTextFill || this.primaryTextColor;
+    this.quadrantXAxisTextFill = this.quadrantXAxisTextFill || this.primaryTextColor;
+    this.quadrantYAxisTextFill = this.quadrantYAxisTextFill || this.primaryTextColor;
+    this.quadrantInternalBorderStrokeFill =
+      this.quadrantInternalBorderStrokeFill || this.primaryBorderColor;
+    this.quadrantExternalBorderStrokeFill =
+      this.quadrantExternalBorderStrokeFill || this.primaryBorderColor;
+    this.quadrantTitleFill = this.quadrantTitleFill || this.primaryTextColor;
 
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;
     this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
-    this.requirementBorderSize = this.requirementBorderSize || this.primaryBorderColor;
+    this.requirementBorderSize = this.requirementBorderSize || '1';
     this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
     this.relationColor = this.relationColor || this.lineColor;
     this.relationLabelBackground = this.relationLabelBackground || this.edgeLabelBackground;

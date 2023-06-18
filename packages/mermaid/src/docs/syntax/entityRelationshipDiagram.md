@@ -116,7 +116,7 @@ Relationships may be classified as either _identifying_ or _non-identifying_ and
 |      to       |   _identifying_   |
 | optionally to | _non-identifying_ |
 
-```mmd
+```mermaid
 erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     PERSON ||--o{ NAMED-DRIVER : is
@@ -124,25 +124,7 @@ erDiagram
 
 ### Attributes
 
-Attributes can be defined for entities by specifying the entity name followed by a block containing multiple `type name` pairs, where a block is delimited by an opening `{` and a closing `}`. For example:
-
-```mermaid-example
-erDiagram
-    CAR ||--o{ NAMED-DRIVER : allows
-    CAR {
-        string registrationNumber
-        string make
-        string model
-    }
-    PERSON ||--o{ NAMED-DRIVER : is
-    PERSON {
-        string firstName
-        string lastName
-        int age
-    }
-```
-
-The attributes are rendered inside the entity boxes:
+Attributes can be defined for entities by specifying the entity name followed by a block containing multiple `type name` pairs, where a block is delimited by an opening `{` and a closing `}`. The attributes are rendered inside the entity boxes. For example:
 
 ```mermaid-example
 erDiagram
@@ -164,14 +146,13 @@ The `type` and `name` values must begin with an alphabetic character and may con
 
 #### Attribute Keys and Comments
 
-Attributes may also have a `key` or comment defined. Keys can be "PK", "FK" or "UK", for Primary Key, Foreign Key or Unique Key. And a `comment` is defined by double quotes at the end of an attribute. Comments themselves cannot have double-quote characters in them.
+Attributes may also have a `key` or comment defined. Keys can be `PK`, `FK` or `UK`, for Primary Key, Foreign Key or Unique Key. To specify multiple key constraints on a single attribute, separate them with a comma (e.g., `PK, FK`).. A `comment` is defined by double quotes at the end of an attribute. Comments themselves cannot have double-quote characters in them.
 
 ```mermaid-example
 erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {
-        string allowedDriver FK "The license of the allowed driver"
-        string registrationNumber UK
+        string registrationNumber PK
         string make
         string model
         string[] parts
@@ -181,9 +162,14 @@ erDiagram
         string driversLicense PK "The license #"
         string(99) firstName "Only 99 characters are allowed"
         string lastName
+        string phone UK
         int age
     }
-    MANUFACTURER only one to zero or more CAR
+    NAMED-DRIVER {
+        string carRegistrationNumber PK, FK
+        string driverLicence PK, FK
+    }
+    MANUFACTURER only one to zero or more CAR : makes
 ```
 
 ### Other Things

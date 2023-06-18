@@ -1,36 +1,25 @@
 {
   "name": "@mermaid-js/mermaid-example-diagram",
-  "version": "9.2.0-rc2",
-  "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
-  "main": "dist/mermaid-mindmap.core.mjs",
-  "module": "dist/mermaid-mindmap.core.mjs",
+  "version": "9.3.0",
+  "description": "Example of external diagram module for MermaidJS.",
+  "module": "dist/mermaid-example-diagram.core.mjs",
+  "types": "dist/detector.d.ts",
   "type": "module",
   "exports": {
     ".": {
-      "require": "./dist/mermaid-example-diagram.min.js",
-      "import": "./dist/mermaid-example-diagram.core.mjs"
+      "import": "./dist/mermaid-example-diagram.core.mjs",
+      "types": "./dist/detector.d.ts"
     },
     "./*": "./*"
   },
   "keywords": [
     "diagram",
     "markdown",
-    "mindmap",
+    "example",
     "mermaid"
   ],
   "scripts": {
-    "clean": "rimraf dist",
-    "build:types": "tsc -p ./tsconfig.json --emitDeclarationOnly",
-    "build:watch": "yarn build:code --watch",
-    "build:esbuild": "concurrently \"yarn build:code\" \"yarn build:types\"",
-    "build": "yarn clean; yarn build:esbuild",
-    "dev": "node .esbuild/serve.cjs",
-    "release": "yarn build",
-    "lint": "eslint --cache --ignore-path .gitignore . && yarn lint:jison && prettier --check .",
-    "lint:fix": "eslint --fix --ignore-path .gitignore . && prettier --write .",
-    "lint:jison": "ts-node-esm src/jison/lint.mts",
-    "todo-prepare": "concurrently \"husky install ../../.husky\" \"yarn build\"",
-    "todo-pre-commit": "lint-staged"
+    "prepublishOnly": "pnpm -w run build"
   },
   "repository": {
     "type": "git",
@@ -48,13 +37,20 @@
       "page"
     ]
   },
-  "dependencies": {},
-  "devDependencies": {
-    "concurrently": "^7.5.0",
-    "rimraf": "^3.0.2"
+  "dependencies": {
+    "@braintree/sanitize-url": "^6.0.0",
+    "cytoscape": "^3.23.0",
+    "cytoscape-cose-bilkent": "^4.1.0",
+    "cytoscape-fcose": "^2.1.0",
+    "d3": "^7.0.0",
+    "khroma": "^2.0.0",
+    "non-layered-tidy-tree-layout": "^2.0.2"
   },
-  "resolutions": {
-    "d3": "^7.0.0"
+  "devDependencies": {
+    "@types/cytoscape": "^3.19.9",
+    "concurrently": "^8.0.0",
+    "rimraf": "^5.0.0",
+    "mermaid": "workspace:*"
   },
   "files": [
     "dist"

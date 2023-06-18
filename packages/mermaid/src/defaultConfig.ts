@@ -1,5 +1,5 @@
-import theme from './themes';
-import { MermaidConfig } from './config.type';
+import theme from './themes/index.js';
+import { MermaidConfig } from './config.type.js';
 /**
  * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click
  * here](8.6.0_docs.md)].**
@@ -88,13 +88,13 @@ const config: Partial<MermaidConfig> = {
    *
    * **Notes**:
    *
-   * - **strict**: (**default**) tags in text are encoded, click functionality is disabled
-   * - **loose**: tags in text are allowed, click functionality is enabled
-   * - **antiscript**: html tags in text are allowed, (only script element is removed), click
-   *   functionality is enabled
-   * - **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This
+   * - **strict**: (**default**) HTML tags in the text are encoded and click functionality is disabled.
+   * - **antiscript**: HTML tags in text are allowed (only script elements are removed), and click
+   *   functionality is enabled.
+   * - **loose**: HTML tags in text are allowed and click functionality is enabled.
+   * - **sandbox**: With this security level, all rendering takes place in a sandboxed iframe. This
    *   prevent any JavaScript from running in the context. This may hinder interactive functionality
-   *   of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc.
+   *   of the diagram, like scripts, popups in the sequence diagram, links to other tabs or targets, etc.
    */
   securityLevel: 'strict',
 
@@ -247,16 +247,29 @@ const config: Partial<MermaidConfig> = {
     /**
      * | Parameter       | Description | Type    | Required | Values                  |
      * | --------------- | ----------- | ------- | -------- | ----------------------- |
-     * | defaultRenderer | See notes   | boolean | 4        | dagre-d3, dagre-wrapper |
+     * | defaultRenderer | See notes   | boolean | 4        | dagre-d3, dagre-wrapper, elk |
      *
      * **Notes:**
      *
      * Decides which rendering engine that is to be used for the rendering. Legal values are:
-     * dagre-d3 dagre-wrapper - wrapper for dagre implemented in mermaid
+     * dagre-d3 dagre-wrapper - wrapper for dagre implemented in mermaid, elk for layout using
+     * elkjs
      *
      * Default value: 'dagre-wrapper'
      */
     defaultRenderer: 'dagre-wrapper',
+    /**
+     * | Parameter       | Description | Type    | Required | Values                  |
+     * | --------------- | ----------- | ------- | -------- | ----------------------- |
+     * | wrappingWidth   | See notes   | number  | 4        | width of nodes where text is wrapped |
+     *
+     * **Notes:**
+     *
+     * When using markdown strings the text ius wrapped automatically, this
+     * value sets the max width of a text before it continues on a new line.
+     * Default value: 'dagre-wrapper'
+     */
+    wrappingWidth: 200,
   },
 
   /** The object containing configurations specific for sequence diagrams */
@@ -659,6 +672,17 @@ const config: Partial<MermaidConfig> = {
     numberSectionStyles: 4,
 
     /**
+     * | Parameter   | Description               | Type   | Required | Values    |
+     * | ----------- | ------------------------- | ------ | -------- | --------- |
+     * | displayMode | Controls the display mode | string | 4        | 'compact' |
+     *
+     * **Notes**:
+     *
+     * - **compact**: Enables displaying multiple tasks on the same row.
+     */
+    displayMode: '',
+
+    /**
      * | Parameter  | Description                  | Type | Required | Values           |
      * | ---------- | ---------------------------- | ---- | -------- | ---------------- |
      * | axisFormat | Date/time format of the axis | 3    | Required | Date in yy-mm-dd |
@@ -683,7 +707,6 @@ const config: Partial<MermaidConfig> = {
      * Default value: undefined
      */
     tickInterval: undefined,
-
     /**
      * | Parameter   | Description | Type    | Required | Values      |
      * | ----------- | ----------- | ------- | -------- | ----------- |
@@ -860,6 +883,156 @@ const config: Partial<MermaidConfig> = {
 
     sectionFills: ['#191970', '#8B008B', '#4B0082', '#2F4F4F', '#800000', '#8B4513', '#00008B'],
     sectionColours: ['#fff'],
+  },
+  /** The object containing configurations specific for timeline diagrams */
+  timeline: {
+    /**
+     * | Parameter      | Description                                          | Type    | Required | Values             |
+     * | -------------- | ---------------------------------------------------- | ------- | -------- | ------------------ |
+     * | diagramMarginX | Margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 50
+     */
+    diagramMarginX: 50,
+
+    /**
+     * | Parameter      | Description                                        | Type    | Required | Values             |
+     * | -------------- | -------------------------------------------------- | ------- | -------- | ------------------ |
+     * | diagramMarginY | Margin to the over and under the sequence diagram. | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 10
+     */
+    diagramMarginY: 10,
+
+    /**
+     * | Parameter   | Description           | Type    | Required | Values             |
+     * | ----------- | --------------------- | ------- | -------- | ------------------ |
+     * | actorMargin | Margin between actors | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 50
+     */
+    leftMargin: 150,
+
+    /**
+     * | Parameter | Description          | Type    | Required | Values             |
+     * | --------- | -------------------- | ------- | -------- | ------------------ |
+     * | width     | Width of actor boxes | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 150
+     */
+    width: 150,
+
+    /**
+     * | Parameter | Description           | Type    | Required | Values             |
+     * | --------- | --------------------- | ------- | -------- | ------------------ |
+     * | height    | Height of actor boxes | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 65
+     */
+    height: 50,
+
+    /**
+     * | Parameter | Description              | Type    | Required | Values             |
+     * | --------- | ------------------------ | ------- | -------- | ------------------ |
+     * | boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 10
+     */
+    boxMargin: 10,
+
+    /**
+     * | Parameter     | Description                                  | Type    | Required | Values             |
+     * | ------------- | -------------------------------------------- | ------- | -------- | ------------------ |
+     * | boxTextMargin | Margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 5
+     */
+    boxTextMargin: 5,
+
+    /**
+     * | Parameter  | Description         | Type    | Required | Values             |
+     * | ---------- | ------------------- | ------- | -------- | ------------------ |
+     * | noteMargin | Margin around notes | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 10
+     */
+    noteMargin: 10,
+
+    /**
+     * | Parameter     | Description             | Type    | Required | Values             |
+     * | ------------- | ----------------------- | ------- | -------- | ------------------ |
+     * | messageMargin | Space between messages. | Integer | Required | Any Positive Value |
+     *
+     * **Notes:**
+     *
+     * Space between messages.
+     *
+     * Default value: 35
+     */
+    messageMargin: 35,
+
+    /**
+     * | Parameter    | Description                 | Type | Required | Values                    |
+     * | ------------ | --------------------------- | ---- | -------- | ------------------------- |
+     * | messageAlign | Multiline message alignment | 3    | 4        | 'left', 'center', 'right' |
+     *
+     * **Notes:** Default value: 'center'
+     */
+    messageAlign: 'center',
+
+    /**
+     * | Parameter       | Description                                | Type    | Required | Values             |
+     * | --------------- | ------------------------------------------ | ------- | -------- | ------------------ |
+     * | bottomMarginAdj | Prolongs the edge of the diagram downwards | Integer | 4        | Any Positive Value |
+     *
+     * **Notes:**
+     *
+     * Depending on css styling this might need adjustment.
+     *
+     * Default value: 1
+     */
+    bottomMarginAdj: 1,
+
+    /**
+     * | Parameter   | Description | Type    | Required | Values      |
+     * | ----------- | ----------- | ------- | -------- | ----------- |
+     * | useMaxWidth | See notes   | boolean | 4        | true, false |
+     *
+     * **Notes:**
+     *
+     * When this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used.
+     *
+     * Default value: true
+     */
+    useMaxWidth: true,
+
+    /**
+     * | Parameter   | Description                       | Type | Required | Values      |
+     * | ----------- | --------------------------------- | ---- | -------- | ----------- |
+     * | rightAngles | Curved Arrows become Right Angles | 3    | 4        | true, false |
+     *
+     * **Notes:**
+     *
+     * This will display arrows that start and begin at the same node as right angles, rather than a
+     * curves
+     *
+     * Default value: false
+     */
+    rightAngles: false,
+    taskFontSize: 14,
+    taskFontFamily: '"Open Sans", sans-serif',
+    taskMargin: 50,
+    // width of activation box
+    activationWidth: 10,
+
+    // text placement as: tspan | fo | old only text as before
+    textPlacement: 'fo',
+    actorColours: ['#8FBC8F', '#7CFC00', '#00FFFF', '#20B2AA', '#B0E0E6', '#FFFFE0'],
+
+    sectionFills: ['#191970', '#8B008B', '#4B0082', '#2F4F4F', '#800000', '#8B4513', '#00008B'],
+    sectionColours: ['#fff'],
+    disableMulticolor: false,
   },
   class: {
     /**
@@ -1083,6 +1256,193 @@ const config: Partial<MermaidConfig> = {
   pie: {
     useWidth: undefined,
 
+    /**
+     * | Parameter   | Description | Type    | Required | Values      |
+     * | ----------- | ----------- | ------- | -------- | ----------- |
+     * | useMaxWidth | See Notes   | boolean | Required | true, false |
+     *
+     * **Notes:**
+     *
+     * When this flag is set to true, the diagram width is locked to 100% and scaled based on
+     * available space. If set to false, the diagram reserves its absolute width.
+     *
+     * Default value: true
+     */
+    useMaxWidth: true,
+
+    /**
+     * | Parameter    | Description                                                                      | Type    | Required | Values              |
+     * | ------------ | -------------------------------------------------------------------------------- | ------- | -------- | ------------------- |
+     * | textPosition | Axial position of slice's label from zero at the center to 1 at the outside edge | Number  | Optional | Decimal from 0 to 1 |
+     *
+     * **Notes:** Default value: 0.75
+     */
+    textPosition: 0.75,
+  },
+
+  quadrantChart: {
+    /**
+     * | Parameter       | Description                        | Type    | Required | Values              |
+     * | --------------- | ---------------------------------- | ------- | -------- | ------------------- |
+     * | chartWidth      | Width of the chart                 | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 500
+     */
+    chartWidth: 500,
+    /**
+     * | Parameter       | Description                        | Type    | Required | Values              |
+     * | --------------- | ---------------------------------- | ------- | -------- | ------------------- |
+     * | chartHeight     | Height of the chart                | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 500
+     */
+    chartHeight: 500,
+    /**
+     * | Parameter          | Description                        | Type    | Required | Values              |
+     * | ------------------ | ---------------------------------- | ------- | -------- | ------------------- |
+     * | titlePadding       | Chart title top and bottom padding | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 10
+     */
+    titlePadding: 10,
+    /**
+     * | Parameter          | Description                        | Type    | Required | Values              |
+     * | ------------------ | ---------------------------------- | ------- | -------- | ------------------- |
+     * | titleFontSize      | Chart title font size              | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 20
+     */
+    titleFontSize: 20,
+    /**
+     * | Parameter       | Description                        | Type    | Required | Values              |
+     * | --------------- | ---------------------------------- | ------- | -------- | ------------------- |
+     * | quadrantPadding | Padding around the quadrant square | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 5
+     */
+    quadrantPadding: 5,
+    /**
+     * | Parameter              | Description                                                                | Type    | Required | Values              |
+     * | ---------------------- | -------------------------------------------------------------------------- | ------- | -------- | ------------------- |
+     * | quadrantTextTopPadding | quadrant title padding from top if the quadrant is rendered on top         | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 5
+     */
+    quadrantTextTopPadding: 5,
+    /**
+     * | Parameter             | Description                        | Type    | Required | Values              |
+     * | ------------------    | ---------------------------------- | ------- | -------- | ------------------- |
+     * | quadrantLabelFontSize | quadrant title font size           | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 16
+     */
+    quadrantLabelFontSize: 16,
+    /**
+     * | Parameter                         | Description                                                   | Type    | Required | Values              |
+     * | --------------------------------- | ------------------------------------------------------------- | ------- | -------- | ------------------- |
+     * | quadrantInternalBorderStrokeWidth | stroke width of edges of the box that are inside the quadrant | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 1
+     */
+    quadrantInternalBorderStrokeWidth: 1,
+    /**
+     * | Parameter                         | Description                                                    | Type    | Required | Values              |
+     * | --------------------------------- | -------------------------------------------------------------- | ------- | -------- | ------------------- |
+     * | quadrantExternalBorderStrokeWidth | stroke width of edges of the box that are outside the quadrant | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 2
+     */
+    quadrantExternalBorderStrokeWidth: 2,
+    /**
+     * | Parameter         | Description                        | Type    | Required | Values              |
+     * | ---------------   | ---------------------------------- | ------- | -------- | ------------------- |
+     * | xAxisLabelPadding | Padding around x-axis labels       | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 5
+     */
+    xAxisLabelPadding: 5,
+    /**
+     * | Parameter          | Description                        | Type    | Required | Values              |
+     * | ------------------ | ---------------------------------- | ------- | -------- | ------------------- |
+     * | xAxisLabelFontSize | x-axis label font size             | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 16
+     */
+    xAxisLabelFontSize: 16,
+    /**
+     * | Parameter     | Description                     | Type    | Required | Values              |
+     * | ------------- | ------------------------------- | ------- | -------- | ------------------- |
+     * | xAxisPosition | position of x-axis labels       | string  | Optional | 'top' or 'bottom'   |
+     *
+     * **Notes:**
+     * Default value: top
+     */
+    xAxisPosition: 'top',
+    /**
+     * | Parameter         | Description                        | Type    | Required | Values              |
+     * | ---------------   | ---------------------------------- | ------- | -------- | ------------------- |
+     * | yAxisLabelPadding | Padding around y-axis labels       | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 5
+     */
+    yAxisLabelPadding: 5,
+    /**
+     * | Parameter          | Description                        | Type    | Required | Values              |
+     * | ------------------ | ---------------------------------- | ------- | -------- | ------------------- |
+     * | yAxisLabelFontSize | y-axis label font size             | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 16
+     */
+    yAxisLabelFontSize: 16,
+    /**
+     * | Parameter     | Description                     | Type    | Required | Values              |
+     * | ------------- | ------------------------------- | ------- | -------- | ------------------- |
+     * | yAxisPosition | position of y-axis labels       | string  | Optional | 'left' or 'right'   |
+     *
+     * **Notes:**
+     * Default value: left
+     */
+    yAxisPosition: 'left',
+    /**
+     * | Parameter              | Description                            | Type    | Required | Values              |
+     * | ---------------------- | -------------------------------------- | ------- | -------- | ------------------- |
+     * | pointTextPadding       | padding between point and point label  | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 5
+     */
+    pointTextPadding: 5,
+    /**
+     * | Parameter              | Description            | Type    | Required | Values              |
+     * | ---------------------- | ---------------------- | ------- | -------- | ------------------- |
+     * | pointTextPadding       | point title font size  | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 12
+     */
+    pointLabelFontSize: 12,
+    /**
+     * | Parameter     | Description                     | Type    | Required | Values              |
+     * | ------------- | ------------------------------- | ------- | -------- | ------------------- |
+     * | pointRadius   | radius of the point to be drawn | number  | Optional | Any positive number |
+     *
+     * **Notes:**
+     * Default value: 5
+     */
+    pointRadius: 5,
     /**
      * | Parameter   | Description | Type    | Required | Values      |
      * | ----------- | ----------- | ------- | -------- | ----------- |

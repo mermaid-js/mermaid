@@ -1,9 +1,12 @@
-import moment from 'moment-mini';
 import { sanitizeUrl } from '@braintree/sanitize-url';
-import { log } from '../../logger';
-import * as configApi from '../../config';
-import utils from '../../utils';
-import mermaidAPI from '../../mermaidAPI';
+import dayjs from 'dayjs';
+import dayjsIsoWeek from 'dayjs/plugin/isoWeek.js';
+import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat.js';
+import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
+import { log } from '../../logger.js';
+import * as configApi from '../../config.js';
+import utils from '../../utils.js';
+import mermaidAPI from '../../mermaidAPI.js';
 
 import {
   setAccTitle,
@@ -13,7 +16,11 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb';
+} from '../../commonDb.js';
+
+dayjs.extend(dayjsIsoWeek);
+dayjs.extend(dayjsCustomParseFormat);
+dayjs.extend(dayjsAdvancedFormat);
 
 let dateFormat = '';
 let axisFormat = '';
@@ -25,6 +32,7 @@ let links = {};
 let sections = [];
 let tasks = [];
 let currentSection = '';
+let displayMode = '';
 const tags = ['active', 'done', 'crit', 'milestone'];
 let funs = [];
 let inclusiveEndDates = false;
@@ -48,6 +56,7 @@ export const clear = function () {
   rawTasks = [];
   dateFormat = '';
   axisFormat = '';
+  displayMode = '';
   tickInterval = undefined;
   todayMarker = '';
   includes = [];
@@ -103,6 +112,14 @@ export const topAxisEnabled = function () {
   return topAxis;
 };
 
+export const setDisplayMode = function (txt) {
+  displayMode = txt;
+};
+
+export const getDisplayMode = function () {
+  return displayMode;
+};
+
 export const getDateFormat = function () {
   return dateFormat;
 };
@@ -136,11 +153,11 @@ export const getSections = function () {
 };
 
 export const getTasks = function () {
-  let allItemsPricessed = compileTasks();
+  let allItemsProcessed = compileTasks();
   const maxDepth = 10;
   let iterationCount = 0;
-  while (!allItemsPricessed && iterationCount < maxDepth) {
-    allItemsPricessed = compileTasks();
+  while (!allItemsProcessed && iterationCount < maxDepth) {
+    allItemsProcessed = compileTasks();
     iterationCount++;
   }
 
@@ -162,18 +179,58 @@ export const isInvalidDate = function (date, dateFormat, excludes, includes) {
   return excludes.includes(date.format(dateFormat.trim()));
 };
 
+/**
+ * TODO: fully document what this function does and what types it accepts
+ *
+ * @param {object} task - The task to check.
+ * @param {string | Date} task.startTime - Might be a `Date` or a `string`.
+ * TODO: is this always a Date?
+ * @param {string | Date} task.endTime - Might be a `Date` or a `string`.
+ * TODO: is this always a Date?
+ * @param {string} dateFormat - Dayjs date format string.
+ * @param {*} excludes
+ * @param {*} includes
+ */
 const checkTaskDates = function (task, dateFormat, excludes, includes) {
   if (!excludes.length || task.manualEndTime) {
     return;
   }
-  let startTime = moment(task.startTime, dateFormat, true);
-  startTime.add(1, 'd');
-  let endTime = moment(task.endTime, dateFormat, true);
-  let renderEndTime = fixTaskDates(startTime, endTime, dateFormat, excludes, includes);
-  task.endTime = endTime.toDate();
+  let startTime;
+  if (task.startTime instanceof Date) {
+    startTime = dayjs(task.startTime);
+  } else {
+    startTime = dayjs(task.startTime, dateFormat, true);
+  }
+  startTime = startTime.add(1, 'd');
+
+  let originalEndTime;
+  if (task.endTime instanceof Date) {
+    originalEndTime = dayjs(task.endTime);
+  } else {
+    originalEndTime = dayjs(task.endTime, dateFormat, true);
+  }
+  const [fixedEndTime, renderEndTime] = fixTaskDates(
+    startTime,
+    originalEndTime,
+    dateFormat,
+    excludes,
+    includes
+  );
+  task.endTime = fixedEndTime.toDate();
   task.renderEndTime = renderEndTime;
 };
 
+/**
+ * TODO: what does this function do?
+ *
+ * @param {dayjs.Dayjs} startTime - The start time.
+ * @param {dayjs.Dayjs} endTime - The original end time (will return a different end time if it's invalid).
+ * @param {string} dateFormat - Dayjs date format string.
+ * @param {*} excludes
+ * @param {*} includes
+ * @returns {[endTime: dayjs.Dayjs, renderEndTime: Date | null]} The new `endTime`, and the end time to render.
+ * `renderEndTime` may be `null` if `startTime` is newer than `endTime`.
+ */
 const fixTaskDates = function (startTime, endTime, dateFormat, excludes, includes) {
   let invalid = false;
   let renderEndTime = null;
@@ -183,11 +240,11 @@ const fixTaskDates = function (startTime, endTime, dateFormat, excludes, include
     }
     invalid = isInvalidDate(startTime, dateFormat, excludes, includes);
     if (invalid) {
-      endTime.add(1, 'd');
+      endTime = endTime.add(1, 'd');
     }
-    startTime.add(1, 'd');
+    startTime = startTime.add(1, 'd');
   }
-  return renderEndTime;
+  return [endTime, renderEndTime];
 };
 
 const getStartDate = function (prevTime, dateFormat, str) {
@@ -223,14 +280,24 @@ const getStartDate = function (prevTime, dateFormat, str) {
   }
 
   // Check for actual date set
-  let mDate = moment(str, dateFormat.trim(), true);
+  let mDate = dayjs(str, dateFormat.trim(), true);
   if (mDate.isValid()) {
     return mDate.toDate();
   } else {
     log.debug('Invalid date:' + str);
     log.debug('With date format:' + dateFormat.trim());
     const d = new Date(str);
-    if (d === undefined || isNaN(d.getTime())) {
+    if (
+      d === undefined ||
+      isNaN(d.getTime()) ||
+      // WebKit browsers can mis-parse invalid dates to be ridiculously
+      // huge numbers, e.g. new Date('202304') gets parsed as January 1, 202304.
+      // This can cause virtually infinite loops while rendering, so for the
+      // purposes of Gantt charts we'll just treat any date beyond 10,000 AD/BC as
+      // invalid.
+      d.getFullYear() < -10000 ||
+      d.getFullYear() > 10000
+    ) {
       throw new Error('Invalid date:' + str);
     }
     return d;
@@ -238,10 +305,13 @@ const getStartDate = function (prevTime, dateFormat, str) {
 };
 
 /**
- * Parse a string as a moment duration.
+ * Parse a string into the args for `dayjs.add()`.
  *
  * The string have to be compound by a value and a shorthand duration unit. For example `5d`
  * represents 5 days.
+ *
+ * Please be aware that 1 day may be 23 or 25 hours, if the user lives in an area
+ * that has daylight savings time (or even 23.5/24.5 hours in Lord Howe Island!)
  *
  * Shorthand unit supported are:
  *
@@ -254,33 +324,36 @@ const getStartDate = function (prevTime, dateFormat, str) {
  * - `ms` for milliseconds
  *
  * @param {string} str - A string representing the duration.
- * @returns {moment.Duration} A moment duration, including an invalid moment for invalid input
- *   string.
+ * @returns {[value: number, unit: dayjs.ManipulateType]} Arguments to pass to `dayjs.add()`
  */
 const parseDuration = function (str) {
   const statement = /^(\d+(?:\.\d+)?)([Mdhmswy]|ms)$/.exec(str.trim());
   if (statement !== null) {
-    return moment.duration(Number.parseFloat(statement[1]), statement[2]);
+    return [Number.parseFloat(statement[1]), statement[2]];
   }
-  return moment.duration.invalid();
+  // NaN means an invalid duration
+  return [NaN, 'ms'];
 };
 
 const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   str = str.trim();
 
   // Check for actual date
-  let mDate = moment(str, dateFormat.trim(), true);
+  let mDate = dayjs(str, dateFormat.trim(), true);
   if (mDate.isValid()) {
     if (inclusive) {
-      mDate.add(1, 'd');
+      mDate = mDate.add(1, 'd');
     }
     return mDate.toDate();
   }
 
-  const endTime = moment(prevTime);
-  const duration = parseDuration(str);
-  if (duration.isValid()) {
-    endTime.add(duration);
+  let endTime = dayjs(prevTime);
+  const [durationValue, durationUnit] = parseDuration(str);
+  if (!Number.isNaN(durationValue)) {
+    const newEndTime = endTime.add(durationValue, durationUnit);
+    if (newEndTime.isValid()) {
+      endTime = newEndTime;
+    }
   }
   return endTime.toDate();
 };
@@ -346,7 +419,7 @@ const compileData = function (prevTask, dataStr) {
 
   if (endTimeData) {
     task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates);
-    task.manualEndTime = moment(endTimeData, 'YYYY-MM-DD', true).isValid();
+    task.manualEndTime = dayjs(endTimeData, 'YYYY-MM-DD', true).isValid();
     checkTaskDates(task, dateFormat, excludes, includes);
   }
 
@@ -496,7 +569,7 @@ const compileTasks = function () {
       );
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true;
-        rawTasks[pos].manualEndTime = moment(
+        rawTasks[pos].manualEndTime = dayjs(
           rawTasks[pos].raw.endTime.data,
           'YYYY-MM-DD',
           true
@@ -666,6 +739,8 @@ export default {
   getAccTitle,
   setDiagramTitle,
   getDiagramTitle,
+  setDisplayMode,
+  getDisplayMode,
   setAccDescription,
   getAccDescription,
   addSection,

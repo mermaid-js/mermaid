@@ -50,19 +50,11 @@ body:
     attributes:
       label: Setup
       description: |-
-        Please fill out the below info.
-        Note that you only need to fill out one and not both sections.
+        Please fill out the info below.
+        Note that you only need to fill out the relevant section
       value: |-
-        **Desktop**
-
-        - OS and Version: [Windows, Linux, Mac, ...]
+        - Mermaid version: 
         - Browser and Version: [Chrome, Edge, Firefox]
-
-        **Smartphone**
-
-        - Device: [Samsung, iPhone, ...]
-        - OS and Version: [Android, iOS, ...]
-        - Browser and Version: [Chrome, Safari, ...]
   - type: textarea
     attributes:
       label: Additional Context
