@@ -79,9 +79,9 @@ const addLink = function(source?: Node, target?: Node, value?: number): Link {
 class Node {
   ID: string;
   title: string;
-  constructor(ID: string) {
+  constructor(ID: string, title: string = ID) {
     this.ID = ID;
-    this.title = ID;
+    this.title = title;
   }
 }
 

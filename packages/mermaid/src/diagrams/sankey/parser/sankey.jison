@@ -4,38 +4,36 @@
 %options case-insensitive
 %options easy_keyword_rules
 
-%s group
 // when we are inside [] section we are defining attrubutes
 %x attributes
-// after attr= we are expecting a value without quotes
-%x value      
 // or if we use "" we are expecting a string containing value
-%x string    
+%x string
+%x value
 
 %%
-"sankey"                         { return 'SANKEY'; }
-\d+                              { return 'AMOUNT'; }
-"->"                             { return 'ARROW'; }
-\w+                              { return 'NODE'; }
-(?:<<EOF>>|[\n;])+               { return 'EOS'; } // end of statement is ; \n or end of file
-\s+                                                // skip all whitespace
-"{"                              { this.pushState('group'); return 'OPEN_GROUP'; }
-<group>"}"                       { this.popState(); return 'CLOSE_GROUP'; }
-"["                              { this.pushState('attributes'); return 'OPEN_ATTRIBUTES'; }
-<attributes>"]"                  { this.popState(); return 'CLOSE_ATTRIBUTES'; }
-<attributes>\w+                  { return 'ATTRIBUTE'; }
-<attributes>(?=\=s*)[\s\w]       { return 'VALUE';}
-<attributes>\=                   { this.pushState('value'); return 'EQUAL'; }
-<attributes>\s+                   // skip all whitespace
-<value>[\w]+                     { this.popState(); return 'VALUE';}
-<value>\s+                       //skip
-<value>\"                        { this.pushState('string'); return 'OPEN_STRING'; }
-<string>(?!\\)\" {
-	if(this.topState()==='string') this.popState();
-	if(this.topState()==='value') this.popState();
-	return 'CLOSE_STRING';
-}
-<string>([^"\\]|\\\")+           { return 'STRING'; }
+// skip all whitespace EXCEPT newlines, but not within a string
+<INITIAL,attributes,value>[^\S\r\n]+ {}
+
+// main
+"sankey"                              { return 'SANKEY'; }
+\d+(.\d+)?                            { return 'AMOUNT'; }
+"->"                                  { return 'ARROW'; }
+\w+                                   { return 'NODE'; }
+(?:<<EOF>>|[\n;])+                    { return 'EOS'; } // end of statement is semicolon ; new line \n or end of file
+// attributes
+"["                                   { this.pushState('attributes'); return 'OPEN_ATTRIBUTES'; }
+<attributes>"]"                       { this.popState(); return 'CLOSE_ATTRIBUTES'; }
+<attributes>\w+                       { return 'ATTRIBUTE'; }
+<attributes>\=                        { this.pushState('value'); return 'EQUAL'; }
+<value>\w+                            { this.popState(); return 'VALUE'; }
+// strings
+<INITIAL,attributes,value>\"          { this.pushState('string'); return 'OPEN_STRING'; }
+<string>(?!\\)\"                      {
+																			  if(this.topState()==='string') this.popState();
+																			  if(this.topState()==='value') this.popState();
+																				return 'CLOSE_STRING';
+																			}
+<string>([^"\\]|\\\"|\\\\)+           { return 'STRING'; }
 
 /lex
 
@@ -79,14 +77,8 @@ tail
 	| node { $$ = $node; }
 	;
 
-node: NODE { $$ = yy.addNode($NODE); };
+node
+	: NODE { $$ = yy.addNode($NODE); }
+	| OPEN_STRING STRING[title] CLOSE_STRING { $$ = yy.addNode($title); /* TODO: add title and id separately?*/ }
+	;
 
-// : NODE exhaust intake exhaust_chain optional_attributes EOS
-// exhaust_chain: ARROW AMOUNT intake_chain | ;
-// intake_chain: ARROW NODE exhaust_chain | ;
-
-// exhaust: ARROW AMOUNT;
-// intake: ARROW NODE;
-
-// node_chain_amount: NODE ARROW amount_node_chain | NODE;
-// amount_node_chain: AMOUNT ARROW node_chain_amount | AMOUNT;

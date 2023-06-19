@@ -1,6 +1,6 @@
 // @ts-nocheck TODO: fix file
 import { Diagram } from '../../Diagram.js';
-import { log } from '../../logger.js';
+// import { log } from '../../logger.js';
 import * as configApi from '../../config.js';
 import {
   select as d3select,
@@ -43,7 +43,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   // Launch parsing
   diagObj.parser.parse(text);
   // debugger;
-  log.debug('Parsed sankey diagram');
+  // log.debug('Parsed sankey diagram');
 
   // Figure out what is happening there
   // The main thing is svg object that is a d3 wrapper for svg operations
@@ -64,7 +64,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //
   const elem = doc.getElementById(id);
   const width = elem.parentElement.offsetWidth;
-  const height = 300; // TODO calculate height?
+  const height = 600; // TODO calculate height?
 
   // FIX: using max width prevents height from being set
   configureSvgSize(svg, height, width, true);
@@ -92,7 +92,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   }
 
   diagObj.db.getNodes().forEach(node => {
-    graph.nodes.push({ id: node.ID });
+    graph.nodes.push({ id: node.ID, title: node.title });
   });
 
   diagObj.db.getLinks().forEach(link => {
@@ -158,7 +158,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .attr('x', (d) => d.x0)
     .attr('y', (d) => d.y0)
     .append('rect')
-    .attr('height', (d) => { console.log(d); return (d.y1 - d.y0); })
+    .attr('height', (d) => { return (d.y1 - d.y0); })
     .attr('width', (d) => d.x1 - d.x0)
     .attr('fill', (d) => color(d.id));
 
@@ -175,7 +175,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .attr("y", d => (d.y1 + d.y0) / 2)
     .attr("dy", "0.35em")
     .attr("text-anchor", d => d.x0 < width / 2 ? "start" : "end")
-    .text(d => d.id)
+    .text(d => d.title)
 
   // Creates the paths that represent the links.
   const link_g = svg.append("g")
