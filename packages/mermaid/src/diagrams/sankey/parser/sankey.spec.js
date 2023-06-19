@@ -148,10 +148,9 @@ describe('Sankey diagram', function () {
         "UK land based bioenergy"   ->      182.01   -> "Bio-conversion"
         "Wave"                      ->      19.013   -> "Electricity grid"
         "Wind"                      ->      289.366  -> "Electricity grid"
-        `
+        `;
         parser.parse(str);
-
-      })
+      });
     });
   });
 });

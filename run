@@ -25,8 +25,12 @@ test | vitest | e2e )
 $RUN mermaid sh -c "npx pnpm $command $args"
 ;;
 
+prettier)
+$RUN mermaid sh -c "npx pnpm prettier --write $args"
+;;
+
 lint)
-$RUN mermaid sh -c "npx pnpm -w run lint:fix"
+$RUN mermaid sh -c "npx pnpm -w run lint:fix $args"
 ;;
 
 dev)

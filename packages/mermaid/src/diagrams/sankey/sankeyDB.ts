@@ -23,7 +23,7 @@ let links: Array<Link> = [];
 let nodes: Array<Node> = [];
 let nodesHash: Record<string, Node> = {};
 
-const clear = function() {
+const clear = function () {
   links = [];
   nodes = [];
   nodesHash = {};
@@ -57,7 +57,7 @@ class Link {
  * @param value - number, float or integer, describes the amount to be passed
  */
 // const addLink = ({ source, target, amount }: ILink = {}): Link => {
-const addLink = function(source?: Node, target?: Node, value?: number): Link {
+const addLink = function (source?: Node, target?: Node, value?: number): Link {
   const link: Link = new Link();
 
   // TODO: make attribute setters
@@ -90,7 +90,7 @@ class Node {
  *
  * @param id - The id Node
  */
-const addNode = function(ID: string): Node {
+const addNode = function (ID: string): Node {
   ID = common.sanitizeText(ID, configApi.getConfig());
   let node: Node;
   if (nodesHash[ID] === undefined) {

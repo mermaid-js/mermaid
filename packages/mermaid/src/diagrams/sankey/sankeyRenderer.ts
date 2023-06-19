@@ -88,14 +88,14 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //
   const graph = {
     nodes: [],
-    links: []
-  }
+    links: [],
+  };
 
-  diagObj.db.getNodes().forEach(node => {
+  diagObj.db.getNodes().forEach((node) => {
     graph.nodes.push({ id: node.ID, title: node.title });
   });
 
-  diagObj.db.getLinks().forEach(link => {
+  diagObj.db.getLinks().forEach((link) => {
     graph.links.push({ source: link.source.ID, target: link.target.ID, value: link.value });
   });
 
@@ -154,44 +154,50 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .data(graph.nodes)
     .join('g')
     .attr('class', 'node')
-    .attr("transform", function (d) { return "translate(" + d.x0 + "," + d.y0 + ")"; })
+    .attr('transform', function (d) {
+      return 'translate(' + d.x0 + ',' + d.y0 + ')';
+    })
     .attr('x', (d) => d.x0)
     .attr('y', (d) => d.y0)
     .append('rect')
-    .attr('height', (d) => { return (d.y1 - d.y0); })
+    .attr('height', (d) => {
+      return d.y1 - d.y0;
+    })
     .attr('width', (d) => d.x1 - d.x0)
     .attr('fill', (d) => color(d.id));
 
   // Create text for nodes
   svg
-    .append("g")
+    .append('g')
     .attr('class', 'node-labels')
-    .attr("font-family", "sans-serif")
-    .attr("font-size", 14)
+    .attr('font-family', 'sans-serif')
+    .attr('font-size', 14)
     .selectAll('text')
     .data(graph.nodes)
     .join('text')
-    .attr("x", d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
-    .attr("y", d => (d.y1 + d.y0) / 2)
-    .attr("dy", "0.35em")
-    .attr("text-anchor", d => d.x0 < width / 2 ? "start" : "end")
-    .text(d => d.title)
+    .attr('x', (d) => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
+    .attr('y', (d) => (d.y1 + d.y0) / 2)
+    .attr('dy', '0.35em')
+    .attr('text-anchor', (d) => (d.x0 < width / 2 ? 'start' : 'end'))
+    .text((d) => d.title);
 
   // Creates the paths that represent the links.
-  const link_g = svg.append("g")
+  const link_g = svg
+    .append('g')
     .attr('class', 'links')
-    .attr("fill", "none")
-    .attr("stroke-opacity", 0.5)
-    .selectAll(".link")
+    .attr('fill', 'none')
+    .attr('stroke-opacity', 0.5)
+    .selectAll('.link')
     .data(graph.links)
-    .join("g")
+    .join('g')
     .attr('class', 'link')
-    .style("mix-blend-mode", "multiply");
+    .style('mix-blend-mode', 'multiply');
 
-  link_g.append("path")
-    .attr("d", d3SankeyLinkHorizontal())
-    .attr("stroke", d => color(d.source.id))
-    .attr("stroke-width", d => Math.max(1, d.width));
+  link_g
+    .append('path')
+    .attr('d', d3SankeyLinkHorizontal())
+    .attr('stroke', (d) => color(d.source.id))
+    .attr('stroke-width', (d) => Math.max(1, d.width));
 
   // const { nodes, links } = generator({
   //   nodes: graph.nodes,
