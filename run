@@ -47,6 +47,7 @@ Run commonly used commands within docker containers
 \033[1m$name dev\033[0m             # Run dev server with examples, open http://localhost:9000
 
 $name add             # Add package, 'run add d3-sankey'
+$name prettier        # Prettify a file 'run prettier <path-to-file>'
 $name lint            # Equvalent of pnpm -w run lint:fix
 $name test            # Run unit tests
 $name vitest          # Run watcher for unit tests
