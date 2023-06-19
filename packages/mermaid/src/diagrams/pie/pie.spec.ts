@@ -34,6 +34,19 @@ describe('pie chart', () => {
       expect(sections['bat']).toBe(40);
     });
 
+    it('should handle simple pie with showData', () => {
+      parser.parse(`pie showData
+      "ash" : 60
+      "bat" : 40
+      `);
+
+      expect(db.getShowData()).toBeTruthy();
+
+      const sections = db.getSections();
+      expect(sections['ash']).toBe(60);
+      expect(sections['bat']).toBe(40);
+    });
+
     it('should handle simple pie with comments', () => {
       parser.parse(`pie
       %% comments
@@ -161,9 +174,9 @@ describe('pie chart', () => {
     });
 
     it('reset', () => {
-      db.setConfig({ useWidth: 850 });
+      db.setConfig({ textPosition: 0 });
       db.reset();
-      expect(db.getConfig().useWidth).toStrictEqual(DEFAULT_PIE_DB.config.useWidth);
+      expect(db.getConfig().textPosition).toStrictEqual(DEFAULT_PIE_DB.config.textPosition);
     });
   });
 });
