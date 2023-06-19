@@ -47,18 +47,25 @@ export interface D3Sections {
 }
 
 export interface PieDb extends DiagramDB {
-  clear: () => void;
-  getConfig: () => PieDiagramConfig | undefined;
+  // config
+  setConfig: (config: PieDiagramConfig) => void;
+  getConfig: () => Required<PieDiagramConfig>;
+  reset: () => void;
+
+  // common db
   parseDirective: ParseDirectiveDefinition;
+  clear: () => void;
   setDiagramTitle: (title: string) => void;
   getDiagramTitle: () => string;
   setAccTitle: (title: string) => void;
   getAccTitle: () => string;
   setAccDescription: (describetion: string) => void;
   getAccDescription: () => string;
+
+  // diagram db
   addSection: (label: string, value: number) => void;
-  cleanupValue: (value: string) => number;
   getSections: () => Sections;
+  cleanupValue: (value: string) => number;
   setShowData: (toggle: boolean) => void;
   getShowData: () => boolean;
 }
