@@ -50,11 +50,20 @@ describe('Sankey diagram', function () {
     });
 
     describe('while attributes parsing', () => {
+      it('recognized node and attribute ids starting with numbers', () => {
+        const str = `
+        sankey
+        1st -> 200 -> 2nd -> 180 -> 3rd;
+        `;
+
+        parser.parse(str);
+      });
+
       it('parses different quotless variations', () => {
         const str = `
         sankey
         node[]
-
+        
         node[attr=1]
         node_a -> 30 -> node_b
         node[attrWithoutValue]
@@ -149,6 +158,7 @@ describe('Sankey diagram', function () {
         "Wave"                      ->      19.013   -> "Electricity grid"
         "Wind"                      ->      289.366  -> "Electricity grid"
         `;
+
         parser.parse(str);
       });
     });

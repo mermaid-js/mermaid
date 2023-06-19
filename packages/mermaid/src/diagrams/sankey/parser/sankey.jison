@@ -1,39 +1,58 @@
 /** mermaid */
 %lex
+TOKEN \w+
+NUM \d+(.\d+)?
 
 %options case-insensitive
-%options easy_keyword_rules
+%options easy_keword_rules
 
-// when we are inside [] section we are defining attrubutes
+%s link_value
+
 %x attributes
-// or if we use "" we are expecting a string containing value
+%x attr_value
 %x string
-%x value
 
 %%
+//--------------------------------------------------------------
 // skip all whitespace EXCEPT newlines, but not within a string
-<INITIAL,attributes,value>[^\S\r\n]+ {}
+//--------------------------------------------------------------
 
-// main
-"sankey"                              { return 'SANKEY'; }
-\d+(.\d+)?                            { return 'AMOUNT'; }
-"->"                                  { return 'ARROW'; }
-\w+                                   { return 'NODE'; }
-(?:<<EOF>>|[\n;])+                    { return 'EOS'; } // end of statement is semicolon ; new line \n or end of file
+<INITIAL,link_value,attributes,attr_value>[^\S\r\n]+   {}
+
+//--------------
+// basic tokens
+//--------------
+
+(<<EOF>>|[\n;])+                            { return 'EOS'; } // end of statement is semicolon ; new line \n or end of file
+"sankey"                                    { return 'SANKEY'; }
+<INITIAL>{TOKEN}                            { return 'NODE_ID'; }
+<link_value>{NUM}                           { return 'AMOUNT'; }
+"->"                                        {
+                                              if(this.topState()!=='link_value') this.pushState('link_value');
+                                              else this.popState();
+                                              return 'ARROW';
+                                            }
+//------------
 // attributes
-"["                                   { this.pushState('attributes'); return 'OPEN_ATTRIBUTES'; }
-<attributes>"]"                       { this.popState(); return 'CLOSE_ATTRIBUTES'; }
-<attributes>\w+                       { return 'ATTRIBUTE'; }
-<attributes>\=                        { this.pushState('value'); return 'EQUAL'; }
-<value>\w+                            { this.popState(); return 'VALUE'; }
+//------------
+
+"["                                         { this.pushState('attributes'); return 'OPEN_ATTRIBUTES'; }
+<attributes>"]"                             { this.popState(); return 'CLOSE_ATTRIBUTES'; }
+<attributes>{TOKEN}                         { return 'ATTRIBUTE'; }
+<attributes>\=                              { this.pushState('attr_value'); return 'EQUAL'; }
+<attr_value>{TOKEN}                         { this.popState(); return 'VALUE'; }
+
+//------------
 // strings
-<INITIAL,attributes,value>\"          { this.pushState('string'); return 'OPEN_STRING'; }
-<string>(?!\\)\"                      {
-																			  if(this.topState()==='string') this.popState();
-																			  if(this.topState()==='value') this.popState();
-																				return 'CLOSE_STRING';
-																			}
-<string>([^"\\]|\\\"|\\\\)+           { return 'STRING'; }
+//------------
+
+<INITIAL,attributes,attr_value>\"           { this.pushState('string'); return 'OPEN_STRING'; }
+<string>(?!\\)\"                            {
+                                              if(this.topState()==='string') this.popState();
+                                              if(this.topState()==='attr_value') this.popState();
+                                              return 'CLOSE_STRING';
+                                            }
+<string>([^"\\]|\\\"|\\\\)+                 { return 'STRING'; }
 
 /lex
 
@@ -43,20 +62,20 @@
 %% // language grammar
 
 start
-	: EOS SANKEY document
-	| SANKEY document
-	;
+  : EOS SANKEY document
+  | SANKEY document
+  ;
 
 document
-	: line document
-	|
-	;
+  : line document
+  |
+  ;
 
 line
-	: stream optional_attributes EOS
-	| node optional_attributes EOS
-	| EOS
-	;
+  : node optional_attributes EOS
+  | stream optional_attributes EOS
+  | EOS
+  ;
 
 optional_attributes: OPEN_ATTRIBUTES attributes CLOSE_ATTRIBUTES | ;
 
@@ -65,20 +84,22 @@ attribute: ATTRIBUTE EQUAL value | ATTRIBUTE;
 
 value: VALUE | OPEN_STRING STRING CLOSE_STRING;
 
-stream: node[source] ARROW amount ARROW tail[target] {
-	$$=$source;
-	yy.addLink($source, $target, $amount);
-};
+stream
+  : node\[source] ARROW amount ARROW tail\[target] {
+      $$=$source;
+      yy.addLink($source, $target, $amount);
+    }
+  ;
+
+tail
+  : stream { $$ = $stream }
+  | node { $$ = $node; }
+    ;
 
 amount: AMOUNT { $$=parseFloat($AMOUNT); };
 
-tail
-	: stream { $$ = $stream }
-	| node { $$ = $node; }
-	;
-
 node
-	: NODE { $$ = yy.addNode($NODE); }
-	| OPEN_STRING STRING[title] CLOSE_STRING { $$ = yy.addNode($title); /* TODO: add title and id separately?*/ }
-	;
+  : NODE_ID { $$ = yy.findOrCreateNode($NODE_ID); }
+  | OPEN_STRING STRING\[node_label] CLOSE_STRING { $$ = yy.findOrCreateNode($node_label); }
+  ;
 

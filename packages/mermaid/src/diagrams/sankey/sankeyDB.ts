@@ -12,16 +12,13 @@ import {
   clear as commonClear,
 } from '../../commonDb.js';
 
-// export const parseDirective = function (statement, context, type) {
-//   mermaidAPI.parseDirective(this, statement, context, type);
-// };
-
-// export const cleanupComments = (text: string): string => {
-//   return text.trimStart().replace(/^\s*%%(?!{)[^\n]+\n?/gm, '');
-// };
-let links: Array<Link> = [];
-let nodes: Array<Node> = [];
-let nodesHash: Record<string, Node> = {};
+// Variables where graph data is stored
+// Sankey diagram represented by nodes and links between those nodes
+// We have to track nodes uniqueness (by ID), thats why we need hash also
+//
+let links: Array<SankeyLink> = [];
+let nodes: Array<SankeyNode> = [];
+let nodesHash: Record<string, SankeyNode> = {};
 
 const clear = function () {
   links = [];
@@ -30,71 +27,35 @@ const clear = function () {
   commonClear();
 };
 
-type Nullable<T> = T | null;
-
-// interface ILink {
-//   source?: Node;
-//   target?: Node;
-//   value?: number;
-// }
-
-class Link {
-  source: Nullable<Node>;
-  target: Nullable<Node>;
-  value: Nullable<number>;
-  constructor() {
-    this.source = null;
-    this.target = null;
-    this.value = 0;
-  }
+class SankeyLink {
+  constructor(public source: SankeyNode, public target: SankeyNode, public value: number = 0) {}
 }
 
 /**
- * Adds a link between two elements on the diagram
- *
  * @param source - Node where the link starts
  * @param target - Node where the link ends
  * @param value - number, float or integer, describes the amount to be passed
  */
-// const addLink = ({ source, target, amount }: ILink = {}): Link => {
-const addLink = function (source?: Node, target?: Node, value?: number): Link {
-  const link: Link = new Link();
-
-  // TODO: make attribute setters
-  if (source !== undefined) {
-    link.source = source;
-  }
-  if (target !== undefined) {
-    link.target = target;
-  }
-  if (value !== undefined) {
-    link.value = value;
-  }
+const addLink = function (source: SankeyNode, target: SankeyNode, value: number): SankeyLink {
+  const link: SankeyLink = new SankeyLink(source, target, value);
 
   links.push(link);
 
   return link;
 };
 
-class Node {
-  ID: string;
-  title: string;
-  constructor(ID: string, title: string = ID) {
-    this.ID = ID;
-    this.title = title;
-  }
+class SankeyNode {
+  constructor(public ID: string, public label: string = ID) {}
 }
 
 /**
- * Finds or creates a new Node by ID
- *
- * @param id - The id Node
+ * @param ID - The id of the node
  */
-const addNode = function (ID: string): Node {
+const findOrCreateNode = function (ID: string): SankeyNode {
   ID = common.sanitizeText(ID, configApi.getConfig());
-  let node: Node;
+  let node: SankeyNode;
   if (nodesHash[ID] === undefined) {
-    node = new Node(ID);
+    node = new SankeyNode(ID);
     nodesHash[ID] = node;
     nodes.push(node);
   } else {
@@ -103,16 +64,27 @@ const addNode = function (ID: string): Node {
   return node;
 };
 
+// TODO: this will be better using getters in typescript
 const getNodes = () => nodes;
 const getLinks = () => links;
+
+const getGraph = () => ({
+  nodes: nodes.map((node) => ({ id: node.ID, label: node.label })),
+  links: links.map((link) => ({
+    source: link.source.ID,
+    target: link.target.ID,
+    value: link.value,
+  })),
+});
 
 export default {
   nodesHash,
   getConfig: () => configApi.getConfig().sankey,
   getNodes,
   getLinks,
+  getGraph,
   addLink,
-  addNode,
+  findOrCreateNode,
   // TODO: If this is a must this probably should be an interface
   getAccTitle,
   setAccTitle,

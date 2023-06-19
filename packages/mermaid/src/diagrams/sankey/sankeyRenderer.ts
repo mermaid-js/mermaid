@@ -2,6 +2,7 @@
 import { Diagram } from '../../Diagram.js';
 // import { log } from '../../logger.js';
 import * as configApi from '../../config.js';
+
 import {
   select as d3select,
   scaleOrdinal as d3scaleOrdinal,
@@ -19,9 +20,7 @@ import {
   sankeyJustify as d3SankeyJustify,
 } from 'd3-sankey';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import sankeyDB from './sankeyDB.js';
-import { db } from '../info/infoDb.js';
-import { debug } from 'console';
+// import { debug } from 'console';
 
 /**
  * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
@@ -51,7 +50,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   const { securityLevel, sequence: conf } = configApi.getConfig();
   let sandboxElement;
   if (securityLevel === 'sandbox') {
-    sandboxElement = select('#i' + id);
+    sandboxElement = d3select('#i' + id);
   }
   const root =
     securityLevel === 'sandbox'
@@ -86,35 +85,8 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //      ]
   //    };
   //
-  const graph = {
-    nodes: [],
-    links: [],
-  };
 
-  diagObj.db.getNodes().forEach((node) => {
-    graph.nodes.push({ id: node.ID, title: node.title });
-  });
-
-  diagObj.db.getLinks().forEach((link) => {
-    graph.links.push({ source: link.source.ID, target: link.target.ID, value: link.value });
-  });
-
-  // debugger;
-  // const graph = {
-  //   nodes: [
-  //     { id: 'Alice' },
-  //     { id: 'Bob' },
-  //     { id: 'Carol' },
-  //     { id: 'Andrew' },
-  //     { id: 'Peter' }
-  //   ],
-  //   links: [
-  //     { source: 'Alice', target: 'Andrew', value: 11 },
-  //     { source: 'Alice', target: 'Bob', value: 23 },
-  //     { source: 'Bob', target: 'Carol', value: 43 },
-  //     { source: 'Peter', target: 'Carol', value: 15 },
-  //   ],
-  // };
+  const graph = diagObj.db.getGraph();
 
   // Construct and configure a Sankey generator
   // That will be a function that calculates nodes and links dimensions
@@ -145,11 +117,10 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   // Get color scheme for the graph
   const color = d3scaleOrdinal(d3schemeTableau10);
 
-  // Creates the groups for nodes
+  // Create groups for nodes
   svg
     .append('g')
     .attr('class', 'nodes')
-    .attr('stroke', '#000')
     .selectAll('.node')
     .data(graph.nodes)
     .join('g')
@@ -166,7 +137,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .attr('width', (d) => d.x1 - d.x0)
     .attr('fill', (d) => color(d.id));
 
-  // Create text for nodes
+  // Create labels for nodes
   svg
     .append('g')
     .attr('class', 'node-labels')
@@ -179,7 +150,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .attr('y', (d) => (d.y1 + d.y0) / 2)
     .attr('dy', '0.35em')
     .attr('text-anchor', (d) => (d.x0 < width / 2 ? 'start' : 'end'))
-    .text((d) => d.title);
+    .text((d) => d.label);
 
   // Creates the paths that represent the links.
   const link_g = svg

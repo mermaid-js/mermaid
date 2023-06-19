@@ -1,5 +1,5 @@
 import { DiagramDefinition } from '../../diagram-api/types.js';
-// @ts-ignore: TODO Fix ts errors
+// @ts-ignore: jison doesn't export types
 import parser from './parser/sankey.jison';
 import db from './sankeyDB.js';
 import styles from './styles.js';
