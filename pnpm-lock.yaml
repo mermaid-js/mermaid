@@ -339,6 +339,9 @@ importers:
       start-server-and-test:
         specifier: ^2.0.0
         version: 2.0.0
+      type-fest:
+        specifier: ^3.12.0
+        version: 3.12.0
       typedoc:
         specifier: ^0.24.5
         version: 0.24.5(typescript@5.1.3)
@@ -356,7 +359,7 @@ importers:
         version: 1.0.0-alpha.72(@algolia/client-search@4.17.2)(@types/node@18.16.0)(search-insights@2.6.0)
       vitepress-plugin-search:
         specifier: ^1.0.4-alpha.20
-        version: 1.0.4-alpha.20(flexsearch@0.7.31)(vitepress@1.0.0-alpha.72)(vue@3.2.47)
+        version: 1.0.4-alpha.20(flexsearch@0.7.31)(vitepress@1.0.0-alpha.72)(vue@3.3.4)
 
   packages/mermaid-example-diagram:
     dependencies:
@@ -14341,6 +14344,11 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
+  /type-fest@3.12.0:
+    resolution: {integrity: sha512-qj9wWsnFvVEMUDbESiilKeXeHL7FwwiFcogfhfyjmvT968RXSvnl23f1JOClTHYItsi7o501C/7qVllscUP3oA==}
+    engines: {node: '>=14.16'}
+    dev: true
+
   /type-is@1.6.18:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
     engines: {node: '>= 0.6'}
@@ -14810,7 +14818,7 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitepress-plugin-search@1.0.4-alpha.20(flexsearch@0.7.31)(vitepress@1.0.0-alpha.72)(vue@3.2.47):
+  /vitepress-plugin-search@1.0.4-alpha.20(flexsearch@0.7.31)(vitepress@1.0.0-alpha.72)(vue@3.3.4):
     resolution: {integrity: sha512-zG+ev9pw1Mg7htABlFCNXb8XwnKN+qfTKw+vU0Ers6RIrABx+45EAAFBoaL1mEpl1FRFn1o/dQ7F4b8GP6HdGQ==}
     engines: {node: ^14.13.1 || ^16.7.0 || >=18}
     peerDependencies:
@@ -14824,7 +14832,7 @@ packages:
       glob-to-regexp: 0.4.1
       markdown-it: 13.0.1
       vitepress: 1.0.0-alpha.72(@algolia/client-search@4.17.2)(@types/node@18.16.0)(search-insights@2.6.0)
-      vue: 3.2.47
+      vue: 3.3.4
     dev: true
 
   /vitepress@1.0.0-alpha.72(@algolia/client-search@4.17.2)(@types/node@18.16.0)(search-insights@2.6.0):
