@@ -48,9 +48,9 @@ export interface D3Sections {
 
 export interface PieDb extends DiagramDB {
   // config
+  reset: () => void;
   setConfig: (config: PieDiagramConfig) => void;
   getConfig: () => Required<PieDiagramConfig>;
-  reset: () => void;
 
   // common db
   parseDirective: ParseDirectiveDefinition;
