@@ -42,7 +42,8 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
     diagramObject.parser.parse(txt);
 
     const diagram = root.select('#' + id);
-    configureSvgSize(diagram, height, width, config.useMaxWidth);
+    // TODO: use global `useMaxWidth` until making setConfig update pie setConfig
+    configureSvgSize(diagram, height, width, globalConfig?.pie?.useMaxWidth ?? true);
 
     // Set viewBox
     elem?.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
