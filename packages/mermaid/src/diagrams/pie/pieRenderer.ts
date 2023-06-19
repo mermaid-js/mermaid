@@ -5,7 +5,8 @@ import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { getConfig } from '../../config.js';
 import { parseFontSize } from '../../utils.js';
 import { DrawDefinition, HTML } from '../../diagram-api/types.js';
-import type { D3Sections, PieDb, Sections } from './pieTypes.js';
+import type { D3Sections, PieDb, PieDiagramConfig, Sections } from './pieTypes.js';
+import { MermaidConfig } from '../../config.type.js';
 
 /**
  * Draws a Pie Chart with the data given in text.
@@ -16,11 +17,13 @@ import type { D3Sections, PieDb, Sections } from './pieTypes.js';
 export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
   try {
     log.debug('rendering pie chart\n' + txt);
+    const db = diagramObject.db as PieDb;
+    db.clear();
+    const globalConfig: MermaidConfig = getConfig();
+    const config: Required<PieDiagramConfig> = db.getConfig();
 
-    let width: number | undefined;
     const height = 450;
-    const config = getConfig();
-    const { securityLevel } = config;
+    const { securityLevel } = globalConfig;
     // handle root and document for when rendering in sandbox mode
     let sandboxElement: HTML | undefined;
     if (securityLevel === 'sandbox') {
@@ -32,24 +35,14 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
         : select('body');
     const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
     const elem = doc?.getElementById(id);
-    width = elem?.parentElement?.offsetWidth;
+    const width: number = elem?.parentElement?.offsetWidth ?? config.useWidth;
 
-    // Parse the Pie Chart definition
-    const db = diagramObject.db as PieDb;
-    db.clear();
-
+    // parse the pie chart definition
     log.debug('parsing pie chart');
     diagramObject.parser.parse(txt);
 
-    if (width === undefined) {
-      width = 1200;
-    }
-    if (config.pie?.useWidth !== undefined) {
-      width = config.pie.useWidth;
-    }
-
     const diagram = root.select('#' + id);
-    configureSvgSize(diagram, height, width, config.pie?.useMaxWidth ?? true);
+    configureSvgSize(diagram, height, width, config.useMaxWidth);
 
     // Set viewBox
     elem?.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
@@ -70,7 +63,7 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
       sum += sections[key];
     });
 
-    const themeVariables = config.themeVariables;
+    const { themeVariables } = globalConfig;
     const myGeneratedColors = [
       themeVariables.pie1,
       themeVariables.pie2,
@@ -86,7 +79,7 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
       themeVariables.pie12,
     ];
 
-    const textPosition = config.pie?.textPosition ?? 0.75;
+    const textPosition = config.textPosition;
     let [outerStrokeWidth] = parseFontSize(themeVariables.pieOuterStrokeWidth);
     outerStrokeWidth ??= 2;
 
@@ -106,7 +99,8 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
         // Sort slices in clockwise direction
         return a.order - b.order;
       });
-    const pie = d3pie().value((d: unknown): number => d.value);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pie = d3pie().value((d: any): number => d.value);
     // @ts-ignore - figure out how to assign D3Section[] to PieArcDatum
     const dataReady = pie(pieData);
 
@@ -145,7 +139,8 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
       .text((datum: { data: D3Sections }): string => {
         return ((datum.data.value / sum) * 100).toFixed(0) + '%';
       })
-      .attr('transform', (datum: unknown): string => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .attr('transform', (datum: any): string => {
         return 'translate(' + labelArcGenerator.centroid(datum) + ')';
       })
       .style('text-anchor', 'middle')
