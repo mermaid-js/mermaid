@@ -19,6 +19,7 @@ describe('pie chart', () => {
       parser.parse(`pie
       "ash": 100
       `);
+
       const sections = db.getSections();
       expect(sections['ash']).toBe(100);
     });
@@ -76,8 +77,7 @@ describe('pie chart', () => {
       "bat" : 40
       `);
 
-      const title = db.getDiagramTitle();
-      expect(title).toBe('a 60/40 pie');
+      expect(db.getDiagramTitle()).toBe('a 60/40 pie');
 
       const sections = db.getSections();
       expect(sections['ash']).toBe(60);
@@ -91,11 +91,9 @@ describe('pie chart', () => {
       "bat" : 40
       `);
 
-      const title = db.getDiagramTitle();
-      expect(title).toBe('a neat chart');
+      expect(db.getDiagramTitle()).toBe('a neat chart');
 
-      const accTitle = db.getAccTitle();
-      expect(accTitle).toBe('a neat acc title');
+      expect(db.getAccTitle()).toBe('a neat acc title');
 
       const sections = db.getSections();
       expect(sections['ash']).toBe(60);
@@ -109,11 +107,9 @@ describe('pie chart', () => {
       "bat" : 40
       `);
 
-      const title = db.getDiagramTitle();
-      expect(title).toBe('a neat chart');
+      expect(db.getDiagramTitle()).toBe('a neat chart');
 
-      const description = db.getAccDescription();
-      expect(description).toBe('a neat description');
+      expect(db.getAccDescription()).toBe('a neat description');
 
       const sections = db.getSections();
       expect(sections['ash']).toBe(60);
@@ -130,11 +126,9 @@ describe('pie chart', () => {
       "bat" : 40
     `);
 
-      const title = db.getDiagramTitle();
-      expect(title).toBe('a neat chart');
+      expect(db.getDiagramTitle()).toBe('a neat chart');
 
-      const description = db.getAccDescription();
-      expect(description).toBe('a neat description\non multiple lines');
+      expect(db.getAccDescription()).toBe('a neat description\non multiple lines');
 
       const sections = db.getSections();
       expect(sections['ash']).toBe(60);
@@ -165,8 +159,10 @@ describe('pie chart', () => {
   describe('config', () => {
     it('setConfig', () => {
       db.setConfig({ useWidth: 850, useMaxWidth: undefined });
-      expect(db.getConfig().useWidth).toBe(850);
-      expect(db.getConfig().useMaxWidth).toBeTruthy();
+
+      const config = db.getConfig();
+      expect(config.useWidth).toBe(850);
+      expect(config.useMaxWidth).toBeTruthy();
     });
 
     it('getConfig', () => {
