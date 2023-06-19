@@ -19,7 +19,7 @@ export interface DiagramDB {
   // config
   reset?: () => void;
   setConfig?: (config: BaseDiagramConfig) => void;
-  getConfig?: () => Required<BaseDiagramConfig>;
+  getConfig?: () => BaseDiagramConfig | undefined;
 
   // db
   clear?: () => void;
