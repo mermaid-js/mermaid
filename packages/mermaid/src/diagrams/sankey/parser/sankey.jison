@@ -1,105 +1,82 @@
 /** mermaid */
+
+//----------------------------------------------------
+// We support csv format as defined there
+// CSV format // https://www.ietf.org/rfc/rfc4180.txt
+//----------------------------------------------------
+
 %lex
-TOKEN \w+
-NUM \d+(.\d+)?
 
 %options case-insensitive
 %options easy_keword_rules
 
-%s link_value
-
-%x attributes
-%x attr_value
-%x string
+// as per section 6.1 of RFC 2234 [2]
+COMMA \u002C
+CR \u000D 
+LF \u000A
+CRLF \u000D\u000A
+DQUOTE \u0022
+TEXTDATA [\u0020-\u0021\u0023-\u002B\u002D-\u007E]
 
 %%
-//--------------------------------------------------------------
-// skip all whitespace EXCEPT newlines, but not within a string
-//--------------------------------------------------------------
 
-<INITIAL,link_value,attributes,attr_value>[^\S\r\n]+   {}
+<<EOF>> { return 'EOF' }
 
-//--------------
-// basic tokens
-//--------------
-
-(<<EOF>>|[\n;])+                            { return 'EOS'; } // end of statement is semicolon ; new line \n or end of file
-"sankey"                                    { return 'SANKEY'; }
-<INITIAL>{TOKEN}                            { return 'NODE_ID'; }
-<link_value>{NUM}                           { return 'AMOUNT'; }
-"->"                                        {
-                                              if(this.topState()!=='link_value') this.pushState('link_value');
-                                              else this.popState();
-                                              return 'ARROW';
-                                            }
-//------------
-// attributes
-//------------
-
-"["                                         { this.pushState('attributes'); return 'OPEN_ATTRIBUTES'; }
-<attributes>"]"                             { this.popState(); return 'CLOSE_ATTRIBUTES'; }
-<attributes>{TOKEN}                         { return 'ATTRIBUTE'; }
-<attributes>\=                              { this.pushState('attr_value'); return 'EQUAL'; }
-<attr_value>{TOKEN}                         { this.popState(); return 'VALUE'; }
-
-//------------
-// strings
-//------------
-
-<INITIAL,attributes,attr_value>\"           { this.pushState('string'); return 'OPEN_STRING'; }
-<string>(?!\\)\"                            {
-                                              if(this.topState()==='string') this.popState();
-                                              if(this.topState()==='attr_value') this.popState();
-                                              return 'CLOSE_STRING';
-                                            }
-<string>([^"\\]|\\\"|\\\\)+                 { return 'STRING'; }
+"sankey" { return 'SANKEY' }
+{COMMA} { return 'COMMA' }
+{DQUOTE} { return 'DQUOTE' }
+({CRLF}|{LF}) { return 'NEWLINE' }
+{TEXTDATA}* { return 'NON_ESCAPED_TEXT' }
+({TEXTDATA}|{COMMA}|{CR}|{LF}|{DQUOTE}{DQUOTE})* { return 'ESCAPED_TEXT' }
 
 /lex
 
 %start start
-%left ARROW
 
 %% // language grammar
 
 start
-  : EOS SANKEY document
-  | SANKEY document
+  : SANKEY file opt_eof
   ;
 
-document
-  : line document
-  |
+file: csv opt_newline;
+
+csv
+  : record csv_tail 
   ;
 
-line
-  : node optional_attributes EOS
-  | stream optional_attributes EOS
-  | EOS
+csv_tail
+  : NEWLINE csv
+  | // empty
   ;
 
-optional_attributes: OPEN_ATTRIBUTES attributes CLOSE_ATTRIBUTES | ;
-
-attributes: attribute attributes | ;
-attribute: ATTRIBUTE EQUAL value | ATTRIBUTE;
-
-value: VALUE | OPEN_STRING STRING CLOSE_STRING;
-
-stream
-  : node\[source] ARROW amount ARROW tail\[target] {
-      $$=$source;
-      yy.addLink($source, $target, $amount);
-    }
+opt_newline
+  : NEWLINE
+  | // empty
   ;
 
-tail
-  : stream { $$ = $stream }
-  | node { $$ = $node; }
-    ;
-
-amount: AMOUNT { $$=parseFloat($AMOUNT); };
-
-node
-  : NODE_ID { $$ = yy.findOrCreateNode($NODE_ID); }
-  | OPEN_STRING STRING\[node_label] CLOSE_STRING { $$ = yy.findOrCreateNode($node_label); }
+opt_eof
+  : EOF
+  | // empty
   ;
+
+record
+  : field\[source] COMMA field\[target] COMMA field\[value] {
+      const source = yy.findOrCreateNode($source);
+      const target = yy.findOrCreateNode($target);
+      const value = parseFloat($value);
+      $$ = yy.addLink(source,target,value);
+    } // parse only 3 fields, this is not part of standard
+  | // allow empty record to handle empty lines, this is not part of csv standard either
+  ;
+
+field
+  : escaped { $$=$escaped; }
+  | non_escaped { $$=$non_escaped; }
+  ;
+
+escaped: DQUOTE ESCAPED_TEXT DQUOTE { $$=$ESCAPED_TEXT; };
+
+non_escaped: NON_ESCAPED_TEXT { $$=$NON_ESCAPED_TEXT; };
+
 
