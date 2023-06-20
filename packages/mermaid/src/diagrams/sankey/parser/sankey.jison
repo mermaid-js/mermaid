@@ -62,9 +62,9 @@ opt_eof
 
 record
   : field\[source] COMMA field\[target] COMMA field\[value] {
-      const source = yy.findOrCreateNode($source);
-      const target = yy.findOrCreateNode($target);
-      const value = parseFloat($value);
+      const source = yy.findOrCreateNode($source.trim());
+      const target = yy.findOrCreateNode($target.trim());
+      const value = parseFloat($value.trim());
       $$ = yy.addLink(source,target,value);
     } // parse only 3 fields, this is not part of standard
   | // allow empty record to handle empty lines, this is not part of csv standard either

@@ -1,5 +1,5 @@
-import diagram from './sankey.jison';
-import { parser } from './sankey.jison';
+import diagram from './sankey-arrow.jison';
+import { parser } from './sankey-arrow.jison';
 import db from '../sankeyDB.js';
 // import { fail } from 'assert';
 
