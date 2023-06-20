@@ -7,8 +7,11 @@ https://codepen.io
 # Timeout error, maybe Twitter has anti-bot defenses against GitHub's CI servers?
 https://twitter.com/mermaidjs_
 
-# Site is down occasionally
-https://bundlephobia.com/
-
 # Don't check files that are generated during the build via `pnpm docs:code`
 packages/mermaid/src/docs/config/setup/*
+
+# Ignore localhost
+http://localhost:3333/
+
+# Ignore slack invite
+https://join.slack.com/

@@ -52,9 +52,6 @@
     "rimraf": "^5.0.0",
     "mermaid": "workspace:*"
   },
-  "resolutions": {
-    "d3": "^7.0.0"
-  },
   "files": [
     "dist"
   ],
