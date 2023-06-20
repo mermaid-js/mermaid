@@ -16,8 +16,9 @@ describe('Sankey diagram', function () {
 
     it('parses csv', async () => {
       const fs = await import('fs');
-      const path = await require('path').resolve(__dirname, './energy.csv');
-      await fs.readFile(path, 'utf8', (err: Error, data: string) => {
+      const path = await import('path');
+      const csv = path.resolve(__dirname, './energy.csv');
+      fs.readFile(csv, 'utf8', (err: NodeJS.ErrnoException | null, data: string) => {
         if (err) {
           throw err;
         }
