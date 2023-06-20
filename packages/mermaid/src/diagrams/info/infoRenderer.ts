@@ -15,18 +15,16 @@ const draw: DrawDefinition = (text, id, version) => {
     log.debug('rendering info diagram\n' + text);
 
     const { securityLevel } = getConfig();
+
     // handle root and document for when rendering in sandbox mode
-    let sandboxElement: HTML | undefined;
     let document: Document | null | undefined;
     if (securityLevel === 'sandbox') {
-      sandboxElement = select('#i' + id);
-      document = sandboxElement.nodes()[0].contentDocument;
+      const sandboxElement: HTML = select('#i' + id);
+      document = sandboxElement.node()?.contentDocument;
     }
-
-    // @ts-ignore - figure out how to assign HTML to document type
     const root: HTML =
-      sandboxElement !== undefined && document !== undefined && document !== null
-        ? select(document)
+      document !== undefined && document !== null
+        ? select(document.body as HTMLIFrameElement)
         : select('body');
 
     const svg: SVG = root.select('#' + id);
@@ -34,7 +32,6 @@ const draw: DrawDefinition = (text, id, version) => {
     svg.attr('width', 400);
 
     const g = svg.append('g');
-
     g.append('text') // text label for the x axis
       .attr('x', 100)
       .attr('y', 40)
@@ -43,7 +40,7 @@ const draw: DrawDefinition = (text, id, version) => {
       .style('text-anchor', 'middle')
       .text('v ' + version);
   } catch (e) {
-    log.error('error while rendering info diagram', e);
+    log.error('error while rendering info diagram\n', e);
   }
 };
 
