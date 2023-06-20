@@ -22,7 +22,7 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
     const globalConfig: MermaidConfig = getConfig();
     const config: Required<PieDiagramConfig> = db.getConfig();
 
-    const height: number = 450;
+    const height = 450;
     const { securityLevel } = globalConfig;
     // handle root and document for when rendering in sandbox mode
     let sandboxElement: HTML | undefined;
@@ -48,9 +48,9 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
     // Set viewBox
     elem?.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
 
-    const margin: number = 40;
-    const legendRectSize: number = 18;
-    const legendSpacing: number = 4;
+    const margin = 40;
+    const legendRectSize = 18;
+    const legendSpacing = 4;
 
     const radius: number = Math.min(width, height) / 2 - margin;
 
@@ -59,7 +59,7 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
       .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
     const sections: Sections = db.getSections();
-    let sum: number = 0;
+    let sum = 1;
     Object.keys(sections).forEach((key: string): void => {
       sum += sections[key];
     });
