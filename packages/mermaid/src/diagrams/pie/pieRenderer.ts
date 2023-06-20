@@ -1,11 +1,11 @@
 // @ts-nocheck - placeholder to be handled
-import { select, scaleOrdinal, pie as d3pie, arc } from 'd3';
+import d3, { select, scaleOrdinal, pie as d3pie, arc } from 'd3';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { getConfig } from '../../config.js';
 import { parseFontSize } from '../../utils.js';
-import { DrawDefinition, HTML } from '../../diagram-api/types.js';
-import type { D3Sections, PieDb, PieDiagramConfig, Sections } from './pieTypes.js';
+import type { DrawDefinition, HTML } from '../../diagram-api/types.js';
+import type { D3Sections, PieDB, PieDiagramConfig, Sections } from './pieTypes.js';
 import { MermaidConfig } from '../../config.type.js';
 
 /**
@@ -17,12 +17,12 @@ import { MermaidConfig } from '../../config.type.js';
 export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
   try {
     log.debug('rendering pie chart\n' + txt);
-    const db = diagramObject.db as PieDb;
+    const db: PieDB = diagramObject.db as PieDB;
     db.clear();
     const globalConfig: MermaidConfig = getConfig();
     const config: Required<PieDiagramConfig> = db.getConfig();
 
-    const height = 450;
+    const height: number = 450;
     const { securityLevel } = globalConfig;
     // handle root and document for when rendering in sandbox mode
     let sandboxElement: HTML | undefined;
@@ -31,9 +31,9 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
     }
     const root =
       securityLevel === 'sandbox'
-        ? select(sandboxElement.nodes()[0].contentDocument.body)
+        ? select(sandboxElement?.node()?.contentDocument?.body as HTMLIFrameElement)
         : select('body');
-    const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+    const doc = securityLevel === 'sandbox' ? sandboxElement?.nodes()[0].contentDocument : document;
     const elem = doc?.getElementById(id);
     const width: number = elem?.parentElement?.offsetWidth ?? config.useWidth;
 
@@ -48,18 +48,18 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
     // Set viewBox
     elem?.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
 
-    const margin = 40;
-    const legendRectSize = 18;
-    const legendSpacing = 4;
+    const margin: number = 40;
+    const legendRectSize: number = 18;
+    const legendSpacing: number = 4;
 
-    const radius = Math.min(width, height) / 2 - margin;
+    const radius: number = Math.min(width, height) / 2 - margin;
 
     const svg = diagram
       .append('g')
       .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
     const sections: Sections = db.getSections();
-    let sum = 0;
+    let sum: number = 0;
     Object.keys(sections).forEach((key: string): void => {
       sum += sections[key];
     });
@@ -80,12 +80,12 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
       themeVariables.pie12,
     ];
 
-    const textPosition = config.textPosition;
+    const textPosition: number = config.textPosition;
     let [outerStrokeWidth] = parseFontSize(themeVariables.pieOuterStrokeWidth);
     outerStrokeWidth ??= 2;
 
     // Set the color scale
-    const color = scaleOrdinal().range(myGeneratedColors);
+    const color: d3.ScaleOrdinal<string, unknown, never> = scaleOrdinal().range(myGeneratedColors);
 
     // Compute the position of each group on the pie:
     const pieData: D3Sections[] = Object.entries(sections)

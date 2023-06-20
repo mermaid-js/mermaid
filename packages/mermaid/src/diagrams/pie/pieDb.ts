@@ -12,7 +12,7 @@ import {
   clear as commonClear,
 } from '../../commonDb.js';
 import type { ParseDirectiveDefinition } from '../../diagram-api/types.js';
-import type { PieFields, PieDb, Sections, PieDiagramConfig } from './pieTypes.js';
+import type { PieFields, PieDB, Sections, PieDiagramConfig } from './pieTypes.js';
 import type { RequiredDeep } from 'type-fest';
 
 export const DEFAULT_PIE_CONFIG: Required<PieDiagramConfig> = {
@@ -84,7 +84,7 @@ const setShowData = (toggle: boolean): void => {
 
 const getShowData = (): boolean => showData;
 
-export const db: PieDb = {
+export const db: PieDB = {
   setConfig,
   getConfig,
   reset,

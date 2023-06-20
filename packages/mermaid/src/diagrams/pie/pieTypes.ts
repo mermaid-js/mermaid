@@ -46,7 +46,7 @@ export interface D3Sections {
   value: number;
 }
 
-export interface PieDb extends DiagramDB {
+export interface PieDB extends DiagramDB {
   // config
   reset: () => void;
   setConfig: (config: PieDiagramConfig) => void;
