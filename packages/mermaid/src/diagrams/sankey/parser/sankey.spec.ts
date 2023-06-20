@@ -15,10 +15,12 @@ describe('Sankey diagram', function () {
     });
 
     it('parses csv', async () => {
-      const fs = require('fs');
-      const path = require('path').resolve(__dirname, './energy.csv');
+      const fs = await import('fs');
+      const path = await require('path').resolve(__dirname, './energy.csv');
       await fs.readFile(path, 'utf8', (err: Error, data: string) => {
-        if (err) throw err;
+        if (err) {
+          throw err;
+        }
 
         const str = `sankey\\n${data}`;
 
