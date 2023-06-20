@@ -88,17 +88,19 @@ export const draw = function (text: string, id: string, _version: string, diagOb
 
   const graph = diagObj.db.getGraph();
 
+  const nodeWidth = 10;
   // Construct and configure a Sankey generator
   // That will be a function that calculates nodes and links dimensions
   //
   const sankey = d3Sankey()
     .nodeId((d) => d.id) // we use 'id' property to identify node
-    .nodeWidth(10)
+    .nodeWidth(nodeWidth)
     .nodePadding(10)
     .nodeAlign(d3SankeyJustify) // d3.sankeyLeft, etc.
-    .size([width, height]);
-  // .extent([[5, 20], [width - 5, height - 20]]); alias for size
-  // paddings
+    .extent([
+      [0, 0],
+      [width - nodeWidth, height],
+    ]);
 
   //["left", "sankeyLeft"], ["right", "sankeyRight"], ["center", "sankeyCenter"], ["justify", "sankeyJustify"]
   // .nodeWidth(15)
@@ -169,11 +171,6 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .attr('d', d3SankeyLinkHorizontal())
     .attr('stroke', (d) => color(d.source.id))
     .attr('stroke-width', (d) => Math.max(1, d.width));
-
-  // const { nodes, links } = generator({
-  //   nodes: graph.nodes,
-  //   links: graph.links,
-  // });
 };
 
 export default {

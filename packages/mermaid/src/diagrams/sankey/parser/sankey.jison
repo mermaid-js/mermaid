@@ -66,8 +66,8 @@ record
       const target = yy.findOrCreateNode($target.trim());
       const value = parseFloat($value.trim());
       $$ = yy.addLink(source,target,value);
-    } // parse only 3 fields, this is not part of standard
-  | // allow empty record to handle empty lines, this is not part of csv standard either
+    } // parse only 3 fields, this is not part of CSV standard
+  | // allow empty record to handle empty lines, this is not part of CSV standard either
   ;
 
 field
