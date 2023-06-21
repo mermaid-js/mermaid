@@ -1,5 +1,5 @@
 /** Created by AshishJ on 11-09-2019. */
-// @ts-ignore: TODO Fix ts errors
+// @ts-nocheck - TODO Fix ts errors
 import { select, scaleOrdinal, pie as d3pie, arc } from 'd3';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';

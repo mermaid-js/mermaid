@@ -52,14 +52,6 @@ export interface ExternalDiagramDefinition {
   loader: DiagramLoader;
 }
 
-export interface ParseDirectiveDefinition {
-  (statement: string, context: string, type: string): void;
-}
-
-export interface DrawDefinition {
-  (txt: string, id: string, _version: string, diagObj: Diagram): void;
-}
-
 export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
 export type DiagramLoader = () => Promise<{ id: string; diagram: DiagramDefinition }>;
 
