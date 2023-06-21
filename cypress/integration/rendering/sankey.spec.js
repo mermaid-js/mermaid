@@ -5,7 +5,7 @@ describe('Sankey Diagram', () => {
     imgSnapshotTest(
       `
       sankey
-        a -> 30 -> b
+      a,b,10
       `,
       {}
     );

@@ -87,6 +87,13 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //
 
   const graph = diagObj.db.getGraph();
+  const nodeAligns = {
+    left: d3SankeyLeft,
+    right: d3SankeyRight,
+    center: d3SankeyCenter,
+    justify: d3SankeyJustify,
+  };
+  const nodeAlign = nodeAligns[diagObj.db.getNodeAlign()];
 
   const nodeWidth = 10;
   // Construct and configure a Sankey generator
@@ -96,18 +103,11 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .nodeId((d) => d.id) // we use 'id' property to identify node
     .nodeWidth(nodeWidth)
     .nodePadding(10)
-    .nodeAlign(d3SankeyJustify) // d3.sankeyLeft, etc.
+    .nodeAlign(nodeAlign) // d3.sankeyLeft, etc.
     .extent([
       [0, 0],
       [width - nodeWidth, height],
     ]);
-
-  //["left", "sankeyLeft"], ["right", "sankeyRight"], ["center", "sankeyCenter"], ["justify", "sankeyJustify"]
-  // .nodeWidth(15)
-  //   .nodePadding(10)
-  //   .extent([[1, 5], [width - 1, height - 5]]);
-  // .nodeId(d => d['id'])
-  //
 
   // Compute the Sankey layout
   // Namely calculate nodes and links positions

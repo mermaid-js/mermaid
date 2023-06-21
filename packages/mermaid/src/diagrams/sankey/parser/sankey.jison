@@ -1,9 +1,12 @@
 /** mermaid */
 
-//----------------------------------------------------
-// We support csv format as defined there
-// CSV format // https://www.ietf.org/rfc/rfc4180.txt
-//----------------------------------------------------
+//---------------------------------------------------------
+// We support csv format as defined here:
+// https://www.ietf.org/rfc/rfc4180.txt
+// There are some minor changes for compliance with jison
+// We also parse only 3 columns: source,target,value
+// And allow blank lines for visual purposes
+//---------------------------------------------------------
 
 %lex
 
@@ -23,9 +26,9 @@ TEXTDATA [\u0020-\u0021\u0023-\u002B\u002D-\u007E]
 <<EOF>> { return 'EOF' }
 
 "sankey" { return 'SANKEY' }
+({CRLF}|{LF})+ { return 'NEWLINE' } // let newline to be multiple lines
 {COMMA} { return 'COMMA' }
 {DQUOTE} { return 'DQUOTE' }
-({CRLF}|{LF}) { return 'NEWLINE' }
 {TEXTDATA}* { return 'NON_ESCAPED_TEXT' }
 ({TEXTDATA}|{COMMA}|{CR}|{LF}|{DQUOTE}{DQUOTE})* { return 'ESCAPED_TEXT' }
 
@@ -36,10 +39,8 @@ TEXTDATA [\u0020-\u0021\u0023-\u002B\u002D-\u007E]
 %% // language grammar
 
 start
-  : SANKEY file opt_eof
+  : SANKEY csv opt_eof
   ;
-
-file: csv opt_newline;
 
 csv
   : record csv_tail 
@@ -67,7 +68,7 @@ record
       const value = parseFloat($value.trim());
       $$ = yy.addLink(source,target,value);
     } // parse only 3 fields, this is not part of CSV standard
-  | // allow empty record to handle empty lines, this is not part of CSV standard either
+  | {} // allow empty record to handle empty lines, this is not part of CSV standard either
   ;
 
 field

@@ -19,11 +19,20 @@ import {
 let links: Array<SankeyLink> = [];
 let nodes: Array<SankeyNode> = [];
 let nodesHash: Record<string, SankeyNode> = {};
+let nodeAlign: string = 'justify';
+
+const setNodeAlign = function (alignment: string): void {
+  const nodeAlignments: string[] = ['left', 'right', 'center', 'justify'];
+  if (nodeAlignments.includes(alignment)) nodeAlign = alignment;
+};
+
+const getNodeAlign = () => nodeAlign;
 
 const clear = function () {
   links = [];
   nodes = [];
   nodesHash = {};
+  nodeAlign = 'justify';
   commonClear();
 };
 
@@ -85,6 +94,8 @@ export default {
   getGraph,
   addLink,
   findOrCreateNode,
+  setNodeAlign,
+  getNodeAlign,
   // TODO: If this is a must this probably should be an interface
   getAccTitle,
   setAccTitle,
