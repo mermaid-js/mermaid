@@ -1,4 +1,3 @@
-// @ts-nocheck TODO: Fix TS
 import { MockedD3 } from '../packages/mermaid/src/tests/MockedD3.js';
 
 export const select = function () {

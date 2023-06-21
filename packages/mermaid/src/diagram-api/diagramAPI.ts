@@ -7,6 +7,7 @@ import { addStylesForDiagram } from '../styles.js';
 import { DiagramDefinition, DiagramDetector } from './types.js';
 import * as _commonDb from '../commonDb.js';
 import { parseDirective as _parseDirective } from '../directiveUtils.js';
+import isEmpty from 'lodash-es/isEmpty.js';
 
 /*
   Packaging and exposing resources for external diagrams so that they can import
@@ -50,7 +51,9 @@ export const registerDiagram = (
   if (detector) {
     addDetector(id, detector);
   }
-  addStylesForDiagram(id, diagram.styles);
+  if (!isEmpty(diagram.styles)) {
+    addStylesForDiagram(id, diagram.styles);
+  }
 
   if (diagram.injectUtils) {
     diagram.injectUtils(

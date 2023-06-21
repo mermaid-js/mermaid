@@ -1,5 +1,19 @@
 # Integrations
 
+## Recommendations
+
+### File Extension
+
+Applications that support mermaid files [SHOULD](https://datatracker.ietf.org/doc/html/rfc2119#section-3) use `.mermaid` or `.mmd` file extensions.
+
+### MIME Type
+
+The recommended [MIME type](https://www.iana.org/assignments/media-types/media-types.xhtml) for mermaid media is `text/vnd.mermaid`.
+
+[IANA](https://www.iana.org/) recognition pending.
+
+---
+
 The following list is a compilation of different integrations and plugins that allow the rendering of mermaid definitions within other applications.
 
 They also serve as proof of concept, for the variety of things that can be built with mermaid.
@@ -53,6 +67,8 @@ They also serve as proof of concept, for the variety of things that can be built
   - [hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams)
   - [hexo-tag-mermaid](https://github.com/JameChou/hexo-tag-mermaid)
   - [hexo-mermaid-diagrams](https://github.com/mslxl/hexo-mermaid-diagrams)
+- [Nextra](https://nextra.site/)
+  - [Mermaid](https://nextra.site/docs/guide/mermaid)
 
 ## CMS
 
