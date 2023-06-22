@@ -25,6 +25,12 @@ importers:
       '@types/cors':
         specifier: ^2.8.13
         version: 2.8.13
+      '@types/d3':
+        specifier: ^7.4.0
+        version: 7.4.0
+      '@types/d3-sankey':
+        specifier: ^0.12.1
+        version: 0.12.1
       '@types/eslint':
         specifier: ^8.37.0
         version: 8.37.0
@@ -3983,6 +3989,10 @@ packages:
       '@types/d3-color': 3.1.0
     dev: true
 
+  /@types/d3-path@1.0.9:
+    resolution: {integrity: sha512-NaIeSIBiFgSC6IGUBjZWcscUJEq7vpVu7KthHN8eieTV9d9MqkSOZLH4chq1PmcKy06PNe3axLeKmRIyxJ+PZQ==}
+    dev: true
+
   /@types/d3-path@3.0.0:
     resolution: {integrity: sha512-0g/A+mZXgFkQxN3HniRDbXMN79K3CdTpLsevj+PXiTcb2hVyvkZUBg37StmgCQkaD84cUJ4uaDAWq7UJOQy2Tg==}
     dev: true
@@ -3999,6 +4009,12 @@ packages:
     resolution: {integrity: sha512-IIE6YTekGczpLYo/HehAy3JGF1ty7+usI97LqraNa8IiDur+L44d0VOjAvFQWJVdZOJHukUJw+ZdZBlgeUsHOQ==}
     dev: true
 
+  /@types/d3-sankey@0.12.1:
+    resolution: {integrity: sha512-10X6l6lXB42udBNX9/fDN+kJuooifSMk7+x4U9815eobavldqis4wDdFQUQjMazh+qlzsUZsGzXKxfWFUVt+3w==}
+    dependencies:
+      '@types/d3-shape': 1.3.8
+    dev: true
+
   /@types/d3-scale-chromatic@3.0.0:
     resolution: {integrity: sha512-dsoJGEIShosKVRBZB0Vo3C8nqSDqVGujJU6tPznsBJxNJNwMF8utmS83nvCBKQYPpjCzaaHcrf66iTRpZosLPw==}
     dev: true
@@ -4011,6 +4027,12 @@ packages:
 
   /@types/d3-selection@3.0.5:
     resolution: {integrity: sha512-xCB0z3Hi8eFIqyja3vW8iV01+OHGYR2di/+e+AiOcXIOrY82lcvWW8Ke1DYE/EUVMsBl4Db9RppSBS3X1U6J0w==}
+    dev: true
+
+  /@types/d3-shape@1.3.8:
+    resolution: {integrity: sha512-gqfnMz6Fd5H6GOLYixOZP/xlrMtJms9BaS+6oWxTKHNqPGZ93BkWWupQSCYm6YHqx6h9wjRupuJb90bun6ZaYg==}
+    dependencies:
+      '@types/d3-path': 1.0.9
     dev: true
 
   /@types/d3-shape@3.1.0:

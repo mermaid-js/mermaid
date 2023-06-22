@@ -73,7 +73,6 @@ const findOrCreateNode = function (ID: string): SankeyNode {
   return node;
 };
 
-// TODO: this will be better using getters in typescript
 const getNodes = () => nodes;
 const getLinks = () => links;
 

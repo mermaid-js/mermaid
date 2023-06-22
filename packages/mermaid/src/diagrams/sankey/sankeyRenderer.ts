@@ -4,7 +4,9 @@ import * as configApi from '../../config.js';
 
 import {
   select as d3select,
+  // @ts-ignore TODO: make proper import 
   scaleOrdinal as d3scaleOrdinal,
+  // @ts-ignore TODO: make proper import 
   schemeTableau10 as d3schemeTableau10,
 } from 'd3';
 
@@ -17,6 +19,7 @@ import {
   sankeyJustify as d3SankeyJustify,
 } from 'd3-sankey';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { Uid } from './sankeyUtils.js';
 
 /**
  * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
@@ -31,14 +34,15 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   // The main thing is svg object that is a d3 wrapper for svg operations
   //
   const { securityLevel, sequence: conf } = configApi.getConfig();
-  let sandboxElement;
+  let sandboxElement: any;
   if (securityLevel === 'sandbox') {
     sandboxElement = d3select('#i' + id);
   }
-  const root =
-    securityLevel === 'sandbox'
-      ? d3select(sandboxElement.nodes()[0].contentDocument.body)
-      : d3select('body');
+  let root = d3select('body');
+
+  if (securityLevel === 'sandbox' && sandboxElement) {
+    d3select(sandboxElement.nodes()[0].contentDocument.body)
+  }
   const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
   const svg = securityLevel === 'sandbox' ? root.select(`[id="${id}"]`) : d3select(`[id="${id}"]`);
 
@@ -46,11 +50,11 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //
   const elem = doc.getElementById(id);
   const width = elem.parentElement.offsetWidth;
-  const height = 600; // TODO calculate height?
+  const height = 600;
 
   // FIX: using max width prevents height from being set
-  configureSvgSize(svg, height, width, true);
-  svg.attr('height', height); // that's why we need this line
+  configureSvgSize(svg, height, width, false);
+  // svg.attr('height', height); // that's why we need this line
 
   // Prepare data for construction based on diagObj.db
   // This must be a mutable object with 2 properties:
@@ -68,7 +72,6 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //      ]
   //    };
   //
-
   const graph = diagObj.db.getGraph();
   const nodeAligns = {
     left: d3SankeyLeft,
@@ -83,13 +86,13 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //
   const nodeWidth = 10;
   const sankey = d3Sankey()
-    .nodeId((d) => d.id) // we use 'id' property to identify node
+    .nodeId((d: any) => d.id) // we use 'id' property to identify node
     .nodeWidth(nodeWidth)
     .nodePadding(10)
-    .nodeAlign(nodeAlign) // d3.sankeyLeft, etc.
+    .nodeAlign(nodeAlign)
     .extent([
       [0, 0],
-      [width - nodeWidth, height],
+      [width, height],
     ]);
 
   // Compute the Sankey layout: calculate nodes and links positions
@@ -98,9 +101,9 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   sankey(graph);
 
   // Get color scheme for the graph
-  const color = d3scaleOrdinal(d3schemeTableau10);
+  const colorScheme = d3scaleOrdinal(d3schemeTableau10);
 
-  // Create groups for nodes
+  // Create rectangles for nodes
   svg
     .append('g')
     .attr('class', 'nodes')
@@ -108,17 +111,17 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .data(graph.nodes)
     .join('g')
     .attr('class', 'node')
-    .attr('transform', function (d) {
+    .attr('transform', function (d: any) {
       return 'translate(' + d.x0 + ',' + d.y0 + ')';
     })
-    .attr('x', (d) => d.x0)
-    .attr('y', (d) => d.y0)
+    .attr('x', (d: any) => d.x0)
+    .attr('y', (d: any) => d.y0)
     .append('rect')
-    .attr('height', (d) => {
+    .attr('height', (d: any) => {
       return d.y1 - d.y0;
     })
-    .attr('width', (d) => d.x1 - d.x0)
-    .attr('fill', (d) => color(d.id));
+    .attr('width', (d: any) => d.x1 - d.x0)
+    .attr('fill', (d: any) => colorScheme(d.id));
 
   // Create labels for nodes
   svg
@@ -129,14 +132,14 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .selectAll('text')
     .data(graph.nodes)
     .join('text')
-    .attr('x', (d) => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
-    .attr('y', (d) => (d.y1 + d.y0) / 2)
+    .attr('x', (d: any) => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
+    .attr('y', (d: any) => (d.y1 + d.y0) / 2)
     .attr('dy', '0.35em')
-    .attr('text-anchor', (d) => (d.x0 < width / 2 ? 'start' : 'end'))
-    .text((d) => d.label);
+    .attr('text-anchor', (d: any) => (d.x0 < width / 2 ? 'start' : 'end'))
+    .text((d: any) => d.label);
 
   // Creates the paths that represent the links.
-  const link_g = svg
+  const link = svg
     .append('g')
     .attr('class', 'links')
     .attr('fill', 'none')
@@ -147,11 +150,27 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .attr('class', 'link')
     .style('mix-blend-mode', 'multiply');
 
-  link_g
+  const gradient = link.append("linearGradient")
+    .attr("id", d => (d.uid = Uid.next("linearGradient-")).id)
+    .attr("gradientUnits", "userSpaceOnUse")
+    .attr("x1", d => d.source.x1)
+    .attr("x2", d => d.target.x0);
+
+  gradient
+    .append("stop")
+    .attr("offset", "0%")
+    .attr("stop-color", d => colorScheme(d.source.id));
+
+  gradient
+    .append("stop")
+    .attr("offset", "100%")
+    .attr("stop-color", d => colorScheme(d.target.id));
+
+  link
     .append('path')
     .attr('d', d3SankeyLinkHorizontal())
-    .attr('stroke', (d) => color(d.source.id))
-    .attr('stroke-width', (d) => Math.max(1, d.width));
+    .attr('stroke', (d: any) => d.uid)
+    .attr('stroke-width', (d: any) => Math.max(1, d.width));
 };
 
 export default {

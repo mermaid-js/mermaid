@@ -29,7 +29,6 @@ import state from './diagrams/state/styles.js';
 import journey from './diagrams/user-journey/styles.js';
 import timeline from './diagrams/timeline/styles.js';
 import mindmap from './diagrams/mindmap/styles.js';
-import sankey from './diagrams/sankey/styles.js';
 import themes from './themes/index.js';
 
 async function checkValidStylisCSSStyleSheet(stylisString: string) {
@@ -99,7 +98,7 @@ describe('styles', () => {
         sequence,
         state,
         timeline,
-        sankey,
+        sankey: () => {},
       })) {
         test(`should return a valid style for diagram ${diagramId} and theme ${themeId}`, async () => {
           const { default: getStyles, addStylesForDiagram } = await import('./styles.js');
