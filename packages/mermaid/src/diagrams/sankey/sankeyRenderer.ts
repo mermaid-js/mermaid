@@ -41,7 +41,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   let root = d3select('body');
 
   if (securityLevel === 'sandbox' && sandboxElement) {
-    d3select(sandboxElement.nodes()[0].contentDocument.body)
+    root = d3select(sandboxElement.nodes()[0].contentDocument.body)
   }
   const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
   const svg = securityLevel === 'sandbox' ? root.select(`[id="${id}"]`) : d3select(`[id="${id}"]`);

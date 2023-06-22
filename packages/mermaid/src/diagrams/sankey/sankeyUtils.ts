@@ -9,7 +9,7 @@ const prepareTextForParsing = (text: string): string => {
 
 
 class Uid {
-  private static count: number = 0;
+  private static count = 0;
   id: string;
   href: string;
 
