@@ -3,7 +3,8 @@ import diagram from './sankey.jison';
 // @ts-ignore: jison doesn't export types
 import { parser } from './sankey.jison';
 import db from '../sankeyDB.js';
-// import { fail } from 'assert';
+import { cleanupComments } from '../../../diagram-api/comments.js';
+import { prepareTextForParsing } from '../sankeyDiagram.js';
 
 describe('Sankey diagram', function () {
   // TODO - these examples should be put into ./parser/stateDiagram.spec.js
@@ -18,15 +19,16 @@ describe('Sankey diagram', function () {
       const fs = await import('fs');
       const path = await import('path');
       const csv = path.resolve(__dirname, './energy.csv');
-      fs.readFile(csv, 'utf8', (err: NodeJS.ErrnoException | null, data: string) => {
-        if (err) {
-          throw err;
-        }
+      const data = fs.readFileSync(csv, 'utf8');
 
-        const str = `sankey\\n${data}`;
+      // Add \n\n + space to emulate possible possible imperfections
+      const graphDefinition = prepareTextForParsing(cleanupComments('sankey\n\n ' + data));
+      // const textToParse = graphDefinition
+      //   .replaceAll(/^[^\S\r\n]+|[^\S\r\n]+$/g, '')
+      //   .replaceAll(/([\n\r])+/g, "\n")
+      //   .trim();
 
-        parser.parse(str);
-      });
+      parser.parse(graphDefinition);
     });
   });
 });

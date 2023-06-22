@@ -23,10 +23,10 @@ TEXTDATA [\u0020-\u0021\u0023-\u002B\u002D-\u007E]
 
 %%
 
-<<EOF>> { return 'EOF' }
+<<EOF>> { return 'EOF' } // match end of file
 
 "sankey" { return 'SANKEY' }
-({CRLF}|{LF})+ { return 'NEWLINE' } // let newline to be multiple lines
+({CRLF}|{LF}) { return 'NEWLINE' }
 {COMMA} { return 'COMMA' }
 {DQUOTE} { return 'DQUOTE' }
 {TEXTDATA}* { return 'NON_ESCAPED_TEXT' }
@@ -38,28 +38,11 @@ TEXTDATA [\u0020-\u0021\u0023-\u002B\u002D-\u007E]
 
 %% // language grammar
 
-start
-  : SANKEY csv opt_eof
-  ;
+start: SANKEY NEWLINE csv opt_eof;
 
-csv
-  : record csv_tail 
-  ;
-
-csv_tail
-  : NEWLINE csv
-  | // empty
-  ;
-
-opt_newline
-  : NEWLINE
-  | // empty
-  ;
-
-opt_eof
-  : EOF
-  | // empty
-  ;
+csv: record csv_tail;
+csv_tail: NEWLINE csv | ;
+opt_eof: EOF | ;
 
 record
   : field\[source] COMMA field\[target] COMMA field\[value] {
@@ -68,7 +51,6 @@ record
       const value = parseFloat($value.trim());
       $$ = yy.addLink(source,target,value);
     } // parse only 3 fields, this is not part of CSV standard
-  | {} // allow empty record to handle empty lines, this is not part of CSV standard either
   ;
 
 field

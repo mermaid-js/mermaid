@@ -1,5 +1,7 @@
-Agricultural 'waste',Bio-conversion,124.729
+%% there are leading and trailing spaces, do not remove
+    Agricultural 'waste',Bio-conversion,124.729   
 Bio-conversion,Liquid,0.597
+%% line with comment
 Bio-conversion,Losses,26.862
 Bio-conversion,Solid,280.322
 Bio-conversion,Gas,81.144
@@ -50,6 +52,9 @@ Oil reserves,Oil,107.703
 Oil,Liquid,611.99
 Other waste,Solid,56.587
 Other waste,Bio-conversion,77.81
+%% blank lines in the middle
+
+
 Pumped heat,Heating and cooling - homes,193.026
 Pumped heat,Heating and cooling - commercial,70.672
 Solar PV,Electricity grid,59.901
@@ -66,3 +71,6 @@ Tidal,Electricity grid,9.452
 UK land based bioenergy,Bio-conversion,182.01
 Wave,Electricity grid,19.013
 Wind,Electricity grid,289.366
+
+%% lines at the end, do not remove
+
