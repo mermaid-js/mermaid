@@ -7,7 +7,6 @@ const prepareTextForParsing = (text: string): string => {
   return textToParse;
 };
 
-
 class Uid {
   private static count = 0;
   id: string;
@@ -23,16 +22,8 @@ class Uid {
   }
 
   toString(): string {
-    return "url(" + this.href + ")";
+    return 'url(' + this.href + ')';
   }
 }
 
-export {
-  Uid,
-  prepareTextForParsing
-};
-
-
-
-
-
+export { Uid, prepareTextForParsing };

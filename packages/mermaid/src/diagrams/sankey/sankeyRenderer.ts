@@ -4,9 +4,9 @@ import * as configApi from '../../config.js';
 
 import {
   select as d3select,
-  // @ts-ignore TODO: make proper import 
+  // @ts-ignore TODO: make proper import
   scaleOrdinal as d3scaleOrdinal,
-  // @ts-ignore TODO: make proper import 
+  // @ts-ignore TODO: make proper import
   schemeTableau10 as d3schemeTableau10,
 } from 'd3';
 
@@ -41,7 +41,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   let root = d3select('body');
 
   if (securityLevel === 'sandbox' && sandboxElement) {
-    root = d3select(sandboxElement.nodes()[0].contentDocument.body)
+    root = d3select(sandboxElement.nodes()[0].contentDocument.body);
   }
   const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
   const svg = securityLevel === 'sandbox' ? root.select(`[id="${id}"]`) : d3select(`[id="${id}"]`);
@@ -150,21 +150,22 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .attr('class', 'link')
     .style('mix-blend-mode', 'multiply');
 
-  const gradient = link.append("linearGradient")
-    .attr("id", d => (d.uid = Uid.next("linearGradient-")).id)
-    .attr("gradientUnits", "userSpaceOnUse")
-    .attr("x1", d => d.source.x1)
-    .attr("x2", d => d.target.x0);
+  const gradient = link
+    .append('linearGradient')
+    .attr('id', (d) => (d.uid = Uid.next('linearGradient-')).id)
+    .attr('gradientUnits', 'userSpaceOnUse')
+    .attr('x1', (d) => d.source.x1)
+    .attr('x2', (d) => d.target.x0);
 
   gradient
-    .append("stop")
-    .attr("offset", "0%")
-    .attr("stop-color", d => colorScheme(d.source.id));
+    .append('stop')
+    .attr('offset', '0%')
+    .attr('stop-color', (d) => colorScheme(d.source.id));
 
   gradient
-    .append("stop")
-    .attr("offset", "100%")
-    .attr("stop-color", d => colorScheme(d.target.id));
+    .append('stop')
+    .attr('offset', '100%')
+    .attr('stop-color', (d) => colorScheme(d.target.id));
 
   link
     .append('path')
