@@ -17,7 +17,6 @@ import {
   sankeyJustify as d3SankeyJustify,
 } from 'd3-sankey';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { prepareTextForParsing } from './sankeyUtils.js';
 
 /**
  * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
@@ -28,14 +27,6 @@ import { prepareTextForParsing } from './sankeyUtils.js';
  * @param diagObj - A standard diagram containing the db and the text and type etc of the diagram
  */
 export const draw = function (text: string, id: string, _version: string, diagObj: Diagram): void {
-  // Clear DB before parsing
-  //
-  diagObj.db.clear?.();
-  
-  // Launch parsing
-  const preparedText = prepareTextForParsing(text);
-  diagObj.parser.parse(preparedText);
-
   // TODO: Figure out what is happening there
   // The main thing is svg object that is a d3 wrapper for svg operations
   //
