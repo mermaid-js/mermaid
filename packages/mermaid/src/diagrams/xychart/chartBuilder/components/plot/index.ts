@@ -21,7 +21,6 @@ export interface IPlot extends ChartComponent {
 
 export class Plot implements IPlot {
   private boundingRect: BoundingRect;
-  private orientation: OrientationEnum;
   private xAxis?: IAxis;
   private yAxis?: IAxis;
 
@@ -35,14 +34,10 @@ export class Plot implements IPlot {
       width: 0,
       height: 0,
     };
-    this.orientation = OrientationEnum.VERTICAL;
   }
   setAxes(xAxis: IAxis, yAxis: IAxis) {
     this.xAxis = xAxis;
     this.yAxis = yAxis;
-  }
-  setOrientation(orientation: OrientationEnum): void {
-    this.orientation = orientation;
   }
   setBoundingBoxXY(point: Point): void {
     this.boundingRect.x = point.x;
@@ -62,17 +57,17 @@ export class Plot implements IPlot {
       throw Error("Axes must be passed to render Plots");
     }
     const drawableElem: DrawableElem[] = [
-      ...new PlotBorder(this.boundingRect).getDrawableElement()
+      ...new PlotBorder(this.boundingRect, this.chartConfig.chartOrientation).getDrawableElement()
     ];
     for(const plot of this.chartData.plots) {
       switch(plot.type) {
         case ChartPlotEnum.LINE: {
-          const linePlot = new LinePlot(plot.data, this.xAxis, this.yAxis);
+          const linePlot = new LinePlot(plot, this.xAxis, this.yAxis, this.chartConfig.chartOrientation);
           drawableElem.push(...linePlot.getDrawableElement())
         }
         break;
         case ChartPlotEnum.BAR: {
-          const barPlot = new BarPlot(plot.data, this.boundingRect, this.xAxis, this.yAxis)
+          const barPlot = new BarPlot(plot, this.boundingRect, this.xAxis, this.yAxis, this.chartConfig.chartOrientation)
           drawableElem.push(...barPlot.getDrawableElement());
         }
         break;

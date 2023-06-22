@@ -41,6 +41,10 @@ export abstract class BaseAxis implements IAxis {
 
   abstract getTickValues(): Array<string | number>;
 
+  getTickDistance(): number {
+    return Math.abs(this.range[0] - this.range[1]) / this.getTickValues().length;
+  }
+
   getTickInnerPadding(): number {
     return this.innerPadding * 2;
     // return Math.abs(this.range[0] - this.range[1]) / this.getTickValues().length;
@@ -89,7 +93,7 @@ export abstract class BaseAxis implements IAxis {
     let availableWidth = availableSpace.width;
     if (this.axisConfig.showLabel) {
       const spaceRequired = this.getLabelDimension();
-      this.innerPadding = spaceRequired.width / 2;
+      this.innerPadding = spaceRequired.height / 2;
       const widthRequired = spaceRequired.width + this.axisConfig.lablePadding * 2;
       log.trace('width required for axis label: ', widthRequired);
       if (widthRequired <= availableWidth) {
@@ -122,7 +126,7 @@ export abstract class BaseAxis implements IAxis {
       this.recalculateScale();
       return { width: 0, height: 0 };
     }
-    if (this.axisPosition === 'left') {
+    if (this.axisPosition === 'left' || this.axisPosition === 'right') {
       this.calculateSpaceIfDrawnVertical(availableSpace);
     } else {
       this.calculateSpaceIfDrawnHorizontally(availableSpace);
@@ -247,13 +251,71 @@ export abstract class BaseAxis implements IAxis {
     }
     return drawableElement;
   }
+  private getDrawaableElementsForTopAxis(): DrawableElem[] {
+    const drawableElement: DrawableElem[] = [];
+    if (this.showLabel) {
+      drawableElement.push({
+        type: 'text',
+        groupTexts: ['bottom-axis', 'label'],
+        data: this.getTickValues().map((tick) => ({
+          text: tick.toString(),
+          x: this.getScaleValue(tick),
+          y: this.boundingRect.y + this.boundingRect.height - this.axisConfig.lablePadding - this.axisConfig.tickLength,
+          fill: this.axisConfig.labelFill,
+          fontSize: this.axisConfig.labelFontSize,
+          rotation: 0,
+          verticalPos: 'center',
+          horizontalPos: 'bottom',
+        })),
+      });
+    }
+    if (this.showTick) {
+      const y = this.boundingRect.y;
+      drawableElement.push({
+        type: 'path',
+        groupTexts: ['bottom-axis', 'ticks'],
+        data: this.getTickValues().map((tick) => ({
+          path: `M ${this.getScaleValue(tick)},${y + this.boundingRect.height} L ${this.getScaleValue(tick)},${
+            y + this.boundingRect.height - this.axisConfig.tickLength
+          }`,
+          strokeFill: this.axisConfig.tickFill,
+          strokeWidth: this.axisConfig.tickWidth,
+        })),
+      });
+    }
+    if (this.showTitle) {
+      drawableElement.push({
+        type: 'text',
+        groupTexts: ['bottom-axis', 'title'],
+        data: [
+          {
+            text: this.title,
+            x: this.range[0] + (this.range[1] - this.range[0]) / 2,
+            y: this.boundingRect.y + this.axisConfig.titlePadding,
+            fill: this.axisConfig.titleFill,
+            fontSize: this.axisConfig.titleFontSize,
+            rotation: 0,
+            verticalPos: 'center',
+            horizontalPos: 'top',
+          },
+        ],
+      });
+    }
+    return drawableElement;
+  }
 
   getDrawableElements(): DrawableElem[] {
     if (this.axisPosition === 'left') {
       return this.getDrawaableElementsForLeftAxis();
     }
+    if (this.axisPosition === 'right') {
+      throw Error("Drawing of right axis is not implemented");
+    }
     if (this.axisPosition === 'bottom') {
       return this.getDrawaableElementsForBottomAxis();
+    }
+    if (this.axisPosition === 'top') {
+      return this.getDrawaableElementsForTopAxis();
     }
     return [];
   }

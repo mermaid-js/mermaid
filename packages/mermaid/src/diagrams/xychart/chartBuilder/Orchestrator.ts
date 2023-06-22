@@ -1,5 +1,5 @@
 import { log } from '../../../logger.js';
-import { DrawableElem, XYChartConfig, XYChartData } from './Interfaces.js';
+import { DrawableElem, OrientationEnum, XYChartConfig, XYChartData } from './Interfaces.js';
 import { getChartTitleComponent } from './components/ChartTitle.js';
 import { ChartComponent } from './Interfaces.js';
 import { IAxis, getAxis } from './components/axis/index.js';
@@ -21,7 +21,7 @@ export class Orchestrator {
     };
   }
 
-  private calculateSpace() {
+  private calculateVerticalSpace() {
     let availableWidth = this.chartConfig.width;
     let availableHeight = this.chartConfig.height;
     let chartX = 0;
@@ -67,7 +67,7 @@ export class Orchestrator {
       chartHeight += availableHeight;
       availableHeight = 0;
     }
-    const plotBorderWidthHalf = this.chartConfig.plotBorderWidth/2;
+    const plotBorderWidthHalf = this.chartConfig.plotBorderWidth / 2;
     chartX += plotBorderWidthHalf;
     chartY += plotBorderWidthHalf;
     chartWidth -= this.chartConfig.plotBorderWidth;
@@ -86,6 +86,83 @@ export class Orchestrator {
     this.componentStore.xAxis.setBoundingBoxXY({ x: chartX, y: chartY + chartHeight });
     this.componentStore.yAxis.setRange([chartY, chartY + chartHeight]);
     this.componentStore.yAxis.setBoundingBoxXY({ x: 0, y: chartY });
+  }
+
+  private calculateHorizonatalSpace() {
+    let availableWidth = this.chartConfig.width;
+    let availableHeight = this.chartConfig.height;
+    let titleYEnd = 0;
+    let chartX = 0;
+    let chartY = 0;
+    let chartWidth = Math.floor((availableWidth * this.chartConfig.plotReservedSpacePercent) / 100);
+    let chartHeight = Math.floor(
+      (availableHeight * this.chartConfig.plotReservedSpacePercent) / 100
+    );
+    let spaceUsed = this.componentStore.plot.calculateSpace({
+      width: chartWidth,
+      height: chartHeight,
+    });
+    availableWidth -= spaceUsed.width;
+    availableHeight -= spaceUsed.height;
+
+    spaceUsed = this.componentStore.title.calculateSpace({
+      width: this.chartConfig.width,
+      height: availableHeight,
+    });
+    log.trace('space used by title: ', spaceUsed);
+    titleYEnd = spaceUsed.height;
+    availableHeight -= spaceUsed.height;
+    this.componentStore.xAxis.setAxisPosition('left');
+    spaceUsed = this.componentStore.xAxis.calculateSpace({
+      width: availableWidth,
+      height: availableHeight,
+    });
+    availableWidth -= spaceUsed.width;
+    chartX = spaceUsed.width;
+    log.trace('space used by xaxis: ', spaceUsed);
+    this.componentStore.yAxis.setAxisPosition('top');
+    spaceUsed = this.componentStore.yAxis.calculateSpace({
+      width: availableWidth,
+      height: availableHeight,
+    });
+    log.trace('space used by yaxis: ', spaceUsed);
+    availableHeight -= spaceUsed.height;
+    chartY = titleYEnd + spaceUsed.height;
+    if (availableWidth > 0) {
+      chartWidth += availableWidth;
+      availableWidth = 0;
+    }
+    if (availableHeight > 0) {
+      chartHeight += availableHeight;
+      availableHeight = 0;
+    }
+    const plotBorderWidthHalf = this.chartConfig.plotBorderWidth / 2;
+    chartX += plotBorderWidthHalf;
+    chartY += plotBorderWidthHalf;
+    chartWidth -= this.chartConfig.plotBorderWidth;
+    chartHeight -= this.chartConfig.plotBorderWidth;
+    this.componentStore.plot.calculateSpace({
+      width: chartWidth,
+      height: chartHeight,
+    });
+
+    log.trace(
+      `Final chart dimansion: x = ${chartX}, y = ${chartY}, width = ${chartWidth}, height = ${chartHeight}`
+    );
+
+    this.componentStore.plot.setBoundingBoxXY({ x: chartX, y: chartY });
+    this.componentStore.yAxis.setRange([chartX, chartX + chartWidth]);
+    this.componentStore.yAxis.setBoundingBoxXY({ x: chartX, y: titleYEnd });
+    this.componentStore.xAxis.setRange([chartY, chartY + chartHeight]);
+    this.componentStore.xAxis.setBoundingBoxXY({ x: 0, y: chartY });
+  }
+
+  private calculateSpace() {
+    if (this.chartConfig.chartOrientation === OrientationEnum.HORIZONTAL) {
+      this.calculateHorizonatalSpace();
+    } else {
+      this.calculateVerticalSpace();
+    }
   }
 
   getDrawableElement() {

@@ -69,6 +69,7 @@ export class XYChartBuilder {
       plots: [
         {
           type: ChartPlotEnum.BAR,
+          fill: '#0000bb',
           data: [
             ['category1', 23],
             ['category2', 56],
@@ -77,6 +78,8 @@ export class XYChartBuilder {
         },
         {
           type: ChartPlotEnum.LINE,
+          strokeFill: '#bb0000',
+          strokeWidth: 2,
           data: [
             ['category1', 33],
             ['category2', 45],

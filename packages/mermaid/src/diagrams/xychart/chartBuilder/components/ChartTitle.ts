@@ -13,7 +13,6 @@ import { ChartComponent } from '../Interfaces.js';
 export class ChartTitle implements ChartComponent {
   private boundingRect: BoundingRect;
   private showChartTitle: boolean;
-  private orientation: OrientationEnum;
   constructor(
     private textDimensionCalculator: ITextDimensionCalculator,
     private chartConfig: XYChartConfig,
@@ -26,10 +25,6 @@ export class ChartTitle implements ChartComponent {
       height: 0,
     };
     this.showChartTitle = !!(this.chartData.title && this.chartConfig.showtitle);
-    this.orientation = OrientationEnum.VERTICAL;
-  }
-  setOrientation(orientation: OrientationEnum): void {
-    this.orientation = orientation;
   }
   setBoundingBoxXY(point: Point): void {
     this.boundingRect.x = point.x;

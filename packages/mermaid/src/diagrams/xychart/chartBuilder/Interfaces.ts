@@ -47,11 +47,19 @@ export interface XYChartConfig {
 export type SimplePlotDataType = [string | number, number][];
 
 export interface LinePlotData {
-  type: ChartPlotEnum.LINE | ChartPlotEnum.BAR;
+  type: ChartPlotEnum.LINE;
+  strokeFill: string,
+  strokeWidth: number,
   data: SimplePlotDataType;
 }
 
-export type PlotData = LinePlotData;
+export interface BarPlotData {
+  type: ChartPlotEnum.BAR;
+  fill: string,
+  data: SimplePlotDataType;
+}
+
+export type PlotData = LinePlotData | BarPlotData;
 
 export interface BandAxisDataType {
   title: string;
