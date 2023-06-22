@@ -1,5 +1,3 @@
-// import { log } from '../../logger.js';
-// import mermaidAPI from '../../mermaidAPI.js';
 import * as configApi from '../../config.js';
 import common from '../common/common.js';
 import {
@@ -19,11 +17,13 @@ import {
 let links: Array<SankeyLink> = [];
 let nodes: Array<SankeyNode> = [];
 let nodesHash: Record<string, SankeyNode> = {};
-let nodeAlign: string = 'justify';
+let nodeAlign = 'justify';
 
 const setNodeAlign = function (alignment: string): void {
   const nodeAlignments: string[] = ['left', 'right', 'center', 'justify'];
-  if (nodeAlignments.includes(alignment)) nodeAlign = alignment;
+  if (nodeAlignments.includes(alignment)) {
+    nodeAlign = alignment;
+  }
 };
 
 const getNodeAlign = () => nodeAlign;
@@ -96,7 +96,6 @@ export default {
   findOrCreateNode,
   setNodeAlign,
   getNodeAlign,
-  // TODO: If this is a must this probably should be an interface
   getAccTitle,
   setAccTitle,
   getAccDescription,

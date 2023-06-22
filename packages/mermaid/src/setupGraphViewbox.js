@@ -25,7 +25,6 @@ export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
   if (useMaxWidth) {
     attrs.set('width', '100%');
     attrs.set('style', `max-width: ${width}px;`);
-    // TODO: when using max width it does not set height? Is it intended?
   } else {
     attrs.set('height', height);
     attrs.set('width', width);

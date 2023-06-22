@@ -1,14 +1,11 @@
 // @ts-nocheck TODO: fix file
 import { Diagram } from '../../Diagram.js';
-// import { log } from '../../logger.js';
 import * as configApi from '../../config.js';
 
 import {
   select as d3select,
   scaleOrdinal as d3scaleOrdinal,
   schemeTableau10 as d3schemeTableau10,
-  // rgb as d3rgb,
-  // map as d3map,
 } from 'd3';
 
 import {
@@ -20,7 +17,7 @@ import {
   sankeyJustify as d3SankeyJustify,
 } from 'd3-sankey';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-// import { debug } from 'console';
+import { prepareTextForParsing } from './sankeyUtils.js';
 
 /**
  * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
@@ -31,20 +28,15 @@ import { configureSvgSize } from '../../setupGraphViewbox.js';
  * @param diagObj - A standard diagram containing the db and the text and type etc of the diagram
  */
 export const draw = function (text: string, id: string, _version: string, diagObj: Diagram): void {
-  // First of all parse sankey language
-  // Everything that is parsed will be stored in diagObj.DB
-  // That is why we need to clear DB first
+  // Clear DB before parsing
   //
-  if (diagObj?.db?.clear !== undefined) {
-    // why do we need to check for undefined? typescript complains
-    diagObj?.db?.clear();
-  }
+  diagObj.db.clear?.();
+  
   // Launch parsing
-  diagObj.parser.parse(text);
-  // debugger;
-  // log.debug('Parsed sankey diagram');
+  const preparedText = prepareTextForParsing(text);
+  diagObj.parser.parse(preparedText);
 
-  // Figure out what is happening there
+  // TODO: Figure out what is happening there
   // The main thing is svg object that is a d3 wrapper for svg operations
   //
   const { securityLevel, sequence: conf } = configApi.getConfig();
@@ -95,10 +87,10 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   };
   const nodeAlign = nodeAligns[diagObj.db.getNodeAlign()];
 
-  const nodeWidth = 10;
   // Construct and configure a Sankey generator
   // That will be a function that calculates nodes and links dimensions
   //
+  const nodeWidth = 10;
   const sankey = d3Sankey()
     .nodeId((d) => d.id) // we use 'id' property to identify node
     .nodeWidth(nodeWidth)
@@ -109,10 +101,8 @@ export const draw = function (text: string, id: string, _version: string, diagOb
       [width - nodeWidth, height],
     ]);
 
-  // Compute the Sankey layout
-  // Namely calculate nodes and links positions
-  // Our `graph` object will be mutated by this
-  // and enriched with some properties
+  // Compute the Sankey layout: calculate nodes and links positions
+  // Our `graph` object will be mutated by this and enriched with other properties
   //
   sankey(graph);
 
