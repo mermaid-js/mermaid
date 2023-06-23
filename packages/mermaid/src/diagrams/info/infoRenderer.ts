@@ -17,17 +17,15 @@ const draw: DrawDefinition = (text, id, version) => {
     const { securityLevel } = getConfig();
 
     // handle root and document for when rendering in sandbox mode
-    let document: Document | null | undefined;
+    let doc: Document = document;
     if (securityLevel === 'sandbox') {
-      const sandboxElement: HTML = select('#i' + id);
-      document = sandboxElement.node()?.contentDocument;
+      const sandboxElement: HTML = select(`#i${id}`);
+      doc = sandboxElement.node()?.contentDocument ?? doc;
     }
     const root: HTML =
-      document !== undefined && document !== null
-        ? select(document.body as HTMLIFrameElement)
-        : select('body');
+      securityLevel === 'sandbox' ? select(doc.body as HTMLIFrameElement) : select('body');
 
-    const svg: SVG = root.select('#' + id);
+    const svg: SVG = root.select(`#${id}`);
     svg.attr('height', 100);
     svg.attr('width', 400);
 
@@ -38,7 +36,7 @@ const draw: DrawDefinition = (text, id, version) => {
       .attr('class', 'version')
       .attr('font-size', '32px')
       .style('text-anchor', 'middle')
-      .text('v ' + version);
+      .text(`v${version}`);
   } catch (e) {
     log.error('error while rendering info diagram\n', e);
   }
