@@ -28,13 +28,13 @@ export const setConf = function (cnf) {
  * @param _doc
  * @param diagObj
  */
-export const addVertices = function (vert, g, svgId, root, _doc, diagObj) {
+export const addVertices = async function (vert, g, svgId, root, _doc, diagObj) {
   const svg = !root ? select(`[id="${svgId}"]`) : root.select(`[id="${svgId}"]`);
   const doc = !_doc ? document : _doc;
   const keys = Object.keys(vert);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
-  keys.forEach(function (id) {
+  for (const id of keys) {
     const vertex = vert[id];
 
     /**
@@ -57,7 +57,7 @@ export const addVertices = function (vert, g, svgId, root, _doc, diagObj) {
     if (evaluate(getConfig().flowchart.htmlLabels)) {
       // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
       const node = {
-        label: renderKatex(
+        label: await renderKatex(
           vertexText.replace(
             /fa[blrs]?:fa-[\w-]+/g,
             (s) => `<i class='${s.replace(':', ' ')}'></i>`
@@ -153,7 +153,7 @@ export const addVertices = function (vert, g, svgId, root, _doc, diagObj) {
       style: styles.style,
       id: diagObj.db.lookUpDomId(vertex.id),
     });
-  });
+  }
 };
 
 /**
@@ -163,7 +163,7 @@ export const addVertices = function (vert, g, svgId, root, _doc, diagObj) {
  * @param {object} g The graph object
  * @param diagObj
  */
-export const addEdges = function (edges, g, diagObj) {
+export const addEdges = async function (edges, g, diagObj) {
   let cnt = 0;
 
   let defaultStyle;
@@ -175,7 +175,7 @@ export const addEdges = function (edges, g, diagObj) {
     defaultLabelStyle = defaultStyles.labelStyle;
   }
 
-  edges.forEach(function (edge) {
+  for (const edge of edges) {
     cnt++;
 
     // Identify Link
@@ -242,7 +242,7 @@ export const addEdges = function (edges, g, diagObj) {
         edgeData.labelType = 'html';
         edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}" style="${
           edgeData.labelStyle
-        }">${renderKatex(
+        }">${await renderKatex(
           edge.text.replace(
             /fa[blrs]?:fa-[\w-]+/g,
             (s) => `<i class='${s.replace(':', ' ')}'></i>`
@@ -267,7 +267,7 @@ export const addEdges = function (edges, g, diagObj) {
 
     // Add the edge to the graph
     g.setEdge(diagObj.db.lookUpDomId(edge.start), diagObj.db.lookUpDomId(edge.end), edgeData, cnt);
-  });
+  }
 };
 
 /**
@@ -298,7 +298,7 @@ export const getClasses = function (text, diagObj) {
  * @param _version
  * @param diagObj
  */
-export const draw = function (text, id, _version, diagObj) {
+export const draw = async function (text, id, _version, diagObj) {
   log.info('Drawing flowchart');
   diagObj.db.clear();
   const { securityLevel, flowchart: conf } = getConfig();
@@ -372,8 +372,8 @@ export const draw = function (text, id, _version, diagObj) {
       g.setParent(diagObj.db.lookUpDomId(subG.nodes[j]), diagObj.db.lookUpDomId(subG.id));
     }
   }
-  addVertices(vert, g, id, root, doc, diagObj);
-  addEdges(edges, g, diagObj);
+  await addVertices(vert, g, id, root, doc, diagObj);
+  await addEdges(edges, g, diagObj);
 
   // Create the renderer
   const render = new Render();

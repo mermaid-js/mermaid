@@ -1,6 +1,4 @@
 import DOMPurify from 'dompurify';
-// @ts-ignore @types/katex does not work
-import katex from 'katex';
 import { MermaidConfig } from '../../config.type.js';
 
 export const lineBreakRegex = /<br\s*\/?>/gi;
@@ -219,8 +217,8 @@ export const hasKatex = (text: string): boolean => (text.match(katexRegex)?.leng
  * @param config - Configuration for Mermaid
  * @returns Object containing \{width, height\}
  */
-export const calculateMathMLDimensions = (text: string, config: MermaidConfig) => {
-  text = renderKatex(text, config);
+export const calculateMathMLDimensions = async (text: string, config: MermaidConfig) => {
+  text = await renderKatex(text, config);
   const divElem = document.createElement('div');
   divElem.innerHTML = text;
   divElem.id = 'katex-temp';
@@ -234,13 +232,6 @@ export const calculateMathMLDimensions = (text: string, config: MermaidConfig) =
   return dim;
 };
 
-// export const temp = (text: string, config: MermaidConfig) => {
-//   return renderKatex(text, config).split(lineBreakRegex).map((text) =>
-//     hasKatex(text) ?
-//        `<div style="display: flex;">${text}</div>` :
-//        `<div>${text}</div>`).join('');
-// }
-
 /**
  * Attempts to render and return the KaTeX portion of a string with MathML
  *
@@ -248,8 +239,10 @@ export const calculateMathMLDimensions = (text: string, config: MermaidConfig) =
  * @param config - Configuration for Mermaid
  * @returns String containing MathML if KaTeX is supported, or an error message if it is not and stylesheets aren't present
  */
-export const renderKatex = (text: string, config: MermaidConfig): string => {
-  if (isMathMLSupported() || (!isMathMLSupported() && config.legacyMathML)) {
+export const renderKatex = async (text: string, config: MermaidConfig): Promise<string> => {
+  if ((hasKatex(text) && isMathMLSupported()) || (!isMathMLSupported() && config.legacyMathML)) {
+    // @ts-ignore @types/katex does not work
+    const katex = (await import('katex')).default;
     return text
       .split(lineBreakRegex)
       .map((line) =>

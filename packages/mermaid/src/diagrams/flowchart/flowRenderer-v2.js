@@ -30,12 +30,12 @@ export const setConf = function (cnf) {
  * @param doc
  * @param diagObj
  */
-export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
+export const addVertices = async function (vert, g, svgId, root, doc, diagObj) {
   const svg = root.select(`[id="${svgId}"]`);
   const keys = Object.keys(vert);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
-  keys.forEach(function (id) {
+  for (const id of keys) {
     const vertex = vert[id];
 
     /**
@@ -143,7 +143,7 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
       default:
         _shape = 'rect';
     }
-    const labelText = renderKatex(vertexText, getConfig());
+    const labelText = await renderKatex(vertexText, getConfig());
 
     // Add the node
     g.setNode(vertex.id, {
@@ -185,7 +185,7 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
       props: vertex.props,
       padding: getConfig().flowchart.padding,
     });
-  });
+  }
 };
 
 /**
@@ -195,7 +195,7 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
  * @param {object} g The graph object
  * @param diagObj
  */
-export const addEdges = function (edges, g, diagObj) {
+export const addEdges = async function (edges, g, diagObj) {
   log.info('abc78 edges = ', edges);
   let cnt = 0;
   let linkIdCnt = {};
@@ -209,7 +209,7 @@ export const addEdges = function (edges, g, diagObj) {
     defaultLabelStyle = defaultStyles.labelStyle;
   }
 
-  edges.forEach(function (edge) {
+  for (const edge of edges) {
     cnt++;
 
     // Identify Link
@@ -318,7 +318,7 @@ export const addEdges = function (edges, g, diagObj) {
       edgeData.labelpos = 'c';
     }
     edgeData.labelType = edge.labelType;
-    edgeData.label = renderKatex(edge.text.replace(common.lineBreakRegex, '\n'), getConfig());
+    edgeData.label = await renderKatex(edge.text.replace(common.lineBreakRegex, '\n'), getConfig());
 
     if (edge.style === undefined) {
       edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none;';
@@ -331,7 +331,7 @@ export const addEdges = function (edges, g, diagObj) {
 
     // Add the edge to the graph
     g.setEdge(edge.start, edge.end, edgeData, cnt);
-  });
+  }
 };
 
 /**
@@ -438,8 +438,8 @@ export const draw = async function (text, id, _version, diagObj) {
       g.setParent(subG.nodes[j], subG.id);
     }
   }
-  addVertices(vert, g, id, root, doc, diagObj);
-  addEdges(edges, g, diagObj);
+  await addVertices(vert, g, id, root, doc, diagObj);
+  await addEdges(edges, g, diagObj);
 
   // Add custom shapes
   // flowChartShapes.addToRenderV2(addShape);

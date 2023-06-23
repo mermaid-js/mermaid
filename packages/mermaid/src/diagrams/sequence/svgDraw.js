@@ -119,9 +119,9 @@ const popupMenuDownFunc = function (popupId) {
   }
 };
 
-export const drawKatex = function (elem, textData, msgModel = null) {
+export const drawKatex = async function (elem, textData, msgModel = null) {
   let textElem = elem.append('foreignObject');
-  const lines = renderKatex(textData.text, configApi.getConfig());
+  const lines = await renderKatex(textData.text, configApi.getConfig());
 
   const divElem = textElem
     .append('xhtml:div')
@@ -353,7 +353,7 @@ export const fixLifeLineHeights = (diagram, bounds) => {
  * @param {any} conf - DrawText implementation discriminator object
  * @param {boolean} isFooter - If the actor is the footer one
  */
-const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
+const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
   const center = actor.x + actor.width / 2;
   const centerY = actor.y + 5;
 
@@ -407,7 +407,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
     }
   }
 
-  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+  await _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     g,
     rect.x,
@@ -428,10 +428,9 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   return height;
 };
 
-const drawActorTypeActor = function (elem, actor, conf, isFooter) {
+const drawActorTypeActor = async function (elem, actor, conf, isFooter) {
   const center = actor.x + actor.width / 2;
   const centerY = actor.y + 80;
-
   if (!isFooter) {
     actorCnt++;
     elem
@@ -496,7 +495,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   const bounds = actElem.node().getBBox();
   actor.height = bounds.height;
 
-  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+  await _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     actElem,
     rect.x,
@@ -510,21 +509,21 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   return actor.height;
 };
 
-export const drawActor = function (elem, actor, conf, isFooter) {
+export const drawActor = async function (elem, actor, conf, isFooter) {
   switch (actor.type) {
     case 'actor':
-      return drawActorTypeActor(elem, actor, conf, isFooter);
+      return await drawActorTypeActor(elem, actor, conf, isFooter);
     case 'participant':
-      return drawActorTypeParticipant(elem, actor, conf, isFooter);
+      return await drawActorTypeParticipant(elem, actor, conf, isFooter);
   }
 };
 
-export const drawBox = function (elem, box, conf) {
+export const drawBox = async function (elem, box, conf) {
   const boxplustextGroup = elem.append('g');
   const g = boxplustextGroup;
   drawBackgroundRect(g, box);
   if (box.name) {
-    _drawTextCandidateFunc(conf)(
+    await _drawTextCandidateFunc(conf)(
       box.name,
       g,
       box.x,
@@ -571,7 +570,7 @@ export const drawActivation = function (elem, bounds, verticalPos, conf, actorAc
  * @param {any} conf - Diagram configuration
  * @returns {any}
  */
-export const drawLoop = function (elem, loopModel, labelText, conf) {
+export const drawLoop = async function (elem, loopModel, labelText, conf) {
   const {
     boxMargin,
     boxTextMargin,
@@ -633,10 +632,10 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
   txt.fontWeight = fontWeight;
   txt.wrap = true;
 
-  let textElem = hasKatex(txt.text) ? drawKatex(g, txt, loopModel) : drawText(g, txt);
+  let textElem = hasKatex(txt.text) ? await drawKatex(g, txt, loopModel) : drawText(g, txt);
 
   if (loopModel.sectionTitles !== undefined) {
-    loopModel.sectionTitles.forEach(function (item, idx) {
+    for (const [idx, item] of Object.entries(loopModel.sectionTitles)) {
       if (item.message) {
         txt.text = item.message;
         txt.x = loopModel.startx + (loopModel.stopx - loopModel.startx) / 2;
@@ -652,7 +651,7 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
 
         if (hasKatex(txt.text)) {
           loopModel.starty = loopModel.sections[idx].y;
-          drawKatex(g, txt, loopModel);
+          await drawKatex(g, txt, loopModel);
         } else {
           drawText(g, txt);
         }
@@ -663,7 +662,7 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
         );
         loopModel.sections[idx].height += sectionHeight - (boxMargin + boxTextMargin);
       }
-    });
+    }
   }
 
   loopModel.height = Math.round(loopModel.stopy - loopModel.starty);
@@ -951,9 +950,10 @@ const _drawTextCandidateFunc = (function () {
    * @param textAttrs
    * @param conf
    */
-  function byKatex(content, g, x, y, width, height, textAttrs, conf) {
+  async function byKatex(content, g, x, y, width, height, textAttrs, conf) {
     // TODO duplicate render calls, optimize
-    const dim = calculateMathMLDimensions(content, configApi.getConfig());
+
+    const dim = await calculateMathMLDimensions(content, configApi.getConfig());
     const s = g.append('switch');
     const f = s
       .append('foreignObject')
@@ -968,7 +968,7 @@ const _drawTextCandidateFunc = (function () {
       .append('div')
       .style('text-align', 'center')
       .style('vertical-align', 'middle')
-      .html(renderKatex(content, configApi.getConfig()));
+      .html(await renderKatex(content, configApi.getConfig()));
 
     byTspan(content, s, x, y, width, height, textAttrs, conf);
     _setTextAttrs(text, textAttrs);
