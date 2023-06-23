@@ -6,10 +6,12 @@ import { readFileSync } from 'fs';
 import typescript from '@rollup/plugin-typescript';
 import { visualizer } from 'rollup-plugin-visualizer';
 import type { TemplateType } from 'rollup-plugin-visualizer/dist/plugin/template-types.js';
+import istanbul from 'vite-plugin-istanbul';
 
 const visualize = process.argv.includes('--visualize');
 const watch = process.argv.includes('--watch');
 const mermaidOnly = process.argv.includes('--mermaid');
+const coverage = process.env.VITE_COVERAGE === 'true';
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const sourcemap = false;
 
@@ -42,6 +44,11 @@ const packageOptions = {
   'mermaid-example-diagram': {
     name: 'mermaid-example-diagram',
     packageName: 'mermaid-example-diagram',
+    file: 'detector.ts',
+  },
+  'mermaid-zenuml': {
+    name: 'mermaid-zenuml',
+    packageName: 'mermaid-zenuml',
     file: 'detector.ts',
   },
 };
@@ -116,6 +123,12 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
       jisonPlugin(),
       // @ts-expect-error According to the type definitions, rollup plugins are incompatible with vite
       typescript({ compilerOptions: { declaration: false } }),
+      istanbul({
+        exclude: ['node_modules', 'test/', '__mocks__'],
+        extension: ['.js', '.ts'],
+        requireEnv: true,
+        forceBuildInstrument: coverage,
+      }),
       ...visualizerOptions(packageName, core),
     ],
   };
@@ -146,6 +159,7 @@ if (watch) {
   build(getBuildConfig({ minify: false, watch, core: false, entryName: 'mermaid' }));
   if (!mermaidOnly) {
     build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
+    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-zenuml' }));
   }
 } else if (visualize) {
   await build(getBuildConfig({ minify: false, core: true, entryName: 'mermaid' }));

@@ -3,6 +3,7 @@ description: Suggest a new Diagram Type to add to Mermaid.
 labels:
   - 'Status: Triage'
   - 'Type: Enhancement'
+  - 'Type: New Diagram'
 
 body:
   - type: markdown
@@ -17,6 +18,14 @@ body:
         - Use a clear and concise title
         - Fill out the text fields with as much detail as possible.
         - Never be shy to give us screenshots and/or code samples. It will help!
+
+        ## Example issues
+
+        Refer to the discussions here to get an idea of how the diagram syntax is created.
+
+        - https://github.com/mermaid-js/mermaid/issues/4269
+        - https://github.com/mermaid-js/mermaid/issues/4282
+
   - type: textarea
     attributes:
       label: Proposal
@@ -35,8 +44,17 @@ body:
       description: If applicable, add screenshots to show possible examples of how the diagram may look like.
   - type: textarea
     attributes:
-      label: Code Sample
+      label: Syntax
       description: |-
-        If applicable, add a code sample for how to implement this new diagram.
-        The text will automatically be rendered as JavaScript code.
-      render: javascript
+        If possible, include a syntax which could be used to write the diagram.
+        Try to add one or two examples of valid use-cases here.
+  - type: dropdown
+    id: implementation
+    attributes:
+      label: Implementation
+      description: |-
+        Would you like to implement this yourself, or is it a proposal for the community?
+        If there is no corresponding PR from your side after 30 days, the diagram will be open for everyone to implement.
+      options:
+        - I will try and implement it myself.
+        - This is a proposal which I'd love to see built into mermaid by the wonderful community.

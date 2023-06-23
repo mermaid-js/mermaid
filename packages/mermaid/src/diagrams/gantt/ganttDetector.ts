@@ -1,12 +1,16 @@
-import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types.js';
+import type {
+  DiagramDetector,
+  DiagramLoader,
+  ExternalDiagramDefinition,
+} from '../../diagram-api/types.js';
 
 const id = 'gantt';
 
 const detector: DiagramDetector = (txt) => {
-  return txt.match(/^\s*gantt/) !== null;
+  return /^\s*gantt/.test(txt);
 };
 
-const loader = async () => {
+const loader: DiagramLoader = async () => {
   const { diagram } = await import('./ganttDiagram.js');
   return { id, diagram };
 };

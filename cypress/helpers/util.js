@@ -60,7 +60,7 @@ export const renderGraph = (graphStr, options, api) => {
   openURLAndVerifyRendering(url, options);
 };
 
-const openURLAndVerifyRendering = (url, options, validation = undefined) => {
+export const openURLAndVerifyRendering = (url, options, validation = undefined) => {
   const useAppli = Cypress.env('useAppli');
   const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 

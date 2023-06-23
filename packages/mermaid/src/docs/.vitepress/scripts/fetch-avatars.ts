@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'url';
@@ -12,22 +13,23 @@ async function download(url: string, fileName: URL) {
   if (existsSync(fileName)) {
     return;
   }
-  // eslint-disable-next-line no-console
-  console.log('downloading', fileName);
+  console.log('downloading', url);
   try {
     const image = await fetch(url);
     await writeFile(fileName, Buffer.from(await image.arrayBuffer()));
-  } catch {}
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 async function fetchAvatars() {
-  await mkdir(fileURLToPath(new URL('..', getAvatarPath('none'))), { recursive: true });
+  await mkdir(fileURLToPath(new URL(getAvatarPath('none'))).replace('none.png', ''), {
+    recursive: true,
+  });
   contributors = JSON.parse(await readFile(pathContributors, { encoding: 'utf-8' }));
-  await Promise.allSettled(
-    contributors.map((name) =>
-      download(`https://github.com/${name}.png?size=100`, getAvatarPath(name))
-    )
-  );
+  for (const name of contributors) {
+    await download(`https://github.com/${name}.png?size=100`, getAvatarPath(name));
+  }
 }
 
 fetchAvatars();

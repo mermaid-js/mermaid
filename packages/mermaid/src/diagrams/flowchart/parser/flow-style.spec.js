@@ -113,6 +113,22 @@ describe('[Style] when parsing', () => {
     expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
   });
 
+  it('should be possible to declare multiple classes', function () {
+    const res = flow.parser.parse(
+      'graph TD;classDef firstClass,secondClass background:#bbb,border:1px solid red;'
+    );
+
+    const classes = flow.parser.yy.getClasses();
+
+    expect(classes['firstClass'].styles.length).toBe(2);
+    expect(classes['firstClass'].styles[0]).toBe('background:#bbb');
+    expect(classes['firstClass'].styles[1]).toBe('border:1px solid red');
+
+    expect(classes['secondClass'].styles.length).toBe(2);
+    expect(classes['secondClass'].styles[0]).toBe('background:#bbb');
+    expect(classes['secondClass'].styles[1]).toBe('border:1px solid red');
+  });
+
   it('should be possible to declare a class with a dot in the style', function () {
     const res = flow.parser.parse(
       'graph TD;classDef exClass background:#bbb,border:1.5px solid red;'

@@ -1,7 +1,7 @@
 import common, { calculateMathMLDimensions, hasKatex, renderKatex } from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon';
 import { addFunction } from '../../interactionDb.js';
-import { parseFontSize } from '../../utils.js';
+import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
 
@@ -266,15 +266,16 @@ export const drawText = function (elem, textData) {
       textElem.attr('dy', dy);
     }
 
+    const text = line || ZERO_WIDTH_SPACE;
     if (textData.tspan) {
       const span = textElem.append('tspan');
       span.attr('x', textData.x);
       if (textData.fill !== undefined) {
         span.attr('fill', textData.fill);
       }
-      span.text(line);
+      span.text(text);
     } else {
-      textElem.text(line);
+      textElem.text(text);
     }
     if (
       textData.valign !== undefined &&

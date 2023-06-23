@@ -717,7 +717,7 @@ const insertEdge = function (edgesEl, edge, edgeData, diagObj, parentLookupDb) {
   const edgePath = edgesEl
     .insert('path')
     .attr('d', curve(points))
-    .attr('class', 'path')
+    .attr('class', 'path ' + edgeData.classes)
     .attr('fill', 'none');
   const edgeG = edgesEl.insert('g').attr('class', 'edgeLabel');
   const edgeWithLabel = select(edgeG.node().appendChild(edge.labelEl));
