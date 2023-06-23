@@ -27,7 +27,7 @@ describe('the flowchart renderer', function () {
       ['cylinder', 'cylinder'],
       ['group', 'rect'],
     ].forEach(function ([type, expectedShape, expectedRadios = 0]) {
-      it(`should add the correct shaped node to the graph for vertex type ${type}`, function () {
+      it(`should add the correct shaped node to the graph for vertex type ${type}`, async function () {
         const fakeDiag = {
           db: {
             lookUpDomId: () => {
@@ -41,7 +41,7 @@ describe('the flowchart renderer', function () {
             addedNodes.push([id, object]);
           },
         };
-        addVertices(
+        await addVertices(
           {
             v1: {
               type,
@@ -70,7 +70,7 @@ describe('the flowchart renderer', function () {
     ['Multi<br>Line', 'Multi<br/>Line', 'Multi<br />Line', 'Multi<br\t/>Line'].forEach(function (
       labelText
     ) {
-      it('should handle multiline texts with different line breaks', function () {
+      it('should handle multiline texts with different line breaks', async function () {
         const addedNodes = [];
         const fakeDiag = {
           db: {
@@ -84,7 +84,7 @@ describe('the flowchart renderer', function () {
             addedNodes.push([id, object]);
           },
         };
-        addVertices(
+        await addVertices(
           {
             v1: {
               type: 'rect',
@@ -121,7 +121,7 @@ describe('the flowchart renderer', function () {
         'color:#ccc;text-align:center;',
       ],
     ].forEach(function ([style, expectedStyle, expectedLabelStyle]) {
-      it(`should add the styles to style and/or labelStyle for style ${style}`, function () {
+      it(`should add the styles to style and/or labelStyle for style ${style}`, async function () {
         const addedNodes = [];
         const fakeDiag = {
           db: {
@@ -135,7 +135,7 @@ describe('the flowchart renderer', function () {
             addedNodes.push([id, object]);
           },
         };
-        addVertices(
+        await addVertices(
           {
             v1: {
               type: 'rect',
@@ -160,7 +160,7 @@ describe('the flowchart renderer', function () {
       });
     });
 
-    it(`should add default class to all nodes which do not have another class assigned`, function () {
+    it(`should add default class to all nodes which do not have another class assigned`, async function () {
       const addedNodes = [];
       const mockG = {
         setNode: function (id, object) {
@@ -174,7 +174,7 @@ describe('the flowchart renderer', function () {
           },
         },
       };
-      addVertices(
+      await addVertices(
         {
           v1: {
             type: 'rect',
@@ -206,7 +206,7 @@ describe('the flowchart renderer', function () {
   });
 
   describe('when adding edges to a graph', function () {
-    it('should handle multiline texts and set centered label position', function () {
+    it('should handle multiline texts and set centered label position', async function () {
       const addedEdges = [];
       const fakeDiag = {
         db: {
@@ -220,7 +220,7 @@ describe('the flowchart renderer', function () {
           addedEdges.push(data);
         },
       };
-      addEdges(
+      await addEdges(
         [
           { text: 'Multi<br>Line' },
           { text: 'Multi<br/>Line' },
@@ -251,7 +251,7 @@ describe('the flowchart renderer', function () {
         'fill:red;',
       ],
     ].forEach(function ([style, expectedStyle, expectedLabelStyle]) {
-      it(`should add the styles to style and/or labelStyle for style ${style}`, function () {
+      it(`should add the styles to style and/or labelStyle for style ${style}`, async function () {
         const addedEdges = [];
         const fakeDiag = {
           db: {
@@ -265,7 +265,7 @@ describe('the flowchart renderer', function () {
             addedEdges.push(data);
           },
         };
-        addEdges([{ style: style, text: 'styling' }], mockG, fakeDiag);
+        await addEdges([{ style: style, text: 'styling' }], mockG, fakeDiag);
 
         expect(addedEdges).toHaveLength(1);
         expect(addedEdges[0]).toHaveProperty('style', expectedStyle);
