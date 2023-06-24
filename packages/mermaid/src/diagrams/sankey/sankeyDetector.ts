@@ -3,7 +3,7 @@ import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-a
 const id = 'sankey';
 
 const detector: DiagramDetector = (txt) => {
-  return txt.match(/^\s*sankey/) !== null;
+  return txt.match(/^\s*sankey-beta/) !== null;
 };
 
 const loader = async () => {

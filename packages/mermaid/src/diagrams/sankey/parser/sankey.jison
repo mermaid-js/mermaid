@@ -27,7 +27,7 @@ TEXTDATA [\u0020-\u0021\u0023-\u002B\u002D-\u007E]
 
 %%
 
-<INITIAL>"sankey"                              { this.pushState('csv'); return 'SANKEY'; }
+<INITIAL>"sankey-beta"                         { this.pushState('csv'); return 'SANKEY'; }
 <INITIAL,csv><<EOF>>                           { return 'EOF' } // match end of file
 <INITIAL,csv>({CRLF}|{LF})                     { return 'NEWLINE' }
 <INITIAL,csv>{COMMA}                           { return 'COMMA' }

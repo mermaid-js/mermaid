@@ -24,7 +24,7 @@ NUM \d+(.\d+)?
 //--------------
 
 (<<EOF>>|[\n;])+                            { return 'EOS'; } // end of statement is semicolon ; new line \n or end of file
-"sankey"                                    { return 'SANKEY'; }
+"sankey-beta"                               { return 'SANKEY'; }
 <INITIAL>{TOKEN}                            { return 'NODE_ID'; }
 <link_value>{NUM}                           { return 'AMOUNT'; }
 "->"                                        {

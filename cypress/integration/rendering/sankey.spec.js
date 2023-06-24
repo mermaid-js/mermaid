@@ -1,10 +1,10 @@
 import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
 
 describe('Sankey Diagram', () => {
-  it('should render a simple sankey diagram', () => {
+  it('should render a simple example', () => {
     imgSnapshotTest(
       `
-      sankey
+      sankey-beta
       
       a,b,10
       `,
