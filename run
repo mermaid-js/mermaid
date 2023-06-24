@@ -10,7 +10,7 @@ args=${@:2}
 case $command in
 
 sh)
-$RUN --service-ports mermaid sh $args
+$RUN mermaid sh $args
 ;;
 
 i | install)
