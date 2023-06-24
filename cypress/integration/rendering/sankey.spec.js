@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
+import { imgSnapshotTest } from '../../helpers/util.js';
 
 describe('Sankey Diagram', () => {
   it('should render a simple example', () => {
