@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[config.ts:7](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L7)
+config.ts:7
 
 ## Functions
 
@@ -36,7 +36,7 @@ Pushes in a directive to the configuration
 
 #### Defined in
 
-[config.ts:191](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L191)
+config.ts:191
 
 ---
 
@@ -60,7 +60,7 @@ The currentConfig
 
 #### Defined in
 
-[config.ts:137](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L137)
+config.ts:137
 
 ---
 
@@ -84,7 +84,7 @@ The siteConfig
 
 #### Defined in
 
-[config.ts:96](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L96)
+config.ts:96
 
 ---
 
@@ -118,7 +118,7 @@ The siteConfig
 
 #### Defined in
 
-[config.ts:223](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L223)
+config.ts:223
 
 ---
 
@@ -147,7 +147,7 @@ options in-place
 
 #### Defined in
 
-[config.ts:152](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L152)
+config.ts:152
 
 ---
 
@@ -167,7 +167,7 @@ options in-place
 
 #### Defined in
 
-[config.ts:75](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L75)
+config.ts:75
 
 ---
 
@@ -199,7 +199,7 @@ The currentConfig merged with the sanitized conf
 
 #### Defined in
 
-[config.ts:113](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L113)
+config.ts:113
 
 ---
 
@@ -232,7 +232,7 @@ The new siteConfig
 
 #### Defined in
 
-[config.ts:61](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L61)
+config.ts:61
 
 ---
 
@@ -253,7 +253,7 @@ The new siteConfig
 
 #### Defined in
 
-[config.ts:14](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L14)
+config.ts:14
 
 ---
 
@@ -273,4 +273,4 @@ The new siteConfig
 
 #### Defined in
 
-[config.ts:79](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L79)
+config.ts:79

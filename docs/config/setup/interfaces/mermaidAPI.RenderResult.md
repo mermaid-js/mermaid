@@ -39,7 +39,7 @@ bindFunctions?.(div); // To call bindFunctions only if it's present.
 
 #### Defined in
 
-[mermaidAPI.ts:97](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L97)
+mermaidAPI.ts:97
 
 ---
 
@@ -51,4 +51,4 @@ The svg code for the rendered graph.
 
 #### Defined in
 
-[mermaidAPI.ts:87](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L87)
+mermaidAPI.ts:87

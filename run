@@ -1,16 +1,14 @@
 #!/bin/bash
 RUN="docker-compose run --rm"
-# UP="docker-compose up"
 
 name=$(basename $0)
 command=$1
 args=${@:2}
 
-
 case $command in
 
 sh)
-$RUN mermaid sh $args
+$RUN mermaid sh -c "npx $args" 
 ;;
 
 i | install)
@@ -35,7 +33,10 @@ $RUN mermaid sh -c "npx pnpm -w run lint:fix $args"
 
 dev)
 $RUN --service-ports mermaid sh -c "npx pnpm run dev"
-# $UP --rm mermaid sh -c "npx pnpm run dev"
+;;
+
+docs:dev)
+$RUN --service-ports mermaid sh -c "npx pnpm --filter mermaid run docs:dev"
 ;;
 
 help)
@@ -45,6 +46,7 @@ Run commonly used commands within docker containers
 
 \033[1m$name install\033[0m         # Equvalent of pnpm install 
 \033[1m$name dev\033[0m             # Run dev server with examples, open http://localhost:9000
+\033[1m$name docs:dev\033[0m        # For docs contributions, open http://localhost:3333
 
 $name add             # Add package, 'run add d3-sankey'
 $name prettier        # Prettify a file 'run prettier <path-to-file>'
