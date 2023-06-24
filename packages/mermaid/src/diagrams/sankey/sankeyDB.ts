@@ -20,7 +20,7 @@ let nodesMap: Record<string, SankeyNode> = {};
 let nodeAlign = 'justify';
 
 const setNodeAlign = (alignment: string): void => {
-  const nodeAlignments: Set<string>= new Set(['left', 'right', 'center', 'justify']);
+  const nodeAlignments: Set<string> = new Set(['left', 'right', 'center', 'justify']);
   if (nodeAlignments.has(alignment)) {
     nodeAlign = alignment;
   }

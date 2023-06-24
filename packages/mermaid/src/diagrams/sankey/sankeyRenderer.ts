@@ -20,9 +20,10 @@ import {
 } from 'd3-sankey';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { Uid } from './sankeyUtils.js';
+import { SankeyLinkColor } from '../../config.type.js';
 
 /**
- * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
+ * Draws Sankey diagram.
  *
  * @param text - The text of the diagram
  * @param id - The id of the diagram which will be used as a DOM element id¨
@@ -30,10 +31,14 @@ import { Uid } from './sankeyUtils.js';
  * @param diagObj - A standard diagram containing the db and the text and type etc of the diagram
  */
 export const draw = function (text: string, id: string, _version: string, diagObj: Diagram): void {
-  // TODO: Figure out what is happening there
+  // Get Sankey config
+  const { securityLevel, sankey: conf } = configApi.getConfig();
+
+  // TODO:
+  // This code repeats for every diagram
+  // Figure out what is happening there, probably it should be separated
   // The main thing is svg object that is a d3 wrapper for svg operations
   //
-  const { securityLevel, sequence: conf } = configApi.getConfig();
   let sandboxElement: any;
   if (securityLevel === 'sandbox') {
     sandboxElement = d3select('#i' + id);
@@ -43,18 +48,17 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   if (securityLevel === 'sandbox' && sandboxElement) {
     root = d3select(sandboxElement.nodes()[0].contentDocument.body);
   }
-  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
   const svg = securityLevel === 'sandbox' ? root.select(`[id="${id}"]`) : d3select(`[id="${id}"]`);
 
   // Establish svg dimensions and get width and height
   //
-  const elem = doc.getElementById(id);
-  const width = elem.parentElement.offsetWidth;
-  const height = 600;
+  const width = conf?.width || 800;
+  const height = conf?.height || 400;
+  const useMaxWidth = conf?.useMaxWidth || false;
 
-  // FIX: using max width prevents height from being set
-  configureSvgSize(svg, height, width, false);
-  // svg.attr('height', height); // that's why we need this line
+  // FIX: using max width prevents height from being set, is it intended?
+  // to add height directly one can use `svg.attr('height', height)`
+  configureSvgSize(svg, height, width, useMaxWidth);
 
   // Prepare data for construction based on diagObj.db
   // This must be a mutable object with `nodes` and `links` properties:
@@ -142,27 +146,46 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .attr('class', 'link')
     .style('mix-blend-mode', 'multiply');
 
-  const gradient = link
-    .append('linearGradient')
-    .attr('id', (d) => (d.uid = Uid.next('linearGradient-')).id)
-    .attr('gradientUnits', 'userSpaceOnUse')
-    .attr('x1', (d) => d.source.x1)
-    .attr('x2', (d) => d.target.x0);
+  const linkColor = conf?.linkColor || SankeyLinkColor.gradient;
 
-  gradient
-    .append('stop')
-    .attr('offset', '0%')
-    .attr('stop-color', (d) => colorScheme(d.source.id));
+  if (linkColor === SankeyLinkColor.gradient) {
+    const gradient = link
+      .append('linearGradient')
+      .attr('id', (d) => (d.uid = Uid.next('linearGradient-')).id)
+      .attr('gradientUnits', 'userSpaceOnUse')
+      .attr('x1', (d) => d.source.x1)
+      .attr('x2', (d) => d.target.x0);
 
-  gradient
-    .append('stop')
-    .attr('offset', '100%')
-    .attr('stop-color', (d) => colorScheme(d.target.id));
+    gradient
+      .append('stop')
+      .attr('offset', '0%')
+      .attr('stop-color', (d) => colorScheme(d.source.id));
+
+    gradient
+      .append('stop')
+      .attr('offset', '100%')
+      .attr('stop-color', (d) => colorScheme(d.target.id));
+  }
+
+  let coloring: any;
+  switch (linkColor) {
+    case SankeyLinkColor.gradient:
+      coloring = (d) => d.uid;
+      break;
+    case SankeyLinkColor.source:
+      coloring = (d) => d.source.id;
+      break;
+    case SankeyLinkColor.target:
+      coloring = (d) => d.target.id;
+      break;
+    default:
+      coloring = linkColor;
+  }
 
   link
     .append('path')
     .attr('d', d3SankeyLinkHorizontal())
-    .attr('stroke', (d: any) => d.uid)
+    .attr('stroke', coloring)
     .attr('stroke-width', (d: any) => Math.max(1, d.width));
 };
 

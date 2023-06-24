@@ -2270,6 +2270,11 @@ const config: Partial<MermaidConfig> = {
     padding: 10,
     maxNodeWidth: 200,
   },
+  sankey: {
+    width: 800,
+    height: 400,
+    linkColor: 'gradient',
+  },
   fontSize: 16,
 };
 

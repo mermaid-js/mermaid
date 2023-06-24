@@ -412,7 +412,17 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
   wrappingWidth?: number;
 }
 
-export type SankeyDiagramConfig = BaseDiagramConfig;
+export enum SankeyLinkColor {
+  source = 'source',
+  target = 'target',
+  gradient = 'gradient',
+}
+
+export interface SankeyDiagramConfig extends BaseDiagramConfig {
+  width?: number;
+  height?: number;
+  linkColor?: SankeyLinkColor | string;
+}
 
 export interface FontConfig {
   fontSize?: string | number;
