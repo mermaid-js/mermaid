@@ -73,8 +73,10 @@ const getStyles = (
 `;
 };
 
-export const addStylesForDiagram = (type: string, diagramTheme: unknown): void => {
-  themes[type] = diagramTheme;
+export const addStylesForDiagram = (type: string, diagramTheme?: unknown): void => {
+  if (diagramTheme !== undefined) {
+    themes[type] = diagramTheme;
+  }
 };
 
 export default getStyles;
