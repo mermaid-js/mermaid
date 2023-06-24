@@ -240,7 +240,7 @@ export const calculateMathMLDimensions = async (text: string, config: MermaidCon
  * @returns String containing MathML if KaTeX is supported, or an error message if it is not and stylesheets aren't present
  */
 export const renderKatex = async (text: string, config: MermaidConfig): Promise<string> => {
-  if ((hasKatex(text) && isMathMLSupported()) || (!isMathMLSupported() && config.legacyMathML)) {
+  if (hasKatex(text) && (isMathMLSupported() || config.legacyMathML)) {
     // @ts-ignore @types/katex does not work
     const katex = (await import('katex')).default;
     return text
