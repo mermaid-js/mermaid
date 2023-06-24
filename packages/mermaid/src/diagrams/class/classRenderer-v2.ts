@@ -93,52 +93,54 @@ export const addClasses = function (
   log.info(classes);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
-  keys.forEach(function (id) {
-    const vertex = classes[id];
+  keys
+    .filter((id) => classes[id].parent == parent)
+    .forEach(function (id) {
+      const vertex = classes[id];
 
-    /**
-     * Variable for storing the classes for the vertex
-     */
-    let cssClassStr = '';
-    if (vertex.cssClasses.length > 0) {
-      cssClassStr = cssClassStr + ' ' + vertex.cssClasses.join(' ');
-    }
+      /**
+       * Variable for storing the classes for the vertex
+       */
+      let cssClassStr = '';
+      if (vertex.cssClasses.length > 0) {
+        cssClassStr = cssClassStr + ' ' + vertex.cssClasses.join(' ');
+      }
 
-    const styles = { labelStyle: '', style: '' }; //getStylesFromArray(vertex.styles);
+      const styles = { labelStyle: '', style: '' }; //getStylesFromArray(vertex.styles);
 
-    // Use vertex id as text in the box if no text is provided by the graph definition
-    const vertexText = vertex.label ?? vertex.id;
-    const radius = 0;
-    const shape = 'class_box';
+      // Use vertex id as text in the box if no text is provided by the graph definition
+      const vertexText = vertex.label ?? vertex.id;
+      const radius = 0;
+      const shape = 'class_box';
 
-    // Add the node
-    const node = {
-      labelStyle: styles.labelStyle,
-      shape: shape,
-      labelText: sanitizeText(vertexText),
-      classData: vertex,
-      rx: radius,
-      ry: radius,
-      class: cssClassStr,
-      style: styles.style,
-      id: vertex.id,
-      domId: vertex.domId,
-      tooltip: diagObj.db.getTooltip(vertex.id, parent) || '',
-      haveCallback: vertex.haveCallback,
-      link: vertex.link,
-      width: vertex.type === 'group' ? 500 : undefined,
-      type: vertex.type,
-      // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release
-      padding: getConfig().flowchart?.padding ?? getConfig().class?.padding,
-    };
-    g.setNode(vertex.id, node);
+      // Add the node
+      const node = {
+        labelStyle: styles.labelStyle,
+        shape: shape,
+        labelText: sanitizeText(vertexText),
+        classData: vertex,
+        rx: radius,
+        ry: radius,
+        class: cssClassStr,
+        style: styles.style,
+        id: vertex.id,
+        domId: vertex.domId,
+        tooltip: diagObj.db.getTooltip(vertex.id, parent) || '',
+        haveCallback: vertex.haveCallback,
+        link: vertex.link,
+        width: vertex.type === 'group' ? 500 : undefined,
+        type: vertex.type,
+        // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release
+        padding: getConfig().flowchart?.padding ?? getConfig().class?.padding,
+      };
+      g.setNode(vertex.id, node);
 
-    if (parent) {
-      g.setParent(vertex.id, parent);
-    }
+      if (parent) {
+        g.setParent(vertex.id, parent);
+      }
 
-    log.info('setNode', node);
-  });
+      log.info('setNode', node);
+    });
 };
 
 /**
