@@ -12,26 +12,26 @@ import {
 
 // Variables where graph data is stored
 // Sankey diagram represented by nodes and links between those nodes
-// We have to track nodes uniqueness (by ID), thats why we need hash also
+// We have to track nodes uniqueness (by ID), thats why we need a mapping also
 //
 let links: Array<SankeyLink> = [];
 let nodes: Array<SankeyNode> = [];
-let nodesHash: Record<string, SankeyNode> = {};
+let nodesMap: Record<string, SankeyNode> = {};
 let nodeAlign = 'justify';
 
-const setNodeAlign = function (alignment: string): void {
-  const nodeAlignments: string[] = ['left', 'right', 'center', 'justify'];
-  if (nodeAlignments.includes(alignment)) {
+const setNodeAlign = (alignment: string): void => {
+  const nodeAlignments: Set<string>= new Set(['left', 'right', 'center', 'justify']);
+  if (nodeAlignments.has(alignment)) {
     nodeAlign = alignment;
   }
 };
 
-const getNodeAlign = () => nodeAlign;
+const getNodeAlign = (): string => nodeAlign;
 
-const clear = function () {
+const clear = (): void => {
   links = [];
   nodes = [];
-  nodesHash = {};
+  nodesMap = {};
   nodeAlign = 'justify';
   commonClear();
 };
@@ -45,30 +45,26 @@ class SankeyLink {
  * @param target - Node where the link ends
  * @param value - number, float or integer, describes the amount to be passed
  */
-const addLink = function (source: SankeyNode, target: SankeyNode, value: number): SankeyLink {
-  const link: SankeyLink = new SankeyLink(source, target, value);
-
-  links.push(link);
-
-  return link;
+const addLink = (source: SankeyNode, target: SankeyNode, value: number): void => {
+  links.push(new SankeyLink(source, target, value));
 };
 
 class SankeyNode {
-  constructor(public ID: string, public label: string = ID) {}
+  constructor(public ID: string) {}
 }
 
 /**
  * @param ID - The id of the node
  */
-const findOrCreateNode = function (ID: string): SankeyNode {
+const findOrCreateNode = (ID: string): SankeyNode => {
   ID = common.sanitizeText(ID, configApi.getConfig());
   let node: SankeyNode;
-  if (nodesHash[ID] === undefined) {
+  if (nodesMap[ID] === undefined) {
     node = new SankeyNode(ID);
-    nodesHash[ID] = node;
+    nodesMap[ID] = node;
     nodes.push(node);
   } else {
-    node = nodesHash[ID];
+    node = nodesMap[ID];
   }
   return node;
 };
@@ -77,7 +73,7 @@ const getNodes = () => nodes;
 const getLinks = () => links;
 
 const getGraph = () => ({
-  nodes: nodes.map((node) => ({ id: node.ID, label: node.label })),
+  nodes: nodes.map((node) => ({ id: node.ID })),
   links: links.map((link) => ({
     source: link.source.ID,
     target: link.target.ID,
@@ -86,7 +82,7 @@ const getGraph = () => ({
 });
 
 export default {
-  nodesHash,
+  nodesMap,
   getConfig: () => configApi.getConfig().sankey,
   getNodes,
   getLinks,

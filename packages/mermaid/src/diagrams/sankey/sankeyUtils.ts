@@ -1,4 +1,4 @@
-const prepareTextForParsing = (text: string): string => {
+export const prepareTextForParsing = (text: string): string => {
   const textToParse = text
     .replaceAll(/^[^\S\n\r]+|[^\S\n\r]+$/g, '') // remove all trailing spaces for each row
     .replaceAll(/([\n\r])+/g, '\n') // remove empty lines duplicated
@@ -7,7 +7,7 @@ const prepareTextForParsing = (text: string): string => {
   return textToParse;
 };
 
-class Uid {
+export class Uid {
   private static count = 0;
   id: string;
   href: string;
@@ -25,5 +25,3 @@ class Uid {
     return 'url(' + this.href + ')';
   }
 }
-
-export { Uid, prepareTextForParsing };

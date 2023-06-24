@@ -57,20 +57,12 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   // svg.attr('height', height); // that's why we need this line
 
   // Prepare data for construction based on diagObj.db
-  // This must be a mutable object with 2 properties:
-  // `nodes` and `links`
+  // This must be a mutable object with `nodes` and `links` properties:
   //
-  //    let graph = {
-  //      "nodes": [
-  //        { "id": "Alice" },
-  //        { "id": "Bob" },
-  //        { "id": "Carol" }
-  //      ],
-  //      "links": [
-  //        { "source": "Alice", "target": "Bob", "value": 23 },
-  //        { "source": "Bob", "target": "Carol", "value": 43 }
-  //      ]
-  //    };
+  //    {
+  //      "nodes": [ { "id": "Alice" }, { "id": "Bob" }, { "id": "Carol" } ],
+  //      "links": [ { "source": "Alice", "target": "Bob", "value": 23 }, { "source": "Bob", "target": "Carol", "value": 43 } ]
+  //    }
   //
   const graph = diagObj.db.getGraph();
   const nodeAligns = {
@@ -136,7 +128,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .attr('y', (d: any) => (d.y1 + d.y0) / 2)
     .attr('dy', '0.35em')
     .attr('text-anchor', (d: any) => (d.x0 < width / 2 ? 'start' : 'end'))
-    .text((d: any) => d.label);
+    .text((d: any) => d.id);
 
   // Creates the paths that represent the links.
   const link = svg

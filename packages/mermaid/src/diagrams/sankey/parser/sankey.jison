@@ -53,7 +53,7 @@ record
       const source = yy.findOrCreateNode($source.trim());
       const target = yy.findOrCreateNode($target.trim());
       const value = parseFloat($value.trim());
-      $$ = yy.addLink(source,target,value);
+      yy.addLink(source,target,value);
     } // parse only 3 fields, this is not part of CSV standard
   ;
 
