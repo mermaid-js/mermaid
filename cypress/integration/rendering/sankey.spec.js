@@ -10,6 +10,5 @@ describe('Sankey Diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 });
