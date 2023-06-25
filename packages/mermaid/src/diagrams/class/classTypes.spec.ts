@@ -372,7 +372,7 @@ describe('given text representing a method, ', function () {
       const str = `getTimes(List~T~)*`;
 
       const classMember = new ClassMember(str, 'method');
-      expect(classMember.getDisplayDetails().displayText).toBe('getTimes(List>List<T>>)');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTimes(List<T>)');
       expect(classMember.getDisplayDetails().cssStyle).toBe(abstractCssStyle);
     });
   });
@@ -537,7 +537,7 @@ describe('given text representing a method, ', function () {
       const str = `getTimes() List~T~*`;
 
       const classMember = new ClassMember(str, 'method');
-      expect(classMember.getDisplayDetails().displayText).toBe('getTimes() : List<T>)');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTimes() : List<T>');
       expect(classMember.getDisplayDetails().cssStyle).toBe(abstractCssStyle);
     });
   });
