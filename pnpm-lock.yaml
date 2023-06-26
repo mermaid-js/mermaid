@@ -445,8 +445,8 @@ importers:
         specifier: ^0.16.0
         version: 0.16.0(vite@4.3.3)(workbox-build@7.0.0)(workbox-window@6.5.4)
       vitepress:
-        specifier: 1.0.0-beta.2
-        version: 1.0.0-beta.2(@algolia/client-search@4.14.2)(@types/node@18.16.0)(search-insights@2.6.0)
+        specifier: 1.0.0-beta.3
+        version: 1.0.0-beta.3(@algolia/client-search@4.14.2)(@types/node@18.16.0)(search-insights@2.6.0)
       workbox-window:
         specifier: ^6.5.4
         version: 6.5.4
@@ -14939,8 +14939,8 @@ packages:
       - terser
     dev: true
 
-  /vitepress@1.0.0-beta.2(@algolia/client-search@4.14.2)(@types/node@18.16.0)(search-insights@2.6.0):
-    resolution: {integrity: sha512-DBXYjtYbm3W1IPPJ2TiCaK/XK+o/2XmL2+jslOGKm+txcbmG0kbeB+vadC5tCUZA9NdA+9Ywj3M4548c7t/SDg==}
+  /vitepress@1.0.0-beta.3(@algolia/client-search@4.14.2)(@types/node@18.16.0)(search-insights@2.6.0):
+    resolution: {integrity: sha512-GR5Pvr/o343NN1M4Na1shhDYZRrQbjmLq7WE0lla0H8iDPAsHE8agTHLWfu3FWx+3q2KA29sv16+0O9RQKGjlA==}
     hasBin: true
     dependencies:
       '@docsearch/css': 3.5.1
