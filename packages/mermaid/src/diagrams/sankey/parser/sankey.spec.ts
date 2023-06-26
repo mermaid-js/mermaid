@@ -5,6 +5,8 @@ import { parser } from './sankey.jison';
 import db from '../sankeyDB.js';
 import { cleanupComments } from '../../../diagram-api/comments.js';
 import { prepareTextForParsing } from '../sankeyUtils.js';
+import * as fs from 'fs';
+import * as path from 'path';
 
 describe('Sankey diagram', function () {
   describe('when parsing an info graph it', function () {
@@ -15,8 +17,6 @@ describe('Sankey diagram', function () {
     });
 
     it('parses csv', async () => {
-      const fs = await import('fs');
-      const path = await import('path');
       const csv = path.resolve(__dirname, './energy.csv');
       const data = fs.readFileSync(csv, 'utf8');
       const graphDefinition = prepareTextForParsing(cleanupComments('sankey-beta\n\n ' + data));

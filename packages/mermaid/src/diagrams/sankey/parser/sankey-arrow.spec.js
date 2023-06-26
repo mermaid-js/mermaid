@@ -1,7 +1,6 @@
 import diagram from './sankey-arrow.jison';
 import { parser } from './sankey-arrow.jison';
 import db from '../sankeyDB.js';
-// import { fail } from 'assert';
 
 describe('sankey-beta diagram', function () {
   // TODO - these examples should be put into ./parser/stateDiagram.spec.js
