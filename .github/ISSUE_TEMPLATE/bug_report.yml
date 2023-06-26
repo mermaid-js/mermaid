@@ -53,8 +53,18 @@ body:
         Please fill out the info below.
         Note that you only need to fill out the relevant section
       value: |-
-        - Mermaid version: 
+        - Mermaid version:
         - Browser and Version: [Chrome, Edge, Firefox]
+  - type: textarea
+    attributes:
+      label: Suggested Solutions
+      description: >
+        If applicable, suggest solutions that could resolve the bug.
+        It would help maintainers/contributors to not waist time looking for some,
+        even pointing the line causing the bug would be great!
+      placeholder: |-
+        - Add a new option for ...
+        - Add a new type for ...
   - type: textarea
     attributes:
       label: Additional Context
