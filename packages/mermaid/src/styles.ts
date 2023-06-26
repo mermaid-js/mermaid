@@ -1,7 +1,8 @@
 import type { FlowChartStyleOptions } from './diagrams/flowchart/styles.js';
 import { log } from './logger.js';
+import { getDiagramStyles } from './diagram-api/types.js';
 
-const themes: Record<string, (options?: any) => string> = {};
+const themes: Record<string, getDiagramStyles> = {};
 
 const getStyles = (
   type: string,
@@ -73,12 +74,9 @@ const getStyles = (
 `;
 };
 
-export const addStylesForDiagram = (
-  type: string,
-  diagramTheme?: (options?: any) => string
-): void => {
-  if (diagramTheme !== undefined) {
-    themes[type] = diagramTheme;
+export const addStylesForDiagram = (type: string, getDiagramStyles?: getDiagramStyles): void => {
+  if (getDiagramStyles !== undefined) {
+    themes[type] = getDiagramStyles;
   }
 };
 
