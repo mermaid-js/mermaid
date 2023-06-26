@@ -83,4 +83,4 @@ export type HTML = d3.Selection<HTMLIFrameElement, unknown, Element, unknown>;
 
 export type SVG = d3.Selection<SVGSVGElement, unknown, Element, unknown>;
 
-export type getDiagramStyles = (options?: unknown) => string;
+export type getDiagramStyles = (options?: any) => string;
