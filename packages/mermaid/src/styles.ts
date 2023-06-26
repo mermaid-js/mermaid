@@ -78,7 +78,7 @@ export const addStylesForDiagram = (
   diagramTheme?: (options?: any) => string
 ): void => {
   if (diagramTheme !== undefined) {
-    themes[type] = (options) => diagramTheme(options);
+    themes[type] = diagramTheme;
   }
 };
 
