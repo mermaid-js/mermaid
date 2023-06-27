@@ -257,8 +257,10 @@ let us look at same example, where we have disabled the multiColor option.
 
 ### Customizing Color scheme
 
-You can customize the color scheme using the `cScale0` to `cScale11` theme variables. Mermaid allows you to set unique colors for up-to 12 sections, where `cScale0` variable will drive the value of the first section or time-period, `cScale1` will drive the value of the second section and so on.
+You can customize the color scheme using the `cScale0` to `cScale11` theme variables, which will change the background colors. Mermaid allows you to set unique colors for up-to 12 sections, where `cScale0` variable will drive the value of the first section or time-period, `cScale1` will drive the value of the second section and so on.
 In case you have more than 12 sections, the color scheme will start to repeat.
+
+If you also want to change the foreground color of a section, you can do so use theme variables corresponding `cScaleLabel0` to `cScaleLabel11` variables.
 
 NOTE: Default values for these theme variables are picked from the selected theme. If you want to override the default values, you can use the `initialize` call to add your custom theme variable values.
 
@@ -268,9 +270,9 @@ Now let's override the default values for the `cScale0` to `cScale2` variables:
 
 ```mermaid-example
     %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-              'cScale0': '#ff0000',
+              'cScale0': '#ff0000', 'cScaleLabel0': '#ffffff',
               'cScale1': '#00ff00',
-              'cScale2': '#0000ff'
+              'cScale2': '#0000ff', 'cScaleLabel2': '#ffffff'
        } } }%%
        timeline
         title History of Social Media Platform
@@ -286,9 +288,9 @@ Now let's override the default values for the `cScale0` to `cScale2` variables:
 
 ```mermaid
     %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-              'cScale0': '#ff0000',
+              'cScale0': '#ff0000', 'cScaleLabel0': '#ffffff',
               'cScale1': '#00ff00',
-              'cScale2': '#0000ff'
+              'cScale2': '#0000ff', 'cScaleLabel2': '#ffffff'
        } } }%%
        timeline
         title History of Social Media Platform
