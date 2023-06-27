@@ -31,7 +31,7 @@ import { SankeyLinkColor, SankeyNodeAlignment } from '../../config.type.js';
 export const draw = function (text: string, id: string, _version: string, diagObj: Diagram): void {
   // Get Sankey config
   const { securityLevel, sankey: conf } = configApi.getConfig();
-  
+
   // TODO:
   // This code repeats for every diagram
   // Figure out what is happening there, probably it should be separated
@@ -81,7 +81,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     [SankeyNodeAlignment.right, d3SankeyRight],
     [SankeyNodeAlignment.center, d3SankeyCenter],
     [SankeyNodeAlignment.justify, d3SankeyJustify],
-  ])
+  ]);
   // We need fallback because typescript thinks that `get` can result in undefined
   const nodeAlign = alignmentsMap.get(nodeAlignment) || d3SankeyJustify;
 
