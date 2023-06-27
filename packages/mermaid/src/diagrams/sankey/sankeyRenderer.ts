@@ -1,12 +1,9 @@
-// @ts-nocheck TODO: fix file
 import { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
 
 import {
   select as d3select,
-  // @ts-ignore TODO: make proper import
   scaleOrdinal as d3scaleOrdinal,
-  // @ts-ignore TODO: make proper import
   schemeTableau10 as d3schemeTableau10,
 } from 'd3';
 
@@ -20,7 +17,7 @@ import {
 } from 'd3-sankey';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { Uid } from './sankeyUtils.js';
-import { SankeyLinkColor } from '../../config.type.js';
+import { SankeyLinkColor, SankeyNodeAlignment } from '../../config.type.js';
 
 /**
  * Draws Sankey diagram.
@@ -69,13 +66,14 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //    }
   //
   const graph = diagObj.db.getGraph();
-  const nodeAligns = {
-    left: d3SankeyLeft,
-    right: d3SankeyRight,
-    center: d3SankeyCenter,
-    justify: d3SankeyJustify,
-  };
-  const nodeAlign = nodeAligns[diagObj.db.getNodeAlign()];
+  
+  const alignmentsMap: Record<SankeyNodeAlignment, (node: SankeyNode<{}, {}>, n: number) => number> = new Map([
+    [SankeyNodeAlignment.left, d3SankeyLeft],
+    [SankeyNodeAlignment.right, d3SankeyRight],
+    [SankeyNodeAlignment.center, d3SankeyCenter],
+    [SankeyNodeAlignment.justify, d3SankeyJustify],
+  ]);
+  const nodeAlignment = alignmentsMap[conf?.nodeAlignment];
 
   // Construct and configure a Sankey generator
   // That will be a function that calculates nodes and links dimensions
@@ -85,7 +83,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .nodeId((d: any) => d.id) // we use 'id' property to identify node
     .nodeWidth(nodeWidth)
     .nodePadding(10)
-    .nodeAlign(nodeAlign)
+    .nodeAlign(nodeAlignment)
     .extent([
       [0, 0],
       [width, height],

@@ -418,10 +418,18 @@ export enum SankeyLinkColor {
   gradient = 'gradient',
 }
 
+export enum SankeyNodeAlignment {
+  left = 'left',
+  right = 'right',
+  center = 'center',
+  justify = 'justify',
+}
+
 export interface SankeyDiagramConfig extends BaseDiagramConfig {
   width?: number;
   height?: number;
   linkColor?: SankeyLinkColor | string;
+  nodeAlignment?: SankeyNodeAlignment;
 }
 
 export interface FontConfig {

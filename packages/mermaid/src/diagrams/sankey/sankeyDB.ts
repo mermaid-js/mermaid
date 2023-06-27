@@ -17,22 +17,11 @@ import {
 let links: SankeyLink[] = [];
 let nodes: SankeyNode[] = [];
 let nodesMap: Record<string, SankeyNode> = {};
-let nodeAlign = 'justify';
-
-const setNodeAlign = (alignment: string): void => {
-  const nodeAlignments: Set<string> = new Set(['left', 'right', 'center', 'justify']);
-  if (nodeAlignments.has(alignment)) {
-    nodeAlign = alignment;
-  }
-};
-
-const getNodeAlign = (): string => nodeAlign;
 
 const clear = (): void => {
   links = [];
   nodes = [];
   nodesMap = {};
-  nodeAlign = 'justify';
   commonClear();
 };
 
@@ -58,15 +47,13 @@ class SankeyNode {
  */
 const findOrCreateNode = (ID: string): SankeyNode => {
   ID = common.sanitizeText(ID, configApi.getConfig());
-  let node: SankeyNode;
-  if (nodesMap[ID] === undefined) {
-    node = new SankeyNode(ID);
-    nodesMap[ID] = node;
-    nodes.push(node);
-  } else {
-    node = nodesMap[ID];
+  if (nodesMap[ID]) {
+    return nodesMap[ID];
   }
-  return node;
+
+  nodesMap[ID] = new SankeyNode(ID);
+  nodes.push(nodesMap[ID]);
+  return nodesMap[ID];
 };
 
 const getNodes = () => nodes;
@@ -89,8 +76,6 @@ export default {
   getGraph,
   addLink,
   findOrCreateNode,
-  setNodeAlign,
-  getNodeAlign,
   getAccTitle,
   setAccTitle,
   getAccDescription,

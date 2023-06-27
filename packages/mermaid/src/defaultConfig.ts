@@ -1,5 +1,5 @@
 import theme from './themes/index.js';
-import { MermaidConfig } from './config.type.js';
+import { MermaidConfig, SankeyLinkColor, SankeyNodeAlignment } from './config.type.js';
 /**
  * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click
  * here](8.6.0_docs.md)].**
@@ -2273,7 +2273,8 @@ const config: Partial<MermaidConfig> = {
   sankey: {
     width: 800,
     height: 400,
-    linkColor: 'gradient',
+    linkColor: SankeyLinkColor.gradient,
+    nodeAlignment: SankeyNodeAlignment.justify,
   },
   fontSize: 16,
 };
