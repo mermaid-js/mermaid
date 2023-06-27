@@ -60,10 +60,9 @@ body:
       label: Suggested Solutions
       description: >
         If applicable, suggest solutions that could resolve the bug.
-        It would help maintainers/contributors to not waist time looking for some,
-        even pointing the line causing the bug would be great!
+        It would help maintainers/contributors to not waste time looking for the solution. Even pointing the line causing the bug would be great!
       placeholder: |-
-        - Add a new option for ...
+        - Variable `parser` in file <filepath> is not initialised ...
         - Add a new type for ...
   - type: textarea
     attributes:
