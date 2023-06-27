@@ -185,7 +185,7 @@ Now let's override the default values for the `cScale0` to `cScale2` variables:
 
 ```mermaid-example
     %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-              'cScale0': '#ff0000', 'cScaleLabel0': '#ffffff', 
+              'cScale0': '#ff0000', 'cScaleLabel0': '#ffffff',
               'cScale1': '#00ff00',
               'cScale2': '#0000ff', 'cScaleLabel2': '#ffffff'
        } } }%%
