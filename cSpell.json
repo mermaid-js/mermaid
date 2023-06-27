@@ -40,6 +40,7 @@
     "dompurify",
     "edgechromium",
     "elkjs",
+    "elle",
     "faber",
     "flatmap",
     "ftplugin",
@@ -84,6 +85,7 @@
     "mkdocs",
     "mmorel",
     "mult",
+    "neurodiverse",
     "nextra",
     "orlandoni",
     "pathe",
@@ -139,9 +141,7 @@
     "vueuse",
     "xlink",
     "yash",
-    "zenuml",
-    "Elle",
-    "Neurodiverse"
+    "zenuml"
   ],
   "patterns": [
     { "name": "Markdown links", "pattern": "\\((.*)\\)", "description": "" },
