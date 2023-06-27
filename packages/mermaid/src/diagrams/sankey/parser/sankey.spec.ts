@@ -1,7 +1,5 @@
 // @ts-ignore: jison doesn't export types
-import diagram from './sankey.jison';
-// @ts-ignore: jison doesn't export types
-import { parser } from './sankey.jison';
+import sankey from './sankey.jison';
 import db from '../sankeyDB.js';
 import { cleanupComments } from '../../../diagram-api/comments.js';
 import { prepareTextForParsing } from '../sankeyUtils.js';
@@ -11,9 +9,8 @@ import * as path from 'path';
 describe('Sankey diagram', function () {
   describe('when parsing an info graph it', function () {
     beforeEach(function () {
-      parser.yy = db;
-      diagram.parser.yy = db;
-      diagram.parser.yy.clear();
+      sankey.parser.yy = db;
+      sankey.parser.yy.clear();
     });
 
     it('parses csv', async () => {
@@ -21,7 +18,7 @@ describe('Sankey diagram', function () {
       const data = fs.readFileSync(csv, 'utf8');
       const graphDefinition = prepareTextForParsing(cleanupComments('sankey-beta\n\n ' + data));
 
-      parser.parse(graphDefinition);
+      sankey.parser.parse(graphDefinition);
     });
   });
 });
