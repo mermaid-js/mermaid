@@ -28,7 +28,7 @@ export const mermaidUrl = (
     mermaid: options,
   };
   const objStr: string = JSON.stringify(codeObject);
-  let url: string = `http://localhost:9000/e2e.html?graph=${utf8ToB64(objStr)}`;
+  let url = `http://localhost:9000/e2e.html?graph=${utf8ToB64(objStr)}`;
   if (api) {
     url = `http://localhost:9000/xss.html?graph=${graphStr}`;
   }
@@ -43,7 +43,7 @@ export const mermaidUrl = (
 export const imgSnapshotTest = (
   graphStr: string,
   _options: CypressMermaidConfig = {},
-  api: boolean = false,
+  api = false,
   validation?: any
 ): void => {
   cy.log(JSON.stringify(_options));
@@ -77,7 +77,7 @@ export const imgSnapshotTest = (
 export const urlSnapshotTest = (
   url: string,
   _options: CypressMermaidConfig,
-  _api: boolean = false,
+  _api = false,
   validation?: any
 ): void => {
   const options: CypressMermaidConfig = Object.assign(_options);
@@ -87,7 +87,7 @@ export const urlSnapshotTest = (
 export const renderGraph = (
   graphStr: string,
   options: CypressMermaidConfig = {},
-  api: boolean = false
+  api = false
 ): void => {
   const url: string = mermaidUrl(graphStr, options, api);
   openURLAndVerifyRendering(url, options);
