@@ -8,6 +8,7 @@ authors:
     given-names: Knut
   - name: "Contributors to Mermaid"
 repository-code: "https://github.com/mermaid-js/mermaid"
+date-released: 2014-12-02
 url: "https://mermaid.js.org/"
 abstract: >-
   JavaScript based diagramming and charting tool that renders Markdown-inspired
