@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
 

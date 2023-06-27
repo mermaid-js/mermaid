@@ -42,9 +42,6 @@ class SankeyNode {
   constructor(public ID: string) {}
 }
 
-/**
- * @param ID - The id of the node
- */
 const findOrCreateNode = (ID: string): SankeyNode => {
   ID = common.sanitizeText(ID, configApi.getConfig());
   if (nodesMap[ID]) {

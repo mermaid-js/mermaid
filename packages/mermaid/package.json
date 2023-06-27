@@ -53,10 +53,13 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.2",
+    "@types/d3-scale": "^4.0.3",
+    "@types/d3-scale-chromatic": "^3.0.0",
     "cytoscape": "^3.23.0",
     "cytoscape-cose-bilkent": "^4.1.0",
     "cytoscape-fcose": "^2.1.0",
     "d3": "^7.4.0",
+    "d3-sankey": "^0.12.3",
     "dagre-d3-es": "7.0.10",
     "dayjs": "^1.11.7",
     "dompurify": "3.0.3",
