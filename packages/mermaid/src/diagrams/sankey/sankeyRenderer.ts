@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
 
@@ -15,6 +14,7 @@ import {
   sankeyRight as d3SankeyRight,
   sankeyCenter as d3SankeyCenter,
   sankeyJustify as d3SankeyJustify,
+  SankeyNode as d3SankeyNode,
 } from 'd3-sankey';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { Uid } from '../../rendering-util/uid.js';
@@ -41,11 +41,11 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   if (securityLevel === 'sandbox') {
     sandboxElement = d3select('#i' + id);
   }
-  let root = d3select('body');
-
-  if (securityLevel === 'sandbox' && sandboxElement) {
-    root = d3select(sandboxElement.nodes()[0].contentDocument.body);
-  }
+  const root =
+    securityLevel === 'sandbox'
+      ? d3select(sandboxElement.nodes()[0].contentDocument.body)
+      : d3select('body');
+  // @ts-ignore TODO root.select is not callable
   const svg = securityLevel === 'sandbox' ? root.select(`[id="${id}"]`) : d3select(`[id="${id}"]`);
 
   // Establish svg dimensions and get width and height
@@ -53,9 +53,12 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   const width = conf?.width || 800;
   const height = conf?.height || 400;
   const useMaxWidth = conf?.useMaxWidth || false;
+  const nodeAlignment = conf?.nodeAlignment || SankeyNodeAlignment.justify;
 
   // FIX: using max width prevents height from being set, is it intended?
   // to add height directly one can use `svg.attr('height', height)`
+  //
+  // @ts-ignore TODO: svg type vs selection mismatch
   configureSvgSize(svg, height, width, useMaxWidth);
 
   // Prepare data for construction based on diagObj.db
@@ -66,17 +69,21 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //      "links": [ { "source": "Alice", "target": "Bob", "value": 23 }, { "source": "Bob", "target": "Carol", "value": 43 } ]
   //    }
   //
+  // @ts-ignore TODO: db should be coerced to sankey DB type
   const graph = diagObj.db.getGraph();
+
+  // Map config options to alignment functions
   const alignmentsMap: Map<
     SankeyNodeAlignment,
-    (node: SankeyNode<{}, {}>, n: number) => number
+    (node: d3SankeyNode<{}, {}>, n: number) => number
   > = new Map([
     [SankeyNodeAlignment.left, d3SankeyLeft],
     [SankeyNodeAlignment.right, d3SankeyRight],
     [SankeyNodeAlignment.center, d3SankeyCenter],
     [SankeyNodeAlignment.justify, d3SankeyJustify],
-  ]);
-  const nodeAlignment = alignmentsMap.get(conf?.nodeAlignment || SankeyNodeAlignment.justify);
+  ])
+  // We need fallback because typescript thinks that `get` can result in undefined
+  const nodeAlign = alignmentsMap.get(nodeAlignment) || d3SankeyJustify;
 
   // Construct and configure a Sankey generator
   // That will be a function that calculates nodes and links dimensions
@@ -86,7 +93,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .nodeId((d: any) => d.id) // we use 'id' property to identify node
     .nodeWidth(nodeWidth)
     .nodePadding(10)
-    .nodeAlign(nodeAlignment)
+    .nodeAlign(nodeAlign)
     .extent([
       [0, 0],
       [width, height],
@@ -152,32 +159,32 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   if (linkColor === SankeyLinkColor.gradient) {
     const gradient = link
       .append('linearGradient')
-      .attr('id', (d) => (d.uid = Uid.next('linearGradient-')).id)
+      .attr('id', (d: any) => (d.uid = Uid.next('linearGradient-')).id)
       .attr('gradientUnits', 'userSpaceOnUse')
-      .attr('x1', (d) => d.source.x1)
-      .attr('x2', (d) => d.target.x0);
+      .attr('x1', (d: any) => d.source.x1)
+      .attr('x2', (d: any) => d.target.x0);
 
     gradient
       .append('stop')
       .attr('offset', '0%')
-      .attr('stop-color', (d) => colorScheme(d.source.id));
+      .attr('stop-color', (d: any) => colorScheme(d.source.id));
 
     gradient
       .append('stop')
       .attr('offset', '100%')
-      .attr('stop-color', (d) => colorScheme(d.target.id));
+      .attr('stop-color', (d: any) => colorScheme(d.target.id));
   }
 
   let coloring: any;
   switch (linkColor) {
     case SankeyLinkColor.gradient:
-      coloring = (d) => d.uid;
+      coloring = (d: any) => d.uid;
       break;
     case SankeyLinkColor.source:
-      coloring = (d) => d.source.id;
+      coloring = (d: any) => d.source.id;
       break;
     case SankeyLinkColor.target:
-      coloring = (d) => d.target.id;
+      coloring = (d: any) => d.target.id;
       break;
     default:
       coloring = linkColor;
