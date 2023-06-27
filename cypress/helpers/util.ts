@@ -1,18 +1,36 @@
-const utf8ToB64 = (str) => {
-  return window.btoa(unescape(encodeURIComponent(str)));
+import type { MermaidConfig } from '../../packages/mermaid/src/config.type.js';
+
+type CypressConfig = {
+  listUrl?: boolean;
+  listId?: string;
+  name?: string;
+};
+type CypressMermaidConfig = MermaidConfig & CypressConfig;
+
+interface CodeObject {
+  code: string;
+  mermaid: CypressMermaidConfig;
+}
+
+const utf8ToB64 = (str: string): string => {
+  return window.btoa(decodeURIComponent(encodeURIComponent(str)));
 };
 
-const batchId = 'mermaid-batch' + new Date().getTime();
+const batchId: string = 'mermaid-batch' + new Date().getTime();
 
-export const mermaidUrl = (graphStr, options, api) => {
-  const obj = {
+export const mermaidUrl = (
+  graphStr: string,
+  options: CypressMermaidConfig,
+  api: boolean
+): string => {
+  const codeObject: CodeObject = {
     code: graphStr,
     mermaid: options,
   };
-  const objStr = JSON.stringify(obj);
-  let url = 'http://localhost:9000/e2e.html?graph=' + utf8ToB64(objStr);
+  const objStr: string = JSON.stringify(codeObject);
+  let url: string = `http://localhost:9000/e2e.html?graph=${utf8ToB64(objStr)}`;
   if (api) {
-    url = 'http://localhost:9000/xss.html?graph=' + graphStr;
+    url = `http://localhost:9000/xss.html?graph=${graphStr}`;
   }
 
   if (options.listUrl) {
@@ -22,9 +40,14 @@ export const mermaidUrl = (graphStr, options, api) => {
   return url;
 };
 
-export const imgSnapshotTest = (graphStr, _options = {}, api = false, validation = undefined) => {
-  cy.log(_options);
-  const options = Object.assign(_options);
+export const imgSnapshotTest = (
+  graphStr: string,
+  _options: CypressMermaidConfig = {},
+  api: boolean = false,
+  validation?: any
+): void => {
+  cy.log(JSON.stringify(_options));
+  const options: CypressMermaidConfig = Object.assign(_options);
   if (!options.fontFamily) {
     options.fontFamily = 'courier';
   }
@@ -44,28 +67,42 @@ export const imgSnapshotTest = (graphStr, _options = {}, api = false, validation
     options.sequence.actorFontFamily = 'courier';
   }
   if (!options.fontSize) {
-    options.fontSize = '16px';
+    options.fontSize = 16;
   }
-  const url = mermaidUrl(graphStr, options, api);
+
+  const url: string = mermaidUrl(graphStr, options, api);
   openURLAndVerifyRendering(url, options, validation);
 };
 
-export const urlSnapshotTest = (url, _options, api = false, validation) => {
-  const options = Object.assign(_options);
+export const urlSnapshotTest = (
+  url: string,
+  _options: CypressMermaidConfig,
+  _api: boolean = false,
+  validation?: any
+): void => {
+  const options: CypressMermaidConfig = Object.assign(_options);
   openURLAndVerifyRendering(url, options, validation);
 };
 
-export const renderGraph = (graphStr, options, api) => {
-  const url = mermaidUrl(graphStr, options, api);
+export const renderGraph = (
+  graphStr: string,
+  options: CypressMermaidConfig = {},
+  api: boolean = false
+): void => {
+  const url: string = mermaidUrl(graphStr, options, api);
   openURLAndVerifyRendering(url, options);
 };
 
-export const openURLAndVerifyRendering = (url, options, validation = undefined) => {
-  const useAppli = Cypress.env('useAppli');
-  const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
+export const openURLAndVerifyRendering = (
+  url: string,
+  options: CypressMermaidConfig,
+  validation?: any
+): void => {
+  const useAppli: boolean = Cypress.env('useAppli');
+  const name: string = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
   if (useAppli) {
-    cy.log('Opening eyes ' + Cypress.spec.name + ' --- ' + name);
+    cy.log(`Opening eyes ${Cypress.spec.name} --- ${name}`);
     cy.eyesOpen({
       appName: 'Mermaid',
       testName: name,
@@ -83,9 +120,9 @@ export const openURLAndVerifyRendering = (url, options, validation = undefined) 
   }
 
   if (useAppli) {
-    cy.log('Check eyes' + Cypress.spec.name);
+    cy.log(`Check eyes ${Cypress.spec.name}`);
     cy.eyesCheckWindow('Click!');
-    cy.log('Closing eyes' + Cypress.spec.name);
+    cy.log(`Closing eyes ${Cypress.spec.name}`);
     cy.eyesClose();
   } else {
     cy.matchImageSnapshot(name);
