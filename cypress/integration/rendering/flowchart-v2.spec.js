@@ -671,7 +671,7 @@ title: Simple flowchart
 flowchart TD
 A --> B
 `,
-      { titleTopMargin: 0 }
+      { flowchart: { titleTopMargin: 0 } }
     );
   });
   it('3192: It should be possieble to render flowcharts with invisible edges', () => {
@@ -682,7 +682,7 @@ title: Simple flowchart with invisible edges
 flowchart TD
 A ~~~ B
 `,
-      { titleTopMargin: 0 }
+      { flowchart: { titleTopMargin: 0 } }
     );
   });
   it('4023: Should render html labels with images and-or text correctly', () => {
@@ -707,7 +707,7 @@ flowchart LR
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
     classDef someclass fill:#f96
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('With formatting in a node', () => {
@@ -723,7 +723,7 @@ flowchart LR
   b --> d(The dog in the hog)
   c --> d
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('New line in node and formatted edge label', () => {
@@ -733,7 +733,7 @@ flowchart LR
 b("\`The dog in **the** hog.(1)
 NL\`") --"\`1o **bold**\`"--> c
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('Wrapping long text with a new line', () => {
@@ -746,7 +746,7 @@ Word!
 Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. \`") --> c
 
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('Sub graphs and markdown strings', () => {
@@ -763,7 +763,7 @@ subgraph "\`**Two**\`"
 end
 
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
     });
@@ -779,7 +779,7 @@ flowchart LR
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
     classDef someclass fill:#f96
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('With formatting in a node', () => {
@@ -795,7 +795,7 @@ flowchart LR
   b --> d(The dog in the hog)
   c --> d
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('New line in node and formatted edge label', () => {
@@ -805,7 +805,7 @@ flowchart LR
 b("\`The dog in **the** hog.(1)
 NL\`") --"\`1o **bold**\`"--> c
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('Wrapping long text with a new line', () => {
@@ -818,7 +818,7 @@ Word!
 Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. \`") --> c
 
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('Sub graphs and markdown strings', () => {
@@ -835,7 +835,7 @@ subgraph "\`**Two**\`"
 end
 
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
     });

@@ -242,8 +242,7 @@ mindmap
     a second line 😎\`]
       id2[\`The dog in **the** hog... a *very long text* about it
 Word!\`]
-`,
-        { titleTopMargin: 0 }
+`
       );
     });
   });
