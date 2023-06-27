@@ -16,7 +16,7 @@ import {
   sankeyJustify as d3SankeyJustify,
 } from 'd3-sankey';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { Uid } from './sankeyUtils.js';
+import { Uid } from '../../rendering-util/uid.js';
 import { SankeyLinkColor, SankeyNodeAlignment } from '../../config.type.js';
 
 /**
@@ -30,7 +30,7 @@ import { SankeyLinkColor, SankeyNodeAlignment } from '../../config.type.js';
 export const draw = function (text: string, id: string, _version: string, diagObj: Diagram): void {
   // Get Sankey config
   const { securityLevel, sankey: conf } = configApi.getConfig();
-
+  
   // TODO:
   // This code repeats for every diagram
   // Figure out what is happening there, probably it should be separated
@@ -66,14 +66,16 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //    }
   //
   const graph = diagObj.db.getGraph();
-  
-  const alignmentsMap: Record<SankeyNodeAlignment, (node: SankeyNode<{}, {}>, n: number) => number> = new Map([
+  const alignmentsMap: Map<
+    SankeyNodeAlignment,
+    (node: SankeyNode<{}, {}>, n: number) => number
+  > = new Map([
     [SankeyNodeAlignment.left, d3SankeyLeft],
     [SankeyNodeAlignment.right, d3SankeyRight],
     [SankeyNodeAlignment.center, d3SankeyCenter],
     [SankeyNodeAlignment.justify, d3SankeyJustify],
   ]);
-  const nodeAlignment = alignmentsMap[conf?.nodeAlignment];
+  const nodeAlignment = alignmentsMap.get(conf?.nodeAlignment || SankeyNodeAlignment.justify);
 
   // Construct and configure a Sankey generator
   // That will be a function that calculates nodes and links dimensions

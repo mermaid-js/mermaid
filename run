@@ -30,27 +30,28 @@ Run commands within docker containers.
 
 Development quick start guide:
 
-\033[1m$name pnpm install\033[0m      # Install packages
-\033[1m$name dev\033[0m               # Run dev server with examples, open http://localhost:9000
-\033[1m$name docs:dev\033[0m          # For docs contributions, open http://localhost:3333
+\033[1m$name pnpm install\033[0m            # Install packages
+\033[1m$name dev\033[0m                     # Run dev server with examples, open http://localhost:9000
+\033[1m$name docs:dev\033[0m                # For docs contributions, open http://localhost:3333
 
 Commands:
 
-$name pnpm            # Run any 'pnpm' command
-$name dev             # Run dev server with examples, open http://localhost:9000
-$name docs:dev        # For docs contributions, open http://localhost:3333
+$name pnpm                    # Run any 'pnpm' command
+$name dev                     # Run dev server with examples, open http://localhost:9000
+$name docs:dev                # For docs contributions, open http://localhost:3333
 
-$name sh              # Open 'sh' inside docker container for development
+$name sh                      # Open 'sh' inside docker container for development
 
-$name help            # Show this help
+$name help                    # Show this help
 
 Examples of frequiently used commands:
 
-$name pnpm add             # Add package, 'run add d3-sankey'
-$name pnpm prettier        # Prettify a file 'run prettier <path-to-file>'
-$name pnpm test            # Run unit tests
-$name pnpm vitest          # Run watcher for unit tests
-$name pnpm e2e             # Run integration tests
+$name pnpm add                # Add package, 'run add d3-sankey'
+$name pnpm prettier --write   # Prettify a file 'run prettier <path-to-file>'
+                              #   git diff --name-only develop | xargs run pnpm prettier --write
+$name pnpm test               # Run unit tests
+$name pnpm vitest             # Run watcher for unit tests
+$name pnpm e2e                # Run integration tests
 $name pnpm -w run lint:fix
 EOF
 )
