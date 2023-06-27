@@ -3,7 +3,6 @@ import { parser } from './sankey-arrow.jison';
 import db from '../sankeyDB.js';
 
 describe('sankey-beta diagram', function () {
-  // TODO - these examples should be put into ./parser/stateDiagram.spec.js
   describe('when parsing an info graph it', function () {
     beforeEach(function () {
       parser.yy = db;
