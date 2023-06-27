@@ -139,7 +139,9 @@
     "vueuse",
     "xlink",
     "yash",
-    "zenuml"
+    "zenuml",
+    "Elle",
+    "Neurodiverse"
   ],
   "patterns": [
     { "name": "Markdown links", "pattern": "\\((.*)\\)", "description": "" },
