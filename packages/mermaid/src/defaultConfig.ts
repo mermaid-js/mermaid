@@ -2275,6 +2275,7 @@ const config: Partial<MermaidConfig> = {
     height: 400,
     linkColor: SankeyLinkColor.gradient,
     nodeAlignment: SankeyNodeAlignment.justify,
+    useMaxWidth: false,
   },
   fontSize: 16,
 };

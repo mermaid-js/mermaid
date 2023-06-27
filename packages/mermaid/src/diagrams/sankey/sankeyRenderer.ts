@@ -31,6 +31,7 @@ import { SankeyLinkColor, SankeyNodeAlignment } from '../../config.type.js';
 export const draw = function (text: string, id: string, _version: string, diagObj: Diagram): void {
   // Get Sankey config
   const { securityLevel, sankey: conf } = configApi.getConfig();
+  const defaultSankeyConfig = configApi!.defaultConfig!.sankey!;
 
   // TODO:
   // This code repeats for every diagram
@@ -50,10 +51,10 @@ export const draw = function (text: string, id: string, _version: string, diagOb
 
   // Establish svg dimensions and get width and height
   //
-  const width = conf?.width || 800;
-  const height = conf?.height || 400;
-  const useMaxWidth = conf?.useMaxWidth || false;
-  const nodeAlignment = conf?.nodeAlignment || SankeyNodeAlignment.justify;
+  const width = conf?.width || defaultSankeyConfig.width!;
+  const height = conf?.height || defaultSankeyConfig.width!;
+  const useMaxWidth = conf?.useMaxWidth || defaultSankeyConfig.useMaxWidth!;
+  const nodeAlignment = conf?.nodeAlignment || defaultSankeyConfig.nodeAlignment!;
 
   // FIX: using max width prevents height from being set, is it intended?
   // to add height directly one can use `svg.attr('height', height)`
@@ -73,17 +74,16 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   const graph = diagObj.db.getGraph();
 
   // Map config options to alignment functions
-  const alignmentsMap: Map<
+  const alignmentsMap: Record<
     SankeyNodeAlignment,
     (node: d3SankeyNode<object, object>, n: number) => number
-  > = new Map([
-    [SankeyNodeAlignment.left, d3SankeyLeft],
-    [SankeyNodeAlignment.right, d3SankeyRight],
-    [SankeyNodeAlignment.center, d3SankeyCenter],
-    [SankeyNodeAlignment.justify, d3SankeyJustify],
-  ]);
-  // We need fallback because typescript thinks that `get` can result in undefined
-  const nodeAlign = alignmentsMap.get(nodeAlignment) || d3SankeyJustify;
+  > = {
+    [SankeyNodeAlignment.left]: d3SankeyLeft,
+    [SankeyNodeAlignment.right]: d3SankeyRight,
+    [SankeyNodeAlignment.center]: d3SankeyCenter,
+    [SankeyNodeAlignment.justify]: d3SankeyJustify,
+  };
+  const nodeAlign = alignmentsMap[nodeAlignment];
 
   // Construct and configure a Sankey generator
   // That will be a function that calculates nodes and links dimensions

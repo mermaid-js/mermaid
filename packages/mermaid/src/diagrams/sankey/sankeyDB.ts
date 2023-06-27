@@ -10,12 +10,11 @@ import {
   clear as commonClear,
 } from '../../commonDb.js';
 
-// Variables where graph data is stored
 // Sankey diagram represented by nodes and links between those nodes
-// We have to track nodes uniqueness (by ID), thats why we need a mapping also
-//
 let links: SankeyLink[] = [];
+// Array of nodes guarantees their order
 let nodes: SankeyNode[] = [];
+// We also have to track nodes uniqueness (by ID)
 let nodesMap: Record<string, SankeyNode> = {};
 
 const clear = (): void => {
