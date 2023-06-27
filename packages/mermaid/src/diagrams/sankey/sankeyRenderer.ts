@@ -75,7 +75,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   // Map config options to alignment functions
   const alignmentsMap: Map<
     SankeyNodeAlignment,
-    (node: d3SankeyNode<{}, {}>, n: number) => number
+    (node: d3SankeyNode<object, object>, n: number) => number
   > = new Map([
     [SankeyNodeAlignment.left, d3SankeyLeft],
     [SankeyNodeAlignment.right, d3SankeyRight],
