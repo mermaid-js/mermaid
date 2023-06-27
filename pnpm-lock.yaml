@@ -105,8 +105,8 @@ importers:
         specifier: ^27.2.1
         version: 27.2.1(@typescript-eslint/eslint-plugin@5.59.0)(eslint@8.39.0)(jest@29.5.0)(typescript@5.1.3)
       eslint-plugin-jsdoc:
-        specifier: ^43.0.7
-        version: 43.0.7(eslint@8.39.0)
+        specifier: ^46.0.0
+        version: 46.0.0(eslint@8.39.0)
       eslint-plugin-json:
         specifier: ^3.1.0
         version: 3.1.0
@@ -2824,9 +2824,9 @@ packages:
       - search-insights
     dev: true
 
-  /@es-joy/jsdoccomment@0.37.1:
-    resolution: {integrity: sha512-5vxWJ1gEkEF0yRd0O+uK6dHJf7adrxwQSX8PuRiPfFSAbNLnY0ZJfXaZucoz14Jj2N11xn2DnlEPwWRpYpvRjg==}
-    engines: {node: ^14 || ^16 || ^17 || ^18 || ^19 || ^20}
+  /@es-joy/jsdoccomment@0.39.4:
+    resolution: {integrity: sha512-Jvw915fjqQct445+yron7Dufix9A+m9j1fCJYlCo1FWlRvTxa3pjJelxdSTdaLWcTwRU6vbL+NYjO4YuNIS5Qg==}
+    engines: {node: '>=16'}
     dependencies:
       comment-parser: 1.3.1
       esquery: 1.5.0
@@ -6653,7 +6653,7 @@ packages:
       js-string-escape: 1.0.1
       lodash: 4.17.21
       md5-hex: 3.0.1
-      semver: 7.5.0
+      semver: 7.5.3
       well-known-symbols: 2.0.0
     dev: true
 
@@ -8061,20 +8061,20 @@ packages:
       - typescript
     dev: true
 
-  /eslint-plugin-jsdoc@43.0.7(eslint@8.39.0):
-    resolution: {integrity: sha512-32Sx5I9VzO/bqbtslCu3L1GHIPo+QEliwqwjWq+qzbUv76wrkH6ifUEE0EbkuNEn+cHlSIOrg/IJ1PGNN72QZA==}
-    engines: {node: ^14 || ^16 || ^17 || ^18 || ^19 || ^20}
+  /eslint-plugin-jsdoc@46.0.0(eslint@8.39.0):
+    resolution: {integrity: sha512-xmB5WleBcPCFYlrFfdjrcfSKOJBLwyGmKa+i+fVqlIHp8g5aAoeQpBGugUzToFtQgd4hNZYlfIcP7QSxC9NYWQ==}
+    engines: {node: '>=16'}
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0
     dependencies:
-      '@es-joy/jsdoccomment': 0.37.1
+      '@es-joy/jsdoccomment': 0.39.4
       are-docs-informative: 0.0.2
       comment-parser: 1.3.1
       debug: 4.3.4(supports-color@8.1.1)
       escape-string-regexp: 4.0.0
       eslint: 8.39.0
       esquery: 1.5.0
-      semver: 7.5.0
+      semver: 7.5.3
       spdx-expression-parse: 3.0.1
     transitivePeerDependencies:
       - supports-color
@@ -8548,7 +8548,7 @@ packages:
       proxy-addr: 2.0.7
       rfdc: 1.3.0
       secure-json-parse: 2.7.0
-      semver: 7.5.0
+      semver: 7.5.3
       tiny-lru: 8.0.2
     transitivePeerDependencies:
       - supports-color
@@ -10347,7 +10347,7 @@ packages:
       jest-util: 29.5.0
       natural-compare: 1.4.0
       pretty-format: 29.5.0
-      semver: 7.5.0
+      semver: 7.5.3
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -11801,7 +11801,7 @@ packages:
     dependencies:
       hosted-git-info: 4.1.0
       is-core-module: 2.12.1
-      semver: 7.5.0
+      semver: 7.5.3
       validate-npm-package-license: 3.0.4
     dev: true
 
@@ -13248,6 +13248,14 @@ packages:
 
   /semver@7.5.0:
     resolution: {integrity: sha512-+XC0AD/R7Q2mPSRuy2Id0+CGTZ98+8f+KvwirxOKIEyid+XSx6HbC63p+O4IndTHuX5Z+JxQ0TghCkO5Cg/2HA==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dependencies:
+      lru-cache: 6.0.0
+    dev: true
+
+  /semver@7.5.3:
+    resolution: {integrity: sha512-QBlUtyVk/5EeHbi7X0fw6liDZc7BBmEaSYn01fMU1OUYbf6GPsbTtd8WmnqbI20SeycoHSeiybkE/q1Q+qlThQ==}
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
