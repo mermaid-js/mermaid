@@ -1,13 +1,13 @@
 import { DiagramDefinition } from '../../diagram-api/types.js';
 // @ts-ignore: TODO Fix ts errors
 import parser from './parser/classDiagram.jison';
-import db from './classParser.js';
+import classDb from './classDb.js';
 import styles from './styles.js';
 import renderer from './classRenderer-v2.js';
 
 export const diagram: DiagramDefinition = {
   parser,
-  db,
+  db: classDb,
   renderer,
   styles,
   init: (cnf) => {
@@ -15,6 +15,6 @@ export const diagram: DiagramDefinition = {
       cnf.class = {};
     }
     cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-    db.clear();
+    classDb.clear();
   },
 };

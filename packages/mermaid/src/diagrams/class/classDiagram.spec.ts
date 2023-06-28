@@ -1,6 +1,6 @@
 // @ts-expect-error Jison doesn't export types
 import { parser } from './parser/classDiagram.jison';
-import classParser from './classParser.js';
+import classDb from './classDb.js';
 import { vi, describe, it, expect } from 'vitest';
 const spyOn = vi.spyOn;
 
@@ -10,8 +10,8 @@ const abstractCssStyle = 'font-style:italic;';
 describe('given a basic class diagram, ', function () {
   describe('when parsing class definition', function () {
     beforeEach(function () {
-      classParser.clear();
-      parser.yy = classParser;
+      classDb.clear();
+      parser.yy = classDb;
     });
     it('should handle accTitle and accDescr', function () {
       const str = `classDiagram
@@ -57,7 +57,7 @@ describe('given a basic class diagram, ', function () {
       const str = 'classDiagram\n' + 'class Ca-r';
 
       parser.parse(str);
-      const actual = classParser.getClass('Ca-r');
+      const actual = classDb.getClass('Ca-r');
       expect(actual.label).toBe('Ca-r');
     });
 
@@ -105,7 +105,7 @@ describe('given a basic class diagram, ', function () {
 
       parser.parse(str);
 
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
     });
 
@@ -117,9 +117,9 @@ describe('given a basic class diagram, ', function () {
 
       parser.parse(str);
 
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
-      const c2 = classParser.getClass('C2');
+      const c2 = classDb.getClass('C2');
       expect(c2.label).toBe('Class 2 with chars @?');
     });
 
@@ -127,7 +127,7 @@ describe('given a basic class diagram, ', function () {
       const str = 'classDiagram\n' + 'class C1["Class 1 with text label"]\n' + 'C1: member1';
 
       parser.parse(str);
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.members.length).toBe(1);
       expect(c1.members[0].getDisplayDetails().displayText).toBe('member1');
@@ -142,7 +142,7 @@ describe('given a basic class diagram, ', function () {
 
       parser.parse(str);
 
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.members.length).toBe(1);
       expect(c1.members[0].getDisplayDetails().displayText).toBe('int member1');
@@ -155,7 +155,7 @@ describe('given a basic class diagram, ', function () {
 
       parser.parse(str);
 
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.cssClasses[0]).toBe('styleClass');
     });
@@ -169,7 +169,7 @@ describe('given a basic class diagram, ', function () {
 
       parser.parse(str);
 
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.members[0].getDisplayDetails().displayText).toBe('int member1');
       expect(c1.cssClasses[0]).toBe('styleClass');
@@ -185,11 +185,11 @@ describe('given a basic class diagram, ', function () {
 
       parser.parse(str);
 
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.cssClasses[0]).toBe('styleClass');
 
-      const c2 = classParser.getClass('C2');
+      const c2 = classDb.getClass('C2');
       expect(c2.label).toBe('Long long long long long long long long long long label');
       expect(c2.cssClasses[0]).toBe('styleClass');
     });
@@ -202,11 +202,11 @@ describe('given a basic class diagram, ', function () {
 
       parser.parse(str);
 
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.cssClasses[0]).toBe('styleClass1');
 
-      const c2 = classParser.getClass('C2');
+      const c2 = classDb.getClass('C2');
       expect(c2.label).toBe('Class 2 !@#$%^&*() label');
       expect(c2.cssClasses[0]).toBe('styleClass2');
     });
@@ -217,13 +217,13 @@ class C1["Class with text label"]
 class C2["Class with text label"]
 class C3["Class with text label"]`);
 
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class with text label');
 
-      const c2 = classParser.getClass('C2');
+      const c2 = classDb.getClass('C2');
       expect(c2.label).toBe('Class with text label');
 
-      const c3 = classParser.getClass('C3');
+      const c3 = classDb.getClass('C3');
       expect(c3.label).toBe('Class with text label');
     });
 
@@ -243,19 +243,19 @@ class C11["With ' single quote"]
 class C12["With ~!@#$%^&*()_+=-/?"]
 class C13["With Città foreign language"]
 `);
-      expect(classParser.getClass('C1').label).toBe('OneWord');
-      expect(classParser.getClass('C2').label).toBe('With, Comma');
-      expect(classParser.getClass('C3').label).toBe('With (Brackets)');
-      expect(classParser.getClass('C4').label).toBe('With [Brackets]');
-      expect(classParser.getClass('C5').label).toBe('With {Brackets}');
-      expect(classParser.getClass('C6').label).toBe(' ');
-      expect(classParser.getClass('C7').label).toBe('With 1 number');
-      expect(classParser.getClass('C8').label).toBe('With . period...');
-      expect(classParser.getClass('C9').label).toBe('With - dash');
-      expect(classParser.getClass('C10').label).toBe('With _ underscore');
-      expect(classParser.getClass('C11').label).toBe("With ' single quote");
-      expect(classParser.getClass('C12').label).toBe('With ~!@#$%^&*()_+=-/?');
-      expect(classParser.getClass('C13').label).toBe('With Città foreign language');
+      expect(classDb.getClass('C1').label).toBe('OneWord');
+      expect(classDb.getClass('C2').label).toBe('With, Comma');
+      expect(classDb.getClass('C3').label).toBe('With (Brackets)');
+      expect(classDb.getClass('C4').label).toBe('With [Brackets]');
+      expect(classDb.getClass('C5').label).toBe('With {Brackets}');
+      expect(classDb.getClass('C6').label).toBe(' ');
+      expect(classDb.getClass('C7').label).toBe('With 1 number');
+      expect(classDb.getClass('C8').label).toBe('With . period...');
+      expect(classDb.getClass('C9').label).toBe('With - dash');
+      expect(classDb.getClass('C10').label).toBe('With _ underscore');
+      expect(classDb.getClass('C11').label).toBe("With ' single quote");
+      expect(classDb.getClass('C12').label).toBe('With ~!@#$%^&*()_+=-/?');
+      expect(classDb.getClass('C13').label).toBe('With Città foreign language');
     });
 
     it('should handle "note for"', function () {
@@ -285,8 +285,8 @@ class C13["With Città foreign language"]
           Student "1" --o "1" IdCard : carries
           Student "1" --o "1" Bike : rides`);
 
-      expect(Object.keys(classParser.getClasses()).length).toBe(3);
-      expect(classParser.getClasses().Student).toMatchInlineSnapshot(`
+      expect(Object.keys(classDb.getClasses()).length).toBe(3);
+      expect(classDb.getClasses().Student).toMatchInlineSnapshot(`
         {
           "annotations": [],
           "cssClasses": [],
@@ -305,8 +305,8 @@ class C13["With Città foreign language"]
           "type": "",
         }
       `);
-      expect(classParser.getRelations().length).toBe(2);
-      expect(classParser.getRelations()).toMatchInlineSnapshot(`
+      expect(classDb.getRelations().length).toBe(2);
+      expect(classDb.getRelations()).toMatchInlineSnapshot(`
         [
           {
             "id1": "Student",
@@ -339,8 +339,8 @@ class C13["With Città foreign language"]
 
   describe('when parsing class defined in brackets', function () {
     beforeEach(function () {
-      classParser.clear();
-      parser.yy = classParser;
+      classDb.clear();
+      parser.yy = classDb;
     });
 
     it('should handle member definitions', function () {
@@ -405,7 +405,7 @@ class C13["With Città foreign language"]
       const str = 'classDiagram\n' + 'class C1["Class 1 with text label"] {\n' + '+member1\n' + '}';
 
       parser.parse(str);
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.members.length).toBe(1);
       expect(c1.members[0].getDisplayDetails().displayText).toBe('+member1');
@@ -420,7 +420,7 @@ class C13["With Città foreign language"]
         '}';
 
       parser.parse(str);
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.members.length).toBe(1);
       expect(c1.members[0].getDisplayDetails().displayText).toBe('+member1');
@@ -431,8 +431,8 @@ class C13["With Città foreign language"]
 
   describe('when parsing comments', function () {
     beforeEach(function () {
-      classParser.clear();
-      parser.yy = classParser;
+      classDb.clear();
+      parser.yy = classDb;
     });
 
     it('should handle comments at the start', function () {
@@ -521,16 +521,16 @@ foo()
 
   describe('when parsing click statements', function () {
     beforeEach(function () {
-      classParser.clear();
-      parser.yy = classParser;
+      classDb.clear();
+      parser.yy = classDb;
     });
     it('should handle href link', function () {
-      spyOn(classParser, 'setLink');
+      spyOn(classDb, 'setLink');
       const str = 'classDiagram\n' + 'class Class1 \n' + 'click Class1 href "google.com" ';
 
       parser.parse(str);
 
-      expect(classParser.setLink).toHaveBeenCalledWith('Class1', 'google.com');
+      expect(classDb.setLink).toHaveBeenCalledWith('Class1', 'google.com');
 
       const actual = parser.yy.getClass('Class1');
       expect(actual.link).toBe('google.com');
@@ -538,14 +538,14 @@ foo()
     });
 
     it('should handle href link with tooltip', function () {
-      spyOn(classParser, 'setLink');
-      spyOn(classParser, 'setTooltip');
+      spyOn(classDb, 'setLink');
+      spyOn(classDb, 'setTooltip');
       const str =
         'classDiagram\n' + 'class Class1 \n' + 'click Class1 href "google.com" "A Tooltip" ';
 
       parser.parse(str);
 
-      expect(classParser.setLink).toHaveBeenCalledWith('Class1', 'google.com');
+      expect(classDb.setLink).toHaveBeenCalledWith('Class1', 'google.com');
 
       const actual = parser.yy.getClass('Class1');
       expect(actual.link).toBe('google.com');
@@ -554,8 +554,8 @@ foo()
     });
 
     it('should handle href link with tooltip and target', function () {
-      spyOn(classParser, 'setLink');
-      spyOn(classParser, 'setTooltip');
+      spyOn(classDb, 'setLink');
+      spyOn(classDb, 'setTooltip');
       const str =
         'classDiagram\n' +
         'class Class1\n' +
@@ -563,8 +563,8 @@ foo()
         'click Class1 href "google.com" "A tooltip" _self';
       parser.parse(str);
 
-      expect(classParser.setLink).toHaveBeenCalledWith('Class1', 'google.com', '_self');
-      expect(classParser.setTooltip).toHaveBeenCalledWith('Class1', 'A tooltip');
+      expect(classDb.setLink).toHaveBeenCalledWith('Class1', 'google.com', '_self');
+      expect(classDb.setTooltip).toHaveBeenCalledWith('Class1', 'A tooltip');
 
       const actual = parser.yy.getClass('Class1');
       expect(actual.link).toBe('google.com');
@@ -573,30 +573,30 @@ foo()
     });
 
     it('should handle function call', function () {
-      spyOn(classParser, 'setClickEvent');
+      spyOn(classDb, 'setClickEvent');
 
       const str = 'classDiagram\n' + 'class Class1 \n' + 'click Class1 call functionCall() ';
 
       parser.parse(str);
 
-      expect(classParser.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
+      expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
     });
 
     it('should handle function call with tooltip', function () {
-      spyOn(classParser, 'setClickEvent');
-      spyOn(classParser, 'setTooltip');
+      spyOn(classDb, 'setClickEvent');
+      spyOn(classDb, 'setTooltip');
 
       const str =
         'classDiagram\n' + 'class Class1 \n' + 'click Class1 call functionCall() "A Tooltip" ';
 
       parser.parse(str);
 
-      expect(classParser.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
-      expect(classParser.setTooltip).toHaveBeenCalledWith('Class1', 'A Tooltip');
+      expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
+      expect(classDb.setTooltip).toHaveBeenCalledWith('Class1', 'A Tooltip');
     });
 
     it('should handle function call with an arbitrary number of args', function () {
-      spyOn(classParser, 'setClickEvent');
+      spyOn(classDb, 'setClickEvent');
       const str =
         'classDiagram\n' +
         'class Class1\n' +
@@ -604,7 +604,7 @@ foo()
         'click Class1 call functionCall(test, test1, test2)';
       parser.parse(str);
 
-      expect(classParser.setClickEvent).toHaveBeenCalledWith(
+      expect(classDb.setClickEvent).toHaveBeenCalledWith(
         'Class1',
         'functionCall',
         'test, test1, test2'
@@ -612,8 +612,8 @@ foo()
     });
 
     it('should handle function call with an arbitrary number of args and tooltip', function () {
-      spyOn(classParser, 'setClickEvent');
-      spyOn(classParser, 'setTooltip');
+      spyOn(classDb, 'setClickEvent');
+      spyOn(classDb, 'setTooltip');
       const str =
         'classDiagram\n' +
         'class Class1\n' +
@@ -621,19 +621,19 @@ foo()
         'click Class1 call functionCall("test0", test1, test2) "A Tooltip"';
       parser.parse(str);
 
-      expect(classParser.setClickEvent).toHaveBeenCalledWith(
+      expect(classDb.setClickEvent).toHaveBeenCalledWith(
         'Class1',
         'functionCall',
         '"test0", test1, test2'
       );
-      expect(classParser.setTooltip).toHaveBeenCalledWith('Class1', 'A Tooltip');
+      expect(classDb.setTooltip).toHaveBeenCalledWith('Class1', 'A Tooltip');
     });
   });
 
   describe('when parsing annotations', function () {
     beforeEach(function () {
-      classParser.clear();
-      parser.yy = classParser;
+      classDb.clear();
+      parser.yy = classDb;
     });
 
     it('should handle class annotations', function () {
@@ -696,8 +696,8 @@ foo()
 describe('given a class diagram with members and methods ', function () {
   describe('when parsing members', function () {
     beforeEach(function () {
-      classParser.clear();
-      parser.yy = classParser;
+      classDb.clear();
+      parser.yy = classDb;
     });
 
     it('should handle simple member declaration', function () {
@@ -741,8 +741,8 @@ describe('given a class diagram with members and methods ', function () {
 
   describe('when parsing method definition', function () {
     beforeEach(function () {
-      classParser.clear();
-      parser.yy = classParser;
+      classDb.clear();
+      parser.yy = classDb;
     });
 
     it('should handle method definition', function () {
@@ -828,8 +828,8 @@ describe('given a class diagram with members and methods ', function () {
 describe('given a class diagram with generics, ', function () {
   describe('when parsing valid generic classes', function () {
     beforeEach(function () {
-      classParser.clear();
-      parser.yy = classParser;
+      classDb.clear();
+      parser.yy = classDb;
     });
 
     it('should handle generic class', function () {
@@ -928,8 +928,8 @@ foo()
 describe('given a class diagram with relationships, ', function () {
   describe('when parsing basic relationships', function () {
     beforeEach(function () {
-      classParser.clear();
-      parser.yy = classParser;
+      classDb.clear();
+      parser.yy = classDb;
     });
 
     it('should handle all basic relationships', function () {
@@ -966,9 +966,9 @@ describe('given a class diagram with relationships, ', function () {
       expect(parser.yy.getClass('Class1').id).toBe('Class1');
       expect(parser.yy.getClass('Class1').type).toBe('T');
       expect(parser.yy.getClass('Class02').id).toBe('Class02');
-      expect(relations[0].relation.type1).toBe(classParser.relationType.EXTENSION);
+      expect(relations[0].relation.type1).toBe(classDb.relationType.EXTENSION);
       expect(relations[0].relation.type2).toBe('none');
-      expect(relations[0].relation.lineType).toBe(classParser.lineType.LINE);
+      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
     });
 
     it('should handle relationships with labels', function () {
@@ -991,9 +991,9 @@ describe('given a class diagram with relationships, ', function () {
 
       expect(parser.yy.getClass('Class1').id).toBe('Class1');
       expect(parser.yy.getClass('Class02').id).toBe('Class02');
-      expect(relations[0].relation.type1).toBe(classParser.relationType.EXTENSION);
+      expect(relations[0].relation.type1).toBe(classDb.relationType.EXTENSION);
       expect(relations[0].relation.type2).toBe('none');
-      expect(relations[0].relation.lineType).toBe(classParser.lineType.LINE);
+      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
     });
 
     it('should handle relation definition of different types and directions', function () {
@@ -1038,9 +1038,9 @@ describe('given a class diagram with relationships, ', function () {
 
       expect(parser.yy.getClass('Class1').id).toBe('Class1');
       expect(parser.yy.getClass('Class02').id).toBe('Class02');
-      expect(relations[0].relation.type1).toBe(classParser.relationType.AGGREGATION);
+      expect(relations[0].relation.type1).toBe(classDb.relationType.AGGREGATION);
       expect(relations[0].relation.type2).toBe('none');
-      expect(relations[0].relation.lineType).toBe(classParser.lineType.DOTTED_LINE);
+      expect(relations[0].relation.lineType).toBe(classDb.lineType.DOTTED_LINE);
     });
 
     it('should handle relation definitions COMPOSITION on both sides', function () {
@@ -1052,9 +1052,9 @@ describe('given a class diagram with relationships, ', function () {
 
       expect(parser.yy.getClass('Class1').id).toBe('Class1');
       expect(parser.yy.getClass('Class02').id).toBe('Class02');
-      expect(relations[0].relation.type1).toBe(classParser.relationType.COMPOSITION);
-      expect(relations[0].relation.type2).toBe(classParser.relationType.COMPOSITION);
-      expect(relations[0].relation.lineType).toBe(classParser.lineType.LINE);
+      expect(relations[0].relation.type1).toBe(classDb.relationType.COMPOSITION);
+      expect(relations[0].relation.type2).toBe(classDb.relationType.COMPOSITION);
+      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
     });
 
     it('should handle relation definitions with no types', function () {
@@ -1068,7 +1068,7 @@ describe('given a class diagram with relationships, ', function () {
       expect(parser.yy.getClass('Class02').id).toBe('Class02');
       expect(relations[0].relation.type1).toBe('none');
       expect(relations[0].relation.type2).toBe('none');
-      expect(relations[0].relation.lineType).toBe(classParser.lineType.LINE);
+      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
     });
 
     it('should handle relation definitions with type only on right side', function () {
@@ -1081,8 +1081,8 @@ describe('given a class diagram with relationships, ', function () {
       expect(parser.yy.getClass('Class1').id).toBe('Class1');
       expect(parser.yy.getClass('Class02').id).toBe('Class02');
       expect(relations[0].relation.type1).toBe('none');
-      expect(relations[0].relation.type2).toBe(classParser.relationType.EXTENSION);
-      expect(relations[0].relation.lineType).toBe(classParser.lineType.LINE);
+      expect(relations[0].relation.type2).toBe(classDb.relationType.EXTENSION);
+      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
     });
 
     it('should handle multiple classes and relation definitions', function () {
@@ -1103,12 +1103,12 @@ describe('given a class diagram with relationships, ', function () {
 
       expect(relations.length).toBe(5);
 
-      expect(relations[0].relation.type1).toBe(classParser.relationType.EXTENSION);
+      expect(relations[0].relation.type1).toBe(classDb.relationType.EXTENSION);
       expect(relations[0].relation.type2).toBe('none');
-      expect(relations[0].relation.lineType).toBe(classParser.lineType.LINE);
+      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
       expect(relations[3].relation.type1).toBe('none');
       expect(relations[3].relation.type2).toBe('none');
-      expect(relations[3].relation.lineType).toBe(classParser.lineType.DOTTED_LINE);
+      expect(relations[3].relation.lineType).toBe(classDb.lineType.DOTTED_LINE);
     });
 
     it('should handle generic class with relation definitions', function () {
@@ -1121,9 +1121,9 @@ describe('given a class diagram with relationships, ', function () {
       expect(parser.yy.getClass('Class01').id).toBe('Class01');
       expect(parser.yy.getClass('Class01').type).toBe('T');
       expect(parser.yy.getClass('Class02').id).toBe('Class02');
-      expect(relations[0].relation.type1).toBe(classParser.relationType.EXTENSION);
+      expect(relations[0].relation.type1).toBe(classDb.relationType.EXTENSION);
       expect(relations[0].relation.type2).toBe('none');
-      expect(relations[0].relation.lineType).toBe(classParser.lineType.LINE);
+      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
     });
 
     it('should handle class annotations', function () {
@@ -1286,8 +1286,8 @@ describe('given a class diagram with relationships, ', function () {
     });
 
     it('should associate click and href link with tooltip and target appropriately', function () {
-      spyOn(classParser, 'setLink');
-      spyOn(classParser, 'setTooltip');
+      spyOn(classDb, 'setLink');
+      spyOn(classDb, 'setTooltip');
       const str =
         'classDiagram\n' +
         'class Class1\n' +
@@ -1295,12 +1295,12 @@ describe('given a class diagram with relationships, ', function () {
         'click Class1 href "google.com" "A tooltip" _self';
       parser.parse(str);
 
-      expect(classParser.setLink).toHaveBeenCalledWith('Class1', 'google.com', '_self');
-      expect(classParser.setTooltip).toHaveBeenCalledWith('Class1', 'A tooltip');
+      expect(classDb.setLink).toHaveBeenCalledWith('Class1', 'google.com', '_self');
+      expect(classDb.setTooltip).toHaveBeenCalledWith('Class1', 'A tooltip');
     });
 
     it('should associate click and href link appropriately', function () {
-      spyOn(classParser, 'setLink');
+      spyOn(classDb, 'setLink');
       const str =
         'classDiagram\n' +
         'class Class1\n' +
@@ -1308,11 +1308,11 @@ describe('given a class diagram with relationships, ', function () {
         'click Class1 href "google.com"';
       parser.parse(str);
 
-      expect(classParser.setLink).toHaveBeenCalledWith('Class1', 'google.com');
+      expect(classDb.setLink).toHaveBeenCalledWith('Class1', 'google.com');
     });
 
     it('should associate click and href link with target appropriately', function () {
-      spyOn(classParser, 'setLink');
+      spyOn(classDb, 'setLink');
       const str =
         'classDiagram\n' +
         'class Class1\n' +
@@ -1320,12 +1320,12 @@ describe('given a class diagram with relationships, ', function () {
         'click Class1 href "google.com" _self';
       parser.parse(str);
 
-      expect(classParser.setLink).toHaveBeenCalledWith('Class1', 'google.com', '_self');
+      expect(classDb.setLink).toHaveBeenCalledWith('Class1', 'google.com', '_self');
     });
 
     it('should associate link appropriately', function () {
-      spyOn(classParser, 'setLink');
-      spyOn(classParser, 'setTooltip');
+      spyOn(classDb, 'setLink');
+      spyOn(classDb, 'setTooltip');
       const str =
         'classDiagram\n' +
         'class Class1\n' +
@@ -1333,12 +1333,12 @@ describe('given a class diagram with relationships, ', function () {
         'link Class1 "google.com" "A tooltip" _self';
       parser.parse(str);
 
-      expect(classParser.setLink).toHaveBeenCalledWith('Class1', 'google.com', '_self');
-      expect(classParser.setTooltip).toHaveBeenCalledWith('Class1', 'A tooltip');
+      expect(classDb.setLink).toHaveBeenCalledWith('Class1', 'google.com', '_self');
+      expect(classDb.setTooltip).toHaveBeenCalledWith('Class1', 'A tooltip');
     });
 
     it('should associate callback appropriately', function () {
-      spyOn(classParser, 'setClickEvent');
+      spyOn(classDb, 'setClickEvent');
       const str =
         'classDiagram\n' +
         'class Class1\n' +
@@ -1346,11 +1346,11 @@ describe('given a class diagram with relationships, ', function () {
         'callback Class1 "functionCall"';
       parser.parse(str);
 
-      expect(classParser.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
+      expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
     });
 
     it('should associate click and call callback appropriately', function () {
-      spyOn(classParser, 'setClickEvent');
+      spyOn(classDb, 'setClickEvent');
       const str =
         'classDiagram\n' +
         'class Class1\n' +
@@ -1358,11 +1358,11 @@ describe('given a class diagram with relationships, ', function () {
         'click Class1 call functionCall()';
       parser.parse(str);
 
-      expect(classParser.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
+      expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
     });
 
     it('should associate callback appropriately with an arbitrary number of args', function () {
-      spyOn(classParser, 'setClickEvent');
+      spyOn(classDb, 'setClickEvent');
       const str =
         'classDiagram\n' +
         'class Class1\n' +
@@ -1370,7 +1370,7 @@ describe('given a class diagram with relationships, ', function () {
         'click Class1 call functionCall("test0", test1, test2)';
       parser.parse(str);
 
-      expect(classParser.setClickEvent).toHaveBeenCalledWith(
+      expect(classDb.setClickEvent).toHaveBeenCalledWith(
         'Class1',
         'functionCall',
         '"test0", test1, test2'
@@ -1378,8 +1378,8 @@ describe('given a class diagram with relationships, ', function () {
     });
 
     it('should associate callback with tooltip', function () {
-      spyOn(classParser, 'setClickEvent');
-      spyOn(classParser, 'setTooltip');
+      spyOn(classDb, 'setClickEvent');
+      spyOn(classDb, 'setTooltip');
       const str =
         'classDiagram\n' +
         'class Class1\n' +
@@ -1387,8 +1387,8 @@ describe('given a class diagram with relationships, ', function () {
         'click Class1 call functionCall() "A tooltip"';
       parser.parse(str);
 
-      expect(classParser.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
-      expect(classParser.setTooltip).toHaveBeenCalledWith('Class1', 'A tooltip');
+      expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
+      expect(classDb.setTooltip).toHaveBeenCalledWith('Class1', 'A tooltip');
     });
 
     it('should add classes namespaces', function () {
@@ -1413,7 +1413,7 @@ class Class2
 
   describe('when parsing classDiagram with text labels', () => {
     beforeEach(function () {
-      parser.yy = classParser;
+      parser.yy = classDb;
       parser.yy.clear();
     });
 
@@ -1422,9 +1422,9 @@ class Class2
   class C1["Class 1 with text label"]
   C1 -->  C2
       `);
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
-      const c2 = classParser.getClass('C2');
+      const c2 = classDb.getClass('C2');
       expect(c2.label).toBe('C2');
     });
 
@@ -1434,9 +1434,9 @@ class Class2
   class C2["Class 2 with chars @?"]
   C1 -->  C2
       `);
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
-      const c2 = classParser.getClass('C2');
+      const c2 = classDb.getClass('C2');
       expect(c2.label).toBe('Class 2 with chars @?');
     });
 
@@ -1447,12 +1447,12 @@ class Class2
   }
   C1 -->  C2
       `);
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.members.length).toBe(1);
       const member = c1.members[0];
       expect(member.getDisplayDetails().displayText).toBe('+member1');
-      const c2 = classParser.getClass('C2');
+      const c2 = classDb.getClass('C2');
       expect(c2.label).toBe('C2');
     });
 
@@ -1464,7 +1464,7 @@ class Class2
   }
   C1 -->  C2
       `);
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.members.length).toBe(1);
       expect(c1.annotations.length).toBe(1);
@@ -1472,7 +1472,7 @@ class Class2
       const member = c1.members[0];
       expect(member.getDisplayDetails().displayText).toBe('+member1');
 
-      const c2 = classParser.getClass('C2');
+      const c2 = classDb.getClass('C2');
       expect(c2.label).toBe('C2');
     });
 
@@ -1484,7 +1484,7 @@ class C1["Class 1 with text label"]:::styleClass {
 C1 -->  C2
   `);
 
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.cssClasses.length).toBe(1);
       expect(c1.cssClasses[0]).toBe('styleClass');
@@ -1501,7 +1501,7 @@ C1 --> C2
 cssClass "C1" styleClass
   `);
 
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.cssClasses.length).toBe(1);
       expect(c1.cssClasses[0]).toBe('styleClass');
@@ -1519,12 +1519,12 @@ C1 --> C2
 cssClass "C1,C2" styleClass
   `);
 
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.cssClasses.length).toBe(1);
       expect(c1.cssClasses[0]).toBe('styleClass');
 
-      const c2 = classParser.getClass('C2');
+      const c2 = classDb.getClass('C2');
       expect(c2.label).toBe('Long long long long long long long long long long label');
       expect(c2.cssClasses.length).toBe(1);
       expect(c2.cssClasses[0]).toBe('styleClass');
@@ -1539,12 +1539,12 @@ class C2["Class 2 !@#$%^&*() label"]:::styleClass2
 C1 --> C2
   `);
 
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.cssClasses.length).toBe(1);
       expect(c1.cssClasses[0]).toBe('styleClass1');
 
-      const c2 = classParser.getClass('C2');
+      const c2 = classDb.getClass('C2');
       expect(c2.label).toBe('Class 2 !@#$%^&*() label');
       expect(c2.cssClasses.length).toBe(1);
       expect(c2.cssClasses[0]).toBe('styleClass2');
@@ -1559,13 +1559,13 @@ C1 --> C2
 C3 ..> C2
   `);
 
-      const c1 = classParser.getClass('C1');
+      const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class with text label');
 
-      const c2 = classParser.getClass('C2');
+      const c2 = classDb.getClass('C2');
       expect(c2.label).toBe('Class with text label');
 
-      const c3 = classParser.getClass('C3');
+      const c3 = classDb.getClass('C3');
       expect(c3.label).toBe('Class with text label');
     });
 
@@ -1585,19 +1585,19 @@ class C11["With ' single quote"]
 class C12["With ~!@#$%^&*()_+=-/?"]
 class C13["With Città foreign language"]
 `);
-      expect(classParser.getClass('C1').label).toBe('OneWord');
-      expect(classParser.getClass('C2').label).toBe('With, Comma');
-      expect(classParser.getClass('C3').label).toBe('With (Brackets)');
-      expect(classParser.getClass('C4').label).toBe('With [Brackets]');
-      expect(classParser.getClass('C5').label).toBe('With {Brackets}');
-      expect(classParser.getClass('C6').label).toBe(' ');
-      expect(classParser.getClass('C7').label).toBe('With 1 number');
-      expect(classParser.getClass('C8').label).toBe('With . period...');
-      expect(classParser.getClass('C9').label).toBe('With - dash');
-      expect(classParser.getClass('C10').label).toBe('With _ underscore');
-      expect(classParser.getClass('C11').label).toBe("With ' single quote");
-      expect(classParser.getClass('C12').label).toBe('With ~!@#$%^&*()_+=-/?');
-      expect(classParser.getClass('C13').label).toBe('With Città foreign language');
+      expect(classDb.getClass('C1').label).toBe('OneWord');
+      expect(classDb.getClass('C2').label).toBe('With, Comma');
+      expect(classDb.getClass('C3').label).toBe('With (Brackets)');
+      expect(classDb.getClass('C4').label).toBe('With [Brackets]');
+      expect(classDb.getClass('C5').label).toBe('With {Brackets}');
+      expect(classDb.getClass('C6').label).toBe(' ');
+      expect(classDb.getClass('C7').label).toBe('With 1 number');
+      expect(classDb.getClass('C8').label).toBe('With . period...');
+      expect(classDb.getClass('C9').label).toBe('With - dash');
+      expect(classDb.getClass('C10').label).toBe('With _ underscore');
+      expect(classDb.getClass('C11').label).toBe("With ' single quote");
+      expect(classDb.getClass('C12').label).toBe('With ~!@#$%^&*()_+=-/?');
+      expect(classDb.getClass('C13').label).toBe('With Città foreign language');
     });
   });
 });
