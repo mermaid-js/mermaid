@@ -4,7 +4,7 @@ import flowchartV2 from '../diagrams/flowchart/flowDetector-v2.js';
 import er from '../diagrams/er/erDetector.js';
 import git from '../diagrams/git/gitGraphDetector.js';
 import gantt from '../diagrams/gantt/ganttDetector.js';
-import info from '../diagrams/info/infoDetector.js';
+import { info } from '../diagrams/info/infoDetector.js';
 import pie from '../diagrams/pie/pieDetector.js';
 import quadrantChart from '../diagrams/quadrant-chart/quadrantDetector.js';
 import requirement from '../diagrams/requirement/requirementDetector.js';

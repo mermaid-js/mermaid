@@ -9,3 +9,9 @@ https://twitter.com/mermaidjs_
 
 # Don't check files that are generated during the build via `pnpm docs:code`
 packages/mermaid/src/docs/config/setup/*
+
+# Ignore localhost
+http://localhost:3333/
+
+# Ignore slack invite
+https://join.slack.com/

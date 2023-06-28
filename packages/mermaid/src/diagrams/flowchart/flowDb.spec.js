@@ -41,3 +41,26 @@ describe('flow db subgraphs', () => {
     });
   });
 });
+
+describe('flow db addClass', () => {
+  beforeEach(() => {
+    flowDb.clear();
+  });
+  it('should detect many classes', () => {
+    flowDb.addClass('a,b', ['stroke-width: 8px']);
+    const classes = flowDb.getClasses();
+
+    expect(classes.hasOwnProperty('a')).toBe(true);
+    expect(classes.hasOwnProperty('b')).toBe(true);
+    expect(classes['a']['styles']).toEqual(['stroke-width: 8px']);
+    expect(classes['b']['styles']).toEqual(['stroke-width: 8px']);
+  });
+
+  it('should detect single class', () => {
+    flowDb.addClass('a', ['stroke-width: 8px']);
+    const classes = flowDb.getClasses();
+
+    expect(classes.hasOwnProperty('a')).toBe(true);
+    expect(classes['a']['styles']).toEqual(['stroke-width: 8px']);
+  });
+});

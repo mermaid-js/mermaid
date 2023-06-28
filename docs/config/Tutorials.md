@@ -26,6 +26,10 @@ The definitions that can be generated the Live-Editor are also backwards-compati
 
 [Eddie Jaoude: Can you code your diagrams?](https://www.youtube.com/watch?v=9HZzKkAqrX8)
 
+## Mermaid with OpenAI
+
+[Elle Neal: Mind Mapping with AI: An Accessible Approach for Neurodiverse Learners Tutorial:](https://medium.com/@elle.neal_71064/mind-mapping-with-ai-an-accessible-approach-for-neurodiverse-learners-1a74767359ff), [Demo:](https://databutton.com/v/jk9vrghc)
+
 ## Mermaid with HTML
 
 Examples are provided in [Getting Started](../intro/n00b-gettingStarted.md)

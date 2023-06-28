@@ -1,4 +1,4 @@
-// @ts-ignore d3 types are not available
+// @ts-nocheck - don't check until handle it
 import { select, curveLinear } from 'd3';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger.js';
@@ -347,11 +347,9 @@ export const draw = async function (text: string, id: string, _version: string, 
     securityLevel === 'sandbox'
       ? select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
-  // @ts-ignore Ignore type error for now
   const svg = root.select(`[id="${id}"]`);
 
   // Run the renderer. This is what draws the final graph.
-  // @ts-ignore Ignore type error for now
   const element = root.select('#' + id + ' g');
   await render(
     element,
@@ -367,7 +365,6 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   // Add label rects for non html labels
   if (!conf?.htmlLabels) {
-    // @ts-ignore Ignore type error for now
     const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
     const labels = doc.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
     for (const label of labels) {

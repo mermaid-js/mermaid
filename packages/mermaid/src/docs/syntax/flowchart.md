@@ -25,6 +25,10 @@ flowchart LR
 The id is what is displayed in the box.
 ```
 
+```tip
+Instead of `flowchart` one can also use `graph`.
+```
+
 ### A node with text
 
 It is also possible to set text in the box that differs from the id. If this is done several times, it is the last text
@@ -494,7 +498,11 @@ This feature is applicable to node labels, edge labels, and subgraph labels.
 
 ## Interaction
 
-It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab.
+
+```note
+This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+```
 
 ```
 click nodeId callback
@@ -597,6 +605,12 @@ In the example below the style defined in the linkStyle statement will belong to
 linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
 ```
 
+It is also possible to add style to multiple links in a single statement, by separating link numbers with commas:
+
+```
+linkStyle 1,2,7 color:blue;
+```
+
 ### Styling line curves
 
 It is possible to style the type of curve used for lines between items, if the default method does not meet your needs.
@@ -630,10 +644,16 @@ flowchart LR
 More convenient than defining the style every time is to define a class of styles and attach this class to the nodes that
 should have a different look.
 
-a class definition looks like the example below:
+A class definition looks like the example below:
 
 ```
     classDef className fill:#f9f,stroke:#333,stroke-width:4px;
+```
+
+Also, it is possible to define style to multiple classes in one statement:
+
+```
+    classDef firstClassName,secondClassName font-size:12pt;
 ```
 
 Attachment of a class to a node is done as per below:
@@ -737,7 +757,9 @@ You can change the renderer to elk by adding this directive:
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 ```
 
+```note
 Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
+```
 
 ### Width
 
