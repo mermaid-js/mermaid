@@ -125,7 +125,6 @@
     "node": "18.16.1"
   },
   "nyc": {
-    "report-dir": "coverage/cypress",
-    "temp-directory": "./coverage/.nyc_output"
+    "report-dir": "coverage/cypress"
   }
 }

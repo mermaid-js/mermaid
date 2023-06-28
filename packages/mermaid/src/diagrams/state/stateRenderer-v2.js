@@ -358,7 +358,7 @@ const setupDoc = (g, parentParsedItem, doc, diagramStates, diagramDb, altFlag) =
  * Look through all of the documents (docs) in the parsedItems
  * Because is a _document_ direction, the default direction is not necessarily the same as the overall default _diagram_ direction.
  * @param {object[]} parsedItem - the parsed statement item to look through
- * @param [defaultDir=DEFAULT_NESTED_DOC_DIR] - the direction to use if none is found
+ * @param [defaultDir] - the direction to use if none is found
  * @returns {string}
  */
 const getDir = (parsedItem, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
