@@ -88,12 +88,12 @@ You can add milestones to the diagrams. Milestones differ from tasks as they rep
 
 ```mermaid-example
 gantt
-dateFormat HH:mm
-axisFormat %H:%M
-Initial milestone : milestone, m1, 17:49,2min
-taska2 : 10min
-taska3 : 5min
-Final milestone : milestone, m2, 18:14, 2min
+    dateFormat HH:mm
+    axisFormat %H:%M
+    Initial milestone : milestone, m1, 17:49, 2m
+    Task A : 10m
+    Task B : 5m
+    Final milestone : milestone, m2, 18:08, 4m
 ```
 
 ## Setting dates
