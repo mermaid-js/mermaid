@@ -159,8 +159,8 @@ UK land based bioenergy,Bio-conversion,182.01
 Wave,Electricity grid,19.013
 Wind,Electricity grid,289.366
 ```
-:::
 
+:::
 
 ## Syntax
 
@@ -214,6 +214,7 @@ Pumped heat,"Heating and cooling, commercial",70.672
 ```
 
 ### Double quotes
+
 If you need to have double quote, put a pair of them:
 
 ```mermaid-example
@@ -236,28 +237,28 @@ Pumped heat,"Heating and cooling, ""commercial""",70.672
 
 You can change graph layout by setting `nodeAlignment` to:
 
-* `justify`
-* `center`
-* `left`
-* `right`
+- `justify`
+- `center`
+- `left`
+- `right`
 
 And adjust coloring of the links by setting `linkColor` to one of those:
 
-* `source`
-* `target`
-* `gradient`
-* hex code of color, like `#a1a1a1`
+- `source`
+- `target`
+- `gradient`
+- hex code of color, like `#a1a1a1`
 
 ```html
-  <script>
-    const config = {
-      startOnLoad: true,
-      securityLevel: "loose",
-      sankey: {
-        linkColor: "source",
-        nodeAlignment: "left"
-      }
-    };
-    mermaid.initialize(config);
-  </script>
+<script>
+  const config = {
+    startOnLoad: true,
+    securityLevel: 'loose',
+    sankey: {
+      linkColor: 'source',
+      nodeAlignment: 'left',
+    },
+  };
+  mermaid.initialize(config);
+</script>
 ```

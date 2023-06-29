@@ -28,7 +28,9 @@ async function fetchContributors() {
       console.log(`Fetched page ${page}`);
       page++;
     } while (data.length === 100);
-  } catch (e) { /* contributors fetching failure must not hinder docs development */ }
+  } catch (e) {
+    /* contributors fetching failure must not hinder docs development */
+  }
   return collaborators.filter((name) => !name.includes('[bot]'));
 }
 
