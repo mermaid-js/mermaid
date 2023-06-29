@@ -67,8 +67,6 @@
     "@cypress/code-coverage": "^3.10.7",
     "@rollup/plugin-typescript": "^11.1.1",
     "@types/cors": "^2.8.13",
-    "@types/d3": "^7.4.0",
-    "@types/d3-sankey": "^0.12.1",
     "@types/eslint": "^8.37.0",
     "@types/express": "^4.17.17",
     "@types/js-yaml": "^4.0.5",

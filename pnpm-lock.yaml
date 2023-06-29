@@ -25,12 +25,6 @@ importers:
       '@types/cors':
         specifier: ^2.8.13
         version: 2.8.13
-      '@types/d3':
-        specifier: ^7.4.0
-        version: 7.4.0
-      '@types/d3-sankey':
-        specifier: ^0.12.1
-        version: 0.12.1
       '@types/eslint':
         specifier: ^8.37.0
         version: 8.37.0
@@ -260,6 +254,9 @@ importers:
       '@types/d3':
         specifier: ^7.4.0
         version: 7.4.0
+      '@types/d3-sankey':
+        specifier: ^0.12.1
+        version: 0.12.1
       '@types/d3-selection':
         specifier: ^3.0.5
         version: 3.0.5

@@ -230,6 +230,8 @@ Pumped heat,"Heating and cooling ""homes""",193.026
 Pumped heat,"Heating and cooling, ""commercial""",70.672
 ```
 
+## Configuration
+
 ### Coloring and Alignment
 
 You can change graph layout by setting `nodeAlignment` to:
