@@ -24,6 +24,8 @@ $RUN --service-ports mermaid sh -c "cd packages/mermaid/src/docs && npx pnpm pre
 ;;
 
 help)
+
+# Alignment of help message must be as it is, it will be nice looking when printed
 usage=$(
 cat <<EOF
 Run commands within docker containers.
@@ -48,7 +50,7 @@ Examples of frequiently used commands:
 
 $name pnpm add                # Add package, 'run add d3-sankey'
 $name pnpm prettier --write   # Prettify a file 'run prettier <path-to-file>'
-                              #   git diff --name-only develop | xargs run pnpm prettier --write
+                            #   git diff --name-only develop | xargs run pnpm prettier --write
 $name pnpm test               # Run unit tests
 $name pnpm vitest             # Run watcher for unit tests
 $name pnpm e2e                # Run integration tests
