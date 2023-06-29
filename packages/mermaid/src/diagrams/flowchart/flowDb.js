@@ -342,7 +342,8 @@ export const setLink = function (ids, linkStr, target) {
   setClass(ids, 'clickable');
 };
 export const getTooltip = function (id) {
-  return tooltips[id];
+  if (tooltips.hasOwnProperty(id)) return tooltips[id];
+  return undefined;
 };
 
 /**
@@ -443,7 +444,7 @@ export const clear = function (ver = 'gen-1') {
   subGraphs = [];
   subGraphLookup = {};
   subCount = 0;
-  tooltips = [];
+  tooltips = {};
   firstGraphFlag = true;
   version = ver;
   commonClear();
