@@ -9,6 +9,7 @@ export interface ClassNode {
   members: ClassMember[];
   annotations: string[];
   domId: string;
+  parent?: string;
   link?: string;
   linkTarget?: string;
   haveCallback?: boolean;

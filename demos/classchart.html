@@ -158,6 +158,29 @@
     </pre>
     <hr />
 
+    <pre class="mermaid">
+    classDiagram
+      A1 --> B1
+      namespace A {
+        class A1 {
+          +foo : string
+        }
+        class A2 {
+          +bar : int
+        }
+      }
+      namespace B {
+        class B1 {
+          +foo : bool
+        }
+        class B2 {
+          +bar : float
+        }
+      }
+      A2 --> B2
+    </pre>
+    <hr />
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({

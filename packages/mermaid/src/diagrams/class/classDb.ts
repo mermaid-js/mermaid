@@ -450,9 +450,8 @@ const getNamespaces = function (): NamespaceMap {
 export const addClassesToNamespace = function (id: string, classNames: string[]) {
   if (namespaces[id] !== undefined) {
     classNames.map((className) => {
+      classes[className].parent = id;
       namespaces[id].classes[className] = classes[className];
-      delete classes[className];
-      classCounter--;
     });
   }
 };

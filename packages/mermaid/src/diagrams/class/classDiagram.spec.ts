@@ -1405,9 +1405,54 @@ class Class2
       parser.parse(str);
 
       const testNamespace = parser.yy.getNamespace('Namespace1');
+      const testClasses = parser.yy.getClasses();
       expect(Object.keys(testNamespace.classes).length).toBe(2);
       expect(Object.keys(testNamespace.children).length).toBe(0);
       expect(testNamespace.classes['Class1'].id).toBe('Class1');
+      expect(Object.keys(testClasses).length).toBe(2);
+    });
+
+    it('should add relations between classes of different namespaces', function () {
+      const str = `classDiagram
+      A1 --> B1
+      namespace A {
+        class A1 {
+          +foo : string
+        }
+        class A2 {
+          +bar : int
+        }
+      }
+      namespace B {
+        class B1 {
+          +foo : bool
+        }
+        class B2 {
+          +bar : float
+        }
+      }
+      A2 --> B2`;
+
+      parser.parse(str);
+      const testNamespaceA = parser.yy.getNamespace('A');
+      const testNamespaceB = parser.yy.getNamespace('B');
+      const testClasses = parser.yy.getClasses();
+      const testRelations = parser.yy.getRelations();
+      expect(Object.keys(testNamespaceA.classes).length).toBe(2);
+      expect(testNamespaceA.classes['A1'].members[0]).toBe('+foo : string');
+      expect(testNamespaceA.classes['A2'].members[0]).toBe('+bar : int');
+      expect(Object.keys(testNamespaceB.classes).length).toBe(2);
+      expect(testNamespaceB.classes['B1'].members[0]).toBe('+foo : bool');
+      expect(testNamespaceB.classes['B2'].members[0]).toBe('+bar : float');
+      expect(Object.keys(testClasses).length).toBe(4);
+      expect(testClasses['A1'].parent).toBe('A');
+      expect(testClasses['A2'].parent).toBe('A');
+      expect(testClasses['B1'].parent).toBe('B');
+      expect(testClasses['B2'].parent).toBe('B');
+      expect(testRelations[0].id1).toBe('A1');
+      expect(testRelations[0].id2).toBe('B1');
+      expect(testRelations[1].id1).toBe('A2');
+      expect(testRelations[1].id2).toBe('B2');
     });
   });
 
