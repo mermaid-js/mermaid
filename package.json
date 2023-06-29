@@ -78,7 +78,7 @@
     "@types/rollup-plugin-visualizer": "^4.2.1",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
-    "@vitest/coverage-istanbul": "^0.32.2",
+    "@vitest/coverage-v8": "^0.32.2",
     "@vitest/spy": "^0.32.2",
     "@vitest/ui": "^0.32.2",
     "concurrently": "^8.0.1",
