@@ -50,8 +50,8 @@ opt_eof: EOF | ;
 
 record
   : field\[source] COMMA field\[target] COMMA field\[value] {
-      const source = yy.findOrCreateNode($source.trim());
-      const target = yy.findOrCreateNode($target.trim());
+      const source = yy.findOrCreateNode($source.trim().replaceAll('""', '"'));
+      const target = yy.findOrCreateNode($target.trim().replaceAll('""', '"'));
       const value = parseFloat($value.trim());
       yy.addLink(source,target,value);
     } // parse only 3 fields, this is not part of CSV standard
