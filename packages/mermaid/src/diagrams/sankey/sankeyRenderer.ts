@@ -20,6 +20,17 @@ import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { Uid } from '../../rendering-util/uid.js';
 import { SankeyLinkColor, SankeyNodeAlignment } from '../../config.type.js';
 
+// Map config options to alignment functions
+const alignmentsMap: Record<
+  SankeyNodeAlignment,
+  (node: d3SankeyNode<object, object>, n: number) => number
+> = {
+  [SankeyNodeAlignment.left]: d3SankeyLeft,
+  [SankeyNodeAlignment.right]: d3SankeyRight,
+  [SankeyNodeAlignment.center]: d3SankeyCenter,
+  [SankeyNodeAlignment.justify]: d3SankeyJustify,
+};
+
 /**
  * Draws Sankey diagram.
  *
@@ -73,16 +84,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   // @ts-ignore TODO: db should be coerced to sankey DB type
   const graph = diagObj.db.getGraph();
 
-  // Map config options to alignment functions
-  const alignmentsMap: Record<
-    SankeyNodeAlignment,
-    (node: d3SankeyNode<object, object>, n: number) => number
-  > = {
-    [SankeyNodeAlignment.left]: d3SankeyLeft,
-    [SankeyNodeAlignment.right]: d3SankeyRight,
-    [SankeyNodeAlignment.center]: d3SankeyCenter,
-    [SankeyNodeAlignment.justify]: d3SankeyJustify,
-  };
+  // Get alignment function
   const nodeAlign = alignmentsMap[nodeAlignment];
 
   // Construct and configure a Sankey generator
