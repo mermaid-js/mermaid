@@ -101,10 +101,7 @@ export const addClasses = function (
       /**
        * Variable for storing the classes for the vertex
        */
-      let cssClassStr = '';
-      if (vertex.cssClasses.length > 0) {
-        cssClassStr = cssClassStr + ' ' + vertex.cssClasses.join(' ');
-      }
+      const cssClassStr = vertex.cssClasses.join(' ');
 
       const styles = { labelStyle: '', style: '' }; //getStylesFromArray(vertex.styles);
 
