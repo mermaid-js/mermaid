@@ -15,6 +15,7 @@ services:
       - root_npm:/root/.npm
     ports:
       - 9000:9000
+      - 3333:3333
 volumes:
   root_cache:
   root_local:

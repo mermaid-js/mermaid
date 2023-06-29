@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vitepress --port 3333 --open",
+    "dev": "pnpm prefetch && vitepress --port 3333 --host",
     "build": "pnpm prefetch && vitepress build",
     "build-no-prefetch": "vitepress build",
     "serve": "vitepress serve",
