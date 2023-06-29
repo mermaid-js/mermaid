@@ -506,13 +506,13 @@ importers:
         version: 4.3.9(@types/node@18.16.0)
       vite-plugin-pwa:
         specifier: ^0.16.0
-        version: 0.16.0(vite@4.3.9)(workbox-build@7.0.0)(workbox-window@6.5.4)
+        version: 0.16.0(vite@4.3.9)(workbox-build@7.0.0)(workbox-window@7.0.0)
       vitepress:
-        specifier: 1.0.0-beta.2
-        version: 1.0.0-beta.2(@algolia/client-search@4.14.2)(@types/node@18.16.0)(search-insights@2.6.0)
+        specifier: 1.0.0-beta.3
+        version: 1.0.0-beta.3(@algolia/client-search@4.14.2)(@types/node@18.16.0)(search-insights@2.6.0)
       workbox-window:
-        specifier: ^6.5.4
-        version: 6.5.4
+        specifier: ^7.0.0
+        version: 7.0.0
 
   tests/webpack:
     dependencies:
@@ -14980,7 +14980,7 @@ packages:
       - supports-color
     dev: true
 
-  /vite-plugin-pwa@0.16.0(vite@4.3.9)(workbox-build@7.0.0)(workbox-window@6.5.4):
+  /vite-plugin-pwa@0.16.0(vite@4.3.9)(workbox-build@7.0.0)(workbox-window@7.0.0):
     resolution: {integrity: sha512-E+AQRzHxqNU4ZhEeR8X37/foZB+ezJEhXauE/mcf1UITY6k2Pa1dtlFl+BQu57fTdiVlWim5S0Qy44Yap93Dkg==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
@@ -14993,7 +14993,7 @@ packages:
       pretty-bytes: 6.1.0
       vite: 4.3.9(@types/node@18.16.0)
       workbox-build: 7.0.0
-      workbox-window: 6.5.4
+      workbox-window: 7.0.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -15141,49 +15141,6 @@ packages:
       - stylus
       - sugarss
       - terser
-    dev: true
-
-  /vitepress@1.0.0-beta.2(@algolia/client-search@4.14.2)(@types/node@18.16.0)(search-insights@2.6.0):
-    resolution: {integrity: sha512-DBXYjtYbm3W1IPPJ2TiCaK/XK+o/2XmL2+jslOGKm+txcbmG0kbeB+vadC5tCUZA9NdA+9Ywj3M4548c7t/SDg==}
-    hasBin: true
-    dependencies:
-      '@docsearch/css': 3.5.1
-      '@docsearch/js': 3.5.1(@algolia/client-search@4.14.2)(search-insights@2.6.0)
-      '@vitejs/plugin-vue': 4.2.3(vite@4.3.9)(vue@3.3.4)
-      '@vue/devtools-api': 6.5.0
-      '@vueuse/core': 10.1.2(vue@3.3.4)
-      '@vueuse/integrations': 10.1.2(focus-trap@7.4.3)(vue@3.3.4)
-      body-scroll-lock: 4.0.0-beta.0
-      focus-trap: 7.4.3
-      mark.js: 8.11.1
-      minisearch: 6.1.0
-      shiki: 0.14.2
-      vite: 4.3.9(@types/node@18.16.0)
-      vue: 3.3.4
-    transitivePeerDependencies:
-      - '@algolia/client-search'
-      - '@types/node'
-      - '@types/react'
-      - '@vue/composition-api'
-      - async-validator
-      - axios
-      - change-case
-      - drauu
-      - fuse.js
-      - idb-keyval
-      - jwt-decode
-      - less
-      - nprogress
-      - qrcode
-      - react
-      - react-dom
-      - sass
-      - search-insights
-      - sortablejs
-      - stylus
-      - sugarss
-      - terser
-      - universal-cookie
     dev: true
 
   /vitepress@1.0.0-beta.3(@algolia/client-search@4.14.2)(@types/node@18.16.0)(search-insights@2.6.0):
@@ -15851,10 +15808,6 @@ packages:
       workbox-core: 7.0.0
     dev: true
 
-  /workbox-core@6.5.4:
-    resolution: {integrity: sha512-OXYb+m9wZm8GrORlV2vBbE5EC1FKu71GGp0H4rjmxmF4/HLbMCoTFws87M3dFwgpmg0v00K++PImpNQ6J5NQ6Q==}
-    dev: true
-
   /workbox-core@7.0.0:
     resolution: {integrity: sha512-81JkAAZtfVP8darBpfRTovHg8DGAVrKFgHpOArZbdFd78VqHr5Iw65f2guwjE2NlCFbPFDoez3D3/6ZvhI/rwQ==}
     dev: true
@@ -15927,13 +15880,6 @@ packages:
 
   /workbox-sw@7.0.0:
     resolution: {integrity: sha512-SWfEouQfjRiZ7GNABzHUKUyj8pCoe+RwjfOIajcx6J5mtgKkN+t8UToHnpaJL5UVVOf5YhJh+OHhbVNIHe+LVA==}
-    dev: true
-
-  /workbox-window@6.5.4:
-    resolution: {integrity: sha512-HnLZJDwYBE+hpG25AQBO8RUWBJRaCsI9ksQJEp3aCOFCaG5kqaToAYXFRAHxzRluM2cQbGzdQF5rjKPWPA1fug==}
-    dependencies:
-      '@types/trusted-types': 2.0.2
-      workbox-core: 6.5.4
     dev: true
 
   /workbox-window@7.0.0:

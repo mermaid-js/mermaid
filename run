@@ -20,7 +20,7 @@ $RUN --service-ports mermaid sh -c "npx pnpm run dev"
 ;;
 
 docs:dev)
-$RUN --service-ports mermaid sh -c "npx pnpm --filter mermaid run docs:dev"
+$RUN --service-ports mermaid sh -c "cd packages/mermaid/src/docs && npx pnpm prefetch && npx vitepress --port 3333 --host"
 ;;
 
 help)
