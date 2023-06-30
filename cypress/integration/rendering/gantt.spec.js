@@ -490,4 +490,40 @@ describe('Gantt diagram', () => {
       {}
     );
   });
+
+  it('should render when there is a dateRange', () => {
+    imgSnapshotTest(
+      `
+      ---
+      displayMode: compact
+      ---
+      gantt
+        title GANTT compact
+        dateFormat  HH:mm:ss
+        dateRange   12:30:00,13:30:00
+        axisFormat  %Hh%M
+
+        section DB Clean
+        Clean: 12:00:00, 10m
+        Clean: 12:30:00, 12m
+        Clean: 13:00:00, 8m
+        Clean: 13:30:00, 9m
+        Clean: 14:00:00, 13m
+        Clean: 14:30:00, 10m
+        Clean: 15:00:00, 11m
+
+        section Sessions
+        A: 12:00:00, 63m
+        B: 12:30:00, 12m
+        C: 13:05:00, 12m
+        D: 13:06:00, 33m
+        E: 13:15:00, 55m
+        F: 13:20:00, 12m
+        G: 13:32:00, 18m
+        H: 13:50:00, 20m
+        I: 14:10:00, 10m
+    `,
+      {}
+    );
+  });
 });
