@@ -33,6 +33,7 @@ describe('when using the ganttDb', function () {
   describe('when calling the clear function', function () {
     beforeEach(function () {
       ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.setDateRange('2023-06-01, 2023-07-01');
       ganttDb.enableInclusiveEndDates();
       ganttDb.setDisplayMode('compact');
       ganttDb.setTodayMarker('off');
@@ -49,6 +50,7 @@ describe('when using the ganttDb', function () {
       ${'getAccTitle'}          | ${''}
       ${'getAccDescription'}    | ${''}
       ${'getDateFormat'}        | ${''}
+      ${'getDateRange'}         | ${''}
       ${'getAxisFormat'}        | ${''}
       ${'getTodayMarker'}       | ${''}
       ${'getExcludes'}          | ${[]}
@@ -157,6 +159,28 @@ describe('when using the ganttDb', function () {
     expect(tasks[2].task).toEqual('test3');
     expect(tasks[2].startTime).toEqual(new Date(2013, 0, 15));
     expect(tasks[2].endTime).toEqual(new Date(2013, 0, 17));
+  });
+  it('should handle fixed date ranges', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setDateRange('2023-07-01, 2023-07-30');
+    ganttDb.addSection('testa1');
+    ganttDb.addTask('test1', 'id1,2013-07-01,2w');
+    ganttDb.addTask('test2', 'id2,2023-06-25,2w');
+    ganttDb.addSection('testa2');
+    ganttDb.addTask('test3', 'id3,after id2,2d');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks.length).toEqual(2);
+    expect(tasks[0].startTime).toEqual(new Date(2023, 5, 25));
+    expect(tasks[0].endTime).toEqual(new Date(2023, 6, 9));
+    expect(tasks[0].id).toEqual('id2');
+    expect(tasks[0].task).toEqual('test2');
+
+    expect(tasks[1].id).toEqual('id3');
+    expect(tasks[1].task).toEqual('test3');
+    expect(tasks[1].startTime).toEqual(new Date(2023, 6, 9));
+    expect(tasks[1].endTime).toEqual(new Date(2023, 6, 11));
   });
   it('should ignore weekends', function () {
     ganttDb.setDateFormat('YYYY-MM-DD');
@@ -436,6 +460,8 @@ describe('when using the ganttDb', function () {
   it('should reject dates with ridiculous years', function () {
     ganttDb.setDateFormat('YYYYMMDD');
     ganttDb.addTask('test1', 'id1,202304,1d');
-    expect(() => ganttDb.getTasks()).toThrowError('Invalid date:202304');
+    expect(() => ganttDb.getTasks()).toThrowError(
+      'Invalid date: `202304` with date format: `YYYYMMDD`'
+    );
   });
 });

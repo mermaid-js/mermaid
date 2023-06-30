@@ -3,8 +3,6 @@ import { log } from '../../logger.js';
 import {
   select,
   scaleTime,
-  min,
-  max,
   scaleLinear,
   interpolateHcl,
   axisBottom,
@@ -128,14 +126,7 @@ export const draw = function (text, id, version, diagObj) {
 
   // Set timescale
   const timeScale = scaleTime()
-    .domain([
-      min(taskArray, function (d) {
-        return d.startTime;
-      }),
-      max(taskArray, function (d) {
-        return d.endTime;
-      }),
-    ])
+    .domain([diagObj.db.getStartRange(), diagObj.db.getEndRange()])
     .rangeRound([0, w - conf.leftPadding - conf.rightPadding]);
 
   /**

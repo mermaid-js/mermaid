@@ -1,5 +1,6 @@
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import dayjs from 'dayjs';
+import { min, max } from 'd3';
 import dayjsIsoWeek from 'dayjs/plugin/isoWeek.js';
 import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat.js';
 import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
@@ -23,6 +24,9 @@ dayjs.extend(dayjsCustomParseFormat);
 dayjs.extend(dayjsAdvancedFormat);
 
 let dateFormat = '';
+let dateRange = '';
+let startDateRange = undefined;
+let endDateRange = undefined;
 let axisFormat = '';
 let tickInterval = undefined;
 let todayMarker = '';
@@ -55,6 +59,7 @@ export const clear = function () {
   lastTaskID = undefined;
   rawTasks = [];
   dateFormat = '';
+  dateRange = '';
   axisFormat = '';
   displayMode = '';
   tickInterval = undefined;
@@ -100,6 +105,22 @@ export const enableInclusiveEndDates = function () {
   inclusiveEndDates = true;
 };
 
+export const setDateRange = function (txt) {
+  dateRange = txt;
+
+  if (dateRange != '') {
+    const data = dateRange.split(',');
+
+    switch (data.length) {
+      case 2:
+        startDateRange = getStartDate(undefined, dateFormat, data[0]);
+        endDateRange = getEndDate(undefined, dateFormat, data[1]);
+        break;
+      default:
+    }
+  }
+};
+
 export const endDatesAreInclusive = function () {
   return inclusiveEndDates;
 };
@@ -122,6 +143,28 @@ export const getDisplayMode = function () {
 
 export const getDateFormat = function () {
   return dateFormat;
+};
+
+export const getDateRange = function () {
+  return dateRange;
+};
+
+export const getStartRange = function () {
+  return (
+    startDateRange ||
+    min(getTasks(), function (d) {
+      return d.startTime;
+    })
+  );
+};
+
+export const getEndRange = function () {
+  return (
+    endDateRange ||
+    max(getTasks(), function (d) {
+      return d.endTime;
+    })
+  );
 };
 
 export const setIncludes = function (txt) {
@@ -162,6 +205,18 @@ export const getTasks = function () {
   }
 
   tasks = rawTasks;
+  if (dateRange != '') {
+    tasks = tasks.filter(function (task) {
+      let in_bounds = true;
+      if (startDateRange && task.endTime <= startDateRange) {
+        in_bounds = false;
+      }
+      if (endDateRange && task.startTime >= endDateRange) {
+        in_bounds = false;
+      }
+      return in_bounds;
+    });
+  }
 
   return tasks;
 };
@@ -298,7 +353,7 @@ const getStartDate = function (prevTime, dateFormat, str) {
       d.getFullYear() < -10000 ||
       d.getFullYear() > 10000
     ) {
-      throw new Error('Invalid date:' + str);
+      throw new Error('Invalid date: `' + str + '` with date format: `' + dateFormat + '`');
     }
     return d;
   }
@@ -726,6 +781,10 @@ export default {
   setDateFormat,
   getDateFormat,
   enableInclusiveEndDates,
+  setDateRange,
+  getDateRange,
+  getStartRange,
+  getEndRange,
   endDatesAreInclusive,
   enableTopAxis,
   topAxisEnabled,

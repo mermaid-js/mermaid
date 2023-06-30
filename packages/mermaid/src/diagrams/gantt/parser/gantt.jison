@@ -80,6 +80,7 @@ that id.
 "gantt"                     return 'gantt';
 "dateFormat"\s[^#\n;]+      return 'dateFormat';
 "inclusiveEndDates"         return 'inclusiveEndDates';
+"dateRange"\s[^#\n;]+       return 'dateRange';
 "topAxis"                   return 'topAxis';
 "axisFormat"\s[^#\n;]+      return 'axisFormat';
 "tickInterval"\s[^#\n;]+    return 'tickInterval';
@@ -124,6 +125,7 @@ line
 statement
   : dateFormat {yy.setDateFormat($1.substr(11));$$=$1.substr(11);}
   | inclusiveEndDates {yy.enableInclusiveEndDates();$$=$1.substr(18);}
+  | dateRange {yy.setDateRange($1.substr(11));$$=$1.substr(11);}
   | topAxis {yy.TopAxis();$$=$1.substr(8);}
   | axisFormat {yy.setAxisFormat($1.substr(11));$$=$1.substr(11);}
   | tickInterval {yy.setTickInterval($1.substr(13));$$=$1.substr(13);}
