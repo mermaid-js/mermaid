@@ -22,7 +22,6 @@ import er from './diagrams/er/styles.js';
 import error from './diagrams/error/styles.js';
 import git from './diagrams/git/styles.js';
 import gantt from './diagrams/gantt/styles.js';
-import info from './diagrams/info/styles.js';
 import pie from './diagrams/pie/styles.js';
 import requirement from './diagrams/requirement/styles.js';
 import sequence from './diagrams/sequence/styles.js';
@@ -92,7 +91,6 @@ describe('styles', () => {
         flowchartElk,
         gantt,
         git,
-        info,
         journey,
         mindmap,
         pie,

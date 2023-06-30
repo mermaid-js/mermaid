@@ -17,7 +17,10 @@ export default defineConfig({
     // TODO: should we move this to a mermaid-core package?
     setupFiles: ['packages/mermaid/src/tests/setup.ts'],
     coverage: {
+      provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
+      reportsDirectory: './coverage/vitest',
+      exclude: ['**/node_modules/**', '**/tests/**', '**/__mocks__/**'],
     },
   },
   build: {

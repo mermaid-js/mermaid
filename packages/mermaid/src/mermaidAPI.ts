@@ -78,7 +78,6 @@ export interface ParseOptions {
 }
 
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
-// @ts-ignore Could replicate the type definition in d3. This also makes it possible to use the untyped info from the js diagram files.
 export type D3Element = any;
 
 export interface RenderResult {
@@ -491,13 +490,7 @@ const render = async function (
     ? diag.renderer.getClasses(text, diag)
     : {};
 
-  const rules = createUserStyles(
-    config,
-    graphType,
-    // @ts-ignore convert renderer to TS.
-    diagramClassDefs,
-    idSelector
-  );
+  const rules = createUserStyles(config, graphType, diagramClassDefs, idSelector);
 
   const style1 = document.createElement('style');
   style1.innerHTML = rules;
