@@ -33,7 +33,7 @@ describe('when using the ganttDb', function () {
   describe('when calling the clear function', function () {
     beforeEach(function () {
       ganttDb.setDateFormat('YYYY-MM-DD');
-      ganttDb.setDateRange('2023-06-01, 2023-07-01');
+      ganttDb.setDateRange('2019-02-01, 2019-03-01');
       ganttDb.enableInclusiveEndDates();
       ganttDb.setDisplayMode('compact');
       ganttDb.setTodayMarker('off');
@@ -51,6 +51,8 @@ describe('when using the ganttDb', function () {
       ${'getAccDescription'}    | ${''}
       ${'getDateFormat'}        | ${''}
       ${'getDateRange'}         | ${''}
+      ${'getStartRange'}        | ${''}
+      ${'getEndRange'}          | ${''}
       ${'getAxisFormat'}        | ${''}
       ${'getTodayMarker'}       | ${''}
       ${'getExcludes'}          | ${[]}
@@ -463,5 +465,27 @@ describe('when using the ganttDb', function () {
     expect(() => ganttDb.getTasks()).toThrowError(
       'Invalid date: `202304` with date format: `YYYYMMDD`'
     );
+  });
+
+  it.each(convert`
+    testName                   | dateRange                   | expStartRange   | expEndRange     | expTasksLength
+    ${'No dateRange'}          | ${''}                       | ${'2023-06-01'} | ${'2023-07-07'} | ${2}
+    ${'Wide dateRange'}        | ${'2023-01-01, 2023-12-31'} | ${'2023-01-01'} | ${'2023-12-31'} | ${2}
+    ${'Narrow dateRange'}      | ${'2023-06-29, 2023-06-30'} | ${'2023-06-29'} | ${'2023-06-30'} | ${0}
+    ${'Overlapping dateRange'} | ${'2023-06-06, 2023-07-03'} | ${'2023-06-06'} | ${'2023-07-03'} | ${2}
+    ${'Starting dateRange'}    | ${'2023-06-06'}             | ${'2023-06-06'} | ${'2023-07-07'} | ${2}
+    ${'Ending dateRange'}      | ${',2023-06-06'}            | ${'2023-06-01'} | ${'2023-06-06'} | ${1}
+  `)('$testName', ({ dateFormat, dateRange, expStartRange, expEndRange, expTasksLength }) => {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    expect('').toEqual(ganttDb.getDateRange());
+    ganttDb.setDateRange(dateRange);
+    ganttDb.addTask('task1', 't1, 2023-06-01, 2023-06-07');
+    ganttDb.addTask('task2', 't2, 2023-07-02, 2023-07-07');
+    const tasks = ganttDb.getTasks();
+    const startRange = ganttDb.getStartRange();
+    const endRange = ganttDb.getEndRange();
+    expect(expTasksLength).toEqual(tasks.length);
+    expect(dayjs(expStartRange, 'YYYY-MM-DD').toDate()).toEqual(startRange);
+    expect(dayjs(expEndRange, 'YYYY-MM-DD').toDate()).toEqual(endRange);
   });
 });

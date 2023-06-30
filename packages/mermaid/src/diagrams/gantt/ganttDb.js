@@ -1,6 +1,5 @@
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import dayjs from 'dayjs';
-import { min, max } from 'd3';
 import dayjsIsoWeek from 'dayjs/plugin/isoWeek.js';
 import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat.js';
 import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
@@ -25,8 +24,8 @@ dayjs.extend(dayjsAdvancedFormat);
 
 let dateFormat = '';
 let dateRange = '';
-let startDateRange = undefined;
-let endDateRange = undefined;
+let startDateRange = '';
+let endDateRange = '';
 let axisFormat = '';
 let tickInterval = undefined;
 let todayMarker = '';
@@ -60,6 +59,8 @@ export const clear = function () {
   rawTasks = [];
   dateFormat = '';
   dateRange = '';
+  startDateRange = '';
+  endDateRange = '';
   axisFormat = '';
   displayMode = '';
   tickInterval = undefined;
@@ -108,15 +109,14 @@ export const enableInclusiveEndDates = function () {
 export const setDateRange = function (txt) {
   dateRange = txt;
 
-  if (dateRange != '') {
+  if (dateRange) {
     const data = dateRange.split(',');
 
-    switch (data.length) {
-      case 2:
-        startDateRange = getStartDate(undefined, dateFormat, data[0]);
-        endDateRange = getEndDate(undefined, dateFormat, data[1]);
-        break;
-      default:
+    if (data[0]) {
+      startDateRange = getStartDate(undefined, dateFormat, data[0]);
+    }
+    if (data[1]) {
+      endDateRange = getEndDate(undefined, dateFormat, data[1]);
     }
   }
 };
@@ -150,21 +150,27 @@ export const getDateRange = function () {
 };
 
 export const getStartRange = function () {
-  return (
-    startDateRange ||
-    min(getTasks(), function (d) {
-      return d.startTime;
-    })
-  );
+  if (startDateRange) {
+    return startDateRange;
+  } else if (getTasks().length > 0) {
+    return getTasks().reduce((min, task) => {
+      return task.startTime < min ? task.startTime : min;
+    }, Infinity);
+  } else {
+    return '';
+  }
 };
 
 export const getEndRange = function () {
-  return (
-    endDateRange ||
-    max(getTasks(), function (d) {
-      return d.endTime;
-    })
-  );
+  if (endDateRange) {
+    return endDateRange;
+  } else if (getTasks().length > 0) {
+    return getTasks().reduce((max, task) => {
+      return task.endTime > max ? task.endTime : max;
+    }, -Infinity);
+  } else {
+    return '';
+  }
 };
 
 export const setIncludes = function (txt) {
