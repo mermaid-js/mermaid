@@ -1,4 +1,4 @@
-// @ts-ignore d3 types are not available
+// @ts-nocheck - don't check until handle it
 import { select, curveLinear } from 'd3';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger.js';
@@ -93,52 +93,51 @@ export const addClasses = function (
   log.info(classes);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
-  keys.forEach(function (id) {
-    const vertex = classes[id];
+  keys
+    .filter((id) => classes[id].parent == parent)
+    .forEach(function (id) {
+      const vertex = classes[id];
 
-    /**
-     * Variable for storing the classes for the vertex
-     */
-    let cssClassStr = '';
-    if (vertex.cssClasses.length > 0) {
-      cssClassStr = cssClassStr + ' ' + vertex.cssClasses.join(' ');
-    }
+      /**
+       * Variable for storing the classes for the vertex
+       */
+      const cssClassStr = vertex.cssClasses.join(' ');
 
-    const styles = { labelStyle: '', style: '' }; //getStylesFromArray(vertex.styles);
+      const styles = { labelStyle: '', style: '' }; //getStylesFromArray(vertex.styles);
 
-    // Use vertex id as text in the box if no text is provided by the graph definition
-    const vertexText = vertex.label ?? vertex.id;
-    const radius = 0;
-    const shape = 'class_box';
+      // Use vertex id as text in the box if no text is provided by the graph definition
+      const vertexText = vertex.label ?? vertex.id;
+      const radius = 0;
+      const shape = 'class_box';
 
-    // Add the node
-    const node = {
-      labelStyle: styles.labelStyle,
-      shape: shape,
-      labelText: sanitizeText(vertexText),
-      classData: vertex,
-      rx: radius,
-      ry: radius,
-      class: cssClassStr,
-      style: styles.style,
-      id: vertex.id,
-      domId: vertex.domId,
-      tooltip: diagObj.db.getTooltip(vertex.id, parent) || '',
-      haveCallback: vertex.haveCallback,
-      link: vertex.link,
-      width: vertex.type === 'group' ? 500 : undefined,
-      type: vertex.type,
-      // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release
-      padding: getConfig().flowchart?.padding ?? getConfig().class?.padding,
-    };
-    g.setNode(vertex.id, node);
+      // Add the node
+      const node = {
+        labelStyle: styles.labelStyle,
+        shape: shape,
+        labelText: sanitizeText(vertexText),
+        classData: vertex,
+        rx: radius,
+        ry: radius,
+        class: cssClassStr,
+        style: styles.style,
+        id: vertex.id,
+        domId: vertex.domId,
+        tooltip: diagObj.db.getTooltip(vertex.id, parent) || '',
+        haveCallback: vertex.haveCallback,
+        link: vertex.link,
+        width: vertex.type === 'group' ? 500 : undefined,
+        type: vertex.type,
+        // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release
+        padding: getConfig().flowchart?.padding ?? getConfig().class?.padding,
+      };
+      g.setNode(vertex.id, node);
 
-    if (parent) {
-      g.setParent(vertex.id, parent);
-    }
+      if (parent) {
+        g.setParent(vertex.id, parent);
+      }
 
-    log.info('setNode', node);
-  });
+      log.info('setNode', node);
+    });
 };
 
 /**
@@ -353,15 +352,11 @@ export const draw = async function (text: string, id: string, _version: string, 
   }
   const root =
     securityLevel === 'sandbox'
-      ? // @ts-ignore Ignore type error for now
-
-        select(sandboxElement.nodes()[0].contentDocument.body)
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
-  // @ts-ignore Ignore type error for now
   const svg = root.select(`[id="${id}"]`);
 
   // Run the renderer. This is what draws the final graph.
-  // @ts-ignore Ignore type error for now
   const element = root.select('#' + id + ' g');
   await render(
     element,
@@ -377,7 +372,6 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   // Add label rects for non html labels
   if (!conf?.htmlLabels) {
-    // @ts-ignore Ignore type error for now
     const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
     const labels = doc.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
     for (const label of labels) {

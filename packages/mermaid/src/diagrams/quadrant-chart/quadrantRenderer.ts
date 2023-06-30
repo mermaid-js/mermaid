@@ -1,4 +1,4 @@
-// @ts-ignore: TODO Fix ts errors
+// @ts-nocheck - don't check until handle it
 import { select } from 'd3';
 import * as configApi from '../../config.js';
 import { log } from '../../logger.js';

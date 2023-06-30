@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "10.2.3",
+  "version": "10.2.4",
   "description": "Markdown-ish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
   "module": "./dist/mermaid.core.mjs",
@@ -73,6 +73,7 @@
   "devDependencies": {
     "@types/cytoscape": "^3.19.9",
     "@types/d3": "^7.4.0",
+    "@types/d3-selection": "^3.0.5",
     "@types/dompurify": "^3.0.2",
     "@types/jsdom": "^21.1.1",
     "@types/lodash-es": "^4.17.7",
@@ -91,7 +92,7 @@
     "globby": "^13.1.4",
     "jison": "^0.4.18",
     "js-base64": "^3.7.5",
-    "jsdom": "^21.1.1",
+    "jsdom": "^22.0.0",
     "micromatch": "^4.0.5",
     "path-browserify": "^1.0.1",
     "prettier": "^2.8.8",

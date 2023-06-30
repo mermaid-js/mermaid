@@ -602,6 +602,8 @@ const doublecircle = async (parent, node) => {
   const outerCircle = circleGroup.insert('circle');
   const innerCircle = circleGroup.insert('circle');
 
+  circleGroup.attr('class', node.class);
+
   // center the circle around its coordinate
   outerCircle
     .attr('style', node.style)
