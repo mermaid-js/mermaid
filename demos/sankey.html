@@ -19,47 +19,19 @@
     <pre class="mermaid">
       sankey-beta
 
-      %% There are leading and trailing spaces, do not crop
-          Agricultural 'waste',Bio-conversion,124.729   
-      %% line with a comment
-
-      %% Normal line
+      Agricultural 'waste',Bio-conversion,124.729
       Bio-conversion,Liquid,0.597
-
-      %% Line with unquoted sankey keyword
-      sankey,target,10
-
-      %% Quoted sankey keyword
-      "sankey",target,10
-
-      %% Another normal line
       Bio-conversion,Losses,26.862
-
-      %% Line with integer amount
-      Bio-conversion,Solid,280
-
-      %% Some blank lines in the middle of CSV
-
-
-      %% Another normal line
+      Bio-conversion,Solid,280.322
       Bio-conversion,Gas,81.144
-
-      %% Quoted line
-      "Biofuel imports",Liquid,35
-
-      %% Quoted line with escaped quotes inside
-      """Biomass imports""",Solid,35
-
-      %% Lines containing commas inside
-      %% Quoted and unquoted values should be equal in terms of graph
-      "District heating","Heating and cooling, commercial",22.505
-      District heating,"Heating and cooling, homes",46.184
-
-      %% A bunch of lines, normal CSV
+      Biofuel imports,Liquid,35
+      Biomass imports,Solid,35
       Coal imports,Coal,11.606
       Coal reserves,Coal,63.965
       Coal,Solid,75.571
       District heating,Industry,10.639
+      District heating,Heating and cooling - commercial,22.505
+      District heating,Heating and cooling - homes,46.184
       Electricity grid,Over generation / exports,104.453
       Electricity grid,Heating and cooling - homes,113.726
       Electricity grid,H2 conversion,27.14
@@ -113,12 +85,8 @@
       Thermal generation,District heating,79.329
       Tidal,Electricity grid,9.452
       UK land based bioenergy,Bio-conversion,182.01
-      """Wave""",Electricity grid,19.013
-      """Wind""",Electricity grid,289.366
-
-      %% lines at the end, do not remove
-
-
+      Wave,Electricity grid,19.013
+      Wind,Electricity grid,289.366
     </pre>
 
     <script type="module">

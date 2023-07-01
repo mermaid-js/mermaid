@@ -117,6 +117,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .data(graph.nodes)
     .join('g')
     .attr('class', 'node')
+    .attr('id', (d: any) => (d.uid = Uid.next('node-')).id)
     .attr('transform', function (d: any) {
       return 'translate(' + d.x0 + ',' + d.y0 + ')';
     })
@@ -183,10 +184,10 @@ export const draw = function (text: string, id: string, _version: string, diagOb
       coloring = (d: any) => d.uid;
       break;
     case SankeyLinkColor.source:
-      coloring = (d: any) => d.source.id;
+      coloring = (d: any) => colorScheme(d.source.id);
       break;
     case SankeyLinkColor.target:
-      coloring = (d: any) => d.target.id;
+      coloring = (d: any) => colorScheme(d.target.id);
       break;
     default:
       coloring = linkColor;

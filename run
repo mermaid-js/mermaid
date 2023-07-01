@@ -31,7 +31,7 @@ $RUN --service-ports mermaid sh -c "cd packages/mermaid/src/docs && npx pnpm pre
 ;;
 
 cypress)
-$RUN cypress npm run cypress $args
+$RUN cypress $args
 ;;
 
 help)
@@ -42,7 +42,7 @@ cat <<EOF
 
 $(bold MERMAID LOCAL DOCKER DEVELOPMENT)
 
-Welcome! Thank you for joining development.
+Welcome! Thank you for joining the development.
 This is a script for running commands within docker containers at ease.
 __________________________________________________________________________________________
 
@@ -74,7 +74,10 @@ $(bold ./$name pnpm add --filter mermaid) $(underline package)
 $(bold git diff --name-only develop \| xargs ./$name pnpm prettier --write)
         Prettify everything you added so far
 
-$(bold ./$name cypress run -- --spec cypress/integration/rendering/)$(underline test.ts)
+$(bold ./$name cypress open --project .)
+        Open cypress interactive GUI
+
+$(bold ./$name cypress run --spec cypress/integration/rendering/)$(underline test.spec.ts)
         Run specific test in cypress\n
 
 EOF
