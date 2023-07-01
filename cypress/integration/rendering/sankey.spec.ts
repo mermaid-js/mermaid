@@ -128,7 +128,7 @@ describe('Sankey Diagram', () => {
         expect(node.attr('x')).to.equal('400');
       });
     });
-    
+
     it('should center nodes', function () {
       renderGraph(this.graph, {
         sankey: { nodeAlignment: 'center', width: 410, useMaxWidth: false },
