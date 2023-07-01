@@ -11,4 +11,16 @@ describe('Sankey Diagram', () => {
       {}
     );
   });
+
+  describe('Changes link color', function () {
+    beforeAll(() => {
+      let conf = {
+        sankey: {
+          linkColor: 'source',
+        }
+      };
+  
+      mermaidAPI.initialize(conf);
+    });
+  });
 });
