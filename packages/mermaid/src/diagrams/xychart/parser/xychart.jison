@@ -12,6 +12,15 @@
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
+%x chart_config
+%x chart_orientation
+%x x_axis
+%x y_axis
+%x axis_title
+%x axis_data
+%x axis_data_band
+%x axis_data_band_capture
+%x axis_data_band_str
 %%
 \%\%\{                                   { this.begin('open_directive'); return 'open_directive'; }
 <open_directive>((?:(?!\}\%\%)[^:.])*)   { this.begin('type_directive'); return 'type_directive'; }
@@ -34,6 +43,34 @@ accDescr\s*"{"\s*                        { this.begin("acc_descr_multiline");}
 <acc_descr_multiline>[\}]                { this.popState(); }
 <acc_descr_multiline>[^\}]*              return "acc_descr_multiline_value";
 
+" "*"xychart-beta"		                  {this.begin("chart_config"); return 'XYCHART';}
+<chart_config>" "+("vertical"|"horizontal")   {this.begin("chart_orientation"); return 'chart_orientation';}
+<chart_orientation>[\s]*                 {this.popState(); this.popState(); return 'CHART_CONFIG_END';}
+<chart_config>[\s]*                         {this.popState(); return 'CHART_CONFIG_END';}
+
+"x-axis"" "* { this.begin("x_axis"); return "X_AXIS";}
+"y-axis"" "* { this.begin("y_axis"); return "Y_AXIS";}
+<x_axis,y_axis>["] {this.begin("axis_title");}
+<axis_title>[^"]+ {return 'AXIS_TITLE';}
+<axis_title>["]" "*(\r?\n) {this.popState(); this.popState();}
+<axis_title>["]" "* {this.popState(); this.begin("axis_data");}
+<x_axis,y_axis>[^\s]+" "*(\r?\n) {this.popState(); return 'AXIS_TITLE';}
+<x_axis,y_axis>[^\s]+" "* {this.begin("axis_data"); return 'AXIS_TITLE'; }
+
+<axis_data>[+-]?\d+(\.\d+)?" "*"-->"" "*[+-]?\d+(\.\d+)?" "* { return 'AXIS_RANGE_DATA';}
+
+<axis_data>[\[]" "* {this.begin("axis_data_band"); this.begin("axis_data_band_capture")}
+<axis_data_band>[,]" "* {this.begin("axis_data_band_capture")}
+<axis_data_band_capture>["] {this.begin("axis_data_band_str");}
+<axis_data_band_str>[^"]+ {return "AXIS_BAND_DATA";}
+<axis_data_band_str>["]" "* {this.popState(); this.popState();}
+<axis_data_band_capture>[^\s]+" "* {this.popState(); return "AXIS_BAND_DATA"}
+<axis_data_band>[\]]" "* {this.popState(); return "AXIS_BAND_DATA_END"}
+
+
+<axis_data>[\r\n]+ {this.popState(); this.popState();}
+
+
 
 ["][`]                                   { this.begin("md_string");}
 <md_string>[^`"]+                        { return "MD_STR";}
@@ -41,8 +78,6 @@ accDescr\s*"{"\s*                        { this.begin("acc_descr_multiline");}
 ["]                                      this.begin("string");
 <string>["]                              this.popState();
 <string>[^"]*                            return "STR";
-
-" "*"xychart"" "*		                   return 'XYCHART';
 
 [A-Za-z]+                                return 'ALPHA';
 ":"                                      return 'COLON';
@@ -72,8 +107,13 @@ start
   : eol start
   | SPACE start
   | directive start
-	| XYCHART document
+  | XYCHART chartConfig CHART_CONFIG_END document
+	| XYCHART CHART_CONFIG_END document
 	;
+
+chartConfig
+  : chart_orientation {yy.setOrientation($1.trim());}
+  ;
 
 document
 	: /* empty */
@@ -88,8 +128,25 @@ statement
   :
   | SPACE statement
 	| directive
+  | X_AXIS parseXAxis
+  | Y_AXIS parseYAxis
 	;
 
+parseXAxis
+  : AXIS_TITLE {yy.setXAxisTitle($1.trim());}
+  | AXIS_TITLE xAxisBandData {yy.setXAxisTitle($1.trim());}
+  | AXIS_TITLE AXIS_RANGE_DATA {yy.setXAxisTitle($1.trim()); $$ = $2.split("-->"); yy.setXAxisRangeData(Number($$[0]), Number($$[1]));}
+  ;
+
+xAxisBandData
+  : AXIS_BAND_DATA xAxisBandData {yy.addXAxisBand($1.trim());}
+  | AXIS_BAND_DATA_END
+  ;
+
+parseYAxis
+  : AXIS_TITLE {yy.setYAxisTitle($1.trim());}
+  | AXIS_TITLE AXIS_RANGE_DATA {yy.setYAxisTitle($1.trim()); $$ = $2.split("-->"); yy.setYAxisRangeData(Number($$[0]), Number($$[1]));}
+  ;
 
 directive
   : openDirective typeDirective closeDirective
@@ -115,7 +172,7 @@ argDirective
   ;
 
 closeDirective
-  : close_directive { yy.parseDirective('}%%', 'close_directive', 'quadrantChart'); }
+  : close_directive { yy.parseDirective('}%%', 'close_directive', 'xychart'); }
   ;
 
 text: alphaNumToken
