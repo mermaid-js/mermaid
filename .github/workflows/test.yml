@@ -1,6 +1,6 @@
 name: Unit Tests
 
-on: [push, pull_request]
+on: [push, pull_request, merge_group]
 
 permissions:
   contents: read

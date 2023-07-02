@@ -2,6 +2,7 @@ name: Build
 
 on:
   push: {}
+  merge_group:
   pull_request:
     types:
       - opened
