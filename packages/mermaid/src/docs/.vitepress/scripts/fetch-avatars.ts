@@ -18,7 +18,7 @@ async function download(url: string, fileName: URL) {
     const image = await fetch(url);
     await writeFile(fileName, Buffer.from(await image.arrayBuffer()));
   } catch (error) {
-    console.error(error);
+    console.error('failed to load', url, error);
   }
 }
 
@@ -26,10 +26,13 @@ async function fetchAvatars() {
   await mkdir(fileURLToPath(new URL(getAvatarPath('none'))).replace('none.png', ''), {
     recursive: true,
   });
+
   contributors = JSON.parse(await readFile(pathContributors, { encoding: 'utf-8' }));
-  for (const name of contributors) {
-    await download(`https://github.com/${name}.png?size=100`, getAvatarPath(name));
-  }
+  let avatars = contributors.map((name) => {
+    download(`https://github.com/${name}.png?size=100`, getAvatarPath(name));
+  });
+
+  await Promise.all(avatars);
 }
 
 fetchAvatars();
