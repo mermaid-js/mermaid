@@ -1,3 +1,6 @@
+codecov:
+  branch: develop
+
 comment:
   layout: 'reach, diff, flags, files'
   behavior: default

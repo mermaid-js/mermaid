@@ -1,40 +1,93 @@
 #!/bin/bash
 RUN="docker-compose run --rm"
+
+ansi()          { echo -e "\e[${1}m${*:2}\e[0m"; }
+bold()          { ansi 1 "$@"; }
+# italic()        { ansi 3 "$@"; }
+underline()     { ansi 4 "$@"; }
+# strikethrough() { ansi 9 "$@"; }
+# red()           { ansi 31 "$@"; }
+
+name=$(basename $0)
 command=$1
 args=${@:2}
 
 case $command in
 
 sh)
-$RUN mermaid sh $args
+$RUN mermaid sh -c "npx $args" 
 ;;
 
-install)
-$RUN mermaid sh -c "npx pnpm install"
+pnpm)
+$RUN mermaid sh -c "npx pnpm $args"
 ;;
 
-test)
-$RUN mermaid sh -c "npx pnpm test"
+dev)
+$RUN --service-ports mermaid sh -c "npx pnpm run dev"
 ;;
 
-lint)
-$RUN mermaid sh -c "npx pnpm -w run lint:fix"
+docs:dev)
+$RUN --service-ports mermaid sh -c "cd packages/mermaid/src/docs && npx pnpm prefetch && npx vitepress --port 3333 --host"
+;;
+
+cypress)
+$RUN cypress $args
 ;;
 
 help)
+
+# Alignment of help message must be as it is, it will be nice looking when printed
+usage=$(
 cat <<EOF
-Run commonly used commands within docker containers
 
-$0 install         # Equvalent of pnpm install 
-$0 lint            # Equvalent of pnpm -w run lint:fix
-$0 sh              # Open sh inside docker container for development
+$(bold MERMAID LOCAL DOCKER DEVELOPMENT)
 
-$0 help            # Show this help
+Welcome! Thank you for joining the development.
+This is a script for running commands within docker containers at ease.
+__________________________________________________________________________________________
+
+Development quick start guide:
+
+$(bold ./$name pnpm install)                 # Install packages
+$(bold ./$name dev)                          # Run dev server with examples, open http://localhost:9000
+$(bold ./$name pnpm vitest)                  # Run watcher for unit tests
+$(bold ./$name cypress)                      # Run integration tests (after starting dev server)
+$(bold ./$name pnpm build)                   # Prepare it for production
+$(bold ./$name docs:dev)                     # Then add documentation, open http://localhost:3333
+__________________________________________________________________________________________
+
+Commands:
+
+$(bold ./$name pnpm)                         # Run any 'pnpm' command
+$(bold ./$name dev)                          # Run dev server with examples, open http://localhost:9000
+$(bold ./$name docs:dev)                     # For docs contributions, open http://localhost:3333
+$(bold ./$name cypress)                      # Run integration tests
+$(bold ./$name sh)                           # Open 'sh' inside docker container for development
+$(bold ./$name help)                         # Show this help
+__________________________________________________________________________________________
+
+Examples of frequiently used commands:
+
+$(bold ./$name pnpm add --filter mermaid) $(underline package)
+        Add package to mermaid
+
+$(bold git diff --name-only develop \| xargs ./$name pnpm prettier --write)
+        Prettify everything you added so far
+
+$(bold ./$name cypress open --project .)
+        Open cypress interactive GUI
+
+$(bold ./$name cypress run --spec cypress/integration/rendering/)$(underline test.spec.ts)
+        Run specific test in cypress\n
+
 EOF
+)
+
+echo -n -e "$usage"
 ;;
 
 *)
-$0 help
+$name help
 ;;
 
 esac

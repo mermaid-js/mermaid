@@ -1,5 +1,6 @@
 on:
-  push: {}
+  push:
+  merge_group:
   pull_request:
     types:
       - opened

@@ -10,23 +10,27 @@ interface Contributor {
 
 async function fetchContributors() {
   const collaborators: string[] = [];
-  let page = 1;
-  let data: Contributor[] = [];
-  do {
-    const response = await fetch(
-      `https://api.github.com/repos/mermaid-js/mermaid/contributors?per_page=100&page=${page}`,
-      {
-        method: 'GET',
-        headers: {
-          'content-type': 'application/json',
-        },
-      }
-    );
-    data = await response.json();
-    collaborators.push(...data.map((i) => i.login));
-    console.log(`Fetched page ${page}`);
-    page++;
-  } while (data.length === 100);
+  try {
+    let page = 1;
+    let data: Contributor[] = [];
+    do {
+      const response = await fetch(
+        `https://api.github.com/repos/mermaid-js/mermaid/contributors?per_page=100&page=${page}`,
+        {
+          method: 'GET',
+          headers: {
+            'content-type': 'application/json',
+          },
+        }
+      );
+      data = await response.json();
+      collaborators.push(...data.map((i) => i.login));
+      console.log(`Fetched page ${page}`);
+      page++;
+    } while (data.length === 100);
+  } catch (e) {
+    /* contributors fetching failure must not hinder docs development */
+  }
   return collaborators.filter((name) => !name.includes('[bot]'));
 }
 
