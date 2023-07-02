@@ -226,9 +226,11 @@ export const reset = (config = siteConfig): void => {
   updateCurrentConfig(config, directives);
 };
 
-enum ConfigWarning {
-  'LAZY_LOAD_DEPRECATED' = 'The configuration options lazyLoadedDiagrams and loadExternalDiagramsAtStartup are deprecated. Please use registerExternalDiagrams instead.',
-}
+const ConfigWarning = {
+  LAZY_LOAD_DEPRECATED:
+    'The configuration options lazyLoadedDiagrams and loadExternalDiagramsAtStartup are deprecated. Please use registerExternalDiagrams instead.',
+} as const;
+
 type ConfigWarningStrings = keyof typeof ConfigWarning;
 const issuedWarnings: { [key in ConfigWarningStrings]?: boolean } = {};
 const issueWarning = (warning: ConfigWarningStrings) => {
