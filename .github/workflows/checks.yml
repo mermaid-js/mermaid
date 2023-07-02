@@ -7,10 +7,10 @@ on:
       - synchronize
       - ready_for_review
 
-name: Static analysis
+name: Static analysis on Test files
 
 jobs:
-  test:
+  check-tests:
     runs-on: ubuntu-latest
     name: check tests
     if: github.repository_owner == 'mermaid-js'
