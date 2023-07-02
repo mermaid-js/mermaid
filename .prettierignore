@@ -6,3 +6,4 @@ coverage
 pnpm-lock.yaml
 stats
 packages/mermaid/src/docs/.vitepress/components.d.ts
+.nyc_output

@@ -138,6 +138,7 @@ function sidebarSyntax() {
         { text: 'Mindmaps 🔥', link: '/syntax/mindmap' },
         { text: 'Timeline 🔥', link: '/syntax/timeline' },
         { text: 'Zenuml 🔥', link: '/syntax/zenuml' },
+        { text: 'Sankey 🔥', link: '/syntax/sankey' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
