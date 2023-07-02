@@ -9,41 +9,6 @@ export interface ChartComponent {
   getDrawableElements(): DrawableElem[];
 }
 
-export enum OrientationEnum {
-  VERTICAL = 'vertical',
-  HORIZONTAL = 'horizontal',
-}
-
-export interface AxisConfig {
-  showLabel: boolean;
-  labelFontSize: number;
-  lablePadding: number;
-  labelFill: string;
-  showTitle: boolean;
-  titleFontSize: number;
-  titlePadding: number;
-  titleFill: string;
-  showTick: boolean;
-  tickLength: number;
-  tickWidth: number;
-  tickFill: string;
-}
-
-export interface XYChartConfig {
-  width: number;
-  height: number;
-  fontFamily: string;
-  titleFontSize: number;
-  titleFill: string;
-  titlePadding: number;
-  showtitle: boolean;
-  xAxis: AxisConfig;
-  yAxis: AxisConfig;
-  plotBorderWidth: number;
-  chartOrientation: OrientationEnum;
-  plotReservedSpacePercent: number;
-}
-
 export type SimplePlotDataType = [string | number, number][];
 
 export interface LinePlotData {
@@ -74,6 +39,11 @@ export interface LinearAxisDataType{
 
 export type AxisDataType = LinearAxisDataType | BandAxisDataType;
 
+export function isBandAxisData(data: any): data is BandAxisDataType {
+  return data.categories && Array.isArray(data.categories);
+}
+
+
 export interface XYChartData {
   xAxis: AxisDataType;
   yAxis: AxisDataType;
@@ -87,19 +57,6 @@ export interface Dimension {
 }
 
 export interface BoundingRect extends Point, Dimension {}
-
-export interface XYChartSpaceProperty extends BoundingRect {
-  orientation: OrientationEnum;
-}
-
-export interface XYChartSpace {
-  chart: XYChartSpaceProperty;
-  title: XYChartSpaceProperty;
-  xAxisLabels: XYChartSpaceProperty;
-  xAxisTitle: XYChartSpaceProperty;
-  yAxisLabel: XYChartSpaceProperty;
-  yAxisTitle: XYChartSpaceProperty;
-}
 
 export interface Point {
   x: number;

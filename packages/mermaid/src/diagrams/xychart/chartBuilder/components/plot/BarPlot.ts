@@ -1,9 +1,8 @@
+import { XYChartConfig } from '../../../../../config.type.js';
 import {
   BarPlotData,
   BoundingRect,
   DrawableElem,
-  OrientationEnum,
-  SimplePlotDataType,
 } from '../../Interfaces.js';
 import { IAxis } from '../axis/index.js';
 
@@ -13,7 +12,7 @@ export class BarPlot {
     private boundingRect: BoundingRect,
     private xAxis: IAxis,
     private yAxis: IAxis,
-    private orientation: OrientationEnum
+    private orientation: XYChartConfig['chartOrientation']
   ) {}
 
   getDrawableElement(): DrawableElem[] {
@@ -29,7 +28,7 @@ export class BarPlot {
       (1 - barPaddingPercent / 100);
     const barWidthHalf = barWidth / 2;
 
-    if (this.orientation === OrientationEnum.HORIZONTAL) {
+    if (this.orientation === 'horizontal') {
       return [
         {
           groupTexts: ['plot', 'bar-plot'],

@@ -1,23 +1,26 @@
-import { BoundingRect, DrawableElem, OrientationEnum } from '../../Interfaces.js';
+import { XYChartConfig } from '../../../../../config.type.js';
+import { BoundingRect, DrawableElem } from '../../Interfaces.js';
 export class PlotBorder {
-  constructor(private boundingRect: BoundingRect, private orientation: OrientationEnum) {}
+  constructor(private boundingRect: BoundingRect, private orientation: XYChartConfig['chartOrientation']) {}
 
   getDrawableElement(): DrawableElem[] {
-    const {x, y, width, height} = this.boundingRect;
-    if(this.orientation === OrientationEnum.HORIZONTAL) {
-    return [
-      {
-        groupTexts: ['plot', 'chart-border'],
-        type: 'path',
-        data: [
-          {
-            path: `M ${x},${y} L ${x + width},${y} M ${x + width},${y + height} M ${x},${y + height} L ${x},${y}`,
-            strokeFill: '#000000',
-            strokeWidth: 1,
-          },
-        ],
-      },
-    ];
+    const { x, y, width, height } = this.boundingRect;
+    if (this.orientation === 'horizontal') {
+      return [
+        {
+          groupTexts: ['plot', 'chart-border'],
+          type: 'path',
+          data: [
+            {
+              path: `M ${x},${y} L ${x + width},${y} M ${x + width},${y + height} M ${x},${
+                y + height
+              } L ${x},${y}`,
+              strokeFill: '#000000',
+              strokeWidth: 1,
+            },
+          ],
+        },
+      ];
     }
     return [
       {
@@ -25,7 +28,9 @@ export class PlotBorder {
         type: 'path',
         data: [
           {
-            path: `M ${x},${y} M ${x + width},${y} M ${x + width},${y + height} L ${x},${y + height} L ${x},${y}`,
+            path: `M ${x},${y} M ${x + width},${y} M ${x + width},${y + height} L ${x},${
+              y + height
+            } L ${x},${y}`,
             strokeFill: '#000000',
             strokeWidth: 1,
           },

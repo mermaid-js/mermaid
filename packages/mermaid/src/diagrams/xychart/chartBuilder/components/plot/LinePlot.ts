@@ -1,13 +1,14 @@
 import { line } from 'd3';
-import { DrawableElem, LinePlotData, OrientationEnum } from '../../Interfaces.js';
+import { DrawableElem, LinePlotData } from '../../Interfaces.js';
 import { IAxis } from '../axis/index.js';
+import { XYChartConfig } from '../../../../../config.type.js';
 
 export class LinePlot {
   constructor(
     private plotData: LinePlotData,
     private xAxis: IAxis,
     private yAxis: IAxis,
-    private orientation: OrientationEnum
+    private orientation: XYChartConfig['chartOrientation']
   ) {}
 
   getDrawableElement(): DrawableElem[] {
@@ -17,7 +18,7 @@ export class LinePlot {
     ]);
 
     let path: string | null;
-    if (this.orientation === OrientationEnum.HORIZONTAL) {
+    if (this.orientation === 'horizontal') {
       path = line()
         .y((d) => d[0])
         .x((d) => d[1])(finalData);

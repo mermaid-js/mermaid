@@ -16,11 +16,23 @@
   <body>
     <h1>XY Charts demos</h1>
     <pre class="mermaid">
-    xychart
+    xychart-beta horizontal
+    title Basic xychart
+    x-axis "this is x axis" [category1, "category 2", category3]
+    y-axis yaxisText 10 --> 150
     </pre>
 
     <hr />
 
+    <h1>XY Charts demos</h1>
+    <pre class="mermaid">
+    xychart-beta
+    title Basic xychart
+    x-axis "this is x axis" [category1, "category 2", category3]
+    y-axis yaxisText 10 --> 150
+    </pre>
+
+    <hr />
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({

@@ -1,9 +1,10 @@
 import { log } from '../../../logger.js';
-import { DrawableElem, OrientationEnum, XYChartConfig, XYChartData } from './Interfaces.js';
+import { DrawableElem, XYChartData } from './Interfaces.js';
 import { getChartTitleComponent } from './components/ChartTitle.js';
 import { ChartComponent } from './Interfaces.js';
 import { IAxis, getAxis } from './components/axis/index.js';
 import { IPlot, getPlotComponent } from './components/plot/index.js';
+import { XYChartConfig } from '../../../config.type.js';
 
 export class Orchestrator {
   private componentStore: {
@@ -158,7 +159,7 @@ export class Orchestrator {
   }
 
   private calculateSpace() {
-    if (this.chartConfig.chartOrientation === OrientationEnum.HORIZONTAL) {
+    if (this.chartConfig.chartOrientation === 'horizontal') {
       this.calculateHorizonatalSpace();
     } else {
       this.calculateVerticalSpace();

@@ -1,14 +1,13 @@
 import { ITextDimensionCalculator, TextDimensionCalculator } from '../TextDimensionCalculator.js';
 import {
-  XYChartConfig,
   XYChartData,
   Dimension,
   BoundingRect,
   DrawableElem,
   Point,
-  OrientationEnum,
 } from '../Interfaces.js';
 import { ChartComponent } from '../Interfaces.js';
+import { XYChartConfig } from '../../../../config.type.js';
 
 export class ChartTitle implements ChartComponent {
   private boundingRect: BoundingRect;

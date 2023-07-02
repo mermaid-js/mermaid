@@ -150,6 +150,7 @@ export interface MermaidConfig {
   er?: ErDiagramConfig;
   pie?: PieDiagramConfig;
   quadrantChart?: QuadrantChartConfig;
+  xyChart?: XYChartConfig;
   requirement?: RequirementDiagramConfig;
   mindmap?: MindmapDiagramConfig;
   gitGraph?: GitGraphDiagramConfig;
@@ -703,6 +704,37 @@ export interface QuadrantChartConfig extends BaseDiagramConfig {
    */
   quadrantExternalBorderStrokeWidth?: number;
 }
+
+export interface XYChartAxisConfig {
+  showLabel: boolean;
+  labelFontSize: number;
+  lablePadding: number;
+  labelFill: string;
+  showTitle: boolean;
+  titleFontSize: number;
+  titlePadding: number;
+  titleFill: string;
+  showTick: boolean;
+  tickLength: number;
+  tickWidth: number;
+  tickFill: string;
+}
+
+export interface XYChartConfig extends BaseDiagramConfig {
+  width: number;
+  height: number;
+  fontFamily: string;
+  titleFontSize: number;
+  titleFill: string;
+  titlePadding: number;
+  showtitle: boolean;
+  xAxis: XYChartAxisConfig;
+  yAxis: XYChartAxisConfig;
+  plotBorderWidth: number;
+  chartOrientation: 'vertical' | 'horizontal';
+  plotReservedSpacePercent: number;
+}
+
 /**
  * The object containing configurations specific for entity relationship diagrams
  *

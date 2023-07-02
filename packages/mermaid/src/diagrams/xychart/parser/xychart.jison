@@ -20,7 +20,6 @@
 %x axis_data
 %x axis_data_band
 %x axis_data_band_capture
-%x axis_data_band_str
 %x line
 %x line_title
 %x line_data
@@ -67,14 +66,10 @@ accDescr\s*"{"\s*                         { this.begin("acc_descr_multiline");}
 
 <axis_data>[+-]?\d+(?:\.\d+)?" "*"-->"" "*[+-]?\d+(?:\.\d+)?" "*      { return 'AXIS_RANGE_DATA';}
 
-<axis_data>[\[]" "*                       {this.begin("axis_data_band"); this.begin("axis_data_band_capture")}
-<axis_data_band>[,]" "*                   {this.begin("axis_data_band_capture")}
-<axis_data_band_capture>["]               {this.begin("axis_data_band_str");}
-<axis_data_band_str>[^"]+                 {return "AXIS_BAND_DATA";}
-<axis_data_band_str>["]" "*               {this.popState(); this.popState();}
-<axis_data_band_capture>[^\s]+" "*        {this.popState(); return "AXIS_BAND_DATA"}
+<axis_data>[\[]" "*                       {this.begin("axis_data_band"), this.begin("axis_data_band_capture")}
+<axis_data_band_capture>(["][^",]+["]|[^\s\"\,]]+)" "*([,]" "*(["][^",]+["]|[^\s\]",]+)" "*)* { this.popState(); return "AXIS_BAND_DATA"; }
 <axis_data_band>[\]]" "*                  {this.popState(); return "AXIS_BAND_DATA_END"}
-<axis_data>[\r\n]+                        {this.popState(); this.popState();}
+<axis_data>[\s]+                        {this.popState(); this.popState();}
 
 
 "line"" "*                                {this.begin("line"); return 'LINE';}
@@ -162,27 +157,27 @@ statement
 	;
 
 parseLine
-  : LINE LINE_TITLE LINE_DATA {yy.addLineData($2.trim(), $3.split(',').map(d => Number(d.trim())));}
+  : LINE LINE_TITLE LINE_DATA {yy.setLineData($2.trim(), $3.split(',').map(d => Number(d.trim())));}
   ;
 
 parseBar
-  : BAR BAR_TITLE BAR_DATA {yy.addBarData($2.trim(), $3.split(',').map(d => Number(d.trim())));}
+  : BAR BAR_TITLE BAR_DATA {yy.setBarData($2.trim(), $3.split(',').map(d => Number(d.trim())));}
   ;
 
 parseXAxis
   : AXIS_TITLE statement {yy.setXAxisTitle($1.trim());}
-  | AXIS_TITLE xAxisBandData {yy.setXAxisTitle($1.trim());}
-  | AXIS_TITLE AXIS_RANGE_DATA {yy.setXAxisTitle($1.trim()); $$ = $2.split("-->"); yy.setXAxisRangeData(Number($$[0]), Number($$[1]));}
+  | AXIS_TITLE xAxisBandData statement {yy.setXAxisTitle($1.trim());}
+  | AXIS_TITLE AXIS_RANGE_DATA statement {yy.setXAxisTitle($1.trim()); $$ = $2.split("-->"); yy.setXAxisRangeData(Number($$[0]), Number($$[1]));}
   ;
 
 xAxisBandData
-  : AXIS_BAND_DATA xAxisBandData {yy.addXAxisBand($1.trim());}
+  : AXIS_BAND_DATA xAxisBandData {yy.setXAxisBand($1.split(',').map(d => { let m = d.trim().match(/^(?:["]([^"]+)["]|([^\s"]+))$/); return m ? m[1] || m[2] : "";}));}
   | AXIS_BAND_DATA_END
   ;
 
 parseYAxis
   : AXIS_TITLE statement {yy.setYAxisTitle($1.trim());}
-  | AXIS_TITLE AXIS_RANGE_DATA {yy.setYAxisTitle($1.trim()); $$ = $2.split("-->"); yy.setYAxisRangeData(Number($$[0]), Number($$[1]));}
+  | AXIS_TITLE AXIS_RANGE_DATA statement {yy.setYAxisTitle($1.trim()); $$ = $2.split("-->"); yy.setYAxisRangeData(Number($$[0]), Number($$[1]));}
   ;
 
 directive
