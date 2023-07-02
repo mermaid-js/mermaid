@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  build-mermaid:
     runs-on: ubuntu-latest
     strategy:
       matrix:

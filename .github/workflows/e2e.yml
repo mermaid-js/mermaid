@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  e2e:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
