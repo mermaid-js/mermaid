@@ -412,18 +412,8 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
   wrappingWidth?: number;
 }
 
-export enum SankeyLinkColor {
-  source = 'source',
-  target = 'target',
-  gradient = 'gradient',
-}
-
-export enum SankeyNodeAlignment {
-  left = 'left',
-  right = 'right',
-  center = 'center',
-  justify = 'justify',
-}
+export type SankeyLinkColor = 'source' | 'target' | 'gradient';
+export type SankeyNodeAlignment = 'left' | 'right' | 'center' | 'justify';
 
 export interface SankeyDiagramConfig extends BaseDiagramConfig {
   width?: number;
