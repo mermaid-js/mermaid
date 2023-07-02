@@ -154,6 +154,7 @@ statement
   :
   | SPACE statement
 	| directive
+	| title title_value  { $$=$2.trim();yy.setDiagramTitle($$); }
   | X_AXIS parseXAxis
   | Y_AXIS parseYAxis
   | parseLine

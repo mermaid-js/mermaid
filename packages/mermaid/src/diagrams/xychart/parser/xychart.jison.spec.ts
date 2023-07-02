@@ -11,6 +11,7 @@ const parserFnConstructor = (str: string) => {
 const mockDB: Record<string, Mock<any, any>> = {
   parseDirective: vi.fn(),
   setOrientation: vi.fn(),
+  setDiagramTitle: vi.fn(),
   setXAxisTitle: vi.fn(),
   setXAxisRangeData: vi.fn(),
   addXAxisBand: vi.fn(),
@@ -41,6 +42,12 @@ describe('Testing xychart jison file', () => {
   it('should not throw error if only xychart is there', () => {
     const str = 'xychart-beta';
     expect(parserFnConstructor(str)).not.toThrow();
+  });
+
+  it('parse title of the chart', () => {
+    const str = 'xychart-beta \n title This is a title';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('This is a title');
   });
 
   it('should be able to parse directive', () => {
