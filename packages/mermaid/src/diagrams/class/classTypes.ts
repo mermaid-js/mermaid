@@ -35,7 +35,7 @@ export class ClassMember {
   getDisplayDetails() {
     let displayText = this.visibility + parseGenericTypes(this.id);
     if (this.memberType === 'method') {
-      displayText += '(' + parseGenericTypes(this.parameters.trim()) + ')';
+      displayText += `(${parseGenericTypes(this.parameters.trim())})`;
       if (this.returnType) {
         displayText += ' : ' + parseGenericTypes(this.returnType);
       }
