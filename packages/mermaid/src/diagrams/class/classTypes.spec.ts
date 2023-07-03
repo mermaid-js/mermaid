@@ -377,6 +377,59 @@ describe('given text representing a method, ', function () {
     });
   });
 
+  describe('when method parameter contains two generic', function () {
+    it('should parse correctly', function () {
+      const str = `getTimes(List~T~, List~OT~)`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTimes(List<T>, List<OT>');
+    });
+
+    it('should handle public visibility', function () {
+      const str = `+getTimes(List~T~, List~OT~)`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('+getTimes(List<T>, List<OT>');
+    });
+
+    it('should handle private visibility', function () {
+      const str = `-getTimes(List~T~, List~OT~)`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('-getTimes(List<T>, List<OT>');
+    });
+
+    it('should handle protected visibility', function () {
+      const str = `#getTimes(List~T~, List~OT~)`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('#getTimes(List<T>, List<OT>');
+    });
+
+    it('should handle internal visibility', function () {
+      const str = `~getTimes(List~T~, List~OT~)`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('~getTimes(List<T>, List<OT>');
+    });
+
+    it('should return correct css for static classifier', function () {
+      const str = `getTimes(List~T~, List~OT~)$`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTimes(List<T>, List<OT>');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(staticCssStyle);
+    });
+
+    it('should return correct css for abstract classifier', function () {
+      const str = `getTimes(List~T~, List~OT~)*`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTimes(List<T>, List<OT>)');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractCssStyle);
+    });
+  });
+
   describe('when method parameter is a nested generic', function () {
     it('should parse correctly', function () {
       const str = `getTimetableList(List~List~T~~)`;
