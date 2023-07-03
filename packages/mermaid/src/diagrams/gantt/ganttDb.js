@@ -110,7 +110,7 @@ export const setDateRange = function (txt) {
   dateRange = txt;
 
   if (!dateRange) {
-     return;
+    return;
   }
   const [startStr, endStr] = dateRange.split(',');
 
@@ -214,9 +214,10 @@ export const getTasks = function () {
   tasks = rawTasks;
   if (dateRange != '') {
     tasks = tasks.filter(function (task) {
-      if (startDateRange && task.endTime <= startDateRange ||
-          endDateRange && task.startTime >= endDateRange
-         ) {
+      if (
+        (startDateRange && task.endTime <= startDateRange) ||
+        (endDateRange && task.startTime >= endDateRange)
+      ) {
         return false;
       }
       return true;
