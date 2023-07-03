@@ -9,6 +9,8 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
     switch (type) {
       case diagObj.db.relationType.AGGREGATION:
         return 'aggregation';
+      case diagObj.db.relationType.REALIZATION:
+        return 'realization';
       case diagObj.db.relationType.EXTENSION:
         return 'extension';
       case diagObj.db.relationType.COMPOSITION:

@@ -124,7 +124,7 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 <*>"_top"               return 'LINK_TARGET';
 
 <*>\s*\<\|              return 'EXTENSION';
-<*>\s*\|\>              return 'EXTENSION';
+<*>\s*\|\>              return 'REALIZATION';
 <*>\s*\>                return 'DEPENDENCY';
 <*>\s*\<                return 'DEPENDENCY';
 <*>\s*\*                return 'COMPOSITION';
@@ -370,6 +370,7 @@ relation
 relationType
     : AGGREGATION { $$=yy.relationType.AGGREGATION;}
     | EXTENSION   { $$=yy.relationType.EXTENSION;}
+    | REALIZATION { $$=yy.relationType.REALIZATION;}
     | COMPOSITION { $$=yy.relationType.COMPOSITION;}
     | DEPENDENCY  { $$=yy.relationType.DEPENDENCY;}
     | LOLLIPOP    { $$=yy.relationType.LOLLIPOP;}

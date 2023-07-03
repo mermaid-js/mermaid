@@ -361,7 +361,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   await render(
     element,
     g,
-    ['aggregation', 'extension', 'composition', 'dependency', 'lollipop'],
+    ['aggregation', 'extension', 'realization', 'composition', 'dependency', 'lollipop'],
     'classDiagram',
     id
   );
@@ -412,6 +412,9 @@ function getArrowMarker(type: number) {
       break;
     case 4:
       marker = 'lollipop';
+      break;
+    case 5:
+      marker = 'realization';
       break;
     default:
       marker = 'none';

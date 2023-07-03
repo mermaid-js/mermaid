@@ -469,6 +469,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     default:
       strokeClasses = '';
   }
+
   switch (edge.pattern) {
     case 'solid':
       strokeClasses += ' edge-pattern-solid';
@@ -533,6 +534,9 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     case 'extension':
       svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-extensionStart' + ')');
       break;
+    case 'realization':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-realizationStart' + ')');
+      break;
     case 'composition':
       svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-compositionStart' + ')');
       break;
@@ -562,6 +566,9 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
       break;
     case 'extension':
       svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-extensionEnd' + ')');
+      break;
+    case 'realization':
+      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-realizationEnd' + ')');
       break;
     case 'composition':
       svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-compositionEnd' + ')');
