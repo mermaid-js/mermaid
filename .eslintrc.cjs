@@ -123,6 +123,14 @@ module.exports = {
       files: ['*.{ts,tsx}'],
       plugins: ['tsdoc'],
       rules: {
+        'no-restricted-syntax': [
+          'error',
+          {
+            selector: 'TSEnumDeclaration',
+            message:
+              'Prefer using TypeScript union types over TypeScript enum, since TypeScript enums have a bunch of issues, see https://dev.to/dvddpl/whats-the-problem-with-typescript-enums-2okj',
+          },
+        ],
         'tsdoc/syntax': 'error',
       },
     },

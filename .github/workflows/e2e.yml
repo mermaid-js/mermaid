@@ -52,8 +52,9 @@ jobs:
           files: coverage/cypress/lcov.info
           flags: e2e
           name: mermaid-codecov
-          fail_ci_if_error: true
+          fail_ci_if_error: false
           verbose: true
+          token: 6845cc80-77ee-4e17-85a1-026cd95e0766
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         if: ${{ failure() && steps.cypress.conclusion == 'failure' }}
