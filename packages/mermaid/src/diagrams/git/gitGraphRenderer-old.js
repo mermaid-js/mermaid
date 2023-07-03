@@ -1,7 +1,6 @@
 import { curveBasis, line, select } from 'd3';
 
 import db from './gitGraphAst.js';
-import gitGraphParser from './parser/gitGraph.js';
 import { logger } from '../../logger.js';
 import { interpolateToCurve } from '../../utils.js';
 
@@ -328,13 +327,7 @@ function renderLines(svg, commit, direction, branchColor = 0) {
 
 export const draw = function (txt, id, ver) {
   try {
-    const parser = gitGraphParser.parser;
-    parser.yy = db;
-    parser.yy.clear();
-
     logger.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver);
-    // Parse the graph definition
-    parser.parse(txt + '\n');
 
     config = Object.assign(config, apiConfig, db.getOptions());
     logger.debug('effective options', config);
