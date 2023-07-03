@@ -32,6 +32,7 @@ export interface MermaidConfig {
   mindmap?: MindmapDiagramConfig;
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
+  sankey?: SankeyDiagramConfig;
   dompurifyConfig?: DOMPurify.Config;
   wrap?: boolean;
   fontSize?: number;
@@ -409,6 +410,26 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
   padding?: number;
   defaultRenderer?: string;
   wrappingWidth?: number;
+}
+
+export enum SankeyLinkColor {
+  source = 'source',
+  target = 'target',
+  gradient = 'gradient',
+}
+
+export enum SankeyNodeAlignment {
+  left = 'left',
+  right = 'right',
+  center = 'center',
+  justify = 'justify',
+}
+
+export interface SankeyDiagramConfig extends BaseDiagramConfig {
+  width?: number;
+  height?: number;
+  linkColor?: SankeyLinkColor | string;
+  nodeAlignment?: SankeyNodeAlignment;
 }
 
 export interface FontConfig {
