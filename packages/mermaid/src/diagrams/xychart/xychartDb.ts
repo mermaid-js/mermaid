@@ -12,7 +12,12 @@ import {
   clear as commonClear,
 } from '../../commonDb.js';
 import { XYChartBuilder } from './chartBuilder/index.js';
-import { ChartPlotEnum, DrawableElem, XYChartData, isBandAxisData } from './chartBuilder/Interfaces.js';
+import {
+  ChartPlotEnum,
+  DrawableElem,
+  XYChartData,
+  isBandAxisData,
+} from './chartBuilder/Interfaces.js';
 import { XYChartConfig } from '../../config.type.js';
 
 const config = configApi.getConfig();
@@ -76,27 +81,7 @@ function getChartDefalutData(): XYChartData {
       categories: [],
     },
     title: '',
-    plots: [
-      {
-        type: ChartPlotEnum.BAR,
-        fill: '#0000bb',
-        data: [
-          ['category1', 23],
-          ['category 2', 56],
-          ['category3', 34],
-        ],
-      },
-      {
-        type: ChartPlotEnum.LINE,
-        strokeFill: '#bb0000',
-        strokeWidth: 2,
-        data: [
-          ['category1', 33],
-          ['category 2', 45],
-          ['category3', 65],
-        ],
-      },
-    ],
+    plots: [],
   };
 }
 
@@ -112,7 +97,6 @@ function parseDirective(statement: string, context: string, type: string) {
   mermaidAPI.parseDirective(this, statement, context, type);
 }
 
-
 function setOrientation(oriantation: string) {
   if (oriantation === 'horizontal') {
     xyChartConfig.chartOrientation = 'horizontal';
@@ -124,19 +108,39 @@ function setXAxisTitle(title: string) {
   xyChartData.xAxis.title = textSanitizer(title);
 }
 function setXAxisRangeData(min: number, max: number) {
-  xyChartData.xAxis = {title: xyChartData.xAxis.title, min, max};
+  xyChartData.xAxis = { title: xyChartData.xAxis.title, min, max };
 }
 function setXAxisBand(categories: string[]) {
-  xyChartData.xAxis = {title: xyChartData.xAxis.title, categories: categories.map(c => textSanitizer(c))};
+  xyChartData.xAxis = {
+    title: xyChartData.xAxis.title,
+    categories: categories.map((c) => textSanitizer(c)),
+  };
 }
 function setYAxisTitle(title: string) {
   xyChartData.yAxis.title = textSanitizer(title);
 }
 function setYAxisRangeData(min: number, max: number) {
-  xyChartData.yAxis = {title: xyChartData.yAxis.title, min, max};
+  xyChartData.yAxis = { title: xyChartData.yAxis.title, min, max };
 }
-function setLineData(title: string, data: number[]) {}
-function setBarData(title: string, data: number[]) {}
+function setLineData(title: string, data: number[]) {
+  if (isBandAxisData(xyChartData.xAxis)) {
+    xyChartData.plots.push({
+      type: ChartPlotEnum.BAR,
+      fill: '#0000bb',
+      data: xyChartData.xAxis.categories.map((c, i) => [c, data[i]]),
+    });
+  }
+}
+function setBarData(title: string, data: number[]) {
+  if (isBandAxisData(xyChartData.xAxis)) {
+    xyChartData.plots.push({
+      type: ChartPlotEnum.LINE,
+      strokeFill: '#00ff00',
+      strokeWidth: 2,
+      data: xyChartData.xAxis.categories.map((c, i) => [c, data[i]]),
+    });
+  }
+}
 
 function getDrawableElem(): DrawableElem[] {
   xyChartData.title = getDiagramTitle();

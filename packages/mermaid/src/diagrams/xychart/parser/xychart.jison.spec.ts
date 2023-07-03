@@ -175,6 +175,14 @@ describe('Testing xychart jison file', () => {
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith('xAxisName');
     expect(mockDB.setLineData).toHaveBeenCalledWith('lineTitle with space', [23, -45, 56.6]);
 
+    // set line data without title
+    str =
+      'xychart-beta\nx-axis xAxisName\ny-axis yAxisName\n line [  +23 , -45  , 56.6 ]   ';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setYAxisTitle).toHaveBeenCalledWith('yAxisName');
+    expect(mockDB.setXAxisTitle).toHaveBeenCalledWith('xAxisName');
+    expect(mockDB.setLineData).toHaveBeenCalledWith('', [23, -45, 56.6]);
+
     clearMocks();
     str =
       'xychart-beta\nx-axis xAxisName\ny-axis yAxisName\n line "lineTitle with space"   [  +23 , -4aa5  , 56.6 ]   ';
@@ -195,6 +203,15 @@ describe('Testing xychart jison file', () => {
     expect(mockDB.setYAxisTitle).toHaveBeenCalledWith('yAxisName');
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith('xAxisName');
     expect(mockDB.setBarData).toHaveBeenCalledWith('barTitle with space', [23, -45, 56.6]);
+    clearMocks();
+
+    // set bar data without title
+    str =
+      'xychart-beta\nx-axis xAxisName\ny-axis yAxisName\n bar   [  +23 , -45  , 56.6 ]   ';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setYAxisTitle).toHaveBeenCalledWith('yAxisName');
+    expect(mockDB.setXAxisTitle).toHaveBeenCalledWith('xAxisName');
+    expect(mockDB.setBarData).toHaveBeenCalledWith('', [23, -45, 56.6]);
     clearMocks();
 
     str =

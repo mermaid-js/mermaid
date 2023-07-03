@@ -24,6 +24,8 @@
 %x line_title
 %x line_data
 %x line_data_entries
+%x line_data_without_label
+%x bar_data_without_label
 %x bar
 %x bar_title
 %x bar_data
@@ -77,18 +79,22 @@ accDescr\s*"{"\s*                         { this.begin("acc_descr_multiline");}
 <line_title>[^"]+                         {return 'LINE_TITLE';}
 <line_title>["]" "*                       {this.popState(); this.begin("line_data");}
 <line_data>"["" "*                        {this.begin('line_data_entries');}
-<line_data_entries>(?:[+-]?\d+(?:\.\d+)?)+(?:" "*[,]" "*(?:[+-]?\d+(?:\.\d+)?)+)*" "*   {return 'LINE_DATA'}
+<line_data_without_label,line_data_entries>(?:[+-]?\d+(?:\.\d+)?)+(?:" "*[,]" "*(?:[+-]?\d+(?:\.\d+)?)+)*" "*   {return 'LINE_DATA'}
 <line_data_entries>"]"" "*                {this.popState(); this.popState(); this.popState()}
-<line>[^\s]+" "*                          {this.begin("line_data"); return 'LINE_TITLE';}
+<line_data_without_label>"]"" "*          {this.popState(); this.popState()}
+<line>[^\s\[]+" "*                          {this.begin("line_data"); return 'LINE_TITLE';}
+<line>"["" "*                             {this.begin('line_data_without_label');}
 
 "bar"" "*                                 {this.begin("bar"); return 'BAR';}
 <bar>["]                                  {this.begin("bar_title");}
 <bar_title>[^"]+                          {return 'BAR_TITLE';}
 <bar_title>["]" "*                        {this.popState(); this.begin("bar_data");}
 <bar_data>"["" "*                         {this.begin('bar_data_entries');}
-<bar_data_entries>(?:[+-]?\d+(?:\.\d+)?)+(?:" "*[,]" "*(?:[+-]?\d+(?:\.\d+)?)+)*" "*    {return 'BAR_DATA'}
+<bar_data_without_label,bar_data_entries>(?:[+-]?\d+(?:\.\d+)?)+(?:" "*[,]" "*(?:[+-]?\d+(?:\.\d+)?)+)*" "*    {return 'BAR_DATA'}
 <bar_data_entries>"]"" "*                 {this.popState(); this.popState(); this.popState()}
-<bar>[^\s]+" "*                           {this.begin("bar_data"); return 'BAR_TITLE';}
+<bar_data_without_label>"]"" "*           {this.popState(); this.popState()}
+<bar>[^\s\[]+" "*                           {this.begin("bar_data"); return 'BAR_TITLE';}
+<bar>"["" "*                              {this.begin('bar_data_without_label');}
 
 
 
@@ -157,11 +163,13 @@ statement
 	;
 
 parseLine
-  : LINE LINE_TITLE LINE_DATA {yy.setLineData($2.trim(), $3.split(',').map(d => Number(d.trim())));}
+  : LINE LINE_DATA {yy.setLineData('', $2.split(',').map(d => Number(d.trim())));}
+  | LINE LINE_TITLE LINE_DATA {yy.setLineData($2.trim(), $3.split(',').map(d => Number(d.trim())));}
   ;
 
 parseBar
-  : BAR BAR_TITLE BAR_DATA {yy.setBarData($2.trim(), $3.split(',').map(d => Number(d.trim())));}
+  : BAR BAR_DATA {yy.setBarData('', $2.split(',').map(d => Number(d.trim())));}
+  | BAR BAR_TITLE BAR_DATA {yy.setBarData($2.trim(), $3.split(',').map(d => Number(d.trim())));}
   ;
 
 parseXAxis
