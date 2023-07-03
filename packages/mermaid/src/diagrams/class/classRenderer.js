@@ -141,8 +141,6 @@ const insertMarkers = function (elem) {
 export const draw = function (text, id, _version, diagObj) {
   const conf = getConfig().class;
   idCache = {};
-  // diagObj.db.clear();
-  // diagObj.parser.parse(text);
 
   log.info('Rendering diagram ' + text);
 
