@@ -112,14 +112,13 @@ export const setDateRange = function (txt) {
   if (!dateRange) {
      return;
   }
-    const [startStr, endStr] = dateRange.split(',');
+  const [startStr, endStr] = dateRange.split(',');
 
-    if (startStr) {
-      startDateRange = getStartDate(undefined, dateFormat, startStr);
-    }
-    if (endStr) {
-      endDateRange = getEndDate(undefined, dateFormat, endStr);
-    }
+  if (startStr) {
+    startDateRange = getStartDate(undefined, dateFormat, startStr);
+  }
+  if (endStr) {
+    endDateRange = getEndDate(undefined, dateFormat, endStr);
   }
 };
 
@@ -166,13 +165,13 @@ export const getStartRange = function () {
 export const getEndRange = function () {
   if (endDateRange) {
     return endDateRange;
-  } else if (getTasks().length > 0) {
+  }
+  if (getTasks().length > 0) {
     return getTasks().reduce((max, task) => {
       return task.endTime > max ? task.endTime : max;
     }, -Infinity);
-  } else {
-    return '';
   }
+  return '';
 };
 
 export const setIncludes = function (txt) {
@@ -215,10 +214,9 @@ export const getTasks = function () {
   tasks = rawTasks;
   if (dateRange != '') {
     tasks = tasks.filter(function (task) {
-      if (startDateRange && task.endTime <= startDateRange) {
-        return false;
-      }
-      if (endDateRange && task.startTime >= endDateRange) {
+      if (startDateRange && task.endTime <= startDateRange ||
+          endDateRange && task.startTime >= endDateRange
+         ) {
         return false;
       }
       return true;
@@ -360,7 +358,7 @@ const getStartDate = function (prevTime, dateFormat, str) {
       d.getFullYear() < -10000 ||
       d.getFullYear() > 10000
     ) {
-      throw new Error('Invalid date: `' + str + '` with date format: `' + dateFormat + '`');
+      throw new Error(`Invalid date: '${str}' with date format: '${dateFormat}'`);
     }
     return d;
   }

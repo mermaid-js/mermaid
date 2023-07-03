@@ -463,7 +463,7 @@ describe('when using the ganttDb', function () {
     ganttDb.setDateFormat('YYYYMMDD');
     ganttDb.addTask('test1', 'id1,202304,1d');
     expect(() => ganttDb.getTasks()).toThrowError(
-      'Invalid date: `202304` with date format: `YYYYMMDD`'
+      "Invalid date: '202304' with date format: 'YYYYMMDD'"
     );
   });
 
