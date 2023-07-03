@@ -1,12 +1,15 @@
 name: E2E
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  merge_group:
 
 permissions:
   contents: read
 
 jobs:
-  build:
+  e2e:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -49,7 +52,7 @@ jobs:
           files: coverage/cypress/lcov.info
           flags: e2e
           name: mermaid-codecov
-          fail_ci_if_error: true
+          fail_ci_if_error: false
           verbose: true
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3

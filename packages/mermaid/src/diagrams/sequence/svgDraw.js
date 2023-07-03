@@ -4,6 +4,8 @@ import { addFunction } from '../../interactionDb.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 
+export const ACTOR_TYPE_WIDTH = 18 * 2;
+
 export const drawRect = function (elem, rectData) {
   return svgDrawCommon.drawRect(elem, rectData);
 };
@@ -294,14 +296,19 @@ export const drawLabel = function (elem, txtObject) {
 
 let actorCnt = -1;
 
-export const fixLifeLineHeights = (diagram, bounds) => {
-  if (!diagram.selectAll) {
+export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
+  if (!diagram.select) {
     return;
   }
-  diagram
-    .selectAll('.actor-line')
-    .attr('class', '200')
-    .attr('y2', bounds - 55);
+  actorKeys.forEach((actorKey) => {
+    const actor = actors[actorKey];
+    const actorDOM = diagram.select('#actor' + actor.actorCnt);
+    if (!conf.mirrorActors && actor.stopy) {
+      actorDOM.attr('y2', actor.stopy + actor.height / 2);
+    } else if (conf.mirrorActors) {
+      actorDOM.attr('y2', actor.stopy);
+    }
+  });
 };
 
 /**
@@ -313,10 +320,11 @@ export const fixLifeLineHeights = (diagram, bounds) => {
  * @param {boolean} isFooter - If the actor is the footer one
  */
 const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
+  const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = actor.y + 5;
+  const centerY = actorY + 5;
 
-  const boxpluslineGroup = elem.append('g');
+  const boxpluslineGroup = elem.append('g').lower();
   var g = boxpluslineGroup;
 
   if (!isFooter) {
@@ -328,6 +336,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
       .attr('x2', center)
       .attr('y2', 2000)
       .attr('class', 'actor-line')
+      .attr('class', '200')
       .attr('stroke-width', '0.5px')
       .attr('stroke', '#999');
 
@@ -348,7 +357,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
     rect.fill = '#eaeaea';
   }
   rect.x = actor.x;
-  rect.y = actor.y;
+  rect.y = actorY;
   rect.width = actor.width;
   rect.height = actor.height;
   rect.class = cssclass;
@@ -388,8 +397,11 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
 };
 
 const drawActorTypeActor = function (elem, actor, conf, isFooter) {
+  const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = actor.y + 80;
+  const centerY = actorY + 80;
+
+  elem.lower();
 
   if (!isFooter) {
     actorCnt++;
@@ -401,15 +413,18 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
       .attr('x2', center)
       .attr('y2', 2000)
       .attr('class', 'actor-line')
+      .attr('class', '200')
       .attr('stroke-width', '0.5px')
       .attr('stroke', '#999');
+
+    actor.actorCnt = actorCnt;
   }
   const actElem = elem.append('g');
   actElem.attr('class', 'actor-man');
 
   const rect = svgDrawCommon.getNoteRect();
   rect.x = actor.x;
-  rect.y = actor.y;
+  rect.y = actorY;
   rect.fill = '#eaeaea';
   rect.width = actor.width;
   rect.height = actor.height;
@@ -421,33 +436,33 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
     .append('line')
     .attr('id', 'actor-man-torso' + actorCnt)
     .attr('x1', center)
-    .attr('y1', actor.y + 25)
+    .attr('y1', actorY + 25)
     .attr('x2', center)
-    .attr('y2', actor.y + 45);
+    .attr('y2', actorY + 45);
 
   actElem
     .append('line')
     .attr('id', 'actor-man-arms' + actorCnt)
-    .attr('x1', center - 18)
-    .attr('y1', actor.y + 33)
-    .attr('x2', center + 18)
-    .attr('y2', actor.y + 33);
+    .attr('x1', center - ACTOR_TYPE_WIDTH / 2)
+    .attr('y1', actorY + 33)
+    .attr('x2', center + ACTOR_TYPE_WIDTH / 2)
+    .attr('y2', actorY + 33);
   actElem
     .append('line')
-    .attr('x1', center - 18)
-    .attr('y1', actor.y + 60)
+    .attr('x1', center - ACTOR_TYPE_WIDTH / 2)
+    .attr('y1', actorY + 60)
     .attr('x2', center)
-    .attr('y2', actor.y + 45);
+    .attr('y2', actorY + 45);
   actElem
     .append('line')
     .attr('x1', center)
-    .attr('y1', actor.y + 45)
-    .attr('x2', center + 16)
-    .attr('y2', actor.y + 60);
+    .attr('y1', actorY + 45)
+    .attr('x2', center + ACTOR_TYPE_WIDTH / 2 - 2)
+    .attr('y2', actorY + 60);
 
   const circle = actElem.append('circle');
   circle.attr('cx', actor.x + actor.width / 2);
-  circle.attr('cy', actor.y + 10);
+  circle.attr('cy', actorY + 10);
   circle.attr('r', 15);
   circle.attr('width', actor.width);
   circle.attr('height', actor.height);
