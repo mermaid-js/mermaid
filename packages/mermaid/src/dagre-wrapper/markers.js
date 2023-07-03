@@ -48,7 +48,7 @@ const insertMarkers = (elem, markerArray, type, id) => {
 
 const extension = (elem, type, id) => {
   log.trace('Making markers for ', id);
-  let backgroundColor = getBackgroundColor(elem);
+  const backgroundColor = getBackgroundColor(elem);
 
   elem
     .append('defs')
