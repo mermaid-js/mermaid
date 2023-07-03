@@ -18,17 +18,17 @@ import {
 } from 'd3-sankey';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { Uid } from '../../rendering-util/uid.js';
-import { SankeyLinkColor, SankeyNodeAlignment } from '../../config.type.js';
+import type { SankeyLinkColor, SankeyNodeAlignment } from '../../config.type.js';
 
 // Map config options to alignment functions
 const alignmentsMap: Record<
   SankeyNodeAlignment,
   (node: d3SankeyNode<object, object>, n: number) => number
 > = {
-  [SankeyNodeAlignment.left]: d3SankeyLeft,
-  [SankeyNodeAlignment.right]: d3SankeyRight,
-  [SankeyNodeAlignment.center]: d3SankeyCenter,
-  [SankeyNodeAlignment.justify]: d3SankeyJustify,
+  left: d3SankeyLeft,
+  right: d3SankeyRight,
+  center: d3SankeyCenter,
+  justify: d3SankeyJustify,
 };
 
 /**
@@ -157,9 +157,9 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .attr('class', 'link')
     .style('mix-blend-mode', 'multiply');
 
-  const linkColor = conf?.linkColor || SankeyLinkColor.gradient;
+  const linkColor = conf?.linkColor || 'gradient';
 
-  if (linkColor === SankeyLinkColor.gradient) {
+  if (linkColor === 'gradient') {
     const gradient = link
       .append('linearGradient')
       .attr('id', (d: any) => (d.uid = Uid.next('linearGradient-')).id)
@@ -180,13 +180,13 @@ export const draw = function (text: string, id: string, _version: string, diagOb
 
   let coloring: any;
   switch (linkColor) {
-    case SankeyLinkColor.gradient:
+    case 'gradient':
       coloring = (d: any) => d.uid;
       break;
-    case SankeyLinkColor.source:
+    case 'source':
       coloring = (d: any) => colorScheme(d.source.id);
       break;
-    case SankeyLinkColor.target:
+    case 'target':
       coloring = (d: any) => colorScheme(d.target.id);
       break;
     default:
