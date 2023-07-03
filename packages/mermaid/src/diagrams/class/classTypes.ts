@@ -19,13 +19,13 @@ export interface ClassNode {
 export class ClassMember {
   id!: string;
   cssStyle!: string;
-  memberType!: string;
+  memberType!: 'method' | 'attribute';
   visibility!: string;
   classifier!: string;
   parameters!: string;
   returnType!: string;
 
-  constructor(input: string, memberType: string) {
+  constructor(input: string, memberType: 'method' | 'attribute') {
     this.memberType = memberType;
     this.visibility = '';
     this.classifier = '';
@@ -35,7 +35,7 @@ export class ClassMember {
   getDisplayDetails() {
     let displayText = this.visibility + parseGenericTypes(this.id);
     if (this.memberType === 'method') {
-      displayText += '(' + parseGenericTypes(this.parameters.trim()) + ')';
+      displayText += `(${parseGenericTypes(this.parameters.trim())})`;
       if (this.returnType) {
         displayText += ' : ' + parseGenericTypes(this.returnType);
       }
