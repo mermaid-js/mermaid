@@ -109,14 +109,16 @@ export const enableInclusiveEndDates = function () {
 export const setDateRange = function (txt) {
   dateRange = txt;
 
-  if (dateRange) {
-    const data = dateRange.split(',');
+  if (!dateRange) {
+     return;
+  }
+    const [startStr, endStr] = dateRange.split(',');
 
-    if (data[0]) {
-      startDateRange = getStartDate(undefined, dateFormat, data[0]);
+    if (startStr) {
+      startDateRange = getStartDate(undefined, dateFormat, startStr);
     }
-    if (data[1]) {
-      endDateRange = getEndDate(undefined, dateFormat, data[1]);
+    if (endStr) {
+      endDateRange = getEndDate(undefined, dateFormat, endStr);
     }
   }
 };
@@ -152,13 +154,13 @@ export const getDateRange = function () {
 export const getStartRange = function () {
   if (startDateRange) {
     return startDateRange;
-  } else if (getTasks().length > 0) {
+  }
+  if (getTasks().length > 0) {
     return getTasks().reduce((min, task) => {
       return task.startTime < min ? task.startTime : min;
     }, Infinity);
-  } else {
-    return '';
   }
+  return '';
 };
 
 export const getEndRange = function () {
@@ -213,14 +215,13 @@ export const getTasks = function () {
   tasks = rawTasks;
   if (dateRange != '') {
     tasks = tasks.filter(function (task) {
-      let in_bounds = true;
       if (startDateRange && task.endTime <= startDateRange) {
-        in_bounds = false;
+        return false;
       }
       if (endDateRange && task.startTime >= endDateRange) {
-        in_bounds = false;
+        return false;
       }
-      return in_bounds;
+      return true;
     });
   }
 
