@@ -1044,16 +1044,18 @@ describe('given a class diagram with relationships, ', function () {
     });
 
     it('should handle relation definitions with type only on right side', function () {
-      const str = 'classDiagram\n' + 'Class1 --|> Class02';
+      const str = 'classDiagram\n' + 'Class1 --|> Class2';
 
       parser.parse(str);
 
       const relations = parser.yy.getRelations();
+      const class1 = parser.yy.getClass('Class1');
+      const class2 = parser.yy.getClass('Class2');
 
-      expect(parser.yy.getClass('Class1').id).toBe('Class1');
-      expect(parser.yy.getClass('Class02').id).toBe('Class02');
+      expect(class1.id).toBe('Class1');
+      expect(class2.id).toBe('Class2');
       expect(relations[0].relation.type1).toBe('none');
-      expect(relations[0].relation.type2).toBe(classDb.relationType.EXTENSION);
+      expect(relations[0].relation.type2).toBe(classDb.relationType.REALIZATION);
       expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
     });
 
