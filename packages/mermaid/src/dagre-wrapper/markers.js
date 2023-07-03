@@ -25,7 +25,7 @@ const getBackgroundColor = (elem) => {
 
   let backgroundColor;
   while (parent && parent.tagName.toLowerCase() !== 'body') {
-    if(parent instanceof Element) {
+    if (parent instanceof Element) {
       const computedStyle = getComputedStyle(parent);
       backgroundColor = computedStyle.backgroundColor;
 
