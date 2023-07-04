@@ -1,15 +1,15 @@
 import { ScaleBand, scaleBand } from 'd3';
-import { AxisConfig } from '../../Interfaces.js';
+import { XYChartAxisConfig } from '../../../../../config.type.js';
+import { log } from '../../../../../logger.js';
 import { ITextDimensionCalculator } from '../../TextDimensionCalculator.js';
 import { BaseAxis } from './BaseAxis.js';
-import { log } from '../../../../../logger.js';
 
 export class BandAxis extends BaseAxis {
   private scale: ScaleBand<string>;
   private categories: string[];
 
   constructor(
-    axisConfig: AxisConfig,
+    axisConfig: XYChartAxisConfig,
     categories: string[],
     title: string,
     textDimensionCalculator: ITextDimensionCalculator

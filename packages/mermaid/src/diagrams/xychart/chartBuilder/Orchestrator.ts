@@ -1,5 +1,5 @@
 import { log } from '../../../logger.js';
-import { DrawableElem, XYChartData } from './Interfaces.js';
+import { DrawableElem, XYChartData, isBarPlot } from './Interfaces.js';
 import { getChartTitleComponent } from './components/ChartTitle.js';
 import { ChartComponent } from './Interfaces.js';
 import { IAxis, getAxis } from './components/axis/index.js';
@@ -13,7 +13,7 @@ export class Orchestrator {
     xAxis: IAxis;
     yAxis: IAxis;
   };
-  constructor(private chartConfig: XYChartConfig, chartData: XYChartData) {
+  constructor(private chartConfig: XYChartConfig, private chartData: XYChartData) {
     this.componentStore = {
       title: getChartTitleComponent(chartConfig, chartData),
       plot: getPlotComponent(chartConfig, chartData),
@@ -87,6 +87,9 @@ export class Orchestrator {
     this.componentStore.xAxis.setBoundingBoxXY({ x: chartX, y: chartY + chartHeight });
     this.componentStore.yAxis.setRange([chartY, chartY + chartHeight]);
     this.componentStore.yAxis.setBoundingBoxXY({ x: 0, y: chartY });
+    if(this.chartData.plots.find(p => isBarPlot(p))) {
+      this.componentStore.xAxis.recalculateOuterPaddingToDrawBar();
+    }
   }
 
   private calculateHorizonatalSpace() {
@@ -156,6 +159,9 @@ export class Orchestrator {
     this.componentStore.yAxis.setBoundingBoxXY({ x: chartX, y: titleYEnd });
     this.componentStore.xAxis.setRange([chartY, chartY + chartHeight]);
     this.componentStore.xAxis.setBoundingBoxXY({ x: 0, y: chartY });
+    if(this.chartData.plots.find(p => isBarPlot(p))) {
+      this.componentStore.xAxis.recalculateOuterPaddingToDrawBar();
+    }
   }
 
   private calculateSpace() {

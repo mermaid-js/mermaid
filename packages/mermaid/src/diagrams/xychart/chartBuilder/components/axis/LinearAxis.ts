@@ -1,6 +1,6 @@
 import { ScaleLinear, scaleLinear } from 'd3';
+import { XYChartAxisConfig } from '../../../../../config.type.js';
 import { log } from '../../../../../logger.js';
-import { AxisConfig } from '../../Interfaces.js';
 import { ITextDimensionCalculator } from '../../TextDimensionCalculator.js';
 import { BaseAxis } from './BaseAxis.js';
 
@@ -9,7 +9,7 @@ export class LinearAxis extends BaseAxis {
   private domain: [number, number];
 
   constructor(
-    axisConfig: AxisConfig,
+    axisConfig: XYChartAxisConfig,
     domain: [number, number],
     title: string,
     textDimensionCalculator: ITextDimensionCalculator

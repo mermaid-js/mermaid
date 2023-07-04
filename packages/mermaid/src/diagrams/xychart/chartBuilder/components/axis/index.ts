@@ -13,8 +13,9 @@ export type AxisPosition = 'left' | 'right' | 'top' | 'bottom';
 export interface IAxis extends ChartComponent {
   getScaleValue(value: string | number): number;
   setAxisPosition(axisPosition: AxisPosition): void;
-  getTickInnerPadding(): number;
+  getAxisOuterPadding(): number;
   getTickDistance(): number;
+  recalculateOuterPaddingToDrawBar(): void;
   setRange(range: [number, number]): void;
 }
 

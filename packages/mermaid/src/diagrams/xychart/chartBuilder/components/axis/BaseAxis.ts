@@ -1,7 +1,8 @@
-import { Dimension, Point, DrawableElem, BoundingRect, AxisConfig } from '../../Interfaces.js';
-import { AxisPosition, IAxis } from './index.js';
-import { ITextDimensionCalculator } from '../../TextDimensionCalculator.js';
+import { XYChartAxisConfig } from '../../../../../config.type.js';
 import { log } from '../../../../../logger.js';
+import { BoundingRect, Dimension, DrawableElem, Point } from '../../Interfaces.js';
+import { ITextDimensionCalculator } from '../../TextDimensionCalculator.js';
+import { AxisPosition, IAxis } from './index.js';
 
 export abstract class BaseAxis implements IAxis {
   protected boundingRect: BoundingRect = { x: 0, y: 0, width: 0, height: 0 };
@@ -10,10 +11,10 @@ export abstract class BaseAxis implements IAxis {
   protected showTitle = false;
   protected showLabel = false;
   protected showTick = false;
-  protected innerPadding = 0;
+  protected outerPadding = 0;
 
   constructor(
-    protected axisConfig: AxisConfig,
+    protected axisConfig: XYChartAxisConfig,
     protected title: string,
     protected textDimensionCalculator: ITextDimensionCalculator
   ) {
@@ -28,7 +29,7 @@ export abstract class BaseAxis implements IAxis {
   }
 
   getRange(): [number, number] {
-    return [this.range[0] + this.innerPadding, this.range[1] - this.innerPadding];
+    return [this.range[0] + this.outerPadding, this.range[1] - this.outerPadding];
   }
 
   setAxisPosition(axisPosition: AxisPosition): void {
@@ -45,9 +46,8 @@ export abstract class BaseAxis implements IAxis {
     return Math.abs(this.range[0] - this.range[1]) / this.getTickValues().length;
   }
 
-  getTickInnerPadding(): number {
-    return this.innerPadding * 2;
-    // return Math.abs(this.range[0] - this.range[1]) / this.getTickValues().length;
+  getAxisOuterPadding(): number {
+    return this.outerPadding;
   }
 
   private getLabelDimension(): Dimension {
@@ -57,11 +57,18 @@ export abstract class BaseAxis implements IAxis {
     );
   }
 
+  recalculateOuterPaddingToDrawBar(): void {
+    if((0.7 * this.getTickDistance()) > (this.outerPadding * 2) ) {
+      this.outerPadding = Math.floor((0.7 * this.getTickDistance())/2);
+    }
+    this.recalculateScale();
+  }
+
   private calculateSpaceIfDrawnHorizontally(availableSpace: Dimension) {
     let availableHeight = availableSpace.height;
     if (this.axisConfig.showLabel) {
       const spaceRequired = this.getLabelDimension();
-      this.innerPadding = spaceRequired.width / 2;
+      this.outerPadding = spaceRequired.width / 2;
       const heightRequired = spaceRequired.height + this.axisConfig.lablePadding * 2;
       log.trace('height required for axis label: ', heightRequired);
       if (heightRequired <= availableHeight) {
@@ -93,7 +100,7 @@ export abstract class BaseAxis implements IAxis {
     let availableWidth = availableSpace.width;
     if (this.axisConfig.showLabel) {
       const spaceRequired = this.getLabelDimension();
-      this.innerPadding = spaceRequired.height / 2;
+      this.outerPadding = spaceRequired.height / 2;
       const widthRequired = spaceRequired.width + this.axisConfig.lablePadding * 2;
       log.trace('width required for axis label: ', widthRequired);
       if (widthRequired <= availableWidth) {

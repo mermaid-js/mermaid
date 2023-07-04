@@ -125,8 +125,9 @@ function setYAxisRangeData(min: number, max: number) {
 function setLineData(title: string, data: number[]) {
   if (isBandAxisData(xyChartData.xAxis)) {
     xyChartData.plots.push({
-      type: ChartPlotEnum.BAR,
-      fill: '#0000bb',
+      type: ChartPlotEnum.LINE,
+      strokeFill: '#00ff00',
+      strokeWidth: 2,
       data: xyChartData.xAxis.categories.map((c, i) => [c, data[i]]),
     });
   }
@@ -134,9 +135,8 @@ function setLineData(title: string, data: number[]) {
 function setBarData(title: string, data: number[]) {
   if (isBandAxisData(xyChartData.xAxis)) {
     xyChartData.plots.push({
-      type: ChartPlotEnum.LINE,
-      strokeFill: '#00ff00',
-      strokeWidth: 2,
+      type: ChartPlotEnum.BAR,
+      fill: '#0000bb',
       data: xyChartData.xAxis.categories.map((c, i) => [c, data[i]]),
     });
   }

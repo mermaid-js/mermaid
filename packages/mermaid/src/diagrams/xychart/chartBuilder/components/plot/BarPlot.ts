@@ -24,7 +24,7 @@ export class BarPlot {
     const barPaddingPercent = 5;
 
     const barWidth =
-      Math.min(this.xAxis.getTickInnerPadding(), this.xAxis.getTickDistance()) *
+      Math.min(this.xAxis.getAxisOuterPadding() * 2, this.xAxis.getTickDistance()) *
       (1 - barPaddingPercent / 100);
     const barWidthHalf = barWidth / 2;
 

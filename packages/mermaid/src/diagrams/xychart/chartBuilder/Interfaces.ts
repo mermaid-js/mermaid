@@ -26,6 +26,10 @@ export interface BarPlotData {
 
 export type PlotData = LinePlotData | BarPlotData;
 
+export function isBarPlot(data: PlotData): data is BarPlotData {
+  return data.type === ChartPlotEnum.BAR;
+}
+
 export interface BandAxisDataType {
   title: string;
   categories: string[];
