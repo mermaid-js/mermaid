@@ -101,7 +101,7 @@ function sidebarAll() {
   return [
     {
       text: '📔 Introduction',
-      collapsible: true,
+      collapsed: true,
       items: [
         { text: 'About Mermaid', link: '/intro/' },
         { text: 'Deployment', link: '/intro/n00b-gettingStarted' },
@@ -123,7 +123,7 @@ function sidebarSyntax() {
   return [
     {
       text: '📊 Diagram Syntax',
-      collapsible: true,
+      collapsed: true,
       items: [
         { text: 'Flowchart', link: '/syntax/flowchart' },
         { text: 'Sequence Diagram', link: '/syntax/sequenceDiagram' },
@@ -154,7 +154,7 @@ function sidebarConfig() {
   return [
     {
       text: '⚙️ Deployment and Configuration',
-      collapsible: true,
+      collapsed: true,
       items: [
         { text: 'Configuration', link: '/config/configuration' },
         { text: 'Tutorials', link: '/config/Tutorials' },
@@ -176,7 +176,7 @@ function sidebarEcosystem() {
   return [
     {
       text: '📚 Ecosystem',
-      collapsible: true,
+      collapsed: true,
       items: [
         { text: 'Showcases', link: '/ecosystem/showcases' },
         { text: 'Use-Cases and Integrations', link: '/ecosystem/integrations' },
@@ -189,7 +189,7 @@ function sidebarCommunity() {
   return [
     {
       text: '🙌 Contributions and Community',
-      collapsible: true,
+      collapsed: true,
       items: [
         { text: 'Overview for Beginners', link: '/community/n00b-overview' },
         ...sidebarCommunityDevelopContribute(),
@@ -207,7 +207,7 @@ function sidebarCommunityDevelopContribute() {
     {
       text: 'Contributing to Mermaid',
       link: page_path + '#contributing-to-mermaid',
-      collapsible: true,
+      collapsed: true,
       items: [
         {
           text: 'Technical Requirements and Setup',
@@ -238,7 +238,7 @@ function sidebarNews() {
   return [
     {
       text: '📰 Latest News',
-      collapsible: true,
+      collapsed: true,
       items: [
         { text: 'Announcements', link: '/news/announcements' },
         { text: 'Blog', link: '/news/blog' },
