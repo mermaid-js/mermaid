@@ -1,12 +1,12 @@
+import { XYChartAxisConfig } from '../../../../../config.type.js';
 import {
     AxisDataType,
+    ChartComponent,
     isBandAxisData,
 } from '../../Interfaces.js';
-import { TextDimensionCalculator } from '../../TextDimensionCalculator.js';
-import { ChartComponent } from '../../Interfaces.js';
+import { TextDimensionCalculatorWithFont } from '../../TextDimensionCalculator.js';
 import { BandAxis } from './BandAxis.js';
 import { LinearAxis } from './LinearAxis.js';
-import { XYChartAxisConfig } from '../../../../../config.type.js';
 
 export type AxisPosition = 'left' | 'right' | 'top' | 'bottom';
 
@@ -18,8 +18,8 @@ export interface IAxis extends ChartComponent {
   setRange(range: [number, number]): void;
 }
 
-export function getAxis(data: AxisDataType, axisConfig: XYChartAxisConfig): IAxis {
-  const textDimansionCalculator = new TextDimensionCalculator();
+export function getAxis(data: AxisDataType, axisConfig: XYChartAxisConfig, fontFamily?: string): IAxis {
+  const textDimansionCalculator = new TextDimensionCalculatorWithFont(fontFamily);
   if (isBandAxisData(data)) {
     return new BandAxis(axisConfig, data.categories, data.title, textDimansionCalculator);
   }

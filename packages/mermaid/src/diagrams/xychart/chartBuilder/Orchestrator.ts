@@ -17,8 +17,8 @@ export class Orchestrator {
     this.componentStore = {
       title: getChartTitleComponent(chartConfig, chartData),
       plot: getPlotComponent(chartConfig, chartData),
-      xAxis: getAxis(chartData.xAxis, chartConfig.xAxis),
-      yAxis: getAxis(chartData.yAxis, chartConfig.yAxis),
+      xAxis: getAxis(chartData.xAxis, chartConfig.xAxis, chartConfig.fontFamily),
+      yAxis: getAxis(chartData.yAxis, chartConfig.yAxis, chartConfig.fontFamily),
     };
   }
 
