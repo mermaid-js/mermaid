@@ -13,7 +13,6 @@ import {
 } from '../../commonDb.js';
 import { XYChartBuilder } from './chartBuilder/index.js';
 import {
-  ChartPlotEnum,
   DrawableElem,
   XYChartData,
   isBandAxisData,
@@ -21,9 +20,6 @@ import {
 import { XYChartConfig } from '../../config.type.js';
 
 const config = configApi.getConfig();
-let chartWidth = 600;
-let chartHeight = 500;
-
 function getChartDefaultConfig(): XYChartConfig {
   return config.xyChart
     ? { ...config.xyChart, yAxis: { ...config.xyChart.yAxis }, xAxis: { ...config.xyChart.xAxis } }
@@ -125,7 +121,7 @@ function setYAxisRangeData(min: number, max: number) {
 function setLineData(title: string, data: number[]) {
   if (isBandAxisData(xyChartData.xAxis)) {
     xyChartData.plots.push({
-      type: ChartPlotEnum.LINE,
+      type: 'line',
       strokeFill: '#00ff00',
       strokeWidth: 2,
       data: xyChartData.xAxis.categories.map((c, i) => [c, data[i]]),
@@ -135,7 +131,7 @@ function setLineData(title: string, data: number[]) {
 function setBarData(title: string, data: number[]) {
   if (isBandAxisData(xyChartData.xAxis)) {
     xyChartData.plots.push({
-      type: ChartPlotEnum.BAR,
+      type: 'bar',
       fill: '#0000bb',
       data: xyChartData.xAxis.categories.map((c, i) => [c, data[i]]),
     });

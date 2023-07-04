@@ -82,7 +82,7 @@ export const addDiagrams = () => {
     state,
     journey,
     quadrantChart,
-    sankey
+    sankey,
     xychart
   );
 };

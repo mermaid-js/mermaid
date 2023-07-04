@@ -1,8 +1,3 @@
-export enum ChartPlotEnum {
-  LINE = 'line',
-  BAR = 'bar',
-}
-
 export interface ChartComponent {
   calculateSpace(availableSpace: Dimension): Dimension;
   setBoundingBoxXY(point: Point): void;
@@ -12,14 +7,14 @@ export interface ChartComponent {
 export type SimplePlotDataType = [string | number, number][];
 
 export interface LinePlotData {
-  type: ChartPlotEnum.LINE;
+  type: 'line';
   strokeFill: string,
   strokeWidth: number,
   data: SimplePlotDataType;
 }
 
 export interface BarPlotData {
-  type: ChartPlotEnum.BAR;
+  type: 'bar'
   fill: string,
   data: SimplePlotDataType;
 }
@@ -27,7 +22,7 @@ export interface BarPlotData {
 export type PlotData = LinePlotData | BarPlotData;
 
 export function isBarPlot(data: PlotData): data is BarPlotData {
-  return data.type === ChartPlotEnum.BAR;
+  return data.type === 'line';
 }
 
 export interface BandAxisDataType {

@@ -24,9 +24,9 @@ export class LinearAxis extends BaseAxis {
   }
 
   recalculateScale(): void {
-    const domain = [...this.domain]; // copy the array so if reverse is called twise it shouldnot cancel the reverse effect
+    const domain = [...this.domain]; // copy the array so if reverse is called two times it should not cancel the reverse effect
     if (this.axisPosition === 'left') {
-      domain.reverse(); // since yaxis in svg start from top
+      domain.reverse(); // since y-axis in svg start from top
     }
     this.scale = scaleLinear().domain(domain).range(this.getRange());
     log.trace('Linear axis final domain, range: ', this.domain, this.getRange());

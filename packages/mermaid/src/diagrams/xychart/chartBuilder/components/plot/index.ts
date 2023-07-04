@@ -4,7 +4,6 @@ import {
   BoundingRect,
   DrawableElem,
   Point,
-  ChartPlotEnum,
 } from '../../Interfaces.js';
 import { IAxis } from '../axis/index.js';
 import { ChartComponent } from '../../Interfaces.js';
@@ -60,12 +59,12 @@ export class Plot implements IPlot {
     ];
     for(const plot of this.chartData.plots) {
       switch(plot.type) {
-        case ChartPlotEnum.LINE: {
+        case 'line': {
           const linePlot = new LinePlot(plot, this.xAxis, this.yAxis, this.chartConfig.chartOrientation);
           drawableElem.push(...linePlot.getDrawableElement())
         }
         break;
-        case ChartPlotEnum.BAR: {
+        case 'bar': {
           const barPlot = new BarPlot(plot, this.boundingRect, this.xAxis, this.yAxis, this.chartConfig.chartOrientation)
           drawableElem.push(...barPlot.getDrawableElement());
         }

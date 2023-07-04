@@ -1,4 +1,4 @@
-import { select, Selection } from 'd3';
+import { select } from 'd3';
 import { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
 import { log } from '../../logger.js';
@@ -59,7 +59,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   function getGroup(gList: string[]) {
     let elem = group;
     let prefix = '';
-    for (let i = 0; i < gList.length; i++) {
+    for (const [i, _] of gList.entries()) {
       let parent = group;
       if (i > 0 && groups[prefix]) {
         parent = groups[prefix];

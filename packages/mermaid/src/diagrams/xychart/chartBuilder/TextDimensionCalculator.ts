@@ -5,7 +5,6 @@ export interface ITextDimensionCalculator {
 }
 
 export class TextDimensionCalculator implements ITextDimensionCalculator {
-  constructor() {}
   getDimension(texts: string[], fontSize: number): Dimension {
     return {
       width: texts.reduce((acc, cur) => Math.max(cur.length, acc), 0) * fontSize,
@@ -58,7 +57,7 @@ export class TextDimensionCalculatorWithFont implements ITextDimensionCalculator
 
     this.container.style.fontSize = `${fontSize}px`;
 
-    for (let t of texts) {
+    for (const t of texts) {
       this.container.innerHTML = t;
       const bbox = this.container.getBoundingClientRect();
       dimension.width = Math.max(dimension.width, bbox.width);

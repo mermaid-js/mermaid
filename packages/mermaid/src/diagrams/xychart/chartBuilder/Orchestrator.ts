@@ -87,7 +87,7 @@ export class Orchestrator {
     this.componentStore.xAxis.setBoundingBoxXY({ x: chartX, y: chartY + chartHeight });
     this.componentStore.yAxis.setRange([chartY, chartY + chartHeight]);
     this.componentStore.yAxis.setBoundingBoxXY({ x: 0, y: chartY });
-    if(this.chartData.plots.find(p => isBarPlot(p))) {
+    if (this.chartData.plots.some((p) => isBarPlot(p))) {
       this.componentStore.xAxis.recalculateOuterPaddingToDrawBar();
     }
   }
@@ -159,7 +159,7 @@ export class Orchestrator {
     this.componentStore.yAxis.setBoundingBoxXY({ x: chartX, y: titleYEnd });
     this.componentStore.xAxis.setRange([chartY, chartY + chartHeight]);
     this.componentStore.xAxis.setBoundingBoxXY({ x: 0, y: chartY });
-    if(this.chartData.plots.find(p => isBarPlot(p))) {
+    if (this.chartData.plots.some((p) => isBarPlot(p))) {
       this.componentStore.xAxis.recalculateOuterPaddingToDrawBar();
     }
   }
