@@ -342,7 +342,9 @@ export const setLink = function (ids, linkStr, target) {
   setClass(ids, 'clickable');
 };
 export const getTooltip = function (id) {
-  if (tooltips.hasOwnProperty(id)) return tooltips[id];
+  if (tooltips.hasOwnProperty(id)) {
+    return tooltips[id];
+  }
   return undefined;
 };
 
