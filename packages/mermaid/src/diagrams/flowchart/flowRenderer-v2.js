@@ -11,6 +11,7 @@ import { log } from '../../logger.js';
 import common, { evaluate } from '../common/common.js';
 import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
+import { Diagram } from '../../Diagram.js';
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -356,40 +357,12 @@ export const getClasses = function (text, diagObj) {
 };
 
 /**
- * Draws a flowchart in the tag with id: id based on the graph definition in text.
  *
- * @param text
- * @param id
+ * Convert a flowchart diagram to dagre graph.
+ *
+ * @param {Diagram} diagObj The diagram object
  */
-
-export const draw = async function (text, id, _version, diagObj) {
-  log.info('Drawing flowchart');
-  diagObj.db.clear();
-  flowDb.setGen('gen-2');
-  // Parse the graph definition
-  diagObj.parser.parse(text);
-
-  // Fetch the default direction, use TD if none was found
-  let dir = diagObj.db.getDirection();
-  if (dir === undefined) {
-    dir = 'TD';
-  }
-
-  const { securityLevel, flowchart: conf } = getConfig();
-  const nodeSpacing = conf.nodeSpacing || 50;
-  const rankSpacing = conf.rankSpacing || 50;
-
-  // Handle root and document for when rendering in sandbox mode
-  let sandboxElement;
-  if (securityLevel === 'sandbox') {
-    sandboxElement = select('#i' + id);
-  }
-  const root =
-    securityLevel === 'sandbox'
-      ? select(sandboxElement.nodes()[0].contentDocument.body)
-      : select('body');
-  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
-
+export const diagramToGraph = async function (diagObj) {
   // Create the input mermaid.graph
   const g = new graphlib.Graph({
     multigraph: true,
@@ -442,6 +415,47 @@ export const draw = async function (text, id, _version, diagObj) {
   }
   addVertices(vert, g, id, root, doc, diagObj);
   addEdges(edges, g, diagObj);
+  
+  return g;
+}
+
+/**
+  *
+ * Draws a flowchart in the tag with id: id based on the graph definition in text.
+ *
+ * @param text
+ * @param id
+ */
+
+export const draw = async function (text, id, _version, diagObj) {
+  log.info('Drawing flowchart');
+  diagObj.db.clear();
+  flowDb.setGen('gen-2');
+  // Parse the graph definition
+  diagObj.parser.parse(text);
+
+  // Fetch the default direction, use TD if none was found
+  let dir = diagObj.db.getDirection();
+  if (dir === undefined) {
+    dir = 'TD';
+  }
+
+  const { securityLevel, flowchart: conf } = getConfig();
+  const nodeSpacing = conf.nodeSpacing || 50;
+  const rankSpacing = conf.rankSpacing || 50;
+
+  // Handle root and document for when rendering in sandbox mode
+  let sandboxElement;
+  if (securityLevel === 'sandbox') {
+    sandboxElement = select('#i' + id);
+  }
+  const root =
+    securityLevel === 'sandbox'
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      : select('body');
+  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+
+  const g = await diagramToGraph(diagObj);
 
   // Add custom shapes
   // flowChartShapes.addToRenderV2(addShape);
@@ -522,5 +536,6 @@ export default {
   addVertices,
   addEdges,
   getClasses,
+  diagramToGraph,
   draw,
 };
