@@ -8,14 +8,14 @@ export type SimplePlotDataType = [string | number, number][];
 
 export interface LinePlotData {
   type: 'line';
-  strokeFill: string,
-  strokeWidth: number,
+  strokeFill: string;
+  strokeWidth: number;
   data: SimplePlotDataType;
 }
 
 export interface BarPlotData {
-  type: 'bar'
-  fill: string,
+  type: 'bar';
+  fill: string;
   data: SimplePlotDataType;
 }
 
@@ -30,7 +30,7 @@ export interface BandAxisDataType {
   categories: string[];
 }
 
-export interface LinearAxisDataType{
+export interface LinearAxisDataType {
   title: string;
   min: number;
   max: number;
@@ -41,7 +41,6 @@ export type AxisDataType = LinearAxisDataType | BandAxisDataType;
 export function isBandAxisData(data: any): data is BandAxisDataType {
   return data.categories && Array.isArray(data.categories);
 }
-
 
 export interface XYChartData {
   xAxis: AxisDataType;

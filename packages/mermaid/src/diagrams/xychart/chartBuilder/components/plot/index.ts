@@ -1,10 +1,4 @@
-import {
-  XYChartData,
-  Dimension,
-  BoundingRect,
-  DrawableElem,
-  Point,
-} from '../../Interfaces.js';
+import { XYChartData, Dimension, BoundingRect, DrawableElem, Point } from '../../Interfaces.js';
 import { IAxis } from '../axis/index.js';
 import { ChartComponent } from '../../Interfaces.js';
 import { LinePlot } from './LinePlot.js';
@@ -12,9 +6,8 @@ import { PlotBorder } from './PlotBorder.js';
 import { BarPlot } from './BarPlot.js';
 import { XYChartConfig } from '../../../../../config.type.js';
 
-
 export interface IPlot extends ChartComponent {
-  setAxes(xAxis: IAxis, yAxis: IAxis): void
+  setAxes(xAxis: IAxis, yAxis: IAxis): void;
 }
 
 export class Plot implements IPlot {
@@ -22,10 +15,7 @@ export class Plot implements IPlot {
   private xAxis?: IAxis;
   private yAxis?: IAxis;
 
-  constructor(
-    private chartConfig: XYChartConfig,
-    private chartData: XYChartData,
-  ) {
+  constructor(private chartConfig: XYChartConfig, private chartData: XYChartData) {
     this.boundingRect = {
       x: 0,
       y: 0,
@@ -51,33 +41,43 @@ export class Plot implements IPlot {
     };
   }
   getDrawableElements(): DrawableElem[] {
-    if(!(this.xAxis && this.yAxis)) {
-      throw Error("Axes must be passed to render Plots");
+    if (!(this.xAxis && this.yAxis)) {
+      throw Error('Axes must be passed to render Plots');
     }
     const drawableElem: DrawableElem[] = [
-      ...new PlotBorder(this.boundingRect, this.chartConfig.chartOrientation).getDrawableElement()
+      ...new PlotBorder(this.boundingRect, this.chartConfig.chartOrientation).getDrawableElement(),
     ];
-    for(const plot of this.chartData.plots) {
-      switch(plot.type) {
-        case 'line': {
-          const linePlot = new LinePlot(plot, this.xAxis, this.yAxis, this.chartConfig.chartOrientation);
-          drawableElem.push(...linePlot.getDrawableElement())
-        }
-        break;
-        case 'bar': {
-          const barPlot = new BarPlot(plot, this.boundingRect, this.xAxis, this.yAxis, this.chartConfig.chartOrientation)
-          drawableElem.push(...barPlot.getDrawableElement());
-        }
-        break;
+    for (const plot of this.chartData.plots) {
+      switch (plot.type) {
+        case 'line':
+          {
+            const linePlot = new LinePlot(
+              plot,
+              this.xAxis,
+              this.yAxis,
+              this.chartConfig.chartOrientation
+            );
+            drawableElem.push(...linePlot.getDrawableElement());
+          }
+          break;
+        case 'bar':
+          {
+            const barPlot = new BarPlot(
+              plot,
+              this.boundingRect,
+              this.xAxis,
+              this.yAxis,
+              this.chartConfig.chartOrientation
+            );
+            drawableElem.push(...barPlot.getDrawableElement());
+          }
+          break;
       }
     }
     return drawableElem;
   }
 }
 
-export function getPlotComponent(
-  chartConfig: XYChartConfig,
-  chartData: XYChartData,
-): IPlot {
+export function getPlotComponent(chartConfig: XYChartConfig, chartData: XYChartData): IPlot {
   return new Plot(chartConfig, chartData);
 }

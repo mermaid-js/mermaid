@@ -58,8 +58,8 @@ export abstract class BaseAxis implements IAxis {
   }
 
   recalculateOuterPaddingToDrawBar(): void {
-    if((0.7 * this.getTickDistance()) > (this.outerPadding * 2) ) {
-      this.outerPadding = Math.floor((0.7 * this.getTickDistance())/2);
+    if (0.7 * this.getTickDistance() > this.outerPadding * 2) {
+      this.outerPadding = Math.floor((0.7 * this.getTickDistance()) / 2);
     }
     this.recalculateScale();
   }
@@ -267,7 +267,11 @@ export abstract class BaseAxis implements IAxis {
         data: this.getTickValues().map((tick) => ({
           text: tick.toString(),
           x: this.getScaleValue(tick),
-          y: this.boundingRect.y + this.boundingRect.height - this.axisConfig.lablePadding - this.axisConfig.tickLength,
+          y:
+            this.boundingRect.y +
+            this.boundingRect.height -
+            this.axisConfig.lablePadding -
+            this.axisConfig.tickLength,
           fill: this.axisConfig.labelFill,
           fontSize: this.axisConfig.labelFontSize,
           rotation: 0,
@@ -282,7 +286,9 @@ export abstract class BaseAxis implements IAxis {
         type: 'path',
         groupTexts: ['bottom-axis', 'ticks'],
         data: this.getTickValues().map((tick) => ({
-          path: `M ${this.getScaleValue(tick)},${y + this.boundingRect.height} L ${this.getScaleValue(tick)},${
+          path: `M ${this.getScaleValue(tick)},${
+            y + this.boundingRect.height
+          } L ${this.getScaleValue(tick)},${
             y + this.boundingRect.height - this.axisConfig.tickLength
           }`,
           strokeFill: this.axisConfig.tickFill,
@@ -316,7 +322,7 @@ export abstract class BaseAxis implements IAxis {
       return this.getDrawaableElementsForLeftAxis();
     }
     if (this.axisPosition === 'right') {
-      throw Error("Drawing of right axis is not implemented");
+      throw Error('Drawing of right axis is not implemented');
     }
     if (this.axisPosition === 'bottom') {
       return this.getDrawaableElementsForBottomAxis();

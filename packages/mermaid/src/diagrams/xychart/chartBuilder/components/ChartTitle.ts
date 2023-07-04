@@ -1,13 +1,16 @@
 import { XYChartConfig } from '../../../../config.type.js';
 import {
-    BoundingRect,
-    ChartComponent,
-    Dimension,
-    DrawableElem,
-    Point,
-    XYChartData,
+  BoundingRect,
+  ChartComponent,
+  Dimension,
+  DrawableElem,
+  Point,
+  XYChartData,
 } from '../Interfaces.js';
-import { ITextDimensionCalculator, TextDimensionCalculatorWithFont } from '../TextDimensionCalculator.js';
+import {
+  ITextDimensionCalculator,
+  TextDimensionCalculatorWithFont,
+} from '../TextDimensionCalculator.js';
 
 export class ChartTitle implements ChartComponent {
   private boundingRect: BoundingRect;
@@ -30,7 +33,10 @@ export class ChartTitle implements ChartComponent {
     this.boundingRect.y = point.y;
   }
   calculateSpace(availableSpace: Dimension): Dimension {
-    const titleDimension = this.textDimensionCalculator.getDimension([this.chartData.title], this.chartConfig.titleFontSize);
+    const titleDimension = this.textDimensionCalculator.getDimension(
+      [this.chartData.title],
+      this.chartConfig.titleFontSize
+    );
     const widthRequired = Math.max(titleDimension.width, availableSpace.width);
     const heightRequired = titleDimension.height + 2 * this.chartConfig.titlePadding;
     if (

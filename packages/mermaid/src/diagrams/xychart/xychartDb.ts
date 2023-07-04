@@ -12,11 +12,7 @@ import {
   clear as commonClear,
 } from '../../commonDb.js';
 import { XYChartBuilder } from './chartBuilder/index.js';
-import {
-  DrawableElem,
-  XYChartData,
-  isBandAxisData,
-} from './chartBuilder/Interfaces.js';
+import { DrawableElem, XYChartData, isBandAxisData } from './chartBuilder/Interfaces.js';
 import { XYChartConfig } from '../../config.type.js';
 
 const config = configApi.getConfig();

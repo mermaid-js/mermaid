@@ -1,7 +1,10 @@
 import { XYChartConfig } from '../../../../../config.type.js';
 import { BoundingRect, DrawableElem } from '../../Interfaces.js';
 export class PlotBorder {
-  constructor(private boundingRect: BoundingRect, private orientation: XYChartConfig['chartOrientation']) {}
+  constructor(
+    private boundingRect: BoundingRect,
+    private orientation: XYChartConfig['chartOrientation']
+  ) {}
 
   getDrawableElement(): DrawableElem[] {
     const { x, y, width, height } = this.boundingRect;
