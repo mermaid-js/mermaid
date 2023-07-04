@@ -16,7 +16,7 @@ Anyone who has used Visio, or (God Forbid) Excel to make a Gantt Chart, knows ho
 
 Diagrams/Charts are significant but also become obsolete/inaccurate very fast. This catch-22 hobbles the productivity of teams.
 
-# Doc Rot in Diagrams
+## Doc Rot in Diagrams
 
 Doc-Rot kills diagrams as quickly as it does text, but it takes hours in a desktop application to produce a diagram.
 
@@ -24,7 +24,7 @@ Mermaid seeks to change using markdown-inspired syntax. The process is a quicker
 
 It is a relatively straightforward solution to a significant hurdle with the software teams.
 
-# Definition of Terms/ Dictionary
+## Definition of Terms/ Dictionary
 
 **Mermaid text definitions can be saved for later reuse and editing.**
 
