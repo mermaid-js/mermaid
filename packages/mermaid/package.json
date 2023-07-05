@@ -30,6 +30,7 @@
     "docs:pre:vitepress": "rimraf src/vitepress && pnpm docs:code && ts-node-esm src/docs.mts --vitepress && pnpm --filter ./src/vitepress install --no-frozen-lockfile --ignore-scripts ",
     "docs:build:vitepress": "pnpm docs:pre:vitepress && (cd src/vitepress && pnpm run build) && cpy --flat src/docs/landing/ ./src/vitepress/.vitepress/dist/landing",
     "docs:dev": "pnpm docs:pre:vitepress && concurrently \"pnpm --filter ./src/vitepress dev\" \"ts-node-esm src/docs.mts --watch --vitepress\"",
+    "docs:dev:docker": "pnpm docs:pre:vitepress && concurrently \"pnpm --filter ./src/vitepress dev:docker\" \"ts-node-esm src/docs.mts --watch --vitepress\"",
     "docs:serve": "pnpm docs:build:vitepress && vitepress serve src/vitepress",
     "docs:spellcheck": "cspell --config ../../cSpell.json \"src/docs/**/*.md\"",
     "release": "pnpm build",
