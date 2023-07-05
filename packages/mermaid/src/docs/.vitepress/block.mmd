@@ -1,0 +1,33 @@
+block
+  columns 3
+  Block1
+  Block2["Block 2"]
+  block
+    columns 2
+    Block2.1
+    Block2.2
+  end
+  Block3
+
+
+----
+
+block
+  columns 2
+  Block[Frontend]:vertical
+
+  block "Document management System"
+    columns 3
+    MO[Manager Operation]:vertical
+    block
+      columns 2
+        block "Security and User Manager"
+  end
+
+
+----
+block frontend:vertical
+move right
+block "Document Management System"
+move down
+

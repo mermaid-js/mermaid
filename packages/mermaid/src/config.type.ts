@@ -33,6 +33,7 @@ export interface MermaidConfig {
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
   sankey?: SankeyDiagramConfig;
+  blockDiagram?: BlockDiagramConfig;
   dompurifyConfig?: DOMPurify.Config;
   wrap?: boolean;
   fontSize?: number;
@@ -420,6 +421,9 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
   height?: number;
   linkColor?: SankeyLinkColor | string;
   nodeAlignment?: SankeyNodeAlignment;
+}
+export interface BlockDiagramConfig extends BaseDiagramConfig {
+  padding?: number;
 }
 
 export interface FontConfig {
