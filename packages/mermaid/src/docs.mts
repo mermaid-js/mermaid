@@ -122,7 +122,7 @@ const changeToFinalDocDir = (file: string): string => {
 const logWasOrShouldBeTransformed = (filename: string, wasCopied: boolean) => {
   const changeMsg = wasCopied ? LOGMSG_TRANSFORMED : LOGMSG_TO_BE_TRANSFORMED;
   let logMsg: string;
-  logMsg = `  File ${changeMsg}: ${filename}`;
+  logMsg = `  File ${changeMsg}: ${filename.replace(FINAL_DOCS_DIR, SOURCE_DOCS_DIR)}`;
   if (wasCopied) {
     logMsg += LOGMSG_COPIED;
   }
@@ -363,14 +363,14 @@ const transformHtml = (filename: string) => {
 
 const getGlobs = (globs: string[]): string[] => {
   globs.push(
-    '!**/dist',
+    '!**/dist/**',
     '!**/redirect.spec.ts',
-    '!**/landing',
-    '!**/node_modules',
-    '!**/user-avatars'
+    '!**/landing/**',
+    '!**/node_modules/**',
+    '!**/user-avatars/**'
   );
   if (!vitepress) {
-    globs.push('!**/.vitepress', '!**/vite.config.ts', '!src/docs/index.md', '!**/package.json');
+    globs.push('!**/.vitepress/**', '!**/vite.config.ts', '!src/docs/index.md', '!**/package.json');
   }
   return globs;
 };
