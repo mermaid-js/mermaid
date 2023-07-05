@@ -4,7 +4,7 @@ export interface ChartComponent {
   getDrawableElements(): DrawableElem[];
 }
 
-export type SimplePlotDataType = [string | number, number][];
+export type SimplePlotDataType = [string, number][];
 
 export interface LinePlotData {
   type: 'line';
@@ -26,11 +26,13 @@ export function isBarPlot(data: PlotData): data is BarPlotData {
 }
 
 export interface BandAxisDataType {
+  type: 'band';
   title: string;
   categories: string[];
 }
 
 export interface LinearAxisDataType {
+  type: 'linear';
   title: string;
   min: number;
   max: number;
@@ -38,8 +40,12 @@ export interface LinearAxisDataType {
 
 export type AxisDataType = LinearAxisDataType | BandAxisDataType;
 
-export function isBandAxisData(data: any): data is BandAxisDataType {
-  return data.categories && Array.isArray(data.categories);
+export function isBandAxisData(data: AxisDataType): data is BandAxisDataType {
+  return data.type === 'band';
+}
+
+export function isLinearAxisData(data: AxisDataType): data is LinearAxisDataType {
+  return data.type === 'linear';
 }
 
 export interface XYChartData {
