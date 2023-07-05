@@ -276,17 +276,12 @@ class C13["With Città foreign language"]
     });
 
     it('should handle note with "link" in it', function () {
-      const str = 'classDiagram\n' + 'note "test"\n';
+      const str = 'classDiagram\n' + 'note "link"\n';
       parser.parse(str);
     });
 
     it('should handle note with "click" in it', function () {
       const str = 'classDiagram\n' + 'note "click"\n';
-      parser.parse(str);
-    });
-
-    it('should handle note with "link" in it', function () {
-      const str = 'classDiagram\n' + 'note "test"\n';
       parser.parse(str);
     });
 
