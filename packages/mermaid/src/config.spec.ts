@@ -6,51 +6,51 @@ describe('when working with site config', function () {
     configApi.setSiteConfig({});
   });
   it('should set site config and config properly', function () {
-    const config_0 = { foo: 'bar', bar: 0 };
+    const config_0 = { fontFamily: 'foo-font', fontSize: 150 };
     configApi.setSiteConfig(config_0);
     const config_1 = configApi.getSiteConfig();
     const config_2 = configApi.getConfig();
-    expect(config_1.foo).toEqual(config_0.foo);
-    expect(config_1.bar).toEqual(config_0.bar);
+    expect(config_1.fontFamily).toEqual(config_0.fontFamily);
+    expect(config_1.fontSize).toEqual(config_0.fontSize);
     expect(config_1).toEqual(config_2);
   });
   it('should respect secure keys when applying directives', function () {
     const config_0 = {
-      foo: 'bar',
-      bar: 'cant-be-changed',
-      secure: [...configApi.defaultConfig.secure, 'bar'],
+      fontFamily: 'foo-font',
+      fontSize: 12345, // can't be changed
+      secure: [...configApi.defaultConfig.secure!, 'fontSize'],
     };
     configApi.setSiteConfig(config_0);
-    const directive = { foo: 'baf', bar: 'should-not-be-allowed' };
+    const directive = { fontFamily: 'baf', fontSize: 54321 /* fontSize shouldn't be changed */ };
     const cfg = configApi.updateCurrentConfig(config_0, [directive]);
-    expect(cfg.foo).toEqual(directive.foo);
-    expect(cfg.bar).toBe(config_0.bar);
+    expect(cfg.fontFamily).toEqual(directive.fontFamily);
+    expect(cfg.fontSize).toBe(config_0.fontSize);
   });
   it('should set reset config properly', function () {
-    const config_0 = { foo: 'bar', bar: 0 };
+    const config_0 = { fontFamily: 'foo-font', fontSize: 150 };
     configApi.setSiteConfig(config_0);
-    const config_1 = { foo: 'baf' };
+    const config_1 = { fontFamily: 'baf' };
     configApi.setConfig(config_1);
     const config_2 = configApi.getConfig();
-    expect(config_2.foo).toEqual(config_1.foo);
+    expect(config_2.fontFamily).toEqual(config_1.fontFamily);
     configApi.reset();
     const config_3 = configApi.getConfig();
-    expect(config_3.foo).toEqual(config_0.foo);
+    expect(config_3.fontFamily).toEqual(config_0.fontFamily);
     const config_4 = configApi.getSiteConfig();
-    expect(config_4.foo).toEqual(config_0.foo);
+    expect(config_4.fontFamily).toEqual(config_0.fontFamily);
   });
   it('should set global reset config properly', function () {
-    const config_0 = { foo: 'bar', bar: 0 };
+    const config_0 = { fontFamily: 'foo-font', fontSize: 150 };
     configApi.setSiteConfig(config_0);
     const config_1 = configApi.getSiteConfig();
-    expect(config_1.foo).toEqual(config_0.foo);
+    expect(config_1.fontFamily).toEqual(config_0.fontFamily);
     const config_2 = configApi.getConfig();
-    expect(config_2.foo).toEqual(config_0.foo);
-    configApi.setConfig({ foobar: 'bar0' });
+    expect(config_2.fontFamily).toEqual(config_0.fontFamily);
+    configApi.setConfig({ altFontFamily: 'bar-font' });
     const config_3 = configApi.getConfig();
-    expect(config_3.foobar).toEqual('bar0');
+    expect(config_3.altFontFamily).toEqual('bar-font');
     configApi.reset();
     const config_4 = configApi.getConfig();
-    expect(config_4.foobar).toBeUndefined();
+    expect(config_4.altFontFamily).toBeUndefined();
   });
 });
