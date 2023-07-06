@@ -568,13 +568,6 @@ export const draw = function (text, id, _version, diagObj) {
       : select('body');
   // const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
-  // Parse the text to populate erDb
-  // try {
-  //   parser.parse(text);
-  // } catch (err) {
-  //   log.debug('Parsing failed');
-  // }
-
   // Get a reference to the svg node that contains the text
   const svg = root.select(`[id='${id}']`);
 

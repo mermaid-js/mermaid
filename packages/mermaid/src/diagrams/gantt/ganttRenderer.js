@@ -57,8 +57,6 @@ let w;
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().gantt;
 
-  // diagObj.db.clear();
-  // parser.parse(text);
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
