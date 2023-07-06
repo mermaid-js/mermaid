@@ -144,6 +144,7 @@ function sidebarSyntax() {
         { text: 'Timeline 🔥', link: '/syntax/timeline' },
         { text: 'Zenuml 🔥', link: '/syntax/zenuml' },
         { text: 'Sankey 🔥', link: '/syntax/sankey' },
+        { text: 'Railroad 🔥', link: '/syntax/railroad' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
