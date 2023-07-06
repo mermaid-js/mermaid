@@ -39,12 +39,6 @@ export function splitWordToFitWidth(
   word: MarkdownWord
 ): [MarkdownWord, MarkdownWord] {
   const characters = splitTextToChars(word.content);
-  if (characters.length === 0) {
-    return [
-      { content: '', type: word.type },
-      { content: '', type: word.type },
-    ];
-  }
   return splitWordToFitWidthRecursion(checkFit, [], characters, word.type);
 }
 
@@ -54,8 +48,6 @@ function splitWordToFitWidthRecursion(
   remainingChars: string[],
   type: MarkdownWordType
 ): [MarkdownWord, MarkdownWord] {
-  // eslint-disable-next-line no-console
-  console.error({ usedChars, remainingChars });
   if (remainingChars.length === 0) {
     return [
       { content: usedChars.join(''), type },
@@ -94,8 +86,6 @@ function splitLineToFitWidthRecursion(
   lines: MarkdownLine[] = [],
   newLine: MarkdownLine = []
 ): MarkdownLine[] {
-  // eslint-disable-next-line no-console
-  console.error({ words, lines, newLine });
   // Return if there is nothing left to split
   if (words.length === 0) {
     // If there is a new line, add it to the lines
@@ -110,8 +100,6 @@ function splitLineToFitWidthRecursion(
     words.shift();
   }
   const nextWord: MarkdownWord = words.shift() ?? { content: ' ', type: 'normal' };
-
-  // const nextWordWithJoiner: MarkdownWord = { ...nextWord, content: joiner + nextWord.content };
   const lineWithNextWord: MarkdownLine = [...newLine];
   if (joiner !== '') {
     lineWithNextWord.push({ content: joiner, type: 'normal' });
@@ -128,7 +116,7 @@ function splitLineToFitWidthRecursion(
     // There was text in newLine, so add it to lines and push nextWord back into words.
     lines.push(newLine);
     words.unshift(nextWord);
-  } else {
+  } else if (nextWord.content) {
     // There was no text in newLine, so we need to split nextWord
     const [line, rest] = splitWordToFitWidth(checkFit, nextWord);
     lines.push([line]);
