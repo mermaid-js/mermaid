@@ -1,5 +1,5 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
-import { line, curveBasis, select } from 'd3';
+import { line, curveBasis } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import { getConfig } from '../../config.js';
 import { log } from '../../logger.js';
@@ -8,6 +8,7 @@ import erMarkers from './erMarkers.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { parseGenericTypes } from '../common/common.js';
 import { v5 as uuid5 } from 'uuid';
+import { selectElementsForRender } from '../../rendering-util/selectElementsForRender.js';
 
 /** Regex used to remove chars from the entity name so the result can be used in an id */
 const BAD_ID_CHARS_REGEXP = /[^\dA-Za-z](\W)*/g;
@@ -555,21 +556,8 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
 export const draw = function (text, id, _version, diagObj) {
   conf = getConfig().er;
   log.info('Drawing ER diagram');
-  //  diag.db.clear();
-  const securityLevel = getConfig().securityLevel;
-  // Handle root and Document for when rendering in sandbox mode
-  let sandboxElement;
-  if (securityLevel === 'sandbox') {
-    sandboxElement = select('#i' + id);
-  }
-  const root =
-    securityLevel === 'sandbox'
-      ? select(sandboxElement.nodes()[0].contentDocument.body)
-      : select('body');
-  // const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
-
   // Get a reference to the svg node that contains the text
-  const svg = root.select(`[id='${id}']`);
+  const { svg } = selectElementsForRender(id);
 
   // Add cardinality marker definitions to the svg
   erMarkers.insertMarkers(svg, conf);

@@ -19,6 +19,7 @@ import {
 import common from '../common/common.js';
 import { getConfig } from '../../config.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { selectElementsForRender } from '../../rendering-util/selectElementsForRender.js';
 
 export const setConf = function () {
   log.debug('Something is calling, setConf, remove the call');
@@ -59,19 +60,9 @@ let w;
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().gantt;
 
-  const securityLevel = getConfig().securityLevel;
-  // Handle root and Document for when rendering in sandbox mode
-  let sandboxElement;
-  if (securityLevel === 'sandbox') {
-    sandboxElement = select('#i' + id);
-  }
-  const root =
-    securityLevel === 'sandbox'
-      ? select(sandboxElement.nodes()[0].contentDocument.body)
-      : select('body');
-  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+  const { svg, doc } = selectElementsForRender(id);
+  const elem = svg.node();
 
-  const elem = doc.getElementById(id);
   w = elem.parentElement.offsetWidth;
 
   if (w === undefined) {
@@ -122,7 +113,6 @@ export const draw = function (text, id, version, diagObj) {
 
   // Set viewBox
   elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-  const svg = root.select(`[id="${id}"]`);
 
   // Set timescale
   const timeScale = scaleTime()
@@ -447,10 +437,6 @@ export const draw = function (text, id, version, diagObj) {
 
     // Wrap the tasks in an a tag for working links without javascript
     if (securityLevel === 'sandbox') {
-      let sandboxElement;
-      sandboxElement = select('#i' + id);
-      const doc = sandboxElement.nodes()[0].contentDocument;
-
       rectangles
         .filter(function (d) {
           return links[d.id] !== undefined;

@@ -1,11 +1,7 @@
 import { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
 
-import {
-  select as d3select,
-  scaleOrdinal as d3scaleOrdinal,
-  schemeTableau10 as d3schemeTableau10,
-} from 'd3';
+import { scaleOrdinal as d3scaleOrdinal, schemeTableau10 as d3schemeTableau10 } from 'd3';
 
 import {
   sankey as d3Sankey,
@@ -18,7 +14,8 @@ import {
 } from 'd3-sankey';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { Uid } from '../../rendering-util/uid.js';
-import type { SankeyLinkColor, SankeyNodeAlignment } from '../../config.type.js';
+import type { SankeyNodeAlignment } from '../../config.type.js';
+import { selectElementsForRender } from '../../rendering-util/selectElementsForRender.js';
 
 // Map config options to alignment functions
 const alignmentsMap: Record<
@@ -40,25 +37,11 @@ const alignmentsMap: Record<
  * @param diagObj - A standard diagram containing the db and the text and type etc of the diagram
  */
 export const draw = function (text: string, id: string, _version: string, diagObj: Diagram): void {
-  // Get Sankey config
-  const { securityLevel, sankey: conf } = configApi.getConfig();
-  const defaultSankeyConfig = configApi!.defaultConfig!.sankey!;
+  const { svg } = selectElementsForRender(id);
 
-  // TODO:
-  // This code repeats for every diagram
-  // Figure out what is happening there, probably it should be separated
-  // The main thing is svg object that is a d3 wrapper for svg operations
-  //
-  let sandboxElement: any;
-  if (securityLevel === 'sandbox') {
-    sandboxElement = d3select('#i' + id);
-  }
-  const root =
-    securityLevel === 'sandbox'
-      ? d3select(sandboxElement.nodes()[0].contentDocument.body)
-      : d3select('body');
-  // @ts-ignore TODO root.select is not callable
-  const svg = securityLevel === 'sandbox' ? root.select(`[id="${id}"]`) : d3select(`[id="${id}"]`);
+  // Get Sankey config
+  const { sankey: conf } = configApi.getConfig();
+  const defaultSankeyConfig = configApi!.defaultConfig!.sankey!;
 
   // Establish svg dimensions and get width and height
   //

@@ -1,4 +1,3 @@
-import { select } from 'd3';
 import svgDraw from './svgDraw.js';
 import { log } from '../../logger.js';
 import { parser } from './parser/c4Diagram.jison';
@@ -8,6 +7,7 @@ import * as configApi from '../../config.js';
 import assignWithDepth from '../../assignWithDepth.js';
 import { wrapLabel, calculateTextWidth, calculateTextHeight } from '../../utils.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { selectElementsForRender } from '../../rendering-util/selectElementsForRender.js';
 
 let globalBoundaryMaxX = 0,
   globalBoundaryMaxY = 0;
@@ -581,16 +581,6 @@ function drawInsideBoundary(
  */
 export const draw = function (_text, id, _version, diagObj) {
   conf = configApi.getConfig().c4;
-  const securityLevel = configApi.getConfig().securityLevel;
-  // Handle root and Document for when rendering in sandbox mode
-  let sandboxElement;
-  if (securityLevel === 'sandbox') {
-    sandboxElement = select('#i' + id);
-  }
-  const root =
-    securityLevel === 'sandbox'
-      ? select(sandboxElement.nodes()[0].contentDocument.body)
-      : select('body');
 
   let db = diagObj.db;
 
@@ -601,8 +591,7 @@ export const draw = function (_text, id, _version, diagObj) {
 
   log.debug(`C:${JSON.stringify(conf, null, 2)}`);
 
-  const diagram =
-    securityLevel === 'sandbox' ? root.select(`[id="${id}"]`) : select(`[id="${id}"]`);
+  const { svg: diagram } = selectElementsForRender(id);
 
   svgDraw.insertComputerIcon(diagram);
   svgDraw.insertDatabaseIcon(diagram);

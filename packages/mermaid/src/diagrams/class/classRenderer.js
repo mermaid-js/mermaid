@@ -1,10 +1,10 @@
-import { select } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger.js';
 import svgDraw from './svgDraw.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { getConfig } from '../../config.js';
+import { selectElementsForRender } from '../../rendering-util/selectElementsForRender.js';
 
 let idCache = {};
 const padding = 20;
@@ -144,19 +144,7 @@ export const draw = function (text, id, _version, diagObj) {
 
   log.info('Rendering diagram ' + text);
 
-  const securityLevel = getConfig().securityLevel;
-  // Handle root and Document for when rendering in sandbox mode
-  let sandboxElement;
-  if (securityLevel === 'sandbox') {
-    sandboxElement = select('#i' + id);
-  }
-  const root =
-    securityLevel === 'sandbox'
-      ? select(sandboxElement.nodes()[0].contentDocument.body)
-      : select('body');
-
-  // Fetch the default direction, use TD if none was found
-  const diagram = root.select(`[id='${id}']`);
+  const { svg: diagram } = selectElementsForRender(id);
   insertMarkers(diagram);
 
   // Layout graph, Create a new directed graph

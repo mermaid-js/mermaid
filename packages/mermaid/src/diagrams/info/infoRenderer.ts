@@ -1,7 +1,6 @@
-import { select } from 'd3';
 import { log } from '../../logger.js';
-import { getConfig } from '../../config.js';
-import type { DrawDefinition, HTML, SVG } from '../../diagram-api/types.js';
+import type { DrawDefinition } from '../../diagram-api/types.js';
+import { selectElementsForRender } from '../../rendering-util/selectElementsForRender.js';
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
@@ -14,22 +13,7 @@ const draw: DrawDefinition = (text, id, version) => {
   try {
     log.debug('rendering info diagram\n' + text);
 
-    const { securityLevel } = getConfig();
-    // handle root and document for when rendering in sandbox mode
-    let sandboxElement: HTML | undefined;
-    let document: Document | null | undefined;
-    if (securityLevel === 'sandbox') {
-      sandboxElement = select('#i' + id);
-      document = sandboxElement.nodes()[0].contentDocument;
-    }
-
-    // @ts-ignore - figure out how to assign HTML to document type
-    const root: HTML =
-      sandboxElement !== undefined && document !== undefined && document !== null
-        ? select(document)
-        : select('body');
-
-    const svg: SVG = root.select('#' + id);
+    const { svg } = selectElementsForRender(id);
     svg.attr('height', 100);
     svg.attr('width', 400);
 

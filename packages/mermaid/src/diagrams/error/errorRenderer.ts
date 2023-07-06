@@ -3,6 +3,7 @@
 import { select } from 'd3';
 import { log } from '../../logger.js';
 import { getErrorMessage } from '../../utils.js';
+import { selectElementsForRender } from '../../rendering-util/selectElementsForRender.js';
 
 /**
  * Merges the value of `conf` with the passed `cnf`
@@ -24,7 +25,7 @@ export const draw = (_text: string, id: string, mermaidVersion: string) => {
   try {
     log.debug('Renering svg for syntax error\n');
 
-    const svg = select('#' + id);
+    const { svg } = selectElementsForRender(id);
 
     const g = svg.append('g');
 
