@@ -34,7 +34,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync, rmdirSync }
 import { exec } from 'child_process';
 import { globby } from 'globby';
 import { JSDOM } from 'jsdom';
-import type { Code, Root } from 'mdast';
+import type { Code, ListItem, Root, Text } from 'mdast';
 import { posix, dirname, relative, join } from 'path';
 import prettier from 'prettier';
 import { remark } from 'remark';
@@ -44,6 +44,7 @@ import chokidar from 'chokidar';
 import mm from 'micromatch';
 // @ts-ignore No typescript declaration file
 import flatmap from 'unist-util-flatmap';
+import { visit } from 'unist-util-visit';
 
 const MERMAID_MAJOR_VERSION = (
   JSON.parse(readFileSync('../mermaid/package.json', 'utf8')).version as string
@@ -122,7 +123,7 @@ const changeToFinalDocDir = (file: string): string => {
 const logWasOrShouldBeTransformed = (filename: string, wasCopied: boolean) => {
   const changeMsg = wasCopied ? LOGMSG_TRANSFORMED : LOGMSG_TO_BE_TRANSFORMED;
   let logMsg: string;
-  logMsg = `  File ${changeMsg}: ${filename}`;
+  logMsg = `  File ${changeMsg}: ${filename.replace(FINAL_DOCS_DIR, SOURCE_DOCS_DIR)}`;
   if (wasCopied) {
     logMsg += LOGMSG_COPIED;
   }
@@ -150,6 +151,7 @@ const copyTransformedContents = (filename: string, doCopy = false, transformedCo
   }
 
   filesTransformed.add(fileInFinalDocDir);
+
   if (doCopy) {
     writeFileSync(fileInFinalDocDir, newBuffer);
   }
@@ -321,6 +323,123 @@ const transformMarkdown = (file: string) => {
   copyTransformedContents(file, !verifyOnly, formatted);
 };
 
+import { load, JSON_SCHEMA } from 'js-yaml';
+// @ts-ignore: we're importing internal jsonschema2md functions
+import { default as schemaLoader } from '@adobe/jsonschema2md/lib/schemaProxy.js';
+// @ts-ignore: we're importing internal jsonschema2md functions
+import { default as traverseSchemas } from '@adobe/jsonschema2md/lib/traverseSchema.js';
+// @ts-ignore: we're importing internal jsonschema2md functions
+import { default as buildMarkdownFromSchema } from '@adobe/jsonschema2md/lib/markdownBuilder.js';
+// @ts-ignore: we're importing internal jsonschema2md functions
+import { default as jsonSchemaReadmeBuilder } from '@adobe/jsonschema2md/lib/readmeBuilder.js';
+
+/**
+ * Transforms the given JSON Schema into Markdown documentation
+ */
+async function transormJsonSchema(file: string) {
+  const yamlContents = readSyncedUTF8file(file);
+  const jsonSchema = load(yamlContents, {
+    filename: file,
+    // only allow JSON types in our YAML doc (will probably be default in YAML 1.3)
+    // e.g. `true` will be parsed a boolean `true`, `True` will be parsed as string `"True"`.
+    schema: JSON_SCHEMA,
+  });
+
+  /** Location of the `schema.yaml` files */
+  const SCHEMA_INPUT_DIR = 'src/schemas/';
+  /**
+   * Location to store the generated `schema.json` file for the website
+   *
+   * Because Vitepress doesn't handle bundling `.json` files properly, we need
+   * to instead place it into a `public/` subdirectory.
+   */
+  const SCHEMA_OUTPUT_DIR = 'src/docs/public/schemas/';
+  const VITEPRESS_PUBLIC_DIR = 'src/docs/public';
+  /**
+   * Location to store the generated Schema Markdown docs.
+   * Links to JSON Schemas should automatically be rewritten to point to
+   * `SCHEMA_OUTPUT_DIR`.
+   */
+  const SCHEMA_MARKDOWN_OUTPUT_DIR = join('src', 'docs', 'config', 'schema-docs');
+
+  // write .schema.json files
+  const jsonFileName = file
+    .replace('.schema.yaml', '.schema.json')
+    .replace(SCHEMA_INPUT_DIR, SCHEMA_OUTPUT_DIR);
+  copyTransformedContents(jsonFileName, !verifyOnly, JSON.stringify(jsonSchema, undefined, 2));
+
+  const schemas = traverseSchemas([schemaLoader()(jsonFileName, jsonSchema)]);
+
+  // ignore output of this function
+  // for some reason, without calling this function, we get some broken links
+  // this is probably a bug in @adobe/jsonschema2md
+  jsonSchemaReadmeBuilder({ readme: true })(schemas);
+
+  // write Markdown files
+  const markdownFiles = buildMarkdownFromSchema({
+    header: true,
+    // links,
+    includeProperties: ['tsType'], // Custom TypeScript type
+    exampleFormat: 'json',
+    // skipProperties,
+    /**
+     * Automatically rewrite schema paths passed to `schemaLoader`
+     * (e.g. src/docs/schemas/config.schema.json)
+     * to relative links (e.g. /schemas/config.schema.json)
+     *
+     * See https://vitepress.vuejs.org/guide/asset-handling
+     *
+     * @param origin - Original schema path (relative to this script).
+     * @returns New absolute Vitepress path to schema
+     */
+    rewritelinks: (origin: string) => {
+      return `/${relative(VITEPRESS_PUBLIC_DIR, origin)}`;
+    },
+  })(schemas);
+
+  for (const [name, markdownAst] of Object.entries(markdownFiles)) {
+    /*
+     * Converts list entries of shape '- tsType: () => Partial<FontConfig>'
+     * into '- tsType: `() => Partial<FontConfig>`' (e.g. escaping with back-ticks),
+     * as otherwise VitePress doesn't like the <FontConfig> bit.
+     */
+    visit(markdownAst as Root, 'listItem', (listEntry: ListItem) => {
+      let listText: Text;
+      const blockItem = listEntry.children[0];
+      if (blockItem.type === 'paragraph' && blockItem.children[0].type === 'text') {
+        listText = blockItem.children[0];
+      } // @ts-expect-error: MD AST output from @adobe/jsonschema2md is technically wrong
+      else if (blockItem.type === 'text') {
+        listText = blockItem;
+      } else {
+        return; // skip
+      }
+
+      if (listText.value.startsWith('tsType: ')) {
+        listText.value = listText.value.replace(/tsType: (.*)/g, 'tsType: `$1`');
+      }
+    });
+
+    const transformed = remark()
+      .use(remarkGfm)
+      .use(remarkFrontmatter, ['yaml']) // support YAML front-matter in Markdown
+      .use(transformMarkdownAst, {
+        // mermaid project specific plugin
+        originalFilename: file,
+        addAutogeneratedWarning: !noHeader,
+        removeYAML: !noHeader,
+      })
+      .stringify(markdownAst as Root);
+
+    const formatted = prettier.format(transformed, {
+      parser: 'markdown',
+      ...prettierConfig,
+    });
+    const newFileName = join(SCHEMA_MARKDOWN_OUTPUT_DIR, `${name}.md`);
+    copyTransformedContents(newFileName, !verifyOnly, formatted);
+  }
+}
+
 /**
  * Transform an HTML file and write the transformed file to the directory for published
  * documentation
@@ -363,14 +482,14 @@ const transformHtml = (filename: string) => {
 
 const getGlobs = (globs: string[]): string[] => {
   globs.push(
-    '!**/dist',
+    '!**/dist/**',
     '!**/redirect.spec.ts',
-    '!**/landing',
-    '!**/node_modules',
-    '!**/user-avatars'
+    '!**/landing/**',
+    '!**/node_modules/**',
+    '!**/user-avatars/**'
   );
   if (!vitepress) {
-    globs.push('!**/.vitepress', '!**/vite.config.ts', '!src/docs/index.md', '!**/package.json');
+    globs.push('!**/.vitepress/**', '!**/vite.config.ts', '!src/docs/index.md', '!**/package.json');
   }
   return globs;
 };
@@ -387,6 +506,14 @@ const main = async () => {
 
   const sourceDirGlob = posix.join('.', SOURCE_DOCS_DIR, '**');
   const action = verifyOnly ? 'Verifying' : 'Transforming';
+
+  if (vitepress) {
+    console.log(`${action} 1 .schema.yaml file`);
+    await transormJsonSchema('src/schemas/config.schema.yaml');
+  } else {
+    // skip because this creates so many Markdown files that it lags git
+    console.log('Skipping 1 .schema.yaml file');
+  }
 
   const mdFileGlobs = getGlobs([posix.join(sourceDirGlob, '*.md')]);
   const mdFiles = await getFilesFromGlobs(mdFileGlobs);

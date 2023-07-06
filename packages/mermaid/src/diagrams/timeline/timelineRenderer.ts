@@ -1,4 +1,4 @@
-// @ts-ignore - db not typed yet
+// @ts-nocheck - don't check until handle it
 import { select, Selection } from 'd3';
 import svgDraw from './svgDraw.js';
 import { log } from '../../logger.js';
@@ -30,12 +30,6 @@ export const draw = function (text: string, id: string, version: string, diagObj
   // @ts-expect-error - wrong config?
   const LEFT_MARGIN = conf.leftMargin ?? 50;
 
-  //2. Clear the diagram db before parsing
-  diagObj.db.clear?.();
-
-  //3. Parse the diagram text
-  diagObj.parser.parse(text + '\n');
-
   log.debug('timeline', diagObj.db);
 
   const securityLevel = conf.securityLevel;
@@ -46,11 +40,9 @@ export const draw = function (text: string, id: string, version: string, diagObj
   }
   const root =
     securityLevel === 'sandbox'
-      ? // @ts-ignore d3 types are wrong
-        select(sandboxElement.nodes()[0].contentDocument.body)
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
 
-  // @ts-ignore d3 types are wrong
   const svg = root.select('#' + id);
 
   svg.append('g');

@@ -208,21 +208,22 @@ export const updateLink = function (positions, style) {
   });
 };
 
-export const addClass = function (id, style) {
-  if (classes[id] === undefined) {
-    classes[id] = { id: id, styles: [], textStyles: [] };
-  }
+export const addClass = function (ids, style) {
+  ids.split(',').forEach(function (id) {
+    if (classes[id] === undefined) {
+      classes[id] = { id, styles: [], textStyles: [] };
+    }
 
-  if (style !== undefined && style !== null) {
-    style.forEach(function (s) {
-      if (s.match('color')) {
-        const newStyle1 = s.replace('fill', 'bgFill');
-        const newStyle2 = newStyle1.replace('color', 'fill');
-        classes[id].textStyles.push(newStyle2);
-      }
-      classes[id].styles.push(s);
-    });
-  }
+    if (style !== undefined && style !== null) {
+      style.forEach(function (s) {
+        if (s.match('color')) {
+          const newStyle = s.replace('fill', 'bgFill').replace('color', 'fill');
+          classes[id].textStyles.push(newStyle);
+        }
+        classes[id].styles.push(s);
+      });
+    }
+  });
 };
 
 /**
@@ -341,7 +342,10 @@ export const setLink = function (ids, linkStr, target) {
   setClass(ids, 'clickable');
 };
 export const getTooltip = function (id) {
-  return tooltips[id];
+  if (tooltips.hasOwnProperty(id)) {
+    return tooltips[id];
+  }
+  return undefined;
 };
 
 /**
@@ -442,7 +446,7 @@ export const clear = function (ver = 'gen-1') {
   subGraphs = [];
   subGraphLookup = {};
   subCount = 0;
-  tooltips = [];
+  tooltips = {};
   firstGraphFlag = true;
   version = ver;
   commonClear();

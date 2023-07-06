@@ -57,8 +57,6 @@ export const draw = function (text, id, _version, diagObj) {
       : select('body');
   const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
-  // diagObj.db.clear();
-  // parser.parse(text);
   log.debug('Rendering diagram ' + text);
 
   // Fetch the default direction, use TD if none was found
