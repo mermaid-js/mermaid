@@ -1,6 +1,7 @@
 import type { Content } from 'mdast';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import { dedent } from 'ts-dedent';
+import { MarkdownLine, MarkdownWordType } from './types.js';
 
 /**
  * @param markdown - markdown to process
@@ -17,13 +18,13 @@ function preprocessMarkdown(markdown: string): string {
 /**
  * @param markdown - markdown to split into lines
  */
-export function markdownToLines(markdown: string) {
+export function markdownToLines(markdown: string): MarkdownLine[] {
   const preprocessedMarkdown = preprocessMarkdown(markdown);
   const { children } = fromMarkdown(preprocessedMarkdown);
-  const lines: { content: string; type: string }[][] = [[]];
+  const lines: MarkdownLine[] = [[]];
   let currentLine = 0;
 
-  function processNode(node: Content, parentType = 'normal') {
+  function processNode(node: Content, parentType: MarkdownWordType = 'normal') {
     if (node.type === 'text') {
       const textLines = node.value.split('\n');
       textLines.forEach((textLine, index) => {

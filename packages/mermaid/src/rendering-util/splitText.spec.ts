@@ -1,5 +1,6 @@
-import { splitTextToChars, splitLineToFitWidth, type CheckFitFunction } from './splitText.js';
+import { splitTextToChars, splitLineToFitWidth, splitLineToWords } from './splitText.js';
 import { describe, it, expect } from 'vitest';
+import type { CheckFitFunction, MarkdownLine, MarkdownWordType } from './types.js';
 
 describe('splitText', () => {
   it.each([
@@ -13,11 +14,34 @@ describe('splitText', () => {
 });
 
 describe('split lines', () => {
+  /**
+   * Creates a checkFunction for a given width
+   * @param width - width of characters to fit in a line
+   * @returns checkFunction
+   */
   const createCheckFn = (width: number): CheckFitFunction => {
-    return (text: string) => {
-      return splitTextToChars(text).length <= width;
+    return (text: MarkdownLine) => {
+      // Join all words into a single string
+      const joinedContent = text.map((w) => w.content).join('');
+      const characters = splitTextToChars(joinedContent);
+      return characters.length <= width;
     };
   };
+
+  it('should create valid checkFit function', () => {
+    const checkFit5 = createCheckFn(5);
+    expect(checkFit5([{ content: 'hello', type: 'normal' }])).toBe(true);
+    expect(
+      checkFit5([
+        { content: 'hello', type: 'normal' },
+        { content: 'world', type: 'normal' },
+      ])
+    ).toBe(false);
+    const checkFit1 = createCheckFn(1);
+    expect(checkFit1([{ content: 'A', type: 'normal' }])).toBe(true);
+    expect(checkFit1([{ content: '🏳️‍⚧️', type: 'normal' }])).toBe(true);
+    expect(checkFit1([{ content: '🏳️‍⚧️🏳️‍⚧️', type: 'normal' }])).toBe(false);
+  });
 
   it.each([
     // empty string
@@ -40,7 +64,10 @@ describe('split lines', () => {
     'should split $str into lines of $width characters',
     ({ str, split, width }: { str: string; width: number; split: string[] }) => {
       const checkFn = createCheckFn(width);
-      expect(splitLineToFitWidth(str, checkFn)).toEqual(split);
+      const line: MarkdownLine = getLineFromString(str);
+      expect(splitLineToFitWidth(line, checkFn)).toEqual(
+        split.map((str) => splitLineToWords(str).map((content) => ({ content, type: 'normal' })))
+      );
     }
   );
 
@@ -48,8 +75,17 @@ describe('split lines', () => {
     const checkFn: CheckFitFunction = createCheckFn(6);
     const str = `Flag
   🏳️‍⚧️ this 🏳️‍🌈`;
-    expect(() => splitLineToFitWidth(str, checkFn)).toThrowErrorMatchingInlineSnapshot(
+    expect(() =>
+      splitLineToFitWidth(getLineFromString(str), checkFn)
+    ).toThrowErrorMatchingInlineSnapshot(
       '"splitLineToFitWidth does not support newlines in the line"'
     );
   });
 });
+
+const getLineFromString = (str: string, type: MarkdownWordType = 'normal'): MarkdownLine => {
+  return splitLineToWords(str).map((content) => ({
+    content,
+    type,
+  }));
+};

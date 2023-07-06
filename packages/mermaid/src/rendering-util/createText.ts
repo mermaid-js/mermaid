@@ -1,25 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// @ts-nocheck TODO: Fix types
 import { log } from '../logger.js';
 import { decodeEntities } from '../mermaidAPI.js';
 import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
 import { splitLineToFitWidth } from './splitText.js';
-/**
- * @param dom
- * @param styleFn
- */
+import { MarkdownLine, MarkdownWord } from './types.js';
+
 function applyStyle(dom, styleFn) {
   if (styleFn) {
     dom.attr('style', styleFn);
   }
 }
 
-/**
- * @param element
- * @param {any} node
- * @param width
- * @param classes
- * @param addBackground
- * @returns {SVGForeignObjectElement} Node
- */
 function addHtmlSpan(element, node, width, classes, addBackground = false) {
   const fo = element.append('foreignObject');
   // const newEl = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
@@ -65,12 +57,12 @@ function addHtmlSpan(element, node, width, classes, addBackground = false) {
 /**
  * Creates a tspan element with the specified attributes for text positioning.
  *
- * @param {object} textElement - The parent text element to append the tspan element.
- * @param {number} lineIndex - The index of the current line in the structuredText array.
- * @param {number} lineHeight - The line height value for the text.
- * @returns {object} The created tspan element.
+ * @param textElement - The parent text element to append the tspan element.
+ * @param lineIndex - The index of the current line in the structuredText array.
+ * @param lineHeight - The line height value for the text.
+ * @returns The created tspan element.
  */
-function createTspan(textElement, lineIndex, lineHeight) {
+function createTspan(textElement: any, lineIndex: number, lineHeight: number) {
   return textElement
     .append('tspan')
     .attr('class', 'text-outer-tspan')
@@ -79,55 +71,41 @@ function createTspan(textElement, lineIndex, lineHeight) {
     .attr('dy', lineHeight + 'em');
 }
 
-/**
- * Compute the width of rendered text
- * @param {object} parentNode
- * @param {number} lineHeight
- * @param {string} text
- * @returns {number}
- */
-function computeWidthOfText(parentNode, lineHeight, text) {
+function computeWidthOfText(parentNode: any, lineHeight: number, line: MarkdownLine): number {
   const testElement = parentNode.append('text');
   const testSpan = createTspan(testElement, 1, lineHeight);
-  updateTextContentAndStyles(testSpan, [{ content: text, type: 'normal' }]);
+  updateTextContentAndStyles(testSpan, line);
   const textLength = testSpan.node().getComputedTextLength();
   testElement.remove();
   return textLength;
 }
 
-/**
- * Creates a formatted text element by breaking lines and applying styles based on
- * the given structuredText.
- *
- * @param {number} width - The maximum allowed width of the text.
- * @param {object} g - The parent group element to append the formatted text.
- * @param {Array} structuredText - The structured text data to format.
- * @param addBackground
- */
-function createFormattedText(width, g, structuredText, addBackground = false) {
+function createFormattedText(
+  width: number,
+  g: any,
+  structuredText: MarkdownWord[][],
+  addBackground = false
+) {
   const lineHeight = 1.1;
   const labelGroup = g.append('g');
-  let bkg = labelGroup.insert('rect').attr('class', 'background');
+  const bkg = labelGroup.insert('rect').attr('class', 'background');
   const textElement = labelGroup.append('text').attr('y', '-10.1');
   let lineIndex = 0;
-  structuredText.forEach((line) => {
+  for (const line of structuredText) {
     /**
      * Preprocess raw string content of line data
      * Creating an array of strings pre-split to satisfy width limit
      */
-    let fullStr = line.map((data) => data.content).join(' ');
-    const checkWidth = (str) => computeWidthOfText(labelGroup, lineHeight, str) <= width;
-    const linesUnderWidth = checkWidth(fullStr)
-      ? [fullStr]
-      : splitLineToFitWidth(fullStr, checkWidth);
+    const checkWidth = (line: MarkdownLine) =>
+      computeWidthOfText(labelGroup, lineHeight, line) <= width;
+    const linesUnderWidth = checkWidth(line) ? [line] : splitLineToFitWidth(line, checkWidth);
     /** Add each prepared line as a tspan to the parent node */
-    const preparedLines = linesUnderWidth.map((w) => ({ content: w, type: line.type }));
-    for (const preparedLine of preparedLines) {
-      let tspan = createTspan(textElement, lineIndex, lineHeight);
-      updateTextContentAndStyles(tspan, [preparedLine]);
+    for (const preparedLine of linesUnderWidth) {
+      const tspan = createTspan(textElement, lineIndex, lineHeight);
+      updateTextContentAndStyles(tspan, preparedLine);
       lineIndex++;
     }
-  });
+  }
   if (addBackground) {
     const bbox = textElement.node().getBBox();
     const padding = 2;
@@ -143,44 +121,25 @@ function createFormattedText(width, g, structuredText, addBackground = false) {
   }
 }
 
-/**
- * Updates the text content and styles of the given tspan element based on the
- * provided wrappedLine data.
- *
- * @param {object} tspan - The tspan element to update.
- * @param {Array} wrappedLine - The line data to apply to the tspan element.
- */
-function updateTextContentAndStyles(tspan, wrappedLine) {
+function updateTextContentAndStyles(tspan: any, wrappedLine: MarkdownWord[]) {
   tspan.text('');
 
   wrappedLine.forEach((word, index) => {
     const innerTspan = tspan
       .append('tspan')
-      .attr('font-style', word.type === 'em' ? 'italic' : 'normal')
+      .attr('font-style', word.type === 'emphasis' ? 'italic' : 'normal')
       .attr('class', 'text-inner-tspan')
       .attr('font-weight', word.type === 'strong' ? 'bold' : 'normal');
-    const special = ['"', "'", '.', ',', ':', ';', '!', '?', '(', ')', '[', ']', '{', '}'];
+    // const special = ['"', "'", '.', ',', ':', ';', '!', '?', '(', ')', '[', ']', '{', '}'];
     if (index === 0) {
       innerTspan.text(word.content);
     } else {
+      // TODO: check what joiner to use.
       innerTspan.text(' ' + word.content);
     }
   });
 }
 
-/**
- *
- * @param el
- * @param {*} text
- * @param {*} param1
- * @param root0
- * @param root0.style
- * @param root0.isTitle
- * @param root0.classes
- * @param root0.useHtmlLabels
- * @param root0.isNode
- * @returns
- */
 // Note when using from flowcharts converting the API isNode means classes should be set accordingly. When using htmlLabels => to sett classes to'nodeLabel' when isNode=true otherwise 'edgeLabel'
 // When not using htmlLabels => to set classes to 'title-row' when isTitle=true otherwise 'title-row'
 export const createText = (
@@ -210,7 +169,7 @@ export const createText = (
       ),
       labelStyle: style.replace('fill:', 'color:'),
     };
-    let vertexNode = addHtmlSpan(el, node, width, classes, addSvgBackground);
+    const vertexNode = addHtmlSpan(el, node, width, classes, addSvgBackground);
     return vertexNode;
   } else {
     const structuredText = markdownToLines(text);

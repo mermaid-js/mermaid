@@ -1,4 +1,4 @@
-export type CheckFitFunction = (text: string) => boolean;
+import type { CheckFitFunction, MarkdownLine, MarkdownWord, MarkdownWordType } from './types.js';
 
 /**
  * Splits a string into graphemes if available, otherwise characters.
@@ -13,7 +13,7 @@ export function splitTextToChars(text: string): string[] {
 /**
  * Splits a string into words.
  */
-function splitLineToWords(text: string): string[] {
+export function splitLineToWords(text: string): string[] {
   if (Intl.Segmenter) {
     return [...new Intl.Segmenter(undefined, { granularity: 'word' }).segment(text)].map(
       (s) => s.segment
@@ -34,46 +34,61 @@ function splitLineToWords(text: string): string[] {
  * @param word - Word to split
  * @returns [first part of word that fits, rest of word]
  */
-export function splitWordToFitWidth(checkFit: CheckFitFunction, word: string): [string, string] {
-  const characters = splitTextToChars(word);
+export function splitWordToFitWidth(
+  checkFit: CheckFitFunction,
+  word: MarkdownWord
+): [MarkdownWord, MarkdownWord] {
+  const characters = splitTextToChars(word.content);
   if (characters.length === 0) {
-    return ['', ''];
+    return [
+      { content: '', type: word.type },
+      { content: '', type: word.type },
+    ];
   }
-  return splitWordToFitWidthRecursion(checkFit, [], characters);
+  return splitWordToFitWidthRecursion(checkFit, [], characters, word.type);
 }
 
 function splitWordToFitWidthRecursion(
   checkFit: CheckFitFunction,
   usedChars: string[],
-  remainingChars: string[]
-): [string, string] {
+  remainingChars: string[],
+  type: MarkdownWordType
+): [MarkdownWord, MarkdownWord] {
   // eslint-disable-next-line no-console
   console.error({ usedChars, remainingChars });
   if (remainingChars.length === 0) {
-    return [usedChars.join(''), ''];
+    return [
+      { content: usedChars.join(''), type },
+      { content: '', type },
+    ];
   }
   const [nextChar, ...rest] = remainingChars;
   const newWord = [...usedChars, nextChar];
-  if (checkFit(newWord.join(''))) {
-    return splitWordToFitWidthRecursion(checkFit, newWord, rest);
+  if (checkFit([{ content: newWord.join(''), type }])) {
+    return splitWordToFitWidthRecursion(checkFit, newWord, rest, type);
   }
-  return [usedChars.join(''), remainingChars.join('')];
+  return [
+    { content: usedChars.join(''), type },
+    { content: remainingChars.join(''), type },
+  ];
 }
 
-export function splitLineToFitWidth(line: string, checkFit: CheckFitFunction): string[] {
-  if (line.includes('\n')) {
+export function splitLineToFitWidth(
+  line: MarkdownLine,
+  checkFit: CheckFitFunction
+): MarkdownLine[] {
+  if (line.some(({ content }) => content.includes('\n'))) {
     throw new Error('splitLineToFitWidth does not support newlines in the line');
   }
-  const words = splitLineToWords(line);
-  return splitLineToFitWidthRecursion(words, checkFit);
+  return splitLineToFitWidthRecursion(line, checkFit);
 }
 
 function splitLineToFitWidthRecursion(
-  words: string[],
+  words: MarkdownWord[],
   checkFit: CheckFitFunction,
-  lines: string[] = [],
-  newLine = ''
-): string[] {
+  lines: MarkdownLine[] = [],
+  newLine: MarkdownLine = []
+): MarkdownLine[] {
   // eslint-disable-next-line no-console
   console.error({ words, lines, newLine });
   // Return if there is nothing left to split
@@ -82,17 +97,22 @@ function splitLineToFitWidthRecursion(
     if (newLine.length > 0) {
       lines.push(newLine);
     }
-    return lines.length > 0 ? lines : [''];
+    return lines.length > 0 ? lines : [];
   }
   let joiner = '';
-  if (words[0] === ' ') {
+  if (words[0].content === ' ') {
     joiner = ' ';
     words.shift();
   }
-  const nextWord = words.shift() ?? ' ';
+  const nextWord: MarkdownWord = words.shift() ?? { content: ' ', type: 'normal' };
 
-  const nextWordWithJoiner = joiner + nextWord;
-  const lineWithNextWord = newLine ? `${newLine}${nextWordWithJoiner}` : nextWordWithJoiner;
+  // const nextWordWithJoiner: MarkdownWord = { ...nextWord, content: joiner + nextWord.content };
+  const lineWithNextWord: MarkdownLine = [...newLine];
+  if (joiner !== '') {
+    lineWithNextWord.push({ content: joiner, type: 'normal' });
+  }
+  lineWithNextWord.push(nextWord);
+
   if (checkFit(lineWithNextWord)) {
     // nextWord fits, so we can add it to the new line and continue
     return splitLineToFitWidthRecursion(words, checkFit, lines, lineWithNextWord);
@@ -106,7 +126,7 @@ function splitLineToFitWidthRecursion(
   } else {
     // There was no text in newLine, so we need to split nextWord
     const [line, rest] = splitWordToFitWidth(checkFit, nextWord);
-    lines.push(line);
+    lines.push([line]);
     words.unshift(rest);
   }
   return splitLineToFitWidthRecursion(words, checkFit, lines);
