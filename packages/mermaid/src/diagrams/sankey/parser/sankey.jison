@@ -11,7 +11,7 @@
 %lex
 
 %options case-insensitive
-%options easy_keword_rules
+// %options easy_keword_rules
 
 %x escaped_text
 %x csv
