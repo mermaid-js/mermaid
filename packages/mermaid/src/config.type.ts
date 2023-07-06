@@ -229,24 +229,24 @@ export interface PieDiagramConfig extends BaseDiagramConfig {
 }
 
 export interface QuadrantChartConfig extends BaseDiagramConfig {
-  chartWidth: number;
-  chartHeight: number;
-  titleFontSize: number;
-  titlePadding: number;
-  quadrantPadding: number;
-  xAxisLabelPadding: number;
-  yAxisLabelPadding: number;
-  xAxisLabelFontSize: number;
-  yAxisLabelFontSize: number;
-  quadrantLabelFontSize: number;
-  quadrantTextTopPadding: number;
-  pointTextPadding: number;
-  pointLabelFontSize: number;
-  pointRadius: number;
-  xAxisPosition: 'top' | 'bottom';
-  yAxisPosition: 'left' | 'right';
-  quadrantInternalBorderStrokeWidth: number;
-  quadrantExternalBorderStrokeWidth: number;
+  chartWidth?: number;
+  chartHeight?: number;
+  titleFontSize?: number;
+  titlePadding?: number;
+  quadrantPadding?: number;
+  xAxisLabelPadding?: number;
+  yAxisLabelPadding?: number;
+  xAxisLabelFontSize?: number;
+  yAxisLabelFontSize?: number;
+  quadrantLabelFontSize?: number;
+  quadrantTextTopPadding?: number;
+  pointTextPadding?: number;
+  pointLabelFontSize?: number;
+  pointRadius?: number;
+  xAxisPosition?: 'top' | 'bottom';
+  yAxisPosition?: 'left' | 'right';
+  quadrantInternalBorderStrokeWidth?: number;
+  quadrantExternalBorderStrokeWidth?: number;
 }
 
 export interface ErDiagramConfig extends BaseDiagramConfig {
