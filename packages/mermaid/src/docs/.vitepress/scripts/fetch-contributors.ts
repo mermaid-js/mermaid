@@ -1,7 +1,7 @@
 // Adapted from https://github.dev/vitest-dev/vitest/blob/991ff33ab717caee85ef6cbe1c16dc514186b4cc/scripts/update-contributors.ts#L6
 
 import { writeFile } from 'node:fs/promises';
-import { knut, plainTeamMembers } from '../data.js';
+import { knut, plainTeamMembers } from '../teamMembers.js';
 import { existsSync } from 'node:fs';
 
 const pathContributors = new URL('../contributor-names.json', import.meta.url);
