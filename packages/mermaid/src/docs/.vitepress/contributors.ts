@@ -13,6 +13,7 @@ const websiteSVG = {
 
 const createLinks = (tm: CoreTeam): CoreTeam => {
   tm.avatar = `/user-avatars/${tm.github}.png`;
+  tm.title = tm.title ?? 'Developer';
   tm.links = [{ icon: 'github', link: `https://github.com/${tm.github}` }];
   if (tm.mastodon) {
     tm.links.push({ icon: 'mastodon', link: tm.mastodon });
