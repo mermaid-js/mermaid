@@ -67,6 +67,11 @@ function splitWordToFitWidthRecursion(
   if (checkFit([{ content: newWord.join(''), type }])) {
     return splitWordToFitWidthRecursion(checkFit, newWord, rest, type);
   }
+  if (usedChars.length === 0 && nextChar) {
+    // If the first character does not fit, split it anyway
+    usedChars.push(nextChar);
+    remainingChars.shift();
+  }
   return [
     { content: usedChars.join(''), type },
     { content: remainingChars.join(''), type },
@@ -127,7 +132,9 @@ function splitLineToFitWidthRecursion(
     // There was no text in newLine, so we need to split nextWord
     const [line, rest] = splitWordToFitWidth(checkFit, nextWord);
     lines.push([line]);
-    words.unshift(rest);
+    if (rest.content) {
+      words.unshift(rest);
+    }
   }
   return splitLineToFitWidthRecursion(words, checkFit, lines);
 }
