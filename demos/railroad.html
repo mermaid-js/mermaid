@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Railroad Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Railroad diagram demos</h1>
+    <h2>Example</h2>
+    <pre class="mermaid">
+      railroad-beta
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({
+        theme: 'default',
+        logLevel: 3,
+        securityLevel: 'loose',
+        railroad: {},
+      });
+    </script>
+  </body>
+</html>
