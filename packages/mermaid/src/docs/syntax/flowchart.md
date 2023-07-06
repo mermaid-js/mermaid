@@ -676,6 +676,16 @@ flowchart LR
     classDef someclass fill:#f96
 ```
 
+This form can be used when declaring multiple links between nodes:
+
+```mermaid-example
+flowchart LR
+    A:::foo & B:::bar --> C:::foobar
+    classDef foo stroke:#f00
+    classDef bar stroke:#0f0
+    classDef foobar stroke:#00f
+```
+
 ### Css classes
 
 It is also possible to predefine classes in css styles that can be applied from the graph definition as in the example
