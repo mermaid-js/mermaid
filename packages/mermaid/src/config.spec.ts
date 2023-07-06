@@ -26,6 +26,22 @@ describe('when working with site config', function () {
     expect(cfg.fontFamily).toEqual(directive.fontFamily);
     expect(cfg.fontSize).toBe(config_0.fontSize);
   });
+  it('should allow setting partial options', function () {
+    const defaultConfig = configApi.getConfig();
+
+    configApi.setConfig({
+      quadrantChart: {
+        chartHeight: 600,
+      },
+    });
+
+    const updatedConfig = configApi.getConfig();
+
+    // deep options we didn't update should remain the same
+    expect(defaultConfig.quadrantChart!.chartWidth).toEqual(
+      updatedConfig.quadrantChart!.chartWidth
+    );
+  });
   it('should set reset config properly', function () {
     const config_0 = { fontFamily: 'foo-font', fontSize: 150 };
     configApi.setSiteConfig(config_0);
