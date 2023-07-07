@@ -76,6 +76,15 @@ function computeWidthOfText(parentNode: any, lineHeight: number, line: MarkdownL
   return textLength;
 }
 
+/**
+ * Creates a formatted text element by breaking lines and applying styles based on
+ * the given structuredText.
+ *
+ * @param width - The maximum allowed width of the text.
+ * @param g - The parent group element to append the formatted text.
+ * @param structuredText - The structured text data to format.
+ * @param addBackground - Whether to add a background to the text.
+ */
 function createFormattedText(
   width: number,
   g: any,
@@ -117,6 +126,13 @@ function createFormattedText(
   }
 }
 
+/**
+ * Updates the text content and styles of the given tspan element based on the
+ * provided wrappedLine data.
+ *
+ * @param tspan - The tspan element to update.
+ * @param wrappedLine - The line data to apply to the tspan element.
+ */
 function updateTextContentAndStyles(tspan: any, wrappedLine: MarkdownWord[]) {
   tspan.text('');
 
