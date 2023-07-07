@@ -82,3 +82,5 @@ export type ParseDirectiveDefinition = (statement: string, context: string, type
 export type HTML = d3.Selection<HTMLIFrameElement, unknown, Element, unknown>;
 
 export type SVG = d3.Selection<SVGSVGElement, unknown, Element, unknown>;
+
+export type DiagramStylesProvider = (options?: any) => string;

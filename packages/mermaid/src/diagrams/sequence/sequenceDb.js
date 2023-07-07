@@ -14,12 +14,16 @@ import {
 
 let prevActor = undefined;
 let actors = {};
+let createdActors = {};
+let destroyedActors = {};
 let boxes = [];
 let messages = [];
 const notes = [];
 let sequenceNumbersEnabled = false;
 let wrapEnabled;
 let currentBox = undefined;
+let lastCreated = undefined;
+let lastDestroyed = undefined;
 
 export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
@@ -165,6 +169,12 @@ export const getBoxes = function () {
 export const getActors = function () {
   return actors;
 };
+export const getCreatedActors = function () {
+  return createdActors;
+};
+export const getDestroyedActors = function () {
+  return destroyedActors;
+};
 export const getActor = function (id) {
   return actors[id];
 };
@@ -194,6 +204,8 @@ export const autoWrap = () => {
 
 export const clear = function () {
   actors = {};
+  createdActors = {};
+  destroyedActors = {};
   boxes = [];
   messages = [];
   sequenceNumbersEnabled = false;
@@ -459,10 +471,21 @@ export const apply = function (param) {
         });
         break;
       case 'addParticipant':
-        addActor(param.actor, param.actor, param.description, 'participant');
+        addActor(param.actor, param.actor, param.description, param.draw);
         break;
-      case 'addActor':
-        addActor(param.actor, param.actor, param.description, 'actor');
+      case 'createParticipant':
+        if (actors[param.actor]) {
+          throw new Error(
+            "It is not possible to have actors with the same id, even if one is destroyed before the next is created. Use 'AS' aliases to simulate the behavior"
+          );
+        }
+        lastCreated = param.actor;
+        addActor(param.actor, param.actor, param.description, param.draw);
+        createdActors[param.actor] = messages.length;
+        break;
+      case 'destroyParticipant':
+        lastDestroyed = param.actor;
+        destroyedActors[param.actor] = messages.length;
         break;
       case 'activeStart':
         addSignal(param.actor, undefined, undefined, param.signalType);
@@ -486,6 +509,27 @@ export const apply = function (param) {
         addDetails(param.actor, param.text);
         break;
       case 'addMessage':
+        if (lastCreated) {
+          if (param.to !== lastCreated) {
+            throw new Error(
+              'The created participant ' +
+                lastCreated +
+                ' does not have an associated creating message after its declaration. Please check the sequence diagram.'
+            );
+          } else {
+            lastCreated = undefined;
+          }
+        } else if (lastDestroyed) {
+          if (param.to !== lastDestroyed && param.from !== lastDestroyed) {
+            throw new Error(
+              'The destroyed participant ' +
+                lastDestroyed +
+                ' does not have an associated destroying message after its declaration. Please check the sequence diagram.'
+            );
+          } else {
+            lastDestroyed = undefined;
+          }
+        }
         addSignal(param.from, param.to, param.msg, param.signalType);
         break;
       case 'boxStart':
@@ -566,6 +610,8 @@ export default {
   showSequenceNumbers,
   getMessages,
   getActors,
+  getCreatedActors,
+  getDestroyedActors,
   getActor,
   getActorKeys,
   getActorProperty,
