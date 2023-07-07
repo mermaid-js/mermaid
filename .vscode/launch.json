@@ -17,7 +17,7 @@
       "name": "Docs generation",
       "type": "node",
       "request": "launch",
-      "args": ["src/docs.mts"],
+      "args": ["src/docs.cli.mts"],
       "runtimeArgs": ["--loader", "ts-node/esm"],
       "cwd": "${workspaceRoot}/packages/mermaid",
       "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
