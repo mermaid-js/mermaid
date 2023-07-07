@@ -19,13 +19,13 @@ Mermaid can render Gantt diagrams as SVG, PNG or a MarkDown link that can be pas
 ```mermaid-example
 gantt
     title A Gantt Diagram
-    dateFormat  YYYY-MM-DD
+    dateFormat YYYY-MM-DD
     section Section
-    A task           :a1, 2014-01-01, 30d
-    Another task     :after a1  , 20d
+        A task          :a1, 2014-01-01, 30d
+        Another task    :after a1, 20d
     section Another
-    Task in sec      :2014-01-12  , 12d
-    another task      : 24d
+        Task in Another :2014-01-12, 12d
+        another task    :24d
 ```
 
 ## Syntax
@@ -66,10 +66,10 @@ gantt
 It is possible to set multiple dependencies separated by space:
 
 ```mermaid-example
-    gantt
-        apple :a, 2017-07-20, 1w
-        banana :crit, b, 2017-07-23, 1d
-        cherry :active, c, after b a, 1d
+gantt
+    apple :a, 2017-07-20, 1w
+    banana :crit, b, 2017-07-23, 1d
+    cherry :active, c, after b a, 1d
 ```
 
 ### Title
@@ -88,12 +88,12 @@ You can add milestones to the diagrams. Milestones differ from tasks as they rep
 
 ```mermaid-example
 gantt
-dateFormat HH:mm
-axisFormat %H:%M
-Initial milestone : milestone, m1, 17:49,2min
-taska2 : 10min
-taska3 : 5min
-Final milestone : milestone, m2, 18:14, 2min
+    dateFormat HH:mm
+    axisFormat %H:%M
+    Initial milestone : milestone, m1, 17:49, 2m
+    Task A : 10m
+    Task B : 5m
+    Final milestone : milestone, m2, 18:08, 4m
 ```
 
 ## Setting dates
@@ -214,15 +214,14 @@ Comments can be entered within a gantt chart, which will be ignored by the parse
 ```mermaid
 gantt
     title A Gantt Diagram
-    %% this is a comment
-    dateFormat  YYYY-MM-DD
+    %% This is a comment
+    dateFormat YYYY-MM-DD
     section Section
-    A task           :a1, 2014-01-01, 30d
-    Another task     :after a1  , 20d
+        A task          :a1, 2014-01-01, 30d
+        Another task    :after a1, 20d
     section Another
-    Task in sec      :2014-01-12  , 12d
-    another task      : 24d
-
+        Task in Another :2014-01-12, 12d
+        another task    :24d
 ```
 
 ## Styling
@@ -350,7 +349,7 @@ Beginner's tip—a full example using interactive links in an html context:
       dateFormat  YYYY-MM-DD
 
       section Clickable
-      Visit mermaidjs           :active, cl1, 2014-01-07, 3d
+      Visit mermaidjs         :active, cl1, 2014-01-07, 3d
       Print arguments         :cl2, after cl1, 3d
       Print task              :cl3, after cl2, 3d
 
