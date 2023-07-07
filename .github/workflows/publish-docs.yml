@@ -36,6 +36,19 @@ jobs:
       - name: Install Packages
         run: pnpm install --frozen-lockfile
 
+      - name: Update release verion
+        run: |
+          pnpm --filter mermaid run docs:release-version
+          pnpm --filter mermaid run docs:build
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: '["docs", "packages/mermaid/src/docs"]'
+          author_name: ${{ github.actor }}
+          author_email: ${{ github.actor }}@users.noreply.github.com
+          message: 'chore: Update MERMAID_RELEASE_VERSION in docs'
+
       - name: Setup Pages
         uses: actions/configure-pages@v3
 
