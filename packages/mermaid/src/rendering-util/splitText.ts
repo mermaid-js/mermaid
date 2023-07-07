@@ -22,7 +22,7 @@ export function splitLineToWords(text: string): string[] {
   // Split by ' ' removes the ' 's from the result.
   const words = text.split(' ');
   // Add the ' 's back to the result.
-  const wordsWithSpaces = words.flatMap((s) => [s, ' ']);
+  const wordsWithSpaces = words.flatMap((s) => [s, ' ']).filter((s) => s);
   // Remove last space.
   wordsWithSpaces.pop();
   return wordsWithSpaces;

@@ -14,11 +14,7 @@ function applyStyle(dom, styleFn) {
 
 function addHtmlSpan(element, node, width, classes, addBackground = false) {
   const fo = element.append('foreignObject');
-  // const newEl = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
-  // const newEl = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
   const div = fo.append('xhtml:div');
-  // const div = body.append('div');
-  // const div = fo.append('div');
 
   const label = node.label;
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
@@ -130,7 +126,6 @@ function updateTextContentAndStyles(tspan: any, wrappedLine: MarkdownWord[]) {
       .attr('font-style', word.type === 'emphasis' ? 'italic' : 'normal')
       .attr('class', 'text-inner-tspan')
       .attr('font-weight', word.type === 'strong' ? 'bold' : 'normal');
-    // const special = ['"', "'", '.', ',', ':', ';', '!', '?', '(', ')', '[', ']', '{', '}'];
     if (index === 0) {
       innerTspan.text(word.content);
     } else {
