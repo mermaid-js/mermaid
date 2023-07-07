@@ -9,18 +9,14 @@ import {
 
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { Uid } from '../../rendering-util/uid.js';
-import type { SankeyLinkColor, SankeyNodeAlignment } from '../../config.type.js';
 
 export const draw = function (text: string, id: string, _version: string, diagObj: Diagram): void {
-  // Get the config
-  const { securityLevel, sankey: conf } = configApi.getConfig();
-  const defaultSankeyConfig = configApi!.defaultConfig!.blockDiagram!;
-
   // TODO:
   // This code repeats for every diagram
   // Figure out what is happening there, probably it should be separated
   // The main thing is svg object that is a d3 wrapper for svg operations
   //
+  const { securityLevel } = configApi.getConfig();
   let sandboxElement: any;
   if (securityLevel === 'sandbox') {
     sandboxElement = d3select('#i' + id);
@@ -43,11 +39,6 @@ export const draw = function (text: string, id: string, _version: string, diagOb
 
   // Prepare data for construction based on diagObj.db
   // This must be a mutable object with `nodes` and `links` properties:
-  //
-  //    {
-  //      "nodes": [ { "id": "Alice" }, { "id": "Bob" }, { "id": "Carol" } ],
-  //      "links": [ { "source": "Alice", "target": "Bob", "value": 23 }, { "source": "Bob", "target": "Carol", "value": 43 } ]
-  //    }
   //
   // @ts-ignore TODO: db type
   const graph = diagObj.db.getGraph();

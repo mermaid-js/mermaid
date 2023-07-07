@@ -1,6 +1,7 @@
 // TODO: This was auto generated from defaultConfig. Needs to be verified.
 
 import DOMPurify from 'dompurify';
+import { BlockConfig } from './diagrams/block/blockTypes.js';
 
 export interface MermaidConfig {
   theme?: string;
@@ -33,7 +34,7 @@ export interface MermaidConfig {
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
   sankey?: SankeyDiagramConfig;
-  block?: BlockDiagramConfig;
+  block?: BlockConfig;
   dompurifyConfig?: DOMPurify.Config;
   wrap?: boolean;
   fontSize?: number;
@@ -421,9 +422,6 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
   height?: number;
   linkColor?: SankeyLinkColor | string;
   nodeAlignment?: SankeyNodeAlignment;
-}
-export interface BlockDiagramConfig extends BaseDiagramConfig {
-  padding?: number;
 }
 
 export interface FontConfig {
