@@ -200,6 +200,27 @@ describe('Entity Relationship Diagram', () => {
     );
   });
 
+  it('should render entities with attributes that begin with asterisk', () => {
+    imgSnapshotTest(
+      `
+    erDiagram
+        BOOKS {
+          int         *id
+          string      name
+          varchar(99) summary
+        }
+        BOOKS }o..o{ STORES : sold
+        STORES {
+          int         *id
+          string      name
+          varchar(50) address
+        }
+        `,
+      { loglevel: 1 }
+    );
+    cy.get('svg');
+  });
+
   it('should render entities with keys', () => {
     renderGraph(
       `
