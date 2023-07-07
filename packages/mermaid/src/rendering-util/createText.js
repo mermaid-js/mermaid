@@ -85,7 +85,7 @@ function createTspan(textElement, lineIndex, lineHeight) {
  * @param {string} text
  * @returns {number}
  */
-function computeWidthOfText(parentNode, lineHeight, text) {
+export function computeWidthOfText(parentNode, lineHeight, text) {
   const testElement = parentNode.append('text');
   const testSpan = createTspan(testElement, 1, lineHeight);
   updateTextContentAndStyles(testSpan, [{ content: text, type: 'normal' }]);

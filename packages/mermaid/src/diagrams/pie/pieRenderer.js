@@ -4,7 +4,7 @@ import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import * as configApi from '../../config.js';
 import { parseFontSize } from '../../utils.js';
-import { getTextWidth } from '../../rendering-util/getTextWidth.js';
+import { computeWidthOfText } from '../../rendering-util/createText.js';
 
 let conf = configApi.getConfig();
 
@@ -74,16 +74,18 @@ export const draw = (txt, id, _version, diagObj) => {
       sum += data[key];
     });
 
-    const legendShowData = diagObj.db.getShowData() || conf.showData || conf.pie.showData || false;
+    const legendShowData = diagObj.db.getShowData();
     const legendTexts = Object.keys(data).map(key => {
       if (!legendShowData) {
         return key;
       }
       return `${key} [${data[key]}]`;
     })
-    const longestTextWidth = Math.max(...(legendTexts.map(v => getTextWidth(v))));
+    const longestTextWidth = Math.max(...(legendTexts.map(text => {
+      return computeWidthOfText(svg, 1, text)
+    })));
     const newWidth = width + margin + legendRectSize + legendSpacing + longestTextWidth;
-    elem.setAttribute("viewBox", "0 0 " + newWidth + " " + height);
+    elem.setAttribute("viewBox", `0 0 ${newWidth} ${height}`);
 
     const themeVariables = conf.themeVariables;
     var myGeneratedColors = [
