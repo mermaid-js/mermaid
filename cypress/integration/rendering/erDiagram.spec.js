@@ -204,13 +204,13 @@ describe('Entity Relationship Diagram', () => {
     imgSnapshotTest(
       `
     erDiagram
-        BOOKS {
+        BOOK {
           int         *id
           string      name
           varchar(99) summary
         }
-        BOOKS }o..o{ STORES : sold
-        STORES {
+        BOOK }o..o{ STORE : soldBy
+        STORE {
           int         *id
           string      name
           varchar(50) address
