@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/config/math.md](../../packages/mermaid/src/docs/config/math.md).
 
-# Math Configuration
+# Math Configuration (v10.3+)
 
 Mermaid supports rendering mathematical expressions through the [KaTeX](https://katex.org/) typesetter.
 
