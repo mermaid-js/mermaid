@@ -17,14 +17,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            pr-labeller:
-              - '.github/pr-labeler.yml'
       - name: Validate Configuration
-        if: steps.filter.outputs.pr-labeller == 'true'
         uses: Yash-Singh1/pr-labeler-config-validator@releases/v0.0.3
         with:
           configuration-path: .github/pr-labeler.yml
