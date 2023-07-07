@@ -1,7 +1,15 @@
 name: Validate PR Labeler Configuration
 on:
   push:
+    paths:
+      - .github/workflows/pr-labeler-config-validator.yml
+      - .github/workflows/pr-labeler.yml
+      - .github/pr-labeler.yml
   pull_request:
+    paths:
+      - .github/workflows/pr-labeler-config-validator.yml
+      - .github/workflows/pr-labeler.yml
+      - .github/pr-labeler.yml
 
 jobs:
   pr-labeler:
