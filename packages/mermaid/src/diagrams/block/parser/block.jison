@@ -27,7 +27,7 @@ CRLF \u000D\u000A
 
 %%
 
-"blockDiagram-beta"                                             { return 'BLOCK_DIAGRAM_KEY'; }
+"block-beta"                                             { return 'BLOCK_DIAGRAM_KEY'; }
 // \s*\%\%.*                                                       { yy.getLogger().info('Found comment',yytext); }
 [\s]+                                                           { yy.getLogger().info('.', yytext); /* skip all whitespace */  }
 [\n]+ {yy.getLogger().info('_', yytext);                 /* skip all whitespace */   }

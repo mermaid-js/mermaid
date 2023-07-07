@@ -23,7 +23,7 @@ const clear = (): void => {
 };
 
 export default {
-  getConfig: () => configApi.getConfig().blockDiagram,
+  getConfig: () => configApi.getConfig().block,
 
   getAccTitle,
   setAccTitle,

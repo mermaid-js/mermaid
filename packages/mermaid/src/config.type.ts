@@ -33,7 +33,7 @@ export interface MermaidConfig {
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
   sankey?: SankeyDiagramConfig;
-  blockDiagram?: BlockDiagramConfig;
+  block?: BlockDiagramConfig;
   dompurifyConfig?: DOMPurify.Config;
   wrap?: boolean;
   fontSize?: number;

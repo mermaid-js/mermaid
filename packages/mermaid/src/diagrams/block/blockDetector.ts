@@ -1,9 +1,9 @@
 import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types.js';
 
-const id = 'sankey';
+const id = 'block';
 
 const detector: DiagramDetector = (txt) => {
-  return /^\s*blockDiagram-beta/.test(txt);
+  return /^\s*block-beta/.test(txt);
 };
 
 const loader = async () => {
