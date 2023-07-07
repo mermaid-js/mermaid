@@ -58,6 +58,31 @@ sequenceDiagram
     J->>A: Great!
 ```
 
+### Actor Creation and Destruction
+
+It is possible to create and destroy actors by messages. To do so, add a create or destroy directive before the message.
+
+```
+create participant B
+A --> B: Hello
+```
+
+Create directives support actor/participant distinction and aliases. The sender or the recipient of a message can be destroyed but only the recipient can be created.
+
+```mermaid-example
+sequenceDiagram
+    Alice->>Bob: Hello Bob, how are you ?
+    Bob->>Alice: Fine, thank you. And you?
+    create participant Carl
+    Alice->>Carl: Hi Carl!
+    create actor D as Donald
+    Carl->>D: Hi!
+    destroy Carl
+    Alice-xCarl: We are too many
+    destroy Bob
+    Bob->>Alice: I agree
+```
+
 ### Grouping / Box
 
 The actor(s) can be grouped in vertical boxes. You can define a color (if not, it will be transparent) and/or a descriptive label using the following notation:
