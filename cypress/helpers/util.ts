@@ -16,7 +16,7 @@ const utf8ToB64 = (str: string): string => {
   return window.btoa(decodeURIComponent(encodeURIComponent(str)));
 };
 
-const batchId: string = 'mermaid-batch' + new Date().getTime();
+const batchId: string = 'mermaid-batch-' + Cypress.env('CYPRESS_COMMIT') || Date.now().toString();
 
 export const mermaidUrl = (
   graphStr: string,
