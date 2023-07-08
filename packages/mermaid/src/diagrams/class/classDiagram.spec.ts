@@ -265,84 +265,43 @@ class C13["With Città foreign language"]
       parser.parse(str);
     });
 
-    it('should handle note with "cssClass" in it', function () {
-      const str = 'classDiagram\n' + 'note "cssClass"\n';
+    const keywords = [
+      'cssClass',
+      'callback',
+      'link',
+      'click',
+      'note',
+      'note for',
+      '<<',
+      '>>',
+      'href ',
+      'call ',
+      '~',
+      '``',
+      '_self',
+      '_blank',
+      '_parent',
+      '_top',
+    ];
+
+    test.each(keywords)('should handle a note with keyword in it', function (note: string) {
+      const str = `classDiagram
+                     note "This is a keyword: ${note}. It truly is."
+                  `;
       parser.parse(str);
+      expect(classDb.getNotes()[0].text).toEqual(`This is a keyword: ${note}. It truly is.`);
     });
 
-    it('should handle note with "callback" in it', function () {
-      const str = 'classDiagram\n' + 'note "callback"\n';
+    test.each(keywords)('should handle a note for with a keyword in it', function (note: string) {
+      const str = `classDiagram
+                   class Something {
+                     int id
+                     string name
+                   }
+                   note for Something "This is a keyword: ${note}. It truly is."
+                   `;
       parser.parse(str);
-    });
-
-    it('should handle note with "link" in it', function () {
-      const str = 'classDiagram\n' + 'note "link"\n';
-      parser.parse(str);
-    });
-
-    it('should handle note with "click" in it', function () {
-      const str = 'classDiagram\n' + 'note "click"\n';
-      parser.parse(str);
-    });
-
-    it('should handle note with "note" in it', function () {
-      const str = 'classDiagram\n' + 'note "note"\n';
-      parser.parse(str);
-    });
-
-    it('should handle note with "note for" in it', function () {
-      const str = 'classDiagram\n' + 'note "note for"\n';
-      parser.parse(str);
-    });
-
-    it('should handle note with "<<" in it', function () {
-      const str = 'classDiagram\n' + 'note "<<"\n';
-      parser.parse(str);
-    });
-
-    it('should handle note with ">>" in it', function () {
-      const str = 'classDiagram\n' + 'note ">>"\n';
-      parser.parse(str);
-    });
-
-    it('should handle note with "href " in it', function () {
-      const str = 'classDiagram\n' + 'note "href "\n';
-      parser.parse(str);
-    });
-
-    it('should handle note with "call " in it', function () {
-      const str = 'classDiagram\n' + 'note "call "\n';
-      parser.parse(str);
-    });
-
-    it('should handle note with "~" in it', function () {
-      const str = 'classDiagram\n' + 'note "~"\n';
-      parser.parse(str);
-    });
-
-    it('should handle note with "``" in it', function () {
-      const str = 'classDiagram\n' + 'note "``"\n';
-      parser.parse(str);
-    });
-
-    it('should handle note with "_self" in it', function () {
-      const str = 'classDiagram\n' + 'note "_self"\n';
-      parser.parse(str);
-    });
-
-    it('should handle note with "_blank" in it', function () {
-      const str = 'classDiagram\n' + 'note "_blank"\n';
-      parser.parse(str);
-    });
-
-    it('should handle note with "_parent" in it', function () {
-      const str = 'classDiagram\n' + 'note "_parent"\n';
-      parser.parse(str);
-    });
-
-    it('should handle note with "_top" in it', function () {
-      const str = 'classDiagram\n' + 'note "_top"\n';
-      parser.parse(str);
+      expect(classDb.getNotes()[0].text).toEqual(`This is a keyword: ${note}. It truly is.`);
     });
   });
 
