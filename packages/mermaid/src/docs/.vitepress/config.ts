@@ -155,6 +155,7 @@ function sidebarConfig() {
         { text: 'Tutorials', link: '/config/Tutorials' },
         { text: 'API-Usage', link: '/config/usage' },
         { text: 'Mermaid API Configuration', link: '/config/setup/README' },
+        { text: 'Mermaid Configuration Options', link: '/config/schema-docs/config' },
         { text: 'Directives', link: '/config/directives' },
         { text: 'Theming', link: '/config/theming' },
         { text: 'Accessibility', link: '/config/accessibility' },

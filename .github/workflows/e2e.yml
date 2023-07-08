@@ -47,7 +47,8 @@ jobs:
           VITEST_COVERAGE: true
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v3
-        if: steps.cypress.conclusion == 'success'
+        # Run step only pushes to develop and pull_requests
+        if: ${{ steps.cypress.conclusion == 'success' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop')}}
         with:
           files: coverage/cypress/lcov.info
           flags: e2e
