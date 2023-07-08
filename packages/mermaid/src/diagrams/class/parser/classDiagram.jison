@@ -283,8 +283,8 @@ className
     : alphaNumToken { $$=$1; }
     | classLiteralName { $$=$1; }
     | alphaNumToken className { $$=$1+$2; }
-    | alphaNumToken GENERICTYPE { $$=$1+"~"+$2+"~"; }
-    | classLiteralName GENERICTYPE { $$=$1+"~"+$2+"~"; }
+    | alphaNumToken GENERICTYPE { $$=$1+'~'+$2+'~'; }
+    | classLiteralName GENERICTYPE { $$=$1+'~'+$2+'~'; }
     ;
 
 statement
