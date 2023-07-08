@@ -271,7 +271,14 @@ class C13["With Città foreign language"]
       'classDiagram-v2',
       'namespace',
       '{}',
+      '{',
+      '}',
       '()',
+      '(',
+      ')',
+      '[]',
+      '[',
+      ']',
       'class',
       '\n',
       'cssClass',
@@ -305,10 +312,10 @@ class C13["With Città foreign language"]
       '.',
       '+',
       'alphaNum',
-      '[',
-      ']',
       '!',
       '0123',
+      'function()',
+      'function(arg1, arg2)',
     ];
 
     it.each(keywords)('should handle a note with %s in it', function (keyword: string) {
