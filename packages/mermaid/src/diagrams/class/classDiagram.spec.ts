@@ -349,7 +349,7 @@ class C13["With Città foreign language"]
     it.each(keywords)('should elicit error for %s after NOTE token', function (keyword: string) {
       const str = `classDiagram
                    note ${keyword}`;
-      expect(() => parser.parse(str)).toThrowError(/expecting | unrecognized/i);
+      expect(() => parser.parse(str)).toThrowError(/(Expecting\s'STR'|Unrecognized\stext)/);
     });
   });
 
