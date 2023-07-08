@@ -62,7 +62,11 @@ describe('when Intl.Segmenter is available', () => {
   });
 });
 
-describe('when Intl.segmenter is not available', () => {
+/**
+ * Intl.Segmenter is not supported in Firefox yet,
+ * see https://bugzilla.mozilla.org/show_bug.cgi?id=1423593 
+ */
+describe('when Intl.Segmenter is not available', () => {
   beforeAll(() => {
     vi.stubGlobal('Intl', { Segmenter: undefined });
   });
