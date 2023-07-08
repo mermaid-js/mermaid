@@ -66,7 +66,7 @@ They also serve as proof of concept, for the variety of things that can be built
 
 ## Blogs
 
-- [Wordpress](https://wordpress.org)
+- [WordPress](https://wordpress.org)
   - [WordPress Markdown Editor](https://wordpress.org/plugins/wp-githuber-md)
   - [WP-ReliableMD](https://wordpress.org/plugins/wp-reliablemd/)
 - [Hexo](https://hexo.io)
@@ -84,7 +84,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Plugin for Mermaid.js](https://github.com/eFrane/vuepress-plugin-mermaidjs)
 - [Grav CMS](https://getgrav.org/)
   - [Mermaid Diagrams](https://github.com/DanielFlaum/grav-plugin-mermaid-diagrams)
-  - [Gitlab Markdown Adapter](https://github.com/Goutte/grav-plugin-gitlab-markdown-adapter)
+  - [GitLab Markdown Adapter](https://github.com/Goutte/grav-plugin-gitlab-markdown-adapter)
 
 ## Communication
 
@@ -104,7 +104,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Flex Diagrams Extension](https://www.mediawiki.org/wiki/Extension:Flex_Diagrams)
 - [Semantic Media Wiki](https://semantic-mediawiki.org)
   - [Mermaid Plugin](https://github.com/SemanticMediaWiki/Mermaid)
-- [FosWiki](https://foswiki.org)
+- [Foswiki](https://foswiki.org)
   - [Mermaid Plugin](https://foswiki.org/Extensions/MermaidPlugin)
 - [DokuWiki](https://dokuwiki.org)
   - [Mermaid Plugin](https://www.dokuwiki.org/plugin:mermaid)
@@ -161,6 +161,8 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Nano Mermaid](https://github.com/Yash-Singh1/nano-mermaid)
 - [CKEditor](https://github.com/ckeditor/ckeditor5)
   - [CKEditor 5 Mermaid plugin](https://github.com/ckeditor/ckeditor5-mermaid)
+- [Standard Notes](https://standardnotes.com/)
+  - [sn-mermaid](https://github.com/nienow/sn-mermaid)
 
 ## Document Generation
 
@@ -172,7 +174,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [rehype-mermaidjs](https://github.com/remcohaszing/rehype-mermaidjs)
 - [Gatsby](https://www.gatsbyjs.com/)
   - [gatsby-remark-mermaid](https://github.com/remcohaszing/gatsby-remark-mermaid)
-- [jSDoc](https://jsdoc.app/)
+- [JSDoc](https://jsdoc.app/)
   - [jsdoc-mermaid](https://github.com/Jellyvision/jsdoc-mermaid)
 - [MkDocs](https://www.mkdocs.org)
   - [mkdocs-mermaid2-plugin](https://github.com/fralau/mkdocs-mermaid2-plugin)

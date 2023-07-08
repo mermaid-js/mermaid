@@ -312,13 +312,6 @@ export const draw = async function (text, id, _version, diagObj) {
       : select('body');
   const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
-  // Parse the graph definition
-  try {
-    diagObj.parser.parse(text);
-  } catch (err) {
-    log.debug('Parsing failed');
-  }
-
   // Fetch the default direction, use TD if none was found
   let dir = diagObj.db.getDirection();
   if (dir === undefined) {
