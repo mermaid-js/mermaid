@@ -91,10 +91,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 line was introduced with 'click'.
 'href "<link>"' attaches the specified link to the node that was specified by 'click'.
 */
-<*>"href"[\s]+["]         this.begin("href");
-<href>["]                       this.popState();
-<href>[^"]*                     return 'HREF';
-
+<*>"href"         return 'HREF';
 /*
 ---interactivity command---
 'call' adds a callback to the specified node. 'call' can only be specified when
@@ -391,10 +388,10 @@ clickStatement
     | CLICK className CALLBACK_NAME STR                 {$$ = $1;yy.setClickEvent($2, $3);yy.setTooltip($2, $4);}
     | CLICK className CALLBACK_NAME CALLBACK_ARGS       {$$ = $1;yy.setClickEvent($2, $3, $4);}
     | CLICK className CALLBACK_NAME CALLBACK_ARGS STR   {$$ = $1;yy.setClickEvent($2, $3, $4);yy.setTooltip($2, $5);}
-    | CLICK className HREF                              {$$ = $1;yy.setLink($2, $3);}
-    | CLICK className HREF LINK_TARGET                  {$$ = $1;yy.setLink($2, $3, $4);}
-    | CLICK className HREF STR                          {$$ = $1;yy.setLink($2, $3);yy.setTooltip($2, $4);}
-    | CLICK className HREF STR LINK_TARGET              {$$ = $1;yy.setLink($2, $3, $5);yy.setTooltip($2, $4);}
+    | CLICK className HREF STR                          {$$ = $1;yy.setLink($2, $4);}
+    | CLICK className HREF STR LINK_TARGET              {$$ = $1;yy.setLink($2, $4, $5);}
+    | CLICK className HREF STR STR                      {$$ = $1;yy.setLink($2, $4);yy.setTooltip($2, $5);}
+    | CLICK className HREF STR STR LINK_TARGET          {$$ = $1;yy.setLink($2, $4, $6);yy.setTooltip($2, $5);}
     ;
 
 cssClassStatement
