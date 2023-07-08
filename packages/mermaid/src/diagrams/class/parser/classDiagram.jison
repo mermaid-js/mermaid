@@ -50,6 +50,21 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "classDiagram"                  return 'CLASS_DIAGRAM';
 "[*]"                           return 'EDGE_STATE';
 
+/*
+---interactivity command---
+'call' adds a callback to the specified node. 'call' can only be specified when
+the line was introduced with 'click'.
+'call <callback_name>(<callback_args>)' attaches the function 'callback_name' with the specified
+arguments to the node that was specified by 'click'.
+Function arguments are optional: 'call <callback_name>()' simply executes 'callback_name' without any arguments.
+*/
+<INITIAL>"call"[\s]+            this.begin("callback_name");
+<callback_name>\([\s]*\)        this.popState();
+<callback_name>\(               this.popState(); this.begin("callback_args");
+<callback_name>[^(]*            return 'CALLBACK_NAME';
+<callback_args>\)               this.popState();
+<callback_args>[^)]*            return 'CALLBACK_ARGS';
+
 <string>["]                     this.popState();
 <string>[^"]*                   return "STR";
 <*>["]                          this.begin("string");
@@ -92,24 +107,10 @@ line was introduced with 'click'.
 'href "<link>"' attaches the specified link to the node that was specified by 'click'.
 */
 <*>"href"         return 'HREF';
-/*
----interactivity command---
-'call' adds a callback to the specified node. 'call' can only be specified when
-the line was introduced with 'click'.
-'call <callback_name>(<callback_args>)' attaches the function 'callback_name' with the specified
-arguments to the node that was specified by 'click'.
-Function arguments are optional: 'call <callback_name>()' simply executes 'callback_name' without any arguments.
-*/
-<*>"call"[\s]+            this.begin("callback_name");
-<callback_name>\([\s]*\)        this.popState();
-<callback_name>\(               this.popState(); this.begin("callback_args");
-<callback_name>[^(]*            return 'CALLBACK_NAME';
-<callback_args>\)               this.popState();
-<callback_args>[^)]*            return 'CALLBACK_ARGS';
 
 <generic>[~]                    this.popState();
 <generic>[^~]*                  return "GENERICTYPE";
-<INITIAL,class>"~"              this.begin("generic");
+<*>"~"              this.begin("generic");
 
 <bqstring>[`]                   this.popState();
 <bqstring>[^`]+                 return "BQUOTE_STR";
