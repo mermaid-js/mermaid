@@ -72,14 +72,14 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <class-body>[\n]                /* nothing */
 <class-body>[^{}\n]*            { return "MEMBER";}
 
-<INITIAL>"cssClass"             return 'CSSCLASS';
-<INITIAL>"callback"             return 'CALLBACK';
-<INITIAL>"link"                 return 'LINK';
-<INITIAL>"click"                return 'CLICK';
-<INITIAL>"note for"             return 'NOTE_FOR';
-<INITIAL>"note"                 return 'NOTE';
-<INITIAL>"<<"                   return 'ANNOTATION_START';
-<INITIAL>">>"                   return 'ANNOTATION_END';
+<*>"cssClass"             return 'CSSCLASS';
+<*>"callback"             return 'CALLBACK';
+<*>"link"                 return 'LINK';
+<*>"click"                return 'CLICK';
+<*>"note for"             return 'NOTE_FOR';
+<*>"note"                 return 'NOTE';
+<*>"<<"                   return 'ANNOTATION_START';
+<*>">>"                   return 'ANNOTATION_END';
 
 /*
 ---interactivity command---
@@ -87,7 +87,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 line was introduced with 'click'.
 'href "<link>"' attaches the specified link to the node that was specified by 'click'.
 */
-<INITIAL>"href"[\s]+["]         this.begin("href");
+<*>"href"[\s]+["]         this.begin("href");
 <href>["]                       this.popState();
 <href>[^"]*                     return 'HREF';
 
@@ -99,7 +99,7 @@ the line was introduced with 'click'.
 arguments to the node that was specified by 'click'.
 Function arguments are optional: 'call <callback_name>()' simply executes 'callback_name' without any arguments.
 */
-<INITIAL>"call"[\s]+            this.begin("callback_name");
+<*>"call"[\s]+            this.begin("callback_name");
 <callback_name>\([\s]*\)        this.popState();
 <callback_name>\(               this.popState(); this.begin("callback_args");
 <callback_name>[^(]*            return 'CALLBACK_NAME';
@@ -116,20 +116,20 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 
 <bqstring>[`]                   this.popState();
 <bqstring>[^`]+                 return "BQUOTE_STR";
-<INITIAL,class>[`]              this.begin("bqstring");
+<*>[`]              this.begin("bqstring");
 
-<INITIAL>"_self"                return 'LINK_TARGET';
-<INITIAL>"_blank"               return 'LINK_TARGET';
-<INITIAL>"_parent"              return 'LINK_TARGET';
-<INITIAL>"_top"                 return 'LINK_TARGET';
+<*>"_self"                return 'LINK_TARGET';
+<*>"_blank"               return 'LINK_TARGET';
+<*>"_parent"              return 'LINK_TARGET';
+<*>"_top"                 return 'LINK_TARGET';
 
-<INITIAL>\s*\<\|                return 'EXTENSION';
-<INITIAL>\s*\|\>                return 'EXTENSION';
-<INITIAL>\s*\>                  return 'DEPENDENCY';
-<INITIAL>\s*\<                  return 'DEPENDENCY';
-<INITIAL>\s*\*                  return 'COMPOSITION';
-<INITIAL>\s*o                   return 'AGGREGATION';
-<INITIAL>\s*\(\)                return 'LOLLIPOP';
+<*>\s*\<\|                return 'EXTENSION';
+<*>\s*\|\>                return 'EXTENSION';
+<*>\s*\>                  return 'DEPENDENCY';
+<*>\s*\<                  return 'DEPENDENCY';
+<*>\s*\*                  return 'COMPOSITION';
+<*>\s*o                   return 'AGGREGATION';
+<*>\s*\(\)                return 'LOLLIPOP';
 <*>\-\-                         return 'LINE';
 <*>\.\.                         return 'DOTTED_LINE';
 <*>":"{1}[^:\n;]+               return 'LABEL';
