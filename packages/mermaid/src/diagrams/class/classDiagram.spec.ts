@@ -266,6 +266,14 @@ class C13["With Città foreign language"]
     });
 
     const keywords = [
+      'direction',
+      'classDiagram',
+      'classDiagram-v2',
+      'namespace',
+      '}',
+      '()',
+      'class',
+      '\n',
       'cssClass',
       'callback',
       'link',
@@ -274,34 +282,74 @@ class C13["With Città foreign language"]
       'note for',
       '<<',
       '>>',
-      'href ',
       'call ',
       '~',
-      '``',
+      '~Generic~',
       '_self',
       '_blank',
       '_parent',
       '_top',
+      '<|',
+      '|>',
+      '>',
+      '<',
+      '*',
+      'o',
+      '\\',
+      '--',
+      '..',
+      '-->',
+      '--|>',
+      ': label',
+      ':::',
+      '.',
+      '+',
+      'alphaNum',
+      '[',
+      ']',
+      '!',
+      '0123',
     ];
 
-    test.each(keywords)('should handle a note with keyword in it', function (note: string) {
+    it.each(keywords)('should handle a note with %s in it', function (keyword: string) {
       const str = `classDiagram
-                     note "This is a keyword: ${note}. It truly is."
+                     note "This is a keyword: ${keyword}. It truly is."
                   `;
+      const str2 = `classDiagram
+                      note "${keyword}"`;
       parser.parse(str);
-      expect(classDb.getNotes()[0].text).toEqual(`This is a keyword: ${note}. It truly is.`);
+      parser.parse(str2);
+      expect(classDb.getNotes()[0].text).toEqual(`This is a keyword: ${keyword}. It truly is.`);
+      expect(classDb.getNotes()[1].text).toEqual(`${keyword}`);
     });
 
-    test.each(keywords)('should handle a note for with a keyword in it', function (note: string) {
+    it.each(keywords)('should handle a "note for" with a %s in it', function (keyword: string) {
       const str = `classDiagram
                    class Something {
                      int id
                      string name
                    }
-                   note for Something "This is a keyword: ${note}. It truly is."
+                   note for Something "This is a keyword: ${keyword}. It truly is."
                    `;
+
+      const str2 = `classDiagram
+                    class Something {
+                      int id
+                      string name
+                    }
+                    note for Something "${keyword}"
+                    `;
+
       parser.parse(str);
-      expect(classDb.getNotes()[0].text).toEqual(`This is a keyword: ${note}. It truly is.`);
+      parser.parse(str2);
+      expect(classDb.getNotes()[0].text).toEqual(`This is a keyword: ${keyword}. It truly is.`);
+      expect(classDb.getNotes()[1].text).toEqual(`${keyword}`);
+    });
+
+    it.each(keywords)('should elicit error for %s after NOTE token', function (keyword: string) {
+      const str = `classDiagram
+                   note ${keyword}`;
+      expect(() => parser.parse(str)).toThrowError(/expecting | unrecognized/i);
     });
   });
 
