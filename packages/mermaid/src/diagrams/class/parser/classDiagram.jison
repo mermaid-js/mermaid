@@ -50,6 +50,10 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "classDiagram"                  return 'CLASS_DIAGRAM';
 "[*]"                           return 'EDGE_STATE';
 
+<string>["]                     this.popState();
+<string>[^"]*                   return "STR";
+<*>["]                          this.begin("string");
+
 <INITIAL,namespace>"namespace"  { this.begin('namespace'); return 'NAMESPACE'; }
 <namespace>\s*(\r?\n)+          { this.popState(); return 'NEWLINE'; }
 <namespace>\s+                  /* skip whitespace */
@@ -109,10 +113,6 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 <generic>[~]                    this.popState();
 <generic>[^~]*                  return "GENERICTYPE";
 <INITIAL,class>"~"              this.begin("generic");
-
-<string>["]                     this.popState();
-<string>[^"]*                   return "STR";
-<*>["]                          this.begin("string");
 
 <bqstring>[`]                   this.popState();
 <bqstring>[^`]+                 return "BQUOTE_STR";
