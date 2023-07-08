@@ -24,24 +24,24 @@
 %x namespace
 %x namespace-body
 %%
-\%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
-.*direction\s+TB[^\n]*                                          return 'direction_tb';
-.*direction\s+BT[^\n]*                                          return 'direction_bt';
-.*direction\s+RL[^\n]*                                          return 'direction_rl';
-.*direction\s+LR[^\n]*                                          return 'direction_lr';
-<open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
-<type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
-<type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
-<arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
-\%\%(?!\{)*[^\n]*(\r?\n?)+                                      /* skip comments */
-\%\%[^\n]*(\r?\n)*                                              /* skip comments */
-accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
-<acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
-accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
-<acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
-accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
-<acc_descr_multiline>[\}]                       { this.popState(); }
-<acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
+\%\%\{                                       { this.begin('open_directive'); return 'open_directive'; }
+.*direction\s+TB[^\n]*                       return 'direction_tb';
+.*direction\s+BT[^\n]*                       return 'direction_bt';
+.*direction\s+RL[^\n]*                       return 'direction_rl';
+.*direction\s+LR[^\n]*                       return 'direction_lr';
+<open_directive>((?:(?!\}\%\%)[^:.])*)       { this.begin('type_directive'); return 'type_directive'; }
+<type_directive>":"                          { this.popState(); this.begin('arg_directive'); return ':'; }
+<type_directive,arg_directive>\}\%\%         { this.popState(); this.popState(); return 'close_directive'; }
+<arg_directive>((?:(?!\}\%\%).|\n)*)         return 'arg_directive';
+\%\%(?!\{)*[^\n]*(\r?\n?)+                   /* skip comments */
+\%\%[^\n]*(\r?\n)*                           /* skip comments */
+accTitle\s*":"\s*                            { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                 { this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                            { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                 { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                            { this.begin("acc_descr_multiline");}
+<acc_descr_multiline>[\}]                    { this.popState(); }
+<acc_descr_multiline>[^\}]*                  return "acc_descr_multiline_value";
 
 \s*(\r?\n)+                     return 'NEWLINE';
 \s+                             /* skip whitespace */
@@ -91,14 +91,14 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 <class-body>[\n]                /* nothing */
 <class-body>[^{}\n]*            { return "MEMBER";}
 
-<*>"cssClass"             return 'CSSCLASS';
-<*>"callback"             return 'CALLBACK';
-<*>"link"                 return 'LINK';
-<*>"click"                return 'CLICK';
-<*>"note for"             return 'NOTE_FOR';
-<*>"note"                 return 'NOTE';
-<*>"<<"                   return 'ANNOTATION_START';
-<*>">>"                   return 'ANNOTATION_END';
+<*>"cssClass"                   return 'CSSCLASS';
+<*>"callback"                   return 'CALLBACK';
+<*>"link"                       return 'LINK';
+<*>"click"                      return 'CLICK';
+<*>"note for"                   return 'NOTE_FOR';
+<*>"note"                       return 'NOTE';
+<*>"<<"                         return 'ANNOTATION_START';
+<*>">>"                         return 'ANNOTATION_END';
 
 /*
 ---interactivity command---
@@ -106,28 +106,28 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 line was introduced with 'click'.
 'href "<link>"' attaches the specified link to the node that was specified by 'click'.
 */
-<*>"href"         return 'HREF';
+<*>"href"                       return 'HREF';
 
 <generic>[~]                    this.popState();
 <generic>[^~]*                  return "GENERICTYPE";
-<*>"~"              this.begin("generic");
+<*>"~"                          this.begin("generic");
 
 <bqstring>[`]                   this.popState();
 <bqstring>[^`]+                 return "BQUOTE_STR";
-<*>[`]              this.begin("bqstring");
+<*>[`]                          this.begin("bqstring");
 
-<*>"_self"                return 'LINK_TARGET';
-<*>"_blank"               return 'LINK_TARGET';
-<*>"_parent"              return 'LINK_TARGET';
-<*>"_top"                 return 'LINK_TARGET';
+<*>"_self"                      return 'LINK_TARGET';
+<*>"_blank"                     return 'LINK_TARGET';
+<*>"_parent"                    return 'LINK_TARGET';
+<*>"_top"                       return 'LINK_TARGET';
 
-<*>\s*\<\|                return 'EXTENSION';
-<*>\s*\|\>                return 'EXTENSION';
-<*>\s*\>                  return 'DEPENDENCY';
-<*>\s*\<                  return 'DEPENDENCY';
-<*>\s*\*                  return 'COMPOSITION';
-<*>\s*o                   return 'AGGREGATION';
-<*>\s*\(\)                return 'LOLLIPOP';
+<*>\s*\<\|                      return 'EXTENSION';
+<*>\s*\|\>                      return 'EXTENSION';
+<*>\s*\>                        return 'DEPENDENCY';
+<*>\s*\<                        return 'DEPENDENCY';
+<*>\s*\*                        return 'COMPOSITION';
+<*>\s*o                         return 'AGGREGATION';
+<*>\s*\(\)                      return 'LOLLIPOP';
 <*>\-\-                         return 'LINE';
 <*>\.\.                         return 'DOTTED_LINE';
 <*>":"{1}[^:\n;]+               return 'LABEL';
