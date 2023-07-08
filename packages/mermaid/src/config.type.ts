@@ -127,6 +127,7 @@ export interface MermaidConfig {
    * without their own MathML implementation. If this option is disabled and MathML is not supported, the math
    * equations are replaced with a warning. If this option is enabled and MathML is not supported, Mermaid will
    * fall back to legacy rendering for KaTeX.
+   *
    */
   legacyMathML?: boolean;
   /**
