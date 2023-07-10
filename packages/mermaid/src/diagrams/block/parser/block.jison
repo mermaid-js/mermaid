@@ -33,10 +33,10 @@ CRLF \u000D\u000A
 [\n]+ {yy.getLogger().info('_', yytext);                 /* skip all whitespace */   }
 // [\n]                return 'NL';
 <INITIAL>({CRLF}|{LF})                     { return 'NL' }
-["][`]          { this.begin("md_string");}
+["][`]          { this.pushState("md_string");}
 <md_string>[^`"]+        { return "MD_STR";}
 <md_string>[`]["]          { this.popState();}
-["]                     this.begin("string");
+["]                     this.pushState("string");
 <string>["]             this.popState();
 <string>[^"]*           return "STR";
 "style"               return 'STYLE';
@@ -45,11 +45,11 @@ CRLF \u000D\u000A
 "interpolate"         return 'INTERPOLATE';
 "classDef"            return 'CLASSDEF';
 "class"               return 'CLASS';
-accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
+accTitle\s*":"\s*                                               { this.pushState("acc_title");return 'acc_title'; }
 <acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
-accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
+accDescr\s*":"\s*                                               { this.pushState("acc_descr");return 'acc_descr'; }
 <acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
-accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
+accDescr\s*"{"\s*                                { this.pushState("acc_descr_multiline");}
 <acc_descr_multiline>[\}]                       { this.popState(); }
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 "subgraph"            return 'subgraph';
@@ -60,32 +60,32 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 .*direction\s+LR[^\n]*                                      return 'direction_lr';
 
 // Start of nodes with shapes and description
-"-)"                   { yy.getLogger().info('Lex: -)'); this.begin('NODE');return 'NODE_D START'; }
-"(-"                   { yy.getLogger().info('Lex: (-'); this.begin('NODE');return 'NODE_DSTART';           }
-"))"                   { yy.getLogger().info('Lex: ))'); this.begin('NODE');return 'NODE_DSTART';  }
-")"                    { yy.getLogger().info('Lex: )'); this.begin('NODE');return 'NODE_DSTART';      }
-"(("                   { yy.getLogger().info('Lex: )'); this.begin('NODE');return 'NODE_DSTART'; }
-"{{"                   { yy.getLogger().info('Lex: )'); this.begin('NODE');return 'NODE_DSTART'; }
-"("                    { yy.getLogger().info('Lex: )'); this.begin('NODE');return 'NODE_DSTART'; }
-"["                    { yy.getLogger().info('Lex: ['); this.begin('NODE');return 'NODE_DSTART'; }
-"(["                   { yy.getLogger().info('Lex: )'); this.begin('NODE');return 'NODE_DSTART'; }
-"[["                   { this.begin('NODE');return 'NODE_DSTART'; }
-"[|"                   { this.begin('NODE');return 'NODE_DSTART'; }
-"[("                   { this.begin('NODE');return 'NODE_DSTART'; }
-"((("                  { this.begin('NODE');return 'NODE_DSTART'; }
-")))"                  { this.begin('NODE');return 'NODE_DSTART'; }
-"[/"                   { this.begin('NODE');return 'NODE_DSTART'; }
-"[\\"                  { this.begin('NODE');return 'NODE_DSTART'; }
+"-)"                   { yy.getLogger().info('Lex: -)'); this.pushState('NODE');return 'NODE_D START'; }
+"(-"                   { yy.getLogger().info('Lex: (-'); this.pushState('NODE');return 'NODE_DSTART';           }
+"))"                   { yy.getLogger().info('Lex: ))'); this.pushState('NODE');return 'NODE_DSTART';  }
+")"                    { yy.getLogger().info('Lex: )'); this.pushState('NODE');return 'NODE_DSTART';      }
+"(("                   { yy.getLogger().info('Lex: )'); this.pushState('NODE');return 'NODE_DSTART'; }
+"{{"                   { yy.getLogger().info('Lex: )'); this.pushState('NODE');return 'NODE_DSTART'; }
+"("                    { yy.getLogger().info('Lex: )'); this.pushState('NODE');return 'NODE_DSTART'; }
+"["                    { yy.getLogger().info('Lex: ['); this.pushState('NODE');return 'NODE_DSTART'; }
+"(["                   { yy.getLogger().info('Lex: )'); this.pushState('NODE');return 'NODE_DSTART'; }
+"[["                   { this.pushState('NODE');return 'NODE_DSTART'; }
+"[|"                   { this.pushState('NODE');return 'NODE_DSTART'; }
+"[("                   { this.pushState('NODE');return 'NODE_DSTART'; }
+"((("                  { this.pushState('NODE');return 'NODE_DSTART'; }
+")))"                  { this.pushState('NODE');return 'NODE_DSTART'; }
+"[/"                   { this.pushState('NODE');return 'NODE_DSTART'; }
+"[\\"                  { this.pushState('NODE');return 'NODE_DSTART'; }
 
 
 [^\(\[\n\-\)\{\}]+     { yy.getLogger().info('Lex: NODE_ID', yytext);return 'NODE_ID'; }
 <<EOF>>                { yy.getLogger().info('Lex: EOF', yytext);return 'EOF'; }
 
 // Handling of strings in node
-<NODE>["][`]           { this.begin("md_string");}
+<NODE>["][`]           { this.pushState("md_string");}
 <md_string>[^`"]+      { return "NODE_DESCR";}
 <md_string>[`]["]      { this.popState();}
-<NODE>["]              { yy.getLogger().info('Lex: Starting string');this.begin("string");}
+<NODE>["]              { yy.getLogger().info('Lex: Starting string');this.pushState("string");}
 <string>[^"]+          { yy.getLogger().info('Lex: NODE_DESCR:', yytext); return "NODE_DESCR";}
 <string>["]            {this.popState();}
 

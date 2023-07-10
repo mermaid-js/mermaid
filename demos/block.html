@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>States Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Block diagram demos</h1>
+    <h2>TCI IP</h2>
+    <pre class="mermaid">
+      block-beta
+
+      block TCP_IP["TCP/IP"]
+    </pre>
+<!--
+        columns H
+        ApplicationLayer("Application Layer")
+        block
+          columns H
+          UserInterface("User Interface (WPF, HTML5/CSS3, Swing)")
+        end
+      end
+      
+      block:::background
+        columns H
+        PresentationLayer["Presentation Layer"]
+        block("")
+          columns H
+          Smack["J2SE Mobil App (Smack)"]
+          JsJAC["Java Script Browser App (JsJAC)"]
+          babelim[".NET Windows App (Babel-im)"]
+        end
+      end
+    
+      block:::background
+        columns H
+        SessionLayer("Session Layer")
+        block("")
+          columns H
+          XMPP["XMPP Component"]
+          block
+            Authentication
+            Authorization
+          end
+          LDAP["LDAP, DB, POP"]
+        end
+      end
+    
+      block:::background
+        columns H
+        NetworkLayer("Network Layer")
+        block("")
+          columns H
+          HTTP[HTTP]:1.5
+          SOCK[SOCK]:1.5
+        end
+      end
+    
+      block:::background
+        columns H
+        DataLayer("Data Layer")
+        block("")
+          columns H
+          XMPP[XMPP]
+          BDB["Business DB"]
+          AD["Active Directory"]
+        end
+      end  
+
+-->
+
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({
+        theme: 'default',
+        logLevel: 3,
+        securityLevel: 'loose',
+        block: {
+          padding: 10
+        },
+      });
+    </script>
+  </body>
+</html>

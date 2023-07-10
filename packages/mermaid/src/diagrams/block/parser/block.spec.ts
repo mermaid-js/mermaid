@@ -6,7 +6,7 @@ import { prepareTextForParsing } from '../blockUtils.js';
 import * as fs from 'fs';
 import * as path from 'path';
 
-describe('Sankey diagram', function () {
+describe('Block diagram', function () {
   describe('when parsing an block diagram graph it should handle > ', function () {
     beforeEach(function () {
       block.parser.yy = db;
