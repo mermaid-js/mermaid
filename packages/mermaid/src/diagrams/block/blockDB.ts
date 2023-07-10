@@ -14,21 +14,23 @@ import {
   clear as commonClear,
 } from '../../commonDb.js';
 
-export type TBlockColumnsDefaultValue = 'H'; // Do we support something else, like 'auto' | 0?
+// export type TBlockColumnsDefaultValue = 'H'; // Do we support something else, like 'auto' | 0?
 
-interface Block {
-  ID: string;
+// TODO: Convert to generic TreeNode type? Convert to class?
+export interface Block {
+  ID?: string;
   label?: string;
   parent?: Block;
   children?: Block[];
-  columns: number | TBlockColumnsDefaultValue;
+  columns?: number; // | TBlockColumnsDefaultValue;
 }
 
-interface Link {
+export interface Link {
   source: Block;
   target: Block;
 }
 
+let rootBlocks: Block[] = [];
 let blocks: Block[] = [];
 let links: Link[] = [];
 
@@ -38,7 +40,13 @@ const clear = (): void => {
 };
 
 type IAddBlock = (block: Block) => Block;
-const addBlock: IAddBlock = (block: Block): Block => {
+const addBlock: IAddBlock = (block: Block, parent?: Block): Block => {
+  if(parent) {
+    parent.children ??= [];
+    parent.children.push(block);
+  } else {
+    rootBlocks.push(block);
+  }
   blocks.push(block);
   return block;
 };
@@ -49,19 +57,32 @@ const addLink: IAddLink = (link: Link): Link => {
   return link;
 };
 
+type IGetBlocks = () => Block[];
+const getBlocks:IGetBlocks = () => blocks;
+
+type IGetLinks = () => Link[];
+const getLinks:IGetLinks = () => links;
+
+type IGetLogger = () => Console;
+const getLogger:IGetLogger = () => console;
+
 export interface BlockDB extends DiagramDB {
   clear: () => void;
   getConfig: () => BlockConfig | undefined;
   addBlock: IAddBlock;
   addLink: IAddLink;
-  getLogger: () => Console;
+  getLogger: IGetLogger;
+  getBlocks: IGetBlocks;
+  getLinks: IGetLinks;
 }
 
 const db: BlockDB = {
   getConfig: () => configApi.getConfig().block,
   addBlock: addBlock,
   addLink: addLink,
-  getLogger: () => console, // TODO: remove
+  getLogger, // TODO: remove
+  getBlocks,
+  getLinks,
   // getAccTitle,
   // setAccTitle,
   // getAccDescription,
