@@ -423,4 +423,67 @@ describe('Class diagram', () => {
     );
     cy.get('svg');
   });
+
+  it('20: should render class diagram with newlines in title', () => {
+    imgSnapshotTest(`
+      classDiagram
+        Animal <|-- \`Du\nck\`
+        Animal : +int age
+        Animal : +String gender
+        Animal: +isMammal()
+        Animal: +mate()
+        class \`Du\nck\` {
+          +String beakColor
+          +String featherColor
+          +swim()
+          +quack()
+        }
+      `);
+    cy.get('svg');
+  });
+
+  it('21: should render class diagram with many newlines in title', () => {
+    imgSnapshotTest(`
+    classDiagram
+      class \`This\nTitle\nHas\nMany\nNewlines\` {
+        +String Also
+        -Stirng Many
+        #int Members
+        +And()
+        -Many()
+        #Methods()
+      }
+    `);
+  });
+
+  it('22: should render with newlines in title and an annotation', () => {
+    imgSnapshotTest(`
+    classDiagram
+      class \`This\nTitle\nHas\nMany\nNewlines\` {
+        +String Also
+        -Stirng Many
+        #int Members
+        +And()
+        -Many()
+        #Methods()
+      }
+      &lt;&lt;Interface&gt;&gt; \`This\nTitle\nHas\nMany\nNewlines\`  
+    `);
+  });
+
+  it('23: should handle newline title in namespace', () => {
+    imgSnapshotTest(`
+    classDiagram
+      namespace testingNamespace {
+      class \`This\nTitle\nHas\nMany\nNewlines\` {
+        +String Also
+        -Stirng Many
+        #int Members
+        +And()
+        -Many()
+        #Methods()
+      }
+    }
+    `);
+  });
 });
