@@ -359,7 +359,7 @@ statement
 
 separator: NEWLINE | SEMI | EOF ;
 
-
+ 
 verticeStatement: verticeStatement link node
         { /* console.warn('vs',$1.stmt,$3); */ yy.addLink($1.stmt,$3,$2); $$ = { stmt: $3, nodes: $3.concat($1.nodes) } }
     |  verticeStatement link node spaceList
@@ -368,12 +368,16 @@ verticeStatement: verticeStatement link node
     |node { /*console.warn('noda', $1);*/ $$ = {stmt: $1, nodes:$1 }}
     ;
 
-node: vertex
+node: styledVertex
         { /* console.warn('nod', $1); */ $$ = [$1];}
-    | node spaceList AMP spaceList vertex
+    | node spaceList AMP spaceList styledVertex
         { $$ = $1.concat($5); /* console.warn('pip', $1[0], $5, $$); */ }
+    ;
+
+styledVertex: vertex
+        { /* console.warn('nod', $1); */ $$ = $1;}
     | vertex STYLE_SEPARATOR idString
-        {$$ = [$1];yy.setClass($1,$3)}
+        {$$ = $1;yy.setClass($1,$3)}
     ;
 
 vertex:  idString SQS text SQE

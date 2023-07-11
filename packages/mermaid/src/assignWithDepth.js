@@ -20,7 +20,7 @@
  *   of src to dst in order.
  * @param {any} dst - The destination of the merge
  * @param {any} src - The source object(s) to merge into destination
- * @param {{ depth: number; clobber: boolean }} [config={ depth: 2, clobber: false }] - Depth: depth
+ * @param {{ depth: number; clobber: boolean }} [config] - Depth: depth
  *   to traverse within src and dst for merging - clobber: should dissimilar types clobber (default:
  *   { depth: 2, clobber: false }). Default is `{ depth: 2, clobber: false }`
  * @returns {any}

@@ -605,6 +605,12 @@ In the example below the style defined in the linkStyle statement will belong to
 linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
 ```
 
+It is also possible to add style to multiple links in a single statement, by separating link numbers with commas:
+
+```
+linkStyle 1,2,7 color:blue;
+```
+
 ### Styling line curves
 
 It is possible to style the type of curve used for lines between items, if the default method does not meet your needs.
@@ -638,10 +644,16 @@ flowchart LR
 More convenient than defining the style every time is to define a class of styles and attach this class to the nodes that
 should have a different look.
 
-a class definition looks like the example below:
+A class definition looks like the example below:
 
 ```
     classDef className fill:#f9f,stroke:#333,stroke-width:4px;
+```
+
+Also, it is possible to define style to multiple classes in one statement:
+
+```
+    classDef firstClassName,secondClassName font-size:12pt;
 ```
 
 Attachment of a class to a node is done as per below:
@@ -662,6 +674,16 @@ A shorter form of adding a class is to attach the classname to the node using th
 flowchart LR
     A:::someclass --> B
     classDef someclass fill:#f96
+```
+
+This form can be used when declaring multiple links between nodes:
+
+```mermaid-example
+flowchart LR
+    A:::foo & B:::bar --> C:::foobar
+    classDef foo stroke:#f00
+    classDef bar stroke:#0f0
+    classDef foobar stroke:#00f
 ```
 
 ### Css classes

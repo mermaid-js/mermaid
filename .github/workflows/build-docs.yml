@@ -2,13 +2,13 @@ name: Build Vitepress docs
 
 on:
   pull_request:
+  merge_group:
 
 permissions:
   contents: read
 
 jobs:
-  # Build job
-  build:
+  build-docs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

@@ -172,7 +172,7 @@ describe('Flowchart v2', () => {
     );
   });
 
-  it('52: handle nested subgraphs in several levels', () => {
+  it('52: handle nested subgraphs in several levels.', () => {
     imgSnapshotTest(
       `flowchart TB
     b-->B

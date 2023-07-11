@@ -154,6 +154,16 @@ describe('when parsing ER diagram it...', function () {
       expect(entities[entity].attributes[2].attributeName).toBe('author-ref[name](1)');
     });
 
+    it('should allow asterisk at the start of title', function () {
+      const entity = 'BOOK';
+      const attribute = 'string *title';
+
+      erDiagram.parser.parse(`erDiagram\n${entity}{${attribute}}`);
+      const entities = erDb.getEntities();
+      expect(Object.keys(entities).length).toBe(1);
+      expect(entities[entity].attributes.length).toBe(1);
+    });
+
     it('should not allow leading numbers, dashes or brackets', function () {
       const entity = 'BOOK';
       const nonLeadingChars = '0-[]()';

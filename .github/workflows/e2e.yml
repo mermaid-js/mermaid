@@ -1,12 +1,15 @@
 name: E2E
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  merge_group:
 
 permissions:
   contents: read
 
 jobs:
-  build:
+  e2e:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -33,7 +36,7 @@ jobs:
         # Otherwise (e.g. if running from fork), we run on a single container only
         if: ${{ ( env.CYPRESS_RECORD_KEY != '' ) || ( matrix.containers == 1 ) }}
         with:
-          start: pnpm run dev
+          start: pnpm run dev:coverage
           wait-on: 'http://localhost:9000'
           # Disable recording if we don't have an API key
           # e.g. if this action was run from a fork
@@ -41,7 +44,18 @@ jobs:
           parallel: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-
+          VITEST_COVERAGE: true
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v3
+        # Run step only pushes to develop and pull_requests
+        if: ${{ steps.cypress.conclusion == 'success' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop')}}
+        with:
+          files: coverage/cypress/lcov.info
+          flags: e2e
+          name: mermaid-codecov
+          fail_ci_if_error: false
+          verbose: true
+          token: 6845cc80-77ee-4e17-85a1-026cd95e0766
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         if: ${{ failure() && steps.cypress.conclusion == 'failure' }}
