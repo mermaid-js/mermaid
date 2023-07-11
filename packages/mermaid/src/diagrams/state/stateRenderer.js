@@ -63,20 +63,6 @@ export const draw = function (text, id, _version, diagObj) {
   const diagram = root.select(`[id='${id}']`);
   insertMarkers(diagram);
 
-  // Layout graph, Create a new directed graph
-  const graph = new graphlib.Graph({
-    multigraph: true,
-    compound: true,
-    // acyclicer: 'greedy',
-    rankdir: 'RL',
-    // ranksep: '20'
-  });
-
-  // Default to assigning a new object as a label for each new edge.
-  graph.setDefaultEdgeLabel(function () {
-    return {};
-  });
-
   const rootDoc = diagObj.db.getRootDoc();
   renderDoc(rootDoc, diagram, undefined, false, root, doc, diagObj);
 
