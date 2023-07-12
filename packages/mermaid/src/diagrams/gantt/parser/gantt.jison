@@ -86,6 +86,7 @@ that id.
 "includes"\s[^#\n;]+        return 'includes';
 "excludes"\s[^#\n;]+        return 'excludes';
 "todayMarker"\s[^\n;]+      return 'todayMarker';
+"weekday"\s[^#\n;]+         return 'weekday';
 \d\d\d\d"-"\d\d"-"\d\d      return 'date';
 "title"\s[^#\n;]+           return 'title';
 "accDescription"\s[^#\n;]+  return 'accDescription'
@@ -130,6 +131,7 @@ statement
   | excludes {yy.setExcludes($1.substr(9));$$=$1.substr(9);}
   | includes {yy.setIncludes($1.substr(9));$$=$1.substr(9);}
   | todayMarker {yy.setTodayMarker($1.substr(12));$$=$1.substr(12);}
+  | weekday { yy.setWeekday($1.substr(8));$$=$1.substr(8);}
   | title {yy.setDiagramTitle($1.substr(6));$$=$1.substr(6);}
   | acc_title acc_title_value { $$=$2.trim();yy.setAccTitle($$); }
   | acc_descr acc_descr_value { $$=$2.trim();yy.setAccDescription($$); }

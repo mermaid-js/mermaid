@@ -14,6 +14,12 @@ import {
   timeHour,
   timeDay,
   timeMonday,
+  timeTuesday,
+  timeWednesday,
+  timeThursday,
+  timeFriday,
+  timeSaturday,
+  timeSunday,
   timeMonth,
 } from 'd3';
 import common from '../common/common.js';
@@ -561,6 +567,8 @@ export const draw = function (text, id, version, diagObj) {
     if (resultTickInterval !== null) {
       const every = resultTickInterval[1];
       const interval = resultTickInterval[2];
+      const weekday = diagObj.db.getWeekday() || conf.weekday;
+
       switch (interval) {
         case 'minute':
           bottomXAxis.ticks(timeMinute.every(every));
@@ -572,7 +580,30 @@ export const draw = function (text, id, version, diagObj) {
           bottomXAxis.ticks(timeDay.every(every));
           break;
         case 'week':
-          bottomXAxis.ticks(timeMonday.every(every));
+          switch (weekday) {
+            case 'monday':
+              bottomXAxis.ticks(timeMonday.every(every));
+              break;
+            case 'tuesday':
+              bottomXAxis.ticks(timeTuesday.every(every));
+              break;
+            case 'wednesday':
+              bottomXAxis.ticks(timeWednesday.every(every));
+              break;
+            case 'thursday':
+              bottomXAxis.ticks(timeThursday.every(every));
+              break;
+            case 'friday':
+              bottomXAxis.ticks(timeFriday.every(every));
+              break;
+            case 'saturday':
+              bottomXAxis.ticks(timeSaturday.every(every));
+              break;
+            case 'sunday':
+            default:
+              bottomXAxis.ticks(timeSunday.every(every));
+              break;
+          }
           break;
         case 'month':
           bottomXAxis.ticks(timeMonth.every(every));

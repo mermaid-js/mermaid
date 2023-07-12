@@ -180,4 +180,9 @@ row2`;
     expect(ganttDb.getAccTitle()).toBe(expectedTitle);
     expect(ganttDb.getAccDescription()).toBe(expectedAccDescription);
   });
+
+  it('should allow for customising the weekday for tick intervals', function () {
+    parser.parse('gantt\nweekday wednesday');
+    expect(ganttDb.getWeekday()).toBe('wednesday');
+  });
 });
