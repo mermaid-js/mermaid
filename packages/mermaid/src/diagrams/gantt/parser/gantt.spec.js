@@ -181,8 +181,32 @@ row2`;
     expect(ganttDb.getAccDescription()).toBe(expectedAccDescription);
   });
 
-  it('should allow for customising the weekday for tick intervals', function () {
+  it('should allow for setting the starting weekday to monday for tick intervals', function () {
+    parser.parse('gantt\nweekday monday');
+    expect(ganttDb.getWeekday()).toBe('monday');
+  });
+  it('should allow for setting the starting weekday to tuesday for tick intervals', function () {
+    parser.parse('gantt\nweekday tuesday');
+    expect(ganttDb.getWeekday()).toBe('tuesday');
+  });
+  it('should allow for setting the starting weekday to wednesday for tick intervals', function () {
     parser.parse('gantt\nweekday wednesday');
     expect(ganttDb.getWeekday()).toBe('wednesday');
+  });
+  it('should allow for setting the starting weekday to thursday for tick intervals', function () {
+    parser.parse('gantt\nweekday thursday');
+    expect(ganttDb.getWeekday()).toBe('thursday');
+  });
+  it('should allow for setting the starting weekday to friday for tick intervals', function () {
+    parser.parse('gantt\nweekday friday');
+    expect(ganttDb.getWeekday()).toBe('friday');
+  });
+  it('should allow for setting the starting weekday to saturday for tick intervals', function () {
+    parser.parse('gantt\nweekday saturday');
+    expect(ganttDb.getWeekday()).toBe('saturday');
+  });
+  it('should allow for setting the starting weekday to sunday for tick intervals', function () {
+    parser.parse('gantt\nweekday sunday');
+    expect(ganttDb.getWeekday()).toBe('sunday');
   });
 });
