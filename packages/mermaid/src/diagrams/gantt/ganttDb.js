@@ -37,7 +37,7 @@ const tags = ['active', 'done', 'crit', 'milestone'];
 let funs = [];
 let inclusiveEndDates = false;
 let topAxis = false;
-let weekday = undefined;
+let weekday = 'sunday';
 
 // The serial order of the task in the script
 let lastOrder = 0;
