@@ -13,7 +13,7 @@ import {
   timeMinute,
   timeHour,
   timeDay,
-  timeWeek,
+  timeMonday,
   timeMonth,
 } from 'd3';
 import common from '../common/common.js';
@@ -572,7 +572,7 @@ export const draw = function (text, id, version, diagObj) {
           bottomXAxis.ticks(timeDay.every(every));
           break;
         case 'week':
-          bottomXAxis.ticks(timeWeek.every(every));
+          bottomXAxis.ticks(timeMonday.every(every));
           break;
         case 'month':
           bottomXAxis.ticks(timeMonth.every(every));
@@ -611,7 +611,7 @@ export const draw = function (text, id, version, diagObj) {
             topXAxis.ticks(timeDay.every(every));
             break;
           case 'week':
-            topXAxis.ticks(timeWeek.every(every));
+            topXAxis.ticks(timeMonday.every(every));
             break;
           case 'month':
             topXAxis.ticks(timeMonth.every(every));
