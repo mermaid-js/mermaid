@@ -50,7 +50,6 @@ const config: Partial<MermaidConfig> = {
     ...defaultConfigJson.gantt,
     tickInterval: undefined,
     useWidth: undefined, // can probably be removed since `configKeys` already includes this
-    weekday: 'sunday', // the sane default is a monday, but it's set to sunday for legacy reasons
   },
   c4: {
     ...defaultConfigJson.c4,
