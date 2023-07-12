@@ -189,6 +189,12 @@ The pattern is:
 
 More info in: [https://github.com/d3/d3-time#interval_every](https://github.com/d3/d3-time#interval_every)
 
+Week-based `tickInterval`s start the week on sunday by default. If you wish to specify another weekday on which the `tickInterval` should start, use the `weekday` option:
+
+```markdown
+weekday monday
+```
+
 ## Output in compact mode
 
 The compact mode allows you to display multiple tasks in the same row. Compact mode can be enabled for a gantt chart by setting the display mode of the graph via preceeding YAML settings.
