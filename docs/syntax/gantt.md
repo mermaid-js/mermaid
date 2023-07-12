@@ -259,8 +259,16 @@ More info in: <https://github.com/d3/d3-time#interval_every>
 
 Week-based `tickInterval`s start the week on sunday by default. If you wish to specify another weekday on which the `tickInterval` should start, use the `weekday` option:
 
-```markdown
-weekday monday
+```mermaid-example
+gantt
+  tickInterval 1week
+  weekday monday
+```
+
+```mermaid
+gantt
+  tickInterval 1week
+  weekday monday
 ```
 
 ## Output in compact mode
