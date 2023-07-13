@@ -486,4 +486,19 @@ describe('Class diagram', () => {
     }
     `);
   });
+
+  it('should handle newline in string label', () => {
+    imgSnapshotTest(`
+      classDiagram
+        class A["This has\na newline!"] {
+          +String boop
+          -Int beep
+          #double bop
+        }
+
+        class B["This title also has\na newline"]
+        B : +with(more)
+        B : -methods()
+      `);
+  });
 });
