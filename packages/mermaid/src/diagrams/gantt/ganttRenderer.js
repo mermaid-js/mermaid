@@ -631,6 +631,8 @@ export const draw = function (text, id, version, diagObj) {
       if (resultTickInterval !== null) {
         const every = resultTickInterval[1];
         const interval = resultTickInterval[2];
+        const weekday = diagObj.db.getWeekday() || conf.weekday;
+
         switch (interval) {
           case 'minute':
             topXAxis.ticks(timeMinute.every(every));
@@ -642,7 +644,30 @@ export const draw = function (text, id, version, diagObj) {
             topXAxis.ticks(timeDay.every(every));
             break;
           case 'week':
-            topXAxis.ticks(timeMonday.every(every));
+            switch (weekday) {
+              case 'monday':
+                topXAxis.ticks(timeMonday.every(every));
+                break;
+              case 'tuesday':
+                topXAxis.ticks(timeTuesday.every(every));
+                break;
+              case 'wednesday':
+                topXAxis.ticks(timeWednesday.every(every));
+                break;
+              case 'thursday':
+                topXAxis.ticks(timeThursday.every(every));
+                break;
+              case 'friday':
+                topXAxis.ticks(timeFriday.every(every));
+                break;
+              case 'saturday':
+                topXAxis.ticks(timeSaturday.every(every));
+                break;
+              case 'sunday':
+              default:
+                topXAxis.ticks(timeSunday.every(every));
+                break;
+            }
             break;
           case 'month':
             topXAxis.ticks(timeMonth.every(every));
