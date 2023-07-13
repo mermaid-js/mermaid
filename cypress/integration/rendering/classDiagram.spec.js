@@ -1,7 +1,7 @@
 import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
 
 describe('Class diagram', () => {
-  it('1: should render a simple class diagram', () => {
+  it('should render a simple class diagram', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -35,7 +35,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('2: should render a simple class diagrams with cardinality', () => {
+  it('should render a simple class diagrams with cardinality', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -64,7 +64,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('3: should render a simple class diagram with different visibilities', () => {
+  it('should render a simple class diagram with different visibilities', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -82,7 +82,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('4: should render a simple class diagram with comments', () => {
+  it('should render a simple class diagram with comments', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -112,7 +112,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('5: should render a simple class diagram with abstract method', () => {
+  it('should render a simple class diagram with abstract method', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -124,7 +124,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('6: should render a simple class diagram with static method', () => {
+  it('should render a simple class diagram with static method', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -136,7 +136,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('7: should render a simple class diagram with Generic class', () => {
+  it('should render a simple class diagram with Generic class', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -156,7 +156,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('8: should render a simple class diagram with Generic class and relations', () => {
+  it('should render a simple class diagram with Generic class and relations', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -177,7 +177,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('9: should render a simple class diagram with clickable link', () => {
+  it('should render a simple class diagram with clickable link', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -199,7 +199,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('10: should render a simple class diagram with clickable callback', () => {
+  it('should render a simple class diagram with clickable callback', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -221,7 +221,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('11: should render a simple class diagram with return type on method', () => {
+  it('should render a simple class diagram with return type on method', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -236,7 +236,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('12: should render a simple class diagram with generic types', () => {
+  it('should render a simple class diagram with generic types', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -252,7 +252,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('13: should render a simple class diagram with css classes applied', () => {
+  it('should render a simple class diagram with css classes applied', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -270,7 +270,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('14: should render a simple class diagram with css classes applied directly', () => {
+  it('should render a simple class diagram with css classes applied directly', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -286,7 +286,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('15: should render a simple class diagram with css classes applied to multiple classes', () => {
+  it('should render a simple class diagram with css classes applied to multiple classes', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -301,7 +301,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('16: should render multiple class diagrams', () => {
+  it('should render multiple class diagrams', () => {
     imgSnapshotTest(
       [
         `
@@ -354,7 +354,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  // it('17: should render a class diagram when useMaxWidth is true (default)', () => {
+  // it('should render a class diagram when useMaxWidth is true (default)', () => {
   //   renderGraph(
   //     `
   //   classDiagram
@@ -382,7 +382,7 @@ describe('Class diagram', () => {
   //     });
   // });
 
-  // it('18: should render a class diagram when useMaxWidth is false', () => {
+  // it('should render a class diagram when useMaxWidth is false', () => {
   //   renderGraph(
   //     `
   //   classDiagram
@@ -408,7 +408,7 @@ describe('Class diagram', () => {
   //     });
   // });
 
-  it('19: should render a simple class diagram with notes', () => {
+  it('should render a simple class diagram with notes', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -424,7 +424,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('20: should render class diagram with newlines in title', () => {
+  it('should render class diagram with newlines in title', () => {
     imgSnapshotTest(`
       classDiagram
         Animal <|-- \`Du\nck\`
@@ -442,7 +442,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('21: should render class diagram with many newlines in title', () => {
+  it('should render class diagram with many newlines in title', () => {
     imgSnapshotTest(`
     classDiagram
       class \`This\nTitle\nHas\nMany\nNewlines\` {
@@ -456,7 +456,7 @@ describe('Class diagram', () => {
     `);
   });
 
-  it('22: should render with newlines in title and an annotation', () => {
+  it('should render with newlines in title and an annotation', () => {
     imgSnapshotTest(`
     classDiagram
       class \`This\nTitle\nHas\nMany\nNewlines\` {
@@ -467,11 +467,11 @@ describe('Class diagram', () => {
         -Many()
         #Methods()
       }
-      &lt;&lt;Interface&gt;&gt; \`This\nTitle\nHas\nMany\nNewlines\`  
+      &lt;&lt;Interface&gt;&gt; \`This\nTitle\nHas\nMany\nNewlines\`
     `);
   });
 
-  it('23: should handle newline title in namespace', () => {
+  it('should handle newline title in namespace', () => {
     imgSnapshotTest(`
     classDiagram
       namespace testingNamespace {
