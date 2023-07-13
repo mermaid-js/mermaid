@@ -918,8 +918,8 @@ const class_box = (parent, node) => {
         ')'
     );
     //get the height of the bounding box of each member if exists
-    const memberBBox = lbl ? lbl.getBBox() : null;
-    verticalPos += (memberBBox.height ?? 0) + rowPadding;
+    const memberBBox = lbl?.getBBox();
+    verticalPos += (memberBBox?.height ?? 0) + rowPadding;
   });
 
   verticalPos += lineHeight;
