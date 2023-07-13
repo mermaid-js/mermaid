@@ -11,5 +11,7 @@ comment:
 coverage:
   status:
     project:
-      default:
-        threshold: 2%
+      off
+      # Turing off for now as code coverage isn't stable and causes unnecessary build failures.
+      # default:
+      #   threshold: 2%

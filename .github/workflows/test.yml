@@ -43,9 +43,12 @@ jobs:
 
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v3
+        # Run step only pushes to develop and pull_requests
+        if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/develop' }}
         with:
           files: ./coverage/vitest/lcov.info
           flags: unit
           name: mermaid-codecov
           fail_ci_if_error: false
           verbose: true
+          token: 6845cc80-77ee-4e17-85a1-026cd95e0766
