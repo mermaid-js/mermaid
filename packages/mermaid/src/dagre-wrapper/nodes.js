@@ -937,8 +937,8 @@ const class_box = (parent, node) => {
       'transform',
       'translate( ' + -maxWidth / 2 + ', ' + ((-1 * maxHeight) / 2 + verticalPos) + ')'
     );
-    const methodBBox = lbl ? lbl.getBBox() : null;
-    verticalPos += (methodBBox.height ?? 0) + rowPadding;
+    const memberBBox = lbl?.getBBox();
+    verticalPos += (memberBBox?.height ?? 0) + rowPadding;
   });
 
   rect
