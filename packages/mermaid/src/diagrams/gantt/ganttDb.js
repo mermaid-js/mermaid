@@ -67,7 +67,7 @@ export const clear = function () {
   lastOrder = 0;
   links = {};
   commonClear();
-  weekday = undefined;
+  weekday = 'sunday';
 };
 
 export const setAxisFormat = function (txt) {
