@@ -77,25 +77,31 @@ that id.
 <click>[\s\n]           this.popState();
 <click>[^\s\n]*         return 'click';
 
-"gantt"                     return 'gantt';
-"dateFormat"\s[^#\n;]+      return 'dateFormat';
-"inclusiveEndDates"         return 'inclusiveEndDates';
-"topAxis"                   return 'topAxis';
-"axisFormat"\s[^#\n;]+      return 'axisFormat';
-"tickInterval"\s[^#\n;]+    return 'tickInterval';
-"includes"\s[^#\n;]+        return 'includes';
-"excludes"\s[^#\n;]+        return 'excludes';
-"todayMarker"\s[^\n;]+      return 'todayMarker';
-"weekday"\s[^#\n;]+         return 'weekday';
-\d\d\d\d"-"\d\d"-"\d\d      return 'date';
-"title"\s[^#\n;]+           return 'title';
-"accDescription"\s[^#\n;]+  return 'accDescription'
-"section"\s[^#:\n;]+        return 'section';
-[^#:\n;]+                   return 'taskTxt';
-":"[^#\n;]+                 return 'taskData';
-":"                         return ':';
-<<EOF>>                     return 'EOF';
-.                           return 'INVALID';
+"gantt"                         return 'gantt';
+"dateFormat"\s[^#\n;]+          return 'dateFormat';
+"inclusiveEndDates"             return 'inclusiveEndDates';
+"topAxis"                       return 'topAxis';
+"axisFormat"\s[^#\n;]+          return 'axisFormat';
+"tickInterval"\s[^#\n;]+        return 'tickInterval';
+"includes"\s[^#\n;]+            return 'includes';
+"excludes"\s[^#\n;]+            return 'excludes';
+"todayMarker"\s[^\n;]+          return 'todayMarker';
+.*weekday\s+monday[^\n]*        return 'weekday_monday'
+.*weekday\s+tuesday[^\n]*       return 'weekday_tuesday'
+.*weekday\s+wednesday[^\n]*     return 'weekday_wednesday'
+.*weekday\s+thursday[^\n]*      return 'weekday_thursday'
+.*weekday\s+friday[^\n]*        return 'weekday_friday'
+.*weekday\s+saturday[^\n]*      return 'weekday_saturday'
+.*weekday\s+sunday[^\n]*        return 'weekday_sunday'
+\d\d\d\d"-"\d\d"-"\d\d          return 'date';
+"title"\s[^#\n;]+               return 'title';
+"accDescription"\s[^#\n;]+      return 'accDescription'
+"section"\s[^#:\n;]+            return 'section';
+[^#:\n;]+                       return 'taskTxt';
+":"[^#\n;]+                     return 'taskData';
+":"                             return ':';
+<<EOF>>                         return 'EOF';
+.                               return 'INVALID';
 
 /lex
 
@@ -122,6 +128,16 @@ line
 	| EOF { $$=[];}
 	;
 
+weekday
+  : weekday_monday { yy.setWeekday("monday");}
+  | weekday_tuesday { yy.setWeekday("tuesday");}
+  | weekday_wednesday { yy.setWeekday("wednesday");}
+  | weekday_thursday { yy.setWeekday("thursday");}
+  | weekday_friday { yy.setWeekday("friday");}
+  | weekday_saturday { yy.setWeekday("saturday");}
+  | weekday_sunday { yy.setWeekday("sunday");}
+  ;
+
 statement
   : dateFormat {yy.setDateFormat($1.substr(11));$$=$1.substr(11);}
   | inclusiveEndDates {yy.enableInclusiveEndDates();$$=$1.substr(18);}
@@ -131,7 +147,7 @@ statement
   | excludes {yy.setExcludes($1.substr(9));$$=$1.substr(9);}
   | includes {yy.setIncludes($1.substr(9));$$=$1.substr(9);}
   | todayMarker {yy.setTodayMarker($1.substr(12));$$=$1.substr(12);}
-  | weekday { yy.setWeekday($1.substr(8));$$=$1.substr(8);}
+  | weekday
   | title {yy.setDiagramTitle($1.substr(6));$$=$1.substr(6);}
   | acc_title acc_title_value { $$=$2.trim();yy.setAccTitle($$); }
   | acc_descr acc_descr_value { $$=$2.trim();yy.setAccDescription($$); }
