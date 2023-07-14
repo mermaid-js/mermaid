@@ -1549,6 +1549,7 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         description: |
           On which day a week-based interval should start
         type: string
+        tsType: 'string | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday"'
         enum:
           - monday
           - tuesday
@@ -1557,7 +1558,6 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
           - friday
           - saturday
           - sunday
-        # the sane default is a monday, but it's set to sunday for legacy reasons
         default: sunday
 
   SequenceDiagramConfig:
