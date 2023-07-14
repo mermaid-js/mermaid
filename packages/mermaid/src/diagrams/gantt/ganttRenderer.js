@@ -31,6 +31,20 @@ export const setConf = function () {
 };
 
 /**
+ * This will map any day of the week that can be set in the `weekday` option to
+ * the corresponding d3-time function that is used to calculate the ticks.
+ */
+const mapWeekdayToTimeFunction = {
+  monday: timeMonday,
+  tuesday: timeTuesday,
+  wednesday: timeWednesday,
+  thursday: timeThursday,
+  friday: timeFriday,
+  saturday: timeSaturday,
+  sunday: timeSunday,
+};
+
+/**
  * For this issue:
  * https://github.com/mermaid-js/mermaid/issues/1618
  *
@@ -580,30 +594,7 @@ export const draw = function (text, id, version, diagObj) {
           bottomXAxis.ticks(timeDay.every(every));
           break;
         case 'week':
-          switch (weekday) {
-            case 'monday':
-              bottomXAxis.ticks(timeMonday.every(every));
-              break;
-            case 'tuesday':
-              bottomXAxis.ticks(timeTuesday.every(every));
-              break;
-            case 'wednesday':
-              bottomXAxis.ticks(timeWednesday.every(every));
-              break;
-            case 'thursday':
-              bottomXAxis.ticks(timeThursday.every(every));
-              break;
-            case 'friday':
-              bottomXAxis.ticks(timeFriday.every(every));
-              break;
-            case 'saturday':
-              bottomXAxis.ticks(timeSaturday.every(every));
-              break;
-            case 'sunday':
-            default:
-              bottomXAxis.ticks(timeSunday.every(every));
-              break;
-          }
+          bottomXAxis.ticks(mapWeekdayToTimeFunction[weekday].every(every));
           break;
         case 'month':
           bottomXAxis.ticks(timeMonth.every(every));
@@ -644,30 +635,7 @@ export const draw = function (text, id, version, diagObj) {
             topXAxis.ticks(timeDay.every(every));
             break;
           case 'week':
-            switch (weekday) {
-              case 'monday':
-                topXAxis.ticks(timeMonday.every(every));
-                break;
-              case 'tuesday':
-                topXAxis.ticks(timeTuesday.every(every));
-                break;
-              case 'wednesday':
-                topXAxis.ticks(timeWednesday.every(every));
-                break;
-              case 'thursday':
-                topXAxis.ticks(timeThursday.every(every));
-                break;
-              case 'friday':
-                topXAxis.ticks(timeFriday.every(every));
-                break;
-              case 'saturday':
-                topXAxis.ticks(timeSaturday.every(every));
-                break;
-              case 'sunday':
-              default:
-                topXAxis.ticks(timeSunday.every(every));
-                break;
-            }
+            topXAxis.ticks(mapWeekdayToTimeFunction[weekday].every(every));
             break;
           case 'month':
             topXAxis.ticks(timeMonth.every(every));
