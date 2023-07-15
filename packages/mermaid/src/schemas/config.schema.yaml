@@ -1549,7 +1549,7 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         description: |
           On which day a week-based interval should start
         type: string
-        tsType: 'string | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday"'
+        tsType: '"monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday"'
         enum:
           - monday
           - tuesday
