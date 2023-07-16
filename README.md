@@ -12,7 +12,7 @@ Generate diagrams from markdown-like text.
 <p>
 
 <p align="center">
-<a href="https://mermaid.live/"><b>Live Editor!</b></a>
+<a href="https://mermaid.live/"><b>Live Editor</b></a> | <a href="https://mermaid-js.github.io/docs/mermaid-live-editor-beta"><b>Live Editor Beta</b></a>
 </p>
 <p align="center">
  <a href="https://mermaid.js.org">📖 Documentation</a> | <a href="https://mermaid.js.org/intro/">🚀 Getting Started</a> | <a href="https://www.jsdelivr.com/package/npm/mermaid">🌐 CDN</a> | <a href="https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE" title="Slack invite">🙌 Join Us</a>
