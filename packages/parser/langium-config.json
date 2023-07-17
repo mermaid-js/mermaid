@@ -3,7 +3,7 @@
   "languages": [
     {
       "id": "mermaid",
-      "grammar": "src/language/grammars/mermaid.langium",
+      "grammar": "src/language/mermaid/mermaid.langium",
       "fileExtensions": [".mmd"]
     },
     {
