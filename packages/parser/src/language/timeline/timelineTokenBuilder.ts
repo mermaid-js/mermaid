@@ -10,11 +10,11 @@ import {
 
 export class TimelineTokenBuilder extends CommonTokenBuilder {
   protected override buildTerminalToken(terminal: GrammarAST.TerminalRule): TokenType {
-    const tokenType = super.buildTerminalToken(terminal);
+    const tokenType: TokenType = super.buildTerminalToken(terminal);
     return TimelineTokenBuilder.customBuildTokens(tokenType);
   }
 
-  public static customBuildTokens(tokenType: TokenType) {
+  public static customBuildTokens(tokenType: TokenType): TokenType {
     switch (tokenType.name) {
       case 'TIMELINE_SECTION_TITLE': {
         tokenType.LINE_BREAKS = false;

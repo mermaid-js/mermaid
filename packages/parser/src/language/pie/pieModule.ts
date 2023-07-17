@@ -57,8 +57,11 @@ export function createPieServices(context: DefaultSharedModuleContext): {
   shared: LangiumSharedServices;
   Pie: PieServices;
 } {
-  const shared = inject(createDefaultSharedModule(context), MermaidGeneratedSharedModule);
-  const Pie = inject(createDefaultModule({ shared }), PieGeneratedModule, PieModule);
+  const shared: LangiumSharedServices = inject(
+    createDefaultSharedModule(context),
+    MermaidGeneratedSharedModule
+  );
+  const Pie: PieServices = inject(createDefaultModule({ shared }), PieGeneratedModule, PieModule);
   shared.ServiceRegistry.register(Pie);
   return { shared, Pie };
 }

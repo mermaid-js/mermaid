@@ -6,7 +6,7 @@ import { TimelineTokenBuilder } from '../timeline/timelineTokenBuilder.js';
 
 export class MermiadTokenBuilder extends CommonTokenBuilder {
   protected override buildTerminalToken(terminal: GrammarAST.TerminalRule): TokenType {
-    let tokenType = super.buildTerminalToken(terminal);
+    let tokenType: TokenType = super.buildTerminalToken(terminal);
     tokenType = PieTokenBuilder.customBuildTokens(tokenType);
     tokenType = TimelineTokenBuilder.customBuildTokens(tokenType);
     return tokenType;

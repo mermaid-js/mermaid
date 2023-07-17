@@ -5,7 +5,7 @@ import { matchAccessibilityDescr, matchAccessibilityTitle, matchTitle } from './
 
 export class CommonTokenBuilder extends DefaultTokenBuilder {
   protected override buildTerminalToken(terminal: GrammarAST.TerminalRule): TokenType {
-    const tokenType = super.buildTerminalToken(terminal);
+    const tokenType: TokenType = super.buildTerminalToken(terminal);
     switch (tokenType.name) {
       case 'ACC_DESCR': {
         tokenType.LINE_BREAKS = true;

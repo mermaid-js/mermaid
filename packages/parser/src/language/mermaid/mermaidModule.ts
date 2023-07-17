@@ -58,8 +58,15 @@ export function createMermaidServices(context: DefaultSharedModuleContext): {
   shared: LangiumSharedServices;
   Mermaid: MermaidServices;
 } {
-  const shared = inject(createDefaultSharedModule(context), MermaidGeneratedSharedModule);
-  const Mermaid = inject(createDefaultModule({ shared }), MermaidGeneratedModule, MermaidModule);
+  const shared: LangiumSharedServices = inject(
+    createDefaultSharedModule(context),
+    MermaidGeneratedSharedModule
+  );
+  const Mermaid: MermaidServices = inject(
+    createDefaultModule({ shared }),
+    MermaidGeneratedModule,
+    MermaidModule
+  );
   shared.ServiceRegistry.register(Mermaid);
   return { shared, Mermaid };
 }

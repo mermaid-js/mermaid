@@ -1,8 +1,10 @@
+import { CustomPatternMatcherFunc } from 'chevrotain';
+
 /**
  * Matches a timeline section title
  */
 export const timelineSectionTitleRegex = /section[\t ]+([^\n\r]+)/y;
-export const matchTimelineSectionTitle = (text: string, startOffset: number) => {
+export const matchTimelineSectionTitle: CustomPatternMatcherFunc = (text, startOffset) => {
   timelineSectionTitleRegex.lastIndex = startOffset;
   return timelineSectionTitleRegex.exec(text);
 };
@@ -11,7 +13,7 @@ export const matchTimelineSectionTitle = (text: string, startOffset: number) => 
  * Matches a timeline period title
  */
 export const timelinePeroidTitleRegex = /([^\n\r:]+)/y;
-export const matchTimelinePeroidTitle = (text: string, startOffset: number) => {
+export const matchTimelinePeroidTitle: CustomPatternMatcherFunc = (text, startOffset) => {
   timelinePeroidTitleRegex.lastIndex = startOffset;
   return timelinePeroidTitleRegex.exec(text);
 };
@@ -20,7 +22,7 @@ export const matchTimelinePeroidTitle = (text: string, startOffset: number) => {
  * Matches a timeline event
  */
 export const timelineEventRegex = /([^\n\r:]+)/y;
-export const matchTimelineEventTitle = (text: string, startOffset: number) => {
+export const matchTimelineEventTitle: CustomPatternMatcherFunc = (text, startOffset) => {
   timelinePeroidTitleRegex.lastIndex = startOffset;
   return timelinePeroidTitleRegex.exec(text);
 };

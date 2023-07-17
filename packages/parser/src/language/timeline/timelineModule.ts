@@ -60,8 +60,15 @@ export function createTimelineServices(context: DefaultSharedModuleContext): {
   shared: LangiumSharedServices;
   Timeline: TimelineServices;
 } {
-  const shared = inject(createDefaultSharedModule(context), MermaidGeneratedSharedModule);
-  const Timeline = inject(createDefaultModule({ shared }), TimelineGeneratedModule, TimelineModule);
+  const shared: LangiumSharedServices = inject(
+    createDefaultSharedModule(context),
+    MermaidGeneratedSharedModule
+  );
+  const Timeline: TimelineServices = inject(
+    createDefaultModule({ shared }),
+    TimelineGeneratedModule,
+    TimelineModule
+  );
   shared.ServiceRegistry.register(Timeline);
   return { shared, Timeline };
 }

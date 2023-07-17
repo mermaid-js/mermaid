@@ -14,7 +14,7 @@ export class TimelineValueConverter extends DefaultValueConverter {
     input: string,
     cstNode: CstNode
   ): ValueType {
-    let value = CommonValueConverter.customRunConverter(rule, input, cstNode);
+    let value: ValueType | null = CommonValueConverter.customRunConverter(rule, input, cstNode);
     if (value === null) {
       value = TimelineValueConverter.customRunConverter(rule, input, cstNode);
     }
@@ -31,14 +31,14 @@ export class TimelineValueConverter extends DefaultValueConverter {
    *
    * @param rule - Parsed rule.
    * @param input - Matched string.
-   * @param cstNode - Node in the Concrete Syntax Tree (CST).
+   * @param _cstNode - Node in the Concrete Syntax Tree (CST).
    * @returns converted the value if it's timeline rule or `null` if it's not.
    */
   public static customRunConverter(
     rule: GrammarAST.AbstractRule,
     input: string,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    cstNode: CstNode
+    _cstNode: CstNode
   ): ValueType | null {
     let regex: RegExp | undefined;
     switch (rule.name) {

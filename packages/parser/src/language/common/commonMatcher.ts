@@ -1,8 +1,10 @@
+import { CustomPatternMatcherFunc } from 'chevrotain';
+
 /**
  * Matches single and multiline accessible description
  */
 export const accessibilityDescrRegex = /accDescr(?:[\t ]*:[\t ]*([^\n\r]*)|\s*{([^}]*)})/y;
-export const matchAccessibilityDescr = (text: string, startOffset: number) => {
+export const matchAccessibilityDescr: CustomPatternMatcherFunc = (text, startOffset) => {
   accessibilityDescrRegex.lastIndex = startOffset;
   return accessibilityDescrRegex.exec(text);
 };
@@ -11,7 +13,7 @@ export const matchAccessibilityDescr = (text: string, startOffset: number) => {
  * Matches single line accessible title
  */
 export const accessibilityTitleRegex = /accTitle[\t ]*:[\t ]*([^\n\r]*)/y;
-export const matchAccessibilityTitle = (text: string, startOffset: number) => {
+export const matchAccessibilityTitle: CustomPatternMatcherFunc = (text, startOffset) => {
   accessibilityTitleRegex.lastIndex = startOffset;
   return accessibilityTitleRegex.exec(text);
 };
@@ -20,7 +22,7 @@ export const matchAccessibilityTitle = (text: string, startOffset: number) => {
  * Matches a single title
  */
 export const titleRegex = /title(?:[\t ]+([^\n\r]*)|$)/my;
-export const matchTitle = (text: string, startOffset: number) => {
+export const matchTitle: CustomPatternMatcherFunc = (text, startOffset) => {
   titleRegex.lastIndex = startOffset;
   return titleRegex.exec(text);
 };
