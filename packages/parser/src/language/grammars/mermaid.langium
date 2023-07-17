@@ -1,10 +1,12 @@
 grammar Mermaid
+import '../info/info'
 import './pie'
 import './timeline'
 
 entry Mermaid:
   (
-    Pie |
-    Timeline
+    Info
+    | Pie
+    | Timeline
   )
 ;
