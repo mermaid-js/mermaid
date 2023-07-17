@@ -94,7 +94,6 @@
     "ajv": "^8.11.2",
     "chokidar": "^3.5.3",
     "concurrently": "^8.0.1",
-    "coveralls": "^3.1.1",
     "cpy-cli": "^4.2.0",
     "cspell": "^6.31.1",
     "csstree-validator": "^3.0.0",
