@@ -2,7 +2,7 @@ import { DefaultValueConverter, type CstNode, type GrammarAST, type ValueType } 
 
 import { CommonValueConverter } from '../../common/commonValueConverters.js';
 import { PieValueConverter } from '../../pie/pieValueConverter.js';
-import { TimelineValueConverter } from './timelineValueConverter.js';
+import { TimelineValueConverter } from '../../timeline/timelineValueConverter.js';
 
 export class MermaidValueConverter extends DefaultValueConverter {
   public override runConverter(

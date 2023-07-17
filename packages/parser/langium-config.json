@@ -18,7 +18,7 @@
     },
     {
       "id": "timeline",
-      "grammar": "src/language/grammars/timeline.langium",
+      "grammar": "src/language/timeline/timeline.langium",
       "fileExtensions": [".mmd"]
     }
   ],

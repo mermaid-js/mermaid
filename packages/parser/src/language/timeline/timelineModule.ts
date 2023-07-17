@@ -10,8 +10,8 @@ import {
 } from 'langium';
 
 import { MermaidLexer } from '../services/mermaidLexer.js';
-import { TimelineValueConverter } from '../services/value-converters/index.js';
-import { TimelineTokenBuilder } from '../services/token-builders/index.js';
+import { TimelineValueConverter } from './timelineValueConverter.js';
+import { TimelineTokenBuilder } from './timelineTokenBuilder.js';
 import { MermaidGeneratedSharedModule, TimelineGeneratedModule } from '../generated/module.js';
 
 /**

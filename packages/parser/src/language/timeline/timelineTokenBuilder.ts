@@ -1,12 +1,12 @@
 import type { TokenType } from 'chevrotain';
 import type { GrammarAST } from 'langium';
 
-import { CommonTokenBuilder } from '../../common/commonTokenBuilder.js';
+import { CommonTokenBuilder } from '../common/commonTokenBuilder.js';
 import {
   matchTimelineEventTitle,
   matchTimelinePeroidTitle,
   matchTimelineSectionTitle,
-} from '../matchers/timeline.js';
+} from './timelineMatcher.js';
 
 export class TimelineTokenBuilder extends CommonTokenBuilder {
   public override buildTerminalToken(terminal: GrammarAST.TerminalRule): TokenType {

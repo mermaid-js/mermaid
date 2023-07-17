@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DefaultValueConverter, type CstNode, type GrammarAST, type ValueType } from 'langium';
 
-import { CommonValueConverter } from '../../common/commonValueConverters.js';
+import { CommonValueConverter } from '../common/commonValueConverters.js';
 import {
   timelineEventRegex,
   timelinePeroidTitleRegex,
   timelineSectionTitleRegex,
-} from '../matchers/timeline.js';
+} from './timelineMatcher.js';
 
 export class TimelineValueConverter extends DefaultValueConverter {
   public override runConverter(

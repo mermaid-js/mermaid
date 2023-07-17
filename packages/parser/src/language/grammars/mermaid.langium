@@ -1,7 +1,7 @@
 grammar Mermaid
 import '../info/info'
 import '../pie/pie'
-import './timeline'
+import '../timeline/timeline'
 
 entry Mermaid:
   (
