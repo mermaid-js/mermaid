@@ -9,7 +9,7 @@ import {
 } from './timelineMatcher.js';
 
 export class TimelineValueConverter extends DefaultValueConverter {
-  public override runConverter(
+  protected override runConverter(
     rule: GrammarAST.AbstractRule,
     input: string,
     cstNode: CstNode

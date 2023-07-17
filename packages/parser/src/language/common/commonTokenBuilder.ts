@@ -4,7 +4,7 @@ import { DefaultTokenBuilder, type GrammarAST } from 'langium';
 import { matchAccessibilityDescr, matchAccessibilityTitle, matchTitle } from './commonMatcher.js';
 
 export class CommonTokenBuilder extends DefaultTokenBuilder {
-  override buildTerminalToken(terminal: GrammarAST.TerminalRule): TokenType {
+  protected override buildTerminalToken(terminal: GrammarAST.TerminalRule): TokenType {
     const tokenType = super.buildTerminalToken(terminal);
     switch (tokenType.name) {
       case 'ACC_DESCR': {

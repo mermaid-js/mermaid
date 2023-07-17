@@ -9,7 +9,7 @@ import {
 } from './timelineMatcher.js';
 
 export class TimelineTokenBuilder extends CommonTokenBuilder {
-  public override buildTerminalToken(terminal: GrammarAST.TerminalRule): TokenType {
+  protected override buildTerminalToken(terminal: GrammarAST.TerminalRule): TokenType {
     const tokenType = super.buildTerminalToken(terminal);
     return TimelineTokenBuilder.customBuildTokens(tokenType);
   }

@@ -5,7 +5,7 @@ import { PieValueConverter } from '../pie/pieValueConverter.js';
 import { TimelineValueConverter } from '../timeline/timelineValueConverter.js';
 
 export class MermaidValueConverter extends DefaultValueConverter {
-  public override runConverter(
+  protected override runConverter(
     rule: GrammarAST.AbstractRule,
     input: string,
     cstNode: CstNode

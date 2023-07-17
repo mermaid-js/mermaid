@@ -3,7 +3,7 @@ import { DefaultValueConverter, type CstNode, type GrammarAST, type ValueType } 
 import { CommonValueConverter } from '../common/commonValueConverters.js';
 
 export class PieValueConverter extends DefaultValueConverter {
-  public override runConverter(
+  protected override runConverter(
     rule: GrammarAST.AbstractRule,
     input: string,
     cstNode: CstNode

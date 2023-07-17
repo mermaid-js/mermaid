@@ -4,7 +4,7 @@ import type { GrammarAST } from 'langium';
 import { CommonTokenBuilder } from '../common/commonTokenBuilder.js';
 
 export class PieTokenBuilder extends CommonTokenBuilder {
-  public override buildTerminalToken(terminal: GrammarAST.TerminalRule): TokenType {
+  protected override buildTerminalToken(terminal: GrammarAST.TerminalRule): TokenType {
     const tokenType = super.buildTerminalToken(terminal);
     return PieTokenBuilder.customBuildTokens(tokenType);
   }

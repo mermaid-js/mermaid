@@ -4,7 +4,7 @@ import { CstNode, DefaultValueConverter, GrammarAST, ValueType } from 'langium';
 import { accessibilityDescrRegex, accessibilityTitleRegex, titleRegex } from './commonMatcher.js';
 
 export class CommonValueConverter extends DefaultValueConverter {
-  public override runConverter(
+  protected override runConverter(
     rule: GrammarAST.AbstractRule,
     input: string,
     cstNode: CstNode
