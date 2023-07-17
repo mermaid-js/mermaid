@@ -424,7 +424,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('20: should render class diagram with newlines in title', () => {
+  it('should render class diagram with newlines in title', () => {
     imgSnapshotTest(`
       classDiagram
         Animal <|-- \`Du\nck\`
@@ -442,7 +442,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('21: should render class diagram with many newlines in title', () => {
+  it('should render class diagram with many newlines in title', () => {
     imgSnapshotTest(`
     classDiagram
       class \`This\nTitle\nHas\nMany\nNewlines\` {
@@ -456,7 +456,7 @@ describe('Class diagram', () => {
     `);
   });
 
-  it('22: should render with newlines in title and an annotation', () => {
+  it('should render with newlines in title and an annotation', () => {
     imgSnapshotTest(`
     classDiagram
       class \`This\nTitle\nHas\nMany\nNewlines\` {
@@ -471,7 +471,7 @@ describe('Class diagram', () => {
     `);
   });
 
-  it('23: should handle newline title in namespace', () => {
+  it('should handle newline title in namespace', () => {
     imgSnapshotTest(`
     classDiagram
       namespace testingNamespace {
