@@ -9,7 +9,6 @@ import {
   inject,
 } from 'langium';
 
-import { MermaidLexer } from '../services/mermaidLexer.js';
 import { MermaidValueConverter } from './mermaidValueConverter.js';
 import { MermiadTokenBuilder } from './mermaidTokenBuilder.js';
 import { MermaidGeneratedSharedModule, MermaidGeneratedModule } from '../generated/module.js';
@@ -19,7 +18,6 @@ import { MermaidGeneratedSharedModule, MermaidGeneratedModule } from '../generat
  */
 export type MermaidAddedServices = {
   parser: {
-    Lexer: MermaidLexer;
     TokenBuilder: MermiadTokenBuilder;
     ValueConverter: MermaidValueConverter;
   };
@@ -37,7 +35,6 @@ export type MermaidServices = LangiumServices & MermaidAddedServices;
 export const MermaidModule: Module<MermaidServices, PartialLangiumServices & MermaidAddedServices> =
   {
     parser: {
-      Lexer: (services) => new MermaidLexer(services),
       TokenBuilder: () => new MermiadTokenBuilder(),
       ValueConverter: () => new MermaidValueConverter(),
     },

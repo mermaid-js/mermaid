@@ -9,7 +9,6 @@ import {
   inject,
 } from 'langium';
 
-import { MermaidLexer } from '../services/mermaidLexer.js';
 import { PieValueConverter } from './pieValueConverter.js';
 import { PieTokenBuilder } from './pieTokenBuilder.js';
 import { MermaidGeneratedSharedModule, PieGeneratedModule } from '../generated/module.js';
@@ -19,7 +18,6 @@ import { MermaidGeneratedSharedModule, PieGeneratedModule } from '../generated/m
  */
 export type PieAddedServices = {
   parser: {
-    Lexer: MermaidLexer;
     TokenBuilder: PieTokenBuilder;
     ValueConverter: PieValueConverter;
   };
@@ -36,7 +34,6 @@ export type PieServices = LangiumServices & PieAddedServices;
  */
 export const PieModule: Module<PieServices, PartialLangiumServices & PieAddedServices> = {
   parser: {
-    Lexer: (services) => new MermaidLexer(services),
     TokenBuilder: () => new PieTokenBuilder(),
     ValueConverter: () => new PieValueConverter(),
   },

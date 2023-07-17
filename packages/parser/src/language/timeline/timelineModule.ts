@@ -9,7 +9,6 @@ import {
   inject,
 } from 'langium';
 
-import { MermaidLexer } from '../services/mermaidLexer.js';
 import { TimelineValueConverter } from './timelineValueConverter.js';
 import { TimelineTokenBuilder } from './timelineTokenBuilder.js';
 import { MermaidGeneratedSharedModule, TimelineGeneratedModule } from '../generated/module.js';
@@ -19,7 +18,6 @@ import { MermaidGeneratedSharedModule, TimelineGeneratedModule } from '../genera
  */
 export type TimelineAddedServices = {
   parser: {
-    Lexer: MermaidLexer;
     TokenBuilder: TimelineTokenBuilder;
     ValueConverter: TimelineValueConverter;
   };
@@ -39,7 +37,6 @@ export const TimelineModule: Module<
   PartialLangiumServices & TimelineAddedServices
 > = {
   parser: {
-    Lexer: (services) => new MermaidLexer(services),
     TokenBuilder: () => new TimelineTokenBuilder(),
     ValueConverter: () => new TimelineValueConverter(),
   },

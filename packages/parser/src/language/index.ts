@@ -7,4 +7,3 @@ export * from './info/index.js';
 export * from './pie/index.js';
 export * from './timeline/index.js';
 export * from './mermaid/index.js';
-export * from './services/index.js';
