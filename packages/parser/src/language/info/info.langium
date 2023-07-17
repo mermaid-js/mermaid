@@ -3,6 +3,8 @@ import "../common/common";
 
 entry Info:
   NEWLINE*
-  info='info'
+  info=INFO_KEYWORD
   NEWLINE*
 ;
+
+terminal INFO_KEYWORD: /info/;
