@@ -7,6 +7,9 @@ export const matchAccessibilityDescr = (text: string, startOffset: number) => {
   return accessibilityDescrRegex.exec(text);
 };
 
+/**
+ * Matches single line accessible title
+ */
 export const accessibilityTitleRegex = /accTitle[\t ]*:[\t ]*([^\n\r]*)/y;
 export const matchAccessibilityTitle = (text: string, startOffset: number) => {
   accessibilityTitleRegex.lastIndex = startOffset;

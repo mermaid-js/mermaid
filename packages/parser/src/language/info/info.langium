@@ -1,5 +1,5 @@
 grammar Info
-import '../grammars/common';
+import "../common/common";
 
 entry Info:
   NEWLINE*

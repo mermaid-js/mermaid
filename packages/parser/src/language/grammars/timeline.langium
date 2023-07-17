@@ -1,5 +1,5 @@
 grammar Timeline
-import './common'
+import "../common/common";
 
 entry Timeline:
   NEWLINE*

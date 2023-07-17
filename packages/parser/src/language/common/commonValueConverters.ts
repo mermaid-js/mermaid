@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { CstNode, DefaultValueConverter, GrammarAST, ValueType } from 'langium';
 
-import {
-  accessibilityDescrRegex,
-  accessibilityTitleRegex,
-  titleRegex,
-} from '../matchers/common.js';
+import { accessibilityDescrRegex, accessibilityTitleRegex, titleRegex } from './commonMatcher.js';
 
 export class CommonValueConverter extends DefaultValueConverter {
   public override runConverter(

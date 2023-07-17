@@ -1,7 +1,7 @@
 import type { TokenType } from 'chevrotain';
 import type { GrammarAST } from 'langium';
 
-import { CommonTokenBuilder } from './commonTokenBuilder.js';
+import { CommonTokenBuilder } from '../../common/commonTokenBuilder.js';
 import {
   matchTimelineEventTitle,
   matchTimelinePeroidTitle,

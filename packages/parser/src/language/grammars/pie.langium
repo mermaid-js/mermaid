@@ -1,5 +1,5 @@
 grammar Pie
-import "./common";
+import "../common/common";
 
 entry Pie:
   NEWLINE*

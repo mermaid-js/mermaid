@@ -1,6 +1,6 @@
 import { DefaultValueConverter, type CstNode, type GrammarAST, type ValueType } from 'langium';
 
-import { CommonValueConverter } from './commonValueConverters.js';
+import { CommonValueConverter } from '../../common/commonValueConverters.js';
 import { PieValueConverter } from './pieValueConverter.js';
 import { TimelineValueConverter } from './timelineValueConverter.js';
 
