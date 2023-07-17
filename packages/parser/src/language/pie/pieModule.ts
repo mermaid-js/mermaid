@@ -10,8 +10,8 @@ import {
 } from 'langium';
 
 import { MermaidLexer } from '../services/mermaidLexer.js';
-import { PieValueConverter } from '../services/value-converters/index.js';
-import { PieTokenBuilder } from '../services/token-builders/index.js';
+import { PieValueConverter } from './pieValueConverter.js';
+import { PieTokenBuilder } from './pieTokenBuilder.js';
 import { MermaidGeneratedSharedModule, PieGeneratedModule } from '../generated/module.js';
 
 /**

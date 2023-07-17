@@ -13,7 +13,7 @@
     },
     {
       "id": "pie",
-      "grammar": "src/language/grammars/pie.langium",
+      "grammar": "src/language/pie/pie.langium",
       "fileExtensions": [".mmd"]
     },
     {

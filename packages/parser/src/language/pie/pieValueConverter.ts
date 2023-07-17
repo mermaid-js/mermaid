@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DefaultValueConverter, type CstNode, type GrammarAST, type ValueType } from 'langium';
 
-import { CommonValueConverter } from '../../common/commonValueConverters.js';
+import { CommonValueConverter } from '../common/commonValueConverters.js';
 
 export class PieValueConverter extends DefaultValueConverter {
   public override runConverter(
@@ -44,4 +43,3 @@ export class PieValueConverter extends DefaultValueConverter {
     return null;
   }
 }
-/* eslint-enable @typescript-eslint/no-non-null-assertion */

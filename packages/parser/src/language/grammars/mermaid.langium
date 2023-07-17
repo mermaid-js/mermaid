@@ -1,6 +1,6 @@
 grammar Mermaid
 import '../info/info'
-import './pie'
+import '../pie/pie'
 import './timeline'
 
 entry Mermaid:

@@ -1,7 +1,7 @@
 import { DefaultValueConverter, type CstNode, type GrammarAST, type ValueType } from 'langium';
 
 import { CommonValueConverter } from '../../common/commonValueConverters.js';
-import { PieValueConverter } from './pieValueConverter.js';
+import { PieValueConverter } from '../../pie/pieValueConverter.js';
 import { TimelineValueConverter } from './timelineValueConverter.js';
 
 export class MermaidValueConverter extends DefaultValueConverter {
