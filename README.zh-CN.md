@@ -322,7 +322,7 @@ Rel(SystemC, customerA, "Sends e-mails to")
 npm publish
 ```
 
-以上的命令会将文件打包到 `dist` 目录并发布至 npmjs.org.
+以上的命令会将文件打包到 `dist` 目录并发布至 <https://www.npmjs.com>.
 
 ## 相关项目
 
