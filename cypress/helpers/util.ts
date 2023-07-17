@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Buffer } from 'buffer';
 import type { MermaidConfig } from '../../packages/mermaid/src/config.type.js';
 
 type CypressConfig = {
@@ -13,7 +15,7 @@ interface CodeObject {
 }
 
 const utf8ToB64 = (str: string): string => {
-  return window.btoa(decodeURIComponent(encodeURIComponent(str)));
+  return Buffer.from(decodeURIComponent(encodeURIComponent(str))).toString('base64');
 };
 
 const batchId: string = 'mermaid-batch-' + Cypress.env('CYPRESS_COMMIT') || Date.now().toString();
