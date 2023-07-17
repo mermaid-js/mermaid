@@ -10,8 +10,8 @@ import {
 } from 'langium';
 
 import { MermaidLexer } from '../services/mermaidLexer.js';
-import { MermaidValueConverter } from '../services/value-converters/index.js';
-import { MermiadTokenBuilder } from '../services/token-builders/index.js';
+import { MermaidValueConverter } from './mermaidValueConverter.js';
+import { MermiadTokenBuilder } from './mermaidTokenBuilder.js';
 import { MermaidGeneratedSharedModule, MermaidGeneratedModule } from '../generated/module.js';
 
 /**
