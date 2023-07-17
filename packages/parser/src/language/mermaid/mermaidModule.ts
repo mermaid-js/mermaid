@@ -12,12 +12,14 @@ import {
 import { MermaidValueConverter } from './mermaidValueConverter.js';
 import { MermiadTokenBuilder } from './mermaidTokenBuilder.js';
 import { MermaidGeneratedSharedModule, MermaidGeneratedModule } from '../generated/module.js';
+import { CommonLexer } from '../common/commonLexer.js';
 
 /**
  * Declaration of `Mermaid` services.
  */
 export type MermaidAddedServices = {
   parser: {
+    Lexer: CommonLexer;
     TokenBuilder: MermiadTokenBuilder;
     ValueConverter: MermaidValueConverter;
   };
@@ -35,6 +37,7 @@ export type MermaidServices = LangiumServices & MermaidAddedServices;
 export const MermaidModule: Module<MermaidServices, PartialLangiumServices & MermaidAddedServices> =
   {
     parser: {
+      Lexer: (services) => new CommonLexer(services),
       TokenBuilder: () => new MermiadTokenBuilder(),
       ValueConverter: () => new MermaidValueConverter(),
     },

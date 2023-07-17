@@ -10,14 +10,31 @@ import {
 } from 'langium';
 
 import { MermaidGeneratedSharedModule, InfoGeneratedModule } from '../generated/module.js';
+import { CommonLexer } from '../common/commonLexer.js';
 
-export type InfoServices = LangiumServices;
+/**
+ * Declaration of `Info` services.
+ */
+export type InfoAddedServices = {
+  parser: {
+    Lexer: CommonLexer;
+  };
+};
+
+/**
+ * Union of Langium default services and `Info` services.
+ */
+export type InfoServices = LangiumServices & InfoAddedServices;
 
 /**
  * Dependency injection module that overrides Langium default services and
  * contributes the declared `Info` services.
  */
-export const InfoModule: Module<InfoServices, PartialLangiumServices> = {};
+export const InfoModule: Module<InfoServices, PartialLangiumServices & InfoAddedServices> = {
+  parser: {
+    Lexer: (services) => new CommonLexer(services),
+  },
+};
 
 /**
  * Create the full set of services required by Langium.

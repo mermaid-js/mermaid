@@ -12,12 +12,14 @@ import {
 import { TimelineValueConverter } from './timelineValueConverter.js';
 import { TimelineTokenBuilder } from './timelineTokenBuilder.js';
 import { MermaidGeneratedSharedModule, TimelineGeneratedModule } from '../generated/module.js';
+import { CommonLexer } from '../common/commonLexer.js';
 
 /**
  * Declaration of `Timeline` services.
  */
 export type TimelineAddedServices = {
   parser: {
+    Lexer: CommonLexer;
     TokenBuilder: TimelineTokenBuilder;
     ValueConverter: TimelineValueConverter;
   };
@@ -37,6 +39,7 @@ export const TimelineModule: Module<
   PartialLangiumServices & TimelineAddedServices
 > = {
   parser: {
+    Lexer: (services) => new CommonLexer(services),
     TokenBuilder: () => new TimelineTokenBuilder(),
     ValueConverter: () => new TimelineValueConverter(),
   },

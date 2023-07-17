@@ -12,12 +12,14 @@ import {
 import { PieValueConverter } from './pieValueConverter.js';
 import { PieTokenBuilder } from './pieTokenBuilder.js';
 import { MermaidGeneratedSharedModule, PieGeneratedModule } from '../generated/module.js';
+import { CommonLexer } from '../common/commonLexer.js';
 
 /**
  * Declaration of `Pie` services.
  */
 export type PieAddedServices = {
   parser: {
+    Lexer: CommonLexer;
     TokenBuilder: PieTokenBuilder;
     ValueConverter: PieValueConverter;
   };
@@ -34,6 +36,7 @@ export type PieServices = LangiumServices & PieAddedServices;
  */
 export const PieModule: Module<PieServices, PartialLangiumServices & PieAddedServices> = {
   parser: {
+    Lexer: (services) => new CommonLexer(services),
     TokenBuilder: () => new PieTokenBuilder(),
     ValueConverter: () => new PieValueConverter(),
   },
