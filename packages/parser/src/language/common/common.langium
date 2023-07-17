@@ -16,5 +16,3 @@ hidden terminal SINGLE_LINE_COMMENT: /%%[^\n\r]*\s*/;
 terminal ACC_DESCR: /accDescr/;
 terminal ACC_TITLE: /accTitle/;
 terminal TITLE: /title/;
-
-terminal NUMBER returns number: /(0|[1-9][0-9]*)(\.[0-9]+)?/;
