@@ -22,7 +22,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
       reportsDirectory: './coverage/vitest',
-      exclude: [...defaultExclude, '**/tests/**', '**/__mocks__/**', '**/generated/'],
+      exclude: [...defaultExclude, './tests/**', '**/__mocks__/**', '**/generated/'],
     },
   },
   build: {
