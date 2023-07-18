@@ -17,7 +17,7 @@ services:
       - 9000:9000
       - 3333:3333
   cypress:
-    image: cypress/included:12.16.0
+    image: cypress/included:12.17.1
     stdin_open: true
     tty: true
     working_dir: /mermaid
