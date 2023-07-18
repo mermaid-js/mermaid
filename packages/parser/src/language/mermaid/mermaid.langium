@@ -1,7 +1,7 @@
 grammar Mermaid
-import '../info/info'
-import '../pie/pie'
-import '../timeline/timeline'
+import "../info/info";
+import "../pie/pie";
+import "../timeline/timeline";
 
 entry Mermaid:
   (
