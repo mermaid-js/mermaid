@@ -22,7 +22,7 @@ describe('accTitle', () => {
       expect(result.lexerErrors).toHaveLength(0);
 
       const value = result.value;
-      expect(value.accTitle).toBeUndefined();
+      expect(value.accTitle).toBe('');
     });
 
     it.each([
@@ -110,7 +110,7 @@ describe('accTitle', () => {
         expect(result.lexerErrors).toHaveLength(0);
 
         const value = result.value;
-        expect(value.accTitle).toBeUndefined();
+        expect(value.accTitle).toBe('');
       });
 
       it('should handle regular accTitle after regular accTitle', () => {

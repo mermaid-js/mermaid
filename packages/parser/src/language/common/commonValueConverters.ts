@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { CstNode, DefaultValueConverter, GrammarAST, ValueType } from 'langium';
+import { type CstNode, DefaultValueConverter, type GrammarAST, type ValueType } from 'langium';
 
 import { accessibilityDescrRegex, accessibilityTitleRegex, titleRegex } from './commonMatcher.js';
 
@@ -51,22 +50,18 @@ export class CommonValueConverter extends DefaultValueConverter {
       if (match !== null) {
         // single line title, accTitle, accDescr
         if (match[1] !== undefined) {
-          const result = match[1].trim().replaceAll(/[\t ]{2,}/gm, ' ');
-          return result || undefined!;
+          return match[1].trim().replaceAll(/[\t ]{2,}/gm, ' ');
         }
-        // multi line accDescr
+        // empty title and multi line accDescr
         else if (match[2] !== undefined) {
-          const result = match[2]
+          return match[2]
             .replaceAll(/^\s*/gm, '')
             .replaceAll(/\s+$/gm, '')
             .replaceAll(/[\t ]{2,}/gm, ' ')
             .replaceAll(/[\n\r]{2,}/gm, '\n');
-          return result || undefined!;
         }
-        return undefined!;
       }
     }
     return null;
   }
 }
-/* eslint-enable @typescript-eslint/no-non-null-assertion */

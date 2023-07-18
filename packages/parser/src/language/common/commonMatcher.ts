@@ -21,7 +21,7 @@ export const matchAccessibilityTitle: CustomPatternMatcherFunc = (text, startOff
 /**
  * Matches a single title
  */
-export const titleRegex = /title(?:[\t ]+([^\n\r]*)|$)/my;
+export const titleRegex = /title([\t ]+([^\n\r]*)|)/y;
 export const matchTitle: CustomPatternMatcherFunc = (text, startOffset) => {
   titleRegex.lastIndex = startOffset;
   return titleRegex.exec(text);

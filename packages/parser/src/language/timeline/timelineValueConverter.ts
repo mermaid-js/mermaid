@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DefaultValueConverter, type CstNode, type GrammarAST, type ValueType } from 'langium';
 
 import { CommonValueConverter } from '../common/commonValueConverters.js';
@@ -62,10 +61,9 @@ export class TimelineValueConverter extends DefaultValueConverter {
         if (rule.name === 'EVENT') {
           result = result.replace('<br>', '\n');
         }
-        return result.replaceAll(/[\n\r]{2,}/gm, '\n') || undefined!;
+        return result.replaceAll(/[\n\r]{2,}/gm, '\n');
       }
     }
     return null;
   }
 }
-/* eslint-enable @typescript-eslint/no-non-null-assertion */

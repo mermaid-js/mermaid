@@ -22,7 +22,7 @@ describe('accDescr', () => {
       expect(result.lexerErrors).toHaveLength(0);
 
       const value = result.value;
-      expect(value.accDescr).toBeUndefined();
+      expect(value.accDescr).toBe('');
     });
 
     it.each([
@@ -86,7 +86,7 @@ describe('accDescr', () => {
       expect(result.lexerErrors).toHaveLength(0);
 
       const value = result.value;
-      expect(value.accDescr).toBeUndefined();
+      expect(value.accDescr).toBe('');
     });
 
     it.each([
@@ -205,7 +205,7 @@ describe('accDescr', () => {
         expect(result.lexerErrors).toHaveLength(0);
 
         const value = result.value;
-        expect(value.accDescr).toBeUndefined();
+        expect(value.accDescr).toBe('');
       });
 
       it('should handle multi line after single line accDescr', () => {
@@ -216,7 +216,7 @@ describe('accDescr', () => {
         expect(result.lexerErrors).toHaveLength(0);
 
         const value = result.value;
-        expect(value.accDescr).toBeUndefined();
+        expect(value.accDescr).toBe('');
       });
 
       it('should handle multi line after multi line accDescr', () => {
@@ -231,7 +231,7 @@ describe('accDescr', () => {
         expect(result.lexerErrors).toHaveLength(0);
 
         const value = result.value;
-        expect(value.accDescr).toBeUndefined();
+        expect(value.accDescr).toBe('');
       });
     });
   });

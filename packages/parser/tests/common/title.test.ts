@@ -22,7 +22,7 @@ describe('title', () => {
       expect(result.lexerErrors).toHaveLength(0);
 
       const value = result.value;
-      expect(value.title).toBeUndefined();
+      expect(value.title).toBe('');
     });
 
     it.each([
@@ -120,7 +120,7 @@ describe('title', () => {
         expect(result.lexerErrors).toHaveLength(0);
 
         const value = result.value;
-        expect(value.title).toBeUndefined();
+        expect(value.title).toBe('');
       });
 
       it('should handle regular title after regular title', () => {
