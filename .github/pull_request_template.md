@@ -13,6 +13,6 @@ Describe the way your implementation works or what design decisions you made if 
 Make sure you
 
 - [ ] :book: have read the [contribution guidelines](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md)
-- [ ] :computer: have added unit/e2e tests (if appropriate)
-- [ ] :notebook: have added documentation (if appropriate)
+- [ ] :computer: have added necessary unit/e2e tests.
+- [ ] :notebook: have added documentation. Make sure `MERMAID_RELEASE_VERSION` is used for all new features.
 - [ ] :bookmark: targeted `develop` branch
