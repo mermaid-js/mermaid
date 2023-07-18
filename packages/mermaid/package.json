@@ -34,6 +34,7 @@
     "docs:serve": "pnpm docs:build:vitepress && vitepress serve src/vitepress",
     "docs:spellcheck": "cspell --config ../../cSpell.json \"src/docs/**/*.md\"",
     "docs:release-version": "ts-node-esm scripts/update-release-version.mts",
+    "docs:verify-version": "ts-node-esm scripts/update-release-version.mts --verify",
     "types:build-config": "ts-node-esm --transpileOnly scripts/create-types-from-json-schema.mts",
     "types:verify-config": "ts-node-esm scripts/create-types-from-json-schema.mts --verify",
     "release": "pnpm build",

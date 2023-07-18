@@ -15,19 +15,38 @@ import {
 } from '../src/docs.mjs';
 import { writeFile } from 'fs/promises';
 
+const verifyOnly: boolean = process.argv.includes('--verify');
+const versionPlaceholder = '<MERMAID_RELEASE_VERSION>';
+
 const main = async () => {
   const sourceDirGlob = posix.join('.', SOURCE_DOCS_DIR, '**');
   const mdFileGlobs = getGlobs([posix.join(sourceDirGlob, '*.md')]);
   mdFileGlobs.push('!**/community/development.md');
   const mdFiles = await getFilesFromGlobs(mdFileGlobs);
   mdFiles.sort();
+  const mdFilesWithPlaceholder: string[] = [];
   for (const mdFile of mdFiles) {
     const content = readSyncedUTF8file(mdFile);
-    const updatedContent = content.replace(/<MERMAID_RELEASE_VERSION>/g, MERMAID_RELEASE_VERSION);
-    if (content !== updatedContent) {
-      await writeFile(mdFile, updatedContent);
-      console.log(`Updated MERMAID_RELEASE_VERSION in ${mdFile}`);
+    if (content.includes(versionPlaceholder)) {
+      mdFilesWithPlaceholder.push(mdFile);
     }
+  }
+
+  if (mdFilesWithPlaceholder.length === 0) {
+    return;
+  }
+
+  if (verifyOnly) {
+    console.log(
+      `${mdFilesWithPlaceholder.length} file(s) were found with the placeholder ${versionPlaceholder}. Run \`pnpm --filter mermaid docs:release-version\` to update them.`
+    );
+    process.exit(1);
+  }
+
+  for (const mdFile of mdFilesWithPlaceholder) {
+    const content = readSyncedUTF8file(mdFile);
+    const newContent = content.replace(versionPlaceholder, MERMAID_RELEASE_VERSION);
+    await writeFile(mdFile, newContent);
   }
 };
 
