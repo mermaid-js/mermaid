@@ -1455,6 +1455,7 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
       - axisFormat
       - useMaxWidth
       - topAxis
+      - weekday
     properties:
       titleTopMargin:
         $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
@@ -1544,6 +1545,20 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         default: ''
         # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
         tsType: 'string | "compact"'
+      weekday:
+        description: |
+          On which day a week-based interval should start
+        type: string
+        tsType: '"monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday"'
+        enum:
+          - monday
+          - tuesday
+          - wednesday
+          - thursday
+          - friday
+          - saturday
+          - sunday
+        default: sunday
 
   SequenceDiagramConfig:
     title: Sequence Diagram Config
