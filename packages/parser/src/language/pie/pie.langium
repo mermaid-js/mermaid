@@ -3,9 +3,12 @@ import "../common/common";
 
 entry Pie:
   NEWLINE*
-  PIE_KEYWORD showData?=PIE_SHOWDATA? NEWLINE*
-  TitleAndAccessibilities?
-  sections+=PieSection*
+  PIE_KEYWORD showData?=PIE_SHOWDATA?
+  (
+    NEWLINE* TitleAndAccessibilities sections+=PieSection*
+    | NEWLINE+ sections+=PieSection*
+    | NEWLINE*
+  )
 ;
 
 PieSection:

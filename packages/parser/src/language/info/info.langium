@@ -7,4 +7,4 @@ entry Info:
   TitleAndAccessibilities?
 ;
 
-terminal INFO_KEYWORD: /info/;
+terminal INFO_KEYWORD: /info(?!\S)/;
