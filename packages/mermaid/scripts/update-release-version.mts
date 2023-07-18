@@ -12,7 +12,7 @@ import {
   SOURCE_DOCS_DIR,
   readSyncedUTF8file,
   MERMAID_RELEASE_VERSION,
-} from '../src/docs.mjs';
+} from './docs.mjs';
 import { writeFile } from 'fs/promises';
 
 const verifyOnly: boolean = process.argv.includes('--verify');
