@@ -6,10 +6,10 @@ import { PieTokenBuilder } from '../pie/pieTokenBuilder.js';
 import { TimelineTokenBuilder } from '../timeline/timelineTokenBuilder.js';
 
 export class MermiadTokenBuilder extends CommonTokenBuilder {
-  protected override buildTerminalToken(terminal: GrammarAST.TerminalRule): TokenType {
-    let tokenType: TokenType = super.buildTerminalToken(terminal);
-    tokenType = TimelineTokenBuilder.customBuildTokens(tokenType);
-    return tokenType;
+  protected override buildTerminalTokens(rules: Stream<GrammarAST.AbstractRule>): TokenType[] {
+    let tokenTypes: TokenType[] = super.buildTerminalTokens(rules);
+    tokenTypes = TimelineTokenBuilder.customBuildTerminalTokens(tokenTypes);
+    return tokenTypes;
   }
 
   protected override buildKeywordTokens(
