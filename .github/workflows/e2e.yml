@@ -45,6 +45,7 @@ jobs:
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           VITEST_COVERAGE: true
+          CYPRESS_COMMIT: ${{ github.sha }}
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v3
         # Run step only pushes to develop and pull_requests
