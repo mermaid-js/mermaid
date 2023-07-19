@@ -11,7 +11,8 @@ import {
 
 import { MermaidGeneratedSharedModule, InfoGeneratedModule } from '../generated/module.js';
 import { CommonLexer } from '../common/commonLexer.js';
-import { CommonTokenBuilder } from '../index.js';
+import { CommonTokenBuilder } from '../common/commonTokenBuilder.js';
+import { CommonValueConverter } from '../common/commonValueConverters.js';
 
 /**
  * Declaration of `Info` services.
@@ -36,6 +37,7 @@ export const InfoModule: Module<InfoServices, PartialLangiumServices & InfoAdded
   parser: {
     Lexer: (services) => new CommonLexer(services),
     TokenBuilder: () => new CommonTokenBuilder(),
+    ValueConverter: () => new CommonValueConverter(),
   },
 };
 
