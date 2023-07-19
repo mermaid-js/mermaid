@@ -414,6 +414,28 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should render a gantt diagram with tick is 1 week, with the day starting on monday', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title A Gantt Diagram
+        dateFormat   YYYY-MM-DD
+        axisFormat   %m-%d
+        tickInterval 1week
+        weekday      monday
+        excludes     weekends
+
+        section Section
+        A task           : a1, 2022-10-01, 30d
+        Another task     : after a1, 20d
+        section Another
+        Task in sec      : 2022-10-20, 12d
+        another task     : 24d
+      `,
+      {}
+    );
+  });
+
   it('should render a gantt diagram with tick is 1 month', () => {
     imgSnapshotTest(
       `
