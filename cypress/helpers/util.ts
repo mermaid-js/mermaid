@@ -6,7 +6,7 @@ interface CypressConfig {
   listUrl?: boolean;
   listId?: string;
   name?: string;
-};
+}
 type CypressMermaidConfig = MermaidConfig & CypressConfig;
 
 interface CodeObject {
