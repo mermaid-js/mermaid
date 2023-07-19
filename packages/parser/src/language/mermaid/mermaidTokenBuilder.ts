@@ -1,7 +1,8 @@
 import type { TokenType } from 'chevrotain';
 import type { GrammarAST, Stream, TokenBuilderOptions } from 'langium';
 import { CommonTokenBuilder } from '../common/commonTokenBuilder.js';
-import { InfoTokenBuilder } from '../index.js';
+import { InfoTokenBuilder } from '../info/infoTokenBuilder.js';
+import { PieTokenBuilder } from '../pie/pieTokenBuilder.js';
 import { TimelineTokenBuilder } from '../timeline/timelineTokenBuilder.js';
 
 export class MermiadTokenBuilder extends CommonTokenBuilder {
@@ -18,6 +19,7 @@ export class MermiadTokenBuilder extends CommonTokenBuilder {
   ): TokenType[] {
     let tokenTypes: TokenType[] = super.buildKeywordTokens(rules, terminalTokens, options);
     tokenTypes = InfoTokenBuilder.customBuildKeywordTokens(tokenTypes);
+    tokenTypes = PieTokenBuilder.customBuildKeywordTokens(tokenTypes);
     return tokenTypes;
   }
 }

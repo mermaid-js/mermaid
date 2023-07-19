@@ -3,7 +3,7 @@ import "../common/common";
 
 entry Pie:
   NEWLINE*
-  PIE_KEYWORD showData?=PIE_SHOWDATA?
+  "pie" showData?="showData"?
   (
     NEWLINE* TitleAndAccessibilities sections+=PieSection*
     | NEWLINE+ sections+=PieSection+
@@ -16,7 +16,5 @@ PieSection:
   NEWLINE+
 ;
 
-terminal PIE_KEYWORD: /pie(?!\S)/;
-terminal PIE_SHOWDATA: /showData(?!\S)/;
 terminal PIE_SECTION_LABEL: /"[^"]+"/;
 terminal PIE_SECTION_VALUE returns number: /(0|[1-9][0-9]*)(\.[0-9]+)?/;
