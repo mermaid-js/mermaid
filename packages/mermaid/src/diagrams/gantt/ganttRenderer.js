@@ -13,7 +13,13 @@ import {
   timeMinute,
   timeHour,
   timeDay,
-  timeWeek,
+  timeMonday,
+  timeTuesday,
+  timeWednesday,
+  timeThursday,
+  timeFriday,
+  timeSaturday,
+  timeSunday,
   timeMonth,
 } from 'd3';
 import common from '../common/common.js';
@@ -22,6 +28,20 @@ import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 export const setConf = function () {
   log.debug('Something is calling, setConf, remove the call');
+};
+
+/**
+ * This will map any day of the week that can be set in the `weekday` option to
+ * the corresponding d3-time function that is used to calculate the ticks.
+ */
+const mapWeekdayToTimeFunction = {
+  monday: timeMonday,
+  tuesday: timeTuesday,
+  wednesday: timeWednesday,
+  thursday: timeThursday,
+  friday: timeFriday,
+  saturday: timeSaturday,
+  sunday: timeSunday,
 };
 
 /**
@@ -561,6 +581,8 @@ export const draw = function (text, id, version, diagObj) {
     if (resultTickInterval !== null) {
       const every = resultTickInterval[1];
       const interval = resultTickInterval[2];
+      const weekday = diagObj.db.getWeekday() || conf.weekday;
+
       switch (interval) {
         case 'minute':
           bottomXAxis.ticks(timeMinute.every(every));
@@ -572,7 +594,7 @@ export const draw = function (text, id, version, diagObj) {
           bottomXAxis.ticks(timeDay.every(every));
           break;
         case 'week':
-          bottomXAxis.ticks(timeWeek.every(every));
+          bottomXAxis.ticks(mapWeekdayToTimeFunction[weekday].every(every));
           break;
         case 'month':
           bottomXAxis.ticks(timeMonth.every(every));
@@ -600,6 +622,8 @@ export const draw = function (text, id, version, diagObj) {
       if (resultTickInterval !== null) {
         const every = resultTickInterval[1];
         const interval = resultTickInterval[2];
+        const weekday = diagObj.db.getWeekday() || conf.weekday;
+
         switch (interval) {
           case 'minute':
             topXAxis.ticks(timeMinute.every(every));
@@ -611,7 +635,7 @@ export const draw = function (text, id, version, diagObj) {
             topXAxis.ticks(timeDay.every(every));
             break;
           case 'week':
-            topXAxis.ticks(timeWeek.every(every));
+            topXAxis.ticks(mapWeekdayToTimeFunction[weekday].every(every));
             break;
           case 'month':
             topXAxis.ticks(timeMonth.every(every));
