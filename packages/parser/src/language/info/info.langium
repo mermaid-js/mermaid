@@ -3,11 +3,9 @@ import "../common/common";
 
 entry Info:
   NEWLINE*
-  INFO_KEYWORD
+  'info'
   (
     NEWLINE* TitleAndAccessibilities
     | NEWLINE*
   )
 ;
-
-terminal INFO_KEYWORD: /info(?!\S)/;
