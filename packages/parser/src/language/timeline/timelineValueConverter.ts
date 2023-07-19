@@ -58,7 +58,11 @@ export class TimelineValueConverter extends DefaultValueConverter {
       const match = regex.exec(input);
       if (match !== null && match[1] !== undefined) {
         let result = match[1].trim().replaceAll(/[\t ]{2,}/gm, ' ');
-        if (rule.name === 'EVENT') {
+        if (
+          rule.name === 'TIMELINE_SECTION_TITLE' ||
+          rule.name === 'TIMELINE_PERIOD_TITLE' ||
+          rule.name === 'TIMELINE_PERIOD_EVENT'
+        ) {
           result = result.replace('<br>', '\n');
         }
         return result.replaceAll(/[\n\r]{2,}/gm, '\n');
