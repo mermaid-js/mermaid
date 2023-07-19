@@ -20,6 +20,7 @@ export class MermiadTokenBuilder extends CommonTokenBuilder {
     let tokenTypes: TokenType[] = super.buildKeywordTokens(rules, terminalTokens, options);
     tokenTypes = InfoTokenBuilder.customBuildKeywordTokens(tokenTypes);
     tokenTypes = PieTokenBuilder.customBuildKeywordTokens(tokenTypes);
+    tokenTypes = TimelineTokenBuilder.customBuildKeywordTokens(tokenTypes);
     return tokenTypes;
   }
 }

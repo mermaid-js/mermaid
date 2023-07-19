@@ -1,5 +1,5 @@
 import type { TokenType } from 'chevrotain';
-import type { GrammarAST } from 'langium';
+import type { GrammarAST, Stream, TokenBuilderOptions } from 'langium';
 
 import { CommonTokenBuilder } from '../common/commonTokenBuilder.js';
 import {
@@ -34,5 +34,23 @@ export class TimelineTokenBuilder extends CommonTokenBuilder {
       }
     }
     return tokenType;
+  }
+
+  protected override buildKeywordTokens(
+    rules: Stream<GrammarAST.AbstractRule>,
+    terminalTokens: TokenType[],
+    options?: TokenBuilderOptions
+  ): TokenType[] {
+    const tokenTypes: TokenType[] = super.buildKeywordTokens(rules, terminalTokens, options);
+    return TimelineTokenBuilder.customBuildKeywordTokens(tokenTypes);
+  }
+
+  public static customBuildKeywordTokens(tokenTypes: TokenType[]): TokenType[] {
+    tokenTypes.forEach((token) => {
+      if (token.name === 'timeilne' && token.PATTERN !== undefined) {
+        token.PATTERN = new RegExp(token.PATTERN.toString() + '(?!\\S)');
+      }
+    });
+    return tokenTypes;
   }
 }
