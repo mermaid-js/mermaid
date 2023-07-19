@@ -13,6 +13,6 @@ hidden terminal MULTI_LINE_COMMENT: /%%\*[\s\S]*?\*%%\s*/;
 hidden terminal DIRECTIVE: /%%{[\s\S]*?}%%\s*/;
 hidden terminal SINGLE_LINE_COMMENT: /%%[^\n\r]*\s*/;
 
-terminal ACC_DESCR: /accDescr/;
-terminal ACC_TITLE: /accTitle/;
-terminal TITLE: /title/;
+terminal ACC_DESCR: /accessibility-description/;
+terminal ACC_TITLE: /accessibility-title/;
+terminal TITLE: /diagram-title/;
