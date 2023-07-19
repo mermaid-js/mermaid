@@ -2,7 +2,7 @@
 import { Buffer } from 'buffer';
 import type { MermaidConfig } from '../../packages/mermaid/src/config.type.js';
 
-type CypressConfig = {
+interface CypressConfig {
   listUrl?: boolean;
   listId?: string;
   name?: string;
