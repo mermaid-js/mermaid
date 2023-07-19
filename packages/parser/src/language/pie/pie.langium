@@ -6,7 +6,7 @@ entry Pie:
   PIE_KEYWORD showData?=PIE_SHOWDATA?
   (
     NEWLINE* TitleAndAccessibilities sections+=PieSection*
-    | NEWLINE+ sections+=PieSection*
+    | NEWLINE+ sections+=PieSection+
     | NEWLINE*
   )
 ;
