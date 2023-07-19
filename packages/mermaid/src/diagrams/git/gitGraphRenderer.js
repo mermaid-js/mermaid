@@ -253,28 +253,17 @@ const drawCommits = (svg, commits, modifyGraph) => {
           .attr('height', bbox.height + 2 * py);
 
         if (dir === 'TB') {
-          labelBkg
-            .attr('x', x - (bbox.width + 4 * px + 5))
-            .attr('y', y - 12);
-          text
-            .attr('x', x - (bbox.width + 4 * px))
-            .attr('y', y + bbox.height - 12);
+          labelBkg.attr('x', x - (bbox.width + 4 * px + 5)).attr('y', y - 12);
+          text.attr('x', x - (bbox.width + 4 * px)).attr('y', y + bbox.height - 12);
         }
 
         if (dir !== 'TB') {
           text.attr('x', pos + 10 - bbox.width / 2);
         }
         if (gitGraphConfig.rotateCommitLabel) {
-          if (dir === 'TB')
-          {
-            text.attr(
-              'transform',
-              'rotate(' + -45 + ', ' + x + ', ' + y + ')'
-            );
-            labelBkg.attr(
-              'transform',
-              'rotate(' + -45 + ', ' + x + ', ' + y + ')'
-            );
+          if (dir === 'TB') {
+            text.attr('transform', 'rotate(' + -45 + ', ' + x + ', ' + y + ')');
+            labelBkg.attr('transform', 'rotate(' + -45 + ', ' + x + ', ' + y + ')');
           } else {
             let r_x = -7.5 - ((bbox.width + 10) / 25) * 9.5;
             let r_y = 10 + (bbox.width / 25) * 8.5;
@@ -316,13 +305,12 @@ const drawCommits = (svg, commits, modifyGraph) => {
           .attr('r', 1.5)
           .attr('class', 'tag-hole');
 
-        if (dir === 'TB')
-        {
+        if (dir === 'TB') {
           rect
             .attr('class', 'tag-label-bkg')
             .attr(
-            'points',
-            `
+              'points',
+              `
             ${x},${pos + py}
             ${x},${pos - py}
             ${x + 10},${pos - h2 - py}
@@ -330,15 +318,15 @@ const drawCommits = (svg, commits, modifyGraph) => {
             ${x + 10 + tagBbox.width + px},${pos + h2 + py}
             ${x + 10},${pos + h2 + py}`
             )
-            .attr('transform', 'translate(12,12) rotate(45, '+ x + ',' + pos +')');
+            .attr('transform', 'translate(12,12) rotate(45, ' + x + ',' + pos + ')');
           hole
-            .attr('cx', x + px/2)
+            .attr('cx', x + px / 2)
             .attr('cy', pos)
-            .attr('transform', 'translate(12,12) rotate(45, '+ x + ',' + pos +')');
+            .attr('transform', 'translate(12,12) rotate(45, ' + x + ',' + pos + ')');
           tag
-            .attr('x', x+5)
-            .attr('y', pos+3)
-            .attr('transform', 'translate(14,14) rotate(45, '+ x + ',' + pos +')');
+            .attr('x', x + 5)
+            .attr('y', pos + 3)
+            .attr('transform', 'translate(14,14) rotate(45, ' + x + ',' + pos + ')');
         }
       }
     }
@@ -429,19 +417,19 @@ const drawArrow = (svg, commit1, commit2, allCommits) => {
 
     if (dir === 'TB') {
       if (p1.x < p2.x) {
-        lineDef = `M ${p1.x} ${p1.y} L ${lineX - radius} ${p1.y} ${arc2} ${lineX} ${p1.y + offset} L ${
-          lineX
-        } ${p2.y - radius} ${arc} ${lineX + offset} ${p2.y} L ${p2.x} ${p2.y}`;
+        lineDef = `M ${p1.x} ${p1.y} L ${lineX - radius} ${p1.y} ${arc2} ${lineX} ${
+          p1.y + offset
+        } L ${lineX} ${p2.y - radius} ${arc} ${lineX + offset} ${p2.y} L ${p2.x} ${p2.y}`;
       } else {
-        lineDef = `M ${p1.x} ${p1.y} L ${lineX + radius} ${p1.y} ${arc} ${
-          lineX
-        } ${p1.y + offset} L ${lineX} ${p2.y - radius} ${arc2} ${lineX - offset} ${p2.y} L ${p2.x} ${p2.y}`;
+        lineDef = `M ${p1.x} ${p1.y} L ${lineX + radius} ${p1.y} ${arc} ${lineX} ${
+          p1.y + offset
+        } L ${lineX} ${p2.y - radius} ${arc2} ${lineX - offset} ${p2.y} L ${p2.x} ${p2.y}`;
       }
     } else {
       if (p1.y < p2.y) {
-        lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY - radius} ${arc} ${p1.x + offset} ${lineY} L ${
-          p2.x - radius
-        } ${lineY} ${arc2} ${p2.x} ${lineY + offset} L ${p2.x} ${p2.y}`;
+        lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY - radius} ${arc} ${
+          p1.x + offset
+        } ${lineY} L ${p2.x - radius} ${lineY} ${arc2} ${p2.x} ${lineY + offset} L ${p2.x} ${p2.y}`;
       } else {
         lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY + radius} ${arc2} ${
           p1.x + offset
@@ -449,8 +437,7 @@ const drawArrow = (svg, commit1, commit2, allCommits) => {
       }
     }
   } else {
-    if (dir === 'TB')
-    {
+    if (dir === 'TB') {
       if (p1.x < p2.x) {
         arc = 'A 20 20, 0, 0, 0,';
         arc2 = 'A 20 20, 0, 0, 1,';
@@ -460,9 +447,9 @@ const drawArrow = (svg, commit1, commit2, allCommits) => {
         // Figure out the color of the arrow,arrows going down take the color from the destination branch
         colorClassNum = branchPos[commit2.branch].index;
 
-        lineDef = `M ${p1.x} ${p1.y} L ${p2.x - radius} ${p1.y} ${arc2} ${p2.x} ${p1.y + offset} L ${
-          p2.x
-        } ${p2.y}`;
+        lineDef = `M ${p1.x} ${p1.y} L ${p2.x - radius} ${p1.y} ${arc2} ${p2.x} ${
+          p1.y + offset
+        } L ${p2.x} ${p2.y}`;
       }
       if (p1.x > p2.x) {
         arc = 'A 20 20, 0, 0, 0,';
@@ -472,16 +459,16 @@ const drawArrow = (svg, commit1, commit2, allCommits) => {
 
         // Arrows going up take the color from the source branch
         colorClassNum = branchPos[commit1.branch].index;
-        lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y-radius} ${arc2} ${p1.x-offset} ${p2.y} L ${
-          p2.x
-        } ${p2.y}`;
+        lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y - radius} ${arc2} ${p1.x - offset} ${
+          p2.y
+        } L ${p2.x} ${p2.y}`;
       }
 
       if (p1.x === p2.x) {
         colorClassNum = branchPos[commit1.branch].index;
-        lineDef = `M ${p1.x} ${p1.y} L ${p1.x + radius} ${p1.y} ${arc} ${p1.x + offset} ${p2.y + radius} L ${
-          p2.x
-        } ${p2.y}`;
+        lineDef = `M ${p1.x} ${p1.y} L ${p1.x + radius} ${p1.y} ${arc} ${p1.x + offset} ${
+          p2.y + radius
+        } L ${p2.x} ${p2.y}`;
       }
     } else {
       if (p1.y < p2.y) {
@@ -592,18 +579,8 @@ const drawBranches = (svg, branches) => {
         ')'
     );
     if (dir === 'TB') {
-      bkg
-        .attr('x', pos - bbox.width/2 - 10)
-        .attr('y', 0);
-      label
-        .attr(
-          'transform',
-          'translate(' +
-            (pos - bbox.width/2 - 5) +
-            ', ' +
-            (0) +
-            ')'
-        );
+      bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', 0);
+      label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + 0 + ')');
     }
     if (dir !== 'TB') {
       bkg.attr('transform', 'translate(' + -19 + ', ' + (pos - bbox.height / 2) + ')');
@@ -639,13 +616,11 @@ export const draw = function (txt, id, ver, diagObj) {
     let bbox = labelElement.getBBox();
 
     branchPos[branch.name] = { pos, index };
-    pos += 50 + (gitGraphConfig.rotateCommitLabel ? 40 : 0) + ((dir === 'TB') ? bbox.width/2 : 0);
+    pos += 50 + (gitGraphConfig.rotateCommitLabel ? 40 : 0) + (dir === 'TB' ? bbox.width / 2 : 0);
     label.remove();
     branchLabel.remove();
     g.remove();
   });
-
-  
 
   drawCommits(diagram, allCommitsDict, false);
   if (gitGraphConfig.showBranches) {
