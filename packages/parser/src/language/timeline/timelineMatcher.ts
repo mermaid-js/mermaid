@@ -19,10 +19,10 @@ export const matchTimelinePeroidTitle: CustomPatternMatcherFunc = (text, startOf
 };
 
 /**
- * Matches a timeline event
+ * Matches a timeline period event
  */
-export const timelineEventRegex = /([^\n\r:]+)/y;
-export const matchTimelineEventTitle: CustomPatternMatcherFunc = (text, startOffset) => {
+export const timelinePeriodEventRegex = /([^\n\r:]+)/y;
+export const matchTimelinePeriodEventTitle: CustomPatternMatcherFunc = (text, startOffset) => {
   timelinePeroidTitleRegex.lastIndex = startOffset;
   return timelinePeroidTitleRegex.exec(text);
 };

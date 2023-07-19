@@ -5,11 +5,14 @@ entry Timeline:
   NEWLINE*
   TIMELINE_KEYWORD
   (
-    NEWLINE* TitleAndAccessibilities
-    (sections+=TimelineSection* | periods+=TimelinePeriod*)
-    | NEWLINE+ (sections+=TimelineSection* | periods+=TimelinePeriod*)
+    NEWLINE* TitleAndAccessibilities TimelineSectionAndPeriod
+    | NEWLINE+ TimelineSectionAndPeriod
     | NEWLINE*
   )
+;
+
+fragment TimelineSectionAndPeriod:
+  sections+=TimelineSection* | periods+=TimelinePeriod*
 ;
 
 TimelineSection:
@@ -19,11 +22,11 @@ TimelineSection:
 
 TimelinePeriod:
   title=TIMELINE_PERIOD_TITLE NEWLINE*
-  (":" events+=(TIMELINE_EVENT | TIMELINE_PERIOD_TITLE) NEWLINE*)*
+  (":" events+=(TIMELINE_PERIOD_EVENT | TIMELINE_PERIOD_TITLE) NEWLINE*)*
 ;
 
 terminal TIMELINE_KEYWORD: /timeline(?!\S)/;
 terminal TIMELINE_SECTION_TITLE: /timeline-section/;
 // TODO: figue out how to prevent `TIMELINE_PERIOD_TITLE` from consuming `TIMELINE_EVENT`
-terminal TIMELINE_PERIOD_TITLE: /timeline-period/;
-terminal TIMELINE_EVENT: /timeline-event/;
+terminal TIMELINE_PERIOD_TITLE: /timeline-period-title/;
+terminal TIMELINE_PERIOD_EVENT: /timeline-period-event/;
