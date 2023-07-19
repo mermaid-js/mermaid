@@ -1,5 +1,5 @@
 import { line } from 'd3';
-import { DrawableElem, LinePlotData } from '../../Interfaces.js';
+import { DrawableElem, LinePlotData, XYChartThemeConfig } from '../../Interfaces.js';
 import { IAxis } from '../axis/index.js';
 import { XYChartConfig } from '../../../../../config.type.js';
 
@@ -8,7 +8,8 @@ export class LinePlot {
     private plotData: LinePlotData,
     private xAxis: IAxis,
     private yAxis: IAxis,
-    private orientation: XYChartConfig['chartOrientation']
+    private orientation: XYChartConfig['chartOrientation'],
+    private chartThemeConfig: XYChartThemeConfig
   ) {}
 
   getDrawableElement(): DrawableElem[] {

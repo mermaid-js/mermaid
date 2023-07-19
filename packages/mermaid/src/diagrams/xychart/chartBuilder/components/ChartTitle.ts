@@ -6,6 +6,7 @@ import {
   DrawableElem,
   Point,
   XYChartData,
+  XYChartThemeConfig,
 } from '../Interfaces.js';
 import {
   ITextDimensionCalculator,
@@ -18,7 +19,8 @@ export class ChartTitle implements ChartComponent {
   constructor(
     private textDimensionCalculator: ITextDimensionCalculator,
     private chartConfig: XYChartConfig,
-    private chartData: XYChartData
+    private chartData: XYChartData,
+    private chartThemeConfig: XYChartThemeConfig
   ) {
     this.boundingRect = {
       x: 0,
@@ -67,7 +69,7 @@ export class ChartTitle implements ChartComponent {
             horizontalPos: 'middle',
             x: this.boundingRect.x + this.boundingRect.width / 2,
             y: this.boundingRect.y + this.boundingRect.height / 2,
-            fill: this.chartConfig.titleFill,
+            fill: this.chartThemeConfig.xychartTitleColor,
             rotation: 0,
           },
         ],
@@ -79,8 +81,9 @@ export class ChartTitle implements ChartComponent {
 
 export function getChartTitleComponent(
   chartConfig: XYChartConfig,
-  chartData: XYChartData
+  chartData: XYChartData,
+  chartThemeConfig: XYChartThemeConfig
 ): ChartComponent {
   const textDimensionCalculator = new TextDimensionCalculatorWithFont(chartConfig.fontFamily);
-  return new ChartTitle(textDimensionCalculator, chartConfig, chartData);
+  return new ChartTitle(textDimensionCalculator, chartConfig, chartData, chartThemeConfig);
 }

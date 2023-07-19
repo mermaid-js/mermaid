@@ -1,6 +1,12 @@
 import { XYChartAxisConfig } from '../../../../../config.type.js';
 import { log } from '../../../../../logger.js';
-import { BoundingRect, Dimension, DrawableElem, Point } from '../../Interfaces.js';
+import {
+  BoundingRect,
+  Dimension,
+  DrawableElem,
+  Point,
+  XYChartAxisThemeConfig,
+} from '../../Interfaces.js';
 import { ITextDimensionCalculator } from '../../TextDimensionCalculator.js';
 import { AxisPosition, IAxis } from './index.js';
 
@@ -16,7 +22,8 @@ export abstract class BaseAxis implements IAxis {
   constructor(
     protected axisConfig: XYChartAxisConfig,
     protected title: string,
-    protected textDimensionCalculator: ITextDimensionCalculator
+    protected textDimensionCalculator: ITextDimensionCalculator,
+    protected axisThemeConfig: XYChartAxisThemeConfig
   ) {
     this.range = [0, 10];
     this.boundingRect = { x: 0, y: 0, width: 0, height: 0 };
@@ -164,7 +171,7 @@ export abstract class BaseAxis implements IAxis {
             this.axisConfig.lablePadding -
             this.axisConfig.tickLength,
           y: this.getScaleValue(tick),
-          fill: this.axisConfig.labelFill,
+          fill: this.axisThemeConfig.labelColor,
           fontSize: this.axisConfig.labelFontSize,
           rotation: 0,
           verticalPos: 'right',
@@ -181,7 +188,7 @@ export abstract class BaseAxis implements IAxis {
           path: `M ${x},${this.getScaleValue(tick)} L ${
             x - this.axisConfig.tickLength
           },${this.getScaleValue(tick)}`,
-          strokeFill: this.axisConfig.tickFill,
+          strokeFill: this.axisThemeConfig.tickColor,
           strokeWidth: this.axisConfig.tickWidth,
         })),
       });
@@ -195,7 +202,7 @@ export abstract class BaseAxis implements IAxis {
             text: this.title,
             x: this.boundingRect.x + this.axisConfig.titlePadding,
             y: this.range[0] + (this.range[1] - this.range[0]) / 2,
-            fill: this.axisConfig.titleFill,
+            fill: this.axisThemeConfig.titleColor,
             fontSize: this.axisConfig.titleFontSize,
             rotation: 270,
             verticalPos: 'center',
@@ -216,7 +223,7 @@ export abstract class BaseAxis implements IAxis {
           text: tick.toString(),
           x: this.getScaleValue(tick),
           y: this.boundingRect.y + this.axisConfig.lablePadding + this.axisConfig.tickLength,
-          fill: this.axisConfig.labelFill,
+          fill: this.axisThemeConfig.labelColor,
           fontSize: this.axisConfig.labelFontSize,
           rotation: 0,
           verticalPos: 'center',
@@ -233,7 +240,7 @@ export abstract class BaseAxis implements IAxis {
           path: `M ${this.getScaleValue(tick)},${y} L ${this.getScaleValue(tick)},${
             y + this.axisConfig.tickLength
           }`,
-          strokeFill: this.axisConfig.tickFill,
+          strokeFill: this.axisThemeConfig.tickColor,
           strokeWidth: this.axisConfig.tickWidth,
         })),
       });
@@ -247,7 +254,7 @@ export abstract class BaseAxis implements IAxis {
             text: this.title,
             x: this.range[0] + (this.range[1] - this.range[0]) / 2,
             y: this.boundingRect.y + this.boundingRect.height - this.axisConfig.titlePadding,
-            fill: this.axisConfig.titleFill,
+            fill: this.axisThemeConfig.titleColor,
             fontSize: this.axisConfig.titleFontSize,
             rotation: 0,
             verticalPos: 'center',
@@ -272,7 +279,7 @@ export abstract class BaseAxis implements IAxis {
             this.boundingRect.height -
             this.axisConfig.lablePadding -
             this.axisConfig.tickLength,
-          fill: this.axisConfig.labelFill,
+          fill: this.axisThemeConfig.labelColor,
           fontSize: this.axisConfig.labelFontSize,
           rotation: 0,
           verticalPos: 'center',
@@ -291,7 +298,7 @@ export abstract class BaseAxis implements IAxis {
           } L ${this.getScaleValue(tick)},${
             y + this.boundingRect.height - this.axisConfig.tickLength
           }`,
-          strokeFill: this.axisConfig.tickFill,
+          strokeFill: this.axisThemeConfig.tickColor,
           strokeWidth: this.axisConfig.tickWidth,
         })),
       });
@@ -305,7 +312,7 @@ export abstract class BaseAxis implements IAxis {
             text: this.title,
             x: this.range[0] + (this.range[1] - this.range[0]) / 2,
             y: this.boundingRect.y + this.axisConfig.titlePadding,
-            fill: this.axisConfig.titleFill,
+            fill: this.axisThemeConfig.titleColor,
             fontSize: this.axisConfig.titleFontSize,
             rotation: 0,
             verticalPos: 'center',

@@ -1,5 +1,5 @@
 import { log } from '../../../logger.js';
-import { DrawableElem, XYChartData, isBarPlot } from './Interfaces.js';
+import { DrawableElem, XYChartData, XYChartThemeConfig, isBarPlot } from './Interfaces.js';
 import { getChartTitleComponent } from './components/ChartTitle.js';
 import { ChartComponent } from './Interfaces.js';
 import { IAxis, getAxis } from './components/axis/index.js';
@@ -13,12 +13,34 @@ export class Orchestrator {
     xAxis: IAxis;
     yAxis: IAxis;
   };
-  constructor(private chartConfig: XYChartConfig, private chartData: XYChartData) {
+  constructor(
+    private chartConfig: XYChartConfig,
+    private chartData: XYChartData,
+    private chartThemeConfig: XYChartThemeConfig
+  ) {
     this.componentStore = {
-      title: getChartTitleComponent(chartConfig, chartData),
-      plot: getPlotComponent(chartConfig, chartData),
-      xAxis: getAxis(chartData.xAxis, chartConfig.xAxis, chartConfig.fontFamily),
-      yAxis: getAxis(chartData.yAxis, chartConfig.yAxis, chartConfig.fontFamily),
+      title: getChartTitleComponent(chartConfig, chartData, chartThemeConfig),
+      plot: getPlotComponent(chartConfig, chartData, chartThemeConfig),
+      xAxis: getAxis(
+        chartData.xAxis,
+        chartConfig.xAxis,
+        {
+          titleColor: chartThemeConfig.xychartXAxisTitleColor,
+          labelColor: chartThemeConfig.xychartXAxisLableColor,
+          tickColor: chartThemeConfig.xychartXAxisTickColor,
+        },
+        chartConfig.fontFamily
+      ),
+      yAxis: getAxis(
+        chartData.yAxis,
+        chartConfig.yAxis,
+        {
+          titleColor: chartThemeConfig.xychartYAxisTitleColor,
+          labelColor: chartThemeConfig.xychartYAxisLableColor,
+          tickColor: chartThemeConfig.xychartYAxisTickColor,
+        },
+        chartConfig.fontFamily
+      ),
     };
   }
 

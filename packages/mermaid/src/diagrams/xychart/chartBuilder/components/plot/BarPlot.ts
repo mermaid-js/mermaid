@@ -1,5 +1,5 @@
 import { XYChartConfig } from '../../../../../config.type.js';
-import { BarPlotData, BoundingRect, DrawableElem } from '../../Interfaces.js';
+import { BarPlotData, BoundingRect, DrawableElem, XYChartThemeConfig } from '../../Interfaces.js';
 import { IAxis } from '../axis/index.js';
 
 export class BarPlot {
@@ -8,7 +8,8 @@ export class BarPlot {
     private boundingRect: BoundingRect,
     private xAxis: IAxis,
     private yAxis: IAxis,
-    private orientation: XYChartConfig['chartOrientation']
+    private orientation: XYChartConfig['chartOrientation'],
+    private chartThemeConfig: XYChartThemeConfig
   ) {}
 
   getDrawableElement(): DrawableElem[] {

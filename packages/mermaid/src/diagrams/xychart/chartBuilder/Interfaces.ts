@@ -1,3 +1,22 @@
+export interface XYChartAxisThemeConfig {
+  titleColor: string;
+  labelColor: string;
+  tickColor: string;
+}
+
+export interface XYChartThemeConfig {
+  xychartTitleColor: string;
+  xychartAxisLineColor: string;
+  xychartXAxisLableColor: string;
+  xychartXAxisTitleColor: string;
+  xychartXAxisTickColor: string;
+  xychartYAxisLableColor: string;
+  xychartYAxisTitleColor: string;
+  xychartYAxisTickColor: string;
+  xychartBarPlotPalette: string[];
+  xychartLinePlotPalette: string[];
+}
+
 export interface ChartComponent {
   calculateSpace(availableSpace: Dimension): Dimension;
   setBoundingBoxXY(point: Point): void;

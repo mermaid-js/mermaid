@@ -1,4 +1,11 @@
-import { XYChartData, Dimension, BoundingRect, DrawableElem, Point } from '../../Interfaces.js';
+import {
+  XYChartData,
+  Dimension,
+  BoundingRect,
+  DrawableElem,
+  Point,
+  XYChartThemeConfig,
+} from '../../Interfaces.js';
 import { IAxis } from '../axis/index.js';
 import { ChartComponent } from '../../Interfaces.js';
 import { LinePlot } from './LinePlot.js';
@@ -15,7 +22,11 @@ export class Plot implements IPlot {
   private xAxis?: IAxis;
   private yAxis?: IAxis;
 
-  constructor(private chartConfig: XYChartConfig, private chartData: XYChartData) {
+  constructor(
+    private chartConfig: XYChartConfig,
+    private chartData: XYChartData,
+    private chartThemeConfig: XYChartThemeConfig
+  ) {
     this.boundingRect = {
       x: 0,
       y: 0,
@@ -45,7 +56,11 @@ export class Plot implements IPlot {
       throw Error('Axes must be passed to render Plots');
     }
     const drawableElem: DrawableElem[] = [
-      ...new PlotBorder(this.boundingRect, this.chartConfig.chartOrientation).getDrawableElement(),
+      ...new PlotBorder(
+        this.boundingRect,
+        this.chartConfig.chartOrientation,
+        this.chartThemeConfig
+      ).getDrawableElement(),
     ];
     for (const plot of this.chartData.plots) {
       switch (plot.type) {
@@ -55,7 +70,8 @@ export class Plot implements IPlot {
               plot,
               this.xAxis,
               this.yAxis,
-              this.chartConfig.chartOrientation
+              this.chartConfig.chartOrientation,
+              this.chartThemeConfig
             );
             drawableElem.push(...linePlot.getDrawableElement());
           }
@@ -67,7 +83,8 @@ export class Plot implements IPlot {
               this.boundingRect,
               this.xAxis,
               this.yAxis,
-              this.chartConfig.chartOrientation
+              this.chartConfig.chartOrientation,
+              this.chartThemeConfig
             );
             drawableElem.push(...barPlot.getDrawableElement());
           }
@@ -78,6 +95,10 @@ export class Plot implements IPlot {
   }
 }
 
-export function getPlotComponent(chartConfig: XYChartConfig, chartData: XYChartData): IPlot {
-  return new Plot(chartConfig, chartData);
+export function getPlotComponent(
+  chartConfig: XYChartConfig,
+  chartData: XYChartData,
+  chartThemeConfig: XYChartThemeConfig
+): IPlot {
+  return new Plot(chartConfig, chartData, chartThemeConfig);
 }

@@ -16,12 +16,41 @@ import {
   DrawableElem,
   SimplePlotDataType,
   XYChartData,
+  XYChartThemeConfig,
   isBandAxisData,
   isLinearAxisData,
 } from './chartBuilder/Interfaces.js';
 import { XYChartConfig } from '../../config.type.js';
+import { getThemeVariables } from '../../themes/theme-default.js';
+
+const defaultThemeVariables = getThemeVariables();
 
 const config = configApi.getConfig();
+
+function getChartDefaultThemeConfig(): XYChartThemeConfig {
+  return {
+    xychartTitleColor:
+      config.themeVariables?.xychartTitleColor || defaultThemeVariables.xychartTitleColor,
+    xychartAxisLineColor:
+      config.themeVariables?.xychartAxisLineColor || defaultThemeVariables.xychartAxisLineColor,
+    xychartXAxisLableColor:
+      config.themeVariables?.xychartXAxisLableColor || defaultThemeVariables.xychartXAxisLableColor,
+    xychartXAxisTitleColor:
+      config.themeVariables?.xychartXAxisTitleColor || defaultThemeVariables.xychartXAxisTitleColor,
+    xychartXAxisTickColor:
+      config.themeVariables?.xychartXAxisTickColor || defaultThemeVariables.xychartXAxisTickColor,
+    xychartYAxisLableColor:
+      config.themeVariables?.xychartYAxisLableColor || defaultThemeVariables.xychartYAxisLableColor,
+    xychartYAxisTitleColor:
+      config.themeVariables?.xychartYAxisTitleColor || defaultThemeVariables.xychartYAxisTitleColor,
+    xychartYAxisTickColor:
+      config.themeVariables?.xychartYAxisTickColor || defaultThemeVariables.xychartYAxisTickColor,
+    xychartBarPlotPalette:
+      config.themeVariables?.xychartBarPlotPalette || defaultThemeVariables.xychartBarPlotPalette,
+    xychartLinePlotPalette:
+      config.themeVariables?.xychartLinePlotPalette || defaultThemeVariables.xychartLinePlotPalette,
+  };
+}
 function getChartDefaultConfig(): XYChartConfig {
   return config.xyChart
     ? { ...config.xyChart, yAxis: { ...config.xyChart.yAxis }, xAxis: { ...config.xyChart.xAxis } }
@@ -30,7 +59,6 @@ function getChartDefaultConfig(): XYChartConfig {
         height: 500,
         fontFamily: config.fontFamily || 'Sans',
         titleFontSize: 16,
-        titleFill: '#000000',
         titlePadding: 5,
         showtitle: true,
         plotBorderWidth: 2,
@@ -38,29 +66,23 @@ function getChartDefaultConfig(): XYChartConfig {
           showLabel: true,
           labelFontSize: 14,
           lablePadding: 5,
-          labelFill: '#000000',
           showTitle: true,
           titleFontSize: 16,
           titlePadding: 5,
-          titleFill: '#000000',
           showTick: true,
           tickLength: 5,
           tickWidth: 2,
-          tickFill: '#000000',
         },
         xAxis: {
           showLabel: true,
           labelFontSize: 14,
           lablePadding: 5,
-          labelFill: '#000000',
           showTitle: true,
           titleFontSize: 16,
           titlePadding: 5,
-          titleFill: '#000000',
           showTick: true,
           tickLength: 5,
           tickWidth: 2,
-          tickFill: '#000000',
         },
         chartOrientation: 'vertical',
         plotReservedSpacePercent: 50,
@@ -86,6 +108,7 @@ function getChartDefalutData(): XYChartData {
 }
 
 let xyChartConfig: XYChartConfig = getChartDefaultConfig();
+let xyChartThemeConfig: XYChartThemeConfig = getChartDefaultThemeConfig();
 let xyChartData: XYChartData = getChartDefalutData();
 let hasSetXAxis = false;
 let hasSetYAxis = false;
@@ -178,7 +201,10 @@ function setLineData(title: string, data: number[]) {
   const plotData = transformDataWithOutCategory(data);
   xyChartData.plots.push({
     type: 'line',
-    strokeFill: '#00ff00',
+    strokeFill:
+      xyChartThemeConfig.xychartLinePlotPalette[
+        Math.floor(Math.random() * (xyChartThemeConfig.xychartLinePlotPalette.length - 1))
+      ],
     strokeWidth: 2,
     data: plotData,
   });
@@ -187,7 +213,9 @@ function setBarData(title: string, data: number[]) {
   const plotData = transformDataWithOutCategory(data);
   xyChartData.plots.push({
     type: 'bar',
-    fill: '#0000bb',
+    fill: xyChartThemeConfig.xychartBarPlotPalette[
+      Math.floor(Math.random() * (xyChartThemeConfig.xychartBarPlotPalette.length - 1))
+    ],
     data: plotData,
   });
 }
@@ -197,7 +225,7 @@ function getDrawableElem(): DrawableElem[] {
     throw Error('No Plot to render, please provide a plot with some data');
   }
   xyChartData.title = getDiagramTitle();
-  return XYChartBuilder.build(xyChartConfig, xyChartData);
+  return XYChartBuilder.build(xyChartConfig, xyChartData, xyChartThemeConfig);
 }
 
 function setHeight(height: number) {
@@ -212,6 +240,7 @@ const clear = function () {
   commonClear();
   xyChartConfig = getChartDefaultConfig();
   xyChartData = getChartDefalutData();
+  xyChartThemeConfig = getChartDefaultThemeConfig();
   hasSetXAxis = false;
   hasSetYAxis = false;
 };

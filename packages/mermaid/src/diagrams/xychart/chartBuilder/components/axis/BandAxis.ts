@@ -3,6 +3,7 @@ import { XYChartAxisConfig } from '../../../../../config.type.js';
 import { log } from '../../../../../logger.js';
 import { ITextDimensionCalculator } from '../../TextDimensionCalculator.js';
 import { BaseAxis } from './BaseAxis.js';
+import { XYChartAxisThemeConfig } from '../../Interfaces.js';
 
 export class BandAxis extends BaseAxis {
   private scale: ScaleBand<string>;
@@ -10,11 +11,12 @@ export class BandAxis extends BaseAxis {
 
   constructor(
     axisConfig: XYChartAxisConfig,
+    axisThemeConfig: XYChartAxisThemeConfig,
     categories: string[],
     title: string,
     textDimensionCalculator: ITextDimensionCalculator
   ) {
-    super(axisConfig, title, textDimensionCalculator);
+    super(axisConfig, title, textDimensionCalculator, axisThemeConfig);
     this.categories = categories;
     this.scale = scaleBand().domain(this.categories).range(this.getRange());
   }
