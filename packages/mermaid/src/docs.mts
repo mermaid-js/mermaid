@@ -30,10 +30,19 @@
  * @todo Write a test file for this. (Will need to be able to deal .mts file. Jest has trouble with
  *   it.)
  */
+// @ts-ignore: we're importing internal jsonschema2md functions
+import { default as schemaLoader } from '@adobe/jsonschema2md/lib/schemaProxy.js';
+// @ts-ignore: we're importing internal jsonschema2md functions
+import { default as traverseSchemas } from '@adobe/jsonschema2md/lib/traverseSchema.js';
+// @ts-ignore: we're importing internal jsonschema2md functions
+import { default as buildMarkdownFromSchema } from '@adobe/jsonschema2md/lib/markdownBuilder.js';
+// @ts-ignore: we're importing internal jsonschema2md functions
+import { default as jsonSchemaReadmeBuilder } from '@adobe/jsonschema2md/lib/readmeBuilder.js';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync, rmdirSync } from 'fs';
 import { exec } from 'child_process';
 import { globby } from 'globby';
 import { JSDOM } from 'jsdom';
+import { dump, load, JSON_SCHEMA } from 'js-yaml';
 import type { Code, ListItem, Root, Text, YAML } from 'mdast';
 import { posix, dirname, relative, join } from 'path';
 import prettier from 'prettier';
@@ -286,10 +295,12 @@ export function transformMarkdownAst({
         astWithTransformedBlocks.children.unshift(yamlFrontMatter);
       }
       const filePathFromRoot = posix.join('packages/mermaid', originalFilename);
-      // TODO, should we replace this with proper YAML parsing?
-      yamlFrontMatter.value += `\neditLink: ${JSON.stringify(
-        `https://github.com/mermaid-js/mermaid/edit/develop/${filePathFromRoot}`
-      )}`;
+      yamlFrontMatter.value = dump({
+        ...(load(yamlFrontMatter.value, { schema: JSON_SCHEMA }) as
+          | Record<string, unknown>
+          | undefined),
+        editLink: `https://github.com/mermaid-js/mermaid/edit/develop/${filePathFromRoot}`,
+      });
     }
 
     if (removeYAML) {
@@ -345,16 +356,6 @@ const transformMarkdown = (file: string) => {
   });
   copyTransformedContents(file, !verifyOnly, formatted);
 };
-
-import { load, JSON_SCHEMA } from 'js-yaml';
-// @ts-ignore: we're importing internal jsonschema2md functions
-import { default as schemaLoader } from '@adobe/jsonschema2md/lib/schemaProxy.js';
-// @ts-ignore: we're importing internal jsonschema2md functions
-import { default as traverseSchemas } from '@adobe/jsonschema2md/lib/traverseSchema.js';
-// @ts-ignore: we're importing internal jsonschema2md functions
-import { default as buildMarkdownFromSchema } from '@adobe/jsonschema2md/lib/markdownBuilder.js';
-// @ts-ignore: we're importing internal jsonschema2md functions
-import { default as jsonSchemaReadmeBuilder } from '@adobe/jsonschema2md/lib/readmeBuilder.js';
 
 /**
  * Transforms the given JSON Schema into Markdown documentation

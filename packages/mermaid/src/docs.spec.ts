@@ -119,7 +119,9 @@ This Markdown should be kept.
     ).toString();
     expect(withYaml).toEqual(`---
 title: Flowcharts Syntax
-editLink: "https://github.com/mermaid-js/mermaid/edit/develop/packages/mermaid/example-input-filename.md"
+editLink: >-
+  https://github.com/mermaid-js/mermaid/edit/develop/packages/mermaid/example-input-filename.md
+
 ---
 
 This Markdown should be kept.
