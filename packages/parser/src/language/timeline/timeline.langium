@@ -3,7 +3,7 @@ import "../common/common";
 
 entry Timeline:
   NEWLINE*
-  TIMELINE_KEYWORD
+  "timeline"
   (
     NEWLINE* TitleAndAccessibilities TimelineSectionAndPeriod
     | NEWLINE+ TimelineSectionAndPeriod
@@ -25,7 +25,6 @@ TimelinePeriod:
   (":" events+=(TIMELINE_PERIOD_EVENT | TIMELINE_PERIOD_TITLE) NEWLINE*)*
 ;
 
-terminal TIMELINE_KEYWORD: /timeline(?!\S)/;
 terminal TIMELINE_SECTION_TITLE: /timeline-section/;
 // TODO: figue out how to prevent `TIMELINE_PERIOD_TITLE` from consuming `TIMELINE_EVENT`
 terminal TIMELINE_PERIOD_TITLE: /timeline-period-title/;
