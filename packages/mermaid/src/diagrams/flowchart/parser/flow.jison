@@ -158,8 +158,8 @@ that id.
 <trapText>\/(?=\])\]     { this.popState(); return 'INVTRAPEND'; }
 <*>"[\\"                 { this.pushState("trapText"); return 'INVTRAPSTART'; }
 
-\-                    return 'MINUS';
-"."                   return 'DOT';
+\-                   return 'MINUS';
+"."                    return 'DOT';
 [\_]                  return 'UNDERSCORE';
 \+                    return 'PLUS';
 \%                    return 'PCT';
@@ -170,9 +170,9 @@ that id.
 "^"                   return 'UP';
 "\|"                  return 'SEP';
 "v"                   return 'DOWN';
+[0-9]+                return 'NUM';
 [A-Za-z0-9_]+         return 'ALPHA_NUM';
-[A-Za-z]+             return 'ALPHA';
-[!"#$%&'*+,-.`?\\_/]  return 'PUNCTUATION';
+[!"#$%&'*+,-\.`?\\_/]  return 'PUNCTUATION';
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
 [\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|
@@ -552,9 +552,9 @@ style: styleComponent
 styleComponent: ALPHA_NUM | ALPHA | COLON | MINUS | NUM | UNIT | SPACE | HEX | BRKT | DOT | STYLE | PCT ;
 
 /* Token lists */
-idStringToken  : alphaNumToken | DOWN | MINUS | DEFAULT;
+idStringToken  :  alphaNumToken | DOWN | MINUS | DEFAULT;
 
-textToken      :  textNoTagsToken | STR | TEXT;
+textToken      :   STR | TEXT;
 
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords | START_LINK ;
 
@@ -566,9 +566,9 @@ idString
     ;
 
 alphaNum
-    : alphaNumStatement
+    : alphaNumToken
     {$$=$1;}
-    | alphaNum alphaNumStatement
+    | alphaNum alphaNumToken
     {$$=$1+''+$2;}
     ;
 
