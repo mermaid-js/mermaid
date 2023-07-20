@@ -4,22 +4,22 @@
     {
       "id": "mermaid",
       "grammar": "src/language/mermaid/mermaid.langium",
-      "fileExtensions": [".mmd"]
+      "fileExtensions": [".mmd", ".mermaid"]
     },
     {
       "id": "info",
       "grammar": "src/language/info/info.langium",
-      "fileExtensions": [".mmd"]
+      "fileExtensions": [".mmd", ".mermaid"]
     },
     {
       "id": "pie",
       "grammar": "src/language/pie/pie.langium",
-      "fileExtensions": [".mmd"]
+      "fileExtensions": [".mmd", ".mermaid"]
     },
     {
       "id": "timeline",
       "grammar": "src/language/timeline/timeline.langium",
-      "fileExtensions": [".mmd"]
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "importExtension": ".js",
