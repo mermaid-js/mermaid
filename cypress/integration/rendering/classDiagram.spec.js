@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('Class diagram', () => {
   it('1: should render a simple class diagram', () => {
@@ -32,7 +32,6 @@ describe('Class diagram', () => {
       `,
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('2: should render a simple class diagrams with cardinality', () => {
@@ -58,10 +57,8 @@ describe('Class diagram', () => {
         int id
         test()
       }
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
 
   it('3: should render a simple class diagram with different visibilities', () => {
@@ -76,10 +73,8 @@ describe('Class diagram', () => {
       Class01 : -int privateChimp
       Class01 : +int publicGorilla
       Class01 : #int protectedMarmoset
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
 
   it('4: should render a simple class diagram with comments', () => {
@@ -106,10 +101,8 @@ describe('Class diagram', () => {
         int id
         test()
       }
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
 
   it('5: should render a simple class diagram with abstract method', () => {
@@ -118,10 +111,8 @@ describe('Class diagram', () => {
     classDiagram
       Class01 <|-- AveryLongClass : Cool
       Class01 : someMethod()*
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
 
   it('6: should render a simple class diagram with static method', () => {
@@ -130,10 +121,8 @@ describe('Class diagram', () => {
     classDiagram
       Class01 <|-- AveryLongClass : Cool
       Class01 : someMethod()$
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
 
   it('7: should render a simple class diagram with Generic class', () => {
@@ -150,10 +139,8 @@ describe('Class diagram', () => {
         int id
         test()
       }
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
 
   it('8: should render a simple class diagram with Generic class and relations', () => {
@@ -171,10 +158,8 @@ describe('Class diagram', () => {
         int id
         test()
       }
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
 
   it('9: should render a simple class diagram with clickable link', () => {
@@ -193,10 +178,8 @@ describe('Class diagram', () => {
         test()
       }
       link Class01 "google.com" "A Tooltip"
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
 
   it('10: should render a simple class diagram with clickable callback', () => {
@@ -215,10 +198,8 @@ describe('Class diagram', () => {
         test()
       }
       callback Class01 "functionCall" "A Tooltip"
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
 
   it('11: should render a simple class diagram with return type on method', () => {
@@ -230,10 +211,8 @@ describe('Class diagram', () => {
         test(int[] ids) bool
         testArray() bool[]
       }
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
 
   it('12: should render a simple class diagram with generic types', () => {
@@ -246,10 +225,8 @@ describe('Class diagram', () => {
         test(List~int~ ids) List~bool~
         testArray() bool[]
       }
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
 
   it('13: should render a simple class diagram with css classes applied', () => {
@@ -264,10 +241,8 @@ describe('Class diagram', () => {
       }
 
       class Class10:::exClass2
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
 
   it('14: should render a simple class diagram with css classes applied directly', () => {
@@ -280,10 +255,8 @@ describe('Class diagram', () => {
         test(List~int~ ids) List~bool~
         testArray() bool[]
       }
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
 
   it('15: should render a simple class diagram with css classes applied to multiple classes', () => {
@@ -295,16 +268,13 @@ describe('Class diagram', () => {
 
       cssClass "Class10, Class20" exClass2
       class Class20:::exClass2
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
 
   it('16: should render multiple class diagrams', () => {
-    imgSnapshotTest(
-      [
-        `
+    imgSnapshotTest([
+      `
     classDiagram
       Class01 "1" <|--|> "*" AveryLongClass : Cool
       &lt;&lt;interface&gt;&gt; Class01
@@ -326,7 +296,7 @@ describe('Class diagram', () => {
         test()
       }
       `,
-        `
+      `
     classDiagram
       Class01 "1" <|--|> "*" AveryLongClass : Cool
       &lt;&lt;interface&gt;&gt; Class01
@@ -348,14 +318,11 @@ describe('Class diagram', () => {
         test()
       }
       `,
-      ],
-      {}
-    );
-    cy.get('svg');
+    ]);
   });
 
   // it('17: should render a class diagram when useMaxWidth is true (default)', () => {
-  //   renderGraph(
+  //   imgSnapshotTest(
   //     `
   //   classDiagram
   //     Class01 <|-- AveryLongClass : Cool
@@ -383,7 +350,7 @@ describe('Class diagram', () => {
   // });
 
   // it('18: should render a class diagram when useMaxWidth is false', () => {
-  //   renderGraph(
+  //   imgSnapshotTest(
   //     `
   //   classDiagram
   //     Class01 <|-- AveryLongClass : Cool
@@ -421,7 +388,6 @@ describe('Class diagram', () => {
       `,
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('should render class diagram with newlines in title', () => {
@@ -439,7 +405,6 @@ describe('Class diagram', () => {
           +quack()
         }
       `);
-    cy.get('svg');
   });
 
   it('should render class diagram with many newlines in title', () => {
@@ -467,7 +432,7 @@ describe('Class diagram', () => {
         -Many()
         #Methods()
       }
-      &lt;&lt;Interface&gt;&gt; \`This\nTitle\nHas\nMany\nNewlines\`  
+      &lt;&lt;Interface&gt;&gt; \`This\nTitle\nHas\nMany\nNewlines\`
     `);
   });
 

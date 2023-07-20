@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('State diagram', () => {
   it('should render a simple state diagrams', () => {
@@ -10,7 +10,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('should render a long descriptions instead of id when available', () => {
     imgSnapshotTest(
@@ -22,7 +21,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('should render a long descriptions with additional descriptions', () => {
     imgSnapshotTest(
@@ -34,7 +32,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('should render a single state with short descriptions', () => {
     imgSnapshotTest(
@@ -45,7 +42,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('should render a transition descriptions with new lines', () => {
     imgSnapshotTest(
@@ -59,7 +55,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('should render a state with a note', () => {
     imgSnapshotTest(
@@ -73,7 +68,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('should render a state with on the left side when so specified', () => {
     imgSnapshotTest(
@@ -87,7 +81,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('should render a state with a note together with another state', () => {
     imgSnapshotTest(
@@ -103,7 +96,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('should render a note with multiple lines in it', () => {
     imgSnapshotTest(
@@ -146,7 +138,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('should render a simple state diagrams 2', () => {
     imgSnapshotTest(
@@ -159,7 +150,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('should render a simple state diagrams with labels', () => {
     imgSnapshotTest(
@@ -175,7 +165,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('should render state descriptions', () => {
     imgSnapshotTest(
@@ -188,7 +177,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('should render composite states', () => {
     imgSnapshotTest(
@@ -207,7 +195,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('should render multiple composit states', () => {
     imgSnapshotTest(
@@ -277,7 +264,6 @@ describe('State diagram', () => {
     `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('should render concurrency states', () => {
     imgSnapshotTest(
@@ -301,7 +287,6 @@ describe('State diagram', () => {
     `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('should render a state with states in it', () => {
     imgSnapshotTest(
@@ -347,7 +332,7 @@ describe('State diagram', () => {
     );
   });
   it('should render a state diagram when useMaxWidth is true (default)', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     stateDiagram
     [*] --> State1
@@ -370,7 +355,7 @@ describe('State diagram', () => {
     });
   });
   it('should render a state diagram when useMaxWidth is false', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     stateDiagram
     [*] --> State1

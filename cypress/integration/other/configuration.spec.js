@@ -1,16 +1,15 @@
-import { renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 describe('Configuration', () => {
   describe('arrowMarkerAbsolute', () => {
     it('should handle default value false of arrowMarkerAbsolute', () => {
-      renderGraph(
+      imgSnapshotTest(
         `graph TD
         A[Christmas] -->|Get money| B(Go shopping)
         B --> C{Let me think}
         C -->|One| D[Laptop]
         C -->|Two| E[iPhone]
         C -->|Three| F[fa:fa-car Car]
-        `,
-        {}
+        `
       );
 
       // Check the marker-end property to make sure it is properly set to
@@ -24,15 +23,14 @@ describe('Configuration', () => {
       });
     });
     it('should handle default value false of arrowMarkerAbsolute', () => {
-      renderGraph(
+      imgSnapshotTest(
         `graph TD
         A[Christmas] -->|Get money| B(Go shopping)
         B --> C{Let me think}
         C -->|One| D[Laptop]
         C -->|Two| E[iPhone]
         C -->|Three| F[fa:fa-car Car]
-        `,
-        {}
+        `
       );
 
       // Check the marker-end property to make sure it is properly set to
@@ -46,7 +44,7 @@ describe('Configuration', () => {
       });
     });
     it('should handle arrowMarkerAbsolute explicitly set to false', () => {
-      renderGraph(
+      imgSnapshotTest(
         `graph TD
         A[Christmas] -->|Get money| B(Go shopping)
         B --> C{Let me think}
@@ -70,7 +68,7 @@ describe('Configuration', () => {
       });
     });
     it('should handle arrowMarkerAbsolute explicitly set to "false" as false', () => {
-      renderGraph(
+      imgSnapshotTest(
         `graph TD
         A[Christmas] -->|Get money| B(Go shopping)
         B --> C{Let me think}
@@ -94,7 +92,7 @@ describe('Configuration', () => {
       });
     });
     it('should handle arrowMarkerAbsolute set to true', () => {
-      renderGraph(
+      imgSnapshotTest(
         `flowchart TD
         A[Christmas] -->|Get money| B(Go shopping)
         B --> C{Let me think}

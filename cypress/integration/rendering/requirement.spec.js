@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('Requirement diagram', () => {
   it('sample', () => {
@@ -41,9 +41,7 @@ describe('Requirement diagram', () => {
     test_req - traces -> test_req2
     test_req - contains -> test_req3
     test_req <- copies - test_entity2
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
 });

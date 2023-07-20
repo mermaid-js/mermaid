@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('Gantt diagram', () => {
   beforeEach(() => {
@@ -36,8 +36,7 @@ describe('Gantt diagram', () => {
       Describe gantt syntax               :after doc1, 3d
       Add gantt diagram to demo page      : 20h
       Add another diagram to demo page    : 48h
-      `,
-      {}
+      `
     );
   });
   it('Handle multiline section titles with different line breaks', () => {
@@ -72,8 +71,7 @@ describe('Gantt diagram', () => {
       Describe gantt syntax               : after doc1, 3d
       Add gantt diagram to demo page      : 20h
       Add another diagram to demo page    : 48h
-      `,
-      {}
+      `
     );
   });
   it('Multiple dependencies syntax', () => {
@@ -88,8 +86,7 @@ describe('Gantt diagram', () => {
       apple :a, 2017-07-20, 1w
       banana :crit, b, 2017-07-23, 1d
       cherry :active, c, after b a, 1d
-      `,
-      {}
+      `
     );
   });
   it('should FAIL redering a gantt chart for issue #1060 with invalid date', () => {
@@ -128,8 +125,7 @@ describe('Gantt diagram', () => {
       Plasma call 26 :pc26, 2019-08-21, 1d
       Plasma call 27 :pc27, 2019-09-03, 1d
       Plasma call 28 :pc28, 2019-09-17, 1d
-        `,
-      {}
+        `
     );
   });
 
@@ -146,8 +142,7 @@ describe('Gantt diagram', () => {
         section Section1
          Yesterday: 1010-10-09, 1d
          Today: 1010-10-10, 1d
-      `,
-      {}
+      `
     );
   });
 
@@ -162,8 +157,7 @@ describe('Gantt diagram', () => {
         section Section1
          Yesterday: 1010-10-09, 1d
          Today: 1010-10-10, 1d
-      `,
-      {}
+      `
     );
   });
 
@@ -178,8 +172,7 @@ describe('Gantt diagram', () => {
       section Section1
        Yesterday: 1010-10-09, 1d
        Today: 1010-10-10, 1d
-      `,
-      {}
+      `
     );
   });
 
@@ -196,13 +189,12 @@ describe('Gantt diagram', () => {
       section Another
       Another another task      :b1, 20, 12ms
       Another another another task     :after b1, 0.024s
-        `,
-      {}
+        `
     );
   });
 
   it('should render a gantt diagram when useMaxWidth is true (default)', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     gantt
       dateFormat  YYYY-MM-DD
@@ -250,7 +242,7 @@ describe('Gantt diagram', () => {
   });
 
   it('should render a gantt diagram when useMaxWidth is false', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     gantt
       dateFormat  YYYY-MM-DD
@@ -346,8 +338,7 @@ describe('Gantt diagram', () => {
         section Another
         Task in sec      : 2022-10-03, 3h
         another task     : 3h
-      `,
-      {}
+      `
     );
   });
 
@@ -367,8 +358,7 @@ describe('Gantt diagram', () => {
         section Another
         Task in sec      : 2022-10-04, 2d
         another task     : 2d
-      `,
-      {}
+      `
     );
   });
 
@@ -388,8 +378,7 @@ describe('Gantt diagram', () => {
         section Another
         Task in sec      : 2022-10-20, 12d
         another task     : 24d
-      `,
-      {}
+      `
     );
   });
 
@@ -409,8 +398,7 @@ describe('Gantt diagram', () => {
         section Another
         Task in sec      : 2022-10-20, 12d
         another task     : 24d
-      `,
-      {}
+      `
     );
   });
 
@@ -431,8 +419,7 @@ describe('Gantt diagram', () => {
         section Another
         Task in sec      : 2022-10-20, 12d
         another task     : 24d
-      `,
-      {}
+      `
     );
   });
 
@@ -452,8 +439,7 @@ describe('Gantt diagram', () => {
         section Another
         Task in sec      : 2022-10-20, 12d
         another task     : 24d
-      `,
-      {}
+      `
     );
   });
 
@@ -508,8 +494,7 @@ describe('Gantt diagram', () => {
         G: 13:32:00, 18m
         H: 13:50:00, 20m
         I: 14:10:00, 10m
-    `,
-      {}
+    `
     );
   });
 });

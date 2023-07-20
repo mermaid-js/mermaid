@@ -208,7 +208,6 @@ it('should render forks and joins', () => {
     `,
     { logLevel: 0 }
   );
-  cy.get('svg');
 });
 ```
 
@@ -228,7 +227,7 @@ We know it can sometimes be hard to code _and_ write user documentation.
 
 Our documentation is managed in `packages/mermaid/src/docs`. Details on how to edit is in the [Contributing Documentation](#contributing-documentation) section.
 
-Create another issue specifically for the documentation.\
+Create another issue specifically for the documentation.
 You will need to help with the PR, but definitely ask for help if you feel stuck.
 When it feels hard to write stuff out, explaining it to someone and having that person ask you clarifying questions can often be 80% of the work!
 

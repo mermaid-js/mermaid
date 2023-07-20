@@ -7,8 +7,7 @@ describe('Git Graph diagram', () => {
        commit id: "1"
        commit id: "2"
        commit id: "3"
-      `,
-      {}
+      `
     );
   });
   it('2: should render a simple gitgraph with commit on main branch with Id', () => {
@@ -17,8 +16,7 @@ describe('Git Graph diagram', () => {
        commit id: "One"
        commit id: "Two"
        commit id: "Three"
-      `,
-      {}
+      `
     );
   });
   it('3: should render a simple gitgraph with different commitTypes on main branch ', () => {
@@ -27,8 +25,7 @@ describe('Git Graph diagram', () => {
        commit id: "Normal Commit"
        commit id: "Reverse Commit" type: REVERSE
        commit id: "Hightlight Commit" type: HIGHLIGHT
-      `,
-      {}
+      `
     );
   });
   it('4: should render a simple gitgraph with tags commitTypes on main branch ', () => {
@@ -37,8 +34,7 @@ describe('Git Graph diagram', () => {
        commit id: "Normal Commit with tag" tag: "v1.0.0"
        commit id: "Reverse Commit with tag" type: REVERSE tag: "RC_1"
        commit id: "Hightlight Commit" type: HIGHLIGHT  tag: "8.8.4"
-      `,
-      {}
+      `
     );
   });
   it('5: should render a simple gitgraph with two branches', () => {
@@ -53,8 +49,7 @@ describe('Git Graph diagram', () => {
        checkout main
        commit id: "5"
        commit id: "6"
-      `,
-      {}
+      `
     );
   });
   it('6: should render a simple gitgraph with two branches and merge commit', () => {
@@ -70,8 +65,7 @@ describe('Git Graph diagram', () => {
        merge develop
        commit id: "5"
        commit id: "6"
-      `,
-      {}
+      `
     );
   });
   it('7: should render a simple gitgraph with three branches and tagged merge commit', () => {
@@ -98,8 +92,7 @@ describe('Git Graph diagram', () => {
        commit id: "8"
        checkout main
        commit id: "9"
-      `,
-      {}
+      `
     );
   });
   it('8: should render a simple gitgraph with more than 8 branchs &  overriding variables', () => {
@@ -127,8 +120,7 @@ describe('Git Graph diagram', () => {
     branch branch9
     checkout branch1
     commit id: "1"
-      `,
-      {}
+      `
     );
   });
   it('9: should render a simple gitgraph with rotated labels', () => {
@@ -141,8 +133,7 @@ describe('Git Graph diagram', () => {
         commit id: "0db4784daf82736dec4569e0dc92980d328c1f2e"
         commit id: "7067e9973f9eaa6cd4a4b723c506d1eab598e83e"
         commit id: "66972321ad6c199013b5b31f03b3a86fa3f9817d"
-      `,
-      {}
+      `
     );
   });
   it('10: should render a simple gitgraph with horizontal labels', () => {
@@ -155,8 +146,7 @@ describe('Git Graph diagram', () => {
         commit id: "Beta"
         commit id: "Gamma"
         commit id: "Delta"
-      `,
-      {}
+      `
     );
   });
   it('11: should render a simple gitgraph with cherry pick commit', () => {
@@ -176,8 +166,7 @@ describe('Git Graph diagram', () => {
        commit id:"THREE"
        checkout develop
        commit id:"C"
-      `,
-      {}
+      `
     );
   });
   it('11: should render a gitgraph with cherry pick commit with custom tag', () => {
@@ -197,8 +186,7 @@ describe('Git Graph diagram', () => {
        commit id:"THREE"
        checkout develop
        commit id:"C"
-      `,
-      {}
+      `
     );
   });
   it('11: should render a gitgraph with cherry pick commit with no tag', () => {
@@ -218,8 +206,7 @@ describe('Git Graph diagram', () => {
        commit id:"THREE"
        checkout develop
        commit id:"C"
-      `,
-      {}
+      `
     );
   });
   it('11: should render a simple gitgraph with two cherry pick commit', () => {
@@ -244,8 +231,7 @@ describe('Git Graph diagram', () => {
        checkout develop
        commit id:"C"
        merge featureA
-      `,
-      {}
+      `
     );
   });
   it('12: should render commits for more than 8 branches', () => {
@@ -290,8 +276,7 @@ describe('Git Graph diagram', () => {
       merge branch8
       branch branch9
       commit id: "10-abcdefg"
-      `,
-      {}
+      `
     );
   });
   it('13: should render a simple gitgraph with three branches,custom merge commit id,tag,type', () => {
@@ -318,8 +303,7 @@ describe('Git Graph diagram', () => {
        commit id: "8"
        checkout main
        commit id: "9"
-      `,
-      {}
+      `
     );
   });
   it('1433: should render a simple gitgraph with a title', () => {
@@ -329,8 +313,7 @@ title: simple gitGraph
 ---
 gitGraph
   commit id: "1-abcdefg"
-`,
-      {}
+`
     );
   });
 });

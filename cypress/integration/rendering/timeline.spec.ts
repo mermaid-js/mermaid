@@ -9,8 +9,7 @@ describe('Timeline diagram', () => {
     2004 : Facebook : Google
     2005 : Youtube
     2006 : Twitter
-      `,
-      {}
+      `
     );
   });
   it('2: should render a timeline diagram with sections', () => {
@@ -24,8 +23,7 @@ describe('Timeline diagram', () => {
     section 21st century
         Industry 4.0 : Internet, Robotics, Internet of Things
         Industry 5.0 : Artificial intelligence, Big data,3D printing
-      `,
-      {}
+      `
     );
   });
   it('3: should render a complex timeline with sections, and long events text with <br>', () => {
@@ -40,8 +38,7 @@ describe('Timeline diagram', () => {
                   : New styles of pottery and ways of burying the dead appear.
           2200 BC : The last major building works are completed at Stonehenge.<br> People now bury their dead in stone circles.
                   : The first metal objects are made in Britain.Some other nice things happen. it is a good time to be alive.
-      `,
-      {}
+      `
     );
   });
   it('4: should render a simple timeline with directives and disableMultiColor:true ', () => {
@@ -53,8 +50,7 @@ describe('Timeline diagram', () => {
           2004 : Facebook : Google
           2005 : Youtube
           2006 : Twitter
-      `,
-      {}
+      `
     );
   });
   it('5: should render a simple timeline with directive overriden colors', () => {
@@ -73,8 +69,7 @@ describe('Timeline diagram', () => {
           2007 : Tumblr
           2008 : Instagram
           2010 : Pinterest
-      `,
-      {}
+      `
     );
   });
   it('6: should render a simple timeline in base theme', () => {
@@ -89,8 +84,7 @@ describe('Timeline diagram', () => {
           2007 : Tumblr
           2008 : Instagram
           2010 : Pinterest
-      `,
-      {}
+      `
     );
   });
 
@@ -106,8 +100,7 @@ describe('Timeline diagram', () => {
           2007 : Tumblr
           2008 : Instagram
           2010 : Pinterest
-      `,
-      {}
+      `
     );
   });
 
@@ -123,8 +116,7 @@ describe('Timeline diagram', () => {
           2007 : Tumblr
           2008 : Instagram
           2010 : Pinterest
-      `,
-      {}
+      `
     );
   });
 
@@ -140,8 +132,7 @@ describe('Timeline diagram', () => {
           2007 : Tumblr
           2008 : Instagram
           2010 : Pinterest
-      `,
-      {}
+      `
     );
   });
 
@@ -157,8 +148,7 @@ describe('Timeline diagram', () => {
           2007 : Tumblr
           2008 : Instagram
           2010 : Pinterest
-      `,
-      {}
+      `
     );
   });
 });

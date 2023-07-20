@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('Flowchart v2', () => {
   it('1: should render a simple flowchart', () => {
@@ -9,8 +9,7 @@ describe('Flowchart v2', () => {
       C -->|One| D[Laptop]
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
-      `,
-      {}
+      `
     );
   });
 
@@ -41,8 +40,7 @@ describe('Flowchart v2', () => {
         P2 --> P4
         P3 --> P6
         P1.5 --> P5
-      `,
-      {}
+      `
     );
   });
 
@@ -59,8 +57,7 @@ describe('Flowchart v2', () => {
       C ----> E3
       C <-...-> E4
       C ======> E5
-      `,
-      {}
+      `
     );
   });
   it('5: should render escaped without html labels', () => {
@@ -80,7 +77,7 @@ describe('Flowchart v2', () => {
     );
   });
   it('7: should render a flowchart when useMaxWidth is true (default)', () => {
-    renderGraph(
+    imgSnapshotTest(
       `flowchart TD
       A[Christmas] -->|Get money| B(Go shopping)
       B --> C{Let me think}
@@ -103,7 +100,7 @@ describe('Flowchart v2', () => {
     });
   });
   it('8: should render a flowchart when useMaxWidth is false', () => {
-    renderGraph(
+    imgSnapshotTest(
       `flowchart TD
       A[Christmas] -->|Get money| B(Go shopping)
       B --> C{Let me think}
@@ -691,8 +688,7 @@ A ~~~ B
     B[<img src='https://mermaid.js.org/mermaid-logo.svg'>]
     B-->C[<img src="https://mermaid.js.org/mermaid-logo.svg"> more text <img src='https://mermaid.js.org/mermaid-logo.svg'>]
     B-->D(<img src='https://mermaid.js.org/mermaid-logo.svg'> some text)
-    B-->E(plain)`,
-      {}
+    B-->E(plain)`
     );
   });
 
@@ -700,8 +696,7 @@ A ~~~ B
     imgSnapshotTest(
       `flowchart TD
     B[<img>]
-    B-->C[<img>]`,
-      {}
+    B-->C[<img>]`
     );
   });
   describe('Markdown strings flowchart (#4220)', () => {

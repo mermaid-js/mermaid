@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('State diagram', () => {
   it('v2 should render a simple info', () => {
@@ -8,7 +8,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 1, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('v2 should render a simple state diagrams', () => {
     imgSnapshotTest(
@@ -20,7 +19,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('v2 should render a long descriptions instead of id when available', () => {
     imgSnapshotTest(
@@ -32,7 +30,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('v2 should render a long descriptions with additional descriptions', () => {
     imgSnapshotTest(
@@ -44,7 +41,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('v2 should render a single state with short descriptions', () => {
     imgSnapshotTest(
@@ -55,7 +51,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('v2 should render a transition descriptions with new lines', () => {
     imgSnapshotTest(
@@ -69,7 +64,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('v2 should render a state with a note', () => {
     imgSnapshotTest(
@@ -83,7 +77,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('v2 should render a state with on the left side when so specified', () => {
     imgSnapshotTest(
@@ -97,7 +90,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('v2 should render a state with a note together with another state', () => {
     imgSnapshotTest(
@@ -113,7 +105,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('v2 should render a note with multiple lines in it', () => {
     imgSnapshotTest(
@@ -156,7 +147,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('v2 should render a simple state diagrams 2', () => {
     imgSnapshotTest(
@@ -169,7 +159,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('v2 should render a simple state diagrams with labels', () => {
     imgSnapshotTest(
@@ -185,7 +174,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('v2 should render state descriptions', () => {
     imgSnapshotTest(
@@ -198,7 +186,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('v2 should render composite states', () => {
     imgSnapshotTest(
@@ -217,7 +204,6 @@ describe('State diagram', () => {
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('v2 should render multiple composite states', () => {
     imgSnapshotTest(
@@ -287,7 +273,6 @@ describe('State diagram', () => {
     `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('v2 should render concurrency states', () => {
     imgSnapshotTest(
@@ -311,7 +296,6 @@ describe('State diagram', () => {
     `,
       { logLevel: 0, fontFamily: 'courier' }
     );
-    cy.get('svg');
   });
   it('v2 should render a state with states in it', () => {
     imgSnapshotTest(
@@ -469,7 +453,7 @@ stateDiagram-v2
     );
   });
   it('v2 should render a state diagram when useMaxWidth is true (default)', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     stateDiagram-v2
 
@@ -491,7 +475,7 @@ stateDiagram-v2
     });
   });
   it('v2 should render a state diagram when useMaxWidth is false', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     stateDiagram-v2
 
@@ -567,8 +551,7 @@ title: simple state diagram
 stateDiagram-v2
 [*] --> State1
 State1 --> [*]
-`,
-      {}
+`
     );
   });
 });

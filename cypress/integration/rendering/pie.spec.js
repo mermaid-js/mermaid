@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('Pie Chart', () => {
   it('should render a simple pie diagram', () => {
@@ -8,10 +8,8 @@ describe('Pie Chart', () => {
        "Bandy" : 40
        "Ice-Hockey" : 80
        "Football" : 90
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
   it('should render a simple pie diagram with long labels', () => {
     imgSnapshotTest(
@@ -19,10 +17,8 @@ describe('Pie Chart', () => {
       pie title NETFLIX
          "Time spent looking for movie" : 90
          "Time spent watching it" : 10
-        `,
-      {}
+        `
     );
-    cy.get('svg');
   });
   it('should render a simple pie diagram with capital letters for labels', () => {
     imgSnapshotTest(
@@ -31,13 +27,11 @@ describe('Pie Chart', () => {
          "FRIENDS" : 2
          "FAMILY" : 3
          "NOSE" : 45
-        `,
-      {}
+        `
     );
-    cy.get('svg');
   });
   it('should render a pie diagram when useMaxWidth is true (default)', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     pie title Sports in Sweden
        "Bandy" : 40
@@ -58,7 +52,7 @@ describe('Pie Chart', () => {
     });
   });
   it('should render a pie diagram when useMaxWidth is false', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     pie title Sports in Sweden
        "Bandy" : 40
@@ -84,6 +78,5 @@ describe('Pie Chart', () => {
         `,
       { logLevel: 1, pie: { textPosition: 0.9 } }
     );
-    cy.get('svg');
   });
 });

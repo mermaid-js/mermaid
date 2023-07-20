@@ -11,10 +11,8 @@ describe('Configuration and directives - nodes should be light blue', () => {
             B
             C
           end
-        `,
-      {}
+        `
     );
-    cy.get('svg');
   });
   it('Settings from initialize - nodes should be green', () => {
     imgSnapshotTest(
@@ -28,7 +26,6 @@ graph TD
           end          `,
       { theme: 'forest' }
     );
-    cy.get('svg');
   });
   it('Settings from initialize overriding themeVariable - nodes should be red', () => {
     imgSnapshotTest(
@@ -46,7 +43,6 @@ graph TD
         `,
       { theme: 'base', themeVariables: { primaryColor: '#ff0000' }, logLevel: 0 }
     );
-    cy.get('svg');
   });
   it('Settings from directive - nodes should be grey', () => {
     imgSnapshotTest(
@@ -59,10 +55,8 @@ graph TD
             B
             C
           end
-        `,
-      {}
+        `
     );
-    cy.get('svg');
   });
 
   it('Settings from directive overriding theme variable - nodes should be red', () => {
@@ -76,10 +70,8 @@ graph TD
             B
             C
           end
-        `,
-      {}
+        `
     );
-    cy.get('svg');
   });
   it('Settings from initialize and directive - nodes should be grey', () => {
     imgSnapshotTest(
@@ -95,7 +87,6 @@ graph TD
         `,
       { theme: 'forest' }
     );
-    cy.get('svg');
   });
   it('Theme from initialize, directive overriding theme variable - nodes should be red', () => {
     imgSnapshotTest(
@@ -111,7 +102,6 @@ graph TD
         `,
       { theme: 'base' }
     );
-    cy.get('svg');
   });
   it('Theme variable from initialize, theme from directive - nodes should be red', () => {
     imgSnapshotTest(
@@ -127,7 +117,6 @@ graph TD
         `,
       { themeVariables: { primaryColor: '#ff0000' } }
     );
-    cy.get('svg');
   });
   describe('when rendering several diagrams', () => {
     it('diagrams should not taint later diagrams', () => {

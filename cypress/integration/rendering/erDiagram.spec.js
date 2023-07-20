@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('Entity Relationship Diagram', () => {
   it('should render a simple ER diagram', () => {
@@ -95,7 +95,7 @@ describe('Entity Relationship Diagram', () => {
   });
 
   it('should render an ER diagrams when useMaxWidth is true (default)', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     erDiagram
         CUSTOMER ||--o{ ORDER : places
@@ -115,7 +115,7 @@ describe('Entity Relationship Diagram', () => {
   });
 
   it('should render an ER when useMaxWidth is false', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     erDiagram
         CUSTOMER ||--o{ ORDER : places
@@ -133,7 +133,7 @@ describe('Entity Relationship Diagram', () => {
   });
 
   it('should render entities that have no relationships', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     erDiagram
         DEAD_PARROT
@@ -147,7 +147,7 @@ describe('Entity Relationship Diagram', () => {
   });
 
   it('should render entities with and without attributes', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     erDiagram
         BOOK { string title }
@@ -159,7 +159,7 @@ describe('Entity Relationship Diagram', () => {
   });
 
   it('should render entities with generic and array attributes', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     erDiagram
         BOOK {
@@ -173,7 +173,7 @@ describe('Entity Relationship Diagram', () => {
   });
 
   it('should render entities with length in attributes type', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     erDiagram
         CLUSTER {
@@ -186,7 +186,7 @@ describe('Entity Relationship Diagram', () => {
   });
 
   it('should render entities and attributes with big and small entity names', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     erDiagram
         PRIVATE_FINANCIAL_INSTITUTION {
@@ -218,11 +218,10 @@ describe('Entity Relationship Diagram', () => {
         `,
       { loglevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('should render entities with keys', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     erDiagram
       AUTHOR_WITH_LONG_ENTITY_NAME {
@@ -240,7 +239,7 @@ describe('Entity Relationship Diagram', () => {
   });
 
   it('should render entities with comments', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     erDiagram
       AUTHOR_WITH_LONG_ENTITY_NAME {
@@ -258,7 +257,7 @@ describe('Entity Relationship Diagram', () => {
   });
 
   it('should render entities with keys and comments', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     erDiagram
       AUTHOR_WITH_LONG_ENTITY_NAME {
@@ -277,7 +276,7 @@ describe('Entity Relationship Diagram', () => {
   });
 
   it('should render entities with aliases', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     erDiagram
       T1 one or zero to one or more T2 : test
@@ -301,8 +300,7 @@ title: simple ER diagram
 erDiagram
 CUSTOMER ||--o{ ORDER : places
 ORDER ||--|{ LINE-ITEM : contains
-`,
-      {}
+`
     );
   });
 });

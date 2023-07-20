@@ -1,10 +1,8 @@
-/// <reference types="Cypress" />
-
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 context('Sequence diagram', () => {
   it('should render a sequence diagram with boxes', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     sequenceDiagram
       box LightGrey Alice and Bob
@@ -84,8 +82,7 @@ context('Sequence diagram', () => {
       note right of 4: multiline<br />using #lt;br /#gt;
       4->>1: multiline<br />using #lt;br /#gt;
       note right of 1: multiline<br \t/>using #lt;br \t/#gt;
-    `,
-      {}
+    `
     );
   });
   it('should handle empty lines', () => {
@@ -94,8 +91,7 @@ context('Sequence diagram', () => {
       sequenceDiagram
       Alice->>John: Hello John<br/>
       John-->>Alice: Great<br/><br/>day!
-    `,
-      {}
+    `
     );
   });
   it('should handle line breaks and wrap annotations', () => {
@@ -114,8 +110,7 @@ context('Sequence diagram', () => {
       Note over John:nowrap: John's trying hard not to break his train of thought.
       Bob-x John:wrap: John! Are you still debating about how you're doing? How long does it take??
       Note over John: After a few more moments, John<br/>finally snaps out of it.
-    `,
-      {}
+    `
     );
   });
   it('should render loops with a slight margin', () => {
@@ -359,8 +354,7 @@ context('Sequence diagram', () => {
         participant A as Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         A->>Bob: Hola
         Bob-->A: Pasten !
-      `,
-        {}
+      `
       );
     });
     it('should be possible to use actor symbols instead of boxes', () => {
@@ -371,8 +365,7 @@ context('Sequence diagram', () => {
           actor Bob
           Alice->>Bob: Hi Bob
           Bob->>Alice: Hi Alice
-      `,
-        {}
+      `
       );
     });
     it('should render long notes left of actor', () => {
@@ -382,8 +375,7 @@ context('Sequence diagram', () => {
         Alice->>Bob: Hola
         Note left of Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
-      `,
-        {}
+      `
       );
     });
     it('should render long notes wrapped (inline) left of actor', () => {
@@ -393,8 +385,7 @@ context('Sequence diagram', () => {
         Alice->>Bob: Hola
         Note left of Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
-      `,
-        {}
+      `
       );
     });
     it('should render long notes right of actor', () => {
@@ -404,8 +395,7 @@ context('Sequence diagram', () => {
         Alice->>Bob: Hola
         Note right of Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
-      `,
-        {}
+      `
       );
     });
     it('should render long notes wrapped (inline) right of actor', () => {
@@ -415,8 +405,7 @@ context('Sequence diagram', () => {
         Alice->>Bob: Hola
         Note right of Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
-      `,
-        {}
+      `
       );
     });
     it('should render long notes over actor', () => {
@@ -426,8 +415,7 @@ context('Sequence diagram', () => {
         Alice->>Bob: Hola
         Note over Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
-      `,
-        {}
+      `
       );
     });
     it('should render long notes wrapped (inline) over actor', () => {
@@ -437,8 +425,7 @@ context('Sequence diagram', () => {
         Alice->>Bob: Hola
         Note over Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
-      `,
-        {}
+      `
       );
     });
     it('should render long messages from an actor to the left to one to the right', () => {
@@ -447,8 +434,7 @@ context('Sequence diagram', () => {
         sequenceDiagram
         Alice->>Bob: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
-      `,
-        {}
+      `
       );
     });
     it('should render long messages wrapped (inline) from an actor to the left to one to the right', () => {
@@ -457,8 +443,7 @@ context('Sequence diagram', () => {
         sequenceDiagram
         Alice->>Bob:wrap:Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
-      `,
-        {}
+      `
       );
     });
     it('should render long messages from an actor to the right to one to the left', () => {
@@ -467,8 +452,7 @@ context('Sequence diagram', () => {
         sequenceDiagram
         Alice->>Bob: I'm short
         Bob->>Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
-      `,
-        {}
+      `
       );
     });
     it('should render long messages wrapped (inline) from an actor to the right to one to the left', () => {
@@ -477,8 +461,7 @@ context('Sequence diagram', () => {
         sequenceDiagram
         Alice->>Bob: I'm short
         Bob->>Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
-      `,
-        {}
+      `
       );
     });
   });
@@ -510,8 +493,7 @@ context('Sequence diagram', () => {
             E ->> E: Task 6
           end
           D -->> A: Complete
-      `,
-        {}
+      `
       );
     });
     it('should render a single and nested opt with long test overflowing', () => {
@@ -541,8 +523,7 @@ context('Sequence diagram', () => {
             E ->> E: Task 6
           end
           D -->> A: Complete
-      `,
-        {}
+      `
       );
     });
     it('should render a single and nested opt with long test wrapping', () => {
@@ -573,8 +554,7 @@ context('Sequence diagram', () => {
             E ->> E: Task 6
           end
           D -->> A: Complete
-      `,
-        {}
+      `
       );
     });
     it('should render rect around and inside loops', () => {
@@ -595,8 +575,7 @@ context('Sequence diagram', () => {
             D --> C: 4
             end
           end
-      `,
-        {}
+      `
       );
     });
     it('should render rect around and inside alts', () => {
@@ -614,8 +593,7 @@ context('Sequence diagram', () => {
             end
           end
           B ->> A: Return
-      `,
-        {}
+      `
       );
     });
     it('should render rect around and inside opts', () => {
@@ -638,8 +616,7 @@ context('Sequence diagram', () => {
             end
           end
           B ->> A: Return
-      `,
-        {}
+      `
       );
     });
     it('should render rect around and inside criticals', () => {
@@ -657,8 +634,7 @@ context('Sequence diagram', () => {
             end
           end
           B ->> A: Return
-      `,
-        {}
+      `
       );
     });
     it('should render rect around and inside breaks', () => {
@@ -674,8 +650,7 @@ context('Sequence diagram', () => {
             end
           end
           B ->> A: Return
-      `,
-        {}
+      `
       );
     });
     it('should render autonumber when configured with such', () => {
@@ -707,8 +682,7 @@ context('Sequence diagram', () => {
         John-->>Alice: Great!
         John->>Bob: How about you?
         Bob-->>John: Jolly good!
-      `,
-        {}
+      `
       );
     });
     it('should render autonumber with different line breaks', () => {
@@ -720,8 +694,7 @@ context('Sequence diagram', () => {
         Alice->>John: John,<br/>can you hear me?
         John-->>Alice: Hi Alice,<br />I can hear you!
         John-->>Alice: I feel great!
-      `,
-        {}
+      `
       );
     });
     it('should render dark theme from init directive and configure font size 24 font', () => {
@@ -733,8 +706,7 @@ context('Sequence diagram', () => {
         Alice->>John: John, can you hear me?
         John-->>Alice: Hi Alice, I can hear you!
         John-->>Alice: I feel great!
-      `,
-        {}
+      `
       );
     });
     it('should render with wrapping enabled', () => {
@@ -747,8 +719,7 @@ context('Sequence diagram', () => {
         A->>John: John, can you hear me? If you are not available, we can talk later.
         John-->>A: Hi Alice, I can hear you! I was finishing up an important meeting.
         John-->>A: I feel great! I was not ignoring you. I am sorry you had to wait for a response.
-      `,
-        {}
+      `
       );
     });
     it('should render with an init directive', () => {
@@ -757,8 +728,7 @@ context('Sequence diagram', () => {
           sequenceDiagram
           Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
           Note left of Alice: Bob thinks
-          Bob->>Alice: Fine!`,
-        {}
+          Bob->>Alice: Fine!`
       );
     });
   });
@@ -853,7 +823,7 @@ context('Sequence diagram', () => {
   });
   context('svg size', () => {
     it('should render a sequence diagram when useMaxWidth is true (default)', () => {
-      renderGraph(
+      imgSnapshotTest(
         `
       sequenceDiagram
         participant Alice
@@ -893,7 +863,7 @@ context('Sequence diagram', () => {
       });
     });
     it('should render a sequence diagram when useMaxWidth is false', () => {
-      renderGraph(
+      imgSnapshotTest(
         `
       sequenceDiagram
         participant Alice
