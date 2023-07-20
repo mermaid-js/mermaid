@@ -14,5 +14,5 @@ Make sure you
 
 - [ ] :book: have read the [contribution guidelines](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md)
 - [ ] :computer: have added necessary unit/e2e tests.
-- [ ] :notebook: have added documentation. Make sure `MERMAID_RELEASE_VERSION` is used for all new features.
+- [ ] :notebook: have added documentation. Make sure [`MERMAID_RELEASE_VERSION`](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/docs/community/development.md#3-update-documentation) is used for all new features.
 - [ ] :bookmark: targeted `develop` branch
