@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.js';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 /**
  * Check whether the SVG Element has a Mindmap root
@@ -242,8 +242,7 @@ mindmap
     a second line 😎\`]
       id2[\`The dog in **the** hog... a *very long text* about it
 Word!\`]
-`,
-        { titleTopMargin: 0 }
+`
       );
     });
   });
