@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.js';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('themeCSS balancing, it', () => {
   it('should not allow unbalanced CSS definitions', () => {
