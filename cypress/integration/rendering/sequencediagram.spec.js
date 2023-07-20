@@ -1,6 +1,6 @@
 /// <reference types="Cypress" />
 
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
 context('Sequence diagram', () => {
   it('should render a sequence diagram with boxes', () => {
