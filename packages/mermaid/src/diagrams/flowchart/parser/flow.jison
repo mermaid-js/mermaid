@@ -40,7 +40,7 @@ accDescr\s*"{"\s*                               { this.begin("acc_descr_multilin
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 // <acc_descr_multiline>.*[^\n]*                {  return "acc_descr_line"}
 
-["][`]                  { this.begin("md_string");}
+<INITIAL,text>["][`]                  { this.begin("md_string");}
 <md_string>[^`"]+       { return "MD_STR";}
 <md_string>[`]["]       { this.popState();}
 <INITIAL,text>["]       this.pushState("string");
@@ -463,6 +463,8 @@ text: textToken
     { $$={text:$1, type: 'text'};}
     | text textToken
     { $$={text:$1.text+''+$2, type: $1.type};}
+    | MD_STR
+    { $$={text: $1, type: 'markdown'};}
     ;
 
 
@@ -552,7 +554,7 @@ styleComponent: ALPHA_NUM | ALPHA | COLON | MINUS | NUM | UNIT | SPACE | HEX | B
 /* Token lists */
 idStringToken  : alphaNumToken | DOWN | MINUS | DEFAULT;
 
-textToken      :  textNoTagsToken | STR | MD_STR | TEXT;
+textToken      :  textNoTagsToken | STR | TEXT;
 
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords | START_LINK ;
 
