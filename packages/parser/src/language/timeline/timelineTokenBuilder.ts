@@ -49,7 +49,7 @@ export class TimelineTokenBuilder extends CommonTokenBuilder {
 
   public static customBuildKeywordTokens(tokenTypes: TokenType[]): TokenType[] {
     tokenTypes.forEach((token) => {
-      if (token.name === 'timeilne' && token.PATTERN !== undefined) {
+      if (token.name === 'timeline' && token.PATTERN !== undefined) {
         token.PATTERN = new RegExp(token.PATTERN.toString() + '(?!\\S)');
       }
     });
