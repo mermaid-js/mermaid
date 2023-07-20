@@ -13,6 +13,9 @@
 %x acc_descr_multiline
 %x dir
 %x vertex
+%x text
+%x ellipseText
+%x trapText
 %x click
 %x href
 %x callbackname
@@ -23,31 +26,32 @@
 %x close_directive
 
 %%
-\%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
-<open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
-<type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
-<type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
-<arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
-accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
-<acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
-accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
-<acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
-accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
+\%\%\{                                          { this.begin('open_directive'); return 'open_directive'; }
+<open_directive>((?:(?!\}\%\%)[^:.])*)          { this.begin('type_directive'); return 'type_directive'; }
+<type_directive>":"                             { this.popState(); this.begin('arg_directive'); return ':'; }
+<type_directive,arg_directive>\}\%\%            { this.popState(); this.popState(); return 'close_directive'; }
+<arg_directive>((?:(?!\}\%\%).|\n)*)            return 'arg_directive';
+accTitle\s*":"\s*                               { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                    { this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                               { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                    { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                               { this.begin("acc_descr_multiline");}
 <acc_descr_multiline>[\}]                       { this.popState(); }
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
-// <acc_descr_multiline>.*[^\n]*                    {  return "acc_descr_line"}
-["][`]          { this.begin("md_string");}
-<md_string>[^`"]+        { return "MD_STR";}
-<md_string>[`]["]          { this.popState();}
-["]                     this.begin("string");
+// <acc_descr_multiline>.*[^\n]*                {  return "acc_descr_line"}
+
+["][`]                  { this.begin("md_string");}
+<md_string>[^`"]+       { return "MD_STR";}
+<md_string>[`]["]       { this.popState();}
+<INITIAL,text>["]       this.pushState("string");
 <string>["]             this.popState();
-<string>[^"]*           return "STR";
-"style"               return 'STYLE';
-"default"             return 'DEFAULT';
-"linkStyle"           return 'LINKSTYLE';
-"interpolate"         return 'INTERPOLATE';
-"classDef"            return 'CLASSDEF';
-"class"               return 'CLASS';
+<string>[^"]+           return "STR";
+"style"                 return 'STYLE';
+"default"               return 'DEFAULT';
+"linkStyle"             return 'LINKSTYLE';
+"interpolate"           return 'INTERPOLATE';
+"classDef"              return 'CLASSDEF';
+"class"                 return 'CLASS';
 
 /*
 ---interactivity command---
@@ -80,64 +84,80 @@ Function arguments are optional: 'call <callbackname>()' simply executes 'callba
 that id.
 'click <id>' can be followed by href or call commands in any desired order
 */
-"click"[\s]+            this.begin("click");
-<click>[\s\n]           this.popState();
-<click>[^\s\n]*         return 'CLICK';
+"click"[\s]+             this.begin("click");
+<click>[\s\n]            this.popState();
+<click>[^\s\n]*          return 'CLICK';
 
-"flowchart-elk"        {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
-"graph"                {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
-"flowchart"            {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
-"subgraph"            return 'subgraph';
-"end"\b\s*            return 'end';
+"flowchart-elk"          {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
+"graph"                  {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
+"flowchart"              {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
+"subgraph"               return 'subgraph';
+"end"\b\s*               return 'end';
 
-"_self"               return 'LINK_TARGET';
-"_blank"              return 'LINK_TARGET';
-"_parent"             return 'LINK_TARGET';
-"_top"                return 'LINK_TARGET';
+"_self"                  return 'LINK_TARGET';
+"_blank"                 return 'LINK_TARGET';
+"_parent"                return 'LINK_TARGET';
+"_top"                   return 'LINK_TARGET';
 
-<dir>(\r?\n)*\s*\n       {   this.popState();  return 'NODIR'; }
-<dir>\s*"LR"             {   this.popState();  return 'DIR'; }
-<dir>\s*"RL"             {   this.popState();  return 'DIR'; }
-<dir>\s*"TB"             {   this.popState();  return 'DIR'; }
-<dir>\s*"BT"             {   this.popState();  return 'DIR'; }
-<dir>\s*"TD"             {   this.popState();  return 'DIR'; }
-<dir>\s*"BR"             {   this.popState();  return 'DIR'; }
-<dir>\s*"<"              {   this.popState();  return 'DIR'; }
-<dir>\s*">"              {   this.popState();  return 'DIR'; }
-<dir>\s*"^"              {   this.popState();  return 'DIR'; }
-<dir>\s*"v"              {   this.popState();  return 'DIR'; }
+<dir>(\r?\n)*\s*\n       { this.popState();  return 'NODIR'; }
+<dir>\s*"LR"             { this.popState();  return 'DIR'; }
+<dir>\s*"RL"             { this.popState();  return 'DIR'; }
+<dir>\s*"TB"             { this.popState();  return 'DIR'; }
+<dir>\s*"BT"             { this.popState();  return 'DIR'; }
+<dir>\s*"TD"             { this.popState();  return 'DIR'; }
+<dir>\s*"BR"             { this.popState();  return 'DIR'; }
+<dir>\s*"<"              { this.popState();  return 'DIR'; }
+<dir>\s*">"              { this.popState();  return 'DIR'; }
+<dir>\s*"^"              { this.popState();  return 'DIR'; }
+<dir>\s*"v"              { this.popState();  return 'DIR'; }
 
-.*direction\s+TB[^\n]*                                      return 'direction_tb';
-.*direction\s+BT[^\n]*                                      return 'direction_bt';
-.*direction\s+RL[^\n]*                                      return 'direction_rl';
-.*direction\s+LR[^\n]*                                      return 'direction_lr';
+.*direction\s+TB[^\n]*       return 'direction_tb';
+.*direction\s+BT[^\n]*       return 'direction_bt';
+.*direction\s+RL[^\n]*       return 'direction_rl';
+.*direction\s+LR[^\n]*       return 'direction_lr';
 
-[0-9]+                { return 'NUM';}
-\#                    return 'BRKT';
-":::"                 return 'STYLE_SEPARATOR';
-":"                   return 'COLON';
-"&"                   return 'AMP';
-";"                   return 'SEMI';
-","                   return 'COMMA';
-"*"                   return 'MULT';
-\s*[xo<]?\-\-+[-xo>]\s*     return 'LINK';
-\s*[xo<]?\=\=+[=xo>]\s*     return 'LINK';
-\s*[xo<]?\-?\.+\-[xo>]?\s*  return 'LINK';
-\s*\~\~[\~]+\s*  return 'LINK';
-\s*[xo<]?\-\-\s*            return 'START_LINK';
-\s*[xo<]?\=\=\s*            return 'START_LINK';
-\s*[xo<]?\-\.\s*            return 'START_LINK';
-"(-"                  return '(-';
-"-)"                  return '-)';
-"(["                  return 'STADIUMSTART';
-"])"                  return 'STADIUMEND';
-"[["                  return 'SUBROUTINESTART';
-"]]"                  return 'SUBROUTINEEND';
-"[|"                  return 'VERTEX_WITH_PROPS_START';
-"[("                  return 'CYLINDERSTART';
-")]"                  return 'CYLINDEREND';
-"((("                 return 'DOUBLECIRCLESTART';
-")))"                 return 'DOUBLECIRCLEEND';
+[0-9]+                       return 'NUM';
+\#                           return 'BRKT';
+":::"                        return 'STYLE_SEPARATOR';
+":"                          return 'COLON';
+"&"                          return 'AMP';
+";"                          return 'SEMI';
+","                          return 'COMMA';
+"*"                          return 'MULT';
+\s*[xo<]?\-\-+[-xo>]\s*      return 'LINK';
+\s*[xo<]?\=\=+[=xo>]\s*      return 'LINK';
+\s*[xo<]?\-?\.+\-[xo>]?\s*   return 'LINK';
+\s*\~\~[\~]+\s*              return 'LINK';
+\s*[xo<]?\-\-\s*             return 'START_LINK';
+\s*[xo<]?\=\=\s*             return 'START_LINK';
+\s*[xo<]?\-\.\s*             return 'START_LINK';
+
+<*>"(-"                         { this.pushState("ellipseText"); return '(-'; }
+<ellipseText>[-/\)][\)]         { this.popState(); return '-)'; }
+<ellipseText>[^/)]|-/!\)+       return "TEXT"
+
+<*>"(["                   { this.pushState("text"); return 'STADIUMSTART'; }
+<text>"])"                { this.popState(); return 'STADIUMEND'; }
+
+<*>"[["                   { this.pushState("text"); return 'SUBROUTINESTART'; }
+<text>"]]"                { this.popState(); return 'SUBROUTINEEND'; }
+
+"[|"                      { return 'VERTEX_WITH_PROPS_START'; }
+
+\>/!\s                    { this.pushState("text"); return 'TAGEND'; }
+<*>"[("                   { this.pushState("text") ;return 'CYLINDERSTART'; }
+<text>")]"                { this.popState(); return 'CYLINDEREND'; }
+
+<*>"((("                  { this.pushState("text"); return 'DOUBLECIRCLESTART'; }
+<text>")))"               { this.popState(); return 'DOUBLECIRCLEEND'; }
+
+<*>"[/"                   { this.pushState("trapText"); return 'TRAPSTART'; }
+<trapText>[\\(?=\])][\]]     { this.popState(); return 'TRAPEND'; }
+<trapText>[^\\\/]+   return 'TEXT';
+
+<trapText>\/(?=\])\]     { this.popState(); return 'INVTRAPEND'; }
+<*>"[\\"                 { this.pushState("trapText"); return 'INVTRAPSTART'; }
+
 \-                    return 'MINUS';
 "."                   return 'DOT';
 [\_]                  return 'UNDERSCORE';
@@ -150,11 +170,8 @@ that id.
 "^"                   return 'UP';
 "\|"                  return 'SEP';
 "v"                   return 'DOWN';
+[A-Za-z0-9_]+         return 'ALPHA_NUM';
 [A-Za-z]+             return 'ALPHA';
-"\\]"                 return 'TRAPEND';
-"[/"                  return 'TRAPSTART';
-"/]"                  return 'INVTRAPEND';
-"[\\"                 return 'INVTRAPSTART';
 [!"#$%&'*+,-.`?\\_/]  return 'PUNCTUATION';
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
@@ -218,13 +235,16 @@ that id.
 [\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|
 [\uFFD2-\uFFD7\uFFDA-\uFFDC]
                       return 'UNICODE_TEXT';
-"|"                   return 'PIPE';
-"("                   return 'PS';
-")"                   return 'PE';
-"["                   return 'SQS';
-"]"                   return 'SQE';
-"{"                   return 'DIAMOND_START'
-"}"                   return 'DIAMOND_STOP'
+
+<text>"|"             { this.popState(); return 'PIPE'; }
+<*>"|"                { this.pushState("text"); return 'PIPE'; }
+<*>"("                { this.pushState("text"); return 'PS'; }
+<text>")"             { this.popState(); return 'PE'; }
+<*>"["                { this.pushState("text"); return 'SQS'; }
+<text>(\])            { this.popState(); return 'SQE'; }
+<*>"{"                { this.pushState("text"); return 'DIAMOND_START' }
+<text>(\})            { this.popState(); return 'DIAMOND_STOP' }
+<text>[^\]\)\}\|]+    return "TEXT";
 "\""                  return 'QUOTE';
 (\r?\n)+              return 'NEWLINE';
 \s                    return 'SPACE';
@@ -343,11 +363,11 @@ statement
     {$$=[];}
     | clickStatement separator
     {$$=[];}
-    | subgraph SPACE text SQS text SQE separator document end
+    | subgraph SPACE textNoTags SQS text SQE separator document end
     {$$=yy.addSubGraph($3,$8,$5);}
-    | subgraph SPACE text separator document end
+    | subgraph SPACE textNoTags separator document end
     {$$=yy.addSubGraph($3,$5,$3);}
-    // | subgraph SPACE text separator document end
+    // | subgraph SPACE textNoTags separator document end
     // {$$=yy.addSubGraph($3,$5,$3);}
     | subgraph separator document end
     {$$=yy.addSubGraph(undefined,$3,undefined);}
@@ -392,7 +412,7 @@ vertex:  idString SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'stadium');}
     | idString SUBROUTINESTART text SUBROUTINEEND
         {$$ = $1;yy.addVertex($1,$3,'subroutine');}
-    | idString VERTEX_WITH_PROPS_START ALPHA COLON ALPHA PIPE text SQE
+    | idString VERTEX_WITH_PROPS_START ALPHA_NUM COLON ALPHA_NUM PIPE text SQE
         {$$ = $1;yy.addVertex($1,$7,'rect',undefined,undefined,undefined, Object.fromEntries([[$3, $5]]));}
     | idString CYLINDERSTART text CYLINDEREND
         {$$ = $1;yy.addVertex($1,$3,'cylinder');}
@@ -426,7 +446,7 @@ link: linkStatement arrowText
     {$1.text = $2;$$ = $1;}
     | linkStatement
     {$$ = $1;}
-    | START_LINK text LINK
+    | START_LINK textNoTags LINK
         {var inf = yy.destructLink($3, $1); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$2};}
     ;
 
@@ -443,10 +463,6 @@ text: textToken
     { $$={text:$1, type: 'text'};}
     | text textToken
     { $$={text:$1.text+''+$2, type: $1.type};}
-    | STR
-    { $$={text: $1, type: 'text'};}
-    | MD_STR
-    { $$={text: $1, type: 'markdown'};}
     ;
 
 
@@ -456,9 +472,13 @@ keywords
 
 
 textNoTags: textNoTagsToken
-    {$$=$1;}
+    {$$={text:$1, type: 'text'};}
     | textNoTags textNoTagsToken
-    {$$=$1+''+$2;}
+    {$$={text:$1.text+''+$2, type: $1.type};}
+    | STR
+    { $$={text: $1, type: 'text'};}
+    | MD_STR
+    { $$={text: $1, type: 'markdown'};}
     ;
 
 
@@ -527,13 +547,14 @@ style: styleComponent
     {$$ = $1 + $2;}
     ;
 
-styleComponent: ALPHA | COLON | MINUS | NUM | UNIT | SPACE | HEX | BRKT | DOT | STYLE | PCT ;
+styleComponent: ALPHA_NUM | ALPHA | COLON | MINUS | NUM | UNIT | SPACE | HEX | BRKT | DOT | STYLE | PCT ;
 
 /* Token lists */
+idStringToken  : alphaNumToken | DOWN | MINUS | DEFAULT;
 
-textToken      : textNoTagsToken | TAGSTART | TAGEND | START_LINK | PCT | DEFAULT;
+textToken      :  textNoTagsToken | STR | MD_STR | TEXT;
 
-textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
+textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords | START_LINK ;
 
 idString
     :idStringToken
@@ -571,9 +592,7 @@ direction
     { $$={stmt:'dir', value:'LR'};}
     ;
 
-alphaNumToken  : PUNCTUATION | AMP | UNICODE_TEXT | NUM| ALPHA | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT| UNDERSCORE ;
-
-idStringToken  : ALPHA|UNDERSCORE |UNICODE_TEXT | NUM|  COLON | COMMA | PLUS | MINUS | DOWN |EQUALS | MULT | BRKT | DOT | PUNCTUATION | AMP | DEFAULT;
+alphaNumToken  : ALPHA_NUM | PUNCTUATION | AMP | UNICODE_TEXT | NUM| ALPHA | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT| UNDERSCORE ;
 
 graphCodeTokens: STADIUMSTART | STADIUMEND | SUBROUTINESTART | SUBROUTINEEND | VERTEX_WITH_PROPS_START | CYLINDERSTART | CYLINDEREND | TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI;
 %%
