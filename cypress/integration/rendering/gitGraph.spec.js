@@ -665,4 +665,40 @@ gitGraph TB:
       {}
     );
   });
+  it('32: should render a simple gitgraph overlapping commits | Vertical Branch', () => {
+    imgSnapshotTest(
+      `gitGraph TB:
+       commit id:"s1"
+       commit id:"s2"
+       branch branch1
+       commit id:"s3"
+       commit id:"s4"
+       checkout main
+       commit id:"s5"
+       checkout branch1
+       commit id:"s6"
+       commit id:"s7"
+       merge main
+      `,
+      {}
+    );
+  });
+  it('33: should render a simple gitgraph overlapping commits', () => {
+    imgSnapshotTest(
+      `gitGraph
+       commit id:"s1"
+       commit id:"s2"
+       branch branch1
+       commit id:"s3"
+       commit id:"s4"
+       checkout main
+       commit id:"s5"
+       checkout branch1
+       commit id:"s6"
+       commit id:"s7"
+       merge main
+      `,
+      {}
+    );
+  });
 });
