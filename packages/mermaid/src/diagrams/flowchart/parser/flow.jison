@@ -504,7 +504,6 @@ clickStatement
 
 styleStatement:STYLE SPACE idString SPACE stylesOpt
     {$$ = $1;yy.addVertex($3,undefined,undefined,$5);}
-
     ;
 
 linkStyleStatement
