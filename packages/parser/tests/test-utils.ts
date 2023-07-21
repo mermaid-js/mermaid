@@ -3,6 +3,8 @@ import { EmptyFileSystem, LangiumParser } from 'langium';
 import {
   Info,
   InfoServices,
+  Journey,
+  JourneyServices,
   Pie,
   PieServices,
   Timeline,
@@ -17,6 +19,16 @@ const infoParser: LangiumParser = infoServices.parser.LangiumParser;
 export function createInfoTestServices() {
   const parse = (input: string) => {
     return infoParser.parse<Info>(input);
+  };
+
+  return { services, parse };
+}
+
+const journeyServices: JourneyServices = services.Journey;
+const journeyParser: LangiumParser = journeyServices.parser.LangiumParser;
+export function createJourneyTestServices() {
+  const parse = (input: string) => {
+    return journeyParser.parse<Journey>(input);
   };
 
   return { services, parse };
