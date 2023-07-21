@@ -136,10 +136,10 @@ that id.
 <ellipseText>[-/\)][\)]         { this.popState(); return '-)'; }
 <ellipseText>[^/)]|-/!\)+       return "TEXT"
 
-<*>"(["                   { this.pushState("text"); return 'STADIUMSTART'; }
+"(["                   { this.pushState("text"); return 'STADIUMSTART'; }
 <text>"])"                { this.popState(); return 'STADIUMEND'; }
 
-<*>"[["                   { this.pushState("text"); return 'SUBROUTINESTART'; }
+"[["                   { this.pushState("text"); return 'SUBROUTINESTART'; }
 <text>"]]"                { this.popState(); return 'SUBROUTINEEND'; }
 
 "[|"                      { return 'VERTEX_WITH_PROPS_START'; }
@@ -152,27 +152,19 @@ that id.
 <text>")))"               { this.popState(); return 'DOUBLECIRCLEEND'; }
 
 <*>"[/"                   { this.pushState("trapText"); return 'TRAPSTART'; }
-<trapText>[\\(?=\])][\]]     { this.popState(); return 'TRAPEND'; }
-<trapText>[^\\\/]+   return 'TEXT';
-
+<trapText>[\\(?=\])][\]]  { this.popState(); return 'TRAPEND'; }
 <trapText>\/(?=\])\]     { this.popState(); return 'INVTRAPEND'; }
+<trapText>\/(?!\])|\\(?!\])|[^\\\]\/]+        return 'TEXT';
 <*>"[\\"                 { this.pushState("trapText"); return 'INVTRAPSTART'; }
 
-\-                   return 'MINUS';
-"."                    return 'DOT';
-[\_]                  return 'UNDERSCORE';
-\+                    return 'PLUS';
-\%                    return 'PCT';
-"="                   return 'EQUALS';
-\=                    return 'EQUALS';
+
 "<"                   return 'TAGSTART';
 ">"                   return 'TAGEND';
 "^"                   return 'UP';
 "\|"                  return 'SEP';
 "v"                   return 'DOWN';
-[0-9]+                return 'NUM';
-[A-Za-z0-9_]+         return 'ALPHA_NUM';
-[!"#$%&'*+,-\.`?\\_/]  return 'PUNCTUATION';
+([A-Za-z0-9!"#$%&'*+\.`?\\_]|\-(?=[^\>\-\.]))+  return 'NODE_STRING';
+"-"                   return 'MINUS'
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
 [\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|
@@ -245,6 +237,7 @@ that id.
 <*>"{"                { this.pushState("text"); return 'DIAMOND_START' }
 <text>(\})            { this.popState(); return 'DIAMOND_STOP' }
 <text>[^\]\)\}\|]+    return "TEXT";
+
 "\""                  return 'QUOTE';
 (\r?\n)+              return 'NEWLINE';
 \s                    return 'SPACE';
@@ -412,7 +405,7 @@ vertex:  idString SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'stadium');}
     | idString SUBROUTINESTART text SUBROUTINEEND
         {$$ = $1;yy.addVertex($1,$3,'subroutine');}
-    | idString VERTEX_WITH_PROPS_START ALPHA_NUM COLON ALPHA_NUM PIPE text SQE
+    | idString VERTEX_WITH_PROPS_START NODE_STRING COLON NODE_STRING PIPE text SQE
         {$$ = $1;yy.addVertex($1,$7,'rect',undefined,undefined,undefined, Object.fromEntries([[$3, $5]]));}
     | idString CYLINDERSTART text CYLINDEREND
         {$$ = $1;yy.addVertex($1,$3,'cylinder');}
@@ -549,14 +542,14 @@ style: styleComponent
     {$$ = $1 + $2;}
     ;
 
-styleComponent: ALPHA_NUM | ALPHA | COLON | MINUS | NUM | UNIT | SPACE | HEX | BRKT | DOT | STYLE | PCT ;
+styleComponent: NUM | NODE_STRING| COLON | UNIT | SPACE | HEX | BRKT | STYLE | PCT ;
 
 /* Token lists */
-idStringToken  :  alphaNumToken | DOWN | MINUS | DEFAULT;
+idStringToken  :  NUM | NODE_STRING | DOWN | MINUS | DEFAULT;
 
-textToken      :   STR | TEXT;
+textToken      :   STR | TEXT | TAGSTART | TAGEND;
 
-textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords | START_LINK ;
+textNoTagsToken: NUM | NODE_STRING | SPACE | MINUS | keywords |  START_LINK ;
 
 idString
     :idStringToken
@@ -566,14 +559,16 @@ idString
     ;
 
 alphaNum
-    : alphaNumToken
+    : alphaNumStatement
     {$$=$1;}
-    | alphaNum alphaNumToken
+    | alphaNum alphaNumStatement
     {$$=$1+''+$2;}
     ;
 
 alphaNumStatement
     : DIR
+        {$$=$1;}
+    | NODE_STRING
         {$$=$1;}
     | alphaNumToken
         {$$=$1;}
