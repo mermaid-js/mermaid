@@ -6,7 +6,7 @@ import { createTestServices } from '../test-utils.js';
 describe('timeline', () => {
   const { parse } = createTestServices<Timeline>();
 
-  it('TL-1 should handle a simple section definition abc-123', () => {
+  it('should handle a simple section definition abc-123', () => {
     const context = `timeline
     section abc-123`;
     const result = parse(context);
@@ -16,7 +16,7 @@ describe('timeline', () => {
     expect(result.value.sections[0].title).toBe('abc-123');
   });
 
-  it('TL-2 should handle a simple section and only two tasks', () => {
+  it('should handle a simple section and only two tasks', () => {
     const context = `timeline
     section abc-123
     task1
@@ -30,7 +30,7 @@ describe('timeline', () => {
     expect(result.value.sections[0].periods[1].title).toBe('task2');
   });
 
-  it('TL-3 should handle a two section and two coressponding tasks', () => {
+  it('should handle a two section and two coressponding tasks', () => {
     const context = `timeline
     section abc-123
     task1
@@ -51,7 +51,7 @@ describe('timeline', () => {
     expect(result.value.sections[1].periods[1].title).toBe('task4');
   });
 
-  it('TL-4 should handle a section, and task and its events', () => {
+  it('should handle a section, and task and its events', () => {
     const context = `timeline
     section abc-123
     task1: event1
@@ -68,7 +68,7 @@ describe('timeline', () => {
     expect(result.value.sections[0].periods[1].events[1]).toBe('event3');
   });
 
-  it('TL-5 should handle a section, and task and its multi line events', () => {
+  it('should handle a section, and task and its multi line events', () => {
     const context = `timeline
     section abc-123
     task1: event1
