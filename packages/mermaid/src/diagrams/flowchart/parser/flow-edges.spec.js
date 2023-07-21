@@ -6,6 +6,28 @@ setConfig({
   securityLevel: 'strict',
 });
 
+const keywords = [
+  'graph',
+  'flowchart',
+  'flowchart-elk',
+  'style',
+  'default',
+  'linkStyle',
+  'interpolate',
+  'classDef',
+  'class',
+  'href',
+  'call',
+  'click',
+  '_self',
+  '_blank',
+  '_parent',
+  '_top',
+  'end',
+  'subgraph',
+  'kitty',
+];
+
 describe('[Edges] when parsing', () => {
   beforeEach(function () {
     flow.parser.yy = flowDb;
@@ -74,6 +96,23 @@ describe('[Edges] when parsing', () => {
       expect(edges[0].length).toBe(1);
     });
 
+    it.each(keywords)('should handle %s as text in double edged nodes', function (keyword) {
+      const res = flow.parser.parse(`graph TD;\nA x-- ${keyword} --x B;`);
+
+      const vert = flow.parser.yy.getVertices();
+      const edges = flow.parser.yy.getEdges();
+
+      expect(vert['A'].id).toBe('A');
+      expect(vert['B'].id).toBe('B');
+      expect(edges.length).toBe(1);
+      expect(edges[0].start).toBe('A');
+      expect(edges[0].end).toBe('B');
+      expect(edges[0].type).toBe('double_arrow_cross');
+      expect(edges[0].text).toBe(`${keyword}`);
+      expect(edges[0].stroke).toBe('normal');
+      expect(edges[0].length).toBe(1);
+    });
+
     it('should handle double edged nodes and edges on thick arrows', function () {
       const res = flow.parser.parse('graph TD;\nA x==x B;');
 
@@ -104,6 +143,23 @@ describe('[Edges] when parsing', () => {
       expect(edges[0].end).toBe('B');
       expect(edges[0].type).toBe('double_arrow_cross');
       expect(edges[0].text).toBe('text');
+      expect(edges[0].stroke).toBe('thick');
+      expect(edges[0].length).toBe(1);
+    });
+
+    it.each(keywords)('should handle %s as text in thick double edged nodes', function (keyword) {
+      const res = flow.parser.parse(`graph TD;\nA x== ${keyword} ==x B;`);
+
+      const vert = flow.parser.yy.getVertices();
+      const edges = flow.parser.yy.getEdges();
+
+      expect(vert['A'].id).toBe('A');
+      expect(vert['B'].id).toBe('B');
+      expect(edges.length).toBe(1);
+      expect(edges[0].start).toBe('A');
+      expect(edges[0].end).toBe('B');
+      expect(edges[0].type).toBe('double_arrow_cross');
+      expect(edges[0].text).toBe(`${keyword}`);
       expect(edges[0].stroke).toBe('thick');
       expect(edges[0].length).toBe(1);
     });
@@ -143,6 +199,23 @@ describe('[Edges] when parsing', () => {
     });
   });
 
+  it.each(keywords)('should handle %s as text in dotted double edged nodes', function (keyword) {
+    const res = flow.parser.parse(`graph TD;\nA x-. ${keyword} .-x B;`);
+
+    const vert = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(vert['A'].id).toBe('A');
+    expect(vert['B'].id).toBe('B');
+    expect(edges.length).toBe(1);
+    expect(edges[0].start).toBe('A');
+    expect(edges[0].end).toBe('B');
+    expect(edges[0].type).toBe('double_arrow_cross');
+    expect(edges[0].text).toBe(`${keyword}`);
+    expect(edges[0].stroke).toBe('dotted');
+    expect(edges[0].length).toBe(1);
+  });
+
   describe('circle', function () {
     it('should handle double edged nodes and edges', function () {
       const res = flow.parser.parse('graph TD;\nA o--o B;');
@@ -174,6 +247,23 @@ describe('[Edges] when parsing', () => {
       expect(edges[0].end).toBe('B');
       expect(edges[0].type).toBe('double_arrow_circle');
       expect(edges[0].text).toBe('text');
+      expect(edges[0].stroke).toBe('normal');
+      expect(edges[0].length).toBe(1);
+    });
+
+    it.each(keywords)('should handle double edged nodes with %s as text', function (keyword) {
+      const res = flow.parser.parse(`graph TD;\nA o-- ${keyword} --o B;`);
+
+      const vert = flow.parser.yy.getVertices();
+      const edges = flow.parser.yy.getEdges();
+
+      expect(vert['A'].id).toBe('A');
+      expect(vert['B'].id).toBe('B');
+      expect(edges.length).toBe(1);
+      expect(edges[0].start).toBe('A');
+      expect(edges[0].end).toBe('B');
+      expect(edges[0].type).toBe('double_arrow_circle');
+      expect(edges[0].text).toBe(`${keyword}`);
       expect(edges[0].stroke).toBe('normal');
       expect(edges[0].length).toBe(1);
     });
@@ -212,6 +302,23 @@ describe('[Edges] when parsing', () => {
       expect(edges[0].length).toBe(1);
     });
 
+    it.each(keywords)('should handle thick double edged nodes with %s as text', function (keyword) {
+      const res = flow.parser.parse(`graph TD;\nA o== ${keyword} ==o B;`);
+
+      const vert = flow.parser.yy.getVertices();
+      const edges = flow.parser.yy.getEdges();
+
+      expect(vert['A'].id).toBe('A');
+      expect(vert['B'].id).toBe('B');
+      expect(edges.length).toBe(1);
+      expect(edges[0].start).toBe('A');
+      expect(edges[0].end).toBe('B');
+      expect(edges[0].type).toBe('double_arrow_circle');
+      expect(edges[0].text).toBe(`${keyword}`);
+      expect(edges[0].stroke).toBe('thick');
+      expect(edges[0].length).toBe(1);
+    });
+
     it('should handle double edged nodes and edges on dotted arrows', function () {
       const res = flow.parser.parse('graph TD;\nA o-.-o B;');
 
@@ -245,6 +352,26 @@ describe('[Edges] when parsing', () => {
       expect(edges[0].stroke).toBe('dotted');
       expect(edges[0].length).toBe(1);
     });
+
+    it.each(keywords)(
+      'should handle dotted double edged nodes with %s as text',
+      function (keyword) {
+        const res = flow.parser.parse(`graph TD;\nA o-. ${keyword} .-o B;`);
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('double_arrow_circle');
+        expect(edges[0].text).toBe(`${keyword}`);
+        expect(edges[0].stroke).toBe('dotted');
+        expect(edges[0].length).toBe(1);
+      }
+    );
   });
 
   it('should handle multiple edges', function () {
