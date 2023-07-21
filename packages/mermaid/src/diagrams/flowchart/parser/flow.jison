@@ -16,6 +16,9 @@
 %x text
 %x ellipseText
 %x trapText
+%x edgeText
+%x thickEdgeText
+%x dottedEdgeText
 %x click
 %x href
 %x callbackname
@@ -40,10 +43,10 @@ accDescr\s*"{"\s*                               { this.begin("acc_descr_multilin
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 // <acc_descr_multiline>.*[^\n]*                {  return "acc_descr_line"}
 
-<INITIAL,text>["][`]                  { this.begin("md_string");}
+<INITIAL,text,edgeText,dottedEdgeText,thickEdgeText>["][`]                  { this.begin("md_string");}
 <md_string>[^`"]+       { return "MD_STR";}
 <md_string>[`]["]       { this.popState();}
-<INITIAL,text>["]       this.pushState("string");
+<INITIAL,text,edgeText,dottedEdgeText,thickEdgeText>["]       this.pushState("string");
 <string>["]             this.popState();
 <string>[^"]+           return "STR";
 "style"                 return 'STYLE';
@@ -124,13 +127,21 @@ that id.
 ";"                          return 'SEMI';
 ","                          return 'COMMA';
 "*"                          return 'MULT';
-\s*[xo<]?\-\-+[-xo>]\s*      return 'LINK';
-\s*[xo<]?\=\=+[=xo>]\s*      return 'LINK';
-\s*[xo<]?\-?\.+\-[xo>]?\s*   return 'LINK';
-\s*\~\~[\~]+\s*              return 'LINK';
-\s*[xo<]?\-\-\s*             return 'START_LINK';
-\s*[xo<]?\=\=\s*             return 'START_LINK';
-\s*[xo<]?\-\.\s*             return 'START_LINK';
+
+<INITIAL,edgeText>\s*[xo<]?\-\-+[-xo>]\s*          { this.popState(); return 'LINK'; }
+<INITIAL>\s*[xo<]?\-\-\s*                          { this.pushState("edgeText"); return 'START_LINK'; }
+<edgeText>[^-]|\-(?!\-)+                           return 'EDGE_TEXT';
+
+<INITIAL,thickEdgeText>\s*[xo<]?\=\=+[=xo>]\s*      { this.popState(); return 'LINK'; }
+<INITIAL>\s*[xo<]?\=\=\s*                           { this.pushState("thickEdgeText"); return 'START_LINK'; }
+<thickEdgeText>[^=]|\=(?!=)                         return 'EDGE_TEXT';
+
+<INITIAL,dottedEdgeText>\s*[xo<]?\-?\.+\-[xo>]?\s*   { this.popState(); return 'LINK'; }
+<INITIAL>\s*[xo<]?\-\.\s*                            { this.pushState("dottedEdgeText"); return 'START_LINK'; }
+<dottedEdgeText>[^\.]|\.(?!-)                        return 'EDGE_TEXT';
+
+
+<*>\s*\~\~[\~]+\s*              return 'LINK';
 
 <*>"(-"                         { this.pushState("ellipseText"); return '(-'; }
 <ellipseText>[-/\)][\)]         { this.popState(); return '-)'; }
@@ -439,9 +450,18 @@ link: linkStatement arrowText
     {$1.text = $2;$$ = $1;}
     | linkStatement
     {$$ = $1;}
-    | START_LINK textNoTags LINK
+    | START_LINK edgeText LINK
         {var inf = yy.destructLink($3, $1); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$2};}
     ;
+
+edgeText: edgeTextToken
+    {$$={text:$1, type:'text'};}
+    | edgeText edgeTextToken
+    {$$={text:$1.text+''+$2, type:$1.type};}
+    | MD_STR
+    {$$={text:$1, type:'markdown'};}
+    ;
+
 
 linkStatement: LINK
         {var inf = yy.destructLink($1);$$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length};}
@@ -546,6 +566,8 @@ idStringToken  :  NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON;
 textToken      :   STR | TEXT | TAGSTART | TAGEND | UNICODE_TEXT;
 
 textNoTagsToken: NUM | NODE_STRING | SPACE | MINUS | keywords |  START_LINK ;
+
+edgeTextToken  :  STR | EDGE_TEXT | UNICODE_TEXT ;
 
 idString
     :idStringToken
