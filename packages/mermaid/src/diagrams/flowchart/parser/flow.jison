@@ -118,7 +118,6 @@ that id.
 
 [0-9]+                       return 'NUM';
 \#                           return 'BRKT';
-\#[0-9]+                     return 'HEX';
 ":::"                        return 'STYLE_SEPARATOR';
 ":"                          return 'COLON';
 "&"                          return 'AMP';
@@ -505,8 +504,7 @@ clickStatement
 
 styleStatement:STYLE SPACE idString SPACE stylesOpt
     {$$ = $1;yy.addVertex($3,undefined,undefined,$5);}
-    | STYLE SPACE HEX SPACE stylesOpt
-          {$$ = $1;yy.updateLink($3,$5);}
+
     ;
 
 linkStyleStatement
@@ -541,7 +539,7 @@ style: styleComponent
     {$$ = $1 + $2;}
     ;
 
-styleComponent: NUM | NODE_STRING| COLON | UNIT | SPACE | HEX | BRKT | STYLE | PCT ;
+styleComponent: NUM | NODE_STRING| COLON | UNIT | SPACE | BRKT | STYLE | PCT ;
 
 /* Token lists */
 idStringToken  :  NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON;
