@@ -52,7 +52,7 @@ export class CommonValueConverter extends DefaultValueConverter {
         if (match[1] !== undefined) {
           return match[1].trim().replaceAll(/[\t ]{2,}/gm, ' ');
         }
-        // empty title and multi line accDescr
+        // multi line accDescr
         else if (match[2] !== undefined) {
           return match[2]
             .replaceAll(/^\s*/gm, '')
