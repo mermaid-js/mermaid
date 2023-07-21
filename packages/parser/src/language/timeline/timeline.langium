@@ -26,6 +26,6 @@ TimelinePeriod:
   (events+=TIMELINE_PERIOD_EVENT NEWLINE*)*
 ;
 
-terminal TIMELINE_SECTION_TITLE: /timeline-section-title/;
+terminal TIMELINE_SECTION_TITLE: /section[\t ]+[^\n\r]+/;
 terminal TIMELINE_PERIOD_EVENT: /timeline-period-event/;
 terminal TIMELINE_PERIOD_TITLE: /timeline-period-title/;

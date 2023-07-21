@@ -3,11 +3,7 @@ import { CustomPatternMatcherFunc } from 'chevrotain';
 /**
  * Matches a timeline section title
  */
-export const timelineSectionTitleRegex = /section[\t ]+([^\n\r]+)/y;
-export const matchTimelineSectionTitle: CustomPatternMatcherFunc = (text, startOffset) => {
-  timelineSectionTitleRegex.lastIndex = startOffset;
-  return timelineSectionTitleRegex.exec(text);
-};
+export const timelineSectionTitleRegex = /section[\t ]+([^\n\r]+)/;
 
 /**
  * Matches a timeline period title

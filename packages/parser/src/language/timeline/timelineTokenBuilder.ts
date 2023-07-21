@@ -2,11 +2,7 @@ import type { TokenType } from 'chevrotain';
 import type { GrammarAST, Stream, TokenBuilderOptions } from 'langium';
 
 import { CommonTokenBuilder } from '../common/commonTokenBuilder.js';
-import {
-  matchTimelinePeriodEvent,
-  matchTimelinePeriodTitle,
-  matchTimelineSectionTitle,
-} from './timelineMatcher.js';
+import { matchTimelinePeriodEvent, matchTimelinePeriodTitle } from './timelineMatcher.js';
 
 export class TimelineTokenBuilder extends CommonTokenBuilder {
   protected override buildTerminalTokens(rules: Stream<GrammarAST.AbstractRule>): TokenType[] {
@@ -17,12 +13,6 @@ export class TimelineTokenBuilder extends CommonTokenBuilder {
   public static customBuildTerminalTokens(tokenTypes: TokenType[]): TokenType[] {
     tokenTypes.forEach((tokenType: TokenType): void => {
       switch (tokenType.name) {
-        case 'TIMELINE_SECTION_TITLE': {
-          tokenType.LINE_BREAKS = false;
-          tokenType.PATTERN = matchTimelineSectionTitle;
-          tokenType.START_CHARS_HINT = ['section'];
-          break;
-        }
         case 'TIMELINE_PERIOD_TITLE': {
           tokenType.LINE_BREAKS = false;
           tokenType.PATTERN = matchTimelinePeriodTitle;
