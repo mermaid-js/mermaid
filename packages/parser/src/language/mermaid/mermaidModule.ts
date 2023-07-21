@@ -13,6 +13,8 @@ import { MermaidValueConverter } from './mermaidValueConverter.js';
 import { MermiadTokenBuilder } from './mermaidTokenBuilder.js';
 import { MermaidGeneratedSharedModule, MermaidGeneratedModule } from '../generated/module.js';
 import { CommonLexer } from '../common/commonLexer.js';
+import { MermaidServiceRegistry } from './mermaidServiceRegistry.js';
+import { createInfoServices, createPieServices, createTimelineServices } from '../index.js';
 
 /**
  * Declaration of `Mermaid` services.
@@ -61,15 +63,25 @@ export function createMermaidServices(context: DefaultSharedModuleContext): {
   shared: LangiumSharedServices;
   Mermaid: MermaidServices;
 } {
-  const shared: LangiumSharedServices = inject(
+  let shared: LangiumSharedServices = inject(
     createDefaultSharedModule(context),
     MermaidGeneratedSharedModule
   );
+  shared = {
+    ...shared,
+    ServiceRegistry: new MermaidServiceRegistry(),
+  };
   const Mermaid: MermaidServices = inject(
     createDefaultModule({ shared }),
     MermaidGeneratedModule,
     MermaidModule
   );
   shared.ServiceRegistry.register(Mermaid);
+  const { Info } = createInfoServices(context);
+  shared.ServiceRegistry.register(Info);
+  const { Pie } = createPieServices(context);
+  shared.ServiceRegistry.register(Pie);
+  const { Timeline } = createTimelineServices(context);
+  shared.ServiceRegistry.register(Timeline);
   return { shared, Mermaid };
 }
