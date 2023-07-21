@@ -363,18 +363,18 @@ describe('[Text] when parsing', () => {
 
     it.each(keywords)('should handle %s keyword in doublecircle vertex', function (keyword) {
       const rest = flow.parser.parse(
-        `graph TD;A_${keyword}-->${keyword}_B(((This node has a ${keyword} as text)));`
+        `graph TD;A_${keyword}-->-${keyword}-B(((This node has a ${keyword} as text)));`
       );
 
       const vert = flow.parser.yy.getVertices();
       const edges = flow.parser.yy.getEdges();
-      expect(vert[`${keyword}_B`].type).toBe('doublecircle');
-      expect(vert[`${keyword}_B`].text).toBe(`This node has a ${keyword} as text`);
+      expect(vert[`-${keyword}-B`].type).toBe('doublecircle');
+      expect(vert[`-${keyword}-B`].text).toBe(`This node has a ${keyword} as text`);
     });
 
     it.each(keywords)('should handle %s keyword in ellipse vertex', function (keyword) {
       const rest = flow.parser.parse(
-        `graph TD;A_${keyword}_node-->B(-This node has a ${keyword} as text-);`
+        `graph TD;A_${keyword}-->B(-This node has a ${keyword} as text-);`
       );
 
       const vert = flow.parser.yy.getVertices();
