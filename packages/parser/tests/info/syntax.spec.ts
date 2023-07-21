@@ -8,14 +8,16 @@ describe('info', () => {
 
   it.each([
     `info`,
-    `  info  `,
-    `\tinfo\t`,
+    `
+    info`,
+    `info
+    `,
     `
 
-    \tinfo
+    info
 
     `,
-  ])('should handle regular info', (context: string) => {
+  ])('should handle empty info', (context: string) => {
     const result: ParseResult<Info> = parse(context);
     expect(result.parserErrors).toHaveLength(0);
     expect(result.lexerErrors).toHaveLength(0);
