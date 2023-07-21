@@ -17,7 +17,7 @@ fragment TimelineSectionAndPeriod:
 ;
 
 TimelineSection:
-  title=TIMELINE_SECTION_TITLE NEWLINE*
+  title=TIMELINE_SECTION_TITLE NEWLINE+
   periods+=TimelinePeriod*
 ;
 
