@@ -12,17 +12,17 @@ export const matchTimelineSectionTitle: CustomPatternMatcherFunc = (text, startO
 /**
  * Matches a timeline period title
  */
-export const timelinePeroidTitleRegex = /([^\n\r:]+)/y;
-export const matchTimelinePeroidTitle: CustomPatternMatcherFunc = (text, startOffset) => {
-  timelinePeroidTitleRegex.lastIndex = startOffset;
-  return timelinePeroidTitleRegex.exec(text);
+export const timelinePeriodTitleRegex = /([^\n\r:]+)/y;
+export const matchTimelinePeriodTitle: CustomPatternMatcherFunc = (text, startOffset) => {
+  timelinePeriodTitleRegex.lastIndex = startOffset;
+  return timelinePeriodTitleRegex.exec(text);
 };
 
 /**
  * Matches a timeline period event
  */
 export const timelinePeriodEventRegex = /([^\n\r:]+)/y;
-export const matchTimelinePeriodEventTitle: CustomPatternMatcherFunc = (text, startOffset) => {
-  timelinePeroidTitleRegex.lastIndex = startOffset;
-  return timelinePeroidTitleRegex.exec(text);
+export const matchTimelinePeriodEvent: CustomPatternMatcherFunc = (text, startOffset) => {
+  timelinePeriodEventRegex.lastIndex = startOffset;
+  return timelinePeriodEventRegex.exec(text);
 };

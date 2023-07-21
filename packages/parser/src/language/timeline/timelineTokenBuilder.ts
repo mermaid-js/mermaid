@@ -3,8 +3,8 @@ import type { GrammarAST, Stream, TokenBuilderOptions } from 'langium';
 
 import { CommonTokenBuilder } from '../common/commonTokenBuilder.js';
 import {
-  matchTimelinePeriodEventTitle,
-  matchTimelinePeroidTitle,
+  matchTimelinePeriodEvent,
+  matchTimelinePeriodTitle,
   matchTimelineSectionTitle,
 } from './timelineMatcher.js';
 
@@ -25,12 +25,12 @@ export class TimelineTokenBuilder extends CommonTokenBuilder {
         }
         case 'TIMELINE_PERIOD_TITLE': {
           tokenType.LINE_BREAKS = false;
-          tokenType.PATTERN = matchTimelinePeroidTitle;
+          tokenType.PATTERN = matchTimelinePeriodTitle;
           break;
         }
         case 'TIMELINE_PERIOD_EVENT': {
           tokenType.LINE_BREAKS = false;
-          tokenType.PATTERN = matchTimelinePeriodEventTitle;
+          tokenType.PATTERN = matchTimelinePeriodEvent;
           break;
         }
       }

@@ -3,7 +3,7 @@ import { DefaultValueConverter, type CstNode, type GrammarAST, type ValueType } 
 import { CommonValueConverter } from '../common/commonValueConverters.js';
 import {
   timelinePeriodEventRegex,
-  timelinePeroidTitleRegex,
+  timelinePeriodTitleRegex,
   timelineSectionTitleRegex,
 } from './timelineMatcher.js';
 
@@ -46,7 +46,7 @@ export class TimelineValueConverter extends DefaultValueConverter {
         break;
       }
       case 'TIMELINE_PERIOD_TITLE': {
-        regex = new RegExp(timelinePeroidTitleRegex.source);
+        regex = new RegExp(timelinePeriodTitleRegex.source);
         break;
       }
       case 'TIMELINE_PERIOD_EVENT': {
