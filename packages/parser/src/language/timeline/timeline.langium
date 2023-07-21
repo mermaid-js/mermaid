@@ -6,13 +6,14 @@ entry Timeline:
   "timeline"
   (
     NEWLINE* TitleAndAccessibilities TimelineSectionAndPeriod
+    | NEWLINE* TitleAndAccessibilities
     | NEWLINE+ TimelineSectionAndPeriod
     | NEWLINE*
   )
 ;
 
 fragment TimelineSectionAndPeriod:
-  sections+=TimelineSection* | periods+=TimelinePeriod*
+  sections+=TimelineSection+ | periods+=TimelinePeriod+
 ;
 
 TimelineSection:
