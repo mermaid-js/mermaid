@@ -118,6 +118,7 @@ that id.
 
 [0-9]+                       return 'NUM';
 \#                           return 'BRKT';
+\#[0-9]+                     return 'HEX';
 ":::"                        return 'STYLE_SEPARATOR';
 ":"                          return 'COLON';
 "&"                          return 'AMP';
@@ -163,7 +164,7 @@ that id.
 "^"                   return 'UP';
 "\|"                  return 'SEP';
 "v"                   return 'DOWN';
-([A-Za-z0-9!"#$%&'*+\.`?\\_]|\-(?=[^\>\-\.]))+  return 'NODE_STRING';
+([A-Za-z0-9!"\#$%&'*+\.`?\\_\/]|\-(?=[^\>\-\.]))+  return 'NODE_STRING';
 "-"                   return 'MINUS'
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
@@ -477,13 +478,11 @@ textNoTags: textNoTagsToken
     ;
 
 
-classDefStatement:CLASSDEF SPACE DEFAULT SPACE stylesOpt
+classDefStatement:CLASSDEF SPACE idString SPACE stylesOpt
     {$$ = $1;yy.addClass($3,$5);}
-    | CLASSDEF SPACE alphaNum SPACE stylesOpt
-          {$$ = $1;yy.addClass($3,$5);}
     ;
 
-classStatement:CLASS SPACE alphaNum SPACE alphaNum
+classStatement:CLASS SPACE idString SPACE alphaNum
     {$$ = $1;yy.setClass($3, $5);}
     ;
 
@@ -504,7 +503,7 @@ clickStatement
     | CLICK STR SPACE STR SPACE LINK_TARGET        {$$ = $1;yy.setLink($1, $2, $6);yy.setTooltip($1, $4);}
     ;
 
-styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
+styleStatement:STYLE SPACE idString SPACE stylesOpt
     {$$ = $1;yy.addVertex($3,undefined,undefined,$5);}
     | STYLE SPACE HEX SPACE stylesOpt
           {$$ = $1;yy.updateLink($3,$5);}
@@ -545,9 +544,9 @@ style: styleComponent
 styleComponent: NUM | NODE_STRING| COLON | UNIT | SPACE | HEX | BRKT | STYLE | PCT ;
 
 /* Token lists */
-idStringToken  :  NUM | NODE_STRING | DOWN | MINUS | DEFAULT;
+idStringToken  :  NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON;
 
-textToken      :   STR | TEXT | TAGSTART | TAGEND;
+textToken      :   STR | TEXT | TAGSTART | TAGEND | UNICODE_TEXT;
 
 textNoTagsToken: NUM | NODE_STRING | SPACE | MINUS | keywords |  START_LINK ;
 
@@ -569,8 +568,6 @@ alphaNumStatement
     : DIR
         {$$=$1;}
     | NODE_STRING
-        {$$=$1;}
-    | alphaNumToken
         {$$=$1;}
     | DOWN
         {$$='v';}
