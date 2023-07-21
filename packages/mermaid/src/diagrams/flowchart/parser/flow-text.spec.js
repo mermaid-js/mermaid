@@ -363,13 +363,13 @@ describe('[Text] when parsing', () => {
 
     it.each(keywords)('should handle %s keyword in doublecircle vertex', function (keyword) {
       const rest = flow.parser.parse(
-        `graph TD;A_${keyword}_node-->B(((This node has a ${keyword} as text)));`
+        `graph TD;A_${keyword}-->${keyword}_B(((This node has a ${keyword} as text)));`
       );
 
       const vert = flow.parser.yy.getVertices();
       const edges = flow.parser.yy.getEdges();
-      expect(vert['B'].type).toBe('doublecircle');
-      expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
+      expect(vert[`${keyword}_B`].type).toBe('doublecircle');
+      expect(vert[`${keyword}_B`].text).toBe(`This node has a ${keyword} as text`);
     });
 
     it.each(keywords)('should handle %s keyword in ellipse vertex', function (keyword) {
@@ -480,6 +480,24 @@ describe('[Text] when parsing', () => {
       const edges = flow.parser.yy.getEdges();
       expect(vert['B'].type).toBe('lean_right');
       expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
+    });
+
+    it('should allow forward slashes in lean_right vertices', function () {
+      const rest = flow.parser.parse(`graph TD;A_node-->B[/This node has a / as text/];`);
+
+      const vert = flow.parser.yy.getVertices();
+      const edges = flow.parser.yy.getEdges();
+      expect(vert['B'].type).toBe('lean_right');
+      expect(vert['B'].text).toBe(`This node has a / as text`);
+    });
+
+    it('should allow back slashes in lean_left vertices', function () {
+      const rest = flow.parser.parse(`graph TD;A_node-->B[\\This node has a \\ as text\\];`);
+
+      const vert = flow.parser.yy.getVertices();
+      const edges = flow.parser.yy.getEdges();
+      expect(vert['B'].type).toBe('lean_left');
+      expect(vert['B'].text).toBe(`This node has a \\ as text`);
     });
 
     it.each(keywords)('should handle %s keyword in lean_left vertex', function (keyword) {
