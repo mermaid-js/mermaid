@@ -1,5 +1,5 @@
 import { XYChartConfig } from '../../../../../config.type.js';
-import { BarPlotData, BoundingRect, DrawableElem, XYChartThemeConfig } from '../../Interfaces.js';
+import { BarPlotData, BoundingRect, DrawableElem } from '../../Interfaces.js';
 import { IAxis } from '../axis/index.js';
 
 export class BarPlot {
@@ -9,7 +9,7 @@ export class BarPlot {
     private xAxis: IAxis,
     private yAxis: IAxis,
     private orientation: XYChartConfig['chartOrientation'],
-    private chartThemeConfig: XYChartThemeConfig
+    private plotIndex: number
   ) {}
 
   getDrawableElement(): DrawableElem[] {
@@ -28,7 +28,7 @@ export class BarPlot {
     if (this.orientation === 'horizontal') {
       return [
         {
-          groupTexts: ['plot', 'bar-plot'],
+          groupTexts: ['plot', `bar-plot-${this.plotIndex}`],
           type: 'rect',
           data: finalData.map((data) => ({
             x: this.boundingRect.x,
@@ -44,7 +44,7 @@ export class BarPlot {
     } else {
       return [
         {
-          groupTexts: ['plot', 'bar-plot'],
+          groupTexts: ['plot', `bar-plot-${this.plotIndex}`],
           type: 'rect',
           data: finalData.map((data) => ({
             x: data[0] - barWidthHalf,

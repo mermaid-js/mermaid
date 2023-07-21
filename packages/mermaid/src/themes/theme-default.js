@@ -282,10 +282,7 @@ class Theme {
     this.xychartYAxisTitleColor = this.xychartYAxisTitleColor || this.primaryTextColor;
     this.xychartYAxisLableColor = this.xychartYAxisLableColor || this.primaryTextColor;
     this.xychartYAxisTickColor = this.xychartYAxisTickColor || this.primaryTextColor;
-    this.xychartBarPlotPalette = this.xychartBarPlotPalette || [this.primaryColor];
-    this.xychartLinePlotPalette = this.xychartLinePlotPalette || [
-      adjust(this.primaryColor, { r: -100, g: -100, b: -100 }),
-    ];
+    this.xychartPlotBaseColor = this.xychartPlotBaseColor || darken(this.primaryColor, 25);
 
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;

@@ -1,4 +1,5 @@
-import { log } from '../../logger.js';
+// @ts-ignore: TODO Fix ts errors
+import { adjust, channel, toHsla, isDark, lighten, darken } from 'khroma';
 import mermaidAPI from '../../mermaidAPI.js';
 import * as configApi from '../../config.js';
 import { sanitizeText } from '../common/common.js';
@@ -27,6 +28,24 @@ const defaultThemeVariables = getThemeVariables();
 
 const config = configApi.getConfig();
 
+function plotColorPaletteGenerator(baseColor: string, noOfColorNeeded = 15): string[] {
+  const colors = [];
+  const MAX_HUE_VALUE = 360;
+  const baseHue = channel(baseColor, 'h');
+  if (baseHue > MAX_HUE_VALUE / 2) {
+    const decr = Math.floor(baseHue / noOfColorNeeded);
+    for (let i = 0; i <= baseHue; i += decr) {
+      colors.push(adjust(baseColor, { h: -i }));
+    }
+  } else {
+    const incr = Math.floor((MAX_HUE_VALUE - baseHue) / noOfColorNeeded);
+    for (let i = 0; i <= baseHue; i += incr) {
+      colors.push(adjust(baseColor, { h: i }));
+    }
+  }
+  return colors;
+}
+
 function getChartDefaultThemeConfig(): XYChartThemeConfig {
   return {
     xychartTitleColor:
@@ -45,10 +64,8 @@ function getChartDefaultThemeConfig(): XYChartThemeConfig {
       config.themeVariables?.xychartYAxisTitleColor || defaultThemeVariables.xychartYAxisTitleColor,
     xychartYAxisTickColor:
       config.themeVariables?.xychartYAxisTickColor || defaultThemeVariables.xychartYAxisTickColor,
-    xychartBarPlotPalette:
-      config.themeVariables?.xychartBarPlotPalette || defaultThemeVariables.xychartBarPlotPalette,
-    xychartLinePlotPalette:
-      config.themeVariables?.xychartLinePlotPalette || defaultThemeVariables.xychartLinePlotPalette,
+    xychartPlotBaseColor:
+      config.themeVariables?.xychartPlotBaseColor || defaultThemeVariables.xychartPlotBaseColor,
   };
 }
 function getChartDefaultConfig(): XYChartConfig {
@@ -110,6 +127,9 @@ function getChartDefalutData(): XYChartData {
 let xyChartConfig: XYChartConfig = getChartDefaultConfig();
 let xyChartThemeConfig: XYChartThemeConfig = getChartDefaultThemeConfig();
 let xyChartData: XYChartData = getChartDefalutData();
+let plotColorPalette = Array.isArray(xyChartThemeConfig.xychartPlotBaseColor)
+  ? xyChartThemeConfig.xychartPlotBaseColor
+  : plotColorPaletteGenerator(xyChartThemeConfig.xychartPlotBaseColor);
 let hasSetXAxis = false;
 let hasSetYAxis = false;
 
@@ -197,27 +217,32 @@ function transformDataWithOutCategory(data: number[]): SimplePlotDataType {
 
   return retData;
 }
+
+let plotIndex = 0;
+
+function getPlotColorFromPalette(plotIndex: number): string {
+  return plotColorPalette[plotIndex === 0 ? 0 : plotIndex % (plotColorPalette.length - 1)];
+}
+
 function setLineData(title: string, data: number[]) {
   const plotData = transformDataWithOutCategory(data);
   xyChartData.plots.push({
     type: 'line',
-    strokeFill:
-      xyChartThemeConfig.xychartLinePlotPalette[
-        Math.floor(Math.random() * (xyChartThemeConfig.xychartLinePlotPalette.length - 1))
-      ],
+    strokeFill: getPlotColorFromPalette(plotIndex),
     strokeWidth: 2,
     data: plotData,
   });
+  plotIndex++;
 }
+
 function setBarData(title: string, data: number[]) {
   const plotData = transformDataWithOutCategory(data);
   xyChartData.plots.push({
     type: 'bar',
-    fill: xyChartThemeConfig.xychartBarPlotPalette[
-      Math.floor(Math.random() * (xyChartThemeConfig.xychartBarPlotPalette.length - 1))
-    ],
+    fill: getPlotColorFromPalette(plotIndex),
     data: plotData,
   });
+  plotIndex++;
 }
 
 function getDrawableElem(): DrawableElem[] {
@@ -238,9 +263,13 @@ function setWidth(width: number) {
 
 const clear = function () {
   commonClear();
+  plotIndex = 0;
   xyChartConfig = getChartDefaultConfig();
   xyChartData = getChartDefalutData();
   xyChartThemeConfig = getChartDefaultThemeConfig();
+  plotColorPalette = Array.isArray(xyChartThemeConfig.xychartPlotBaseColor)
+    ? xyChartThemeConfig.xychartPlotBaseColor
+    : plotColorPaletteGenerator(xyChartThemeConfig.xychartPlotBaseColor);
   hasSetXAxis = false;
   hasSetYAxis = false;
 };

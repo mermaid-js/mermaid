@@ -62,7 +62,7 @@ export class Plot implements IPlot {
         this.chartThemeConfig
       ).getDrawableElement(),
     ];
-    for (const plot of this.chartData.plots) {
+    for (const [i, plot] of this.chartData.plots.entries()) {
       switch (plot.type) {
         case 'line':
           {
@@ -71,7 +71,7 @@ export class Plot implements IPlot {
               this.xAxis,
               this.yAxis,
               this.chartConfig.chartOrientation,
-              this.chartThemeConfig
+              i
             );
             drawableElem.push(...linePlot.getDrawableElement());
           }
@@ -84,7 +84,7 @@ export class Plot implements IPlot {
               this.xAxis,
               this.yAxis,
               this.chartConfig.chartOrientation,
-              this.chartThemeConfig
+              i
             );
             drawableElem.push(...barPlot.getDrawableElement());
           }

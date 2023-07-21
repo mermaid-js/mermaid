@@ -1,7 +1,7 @@
 import { line } from 'd3';
-import { DrawableElem, LinePlotData, XYChartThemeConfig } from '../../Interfaces.js';
-import { IAxis } from '../axis/index.js';
 import { XYChartConfig } from '../../../../../config.type.js';
+import { DrawableElem, LinePlotData } from '../../Interfaces.js';
+import { IAxis } from '../axis/index.js';
 
 export class LinePlot {
   constructor(
@@ -9,7 +9,7 @@ export class LinePlot {
     private xAxis: IAxis,
     private yAxis: IAxis,
     private orientation: XYChartConfig['chartOrientation'],
-    private chartThemeConfig: XYChartThemeConfig
+    private plotIndex: number
   ) {}
 
   getDrawableElement(): DrawableElem[] {
@@ -33,7 +33,7 @@ export class LinePlot {
     }
     return [
       {
-        groupTexts: ['plot', 'line-plot'],
+        groupTexts: ['plot', `line-plot-${this.plotIndex}`],
         type: 'path',
         data: [
           {

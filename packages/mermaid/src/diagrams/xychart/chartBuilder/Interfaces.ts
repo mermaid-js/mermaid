@@ -13,8 +13,7 @@ export interface XYChartThemeConfig {
   xychartYAxisLableColor: string;
   xychartYAxisTitleColor: string;
   xychartYAxisTickColor: string;
-  xychartBarPlotPalette: string[];
-  xychartLinePlotPalette: string[];
+  xychartPlotBaseColor: string;
 }
 
 export interface ChartComponent {
