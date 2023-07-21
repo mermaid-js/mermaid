@@ -18,7 +18,3 @@ export const matchTimelinePeriodTitle: CustomPatternMatcherFunc = (text, startOf
  * Matches a timeline period event
  */
 export const timelinePeriodEventRegex = /:[\t ]+([^\n\r:]+)/y;
-export const matchTimelinePeriodEvent: CustomPatternMatcherFunc = (text, startOffset) => {
-  timelinePeriodEventRegex.lastIndex = startOffset;
-  return timelinePeriodEventRegex.exec(text);
-};
