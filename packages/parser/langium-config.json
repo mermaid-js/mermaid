@@ -2,11 +2,6 @@
   "projectName": "Mermaid",
   "languages": [
     {
-      "id": "mermaid",
-      "grammar": "src/language/mermaid/mermaid.langium",
-      "fileExtensions": [".mmd", ".mermaid"]
-    },
-    {
       "id": "info",
       "grammar": "src/language/info/info.langium",
       "fileExtensions": [".mmd", ".mermaid"]

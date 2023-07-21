@@ -1,10 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { Timeline } from '../../src/language/index.js';
-import { createTestServices } from '../test-utils.js';
+import { createTimelineTestServices } from '../test-utils.js';
 
 describe('timeline', () => {
-  const { parse } = createTestServices<Timeline>();
+  const { parse } = createTimelineTestServices();
 
   it('should handle a simple section definition abc-123', () => {
     const context = `timeline
@@ -51,7 +50,7 @@ describe('timeline', () => {
     expect(result.value.sections[1].periods[1].title).toBe('task4');
   });
 
-  it.todo('should handle a section, and task and its events', () => {
+  it('should handle a section, and task and its events', () => {
     const context = `timeline
     section abc-123
     task1: event1
@@ -68,7 +67,7 @@ describe('timeline', () => {
     expect(result.value.sections[0].periods[1].events[1]).toBe('event3');
   });
 
-  it.todo('should handle a section, and task and its multi line events', () => {
+  it('should handle a section, and task and its multi line events', () => {
     const context = `timeline
     section abc-123
     task1: event1

@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { Info } from '../../src/language/index.js';
-import { createTestServices } from '../test-utils.js';
+import { createInfoTestServices } from '../test-utils.js';
 import { ParseResult } from 'langium';
 
 describe('info', () => {
-  const { parse } = createTestServices<Info>();
+  const { parse } = createInfoTestServices();
 
   it.each([
     `info`,

@@ -1,49 +1,13 @@
 import {
   DefaultSharedModuleContext,
-  LangiumServices,
   LangiumSharedServices,
-  Module,
-  PartialLangiumServices,
-  createDefaultModule,
   createDefaultSharedModule,
   inject,
 } from 'langium';
 
-import { MermaidValueConverter } from './mermaidValueConverter.js';
-import { MermiadTokenBuilder } from './mermaidTokenBuilder.js';
-import { MermaidGeneratedSharedModule, MermaidGeneratedModule } from '../generated/module.js';
-import { CommonLexer } from '../common/commonLexer.js';
+import { MermaidGeneratedSharedModule } from '../generated/module.js';
 import { MermaidServiceRegistry } from './mermaidServiceRegistry.js';
 import { createInfoServices, createPieServices, createTimelineServices } from '../index.js';
-
-/**
- * Declaration of `Mermaid` services.
- */
-export type MermaidAddedServices = {
-  parser: {
-    Lexer: CommonLexer;
-    TokenBuilder: MermiadTokenBuilder;
-    ValueConverter: MermaidValueConverter;
-  };
-};
-
-/**
- * Union of Langium default services and `Mermaid` services.
- */
-export type MermaidServices = LangiumServices & MermaidAddedServices;
-
-/**
- * Dependency injection module that overrides Langium default services and
- * contributes the declared `Mermaid` services.
- */
-export const MermaidModule: Module<MermaidServices, PartialLangiumServices & MermaidAddedServices> =
-  {
-    parser: {
-      Lexer: (services) => new CommonLexer(services),
-      TokenBuilder: () => new MermiadTokenBuilder(),
-      ValueConverter: () => new MermaidValueConverter(),
-    },
-  };
 
 /**
  * Create the full set of services required by Langium.
@@ -59,10 +23,7 @@ export const MermaidModule: Module<MermaidServices, PartialLangiumServices & Mer
  * @param context - Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
-export function createMermaidServices(context: DefaultSharedModuleContext): {
-  shared: LangiumSharedServices;
-  Mermaid: MermaidServices;
-} {
+export function createMermaidServices(context: DefaultSharedModuleContext) {
   let shared: LangiumSharedServices = inject(
     createDefaultSharedModule(context),
     MermaidGeneratedSharedModule
@@ -71,17 +32,11 @@ export function createMermaidServices(context: DefaultSharedModuleContext): {
     ...shared,
     ServiceRegistry: new MermaidServiceRegistry(),
   };
-  const Mermaid: MermaidServices = inject(
-    createDefaultModule({ shared }),
-    MermaidGeneratedModule,
-    MermaidModule
-  );
-  shared.ServiceRegistry.register(Mermaid);
   const { Info } = createInfoServices(context);
   shared.ServiceRegistry.register(Info);
   const { Pie } = createPieServices(context);
   shared.ServiceRegistry.register(Pie);
   const { Timeline } = createTimelineServices(context);
   shared.ServiceRegistry.register(Timeline);
-  return { shared, Mermaid };
+  return { Info, Pie, Timeline, shared };
 }

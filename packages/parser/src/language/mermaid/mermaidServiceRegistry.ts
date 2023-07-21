@@ -31,13 +31,12 @@ export class MermaidServiceRegistry extends DefaultServiceRegistry {
     const text: string = content.textDocument.getText();
     if (/^\s*info/.test(text)) {
       return this.infoServices;
-    }
-    if (/^\s*pie/.test(text)) {
+    } else if (/^\s*pie/.test(text)) {
       return this.pieServices;
-    }
-    if (/^\s*timeline/.test(text)) {
+    } else if (/^\s*timeline/.test(text)) {
       return this.timelineServices;
+    } else {
+      return super.getServices(uri);
     }
-    return super.getServices(uri);
   }
 }

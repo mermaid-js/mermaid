@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import { Pie } from '../../src/language/index.js';
-import { createTestServices } from '../test-utils.js';
+import { createPieTestServices } from '../test-utils.js';
 
 describe('pie chart', () => {
-  const { parse } = createTestServices<Pie>();
+  const { parse } = createPieTestServices();
 
   it.each([
     `pie`,

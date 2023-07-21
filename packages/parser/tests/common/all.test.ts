@@ -1,10 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { Mermaid } from '../../src/language/index.js';
-import { createTestServices } from '../test-utils.js';
+import { createPieTestServices } from '../test-utils.js';
 
 describe('all', () => {
-  const { parse } = createTestServices<Mermaid>();
+  const { parse } = createPieTestServices();
 
   describe('title', () => {
     it('title then accTitle then single line accDescr', () => {
