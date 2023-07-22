@@ -7,10 +7,6 @@ import { matchTimelinePeriodTitle } from './timelineMatcher.js';
 export class TimelineTokenBuilder extends CommonTokenBuilder {
   protected override buildTerminalTokens(rules: Stream<GrammarAST.AbstractRule>): TokenType[] {
     const tokenTypes: TokenType[] = super.buildTerminalTokens(rules);
-    return TimelineTokenBuilder.customBuildTerminalTokens(tokenTypes);
-  }
-
-  public static customBuildTerminalTokens(tokenTypes: TokenType[]): TokenType[] {
     tokenTypes.forEach((tokenType: TokenType): void => {
       switch (tokenType.name) {
         case 'TIMELINE_PERIOD_TITLE': {
@@ -29,13 +25,9 @@ export class TimelineTokenBuilder extends CommonTokenBuilder {
     options?: TokenBuilderOptions
   ): TokenType[] {
     const tokenTypes: TokenType[] = super.buildKeywordTokens(rules, terminalTokens, options);
-    return TimelineTokenBuilder.customBuildKeywordTokens(tokenTypes);
-  }
-
-  public static customBuildKeywordTokens(tokenTypes: TokenType[]): TokenType[] {
-    tokenTypes.forEach((token) => {
-      if (token.name === 'timeline' && token.PATTERN !== undefined) {
-        token.PATTERN = new RegExp(token.PATTERN.toString() + '(?!\\S)');
+    tokenTypes.forEach((tokenType: TokenType): void => {
+      if (tokenType.name === 'timeline' && tokenType.PATTERN !== undefined) {
+        tokenType.PATTERN = new RegExp(tokenType.PATTERN.toString() + '(?!\\S)');
       }
     });
     return tokenTypes;

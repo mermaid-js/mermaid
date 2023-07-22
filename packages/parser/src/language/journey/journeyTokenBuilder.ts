@@ -7,10 +7,6 @@ import { matchJourneyTaskTitle } from './journeyMatcher.js';
 export class JourneyTokenBuilder extends CommonTokenBuilder {
   protected override buildTerminalTokens(rules: Stream<GrammarAST.AbstractRule>): TokenType[] {
     const tokenTypes: TokenType[] = super.buildTerminalTokens(rules);
-    return JourneyTokenBuilder.customBuildTerminalTokens(tokenTypes);
-  }
-
-  public static customBuildTerminalTokens(tokenTypes: TokenType[]): TokenType[] {
     tokenTypes.forEach((tokenType: TokenType): void => {
       switch (tokenType.name) {
         case 'JOURNEY_TASK_TITLE': {
@@ -29,13 +25,9 @@ export class JourneyTokenBuilder extends CommonTokenBuilder {
     options?: TokenBuilderOptions
   ): TokenType[] {
     const tokenTypes: TokenType[] = super.buildKeywordTokens(rules, terminalTokens, options);
-    return JourneyTokenBuilder.customBuildKeywordTokens(tokenTypes);
-  }
-
-  public static customBuildKeywordTokens(tokenTypes: TokenType[]): TokenType[] {
-    tokenTypes.forEach((token) => {
-      if (token.name === 'journey' && token.PATTERN !== undefined) {
-        token.PATTERN = new RegExp(token.PATTERN.toString() + '(?!\\S)');
+    tokenTypes.forEach((tokenType: TokenType): void => {
+      if (tokenType.name === 'journey' && tokenType.PATTERN !== undefined) {
+        tokenType.PATTERN = new RegExp(tokenType.PATTERN.toString() + '(?!\\S)');
       }
     });
     return tokenTypes;

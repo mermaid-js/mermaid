@@ -10,13 +10,9 @@ export class InfoTokenBuilder extends CommonTokenBuilder {
     options?: TokenBuilderOptions
   ): TokenType[] {
     const tokenTypes: TokenType[] = super.buildKeywordTokens(rules, terminalTokens, options);
-    return InfoTokenBuilder.customBuildKeywordTokens(tokenTypes);
-  }
-
-  public static customBuildKeywordTokens(tokenTypes: TokenType[]): TokenType[] {
-    tokenTypes.forEach((token) => {
-      if (token.name === 'info' && token.PATTERN !== undefined) {
-        token.PATTERN = new RegExp(token.PATTERN.toString() + '(?!\\S)');
+    tokenTypes.forEach((tokenType: TokenType): void => {
+      if (tokenType.name === 'info' && tokenType.PATTERN !== undefined) {
+        tokenType.PATTERN = new RegExp(tokenType.PATTERN.toString() + '(?!\\S)');
       }
     });
     return tokenTypes;

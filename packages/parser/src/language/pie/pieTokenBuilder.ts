@@ -10,13 +10,12 @@ export class PieTokenBuilder extends CommonTokenBuilder {
     options?: TokenBuilderOptions
   ): TokenType[] {
     const tokenTypes: TokenType[] = super.buildKeywordTokens(rules, terminalTokens, options);
-    return PieTokenBuilder.customBuildKeywordTokens(tokenTypes);
-  }
-
-  public static customBuildKeywordTokens(tokenTypes: TokenType[]): TokenType[] {
-    tokenTypes.forEach((token) => {
-      if ((token.name === 'pie' || token.name === 'showData') && token.PATTERN !== undefined) {
-        token.PATTERN = new RegExp(token.PATTERN.toString() + '(?!\\S)');
+    tokenTypes.forEach((tokenType: TokenType): void => {
+      if (
+        (tokenType.name === 'pie' || tokenType.name === 'showData') &&
+        tokenType.PATTERN !== undefined
+      ) {
+        tokenType.PATTERN = new RegExp(tokenType.PATTERN.toString() + '(?!\\S)');
       }
     });
     return tokenTypes;
