@@ -8,7 +8,7 @@ export const timelineSectionTitleRegex = /section[\t ]+([^\n\r]+)/;
 /**
  * Matches a timeline period title
  */
-export const timelinePeriodTitleRegex = /([^\n\r:]+)/y;
+export const timelinePeriodTitleRegex = /(?!%%.*)([^\n\r:]+)/y;
 export const matchTimelinePeriodTitle: CustomPatternMatcherFunc = (text, startOffset) => {
   timelinePeriodTitleRegex.lastIndex = startOffset;
   return timelinePeriodTitleRegex.exec(text);
@@ -17,4 +17,4 @@ export const matchTimelinePeriodTitle: CustomPatternMatcherFunc = (text, startOf
 /**
  * Matches a timeline period event
  */
-export const timelinePeriodEventRegex = /:[\t ]+([^\n\r:]+)/y;
+export const timelinePeriodEventRegex = /(?!%%.*):[\t ]+([^\n\r:]+)/y;

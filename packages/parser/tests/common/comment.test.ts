@@ -1,10 +1,89 @@
 import { describe, expect, it } from 'vitest';
 
-import { createPieTestServices, createTimelineTestServices } from '../test-utils.js';
+import {
+  createInfoTestServices,
+  createJourneyTestServices,
+  createPieTestServices,
+  createTimelineTestServices,
+} from '../test-utils.js';
 
 describe('comments', () => {
+  const { parse: infoParse } = createInfoTestServices();
+  const { parse: journeyParse } = createJourneyTestServices();
   const { parse: pieParse } = createPieTestServices();
   const { parse: timelineParse } = createTimelineTestServices();
+
+  describe('info', () => {
+    describe('single line', () => {
+      it('should handle empty comment', () => {
+        const context = `info %%`;
+        const result = infoParse(context);
+        expect(result.parserErrors).toHaveLength(0);
+        expect(result.lexerErrors).toHaveLength(0);
+      });
+
+      it('should handle regular comment', () => {
+        const context = `info %% comment`;
+        const result = infoParse(context);
+        expect(result.parserErrors).toHaveLength(0);
+        expect(result.lexerErrors).toHaveLength(0);
+      });
+    });
+
+    describe('multi line', () => {
+      it('should handle empty comment', () => {
+        const context = `info %%**%%`;
+        const result = infoParse(context);
+        expect(result.parserErrors).toHaveLength(0);
+        expect(result.lexerErrors).toHaveLength(0);
+      });
+
+      it('should handle regular comment', () => {
+        const context = `info %%*
+        multi line comment
+        *%%`;
+        const result = infoParse(context);
+        expect(result.parserErrors).toHaveLength(0);
+        expect(result.lexerErrors).toHaveLength(0);
+      });
+    });
+  });
+
+  describe('journey', () => {
+    describe('single line', () => {
+      it('should handle empty comment', () => {
+        const context = `journey %%`;
+        const result = journeyParse(context);
+        expect(result.parserErrors).toHaveLength(0);
+        expect(result.lexerErrors).toHaveLength(0);
+      });
+
+      it('should handle regular comment', () => {
+        const context = `journey %% comment`;
+        const result = journeyParse(context);
+        expect(result.parserErrors).toHaveLength(0);
+        expect(result.lexerErrors).toHaveLength(0);
+      });
+    });
+
+    describe('multi line', () => {
+      it('should handle empty comment', () => {
+        const context = `journey %%**%%`;
+        const result = journeyParse(context);
+        expect(result.parserErrors).toHaveLength(0);
+        expect(result.lexerErrors).toHaveLength(0);
+      });
+
+      it('should handle regular comment', () => {
+        const context = `journey %%*
+        multi line comment
+        *%%`;
+        const result = journeyParse(context);
+        expect(result.parserErrors).toHaveLength(0);
+        expect(result.lexerErrors).toHaveLength(0);
+      });
+    });
+  });
 
   describe('pie', () => {
     describe('single line', () => {
@@ -42,7 +121,7 @@ describe('comments', () => {
     });
   });
 
-  describe.todo('timeline', () => {
+  describe('timeline', () => {
     describe('single line', () => {
       it('should handle empty comment', () => {
         const context = `timeline %%`;
