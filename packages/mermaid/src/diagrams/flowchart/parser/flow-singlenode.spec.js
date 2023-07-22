@@ -6,6 +6,27 @@ setConfig({
   securityLevel: 'strict',
 });
 
+const keywords = [
+  'graph',
+  'flowchart',
+  'flowchart-elk',
+  'style',
+  'default',
+  'linkStyle',
+  'interpolate',
+  'classDef',
+  'class',
+  'href',
+  'call',
+  'click',
+  '_self',
+  '_blank',
+  '_parent',
+  '_top',
+  'end',
+  'subgraph',
+];
+
 describe('[Singlenodes] when parsing', () => {
   beforeEach(function () {
     flow.parser.yy = flowDb;
@@ -258,5 +279,31 @@ describe('[Singlenodes] when parsing', () => {
 
     expect(edges.length).toBe(0);
     expect(vert['i_d'].styles.length).toBe(0);
+  });
+
+  it.each(keywords)('should handle keywords between dashes "-"', function (keyword) {
+    const res = flow.parser.parse(`graph TD;a-${keyword}-node;`);
+    const vert = flow.parser.yy.getVertices();
+    expect(vert[`a-${keyword}-node`].text).toBe(`a-${keyword}-node`);
+  });
+
+  it.each(keywords)('should handle keywords between periods "."', function (keyword) {
+    const res = flow.parser.parse(`graph TD;a.${keyword}.node;`);
+    const vert = flow.parser.yy.getVertices();
+    expect(vert[`a.${keyword}.node`].text).toBe(`a.${keyword}.node`);
+  });
+
+  it.each(keywords)('should handle keywords between underscores "_"', function (keyword) {
+    const res = flow.parser.parse(`graph TD;a_${keyword}_node;`);
+    const vert = flow.parser.yy.getVertices();
+    expect(vert[`a_${keyword}_node`].text).toBe(`a_${keyword}_node`);
+  });
+
+  it.each(keywords)('should handle nodes ending in keywords', function (keyword) {
+    const res = flow.parser.parse(`graph TD;node_${keyword};node.${keyword};node-${keyword};`);
+    const vert = flow.parser.yy.getVertices();
+    expect(vert[`node_${keyword}`].text).toBe(`node_${keyword}`);
+    expect(vert[`node.${keyword}`].text).toBe(`node.${keyword}`);
+    expect(vert[`node-${keyword}`].text).toBe(`node-${keyword}`);
   });
 });
