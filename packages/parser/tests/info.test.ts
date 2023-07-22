@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { Info } from '../../src/language/index.js';
-import { createInfoTestServices } from '../test-utils.js';
+import { Info } from '../src/language/index.js';
+import { createInfoTestServices } from './test-utils.js';
 import { ParseResult } from 'langium';
 
 describe('info', () => {

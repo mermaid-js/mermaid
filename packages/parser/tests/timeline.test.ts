@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { createTimelineTestServices } from '../test-utils.js';
+import { createTimelineTestServices } from './test-utils.js';
 
 describe('timeline', () => {
   const { parse } = createTimelineTestServices();

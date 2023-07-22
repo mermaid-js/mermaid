@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { Pie } from '../../src/language/index.js';
-import { createPieTestServices } from '../test-utils.js';
+import { Pie } from '../src/language/index.js';
+import { createPieTestServices } from './test-utils.js';
 
-describe('pie chart', () => {
+describe('pie', () => {
   const { parse } = createPieTestServices();
 
   it.each([
