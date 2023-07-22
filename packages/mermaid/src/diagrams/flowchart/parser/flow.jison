@@ -43,29 +43,6 @@ accDescr\s*"{"\s*                               { this.begin("acc_descr_multilin
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 // <acc_descr_multiline>.*[^\n]*                {  return "acc_descr_line"}
 
-<INITIAL,text,edgeText,dottedEdgeText,thickEdgeText>["][`]                  { this.begin("md_string");}
-<md_string>[^`"]+       { return "MD_STR";}
-<md_string>[`]["]       { this.popState();}
-<INITIAL,text,edgeText,dottedEdgeText,thickEdgeText>["]       this.pushState("string");
-<string>["]             this.popState();
-<string>[^"]+           return "STR";
-"style"                 return 'STYLE';
-"default"               return 'DEFAULT';
-"linkStyle"             return 'LINKSTYLE';
-"interpolate"           return 'INTERPOLATE';
-"classDef"              return 'CLASSDEF';
-"class"                 return 'CLASS';
-
-/*
----interactivity command---
-'href' adds a link to the specified node. 'href' can only be specified when the
-line was introduced with 'click'.
-'href "<link>"' attaches the specified link to the node that was specified by 'click'.
-*/
-"href"[\s]+["]          this.begin("href");
-<href>["]               this.popState();
-<href>[^"]*             return 'HREF';
-
 /*
 ---interactivity command---
 'call' adds a callback to the specified node. 'call' can only be specified when
@@ -80,6 +57,28 @@ Function arguments are optional: 'call <callbackname>()' simply executes 'callba
 <callbackname>[^(]*     return 'CALLBACKNAME';
 <callbackargs>\)        this.popState();
 <callbackargs>[^)]*     return 'CALLBACKARGS';
+
+<md_string>[^`"]+       { return "MD_STR";}
+<md_string>[`]["]       { this.popState();}
+<*>["][`]                  { this.begin("md_string");}
+<string>["]             this.popState();
+<string>[^"]+           return "STR";
+<*>["]       this.pushState("string");
+"style"                 return 'STYLE';
+"default"               return 'DEFAULT';
+"linkStyle"             return 'LINKSTYLE';
+"interpolate"           return 'INTERPOLATE';
+"classDef"              return 'CLASSDEF';
+"class"                 return 'CLASS';
+
+/*
+---interactivity command---
+'href' adds a link to the specified node. 'href' can only be specified when the
+line was introduced with 'click'.
+'href "<link>"' attaches the specified link to the node that was specified by 'click'.
+*/
+"href"                  return 'HREF';
+
 
 /*
 'click' is the keyword to introduce a line that contains interactivity commands.
@@ -383,7 +382,7 @@ statement
 
 separator: NEWLINE | SEMI | EOF ;
 
- 
+
 verticeStatement: verticeStatement link node
         { /* console.warn('vs',$1.stmt,$3); */ yy.addLink($1.stmt,$3,$2); $$ = { stmt: $3, nodes: $3.concat($1.nodes) } }
     |  verticeStatement link node spaceList
@@ -506,20 +505,20 @@ classStatement:CLASS SPACE idString SPACE alphaNum
     ;
 
 clickStatement
-    : CLICK CALLBACKNAME                           {$$ = $1;yy.setClickEvent($1, $2);}
-    | CLICK CALLBACKNAME SPACE STR                 {$$ = $1;yy.setClickEvent($1, $2);yy.setTooltip($1, $4);}
-    | CLICK CALLBACKNAME CALLBACKARGS              {$$ = $1;yy.setClickEvent($1, $2, $3);}
-    | CLICK CALLBACKNAME CALLBACKARGS SPACE STR    {$$ = $1;yy.setClickEvent($1, $2, $3);yy.setTooltip($1, $5);}
-    | CLICK HREF                                   {$$ = $1;yy.setLink($1, $2);}
-    | CLICK HREF SPACE STR                         {$$ = $1;yy.setLink($1, $2);yy.setTooltip($1, $4);}
-    | CLICK HREF SPACE LINK_TARGET                 {$$ = $1;yy.setLink($1, $2, $4);}
-    | CLICK HREF SPACE STR SPACE LINK_TARGET       {$$ = $1;yy.setLink($1, $2, $6);yy.setTooltip($1, $4);}
-    | CLICK alphaNum                               {$$ = $1;yy.setClickEvent($1, $2);}
-    | CLICK alphaNum SPACE STR                     {$$ = $1;yy.setClickEvent($1, $2);yy.setTooltip($1, $4);}
-    | CLICK STR                                    {$$ = $1;yy.setLink($1, $2);}
-    | CLICK STR SPACE STR                          {$$ = $1;yy.setLink($1, $2);yy.setTooltip($1, $4);}
-    | CLICK STR SPACE LINK_TARGET                  {$$ = $1;yy.setLink($1, $2, $4);}
-    | CLICK STR SPACE STR SPACE LINK_TARGET        {$$ = $1;yy.setLink($1, $2, $6);yy.setTooltip($1, $4);}
+    : CLICK CALLBACKNAME                                    {$$ = $1;yy.setClickEvent($1, $2);}
+    | CLICK CALLBACKNAME SPACE STR                          {$$ = $1;yy.setClickEvent($1, $2);yy.setTooltip($1, $4);}
+    | CLICK CALLBACKNAME CALLBACKARGS                       {$$ = $1;yy.setClickEvent($1, $2, $3);}
+    | CLICK CALLBACKNAME CALLBACKARGS SPACE STR             {$$ = $1;yy.setClickEvent($1, $2, $3);yy.setTooltip($1, $5);}
+    | CLICK HREF SPACE STR                                  {$$ = $1;yy.setLink($1, $4);}
+    | CLICK HREF SPACE STR SPACE STR                        {$$ = $1;yy.setLink($1, $4);yy.setTooltip($1, $6);}
+    | CLICK HREF SPACE STR SPACE LINK_TARGET                {$$ = $1;yy.setLink($1, $4, $6);}
+    | CLICK HREF SPACE STR SPACE STR SPACE LINK_TARGET      {$$ = $1;yy.setLink($1, $4, $8);yy.setTooltip($1, $6);}
+    | CLICK alphaNum                                        {$$ = $1;yy.setClickEvent($1, $2);}
+    | CLICK alphaNum SPACE STR                              {$$ = $1;yy.setClickEvent($1, $2);yy.setTooltip($1, $4);}
+    | CLICK STR                                             {$$ = $1;yy.setLink($1, $2);}
+    | CLICK STR SPACE STR                                   {$$ = $1;yy.setLink($1, $2);yy.setTooltip($1, $4);}
+    | CLICK STR SPACE LINK_TARGET                           {$$ = $1;yy.setLink($1, $2, $4);}
+    | CLICK STR SPACE STR SPACE LINK_TARGET                 {$$ = $1;yy.setLink($1, $2, $6);yy.setTooltip($1, $4);}
     ;
 
 styleStatement:STYLE SPACE idString SPACE stylesOpt
