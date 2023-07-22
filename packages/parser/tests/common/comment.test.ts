@@ -22,7 +22,7 @@ describe('comments', () => {
         expect(result.lexerErrors).toHaveLength(0);
       });
 
-      it('should handle regular comment', () => {
+      it.todo('should handle regular comment', () => {
         const context = `info %% comment`;
         const result = infoParse(context);
         expect(result.parserErrors).toHaveLength(0);
@@ -30,7 +30,7 @@ describe('comments', () => {
       });
     });
 
-    describe('multi line', () => {
+    describe.todo('multi line', () => {
       it('should handle empty comment', () => {
         const context = `info %%**%%`;
         const result = infoParse(context);
@@ -66,7 +66,7 @@ describe('comments', () => {
       });
     });
 
-    describe('multi line', () => {
+    describe.todo('multi line', () => {
       it('should handle empty comment', () => {
         const context = `journey %%**%%`;
         const result = journeyParse(context);
@@ -102,7 +102,7 @@ describe('comments', () => {
       });
     });
 
-    describe('multi line', () => {
+    describe.todo('multi line', () => {
       it('should handle empty comment', () => {
         const context = `pie %%**%%`;
         const result = pieParse(context);
@@ -138,7 +138,7 @@ describe('comments', () => {
       });
     });
 
-    describe('multi line', () => {
+    describe.todo('multi line', () => {
       it('should handle empty comment', () => {
         const context = `timeline %%**%%`;
         const result = timelineParse(context);

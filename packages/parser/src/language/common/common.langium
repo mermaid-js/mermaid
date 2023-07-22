@@ -9,7 +9,7 @@ hidden terminal WHITESPACE: /[\t\r ]+/;
 
 // TODO: add YAML_COMMENT hidden rule
 hidden terminal YAML: /---\s*[\n\r][\s\S]*?---\s*(?!.)/;
-hidden terminal MULTI_LINE_COMMENT: /%%\*[\s\S]*?\*%%\s*/;
+// hidden terminal MULTI_LINE_COMMENT: /%%\*[\s\S]*?\*%%\s*/;
 hidden terminal DIRECTIVE: /%%{[\s\S]*?}%%\s*/;
 hidden terminal SINGLE_LINE_COMMENT: /%%[^\n\r]*\s*/;
 
