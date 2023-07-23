@@ -73,6 +73,11 @@ function nav() {
     },
     { text: 'Integrations', link: '/ecosystem/integrations', activeMatch: '/ecosystem/' },
     {
+      text: 'Contributing',
+      link: '/community/n00b-overview.html',
+      activeMatch: '/n00b-overview',
+    },
+    {
       text: 'Latest News',
       link: '/news/announcements',
       activeMatch: '/announcements',
