@@ -32,8 +32,8 @@
     "ast"
   ],
   "dependencies": {
-    "@chevrotain/types": "^10.5.0",
-    "chevrotain": "^10.5.0",
+    "@chevrotain/types": "^11.0.1",
+    "chevrotain": "^11.0.1",
     "langium": "1.2.0",
     "vscode-uri": "^3.0.7"
   },
