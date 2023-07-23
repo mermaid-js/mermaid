@@ -1,3 +1,80 @@
+<script>
+  export default {
+    data() {
+      return {
+        selectedPlatform: "local",
+      };
+    },
+    methods: {
+      handlePlatformChange(newValue) {
+        console.log('Value changed:', this.selectedPlatform);
+        this.selectedPlatform = newValue;
+      },
+    },
+  };
+</script>
+
+<style>
+.button-container {
+  display: inline;
+}
+
+.platform-button {
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  margin-right: 8px;
+
+  border-color: var(--vp-button-brand-border);
+  color: var(--vp-button-brand-text);
+  background-color: var(--vp-button-brand-bg);
+}
+
+.platform-button:hover {
+}
+
+.selected-button {
+}
+</style>
+
+<!-- 
+<Selector
+  title="Select your platform"
+  defaultValue="local"
+  :options="[
+    { value: 'local', label: 'Local' },
+    { value: 'docker', label: 'Docker' },
+    { value: 'mac', label: 'Mac' }
+  ]"
+  v-on:change="handlePlatformChange"
+/>
+-->
+
+<div class="button-container">
+  Select your platform
+  <button class="platform-button" :class="{'selected-button': true}" @click="handlePlatformChange('local')">
+    Local
+  </button>
+  <button class="selected-button" @click="handlePlatformChange('docker')">
+    Docker
+  </button>
+</div>
+
+<br/>
+<br/>
+<div v-if="selectedPlatform === 'mac'">
+MAC
+</div>
+
+<div v-if="selectedPlatform === 'local'">
+LOCAL
+</div>
+
+<div v-if="selectedPlatform === 'docker'">
+DOCKER
+</div>
+
+
 # Contributing to Mermaid
 
 ## Contents
