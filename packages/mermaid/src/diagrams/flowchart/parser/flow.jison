@@ -397,51 +397,51 @@ verticeStatement: verticeStatement link node
     ;
 
 node: styledVertex
-        { /* console.warn('nod', $1); */ $$ = [$1];}
+        { /* console.warn('nod', $styledVertex); */ $$ = [$styledVertex];}
     | node spaceList AMP spaceList styledVertex
-        { $$ = $1.concat($5); /* console.warn('pip', $1[0], $5, $$); */ }
+        { $$ = $node.concat($styledVertex); /* console.warn('pip', $node[0], $styledVertex, $$); */ }
     ;
 
 styledVertex: vertex
-        { /* console.warn('nod', $1); */ $$ = $1;}
+        { /* console.warn('nod', $vertex); */ $$ = $vertex;}
     | vertex STYLE_SEPARATOR idString
-        {$$ = $1;yy.setClass($1,$3)}
+        {$$ = $vertex;yy.setClass($vertex,$idString)}
     ;
 
 vertex:  idString SQS text SQE
-        {$$ = $1;yy.addVertex($1,$3,'square');}
+        {$$ = $idString;yy.addVertex($idString,$text,'square');}
     | idString DOUBLECIRCLESTART text DOUBLECIRCLEEND
-        {$$ = $1;yy.addVertex($1,$3,'doublecircle');}
+        {$$ = $idString;yy.addVertex($idString,$text,'doublecircle');}
     | idString PS PS text PE PE
-        {$$ = $1;yy.addVertex($1,$4,'circle');}
+        {$$ = $idString;yy.addVertex($idString,$text,'circle');}
     | idString '(-' text '-)'
-        {$$ = $1;yy.addVertex($1,$3,'ellipse');}
+        {$$ = $idString;yy.addVertex($idString,$text,'ellipse');}
     | idString STADIUMSTART text STADIUMEND
-        {$$ = $1;yy.addVertex($1,$3,'stadium');}
+        {$$ = $idString;yy.addVertex($idString,$text,'stadium');}
     | idString SUBROUTINESTART text SUBROUTINEEND
-        {$$ = $1;yy.addVertex($1,$3,'subroutine');}
-    | idString VERTEX_WITH_PROPS_START NODE_STRING COLON NODE_STRING PIPE text SQE
-        {$$ = $1;yy.addVertex($1,$7,'rect',undefined,undefined,undefined, Object.fromEntries([[$3, $5]]));}
+        {$$ = $idString;yy.addVertex($idString,$text,'subroutine');}
+    | idString VERTEX_WITH_PROPS_START NODE_STRING\[field] COLON NODE_STRING\[value] PIPE text SQE
+        {$$ = $idString;yy.addVertex($idString,$text,'rect',undefined,undefined,undefined, Object.fromEntries([[$field, $value]]));}
     | idString CYLINDERSTART text CYLINDEREND
-        {$$ = $1;yy.addVertex($1,$3,'cylinder');}
+        {$$ = $idString;yy.addVertex($idString,$text,'cylinder');}
     | idString PS text PE
-        {$$ = $1;yy.addVertex($1,$3,'round');}
+        {$$ = $idString;yy.addVertex($idString,$text,'round');}
     | idString DIAMOND_START text DIAMOND_STOP
-        {$$ = $1;yy.addVertex($1,$3,'diamond');}
+        {$$ = $idString;yy.addVertex($idString,$text,'diamond');}
     | idString DIAMOND_START DIAMOND_START text DIAMOND_STOP DIAMOND_STOP
-        {$$ = $1;yy.addVertex($1,$4,'hexagon');}
+        {$$ = $idString;yy.addVertex($idString,$text,'hexagon');}
     | idString TAGEND text SQE
-        {$$ = $1;yy.addVertex($1,$3,'odd');}
+        {$$ = $idString;yy.addVertex($idString,$text,'odd');}
     | idString TRAPSTART text TRAPEND
-        {$$ = $1;yy.addVertex($1,$3,'trapezoid');}
+        {$$ = $idString;yy.addVertex($idString,$text,'trapezoid');}
     | idString INVTRAPSTART text INVTRAPEND
-        {$$ = $1;yy.addVertex($1,$3,'inv_trapezoid');}
+        {$$ = $idString;yy.addVertex($idString,$text,'inv_trapezoid');}
     | idString TRAPSTART text INVTRAPEND
-        {$$ = $1;yy.addVertex($1,$3,'lean_right');}
+        {$$ = $idString;yy.addVertex($idString,$text,'lean_right');}
     | idString INVTRAPSTART text TRAPEND
-        {$$ = $1;yy.addVertex($1,$3,'lean_left');}
+        {$$ = $idString;yy.addVertex($idString,$text,'lean_left');}
     | idString
-        { /*console.warn('h: ', $1);*/$$ = $1;yy.addVertex($1);}
+        { /*console.warn('h: ', $idString);*/$$ = $idString;yy.addVertex($idString);}
     ;
 
 
