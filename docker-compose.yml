@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   mermaid:
-    image: node:18.16.1-alpine3.18
+    image: node:18.17.0-alpine3.18
     stdin_open: true
     tty: true
     working_dir: /mermaid
