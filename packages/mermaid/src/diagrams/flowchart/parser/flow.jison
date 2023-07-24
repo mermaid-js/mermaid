@@ -283,11 +283,11 @@ openDirective
   ;
 
 typeDirective
-  : type_directive { yy.parseDirective($1, 'type_directive'); }
+  : type_directive { yy.parseDirective($type_directive, 'type_directive'); }
   ;
 
 argDirective
-  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
+  : arg_directive { $arg_directive = $arg_directive.trim().replace(/'/g, '"'); yy.parseDirective($arg_directive, 'arg_directive'); }
   ;
 
 closeDirective
@@ -303,15 +303,15 @@ document
 	{ $$ = [];}
 	| document line
 	{
-	    if(!Array.isArray($2) || $2.length > 0){
-	        $1.push($2);
+	    if(!Array.isArray($line) || $line.length > 0){
+	        $document.push($line);
 	    }
-	    $$=$1;}
+	    $$=$document;}
 	;
 
 line
 	: statement
-	{$$=$1;}
+	{$$=$statement;}
 	| SEMI
 	| NEWLINE
 	| SPACE
@@ -324,15 +324,15 @@ graphConfig
     | GRAPH NODIR
         { yy.setDirection('TB');$$ = 'TB';}
     | GRAPH DIR FirstStmtSeperator
-        { yy.setDirection($2);$$ = $2;}
+        { yy.setDirection($DIR);$$ = $DIR;}
     // | GRAPH SPACE TAGEND FirstStmtSeperator
-    //     { yy.setDirection("LR");$$ = $3;}
+    //     { yy.setDirection("LR");$$ = $TAGEND;}
     // | GRAPH SPACE TAGSTART FirstStmtSeperator
-    //     { yy.setDirection("RL");$$ = $3;}
+    //     { yy.setDirection("RL");$$ = $TAGSTART;}
     // | GRAPH SPACE UP FirstStmtSeperator
-    //     { yy.setDirection("BT");$$ = $3;}
+    //     { yy.setDirection("BT");$$ = $UP;}
     // | GRAPH SPACE DOWN FirstStmtSeperator
-    //     { yy.setDirection("TB");$$ = $3;}
+    //     { yy.setDirection("TB");$$ = $DOWN;}
     ;
 
 ending: endToken ending
