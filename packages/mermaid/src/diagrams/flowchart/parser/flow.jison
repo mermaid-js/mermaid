@@ -142,29 +142,31 @@ that id.
 
 <*>\s*\~\~[\~]+\s*              return 'LINK';
 
-<*>"(-"                         { this.pushState("ellipseText"); return '(-'; }
 <ellipseText>[-/\)][\)]         { this.popState(); return '-)'; }
 <ellipseText>[^/)]|-/!\)+       return "TEXT"
+<*>"(-"                         { this.pushState("ellipseText"); return '(-'; }
 
-"(["                   { this.pushState("text"); return 'STADIUMSTART'; }
 <text>"])"                { this.popState(); return 'STADIUMEND'; }
+<*>"(["                   { this.pushState("text"); return 'STADIUMSTART'; }
 
-"[["                   { this.pushState("text"); return 'SUBROUTINESTART'; }
 <text>"]]"                { this.popState(); return 'SUBROUTINEEND'; }
+<*>"[["                   { this.pushState("text"); return 'SUBROUTINESTART'; }
 
 "[|"                      { return 'VERTEX_WITH_PROPS_START'; }
 
 \>/!\s                    { this.pushState("text"); return 'TAGEND'; }
-<*>"[("                   { this.pushState("text") ;return 'CYLINDERSTART'; }
+
 <text>")]"                { this.popState(); return 'CYLINDEREND'; }
+<*>"[("                   { this.pushState("text") ;return 'CYLINDERSTART'; }
 
-<*>"((("                  { this.pushState("text"); return 'DOUBLECIRCLESTART'; }
 <text>")))"               { this.popState(); return 'DOUBLECIRCLEEND'; }
+<*>"((("                  { this.pushState("text"); return 'DOUBLECIRCLESTART'; }
 
-<*>"[/"                   { this.pushState("trapText"); return 'TRAPSTART'; }
 <trapText>[\\(?=\])][\]]  { this.popState(); return 'TRAPEND'; }
 <trapText>\/(?=\])\]     { this.popState(); return 'INVTRAPEND'; }
 <trapText>\/(?!\])|\\(?!\])|[^\\\]\/]+        return 'TEXT';
+<*>"[/"                   { this.pushState("trapText"); return 'TRAPSTART'; }
+
 <*>"[\\"                 { this.pushState("trapText"); return 'INVTRAPSTART'; }
 
 
@@ -240,13 +242,16 @@ that id.
 
 <text>"|"             { this.popState(); return 'PIPE'; }
 <*>"|"                { this.pushState("text"); return 'PIPE'; }
-<*>"("                { this.pushState("text"); return 'PS'; }
+
 <text>")"             { this.popState(); return 'PE'; }
+<*>"("                { this.pushState("text"); return 'PS'; }
+
+<text>"]"            { this.popState(); return 'SQE'; }
 <*>"["                { this.pushState("text"); return 'SQS'; }
-<text>(\])            { this.popState(); return 'SQE'; }
-<*>"{"                { this.pushState("text"); return 'DIAMOND_START' }
+
 <text>(\})            { this.popState(); return 'DIAMOND_STOP' }
-<text>[^\]\)\}\|]+    return "TEXT";
+<*>"{"                { this.pushState("text"); return 'DIAMOND_START' }
+<text>[^\]\)\}\|\"]+    return "TEXT";
 
 "\""                  return 'QUOTE';
 (\r?\n)+              return 'NEWLINE';
