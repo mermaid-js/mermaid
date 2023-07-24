@@ -360,7 +360,7 @@ spaceList
 
 statement
     : verticeStatement separator
-    { /* console.warn('finat vs', $1.nodes); */ $$=$1.nodes}
+    { /* console.warn('finat vs', $verticeStatement.nodes); */ $$=$verticeStatement.nodes}
     | styleStatement separator
     {$$=[];}
     | linkStyleStatement separator
@@ -372,28 +372,28 @@ statement
     | clickStatement separator
     {$$=[];}
     | subgraph SPACE textNoTags SQS text SQE separator document end
-    {$$=yy.addSubGraph($3,$8,$5);}
+    {$$=yy.addSubGraph($textNoTags,$document,$text);}
     | subgraph SPACE textNoTags separator document end
-    {$$=yy.addSubGraph($3,$5,$3);}
+    {$$=yy.addSubGraph($textNoTags,$document,$textNoTags);}
     // | subgraph SPACE textNoTags separator document end
-    // {$$=yy.addSubGraph($3,$5,$3);}
+    // {$$=yy.addSubGraph($textNoTags,$document,$textNoTags);}
     | subgraph separator document end
-    {$$=yy.addSubGraph(undefined,$3,undefined);}
+    {$$=yy.addSubGraph(undefined,$document,undefined);}
     | direction
-    | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
-    | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
-    | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
+    | acc_title acc_title_value  { $$=$acc_title_value.trim();yy.setAccTitle($$); }
+    | acc_descr acc_descr_value  { $$=$acc_descr_value.trim();yy.setAccDescription($$); }
+    | acc_descr_multiline_value { $$=$acc_descr_multiline_value.trim();yy.setAccDescription($$); }
     ;
 
 separator: NEWLINE | SEMI | EOF ;
 
 
 verticeStatement: verticeStatement link node
-        { /* console.warn('vs',$1.stmt,$3); */ yy.addLink($1.stmt,$3,$2); $$ = { stmt: $3, nodes: $3.concat($1.nodes) } }
+        { /* console.warn('vs',$verticeStatement.stmt,$node); */ yy.addLink($verticeStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($verticeStatement.nodes) } }
     |  verticeStatement link node spaceList
-        { /* console.warn('vs',$1.stmt,$3); */ yy.addLink($1.stmt,$3,$2); $$ = { stmt: $3, nodes: $3.concat($1.nodes) } }
-    |node spaceList {/*console.warn('noda', $1);*/ $$ = {stmt: $1, nodes:$1 }}
-    |node { /*console.warn('noda', $1);*/ $$ = {stmt: $1, nodes:$1 }}
+        { /* console.warn('vs',$verticeStatement.stmt,$node); */ yy.addLink($verticeStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($verticeStatement.nodes) } }
+    |node spaceList {/*console.warn('noda', $node);*/ $$ = {stmt: $node, nodes:$node }}
+    |node { /*console.warn('noda', $node);*/ $$ = {stmt: $node, nodes:$node }}
     ;
 
 node: styledVertex
