@@ -507,8 +507,8 @@ classDefStatement:CLASSDEF SPACE idString SPACE stylesOpt
     {$$ = $CLASSDEF;yy.addClass($idString,$stylesOpt);}
     ;
 
-classStatement:CLASS SPACE idString SPACE alphaNum
-    {$$ = $CLASS;yy.setClass($idString, $alphaNum);}
+classStatement:CLASS SPACE idString\[vertex] SPACE idString\[class]
+    {$$ = $CLASS;yy.setClass($vertex, $class);}
     ;
 
 clickStatement
