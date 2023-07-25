@@ -447,41 +447,41 @@ vertex:  idString SQS text SQE
 
 
 link: linkStatement arrowText
-    {$1.text = $2;$$ = $1;}
+    {$linkStatement.text = $arrowText;$$ = $linkStatement;}
     | linkStatement TESTSTR SPACE
-    {$1.text = $2;$$ = $1;}
+    {$linkStatement.text = $TESTSTR;$$ = $linkStatement;}
     | linkStatement arrowText SPACE
-    {$1.text = $2;$$ = $1;}
+    {$linkStatement.text = $arrowText;$$ = $linkStatement;}
     | linkStatement
-    {$$ = $1;}
+    {$$ = $linkStatement;}
     | START_LINK edgeText LINK
-        {var inf = yy.destructLink($3, $1); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$2};}
+        {var inf = yy.destructLink($LINK, $START_LINK); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$edgeText};}
     ;
 
 edgeText: edgeTextToken
-    {$$={text:$1, type:'text'};}
+    {$$={text:$edgeTextToken, type:'text'};}
     | edgeText edgeTextToken
-    {$$={text:$1.text+''+$2, type:$1.type};}
+    {$$={text:$edgeText.text+''+$edgeTextToken, type:$edgeText.type};}
     | MD_STR
-    {$$={text:$1, type:'markdown'};}
+    {$$={text:$MD_STR, type:'markdown'};}
     ;
 
 
 linkStatement: LINK
-        {var inf = yy.destructLink($1);$$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length};}
+        {var inf = yy.destructLink($LINK);$$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length};}
         ;
 
 arrowText:
     PIPE text PIPE
-    {$$ = $2;}
+    {$$ = $text;}
     ;
 
 text: textToken
-    { $$={text:$1, type: 'text'};}
+    { $$={text:$textToken, type: 'text'};}
     | text textToken
-    { $$={text:$1.text+''+$2, type: $1.type};}
+    { $$={text:$text.text+''+$textToken, type: $text.type};}
     | MD_STR
-    { $$={text: $1, type: 'markdown'};}
+    { $$={text: $MD_STR, type: 'markdown'};}
     ;
 
 
@@ -491,75 +491,75 @@ keywords
 
 
 textNoTags: textNoTagsToken
-    {$$={text:$1, type: 'text'};}
+    {$$={text:$textNoTagsToken, type: 'text'};}
     | textNoTags textNoTagsToken
-    {$$={text:$1.text+''+$2, type: $1.type};}
+    {$$={text:$textNoTags.text+''+$textNoTagsToken, type: $textNoTags.type};}
     | STR
-    { $$={text: $1, type: 'text'};}
+    { $$={text: $STR, type: 'text'};}
     | MD_STR
-    { $$={text: $1, type: 'markdown'};}
+    { $$={text: $MD_STR, type: 'markdown'};}
     ;
 
 
 classDefStatement:CLASSDEF SPACE idString SPACE stylesOpt
-    {$$ = $1;yy.addClass($3,$5);}
+    {$$ = $CLASSDEF;yy.addClass($idString,$stylesOpt);}
     ;
 
 classStatement:CLASS SPACE idString SPACE alphaNum
-    {$$ = $1;yy.setClass($3, $5);}
+    {$$ = $CLASS;yy.setClass($idString, $alphaNum);}
     ;
 
 clickStatement
-    : CLICK CALLBACKNAME                                    {$$ = $1;yy.setClickEvent($1, $2);}
-    | CLICK CALLBACKNAME SPACE STR                          {$$ = $1;yy.setClickEvent($1, $2);yy.setTooltip($1, $4);}
-    | CLICK CALLBACKNAME CALLBACKARGS                       {$$ = $1;yy.setClickEvent($1, $2, $3);}
-    | CLICK CALLBACKNAME CALLBACKARGS SPACE STR             {$$ = $1;yy.setClickEvent($1, $2, $3);yy.setTooltip($1, $5);}
-    | CLICK HREF SPACE STR                                  {$$ = $1;yy.setLink($1, $4);}
-    | CLICK HREF SPACE STR SPACE STR                        {$$ = $1;yy.setLink($1, $4);yy.setTooltip($1, $6);}
-    | CLICK HREF SPACE STR SPACE LINK_TARGET                {$$ = $1;yy.setLink($1, $4, $6);}
-    | CLICK HREF SPACE STR SPACE STR SPACE LINK_TARGET      {$$ = $1;yy.setLink($1, $4, $8);yy.setTooltip($1, $6);}
-    | CLICK alphaNum                                        {$$ = $1;yy.setClickEvent($1, $2);}
-    | CLICK alphaNum SPACE STR                              {$$ = $1;yy.setClickEvent($1, $2);yy.setTooltip($1, $4);}
-    | CLICK STR                                             {$$ = $1;yy.setLink($1, $2);}
-    | CLICK STR SPACE STR                                   {$$ = $1;yy.setLink($1, $2);yy.setTooltip($1, $4);}
-    | CLICK STR SPACE LINK_TARGET                           {$$ = $1;yy.setLink($1, $2, $4);}
-    | CLICK STR SPACE STR SPACE LINK_TARGET                 {$$ = $1;yy.setLink($1, $2, $6);yy.setTooltip($1, $4);}
+    : CLICK CALLBACKNAME                                    {$$ = $CLICK;yy.setClickEvent($CLICK, $CALLBACKNAME);}
+    | CLICK CALLBACKNAME SPACE STR                          {$$ = $CLICK;yy.setClickEvent($CLICK, $CALLBACKNAME);yy.setTooltip($CLICK, $STR);}
+    | CLICK CALLBACKNAME CALLBACKARGS                       {$$ = $CLICK;yy.setClickEvent($CLICK, $CALLBACKNAME, $CALLBACKARGS);}
+    | CLICK CALLBACKNAME CALLBACKARGS SPACE STR             {$$ = $CLICK;yy.setClickEvent($CLICK, $CALLBACKNAME, $CALLBACKARGS);yy.setTooltip($CLICK, $STR);}
+    | CLICK HREF SPACE STR                                  {$$ = $CLICK;yy.setLink($CLICK, $STR);}
+    | CLICK HREF SPACE STR\[link] SPACE STR\[target]        {$$ = $CLICK;yy.setLink($CLICK, $link);yy.setTooltip($CLICK, $target);}
+    | CLICK HREF SPACE STR SPACE LINK_TARGET                {$$ = $CLICK;yy.setLink($CLICK, $STR, $LINK_TARGET);}
+    | CLICK HREF SPACE STR\[link] SPACE STR\[tooltip] SPACE LINK_TARGET      {$$ = $CLICK;yy.setLink($CLICK, $link, $LINK_TARGET);yy.setTooltip($CLICK, $tooltip);}
+    | CLICK alphaNum                                        {$$ = $CLICK;yy.setClickEvent($CLICK, $alphaNum);}
+    | CLICK alphaNum SPACE STR                              {$$ = $CLICK;yy.setClickEvent($CLICK, $alphaNum);yy.setTooltip($CLICK, $STR);}
+    | CLICK STR                                             {$$ = $CLICK;yy.setLink($CLICK, $STR);}
+    | CLICK STR\[link] SPACE STR\[tooltip]                  {$$ = $CLICK;yy.setLink($CLICK, $link);yy.setTooltip($CLICK, $tooltip);}
+    | CLICK STR SPACE LINK_TARGET                           {$$ = $CLICK;yy.setLink($CLICK, $STR, $LINK_TARGET);}
+    | CLICK STR\[link] SPACE STR\[tooltip] SPACE LINK_TARGET    {$$ = $CLICK;yy.setLink($CLICK, $link, $LINK_TARGET);yy.setTooltip($CLICK, $tooltip);}
     ;
 
 styleStatement:STYLE SPACE idString SPACE stylesOpt
-    {$$ = $1;yy.addVertex($3,undefined,undefined,$5);}
+    {$$ = $STYLE;yy.addVertex($idString,undefined,undefined,$stylesOpt);}
     ;
 
 linkStyleStatement
     : LINKSTYLE SPACE DEFAULT SPACE stylesOpt
-          {$$ = $1;yy.updateLink([$3],$5);}
+          {$$ = $LINKSTYLE;yy.updateLink([$DEFAULT],$stylesOpt);}
     | LINKSTYLE SPACE numList SPACE stylesOpt
-          {$$ = $1;yy.updateLink($3,$5);}
+          {$$ = $LINKSTYLE;yy.updateLink($numList,$stylesOpt);}
     | LINKSTYLE SPACE DEFAULT SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
-          {$$ = $1;yy.updateLinkInterpolate([$3],$7);yy.updateLink([$3],$9);}
+          {$$ = $LINKSTYLE;yy.updateLinkInterpolate([$DEFAULT],$alphaNum);yy.updateLink([$DEFAULT],$stylesOpt);}
     | LINKSTYLE SPACE numList SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
-          {$$ = $1;yy.updateLinkInterpolate($3,$7);yy.updateLink($3,$9);}
+          {$$ = $LINKSTYLE;yy.updateLinkInterpolate($numList,$alphaNum);yy.updateLink($numList,$stylesOpt);}
     | LINKSTYLE SPACE DEFAULT SPACE INTERPOLATE SPACE alphaNum
-          {$$ = $1;yy.updateLinkInterpolate([$3],$7);}
+          {$$ = $LINKSTYLE;yy.updateLinkInterpolate([$DEFAULT],$alphaNum);}
     | LINKSTYLE SPACE numList SPACE INTERPOLATE SPACE alphaNum
-          {$$ = $1;yy.updateLinkInterpolate($3,$7);}
+          {$$ = $LINKSTYLE;yy.updateLinkInterpolate($numList,$alphaNum);}
     ;
 
 numList: NUM
-        {$$ = [$1]}
+        {$$ = [$NUM]}
     | numList COMMA NUM
-        {$1.push($3);$$ = $1;}
+        {$numList.push($NUM);$$ = $numList;}
     ;
 
 stylesOpt: style
-        {$$ = [$1]}
+        {$$ = [$style]}
     | stylesOpt COMMA style
-        {$1.push($3);$$ = $1;}
+        {$stylesOpt.push($style);$$ = $stylesOpt;}
     ;
 
 style: styleComponent
     |style styleComponent
-    {$$ = $1 + $2;}
+    {$$ = $style + $styleComponent;}
     ;
 
 styleComponent: NUM | NODE_STRING| COLON | UNIT | SPACE | BRKT | STYLE | PCT ;
@@ -575,23 +575,23 @@ edgeTextToken  :  STR | EDGE_TEXT | UNICODE_TEXT ;
 
 idString
     :idStringToken
-    {$$=$1}
+    {$$=$idStringToken}
     | idString idStringToken
-    {$$=$1+''+$2}
+    {$$=$idString+''+$idStringToken}
     ;
 
 alphaNum
     : alphaNumStatement
-    {$$=$1;}
+    {$$=$alphaNumStatement;}
     | alphaNum alphaNumStatement
-    {$$=$1+''+$2;}
+    {$$=$alphaNum+''+$alphaNumStatement;}
     ;
 
 alphaNumStatement
     : DIR
-        {$$=$1;}
+        {$$=$DIR;}
     | NODE_STRING
-        {$$=$1;}
+        {$$=$NODE_STRING;}
     | DOWN
         {$$='v';}
     | MINUS
