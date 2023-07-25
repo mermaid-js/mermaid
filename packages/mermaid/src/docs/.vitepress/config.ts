@@ -134,7 +134,7 @@ function sidebarSyntax() {
         { text: 'Quadrant Chart', link: '/syntax/quadrantChart' },
         { text: 'Requirement Diagram', link: '/syntax/requirementDiagram' },
         { text: 'Gitgraph (Git) Diagram 🔥', link: '/syntax/gitgraph' },
-        { text: 'C4 Diagram 🦺⚠️', link: '/syntax/c4c' },
+        { text: 'C4 Diagram 🦺⚠️', link: '/syntax/c4' },
         { text: 'Mindmaps 🔥', link: '/syntax/mindmap' },
         { text: 'Timeline 🔥', link: '/syntax/timeline' },
         { text: 'Zenuml 🔥', link: '/syntax/zenuml' },
