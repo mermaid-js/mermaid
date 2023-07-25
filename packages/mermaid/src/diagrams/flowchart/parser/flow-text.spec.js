@@ -691,9 +691,35 @@ describe('[Text] when parsing', () => {
     expect(edges[0].text).toBe(',.?!+-*');
   });
 
+  it('should throw error at nested set of brackets', function () {
+    const str = 'graph TD; A[This is a () in text];';
+    expect(() => flow.parser.parse(str)).toThrowError("got 'PE'");
+  });
+
   it('should throw error for strings and text at the same time', function () {
     const str = 'graph TD;A(this node has "string" and text)-->|this link has "string" and text|C;';
 
     expect(() => flow.parser.parse(str)).toThrowError("got 'STR'");
+  });
+
+  it('should throw error for escaping quotes in text state', function () {
+    //prettier-ignore
+    const str = 'graph TD; A[This is a \"()\" in text];'; //eslint-disable-line no-useless-escape
+
+    expect(() => flow.parser.parse(str)).toThrowError("got 'STR'");
+  });
+
+  it('should throw error for nested quoatation marks', function () {
+    const str = 'graph TD; A["This is a "()" in text"];';
+
+    expect(() => flow.parser.parse(str)).toThrowError("Expecting 'SQE'");
+  });
+
+  it('should parse escaped quotes in a string state', function () {
+    //prettier-ignore
+    const str = 'graph TD; A["This is a \"()\" in text"];'; //eslint-disable-line no-useless-escape
+
+    flow.parser.parse(str);
+    expect(flow.parser.getVertices[0].text).toBe('This is a "()" in text');
   });
 });
