@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/sankey.md](../../packages/mermaid/src/docs/syntax/sankey.md).
 
-# Sankey diagrams
+# Sankey diagram (v\<MERMAID_RELEASE_VERSION>+)
 
 > A sankey diagram is a visualization used to depict a flow from one set of values to another.
 
