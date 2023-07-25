@@ -4,4 +4,5 @@ export interface MarkdownWord {
   type: MarkdownWordType;
 }
 export type MarkdownLine = MarkdownWord[];
+/** Returns `true` if the line fits a constraint (e.g. it's under 𝑛 chars) */
 export type CheckFitFunction = (text: MarkdownLine) => boolean;
