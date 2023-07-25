@@ -717,9 +717,8 @@ describe('[Text] when parsing', () => {
 
   it('should parse escaped quotes in a string state', function () {
     //prettier-ignore
-    const str = 'graph TD; A["This is a \"()\" in text"];'; //eslint-disable-line no-useless-escape
-
-    flow.parser.parse(str);
-    expect(flow.parser.getVertices[0].text).toBe('This is a "()" in text');
+    flow.parser.parse('graph TD; A["This is a \\"()\\" in text"];'); //eslint-disable-line no-useless-escape
+    const vert = flow.parser.yy.getVertices();
+    expect(vert['A'].text).toBe('This is a "()" in text');
   });
 });

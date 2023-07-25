@@ -91,6 +91,7 @@ export const addVertex = function (_id, textObj, type, style, classes, dir, prop
   if (textObj !== undefined) {
     config = configApi.getConfig();
     txt = sanitizeText(textObj.text.trim());
+    txt = textObj.type === 'string' ? txt.replaceAll('\\"', '"') : txt;
     vertices[id].labelType = textObj.type;
     // strip quotes if string starts and ends with a quote
     if (txt[0] === '"' && txt[txt.length - 1] === '"') {

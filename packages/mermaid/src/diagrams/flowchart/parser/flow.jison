@@ -61,9 +61,9 @@ Function arguments are optional: 'call <callbackname>()' simply executes 'callba
 <md_string>[^`"]+       { return "MD_STR";}
 <md_string>[`]["]       { this.popState();}
 <*>["][`]                  { this.begin("md_string");}
+<string>(\\(?=\")\"|[^"])+           return "STR";
 <string>["]             this.popState();
-<string>[^"]+           return "STR";
-<*>["]       this.pushState("string");
+<*>["]                  this.pushState("string");
 "style"                 return 'STYLE';
 "default"               return 'DEFAULT';
 "linkStyle"             return 'LINKSTYLE';
@@ -481,7 +481,7 @@ text: textToken
     | text textToken
     { $$={text:$text.text+''+$textToken, type: $text.type};}
     | STR
-    {$$={text: $STR, type: 'text'};}
+    { $$ = {text: $STR, type: 'string'};}
     | MD_STR
     { $$={text: $MD_STR, type: 'markdown'};}
     ;
