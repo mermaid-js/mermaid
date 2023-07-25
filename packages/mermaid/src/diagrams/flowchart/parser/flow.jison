@@ -480,6 +480,8 @@ text: textToken
     { $$={text:$textToken, type: 'text'};}
     | text textToken
     { $$={text:$text.text+''+$textToken, type: $text.type};}
+    | STR
+    {$$={text: $STR, type: 'text'};}
     | MD_STR
     { $$={text: $MD_STR, type: 'markdown'};}
     ;
@@ -567,7 +569,7 @@ styleComponent: NUM | NODE_STRING| COLON | UNIT | SPACE | BRKT | STYLE | PCT ;
 /* Token lists */
 idStringToken  :  NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON;
 
-textToken      :   STR | TEXT | TAGSTART | TAGEND | UNICODE_TEXT;
+textToken      :   TEXT | TAGSTART | TAGEND | UNICODE_TEXT;
 
 textNoTagsToken: NUM | NODE_STRING | SPACE | MINUS | keywords |  START_LINK ;
 

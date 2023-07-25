@@ -691,15 +691,9 @@ describe('[Text] when parsing', () => {
     expect(edges[0].text).toBe(',.?!+-*');
   });
 
-  it('should handle strings and text at the same time', function () {
-    const res = flow.parser.parse(
-      'graph TD;A(this node has "string" and text)-->|this link has "string" and text|C;'
-    );
+  it('should throw error for strings and text at the same time', function () {
+    const str = 'graph TD;A(this node has "string" and text)-->|this link has "string" and text|C;';
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
-
-    expect(vert['A'].text).toBe('this node has "string" and text');
-    expect(edges[0].text).toBe('this link has "string" and text');
+    expect(() => flow.parser.parse(str)).toThrowError("got 'STR'");
   });
 });
