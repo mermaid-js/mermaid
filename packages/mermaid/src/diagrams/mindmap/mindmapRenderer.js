@@ -167,13 +167,7 @@ function positionNodes(cy) {
 export const draw = async (text, id, version, diagObj) => {
   const conf = getConfig();
 
-  // console.log('Config: ', conf);
   conf.htmlLabels = false;
-
-  // This is done only for throwing the error if the text is not valid.
-  diagObj.db.clear();
-  // Parse the graph definition
-  diagObj.parser.parse(text);
 
   log.debug('Rendering mindmap diagram\n' + text, diagObj.parser);
 

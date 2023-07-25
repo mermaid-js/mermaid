@@ -14,7 +14,7 @@ permissions:
   contents: read
 
 jobs:
-  check:
+  check-readme:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

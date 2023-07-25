@@ -1,4 +1,4 @@
-import { renderGraph } from '../../helpers/util.js';
+import { renderGraph } from '../../helpers/util.ts';
 describe('Configuration', () => {
   describe('arrowMarkerAbsolute', () => {
     it('should handle default value false of arrowMarkerAbsolute', () => {

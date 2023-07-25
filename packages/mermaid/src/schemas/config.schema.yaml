@@ -1,0 +1,1901 @@
+# Used for VS Code's YAML plugin to automatically error on invalid types
+# yaml-language-server: $schema=https://json-schema.org/draft/2019-09/schema
+
+# This file defines the MermaidConfig JSON Schema as a YAML file.
+#
+# From this file, the following things can be generated:
+#   - `scripts/create-types-from-json-schema.mjs`
+#     Used to generate the `src/config.type.ts` TypeScript types for MermaidConfig
+#     with the `json-schema-to-typescript` NPM package.
+#   - `.vite/jsonSchemaPlugin.ts`
+#     Used to generate the default values from the `default` keys in this
+#     JSON Schema using the `ajv` NPM package.
+#     Non-JSON values, like functions or `undefined`, still need to be manually
+#     set in `src/defaultConfig.ts`)
+#   - `src/docs.mts`
+#     Used to genereate Markdown documentation for this JSON Schema by using
+#     the `@adobe/jsonschema2md` NPM package.
+
+# Useful things to know when editting this file
+# - Use the `|` character for multi-line strings
+# - Use `meta:enum` to document enum values (from jsonschema2md)
+# - Use `tsType` to override the TypeScript type (from json-schema-to-typescript)
+# - If adding a new object to `MermaidConfig` (e.g. a new diagram type),
+#   you may need to add it to `.vite/jsonSchemaPlugin.ts` and `src/docs.mts`
+#   to get the docs/default values to generate properly.
+$id: https://mermaid-js.github.io/schemas/config.schema.json
+$schema: https://json-schema.org/draft/2019-09/schema
+title: Mermaid Config
+type: object
+additionalProperties: false
+required:
+  - fontFamily
+  - logLevel
+  - securityLevel
+  - startOnLoad
+  - arrowMarkerAbsolute
+  - flowchart
+  - sequence
+  - gantt
+  - journey
+  - class
+  - state
+  - er
+  - pie
+  - quadrantChart
+  - requirement
+  - mindmap
+  - gitGraph
+  - c4
+  - sankey
+properties:
+  theme:
+    description: |
+      Theme, the CSS style sheet.
+      You may also use `themeCSS` to override this value.
+    type: string
+    enum:
+      - default
+      - forest
+      - dark
+      - neutral
+      - 'null' # should this be a `null`-type?
+    meta:enum:
+      'null': Can be set to disable any pre-defined mermaid theme
+    default: 'default'
+    # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
+    tsType: 'string | "default" | "forest" | "dark" | "neutral" | "null"'
+  themeVariables:
+    tsType: any
+  themeCSS:
+    type: string
+  maxTextSize:
+    description: The maximum allowed size of the users text diagram
+    type: number
+    default: 50000
+  darkMode:
+    type: boolean
+    default: false
+  htmlLabels:
+    type: boolean # maybe unused, seems to be copied in each diagram config
+  fontFamily:
+    description: |
+      Specifies the font to be used in the rendered diagrams.
+      Can be any possible CSS `font-family`.
+      See https://developer.mozilla.org/en-US/docs/Web/CSS/font-family
+    type: string
+    default: '"trebuchet ms", verdana, arial, sans-serif;'
+  altFontFamily:
+    # TODO: seems to be unused, except for in tests
+    type: string
+  logLevel:
+    description: |
+      This option decides the amount of logging to be used by mermaid.
+    type:
+      - string
+      - number
+    enum:
+      - trace
+      - 0
+      - debug
+      - 1
+      - info
+      - 2
+      - warn
+      - 3
+      - error
+      - 4
+      - fatal
+      - 5
+    meta:enum:
+      trace: Equivalent to 0
+      debug: Equivalent to 1
+      info: Equivalent to 2
+      warn: Equivalent to 3
+      error: Equivalent to 4
+      fatal: Equivalent to 5 (default)
+    default: 5
+    # Allow any number or string for typescript backwards compatibility (fix in Mermaid v10)
+    tsType: 'number | string | 0 | 2 | 1 | "trace" | "debug" | "info" | "warn" | "error" | "fatal" | 3 | 4 | 5 | undefined'
+  securityLevel:
+    description: Level of trust for parsed diagram
+    type: string
+    enum:
+      - strict
+      - loose
+      - antiscript
+      - sandbox
+    meta:enum:
+      strict: (**default**) HTML tags in the text are encoded and click functionality is disabled.
+      antiscript: HTML tags in text are allowed (only script elements are removed), and click functionality is enabled.
+      loose: HTML tags in text are allowed and click functionality is enabled.
+      sandbox: |
+        With this security level, all rendering takes place in a sandboxed iframe.
+        This prevent any JavaScript from running in the context.
+        This may hinder interactive functionality of the diagram, like scripts, popups in the sequence diagram, or links to other tabs or targets, etc.
+    default: strict
+    # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
+    tsType: 'string | "strict" | "loose" | "antiscript" | "sandbox" | undefined'
+  startOnLoad:
+    description: Dictates whether mermaid starts on Page load
+    type: boolean
+    default: true
+  arrowMarkerAbsolute:
+    &arrowMarkerAbsolute # YAML anchor, can be used later with `*arrowMarkerAbsolute`
+    description: |
+      Controls whether or arrow markers in html code are absolute paths or anchors.
+      This matters if you are using base tag settings.
+    type: boolean
+    default: false
+  secure:
+    description: |
+      This option controls which `currentConfig` keys are considered secure and
+      can only be changed via call to `mermaidAPI.initialize`.
+      Calls to `mermaidAPI.reinitialize` cannot make changes to the secure keys
+      in the current `currentConfig`.
+
+      This prevents malicious graph directives from overriding a site's default security.
+    default: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
+    type: array
+    items:
+      type: string
+    uniqueItems: false # Should be enabled, but it may be a breaking change from the old config
+  deterministicIds:
+    description: |
+      This option controls if the generated ids of nodes in the SVG are
+      generated randomly or based on a seed.
+      If set to `false`, the IDs are generated based on the current date and
+      thus are not deterministic. This is the default behavior.
+
+      This matters if your files are checked into source control e.g. git and
+      should not change unless content is changed.
+    type: boolean
+    default: false
+  deterministicIDSeed:
+    description: |
+      This option is the optional seed for deterministic ids.
+      If set to `undefined` but deterministicIds is `true`, a simple number iterator is used.
+      You can set this attribute to base the seed on a static string.
+    type: string
+  flowchart:
+    $ref: '#/$defs/FlowchartDiagramConfig'
+  sequence:
+    $ref: '#/$defs/SequenceDiagramConfig'
+  gantt:
+    $ref: '#/$defs/GanttDiagramConfig'
+  journey:
+    $ref: '#/$defs/JourneyDiagramConfig'
+  timeline:
+    $ref: '#/$defs/TimelineDiagramConfig'
+  class:
+    $ref: '#/$defs/ClassDiagramConfig'
+  state:
+    $ref: '#/$defs/StateDiagramConfig'
+  er:
+    $ref: '#/$defs/ErDiagramConfig'
+  pie:
+    $ref: '#/$defs/PieDiagramConfig'
+  quadrantChart:
+    $ref: '#/$defs/QuadrantChartConfig'
+  requirement:
+    $ref: '#/$defs/RequirementDiagramConfig'
+  mindmap:
+    $ref: '#/$defs/MindmapDiagramConfig'
+  gitGraph:
+    $ref: '#/$defs/GitGraphDiagramConfig'
+  c4:
+    $ref: '#/$defs/C4DiagramConfig'
+  sankey:
+    $ref: '#/$defs/SankeyDiagramConfig'
+  dompurifyConfig:
+    title: DOM Purify Configuration
+    description: Configuration options to pass to the `dompurify` library.
+    type: object
+    tsType: "import('dompurify').Config"
+  wrap:
+    type: boolean
+  fontSize:
+    type: number
+    default: 16
+
+$defs: # JSON Schema definition (maybe we should move these to a seperate file)
+  BaseDiagramConfig:
+    # TODO: More config needs to be moved here
+    title: Base Diagram Config
+    type: object
+    properties:
+      useWidth:
+        type: number
+      useMaxWidth:
+        description: |
+          When this flag is set to `true`, the height and width is set to 100%
+          and is then scaled with the available space.
+          If set to `false`, the absolute space required is used.
+        type: boolean
+        default: true
+  C4DiagramConfig:
+    title: C4 Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for c4 diagrams
+    type: object
+    unevaluatedProperties: false
+    required:
+      - diagramMarginX
+      - diagramMarginY
+      - c4ShapeMargin
+      - c4ShapePadding
+      - width
+      - height
+      - boxMargin
+      - useMaxWidth
+      - c4ShapeInRow
+      - c4BoundaryInRow
+    properties:
+      diagramMarginX:
+        description: |
+          Margin to the right and left of the c4 diagram, must be a positive value.
+        type: integer
+        default: 50
+        minimum: 0
+      diagramMarginY:
+        description: |
+          Margin to the over and under the c4 diagram, must be a positive value.
+        type: integer
+        default: 10
+        minimum: 0
+      c4ShapeMargin:
+        description: Margin between shapes
+        type: integer
+        default: 50
+        minimum: 0
+      c4ShapePadding:
+        description: Padding between shapes
+        type: integer
+        default: 20
+        minimum: 0
+      width:
+        description: Width of person boxes
+        type: integer
+        default: 216
+        minimum: 0
+      height:
+        description: Height of person boxes
+        type: integer
+        default: 60
+        minimum: 0
+      boxMargin:
+        description: Margin around boxes
+        type: integer
+        default: 10
+        minimum: 0
+      c4ShapeInRow:
+        description: How many shapes to place in each row.
+        type: integer
+        default: 4
+        minimum: 0
+      nextLinePaddingX:
+        # TODO: add description
+        type: number
+        default: 0
+      c4BoundaryInRow:
+        description: How many boundaries to place in each row.
+        type: integer
+        default: 2
+        minimum: 0
+
+      # --------------------------------------------------------------------- #
+      # Default font values
+      # --------------------------------------------------------------------- #
+      personFontSize:
+        description: This sets the font size of Person shape for the diagram
+        type: &fontSizeType ['string', 'number'] # YAML anchor
+        default: 14
+      personFontFamily:
+        description: This sets the font weight of Person shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      personFontWeight:
+        description: This sets the font weight of Person shape for the diagram
+        type: ['string', 'number']
+        default: normal
+      external_personFontSize:
+        description: This sets the font size of External Person shape for the diagram
+        type: *fontSizeType
+        default: 14
+      external_personFontFamily:
+        description: This sets the font family of External Person shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      external_personFontWeight:
+        description: This sets the font weight of External Person shape for the diagram
+        type: ['string', 'number']
+        default: normal
+      systemFontSize:
+        description: This sets the font size of System shape for the diagram
+        type: *fontSizeType
+        default: 14
+      systemFontFamily:
+        description: This sets the font family of System shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      systemFontWeight:
+        description: This sets the font weight of System shape for the diagram
+        type: ['string', 'number']
+        default: normal
+      external_systemFontSize:
+        description: This sets the font size of External System shape for the diagram
+        type: *fontSizeType
+        default: 14
+      external_systemFontFamily:
+        description: This sets the font family of External System shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      external_systemFontWeight:
+        description: This sets the font weight of External System shape for the diagram
+        type: ['string', 'number']
+        default: normal
+      system_dbFontSize:
+        description: This sets the font size of System DB shape for the diagram
+        type: *fontSizeType
+        default: 14
+      system_dbFontFamily:
+        description: This sets the font family of System DB shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      system_dbFontWeight:
+        description: This sets the font weight of System DB shape for the diagram
+        type: ['string', 'number']
+        default: normal
+      external_system_dbFontSize:
+        description: This sets the font size of External System DB shape for the diagram
+        type: *fontSizeType
+        default: 14
+      external_system_dbFontFamily:
+        description: This sets the font family of External System DB shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      external_system_dbFontWeight:
+        description: This sets the font weight of External System DB shape for the diagram
+        type: ['string', 'number']
+        default: normal
+      system_queueFontSize:
+        description: This sets the font size of System Queue shape for the diagram
+        type: *fontSizeType
+        default: 14
+      system_queueFontFamily:
+        description: This sets the font family of System Queue shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      system_queueFontWeight:
+        description: This sets the font weight of System Queue shape for the diagram
+        type: ['string', 'number']
+        default: normal
+      external_system_queueFontSize:
+        description: This sets the font size of External System Queue shape for the diagram
+        type: *fontSizeType
+        default: 14
+      external_system_queueFontFamily:
+        description: This sets the font family of External System Queue shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      external_system_queueFontWeight:
+        description: This sets the font weight of External System Queue shape for the diagram
+        type: ['string', 'number']
+        default: normal
+      boundaryFontSize:
+        description: This sets the font size of Boundary shape for the diagram
+        type: *fontSizeType
+        default: 14
+      boundaryFontFamily:
+        description: This sets the font family of Boundary shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      boundaryFontWeight:
+        description: This sets the font weight of Boundary shape for the diagram
+        type: ['string', 'number']
+        default: normal
+      messageFontSize:
+        description: This sets the font size of Message shape for the diagram
+        type: *fontSizeType
+        default: 12
+      messageFontFamily:
+        description: This sets the font family of Message shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      messageFontWeight:
+        description: This sets the font weight of Message shape for the diagram
+        type: ['string', 'number']
+        default: normal
+
+      containerFontSize:
+        description: This sets the font size of Container shape for the diagram
+        type: *fontSizeType
+        default: 14
+      containerFontFamily:
+        description: This sets the font family of Container shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      containerFontWeight:
+        description: This sets the font weight of Container shape for the diagram
+        type: ['string', 'number']
+        default: normal
+      external_containerFontSize:
+        description: This sets the font size of External Container shape for the diagram
+        type: *fontSizeType
+        default: 14
+      external_containerFontFamily:
+        description: This sets the font family of External Container shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      external_containerFontWeight:
+        description: This sets the font weight of External Container shape for the diagram
+        type: ['string', 'number']
+        default: normal
+
+      container_dbFontSize:
+        description: This sets the font size of Container DB shape for the diagram
+        type: *fontSizeType
+        default: 14
+      container_dbFontFamily:
+        description: This sets the font family of Container DB shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      container_dbFontWeight:
+        description: This sets the font weight of Container DB shape for the diagram
+        type: ['string', 'number']
+        default: normal
+      external_container_dbFontSize:
+        description: This sets the font size of External Container DB shape for the diagram
+        type: *fontSizeType
+        default: 14
+      external_container_dbFontFamily:
+        description: This sets the font family of External Container DB shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      external_container_dbFontWeight:
+        description: This sets the font weight of External Container DB shape for the diagram
+        type: ['string', 'number']
+        default: normal
+
+      container_queueFontSize:
+        description: This sets the font size of Container Queue shape for the diagram
+        type: *fontSizeType
+        default: 14
+      container_queueFontFamily:
+        description: This sets the font family of Container Queue shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      container_queueFontWeight:
+        description: This sets the font weight of Container Queue shape for the diagram
+        type: ['string', 'number']
+        default: normal
+      external_container_queueFontSize:
+        description: This sets the font size of External Container Queue shape for the diagram
+        type: *fontSizeType
+        default: 14
+      external_container_queueFontFamily:
+        description: This sets the font family of External Container Queue shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      external_container_queueFontWeight:
+        description: This sets the font weight of External Container Queue shape for the diagram
+        type: ['string', 'number']
+        default: normal
+
+      componentFontSize:
+        description: This sets the font size of Component shape for the diagram
+        type: *fontSizeType
+        default: 14
+      componentFontFamily:
+        description: This sets the font family of Component shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      componentFontWeight:
+        description: This sets the font weight of Component shape for the diagram
+        type: ['string', 'number']
+        default: normal
+      external_componentFontSize:
+        description: This sets the font size of External Component shape for the diagram
+        type: *fontSizeType
+        default: 14
+      external_componentFontFamily:
+        description: This sets the font family of External Component shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      external_componentFontWeight:
+        description: This sets the font weight of External Component shape for the diagram
+        type: ['string', 'number']
+        default: normal
+
+      component_dbFontSize:
+        description: This sets the font size of Component DB shape for the diagram
+        type: *fontSizeType
+        default: 14
+      component_dbFontFamily:
+        description: This sets the font family of Component DB shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      component_dbFontWeight:
+        description: This sets the font weight of Component DB shape for the diagram
+        type: ['string', 'number']
+        default: normal
+      external_component_dbFontSize:
+        description: This sets the font size of External Component DB shape for the diagram
+        type: *fontSizeType
+        default: 14
+      external_component_dbFontFamily:
+        description: This sets the font family of External Component DB shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      external_component_dbFontWeight:
+        description: This sets the font weight of External Component DB shape for the diagram
+        type: ['string', 'number']
+        default: normal
+
+      component_queueFontSize:
+        description: This sets the font size of Component Queue shape for the diagram
+        type: *fontSizeType
+        default: 14
+      component_queueFontFamily:
+        description: This sets the font family of Component Queue shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      component_queueFontWeight:
+        description: This sets the font weight of Component Queue shape for the diagram
+        type: ['string', 'number']
+        default: normal
+      external_component_queueFontSize:
+        description: This sets the font size of External Component Queue shape for the diagram
+        type: *fontSizeType
+        default: 14
+      external_component_queueFontFamily:
+        description: This sets the font family of External Component Queue shape for the diagram
+        type: string
+        default: '"Open Sans", sans-serif'
+      external_component_queueFontWeight:
+        description: This sets the font weight of External Component Queue shape for the diagram
+        type: ['string', 'number']
+        default: normal
+
+      wrap:
+        description: This sets the auto-wrap state for the diagram
+        type: boolean
+        default: true
+      wrapPadding:
+        description: This sets the auto-wrap padding for the diagram (sides only)
+        type: number
+        default: 10
+
+      # --------------------------------------------------------------------- #
+      # Colors
+      # --------------------------------------------------------------------- #
+      person_bg_color:
+        type: string
+        default: '#08427B'
+      person_border_color:
+        type: string
+        default: '#073B6F'
+      external_person_bg_color:
+        type: string
+        default: '#686868'
+      external_person_border_color:
+        type: string
+        default: '#8A8A8A'
+      system_bg_color:
+        type: string
+        default: '#1168BD'
+      system_border_color:
+        type: string
+        default: '#3C7FC0'
+      system_db_bg_color:
+        type: string
+        default: '#1168BD'
+      system_db_border_color:
+        type: string
+        default: '#3C7FC0'
+      system_queue_bg_color:
+        type: string
+        default: '#1168BD'
+      system_queue_border_color:
+        type: string
+        default: '#3C7FC0'
+      external_system_bg_color:
+        type: string
+        default: '#999999'
+      external_system_border_color:
+        type: string
+        default: '#8A8A8A'
+      external_system_db_bg_color:
+        type: string
+        default: '#999999'
+      external_system_db_border_color:
+        type: string
+        default: '#8A8A8A'
+      external_system_queue_bg_color:
+        type: string
+        default: '#999999'
+      external_system_queue_border_color:
+        type: string
+        default: '#8A8A8A'
+      container_bg_color:
+        type: string
+        default: '#438DD5'
+      container_border_color:
+        type: string
+        default: '#3C7FC0'
+      container_db_bg_color:
+        type: string
+        default: '#438DD5'
+      container_db_border_color:
+        type: string
+        default: '#3C7FC0'
+      container_queue_bg_color:
+        type: string
+        default: '#438DD5'
+      container_queue_border_color:
+        type: string
+        default: '#3C7FC0'
+      external_container_bg_color:
+        type: string
+        default: '#B3B3B3'
+      external_container_border_color:
+        type: string
+        default: '#A6A6A6'
+      external_container_db_bg_color:
+        type: string
+        default: '#B3B3B3'
+      external_container_db_border_color:
+        type: string
+        default: '#A6A6A6'
+      external_container_queue_bg_color:
+        type: string
+        default: '#B3B3B3'
+      external_container_queue_border_color:
+        type: string
+        default: '#A6A6A6'
+      component_bg_color:
+        type: string
+        default: '#85BBF0'
+      component_border_color:
+        type: string
+        default: '#78A8D8'
+      component_db_bg_color:
+        type: string
+        default: '#85BBF0'
+      component_db_border_color:
+        type: string
+        default: '#78A8D8'
+      component_queue_bg_color:
+        type: string
+        default: '#85BBF0'
+      component_queue_border_color:
+        type: string
+        default: '#78A8D8'
+      external_component_bg_color:
+        type: string
+        default: '#CCCCCC'
+      external_component_border_color:
+        type: string
+        default: '#BFBFBF'
+      external_component_db_bg_color:
+        type: string
+        default: '#CCCCCC'
+      external_component_db_border_color:
+        type: string
+        default: '#BFBFBF'
+      external_component_queue_bg_color:
+        type: string
+        default: '#CCCCCC'
+      external_component_queue_border_color:
+        type: string
+        default: '#BFBFBF'
+
+      # Font Calculators
+      # By default, these all return the values from this configuration.
+      personFont: { '$ref': '#/$defs/FontCalculator' }
+      external_personFont: { '$ref': '#/$defs/FontCalculator' }
+      systemFont: { '$ref': '#/$defs/FontCalculator' }
+      external_systemFont: { '$ref': '#/$defs/FontCalculator' }
+      system_dbFont: { '$ref': '#/$defs/FontCalculator' }
+      external_system_dbFont: { '$ref': '#/$defs/FontCalculator' }
+      system_queueFont: { '$ref': '#/$defs/FontCalculator' }
+      external_system_queueFont: { '$ref': '#/$defs/FontCalculator' }
+      containerFont: { '$ref': '#/$defs/FontCalculator' }
+      external_containerFont: { '$ref': '#/$defs/FontCalculator' }
+      container_dbFont: { '$ref': '#/$defs/FontCalculator' }
+      external_container_dbFont: { '$ref': '#/$defs/FontCalculator' }
+      container_queueFont: { '$ref': '#/$defs/FontCalculator' }
+      external_container_queueFont: { '$ref': '#/$defs/FontCalculator' }
+      componentFont: { '$ref': '#/$defs/FontCalculator' }
+      external_componentFont: { '$ref': '#/$defs/FontCalculator' }
+      component_dbFont: { '$ref': '#/$defs/FontCalculator' }
+      external_component_dbFont: { '$ref': '#/$defs/FontCalculator' }
+      component_queueFont: { '$ref': '#/$defs/FontCalculator' }
+      external_component_queueFont: { '$ref': '#/$defs/FontCalculator' }
+      boundaryFont: { '$ref': '#/$defs/FontCalculator' }
+      messageFont: { '$ref': '#/$defs/FontCalculator' }
+
+  GitGraphDiagramConfig:
+    title: Git Graph Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    type: object
+    unevaluatedProperties: false
+    required:
+      - titleTopMargin
+    properties:
+      titleTopMargin:
+        # TODO: I've removed the `Git` part from this description, so that I
+        # could $ref: "#/$defs/GitGraphDiagramConfig/properties/titleTopMargin"
+        # this field in other diagrams
+        description: Margin top for the text over the diagram
+        type: integer
+        default: 25
+        minimum: 0
+      diagramPadding:
+        type: number
+        default: 8
+      nodeLabel:
+        allOf: [{ $ref: '#/$defs/NodeLabel' }]
+        type: object
+        default:
+          width: 75
+          height: 100
+          x: -25
+          y: 0
+      mainBranchName:
+        type: string
+        default: 'main'
+      mainBranchOrder:
+        type: number
+        default: 0
+      showCommitLabel:
+        type: boolean
+        default: true
+      showBranches:
+        type: boolean
+        default: true
+      rotateCommitLabel:
+        type: boolean
+        default: true
+      # YAML anchor reference, don't use $ref since ajv doesn't load defaults
+      arrowMarkerAbsolute: *arrowMarkerAbsolute
+
+  NodeLabel:
+    title: Node Label
+    type: object
+    properties:
+      width:
+        type: number
+      height:
+        type: number
+      x:
+        type: number
+      y:
+        type: number
+
+  RequirementDiagramConfig:
+    title: Requirement Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for req diagrams
+    type: object
+    unevaluatedProperties: false
+    required:
+      - useMaxWidth
+    properties:
+      rect_fill:
+        type: string
+        default: '#f9f9f9'
+      text_color:
+        type: string
+        default: '#333'
+      rect_border_size:
+        type: string
+        default: '0.5px'
+      rect_border_color:
+        type: string
+        default: '#bbb'
+      rect_min_width:
+        type: number
+        default: 200
+      rect_min_height:
+        type: number
+        default: 200
+      fontSize:
+        type: number # TODO, should this be `type: *fontSizeType` (aka string too)
+        default: 14
+      rect_padding:
+        type: number
+        default: 10
+      line_height:
+        type: number
+        default: 20
+
+  MindmapDiagramConfig:
+    title: Mindmap Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for mindmap diagrams
+    type: object
+    unevaluatedProperties: false
+    required:
+      - useMaxWidth
+      - padding
+      - maxNodeWidth
+    properties:
+      padding:
+        type: number
+        default: 10
+      maxNodeWidth:
+        type: number
+        default: 200
+
+  PieDiagramConfig:
+    title: Pie Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    type: object
+    unevaluatedProperties: false
+    properties:
+      textPosition:
+        type: number
+        minimum: 0
+        maximum: 1
+        description: |
+          Axial position of slice's label from zero at the center to 1 at the outside edges.
+        default: 0.75
+
+  QuadrantChartConfig:
+    title: Quadrant Chart Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    type: object
+    unevaluatedProperties: false
+    required:
+      - chartWidth
+      - chartHeight
+      - titleFontSize
+      - titlePadding
+      - quadrantPadding
+      - xAxisLabelPadding
+      - yAxisLabelPadding
+      - xAxisLabelFontSize
+      - yAxisLabelFontSize
+      - quadrantLabelFontSize
+      - quadrantTextTopPadding
+      - pointTextPadding
+      - pointLabelFontSize
+      - pointRadius
+      - xAxisPosition
+      - yAxisPosition
+      - quadrantInternalBorderStrokeWidth
+      - quadrantExternalBorderStrokeWidth
+      - useMaxWidth
+    properties:
+      chartWidth:
+        description: Width of the chart
+        type: number
+        minimum: 0
+        default: 500
+      chartHeight:
+        description: Height of the chart
+        type: number
+        minimum: 0
+        default: 500
+      titleFontSize:
+        description: Chart title top and bottom padding
+        type: number
+        minimum: 0
+        default: 20
+      titlePadding:
+        description: Padding around the quadrant square
+        type: number
+        minimum: 0
+        default: 10
+      quadrantPadding:
+        description: quadrant title padding from top if the quadrant is rendered on top
+        type: number
+        minimum: 0
+        default: 5
+      xAxisLabelPadding:
+        description: Padding around x-axis labels
+        type: number
+        minimum: 0
+        default: 5
+      yAxisLabelPadding:
+        description: Padding around y-axis labels
+        type: number
+        minimum: 0
+        default: 5
+      xAxisLabelFontSize:
+        description: x-axis label font size
+        type: number
+        minimum: 0
+        default: 16
+      yAxisLabelFontSize:
+        description: y-axis label font size
+        type: number
+        minimum: 0
+        default: 16
+      quadrantLabelFontSize:
+        description: quadrant title font size
+        type: number
+        minimum: 0
+        default: 16
+      quadrantTextTopPadding:
+        description: quadrant title padding from top if the quadrant is rendered on top
+        type: number
+        minimum: 0
+        default: 5
+      pointTextPadding:
+        description: padding between point and point label
+        type: number
+        minimum: 0
+        default: 5
+      pointLabelFontSize:
+        description: point title font size
+        type: number
+        minimum: 0
+        default: 12
+      pointRadius:
+        description: radius of the point to be drawn
+        type: number
+        minimum: 0
+        default: 5
+      xAxisPosition:
+        description: position of x-axis labels
+        type: string
+        enum:
+          - top
+          - bottom
+        default: top
+      yAxisPosition:
+        description: position of y-axis labels
+        type: string
+        enum:
+          - left
+          - right
+        default: left
+      quadrantInternalBorderStrokeWidth:
+        description: stroke width of edges of the box that are inside the quadrant
+        type: number
+        minimum: 0
+        default: 1
+      quadrantExternalBorderStrokeWidth:
+        description: stroke width of edges of the box that are outside the quadrant
+        type: number
+        minimum: 0
+        default: 2
+
+  ErDiagramConfig:
+    title: Er Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for entity relationship diagrams
+    type: object
+    unevaluatedProperties: false
+    required:
+      - titleTopMargin
+      - diagramPadding
+      - layoutDirection
+      - minEntityWidth
+      - minEntityHeight
+      - entityPadding
+      - stroke
+      - fill
+      # TODO: fontSize is the only property that is not required, is this correct?
+      - useMaxWidth
+    properties:
+      titleTopMargin:
+        $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
+        default: 25
+      diagramPadding:
+        description: |
+          The amount of padding around the diagram as a whole so that embedded
+          diagrams have margins, expressed in pixels.
+        type: integer
+        default: 20
+        minimum: 0
+      layoutDirection:
+        description: Directional bias for layout of entities
+        type: string
+        enum: ['TB', 'BT', 'LR', 'RL']
+        meta:enum:
+          TB: Top-Bottom
+          BT: Bottom-Top
+          LR: Left-Right
+          RL: Right to Left
+        default: TB
+        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
+        tsType: 'string | "TB" | "BT" | "LR" | "RL"'
+      minEntityWidth:
+        description: The minimum width of an entity box. Expressed in pixels.
+        type: integer
+        default: 100
+        minimum: 0
+      minEntityHeight:
+        description: The minimum height of an entity box. Expressed in pixels.
+        type: integer
+        default: 75
+        minimum: 0
+      entityPadding:
+        description: |
+          The minimum internal padding between text in an entity box and the enclosing box borders.
+          Expressed in pixels.
+        type: integer
+        default: 15
+        minimum: 0
+      stroke:
+        description: Stroke color of box edges and lines.
+        type: string
+        default: gray
+      fill:
+        description: Fill color of entity boxes
+        type: string
+        default: honeydew
+      fontSize:
+        description: Font size (expressed as an integer representing a number of pixels)
+        type: integer
+        default: 12
+        minimum: 0
+
+  StateDiagramConfig:
+    title: State Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for entity relationship diagrams
+    type: object
+    unevaluatedProperties: false
+    required:
+      - titleTopMargin
+      - useMaxWidth
+      - defaultRenderer
+    properties:
+      titleTopMargin:
+        $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
+        default: 25
+      arrowMarkerAbsolute:
+        # TODO: use $ref: '#/properties/arrowMarkerAbsolute' to copy main setting
+        type: boolean
+      dividerMargin:
+        type: number
+        default: 10
+      sizeUnit:
+        type: number
+        default: 5
+      padding:
+        type: number
+        default: 8
+      textHeight:
+        type: number
+        default: 10
+      titleShift:
+        type: number
+        default: -15
+      noteMargin:
+        type: number
+        default: 10
+      forkWidth:
+        type: number
+        default: 70
+      forkHeight:
+        type: number
+        default: 7
+      # Used
+      miniPadding:
+        type: number
+        default: 2
+      fontSizeFactor:
+        description: |
+          Font size factor, this is used to guess the width of the edges labels
+          before rendering by dagre layout.
+          This might need updating if/when switching font
+        type: number
+        default: 5.02
+      fontSize:
+        type: number
+        default: 24
+      labelHeight:
+        type: number
+        default: 16
+      edgeLengthFactor:
+        type: string
+        default: '20'
+      compositTitleSize:
+        type: number
+        default: 35
+      radius:
+        type: number
+        default: 5
+      defaultRenderer:
+        description: |
+          Decides which rendering engine that is to be used for the rendering.
+        type: string
+        enum:
+          - dagre-d3
+          - dagre-wrapper
+          - elk
+        # todo, check this, old docs said dagre-d3 even though value was dagre-wrapper
+        default: dagre-wrapper
+        meta:enum:
+          dagre-d3: The [dagre-d3-es](https://www.npmjs.com/package/dagre-d3-es) library.
+          dagre-wrapper: wrapper for dagre implemented in mermaid
+          elk: Layout using [elkjs](https://github.com/kieler/elkjs)
+        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
+        tsType: 'string | "dagre-d3" | "dagre-wrapper" | "elk"'
+
+  ClassDiagramConfig:
+    title: Class Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    type: object
+    unevaluatedProperties: false
+    required:
+      - titleTopMargin
+      - useMaxWidth
+      - defaultRenderer
+    properties:
+      titleTopMargin:
+        $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
+        default: 25
+      # YAML anchor reference, don't use $ref since ajv doesn't load defaults
+      arrowMarkerAbsolute: *arrowMarkerAbsolute
+      dividerMargin:
+        type: number
+        default: 10
+      padding:
+        type: number
+        default: 5
+      textHeight:
+        type: number
+        default: 10
+      defaultRenderer:
+        $ref: '#/$defs/StateDiagramConfig/properties/defaultRenderer'
+        default: dagre-wrapper
+      nodeSpacing:
+        type: integer
+        minimum: 0
+        # should the default value be 50?
+        # see https://github.com/mermaid-js/mermaid/blob/7647ae317a7b2130e32777248d25a9c4d24b8f9f/packages/mermaid/src/diagrams/class/classRenderer-v2.ts#L258
+      rankSpacing:
+        type: integer
+        minimum: 0
+        # should the default value be 50?
+        # see https://github.com/mermaid-js/mermaid/blob/7647ae317a7b2130e32777248d25a9c4d24b8f9f/packages/mermaid/src/diagrams/class/classRenderer-v2.ts#L259
+      diagramPadding:
+        $ref: '#/$defs/ErDiagramConfig/properties/diagramPadding'
+      htmlLabels:
+        type: boolean
+        default: false
+
+  JourneyDiagramConfig:
+    title: Journey Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: |
+      The object containing configurations specific for journey diagrams
+    type: object
+    unevaluatedProperties: false
+    required:
+      - diagramMarginX
+      - diagramMarginY
+      - leftMargin
+      - width
+      - height
+      - boxMargin
+      - boxTextMargin
+      - noteMargin
+      - messageMargin
+      - messageAlign
+      - bottomMarginAdj
+      - useMaxWidth
+      - rightAngles
+    properties:
+      diagramMarginX:
+        $ref: '#/$defs/C4DiagramConfig/properties/diagramMarginX'
+        default: 50
+      diagramMarginY:
+        $ref: '#/$defs/C4DiagramConfig/properties/diagramMarginY'
+        default: 10
+      leftMargin:
+        description: Margin between actors
+        type: integer
+        default: 150
+        minimum: 0
+      width:
+        description: Width of actor boxes
+        type: integer
+        default: 150
+        minimum: 0
+      height:
+        description: Height of actor boxes
+        type: integer
+        default: 50
+        minimum: 0
+      boxMargin:
+        description: Margin around loop boxes
+        type: integer
+        default: 10
+        minimum: 0
+      boxTextMargin:
+        description: Margin around the text in loop/alt/opt boxes
+        type: integer
+        default: 5
+        minimum: 0
+      noteMargin:
+        description: Margin around notes
+        type: integer
+        default: 10
+        minimum: 0
+      messageMargin:
+        description: Space between messages.
+        type: integer
+        default: 35
+        minimum: 0
+      messageAlign:
+        description: Multiline message alignment
+        type: string
+        enum:
+          - left
+          - center
+          - right
+        default: center
+        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
+        tsType: 'string | "left" | "center" | "right"'
+      bottomMarginAdj:
+        description: |
+          Prolongs the edge of the diagram downwards.
+
+          Depending on css styling this might need adjustment.
+        type: integer
+        default: 1
+        minimum: 0
+      rightAngles:
+        description: |
+          Curved Arrows become Right Angles
+
+          This will display arrows that start and begin at the same node as
+          right angles, rather than as curves.
+        type: boolean
+        default: false
+      taskFontSize:
+        type: *fontSizeType
+        default: 14
+      taskFontFamily:
+        type: string
+        default: '"Open Sans", sans-serif'
+      taskMargin:
+        type: number
+        default: 50
+      activationWidth:
+        description: Width of activation box
+        type: number
+        default: 10
+      textPlacement:
+        description: |
+          text placement as: tspan | fo | old only text as before
+        type: string
+        # TODO, should this be an enum?
+        default: fo
+      actorColours:
+        type: array
+        items:
+          type: string
+        default: ['#8FBC8F', '#7CFC00', '#00FFFF', '#20B2AA', '#B0E0E6', '#FFFFE0']
+      sectionFills:
+        type: array
+        items:
+          type: string
+        default: ['#191970', '#8B008B', '#4B0082', '#2F4F4F', '#800000', '#8B4513', '#00008B']
+      sectionColours:
+        type: array
+        items:
+          type: string
+        default: ['#fff']
+
+  TimelineDiagramConfig:
+    # added by https://github.com/mermaid-js/mermaid/commit/0d5246fbc730bf15463d7183fe4400a1e2fc492c
+    title: Timeline Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    type: object
+    unevaluatedProperties: false
+    required:
+      - diagramMarginX
+      - diagramMarginY
+      - leftMargin
+      - width
+      - height
+      - boxMargin
+      - boxTextMargin
+      - noteMargin
+      - messageMargin
+      - messageAlign
+      - bottomMarginAdj
+      - useMaxWidth
+    properties:
+      diagramMarginX:
+        $ref: '#/$defs/C4DiagramConfig/properties/diagramMarginX'
+        default: 50
+      diagramMarginY:
+        $ref: '#/$defs/C4DiagramConfig/properties/diagramMarginY'
+        default: 10
+      leftMargin:
+        description: Margin between actors
+        type: integer
+        default: 150
+        minimum: 0
+      width:
+        description: Width of actor boxes
+        type: integer
+        default: 150
+        minimum: 0
+      height:
+        description: Height of actor boxes
+        type: integer
+        default: 50
+        minimum: 0
+      padding:
+        type: number
+        # should the default value be 50?
+        # see https://github.com/mermaid-js/mermaid/blob/7647ae317a7b2130e32777248d25a9c4d24b8f9f/packages/mermaid/src/diagrams/timeline/timelineRenderer.ts#L237
+      boxMargin:
+        description: Margin around loop boxes
+        type: integer
+        default: 10
+        minimum: 0
+      boxTextMargin:
+        description: Margin around the text in loop/alt/opt boxes
+        type: integer
+        default: 5
+        minimum: 0
+      noteMargin:
+        description: Margin around notes
+        type: integer
+        default: 10
+        minimum: 0
+      messageMargin:
+        description: Space between messages.
+        type: integer
+        default: 35
+        minimum: 0
+      messageAlign:
+        description: Multiline message alignment
+        type: string
+        enum:
+          - left
+          - center
+          - right
+        default: center
+        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
+        tsType: 'string | "left" | "center" | "right"'
+      bottomMarginAdj:
+        description: |
+          Prolongs the edge of the diagram downwards.
+
+          Depending on css styling this might need adjustment.
+        type: integer
+        default: 1
+        minimum: 0
+      rightAngles:
+        description: |
+          Curved Arrows become Right Angles
+
+          This will display arrows that start and begin at the same node as
+          right angles, rather than as curves.
+        type: boolean
+        default: false
+      taskFontSize:
+        type: *fontSizeType
+        default: 14
+      taskFontFamily:
+        type: string
+        default: '"Open Sans", sans-serif'
+      taskMargin:
+        type: number
+        default: 50
+      activationWidth:
+        description: Width of activation box
+        type: number
+        default: 10
+      textPlacement:
+        description: |
+          text placement as: tspan | fo | old only text as before
+        type: string
+        # TODO, should this be an enum?
+        default: fo
+      actorColours:
+        type: array
+        items:
+          type: string
+        default: ['#8FBC8F', '#7CFC00', '#00FFFF', '#20B2AA', '#B0E0E6', '#FFFFE0']
+      sectionFills:
+        type: array
+        items:
+          type: string
+        default: ['#191970', '#8B008B', '#4B0082', '#2F4F4F', '#800000', '#8B4513', '#00008B']
+      sectionColours:
+        type: array
+        items:
+          type: string
+        default: ['#fff']
+      disableMulticolor:
+        # added by https://github.com/mermaid-js/mermaid/commit/652a42fe1aed7911a781a84716940a973b995639
+        type: boolean
+        default: false
+
+  GanttDiagramConfig:
+    title: Gantt Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: |
+      The object containing configurations specific for gantt diagrams
+    type: object
+    unevaluatedProperties: false
+    required:
+      - titleTopMargin
+      - barHeight
+      - topPadding
+      - rightPadding
+      - leftPadding
+      - gridLineStartPadding
+      - fontSize
+      - sectionFontSize
+      - numberSectionStyles
+      - axisFormat
+      - useMaxWidth
+      - topAxis
+      - weekday
+    properties:
+      titleTopMargin:
+        $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
+        default: 25
+      barHeight:
+        description: The height of the bars in the graph
+        type: integer
+        default: 20
+        minimum: 0
+      barGap:
+        description: The margin between the different activities in the gantt diagram
+        type: integer
+        default: 4
+        minimum: 0
+      topPadding:
+        description: |
+          Margin between title and gantt diagram and between axis and gantt diagram.
+        type: integer
+        default: 50
+        minimum: 0
+      rightPadding:
+        description: |
+          The space allocated for the section name to the right of the activities
+        type: integer
+        default: 75
+        minimum: 0
+      leftPadding:
+        description: |
+          The space allocated for the section name to the left of the activities
+        type: integer
+        default: 75
+        minimum: 0
+      gridLineStartPadding:
+        description: Vertical starting position of the grid lines
+        type: integer
+        default: 35
+        minimum: 0
+      fontSize:
+        description: Font size
+        type: integer
+        default: 11
+        minimum: 0
+      sectionFontSize:
+        description: Font size for sections
+        type: integer
+        # TODO: typescript type for this also allows strings, but the docs say only integers
+        tsType: 'string | number'
+        default: 11
+        minimum: 0
+      numberSectionStyles:
+        description: The number of alternating section styles
+        type: integer
+        default: 4
+        minimum: 0
+      axisFormat:
+        description: |
+          Date/time format of the axis
+
+          This might need adjustment to match your locale and preferences.
+        type: string
+        default: '%Y-%m-%d'
+      tickInterval:
+        description: |
+          axis ticks
+
+          Pattern is:
+
+          ```javascript
+          /^([1-9][0-9]*)(minute|hour|day|week|month)$/
+          ```
+        type: string
+        pattern: ^([1-9][0-9]*)(minute|hour|day|week|month)$
+      topAxis:
+        description: |
+          When this flag is set, date labels will be added to the top of the chart
+        type: boolean
+        default: false
+      displayMode:
+        description: |
+          Controls the display mode.
+        type: string
+        enum:
+          - ''
+          - compact
+        meta:enum:
+          compact: Enables displaying multiple tasks on the same row.
+        default: ''
+        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
+        tsType: 'string | "compact"'
+      weekday:
+        description: |
+          On which day a week-based interval should start
+        type: string
+        tsType: '"monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday"'
+        enum:
+          - monday
+          - tuesday
+          - wednesday
+          - thursday
+          - friday
+          - saturday
+          - sunday
+        default: sunday
+
+  SequenceDiagramConfig:
+    title: Sequence Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for sequence diagrams
+    type: object
+    unevaluatedProperties: false
+    required:
+      - activationWidth
+      - diagramMarginX
+      - diagramMarginY
+      - actorMargin
+      - width
+      - height
+      - boxMargin
+      - boxTextMargin
+      - noteMargin
+      - messageMargin
+      - messageAlign
+      - mirrorActors
+      - forceMenus
+      - bottomMarginAdj
+      - useMaxWidth
+      - rightAngles
+      - showSequenceNumbers
+      - actorFontSize
+      - actorFontFamily
+      - actorFontWeight
+      - noteFontSize
+      - noteFontFamily
+      - noteFontWeight
+      - noteAlign
+      - messageFontSize
+      - messageFontFamily
+      - messageFontWeight
+    properties:
+      arrowMarkerAbsolute:
+        type: boolean # TODO, is this actually used here (it has no default value but was in types)
+      hideUnusedParticipants:
+        type: boolean
+        default: false
+      activationWidth:
+        description: Width of the activation rect
+        type: integer
+        default: 10
+        minimum: 0
+      diagramMarginX:
+        description: Margin to the right and left of the sequence diagram
+        type: integer
+        default: 50
+        minimum: 0
+      diagramMarginY:
+        description: Margin to the over and under the sequence diagram
+        type: integer
+        default: 10
+        minimum: 0
+      actorMargin:
+        description: Margin between actors
+        type: integer
+        default: 50
+        minimum: 0
+      width:
+        $ref: '#/$defs/JourneyDiagramConfig/properties/width'
+        default: 150
+      height:
+        $ref: '#/$defs/JourneyDiagramConfig/properties/height'
+        default: 65
+      boxMargin:
+        $ref: '#/$defs/JourneyDiagramConfig/properties/boxMargin'
+        default: 10
+      boxTextMargin:
+        $ref: '#/$defs/JourneyDiagramConfig/properties/boxTextMargin'
+        default: 5
+      noteMargin:
+        $ref: '#/$defs/JourneyDiagramConfig/properties/noteMargin'
+        default: 10
+      messageMargin:
+        $ref: '#/$defs/JourneyDiagramConfig/properties/messageMargin'
+        default: 35
+      messageAlign:
+        $ref: '#/$defs/JourneyDiagramConfig/properties/messageAlign'
+        default: center
+      mirrorActors:
+        description: |
+          Mirror actors under diagram
+        type: boolean
+        default: true
+      forceMenus:
+        description: |
+          forces actor popup menus to always be visible (to support E2E testing).
+        type: boolean
+        default: false
+      bottomMarginAdj:
+        $ref: '#/$defs/JourneyDiagramConfig/properties/bottomMarginAdj'
+        default: 1
+      rightAngles:
+        $ref: '#/$defs/JourneyDiagramConfig/properties/rightAngles'
+        default: false
+      showSequenceNumbers:
+        description: This will show the node numbers
+        type: boolean
+        default: false
+      actorFontSize:
+        description: This sets the font size of the actor's description
+        type: *fontSizeType
+        default: 14
+      actorFontFamily:
+        description: This sets the font family of the actor's description
+        type: string
+        default: '"Open Sans", sans-serif'
+      actorFontWeight:
+        description: This sets the font weight of the actor's description
+        type: ['string', 'number']
+        default: 400
+
+      noteFontSize:
+        description: This sets the font size of actor-attached notes
+        type: *fontSizeType
+        default: 14
+      noteFontFamily:
+        description: This sets the font family of actor-attached notes
+        type: string
+        default: '"trebuchet ms", verdana, arial, sans-serif'
+      noteFontWeight:
+        description: This sets the font weight of actor-attached notes
+        type: ['string', 'number']
+        default: 400
+      noteAlign:
+        description: This sets the text alignment of actor-attached notes
+        type: string
+        enum: ['left', 'center', 'right']
+        default: 'center'
+        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
+        tsType: 'string | "left" | "center" | "right"'
+
+      messageFontSize:
+        description: This sets the font size of actor messages
+        type: *fontSizeType
+        default: 16
+      messageFontFamily:
+        description: This sets the font family of actor messages
+        type: string
+        default: '"trebuchet ms", verdana, arial, sans-serif'
+      messageFontWeight:
+        description: This sets the font weight of actor messages
+        type: ['string', 'number']
+        default: 400
+
+      wrap:
+        description: This sets the auto-wrap state for the diagram
+        type: boolean
+        default: false # different from C4 Diagram
+      wrapPadding:
+        $ref: '#/$defs/C4DiagramConfig/properties/wrapPadding'
+        default: 10
+      labelBoxWidth:
+        description: This sets the width of the loop-box (loop, alt, opt, par)
+        type: number
+        default: 50
+      labelBoxHeight:
+        description: This sets the height of the loop-box (loop, alt, opt, par)
+        type: number
+        default: 20
+      messageFont: { '$ref': '#/$defs/FontCalculator' }
+      noteFont: { '$ref': '#/$defs/FontCalculator' }
+      actorFont: { '$ref': '#/$defs/FontCalculator' }
+
+  FlowchartDiagramConfig:
+    title: Flowchart Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for flowcharts
+    type: object
+    unevaluatedProperties: false
+    required:
+      - titleTopMargin
+      - diagramPadding
+      - htmlLabels
+      - nodeSpacing
+      - rankSpacing
+      - curve
+      - useMaxWidth
+      - defaultRenderer
+      - wrappingWidth
+    properties:
+      titleTopMargin:
+        $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
+        default: 25
+      arrowMarkerAbsolute:
+        type: boolean # TODO, is this actually used here (it has no default value but was in types)
+      diagramPadding:
+        $ref: '#/$defs/ErDiagramConfig/properties/diagramPadding'
+        default: 8
+      htmlLabels:
+        description: |
+          Flag for setting whether or not a html tag should be used for rendering labels on the edges.
+        type: boolean
+        default: true
+      nodeSpacing:
+        description: |
+          Defines the spacing between nodes on the same level
+
+          Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs,
+          and the vertical spacing for LR as well as RL graphs.
+        type: integer
+        default: 50
+        minimum: 0
+      rankSpacing:
+        description: |
+          Defines the spacing between nodes on different levels
+
+          Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs,
+          and the vertical spacing for LR as well as RL graphs.
+        type: integer
+        default: 50
+        minimum: 0
+      curve:
+        description: |
+          Defines how mermaid renders curves for flowcharts.
+        type: string
+        enum: ['basis', 'linear', 'cardinal']
+        default: 'basis'
+        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
+        tsType: 'string | "basis" | "linear" | "cardinal"'
+      padding:
+        description: |
+          Represents the padding between the labels and the shape
+
+          **Only used in new experimental rendering.**
+        type: number
+        default: 15
+      defaultRenderer:
+        $ref: '#/$defs/StateDiagramConfig/properties/defaultRenderer'
+        default: dagre-wrapper
+      wrappingWidth:
+        description: |
+          Width of nodes where text is wrapped.
+
+          When using markdown strings the text ius wrapped automatically, this
+          value sets the max width of a text before it continues on a new line.
+        type: number
+        default: 200
+
+  SankeyLinkColor:
+    description: |
+      Picks the color of the sankey diagram links, using the colors of the source and/or target of the links.
+    type: string
+    enum:
+      - source
+      - target
+      - gradient
+    meta:enum:
+      source: Use the source of sankey link for the color of the link.
+      target: Use the target of sankey link for the color of the link.
+      gradient: Use a gradient of the source and target for the color of the link.
+    default: gradient
+
+  SankeyNodeAlignment:
+    description: |
+      Controls the alignment of the Sankey diagrams.
+
+      See <https://github.com/d3/d3-sankey#alignments>.
+    type: string
+    enum:
+      - left
+      - right
+      - center
+      - justify
+    meta:enum:
+      left: Align all inputs to the left.
+      right: Align all outputs to the right.
+      center: Like `left`, except that nodes without any incoming links are moved as right as possible.
+      justify: Like `left`, except that nodes without any outgoing links are moved to the far right.
+    default: justify
+
+  SankeyDiagramConfig:
+    title: Sankey Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for sankey diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      width:
+        type: number
+        default: 600
+      height:
+        type: number
+        default: 400
+      linkColor:
+        description: |
+          The color of the links in the sankey diagram.
+        anyOf:
+          - $ref: '#/$defs/SankeyLinkColor'
+          - description: An arbtirary [CSS color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)
+            type: string
+        default: gradient
+      nodeAlignment:
+        $ref: '#/$defs/SankeyNodeAlignment'
+        default: justify
+      useMaxWidth:
+        default: false
+
+  FontCalculator:
+    title: Font Calculator
+    description: |
+      JavaScript function that returns a `FontConfig`.
+
+      By default, these return the appropriate `*FontSize`, `*FontFamily`, `*FontWeight`
+      values.
+
+      For example, the font calculator called `boundaryFont` might be defined as:
+
+      ```javascript
+      boundaryFont: function () {
+        return {
+          fontFamily: this.boundaryFontFamily,
+          fontSize: this.boundaryFontSize,
+          fontWeight: this.boundaryFontWeight,
+        };
+      }
+      ```
+    tsType: '() => Partial<FontConfig>'
+
+  FontConfig:
+    title: Font Config
+    type: object
+    additionalProperties: false
+    properties:
+      fontSize:
+        title: CSS Font Size
+        description: The font size to use
+        type: *fontSizeType
+        default: 14
+      fontFamily:
+        description: The CSS [`font-family`](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) to use.
+        type: string
+        default: '"Open Sans", sans-serif'
+      fontWeight:
+        description: The font weight to use.
+        type: ['string', 'number']
+        default: normal

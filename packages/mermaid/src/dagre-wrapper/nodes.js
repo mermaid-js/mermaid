@@ -917,7 +917,9 @@ const class_box = (parent, node) => {
         ((-1 * maxHeight) / 2 + verticalPos + lineHeight / 2) +
         ')'
     );
-    verticalPos += classTitleBBox.height + rowPadding;
+    //get the height of the bounding box of each member if exists
+    const memberBBox = lbl?.getBBox();
+    verticalPos += (memberBBox?.height ?? 0) + rowPadding;
   });
 
   verticalPos += lineHeight;
@@ -935,7 +937,8 @@ const class_box = (parent, node) => {
       'transform',
       'translate( ' + -maxWidth / 2 + ', ' + ((-1 * maxHeight) / 2 + verticalPos) + ')'
     );
-    verticalPos += classTitleBBox.height + rowPadding;
+    const memberBBox = lbl?.getBBox();
+    verticalPos += (memberBBox?.height ?? 0) + rowPadding;
   });
 
   rect
