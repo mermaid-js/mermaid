@@ -1,5 +1,11 @@
 # Blog
 
+## [Mermaid Chart Announces Visual Studio Code Plugin to Simplify Development Workflows](https://www.mermaidchart.com/blog/posts/mermaid-chart-announces-visual-studio-code-plugin)
+
+17 July 2023 · 3 mins
+
+New Integration Enhances Workflows By Enabling Developers To Reference And Edit Diagrams Within Visual Studio Code.
+
 ## [Mermaid Chart’s ChatGPT Plugin Combines Generative AI and Smart Diagramming For Users](https://www.mermaidchart.com/blog/posts/mermaid-chart-chatgpt-plugin-combines-generative-ai-and-smart-diagramming)
 
 29 June 2023 · 4 mins
