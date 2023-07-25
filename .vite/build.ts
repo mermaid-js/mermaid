@@ -2,6 +2,7 @@ import { build, InlineConfig, type PluginOption } from 'vite';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import jisonPlugin from './jisonPlugin.js';
+import jsonSchemaPlugin from './jsonSchemaPlugin.js';
 import { readFileSync } from 'fs';
 import typescript from '@rollup/plugin-typescript';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -121,6 +122,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     },
     plugins: [
       jisonPlugin(),
+      jsonSchemaPlugin(), // handles `.schema.yaml` files
       // @ts-expect-error According to the type definitions, rollup plugins are incompatible with vite
       typescript({ compilerOptions: { declaration: false } }),
       istanbul({

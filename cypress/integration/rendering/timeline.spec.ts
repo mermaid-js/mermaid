@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.js';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('Timeline diagram', () => {
   it('1: should render a simple timeline with no specific sections', () => {
