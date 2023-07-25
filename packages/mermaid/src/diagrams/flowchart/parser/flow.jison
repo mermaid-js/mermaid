@@ -175,7 +175,7 @@ that id.
 "^"                   return 'UP';
 "\|"                  return 'SEP';
 "v"                   return 'DOWN';
-([A-Za-z0-9!"\#$%&'*+\.`?\\_\/]|\-(?=[^\>\-\.]))+  return 'NODE_STRING';
+([A-Za-z0-9!"\#$%&'*+\.`?\\_\/]|\-(?=[^\>\-\.])|=(?!=))+  return 'NODE_STRING';
 "-"                   return 'MINUS'
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
@@ -575,6 +575,8 @@ textNoTagsToken: NUM | NODE_STRING | SPACE | MINUS | keywords |  START_LINK ;
 
 edgeTextToken  :  STR | EDGE_TEXT | UNICODE_TEXT ;
 
+alphaNumToken   :  NUM | UNICODE_TEXT | NODE_STRING | DIR | DOWN | MINUS | COMMA;
+
 idString
     :idStringToken
     {$$=$idStringToken}
@@ -583,22 +585,12 @@ idString
     ;
 
 alphaNum
-    : alphaNumStatement
-    {$$=$alphaNumStatement;}
-    | alphaNum alphaNumStatement
-    {$$=$alphaNum+''+$alphaNumStatement;}
+    : alphaNumToken
+    {$$=$alphaNumToken;}
+    | alphaNum alphaNumToken
+    {$$=$alphaNum+''+$alphaNumToken;}
     ;
 
-alphaNumStatement
-    : DIR
-        {$$=$DIR;}
-    | NODE_STRING
-        {$$=$NODE_STRING;}
-    | DOWN
-        {$$='v';}
-    | MINUS
-        {$$='-';}
-    ;
 
 direction
     : direction_tb
