@@ -11,7 +11,8 @@ export function splitTextToChars(text: string): string[] {
 }
 
 /**
- * Splits a string into words.
+ * Splits a string into words by using `Intl.Segmenter` if available, or splitting by ' '.
+ * `Intl.Segmenter` uses the default locale, which might be different across browsers.
  */
 export function splitLineToWords(text: string): string[] {
   if (Intl.Segmenter) {
@@ -70,6 +71,12 @@ function splitWordToFitWidthRecursion(
   ];
 }
 
+/**
+ * Splits a line into multiple lines that satisfy the checkFit function.
+ * @param line - Line to split
+ * @param checkFit - Function to check if line fits
+ * @returns Array of lines that fit
+ */
 export function splitLineToFitWidth(
   line: MarkdownLine,
   checkFit: CheckFitFunction
