@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.js';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 describe('Class diagram V2', () => {
   it('0: should render a simple class diagram', () => {
     imgSnapshotTest(

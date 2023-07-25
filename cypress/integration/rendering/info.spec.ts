@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.js';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('info diagram', () => {
   it('should handle an info definition', () => {
