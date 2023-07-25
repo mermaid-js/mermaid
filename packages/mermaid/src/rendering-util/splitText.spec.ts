@@ -64,7 +64,7 @@ describe('when Intl.Segmenter is available', () => {
 
 /**
  * Intl.Segmenter is not supported in Firefox yet,
- * see https://bugzilla.mozilla.org/show_bug.cgi?id=1423593 
+ * see https://bugzilla.mozilla.org/show_bug.cgi?id=1423593
  */
 describe('when Intl.Segmenter is not available', () => {
   beforeAll(() => {
