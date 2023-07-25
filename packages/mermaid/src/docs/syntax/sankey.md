@@ -1,4 +1,4 @@
-# Sankey diagrams
+# Sankey diagram (v<MERMAID_RELEASE_VERSION>+)
 
 > A sankey diagram is a visualization used to depict a flow from one set of values to another.
 
