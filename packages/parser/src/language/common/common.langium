@@ -1,10 +1,8 @@
-/* fragments */
 fragment TitleAndAccessibilities:
   ((accDescr=ACC_DESCR | accTitle=ACC_TITLE | title=TITLE) NEWLINE+)+
 ;
 
-/* terminals */
-terminal NEWLINE: /[\n\r]/;
+terminal NEWLINE: /\r?\n/;
 hidden terminal WHITESPACE: /[\t\r ]+/;
 
 // TODO: add YAML_COMMENT hidden rule
