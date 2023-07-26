@@ -27,8 +27,6 @@
  *   get their absolute paths. Ensures that the location of those 2 directories is not dependent on
  *   where this file resides.
  *
- * @todo Write a test file for this. (Will need to be able to deal .mts file. Jest has trouble with
- *   it.)
  */
 // @ts-ignore: we're importing internal jsonschema2md functions
 import { default as schemaLoader } from '@adobe/jsonschema2md/lib/schemaProxy.js';
@@ -55,9 +53,9 @@ import mm from 'micromatch';
 import flatmap from 'unist-util-flatmap';
 import { visit } from 'unist-util-visit';
 
-const MERMAID_MAJOR_VERSION = (
-  JSON.parse(readFileSync('../mermaid/package.json', 'utf8')).version as string
-).split('.')[0];
+export const MERMAID_RELEASE_VERSION = JSON.parse(readFileSync('../mermaid/package.json', 'utf8'))
+  .version as string;
+const MERMAID_MAJOR_VERSION = MERMAID_RELEASE_VERSION.split('.')[0];
 const CDN_URL = 'https://cdn.jsdelivr.net/npm'; // 'https://unpkg.com';
 
 const MERMAID_KEYWORD = 'mermaid';
@@ -80,7 +78,7 @@ const vitepress: boolean = process.argv.includes('--vitepress');
 const noHeader: boolean = process.argv.includes('--noHeader') || vitepress;
 
 // These paths are from the root of the mono-repo, not from the mermaid subdirectory
-const SOURCE_DOCS_DIR = 'src/docs';
+export const SOURCE_DOCS_DIR = 'src/docs';
 const FINAL_DOCS_DIR = vitepress ? 'src/vitepress' : '../../docs';
 
 const LOGMSG_TRANSFORMED = 'transformed';
@@ -167,7 +165,7 @@ const copyTransformedContents = (filename: string, doCopy = false, transformedCo
   logWasOrShouldBeTransformed(fileInFinalDocDir, doCopy);
 };
 
-const readSyncedUTF8file = (filename: string): string => {
+export const readSyncedUTF8file = (filename: string): string => {
   return readFileSync(filename, 'utf8');
 };
 
@@ -360,7 +358,7 @@ const transformMarkdown = (file: string) => {
 /**
  * Transforms the given JSON Schema into Markdown documentation
  */
-async function transormJsonSchema(file: string) {
+async function transformJsonSchema(file: string) {
   const yamlContents = readSyncedUTF8file(file);
   const jsonSchema = load(yamlContents, {
     filename: file,
@@ -506,7 +504,7 @@ const transformHtml = (filename: string) => {
   copyTransformedContents(filename, !verifyOnly, formattedHTML);
 };
 
-const getGlobs = (globs: string[]): string[] => {
+export const getGlobs = (globs: string[]): string[] => {
   globs.push('!**/dist/**', '!**/redirect.spec.ts', '!**/landing/**', '!**/node_modules/**');
   if (!vitepress) {
     globs.push(
@@ -520,12 +518,12 @@ const getGlobs = (globs: string[]): string[] => {
   return globs;
 };
 
-const getFilesFromGlobs = async (globs: string[]): Promise<string[]> => {
+export const getFilesFromGlobs = async (globs: string[]): Promise<string[]> => {
   return await globby(globs, { dot: true });
 };
 
 /** Main method (entry point) */
-const main = async () => {
+export const processDocs = async () => {
   if (verifyOnly) {
     console.log('Verifying that all files are in sync with the source files');
   }
@@ -535,7 +533,7 @@ const main = async () => {
 
   if (vitepress) {
     console.log(`${action} 1 .schema.yaml file`);
-    await transormJsonSchema('src/schemas/config.schema.yaml');
+    await transformJsonSchema('src/schemas/config.schema.yaml');
   } else {
     // skip because this creates so many Markdown files that it lags git
     console.log('Skipping 1 .schema.yaml file');
@@ -603,5 +601,3 @@ const main = async () => {
       });
   }
 };
-
-void main();

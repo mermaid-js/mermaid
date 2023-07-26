@@ -4,7 +4,7 @@
   "version": "10.2.4",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
-  "packageManager": "pnpm@8.6.7",
+  "packageManager": "pnpm@8.6.10",
   "keywords": [
     "diagram",
     "markdown",
@@ -122,7 +122,7 @@
     "vitest": "^0.33.0"
   },
   "volta": {
-    "node": "18.16.1"
+    "node": "18.17.0"
   },
   "nyc": {
     "report-dir": "coverage/cypress"

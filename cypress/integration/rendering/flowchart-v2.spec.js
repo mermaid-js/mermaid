@@ -668,7 +668,7 @@ title: Simple flowchart
 flowchart TD
 A --> B
 `,
-      { flowchart: { titleTopMargin: 0 } }
+      { flowchart: { titleTopMargin: 10 } }
     );
   });
   it('3192: It should be possieble to render flowcharts with invisible edges', () => {
@@ -679,7 +679,7 @@ title: Simple flowchart with invisible edges
 flowchart TD
 A ~~~ B
 `,
-      { flowchart: { titleTopMargin: 0 } }
+      { flowchart: { titleTopMargin: 10 } }
     );
   });
   it('4023: Should render html labels with images and-or text correctly', () => {
