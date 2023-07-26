@@ -162,7 +162,7 @@ export const createText = (
     classes = '',
     useHtmlLabels = true,
     isNode = true,
-    width,
+    width = 200,
     addSvgBackground = false,
   } = {}
 ) => {
