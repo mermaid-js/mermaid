@@ -58,6 +58,14 @@
   </head>
   <body>
     <pre id="diagram" class="mermaid">
+---
+title: Simple flowchart with invisible edges
+---
+flowchart TD
+A ~~~ B
+  </pre
+    >
+    <pre id="diagram" class="mermaid2">
 stateDiagram-v2
     [*] --> Still
     Still --> [*]
@@ -73,7 +81,7 @@ flowchart RL
       a1 -- l2 --> a2
     end
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 flowchart RL
     subgraph "`one`"
       a1 -- l1 --> a2
@@ -98,11 +106,11 @@ flowchart LR
         way`"]
   </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
       classDiagram-v2
         note "I love this diagram!\nDo you love it?"
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
     stateDiagram-v2
     State1: The state with a note with minus - and plus + in it
     note left of State1
@@ -147,7 +155,7 @@ mindmap
       शान्तिः سلام  和平 `"]
 
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 flowchart TB
   %% I could not figure out how to use double quotes in labels in Mermaid
@@ -399,21 +407,31 @@ mindmap
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
+      // mermaid.initialize({
+      //   // theme: 'forest',
+      //   startOnLoad: true,
+      //   logLevel: 0,
+      //   flowchart: {
+      //     // defaultRenderer: 'elk',
+      //     useMaxWidth: false,
+      //     // htmlLabels: false,
+      //     htmlLabels: true,
+      //   },
+      //   // htmlLabels: false,
+      //   gantt: {
+      //     useMaxWidth: false,
+      //   },
+      //   useMaxWidth: false,
+      // });
       mermaid.initialize({
-        // theme: 'forest',
-        startOnLoad: true,
-        logLevel: 0,
-        flowchart: {
-          // defaultRenderer: 'elk',
-          useMaxWidth: false,
-          // htmlLabels: false,
-          htmlLabels: true,
+        flowchart: { titleTopMargin: 10 },
+        fontFamily: 'courier',
+        sequence: {
+          actorFontFamily: 'courier',
+          noteFontFamily: 'courier',
+          messageFontFamily: 'courier',
         },
-        // htmlLabels: false,
-        gantt: {
-          useMaxWidth: false,
-        },
-        useMaxWidth: false,
+        fontSize: 16,
       });
       function callback() {
         alert('It worked');
