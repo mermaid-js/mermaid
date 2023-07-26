@@ -5,6 +5,8 @@ import {
   InfoServices,
   Journey,
   JourneyServices,
+  Mindmap,
+  MindmapServices,
   Pie,
   PieServices,
   Timeline,
@@ -29,6 +31,16 @@ const journeyParser: LangiumParser = journeyServices.parser.LangiumParser;
 export function createJourneyTestServices() {
   const parse = (input: string) => {
     return journeyParser.parse<Journey>(input);
+  };
+
+  return { services, parse };
+}
+
+const mindmapServices: MindmapServices = services.Mindmap;
+const mindmapParser: LangiumParser = mindmapServices.parser.LangiumParser;
+export function createMindmapTestServices() {
+  const parse = (input: string) => {
+    return mindmapParser.parse<Mindmap>(input);
   };
 
   return { services, parse };
