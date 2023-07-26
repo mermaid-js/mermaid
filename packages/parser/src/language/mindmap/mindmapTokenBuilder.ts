@@ -1,4 +1,4 @@
-import type { TokenType } from 'chevrotain';
+import { createToken, type TokenType } from 'chevrotain';
 import {
   DefaultTokenBuilder,
   type GrammarAST,
@@ -16,11 +16,11 @@ import {
   matchMindmapTitle,
 } from './mindmapMatcher.js';
 
-export const MINDMAP_OUTDENT: TokenType = {
-  LINE_BREAKS: false,
+export const MINDMAP_OUTDENT: TokenType = createToken({
+  line_breaks: false,
   name: 'MINDMAP_OUTDENT',
-  PATTERN: matchMindmapOutdent,
-};
+  pattern: matchMindmapOutdent,
+});
 
 export class MindmapTokenBuilder extends DefaultTokenBuilder {
   protected override buildTerminalTokens(rules: Stream<GrammarAST.AbstractRule>): TokenType[] {
