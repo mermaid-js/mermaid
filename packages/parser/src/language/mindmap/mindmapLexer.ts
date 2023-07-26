@@ -1,7 +1,7 @@
 import type { LexerResult } from 'langium';
 import { CommonLexer } from '../common/commonLexer.js';
 import { createTokenInstance } from 'chevrotain';
-import { matchMindmapOutdent } from './mindmapMatcher.js';
+import { MINDMAP_OUTDENT } from './mindmapTokenBuilder.js';
 
 /**
  * The indentation stack,
@@ -18,20 +18,7 @@ export class MindmapLexer extends CommonLexer {
     // add remaining OUTDENTs
     while (indentStack.length > 1) {
       LexerResult.tokens.push(
-        createTokenInstance(
-          {
-            name: 'MINDMAP_OUTDENT',
-            PATTERN: matchMindmapOutdent,
-            LINE_BREAKS: false,
-          },
-          '',
-          NaN,
-          NaN,
-          NaN,
-          NaN,
-          NaN,
-          NaN
-        )
+        createTokenInstance(MINDMAP_OUTDENT, '', NaN, NaN, NaN, NaN, NaN, NaN)
       );
       indentStack.pop();
     }

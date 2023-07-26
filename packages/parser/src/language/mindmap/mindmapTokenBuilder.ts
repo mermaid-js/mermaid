@@ -16,6 +16,12 @@ import {
   matchMindmapTitle,
 } from './mindmapMatcher.js';
 
+export const MINDMAP_OUTDENT: TokenType = {
+  LINE_BREAKS: false,
+  name: 'MINDMAP_OUTDENT',
+  PATTERN: matchMindmapOutdent,
+};
+
 export class MindmapTokenBuilder extends DefaultTokenBuilder {
   protected override buildTerminalTokens(rules: Stream<GrammarAST.AbstractRule>): TokenType[] {
     let tokenTypes: TokenType[] = super.buildTerminalTokens(rules);
@@ -43,8 +49,7 @@ export class MindmapTokenBuilder extends DefaultTokenBuilder {
           break;
         }
         case 'MINDMAP_OUTDENT': {
-          tokenType.LINE_BREAKS = false;
-          tokenType.PATTERN = matchMindmapOutdent;
+          tokenType = MINDMAP_OUTDENT;
           break;
         }
         case 'MINDMAP_INDENT': {

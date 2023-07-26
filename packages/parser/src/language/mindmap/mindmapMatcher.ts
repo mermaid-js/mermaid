@@ -6,6 +6,7 @@ import {
   accessibilityTitleRegex,
   titleRegex,
 } from '../common/commonMatcher.js';
+import { MINDMAP_OUTDENT } from './mindmapTokenBuilder.js';
 
 export const mindmapAccessibilityDescrRegex = new RegExp(
   '[\t ]+' + accessibilityDescrRegex.source,
@@ -76,22 +77,7 @@ export const matchMindmapOutdent: CustomPatternMatcherFunc = (text, startOffest,
       const iStart: 0 | 1 = match !== null ? 1 : 0;
       for (let i = iStart; i < numberOfDedents; i++) {
         indentStack.pop();
-        matchedTokens.push(
-          createTokenInstance(
-            {
-              name: 'MINDMAP_OUTDENT',
-              PATTERN: matchMindmapOutdent,
-              LINE_BREAKS: false,
-            },
-            '',
-            NaN,
-            NaN,
-            NaN,
-            NaN,
-            NaN,
-            NaN
-          )
-        );
+        matchedTokens.push(createTokenInstance(MINDMAP_OUTDENT, '', NaN, NaN, NaN, NaN, NaN, NaN));
       }
 
       // even though we are adding fewer outdents directly we still need to update the indent stack fully.
