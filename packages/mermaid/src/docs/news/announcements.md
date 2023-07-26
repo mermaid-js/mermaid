@@ -1,7 +1,7 @@
 # Announcements
 
-## [Mermaid Chart’s ChatGPT Plugin Combines Generative AI and Smart Diagramming For Users](https://www.mermaidchart.com/blog/posts/mermaid-chart-chatgpt-plugin-combines-generative-ai-and-smart-diagramming)
+## [Mermaid Chart Announces Visual Studio Code Plugin to Simplify Development Workflows](https://www.mermaidchart.com/blog/posts/mermaid-chart-announces-visual-studio-code-plugin)
 
-29 June 2023 · 4 mins
+17 July 2023 · 3 mins
 
-Mermaid Chart’s new ChatGPT plugin integrates AI-powered text prompts with Mermaid’s intuitive diagramming editor, enabling users to generate, edit, and share complex diagrams with ease and efficiency.
+New Integration Enhances Workflows By Enabling Developers To Reference And Edit Diagrams Within Visual Studio Code.
