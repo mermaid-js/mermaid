@@ -1,6 +1,6 @@
 {
   "name": "@mermaid-js/mermaid-zenuml",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "MermaidJS plugin for ZenUML integration",
   "module": "dist/mermaid-zenuml.core.mjs",
   "types": "dist/detector.d.ts",
@@ -33,7 +33,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@zenuml/core": "^3.0.0"
+    "@zenuml/core": "^3.0.3"
   },
   "devDependencies": {
     "mermaid": "workspace:^"

@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
 describe('Class diagram', () => {
   it('1: should render a simple class diagram', () => {
@@ -422,5 +422,83 @@ describe('Class diagram', () => {
       { logLevel: 1 }
     );
     cy.get('svg');
+  });
+
+  it('should render class diagram with newlines in title', () => {
+    imgSnapshotTest(`
+      classDiagram
+        Animal <|-- \`Du\nck\`
+        Animal : +int age
+        Animal : +String gender
+        Animal: +isMammal()
+        Animal: +mate()
+        class \`Du\nck\` {
+          +String beakColor
+          +String featherColor
+          +swim()
+          +quack()
+        }
+      `);
+    cy.get('svg');
+  });
+
+  it('should render class diagram with many newlines in title', () => {
+    imgSnapshotTest(`
+    classDiagram
+      class \`This\nTitle\nHas\nMany\nNewlines\` {
+        +String Also
+        -Stirng Many
+        #int Members
+        +And()
+        -Many()
+        #Methods()
+      }
+    `);
+  });
+
+  it('should render with newlines in title and an annotation', () => {
+    imgSnapshotTest(`
+    classDiagram
+      class \`This\nTitle\nHas\nMany\nNewlines\` {
+        +String Also
+        -Stirng Many
+        #int Members
+        +And()
+        -Many()
+        #Methods()
+      }
+      &lt;&lt;Interface&gt;&gt; \`This\nTitle\nHas\nMany\nNewlines\`  
+    `);
+  });
+
+  it('should handle newline title in namespace', () => {
+    imgSnapshotTest(`
+    classDiagram
+      namespace testingNamespace {
+      class \`This\nTitle\nHas\nMany\nNewlines\` {
+        +String Also
+        -Stirng Many
+        #int Members
+        +And()
+        -Many()
+        #Methods()
+      }
+    }
+    `);
+  });
+
+  it('should handle newline in string label', () => {
+    imgSnapshotTest(`
+      classDiagram
+        class A["This has\na newline!"] {
+          +String boop
+          -Int beep
+          #double bop
+        }
+
+        class B["This title also has\na newline"]
+        B : +with(more)
+        B : -methods()
+      `);
   });
 });
