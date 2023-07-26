@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 importers:
 
   .:
@@ -419,8 +415,8 @@ importers:
   packages/mermaid-zenuml:
     dependencies:
       '@zenuml/core':
-        specifier: ^3.0.0
-        version: 3.0.0(ts-node@10.9.1)
+        specifier: ^3.0.3
+        version: 3.0.3(ts-node@10.9.1)
     devDependencies:
       mermaid:
         specifier: workspace:^
@@ -5097,8 +5093,8 @@ packages:
       cac: 6.7.14
       chokidar: 3.5.3
       colorette: 2.0.20
-      consola: 3.2.3
-      fast-glob: 3.2.12
+      consola: 3.1.0
+      fast-glob: 3.3.0
       magic-string: 0.30.1
       pathe: 1.1.1
       perfect-debounce: 1.0.0
@@ -5140,7 +5136,7 @@ packages:
       '@unocss/config': 0.53.0
       '@unocss/core': 0.53.0
       css-tree: 2.3.1
-      fast-glob: 3.2.12
+      fast-glob: 3.3.0
       magic-string: 0.30.1
       postcss: 8.4.27
     dev: true
@@ -5255,7 +5251,7 @@ packages:
       '@unocss/scope': 0.53.0
       '@unocss/transformer-directives': 0.53.0
       chokidar: 3.5.3
-      fast-glob: 3.2.12
+      fast-glob: 3.3.0
       magic-string: 0.30.1
       vite: 4.3.9(@types/node@18.16.0)
     transitivePeerDependencies:
@@ -5936,8 +5932,8 @@ packages:
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
     dev: true
 
-  /@zenuml/core@3.0.0(ts-node@10.9.1):
-    resolution: {integrity: sha512-DLX3vFfrV66X0b2kv8MPy3//l4jSoEGuf/zK2m+4t4CvaQ3rArQgXOc5aywi8pRyF1GmCiqgnG9NMRZ6RfqboA==}
+  /@zenuml/core@3.0.3(ts-node@10.9.1):
+    resolution: {integrity: sha512-Wp6yF5iERvGXrR3z/mNhQYP2uI54Bd7RQ2ZwA26Lca+tufj4X8pfqGVSORLqbUl4wjjdcwHc2RNT8AU+cz2NCg==}
     engines: {node: '>=12.0.0'}
     dependencies:
       '@types/assert': 1.5.6
@@ -9928,8 +9924,8 @@ packages:
     dependencies:
       array-union: 2.1.0
       dir-glob: 3.0.1
-      fast-glob: 3.3.1
-      ignore: 5.2.4
+      fast-glob: 3.3.0
+      ignore: 5.2.0
       merge2: 1.4.1
       slash: 3.0.0
     dev: true
@@ -9940,8 +9936,8 @@ packages:
     dependencies:
       array-union: 2.1.0
       dir-glob: 3.0.1
-      fast-glob: 3.3.1
-      ignore: 5.2.4
+      fast-glob: 3.3.0
+      ignore: 5.2.0
       merge2: 1.4.1
       slash: 3.0.0
     dev: true
@@ -13382,7 +13378,25 @@ packages:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
     dev: false
 
-  /postcss@8.4.27:
+  /postcss@8.4.23:
+    resolution: {integrity: sha512-bQ3qMcpF6A/YjR55xtoTr0jGOlnPOKAIMdOWiv0EIT6HVPEaJiJB4NLljSbiHoC2RX7DN5Uvjtpbg1NPdwv1oA==}
+    engines: {node: ^10 || ^12 || >=14}
+    dependencies:
+      nanoid: 3.3.6
+      picocolors: 1.0.0
+      source-map-js: 1.0.2
+    dev: true
+
+  /postcss@8.4.24:
+    resolution: {integrity: sha512-M0RzbcI0sO/XJNucsGjvWU9ERWxb/ytp1w6dKtxTKgixdtQDq4rmx/g8W1hnaheq9jgwL/oyEdH5Bc4WwJKMqg==}
+    engines: {node: ^10 || ^12 || >=14}
+    dependencies:
+      nanoid: 3.3.6
+      picocolors: 1.0.0
+      source-map-js: 1.0.2
+    dev: true
+
+/postcss@8.4.27:
     resolution: {integrity: sha512-gY/ACJtJPSmUFPDCHtX78+01fHa64FaU4zaaWfuh1MhGJISufJAH4cun6k/8fwsHYeK4UQmENQK+tRLCFJE8JQ==}
     engines: {node: ^10 || ^12 || >=14}
     dependencies:
@@ -14837,7 +14851,7 @@ packages:
       chokidar: 3.5.3
       didyoumean: 1.2.2
       dlv: 1.1.3
-      fast-glob: 3.3.1
+      fast-glob: 3.3.0
       glob-parent: 6.0.2
       is-glob: 4.0.3
       jiti: 1.19.1
@@ -15503,7 +15517,7 @@ packages:
     engines: {node: '>= 10.0.0'}
     dev: true
 
-  /unocss@0.53.0(postcss@8.4.27)(rollup@2.79.1)(vite@4.3.9):
+  /unocss@0.53.0(postcss@8.4.27)(rollup@2.79.1)(vite@4.3.3):
     resolution: {integrity: sha512-kY4h5ERiDYlSnL2X+hbDfh+uaF7QNouy7j51GOTUr3Q0aaWehaNd05b15SjHrab559dEC0mYfrSEdh/DnCK1cw==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -15561,10 +15575,10 @@ packages:
       '@rollup/pluginutils': 5.0.2(rollup@2.79.1)
       chokidar: 3.5.3
       debug: 4.3.4(supports-color@8.1.1)
-      fast-glob: 3.2.12
+      fast-glob: 3.3.0
       local-pkg: 0.4.3
       magic-string: 0.30.1
-      minimatch: 9.0.3
+      minimatch: 9.0.1
       resolve: 1.22.2
       unplugin: 1.4.0
       vue: 3.2.47
@@ -15703,10 +15717,11 @@ packages:
       mlly: 1.4.0
       pathe: 1.1.1
       picocolors: 1.0.0
-      vite: 4.3.9(@types/node@18.16.0)
+      vite: 4.4.6(@types/node@18.16.0)
     transitivePeerDependencies:
       - '@types/node'
       - less
+      - lightningcss
       - sass
       - stylus
       - sugarss
@@ -15935,6 +15950,7 @@ packages:
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
       - less
+      - lightningcss
       - sass
       - stylus
       - sugarss
@@ -15992,6 +16008,7 @@ packages:
 
   /vscode-uri@3.0.7:
     resolution: {integrity: sha512-eOpPHogvorZRobNqJGhapa0JdwaxpjVvyBp0QIUMRMSf8ZAlqOdEquKuRmw9Qwu0qXtJIWqFtMkmvJjUZmMjVA==}
+    dev: true
 
   /vue-demi@0.14.5(vue@3.2.47):
     resolution: {integrity: sha512-o9NUVpl/YlsGJ7t+xuqJKx8EBGf1quRhCiT6D/J0pfwmk9zUwYkC7yrF4SZCe6fETvSM3UNL2edcbYrSyc4QHA==}
