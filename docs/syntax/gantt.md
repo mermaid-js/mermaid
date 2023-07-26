@@ -271,7 +271,7 @@ gantt
   weekday monday
 ```
 
-Support: v\<MERMAID_RELEASE_VERSION>+
+Support: v10.3.0+
 
 ## Output in compact mode
 

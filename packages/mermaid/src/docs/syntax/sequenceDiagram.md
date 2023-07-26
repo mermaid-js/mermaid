@@ -58,7 +58,7 @@ sequenceDiagram
     J->>A: Great!
 ```
 
-### Actor Creation and Destruction (v<MERMAID_RELEASE_VERSION>+)
+### Actor Creation and Destruction (v10.3.0+)
 
 It is possible to create and destroy actors by messages. To do so, add a create or destroy directive before the message.
 
