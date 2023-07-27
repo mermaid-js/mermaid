@@ -150,6 +150,7 @@ export const addSingleLink = function (_start, _end, type) {
   if (linkTextObj !== undefined) {
     edge.text = sanitizeText(linkTextObj.text.trim());
 
+    edge.text = edge.text.replaceAll('\\"', '"');
     // strip quotes if string starts and ends with a quote
     if (edge.text[0] === '"' && edge.text[edge.text.length - 1] === '"') {
       edge.text = edge.text.substring(1, edge.text.length - 1);

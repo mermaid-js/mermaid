@@ -462,6 +462,8 @@ edgeText: edgeTextToken
     {$$={text:$edgeTextToken, type:'text'};}
     | edgeText edgeTextToken
     {$$={text:$edgeText.text+''+$edgeTextToken, type:$edgeText.type};}
+    |STR
+    {$$={text: $STR, type: 'string'};}
     | MD_STR
     {$$={text:$MD_STR, type:'markdown'};}
     ;
@@ -573,7 +575,7 @@ textToken      :   TEXT | TAGSTART | TAGEND | UNICODE_TEXT;
 
 textNoTagsToken: NUM | NODE_STRING | SPACE | MINUS | keywords |  START_LINK ;
 
-edgeTextToken  :  STR | EDGE_TEXT | UNICODE_TEXT ;
+edgeTextToken  :  EDGE_TEXT | UNICODE_TEXT ;
 
 alphaNumToken   :  NUM | UNICODE_TEXT | NODE_STRING | DIR | DOWN | MINUS | COMMA;
 

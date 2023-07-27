@@ -35,7 +35,7 @@ A["\`The cat in **the** hat\`"]-- "\`The *bat* in the chat\`" -->B["The dog in t
     expect(edges[1].end).toBe('C');
     expect(edges[1].type).toBe('arrow_point');
     expect(edges[1].text).toBe('The rat in the mat');
-    expect(edges[1].labelType).toBe('text');
+    expect(edges[1].labelType).toBe('string');
   });
   it('mardown formatting in subgraphs', function () {
     const res = flow.parser.parse(`flowchart LR
