@@ -1,11 +1,13 @@
+import type { Content } from 'mdast';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import { dedent } from 'ts-dedent';
+import { MarkdownLine, MarkdownWordType } from './types.js';
 
 /**
- * @param {string} markdown markdown to process
- * @returns {string} processed markdown
+ * @param markdown - markdown to process
+ * @returns processed markdown
  */
-function preprocessMarkdown(markdown) {
+function preprocessMarkdown(markdown: string): string {
   // Replace multiple newlines with a single newline
   const withoutMultipleNewlines = markdown.replace(/\n{2,}/g, '\n');
   // Remove extra spaces at the beginning of each line
@@ -14,19 +16,15 @@ function preprocessMarkdown(markdown) {
 }
 
 /**
- * @param {string} markdown markdown to split into lines
+ * @param markdown - markdown to split into lines
  */
-export function markdownToLines(markdown) {
+export function markdownToLines(markdown: string): MarkdownLine[] {
   const preprocessedMarkdown = preprocessMarkdown(markdown);
   const { children } = fromMarkdown(preprocessedMarkdown);
-  const lines = [[]];
+  const lines: MarkdownLine[] = [[]];
   let currentLine = 0;
 
-  /**
-   * @param {import('mdast').Content} node
-   * @param {string} [parentType]
-   */
-  function processNode(node, parentType = 'normal') {
+  function processNode(node: Content, parentType: MarkdownWordType = 'normal') {
     if (node.type === 'text') {
       const textLines = node.value.split('\n');
       textLines.forEach((textLine, index) => {
@@ -58,17 +56,10 @@ export function markdownToLines(markdown) {
   return lines;
 }
 
-/**
- * @param {string} markdown markdown to convert to HTML
- * @returns {string} HTML
- */
-export function markdownToHTML(markdown) {
+export function markdownToHTML(markdown: string) {
   const { children } = fromMarkdown(markdown);
 
-  /**
-   * @param {import('mdast').Content} node
-   */
-  function output(node) {
+  function output(node: Content): string {
     if (node.type === 'text') {
       return node.value.replace(/\n/g, '<br/>');
     } else if (node.type === 'strong') {
