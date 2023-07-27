@@ -897,7 +897,6 @@ graph TD
       graph TD
         classDef default fill:#000,stroke:#000,stroke-width:4px,color:#fff 
         default --> default2
-        class default,default2 default
       `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
