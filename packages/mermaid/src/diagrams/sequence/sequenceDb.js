@@ -299,6 +299,8 @@ export const LINETYPE = {
   BREAK_START: 30,
   BREAK_END: 31,
   PAR_OVER_START: 32,
+  GROUP_START: 33,
+  GROUP_END: 34,
 };
 
 export const ARROWTYPE = {
@@ -591,6 +593,12 @@ export const apply = function (param) {
         break;
       case 'breakEnd':
         addSignal(undefined, undefined, undefined, param.signalType);
+        break;
+      case 'groupStart':
+        addSignal(undefined, undefined, param.groupText, param.signalType);
+        break;
+      case 'groupEnd':
+        addSignal(undefined, undefined, param.groupLabel, param.signalType);
         break;
     }
   }

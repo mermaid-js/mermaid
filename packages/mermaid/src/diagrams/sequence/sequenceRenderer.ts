@@ -991,6 +991,22 @@ export const draw = function (_text: string, id: string, _version: string, diagO
         bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
         bounds.models.addLoop(loopModel);
         break;
+      case diagObj.db.LINETYPE.GROUP_START:
+        adjustLoopHeightForWrap(
+          loopWidths,
+          msg,
+          conf.boxMargin,
+          conf.boxMargin + conf.boxTextMargin,
+          (message) => bounds.newLoop(message)
+        );
+        break;
+      case diagObj.db.LINETYPE.GROUP_END:
+        loopModel = bounds.endLoop();
+        conf.labelBoxWidth = msg.message.length * 10;
+        svgDraw.drawLoop(diagram, loopModel, msg.message, conf);
+        bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
+        bounds.models.addLoop(loopModel);
+        break;
       default:
         try {
           msgModel = msg.msgModel;
@@ -1467,6 +1483,15 @@ const calculateLoopBounds = function (messages, actors, _maxWidthPerActor, diagO
           width: 0,
         });
         break;
+      case diagObj.db.LINETYPE.GROUP_START:
+        stack.push({
+          id: msg.id,
+          msg: msg.message,
+          from: Number.MAX_SAFE_INTEGER,
+          to: Number.MIN_SAFE_INTEGER,
+          width: 0,
+        });
+        break;
       case diagObj.db.LINETYPE.ALT_ELSE:
       case diagObj.db.LINETYPE.PAR_AND:
       case diagObj.db.LINETYPE.CRITICAL_OPTION:
@@ -1483,6 +1508,10 @@ const calculateLoopBounds = function (messages, actors, _maxWidthPerActor, diagO
       case diagObj.db.LINETYPE.PAR_END:
       case diagObj.db.LINETYPE.CRITICAL_END:
       case diagObj.db.LINETYPE.BREAK_END:
+        current = stack.pop();
+        loops[current.id] = current;
+        break;
+      case diagObj.db.LINETYPE.GROUP_END:
         current = stack.pop();
         loops[current.id] = current;
         break;

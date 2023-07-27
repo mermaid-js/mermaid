@@ -1099,6 +1099,32 @@ sequenceDiagram
     expect(messages[4].type).toBe(diagram.db.LINETYPE.BREAK_END);
     expect(messages[5].from).toBe('API');
   });
+  it('should handle group statements', async () => {
+    const str = `
+sequenceDiagram
+    Alice-->Bob: I have a secret
+    Bob-->Alice: What is it?
+    group:Whisper So nobody hears
+        Alice-->Bob: I love you
+    end
+    Bob-->Alice: AAAAAAHHhhh!!!`;
+
+    await mermaidAPI.parse(str);
+    const actors = diagram.db.getActors();
+
+    expect(actors.Consumer.description).toBe('Consumer');
+    expect(actors.API.description).toBe('API');
+
+    const messages = diagram.db.getMessages();
+
+    expect(messages.length).toBe(6);
+    expect(messages[0].from).toBe('Alice');
+    expect(messages[1].from).toBe('Bob');
+    expect(messages[2].type).toBe(diagram.db.LINETYPE.GROUP_START);
+    expect(messages[3].from).toBe('API');
+    expect(messages[4].type).toBe(diagram.db.LINETYPE.GROUP_END);
+    expect(messages[5].from).toBe('API');
+  });
   it('should handle par statements a sequenceDiagram', async () => {
     const str = `
 sequenceDiagram

@@ -14,7 +14,7 @@
 
 // Special states for recognizing aliases
 // A special state for grabbing text up to the first comment/newline
-%x ID ALIAS LINE
+%x ID ALIAS LINE GROUP
 
 // Directive states
 %x open_directive type_directive arg_directive
@@ -54,6 +54,8 @@
 "critical"                                                      { this.begin('LINE'); return 'critical'; }
 "option"                                                        { this.begin('LINE'); return 'option'; }
 "break"                                                         { this.begin('LINE'); return 'break'; }
+"group"                                                         { this.begin('GROUP'); return 'group'; }
+<GROUP>\s*(?:[:])\s*[^\->:\n,;]+?([\-]*[^\->:\n,;]+?)*?(?=((?!\n)\s)+) { yytext = yytext.trim().substring(1); this.popState(); this.begin('LINE'); return 'label'; }
 <LINE>(?:[:]?(?:no)?wrap:)?[^#\n;]*                             { this.popState(); return 'restOfLine'; }
 "end"                                                           return 'end';
 "left of"                                                       return 'left_of';
@@ -215,6 +217,11 @@ statement
 		$3.unshift({type: 'breakStart', breakText:yy.parseMessage($2), signalType: yy.LINETYPE.BREAK_START});
 		$3.push({type: 'breakEnd', optText:yy.parseMessage($2), signalType: yy.LINETYPE.BREAK_END});
 		$$=$3;}
+	| group label restOfLine document end
+	{
+		$4.unshift({type: 'groupStart', groupText:yy.parseMessage($3), signalType: yy.LINETYPE.GROUP_START});
+		$4.push({type: 'groupEnd', groupLabel:yy.parseMessage($2), signalType: yy.LINETYPE.GROUP_END});
+		$$=$4;}
   | directive
 	;
 
