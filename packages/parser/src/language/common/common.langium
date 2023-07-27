@@ -3,13 +3,13 @@ fragment TitleAndAccessibilities:
 ;
 
 terminal NEWLINE: /\r?\n/;
-hidden terminal WHITESPACE: /[\t\r ]+/;
+hidden terminal WHITESPACE: /[\t ]+/;
 
 // TODO: add YAML_COMMENT hidden rule
 hidden terminal YAML: /---\s*[\n\r][\s\S]*?---\s*(?!.)/;
 // hidden terminal MULTI_LINE_COMMENT: /%%\*[\s\S]*?\*%%\s*/;
-hidden terminal DIRECTIVE: /%%{[\s\S]*?}%%\s*/;
-hidden terminal SINGLE_LINE_COMMENT: /%%[^\n\r]*\s*/;
+hidden terminal DIRECTIVE: /[\t ]*%%{[\s\S]*?}%%\s*/;
+hidden terminal SINGLE_LINE_COMMENT: /[\t ]*%%[^\n\r]*\s*/;
 
 terminal ACC_DESCR: /accDescr(?:[\t ]*:[\t ]*[^\n\r]*|\s*{[^}]*})/;
 terminal ACC_TITLE: /accTitle[\t ]*:[\t ]*[^\n\r]*/;
