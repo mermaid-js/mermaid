@@ -1112,8 +1112,8 @@ sequenceDiagram
     await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
 
-    expect(actors.Consumer.description).toBe('Consumer');
-    expect(actors.API.description).toBe('API');
+    expect(actors.Bob.description).toBe('Bob');
+    expect(actors.Alice.description).toBe('Alice');
 
     const messages = diagram.db.getMessages();
 
@@ -1121,9 +1121,9 @@ sequenceDiagram
     expect(messages[0].from).toBe('Alice');
     expect(messages[1].from).toBe('Bob');
     expect(messages[2].type).toBe(diagram.db.LINETYPE.GROUP_START);
-    expect(messages[3].from).toBe('API');
+    expect(messages[3].from).toBe('Alice');
     expect(messages[4].type).toBe(diagram.db.LINETYPE.GROUP_END);
-    expect(messages[5].from).toBe('API');
+    expect(messages[5].from).toBe('Bob');
   });
   it('should handle par statements a sequenceDiagram', async () => {
     const str = `
