@@ -1,9 +1,12 @@
 import type { TokenType } from 'chevrotain';
-import type { GrammarAST, Stream, TokenBuilderOptions } from 'langium';
+import {
+  DefaultTokenBuilder,
+  type GrammarAST,
+  type Stream,
+  type TokenBuilderOptions,
+} from 'langium';
 
-import { CommonTokenBuilder } from '../common/commonTokenBuilder.js';
-
-export class InfoTokenBuilder extends CommonTokenBuilder {
+export class InfoTokenBuilder extends DefaultTokenBuilder {
   protected override buildKeywordTokens(
     rules: Stream<GrammarAST.AbstractRule>,
     terminalTokens: TokenType[],

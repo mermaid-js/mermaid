@@ -11,6 +11,6 @@ hidden terminal YAML: /---\s*[\n\r][\s\S]*?---\s*(?!.)/;
 hidden terminal DIRECTIVE: /%%{[\s\S]*?}%%\s*/;
 hidden terminal SINGLE_LINE_COMMENT: /%%[^\n\r]*\s*/;
 
-terminal ACC_DESCR: /accessibility-description/;
-terminal ACC_TITLE: /accessibility-title/;
-terminal TITLE: /diagram-title/;
+terminal ACC_DESCR: /accDescr(?:[\t ]*:[\t ]*[^\n\r]*|\s*{[^}]*})/;
+terminal ACC_TITLE: /accTitle[\t ]*:[\t ]*[^\n\r]*/;
+terminal TITLE: /title(?:[\t ]+[^\n\r]*|)/;

@@ -1,10 +1,14 @@
 import type { TokenType } from 'chevrotain';
-import type { GrammarAST, Stream, TokenBuilderOptions } from 'langium';
+import {
+  DefaultTokenBuilder,
+  type GrammarAST,
+  type Stream,
+  type TokenBuilderOptions,
+} from 'langium';
 
-import { CommonTokenBuilder } from '../common/commonTokenBuilder.js';
 import { matchJourneyTaskTitle } from './journeyMatcher.js';
 
-export class JourneyTokenBuilder extends CommonTokenBuilder {
+export class JourneyTokenBuilder extends DefaultTokenBuilder {
   protected override buildTerminalTokens(rules: Stream<GrammarAST.AbstractRule>): TokenType[] {
     const tokenTypes: TokenType[] = super.buildTerminalTokens(rules);
     tokenTypes.forEach((tokenType: TokenType): void => {
