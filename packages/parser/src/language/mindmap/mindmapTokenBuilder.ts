@@ -28,7 +28,7 @@ export class MindmapTokenBuilder extends DefaultTokenBuilder {
     tokenTypes = tokenTypes.filter(
       (tokenType: TokenType): boolean => tokenType.name !== 'WHITESPACE'
     );
-    tokenTypes.forEach((tokenType: TokenType): void => {
+    tokenTypes.forEach((tokenType: TokenType, index: number): void => {
       switch (tokenType.name) {
         case 'ACC_DESCR': {
           tokenType.LINE_BREAKS = true;
@@ -49,7 +49,7 @@ export class MindmapTokenBuilder extends DefaultTokenBuilder {
           break;
         }
         case 'MINDMAP_OUTDENT': {
-          tokenType = MINDMAP_OUTDENT;
+          tokenTypes[index] = MINDMAP_OUTDENT;
           break;
         }
         case 'MINDMAP_INDENT': {
