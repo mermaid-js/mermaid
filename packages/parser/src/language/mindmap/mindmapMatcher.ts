@@ -1,4 +1,4 @@
-import { CustomPatternMatcherFunc, createTokenInstance } from 'chevrotain';
+import { CustomPatternMatcherFunc, IToken, createTokenInstance } from 'chevrotain';
 import { indentStack } from './mindmapLexer.js';
 import { t } from './mindmapUtil.js';
 import {
@@ -75,9 +75,21 @@ export const matchMindmapOutdent: CustomPatternMatcherFunc = (text, startOffest,
       // 2. If there was match (> 0 level indent) than we need to add minus one number of outdents
       //    because the lexer would create one due to returning a none null result.
       const iStart: 0 | 1 = match !== null ? 1 : 0;
+      const lastMatchedToken: IToken = matchedTokens[matchedTokens.length - 1];
       for (let i = iStart; i < numberOfDedents; i++) {
         indentStack.pop();
-        matchedTokens.push(createTokenInstance(MINDMAP_OUTDENT, '', NaN, NaN, NaN, NaN, NaN, NaN));
+        matchedTokens.push(
+          createTokenInstance(
+            MINDMAP_OUTDENT,
+            '',
+            lastMatchedToken.startOffset,
+            lastMatchedToken.endOffset ?? NaN,
+            lastMatchedToken.startLine ?? NaN,
+            lastMatchedToken.endLine ?? NaN,
+            lastMatchedToken.startColumn ?? NaN,
+            lastMatchedToken.endColumn ?? NaN
+          )
+        );
       }
 
       // even though we are adding fewer outdents directly we still need to update the indent stack fully.
