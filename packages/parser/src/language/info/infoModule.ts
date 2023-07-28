@@ -13,6 +13,7 @@ import { MermaidGeneratedSharedModule, InfoGeneratedModule } from '../generated/
 import { CommonLexer } from '../common/commonLexer.js';
 import { CommonValueConverter } from '../common/commonValueConverters.js';
 import { InfoTokenBuilder } from './infoTokenBuilder.js';
+import { InfoDocumentFactory } from './InfoDocumentFactory.js';
 
 /**
  * Declaration of `Info` services.
@@ -21,6 +22,7 @@ export type InfoAddedServices = {
   parser: {
     Lexer: CommonLexer;
     TokenBuilder: InfoTokenBuilder;
+    ValueConverter: CommonValueConverter;
   };
 };
 
@@ -39,6 +41,7 @@ export const InfoModule: Module<InfoServices, PartialLangiumServices & InfoAdded
     TokenBuilder: () => new InfoTokenBuilder(),
     ValueConverter: () => new CommonValueConverter(),
   },
+  workspace: {},
 };
 
 /**
@@ -63,6 +66,7 @@ export function createInfoServices(context: DefaultSharedModuleContext): {
     createDefaultSharedModule(context),
     MermaidGeneratedSharedModule
   );
+  shared.workspace.LangiumDocumentFactory = new InfoDocumentFactory(shared);
   const Info: InfoServices = inject(
     createDefaultModule({ shared }),
     InfoGeneratedModule,

@@ -1,7 +1,6 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "rootDir": "./src",
     "outDir": "./dist",
     // TODO: figure out how to remove these configs
     "lib": ["ES2022"],
