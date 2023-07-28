@@ -1,12 +1,13 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "rootDir": ".",
     "outDir": "./dist",
     // TODO: figure out how to remove these configs
     "lib": ["ES2022"],
     "preserveSymlinks": false,
     "strictPropertyInitialization": false
   },
-  "include": ["./src/**/*.ts"],
+  "include": ["./package.json", "./src/**/*.ts"],
   "typeRoots": ["./src/types"]
 }

@@ -4,12 +4,12 @@
   "description": "MermaidJS parser",
   "author": "Yokozuna59",
   "homepage": "https://github.com/mermaid-js/mermaid/#readme",
-  "types": "dist/index.d.ts",
+  "types": "dist/src/index.d.ts",
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/src/index.js",
+      "types": "./dist/src/index.d.ts"
     },
     "./*": "./*"
   },
