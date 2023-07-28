@@ -528,7 +528,7 @@ sequenceDiagram
     API-->BillingService: Start billing process
 ```
 
-## Custom Grouping
+## Custom Grouping (v\<MERMAID_RELEASE_VERSION>+)
 
 It is possible to create a group of actions similar to those described above, but with a custom label.
 
