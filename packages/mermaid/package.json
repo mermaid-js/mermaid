@@ -67,7 +67,7 @@
     "d3-sankey": "^0.12.3",
     "dagre-d3-es": "7.0.10",
     "dayjs": "^1.11.7",
-    "dompurify": "3.0.5",
+    "dompurify": "^3.0.5",
     "elkjs": "^0.8.2",
     "khroma": "^2.0.0",
     "lodash-es": "^4.17.21",

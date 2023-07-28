@@ -218,7 +218,7 @@ importers:
         specifier: ^1.11.7
         version: 1.11.7
       dompurify:
-        specifier: 3.0.5
+        specifier: ^3.0.5
         version: 3.0.5
       elkjs:
         specifier: ^0.8.2
