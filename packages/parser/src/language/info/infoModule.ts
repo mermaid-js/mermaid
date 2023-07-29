@@ -1,5 +1,6 @@
 import {
   DefaultSharedModuleContext,
+  LangiumParser,
   LangiumServices,
   LangiumSharedServices,
   Module,
@@ -13,13 +14,14 @@ import { MermaidGeneratedSharedModule, InfoGeneratedModule } from '../generated/
 import { CommonLexer } from '../common/commonLexer.js';
 import { CommonValueConverter } from '../common/commonValueConverters.js';
 import { InfoTokenBuilder } from './infoTokenBuilder.js';
-import { InfoDocumentFactory } from './InfoDocumentFactory.js';
+import { createInfoParser } from './infoParser.js';
 
 /**
  * Declaration of `Info` services.
  */
 export type InfoAddedServices = {
   parser: {
+    LangiumParser: LangiumParser;
     Lexer: CommonLexer;
     TokenBuilder: InfoTokenBuilder;
     ValueConverter: CommonValueConverter;
@@ -37,11 +39,11 @@ export type InfoServices = LangiumServices & InfoAddedServices;
  */
 export const InfoModule: Module<InfoServices, PartialLangiumServices & InfoAddedServices> = {
   parser: {
+    LangiumParser: (services) => createInfoParser(services),
     Lexer: (services) => new CommonLexer(services),
     TokenBuilder: () => new InfoTokenBuilder(),
     ValueConverter: () => new CommonValueConverter(),
   },
-  workspace: {},
 };
 
 /**
@@ -66,7 +68,6 @@ export function createInfoServices(context: DefaultSharedModuleContext): {
     createDefaultSharedModule(context),
     MermaidGeneratedSharedModule
   );
-  shared.workspace.LangiumDocumentFactory = new InfoDocumentFactory(shared);
   const Info: InfoServices = inject(
     createDefaultModule({ shared }),
     InfoGeneratedModule,

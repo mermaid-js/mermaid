@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { Info } from '../src/language/index.js';
 import { createInfoTestServices } from './test-utils.js';
-import { ParseResult } from 'langium';
+import type { ParseResult } from 'langium';
 
 describe('info', () => {
   const { parse } = createInfoTestServices();
@@ -24,5 +24,6 @@ describe('info', () => {
 
     const value: Info = result.value;
     expect(value.$type).toBe(Info);
+    expect(value.version).toBeDefined();
   });
 });
