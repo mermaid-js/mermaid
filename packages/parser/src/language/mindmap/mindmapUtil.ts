@@ -40,3 +40,27 @@ export const t = (
 
   return { isFirstLine, isStartOfLine };
 };
+
+/**
+ * Test if the current {@link startOffset} of the {@link text}
+ * has a possible {@link lookahead} regexps.
+ *
+ * @param text - the actual text.
+ * @param startOffset - the current offset.
+ * @param lookahead - the possible regexps.
+ * @returns if the passed {@link lookahead} is ahead the current {@link startOffset}.
+ */
+export const isRegExpAhead = (
+  text: string,
+  startOffset: number,
+  lookahead: Record<string, RegExp>
+): boolean => {
+  for (const regexp of Object.values(lookahead)) {
+    regexp.lastIndex = startOffset;
+    const newText: string = text.slice(startOffset);
+    if (regexp.test(newText)) {
+      return true;
+    }
+  }
+  return false;
+};

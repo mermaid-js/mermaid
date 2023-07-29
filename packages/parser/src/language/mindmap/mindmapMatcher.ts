@@ -1,6 +1,6 @@
 import { CustomPatternMatcherFunc, IToken, createTokenInstance } from 'chevrotain';
 import { indentStack } from './mindmapLexer.js';
-import { t } from './mindmapUtil.js';
+import { isRegExpAhead, t } from './mindmapUtil.js';
 import {
   accessibilityDescrRegex,
   accessibilityTitleRegex,
@@ -38,15 +38,15 @@ export const matchMindmapTitle: CustomPatternMatcherFunc = (text, startOffset) =
 /**
  *
  */
-export const matchMindmapOutdent: CustomPatternMatcherFunc = (text, startOffest, matchedTokens) => {
-  const { isFirstLine, isStartOfLine } = t(startOffest, matchedTokens);
+export const matchMindmapOutdent: CustomPatternMatcherFunc = (text, startOffset, matchedTokens) => {
+  const { isFirstLine, isStartOfLine } = t(startOffset, matchedTokens);
 
   // indentation can only be matched at the start of a line.
   if (isFirstLine || isStartOfLine) {
     let currIndentLevel: number;
 
     const whitespaceRegex = /[\t ]+/y;
-    whitespaceRegex.lastIndex = startOffest;
+    whitespaceRegex.lastIndex = startOffset;
     const match = whitespaceRegex.exec(text);
     // possible non-empty indentation
     if (match !== null) {
@@ -64,7 +64,7 @@ export const matchMindmapOutdent: CustomPatternMatcherFunc = (text, startOffest,
 
       // any outdent must match some previous indentation level.
       if (matchIndentIndex === -1) {
-        throw new Error(`invalid outdent at offset: ${startOffest}`);
+        throw new Error(`invalid outdent at offset: ${startOffset}`);
       }
 
       const numberOfDedents: number = indentStack.length - matchIndentIndex - 1;
@@ -110,23 +110,16 @@ export const matchMindmapOutdent: CustomPatternMatcherFunc = (text, startOffest,
 /**
  *
  */
-export const matchMindmapIndent: CustomPatternMatcherFunc = (text, startOffest, matchedTokens) => {
-  const { isFirstLine, isStartOfLine } = t(startOffest, matchedTokens);
-  let shouldMatch = true;
-  Object.values(lookahead).forEach((regex: RegExp) => {
-    regex.lastIndex = startOffest;
-    const newText = text.slice(startOffest);
-    if (regex.test(newText)) {
-      shouldMatch = false;
-    }
-  });
+export const matchMindmapIndent: CustomPatternMatcherFunc = (text, startOffset, matchedTokens) => {
+  const { isFirstLine, isStartOfLine } = t(startOffset, matchedTokens);
+  const isNodeAhead = !isRegExpAhead(text, startOffset, lookahead);
 
   // indentation can only be matched at the start of a line.
-  if (shouldMatch && (isFirstLine || isStartOfLine)) {
+  if (isNodeAhead && (isFirstLine || isStartOfLine)) {
     let currIndentLevel: number;
 
     const whitespaceRegex = /[\t ]+/y;
-    whitespaceRegex.lastIndex = startOffest;
+    whitespaceRegex.lastIndex = startOffset;
     const match = whitespaceRegex.exec(text);
     // possible non-empty indentation
     if (match !== null) {
@@ -166,27 +159,11 @@ export const mindmapIconRegex = /[\t ]*::icon\(([^\n\r)]+)\)[\t ]*/;
  * Matches a mindmap node id
  */
 export const mindmapNodeIdRegex = /([^\n\r()[{]+)/y;
-const nodeShapeTitles: Record<string, RegExp> = {
-  squareTitle: /[^\n\r[]+\[[^\n\r\]]+]/,
-  circleTitle: /[^\n\r(]+\(\([^\n\r)]+\)\)/,
-  roundedSquareTitle: /[^\n\r(]+\([^\n\r)]+\)/,
-  bangTitle: /[^\n\r)]+\)\)[^\n\r(]+\(\(/,
-  cloudTitle: /[^\n\r)]+\)[^\n\r(]+\(/,
-  hexagonTitle: /[^\n\r{]+{{[^\n\r}]+}}/,
-};
 export const matchMindmapNodeId: CustomPatternMatcherFunc = (text, startOffset) => {
-  let isShapeNode = false;
-  Object.values(nodeShapeTitles).forEach((regex: RegExp): void => {
-    regex.lastIndex = startOffset;
-    const newText = text.slice(startOffset);
-    if (regex.test(newText)) {
-      isShapeNode = true;
-    }
-    regex.lastIndex = 0;
-  });
+  const isNodeShapeAhead = isRegExpAhead(text, startOffset, nodeShapeTitles);
 
   // if it's a shape node, then it has an id
-  if (isShapeNode) {
+  if (isNodeShapeAhead) {
     mindmapNodeIdRegex.lastIndex = startOffset;
     return mindmapNodeIdRegex.exec(text);
   } else {
@@ -227,7 +204,7 @@ export const mindmapNodeHexagonTitleRegex = /{{([^\n\r}]+)}}[\t ]*/;
 /**
  * Matches a mindmap default node
  */
-export const mindmapNodeDefault = /([^\n\r]+)/y;
+export const mindmapNodeDefault = /([^\n\r]+)(?=%%)|([^\n\r]+)/y;
 export const matchMindmapNodeDefault: CustomPatternMatcherFunc = (text, startOffset) => {
   mindmapNodeDefault.lastIndex = startOffset;
   return mindmapNodeDefault.exec(text);
@@ -239,4 +216,13 @@ const lookahead = {
   title: mindmapTitleRegex,
   accTItle: mindmapAccessibilityTitleRegex,
   accDescr: mindmapAccessibilityDescrRegex,
+};
+
+const nodeShapeTitles: Record<string, RegExp> = {
+  squareTitle: new RegExp('[^\n\r[]*' + mindmapNodeSquareTitleRegex.source),
+  circleTitle: new RegExp('[^\n\r(]*' + mindmapNodeCircleTitleRegex.source),
+  roundedSquareTitle: new RegExp('[^\n\r(]*' + mindmapNodeRoundedSquareTitleRegex.source),
+  bangTitle: new RegExp('[^\n\r)]*' + mindmapNodeBangTitleRegex.source),
+  cloudTitle: new RegExp('[^\n\r)]*' + mindmapNodeCloudTitleRegex.source),
+  hexagonTitle: new RegExp('[^\n\r{]*' + mindmapNodeHexagonTitleRegex.source),
 };
