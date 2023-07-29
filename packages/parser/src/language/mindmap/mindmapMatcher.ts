@@ -174,32 +174,32 @@ export const matchMindmapNodeId: CustomPatternMatcherFunc = (text, startOffset) 
 /**
  * Matches a mindmap node square
  */
-export const mindmapNodeSquareTitleRegex = /\[([^\n\r\]]+)][\t ]*/;
+export const mindmapNodeSquareTitleRegex = /\[([^\n\r\]]+|[^\]]+)][\t ]*/;
 
 /**
  * Matches a mindmap node circle
  */
-export const mindmapNodeCircleTitleRegex = /\(\(([^\n\r]+)\)\)[\t ]*/;
+export const mindmapNodeCircleTitleRegex = /\(\(([^\n\r)]+|[^)]+)\)\)[\t ]*/;
 
 /**
  * Matches a mindmap node rounded square
  */
-export const mindmapNodeRoundedSquareTitleRegex = /\(([^\n\r)]+)\)[\t ]*/;
+export const mindmapNodeRoundedSquareTitleRegex = /\(([^\n\r)]+|[^)]+)\)[\t ]*/;
 
 /**
  * Matches a mindmap node bang
  */
-export const mindmapNodeBangTitleRegex = /\)\)([^\n\r(]+)\(\([\t ]*/;
+export const mindmapNodeBangTitleRegex = /\)\)([^\n\r(]+|[^(]+)\(\([\t ]*/;
 
 /**
  * Matches a mindmap node cloud
  */
-export const mindmapNodeCloudTitleRegex = /\)([^\n\r(]+)\([\t ]*/;
+export const mindmapNodeCloudTitleRegex = /\)([^\n\r(]+|[^(]+)\([\t ]*/;
 
 /**
  * Matches a mindmap node hexagon
  */
-export const mindmapNodeHexagonTitleRegex = /{{([^\n\r}]+)}}[\t ]*/;
+export const mindmapNodeHexagonTitleRegex = /{{([^\n\r}]+|[^}]+)}}[\t ]*/;
 
 /**
  * Matches a mindmap default node
