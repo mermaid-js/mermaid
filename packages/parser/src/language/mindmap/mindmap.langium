@@ -8,6 +8,7 @@ entry Mindmap:
     (MINDMAP_INDENT NEWLINE MINDMAP_OUTDENT | NEWLINE)* TitleAndAccessibilities root=MindmapRootNode
     | NEWLINE (MINDMAP_INDENT NEWLINE MINDMAP_OUTDENT | NEWLINE)* root=MindmapRootNode
   )
+  (MINDMAP_INDENT NEWLINE MINDMAP_OUTDENT | NEWLINE)*
 ;
 
 MindmapRootNode:
