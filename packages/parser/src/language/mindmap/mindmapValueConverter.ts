@@ -113,7 +113,7 @@ export class MindmapValueConverter extends DefaultValueConverter {
             rule.name === 'MINDMAP_NODE_HEXAGON_TITLE' ||
             rule.name === 'MINDMAP_NODE_DEFAULT'
           ) {
-            result = result = result.replace(/<br>|<br\/>/, '\n');
+            result = result.replace(/<br>|<\/br>/, '\n');
           }
           return result.replaceAll(/[\n\r]{2,}/gm, '\n');
         }
