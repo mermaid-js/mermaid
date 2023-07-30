@@ -143,7 +143,7 @@ that id.
 <*>\s*\~\~[\~]+\s*              return 'LINK';
 
 <ellipseText>[-/\)][\)]         { this.popState(); return '-)'; }
-<ellipseText>[^/)]|-/!\)+       return "TEXT"
+<ellipseText>[^\(\)\[\]\{\}]|-/!\)+       return "TEXT"
 <*>"(-"                         { this.pushState("ellipseText"); return '(-'; }
 
 <text>"])"                { this.popState(); return 'STADIUMEND'; }
@@ -164,7 +164,7 @@ that id.
 
 <trapText>[\\(?=\])][\]]  { this.popState(); return 'TRAPEND'; }
 <trapText>\/(?=\])\]     { this.popState(); return 'INVTRAPEND'; }
-<trapText>\/(?!\])|\\(?!\])|[^\\\]\/]+        return 'TEXT';
+<trapText>\/(?!\])|\\(?!\])|[^\\\[\]\(\)\{\}\/]+        return 'TEXT';
 <*>"[/"                   { this.pushState("trapText"); return 'TRAPSTART'; }
 
 <*>"[\\"                 { this.pushState("trapText"); return 'INVTRAPSTART'; }
@@ -251,7 +251,7 @@ that id.
 
 <text>(\})            { this.popState(); return 'DIAMOND_STOP' }
 <*>"{"                { this.pushState("text"); return 'DIAMOND_START' }
-<text>[^\]\)\}\|\"]+    return "TEXT";
+<text>[^\[\]\(\)\{\}\|\"]+    return "TEXT";
 
 "\""                  return 'QUOTE';
 (\r?\n)+              return 'NEWLINE';
