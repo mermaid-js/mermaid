@@ -2,13 +2,13 @@ grammar Mindmap
 import "../common/common";
 
 entry Mindmap:
-  (MINDMAP_INDENT NEWLINE MINDMAP_OUTDENT | NEWLINE)*
+  NEWLINE*
   "mindmap"
   (
-    (MINDMAP_INDENT NEWLINE MINDMAP_OUTDENT | NEWLINE)* TitleAndAccessibilities root=MindmapRootNode
-    | NEWLINE (MINDMAP_INDENT NEWLINE MINDMAP_OUTDENT | NEWLINE)* root=MindmapRootNode
+    NEWLINE* TitleAndAccessibilities root=MindmapRootNode
+    | NEWLINE+ root=MindmapRootNode
   )
-  (MINDMAP_INDENT NEWLINE MINDMAP_OUTDENT | NEWLINE)*
+  NEWLINE*
 ;
 
 MindmapRootNode:
@@ -72,6 +72,7 @@ fragment MindmapClassAndIcon:
 
 terminal MINDMAP_OUTDENT: /mindmap-outdent/;
 terminal MINDMAP_INDENT: /mindmap-indent/;
+hidden terminal MINDMAP_WHITESPACE: /[\t ]+(\r?\n)+/;
 
 terminal MINDMAP_CLASS: /[\t ]*:::[^\n\r)]+/;
 terminal MINDMAP_ICON: /[\t ]*::icon\([^\n\r)]+\)[\t ]*/;

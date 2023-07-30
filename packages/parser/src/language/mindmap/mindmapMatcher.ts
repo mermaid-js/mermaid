@@ -32,14 +32,14 @@ export const matchMindmapOutdent: CustomPatternMatcherFunc = (text, startOffset,
     const prevIndentLevel: number = indentStack[indentStack.length - 1];
     // shallower indentation
     if (currIndentLevel < prevIndentLevel) {
-      const matchIndentIndex: number = indentStack.reverse().indexOf(currIndentLevel);
+      const lastIndentIndex: number = indentStack.reverse().indexOf(currIndentLevel);
 
       // any outdent must match some previous indentation level.
-      if (matchIndentIndex === -1) {
+      if (lastIndentIndex === -1) {
         throw new Error(`invalid outdent at offset: ${startOffset}`);
       }
 
-      const numberOfDedents: number = indentStack.length - matchIndentIndex - 1;
+      const numberOfDedents: number = indentStack.length - lastIndentIndex - 1;
 
       // This is a little tricky
       // 1. If there is no match (0 level indent) than this custom token
