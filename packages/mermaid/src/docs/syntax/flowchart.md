@@ -387,11 +387,12 @@ flowchart LR
 ### Entity codes to escape characters
 
 It is possible to escape characters using the syntax exemplified here.
-For quotation marks, you can escape them with a backslash.
+For quotation marks, you can escape them with a backslash as well.
 
 ```mermaid-example
     flowchart LR
-        A["A double quote:\""] -->B["A dec char:#9829;"]
+        A["A double quote:#quot;"] --> B["A dec char:#9829;"]
+        B --> C["This is a \"square\" vertex"]
 ```
 
 Numbers given are base 10, so `#` can be encoded as `#35;`. It is also supported to use HTML character names.
