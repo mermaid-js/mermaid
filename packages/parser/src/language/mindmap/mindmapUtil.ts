@@ -1,6 +1,10 @@
 import type { IToken } from 'chevrotain';
 
-export const t = (
+import { indentStack } from './mindmapLexer.js';
+
+let isFirstNodeMatched = false;
+
+export const healperCondition = (
   startOffest: number,
   matchedTokens: IToken[]
 ): {
@@ -21,22 +25,33 @@ export const t = (
       !noNewLinesMatchedYet &&
       startOffest === newLines[newLines.length - 1].startOffset + 1);
 
-  // const nodes: IToken[] = matchedTokens.filter((matchedToken: IToken): boolean => {
-  //   const name: string = matchedToken.tokenType.name;
-  //   if (
-  //     name === 'MINDMAP_NODE_SQUARE_TITLE' ||
-  //     name === 'MINDMAP_NODE_CIRCLE_TITLE' ||
-  //     name === 'MINDMAP_NODE_ROUNDED_SQUARE_TITLE' ||
-  //     name === 'MINDMAP_NODE_BANG_TITLE' ||
-  //     name === 'MINDMAP_NODE_CLOUD_TITLE' ||
-  //     name === 'MINDMAP_NODE_HEXAGON_TITLE' ||
-  //     name === 'MINDMAP_NODE_DEFAULT'
-  //   ) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // });
+  if (!isFirstNodeMatched) {
+    const firstNodeIndex: number = matchedTokens.findIndex((matchedToken: IToken): boolean => {
+      const name: string = matchedToken.tokenType.name;
+      if (
+        name === 'MINDMAP_NODE_SQUARE_TITLE' ||
+        name === 'MINDMAP_NODE_CIRCLE_TITLE' ||
+        name === 'MINDMAP_NODE_ROUNDED_SQUARE_TITLE' ||
+        name === 'MINDMAP_NODE_BANG_TITLE' ||
+        name === 'MINDMAP_NODE_CLOUD_TITLE' ||
+        name === 'MINDMAP_NODE_HEXAGON_TITLE' ||
+        name === 'MINDMAP_NODE_DEFAULT'
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+
+    if (
+      firstNodeIndex !== -1 &&
+      matchedTokens[firstNodeIndex - 1].tokenType.name === 'MINDMAP_INDENT'
+    ) {
+      // update the minimum indent level to be as the root node indent
+      indentStack[0] = matchedTokens[firstNodeIndex - 1].image.length;
+    }
+    isFirstNodeMatched = true;
+  }
 
   return { isFirstLine, isStartOfLine };
 };
@@ -64,3 +79,7 @@ export const isRegExpAhead = (
   }
   return false;
 };
+
+// /(?:accDescr\s*{[^}]*}[\t ]*|)(?:\r?\n)+/;
+// /[^\n\r[]*\[[^\]]+][\t ]*/;
+// /[^\n\r[]*\[[^\]]+][\t ]*/;

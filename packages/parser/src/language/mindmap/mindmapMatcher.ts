@@ -1,6 +1,6 @@
 import { CustomPatternMatcherFunc, IToken, createTokenInstance } from 'chevrotain';
 import { indentStack } from './mindmapLexer.js';
-import { isRegExpAhead, t } from './mindmapUtil.js';
+import { isRegExpAhead, healperCondition } from './mindmapUtil.js';
 import {
   accessibilityDescrRegex,
   accessibilityTitleRegex,
@@ -12,7 +12,7 @@ import { MINDMAP_OUTDENT } from './mindmapTokenBuilder.js';
  *
  */
 export const matchMindmapOutdent: CustomPatternMatcherFunc = (text, startOffset, matchedTokens) => {
-  const { isFirstLine, isStartOfLine } = t(startOffset, matchedTokens);
+  const { isFirstLine, isStartOfLine } = healperCondition(startOffset, matchedTokens);
 
   // indentation can only be matched at the start of a line.
   if (isFirstLine || isStartOfLine) {
@@ -84,7 +84,7 @@ export const matchMindmapOutdent: CustomPatternMatcherFunc = (text, startOffset,
  *
  */
 export const matchMindmapIndent: CustomPatternMatcherFunc = (text, startOffset, matchedTokens) => {
-  const { isFirstLine, isStartOfLine } = t(startOffset, matchedTokens);
+  const { isFirstLine, isStartOfLine } = healperCondition(startOffset, matchedTokens);
   const isNodeAhead = !isRegExpAhead(text, startOffset, lookahead);
 
   // indentation can only be matched at the start of a line.
