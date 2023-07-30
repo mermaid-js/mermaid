@@ -7,13 +7,10 @@ import {
 } from 'langium';
 
 import {
-  matchMindmapAccessibilityDescr,
-  matchMindmapAccessibilityTitle,
   matchMindmapIndent,
   matchMindmapNodeDefault,
   matchMindmapNodeId,
   matchMindmapOutdent,
-  matchMindmapTitle,
 } from './mindmapMatcher.js';
 
 export const MINDMAP_OUTDENT: TokenType = createToken({
@@ -30,24 +27,6 @@ export class MindmapTokenBuilder extends DefaultTokenBuilder {
     );
     tokenTypes.forEach((tokenType: TokenType, index: number): void => {
       switch (tokenType.name) {
-        case 'ACC_DESCR': {
-          tokenType.LINE_BREAKS = true;
-          tokenType.PATTERN = matchMindmapAccessibilityDescr;
-          tokenType.START_CHARS_HINT = ['accDescr'];
-          break;
-        }
-        case 'ACC_TITLE': {
-          tokenType.LINE_BREAKS = false;
-          tokenType.PATTERN = matchMindmapAccessibilityTitle;
-          tokenType.START_CHARS_HINT = ['accTitle'];
-          break;
-        }
-        case 'TITLE': {
-          tokenType.LINE_BREAKS = false;
-          tokenType.PATTERN = matchMindmapTitle;
-          tokenType.START_CHARS_HINT = ['title'];
-          break;
-        }
         case 'MINDMAP_OUTDENT': {
           tokenTypes[index] = MINDMAP_OUTDENT;
           break;

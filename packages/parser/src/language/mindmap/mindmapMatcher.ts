@@ -8,33 +8,6 @@ import {
 } from '../common/commonMatcher.js';
 import { MINDMAP_OUTDENT } from './mindmapTokenBuilder.js';
 
-export const mindmapAccessibilityDescrRegex = new RegExp(
-  '[\t ]+' + accessibilityDescrRegex.source,
-  accessibilityDescrRegex.flags
-);
-export const matchMindmapAccessibilityDescr: CustomPatternMatcherFunc = (text, startOffset) => {
-  mindmapAccessibilityDescrRegex.lastIndex = startOffset;
-  return mindmapAccessibilityDescrRegex.exec(text);
-};
-
-export const mindmapAccessibilityTitleRegex = new RegExp(
-  '[\t ]+' + accessibilityTitleRegex.source,
-  accessibilityTitleRegex.flags
-);
-export const matchMindmapAccessibilityTitle: CustomPatternMatcherFunc = (text, startOffset) => {
-  mindmapAccessibilityTitleRegex.lastIndex = startOffset;
-  return mindmapAccessibilityTitleRegex.exec(text);
-};
-
-export const mindmapTitleRegex = new RegExp(
-  '[\t ]+' + titleRegex.source,
-  accessibilityDescrRegex.flags
-);
-export const matchMindmapTitle: CustomPatternMatcherFunc = (text, startOffset) => {
-  mindmapTitleRegex.lastIndex = startOffset;
-  return mindmapTitleRegex.exec(text);
-};
-
 /**
  *
  */
@@ -162,7 +135,7 @@ export const mindmapNodeIdRegex = /([^\n\r()[{]+)/y;
 export const matchMindmapNodeId: CustomPatternMatcherFunc = (text, startOffset) => {
   const isNodeShapeAhead = isRegExpAhead(text, startOffset, nodeShapeTitles);
 
-  // if it's a shape node, then it has an id
+  // if it's a shape node, then it could has an id
   if (isNodeShapeAhead) {
     mindmapNodeIdRegex.lastIndex = startOffset;
     return mindmapNodeIdRegex.exec(text);
@@ -213,9 +186,9 @@ export const matchMindmapNodeDefault: CustomPatternMatcherFunc = (text, startOff
 const lookahead = {
   class: mindmapClassRegex,
   icon: mindmapIconRegex,
-  title: mindmapTitleRegex,
-  accTItle: mindmapAccessibilityTitleRegex,
-  accDescr: mindmapAccessibilityDescrRegex,
+  title: titleRegex,
+  accTItle: accessibilityTitleRegex,
+  accDescr: accessibilityDescrRegex,
 };
 
 const nodeShapeTitles: Record<string, RegExp> = {

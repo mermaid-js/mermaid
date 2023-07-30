@@ -1,8 +1,6 @@
 import { DefaultValueConverter, type CstNode, type GrammarAST, type ValueType } from 'langium';
 
 import {
-  mindmapAccessibilityDescrRegex,
-  mindmapAccessibilityTitleRegex,
   mindmapClassRegex,
   mindmapIconRegex,
   mindmapNodeBangTitleRegex,
@@ -13,8 +11,12 @@ import {
   mindmapNodeIdRegex,
   mindmapNodeRoundedSquareTitleRegex,
   mindmapNodeSquareTitleRegex,
-  mindmapTitleRegex,
 } from './mindmapMatcher.js';
+import {
+  accessibilityDescrRegex,
+  accessibilityTitleRegex,
+  titleRegex,
+} from '../common/commonMatcher.js';
 
 export class MindmapValueConverter extends DefaultValueConverter {
   protected override runConverter(
@@ -47,15 +49,15 @@ export class MindmapValueConverter extends DefaultValueConverter {
     let regex: RegExp | undefined;
     switch (rule.name) {
       case 'ACC_DESCR': {
-        regex = new RegExp(mindmapAccessibilityDescrRegex.source);
+        regex = new RegExp(accessibilityDescrRegex.source);
         break;
       }
       case 'ACC_TITLE': {
-        regex = new RegExp(mindmapAccessibilityTitleRegex.source);
+        regex = new RegExp(accessibilityTitleRegex.source);
         break;
       }
       case 'TITLE': {
-        regex = new RegExp(mindmapTitleRegex.source);
+        regex = new RegExp(titleRegex.source);
         break;
       }
       case 'MINDMAP_CLASS': {
