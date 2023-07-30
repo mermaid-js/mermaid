@@ -154,7 +154,7 @@ that id.
 
 "[|"                      { return 'VERTEX_WITH_PROPS_START'; }
 
-\>/!\s                    { this.pushState("text"); return 'TAGEND'; }
+\>                    { this.pushState("text"); return 'TAGEND'; }
 
 <text>")]"                { this.popState(); return 'CYLINDEREND'; }
 <*>"[("                   { this.pushState("text") ;return 'CYLINDERSTART'; }

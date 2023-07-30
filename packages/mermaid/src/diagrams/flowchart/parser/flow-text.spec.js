@@ -369,6 +369,13 @@ describe('[Text] when parsing', () => {
       expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
     });
 
+    it('should handle edge case for odd vertex with node id ending with minus', function () {
+      const res = flow.parser.parse('graph TD;A_node-->odd->Vertex Text];');
+      const vert = flow.parser.yy.getVertices();
+
+      expect(vert['odd-'].type).toBe('odd');
+      expect(vert['odd-'].text).toBe('Vertex Text');
+    });
     it('should allow forward slashes in lean_right vertices', function () {
       const rest = flow.parser.parse(`graph TD;A_node-->B[/This node has a / as text/];`);
 
