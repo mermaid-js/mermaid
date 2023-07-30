@@ -328,81 +328,34 @@ describe('[Text] when parsing', () => {
       'kitty',
     ];
 
-    it.each(keywords)('should handle %s keyword in square vertex', function (keyword) {
-      const rest = flow.parser.parse(
-        `graph TD;A_${keyword}_node-->B[This node has a ${keyword} as text];`
-      );
+    const shapes = [
+      { start: '[', end: ']', name: 'square' },
+      { start: '(', end: ')', name: 'round' },
+      { start: '{', end: '}', name: 'diamond' },
+      { start: '(-', end: '-)', name: 'ellipse' },
+      { start: '([', end: '])', name: 'stadium' },
+      { start: '>', end: ']', name: 'odd' },
+      { start: '[(', end: ')]', name: 'cylinder' },
+      { start: '(((', end: ')))', name: 'doublecircle' },
+      { start: '[/', end: '\\]', name: 'trapezoid' },
+      { start: '[\\', end: '/]', name: 'inv_trapezoid' },
+      { start: '[/', end: '/]', name: 'lean_right' },
+      { start: '[\\', end: '\\]', name: 'lean_left' },
+      { start: '[[', end: ']]', name: 'subroutine' },
+      { start: '{{', end: '}}', name: 'hexagon' },
+    ];
 
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
-      expect(vert['B'].type).toBe('square');
-      expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
-    });
+    shapes.forEach((shape) => {
+      it.each(keywords)(`should handle %s keyword in ${shape.name} vertex`, function (keyword) {
+        const rest = flow.parser.parse(
+          `graph TD;A_${keyword}_node-->B${shape.start}This node has a ${keyword} as text${shape.end};`
+        );
 
-    it.each(keywords)('should handle %s keyword in round vertex', function (keyword) {
-      const rest = flow.parser.parse(
-        `graph TD;A_${keyword}_node-->B(This node has a ${keyword} as text);`
-      );
-
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
-      expect(vert['B'].type).toBe('round');
-      expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
-    });
-
-    it.each(keywords)('should handle %s keyword in diamond vertex', function (keyword) {
-      const rest = flow.parser.parse(
-        `graph TD;A_${keyword}_node-->B{This node has a ${keyword} as text};`
-      );
-
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
-      expect(vert['B'].type).toBe('diamond');
-      expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
-    });
-
-    it.each(keywords)('should handle %s keyword in doublecircle vertex', function (keyword) {
-      const rest = flow.parser.parse(
-        `graph TD;A_${keyword}-->-${keyword}-B(((This node has a ${keyword} as text)));`
-      );
-
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
-      expect(vert[`-${keyword}-B`].type).toBe('doublecircle');
-      expect(vert[`-${keyword}-B`].text).toBe(`This node has a ${keyword} as text`);
-    });
-
-    it.each(keywords)('should handle %s keyword in ellipse vertex', function (keyword) {
-      const rest = flow.parser.parse(
-        `graph TD;A_${keyword}-->B(-This node has a ${keyword} as text-);`
-      );
-
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
-      expect(vert['B'].type).toBe('ellipse');
-      expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
-    });
-
-    it.each(keywords)('should handle %s keyword in stadium vertex', function (keyword) {
-      const rest = flow.parser.parse(
-        `graph TD;A_${keyword}_node-->B([This node has a ${keyword} as text]);`
-      );
-
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
-      expect(vert['B'].type).toBe('stadium');
-      expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
-    });
-
-    it.each(keywords)('should handle %s keyword in subroutine vertex', function (keyword) {
-      const rest = flow.parser.parse(
-        `graph TD;A_${keyword}_node-->B[[This node has a ${keyword} as text]];`
-      );
-
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
-      expect(vert['B'].type).toBe('subroutine');
-      expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+        expect(vert['B'].type).toBe(`${shape.name}`);
+        expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
+      });
     });
 
     it.each(keywords)('should handle %s keyword in rect vertex', function (keyword) {
@@ -413,72 +366,6 @@ describe('[Text] when parsing', () => {
       const vert = flow.parser.yy.getVertices();
       const edges = flow.parser.yy.getEdges();
       expect(vert['B'].type).toBe('rect');
-      expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
-    });
-
-    it.each(keywords)('should handle %s keyword in cylinder vertex', function (keyword) {
-      const rest = flow.parser.parse(
-        `graph TD;A_${keyword}_node-->B[(This node has a ${keyword} as text)];`
-      );
-
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
-      expect(vert['B'].type).toBe('cylinder');
-      expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
-    });
-
-    it.each(keywords)('should handle %s keyword in hexagon vertex', function (keyword) {
-      const rest = flow.parser.parse(
-        `graph TD;A_${keyword}_node-->B{{This node has a ${keyword} as text}};`
-      );
-
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
-      expect(vert['B'].type).toBe('hexagon');
-      expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
-    });
-
-    it.each(keywords)('should handle %s keyword in odd vertex', function (keyword) {
-      const rest = flow.parser.parse(
-        `graph TD;A_${keyword}_node-->B>This node has a ${keyword} as text];`
-      );
-
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
-      expect(vert['B'].type).toBe('odd');
-      expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
-    });
-
-    it.each(keywords)('should handle %s keyword in trapezoid vertex', function (keyword) {
-      const rest = flow.parser.parse(
-        `graph TD;A_${keyword}_node-->B[/This node has a ${keyword} as text\\];`
-      );
-
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
-      expect(vert['B'].type).toBe('trapezoid');
-      expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
-    });
-
-    it.each(keywords)('should handle %s keyword in inv_trapezoid vertex', function (keyword) {
-      const rest = flow.parser.parse(
-        `graph TD;A_${keyword}_node-->B[\\This node has a ${keyword} as text/];`
-      );
-
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
-      expect(vert['B'].type).toBe('inv_trapezoid');
-      expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
-    });
-
-    it.each(keywords)('should handle %s keyword in lean_right vertex', function (keyword) {
-      const rest = flow.parser.parse(
-        `graph TD;A_${keyword}_node-->B[/This node has a ${keyword} as text/];`
-      );
-
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
-      expect(vert['B'].type).toBe('lean_right');
       expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
     });
 
@@ -498,17 +385,6 @@ describe('[Text] when parsing', () => {
       const edges = flow.parser.yy.getEdges();
       expect(vert['B'].type).toBe('lean_left');
       expect(vert['B'].text).toBe(`This node has a \\ as text`);
-    });
-
-    it.each(keywords)('should handle %s keyword in lean_left vertex', function (keyword) {
-      const rest = flow.parser.parse(
-        `graph TD;A_${keyword}_node-->B[\\This node has a ${keyword} as text\\];`
-      );
-
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
-      expect(vert['B'].type).toBe('lean_left');
-      expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
     });
 
     it('should handle åäö and minus', function () {
@@ -693,7 +569,7 @@ describe('[Text] when parsing', () => {
 
   it('should throw error at nested set of brackets', function () {
     const str = 'graph TD; A[This is a () in text];';
-    expect(() => flow.parser.parse(str)).toThrowError("got 'PE'");
+    expect(() => flow.parser.parse(str)).toThrowError("got 'PS'");
   });
 
   it('should throw error for strings and text at the same time', function () {
@@ -720,5 +596,10 @@ describe('[Text] when parsing', () => {
     flow.parser.parse('graph TD; A["This is a \\"()\\" in text"];'); //eslint-disable-line no-useless-escape
     const vert = flow.parser.yy.getVertices();
     expect(vert['A'].text).toBe('This is a "()" in text');
+  });
+
+  it('should throw error', function () {
+    const str = `graph TD; node[hello ) world] --> works`;
+    expect(() => flow.parser.parse(str)).toThrowError("got 'PE'");
   });
 });
