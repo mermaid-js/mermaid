@@ -895,8 +895,8 @@ graph TD
     imgSnapshotTest(
       `
       graph TD
-        classDef default fill:#000,stroke:#000,stroke-width:4px,color:#fff 
-        default --> default2
+        classDef default fill:#a34,stroke:#000,stroke-width:4px,color:#fff 
+        hello --> default
       `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
@@ -906,5 +906,17 @@ graph TD
       graph TD
         a_node("This has an escaped \\" in it") -- "edge string can escape too \\"" --> b_node
     `);
+  });
+  it('68: should be able to style default node independently', () => {
+    imgSnapshotTest(
+      `
+    flowchart TD
+      classDef default fill:#a34
+      hello --> default
+
+      style default stroke:#000,stroke-width:4px
+    `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
   });
 });
