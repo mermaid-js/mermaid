@@ -1,12 +1,11 @@
-import { CustomPatternMatcherFunc, IToken, createTokenInstance } from 'chevrotain';
+import type { CustomPatternMatcherFunc, IToken } from 'chevrotain';
 import { indentStack } from './mindmapLexer.js';
-import { isRegExpAhead, healperCondition } from './mindmapUtil.js';
+import { isRegExpAhead, healperCondition, createOutdentInstance } from './mindmapUtil.js';
 import {
   accessibilityDescrRegex,
   accessibilityTitleRegex,
   titleRegex,
 } from '../common/commonMatcher.js';
-import { MINDMAP_OUTDENT } from './mindmapTokenBuilder.js';
 
 /**
  *
@@ -51,18 +50,7 @@ export const matchMindmapOutdent: CustomPatternMatcherFunc = (text, startOffset,
       const lastMatchedToken: IToken = matchedTokens[matchedTokens.length - 1];
       for (let i = iStart; i < numberOfDedents; i++) {
         indentStack.pop();
-        matchedTokens.push(
-          createTokenInstance(
-            MINDMAP_OUTDENT,
-            '',
-            lastMatchedToken.startOffset,
-            lastMatchedToken.endOffset ?? NaN,
-            lastMatchedToken.startLine ?? NaN,
-            lastMatchedToken.endLine ?? NaN,
-            lastMatchedToken.startColumn ?? NaN,
-            lastMatchedToken.endColumn ?? NaN
-          )
-        );
+        matchedTokens.push(createOutdentInstance(lastMatchedToken));
       }
 
       // even though we are adding fewer outdents directly we still need to update the indent stack fully.

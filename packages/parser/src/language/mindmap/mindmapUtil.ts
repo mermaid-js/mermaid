@@ -1,6 +1,7 @@
-import type { IToken } from 'chevrotain';
+import { createTokenInstance, type IToken } from 'chevrotain';
 
 import { indentStack } from './mindmapLexer.js';
+import { MINDMAP_OUTDENT } from './mindmapTokenBuilder.js';
 
 let isFirstNodeMatched = false;
 
@@ -80,6 +81,15 @@ export const isRegExpAhead = (
   return false;
 };
 
-// /(?:accDescr\s*{[^}]*}[\t ]*|)(?:\r?\n)+/;
-// /[^\n\r[]*\[[^\]]+][\t ]*/;
-// /[^\n\r[]*\[[^\]]+][\t ]*/;
+export const createOutdentInstance = (lastToken: IToken): IToken => {
+  return createTokenInstance(
+    MINDMAP_OUTDENT,
+    '',
+    lastToken.startOffset,
+    lastToken.endOffset ?? NaN,
+    lastToken.startLine ?? NaN,
+    lastToken.endLine ?? NaN,
+    lastToken.startColumn ?? NaN,
+    lastToken.endColumn ?? NaN
+  );
+};
