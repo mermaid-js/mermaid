@@ -7,11 +7,11 @@ describe('mindmap', () => {
 
   it('should handle regular mindmap', () => {
     const context = `mindmap
-id1[awesome title]
+id1[awesome 1]
   :::urgent large
 ::icon(fa fa-book)
 
-  id2[awesome title 2]`;
+  id2[awesome 2]`;
     const result = parse(context);
     expect(result.parserErrors).toHaveLength(0);
     expect(result.lexerErrors).toHaveLength(0);
@@ -20,12 +20,150 @@ id1[awesome title]
     expect(value.$type).toBe(Mindmap);
 
     expect(value.root.id).toBe('id1');
-    expect(value.root.title).toBe('awesome title');
+    expect(value.root.title).toBe('awesome 1');
     expect(value.root.class).toBe('urgent large');
     expect(value.root.icon).toBe('fa fa-book');
 
     expect(value.root.children[0].id).toBe('id2');
-    expect(value.root.children[0].title).toBe('awesome title 2');
+    expect(value.root.children[0].title).toBe('awesome 2');
+  });
+
+  it.todo('should handle a hierachial mindmap definition', () => {
+    const context = `mindmap
+root
+  child1
+  child2`;
+    const result = parse(context);
+    expect(result.parserErrors).toHaveLength(0);
+    expect(result.lexerErrors).toHaveLength(0);
+
+    const value = result.value;
+    expect(value.$type).toBe(Mindmap);
+    expect(value.root.title).toBe('root');
+    expect(value.root.children[0].title).toBe('child1');
+    expect(value.root.children[1].title).toBe('child2');
+  });
+
+  it.todo('shoudl handle newlines above the mindmap declarations', () => {
+    const context = `
+
+mindmap
+root
+  A
+
+
+  B`;
+    const result = parse(context);
+    expect(result.parserErrors).toHaveLength(0);
+    expect(result.lexerErrors).toHaveLength(0);
+
+    const value = result.value;
+    expect(value.$type).toBe(Mindmap);
+    expect(value.root.title).toBe('root');
+
+    expect(value.root.children).toHaveLength(2);
+    expect(value.root.children[0].title).toBe('A');
+    expect(value.root.children[1].title).toBe('B');
+  });
+
+  it('shoudl handle newlines above the mindmap declarations', () => {
+    const context = `
+
+mindmap
+  root
+    A`;
+    const result = parse(context);
+    expect(result.parserErrors).toHaveLength(0);
+    expect(result.lexerErrors).toHaveLength(0);
+
+    const value = result.value;
+    expect(value.$type).toBe(Mindmap);
+    expect(value.root.title).toBe('root');
+
+    expect(value.root.children[0].title).toBe('A');
+  });
+
+  describe('hiearchy', () => {
+    it('should handle simple root definition', () => {
+      const context = `mindmap
+      root`;
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Mindmap);
+      expect(value.root.title).toBe('root');
+    });
+
+    it.todo('should handle hierachial mindmap definition', () => {
+      const context = `mindmap
+      root
+        child1
+        child2`;
+
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Mindmap);
+      expect(value.root.title).toBe('root');
+      expect(value.root.children[0].title).toBe('child1');
+      expect(value.root.children[1].title).toBe('child2');
+    });
+
+    it('should handle simple root with a shape and without an id', () => {
+      const context = `mindmap
+      (root)`;
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Mindmap);
+      expect(value.root.title).toBe('root');
+    });
+
+    it.todo('should handle deeper hierachial mindmap definition', () => {
+      const context = `mindmap
+      root
+        child1
+          leaf1
+        child2`;
+
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Mindmap);
+      expect(value.root.title).toBe('root');
+      expect(value.root.children[0].title).toBe('child1');
+      expect(value.root.children[0].children[0].title).toBe('leaf1');
+      expect(value.root.children[1].title).toBe('child2');
+    });
+
+    it('should not allow multiple roots', () => {
+      const context = `mindmap
+      root
+      fakeRoot`;
+
+      const result = parse(context);
+      expect(result.parserErrors).not.toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+    });
+
+    it.todo('should not allow actual root in wrong place', () => {
+      const context = `mindmap
+          root
+        fakeRoot
+      realRootWrongPlace`;
+
+      const result = parse(context);
+      expect(result.parserErrors).not.toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+    });
   });
 
   describe('title and accessibilities', () => {
