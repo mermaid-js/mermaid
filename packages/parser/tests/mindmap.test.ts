@@ -28,6 +28,84 @@ id1[awesome title]
     expect(value.root.children[0].title).toBe('awesome title 2');
   });
 
+  describe('title and accessibilities', () => {
+    it('should handle title definition', () => {
+      const context = `mindmap title awesome title
+      root`;
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Mindmap);
+
+      expect(value.title).toBe('awesome title');
+      expect(value.root.title).toBe('root');
+    });
+
+    it('should handle accTitle definition', () => {
+      const context = `mindmap accTitle: awesome accTitle
+      root`;
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Mindmap);
+
+      expect(value.accTitle).toBe('awesome accTitle');
+      expect(value.root.title).toBe('root');
+    });
+
+    it('should handle single line accDescr definition', () => {
+      const context = `mindmap accDescr: awesome accDescr
+      root`;
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Mindmap);
+
+      expect(value.accDescr).toBe('awesome accDescr');
+      expect(value.root.title).toBe('root');
+    });
+
+    it('should handle multi line accDescr definition', () => {
+      const context = `mindmap accDescr {
+        awesome accDescr
+      }
+      root`;
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Mindmap);
+
+      expect(value.accDescr).toBe('awesome accDescr');
+      expect(value.root.title).toBe('root');
+    });
+
+    it('should handle title and accessibilities definition', () => {
+      const context = `mindmap title awesome title
+      accTitle: awesome accTitle
+      accDescr: awesome accDescr
+      root`;
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Mindmap);
+
+      expect(value.title).toBe('awesome title');
+      expect(value.accTitle).toBe('awesome accTitle');
+      expect(value.accDescr).toBe('awesome accDescr');
+      expect(value.root.title).toBe('root');
+    });
+  });
+
   describe('nodes', () => {
     it('should handle rectangle node definition', () => {
       const context = `mindmap

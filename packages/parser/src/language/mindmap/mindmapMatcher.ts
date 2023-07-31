@@ -167,8 +167,14 @@ export const mindmapNodeHexagonTitleRegex = /{{([^\n\r}]+|[^}]+)}}[\t ]*/;
  */
 export const mindmapNodeDefault = /([^\n\r]+)(?=%%)|([^\n\r]+)/y;
 export const matchMindmapNodeDefault: CustomPatternMatcherFunc = (text, startOffset) => {
-  mindmapNodeDefault.lastIndex = startOffset;
-  return mindmapNodeDefault.exec(text);
+  const isNodeAhead = !isRegExpAhead(text, startOffset, nonNodeRegexps);
+
+  if (isNodeAhead) {
+    mindmapNodeDefault.lastIndex = startOffset;
+    return mindmapNodeDefault.exec(text);
+  } else {
+    return null;
+  }
 };
 
 const nonNodeRegexps: Record<string, RegExp> = {
