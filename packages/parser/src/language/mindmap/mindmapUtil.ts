@@ -71,9 +71,9 @@ export const isRegExpAhead = (
   startOffset: number,
   lookahead: Record<string, RegExp>
 ): boolean => {
+  const newText: string = text.slice(startOffset);
   for (const regexp of Object.values(lookahead)) {
     regexp.lastIndex = startOffset;
-    const newText: string = text.slice(startOffset);
     if (regexp.test(newText)) {
       return true;
     }
