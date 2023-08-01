@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { createTimelineTestServices } from './test-utils.js';
+import { Timeline } from '../src/language/index.js';
 
 describe('timeline', () => {
   const { parse } = createTimelineTestServices();
@@ -87,5 +88,61 @@ describe('timeline', () => {
     expect(result.value.sections[0].periods[1].events[1]).toBe('event3');
     expect(result.value.sections[0].periods[1].events[2]).toBe('event4');
     expect(result.value.sections[0].periods[1].events[3]).toBe('event5');
+  });
+
+  describe('title and accessibilities', () => {
+    it('should handle title definition', () => {
+      const context = `timeline title awesome title`;
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Timeline);
+    });
+
+    it('should handle accTitle definition', () => {
+      const context = `timeline accTitle: awesome accTitle`;
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Timeline);
+    });
+
+    it('should handle single line accDescr definition', () => {
+      const context = `timeline accDescr: awesome accDescr`;
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Timeline);
+    });
+
+    it('should handle multi line accDescr definition', () => {
+      const context = `timeline accDescr {
+        awesome accDescr
+      }`;
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Timeline);
+    });
+
+    it('should handle title and accessibilities definition', () => {
+      const context = `timeline title awesome title
+      accTitle: awesome accTitle
+      accDescr: awesome accDescr`;
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Timeline);
+    });
   });
 });
