@@ -1,6 +1,7 @@
-import { createToken, type TokenType } from 'chevrotain';
+import { createToken, type TokenVocabulary, type TokenType } from 'chevrotain';
 import {
   DefaultTokenBuilder,
+  type Grammar,
   type GrammarAST,
   type Stream,
   type TokenBuilderOptions,
@@ -12,6 +13,7 @@ import {
   matchMindmapNodeId,
   matchMindmapOutdent,
 } from './mindmapMatcher.js';
+import { swapByIndex } from './mindmapUtil.js';
 
 export const MINDMAP_OUTDENT: TokenType = createToken({
   line_breaks: false,
@@ -20,6 +22,20 @@ export const MINDMAP_OUTDENT: TokenType = createToken({
 });
 
 export class MindmapTokenBuilder extends DefaultTokenBuilder {
+  public override buildTokens(grammar: Grammar, options?: TokenBuilderOptions): TokenVocabulary {
+    const tokenTypes: TokenType[] = super.buildTokens(grammar, options) as TokenType[];
+
+    // langium sorts the array from optimization, so we manually order tokens
+    const tokenTypesNames: string[] = tokenTypes.map(
+      (tokenType: TokenType): string => tokenType.name
+    );
+    const mindmapWhitespaceIndex = tokenTypesNames.indexOf('MINDMAP_WHITESPACE');
+    const mindmapIndentIndex = tokenTypesNames.indexOf('MINDMAP_INDENT');
+    swapByIndex(tokenTypes, mindmapWhitespaceIndex, mindmapIndentIndex);
+
+    return tokenTypes;
+  }
+
   protected override buildTerminalTokens(rules: Stream<GrammarAST.AbstractRule>): TokenType[] {
     const tokenTypes: TokenType[] = super.buildTerminalTokens(rules);
     tokenTypes.forEach((tokenType: TokenType, index: number): void => {

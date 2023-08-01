@@ -1,4 +1,4 @@
-import { createTokenInstance, type IToken } from 'chevrotain';
+import { createTokenInstance, TokenType, type IToken } from 'chevrotain';
 
 import { indentStack } from './mindmapLexer.js';
 import { MINDMAP_OUTDENT } from './mindmapTokenBuilder.js';
@@ -92,4 +92,10 @@ export const createOutdentInstance = (lastToken: IToken): IToken => {
     lastToken.startColumn ?? NaN,
     lastToken.endColumn ?? NaN
   );
+};
+
+export const swapByIndex = (array: TokenType[], fromIndex: number, toIndex: number) => {
+  const element = array[fromIndex];
+  array.splice(fromIndex, 1);
+  array.splice(toIndex, 0, element);
 };
