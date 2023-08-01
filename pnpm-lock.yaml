@@ -192,8 +192,8 @@ importers:
   packages/mermaid:
     dependencies:
       '@braintree/sanitize-url':
-        specifier: ^6.0.2
-        version: 6.0.2
+        specifier: ^6.0.1
+        version: 6.0.1
       '@types/d3-scale':
         specifier: ^4.0.3
         version: 4.0.3
@@ -376,8 +376,8 @@ importers:
   packages/mermaid-example-diagram:
     dependencies:
       '@braintree/sanitize-url':
-        specifier: ^6.0.0
-        version: 6.0.0
+        specifier: ^6.0.1
+        version: 6.0.1
       cytoscape:
         specifier: ^3.23.0
         version: 3.23.0
@@ -2271,12 +2271,8 @@ packages:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
     dev: true
 
-  /@braintree/sanitize-url@6.0.0:
-    resolution: {integrity: sha512-mgmE7XBYY/21erpzhexk4Cj1cyTQ9LzvnTxtzM17BJ7ERMNE6W72mQRo0I1Ud8eFJ+RVVIcBNhLFZ3GX4XFz5w==}
-    dev: false
-
-  /@braintree/sanitize-url@6.0.2:
-    resolution: {integrity: sha512-Tbsj02wXCbqGmzdnXNk0SOF19ChhRU70BsroIi4Pm6Ehp56in6vch94mfbdQ17DozxkL3BAVjbZ4Qc1a0HFRAg==}
+  /@braintree/sanitize-url@6.0.1:
+    resolution: {integrity: sha512-zr9Qs9KFQiEvMWdZesjcmRJlUck5NR+eKGS1uyKk+oYTWwlYrsoPEi6VmG6/TzBD1hKCGEimrhTgGS6hvn/xIQ==}
     dev: false
 
   /@colors/colors@1.5.0:
