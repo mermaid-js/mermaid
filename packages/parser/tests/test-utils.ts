@@ -9,6 +9,8 @@ import {
   MindmapServices,
   Pie,
   PieServices,
+  Sankey,
+  SankeyServices,
   Timeline,
   TimelineServices,
   createMermaidServices,
@@ -51,6 +53,16 @@ const pieParser: LangiumParser = pieServices.parser.LangiumParser;
 export function createPieTestServices() {
   const parse = (input: string) => {
     return pieParser.parse<Pie>(input);
+  };
+
+  return { services, parse };
+}
+
+const sankeyServices: SankeyServices = services.Sankey;
+const sankeyParser: LangiumParser = sankeyServices.parser.LangiumParser;
+export function createSankeyTestServices() {
+  const parse = (input: string) => {
+    return sankeyParser.parse<Sankey>(input);
   };
 
   return { services, parse };

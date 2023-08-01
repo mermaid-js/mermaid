@@ -10,6 +10,7 @@ import { MermaidServiceRegistry } from './mermaidServiceRegistry.js';
 import { createInfoServices, createPieServices, createTimelineServices } from '../index.js';
 import { createJourneyServices } from '../journey/journeyModule.js';
 import { createMindmapServices } from '../mindmap/mindmapModule.js';
+import { createSankeyServices } from '../sankey/sankeyModule.js';
 
 /**
  * Create the full set of services required by Langium.
@@ -42,7 +43,9 @@ export function createMermaidServices(context: DefaultSharedModuleContext) {
   shared.ServiceRegistry.register(Mindmap);
   const { Pie } = createPieServices(context);
   shared.ServiceRegistry.register(Pie);
+  const { Sankey } = createSankeyServices(context);
+  shared.ServiceRegistry.register(Sankey);
   const { Timeline } = createTimelineServices(context);
   shared.ServiceRegistry.register(Timeline);
-  return { Info, Journey, Mindmap, Pie, Timeline, shared };
+  return { Info, Journey, Mindmap, Pie, Sankey, Timeline, shared };
 }
