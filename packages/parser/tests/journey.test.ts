@@ -96,4 +96,60 @@ describe('journey', () => {
     expect(sectionTwoTasks[2].score).toBe(5);
     expect(sectionTwoTasks[2].title).toBe('R task');
   });
+
+  describe('title and accessibilities', () => {
+    it('should handle title definition', () => {
+      const context = `journey title awesome title`;
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Journey);
+    });
+
+    it('should handle accTitle definition', () => {
+      const context = `journey accTitle: awesome accTitle`;
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Journey);
+    });
+
+    it('should handle single line accDescr definition', () => {
+      const context = `journey accDescr: awesome accDescr`;
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Journey);
+    });
+
+    it('should handle multi line accDescr definition', () => {
+      const context = `journey accDescr {
+        awesome accDescr
+      }`;
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Journey);
+    });
+
+    it('should handle title and accessibilities definition', () => {
+      const context = `journey title awesome title
+      accTitle: awesome accTitle
+      accDescr: awesome accDescr`;
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.$type).toBe(Journey);
+    });
+  });
 });
