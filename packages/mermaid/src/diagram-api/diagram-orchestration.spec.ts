@@ -27,7 +27,7 @@ describe('diagram-orchestration', () => {
       { text: 'journey', expected: 'journey' },
       { text: 'gantt', expected: 'gantt' },
       { text: 'pie', expected: 'pie' },
-      { text: 'tt', expected: 'tt' },
+      { text: 'teamTopology', expected: 'teamTopology' },
       { text: 'requirementDiagram', expected: 'requirement' },
       { text: 'info', expected: 'info' },
       { text: 'sequenceDiagram', expected: 'sequence' },

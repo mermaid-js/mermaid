@@ -1,13 +1,13 @@
 import teamTopologyDb from '../teamTopologyDb.js';
-import tt from './teamTopology.jison';
+import teamTopology from './teamTopology.jison';
 
 describe('when parsing team topology', function () {
   beforeEach(function () {
-    tt.parser.yy = teamTopologyDb;
-    tt.parser.yy.clear();
+    teamTopology.parser.yy = teamTopologyDb;
+    teamTopology.parser.yy.clear();
   });
   it('should handle topology with two teams and one interaction', function () {
-    const res = tt.parser.parse(`f1#Stream
+    const res = teamTopology.parser.parse(`f1#Stream
 f2#Stream
 f1--XaaS->f2`);
 

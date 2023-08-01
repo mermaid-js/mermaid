@@ -6,7 +6,7 @@ import git from '../diagrams/git/gitGraphDetector.js';
 import gantt from '../diagrams/gantt/ganttDetector.js';
 import { info } from '../diagrams/info/infoDetector.js';
 import pie from '../diagrams/pie/pieDetector.js';
-import tt from '../diagrams/team-topology/teamTopologyDetector.ts';
+import teamTopology from '../diagrams/team-topology/teamTopologyDetector.ts';
 import quadrantChart from '../diagrams/quadrant-chart/quadrantDetector.js';
 import requirement from '../diagrams/requirement/requirementDetector.js';
 import sequence from '../diagrams/sequence/sequenceDetector.js';
@@ -72,7 +72,7 @@ export const addDiagrams = () => {
     pie,
     requirement,
     sequence,
-    tt,
+    teamTopology,
     flowchartElk,
     flowchartV2,
     flowchart,

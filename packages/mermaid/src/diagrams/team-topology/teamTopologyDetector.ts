@@ -4,10 +4,10 @@ import type {
   ExternalDiagramDefinition,
 } from '../../diagram-api/types.js';
 
-const id = 'tt';
+const id = 'teamTopology';
 
 const detector: DiagramDetector = (txt) => {
-  return /^\s*tt/.test(txt);
+  return /^\s*teamTopology/.test(txt);
 };
 
 const loader: DiagramLoader = async () => {
