@@ -16,7 +16,24 @@ hidden terminal DIRECTIVE: /[\t ]*%%{[\s\S]*?}%%\s*/;
 hidden terminal SINGLE_LINE_COMMENT: /[\t ]*%%[^\n\r]*\n*/;
 
 // actual grammar
-entry Mindmap:
+
+interface Mindmap {
+  accDescr?: string;
+  accTitle?: string;
+  title?: string;
+  root: Node;
+}
+
+interface Node {
+  id?: string;
+  title: string;
+  type?: 'default' | 'square' | 'rounded-square' | 'circle' | 'bang' | 'cloud' | 'hexagon';
+  children: Node[]
+  class?: string;
+  icon?: string;
+}
+
+entry Mindmap returns Mindmap:
   NEWLINE*
   "mindmap"
   (
@@ -26,7 +43,7 @@ entry Mindmap:
   NEWLINE*
 ;
 
-MindmapRootNode:
+MindmapRootNode returns Node:
   (
     MINDMAP_INDENT
     id=MINDMAP_NODE_ID?
@@ -59,7 +76,7 @@ MindmapRootNode:
   )
 ;
 
-MindmapNode:
+MindmapNode returns Node:
   MINDMAP_INDENT
   id=MINDMAP_NODE_ID?
   title=(
