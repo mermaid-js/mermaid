@@ -57,7 +57,7 @@
     ]
   },
   "dependencies": {
-    "@braintree/sanitize-url": "^6.0.2",
+    "@braintree/sanitize-url": "^6.0.1",
     "@types/d3-scale": "^4.0.3",
     "@types/d3-scale-chromatic": "^3.0.0",
     "cytoscape": "^3.23.0",
