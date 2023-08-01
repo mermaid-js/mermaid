@@ -17,6 +17,8 @@ describe('sankey', () => {
     expect(value.links[0].source).toBe('sourceNode');
     expect(value.links[0].target).toBe('targetNode');
     expect(value.links[0].value).toBe(10);
+
+    expect(value.nodes).toStrictEqual(['sourceNode', 'targetNode']);
   });
 
   it('should handle sankey with double quotes', () => {
@@ -31,7 +33,9 @@ describe('sankey', () => {
     expect(value.$type).toBe(Sankey);
     expect(value.links[0].source).toBe('source node, with comma');
     expect(value.links[0].target).toBe('target node, with comma');
-    expect(value.links[0].value).toBe(10.0);
+    expect(value.links[0].value).toBe(10);
+
+    expect(value.nodes).toStrictEqual(['source node, with comma', 'target node, with comma']);
   });
 
   it('should handle sankey with more than one link', () => {
@@ -51,6 +55,34 @@ describe('sankey', () => {
     expect(value.links[1].source).toBe('source node 2');
     expect(value.links[1].target).toBe('target node 2');
     expect(value.links[1].value).toBe(50);
+
+    expect(value.nodes).toStrictEqual([
+      'source node 1',
+      'target node 1',
+      'source node 2',
+      'target node 2',
+    ]);
+  });
+
+  it('should handle sankey with duplicate nodes', () => {
+    const context = `sankey-beta
+    source, target, 10
+    target, another target, 20`;
+    const result = parse(context);
+    expect(result.parserErrors).toHaveLength(0);
+    expect(result.lexerErrors).toHaveLength(0);
+
+    const value = result.value;
+    expect(value.$type).toBe(Sankey);
+    expect(value.links[0].source).toBe('source');
+    expect(value.links[0].target).toBe('target');
+    expect(value.links[0].value).toBe(10);
+
+    expect(value.links[1].source).toBe('target');
+    expect(value.links[1].target).toBe('another target');
+    expect(value.links[1].value).toBe(20);
+
+    expect(value.nodes).toStrictEqual(['source', 'target', 'another target']);
   });
 
   describe('title and accessibilities', () => {

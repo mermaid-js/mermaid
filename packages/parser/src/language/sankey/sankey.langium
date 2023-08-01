@@ -15,8 +15,16 @@ hidden terminal YAML: /---[\t ]*\r?\n[\s\S]*?---[\t ]*(?!.)/;
 hidden terminal DIRECTIVE: /[\t ]*%%{[\s\S]*?}%%\s*/;
 hidden terminal SINGLE_LINE_COMMENT: /[\t ]*%%[^\n\r]*(\r?\n)*/;
 
+interface Sankey {
+  accDescr?: string;
+  accTitle?: string
+  title?: string
+  links: SankeyLink[]
+  nodes: string[]
+}
+
 // actual grammar
-entry Sankey:
+entry Sankey returns Sankey:
   NEWLINE*
   "sankey-beta"
   (

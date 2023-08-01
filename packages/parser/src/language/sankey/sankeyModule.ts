@@ -1,5 +1,6 @@
 import {
   DefaultSharedModuleContext,
+  LangiumParser,
   LangiumServices,
   LangiumSharedServices,
   Module,
@@ -13,12 +14,14 @@ import { MermaidGeneratedSharedModule, SankeyGeneratedModule } from '../generate
 import { CommonLexer } from '../common/commonLexer.js';
 import { SankeyTokenBuilder } from './sankeyTokenBuilder.js';
 import { SankeyValueConverter } from './sankeyValueConverter.js';
+import { createSankeyParser } from './sankeyParser.js';
 
 /**
  * Declaration of `Sankey` services.
  */
 export type SankeyAddedServices = {
   parser: {
+    LangiumParser: LangiumParser;
     Lexer: CommonLexer;
     TokenBuilder: SankeyTokenBuilder;
     ValueConverter: SankeyValueConverter;
@@ -36,6 +39,7 @@ export type SankeyServices = LangiumServices & SankeyAddedServices;
  */
 export const SankeyModule: Module<SankeyServices, PartialLangiumServices & SankeyAddedServices> = {
   parser: {
+    LangiumParser: (services) => createSankeyParser(services),
     Lexer: (services) => new CommonLexer(services),
     TokenBuilder: () => new SankeyTokenBuilder(),
     ValueConverter: () => new SankeyValueConverter(),
