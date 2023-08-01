@@ -22,6 +22,11 @@
       "fileExtensions": [".mmd", ".mermaid"]
     },
     {
+      "id": "quadrant",
+      "grammar": "./src/language/quadrant/quadrant.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
       "id": "sankey",
       "grammar": "src/language/sankey/sankey.langium",
       "fileExtensions": [".mmd", ".mermaid"]

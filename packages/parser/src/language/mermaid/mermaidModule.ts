@@ -7,10 +7,15 @@ import {
 
 import { MermaidGeneratedSharedModule } from '../generated/module.js';
 import { MermaidServiceRegistry } from './mermaidServiceRegistry.js';
-import { createInfoServices, createPieServices, createTimelineServices } from '../index.js';
-import { createJourneyServices } from '../journey/journeyModule.js';
-import { createMindmapServices } from '../mindmap/mindmapModule.js';
-import { createSankeyServices } from '../sankey/sankeyModule.js';
+import {
+  createInfoServices,
+  createJourneyServices,
+  createMindmapServices,
+  createPieServices,
+  createQuadrantServices,
+  createSankeyServices,
+  createTimelineServices,
+} from '../index.js';
 
 /**
  * Create the full set of services required by Langium.
@@ -43,9 +48,11 @@ export function createMermaidServices(context: DefaultSharedModuleContext) {
   shared.ServiceRegistry.register(Mindmap);
   const { Pie } = createPieServices(context);
   shared.ServiceRegistry.register(Pie);
+  const { Quadrant } = createQuadrantServices(context);
+  shared.ServiceRegistry.register(Quadrant);
   const { Sankey } = createSankeyServices(context);
   shared.ServiceRegistry.register(Sankey);
   const { Timeline } = createTimelineServices(context);
   shared.ServiceRegistry.register(Timeline);
-  return { Info, Journey, Mindmap, Pie, Sankey, Timeline, shared };
+  return { Info, Journey, Mindmap, Pie, Quadrant, Sankey, Timeline, shared };
 }

@@ -10,6 +10,7 @@ import {
   JourneyServices,
   MindmapServices,
   PieServices,
+  QuadrantServices,
   SankeyServices,
   TimelineServices,
 } from '../index.js';
@@ -21,6 +22,7 @@ export class MermaidServiceRegistry extends DefaultServiceRegistry {
   private mindmapServices: MindmapServices;
   private pieServices: PieServices;
   private sankeyServices: SankeyServices;
+  private quadrantServices: QuadrantServices;
   private timelineServices: TimelineServices;
   private documents: () => LangiumDocuments;
 
@@ -35,6 +37,8 @@ export class MermaidServiceRegistry extends DefaultServiceRegistry {
       this.pieServices = language as PieServices;
     } else if (language.LanguageMetaData.languageId === 'sankey') {
       this.sankeyServices = language as SankeyServices;
+    } else if (language.LanguageMetaData.languageId === 'quadrant') {
+      this.quadrantServices = language as QuadrantServices;
     } else if (language.LanguageMetaData.languageId === 'timeline') {
       this.timelineServices = language as TimelineServices;
     } else {
@@ -55,6 +59,8 @@ export class MermaidServiceRegistry extends DefaultServiceRegistry {
       return this.pieServices;
     } else if (/^\s*sankey/.test(text)) {
       return this.sankeyServices;
+    } else if (/^\s*quadrant/.test(text)) {
+      return this.quadrantServices;
     } else if (/^\s*timeline/.test(text)) {
       return this.timelineServices;
     } else {

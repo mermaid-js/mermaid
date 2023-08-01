@@ -11,6 +11,8 @@ import {
   PieServices,
   Sankey,
   SankeyServices,
+  Quadrant,
+  QuadrantServices,
   Timeline,
   TimelineServices,
   createMermaidServices,
@@ -63,6 +65,15 @@ const sankeyParser: LangiumParser = sankeyServices.parser.LangiumParser;
 export function createSankeyTestServices() {
   const parse = (input: string) => {
     return sankeyParser.parse<Sankey>(input);
+  };
+  return { services, parse };
+}
+
+const quadrantServices: QuadrantServices = services.Quadrant;
+const parser: LangiumParser = quadrantServices.parser.LangiumParser;
+export function createQuadrantTestServices() {
+  const parse = (input: string) => {
+    return parser.parse<Quadrant>(input);
   };
 
   return { services, parse };
