@@ -77,7 +77,7 @@ Function arguments are optional: 'call <callbackname>()' simply executes 'callba
 line was introduced with 'click'.
 'href "<link>"' attaches the specified link to the node that was specified by 'click'.
 */
-"href"                  return 'HREF';
+"href"[\s]                  return 'HREF';
 
 
 /*
@@ -518,10 +518,10 @@ clickStatement
     | CLICK CALLBACKNAME SPACE STR                          {$$ = $CLICK;yy.setClickEvent($CLICK, $CALLBACKNAME);yy.setTooltip($CLICK, $STR);}
     | CLICK CALLBACKNAME CALLBACKARGS                       {$$ = $CLICK;yy.setClickEvent($CLICK, $CALLBACKNAME, $CALLBACKARGS);}
     | CLICK CALLBACKNAME CALLBACKARGS SPACE STR             {$$ = $CLICK;yy.setClickEvent($CLICK, $CALLBACKNAME, $CALLBACKARGS);yy.setTooltip($CLICK, $STR);}
-    | CLICK HREF SPACE STR                                  {$$ = $CLICK;yy.setLink($CLICK, $STR);}
-    | CLICK HREF SPACE STR\[link] SPACE STR\[target]        {$$ = $CLICK;yy.setLink($CLICK, $link);yy.setTooltip($CLICK, $target);}
-    | CLICK HREF SPACE STR SPACE LINK_TARGET                {$$ = $CLICK;yy.setLink($CLICK, $STR, $LINK_TARGET);}
-    | CLICK HREF SPACE STR\[link] SPACE STR\[tooltip] SPACE LINK_TARGET      {$$ = $CLICK;yy.setLink($CLICK, $link, $LINK_TARGET);yy.setTooltip($CLICK, $tooltip);}
+    | CLICK HREF STR                                        {$$ = $CLICK;yy.setLink($CLICK, $STR);}
+    | CLICK HREF STR SPACE STR                              {$$ = $CLICK;yy.setLink($CLICK, $STR1);yy.setTooltip($CLICK, $STR2);}
+    | CLICK HREF STR SPACE LINK_TARGET                      {$$ = $CLICK;yy.setLink($CLICK, $STR, $LINK_TARGET);}
+    | CLICK HREF STR\[link] SPACE STR\[tooltip] SPACE LINK_TARGET      {$$ = $CLICK;yy.setLink($CLICK, $link, $LINK_TARGET);yy.setTooltip($CLICK, $tooltip);}
     | CLICK alphaNum                                        {$$ = $CLICK;yy.setClickEvent($CLICK, $alphaNum);}
     | CLICK alphaNum SPACE STR                              {$$ = $CLICK;yy.setClickEvent($CLICK, $alphaNum);yy.setTooltip($CLICK, $STR);}
     | CLICK STR                                             {$$ = $CLICK;yy.setLink($CLICK, $STR);}
