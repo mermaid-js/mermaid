@@ -299,11 +299,44 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert[`a_${keyword}_node`].text).toBe(`a_${keyword}_node`);
   });
 
-  it.each(keywords)('should handle nodes ending in keywords', function (keyword) {
+  it.each(keywords)('should handle nodes ending in %s', function (keyword) {
     const res = flow.parser.parse(`graph TD;node_${keyword};node.${keyword};node-${keyword};`);
     const vert = flow.parser.yy.getVertices();
     expect(vert[`node_${keyword}`].text).toBe(`node_${keyword}`);
     expect(vert[`node.${keyword}`].text).toBe(`node.${keyword}`);
     expect(vert[`node-${keyword}`].text).toBe(`node-${keyword}`);
+  });
+
+  const errorKeywords = [
+    'graph',
+    'flowchart',
+    'flowchart-elk',
+    'style',
+    'linkStyle',
+    'interpolate',
+    'classDef',
+    'class',
+    '_self',
+    '_blank',
+    '_parent',
+    '_top',
+    'end',
+    'subgraph',
+  ];
+  it.each(errorKeywords)('should throw error at nodes beginning with %s', function (keyword) {
+    const str = `graph TD;${keyword}.node;${keyword}-node;${keyword}/node`;
+    const vert = flow.parser.yy.getVertices();
+
+    expect(() => flow.parser.parse(str)).toThrowError();
+  });
+
+  const workingKeywords = ['default', 'href', 'click', 'call'];
+
+  it.each(workingKeywords)('should parse node beginning with %s', function (keyword) {
+    flow.parser.parse(`graph TD; ${keyword}.node;${keyword}-node;${keyword}/node;`);
+    const vert = flow.parser.yy.getVertices();
+    expect(vert[`${keyword}.node`].text).toBe(`${keyword}.node`);
+    expect(vert[`${keyword}-node`].text).toBe(`${keyword}-node`);
+    expect(vert[`${keyword}/node`].text).toBe(`${keyword}/node`);
   });
 });
