@@ -10,12 +10,15 @@ export function createSankeyParser(services: SankeyServices): LangiumParser {
     const parseResult: ParseResult<T> = parse(input);
 
     const sankeyValue: Sankey = parseResult.value as unknown as Sankey;
-    const links: SankeyLink[] = sankeyValue.links;
 
     const nodes: Set<string> = new Set<string>();
-    links.forEach((link: SankeyLink) => {
-      nodes.add(link.source);
-      nodes.add(link.target);
+    sankeyValue.links.forEach((link: SankeyLink) => {
+      if (!nodes.has(link.source)) {
+        nodes.add(link.source);
+      }
+      if (!nodes.has(link.target)) {
+        nodes.add(link.target);
+      }
     });
     sankeyValue.nodes = [...nodes.values()];
 
