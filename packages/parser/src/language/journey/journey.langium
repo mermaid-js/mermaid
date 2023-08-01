@@ -1,7 +1,7 @@
 grammar Journey
 
 // common stuff in ../common/common.langium
-// can't import directly because of TIMELINE_PERIOD_TITLE parse rule
+// can't import directly because of JOURNEY_TASK_TITLE parse rule
 fragment TitleAndAccessibilities:
   ((accDescr=ACC_DESCR | accTitle=ACC_TITLE | title=TITLE) NEWLINE+)+
 ;

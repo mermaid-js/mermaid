@@ -1,11 +1,6 @@
 import type { CustomPatternMatcherFunc, IToken } from 'chevrotain';
 import { indentStack } from './mindmapLexer.js';
 import { isRegExpAhead, healperCondition, createOutdentInstance } from './mindmapUtil.js';
-import {
-  accessibilityDescrRegex,
-  accessibilityTitleRegex,
-  titleRegex,
-} from '../common/commonMatcher.js';
 
 /**
  *
@@ -180,9 +175,6 @@ export const matchMindmapNodeDefault: CustomPatternMatcherFunc = (text, startOff
 const nonNodeRegexps: Record<string, RegExp> = {
   class: mindmapClassRegex,
   icon: mindmapIconRegex,
-  title: titleRegex,
-  accTItle: accessibilityTitleRegex,
-  accDescr: accessibilityDescrRegex,
 };
 
 export const nodeShapeTitles: Record<string, RegExp> = {

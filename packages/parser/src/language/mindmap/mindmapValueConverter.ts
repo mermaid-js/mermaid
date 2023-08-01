@@ -12,11 +12,7 @@ import {
   mindmapNodeRoundedSquareTitleRegex,
   mindmapNodeSquareTitleRegex,
 } from './mindmapMatcher.js';
-import {
-  accessibilityDescrRegex,
-  accessibilityTitleRegex,
-  titleRegex,
-} from '../common/commonMatcher.js';
+import { CommonValueConverter } from '../index.js';
 
 export class MindmapValueConverter extends DefaultValueConverter {
   protected override runConverter(
@@ -24,7 +20,11 @@ export class MindmapValueConverter extends DefaultValueConverter {
     input: string,
     cstNode: CstNode
   ): ValueType {
-    const value: ValueType | null = MindmapValueConverter.customRunConverter(rule, input, cstNode);
+    let value: ValueType | null = CommonValueConverter.customRunConverter(rule, input, cstNode);
+    if (value === null) {
+      value = MindmapValueConverter.customRunConverter(rule, input, cstNode);
+    }
+
     if (value === null) {
       return super.runConverter(rule, input, cstNode);
     } else {
@@ -48,18 +48,6 @@ export class MindmapValueConverter extends DefaultValueConverter {
   ): ValueType | null {
     let regex: RegExp | undefined;
     switch (rule.name) {
-      case 'ACC_DESCR': {
-        regex = new RegExp(accessibilityDescrRegex.source);
-        break;
-      }
-      case 'ACC_TITLE': {
-        regex = new RegExp(accessibilityTitleRegex.source);
-        break;
-      }
-      case 'TITLE': {
-        regex = new RegExp(titleRegex.source);
-        break;
-      }
       case 'MINDMAP_CLASS': {
         regex = new RegExp(mindmapClassRegex.source);
         break;
@@ -103,30 +91,20 @@ export class MindmapValueConverter extends DefaultValueConverter {
     }
     if (regex !== undefined) {
       const match = regex.exec(input);
-      if (match !== null) {
-        if (match[1] !== undefined) {
-          let result = match[1].trim().replaceAll(/[\t ]{2,}/gm, ' ');
-          if (
-            rule.name === 'MINDMAP_NODE_SQUARE_TITLE' ||
-            rule.name === 'MINDMAP_NODE_CIRCLE_TITLE' ||
-            rule.name === 'MINDMAP_NODE_ROUNDED_SQUARE_TITLE' ||
-            rule.name === 'MINDMAP_NODE_BANG_TITLE' ||
-            rule.name === 'MINDMAP_NODE_CLOUD_TITLE' ||
-            rule.name === 'MINDMAP_NODE_HEXAGON_TITLE' ||
-            rule.name === 'MINDMAP_NODE_DEFAULT'
-          ) {
-            result = result.replace(/<br>|<\/br>/, '\n');
-          }
-          return result.replaceAll(/[\n\r]{2,}/gm, '\n');
+      if (match !== null && match[1] !== undefined) {
+        let result = match[1].trim().replaceAll(/[\t ]{2,}/gm, ' ');
+        if (
+          rule.name === 'MINDMAP_NODE_SQUARE_TITLE' ||
+          rule.name === 'MINDMAP_NODE_CIRCLE_TITLE' ||
+          rule.name === 'MINDMAP_NODE_ROUNDED_SQUARE_TITLE' ||
+          rule.name === 'MINDMAP_NODE_BANG_TITLE' ||
+          rule.name === 'MINDMAP_NODE_CLOUD_TITLE' ||
+          rule.name === 'MINDMAP_NODE_HEXAGON_TITLE' ||
+          rule.name === 'MINDMAP_NODE_DEFAULT'
+        ) {
+          result = result.replace(/<br>|<\/br>/, '\n');
         }
-        // multi line accDescr
-        else if (match[2] !== undefined) {
-          return match[2]
-            .replaceAll(/^\s*/gm, '')
-            .replaceAll(/\s+$/gm, '')
-            .replaceAll(/[\t ]{2,}/gm, ' ')
-            .replaceAll(/[\n\r]{2,}/gm, '\n');
-        }
+        return result.replaceAll(/[\n\r]{2,}/gm, '\n');
       }
     }
     return null;

@@ -21,10 +21,7 @@ export const MINDMAP_OUTDENT: TokenType = createToken({
 
 export class MindmapTokenBuilder extends DefaultTokenBuilder {
   protected override buildTerminalTokens(rules: Stream<GrammarAST.AbstractRule>): TokenType[] {
-    let tokenTypes: TokenType[] = super.buildTerminalTokens(rules);
-    tokenTypes = tokenTypes.filter(
-      (tokenType: TokenType): boolean => tokenType.name !== 'WHITESPACE'
-    );
+    const tokenTypes: TokenType[] = super.buildTerminalTokens(rules);
     tokenTypes.forEach((tokenType: TokenType, index: number): void => {
       switch (tokenType.name) {
         case 'MINDMAP_OUTDENT': {
