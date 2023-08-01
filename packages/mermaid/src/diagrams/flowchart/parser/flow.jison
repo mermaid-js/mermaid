@@ -60,8 +60,8 @@ Function arguments are optional: 'call <callbackname>()' simply executes 'callba
 
 <md_string>[^`"]+       { return "MD_STR";}
 <md_string>[`]["]       { this.popState();}
-<*>["][`]                  { this.begin("md_string");}
-<string>(\\(?=\")\"|[^"])+           return "STR";
+<*>["][`]               { this.begin("md_string");}
+<string>[^"]+           return "STR";
 <string>["]             this.popState();
 <*>["]                  this.pushState("string");
 "style"                 return 'STYLE';

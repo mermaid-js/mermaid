@@ -610,13 +610,11 @@ For quotation marks, you can escape them with a backslash as well.
 ```mermaid-example
     flowchart LR
         A["A double quote:#quot;"] --> B["A dec char:#9829;"]
-        B --> C["This is a \"square\" vertex"]
 ```
 
 ```mermaid
     flowchart LR
         A["A double quote:#quot;"] --> B["A dec char:#9829;"]
-        B --> C["This is a \"square\" vertex"]
 ```
 
 Numbers given are base 10, so `#` can be encoded as `#35;`. It is also supported to use HTML character names.

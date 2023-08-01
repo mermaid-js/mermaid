@@ -901,13 +901,8 @@ graph TD
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
-  it('67: allow escaping quotes with backslash', () => {
-    imgSnapshotTest(`
-      graph TD
-        a_node("This has an escaped \\" in it") -- "edge string can escape too \\"" --> b_node
-    `);
-  });
-  it('68: should be able to style default node independently', () => {
+
+  it('67: should be able to style default node independently', () => {
     imgSnapshotTest(
       `
     flowchart TD

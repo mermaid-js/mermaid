@@ -598,13 +598,6 @@ describe('[Text] when parsing', () => {
     expect(() => flow.parser.parse(str)).toThrowError("Expecting 'SQE'");
   });
 
-  it('should parse escaped quotes in a string state', function () {
-    //prettier-ignore
-    flow.parser.parse('graph TD; A["This is a \\"()\\" in text"];'); //eslint-disable-line no-useless-escape
-    const vert = flow.parser.yy.getVertices();
-    expect(vert['A'].text).toBe('This is a "()" in text');
-  });
-
   it('should throw error', function () {
     const str = `graph TD; node[hello ) world] --> works`;
     expect(() => flow.parser.parse(str)).toThrowError("got 'PE'");
