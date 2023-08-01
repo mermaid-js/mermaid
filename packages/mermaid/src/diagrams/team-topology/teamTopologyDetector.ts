@@ -4,7 +4,7 @@ import type {
   ExternalDiagramDefinition,
 } from '../../diagram-api/types.js';
 
-const id = 'teamTopology';
+const id = 'teamTopology-beta';
 
 const detector: DiagramDetector = (txt) => {
   return /^\s*teamTopology/.test(txt);
