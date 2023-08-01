@@ -17,10 +17,10 @@ hidden terminal SINGLE_LINE_COMMENT: /[\t ]*%%[^\n\r]*(\r?\n)*/;
 
 interface Sankey {
   accDescr?: string;
-  accTitle?: string
-  title?: string
-  links: SankeyLink[]
-  nodes: string[]
+  accTitle?: string;
+  title?: string;
+  links: SankeyLink[];
+  nodes: string[];
 }
 
 // actual grammar
