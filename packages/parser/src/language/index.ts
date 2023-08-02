@@ -2,6 +2,7 @@ export * from './generated/ast.js';
 export * from './generated/grammar.js';
 export * from './generated/module.js';
 
+export * from './utils.js';
 export * from './common/index.js';
 export * from './info/index.js';
 export * from './journey/index.js';

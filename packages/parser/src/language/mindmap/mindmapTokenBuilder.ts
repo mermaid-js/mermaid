@@ -13,7 +13,7 @@ import {
   matchMindmapNodeId,
   matchMindmapOutdent,
 } from './mindmapMatcher.js';
-import { swapByIndex } from './mindmapUtil.js';
+import { swapByIndex } from '../utils.js';
 
 export const MINDMAP_OUTDENT: TokenType = createToken({
   line_breaks: false,
