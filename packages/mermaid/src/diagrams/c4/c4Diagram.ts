@@ -1,4 +1,4 @@
-// @ts-ignore: TODO Fix ts errors
+// @ts-ignore: JISON doesn't support types
 import c4Parser from './parser/c4Diagram.jison';
 import c4Db from './c4Db.js';
 import c4Renderer from './c4Renderer.js';
