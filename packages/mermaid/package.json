@@ -70,7 +70,7 @@
     "dompurify": "^3.0.5",
     "elkjs": "^0.8.2",
     "khroma": "^2.0.0",
-    "langium": "1.2.0",
+    "langium": "1.2.1",
     "lodash-es": "^4.17.21",
     "mdast-util-from-markdown": "^1.3.0",
     "mermaid-parser": "workspace:*",

@@ -231,8 +231,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       langium:
-        specifier: 1.2.0
-        version: 1.2.0
+        specifier: 1.2.1
+        version: 1.2.1
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
@@ -480,15 +480,12 @@ importers:
 
   packages/parser:
     dependencies:
-      '@chevrotain/types':
-        specifier: ^11.0.1
-        version: 11.0.1
       chevrotain:
-        specifier: ^11.0.1
-        version: 11.0.1
+        specifier: ^11.0.2
+        version: 11.0.2
       langium:
-        specifier: 1.2.0
-        version: 1.2.0
+        specifier: 1.2.1
+        version: 1.2.1
       vscode-uri:
         specifier: ^3.0.7
         version: 3.0.7
@@ -2304,11 +2301,11 @@ packages:
       '@chevrotain/types': 10.4.2
       lodash: 4.17.21
 
-  /@chevrotain/cst-dts-gen@11.0.1:
-    resolution: {integrity: sha512-WFnTsSc+scDotTzyy8iVV88+zovLzLtQUPnuSnv1x/p+IHkUGpINTcF+HNMPcvJL1cGk8Hb3cQnYx0sobltkFw==}
+  /@chevrotain/cst-dts-gen@11.0.2:
+    resolution: {integrity: sha512-thr6e9rb/v+7uzRDezhH2hjzrlZH6B7oauZka5Ks+8i/1uMaDsz4HtC+USO+wevf9L0qo9n1L8yjFEvpRPMcLw==}
     dependencies:
-      '@chevrotain/gast': 11.0.1
-      '@chevrotain/types': 11.0.1
+      '@chevrotain/gast': 11.0.2
+      '@chevrotain/types': 11.0.2
       lodash-es: 4.17.21
     dev: false
 
@@ -2318,29 +2315,29 @@ packages:
       '@chevrotain/types': 10.4.2
       lodash: 4.17.21
 
-  /@chevrotain/gast@11.0.1:
-    resolution: {integrity: sha512-Q/LZgSdQvmZSAFT/zSRhsvwmmBU9zhKqW+2S65x8v3zNb4nFCzrNK/vCbU4HpbsM4fmBZkJZ/1FQYV+S9DcOeg==}
+  /@chevrotain/gast@11.0.2:
+    resolution: {integrity: sha512-TuYPcVX0KLFpLJPUH1zl4I3KNtmulax62R98jLyJbjUFM+0hPQvGqEtbR3Z8J6kODTCRiySSw8mRY67VdbrJ0g==}
     dependencies:
-      '@chevrotain/types': 11.0.1
+      '@chevrotain/types': 11.0.2
       lodash-es: 4.17.21
     dev: false
 
-  /@chevrotain/regexp-to-ast@11.0.1:
-    resolution: {integrity: sha512-pA4aqqESsmsUr2kJUSUFUoOcVp5ltivHaib1mVtIJ7kPDSJ44JLQ8wXJdBV1/iAhLUaoqgy30ybQR6yAXHRt0A==}
+  /@chevrotain/regexp-to-ast@11.0.2:
+    resolution: {integrity: sha512-VHVOLvRTehE1QMVRlRdhZkz8m/mmLOguaulbpDt100PH0/5Igod91wlQ8OljYYBMr/PoUGhW2piJxQv/FCawfA==}
     dev: false
 
   /@chevrotain/types@10.4.2:
     resolution: {integrity: sha512-QzSCjg6G4MvIoLeIgOiMR0IgzkGEQqrNJJIr3T5ETRa7l4Av4AMIiEctV99mvDr57iXwwk0/kr3RJxiU36Nevw==}
 
-  /@chevrotain/types@11.0.1:
-    resolution: {integrity: sha512-0s7LD/dcZThnm/SbG/Ts4KGEJzMhta51cTVUHck737TIzpRZXyQDYOgs16MlwqOnzNGtp1IDU/yX616LmUTLtw==}
+  /@chevrotain/types@11.0.2:
+    resolution: {integrity: sha512-b7zJ8avGLtf4abOf1Lb7GwisyElybATnulfOFBk14IDqwz3o9mjVsz8OlmEYBi/NQSHNbYXePPzHU15WWDs3LA==}
     dev: false
 
   /@chevrotain/utils@10.4.2:
     resolution: {integrity: sha512-V34dacxWLwKcvcy32dx96ADJVdB7kOJLm7LyBkBQw5u5HC9WdEFw2G17zml+U3ivavGTrGPJHl8o9/UJm0PlUw==}
 
-  /@chevrotain/utils@11.0.1:
-    resolution: {integrity: sha512-abc+noz6Sd/ZzTiivdMKN18SKORsPtNRq5o+OZt8KOSqDBTJIrwV907KxsfmB+4AX+VZ3Hk2R/QpEJUb7SEi8A==}
+  /@chevrotain/utils@11.0.2:
+    resolution: {integrity: sha512-xrpSVsW8NgJoP02UhumJgvJMc4aKvPZZmEl0DAGEfqawp98LQcwXfk1oCEwm1xIYNlotlTa/BxEBffrcFlgHaA==}
     dev: false
 
   /@colors/colors@1.5.0:
@@ -6928,14 +6925,14 @@ packages:
       lodash: 4.17.21
       regexp-to-ast: 0.5.0
 
-  /chevrotain@11.0.1:
-    resolution: {integrity: sha512-aK0xr6GdoX6tSaACNIajrppj0iraJKXadQ97EiY+g46aheUwBDrBLF6AJYqtRbQO9S+DHcaSst4Xpcl+lqyeDg==}
+  /chevrotain@11.0.2:
+    resolution: {integrity: sha512-kQAQeRduf3SpiA8hFX5TtJc2fWKzg7R3oy9o03R6xgJRlCCD38y80jujcMVYyr+AzOsejyCdFq83vkZ91Yw4tA==}
     dependencies:
-      '@chevrotain/cst-dts-gen': 11.0.1
-      '@chevrotain/gast': 11.0.1
-      '@chevrotain/regexp-to-ast': 11.0.1
-      '@chevrotain/types': 11.0.1
-      '@chevrotain/utils': 11.0.1
+      '@chevrotain/cst-dts-gen': 11.0.2
+      '@chevrotain/gast': 11.0.2
+      '@chevrotain/regexp-to-ast': 11.0.2
+      '@chevrotain/types': 11.0.2
+      '@chevrotain/utils': 11.0.2
       lodash-es: 4.17.21
     dev: false
 
@@ -11573,12 +11570,12 @@ packages:
       commander: 10.0.1
       fs-extra: 11.1.1
       jsonschema: 1.4.1
-      langium: 1.2.0
+      langium: 1.2.1
       lodash: 4.17.21
     dev: true
 
-  /langium@1.2.0:
-    resolution: {integrity: sha512-jFSptpFljYo9ZTHrq/GZflMUXiKo5KBNtsaIJtnIzDm9zC2FxsxejEFAtNL09262RVQt+zFeF/2iLAShFTGitw==}
+  /langium@1.2.1:
+    resolution: {integrity: sha512-tpUa1r47pxuUBNqX5X4GAB08qhWpVwWhxjwOV+948skElHO9OV6emngfY3jOYzchJS4H6UZwyKalsOb8GGPsnQ==}
     engines: {node: '>=14.0.0'}
     dependencies:
       chevrotain: 10.4.2
