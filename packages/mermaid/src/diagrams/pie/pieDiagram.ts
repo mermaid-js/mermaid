@@ -1,5 +1,5 @@
 import type { DiagramDefinition } from '../../diagram-api/types.js';
-// @ts-ignore - jison doesn't export types
+// @ts-ignore: JISON doesn't support types
 import parser from './parser/pie.jison';
 import { db } from './pieDb.js';
 import styles from './styles.js';

@@ -18,7 +18,6 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
   try {
     log.debug('rendering pie chart\n' + txt);
     const db: PieDB = diagramObject.db as PieDB;
-    db.clear();
     const globalConfig: MermaidConfig = getConfig();
     const config: Required<PieDiagramConfig> = db.getConfig();
 
@@ -36,10 +35,6 @@ export const draw: DrawDefinition = (txt, id, _version, diagramObject) => {
     const doc = securityLevel === 'sandbox' ? sandboxElement?.nodes()[0].contentDocument : document;
     const elem = doc?.getElementById(id);
     const width: number = elem?.parentElement?.offsetWidth ?? config.useWidth;
-
-    // parse the pie chart definition
-    log.debug('parsing pie chart');
-    diagramObject.parser.parse(txt);
 
     const diagram = root.select('#' + id);
     // TODO: use global `useMaxWidth` until making setConfig update pie setConfig

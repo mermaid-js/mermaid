@@ -338,4 +338,20 @@ describe('[Style] when parsing', () => {
 
     expect(edges[0].type).toBe('arrow_point');
   });
+
+  it('should handle multiple vertices with style', function () {
+    const res = flow.parser.parse(`
+    graph TD
+      classDef C1 stroke-dasharray:4
+      classDef C2 stroke-dasharray:6
+      A & B:::C1 & D:::C1 --> E:::C2
+    `);
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert['A'].classes.length).toBe(0);
+    expect(vert['B'].classes[0]).toBe('C1');
+    expect(vert['D'].classes[0]).toBe('C1');
+    expect(vert['E'].classes[0]).toBe('C2');
+  });
 });

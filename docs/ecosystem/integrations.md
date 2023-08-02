@@ -161,6 +161,8 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Nano Mermaid](https://github.com/Yash-Singh1/nano-mermaid)
 - [CKEditor](https://github.com/ckeditor/ckeditor5)
   - [CKEditor 5 Mermaid plugin](https://github.com/ckeditor/ckeditor5-mermaid)
+- [Standard Notes](https://standardnotes.com/)
+  - [sn-mermaid](https://github.com/nienow/sn-mermaid)
 
 ## Document Generation
 
@@ -185,6 +187,7 @@ They also serve as proof of concept, for the variety of things that can be built
 - [mdbook](https://rust-lang.github.io/mdBook/index.html)
   - [mdbook-mermaid](https://github.com/badboy/mdbook-mermaid)
 - [Quarto](https://quarto.org/)
+- [Typora](https://typora.io/) ([Native support](https://support.typora.io/Draw-Diagrams-With-Markdown/#mermaid))
 
 ## Browser Extensions
 

@@ -7,6 +7,7 @@ export interface ClassNode {
   members: string[];
   annotations: string[];
   domId: string;
+  parent?: string;
   link?: string;
   linkTarget?: string;
   haveCallback?: boolean;

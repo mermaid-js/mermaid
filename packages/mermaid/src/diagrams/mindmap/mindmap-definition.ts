@@ -1,4 +1,4 @@
-// @ts-ignore: TODO Fix ts errors
+// @ts-ignore: JISON doesn't support types
 import mindmapParser from './parser/mindmap.jison';
 import * as mindmapDb from './mindmapDb.js';
 import mindmapRenderer from './mindmapRenderer.js';

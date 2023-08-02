@@ -57,27 +57,11 @@ export const draw = function (text, id, _version, diagObj) {
       : select('body');
   const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
-  // diagObj.db.clear();
-  // parser.parse(text);
   log.debug('Rendering diagram ' + text);
 
   // Fetch the default direction, use TD if none was found
   const diagram = root.select(`[id='${id}']`);
   insertMarkers(diagram);
-
-  // Layout graph, Create a new directed graph
-  const graph = new graphlib.Graph({
-    multigraph: true,
-    compound: true,
-    // acyclicer: 'greedy',
-    rankdir: 'RL',
-    // ranksep: '20'
-  });
-
-  // Default to assigning a new object as a label for each new edge.
-  graph.setDefaultEdgeLabel(function () {
-    return {};
-  });
 
   const rootDoc = diagObj.db.getRootDoc();
   renderDoc(rootDoc, diagram, undefined, false, root, doc, diagObj);
