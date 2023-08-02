@@ -1,43 +1,26 @@
-<script setup>
-import { ref } from 'vue'
-
-const selectedPlatform = ref("local")
-const handlePlatformChange = (newValue) => {
+<script setup lang="ts">
+import { ref } from 'vue';
+type Platform = "native" | "docker";
+const selectedPlatform = ref<Platform>("native");
+const handlePlatformChange = (newPlatform: Platform) => {
   console.log('Value changed:', selectedPlatform.value);
-  selectedPlatform.value = newValue;
+  selectedPlatform.value = newPlatform;
 }
-// export default {
-  //   data() {
-  //     return {
-  //       selectedPlatform: "local",
-  //     };
-  //   },
-  //   methods: {
-  //     handlePlatformChange(newValue) {
-  //       console.log('Value changed:', this.selectedPlatform);
-  //       this.selectedPlatform = newValue;
-  //     },
-  //   },
-  // };
 </script>
 
 <style>
-.platform-title {
-  margin: 0 !important;
-}
-
 .platform-button {
   transition: color 0.25s, border-color 0.25s, background-color 0.25s;
-    border: 1px solid transparent;
-    border-color: var(--vp-button-alt-border);
-    color: var(--vp-button-alt-text);
-    background-color: var(--vp-button-alt-bg);
+  border: 1px solid transparent;
+  border-color: var(--vp-button-alt-border);
+  color: var(--vp-button-alt-text);
+  background-color: var(--vp-button-alt-bg);
 }
 
 .platform-button:hover {
-    border-color: var(--vp-button-alt-hover-border);
-    color: var(--vp-button-alt-hover-text);
-    background-color: var(--vp-button-alt-hover-bg);
+  border-color: var(--vp-button-alt-hover-border);
+  color: var(--vp-button-alt-hover-text);
+  background-color: var(--vp-button-alt-hover-bg);
 }
 
 .platform-button--selected {
@@ -57,14 +40,13 @@ const handlePlatformChange = (newValue) => {
 MAC
 </div>
 
-<div v-if="selectedPlatform === 'local'">
+<div v-if="selectedPlatform === 'native'">
 LOCAL
 </div>
 
 <div v-if="selectedPlatform === 'docker'">
 DOCKER
 </div> -->
-
 
 # Contributing to Mermaid
 
@@ -86,20 +68,19 @@ Here are a few things to get you started on the right path.
 
 ## Technical Requirements and Setup
 
-<div class="platform-container space-x-2 flex rounded-lg">
-  <p class="platform-title font-semibold">Platform:</p>
-  <button class="platform-button font-semibold rounded-full px-4" :class="{ 'platform-button--selected': selectedPlatform === 'local' }" @click="handlePlatformChange('local')">
-    Local
+### Technical Requirements
+
+<div class="space-x-2 flex rounded-lg items-center">
+  <p class="font-semibold">Platform:</p>
+  <button class="platform-button font-semibold rounded-full px-4 py-1" :class="{ 'platform-button--selected': selectedPlatform === 'native' }" @click="handlePlatformChange('native')">
+    Native
   </button>
-  <button class="platform-button font-semibold rounded-full px-4" :class="{ 'platform-button--selected': selectedPlatform === 'docker' }" @click="handlePlatformChange('docker')">
+  <button class="platform-button font-semibold rounded-full px-4 py-1" :class="{ 'platform-button--selected': selectedPlatform === 'docker' }" @click="handlePlatformChange('docker')">
     Docker
-  </button>
-  <button class="platform-button font-semibold rounded-full px-4" :class="{ 'platform-button--selected': selectedPlatform === 'mac' }" @click="handlePlatformChange('mac')">
-    Mac
   </button>
 </div>
 
-### Technical Requirements
+<div v-if="selectedPlatform === 'native'">
 
 These are the tools we use for working with the code and documentation.
 
@@ -110,7 +91,27 @@ These are the tools we use for working with the code and documentation.
 
 Follow [the setup steps below](#setup) to install them and verify they are working
 
+</div>
+
+<div v-if="selectedPlatform === 'docker'">
+
+[Install Docker](https://docs.docker.com/engine/install/). There are plenty of different platforms.
+
+</div>
+
 ### Setup
+
+<div class="space-x-2 flex rounded-lg items-center">
+  <p class="font-semibold">Platform:</p>
+  <button class="platform-button font-semibold rounded-full px-4 py-1" :class="{ 'platform-button--selected': selectedPlatform === 'native' }" @click="handlePlatformChange('native')">
+    Native
+  </button>
+  <button class="platform-button font-semibold rounded-full px-4 py-1" :class="{ 'platform-button--selected': selectedPlatform === 'docker' }" @click="handlePlatformChange('docker')">
+    Docker
+  </button>
+</div>
+
+<div v-if="selectedPlatform === 'native'">
 
 Follow these steps to set up the environment you need to work on code and/or documentation.
 
@@ -161,7 +162,10 @@ If you need a specific diagram, you can duplicate the `example.html` file in `/d
 That will be served at <http://localhost:9000/dev/your-file-name.html>.
 After making code changes, the dev server will rebuild the mermaid library. You will need to reload the browser page yourself to see the changes. (PRs for auto reload are welcome!)
 
-### Docker
+
+</div>
+
+<div v-if="selectedPlatform === 'docker'">
 
 If you are using docker and docker-compose, you have self-documented `run` bash script, which is a convenient alias for docker-compose commands:
 
@@ -169,6 +173,8 @@ If you are using docker and docker-compose, you have self-documented `run` bash 
 ./run install # npx pnpm install
 ./run test # pnpm test
 ```
+
+</div>
 
 ## Contributing Code
 
