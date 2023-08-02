@@ -1,68 +1,59 @@
-<script>
-  export default {
-    data() {
-      return {
-        selectedPlatform: "local",
-      };
-    },
-    methods: {
-      handlePlatformChange(newValue) {
-        console.log('Value changed:', this.selectedPlatform);
-        this.selectedPlatform = newValue;
-      },
-    },
-  };
+<script setup>
+import { ref } from 'vue'
+
+const selectedPlatform = ref("local")
+const handlePlatformChange = (newValue) => {
+  console.log('Value changed:', selectedPlatform.value);
+  selectedPlatform.value = newValue;
+}
+// export default {
+  //   data() {
+  //     return {
+  //       selectedPlatform: "local",
+  //     };
+  //   },
+  //   methods: {
+  //     handlePlatformChange(newValue) {
+  //       console.log('Value changed:', this.selectedPlatform);
+  //       this.selectedPlatform = newValue;
+  //     },
+  //   },
+  // };
 </script>
 
 <style>
-.button-container {
-  display: inline;
+.platform-title {
+  margin: 0 !important;
 }
 
 .platform-button {
-  padding: 4px 8px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  margin-right: 8px;
+  transition: color 0.25s, border-color 0.25s, background-color 0.25s;
+    border: 1px solid transparent;
+    border-color: var(--vp-button-alt-border);
+    color: var(--vp-button-alt-text);
+    background-color: var(--vp-button-alt-bg);
+}
 
+.platform-button:hover {
+    border-color: var(--vp-button-alt-hover-border);
+    color: var(--vp-button-alt-hover-text);
+    background-color: var(--vp-button-alt-hover-bg);
+}
+
+.platform-button--selected {
   border-color: var(--vp-button-brand-border);
   color: var(--vp-button-brand-text);
   background-color: var(--vp-button-brand-bg);
 }
 
-.platform-button:hover {
-}
-
-.selected-button {
+.platform-button--selected:hover {
+  border-color: var(--vp-button-brand-hover-border);
+  color: var(--vp-button-brand-hover-text);
+  background-color: var(--vp-button-brand-hover-bg);
 }
 </style>
 
-<!-- 
-<Selector
-  title="Select your platform"
-  defaultValue="local"
-  :options="[
-    { value: 'local', label: 'Local' },
-    { value: 'docker', label: 'Docker' },
-    { value: 'mac', label: 'Mac' }
-  ]"
-  v-on:change="handlePlatformChange"
-/>
--->
-
-<div class="button-container">
-  Select your platform
-  <button class="platform-button" :class="{'selected-button': true}" @click="handlePlatformChange('local')">
-    Local
-  </button>
-  <button class="selected-button" @click="handlePlatformChange('docker')">
-    Docker
-  </button>
-</div>
-
-<br/>
-<br/>
-<div v-if="selectedPlatform === 'mac'">
+<!-- <div v-if="selectedPlatform === 'mac'">
 MAC
 </div>
 
@@ -72,7 +63,7 @@ LOCAL
 
 <div v-if="selectedPlatform === 'docker'">
 DOCKER
-</div>
+</div> -->
 
 
 # Contributing to Mermaid
@@ -94,6 +85,19 @@ So you want to help? That's great!
 Here are a few things to get you started on the right path.
 
 ## Technical Requirements and Setup
+
+<div class="platform-container space-x-2 flex rounded-lg">
+  <p class="platform-title font-semibold">Platform:</p>
+  <button class="platform-button font-semibold rounded-full px-4" :class="{ 'platform-button--selected': selectedPlatform === 'local' }" @click="handlePlatformChange('local')">
+    Local
+  </button>
+  <button class="platform-button font-semibold rounded-full px-4" :class="{ 'platform-button--selected': selectedPlatform === 'docker' }" @click="handlePlatformChange('docker')">
+    Docker
+  </button>
+  <button class="platform-button font-semibold rounded-full px-4" :class="{ 'platform-button--selected': selectedPlatform === 'mac' }" @click="handlePlatformChange('mac')">
+    Mac
+  </button>
+</div>
 
 ### Technical Requirements
 
