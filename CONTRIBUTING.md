@@ -26,7 +26,7 @@ Install required packages:
 ```bash
 # npx is required for first install as volta support for pnpm is not added yet.
 npx pnpm install
-pnpm test
+npx pnpm test
 ```
 
 ### Docker
