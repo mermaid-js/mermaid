@@ -24,31 +24,50 @@
 %x namespace
 %x namespace-body
 %%
-\%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
-.*direction\s+TB[^\n]*                                          return 'direction_tb';
-.*direction\s+BT[^\n]*                                          return 'direction_bt';
-.*direction\s+RL[^\n]*                                          return 'direction_rl';
-.*direction\s+LR[^\n]*                                          return 'direction_lr';
-<open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
-<type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
-<type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
-<arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
-\%\%(?!\{)*[^\n]*(\r?\n?)+                                      /* skip comments */
-\%\%[^\n]*(\r?\n)*                                              /* skip comments */
-accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
-<acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
-accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
-<acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
-accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
-<acc_descr_multiline>[\}]                       { this.popState(); }
-<acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
+\%\%\{                                       { this.begin('open_directive'); return 'open_directive'; }
+.*direction\s+TB[^\n]*                       return 'direction_tb';
+.*direction\s+BT[^\n]*                       return 'direction_bt';
+.*direction\s+RL[^\n]*                       return 'direction_rl';
+.*direction\s+LR[^\n]*                       return 'direction_lr';
+<open_directive>((?:(?!\}\%\%)[^:.])*)       { this.begin('type_directive'); return 'type_directive'; }
+<type_directive>":"                          { this.popState(); this.begin('arg_directive'); return ':'; }
+<type_directive,arg_directive>\}\%\%         { this.popState(); this.popState(); return 'close_directive'; }
+<arg_directive>((?:(?!\}\%\%).|\n)*)         return 'arg_directive';
+\%\%(?!\{)*[^\n]*(\r?\n?)+                   /* skip comments */
+\%\%[^\n]*(\r?\n)*                           /* skip comments */
+accTitle\s*":"\s*                            { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                 { this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                            { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                 { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                            { this.begin("acc_descr_multiline");}
+<acc_descr_multiline>[\}]                    { this.popState(); }
+<acc_descr_multiline>[^\}]*                  return "acc_descr_multiline_value";
 
-\s*(\r?\n)+                return 'NEWLINE';
-\s+                     /* skip whitespace */
+\s*(\r?\n)+                     return 'NEWLINE';
+\s+                             /* skip whitespace */
 
-"classDiagram-v2"       return 'CLASS_DIAGRAM';
-"classDiagram"          return 'CLASS_DIAGRAM';
-"[*]"                   return 'EDGE_STATE';
+"classDiagram-v2"               return 'CLASS_DIAGRAM';
+"classDiagram"                  return 'CLASS_DIAGRAM';
+"[*]"                           return 'EDGE_STATE';
+
+/*
+---interactivity command---
+'call' adds a callback to the specified node. 'call' can only be specified when
+the line was introduced with 'click'.
+'call <callback_name>(<callback_args>)' attaches the function 'callback_name' with the specified
+arguments to the node that was specified by 'click'.
+Function arguments are optional: 'call <callback_name>()' simply executes 'callback_name' without any arguments.
+*/
+<INITIAL>"call"[\s]+            this.begin("callback_name");
+<callback_name>\([\s]*\)        this.popState();
+<callback_name>\(               this.popState(); this.begin("callback_args");
+<callback_name>[^(]*            return 'CALLBACK_NAME';
+<callback_args>\)               this.popState();
+<callback_args>[^)]*            return 'CALLBACK_ARGS';
+
+<string>["]                     this.popState();
+<string>[^"]*                   return "STR";
+<*>["]                          this.begin("string");
 
 <INITIAL,namespace>"namespace"  { this.begin('namespace'); return 'NAMESPACE'; }
 <namespace>\s*(\r?\n)+          { this.popState(); return 'NEWLINE'; }
@@ -60,26 +79,26 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <namespace-body>\s+             /* skip whitespace */
 <namespace-body>"[*]"           return 'EDGE_STATE';
 
-<INITIAL,namespace-body>"class"     { this.begin('class'); return 'CLASS';}
-<class>\s*(\r?\n)+          { this.popState(); return 'NEWLINE'; }
-<class>\s+                  /* skip whitespace */
-<class>[}]                  { this.popState(); this.popState(); return 'STRUCT_STOP';}
-<class>[{]                  { this.begin("class-body"); return 'STRUCT_START';}
-<class-body>[}]             { this.popState(); return 'STRUCT_STOP'; }
-<class-body><<EOF>>         return "EOF_IN_STRUCT";
-<class-body>"[*]"           { return 'EDGE_STATE';}
-<class-body>[{]             return "OPEN_IN_STRUCT";
-<class-body>[\n]            /* nothing */
-<class-body>[^{}\n]*        { return "MEMBER";}
+<INITIAL,namespace-body>"class" { this.begin('class'); return 'CLASS';}
+<class>\s*(\r?\n)+              { this.popState(); return 'NEWLINE'; }
+<class>\s+                      /* skip whitespace */
+<class>[}]                      { this.popState(); this.popState(); return 'STRUCT_STOP';}
+<class>[{]                      { this.begin("class-body"); return 'STRUCT_START';}
+<class-body>[}]                 { this.popState(); return 'STRUCT_STOP'; }
+<class-body><<EOF>>             return "EOF_IN_STRUCT";
+<class-body>"[*]"               { return 'EDGE_STATE';}
+<class-body>[{]                 return "OPEN_IN_STRUCT";
+<class-body>[\n]                /* nothing */
+<class-body>[^{}\n]*            { return "MEMBER";}
 
-<*>"cssClass"           return 'CSSCLASS';
-<*>"callback"           return 'CALLBACK';
-<*>"link"               return 'LINK';
-<*>"click"              return 'CLICK';
-<*>"note for"           return 'NOTE_FOR';
-<*>"note"               return 'NOTE';
-<*>"<<"                 return 'ANNOTATION_START';
-<*>">>"                 return 'ANNOTATION_END';
+<*>"cssClass"                   return 'CSSCLASS';
+<*>"callback"                   return 'CALLBACK';
+<*>"link"                       return 'LINK';
+<*>"click"                      return 'CLICK';
+<*>"note for"                   return 'NOTE_FOR';
+<*>"note"                       return 'NOTE';
+<*>"<<"                         return 'ANNOTATION_START';
+<*>">>"                         return 'ANNOTATION_END';
 
 /*
 ---interactivity command---
@@ -87,64 +106,43 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 line was introduced with 'click'.
 'href "<link>"' attaches the specified link to the node that was specified by 'click'.
 */
-<*>"href"[\s]+["]       this.begin("href");
-<href>["]               this.popState();
-<href>[^"]*             return 'HREF';
+<*>"href"                       return 'HREF';
 
-/*
----interactivity command---
-'call' adds a callback to the specified node. 'call' can only be specified when
-the line was introduced with 'click'.
-'call <callback_name>(<callback_args>)' attaches the function 'callback_name' with the specified
-arguments to the node that was specified by 'click'.
-Function arguments are optional: 'call <callback_name>()' simply executes 'callback_name' without any arguments.
-*/
-<*>"call"[\s]+              this.begin("callback_name");
-<callback_name>\([\s]*\) this.popState();
-<callback_name>\(        this.popState(); this.begin("callback_args");
-<callback_name>[^(]*     return 'CALLBACK_NAME';
-<callback_args>\)        this.popState();
-<callback_args>[^)]*     return 'CALLBACK_ARGS';
+<generic>[~]                    this.popState();
+<generic>[^~]*                  return "GENERICTYPE";
+<*>"~"                          this.begin("generic");
 
-<generic>[~]            this.popState();
-<generic>[^~]*          return "GENERICTYPE";
-<*>[~]                  this.begin("generic");
+<bqstring>[`]                   this.popState();
+<bqstring>[^`]+                 return "BQUOTE_STR";
+<*>[`]                          this.begin("bqstring");
 
-<string>["]             this.popState();
-<string>[^"]*           return "STR";
-<*>["]                  this.begin("string");
+<*>"_self"                      return 'LINK_TARGET';
+<*>"_blank"                     return 'LINK_TARGET';
+<*>"_parent"                    return 'LINK_TARGET';
+<*>"_top"                       return 'LINK_TARGET';
 
-<bqstring>[`]           this.popState();
-<bqstring>[^`]+         return "BQUOTE_STR";
-<*>[`]                  this.begin("bqstring");
-
-<*>"_self"              return 'LINK_TARGET';
-<*>"_blank"             return 'LINK_TARGET';
-<*>"_parent"            return 'LINK_TARGET';
-<*>"_top"               return 'LINK_TARGET';
-
-<*>\s*\<\|              return 'EXTENSION';
-<*>\s*\|\>              return 'EXTENSION';
-<*>\s*\>                return 'DEPENDENCY';
-<*>\s*\<                return 'DEPENDENCY';
-<*>\s*\*                return 'COMPOSITION';
-<*>\s*o                 return 'AGGREGATION';
-<*>\s*\(\)              return 'LOLLIPOP';
-<*>\-\-                 return 'LINE';
-<*>\.\.                 return 'DOTTED_LINE';
-<*>":"{1}[^:\n;]+       return 'LABEL';
-<*>":"{3}               return 'STYLE_SEPARATOR';
-<*>\-                   return 'MINUS';
-<*>"."                  return 'DOT';
-<*>\+                   return 'PLUS';
-<*>\%                   return 'PCT';
-<*>"="                  return 'EQUALS';
-<*>\=                   return 'EQUALS';
-<*>\w+                  return 'ALPHA';
-<*>"["                  return 'SQS';
-<*>"]"                  return 'SQE';
-<*>[!"#$%&'*+,-.`?\\/]  return 'PUNCTUATION';
-<*>[0-9]+               return 'NUM';
+<*>\s*\<\|                      return 'EXTENSION';
+<*>\s*\|\>                      return 'EXTENSION';
+<*>\s*\>                        return 'DEPENDENCY';
+<*>\s*\<                        return 'DEPENDENCY';
+<*>\s*\*                        return 'COMPOSITION';
+<*>\s*o                         return 'AGGREGATION';
+<*>\s*\(\)                      return 'LOLLIPOP';
+<*>\-\-                         return 'LINE';
+<*>\.\.                         return 'DOTTED_LINE';
+<*>":"{1}[^:\n;]+               return 'LABEL';
+<*>":"{3}                       return 'STYLE_SEPARATOR';
+<*>\-                           return 'MINUS';
+<*>"."                          return 'DOT';
+<*>\+                           return 'PLUS';
+<*>\%                           return 'PCT';
+<*>"="                          return 'EQUALS';
+<*>\=                           return 'EQUALS';
+<*>\w+                          return 'ALPHA';
+<*>"["                          return 'SQS';
+<*>"]"                          return 'SQE';
+<*>[!"#$%&'*+,-.`?\\/]          return 'PUNCTUATION';
+<*>[0-9]+                       return 'NUM';
 <*>[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
 [\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|
@@ -206,9 +204,9 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 [\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|
 [\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|
 [\uFFD2-\uFFD7\uFFDA-\uFFDC]
-                        return 'UNICODE_TEXT';
-<*>\s                   return 'SPACE';
-<*><<EOF>>              return 'EOF';
+                                return 'UNICODE_TEXT';
+<*>\s                           return 'SPACE';
+<*><<EOF>>                      return 'EOF';
 
 /lex
 
@@ -321,7 +319,7 @@ classStatements
     ;
 
 classStatement
-    : classIdentifier                                    
+    : classIdentifier
     | classIdentifier STYLE_SEPARATOR alphaNumToken      {yy.setCssClass($1, $3);}
     | classIdentifier STRUCT_START members STRUCT_STOP   {yy.addMembers($1,$3);}
     | classIdentifier STYLE_SEPARATOR alphaNumToken STRUCT_START members STRUCT_STOP {yy.setCssClass($1, $3);yy.addMembers($1,$5);}
@@ -391,10 +389,10 @@ clickStatement
     | CLICK className CALLBACK_NAME STR                 {$$ = $1;yy.setClickEvent($2, $3);yy.setTooltip($2, $4);}
     | CLICK className CALLBACK_NAME CALLBACK_ARGS       {$$ = $1;yy.setClickEvent($2, $3, $4);}
     | CLICK className CALLBACK_NAME CALLBACK_ARGS STR   {$$ = $1;yy.setClickEvent($2, $3, $4);yy.setTooltip($2, $5);}
-    | CLICK className HREF                              {$$ = $1;yy.setLink($2, $3);}
-    | CLICK className HREF LINK_TARGET                  {$$ = $1;yy.setLink($2, $3, $4);}
-    | CLICK className HREF STR                          {$$ = $1;yy.setLink($2, $3);yy.setTooltip($2, $4);}
-    | CLICK className HREF STR LINK_TARGET              {$$ = $1;yy.setLink($2, $3, $5);yy.setTooltip($2, $4);}
+    | CLICK className HREF STR                          {$$ = $1;yy.setLink($2, $4);}
+    | CLICK className HREF STR LINK_TARGET              {$$ = $1;yy.setLink($2, $4, $5);}
+    | CLICK className HREF STR STR                      {$$ = $1;yy.setLink($2, $4);yy.setTooltip($2, $5);}
+    | CLICK className HREF STR STR LINK_TARGET          {$$ = $1;yy.setLink($2, $4, $6);yy.setTooltip($2, $5);}
     ;
 
 cssClassStatement

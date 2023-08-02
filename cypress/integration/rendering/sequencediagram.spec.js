@@ -1,6 +1,6 @@
 /// <reference types="Cypress" />
 
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
 context('Sequence diagram', () => {
   it('should render a sequence diagram with boxes', () => {
@@ -153,6 +153,81 @@ context('Sequence diagram', () => {
           Alice ->> Bob: Message 1
           Note left of Bob: Alice/Bob Note
         end
+      `
+    );
+  });
+  it('should render a sequence diagram with basic actor creation and destruction', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      Alice ->> Bob: Hello Bob, how are you ?
+      Bob ->> Alice: Fine, thank you. And you?
+      create participant Polo
+      Alice ->> Polo: Hi Polo!
+      create actor Ola1 as Ola
+      Polo ->> Ola1: Hiii
+      Ola1 ->> Alice: Hi too
+      destroy Ola1
+      Alice --x Ola1: Bye!
+      Alice ->> Bob: And now?
+      create participant Ola2 as Ola
+      Alice ->> Ola2: Hello again
+      destroy Alice
+      Alice --x Ola2: Bye for me!
+      destroy Bob
+      Ola2 --> Bob: The end
+      `
+    );
+  });
+  it('should render a sequence diagram with actor creation and destruction coupled with backgrounds, loops and notes', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+			accTitle: test the accTitle
+			accDescr: Test a description
+
+			participant Alice
+      participant Bob
+			autonumber 10 10
+			rect rgb(200, 220, 100)
+			rect rgb(200, 255, 200)
+
+			Alice ->> Bob: Hello Bob, how are you?
+      create participant John as John<br />Second Line
+			Bob-->>John: How about you John?
+			end
+
+			Bob--x Alice: I am good thanks!
+			Bob-x John: I am good thanks!
+			Note right of John: John thinks a long<br />long time, so long<br />that the text does<br />not fit on a row.
+
+			Bob-->Alice: Checking with John...
+			Note over John:wrap: John looks like he's still thinking, so Bob prods him a bit.
+			Bob-x John: Hey John - we're still waiting to know<br />how you're doing
+			Note over John:nowrap: John's trying hard not to break his train of thought.
+      destroy John
+			Bob-x John: John! Cmon!
+			Note over John: After a few more moments, John<br />finally snaps out of it.
+			end
+
+			autonumber off
+			alt either this
+      create actor Lola
+			Alice->>+Lola: Yes
+			Lola-->>-Alice: OK
+			else or this
+			autonumber
+			Alice->>Lola: No
+			else or this will happen
+			Alice->Lola: Maybe
+			end
+			autonumber 200
+			par this happens in parallel
+      destroy Bob
+			Alice -->> Bob: Parallel message 1
+			and
+			Alice -->> Lola: Parallel message 2
+			end
       `
     );
   });
