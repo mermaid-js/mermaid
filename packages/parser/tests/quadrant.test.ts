@@ -21,10 +21,10 @@ describe('quadrant', () => {
     expect(result.lexerErrors).toHaveLength(0);
 
     const value = result.value;
-    expect(value.x_axis_left).toBe('low reach');
-    expect(value.x_axis_right).toBe('high reach');
-    expect(value.y_axis_left).toBe('low engagement');
-    expect(value.y_axis_right).toBe('high engagement');
+    expect(value.xAxis?.left).toBe('low reach');
+    expect(value.xAxis?.right).toBe('high reach');
+    expect(value.yAxis?.up).toBe('low engagement');
+    expect(value.yAxis?.down).toBe('high engagement');
 
     expect(value.quadrant_1).toBe('we should expand');
     expect(value.quadrant_2).toBe('need to promote');

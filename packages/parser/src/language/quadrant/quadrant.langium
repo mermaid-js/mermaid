@@ -37,8 +37,8 @@ fragment QuadrantAttributes:
       | quadrant_2=QUADRANT_QUADRANT_2
       | quadrant_3=QUADRANT_QUADRANT_3
       | quadrant_4=QUADRANT_QUADRANT_4
-      | x_axis_left=QUADRANT_X_AXIS_LEFT x_axis_right=QUADRANT_AXIS_RIGHT?
-      | y_axis_left=QUADRANT_Y_AXIS_LEFT y_axis_right=QUADRANT_AXIS_RIGHT?
+      | xAxis=QuadrantXAxis
+      | yAxis=QuadrantYAxis
     ) NEWLINE+
   )+
 ;
@@ -46,6 +46,14 @@ fragment QuadrantAttributes:
 QuadrantPoint:
   title=QUADRANT_POINT_TITLE x=QUADRANT_START_POINT_COORDINATE y=QUADRANT_END_POINT_COORDINATE
   NEWLINE+
+;
+
+QuadrantXAxis:
+  left=QUADRANT_X_AXIS_LEFT right=QUADRANT_AXIS_RIGHT?
+;
+
+QuadrantYAxis:
+  up=QUADRANT_Y_AXIS_LEFT down=QUADRANT_AXIS_RIGHT?
 ;
 
 // the `Chart` part is for backward compatibility
