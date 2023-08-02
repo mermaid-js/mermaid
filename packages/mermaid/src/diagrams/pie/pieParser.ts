@@ -1,5 +1,5 @@
 import { Pie, PieServices, createPieServices } from 'mermaid-parser';
-import { EmptyFileSystem, LangiumParser, ParseResult } from 'langium';
+import { EmptyFileSystem, type LangiumParser, type ParseResult } from 'langium';
 import { log } from '../../logger.js';
 import pieDb from './pieDb.js';
 
@@ -7,7 +7,7 @@ const services: PieServices = createPieServices(EmptyFileSystem).Pie;
 const parser: LangiumParser = services.parser.LangiumParser;
 
 export function parse(input: string): void {
-  const result: ParseResult<Pie> = parser.parse(input);
+  const result: ParseResult<Pie> = parser.parse<Pie>(input);
 
   if (result.parserErrors.length > 0 || result.lexerErrors.length > 0) {
     log.error(
