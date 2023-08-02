@@ -480,8 +480,8 @@ export const draw = function (text, id, version, diagObj) {
           var taskText = doc.querySelector('#' + o.id + '-text');
           const oldParent = taskRect.parentNode;
           var Link = doc.createElement('a');
-          Link.setAttribute('xlink:href', links[o.id]);
-          Link.setAttribute('target', '_top');
+          Link.setAttribute('xlink:href', links[o.id][0]);
+          Link.setAttribute('target', links[o.id][1]);
           oldParent.appendChild(Link);
           Link.appendChild(taskRect);
           Link.appendChild(taskText);

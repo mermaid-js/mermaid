@@ -42,14 +42,14 @@ If you are using docker and docker-compose, you have self-documented `run` bash 
 
 ```bash
 # Run unit test
-pnpm test
+npx pnpm test
 # Run unit test in watch mode
-pnpm test:watch
+npx pnpm test:watch
 # Run E2E test
-pnpm e2e
+npx pnpm e2e
 # Debug E2E tests
-pnpm dev
-pnpm cypress:open # in another terminal
+npx pnpm dev
+npx pnpm cypress:open # in another terminal
 ```
 
 ## Branch name format:
