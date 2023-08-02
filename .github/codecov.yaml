@@ -1,6 +1,17 @@
+codecov:
+  branch: develop
+
 comment:
   layout: 'reach, diff, flags, files'
   behavior: default
   require_changes: false # if true: only post the comment if coverage changes
   require_base: no # [yes :: must have a base report to post]
   require_head: yes # [yes :: must have a head report to post]
+
+coverage:
+  status:
+    project:
+      off
+      # Turing off for now as code coverage isn't stable and causes unnecessary build failures.
+      # default:
+      #   threshold: 2%

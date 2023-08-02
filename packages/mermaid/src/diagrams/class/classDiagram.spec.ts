@@ -264,6 +264,113 @@ class C13["With Città foreign language"]
       const str = 'classDiagram\n' + 'note "test"\n';
       parser.parse(str);
     });
+
+    const keywords = [
+      'direction',
+      'classDiagram',
+      'classDiagram-v2',
+      'namespace',
+      '{}',
+      '{',
+      '}',
+      '()',
+      '(',
+      ')',
+      '[]',
+      '[',
+      ']',
+      'class',
+      '\n',
+      'cssClass',
+      'callback',
+      'link',
+      'click',
+      'note',
+      'note for',
+      '<<',
+      '>>',
+      'call ',
+      '~',
+      '~Generic~',
+      '_self',
+      '_blank',
+      '_parent',
+      '_top',
+      '<|',
+      '|>',
+      '>',
+      '<',
+      '*',
+      'o',
+      '\\',
+      '--',
+      '..',
+      '-->',
+      '--|>',
+      ': label',
+      ':::',
+      '.',
+      '+',
+      'alphaNum',
+      '!',
+      '0123',
+      'function()',
+      'function(arg1, arg2)',
+    ];
+
+    it.each(keywords)('should handle a note with %s in it', function (keyword: string) {
+      const str = `classDiagram
+                     note "This is a keyword: ${keyword}. It truly is."
+                  `;
+      parser.parse(str);
+      expect(classDb.getNotes()[0].text).toEqual(`This is a keyword: ${keyword}. It truly is.`);
+    });
+
+    it.each(keywords)(
+      'should handle note with %s at beginning of string',
+      function (keyword: string) {
+        const str = `classDiagram
+                      note "${keyword}"`;
+
+        parser.parse(str);
+        expect(classDb.getNotes()[0].text).toEqual(`${keyword}`);
+      }
+    );
+
+    it.each(keywords)('should handle a "note for" with a %s in it', function (keyword: string) {
+      const str = `classDiagram
+                   class Something {
+                     int id
+                     string name
+                   }
+                   note for Something "This is a keyword: ${keyword}. It truly is."
+                   `;
+
+      parser.parse(str);
+      expect(classDb.getNotes()[0].text).toEqual(`This is a keyword: ${keyword}. It truly is.`);
+    });
+
+    it.each(keywords)(
+      'should handle a "note for" with a %s at beginning of string',
+      function (keyword: string) {
+        const str = `classDiagram
+                    class Something {
+                      int id
+                      string name
+                    }
+                    note for Something "${keyword}"
+                    `;
+
+        parser.parse(str);
+        expect(classDb.getNotes()[0].text).toEqual(`${keyword}`);
+      }
+    );
+
+    it.each(keywords)('should elicit error for %s after NOTE token', function (keyword: string) {
+      const str = `classDiagram
+                   note ${keyword}`;
+      expect(() => parser.parse(str)).toThrowError(/(Expecting\s'STR'|Unrecognized\stext)/);
+    });
   });
 
   describe('when parsing class defined in brackets', function () {
@@ -1373,9 +1480,54 @@ class Class2
       parser.parse(str);
 
       const testNamespace = parser.yy.getNamespace('Namespace1');
+      const testClasses = parser.yy.getClasses();
       expect(Object.keys(testNamespace.classes).length).toBe(2);
       expect(Object.keys(testNamespace.children).length).toBe(0);
       expect(testNamespace.classes['Class1'].id).toBe('Class1');
+      expect(Object.keys(testClasses).length).toBe(2);
+    });
+
+    it('should add relations between classes of different namespaces', function () {
+      const str = `classDiagram
+      A1 --> B1
+      namespace A {
+        class A1 {
+          +foo : string
+        }
+        class A2 {
+          +bar : int
+        }
+      }
+      namespace B {
+        class B1 {
+          +foo : bool
+        }
+        class B2 {
+          +bar : float
+        }
+      }
+      A2 --> B2`;
+
+      parser.parse(str);
+      const testNamespaceA = parser.yy.getNamespace('A');
+      const testNamespaceB = parser.yy.getNamespace('B');
+      const testClasses = parser.yy.getClasses();
+      const testRelations = parser.yy.getRelations();
+      expect(Object.keys(testNamespaceA.classes).length).toBe(2);
+      expect(testNamespaceA.classes['A1'].members[0]).toBe('+foo : string');
+      expect(testNamespaceA.classes['A2'].members[0]).toBe('+bar : int');
+      expect(Object.keys(testNamespaceB.classes).length).toBe(2);
+      expect(testNamespaceB.classes['B1'].members[0]).toBe('+foo : bool');
+      expect(testNamespaceB.classes['B2'].members[0]).toBe('+bar : float');
+      expect(Object.keys(testClasses).length).toBe(4);
+      expect(testClasses['A1'].parent).toBe('A');
+      expect(testClasses['A2'].parent).toBe('A');
+      expect(testClasses['B1'].parent).toBe('B');
+      expect(testClasses['B2'].parent).toBe('B');
+      expect(testRelations[0].id1).toBe('A1');
+      expect(testRelations[0].id2).toBe('B1');
+      expect(testRelations[1].id1).toBe('A2');
+      expect(testRelations[1].id2).toBe('B2');
     });
   });
 

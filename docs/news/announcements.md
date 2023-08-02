@@ -6,8 +6,8 @@
 
 # Announcements
 
-## [subhash-halder contributed quadrant charts so you can show your manager what to select - just like the strategy consultants at BCG do](https://www.mermaidchart.com/blog/posts/subhash-halder-contributed-quadrant-charts-so-you-can-show-your-manager-what-to-select-just-like-the-strategy-consultants-at-bcg-do/)
+## [Mermaid Chart Announces Visual Studio Code Plugin to Simplify Development Workflows](https://www.mermaidchart.com/blog/posts/mermaid-chart-announces-visual-studio-code-plugin)
 
-8 June 2023 · 7 mins
+17 July 2023 · 3 mins
 
-A quadrant chart is a useful diagram that helps users visualize data and identify patterns in a data set.
+New Integration Enhances Workflows By Enabling Developers To Reference And Edit Diagrams Within Visual Studio Code.
