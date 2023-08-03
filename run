@@ -1,5 +1,5 @@
 #!/bin/bash
-RUN="docker-compose run --rm"
+RUN="docker compose run --rm"
 
 ansi()          { echo -e "\e[${1}m${*:2}\e[0m"; }
 bold()          { ansi 1 "$@"; }
@@ -79,6 +79,9 @@ $(bold ./$name cypress open --project .)
 
 $(bold ./$name cypress run --spec cypress/integration/rendering/)$(underline test.spec.ts)
         Run specific test in cypress\n
+
+$(bold xhost +local:)
+        Allow local connections for x11 server
 
 EOF
 )

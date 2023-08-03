@@ -3,12 +3,17 @@ import { ref } from 'vue';
 type Platform = "native" | "docker";
 const selectedPlatform = ref<Platform>("native");
 const handlePlatformChange = (newPlatform: Platform) => {
-  console.log('Value changed:', selectedPlatform.value);
   selectedPlatform.value = newPlatform;
+
+  // , anchor: string | undefined
+  // if(anchor) {
+  //   document.querySelector(anchor).scrollIntoView();
+  // }
 }
 </script>
 
 <style>
+
 .platform-button {
   transition: color 0.25s, border-color 0.25s, background-color 0.25s;
   border: 1px solid transparent;
@@ -66,11 +71,22 @@ So you want to help? That's great!
 
 Here are a few things to get you started on the right path.
 
-## Technical Requirements and Setup
+## Get the Source Code
 
-### Technical Requirements
+In GitHub, you first **fork** a repository when you are going to make changes and submit pull requests.
 
-<div class="space-x-2 flex rounded-lg items-center">
+Then you **clone** a copy to your local development machine (e.g. where you code) to make a copy with all the files to work with.
+
+[Fork mermaid](https://github.com/mermaid-js/mermaid/fork) to start contributing to the main project and its documentaion, or [search for other repositories](https://github.com/orgs/mermaid-js/repositories).
+
+[Here is a GitHub document that gives an overview of the process.](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
+
+## Install the Requirements
+
+For [mermaid repository](https://github.com/mermaid-js/mermaid) we also support local development in Docker.
+So you can install everything natively on your machine or in Docker by your choice.
+
+<div class="platform space-x-2 flex rounded-lg items-center">
   <p class="font-semibold">Platform:</p>
   <button class="platform-button font-semibold rounded-full px-4 py-1" :class="{ 'platform-button--selected': selectedPlatform === 'native' }" @click="handlePlatformChange('native')">
     Native
@@ -82,99 +98,149 @@ Here are a few things to get you started on the right path.
 
 <div v-if="selectedPlatform === 'native'">
 
-These are the tools we use for working with the code and documentation.
+These are the tools we use for working with the code and documentation:
 
 - [volta](https://volta.sh/) to manage node versions.
 - [Node.js](https://nodejs.org/en/). `volta install node`
 - [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
-- [npx](https://docs.npmjs.com/cli/v8/commands/npx) the packaged executor in npm. This is needed [to install pnpm.](#2-install-pnpm)
+- [npx](https://docs.npmjs.com/cli/v8/commands/npx) the packaged executor in npm. This is needed [to install pnpm.](#install-packages)
 
-Follow [the setup steps below](#setup) to install them and verify they are working
+Follow [the setup steps below](#setup) to install them and start the development
 
 </div>
 
 <div v-if="selectedPlatform === 'docker'">
 
-[Install Docker](https://docs.docker.com/engine/install/). There are plenty of different platforms.
+[Install Docker](https://docs.docker.com/engine/install/). And that is pretty much all you need.
+
+Optionally, to run GUI (Cypress) within Docker you will also need X11 server insatlled.
+Maybe you already have it installed, so check it first:
+
+```bash
+echo $DISPLAY
+```
+If variable `$DISPLAY` is not empty, then it must be working. Otherwise install it.
 
 </div>
 
-### Setup
+## Setup and Launch
 
-<div class="space-x-2 flex rounded-lg items-center">
+<div class="platform space-x-2 flex rounded-lg items-center">
   <p class="font-semibold">Platform:</p>
-  <button class="platform-button font-semibold rounded-full px-4 py-1" :class="{ 'platform-button--selected': selectedPlatform === 'native' }" @click="handlePlatformChange('native')">
+  <button class="platform-button font-semibold rounded-full px-4 py-1" :class="{ 'platform-button--selected': selectedPlatform === 'native' }" @click="handlePlatformChange('native', '#setup')">
     Native
   </button>
-  <button class="platform-button font-semibold rounded-full px-4 py-1" :class="{ 'platform-button--selected': selectedPlatform === 'docker' }" @click="handlePlatformChange('docker')">
+  <button class="platform-button font-semibold rounded-full px-4 py-1" :class="{ 'platform-button--selected': selectedPlatform === 'docker' }" @click="handlePlatformChange('docker', '#setup')">
     Docker
   </button>
 </div>
 
-<div v-if="selectedPlatform === 'native'">
+### Switch to project
 
-Follow these steps to set up the environment you need to work on code and/or documentation.
-
-#### 1. Fork and clone the repository
-
-In GitHub, you first _fork_ a repository when you are going to make changes and submit pull requests.
-
-Then you _clone_ a copy to your local development machine (e.g. where you code) to make a copy with all the files to work with.
-
-[Here is a GitHub document that gives an overview of the process.](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
-
-#### 2. Install pnpm
-
-Once you have cloned the repository onto your development machine, change into the `mermaid` project folder so that you can install `pnpm`. You will need `npx` to install pnpm because volta doesn't support it yet.
-
-Ex:
+Once you have cloned the repository onto your development machine, change into the `mermaid` project folder (the top level directory of the mermaid project repository)
 
 ```bash
-# Change into the mermaid directory (the top level director of the mermaid project repository)
 cd mermaid
-# npx is required for first install because volta does not support pnpm yet
-npx pnpm install
 ```
 
-#### 3. Verify Everything Is Working
-
-Once you have installed pnpm, you can run the `test` script to verify that pnpm is working _and_ that the repository has been cloned correctly:
-
-```bash
-pnpm test
-```
-
-The `test` script and others are in the top-level `package.json` file.
-
-All tests should run successfully without any errors or failures. (You might see _lint_ or _formatting_ "warnings"; those are ok during this step.)
-
-#### 4. Make your changes
-
-Now you are ready to make your changes!
-Edit whichever files in `src` as required.
-
-#### 5. See your changes
-
-Open <http://localhost:9000> in your browser, after starting the dev server.
-There is a list of demos that can be used to see and test your changes.
-
-If you need a specific diagram, you can duplicate the `example.html` file in `/demos/dev` and add your own mermaid code to your copy.
-That will be served at <http://localhost:9000/dev/your-file-name.html>.
-After making code changes, the dev server will rebuild the mermaid library. You will need to reload the browser page yourself to see the changes. (PRs for auto reload are welcome!)
-
-
+<div v-if="selectedPlatform === 'native'">
 </div>
 
 <div v-if="selectedPlatform === 'docker'">
 
-If you are using docker and docker-compose, you have self-documented `run` bash script, which is a convenient alias for docker-compose commands:
+### Make `./run` executable
+
+For development using Docker there is a self-documented `run` bash script, which provides convenient aliases for `docker compose` commands.
+
+Ensure `./run` script is executable:
 
 ```bash
-./run install # npx pnpm install
-./run test # pnpm test
+chmod +x run
+```
+
+::: tip
+To get detailed help simply type `./run` or `./run help`.
+It also has short _Development quick start guide_ embedded.
+:::
+</div>
+
+### Install packages
+
+<div v-if="selectedPlatform === 'native'">
+
+Run `npx pnpm install`. You will need `npx` for this because volta doesn't support it yet.
+
+```bash
+npx pnpm install # npx is required for first install
+```
+</div>
+
+<div v-if="selectedPlatform === 'docker'">
+
+```bash
+./run pnpm install  # Install packages
+```
+</div>
+
+### Launch
+
+<div v-if="selectedPlatform === 'native'">
+
+```bash
+npx pnpm run dev
+```
+</div>
+<div v-if="selectedPlatform === 'docker'">
+
+```bash
+./run dev
+```
+</div>
+
+Open http://localhost:9000 and you will see demo pages.
+
+> Now you are ready to make your changes!
+> Edit whichever files in `src` as required.
+> 
+> Open <http://localhost:9000> in your browser, after starting the dev server.
+> There is a list of demos that can be used to see and test your changes.
+> 
+> If you need a specific diagram, you can duplicate the `example.html` file in `/demos/dev` and add your own mermaid code to your copy.
+> That will be served at <http://localhost:9000/dev/your-file-name.html>.
+> After making code changes, the dev server will rebuild the mermaid library. You will need to reload the browser page yourself to see the changes. (PRs for auto reload are welcome!)
+> 
+
+### Verify Everything Is Working
+
+> Once you have installed pnpm, you can run the `test` script to verify that pnpm is working _and_ that the repository has been cloned correctly:
+> ```bash
+> pnpm test
+> ```
+> The `test` script and others are in the top-level `package.json` file.
+> All tests should run successfully without any errors or failures. (You might see _lint_ or _formatting_ "warnings"; those are ok during this step.)
+
+
+
+<div v-if="selectedPlatform === 'native'">
+
+You can run the `test` script to verify that pnpm is working _and_ that the repository has been cloned correctly:
+
+```bash
+pnpm test
+```
+</div>
+
+<div v-if="selectedPlatform === 'docker'">
+
+```bash
+./run pnpm test
 ```
 
 </div>
+
+The `test` script and others are in the top-level `package.json` file.
+
+All tests should run successfully without any errors or failures. (You might see _lint_ or _formatting_ warnings; those are ok during this step.)
 
 ## Contributing Code
 
