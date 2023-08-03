@@ -555,7 +555,6 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
 export const draw = function (text, id, _version, diagObj) {
   conf = getConfig().er;
   log.info('Drawing ER diagram');
-  //  diag.db.clear();
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;

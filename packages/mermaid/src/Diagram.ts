@@ -32,7 +32,6 @@ export class Diagram {
     log.debug('Type ' + this.type);
     // Setup diagram
     this.db = diagram.db;
-    this.db.clear?.();
     this.renderer = diagram.renderer;
     this.parser = diagram.parser;
     const originalParse = this.parser.parse.bind(this.parser);
@@ -49,6 +48,7 @@ export class Diagram {
       originalParse(cleanupComments(extractFrontMatter(text, this.db)));
 
     this.parser.parser.yy = this.db;
+    this.db.clear?.();
     if (diagram.init) {
       diagram.init(cnf);
       log.info('Initialized diagram ' + this.type, cnf);
@@ -60,7 +60,6 @@ export class Diagram {
     if (this.detectError) {
       throw this.detectError;
     }
-    this.db.clear?.();
     this.parser.parse(this.text);
   }
 

@@ -1,10 +1,7 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select, curveLinear, selectAll } from 'd3';
-
-import flowDb from './flowDb.js';
 import { getConfig } from '../../config.js';
 import utils from '../../utils.js';
-
 import { render } from '../../dagre-wrapper/index.js';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
 import { log } from '../../logger.js';
@@ -344,15 +341,7 @@ export const addEdges = function (edges, g, diagObj) {
  * @returns {object} ClassDef styles
  */
 export const getClasses = function (text, diagObj) {
-  log.info('Extracting classes');
-  diagObj.db.clear();
-  try {
-    // Parse the graph definition
-    diagObj.parse(text);
-    return diagObj.db.getClasses();
-  } catch (e) {
-    return;
-  }
+  return diagObj.db.getClasses();
 };
 
 /**
@@ -364,10 +353,6 @@ export const getClasses = function (text, diagObj) {
 
 export const draw = async function (text, id, _version, diagObj) {
   log.info('Drawing flowchart');
-  diagObj.db.clear();
-  flowDb.setGen('gen-2');
-  // Parse the graph definition
-  diagObj.parser.parse(text);
 
   // Fetch the default direction, use TD if none was found
   let dir = diagObj.db.getDirection();
