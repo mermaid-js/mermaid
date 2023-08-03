@@ -1,4 +1,4 @@
-// @ts-ignore - jison doesn't export types
+// @ts-ignore: JISON doesn't support types
 import { parser } from './parser/pie.jison';
 import { DEFAULT_PIE_DB, db } from './pieDb.js';
 import { setConfig } from '../../config.js';

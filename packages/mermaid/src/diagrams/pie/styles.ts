@@ -1,4 +1,4 @@
-import { PieStyleOptions } from './pieTypes.js';
+import type { PieStyleOptions } from './pieTypes.js';
 
 const getStyles = (options: PieStyleOptions) =>
   `
