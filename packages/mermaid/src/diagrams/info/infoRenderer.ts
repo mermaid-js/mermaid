@@ -1,6 +1,7 @@
 import { select } from 'd3';
 import { log } from '../../logger.js';
 import { getConfig } from '../../config.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { DrawDefinition, HTML, SVG } from '../../diagram-api/types.js';
 
 /**
@@ -15,7 +16,6 @@ const draw: DrawDefinition = (text, id, version) => {
     log.debug('rendering info diagram\n' + text);
 
     const { securityLevel } = getConfig();
-
     // handle root and document for when rendering in sandbox mode
     let doc: Document = document;
     if (securityLevel === 'sandbox') {
@@ -26,19 +26,19 @@ const draw: DrawDefinition = (text, id, version) => {
       securityLevel === 'sandbox' ? select(doc.body as HTMLIFrameElement) : select('body');
 
     const svg: SVG = root.select(`#${id}`);
-    svg.attr('height', 100);
-    svg.attr('width', 400);
+    configureSvgSize(svg, 100, 400, true);
 
-    const g = svg.append('g');
-    g.append('text') // text label for the x axis
+    svg
+      .append('g')
+      .append('text')
       .attr('x', 100)
       .attr('y', 40)
       .attr('class', 'version')
-      .attr('font-size', '32px')
+      .attr('font-size', 32)
       .style('text-anchor', 'middle')
       .text(`v${version}`);
   } catch (e) {
-    log.error('error while rendering info diagram\n', e);
+    log.error('error while rendering info diagram', e);
   }
 };
 
