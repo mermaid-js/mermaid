@@ -17,7 +17,7 @@ import type { RequiredDeep } from 'type-fest';
 
 export const DEFAULT_PIE_CONFIG: Required<PieDiagramConfig> = {
   useMaxWidth: true,
-  useWidth: 1200,
+  useWidth: 984,
   textPosition: 0.75,
 } as const;
 
