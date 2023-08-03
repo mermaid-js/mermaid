@@ -572,7 +572,7 @@ style: styleComponent
 styleComponent: NUM | NODE_STRING| COLON | UNIT | SPACE | BRKT | STYLE | PCT ;
 
 /* Token lists */
-idStringToken  :  NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON | AMP | BRKT | MULT;
+idStringToken  :  NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON | AMP | BRKT | MULT | UNICODE_TEXT;
 
 textToken      :   TEXT | TAGSTART | TAGEND | UNICODE_TEXT;
 
