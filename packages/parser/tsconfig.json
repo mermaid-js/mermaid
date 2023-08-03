@@ -4,7 +4,6 @@
     "rootDir": ".",
     "outDir": "./dist",
     // TODO: figure out how to remove these configs
-    "lib": ["ES2022"],
     "preserveSymlinks": false,
     "strictPropertyInitialization": false
   },
