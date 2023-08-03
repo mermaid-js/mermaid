@@ -4,8 +4,9 @@ import { getDiagram, registerDiagram } from './diagram-api/diagramAPI.js';
 import { detectType, getDiagramLoader } from './diagram-api/detectType.js';
 import { extractFrontMatter } from './diagram-api/frontmatter.js';
 import { UnknownDiagramError } from './errors.js';
-import { DetailedError } from './utils.js';
 import { cleanupComments } from './diagram-api/comments.js';
+import type { DetailedError } from './utils.js';
+import type { MermaidConfig } from './config.type.js';
 
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
 
@@ -18,6 +19,7 @@ export class Diagram {
   parser;
   renderer;
   db;
+  private init?: (config: MermaidConfig) => void;
   private detectError?: UnknownDiagramError;
   constructor(public text: string) {
     this.text += '\n';
@@ -48,17 +50,19 @@ export class Diagram {
       originalParse(cleanupComments(extractFrontMatter(text, this.db)));
 
     this.parser.parser.yy = this.db;
-    this.db.clear?.();
-    if (diagram.init) {
-      diagram.init(cnf);
-      log.info('Initialized diagram ' + this.type, cnf);
-    }
+    this.init = diagram.init;
     this.parse();
   }
 
   parse() {
     if (this.detectError) {
       throw this.detectError;
+    }
+    this.db.clear?.();
+    if (this.init) {
+      const config = configApi.getConfig();
+      this.init(config);
+      log.info('Initialized diagram ' + this.type, config);
     }
     this.parser.parse(this.text);
   }
