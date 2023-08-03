@@ -1,8 +1,7 @@
-import { select } from 'd3';
 import { log } from '../../logger.js';
-import { getConfig } from '../../config.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import type { DrawDefinition, HTML, SVG } from '../../diagram-api/types.js';
+import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
+import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
@@ -15,17 +14,7 @@ const draw: DrawDefinition = (text, id, version) => {
   try {
     log.debug('rendering info diagram\n' + text);
 
-    const { securityLevel } = getConfig();
-    // handle root and document for when rendering in sandbox mode
-    let doc: Document = document;
-    if (securityLevel === 'sandbox') {
-      const sandboxElement: HTML = select(`#i${id}`);
-      doc = sandboxElement.node()?.contentDocument ?? doc;
-    }
-    const root: HTML =
-      securityLevel === 'sandbox' ? select(doc.body as HTMLIFrameElement) : select('body');
-
-    const svg: SVG = root.select(`#${id}`);
+    const svg: SVG = selectSvgElement(id);
     configureSvgSize(svg, 100, 400, true);
 
     svg
