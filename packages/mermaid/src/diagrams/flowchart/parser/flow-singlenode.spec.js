@@ -27,6 +27,8 @@ const keywords = [
   'subgraph',
 ];
 
+const specialChars = ['#', ':', '0', '&', ',', '*', '.', '\\', 'v', '-'];
+
 describe('[Singlenodes] when parsing', () => {
   beforeEach(function () {
     flow.parser.yy = flowDb;
@@ -339,4 +341,31 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert[`${keyword}-node`].text).toBe(`${keyword}-node`);
     expect(vert[`${keyword}/node`].text).toBe(`${keyword}/node`);
   });
+
+  it.each(specialChars)(
+    'should allow node ids of single special characters',
+    function (specialChar) {
+      flow.parser.parse(`graph TD; ${specialChar} --> A`);
+      const vert = flow.parser.yy.getVertices();
+      expect(vert[`${specialChar}`].text).toBe(`${specialChar}`);
+    }
+  );
+
+  it.each(specialChars)(
+    'should allow node ids with special characters at start of id',
+    function (specialChar) {
+      flow.parser.parse(`graph TD; ${specialChar}node --> A`);
+      const vert = flow.parser.yy.getVertices();
+      expect(vert[`${specialChar}node`].text).toBe(`${specialChar}node`);
+    }
+  );
+
+  it.each(specialChars)(
+    'should allow node ids with special characters at end of id',
+    function (specialChar) {
+      flow.parser.parse(`graph TD; node${specialChar} --> A`);
+      const vert = flow.parser.yy.getVertices();
+      expect(vert[`node${specialChar}`].text).toBe(`node${specialChar}`);
+    }
+  );
 });
