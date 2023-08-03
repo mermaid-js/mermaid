@@ -1,4 +1,4 @@
-// @ts-ignore: TODO Fix ts errors
+// @ts-ignore: JISON doesn't support types
 import flowParser from './parser/flow.jison';
 import flowDb from './flowDb.js';
 import flowRenderer from './flowRenderer.js';
