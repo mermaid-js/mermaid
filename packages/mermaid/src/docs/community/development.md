@@ -96,7 +96,7 @@ Follow [the setup steps below](#setup) to install them and start the development
 
 [Install Docker](https://docs.docker.com/engine/install/). And that is pretty much all you need.
 
-Optionally, to run GUI (Cypress) within Docker you will also need X11 server insatlled.
+Optionally, to run GUI (Cypress) within Docker you will also need X11 server installed.
 Maybe you already have it installed, so check it first:
 
 ```bash
