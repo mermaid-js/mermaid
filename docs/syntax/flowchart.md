@@ -605,7 +605,6 @@ flowchart LR
 ### Entity codes to escape characters
 
 It is possible to escape characters using the syntax exemplified here.
-For quotation marks, you can escape them with a backslash as well.
 
 ```mermaid-example
     flowchart LR
