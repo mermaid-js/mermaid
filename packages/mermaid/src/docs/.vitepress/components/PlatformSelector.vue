@@ -3,7 +3,7 @@ const { selectedPlatform } = defineProps(['selectedPlatform']);
 const emit = defineEmits();
 const handlePlatformChange = (newPlatform) => {
   emit('change', newPlatform);
-}
+};
 </script>
 
 <style>
@@ -37,12 +37,19 @@ const handlePlatformChange = (newPlatform) => {
 <template>
   <div class="platform space-x-2 flex rounded-lg items-center">
     <p class="font-semibold">Platform:</p>
-    <button class="platform-button font-semibold rounded-full px-4 py-1" :class="{ 'platform-button--selected': selectedPlatform === 'native' }" @click="handlePlatformChange('native')">
+    <button
+      class="platform-button font-semibold rounded-full px-4 py-1"
+      :class="{ 'platform-button--selected': selectedPlatform === 'native' }"
+      @click="handlePlatformChange('native')"
+    >
       Native
     </button>
-    <button class="platform-button font-semibold rounded-full px-4 py-1" :class="{ 'platform-button--selected': selectedPlatform === 'docker' }" @click="handlePlatformChange('docker')">
+    <button
+      class="platform-button font-semibold rounded-full px-4 py-1"
+      :class="{ 'platform-button--selected': selectedPlatform === 'docker' }"
+      @click="handlePlatformChange('docker')"
+    >
       Docker
     </button>
   </div>
 </template>
-
