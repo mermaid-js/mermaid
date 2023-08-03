@@ -27,7 +27,7 @@ const keywords = [
   'subgraph',
 ];
 
-const specialChars = ['#', ':', '0', '&', ',', '*', '.', '\\', 'v', '-'];
+const specialChars = ['#', ':', '0', '&', ',', '*', '.', '\\', 'v', '-', '/'];
 
 describe('[Singlenodes] when parsing', () => {
   beforeEach(function () {
