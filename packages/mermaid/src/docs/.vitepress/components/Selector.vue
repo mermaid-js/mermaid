@@ -1,7 +1,12 @@
 <template>
   <div>
     <span>{{ title }}</span>
-    <button class="rounded-full" :key="option.value" @click="handleButtonClick(option.value)" v-for="option in options">
+    <button
+      class="rounded-full"
+      :key="option.value"
+      @click="handleButtonClick(option.value)"
+      v-for="option in options"
+    >
       {{ option.label }}
       <span v-if="option.value === value">[v]</span>
     </button>
@@ -13,11 +18,11 @@ export default {
   props: {
     title: String,
     defaultValue: String,
-    options: Array
+    options: Array,
   },
   data() {
     return {
-      value: this.defaultValue
+      value: this.defaultValue,
     };
   },
   methods: {

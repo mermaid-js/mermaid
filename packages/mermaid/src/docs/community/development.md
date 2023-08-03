@@ -102,6 +102,7 @@ Maybe you already have it installed, so check it first:
 ```bash
 echo $DISPLAY
 ```
+
 If variable `$DISPLAY` is not empty, then it must be working. Otherwise install it.
 
 </div>
@@ -145,6 +146,7 @@ chmod +x run
 To get detailed help simply type `./run` or `./run help`.
 It also has short _Development quick start guide_ embedded.
 :::
+
 </div>
 
 ### Install packages
@@ -156,6 +158,7 @@ Run `npx pnpm install`. You will need `npx` for this because volta doesn't suppo
 ```bash
 npx pnpm install # npx is required for first install
 ```
+
 </div>
 
 <div v-if="selectedPlatform === 'docker'">
@@ -163,6 +166,7 @@ npx pnpm install # npx is required for first install
 ```bash
 ./run pnpm install  # Install packages
 ```
+
 </div>
 
 ### Launch
@@ -172,12 +176,14 @@ npx pnpm install # npx is required for first install
 ```bash
 npx pnpm run dev
 ```
+
 </div>
 <div v-if="selectedPlatform === 'docker'">
 
 ```bash
 ./run dev
 ```
+
 </div>
 
 Open http://localhost:9000 and you will see demo pages.
@@ -211,6 +217,7 @@ You can run the `test` script to verify that pnpm is working _and_ that the repo
 ```bash
 pnpm test
 ```
+
 </div>
 
 <div v-if="selectedPlatform === 'docker'">
@@ -224,7 +231,6 @@ pnpm test
 The `test` script and others are in the top-level `package.json` file.
 
 All tests should run successfully without any errors or failures. (You might see _lint_ or _formatting_ warnings; those are ok during this step.)
-
 
 ## Last Words
 
