@@ -175,6 +175,9 @@ that id.
 "^"                   return 'UP';
 "\|"                  return 'SEP';
 "v"                   return 'DOWN';
+"*"                   return 'MULT';
+"#"                   return 'BRKT';
+"&"                   return 'AMP';
 ([A-Za-z0-9!"\#$%&'*+\.`?\\_\/]|\-(?=[^\>\-\.])|=(?!=))+  return 'NODE_STRING';
 "-"                   return 'MINUS'
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
@@ -569,7 +572,7 @@ style: styleComponent
 styleComponent: NUM | NODE_STRING| COLON | UNIT | SPACE | BRKT | STYLE | PCT ;
 
 /* Token lists */
-idStringToken  :  NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON;
+idStringToken  :  NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON | AMP | BRKT | MULT;
 
 textToken      :   TEXT | TAGSTART | TAGEND | UNICODE_TEXT;
 
