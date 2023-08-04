@@ -576,11 +576,11 @@ idStringToken  :  NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON | A
 
 textToken      :   TEXT | TAGSTART | TAGEND | UNICODE_TEXT;
 
-textNoTagsToken: NUM | NODE_STRING | SPACE | MINUS | keywords |  START_LINK ;
+textNoTagsToken: NUM | NODE_STRING | SPACE | MINUS | AMP | UNICODE_TEXT | COLON | MULT | BRKT | keywords | START_LINK ;
 
 edgeTextToken  :  EDGE_TEXT | UNICODE_TEXT ;
 
-alphaNumToken   :  NUM | UNICODE_TEXT | NODE_STRING | DIR | DOWN | MINUS | COMMA;
+alphaNumToken  :  NUM | UNICODE_TEXT | NODE_STRING | DIR | DOWN | MINUS | COMMA | COLON | AMP | BRKT | MULT;
 
 idString
     :idStringToken
