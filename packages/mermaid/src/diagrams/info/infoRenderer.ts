@@ -1,6 +1,6 @@
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
+import type { DrawDefinition, Group, SVG } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 
 /**
@@ -11,24 +11,20 @@ import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
  * @param version - MermaidJS version.
  */
 const draw: DrawDefinition = (text, id, version) => {
-  try {
-    log.debug('rendering info diagram\n' + text);
+  log.debug('rendering info diagram\n' + text);
 
-    const svg: SVG = selectSvgElement(id);
-    configureSvgSize(svg, 100, 400, true);
+  const svg: SVG = selectSvgElement(id);
+  configureSvgSize(svg, 100, 400, true);
 
-    svg
-      .append('g')
-      .append('text')
-      .attr('x', 100)
-      .attr('y', 40)
-      .attr('class', 'version')
-      .attr('font-size', 32)
-      .style('text-anchor', 'middle')
-      .text(`v${version}`);
-  } catch (e) {
-    log.error('error while rendering info diagram', e);
-  }
+  const group: Group = svg.append('g');
+  group
+    .append('text')
+    .attr('x', 100)
+    .attr('y', 40)
+    .attr('class', 'version')
+    .attr('font-size', 32)
+    .style('text-anchor', 'middle')
+    .text(`v${version}`);
 };
 
 export const renderer = { draw };
