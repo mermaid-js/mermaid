@@ -17,4 +17,4 @@ export const sankeyLinkTargetRegex = /,(?:"([^\n\r"]+)"|([^\n\r,]+))/;
 /**
  * Matches sankey link value
  */
-export const sankeyLinkValueRegex = /,[\t ]*((?:0|[1-9]\d*)(?:\.\d+)?)/;
+export const sankeyLinkValueRegex = /,("(?:0|[1-9]\d*)(?:\.\d+)?"|[\t ]*(?:0|[1-9]\d*)(?:\.\d+)?)/;

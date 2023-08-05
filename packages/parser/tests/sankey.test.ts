@@ -23,7 +23,7 @@ describe('sankey', () => {
 
   it('should handle sankey with double quotes', () => {
     const context = `sankey-beta
-"source node, with comma","target node, with comma", 10.00
+"source node, with comma","target node, with comma","10.00"
     `;
     const result = parse(context);
     expect(result.parserErrors).toHaveLength(0);

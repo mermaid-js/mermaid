@@ -60,7 +60,7 @@ export class SankeyValueConverter extends DefaultValueConverter {
         // source and target with double quote and value
         if (match[1] !== undefined) {
           if (rule.name === 'SANKEY_LINK_VALUE') {
-            return Number(match[1]);
+            return Number(match[1].replaceAll('"', ''));
           } else {
             return match[1]
               .trim()
