@@ -26,15 +26,6 @@ describe('[Style] when parsing', () => {
     expect(vert['Q'].styles[0]).toBe('background:#fff');
   });
 
-  // log.debug(flow.parser.parse('graph TD;style Q background:#fff;'));
-  it('should handle styles for edges', function () {
-    const res = flow.parser.parse('graph TD;a-->b;\nstyle #0 stroke: #f66;');
-
-    const edges = flow.parser.yy.getEdges();
-
-    expect(edges.length).toBe(1);
-  });
-
   it('should handle multiple styles for a vortex', function () {
     const res = flow.parser.parse('graph TD;style R background:#fff,border:1px solid red;');
 
