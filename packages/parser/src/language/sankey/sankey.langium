@@ -38,5 +38,5 @@ SankeyLink:
 ;
 
 terminal SANKEY_LINK_VALUE returns number: /,[\t ]*(0|[1-9][0-9]*)(\.[0-9]+)?/;
-terminal SANKEY_LINK_TARGET: /,[\t ]*("[^\n\r"]+"|[^\n\r,]+)/;
+terminal SANKEY_LINK_TARGET: /,("[^\n\r"]+"|[^\n\r,]+)/;
 terminal SANKEY_LINK_SOURCE: /sankey-link-source/;

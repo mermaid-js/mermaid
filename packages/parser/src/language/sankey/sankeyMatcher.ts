@@ -12,7 +12,7 @@ export const matchSankeyLinkSource: CustomPatternMatcherFunc = (text, startOffse
 /**
  * Matches sankey link target node
  */
-export const sankeyLinkTargetRegex = /,[\t ]*(?:"([^\n\r"]+)"|([^\n\r,]+))/;
+export const sankeyLinkTargetRegex = /,(?:"([^\n\r"]+)"|([^\n\r,]+))/;
 
 /**
  * Matches sankey link value
