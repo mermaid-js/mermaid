@@ -11,14 +11,12 @@ import type { HTML, SVG } from '../diagram-api/types.js';
 export const selectSvgElement = (id: string): SVG => {
   const { securityLevel } = getConfig();
   // handle root and document for when rendering in sandbox mode
-  let doc: Document = document;
+  let root: HTML = select('body');
   if (securityLevel === 'sandbox') {
     const sandboxElement: HTML = select(`#i${id}`);
-    doc = sandboxElement.node()?.contentDocument ?? doc;
+    const doc: Document = sandboxElement.node()?.contentDocument ?? document;
+    root = select(doc.body as HTMLIFrameElement);
   }
-  const root: HTML =
-    securityLevel === 'sandbox' ? select(doc.body as HTMLIFrameElement) : select('body');
-
   const svg: SVG = root.select(`#${id}`);
   return svg;
 };
