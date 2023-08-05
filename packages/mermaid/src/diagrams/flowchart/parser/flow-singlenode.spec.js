@@ -6,6 +6,29 @@ setConfig({
   securityLevel: 'strict',
 });
 
+const keywords = [
+  'graph',
+  'flowchart',
+  'flowchart-elk',
+  'style',
+  'default',
+  'linkStyle',
+  'interpolate',
+  'classDef',
+  'class',
+  'href',
+  'call',
+  'click',
+  '_self',
+  '_blank',
+  '_parent',
+  '_top',
+  'end',
+  'subgraph',
+];
+
+const specialChars = ['#', ':', '0', '&', ',', '*', '.', '\\', 'v', '-', '/', '_'];
+
 describe('[Singlenodes] when parsing', () => {
   beforeEach(function () {
     flow.parser.yy = flowDb;
@@ -259,4 +282,90 @@ describe('[Singlenodes] when parsing', () => {
     expect(edges.length).toBe(0);
     expect(vert['i_d'].styles.length).toBe(0);
   });
+
+  it.each(keywords)('should handle keywords between dashes "-"', function (keyword) {
+    const res = flow.parser.parse(`graph TD;a-${keyword}-node;`);
+    const vert = flow.parser.yy.getVertices();
+    expect(vert[`a-${keyword}-node`].text).toBe(`a-${keyword}-node`);
+  });
+
+  it.each(keywords)('should handle keywords between periods "."', function (keyword) {
+    const res = flow.parser.parse(`graph TD;a.${keyword}.node;`);
+    const vert = flow.parser.yy.getVertices();
+    expect(vert[`a.${keyword}.node`].text).toBe(`a.${keyword}.node`);
+  });
+
+  it.each(keywords)('should handle keywords between underscores "_"', function (keyword) {
+    const res = flow.parser.parse(`graph TD;a_${keyword}_node;`);
+    const vert = flow.parser.yy.getVertices();
+    expect(vert[`a_${keyword}_node`].text).toBe(`a_${keyword}_node`);
+  });
+
+  it.each(keywords)('should handle nodes ending in %s', function (keyword) {
+    const res = flow.parser.parse(`graph TD;node_${keyword};node.${keyword};node-${keyword};`);
+    const vert = flow.parser.yy.getVertices();
+    expect(vert[`node_${keyword}`].text).toBe(`node_${keyword}`);
+    expect(vert[`node.${keyword}`].text).toBe(`node.${keyword}`);
+    expect(vert[`node-${keyword}`].text).toBe(`node-${keyword}`);
+  });
+
+  const errorKeywords = [
+    'graph',
+    'flowchart',
+    'flowchart-elk',
+    'style',
+    'linkStyle',
+    'interpolate',
+    'classDef',
+    'class',
+    '_self',
+    '_blank',
+    '_parent',
+    '_top',
+    'end',
+    'subgraph',
+  ];
+  it.each(errorKeywords)('should throw error at nodes beginning with %s', function (keyword) {
+    const str = `graph TD;${keyword}.node;${keyword}-node;${keyword}/node`;
+    const vert = flow.parser.yy.getVertices();
+
+    expect(() => flow.parser.parse(str)).toThrowError();
+  });
+
+  const workingKeywords = ['default', 'href', 'click', 'call'];
+
+  it.each(workingKeywords)('should parse node beginning with %s', function (keyword) {
+    flow.parser.parse(`graph TD; ${keyword}.node;${keyword}-node;${keyword}/node;`);
+    const vert = flow.parser.yy.getVertices();
+    expect(vert[`${keyword}.node`].text).toBe(`${keyword}.node`);
+    expect(vert[`${keyword}-node`].text).toBe(`${keyword}-node`);
+    expect(vert[`${keyword}/node`].text).toBe(`${keyword}/node`);
+  });
+
+  it.each(specialChars)(
+    'should allow node ids of single special characters',
+    function (specialChar) {
+      flow.parser.parse(`graph TD; ${specialChar} --> A`);
+      const vert = flow.parser.yy.getVertices();
+      expect(vert[`${specialChar}`].text).toBe(`${specialChar}`);
+    }
+  );
+
+  it.each(specialChars)(
+    'should allow node ids with special characters at start of id',
+    function (specialChar) {
+      flow.parser.parse(`graph TD; ${specialChar}node --> A`);
+      const vert = flow.parser.yy.getVertices();
+      expect(vert[`${specialChar}node`].text).toBe(`${specialChar}node`);
+    }
+  );
+
+  it.each(specialChars)(
+    'should allow node ids with special characters at end of id',
+    function (specialChar) {
+      flow.parser.parse(`graph TD; node${specialChar} --> A`);
+      const vert = flow.parser.yy.getVertices();
+      expect(vert[`node${specialChar}`].text).toBe(`node${specialChar}`);
+    }
+  );
 });
