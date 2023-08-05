@@ -305,6 +305,95 @@ describe('[Text] when parsing', () => {
       expect(vert['C'].type).toBe('round');
       expect(vert['C'].text).toBe('Chimpansen hoppar');
     });
+
+    const keywords = [
+      'graph',
+      'flowchart',
+      'flowchart-elk',
+      'style',
+      'default',
+      'linkStyle',
+      'interpolate',
+      'classDef',
+      'class',
+      'href',
+      'call',
+      'click',
+      '_self',
+      '_blank',
+      '_parent',
+      '_top',
+      'end',
+      'subgraph',
+      'kitty',
+    ];
+
+    const shapes = [
+      { start: '[', end: ']', name: 'square' },
+      { start: '(', end: ')', name: 'round' },
+      { start: '{', end: '}', name: 'diamond' },
+      { start: '(-', end: '-)', name: 'ellipse' },
+      { start: '([', end: '])', name: 'stadium' },
+      { start: '>', end: ']', name: 'odd' },
+      { start: '[(', end: ')]', name: 'cylinder' },
+      { start: '(((', end: ')))', name: 'doublecircle' },
+      { start: '[/', end: '\\]', name: 'trapezoid' },
+      { start: '[\\', end: '/]', name: 'inv_trapezoid' },
+      { start: '[/', end: '/]', name: 'lean_right' },
+      { start: '[\\', end: '\\]', name: 'lean_left' },
+      { start: '[[', end: ']]', name: 'subroutine' },
+      { start: '{{', end: '}}', name: 'hexagon' },
+    ];
+
+    shapes.forEach((shape) => {
+      it.each(keywords)(`should handle %s keyword in ${shape.name} vertex`, function (keyword) {
+        const rest = flow.parser.parse(
+          `graph TD;A_${keyword}_node-->B${shape.start}This node has a ${keyword} as text${shape.end};`
+        );
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+        expect(vert['B'].type).toBe(`${shape.name}`);
+        expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
+      });
+    });
+
+    it.each(keywords)('should handle %s keyword in rect vertex', function (keyword) {
+      const rest = flow.parser.parse(
+        `graph TD;A_${keyword}_node-->B[|borders:lt|This node has a ${keyword} as text];`
+      );
+
+      const vert = flow.parser.yy.getVertices();
+      const edges = flow.parser.yy.getEdges();
+      expect(vert['B'].type).toBe('rect');
+      expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
+    });
+
+    it('should handle edge case for odd vertex with node id ending with minus', function () {
+      const res = flow.parser.parse('graph TD;A_node-->odd->Vertex Text];');
+      const vert = flow.parser.yy.getVertices();
+
+      expect(vert['odd-'].type).toBe('odd');
+      expect(vert['odd-'].text).toBe('Vertex Text');
+    });
+    it('should allow forward slashes in lean_right vertices', function () {
+      const rest = flow.parser.parse(`graph TD;A_node-->B[/This node has a / as text/];`);
+
+      const vert = flow.parser.yy.getVertices();
+      const edges = flow.parser.yy.getEdges();
+      expect(vert['B'].type).toBe('lean_right');
+      expect(vert['B'].text).toBe(`This node has a / as text`);
+    });
+
+    it('should allow back slashes in lean_left vertices', function () {
+      const rest = flow.parser.parse(`graph TD;A_node-->B[\\This node has a \\ as text\\];`);
+
+      const vert = flow.parser.yy.getVertices();
+      const edges = flow.parser.yy.getEdges();
+      expect(vert['B'].type).toBe('lean_left');
+      expect(vert['B'].text).toBe(`This node has a \\ as text`);
+    });
+
     it('should handle åäö and minus', function () {
       const res = flow.parser.parse('graph TD;A-->C{Chimpansen hoppar åäö-ÅÄÖ};');
 
@@ -483,5 +572,34 @@ describe('[Text] when parsing', () => {
 
     expect(vert['A'].text).toBe(',.?!+-*');
     expect(edges[0].text).toBe(',.?!+-*');
+  });
+
+  it('should throw error at nested set of brackets', function () {
+    const str = 'graph TD; A[This is a () in text];';
+    expect(() => flow.parser.parse(str)).toThrowError("got 'PS'");
+  });
+
+  it('should throw error for strings and text at the same time', function () {
+    const str = 'graph TD;A(this node has "string" and text)-->|this link has "string" and text|C;';
+
+    expect(() => flow.parser.parse(str)).toThrowError("got 'STR'");
+  });
+
+  it('should throw error for escaping quotes in text state', function () {
+    //prettier-ignore
+    const str = 'graph TD; A[This is a \"()\" in text];'; //eslint-disable-line no-useless-escape
+
+    expect(() => flow.parser.parse(str)).toThrowError("got 'STR'");
+  });
+
+  it('should throw error for nested quoatation marks', function () {
+    const str = 'graph TD; A["This is a "()" in text"];';
+
+    expect(() => flow.parser.parse(str)).toThrowError("Expecting 'SQE'");
+  });
+
+  it('should throw error', function () {
+    const str = `graph TD; node[hello ) world] --> works`;
+    expect(() => flow.parser.parse(str)).toThrowError("got 'PE'");
   });
 });
