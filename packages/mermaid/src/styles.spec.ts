@@ -27,7 +27,7 @@ import requirement from './diagrams/requirement/styles.js';
 import sequence from './diagrams/sequence/styles.js';
 import state from './diagrams/state/styles.js';
 import journey from './diagrams/user-journey/styles.js';
-import timeline from './diagrams/timeline/styles.js';
+import timeline from './diagrams/timeline/timelineStyles.js';
 import mindmap from './diagrams/mindmap/styles.js';
 import themes from './themes/index.js';
 

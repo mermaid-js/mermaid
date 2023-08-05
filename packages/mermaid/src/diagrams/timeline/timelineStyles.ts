@@ -1,3 +1,4 @@
+// @ts-nocheck - ignore error for converting file to ts
 import { darken, lighten, isDark } from 'khroma';
 
 const genSections = (options) => {

@@ -1,3 +1,4 @@
+// @ts-nocheck - ignore error for converting file to ts
 import { parser as timeline } from './parser/timeline.jison';
 import * as timelineDB from './timelineDb.js';
 // import { injectUtils } from './mermaidUtils.js';
@@ -30,7 +31,7 @@ describe('when parsing a timeline ', function () {
   });
   describe('Timeline', function () {
     it('TL-1 should handle a simple section definition abc-123', function () {
-      let str = `timeline
+      const str = `timeline
     section abc-123`;
 
       timeline.parse(str);
@@ -38,7 +39,7 @@ describe('when parsing a timeline ', function () {
     });
 
     it('TL-2 should handle a simple section and only two tasks', function () {
-      let str = `timeline
+      const str = `timeline
     section abc-123
     task1
     task2`;
@@ -50,7 +51,7 @@ describe('when parsing a timeline ', function () {
     });
 
     it('TL-3 should handle a two section and two coressponding tasks', function () {
-      let str = `timeline
+      const str = `timeline
     section abc-123
     task1
     task2
@@ -71,7 +72,7 @@ describe('when parsing a timeline ', function () {
     });
 
     it('TL-4 should handle a section, and task and its events', function () {
-      let str = `timeline
+      const str = `timeline
     section abc-123
       task1: event1
       task2: event2: event3
@@ -95,7 +96,7 @@ describe('when parsing a timeline ', function () {
     });
 
     it('TL-5 should handle a section, and task and its multi line events', function () {
-      let str = `timeline
+      const str = `timeline
     section abc-123
       task1: event1
       task2: event2: event3
