@@ -16,6 +16,8 @@
 // A special state for grabbing text up to the first comment/newline
 %x ID ALIAS LINE
 
+%x MD_STR
+
 // Directive states
 %x open_directive type_directive arg_directive
 %x acc_title
@@ -34,6 +36,9 @@
 <INITIAL,ID,ALIAS,LINE,arg_directive,type_directive,open_directive>\#[^\n]*   /* skip comments */
 \%%(?!\{)[^\n]*                                                 /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */
+<MD_STR>.+														return 'markdown';
+<MD_STR>\`(?=\")\"												this.popState('MD_STR');
+["`]															this.pushState('MD_STR');
 [0-9]+(?=[ \n]+)       											return 'NUM';
 "box"															{ this.begin('LINE'); return 'box'; }
 "participant"                                                   { this.begin('ID'); return 'participant'; }
@@ -332,7 +337,8 @@ signaltype
 	;
 
 text2
-  : TXT {$$ = yy.parseMessage($1.trim().substring(1)) }
+  : TXT {$$ = yy.parseMessage($1.trim().substring(1)); }
+  | 'markdown' {$$ = yy.parseMessage($1.trim().substring(1)); }
   ;
 
 openDirective
