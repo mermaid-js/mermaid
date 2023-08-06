@@ -1,5 +1,5 @@
 // @ts-ignore: TODO Fix ts errors
-import { adjust, channel, toHsla, isDark, lighten, darken } from 'khroma';
+import { adjust, channel } from 'khroma';
 import mermaidAPI from '../../mermaidAPI.js';
 import * as configApi from '../../config.js';
 import { sanitizeText } from '../common/common.js';
@@ -133,6 +133,11 @@ let plotColorPalette = Array.isArray(xyChartThemeConfig.xychartPlotBaseColor)
 let hasSetXAxis = false;
 let hasSetYAxis = false;
 
+interface NormalTextType {
+  type: 'text';
+  text: string;
+}
+
 function textSanitizer(text: string) {
   return sanitizeText(text.trim(), config);
 }
@@ -149,23 +154,23 @@ function setOrientation(oriantation: string) {
     xyChartConfig.chartOrientation = 'vertical';
   }
 }
-function setXAxisTitle(title: string) {
-  xyChartData.xAxis.title = textSanitizer(title);
+function setXAxisTitle(title: NormalTextType) {
+  xyChartData.xAxis.title = textSanitizer(title.text);
 }
 function setXAxisRangeData(min: number, max: number) {
   xyChartData.xAxis = { type: 'linear', title: xyChartData.xAxis.title, min, max };
   hasSetXAxis = true;
 }
-function setXAxisBand(categories: string[]) {
+function setXAxisBand(categories: NormalTextType[]) {
   xyChartData.xAxis = {
     type: 'band',
     title: xyChartData.xAxis.title,
-    categories: categories.map((c) => textSanitizer(c)),
+    categories: categories.map((c) => textSanitizer(c.text)),
   };
   hasSetXAxis = true;
 }
-function setYAxisTitle(title: string) {
-  xyChartData.yAxis.title = textSanitizer(title);
+function setYAxisTitle(title: NormalTextType) {
+  xyChartData.yAxis.title = textSanitizer(title.text);
 }
 function setYAxisRangeData(min: number, max: number) {
   xyChartData.yAxis = { type: 'linear', title: xyChartData.yAxis.title, min, max };
@@ -224,7 +229,7 @@ function getPlotColorFromPalette(plotIndex: number): string {
   return plotColorPalette[plotIndex === 0 ? 0 : plotIndex % (plotColorPalette.length - 1)];
 }
 
-function setLineData(title: string, data: number[]) {
+function setLineData(title: NormalTextType, data: number[]) {
   const plotData = transformDataWithOutCategory(data);
   xyChartData.plots.push({
     type: 'line',
@@ -235,7 +240,7 @@ function setLineData(title: string, data: number[]) {
   plotIndex++;
 }
 
-function setBarData(title: string, data: number[]) {
+function setBarData(title: NormalTextType, data: number[]) {
   const plotData = transformDataWithOutCategory(data);
   xyChartData.plots.push({
     type: 'bar',
