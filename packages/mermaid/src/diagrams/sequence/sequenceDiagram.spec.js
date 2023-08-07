@@ -172,8 +172,6 @@ describe('more than one sequence diagram', () => {
 
 describe('when parsing a sequenceDiagram', function () {
   beforeEach(function () {
-    // diagram.db = sequenceDb;
-    //
     diagram = new Diagram(`
 sequenceDiagram
 Alice->Bob:Hello Bob, how are you?
@@ -2048,7 +2046,6 @@ describe('when rendering a sequenceDiagram with directives', () => {
 
   beforeEach(function () {
     mermaidAPI.reset();
-    // diagram.db = sequenceDb;
     diagram.renderer.bounds.init();
   });
 

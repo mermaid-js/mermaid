@@ -7,6 +7,8 @@ import { UnknownDiagramError } from './errors.js';
 import { cleanupComments } from './diagram-api/comments.js';
 import type { DetailedError } from './utils.js';
 import type { MermaidConfig } from './config.type.js';
+import type { DiagramDefinition } from './diagram-api/types.js';
+import { D } from 'vitest/dist/types-198fd1d9.js';
 
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
 
@@ -16,10 +18,11 @@ export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: 
  */
 export class Diagram {
   type = 'graph';
-  parser;
-  renderer;
-  db;
-  private init?: (config: MermaidConfig) => void;
+  parser: DiagramDefinition['parser'];
+  renderer: DiagramDefinition['renderer'];
+  db: DiagramDefinition['db'];
+  private init?: DiagramDefinition['init'];
+
   private detectError?: UnknownDiagramError;
   constructor(public text: string) {
     this.text += '\n';
@@ -62,7 +65,6 @@ export class Diagram {
     if (this.init) {
       const config = configApi.getConfig();
       this.init(config);
-      log.info('Initialized diagram ' + this.type, config);
     }
     this.parser.parse(this.text);
   }
