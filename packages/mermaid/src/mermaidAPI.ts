@@ -109,7 +109,6 @@ async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean
   addDiagrams();
   try {
     await getDiagramFromText(text);
-    // diagram.parse();
   } catch (error) {
     if (parseOptions?.suppressErrors) {
       return false;
