@@ -214,15 +214,30 @@ export const clear = function () {
 
 export const parseMessage = function (str) {
   const _str = str.trim();
-  const message = {
-    text: _str.replace(/^:?(?:no)?wrap:/, '').trim(),
-    wrap:
-      _str.match(/^:?wrap:/) !== null
-        ? true
-        : _str.match(/^:?nowrap:/) !== null
-        ? false
-        : undefined,
-  };
+  const markdown = _str.replace(/^:?(?:no)?wrap:/, '').trim();
+  let message;
+  if (markdown[0] === '"') {
+    const text = markdown.replace(/"`/, '').trim();
+    message = {
+      text: text,
+      wrap:
+        _str.match(/^:?wrap:/) !== null
+          ? true
+          : _str.match(/^:?nowrap:/) !== null
+          ? false
+          : undefined,
+    };
+  } else {
+    message = {
+      text: _str.replace(/^:?(?:no)?wrap:/, '').trim(),
+      wrap:
+        _str.match(/^:?wrap:/) !== null
+          ? true
+          : _str.match(/^:?nowrap:/) !== null
+          ? false
+          : undefined,
+    };
+  }
   log.debug('parseMessage:', message);
   return message;
 };
