@@ -6,9 +6,7 @@ import { extractFrontMatter } from './diagram-api/frontmatter.js';
 import { UnknownDiagramError } from './errors.js';
 import { cleanupComments } from './diagram-api/comments.js';
 import type { DetailedError } from './utils.js';
-import type { MermaidConfig } from './config.type.js';
 import type { DiagramDefinition } from './diagram-api/types.js';
-import { D } from 'vitest/dist/types-198fd1d9.js';
 
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
 
@@ -62,10 +60,7 @@ export class Diagram {
       throw this.detectError;
     }
     this.db.clear?.();
-    if (this.init) {
-      const config = configApi.getConfig();
-      this.init(config);
-    }
+    this.init?.(configApi.getConfig());
     this.parser.parse(this.text);
   }
 
