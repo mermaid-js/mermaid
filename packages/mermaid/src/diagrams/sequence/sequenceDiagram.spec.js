@@ -2134,10 +2134,10 @@ describe('Uses markdown for text', () => {
   it('should allow markdown as message text', () => {
     const diagram = new Diagram(`
       sequenceDiagram
-      Alice->Bob:Hello there, man
+      Alice->Bob: "\`Hello there, man\`"
     `);
     const messages = diagram.db.getMessages();
     expect(messages[0].message).toBe('Hello there, man');
-    expect(messages[0].messageType).toBe('markdown');
+    expect(messages[0].textType).toBe('markdown');
   });
 });
