@@ -23,7 +23,7 @@ export const journeyTaskAnotherActorRegex = /,([^\n\r,]+)/;
 /**
  * Matches a journey task title
  */
-export const journeyPeriodTaskRegex = /(?!%%.*)([^\n\r:]+)/y;
+export const journeyPeriodTaskRegex = /([^\n\r:]+(?=%%)|[^\n\r:]+)/y;
 export const matchJourneyTaskTitle: CustomPatternMatcherFunc = (text, startOffset) => {
   journeyPeriodTaskRegex.lastIndex = startOffset;
   return journeyPeriodTaskRegex.exec(text);
