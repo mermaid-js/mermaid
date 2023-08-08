@@ -109,11 +109,8 @@ function sidebarAll() {
       collapsed: true,
       items: [
         { text: 'About Mermaid', link: '/intro/' },
-        { text: 'Deployment', link: '/intro/n00b-gettingStarted' },
-        {
-          text: 'Syntax and Configuration',
-          link: '/intro/n00b-syntaxReference',
-        },
+        { text: 'Getting Started', link: '/intro/n00b-gettingStarted' },
+        { text: 'Syntax and Configuration', link: '/intro/n00b-syntaxReference' },
       ],
     },
     ...sidebarSyntax(),
