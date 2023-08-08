@@ -18,7 +18,7 @@ import {
 
 // TODO: Convert to generic TreeNode type? Convert to class?
 export interface Block {
-  ID?: string;
+  ID: string;
   label?: string;
   parent?: Block;
   children?: Block[];
@@ -32,16 +32,21 @@ export interface Link {
 
 let rootBlocks: Block[] = [];
 let blocks: Block[] = [];
-let links: Link[] = [];
+const links: Link[] = [];
+let rootBlock = { ID: 'root', children: [], columns: -1 } as Block;
+let currentBlock: Block | undefined;
 
 const clear = (): void => {
+  rootBlocks = [];
   blocks = [];
   commonClear();
+  rootBlock = { ID: 'root', children: [], columns: -1 };
+  currentBlock = rootBlock;
 };
 
 type IAddBlock = (block: Block) => Block;
 const addBlock: IAddBlock = (block: Block, parent?: Block): Block => {
-  if(parent) {
+  if (parent) {
     parent.children ??= [];
     parent.children.push(block);
   } else {
@@ -57,14 +62,44 @@ const addLink: IAddLink = (link: Link): Link => {
   return link;
 };
 
+type ISetColumns = (columnsStr: string) => void;
+const setColumns = (columnsStr: string): void => {
+  const columns = columnsStr === 'auto' ? -1 : parseInt(columnsStr);
+  currentBlock!.columns = columns;
+};
+
+const getBlock = (id: string, blocks: Block[]): Block | undefined => {
+  for (const block of blocks) {
+    if (block.ID === id) {
+      return block;
+    }
+    if (block.children) {
+      const foundBlock = getBlock(id, block.children);
+      if (foundBlock) {
+        return foundBlock;
+      }
+    }
+  }
+};
+
+type IGetColumns = (blockID: string) => number;
+const getColumns = (blockID: string): number => {
+  const blocks = [rootBlock];
+  const block = getBlock(blockID, blocks);
+  if (!block) {
+    return -1;
+  }
+  return block.columns || -1;
+};
+
 type IGetBlocks = () => Block[];
-const getBlocks:IGetBlocks = () => blocks;
+const getBlocks: IGetBlocks = () => blocks;
 
 type IGetLinks = () => Link[];
-const getLinks:IGetLinks = () => links;
+const getLinks: IGetLinks = () => links;
 
 type IGetLogger = () => Console;
-const getLogger:IGetLogger = () => console;
+const getLogger: IGetLogger = () => console;
 
 export interface BlockDB extends DiagramDB {
   clear: () => void;
@@ -74,6 +109,8 @@ export interface BlockDB extends DiagramDB {
   getLogger: IGetLogger;
   getBlocks: IGetBlocks;
   getLinks: IGetLinks;
+  setColumns: ISetColumns;
+  getColumns: IGetColumns;
 }
 
 const db: BlockDB = {
@@ -89,6 +126,8 @@ const db: BlockDB = {
   // setAccDescription,
   // getDiagramTitle,
   // setDiagramTitle,
+  setColumns,
+  getColumns,
   clear,
 };
 

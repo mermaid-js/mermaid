@@ -15,7 +15,6 @@
 %x string
 %x md_string
 %x NODE
-%options easy_keword_rules
 
 
 // as per section 6.1 of RFC 2234 [2]
@@ -28,11 +27,15 @@ CRLF \u000D\u000A
 %%
 
 "block-beta"                                             { return 'BLOCK_DIAGRAM_KEY'; }
+"block"\s+            { yy.getLogger().info('Found space-block'); return 'block';}
+"block"\n+            { yy.getLogger().info('Found nl-block'); return 'block';}
 // \s*\%\%.*                                                       { yy.getLogger().info('Found comment',yytext); }
 [\s]+                                                           { yy.getLogger().info('.', yytext); /* skip all whitespace */  }
 [\n]+ {yy.getLogger().info('_', yytext);                 /* skip all whitespace */   }
 // [\n]                return 'NL';
 <INITIAL>({CRLF}|{LF})                     { return 'NL' }
+"columns"\s+"auto"             { yytext=-1; return 'COLUMNS'; }
+"columns"\s+[\d]+            { yytext = yytext.replace(/columns\s+/,''); yy.getLogger().info('COLUMNS (LEX)', yytext); return 'COLUMNS'; }
 ["][`]          { this.pushState("md_string");}
 <md_string>[^`"]+        { return "MD_STR";}
 <md_string>[`]["]          { this.popState();}
@@ -114,6 +117,7 @@ accDescr\s*"{"\s*                                { this.pushState("acc_descr_mul
 
 /lex
 
+%left '^'
 %start start
 
 %% // language grammar
@@ -133,12 +137,8 @@ seperator
     {yy.getLogger().info('Rule: seperator (EOF) ');}
   ;
 
-start: BLOCK_DIAGRAM_KEY document;
+start: BLOCK_DIAGRAM_KEY document EOF;
 
-blockDiagram
-  : blockDiagram document  { return yy; }
-  | blockDiagram NL document  { return yy; }
-  ;
 
 stop
   : NL {yy.getLogger().info('Stop NL ');}
@@ -149,8 +149,8 @@ stop
   ;
 
 document
-	: document statement
-	| statement
+	: statement { yy.getLogger().info("Rule: statement: ", $1);}
+	| statement document { yy.getLogger().info("Rule: document statement: ", $1);}
 	;
 
 link
@@ -162,6 +162,8 @@ link
 
 statement
   : nodeStatement
+  | columnsStatement
+  | blockStatement
 //   SPACELIST node       { yy.getLogger().info('Node: ',$2.id);yy.addNode($1.length, $2.id, $2.descr, $2.type);  }
 // 	| SPACELIST ICON       { yy.getLogger().info('Icon: ',$2);yy.decorateNode({icon: $2}); }
 // 	| SPACELIST CLASS      { yy.decorateNode({class: $2}); }
@@ -171,12 +173,22 @@ statement
 // 	| ICON                 { yy.decorateNode({icon: $1}); }
 // 	| CLASS                { yy.decorateNode({class: $1}); }
 //   // | SPACELIST
-  | EOF
+
 	;
 
-nodeStatement: nodeStatement link node { yy.getLogger().info('Rule: nodeStatement (nodeStatement link node) ');}
-    |node { yy.getLogger().info('Rule: nodeStatement (node) ');}
-    ;
+nodeStatement
+  : nodeStatement link node { yy.getLogger().info('Rule: nodeStatement (nodeStatement link node) ');}
+  | node { yy.getLogger().info('Rule: nodeStatement (node) ', $1);}
+  ;
+
+columnsStatement
+  : COLUMNS { yy.getLogger().info("COLUMNS: ", $1);yy.setColumns($1); }
+  ;
+
+blockStatement
+  : block document end { yy.getLogger().info('Rule: blockStatement : ', $1); }
+  ;
+
 
 node
   : NODE_ID

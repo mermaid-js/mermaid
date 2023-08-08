@@ -55,19 +55,38 @@ describe('Block diagram', function () {
 
       block.parse(str);
     });
-    it.skip('a diagram with column statements', async () => {
+    it('a diagram with column statements', async () => {
       const str = `block-beta
-          columns 1
+          columns 2
           block1["Block 1"]
       `;
 
       block.parse(str);
+      expect(db.getColumns('root')).toBe(2);
+      // Todo: DB check that the we have one block and that the root block has one column
+    });
+    it('a diagram withput column statements', async () => {
+      const str = `block-beta
+          block1["Block 1"]
+      `;
+
+      block.parse(str);
+      expect(db.getColumns('root')).toBe(-1);
+      // Todo: DB check that the we have one block and that the root block has one column
+    });
+    it('a diagram with auto column statements', async () => {
+      const str = `block-beta
+          columns auto
+          block1["Block 1"]
+      `;
+
+      block.parse(str);
+      expect(db.getColumns('root')).toBe(-1);
       // Todo: DB check that the we have one block and that the root block has one column
     });
 
-    it.skip('blocks next to each other', async () => {
+    it('blocks next to each other', async () => {
       const str = `block-beta
-        block
           columns 2
           block1["Block 1"]
           block2["Block 2"]
@@ -78,9 +97,8 @@ describe('Block diagram', function () {
       // Todo: DB check that the we have two blocks and that the root block has two columns
     });
 
-    it.skip('blocks on top of each other', async () => {
+    it('blocks on top of each other', async () => {
       const str = `block-beta
-        block
           columns 1
           block1["Block 1"]
           block2["Block 2"]
@@ -91,13 +109,11 @@ describe('Block diagram', function () {
       // Todo: DB check that the we have two blocks and that the root block has one column
     });
 
-    it.skip('compound blocks', async () => {
-      const str = `block
+    it('compound blocks', async () => {
+      const str = `block-beta
           block
-            columns 2
-            block2["Block 2"]
-            block3["Block 3"]
-          end %% End the compound block
+            aBlock["Block"]
+          end
         `;
 
       block.parse(str);
@@ -121,7 +137,7 @@ describe('Block diagram', function () {
             columns 2
             block2["Block 2"]
             block3["Block 3"]
-          end %% End the compound block
+          end
         `;
 
       block.parse(str);
