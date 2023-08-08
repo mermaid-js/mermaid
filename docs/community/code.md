@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/community/code.md](../../packages/mermaid/src/docs/community/code.md).
 
-## Contributing Code
+# Contributing Code
 
 The basic steps for contributing code are:
 
@@ -24,7 +24,7 @@ graph LR
 4.  **Submit** your code as a _pull request_.
 5.  Maintainers will **review** your code. If there are no changes necessary, the PR will be merged. Otherwise, make the requested changes and repeat.
 
-### 1. Checkout a git branch
+## 1. Checkout a git branch
 
 Mermaid uses a [Git Flow](https://guides.github.com/introduction/flow/)–inspired approach to branching.
 
@@ -63,7 +63,7 @@ If your work is specific to a single diagram type, it is a good idea to put the 
 **Ex: A bug described in issue 1123 that causes random ugly red text in multiple diagram types**
 `bug/1123_fix_random_ugly_red_text`
 
-### 2. Write Tests
+## 2. Write Tests
 
 Tests ensure that each function, module, or part of code does what it says it will do. This is critically
 important when other changes are made to ensure that existing code is not broken (no regression).
@@ -77,7 +77,7 @@ You may need to change existing tests if they were inaccurate.
 
 If you are adding a feature, you will definitely need to add tests. Depending on the size of your feature, you may need to add integration tests.
 
-#### Unit Tests
+## Unit Tests
 
 Unit tests are tests that test a single function or module. They are the easiest to write and the fastest to run.
 
@@ -97,7 +97,7 @@ When writing new tests, it's easier to have the tests automatically run as you m
 pnpm test:watch
 ```
 
-#### Integration/End-to-End (e2e) tests
+## Integration/End-to-End (e2e) tests
 
 These test the rendering and visual appearance of the diagrams.
 This ensures that the rendering of that feature in the e2e will be reviewed in the release process going forward. Less chance that it breaks!
@@ -140,7 +140,7 @@ it('should render forks and joins', () => {
 **_\[TODO - how to generate new screenshots]_**
 ....
 
-### 3. Update Documentation
+## 3. Update Documentation
 
 If the users have no way to know that things have changed, then you haven't really _fixed_ anything for the users; you've just added to making Mermaid feel broken.
 Likewise, if users don't know that there is a new feature that you've implemented, it will forever remain unknown and unused.
@@ -160,7 +160,7 @@ When it feels hard to write stuff out, explaining it to someone and having that 
 
 When in doubt, write up and submit what you can. It can be clarified and refined later. (With documentation, something is better than nothing!)
 
-### 4. Submit your pull request
+## 4. Submit your pull request
 
 **\[TODO - PR titles should start with (fix | feat | ....)]**
 
@@ -172,125 +172,3 @@ We make all changes via Pull Requests (PRs). As we have many Pull Requests from 
 - When a release is ready, the `release/x.x.x` branch will be created, extensively tested and knsv will be in charge of the release process.
 
 **Reminder: Pull Requests should be submitted to the develop branch.**
-
-## Contributing Documentation
-
-**_\[TODO: This section is still a WIP. It still needs MAJOR revision.]_**
-
-If it is not in the documentation, it's like it never happened. Wouldn't that be sad? With all the effort that was put into the feature?
-
-The docs are located in the `packages/mermaid/src/docs` folder and are written in Markdown. Just pick the right section and start typing.
-
-The contents of [mermaid.js.org](https://mermaid.js.org/) are based on the docs from the `master` branch.
-Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid.js.org/) once published.
-
-### How to Contribute to Documentation
-
-We are a little less strict here, it is OK to commit directly in the `develop` branch if you are a collaborator.
-
-The documentation is located in the `packages/mermaid/src/docs` directory and organized according to relevant subfolder.
-
-The `docs` folder will be automatically generated when committing to `packages/mermaid/src/docs` and **should not** be edited manually.
-
-```mermaid-example
-flowchart LR
-  classDef default fill:#fff,color:black,stroke:black
-
-  source["files in /packages/mermaid/src/docs\n(changes should be done here)"] -- automatic processing\nto generate the final documentation--> published["files in /docs\ndisplayed on the official documentation site"]
-
-```
-
-```mermaid
-flowchart LR
-  classDef default fill:#fff,color:black,stroke:black
-
-  source["files in /packages/mermaid/src/docs\n(changes should be done here)"] -- automatic processing\nto generate the final documentation--> published["files in /docs\ndisplayed on the official documentation site"]
-
-```
-
-You can use `note`, `tip`, `warning` and `danger` in triple backticks to add a note, tip, warning or danger box.
-Do not use vitepress specific markdown syntax `::: warning` as it will not be processed correctly.
-
-````
-```note
-Note content
-```
-
-```tip
-Tip content
-```
-
-```warning
-Warning content
-```
-
-```danger
-Danger content
-```
-
-````
-
-> **Note**
-> If the change is _only_ to the documentation, you can get your changes published to the site quicker by making a PR to the `master` branch.
-
-We encourage contributions to the documentation at [packages/mermaid/src/docs in the _develop_ branch](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs).
-
-**_DO NOT CHANGE FILES IN `/docs`_**
-
-### The official documentation site
-
-**[The mermaid documentation site](https://mermaid.js.org/) is powered by [Vitepress](https://vitepress.vuejs.org/).**
-
-To run the documentation site locally:
-
-1.  Run `pnpm --filter mermaid run docs:dev` to start the dev server. (Or `pnpm docs:dev` inside the `packages/mermaid` directory.)
-2.  Open <http://localhost:3333/> in your browser.
-
-Markdown is used to format the text, for more information about Markdown [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
-
-To edit Docs on your computer:
-
-_\[TODO: need to keep this in sync with [check out a git branch in Contributing Code above](#1-checkout-a-git-branch) ]_
-
-1.  Create a fork of the develop branch to work on.
-2.  Find the Markdown file (.md) to edit in the `packages/mermaid/src/docs` directory.
-3.  Make changes or add new documentation.
-4.  Commit changes to your branch and push it to GitHub (which should create a new branch).
-5.  Create a Pull Request of your fork.
-
-To edit Docs on GitHub:
-
-1.  Login to [GitHub.com](https://www.github.com).
-2.  Navigate to [packages/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs) in the mermaid-js repository.
-3.  To edit a file, click the pencil icon at the top-right of the file contents panel.
-4.  Describe what you changed in the **Propose file change** section, located at the bottom of the page.
-5.  Submit your changes by clicking the button **Propose file change** at the bottom (by automatic creation of a fork and a new branch).
-6.  Visit the Actions tab in Github, `https://github.com/<Your Username>/mermaid/actions` and enable the actions for your fork. This will ensure that the documentation is built and updated in your fork.
-7.  Create a Pull Request of your newly forked branch by clicking the green **Create Pull Request** button.
-
-### Documentation organization: Sidebar navigation
-
-If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation.**
-
-The sidebar navigation is defined in [the vitepress configuration file config.ts](../.vitepress/config.ts).
-
-## Questions or Suggestions?
-
-#### First search to see if someone has already asked (and hopefully been answered) or suggested the same thing.
-
-- Search in Discussions
-- Search in open Issues
-- Search in closed Issues
-
-If you find an open issue or discussion thread that is similar to your question but isn't answered, you can let us know that you are also interested in it.
-Use the GitHub reactions to add a thumbs-up to the issue or discussion thread.
-
-This helps the team know the relative interest in something and helps them set priorities and assignments.
-
-Feel free to add to the discussion on the issue or topic.
-
-If you can't find anything that already addresses your question or suggestion, _open a new issue:_
-
-Log in to [GitHub.com](https://www.github.com), open or append to an issue [using the GitHub issue tracker of the mermaid-js repository](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Area%3A+Documentation%22).
-
-### How to Contribute a Suggestion

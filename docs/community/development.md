@@ -16,10 +16,10 @@ const setPlatform = (newPlatform) => {
 
 ## Contents
 
-- [Technical Requirements and Setup](#technical-requirements-and-setup)
-- [Contributing Code](#contributing-code)
-- [Contributing Documentation](#contributing-documentation)
-- [Questions or Suggestions?](#questions-or-suggestions)
+- [Get the Source Code](#get-the-source-code)
+- [Technical Requirements](#technical-requirements)
+- [Setup and Launch](#setup-and-launch)
+- [Verify Everything Is Working](#verify-everything-is-working)
 - [Last Words](#last-words)
 
 ---
@@ -40,10 +40,9 @@ Then you **clone** a copy to your local development machine (e.g. where you code
 
 [Here is a GitHub document that gives an overview of the process.](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
 
-## Install the Requirements
+## Technical Requirements
 
-For [mermaid repository](https://github.com/mermaid-js/mermaid) we also support local development in Docker.
-So you can install everything natively on your machine or in Docker by your choice.
+You can install the requirements natively on your machine or in Docker by your choice.
 
 <PlatformSelector :selectedPlatform="selectedPlatform" v-on:change="setPlatform" />
 
@@ -79,7 +78,7 @@ If variable `$DISPLAY` is not empty, then it must be working. Otherwise install 
 
 <PlatformSelector :selectedPlatform="selectedPlatform" v-on:change="setPlatform" />
 
-**Switch to project**
+### Switch to project
 
 Once you have cloned the repository onto your development machine, change into the `mermaid` project folder (the top level directory of the mermaid project repository)
 
@@ -92,7 +91,7 @@ cd mermaid
 
 <div v-if="selectedPlatform === 'docker'">
 
-**Make `./run` executable**
+### Make `./run` executable
 
 For development using Docker there is a self-documented `run` bash script, which provides convenient aliases for `docker compose` commands.
 
@@ -104,12 +103,13 @@ chmod +x run
 
 ::: tip
 To get detailed help simply type `./run` or `./run help`.
+
 It also has short _Development quick start guide_ embedded.
 :::
 
 </div>
 
-**Install packages**
+### Install packages
 
 <div v-if="selectedPlatform === 'native'">
 
@@ -129,7 +129,7 @@ npx pnpm install # npx is required for first install
 
 </div>
 
-**Launch**
+### Launch
 
 <div v-if="selectedPlatform === 'native'">
 

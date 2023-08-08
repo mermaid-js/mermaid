@@ -6,34 +6,38 @@
 
 # About Mermaid
 
-**Mermaid lets you create diagrams and visualizations using text and code.**
-
-It is a JavaScript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically.
+Mermaid is diagramming and charting tool that renders Markdown-like text definitions to beautiful diagrams.
 
 > If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](n00b-syntaxReference.md).
 
 <img src="/header.png" alt="" />
 
-[![Build CI Status](https://github.com/mermaid-js/mermaid/actions/workflows/build.yml/badge.svg)](https://github.com/mermaid-js/mermaid/actions/workflows/build.yml) [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid) [![npm minified gzipped bundle size](https://img.shields.io/bundlephobia/minzip/mermaid)](https://bundlephobia.com/package/mermaid) [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master) [![CDN Status](https://img.shields.io/jsdelivr/npm/hm/mermaid)](https://www.jsdelivr.com/package/npm/mermaid) [![NPM](https://img.shields.io/npm/dm/mermaid)](https://www.npmjs.com/package/mermaid) [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE) [![Twitter Follow](https://img.shields.io/twitter/follow/mermaidjs_?style=social)](https://twitter.com/mermaidjs_)
+<p class="space-x-2 flex items-center"><a href="https://github.com/mermaid-js/mermaid/actions/workflows/build.yml" target="_blank" rel="noreferrer"><img src="https://github.com/mermaid-js/mermaid/actions/workflows/build.yml/badge.svg" alt="Build CI Status"></a><a href="https://www.npmjs.com/package/mermaid" target="_blank" rel="noreferrer"><img src="https://img.shields.io/npm/v/mermaid" alt="NPM"></a><a href="https://bundlephobia.com/package/mermaid" target="_blank" rel="noreferrer"><img src="https://img.shields.io/bundlephobia/minzip/mermaid" alt="npm minified gzipped bundle size"></a><a href="https://coveralls.io/github/mermaid-js/mermaid?branch=master" target="_blank" rel="noreferrer"><img src="https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master" alt="Coverage Status"></a><a href="https://www.jsdelivr.com/package/npm/mermaid" target="_blank" rel="noreferrer"><img src="https://img.shields.io/jsdelivr/npm/hm/mermaid" alt="CDN Status"></a><a href="https://www.npmjs.com/package/mermaid" target="_blank" rel="noreferrer"><img src="https://img.shields.io/npm/dm/mermaid" alt="NPM"></a><a href="https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE" target="_blank" rel="noreferrer"><img src="https://img.shields.io/static/v1?message=join%20chat&amp;color=9cf&amp;logo=slack&amp;label=slack" alt="Join our Slack!"></a> <a href="https://twitter.com/mermaidjs_" target="_blank" rel="noreferrer"><img src="https://img.shields.io/twitter/follow/mermaidjs_?style=social" alt="Twitter Follow"></a></p>
 
 <!-- Mermaid book banner -->
 
 [![Explore Mermaid.js in depth, with real-world examples, tips & tricks from the creator... The first official book on Mermaid is available for purchase. Check it out!](img/book-banner-post-release.jpg)](https://mermaid-js.github.io/mermaid/landing/)
 
+## Why use Mermaid
+
 <!-- <Main description> -->
 
-Mermaid is a JavaScript based diagramming and charting tool that uses Markdown-inspired text definitions and a renderer to create and modify complex diagrams. The main purpose of Mermaid is to help documentation catch up with development.
+- Create concepts
 
-> Doc-Rot is a Catch-22 that Mermaid helps to solve.
+  Anyone who has ever used Visio, or Excel knows how hard it is to create, edit and maintain good visualizations with those tools. Mermaid offers a quicker, less complicated, and more convenient way of going from concept to visualization.
 
-Diagramming and documentation costs precious developer time and gets outdated quickly.
-But not having diagrams or docs ruins productivity and hurts organizational learning.<br/>
-Mermaid addresses this problem by enabling users to create easily modifiable diagrams, it can also be made part of production scripts (and other pieces of code).<br/> <br/>
-Mermaid allows even non-programmers to easily create detailed and diagrams through the [Mermaid Live Editor](https://mermaid.live/).<br/>
-[Tutorials](../config/Tutorials.md) has video tutorials.
-Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](../ecosystem/integrations.md).
+- Keep the documentation up with the development
 
-For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](../community/n00b-overview.md) and [Usage](../config/usage.md).
+  Doc-Rot kills diagrams as quickly as it does text, but it takes hours in a desktop application to produce a diagram. Mermaid addresses this problem by providing users with text-based easily modifiable diagrams. It can also be embedded in the development pipeline and used by scripts.
+
+- Diagram as Code
+
+  One definition leads to one layout, so your code becomes idempotent. It guarantees consistency. It becomes far easier to see what changes was made and possible to keep diagram in version control system along with code.
+
+Mermaid allows even non-programmers to easily create detailed and diagrams through the [Mermaid Live Editor](https://mermaid.live/).
+There are plenty of [Tutorials](../config/Tutorials.md) made by our woderful community. Also, Mermaid has a huge amount of [Use-cases and Integrations](../ecosystem/integrations.md), so you can use it with your favorite applications.
+
+For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](../intro/n00b-gettingStarted.md) and [Usage](../config/usage.md).
 
 🌐 [CDN](https://www.jsdelivr.com/package/npm/mermaid) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](../community/development.md) | 🔌 [Plug-Ins](../ecosystem/integrations.md)
 
