@@ -33,11 +33,10 @@
   ],
   "dependencies": {
     "chevrotain": "^11.0.2",
-    "langium": "1.2.1",
-    "vscode-uri": "^3.0.7"
+    "langium": "2.0.0-next.a57102f"
   },
   "devDependencies": {
-    "langium-cli": "1.2.1"
+    "langium-cli": "2.0.0-next.a57102f"
   },
   "files": [
     "dist/"

@@ -1,9 +1,10 @@
 import {
-  AstNode,
+  type AstNode,
   DefaultServiceRegistry,
-  LangiumDocument,
-  LangiumDocuments,
-  LangiumServices,
+  type LangiumDocument,
+  type LangiumDocuments,
+  type LangiumServices,
+  type URI,
 } from 'langium';
 import {
   InfoServices,
@@ -14,7 +15,6 @@ import {
   SankeyServices,
   TimelineServices,
 } from '../index.js';
-import { URI } from 'vscode-uri';
 
 export class MermaidServiceRegistry extends DefaultServiceRegistry {
   private infoServices: InfoServices;
