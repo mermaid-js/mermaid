@@ -56,7 +56,7 @@ describe('diagram detection', () => {
 "Parse error on line 1:
 ...quenceDiagram; A-->B
 -----------------------^
-Expecting 'TXT', got 'NEWLINE'"
+Expecting 'TXT', 'markdown', got 'NEWLINE'"
 		`);
   });
 

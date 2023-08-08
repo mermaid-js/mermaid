@@ -106,6 +106,7 @@ describe('more than one sequence diagram', () => {
         {
           "from": "Alice",
           "message": "Hello Bob, how are you?",
+          "textType": undefined,
           "to": "Bob",
           "type": 5,
           "wrap": false,
@@ -113,6 +114,7 @@ describe('more than one sequence diagram', () => {
         {
           "from": "Bob",
           "message": "I am good thanks!",
+          "textType": undefined,
           "to": "Alice",
           "type": 6,
           "wrap": false,
@@ -129,6 +131,7 @@ describe('more than one sequence diagram', () => {
         {
           "from": "Alice",
           "message": "Hello Bob, how are you?",
+          "textType": undefined,
           "to": "Bob",
           "type": 5,
           "wrap": false,
@@ -136,6 +139,7 @@ describe('more than one sequence diagram', () => {
         {
           "from": "Bob",
           "message": "I am good thanks!",
+          "textType": undefined,
           "to": "Alice",
           "type": 6,
           "wrap": false,
@@ -154,6 +158,7 @@ describe('more than one sequence diagram', () => {
         {
           "from": "Alice",
           "message": "Hello John, how are you?",
+          "textType": undefined,
           "to": "John",
           "type": 5,
           "wrap": false,
@@ -161,6 +166,7 @@ describe('more than one sequence diagram', () => {
         {
           "from": "John",
           "message": "I am good thanks!",
+          "textType": undefined,
           "to": "Alice",
           "type": 6,
           "wrap": false,
