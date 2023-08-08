@@ -1,5 +1,5 @@
 #!/bin/bash
-RUN="docker compose run -T --rm"
+RUN="docker-compose run --rm"
 
 ansi()          { echo -e "\e[${1}m${*:2}\e[0m"; }
 bold()          { ansi 1 "$@"; }
