@@ -420,8 +420,11 @@ const drawMessage = function (diagram, msgModel, lineStartY: number, diagObj: Di
     line = diagram.append('line');
     line.attr('x1', startx);
     line.attr('y1', lineStartY);
-    if (startx > stopx) line.attr('x2', stopx + 4);
-    else line.attr('x2', stopx - 4);
+    if (startx > stopx) {
+      line.attr('x2', stopx + 4);
+    } else {
+      line.attr('x2', stopx - 4);
+    }
     line.attr('y2', lineStartY);
   }
   // Make an SVG Container
