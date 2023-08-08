@@ -117,13 +117,14 @@ export const addMessage = function (idFrom, idTo, message, answer) {
     message: message.text,
     wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
     answer: answer,
+    textType: message.textType,
   });
 };
 
 export const addSignal = function (
   idFrom,
   idTo,
-  message = { text: undefined, wrap: undefined },
+  message = { text: undefined, wrap: undefined, type: undefined },
   messageType
 ) {
   if (messageType === LINETYPE.ACTIVE_END) {
@@ -147,6 +148,7 @@ export const addSignal = function (
     message: message.text,
     wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
     type: messageType,
+    textType: message.textType,
   });
   return true;
 };
@@ -214,30 +216,38 @@ export const clear = function () {
 
 export const parseMessage = function (str) {
   const _str = str.trim();
-  const markdown = _str.replace(/^:?(?:no)?wrap:/, '').trim();
-  let message;
-  if (markdown[0] === '"') {
-    const text = markdown.replace(/"`/, '').trim();
-    message = {
-      text: text,
+  const checkMarkdown = (string) => {
+    const text = string.replace(/^:?(?:no)?wrap:/, '').trim();
+    return text[0] === '"';
+  };
+
+  const parseMarkdown = (string) => {
+    const text = string.replace(/^:?(?:no)?wrap:/, '').trim();
+    return {
+      text: text.replaceAll(/"`|`"/g, ''),
       wrap:
-        _str.match(/^:?wrap:/) !== null
+        string.match(/^:?wrap:/) !== null
           ? true
-          : _str.match(/^:?nowrap:/) !== null
+          : string.match(/^:?nowrap:/) !== null
+          ? false
+          : undefined,
+      textType: 'markdown',
+    };
+  };
+
+  const parseString = (string) => {
+    return {
+      text: string.replace(/^:?(?:no)?wrap:/, '').trim(),
+      wrap:
+        string.match(/^:?wrap:/) !== null
+          ? true
+          : string.match(/^:?nowrap:/) !== null
           ? false
           : undefined,
     };
-  } else {
-    message = {
-      text: _str.replace(/^:?(?:no)?wrap:/, '').trim(),
-      wrap:
-        _str.match(/^:?wrap:/) !== null
-          ? true
-          : _str.match(/^:?nowrap:/) !== null
-          ? false
-          : undefined,
-    };
-  }
+  };
+
+  const message = checkMarkdown(_str) ? parseMarkdown(_str) : parseString(_str);
   log.debug('parseMessage:', message);
   return message;
 };
