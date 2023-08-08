@@ -1,6 +1,6 @@
 # About Mermaid
 
-Mermaid is diagramming and charting tool that renders Markdown-like text definitions into beautiful diagrams.
+Mermaid is diagramming and charting tool that renders Markdown-like text definitions to beautiful diagrams.
 
 > If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](n00b-syntaxReference.md).
 
@@ -12,11 +12,9 @@ Mermaid is diagramming and charting tool that renders Markdown-like text definit
 
 [![Explore Mermaid.js in depth, with real-world examples, tips & tricks from the creator... The first official book on Mermaid is available for purchase. Check it out!](img/book-banner-post-release.jpg)](https://mermaid-js.github.io/mermaid/landing/)
 
-## Key Benefits
+## Why use Mermaid
 
 <!-- <Main description> -->
-
-Mermaid is a JavaScript based diagramming and charting tool that uses Markdown-inspired text definitions to create and modify complex diagrams.
 
 - Create concepts
 
@@ -28,7 +26,7 @@ Mermaid is a JavaScript based diagramming and charting tool that uses Markdown-i
 
 - Diagram as Code
 
-  One definition leads to one layout, so your code becomes idempotent. It guarantees consistentsy. It becomes far easier to see what changes was made and possible to keep diagram in version control system along with code.
+  One definition leads to one layout, so your code becomes idempotent. It guarantees consistency. It becomes far easier to see what changes was made and possible to keep diagram in version control system along with code.
 
 Mermaid allows even non-programmers to easily create detailed and diagrams through the [Mermaid Live Editor](https://mermaid.live/).
 There are plenty of [Tutorials](../config/Tutorials.md) made by our woderful community. Also, Mermaid has a huge amount of [Use-cases and Integrations](../ecosystem/integrations.md), so you can use it with your favorite applications.
