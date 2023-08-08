@@ -4,7 +4,7 @@ import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { getConfig } from '../../config.js';
 import { parseFontSize } from '../../utils.js';
-import type { DrawDefinition, Group, HTML, SVG } from '../../diagram-api/types.js';
+import type { DrawDefinition, Group, SVG } from '../../diagram-api/types.js';
 import type { D3Sections, PieDB, PieDiagramConfig, Sections } from './pieTypes.js';
 import type { MermaidConfig } from '../../config.type.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
