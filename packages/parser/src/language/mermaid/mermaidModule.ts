@@ -1,6 +1,6 @@
 import {
-  DefaultSharedModuleContext,
-  LangiumSharedServices,
+  type DefaultSharedModuleContext,
+  type LangiumSharedServices,
   createDefaultSharedModule,
   inject,
 } from 'langium';
