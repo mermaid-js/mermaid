@@ -75,11 +75,11 @@ export class QuadrantValueConverter extends DefaultValueConverter {
         regex = new RegExp(quadrantForthQuadrantRegex.source);
         break;
       }
-      case 'QUADRANT_START_POINT_COORDINATE': {
+      case 'QUADRANT_X_POINT_COORDINATE': {
         regex = new RegExp(quadrantStartPointCoordinateRegex.source);
         break;
       }
-      case 'QUADRANT_END_POINT_COORDINATE': {
+      case 'QUADRANT_Y_POINT_COORDINATE': {
         regex = new RegExp(quadrantEndPointCoordinateRegex.source);
         break;
       }
@@ -88,8 +88,8 @@ export class QuadrantValueConverter extends DefaultValueConverter {
       const match = regex.exec(input);
       if (match !== null && match[1] !== undefined) {
         if (
-          rule.name === 'QUADRANT_START_POINT_COORDINATE' ||
-          rule.name === 'QUADRANT_END_POINT_COORDINATE'
+          rule.name === 'QUADRANT_X_POINT_COORDINATE' ||
+          rule.name === 'QUADRANT_Y_POINT_COORDINATE'
         ) {
           return Number(match[1]);
         }

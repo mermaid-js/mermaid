@@ -44,7 +44,7 @@ fragment QuadrantAttributes:
 ;
 
 QuadrantPoint:
-  title=QUADRANT_POINT_TITLE x=QUADRANT_START_POINT_COORDINATE y=QUADRANT_END_POINT_COORDINATE
+  title=QUADRANT_POINT_TITLE x=QUADRANT_X_POINT_COORDINATE y=QUADRANT_Y_POINT_COORDINATE
   NEWLINE+
 ;
 
@@ -59,15 +59,15 @@ QuadrantYAxis:
 // the `Chart` part is for backward compatibility
 terminal QUADRANT_KEYWORD: /quadrantChart(?!\S)/;
 
-terminal QUADRANT_X_AXIS_LEFT: /x-axis[\t ]+[^\n\r]+(?=-->)|x-axis[\t ]+[^\n\r]+/;
-terminal QUADRANT_Y_AXIS_LEFT: /y-axis[\t ]+[^\n\r]+(?=-->)|y-axis[\t ]+[^\n\r]+/;
-terminal QUADRANT_AXIS_RIGHT: /-->[^\n\r]+/;
+terminal QUADRANT_X_AXIS_LEFT: /x-axis[\t ]+[^\n\r]+(?=%%)|x-axis[\t ]+[^\n\r]+(?=-->)|x-axis[\t ]+[^\n\r]+/;
+terminal QUADRANT_Y_AXIS_LEFT: /y-axis[\t ]+[^\n\r]+(?=%%)|y-axis[\t ]+[^\n\r]+(?=-->)|y-axis[\t ]+[^\n\r]+/;
+terminal QUADRANT_AXIS_RIGHT: /-->(?:[^\n\r]+(?=%%)|[^\n\r]+)/;
 
 terminal QUADRANT_QUADRANT_1: /quadrant-1[\t ]+[^\n\r]+(?=%%)|quadrant-1[\t ]+[^\n\r]+/;
 terminal QUADRANT_QUADRANT_2: /quadrant-2[\t ]+[^\n\r]+(?=%%)|quadrant-2[\t ]+[^\n\r]+/;
 terminal QUADRANT_QUADRANT_3: /quadrant-3[\t ]+[^\n\r]+(?=%%)|quadrant-3[\t ]+[^\n\r]+/;
 terminal QUADRANT_QUADRANT_4: /quadrant-4[\t ]+[^\n\r]+(?=%%)|quadrant-4[\t ]+[^\n\r]+/;
 
-terminal QUADRANT_START_POINT_COORDINATE returns number: /:[\t ]+\[0(\.[0-9]+)?|1(\.0+)?[\t ]*/;
-terminal QUADRANT_END_POINT_COORDINATE returns number: /,[\t ]+(0(\.\d+)?|1(\.0+)?)[\t ]*]/;
+terminal QUADRANT_X_POINT_COORDINATE returns number: /:[\t ]+\[[\t ]*0(\.[0-9]+)?|1(\.0+)?/;
+terminal QUADRANT_Y_POINT_COORDINATE returns number: /,[\t ]+(0(\.\d+)?|1(\.0+)?)[\t ]*]/;
 terminal QUADRANT_POINT_TITLE: /quadrant-point-title/;

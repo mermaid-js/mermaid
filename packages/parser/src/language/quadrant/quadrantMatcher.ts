@@ -38,7 +38,7 @@ export const quadrantForthQuadrantRegex = /quadrant-4[\t ]+([^\n\r]+)/;
 /**
  * Matches a quadrant point title
  */
-export const quadrantPointTitleRegex = /([^\n\r:]+)/y;
+export const quadrantPointTitleRegex = /([^\n\r:]+(?=%%)|[^\n\r:]+)/y;
 export const matchQuadrantPointTitle: CustomPatternMatcherFunc = (text, startOffset) => {
   quadrantPointTitleRegex.lastIndex = startOffset;
   return quadrantPointTitleRegex.exec(text);
@@ -47,7 +47,7 @@ export const matchQuadrantPointTitle: CustomPatternMatcherFunc = (text, startOff
 /**
  * Match a quadrant start point
  */
-export const quadrantStartPointCoordinateRegex = /:[\t ]+\[(0(\.\d+)?|1(\.0+)?)[\t ]*/;
+export const quadrantStartPointCoordinateRegex = /:[\t ]+\[[\t ]*(0(\.\d+)?|1(\.0+)?)/;
 
 /**
  * Match a quadrant end point
