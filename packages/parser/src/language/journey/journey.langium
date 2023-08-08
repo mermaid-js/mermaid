@@ -43,8 +43,8 @@ JourneyTask:
   NEWLINE+
 ;
 
-terminal JOURNEY_SECTION_TITLE: /section[\t ]+[^\n\r]+/;
-terminal JOURNEY_TASK_SCORE returns number: /(?!%%.*):[\t ]+[0-9]/;
-terminal JOURNEY_TASK_FIRST_ACTOR: /(?!%%.*):[\t ]+[^\n\r,]+/;
-terminal JOURNEY_TASK_ANOTHER_ACTOR: /(?!%%.*),[\t ]+[^\n\r,]+/;
+terminal JOURNEY_SECTION_TITLE: /section[\t ]+[^\n\r]+(?=%%)|section[\t ]+[^\n\r]+/;
+terminal JOURNEY_TASK_SCORE returns number: /:[\t ]*[0-9]/;
+terminal JOURNEY_TASK_FIRST_ACTOR: /:(?:[^\n\r,]+(?=%%)|[^\n\r,]+)/;
+terminal JOURNEY_TASK_ANOTHER_ACTOR: /,(?:[^\n\r,]+(?=%%)|[^\n\r,]+)/;
 terminal JOURNEY_TASK_TITLE: /journey-task-title/;

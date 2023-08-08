@@ -97,6 +97,20 @@ describe('journey', () => {
     expect(sectionTwoTasks[2].title).toBe('R task');
   });
 
+  it('should handle actor until comment', () => {
+    const context = `journey
+    task a: 5: cat %% comment`;
+    const result = parse(context);
+    expect(result.parserErrors).toHaveLength(0);
+    expect(result.lexerErrors).toHaveLength(0);
+
+    const value = result.value;
+    expect(value.$type).toBe(Journey);
+    expect(value.tasks[0].actors).toStrictEqual(['cat']);
+    expect(value.tasks[0].score).toBe(5);
+    expect(value.tasks[0].title).toBe('task a');
+  });
+
   describe('title and accessibilities', () => {
     it('should handle title definition', () => {
       const context = `journey title awesome title`;

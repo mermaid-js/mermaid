@@ -8,17 +8,17 @@ export const journeySectionTitleRegex = /section[\t ]+([^\n\r]+)/;
 /**
  * Matches a journey task score
  */
-export const journeyTaskScoreRegex = /(?!%%.*):[\t ]+(\d)/;
+export const journeyTaskScoreRegex = /:[\t ]*(\d)/;
 
 /**
  * Matches a journey task first actor
  */
-export const journeyTaskFirstActorRegex = /(?!%%.*):[\t ]+([^\n\r,]+)/;
+export const journeyTaskFirstActorRegex = /:([^\n\r,]+)/;
 
 /**
  * Matches a journey task another actor
  */
-export const journeyTaskAnotherActorRegex = /(?!%%.*),[\t ]+([^\n\r,]+)/;
+export const journeyTaskAnotherActorRegex = /,([^\n\r,]+)/;
 
 /**
  * Matches a journey task title
