@@ -74,8 +74,8 @@ function nav() {
     { text: 'Integrations', link: '/ecosystem/integrations', activeMatch: '/ecosystem/' },
     {
       text: 'Contributing',
-      link: '/community/n00b-overview.html',
-      activeMatch: '/n00b-overview',
+      link: '/community/development.html',
+      activeMatch: '/community/',
     },
     {
       text: 'Latest News',
@@ -193,9 +193,9 @@ function sidebarCommunity() {
       text: '🙌 Contributions and Community',
       collapsed: true,
       items: [
-        { text: 'Overview for Beginners', link: '/community/n00b-overview' },
         { text: 'Contributing to Mermaid', link: '/community/development' },
         { text: 'Contributing Code', link: '/community/code' },
+        { text: 'Contributing Documentation', link: '/community/documentation' },
         { text: 'Adding Diagrams', link: '/community/newDiagram' },
         { text: 'Security', link: '/community/security' },
       ],

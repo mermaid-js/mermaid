@@ -18,17 +18,17 @@ Mermaid is diagramming and charting tool that renders Markdown-like text definit
 
 Mermaid is a JavaScript based diagramming and charting tool that uses Markdown-inspired text definitions to create and modify complex diagrams.
 
-* Create concepts
+- Create concepts
 
-    Anyone who has ever used Visio, or Excel knows how hard it is to create, edit and maintain good visualizations with those tools. Mermaid offers a quicker, less complicated, and more convenient way of going from concept to visualization.
+  Anyone who has ever used Visio, or Excel knows how hard it is to create, edit and maintain good visualizations with those tools. Mermaid offers a quicker, less complicated, and more convenient way of going from concept to visualization.
 
-* Keep the documentation up with the development
+- Keep the documentation up with the development
 
-    Doc-Rot kills diagrams as quickly as it does text, but it takes hours in a desktop application to produce a diagram. Mermaid addresses this problem by providing users with text-based easily modifiable diagrams. It can also be embedded in the development pipeline and used by scripts.
+  Doc-Rot kills diagrams as quickly as it does text, but it takes hours in a desktop application to produce a diagram. Mermaid addresses this problem by providing users with text-based easily modifiable diagrams. It can also be embedded in the development pipeline and used by scripts.
 
-* Diagram as Code
+- Diagram as Code
 
-    One definition leads to one layout, so your code becomes idempotent. It guarantees consistentsy. It becomes far easier to see what changes was made and possible to keep diagram in version control system along with code.
+  One definition leads to one layout, so your code becomes idempotent. It guarantees consistentsy. It becomes far easier to see what changes was made and possible to keep diagram in version control system along with code.
 
 Mermaid allows even non-programmers to easily create detailed and diagrams through the [Mermaid Live Editor](https://mermaid.live/).
 There are plenty of [Tutorials](../config/Tutorials.md) made by our woderful community. Also, Mermaid has a huge amount of [Use-cases and Integrations](../ecosystem/integrations.md), so you can use it with your favorite applications.
