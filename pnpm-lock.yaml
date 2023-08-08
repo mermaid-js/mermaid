@@ -413,8 +413,8 @@ importers:
   packages/mermaid-zenuml:
     dependencies:
       '@zenuml/core':
-        specifier: ^3.0.3
-        version: 3.0.3(ts-node@10.9.1)
+        specifier: ^3.0.6
+        version: 3.0.6(ts-node@10.9.1)
     devDependencies:
       mermaid:
         specifier: workspace:^
@@ -5738,14 +5738,14 @@ packages:
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
     dev: true
 
-  /@zenuml/core@3.0.3(ts-node@10.9.1):
-    resolution: {integrity: sha512-Wp6yF5iERvGXrR3z/mNhQYP2uI54Bd7RQ2ZwA26Lca+tufj4X8pfqGVSORLqbUl4wjjdcwHc2RNT8AU+cz2NCg==}
+  /@zenuml/core@3.0.6(ts-node@10.9.1):
+    resolution: {integrity: sha512-azEBVrl+ClCPhII92TbzBUFcWhIjlOPdEHVzF6eZXs5Oy4JlrfldS5pAZBHCFL4riOBsjZ5sHHmQLQg9V07T4Q==}
     engines: {node: '>=12.0.0'}
     dependencies:
       '@types/assert': 1.5.6
       '@types/ramda': 0.28.25
       '@vue/compat': 3.3.4(vue@3.3.4)
-      antlr4: 4.13.0
+      antlr4: 4.11.0
       color-string: 1.9.1
       dom-to-image-more: 2.16.0
       file-saver: 2.0.5
@@ -6026,9 +6026,9 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
-  /antlr4@4.13.0:
-    resolution: {integrity: sha512-zooUbt+UscjnWyOrsuY/tVFL4rwrAGwOivpQmvmUDE22hy/lUA467Rc1rcixyRwcRUIXFYBwv7+dClDSHdmmew==}
-    engines: {node: '>=16'}
+  /antlr4@4.11.0:
+    resolution: {integrity: sha512-GUGlpE2JUjAN+G8G5vY+nOoeyNhHsXoIJwP1XF1oRw89vifA1K46T6SEkwLwr7drihN7I/lf0DIjKc4OZvBX8w==}
+    engines: {node: '>=14'}
     dev: false
 
   /any-promise@1.3.0:
