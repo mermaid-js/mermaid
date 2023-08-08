@@ -13,7 +13,7 @@ terminal TITLE: /[\t ]*(?:title(?:[\t ]+[^\n\r]*?|)(?=%%)|title(?:[\t ]+[^\n\r]*
 
 hidden terminal YAML: /---[\t ]*\r?\n[\s\S]*?---[\t ]*(?!.)/;
 hidden terminal DIRECTIVE: /[\t ]*%%{[\s\S]*?}%%\s*/;
-hidden terminal SINGLE_LINE_COMMENT: /[\t ]*%%[^\n\r]*\n*/;
+hidden terminal SINGLE_LINE_COMMENT: /[\t ]*%%[^\n\r]*/;
 
 // actual grammar
 
@@ -102,12 +102,12 @@ fragment MindmapClassAndIcon:
   NEWLINE+
 ;
 
+terminal MINDMAP_CLASS: /[\t ]*:::[^\n\r)]+/;
+terminal MINDMAP_ICON: /[\t ]*::icon\([^\n\r)]+\)[\t ]*/;
+
 terminal MINDMAP_OUTDENT: /mindmap-outdent/;
 terminal MINDMAP_INDENT: /mindmap-indent/;
 hidden terminal MINDMAP_WHITESPACE: /[\t ]+/;
-
-terminal MINDMAP_CLASS: /:::[^\n\r)]+/;
-terminal MINDMAP_ICON: /::icon\([^\n\r)]+\)[\t ]*/;
 
 terminal MINDMAP_NODE_ID: /mindmap-node-id/;
 terminal MINDMAP_NODE_SQUARE_TITLE: /\[("[^"]+"|[^\]]+)][\t ]*/;

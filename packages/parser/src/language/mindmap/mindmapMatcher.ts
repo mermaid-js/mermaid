@@ -68,10 +68,9 @@ export const matchMindmapOutdent: CustomPatternMatcherFunc = (text, startOffset,
  */
 export const matchMindmapIndent: CustomPatternMatcherFunc = (text, startOffset, matchedTokens) => {
   const { isFirstLine, isStartOfLine } = healperCondition(startOffset, matchedTokens);
-  const isNodeAhead = !isRegExpAhead(text, startOffset, nonNodeRegexps);
 
   // indentation can only be matched at the start of a line.
-  if (isNodeAhead && (isFirstLine || isStartOfLine)) {
+  if (isFirstLine || isStartOfLine) {
     let currIndentLevel: number;
 
     const whitespaceRegex = /[\t ]+/y;
@@ -162,19 +161,8 @@ export const mindmapNodeHexagonTitleRegex = /{{([^\n\r}]+|[^}]+)}}[\t ]*/;
  */
 export const mindmapNodeDefault = /([^\n\r]+)(?=%%)|([^\n\r]+)/y;
 export const matchMindmapNodeDefault: CustomPatternMatcherFunc = (text, startOffset) => {
-  const isNodeAhead = !isRegExpAhead(text, startOffset, nonNodeRegexps);
-
-  if (isNodeAhead) {
-    mindmapNodeDefault.lastIndex = startOffset;
-    return mindmapNodeDefault.exec(text);
-  } else {
-    return null;
-  }
-};
-
-const nonNodeRegexps: Record<string, RegExp> = {
-  class: mindmapClassRegex,
-  icon: mindmapIconRegex,
+  mindmapNodeDefault.lastIndex = startOffset;
+  return mindmapNodeDefault.exec(text);
 };
 
 export const nodeShapeTitles: Record<string, RegExp> = {

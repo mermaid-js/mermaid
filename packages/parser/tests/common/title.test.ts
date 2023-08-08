@@ -74,6 +74,17 @@ describe('title', () => {
       expect(value.title).toBe('sample + accDescr {test}');
       expect(value.accDescr).toBeUndefined();
     });
+
+    it('should handle title until comment', () => {
+      const context = `pie title sample %% comment`;
+      const result = parse(context);
+      expect(result.parserErrors).toHaveLength(0);
+      expect(result.lexerErrors).toHaveLength(0);
+
+      const value = result.value;
+      expect(value.title).toBe('sample');
+      expect(value.accDescr).toBeUndefined();
+    });
   });
 
   describe('duplicate', () => {
