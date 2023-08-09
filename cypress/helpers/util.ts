@@ -68,7 +68,10 @@ export const openUrlAndVerifyRendering = (
   validation?: any
 ): void => {
   const useAppli: boolean = Cypress.env('useAppli');
-  const name: string = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
+  const name: string = ((options && options.name) || cy.state('runnable').fullTitle()).replace(
+    /\s+/g,
+    '-'
+  );
 
   if (useAppli) {
     cy.log(`Opening eyes ${Cypress.spec.name} --- ${name}`);
@@ -113,9 +116,9 @@ export const imgSnapshotTest = (
 ): void => {
   cy.log(JSON.stringify(_options));
   const options: CypressMermaidConfig = {
-    ..._options,
-    fontFamily: _options.fontFamily || 'courier',
-    fontSize: _options.fontSize || 16,
+    ...(_options || {}),
+    fontFamily: (_options && _options.fontFamily) || 'courier',
+    fontSize: (_options && _options.fontSize) || 16,
     sequence: {
       actorFontFamily: 'courier',
       noteFontFamily: 'courier',
