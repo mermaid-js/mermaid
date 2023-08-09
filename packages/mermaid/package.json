@@ -24,6 +24,7 @@
   ],
   "scripts": {
     "clean": "rimraf dist",
+    "dev": "pnpm -w dev",
     "docs:code": "typedoc src/defaultConfig.ts src/config.ts src/mermaidAPI.ts && prettier --write ./src/docs/config/setup",
     "docs:build": "rimraf ../../docs && pnpm docs:spellcheck && pnpm docs:code && ts-node-esm scripts/docs.cli.mts",
     "docs:verify": "pnpm docs:spellcheck && pnpm docs:code && ts-node-esm scripts/docs.cli.mts --verify",

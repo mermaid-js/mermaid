@@ -26,8 +26,13 @@ Install required packages:
 ```bash
 # npx is required for first install as volta support for pnpm is not added yet.
 npx pnpm install
-pnpm test
+pnpm test # run unit tests
+pnpm dev # starts a dev server
 ```
+
+Open <http://localhost:9000> in your browser after starting the dev server.
+You can also duplicate the `example.html` file in `demos/dev`, rename it and add your own mermaid code to it.
+That will be served at <http://localhost:9000/dev/your-file-name.html>.
 
 ### Docker
 

@@ -70,7 +70,21 @@ pnpm test
 
 The `test` script and others are in the top-level `package.json` file.
 
-All tests should run successfully without any errors or failures. (You might see _lint_ or _formatting_ warnings; those are ok during this step.)
+All tests should run successfully without any errors or failures. (You might see _lint_ or _formatting_ "warnings"; those are ok during this step.)
+
+#### 4. Make your changes
+
+Now you are ready to make your changes!
+Edit whichever files in `src` as required.
+
+#### 5. See your changes
+
+Open <http://localhost:9000> in your browser, after starting the dev server.
+There is a list of demos that can be used to see and test your changes.
+
+If you need a specific diagram, you can duplicate the `example.html` file in `/demos/dev` and add your own mermaid code to your copy.
+That will be served at <http://localhost:9000/dev/your-file-name.html>.
+After making code changes, the dev server will rebuild the mermaid library. You will need to reload the browser page yourself to see the changes. (PRs for auto reload are welcome!)
 
 ### Docker
 
