@@ -14,16 +14,6 @@ const setPlatform = (newPlatform) => {
 
 # Contributing to Mermaid
 
-## Contents
-
-- [Get the Source Code](#get-the-source-code)
-- [Technical Requirements](#technical-requirements)
-- [Setup and Launch](#setup-and-launch)
-- [Verify Everything Is Working](#verify-everything-is-working)
-- [Last Words](#last-words)
-
----
-
 So you want to help? That's great!
 
 ![Image of happy people jumping with excitement](https://media.giphy.com/media/BlVnrxJgTGsUw/giphy.gif)
