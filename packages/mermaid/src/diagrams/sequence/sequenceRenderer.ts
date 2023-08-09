@@ -361,7 +361,8 @@ function boundMessage(_diagram, msgModel): number {
  * @param diagObj - The diagram object.
  */
 const drawMessage = function (diagram, msgModel, lineStartY: number, diagObj: Diagram) {
-  const { startx, stopx, starty, message, type, sequenceIndex, sequenceVisible } = msgModel;
+  const { startx, stopx, starty, message, textType, type, sequenceIndex, sequenceVisible } =
+    msgModel;
   const textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const textObj = svgDrawCommon.getTextObj();
   textObj.x = startx;
@@ -369,6 +370,7 @@ const drawMessage = function (diagram, msgModel, lineStartY: number, diagObj: Di
   textObj.width = stopx - startx;
   textObj.class = 'messageText';
   textObj.dy = '1em';
+  textObj.textType = textType;
   textObj.text = message;
   textObj.fontFamily = conf.messageFontFamily;
   textObj.fontSize = conf.messageFontSize;
@@ -1437,6 +1439,7 @@ const buildMessageModel = function (msg, actors, diagObj) {
     starty: 0,
     stopy: 0,
     message: msg.message,
+    textType: msg.textType,
     type: msg.type,
     wrap: msg.wrap,
     fromBounds: Math.min.apply(null, allBounds),
