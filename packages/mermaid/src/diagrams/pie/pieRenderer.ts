@@ -36,7 +36,7 @@ const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Sections>[] => {
 export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   log.debug('rendering pie chart\n' + text);
 
-  const db: PieDB = diagObj.db as PieDB;
+  const db = diagObj.db as PieDB;
   const globalConfig: MermaidConfig = getConfig();
   const pieConfig: Required<PieDiagramConfig> = db.getConfig();
 
@@ -171,9 +171,8 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
       const { label, value } = datum.data;
       if (db.getShowData()) {
         return `${label} [${value}]`;
-      } else {
-        return label;
       }
+      return label;
     });
 };
 
