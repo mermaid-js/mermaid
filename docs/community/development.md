@@ -77,7 +77,7 @@ All tests should run successfully without any errors or failures. (You might see
 Now you are ready to make your changes!
 Edit whichever files in `src` as required.
 
-#### 4. See your changes
+#### 5. See your changes
 
 Open <http://localhost:9000> in your browser, after starting the dev server.
 There is a list of demos that can be used to see and test your changes.
