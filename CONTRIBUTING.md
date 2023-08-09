@@ -64,7 +64,7 @@ eg: `feature/2945_state-diagram-new-arrow-florbs`, `bug/1123_fix_random_ugly_red
 
 Documentation is necessary for all non bugfix/refactoring changes.
 
-Only make changes to files are in [`/packages/mermaid/src/docs`](packages/mermaid/src/docs)
+Only make changes to files that are in [`/packages/mermaid/src/docs`](packages/mermaid/src/docs)
 
 **_DO NOT CHANGE FILES IN `/docs`_**
 
