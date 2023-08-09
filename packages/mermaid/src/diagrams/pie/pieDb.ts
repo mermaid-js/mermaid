@@ -12,8 +12,9 @@ import {
   clear as commonClear,
 } from '../../commonDb.js';
 import type { ParseDirectiveDefinition } from '../../diagram-api/types.js';
-import type { PieFields, PieDB, Sections, PieDiagramConfig } from './pieTypes.js';
+import type { PieFields, PieDB, Sections } from './pieTypes.js';
 import type { RequiredDeep } from 'type-fest';
+import type { PieDiagramConfig } from '../../config.type.js';
 
 export const DEFAULT_PIE_CONFIG: Required<PieDiagramConfig> = {
   useMaxWidth: true,
