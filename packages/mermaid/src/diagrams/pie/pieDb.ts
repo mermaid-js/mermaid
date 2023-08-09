@@ -30,11 +30,7 @@ export const DEFAULT_PIE_DB: RequiredDeep<PieFields> = {
 
 let sections: Sections = DEFAULT_PIE_DB.sections;
 let showData: boolean = DEFAULT_PIE_DB.showData;
-const config: Required<PieDiagramConfig> = {
-  useWidth: DEFAULT_PIE_DB.config.useWidth,
-  useMaxWidth: DEFAULT_PIE_DB.config.useMaxWidth,
-  textPosition: DEFAULT_PIE_DB.config.textPosition,
-};
+const config: Required<PieDiagramConfig> = structuredClone(DEFAULT_PIE_CONFIG);
 
 const setConfig = (conf: PieDiagramConfig): void => {
   config.useWidth = conf.useWidth ?? DEFAULT_PIE_CONFIG.useWidth;
@@ -55,7 +51,7 @@ const parseDirective: ParseDirectiveDefinition = (statement, context, type) => {
 };
 
 const clear = (): void => {
-  sections = JSON.parse(JSON.stringify(DEFAULT_PIE_DB.sections));
+  sections = structuredClone(DEFAULT_PIE_DB.sections);
   showData = DEFAULT_PIE_DB.showData;
   commonClear();
 };
