@@ -929,5 +929,17 @@ context('Sequence diagram', () => {
         expect(svg).to.not.have.attr('style');
       });
     });
+
+    context('markdown text', () => {
+      it('it should render markdown in messages', () => {
+        imgSnapshotTest(
+          `
+          sequenceDiagram
+          Alice -->> Bob: "\`Hello using **markdown**\`"
+          `,
+          { sequence: { htmlLabels: true } }
+        );
+      });
+    });
   });
 });

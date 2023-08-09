@@ -3,6 +3,7 @@ import * as svgDrawCommon from '../common/svgDrawCommon';
 import { addFunction } from '../../interactionDb.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
+import { markdownToHTML } from '../../rendering-util/handle-markdown-text.js';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
 
@@ -227,7 +228,10 @@ export const drawText = function (elem, textData) {
     }
 
     const text = line || ZERO_WIDTH_SPACE;
-    if (textData.tspan) {
+    if (textData.textType) {
+      const HTMLtext = markdownToHTML(text);
+      textElem.text(HTMLtext);
+    } else if (textData.tspan) {
       const span = textElem.append('tspan');
       span.attr('x', textData.x);
       if (textData.fill !== undefined) {
