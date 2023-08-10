@@ -15,25 +15,25 @@
     "git graph"
   ],
   "scripts": {
-    "build:vite": "ts-node-esm --transpileOnly .vite/build.ts",
+    "build:vite": "tsx .vite/build.ts",
     "build:mermaid": "pnpm build:vite --mermaid",
     "build:viz": "pnpm build:mermaid --visualize",
     "build:types": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-zenuml/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-example-diagram/tsconfig.json --emitDeclarationOnly",
     "build:watch": "pnpm build:vite --watch",
     "build": "pnpm run -r clean && pnpm build:types && pnpm build:vite",
-    "dev": "concurrently \"pnpm build:vite --watch\" \"ts-node-esm .vite/server.ts\"",
+    "dev": "concurrently \"pnpm build:vite --watch\" \"tsx .vite/server.ts\"",
     "dev:coverage": "pnpm coverage:cypress:clean && VITE_COVERAGE=true pnpm dev",
     "release": "pnpm build",
     "lint": "eslint --cache --cache-strategy content --ignore-path .gitignore . && pnpm lint:jison && prettier --cache --check .",
-    "lint:fix": "eslint --cache --cache-strategy content --fix --ignore-path .gitignore . && prettier --write . && ts-node-esm scripts/fixCSpell.ts",
-    "lint:jison": "ts-node-esm ./scripts/jison/lint.mts",
-    "contributors": "ts-node-esm scripts/updateContributors.ts",
+    "lint:fix": "eslint --cache --cache-strategy content --fix --ignore-path .gitignore . && prettier --write . && tsx scripts/fixCSpell.ts",
+    "lint:jison": "tsx ./scripts/jison/lint.mts",
+    "contributors": "tsx scripts/updateContributors.ts",
     "cypress": "cypress run",
     "cypress:open": "cypress open",
     "e2e": "start-server-and-test dev http://localhost:9000/ cypress",
     "coverage:cypress:clean": "rimraf .nyc_output coverage/cypress",
     "e2e:coverage": "pnpm coverage:cypress:clean && VITE_COVERAGE=true pnpm e2e",
-    "coverage:merge": "ts-node-esm scripts/coverage.ts",
+    "coverage:merge": "tsx scripts/coverage.ts",
     "coverage": "pnpm test:coverage --run && pnpm e2e:coverage && pnpm coverage:merge",
     "ci": "vitest run",
     "test": "pnpm lint && vitest run",
@@ -126,5 +126,8 @@
   },
   "nyc": {
     "report-dir": "coverage/cypress"
+  },
+  "dependencies": {
+    "tsx": "^3.12.7"
   }
 }

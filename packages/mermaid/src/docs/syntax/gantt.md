@@ -345,6 +345,7 @@ It is possible to bind a click event to a task. The click can lead to either a j
 ```
 click taskId call callback(arguments)
 click taskId href URL
+click taskId href URL target
 ```
 
 - taskId is the id of the task
@@ -360,12 +361,14 @@ Beginner's tip—a full example using interactive links in an html context:
 
       section Clickable
       Visit mermaidjs         :active, cl1, 2014-01-07, 3d
-      Print arguments         :cl2, after cl1, 3d
-      Print task              :cl3, after cl2, 3d
+      Visit mermaidjs in tab  :cl2, after cl1, 3d
+      Print arguments         :cl3, after cl1, 3d
+      Print task              :cl4, after cl3, 3d
 
       click cl1 href "https://mermaidjs.github.io/"
-      click cl2 call printArguments("test1", "test2", test3)
-      click cl3 call printTask()
+      click cl2 href "https://mermaidjs.github.io/" "_blank"
+      click cl3 call printArguments("test1", "test2", test3)
+      click cl4 call printTask()
   </pre>
 
   <script>

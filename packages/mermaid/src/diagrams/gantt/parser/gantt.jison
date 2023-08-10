@@ -42,11 +42,20 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 \#[^\n]*                /* skip comments */
 \%%[^\n]*               /* skip comments */
 
+"_self"         return 'hreftarget';
+\"_self\"         return 'hreftarget';
+"_blank"        return 'hreftarget';
+\"_blank\"        return 'hreftarget';
+"_parent"       return 'hreftarget';
+\"_parent\"       return 'hreftarget';
+"_top"          return 'hreftarget';
+\"_top\"          return 'hreftarget';
+
 /*
 ---interactivity command---
 'href' adds a link to the specified task. 'href' can only be specified when the
 line was introduced with 'click'.
-'href "<link>"' attaches the specified link to the task that was specified by 'click'.
+'href "<link>" "<target>"' attaches the specified link to the task that was specified by 'click'.
 */
 "href"[\s]+["]          this.begin("href");
 <href>["]               this.popState();
@@ -170,13 +179,11 @@ clickStatement
     : click callbackname                    {$$ = $1;yy.setClickEvent($1, $2, null);}
     | click callbackname callbackargs       {$$ = $1;yy.setClickEvent($1, $2, $3);}
 
-    | click callbackname href               {$$ = $1;yy.setClickEvent($1, $2, null);yy.setLink($1,$3);}
-    | click callbackname callbackargs href  {$$ = $1;yy.setClickEvent($1, $2, $3);yy.setLink($1,$4);}
+    | click callbackname href               {$$ = $1;yy.setClickEvent($1, $2, null);yy.setLink($1,$3,null);}
+    | click callbackname callbackargs href  {$$ = $1;yy.setClickEvent($1, $2, $3);yy.setLink($1,$4,null);}
 
-    | click href callbackname               {$$ = $1;yy.setClickEvent($1, $3, null);yy.setLink($1,$2);}
-    | click href callbackname callbackargs  {$$ = $1;yy.setClickEvent($1, $3, $4);yy.setLink($1,$2);}
-
-    | click href                            {$$ = $1;yy.setLink($1, $2);}
+    | click href                            {$$ = $1;yy.setLink($1, $2, null);}
+    | click href hreftarget                {$$ = $1;yy.setLink($1, $2, $3);}
     ;
 
 clickStatementDebug
@@ -186,10 +193,8 @@ clickStatementDebug
     | click callbackname callbackargs       {$$=$1 + ' ' + $2 + ' ' + $3;}
     | click callbackname callbackargs href  {$$=$1 + ' ' + $2 + ' ' + $3 + ' ' + $4;}
 
-    | click href callbackname               {$$=$1 + ' ' + $2 + ' ' + $3;}
-    | click href callbackname callbackargs  {$$=$1 + ' ' + $2 + ' ' + $3 + ' ' + $4;}
-
     | click href                            {$$=$1 + ' ' + $2;}
+    | click href hreftarget                {$$=$1 + ' ' + $2 + ' ' + $3;}
     ;
 
 openDirective

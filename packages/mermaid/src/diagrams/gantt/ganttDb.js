@@ -605,19 +605,25 @@ const compileTasks = function () {
  *
  * @param ids Comma separated list of ids
  * @param _linkStr URL to create a link for
+ * @param target to define where the link should be opened
  */
-export const setLink = function (ids, _linkStr) {
+export const setLink = function (ids, _linkStr, target) {
   let linkStr = _linkStr;
   if (configApi.getConfig().securityLevel !== 'loose') {
     linkStr = sanitizeUrl(_linkStr);
   }
+
+  if (target == undefined) {
+    target = '_self';
+  }
+
   ids.split(',').forEach(function (id) {
     let rawTask = findTaskById(id);
     if (rawTask !== undefined) {
       pushFun(id, () => {
-        window.open(linkStr, '_self');
+        window.open(linkStr, target);
       });
-      links[id] = linkStr;
+      links[id] = [linkStr, target];
     }
   });
   setClass(ids, 'clickable');

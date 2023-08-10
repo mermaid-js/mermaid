@@ -512,4 +512,32 @@ describe('Gantt diagram', () => {
       {}
     );
   });
+
+  it('should render a gantt with all kind of links and target', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title GANTT
+        dateFormat  HH:mm:ss
+
+        section part1
+        A label_link : active, A, 2023-01-01, 2023-01-02
+	      B label_target: active, B, 2023-01-03, 2023-01-06
+        BBis label_target bis : active, BBis, 2023-01-03, 2023-01-06
+
+        section part2
+        C label_mailto : active, C, 2023-01-01, 2023-01-31
+        D label_other : active, D, 2023-02-01, 2023-02-05
+        E label_script : active, E, 2023-02-05, 2023-02-10
+
+        click A href "https://mermaid-js.github.io/mermaid/#/"
+        click B href "https://mermaid-js.github.io/mermaid/#/" _blank
+        click BBis href "https://mermaid-js.github.io/mermaid/#/" "_blank"
+        click C href "mailto:user@user.user"
+        click D href "notes://do-your-thing/id"
+        click E href "javascript:alert('test')"
+    `,
+      {}
+    );
+  });
 });

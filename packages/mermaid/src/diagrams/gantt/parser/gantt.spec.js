@@ -127,6 +127,7 @@ describe('when parsing a gantt diagram it', function () {
     expect(parserFnConstructor(str)).not.toThrow();
     expect(ganttDb.setClickEvent).toHaveBeenCalledWith('cl2', 'ganttTestClick', null);
   });
+
   it('should parse callback specifier with arbitrary number of args', function () {
     spyOn(ganttDb, 'setClickEvent');
     const str =
@@ -134,14 +135,18 @@ describe('when parsing a gantt diagram it', function () {
       'dateFormat  YYYY-MM-DD\n' +
       'section Clickable\n' +
       'Visit mermaidjs           :active, cl1, 2014-01-07, 3d\n' +
-      'Calling a callback        :cl2, after cl1, 3d\n\n' +
+      'Visit mermaidjs in tab    :cl2, after cl1, 3d\n' +
+      'Visit mermaidjs in tab2    :cl3, after cl1, 3d\n' +
+      'Calling a callback        :cl4, after cl3, 3d\n\n' +
       'click cl1 href "https://mermaidjs.github.io/"\n' +
-      'click cl2 call ganttTestClick("test0", test1, test2)\n';
+      'click cl2 href "https://mermaidjs.github.io/" _blank\n' +
+      'click cl3 href "https://mermaidjs.github.io/" "_blank"\n' +
+      'click cl4 call ganttTestClick("test0", test1, test2)\n';
 
     expect(parserFnConstructor(str)).not.toThrow();
     const args = '"test1", "test2", "test3"';
     expect(ganttDb.setClickEvent).toHaveBeenCalledWith(
-      'cl2',
+      'cl4',
       'ganttTestClick',
       '"test0", test1, test2'
     );
