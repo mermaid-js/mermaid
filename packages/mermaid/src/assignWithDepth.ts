@@ -28,9 +28,9 @@
 const assignWithDepth = (
   dst: any,
   src: any,
-  config: { depth: number; clobber: boolean } = { depth: 2, clobber: false }
+  { depth = 2, clobber = false }: { depth: number; clobber: boolean } = { depth: 2, clobber: false }
 ): any => {
-  const { depth, clobber } = config;
+  const config = Object.assign({ depth, clobber });
   if (Array.isArray(src) && !Array.isArray(dst)) {
     src.forEach((s) => assignWithDepth(dst, s, config));
     return dst;
