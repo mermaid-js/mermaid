@@ -1,5 +1,5 @@
 import { Diagram } from '../Diagram.js';
-import { MermaidConfig } from '../config.type.js';
+import type { MermaidConfig } from '../config.type.js';
 import type * as d3 from 'd3';
 
 export interface InjectUtils {
@@ -27,7 +27,7 @@ export interface DiagramDB {
 export interface DiagramDefinition {
   db: DiagramDB;
   renderer: any;
-  parser: any;
+  parser: ParserDefinition;
   styles?: any;
   init?: (config: MermaidConfig) => void;
   injectUtils?: (
@@ -69,6 +69,11 @@ export type DrawDefinition = (
   version: string,
   diagramObject: Diagram
 ) => void;
+
+export interface ParserDefinition {
+  parse: (text: string) => void;
+  parser: { yy: DiagramDB };
+}
 
 /**
  * Type for function parse directive from diagram code.
