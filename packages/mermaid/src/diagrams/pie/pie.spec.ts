@@ -8,8 +8,11 @@ setConfig({
 });
 
 describe('pie chart', () => {
-  beforeEach(() => {
+  beforeAll(() => {
     parser.yy = db;
+  });
+
+  beforeEach(() => {
     parser.yy.clear();
   });
 
