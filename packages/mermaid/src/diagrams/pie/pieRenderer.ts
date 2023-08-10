@@ -57,10 +57,10 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   group.attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
   const { themeVariables } = globalConfig;
-  const textPosition: number = pieConfig.textPosition;
   let [outerStrokeWidth] = parseFontSize(themeVariables.pieOuterStrokeWidth);
   outerStrokeWidth ??= 2;
 
+  const textPosition: number = pieConfig.textPosition;
   const radius: number = Math.min(width, height) / 2 - MARGIN;
   // Shape helper to build arcs:
   const arcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Sections>> = arc<
@@ -108,7 +108,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .enter()
     .append('path')
     .attr('d', arcGenerator)
-    .attr('fill', (datum) => {
+    .attr('fill', (datum: d3.PieArcDatum<D3Sections>) => {
       return color(datum.data.label);
     })
     .attr('class', 'pieCircle');
@@ -124,7 +124,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .data(arcs)
     .enter()
     .append('text')
-    .text((datum: { data: D3Sections }): string => {
+    .text((datum: d3.PieArcDatum<D3Sections>): string => {
       return ((datum.data.value / sum) * 100).toFixed(0) + '%';
     })
     .attr('transform', (datum: d3.PieArcDatum<D3Sections>): string => {
