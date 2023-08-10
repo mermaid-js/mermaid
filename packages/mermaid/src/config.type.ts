@@ -8,7 +8,7 @@
 /**
  * Configuration options to pass to the `dompurify` library.
  */
-export type DOMPurifyConfiguration = import("dompurify").Config;
+export type DOMPurifyConfiguration = import('dompurify').Config;
 /**
  * JavaScript function that returns a `FontConfig`.
  *
@@ -39,7 +39,7 @@ export type FontCalculator = () => Partial<FontConfig>;
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
  * via the `definition` "SankeyLinkColor".
  */
-export type SankeyLinkColor = "source" | "target" | "gradient";
+export type SankeyLinkColor = 'source' | 'target' | 'gradient';
 /**
  * Controls the alignment of the Sankey diagrams.
  *
@@ -49,7 +49,7 @@ export type SankeyLinkColor = "source" | "target" | "gradient";
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
  * via the `definition` "SankeyNodeAlignment".
  */
-export type SankeyNodeAlignment = "left" | "right" | "center" | "justify";
+export type SankeyNodeAlignment = 'left' | 'right' | 'center' | 'justify';
 /**
  * The font size to use
  */
@@ -61,7 +61,7 @@ export interface MermaidConfig {
    * You may also use `themeCSS` to override this value.
    *
    */
-  theme?: string | "default" | "forest" | "dark" | "neutral" | "null";
+  theme?: string | 'default' | 'forest' | 'dark' | 'neutral' | 'null';
   themeVariables?: any;
   themeCSS?: string;
   /**
@@ -88,12 +88,12 @@ export interface MermaidConfig {
     | 0
     | 2
     | 1
-    | "trace"
-    | "debug"
-    | "info"
-    | "warn"
-    | "error"
-    | "fatal"
+    | 'trace'
+    | 'debug'
+    | 'info'
+    | 'warn'
+    | 'error'
+    | 'fatal'
     | 3
     | 4
     | 5
@@ -101,7 +101,7 @@ export interface MermaidConfig {
   /**
    * Level of trust for parsed diagram
    */
-  securityLevel?: string | "strict" | "loose" | "antiscript" | "sandbox" | undefined;
+  securityLevel?: string | 'strict' | 'loose' | 'antiscript' | 'sandbox' | undefined;
   /**
    * Dictates whether mermaid starts on Page load
    */
@@ -689,11 +689,11 @@ export interface QuadrantChartConfig extends BaseDiagramConfig {
   /**
    * position of x-axis labels
    */
-  xAxisPosition?: "top" | "bottom";
+  xAxisPosition?: 'top' | 'bottom';
   /**
    * position of y-axis labels
    */
-  yAxisPosition?: "left" | "right";
+  yAxisPosition?: 'left' | 'right';
   /**
    * stroke width of edges of the box that are inside the quadrant
    */
@@ -723,7 +723,7 @@ export interface ErDiagramConfig extends BaseDiagramConfig {
   /**
    * Directional bias for layout of entities
    */
-  layoutDirection?: string | "TB" | "BT" | "LR" | "RL";
+  layoutDirection?: string | 'TB' | 'BT' | 'LR' | 'RL';
   /**
    * The minimum width of an entity box. Expressed in pixels.
    */
@@ -788,7 +788,7 @@ export interface StateDiagramConfig extends BaseDiagramConfig {
    * Decides which rendering engine that is to be used for the rendering.
    *
    */
-  defaultRenderer?: string | "dagre-d3" | "dagre-wrapper" | "elk";
+  defaultRenderer?: string | 'dagre-d3' | 'dagre-wrapper' | 'elk';
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -812,7 +812,7 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
    * Decides which rendering engine that is to be used for the rendering.
    *
    */
-  defaultRenderer?: string | "dagre-d3" | "dagre-wrapper" | "elk";
+  defaultRenderer?: string | 'dagre-d3' | 'dagre-wrapper' | 'elk';
   nodeSpacing?: number;
   rankSpacing?: number;
   /**
@@ -872,7 +872,7 @@ export interface JourneyDiagramConfig extends BaseDiagramConfig {
   /**
    * Multiline message alignment
    */
-  messageAlign?: string | "left" | "center" | "right";
+  messageAlign?: string | 'left' | 'center' | 'right';
   /**
    * Prolongs the edge of the diagram downwards.
    *
@@ -951,7 +951,7 @@ export interface TimelineDiagramConfig extends BaseDiagramConfig {
   /**
    * Multiline message alignment
    */
-  messageAlign?: string | "left" | "center" | "right";
+  messageAlign?: string | 'left' | 'center' | 'right';
   /**
    * Prolongs the edge of the diagram downwards.
    *
@@ -1062,12 +1062,12 @@ export interface GanttDiagramConfig extends BaseDiagramConfig {
    * Controls the display mode.
    *
    */
-  displayMode?: string | "compact";
+  displayMode?: string | 'compact';
   /**
    * On which day a week-based interval should start
    *
    */
-  weekday?: "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
+  weekday?: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
 }
 /**
  * The object containing configurations specific for sequence diagrams
@@ -1121,7 +1121,7 @@ export interface SequenceDiagramConfig extends BaseDiagramConfig {
   /**
    * Multiline message alignment
    */
-  messageAlign?: string | "left" | "center" | "right";
+  messageAlign?: string | 'left' | 'center' | 'right';
   /**
    * Mirror actors under diagram
    *
@@ -1178,7 +1178,7 @@ export interface SequenceDiagramConfig extends BaseDiagramConfig {
   /**
    * This sets the text alignment of actor-attached notes
    */
-  noteAlign?: string | "left" | "center" | "right";
+  noteAlign?: string | 'left' | 'center' | 'right';
   /**
    * This sets the font size of actor messages
    */
@@ -1254,7 +1254,7 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    * Defines how mermaid renders curves for flowcharts.
    *
    */
-  curve?: string | "basis" | "linear" | "cardinal";
+  curve?: string | 'basis' | 'linear' | 'cardinal';
   /**
    * Represents the padding between the labels and the shape
    *
@@ -1266,7 +1266,7 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    * Decides which rendering engine that is to be used for the rendering.
    *
    */
-  defaultRenderer?: string | "dagre-d3" | "dagre-wrapper" | "elk";
+  defaultRenderer?: string | 'dagre-d3' | 'dagre-wrapper' | 'elk';
   /**
    * Width of nodes where text is wrapped.
    *
@@ -1296,7 +1296,7 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
    * See <https://github.com/d3/d3-sankey#alignments>.
    *
    */
-  nodeAlignment?: "left" | "right" | "center" | "justify";
+  nodeAlignment?: 'left' | 'right' | 'center' | 'justify';
   useMaxWidth?: boolean;
 }
 /**
