@@ -10,8 +10,7 @@ setConfig({
 describe('pie chart', () => {
   beforeEach(() => {
     parser.yy = db;
-    db.clear();
-    db.resetConfig();
+    parser.yy.clear();
   });
 
   describe('parse', () => {

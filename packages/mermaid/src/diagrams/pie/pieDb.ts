@@ -54,6 +54,7 @@ const clear = (): void => {
   sections = structuredClone(DEFAULT_PIE_DB.sections);
   showData = DEFAULT_PIE_DB.showData;
   commonClear();
+  resetConfig();
 };
 
 const addSection = (label: string, value: number): void => {
