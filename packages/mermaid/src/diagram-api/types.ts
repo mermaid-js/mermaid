@@ -17,7 +17,7 @@ export interface InjectUtils {
  */
 export interface DiagramDB {
   // config
-  reset?: () => void;
+  resetConfig?: () => void;
   setConfig?: (config: BaseDiagramConfig) => void;
   getConfig?: () => BaseDiagramConfig | undefined;
 

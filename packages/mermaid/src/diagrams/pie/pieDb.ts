@@ -40,7 +40,7 @@ const setConfig = (conf: PieDiagramConfig): void => {
 
 const getConfig = (): Required<PieDiagramConfig> => config;
 
-const reset = (): void => {
+const resetConfig = (): void => {
   config.useWidth = DEFAULT_PIE_CONFIG.useWidth;
   config.useMaxWidth = DEFAULT_PIE_CONFIG.useMaxWidth;
   config.textPosition = DEFAULT_PIE_CONFIG.textPosition;
@@ -82,7 +82,7 @@ const getShowData = (): boolean => showData;
 export const db: PieDB = {
   setConfig,
   getConfig,
-  reset,
+  resetConfig,
 
   parseDirective,
   clear,

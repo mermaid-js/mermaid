@@ -11,7 +11,7 @@ describe('pie chart', () => {
   beforeEach(() => {
     parser.yy = db;
     db.clear();
-    db.reset();
+    db.resetConfig();
   });
 
   describe('parse', () => {
@@ -171,7 +171,7 @@ describe('pie chart', () => {
 
     it('reset', () => {
       db.setConfig({ textPosition: 0 });
-      db.reset();
+      db.resetConfig();
       expect(db.getConfig().textPosition).toStrictEqual(DEFAULT_PIE_DB.config.textPosition);
     });
   });
