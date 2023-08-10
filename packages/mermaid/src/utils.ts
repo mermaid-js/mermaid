@@ -31,6 +31,7 @@ import { detectType } from './diagram-api/detectType.js';
 import assignWithDepth from './assignWithDepth.js';
 import { MermaidConfig } from './config.type.js';
 import memoize from 'lodash-es/memoize.js';
+import merge from 'lodash-es/merge.js';
 
 export const ZERO_WIDTH_SPACE = '\u200b';
 
@@ -802,7 +803,7 @@ export const calculateTextDimensions: (
 );
 
 export const initIdGenerator = class iterator {
-  constructor(deterministic, seed) {
+  constructor(deterministic, seed?: any) {
     this.deterministic = deterministic;
     // TODO: Seed is only used for length?
     this.seed = seed;
@@ -994,12 +995,17 @@ export const parseFontSize = (fontSize: string | number | undefined): [number?, 
   }
 };
 
+export function cleanAndMerge<T>(defaultData: T, data?: Partial<T>): T {
+  return merge({}, defaultData, data);
+}
+
 export default {
   assignWithDepth,
   wrapLabel,
   calculateTextHeight,
   calculateTextWidth,
   calculateTextDimensions,
+  cleanAndMerge,
   detectInit,
   detectDirective,
   isSubstringInArray,
