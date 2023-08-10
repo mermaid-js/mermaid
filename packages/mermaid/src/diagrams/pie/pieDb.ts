@@ -15,6 +15,7 @@ import type { ParseDirectiveDefinition } from '../../diagram-api/types.js';
 import type { PieFields, PieDB, Sections } from './pieTypes.js';
 import type { RequiredDeep } from 'type-fest';
 import type { PieDiagramConfig } from '../../config.type.js';
+import { structuredCleanClone } from '../../cleanClone.js';
 
 export const DEFAULT_PIE_CONFIG: Required<PieDiagramConfig> = {
   useMaxWidth: true,
@@ -30,20 +31,16 @@ export const DEFAULT_PIE_DB: RequiredDeep<PieFields> = {
 
 let sections: Sections = DEFAULT_PIE_DB.sections;
 let showData: boolean = DEFAULT_PIE_DB.showData;
-const config: Required<PieDiagramConfig> = structuredClone(DEFAULT_PIE_CONFIG);
+let config: Required<PieDiagramConfig> = structuredCleanClone(DEFAULT_PIE_CONFIG);
 
 const setConfig = (conf: PieDiagramConfig): void => {
-  config.useWidth = conf.useWidth ?? DEFAULT_PIE_CONFIG.useWidth;
-  config.useMaxWidth = conf.useMaxWidth ?? DEFAULT_PIE_CONFIG.useMaxWidth;
-  config.textPosition = conf.textPosition ?? DEFAULT_PIE_CONFIG.textPosition;
+  config = structuredCleanClone(DEFAULT_PIE_CONFIG, conf);
 };
 
 const getConfig = (): Required<PieDiagramConfig> => config;
 
 const resetConfig = (): void => {
-  config.useWidth = DEFAULT_PIE_CONFIG.useWidth;
-  config.useMaxWidth = DEFAULT_PIE_CONFIG.useMaxWidth;
-  config.textPosition = DEFAULT_PIE_CONFIG.textPosition;
+  config = structuredCleanClone(DEFAULT_PIE_CONFIG);
 };
 
 const parseDirective: ParseDirectiveDefinition = (statement, context, type) => {
@@ -51,7 +48,7 @@ const parseDirective: ParseDirectiveDefinition = (statement, context, type) => {
 };
 
 const clear = (): void => {
-  sections = structuredClone(DEFAULT_PIE_DB.sections);
+  sections = structuredCleanClone(DEFAULT_PIE_DB.sections);
   showData = DEFAULT_PIE_DB.showData;
   commonClear();
   resetConfig();
