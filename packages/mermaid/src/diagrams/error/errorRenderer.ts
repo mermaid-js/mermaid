@@ -77,3 +77,5 @@ export const draw = (_text: string, id: string, version: string) => {
 };
 
 export const renderer = { draw };
+
+export default renderer;

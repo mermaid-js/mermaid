@@ -18,7 +18,7 @@ import { version } from '../package.json';
 import * as configApi from './config.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import { Diagram, getDiagramFromText } from './Diagram.js';
-import { renderer as errorRenderer } from './diagrams/error/errorRenderer.js';
+import errorRenderer from './diagrams/error/errorRenderer.js';
 import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
 import getStyles from './styles.js';
