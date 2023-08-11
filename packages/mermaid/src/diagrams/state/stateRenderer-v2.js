@@ -84,17 +84,7 @@ export const setConf = function (cnf) {
  * @returns {object} ClassDef styles (a Map with keys = strings, values = )
  */
 export const getClasses = function (text, diagramObj) {
-  log.trace('Extracting classes');
-  diagramObj.db.clear();
-  try {
-    // Parse the graph definition
-    diagramObj.parser.parse(text);
-    // must run extract() to turn the parsed statements into states, relationships, classes, etc.
-    diagramObj.db.extract(diagramObj.db.getRootDocV2());
-    return diagramObj.db.getClasses();
-  } catch (e) {
-    return e;
-  }
+  return diagramObj.db.getClasses();
 };
 
 /**
@@ -384,7 +374,6 @@ const getDir = (parsedItem, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
  */
 export const draw = async function (text, id, _version, diag) {
   log.info('Drawing state diagram (v2)', id);
-  // diag.sb.clear();
   nodeDb = {};
   // Fetch the default direction, use TD if none was found
   let dir = diag.db.getDirection();
