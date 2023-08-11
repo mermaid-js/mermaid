@@ -1,38 +1,49 @@
-// @ts-nocheck - ignore to convert to TS
 import { sanitizeUrl } from '@braintree/sanitize-url';
+import type { Group, SVG } from '../../diagram-api/types.js';
+import type {
+  Bound,
+  D3ImageElement,
+  D3RectElement,
+  D3TSpanElement,
+  D3TextElement,
+  D3UseElement,
+  RectData,
+  TextData,
+  TextObject,
+} from './commonTypes.js';
 
-export const drawRect = function (elem, rectData) {
-  const rectElem = elem.append('rect');
-  rectElem.attr('x', rectData.x);
-  rectElem.attr('y', rectData.y);
-  rectElem.attr('fill', rectData.fill);
-  rectElem.attr('stroke', rectData.stroke);
-  rectElem.attr('width', rectData.width);
-  rectElem.attr('height', rectData.height);
-  rectElem.attr('rx', rectData.rx);
-  rectElem.attr('ry', rectData.ry);
+export const drawRect = (element: SVG | Group, rectData: RectData): D3RectElement => {
+  const rectElement: D3RectElement = element.append('rect');
+  rectData.x !== undefined && rectElement.attr('x', rectData.x);
+  rectData.y !== undefined && rectElement.attr('y', rectData.y);
+  rectData.fill !== undefined && rectElement.attr('fill', rectData.fill);
+  rectData.stroke !== undefined && rectElement.attr('stroke', rectData.stroke);
+  rectData.width !== undefined && rectElement.attr('width', rectData.width);
+  rectData.height !== undefined && rectElement.attr('height', rectData.height);
+  rectData.rx !== undefined && rectElement.attr('rx', rectData.rx);
+  rectData.ry !== undefined && rectElement.attr('ry', rectData.ry);
 
-  if (rectData.attrs !== 'undefined' && rectData.attrs !== null) {
+  if (rectData.attrs !== undefined && rectData.attrs !== null) {
     for (const attrKey in rectData.attrs) {
-      rectElem.attr(attrKey, rectData.attrs[attrKey]);
+      rectElement.attr(attrKey, rectData.attrs[attrKey]);
     }
   }
 
-  if (rectData.class !== 'undefined') {
-    rectElem.attr('class', rectData.class);
+  if (rectData.class !== undefined) {
+    rectElement.attr('class', rectData.class);
   }
 
-  return rectElem;
+  return rectElement;
 };
 
 /**
  * Draws a background rectangle
  *
- * @param elem - Diagram (reference for bounds)
+ * @param element - Diagram (reference for bounds)
  * @param bounds - Shape of the rectangle
  */
-export const drawBackgroundRect = function (elem, bounds) {
-  const rectElem = drawRect(elem, {
+export const drawBackgroundRect = (element: SVG | Group, bounds: Bound): void => {
+  const rectData: RectData = {
     x: bounds.startx,
     y: bounds.starty,
     width: bounds.stopx - bounds.startx,
@@ -40,50 +51,53 @@ export const drawBackgroundRect = function (elem, bounds) {
     fill: bounds.fill,
     stroke: bounds.stroke,
     class: 'rect',
-  });
-  rectElem.lower();
+  };
+  const rectElement: D3RectElement = drawRect(element, rectData);
+  rectElement.lower();
 };
 
-export const drawText = function (elem, textData) {
+export const drawText = (element: SVG | Group, textData: TextData): D3TextElement => {
   // Remove and ignore br:s
-  const nText = textData.text.replace(/<br\s*\/?>/gi, ' ');
+  const nText: string = textData.text.replace(/<br\s*\/?>/gi, ' ');
 
-  const textElem = elem.append('text');
+  const textElem: D3TextElement = element.append('text');
   textElem.attr('x', textData.x);
   textElem.attr('y', textData.y);
   textElem.attr('class', 'legend');
 
   textElem.style('text-anchor', textData.anchor);
+  textData.class !== undefined && textElem.attr('class', textData.class);
 
-  if (textData.class !== undefined) {
-    textElem.attr('class', textData.class);
-  }
-
-  const span = textElem.append('tspan');
-  span.attr('x', textData.x + textData.textMargin * 2);
-  span.text(nText);
+  const tspan: D3TSpanElement = textElem.append('tspan');
+  tspan.attr('x', textData.x + textData.textMargin * 2);
+  tspan.text(nText);
 
   return textElem;
 };
 
-export const drawImage = function (elem, x, y, link) {
-  const imageElem = elem.append('image');
-  imageElem.attr('x', x);
-  imageElem.attr('y', y);
-  const sanitizedLink = sanitizeUrl(link);
-  imageElem.attr('xlink:href', sanitizedLink);
+export const drawImage = (elem: SVG | Group, x: number, y: number, link: string): void => {
+  const imageElement: D3ImageElement = elem.append('image');
+  imageElement.attr('x', x);
+  imageElement.attr('y', y);
+  const sanitizedLink: string = sanitizeUrl(link);
+  imageElement.attr('xlink:href', sanitizedLink);
 };
 
-export const drawEmbeddedImage = function (elem, x, y, link) {
-  const imageElem = elem.append('use');
-  imageElem.attr('x', x);
-  imageElem.attr('y', y);
-  const sanitizedLink = sanitizeUrl(link);
-  imageElem.attr('xlink:href', '#' + sanitizedLink);
+export const drawEmbeddedImage = (
+  element: SVG | Group,
+  x: number,
+  y: number,
+  link: string
+): void => {
+  const imageElement: D3UseElement = element.append('use');
+  imageElement.attr('x', x);
+  imageElement.attr('y', y);
+  const sanitizedLink: string = sanitizeUrl(link);
+  imageElement.attr('xlink:href', `#${sanitizedLink}`);
 };
 
-export const getNoteRect = function () {
-  return {
+export const getNoteRect = (): RectData => {
+  const noteRectData: RectData = {
     x: 0,
     y: 0,
     width: 100,
@@ -94,10 +108,11 @@ export const getNoteRect = function () {
     rx: 0,
     ry: 0,
   };
+  return noteRectData;
 };
 
-export const getTextObj = function () {
-  return {
+export const getTextObj = (): TextObject => {
+  const testObject: TextObject = {
     x: 0,
     y: 0,
     width: 100,
@@ -112,4 +127,5 @@ export const getTextObj = function () {
     tspan: true,
     valign: undefined,
   };
+  return testObject;
 };
