@@ -197,6 +197,8 @@ gantt
   weekday monday
 ```
 
+Support: v10.3.0+
+
 ## Output in compact mode
 
 The compact mode allows you to display multiple tasks in the same row. Compact mode can be enabled for a gantt chart by setting the display mode of the graph via preceeding YAML settings.

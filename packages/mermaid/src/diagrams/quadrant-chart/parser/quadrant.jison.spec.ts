@@ -1,4 +1,4 @@
-// @ts-ignore: TODO Fix ts errors
+// @ts-ignore: JISON doesn't support types
 import { parser } from './quadrant.jison';
 import { Mock, vi } from 'vitest';
 

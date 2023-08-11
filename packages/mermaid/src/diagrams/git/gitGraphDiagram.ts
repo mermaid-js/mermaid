@@ -1,4 +1,4 @@
-// @ts-ignore: TODO Fix ts errors
+// @ts-ignore: JISON doesn't support types
 import gitGraphParser from './parser/gitGraph.jison';
 import gitGraphDb from './gitGraphAst.js';
 import gitGraphRenderer from './gitGraphRenderer.js';

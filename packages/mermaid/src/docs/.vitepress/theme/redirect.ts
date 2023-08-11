@@ -28,7 +28,7 @@ const idRedirectMap: Record<string, string> = {
   '8.6.0_docs': '',
   accessibility: 'config/theming',
   breakingchanges: '',
-  c4c: 'syntax/c4c',
+  c4c: 'syntax/c4',
   classdiagram: 'syntax/classDiagram',
   configuration: 'config/configuration',
   demos: 'ecosystem/integrations',
@@ -50,7 +50,7 @@ const idRedirectMap: Record<string, string> = {
   'n00b-advanced': 'config/n00b-advanced',
   'n00b-gettingstarted': 'intro/n00b-gettingStarted',
   'n00b-overview': 'community/n00b-overview',
-  'n00b-syntaxreference': '',
+  'n00b-syntaxreference': 'intro/n00b-syntaxReference',
   newdiagram: 'community/newDiagram',
   pie: 'syntax/pie',
   plugins: '',
@@ -70,6 +70,7 @@ const idRedirectMap: Record<string, string> = {
 
 const urlRedirectMap: Record<string, string> = {
   '/misc/faq.html': 'configure/faq.html',
+  '/syntax/c4c.html': 'syntax/c4.html',
 };
 
 /**

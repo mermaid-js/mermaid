@@ -511,7 +511,7 @@ NOTE: Because we have overridden the `mainBranchOrder` to `2`, the `main` branch
 
 Here, we have changed the default main branch name to `MetroLine1`.
 
-## Orientation
+## Orientation (v10.3.0+)
 
 In Mermaid, the default orientation is Left to Right. The branches are lined vertically.
 
