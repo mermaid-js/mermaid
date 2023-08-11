@@ -1,12 +1,6 @@
-<script setup>
-import { ref } from 'vue';
-let selectedPlatform = ref("native");
-const setPlatform = (newPlatform) => {
-  selectedPlatform.value = newPlatform;
-}
-</script>
-
 # Contributing to Mermaid
+
+> You can pick [Native](/community/development) or [Docker](/community/docker-development) installation guide.
 
 So you want to help? That's great!
 
@@ -26,11 +20,7 @@ Then you **clone** a copy to your local development machine (e.g. where you code
 
 ## Technical Requirements
 
-You can install the requirements natively on your machine or in Docker by your choice.
-
-<PlatformSelector :selectedPlatform="selectedPlatform" v-on:change="setPlatform" />
-
-<div v-if="selectedPlatform === 'native'">
+> You can pick [Native](/community/development) or [Docker](/community/docker-development) installation guide.
 
 These are the tools we use for working with the code and documentation:
 
@@ -39,28 +29,9 @@ These are the tools we use for working with the code and documentation:
 - [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
 - [npx](https://docs.npmjs.com/cli/v8/commands/npx) the packaged executor in npm. This is needed [to install pnpm.](#install-packages)
 
-Follow [the setup steps below](#setup) to install them and start the development
-
-</div>
-
-<div v-if="selectedPlatform === 'docker'">
-
-[Install Docker](https://docs.docker.com/engine/install/). And that is pretty much all you need.
-
-Optionally, to run GUI (Cypress) within Docker you will also need X11 server installed.
-Maybe you already have it installed, so check it first:
-
-```bash
-echo $DISPLAY
-```
-
-If variable `$DISPLAY` is not empty, then it must be working. Otherwise install it.
-
-</div>
+Follow the setup steps below to install them and start the development.
 
 ## Setup and Launch
-
-<PlatformSelector :selectedPlatform="selectedPlatform" v-on:change="setPlatform" />
 
 ### Switch to project
 
@@ -70,32 +41,7 @@ Once you have cloned the repository onto your development machine, change into t
 cd mermaid
 ```
 
-<div v-if="selectedPlatform === 'native'">
-</div>
-
-<div v-if="selectedPlatform === 'docker'">
-
-### Make `./run` executable
-
-For development using Docker there is a self-documented `run` bash script, which provides convenient aliases for `docker compose` commands.
-
-Ensure `./run` script is executable:
-
-```bash
-chmod +x run
-```
-
-::: tip
-To get detailed help simply type `./run` or `./run help`.
-
-It also has short _Development quick start guide_ embedded.
-:::
-
-</div>
-
 ### Install packages
-
-<div v-if="selectedPlatform === 'native'">
 
 Run `npx pnpm install`. You will need `npx` for this because volta doesn't support it yet.
 
@@ -103,74 +49,29 @@ Run `npx pnpm install`. You will need `npx` for this because volta doesn't suppo
 npx pnpm install # npx is required for first install
 ```
 
-</div>
-
-<div v-if="selectedPlatform === 'docker'">
-
-```bash
-./run pnpm install  # Install packages
-```
-
-</div>
-
 ### Launch
-
-<div v-if="selectedPlatform === 'native'">
 
 ```bash
 npx pnpm run dev
 ```
 
-</div>
-<div v-if="selectedPlatform === 'docker'">
+Now you are ready to make your changes! Edit whichever files in `src` as required.
 
-```bash
-./run dev
-```
+Open <http://localhost:9000> in your browser, after starting the dev server.
+There is a list of demos that can be used to see and test your changes.
 
-</div>
+If you need a specific diagram, you can duplicate the `example.html` file in `/demos/dev` and add your own mermaid code to your copy.
 
-Open http://localhost:9000 and you will see demo pages.
+That will be served at <http://localhost:9000/dev/your-file-name.html>.
+After making code changes, the dev server will rebuild the mermaid library. You will need to reload the browser page yourself to see the changes. (PRs for auto reload are welcome!)
 
-> Now you are ready to make your changes!
-> Edit whichever files in `src` as required.
-> 
-> Open <http://localhost:9000> in your browser, after starting the dev server.
-> There is a list of demos that can be used to see and test your changes.
-> 
-> If you need a specific diagram, you can duplicate the `example.html` file in `/demos/dev` and add your own mermaid code to your copy.
-> That will be served at <http://localhost:9000/dev/your-file-name.html>.
-> After making code changes, the dev server will rebuild the mermaid library. You will need to reload the browser page yourself to see the changes. (PRs for auto reload are welcome!)
-> 
-
-<PlatformSelector :selectedPlatform="selectedPlatform" v-on:change="setPlatform" />
-
-> Once you have installed pnpm, you can run the `test` script to verify that pnpm is working _and_ that the repository has been cloned correctly:
-> ```bash
-> pnpm test
-> ```
-> The `test` script and others are in the top-level `package.json` file.
-> All tests should run successfully without any errors or failures. (You might see _lint_ or _formatting_ "warnings"; those are ok during this step.)
-
-
-
-<div v-if="selectedPlatform === 'native'">
+## Verify Everything is Working
 
 You can run the `test` script to verify that pnpm is working _and_ that the repository has been cloned correctly:
 
 ```bash
 pnpm test
 ```
-
-</div>
-
-<div v-if="selectedPlatform === 'docker'">
-
-```bash
-./run pnpm test
-```
-
-</div>
 
 The `test` script and others are in the top-level `package.json` file.
 
