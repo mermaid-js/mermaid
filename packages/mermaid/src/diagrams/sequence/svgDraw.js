@@ -122,6 +122,70 @@ const popupMenuDownFunc = function (popupId) {
   }
 };
 
+const calculateYFunc = function (textData, prevTextHeight = 0, textHeight = 0) {
+  let yfunc = () => textData.y;
+  if (
+    textData.valign !== undefined &&
+    textData.textMargin !== undefined &&
+    textData.textMargin > 0
+  ) {
+    switch (textData.valign) {
+      case 'top':
+      case 'start':
+        yfunc = () => Math.round(textData.y + textData.textMargin);
+        break;
+      case 'middle':
+      case 'center':
+        yfunc = () =>
+          Math.round(textData.y + (prevTextHeight + textHeight + textData.textMargin) / 2);
+        break;
+      case 'bottom':
+      case 'end':
+        yfunc = () =>
+          Math.round(
+            textData.y +
+              (prevTextHeight + textHeight + 2 * textData.textMargin) -
+              textData.textMargin
+          );
+        break;
+    }
+  }
+  return yfunc;
+};
+
+const setXAndAnchor = function (textData) {
+  if (
+    textData.anchor !== undefined &&
+    textData.textMargin !== undefined &&
+    textData.width !== undefined
+  ) {
+    switch (textData.anchor) {
+      case 'left':
+      case 'start':
+        textData.x = Math.round(textData.x + textData.textMargin);
+        textData.anchor = 'start';
+        textData.dominantBaseline = 'middle';
+        textData.alignmentBaseline = 'middle';
+        break;
+      case 'middle':
+      case 'center':
+        textData.x = Math.round(textData.x + textData.width / 2);
+        textData.anchor = 'middle';
+        textData.dominantBaseline = 'middle';
+        textData.alignmentBaseline = 'middle';
+        break;
+      case 'right':
+      case 'end':
+        textData.x = Math.round(textData.x + textData.width - textData.textMargin);
+        textData.anchor = 'end';
+        textData.dominantBaseline = 'middle';
+        textData.alignmentBaseline = 'middle';
+        break;
+    }
+  }
+  return textData;
+};
+
 export const drawMarkdownText = function (elem, textData) {
   const labelText = createText(elem, textData.text, {
     class: textData.class,
@@ -143,71 +207,10 @@ export const drawMarkdownText = function (elem, textData) {
   dv.attr('width', bbox.width);
   dv.attr('height', bbox.height);
 
-  innerLabel.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
-
-  let prevTextHeight = 0;
-  let textHeight = 0;
-
   const [_textFontSize, _textFontSizePx] = parseFontSize(textData.fontSize);
 
-  let dy = 0;
-  let yfunc = () => textData.y;
-  if (
-    textData.valign !== undefined &&
-    textData.textMargin !== undefined &&
-    textData.textMargin > 0
-  ) {
-    switch (textData.valign) {
-      case 'top':
-      case 'start':
-        yfunc = () => Math.round(textData.y + textData.textMargin);
-        break;
-      case 'middle':
-      case 'center':
-        yfunc = () =>
-          Math.round(textData.y + (prevTextHeight + textHeight + textData.textMargin) / 2);
-        break;
-      case 'bottom':
-      case 'end':
-        yfunc = () =>
-          Math.round(
-            textData.y +
-              (prevTextHeight + textHeight + 2 * textData.textMargin) -
-              textData.textMargin
-          );
-        break;
-    }
-  }
-
-  if (
-    textData.anchor !== undefined &&
-    textData.textMargin !== undefined &&
-    textData.width !== undefined
-  ) {
-    switch (textData.anchor) {
-      case 'left':
-      case 'start':
-        textData.x = Math.round(textData.x + textData.textMargin);
-        textData.anchor = 'start';
-        textData.dominantBaseline = 'middle';
-        textData.alignmentBaseline = 'middle';
-        break;
-      case 'middle':
-      case 'center':
-        textData.x = Math.round(textData.x + textData.width / 2);
-        textData.anchor = 'middle';
-        textData.dominantBaseline = 'middle';
-        textData.alignmentBaseline = 'middle';
-        break;
-      case 'right':
-      case 'end':
-        textData.x = Math.round(textData.x + textData.width - textData.textMargin);
-        textData.anchor = 'end';
-        textData.dominantBaseline = 'middle';
-        textData.alignmentBaseline = 'middle';
-        break;
-    }
-  }
+  const yfunc = calculateYFunc(textData);
+  textData = setXAndAnchor(textData);
 
   if (textData.anchor !== undefined) {
     messageLabel
@@ -229,10 +232,9 @@ export const drawMarkdownText = function (elem, textData) {
   }
   if (textData.class !== undefined) {
     messageLabel.attr('class', textData.class);
-  } else if (dy !== 0) {
-    textData.y = dy;
   }
 
+  innerLabel.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
   messageLabel.attr('transform', `translate(${textData.x}, ${yfunc() + textData.textMargin})`);
 
   return labelText;
@@ -247,63 +249,8 @@ export const drawText = function (elem, textData) {
 
   let textElems = [];
   let dy = 0;
-  let yfunc = () => textData.y;
-  if (
-    textData.valign !== undefined &&
-    textData.textMargin !== undefined &&
-    textData.textMargin > 0
-  ) {
-    switch (textData.valign) {
-      case 'top':
-      case 'start':
-        yfunc = () => Math.round(textData.y + textData.textMargin);
-        break;
-      case 'middle':
-      case 'center':
-        yfunc = () =>
-          Math.round(textData.y + (prevTextHeight + textHeight + textData.textMargin) / 2);
-        break;
-      case 'bottom':
-      case 'end':
-        yfunc = () =>
-          Math.round(
-            textData.y +
-              (prevTextHeight + textHeight + 2 * textData.textMargin) -
-              textData.textMargin
-          );
-        break;
-    }
-  }
 
-  if (
-    textData.anchor !== undefined &&
-    textData.textMargin !== undefined &&
-    textData.width !== undefined
-  ) {
-    switch (textData.anchor) {
-      case 'left':
-      case 'start':
-        textData.x = Math.round(textData.x + textData.textMargin);
-        textData.anchor = 'start';
-        textData.dominantBaseline = 'middle';
-        textData.alignmentBaseline = 'middle';
-        break;
-      case 'middle':
-      case 'center':
-        textData.x = Math.round(textData.x + textData.width / 2);
-        textData.anchor = 'middle';
-        textData.dominantBaseline = 'middle';
-        textData.alignmentBaseline = 'middle';
-        break;
-      case 'right':
-      case 'end':
-        textData.x = Math.round(textData.x + textData.width - textData.textMargin);
-        textData.anchor = 'end';
-        textData.dominantBaseline = 'middle';
-        textData.alignmentBaseline = 'middle';
-        break;
-    }
-  }
+  textData = setXAndAnchor(textData);
 
   for (let [i, line] of lines.entries()) {
     if (
@@ -313,6 +260,8 @@ export const drawText = function (elem, textData) {
     ) {
       dy = i * _textFontSize;
     }
+
+    let yfunc = calculateYFunc(textData, prevTextHeight, textHeight);
 
     const textElem = elem.append('text');
     textElem.attr('x', textData.x);
