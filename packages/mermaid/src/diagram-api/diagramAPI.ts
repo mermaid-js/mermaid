@@ -69,11 +69,11 @@ export const getDiagram = (name: string): DiagramDefinition => {
   if (name in diagrams) {
     return diagrams[name];
   }
-  throw new Error(`Diagram ${name} not found.`);
+  throw new DiagramNotFoundError(name);
 };
 
 export class DiagramNotFoundError extends Error {
-  constructor(message: string) {
-    super(`Diagram ${message} not found.`);
+  constructor(name: string) {
+    super(`Diagram ${name} not found.`);
   }
 }

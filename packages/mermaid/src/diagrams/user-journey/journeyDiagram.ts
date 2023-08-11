@@ -1,5 +1,5 @@
 import { DiagramDefinition } from '../../diagram-api/types.js';
-// @ts-ignore: TODO Fix ts errors
+// @ts-ignore: JISON doesn't support types
 import parser from './parser/journey.jison';
 import db from './journeyDb.js';
 import styles from './styles.js';
