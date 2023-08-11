@@ -1,6 +1,6 @@
 import mermaid from './mermaid.esm.mjs';
-import externalExample from './mermaid-example-diagram.core.mjs';
-import zenUml from './mermaid-zenuml.core.mjs';
+import externalExample from './mermaid-example-diagram.esm.mjs';
+import zenUml from './mermaid-zenuml.esm.mjs';
 
 function b64ToUtf8(str) {
   return decodeURIComponent(escape(window.atob(str)));

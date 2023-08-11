@@ -8,16 +8,17 @@ async function createServer() {
   const mermaidCtx = await context(
     getBuildConfig({ minify: false, core: false, entryName: 'mermaid' })
   );
-  mermaidCtx.watch();
   const externalCtx = await context(
     getBuildConfig({ minify: false, core: false, entryName: 'mermaid-example-diagram' })
   );
-  externalCtx.watch();
   const zenuml = await context(
     getBuildConfig({ minify: false, core: false, entryName: 'mermaid-zenuml' })
   );
-  // TODO: zenuml
+
+  mermaidCtx.watch();
+  externalCtx.watch();
   zenuml.watch();
+
   app.use(cors());
   app.use(express.static('./packages/mermaid/dist'));
   app.use(express.static('./packages/mermaid-zenuml/dist'));
