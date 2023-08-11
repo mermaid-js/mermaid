@@ -1,7 +1,7 @@
 interface Common {
-  accDescr?: string
-  accTitle?: string
-  title?: string
+  accDescr?: string;
+  accTitle?: string;
+  title?: string;
 }
 
 fragment TitleAndAccessibilities:

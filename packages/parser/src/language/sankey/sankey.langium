@@ -2,6 +2,12 @@ grammar Sankey
 
 // common stuff in ../common/common.langium
 // can't import directly because of SANKEY_LINK_SOURCE parse rule
+interface Common {
+  accDescr?: string;
+  accTitle?: string;
+  title?: string;
+}
+
 fragment TitleAndAccessibilities:
   ((accDescr=ACC_DESCR | accTitle=ACC_TITLE | title=TITLE) NEWLINE+)+
 ;
@@ -15,10 +21,7 @@ hidden terminal YAML: /---[\t ]*\r?\n[\s\S]*?---[\t ]*(?!.)/;
 hidden terminal DIRECTIVE: /[\t ]*%%{[\s\S]*?}%%\s*/;
 hidden terminal SINGLE_LINE_COMMENT: /[\t ]*%%[^\n\r]*/;
 
-interface Sankey {
-  accDescr?: string;
-  accTitle?: string;
-  title?: string;
+interface Sankey extends Common {
   links: SankeyLink[];
   nodes: string[];
 }

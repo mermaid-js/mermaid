@@ -2,6 +2,12 @@ grammar Mindmap
 
 // common stuff in ../common/common.langium
 // can't import directly because of MINDMAP_NODE_ID and MINDMAP_NODE_DEFAULT parse rules
+interface Common {
+  accDescr?: string;
+  accTitle?: string;
+  title?: string;
+}
+
 fragment TitleAndAccessibilities:
   ((accDescr=ACC_DESCR | accTitle=ACC_TITLE | title=TITLE) NEWLINE+)+
 ;
@@ -16,21 +22,17 @@ hidden terminal DIRECTIVE: /[\t ]*%%{[\s\S]*?}%%\s*/;
 hidden terminal SINGLE_LINE_COMMENT: /[\t ]*%%[^\n\r]*/;
 
 // actual grammar
-
-interface Mindmap {
-  accDescr?: string;
-  accTitle?: string;
-  title?: string;
-  root: Node;
-}
-
 interface Node {
   id?: string;
   title: string;
   type?: 'default' | 'square' | 'rounded-square' | 'circle' | 'bang' | 'cloud' | 'hexagon';
-  children: Node[]
+  children: Node[];
   class?: string;
   icon?: string;
+}
+
+interface Mindmap extends Common {
+  root: Node;
 }
 
 entry Mindmap returns Mindmap:
