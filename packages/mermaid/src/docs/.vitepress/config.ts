@@ -203,40 +203,6 @@ function sidebarCommunity() {
   ];
 }
 
-// Development and Contributing
-// function sidebarCommunityDevelopContribute() {
-//   const page_path = '/community/development';
-//   return [
-//     {
-//       text: 'Contributing to Mermaid',
-//       link: page_path + '#contributing-to-mermaid',
-//       collapsed: false,
-//       items: [
-//         {
-//           text: 'Technical Requirements and Setup',
-//           link: pathToId(page_path, 'technical-requirements-and-setup'),
-//         },
-//         {
-//           text: 'Contributing Code',
-//           link: pathToId(page_path, 'contributing-code'),
-//         },
-//         {
-//           text: 'Contributing Documentation',
-//           link: pathToId(page_path, 'contributing-documentation'),
-//         },
-//         {
-//           text: 'Questions or Suggestions?',
-//           link: pathToId(page_path, 'questions-or-suggestions'),
-//         },
-//         {
-//           text: 'Last Words',
-//           link: pathToId(page_path, 'last-words'),
-//         },
-//       ],
-//     },
-//   ];
-// }
-
 function sidebarNews() {
   return [
     {

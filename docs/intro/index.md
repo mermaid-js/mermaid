@@ -12,7 +12,32 @@ Mermaid is diagramming and charting tool that renders Markdown-like text definit
 
 <img src="/header.png" alt="" />
 
-<p class="space-x-2 flex items-center"><a href="https://github.com/mermaid-js/mermaid/actions/workflows/build.yml" target="_blank" rel="noreferrer"><img src="https://github.com/mermaid-js/mermaid/actions/workflows/build.yml/badge.svg" alt="Build CI Status"></a><a href="https://www.npmjs.com/package/mermaid" target="_blank" rel="noreferrer"><img src="https://img.shields.io/npm/v/mermaid" alt="NPM"></a><a href="https://bundlephobia.com/package/mermaid" target="_blank" rel="noreferrer"><img src="https://img.shields.io/bundlephobia/minzip/mermaid" alt="npm minified gzipped bundle size"></a><a href="https://coveralls.io/github/mermaid-js/mermaid?branch=master" target="_blank" rel="noreferrer"><img src="https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master" alt="Coverage Status"></a><a href="https://www.jsdelivr.com/package/npm/mermaid" target="_blank" rel="noreferrer"><img src="https://img.shields.io/jsdelivr/npm/hm/mermaid" alt="CDN Status"></a><a href="https://www.npmjs.com/package/mermaid" target="_blank" rel="noreferrer"><img src="https://img.shields.io/npm/dm/mermaid" alt="NPM"></a><a href="https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE" target="_blank" rel="noreferrer"><img src="https://img.shields.io/static/v1?message=join%20chat&amp;color=9cf&amp;logo=slack&amp;label=slack" alt="Join our Slack!"></a> <a href="https://twitter.com/mermaidjs_" target="_blank" rel="noreferrer"><img src="https://img.shields.io/twitter/follow/mermaidjs_?style=social" alt="Twitter Follow"></a></p>
+<p class="space-x-2 flex items-center">
+  <a href="https://github.com/mermaid-js/mermaid/actions/workflows/build.yml" target="_blank" rel="noreferrer">
+    <img src="https://github.com/mermaid-js/mermaid/actions/workflows/build.yml/badge.svg" alt="Build CI Status">
+  </a>
+  <a href="https://www.npmjs.com/package/mermaid" target="_blank" rel="noreferrer">
+    <img src="https://img.shields.io/npm/v/mermaid" alt="NPM">
+  </a>
+  <a href="https://bundlephobia.com/package/mermaid" target="_blank" rel="noreferrer">
+    <img src="https://img.shields.io/bundlephobia/minzip/mermaid" alt="npm minified gzipped bundle size">
+  </a>
+  <a href="https://coveralls.io/github/mermaid-js/mermaid?branch=master" target="_blank" rel="noreferrer">
+    <img src="https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master" alt="Coverage Status">
+  </a>
+  <a href="https://www.jsdelivr.com/package/npm/mermaid" target="_blank" rel="noreferrer">
+    <img src="https://img.shields.io/jsdelivr/npm/hm/mermaid" alt="CDN Status">
+  </a>
+  <a href="https://www.npmjs.com/package/mermaid" target="_blank" rel="noreferrer">
+    <img src="https://img.shields.io/npm/dm/mermaid" alt="NPM">
+  </a>
+  <a href="https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE" target="_blank" rel="noreferrer">
+    <img src="https://img.shields.io/static/v1?message=join%20chat&amp;color=9cf&amp;logo=slack&amp;label=slack" alt="Join our Slack!">
+  </a>
+  <a href="https://twitter.com/mermaidjs_" target="_blank" rel="noreferrer">
+    <img src="https://img.shields.io/twitter/follow/mermaidjs_?style=social" alt="Twitter Follow">
+  </a>
+</p>
 
 <!-- Mermaid book banner -->
 
