@@ -1,3 +1,4 @@
+// @ts-nocheck - ignore to convert to TS
 import { sanitizeUrl } from '@braintree/sanitize-url';
 
 export const drawRect = function (elem, rectData) {
@@ -12,7 +13,7 @@ export const drawRect = function (elem, rectData) {
   rectElem.attr('ry', rectData.ry);
 
   if (rectData.attrs !== 'undefined' && rectData.attrs !== null) {
-    for (let attrKey in rectData.attrs) {
+    for (const attrKey in rectData.attrs) {
       rectElem.attr(attrKey, rectData.attrs[attrKey]);
     }
   }
@@ -27,8 +28,8 @@ export const drawRect = function (elem, rectData) {
 /**
  * Draws a background rectangle
  *
- * @param {any} elem Diagram (reference for bounds)
- * @param {any} bounds Shape of the rectangle
+ * @param elem - Diagram (reference for bounds)
+ * @param bounds - Shape of the rectangle
  */
 export const drawBackgroundRect = function (elem, bounds) {
   const rectElem = drawRect(elem, {
@@ -69,7 +70,7 @@ export const drawImage = function (elem, x, y, link) {
   const imageElem = elem.append('image');
   imageElem.attr('x', x);
   imageElem.attr('y', y);
-  var sanitizedLink = sanitizeUrl(link);
+  const sanitizedLink = sanitizeUrl(link);
   imageElem.attr('xlink:href', sanitizedLink);
 };
 
