@@ -4,8 +4,9 @@ import { getDiagram, registerDiagram } from './diagram-api/diagramAPI.js';
 import { detectType, getDiagramLoader } from './diagram-api/detectType.js';
 import { extractFrontMatter } from './diagram-api/frontmatter.js';
 import { UnknownDiagramError } from './errors.js';
-import { DetailedError } from './utils.js';
 import { cleanupComments } from './diagram-api/comments.js';
+import type { DetailedError } from './utils.js';
+import type { DiagramDefinition } from './diagram-api/types.js';
 
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
 
@@ -15,9 +16,11 @@ export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: 
  */
 export class Diagram {
   type = 'graph';
-  parser;
-  renderer;
-  db;
+  parser: DiagramDefinition['parser'];
+  renderer: DiagramDefinition['renderer'];
+  db: DiagramDefinition['db'];
+  private init?: DiagramDefinition['init'];
+
   private detectError?: UnknownDiagramError;
   constructor(public text: string) {
     this.text += '\n';
@@ -32,7 +35,6 @@ export class Diagram {
     log.debug('Type ' + this.type);
     // Setup diagram
     this.db = diagram.db;
-    this.db.clear?.();
     this.renderer = diagram.renderer;
     this.parser = diagram.parser;
     const originalParse = this.parser.parse.bind(this.parser);
@@ -49,10 +51,8 @@ export class Diagram {
       originalParse(cleanupComments(extractFrontMatter(text, this.db)));
 
     this.parser.parser.yy = this.db;
-    if (diagram.init) {
-      diagram.init(cnf);
-      log.info('Initialized diagram ' + this.type, cnf);
-    }
+    this.init = diagram.init;
+    this.parse();
   }
 
   parse() {
@@ -60,6 +60,7 @@ export class Diagram {
       throw this.detectError;
     }
     this.db.clear?.();
+    this.init?.(configApi.getConfig());
     this.parser.parse(this.text);
     return this;
   }
