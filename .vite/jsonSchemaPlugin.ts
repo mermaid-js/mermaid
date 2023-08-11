@@ -17,17 +17,12 @@ export default function jsonSchemaPlugin(): PluginOption {
       }
 
       const jsonSchema = loadSchema(src, idAsUrl.pathname);
-      if (idAsUrl.searchParams.get('only-defaults')) {
-        return {
-          code: getDefaults(jsonSchema),
-          map: null, // no source map
-        };
-      } else {
-        return {
-          code: getSchema(jsonSchema),
-          map: null, // provide source map if available
-        };
-      }
+      return {
+        code: idAsUrl.searchParams.get('only-defaults')
+          ? getDefaults(jsonSchema)
+          : getSchema(jsonSchema),
+        map: null, // no source map
+      };
     },
   };
 }
