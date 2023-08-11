@@ -150,27 +150,27 @@ accDescr\s*"{"\s*                         { this.begin("acc_descr_multiline");}
 "Node_R"                                  { this.begin("node_r"); return 'NODE_R';}
 
 
-"Rel"                                     { this.begin("rel"); return 'REL';} 
-"BiRel"                                   { this.begin("birel"); return 'BIREL';} 
-"Rel_Up"                                  { this.begin("rel_u"); return 'REL_U';}  
-"Rel_U"                                   { this.begin("rel_u"); return 'REL_U';}  
-"Rel_Down"                                { this.begin("rel_d"); return 'REL_D';}  
-"Rel_D"                                   { this.begin("rel_d"); return 'REL_D';}  
-"Rel_Left"                                { this.begin("rel_l"); return 'REL_L';}  
-"Rel_L"                                   { this.begin("rel_l"); return 'REL_L';}  
-"Rel_Right"                               { this.begin("rel_r"); return 'REL_R';}  
-"Rel_R"                                   { this.begin("rel_r"); return 'REL_R';}  
-"Rel_Back"                                { this.begin("rel_b"); return 'REL_B';}  
-"RelIndex"                                { this.begin("rel_index"); return 'REL_INDEX';} 
+"Rel"                                     { this.begin("rel"); return 'REL';}
+"BiRel"                                   { this.begin("birel"); return 'BIREL';}
+"Rel_Up"                                  { this.begin("rel_u"); return 'REL_U';}
+"Rel_U"                                   { this.begin("rel_u"); return 'REL_U';}
+"Rel_Down"                                { this.begin("rel_d"); return 'REL_D';}
+"Rel_D"                                   { this.begin("rel_d"); return 'REL_D';}
+"Rel_Left"                                { this.begin("rel_l"); return 'REL_L';}
+"Rel_L"                                   { this.begin("rel_l"); return 'REL_L';}
+"Rel_Right"                               { this.begin("rel_r"); return 'REL_R';}
+"Rel_R"                                   { this.begin("rel_r"); return 'REL_R';}
+"Rel_Back"                                { this.begin("rel_b"); return 'REL_B';}
+"RelIndex"                                { this.begin("rel_index"); return 'REL_INDEX';}
 
-"UpdateElementStyle"                      { this.begin("update_el_style"); return 'UPDATE_EL_STYLE';}  
-"UpdateRelStyle"                          { this.begin("update_rel_style"); return 'UPDATE_REL_STYLE';} 
-"UpdateLayoutConfig"                      { this.begin("update_layout_config"); return 'UPDATE_LAYOUT_CONFIG';} 
+"UpdateElementStyle"                      { this.begin("update_el_style"); return 'UPDATE_EL_STYLE';}
+"UpdateRelStyle"                          { this.begin("update_rel_style"); return 'UPDATE_REL_STYLE';}
+"UpdateLayoutConfig"                      { this.begin("update_layout_config"); return 'UPDATE_LAYOUT_CONFIG';}
 
-<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index,update_el_style,update_rel_style,update_layout_config><<EOF>>                return "EOF_IN_STRUCT";
-<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index,update_el_style,update_rel_style,update_layout_config>[(][ ]*[,]             { this.begin("attribute"); return "ATTRIBUTE_EMPTY";}
-<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index,update_el_style,update_rel_style,update_layout_config>[(]                    { this.begin("attribute"); }
-<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index,update_el_style,update_rel_style,update_layout_config,attribute>[)]          { this.popState();this.popState();}
+<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext_queue,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index,update_el_style,update_rel_style,update_layout_config><<EOF>>                return "EOF_IN_STRUCT";
+<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext_queue,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index,update_el_style,update_rel_style,update_layout_config>[(][ ]*[,]             { this.begin("attribute"); return "ATTRIBUTE_EMPTY";}
+<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext_queue,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index,update_el_style,update_rel_style,update_layout_config>[(]                    { this.begin("attribute"); }
+<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext_queue,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index,update_el_style,update_rel_style,update_layout_config,attribute>[)]          { this.popState();this.popState();}
 
 <attribute>",,"                           { return 'ATTRIBUTE_EMPTY';}
 <attribute>","                            { }
@@ -189,7 +189,7 @@ accDescr\s*"{"\s*                         { this.begin("acc_descr_multiline");}
 
 '{'                                       { /* this.begin("lbrace"); */ return "LBRACE";}
 '}'                                       { /* this.popState(); */ return "RBRACE";}
-   
+
 [\s]+                                     return 'SPACE';
 [\n\r]+                                   return 'EOL';
 <<EOF>>                                   return 'EOF';
@@ -257,7 +257,7 @@ graphConfig
 statements
     : otherStatements
     | diagramStatements
-    | otherStatements diagramStatements 
+    | otherStatements diagramStatements
     ;
 
 otherStatements
@@ -268,10 +268,10 @@ otherStatements
 
 otherStatement
     : title {yy.setTitle($1.substring(6));$$=$1.substring(6);}
-    | accDescription {yy.setAccDescription($1.substring(15));$$=$1.substring(15);}   
+    | accDescription {yy.setAccDescription($1.substring(15));$$=$1.substring(15);}
     | acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
-    | acc_descr_multiline_value  { $$=$1.trim();yy.setAccDescription($$); } 
+    | acc_descr_multiline_value  { $$=$1.trim();yy.setAccDescription($$); }
     ;
 
 boundaryStatement
@@ -301,7 +301,7 @@ boundaryStopStatement
 diagramStatements
     : diagramStatement
     | diagramStatement NEWLINE
-    | diagramStatement NEWLINE statements  
+    | diagramStatement NEWLINE statements
     ;
 
 diagramStatement
@@ -312,19 +312,19 @@ diagramStatement
     | SYSTEM_QUEUE attributes {yy.addPersonOrSystem('system_queue', ...$2); $$=$2;}
     | SYSTEM_EXT attributes {yy.addPersonOrSystem('external_system', ...$2); $$=$2;}
     | SYSTEM_EXT_DB attributes {yy.addPersonOrSystem('external_system_db', ...$2); $$=$2;}
-    | SYSTEM_EXT_QUEUE attributes {yy.addPersonOrSystem('external_system_queue', ...$2); $$=$2;}      
+    | SYSTEM_EXT_QUEUE attributes {yy.addPersonOrSystem('external_system_queue', ...$2); $$=$2;}
     | CONTAINER attributes {yy.addContainer('container', ...$2); $$=$2;}
     | CONTAINER_DB attributes {yy.addContainer('container_db', ...$2); $$=$2;}
     | CONTAINER_QUEUE attributes {yy.addContainer('container_queue', ...$2); $$=$2;}
     | CONTAINER_EXT attributes {yy.addContainer('external_container', ...$2); $$=$2;}
     | CONTAINER_EXT_DB attributes {yy.addContainer('external_container_db', ...$2); $$=$2;}
-    | CONTAINER_EXT_QUEUE attributes {yy.addContainer('external_container_queue', ...$2); $$=$2;}      
+    | CONTAINER_EXT_QUEUE attributes {yy.addContainer('external_container_queue', ...$2); $$=$2;}
     | COMPONENT attributes {yy.addComponent('component', ...$2); $$=$2;}
     | COMPONENT_DB attributes {yy.addComponent('component_db', ...$2); $$=$2;}
     | COMPONENT_QUEUE attributes {yy.addComponent('component_queue', ...$2); $$=$2;}
     | COMPONENT_EXT attributes {yy.addComponent('external_component', ...$2); $$=$2;}
     | COMPONENT_EXT_DB attributes {yy.addComponent('external_component_db', ...$2); $$=$2;}
-    | COMPONENT_EXT_QUEUE attributes {yy.addComponent('external_component_queue', ...$2); $$=$2;}      
+    | COMPONENT_EXT_QUEUE attributes {yy.addComponent('external_component_queue', ...$2); $$=$2;}
     | boundaryStatement
     | REL attributes {yy.addRel('rel', ...$2); $$=$2;}
     | BIREL attributes {yy.addRel('birel', ...$2); $$=$2;}

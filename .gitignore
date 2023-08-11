@@ -3,8 +3,10 @@
 node_modules/
 coverage/
 .idea/
+.pnpm-store/
 
 dist
+v8-compile-cache-0
 
 yarn-error.log
 .npmrc
@@ -36,3 +38,8 @@ tsconfig.tsbuildinfo
 knsv*.html
 local*.html
 stats/
+
+**/user-avatars/*
+**/contributor-names.json
+.pnpm-store
+.nyc_output

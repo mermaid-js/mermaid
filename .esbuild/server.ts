@@ -12,9 +12,11 @@ async function createServer() {
   const externalCtx = await context(
     getBuildConfig({ minify: false, core: false, entryName: 'mermaid-example-diagram' })
   );
+  // TODO: zenuml
   externalCtx.watch();
   app.use(cors());
   app.use(express.static('./packages/mermaid/dist'));
+  app.use(express.static('./packages/mermaid-zenuml/dist'));
   app.use(express.static('./packages/mermaid-example-diagram/dist'));
   app.use(express.static('demos'));
   app.use(express.static('cypress/platform'));

@@ -1,4 +1,8 @@
-import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types';
+import type {
+  DiagramDetector,
+  DiagramLoader,
+  ExternalDiagramDefinition,
+} from '../../diagram-api/types.js';
 
 const id = 'class';
 
@@ -8,11 +12,11 @@ const detector: DiagramDetector = (txt, config) => {
     return false;
   }
   // We have not opted to use the new renderer so we should return true if we detect a class diagram
-  return txt.match(/^\s*classDiagram/) !== null;
+  return /^\s*classDiagram/.test(txt);
 };
 
-const loader = async () => {
-  const { diagram } = await import('./classDiagram');
+const loader: DiagramLoader = async () => {
+  const { diagram } = await import('./classDiagram.js');
   return { id, diagram };
 };
 

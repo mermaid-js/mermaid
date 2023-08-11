@@ -1,5 +1,5 @@
-import { addVertices, addEdges } from './flowRenderer';
-import { setConfig } from '../../config';
+import { addVertices, addEdges } from './flowRenderer.js';
+import { setConfig } from '../../config.js';
 
 setConfig({
   flowchart: {

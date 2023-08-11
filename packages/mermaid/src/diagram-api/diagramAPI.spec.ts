@@ -1,8 +1,8 @@
-import { detectType } from './detectType';
-import { getDiagram, registerDiagram } from './diagramAPI';
-import { addDiagrams } from './diagram-orchestration';
-import { DiagramDetector } from './types';
-import { getDiagramFromText } from '../Diagram';
+import { detectType } from './detectType.js';
+import { getDiagram, registerDiagram } from './diagramAPI.js';
+import { addDiagrams } from './diagram-orchestration.js';
+import { DiagramDetector } from './types.js';
+import { getDiagramFromText } from '../Diagram.js';
 import { it, describe, expect, beforeAll } from 'vitest';
 
 addDiagrams();
@@ -35,7 +35,12 @@ describe('DiagramAPI', () => {
       'loki',
       {
         db: {},
-        parser: {},
+        parser: {
+          parse: (_text) => {
+            return;
+          },
+          parser: { yy: {} },
+        },
         renderer: {},
         styles: {},
       },

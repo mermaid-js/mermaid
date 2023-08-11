@@ -2,7 +2,6 @@
   "extends": [
     "config:base",
     ":rebaseStalePrs",
-    "group:allNonMajor",
     "schedule:earlyMondays",
     ":automergeMinor",
     ":automergeTesters",
@@ -14,6 +13,18 @@
     {
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "automerge": true
+    },
+    {
+      "groupName": "all patch dependencies",
+      "groupSlug": "all-patch",
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["patch"]
+    },
+    {
+      "groupName": "all minor dependencies",
+      "groupSlug": "all-minor",
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["minor"]
     }
   ],
   "dependencyDashboard": true,

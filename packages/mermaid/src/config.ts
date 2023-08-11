@@ -1,8 +1,8 @@
-import assignWithDepth from './assignWithDepth';
-import { log } from './logger';
-import theme from './themes';
-import config from './defaultConfig';
-import type { MermaidConfig } from './config.type';
+import assignWithDepth from './assignWithDepth.js';
+import { log } from './logger.js';
+import theme from './themes/index.js';
+import config from './defaultConfig.js';
+import type { MermaidConfig } from './config.type.js';
 
 export const defaultConfig: MermaidConfig = Object.freeze(config);
 
@@ -226,9 +226,11 @@ export const reset = (config = siteConfig): void => {
   updateCurrentConfig(config, directives);
 };
 
-enum ConfigWarning {
-  'LAZY_LOAD_DEPRECATED' = 'The configuration options lazyLoadedDiagrams and loadExternalDiagramsAtStartup are deprecated. Please use registerExternalDiagrams instead.',
-}
+const ConfigWarning = {
+  LAZY_LOAD_DEPRECATED:
+    'The configuration options lazyLoadedDiagrams and loadExternalDiagramsAtStartup are deprecated. Please use registerExternalDiagrams instead.',
+} as const;
+
 type ConfigWarningStrings = keyof typeof ConfigWarning;
 const issuedWarnings: { [key in ConfigWarningStrings]?: boolean } = {};
 const issueWarning = (warning: ConfigWarningStrings) => {

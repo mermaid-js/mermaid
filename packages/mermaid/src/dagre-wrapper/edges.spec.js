@@ -1,5 +1,5 @@
-import { intersection } from './edges';
-import { setLogLevel } from '../logger';
+import { intersection } from './edges.js';
+import { setLogLevel } from '../logger.js';
 
 describe('Graphlib decorations', () => {
   let node;

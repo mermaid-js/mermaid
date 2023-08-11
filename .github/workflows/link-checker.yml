@@ -14,12 +14,13 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch:
   schedule:
     # * is a special character in YAML so you have to quote this string
     - cron: '30 8 * * *'
 
 jobs:
-  linkChecker:
+  link-checker:
     runs-on: ubuntu-latest
     permissions:
       # lychee only uses the GITHUB_TOKEN to avoid rate-limiting
@@ -35,9 +36,13 @@ jobs:
           restore-keys: cache-lychee-
 
       - name: Link Checker
-        uses: lycheeverse/lychee-action@v1.5.4
+        uses: lycheeverse/lychee-action@v1.8.0
         with:
-          args: --verbose --no-progress --cache --max-cache-age 1d packages/mermaid/src/docs/**/*.md README.md README.zh-CN.md
+          args: >-
+            --config .github/lychee.toml
+            packages/mermaid/src/docs/**/*.md
+            README.md
+            README.zh-CN.md
           fail: true
           jobSummary: true
         env:

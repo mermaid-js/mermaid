@@ -5,11 +5,11 @@ outline: 'deep' # shows all h3 headings in outline in Vitepress
 
 # Flowcharts - Basic Syntax
 
-All Flowcharts are composed of **nodes**, the geometric shapes and **edges**, the arrows or lines. The mermaid code defines the way that these **nodes** and **edges** are made and interact.
+Flowcharts are composed of **nodes** (geometric shapes) and **edges** (arrows or lines). The Mermaid code defines how nodes and edges are made and accommodates different arrow types, multi-directional arrows, and any linking to and from subgraphs.
 
-It can also accommodate different arrow types, multi directional arrows, and linking to and from subgraphs.
-
-> **Important note**: Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).
+```warning
+If you are using the word "end" in a Flowchart node, capitalize the entire word or any of the letters (e.g., "End" or "END"), or apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897). Typing "end" in all lowercase letters will break the Flowchart.
+```
 
 ### A node (default)
 
@@ -23,6 +23,10 @@ flowchart LR
 
 ```note
 The id is what is displayed in the box.
+```
+
+```tip
+Instead of `flowchart` one can also use `graph`.
 ```
 
 ### A node with text
@@ -39,7 +43,30 @@ flowchart LR
     id1[This is the text in the box]
 ```
 
-## Graph
+#### Unicode text
+
+Use `"` to enclose the unicode text.
+
+```mermaid-example
+flowchart LR
+    id["This ❤ Unicode"]
+```
+
+#### Markdown formatting
+
+Use double quotes and backticks "\` text \`" to enclose the markdown text.
+
+```mermaid-example
+%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+    markdown["`This **is** _Markdown_`"]
+    newLines["`Line1
+    Line 2
+    Line 3`"]
+    markdown --> newLines
+```
+
+### Direction
 
 This statement declares the direction of the Flowchart.
 
@@ -57,15 +84,13 @@ flowchart LR
     Start --> Stop
 ```
 
-## Flowchart Orientation
-
 Possible FlowChart orientations are:
 
-- TB - top to bottom
-- TD - top-down/ same as top to bottom
-- BT - bottom to top
-- RL - right to left
-- LR - left to right
+- TB - Top to bottom
+- TD - Top-down/ same as top to bottom
+- BT - Bottom to top
+- RL - Right to left
+- LR - Left to right
 
 ## Node shapes
 
@@ -122,16 +147,7 @@ flowchart LR
 
 ### A hexagon node
 
-Code:
-
-```mmd
-flowchart LR
-    id1{{This is the text in the box}}
-```
-
-Render:
-
-```mermaid
+```mermaid-example
 flowchart LR
     id1{{This is the text in the box}}
 ```
@@ -282,7 +298,7 @@ word of warning, one could go overboard with this making the flowchart harder to
 markdown form. The Swedish word `lagom` comes to mind. It means, not too much and not too little.
 This goes for expressive syntaxes as well.
 
-```mmd
+```mermaid
 flowchart TB
     A --> C
     A --> D
@@ -374,7 +390,7 @@ It is possible to escape characters using the syntax exemplified here.
 
 ```mermaid-example
     flowchart LR
-        A["A double quote:#quot;"] -->B["A dec char:#9829;"]
+        A["A double quote:#quot;"] --> B["A dec char:#9829;"]
 ```
 
 Numbers given are base 10, so `#` can be encoded as `#35;`. It is also supported to use HTML character names.
@@ -413,7 +429,7 @@ flowchart TB
     end
 ```
 
-## flowcharts
+### flowcharts
 
 With the graphtype flowchart it is also possible to set edges to and from subgraphs as in the flowchart below.
 
@@ -434,7 +450,7 @@ flowchart TB
     two --> c2
 ```
 
-## Direction in subgraphs
+### Direction in subgraphs
 
 With the graphtype flowcharts you can use the direction statement to set the direction which the subgraph will render like in this example.
 
@@ -455,9 +471,38 @@ flowchart LR
   B1 --> B2
 ```
 
+## Markdown Strings
+
+The "Markdown Strings" feature enhances flowcharts and mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
+
+```mermaid-example
+%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+subgraph "One"
+  a("`The **cat**
+  in the hat`") -- "edge label" --> b{{"`The **dog** in the hog`"}}
+end
+subgraph "`**Two**`"
+  c("`The **cat**
+  in the hat`") -- "`Bold **edge label**`" --> d("The dog in the hog")
+end
+```
+
+Formatting:
+
+- For bold text, use double asterisks (`**`) before and after the text.
+- For italics, use single asterisks (`*`) before and after the text.
+- With traditional strings, you needed to add `<br>` tags for text to wrap in nodes. However, markdown strings automatically wrap text when it becomes too long and allows you to start a new line by simply using a newline character instead of a `<br>` tag.
+
+This feature is applicable to node labels, edge labels, and subgraph labels.
+
 ## Interaction
 
-It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab.
+
+```note
+This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+```
 
 ```
 click nodeId callback
@@ -541,7 +586,7 @@ Beginner's tip—a full example using interactive links in a html context:
 
 Comments can be entered within a flow diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any flow syntax
 
-```mmd
+```mermaid
 flowchart LR
 %% this is a comment A -- text --> B{node}
    A -- text --> B -- text2 --> C
@@ -558,6 +603,12 @@ In the example below the style defined in the linkStyle statement will belong to
 
 ```
 linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
+```
+
+It is also possible to add style to multiple links in a single statement, by separating link numbers with commas:
+
+```
+linkStyle 1,2,7 color:blue;
 ```
 
 ### Styling line curves
@@ -593,10 +644,16 @@ flowchart LR
 More convenient than defining the style every time is to define a class of styles and attach this class to the nodes that
 should have a different look.
 
-a class definition looks like the example below:
+A class definition looks like the example below:
 
 ```
     classDef className fill:#f9f,stroke:#333,stroke-width:4px;
+```
+
+Also, it is possible to define style to multiple classes in one statement:
+
+```
+    classDef firstClassName,secondClassName font-size:12pt;
 ```
 
 Attachment of a class to a node is done as per below:
@@ -617,6 +674,16 @@ A shorter form of adding a class is to attach the classname to the node using th
 flowchart LR
     A:::someclass --> B
     classDef someclass fill:#f96
+```
+
+This form can be used when declaring multiple links between nodes:
+
+```mermaid-example
+flowchart LR
+    A:::foo & B:::bar --> C:::foobar
+    classDef foo stroke:#f00
+    classDef bar stroke:#0f0
+    classDef foobar stroke:#00f
 ```
 
 ### Css classes
@@ -667,7 +734,7 @@ flowchart TD
     B-->E(A fa:fa-camera-retro perhaps?)
 ```
 
-?> Mermaid is now only compatible with Font Awesome versions 4 and 5. Check that you are using the correct version of Font Awesome.
+Mermaid is compatible with Font Awesome up to verion 5, Free icons only. Check that the icons you use are from the [supported set of icons](https://fontawesome.com/v5/search?o=r&m=free).
 
 ## Graph declarations with spaces between vertices and link and without semicolon
 
@@ -700,7 +767,9 @@ You can change the renderer to elk by adding this directive:
 %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 ```
 
+```note
 Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
+```
 
 ### Width
 

@@ -3,10 +3,10 @@ import dayjs from 'dayjs';
 import dayjsIsoWeek from 'dayjs/plugin/isoWeek.js';
 import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat.js';
 import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
-import { log } from '../../logger';
-import * as configApi from '../../config';
-import utils from '../../utils';
-import mermaidAPI from '../../mermaidAPI';
+import { log } from '../../logger.js';
+import * as configApi from '../../config.js';
+import utils from '../../utils.js';
+import mermaidAPI from '../../mermaidAPI.js';
 
 import {
   setAccTitle,
@@ -16,7 +16,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb';
+} from '../../commonDb.js';
 
 dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);
@@ -32,10 +32,12 @@ let links = {};
 let sections = [];
 let tasks = [];
 let currentSection = '';
+let displayMode = '';
 const tags = ['active', 'done', 'crit', 'milestone'];
 let funs = [];
 let inclusiveEndDates = false;
 let topAxis = false;
+let weekday = 'sunday';
 
 // The serial order of the task in the script
 let lastOrder = 0;
@@ -55,6 +57,7 @@ export const clear = function () {
   rawTasks = [];
   dateFormat = '';
   axisFormat = '';
+  displayMode = '';
   tickInterval = undefined;
   todayMarker = '';
   includes = [];
@@ -64,6 +67,7 @@ export const clear = function () {
   lastOrder = 0;
   links = {};
   commonClear();
+  weekday = 'sunday';
 };
 
 export const setAxisFormat = function (txt) {
@@ -110,6 +114,14 @@ export const topAxisEnabled = function () {
   return topAxis;
 };
 
+export const setDisplayMode = function (txt) {
+  displayMode = txt;
+};
+
+export const getDisplayMode = function () {
+  return displayMode;
+};
+
 export const getDateFormat = function () {
   return dateFormat;
 };
@@ -143,11 +155,11 @@ export const getSections = function () {
 };
 
 export const getTasks = function () {
-  let allItemsPricessed = compileTasks();
+  let allItemsProcessed = compileTasks();
   const maxDepth = 10;
   let iterationCount = 0;
-  while (!allItemsPricessed && iterationCount < maxDepth) {
-    allItemsPricessed = compileTasks();
+  while (!allItemsProcessed && iterationCount < maxDepth) {
+    allItemsProcessed = compileTasks();
     iterationCount++;
   }
 
@@ -167,6 +179,14 @@ export const isInvalidDate = function (date, dateFormat, excludes, includes) {
     return true;
   }
   return excludes.includes(date.format(dateFormat.trim()));
+};
+
+export const setWeekday = function (txt) {
+  weekday = txt;
+};
+
+export const getWeekday = function () {
+  return weekday;
 };
 
 /**
@@ -277,7 +297,17 @@ const getStartDate = function (prevTime, dateFormat, str) {
     log.debug('Invalid date:' + str);
     log.debug('With date format:' + dateFormat.trim());
     const d = new Date(str);
-    if (d === undefined || isNaN(d.getTime())) {
+    if (
+      d === undefined ||
+      isNaN(d.getTime()) ||
+      // WebKit browsers can mis-parse invalid dates to be ridiculously
+      // huge numbers, e.g. new Date('202304') gets parsed as January 1, 202304.
+      // This can cause virtually infinite loops while rendering, so for the
+      // purposes of Gantt charts we'll just treat any date beyond 10,000 AD/BC as
+      // invalid.
+      d.getFullYear() < -10000 ||
+      d.getFullYear() > 10000
+    ) {
       throw new Error('Invalid date:' + str);
     }
     return d;
@@ -719,6 +749,8 @@ export default {
   getAccTitle,
   setDiagramTitle,
   getDiagramTitle,
+  setDisplayMode,
+  getDisplayMode,
   setAccDescription,
   getAccDescription,
   addSection,
@@ -737,6 +769,8 @@ export default {
   bindFunctions,
   parseDuration,
   isInvalidDate,
+  setWeekday,
+  getWeekday,
 };
 
 /**

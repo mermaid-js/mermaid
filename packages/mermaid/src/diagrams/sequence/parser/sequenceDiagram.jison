@@ -38,6 +38,8 @@
 "box"															{ this.begin('LINE'); return 'box'; }
 "participant"                                                   { this.begin('ID'); return 'participant'; }
 "actor"                                                   		{ this.begin('ID'); return 'participant_actor'; }
+"create"                                                        return 'create';
+"destroy"                                                       { this.begin('ID'); return 'destroy'; }
 <ID>[^\->:\n,;]+?([\-]*[^\->:\n,;]+?)*?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)     { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 <ALIAS>"as"                                                     { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
 <ALIAS>(?:)                                                     { this.popState(); this.popState(); return 'NEWLINE'; }
@@ -47,6 +49,7 @@
 "alt"                                                           { this.begin('LINE'); return 'alt'; }
 "else"                                                          { this.begin('LINE'); return 'else'; }
 "par"                                                           { this.begin('LINE'); return 'par'; }
+"par_over" 														{ this.begin('LINE'); return 'par_over'; }
 "and"                                                           { this.begin('LINE'); return 'and'; }
 "critical"                                                      { this.begin('LINE'); return 'critical'; }
 "option"                                                        { this.begin('LINE'); return 'option'; }
@@ -137,6 +140,7 @@ directive
 
 statement
 	: participant_statement
+	| 'create' participant_statement {$2.type='createParticipant'; $$=$2;}
 	| 'box' restOfLine box_section end
 	{
 		$3.unshift({type: 'boxStart', boxData:yy.parseBoxData($2) });
@@ -190,6 +194,14 @@ statement
 		// End
 		$3.push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});
 		$$=$3;}
+	| par_over restOfLine par_sections end
+	{
+		// Parallel (overlapped) start
+		$3.unshift({type: 'parStart', parText:yy.parseMessage($2), signalType: yy.LINETYPE.PAR_OVER_START});
+		// Content in par is already in $3
+		// End
+		$3.push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});
+		$$=$3;}
 	| critical restOfLine option_sections end
 	{
 		// critical start
@@ -225,10 +237,11 @@ else_sections
 	;
 
 participant_statement
-	: 'participant' actor 'AS' restOfLine 'NEWLINE' {$2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
-	| 'participant' actor 'NEWLINE' {$2.type='addParticipant';$$=$2;}
-	| 'participant_actor' actor 'AS' restOfLine 'NEWLINE' {$2.type='addActor';$2.description=yy.parseMessage($4); $$=$2;}
-	| 'participant_actor' actor 'NEWLINE' {$2.type='addActor'; $$=$2;}
+	: 'participant' actor 'AS' restOfLine 'NEWLINE' {$2.draw='participant'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant' actor 'NEWLINE' {$2.draw='participant'; $2.type='addParticipant';$$=$2;}
+	| 'participant_actor' actor 'AS' restOfLine 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant_actor' actor 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant'; $$=$2;}
+	| 'destroy' actor 'NEWLINE' {$2.type='destroyParticipant'; $$=$2;}
 	;
 
 note_statement

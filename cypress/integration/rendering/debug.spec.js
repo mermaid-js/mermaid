@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('Flowchart', () => {
   it('34: testing the label width in percy', () => {

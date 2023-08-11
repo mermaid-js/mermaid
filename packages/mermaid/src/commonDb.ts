@@ -1,8 +1,9 @@
-import { sanitizeText as _sanitizeText } from './diagrams/common/common';
-import { getConfig } from './config';
+import { sanitizeText as _sanitizeText } from './diagrams/common/common.js';
+import { getConfig } from './config.js';
 let title = '';
 let diagramTitle = '';
 let description = '';
+
 const sanitizeText = (txt: string): string => _sanitizeText(txt, getConfig());
 
 export const clear = function (): void {
@@ -36,10 +37,10 @@ export const getDiagramTitle = function (): string {
 };
 
 export default {
-  setAccTitle,
   getAccTitle,
+  setAccTitle,
+  getDiagramTitle,
   setDiagramTitle,
-  getDiagramTitle: getDiagramTitle,
   getAccDescription,
   setAccDescription,
   clear,

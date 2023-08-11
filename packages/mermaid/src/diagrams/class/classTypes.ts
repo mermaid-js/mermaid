@@ -7,6 +7,7 @@ export interface ClassNode {
   members: string[];
   annotations: string[];
   domId: string;
+  parent?: string;
   link?: string;
   linkTarget?: string;
   haveCallback?: boolean;
@@ -52,4 +53,13 @@ export type ClassRelation = {
     lineType: number;
   };
 };
+
+export interface NamespaceNode {
+  id: string;
+  domId: string;
+  classes: ClassMap;
+  children: NamespaceMap;
+}
+
 export type ClassMap = Record<string, ClassNode>;
+export type NamespaceMap = Record<string, NamespaceNode>;

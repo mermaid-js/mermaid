@@ -1,6 +1,6 @@
 /** Setup arrow head and define the marker. The result is appended to the svg. */
 
-import { log } from '../logger';
+import { log } from '../logger.js';
 
 // Only add the number of markers that the diagram needs
 const insertMarkers = (elem, markerArray, type, id) => {
@@ -142,7 +142,7 @@ const point = (elem, type) => {
     .append('marker')
     .attr('id', type + '-pointEnd')
     .attr('class', 'marker ' + type)
-    .attr('viewBox', '0 0 12 20')
+    .attr('viewBox', '0 0 10 10')
     .attr('refX', 10)
     .attr('refY', 5)
     .attr('markerUnits', 'userSpaceOnUse')

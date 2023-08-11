@@ -1,9 +1,9 @@
 import { vi } from 'vitest';
 
-import * as configApi from '../../config';
-import mermaidAPI from '../../mermaidAPI';
-import { Diagram, getDiagramFromText } from '../../Diagram';
-import { addDiagrams } from '../../diagram-api/diagram-orchestration';
+import * as configApi from '../../config.js';
+import mermaidAPI from '../../mermaidAPI.js';
+import { Diagram, getDiagramFromText } from '../../Diagram.js';
+import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
 
 beforeAll(async () => {
   // Is required to load the sequence diagram
@@ -1126,6 +1126,29 @@ end`;
     expect(messages[1].from).toBe('Alice');
     expect(messages[2].from).toBe('Bob');
   });
+  it('it should handle par_over statements', async () => {
+    const str = `
+sequenceDiagram
+par_over Parallel overlap
+Alice ->> Bob: Message
+Note left of Alice: Alice note
+Note right of Bob: Bob note
+end`;
+
+    await mermaidAPI.parse(str);
+    const actors = diagram.db.getActors();
+
+    expect(actors.Alice.description).toBe('Alice');
+    expect(actors.Bob.description).toBe('Bob');
+
+    const messages = diagram.db.getMessages();
+
+    expect(messages.length).toBe(5);
+    expect(messages[0].message).toBe('Parallel overlap');
+    expect(messages[1].from).toBe('Alice');
+    expect(messages[2].from).toBe('Alice');
+    expect(messages[3].from).toBe('Bob');
+  });
   it('should handle special characters in signals', async () => {
     const str = 'sequenceDiagram\n' + 'Alice->Bob: -:<>,;# comment';
 
@@ -1380,6 +1403,62 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
     expect(boxes[0].name).toBeFalsy();
     expect(boxes[0].actorKeys).toEqual(['a', 'b']);
     expect(boxes[0].fill).toEqual('Aqua');
+  });
+
+  it('should handle simple actor creation', async () => {
+    const str = `
+  sequenceDiagram
+  participant a as Alice
+  a ->>b: Hello Bob?
+  create participant c
+  b-->>c: Hello c!
+  c ->> b: Hello b?
+  create actor d as Donald
+  a ->> d: Hello Donald?
+  `;
+    await mermaidAPI.parse(str);
+    const actors = diagram.db.getActors();
+    const createdActors = diagram.db.getCreatedActors();
+    expect(actors['c'].name).toEqual('c');
+    expect(actors['c'].description).toEqual('c');
+    expect(actors['c'].type).toEqual('participant');
+    expect(createdActors['c']).toEqual(1);
+    expect(actors['d'].name).toEqual('d');
+    expect(actors['d'].description).toEqual('Donald');
+    expect(actors['d'].type).toEqual('actor');
+    expect(createdActors['d']).toEqual(3);
+  });
+  it('should handle simple actor destruction', async () => {
+    const str = `
+  sequenceDiagram
+  participant a as Alice
+  a ->>b: Hello Bob?
+  destroy a
+  b-->>a: Hello Alice!
+  b ->> c: Where is Alice?
+  destroy c
+  b ->> c: Where are you?
+  `;
+    await mermaidAPI.parse(str);
+    const destroyedActors = diagram.db.getDestroyedActors();
+    expect(destroyedActors['a']).toEqual(1);
+    expect(destroyedActors['c']).toEqual(3);
+  });
+  it('should handle the creation and destruction of the same actor', async () => {
+    const str = `
+  sequenceDiagram
+  a ->>b: Hello Bob?
+  create participant c
+  b ->>c: Hello c!
+  c ->> b: Hello b?
+  destroy c
+  b ->> c : Bye c !
+  `;
+    await mermaidAPI.parse(str);
+    const createdActors = diagram.db.getCreatedActors();
+    const destroyedActors = diagram.db.getDestroyedActors();
+    expect(createdActors['c']).toEqual(1);
+    expect(destroyedActors['c']).toEqual(3);
   });
 });
 describe('when checking the bounds in a sequenceDiagram', function () {
@@ -1950,7 +2029,9 @@ participant Alice`;
       expect(bounds.startx).toBe(0);
       expect(bounds.starty).toBe(0);
       expect(bounds.stopx).toBe(conf.width);
-      expect(bounds.stopy).toBe(models.lastActor().y + models.lastActor().height + conf.boxMargin);
+      expect(bounds.stopy).toBe(
+        models.lastActor().stopy + models.lastActor().height + conf.boxMargin
+      );
     });
   });
 });
@@ -2002,7 +2083,7 @@ participant Alice
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopy).toBe(
-      models.lastActor().y + models.lastActor().height + mermaid.sequence.boxMargin
+      models.lastActor().stopy + models.lastActor().height + mermaid.sequence.boxMargin
     );
   });
   it('should handle one actor, when logLevel is 3 (dfg0)', async () => {
@@ -2022,7 +2103,7 @@ participant Alice
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopy).toBe(
-      models.lastActor().y + models.lastActor().height + mermaid.sequence.boxMargin
+      models.lastActor().stopy + models.lastActor().height + mermaid.sequence.boxMargin
     );
   });
   it('should hide sequence numbers when autonumber is removed when autonumber is enabled', async () => {

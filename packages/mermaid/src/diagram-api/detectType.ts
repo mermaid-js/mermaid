@@ -1,14 +1,14 @@
-import { MermaidConfig } from '../config.type';
-import { log } from '../logger';
+import { MermaidConfig } from '../config.type.js';
+import { log } from '../logger.js';
 import type {
   DetectorRecord,
   DiagramDetector,
   DiagramLoader,
   ExternalDiagramDefinition,
-} from './types';
-import { frontMatterRegex } from './frontmatter';
-import { getDiagram, registerDiagram } from './diagramAPI';
-import { UnknownDiagramError } from '../errors';
+} from './types.js';
+import { frontMatterRegex } from './frontmatter.js';
+import { getDiagram, registerDiagram } from './diagramAPI.js';
+import { UnknownDiagramError } from '../errors.js';
 
 const directive = /%{2}{\s*(?:(\w+)\s*:|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;
 const anyComment = /\s*%%.*\n/gm;

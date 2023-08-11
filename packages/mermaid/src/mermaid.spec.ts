@@ -1,15 +1,16 @@
-import mermaid from './mermaid';
-import { mermaidAPI } from './mermaidAPI';
-import './diagram-api/diagram-orchestration';
-import { addDiagrams } from './diagram-api/diagram-orchestration';
+import mermaid from './mermaid.js';
+import { mermaidAPI } from './mermaidAPI.js';
+import './diagram-api/diagram-orchestration.js';
+import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import { beforeAll, describe, it, expect, vi } from 'vitest';
+import type { DiagramDefinition } from './diagram-api/types.js';
 
 beforeAll(async () => {
   addDiagrams();
 });
 const spyOn = vi.spyOn;
 
-vi.mock('./mermaidAPI');
+vi.mock('./mermaidAPI.js');
 
 afterEach(() => {
   vi.clearAllMocks();
@@ -92,13 +93,16 @@ describe('when using mermaid and ', () => {
 
     it('should defer diagram load based on parameter', async () => {
       let loaded = false;
-      const dummyDiagram = {
+      const dummyDiagram: DiagramDefinition = {
         db: {},
         renderer: () => {
           // do nothing
         },
-        parser: () => {
-          // do nothing
+        parser: {
+          parse: (_text) => {
+            return;
+          },
+          parser: { yy: {} },
         },
         styles: () => {
           // do nothing

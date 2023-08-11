@@ -235,6 +235,42 @@ journey
       Sit down: 5: Me
 ```
 
+### [Quadrant Chart](../syntax/quadrantChart.md)
+
+```mermaid-example
+quadrantChart
+    title Reach and engagement of campaigns
+    x-axis Low Reach --> High Reach
+    y-axis Low Engagement --> High Engagement
+    quadrant-1 We should expand
+    quadrant-2 Need to promote
+    quadrant-3 Re-evaluate
+    quadrant-4 May be improved
+    Campaign A: [0.3, 0.6]
+    Campaign B: [0.45, 0.23]
+    Campaign C: [0.57, 0.69]
+    Campaign D: [0.78, 0.34]
+    Campaign E: [0.40, 0.34]
+    Campaign F: [0.35, 0.78]
+```
+
+```mermaid
+quadrantChart
+    title Reach and engagement of campaigns
+    x-axis Low Reach --> High Reach
+    y-axis Low Engagement --> High Engagement
+    quadrant-1 We should expand
+    quadrant-2 Need to promote
+    quadrant-3 Re-evaluate
+    quadrant-4 May be improved
+    Campaign A: [0.3, 0.6]
+    Campaign B: [0.45, 0.23]
+    Campaign C: [0.57, 0.69]
+    Campaign D: [0.78, 0.34]
+    Campaign E: [0.40, 0.34]
+    Campaign F: [0.35, 0.78]
+```
+
 ## Installation
 
 **In depth guides and examples can be found at [Getting Started](./n00b-gettingStarted.md) and [Usage](../config/usage.md).**
@@ -263,7 +299,7 @@ To Deploy Mermaid:
 
 ### [Mermaid API](../config/setup/README.md):
 
-**To deploy mermaid without a bundler, one can insert a `script` tag with an absolute address and a `mermaid.initialize` call into the HTML like so:**
+**To deploy mermaid without a bundler, insert a `script` tag with an absolute address and a `mermaid.initialize` call into the HTML using the following example:**
 
 ```html
 <script type="module">
@@ -272,9 +308,9 @@ To Deploy Mermaid:
 </script>
 ```
 
-**Doing so will command the mermaid parser to look for the `<div>` or `<pre>` tags with `class="mermaid"`. From these tags mermaid will try to read the diagram/chart definitions and render them into SVG charts.**
+**Doing so commands the mermaid parser to look for the `<div>` or `<pre>` tags with `class="mermaid"`. From these tags, mermaid tries read the diagram/chart definitions and render them into SVG charts.**
 
-**Examples can be found at** [Other examples](../syntax/examples.md)
+**Examples can be found in** [Other examples](../syntax/examples.md)
 
 ## Sibling projects
 
@@ -351,7 +387,9 @@ The above command generates files into the `dist` folder and publishes them to \
 - [Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
 - [HTTP Server](https://github.com/TomWright/mermaid-server)
 
-## Contributors [![Good first issue](https://img.shields.io/github/labels/mermaid-js/mermaid/Good%20first%20issue%21)](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Good+first+issue%21%22) [![Contributors](https://img.shields.io/github/contributors/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors) [![Commits](https://img.shields.io/github/commit-activity/m/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors)
+## Contributors
+
+[![Good first issue](https://img.shields.io/github/labels/mermaid-js/mermaid/Good%20first%20issue%21)](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Good+first+issue%21%22) [![Contributors](https://img.shields.io/github/contributors/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors) [![Commits](https://img.shields.io/github/commit-activity/m/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors)
 
 Mermaid is a growing community and is always accepting new contributors. There's a lot of different ways to help out and we're always looking for extra hands! Look at [this issue](https://github.com/mermaid-js/mermaid/issues/866) if you want to know where to start helping out.
 

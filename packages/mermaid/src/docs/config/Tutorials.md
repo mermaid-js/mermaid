@@ -1,6 +1,6 @@
 # Tutorials
 
-This is list of publicly available Tutorials for using Mermaid.JS . This is intended as a basic introduction for the use of the Live Editor for generating diagrams, and deploying Mermaid.JS through HTML.
+This is a list of publicly available Tutorials for using Mermaid.JS and is intended as a basic introduction for the use of the Live Editor for generating diagrams, and deploying Mermaid.JS through HTML.
 
 **Note that these tutorials might display an older interface, but the usage of the live-editor will largely be the same.**
 
@@ -19,6 +19,10 @@ The definitions that can be generated the Live-Editor are also backwards-compati
 [World of Zero: I Learn How To Build Flowcharts and Signal Diagram's in Mermaid.JS](https://www.youtube.com/watch?v=7_2IroEs6Is&t=207s)
 
 [Eddie Jaoude: Can you code your diagrams?](https://www.youtube.com/watch?v=9HZzKkAqrX8)
+
+## Mermaid with OpenAI
+
+[Elle Neal: Mind Mapping with AI: An Accessible Approach for Neurodiverse Learners Tutorial:](https://medium.com/@elle.neal_71064/mind-mapping-with-ai-an-accessible-approach-for-neurodiverse-learners-1a74767359ff), [Demo:](https://databutton.com/v/jk9vrghc)
 
 ## Mermaid with HTML
 

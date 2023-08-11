@@ -1,7 +1,7 @@
-import { log } from '../../logger';
-import mermaidAPI from '../../mermaidAPI';
-import * as configApi from '../../config';
-import common from '../common/common';
+import { log } from '../../logger.js';
+import mermaidAPI from '../../mermaidAPI.js';
+import * as configApi from '../../config.js';
+import common from '../common/common.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -10,7 +10,7 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../../commonDb';
+} from '../../commonDb.js';
 
 let sections = {};
 let showData = false;

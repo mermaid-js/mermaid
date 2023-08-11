@@ -16,7 +16,7 @@ const getStyles = (options) => `
 
   .reqBox {
     fill: ${options.requirementBackground};
-    fill-opacity: 100%;
+    fill-opacity: 1.0;
     stroke: ${options.requirementBorderColor};
     stroke-width: ${options.requirementBorderSize};
   }
@@ -26,7 +26,7 @@ const getStyles = (options) => `
   }
   .reqLabelBox {
     fill: ${options.relationLabelBackground};
-    fill-opacity: 100%;
+    fill-opacity: 1.0;
   }
 
   .req-title-line {

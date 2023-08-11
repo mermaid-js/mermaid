@@ -1505,6 +1505,34 @@
     </pre>
     <hr />
 
+    <pre class="mermaid">
+    graph TD
+      A([Start]) ==> B[Step 1]
+      B ==> C{Flow 1}
+      C -- Choice 1.1 --> D[Step 2.1]
+      C -- Choice 1.3 --> I[Step 2.3]
+      C == Choice 1.2 ==> E[Step 2.2]
+      D --> F{Flow 2}
+      E ==> F{Flow 2}
+      F{Flow 2} == Choice 2.1 ==> H[Feedback node]
+      H[Feedback node] ==> B[Step 1]
+      F{Flow 2} == Choice 2.2 ==> G((Finish))
+      
+      linkStyle 0,1,4,6,7,8,9 stroke:gold, stroke-width:4px
+
+      classDef active_node fill:#0CF,stroke:#09F,stroke-width:6px
+      classDef unactive_node fill:#e0e0e0,stroke:#bdbdbd,stroke-width:3px      
+      classDef bugged_node fill:#F88,stroke:#F22,stroke-width:3px
+      classDef start_node,finish_node fill:#3B1,stroke:#391,stroke-width:8px
+
+      class A start_node;
+      class B,C,E,F,H active_node;
+      class D unactive_node;
+      class G finish_node;
+      class I bugged_node
+    </pre>
+    <hr />
+
     <h1 id="link-clicked">Anchor for "link-clicked" test</h1>
 
     <script type="module">

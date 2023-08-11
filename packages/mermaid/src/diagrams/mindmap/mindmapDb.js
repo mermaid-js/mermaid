@@ -1,6 +1,6 @@
-import { getConfig } from '../../config';
-import { sanitizeText as _sanitizeText } from '../../diagrams/common/common';
-import { log } from '../../logger';
+import { getConfig } from '../../config.js';
+import { sanitizeText as _sanitizeText } from '../../diagrams/common/common.js';
+import { log } from '../../logger.js';
 
 export const sanitizeText = (text) => _sanitizeText(text, getConfig());
 

@@ -1,7 +1,7 @@
-import mermaidAPI from '../../mermaidAPI';
-import * as configApi from '../../config';
-import { sanitizeText } from '../common/common';
-import { setAccTitle, getAccTitle, getAccDescription, setAccDescription } from '../../commonDb';
+import mermaidAPI from '../../mermaidAPI.js';
+import * as configApi from '../../config.js';
+import { sanitizeText } from '../common/common.js';
+import { setAccTitle, getAccTitle, getAccDescription, setAccDescription } from '../../commonDb.js';
 
 let c4ShapeArray = [];
 let boundaryParseStack = [''];

@@ -825,6 +825,82 @@ NOTE: Because we have overridden the `mainBranchOrder` to `2`, the `main` branch
 
 Here, we have changed the default main branch name to `MetroLine1`.
 
+## Orientation (v10.3.0+)
+
+In Mermaid, the default orientation is Left to Right. The branches are lined vertically.
+
+Usage example:
+
+```mermaid-example
+    gitGraph
+       commit
+       commit
+       branch develop
+       commit
+       commit
+       commit
+       checkout main
+       commit
+       commit
+       merge develop
+       commit
+       commit
+```
+
+```mermaid
+    gitGraph
+       commit
+       commit
+       branch develop
+       commit
+       commit
+       commit
+       checkout main
+       commit
+       commit
+       merge develop
+       commit
+       commit
+```
+
+Sometimes we may want to change the orientation. Currently, Mermaid supports two orientations: **Left to Right**(default) and **Top to Bottom**.
+
+In order to change the orientation from top to bottom i.e. branches lined horizontally, you need to add `TB` along with `gitGraph`.
+
+Usage example:
+
+```mermaid-example
+    gitGraph TB:
+       commit
+       commit
+       branch develop
+       commit
+       commit
+       commit
+       checkout main
+       commit
+       commit
+       merge develop
+       commit
+       commit
+```
+
+```mermaid
+    gitGraph TB:
+       commit
+       commit
+       branch develop
+       commit
+       commit
+       commit
+       checkout main
+       commit
+       commit
+       merge develop
+       commit
+       commit
+```
+
 ## Themes
 
 Mermaid supports a bunch of pre-defined themes which you can use to find the right one for you. PS: you can actually override an existing theme's variable to get your own custom theme going. Learn more about theming your diagram [here](../config/theming.md).

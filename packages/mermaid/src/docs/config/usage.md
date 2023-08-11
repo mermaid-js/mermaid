@@ -106,10 +106,10 @@ A `securityLevel` configuration has to first be cleared. `securityLevel` sets th
 
 Values:
 
-- **strict**: (**default**) tags in text are encoded, click functionality is disabled
-- **loose**: tags in text are allowed, click functionality is enabled
-- **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
-- **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This prevent any JavaScript running in the context. This may hinder interactive functionality of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc.
+- **strict**: (**default**) HTML tags in the text are encoded and click functionality is disabled.
+- **antiscript**: HTML tags in text are allowed (only script elements are removed) and click functionality is enabled.
+- **loose**: HTML tags in text are allowed and click functionality is enabled.
+- **sandbox**: With this security level, all rendering takes place in a sandboxed iframe. This prevent any JavaScript from running in the context. This may hinder interactive functionality of the diagram, like scripts, popups in the sequence diagram, links to other tabs or targets, etc.
 
 ```note
 This changes the default behaviour of mermaid so that after upgrade to 8.2, unless the `securityLevel` is not changed, tags in flowcharts are encoded as tags and clicking is disabled.
@@ -225,7 +225,7 @@ mermaid fully supports webpack. Here is a [working demo](https://github.com/merm
 
 The main idea of the API is to be able to call a render function with the graph definition as a string. The render function will render the graph and call a callback with the resulting SVG code. With this approach it is up to the site creator to fetch the graph definition from the site (perhaps from a textarea), render it and place the graph somewhere in the site.
 
-The example below show an outline of how this could be used. The example just logs the resulting SVG to the JavaScript console.
+The example below shows an example of how this could be used. The example just logs the resulting SVG to the JavaScript console.
 
 ```html
 <script type="module">
@@ -241,6 +241,23 @@ The example below show an outline of how this could be used. The example just lo
   };
 
   await drawDiagram();
+</script>
+```
+
+To determine the type of diagram present in a given text, you can utilize the `mermaid.detectType` function, as demonstrated in the example below.
+
+```html
+<script type="module">
+  import mermaid from './mermaid.esm.mjs';
+  const graphDefinition = `sequenceDiagram
+    Pumbaa->>Timon:I ate like a pig.
+    Timon->>Pumbaa:Pumbaa, you ARE a pig.`;
+  try {
+    const type = mermaid.detectType(graphDefinition);
+    console.log(type); // 'sequence'
+  } catch (error) {
+    // UnknownDiagramError
+  }
 </script>
 ```
 
@@ -328,10 +345,10 @@ mermaid.parseError = function (err, hash) {
   displayErrorInGui(err);
 };
 
-const textFieldUpdated = function () {
+const textFieldUpdated = async function () {
   const textStr = getTextFromFormField('code');
 
-  if (mermaid.parse(textStr)) {
+  if (await mermaid.parse(textStr)) {
     reRender(textStr);
   }
 };

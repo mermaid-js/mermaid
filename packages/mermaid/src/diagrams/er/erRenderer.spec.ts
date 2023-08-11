@@ -1,4 +1,4 @@
-import { generateId } from './erRenderer';
+import { generateId } from './erRenderer.js';
 
 describe('erRenderer', () => {
   describe('generateId', () => {

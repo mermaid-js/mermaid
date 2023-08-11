@@ -58,6 +58,31 @@ sequenceDiagram
     J->>A: Great!
 ```
 
+### Actor Creation and Destruction (v10.3.0+)
+
+It is possible to create and destroy actors by messages. To do so, add a create or destroy directive before the message.
+
+```
+create participant B
+A --> B: Hello
+```
+
+Create directives support actor/participant distinction and aliases. The sender or the recipient of a message can be destroyed but only the recipient can be created.
+
+```mermaid-example
+sequenceDiagram
+    Alice->>Bob: Hello Bob, how are you ?
+    Bob->>Alice: Fine, thank you. And you?
+    create participant Carl
+    Alice->>Carl: Hi Carl!
+    create actor D as Donald
+    Carl->>D: Hi!
+    destroy Carl
+    Alice-xCarl: We are too many
+    destroy Bob
+    Bob->>Alice: I agree
+```
+
 ### Grouping / Box
 
 The actor(s) can be grouped in vertical boxes. You can define a color (if not, it will be transparent) and/or a descriptive label using the following notation:
@@ -387,7 +412,7 @@ sequenceDiagram
 
 Comments can be entered within a sequence diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
 
-```mmd
+```mermaid
 sequenceDiagram
     Alice->>John: Hello John, how are you?
     %% this is a comment
@@ -443,7 +468,7 @@ This can be configured by adding one or more link lines with the format:
 link <actor>: <link-label> @ <link-url>
 ```
 
-```mmd
+```mermaid
 sequenceDiagram
     participant Alice
     participant John

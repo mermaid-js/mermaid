@@ -81,7 +81,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
   .edgeLabel {
     background-color: ${options.edgeLabelBackground};
     rect {
-      opacity: 0.5;
+      opacity: 0.85;
       background-color: ${options.edgeLabelBackground};
       fill: ${options.edgeLabelBackground};
     }
@@ -132,6 +132,11 @@ const getStyles = (options: FlowChartStyleOptions) =>
   //   fill:#ccc;
   //   // stroke:black;
   // }
+
+  .flowchart-label text {
+    text-anchor: middle;
+  }
+
   ${genSections(options)}
 `;
 

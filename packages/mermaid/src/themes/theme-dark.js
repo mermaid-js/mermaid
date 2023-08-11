@@ -1,5 +1,5 @@
-import { invert, lighten, darken, rgba, adjust } from 'khroma';
-import { mkBorder } from './theme-helpers';
+import { invert, lighten, darken, rgba, adjust, isDark } from 'khroma';
+import { mkBorder } from './theme-helpers.js';
 
 class Theme {
   constructor() {
@@ -64,6 +64,7 @@ class Theme {
     this.sectionBkgColor = darken('#EAE8D9', 30);
     this.altSectionBkgColor = 'calculated';
     this.sectionBkgColor2 = '#EAE8D9';
+    this.excludeBkgColor = darken(this.sectionBkgColor, 10);
     this.taskBorderColor = rgba(255, 255, 255, 70);
     this.taskBkgColor = 'calculated';
     this.taskTextColor = 'calculated';
@@ -81,9 +82,8 @@ class Theme {
     this.todayLineColor = '#DB5757';
 
     /* C4 Context Diagram variables */
-
-    this.personBorder = 'calculated';
-    this.personBkg = 'calculated';
+    this.personBorder = this.primaryBorderColor;
+    this.personBkg = this.mainBkg;
 
     /* state colors */
     this.labelColor = 'calculated';
@@ -226,13 +226,38 @@ class Theme {
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
 
+    /* quadrant-graph */
+    this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
+    this.quadrant2Fill = this.quadrant2Fill || adjust(this.primaryColor, { r: 5, g: 5, b: 5 });
+    this.quadrant3Fill = this.quadrant3Fill || adjust(this.primaryColor, { r: 10, g: 10, b: 10 });
+    this.quadrant4Fill = this.quadrant4Fill || adjust(this.primaryColor, { r: 15, g: 15, b: 15 });
+    this.quadrant1TextFill = this.quadrant1TextFill || this.primaryTextColor;
+    this.quadrant2TextFill =
+      this.quadrant2TextFill || adjust(this.primaryTextColor, { r: -5, g: -5, b: -5 });
+    this.quadrant3TextFill =
+      this.quadrant3TextFill || adjust(this.primaryTextColor, { r: -10, g: -10, b: -10 });
+    this.quadrant4TextFill =
+      this.quadrant4TextFill || adjust(this.primaryTextColor, { r: -15, g: -15, b: -15 });
+    this.quadrantPointFill =
+      this.quadrantPointFill || isDark(this.quadrant1Fill)
+        ? lighten(this.quadrant1Fill)
+        : darken(this.quadrant1Fill);
+    this.quadrantPointTextFill = this.quadrantPointTextFill || this.primaryTextColor;
+    this.quadrantXAxisTextFill = this.quadrantXAxisTextFill || this.primaryTextColor;
+    this.quadrantYAxisTextFill = this.quadrantYAxisTextFill || this.primaryTextColor;
+    this.quadrantInternalBorderStrokeFill =
+      this.quadrantInternalBorderStrokeFill || this.primaryBorderColor;
+    this.quadrantExternalBorderStrokeFill =
+      this.quadrantExternalBorderStrokeFill || this.primaryBorderColor;
+    this.quadrantTitleFill = this.quadrantTitleFill || this.primaryTextColor;
+
     /* class */
     this.classText = this.primaryTextColor;
 
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;
     this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
-    this.requirementBorderSize = this.requirementBorderSize || this.primaryBorderColor;
+    this.requirementBorderSize = this.requirementBorderSize || '1';
     this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
     this.relationColor = this.relationColor || this.lineColor;
     this.relationLabelBackground =
@@ -257,6 +282,14 @@ class Theme {
     this.gitInv5 = this.gitInv5 || invert(this.git5);
     this.gitInv6 = this.gitInv6 || invert(this.git6);
     this.gitInv7 = this.gitInv7 || invert(this.git7);
+    this.gitBranchLabel0 = this.gitBranchLabel0 || invert(this.labelTextColor);
+    this.gitBranchLabel1 = this.gitBranchLabel1 || this.labelTextColor;
+    this.gitBranchLabel2 = this.gitBranchLabel2 || this.labelTextColor;
+    this.gitBranchLabel3 = this.gitBranchLabel3 || invert(this.labelTextColor);
+    this.gitBranchLabel4 = this.gitBranchLabel4 || this.labelTextColor;
+    this.gitBranchLabel5 = this.gitBranchLabel5 || this.labelTextColor;
+    this.gitBranchLabel6 = this.gitBranchLabel6 || this.labelTextColor;
+    this.gitBranchLabel7 = this.gitBranchLabel7 || this.labelTextColor;
 
     this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
     this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Error | Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+  </head>
+
+  <body>
+    <pre class="mermaid">
+      erDiagram
+        ATLAS-ORGANIZATION ||--|{ ATLAS-PROJECTS : "has many"
+        ATLAS-PROJECTS ||--|{ MONGODB-CLUSTERS : "has many"
+        ATLAS-PROJECTS ||--|{ ATLAS-TEAMS : "has many"
+    </pre>
+    <pre class="mermaid">
+      erDiagram
+        ATLAS-ORGANIZATION ||--|{ ATLAS-PROJECTS : "has many"
+        ATLAS-PROJECTS ||--|{ MONGODB-CLUSTERS : "has many"
+        ATLAS-PROJECTS ||--|{ ATLAS-TEAMS : "has many"
+        MONGODB-CLUSTERS ||..|{
+        ATLAS-TEAMS ||..|{
+    </pre>
+    <hr />
+    <pre class="mermaid">
+    flowchart TD
+      A[Christmas] -->|Get money| B(Go shopping)
+    </pre>
+    <pre class="mermaid">
+    flowchart TD
+      A[Christmas] --|Get money| B(Go shopping)
+    </pre>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+    </script>
+  </body>
+</html>

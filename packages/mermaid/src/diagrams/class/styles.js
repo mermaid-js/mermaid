@@ -41,7 +41,7 @@ const getStyles = (options) =>
 
 .divider {
   stroke: ${options.nodeBorder};
-  stroke: 1;
+  stroke-width: 1;
 }
 
 g.clickable {

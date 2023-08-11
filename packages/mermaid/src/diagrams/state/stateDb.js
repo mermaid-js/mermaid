@@ -1,8 +1,8 @@
-import { log } from '../../logger';
-import { generateId } from '../../utils';
-import mermaidAPI from '../../mermaidAPI';
-import common from '../common/common';
-import * as configApi from '../../config';
+import { log } from '../../logger.js';
+import { generateId } from '../../utils.js';
+import mermaidAPI from '../../mermaidAPI.js';
+import common from '../common/common.js';
+import * as configApi from '../../config.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -11,7 +11,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb';
+} from '../../commonDb.js';
 
 import {
   DEFAULT_DIAGRAM_DIRECTION,
@@ -21,7 +21,7 @@ import {
   STMT_APPLYCLASS,
   DEFAULT_STATE_TYPE,
   DIVIDER_TYPE,
-} from './stateCommon';
+} from './stateCommon.js';
 
 const START_NODE = '[*]';
 const START_TYPE = 'start';

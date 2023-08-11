@@ -1,9 +1,9 @@
-import { DiagramDefinition } from '../../diagram-api/types';
-// @ts-ignore: TODO Fix ts errors
-import parser from './parser/classDiagram';
-import db from './classDb';
-import styles from './styles';
-import renderer from './classRenderer-v2';
+import { DiagramDefinition } from '../../diagram-api/types.js';
+// @ts-ignore: JISON doesn't support types
+import parser from './parser/classDiagram.jison';
+import db from './classDb.js';
+import styles from './styles.js';
+import renderer from './classRenderer-v2.js';
 
 export const diagram: DiagramDefinition = {
   parser,

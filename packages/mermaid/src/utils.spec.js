@@ -1,10 +1,10 @@
 import { vi } from 'vitest';
-import utils from './utils';
-import assignWithDepth from './assignWithDepth';
-import { detectType } from './diagram-api/detectType';
-import { addDiagrams } from './diagram-api/diagram-orchestration';
+import utils from './utils.js';
+import assignWithDepth from './assignWithDepth.js';
+import { detectType } from './diagram-api/detectType.js';
+import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import memoize from 'lodash-es/memoize.js';
-import { MockedD3 } from './tests/MockedD3';
+import { MockedD3 } from './tests/MockedD3.js';
 
 addDiagrams();
 

@@ -1,9 +1,11 @@
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
-import { BuildOptions } from 'esbuild';
+import type { BuildOptions } from 'esbuild';
 import { readFileSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { transformJison } from './jisonTransformer.js';
+import jsonSchemaPlugin from './jsonSchemaPlugin.js';
+import { Plugin } from 'esbuild';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
@@ -40,14 +42,14 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     resolveExtensions: ['.ts', '.js', '.json', '.jison'],
     external: ['require', 'fs', 'path'],
     outdir: 'dist',
-    plugins: [jisonPlugin],
+    plugins: [jisonPlugin, jsonSchemaPlugin],
     sourcemap: 'external',
     outExtension: { '.js': '.mjs' },
     ...override,
   };
 };
 
-const jisonPlugin = {
+const jisonPlugin: Plugin = {
   name: 'jison',
   setup(build) {
     build.onLoad({ filter: /\.jison$/ }, async (args) => {

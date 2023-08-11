@@ -1,11 +1,11 @@
 import { select } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
-import { log } from '../../logger';
-import common from '../common/common';
-import { drawState, addTitleAndBox, drawEdge } from './shapes';
-import { getConfig } from '../../config';
-import { configureSvgSize } from '../../setupGraphViewbox';
+import { log } from '../../logger.js';
+import common from '../common/common.js';
+import { drawState, addTitleAndBox, drawEdge } from './shapes.js';
+import { getConfig } from '../../config.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 // TODO Move conf object to main conf in mermaidAPI
 let conf;
@@ -57,27 +57,11 @@ export const draw = function (text, id, _version, diagObj) {
       : select('body');
   const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
-  // diagObj.db.clear();
-  // parser.parse(text);
   log.debug('Rendering diagram ' + text);
 
   // Fetch the default direction, use TD if none was found
   const diagram = root.select(`[id='${id}']`);
   insertMarkers(diagram);
-
-  // Layout graph, Create a new directed graph
-  const graph = new graphlib.Graph({
-    multigraph: true,
-    compound: true,
-    // acyclicer: 'greedy',
-    rankdir: 'RL',
-    // ranksep: '20'
-  });
-
-  // Default to assigning a new object as a label for each new edge.
-  graph.setDefaultEdgeLabel(function () {
-    return {};
-  });
 
   const rootDoc = diagObj.db.getRootDoc();
   renderDoc(rootDoc, diagram, undefined, false, root, doc, diagObj);

@@ -19,8 +19,6 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
 <type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
-\%%(?!\{)[^\n]*                                                 /* skip comments */
-[^\}]\%\%[^\n]*                                                 /* skip comments */
 [\n]+                           return 'NEWLINE';
 \s+                             /* skip whitespace */
 [\s]+                           return 'SPACE';
@@ -32,11 +30,9 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <block>\s+                      /* skip whitespace in block */
 <block>\b((?:PK)|(?:FK)|(?:UK))\b      return 'ATTRIBUTE_KEY'
 <block>(.*?)[~](.*?)*[~]        return 'ATTRIBUTE_WORD';
-<block>[A-Za-z_][A-Za-z0-9\-_\[\]\(\)]*  return 'ATTRIBUTE_WORD'
+<block>[\*A-Za-z_][A-Za-z0-9\-_\[\]\(\)]*  return 'ATTRIBUTE_WORD'
 <block>\"[^"]*\"                return 'COMMENT';
 <block>[\n]+                    /* nothing */
-<block>\%%(?!\{)[^\n]*          /* skip comments in attribute block */
-<block>[^\}]\%\%[^\n]*          /* skip comments in attribute block */
 <block>"}"                      { this.popState(); return 'BLOCK_STOP'; }
 <block>.                        return yytext[0];
 
@@ -61,6 +57,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 o\|                             return 'ZERO_OR_ONE';
 o\{                             return 'ZERO_OR_MORE';
 \|\{                            return 'ONE_OR_MORE';
+\s*u                            return 'MD_PARENT';
 \.\.                            return 'NON_IDENTIFYING';
 \-\-                            return 'IDENTIFYING';
 "to"                            return 'IDENTIFYING';
@@ -174,6 +171,7 @@ cardinality
     | 'ZERO_OR_MORE'                 { $$ = yy.Cardinality.ZERO_OR_MORE; }
     | 'ONE_OR_MORE'                  { $$ = yy.Cardinality.ONE_OR_MORE; }
     | 'ONLY_ONE'                     { $$ = yy.Cardinality.ONLY_ONE; }
+    | 'MD_PARENT'                     { $$ = yy.Cardinality.MD_PARENT; }
     ;
 
 relType

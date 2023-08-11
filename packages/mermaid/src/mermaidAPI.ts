@@ -15,24 +15,31 @@ import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 // @ts-ignore: TODO Fix ts errors
 import { version } from '../package.json';
-import * as configApi from './config';
-import { addDiagrams } from './diagram-api/diagram-orchestration';
-import { Diagram, getDiagramFromText } from './Diagram';
-import errorRenderer from './diagrams/error/errorRenderer';
-import { attachFunctions } from './interactionDb';
-import { log, setLogLevel } from './logger';
-import getStyles from './styles';
-import theme from './themes';
-import utils, { directiveSanitizer } from './utils';
+import * as configApi from './config.js';
+import { addDiagrams } from './diagram-api/diagram-orchestration.js';
+import { Diagram, getDiagramFromText } from './Diagram.js';
+import errorRenderer from './diagrams/error/errorRenderer.js';
+import { attachFunctions } from './interactionDb.js';
+import { log, setLogLevel } from './logger.js';
+import getStyles from './styles.js';
+import theme from './themes/index.js';
+import utils, { directiveSanitizer } from './utils.js';
 import DOMPurify from 'dompurify';
-import { MermaidConfig } from './config.type';
-import { evaluate } from './diagrams/common/common';
+import { MermaidConfig } from './config.type.js';
+import { evaluate } from './diagrams/common/common.js';
 import isEmpty from 'lodash-es/isEmpty.js';
-import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility';
-import { parseDirective } from './directiveUtils';
+import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
+import { parseDirective } from './directiveUtils.js';
 
 // diagram names that support classDef statements
-const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram', 'stateDiagram-v2'];
+const CLASSDEF_DIAGRAMS = [
+  'graph',
+  'flowchart',
+  'flowchart-v2',
+  'flowchart-elk',
+  'stateDiagram',
+  'stateDiagram-v2',
+];
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
   'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -71,7 +78,6 @@ export interface ParseOptions {
 }
 
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
-// @ts-ignore Could replicate the type definition in d3. This also makes it possible to use the untyped info from the js diagram files.
 export type D3Element = any;
 
 export interface RenderResult {
@@ -99,21 +105,18 @@ export interface RenderResult {
  * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false.
  */
 
-async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean | void> {
+async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean> {
   addDiagrams();
-  let error;
   try {
     const diagram = await getDiagramFromText(text);
     diagram.parse();
-  } catch (err) {
-    error = err;
-  }
-  if (parseOptions?.suppressErrors) {
-    return error === undefined;
-  }
-  if (error) {
+  } catch (error) {
+    if (parseOptions?.suppressErrors) {
+      return false;
+    }
     throw error;
   }
+  return true;
 }
 
 /**
@@ -150,13 +153,7 @@ export const encodeEntities = function (text: string): string {
  * @returns
  */
 export const decodeEntities = function (text: string): string {
-  let txt = text;
-
-  txt = txt.replace(/ﬂ°°/g, '&#');
-  txt = txt.replace(/ﬂ°/g, '&');
-  txt = txt.replace(/¶ß/g, ';');
-
-  return txt;
+  return text.replace(/ﬂ°°/g, '&#').replace(/ﬂ°/g, '&').replace(/¶ß/g, ';');
 };
 
 // append !important; to each cssClass followed by a final !important, all enclosed in { }
@@ -265,7 +262,10 @@ export const cleanUpSvgCode = (
 
   // Replace marker-end urls with just the # anchor (remove the preceding part of the URL)
   if (!useArrowMarkerUrls && !inSandboxMode) {
-    cleanedUpSvg = cleanedUpSvg.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#');
+    cleanedUpSvg = cleanedUpSvg.replace(
+      /marker-end="url\([\d+./:=?A-Za-z-]*?#/g,
+      'marker-end="url(#'
+    );
   }
 
   cleanedUpSvg = decodeEntities(cleanedUpSvg);
@@ -285,7 +285,9 @@ export const cleanUpSvgCode = (
  * TODO replace btoa(). Replace with  buf.toString('base64')?
  */
 export const putIntoIFrame = (svgCode = '', svgElement?: D3Element): string => {
-  const height = svgElement ? svgElement.viewBox.baseVal.height + 'px' : IFRAME_HEIGHT;
+  const height = svgElement?.viewBox?.baseVal?.height
+    ? svgElement.viewBox.baseVal.height + 'px'
+    : IFRAME_HEIGHT;
   const base64encodedSrc = btoa('<body style="' + IFRAME_BODY_STYLE + '">' + svgCode + '</body>');
   return `<iframe style="width:${IFRAME_WIDTH};height:${height};${IFRAME_STYLES}" src="data:text/html;base64,${base64encodedSrc}" sandbox="${IFRAME_SANDBOX_OPTS}">
   ${IFRAME_NOT_SUPPORTED_MSG}
@@ -402,6 +404,12 @@ const render = async function (
   // clean up text CRLFs
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
 
+  // clean up html tags so that all attributes use single quotes, parser throws error on double quotes
+  text = text.replace(
+    /<(\w+)([^>]*)>/g,
+    (match, tag, attributes) => '<' + tag + attributes.replace(/="([^"]*)"/g, "='$1'") + '>'
+  );
+
   const idSelector = '#' + id;
   const iFrameID = 'i' + id;
   const iFrameID_selector = '#' + iFrameID;
@@ -472,7 +480,7 @@ const render = async function (
 
   // Get the temporary div element containing the svg
   const element = root.select(enclosingDivID_selector).node();
-  const graphType = diag.type;
+  const diagramType = diag.type;
 
   // -------------------------------------------------------------------------------
   // Create and insert the styles (user styles, theme styles, config styles)
@@ -480,17 +488,11 @@ const render = async function (
   // Insert an element into svg. This is where we put the styles
   const svg = element.firstChild;
   const firstChild = svg.firstChild;
-  const diagramClassDefs = CLASSDEF_DIAGRAMS.includes(graphType)
+  const diagramClassDefs = CLASSDEF_DIAGRAMS.includes(diagramType)
     ? diag.renderer.getClasses(text, diag)
     : {};
 
-  const rules = createUserStyles(
-    config,
-    graphType,
-    // @ts-ignore convert renderer to TS.
-    diagramClassDefs,
-    idSelector
-  );
+  const rules = createUserStyles(config, diagramType, diagramClassDefs, idSelector);
 
   const style1 = document.createElement('style');
   style1.innerHTML = rules;
@@ -507,9 +509,9 @@ const render = async function (
 
   // This is the d3 node for the svg element
   const svgNode = root.select(`${enclosingDivID_selector} svg`);
-  const a11yTitle = diag.db.getAccTitle?.();
-  const a11yDescr = diag.db.getAccDescription?.();
-  addA11yInfo(graphType, svgNode, a11yTitle, a11yDescr);
+  const a11yTitle: string | undefined = diag.db.getAccTitle?.();
+  const a11yDescr: string | undefined = diag.db.getAccDescription?.();
+  addA11yInfo(diagramType, svgNode, a11yTitle, a11yDescr);
 
   // -------------------------------------------------------------------------------
   // Clean up SVG code
@@ -534,16 +536,16 @@ const render = async function (
 
   attachFunctions();
 
+  if (parseEncounteredException) {
+    throw parseEncounteredException;
+  }
+
   // -------------------------------------------------------------------------------
   // Remove the temporary HTML element if appropriate
   const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
   const node = select(tmpElementSelector).node();
   if (node && 'remove' in node) {
     node.remove();
-  }
-
-  if (parseEncounteredException) {
-    throw parseEncounteredException;
   }
 
   return {
@@ -586,14 +588,18 @@ function initialize(options: MermaidConfig = {}) {
 /**
  * Add accessibility (a11y) information to the diagram.
  *
+ * @param diagramType - diagram type
+ * @param svgNode - d3 node to insert the a11y title and desc info
+ * @param a11yTitle - a11y title
+ * @param a11yDescr - a11y description
  */
 function addA11yInfo(
-  graphType: string,
+  diagramType: string,
   svgNode: D3Element,
-  a11yTitle: string | undefined,
-  a11yDescr: string | undefined
-) {
-  setA11yDiagramInfo(svgNode, graphType);
+  a11yTitle?: string,
+  a11yDescr?: string
+): void {
+  setA11yDiagramInfo(svgNode, diagramType);
   addSVGa11yTitleDescription(svgNode, a11yTitle, a11yDescr, svgNode.attr('id'));
 }
 
@@ -653,6 +659,7 @@ function addA11yInfo(
  *       numberSectionStyles: 4,
  *       axisFormat: '%Y-%m-%d',
  *       topAxis: false,
+ *       displayMode: '',
  *     },
  *   };
  *   mermaid.initialize(config);
@@ -663,6 +670,7 @@ export const mermaidAPI = Object.freeze({
   render,
   parse,
   parseDirective,
+  getDiagramFromText,
   initialize,
   getConfig: configApi.getConfig,
   setConfig: configApi.setConfig,

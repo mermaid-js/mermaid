@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
-import { Diagram, getDiagramFromText } from './Diagram';
-import { addDetector } from './diagram-api/detectType';
-import { addDiagrams } from './diagram-api/diagram-orchestration';
+import { Diagram, getDiagramFromText } from './Diagram.js';
+import { addDetector } from './diagram-api/detectType.js';
+import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 
 addDiagrams();
 
@@ -49,7 +49,7 @@ describe('diagram detection', () => {
       "Parse error on line 2:
       graph TD; A-->
       --------------^
-      Expecting 'AMP', 'ALPHA', 'COLON', 'PIPE', 'TESTSTR', 'DOWN', 'DEFAULT', 'NUM', 'COMMA', 'MINUS', 'BRKT', 'DOT', 'PUNCTUATION', 'UNICODE_TEXT', 'PLUS', 'EQUALS', 'MULT', 'UNDERSCORE', got 'EOF'"
+      Expecting 'AMP', 'COLON', 'PIPE', 'TESTSTR', 'DOWN', 'DEFAULT', 'NUM', 'COMMA', 'NODE_STRING', 'BRKT', 'MINUS', 'MULT', 'UNICODE_TEXT', got 'EOF'"
     `);
     await expect(getDiagramFromText('sequenceDiagram; A-->B')).rejects
       .toThrowErrorMatchingInlineSnapshot(`

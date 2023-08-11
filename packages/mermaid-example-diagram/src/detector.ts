@@ -3,7 +3,7 @@ import type { ExternalDiagramDefinition } from 'mermaid';
 const id = 'example-diagram';
 
 const detector = (txt: string) => {
-  return txt.match(/^\s*example-diagram/) !== null;
+  return /^\s*example-diagram/.test(txt);
 };
 
 const loader = async () => {

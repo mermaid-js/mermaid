@@ -1,5 +1,6 @@
-let mermaid2;
-let externalExample;
+import mermaid2 from './mermaid.esm.mjs';
+import externalExample from '../../packages/mermaid-example-diagram/dist/mermaid-example-diagram.core.mjs';
+import zenUml from '../../packages/mermaid-zenuml/dist/mermaid-zenuml.core.mjs';
 
 function b64ToUtf8(str) {
   return decodeURIComponent(escape(window.atob(str)));
@@ -44,10 +45,9 @@ const contentLoaded = async function () {
       document.getElementsByTagName('body')[0].appendChild(div);
     }
 
-    await mermaid2.registerExternalDiagrams([externalExample]);
+    await mermaid2.registerExternalDiagrams([externalExample, zenUml]);
     mermaid2.initialize(graphObj.mermaid);
     await mermaid2.run();
-    markRendered();
   }
 };
 
@@ -123,7 +123,6 @@ const contentLoadedApi = async function () {
       bindFunctions(div);
     }
   }
-  markRendered();
 };
 
 if (typeof document !== 'undefined') {
@@ -135,10 +134,10 @@ if (typeof document !== 'undefined') {
     function () {
       if (this.location.href.match('xss.html')) {
         this.console.log('Using api');
-        void contentLoadedApi();
+        void contentLoadedApi().finally(markRendered);
       } else {
         this.console.log('Not using api');
-        void contentLoaded();
+        void contentLoaded().finally(markRendered);
       }
     },
     false

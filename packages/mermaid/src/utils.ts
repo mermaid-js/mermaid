@@ -24,13 +24,15 @@ import {
   curveStepBefore,
   select,
 } from 'd3';
-import common from './diagrams/common/common';
-import { configKeys } from './defaultConfig';
-import { log } from './logger';
-import { detectType } from './diagram-api/detectType';
-import assignWithDepth from './assignWithDepth';
-import { MermaidConfig } from './config.type';
+import common from './diagrams/common/common.js';
+import { configKeys } from './defaultConfig.js';
+import { log } from './logger.js';
+import { detectType } from './diagram-api/detectType.js';
+import assignWithDepth from './assignWithDepth.js';
+import { MermaidConfig } from './config.type.js';
 import memoize from 'lodash-es/memoize.js';
+
+export const ZERO_WIDTH_SPACE = '\u200b';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -765,13 +767,16 @@ export const calculateTextDimensions: (
       const dim = { width: 0, height: 0, lineHeight: 0 };
       for (const line of lines) {
         const textObj = getTextObj();
-        textObj.text = line;
+        textObj.text = line || ZERO_WIDTH_SPACE;
         const textElem = drawSimpleText(g, textObj)
           .style('font-size', _fontSizePx)
           .style('font-weight', fontWeight)
           .style('font-family', fontFamily);
 
         const bBox = (textElem._groups || textElem)[0][0].getBBox();
+        if (bBox.width === 0 && bBox.height === 0) {
+          throw new Error('svg element not in render tree');
+        }
         dim.width = Math.round(Math.max(dim.width, bBox.width));
         cheight = Math.round(bBox.height);
         dim.height += cheight;

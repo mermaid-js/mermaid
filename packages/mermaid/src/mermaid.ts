@@ -2,17 +2,21 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code!
  */
-import dedent from 'ts-dedent';
-import { MermaidConfig } from './config.type';
-import { log } from './logger';
-import utils from './utils';
-import { mermaidAPI, ParseOptions, RenderResult } from './mermaidAPI';
-import { registerLazyLoadedDiagrams, loadRegisteredDiagrams } from './diagram-api/detectType';
-import type { ParseErrorFunction } from './Diagram';
-import { isDetailedError } from './utils';
-import type { DetailedError } from './utils';
-import { ExternalDiagramDefinition } from './diagram-api/types';
-import { UnknownDiagramError } from './errors';
+import { dedent } from 'ts-dedent';
+import { MermaidConfig } from './config.type.js';
+import { log } from './logger.js';
+import utils from './utils.js';
+import { mermaidAPI, ParseOptions, RenderResult } from './mermaidAPI.js';
+import {
+  registerLazyLoadedDiagrams,
+  loadRegisteredDiagrams,
+  detectType,
+} from './diagram-api/detectType.js';
+import type { ParseErrorFunction } from './Diagram.js';
+import { isDetailedError } from './utils.js';
+import type { DetailedError } from './utils.js';
+import { ExternalDiagramDefinition } from './diagram-api/types.js';
+import { UnknownDiagramError } from './errors.js';
 
 export type {
   MermaidConfig,
@@ -388,7 +392,7 @@ const render = (id: string, text: string, container?: Element): Promise<RenderRe
   });
 };
 
-const mermaid: {
+export interface Mermaid {
   startOnLoad: boolean;
   parseError?: ParseErrorFunction;
   mermaidAPI: typeof mermaidAPI;
@@ -400,7 +404,10 @@ const mermaid: {
   initialize: typeof initialize;
   contentLoaded: typeof contentLoaded;
   setParseErrorHandler: typeof setParseErrorHandler;
-} = {
+  detectType: typeof detectType;
+}
+
+const mermaid: Mermaid = {
   startOnLoad: true,
   mermaidAPI,
   parse,
@@ -412,6 +419,7 @@ const mermaid: {
   parseError: undefined,
   contentLoaded,
   setParseErrorHandler,
+  detectType,
 };
 
 export default mermaid;
