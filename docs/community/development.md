@@ -91,11 +91,11 @@ Ensure `./run` script is executable:
 chmod +x run
 ```
 
-::: tip
+```tip
 To get detailed help simply type `./run` or `./run help`.
 
 It also has short _Development quick start guide_ embedded.
-:::
+```
 
 </div>
 
