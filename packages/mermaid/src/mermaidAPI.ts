@@ -108,8 +108,7 @@ export interface RenderResult {
 async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean> {
   addDiagrams();
   try {
-    const diagram = await getDiagramFromText(text);
-    diagram.parse();
+    await getDiagramFromText(text);
   } catch (error) {
     if (parseOptions?.suppressErrors) {
       return false;
