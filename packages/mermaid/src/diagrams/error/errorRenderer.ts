@@ -14,7 +14,7 @@ export const draw = (_text: string, id: string, version: string) => {
   log.debug('renering svg for syntax error\n');
 
   const svg: SVG = selectSvgElement(id);
-  svg.attr('viewBox', '0 0 1912 512');
+  svg.attr('viewBox', '0 0 2412 512');
   configureSvgSize(svg, 100, 512, true);
 
   const g: Group = svg.append('g');
