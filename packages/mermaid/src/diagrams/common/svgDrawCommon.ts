@@ -11,6 +11,7 @@ import type {
   TextData,
   TextObject,
 } from './commonTypes.js';
+import { lineBreakRegex } from './common.js';
 
 export const drawRect = (element: SVG | Group, rectData: RectData): D3RectElement => {
   const rectElement: D3RectElement = element.append('rect');
@@ -57,8 +58,7 @@ export const drawBackgroundRect = (element: SVG | Group, bounds: Bound): void =>
 };
 
 export const drawText = (element: SVG | Group, textData: TextData): D3TextElement => {
-  // Remove and ignore br:s
-  const nText: string = textData.text.replace(/<br\s*\/?>/gi, ' ');
+  const nText: string = textData.text.replace(lineBreakRegex, ' ');
 
   const textElem: D3TextElement = element.append('text');
   textElem.attr('x', textData.x);
