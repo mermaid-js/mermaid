@@ -1,8 +1,8 @@
-import { build, context } from 'esbuild';
+import { build } from 'esbuild';
 import { mkdir, writeFile } from 'node:fs/promises';
-import { getBuildConfig, packageOptions } from './util.js';
+import { getBuildConfig } from './util.js';
+import { packageOptions } from '../.build/common.js';
 
-const shouldWatch = process.argv.includes('--watch');
 const shouldVisualize = process.argv.includes('--visualize');
 
 const buildPackage = async (entryName: keyof typeof packageOptions) => {
@@ -30,10 +30,4 @@ const main = async () => {
   }
 };
 
-const watch = async () => {
-  const ctx = await context(getBuildConfig({ entryName: 'mermaid', minify: false }));
-  ctx.watch();
-  console.log('Watching for changes');
-};
-
-void (shouldWatch ? watch : main)();
+void main();

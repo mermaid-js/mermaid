@@ -2,30 +2,11 @@ import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import type { BuildOptions } from 'esbuild';
 import { readFileSync } from 'fs';
-import { readFile } from 'fs/promises';
-import { transformJison } from './jisonTransformer.js';
 import jsonSchemaPlugin from './jsonSchemaPlugin.js';
-import { Plugin } from 'esbuild';
+import { packageOptions } from '../.build/common.js';
+import { jisonPlugin } from './jisonPlugin.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
-
-export const packageOptions = {
-  mermaid: {
-    name: 'mermaid',
-    packageName: 'mermaid',
-    file: 'mermaid.ts',
-  },
-  'mermaid-example-diagram': {
-    name: 'mermaid-example-diagram',
-    packageName: 'mermaid-example-diagram',
-    file: 'detector.ts',
-  },
-  'mermaid-zenuml': {
-    name: 'mermaid-zenuml',
-    packageName: 'mermaid-zenuml',
-    file: 'detector.ts',
-  },
-};
 
 interface MermaidBuildOptions {
   minify: boolean;
@@ -44,7 +25,7 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     format: 'esm',
     platform: 'browser',
     tsconfig: 'tsconfig.json',
-    resolveExtensions: ['.ts', '.js', '.json', '.jison'],
+    resolveExtensions: ['.ts', '.js', '.json', '.jison', '.yaml'],
     external: ['require', 'fs', 'path'],
     outdir: 'dist',
     plugins: [jisonPlugin, jsonSchemaPlugin],
@@ -52,18 +33,6 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     outExtension: { '.js': '.mjs' },
     ...override,
   };
-};
-
-const jisonPlugin: Plugin = {
-  name: 'jison',
-  setup(build) {
-    build.onLoad({ filter: /\.jison$/ }, async (args) => {
-      // Load the file from the file system
-      const source = await readFile(args.path, 'utf8');
-      const contents = transformJison(source);
-      return { contents, warnings: [] };
-    });
-  },
 };
 
 export const getBuildConfig = ({
