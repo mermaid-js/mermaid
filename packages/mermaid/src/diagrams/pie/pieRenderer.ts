@@ -3,7 +3,7 @@ import d3, { scaleOrdinal, pie as d3pie, arc } from 'd3';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { getConfig } from '../../config.js';
-import { parseFontSize } from '../../utils.js';
+import { cleanAndMerge, parseFontSize } from '../../utils.js';
 import type { DrawDefinition, Group, SVG } from '../../diagram-api/types.js';
 import type { D3Sections, PieDB, Sections } from './pieTypes.js';
 import type { MermaidConfig, PieDiagramConfig } from '../../config.type.js';
@@ -38,7 +38,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
 
   const db = diagObj.db as PieDB;
   const globalConfig: MermaidConfig = getConfig();
-  const pieConfig: Required<PieDiagramConfig> = db.getConfig();
+  const pieConfig: Required<PieDiagramConfig> = cleanAndMerge(db.getConfig(), globalConfig.pie);
 
   const height = 450;
   // TODO: remove document width
@@ -47,7 +47,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   const svg: SVG = selectSvgElement(id);
   // Set viewBox
   svg.attr('viewBox', `0 0 ${width} ${height}`);
-  configureSvgSize(svg, height, width, globalConfig?.pie?.useMaxWidth ?? true);
+  configureSvgSize(svg, height, width, pieConfig.useMaxWidth);
 
   const MARGIN = 40;
   const LEGEND_RECT_SIZE = 18;
