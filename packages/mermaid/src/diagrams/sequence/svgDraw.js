@@ -3,8 +3,9 @@ import * as svgDrawCommon from '../common/svgDrawCommon';
 import { addFunction } from '../../interactionDb.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
-import { markdownToHTML } from '../../rendering-util/handle-markdown-text.js';
+import { createText } from '../../rendering-util/createText.js';
 
+import { select } from 'd3';
 export const ACTOR_TYPE_WIDTH = 18 * 2;
 
 export const drawRect = function (elem, rectData) {
@@ -121,6 +122,122 @@ const popupMenuDownFunc = function (popupId) {
   }
 };
 
+export const drawMarkdownText = function (elem, textData) {
+  const labelText = createText(elem, textData.text, {
+    class: textData.class,
+    useHtmlLabels: true,
+    width: textData.width,
+  });
+  const messageLabel = elem.append('g');
+
+  // Create inner g, label, this will be positioned now for centering the text
+  const innerLabel = messageLabel.insert('g').attr('class', 'label');
+  innerLabel.node().appendChild(labelText);
+
+  // Center the label
+  let bbox = labelText.getBBox();
+
+  const div = labelText.children[0];
+  const dv = select(labelText);
+  bbox = div.getBoundingClientRect();
+  dv.attr('width', bbox.width);
+  dv.attr('height', bbox.height);
+
+  innerLabel.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
+
+  let prevTextHeight = 0;
+  let textHeight = 0;
+
+  const [_textFontSize, _textFontSizePx] = parseFontSize(textData.fontSize);
+
+  let dy = 0;
+  let yfunc = () => textData.y;
+  if (
+    textData.valign !== undefined &&
+    textData.textMargin !== undefined &&
+    textData.textMargin > 0
+  ) {
+    switch (textData.valign) {
+      case 'top':
+      case 'start':
+        yfunc = () => Math.round(textData.y + textData.textMargin);
+        break;
+      case 'middle':
+      case 'center':
+        yfunc = () =>
+          Math.round(textData.y + (prevTextHeight + textHeight + textData.textMargin) / 2);
+        break;
+      case 'bottom':
+      case 'end':
+        yfunc = () =>
+          Math.round(
+            textData.y +
+              (prevTextHeight + textHeight + 2 * textData.textMargin) -
+              textData.textMargin
+          );
+        break;
+    }
+  }
+
+  if (
+    textData.anchor !== undefined &&
+    textData.textMargin !== undefined &&
+    textData.width !== undefined
+  ) {
+    switch (textData.anchor) {
+      case 'left':
+      case 'start':
+        textData.x = Math.round(textData.x + textData.textMargin);
+        textData.anchor = 'start';
+        textData.dominantBaseline = 'middle';
+        textData.alignmentBaseline = 'middle';
+        break;
+      case 'middle':
+      case 'center':
+        textData.x = Math.round(textData.x + textData.width / 2);
+        textData.anchor = 'middle';
+        textData.dominantBaseline = 'middle';
+        textData.alignmentBaseline = 'middle';
+        break;
+      case 'right':
+      case 'end':
+        textData.x = Math.round(textData.x + textData.width - textData.textMargin);
+        textData.anchor = 'end';
+        textData.dominantBaseline = 'middle';
+        textData.alignmentBaseline = 'middle';
+        break;
+    }
+  }
+
+  if (textData.anchor !== undefined) {
+    messageLabel
+      .attr('text-anchor', textData.anchor)
+      .attr('dominant-baseline', textData.dominantBaseline)
+      .attr('alignment-baseline', textData.alignmentBaseline);
+  }
+  if (textData.fontFamily !== undefined) {
+    messageLabel.style('font-family', textData.fontFamily);
+  }
+  if (_textFontSizePx !== undefined) {
+    messageLabel.style('font-size', _textFontSizePx);
+  }
+  if (textData.fontWeight !== undefined) {
+    messageLabel.style('font-weight', textData.fontWeight);
+  }
+  if (textData.fill !== undefined) {
+    messageLabel.attr('fill', textData.fill);
+  }
+  if (textData.class !== undefined) {
+    messageLabel.attr('class', textData.class);
+  } else if (dy !== 0) {
+    textData.y = dy;
+  }
+
+  messageLabel.attr('transform', `translate(${textData.x}, ${yfunc() + textData.textMargin})`);
+
+  return labelText;
+};
+
 export const drawText = function (elem, textData) {
   let prevTextHeight = 0;
   let textHeight = 0;
@@ -228,10 +345,7 @@ export const drawText = function (elem, textData) {
     }
 
     const text = line || ZERO_WIDTH_SPACE;
-    if (textData.textType) {
-      const HTMLtext = markdownToHTML(text);
-      textElem.text(HTMLtext);
-    } else if (textData.tspan) {
+    if (textData.tspan) {
       const span = textElem.append('tspan');
       span.attr('x', textData.x);
       if (textData.fill !== undefined) {
