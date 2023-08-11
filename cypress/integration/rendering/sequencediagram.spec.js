@@ -937,7 +937,7 @@ context('Sequence diagram', () => {
           sequenceDiagram
           Alice -->> Bob: "\`Hello using **markdown**\`"
           `,
-          { sequence: { htmlLabels: true } }
+          { htmlLabels: true, sequence: { htmlLabels: true }, securityLevel: 'loose' }
         );
       });
     });

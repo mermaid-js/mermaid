@@ -1,6 +1,11 @@
 // @ts-nocheck TODO: fix file
 import { select, selectAll } from 'd3';
-import svgDraw, { ACTOR_TYPE_WIDTH, drawText, fixLifeLineHeights } from './svgDraw.js';
+import svgDraw, {
+  ACTOR_TYPE_WIDTH,
+  drawMarkdownText,
+  drawText,
+  fixLifeLineHeights,
+} from './svgDraw.js';
 import { log } from '../../logger.js';
 import common from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon';
@@ -380,7 +385,11 @@ const drawMessage = function (diagram, msgModel, lineStartY: number, diagObj: Di
   textObj.textMargin = conf.wrapPadding;
   textObj.tspan = false;
 
-  drawText(diagram, textObj);
+  if (textType) {
+    drawMarkdownText(diagram, textObj);
+  } else {
+    drawText(diagram, textObj);
+  }
 
   const textWidth = textDims.width;
 
