@@ -10,7 +10,7 @@
 
 #### Grammar
 
-This would be to define a jison grammar for the new diagram type. That should start with a way to identify that the text in the mermaid tag is a diagram of that type. Create a new folder under diagrams for your new diagram type and a parser folder in it. This leads us to step 2.
+This would be to define a JISON grammar for the new diagram type. That should start with a way to identify that the text in the mermaid tag is a diagram of that type. Create a new folder under diagrams for your new diagram type and a parser folder in it. This leads us to step 2.
 
 For instance:
 
@@ -60,7 +60,7 @@ Place the renderer in the diagram folder.
 
 ### Step 3: Detection of the new diagram type
 
-The second thing to do is to add the capability to detect the new diagram to type to the detectType in utils.js. The detection should return a key for the new diagram type.
+The second thing to do is to add the capability to detect the new diagram to type to the detectType in `diagram-api/detectType.ts`. The detection should return a key for the new diagram type.
 [This key will be used to as the aria roledescription](#aria-roledescription), so it should be a word that clearly describes the diagram type.
 For example, if your new diagram use a UML deployment diagram, a good key would be "UMLDeploymentDiagram" because assistive technologies such as a screen reader
 would voice that as "U-M-L Deployment diagram." Another good key would be "deploymentDiagram" because that would be voiced as "Deployment Diagram." A bad key would be "deployment" because that would not sufficiently describe the diagram.
