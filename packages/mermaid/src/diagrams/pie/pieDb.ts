@@ -37,7 +37,7 @@ const setConfig = (conf: PieDiagramConfig): void => {
   config = cleanAndMerge(DEFAULT_PIE_CONFIG, conf);
 };
 
-const getConfig = (): Required<PieDiagramConfig> => config;
+const getConfig = (): Required<PieDiagramConfig> => structuredClone(config);
 
 const resetConfig = (): void => {
   config = structuredClone(DEFAULT_PIE_CONFIG);
