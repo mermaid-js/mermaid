@@ -271,13 +271,15 @@ if (typeof document !== 'undefined') {
    */
   window.addEventListener('load', contentLoaded, false);
   window.addEventListener('error', ({ message }) => {
-    if (message.includes('mermaid.initialize is not a function')) {
+    // Get mermaid function called from error message with regex
+    const match = message.match(/mermaid\.(\w+) is not a function/);
+    if (match) {
       const notify = () =>
         // eslint-disable-next-line no-console
         console.error(`------------------------------
 Breaking change in Mermaid v11
 ------------------------------
-Use mermaid.default.initialize() instead of mermaid.initialize()
+Use mermaid.default.${match[1]}() instead of mermaid.${match[1]}()
 Read more: https://github.com/mermaid-js/mermaid/releases/tag/v11.0.0
 `);
       notify();
