@@ -2131,4 +2131,20 @@ describe('Uses markdown for text', () => {
     expect(messages[0].message).toBe('Hello there, man');
     expect(messages[0].textType).toBe('markdown');
   });
+
+  it('should parse wrap and nowrap configs with markdown text', () => {
+    const diagram = new Diagram(`
+      sequenceDiagram
+      A-->>B: wrap: "\`Hello, this is a super long message with wrap\`"
+      A-->>B: nowrap: "\`Hi, I prefer my super long messages without wrap\`"
+    `);
+
+    const messages = diagram.db.getMessages();
+    expect(messages[0].wrap).toBe(true);
+    expect(messages[0].message).toBe('Hello, this is a super long message with wrap');
+    expect(messages[0].textType).toBe('markdown');
+    expect(messages[1].wrap).toBe(false);
+    expect(messages[1].message).toBe('Hi, I prefer my super long messages without wrap');
+    expect(messages[1].textType).toBe('markdown');
+  });
 });
