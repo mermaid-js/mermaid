@@ -20,7 +20,7 @@ on:
     - cron: '30 8 * * *'
 
 jobs:
-  linkChecker:
+  link-checker:
     runs-on: ubuntu-latest
     permissions:
       # lychee only uses the GITHUB_TOKEN to avoid rate-limiting
@@ -39,10 +39,7 @@ jobs:
         uses: lycheeverse/lychee-action@v1.8.0
         with:
           args: >-
-            --verbose
-            --no-progress
-            --cache
-            --max-cache-age 1d
+            --config .github/lychee.toml
             packages/mermaid/src/docs/**/*.md
             README.md
             README.zh-CN.md
