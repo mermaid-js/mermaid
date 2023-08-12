@@ -12,12 +12,12 @@ graph TB
 
     <script src="/mermaid.min.js"></script>
     <script>
-      mermaid.default.initialize({
+      mermaid.initialize({
         startOnLoad: true,
       });
       const value = `graph TD\nHello --> World`;
       const el = document.getElementById('d2');
-      mermaid.default.render('did', value).then(({ svg }) => {
+      mermaid.render('did', value).then(({ svg }) => {
         console.log(svg);
         el.innerHTML = svg;
         if (window.Cypress) {

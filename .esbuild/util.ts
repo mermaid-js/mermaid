@@ -49,6 +49,7 @@ export const getBuildConfig = ({
       }`]: `src/${file}`,
     },
     metafile,
+    logLevel: 'info',
   });
 
   if (core) {
@@ -65,7 +66,10 @@ export const getBuildConfig = ({
   if (format === 'iife') {
     output.format = 'iife';
     output.splitting = false;
-    output.globalName = 'mermaid';
+    output.globalName = '__esbuild_esm_mermaid';
+    output.footer = {
+      js: 'globalThis.mermaid = globalThis.__esbuild_esm_mermaid.default;',
+    };
     output.outExtension = { '.js': '.js' };
   } else {
     output.format = 'esm';

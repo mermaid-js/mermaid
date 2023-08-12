@@ -270,23 +270,6 @@ if (typeof document !== 'undefined') {
    * Wait for document loaded before starting the execution
    */
   window.addEventListener('load', contentLoaded, false);
-  window.addEventListener('error', ({ message }) => {
-    // Get mermaid function called from error message with regex
-    const match = message.match(/mermaid\.(\w+) is not a function/);
-    if (match) {
-      const notify = () =>
-        // eslint-disable-next-line no-console
-        console.error(`------------------------------
-Breaking change in Mermaid v11
-------------------------------
-Use mermaid.default.${match[1]}() instead of mermaid.${match[1]}()
-Read more: https://github.com/mermaid-js/mermaid/releases/tag/v11.0.0
-`);
-      notify();
-      // Log again after a delay to ensure it's the last message
-      setTimeout(notify, 1000);
-    }
-  });
 }
 
 /**
