@@ -270,6 +270,21 @@ if (typeof document !== 'undefined') {
    * Wait for document loaded before starting the execution
    */
   window.addEventListener('load', contentLoaded, false);
+  window.addEventListener('error', ({ message }) => {
+    if (message.includes('mermaid.initialize is not a function')) {
+      const notify = () =>
+        // eslint-disable-next-line no-console
+        console.error(`------------------------------
+Breaking change in Mermaid v11
+------------------------------
+Use mermaid.default.initialize() instead of mermaid.initialize()
+Read more: https://github.com/mermaid-js/mermaid/releases/tag/v11.0.0
+`);
+      notify();
+      // Log again after a delay to ensure it's the last message
+      setTimeout(notify, 1000);
+    }
+  });
 }
 
 /**
