@@ -12,17 +12,15 @@ interface MermaidBuildOptions {
   minify: boolean;
   core?: boolean;
   metafile?: boolean;
+  format?: 'esm' | 'iife';
   entryName: keyof typeof packageOptions;
 }
 
 const buildOptions = (override: BuildOptions): BuildOptions => {
   return {
     bundle: true,
-    splitting: true,
     minify: true,
     keepNames: true,
-    banner: { js: '"use strict";' },
-    format: 'esm',
     platform: 'browser',
     tsconfig: 'tsconfig.json',
     resolveExtensions: ['.ts', '.js', '.json', '.jison', '.yaml'],
@@ -30,7 +28,6 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     outdir: 'dist',
     plugins: [jisonPlugin, jsonSchemaPlugin],
     sourcemap: 'external',
-    outExtension: { '.js': '.mjs' },
     ...override,
   };
 };
@@ -40,13 +37,16 @@ export const getBuildConfig = ({
   core,
   entryName,
   metafile,
+  format,
 }: MermaidBuildOptions): BuildOptions => {
   const external: string[] = ['require', 'fs', 'path'];
   const { name, file, packageName } = packageOptions[entryName];
   let output: BuildOptions = buildOptions({
     absWorkingDir: resolve(__dirname, `../packages/${packageName}`),
     entryPoints: {
-      [`${name}${core ? '.core' : '.esm'}${minify ? '.min' : ''}`]: `src/${file}`,
+      [`${name}${core ? '.core' : format === 'iife' ? '' : '.esm'}${
+        minify ? '.min' : ''
+      }`]: `src/${file}`,
     },
     metafile,
   });
@@ -61,5 +61,17 @@ export const getBuildConfig = ({
     external.push(...Object.keys(dependencies));
     output.external = external;
   }
+
+  if (format === 'iife') {
+    output.format = 'iife';
+    output.splitting = false;
+    output.globalName = 'mermaid';
+    output.outExtension = { '.js': '.js' };
+  } else {
+    output.format = 'esm';
+    output.splitting = true;
+    output.outExtension = { '.js': '.mjs' };
+  }
+
   return output;
 };

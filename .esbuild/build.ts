@@ -15,6 +15,7 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
     await writeFile(`stats/meta-${entryName}.json`, JSON.stringify(metafile));
   }
   await build(getBuildConfig({ entryName, minify: false, core: true }));
+  await build(getBuildConfig({ entryName, minify: true, format: 'iife' }));
 };
 
 const handler = (e) => {

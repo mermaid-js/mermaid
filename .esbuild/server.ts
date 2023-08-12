@@ -8,6 +8,9 @@ async function createServer() {
   const mermaidCtx = await context(
     getBuildConfig({ minify: false, core: false, entryName: 'mermaid' })
   );
+  const mermaidIIFECtx = await context(
+    getBuildConfig({ minify: false, core: false, entryName: 'mermaid', format: 'iife' })
+  );
   const externalCtx = await context(
     getBuildConfig({ minify: false, core: false, entryName: 'mermaid-example-diagram' })
   );
@@ -16,6 +19,7 @@ async function createServer() {
   );
 
   mermaidCtx.watch();
+  mermaidIIFECtx.watch();
   externalCtx.watch();
   zenuml.watch();
 
