@@ -27,22 +27,31 @@ export class MermaidServiceRegistry extends DefaultServiceRegistry {
   private documents: () => LangiumDocuments;
 
   public override register(language: LangiumServices): void {
-    if (language.LanguageMetaData.languageId === 'info') {
-      this.infoServices = language as InfoServices;
-    } else if (language.LanguageMetaData.languageId === 'journey') {
-      this.journeyServices = language as JourneyServices;
-    } else if (language.LanguageMetaData.languageId === 'mindmap') {
-      this.journeyServices = language as JourneyServices;
-    } else if (language.LanguageMetaData.languageId === 'pie') {
-      this.pieServices = language as PieServices;
-    } else if (language.LanguageMetaData.languageId === 'sankey') {
-      this.sankeyServices = language as SankeyServices;
-    } else if (language.LanguageMetaData.languageId === 'quadrant') {
-      this.quadrantServices = language as QuadrantServices;
-    } else if (language.LanguageMetaData.languageId === 'timeline') {
-      this.timelineServices = language as TimelineServices;
-    } else {
-      super.register(language);
+    switch (language.LanguageMetaData.languageId) {
+      case 'info':
+        this.infoServices = language as InfoServices;
+        break;
+      case 'journey':
+        this.journeyServices = language as JourneyServices;
+        break;
+      case 'mindmap':
+        this.mindmapServices = language as MindmapServices;
+        break;
+      case 'pie':
+        this.pieServices = language as PieServices;
+        break;
+      case 'sankey':
+        this.sankeyServices = language as SankeyServices;
+        break;
+      case 'quadrant':
+        this.quadrantServices = language as QuadrantServices;
+        break;
+      case 'timeline':
+        this.timelineServices = language as TimelineServices;
+        break;
+      default:
+        super.register(language);
+        break;
     }
   }
 
