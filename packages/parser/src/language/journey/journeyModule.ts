@@ -4,6 +4,7 @@ import {
   type LangiumSharedServices,
   type Module,
   type PartialLangiumServices,
+  type LangiumParser,
   createDefaultModule,
   createDefaultSharedModule,
   inject,
@@ -13,12 +14,14 @@ import { JourneyValueConverter } from './journeyValueConverter.js';
 import { JourneyTokenBuilder } from './journeyTokenBuilder.js';
 import { MermaidGeneratedSharedModule, JourneyGeneratedModule } from '../generated/module.js';
 import { CommonLexer } from '../common/commonLexer.js';
+import { createJourneyParser } from './journeyParser.js';
 
 /**
  * Declaration of `Journey` services.
  */
 export type JourneyAddedServices = {
   parser: {
+    LangiumParser: LangiumParser;
     Lexer: CommonLexer;
     TokenBuilder: JourneyTokenBuilder;
     ValueConverter: JourneyValueConverter;
@@ -37,6 +40,7 @@ export type JourneyServices = LangiumServices & JourneyAddedServices;
 export const JourneyModule: Module<JourneyServices, PartialLangiumServices & JourneyAddedServices> =
   {
     parser: {
+      LangiumParser: (services) => createJourneyParser(services),
       Lexer: (services) => new CommonLexer(services),
       TokenBuilder: () => new JourneyTokenBuilder(),
       ValueConverter: () => new JourneyValueConverter(),

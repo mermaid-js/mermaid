@@ -2,6 +2,12 @@ grammar Journey
 
 // common stuff in ../common/common.langium
 // can't import directly because of JOURNEY_TASK_TITLE parse rule
+interface Common {
+  accDescr?: string;
+  accTitle?: string;
+  title?: string;
+}
+
 fragment TitleAndAccessibilities:
   ((accDescr=ACC_DESCR | accTitle=ACC_TITLE | title=TITLE) NEWLINE+)+
 ;
@@ -17,7 +23,13 @@ hidden terminal DIRECTIVE: /[\t ]*%%{[\s\S]*?}%%\s*/;
 hidden terminal SINGLE_LINE_COMMENT: /[\t ]*%%[^\n\r]*/;
 
 // actual grammar
-entry Journey:
+interface Journey extends Common {
+  actors: string[];
+  sections: JourneySection[];
+  tasks: JourneyTask[];
+}
+
+entry Journey returns Journey:
   NEWLINE*
   "journey"
   (

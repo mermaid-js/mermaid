@@ -44,6 +44,8 @@ describe('journey', () => {
     expect(result.lexerErrors).toHaveLength(0);
 
     const value = result.value;
+    expect(value.actors).toStrictEqual(['cat']);
+
     expect(value.sections[0].title).toBe('order from website');
     expect(value.sections[0].tasks[0].actors).toStrictEqual(['cat']);
     expect(value.sections[0].tasks[0].score).toBe(5);
@@ -66,7 +68,8 @@ describe('journey', () => {
     expect(result.parserErrors).toHaveLength(0);
     expect(result.lexerErrors).toHaveLength(0);
 
-    const { sections } = result.value;
+    const { sections, actors } = result.value;
+    expect(actors).toStrictEqual(['alice', 'bob', 'charlie']);
 
     expect(sections[0].title).toBe('documentation');
     const { tasks: sectionOneTasks } = sections[0];
@@ -106,6 +109,8 @@ describe('journey', () => {
 
     const value = result.value;
     expect(value.$type).toBe(Journey);
+    expect(value.actors).toStrictEqual(['cat']);
+
     expect(value.tasks[0].actors).toStrictEqual(['cat']);
     expect(value.tasks[0].score).toBe(5);
     expect(value.tasks[0].title).toBe('task a');
