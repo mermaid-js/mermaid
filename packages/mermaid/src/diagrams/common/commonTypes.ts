@@ -1,12 +1,12 @@
 export interface RectData {
-  x?: number;
-  y?: number;
-  fill?: string;
-  width?: number;
-  height?: number;
-  stroke?: string;
+  x: number;
+  y: number;
+  fill: string;
+  width: number;
+  height: number;
+  stroke: string;
   class?: string;
-  color?: string | number;
+  color?: string;
   rx?: number;
   ry?: number;
   attrs?: Record<string, string | number>;
@@ -44,7 +44,7 @@ export interface TextObject {
   rx: number;
   ry: number;
   tspan: boolean;
-  valign: unknown;
+  valign?: string;
 }
 
 export type D3RectElement = d3.Selection<SVGRectElement, unknown, Element | null, unknown>;

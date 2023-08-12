@@ -15,24 +15,22 @@ import { lineBreakRegex } from './common.js';
 
 export const drawRect = (element: SVG | Group, rectData: RectData): D3RectElement => {
   const rectElement: D3RectElement = element.append('rect');
-  rectData.x !== undefined && rectElement.attr('x', rectData.x);
-  rectData.y !== undefined && rectElement.attr('y', rectData.y);
-  rectData.fill !== undefined && rectElement.attr('fill', rectData.fill);
-  rectData.stroke !== undefined && rectElement.attr('stroke', rectData.stroke);
-  rectData.width !== undefined && rectElement.attr('width', rectData.width);
-  rectData.height !== undefined && rectElement.attr('height', rectData.height);
+  rectElement.attr('x', rectData.x);
+  rectElement.attr('y', rectData.y);
+  rectElement.attr('fill', rectData.fill);
+  rectElement.attr('stroke', rectData.stroke);
+  rectElement.attr('width', rectData.width);
+  rectElement.attr('height', rectData.height);
   rectData.rx !== undefined && rectElement.attr('rx', rectData.rx);
   rectData.ry !== undefined && rectElement.attr('ry', rectData.ry);
 
-  if (rectData.attrs !== undefined && rectData.attrs !== null) {
+  if (rectData.attrs !== undefined) {
     for (const attrKey in rectData.attrs) {
       rectElement.attr(attrKey, rectData.attrs[attrKey]);
     }
   }
 
-  if (rectData.class !== undefined) {
-    rectElement.attr('class', rectData.class);
-  }
+  rectData.class !== undefined && rectElement.attr('class', rectData.class);
 
   return rectElement;
 };
@@ -117,15 +115,12 @@ export const getTextObj = (): TextObject => {
     y: 0,
     width: 100,
     height: 100,
-    fill: undefined,
-    anchor: undefined,
     'text-anchor': 'start',
     style: '#666',
     textMargin: 0,
     rx: 0,
     ry: 0,
     tspan: true,
-    valign: undefined,
   };
   return testObject;
 };
