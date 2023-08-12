@@ -1,3 +1,6 @@
+/**
+ * Shared common options for both ESBuild and Vite
+ */
 export const packageOptions = {
   mermaid: {
     name: 'mermaid',
