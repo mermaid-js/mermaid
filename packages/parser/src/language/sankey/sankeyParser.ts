@@ -20,7 +20,7 @@ export function createSankeyParser(services: SankeyServices): LangiumParser {
         nodes.add(link.target);
       }
     });
-    sankeyValue.nodes = [...nodes.values()];
+    sankeyValue.nodes = [...nodes];
 
     return parseResult;
   };
