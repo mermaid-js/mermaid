@@ -15,7 +15,6 @@ import type { ParseDirectiveDefinition } from '../../diagram-api/types.js';
 import type { PieFields, PieDB, Sections } from './pieTypes.js';
 import type { RequiredDeep } from 'type-fest';
 import type { PieDiagramConfig } from '../../config.type.js';
-import { cleanAndMerge } from '../../utils.js';
 
 export const DEFAULT_PIE_CONFIG: Required<PieDiagramConfig> = {
   useMaxWidth: true,
@@ -31,17 +30,9 @@ export const DEFAULT_PIE_DB: RequiredDeep<PieFields> = {
 
 let sections: Sections = DEFAULT_PIE_DB.sections;
 let showData: boolean = DEFAULT_PIE_DB.showData;
-let config: Required<PieDiagramConfig> = structuredClone(DEFAULT_PIE_CONFIG);
-
-const setConfig = (conf: PieDiagramConfig): void => {
-  config = cleanAndMerge(DEFAULT_PIE_CONFIG, conf);
-};
+const config: Required<PieDiagramConfig> = structuredClone(DEFAULT_PIE_CONFIG);
 
 const getConfig = (): Required<PieDiagramConfig> => structuredClone(config);
-
-const resetConfig = (): void => {
-  config = structuredClone(DEFAULT_PIE_CONFIG);
-};
 
 const parseDirective: ParseDirectiveDefinition = (statement, context, type) => {
   _parseDirective(this, statement, context, type);
@@ -51,7 +42,6 @@ const clear = (): void => {
   sections = structuredClone(DEFAULT_PIE_DB.sections);
   showData = DEFAULT_PIE_DB.showData;
   commonClear();
-  resetConfig();
 };
 
 const addSection = (label: string, value: number): void => {
@@ -78,9 +68,7 @@ const setShowData = (toggle: boolean): void => {
 const getShowData = (): boolean => showData;
 
 export const db: PieDB = {
-  setConfig,
   getConfig,
-  resetConfig,
 
   parseDirective,
   clear,
