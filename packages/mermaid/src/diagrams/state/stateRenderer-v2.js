@@ -84,6 +84,7 @@ export const setConf = function (cnf) {
  * @returns {object} ClassDef styles (a Map with keys = strings, values = )
  */
 export const getClasses = function (text, diagramObj) {
+  diagramObj.db.extract(diagramObj.db.getRootDocV2());
   return diagramObj.db.getClasses();
 };
 
