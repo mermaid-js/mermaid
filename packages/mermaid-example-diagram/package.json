@@ -43,8 +43,7 @@
     "cytoscape-cose-bilkent": "^4.1.0",
     "cytoscape-fcose": "^2.1.0",
     "d3": "^7.0.0",
-    "khroma": "^2.0.0",
-    "non-layered-tidy-tree-layout": "^2.0.2"
+    "khroma": "^2.0.0"
   },
   "devDependencies": {
     "@types/cytoscape": "^3.19.9",
