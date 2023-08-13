@@ -12,32 +12,11 @@ Mermaid is diagramming and charting tool that renders Markdown-like text definit
 
 <img src="/header.png" alt="" />
 
-<p class="space-x-2 flex items-center">
-  <a href="https://github.com/mermaid-js/mermaid/actions/workflows/build.yml" target="_blank" rel="noreferrer">
-    <img src="https://github.com/mermaid-js/mermaid/actions/workflows/build.yml/badge.svg" alt="Build CI Status">
-  </a>
-  <a href="https://www.npmjs.com/package/mermaid" target="_blank" rel="noreferrer">
-    <img src="https://img.shields.io/npm/v/mermaid" alt="NPM">
-  </a>
-  <a href="https://bundlephobia.com/package/mermaid" target="_blank" rel="noreferrer">
-    <img src="https://img.shields.io/bundlephobia/minzip/mermaid" alt="npm minified gzipped bundle size">
-  </a>
-  <a href="https://coveralls.io/github/mermaid-js/mermaid?branch=master" target="_blank" rel="noreferrer">
-    <img src="https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master" alt="Coverage Status">
-  </a>
-  <a href="https://www.jsdelivr.com/package/npm/mermaid" target="_blank" rel="noreferrer">
-    <img src="https://img.shields.io/jsdelivr/npm/hm/mermaid" alt="CDN Status">
-  </a>
-  <a href="https://www.npmjs.com/package/mermaid" target="_blank" rel="noreferrer">
-    <img src="https://img.shields.io/npm/dm/mermaid" alt="NPM">
-  </a>
-  <a href="https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE" target="_blank" rel="noreferrer">
-    <img src="https://img.shields.io/static/v1?message=join%20chat&amp;color=9cf&amp;logo=slack&amp;label=slack" alt="Join our Slack!">
-  </a>
-  <a href="https://twitter.com/mermaidjs_" target="_blank" rel="noreferrer">
-    <img src="https://img.shields.io/twitter/follow/mermaidjs_?style=social" alt="Twitter Follow">
-  </a>
-</p>
+<div class='badges'>
+
+[![Build CI Status](https://github.com/mermaid-js/mermaid/actions/workflows/build.yml/badge.svg)](https://github.com/mermaid-js/mermaid/actions/workflows/build.yml) [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid) [![npm minified gzipped bundle size](https://img.shields.io/bundlephobia/minzip/mermaid)](https://bundlephobia.com/package/mermaid) [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master) [![CDN Status](https://img.shields.io/jsdelivr/npm/hm/mermaid)](https://www.jsdelivr.com/package/npm/mermaid) [![NPM](https://img.shields.io/npm/dm/mermaid)](https://www.npmjs.com/package/mermaid) [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE) [![Twitter Follow](https://img.shields.io/twitter/follow/mermaidjs_?style=social)](https://twitter.com/mermaidjs_)
+
+</div>
 
 <!-- Mermaid book banner -->
 
@@ -453,20 +432,22 @@ A quick note from Knut Sveidqvist:
 _Mermaid was created by Knut Sveidqvist for easier documentation._
 
 <style scoped>
-  #contributors + p,
-  #about-mermaid + p + p + blockquote + img + p
-  {
-    display: flex
+  .badges > p {
+    display: flex;
+  }
+  .badges > p > a {
+    margin: 0 0.5rem;
   }
 
-  #contributors + p a,
-  #about-mermaid + p + p + blockquote + img + p a
-  {
-    margin: 0 0.5rem
+  #contributors + p {
+    display: flex;
   }
 
-  .dark #VPContent > div > div > div.content > div > main > div > div > img
-  {
+  #contributors + p a {
+    margin: 0 0.5rem;
+  }
+
+  .dark #VPContent > div > div > div.content > div > main > div > div > img {
     filter: invert(1) hue-rotate(217deg)  contrast(0.72);
   }
 </style>
