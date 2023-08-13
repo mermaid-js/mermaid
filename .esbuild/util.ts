@@ -67,6 +67,8 @@ export const getBuildConfig = ({
     output.format = 'iife';
     output.splitting = false;
     output.globalName = '__esbuild_esm_mermaid';
+    // Workaround for removing the .default access in esbuild IIFE.
+    // https://github.com/mermaid-js/mermaid/pull/4109#discussion_r1292317396
     output.footer = {
       js: 'globalThis.mermaid = globalThis.__esbuild_esm_mermaid.default;',
     };
