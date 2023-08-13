@@ -33,9 +33,11 @@ Once the release happens we add a tag to the `release` branch and merge it with 
 
 We use the follow naming convention for branches:
 
-```text
+```txt
    [feature | bug | chore | docs]/[issue number]_[short description using dashes ('-') or underscores ('_') instead of spaces]
 ```
+
+You can always check current [configuration of labelling and branch prefixes](https://github.com/mermaid-js/mermaid/blob/develop/.github/pr-labeler.yml)
 
 - The first part is the **type** of change: a feature, bug, chore, or documentation change ('docs')
 - followed by a _slash_ (which helps to group like types together in many git tools)
