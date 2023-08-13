@@ -15,7 +15,7 @@
     "git graph"
   ],
   "scripts": {
-    "build": "pnpm build:esbuild && pnpm build:types",
+    "build": "pnpm run -r clean && pnpm build:esbuild && pnpm build:types",
     "build:esbuild": "pnpm run -r clean && ts-node-esm --transpileOnly .esbuild/build.ts",
     "build:mermaid": "pnpm build:esbuild --mermaid",
     "build:viz": "pnpm build:esbuild --visualize",
@@ -82,6 +82,7 @@
     "@vitest/spy": "^0.33.0",
     "@vitest/ui": "^0.33.0",
     "ajv": "^8.12.0",
+    "chokidar": "^3.5.3",
     "concurrently": "^8.0.1",
     "cors": "^2.8.5",
     "cypress": "^12.10.0",

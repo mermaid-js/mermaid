@@ -74,6 +74,9 @@ importers:
       ajv:
         specifier: ^8.12.0
         version: 8.12.0
+      chokidar:
+        specifier: ^3.5.3
+        version: 3.5.3
       concurrently:
         specifier: ^8.0.1
         version: 8.0.1
