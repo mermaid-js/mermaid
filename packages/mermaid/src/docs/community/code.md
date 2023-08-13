@@ -68,7 +68,7 @@ You may need to change existing tests if they were inaccurate.
 
 If you are adding a feature, you will definitely need to add tests. Depending on the size of your feature, you may need to add integration tests.
 
-## Unit Tests
+### Unit Tests
 
 Unit tests are tests that test a single function or module. They are the easiest to write and the fastest to run.
 
@@ -88,7 +88,7 @@ When writing new tests, it's easier to have the tests automatically run as you m
 pnpm test:watch
 ```
 
-## Integration/End-to-End (e2e) tests
+### Integration/End-to-End (e2e) tests
 
 These test the rendering and visual appearance of the diagrams.
 This ensures that the rendering of that feature in the e2e will be reviewed in the release process going forward. Less chance that it breaks!

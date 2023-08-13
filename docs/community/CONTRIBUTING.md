@@ -170,7 +170,7 @@ You may need to change existing tests if they were inaccurate.
 
 If you are adding a feature, you will definitely need to add tests. Depending on the size of your feature, you may need to add integration tests.
 
-## Unit Tests
+### Unit Tests
 
 Unit tests are tests that test a single function or module. They are the easiest to write and the fastest to run.
 
@@ -190,7 +190,7 @@ When writing new tests, it's easier to have the tests automatically run as you m
 pnpm test:watch
 ```
 
-## Integration/End-to-End (e2e) tests
+### Integration/End-to-End (e2e) tests
 
 These test the rendering and visual appearance of the diagrams.
 This ensures that the rendering of that feature in the e2e will be reviewed in the release process going forward. Less chance that it breaks!
@@ -277,7 +277,7 @@ The docs are located in the `packages/mermaid/src/docs` folder and are written i
 The contents of [mermaid.js.org](https://mermaid.js.org/) are based on the docs from the `master` branch.
 Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid.js.org/) once published.
 
-### How to Contribute to Documentation
+## How to Contribute to Documentation
 
 We are a little less strict here, it is OK to commit directly in the `develop` branch if you are a collaborator.
 
@@ -330,7 +330,7 @@ We encourage contributions to the documentation at [packages/mermaid/src/docs in
 
 **_DO NOT CHANGE FILES IN `/docs`_**
 
-### The official documentation site
+## The official documentation site
 
 **[The mermaid documentation site](https://mermaid.js.org/) is powered by [Vitepress](https://vitepress.vuejs.org/).**
 
@@ -361,29 +361,8 @@ To edit Docs on GitHub:
 6.  Visit the Actions tab in Github, `https://github.com/<Your Username>/mermaid/actions` and enable the actions for your fork. This will ensure that the documentation is built and updated in your fork.
 7.  Create a Pull Request of your newly forked branch by clicking the green **Create Pull Request** button.
 
-### Documentation organization: Sidebar navigation
+## Documentation organization: Sidebar navigation
 
 If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation.**
 
 The sidebar navigation is defined in [the vitepress configuration file config.ts](../.vitepress/config.ts).
-
-## Questions or Suggestions?
-
-#### First search to see if someone has already asked (and hopefully been answered) or suggested the same thing.
-
-- Search in Discussions
-- Search in open Issues
-- Search in closed Issues
-
-If you find an open issue or discussion thread that is similar to your question but isn't answered, you can let us know that you are also interested in it.
-Use the GitHub reactions to add a thumbs-up to the issue or discussion thread.
-
-This helps the team know the relative interest in something and helps them set priorities and assignments.
-
-Feel free to add to the discussion on the issue or topic.
-
-If you can't find anything that already addresses your question or suggestion, _open a new issue:_
-
-Log in to [GitHub.com](https://www.github.com), open or append to an issue [using the GitHub issue tracker of the mermaid-js repository](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Area%3A+Documentation%22).
-
-### How to Contribute a Suggestion

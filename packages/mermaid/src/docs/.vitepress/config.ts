@@ -196,6 +196,7 @@ function sidebarCommunity() {
         { text: 'Contributing to Mermaid', link: '/community/development' },
         { text: 'Contributing Code', link: '/community/code' },
         { text: 'Contributing Documentation', link: '/community/documentation' },
+        { text: 'Questions and Suggestions', link: '/community/questionsAndSuggestions' },
         { text: 'Adding Diagrams', link: '/community/newDiagram' },
         { text: 'Security', link: '/community/security' },
       ],
