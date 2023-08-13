@@ -51,8 +51,10 @@ function handleFileChange() {
     clearTimeout(timeoutId);
   }
   timeoutId = setTimeout(async () => {
+    const time = Date.now();
     await rebuildAll();
     sendEventsToAll();
+    console.log('Rebuild & Refresh complete in' + (Date.now() - time) + 'ms');
     timeoutId = undefined;
   }, 100);
 }

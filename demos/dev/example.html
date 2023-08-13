@@ -5,6 +5,8 @@
     <title>Mermaid development page</title>
   </head>
   <body>
+    <pre class="mermaid">info</pre>
+
     <pre id="diagram" class="mermaid">
 graph TB
       a --> b
@@ -44,8 +46,8 @@ graph TB
             location.reload();
           }
         };
-        events.onerror = (error) => {
-          console.error(error);
+        events.onerror = () => {
+          // No need to log this error, as it's not useful.
           events.close();
           // Try to reconnect after 1 second in case of errors
           setTimeout(connectToEvents, 1000);
@@ -55,7 +57,7 @@ graph TB
         };
       };
       if (liveReload) {
-        connectToEvents();
+        setTimeout(connectToEvents, 1000);
       }
     </script>
   </body>
