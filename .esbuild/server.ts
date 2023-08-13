@@ -20,9 +20,9 @@ const zenumlCtx = await context(
 const contexts = [mermaidCtx, mermaidIIFECtx, externalCtx, zenumlCtx];
 
 const rebuildAll = async () => {
-  const time = Date.now();
+  console.time('Rebuild time');
   await Promise.all(contexts.map((ctx) => ctx.rebuild()));
-  console.log('Rebuilt in' + (Date.now() - time) + 'ms');
+  console.timeEnd('Rebuild time');
 };
 
 let clients: { id: number; response: Response }[] = [];
@@ -64,7 +64,7 @@ function sendEventsToAll() {
 }
 
 async function createServer() {
-  await rebuildAll();
+  handleFileChange();
   const app = express();
   chokidar
     .watch('**/src/**/*.{js,ts,yaml,json}', {
