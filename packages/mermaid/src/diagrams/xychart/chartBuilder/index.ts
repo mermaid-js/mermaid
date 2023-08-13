@@ -1,7 +1,5 @@
-// @ts-ignore: TODO Fix ts errors
-import { XYChartConfig } from '../../../config.type.js';
 import { log } from '../../../logger.js';
-import { DrawableElem, XYChartData, XYChartThemeConfig } from './Interfaces.js';
+import { DrawableElem, XYChartData, XYChartConfig, XYChartThemeConfig } from './Interfaces.js';
 import { Orchestrator } from './Orchestrator.js';
 
 export class XYChartBuilder {

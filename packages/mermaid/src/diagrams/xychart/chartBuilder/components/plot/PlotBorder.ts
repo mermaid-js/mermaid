@@ -1,5 +1,4 @@
-import { XYChartConfig } from '../../../../../config.type.js';
-import { BoundingRect, DrawableElem, XYChartThemeConfig } from '../../Interfaces.js';
+import { BoundingRect, DrawableElem, XYChartConfig, XYChartThemeConfig } from '../../Interfaces.js';
 export class PlotBorder {
   constructor(
     private boundingRect: BoundingRect,
@@ -19,7 +18,7 @@ export class PlotBorder {
               path: `M ${x},${y} L ${x + width},${y} M ${x + width},${y + height} M ${x},${
                 y + height
               } L ${x},${y}`,
-              strokeFill: this.chartThemeConfig.xychartAxisLineColor,
+              strokeFill: this.chartThemeConfig.axisLineColor,
               strokeWidth: 1,
             },
           ],
@@ -35,7 +34,7 @@ export class PlotBorder {
             path: `M ${x},${y} M ${x + width},${y} M ${x + width},${y + height} L ${x},${
               y + height
             } L ${x},${y}`,
-            strokeFill: this.chartThemeConfig.xychartAxisLineColor,
+            strokeFill: this.chartThemeConfig.axisLineColor,
             strokeWidth: 1,
           },
         ],

@@ -234,6 +234,10 @@ const config: Partial<MermaidConfig> = {
     ...defaultConfigJson.pie,
     useWidth: undefined,
   },
+  xyChart: {
+    ...defaultConfigJson.xyChart,
+    useWidth: undefined,
+  },
   requirement: {
     ...defaultConfigJson.requirement,
     useWidth: undefined,

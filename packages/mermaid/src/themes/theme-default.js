@@ -273,16 +273,18 @@ class Theme {
     this.quadrantTitleFill = this.quadrantTitleFill || this.primaryTextColor;
 
     /* xychart */
-    this.xychartBackgroundColor = this.xychartBackgroundColor || this.background;
-    this.xychartTitleColor = this.xychartTitleColor || this.primaryTextColor;
-    this.xychartAxisLineColor = this.xychartAxisLineColor || this.primaryTextColor;
-    this.xychartXAxisTitleColor = this.xychartXAxisTitleColor || this.primaryTextColor;
-    this.xychartXAxisLableColor = this.xychartXAxisLableColor || this.primaryTextColor;
-    this.xychartXAxisTickColor = this.xychartXAxisTickColor || this.primaryTextColor;
-    this.xychartYAxisTitleColor = this.xychartYAxisTitleColor || this.primaryTextColor;
-    this.xychartYAxisLableColor = this.xychartYAxisLableColor || this.primaryTextColor;
-    this.xychartYAxisTickColor = this.xychartYAxisTickColor || this.primaryTextColor;
-    this.xychartPlotBaseColor = this.xychartPlotBaseColor || darken(this.primaryColor, 25);
+    this.xyChart = {
+      backgroundColor: this.xyChart?.backgroundColor || this.background,
+      titleColor: this.xyChart?.titleColor || this.primaryTextColor,
+      axisLineColor: this.xyChart?.axisLineColor || this.primaryTextColor,
+      xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
+      xAxisLableColor: this.xyChart?.xAxisLableColor || this.primaryTextColor,
+      xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,
+      yAxisTitleColor: this.xyChart?.yAxisTitleColor || this.primaryTextColor,
+      yAxisLableColor: this.xyChart?.yAxisLableColor || this.primaryTextColor,
+      yAxisTickColor: this.xyChart?.yAxisTickColor || this.primaryTextColor,
+      plotBaseColor: this.xyChart?.plotBaseColor || darken(this.primaryColor, 25),
+    };
 
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;

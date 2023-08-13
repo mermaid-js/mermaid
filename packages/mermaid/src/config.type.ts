@@ -704,33 +704,178 @@ export interface QuadrantChartConfig extends BaseDiagramConfig {
    */
   quadrantExternalBorderStrokeWidth?: number;
 }
-
+/**
+ * This object contains configuration for XYChart axis config
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "XYChartAxisConfig".
+ */
 export interface XYChartAxisConfig {
-  showLabel: boolean;
-  labelFontSize: number;
-  lablePadding: number;
-  showTitle: boolean;
-  titleFontSize: number;
-  titlePadding: number;
-  showTick: boolean;
-  tickLength: number;
-  tickWidth: number;
+  /**
+   * Should show the axis labels (tick text)
+   */
+  showLabel?: boolean;
+  /**
+   * font size of the axis labels (tick text)
+   */
+  labelFontSize?: number;
+  /**
+   * top and bottom space from axis label (tick text)
+   */
+  labelPadding?: number;
+  /**
+   * Should show the axis title
+   */
+  showTitle?: boolean;
+  /**
+   * font size of the axis title
+   */
+  titleFontSize?: number;
+  /**
+   * top and bottom space from axis title
+   */
+  titlePadding?: number;
+  /**
+   * Should show the axis tick lines
+   */
+  showTick?: boolean;
+  /**
+   * length of the axis tick lines
+   */
+  tickLength?: number;
+  /**
+   * width of the axis tick lines
+   */
+  tickWidth?: number;
 }
-
+/**
+ * This object contains configuration specific to XYCharts
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "XYChartConfig".
+ */
 export interface XYChartConfig extends BaseDiagramConfig {
-  width: number;
-  height: number;
-  fontFamily: string;
-  titleFontSize: number;
-  titlePadding: number;
-  showtitle: boolean;
-  xAxis: XYChartAxisConfig;
-  yAxis: XYChartAxisConfig;
-  plotBorderWidth: number;
-  chartOrientation: 'vertical' | 'horizontal';
-  plotReservedSpacePercent: number;
+  /**
+   * width of the chart
+   */
+  width?: number;
+  /**
+   * height of the chart
+   */
+  height?: number;
+  /**
+   * Font family of texts in the xyChart
+   */
+  fontFamily?: string;
+  /**
+   * Font size of the chart title
+   */
+  titleFontSize?: number;
+  /**
+   * Top and bottom space from the chart title
+   */
+  titlePadding?: number;
+  /**
+   * Should show the chart title
+   */
+  showTitle?: boolean;
+  xAxis?: XYChartAxisConfig1;
+  yAxis?: XYChartAxisConfig2;
+  /**
+   * width of the line around the plot of the chart
+   */
+  plotBorderWidth?: number;
+  /**
+   * How to plot will be drawn horizontal or vertical
+   */
+  chartOrientation?: 'vertical' | 'horizontal';
+  /**
+   * Minimum percent of space plots of the chart will take
+   */
+  plotReservedSpacePercent?: number;
 }
-
+/**
+ * This object contains configuration for XYChart axis config
+ */
+export interface XYChartAxisConfig1 {
+  /**
+   * Should show the axis labels (tick text)
+   */
+  showLabel?: boolean;
+  /**
+   * font size of the axis labels (tick text)
+   */
+  labelFontSize?: number;
+  /**
+   * top and bottom space from axis label (tick text)
+   */
+  labelPadding?: number;
+  /**
+   * Should show the axis title
+   */
+  showTitle?: boolean;
+  /**
+   * font size of the axis title
+   */
+  titleFontSize?: number;
+  /**
+   * top and bottom space from axis title
+   */
+  titlePadding?: number;
+  /**
+   * Should show the axis tick lines
+   */
+  showTick?: boolean;
+  /**
+   * length of the axis tick lines
+   */
+  tickLength?: number;
+  /**
+   * width of the axis tick lines
+   */
+  tickWidth?: number;
+}
+/**
+ * This object contains configuration for XYChart axis config
+ */
+export interface XYChartAxisConfig2 {
+  /**
+   * Should show the axis labels (tick text)
+   */
+  showLabel?: boolean;
+  /**
+   * font size of the axis labels (tick text)
+   */
+  labelFontSize?: number;
+  /**
+   * top and bottom space from axis label (tick text)
+   */
+  labelPadding?: number;
+  /**
+   * Should show the axis title
+   */
+  showTitle?: boolean;
+  /**
+   * font size of the axis title
+   */
+  titleFontSize?: number;
+  /**
+   * top and bottom space from axis title
+   */
+  titlePadding?: number;
+  /**
+   * Should show the axis tick lines
+   */
+  showTick?: boolean;
+  /**
+   * length of the axis tick lines
+   */
+  tickLength?: number;
+  /**
+   * width of the axis tick lines
+   */
+  tickWidth?: number;
+}
 /**
  * The object containing configurations specific for entity relationship diagrams
  *

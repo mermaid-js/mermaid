@@ -1,9 +1,8 @@
 import { ScaleLinear, scaleLinear } from 'd3';
-import { XYChartAxisConfig } from '../../../../../config.type.js';
 import { log } from '../../../../../logger.js';
 import { ITextDimensionCalculator } from '../../TextDimensionCalculator.js';
 import { BaseAxis } from './BaseAxis.js';
-import { XYChartAxisThemeConfig } from '../../Interfaces.js';
+import { XYChartAxisThemeConfig, XYChartAxisConfig } from '../../Interfaces.js';
 
 export class LinearAxis extends BaseAxis {
   private scale: ScaleLinear<number, number>;

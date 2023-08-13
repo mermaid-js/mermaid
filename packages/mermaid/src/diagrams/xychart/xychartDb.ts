@@ -2,6 +2,7 @@
 import { adjust, channel } from 'khroma';
 import mermaidAPI from '../../mermaidAPI.js';
 import * as configApi from '../../config.js';
+import defaultConfig from '../../defaultConfig.js';
 import { sanitizeText } from '../common/common.js';
 import {
   setAccTitle,
@@ -20,13 +21,15 @@ import {
   XYChartThemeConfig,
   isBandAxisData,
   isLinearAxisData,
+  XYChartConfig,
 } from './chartBuilder/Interfaces.js';
-import { XYChartConfig } from '../../config.type.js';
 import { getThemeVariables } from '../../themes/theme-default.js';
 
 const defaultThemeVariables = getThemeVariables();
 
 const config = configApi.getConfig();
+
+let plotIndex = 0;
 
 function plotColorPaletteGenerator(baseColor: string, noOfColorNeeded = 15): string[] {
   const colors = [];
@@ -48,62 +51,45 @@ function plotColorPaletteGenerator(baseColor: string, noOfColorNeeded = 15): str
 
 function getChartDefaultThemeConfig(): XYChartThemeConfig {
   return {
-    xychartTitleColor:
-      config.themeVariables?.xychartTitleColor || defaultThemeVariables.xychartTitleColor,
-    xychartAxisLineColor:
-      config.themeVariables?.xychartAxisLineColor || defaultThemeVariables.xychartAxisLineColor,
-    xychartXAxisLableColor:
-      config.themeVariables?.xychartXAxisLableColor || defaultThemeVariables.xychartXAxisLableColor,
-    xychartXAxisTitleColor:
-      config.themeVariables?.xychartXAxisTitleColor || defaultThemeVariables.xychartXAxisTitleColor,
-    xychartXAxisTickColor:
-      config.themeVariables?.xychartXAxisTickColor || defaultThemeVariables.xychartXAxisTickColor,
-    xychartYAxisLableColor:
-      config.themeVariables?.xychartYAxisLableColor || defaultThemeVariables.xychartYAxisLableColor,
-    xychartYAxisTitleColor:
-      config.themeVariables?.xychartYAxisTitleColor || defaultThemeVariables.xychartYAxisTitleColor,
-    xychartYAxisTickColor:
-      config.themeVariables?.xychartYAxisTickColor || defaultThemeVariables.xychartYAxisTickColor,
-    xychartPlotBaseColor:
-      config.themeVariables?.xychartPlotBaseColor || defaultThemeVariables.xychartPlotBaseColor,
+    titleColor:
+      config.themeVariables?.xyChart?.titleColor || defaultThemeVariables.xyChart.titleColor,
+    axisLineColor:
+      config.themeVariables?.xyChart?.axisLineColor || defaultThemeVariables.xyChart.axisLineColor,
+    xAxisLableColor:
+      config.themeVariables?.xyChart?.xAxisLableColor ||
+      defaultThemeVariables.xyChart.xAxisLableColor,
+    xAxisTitleColor:
+      config.themeVariables?.xyChart?.xAxisTitleColor ||
+      defaultThemeVariables.xyChart.xAxisTitleColor,
+    xAxisTickColor:
+      config.themeVariables?.xyChart?.xAxisTickColor ||
+      defaultThemeVariables.xyChart.xAxisTickColor,
+    yAxisLableColor:
+      config.themeVariables?.xyChart?.yAxisLableColor ||
+      defaultThemeVariables.xyChart.yAxisLableColor,
+    yAxisTitleColor:
+      config.themeVariables?.xyChart?.yAxisTitleColor ||
+      defaultThemeVariables.xyChart.yAxisTitleColor,
+    yAxisTickColor:
+      config.themeVariables?.xyChart?.yAxisTickColor ||
+      defaultThemeVariables.xyChart.yAxisTickColor,
+    plotBaseColor:
+      config.themeVariables?.xyChart?.plotBaseColor || defaultThemeVariables.xyChart.plotBaseColor,
   };
 }
 function getChartDefaultConfig(): XYChartConfig {
-  return config.xyChart
-    ? { ...config.xyChart, yAxis: { ...config.xyChart.yAxis }, xAxis: { ...config.xyChart.xAxis } }
-    : {
-        width: 700,
-        height: 500,
-        fontFamily: config.fontFamily || 'Sans',
-        titleFontSize: 16,
-        titlePadding: 5,
-        showtitle: true,
-        plotBorderWidth: 2,
-        yAxis: {
-          showLabel: true,
-          labelFontSize: 14,
-          lablePadding: 5,
-          showTitle: true,
-          titleFontSize: 16,
-          titlePadding: 5,
-          showTick: true,
-          tickLength: 5,
-          tickWidth: 2,
-        },
-        xAxis: {
-          showLabel: true,
-          labelFontSize: 14,
-          lablePadding: 5,
-          showTitle: true,
-          titleFontSize: 16,
-          titlePadding: 5,
-          showTick: true,
-          tickLength: 5,
-          tickWidth: 2,
-        },
-        chartOrientation: 'vertical',
-        plotReservedSpacePercent: 50,
-      };
+  return {
+    ...(defaultConfig.xyChart as XYChartConfig),
+    ...(config.xyChart ? config.xyChart : {}),
+    yAxis: {
+      ...(defaultConfig.xyChart as XYChartConfig).yAxis,
+      ...(config.xyChart?.yAxis ? config.xyChart.yAxis : {}),
+    },
+    xAxis: {
+      ...(defaultConfig.xyChart as XYChartConfig).xAxis,
+      ...(config.xyChart?.xAxis ? config.xyChart.xAxis : {}),
+    },
+  };
 }
 
 function getChartDefalutData(): XYChartData {
@@ -127,9 +113,9 @@ function getChartDefalutData(): XYChartData {
 let xyChartConfig: XYChartConfig = getChartDefaultConfig();
 let xyChartThemeConfig: XYChartThemeConfig = getChartDefaultThemeConfig();
 let xyChartData: XYChartData = getChartDefalutData();
-let plotColorPalette = Array.isArray(xyChartThemeConfig.xychartPlotBaseColor)
-  ? xyChartThemeConfig.xychartPlotBaseColor
-  : plotColorPaletteGenerator(xyChartThemeConfig.xychartPlotBaseColor);
+let plotColorPalette = Array.isArray(xyChartThemeConfig.plotBaseColor)
+  ? xyChartThemeConfig.plotBaseColor
+  : plotColorPaletteGenerator(xyChartThemeConfig.plotBaseColor);
 let hasSetXAxis = false;
 let hasSetYAxis = false;
 
@@ -223,8 +209,6 @@ function transformDataWithOutCategory(data: number[]): SimplePlotDataType {
   return retData;
 }
 
-let plotIndex = 0;
-
 function getPlotColorFromPalette(plotIndex: number): string {
   return plotColorPalette[plotIndex === 0 ? 0 : plotIndex % (plotColorPalette.length - 1)];
 }
@@ -272,9 +256,9 @@ const clear = function () {
   xyChartConfig = getChartDefaultConfig();
   xyChartData = getChartDefalutData();
   xyChartThemeConfig = getChartDefaultThemeConfig();
-  plotColorPalette = Array.isArray(xyChartThemeConfig.xychartPlotBaseColor)
-    ? xyChartThemeConfig.xychartPlotBaseColor
-    : plotColorPaletteGenerator(xyChartThemeConfig.xychartPlotBaseColor);
+  plotColorPalette = Array.isArray(xyChartThemeConfig.plotBaseColor)
+    ? xyChartThemeConfig.plotBaseColor
+    : plotColorPaletteGenerator(xyChartThemeConfig.plotBaseColor);
   hasSetXAxis = false;
   hasSetYAxis = false;
 };

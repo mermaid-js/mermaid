@@ -1,4 +1,3 @@
-import { XYChartAxisConfig } from '../../../../../config.type.js';
 import { log } from '../../../../../logger.js';
 import {
   BoundingRect,
@@ -6,6 +5,7 @@ import {
   DrawableElem,
   Point,
   XYChartAxisThemeConfig,
+  XYChartAxisConfig,
 } from '../../Interfaces.js';
 import { ITextDimensionCalculator } from '../../TextDimensionCalculator.js';
 import { AxisPosition, IAxis } from './index.js';
@@ -76,7 +76,7 @@ export abstract class BaseAxis implements IAxis {
     if (this.axisConfig.showLabel) {
       const spaceRequired = this.getLabelDimension();
       this.outerPadding = spaceRequired.width / 2;
-      const heightRequired = spaceRequired.height + this.axisConfig.lablePadding * 2;
+      const heightRequired = spaceRequired.height + this.axisConfig.labelPadding * 2;
       log.trace('height required for axis label: ', heightRequired);
       if (heightRequired <= availableHeight) {
         availableHeight -= heightRequired;
@@ -108,7 +108,7 @@ export abstract class BaseAxis implements IAxis {
     if (this.axisConfig.showLabel) {
       const spaceRequired = this.getLabelDimension();
       this.outerPadding = spaceRequired.height / 2;
-      const widthRequired = spaceRequired.width + this.axisConfig.lablePadding * 2;
+      const widthRequired = spaceRequired.width + this.axisConfig.labelPadding * 2;
       log.trace('width required for axis label: ', widthRequired);
       if (widthRequired <= availableWidth) {
         availableWidth -= widthRequired;
@@ -124,7 +124,7 @@ export abstract class BaseAxis implements IAxis {
         [this.title],
         this.axisConfig.labelFontSize
       );
-      const widthRequired = spaceRequired.height + this.axisConfig.lablePadding * 2;
+      const widthRequired = spaceRequired.height + this.axisConfig.labelPadding * 2;
       log.trace('width required for axis title: ', widthRequired);
       if (widthRequired <= availableWidth) {
         availableWidth -= widthRequired;
@@ -168,7 +168,7 @@ export abstract class BaseAxis implements IAxis {
           x:
             this.boundingRect.x +
             this.boundingRect.width -
-            this.axisConfig.lablePadding -
+            this.axisConfig.labelPadding -
             this.axisConfig.tickLength,
           y: this.getScaleValue(tick),
           fill: this.axisThemeConfig.labelColor,
@@ -222,7 +222,7 @@ export abstract class BaseAxis implements IAxis {
         data: this.getTickValues().map((tick) => ({
           text: tick.toString(),
           x: this.getScaleValue(tick),
-          y: this.boundingRect.y + this.axisConfig.lablePadding + this.axisConfig.tickLength,
+          y: this.boundingRect.y + this.axisConfig.labelPadding + this.axisConfig.tickLength,
           fill: this.axisThemeConfig.labelColor,
           fontSize: this.axisConfig.labelFontSize,
           rotation: 0,
@@ -277,7 +277,7 @@ export abstract class BaseAxis implements IAxis {
           y:
             this.boundingRect.y +
             this.boundingRect.height -
-            this.axisConfig.lablePadding -
+            this.axisConfig.labelPadding -
             this.axisConfig.tickLength,
           fill: this.axisThemeConfig.labelColor,
           fontSize: this.axisConfig.labelFontSize,

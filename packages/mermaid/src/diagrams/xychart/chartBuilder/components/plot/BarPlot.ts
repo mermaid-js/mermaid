@@ -1,5 +1,4 @@
-import { XYChartConfig } from '../../../../../config.type.js';
-import { BarPlotData, BoundingRect, DrawableElem } from '../../Interfaces.js';
+import { BarPlotData, BoundingRect, DrawableElem, XYChartConfig } from '../../Interfaces.js';
 import { IAxis } from '../axis/index.js';
 
 export class BarPlot {

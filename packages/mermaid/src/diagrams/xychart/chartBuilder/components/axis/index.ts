@@ -1,8 +1,8 @@
-import { XYChartAxisConfig } from '../../../../../config.type.js';
 import {
   AxisDataType,
   ChartComponent,
   XYChartAxisThemeConfig,
+  XYChartAxisConfig,
   isBandAxisData,
 } from '../../Interfaces.js';
 import { TextDimensionCalculatorWithFont } from '../../TextDimensionCalculator.js';

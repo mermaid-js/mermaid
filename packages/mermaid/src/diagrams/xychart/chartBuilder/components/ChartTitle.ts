@@ -1,4 +1,3 @@
-import { XYChartConfig } from '../../../../config.type.js';
 import {
   BoundingRect,
   ChartComponent,
@@ -7,6 +6,7 @@ import {
   Point,
   XYChartData,
   XYChartThemeConfig,
+  XYChartConfig,
 } from '../Interfaces.js';
 import {
   ITextDimensionCalculator,
@@ -28,7 +28,7 @@ export class ChartTitle implements ChartComponent {
       width: 0,
       height: 0,
     };
-    this.showChartTitle = !!(this.chartData.title && this.chartConfig.showtitle);
+    this.showChartTitle = !!(this.chartData.title && this.chartConfig.showTitle);
   }
   setBoundingBoxXY(point: Point): void {
     this.boundingRect.x = point.x;
@@ -69,7 +69,7 @@ export class ChartTitle implements ChartComponent {
             horizontalPos: 'middle',
             x: this.boundingRect.x + this.boundingRect.width / 2,
             y: this.boundingRect.y + this.boundingRect.height / 2,
-            fill: this.chartThemeConfig.xychartTitleColor,
+            fill: this.chartThemeConfig.titleColor,
             rotation: 0,
           },
         ],

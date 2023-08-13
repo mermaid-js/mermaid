@@ -5,15 +5,15 @@ export interface XYChartAxisThemeConfig {
 }
 
 export interface XYChartThemeConfig {
-  xychartTitleColor: string;
-  xychartAxisLineColor: string;
-  xychartXAxisLableColor: string;
-  xychartXAxisTitleColor: string;
-  xychartXAxisTickColor: string;
-  xychartYAxisLableColor: string;
-  xychartYAxisTitleColor: string;
-  xychartYAxisTickColor: string;
-  xychartPlotBaseColor: string;
+  titleColor: string;
+  axisLineColor: string;
+  xAxisLableColor: string;
+  xAxisTitleColor: string;
+  xAxisTickColor: string;
+  yAxisLableColor: string;
+  yAxisTitleColor: string;
+  yAxisTickColor: string;
+  plotBaseColor: string;
 }
 
 export interface ChartComponent {
@@ -64,6 +64,36 @@ export function isBandAxisData(data: AxisDataType): data is BandAxisDataType {
 
 export function isLinearAxisData(data: AxisDataType): data is LinearAxisDataType {
   return data.type === 'linear';
+}
+
+/**
+ * For now we are keeping this configs as we are removing the required fields while generating the config.type.ts file
+ * we should remove `XYChartAxisConfig` and `XYChartConfig` after we started using required fields
+ */
+export interface XYChartAxisConfig {
+  showLabel: boolean;
+  labelFontSize: number;
+  labelPadding: number;
+  showTitle: boolean;
+  titleFontSize: number;
+  titlePadding: number;
+  showTick: boolean;
+  tickLength: number;
+  tickWidth: number;
+}
+
+export interface XYChartConfig {
+  width: number;
+  height: number;
+  fontFamily: string;
+  titleFontSize: number;
+  titlePadding: number;
+  showTitle: boolean;
+  xAxis: XYChartAxisConfig;
+  yAxis: XYChartAxisConfig;
+  plotBorderWidth: number;
+  chartOrientation: 'vertical' | 'horizontal';
+  plotReservedSpacePercent: number;
 }
 
 export interface XYChartData {

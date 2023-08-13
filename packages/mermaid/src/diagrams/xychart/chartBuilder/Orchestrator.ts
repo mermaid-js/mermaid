@@ -1,10 +1,15 @@
 import { log } from '../../../logger.js';
-import { DrawableElem, XYChartData, XYChartThemeConfig, isBarPlot } from './Interfaces.js';
+import {
+  DrawableElem,
+  XYChartData,
+  XYChartThemeConfig,
+  XYChartConfig,
+  isBarPlot,
+} from './Interfaces.js';
 import { getChartTitleComponent } from './components/ChartTitle.js';
 import { ChartComponent } from './Interfaces.js';
 import { IAxis, getAxis } from './components/axis/index.js';
 import { IPlot, getPlotComponent } from './components/plot/index.js';
-import { XYChartConfig } from '../../../config.type.js';
 
 export class Orchestrator {
   private componentStore: {
@@ -25,9 +30,9 @@ export class Orchestrator {
         chartData.xAxis,
         chartConfig.xAxis,
         {
-          titleColor: chartThemeConfig.xychartXAxisTitleColor,
-          labelColor: chartThemeConfig.xychartXAxisLableColor,
-          tickColor: chartThemeConfig.xychartXAxisTickColor,
+          titleColor: chartThemeConfig.xAxisTitleColor,
+          labelColor: chartThemeConfig.xAxisLableColor,
+          tickColor: chartThemeConfig.xAxisTickColor,
         },
         chartConfig.fontFamily
       ),
@@ -35,9 +40,9 @@ export class Orchestrator {
         chartData.yAxis,
         chartConfig.yAxis,
         {
-          titleColor: chartThemeConfig.xychartYAxisTitleColor,
-          labelColor: chartThemeConfig.xychartYAxisLableColor,
-          tickColor: chartThemeConfig.xychartYAxisTickColor,
+          titleColor: chartThemeConfig.yAxisTitleColor,
+          labelColor: chartThemeConfig.yAxisLableColor,
+          tickColor: chartThemeConfig.yAxisTickColor,
         },
         chartConfig.fontFamily
       ),

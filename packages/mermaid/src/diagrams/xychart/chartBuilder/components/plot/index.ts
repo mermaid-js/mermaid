@@ -5,13 +5,13 @@ import {
   DrawableElem,
   Point,
   XYChartThemeConfig,
+  XYChartConfig,
 } from '../../Interfaces.js';
 import { IAxis } from '../axis/index.js';
 import { ChartComponent } from '../../Interfaces.js';
 import { LinePlot } from './LinePlot.js';
 import { PlotBorder } from './PlotBorder.js';
 import { BarPlot } from './BarPlot.js';
-import { XYChartConfig } from '../../../../../config.type.js';
 
 export interface IPlot extends ChartComponent {
   setAxes(xAxis: IAxis, yAxis: IAxis): void;

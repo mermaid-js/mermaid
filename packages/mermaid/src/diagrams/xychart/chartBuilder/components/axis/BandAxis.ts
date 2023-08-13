@@ -1,9 +1,8 @@
 import { ScaleBand, scaleBand } from 'd3';
-import { XYChartAxisConfig } from '../../../../../config.type.js';
 import { log } from '../../../../../logger.js';
 import { ITextDimensionCalculator } from '../../TextDimensionCalculator.js';
 import { BaseAxis } from './BaseAxis.js';
-import { XYChartAxisThemeConfig } from '../../Interfaces.js';
+import { XYChartAxisThemeConfig, XYChartAxisConfig } from '../../Interfaces.js';
 
 export class BandAxis extends BaseAxis {
   private scale: ScaleBand<string>;
