@@ -20,7 +20,9 @@ const zenumlCtx = await context(
 const contexts = [mermaidCtx, mermaidIIFECtx, externalCtx, zenumlCtx];
 
 const rebuildAll = async () => {
+  const time = Date.now();
   await Promise.all(contexts.map((ctx) => ctx.rebuild()));
+  console.log('Rebuilt in' + (Date.now() - time) + 'ms');
 };
 
 let clients: { id: number; response: Response }[] = [];
@@ -51,10 +53,8 @@ function handleFileChange() {
     clearTimeout(timeoutId);
   }
   timeoutId = setTimeout(async () => {
-    const time = Date.now();
     await rebuildAll();
     sendEventsToAll();
-    console.log('Rebuild & Refresh complete in' + (Date.now() - time) + 'ms');
     timeoutId = undefined;
   }, 100);
 }
@@ -64,6 +64,7 @@ function sendEventsToAll() {
 }
 
 async function createServer() {
+  await rebuildAll();
   const app = express();
   chokidar
     .watch('**/src/**/*.{js,ts,yaml,json}', {
