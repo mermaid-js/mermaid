@@ -1,6 +1,7 @@
 # Contributing to Mermaid
 
-> You can pick [Native](/community/development) or [Docker](/community/docker-development) installation guide.
+> The following documentation describes how to work with Mermaid in your host environment.
+> There's also a [Docker installation guide](./docker-development.md).
 
 So you want to help? That's great!
 
@@ -20,7 +21,8 @@ Then you **clone** a copy to your local development machine (e.g. where you code
 
 ## Technical Requirements
 
-> You can pick [Native](/community/development) or [Docker](/community/docker-development) installation guide.
+> The following documentation describes how to work with Mermaid in your host environment.
+> There's also a [Docker installation guide](./docker-development.md).
 
 These are the tools we use for working with the code and documentation:
 

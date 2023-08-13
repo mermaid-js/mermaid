@@ -9,7 +9,8 @@ next:
 
 # Contributing to Mermaid via Docker
 
-> You can pick [Native](/community/development) or [Docker](/community/docker-development) installation guide.
+> The following documentation describes how to work with Mermaid in a Docker environment.
+> There's also a [host installation guide](../community/development.md).
 
 So you want to help? That's great!
 
@@ -29,7 +30,8 @@ Then you **clone** a copy to your local development machine (e.g. where you code
 
 ## Technical Requirements
 
-> You can pick [Native](/community/development) or [Docker](/community/docker-development) installation guide.
+> The following documentation describes how to work with Mermaid in a Docker environment.
+> There's also a [host installation guide](../community/development.md).
 
 [Install Docker](https://docs.docker.com/engine/install/). And that is pretty much all you need.
 
