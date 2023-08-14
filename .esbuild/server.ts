@@ -1,10 +1,9 @@
 import express from 'express';
 import type { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
-import { getBuildConfig } from './util.js';
+import { getBuildConfig, defaultOptions } from './util.js';
 import { context } from 'esbuild';
 import chokidar from 'chokidar';
-import { defaultOptions } from './util';
 
 const mermaidCtx = await context(
   getBuildConfig({ ...defaultOptions, minify: false, core: false, entryName: 'mermaid' })
