@@ -4,18 +4,30 @@ import cors from 'cors';
 import { getBuildConfig } from './util.js';
 import { context } from 'esbuild';
 import chokidar from 'chokidar';
+import { defaultOptions } from './util';
 
 const mermaidCtx = await context(
-  getBuildConfig({ minify: false, core: false, entryName: 'mermaid' })
+  getBuildConfig({ ...defaultOptions, minify: false, core: false, entryName: 'mermaid' })
 );
 const mermaidIIFECtx = await context(
-  getBuildConfig({ minify: false, core: false, entryName: 'mermaid', format: 'iife' })
+  getBuildConfig({
+    ...defaultOptions,
+    minify: false,
+    core: false,
+    entryName: 'mermaid',
+    format: 'iife',
+  })
 );
 const externalCtx = await context(
-  getBuildConfig({ minify: false, core: false, entryName: 'mermaid-example-diagram' })
+  getBuildConfig({
+    ...defaultOptions,
+    minify: false,
+    core: false,
+    entryName: 'mermaid-example-diagram',
+  })
 );
 const zenumlCtx = await context(
-  getBuildConfig({ minify: false, core: false, entryName: 'mermaid-zenuml' })
+  getBuildConfig({ ...defaultOptions, minify: false, core: false, entryName: 'mermaid-zenuml' })
 );
 const contexts = [mermaidCtx, mermaidIIFECtx, externalCtx, zenumlCtx];
 
