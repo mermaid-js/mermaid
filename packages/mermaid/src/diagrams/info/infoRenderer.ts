@@ -1,6 +1,6 @@
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import type { DrawDefinition, Group, SVG } from '../../diagram-api/types.js';
+import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 
 /**
@@ -15,15 +15,14 @@ const draw: DrawDefinition = (text, id, version) => {
 
   const svg: SVG = selectSvgElement(id);
   configureSvgSize(svg, 100, 400, true);
-
-  const group: Group = svg.append('g');
-  group
+  svg
     .append('text')
-    .attr('x', 100)
-    .attr('y', 40)
+    .attr('x', '50%')
+    .attr('y', '50%')
     .attr('class', 'version')
     .attr('font-size', 32)
-    .style('text-anchor', 'middle')
+    .attr('dominant-baseline', 'middle')
+    .attr('text-anchor', 'middle')
     .text(`v${version}`);
 };
 
