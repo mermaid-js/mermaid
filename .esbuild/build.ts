@@ -40,6 +40,7 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
       const fileName = Object.keys(metafile.outputs)
         .filter((file) => !file.includes('chunks') && file.endsWith('js'))[0]
         .replace('dist/', '');
+      // Upload metafile into https://esbuild.github.io/analyze/
       await writeFile(`stats/${fileName}.meta.json`, JSON.stringify(metafile));
     }
   }
