@@ -42,7 +42,7 @@ import { globby } from 'globby';
 import { JSDOM } from 'jsdom';
 import { dump, load, JSON_SCHEMA } from 'js-yaml';
 import type { Code, ListItem, Root, Text, YAML } from 'mdast';
-import { posix, dirname, relative, join } from 'path';
+import { posix, dirname, relative, join, basename } from 'path';
 import prettier from 'prettier';
 import { remark } from 'remark';
 import remarkFrontmatter from 'remark-frontmatter';
@@ -545,9 +545,14 @@ export const processDocs = async () => {
   mdFiles.forEach(transformMarkdown);
 
   for (const includedFile of includedFiles) {
-    rmSync(includedFile, { force: true });
-    filesTransformed.delete(includedFile);
-    console.log(`Removed ${includedFile} as it was used inside an @include block.`);
+    const fileName = basename(includedFile);
+    if (fileName.startsWith('_')) {
+      rmSync(includedFile, { force: true });
+      filesTransformed.delete(includedFile);
+      console.log(
+        `Removed ${includedFile} as its name starts with _ and it was used inside an @include block.`
+      );
+    }
   }
 
   const htmlFileGlobs = getGlobs([posix.join(sourceDirGlob, '*.html')]);
