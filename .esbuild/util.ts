@@ -8,13 +8,20 @@ import { jisonPlugin } from './jisonPlugin.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
-interface MermaidBuildOptions {
+export interface MermaidBuildOptions {
   minify: boolean;
-  core?: boolean;
-  metafile?: boolean;
-  format?: 'esm' | 'iife';
+  core: boolean;
+  metafile: boolean;
+  format: 'esm' | 'iife';
   entryName: keyof typeof packageOptions;
 }
+
+export const defaultOptions: Omit<MermaidBuildOptions, 'entryName'> = {
+  minify: false,
+  metafile: false,
+  core: false,
+  format: 'esm',
+} as const;
 
 const buildOptions = (override: BuildOptions): BuildOptions => {
   return {
@@ -32,24 +39,32 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
   };
 };
 
-export const getBuildConfig = ({
-  minify,
-  core,
-  entryName,
-  metafile,
-  format,
-}: MermaidBuildOptions): BuildOptions => {
+const getFileName = (fileName: string, { core, format, minify }: MermaidBuildOptions) => {
+  if (core) {
+    fileName += '.core';
+  }
+  if (format === 'esm') {
+    fileName += '.esm';
+  }
+  if (minify) {
+    fileName += '.min';
+  }
+  return fileName;
+};
+
+export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
+  const { core, entryName, metafile, format } = options;
   const external: string[] = ['require', 'fs', 'path'];
   const { name, file, packageName } = packageOptions[entryName];
+  const outFileName = getFileName(name, options);
   let output: BuildOptions = buildOptions({
     absWorkingDir: resolve(__dirname, `../packages/${packageName}`),
     entryPoints: {
-      [`${name}${core ? '.core' : format === 'iife' ? '' : '.esm'}${
-        minify ? '.min' : ''
-      }`]: `src/${file}`,
+      [outFileName]: `src/${file}`,
     },
     metafile,
     logLevel: 'info',
+    chunkNames: `chunks/${outFileName}/[name]-[hash]`,
   });
 
   if (core) {

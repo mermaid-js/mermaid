@@ -1,21 +1,48 @@
 import { build } from 'esbuild';
 import { mkdir, writeFile } from 'node:fs/promises';
-import { getBuildConfig } from './util.js';
+import { MermaidBuildOptions, defaultOptions, getBuildConfig } from './util.js';
 import { packageOptions } from '../.build/common.js';
 
 const shouldVisualize = process.argv.includes('--visualize');
 
 const buildPackage = async (entryName: keyof typeof packageOptions) => {
-  await build(getBuildConfig({ entryName, minify: false }));
-  const { metafile } = await build(
-    getBuildConfig({ entryName, minify: true, metafile: shouldVisualize })
-  );
-  if (metafile) {
-    // Upload metafile into https://esbuild.github.io/analyze/
-    await writeFile(`stats/meta-${entryName}.json`, JSON.stringify(metafile));
+  const commonOptions = { ...defaultOptions, entryName } as const;
+  const buildConfigs = [
+    // package.mjs
+    { ...commonOptions },
+    // package.min.mjs
+    {
+      ...commonOptions,
+      minify: true,
+      metafile: shouldVisualize,
+    },
+    // package.core.mjs
+    { ...commonOptions, core: true },
+  ];
+
+  if (entryName === 'mermaid') {
+    const iifeOptions: MermaidBuildOptions = { ...commonOptions, format: 'iife' };
+    buildConfigs.push(
+      // mermaid.js
+      { ...iifeOptions },
+      // mermaid.min.js
+      { ...iifeOptions, minify: true, metafile: shouldVisualize }
+    );
   }
-  await build(getBuildConfig({ entryName, minify: false, core: true }));
-  await build(getBuildConfig({ entryName, minify: true, format: 'iife' }));
+
+  const results = await Promise.all(buildConfigs.map((option) => build(getBuildConfig(option))));
+
+  if (shouldVisualize) {
+    for (const { metafile } of results) {
+      if (!metafile) {
+        continue;
+      }
+      const fileName = Object.keys(metafile.outputs)
+        .filter((key) => key.includes('.min') && key.endsWith('js'))[0]
+        .replace('dist/', '');
+      await writeFile(`stats/${fileName}.meta.json`, JSON.stringify(metafile));
+    }
+  }
 };
 
 const handler = (e) => {
@@ -26,9 +53,7 @@ const handler = (e) => {
 const main = async () => {
   await mkdir('stats').catch(() => {});
   const packageNames = Object.keys(packageOptions) as (keyof typeof packageOptions)[];
-  for (const pkg of packageNames) {
-    await buildPackage(pkg).catch(handler);
-  }
+  await Promise.allSettled(packageNames.map((pkg) => buildPackage(pkg).catch(handler)));
 };
 
 void main();
