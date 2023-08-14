@@ -14,7 +14,7 @@
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 // @ts-ignore: TODO Fix ts errors
-import { version } from '../package.json';
+import { version as packageVersion } from '../package.json';
 import * as configApi from './config.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import { Diagram, getDiagramFromText } from './Diagram.js';
@@ -30,6 +30,8 @@ import { evaluate } from './diagrams/common/common.js';
 import isEmpty from 'lodash-es/isEmpty.js';
 import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
 import { parseDirective } from './directiveUtils.js';
+
+const version = packageVersion + (includeLargeDiagrams ? '' : '-tiny');
 
 // diagram names that support classDef statements
 const CLASSDEF_DIAGRAMS = [
