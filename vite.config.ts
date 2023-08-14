@@ -33,4 +33,8 @@ export default defineConfig({
       esmExternals: true,
     },
   },
+  define: {
+    // Needs to be string
+    includeLargeDiagrams: 'true',
+  },
 });

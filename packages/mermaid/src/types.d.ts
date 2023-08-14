@@ -1,1 +1,1 @@
-declare let includeLargeDiagrams: boolean;
+declare const includeLargeDiagrams: boolean;
