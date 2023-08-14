@@ -47,8 +47,7 @@ const getFileName = (
 ) => {
   if (core) {
     fileName += '.core';
-  }
-  if (format === 'esm') {
+  } else if (format === 'esm') {
     fileName += '.esm';
   }
   if (!includeLargeDiagrams) {
