@@ -1,29 +1,35 @@
 import { build } from 'esbuild';
 import { mkdir, writeFile } from 'node:fs/promises';
-import { MermaidBuildOptions, defaultConfig, getBuildConfig } from './util.js';
+import { MermaidBuildOptions, defaultOptions, getBuildConfig } from './util.js';
 import { packageOptions } from '../.build/common.js';
 
 const shouldVisualize = process.argv.includes('--visualize');
 
 const buildPackage = async (entryName: keyof typeof packageOptions) => {
-  const commonConfig = { ...defaultConfig, entryName };
-  const configs = [
-    { ...commonConfig },
+  const commonOptions = { ...defaultOptions, entryName } as const;
+  const buildConfigs = [
+    // package.mjs
+    { ...commonOptions },
+    // package.min.mjs
     {
-      ...commonConfig,
+      ...commonOptions,
       minify: true,
       metafile: shouldVisualize,
     },
-    { ...commonConfig, core: true },
+    // package.core.mjs
+    { ...commonOptions, core: true },
   ];
 
   if (entryName === 'mermaid') {
-    const iifeConfig: MermaidBuildOptions = { ...commonConfig, format: 'iife' };
-    configs.push(
-      { ...iifeConfig },
-      { ...iifeConfig, minify: true },
+    const iifeOptions: MermaidBuildOptions = { ...commonOptions, format: 'iife' };
+    buildConfigs.push(
+      // mermaid.js
+      { ...iifeOptions },
+      // mermaid.min.js
+      { ...iifeOptions, minify: true, metafile: shouldVisualize },
+      // mermaid.tiny.min.js
       {
-        ...iifeConfig,
+        ...iifeOptions,
         minify: true,
         includeLargeDiagrams: false,
         metafile: shouldVisualize,
@@ -31,7 +37,7 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
     );
   }
 
-  const results = await Promise.all(configs.map((config) => build(getBuildConfig(config))));
+  const results = await Promise.all(buildConfigs.map((option) => build(getBuildConfig(option))));
 
   if (shouldVisualize) {
     for (const { metafile } of results) {
@@ -39,8 +45,9 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
         continue;
       }
       const fileName = Object.keys(metafile.outputs)
-        .filter((key) => key.includes('.min') && key.endsWith('js'))[0]
+        .filter((file) => !file.includes('chunks') && file.endsWith('js'))[0]
         .replace('dist/', '');
+      // Upload metafile into https://esbuild.github.io/analyze/
       await writeFile(`stats/${fileName}.meta.json`, JSON.stringify(metafile));
     }
   }

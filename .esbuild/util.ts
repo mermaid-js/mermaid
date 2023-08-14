@@ -17,7 +17,7 @@ export interface MermaidBuildOptions {
   includeLargeDiagrams: boolean;
 }
 
-export const defaultConfig: Omit<MermaidBuildOptions, 'entryName'> = {
+export const defaultOptions: Omit<MermaidBuildOptions, 'entryName'> = {
   minify: false,
   metafile: false,
   core: false,
@@ -43,7 +43,7 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
 
 const getFileName = (
   fileName: string,
-  { core, format, includeLargeDiagrams, minify, entryName }: MermaidBuildOptions
+  { core, format, minify, includeLargeDiagrams }: MermaidBuildOptions
 ) => {
   if (core) {
     fileName += '.core';
