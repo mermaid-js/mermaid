@@ -14,6 +14,7 @@ interface MermaidBuildOptions {
   metafile?: boolean;
   format?: 'esm' | 'iife';
   entryName: keyof typeof packageOptions;
+  includeLargeDiagrams?: boolean;
 }
 
 const buildOptions = (override: BuildOptions): BuildOptions => {
@@ -37,7 +38,8 @@ export const getBuildConfig = ({
   core,
   entryName,
   metafile,
-  format,
+  format = 'esm',
+  includeLargeDiagrams = true,
 }: MermaidBuildOptions): BuildOptions => {
   const external: string[] = ['require', 'fs', 'path'];
   const { name, file, packageName } = packageOptions[entryName];
@@ -45,11 +47,15 @@ export const getBuildConfig = ({
     absWorkingDir: resolve(__dirname, `../packages/${packageName}`),
     entryPoints: {
       [`${name}${core ? '.core' : format === 'iife' ? '' : '.esm'}${
-        minify ? '.min' : ''
-      }`]: `src/${file}`,
+        includeLargeDiagrams ? '' : '.tiny'
+      }${minify ? '.min' : ''}`]: `src/${file}`,
     },
     metafile,
     logLevel: 'info',
+    define: {
+      // This needs to be stringified for esbuild
+      includeLargeDiagrams: `${includeLargeDiagrams}`,
+    },
   });
 
   if (core) {

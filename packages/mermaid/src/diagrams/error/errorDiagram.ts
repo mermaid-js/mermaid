@@ -1,7 +1,7 @@
 import type { DiagramDefinition } from '../../diagram-api/types.js';
 import { renderer } from './errorRenderer.js';
 
-const diagram: DiagramDefinition = {
+export const diagram: DiagramDefinition = {
   db: {},
   renderer,
   parser: {

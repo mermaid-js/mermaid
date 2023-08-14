@@ -6,7 +6,9 @@ import { packageOptions } from '../.build/common.js';
 const shouldVisualize = process.argv.includes('--visualize');
 
 const buildPackage = async (entryName: keyof typeof packageOptions) => {
+  // package.mjs
   await build(getBuildConfig({ entryName, minify: false }));
+  // package.min.mjs
   const { metafile } = await build(
     getBuildConfig({ entryName, minify: true, metafile: shouldVisualize })
   );
@@ -14,8 +16,27 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
     // Upload metafile into https://esbuild.github.io/analyze/
     await writeFile(`stats/meta-${entryName}.json`, JSON.stringify(metafile));
   }
+  // package.core.mjs
   await build(getBuildConfig({ entryName, minify: false, core: true }));
-  await build(getBuildConfig({ entryName, minify: true, format: 'iife' }));
+  if (entryName === 'mermaid') {
+    // mermaid.js
+    await build(getBuildConfig({ entryName, minify: false, format: 'iife' }));
+    // mermaid.min.js
+    await build(getBuildConfig({ entryName, minify: true, format: 'iife' }));
+    // mermaid.tiny.min.js
+    const { metafile } = await build(
+      getBuildConfig({
+        entryName,
+        minify: true,
+        includeLargeDiagrams: false,
+        metafile: shouldVisualize,
+        format: 'iife',
+      })
+    );
+    if (metafile) {
+      await writeFile(`stats/meta-${entryName}-tiny.json`, JSON.stringify(metafile));
+    }
+  }
 };
 
 const handler = (e) => {

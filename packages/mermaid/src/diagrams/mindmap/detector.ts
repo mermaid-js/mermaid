@@ -10,7 +10,9 @@ const detector: DiagramDetector = (txt) => {
 };
 
 const loader: DiagramLoader = async () => {
-  const { diagram } = await import('./mindmap-definition.js');
+  const { diagram } = includeLargeDiagrams
+    ? await import('./mindmap-definition.js')
+    : await import('../error/errorDiagram.js');
   return { id, diagram };
 };
 
