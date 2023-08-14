@@ -1428,7 +1428,8 @@ const buildMessageModel = function (msg, actors, diagObj) {
     msg.message = utils.wrapLabel(
       msg.message,
       common.getMax(boundedWidth + 2 * conf.wrapPadding, conf.width),
-      messageFont(conf)
+      messageFont(conf),
+      msg.textType
     );
   }
   const msgDims = utils.calculateTextDimensions(msg.message, messageFont(conf));
