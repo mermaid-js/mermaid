@@ -38,7 +38,7 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
         continue;
       }
       const fileName = Object.keys(metafile.outputs)
-        .filter((file) => file.startsWith('mermaid') && file.endsWith('js'))[0]
+        .filter((file) => !file.includes('chunks') && file.endsWith('js'))[0]
         .replace('dist/', '');
       await writeFile(`stats/${fileName}.meta.json`, JSON.stringify(metafile));
     }
