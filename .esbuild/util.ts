@@ -42,8 +42,7 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
 const getFileName = (fileName: string, { core, format, minify }: MermaidBuildOptions) => {
   if (core) {
     fileName += '.core';
-  }
-  if (format === 'esm') {
+  } else if (format === 'esm') {
     fileName += '.esm';
   }
   if (minify) {
