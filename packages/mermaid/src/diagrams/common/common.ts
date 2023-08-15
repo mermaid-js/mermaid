@@ -188,6 +188,8 @@ export const parseGenericTypes = function (text: string): string {
   if (text.split('~').length - 1 >= 2) {
     let newCleanedText = cleanedText;
 
+    // use a do...while loop instead of replaceAll to detect recursion
+    // e.g. Array~Array~T~~
     do {
       cleanedText = newCleanedText;
       newCleanedText = cleanedText.replace(/~([^\s:;]+)~/, '<$1>');
