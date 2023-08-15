@@ -600,7 +600,7 @@ export const wrapLabel: (label: string, maxWidth: string, config: WrapLabelConfi
       }
       if (isMarkdown) {
         config = Object.assign(
-          { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: '\n' },
+          { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: ' ' },
           config
         );
       } else {

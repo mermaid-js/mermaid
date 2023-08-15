@@ -191,6 +191,7 @@ export const drawMarkdownText = function (elem, textData) {
     class: textData.class,
     useHtmlLabels: true,
     width: textData.width,
+    style: 'text-align: center',
   });
   const messageLabel = elem.append('g');
 
@@ -213,25 +214,25 @@ export const drawMarkdownText = function (elem, textData) {
   textData = setXAndAnchor(textData);
 
   if (textData.anchor !== undefined) {
-    messageLabel
+    innerLabel
       .attr('text-anchor', textData.anchor)
       .attr('dominant-baseline', textData.dominantBaseline)
       .attr('alignment-baseline', textData.alignmentBaseline);
   }
   if (textData.fontFamily !== undefined) {
-    messageLabel.style('font-family', textData.fontFamily);
+    innerLabel.style('font-family', textData.fontFamily);
   }
   if (_textFontSizePx !== undefined) {
-    messageLabel.style('font-size', _textFontSizePx);
+    innerLabel.style('font-size', _textFontSizePx);
   }
   if (textData.fontWeight !== undefined) {
-    messageLabel.style('font-weight', textData.fontWeight);
+    innerLabel.style('font-weight', textData.fontWeight);
   }
   if (textData.fill !== undefined) {
-    messageLabel.attr('fill', textData.fill);
+    innerLabel.attr('fill', textData.fill);
   }
   if (textData.class !== undefined) {
-    messageLabel.attr('class', textData.class);
+    innerLabel.attr('class', textData.class);
   }
 
   innerLabel.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
