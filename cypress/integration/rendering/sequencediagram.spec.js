@@ -929,17 +929,31 @@ context('Sequence diagram', () => {
         expect(svg).to.not.have.attr('style');
       });
     });
+  });
 
-    context('markdown text', () => {
-      it('it should render markdown in messages', () => {
-        imgSnapshotTest(
-          `
+  context('markdown text', () => {
+    it('it should render markdown in messages', () => {
+      imgSnapshotTest(
+        `
           sequenceDiagram
           Alice -->> Bob: "\`Hello using **markdown**\`"
           `,
-          { htmlLabels: true, sequence: { htmlLabels: true }, securityLevel: 'loose' }
-        );
-      });
+        { htmlLabels: true, sequence: { htmlLabels: true }, securityLevel: 'loose' }
+      );
+    });
+
+    it('should render markdown in messages with wrap on', () => {
+      imgSnapshotTest(
+        `
+          sequenceDiagram
+          Alice -->> Bob: wrap: "\`This is a super long message with wrap enabled with **markdown bold, a whole lot of bold** and *italics*\`"
+          `,
+        {
+          htmlLabels: true,
+          sequence: { htmlLabels: true, anchor: 'middle' },
+          securityLevel: 'loose',
+        }
+      );
     });
   });
 });
