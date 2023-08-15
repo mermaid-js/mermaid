@@ -1439,11 +1439,19 @@ class Class2
       const testClasses = parser.yy.getClasses();
       const testRelations = parser.yy.getRelations();
       expect(Object.keys(testNamespaceA.classes).length).toBe(2);
-      expect(testNamespaceA.classes['A1'].members[0]).toBe('+foo : string');
-      expect(testNamespaceA.classes['A2'].members[0]).toBe('+bar : int');
+      expect(testNamespaceA.classes['A1'].members[0].getDisplayDetails().displayText).toBe(
+        '+foo : string'
+      );
+      expect(testNamespaceA.classes['A2'].members[0].getDisplayDetails().displayText).toBe(
+        '+bar : int'
+      );
       expect(Object.keys(testNamespaceB.classes).length).toBe(2);
-      expect(testNamespaceB.classes['B1'].members[0]).toBe('+foo : bool');
-      expect(testNamespaceB.classes['B2'].members[0]).toBe('+bar : float');
+      expect(testNamespaceB.classes['B1'].members[0].getDisplayDetails().displayText).toBe(
+        '+foo : bool'
+      );
+      expect(testNamespaceB.classes['B2'].members[0].getDisplayDetails().displayText).toBe(
+        '+bar : float'
+      );
       expect(Object.keys(testClasses).length).toBe(4);
       expect(testClasses['A1'].parent).toBe('A');
       expect(testClasses['A2'].parent).toBe('A');

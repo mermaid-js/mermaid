@@ -38,12 +38,14 @@
         +quack()
       }
       class Fish{
-        -int sizeInFeet
+        -Listint sizeInFeet
         -canEat()
       }
       class Zebra{
         +bool is_wild
         +run(List~T~, List~OT~)
+        %% +run-composite(List~T, K~)
+        +run-nested(List~List~OT~~)
       }
 
     </pre>
@@ -154,7 +156,7 @@
         ~InternalProperty : string
         ~AnotherInternalProperty : List~List~string~~
       }
-      class People~List~Person~~
+      class People List~List~Person~~
     </pre>
     <hr />
 
