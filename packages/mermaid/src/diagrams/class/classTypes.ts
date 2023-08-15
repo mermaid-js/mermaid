@@ -16,13 +16,32 @@ export interface ClassNode {
   tooltip?: string;
 }
 
+export type Visibility = '#' | '+' | '~' | '-' | '';
+export const visibilityValues = ['#', '+', '~', '-', ''];
+
+/**
+ * Parses and stores class diagram member variables/methods.
+ *
+ */
 export class ClassMember {
   id!: string;
   cssStyle!: string;
   memberType!: 'method' | 'attribute';
-  visibility!: string;
+  visibility!: Visibility;
+  /**
+   * denote if static or to determine which css class to apply to the node
+   * @defaultValue ''
+   */
   classifier!: string;
+  /**
+   * parameters for method
+   * @defaultValue ''
+   */
   parameters!: string;
+  /**
+   * return type for method
+   * @defaultValue ''
+   */
   returnType!: string;
 
   constructor(input: string, memberType: 'method' | 'attribute') {
@@ -57,7 +76,12 @@ export class ClassMember {
       const methodRegEx = /([#+~-])?(.+)\((.*)\)([\s$*])?(.*)([$*])?/;
       const match = input.match(methodRegEx);
       if (match) {
-        this.visibility = match[1] ? match[1].trim() : '';
+        const detectedVisibility = match[1] ? match[1].trim() : '';
+
+        if (visibilityValues.includes(detectedVisibility)) {
+          this.visibility = detectedVisibility as Visibility;
+        }
+
         this.id = match[2].trim();
         this.parameters = match[3] ? match[3].trim() : '';
         potentialClassifier = match[4] ? match[4].trim() : '';
@@ -76,8 +100,8 @@ export class ClassMember {
       const firstChar = input.substring(0, 1);
       const lastChar = input.substring(length - 1);
 
-      if (firstChar.match(/[#+~-]/)) {
-        this.visibility = firstChar;
+      if (visibilityValues.includes(firstChar)) {
+        this.visibility = firstChar as Visibility;
       }
 
       if (lastChar.match(/[*?]/)) {
