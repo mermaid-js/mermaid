@@ -108,8 +108,7 @@ export interface RenderResult {
 async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean> {
   addDiagrams();
   try {
-    const diagram = await getDiagramFromText(text);
-    diagram.parse();
+    await getDiagramFromText(text);
   } catch (error) {
     if (parseOptions?.suppressErrors) {
       return false;
@@ -285,7 +284,9 @@ export const cleanUpSvgCode = (
  * TODO replace btoa(). Replace with  buf.toString('base64')?
  */
 export const putIntoIFrame = (svgCode = '', svgElement?: D3Element): string => {
-  const height = svgElement ? svgElement.viewBox.baseVal.height + 'px' : IFRAME_HEIGHT;
+  const height = svgElement?.viewBox?.baseVal?.height
+    ? svgElement.viewBox.baseVal.height + 'px'
+    : IFRAME_HEIGHT;
   const base64encodedSrc = btoa('<body style="' + IFRAME_BODY_STYLE + '">' + svgCode + '</body>');
   return `<iframe style="width:${IFRAME_WIDTH};height:${height};${IFRAME_STYLES}" src="data:text/html;base64,${base64encodedSrc}" sandbox="${IFRAME_SANDBOX_OPTS}">
   ${IFRAME_NOT_SUPPORTED_MSG}
@@ -478,7 +479,7 @@ const render = async function (
 
   // Get the temporary div element containing the svg
   const element = root.select(enclosingDivID_selector).node();
-  const graphType = diag.type;
+  const diagramType = diag.type;
 
   // -------------------------------------------------------------------------------
   // Create and insert the styles (user styles, theme styles, config styles)
@@ -486,11 +487,11 @@ const render = async function (
   // Insert an element into svg. This is where we put the styles
   const svg = element.firstChild;
   const firstChild = svg.firstChild;
-  const diagramClassDefs = CLASSDEF_DIAGRAMS.includes(graphType)
+  const diagramClassDefs = CLASSDEF_DIAGRAMS.includes(diagramType)
     ? diag.renderer.getClasses(text, diag)
     : {};
 
-  const rules = createUserStyles(config, graphType, diagramClassDefs, idSelector);
+  const rules = createUserStyles(config, diagramType, diagramClassDefs, idSelector);
 
   const style1 = document.createElement('style');
   style1.innerHTML = rules;
@@ -507,9 +508,9 @@ const render = async function (
 
   // This is the d3 node for the svg element
   const svgNode = root.select(`${enclosingDivID_selector} svg`);
-  const a11yTitle = diag.db.getAccTitle?.();
-  const a11yDescr = diag.db.getAccDescription?.();
-  addA11yInfo(graphType, svgNode, a11yTitle, a11yDescr);
+  const a11yTitle: string | undefined = diag.db.getAccTitle?.();
+  const a11yDescr: string | undefined = diag.db.getAccDescription?.();
+  addA11yInfo(diagramType, svgNode, a11yTitle, a11yDescr);
 
   // -------------------------------------------------------------------------------
   // Clean up SVG code
@@ -586,14 +587,18 @@ function initialize(options: MermaidConfig = {}) {
 /**
  * Add accessibility (a11y) information to the diagram.
  *
+ * @param diagramType - diagram type
+ * @param svgNode - d3 node to insert the a11y title and desc info
+ * @param a11yTitle - a11y title
+ * @param a11yDescr - a11y description
  */
 function addA11yInfo(
-  graphType: string,
+  diagramType: string,
   svgNode: D3Element,
-  a11yTitle: string | undefined,
-  a11yDescr: string | undefined
-) {
-  setA11yDiagramInfo(svgNode, graphType);
+  a11yTitle?: string,
+  a11yDescr?: string
+): void {
+  setA11yDiagramInfo(svgNode, diagramType);
   addSVGa11yTitleDescription(svgNode, a11yTitle, a11yDescr, svgNode.attr('id'));
 }
 

@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
 describe('Entity Relationship Diagram', () => {
   it('should render a simple ER diagram', () => {
@@ -198,6 +198,27 @@ describe('Entity Relationship Diagram', () => {
       `,
       { logLevel: 1 }
     );
+  });
+
+  it('should render entities with attributes that begin with asterisk', () => {
+    imgSnapshotTest(
+      `
+    erDiagram
+        BOOK {
+          int         *id
+          string      name
+          varchar(99) summary
+        }
+        BOOK }o..o{ STORE : soldBy
+        STORE {
+          int         *id
+          string      name
+          varchar(50) address
+        }
+        `,
+      { loglevel: 1 }
+    );
+    cy.get('svg');
   });
 
   it('should render entities with keys', () => {

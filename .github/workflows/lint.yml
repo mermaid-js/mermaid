@@ -53,6 +53,19 @@ jobs:
               exit 1
           fi
 
+      - name: Verify `./src/config.type.ts` is in sync with `./src/schemas/config.schema.yaml`
+        shell: bash
+        run: |
+          if ! pnpm run --filter mermaid types:verify-config; then
+            ERROR_MESSAGE='Running `pnpm run --filter mermaid types:verify-config` failed.'
+            ERROR_MESSAGE+=' This should be fixed by running'
+            ERROR_MESSAGE+=' `pnpm run --filter mermaid types:build-config`'
+            ERROR_MESSAGE+=' on your local machine.'
+            echo "::error title=Lint failure::${ERROR_MESSAGE}"
+              # make sure to return an error exitcode so that GitHub actions shows a red-cross
+              exit 1
+          fi
+
       - name: Verify Docs
         id: verifyDocs
         working-directory: ./packages/mermaid

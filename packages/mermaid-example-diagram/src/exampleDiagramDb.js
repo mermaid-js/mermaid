@@ -22,7 +22,6 @@ export const setInfo = (inf) => {
   info = inf;
 };
 
-/** @returns Returns the info flag */
 export const getInfo = () => {
   return info;
 };

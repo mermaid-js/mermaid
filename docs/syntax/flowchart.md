@@ -608,12 +608,12 @@ It is possible to escape characters using the syntax exemplified here.
 
 ```mermaid-example
     flowchart LR
-        A["A double quote:#quot;"] -->B["A dec char:#9829;"]
+        A["A double quote:#quot;"] --> B["A dec char:#9829;"]
 ```
 
 ```mermaid
     flowchart LR
-        A["A double quote:#quot;"] -->B["A dec char:#9829;"]
+        A["A double quote:#quot;"] --> B["A dec char:#9829;"]
 ```
 
 Numbers given are base 10, so `#` can be encoded as `#35;`. It is also supported to use HTML character names.
@@ -989,6 +989,24 @@ flowchart LR
 flowchart LR
     A:::someclass --> B
     classDef someclass fill:#f96
+```
+
+This form can be used when declaring multiple links between nodes:
+
+```mermaid-example
+flowchart LR
+    A:::foo & B:::bar --> C:::foobar
+    classDef foo stroke:#f00
+    classDef bar stroke:#0f0
+    classDef foobar stroke:#00f
+```
+
+```mermaid
+flowchart LR
+    A:::foo & B:::bar --> C:::foobar
+    classDef foo stroke:#f00
+    classDef bar stroke:#0f0
+    classDef foobar stroke:#00f
 ```
 
 ### Css classes

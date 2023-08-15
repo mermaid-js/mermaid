@@ -105,6 +105,29 @@ This Markdown should be kept.
     });
   });
 
+  it('should add an editLink in the YAML frontmatter if `addEditLink: true`', async () => {
+    const contents = `---
+title: Flowcharts Syntax
+---
+
+This Markdown should be kept.
+`;
+    const withYaml = (
+      await remarkBuilder()
+        .use(transformMarkdownAst, { originalFilename, addEditLink: true })
+        .process(contents)
+    ).toString();
+    expect(withYaml).toEqual(`---
+title: Flowcharts Syntax
+editLink: >-
+  https://github.com/mermaid-js/mermaid/edit/develop/packages/mermaid/example-input-filename.md
+
+---
+
+This Markdown should be kept.
+`);
+  });
+
   describe('transformToBlockQuote', () => {
     // TODO Is there a way to test this with --vitepress given as a process argument?
 

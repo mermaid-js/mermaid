@@ -30,12 +30,6 @@ export const draw = function (text: string, id: string, version: string, diagObj
   // @ts-expect-error - wrong config?
   const LEFT_MARGIN = conf.leftMargin ?? 50;
 
-  //2. Clear the diagram db before parsing
-  diagObj.db.clear?.();
-
-  //3. Parse the diagram text
-  diagObj.parser.parse(text + '\n');
-
   log.debug('timeline', diagObj.db);
 
   const securityLevel = conf.securityLevel;

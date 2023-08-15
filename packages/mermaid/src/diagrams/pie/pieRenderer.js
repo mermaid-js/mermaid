@@ -33,9 +33,6 @@ export const draw = (txt, id, _version, diagObj) => {
     const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
     // Parse the Pie Chart definition
-    diagObj.db.clear();
-    diagObj.parser.parse(txt);
-    log.debug('Parsed info diagram');
     const elem = doc.getElementById(id);
     width = elem.parentElement.offsetWidth;
 

@@ -49,8 +49,6 @@ const conf = getConfig().journey;
 const LEFT_MARGIN = conf.leftMargin;
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().journey;
-  diagObj.db.clear();
-  diagObj.parser.parse(text + '\n');
 
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode

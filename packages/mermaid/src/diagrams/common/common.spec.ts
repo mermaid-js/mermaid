@@ -1,15 +1,15 @@
 import { sanitizeText, removeScript, parseGenericTypes } from './common.js';
 
-describe('when securityLevel is antiscript, all script must be removed', function () {
+describe('when securityLevel is antiscript, all script must be removed', () => {
   /**
-   * @param {string} original The original text
-   * @param {string} result The expected sanitized text
+   * @param original - The original text
+   * @param result - The expected sanitized text
    */
-  function compareRemoveScript(original, result) {
+  function compareRemoveScript(original: string, result: string) {
     expect(removeScript(original).trim()).toEqual(result);
   }
 
-  it('should remove all script block, script inline.', function () {
+  it('should remove all script block, script inline.', () => {
     const labelString = `1
 		Act1: Hello 1<script src="http://abc.com/script1.js"></script>1
 		<b>Act2</b>:
@@ -25,7 +25,7 @@ describe('when securityLevel is antiscript, all script must be removed', functio
     compareRemoveScript(labelString, exactlyString);
   });
 
-  it('should remove all javascript urls', function () {
+  it('should remove all javascript urls', () => {
     compareRemoveScript(
       `This is a <a href="javascript:runHijackingScript();">clean link</a> + <a href="javascript:runHijackingScript();">clean link</a>
   and <a href="javascript&colon;bipassedMining();">me too</a>`,
@@ -34,11 +34,11 @@ describe('when securityLevel is antiscript, all script must be removed', functio
     );
   });
 
-  it('should detect malicious images', function () {
+  it('should detect malicious images', () => {
     compareRemoveScript(`<img onerror="alert('hello');">`, `<img>`);
   });
 
-  it('should detect iframes', function () {
+  it('should detect iframes', () => {
     compareRemoveScript(
       `<iframe src="http://abc.com/script1.js"></iframe>
     <iframe src="http://example.com/iframeexample"></iframe>`,
@@ -47,8 +47,8 @@ describe('when securityLevel is antiscript, all script must be removed', functio
   });
 });
 
-describe('Sanitize text', function () {
-  it('should remove script tag', function () {
+describe('Sanitize text', () => {
+  it('should remove script tag', () => {
     const maliciousStr = 'javajavascript:script:alert(1)';
     const result = sanitizeText(maliciousStr, {
       securityLevel: 'strict',
@@ -58,8 +58,8 @@ describe('Sanitize text', function () {
   });
 });
 
-describe('generic parser', function () {
-  it('should parse generic types', function () {
+describe('generic parser', () => {
+  it('should parse generic types', () => {
     expect(parseGenericTypes('test~T~')).toEqual('test<T>');
     expect(parseGenericTypes('test~Array~Array~string~~~')).toEqual('test<Array<Array<string>>>');
     expect(parseGenericTypes('test~Array~Array~string[]~~~')).toEqual(

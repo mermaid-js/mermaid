@@ -13,6 +13,12 @@
 %x acc_descr_multiline
 %x dir
 %x vertex
+%x text
+%x ellipseText
+%x trapText
+%x edgeText
+%x thickEdgeText
+%x dottedEdgeText
 %x click
 %x href
 %x callbackname
@@ -23,41 +29,19 @@
 %x close_directive
 
 %%
-\%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
-<open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
-<type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
-<type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
-<arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
-accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
-<acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
-accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
-<acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
-accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
+\%\%\{                                          { this.begin('open_directive'); return 'open_directive'; }
+<open_directive>((?:(?!\}\%\%)[^:.])*)          { this.begin('type_directive'); return 'type_directive'; }
+<type_directive>":"                             { this.popState(); this.begin('arg_directive'); return ':'; }
+<type_directive,arg_directive>\}\%\%            { this.popState(); this.popState(); return 'close_directive'; }
+<arg_directive>((?:(?!\}\%\%).|\n)*)            return 'arg_directive';
+accTitle\s*":"\s*                               { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                    { this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                               { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                    { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                               { this.begin("acc_descr_multiline");}
 <acc_descr_multiline>[\}]                       { this.popState(); }
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
-// <acc_descr_multiline>.*[^\n]*                    {  return "acc_descr_line"}
-["][`]          { this.begin("md_string");}
-<md_string>[^`"]+        { return "MD_STR";}
-<md_string>[`]["]          { this.popState();}
-["]                     this.begin("string");
-<string>["]             this.popState();
-<string>[^"]*           return "STR";
-"style"               return 'STYLE';
-"default"             return 'DEFAULT';
-"linkStyle"           return 'LINKSTYLE';
-"interpolate"         return 'INTERPOLATE';
-"classDef"            return 'CLASSDEF';
-"class"               return 'CLASS';
-
-/*
----interactivity command---
-'href' adds a link to the specified node. 'href' can only be specified when the
-line was introduced with 'click'.
-'href "<link>"' attaches the specified link to the node that was specified by 'click'.
-*/
-"href"[\s]+["]          this.begin("href");
-<href>["]               this.popState();
-<href>[^"]*             return 'HREF';
+// <acc_descr_multiline>.*[^\n]*                {  return "acc_descr_line"}
 
 /*
 ---interactivity command---
@@ -74,88 +58,128 @@ Function arguments are optional: 'call <callbackname>()' simply executes 'callba
 <callbackargs>\)        this.popState();
 <callbackargs>[^)]*     return 'CALLBACKARGS';
 
+<md_string>[^`"]+       { return "MD_STR";}
+<md_string>[`]["]       { this.popState();}
+<*>["][`]               { this.begin("md_string");}
+<string>[^"]+           return "STR";
+<string>["]             this.popState();
+<*>["]                  this.pushState("string");
+"style"                 return 'STYLE';
+"default"               return 'DEFAULT';
+"linkStyle"             return 'LINKSTYLE';
+"interpolate"           return 'INTERPOLATE';
+"classDef"              return 'CLASSDEF';
+"class"                 return 'CLASS';
+
+/*
+---interactivity command---
+'href' adds a link to the specified node. 'href' can only be specified when the
+line was introduced with 'click'.
+'href "<link>"' attaches the specified link to the node that was specified by 'click'.
+*/
+"href"[\s]                  return 'HREF';
+
+
 /*
 'click' is the keyword to introduce a line that contains interactivity commands.
 'click' must be followed by an existing node-id. All commands are attached to
 that id.
 'click <id>' can be followed by href or call commands in any desired order
 */
-"click"[\s]+            this.begin("click");
-<click>[\s\n]           this.popState();
-<click>[^\s\n]*         return 'CLICK';
+"click"[\s]+             this.begin("click");
+<click>[\s\n]            this.popState();
+<click>[^\s\n]*          return 'CLICK';
 
-"flowchart-elk"        {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
-"graph"                {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
-"flowchart"            {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
-"subgraph"            return 'subgraph';
-"end"\b\s*            return 'end';
+"flowchart-elk"          {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
+"graph"                  {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
+"flowchart"              {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
+"subgraph"               return 'subgraph';
+"end"\b\s*               return 'end';
 
-"_self"               return 'LINK_TARGET';
-"_blank"              return 'LINK_TARGET';
-"_parent"             return 'LINK_TARGET';
-"_top"                return 'LINK_TARGET';
+"_self"                  return 'LINK_TARGET';
+"_blank"                 return 'LINK_TARGET';
+"_parent"                return 'LINK_TARGET';
+"_top"                   return 'LINK_TARGET';
 
-<dir>(\r?\n)*\s*\n       {   this.popState();  return 'NODIR'; }
-<dir>\s*"LR"             {   this.popState();  return 'DIR'; }
-<dir>\s*"RL"             {   this.popState();  return 'DIR'; }
-<dir>\s*"TB"             {   this.popState();  return 'DIR'; }
-<dir>\s*"BT"             {   this.popState();  return 'DIR'; }
-<dir>\s*"TD"             {   this.popState();  return 'DIR'; }
-<dir>\s*"BR"             {   this.popState();  return 'DIR'; }
-<dir>\s*"<"              {   this.popState();  return 'DIR'; }
-<dir>\s*">"              {   this.popState();  return 'DIR'; }
-<dir>\s*"^"              {   this.popState();  return 'DIR'; }
-<dir>\s*"v"              {   this.popState();  return 'DIR'; }
+<dir>(\r?\n)*\s*\n       { this.popState();  return 'NODIR'; }
+<dir>\s*"LR"             { this.popState();  return 'DIR'; }
+<dir>\s*"RL"             { this.popState();  return 'DIR'; }
+<dir>\s*"TB"             { this.popState();  return 'DIR'; }
+<dir>\s*"BT"             { this.popState();  return 'DIR'; }
+<dir>\s*"TD"             { this.popState();  return 'DIR'; }
+<dir>\s*"BR"             { this.popState();  return 'DIR'; }
+<dir>\s*"<"              { this.popState();  return 'DIR'; }
+<dir>\s*">"              { this.popState();  return 'DIR'; }
+<dir>\s*"^"              { this.popState();  return 'DIR'; }
+<dir>\s*"v"              { this.popState();  return 'DIR'; }
 
-.*direction\s+TB[^\n]*                                      return 'direction_tb';
-.*direction\s+BT[^\n]*                                      return 'direction_bt';
-.*direction\s+RL[^\n]*                                      return 'direction_rl';
-.*direction\s+LR[^\n]*                                      return 'direction_lr';
+.*direction\s+TB[^\n]*       return 'direction_tb';
+.*direction\s+BT[^\n]*       return 'direction_bt';
+.*direction\s+RL[^\n]*       return 'direction_rl';
+.*direction\s+LR[^\n]*       return 'direction_lr';
 
-[0-9]+                { return 'NUM';}
-\#                    return 'BRKT';
-":::"                 return 'STYLE_SEPARATOR';
-":"                   return 'COLON';
-"&"                   return 'AMP';
-";"                   return 'SEMI';
-","                   return 'COMMA';
-"*"                   return 'MULT';
-\s*[xo<]?\-\-+[-xo>]\s*     return 'LINK';
-\s*[xo<]?\=\=+[=xo>]\s*     return 'LINK';
-\s*[xo<]?\-?\.+\-[xo>]?\s*  return 'LINK';
-\s*\~\~[\~]+\s*  return 'LINK';
-\s*[xo<]?\-\-\s*            return 'START_LINK';
-\s*[xo<]?\=\=\s*            return 'START_LINK';
-\s*[xo<]?\-\.\s*            return 'START_LINK';
-"(-"                  return '(-';
-"-)"                  return '-)';
-"(["                  return 'STADIUMSTART';
-"])"                  return 'STADIUMEND';
-"[["                  return 'SUBROUTINESTART';
-"]]"                  return 'SUBROUTINEEND';
-"[|"                  return 'VERTEX_WITH_PROPS_START';
-"[("                  return 'CYLINDERSTART';
-")]"                  return 'CYLINDEREND';
-"((("                 return 'DOUBLECIRCLESTART';
-")))"                 return 'DOUBLECIRCLEEND';
-\-                    return 'MINUS';
-"."                   return 'DOT';
-[\_]                  return 'UNDERSCORE';
-\+                    return 'PLUS';
-\%                    return 'PCT';
-"="                   return 'EQUALS';
-\=                    return 'EQUALS';
+[0-9]+                       return 'NUM';
+\#                           return 'BRKT';
+":::"                        return 'STYLE_SEPARATOR';
+":"                          return 'COLON';
+"&"                          return 'AMP';
+";"                          return 'SEMI';
+","                          return 'COMMA';
+"*"                          return 'MULT';
+
+<INITIAL,edgeText>\s*[xo<]?\-\-+[-xo>]\s*          { this.popState(); return 'LINK'; }
+<INITIAL>\s*[xo<]?\-\-\s*                          { this.pushState("edgeText"); return 'START_LINK'; }
+<edgeText>[^-]|\-(?!\-)+                           return 'EDGE_TEXT';
+
+<INITIAL,thickEdgeText>\s*[xo<]?\=\=+[=xo>]\s*      { this.popState(); return 'LINK'; }
+<INITIAL>\s*[xo<]?\=\=\s*                           { this.pushState("thickEdgeText"); return 'START_LINK'; }
+<thickEdgeText>[^=]|\=(?!=)                         return 'EDGE_TEXT';
+
+<INITIAL,dottedEdgeText>\s*[xo<]?\-?\.+\-[xo>]?\s*   { this.popState(); return 'LINK'; }
+<INITIAL>\s*[xo<]?\-\.\s*                            { this.pushState("dottedEdgeText"); return 'START_LINK'; }
+<dottedEdgeText>[^\.]|\.(?!-)                        return 'EDGE_TEXT';
+
+
+<*>\s*\~\~[\~]+\s*              return 'LINK';
+
+<ellipseText>[-/\)][\)]         { this.popState(); return '-)'; }
+<ellipseText>[^\(\)\[\]\{\}]|-/!\)+       return "TEXT"
+<*>"(-"                         { this.pushState("ellipseText"); return '(-'; }
+
+<text>"])"                { this.popState(); return 'STADIUMEND'; }
+<*>"(["                   { this.pushState("text"); return 'STADIUMSTART'; }
+
+<text>"]]"                { this.popState(); return 'SUBROUTINEEND'; }
+<*>"[["                   { this.pushState("text"); return 'SUBROUTINESTART'; }
+
+"[|"                      { return 'VERTEX_WITH_PROPS_START'; }
+
+\>                    { this.pushState("text"); return 'TAGEND'; }
+
+<text>")]"                { this.popState(); return 'CYLINDEREND'; }
+<*>"[("                   { this.pushState("text") ;return 'CYLINDERSTART'; }
+
+<text>")))"               { this.popState(); return 'DOUBLECIRCLEEND'; }
+<*>"((("                  { this.pushState("text"); return 'DOUBLECIRCLESTART'; }
+
+<trapText>[\\(?=\])][\]]  { this.popState(); return 'TRAPEND'; }
+<trapText>\/(?=\])\]     { this.popState(); return 'INVTRAPEND'; }
+<trapText>\/(?!\])|\\(?!\])|[^\\\[\]\(\)\{\}\/]+        return 'TEXT';
+<*>"[/"                   { this.pushState("trapText"); return 'TRAPSTART'; }
+
+<*>"[\\"                 { this.pushState("trapText"); return 'INVTRAPSTART'; }
+
+
 "<"                   return 'TAGSTART';
 ">"                   return 'TAGEND';
 "^"                   return 'UP';
 "\|"                  return 'SEP';
 "v"                   return 'DOWN';
-[A-Za-z]+             return 'ALPHA';
-"\\]"                 return 'TRAPEND';
-"[/"                  return 'TRAPSTART';
-"/]"                  return 'INVTRAPEND';
-"[\\"                 return 'INVTRAPSTART';
-[!"#$%&'*+,-.`?\\_/]  return 'PUNCTUATION';
+"*"                   return 'MULT';
+"#"                   return 'BRKT';
+"&"                   return 'AMP';
+([A-Za-z0-9!"\#$%&'*+\.`?\\_\/]|\-(?=[^\>\-\.])|=(?!=))+  return 'NODE_STRING';
+"-"                   return 'MINUS'
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
 [\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|
@@ -218,13 +242,20 @@ that id.
 [\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|
 [\uFFD2-\uFFD7\uFFDA-\uFFDC]
                       return 'UNICODE_TEXT';
-"|"                   return 'PIPE';
-"("                   return 'PS';
-")"                   return 'PE';
-"["                   return 'SQS';
-"]"                   return 'SQE';
-"{"                   return 'DIAMOND_START'
-"}"                   return 'DIAMOND_STOP'
+
+<text>"|"             { this.popState(); return 'PIPE'; }
+<*>"|"                { this.pushState("text"); return 'PIPE'; }
+
+<text>")"             { this.popState(); return 'PE'; }
+<*>"("                { this.pushState("text"); return 'PS'; }
+
+<text>"]"            { this.popState(); return 'SQE'; }
+<*>"["                { this.pushState("text"); return 'SQS'; }
+
+<text>(\})            { this.popState(); return 'DIAMOND_STOP' }
+<*>"{"                { this.pushState("text"); return 'DIAMOND_START' }
+<text>[^\[\]\(\)\{\}\|\"]+    return "TEXT";
+
 "\""                  return 'QUOTE';
 (\r?\n)+              return 'NEWLINE';
 \s                    return 'SPACE';
@@ -255,11 +286,11 @@ openDirective
   ;
 
 typeDirective
-  : type_directive { yy.parseDirective($1, 'type_directive'); }
+  : type_directive { yy.parseDirective($type_directive, 'type_directive'); }
   ;
 
 argDirective
-  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
+  : arg_directive { $arg_directive = $arg_directive.trim().replace(/'/g, '"'); yy.parseDirective($arg_directive, 'arg_directive'); }
   ;
 
 closeDirective
@@ -275,15 +306,15 @@ document
 	{ $$ = [];}
 	| document line
 	{
-	    if(!Array.isArray($2) || $2.length > 0){
-	        $1.push($2);
+	    if(!Array.isArray($line) || $line.length > 0){
+	        $document.push($line);
 	    }
-	    $$=$1;}
+	    $$=$document;}
 	;
 
 line
 	: statement
-	{$$=$1;}
+	{$$=$statement;}
 	| SEMI
 	| NEWLINE
 	| SPACE
@@ -296,15 +327,15 @@ graphConfig
     | GRAPH NODIR
         { yy.setDirection('TB');$$ = 'TB';}
     | GRAPH DIR FirstStmtSeperator
-        { yy.setDirection($2);$$ = $2;}
+        { yy.setDirection($DIR);$$ = $DIR;}
     // | GRAPH SPACE TAGEND FirstStmtSeperator
-    //     { yy.setDirection("LR");$$ = $3;}
+    //     { yy.setDirection("LR");$$ = $TAGEND;}
     // | GRAPH SPACE TAGSTART FirstStmtSeperator
-    //     { yy.setDirection("RL");$$ = $3;}
+    //     { yy.setDirection("RL");$$ = $TAGSTART;}
     // | GRAPH SPACE UP FirstStmtSeperator
-    //     { yy.setDirection("BT");$$ = $3;}
+    //     { yy.setDirection("BT");$$ = $UP;}
     // | GRAPH SPACE DOWN FirstStmtSeperator
-    //     { yy.setDirection("TB");$$ = $3;}
+    //     { yy.setDirection("TB");$$ = $DOWN;}
     ;
 
 ending: endToken ending
@@ -332,7 +363,7 @@ spaceList
 
 statement
     : verticeStatement separator
-    { /* console.warn('finat vs', $1.nodes); */ $$=$1.nodes}
+    { /* console.warn('finat vs', $verticeStatement.nodes); */ $$=$verticeStatement.nodes}
     | styleStatement separator
     {$$=[];}
     | linkStyleStatement separator
@@ -343,110 +374,121 @@ statement
     {$$=[];}
     | clickStatement separator
     {$$=[];}
-    | subgraph SPACE text SQS text SQE separator document end
-    {$$=yy.addSubGraph($3,$8,$5);}
-    | subgraph SPACE text separator document end
-    {$$=yy.addSubGraph($3,$5,$3);}
-    // | subgraph SPACE text separator document end
-    // {$$=yy.addSubGraph($3,$5,$3);}
+    | subgraph SPACE textNoTags SQS text SQE separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,$text);}
+    | subgraph SPACE textNoTags separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,$textNoTags);}
+    // | subgraph SPACE textNoTags separator document end
+    // {$$=yy.addSubGraph($textNoTags,$document,$textNoTags);}
     | subgraph separator document end
-    {$$=yy.addSubGraph(undefined,$3,undefined);}
+    {$$=yy.addSubGraph(undefined,$document,undefined);}
     | direction
-    | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
-    | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
-    | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
+    | acc_title acc_title_value  { $$=$acc_title_value.trim();yy.setAccTitle($$); }
+    | acc_descr acc_descr_value  { $$=$acc_descr_value.trim();yy.setAccDescription($$); }
+    | acc_descr_multiline_value { $$=$acc_descr_multiline_value.trim();yy.setAccDescription($$); }
     ;
 
 separator: NEWLINE | SEMI | EOF ;
 
- 
+
 verticeStatement: verticeStatement link node
-        { /* console.warn('vs',$1.stmt,$3); */ yy.addLink($1.stmt,$3,$2); $$ = { stmt: $3, nodes: $3.concat($1.nodes) } }
+        { /* console.warn('vs',$verticeStatement.stmt,$node); */ yy.addLink($verticeStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($verticeStatement.nodes) } }
     |  verticeStatement link node spaceList
-        { /* console.warn('vs',$1.stmt,$3); */ yy.addLink($1.stmt,$3,$2); $$ = { stmt: $3, nodes: $3.concat($1.nodes) } }
-    |node spaceList {/*console.warn('noda', $1);*/ $$ = {stmt: $1, nodes:$1 }}
-    |node { /*console.warn('noda', $1);*/ $$ = {stmt: $1, nodes:$1 }}
+        { /* console.warn('vs',$verticeStatement.stmt,$node); */ yy.addLink($verticeStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($verticeStatement.nodes) } }
+    |node spaceList {/*console.warn('noda', $node);*/ $$ = {stmt: $node, nodes:$node }}
+    |node { /*console.warn('noda', $node);*/ $$ = {stmt: $node, nodes:$node }}
     ;
 
 node: styledVertex
-        { /* console.warn('nod', $1); */ $$ = [$1];}
+        { /* console.warn('nod', $styledVertex); */ $$ = [$styledVertex];}
     | node spaceList AMP spaceList styledVertex
-        { $$ = $1.concat($5); /* console.warn('pip', $1[0], $5, $$); */ }
+        { $$ = $node.concat($styledVertex); /* console.warn('pip', $node[0], $styledVertex, $$); */ }
     ;
 
 styledVertex: vertex
-        { /* console.warn('nod', $1); */ $$ = $1;}
+        { /* console.warn('nod', $vertex); */ $$ = $vertex;}
     | vertex STYLE_SEPARATOR idString
-        {$$ = $1;yy.setClass($1,$3)}
+        {$$ = $vertex;yy.setClass($vertex,$idString)}
     ;
 
 vertex:  idString SQS text SQE
-        {$$ = $1;yy.addVertex($1,$3,'square');}
+        {$$ = $idString;yy.addVertex($idString,$text,'square');}
     | idString DOUBLECIRCLESTART text DOUBLECIRCLEEND
-        {$$ = $1;yy.addVertex($1,$3,'doublecircle');}
+        {$$ = $idString;yy.addVertex($idString,$text,'doublecircle');}
     | idString PS PS text PE PE
-        {$$ = $1;yy.addVertex($1,$4,'circle');}
+        {$$ = $idString;yy.addVertex($idString,$text,'circle');}
     | idString '(-' text '-)'
-        {$$ = $1;yy.addVertex($1,$3,'ellipse');}
+        {$$ = $idString;yy.addVertex($idString,$text,'ellipse');}
     | idString STADIUMSTART text STADIUMEND
-        {$$ = $1;yy.addVertex($1,$3,'stadium');}
+        {$$ = $idString;yy.addVertex($idString,$text,'stadium');}
     | idString SUBROUTINESTART text SUBROUTINEEND
-        {$$ = $1;yy.addVertex($1,$3,'subroutine');}
-    | idString VERTEX_WITH_PROPS_START ALPHA COLON ALPHA PIPE text SQE
-        {$$ = $1;yy.addVertex($1,$7,'rect',undefined,undefined,undefined, Object.fromEntries([[$3, $5]]));}
+        {$$ = $idString;yy.addVertex($idString,$text,'subroutine');}
+    | idString VERTEX_WITH_PROPS_START NODE_STRING\[field] COLON NODE_STRING\[value] PIPE text SQE
+        {$$ = $idString;yy.addVertex($idString,$text,'rect',undefined,undefined,undefined, Object.fromEntries([[$field, $value]]));}
     | idString CYLINDERSTART text CYLINDEREND
-        {$$ = $1;yy.addVertex($1,$3,'cylinder');}
+        {$$ = $idString;yy.addVertex($idString,$text,'cylinder');}
     | idString PS text PE
-        {$$ = $1;yy.addVertex($1,$3,'round');}
+        {$$ = $idString;yy.addVertex($idString,$text,'round');}
     | idString DIAMOND_START text DIAMOND_STOP
-        {$$ = $1;yy.addVertex($1,$3,'diamond');}
+        {$$ = $idString;yy.addVertex($idString,$text,'diamond');}
     | idString DIAMOND_START DIAMOND_START text DIAMOND_STOP DIAMOND_STOP
-        {$$ = $1;yy.addVertex($1,$4,'hexagon');}
+        {$$ = $idString;yy.addVertex($idString,$text,'hexagon');}
     | idString TAGEND text SQE
-        {$$ = $1;yy.addVertex($1,$3,'odd');}
+        {$$ = $idString;yy.addVertex($idString,$text,'odd');}
     | idString TRAPSTART text TRAPEND
-        {$$ = $1;yy.addVertex($1,$3,'trapezoid');}
+        {$$ = $idString;yy.addVertex($idString,$text,'trapezoid');}
     | idString INVTRAPSTART text INVTRAPEND
-        {$$ = $1;yy.addVertex($1,$3,'inv_trapezoid');}
+        {$$ = $idString;yy.addVertex($idString,$text,'inv_trapezoid');}
     | idString TRAPSTART text INVTRAPEND
-        {$$ = $1;yy.addVertex($1,$3,'lean_right');}
+        {$$ = $idString;yy.addVertex($idString,$text,'lean_right');}
     | idString INVTRAPSTART text TRAPEND
-        {$$ = $1;yy.addVertex($1,$3,'lean_left');}
+        {$$ = $idString;yy.addVertex($idString,$text,'lean_left');}
     | idString
-        { /*console.warn('h: ', $1);*/$$ = $1;yy.addVertex($1);}
+        { /*console.warn('h: ', $idString);*/$$ = $idString;yy.addVertex($idString);}
     ;
 
 
 
 link: linkStatement arrowText
-    {$1.text = $2;$$ = $1;}
+    {$linkStatement.text = $arrowText;$$ = $linkStatement;}
     | linkStatement TESTSTR SPACE
-    {$1.text = $2;$$ = $1;}
+    {$linkStatement.text = $TESTSTR;$$ = $linkStatement;}
     | linkStatement arrowText SPACE
-    {$1.text = $2;$$ = $1;}
+    {$linkStatement.text = $arrowText;$$ = $linkStatement;}
     | linkStatement
-    {$$ = $1;}
-    | START_LINK text LINK
-        {var inf = yy.destructLink($3, $1); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$2};}
+    {$$ = $linkStatement;}
+    | START_LINK edgeText LINK
+        {var inf = yy.destructLink($LINK, $START_LINK); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$edgeText};}
     ;
 
+edgeText: edgeTextToken
+    {$$={text:$edgeTextToken, type:'text'};}
+    | edgeText edgeTextToken
+    {$$={text:$edgeText.text+''+$edgeTextToken, type:$edgeText.type};}
+    |STR
+    {$$={text: $STR, type: 'string'};}
+    | MD_STR
+    {$$={text:$MD_STR, type:'markdown'};}
+    ;
+
+
 linkStatement: LINK
-        {var inf = yy.destructLink($1);$$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length};}
+        {var inf = yy.destructLink($LINK);$$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length};}
         ;
 
 arrowText:
     PIPE text PIPE
-    {$$ = $2;}
+    {$$ = $text;}
     ;
 
 text: textToken
-    { $$={text:$1, type: 'text'};}
+    { $$={text:$textToken, type: 'text'};}
     | text textToken
-    { $$={text:$1.text+''+$2, type: $1.type};}
+    { $$={text:$text.text+''+$textToken, type: $text.type};}
     | STR
-    { $$={text: $1, type: 'text'};}
+    { $$ = {text: $STR, type: 'string'};}
     | MD_STR
-    { $$={text: $1, type: 'markdown'};}
+    { $$={text: $MD_STR, type: 'markdown'};}
     ;
 
 
@@ -456,109 +498,104 @@ keywords
 
 
 textNoTags: textNoTagsToken
-    {$$=$1;}
+    {$$={text:$textNoTagsToken, type: 'text'};}
     | textNoTags textNoTagsToken
-    {$$=$1+''+$2;}
+    {$$={text:$textNoTags.text+''+$textNoTagsToken, type: $textNoTags.type};}
+    | STR
+    { $$={text: $STR, type: 'text'};}
+    | MD_STR
+    { $$={text: $MD_STR, type: 'markdown'};}
     ;
 
 
-classDefStatement:CLASSDEF SPACE DEFAULT SPACE stylesOpt
-    {$$ = $1;yy.addClass($3,$5);}
-    | CLASSDEF SPACE alphaNum SPACE stylesOpt
-          {$$ = $1;yy.addClass($3,$5);}
+classDefStatement:CLASSDEF SPACE idString SPACE stylesOpt
+    {$$ = $CLASSDEF;yy.addClass($idString,$stylesOpt);}
     ;
 
-classStatement:CLASS SPACE alphaNum SPACE alphaNum
-    {$$ = $1;yy.setClass($3, $5);}
+classStatement:CLASS SPACE idString\[vertex] SPACE idString\[class]
+    {$$ = $CLASS;yy.setClass($vertex, $class);}
     ;
 
 clickStatement
-    : CLICK CALLBACKNAME                           {$$ = $1;yy.setClickEvent($1, $2);}
-    | CLICK CALLBACKNAME SPACE STR                 {$$ = $1;yy.setClickEvent($1, $2);yy.setTooltip($1, $4);}
-    | CLICK CALLBACKNAME CALLBACKARGS              {$$ = $1;yy.setClickEvent($1, $2, $3);}
-    | CLICK CALLBACKNAME CALLBACKARGS SPACE STR    {$$ = $1;yy.setClickEvent($1, $2, $3);yy.setTooltip($1, $5);}
-    | CLICK HREF                                   {$$ = $1;yy.setLink($1, $2);}
-    | CLICK HREF SPACE STR                         {$$ = $1;yy.setLink($1, $2);yy.setTooltip($1, $4);}
-    | CLICK HREF SPACE LINK_TARGET                 {$$ = $1;yy.setLink($1, $2, $4);}
-    | CLICK HREF SPACE STR SPACE LINK_TARGET       {$$ = $1;yy.setLink($1, $2, $6);yy.setTooltip($1, $4);}
-    | CLICK alphaNum                               {$$ = $1;yy.setClickEvent($1, $2);}
-    | CLICK alphaNum SPACE STR                     {$$ = $1;yy.setClickEvent($1, $2);yy.setTooltip($1, $4);}
-    | CLICK STR                                    {$$ = $1;yy.setLink($1, $2);}
-    | CLICK STR SPACE STR                          {$$ = $1;yy.setLink($1, $2);yy.setTooltip($1, $4);}
-    | CLICK STR SPACE LINK_TARGET                  {$$ = $1;yy.setLink($1, $2, $4);}
-    | CLICK STR SPACE STR SPACE LINK_TARGET        {$$ = $1;yy.setLink($1, $2, $6);yy.setTooltip($1, $4);}
+    : CLICK CALLBACKNAME                                    {$$ = $CLICK;yy.setClickEvent($CLICK, $CALLBACKNAME);}
+    | CLICK CALLBACKNAME SPACE STR                          {$$ = $CLICK;yy.setClickEvent($CLICK, $CALLBACKNAME);yy.setTooltip($CLICK, $STR);}
+    | CLICK CALLBACKNAME CALLBACKARGS                       {$$ = $CLICK;yy.setClickEvent($CLICK, $CALLBACKNAME, $CALLBACKARGS);}
+    | CLICK CALLBACKNAME CALLBACKARGS SPACE STR             {$$ = $CLICK;yy.setClickEvent($CLICK, $CALLBACKNAME, $CALLBACKARGS);yy.setTooltip($CLICK, $STR);}
+    | CLICK HREF STR                                        {$$ = $CLICK;yy.setLink($CLICK, $STR);}
+    | CLICK HREF STR SPACE STR                              {$$ = $CLICK;yy.setLink($CLICK, $STR1);yy.setTooltip($CLICK, $STR2);}
+    | CLICK HREF STR SPACE LINK_TARGET                      {$$ = $CLICK;yy.setLink($CLICK, $STR, $LINK_TARGET);}
+    | CLICK HREF STR\[link] SPACE STR\[tooltip] SPACE LINK_TARGET      {$$ = $CLICK;yy.setLink($CLICK, $link, $LINK_TARGET);yy.setTooltip($CLICK, $tooltip);}
+    | CLICK alphaNum                                        {$$ = $CLICK;yy.setClickEvent($CLICK, $alphaNum);}
+    | CLICK alphaNum SPACE STR                              {$$ = $CLICK;yy.setClickEvent($CLICK, $alphaNum);yy.setTooltip($CLICK, $STR);}
+    | CLICK STR                                             {$$ = $CLICK;yy.setLink($CLICK, $STR);}
+    | CLICK STR\[link] SPACE STR\[tooltip]                  {$$ = $CLICK;yy.setLink($CLICK, $link);yy.setTooltip($CLICK, $tooltip);}
+    | CLICK STR SPACE LINK_TARGET                           {$$ = $CLICK;yy.setLink($CLICK, $STR, $LINK_TARGET);}
+    | CLICK STR\[link] SPACE STR\[tooltip] SPACE LINK_TARGET    {$$ = $CLICK;yy.setLink($CLICK, $link, $LINK_TARGET);yy.setTooltip($CLICK, $tooltip);}
     ;
 
-styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
-    {$$ = $1;yy.addVertex($3,undefined,undefined,$5);}
-    | STYLE SPACE HEX SPACE stylesOpt
-          {$$ = $1;yy.updateLink($3,$5);}
+styleStatement:STYLE SPACE idString SPACE stylesOpt
+    {$$ = $STYLE;yy.addVertex($idString,undefined,undefined,$stylesOpt);}
     ;
 
 linkStyleStatement
     : LINKSTYLE SPACE DEFAULT SPACE stylesOpt
-          {$$ = $1;yy.updateLink([$3],$5);}
+          {$$ = $LINKSTYLE;yy.updateLink([$DEFAULT],$stylesOpt);}
     | LINKSTYLE SPACE numList SPACE stylesOpt
-          {$$ = $1;yy.updateLink($3,$5);}
+          {$$ = $LINKSTYLE;yy.updateLink($numList,$stylesOpt);}
     | LINKSTYLE SPACE DEFAULT SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
-          {$$ = $1;yy.updateLinkInterpolate([$3],$7);yy.updateLink([$3],$9);}
+          {$$ = $LINKSTYLE;yy.updateLinkInterpolate([$DEFAULT],$alphaNum);yy.updateLink([$DEFAULT],$stylesOpt);}
     | LINKSTYLE SPACE numList SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
-          {$$ = $1;yy.updateLinkInterpolate($3,$7);yy.updateLink($3,$9);}
+          {$$ = $LINKSTYLE;yy.updateLinkInterpolate($numList,$alphaNum);yy.updateLink($numList,$stylesOpt);}
     | LINKSTYLE SPACE DEFAULT SPACE INTERPOLATE SPACE alphaNum
-          {$$ = $1;yy.updateLinkInterpolate([$3],$7);}
+          {$$ = $LINKSTYLE;yy.updateLinkInterpolate([$DEFAULT],$alphaNum);}
     | LINKSTYLE SPACE numList SPACE INTERPOLATE SPACE alphaNum
-          {$$ = $1;yy.updateLinkInterpolate($3,$7);}
+          {$$ = $LINKSTYLE;yy.updateLinkInterpolate($numList,$alphaNum);}
     ;
 
 numList: NUM
-        {$$ = [$1]}
+        {$$ = [$NUM]}
     | numList COMMA NUM
-        {$1.push($3);$$ = $1;}
+        {$numList.push($NUM);$$ = $numList;}
     ;
 
 stylesOpt: style
-        {$$ = [$1]}
+        {$$ = [$style]}
     | stylesOpt COMMA style
-        {$1.push($3);$$ = $1;}
+        {$stylesOpt.push($style);$$ = $stylesOpt;}
     ;
 
 style: styleComponent
     |style styleComponent
-    {$$ = $1 + $2;}
+    {$$ = $style + $styleComponent;}
     ;
 
-styleComponent: ALPHA | COLON | MINUS | NUM | UNIT | SPACE | HEX | BRKT | DOT | STYLE | PCT ;
+styleComponent: NUM | NODE_STRING| COLON | UNIT | SPACE | BRKT | STYLE | PCT ;
 
 /* Token lists */
+idStringToken  :  NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON | AMP | BRKT | MULT | UNICODE_TEXT;
 
-textToken      : textNoTagsToken | TAGSTART | TAGEND | START_LINK | PCT | DEFAULT;
+textToken      :   TEXT | TAGSTART | TAGEND | UNICODE_TEXT;
 
-textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
+textNoTagsToken: NUM | NODE_STRING | SPACE | MINUS | AMP | UNICODE_TEXT | COLON | MULT | BRKT | keywords | START_LINK ;
+
+edgeTextToken  :  EDGE_TEXT | UNICODE_TEXT ;
+
+alphaNumToken  :  NUM | UNICODE_TEXT | NODE_STRING | DIR | DOWN | MINUS | COMMA | COLON | AMP | BRKT | MULT;
 
 idString
     :idStringToken
-    {$$=$1}
+    {$$=$idStringToken}
     | idString idStringToken
-    {$$=$1+''+$2}
+    {$$=$idString+''+$idStringToken}
     ;
 
 alphaNum
-    : alphaNumStatement
-    {$$=$1;}
-    | alphaNum alphaNumStatement
-    {$$=$1+''+$2;}
+    : alphaNumToken
+    {$$=$alphaNumToken;}
+    | alphaNum alphaNumToken
+    {$$=$alphaNum+''+$alphaNumToken;}
     ;
 
-alphaNumStatement
-    : DIR
-        {$$=$1;}
-    | alphaNumToken
-        {$$=$1;}
-    | DOWN
-        {$$='v';}
-    | MINUS
-        {$$='-';}
-    ;
 
 direction
     : direction_tb
@@ -571,9 +608,4 @@ direction
     { $$={stmt:'dir', value:'LR'};}
     ;
 
-alphaNumToken  : PUNCTUATION | AMP | UNICODE_TEXT | NUM| ALPHA | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT| UNDERSCORE ;
-
-idStringToken  : ALPHA|UNDERSCORE |UNICODE_TEXT | NUM|  COLON | COMMA | PLUS | MINUS | DOWN |EQUALS | MULT | BRKT | DOT | PUNCTUATION | AMP | DEFAULT;
-
-graphCodeTokens: STADIUMSTART | STADIUMEND | SUBROUTINESTART | SUBROUTINEEND | VERTEX_WITH_PROPS_START | CYLINDERSTART | CYLINDEREND | TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI;
 %%

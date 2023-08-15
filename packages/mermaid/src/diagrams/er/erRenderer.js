@@ -555,7 +555,6 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
 export const draw = function (text, id, _version, diagObj) {
   conf = getConfig().er;
   log.info('Drawing ER diagram');
-  //  diag.db.clear();
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
@@ -567,13 +566,6 @@ export const draw = function (text, id, _version, diagObj) {
       ? select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
   // const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
-
-  // Parse the text to populate erDb
-  // try {
-  //   parser.parse(text);
-  // } catch (err) {
-  //   log.debug('Parsing failed');
-  // }
 
   // Get a reference to the svg node that contains the text
   const svg = root.select(`[id='${id}']`);

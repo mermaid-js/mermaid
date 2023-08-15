@@ -1,6 +1,10 @@
 name: Build Vitepress docs
 
 on:
+  push:
+    branches:
+      - master
+      - release/*
   pull_request:
   merge_group:
 
@@ -24,6 +28,10 @@ jobs:
 
       - name: Install Packages
         run: pnpm install --frozen-lockfile
+
+      - name: Verify release verion
+        if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release')) }}
+        run: pnpm --filter mermaid run docs:verify-version
 
       - name: Run Build
         run: pnpm --filter mermaid run docs:build:vitepress

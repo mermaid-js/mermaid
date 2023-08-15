@@ -35,7 +35,12 @@ describe('DiagramAPI', () => {
       'loki',
       {
         db: {},
-        parser: {},
+        parser: {
+          parse: (_text) => {
+            return;
+          },
+          parser: { yy: {} },
+        },
         renderer: {},
         styles: {},
       },
