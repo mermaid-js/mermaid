@@ -1,5 +1,5 @@
 import common from '../common/common.js';
-import * as svgDrawCommon from '../common/svgDrawCommon';
+import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { addFunction } from '../../interactionDb.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
