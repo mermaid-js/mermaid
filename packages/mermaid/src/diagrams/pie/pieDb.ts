@@ -15,12 +15,9 @@ import type { ParseDirectiveDefinition } from '../../diagram-api/types.js';
 import type { PieFields, PieDB, Sections } from './pieTypes.js';
 import type { RequiredDeep } from 'type-fest';
 import type { PieDiagramConfig } from '../../config.type.js';
+import DEFAULT_CONFIG from '../../defaultConfig.js';
 
-export const DEFAULT_PIE_CONFIG: Required<PieDiagramConfig> = {
-  useMaxWidth: true,
-  useWidth: 984,
-  textPosition: 0.75,
-} as const;
+export const DEFAULT_PIE_CONFIG: Required<PieDiagramConfig> = DEFAULT_CONFIG.pie;
 
 export const DEFAULT_PIE_DB: RequiredDeep<PieFields> = {
   sections: {},
