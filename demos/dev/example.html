@@ -5,6 +5,8 @@
     <title>Mermaid development page</title>
   </head>
   <body>
+    <pre class="mermaid">info</pre>
+
     <pre id="diagram" class="mermaid">
 graph TB
       a --> b
@@ -29,6 +31,34 @@ graph TB
       const { svg } = await mermaid.render('dd', value);
       console.log(svg);
       el.innerHTML = svg;
+    </script>
+
+    <script>
+      // Set to false to disable live reload
+      const liveReload = true;
+      // Connect to the server and reload the page if the server sends a reload message
+      const connectToEvents = () => {
+        const events = new EventSource('/events');
+        const loadTime = Date.now();
+        events.onmessage = (event) => {
+          const time = JSON.parse(event.data);
+          if (time && time > loadTime) {
+            location.reload();
+          }
+        };
+        events.onerror = () => {
+          // No need to log this error, as it's not useful.
+          events.close();
+          // Try to reconnect after 1 second in case of errors
+          setTimeout(connectToEvents, 1000);
+        };
+        events.onopen = () => {
+          console.log('Connected to live reload server');
+        };
+      };
+      if (liveReload) {
+        setTimeout(connectToEvents, 1000);
+      }
     </script>
   </body>
 </html>
