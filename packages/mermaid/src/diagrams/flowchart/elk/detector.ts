@@ -19,9 +19,7 @@ const detector: DiagramDetector = (txt, config): boolean => {
 };
 
 const loader: DiagramLoader = async () => {
-  const { diagram } = includeLargeDiagrams
-    ? await import('./flowchart-elk-definition.js')
-    : await import('../../error/errorDiagram.js');
+  const { diagram } = await import('./flowchart-elk-definition.js');
   return { id, diagram };
 };
 

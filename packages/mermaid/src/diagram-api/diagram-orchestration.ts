@@ -71,10 +71,8 @@ export const addDiagrams = () => {
     pie,
     requirement,
     sequence,
-    flowchartElk,
     flowchartV2,
     flowchart,
-    mindmap,
     timeline,
     git,
     stateV2,
@@ -83,4 +81,8 @@ export const addDiagrams = () => {
     quadrantChart,
     sankey
   );
+
+  if (includeLargeDiagrams) {
+    registerLazyLoadedDiagrams(flowchartElk, mindmap);
+  }
 };
