@@ -60,6 +60,11 @@ export const addDiagrams = () => {
       return text.toLowerCase().trimStart().startsWith('---');
     }
   );
+
+  if (includeLargeDiagrams) {
+    registerLazyLoadedDiagrams(flowchartElk, mindmap);
+  }
+
   // Ordering of detectors is important. The first one to return true will be used.
   registerLazyLoadedDiagrams(
     c4,
@@ -81,8 +86,4 @@ export const addDiagrams = () => {
     quadrantChart,
     sankey
   );
-
-  if (includeLargeDiagrams) {
-    registerLazyLoadedDiagrams(flowchartElk, mindmap);
-  }
 };
