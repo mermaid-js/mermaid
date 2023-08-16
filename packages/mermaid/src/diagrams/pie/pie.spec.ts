@@ -7,7 +7,7 @@ setConfig({
   securityLevel: 'strict',
 });
 
-describe('pie chart', () => {
+describe('pie', () => {
   beforeAll(() => {
     parser.yy = db;
   });
