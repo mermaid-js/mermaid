@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[defaultConfig.ts:267](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L267)
+[defaultConfig.ts:268](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L268)
 
 ---
 
@@ -30,4 +30,4 @@ Non-JSON JS default values are listed in this file, e.g. functions, or
 
 #### Defined in
 
-[defaultConfig.ts:17](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L17)
+[defaultConfig.ts:18](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L18)
