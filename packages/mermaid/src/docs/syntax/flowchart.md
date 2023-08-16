@@ -471,6 +471,29 @@ flowchart LR
   B1 --> B2
 ```
 
+#### Limitation
+
+If any of a subgraph's nodes are linked to the outside, subgraph direction will be ignored. Instead the subgraph will inherit the direction of the parent graph:
+
+```mermaid-example
+flowchart LR
+    subgraph subgraph1
+        direction TB
+        top1[top] --> bottom1[bottom]
+    end
+    subgraph subgraph2
+        direction TB
+        top2[top] --> bottom2[bottom]
+    end
+    %% ^ These subgraphs are identical, except for the links to them:
+    
+    %% Link *to* subgraph1: subgraph1 direction is mantained
+    outside --> subgraph1
+    %% Link *within* subgraph2:
+    %% subgraph2 inherits the direction of the top-level graph (LR)
+    outside ---> top2
+```
+
 ## Markdown Strings
 
 The "Markdown Strings" feature enhances flowcharts and mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
