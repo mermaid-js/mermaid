@@ -60,7 +60,7 @@ const getFileName = (
 };
 
 export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
-  const { core, entryName, metafile, format, includeLargeDiagrams } = options;
+  const { core, entryName, metafile, format, includeLargeDiagrams, minify } = options;
   const external: string[] = ['require', 'fs', 'path'];
   const { name, file, packageName } = packageOptions[entryName];
   const outFileName = getFileName(name, options);
@@ -70,6 +70,7 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
       [outFileName]: `src/${file}`,
     },
     metafile,
+    minify,
     logLevel: 'info',
     chunkNames: `chunks/${outFileName}/[name]-[hash]`,
     define: {
