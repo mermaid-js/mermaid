@@ -52,7 +52,7 @@ const getFileName = (fileName: string, { core, format, minify }: MermaidBuildOpt
 };
 
 export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
-  const { core, entryName, metafile, format } = options;
+  const { core, entryName, metafile, format, minify } = options;
   const external: string[] = ['require', 'fs', 'path'];
   const { name, file, packageName } = packageOptions[entryName];
   const outFileName = getFileName(name, options);
