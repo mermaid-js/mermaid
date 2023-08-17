@@ -49,6 +49,7 @@ export const getBuildConfig = ({
       }`]: `src/${file}`,
     },
     metafile,
+    minify,
     logLevel: 'info',
   });
 
