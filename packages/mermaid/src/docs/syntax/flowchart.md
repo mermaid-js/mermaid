@@ -486,7 +486,7 @@ flowchart LR
         top2[top] --> bottom2[bottom]
     end
     %% ^ These subgraphs are identical, except for the links to them:
-    
+
     %% Link *to* subgraph1: subgraph1 direction is mantained
     outside --> subgraph1
     %% Link *within* subgraph2:
