@@ -946,7 +946,7 @@ context('Sequence diagram', () => {
       imgSnapshotTest(
         `
           sequenceDiagram
-          Alice -->> Bob: wrap: "\`This is a super long message with wrap enabled with **markdown bold, a whole lot of bold** and *italics*\`"
+          Alice -->> Bob: wrap: "\`This is a super long message with wrap enabled with **markdown bold, a whole lot of bold** and *italics*. Maybe the line isn't solved after all\`"
           `,
         {
           htmlLabels: true,

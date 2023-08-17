@@ -387,6 +387,13 @@ const drawMessage = function (diagram, msgModel, lineStartY: number, diagObj: Di
 
   if (textType) {
     drawMarkdownText(diagram, textObj);
+
+    bounds.bumpVerticalPos(textObj.height);
+    //bounds.insert(msgModel.startx, msgModel.starty, msgModel.stopx, msgModel.stopy);
+    bounds.models.addMessage(msgModel);
+    //TODO figure out why 3 makes the padding between the line and markdown text
+    //to look like the padding between strings and lines
+    lineStartY += textObj.height - 3 * textObj.textMargin;
   } else {
     drawText(diagram, textObj);
   }

@@ -210,7 +210,7 @@ export const drawMarkdownText = function (elem, textData) {
 
   const [_textFontSize, _textFontSizePx] = parseFontSize(textData.fontSize);
 
-  const yfunc = calculateYFunc(textData);
+  const yfunc = calculateYFunc(textData, bbox.height);
   textData = setXAndAnchor(textData);
 
   if (textData.anchor !== undefined) {
@@ -237,6 +237,8 @@ export const drawMarkdownText = function (elem, textData) {
 
   innerLabel.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
   messageLabel.attr('transform', `translate(${textData.x}, ${yfunc() + textData.textMargin})`);
+
+  textData.height = bbox.height;
 
   return labelText;
 };
