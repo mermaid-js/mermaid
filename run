@@ -80,6 +80,9 @@ $(bold ./$name cypress open --project .)
 $(bold ./$name cypress run --spec cypress/integration/rendering/)$(underline test.spec.ts)
         Run specific test in cypress\n
 
+$(bold xhost +local:)
+        Allow local connections for x11 server
+
 EOF
 )
 

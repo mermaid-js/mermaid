@@ -73,6 +73,11 @@ function nav() {
     },
     { text: 'Integrations', link: '/ecosystem/integrations', activeMatch: '/ecosystem/' },
     {
+      text: 'Contributing',
+      link: '/community/development.html',
+      activeMatch: '/community/',
+    },
+    {
       text: 'Latest News',
       link: '/news/announcements',
       activeMatch: '/announcements',
@@ -104,11 +109,8 @@ function sidebarAll() {
       collapsed: false,
       items: [
         { text: 'About Mermaid', link: '/intro/' },
-        { text: 'Deployment', link: '/intro/n00b-gettingStarted' },
-        {
-          text: 'Syntax and Configuration',
-          link: '/intro/n00b-syntaxReference',
-        },
+        { text: 'Getting Started', link: '/intro/n00b-gettingStarted' },
+        { text: 'Syntax and Configuration', link: '/intro/n00b-syntaxReference' },
       ],
     },
     ...sidebarSyntax(),
@@ -191,44 +193,12 @@ function sidebarCommunity() {
       text: '🙌 Contributions and Community',
       collapsed: false,
       items: [
-        { text: 'Overview for Beginners', link: '/community/n00b-overview' },
-        ...sidebarCommunityDevelopContribute(),
+        { text: 'Contributing to Mermaid', link: '/community/development' },
+        { text: 'Contributing Code', link: '/community/code' },
+        { text: 'Contributing Documentation', link: '/community/documentation' },
+        { text: 'Questions and Suggestions', link: '/community/questionsAndSuggestions' },
         { text: 'Adding Diagrams', link: '/community/newDiagram' },
         { text: 'Security', link: '/community/security' },
-      ],
-    },
-  ];
-}
-
-// Development and Contributing
-function sidebarCommunityDevelopContribute() {
-  const page_path = '/community/development';
-  return [
-    {
-      text: 'Contributing to Mermaid',
-      link: page_path + '#contributing-to-mermaid',
-      collapsed: false,
-      items: [
-        {
-          text: 'Technical Requirements and Setup',
-          link: pathToId(page_path, 'technical-requirements-and-setup'),
-        },
-        {
-          text: 'Contributing Code',
-          link: pathToId(page_path, 'contributing-code'),
-        },
-        {
-          text: 'Contributing Documentation',
-          link: pathToId(page_path, 'contributing-documentation'),
-        },
-        {
-          text: 'Questions or Suggestions?',
-          link: pathToId(page_path, 'questions-or-suggestions'),
-        },
-        {
-          text: 'Last Words',
-          link: pathToId(page_path, 'last-words'),
-        },
       ],
     },
   ];

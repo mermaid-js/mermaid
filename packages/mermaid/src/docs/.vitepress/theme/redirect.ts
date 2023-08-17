@@ -50,6 +50,7 @@ const idRedirectMap: Record<string, string> = {
   'n00b-advanced': 'config/n00b-advanced',
   'n00b-gettingstarted': 'intro/n00b-gettingStarted',
   'n00b-overview': 'community/n00b-overview',
+  'community/n00b-overview': 'intro/n00b-gettingStarted',
   'n00b-syntaxreference': 'intro/n00b-syntaxReference',
   newdiagram: 'community/newDiagram',
   pie: 'syntax/pie',

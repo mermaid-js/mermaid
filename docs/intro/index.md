@@ -322,6 +322,7 @@ To Deploy Mermaid:
 - [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli)
 - [Mermaid Webpack Demo](https://github.com/mermaidjs/mermaid-webpack-demo)
 - [Mermaid Parcel Demo](https://github.com/mermaidjs/mermaid-parcel-demo)
+- [HTTP Server](https://github.com/TomWright/mermaid-server)
 
 ## Request for Assistance
 
@@ -338,7 +339,17 @@ Together we could continue the work with things like:
 
 Don't hesitate to contact me if you want to get involved!
 
-## For contributors
+## Contributors
+
+<div class='badges'>
+
+[![Good first issue](https://img.shields.io/github/labels/mermaid-js/mermaid/Good%20first%20issue%21)](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Good+first+issue%21%22) [![Contributors](https://img.shields.io/github/contributors/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors) [![Commits](https://img.shields.io/github/commit-activity/m/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors)
+
+</div>
+
+Mermaid is a growing community and is always accepting new contributors. There's a lot of different ways to help out and we're always looking for extra hands! Look at [this issue](https://github.com/mermaid-js/mermaid/issues/866) if you want to know where to start helping out.
+
+Detailed information about how to contribute can be found in the [contribution guideline](/community/development).
 
 ### Requirements
 
@@ -346,7 +357,7 @@ Don't hesitate to contact me if you want to get involved!
 - [Node.js](https://nodejs.org/en/). `volta install node`
 - [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
 
-## Development Installation
+### Development Installation
 
 ```bash
 git clone git@github.com:mermaid-js/mermaid.git
@@ -383,25 +394,7 @@ Update version number in `package.json`.
 npm publish
 ```
 
-The above command generates files into the `dist` folder and publishes them to \<npmjs.org>.
-
-## Related projects
-
-- [Command Line Interface](https://github.com/mermaid-js/mermaid-cli)
-- [Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
-- [HTTP Server](https://github.com/TomWright/mermaid-server)
-
-## Contributors
-
-<div class='badges'>
-
-[![Good first issue](https://img.shields.io/github/labels/mermaid-js/mermaid/Good%20first%20issue%21)](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Good+first+issue%21%22) [![Contributors](https://img.shields.io/github/contributors/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors) [![Commits](https://img.shields.io/github/commit-activity/m/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors)
-
-</div>
-
-Mermaid is a growing community and is always accepting new contributors. There's a lot of different ways to help out and we're always looking for extra hands! Look at [this issue](https://github.com/mermaid-js/mermaid/issues/866) if you want to know where to start helping out.
-
-Detailed information about how to contribute can be found in the [contribution guide](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md)
+The above command generates files into the `dist` folder and publishes them to [npmjs.org](npmjs.org).
 
 ## Security and safe diagrams
 
