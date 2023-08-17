@@ -5,5 +5,14 @@
     // ensure that nobody can accidentally use this config for a build
     "noEmit": true
   },
-  "include": ["packages", "tests", "scripts", "cypress", "__mocks__", "./.eslintrc.cjs", "./*"]
+  "include": [
+    "packages",
+    "tests",
+    "scripts",
+    "cypress",
+    "__mocks__",
+    "./.eslintrc.cjs",
+    "./*",
+    "demos/dev"
+  ]
 }
