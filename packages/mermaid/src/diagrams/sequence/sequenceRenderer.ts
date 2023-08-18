@@ -8,7 +8,7 @@ import svgDraw, {
 } from './svgDraw.js';
 import { log } from '../../logger.js';
 import common from '../common/common.js';
-import * as svgDrawCommon from '../common/svgDrawCommon';
+import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import * as configApi from '../../config.js';
 import assignWithDepth from '../../assignWithDepth.js';
 import utils from '../../utils.js';
