@@ -955,5 +955,17 @@ context('Sequence diagram', () => {
         }
       );
     });
+
+    it('should render markdown in alias', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        participant A as "\`The <em>real</em> Alice \`"
+        actor B as "\`Bob **not** the actor one\`"
+        A-->>B: Are you the actor Bob
+      `,
+        { htmlLabels: false, sequence: {}, securityLevel: 'loose' }
+      );
+    });
   });
 });

@@ -2147,4 +2147,19 @@ describe('Uses markdown for text', () => {
     expect(messages[1].message).toBe('Hi, I prefer my super long messages without wrap');
     expect(messages[1].textType).toBe('markdown');
   });
+
+  it('should parse markdown in actor alias', () => {
+    const diagram = new Diagram(`
+      sequenceDiagram
+      participant A as "\`The *real* Alice\`"
+      actor B as "\`Bob **not** the actor\`"
+      A-->>B: Are you the actor Bob
+    `);
+
+    const actors = diagram.db.getActors();
+    expect(actors['A'].description).toBe('The *real* Alice');
+    expect(actors['A'].textType).toBe('markdown');
+    expect(actors['B'].description).toBe('Bob **not** the actor');
+    expect(actors['B'].textType).toBe('markdown');
+  });
 });

@@ -540,17 +540,26 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   const bounds = actElem.node().getBBox();
   actor.height = bounds.height;
 
-  _drawTextCandidateFunc(conf)(
-    actor.description,
-    actElem,
-    rect.x,
-    rect.y + 35,
-    rect.width,
-    rect.height,
-    { class: 'actor' },
-    conf
-  );
-
+  if (actor.textType === 'markdown') {
+    drawMarkdownText(actElem, {
+      ...conf,
+      text: actor.description,
+      textMargin: 5,
+      y: rect.y + 50,
+      x: rect.x + 125,
+    });
+  } else {
+    _drawTextCandidateFunc(conf)(
+      actor.description,
+      actElem,
+      rect.x,
+      rect.y + 35,
+      rect.width,
+      rect.height,
+      { class: 'actor' },
+      conf
+    );
+  }
   return actor.height;
 };
 

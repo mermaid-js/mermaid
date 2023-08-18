@@ -78,6 +78,7 @@ export const addActor = function (id, name, description, type) {
     box: assignedBox,
     name: name,
     description: description.text,
+    textType: description.textType,
     wrap: (description.wrap === undefined && autoWrap()) || !!description.wrap,
     prevActor: prevActor,
     links: {},
