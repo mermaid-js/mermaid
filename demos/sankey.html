@@ -5,16 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>States Mermaid Quick Test Page</title>
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
-    <style>
-      div.mermaid {
-        /* font-family: 'trebuchet ms', verdana, arial; */
-        font-family: 'Courier New', Courier, monospace !important;
-      }
-    </style>
   </head>
 
   <body>
     <h1>Sankey diagram demos</h1>
+    <h2>FY20-21 Performance</h2>
+    <div id="financials"></div>
+
     <h2>Energy flow</h2>
     <pre class="mermaid">
       sankey-beta
@@ -101,8 +98,31 @@
           height: 600,
           linkColor: 'gradient',
           nodeAlignment: 'justify',
+          showValues: false,
+        },
+        startOnLoad: false,
+      });
+      // Render the Energy flow diagram
+      await mermaid.run();
+
+      mermaid.initialize({
+        sankey: {
+          prefix: '$',
+          suffix: 'B',
         },
       });
+
+      const { svg } = await mermaid.render(
+        'ff',
+        `
+sankey-beta
+Revenue,Expenses,10
+Revenue,Profit,10
+Expenses,Manufacturing,5
+Expenses,Tax,3
+Expenses,Research,2`
+      );
+      document.getElementById('financials').innerHTML = svg;
     </script>
   </body>
 </html>

@@ -1859,6 +1859,20 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         default: justify
       useMaxWidth:
         default: false
+      showValues:
+        description: |
+          Toggle to display or hide values along with title.
+        default: true
+      prefix:
+        description: |
+          The prefix to use for values
+        type: string
+        default: ''
+      suffix:
+        description: |
+          The suffix to use for values
+        type: string
+        default: ''
 
   FontCalculator:
     title: Font Calculator

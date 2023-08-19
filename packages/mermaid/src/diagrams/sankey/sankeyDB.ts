@@ -31,7 +31,7 @@ class SankeyLink {
 /**
  * @param source - Node where the link starts
  * @param target - Node where the link ends
- * @param value - number, float or integer, describes the amount to be passed
+ * @param value - Describes the amount to be passed
  */
 const addLink = (source: SankeyNode, target: SankeyNode, value: number): void => {
   links.push(new SankeyLink(source, target, value));
