@@ -71,6 +71,7 @@
     "khroma": "^2.0.0",
     "lodash-es": "^4.17.21",
     "mdast-util-from-markdown": "^1.3.0",
+    "mermaid-parser": "workspace:*",
     "stylis": "^4.1.3",
     "ts-dedent": "^2.2.0",
     "uuid": "^9.0.0"

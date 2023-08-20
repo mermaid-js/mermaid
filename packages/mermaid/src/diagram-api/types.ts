@@ -16,11 +16,16 @@ export interface InjectUtils {
  * Generic Diagram DB that may apply to any diagram type.
  */
 export interface DiagramDB {
+  // db
   clear?: () => void;
   setDiagramTitle?: (title: string) => void;
-  setDisplayMode?: (title: string) => void;
+  getDiagramTitle?: () => string;
+  setAccTitle?: (title: string) => void;
   getAccTitle?: () => string;
+  setAccDescription?: (describetion: string) => void;
   getAccDescription?: () => string;
+
+  setDisplayMode?: (title: string) => void;
   bindFunctions?: (element: Element) => void;
 }
 
