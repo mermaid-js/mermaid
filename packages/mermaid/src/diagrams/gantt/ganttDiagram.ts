@@ -1,4 +1,4 @@
-// @ts-ignore: TODO Fix ts errors
+// @ts-ignore: JISON doesn't support types
 import ganttParser from './parser/gantt.jison';
 import ganttDb from './ganttDb.js';
 import ganttRenderer from './ganttRenderer.js';

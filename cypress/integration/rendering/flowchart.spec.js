@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
 describe('Graph', () => {
   it('1: should render a simple flowchart no htmlLabels', () => {
@@ -888,6 +888,29 @@ graph TD
         Lorem --> Ipsum --> Dolor
         class Lorem,Dolor dark
       `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('66: apply class called default on node called default', () => {
+    imgSnapshotTest(
+      `
+      graph TD
+        classDef default fill:#a34,stroke:#000,stroke-width:4px,color:#fff 
+        hello --> default
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+
+  it('67: should be able to style default node independently', () => {
+    imgSnapshotTest(
+      `
+    flowchart TD
+      classDef default fill:#a34
+      hello --> default
+
+      style default stroke:#000,stroke-width:4px
+    `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });

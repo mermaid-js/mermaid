@@ -13,6 +13,7 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
   } else {
     classes = _classes;
   }
+
   // Add outer g element
   const shapeSvg = parent
     .insert('g')
@@ -49,7 +50,6 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
       )
     );
   }
-
   // Get the size of the label
   let bbox = text.getBBox();
   const halfPadding = node.padding / 2;

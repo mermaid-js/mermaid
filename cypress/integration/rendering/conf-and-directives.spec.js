@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.js';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('Configuration and directives - nodes should be light blue', () => {
   it('No config - use default', () => {

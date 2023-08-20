@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
 describe('State diagram', () => {
   it('should render a simple state diagrams', () => {

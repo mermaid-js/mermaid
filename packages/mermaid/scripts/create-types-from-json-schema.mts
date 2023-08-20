@@ -18,6 +18,7 @@ import { promisify } from 'node:util';
 
 import { load, JSON_SCHEMA } from 'js-yaml';
 import { compile, type JSONSchema } from 'json-schema-to-typescript';
+import prettier from 'prettier';
 
 import _Ajv2019, { type JSONSchemaType } from 'ajv/dist/2019.js';
 
@@ -208,6 +209,7 @@ async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidCon
     {
       additionalProperties: false, // in JSON Schema 2019-09, these are called `unevaluatedProperties`
       unreachableDefinitions: true, // definition for FontConfig is unreachable
+      style: (await prettier.resolveConfig('.')) ?? {},
     }
   );
 

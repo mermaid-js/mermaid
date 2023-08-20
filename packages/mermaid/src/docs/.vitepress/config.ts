@@ -35,7 +35,12 @@ export default defineConfig({
   themeConfig: {
     nav: nav(),
     editLink: {
-      pattern: 'https://github.com/mermaid-js/mermaid/edit/develop/packages/mermaid/src/docs/:path',
+      pattern: ({ filePath, frontmatter }) => {
+        if (typeof frontmatter.editLink === 'string') {
+          return frontmatter.editLink;
+        }
+        return `https://github.com/mermaid-js/mermaid/edit/develop/packages/mermaid/src/docs/${filePath}`;
+      },
       text: 'Edit this page on GitHub',
     },
     sidebar: {
@@ -96,7 +101,7 @@ function sidebarAll() {
   return [
     {
       text: '📔 Introduction',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: 'About Mermaid', link: '/intro/' },
         { text: 'Deployment', link: '/intro/n00b-gettingStarted' },
@@ -118,7 +123,7 @@ function sidebarSyntax() {
   return [
     {
       text: '📊 Diagram Syntax',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: 'Flowchart', link: '/syntax/flowchart' },
         { text: 'Sequence Diagram', link: '/syntax/sequenceDiagram' },
@@ -134,7 +139,7 @@ function sidebarSyntax() {
         { text: 'Quadrant Chart', link: '/syntax/quadrantChart' },
         { text: 'Requirement Diagram', link: '/syntax/requirementDiagram' },
         { text: 'Gitgraph (Git) Diagram 🔥', link: '/syntax/gitgraph' },
-        { text: 'C4C Diagram (Context) Diagram 🦺⚠️', link: '/syntax/c4c' },
+        { text: 'C4 Diagram 🦺⚠️', link: '/syntax/c4' },
         { text: 'Mindmaps 🔥', link: '/syntax/mindmap' },
         { text: 'Timeline 🔥', link: '/syntax/timeline' },
         { text: 'Zenuml 🔥', link: '/syntax/zenuml' },
@@ -149,7 +154,7 @@ function sidebarConfig() {
   return [
     {
       text: '⚙️ Deployment and Configuration',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: 'Configuration', link: '/config/configuration' },
         { text: 'Tutorials', link: '/config/Tutorials' },
@@ -171,7 +176,7 @@ function sidebarEcosystem() {
   return [
     {
       text: '📚 Ecosystem',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: 'Showcases', link: '/ecosystem/showcases' },
         { text: 'Use-Cases and Integrations', link: '/ecosystem/integrations' },
@@ -184,7 +189,7 @@ function sidebarCommunity() {
   return [
     {
       text: '🙌 Contributions and Community',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: 'Overview for Beginners', link: '/community/n00b-overview' },
         ...sidebarCommunityDevelopContribute(),
@@ -202,7 +207,7 @@ function sidebarCommunityDevelopContribute() {
     {
       text: 'Contributing to Mermaid',
       link: page_path + '#contributing-to-mermaid',
-      collapsible: true,
+      collapsed: false,
       items: [
         {
           text: 'Technical Requirements and Setup',
@@ -233,7 +238,7 @@ function sidebarNews() {
   return [
     {
       text: '📰 Latest News',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: 'Announcements', link: '/news/announcements' },
         { text: 'Blog', link: '/news/blog' },
