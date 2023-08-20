@@ -193,7 +193,7 @@ importers:
     dependencies:
       '@braintree/sanitize-url':
         specifier: ^6.0.1
-        version: 6.0.1
+        version: 6.0.2
       '@types/d3-scale':
         specifier: ^4.0.3
         version: 4.0.3
@@ -267,6 +267,9 @@ importers:
       '@types/d3-selection':
         specifier: ^3.0.5
         version: 3.0.5
+      '@types/d3-shape':
+        specifier: ^3.1.1
+        version: 3.1.1
       '@types/dompurify':
         specifier: ^3.0.2
         version: 3.0.2
@@ -351,6 +354,9 @@ importers:
       start-server-and-test:
         specifier: ^2.0.0
         version: 2.0.0
+      type-fest:
+        specifier: ^4.1.0
+        version: 4.1.0
       typedoc:
         specifier: ^0.24.5
         version: 0.24.5(typescript@5.0.4)
@@ -377,7 +383,7 @@ importers:
     dependencies:
       '@braintree/sanitize-url':
         specifier: ^6.0.1
-        version: 6.0.1
+        version: 6.0.2
       cytoscape:
         specifier: ^3.23.0
         version: 3.23.0
@@ -2323,8 +2329,8 @@ packages:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
     dev: true
 
-  /@braintree/sanitize-url@6.0.1:
-    resolution: {integrity: sha512-zr9Qs9KFQiEvMWdZesjcmRJlUck5NR+eKGS1uyKk+oYTWwlYrsoPEi6VmG6/TzBD1hKCGEimrhTgGS6hvn/xIQ==}
+  /@braintree/sanitize-url@6.0.2:
+    resolution: {integrity: sha512-Tbsj02wXCbqGmzdnXNk0SOF19ChhRU70BsroIi4Pm6Ehp56in6vch94mfbdQ17DozxkL3BAVjbZ4Qc1a0HFRAg==}
     dev: false
 
   /@colors/colors@1.5.0:
@@ -3692,7 +3698,7 @@ packages:
       '@types/node': 18.16.0
       ansi-escapes: 4.3.2
       chalk: 4.1.2
-      ci-info: 3.6.2
+      ci-info: 3.8.0
       exit: 0.1.2
       graceful-fs: 4.2.10
       jest-changed-files: 29.5.0
@@ -4357,8 +4363,8 @@ packages:
       '@types/d3-path': 1.0.9
     dev: true
 
-  /@types/d3-shape@3.1.0:
-    resolution: {integrity: sha512-jYIYxFFA9vrJ8Hd4Se83YI6XF+gzDL1aC5DCsldai4XYYiVNdhtpGbA/GM6iyQ8ayhSp3a148LY34hy7A4TxZA==}
+  /@types/d3-shape@3.1.1:
+    resolution: {integrity: sha512-6Uh86YFF7LGg4PQkuO2oG6EMBRLuW9cbavUW46zkIO5kuS2PfTqo2o9SkgtQzguBHbLgNnU90UNsITpsX1My+A==}
     dependencies:
       '@types/d3-path': 3.0.0
     dev: true
@@ -4414,7 +4420,7 @@ packages:
       '@types/d3-scale': 4.0.3
       '@types/d3-scale-chromatic': 3.0.0
       '@types/d3-selection': 3.0.5
-      '@types/d3-shape': 3.1.0
+      '@types/d3-shape': 3.1.1
       '@types/d3-time': 3.0.0
       '@types/d3-time-format': 4.0.0
       '@types/d3-timer': 3.0.0
@@ -6666,11 +6672,6 @@ packages:
   /chrome-trace-event@1.0.3:
     resolution: {integrity: sha512-p3KULyQg4S7NIHixdwbGX+nFHkoBiA4YQmyWtjb8XngSKV124nJmRysgAeujbUVb15vh+RvFUfCPqU7rXk+hZg==}
     engines: {node: '>=6.0'}
-    dev: true
-
-  /ci-info@3.6.2:
-    resolution: {integrity: sha512-lVZdhvbEudris15CLytp2u6Y0p5EKfztae9Fqa189MfNmln9F33XuH69v5fvNfiRN5/0eAUz2yJL3mo+nhaRKg==}
-    engines: {node: '>=8'}
     dev: true
 
   /ci-info@3.8.0:
@@ -14790,6 +14791,11 @@ packages:
   /type-fest@1.4.0:
     resolution: {integrity: sha512-yGSza74xk0UG8k+pLh5oeoYirvIiWo5t0/o3zHHAO2tRDiZcxWP7fywNlXhqb6/r6sWvwi+RsyQMWhVLe4BVuA==}
     engines: {node: '>=10'}
+    dev: true
+
+  /type-fest@4.1.0:
+    resolution: {integrity: sha512-VJGJVepayd8OWavP+rgXt4i3bfLk+tSomTV7r4mca2XD/oTCWnkJlNkpXavkxdmtU2aKdAmFGeHvoQutOVHCZg==}
+    engines: {node: '>=16'}
     dev: true
 
   /type-is@1.6.18:
