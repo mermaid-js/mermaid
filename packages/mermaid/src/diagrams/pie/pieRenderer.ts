@@ -5,22 +5,22 @@ import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { getConfig } from '../../config.js';
 import { cleanAndMerge, parseFontSize } from '../../utils.js';
 import type { DrawDefinition, Group, SVG } from '../../diagram-api/types.js';
-import type { D3Sections, PieDB, Sections } from './pieTypes.js';
+import type { D3Section, PieDB, Sections } from './pieTypes.js';
 import type { MermaidConfig, PieDiagramConfig } from '../../config.type.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 
-const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Sections>[] => {
+const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Section>[] => {
   // Compute the position of each group on the pie:
-  const pieData: D3Sections[] = Object.entries(sections).map(
-    (element: [string, number]): D3Sections => {
+  const pieData: D3Section[] = Object.entries(sections).map(
+    (element: [string, number]): D3Section => {
       return {
         label: element[0],
         value: element[1],
       };
     }
   );
-  const pie: d3.Pie<unknown, D3Sections> = d3pie<D3Sections>().value(
-    (d3Section: D3Sections): number => d3Section.value
+  const pie: d3.Pie<unknown, D3Section> = d3pie<D3Section>().value(
+    (d3Section: D3Section): number => d3Section.value
   );
   return pie(pieData);
 };
@@ -63,13 +63,11 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   const textPosition: number = pieConfig.textPosition;
   const radius: number = Math.min(width, height) / 2 - MARGIN;
   // Shape helper to build arcs:
-  const arcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Sections>> = arc<
-    d3.PieArcDatum<D3Sections>
-  >()
+  const arcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Section>> = arc<d3.PieArcDatum<D3Section>>()
     .innerRadius(0)
     .outerRadius(radius);
-  const labelArcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Sections>> = arc<
-    d3.PieArcDatum<D3Sections>
+  const labelArcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Section>> = arc<
+    d3.PieArcDatum<D3Section>
   >()
     .innerRadius(radius * textPosition)
     .outerRadius(radius * textPosition);
@@ -82,7 +80,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .attr('class', 'pieOuterCircle');
 
   const sections: Sections = db.getSections();
-  const arcs: d3.PieArcDatum<D3Sections>[] = createPieArcs(sections);
+  const arcs: d3.PieArcDatum<D3Section>[] = createPieArcs(sections);
 
   const myGeneratedColors = [
     themeVariables.pie1,
@@ -108,7 +106,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .enter()
     .append('path')
     .attr('d', arcGenerator)
-    .attr('fill', (datum: d3.PieArcDatum<D3Sections>) => {
+    .attr('fill', (datum: d3.PieArcDatum<D3Section>) => {
       return color(datum.data.label);
     })
     .attr('class', 'pieCircle');
@@ -124,10 +122,10 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .data(arcs)
     .enter()
     .append('text')
-    .text((datum: d3.PieArcDatum<D3Sections>): string => {
+    .text((datum: d3.PieArcDatum<D3Section>): string => {
       return ((datum.data.value / sum) * 100).toFixed(0) + '%';
     })
-    .attr('transform', (datum: d3.PieArcDatum<D3Sections>): string => {
+    .attr('transform', (datum: d3.PieArcDatum<D3Section>): string => {
       return 'translate(' + labelArcGenerator.centroid(datum) + ')';
     })
     .style('text-anchor', 'middle')
@@ -167,7 +165,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .append('text')
     .attr('x', LEGEND_RECT_SIZE + LEGEND_SPACING)
     .attr('y', LEGEND_RECT_SIZE - LEGEND_SPACING)
-    .text((datum: d3.PieArcDatum<D3Sections>): string => {
+    .text((datum: d3.PieArcDatum<D3Section>): string => {
       const { label, value } = datum.data;
       if (db.getShowData()) {
         return `${label} [${value}]`;

@@ -36,7 +36,7 @@ export interface PieStyleOptions {
 
 export type Sections = Record<string, number>;
 
-export interface D3Sections {
+export interface D3Section {
   label: string;
   value: number;
 }
