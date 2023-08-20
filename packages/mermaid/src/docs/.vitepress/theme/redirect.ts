@@ -24,6 +24,9 @@ const getBaseFile = (url: URL): Redirect => {
   return { path, id };
 };
 
+/**
+ * Used to redirect old documentation pages to corresponding new pages.
+ */
 const idRedirectMap: Record<string, string> = {
   '8.6.0_docs': '',
   accessibility: 'config/theming',
@@ -68,6 +71,9 @@ const idRedirectMap: Record<string, string> = {
   'user-journey': 'syntax/userJourney',
 };
 
+/**
+ * Used to redirect pages that have been moved in the vitepress site.
+ */
 const urlRedirectMap: Record<string, string> = {
   '/misc/faq.html': 'configure/faq.html',
   '/syntax/c4c.html': 'syntax/c4.html',

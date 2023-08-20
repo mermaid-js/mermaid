@@ -1,5 +1,7 @@
+import type { RequiredDeep } from 'type-fest';
+
 import theme from './themes/index.js';
-import { type MermaidConfig } from './config.type.js';
+import type { MermaidConfig } from './config.type.js';
 
 // Uses our custom Vite jsonSchemaPlugin to load only the default values from
 // our JSON Schema
@@ -13,7 +15,7 @@ import defaultConfigJson from './schemas/config.schema.yaml?only-defaults=true';
  * Non-JSON JS default values are listed in this file, e.g. functions, or
  * `undefined` (explicitly set so that `configKeys` finds them).
  */
-const config: Partial<MermaidConfig> = {
+const config: RequiredDeep<MermaidConfig> = {
   ...defaultConfigJson,
   // Set, even though they're `undefined` so that `configKeys` finds these keys
   // TODO: Should we replace these with `null` so that they can go in the JSON Schema?
@@ -232,7 +234,7 @@ const config: Partial<MermaidConfig> = {
   },
   pie: {
     ...defaultConfigJson.pie,
-    useWidth: undefined,
+    useWidth: 984,
   },
   requirement: {
     ...defaultConfigJson.requirement,
