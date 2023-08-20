@@ -72,7 +72,7 @@ export type DrawDefinition = (
 
 export interface ParserDefinition {
   parse: (text: string) => void;
-  parser: { yy: DiagramDB };
+  parser?: { yy: DiagramDB };
 }
 
 /**
