@@ -2,6 +2,7 @@ import { build } from 'esbuild';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { MermaidBuildOptions, defaultOptions, getBuildConfig } from './util.js';
 import { packageOptions } from '../.build/common.js';
+import { generateLangium } from '../.build/generateLangium.js';
 
 const shouldVisualize = process.argv.includes('--visualize');
 
@@ -52,9 +53,12 @@ const handler = (e) => {
 };
 
 const main = async () => {
+  generateLangium();
   await mkdir('stats').catch(() => {});
   const packageNames = Object.keys(packageOptions) as (keyof typeof packageOptions)[];
-  await Promise.allSettled(packageNames.map((pkg) => buildPackage(pkg).catch(handler)));
+  for (const pkg of packageNames) {
+    await buildPackage(pkg).catch(handler);
+  }
 };
 
 void main();

@@ -15,11 +15,11 @@
     "git graph"
   ],
   "scripts": {
-    "build": "pnpm run -r clean && pnpm build:esbuild && pnpm build:types",
+    "build": "pnpm build:esbuild && pnpm build:types",
     "build:esbuild": "pnpm run -r clean && ts-node-esm --transpileOnly .esbuild/build.ts",
     "build:mermaid": "pnpm build:esbuild --mermaid",
     "build:viz": "pnpm build:esbuild --visualize",
-    "build:types": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-zenuml/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-example-diagram/tsconfig.json --emitDeclarationOnly",
+    "build:types": "tsc -p ./packages/parser/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-zenuml/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-example-diagram/tsconfig.json --emitDeclarationOnly",
     "dev": "ts-node-esm --transpileOnly .esbuild/server.ts",
     "dev:vite": "ts-node-esm --transpileOnly .vite/server.ts",
     "dev:coverage": "pnpm coverage:cypress:clean && VITE_COVERAGE=true pnpm dev:vite",

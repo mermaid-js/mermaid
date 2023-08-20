@@ -4,7 +4,11 @@ import cors from 'cors';
 import { getBuildConfig, defaultOptions } from './util.js';
 import { context } from 'esbuild';
 import chokidar from 'chokidar';
+import { generateLangium } from '../.build/generateLangium.js';
 
+const parserCtx = await context(
+  getBuildConfig({ ...defaultOptions, minify: false, core: false, entryName: 'parser' })
+);
 const mermaidCtx = await context(
   getBuildConfig({ ...defaultOptions, minify: false, core: false, entryName: 'mermaid' })
 );
@@ -28,7 +32,7 @@ const externalCtx = await context(
 const zenumlCtx = await context(
   getBuildConfig({ ...defaultOptions, minify: false, core: false, entryName: 'mermaid-zenuml' })
 );
-const contexts = [mermaidCtx, mermaidIIFECtx, externalCtx, zenumlCtx];
+const contexts = [parserCtx, mermaidCtx, mermaidIIFECtx, externalCtx, zenumlCtx];
 
 const rebuildAll = async () => {
   console.time('Rebuild time');
@@ -75,10 +79,11 @@ function sendEventsToAll() {
 }
 
 async function createServer() {
+  generateLangium();
   handleFileChange();
   const app = express();
   chokidar
-    .watch('**/src/**/*.{js,ts,yaml,json}', {
+    .watch('**/src/**/*.{js,ts,langium,yaml,json}', {
       ignoreInitial: true,
       ignored: [/node_modules/, /dist/, /docs/, /coverage/],
     })
@@ -87,12 +92,16 @@ async function createServer() {
       if (!['add', 'change'].includes(event)) {
         return;
       }
+      if (/\.langium$/.test(path)) {
+        generateLangium();
+      }
       console.log(`${path} changed. Rebuilding...`);
       handleFileChange();
     });
 
   app.use(cors());
   app.get('/events', eventsHandler);
+  app.use(express.static('./packages/parser/dist'));
   app.use(express.static('./packages/mermaid/dist'));
   app.use(express.static('./packages/mermaid-zenuml/dist'));
   app.use(express.static('./packages/mermaid-example-diagram/dist'));
