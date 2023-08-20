@@ -196,7 +196,7 @@ importers:
     dependencies:
       '@braintree/sanitize-url':
         specifier: ^6.0.1
-        version: 6.0.1
+        version: 6.0.2
       cytoscape:
         specifier: ^3.23.0
         version: 3.23.0
@@ -267,6 +267,9 @@ importers:
       '@types/d3-selection':
         specifier: ^3.0.5
         version: 3.0.5
+      '@types/d3-shape':
+        specifier: ^3.1.1
+        version: 3.1.1
       '@types/dompurify':
         specifier: ^3.0.2
         version: 3.0.2
@@ -351,6 +354,9 @@ importers:
       start-server-and-test:
         specifier: ^2.0.0
         version: 2.0.0
+      type-fest:
+        specifier: ^4.1.0
+        version: 4.1.0
       typedoc:
         specifier: ^0.24.5
         version: 0.24.5(typescript@5.1.3)
@@ -377,7 +383,7 @@ importers:
     dependencies:
       '@braintree/sanitize-url':
         specifier: ^6.0.1
-        version: 6.0.1
+        version: 6.0.2
       cytoscape:
         specifier: ^3.23.0
         version: 3.23.0
@@ -478,6 +484,58 @@ importers:
       langium-cli:
         specifier: 2.0.0
         version: 2.0.0
+
+  packages/mermaid/src/vitepress:
+    dependencies:
+      '@vueuse/core':
+        specifier: ^10.1.0
+        version: 10.1.0(vue@3.3.4)
+      jiti:
+        specifier: ^1.18.2
+        version: 1.18.2
+      vue:
+        specifier: ^3.2.47
+        version: 3.3.4
+    devDependencies:
+      '@iconify-json/carbon':
+        specifier: ^1.1.16
+        version: 1.1.16
+      '@unocss/reset':
+        specifier: ^0.55.0
+        version: 0.55.0
+      '@vite-pwa/vitepress':
+        specifier: ^0.2.0
+        version: 0.2.0(vite-plugin-pwa@0.16.0)
+      '@vitejs/plugin-vue':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@4.3.9)(vue@3.3.4)
+      fast-glob:
+        specifier: ^3.2.12
+        version: 3.2.12
+      https-localhost:
+        specifier: ^4.7.1
+        version: 4.7.1
+      pathe:
+        specifier: ^1.1.0
+        version: 1.1.0
+      unocss:
+        specifier: ^0.55.0
+        version: 0.55.0(postcss@8.4.27)(rollup@2.79.1)(vite@4.3.9)
+      unplugin-vue-components:
+        specifier: ^0.25.0
+        version: 0.25.0(rollup@2.79.1)(vue@3.3.4)
+      vite:
+        specifier: ^4.3.9
+        version: 4.3.9(@types/node@18.16.0)
+      vite-plugin-pwa:
+        specifier: ^0.16.0
+        version: 0.16.0(vite@4.3.9)(workbox-build@7.0.0)(workbox-window@7.0.0)
+      vitepress:
+        specifier: 1.0.0-rc.4
+        version: 1.0.0-rc.4(@algolia/client-search@4.14.2)(@types/node@18.16.0)(search-insights@2.6.0)
+      workbox-window:
+        specifier: ^7.0.0
+        version: 7.0.0
 
   tests/webpack:
     dependencies:
@@ -2260,8 +2318,8 @@ packages:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
     dev: true
 
-  /@braintree/sanitize-url@6.0.1:
-    resolution: {integrity: sha512-zr9Qs9KFQiEvMWdZesjcmRJlUck5NR+eKGS1uyKk+oYTWwlYrsoPEi6VmG6/TzBD1hKCGEimrhTgGS6hvn/xIQ==}
+  /@braintree/sanitize-url@6.0.2:
+    resolution: {integrity: sha512-Tbsj02wXCbqGmzdnXNk0SOF19ChhRU70BsroIi4Pm6Ehp56in6vch94mfbdQ17DozxkL3BAVjbZ4Qc1a0HFRAg==}
     dev: false
 
   /@chevrotain/cst-dts-gen@11.0.3:
@@ -15253,6 +15311,11 @@ packages:
   /type-fest@1.4.0:
     resolution: {integrity: sha512-yGSza74xk0UG8k+pLh5oeoYirvIiWo5t0/o3zHHAO2tRDiZcxWP7fywNlXhqb6/r6sWvwi+RsyQMWhVLe4BVuA==}
     engines: {node: '>=10'}
+    dev: true
+
+  /type-fest@4.1.0:
+    resolution: {integrity: sha512-VJGJVepayd8OWavP+rgXt4i3bfLk+tSomTV7r4mca2XD/oTCWnkJlNkpXavkxdmtU2aKdAmFGeHvoQutOVHCZg==}
+    engines: {node: '>=16'}
     dev: true
 
   /type-is@1.6.18:

@@ -1,4 +1,7 @@
-const getStyles = (options) =>
+import type { DiagramStylesProvider } from '../../diagram-api/types.js';
+import type { PieStyleOptions } from './pieTypes.js';
+
+const getStyles: DiagramStylesProvider = (options: PieStyleOptions) =>
   `
   .pieCircle{
     stroke: ${options.pieStrokeColor};

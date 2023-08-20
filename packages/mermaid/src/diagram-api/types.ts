@@ -1,5 +1,5 @@
 import { Diagram } from '../Diagram.js';
-import type { MermaidConfig } from '../config.type.js';
+import type { BaseDiagramConfig, MermaidConfig } from '../config.type.js';
 import type * as d3 from 'd3';
 
 export interface InjectUtils {
@@ -16,6 +16,9 @@ export interface InjectUtils {
  * Generic Diagram DB that may apply to any diagram type.
  */
 export interface DiagramDB {
+  // config
+  getConfig?: () => BaseDiagramConfig | undefined;
+
   // db
   clear?: () => void;
   setDiagramTitle?: (title: string) => void;
