@@ -76,14 +76,7 @@ function computeWidthOfText(parentNode: any, lineHeight: number, line: MarkdownL
   return textLength;
 }
 
-/**
- * Compute the width of rendered text
- * @param {object} parentNode
- * @param {number} lineHeight
- * @param {string} text
- * @returns {{width: number, height: number}}
- */
-export function computeDimensionOfText(parentNode, lineHeight, text) {
+export function computeDimensionOfText(parentNode: any, lineHeight: number, text: string) {
   const testElement = parentNode.append('text');
   const testSpan = createTspan(testElement, 1, lineHeight);
   updateTextContentAndStyles(testSpan, [{ content: text, type: 'normal' }]);

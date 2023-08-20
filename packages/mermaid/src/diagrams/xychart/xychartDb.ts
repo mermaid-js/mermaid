@@ -26,7 +26,7 @@ import {
 } from './chartBuilder/Interfaces.js';
 import { getThemeVariables } from '../../themes/theme-default.js';
 
-export type SVGGType = Selection<SVGGElement, unknown, HTMLElement, any>;
+export type SVGGType = Selection<SVGGElement, unknown, Element | null, unknown>;
 
 const defaultThemeVariables = getThemeVariables();
 

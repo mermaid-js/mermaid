@@ -10,6 +10,7 @@ import {
   TextVerticalPos,
 } from './chartBuilder/Interfaces.js';
 import XYChartDB from './xychartDb.js';
+import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 
 export const draw = (txt: string, id: string, _version: string, diagObj: Diagram) => {
   function getDominantBaseLine(horizontalPos: TextHorizontalPos) {
@@ -23,20 +24,10 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   function getTextTransformation(data: TextElem) {
     return `translate(${data.x}, ${data.y}) rotate(${data.rotation || 0})`;
   }
-  const conf = configApi.getConfig();
 
   log.debug('Rendering xychart chart\n' + txt);
 
-  const securityLevel = conf.securityLevel;
-  // Handle root and Document for when rendering in sandbox mode
-  let sandboxElement;
-  if (securityLevel === 'sandbox') {
-    sandboxElement = select('#i' + id);
-  }
-  const root = sandboxElement ? sandboxElement : select('body');
-
-  const svg = root.select(`[id="${id}"]`);
-
+  const svg = selectSvgElement(id);
   const group = svg.append('g').attr('class', 'main');
 
   const width = 700;
