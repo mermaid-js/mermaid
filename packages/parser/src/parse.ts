@@ -1,8 +1,8 @@
 import type { LangiumParser, ParseResult } from 'langium';
-import type { Info } from './index.js';
-import { createInfoServices } from './language/index.js';
+import type { Info, Pie } from './index.js';
+import { createInfoServices, createPieServices } from './language/index.js';
 
-export type DiagramAST = Info;
+export type DiagramAST = Info | Pie;
 
 const parsers: Record<string, LangiumParser> = {};
 
@@ -13,8 +13,14 @@ const initializers = {
     const parser = createInfoServices().Info.parser.LangiumParser;
     parsers['info'] = parser;
   },
+  pie: () => {
+    const parser = createPieServices().Pie.parser.LangiumParser;
+    parsers['pie'] = parser;
+  },
 } as const;
+
 export function parse(diagramType: 'info', text: string): Info;
+export function parse(diagramType: 'pie', text: string): Pie;
 export function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,
   text: string

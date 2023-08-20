@@ -5,6 +5,11 @@
       "id": "info",
       "grammar": "src/language/info/info.langium",
       "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "pie",
+      "grammar": "src/language/pie/pie.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "mode": "production",
