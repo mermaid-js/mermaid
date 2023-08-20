@@ -56,7 +56,7 @@ export interface PieDB extends DiagramDB {
   getAccDescription: () => string;
 
   // diagram db
-  addSection: (label: string, value: number) => void;
+  addSection: ({ label, value }: D3Section) => void;
   getSections: () => Sections;
   setShowData: (toggle: boolean) => void;
   getShowData: () => boolean;

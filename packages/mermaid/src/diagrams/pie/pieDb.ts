@@ -1,7 +1,5 @@
 import { log } from '../../logger.js';
 import { parseDirective as _parseDirective } from '../../directiveUtils.js';
-import { getConfig as commonGetConfig } from '../../config.js';
-import { sanitizeText } from '../common/common.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -12,7 +10,7 @@ import {
   clear as commonClear,
 } from '../../commonDb.js';
 import type { ParseDirectiveDefinition } from '../../diagram-api/types.js';
-import type { PieFields, PieDB, Sections } from './pieTypes.js';
+import type { PieFields, PieDB, Sections, D3Section } from './pieTypes.js';
 import type { RequiredDeep } from 'type-fest';
 import type { PieDiagramConfig } from '../../config.type.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
@@ -41,8 +39,7 @@ const clear = (): void => {
   commonClear();
 };
 
-const addSection = (label: string, value: number): void => {
-  label = sanitizeText(label, commonGetConfig());
+const addSection = ({ label, value }: D3Section): void => {
   if (sections[label] === undefined) {
     sections[label] = value;
     log.debug(`added new section: ${label}, with value: ${value}`);
