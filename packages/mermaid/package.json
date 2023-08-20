@@ -77,12 +77,11 @@
   },
   "devDependencies": {
     "@adobe/jsonschema2md": "^7.1.4",
-    "@types/d3-scale": "^4.0.3",
-    "@types/d3-scale-chromatic": "^3.0.0",
     "@types/cytoscape": "^3.19.9",
     "@types/d3": "^7.4.0",
     "@types/d3-sankey": "^0.12.1",
     "@types/d3-scale": "^4.0.3",
+    "@types/d3-scale-chromatic": "^3.0.0",
     "@types/d3-selection": "^3.0.5",
     "@types/d3-shape": "^3.1.1",
     "@types/dompurify": "^3.0.2",
