@@ -1,12 +1,12 @@
 import { BarPlotData, BoundingRect, DrawableElem, XYChartConfig } from '../../Interfaces.js';
-import { IAxis } from '../axis/index.js';
+import { Axis } from '../axis/index.js';
 
 export class BarPlot {
   constructor(
     private barData: BarPlotData,
     private boundingRect: BoundingRect,
-    private xAxis: IAxis,
-    private yAxis: IAxis,
+    private xAxis: Axis,
+    private yAxis: Axis,
     private orientation: XYChartConfig['chartOrientation'],
     private plotIndex: number
   ) {}

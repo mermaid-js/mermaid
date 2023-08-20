@@ -40,7 +40,7 @@ export interface BarPlotData {
 export type PlotData = LinePlotData | BarPlotData;
 
 export function isBarPlot(data: PlotData): data is BarPlotData {
-  return data.type === 'line';
+  return data.type === 'bar';
 }
 
 export interface BandAxisDataType {

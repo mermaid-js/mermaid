@@ -1,3 +1,4 @@
+import { SVGGType } from '../../xychartDb.js';
 import {
   BoundingRect,
   ChartComponent,
@@ -9,7 +10,7 @@ import {
   XYChartConfig,
 } from '../Interfaces.js';
 import {
-  ITextDimensionCalculator,
+  TextDimensionCalculator,
   TextDimensionCalculatorWithFont,
 } from '../TextDimensionCalculator.js';
 
@@ -17,7 +18,7 @@ export class ChartTitle implements ChartComponent {
   private boundingRect: BoundingRect;
   private showChartTitle: boolean;
   constructor(
-    private textDimensionCalculator: ITextDimensionCalculator,
+    private textDimensionCalculator: TextDimensionCalculator,
     private chartConfig: XYChartConfig,
     private chartData: XYChartData,
     private chartThemeConfig: XYChartThemeConfig
@@ -35,7 +36,7 @@ export class ChartTitle implements ChartComponent {
     this.boundingRect.y = point.y;
   }
   calculateSpace(availableSpace: Dimension): Dimension {
-    const titleDimension = this.textDimensionCalculator.getDimension(
+    const titleDimension = this.textDimensionCalculator.getMaxDimension(
       [this.chartData.title],
       this.chartConfig.titleFontSize
     );
@@ -82,8 +83,9 @@ export class ChartTitle implements ChartComponent {
 export function getChartTitleComponent(
   chartConfig: XYChartConfig,
   chartData: XYChartData,
-  chartThemeConfig: XYChartThemeConfig
+  chartThemeConfig: XYChartThemeConfig,
+  tmpSVGGElem: SVGGType
 ): ChartComponent {
-  const textDimensionCalculator = new TextDimensionCalculatorWithFont(chartConfig.fontFamily);
+  const textDimensionCalculator = new TextDimensionCalculatorWithFont(tmpSVGGElem);
   return new ChartTitle(textDimensionCalculator, chartConfig, chartData, chartThemeConfig);
 }

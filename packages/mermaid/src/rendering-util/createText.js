@@ -95,6 +95,22 @@ function computeWidthOfText(parentNode, lineHeight, text) {
 }
 
 /**
+ * Compute the width of rendered text
+ * @param {object} parentNode
+ * @param {number} lineHeight
+ * @param {string} text
+ * @returns {{width: number, height: number}}
+ */
+export function computeDimensionOfText(parentNode, lineHeight, text) {
+  const testElement = parentNode.append('text');
+  const testSpan = createTspan(testElement, 1, lineHeight);
+  updateTextContentAndStyles(testSpan, [{ content: text, type: 'normal' }]);
+  const textDimension = testSpan.node().getBoundingClientRect();
+  testElement.remove();
+  return textDimension;
+}
+
+/**
  * Creates a formatted text element by breaking lines and applying styles based on
  * the given structuredText.
  *

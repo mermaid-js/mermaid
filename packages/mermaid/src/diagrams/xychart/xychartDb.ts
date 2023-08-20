@@ -1,5 +1,6 @@
 // @ts-ignore: TODO Fix ts errors
 import { adjust, channel } from 'khroma';
+import { Selection } from 'd3-selection';
 import mermaidAPI from '../../mermaidAPI.js';
 import * as configApi from '../../config.js';
 import defaultConfig from '../../defaultConfig.js';
@@ -25,11 +26,29 @@ import {
 } from './chartBuilder/Interfaces.js';
 import { getThemeVariables } from '../../themes/theme-default.js';
 
+export type SVGGType = Selection<SVGGElement, unknown, HTMLElement, any>;
+
 const defaultThemeVariables = getThemeVariables();
 
 const config = configApi.getConfig();
 
 let plotIndex = 0;
+
+let tmpSVGGElem: SVGGType;
+
+let xyChartConfig: XYChartConfig = getChartDefaultConfig();
+let xyChartThemeConfig: XYChartThemeConfig = getChartDefaultThemeConfig();
+let xyChartData: XYChartData = getChartDefalutData();
+let plotColorPalette = Array.isArray(xyChartThemeConfig.plotBaseColor)
+  ? xyChartThemeConfig.plotBaseColor
+  : plotColorPaletteGenerator(xyChartThemeConfig.plotBaseColor);
+let hasSetXAxis = false;
+let hasSetYAxis = false;
+
+interface NormalTextType {
+  type: 'text';
+  text: string;
+}
 
 function plotColorPaletteGenerator(baseColor: string, noOfColorNeeded = 15): string[] {
   const colors = [];
@@ -110,20 +129,6 @@ function getChartDefalutData(): XYChartData {
   };
 }
 
-let xyChartConfig: XYChartConfig = getChartDefaultConfig();
-let xyChartThemeConfig: XYChartThemeConfig = getChartDefaultThemeConfig();
-let xyChartData: XYChartData = getChartDefalutData();
-let plotColorPalette = Array.isArray(xyChartThemeConfig.plotBaseColor)
-  ? xyChartThemeConfig.plotBaseColor
-  : plotColorPaletteGenerator(xyChartThemeConfig.plotBaseColor);
-let hasSetXAxis = false;
-let hasSetYAxis = false;
-
-interface NormalTextType {
-  type: 'text';
-  text: string;
-}
-
 function textSanitizer(text: string) {
   return sanitizeText(text.trim(), config);
 }
@@ -133,6 +138,9 @@ function parseDirective(statement: string, context: string, type: string) {
   mermaidAPI.parseDirective(this, statement, context, type);
 }
 
+function setTmpSVGG(SVGG: SVGGType) {
+  tmpSVGGElem = SVGG;
+}
 function setOrientation(oriantation: string) {
   if (oriantation === 'horizontal') {
     xyChartConfig.chartOrientation = 'horizontal';
@@ -177,7 +185,7 @@ function setYAxisRangeFromPlotData(data: number[]) {
   };
 }
 
-function transformDataWithOutCategory(data: number[]): SimplePlotDataType {
+function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
   let retData: SimplePlotDataType = [];
   if (data.length === 0) {
     return retData;
@@ -214,7 +222,7 @@ function getPlotColorFromPalette(plotIndex: number): string {
 }
 
 function setLineData(title: NormalTextType, data: number[]) {
-  const plotData = transformDataWithOutCategory(data);
+  const plotData = transformDataWithoutCategory(data);
   xyChartData.plots.push({
     type: 'line',
     strokeFill: getPlotColorFromPalette(plotIndex),
@@ -225,7 +233,7 @@ function setLineData(title: NormalTextType, data: number[]) {
 }
 
 function setBarData(title: NormalTextType, data: number[]) {
-  const plotData = transformDataWithOutCategory(data);
+  const plotData = transformDataWithoutCategory(data);
   xyChartData.plots.push({
     type: 'bar',
     fill: getPlotColorFromPalette(plotIndex),
@@ -239,7 +247,7 @@ function getDrawableElem(): DrawableElem[] {
     throw Error('No Plot to render, please provide a plot with some data');
   }
   xyChartData.title = getDiagramTitle();
-  return XYChartBuilder.build(xyChartConfig, xyChartData, xyChartThemeConfig);
+  return XYChartBuilder.build(xyChartConfig, xyChartData, xyChartThemeConfig, tmpSVGGElem);
 }
 
 function setHeight(height: number) {
@@ -283,4 +291,5 @@ export default {
   setYAxisRangeData,
   setLineData,
   setBarData,
+  setTmpSVGG,
 };

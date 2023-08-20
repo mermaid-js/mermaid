@@ -9,6 +9,7 @@ import {
   TextHorizontalPos,
   TextVerticalPos,
 } from './chartBuilder/Interfaces.js';
+import XYChartDB from './xychartDb.js';
 
 export const draw = (txt: string, id: string, _version: string, diagObj: Diagram) => {
   function getDominantBaseLine(horizontalPos: TextHorizontalPos) {
@@ -46,13 +47,13 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
 
   svg.attr('viewBox', '0 0 ' + width + ' ' + height);
 
-  // @ts-ignore: TODO Fix ts errors
-  diagObj.db.setHeight(height);
-  // @ts-ignore: TODO Fix ts errors
-  diagObj.db.setWidth(width);
+  const db = diagObj.db as typeof XYChartDB;
 
-  // @ts-ignore: TODO Fix ts errors
-  const shapes: DrawableElem[] = diagObj.db.getDrawableElem();
+  db.setHeight(height);
+  db.setWidth(width);
+  db.setTmpSVGG(svg.append('g').attr('class', 'mermaid-tmp-group'));
+
+  const shapes: DrawableElem[] = db.getDrawableElem();
 
   const groups: Record<string, any> = {};
 

@@ -7,10 +7,12 @@ import {
   XYChartAxisThemeConfig,
   XYChartAxisConfig,
 } from '../../Interfaces.js';
-import { ITextDimensionCalculator } from '../../TextDimensionCalculator.js';
-import { AxisPosition, IAxis } from './index.js';
+import { TextDimensionCalculator } from '../../TextDimensionCalculator.js';
+import { AxisPosition, Axis } from './index.js';
 
-export abstract class BaseAxis implements IAxis {
+const BAR_WIDTH_TO_TICK_WIDTH_RATIO = 0.7;
+
+export abstract class BaseAxis implements Axis {
   protected boundingRect: BoundingRect = { x: 0, y: 0, width: 0, height: 0 };
   protected axisPosition: AxisPosition = 'left';
   private range: [number, number];
@@ -22,7 +24,7 @@ export abstract class BaseAxis implements IAxis {
   constructor(
     protected axisConfig: XYChartAxisConfig,
     protected title: string,
-    protected textDimensionCalculator: ITextDimensionCalculator,
+    protected textDimensionCalculator: TextDimensionCalculator,
     protected axisThemeConfig: XYChartAxisThemeConfig
   ) {
     this.range = [0, 10];
@@ -58,15 +60,15 @@ export abstract class BaseAxis implements IAxis {
   }
 
   private getLabelDimension(): Dimension {
-    return this.textDimensionCalculator.getDimension(
+    return this.textDimensionCalculator.getMaxDimension(
       this.getTickValues().map((tick) => tick.toString()),
       this.axisConfig.labelFontSize
     );
   }
 
   recalculateOuterPaddingToDrawBar(): void {
-    if (0.7 * this.getTickDistance() > this.outerPadding * 2) {
-      this.outerPadding = Math.floor((0.7 * this.getTickDistance()) / 2);
+    if (BAR_WIDTH_TO_TICK_WIDTH_RATIO * this.getTickDistance() > this.outerPadding * 2) {
+      this.outerPadding = Math.floor((BAR_WIDTH_TO_TICK_WIDTH_RATIO * this.getTickDistance()) / 2);
     }
     this.recalculateScale();
   }
@@ -88,7 +90,7 @@ export abstract class BaseAxis implements IAxis {
       availableHeight -= this.axisConfig.tickLength;
     }
     if (this.axisConfig.showTitle) {
-      const spaceRequired = this.textDimensionCalculator.getDimension(
+      const spaceRequired = this.textDimensionCalculator.getMaxDimension(
         [this.title],
         this.axisConfig.labelFontSize
       );
@@ -120,7 +122,7 @@ export abstract class BaseAxis implements IAxis {
       availableWidth -= this.axisConfig.tickLength;
     }
     if (this.axisConfig.showTitle) {
-      const spaceRequired = this.textDimensionCalculator.getDimension(
+      const spaceRequired = this.textDimensionCalculator.getMaxDimension(
         [this.title],
         this.axisConfig.labelFontSize
       );
@@ -270,7 +272,7 @@ export abstract class BaseAxis implements IAxis {
     if (this.showLabel) {
       drawableElement.push({
         type: 'text',
-        groupTexts: ['bottom-axis', 'label'],
+        groupTexts: ['top-axis', 'label'],
         data: this.getTickValues().map((tick) => ({
           text: tick.toString(),
           x: this.getScaleValue(tick),

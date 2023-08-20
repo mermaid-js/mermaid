@@ -1,6 +1,6 @@
 import { ScaleBand, scaleBand } from 'd3';
 import { log } from '../../../../../logger.js';
-import { ITextDimensionCalculator } from '../../TextDimensionCalculator.js';
+import { TextDimensionCalculator } from '../../TextDimensionCalculator.js';
 import { BaseAxis } from './BaseAxis.js';
 import { XYChartAxisThemeConfig, XYChartAxisConfig } from '../../Interfaces.js';
 
@@ -13,7 +13,7 @@ export class BandAxis extends BaseAxis {
     axisThemeConfig: XYChartAxisThemeConfig,
     categories: string[],
     title: string,
-    textDimensionCalculator: ITextDimensionCalculator
+    textDimensionCalculator: TextDimensionCalculator
   ) {
     super(axisConfig, title, textDimensionCalculator, axisThemeConfig);
     this.categories = categories;

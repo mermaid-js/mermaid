@@ -7,20 +7,20 @@ import {
   XYChartThemeConfig,
   XYChartConfig,
 } from '../../Interfaces.js';
-import { IAxis } from '../axis/index.js';
+import { Axis } from '../axis/index.js';
 import { ChartComponent } from '../../Interfaces.js';
 import { LinePlot } from './LinePlot.js';
 import { PlotBorder } from './PlotBorder.js';
 import { BarPlot } from './BarPlot.js';
 
-export interface IPlot extends ChartComponent {
-  setAxes(xAxis: IAxis, yAxis: IAxis): void;
+export interface Plot extends ChartComponent {
+  setAxes(xAxis: Axis, yAxis: Axis): void;
 }
 
-export class Plot implements IPlot {
+export class Plot implements Plot {
   private boundingRect: BoundingRect;
-  private xAxis?: IAxis;
-  private yAxis?: IAxis;
+  private xAxis?: Axis;
+  private yAxis?: Axis;
 
   constructor(
     private chartConfig: XYChartConfig,
@@ -34,7 +34,7 @@ export class Plot implements IPlot {
       height: 0,
     };
   }
-  setAxes(xAxis: IAxis, yAxis: IAxis) {
+  setAxes(xAxis: Axis, yAxis: Axis) {
     this.xAxis = xAxis;
     this.yAxis = yAxis;
   }
@@ -99,6 +99,6 @@ export function getPlotComponent(
   chartConfig: XYChartConfig,
   chartData: XYChartData,
   chartThemeConfig: XYChartThemeConfig
-): IPlot {
+): Plot {
   return new Plot(chartConfig, chartData, chartThemeConfig);
 }

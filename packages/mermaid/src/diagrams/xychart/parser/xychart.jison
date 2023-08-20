@@ -15,9 +15,9 @@
 %s data
 %s data_inner
 %%
-\%\%\{                                    { this.begin('open_directive'); return 'open_directive'; }
-<open_directive>((?:(?!\}\%\%)[^:.])*)    { this.begin('type_directive'); return 'type_directive'; }
-<type_directive>":"                       { this.popState(); this.begin('arg_directive'); return ':'; }
+\%\%\{                                    { this.pushState('open_directive'); return 'open_directive'; }
+<open_directive>((?:(?!\}\%\%)[^:.])*)    { this.pushState('type_directive'); return 'type_directive'; }
+<type_directive>":"                       { this.popState(); this.pushState('arg_directive'); return ':'; }
 <type_directive,arg_directive>\}\%\%      { this.popState(); this.popState(); return 'close_directive'; }
 <arg_directive>((?:(?!\}\%\%).|\n)*)      return 'arg_directive';
 \%\%(?!\{)[^\n]*                          /* skip comments */
@@ -27,41 +27,39 @@
 [\n\r]+                                   return 'NEWLINE';
 \%\%[^\n]*                                /* do nothing */
 
-title                                     { this.begin("title"); return 'title'; }
-<title>(?!\n|;|#)*[^\n]*                  { this.popState(); return "title_value"; }
+"title"                                   { return 'title'; }
 
-
-accTitle\s*":"\s*                         { this.begin("acc_title");return 'acc_title'; }
+"accTitle"\s*":"\s*                         { this.pushState("acc_title");return 'acc_title'; }
 <acc_title>(?!\n|;|#)*[^\n]*              { this.popState(); return "acc_title_value"; }
-accDescr\s*":"\s*                         { this.begin("acc_descr");return 'acc_descr'; }
+"accDescr"\s*":"\s*                         { this.pushState("acc_descr");return 'acc_descr'; }
 <acc_descr>(?!\n|;|#)*[^\n]*              { this.popState(); return "acc_descr_value"; }
-accDescr\s*"{"\s*                         { this.begin("acc_descr_multiline");}
+"accDescr"\s*"{"\s*                         { this.pushState("acc_descr_multiline");}
 <acc_descr_multiline>[\}]                 { this.popState(); }
 <acc_descr_multiline>[^\}]*               { return "acc_descr_multiline_value"; }
 
-"xychart-beta"		                        {return 'XYCHART';}
+"xychart-beta"                            {return 'XYCHART';}
 ("vertical"|"horizontal")                 {return 'CHART_ORIENTATION'}
 
-"x-axis"                                  { this.begin("axis_data"); return "X_AXIS"; }
-"y-axis"                                  { this.begin("axis_data"); return "Y_AXIS"; }
+"x-axis"                                  { this.pushState("axis_data"); return "X_AXIS"; }
+"y-axis"                                  { this.pushState("axis_data"); return "Y_AXIS"; }
 <axis_data>[\[]                           { this.popState(); return 'SQUARE_BRACES_START'; }
-<axis_data>[+-]?\d+(?:\.\d+)?             { return 'NUMBER_WITH_DECIMAL'; }
+<axis_data>[+-]?(?:\d+(?:\.\d+)?|\.\d+)   { return 'NUMBER_WITH_DECIMAL'; }
 <axis_data>"-->"                          { return 'ARROW_DELIMITER'; }
 
 
-"line"                                    { this.begin("data"); return 'LINE'; }
-"bar"                                     { this.begin("data"); return 'BAR'; }
-<data>[\[]                                { this.popState(); this.begin("data_inner"); return 'SQUARE_BRACES_START'; }
-<data_inner>[+-]?\d+(?:\.\d+)?            { return 'NUMBER_WITH_DECIMAL';}
+"line"                                    { this.pushState("data"); return 'LINE'; }
+"bar"                                     { this.pushState("data"); return 'BAR'; }
+<data>[\[]                                { this.pushState("data_inner"); return 'SQUARE_BRACES_START'; }
+<data_inner>[+-]?(?:\d+(?:\.\d+)?|\.\d+)  { return 'NUMBER_WITH_DECIMAL';}
 <data_inner>[\]]                          { this.popState(); return 'SQUARE_BRACES_END'; }
 
 
 
 
-["][`]                                    { this.begin("md_string");}
+["][`]                                    { this.pushState("md_string");}
 <md_string>[^`"]+                         { return "MD_STR";}
 <md_string>[`]["]                         { this.popState();}
-["]                                       this.begin("string");
+["]                                       this.pushState("string");
 <string>["]                               this.popState();
 <string>[^"]*                             return "STR";
 
@@ -72,7 +70,6 @@ accDescr\s*"{"\s*                         { this.begin("acc_descr_multiline");}
 ":"                                       return 'COLON';
 \+                                        return 'PLUS';
 ","                                       return 'COMMA';
-"="                                       return 'EQUALS';
 \=                                        return 'EQUALS';
 "*"                                       return 'MULT';
 \#                                        return 'BRKT';
@@ -81,9 +78,8 @@ accDescr\s*"{"\s*                         { this.begin("acc_descr_multiline");}
 "&"                                       return 'AMP';
 \-                                        return 'MINUS';
 [0-9]+                                    return 'NUM';
-\s                                        /* skip */
+\s+                                       /* skip */
 ";"                                       return 'SEMI';
-[!"#$%&'*+,-.`?\\_/]                      return 'PUNCTUATION';
 <<EOF>>                                   return 'EOF';
 
 /lex
@@ -96,61 +92,79 @@ start
   : eol start
   | directive start
   | XYCHART chartConfig start
-	| XYCHART start
+  | XYCHART start
   | document
-	;
+  ;
 
 chartConfig
-  : CHART_ORIENTATION                     { yy.setOrientation($1); }
+  : CHART_ORIENTATION                                           { yy.setOrientation($1); }
   ;
 
 document
-	: /* empty */
-	| document statement
-	;
-
-line
-	: statement
-	;
+  : /* empty */
+  | document statement
+  ;
 
 statement
   : statement eol
-  | title title_value                     { yy.setDiagramTitle($title_value.trim()); }
+  | title text                                                  { yy.setDiagramTitle($text.text.trim()); }
   | X_AXIS parseXAxis
   | Y_AXIS parseYAxis
-  | LINE parseLineData                    { yy.setLineData({text: '', type: 'text'}, $parseLineData); }
-  | LINE text parseLineData               { yy.setLineData($text, $parseLineData); }
-  | BAR parseBarData                      { yy.setBarData({text: '', type: 'text'}, $parseBarData); }
-  | BAR text parseBarData                 { yy.setBarData($text, $parseBarData); }
-	;
-
-parseLineData
-  : SQUARE_BRACES_START NUMBER_WITH_DECIMAL parseLineData   {$parseLineData.unshift(Number($NUMBER_WITH_DECIMAL)); $$ = $parseLineData}
-  | COMMA NUMBER_WITH_DECIMAL parseLineData                 {$parseLineData.unshift(Number($NUMBER_WITH_DECIMAL)); $$ = $parseLineData;}
-  | SQUARE_BRACES_END                                       {$$ = []}
+  | LINE plotData                                               { yy.setLineData({text: '', type: 'text'}, $plotData); }
+  | LINE text plotData                                          { yy.setLineData($text, $plotData); }
+  | BAR plotData                                                { yy.setBarData({text: '', type: 'text'}, $plotData); }
+  | BAR text plotData                                           { yy.setBarData($text, $plotData); }
   ;
 
-parseBarData
-  : SQUARE_BRACES_START NUMBER_WITH_DECIMAL parseBarData    {$parseBarData.unshift(Number($NUMBER_WITH_DECIMAL)); $$ = $parseBarData}
-  | COMMA NUMBER_WITH_DECIMAL parseBarData                  {$parseBarData.unshift(Number($NUMBER_WITH_DECIMAL)); $$ = $parseBarData;}
-  | SQUARE_BRACES_END                                       {$$ = []}
+plotData
+  : SQUARE_BRACES_START commaSeperateNumber SQUARE_BRACES_END   { $$ = $commaSeperateNumber }
   ;
+
+commaSeperateNumber
+  : NUMBER_WITH_DECIMAL commaSeperateNumberValues                 {
+                                                                    $commaSeperateNumberValues = $commaSeperateNumberValues || [];
+                                                                    $commaSeperateNumberValues.unshift(Number($NUMBER_WITH_DECIMAL));
+                                                                    $$ = $commaSeperateNumberValues
+                                                                  }
+  ;
+
+commaSeperateNumberValues
+  : COMMA NUMBER_WITH_DECIMAL commaSeperateNumberValues           {
+                                                                    $commaSeperateNumberValues = $commaSeperateNumberValues || [];
+                                                                    $commaSeperateNumberValues.unshift(Number($NUMBER_WITH_DECIMAL));
+                                                                    $$ = $commaSeperateNumberValues
+                                                                  }
+  |;
 
 parseXAxis
   : text                                                          {yy.setXAxisTitle($text);}
-  | text xAxisBandData                                            {yy.setXAxisTitle($text); yy.setXAxisBand($xAxisBandData);}
-  | text NUMBER_WITH_DECIMAL ARROW_DELIMITER NUMBER_WITH_DECIMAL  {yy.setXAxisTitle($text); yy.setXAxisRangeData(Number($2), Number($4));}
+  | text bandData                                                 {yy.setXAxisTitle($text); yy.setXAxisBand($bandData);}
+  | text NUMBER_WITH_DECIMAL ARROW_DELIMITER NUMBER_WITH_DECIMAL  {yy.setXAxisTitle($text); yy.setXAxisRangeData(Number($NUMBER_WITH_DECIMAL1), Number($NUMBER_WITH_DECIMAL2));}
   ;
 
-xAxisBandData
-  : SQUARE_BRACES_START text xAxisBandData                  {$xAxisBandData.unshift($text); $$ = $xAxisBandData}
-  | COMMA text xAxisBandData                                {$xAxisBandData.unshift($text); $$ = $xAxisBandData;}
-  | SQUARE_BRACES_END                                       {$$ = []}
+bandData
+  : SQUARE_BRACES_START commaSeperateText SQUARE_BRACES_END       {$$ = $commaSeperateText}
   ;
+
+commaSeperateText
+  : text commaSeperateTextValues                                  {
+                                                                    $commaSeperateTextValues = $commaSeperateTextValues || [];
+                                                                    $commaSeperateTextValues.unshift($text);
+                                                                    $$ = $commaSeperateTextValues
+                                                                  }
+  ;
+
+commaSeperateTextValues
+  : COMMA text commaSeperateTextValues                            {
+                                                                    $commaSeperateTextValues = $commaSeperateTextValues || [];
+                                                                    $commaSeperateTextValues.unshift($text);
+                                                                    $$ = $commaSeperateTextValues
+                                                                  }
+  |;
 
 parseYAxis
   : text  {yy.setYAxisTitle($text);}
-  | text NUMBER_WITH_DECIMAL ARROW_DELIMITER NUMBER_WITH_DECIMAL  {yy.setYAxisTitle($text); yy.setYAxisRangeData(Number($2), Number($4));}
+  | text NUMBER_WITH_DECIMAL ARROW_DELIMITER NUMBER_WITH_DECIMAL  {yy.setYAxisTitle($text); yy.setYAxisRangeData(Number($NUMBER_WITH_DECIMAL1), Number($NUMBER_WITH_DECIMAL2));}
   ;
 
 directive
@@ -180,22 +194,17 @@ closeDirective
   : close_directive { yy.parseDirective('}%%', 'close_directive', 'xychart'); }
   ;
 
-text: alphaNum
-    { $$={text:$alphaNum, type: 'text'};}
-    | STR
-    { $$={text: $STR, type: 'text'};}
-    | MD_STR
-    { $$={text: $MD_STR, type: 'markdown'};}
+text: alphaNum { $$={text:$alphaNum, type: 'text'};}
+    | STR { $$={text: $STR, type: 'text'};}
+    | MD_STR { $$={text: $MD_STR, type: 'markdown'};}
     ;
 
 alphaNum
-    : alphaNumToken
-    {$$=$alphaNumToken;}
-    | alphaNum alphaNumToken
-    {$$=$alphaNum+''+$alphaNumToken;}
+    : alphaNumToken {$$=$alphaNumToken;}
+    | alphaNum alphaNumToken {$$=$alphaNum+''+$alphaNumToken;}
     ;
 
 
-alphaNumToken  : PUNCTUATION | AMP | NUM | ALPHA | PLUS | EQUALS | MULT | DOT | BRKT| UNDERSCORE ;
+alphaNumToken  : AMP | NUM | ALPHA | PLUS | EQUALS | MULT | DOT | BRKT| MINUS | UNDERSCORE ;
 
 %%

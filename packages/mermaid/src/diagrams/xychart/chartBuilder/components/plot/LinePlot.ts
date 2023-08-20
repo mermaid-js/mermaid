@@ -1,12 +1,12 @@
 import { line } from 'd3';
 import { DrawableElem, LinePlotData, XYChartConfig } from '../../Interfaces.js';
-import { IAxis } from '../axis/index.js';
+import { Axis } from '../axis/index.js';
 
 export class LinePlot {
   constructor(
     private plotData: LinePlotData,
-    private xAxis: IAxis,
-    private yAxis: IAxis,
+    private xAxis: Axis,
+    private yAxis: Axis,
     private orientation: XYChartConfig['chartOrientation'],
     private plotIndex: number
   ) {}

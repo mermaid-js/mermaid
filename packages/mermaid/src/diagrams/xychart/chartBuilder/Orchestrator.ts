@@ -8,23 +8,25 @@ import {
 } from './Interfaces.js';
 import { getChartTitleComponent } from './components/ChartTitle.js';
 import { ChartComponent } from './Interfaces.js';
-import { IAxis, getAxis } from './components/axis/index.js';
-import { IPlot, getPlotComponent } from './components/plot/index.js';
+import { Axis, getAxis } from './components/axis/index.js';
+import { Plot, getPlotComponent } from './components/plot/index.js';
+import { SVGGType } from '../xychartDb.js';
 
 export class Orchestrator {
   private componentStore: {
     title: ChartComponent;
-    plot: IPlot;
-    xAxis: IAxis;
-    yAxis: IAxis;
+    plot: Plot;
+    xAxis: Axis;
+    yAxis: Axis;
   };
   constructor(
     private chartConfig: XYChartConfig,
     private chartData: XYChartData,
-    private chartThemeConfig: XYChartThemeConfig
+    private chartThemeConfig: XYChartThemeConfig,
+    private tmpSVGGElem: SVGGType
   ) {
     this.componentStore = {
-      title: getChartTitleComponent(chartConfig, chartData, chartThemeConfig),
+      title: getChartTitleComponent(chartConfig, chartData, chartThemeConfig, tmpSVGGElem),
       plot: getPlotComponent(chartConfig, chartData, chartThemeConfig),
       xAxis: getAxis(
         chartData.xAxis,
@@ -34,7 +36,7 @@ export class Orchestrator {
           labelColor: chartThemeConfig.xAxisLableColor,
           tickColor: chartThemeConfig.xAxisTickColor,
         },
-        chartConfig.fontFamily
+        tmpSVGGElem
       ),
       yAxis: getAxis(
         chartData.yAxis,
@@ -44,7 +46,7 @@ export class Orchestrator {
           labelColor: chartThemeConfig.yAxisLableColor,
           tickColor: chartThemeConfig.yAxisTickColor,
         },
-        chartConfig.fontFamily
+        tmpSVGGElem
       ),
     };
   }

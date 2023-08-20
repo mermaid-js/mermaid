@@ -1,3 +1,4 @@
+import { SVGGType } from '../../../xychartDb.js';
 import {
   AxisDataType,
   ChartComponent,
@@ -11,7 +12,7 @@ import { LinearAxis } from './LinearAxis.js';
 
 export type AxisPosition = 'left' | 'right' | 'top' | 'bottom';
 
-export interface IAxis extends ChartComponent {
+export interface Axis extends ChartComponent {
   getScaleValue(value: string | number): number;
   setAxisPosition(axisPosition: AxisPosition): void;
   getAxisOuterPadding(): number;
@@ -24,9 +25,9 @@ export function getAxis(
   data: AxisDataType,
   axisConfig: XYChartAxisConfig,
   axisThemeConfig: XYChartAxisThemeConfig,
-  fontFamily?: string
-): IAxis {
-  const textDimansionCalculator = new TextDimensionCalculatorWithFont(fontFamily);
+  tmpSVGGElem: SVGGType
+): Axis {
+  const textDimansionCalculator = new TextDimensionCalculatorWithFont(tmpSVGGElem);
   if (isBandAxisData(data)) {
     return new BandAxis(
       axisConfig,
