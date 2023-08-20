@@ -1,5 +1,4 @@
-// @ts-ignore: JISON doesn't support types
-import { parser } from './parser/pie.jison';
+import { parser } from './pieParser.js';
 import { DEFAULT_PIE_DB, db } from './pieDb.js';
 import { setConfig } from '../../config.js';
 
@@ -8,13 +7,7 @@ setConfig({
 });
 
 describe('pie', () => {
-  beforeAll(() => {
-    parser.yy = db;
-  });
-
-  beforeEach(() => {
-    parser.yy.clear();
-  });
+  beforeEach(() => db.clear());
 
   describe('parse', () => {
     it('should handle very simple pie', () => {

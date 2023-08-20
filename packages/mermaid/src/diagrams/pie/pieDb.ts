@@ -51,13 +51,6 @@ const addSection = (label: string, value: number): void => {
 
 const getSections = (): Sections => sections;
 
-const cleanupValue = (value: string): number => {
-  if (value.substring(0, 1) === ':') {
-    value = value.substring(1).trim();
-  }
-  return Number(value.trim());
-};
-
 const setShowData = (toggle: boolean): void => {
   showData = toggle;
 };
@@ -78,7 +71,6 @@ export const db: PieDB = {
 
   addSection,
   getSections,
-  cleanupValue,
   setShowData,
   getShowData,
 };

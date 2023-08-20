@@ -58,7 +58,6 @@ export interface PieDB extends DiagramDB {
   // diagram db
   addSection: (label: string, value: number) => void;
   getSections: () => Sections;
-  cleanupValue: (value: string) => number;
   setShowData: (toggle: boolean) => void;
   getShowData: () => boolean;
 }
