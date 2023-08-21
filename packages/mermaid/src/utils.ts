@@ -102,7 +102,7 @@ export const detectInit = function (text: string, config?: MermaidConfig): Merma
 
   if (Array.isArray(inits)) {
     const args = inits.map((init) => init.args);
-    directiveSanitizer(args);
+    sanitizeDirective(args);
 
     results = assignWithDepth(results, [...args]);
   } else {
@@ -842,67 +842,62 @@ export const entityDecode = function (html: string): string {
  *
  * @param args - Directive's JSON
  */
-export const directiveSanitizer = (args: any) => {
-  log.debug('directiveSanitizer called with', args);
-  if (typeof args === 'object') {
-    // check for array
-    if (args.length) {
-      args.forEach((arg) => directiveSanitizer(arg));
-    } else {
-      // This is an object
-      Object.keys(args).forEach((key) => {
-        log.debug('Checking key', key);
-        if (key.startsWith('__')) {
-          log.debug('sanitize deleting __ option', key);
-          delete args[key];
-        }
+export const sanitizeDirective = (args: unknown): void => {
+  log.debug('sanitizeDirective called with', args);
 
-        if (key.includes('proto')) {
-          log.debug('sanitize deleting proto option', key);
-          delete args[key];
-        }
+  // Return if not an object
+  if (typeof args !== 'object') {
+    return;
+  }
 
-        if (key.includes('constr')) {
-          log.debug('sanitize deleting constr option', key);
-          delete args[key];
-        }
+  // Sanitize each element if an array
+  if (Array.isArray(args)) {
+    args.forEach((arg) => sanitizeDirective(arg));
+    return;
+  }
 
-        if (key.includes('themeCSS')) {
-          log.debug('sanitizing themeCss option');
-          args[key] = sanitizeCss(args[key]);
-        }
-        if (key.includes('fontFamily')) {
-          log.debug('sanitizing fontFamily option');
-          args[key] = sanitizeCss(args[key]);
-        }
-        if (key.includes('altFontFamily')) {
-          log.debug('sanitizing altFontFamily option');
-          args[key] = sanitizeCss(args[key]);
-        }
-        if (!configKeys.includes(key)) {
-          log.debug('sanitize deleting option', key);
-          delete args[key];
-        } else {
-          if (typeof args[key] === 'object') {
-            log.debug('sanitize deleting object', key);
-            directiveSanitizer(args[key]);
-          }
-        }
-      });
+  // Sanitize each key if an object
+  for (const key of Object.keys(args)) {
+    log.debug('Checking key', key);
+    if (
+      key.startsWith('__') ||
+      key.includes('proto') ||
+      key.includes('constr') ||
+      !configKeys.has(key)
+    ) {
+      log.debug('sanitize deleting key: ', key);
+      delete args[key];
+      continue;
+    }
+
+    // Recurse if an object
+    if (typeof args[key] === 'object') {
+      log.debug('sanitizing object', key);
+      sanitizeDirective(args[key]);
+      continue;
+    }
+
+    const cssMatchers = ['themeCSS', 'fontFamily', 'altFontFamily'];
+    for (const cssKey of cssMatchers) {
+      if (key.includes(cssKey)) {
+        log.debug('sanitizing css option', key);
+        args[key] = sanitizeCss(args[key]);
+      }
     }
   }
+
   if (args.themeVariables) {
-    const kArr = Object.keys(args.themeVariables);
-    for (const k of kArr) {
+    for (const k of Object.keys(args.themeVariables)) {
       const val = args.themeVariables[k];
-      if (val && val.match && !val.match(/^[\d "#%(),.;A-Za-z]+$/)) {
+      if (val?.match && !val.match(/^[\d "#%(),.;A-Za-z]+$/)) {
         args.themeVariables[k] = '';
       }
     }
   }
   log.debug('After sanitization', args);
 };
-export const sanitizeCss = (str) => {
+
+export const sanitizeCss = (str: string): string => {
   let startCnt = 0;
   let endCnt = 0;
 
@@ -1019,8 +1014,8 @@ export default {
   random,
   runFunc,
   entityDecode,
-  initIdGenerator: initIdGenerator,
-  directiveSanitizer,
+  initIdGenerator,
+  sanitizeDirective,
   sanitizeCss,
   insertTitle,
   parseFontSize,
