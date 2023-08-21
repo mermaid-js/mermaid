@@ -23,7 +23,7 @@ import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
 import getStyles from './styles.js';
 import theme from './themes/index.js';
-import utils, { directiveSanitizer } from './utils.js';
+import utils from './utils.js';
 import DOMPurify from 'dompurify';
 import { MermaidConfig } from './config.type.js';
 import { evaluate } from './diagrams/common/common.js';
@@ -388,7 +388,6 @@ const render = async function (
   // Add Directives. Must do this before getting the config and before creating the diagram.
   const graphInit = utils.detectInit(text);
   if (graphInit) {
-    directiveSanitizer(graphInit);
     configApi.addDirective(graphInit);
   }
 

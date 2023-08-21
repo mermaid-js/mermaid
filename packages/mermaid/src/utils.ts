@@ -102,8 +102,6 @@ export const detectInit = function (text: string, config?: MermaidConfig): Merma
 
   if (Array.isArray(inits)) {
     const args = inits.map((init) => init.args);
-    sanitizeDirective(args);
-
     results = assignWithDepth(results, [...args]);
   } else {
     results = inits.args;
