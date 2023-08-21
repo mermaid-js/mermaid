@@ -30,6 +30,7 @@ import { evaluate } from './diagrams/common/common.js';
 import isEmpty from 'lodash-es/isEmpty.js';
 import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
 import { parseDirective } from './directiveUtils.js';
+import { extractFrontMatter } from './diagram-api/frontmatter.js';
 
 // diagram names that support classDef statements
 const CLASSDEF_DIAGRAMS = [
@@ -385,7 +386,12 @@ const render = async function (
 
   configApi.reset();
 
-  // Add Directives. Must do this before getting the config and before creating the diagram.
+  // We need to add the directives before creating the diagram.
+  // So extractFrontMatter is called twice. Once here and once in the diagram parser.
+  // This can be fixed in a future refactor.
+  extractFrontMatter(text, {}, configApi.addDirective);
+
+  // Add Directives.
   const graphInit = utils.detectInit(text);
   if (graphInit) {
     configApi.addDirective(graphInit);

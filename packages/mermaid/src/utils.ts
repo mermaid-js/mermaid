@@ -96,7 +96,10 @@ const directiveWithoutOpen =
  * @param config - Optional mermaid configuration object.
  * @returns The json object representing the init passed to mermaid.initialize()
  */
-export const detectInit = function (text: string, config?: MermaidConfig): MermaidConfig {
+export const detectInit = function (
+  text: string,
+  config?: MermaidConfig
+): MermaidConfig | undefined {
   const inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
   let results = {};
 
@@ -106,20 +109,22 @@ export const detectInit = function (text: string, config?: MermaidConfig): Merma
   } else {
     results = inits.args;
   }
-  if (results) {
-    let type = detectType(text, config);
-    ['config'].forEach((prop) => {
-      if (results[prop] !== undefined) {
-        if (type === 'flowchart-v2') {
-          type = 'flowchart';
-        }
-        results[type] = results[prop];
-        delete results[prop];
-      }
-    });
+
+  if (!results) {
+    return;
   }
 
-  // Todo: refactor this, these results are never used
+  let type = detectType(text, config);
+  ['config'].forEach((prop) => {
+    if (results[prop] !== undefined) {
+      if (type === 'flowchart-v2') {
+        type = 'flowchart';
+      }
+      results[type] = results[prop];
+      delete results[prop];
+    }
+  });
+
   return results;
 };
 
@@ -844,7 +849,7 @@ export const sanitizeDirective = (args: unknown): void => {
   log.debug('sanitizeDirective called with', args);
 
   // Return if not an object
-  if (typeof args !== 'object') {
+  if (typeof args !== 'object' || args == null) {
     return;
   }
 
@@ -861,7 +866,8 @@ export const sanitizeDirective = (args: unknown): void => {
       key.startsWith('__') ||
       key.includes('proto') ||
       key.includes('constr') ||
-      !configKeys.has(key)
+      !configKeys.has(key) ||
+      args[key] == null
     ) {
       log.debug('sanitize deleting key: ', key);
       delete args[key];

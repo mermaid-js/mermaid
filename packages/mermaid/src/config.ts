@@ -144,9 +144,12 @@ export const getConfig = (): MermaidConfig => {
  * @param options - The potential setConfig parameter
  */
 export const sanitize = (options: any) => {
+  if (!options) {
+    return;
+  }
   // Checking that options are not in the list of excluded options
   ['secure', ...(siteConfig.secure ?? [])].forEach((key) => {
-    if (options[key] !== undefined) {
+    if (Object.hasOwn(options, key)) {
       // DO NOT attempt to print options[key] within `${}` as a malicious script
       // can exploit the logger's attempt to stringify the value and execute arbitrary code
       log.debug(`Denied attempt to modify a secure key ${key}`, options[key]);
@@ -156,7 +159,7 @@ export const sanitize = (options: any) => {
 
   // Check that there no attempts of prototype pollution
   Object.keys(options).forEach((key) => {
-    if (key.indexOf('__') === 0) {
+    if (key.startsWith('__')) {
       delete options[key];
     }
   });
