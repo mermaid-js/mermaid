@@ -144,6 +144,27 @@ graph TD
       { theme: 'forest' }
     );
   });
+  it('Theme from initialize, frontmatter overriding theme variable, directive overriding primaryColor - nodes should be red', () => {
+    imgSnapshotTest(
+      `
+---
+config:
+  theme: base
+  themeVariables:
+    primaryColor: '#00ff00'
+---
+%%{init: {'theme': 'base', 'themeVariables':{ 'primaryColor': '#ff0000'}}}%%
+graph TD
+          A(Start) --> B[/Another/]
+          A[/Another/] --> C[End]
+          subgraph section
+            B
+            C
+          end
+        `,
+      { theme: 'forest' }
+    );
+  });
 
   it('should render if values are not quoted properly', () => {
     // #ff0000 is not quoted properly, and will evaluate to null.
