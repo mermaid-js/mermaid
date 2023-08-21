@@ -50,7 +50,7 @@ export class Diagram {
     this.parser.parse = (text: string) =>
       originalParse(cleanupComments(extractFrontMatter(text, this.db)));
 
-    if (this.parser.parser?.yy) {
+    if (this.parser.parser !== undefined) {
       this.parser.parser.yy = this.db;
     }
     this.init = diagram.init;
