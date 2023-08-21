@@ -108,6 +108,20 @@
         }
         MANUFACTURER only one to zero or more CAR : makes
     </pre>
+    <hr />
+
+    <pre class="mermaid">
+    erDiagram
+      p as Person {
+        string firstName
+        string lastName
+      }
+      a as "Customer Account" {
+        string email
+      }
+      p ||--o| a : has
+    </pre>
+    <hr />
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';

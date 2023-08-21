@@ -144,6 +144,22 @@ erDiagram
 
 The `type` values must begin with an alphabetic character and may contain digits, hyphens, underscores, parentheses and square brackets. The `name` values follow a similar format to `type`, but may start with an asterisk as another option to indicate an attribute is a primary key. Other than that, there are no restrictions, and there is no implicit set of valid data types.
 
+### Entity Name Aliases
+
+An alias can be added to an entity using `as` keyword. If provided, the alias will be showed in the diagram instead of the entity name.
+
+```mermaid-example
+erDiagram
+    p as Person {
+        string firstName
+        string lastName
+    }
+    a as "Customer Account" {
+        string email
+    }
+    p ||--o| a : has
+```
+
 #### Attribute Keys and Comments
 
 Attributes may also have a `key` or comment defined. Keys can be `PK`, `FK` or `UK`, for Primary Key, Foreign Key or Unique Key. To specify multiple key constraints on a single attribute, separate them with a comma (e.g., `PK, FK`).. A `comment` is defined by double quotes at the end of an attribute. Comments themselves cannot have double-quote characters in them.

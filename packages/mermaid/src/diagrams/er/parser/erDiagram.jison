@@ -62,6 +62,7 @@ o\{                             return 'ZERO_OR_MORE';
 \-\-                            return 'IDENTIFYING';
 "to"                            return 'IDENTIFYING';
 "optionally to"                 return 'NON_IDENTIFYING';
+"as"                            return 'ALIAS';
 \.\-                            return 'NON_IDENTIFYING';
 \-\.                            return 'NON_IDENTIFYING';
 [A-Za-z][A-Za-z0-9\-_]*         return 'ALPHANUM';
@@ -113,6 +114,15 @@ statement
       }
     | entityName BLOCK_START BLOCK_STOP { yy.addEntity($1); }
     | entityName { yy.addEntity($1); }
+    | entityName ALIAS entityName BLOCK_START attributes BLOCK_STOP
+      {
+          /* console.log('detected block'); */
+          yy.addEntity($1, $3);
+          yy.addAttributes($1, $5);
+          /* console.log('handled block'); */
+      }
+    | entityName ALIAS entityName BLOCK_START BLOCK_STOP { yy.addEntity($1, $3); }
+    | entityName ALIAS entityName { yy.addEntity($1, $3); }
     | title title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
