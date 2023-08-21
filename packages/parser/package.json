@@ -14,8 +14,7 @@
     ".": {
       "import": "./dist/mermaid-parser.esm.mjs",
       "types": "./dist/src/index.d.ts"
-    },
-    "./*": "./*"
+    }
   },
   "scripts": {
     "clean": "rimraf dist src/language/generated",
