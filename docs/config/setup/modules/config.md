@@ -118,7 +118,7 @@ The siteConfig
 
 #### Defined in
 
-[config.ts:218](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L218)
+[config.ts:217](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L217)
 
 ---
 
