@@ -1,7 +1,5 @@
 import * as configApi from './config.js';
-
 import { log } from './logger.js';
-import { directiveSanitizer } from './utils.js';
 
 let currentDirective: { type?: string; args?: any } | undefined = {};
 
@@ -60,9 +58,6 @@ const handleDirective = function (p: any, directive: any, type: string): void {
           delete directive.args[prop];
         }
       });
-      log.info('sanitize in handleDirective', directive.args);
-      directiveSanitizer(directive.args);
-      log.info('sanitize in handleDirective (done)', directive.args);
       configApi.addDirective(directive.args);
       break;
     }
