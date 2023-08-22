@@ -1,6 +1,6 @@
-import { MermaidConfig } from '../config.type.js';
+import type { MermaidConfig } from '../config.type.js';
 import { frontMatterRegex } from './regexes.js';
-import { DiagramDB } from './types.js';
+import type { DiagramDB } from './types.js';
 // The "* as yaml" part is necessary for tree-shaking
 import * as yaml from 'js-yaml';
 
