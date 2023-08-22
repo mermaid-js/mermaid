@@ -434,6 +434,9 @@ importers:
       jiti:
         specifier: ^1.18.2
         version: 1.18.2
+      mermaid:
+        specifier: workspace:^
+        version: link:../..
       vue:
         specifier: ^3.3
         version: 3.3.4
@@ -486,6 +489,9 @@ importers:
       jiti:
         specifier: ^1.18.2
         version: 1.18.2
+      mermaid:
+        specifier: workspace:^
+        version: link:../..
       vue:
         specifier: ^3.3
         version: 3.3.4
