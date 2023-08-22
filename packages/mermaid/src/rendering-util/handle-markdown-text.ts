@@ -1,7 +1,7 @@
 import type { Content } from 'mdast';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import { dedent } from 'ts-dedent';
-import { MarkdownLine, MarkdownWordType } from './types.js';
+import type { MarkdownLine, MarkdownWordType } from './types.js';
 
 /**
  * @param markdown - markdown to process

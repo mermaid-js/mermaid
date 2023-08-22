@@ -1,4 +1,5 @@
-import d3, { scaleOrdinal, pie as d3pie, arc } from 'd3';
+import type d3 from 'd3';
+import { scaleOrdinal, pie as d3pie, arc } from 'd3';
 
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';

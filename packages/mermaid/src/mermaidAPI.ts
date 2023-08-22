@@ -25,7 +25,7 @@ import getStyles from './styles.js';
 import theme from './themes/index.js';
 import utils, { directiveSanitizer } from './utils.js';
 import DOMPurify from 'dompurify';
-import { MermaidConfig } from './config.type.js';
+import type { MermaidConfig } from './config.type.js';
 import { evaluate } from './diagrams/common/common.js';
 import isEmpty from 'lodash-es/isEmpty.js';
 import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';

@@ -1,5 +1,6 @@
 // @ts-nocheck : TODO Fix ts errors
 import { sanitizeUrl } from '@braintree/sanitize-url';
+import type { CurveFactory } from 'd3';
 import {
   curveBasis,
   curveBasisClosed,
@@ -13,7 +14,6 @@ import {
   curveCatmullRomClosed,
   curveCatmullRomOpen,
   curveCatmullRom,
-  CurveFactory,
   curveLinear,
   curveLinearClosed,
   curveMonotoneX,
@@ -29,7 +29,7 @@ import { configKeys } from './defaultConfig.js';
 import { log } from './logger.js';
 import { detectType } from './diagram-api/detectType.js';
 import assignWithDepth from './assignWithDepth.js';
-import { MermaidConfig } from './config.type.js';
+import type { MermaidConfig } from './config.type.js';
 import memoize from 'lodash-es/memoize.js';
 import merge from 'lodash-es/merge.js';
 import { directiveRegex } from './diagram-api/regexes.js';
