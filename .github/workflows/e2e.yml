@@ -46,12 +46,16 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           VITEST_COVERAGE: true
           CYPRESS_COMMIT: ${{ github.sha }}
+
+      - name: Check coverage files
+        run: |
+          ls -lh ./coverage
+          ls -lh ./coverage/cypress
+
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v3
-        # Run step only pushes to develop and pull_requests
-        if: ${{ steps.cypress.conclusion == 'success' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop')}}
         with:
-          files: coverage/cypress/lcov.info
+          files: ./coverage/cypress/lcov.info
           flags: e2e
           name: mermaid-codecov
           fail_ci_if_error: false
