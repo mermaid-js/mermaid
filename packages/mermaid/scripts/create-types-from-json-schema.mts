@@ -24,6 +24,7 @@ import _Ajv2019, { type JSONSchemaType } from 'ajv/dist/2019.js';
 
 // Workaround for wrong AJV types, see
 // https://github.com/ajv-validator/ajv/issues/2132#issuecomment-1290409907
+// @ts-ignore Incorrect types
 const Ajv2019 = _Ajv2019 as unknown as typeof _Ajv2019.default;
 
 // !!! -- The config.type.js file is created by this script -- !!!
