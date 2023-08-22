@@ -53,7 +53,7 @@ const handler = (e) => {
 };
 
 const main = async () => {
-  generateLangium();
+  await generateLangium();
   await mkdir('stats').catch(() => {});
   const packageNames = Object.keys(packageOptions) as (keyof typeof packageOptions)[];
   // it should build `parser` before `mermaid` because it's a dependecy

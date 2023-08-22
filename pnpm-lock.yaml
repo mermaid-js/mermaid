@@ -149,6 +149,9 @@ importers:
       jsdom:
         specifier: ^22.0.0
         version: 22.0.0
+      langium-cli:
+        specifier: 2.0.1
+        version: 2.0.1
       lint-staged:
         specifier: ^13.2.1
         version: 13.2.1
