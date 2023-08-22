@@ -34,10 +34,10 @@
     "ast"
   ],
   "dependencies": {
-    "langium": "2.0.0"
+    "langium": "2.0.1"
   },
   "devDependencies": {
-    "langium-cli": "2.0.0"
+    "langium-cli": "2.0.1"
   },
   "files": [
     "dist/"

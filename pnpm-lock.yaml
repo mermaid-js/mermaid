@@ -481,12 +481,12 @@ importers:
   packages/parser:
     dependencies:
       langium:
-        specifier: 2.0.0
-        version: 2.0.0
+        specifier: 2.0.1
+        version: 2.0.1
     devDependencies:
       langium-cli:
-        specifier: 2.0.0
-        version: 2.0.0
+        specifier: 2.0.1
+        version: 2.0.1
 
   tests/webpack:
     dependencies:
@@ -11454,8 +11454,8 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
-  /langium-cli@2.0.0:
-    resolution: {integrity: sha512-eyM46Hz6vQEg9bQ1ZX61OS/3ERkSaiu5YG9shmGEv3LHTltN1ziwgfL8QKbzr389QDuX7xHD1nEqUx0fOcA+Wg==}
+  /langium-cli@2.0.1:
+    resolution: {integrity: sha512-dPPaHimIoCgELED4tvRGdU3i26tjWuyVwexXgPtTtTzp1MBdGCBLppLADXHkL8yFVdWM/PWlCq06YyqAT4eV3A==}
     engines: {node: '>=16.0.0'}
     hasBin: true
     dependencies:
@@ -11463,7 +11463,7 @@ packages:
       commander: 10.0.1
       fs-extra: 11.1.1
       jsonschema: 1.4.1
-      langium: 2.0.0
+      langium: 2.0.1
       langium-railroad: 2.0.0
       lodash: 4.17.21
     dev: true
@@ -11471,12 +11471,12 @@ packages:
   /langium-railroad@2.0.0:
     resolution: {integrity: sha512-g6y8vPh4i7ll/Q4D9aFrjk4UgtkuzkE6WGfiTHJHTFlDwHoiKrPSIIBZO4wjEb3XUF9P5vIt7aRjerTy7Jgm0g==}
     dependencies:
-      langium: 2.0.0
+      langium: 2.0.1
       railroad-diagrams: 1.0.0
     dev: true
 
-  /langium@2.0.0:
-    resolution: {integrity: sha512-Sze9q3TIfamgXi6zkgwFylM/Wj5YmgoxvwUgYWivwKMTlBjp4j7J5AtQjuZC3QJ+/QYunIsjhj+lSR9WgxxzoQ==}
+  /langium@2.0.1:
+    resolution: {integrity: sha512-EGi8NNN/5zxcUL//sA4kqpV9YVOZfDngwkkSxsZ/zfx4Wjdg9von71rWIMCV6kW1M40kPOKF6e8oMTyWeX92fg==}
     engines: {node: '>=16.0.0'}
     dependencies:
       chevrotain: 11.0.3
