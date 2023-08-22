@@ -74,6 +74,9 @@ importers:
       ajv:
         specifier: ^8.12.0
         version: 8.12.0
+      chokidar:
+        specifier: ^3.5.3
+        version: 3.5.3
       concurrently:
         specifier: ^8.0.1
         version: 8.0.1
@@ -194,12 +197,6 @@ importers:
       '@braintree/sanitize-url':
         specifier: ^6.0.1
         version: 6.0.2
-      '@types/d3-scale':
-        specifier: ^4.0.3
-        version: 4.0.3
-      '@types/d3-scale-chromatic':
-        specifier: ^3.0.0
-        version: 3.0.0
       cytoscape:
         specifier: ^3.23.0
         version: 3.23.0
@@ -236,9 +233,6 @@ importers:
       mdast-util-from-markdown:
         specifier: ^1.3.0
         version: 1.3.0
-      non-layered-tidy-tree-layout:
-        specifier: ^2.0.2
-        version: 2.0.2
       stylis:
         specifier: ^4.1.3
         version: 4.1.3
@@ -248,9 +242,6 @@ importers:
       uuid:
         specifier: ^9.0.0
         version: 9.0.0
-      web-worker:
-        specifier: ^1.2.0
-        version: 1.2.0
     devDependencies:
       '@adobe/jsonschema2md':
         specifier: ^7.1.4
@@ -264,6 +255,12 @@ importers:
       '@types/d3-sankey':
         specifier: ^0.12.1
         version: 0.12.1
+      '@types/d3-scale':
+        specifier: ^4.0.3
+        version: 4.0.3
+      '@types/d3-scale-chromatic':
+        specifier: ^3.0.0
+        version: 3.0.0
       '@types/d3-selection':
         specifier: ^3.0.5
         version: 3.0.5
@@ -399,9 +396,6 @@ importers:
       khroma:
         specifier: ^2.0.0
         version: 2.0.0
-      non-layered-tidy-tree-layout:
-        specifier: ^2.0.2
-        version: 2.0.2
     devDependencies:
       '@types/cytoscape':
         specifier: ^3.19.9
@@ -4528,11 +4522,13 @@ packages:
 
   /@types/d3-scale-chromatic@3.0.0:
     resolution: {integrity: sha512-dsoJGEIShosKVRBZB0Vo3C8nqSDqVGujJU6tPznsBJxNJNwMF8utmS83nvCBKQYPpjCzaaHcrf66iTRpZosLPw==}
+    dev: true
 
   /@types/d3-scale@4.0.3:
     resolution: {integrity: sha512-PATBiMCpvHJSMtZAMEhc2WyL+hnzarKzI6wAHYjhsonjWJYGq5BXTzQjv4l8m2jO183/4wZ90rKvSeT7o72xNQ==}
     dependencies:
       '@types/d3-time': 3.0.0
+    dev: true
 
   /@types/d3-selection@3.0.5:
     resolution: {integrity: sha512-xCB0z3Hi8eFIqyja3vW8iV01+OHGYR2di/+e+AiOcXIOrY82lcvWW8Ke1DYE/EUVMsBl4Db9RppSBS3X1U6J0w==}
@@ -4556,6 +4552,7 @@ packages:
 
   /@types/d3-time@3.0.0:
     resolution: {integrity: sha512-sZLCdHvBUcNby1cB6Fd3ZBrABbjz3v1Vm90nysCQ6Vt7vd6e/h9Lt7SiJUoEX0l4Dzc7P5llKyhqSi1ycSf1Hg==}
+    dev: true
 
   /@types/d3-timer@3.0.0:
     resolution: {integrity: sha512-HNB/9GHqu7Fo8AQiugyJbv6ZxYz58wef0esl4Mv828w1ZKpAshw/uFWVDUcIB9KKFeFKoxS3cHY07FFgtTRZ1g==}
@@ -12673,10 +12670,6 @@ packages:
       underscore: 1.1.7
     dev: true
 
-  /non-layered-tidy-tree-layout@2.0.2:
-    resolution: {integrity: sha512-gkXMxRzUH+PB0ax9dUN0yYF0S25BqeAYqhgMaLUFmpXLEk7Fcu8f4emJuOAY0V8kjDICxROIKsTAKsV/v355xw==}
-    dev: false
-
   /normalize-package-data@2.5.0:
     resolution: {integrity: sha512-/5CMN3T0R4XTj4DcGaexo+roZSdSFW/0AOOTROrjxzCG1wrWXEsGbRKevjlIL+ZDE4sZlJr5ED4YW0yqmkK+eA==}
     dependencies:
@@ -16071,10 +16064,6 @@ packages:
     resolution: {integrity: sha512-e0MO3wdXWKrLbL0DgGnUV7WHVuw9OUvL4hjgnPkIeEvESk74gAITi5G606JtZPp39cd8HA9VQzCIvA49LpPN5Q==}
     engines: {node: '>= 8'}
     dev: true
-
-  /web-worker@1.2.0:
-    resolution: {integrity: sha512-PgF341avzqyx60neE9DD+XS26MMNMoUQRz9NOZwW32nPQrF6p77f1htcnjBSEV8BGMKZ16choqUG4hyI0Hx7mA==}
-    dev: false
 
   /webdriver@7.31.1(typescript@5.1.6):
     resolution: {integrity: sha512-nCdJLxRnYvOMFqTEX7sqQtF/hV/Jgov0Y6ICeOm1DMTlZSRRDaUsBMlEAPkEwif9uBJYdM0znv8qzfX358AGqQ==}

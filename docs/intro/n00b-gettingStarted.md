@@ -128,7 +128,7 @@ b. The importing of mermaid library through the `mermaid.esm.mjs` or `mermaid.es
 ```html
 <body>
   <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true });
   </script>
 </body>
@@ -168,7 +168,7 @@ Rendering in Mermaid is initialized by `mermaid.initialize()` call. However, doi
     </pre>
 
     <script type="module">
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
       mermaid.initialize({ startOnLoad: true });
     </script>
   </body>

@@ -46,3 +46,4 @@ stats/
 
 demos/dev/**
 !/demos/dev/example.html
+!/demos/dev/reload.js
