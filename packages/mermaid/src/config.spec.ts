@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as configApi from './config.js';
+import type { MermaidConfig } from './config.type.js';
 
-describe('when working with site config', function () {
+describe('when working with site config', () => {
   beforeEach(() => {
     // Resets the site config to default config
     configApi.setSiteConfig({});
   });
-  it('should set site config and config properly', function () {
+  it('should set site config and config properly', () => {
     const config_0 = { fontFamily: 'foo-font', fontSize: 150 };
     configApi.setSiteConfig(config_0);
     const config_1 = configApi.getSiteConfig();
@@ -14,19 +16,26 @@ describe('when working with site config', function () {
     expect(config_1.fontSize).toEqual(config_0.fontSize);
     expect(config_1).toEqual(config_2);
   });
-  it('should respect secure keys when applying directives', function () {
-    const config_0 = {
+  it('should respect secure keys when applying directives', () => {
+    const config_0: MermaidConfig = {
       fontFamily: 'foo-font',
+      securityLevel: 'strict', // can't be changed
       fontSize: 12345, // can't be changed
       secure: [...configApi.defaultConfig.secure!, 'fontSize'],
     };
     configApi.setSiteConfig(config_0);
-    const directive = { fontFamily: 'baf', fontSize: 54321 /* fontSize shouldn't be changed */ };
-    const cfg = configApi.updateCurrentConfig(config_0, [directive]);
+    const directive: MermaidConfig = {
+      fontFamily: 'baf',
+      // fontSize and securityLevel shouldn't be changed
+      fontSize: 54321,
+      securityLevel: 'loose',
+    };
+    const cfg: MermaidConfig = configApi.updateCurrentConfig(config_0, [directive]);
     expect(cfg.fontFamily).toEqual(directive.fontFamily);
     expect(cfg.fontSize).toBe(config_0.fontSize);
+    expect(cfg.securityLevel).toBe(config_0.securityLevel);
   });
-  it('should allow setting partial options', function () {
+  it('should allow setting partial options', () => {
     const defaultConfig = configApi.getConfig();
 
     configApi.setConfig({
@@ -42,7 +51,7 @@ describe('when working with site config', function () {
       updatedConfig.quadrantChart!.chartWidth
     );
   });
-  it('should set reset config properly', function () {
+  it('should set reset config properly', () => {
     const config_0 = { fontFamily: 'foo-font', fontSize: 150 };
     configApi.setSiteConfig(config_0);
     const config_1 = { fontFamily: 'baf' };
@@ -55,7 +64,7 @@ describe('when working with site config', function () {
     const config_4 = configApi.getSiteConfig();
     expect(config_4.fontFamily).toEqual(config_0.fontFamily);
   });
-  it('should set global reset config properly', function () {
+  it('should set global reset config properly', () => {
     const config_0 = { fontFamily: 'foo-font', fontSize: 150 };
     configApi.setSiteConfig(config_0);
     const config_1 = configApi.getSiteConfig();

@@ -48,7 +48,7 @@ export class Diagram {
     // extractFrontMatter().
 
     this.parser.parse = (text: string) =>
-      originalParse(cleanupComments(extractFrontMatter(text, this.db)));
+      originalParse(cleanupComments(extractFrontMatter(text, this.db, configApi.addDirective)));
 
     if (this.parser.parser !== undefined) {
       this.parser.parser.yy = this.db;
