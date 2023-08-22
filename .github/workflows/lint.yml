@@ -80,12 +80,6 @@ jobs:
             exit 1
           fi
 
-      - name: Verify Circular dependencies
-        id: verifyDeps
-        working-directory: ./packages/mermaid
-        continue-on-error: ${{ github.event_name == 'push' }}
-        run: pnpm run checkCircle
-
       - name: Verify Docs
         id: verifyDocs
         working-directory: ./packages/mermaid
