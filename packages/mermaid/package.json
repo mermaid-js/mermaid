@@ -38,6 +38,7 @@
     "docs:verify-version": "ts-node-esm scripts/update-release-version.mts --verify",
     "types:build-config": "ts-node-esm --transpileOnly scripts/create-types-from-json-schema.mts",
     "types:verify-config": "ts-node-esm scripts/create-types-from-json-schema.mts --verify",
+    "checkCircle": "npx madge --circular ./src",
     "release": "pnpm build",
     "prepublishOnly": "cpy '../../README.*' ./ --cwd=. && pnpm -w run build"
   },

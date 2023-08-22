@@ -32,6 +32,7 @@ import assignWithDepth from './assignWithDepth.js';
 import { MermaidConfig } from './config.type.js';
 import memoize from 'lodash-es/memoize.js';
 import merge from 'lodash-es/merge.js';
+import { directiveRegex } from './diagram-api/regexes.js';
 
 export const ZERO_WIDTH_SPACE = '\u200b';
 
@@ -58,7 +59,7 @@ const d3CurveTypes = {
   curveStepAfter: curveStepAfter,
   curveStepBefore: curveStepBefore,
 };
-const directive = /%{2}{\s*(?:(\w+)\s*:|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;
+
 const directiveWithoutOpen =
   /\s*(?:(\w+)(?=:):|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;
 
@@ -163,10 +164,10 @@ export const detectDirective = function (
     );
     let match;
     const result = [];
-    while ((match = directive.exec(text)) !== null) {
+    while ((match = directiveRegex.exec(text)) !== null) {
       // This is necessary to avoid infinite loops with zero-width matches
-      if (match.index === directive.lastIndex) {
-        directive.lastIndex++;
+      if (match.index === directiveRegex.lastIndex) {
+        directiveRegex.lastIndex++;
       }
       if (
         (match && !type) ||
