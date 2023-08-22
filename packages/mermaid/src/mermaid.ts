@@ -7,11 +7,8 @@ import { MermaidConfig } from './config.type.js';
 import { log } from './logger.js';
 import utils from './utils.js';
 import { mermaidAPI, ParseOptions, RenderResult } from './mermaidAPI.js';
-import {
-  registerLazyLoadedDiagrams,
-  loadRegisteredDiagrams,
-  detectType,
-} from './diagram-api/detectType.js';
+import { registerLazyLoadedDiagrams, detectType } from './diagram-api/detectType.js';
+import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';
 import type { ParseErrorFunction } from './Diagram.js';
 import { isDetailedError } from './utils.js';
 import type { DetailedError } from './utils.js';
