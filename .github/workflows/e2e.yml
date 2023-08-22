@@ -30,7 +30,7 @@ jobs:
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
-        uses: cypress-io/github-action@v4
+        uses: cypress-io/github-action@v6
         id: cypress
         # If CYPRESS_RECORD_KEY is set, run in parallel on all containers
         # Otherwise (e.g. if running from fork), we run on a single container only
@@ -44,7 +44,8 @@ jobs:
           parallel: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          VITEST_COVERAGE: true
+          VITE_COVERAGE: true
+          CYPRESS_COVERAGE: true
           CYPRESS_COMMIT: ${{ github.sha }}
 
       - name: Check coverage files
