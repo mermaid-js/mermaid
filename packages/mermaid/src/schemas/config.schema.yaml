@@ -13,10 +13,10 @@
 #     Non-JSON values, like functions or `undefined`, still need to be manually
 #     set in `src/defaultConfig.ts`)
 #   - `src/docs.mts`
-#     Used to genereate Markdown documentation for this JSON Schema by using
+#     Used to generate Markdown documentation for this JSON Schema by using
 #     the `@adobe/jsonschema2md` NPM package.
 
-# Useful things to know when editting this file
+# Useful things to know when editing this file
 # - Use the `|` character for multi-line strings
 # - Use `meta:enum` to document enum values (from jsonschema2md)
 # - Use `tsType` to override the TypeScript type (from json-schema-to-typescript)
@@ -1851,7 +1851,7 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
           The color of the links in the sankey diagram.
         anyOf:
           - $ref: '#/$defs/SankeyLinkColor'
-          - description: An arbtirary [CSS color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)
+          - description: An arbitrary [CSS color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)
             type: string
         default: gradient
       nodeAlignment:

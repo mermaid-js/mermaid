@@ -265,5 +265,5 @@ const keyify = (obj: any, prefix = ''): string[] =>
     return [...res, prefix + el];
   }, []);
 
-export const configKeys: string[] = keyify(config, '');
+export const configKeys: Set<string> = new Set(keyify(config, ''));
 export default config;
