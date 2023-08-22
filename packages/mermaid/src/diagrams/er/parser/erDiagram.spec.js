@@ -137,7 +137,7 @@ describe('when parsing ER diagram it...', function () {
     it('can have an alias', function () {
       const entity = 'foo';
       const alias = 'bar';
-      erDiagram.parser.parse(`erDiagram\n${entity} as "${alias}"\n`);
+      erDiagram.parser.parse(`erDiagram\n${entity}["${alias}"]\n`);
       const entities = erDb.getEntities();
       expect(entities.hasOwnProperty(entity)).toBe(true);
       expect(entities[entity].alias).toBe(alias);

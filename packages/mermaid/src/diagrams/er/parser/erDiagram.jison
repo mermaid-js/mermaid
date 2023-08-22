@@ -35,6 +35,8 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <block>[\n]+                    /* nothing */
 <block>"}"                      { this.popState(); return 'BLOCK_STOP'; }
 <block>.                        return yytext[0];
+"["                             return 'SQS';
+"]"                             return 'SQE';
 
 "one or zero"                   return 'ZERO_OR_ONE';
 "one or more"                   return 'ONE_OR_MORE';
@@ -62,7 +64,6 @@ o\{                             return 'ZERO_OR_MORE';
 \-\-                            return 'IDENTIFYING';
 "to"                            return 'IDENTIFYING';
 "optionally to"                 return 'NON_IDENTIFYING';
-"as"                            return 'ALIAS';
 \.\-                            return 'NON_IDENTIFYING';
 \-\.                            return 'NON_IDENTIFYING';
 [A-Za-z][A-Za-z0-9\-_]*         return 'ALPHANUM';
@@ -114,15 +115,15 @@ statement
       }
     | entityName BLOCK_START BLOCK_STOP { yy.addEntity($1); }
     | entityName { yy.addEntity($1); }
-    | entityName ALIAS entityName BLOCK_START attributes BLOCK_STOP
+    | entityName SQS entityName SQE BLOCK_START attributes BLOCK_STOP
       {
           /* console.log('detected block'); */
           yy.addEntity($1, $3);
-          yy.addAttributes($1, $5);
+          yy.addAttributes($1, $6);
           /* console.log('handled block'); */
       }
-    | entityName ALIAS entityName BLOCK_START BLOCK_STOP { yy.addEntity($1, $3); }
-    | entityName ALIAS entityName { yy.addEntity($1, $3); }
+    | entityName SQS entityName SQE BLOCK_START BLOCK_STOP { yy.addEntity($1, $3); }
+    | entityName SQS entityName SQE { yy.addEntity($1, $3); }
     | title title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }

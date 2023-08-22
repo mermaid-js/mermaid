@@ -112,12 +112,12 @@
 
     <pre class="mermaid">
     erDiagram
-      p as Person {
-        string firstName
-        string lastName
+      p[Person] {
+          string firstName
+          string lastName
       }
-      a as "Customer Account" {
-        string email
+      a["Customer Account"] {
+          string email
       }
       p ||--o| a : has
     </pre>

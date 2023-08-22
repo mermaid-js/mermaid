@@ -200,15 +200,15 @@ The `type` values must begin with an alphabetic character and may contain digits
 
 ### Entity Name Aliases (v\<MERMAID_RELEASE_VERSION>+)
 
-An alias can be added to an entity using `as` keyword. If provided, the alias will be showed in the diagram instead of the entity name.
+An alias can be added to an entity using square brackets. If provided, the alias will be showed in the diagram instead of the entity name.
 
 ```mermaid-example
 erDiagram
-    p as Person {
+    p[Person] {
         string firstName
         string lastName
     }
-    a as "Customer Account" {
+    a["Customer Account"] {
         string email
     }
     p ||--o| a : has
@@ -216,11 +216,11 @@ erDiagram
 
 ```mermaid
 erDiagram
-    p as Person {
+    p[Person] {
         string firstName
         string lastName
     }
-    a as "Customer Account" {
+    a["Customer Account"] {
         string email
     }
     p ||--o| a : has
