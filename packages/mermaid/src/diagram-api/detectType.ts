@@ -6,14 +6,10 @@ import type {
   DiagramLoader,
   ExternalDiagramDefinition,
 } from './types.js';
-import { frontMatterRegex } from './frontmatter.js';
-import { getDiagram, registerDiagram } from './diagramAPI.js';
+import { anyCommentRegex, directiveRegex, frontMatterRegex } from './regexes.js';
 import { UnknownDiagramError } from '../errors.js';
 
-const directive = /%{2}{\s*(?:(\w+)\s*:|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;
-const anyComment = /\s*%%.*\n/gm;
-
-const detectors: Record<string, DetectorRecord> = {};
+export const detectors: Record<string, DetectorRecord> = {};
 
 /**
  * Detects the type of the graph text.
@@ -38,7 +34,10 @@ const detectors: Record<string, DetectorRecord> = {};
  * @returns A graph definition key
  */
 export const detectType = function (text: string, config?: MermaidConfig): string {
-  text = text.replace(frontMatterRegex, '').replace(directive, '').replace(anyComment, '\n');
+  text = text
+    .replace(frontMatterRegex, '')
+    .replace(directiveRegex, '')
+    .replace(anyCommentRegex, '\n');
   for (const [key, { detector }] of Object.entries(detectors)) {
     const diagram = detector(text, config);
     if (diagram) {
@@ -67,39 +66,6 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
 export const registerLazyLoadedDiagrams = (...diagrams: ExternalDiagramDefinition[]) => {
   for (const { id, detector, loader } of diagrams) {
     addDetector(id, detector, loader);
-  }
-};
-
-export const loadRegisteredDiagrams = async () => {
-  log.debug(`Loading registered diagrams`);
-  // Load all lazy loaded diagrams in parallel
-  const results = await Promise.allSettled(
-    Object.entries(detectors).map(async ([key, { detector, loader }]) => {
-      if (loader) {
-        try {
-          getDiagram(key);
-        } catch (error) {
-          try {
-            // Register diagram if it is not already registered
-            const { diagram, id } = await loader();
-            registerDiagram(id, diagram, detector);
-          } catch (err) {
-            // Remove failed diagram from detectors
-            log.error(`Failed to load external diagram with key ${key}. Removing from detectors.`);
-            delete detectors[key];
-            throw err;
-          }
-        }
-      }
-    })
-  );
-  const failed = results.filter((result) => result.status === 'rejected');
-  if (failed.length > 0) {
-    log.error(`Failed to load ${failed.length} external diagrams`);
-    for (const res of failed) {
-      log.error(res);
-    }
-    throw new Error(`Failed to load ${failed.length} external diagrams`);
   }
 };
 
