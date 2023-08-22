@@ -42,7 +42,7 @@ flowchart LR
 You can use `note`, `tip`, `warning` and `danger` in triple backticks to add a note, tip, warning or danger box.
 Do not use vitepress specific markdown syntax `::: warning` as it will not be processed correctly.
 
-````
+````markdown
 ```note
 Note content
 ```
@@ -58,11 +58,10 @@ Warning content
 ```danger
 Danger content
 ```
-
 ````
 
 > **Note**
-> If the change is _only_ to the documentation, you can get your changes published to the site quicker by making a PR to the `master` branch.
+> If the change is _only_ to the documentation, you can get your changes published to the site quicker by making a PR to the `master` branch. In that case, your branch should be based on master, not develop.
 
 We encourage contributions to the documentation at [packages/mermaid/src/docs in the _develop_ branch](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs).
 
@@ -87,7 +86,7 @@ _\[TODO: need to keep this in sync with [check out a git branch in Contributing 
 2.  Find the Markdown file (.md) to edit in the `packages/mermaid/src/docs` directory.
 3.  Make changes or add new documentation.
 4.  Commit changes to your branch and push it to GitHub (which should create a new branch).
-5.  Create a Pull Request of your fork.
+5.  Create a Pull Request from the branch of your fork.
 
 To edit Docs on GitHub:
 

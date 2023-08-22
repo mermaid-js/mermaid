@@ -18,5 +18,3 @@ Feel free to add to the discussion on the issue or topic.
 If you can't find anything that already addresses your question or suggestion, _open a new issue:_
 
 Log in to [GitHub.com](https://www.github.com), open or append to an issue [using the GitHub issue tracker of the mermaid-js repository](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Area%3A+Documentation%22).
-
-## How to Contribute a Suggestion

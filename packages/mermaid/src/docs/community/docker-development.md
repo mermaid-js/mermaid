@@ -28,14 +28,14 @@ Then you **clone** a copy to your local development machine (e.g. where you code
 
 [Install Docker](https://docs.docker.com/engine/install/). And that is pretty much all you need.
 
-Optionally, to run GUI (Cypress) within Docker you will also need X11 server installed.
-Maybe you already have it installed, so check it first:
+Optionally, to run GUI (Cypress) within Docker you will also need an X11 server installed.
+You might already have it installed, so check this by running:
 
 ```bash
 echo $DISPLAY
 ```
 
-If variable `$DISPLAY` is not empty, then it must be working. Otherwise install it.
+If the `$DISPLAY` variable is not empty, then an X11 server is running. Otherwise you may need to install one.
 
 ## Setup and Launch
 
