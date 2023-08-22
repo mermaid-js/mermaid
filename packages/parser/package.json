@@ -7,7 +7,7 @@
     "Yokozuna59",
     "Sidharth Vinod (https://sidharth.dev)"
   ],
-  "homepage": "https://github.com/mermaid-js/mermaid/#readme",
+  "homepage": "https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/parser/#readme",
   "types": "dist/src/index.d.ts",
   "type": "module",
   "exports": {
