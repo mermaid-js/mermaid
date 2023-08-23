@@ -19,8 +19,8 @@ test.each([
     'https://mermaid-js.github.io/mermaid/#/flowchart?another=test&id=my-id&one=more', // with multiple params
     'syntax/flowchart.html#my-id',
   ],
-  ['https://mermaid-js.github.io/mermaid/#/n00b-advanced', 'config/n00b-advanced.html'], // without .md
-  ['https://mermaid-js.github.io/mermaid/#/n00b-advanced.md', 'config/n00b-advanced.html'], // with .md
+  ['https://mermaid-js.github.io/mermaid/#/n00b-advanced', 'config/advanced.html'], // without .md
+  ['https://mermaid-js.github.io/mermaid/#/n00b-advanced.md', 'config/advanced.html'], // with .md
   [
     'https://mermaid-js.github.io/mermaid/#/flowchart?id=a-node-in-the-form-of-a-circle', // with id, without .md
     'syntax/flowchart.html#a-node-in-the-form-of-a-circle',

@@ -1,4 +1,4 @@
-# Advanced n00b mermaid (Coming soon..)
+# Advanced mermaid (Coming soon..)
 
 ## splitting mermaid code from html
 
