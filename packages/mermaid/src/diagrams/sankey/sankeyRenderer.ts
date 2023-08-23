@@ -1,4 +1,4 @@
-import { Diagram } from '../../Diagram.js';
+import type { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
 
 import {
@@ -7,6 +7,7 @@ import {
   schemeTableau10 as d3schemeTableau10,
 } from 'd3';
 
+import type { SankeyNode as d3SankeyNode } from 'd3-sankey';
 import {
   sankey as d3Sankey,
   sankeyLinkHorizontal as d3SankeyLinkHorizontal,
@@ -14,7 +15,6 @@ import {
   sankeyRight as d3SankeyRight,
   sankeyCenter as d3SankeyCenter,
   sankeyJustify as d3SankeyJustify,
-  SankeyNode as d3SankeyNode,
 } from 'd3-sankey';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { Uid } from '../../rendering-util/uid.js';

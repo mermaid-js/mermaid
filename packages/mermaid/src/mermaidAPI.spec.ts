@@ -34,7 +34,7 @@ vi.mock('./diagrams/state/stateRenderer-v2.js');
 // -------------------------------------
 
 import mermaid from './mermaid.js';
-import { MermaidConfig } from './config.type.js';
+import type { MermaidConfig } from './config.type.js';
 
 import mermaidAPI, { removeExistingElements } from './mermaidAPI.js';
 import {
