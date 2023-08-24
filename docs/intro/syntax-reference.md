@@ -72,14 +72,14 @@ The following are the most commonly used methods, and they are all tied to Merma
 
 Here you can edit certain values to change the behavior and appearance of the diagram.
 
-### [The initialize() call](https://mermaid-js.github.io/mermaid/#/getting-started?id=_3-calling-the-javascript-api),
+### [The initialize() call](./getting-started.html#_3-calling-the-javascript-api)
 
 Used when Mermaid is called via an API, or through a `<script>` tag.
 
-### [Directives](../config/directives.md),
+### [Directives](../config/directives.md)
 
 Allows for the limited reconfiguration of a diagram just before it is rendered. It can alter the font style, color and other aesthetic aspects of the diagram. You can pass a directive alongside your definition inside `%%{ }%%`. It can be done either above or below your diagram definition.
 
-### [Theme Manipulation](../config/theming.md):
+### [Theme Manipulation](../config/theming.md)
 
 An application of using Directives to change [Themes](../config/theming.md). `Theme` is a value within Mermaid's configuration that dictates the color scheme for diagrams.
