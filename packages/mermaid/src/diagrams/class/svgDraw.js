@@ -381,8 +381,7 @@ export const drawNote = function (elem, note, conf, diagObj) {
  * @param {{ padding: string; textHeight: string }} conf The configuration for the member
  */
 const addTspan = function (textEl, member, isFirst, conf) {
-  const displayText = member.getDisplayDetails().displayText;
-  const cssStyle = member.getDisplayDetails().cssStyle;
+  const { displayText, cssStyle } = member.getDisplayDetails();
   const tSpan = textEl.append('tspan').attr('x', conf.padding).text(displayText);
 
   if (cssStyle !== '') {
