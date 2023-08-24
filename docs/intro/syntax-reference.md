@@ -72,7 +72,7 @@ The following are the most commonly used methods, and they are all tied to Merma
 
 Here you can edit certain values to change the behavior and appearance of the diagram.
 
-### [The initialize() call](./getting-started.html#_3-calling-the-javascript-api)
+### [The initialize() call](./getting-started#_3-calling-the-javascript-api)
 
 Used when Mermaid is called via an API, or through a `<script>` tag.
 
