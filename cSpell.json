@@ -151,7 +151,8 @@
     "xlink",
     "yash",
     "yokozuna",
-    "zenuml"
+    "zenuml",
+    "zune"
   ],
   "patterns": [
     { "name": "Markdown links", "pattern": "\\((.*)\\)", "description": "" },
