@@ -326,7 +326,7 @@ const drawEntities = function (svgNode, entities, graph) {
       .style('text-anchor', 'middle')
       .style('font-family', getConfig().fontFamily)
       .style('font-size', conf.fontSize + 'px')
-      .text(entities[entityName].alias || entityName);
+      .text(entities[entityName].alias ?? entityName);
 
     const { width: entityWidth, height: entityHeight } = drawAttributes(
       groupNode,

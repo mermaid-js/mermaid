@@ -104,23 +104,18 @@ statement
           yy.addEntity($1);
           yy.addEntity($3);
           yy.addRelationship($1, $5, $3, $2);
-          /*console.log($1 + $2 + $3 + ':' + $5);*/
       }
     | entityName BLOCK_START attributes BLOCK_STOP
       {
-          /* console.log('detected block'); */
           yy.addEntity($1);
           yy.addAttributes($1, $3);
-          /* console.log('handled block'); */
       }
     | entityName BLOCK_START BLOCK_STOP { yy.addEntity($1); }
     | entityName { yy.addEntity($1); }
     | entityName SQS entityName SQE BLOCK_START attributes BLOCK_STOP
       {
-          /* console.log('detected block'); */
           yy.addEntity($1, $3);
           yy.addAttributes($1, $6);
-          /* console.log('handled block'); */
       }
     | entityName SQS entityName SQE BLOCK_START BLOCK_STOP { yy.addEntity($1, $3); }
     | entityName SQS entityName SQE { yy.addEntity($1, $3); }
