@@ -29,6 +29,7 @@ export interface DiagramDB {
   getAccDescription?: () => string;
 
   setDisplayMode?: (title: string) => void;
+  setWrap?: (wrap: boolean) => void;
   bindFunctions?: (element: Element) => void;
 }
 
@@ -82,15 +83,6 @@ export interface ParserDefinition {
   parse: (text: string) => void;
   parser: { yy: DiagramDB };
 }
-
-/**
- * Type for function parse directive from diagram code.
- *
- * @param statement -
- * @param context -
- * @param type -
- */
-export type ParseDirectiveDefinition = (statement: string, context: string, type: string) => void;
 
 export type HTML = d3.Selection<HTMLIFrameElement, unknown, Element | null, unknown>;
 
