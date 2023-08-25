@@ -5,7 +5,6 @@ import { log } from '../../logger.js';
 import * as configApi from '../../config.js';
 import common from '../common/common.js';
 import utils from '../../utils.js';
-import mermaidAPI from '../../mermaidAPI.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -36,11 +35,6 @@ let namespaceCounter = 0;
 let functions: any[] = [];
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, configApi.getConfig());
-
-export const parseDirective = function (statement: string, context: string, type: string) {
-  // @ts-ignore Don't wanna mess it up
-  mermaidAPI.parseDirective(this, statement, context, type);
-};
 
 const splitClassNameAndType = function (id: string) {
   let genericType = '';
@@ -456,7 +450,6 @@ export const addClassesToNamespace = function (id: string, classNames: string[])
 };
 
 export default {
-  parseDirective,
   setAccTitle,
   getAccTitle,
   getAccDescription,

@@ -1,5 +1,4 @@
 import { log } from '../../logger.js';
-import mermaidAPI from '../../mermaidAPI.js';
 import * as configApi from '../../config.js';
 
 import {
@@ -26,10 +25,6 @@ const Cardinality = {
 const Identification = {
   NON_IDENTIFYING: 'NON_IDENTIFYING',
   IDENTIFYING: 'IDENTIFYING',
-};
-
-export const parseDirective = function (statement, context, type) {
-  mermaidAPI.parseDirective(this, statement, context, type);
 };
 
 const addEntity = function (name) {
@@ -85,7 +80,6 @@ const clear = function () {
 export default {
   Cardinality,
   Identification,
-  parseDirective,
   getConfig: () => configApi.getConfig().er,
   addEntity,
   addAttributes,

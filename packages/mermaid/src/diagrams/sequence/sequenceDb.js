@@ -1,4 +1,3 @@
-import mermaidAPI from '../../mermaidAPI.js';
 import * as configApi from '../../config.js';
 import { log } from '../../logger.js';
 import { sanitizeText } from '../common/common.js';
@@ -24,10 +23,6 @@ let wrapEnabled;
 let currentBox = undefined;
 let lastCreated = undefined;
 let lastDestroyed = undefined;
-
-export const parseDirective = function (statement, context, type) {
-  mermaidAPI.parseDirective(this, statement, context, type);
-};
 
 export const addBox = function (data) {
   boxes.push({
@@ -619,7 +614,6 @@ export default {
   getBoxes,
   getDiagramTitle,
   setDiagramTitle,
-  parseDirective,
   getConfig: () => configApi.getConfig().sequence,
   clear,
   parseMessage,

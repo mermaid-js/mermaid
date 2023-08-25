@@ -1,5 +1,3 @@
-import { log } from '../../logger.js';
-import mermaidAPI from '../../mermaidAPI.js';
 import * as configApi from '../../config.js';
 import { sanitizeText } from '../common/common.js';
 import {
@@ -94,11 +92,6 @@ function getQuadrantData() {
   return quadrantBuilder.build();
 }
 
-export const parseDirective = function (statement: string, context: string, type: string) {
-  // @ts-ignore: TODO Fix ts errors
-  mermaidAPI.parseDirective(this, statement, context, type);
-};
-
 const clear = function () {
   quadrantBuilder.clear();
   commonClear();
@@ -117,7 +110,6 @@ export default {
   setYAxisBottomText,
   addPoint,
   getQuadrantData,
-  parseDirective,
   clear,
   setAccTitle,
   getAccTitle,

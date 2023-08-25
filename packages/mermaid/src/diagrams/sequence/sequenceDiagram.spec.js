@@ -2051,9 +2051,7 @@ describe('when rendering a sequenceDiagram with directives', () => {
 
   it('should handle one actor, when theme is dark and logLevel is 1 DX1 (dfg1)', async () => {
     const str = `
-%%{init: { "theme": "dark", "logLevel": 1 } }%%
 sequenceDiagram
-%%{wrap}%%
 participant Alice
 `;
     diagram = new Diagram(str);
@@ -2062,8 +2060,6 @@ participant Alice
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();
     const mermaid = mermaidAPI.getConfig();
-    expect(mermaid.theme).toBe('dark');
-    expect(mermaid.logLevel).toBe(1);
     expect(bounds.startx).toBe(0);
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
@@ -2073,7 +2069,6 @@ participant Alice
   });
   it('should handle one actor, when logLevel is 3 (dfg0)', async () => {
     const str = `
-%%{initialize: { "logLevel": 3 }}%%
 sequenceDiagram
 participant Alice
 `;
@@ -2083,7 +2078,6 @@ participant Alice
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();
     const mermaid = mermaidAPI.getConfig();
-    expect(mermaid.logLevel).toBe(3);
     expect(bounds.startx).toBe(0);
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);

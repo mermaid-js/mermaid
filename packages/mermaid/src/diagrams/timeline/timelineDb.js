@@ -1,4 +1,3 @@
-import { parseDirective as _parseDirective } from '../../directiveUtils.js';
 import * as commonDb from '../../commonDb.js';
 let currentSection = '';
 let currentTaskId = 0;
@@ -8,10 +7,6 @@ const tasks = [];
 const rawTasks = [];
 
 export const getCommonDb = () => commonDb;
-
-export const parseDirective = (statement, context, type) => {
-  _parseDirective(this, statement, context, type);
-};
 
 export const clear = function () {
   sections.length = 0;
@@ -104,5 +99,4 @@ export default {
   addTask,
   addTaskOrg,
   addEvent,
-  parseDirective,
 };
