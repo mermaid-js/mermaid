@@ -22,12 +22,14 @@ test.each([
   ['https://mermaid-js.github.io/mermaid/#/n00b-advanced', 'config/advanced.html'], // without .md
   ['https://mermaid-js.github.io/mermaid/#/n00b-advanced.md', 'config/advanced.html'], // with .md
 
-  ['https://mermaid-js.github.io/mermaid/#/n00b-gettingstarted',       'intro/getting-started.html'],
-  ['https://mermaid-js.github.io/mermaid/#/n00b-gettingstarted.md',    'intro/getting-started.html'],
-  ['https://mermaid-js.github.io/mermaid/#/n00b-overview',             'intro/getting-started.html'],
-  ['https://mermaid-js.github.io/mermaid/#/n00b-overview.md',          'intro/getting-started.html'],
-  ['https://mermaid-js.github.io/mermaid/#/n00b-syntaxreference',      'intro/syntax-reference.html'],
-  ['https://mermaid-js.github.io/mermaid/#/n00b-syntaxreference.md',   'intro/syntax-reference.html'],
+  ['https://mermaid-js.github.io/mermaid/#/n00b-gettingstarted', 'intro/getting-started.html'],
+  ['https://mermaid-js.github.io/mermaid/#/n00b-gettingstarted.md', 'intro/getting-started.html'],
+  ['https://mermaid-js.github.io/mermaid/#/n00b-overview', 'intro/getting-started.html'],
+  ['https://mermaid-js.github.io/mermaid/#/n00b-overview.md', 'intro/getting-started.html'],
+  ['https://mermaid-js.github.io/mermaid/#/n00b-syntaxreference', 'intro/syntax-reference.html'],
+  ['https://mermaid-js.github.io/mermaid/#/n00b-syntaxreference.md', 'intro/syntax-reference.html'],
+  ['https://mermaid-js.github.io/mermaid/#/quickstart', 'intro/getting-started.html'],
+  ['https://mermaid-js.github.io/mermaid/#/quickstart.md', 'intro/getting-started.html'],
   [
     'https://mermaid-js.github.io/mermaid/#/flowchart?id=a-node-in-the-form-of-a-circle', // with id, without .md
     'syntax/flowchart.html#a-node-in-the-form-of-a-circle',
