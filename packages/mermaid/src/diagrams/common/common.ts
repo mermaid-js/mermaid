@@ -178,27 +178,79 @@ export const getMin = function (...values: number[]): number {
  * @param text - The text to convert
  * @returns The converted string
  */
-export const parseGenericTypes = function (text: string): string {
-  if (!text) {
-    return '';
+export const parseGenericTypes = function (input: string): string {
+  const inputSets = input.split(/(,)/);
+  const output = [];
+  let finalResult = '';
+  let skipNextSet = false;
+
+  for (let i = 0; i < inputSets.length; i++) {
+    const previousIndex = i - 1;
+    const nextIndex = i + 1;
+    let thisSet = inputSets[i];
+
+    // based on logic below - if we have already combined this set with the previous, we want to skip it
+    if (skipNextSet) {
+      continue;
+    }
+
+    // if the original input included a value such as "~K, V~"", these will be split into
+    // an array of ["~K",","," V~"].
+    // This means that on each call of processSet, there will only be 1 ~ present
+    // To account for this, if we encounter a ",", we are checking the previous and next sets in the array
+    // to see if they contain matching ~'s
+    // in which case we are assuming that they should be rejoined and sent to be processed
+    // we are also removing
+    if (thisSet === ',' && previousIndex > -1 && nextIndex <= inputSets.length) {
+      const previousSet = inputSets[i - 1];
+      const nextSet = inputSets[i + 1];
+      if (shouldCombineSets(previousSet, nextSet)) {
+        thisSet = previousSet + ',' + nextSet;
+        skipNextSet = true;
+        // remove previous set
+        output.pop();
+      }
+    } else {
+      skipNextSet = false;
+    }
+
+    output.push(processSet(thisSet));
   }
 
-  let cleanedText = text;
+  finalResult = output.join('');
+  // one last scan to see if any sets were missed
+  finalResult = processSet(finalResult);
+  return finalResult;
+};
 
-  if (text.split('~').length - 1 >= 2) {
-    let newCleanedText = cleanedText;
+const shouldCombineSets = (previousSet: string, nextSet: string): boolean => {
+  const prevCount = [...previousSet].reduce((count, char) => (char === '~' ? count + 1 : count), 0);
+  const nextCount = [...nextSet].reduce((count, char) => (char === '~' ? count + 1 : count), 0);
 
-    // use a do...while loop instead of replaceAll to detect recursion
-    // e.g. Array~Array~T~~
-    do {
-      cleanedText = newCleanedText;
-      newCleanedText = cleanedText.replace(/~([^\s:;]+)~/, '<$1>');
-    } while (newCleanedText != cleanedText);
+  return prevCount === 1 && nextCount === 1;
+};
 
-    return parseGenericTypes(newCleanedText);
-  } else {
-    return cleanedText;
+const processSet = (input: string): string => {
+  const chars = [...input];
+  const tildeCount = chars.reduce((count, char) => (char === '~' ? count + 1 : count), 0);
+
+  // ignoring any
+  if (tildeCount <= 1) {
+    return input;
   }
+
+  let first = chars.indexOf('~');
+  let last = chars.lastIndexOf('~');
+
+  while (first !== -1 && last !== -1 && first !== last) {
+    chars[first] = '<';
+    chars[last] = '>';
+
+    first = chars.indexOf('~');
+    last = chars.lastIndexOf('~');
+  }
+
+  return chars.join('');
 };
 
 export default {
