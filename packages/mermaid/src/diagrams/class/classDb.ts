@@ -15,6 +15,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../../commonDb.js';
+import { ClassMember } from './classTypes.js';
 import type {
   ClassRelation,
   ClassNode,
@@ -22,7 +23,6 @@ import type {
   ClassMap,
   NamespaceMap,
   NamespaceNode,
-  ClassMember,
 } from './classTypes.js';
 
 const MERMAID_DOM_ID_PREFIX = 'classId-';
