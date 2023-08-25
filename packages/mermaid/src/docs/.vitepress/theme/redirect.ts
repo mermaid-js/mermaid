@@ -51,13 +51,9 @@ const idRedirectMap: Record<string, string> = {
   mindmap: 'syntax/mindmap',
   'more-pages': '',
   'n00b-advanced': 'config/advanced',
-  'config/n00b-advanced': 'config/advanced',
   'n00b-gettingstarted': 'intro/getting-started',
-  'intro/n00b-gettingStarted': 'intro/getting-started',
   'n00b-overview': 'intro/getting-started',
   'n00b-syntaxreference': 'intro/syntax-reference',
-  'intro/n00b-syntaxReference': 'intro/syntax-reference',
-  'community/n00b-overview': 'intro/getting-started',
   newdiagram: 'community/newDiagram',
   pie: 'syntax/pie',
   plugins: '',
@@ -81,6 +77,10 @@ const idRedirectMap: Record<string, string> = {
 const urlRedirectMap: Record<string, string> = {
   '/misc/faq.html': 'configure/faq.html',
   '/syntax/c4c.html': 'syntax/c4.html',
+  '/config/n00b-advanced.html': 'config/advanced',
+  '/intro/n00b-gettingStarted.html': 'intro/getting-started',
+  '/intro/n00b-syntaxReference.html': 'intro/syntax-reference',
+  '/community/n00b-overview.html': 'intro/getting-started',
 };
 
 /**
