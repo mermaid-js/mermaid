@@ -21,7 +21,8 @@ fi
 npm link mermaid
 
 # Install dependencies
-npm install
+npm install --force
 
-# Build the site
-npm run build
+# Force Build the site
+npm run build -- --force
+
