@@ -55,7 +55,7 @@ Mermaid 通过允许用户创建便于修改的图表来解决这一难题，它
 Mermaid 甚至能让非程序员也能通过 [Mermaid Live Editor](https://mermaid.live/) 轻松创建详细的图表。<br/>
 你可以访问 [教程](./docs/config/Tutorials.md) 来查看 Live Editor 的视频教程，也可以查看 [Mermaid 的集成和使用](./docs/ecosystem/integrations.md) 这个清单来检查你的文档工具是否已经集成了 Mermaid 支持。
 
-如果想要查看关于 Mermaid 更详细的介绍及基础使用方式，可以查看 [入门指引](./docs/intro/n00b-gettingStarted.md), [用法](./docs/config/usage.md) 和 [教程](./docs/config/Tutorials.md).
+如果想要查看关于 Mermaid 更详细的介绍及基础使用方式，可以查看 [入门指引](./docs/intro/getting-started.md), [用法](./docs/config/usage.md) 和 [教程](./docs/config/Tutorials.md).
 
 <!-- </Main description> -->
 
