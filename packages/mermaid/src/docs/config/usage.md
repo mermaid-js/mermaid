@@ -35,7 +35,7 @@ pnpm add mermaid
 
 **Hosting mermaid on a web page:**
 
-> Note:This topic explored in greater depth in the [User Guide for Beginners](../intro/n00b-gettingStarted.md)
+> Note:This topic explored in greater depth in the [User Guide for Beginners](../intro/getting-started.md)
 
 The easiest way to integrate mermaid on a web page requires two elements:
 
