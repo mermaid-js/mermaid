@@ -47,6 +47,7 @@
     "faber",
     "flatmap",
     "foswiki",
+    "frontmatter",
     "ftplugin",
     "gantt",
     "gitea",
@@ -94,6 +95,7 @@
     "nextra",
     "nikolay",
     "nirname",
+    "npmjs",
     "orlandoni",
     "pathe",
     "pbrolin",
@@ -109,6 +111,7 @@
     "rects",
     "reda",
     "redmine",
+    "regexes",
     "rehype",
     "roledescription",
     "rozhkov",
@@ -154,7 +157,8 @@
     "xlink",
     "yash",
     "yokozuna",
-    "zenuml"
+    "zenuml",
+    "zune"
   ],
   "patterns": [
     { "name": "Markdown links", "pattern": "\\((.*)\\)", "description": "" },

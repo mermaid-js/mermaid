@@ -62,8 +62,22 @@ jobs:
             ERROR_MESSAGE+=' `pnpm run --filter mermaid types:build-config`'
             ERROR_MESSAGE+=' on your local machine.'
             echo "::error title=Lint failure::${ERROR_MESSAGE}"
-              # make sure to return an error exitcode so that GitHub actions shows a red-cross
-              exit 1
+            # make sure to return an error exitcode so that GitHub actions shows a red-cross
+            exit 1
+          fi
+
+      - name: Verify no circular dependencies
+        working-directory: ./packages/mermaid
+        shell: bash
+        run: |
+          if ! pnpm run --filter mermaid checkCircle; then
+            ERROR_MESSAGE='Circular dependency detected.'
+            ERROR_MESSAGE+=' This should be fixed by removing the circular dependency.'
+            ERROR_MESSAGE+=' Run `pnpm run --filter mermaid checkCircle` on your local machine'
+            ERROR_MESSAGE+=' to see the circular dependency.'
+            echo "::error title=Lint failure::${ERROR_MESSAGE}"
+            # make sure to return an error exitcode so that GitHub actions shows a red-cross
+            exit 1
           fi
 
       - name: Verify Docs

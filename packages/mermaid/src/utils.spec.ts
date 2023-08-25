@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import utils from './utils.js';
+import utils, { cleanAndMerge } from './utils.js';
 import assignWithDepth from './assignWithDepth.js';
 import { detectType } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
@@ -10,51 +10,51 @@ addDiagrams();
 
 describe('when assignWithDepth: should merge objects within objects', function () {
   it('should handle simple, depth:1 types (identity)', function () {
-    let config_0 = { foo: 'bar', bar: 0 };
-    let config_1 = { foo: 'bar', bar: 0 };
-    let result = assignWithDepth(config_0, config_1);
+    const config_0 = { foo: 'bar', bar: 0 };
+    const config_1 = { foo: 'bar', bar: 0 };
+    const result = assignWithDepth(config_0, config_1);
     expect(result).toEqual(config_1);
   });
   it('should handle simple, depth:1 types (dst: undefined)', function () {
-    let config_0 = undefined;
-    let config_1 = { foo: 'bar', bar: 0 };
-    let result = assignWithDepth(config_0, config_1);
+    const config_0 = undefined;
+    const config_1 = { foo: 'bar', bar: 0 };
+    const result = assignWithDepth(config_0, config_1);
     expect(result).toEqual(config_1);
   });
   it('should handle simple, depth:1 types (src: undefined)', function () {
-    let config_0 = { foo: 'bar', bar: 0 };
-    let config_1 = undefined;
-    let result = assignWithDepth(config_0, config_1);
+    const config_0 = { foo: 'bar', bar: 0 };
+    const config_1 = undefined;
+    const result = assignWithDepth(config_0, config_1);
     expect(result).toEqual(config_0);
   });
   it('should handle simple, depth:1 types (merge)', function () {
-    let config_0 = { foo: 'bar', bar: 0 };
-    let config_1 = { foo: 'foo' };
-    let result = assignWithDepth(config_0, config_1);
+    const config_0 = { foo: 'bar', bar: 0 };
+    const config_1 = { foo: 'foo' };
+    const result = assignWithDepth(config_0, config_1);
     expect(result).toEqual({ foo: 'foo', bar: 0 });
   });
   it('should handle depth:2 types (dst: orphan)', function () {
-    let config_0 = { foo: 'bar', bar: { foo: 'bar' } };
-    let config_1 = { foo: 'bar' };
-    let result = assignWithDepth(config_0, config_1);
+    const config_0 = { foo: 'bar', bar: { foo: 'bar' } };
+    const config_1 = { foo: 'bar' };
+    const result = assignWithDepth(config_0, config_1);
     expect(result).toEqual(config_0);
   });
   it('should handle depth:2 types (dst: object, src: simple type)', function () {
-    let config_0 = { foo: 'bar', bar: { foo: 'bar' } };
-    let config_1 = { foo: 'foo', bar: 'should NOT clobber' };
-    let result = assignWithDepth(config_0, config_1);
+    const config_0 = { foo: 'bar', bar: { foo: 'bar' } };
+    const config_1 = { foo: 'foo', bar: 'should NOT clobber' };
+    const result = assignWithDepth(config_0, config_1);
     expect(result).toEqual({ foo: 'foo', bar: { foo: 'bar' } });
   });
   it('should handle depth:2 types (src: orphan)', function () {
-    let config_0 = { foo: 'bar' };
-    let config_1 = { foo: 'bar', bar: { foo: 'bar' } };
-    let result = assignWithDepth(config_0, config_1);
+    const config_0 = { foo: 'bar' };
+    const config_1 = { foo: 'bar', bar: { foo: 'bar' } };
+    const result = assignWithDepth(config_0, config_1);
     expect(result).toEqual(config_1);
   });
   it('should handle depth:2 types (merge)', function () {
-    let config_0 = { foo: 'bar', bar: { foo: 'bar' }, boofar: 1 };
-    let config_1 = { foo: 'foo', bar: { bar: 0 }, foobar: 'foobar' };
-    let result = assignWithDepth(config_0, config_1);
+    const config_0 = { foo: 'bar', bar: { foo: 'bar' }, boofar: 1 };
+    const config_1 = { foo: 'foo', bar: { bar: 0 }, foobar: 'foobar' };
+    const result = assignWithDepth(config_0, config_1);
     expect(result).toEqual({
       foo: 'foo',
       bar: { foo: 'bar', bar: 0 },
@@ -63,17 +63,17 @@ describe('when assignWithDepth: should merge objects within objects', function (
     });
   });
   it('should handle depth:3 types (merge with clobber because assignWithDepth::depth == 2)', function () {
-    let config_0 = {
+    const config_0 = {
       foo: 'bar',
       bar: { foo: 'bar', bar: { foo: { message: 'this', willbe: 'clobbered' } } },
       boofar: 1,
     };
-    let config_1 = {
+    const config_1 = {
       foo: 'foo',
       bar: { foo: 'foo', bar: { foo: { message: 'clobbered other foo' } } },
       foobar: 'foobar',
     };
-    let result = assignWithDepth(config_0, config_1);
+    const result = assignWithDepth(config_0, config_1);
     expect(result).toEqual({
       foo: 'foo',
       bar: { foo: 'foo', bar: { foo: { message: 'clobbered other foo' } } },
@@ -82,7 +82,7 @@ describe('when assignWithDepth: should merge objects within objects', function (
     });
   });
   it('should handle depth:3 types (merge with clobber because assignWithDepth::depth == 1)', function () {
-    let config_0 = {
+    const config_0 = {
       foo: 'bar',
       bar: {
         foo: 'bar',
@@ -90,12 +90,12 @@ describe('when assignWithDepth: should merge objects within objects', function (
       },
       boofar: 1,
     };
-    let config_1 = {
+    const config_1 = {
       foo: 'foo',
       bar: { foo: 'foo', bar: { foo: { message: 'this' } } },
       foobar: 'foobar',
     };
-    let result = assignWithDepth(config_0, config_1, { depth: 1 });
+    const result = assignWithDepth(config_0, config_1, { depth: 1 });
     expect(result).toEqual({
       foo: 'foo',
       bar: { foo: 'foo', bar: { foo: { message: 'this' } } },
@@ -104,17 +104,17 @@ describe('when assignWithDepth: should merge objects within objects', function (
     });
   });
   it('should handle depth:3 types (merge with no clobber because assignWithDepth::depth == 3)', function () {
-    let config_0 = {
+    const config_0 = {
       foo: 'bar',
       bar: { foo: 'bar', bar: { foo: { message: '', willbe: 'present' } } },
       boofar: 1,
     };
-    let config_1 = {
+    const config_1 = {
       foo: 'foo',
       bar: { foo: 'foo', bar: { foo: { message: 'this' } } },
       foobar: 'foobar',
     };
-    let result = assignWithDepth(config_0, config_1, { depth: 3 });
+    const result = assignWithDepth(config_0, config_1, { depth: 3 });
     expect(result).toEqual({
       foo: 'foo',
       bar: { foo: 'foo', bar: { foo: { message: 'this', willbe: 'present' } } },
@@ -125,8 +125,8 @@ describe('when assignWithDepth: should merge objects within objects', function (
 });
 describe('when memoizing', function () {
   it('should return the same value', function () {
-    const fib = memoize(
-      function (n, x, canary) {
+    const fib: any = memoize(
+      function (n: number, x: string, canary: { flag: boolean }) {
         canary.flag = true;
         if (n < 2) {
           return 1;
@@ -260,7 +260,7 @@ describe('when formatting urls', function () {
   it('should handle links', function () {
     const url = 'https://mermaid-js.github.io/mermaid/#/';
 
-    let config = { securityLevel: 'loose' };
+    const config = { securityLevel: 'loose' };
     let result = utils.formatUrl(url, config);
     expect(result).toEqual(url);
 
@@ -271,7 +271,7 @@ describe('when formatting urls', function () {
   it('should handle anchors', function () {
     const url = '#interaction';
 
-    let config = { securityLevel: 'loose' };
+    const config = { securityLevel: 'loose' };
     let result = utils.formatUrl(url, config);
     expect(result).toEqual(url);
 
@@ -282,7 +282,7 @@ describe('when formatting urls', function () {
   it('should handle mailto', function () {
     const url = 'mailto:user@user.user';
 
-    let config = { securityLevel: 'loose' };
+    const config = { securityLevel: 'loose' };
     let result = utils.formatUrl(url, config);
     expect(result).toEqual(url);
 
@@ -293,7 +293,7 @@ describe('when formatting urls', function () {
   it('should handle other protocols', function () {
     const url = 'notes://do-your-thing/id';
 
-    let config = { securityLevel: 'loose' };
+    const config = { securityLevel: 'loose' };
     let result = utils.formatUrl(url, config);
     expect(result).toEqual(url);
 
@@ -304,7 +304,7 @@ describe('when formatting urls', function () {
   it('should handle scripts', function () {
     const url = 'javascript:alert("test")';
 
-    let config = { securityLevel: 'loose' };
+    const config = { securityLevel: 'loose' };
     let result = utils.formatUrl(url, config);
     expect(result).toEqual(url);
 
@@ -425,6 +425,42 @@ describe('when parsing font sizes', function () {
   });
 
   it('handles unparseable input', function () {
+    // @ts-expect-error Explicitly testing unparsable input
     expect(utils.parseFontSize({ fontSize: 14 })).toEqual([undefined, undefined]);
+  });
+});
+
+describe('cleanAndMerge', () => {
+  test('should merge objects', () => {
+    expect(cleanAndMerge({ a: 1, b: 2 }, { b: 3 })).toEqual({ a: 1, b: 3 });
+    expect(cleanAndMerge({ a: 1 }, { a: 2 })).toEqual({ a: 2 });
+  });
+
+  test('should remove undefined values', () => {
+    expect(cleanAndMerge({ a: 1, b: 2 }, { b: undefined })).toEqual({ a: 1, b: 2 });
+    expect(cleanAndMerge({ a: 1, b: 2 }, { a: 2, b: undefined })).toEqual({ a: 2, b: 2 });
+    expect(cleanAndMerge({ a: 1, b: { c: 2 } }, { a: 2, b: undefined })).toEqual({
+      a: 2,
+      b: { c: 2 },
+    });
+    // @ts-expect-error Explicitly testing different type
+    expect(cleanAndMerge({ a: 1, b: { c: 2 } }, { a: 2, b: { c: undefined } })).toEqual({
+      a: 2,
+      b: { c: 2 },
+    });
+  });
+
+  test('should create deep copies of object', () => {
+    const input: { a: number; b?: number } = { a: 1 };
+    const output = cleanAndMerge(input, { b: 2 });
+    expect(output).toEqual({ a: 1, b: 2 });
+    output.b = 3;
+    expect(input).toEqual({ a: 1 });
+
+    const inputDeep = { a: { b: 1 } };
+    const outputDeep = cleanAndMerge(inputDeep, { a: { b: 2 } });
+    expect(outputDeep).toEqual({ a: { b: 2 } });
+    outputDeep.a.b = 3;
+    expect(inputDeep).toEqual({ a: { b: 1 } });
   });
 });

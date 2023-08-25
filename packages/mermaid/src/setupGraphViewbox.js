@@ -1,5 +1,4 @@
 import { log } from './logger.js';
-import { SVG } from './diagram-api/types.js';
 
 /**
  * Applies d3 attributes
@@ -36,7 +35,7 @@ export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
 /**
  * Applies attributes from `calculateSvgSizeAttrs`
  *
- * @param {SVG} svgElem The SVG Element to configure
+ * @param {import('./diagram-api/types.js').SVG} svgElem The SVG Element to configure
  * @param {number} height The height of the SVG
  * @param {number} width The width of the SVG
  * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%

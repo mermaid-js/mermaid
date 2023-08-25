@@ -73,6 +73,11 @@ function nav() {
     },
     { text: 'Integrations', link: '/ecosystem/integrations', activeMatch: '/ecosystem/' },
     {
+      text: 'Contributing',
+      link: '/community/development.html',
+      activeMatch: '/community/',
+    },
+    {
       text: 'Latest News',
       link: '/news/announcements',
       activeMatch: '/announcements',
@@ -101,14 +106,11 @@ function sidebarAll() {
   return [
     {
       text: '📔 Introduction',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: 'About Mermaid', link: '/intro/' },
-        { text: 'Deployment', link: '/intro/n00b-gettingStarted' },
-        {
-          text: 'Syntax and Configuration',
-          link: '/intro/n00b-syntaxReference',
-        },
+        { text: 'Getting Started', link: '/intro/getting-started' },
+        { text: 'Syntax and Configuration', link: '/intro/syntax-reference' },
       ],
     },
     ...sidebarSyntax(),
@@ -123,7 +125,7 @@ function sidebarSyntax() {
   return [
     {
       text: '📊 Diagram Syntax',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: 'Flowchart', link: '/syntax/flowchart' },
         { text: 'Sequence Diagram', link: '/syntax/sequenceDiagram' },
@@ -154,7 +156,7 @@ function sidebarConfig() {
   return [
     {
       text: '⚙️ Deployment and Configuration',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: 'Configuration', link: '/config/configuration' },
         { text: 'Tutorials', link: '/config/Tutorials' },
@@ -165,7 +167,7 @@ function sidebarConfig() {
         { text: 'Theming', link: '/config/theming' },
         { text: 'Accessibility', link: '/config/accessibility' },
         { text: 'Mermaid CLI', link: '/config/mermaidCLI' },
-        { text: 'Advanced usage', link: '/config/n00b-advanced' },
+        { text: 'Advanced usage', link: '/config/advanced' },
         { text: 'FAQ', link: '/config/faq' },
       ],
     },
@@ -176,7 +178,7 @@ function sidebarEcosystem() {
   return [
     {
       text: '📚 Ecosystem',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: 'Showcases', link: '/ecosystem/showcases' },
         { text: 'Use-Cases and Integrations', link: '/ecosystem/integrations' },
@@ -189,46 +191,14 @@ function sidebarCommunity() {
   return [
     {
       text: '🙌 Contributions and Community',
-      collapsible: true,
+      collapsed: false,
       items: [
-        { text: 'Overview for Beginners', link: '/community/n00b-overview' },
-        ...sidebarCommunityDevelopContribute(),
+        { text: 'Contributing to Mermaid', link: '/community/development' },
+        { text: 'Contributing Code', link: '/community/code' },
+        { text: 'Contributing Documentation', link: '/community/documentation' },
+        { text: 'Questions and Suggestions', link: '/community/questions-and-suggestions' },
         { text: 'Adding Diagrams', link: '/community/newDiagram' },
         { text: 'Security', link: '/community/security' },
-      ],
-    },
-  ];
-}
-
-// Development and Contributing
-function sidebarCommunityDevelopContribute() {
-  const page_path = '/community/development';
-  return [
-    {
-      text: 'Contributing to Mermaid',
-      link: page_path + '#contributing-to-mermaid',
-      collapsible: true,
-      items: [
-        {
-          text: 'Technical Requirements and Setup',
-          link: pathToId(page_path, 'technical-requirements-and-setup'),
-        },
-        {
-          text: 'Contributing Code',
-          link: pathToId(page_path, 'contributing-code'),
-        },
-        {
-          text: 'Contributing Documentation',
-          link: pathToId(page_path, 'contributing-documentation'),
-        },
-        {
-          text: 'Questions or Suggestions?',
-          link: pathToId(page_path, 'questions-or-suggestions'),
-        },
-        {
-          text: 'Last Words',
-          link: pathToId(page_path, 'last-words'),
-        },
       ],
     },
   ];
@@ -238,7 +208,7 @@ function sidebarNews() {
   return [
     {
       text: '📰 Latest News',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: 'Announcements', link: '/news/announcements' },
         { text: 'Blog', link: '/news/blog' },

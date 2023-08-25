@@ -1,5 +1,5 @@
 import DOMPurify from 'dompurify';
-import { MermaidConfig } from '../../config.type.js';
+import type { MermaidConfig } from '../../config.type.js';
 
 // Remove and ignore br:s
 export const lineBreakRegex = /<br\s*\/?>/gi;
