@@ -2,6 +2,7 @@
 
 set -euxo pipefail
 # We have to use npm instead of yarn because it causes trouble in netlify
+pnpm build
 
 # Link local mermaid to npm
 pushd packages/mermaid
