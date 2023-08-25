@@ -1,4 +1,4 @@
-import { Diagram } from '../Diagram.js';
+import type { Diagram } from '../Diagram.js';
 import type { BaseDiagramConfig, MermaidConfig } from '../config.type.js';
 import type * as d3 from 'd3';
 

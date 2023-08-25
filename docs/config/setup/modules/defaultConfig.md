@@ -10,7 +10,7 @@
 
 ### configKeys
 
-• `Const` **configKeys**: `string`\[]
+• `Const` **configKeys**: `Set`<`string`>
 
 #### Defined in
 

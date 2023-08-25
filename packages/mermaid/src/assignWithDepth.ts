@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 /**
- * assignWithDepth Extends the functionality of {@link ObjectConstructor.assign} with the
+ * assignWithDepth Extends the functionality of {@link Object.assign} with the
  *   ability to merge arbitrary-depth objects For each key in src with path `k` (recursively)
  *   performs an Object.assign(dst[`k`], src[`k`]) with a slight change from the typical handling of
  *   undefined for dst[`k`]: instead of raising an error, dst[`k`] is auto-initialized to `{}` and
