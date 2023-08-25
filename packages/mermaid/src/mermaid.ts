@@ -372,6 +372,7 @@ const render = (id: string, text: string, container?: Element): Promise<RenderRe
       new Promise((res, rej) => {
         mermaidAPI.render(id, text, container).then(
           (r) => {
+            alert('Working!');
             // This resolves for the promise for the queue handling
             res(r);
             // This fulfills the promise sent to the value back to the original caller
