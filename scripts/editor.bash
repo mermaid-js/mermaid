@@ -8,11 +8,14 @@ pushd packages/mermaid
 npm link
 popd
 
-# Clone the Mermaid Live Editor repository
-git clone https://github.com/mermaid-js/mermaid-live-editor.git
-
-# Change to the repository directory
-cd mermaid-live-editor
+# Clone or update the Mermaid Live Editor repository
+if [ ! -d "mermaid-live-editor" ]; then
+  git clone --single-branch https://github.com/mermaid-js/mermaid-live-editor.git
+  cd mermaid-live-editor
+else
+  cd mermaid-live-editor
+  git pull
+fi
 
 # Link local mermaid to live editor
 npm link mermaid
