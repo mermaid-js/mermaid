@@ -56,11 +56,11 @@ One should **beware the use of some words or symbols** that can break diagrams. 
 | 'end'                                                                                | The word "End" can cause Flowcharts and Sequence diagrams to break      | Wrap them in quotation marks to prevent breakage. |
 | [Nodes inside Nodes](../syntax/flowchart.md?id=special-characters-that-break-syntax) | Mermaid gets confused with nested shapes                                | wrap them in quotation marks to prevent breaking  |
 
-### Mermaid Live Editor
+## Mermaid Live Editor
 
 Now, that you've seen what you should not add to your diagrams, you can play around with them in the [Mermaid Live Editor](https://mermaid.live).
 
-# Configuration
+## Configuration
 
 Configuration is the third part of Mermaid, after deployment and syntax. It deals with the different ways that Mermaid can be customized across different deployments.
 

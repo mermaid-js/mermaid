@@ -3,12 +3,12 @@ import { select, selectAll } from 'd3';
 import svgDraw, { ACTOR_TYPE_WIDTH, drawText, fixLifeLineHeights } from './svgDraw.js';
 import { log } from '../../logger.js';
 import common from '../common/common.js';
-import * as svgDrawCommon from '../common/svgDrawCommon';
+import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import * as configApi from '../../config.js';
 import assignWithDepth from '../../assignWithDepth.js';
 import utils from '../../utils.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { Diagram } from '../../Diagram.js';
+import type { Diagram } from '../../Diagram.js';
 
 let conf = {};
 
