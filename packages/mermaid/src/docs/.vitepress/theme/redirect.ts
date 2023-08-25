@@ -25,9 +25,13 @@ const getBaseFile = (url: URL): Redirect => {
 };
 
 /**
- * Used to redirect old documentation pages to corresponding new pages.
+ * Used to redirect old (pre-vitepress) documentation pages to corresponding new pages.
+ * The key is the old documentation ID, and the value is the new documentation path.
+ * No key should be added here as it already has all the old documentation IDs.
+ * If you are changing a documentation page, you should update the corresponding value here, and add an entry in the urlRedirectMap below.
  */
 const idRedirectMap: Record<string, string> = {
+  // ID of the old documentation page: Path of the new documentation page
   '8.6.0_docs': '',
   accessibility: 'config/theming',
   breakingchanges: '',
@@ -74,8 +78,13 @@ const idRedirectMap: Record<string, string> = {
 
 /**
  * Used to redirect pages that have been moved in the vitepress site.
+ * No keys should be deleted from here.
+ * If you are changing a documentation page, you should update the corresponding value here,
+ * and update the entry in the idRedirectMap above if it was present
+ * (No need to add new keys in idRedirectMap).
  */
 const urlRedirectMap: Record<string, string> = {
+  // Old URL: New URL
   '/misc/faq.html': 'configure/faq.html',
   '/syntax/c4c.html': 'syntax/c4.html',
 };
