@@ -54,15 +54,14 @@ const idRedirectMap: Record<string, string> = {
   mermaidcli: 'config/mermaidCLI',
   mindmap: 'syntax/mindmap',
   'more-pages': '',
-  'n00b-advanced': 'config/n00b-advanced',
-  'n00b-gettingstarted': 'intro/n00b-gettingStarted',
-  'n00b-overview': 'intro/n00b-gettingStarted',
-  'community/n00b-overview': 'intro/n00b-gettingStarted',
-  'n00b-syntaxreference': 'intro/n00b-syntaxReference',
+  'n00b-advanced': 'config/advanced',
+  'n00b-gettingstarted': 'intro/getting-started',
+  'n00b-overview': 'intro/getting-started',
+  'n00b-syntaxreference': 'intro/syntax-reference',
   newdiagram: 'community/newDiagram',
   pie: 'syntax/pie',
   plugins: '',
-  quickstart: 'intro/n00b-gettingStarted',
+  quickstart: 'intro/getting-started',
   requirementdiagram: 'syntax/requirementDiagram',
   security: 'community/security',
   sequencediagram: 'syntax/sequenceDiagram',
@@ -87,6 +86,10 @@ const urlRedirectMap: Record<string, string> = {
   // Old URL: New URL
   '/misc/faq.html': 'configure/faq.html',
   '/syntax/c4c.html': 'syntax/c4.html',
+  '/config/n00b-advanced.html': 'config/advanced',
+  '/intro/n00b-gettingStarted.html': 'intro/getting-started',
+  '/intro/n00b-syntaxReference.html': 'intro/syntax-reference',
+  '/community/n00b-overview.html': 'intro/getting-started',
 };
 
 /**
