@@ -1,4 +1,4 @@
-import { MermaidConfig } from '../config.type.js';
+import type { MermaidConfig } from '../config.type.js';
 import { log } from '../logger.js';
 import type {
   DetectorRecord,
