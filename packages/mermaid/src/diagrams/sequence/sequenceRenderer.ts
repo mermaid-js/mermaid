@@ -13,7 +13,7 @@ import * as configApi from '../../config.js';
 import assignWithDepth from '../../assignWithDepth.js';
 import utils from '../../utils.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { Diagram } from '../../Diagram.js';
+import type { Diagram } from '../../Diagram.js';
 
 let conf = {};
 

@@ -8,7 +8,7 @@ import utils from '../../utils.js';
 import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import common from '../common/common.js';
-import { ClassRelation, ClassNote, ClassMap, EdgeData, NamespaceMap } from './classTypes.js';
+import type { ClassRelation, ClassNote, ClassMap, EdgeData, NamespaceMap } from './classTypes.js';
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
 

@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "10.3.1",
+  "version": "10.4.0",
   "description": "Markdown-ish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
   "module": "./dist/mermaid.core.mjs",
@@ -38,6 +38,7 @@
     "docs:verify-version": "ts-node-esm scripts/update-release-version.mts --verify",
     "types:build-config": "ts-node-esm --transpileOnly scripts/create-types-from-json-schema.mts",
     "types:verify-config": "ts-node-esm scripts/create-types-from-json-schema.mts --verify",
+    "checkCircle": "npx madge --circular ./src",
     "release": "pnpm build",
     "prepublishOnly": "cpy '../../README.*' ./ --cwd=. && pnpm -w run build"
   },
@@ -84,7 +85,9 @@
     "@types/cytoscape": "^3.19.9",
     "@types/d3": "^7.4.0",
     "@types/d3-sankey": "^0.12.1",
+    "@types/d3-scale": "^4.0.3",
     "@types/d3-selection": "^3.0.5",
+    "@types/d3-shape": "^3.1.1",
     "@types/dompurify": "^3.0.2",
     "@types/jsdom": "^21.1.1",
     "@types/lodash-es": "^4.17.7",
@@ -113,6 +116,7 @@
     "remark-gfm": "^3.0.1",
     "rimraf": "^5.0.0",
     "start-server-and-test": "^2.0.0",
+    "type-fest": "^4.1.0",
     "typedoc": "^0.24.5",
     "typedoc-plugin-markdown": "^3.15.2",
     "typescript": "^5.0.4",

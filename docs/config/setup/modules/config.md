@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[config.ts:7](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L7)
+[config.ts:8](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L8)
 
 ## Functions
 
@@ -26,9 +26,9 @@ Pushes in a directive to the configuration
 
 #### Parameters
 
-| Name        | Type  | Description              |
-| :---------- | :---- | :----------------------- |
-| `directive` | `any` | The directive to push in |
+| Name        | Type            | Description              |
+| :---------- | :-------------- | :----------------------- |
+| `directive` | `MermaidConfig` | The directive to push in |
 
 #### Returns
 
@@ -36,7 +36,7 @@ Pushes in a directive to the configuration
 
 #### Defined in
 
-[config.ts:191](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L191)
+[config.ts:188](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L188)
 
 ---
 
@@ -60,7 +60,7 @@ The currentConfig
 
 #### Defined in
 
-[config.ts:137](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L137)
+[config.ts:131](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L131)
 
 ---
 
@@ -118,7 +118,7 @@ The siteConfig
 
 #### Defined in
 
-[config.ts:223](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L223)
+[config.ts:218](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L218)
 
 ---
 
@@ -147,7 +147,7 @@ options in-place
 
 #### Defined in
 
-[config.ts:152](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L152)
+[config.ts:146](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L146)
 
 ---
 
@@ -242,10 +242,10 @@ The new siteConfig
 
 #### Parameters
 
-| Name          | Type            |
-| :------------ | :-------------- |
-| `siteCfg`     | `MermaidConfig` |
-| `_directives` | `any`\[]        |
+| Name          | Type               |
+| :------------ | :----------------- |
+| `siteCfg`     | `MermaidConfig`    |
+| `_directives` | `MermaidConfig`\[] |
 
 #### Returns
 
@@ -253,7 +253,7 @@ The new siteConfig
 
 #### Defined in
 
-[config.ts:14](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L14)
+[config.ts:15](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L15)
 
 ---
 
