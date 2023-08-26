@@ -3,10 +3,11 @@ import type { LangiumParser, ParseResult } from 'langium';
 
 import type { InfoServices } from '../src/language/index.js';
 import { Info, createInfoServices } from '../src/language/index.js';
+import { noErrorsOrAlternatives } from './test-util.js';
 
 const services: InfoServices = createInfoServices().Info;
 const parser: LangiumParser = services.parser.LangiumParser;
-export function createInfoTestServices(): {
+function createInfoTestServices(): {
   services: InfoServices;
   parse: (input: string) => ParseResult<Info>;
 } {
@@ -30,11 +31,10 @@ describe('info', () => {
     info
     `,
   ])('should handle empty info', (context: string) => {
-    const { parserErrors, lexerErrors, value } = parse(context);
-    expect(parserErrors).toHaveLength(0);
-    expect(lexerErrors).toHaveLength(0);
+    const result = parse(context);
+    noErrorsOrAlternatives(result);
 
-    expect(value.$type).toBe(Info);
+    expect(result.value.$type).toBe(Info);
   });
 
   it.each([
@@ -49,10 +49,9 @@ describe('info', () => {
     showInfo
     `,
   ])('should handle showInfo', (context: string) => {
-    const { parserErrors, lexerErrors, value } = parse(context);
-    expect(parserErrors).toHaveLength(0);
-    expect(lexerErrors).toHaveLength(0);
+    const result = parse(context);
+    noErrorsOrAlternatives(result);
 
-    expect(value.$type).toBe(Info);
+    expect(result.value.$type).toBe(Info);
   });
 });
