@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Diagram } from '../Diagram.js';
 import type { BaseDiagramConfig, MermaidConfig } from '../config.type.js';
 import type * as d3 from 'd3';
@@ -29,7 +30,6 @@ export interface DiagramDB {
   getAccDescription?: () => string;
 
   setDisplayMode?: (title: string) => void;
-  setWrap?: (wrap: boolean) => void;
   bindFunctions?: (element: Element) => void;
 }
 

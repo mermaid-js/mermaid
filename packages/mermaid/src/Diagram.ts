@@ -47,12 +47,9 @@ export class Diagram {
     this.db.clear?.();
     const config = configApi.getConfig();
     this.init?.(config);
-    // These 2 blocks were added for legacy compatibility. Do not add more such blocks. Use frontmatter instead.
+    // This block was added for legacy compatibility. Use frontmatter instead of adding more special cases.
     if (this.metadata.title) {
       this.db.setDiagramTitle?.(this.metadata.title);
-    }
-    if (config.wrap) {
-      this.db.setWrap?.(config.wrap);
     }
     this.parser.parse(this.text);
   }
