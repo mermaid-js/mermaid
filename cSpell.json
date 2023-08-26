@@ -95,6 +95,7 @@
     "nextra",
     "nikolay",
     "nirname",
+    "npmjs",
     "orlandoni",
     "outdir",
     "pathe",
@@ -157,7 +158,8 @@
     "xlink",
     "yash",
     "yokozuna",
-    "zenuml"
+    "zenuml",
+    "zune"
   ],
   "patterns": [
     { "name": "Markdown links", "pattern": "\\((.*)\\)", "description": "" },
