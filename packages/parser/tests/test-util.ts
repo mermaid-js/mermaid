@@ -1,3 +1,4 @@
+import { expect, vi } from 'vitest';
 import type { ParseResult } from 'langium';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => {
