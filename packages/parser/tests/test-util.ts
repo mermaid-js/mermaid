@@ -1,9 +1,7 @@
 import { expect, vi } from 'vitest';
 import type { ParseResult } from 'langium';
 
-const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => {
-  return;
-});
+const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
 /**
  * A helper test function that validate that the result doesn't have errors
