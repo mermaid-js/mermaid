@@ -133,6 +133,43 @@ describe('when parsing ER diagram it...', function () {
       const entities = erDb.getEntities();
       expect(entities.hasOwnProperty(hyphensUnderscore)).toBe(true);
     });
+
+    it('can have an alias', function () {
+      const entity = 'foo';
+      const alias = 'bar';
+      erDiagram.parser.parse(`erDiagram\n${entity}["${alias}"]\n`);
+      const entities = erDb.getEntities();
+      expect(entities.hasOwnProperty(entity)).toBe(true);
+      expect(entities[entity].alias).toBe(alias);
+    });
+
+    it('can have an alias even if the relationship is defined before class', function () {
+      const firstEntity = 'foo';
+      const secondEntity = 'bar';
+      const alias = 'batman';
+      erDiagram.parser.parse(
+        `erDiagram\n${firstEntity} ||--o| ${secondEntity} : rel\nclass ${firstEntity}["${alias}"]\n`
+      );
+      const entities = erDb.getEntities();
+      expect(entities.hasOwnProperty(firstEntity)).toBe(true);
+      expect(entities.hasOwnProperty(secondEntity)).toBe(true);
+      expect(entities[firstEntity].alias).toBe(alias);
+      expect(entities[secondEntity].alias).toBeUndefined();
+    });
+
+    it('can have an alias even if the relationship is defined after class', function () {
+      const firstEntity = 'foo';
+      const secondEntity = 'bar';
+      const alias = 'batman';
+      erDiagram.parser.parse(
+        `erDiagram\nclass ${firstEntity}["${alias}"]\n${firstEntity} ||--o| ${secondEntity} : rel\n`
+      );
+      const entities = erDb.getEntities();
+      expect(entities.hasOwnProperty(firstEntity)).toBe(true);
+      expect(entities.hasOwnProperty(secondEntity)).toBe(true);
+      expect(entities[firstEntity].alias).toBe(alias);
+      expect(entities[secondEntity].alias).toBeUndefined();
+    });
   });
 
   describe('attribute name', () => {

@@ -12,14 +12,16 @@ import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 
 const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Sections>[] => {
   // Compute the position of each group on the pie:
-  const pieData: D3Sections[] = Object.entries(sections).map(
-    (element: [string, number]): D3Sections => {
+  const pieData: D3Sections[] = Object.entries(sections)
+    .map((element: [string, number]): D3Sections => {
       return {
         label: element[0],
         value: element[1],
       };
-    }
-  );
+    })
+    .sort((a: D3Sections, b: D3Sections): number => {
+      return b.value - a.value;
+    });
   const pie: d3.Pie<unknown, D3Sections> = d3pie<D3Sections>().value(
     (d3Section: D3Sections): number => d3Section.value
   );
