@@ -1,4 +1,4 @@
-import { ParseResult } from 'langium';
+import type { ParseResult } from 'langium';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => {
   return;
