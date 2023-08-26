@@ -32,7 +32,7 @@ export type InfoServices = LangiumServices & InfoAddedServices;
  * Dependency injection module that overrides Langium default services and
  * contributes the declared `Info` services.
  */
-const InfoModule: Module<InfoServices, PartialLangiumServices & InfoAddedServices> = {
+export const InfoModule: Module<InfoServices, PartialLangiumServices & InfoAddedServices> = {
   parser: {
     Lexer: (services) => new CommonLexer(services),
     TokenBuilder: () => new InfoTokenBuilder(),
