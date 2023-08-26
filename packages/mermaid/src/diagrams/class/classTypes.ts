@@ -1,4 +1,5 @@
-import { parseGenericTypes } from '../common/common.js';
+import { getConfig } from '../../config.js';
+import { parseGenericTypes, sanitizeText } from '../common/common.js';
 
 export interface ClassNode {
   id: string;
@@ -48,7 +49,8 @@ export class ClassMember {
     this.memberType = memberType;
     this.visibility = '';
     this.classifier = '';
-    this.parseMember(input);
+    const sanitizedInput = sanitizeText(input, getConfig());
+    this.parseMember(sanitizedInput);
   }
 
   getDisplayDetails() {
