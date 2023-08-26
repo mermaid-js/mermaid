@@ -1,4 +1,4 @@
-import { mermaidUrl } from '../../helpers/util.js';
+import { mermaidUrl } from '../../helpers/util.ts';
 describe('XSS', () => {
   it('should handle xss in tags', () => {
     const str =

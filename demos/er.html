@@ -21,6 +21,8 @@
     <pre class="mermaid">
       ---
       title: This is a title
+      config:
+        theme: forest
       ---
       erDiagram
         %% title This is a title
@@ -108,6 +110,20 @@
         }
         MANUFACTURER only one to zero or more CAR : makes
     </pre>
+    <hr />
+
+    <pre class="mermaid">
+    erDiagram
+      p[Person] {
+          string firstName
+          string lastName
+      }
+      a["Customer Account"] {
+          string email
+      }
+      p ||--o| a : has
+    </pre>
+    <hr />
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';

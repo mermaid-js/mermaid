@@ -10,7 +10,7 @@
 
 #### Grammar
 
-This would be to define a jison grammar for the new diagram type. That should start with a way to identify that the text in the mermaid tag is a diagram of that type. Create a new folder under diagrams for your new diagram type and a parser folder in it. This leads us to step 2.
+This would be to define a JISON grammar for the new diagram type. That should start with a way to identify that the text in the mermaid tag is a diagram of that type. Create a new folder under diagrams for your new diagram type and a parser folder in it. This leads us to step 2.
 
 For instance:
 
@@ -60,7 +60,7 @@ Place the renderer in the diagram folder.
 
 ### Step 3: Detection of the new diagram type
 
-The second thing to do is to add the capability to detect the new diagram to type to the detectType in utils.js. The detection should return a key for the new diagram type.
+The second thing to do is to add the capability to detect the new diagram to type to the detectType in `diagram-api/detectType.ts`. The detection should return a key for the new diagram type.
 [This key will be used to as the aria roledescription](#aria-roledescription), so it should be a word that clearly describes the diagram type.
 For example, if your new diagram use a UML deployment diagram, a good key would be "UMLDeploymentDiagram" because assistive technologies such as a screen reader
 would voice that as "U-M-L Deployment diagram." Another good key would be "deploymentDiagram" because that would be voiced as "Deployment Diagram." A bad key would be "deployment" because that would not sufficiently describe the diagram.
@@ -124,53 +124,6 @@ There are a few features that are common between the different types of diagrams
 
 Here some pointers on how to handle these different areas.
 
-#### [Directives](../config/directives.md)
-
-Here is example handling from flowcharts:
-Jison:
-
-```jison
-/* lexical grammar */
-%lex
-%x open_directive
-%x type_directive
-%x arg_directive
-%x close_directive
-
-\%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
-<open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
-<type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
-<type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
-<arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
-
-/* language grammar */
-
-/* ... */
-
-directive
-  : openDirective typeDirective closeDirective separator
-  | openDirective typeDirective ':' argDirective closeDirective separator
-  ;
-
-openDirective
-  : open_directive { yy.parseDirective('%%{', 'open_directive'); }
-  ;
-
-typeDirective
-  : type_directive { yy.parseDirective($1, 'type_directive'); }
-  ;
-
-argDirective
-  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
-  ;
-
-closeDirective
-  : close_directive { yy.parseDirective('}%%', 'close_directive', 'flowchart'); }
-  ;
-```
-
-It is probably a good idea to keep the handling similar to this in your new diagram. The parseDirective function is provided by the mermaidAPI.
-
 ## Accessibility
 
 Mermaid automatically adds the following accessibility information for the diagram SVG HTML element:
@@ -189,7 +142,7 @@ See [the definition of aria-roledescription](https://www.w3.org/TR/wai-aria-1.1/
 
 The syntax for accessible titles and descriptions is described in [the Accessibility documenation section.](../config/accessibility.md)
 
-In a similar way to the directives, the jison syntax are quite similar between the diagrams.
+As a design goal, the jison syntax should be similar between the diagrams.
 
 ```jison
 

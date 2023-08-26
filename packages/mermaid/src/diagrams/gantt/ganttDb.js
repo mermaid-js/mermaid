@@ -37,6 +37,7 @@ const tags = ['active', 'done', 'crit', 'milestone'];
 let funs = [];
 let inclusiveEndDates = false;
 let topAxis = false;
+let weekday = 'sunday';
 
 // The serial order of the task in the script
 let lastOrder = 0;
@@ -66,6 +67,7 @@ export const clear = function () {
   lastOrder = 0;
   links = {};
   commonClear();
+  weekday = 'sunday';
 };
 
 export const setAxisFormat = function (txt) {
@@ -177,6 +179,14 @@ export const isInvalidDate = function (date, dateFormat, excludes, includes) {
     return true;
   }
   return excludes.includes(date.format(dateFormat.trim()));
+};
+
+export const setWeekday = function (txt) {
+  weekday = txt;
+};
+
+export const getWeekday = function () {
+  return weekday;
 };
 
 /**
@@ -759,6 +769,8 @@ export default {
   bindFunctions,
   parseDuration,
   isInvalidDate,
+  setWeekday,
+  getWeekday,
 };
 
 /**

@@ -2,8 +2,13 @@ import { vi } from 'vitest';
 import { extractFrontMatter } from './frontmatter.js';
 
 const dbMock = () => ({ setDiagramTitle: vi.fn() });
+const setConfigMock = vi.fn();
 
 describe('extractFrontmatter', () => {
+  beforeEach(() => {
+    setConfigMock.mockClear();
+  });
+
   it('returns text unchanged if no frontmatter', () => {
     expect(extractFrontMatter('diagram', dbMock())).toEqual('diagram');
   });
@@ -74,5 +79,22 @@ describe('extractFrontmatter', () => {
     expect(() => extractFrontMatter(text, dbMock())).toThrow(
       'tag suffix cannot contain exclamation marks'
     );
+  });
+
+  it('handles frontmatter with config', () => {
+    const text = `---
+title: hello
+config:
+  graph:
+    string: hello
+    number: 14
+    boolean: false
+    array: [1, 2, 3]
+---
+diagram`;
+    expect(extractFrontMatter(text, {}, setConfigMock)).toEqual('diagram');
+    expect(setConfigMock).toHaveBeenCalledWith({
+      graph: { string: 'hello', number: 14, boolean: false, array: [1, 2, 3] },
+    });
   });
 });

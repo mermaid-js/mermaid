@@ -1,5 +1,5 @@
-import { Diagram } from '../Diagram.js';
-import { MermaidConfig } from '../config.type.js';
+import type { Diagram } from '../Diagram.js';
+import type { BaseDiagramConfig, MermaidConfig } from '../config.type.js';
 import type * as d3 from 'd3';
 
 export interface InjectUtils {
@@ -16,18 +16,26 @@ export interface InjectUtils {
  * Generic Diagram DB that may apply to any diagram type.
  */
 export interface DiagramDB {
+  // config
+  getConfig?: () => BaseDiagramConfig | undefined;
+
+  // db
   clear?: () => void;
   setDiagramTitle?: (title: string) => void;
-  setDisplayMode?: (title: string) => void;
+  getDiagramTitle?: () => string;
+  setAccTitle?: (title: string) => void;
   getAccTitle?: () => string;
+  setAccDescription?: (describetion: string) => void;
   getAccDescription?: () => string;
+
+  setDisplayMode?: (title: string) => void;
   bindFunctions?: (element: Element) => void;
 }
 
 export interface DiagramDefinition {
   db: DiagramDB;
   renderer: any;
-  parser: any;
+  parser: ParserDefinition;
   styles?: any;
   init?: (config: MermaidConfig) => void;
   injectUtils?: (
@@ -70,6 +78,11 @@ export type DrawDefinition = (
   diagramObject: Diagram
 ) => void;
 
+export interface ParserDefinition {
+  parse: (text: string) => void;
+  parser: { yy: DiagramDB };
+}
+
 /**
  * Type for function parse directive from diagram code.
  *
@@ -79,8 +92,10 @@ export type DrawDefinition = (
  */
 export type ParseDirectiveDefinition = (statement: string, context: string, type: string) => void;
 
-export type HTML = d3.Selection<HTMLIFrameElement, unknown, Element, unknown>;
+export type HTML = d3.Selection<HTMLIFrameElement, unknown, Element | null, unknown>;
 
-export type SVG = d3.Selection<SVGSVGElement, unknown, Element, unknown>;
+export type SVG = d3.Selection<SVGSVGElement, unknown, Element | null, unknown>;
+
+export type Group = d3.Selection<SVGGElement, unknown, Element | null, unknown>;
 
 export type DiagramStylesProvider = (options?: any) => string;

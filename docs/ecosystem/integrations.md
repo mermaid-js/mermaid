@@ -187,6 +187,7 @@ They also serve as proof of concept, for the variety of things that can be built
 - [mdbook](https://rust-lang.github.io/mdBook/index.html)
   - [mdbook-mermaid](https://github.com/badboy/mdbook-mermaid)
 - [Quarto](https://quarto.org/)
+- [Typora](https://typora.io/) ([Native support](https://support.typora.io/Draw-Diagrams-With-Markdown/#mermaid))
 
 ## Browser Extensions
 

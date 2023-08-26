@@ -8,7 +8,6 @@ import { log, getConfig, setupGraphViewbox } from './mermaidUtils.js';
  * @param {any} text
  * @param {any} id
  * @param {any} version
- * @param diagObj
  */
 export const draw = (text, id, version) => {
   try {

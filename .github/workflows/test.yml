@@ -43,6 +43,8 @@ jobs:
 
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v3
+        # Run step only pushes to develop and pull_requests
+        if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/develop' }}
         with:
           files: ./coverage/vitest/lcov.info
           flags: unit

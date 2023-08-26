@@ -264,6 +264,113 @@ class C13["With Città foreign language"]
       const str = 'classDiagram\n' + 'note "test"\n';
       parser.parse(str);
     });
+
+    const keywords = [
+      'direction',
+      'classDiagram',
+      'classDiagram-v2',
+      'namespace',
+      '{}',
+      '{',
+      '}',
+      '()',
+      '(',
+      ')',
+      '[]',
+      '[',
+      ']',
+      'class',
+      '\n',
+      'cssClass',
+      'callback',
+      'link',
+      'click',
+      'note',
+      'note for',
+      '<<',
+      '>>',
+      'call ',
+      '~',
+      '~Generic~',
+      '_self',
+      '_blank',
+      '_parent',
+      '_top',
+      '<|',
+      '|>',
+      '>',
+      '<',
+      '*',
+      'o',
+      '\\',
+      '--',
+      '..',
+      '-->',
+      '--|>',
+      ': label',
+      ':::',
+      '.',
+      '+',
+      'alphaNum',
+      '!',
+      '0123',
+      'function()',
+      'function(arg1, arg2)',
+    ];
+
+    it.each(keywords)('should handle a note with %s in it', function (keyword: string) {
+      const str = `classDiagram
+                     note "This is a keyword: ${keyword}. It truly is."
+                  `;
+      parser.parse(str);
+      expect(classDb.getNotes()[0].text).toEqual(`This is a keyword: ${keyword}. It truly is.`);
+    });
+
+    it.each(keywords)(
+      'should handle note with %s at beginning of string',
+      function (keyword: string) {
+        const str = `classDiagram
+                      note "${keyword}"`;
+
+        parser.parse(str);
+        expect(classDb.getNotes()[0].text).toEqual(`${keyword}`);
+      }
+    );
+
+    it.each(keywords)('should handle a "note for" with a %s in it', function (keyword: string) {
+      const str = `classDiagram
+                   class Something {
+                     int id
+                     string name
+                   }
+                   note for Something "This is a keyword: ${keyword}. It truly is."
+                   `;
+
+      parser.parse(str);
+      expect(classDb.getNotes()[0].text).toEqual(`This is a keyword: ${keyword}. It truly is.`);
+    });
+
+    it.each(keywords)(
+      'should handle a "note for" with a %s at beginning of string',
+      function (keyword: string) {
+        const str = `classDiagram
+                    class Something {
+                      int id
+                      string name
+                    }
+                    note for Something "${keyword}"
+                    `;
+
+        parser.parse(str);
+        expect(classDb.getNotes()[0].text).toEqual(`${keyword}`);
+      }
+    );
+
+    it.each(keywords)('should elicit error for %s after NOTE token', function (keyword: string) {
+      const str = `classDiagram
+                   note ${keyword}`;
+      expect(() => parser.parse(str)).toThrowError(/(Expecting\s'STR'|Unrecognized\stext)/);
+    });
   });
 
   describe('when parsing class defined in brackets', function () {

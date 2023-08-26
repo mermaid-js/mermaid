@@ -1,5 +1,6 @@
 // @ts-nocheck - don't check until handle it
-import { select, Selection } from 'd3';
+import type { Selection } from 'd3';
+import { select } from 'd3';
 import { log } from '../../logger.js';
 import * as configApi from '../../config.js';
 import common from '../common/common.js';
@@ -14,7 +15,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../../commonDb.js';
-import {
+import type {
   ClassRelation,
   ClassNode,
   ClassNote,

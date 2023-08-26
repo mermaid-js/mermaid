@@ -19,6 +19,10 @@ async function download(url: string, fileName: URL) {
     await writeFile(fileName, Buffer.from(await image.arrayBuffer()));
   } catch (error) {
     console.error('failed to load', url, error);
+    // Exit the build process if we are in CI
+    if (process.env.CI) {
+      throw error;
+    }
   }
 }
 
@@ -32,7 +36,7 @@ async function fetchAvatars() {
     download(`https://github.com/${name}.png?size=100`, getAvatarPath(name));
   });
 
-  await Promise.all(avatars);
+  await Promise.allSettled(avatars);
 }
 
 fetchAvatars();

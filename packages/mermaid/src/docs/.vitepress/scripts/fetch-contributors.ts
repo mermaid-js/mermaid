@@ -1,6 +1,8 @@
 // Adapted from https://github.dev/vitest-dev/vitest/blob/991ff33ab717caee85ef6cbe1c16dc514186b4cc/scripts/update-contributors.ts#L6
 
 import { writeFile } from 'node:fs/promises';
+import { knut, plainTeamMembers } from '../teamMembers.js';
+import { existsSync } from 'node:fs';
 
 const pathContributors = new URL('../contributor-names.json', import.meta.url);
 
@@ -35,7 +37,15 @@ async function fetchContributors() {
 }
 
 async function generate() {
-  const collaborators = await fetchContributors();
+  if (existsSync(pathContributors)) {
+    // Only fetch contributors once, when running locally.
+    // In CI, the file won't exist, so it'll fetch every time as expected.
+    return;
+  }
+  // Will fetch all contributors only in CI to speed up local development.
+  const collaborators = process.env.CI
+    ? await fetchContributors()
+    : [knut, ...plainTeamMembers].map((m) => m.github);
   await writeFile(pathContributors, JSON.stringify(collaborators, null, 2) + '\n', 'utf8');
 }
 
