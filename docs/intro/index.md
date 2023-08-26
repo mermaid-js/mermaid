@@ -10,7 +10,7 @@
 
 It is a JavaScript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically.
 
-> If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](n00b-syntaxReference.md).
+> If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](syntax-reference.md).
 
 <img src="/header.png" alt="" />
 
@@ -44,7 +44,7 @@ Mermaid allows even non-programmers to easily create detailed and diagrams throu
 [Tutorials](../config/Tutorials.md) has video tutorials.
 Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](../ecosystem/integrations.md).
 
-For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](../intro/n00b-gettingStarted.md) and [Usage](../config/usage.md).
+For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](../intro/getting-started.md) and [Usage](../config/usage.md).
 
 🌐 [CDN](https://www.jsdelivr.com/package/npm/mermaid) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](../community/development.md) | 🔌 [Plug-Ins](../ecosystem/integrations.md)
 
@@ -284,9 +284,9 @@ quadrantChart
 
 ## Installation
 
-**In depth guides and examples can be found at [Getting Started](./n00b-gettingStarted.md) and [Usage](../config/usage.md).**
+**In depth guides and examples can be found at [Getting Started](./getting-started.md) and [Usage](../config/usage.md).**
 
-**It would also be helpful to learn more about mermaid's [Syntax](./n00b-syntaxReference.md).**
+**It would also be helpful to learn more about mermaid's [Syntax](./syntax-reference.md).**
 
 ### CDN
 
@@ -402,7 +402,7 @@ Update version number in `package.json`.
 npm publish
 ```
 
-The above command generates files into the `dist` folder and publishes them to [npmjs.org](npmjs.org).
+The above command generates files into the `dist` folder and publishes them to [npmjs.com](https://www.npmjs.com/).
 
 ## Security and safe diagrams
 

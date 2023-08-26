@@ -475,61 +475,6 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0
 
-  packages/mermaid/src/vitepress:
-    dependencies:
-      '@vueuse/core':
-        specifier: ^10.1.0
-        version: 10.1.0(vue@3.3.4)
-      jiti:
-        specifier: ^1.18.2
-        version: 1.18.2
-      mermaid:
-        specifier: workspace:^
-        version: link:../..
-      vue:
-        specifier: ^3.2.47
-        version: 3.3.4
-    devDependencies:
-      '@iconify-json/carbon':
-        specifier: ^1.1.16
-        version: 1.1.16
-      '@unocss/reset':
-        specifier: ^0.55.2
-        version: 0.55.2
-      '@vite-pwa/vitepress':
-        specifier: ^0.2.0
-        version: 0.2.0(vite-plugin-pwa@0.16.0)
-      '@vitejs/plugin-vue':
-        specifier: ^4.2.1
-        version: 4.2.1(vite@4.3.9)(vue@3.3.4)
-      fast-glob:
-        specifier: ^3.2.12
-        version: 3.2.12
-      https-localhost:
-        specifier: ^4.7.1
-        version: 4.7.1
-      pathe:
-        specifier: ^1.1.0
-        version: 1.1.0
-      unocss:
-        specifier: ^0.55.2
-        version: 0.55.2(postcss@8.4.27)(rollup@2.79.1)(vite@4.3.9)
-      unplugin-vue-components:
-        specifier: ^0.25.0
-        version: 0.25.0(rollup@2.79.1)(vue@3.3.4)
-      vite:
-        specifier: ^4.3.9
-        version: 4.3.9(@types/node@18.16.0)
-      vite-plugin-pwa:
-        specifier: ^0.16.0
-        version: 0.16.0(vite@4.3.9)(workbox-build@7.0.0)(workbox-window@7.0.0)
-      vitepress:
-        specifier: 1.0.0-rc.4
-        version: 1.0.0-rc.4(@algolia/client-search@4.14.2)(@types/node@18.16.0)(search-insights@2.6.0)
-      workbox-window:
-        specifier: ^7.0.0
-        version: 7.0.0
-
   tests/webpack:
     dependencies:
       '@mermaid-js/mermaid-example-diagram':
@@ -4044,7 +3989,7 @@ packages:
       tslib:
         optional: true
     dependencies:
-      '@rollup/pluginutils': 5.0.2(rollup@2.79.1)
+      '@rollup/pluginutils': 5.0.2
       resolve: 1.22.2
       typescript: 5.1.3
     dev: true
@@ -4061,7 +4006,7 @@ packages:
       rollup: 2.79.1
     dev: true
 
-  /@rollup/pluginutils@5.0.2(rollup@2.79.1):
+  /@rollup/pluginutils@5.0.2:
     resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -4073,7 +4018,6 @@ packages:
       '@types/estree': 1.0.0
       estree-walker: 2.0.2
       picomatch: 2.3.1
-      rollup: 2.79.1
     dev: true
 
   /@rollup/pluginutils@5.0.3(rollup@2.79.1):
@@ -15048,7 +14992,7 @@ packages:
         optional: true
     dependencies:
       '@antfu/utils': 0.7.5
-      '@rollup/pluginutils': 5.0.2(rollup@2.79.1)
+      '@rollup/pluginutils': 5.0.3(rollup@2.79.1)
       chokidar: 3.5.3
       debug: 4.3.4(supports-color@8.1.1)
       fast-glob: 3.3.1

@@ -1098,7 +1098,7 @@ The icons are accessed via the syntax fa:#icon class name#.
 
 ```mermaid-example
 flowchart TD
-    B["fab:fa-twitter for peace"]
+    B["fa:fa-twitter for peace"]
     B-->C[fa:fa-ban forbidden]
     B-->D(fa:fa-spinner)
     B-->E(A fa:fa-camera-retro perhaps?)
@@ -1106,7 +1106,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    B["fab:fa-twitter for peace"]
+    B["fa:fa-twitter for peace"]
     B-->C[fa:fa-ban forbidden]
     B-->D(fa:fa-spinner)
     B-->E(A fa:fa-camera-retro perhaps?)
