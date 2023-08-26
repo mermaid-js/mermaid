@@ -20,6 +20,22 @@ const getSvgParent = (elem) => {
   return container;
 };
 
+/**
+ * Finds the parent background color of an SVG element.
+ *
+ * Used to make a "hollow" arrowhead for an arrow.
+ *
+ * We can't use a transparent fill,
+ * because the arrow line is behind the arrowhead
+ * (ideally we'd stop drawing the line behind the arrowhead,
+ *  but this is pretty complicated to do).
+ *
+ * **Limitations**:
+ * - If the parent background color is a partial transparency,
+ *   the arrowhead will also be partially transparent.
+ * - More complicated backgrounds like pictures/animations won't work.
+ * @param elem
+ */
 const getBackgroundColor = (elem) => {
   let parent = getSvgParent(elem);
 
