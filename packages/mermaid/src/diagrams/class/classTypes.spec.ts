@@ -661,4 +661,13 @@ describe('given text representing a method, ', function () {
       expect(classMember.getDisplayDetails().cssStyle).toBe(abstractCssStyle);
     });
   });
+
+  describe('--uncategorized tests--', function () {
+    it('member name should handle double colons', function () {
+      const str = `std::map ~int,string~ pMap;`;
+
+      const classMember = new ClassMember(str, 'attribute');
+      expect(classMember.getDisplayDetails().displayText).toBe('std::map <int,string> pMap;');
+    });
+  });
 });
