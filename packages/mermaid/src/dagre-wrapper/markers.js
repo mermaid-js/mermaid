@@ -34,7 +34,7 @@ const getSvgParent = (elem) => {
  * - If the parent background color is a partial transparency,
  *   the arrowhead will also be partially transparent.
  * - More complicated backgrounds like pictures/animations won't work.
- * @param elem
+ * @param elem The SVG element.
  */
 const getBackgroundColor = (elem) => {
   let parent = getSvgParent(elem);
