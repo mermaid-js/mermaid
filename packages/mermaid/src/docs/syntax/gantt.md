@@ -184,7 +184,7 @@ tickInterval 1day
 The pattern is:
 
 ```javascript
-/^([1-9][0-9]*)(minute|hour|day|week|month)$/;
+/^([1-9][0-9]*)(millisecond|second|minute|hour|day|week|month)$/;
 ```
 
 More info in: [https://github.com/d3/d3-time#interval_every](https://github.com/d3/d3-time#interval_every)

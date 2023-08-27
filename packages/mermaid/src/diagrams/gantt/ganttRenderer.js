@@ -10,6 +10,8 @@ import {
   axisBottom,
   axisTop,
   timeFormat,
+  timeMillisecond,
+  timeSecond,
   timeMinute,
   timeHour,
   timeDay,
@@ -573,7 +575,7 @@ export const draw = function (text, id, version, diagObj) {
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
       .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
 
-    const reTickInterval = /^([1-9]\d*)(minute|hour|day|week|month)$/;
+    const reTickInterval = /^([1-9]\d*)(millisecond|second|minute|hour|day|week|month)$/;
     const resultTickInterval = reTickInterval.exec(
       diagObj.db.getTickInterval() || conf.tickInterval
     );
@@ -584,6 +586,12 @@ export const draw = function (text, id, version, diagObj) {
       const weekday = diagObj.db.getWeekday() || conf.weekday;
 
       switch (interval) {
+        case 'millisecond':
+          bottomXAxis.ticks(timeMillisecond.every(every));
+          break;
+        case 'second':
+          bottomXAxis.ticks(timeSecond.every(every));
+          break;
         case 'minute':
           bottomXAxis.ticks(timeMinute.every(every));
           break;
@@ -625,6 +633,12 @@ export const draw = function (text, id, version, diagObj) {
         const weekday = diagObj.db.getWeekday() || conf.weekday;
 
         switch (interval) {
+          case 'millisecond':
+            topXAxis.ticks(timeMillisecond.every(every));
+            break;
+          case 'second':
+            topXAxis.ticks(timeSecond.every(every));
+            break;
           case 'minute':
             topXAxis.ticks(timeMinute.every(every));
             break;
