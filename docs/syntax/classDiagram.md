@@ -19,13 +19,13 @@ Mermaid can render class diagrams.
 title: Animal example
 ---
 classDiagram
-    note "From Duck till Zebra"
+    note "From Duck to Zebra"
     Animal <|-- Duck
     note for Duck "can fly\ncan swim\ncan dive\ncan help in debugging"
     Animal <|-- Fish
     Animal <|-- Zebra
     Animal : +int age
-    Animal : +String gender
+    Animal : gender +string
     Animal: +isMammal()
     Animal: +mate()
     class Duck{
@@ -48,13 +48,13 @@ classDiagram
 title: Animal example
 ---
 classDiagram
-    note "From Duck till Zebra"
+    note "From Duck to Zebra"
     Animal <|-- Duck
     note for Duck "can fly\ncan swim\ncan dive\ncan help in debugging"
     Animal <|-- Fish
     Animal <|-- Zebra
     Animal : +int age
-    Animal : +String gender
+    Animal : gender +string
     Animal: +isMammal()
     Animal: +mate()
     class Duck{
@@ -170,6 +170,8 @@ UML provides mechanisms to represent class members such as attributes and method
 
 Mermaid distinguishes between attributes and functions/methods based on if the **parenthesis** `()` are present or not. The ones with `()` are treated as functions/methods, and all others as attributes.
 
+**Note:** class members can be entered either as __name__ __type__  or __type__ __name__. They can also be entered with, or without the use of a __:__. The examples below uses both methods to demonstrate.
+
 There are two ways to define the members of a class, and regardless of whichever syntax is used to define the members, the output will still be same. The two different ways are :
 
 - Associate a member of a class using **:** (colon) followed by member name, useful to define one member at a time. For example:
@@ -178,7 +180,7 @@ There are two ways to define the members of a class, and regardless of whichever
 classDiagram
 class BankAccount
 BankAccount : +String owner
-BankAccount : +BigDecimal balance
+BankAccount : +balance BigDecimal
 BankAccount : +deposit(amount)
 BankAccount : +withdrawal(amount)
 ```
@@ -187,7 +189,7 @@ BankAccount : +withdrawal(amount)
 classDiagram
 class BankAccount
 BankAccount : +String owner
-BankAccount : +BigDecimal balance
+BankAccount : +balance BigDecimal
 BankAccount : +deposit(amount)
 BankAccount : +withdrawal(amount)
 ```
@@ -198,7 +200,7 @@ BankAccount : +withdrawal(amount)
 classDiagram
 class BankAccount{
     +String owner
-    +BigDecimal balance
+    +balance BigDecimal 
     +deposit(amount)
     +withdrawal(amount)
 }
@@ -208,7 +210,7 @@ class BankAccount{
 classDiagram
 class BankAccount{
     +String owner
-    +BigDecimal balance
+    +balance BigDecimal
     +deposit(amount)
     +withdrawal(amount)
 }
@@ -222,7 +224,7 @@ Optionally you can end a method/function definition with the data type that will
 classDiagram
 class BankAccount{
     +String owner
-    +BigDecimal balance
+    +balance BigDecimal
     +deposit(amount) bool
     +withdrawal(amount) int
 }
@@ -232,7 +234,7 @@ class BankAccount{
 classDiagram
 class BankAccount{
     +String owner
-    +BigDecimal balance
+    +balance BigDecimal
     +deposit(amount) bool
     +withdrawal(amount) int
 }
@@ -247,7 +249,7 @@ Generics can be represented as part of a class definition and also in the parame
 ```mermaid-example
 classDiagram
 class Square~Shape~{
-    int id
+    -id int
     List~int~ position
     setPoints(List~int~ points)
     getPoints() List~int~
@@ -262,7 +264,7 @@ Square : +getDistanceMatrix() List~List~int~~
 ```mermaid
 classDiagram
 class Square~Shape~{
-    int id
+    -id int
     List~int~ position
     setPoints(List~int~ points)
     getPoints() List~int~
@@ -433,7 +435,7 @@ namespace BaseShapes {
     class Triangle
     class Rectangle {
       double width
-      double height
+      height double
     }
 }
 ```
@@ -444,7 +446,7 @@ namespace BaseShapes {
     class Triangle
     class Rectangle {
       double width
-      double height
+      height double
     }
 }
 ```
@@ -586,11 +588,11 @@ classDiagram
   }
   class IdCard{
     -id : int
-    -name : string
+    -string name
   }
   class Bike{
     -id : int
-    -name : string
+    -string name
   }
   Student "1" --o "1" IdCard : carries
   Student "1" --o "1" Bike : rides
@@ -604,11 +606,11 @@ classDiagram
   }
   class IdCard{
     -id : int
-    -name : string
+    -string name
   }
   class Bike{
     -id : int
-    -name : string
+    -string name
   }
   Student "1" --o "1" IdCard : carries
   Student "1" --o "1" Bike : rides
