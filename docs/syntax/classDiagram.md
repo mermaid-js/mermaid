@@ -627,7 +627,7 @@ You would define these actions on a separate line after all classes have been de
     click className href "url" "tooltip"
 
 - _action_ is either `link` or `callback`, depending on which type of interaction you want to have called
-- _className_ is the id of the node that the action will be associated with
+- _className_ is the id of the node that the action will be associated with (if you have created a class with a generic type, the id will be the name only, without the type declaration at the end)
 - _reference_ is either the url link, or the function name for callback.
 - (_optional_) tooltip is a string to be displayed when hovering over element (note: The styles of the tooltip are set by the class .mermaidTooltip.)
 - note: callback function will be called with the nodeId as parameter.
