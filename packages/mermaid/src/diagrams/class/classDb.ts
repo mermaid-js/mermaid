@@ -365,6 +365,7 @@ export const relationType = {
   COMPOSITION: 2,
   DEPENDENCY: 3,
   LOLLIPOP: 4,
+  REALIZATION: 5,
 };
 
 const setupToolTips = function (element: Element) {

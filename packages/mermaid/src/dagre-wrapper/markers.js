@@ -2,6 +2,59 @@
 
 import { log } from '../logger.js';
 
+const getSvgParent = (elem) => {
+  let container = elem;
+
+  // the intent here is to find the first parent element that is NOT part of the SVG element
+  // I know there has to be a better way, but could not find one that worked
+  // tried using checking if elem was instanceof SVGGraphicsElement or SVGElement, but it failed to detect correctly
+  if (container._groups) {
+    container = container._groups[0][0];
+  }
+  if (container.tagName.toLowerCase() === 'g') {
+    container = container.parentElement;
+  }
+  if (container.localName.toLowerCase() === 'svg') {
+    container = container.parentElement;
+  }
+  return container;
+};
+
+/**
+ * Finds the parent background color of an SVG element.
+ *
+ * Used to make a "hollow" arrowhead for an arrow.
+ *
+ * We can't use a transparent fill,
+ * because the arrow line is behind the arrowhead
+ * (ideally we'd stop drawing the line behind the arrowhead,
+ *  but this is pretty complicated to do).
+ *
+ * **Limitations**:
+ * - If the parent background color is a partial transparency,
+ *   the arrowhead will also be partially transparent.
+ * - More complicated backgrounds like pictures/animations won't work.
+ * @param elem
+ */
+const getBackgroundColor = (elem) => {
+  let parent = getSvgParent(elem);
+
+  let backgroundColor;
+  while (parent && parent.tagName.toLowerCase() !== 'body') {
+    if (parent instanceof Element) {
+      const computedStyle = getComputedStyle(parent);
+      backgroundColor = computedStyle.backgroundColor;
+
+      if (backgroundColor !== 'rgba(0, 0, 0, 0)') {
+        break;
+      }
+      parent = parent.parentNode;
+    }
+  }
+
+  return backgroundColor === 'rgba(0, 0, 0, 0)' ? 'white' : backgroundColor;
+};
+
 // Only add the number of markers that the diagram needs
 const insertMarkers = (elem, markerArray, type, id) => {
   markerArray.forEach((markerName) => {
@@ -11,6 +64,8 @@ const insertMarkers = (elem, markerArray, type, id) => {
 
 const extension = (elem, type, id) => {
   log.trace('Making markers for ', id);
+  const backgroundColor = getBackgroundColor(elem);
+
   elem
     .append('defs')
     .append('marker')
@@ -22,7 +77,8 @@ const extension = (elem, type, id) => {
     .attr('markerHeight', 240)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 1,7 L18,13 V 1 Z');
+    .attr('d', 'M 1,7 L18,13 V 2 Z')
+    .attr('fill', backgroundColor);
 
   elem
     .append('defs')
@@ -35,7 +91,41 @@ const extension = (elem, type, id) => {
     .attr('markerHeight', 28)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 1,1 V 13 L18,7 Z'); // this is actual shape for arrowhead
+    .attr('d', 'M 1,1 V 13 L18,7 Z')
+    .attr('fill', backgroundColor); // this is actual shape for arrowhead
+};
+
+const realization = (elem, type, id) => {
+  log.trace('Making markers for ', id);
+  let backgroundColor = getBackgroundColor(elem);
+
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', type + '-realizationStart')
+    .attr('class', 'marker realization ' + type)
+    .attr('refX', 0)
+    .attr('refY', 7)
+    .attr('markerWidth', 190)
+    .attr('markerHeight', 240)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 1,7 L18,13 V 2 Z')
+    .attr('fill', backgroundColor);
+
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', type + '-realizationEnd')
+    .attr('class', 'marker realization ' + type)
+    .attr('refX', 19)
+    .attr('refY', 7)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 28)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 1,1 V 13 L18,7 Z')
+    .attr('fill', backgroundColor); // this is actual shape for arrowhead
 };
 
 const composition = (elem, type) => {
@@ -265,6 +355,7 @@ const barb = (elem, type) => {
 // TODO rename the class diagram markers to something shape descriptive and semantic free
 const markers = {
   extension,
+  realization,
   composition,
   aggregation,
   dependency,
