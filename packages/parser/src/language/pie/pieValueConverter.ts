@@ -20,7 +20,7 @@ export class PieValueConverter extends DefaultValueConverter {
 
     if (value === undefined) {
       return super.runConverter(rule, input, cstNode);
-    } 
+    }
     return value;
   }
 
