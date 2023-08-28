@@ -50,7 +50,10 @@ export class Diagram {
     this.parser.parse = (text: string) =>
       originalParse(cleanupComments(extractFrontMatter(text, this.db, configApi.addDirective)));
 
-    this.parser.parser.yy = this.db;
+    if (this.parser.parser !== undefined) {
+      // The parser.parser.yy is only present in JISON parsers. So, we'll only set if required.
+      this.parser.parser.yy = this.db;
+    }
     this.init = diagram.init;
     this.parse();
   }

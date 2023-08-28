@@ -1,6 +1,5 @@
 import type { DiagramDefinition } from '../../diagram-api/types.js';
-// @ts-ignore - jison doesn't export types
-import parser from './parser/info.jison';
+import { parser } from './infoParser.js';
 import { db } from './infoDb.js';
 import { renderer } from './infoRenderer.js';
 
