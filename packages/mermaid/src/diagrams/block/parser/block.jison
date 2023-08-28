@@ -64,7 +64,7 @@ accDescr\s*"{"\s*                                { this.pushState("acc_descr_mul
 
 // Start of nodes with shapes and description
 "-)"                   { yy.getLogger().info('Lex: -)'); this.pushState('NODE');return 'NODE_D START'; }
-"(-"                   { yy.getLogger().info('Lex: (-'); this.pushState('NODE');return 'NODE_DSTART';           }
+"(-"                   { yy.getLogger().info('Lex: (-'); this.pushState('NODE');return 'NODE_DSTART'; }
 "))"                   { yy.getLogger().info('Lex: ))'); this.pushState('NODE');return 'NODE_DSTART';  }
 ")"                    { yy.getLogger().info('Lex: )'); this.pushState('NODE');return 'NODE_DSTART';      }
 "(("                   { yy.getLogger().info('Lex: )'); this.pushState('NODE');return 'NODE_DSTART'; }
@@ -177,8 +177,8 @@ statement
 	;
 
 nodeStatement
-  : nodeStatement link node { yy.getLogger().info('Rule: nodeStatement (nodeStatement link node) ');}
-  | node { yy.getLogger().info('Rule: nodeStatement (node) ', $1);}
+  : nodeStatement link node { yy.getLogger().info('Rule: nodeStatement (nodeStatement link node) '); yy.addBlock($1.id);}
+  | node { yy.getLogger().info('Rule: nodeStatement (node) ', $1); yy.addBlock($1.id, $1.label, yy.typeStr2Type($1)); }
   ;
 
 columnsStatement
@@ -192,16 +192,16 @@ blockStatement
 
 node
   : NODE_ID
-  { yy.getLogger().info("Rule: node (NODE_ID seperator): ", $1); }
+  { yy.getLogger().info("Rule: node (NODE_ID seperator): ", $1); $$ = { id: $1 }; }
   |NODE_ID nodeShapeNLabel
-    { yy.getLogger().info("Rule: node (NODE_ID nodeShapeNLabel seperator): ", $1, $2); }
+    { yy.getLogger().info("Rule: node (NODE_ID nodeShapeNLabel seperator): ", $1, $2); $$ = { id: $1, label: $2.label, typeStr: $2.typeStr };}
   // |nodeShapeNLabel seperator
   // { yy.getLogger().info("Rule: node (nodeShapeNLabel seperator): ", $1, $2, $3); }
   ;
 
 nodeShapeNLabel
   :   NODE_DSTART STR NODE_DEND
-	      { yy.getLogger().info("Rule: nodeShapeNLabel: ", $1, $2, $3); $$ = { type: $1 + $3, descr: $2 }; }
+	      { yy.getLogger().info("Rule: nodeShapeNLabel: ", $1, $2, $3); $$ = { typeStr: $1 + $3, label: $2 }; }
   ;
 
 %%

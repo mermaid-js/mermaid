@@ -3,8 +3,7 @@ import block from './block.jison';
 import db from '../blockDB.js';
 import { cleanupComments } from '../../../diagram-api/comments.js';
 import { prepareTextForParsing } from '../blockUtils.js';
-import * as fs from 'fs';
-import * as path from 'path';
+import { setConfig } from '../../../config.js';
 
 describe('Block diagram', function () {
   describe('when parsing an block diagram graph it should handle > ', function () {
@@ -20,6 +19,22 @@ describe('Block diagram', function () {
       `;
 
       block.parse(str);
+      const blocks = db.getBlocks();
+      expect(blocks.length).toBe(1);
+      expect(blocks[0].ID).toBe('id');
+      expect(blocks[0].label).toBe('id');
+    });
+    it('a node with a square shape and a label', async () => {
+      const str = `block-beta
+          id["A label"]
+          `;
+
+      block.parse(str);
+      const blocks = db.getBlocks();
+      expect(blocks.length).toBe(1);
+      expect(blocks[0].ID).toBe('id');
+      expect(blocks[0].label).toBe('A label');
+      expect(blocks[0].type).toBe('square');
     });
     it('a diagram with multiple nodes', async () => {
       const str = `block-beta
