@@ -742,6 +742,22 @@ describe('given a class diagram with members and methods ', function () {
       parser.parse(str);
     });
 
+    it('should handle direct member declaration', function () {
+      const str = 'classDiagram\n' + 'Car : wheels';
+
+      parser.parse(str);
+      expect(classDb.getClasses()).toHaveProperty('Car');
+      expect(classDb.getClasses()['Car']['members']).toContain('wheels');
+    });
+
+    it('should handle direct member declaration with type', function () {
+      const str = 'classDiagram\n' + 'Car : int wheels';
+
+      parser.parse(str);
+      expect(classDb.getClasses()).toHaveProperty('Car');
+      expect(classDb.getClasses()['Car']['members']).toContain('int wheels');
+    });
+
     it('should handle simple member declaration with type', function () {
       const str = 'classDiagram\n' + 'class Car\n' + 'Car : int wheels';
 
