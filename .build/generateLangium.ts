@@ -1,5 +1,5 @@
-import { execSync } from 'child_process';
+import { generate } from 'langium-cli';
 
-export function generateLangium() {
-  execSync(`pnpm --prefix ${process.cwd()}/packages/parser exec langium generate`);
+export async function generateLangium() {
+  await generate({ file: `./packages/parser/langium-config.json` });
 }

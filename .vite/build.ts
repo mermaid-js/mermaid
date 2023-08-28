@@ -114,7 +114,7 @@ const main = async () => {
   }
 };
 
-generateLangium();
+await generateLangium();
 
 if (watch) {
   await build(getBuildConfig({ minify: false, watch, core: false, entryName: 'parser' }));

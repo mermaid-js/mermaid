@@ -107,6 +107,7 @@
     "jison": "^0.4.18",
     "js-yaml": "^4.1.0",
     "jsdom": "^22.0.0",
+    "langium-cli": "2.0.1",
     "lint-staged": "^13.2.1",
     "nyc": "^15.1.0",
     "path-browserify": "^1.0.1",

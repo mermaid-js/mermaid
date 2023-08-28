@@ -1,5 +1,6 @@
 // @ts-nocheck : TODO Fix ts errors
 import { sanitizeUrl } from '@braintree/sanitize-url';
+import type { CurveFactory } from 'd3';
 import {
   curveBasis,
   curveBasisClosed,
@@ -13,7 +14,6 @@ import {
   curveCatmullRomClosed,
   curveCatmullRomOpen,
   curveCatmullRom,
-  CurveFactory,
   curveLinear,
   curveLinearClosed,
   curveMonotoneX,
@@ -29,9 +29,10 @@ import { configKeys } from './defaultConfig.js';
 import { log } from './logger.js';
 import { detectType } from './diagram-api/detectType.js';
 import assignWithDepth from './assignWithDepth.js';
-import { MermaidConfig } from './config.type.js';
+import type { MermaidConfig } from './config.type.js';
 import memoize from 'lodash-es/memoize.js';
 import merge from 'lodash-es/merge.js';
+import { directiveRegex } from './diagram-api/regexes.js';
 
 export const ZERO_WIDTH_SPACE = '\u200b';
 
@@ -58,7 +59,7 @@ const d3CurveTypes = {
   curveStepAfter: curveStepAfter,
   curveStepBefore: curveStepBefore,
 };
-const directive = /%{2}{\s*(?:(\w+)\s*:|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;
+
 const directiveWithoutOpen =
   /\s*(?:(\w+)(?=:):|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;
 
@@ -96,32 +97,36 @@ const directiveWithoutOpen =
  * @param config - Optional mermaid configuration object.
  * @returns The json object representing the init passed to mermaid.initialize()
  */
-export const detectInit = function (text: string, config?: MermaidConfig): MermaidConfig {
+export const detectInit = function (
+  text: string,
+  config?: MermaidConfig
+): MermaidConfig | undefined {
   const inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
   let results = {};
 
   if (Array.isArray(inits)) {
     const args = inits.map((init) => init.args);
-    directiveSanitizer(args);
-
+    sanitizeDirective(args);
     results = assignWithDepth(results, [...args]);
   } else {
     results = inits.args;
   }
-  if (results) {
-    let type = detectType(text, config);
-    ['config'].forEach((prop) => {
-      if (results[prop] !== undefined) {
-        if (type === 'flowchart-v2') {
-          type = 'flowchart';
-        }
-        results[type] = results[prop];
-        delete results[prop];
-      }
-    });
+
+  if (!results) {
+    return;
   }
 
-  // Todo: refactor this, these results are never used
+  let type = detectType(text, config);
+  ['config'].forEach((prop) => {
+    if (results[prop] !== undefined) {
+      if (type === 'flowchart-v2') {
+        type = 'flowchart';
+      }
+      results[type] = results[prop];
+      delete results[prop];
+    }
+  });
+
   return results;
 };
 
@@ -163,10 +168,10 @@ export const detectDirective = function (
     );
     let match;
     const result = [];
-    while ((match = directive.exec(text)) !== null) {
+    while ((match = directiveRegex.exec(text)) !== null) {
       // This is necessary to avoid infinite loops with zero-width matches
-      if (match.index === directive.lastIndex) {
-        directive.lastIndex++;
+      if (match.index === directiveRegex.lastIndex) {
+        directiveRegex.lastIndex++;
       }
       if (
         (match && !type) ||
@@ -842,67 +847,63 @@ export const entityDecode = function (html: string): string {
  *
  * @param args - Directive's JSON
  */
-export const directiveSanitizer = (args: any) => {
-  log.debug('directiveSanitizer called with', args);
-  if (typeof args === 'object') {
-    // check for array
-    if (args.length) {
-      args.forEach((arg) => directiveSanitizer(arg));
-    } else {
-      // This is an object
-      Object.keys(args).forEach((key) => {
-        log.debug('Checking key', key);
-        if (key.startsWith('__')) {
-          log.debug('sanitize deleting __ option', key);
-          delete args[key];
-        }
+export const sanitizeDirective = (args: unknown): void => {
+  log.debug('sanitizeDirective called with', args);
 
-        if (key.includes('proto')) {
-          log.debug('sanitize deleting proto option', key);
-          delete args[key];
-        }
+  // Return if not an object
+  if (typeof args !== 'object' || args == null) {
+    return;
+  }
 
-        if (key.includes('constr')) {
-          log.debug('sanitize deleting constr option', key);
-          delete args[key];
-        }
+  // Sanitize each element if an array
+  if (Array.isArray(args)) {
+    args.forEach((arg) => sanitizeDirective(arg));
+    return;
+  }
 
-        if (key.includes('themeCSS')) {
-          log.debug('sanitizing themeCss option');
-          args[key] = sanitizeCss(args[key]);
-        }
-        if (key.includes('fontFamily')) {
-          log.debug('sanitizing fontFamily option');
-          args[key] = sanitizeCss(args[key]);
-        }
-        if (key.includes('altFontFamily')) {
-          log.debug('sanitizing altFontFamily option');
-          args[key] = sanitizeCss(args[key]);
-        }
-        if (!configKeys.includes(key)) {
-          log.debug('sanitize deleting option', key);
-          delete args[key];
-        } else {
-          if (typeof args[key] === 'object') {
-            log.debug('sanitize deleting object', key);
-            directiveSanitizer(args[key]);
-          }
-        }
-      });
+  // Sanitize each key if an object
+  for (const key of Object.keys(args)) {
+    log.debug('Checking key', key);
+    if (
+      key.startsWith('__') ||
+      key.includes('proto') ||
+      key.includes('constr') ||
+      !configKeys.has(key) ||
+      args[key] == null
+    ) {
+      log.debug('sanitize deleting key: ', key);
+      delete args[key];
+      continue;
+    }
+
+    // Recurse if an object
+    if (typeof args[key] === 'object') {
+      log.debug('sanitizing object', key);
+      sanitizeDirective(args[key]);
+      continue;
+    }
+
+    const cssMatchers = ['themeCSS', 'fontFamily', 'altFontFamily'];
+    for (const cssKey of cssMatchers) {
+      if (key.includes(cssKey)) {
+        log.debug('sanitizing css option', key);
+        args[key] = sanitizeCss(args[key]);
+      }
     }
   }
+
   if (args.themeVariables) {
-    const kArr = Object.keys(args.themeVariables);
-    for (const k of kArr) {
+    for (const k of Object.keys(args.themeVariables)) {
       const val = args.themeVariables[k];
-      if (val && val.match && !val.match(/^[\d "#%(),.;A-Za-z]+$/)) {
+      if (val?.match && !val.match(/^[\d "#%(),.;A-Za-z]+$/)) {
         args.themeVariables[k] = '';
       }
     }
   }
   log.debug('After sanitization', args);
 };
-export const sanitizeCss = (str) => {
+
+export const sanitizeCss = (str: string): string => {
   let startCnt = 0;
   let endCnt = 0;
 
@@ -1019,8 +1020,8 @@ export default {
   random,
   runFunc,
   entityDecode,
-  initIdGenerator: initIdGenerator,
-  directiveSanitizer,
+  initIdGenerator,
+  sanitizeDirective,
   sanitizeCss,
   insertTitle,
   parseFontSize,

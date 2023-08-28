@@ -79,7 +79,7 @@ function sendEventsToAll() {
 }
 
 async function createServer() {
-  generateLangium();
+  await generateLangium();
   handleFileChange();
   const app = express();
   chokidar
@@ -93,7 +93,7 @@ async function createServer() {
         return;
       }
       if (/\.langium$/.test(path)) {
-        generateLangium();
+        await generateLangium();
       }
       console.log(`${path} changed. Rebuilding...`);
       handleFileChange();

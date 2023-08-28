@@ -6,6 +6,24 @@
 
 # Blog
 
+## [Special cases broke Microsoft Zune and can ruin your code base too](https://www.mermaidchart.com/blog/posts/special-cases-broke-microsoft-zune-and-can-ruin-your-code-base-too/)
+
+23 August 2023 · 15 mins
+
+Read about the pitfalls of special cases in programming, illustrating how they can lead to complexity, diminish readability, and create maintenance challenges.
+
+## [New AI chatbot now available on Mermaid Chart to simplify text-based diagram creation](https://www.mermaidchart.com/blog/posts/ai-chatbot-now-available-on-mermaid-chart-to-simplify-text-based-diagram-creation/)
+
+14 August 2023 · 4 mins
+
+Introducing Mermaid Chart’s new AI chatbot, a diagramming assistant that simplifies text-based diagram creation for everyone, from developers to educators, offering features to start, edit, and fix diagrams, and embodying our vision to make diagramming accessible, user-friendly, and fun.
+
+## [Believe It or Not, You Still Need an Online UML Diagram Tool](https://www.mermaidchart.com/blog/posts/uml-diagram-tool/)
+
+14 August 2023 · 8 mins
+
+A UML diagram tool helps developers and other professionals quickly create and share UML diagrams that communicate information about complex software systems.
+
 ## [From Chaos to Clarity: Exploring Mind Maps with MermaidJS](https://www.mermaidchart.com/blog/posts/from-chaos-to-clarity-exploring-mind-maps-with-mermaidjs)
 
 24 July 2023 · 4 mins

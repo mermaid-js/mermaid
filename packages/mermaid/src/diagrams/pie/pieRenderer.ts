@@ -1,4 +1,5 @@
-import d3, { scaleOrdinal, pie as d3pie, arc } from 'd3';
+import type d3 from 'd3';
+import { scaleOrdinal, pie as d3pie, arc } from 'd3';
 
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
@@ -11,14 +12,16 @@ import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 
 const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Section>[] => {
   // Compute the position of each group on the pie:
-  const pieData: D3Section[] = Object.entries(sections).map(
-    (element: [string, number]): D3Section => {
+  const pieData: D3Section[] = Object.entries(sections)
+    .map((element: [string, number]): D3Section => {
       return {
         label: element[0],
         value: element[1],
       };
-    }
-  );
+    })
+    .sort((a: D3Section, b: D3Section): number => {
+      return b.value - a.value;
+    });
   const pie: d3.Pie<unknown, D3Section> = d3pie<D3Section>().value(
     (d3Section: D3Section): number => d3Section.value
   );
