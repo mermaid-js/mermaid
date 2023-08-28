@@ -2,9 +2,9 @@
 
 > A sankey diagram is a visualization used to depict a flow from one set of values to another.
 
-::: warning
+```warning
 This is an experimental diagram. Its syntax are very close to plain CSV, but it is to be extended in the nearest future.
-:::
+```
 
 The things being connected are called nodes and the connections are called links.
 
