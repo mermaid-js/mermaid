@@ -11,8 +11,7 @@ function populateDb(ast: Pie, db: PieDB) {
   populateCommonDb(ast, db);
   db.setShowData(ast.showData);
   ast.sections.map((section: PieSection) => {
-    const { label, value } = section;
-    db.addSection({ label, value });
+    db.addSection(section);
   });
 }
 
