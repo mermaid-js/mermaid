@@ -173,7 +173,7 @@ The following formatting strings are supported:
 
 More info in: [https://github.com/d3/d3-time-format/tree/v4.0.0#locale_format](https://github.com/d3/d3-time-format/tree/v4.0.0#locale_format)
 
-### Axis ticks
+### Axis ticks (v10.3.0+)
 
 The default output ticks are auto. You can custom your `tickInterval`, like `1day` or `1week`.
 
@@ -197,7 +197,9 @@ gantt
   weekday monday
 ```
 
-Support: v10.3.0+
+```warning
+`millisecond` and `second` support was added in vMERMAID_RELEASE_VERSION
+```
 
 ## Output in compact mode
 
