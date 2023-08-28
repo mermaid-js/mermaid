@@ -786,11 +786,11 @@ It is possible to apply specific styles such as a thicker border or a different 
 
 Then attaching that class to a specific node:
 
-        cssClass "nodeId1" styleClass;
+        cssClass "nodeId1" styleClass
 
 It is also possible to attach a class to a list of nodes in one statement:
 
-        cssClass "nodeId1,nodeId2" styleClass;
+        cssClass "nodeId1,nodeId2" styleClass
 
 A shorter form of adding a class is to attach the classname to the node using the `:::` operator:
 
