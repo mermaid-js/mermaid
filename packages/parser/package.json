@@ -12,7 +12,7 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/mermaid-parser.esm.mjs",
+      "import": "./dist/mermaid-parser.core.mjs",
       "types": "./dist/src/index.d.ts"
     }
   },
