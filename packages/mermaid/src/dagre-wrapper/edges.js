@@ -456,6 +456,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     curve = edge.curve;
   }
 
+  // The offsets are calculated from the markers' dimensions.
   const markerOffsets = {
     aggregation: 18,
     extension: 18,
@@ -468,9 +469,14 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     .x(function (d, i, data) {
       let offset = 0;
       if (i === 0 && Object.hasOwn(markerOffsets, edge.arrowTypeStart)) {
+        // Handle first point
+        // Calculate the angle and delta between the first two points
         const { angle, deltaX } = calculateDeltaAndAngle(data[0], data[1]);
+        // Calculate the offset based on the angle and the marker's dimensions
         offset = markerOffsets[edge.arrowTypeStart] * Math.cos(angle) * (deltaX >= 0 ? 1 : -1) || 0;
       } else if (i === data.length - 1 && Object.hasOwn(markerOffsets, edge.arrowTypeEnd)) {
+        // Handle last point
+        // Calculate the angle and delta between the last two points
         const { angle, deltaX } = calculateDeltaAndAngle(
           data[data.length - 1],
           data[data.length - 2]
@@ -480,6 +486,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
       return d.x + offset;
     })
     .y(function (d, i, data) {
+      // Same handling as X above
       let offset = 0;
       if (i === 0 && Object.hasOwn(markerOffsets, edge.arrowTypeStart)) {
         const { angle, deltaY } = calculateDeltaAndAngle(data[0], data[1]);
