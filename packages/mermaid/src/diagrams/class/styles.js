@@ -109,13 +109,13 @@ g.classGroup line {
 }
 
 #extensionStart, .extension {
-  fill: ${options.mainBkg} !important;
+  fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
 #extensionEnd, .extension {
-  fill: ${options.mainBkg} !important;
+  fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
