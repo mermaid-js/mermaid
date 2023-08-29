@@ -456,46 +456,42 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     curve = edge.curve;
   }
 
-  const offsets = {
-    dependency: 6,
-    composition: 18,
-    extension: 18,
+  const markerOffsets = {
     aggregation: 18,
-    lollipop: 12,
+    extension: 18,
+    composition: 18,
+    dependency: 6,
+    lollipop: 13.5,
   };
 
   const lineFunction = line()
     .x(function (d, i, data) {
-      debugger;
       let offset = 0;
-      if (i === 0 && edge.arrowTypeStart !== 'none') {
-        const { angle, deltaX, deltaY } = calculateDeltaAndAngle(data[0], data[1]);
-        offset = offsets[edge.arrowTypeStart] * Math.cos(angle) * (deltaX <= 0 ? -1 : 1) || 0;
-        console.log('ffff xstart', { offset, angle, deltaX, deltaY });
-      } else if (i === data.length - 1 && edge.arrowTypeEnd !== 'none') {
-        const { angle, deltaX, deltaY } = calculateDeltaAndAngle(
+      if (i === 0 && Object.hasOwn(markerOffsets, edge.arrowTypeStart)) {
+        const { angle, deltaX } = calculateDeltaAndAngle(data[0], data[1]);
+        offset = markerOffsets[edge.arrowTypeStart] * Math.cos(angle) * (deltaX >= 0 ? 1 : -1) || 0;
+      } else if (i === data.length - 1 && Object.hasOwn(markerOffsets, edge.arrowTypeEnd)) {
+        const { angle, deltaX } = calculateDeltaAndAngle(
           data[data.length - 1],
           data[data.length - 2]
         );
-        offset = offsets[edge.arrowTypeEnd] * Math.cos(angle) * (deltaX <= 0 ? -1 : 1) || 0;
-        console.log('ffff xend', { offset, angle, deltaX, deltaY });
+        offset = markerOffsets[edge.arrowTypeEnd] * Math.cos(angle) * (deltaX >= 0 ? 1 : -1) || 0;
       }
       return d.x + offset;
     })
     .y(function (d, i, data) {
-      debugger;
       let offset = 0;
-      if (i === 0 && edge.arrowTypeStart !== 'none') {
-        const { angle, deltaY, deltaX } = calculateDeltaAndAngle(data[0], data[1]);
-        offset = offsets[edge.arrowTypeStart] * Math.abs(Math.sin(angle)) || 0;
-        console.log('ffff ystart', { offset, angle, deltaX, deltaY, sin: Math.sin(angle) });
-      } else if (i === data.length - 1 && edge.arrowTypeEnd !== 'none') {
-        const { angle, deltaY, deltaX } = calculateDeltaAndAngle(
+      if (i === 0 && Object.hasOwn(markerOffsets, edge.arrowTypeStart)) {
+        const { angle, deltaY } = calculateDeltaAndAngle(data[0], data[1]);
+        offset =
+          markerOffsets[edge.arrowTypeStart] * Math.abs(Math.sin(angle)) * (deltaY >= 0 ? 1 : -1);
+      } else if (i === data.length - 1 && Object.hasOwn(markerOffsets, edge.arrowTypeEnd)) {
+        const { angle, deltaY } = calculateDeltaAndAngle(
           data[data.length - 1],
           data[data.length - 2]
         );
-        offset = offsets[edge.arrowTypeEnd] * -Math.abs(Math.sin(angle)) || 0;
-        console.log('ffff yend', { offset, angle, deltaX, deltaY });
+        offset =
+          markerOffsets[edge.arrowTypeEnd] * Math.abs(Math.sin(angle)) * (deltaY >= 0 ? 1 : -1);
       }
       return d.y + offset;
     })

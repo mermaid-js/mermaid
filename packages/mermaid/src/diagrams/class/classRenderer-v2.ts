@@ -130,7 +130,6 @@ export const addClasses = function (
         // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release
         padding: getConfig().flowchart?.padding ?? getConfig().class?.padding,
       };
-      console.log('node', node, structuredClone(node));
       g.setNode(vertex.id, node);
 
       if (parent) {

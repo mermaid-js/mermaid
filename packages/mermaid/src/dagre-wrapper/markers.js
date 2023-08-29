@@ -125,7 +125,7 @@ const lollipop = (elem, type) => {
     .append('marker')
     .attr('id', type + '-lollipopStart')
     .attr('class', 'marker lollipop ' + type)
-    .attr('refX', 12)
+    .attr('refX', 13)
     .attr('refY', 7)
     .attr('markerWidth', 190)
     .attr('markerHeight', 240)
@@ -133,7 +133,23 @@ const lollipop = (elem, type) => {
     .append('circle')
     .attr('stroke', 'black')
     .attr('fill', 'transparent')
-    .attr('cx', 6)
+    .attr('cx', 7)
+    .attr('cy', 7)
+    .attr('r', 6);
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', type + '-lollipopEnd')
+    .attr('class', 'marker lollipop ' + type)
+    .attr('refX', 1)
+    .attr('refY', 7)
+    .attr('markerWidth', 190)
+    .attr('markerHeight', 240)
+    .attr('orient', 'auto')
+    .append('circle')
+    .attr('stroke', 'black')
+    .attr('fill', 'transparent')
+    .attr('cx', 7)
     .attr('cy', 7)
     .attr('r', 6);
 };
