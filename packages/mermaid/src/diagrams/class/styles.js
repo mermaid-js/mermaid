@@ -91,7 +91,7 @@ g.classGroup line {
 }
 
 #compositionEnd, .composition {
-  fill: ${options.lineColor} !important;
+  fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }

@@ -368,7 +368,20 @@ const cutPathAtIntersect = (_points, boundryNode) => {
   return points;
 };
 
-//(edgePaths, e, edge, clusterDb, diagramtype, graph)
+/**
+ * Calculate the deltas and angle between two points
+ * @param {{x: number, y:number}} point1
+ * @param {{x: number, y:number}} point2
+ * @returns {{angle: number, deltaX: number, deltaY: number}}
+ */
+function calculateDeltaAndAngle(point1, point2) {
+  const [x1, y1] = [point1.x, point1.y];
+  const [x2, y2] = [point2.x, point2.y];
+  const deltaX = x2 - x1;
+  const deltaY = y2 - y1;
+  return { angle: Math.atan(deltaY / deltaX), deltaX, deltaY };
+}
+
 export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph) {
   let points = edge.points;
   let pointsHasChanged = false;
@@ -435,22 +448,56 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
   const lineData = points.filter((p) => !Number.isNaN(p.y));
 
   // This is the accessor function we talked about above
-  let curve;
+  let curve = curveBasis;
   // Currently only flowcharts get the curve from the settings, perhaps this should
   // be expanded to a common setting? Restricting it for now in order not to cause side-effects that
   // have not been thought through
-  if (diagramType === 'graph' || diagramType === 'flowchart') {
-    curve = edge.curve || curveBasis;
-  } else {
-    curve = curveBasis;
+  if (edge.curve && (diagramType === 'graph' || diagramType === 'flowchart')) {
+    curve = edge.curve;
   }
-  // curve = curveLinear;
+
+  const offsets = {
+    dependency: 6,
+    composition: 18,
+    extension: 18,
+    aggregation: 18,
+    lollipop: 12,
+  };
+
   const lineFunction = line()
-    .x(function (d) {
-      return d.x;
+    .x(function (d, i, data) {
+      debugger;
+      let offset = 0;
+      if (i === 0 && edge.arrowTypeStart !== 'none') {
+        const { angle, deltaX, deltaY } = calculateDeltaAndAngle(data[0], data[1]);
+        offset = offsets[edge.arrowTypeStart] * Math.cos(angle) * (deltaX <= 0 ? -1 : 1) || 0;
+        console.log('ffff xstart', { offset, angle, deltaX, deltaY });
+      } else if (i === data.length - 1 && edge.arrowTypeEnd !== 'none') {
+        const { angle, deltaX, deltaY } = calculateDeltaAndAngle(
+          data[data.length - 1],
+          data[data.length - 2]
+        );
+        offset = offsets[edge.arrowTypeEnd] * Math.cos(angle) * (deltaX <= 0 ? -1 : 1) || 0;
+        console.log('ffff xend', { offset, angle, deltaX, deltaY });
+      }
+      return d.x + offset;
     })
-    .y(function (d) {
-      return d.y;
+    .y(function (d, i, data) {
+      debugger;
+      let offset = 0;
+      if (i === 0 && edge.arrowTypeStart !== 'none') {
+        const { angle, deltaY, deltaX } = calculateDeltaAndAngle(data[0], data[1]);
+        offset = offsets[edge.arrowTypeStart] * Math.abs(Math.sin(angle)) || 0;
+        console.log('ffff ystart', { offset, angle, deltaX, deltaY, sin: Math.sin(angle) });
+      } else if (i === data.length - 1 && edge.arrowTypeEnd !== 'none') {
+        const { angle, deltaY, deltaX } = calculateDeltaAndAngle(
+          data[data.length - 1],
+          data[data.length - 2]
+        );
+        offset = offsets[edge.arrowTypeEnd] * -Math.abs(Math.sin(angle)) || 0;
+        console.log('ffff yend', { offset, angle, deltaX, deltaY });
+      }
+      return d.y + offset;
     })
     .curve(curve);
 
@@ -489,15 +536,15 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     .attr('style', edge.style);
 
   // DEBUG code, adds a red circle at each edge coordinate
-  // edge.points.forEach((point) => {
-  //   elem
-  //     .append('circle')
-  //     .style('stroke', 'red')
-  //     .style('fill', 'red')
-  //     .attr('r', 1)
-  //     .attr('cx', point.x)
-  //     .attr('cy', point.y);
-  // });
+  edge.points.forEach((point) => {
+    elem
+      .append('circle')
+      .style('stroke', 'red')
+      .style('fill', 'red')
+      .attr('r', 1)
+      .attr('cx', point.x)
+      .attr('cy', point.y);
+  });
 
   let url = '';
   // // TODO: Can we load this config only from the rendered graph type?
