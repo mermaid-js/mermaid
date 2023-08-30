@@ -456,6 +456,8 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     curve = edge.curve;
   }
 
+  // We need to draw the lines a bit shorter to avoid drawing
+  // under any transparent markers.
   // The offsets are calculated from the markers' dimensions.
   const markerOffsets = {
     aggregation: 18,

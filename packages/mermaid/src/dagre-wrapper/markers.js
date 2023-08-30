@@ -136,6 +136,7 @@ const lollipop = (elem, type) => {
     .attr('cx', 7)
     .attr('cy', 7)
     .attr('r', 6);
+
   elem
     .append('defs')
     .append('marker')
