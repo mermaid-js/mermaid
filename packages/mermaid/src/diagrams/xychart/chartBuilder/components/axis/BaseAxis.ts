@@ -11,6 +11,7 @@ import { TextDimensionCalculator } from '../../TextDimensionCalculator.js';
 import { AxisPosition, Axis } from './index.js';
 
 const BAR_WIDTH_TO_TICK_WIDTH_RATIO = 0.7;
+const MAX_OUTER_PADDING_PERCENT_FOR_WRT_LABEL = 0.2;
 
 export abstract class BaseAxis implements Axis {
   protected boundingRect: BoundingRect = { x: 0, y: 0, width: 0, height: 0 };
@@ -52,7 +53,8 @@ export abstract class BaseAxis implements Axis {
   abstract getTickValues(): Array<string | number>;
 
   getTickDistance(): number {
-    return Math.abs(this.range[0] - this.range[1]) / this.getTickValues().length;
+    const range = this.getRange();
+    return Math.abs(range[0] - range[1]) / this.getTickValues().length;
   }
 
   getAxisOuterPadding(): number {
@@ -77,7 +79,9 @@ export abstract class BaseAxis implements Axis {
     let availableHeight = availableSpace.height;
     if (this.axisConfig.showLabel) {
       const spaceRequired = this.getLabelDimension();
-      this.outerPadding = spaceRequired.width / 2;
+      const maxPadding = MAX_OUTER_PADDING_PERCENT_FOR_WRT_LABEL * availableSpace.width;
+      this.outerPadding = Math.min(spaceRequired.width / 2, maxPadding);
+
       const heightRequired = spaceRequired.height + this.axisConfig.labelPadding * 2;
       log.trace('height required for axis label: ', heightRequired);
       if (heightRequired <= availableHeight) {
@@ -109,7 +113,8 @@ export abstract class BaseAxis implements Axis {
     let availableWidth = availableSpace.width;
     if (this.axisConfig.showLabel) {
       const spaceRequired = this.getLabelDimension();
-      this.outerPadding = spaceRequired.height / 2;
+      const maxPadding = MAX_OUTER_PADDING_PERCENT_FOR_WRT_LABEL * availableSpace.height;
+      this.outerPadding = Math.min(spaceRequired.height / 2, maxPadding);
       const widthRequired = spaceRequired.width + this.axisConfig.labelPadding * 2;
       log.trace('width required for axis label: ', widthRequired);
       if (widthRequired <= availableWidth) {

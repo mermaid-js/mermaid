@@ -54,7 +54,16 @@
     title "Basic xychart with many categories"
     x-axis "this is x axis" [category1, "category 2", category3, category4, category5, category6, category7]
     y-axis yaxisText 10 --> 150
-    bar "sample bat" [52, 96, 35, 10, 87, 34, 67, 99]
+    bar "sample bar" [52, 96, 35, 10, 87, 34, 67, 99]
+    </pre>
+
+    <h1>XY Charts demos</h1>
+    <pre class="mermaid">
+    xychart-beta
+    title "Line chart with many category"
+    x-axis "this is x axis" [category1, "category 2", category3, category4, category5, category6, category7]
+    y-axis yaxisText 10 --> 150
+    line "sample line" [52, 96, 35, 10, 87, 34, 67, 99]
     </pre>
 
     <h1>XY Charts demos</h1>
@@ -63,7 +72,7 @@
     title "Basic xychart with many categories with category overlap"
     x-axis "this is x axis" [category1, "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.", category3, category4, category5, category6, category7]
     y-axis yaxisText 10 --> 150
-    bar "sample bat" [52, 96, 35, 10, 87, 34, 67, 99]
+    bar "sample bar" [52, 96, 35, 10, 87, 34, 67, 99]
     </pre>
 
     <hr />
@@ -72,7 +81,7 @@
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         theme: 'default',
-        logLevel: 0,
+        logLevel: 3,
         securityLevel: 'loose',
       });
     </script>
