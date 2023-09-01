@@ -22,7 +22,8 @@ export type BlockType =
   | 'cylinder'
   | 'group'
   | 'doublecircle'
-  | 'composite';
+  | 'composite'
+  | 'column-setting';
 
 export interface Block {
   id: string;

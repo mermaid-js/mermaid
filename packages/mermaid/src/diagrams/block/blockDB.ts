@@ -18,47 +18,45 @@ import { log } from '../../logger.js';
 // export type TBlockColumnsDefaultValue = 'H'; // Do we support something else, like 'auto' | 0?
 
 // Initialize the node database for simple lookups
-let nodeDatabase: Record<string, Node> = {};
-const blockDatabase: Record<string, Block> = {};
+let blockDatabase: Record<string, Block> = {};
+
+const populateBlockDatabase = (blockList: Block[], parent: Block): void => {
+  for (const block of blockList) {
+    if (block.type === 'column-setting') {
+      const columns = block.columns || -1;
+      parent.columns = columns;
+    } else {
+      if (!block.label) {
+        block.label = block.id;
+      }
+      blockDatabase[block.id] = block;
+
+      if (block.children) {
+        populateBlockDatabase(block.children, block);
+      }
+    }
+  }
+};
 
 // Function to get a node by its id
 type IGetNodeById = (id: string) => Block | undefined;
-export const getNodeById = (id: string): Block | undefined => {
-  console.log(id, nodeDatabase);
+export const getBlockById = (id: string): Block | undefined => {
   return blockDatabase[id];
 };
 
 // TODO: Convert to generic TreeNode type? Convert to class?
 
-let rootBlock = { id: 'root', children: [] as Block[], columns: -1 };
 let blocks: Block[] = [];
 const links: Link[] = [];
-// let rootBlock = { id: 'root', children: [], columns: -1 } as Block;
-let currentBlock = rootBlock;
+let rootBlock = { id: 'root', type: 'composite', children: [], columns: -1 } as Block;
 
 const clear = (): void => {
   log.info('Clear called');
-  // rootBlocks = [];
-  blocks = [] as Block[];
   commonClear();
-  rootBlock = { id: 'root', children: [], columns: -1 };
-  currentBlock = rootBlock;
-  nodeDatabase = {};
-  blockDatabase[rootBlock.id] = rootBlock;
+  rootBlock = { id: 'root', type: 'composite', children: [], columns: -1 } as Block;
+  blockDatabase = { root: rootBlock };
+  blocks = [] as Block[];
 };
-
-// type IAddBlock = (block: Block) => Block;
-// const addBlock: IAddBlock = (block: Block, parent?: Block): Block => {
-//   log.info('addBlock', block, parent);
-//   if (parent) {
-//     parent.children ??= [];
-//     parent.children.push(block);
-//   } else {
-//     rootBlock.children.push(block);
-//   }
-//   blocks.push(block);
-//   return block;
-// };
 
 type ITypeStr2Type = (typeStr: string) => BlockType;
 export function typeStr2Type(typeStr: string) {
@@ -74,6 +72,7 @@ export function typeStr2Type(typeStr: string) {
 }
 
 let cnt = 0;
+type IGenerateId = () => string;
 export const generateId = () => {
   cnt++;
   return 'id-' + Math.random().toString(36).substr(2, 12) + '-' + cnt;
@@ -96,13 +95,15 @@ export const addBlock = (_id: string, _label?: string, type?: BlockType) => {
   blockDatabase[node.id] = node;
   // currentBlock.children ??= [];
   // currentBlock.children.push(node);
-  // console.log('currentBlock', currentBlock.children, nodeDatabase);
-  console.log('addNode called:', id, label, type, node);
+  // log.info('currentBlock', currentBlock.children, nodeDatabase);
+  log.info('addNode called:', id, label, type, node);
   return node;
 };
 
 type ISetHierarchy = (block: Block[]) => void;
 const setHierarchy = (block: Block[]): void => {
+  populateBlockDatabase(block, rootBlock);
+  log.info('blockdb', JSON.stringify(blockDatabase, null, 2));
   blocks = block;
 };
 
@@ -115,7 +116,6 @@ const addLink: IAddLink = (link: Link): Link => {
 type ISetColumns = (columnsStr: string) => void;
 const setColumns = (columnsStr: string): void => {
   const columns = columnsStr === 'auto' ? -1 : parseInt(columnsStr);
-  currentBlock!.columns = columns;
 };
 
 const getBlock = (id: string, blocks: Block[]): Block | undefined => {
@@ -149,8 +149,8 @@ const getColumns = (blockid: string): number => {
 
 type IGetBlocks = () => Block[];
 const getBlocks: IGetBlocks = () => {
-  // console.log('Block in test', rootBlock.children || []);
-  console.log('Block in test', blocks, blocks[0].id);
+  // log.info('Block in test', rootBlock.children || []);
+  log.info('Block in test', blocks, blocks[0].id);
   return blocks || [];
 };
 
@@ -172,7 +172,8 @@ export interface BlockDB extends DiagramDB {
   getColumns: IGetColumns;
   typeStr2Type: ITypeStr2Type;
   setHierarchy: ISetHierarchy;
-  getNodeById: IGetNodeById;
+  getBlockById: IGetNodeById;
+  generateId: IGenerateId;
 }
 
 const db: BlockDB = {
@@ -184,7 +185,7 @@ const db: BlockDB = {
   getBlocks,
   getLinks,
   setHierarchy,
-  getNodeById,
+  getBlockById,
   // getAccTitle,
   // setAccTitle,
   // getAccDescription,
@@ -194,6 +195,7 @@ const db: BlockDB = {
   setColumns,
   getColumns,
   clear,
+  generateId,
 };
 
 export default db;

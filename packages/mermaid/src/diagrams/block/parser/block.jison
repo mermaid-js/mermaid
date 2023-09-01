@@ -138,7 +138,7 @@ seperator
   ;
 
 start: BLOCK_DIAGRAM_KEY document EOF
-  {console.log('This is the hierarchy ', JSON.stringify($2, null, 2)); yy.setHierarchy($2); }
+  {yy.getLogger().info('This is the hierarchy ', JSON.stringify($2, null, 2)); yy.setHierarchy($2); }
   ;
 
 
@@ -180,16 +180,16 @@ statement
 	;
 
 nodeStatement
-  : nodeStatement link node { yy.getLogger().info('Rule: nodeStatement (nodeStatement link node) '); yy.addBlock($1.id); $$ = {id: $1.id}; }
-  | node { yy.getLogger().info('Rule: nodeStatement (node) ', $1); yy.addBlock($1.id, $1.label, yy.typeStr2Type($1)); $$ = {id: $1.id}; }
+  : nodeStatement link node { yy.getLogger().info('Rule: nodeStatement (nodeStatement link node) '); $$ = {id: $1.id}; }
+  | node { yy.getLogger().info('Rule: nodeStatement (node) ', $1); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1)}; }
   ;
 
 columnsStatement
-  : COLUMNS { yy.getLogger().info("COLUMNS: ", $1);yy.setColumns($1); }
+  : COLUMNS { yy.getLogger().info("COLUMNS: ", $1); $$ = {type: 'column-setting', columns: $1 === 'auto'?-1:parseInt($1) } }
   ;
 
 blockStatement
-  : block document end { console.log('Rule: blockStatement : ', $1, $2, $3); const block = yy.addBlock(undefined, undefined, 'composite'); $$ = { id: block.id, children: $2 }; }
+  : block document end { yy.getLogger().info('Rule: blockStatement : ', $1, $2, $3); const id = yy.generateId(); $$ = { id, type:'composite', label:id, children: $2 }; }
   ;
 
 

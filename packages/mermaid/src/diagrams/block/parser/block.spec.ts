@@ -21,7 +21,7 @@ describe('Block diagram', function () {
       block.parse(str);
       const blocks = db.getBlocks();
       expect(blocks.length).toBe(1);
-      expect(blocks[0].ID).toBe('id');
+      expect(blocks[0].id).toBe('id');
       expect(blocks[0].label).toBe('id');
     });
     it('a node with a square shape and a label', async () => {
@@ -32,7 +32,7 @@ describe('Block diagram', function () {
       block.parse(str);
       const blocks = db.getBlocks();
       expect(blocks.length).toBe(1);
-      expect(blocks[0].ID).toBe('id');
+      expect(blocks[0].id).toBe('id');
       expect(blocks[0].label).toBe('A label');
       expect(blocks[0].type).toBe('square');
     });
@@ -45,10 +45,10 @@ describe('Block diagram', function () {
       block.parse(str);
       const blocks = db.getBlocks();
       expect(blocks.length).toBe(2);
-      expect(blocks[0].ID).toBe('id1');
+      expect(blocks[0].id).toBe('id1');
       expect(blocks[0].label).toBe('id1');
       expect(blocks[0].type).toBe('square');
-      expect(blocks[1].ID).toBe('id2');
+      expect(blocks[1].id).toBe('id2');
       expect(blocks[1].label).toBe('id2');
       expect(blocks[1].type).toBe('square');
     });
@@ -62,13 +62,13 @@ describe('Block diagram', function () {
       block.parse(str);
       const blocks = db.getBlocks();
       expect(blocks.length).toBe(3);
-      expect(blocks[0].ID).toBe('id1');
+      expect(blocks[0].id).toBe('id1');
       expect(blocks[0].label).toBe('id1');
       expect(blocks[0].type).toBe('square');
-      expect(blocks[1].ID).toBe('id2');
+      expect(blocks[1].id).toBe('id2');
       expect(blocks[1].label).toBe('id2');
       expect(blocks[1].type).toBe('square');
-      expect(blocks[2].ID).toBe('id3');
+      expect(blocks[2].id).toBe('id3');
       expect(blocks[2].label).toBe('id3');
       expect(blocks[2].type).toBe('square');
     });
@@ -81,10 +81,10 @@ describe('Block diagram', function () {
       block.parse(str);
       const blocks = db.getBlocks();
       expect(blocks.length).toBe(2);
-      expect(blocks[0].ID).toBe('id');
+      expect(blocks[0].id).toBe('id');
       expect(blocks[0].label).toBe('A label');
       expect(blocks[0].type).toBe('square');
-      expect(blocks[1].ID).toBe('id2');
+      expect(blocks[1].id).toBe('id2');
       expect(blocks[1].label).toBe('id2');
       expect(blocks[1].type).toBe('square');
     });
@@ -152,24 +152,32 @@ describe('Block diagram', function () {
     it('compound blocks 2', async () => {
       const str = `block-beta
           block
-            aBlock["Block"]
-            bBlock["Block"]
+            aBlock["ABlock"]
+            bBlock["BBlock"]
           end
         `;
 
       block.parse(str);
       const blocks = db.getBlocks();
-      console.log('blocks', blocks);
       expect(blocks.length).toBe(1);
+
       expect(blocks[0].children.length).toBe(2);
-      expect(blocks[0].id).toBe('id');
-      expect(blocks[0].label).toBe('A label');
-      expect(blocks[0].type).toBe('square');
-      // expect(blocks[1].ID).toBe('id2');
-      // expect(blocks[1].label).toBe('id2');
-      // expect(blocks[1].type).toBe('square');
+      expect(blocks[0].id).not.toBe(undefined);
+      expect(blocks[0].label).toBe(blocks[0].id);
+      expect(blocks[0].type).toBe('composite');
+
+      const aBlock = blocks[0].children[0];
+
+      expect(aBlock.id).not.toBe(aBlock);
+      expect(aBlock.label).toBe('ABlock');
+      expect(aBlock.type).toBe('square');
+
+      const bBlock = blocks[0].children[1];
+      expect(bBlock.id).not.toBe(bBlock);
+      expect(bBlock.label).toBe('BBlock');
+      expect(bBlock.type).toBe('square');
     });
-    it.only('compound blocks', async () => {
+    it('compound blocks of compound blocks', async () => {
       const str = `block-beta
           block
             aBlock["ABlock"]
@@ -182,29 +190,30 @@ describe('Block diagram', function () {
       block.parse(str);
       const blocks = db.getBlocks();
 
-      const aBlockPos = blocks[0].children[0];
-      const bBlockPos = blocks[0].children[1].children[0];
+      const aBlock = blocks[0].children[0];
+      const secondComposite = blocks[0].children[1];
+      const bBlock = blocks[0].children[1].children[0];
 
-      const root = db.getNodeById(blocks[0].id);
-      expect(blocks.length).toBe(1);
-      expect(blocks[0].id).not.toBe(undefined);
-      expect(root?.label).toBe(blocks[0].id);
       expect(blocks[0].children.length).toBe(2);
-      expect(root?.type).toBe('composite');
+      expect(blocks[0].id).not.toBe(undefined);
+      expect(blocks[0].label).toBe(blocks[0].id);
+      expect(blocks[0].type).toBe('composite');
 
-      const aBlock = db.getNodeById(aBlockPos.id);
-      console.log('aBlock', aBlock);
-      expect(aBlock?.label).toBe('ABlock');
-      expect(aBlock?.type).toBe('square');
+      expect(secondComposite.children.length).toBe(1);
+      expect(secondComposite.id).not.toBe(undefined);
+      expect(secondComposite.label).toBe(secondComposite.id);
+      expect(secondComposite.type).toBe('composite');
 
-      const bBlock = db.getNodeById(bBlockPos.id);
+      expect(aBlock.id).not.toBe(aBlock);
+      expect(aBlock.label).toBe('ABlock');
+      expect(aBlock.type).toBe('square');
 
-      expect(bBlock.id).toBe('bBlock');
+      expect(bBlock.id).not.toBe(bBlock);
       expect(bBlock.label).toBe('BBlock');
       expect(bBlock.type).toBe('square');
     });
-    it.skip('compound blocks with title', async () => {
-      const str = `block
+    it('compound blocks with title', async () => {
+      const str = `block-beta
           block compoundBlock["Compound block"]
             columns 1
             block2["Block 1"]
