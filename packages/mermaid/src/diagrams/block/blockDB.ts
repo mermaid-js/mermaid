@@ -21,17 +21,19 @@ import { log } from '../../logger.js';
 let nodeDatabase: Record<string, Node> = {};
 const blockDatabase: Record<string, Block> = {};
 
-// Function to get a node by its ID
-export const getNodeById = (id: string): Node | undefined => {
-  return nodeDatabase[id];
+// Function to get a node by its id
+type IGetNodeById = (id: string) => Block | undefined;
+export const getNodeById = (id: string): Block | undefined => {
+  console.log(id, nodeDatabase);
+  return blockDatabase[id];
 };
 
 // TODO: Convert to generic TreeNode type? Convert to class?
 
-let rootBlock = { ID: 'root', children: [] as Block[], columns: -1 };
+let rootBlock = { id: 'root', children: [] as Block[], columns: -1 };
 let blocks: Block[] = [];
 const links: Link[] = [];
-// let rootBlock = { ID: 'root', children: [], columns: -1 } as Block;
+// let rootBlock = { id: 'root', children: [], columns: -1 } as Block;
 let currentBlock = rootBlock;
 
 const clear = (): void => {
@@ -39,10 +41,10 @@ const clear = (): void => {
   // rootBlocks = [];
   blocks = [] as Block[];
   commonClear();
-  rootBlock = { ID: 'root', children: [], columns: -1 };
+  rootBlock = { id: 'root', children: [], columns: -1 };
   currentBlock = rootBlock;
   nodeDatabase = {};
-  blockDatabase[rootBlock.ID] = rootBlock;
+  blockDatabase[rootBlock.id] = rootBlock;
 };
 
 // type IAddBlock = (block: Block) => Block;
@@ -71,20 +73,37 @@ export function typeStr2Type(typeStr: string) {
   }
 }
 
-type IAddBlock = (id: string, label: string, type: BlockType) => Block;
+let cnt = 0;
+export const generateId = () => {
+  cnt++;
+  return 'id-' + Math.random().toString(36).substr(2, 12) + '-' + cnt;
+};
+
+type IAddBlock = (_id: string, label: string, type: BlockType) => Block;
 // Function to add a node to the database
-export const addBlock = (id: string, _label?: string, type?: BlockType) => {
-  log.info('addNode called:', id, _label, type);
+export const addBlock = (_id: string, _label?: string, type?: BlockType) => {
+  let id = _id;
+  if (!_id) {
+    id = generateId();
+  }
   const label = _label || id;
   const node: Block = {
-    ID: id,
+    id: id,
     label,
     type: type || 'square',
+    children: [],
   };
-  blockDatabase[node.ID] = node;
-  currentBlock.children ??= [];
-  currentBlock.children.push(node);
+  blockDatabase[node.id] = node;
+  // currentBlock.children ??= [];
+  // currentBlock.children.push(node);
+  // console.log('currentBlock', currentBlock.children, nodeDatabase);
+  console.log('addNode called:', id, label, type, node);
   return node;
+};
+
+type ISetHierarchy = (block: Block[]) => void;
+const setHierarchy = (block: Block[]): void => {
+  blocks = block;
 };
 
 type IAddLink = (link: Link) => Link;
@@ -101,7 +120,7 @@ const setColumns = (columnsStr: string): void => {
 
 const getBlock = (id: string, blocks: Block[]): Block | undefined => {
   for (const block of blocks) {
-    if (block.ID === id) {
+    if (block.id === id) {
       return block;
     }
     if (block.children) {
@@ -113,9 +132,9 @@ const getBlock = (id: string, blocks: Block[]): Block | undefined => {
   }
 };
 
-type IGetColumns = (blockID: string) => number;
-const getColumns = (blockID: string): number => {
-  const block = blockDatabase[blockID];
+type IGetColumns = (blockid: string) => number;
+const getColumns = (blockid: string): number => {
+  const block = blockDatabase[blockid];
   if (!block) {
     return -1;
   }
@@ -129,7 +148,11 @@ const getColumns = (blockID: string): number => {
 };
 
 type IGetBlocks = () => Block[];
-const getBlocks: IGetBlocks = () => rootBlock.children || [];
+const getBlocks: IGetBlocks = () => {
+  // console.log('Block in test', rootBlock.children || []);
+  console.log('Block in test', blocks, blocks[0].id);
+  return blocks || [];
+};
 
 type IGetLinks = () => Link[];
 const getLinks: IGetLinks = () => links;
@@ -148,6 +171,8 @@ export interface BlockDB extends DiagramDB {
   setColumns: ISetColumns;
   getColumns: IGetColumns;
   typeStr2Type: ITypeStr2Type;
+  setHierarchy: ISetHierarchy;
+  getNodeById: IGetNodeById;
 }
 
 const db: BlockDB = {
@@ -158,6 +183,8 @@ const db: BlockDB = {
   getLogger, // TODO: remove
   getBlocks,
   getLinks,
+  setHierarchy,
+  getNodeById,
   // getAccTitle,
   // setAccTitle,
   // getAccDescription,

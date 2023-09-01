@@ -21,14 +21,15 @@ export type BlockType =
   | 'subroutine'
   | 'cylinder'
   | 'group'
-  | 'doublecircle';
+  | 'doublecircle'
+  | 'composite';
 
 export interface Block {
-  ID: string;
+  id: string;
   label?: string;
   parent?: Block;
   type?: BlockType;
-  children?: Block[];
+  children: Block[];
   columns?: number; // | TBlockColumnsDefaultValue;
 }
 

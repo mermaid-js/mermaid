@@ -137,7 +137,9 @@ seperator
     {yy.getLogger().info('Rule: seperator (EOF) ');}
   ;
 
-start: BLOCK_DIAGRAM_KEY document EOF;
+start: BLOCK_DIAGRAM_KEY document EOF
+  {console.log('This is the hierarchy ', JSON.stringify($2, null, 2)); yy.setHierarchy($2); }
+  ;
 
 
 stop
@@ -148,9 +150,10 @@ stop
   | stop EOF {yy.getLogger().info('Stop EOF2 ');}
   ;
 
+//array of statements
 document
-	: statement { yy.getLogger().info("Rule: statement: ", $1);}
-	| statement document { yy.getLogger().info("Rule: document statement: ", $1);}
+	: statement { yy.getLogger().info("Rule: statement: ", $1); $$ = [$1]; }
+	| statement document { yy.getLogger().info("Rule: document statement: ", $1, $2); $$ = [$1].concat($2); }
 	;
 
 link
@@ -177,8 +180,8 @@ statement
 	;
 
 nodeStatement
-  : nodeStatement link node { yy.getLogger().info('Rule: nodeStatement (nodeStatement link node) '); yy.addBlock($1.id);}
-  | node { yy.getLogger().info('Rule: nodeStatement (node) ', $1); yy.addBlock($1.id, $1.label, yy.typeStr2Type($1)); }
+  : nodeStatement link node { yy.getLogger().info('Rule: nodeStatement (nodeStatement link node) '); yy.addBlock($1.id); $$ = {id: $1.id}; }
+  | node { yy.getLogger().info('Rule: nodeStatement (node) ', $1); yy.addBlock($1.id, $1.label, yy.typeStr2Type($1)); $$ = {id: $1.id}; }
   ;
 
 columnsStatement
@@ -186,7 +189,7 @@ columnsStatement
   ;
 
 blockStatement
-  : block document end { yy.getLogger().info('Rule: blockStatement : ', $1); }
+  : block document end { console.log('Rule: blockStatement : ', $1, $2, $3); const block = yy.addBlock(undefined, undefined, 'composite'); $$ = { id: block.id, children: $2 }; }
   ;
 
 
