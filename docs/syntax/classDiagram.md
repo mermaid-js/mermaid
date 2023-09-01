@@ -19,13 +19,13 @@ Mermaid can render class diagrams.
 title: Animal example
 ---
 classDiagram
-    note "From Duck to Zebra"
+    note "From Duck till Zebra"
     Animal <|-- Duck
     note for Duck "can fly\ncan swim\ncan dive\ncan help in debugging"
     Animal <|-- Fish
     Animal <|-- Zebra
     Animal : +int age
-    Animal : gender +string
+    Animal : +String gender
     Animal: +isMammal()
     Animal: +mate()
     class Duck{
@@ -48,13 +48,13 @@ classDiagram
 title: Animal example
 ---
 classDiagram
-    note "From Duck to Zebra"
+    note "From Duck till Zebra"
     Animal <|-- Duck
     note for Duck "can fly\ncan swim\ncan dive\ncan help in debugging"
     Animal <|-- Fish
     Animal <|-- Zebra
     Animal : +int age
-    Animal : gender +string
+    Animal : +String gender
     Animal: +isMammal()
     Animal: +mate()
     class Duck{
@@ -170,8 +170,6 @@ UML provides mechanisms to represent class members such as attributes and method
 
 Mermaid distinguishes between attributes and functions/methods based on if the **parenthesis** `()` are present or not. The ones with `()` are treated as functions/methods, and all others as attributes.
 
-**Note:** class members can be entered either as **name** **type** or **type** **name**. They can also be entered with, or without the use of a **:**. The examples below uses both methods to demonstrate.
-
 There are two ways to define the members of a class, and regardless of whichever syntax is used to define the members, the output will still be same. The two different ways are :
 
 - Associate a member of a class using **:** (colon) followed by member name, useful to define one member at a time. For example:
@@ -180,7 +178,7 @@ There are two ways to define the members of a class, and regardless of whichever
 classDiagram
 class BankAccount
 BankAccount : +String owner
-BankAccount : +balance BigDecimal
+BankAccount : +BigDecimal balance
 BankAccount : +deposit(amount)
 BankAccount : +withdrawal(amount)
 ```
@@ -189,7 +187,7 @@ BankAccount : +withdrawal(amount)
 classDiagram
 class BankAccount
 BankAccount : +String owner
-BankAccount : +balance BigDecimal
+BankAccount : +BigDecimal balance
 BankAccount : +deposit(amount)
 BankAccount : +withdrawal(amount)
 ```
@@ -200,7 +198,7 @@ BankAccount : +withdrawal(amount)
 classDiagram
 class BankAccount{
     +String owner
-    +balance BigDecimal
+    +BigDecimal balance
     +deposit(amount)
     +withdrawal(amount)
 }
@@ -210,7 +208,7 @@ class BankAccount{
 classDiagram
 class BankAccount{
     +String owner
-    +balance BigDecimal
+    +BigDecimal balance
     +deposit(amount)
     +withdrawal(amount)
 }
@@ -224,7 +222,7 @@ Optionally you can end a method/function definition with the data type that will
 classDiagram
 class BankAccount{
     +String owner
-    +balance BigDecimal
+    +BigDecimal balance
     +deposit(amount) bool
     +withdrawal(amount) int
 }
@@ -234,7 +232,7 @@ class BankAccount{
 classDiagram
 class BankAccount{
     +String owner
-    +balance BigDecimal
+    +BigDecimal balance
     +deposit(amount) bool
     +withdrawal(amount) int
 }
@@ -249,7 +247,7 @@ Generics can be represented as part of a class definition and also in the parame
 ```mermaid-example
 classDiagram
 class Square~Shape~{
-    -id int
+    int id
     List~int~ position
     setPoints(List~int~ points)
     getPoints() List~int~
@@ -264,7 +262,7 @@ Square : +getDistanceMatrix() List~List~int~~
 ```mermaid
 classDiagram
 class Square~Shape~{
-    -id int
+    int id
     List~int~ position
     setPoints(List~int~ points)
     getPoints() List~int~
@@ -435,7 +433,7 @@ namespace BaseShapes {
     class Triangle
     class Rectangle {
       double width
-      height double
+      double height
     }
 }
 ```
@@ -446,7 +444,7 @@ namespace BaseShapes {
     class Triangle
     class Rectangle {
       double width
-      height double
+      double height
     }
 }
 ```
@@ -588,11 +586,11 @@ classDiagram
   }
   class IdCard{
     -id : int
-    -string name
+    -name : string
   }
   class Bike{
     -id : int
-    -string name
+    -name : string
   }
   Student "1" --o "1" IdCard : carries
   Student "1" --o "1" Bike : rides
@@ -606,11 +604,11 @@ classDiagram
   }
   class IdCard{
     -id : int
-    -string name
+    -name : string
   }
   class Bike{
     -id : int
-    -string name
+    -name : string
   }
   Student "1" --o "1" IdCard : carries
   Student "1" --o "1" Bike : rides
@@ -627,7 +625,7 @@ You would define these actions on a separate line after all classes have been de
     click className href "url" "tooltip"
 
 - _action_ is either `link` or `callback`, depending on which type of interaction you want to have called
-- _className_ is the id of the node that the action will be associated with (if you have created a class with a generic type, the id will be the name only, without the type declaration at the end)
+- _className_ is the id of the node that the action will be associated with
 - _reference_ is either the url link, or the function name for callback.
 - (_optional_) tooltip is a string to be displayed when hovering over element (note: The styles of the tooltip are set by the class .mermaidTooltip.)
 - note: callback function will be called with the nodeId as parameter.
@@ -786,11 +784,11 @@ It is possible to apply specific styles such as a thicker border or a different 
 
 Then attaching that class to a specific node:
 
-        cssClass "nodeId1" styleClass
+        cssClass "nodeId1" styleClass;
 
 It is also possible to attach a class to a list of nodes in one statement:
 
-        cssClass "nodeId1,nodeId2" styleClass
+        cssClass "nodeId1,nodeId2" styleClass;
 
 A shorter form of adding a class is to attach the classname to the node using the `:::` operator:
 
