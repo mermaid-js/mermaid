@@ -11,14 +11,12 @@ const detector: DiagramDetector = (txt) => {
 };
 
 const loader: DiagramLoader = async () => {
-  const { diagram } = await import('./timeline-definition.js');
+  const { diagram } = await import('./timelineDiagram.js');
   return { id, diagram };
 };
 
-const plugin: ExternalDiagramDefinition = {
+export const timeline: ExternalDiagramDefinition = {
   id,
   detector,
   loader,
 };
-
-export default plugin;

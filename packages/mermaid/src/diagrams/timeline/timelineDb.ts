@@ -1,3 +1,4 @@
+// @ts-nocheck - ignore error for converting file to ts
 import { parseDirective as _parseDirective } from '../../directiveUtils.js';
 import * as commonDb from '../../commonDb.js';
 let currentSection = '';
@@ -77,9 +78,7 @@ export const addTaskOrg = function (descr) {
 
 /**
  * Compiles the raw tasks into a list of tasks with events
- * @returns {boolean} true if all items are processed
- * @private
- * @memberof timelineDb
+ * @returns true if all items are processed
  */
 const compileTasks = function () {
   const compileTask = function (pos) {
