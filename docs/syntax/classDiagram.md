@@ -170,7 +170,7 @@ UML provides mechanisms to represent class members such as attributes and method
 
 Mermaid distinguishes between attributes and functions/methods based on if the **parenthesis** `()` are present or not. The ones with `()` are treated as functions/methods, and all others as attributes.
 
-**Note:** class members can be entered either as __name__ __type__  or __type__ __name__. They can also be entered with, or without the use of a __:__. The examples below uses both methods to demonstrate.
+**Note:** class members can be entered either as **name** **type** or **type** **name**. They can also be entered with, or without the use of a **:**. The examples below uses both methods to demonstrate.
 
 There are two ways to define the members of a class, and regardless of whichever syntax is used to define the members, the output will still be same. The two different ways are :
 
@@ -200,7 +200,7 @@ BankAccount : +withdrawal(amount)
 classDiagram
 class BankAccount{
     +String owner
-    +balance BigDecimal 
+    +balance BigDecimal
     +deposit(amount)
     +withdrawal(amount)
 }
