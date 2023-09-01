@@ -11,14 +11,14 @@ import {
   setAccDescription,
   clear as commonClear,
 } from '../../commonDb.js';
-import type { SequenceDB, BoxData } from './sequenceTypes.js';
+import type { SequenceDB, BoxData, ActorData, Message } from './sequenceTypes.js';
 import type { DiagramDB, ParseDirectiveDefinition } from '../../diagram-api/types.js';
 import { parseDirective as _parseDirective } from '../../directiveUtils.js';
 
-const prevActor = undefined;
-const actors = {};
-const createdActors = {};
-const destroyedActors = {};
+let prevActor: string | undefined = undefined;
+const actors: Record<string, ActorData> = {};
+const createdActors: Record<string, ActorData> = {};
+const destroyedActors: Record<string, ActorData> = {};
 const boxes: BoxData[] = [];
 const messages = [];
 const notes = [];
@@ -40,6 +40,49 @@ const addBox = function (data: BoxData): void {
   });
   currentBox = boxes[boxes.length - 1];
 };
+//TODO: look into changing description to type string. Currently, it is set to Message because
+// jison calls parseMessage on the text portion of the participant_statement grammar
+// changing it in jison causes over 100 tests to fail so need to ensure cascading changes don't
+// occur from the type change.
+export const addActor = function (id: string, name: string, description: Message, type: string) {
+  let assignedBox = currentBox;
+  const oldActor = actors[id];
+  if (oldActor) {
+    // If already set and trying to set to a new one throw error
+    if (currentBox && oldActor.box && currentBox !== oldActor.box) {
+      throw new Error(
+        `A same participant should only be defined in one Box: ${oldActor.name} can't be in ${oldActor.box.title} and in ${currentBox.title} at the same time`
+      );
+    }
+
+    //TODO: we throw an error above if they're not equal. Do we need this?
+    // Don't change the box if already
+    assignedBox = oldActor.box ? oldActor.box : currentBox;
+    // oldActor.box = currentBox; //old code that I'm unsure is needed
+  }
+
+  actors[id] = {
+    box: assignedBox,
+    name: name,
+    description: description.text ?? name,
+    wrap: description.wrap,
+    prevActor: prevActor,
+    links: {},
+    properties: {},
+    actorCnt: 0,
+    rectData: null,
+    type: type ?? 'participant',
+  };
+
+  if (prevActor && actors[prevActor]) {
+    actors[prevActor].nextActor = id;
+  }
+
+  if (currentBox) {
+    currentBox?.actorKeys?.push(id);
+  }
+  prevActor = id;
+};
 
 const hasAtleastOneBox = function (): boolean {
   return boxes.length > 0;
@@ -51,6 +94,30 @@ const hasAtleastOneBoxWithTitle = function (): boolean {
 
 const getBoxes = function (): BoxData[] {
   return boxes;
+};
+
+export const getActors = function (): Record<string, ActorData> {
+  return actors;
+};
+
+export const getCreatedActors = function (): Record<string, ActorData> {
+  return createdActors;
+};
+
+export const getDestroyedActors = function (): Record<string, ActorData> {
+  return destroyedActors;
+};
+
+export const getActor = function (id: string): ActorData {
+  return actors[id];
+};
+
+export const getActorKeys = function (): string[] {
+  return Object.keys(actors);
+};
+
+export const getActorProperty = function (actor: ActorData, key: string): string | undefined {
+  return actor.properties[key];
 };
 
 /**
@@ -94,9 +161,16 @@ function boxEnd(): void {
 export const db: SequenceDB = {
   parseDirective,
   addBox,
+  addActor,
   hasAtleastOneBox,
   hasAtleastOneBoxWithTitle,
   getBoxes,
+  getActors,
+  getCreatedActors,
+  getDestroyedActors,
+  getActor,
+  getActorKeys,
+  getActorProperty,
   parseBoxData,
   boxEnd,
 };
