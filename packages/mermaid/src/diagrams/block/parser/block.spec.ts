@@ -214,13 +214,28 @@ describe('Block diagram', function () {
     });
     it('compound blocks with title', async () => {
       const str = `block-beta
-          block compoundBlock["Compound block"]
+          block:compoundBlock["Compound block"]
             columns 1
-            block2["Block 1"]
+            block2["Block 2"]
           end
         `;
 
       block.parse(str);
+
+      const blocks = db.getBlocks();
+      expect(blocks.length).toBe(1);
+
+      const compoundBlock = blocks[0];
+      const block2 = compoundBlock.children[0];
+
+      expect(compoundBlock.children.length).toBe(1);
+      expect(compoundBlock.id).toBe('compoundBlock');
+      expect(compoundBlock.label).toBe('Compound block');
+      expect(compoundBlock.type).toBe('square');
+
+      expect(block2.id).toBe('block2');
+      expect(block2.label).toBe('Block 2');
+      expect(block2.type).toBe('square');
     });
     it.skip('blocks mixed with compound blocks', async () => {
       const str = `block

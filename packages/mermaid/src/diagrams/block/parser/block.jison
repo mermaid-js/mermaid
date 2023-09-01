@@ -29,6 +29,7 @@ CRLF \u000D\u000A
 "block-beta"                                             { return 'BLOCK_DIAGRAM_KEY'; }
 "block"\s+            { yy.getLogger().info('Found space-block'); return 'block';}
 "block"\n+            { yy.getLogger().info('Found nl-block'); return 'block';}
+"block:"            { yy.getLogger().info('Found space-block'); return 'id-block';}
 // \s*\%\%.*                                                       { yy.getLogger().info('Found comment',yytext); }
 [\s]+                                                           { yy.getLogger().info('.', yytext); /* skip all whitespace */  }
 [\n]+ {yy.getLogger().info('_', yytext);                 /* skip all whitespace */   }
@@ -138,7 +139,7 @@ seperator
   ;
 
 start: BLOCK_DIAGRAM_KEY document EOF
-  {yy.getLogger().info('This is the hierarchy ', JSON.stringify($2, null, 2)); yy.setHierarchy($2); }
+  { yy.setHierarchy($2); }
   ;
 
 
@@ -189,7 +190,8 @@ columnsStatement
   ;
 
 blockStatement
-  : block document end { yy.getLogger().info('Rule: blockStatement : ', $1, $2, $3); const id = yy.generateId(); $$ = { id, type:'composite', label:id, children: $2 }; }
+  : id-block nodeStatement document end { yy.getLogger().info('Rule: id-block statement : ', $2, $3); const id2 = yy.generateId(); $$ = { ...$2, children: $3 }; }
+  | block document end { yy.getLogger().info('Rule: blockStatement : ', $1, $2, $3); const id = yy.generateId(); $$ = { id, type:'composite', label:id, children: $2 }; }
   ;
 
 

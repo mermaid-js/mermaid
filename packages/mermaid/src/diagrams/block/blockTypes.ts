@@ -5,6 +5,7 @@ export interface BlockConfig extends BaseDiagramConfig {
 }
 
 export type BlockType =
+  | 'column-setting'
   | 'round'
   | 'square'
   | 'diamond'
@@ -22,8 +23,7 @@ export type BlockType =
   | 'cylinder'
   | 'group'
   | 'doublecircle'
-  | 'composite'
-  | 'column-setting';
+  | 'composite';
 
 export interface Block {
   id: string;

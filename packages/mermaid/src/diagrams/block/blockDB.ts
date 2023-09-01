@@ -19,6 +19,7 @@ import { log } from '../../logger.js';
 let blockDatabase: Record<string, Block> = {};
 
 const populateBlockDatabase = (blockList: Block[], parent: Block): void => {
+  const children = [];
   for (const block of blockList) {
     if (block.type === 'column-setting') {
       const columns = block.columns || -1;
@@ -32,8 +33,12 @@ const populateBlockDatabase = (blockList: Block[], parent: Block): void => {
       if (block.children) {
         populateBlockDatabase(block.children, block);
       }
+      if (block.type !== 'column-setting') {
+        children.push(block);
+      }
     }
   }
+  parent.children = children;
 };
 
 let blocks: Block[] = [];
@@ -71,7 +76,7 @@ export const generateId = () => {
 type ISetHierarchy = (block: Block[]) => void;
 const setHierarchy = (block: Block[]): void => {
   populateBlockDatabase(block, rootBlock);
-  log.info('blockdb', JSON.stringify(blockDatabase, null, 2));
+  log.debug('The hierarchy', JSON.stringify(block, null, 2));
   blocks = block;
 };
 
