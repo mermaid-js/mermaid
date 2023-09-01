@@ -9,7 +9,6 @@ const parserFnConstructor = (str: string) => {
 };
 
 const mockDB: Record<string, Mock<any, any>> = {
-  parseDirective: vi.fn(),
   setOrientation: vi.fn(),
   setDiagramTitle: vi.fn(),
   setXAxisTitle: vi.fn(),
@@ -52,19 +51,6 @@ describe('Testing xychart jison file', () => {
     const str = 'xychart-beta \n title oneLinertitle';
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('oneLinertitle');
-  });
-
-  it('should be able to parse directive', () => {
-    const str =
-      '%%{init: {"xychart": {"chartWidth": 600, "chartHeight": 600} } }%%  \n xychart-beta';
-    expect(parserFnConstructor(str)).not.toThrow();
-    expect(mockDB.parseDirective.mock.calls[0]).toEqual(['%%{', 'open_directive']);
-    expect(mockDB.parseDirective.mock.calls[1]).toEqual(['init', 'type_directive']);
-    expect(mockDB.parseDirective.mock.calls[2]).toEqual([
-      '{"xychart": {"chartWidth": 600, "chartHeight": 600} }',
-      'arg_directive',
-    ]);
-    expect(mockDB.parseDirective.mock.calls[3]).toEqual(['}%%', 'close_directive', 'xychart']);
   });
 
   it('parse chart orientation', () => {
@@ -339,7 +325,6 @@ describe('Testing xychart jison file', () => {
     expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yAxisName', type: 'text' });
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
     expect(mockDB.setBarData).toHaveBeenCalledWith({ text: '', type: 'text' }, [23, -45, 56.6]);
-    clearMocks();
   });
   it('parse bar should throw for unbalanced brackets', () => {
     let str =
