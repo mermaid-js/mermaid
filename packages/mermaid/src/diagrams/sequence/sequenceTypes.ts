@@ -8,9 +8,17 @@ export interface BoxData {
   actorKeys?: string[];
 }
 
-export interface Message {
+export interface Text {
   text: string;
   wrap: boolean;
+}
+
+export interface Message {
+  from?: string;
+  to: string;
+  message: string;
+  wrap: boolean;
+  answer?: string;
 }
 
 export interface ActorData {
@@ -33,7 +41,8 @@ export interface SequenceDB extends DiagramDB {
   //diagram db
   parseBoxData: (str: string) => BoxData;
   addBox: (data: BoxData) => void;
-  addActor: (id: string, name: string, description: Message, type: string) => void;
+  addActor: (id: string, name: string, description: Text, type: string) => void;
+  addMessage: (idFrom: string, idTo: string, message: Text, answer: Text) => void;
   hasAtleastOneBox: () => boolean;
   hasAtleastOneBoxWithTitle: () => boolean;
   getBoxes: () => BoxData[];

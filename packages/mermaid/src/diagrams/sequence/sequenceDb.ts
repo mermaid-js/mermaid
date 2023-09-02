@@ -11,7 +11,7 @@ import {
   setAccDescription,
   clear as commonClear,
 } from '../../commonDb.js';
-import type { SequenceDB, BoxData, ActorData, Message } from './sequenceTypes.js';
+import type { SequenceDB, BoxData, ActorData, Text } from './sequenceTypes.js';
 import type { DiagramDB, ParseDirectiveDefinition } from '../../diagram-api/types.js';
 import { parseDirective as _parseDirective } from '../../directiveUtils.js';
 
@@ -20,7 +20,7 @@ const actors: Record<string, ActorData> = {};
 const createdActors: Record<string, ActorData> = {};
 const destroyedActors: Record<string, ActorData> = {};
 const boxes: BoxData[] = [];
-const messages = [];
+const messages: Message[] = [];
 const notes = [];
 const sequenceNumbersEnabled = false;
 let wrapEnabled;
@@ -44,14 +44,14 @@ const addBox = function (data: BoxData): void {
 // jison calls parseMessage on the text portion of the participant_statement grammar
 // changing it in jison causes over 100 tests to fail so need to ensure cascading changes don't
 // occur from the type change.
-export const addActor = function (id: string, name: string, description: Message, type: string) {
+export const addActor = function (id: string, name: string, description: Text, type: string) {
   let assignedBox = currentBox;
   const oldActor = actors[id];
   if (oldActor) {
     // If already set and trying to set to a new one throw error
     if (currentBox && oldActor.box && currentBox !== oldActor.box) {
       throw new Error(
-        `A same participant should only be defined in one Box: ${oldActor.name} can't be in ${oldActor.box.title} and in ${currentBox.title} at the same time`
+        `The same participant should only be defined in one Box: ${oldActor.name} can't be in ${oldActor.box.title} and in ${currentBox.title} at the same time`
       );
     }
 
@@ -82,6 +82,21 @@ export const addActor = function (id: string, name: string, description: Message
     currentBox?.actorKeys?.push(id);
   }
   prevActor = id;
+};
+
+export const addMessage = function (
+  idFrom: string,
+  idTo: string,
+  message: Text,
+  answer: Text
+): void {
+  messages.push({
+    from: idFrom,
+    to: idTo,
+    message: message.text,
+    wrap: message.wrap ?? true,
+    answer: answer,
+  });
 };
 
 const hasAtleastOneBox = function (): boolean {
@@ -118,6 +133,10 @@ export const getActorKeys = function (): string[] {
 
 export const getActorProperty = function (actor: ActorData, key: string): string | undefined {
   return actor.properties[key];
+};
+
+export const getMessages = function () {
+  return messages;
 };
 
 /**
@@ -162,6 +181,7 @@ export const db: SequenceDB = {
   parseDirective,
   addBox,
   addActor,
+  addMessage,
   hasAtleastOneBox,
   hasAtleastOneBoxWithTitle,
   getBoxes,
