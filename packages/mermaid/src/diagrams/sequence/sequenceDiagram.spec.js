@@ -104,6 +104,7 @@ describe('more than one sequence diagram', () => {
     expect(diagram1.db.getMessages()).toMatchInlineSnapshot(`
       [
         {
+          "activate": false,
           "from": "Alice",
           "message": "Hello Bob, how are you?",
           "to": "Bob",
@@ -111,6 +112,7 @@ describe('more than one sequence diagram', () => {
           "wrap": false,
         },
         {
+          "activate": false,
           "from": "Bob",
           "message": "I am good thanks!",
           "to": "Alice",
@@ -127,6 +129,7 @@ describe('more than one sequence diagram', () => {
     expect(diagram2.db.getMessages()).toMatchInlineSnapshot(`
       [
         {
+          "activate": false,
           "from": "Alice",
           "message": "Hello Bob, how are you?",
           "to": "Bob",
@@ -134,6 +137,7 @@ describe('more than one sequence diagram', () => {
           "wrap": false,
         },
         {
+          "activate": false,
           "from": "Bob",
           "message": "I am good thanks!",
           "to": "Alice",
@@ -152,6 +156,7 @@ describe('more than one sequence diagram', () => {
     expect(diagram3.db.getMessages()).toMatchInlineSnapshot(`
       [
         {
+          "activate": false,
           "from": "Alice",
           "message": "Hello John, how are you?",
           "to": "John",
@@ -159,6 +164,7 @@ describe('more than one sequence diagram', () => {
           "wrap": false,
         },
         {
+          "activate": false,
           "from": "John",
           "message": "I am good thanks!",
           "to": "Alice",
