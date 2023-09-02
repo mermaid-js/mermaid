@@ -3,6 +3,12 @@ import { DefaultValueConverter } from 'langium';
 
 import { accessibilityDescrRegex, accessibilityTitleRegex, titleRegex } from './commonMatcher.js';
 
+const rulesRegexes: Record<string, RegExp> = {
+  ACC_DESCR: accessibilityDescrRegex,
+  ACC_TITLE: accessibilityTitleRegex,
+  TITLE: titleRegex,
+};
+
 export class CommonValueConverter extends DefaultValueConverter {
   protected override runConverter(
     rule: GrammarAST.AbstractRule,
@@ -35,21 +41,7 @@ export class CommonValueConverter extends DefaultValueConverter {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _cstNode: CstNode
   ): ValueType | undefined {
-    let regex: RegExp | undefined;
-    switch (rule.name) {
-      case 'ACC_DESCR': {
-        regex = new RegExp(accessibilityDescrRegex.source);
-        break;
-      }
-      case 'ACC_TITLE': {
-        regex = new RegExp(accessibilityTitleRegex.source);
-        break;
-      }
-      case 'TITLE': {
-        regex = new RegExp(titleRegex.source);
-        break;
-      }
-    }
+    const regex: RegExp | undefined = rulesRegexes[rule.name];
     if (regex === undefined) {
       return undefined;
     }

@@ -8,6 +8,12 @@ import {
   sankeyLinkValueRegex,
 } from './sankeyMatcher.js';
 
+const rulesRegexes: Record<string, RegExp> = {
+  SANKEY_LINK_SOURCE: sankeyLinkSourceRegex,
+  SANKEY_LINK_TARGET: sankeyLinkTargetRegex,
+  SANKEY_LINK_VALUE: sankeyLinkValueRegex,
+};
+
 export class SankeyValueConverter extends DefaultValueConverter {
   protected override runConverter(
     rule: GrammarAST.AbstractRule,
@@ -44,21 +50,7 @@ export class SankeyValueConverter extends DefaultValueConverter {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _cstNode: CstNode
   ): ValueType | undefined {
-    let regex: RegExp | undefined;
-    switch (rule.name) {
-      case 'SANKEY_LINK_SOURCE': {
-        regex = sankeyLinkSourceRegex;
-        break;
-      }
-      case 'SANKEY_LINK_TARGET': {
-        regex = sankeyLinkTargetRegex;
-        break;
-      }
-      case 'SANKEY_LINK_VALUE': {
-        regex = sankeyLinkValueRegex;
-        break;
-      }
-    }
+    const regex: RegExp | undefined = rulesRegexes[rule.name];
     if (regex === undefined) {
       return undefined;
     }
