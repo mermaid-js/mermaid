@@ -103,7 +103,6 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   configureSvgSize(svg, height, width, useMaxWidth);
 
   const graph = createSankeyGraph(db, sankeyConfig);
-  log.fatal(graph);
 
   // Get color scheme for the graph
   const colorScheme: ScaleOrdinal<string, string, never> = d3scaleOrdinal(d3schemeTableau10);
