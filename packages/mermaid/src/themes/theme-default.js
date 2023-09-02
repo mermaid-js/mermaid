@@ -283,7 +283,18 @@ class Theme {
       yAxisTitleColor: this.xyChart?.yAxisTitleColor || this.primaryTextColor,
       yAxisLableColor: this.xyChart?.yAxisLableColor || this.primaryTextColor,
       yAxisTickColor: this.xyChart?.yAxisTickColor || this.primaryTextColor,
-      plotBaseColor: this.xyChart?.plotBaseColor || darken(this.primaryColor, 25),
+      plotColorPalette: this.xyChart?.plotColorPalette || [
+        '#ECECFF',
+        '#8493A6',
+        '#FFC3A0',
+        '#DCDDE1',
+        '#B8E994',
+        '#D1A36F',
+        '#C3CDE6',
+        '#FFB6C1',
+        '#496078',
+        '#F8F3E3',
+      ],
     };
 
     /* requirement-diagram */

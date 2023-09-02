@@ -13,6 +13,9 @@ import XYChartDB from './xychartDb.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 
 export const draw = (txt: string, id: string, _version: string, diagObj: Diagram) => {
+  const db = diagObj.db as typeof XYChartDB;
+  const themeConfig = db.getChartThemeConfig();
+  const chartConfig = db.getChartConfig();
   function getDominantBaseLine(horizontalPos: TextHorizontalPos) {
     return horizontalPos === 'top' ? 'hanging' : 'middle';
   }
@@ -29,19 +32,19 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
 
   const svg = selectSvgElement(id);
   const group = svg.append('g').attr('class', 'main');
-
-  const width = 700;
-  const height = 500;
+  const background = group
+    .append('rect')
+    .attr('width', chartConfig.width)
+    .attr('height', chartConfig.height)
+    .attr('class', 'background');
 
   // @ts-ignore: TODO Fix ts errors
-  configureSvgSize(svg, height, width, true);
+  configureSvgSize(svg, chartConfig.height, chartConfig.width, true);
 
-  svg.attr('viewBox', '0 0 ' + width + ' ' + height);
+  svg.attr('viewBox', '0 0 ' + chartConfig.width + ' ' + chartConfig.height);
 
-  const db = diagObj.db as typeof XYChartDB;
+  background.attr('fill', themeConfig.backgroundColor);
 
-  db.setHeight(height);
-  db.setWidth(width);
   db.setTmpSVGG(svg.append('g').attr('class', 'mermaid-tmp-group'));
 
   const shapes: DrawableElem[] = db.getDrawableElem();

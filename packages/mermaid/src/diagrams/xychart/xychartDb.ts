@@ -39,9 +39,7 @@ let tmpSVGGElem: SVGGType;
 let xyChartConfig: XYChartConfig = getChartDefaultConfig();
 let xyChartThemeConfig: XYChartThemeConfig = getChartDefaultThemeConfig();
 let xyChartData: XYChartData = getChartDefalutData();
-let plotColorPalette = Array.isArray(xyChartThemeConfig.plotBaseColor)
-  ? xyChartThemeConfig.plotBaseColor
-  : plotColorPaletteGenerator(xyChartThemeConfig.plotBaseColor);
+let plotColorPalette = xyChartThemeConfig.plotColorPalette;
 let hasSetXAxis = false;
 let hasSetYAxis = false;
 
@@ -50,26 +48,11 @@ interface NormalTextType {
   text: string;
 }
 
-function plotColorPaletteGenerator(baseColor: string, noOfColorNeeded = 15): string[] {
-  const colors = [];
-  const MAX_HUE_VALUE = 360;
-  const baseHue = channel(baseColor, 'h');
-  if (baseHue > MAX_HUE_VALUE / 2) {
-    const decr = Math.floor(baseHue / noOfColorNeeded);
-    for (let i = 0; i <= baseHue; i += decr) {
-      colors.push(adjust(baseColor, { h: -i }));
-    }
-  } else {
-    const incr = Math.floor((MAX_HUE_VALUE - baseHue) / noOfColorNeeded);
-    for (let i = 0; i <= baseHue; i += incr) {
-      colors.push(adjust(baseColor, { h: i }));
-    }
-  }
-  return colors;
-}
-
 function getChartDefaultThemeConfig(): XYChartThemeConfig {
   return {
+    backgroundColor:
+      config.themeVariables?.xyChart?.backgroundColor ||
+      defaultThemeVariables.xyChart.backgroundColor,
     titleColor:
       config.themeVariables?.xyChart?.titleColor || defaultThemeVariables.xyChart.titleColor,
     axisLineColor:
@@ -92,8 +75,9 @@ function getChartDefaultThemeConfig(): XYChartThemeConfig {
     yAxisTickColor:
       config.themeVariables?.xyChart?.yAxisTickColor ||
       defaultThemeVariables.xyChart.yAxisTickColor,
-    plotBaseColor:
-      config.themeVariables?.xyChart?.plotBaseColor || defaultThemeVariables.xyChart.plotBaseColor,
+    plotColorPalette:
+      config.themeVariables?.xyChart?.plotColorPalette ||
+      defaultThemeVariables.xyChart.plotColorPalette,
   };
 }
 function getChartDefaultConfig(): XYChartConfig {
@@ -250,12 +234,12 @@ function getDrawableElem(): DrawableElem[] {
   return XYChartBuilder.build(xyChartConfig, xyChartData, xyChartThemeConfig, tmpSVGGElem);
 }
 
-function setHeight(height: number) {
-  xyChartConfig.height = height;
+function getChartThemeConfig() {
+  return xyChartThemeConfig;
 }
 
-function setWidth(width: number) {
-  xyChartConfig.width = width;
+function getChartConfig() {
+  return xyChartConfig;
 }
 
 const clear = function () {
@@ -264,16 +248,12 @@ const clear = function () {
   xyChartConfig = getChartDefaultConfig();
   xyChartData = getChartDefalutData();
   xyChartThemeConfig = getChartDefaultThemeConfig();
-  plotColorPalette = Array.isArray(xyChartThemeConfig.plotBaseColor)
-    ? xyChartThemeConfig.plotBaseColor
-    : plotColorPaletteGenerator(xyChartThemeConfig.plotBaseColor);
+  plotColorPalette = xyChartThemeConfig.plotColorPalette;
   hasSetXAxis = false;
   hasSetYAxis = false;
 };
 
 export default {
-  setWidth,
-  setHeight,
   getDrawableElem,
   parseDirective,
   clear,
@@ -292,4 +272,6 @@ export default {
   setLineData,
   setBarData,
   setTmpSVGG,
+  getChartThemeConfig,
+  getChartConfig,
 };

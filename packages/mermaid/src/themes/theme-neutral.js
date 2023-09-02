@@ -271,6 +271,31 @@ class Theme {
       this.quadrantExternalBorderStrokeFill || this.primaryBorderColor;
     this.quadrantTitleFill = this.quadrantTitleFill || this.primaryTextColor;
 
+    /* xychart */
+    this.xyChart = {
+      backgroundColor: this.xyChart?.backgroundColor || this.background,
+      titleColor: this.xyChart?.titleColor || this.primaryTextColor,
+      axisLineColor: this.xyChart?.axisLineColor || this.primaryTextColor,
+      xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
+      xAxisLableColor: this.xyChart?.xAxisLableColor || this.primaryTextColor,
+      xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,
+      yAxisTitleColor: this.xyChart?.yAxisTitleColor || this.primaryTextColor,
+      yAxisLableColor: this.xyChart?.yAxisLableColor || this.primaryTextColor,
+      yAxisTickColor: this.xyChart?.yAxisTickColor || this.primaryTextColor,
+      plotColorPalette: this.xyChart?.plotColorPalette || [
+        '#EEE',
+        '#6BB8E4',
+        '#8ACB88',
+        '#C7ACD6',
+        '#E8DCC2',
+        '#FFB2A8',
+        '#FFF380',
+        '#7E8D91',
+        '#FFD8B1',
+        '#FAF3E0',
+      ],
+    };
+
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;
     this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;

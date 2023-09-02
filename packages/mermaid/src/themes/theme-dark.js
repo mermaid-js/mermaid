@@ -251,6 +251,31 @@ class Theme {
       this.quadrantExternalBorderStrokeFill || this.primaryBorderColor;
     this.quadrantTitleFill = this.quadrantTitleFill || this.primaryTextColor;
 
+    /* xychart */
+    this.xyChart = {
+      backgroundColor: this.xyChart?.backgroundColor || this.background,
+      titleColor: this.xyChart?.titleColor || this.primaryTextColor,
+      axisLineColor: this.xyChart?.axisLineColor || this.primaryTextColor,
+      xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
+      xAxisLableColor: this.xyChart?.xAxisLableColor || this.primaryTextColor,
+      xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,
+      yAxisTitleColor: this.xyChart?.yAxisTitleColor || this.primaryTextColor,
+      yAxisLableColor: this.xyChart?.yAxisLableColor || this.primaryTextColor,
+      yAxisTickColor: this.xyChart?.yAxisTickColor || this.primaryTextColor,
+      plotColorPalette: this.xyChart?.plotColorPalette || [
+        '#3498db',
+        '#2ecc71',
+        '#e74c3c',
+        '#f1c40f',
+        '#bdc3c7',
+        '#ffffff',
+        '#34495e',
+        '#9b59b6',
+        '#1abc9c',
+        '#e67e22',
+      ],
+    };
+
     /* class */
     this.classText = this.primaryTextColor;
 

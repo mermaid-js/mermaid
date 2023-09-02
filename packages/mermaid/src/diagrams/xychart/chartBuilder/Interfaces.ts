@@ -5,6 +5,7 @@ export interface XYChartAxisThemeConfig {
 }
 
 export interface XYChartThemeConfig {
+  backgroundColor: string;
   titleColor: string;
   axisLineColor: string;
   xAxisLableColor: string;
@@ -13,7 +14,7 @@ export interface XYChartThemeConfig {
   yAxisLableColor: string;
   yAxisTitleColor: string;
   yAxisTickColor: string;
-  plotBaseColor: string;
+  plotColorPalette: string;
 }
 
 export interface ChartComponent {
