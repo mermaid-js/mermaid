@@ -1,7 +1,7 @@
 /**
  * Matches sankey link source node
  */
-export const sankeyLinkSourceRegex = /(?:"((?:""|[^"])+)")|([^\n\r,]+)/;
+export const sankeyLinkSourceRegex = /(?:"((?:""|[^"])+)")|([^\n\r,]+(?=%%)|[^\n\r,]+)/;
 
 /**
  * Matches sankey link target node
