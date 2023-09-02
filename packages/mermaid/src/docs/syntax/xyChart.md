@@ -125,8 +125,8 @@ xychart-beta
 ## Chart Theme Variables
 
 ```note
-theames for xychart resides inside xychart attribute so to set the variables use this syntax
-%%{init: { "themeVariables": {"xychart": {"titleColor": "#ff0000"} } }}%%
+Themes for xychart resides inside xychart attribute so to set the variables use this syntax
+%%{init: { "themeVariables": {"xyChart": {"titleColor": "#ff0000"} } }}%%
 ```
 
 | Parameter        | Description                                           |
@@ -145,7 +145,7 @@ theames for xychart resides inside xychart attribute so to set the variables use
 ## Example on config and theme
 
 ```mermaid-example
-%%{init: {"xychart": {"width": 500, "height": 400}, "themeVariables": {"xychart": {"titleColor": "#ff0000"} } }}%%
+%%{init: {"xyChart": {"width": 500, "height": 400}, "themeVariables": {"xyChart": {"titleColor": "#ff0000"} } }}%%
 xychart-beta
     title "Sales Revenue"
     x-axis [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]

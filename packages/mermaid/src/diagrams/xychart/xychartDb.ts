@@ -27,10 +27,6 @@ import { getThemeVariables } from '../../themes/theme-default.js';
 
 export type SVGGType = Selection<SVGGElement, unknown, Element | null, unknown>;
 
-const defaultThemeVariables = getThemeVariables();
-
-const config = configApi.getConfig();
-
 let plotIndex = 0;
 
 let tmpSVGGElem: SVGGType;
@@ -48,12 +44,15 @@ interface NormalTextType {
 }
 
 function getChartDefaultThemeConfig(): XYChartThemeConfig {
+  const defaultThemeVariables = getThemeVariables();
+  const config = configApi.getConfig();
   return {
     ...defaultThemeVariables.xyChart,
     ...config.themeVariables?.xyChart,
   };
 }
 function getChartDefaultConfig(): XYChartConfig {
+  const config = configApi.getConfig();
   return {
     ...(defaultConfig.xyChart as XYChartConfig),
     ...config.xyChart,
@@ -87,6 +86,7 @@ function getChartDefalutData(): XYChartData {
 }
 
 function textSanitizer(text: string) {
+  const config = configApi.getConfig();
   return sanitizeText(text.trim(), config);
 }
 
