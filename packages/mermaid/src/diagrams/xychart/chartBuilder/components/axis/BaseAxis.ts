@@ -93,7 +93,7 @@ export abstract class BaseAxis implements Axis {
       this.showTick = true;
       availableHeight -= this.axisConfig.tickLength;
     }
-    if (this.axisConfig.showTitle) {
+    if (this.axisConfig.showTitle && this.title) {
       const spaceRequired = this.textDimensionCalculator.getMaxDimension(
         [this.title],
         this.axisConfig.labelFontSize
@@ -126,7 +126,7 @@ export abstract class BaseAxis implements Axis {
       this.showTick = true;
       availableWidth -= this.axisConfig.tickLength;
     }
-    if (this.axisConfig.showTitle) {
+    if (this.axisConfig.showTitle && this.title) {
       const spaceRequired = this.textDimensionCalculator.getMaxDimension(
         [this.title],
         this.axisConfig.labelFontSize

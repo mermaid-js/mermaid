@@ -55,8 +55,8 @@
 <string>[^"]*                             return "STR";
 
 
-"["                                      return 'SQUARE_BRACES_START'
-"]"                                      return 'SQUARE_BRACES_END'
+"["                                       return 'SQUARE_BRACES_START'
+"]"                                       return 'SQUARE_BRACES_END'
 [A-Za-z]+                                 return 'ALPHA';
 ":"                                       return 'COLON';
 \+                                        return 'PLUS';
@@ -117,8 +117,13 @@ commaSeparatedNumbers
 
 parseXAxis
   : text                                                          {yy.setXAxisTitle($text);}
-  | text bandData                                                 {yy.setXAxisTitle($text); yy.setXAxisBand($bandData);}
-  | text NUMBER_WITH_DECIMAL ARROW_DELIMITER NUMBER_WITH_DECIMAL  {yy.setXAxisTitle($text); yy.setXAxisRangeData(Number($NUMBER_WITH_DECIMAL1), Number($NUMBER_WITH_DECIMAL2));}
+  | text xAxisData                                                {yy.setXAxisTitle($text);}
+  | xAxisData                                                     {yy.setXAxisTitle({type: 'text', text: ''});}
+  ;
+
+xAxisData
+  : bandData                                                 {yy.setXAxisBand($bandData);}
+  | NUMBER_WITH_DECIMAL ARROW_DELIMITER NUMBER_WITH_DECIMAL  {yy.setXAxisRangeData(Number($NUMBER_WITH_DECIMAL1), Number($NUMBER_WITH_DECIMAL2));}
   ;
 
 bandData
@@ -131,8 +136,13 @@ commaSeparatedTexts
   ;
 
 parseYAxis
-  : text  {yy.setYAxisTitle($text);}
-  | text NUMBER_WITH_DECIMAL ARROW_DELIMITER NUMBER_WITH_DECIMAL  {yy.setYAxisTitle($text); yy.setYAxisRangeData(Number($NUMBER_WITH_DECIMAL1), Number($NUMBER_WITH_DECIMAL2));}
+  : text                                                      {yy.setYAxisTitle($text);}
+  | text yAxisData                                            {yy.setYAxisTitle($text);}
+  | yAxisData                                                 {yy.setYAxisTitle({type: "text", text: ""});}
+  ;
+
+yAxisData
+  : NUMBER_WITH_DECIMAL ARROW_DELIMITER NUMBER_WITH_DECIMAL  {yy.setYAxisRangeData(Number($NUMBER_WITH_DECIMAL1), Number($NUMBER_WITH_DECIMAL2));}
   ;
 
 eol

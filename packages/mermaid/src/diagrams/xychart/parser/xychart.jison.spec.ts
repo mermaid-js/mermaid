@@ -128,11 +128,37 @@ describe('Testing xychart jison file', () => {
     expect(mockDB.setXAxisRangeData).toHaveBeenCalledWith(45.5, 0.34);
   });
 
+  it('parse x-axis without axisname and range data', () => {
+    const str = 'xychart-beta \nx-axis   45.5   -->   1.34   \n';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({
+      text: '',
+      type: 'text',
+    });
+    expect(mockDB.setXAxisRangeData).toHaveBeenCalledWith(45.5, 1.34);
+  });
+
   it('parse x-axis with axis name and category data', () => {
     const str = 'xychart-beta \nx-axis xAxisName    [  "cat1"  ,   cat2a  ]   \n   ';
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({
       text: 'xAxisName',
+      type: 'text',
+    });
+    expect(mockDB.setXAxisBand).toHaveBeenCalledWith([
+      {
+        text: 'cat1',
+        type: 'text',
+      },
+      { text: 'cat2a', type: 'text' },
+    ]);
+  });
+
+  it('parse x-axis without axisname and category data', () => {
+    const str = 'xychart-beta \nx-axis    [  "cat1"  ,   cat2a  ]   \n   ';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({
+      text: '',
       type: 'text',
     });
     expect(mockDB.setXAxisBand).toHaveBeenCalledWith([
@@ -216,6 +242,12 @@ describe('Testing xychart jison file', () => {
     const str = 'xychart-beta \ny-axis yAxisName    45.5   -->   33   \n';
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yAxisName', type: 'text' });
+    expect(mockDB.setYAxisRangeData).toHaveBeenCalledWith(45.5, 33);
+  });
+  it('parse y-axis without axisname with range data', () => {
+    const str = 'xychart-beta \ny-axis    45.5   -->   33   \n';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: '', type: 'text' });
     expect(mockDB.setYAxisRangeData).toHaveBeenCalledWith(45.5, 33);
   });
   it('parse y-axis with axis name with range data with only decimal part', () => {
