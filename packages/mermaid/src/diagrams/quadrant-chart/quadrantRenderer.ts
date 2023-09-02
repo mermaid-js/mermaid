@@ -3,8 +3,8 @@ import { select } from 'd3';
 import * as configApi from '../../config.js';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { Diagram } from '../../Diagram.js';
-import {
+import type { Diagram } from '../../Diagram.js';
+import type {
   QuadrantBuildType,
   QuadrantLineType,
   QuadrantPointType,

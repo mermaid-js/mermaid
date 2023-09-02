@@ -4,7 +4,7 @@ import { log } from '../logger.js';
 import { decodeEntities } from '../mermaidAPI.js';
 import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
 import { splitLineToFitWidth } from './splitText.js';
-import { MarkdownLine, MarkdownWord } from './types.js';
+import type { MarkdownLine, MarkdownWord } from './types.js';
 
 function applyStyle(dom, styleFn) {
   if (styleFn) {

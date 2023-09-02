@@ -1471,6 +1471,21 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
    */
   nodeAlignment?: 'left' | 'right' | 'center' | 'justify';
   useMaxWidth?: boolean;
+  /**
+   * Toggle to display or hide values along with title.
+   *
+   */
+  showValues?: boolean;
+  /**
+   * The prefix to use for values
+   *
+   */
+  prefix?: string;
+  /**
+   * The suffix to use for values
+   *
+   */
+  suffix?: string;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

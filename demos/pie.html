@@ -7,7 +7,6 @@
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
     <style>
       div.mermaid {
-        /* font-family: 'trebuchet ms', verdana, arial; */
         font-family: 'Courier New', Courier, monospace !important;
       }
     </style>
@@ -17,37 +16,32 @@
     <h1>Pie chart demos</h1>
     <pre class="mermaid">
       pie title Pets adopted by volunteers
-      accTitle: simple pie char demo
-      accDescr: pie chart with 3 sections: dogs, cats, rats. Most are dogs.
-    "Dogs" : 386
-    "Cats" : 85
-    "Rats" : 15
+        accTitle: simple pie char demo
+        accDescr: pie chart with 3 sections: dogs, cats, rats. Most are dogs.
+        "Dogs": 386
+        "Cats": 85
+        "Rats": 15
     </pre>
 
     <hr />
     <pre class="mermaid">
-    %%{init: {"pie": {"textPosition": 0.9}, "themeVariables": {"pieOuterStrokeWidth": "5px"}} }%%
-    pie
-      title Key elements in Product X
+      %%{init: {"pie": {"textPosition": 0.9}, "themeVariables": {"pieOuterStrokeWidth": "5px"}}}%%
+      pie
+        title Key elements in Product X
         accTitle: Key elements in Product X
-      accDescr: This is a pie chart showing the key elements in Product X.
-      "Calcium" : 42.96
-      "Potassium" : 50.05
-      "Magnesium" : 10.01
-      "Iron" :  5
+        accDescr: This is a pie chart showing the key elements in Product X.
+        "Calcium": 42.96
+        "Potassium": 50.05
+        "Magnesium": 10.01
+        "Iron": 5
     </pre>
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         theme: 'forest',
-        // themeCSS: '.node rect { fill: red; }',
         logLevel: 3,
         securityLevel: 'loose',
-        // flowchart: { curve: 'basis' },
-        // gantt: { axisFormat: '%m/%d/%Y' },
-        sequence: { actorMargin: 50 },
-        // sequenceDiagram: { actorMargin: 300 } // deprecated
       });
     </script>
   </body>
