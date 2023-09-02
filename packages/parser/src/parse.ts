@@ -1,8 +1,8 @@
 import type { LangiumParser, ParseResult } from 'langium';
-import type { Info } from './index.js';
-import { createInfoServices } from './language/index.js';
+import type { Info, Sankey } from './index.js';
+import { createInfoServices, createSankeyServices } from './language/index.js';
 
-export type DiagramAST = Info;
+export type DiagramAST = Info | Sankey;
 
 const parsers: Record<string, LangiumParser> = {};
 
@@ -13,8 +13,14 @@ const initializers = {
     const parser = createInfoServices().Info.parser.LangiumParser;
     parsers['info'] = parser;
   },
+  sankey: () => {
+    const parser = createSankeyServices().Sankey.parser.LangiumParser;
+    parsers['sankey'] = parser;
+  },
 } as const;
+
 export function parse(diagramType: 'info', text: string): Info;
+export function parse(diagramType: 'sankey', text: string): Sankey;
 export function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,
   text: string

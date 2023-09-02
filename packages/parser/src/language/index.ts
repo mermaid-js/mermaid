@@ -4,3 +4,4 @@ export * from './generated/module.js';
 
 export * from './common/index.js';
 export * from './info/index.js';
+export * from './sankey/index.js';

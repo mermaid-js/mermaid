@@ -1,5 +1,3 @@
-import * as configApi from '../../config.js';
-import common from '../common/common.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -9,73 +7,63 @@ import {
   getDiagramTitle,
   clear as commonClear,
 } from '../../commonDb.js';
+import type { SankeyDiagramConfig } from '../../config.type.js';
+import type { SankeyDB, SankeyLink as ISankeyLink, SankeyFields } from './sankeyTypes.js';
+import DEFAULT_CONFIG from '../../defaultConfig.js';
+import type { RequiredDeep } from 'type-fest';
+
+export const DEFAULT_SANKEY_CONFIG: Required<SankeyDiagramConfig> = DEFAULT_CONFIG.sankey;
+
+export const DEFAULT_SANKEY_DB: RequiredDeep<SankeyFields> = {
+  links: [] as ISankeyLink[],
+  nodes: [] as string[],
+  config: DEFAULT_SANKEY_CONFIG,
+} as const;
 
 // Sankey diagram represented by nodes and links between those nodes
-let links: SankeyLink[] = [];
+let links: ISankeyLink[] = DEFAULT_SANKEY_DB.links;
 // Array of nodes guarantees their order
-let nodes: SankeyNode[] = [];
-// We also have to track nodes uniqueness (by ID)
-let nodesMap: Record<string, SankeyNode> = {};
+let nodes: string[] = DEFAULT_SANKEY_DB.nodes;
+const config: Required<SankeyDiagramConfig> = structuredClone(DEFAULT_SANKEY_CONFIG);
+
+const getConfig = (): Required<SankeyDiagramConfig> => structuredClone(config);
 
 const clear = (): void => {
   links = [];
   nodes = [];
-  nodesMap = {};
   commonClear();
 };
-
-class SankeyLink {
-  constructor(public source: SankeyNode, public target: SankeyNode, public value: number = 0) {}
-}
 
 /**
  * @param source - Node where the link starts
  * @param target - Node where the link ends
  * @param value - Describes the amount to be passed
  */
-const addLink = (source: SankeyNode, target: SankeyNode, value: number): void => {
-  links.push(new SankeyLink(source, target, value));
+const addLink = ({ source, target, value }: ISankeyLink): void => {
+  links.push({ source, target, value });
 };
 
-class SankeyNode {
-  constructor(public ID: string) {}
-}
+const getLinks = (): ISankeyLink[] => links;
 
-const findOrCreateNode = (ID: string): SankeyNode => {
-  ID = common.sanitizeText(ID, configApi.getConfig());
-
-  if (!nodesMap[ID]) {
-    nodesMap[ID] = new SankeyNode(ID);
-    nodes.push(nodesMap[ID]);
-  }
-  return nodesMap[ID];
+const addNode = (node: string): void => {
+  nodes.push(node);
 };
 
-const getNodes = () => nodes;
-const getLinks = () => links;
+const getNodes = (): string[] => nodes;
 
-const getGraph = () => ({
-  nodes: nodes.map((node) => ({ id: node.ID })),
-  links: links.map((link) => ({
-    source: link.source.ID,
-    target: link.target.ID,
-    value: link.value,
-  })),
-});
+export const db: SankeyDB = {
+  getConfig,
 
-export default {
-  nodesMap,
-  getConfig: () => configApi.getConfig().sankey,
-  getNodes,
-  getLinks,
-  getGraph,
-  addLink,
-  findOrCreateNode,
-  getAccTitle,
-  setAccTitle,
-  getAccDescription,
-  setAccDescription,
-  getDiagramTitle,
-  setDiagramTitle,
   clear,
+  setDiagramTitle,
+  getDiagramTitle,
+  setAccTitle,
+  getAccTitle,
+  setAccDescription,
+  getAccDescription,
+
+  addLink,
+  addNode,
+  getLinks,
+  getNodes,
 };
