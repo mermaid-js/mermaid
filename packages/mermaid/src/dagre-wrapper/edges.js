@@ -465,6 +465,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     composition: 18,
     dependency: 6,
     lollipop: 13.5,
+    arrow_point: 5.3,
   };
 
   const lineFunction = line()
