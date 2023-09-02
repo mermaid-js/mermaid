@@ -1,4 +1,9 @@
-import { BoundingRect, DrawableElem, XYChartConfig, XYChartThemeConfig } from '../../Interfaces.js';
+import type {
+  BoundingRect,
+  DrawableElem,
+  XYChartConfig,
+  XYChartThemeConfig,
+} from '../../Interfaces.js';
 export class PlotBorder {
   constructor(
     private boundingRect: BoundingRect,

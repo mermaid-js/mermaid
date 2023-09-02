@@ -1,6 +1,6 @@
 import { line } from 'd3';
-import { DrawableElem, LinePlotData, XYChartConfig } from '../../Interfaces.js';
-import { Axis } from '../axis/index.js';
+import type { DrawableElem, LinePlotData, XYChartConfig } from '../../Interfaces.js';
+import type { Axis } from '../axis/index.js';
 
 export class LinePlot {
   constructor(

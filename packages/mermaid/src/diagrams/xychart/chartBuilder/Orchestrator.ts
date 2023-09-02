@@ -1,16 +1,13 @@
 import { log } from '../../../logger.js';
-import {
-  DrawableElem,
-  XYChartData,
-  XYChartThemeConfig,
-  XYChartConfig,
-  isBarPlot,
-} from './Interfaces.js';
+import type { DrawableElem, XYChartData, XYChartThemeConfig, XYChartConfig } from './Interfaces.js';
+import { isBarPlot } from './Interfaces.js';
 import { getChartTitleComponent } from './components/ChartTitle.js';
-import { ChartComponent } from './Interfaces.js';
-import { Axis, getAxis } from './components/axis/index.js';
-import { Plot, getPlotComponent } from './components/plot/index.js';
-import { SVGGType } from '../xychartDb.js';
+import type { ChartComponent } from './Interfaces.js';
+import type { Axis } from './components/axis/index.js';
+import { getAxis } from './components/axis/index.js';
+import type { Plot } from './components/plot/index.js';
+import { getPlotComponent } from './components/plot/index.js';
+import type { SVGGType } from '../xychartDb.js';
 
 export class Orchestrator {
   private componentStore: {

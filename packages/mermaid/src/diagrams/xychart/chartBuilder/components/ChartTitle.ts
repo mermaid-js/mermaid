@@ -1,5 +1,5 @@
-import { SVGGType } from '../../xychartDb.js';
-import {
+import type { SVGGType } from '../../xychartDb.js';
+import type {
   BoundingRect,
   ChartComponent,
   Dimension,
@@ -9,10 +9,8 @@ import {
   XYChartThemeConfig,
   XYChartConfig,
 } from '../Interfaces.js';
-import {
-  TextDimensionCalculator,
-  TextDimensionCalculatorWithFont,
-} from '../TextDimensionCalculator.js';
+import type { TextDimensionCalculator } from '../TextDimensionCalculator.js';
+import { TextDimensionCalculatorWithFont } from '../TextDimensionCalculator.js';
 
 export class ChartTitle implements ChartComponent {
   private boundingRect: BoundingRect;

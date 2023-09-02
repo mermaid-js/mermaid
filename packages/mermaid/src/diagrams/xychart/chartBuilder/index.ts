@@ -1,6 +1,6 @@
 import { log } from '../../../logger.js';
-import { SVGGType } from '../xychartDb.js';
-import { DrawableElem, XYChartData, XYChartConfig, XYChartThemeConfig } from './Interfaces.js';
+import type { SVGGType } from '../xychartDb.js';
+import type { DrawableElem, XYChartData, XYChartConfig, XYChartThemeConfig } from './Interfaces.js';
 import { Orchestrator } from './Orchestrator.js';
 
 export class XYChartBuilder {

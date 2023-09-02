@@ -1,6 +1,6 @@
-import { Dimension } from './Interfaces.js';
+import type { Dimension } from './Interfaces.js';
 import { computeDimensionOfText } from '../../../rendering-util/createText.js';
-import { SVGGType } from '../xychartDb.js';
+import type { SVGGType } from '../xychartDb.js';
 
 export interface TextDimensionCalculator {
   getMaxDimension(texts: string[], fontSize: number): Dimension;

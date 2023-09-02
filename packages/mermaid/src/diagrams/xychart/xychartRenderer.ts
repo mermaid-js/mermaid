@@ -1,15 +1,13 @@
-import { select } from 'd3';
-import { Diagram } from '../../Diagram.js';
-import * as configApi from '../../config.js';
+import type { Diagram } from '../../Diagram.js';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import {
+import type {
   DrawableElem,
   TextElem,
   TextHorizontalPos,
   TextVerticalPos,
 } from './chartBuilder/Interfaces.js';
-import XYChartDB from './xychartDb.js';
+import type XYChartDB from './xychartDb.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 
 export const draw = (txt: string, id: string, _version: string, diagObj: Diagram) => {
@@ -54,7 +52,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   function getGroup(gList: string[]) {
     let elem = group;
     let prefix = '';
-    for (const [i, _] of gList.entries()) {
+    for (const [i] of gList.entries()) {
       let parent = group;
       if (i > 0 && groups[prefix]) {
         parent = groups[prefix];

@@ -1,4 +1,4 @@
-import { DiagramDefinition } from '../../diagram-api/types.js';
+import type { DiagramDefinition } from '../../diagram-api/types.js';
 // @ts-ignore: TODO Fix ts errors
 import parser from './parser/xychart.jison';
 import db from './xychartDb.js';

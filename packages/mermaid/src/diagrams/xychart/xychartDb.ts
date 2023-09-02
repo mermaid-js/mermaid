@@ -1,6 +1,6 @@
 // @ts-ignore: TODO Fix ts errors
 import { adjust, channel } from 'khroma';
-import { Selection } from 'd3-selection';
+import type { Selection } from 'd3-selection';
 import mermaidAPI from '../../mermaidAPI.js';
 import * as configApi from '../../config.js';
 import defaultConfig from '../../defaultConfig.js';
@@ -15,15 +15,14 @@ import {
   clear as commonClear,
 } from '../../commonDb.js';
 import { XYChartBuilder } from './chartBuilder/index.js';
-import {
+import type {
   DrawableElem,
   SimplePlotDataType,
   XYChartData,
   XYChartThemeConfig,
-  isBandAxisData,
-  isLinearAxisData,
   XYChartConfig,
 } from './chartBuilder/Interfaces.js';
+import { isBandAxisData, isLinearAxisData } from './chartBuilder/Interfaces.js';
 import { getThemeVariables } from '../../themes/theme-default.js';
 
 export type SVGGType = Selection<SVGGElement, unknown, Element | null, unknown>;

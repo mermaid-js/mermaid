@@ -1,4 +1,4 @@
-import {
+import type {
   XYChartData,
   Dimension,
   BoundingRect,
@@ -7,8 +7,8 @@ import {
   XYChartThemeConfig,
   XYChartConfig,
 } from '../../Interfaces.js';
-import { Axis } from '../axis/index.js';
-import { ChartComponent } from '../../Interfaces.js';
+import type { Axis } from '../axis/index.js';
+import type { ChartComponent } from '../../Interfaces.js';
 import { LinePlot } from './LinePlot.js';
 import { PlotBorder } from './PlotBorder.js';
 import { BarPlot } from './BarPlot.js';

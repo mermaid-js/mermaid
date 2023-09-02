@@ -1,6 +1,7 @@
 // @ts-ignore: TODO Fix ts errors
 import { parser } from './xychart.jison';
-import { Mock, vi } from 'vitest';
+import type { Mock } from 'vitest';
+import { vi } from 'vitest';
 
 const parserFnConstructor = (str: string) => {
   return () => {

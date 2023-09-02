@@ -1,5 +1,5 @@
 import { log } from '../../../../../logger.js';
-import {
+import type {
   BoundingRect,
   Dimension,
   DrawableElem,
@@ -7,8 +7,8 @@ import {
   XYChartAxisThemeConfig,
   XYChartAxisConfig,
 } from '../../Interfaces.js';
-import { TextDimensionCalculator } from '../../TextDimensionCalculator.js';
-import { AxisPosition, Axis } from './index.js';
+import type { TextDimensionCalculator } from '../../TextDimensionCalculator.js';
+import type { AxisPosition, Axis } from './index.js';
 
 const BAR_WIDTH_TO_TICK_WIDTH_RATIO = 0.7;
 const MAX_OUTER_PADDING_PERCENT_FOR_WRT_LABEL = 0.2;

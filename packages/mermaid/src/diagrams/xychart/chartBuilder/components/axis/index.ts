@@ -1,11 +1,11 @@
-import { SVGGType } from '../../../xychartDb.js';
-import {
+import type { SVGGType } from '../../../xychartDb.js';
+import type {
   AxisDataType,
   ChartComponent,
   XYChartAxisThemeConfig,
   XYChartAxisConfig,
-  isBandAxisData,
 } from '../../Interfaces.js';
+import { isBandAxisData } from '../../Interfaces.js';
 import { TextDimensionCalculatorWithFont } from '../../TextDimensionCalculator.js';
 import { BandAxis } from './BandAxis.js';
 import { LinearAxis } from './LinearAxis.js';
