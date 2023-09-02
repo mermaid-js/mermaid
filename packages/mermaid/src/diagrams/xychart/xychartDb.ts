@@ -50,47 +50,21 @@ interface NormalTextType {
 
 function getChartDefaultThemeConfig(): XYChartThemeConfig {
   return {
-    backgroundColor:
-      config.themeVariables?.xyChart?.backgroundColor ||
-      defaultThemeVariables.xyChart.backgroundColor,
-    titleColor:
-      config.themeVariables?.xyChart?.titleColor || defaultThemeVariables.xyChart.titleColor,
-    axisLineColor:
-      config.themeVariables?.xyChart?.axisLineColor || defaultThemeVariables.xyChart.axisLineColor,
-    xAxisLableColor:
-      config.themeVariables?.xyChart?.xAxisLableColor ||
-      defaultThemeVariables.xyChart.xAxisLableColor,
-    xAxisTitleColor:
-      config.themeVariables?.xyChart?.xAxisTitleColor ||
-      defaultThemeVariables.xyChart.xAxisTitleColor,
-    xAxisTickColor:
-      config.themeVariables?.xyChart?.xAxisTickColor ||
-      defaultThemeVariables.xyChart.xAxisTickColor,
-    yAxisLableColor:
-      config.themeVariables?.xyChart?.yAxisLableColor ||
-      defaultThemeVariables.xyChart.yAxisLableColor,
-    yAxisTitleColor:
-      config.themeVariables?.xyChart?.yAxisTitleColor ||
-      defaultThemeVariables.xyChart.yAxisTitleColor,
-    yAxisTickColor:
-      config.themeVariables?.xyChart?.yAxisTickColor ||
-      defaultThemeVariables.xyChart.yAxisTickColor,
-    plotColorPalette:
-      config.themeVariables?.xyChart?.plotColorPalette ||
-      defaultThemeVariables.xyChart.plotColorPalette,
+    ...defaultThemeVariables.xyChart,
+    ...config.themeVariables?.xyChart,
   };
 }
 function getChartDefaultConfig(): XYChartConfig {
   return {
     ...(defaultConfig.xyChart as XYChartConfig),
-    ...(config.xyChart ? config.xyChart : {}),
+    ...config.xyChart,
     yAxis: {
       ...(defaultConfig.xyChart as XYChartConfig).yAxis,
-      ...(config.xyChart?.yAxis ? config.xyChart.yAxis : {}),
+      ...config.xyChart?.yAxis,
     },
     xAxis: {
       ...(defaultConfig.xyChart as XYChartConfig).xAxis,
-      ...(config.xyChart?.xAxis ? config.xyChart.xAxis : {}),
+      ...config.xyChart?.xAxis,
     },
   };
 }

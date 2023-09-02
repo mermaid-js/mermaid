@@ -22,8 +22,8 @@ export class Orchestrator {
   constructor(
     private chartConfig: XYChartConfig,
     private chartData: XYChartData,
-    private chartThemeConfig: XYChartThemeConfig,
-    private tmpSVGGElem: SVGGType
+    chartThemeConfig: XYChartThemeConfig,
+    tmpSVGGElem: SVGGType
   ) {
     this.componentStore = {
       title: getChartTitleComponent(chartConfig, chartData, chartThemeConfig, tmpSVGGElem),
@@ -54,8 +54,8 @@ export class Orchestrator {
   private calculateVerticalSpace() {
     let availableWidth = this.chartConfig.width;
     let availableHeight = this.chartConfig.height;
-    let chartX = 0;
-    let chartY = 0;
+    let plotX = 0;
+    let plotY = 0;
     let chartWidth = Math.floor((availableWidth * this.chartConfig.plotReservedSpacePercent) / 100);
     let chartHeight = Math.floor(
       (availableHeight * this.chartConfig.plotReservedSpacePercent) / 100
@@ -72,7 +72,7 @@ export class Orchestrator {
       height: availableHeight,
     });
     log.trace('space used by title: ', spaceUsed);
-    chartY = spaceUsed.height;
+    plotY = spaceUsed.height;
     availableHeight -= spaceUsed.height;
     this.componentStore.xAxis.setAxisPosition('bottom');
     spaceUsed = this.componentStore.xAxis.calculateSpace({
@@ -87,7 +87,7 @@ export class Orchestrator {
       height: availableHeight,
     });
     log.trace('space used by yaxis: ', spaceUsed);
-    chartX = spaceUsed.width;
+    plotX = spaceUsed.width;
     availableWidth -= spaceUsed.width;
     if (availableWidth > 0) {
       chartWidth += availableWidth;
@@ -98,8 +98,8 @@ export class Orchestrator {
       availableHeight = 0;
     }
     const plotBorderWidthHalf = this.chartConfig.plotBorderWidth / 2;
-    chartX += plotBorderWidthHalf;
-    chartY += plotBorderWidthHalf;
+    plotX += plotBorderWidthHalf;
+    plotY += plotBorderWidthHalf;
     chartWidth -= this.chartConfig.plotBorderWidth;
     chartHeight -= this.chartConfig.plotBorderWidth;
     this.componentStore.plot.calculateSpace({
@@ -108,14 +108,14 @@ export class Orchestrator {
     });
 
     log.trace(
-      `Final chart dimansion: x = ${chartX}, y = ${chartY}, width = ${chartWidth}, height = ${chartHeight}`
+      `Final chart dimansion: x = ${plotX}, y = ${plotY}, width = ${chartWidth}, height = ${chartHeight}`
     );
 
-    this.componentStore.plot.setBoundingBoxXY({ x: chartX, y: chartY });
-    this.componentStore.xAxis.setRange([chartX, chartX + chartWidth]);
-    this.componentStore.xAxis.setBoundingBoxXY({ x: chartX, y: chartY + chartHeight });
-    this.componentStore.yAxis.setRange([chartY, chartY + chartHeight]);
-    this.componentStore.yAxis.setBoundingBoxXY({ x: 0, y: chartY });
+    this.componentStore.plot.setBoundingBoxXY({ x: plotX, y: plotY });
+    this.componentStore.xAxis.setRange([plotX, plotX + chartWidth]);
+    this.componentStore.xAxis.setBoundingBoxXY({ x: plotX, y: plotY + chartHeight });
+    this.componentStore.yAxis.setRange([plotY, plotY + chartHeight]);
+    this.componentStore.yAxis.setBoundingBoxXY({ x: 0, y: plotY });
     if (this.chartData.plots.some((p) => isBarPlot(p))) {
       this.componentStore.xAxis.recalculateOuterPaddingToDrawBar();
     }
@@ -125,8 +125,8 @@ export class Orchestrator {
     let availableWidth = this.chartConfig.width;
     let availableHeight = this.chartConfig.height;
     let titleYEnd = 0;
-    let chartX = 0;
-    let chartY = 0;
+    let plotX = 0;
+    let plotY = 0;
     let chartWidth = Math.floor((availableWidth * this.chartConfig.plotReservedSpacePercent) / 100);
     let chartHeight = Math.floor(
       (availableHeight * this.chartConfig.plotReservedSpacePercent) / 100
@@ -151,7 +151,7 @@ export class Orchestrator {
       height: availableHeight,
     });
     availableWidth -= spaceUsed.width;
-    chartX = spaceUsed.width;
+    plotX = spaceUsed.width;
     log.trace('space used by xaxis: ', spaceUsed);
     this.componentStore.yAxis.setAxisPosition('top');
     spaceUsed = this.componentStore.yAxis.calculateSpace({
@@ -160,7 +160,7 @@ export class Orchestrator {
     });
     log.trace('space used by yaxis: ', spaceUsed);
     availableHeight -= spaceUsed.height;
-    chartY = titleYEnd + spaceUsed.height;
+    plotY = titleYEnd + spaceUsed.height;
     if (availableWidth > 0) {
       chartWidth += availableWidth;
       availableWidth = 0;
@@ -170,8 +170,8 @@ export class Orchestrator {
       availableHeight = 0;
     }
     const plotBorderWidthHalf = this.chartConfig.plotBorderWidth / 2;
-    chartX += plotBorderWidthHalf;
-    chartY += plotBorderWidthHalf;
+    plotX += plotBorderWidthHalf;
+    plotY += plotBorderWidthHalf;
     chartWidth -= this.chartConfig.plotBorderWidth;
     chartHeight -= this.chartConfig.plotBorderWidth;
     this.componentStore.plot.calculateSpace({
@@ -180,14 +180,14 @@ export class Orchestrator {
     });
 
     log.trace(
-      `Final chart dimansion: x = ${chartX}, y = ${chartY}, width = ${chartWidth}, height = ${chartHeight}`
+      `Final chart dimansion: x = ${plotX}, y = ${plotY}, width = ${chartWidth}, height = ${chartHeight}`
     );
 
-    this.componentStore.plot.setBoundingBoxXY({ x: chartX, y: chartY });
-    this.componentStore.yAxis.setRange([chartX, chartX + chartWidth]);
-    this.componentStore.yAxis.setBoundingBoxXY({ x: chartX, y: titleYEnd });
-    this.componentStore.xAxis.setRange([chartY, chartY + chartHeight]);
-    this.componentStore.xAxis.setBoundingBoxXY({ x: 0, y: chartY });
+    this.componentStore.plot.setBoundingBoxXY({ x: plotX, y: plotY });
+    this.componentStore.yAxis.setRange([plotX, plotX + chartWidth]);
+    this.componentStore.yAxis.setBoundingBoxXY({ x: plotX, y: titleYEnd });
+    this.componentStore.xAxis.setRange([plotY, plotY + chartHeight]);
+    this.componentStore.xAxis.setBoundingBoxXY({ x: 0, y: plotY });
     if (this.chartData.plots.some((p) => isBarPlot(p))) {
       this.componentStore.xAxis.recalculateOuterPaddingToDrawBar();
     }

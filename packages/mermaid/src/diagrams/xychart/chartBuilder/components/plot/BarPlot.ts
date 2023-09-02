@@ -17,11 +17,11 @@ export class BarPlot {
       this.yAxis.getScaleValue(d[1]),
     ]);
 
-    const barPaddingPercent = 5;
+    const barPaddingPercent = 0.05;
 
     const barWidth =
       Math.min(this.xAxis.getAxisOuterPadding() * 2, this.xAxis.getTickDistance()) *
-      (1 - barPaddingPercent / 100);
+      (1 - barPaddingPercent);
     const barWidthHalf = barWidth / 2;
 
     if (this.orientation === 'horizontal') {
