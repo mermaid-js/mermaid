@@ -31,7 +31,7 @@ mindmap
 
 The syntax for creating Mindmaps is simple and relies on indentation for setting the levels in the hierarchy.
 
-In the following example you can see how there are 3 different levels. One with starting at the left of the text and another level with two rows starting at the same column, defining the node A. At the end there is one more level where the text is indented further then the previous lines defining the nodes B and C.
+In the following example you can see how there are 3 different levels. One with starting at the left of the text and another level with two rows starting at the same column, defining the node A. At the end there is one more level where the text is indented further than the previous lines defining the nodes B and C.
 
 ```
 mindmap
@@ -41,7 +41,7 @@ mindmap
             C
 ```
 
-In summary is a simple text outline where there are one node at the root level called `Root` which has one child `A`. `A` in turn has two children `B`and `C`. In the diagram below we can see this rendered as a mindmap.
+In summary is a simple text outline where there is one node at the root level called `Root` which has one child `A`. `A` in turn has two children `B`and `C`. In the diagram below we can see this rendered as a mindmap.
 
 ```mermaid
 mindmap
@@ -142,7 +142,7 @@ _These classes need to be supplied by the site administrator._
 
 ## Unclear indentation
 
-The actual indentation does not really matter only compared with the previous rows. If we take the previous example and disrupt it a little we can se how the calculations are performed. Let us start with placing C with a smaller indentation than `B`but larger then `A`.
+The actual indentation does not really matter only compared with the previous rows. If we take the previous example and disrupt it a little we can see how the calculations are performed. Let us start with placing C with a smaller indentation than `B` but larger then `A`.
 
 ```
 mindmap
