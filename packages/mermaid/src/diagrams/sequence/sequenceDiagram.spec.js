@@ -554,6 +554,7 @@ deactivate Bob`;
 
     expect(messages.length).toBe(4);
     expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED);
+    expect(messages[0].activate).toBeTruthy();
     expect(messages[1].type).toBe(diagram.db.LINETYPE.ACTIVE_START);
     expect(messages[1].from.actor).toBe('Bob');
     expect(messages[2].type).toBe(diagram.db.LINETYPE.DOTTED);
