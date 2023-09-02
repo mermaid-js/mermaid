@@ -115,7 +115,7 @@
     "rimraf": "^5.0.0",
     "start-server-and-test": "^2.0.0",
     "type-fest": "^4.1.0",
-    "typedoc": "^0.24.5",
+    "typedoc": "^0.25.0",
     "typedoc-plugin-markdown": "^3.15.2",
     "typescript": "^5.0.4",
     "unist-util-flatmap": "^1.0.0",
