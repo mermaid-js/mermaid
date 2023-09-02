@@ -8,7 +8,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
   clear as commonClear,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 
 // Sankey diagram represented by nodes and links between those nodes
 let links: SankeyLink[] = [];

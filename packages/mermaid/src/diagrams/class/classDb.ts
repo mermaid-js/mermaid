@@ -14,7 +14,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 import type {
   ClassRelation,
   ClassNode,

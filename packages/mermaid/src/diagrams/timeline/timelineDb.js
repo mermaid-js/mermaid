@@ -1,5 +1,5 @@
 import { parseDirective as _parseDirective } from '../../directiveUtils.js';
-import * as commonDb from '../../commonDb.js';
+import * as commonDb from '../common/commonDb.js';
 let currentSection = '';
 let currentTaskId = 0;
 
