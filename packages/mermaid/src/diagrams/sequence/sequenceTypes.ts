@@ -42,7 +42,8 @@ export interface SequenceDB extends DiagramDB {
   parseBoxData: (str: string) => BoxData;
   addBox: (data: BoxData) => void;
   addActor: (id: string, name: string, description: Text, type: string) => void;
-  addMessage: (idFrom: string, idTo: string, message: Text, answer: Text) => void;
+  addMessage: (idFrom: string, idTo: string, message: Text, answer: string) => void;
+  getMessages: () => Message[];
   hasAtleastOneBox: () => boolean;
   hasAtleastOneBoxWithTitle: () => boolean;
   getBoxes: () => BoxData[];

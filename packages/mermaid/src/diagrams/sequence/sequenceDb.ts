@@ -11,7 +11,7 @@ import {
   setAccDescription,
   clear as commonClear,
 } from '../../commonDb.js';
-import type { SequenceDB, BoxData, ActorData, Text } from './sequenceTypes.js';
+import type { SequenceDB, BoxData, ActorData, Text, Message } from './sequenceTypes.js';
 import type { DiagramDB, ParseDirectiveDefinition } from '../../diagram-api/types.js';
 import { parseDirective as _parseDirective } from '../../directiveUtils.js';
 
@@ -88,7 +88,7 @@ export const addMessage = function (
   idFrom: string,
   idTo: string,
   message: Text,
-  answer: Text
+  answer: string
 ): void {
   messages.push({
     from: idFrom,
@@ -182,6 +182,7 @@ export const db: SequenceDB = {
   addBox,
   addActor,
   addMessage,
+  getMessages,
   hasAtleastOneBox,
   hasAtleastOneBoxWithTitle,
   getBoxes,
