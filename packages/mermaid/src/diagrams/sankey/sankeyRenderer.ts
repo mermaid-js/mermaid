@@ -16,7 +16,6 @@ import type { MermaidConfig, SankeyDiagramConfig, SankeyNodeAlignment } from '..
 import type {
   SankeyDB,
   SankeyGraph,
-  SankeyLink,
   SankeyLinkData,
   SankeyLinkDatum,
   SankeyLinkOverride,
@@ -65,13 +64,7 @@ const createSankeyGraph = (db: SankeyDB, config: Required<SankeyDiagramConfig>) 
         name: node,
       };
     }),
-    links: db.getLinks().map((link: SankeyLink) => {
-      return {
-        source: link.source,
-        target: link.target,
-        value: link.value,
-      };
-    }),
+    links: db.getLinks(),
   });
 
   const nodeAlign = alignmentsMap[config.nodeAlignment];
