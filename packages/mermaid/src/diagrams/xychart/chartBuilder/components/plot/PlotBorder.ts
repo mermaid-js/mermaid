@@ -23,7 +23,7 @@ export class PlotBorder {
               path: `M ${x},${y} L ${x + width},${y} M ${x + width},${y + height} M ${x},${
                 y + height
               } L ${x},${y}`,
-              strokeFill: this.chartThemeConfig.axisLineColor,
+              strokeFill: this.chartThemeConfig.plotBorderColor,
               strokeWidth: 1,
             },
           ],
@@ -39,7 +39,7 @@ export class PlotBorder {
             path: `M ${x},${y} M ${x + width},${y} M ${x + width},${y + height} L ${x},${
               y + height
             } L ${x},${y}`,
-            strokeFill: this.chartThemeConfig.axisLineColor,
+            strokeFill: this.chartThemeConfig.plotBorderColor,
             strokeWidth: 1,
           },
         ],

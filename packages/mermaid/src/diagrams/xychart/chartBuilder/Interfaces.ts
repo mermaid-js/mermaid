@@ -7,7 +7,7 @@ export interface XYChartAxisThemeConfig {
 export interface XYChartThemeConfig {
   backgroundColor: string;
   titleColor: string;
-  axisLineColor: string;
+  plotBorderColor: string;
   xAxisLableColor: string;
   xAxisTitleColor: string;
   xAxisTickColor: string;
@@ -86,7 +86,6 @@ export interface XYChartAxisConfig {
 export interface XYChartConfig {
   width: number;
   height: number;
-  fontFamily: string;
   titleFontSize: number;
   titlePadding: number;
   showTitle: boolean;

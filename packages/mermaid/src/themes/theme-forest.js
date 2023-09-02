@@ -244,7 +244,7 @@ class Theme {
     this.xyChart = {
       backgroundColor: this.xyChart?.backgroundColor || this.background,
       titleColor: this.xyChart?.titleColor || this.primaryTextColor,
-      axisLineColor: this.xyChart?.axisLineColor || this.primaryTextColor,
+      plotBorderColor: this.xyChart?.plotBorderColor || this.primaryTextColor,
       xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
       xAxisLableColor: this.xyChart?.xAxisLableColor || this.primaryTextColor,
       xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,

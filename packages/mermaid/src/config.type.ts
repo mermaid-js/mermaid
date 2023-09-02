@@ -764,10 +764,6 @@ export interface XYChartConfig extends BaseDiagramConfig {
    */
   height?: number;
   /**
-   * Font family of texts in the xyChart
-   */
-  fontFamily?: string;
-  /**
    * Font size of the chart title
    */
   titleFontSize?: number;

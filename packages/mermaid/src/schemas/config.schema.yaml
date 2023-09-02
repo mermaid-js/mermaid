@@ -1052,7 +1052,6 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
     required:
       - width
       - height
-      - fontFamily
       - titleFontSize
       - titlePadding
       - xAxis
@@ -1072,19 +1071,15 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         type: integer
         default: 500
         minimum: 1
-      fontFamily:
-        description: Font family of texts in the xyChart
-        type: string
-        default: '"trebuchet ms", verdana, arial, sans-serif'
       titleFontSize:
         description: Font size of the chart title
         type: integer
-        default: 16
+        default: 20
         minimum: 1
       titlePadding:
         description: Top and bottom space from the chart title
         type: integer
-        default: 5
+        default: 10
         minimum: 0
       showTitle:
         description: Should show the chart title

@@ -146,6 +146,7 @@ function sidebarSyntax() {
         { text: 'Timeline 🔥', link: '/syntax/timeline' },
         { text: 'Zenuml 🔥', link: '/syntax/zenuml' },
         { text: 'Sankey 🔥', link: '/syntax/sankey' },
+        { text: 'XYChart 🔥', link: '/syntax/xychart' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
