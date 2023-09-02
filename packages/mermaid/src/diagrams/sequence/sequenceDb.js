@@ -124,7 +124,8 @@ export const addSignal = function (
   idFrom,
   idTo,
   message = { text: undefined, wrap: undefined },
-  messageType
+  messageType,
+  activate = false
 ) {
   if (messageType === LINETYPE.ACTIVE_END) {
     const cnt = activationCount(idFrom.actor);
@@ -147,6 +148,7 @@ export const addSignal = function (
     message: message.text,
     wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
     type: messageType,
+    activate,
   });
   return true;
 };
@@ -530,7 +532,7 @@ export const apply = function (param) {
             lastDestroyed = undefined;
           }
         }
-        addSignal(param.from, param.to, param.msg, param.signalType);
+        addSignal(param.from, param.to, param.msg, param.signalType, param.activate);
         break;
       case 'boxStart':
         addBox(param.boxData);

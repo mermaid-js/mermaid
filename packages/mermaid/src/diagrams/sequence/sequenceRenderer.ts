@@ -1,5 +1,5 @@
 // @ts-nocheck TODO: fix file
-import { select, selectAll } from 'd3';
+import { select } from 'd3';
 import svgDraw, { ACTOR_TYPE_WIDTH, drawText, fixLifeLineHeights } from './svgDraw.js';
 import { log } from '../../logger.js';
 import common from '../common/common.js';
@@ -622,10 +622,10 @@ const activationBounds = function (actor, actors) {
 
   const left = activations.reduce(function (acc, activation) {
     return common.getMin(acc, activation.startx);
-  }, actorObj.x + actorObj.width / 2);
+  }, actorObj.x + actorObj.width / 2 - 1);
   const right = activations.reduce(function (acc, activation) {
     return common.getMax(acc, activation.stopx);
-  }, actorObj.x + actorObj.width / 2);
+  }, actorObj.x + actorObj.width / 2 + 1);
   return [left, right];
 };
 
@@ -1389,9 +1389,8 @@ const buildNoteModel = function (msg, actors, diagObj) {
 };
 
 const buildMessageModel = function (msg, actors, diagObj) {
-  let process = false;
   if (
-    [
+    ![
       diagObj.db.LINETYPE.SOLID_OPEN,
       diagObj.db.LINETYPE.DOTTED_OPEN,
       diagObj.db.LINETYPE.SOLID,
@@ -1402,17 +1401,44 @@ const buildMessageModel = function (msg, actors, diagObj) {
       diagObj.db.LINETYPE.DOTTED_POINT,
     ].includes(msg.type)
   ) {
-    process = true;
-  }
-  if (!process) {
     return {};
   }
-  const fromBounds = activationBounds(msg.from, actors);
-  const toBounds = activationBounds(msg.to, actors);
-  const fromIdx = fromBounds[0] <= toBounds[0] ? 1 : 0;
-  const toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
-  const allBounds = [...fromBounds, ...toBounds];
-  const boundedWidth = Math.abs(toBounds[toIdx] - fromBounds[fromIdx]);
+  const [fromLeft, fromRight] = activationBounds(msg.from, actors);
+  const [toLeft, toRight] = activationBounds(msg.to, actors);
+  const arrowDirection = fromLeft <= toLeft ? 'right' : 'left';
+  const startx = arrowDirection === 'right' ? fromRight : fromLeft;
+  let stopx = arrowDirection === 'right' ? toLeft : toRight;
+  const isToActivation = Math.abs(toLeft - toRight) > 2;
+
+  /**
+   * This is an edge case for the first activation.
+   * Proper fix would require significant changes.
+   * So, we set an activate flag in the message, and cross check that with isToActivation
+   * In cases where the message is to an activation that was properly detected, we don't want to move the arrow head
+   * The activation will not be detected on the first message, so we need to move the arrow head
+   */
+  if (msg.activate && !isToActivation) {
+    if (arrowDirection === 'right') {
+      stopx -= conf.activationWidth / 2 - 1;
+    } else {
+      stopx += conf.activationWidth / 2 - 1;
+    }
+  }
+
+  /**
+   * Shorten the length of arrow at the end and move the marker forward (using refX) to have a clean arrowhead
+   * This is not required for open arrows that don't have arrowheads
+   */
+  if (![diagObj.db.LINETYPE.SOLID_OPEN, diagObj.db.LINETYPE.DOTTED_OPEN].includes(msg.type)) {
+    if (arrowDirection === 'right') {
+      stopx -= 3;
+    } else {
+      stopx += 3;
+    }
+  }
+
+  const allBounds = [fromLeft, fromRight, toLeft, toRight];
+  const boundedWidth = Math.abs(startx - stopx);
   if (msg.wrap && msg.message) {
     msg.message = utils.wrapLabel(
       msg.message,
@@ -1429,8 +1455,8 @@ const buildMessageModel = function (msg, actors, diagObj) {
       conf.width
     ),
     height: 0,
-    startx: fromBounds[fromIdx],
-    stopx: toBounds[toIdx],
+    startx,
+    stopx,
     starty: 0,
     stopy: 0,
     message: msg.message,
