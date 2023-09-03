@@ -173,6 +173,15 @@ export const parseBoxData = function (str: string): BoxData {
   return boxData;
 };
 
+export const parseText = function (str: string): Text {
+  const _str = str.trim();
+  const text = {
+    text: _str.replace(/^:?(?:no)?wrap:/, '').trim(),
+    wrap: _str.match(/^:?wrap:/) ? true : _str.match(/^:?nowrap:/) ? false : undefined,
+  };
+  return text;
+};
+
 function boxEnd(): void {
   currentBox = undefined;
 }

@@ -165,23 +165,23 @@ statement
   | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
 	| 'loop' restOfLine document end
 	{
-		$3.unshift({type: 'loopStart', loopText:yy.parseMessage($2), signalType: yy.LINETYPE.LOOP_START});
+		$3.unshift({type: 'loopStart', loopText:yy.parseText($2), signalType: yy.LINETYPE.LOOP_START});
 		$3.push({type: 'loopEnd', loopText:$2, signalType: yy.LINETYPE.LOOP_END});
 		$$=$3;}
 	| 'rect' restOfLine document end
 	{
-		$3.unshift({type: 'rectStart', color:yy.parseMessage($2), signalType: yy.LINETYPE.RECT_START });
-		$3.push({type: 'rectEnd', color:yy.parseMessage($2), signalType: yy.LINETYPE.RECT_END });
+		$3.unshift({type: 'rectStart', color:yy.parseText($2), signalType: yy.LINETYPE.RECT_START });
+		$3.push({type: 'rectEnd', color:yy.parseText($2), signalType: yy.LINETYPE.RECT_END });
 		$$=$3;}
 	| opt restOfLine document end
 	{
-		$3.unshift({type: 'optStart', optText:yy.parseMessage($2), signalType: yy.LINETYPE.OPT_START});
-		$3.push({type: 'optEnd', optText:yy.parseMessage($2), signalType: yy.LINETYPE.OPT_END});
+		$3.unshift({type: 'optStart', optText:yy.parseText($2), signalType: yy.LINETYPE.OPT_START});
+		$3.push({type: 'optEnd', optText:yy.parseText($2), signalType: yy.LINETYPE.OPT_END});
 		$$=$3;}
 	| alt restOfLine else_sections end
 	{
 		// Alt start
-		$3.unshift({type: 'altStart', altText:yy.parseMessage($2), signalType: yy.LINETYPE.ALT_START});
+		$3.unshift({type: 'altStart', altText:yy.parseText($2), signalType: yy.LINETYPE.ALT_START});
 		// Content in alt is already in $3
 		// End
 		$3.push({type: 'altEnd', signalType: yy.LINETYPE.ALT_END});
@@ -189,7 +189,7 @@ statement
 	| par restOfLine par_sections end
 	{
 		// Parallel start
-		$3.unshift({type: 'parStart', parText:yy.parseMessage($2), signalType: yy.LINETYPE.PAR_START});
+		$3.unshift({type: 'parStart', parText:yy.parseText($2), signalType: yy.LINETYPE.PAR_START});
 		// Content in par is already in $3
 		// End
 		$3.push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});
@@ -197,7 +197,7 @@ statement
 	| par_over restOfLine par_sections end
 	{
 		// Parallel (overlapped) start
-		$3.unshift({type: 'parStart', parText:yy.parseMessage($2), signalType: yy.LINETYPE.PAR_OVER_START});
+		$3.unshift({type: 'parStart', parText:yy.parseText($2), signalType: yy.LINETYPE.PAR_OVER_START});
 		// Content in par is already in $3
 		// End
 		$3.push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});
@@ -205,15 +205,15 @@ statement
 	| critical restOfLine option_sections end
 	{
 		// critical start
-		$3.unshift({type: 'criticalStart', criticalText:yy.parseMessage($2), signalType: yy.LINETYPE.CRITICAL_START});
+		$3.unshift({type: 'criticalStart', criticalText:yy.parseText($2), signalType: yy.LINETYPE.CRITICAL_START});
 		// Content in critical is already in $3
 		// critical end
 		$3.push({type: 'criticalEnd', signalType: yy.LINETYPE.CRITICAL_END});
 		$$=$3;}
 	| break restOfLine document end
 	{
-		$3.unshift({type: 'breakStart', breakText:yy.parseMessage($2), signalType: yy.LINETYPE.BREAK_START});
-		$3.push({type: 'breakEnd', optText:yy.parseMessage($2), signalType: yy.LINETYPE.BREAK_END});
+		$3.unshift({type: 'breakStart', breakText:yy.parseText($2), signalType: yy.LINETYPE.BREAK_START});
+		$3.push({type: 'breakEnd', optText:yy.parseText($2), signalType: yy.LINETYPE.BREAK_END});
 		$$=$3;}
   | directive
 	;
@@ -221,25 +221,25 @@ statement
 option_sections
 	: document
 	| document option restOfLine option_sections
-	{ $$ = $1.concat([{type: 'option', optionText:yy.parseMessage($3), signalType: yy.LINETYPE.CRITICAL_OPTION}, $4]); }
+	{ $$ = $1.concat([{type: 'option', optionText:yy.parseText($3), signalType: yy.LINETYPE.CRITICAL_OPTION}, $4]); }
 	;
 
 par_sections
 	: document
 	| document and restOfLine par_sections
-	{ $$ = $1.concat([{type: 'and', parText:yy.parseMessage($3), signalType: yy.LINETYPE.PAR_AND}, $4]); }
+	{ $$ = $1.concat([{type: 'and', parText:yy.parseText($3), signalType: yy.LINETYPE.PAR_AND}, $4]); }
 	;
 
 else_sections
 	: document
 	| document else restOfLine else_sections
-	{ $$ = $1.concat([{type: 'else', altText:yy.parseMessage($3), signalType: yy.LINETYPE.ALT_ELSE}, $4]); }
+	{ $$ = $1.concat([{type: 'else', altText:yy.parseText($3), signalType: yy.LINETYPE.ALT_ELSE}, $4]); }
 	;
 
 participant_statement
-	: 'participant' actor 'AS' restOfLine 'NEWLINE' {$2.draw='participant'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	: 'participant' actor 'AS' restOfLine 'NEWLINE' {$2.draw='participant'; $2.type='addParticipant';$2.description=yy.parseText($4); $$=$2;}
 	| 'participant' actor 'NEWLINE' {$2.draw='participant'; $2.type='addParticipant';$$=$2;}
-	| 'participant_actor' actor 'AS' restOfLine 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant_actor' actor 'AS' restOfLine 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant';$2.description=yy.parseText($4); $$=$2;}
 	| 'participant_actor' actor 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant'; $$=$2;}
 	| 'destroy' actor 'NEWLINE' {$2.type='destroyParticipant'; $$=$2;}
 	;
@@ -332,7 +332,7 @@ signaltype
 	;
 
 text2
-  : TXT {$$ = yy.parseMessage($1.trim().substring(1)) }
+  : TXT {$$ = yy.parseText($1.trim().substring(1)) }
   ;
 
 openDirective

@@ -10,14 +10,14 @@ export interface BoxData {
 
 export interface Text {
   text: string;
-  wrap: boolean;
+  wrap?: boolean;
 }
 
 export interface Message {
   from?: string;
   to: string;
   message: string;
-  wrap: boolean;
+  wrap?: boolean;
   answer?: string;
 }
 
@@ -25,7 +25,7 @@ export interface ActorData {
   box?: BoxData;
   name: string;
   description: string;
-  wrap: boolean;
+  wrap?: boolean;
   prevActor?: string;
   nextActor?: string;
   links: LinkData;
