@@ -63,8 +63,6 @@ properties:
     meta:enum:
       'null': Can be set to disable any pre-defined mermaid theme
     default: 'default'
-    # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
-    tsType: 'string | "default" | "forest" | "dark" | "neutral" | "null"'
   themeVariables:
     tsType: any
   themeCSS:
@@ -115,8 +113,6 @@ properties:
       error: Equivalent to 4
       fatal: Equivalent to 5 (default)
     default: 5
-    # Allow any number or string for typescript backwards compatibility (fix in Mermaid v10)
-    tsType: 'number | string | 0 | 2 | 1 | "trace" | "debug" | "info" | "warn" | "error" | "fatal" | 3 | 4 | 5 | undefined'
   securityLevel:
     description: Level of trust for parsed diagram
     type: string
@@ -134,8 +130,6 @@ properties:
         This prevent any JavaScript from running in the context.
         This may hinder interactive functionality of the diagram, like scripts, popups in the sequence diagram, or links to other tabs or targets, etc.
     default: strict
-    # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
-    tsType: 'string | "strict" | "loose" | "antiscript" | "sandbox" | undefined'
   startOnLoad:
     description: Dictates whether mermaid starts on Page load
     type: boolean
@@ -1021,8 +1015,6 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
           LR: Left-Right
           RL: Right to Left
         default: TB
-        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
-        tsType: 'string | "TB" | "BT" | "LR" | "RL"'
       minEntityWidth:
         description: The minimum width of an entity box. Expressed in pixels.
         type: integer
@@ -1135,8 +1127,6 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
           dagre-d3: The [dagre-d3-es](https://www.npmjs.com/package/dagre-d3-es) library.
           dagre-wrapper: wrapper for dagre implemented in mermaid
           elk: Layout using [elkjs](https://github.com/kieler/elkjs)
-        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
-        tsType: 'string | "dagre-d3" | "dagre-wrapper" | "elk"'
 
   ClassDiagramConfig:
     title: Class Diagram Config
@@ -1252,8 +1242,6 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
           - center
           - right
         default: center
-        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
-        tsType: 'string | "left" | "center" | "right"'
       bottomMarginAdj:
         description: |
           Prolongs the edge of the diagram downwards.
@@ -1378,8 +1366,6 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
           - center
           - right
         default: center
-        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
-        tsType: 'string | "left" | "center" | "right"'
       bottomMarginAdj:
         description: |
           Prolongs the edge of the diagram downwards.
@@ -1543,13 +1529,10 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         meta:enum:
           compact: Enables displaying multiple tasks on the same row.
         default: ''
-        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
-        tsType: 'string | "compact"'
       weekday:
         description: |
           On which day a week-based interval should start
         type: string
-        tsType: '"monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday"'
         enum:
           - monday
           - tuesday
@@ -1691,8 +1674,6 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         type: string
         enum: ['left', 'center', 'right']
         default: 'center'
-        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
-        tsType: 'string | "left" | "center" | "right"'
 
       messageFontSize:
         description: This sets the font size of actor messages
@@ -1780,8 +1761,6 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         type: string
         enum: ['basis', 'linear', 'cardinal']
         default: 'basis'
-        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
-        tsType: 'string | "basis" | "linear" | "cardinal"'
       padding:
         description: |
           Represents the padding between the labels and the shape
