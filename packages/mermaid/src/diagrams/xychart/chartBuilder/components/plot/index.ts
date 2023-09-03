@@ -10,7 +10,6 @@ import type {
 import type { Axis } from '../axis/index.js';
 import type { ChartComponent } from '../../Interfaces.js';
 import { LinePlot } from './LinePlot.js';
-import { PlotBorder } from './PlotBorder.js';
 import { BarPlot } from './BarPlot.js';
 
 export interface Plot extends ChartComponent {
@@ -55,13 +54,7 @@ export class Plot implements Plot {
     if (!(this.xAxis && this.yAxis)) {
       throw Error('Axes must be passed to render Plots');
     }
-    const drawableElem: DrawableElem[] = [
-      // ...new PlotBorder(
-      //   this.boundingRect,
-      //   this.chartConfig.chartOrientation,
-      //   this.chartThemeConfig
-      // ).getDrawableElement(),
-    ];
+    const drawableElem: DrawableElem[] = [];
     for (const [i, plot] of this.chartData.plots.entries()) {
       switch (plot.type) {
         case 'line':

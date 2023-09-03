@@ -8,12 +8,11 @@ export interface XYChartAxisThemeConfig {
 export interface XYChartThemeConfig {
   backgroundColor: string;
   titleColor: string;
-  plotBorderColor: string;
-  xAxisLableColor: string;
+  xAxisLabelColor: string;
   xAxisTitleColor: string;
   xAxisTickColor: string;
   xAxisLineColor: string;
-  yAxisLableColor: string;
+  yAxisLabelColor: string;
   yAxisTitleColor: string;
   yAxisTickColor: string;
   yAxisLineColor: string;
@@ -120,7 +119,7 @@ export interface Point {
 }
 
 export type TextHorizontalPos = 'left' | 'center' | 'right';
-export type TextVerticalPos = 'top' | 'middle' | 'bottom';
+export type TextVerticalPos = 'top' | 'middle';
 
 export interface RectElem extends Point {
   width: number;

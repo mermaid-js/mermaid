@@ -30,7 +30,7 @@ export class Orchestrator {
         chartConfig.xAxis,
         {
           titleColor: chartThemeConfig.xAxisTitleColor,
-          labelColor: chartThemeConfig.xAxisLableColor,
+          labelColor: chartThemeConfig.xAxisLabelColor,
           tickColor: chartThemeConfig.xAxisTickColor,
           axisLineColor: chartThemeConfig.xAxisLineColor,
         },
@@ -41,7 +41,7 @@ export class Orchestrator {
         chartConfig.yAxis,
         {
           titleColor: chartThemeConfig.yAxisTitleColor,
-          labelColor: chartThemeConfig.yAxisLableColor,
+          labelColor: chartThemeConfig.yAxisLabelColor,
           tickColor: chartThemeConfig.yAxisTickColor,
           axisLineColor: chartThemeConfig.yAxisLineColor,
         },
@@ -96,11 +96,6 @@ export class Orchestrator {
       chartHeight += availableHeight;
       availableHeight = 0;
     }
-    // const plotBorderWidthHalf = this.chartConfig.plotBorderWidth / 2;
-    // plotX += plotBorderWidthHalf;
-    // plotY += plotBorderWidthHalf;
-    // chartWidth -= this.chartConfig.plotBorderWidth;
-    // chartHeight -= this.chartConfig.plotBorderWidth;
     this.componentStore.plot.calculateSpace({
       width: chartWidth,
       height: chartHeight,
@@ -168,11 +163,6 @@ export class Orchestrator {
       chartHeight += availableHeight;
       availableHeight = 0;
     }
-    // const plotBorderWidthHalf = this.chartConfig.plotBorderWidth / 2;
-    // plotX += plotBorderWidthHalf;
-    // plotY += plotBorderWidthHalf;
-    // chartWidth -= this.chartConfig.plotBorderWidth;
-    // chartHeight -= this.chartConfig.plotBorderWidth;
     this.componentStore.plot.calculateSpace({
       width: chartWidth,
       height: chartHeight,

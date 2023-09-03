@@ -15,11 +15,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   const themeConfig = db.getChartThemeConfig();
   const chartConfig = db.getChartConfig();
   function getDominantBaseLine(horizontalPos: TextVerticalPos) {
-    return horizontalPos === 'top'
-      ? 'text-before-edge'
-      : horizontalPos === 'bottom'
-      ? 'text-after-edge'
-      : 'middle';
+    return horizontalPos === 'top' ? 'text-before-edge' : 'middle';
   }
 
   function getTextAnchor(verticalPos: TextHorizontalPos) {

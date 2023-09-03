@@ -34,7 +34,7 @@ let tmpSVGGElem: SVGGType;
 let xyChartConfig: XYChartConfig = getChartDefaultConfig();
 let xyChartThemeConfig: XYChartThemeConfig = getChartDefaultThemeConfig();
 let xyChartData: XYChartData = getChartDefalutData();
-let plotColorPalette = xyChartThemeConfig.plotColorPalette;
+let plotColorPalette = xyChartThemeConfig.plotColorPalette.split(',').map((color) => color.trim());
 let hasSetXAxis = false;
 let hasSetYAxis = false;
 
@@ -175,7 +175,7 @@ function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
 }
 
 function getPlotColorFromPalette(plotIndex: number): string {
-  return plotColorPalette[plotIndex === 0 ? 0 : plotIndex % (plotColorPalette.length - 1)];
+  return plotColorPalette[plotIndex === 0 ? 0 : plotIndex % plotColorPalette.length];
 }
 
 function setLineData(title: NormalTextType, data: number[]) {
@@ -221,7 +221,7 @@ const clear = function () {
   xyChartConfig = getChartDefaultConfig();
   xyChartData = getChartDefalutData();
   xyChartThemeConfig = getChartDefaultThemeConfig();
-  plotColorPalette = xyChartThemeConfig.plotColorPalette;
+  plotColorPalette = xyChartThemeConfig.plotColorPalette.split(',').map((color) => color.trim());
   hasSetXAxis = false;
   hasSetYAxis = false;
 };

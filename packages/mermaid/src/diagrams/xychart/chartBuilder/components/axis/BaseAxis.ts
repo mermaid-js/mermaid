@@ -22,6 +22,8 @@ export abstract class BaseAxis implements Axis {
   protected showTick = false;
   protected showAxisLine = false;
   protected outerPadding = 0;
+  protected titleTextHeight = 0;
+  protected labelTextHeight = 0;
 
   constructor(
     protected axisConfig: XYChartAxisConfig,
@@ -93,6 +95,7 @@ export abstract class BaseAxis implements Axis {
       this.outerPadding = Math.min(spaceRequired.width / 2, maxPadding);
 
       const heightRequired = spaceRequired.height + this.axisConfig.labelPadding * 2;
+      this.labelTextHeight = spaceRequired.height;
       log.trace('height required for axis label: ', heightRequired);
       if (heightRequired <= availableHeight) {
         availableHeight -= heightRequired;
@@ -109,6 +112,7 @@ export abstract class BaseAxis implements Axis {
         this.axisConfig.titleFontSize
       );
       const heightRequired = spaceRequired.height + this.axisConfig.titlePadding * 2;
+      this.titleTextHeight = spaceRequired.height;
       log.trace('height required for axis title: ', heightRequired);
       if (heightRequired <= availableHeight) {
         availableHeight -= heightRequired;
@@ -146,6 +150,7 @@ export abstract class BaseAxis implements Axis {
         this.axisConfig.titleFontSize
       );
       const widthRequired = spaceRequired.height + this.axisConfig.titlePadding * 2;
+      this.titleTextHeight = spaceRequired.height;
       log.trace('width required for axis title: ', widthRequired);
       if (widthRequired <= availableWidth) {
         availableWidth -= widthRequired;
@@ -157,10 +162,6 @@ export abstract class BaseAxis implements Axis {
   }
 
   calculateSpace(availableSpace: Dimension): Dimension {
-    if (!(this.axisConfig.showLabel || this.axisConfig.showTitle)) {
-      this.recalculateScale();
-      return { width: 0, height: 0 };
-    }
     if (this.axisPosition === 'left' || this.axisPosition === 'right') {
       this.calculateSpaceIfDrawnVertical(availableSpace);
     } else {
@@ -281,8 +282,8 @@ export abstract class BaseAxis implements Axis {
           x: this.getScaleValue(tick),
           y:
             this.boundingRect.y +
-            (this.showLabel ? this.axisConfig.labelPadding : 0) +
-            (this.showTitle ? this.axisConfig.tickLength : 0) +
+            this.axisConfig.labelPadding +
+            (this.showTick ? this.axisConfig.tickLength : 0) +
             (this.showAxisLine ? this.axisConfig.axisLineWidth : 0),
           fill: this.axisThemeConfig.labelColor,
           fontSize: this.axisConfig.labelFontSize,
@@ -293,17 +294,13 @@ export abstract class BaseAxis implements Axis {
       });
     }
     if (this.showTick) {
-      const y = this.boundingRect.y;
+      const y = this.boundingRect.y + (this.showAxisLine ? this.axisConfig.axisLineWidth : 0);
       drawableElement.push({
         type: 'path',
         groupTexts: ['bottom-axis', 'ticks'],
         data: this.getTickValues().map((tick) => ({
-          path: `M ${this.getScaleValue(tick)},${
-            y + (this.showAxisLine ? this.axisConfig.axisLineWidth : 0)
-          } L ${this.getScaleValue(tick)},${
-            y +
-            (this.showTick ? this.axisConfig.tickLength : 0) +
-            (this.showAxisLine ? this.axisConfig.axisLineWidth : 0)
+          path: `M ${this.getScaleValue(tick)},${y} L ${this.getScaleValue(tick)},${
+            y + this.axisConfig.tickLength
           }`,
           strokeFill: this.axisThemeConfig.tickColor,
           strokeWidth: this.axisConfig.tickWidth,
@@ -318,11 +315,15 @@ export abstract class BaseAxis implements Axis {
           {
             text: this.title,
             x: this.range[0] + (this.range[1] - this.range[0]) / 2,
-            y: this.boundingRect.y + this.boundingRect.height - this.axisConfig.titlePadding,
+            y:
+              this.boundingRect.y +
+              this.boundingRect.height -
+              this.axisConfig.titlePadding -
+              this.titleTextHeight,
             fill: this.axisThemeConfig.titleColor,
             fontSize: this.axisConfig.titleFontSize,
             rotation: 0,
-            verticalPos: 'bottom',
+            verticalPos: 'top',
             horizontalPos: 'center',
           },
         ],
@@ -357,11 +358,8 @@ export abstract class BaseAxis implements Axis {
           x: this.getScaleValue(tick),
           y:
             this.boundingRect.y +
-            (this.showTitle
-              ? this.axisConfig.titleFontSize +
-                this.axisConfig.labelPadding +
-                this.axisConfig.titlePadding * 2
-              : 0),
+            (this.showTitle ? this.titleTextHeight + this.axisConfig.titlePadding * 2 : 0) +
+            this.axisConfig.labelPadding,
           fill: this.axisThemeConfig.labelColor,
           fontSize: this.axisConfig.labelFontSize,
           rotation: 0,
@@ -374,7 +372,7 @@ export abstract class BaseAxis implements Axis {
       const y = this.boundingRect.y;
       drawableElement.push({
         type: 'path',
-        groupTexts: ['bottom-axis', 'ticks'],
+        groupTexts: ['top-axis', 'ticks'],
         data: this.getTickValues().map((tick) => ({
           path: `M ${this.getScaleValue(tick)},${
             y + this.boundingRect.height - (this.showAxisLine ? this.axisConfig.axisLineWidth : 0)
@@ -392,7 +390,7 @@ export abstract class BaseAxis implements Axis {
     if (this.showTitle) {
       drawableElement.push({
         type: 'text',
-        groupTexts: ['bottom-axis', 'title'],
+        groupTexts: ['top-axis', 'title'],
         data: [
           {
             text: this.title,

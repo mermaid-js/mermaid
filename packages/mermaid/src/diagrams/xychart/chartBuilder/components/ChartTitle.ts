@@ -27,7 +27,7 @@ export class ChartTitle implements ChartComponent {
       width: 0,
       height: 0,
     };
-    this.showChartTitle = !!(this.chartData.title && this.chartConfig.showTitle);
+    this.showChartTitle = false;
   }
   setBoundingBoxXY(point: Point): void {
     this.boundingRect.x = point.x;
@@ -43,10 +43,12 @@ export class ChartTitle implements ChartComponent {
     if (
       titleDimension.width <= widthRequired &&
       titleDimension.height <= heightRequired &&
-      this.showChartTitle
+      this.chartConfig.showTitle &&
+      this.chartData.title
     ) {
       this.boundingRect.width = widthRequired;
       this.boundingRect.height = heightRequired;
+      this.showChartTitle = true;
     }
 
     return {
@@ -56,7 +58,7 @@ export class ChartTitle implements ChartComponent {
   }
   getDrawableElements(): DrawableElem[] {
     const drawableElem: DrawableElem[] = [];
-    if (this.boundingRect.height > 0 && this.boundingRect.width > 0) {
+    if (this.showChartTitle) {
       drawableElem.push({
         groupTexts: ['chart-title'],
         type: 'text',

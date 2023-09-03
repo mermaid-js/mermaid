@@ -130,20 +130,19 @@ Themes for xychart resides inside xychart attribute so to set the variables use 
 %%{init: { "themeVariables": {"xyChart": {"titleColor": "#ff0000"} } }}%%
 ```
 
-| Parameter        | Description                                           |
-| ---------------- | ----------------------------------------------------- |
-| backgroundColor  | Background color of the whole chart                   |
-| titleColor       | Color of the Title text                               |
-| plotBorderColor  | Color of the plot border                              |
-| xAxisLableColor  | Color of the x-axis labels                            |
-| xAxisTitleColor  | Color of the x-axis title                             |
-| xAxisTickColor   | Color of the x-axis tick                              |
-| xAxisLineColor   | Color of the x-axis line                              |
-| yAxisLableColor  | Color of the y-axis labels                            |
-| yAxisTitleColor  | Color of the y-axis title                             |
-| yAxisTickColor   | Color of the y-axis tick                              |
-| yAxisLineColor   | Color of the y-axis line                              |
-| plotColorPalette | Array of colors for the plots eg ["#f3456", "#43445"] |
+| Parameter        | Description                                             |
+| ---------------- | ------------------------------------------------------- |
+| backgroundColor  | Background color of the whole chart                     |
+| titleColor       | Color of the Title text                                 |
+| xAxisLableColor  | Color of the x-axis labels                              |
+| xAxisTitleColor  | Color of the x-axis title                               |
+| xAxisTickColor   | Color of the x-axis tick                                |
+| xAxisLineColor   | Color of the x-axis line                                |
+| yAxisLableColor  | Color of the y-axis labels                              |
+| yAxisTitleColor  | Color of the y-axis title                               |
+| yAxisTickColor   | Color of the y-axis tick                                |
+| yAxisLineColor   | Color of the y-axis line                                |
+| plotColorPalette | String of colors seperated by comma eg "#f3456, #43445" |
 
 ## Example on config and theme
 

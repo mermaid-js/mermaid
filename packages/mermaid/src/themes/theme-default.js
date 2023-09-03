@@ -276,27 +276,17 @@ class Theme {
     this.xyChart = {
       backgroundColor: this.xyChart?.backgroundColor || this.background,
       titleColor: this.xyChart?.titleColor || this.primaryTextColor,
-      plotBorderColor: this.xyChart?.plotBorderColor || this.primaryTextColor,
       xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
-      xAxisLableColor: this.xyChart?.xAxisLableColor || this.primaryTextColor,
+      xAxisLabelColor: this.xyChart?.xAxisLabelColor || this.primaryTextColor,
       xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,
       xAxisLineColor: this.xyChart?.xAxisLineColor || this.primaryTextColor,
       yAxisTitleColor: this.xyChart?.yAxisTitleColor || this.primaryTextColor,
-      yAxisLableColor: this.xyChart?.yAxisLableColor || this.primaryTextColor,
+      yAxisLabelColor: this.xyChart?.yAxisLabelColor || this.primaryTextColor,
       yAxisTickColor: this.xyChart?.yAxisTickColor || this.primaryTextColor,
       yAxisLineColor: this.xyChart?.yAxisLineColor || this.primaryTextColor,
-      plotColorPalette: this.xyChart?.plotColorPalette || [
-        '#ECECFF',
-        '#8493A6',
-        '#FFC3A0',
-        '#DCDDE1',
-        '#B8E994',
-        '#D1A36F',
-        '#C3CDE6',
-        '#FFB6C1',
-        '#496078',
-        '#F8F3E3',
-      ],
+      plotColorPalette:
+        this.xyChart?.plotColorPalette ||
+        '#ECECFF,#8493A6,#FFC3A0,#DCDDE1,#B8E994,#D1A36F,#C3CDE6,#FFB6C1,#496078,#F8F3E3',
     };
 
     /* requirement-diagram */
