@@ -1,5 +1,3 @@
-import type { DiagramDB } from '../../diagram-api/types.js';
-
 export interface RectData {
   x: number;
   y: number;
@@ -58,13 +56,3 @@ export type D3ImageElement = d3.Selection<SVGImageElement, unknown, Element | nu
 export type D3TextElement = d3.Selection<SVGTextElement, unknown, Element | null, unknown>;
 
 export type D3TSpanElement = d3.Selection<SVGTSpanElement, unknown, Element | null, unknown>;
-
-export interface CommonDb extends DiagramDB {
-  clear: () => void;
-  setDiagramTitle: (title: string) => void;
-  getDiagramTitle: () => string;
-  setAccTitle: (title: string) => void;
-  getAccTitle: () => string;
-  setAccDescription: (describetion: string) => void;
-  getAccDescription: () => string;
-}
