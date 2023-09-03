@@ -188,6 +188,7 @@ function boxEnd(): void {
 
 export const db: SequenceDB = {
   parseDirective,
+  parseText,
   addBox,
   addActor,
   addMessage,
