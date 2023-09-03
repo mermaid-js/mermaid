@@ -178,23 +178,63 @@ export const getMin = function (...values: number[]): number {
  * @param text - The text to convert
  * @returns The converted string
  */
-export const parseGenericTypes = function (text: string): string {
-  let cleanedText = text;
+export const parseGenericTypes = function (input: string): string {
+  const inputSets = input.split(/(,)/);
+  const output = [];
 
-  if (text.split('~').length - 1 >= 2) {
-    let newCleanedText = cleanedText;
+  for (let i = 0; i < inputSets.length; i++) {
+    let thisSet = inputSets[i];
 
-    // use a do...while loop instead of replaceAll to detect recursion
-    // e.g. Array~Array~T~~
-    do {
-      cleanedText = newCleanedText;
-      newCleanedText = cleanedText.replace(/~([^\s,:;]+)~/, '<$1>');
-    } while (newCleanedText != cleanedText);
+    // if the original input included a value such as "~K, V~"", these will be split into
+    // an array of ["~K",","," V~"].
+    // This means that on each call of processSet, there will only be 1 ~ present
+    // To account for this, if we encounter a ",", we are checking the previous and next sets in the array
+    // to see if they contain matching ~'s
+    // in which case we are assuming that they should be rejoined and sent to be processed
+    if (thisSet === ',' && i > 0 && i + 1 < inputSets.length) {
+      const previousSet = inputSets[i - 1];
+      const nextSet = inputSets[i + 1];
 
-    return parseGenericTypes(newCleanedText);
-  } else {
-    return cleanedText;
+      if (shouldCombineSets(previousSet, nextSet)) {
+        thisSet = previousSet + ',' + nextSet;
+        i++; // Move the index forward to skip the next iteration since we're combining sets
+        output.pop();
+      }
+    }
+
+    output.push(processSet(thisSet));
   }
+
+  return output.join('');
+};
+
+const shouldCombineSets = (previousSet: string, nextSet: string): boolean => {
+  const prevCount = [...previousSet].reduce((count, char) => (char === '~' ? count + 1 : count), 0);
+  const nextCount = [...nextSet].reduce((count, char) => (char === '~' ? count + 1 : count), 0);
+
+  return prevCount === 1 && nextCount === 1;
+};
+
+const processSet = (input: string): string => {
+  const chars = [...input];
+  const tildeCount = chars.reduce((count, char) => (char === '~' ? count + 1 : count), 0);
+
+  if (tildeCount <= 1) {
+    return input;
+  }
+
+  let first = chars.indexOf('~');
+  let last = chars.lastIndexOf('~');
+
+  while (first !== -1 && last !== -1 && first !== last) {
+    chars[first] = '<';
+    chars[last] = '>';
+
+    first = chars.indexOf('~');
+    last = chars.lastIndexOf('~');
+  }
+
+  return chars.join('');
 };
 
 export default {
