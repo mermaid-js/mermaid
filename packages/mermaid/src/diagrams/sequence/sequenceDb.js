@@ -452,6 +452,19 @@ export const getActorProperty = function (actor, key) {
   return undefined;
 };
 
+/**
+ * @typedef {object} AddMessageParams A message from one actor to another.
+ * @property {string} from - The id of the actor sending the message.
+ * @property {string} to - The id of the actor receiving the message.
+ * @property {string} msg - The message text.
+ * @property {number} signalType - The type of signal.
+ * @property {"addMessage"} type - Set to `"addMessage"` if this is an `AddMessageParams`.
+ * @property {boolean} [activate] - If `true`, this signal starts an activation.
+ */
+
+/**
+ * @param {object | object[] | AddMessageParams} param - Object of parameters.
+ */
 export const apply = function (param) {
   if (Array.isArray(param)) {
     param.forEach(function (item) {
