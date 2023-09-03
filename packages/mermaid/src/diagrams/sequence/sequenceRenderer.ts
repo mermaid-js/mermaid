@@ -1405,10 +1405,21 @@ const buildMessageModel = function (msg, actors, diagObj) {
   }
   const [fromLeft, fromRight] = activationBounds(msg.from, actors);
   const [toLeft, toRight] = activationBounds(msg.to, actors);
-  const arrowDirection = fromLeft <= toLeft ? 'right' : 'left';
-  const startx = arrowDirection === 'right' ? fromRight : fromLeft;
-  let stopx = arrowDirection === 'right' ? toLeft : toRight;
-  const isToActivation = Math.abs(toLeft - toRight) > 2;
+  const isArrowToRight = fromLeft <= toLeft;
+  const startx = isArrowToRight ? fromRight : fromLeft;
+  let stopx = isArrowToRight ? toLeft : toRight;
+
+  // As the line width is considered, the left and right values will be off by 2.
+  const isArrowToActivation = Math.abs(toLeft - toRight) > 2;
+
+  /**
+   * Adjust the value based on the arrow direction
+   * @param value - The value to adjust
+   * @returns The adjustment with correct sign to be added to the actual value.
+   */
+  const adjustValue = (value: number) => {
+    return isArrowToRight ? -value : value;
+  };
 
   /**
    * This is an edge case for the first activation.
@@ -1417,12 +1428,8 @@ const buildMessageModel = function (msg, actors, diagObj) {
    * In cases where the message is to an activation that was properly detected, we don't want to move the arrow head
    * The activation will not be detected on the first message, so we need to move the arrow head
    */
-  if (msg.activate && !isToActivation) {
-    if (arrowDirection === 'right') {
-      stopx -= conf.activationWidth / 2 - 1;
-    } else {
-      stopx += conf.activationWidth / 2 - 1;
-    }
+  if (msg.activate && !isArrowToActivation) {
+    stopx += adjustValue(conf.activationWidth / 2 - 1);
   }
 
   /**
@@ -1430,11 +1437,7 @@ const buildMessageModel = function (msg, actors, diagObj) {
    * This is not required for open arrows that don't have arrowheads
    */
   if (![diagObj.db.LINETYPE.SOLID_OPEN, diagObj.db.LINETYPE.DOTTED_OPEN].includes(msg.type)) {
-    if (arrowDirection === 'right') {
-      stopx -= 3;
-    } else {
-      stopx += 3;
-    }
+    stopx += adjustValue(3);
   }
 
   const allBounds = [fromLeft, fromRight, toLeft, toRight];
