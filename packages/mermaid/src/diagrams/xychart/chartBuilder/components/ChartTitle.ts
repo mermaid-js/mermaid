@@ -64,8 +64,8 @@ export class ChartTitle implements ChartComponent {
           {
             fontSize: this.chartConfig.titleFontSize,
             text: this.chartData.title,
-            verticalPos: 'center',
-            horizontalPos: 'middle',
+            verticalPos: 'middle',
+            horizontalPos: 'center',
             x: this.boundingRect.x + this.boundingRect.width / 2,
             y: this.boundingRect.y + this.boundingRect.height / 2,
             fill: this.chartThemeConfig.titleColor,

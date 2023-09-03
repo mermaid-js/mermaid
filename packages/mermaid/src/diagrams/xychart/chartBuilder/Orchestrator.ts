@@ -32,6 +32,7 @@ export class Orchestrator {
           titleColor: chartThemeConfig.xAxisTitleColor,
           labelColor: chartThemeConfig.xAxisLableColor,
           tickColor: chartThemeConfig.xAxisTickColor,
+          axisLineColor: chartThemeConfig.xAxisLineColor,
         },
         tmpSVGGElem
       ),
@@ -42,6 +43,7 @@ export class Orchestrator {
           titleColor: chartThemeConfig.yAxisTitleColor,
           labelColor: chartThemeConfig.yAxisLableColor,
           tickColor: chartThemeConfig.yAxisTickColor,
+          axisLineColor: chartThemeConfig.yAxisLineColor,
         },
         tmpSVGGElem
       ),
@@ -94,11 +96,11 @@ export class Orchestrator {
       chartHeight += availableHeight;
       availableHeight = 0;
     }
-    const plotBorderWidthHalf = this.chartConfig.plotBorderWidth / 2;
-    plotX += plotBorderWidthHalf;
-    plotY += plotBorderWidthHalf;
-    chartWidth -= this.chartConfig.plotBorderWidth;
-    chartHeight -= this.chartConfig.plotBorderWidth;
+    // const plotBorderWidthHalf = this.chartConfig.plotBorderWidth / 2;
+    // plotX += plotBorderWidthHalf;
+    // plotY += plotBorderWidthHalf;
+    // chartWidth -= this.chartConfig.plotBorderWidth;
+    // chartHeight -= this.chartConfig.plotBorderWidth;
     this.componentStore.plot.calculateSpace({
       width: chartWidth,
       height: chartHeight,
@@ -166,11 +168,11 @@ export class Orchestrator {
       chartHeight += availableHeight;
       availableHeight = 0;
     }
-    const plotBorderWidthHalf = this.chartConfig.plotBorderWidth / 2;
-    plotX += plotBorderWidthHalf;
-    plotY += plotBorderWidthHalf;
-    chartWidth -= this.chartConfig.plotBorderWidth;
-    chartHeight -= this.chartConfig.plotBorderWidth;
+    // const plotBorderWidthHalf = this.chartConfig.plotBorderWidth / 2;
+    // plotX += plotBorderWidthHalf;
+    // plotY += plotBorderWidthHalf;
+    // chartWidth -= this.chartConfig.plotBorderWidth;
+    // chartHeight -= this.chartConfig.plotBorderWidth;
     this.componentStore.plot.calculateSpace({
       width: chartWidth,
       height: chartHeight,

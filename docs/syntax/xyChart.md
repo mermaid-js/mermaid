@@ -110,23 +110,24 @@ Every grammer are optional other than the chart name and one data set, so you wi
 | showTitle                | Title to be shown or not                       |     true      |
 | xAxis                    | xAxis configuration                            |  AxisConfig   |
 | yAxis                    | yAxis configuration                            |  AxisConfig   |
-| plotBorderWidth          | Width of the border around the plot            |       2       |
 | chartOrientation         | ('vertical' or 'horizontal')                   |  'vertical'   |
 | plotReservedSpacePercent | Minimum space plots will take inside the chart |      50       |
 
 ### AxisConfig
 
-| Parameter     | Description                                  | Default value |
-| ------------- | -------------------------------------------- | :-----------: |
-| showLabel     | Show axis labels or tick values              |     true      |
-| labelFontSize | Font size of the label to be drawn           |      14       |
-| labelPadding  | Top and Bottom padding of the label          |       5       |
-| showTitle     | Axis title to be shown or not                |     true      |
-| titleFontSize | Axis title font size                         |      16       |
-| titlePadding  | Top and Bottom padding of Axis title         |       5       |
-| showTick      | Tick along with the label to be shown or not |     true      |
-| tickLength    | How long the tick will be                    |       5       |
-| tickWidth     | How width the tick will be                   |       2       |
+| Parameter     | Description                          | Default value |
+| ------------- | ------------------------------------ | :-----------: |
+| showLabel     | Show axis labels or tick values      |     true      |
+| labelFontSize | Font size of the label to be drawn   |      14       |
+| labelPadding  | Top and Bottom padding of the label  |       5       |
+| showTitle     | Axis title to be shown or not        |     true      |
+| titleFontSize | Axis title font size                 |      16       |
+| titlePadding  | Top and Bottom padding of Axis title |       5       |
+| showTick      | Tick to be shown or not              |     true      |
+| tickLength    | How long the tick will be            |       5       |
+| tickWidth     | How width the tick will be           |       2       |
+| showAxisLine  | Axis line to be shown or not         |     true      |
+| axisLineWidth | Thickness of the axis line           |       2       |
 
 ## Chart Theme Variables
 
@@ -142,15 +143,17 @@ Every grammer are optional other than the chart name and one data set, so you wi
 | xAxisLableColor  | Color of the x-axis labels                             |
 | xAxisTitleColor  | Color of the x-axis title                              |
 | xAxisTickColor   | Color of the x-axis tick                               |
+| xAxisLineColor   | Color of the x-axis line                               |
 | yAxisLableColor  | Color of the y-axis labels                             |
 | yAxisTitleColor  | Color of the y-axis title                              |
 | yAxisTickColor   | Color of the y-axis tick                               |
+| yAxisLineColor   | Color of the y-axis line                               |
 | plotColorPalette | Array of colors for the plots eg \["#f3456", "#43445"] |
 
 ## Example on config and theme
 
 ```mermaid-example
-%%{init: {"xyChart": {"width": 500, "height": 400}, "themeVariables": {"xyChart": {"titleColor": "#ff0000"} } }}%%
+%%{init: {"xyChart": {"width": 900, "height": 600}, "themeVariables": {"xyChart": {"titleColor": "#ff0000"} } }}%%
 xychart-beta
     title "Sales Revenue"
     x-axis [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
@@ -160,7 +163,7 @@ xychart-beta
 ```
 
 ```mermaid
-%%{init: {"xyChart": {"width": 500, "height": 400}, "themeVariables": {"xyChart": {"titleColor": "#ff0000"} } }}%%
+%%{init: {"xyChart": {"width": 900, "height": 600}, "themeVariables": {"xyChart": {"titleColor": "#ff0000"} } }}%%
 xychart-beta
     title "Sales Revenue"
     x-axis [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]

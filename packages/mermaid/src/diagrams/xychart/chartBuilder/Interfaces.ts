@@ -2,6 +2,7 @@ export interface XYChartAxisThemeConfig {
   titleColor: string;
   labelColor: string;
   tickColor: string;
+  axisLineColor: string;
 }
 
 export interface XYChartThemeConfig {
@@ -11,9 +12,11 @@ export interface XYChartThemeConfig {
   xAxisLableColor: string;
   xAxisTitleColor: string;
   xAxisTickColor: string;
+  xAxisLineColor: string;
   yAxisLableColor: string;
   yAxisTitleColor: string;
   yAxisTickColor: string;
+  yAxisLineColor: string;
   plotColorPalette: string;
 }
 
@@ -81,6 +84,8 @@ export interface XYChartAxisConfig {
   showTick: boolean;
   tickLength: number;
   tickWidth: number;
+  showAxisLine: boolean;
+  axisLineWidth: number;
 }
 
 export interface XYChartConfig {
@@ -91,7 +96,6 @@ export interface XYChartConfig {
   showTitle: boolean;
   xAxis: XYChartAxisConfig;
   yAxis: XYChartAxisConfig;
-  plotBorderWidth: number;
   chartOrientation: 'vertical' | 'horizontal';
   plotReservedSpacePercent: number;
 }
@@ -115,8 +119,8 @@ export interface Point {
   y: number;
 }
 
-export type TextVerticalPos = 'left' | 'center' | 'right';
-export type TextHorizontalPos = 'top' | 'middle' | 'bottom';
+export type TextHorizontalPos = 'left' | 'center' | 'right';
+export type TextVerticalPos = 'top' | 'middle' | 'bottom';
 
 export interface RectElem extends Point {
   width: number;

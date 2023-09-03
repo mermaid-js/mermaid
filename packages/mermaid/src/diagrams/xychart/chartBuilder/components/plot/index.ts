@@ -56,11 +56,11 @@ export class Plot implements Plot {
       throw Error('Axes must be passed to render Plots');
     }
     const drawableElem: DrawableElem[] = [
-      ...new PlotBorder(
-        this.boundingRect,
-        this.chartConfig.chartOrientation,
-        this.chartThemeConfig
-      ).getDrawableElement(),
+      // ...new PlotBorder(
+      //   this.boundingRect,
+      //   this.chartConfig.chartOrientation,
+      //   this.chartThemeConfig
+      // ).getDrawableElement(),
     ];
     for (const [i, plot] of this.chartData.plots.entries()) {
       switch (plot.type) {

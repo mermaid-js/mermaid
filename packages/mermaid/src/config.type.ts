@@ -747,6 +747,14 @@ export interface XYChartAxisConfig {
    * width of the axis tick lines
    */
   tickWidth?: number;
+  /**
+   * Show line across the axis
+   */
+  showAxisLine?: boolean;
+  /**
+   * Width of the axis line
+   */
+  axisLineWidth?: number;
 }
 /**
  * This object contains configuration specific to XYCharts
@@ -777,10 +785,6 @@ export interface XYChartConfig extends BaseDiagramConfig {
   showTitle?: boolean;
   xAxis?: XYChartAxisConfig1;
   yAxis?: XYChartAxisConfig2;
-  /**
-   * width of the line around the plot of the chart
-   */
-  plotBorderWidth?: number;
   /**
    * How to plot will be drawn horizontal or vertical
    */
@@ -830,6 +834,14 @@ export interface XYChartAxisConfig1 {
    * width of the axis tick lines
    */
   tickWidth?: number;
+  /**
+   * Show line across the axis
+   */
+  showAxisLine?: boolean;
+  /**
+   * Width of the axis line
+   */
+  axisLineWidth?: number;
 }
 /**
  * This object contains configuration for XYChart axis config
@@ -871,6 +883,14 @@ export interface XYChartAxisConfig2 {
    * width of the axis tick lines
    */
   tickWidth?: number;
+  /**
+   * Show line across the axis
+   */
+  showAxisLine?: boolean;
+  /**
+   * Width of the axis line
+   */
+  axisLineWidth?: number;
 }
 /**
  * The object containing configurations specific for entity relationship diagrams

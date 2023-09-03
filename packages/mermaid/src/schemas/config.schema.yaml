@@ -1000,6 +1000,8 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
       - showTick
       - tickLength
       - tickWidth
+      - showAxisLine
+      - axisLineWidth
     properties:
       showLabel:
         description: Should show the axis labels (tick text)
@@ -1043,6 +1045,16 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         type: integer
         default: 2
         minimum: 1
+      showAxisLine:
+        description: Show line across the axis
+        type: boolean
+        default: true
+      axisLineWidth:
+        description: Width of the axis line
+        type: integer
+        default: 2
+        minimum: 1
+
   XYChartConfig:
     title: XYChart Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
@@ -1057,7 +1069,6 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
       - xAxis
       - yAxis
       - showTitle
-      - plotBorderWidth
       - chartOrientation
       - plotReservedSpacePercent
     properties:
@@ -1091,11 +1102,6 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
       yAxis:
         $ref: '#/$defs/XYChartAxisConfig'
         default: { '$ref': '#/$defs/XYChartAxisConfig' }
-      plotBorderWidth:
-        description: width of the line around the plot of the chart
-        type: integer
-        default: 2
-        minimum: 0
       chartOrientation:
         description: How to plot will be drawn horizontal or vertical
         tsType: '"vertical" | "horizontal"'

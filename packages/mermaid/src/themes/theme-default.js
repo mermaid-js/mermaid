@@ -280,9 +280,11 @@ class Theme {
       xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
       xAxisLableColor: this.xyChart?.xAxisLableColor || this.primaryTextColor,
       xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,
+      xAxisLineColor: this.xyChart?.xAxisLineColor || this.primaryTextColor,
       yAxisTitleColor: this.xyChart?.yAxisTitleColor || this.primaryTextColor,
       yAxisLableColor: this.xyChart?.yAxisLableColor || this.primaryTextColor,
       yAxisTickColor: this.xyChart?.yAxisTickColor || this.primaryTextColor,
+      yAxisLineColor: this.xyChart?.yAxisLineColor || this.primaryTextColor,
       plotColorPalette: this.xyChart?.plotColorPalette || [
         '#ECECFF',
         '#8493A6',

@@ -14,11 +14,15 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   const db = diagObj.db as typeof XYChartDB;
   const themeConfig = db.getChartThemeConfig();
   const chartConfig = db.getChartConfig();
-  function getDominantBaseLine(horizontalPos: TextHorizontalPos) {
-    return horizontalPos === 'top' ? 'hanging' : 'middle';
+  function getDominantBaseLine(horizontalPos: TextVerticalPos) {
+    return horizontalPos === 'top'
+      ? 'text-before-edge'
+      : horizontalPos === 'bottom'
+      ? 'text-after-edge'
+      : 'middle';
   }
 
-  function getTextAnchor(verticalPos: TextVerticalPos) {
+  function getTextAnchor(verticalPos: TextHorizontalPos) {
     return verticalPos === 'left' ? 'start' : verticalPos === 'right' ? 'end' : 'middle';
   }
 
@@ -108,8 +112,8 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
           .attr('y', 0)
           .attr('fill', (data) => data.fill)
           .attr('font-size', (data) => data.fontSize)
-          .attr('dominant-baseline', (data) => getDominantBaseLine(data.horizontalPos))
-          .attr('text-anchor', (data) => getTextAnchor(data.verticalPos))
+          .attr('dominant-baseline', (data) => getDominantBaseLine(data.verticalPos))
+          .attr('text-anchor', (data) => getTextAnchor(data.horizontalPos))
           .attr('transform', (data) => getTextTransformation(data))
           .text((data) => data.text);
         break;
