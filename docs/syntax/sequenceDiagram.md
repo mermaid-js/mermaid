@@ -164,7 +164,7 @@ The actor(s) can be grouped in vertical boxes. You can define a color (if not, i
     end
     A->>J: Hello John, how are you?
     J->>A: Great!
-    A->>B: Hello Bob, how is Charly ?
+    A->>B: Hello Bob, how is Charly?
     B->>C: Hello Charly, how are you?
 ```
 
@@ -180,7 +180,7 @@ The actor(s) can be grouped in vertical boxes. You can define a color (if not, i
     end
     A->>J: Hello John, how are you?
     J->>A: Great!
-    A->>B: Hello Bob, how is Charly ?
+    A->>B: Hello Bob, how is Charly?
     B->>C: Hello Charly, how are you?
 ```
 
