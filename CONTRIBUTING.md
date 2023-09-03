@@ -72,6 +72,7 @@ Documentation is necessary for all non bugfix/refactoring changes.
 Only make changes to files that are in [`/packages/mermaid/src/docs`](packages/mermaid/src/docs)
 
 **_DO NOT CHANGE FILES IN `/docs` MANUALLY_**
+
 The `/docs` folder will be rebuilt and committed as part of a pre-commit hook.
 
 [Join our slack community if you want closer contact!](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
