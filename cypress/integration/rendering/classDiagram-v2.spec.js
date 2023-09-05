@@ -386,30 +386,6 @@ describe('Class diagram V2', () => {
       { logLevel: 1, flowchart: { htmlLabels: false } }
     );
   });
-
-  it('18: should handle the direction statement with LR', () => {
-    imgSnapshotTest(
-      `
-      classDiagram
-        direction LR
-        class Student {
-          -idCard : IdCard
-        }
-        class IdCard{
-          -id : int
-          -name : string
-        }
-        class Bike{
-          -id : int
-          -name : string
-        }
-        Student "1" --o "1" IdCard : carries
-        Student "1" --o "1" Bike : rides
-
-      `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
-    );
-  });
   it('17a: should handle the direction statement with BT', () => {
     imgSnapshotTest(
       `
@@ -457,7 +433,31 @@ describe('Class diagram V2', () => {
     );
   });
 
-  it('18: should render a simple class diagram with notes', () => {
+  it('18a: should handle the direction statement with LR', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+        direction LR
+        class Student {
+          -idCard : IdCard
+        }
+        class IdCard{
+          -id : int
+          -name : string
+        }
+        class Bike{
+          -id : int
+          -name : string
+        }
+        Student "1" --o "1" IdCard : carries
+        Student "1" --o "1" Bike : rides
+
+      `,
+      { logLevel: 1, flowchart: { htmlLabels: false } }
+    );
+  });
+
+  it('18b: should render a simple class diagram with notes', () => {
     imgSnapshotTest(
       `
       classDiagram-v2
@@ -560,6 +560,15 @@ class C13["With Città foreign language"]
       class C3
       class C4
       `
+    );
+  });
+  it('should render a simple class diagram with no members', () => {
+    imgSnapshotTest(
+      `
+      classDiagram-v2
+        class Class10
+        `,
+      { logLevel: 1, flowchart: { htmlLabels: false } }
     );
   });
 });
