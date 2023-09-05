@@ -1037,14 +1037,14 @@ export const positionNode = (node) => {
   const padding = 8;
   const diff = node.diff || 0;
   if (node.clusterNode) {
-    el.attr(
-      'transform',
-      'translate(' +
-        (node.x + diff - node.width / 2) +
-        ', ' +
-        (node.y - node.height / 2 - padding) +
-        ')'
-    );
+      el.attr(
+        'transform',
+        'translate(' +
+          (node.x + diff - node.width / 2) +
+          ', ' +
+          (node.y - node.height / 2 - padding) +
+          ')'
+      );
   } else {
     el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
   }

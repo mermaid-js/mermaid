@@ -106,6 +106,16 @@ const getBlocks: IGetBlocks = () => {
   log.info('Block in test', blocks, blocks[0].id);
   return blocks || [];
 };
+type IGetBlock = (id: string) => Block | undefined;
+const getBlock: IGetBlock = (id: string) => {
+  log.info('Block in test', blocks, blocks[0].id);
+  return blockDatabase[id];
+};
+type ISetBlock = (block: Block) => void;
+const setBlock: ISetBlock = (block: Block) => {
+  log.info('Block in test', blocks, blocks[0].id);
+  blockDatabase[block.id] = block;
+};
 
 type IGetLinks = () => Link[];
 const getLinks: IGetLinks = () => links;
@@ -119,6 +129,8 @@ export interface BlockDB extends DiagramDB {
   addLink: IAddLink;
   getLogger: IGetLogger;
   getBlocks: IGetBlocks;
+  getBlock: IGetBlock;
+  setBlock: ISetBlock;
   getLinks: IGetLinks;
   getColumns: IGetColumns;
   typeStr2Type: ITypeStr2Type;
@@ -134,6 +146,8 @@ const db: BlockDB = {
   getBlocks,
   getLinks,
   setHierarchy,
+  getBlock,
+  setBlock,
   // getAccTitle,
   // setAccTitle,
   // getAccDescription,

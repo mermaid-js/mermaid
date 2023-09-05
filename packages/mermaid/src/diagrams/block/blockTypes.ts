@@ -31,6 +31,13 @@ export interface Block {
   parent?: Block;
   type?: BlockType;
   children: Block[];
+  size?: {
+    width: number;
+    height: number;
+    x: number;
+    y: number;
+  };
+  node?: any;
   columns?: number; // | TBlockColumnsDefaultValue;
 }
 
