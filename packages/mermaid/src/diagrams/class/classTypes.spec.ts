@@ -669,5 +669,15 @@ describe('given text representing a method, ', function () {
       const classMember = new ClassMember(str, 'attribute');
       expect(classMember.getDisplayDetails().displayText).toBe('std::map <int,string> pMap;');
     });
+
+    it('member name should handle generic type', function () {
+      const str = `getTime~T~(this T, int seconds)$ DateTime`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe(
+        'getTime<T>(this T, int seconds) : DateTime'
+      );
+      expect(classMember.getDisplayDetails().cssStyle).toBe(staticCssStyle);
+    });
   });
 });

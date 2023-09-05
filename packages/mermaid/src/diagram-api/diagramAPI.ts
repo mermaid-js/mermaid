@@ -5,7 +5,7 @@ import { sanitizeText as _sanitizeText } from '../diagrams/common/common.js';
 import { setupGraphViewbox as _setupGraphViewbox } from '../setupGraphViewbox.js';
 import { addStylesForDiagram } from '../styles.js';
 import type { DiagramDefinition, DiagramDetector } from './types.js';
-import * as _commonDb from '../commonDb.js';
+import * as _commonDb from '../diagrams/common/commonDb.js';
 import { parseDirective as _parseDirective } from '../directiveUtils.js';
 
 /*
