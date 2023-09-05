@@ -40,10 +40,7 @@ const addBox = function (data: BoxData): void {
   });
   currentBox = boxes[boxes.length - 1];
 };
-//TODO: look into changing description to type string. Currently, it is set to Message because
-// jison calls parseMessage on the text portion of the participant_statement grammar
-// changing it in jison causes over 100 tests to fail so need to ensure cascading changes don't
-// occur from the type change.
+
 export const addActor = function (id: string, name: string, description: Text, type: string) {
   let assignedBox = currentBox;
   const oldActor = actors[id];
@@ -98,6 +95,52 @@ export const addMessage = function (
     answer: answer,
   });
 };
+
+export const addLinks = function (actorId: string, text: Text): void {
+  // find the actor
+  const actor = getActor(actorId);
+  // JSON.parse the text
+  try {
+    let sanitizedText = sanitizeText(text.text, commonGetConfig());
+    sanitizedText = sanitizedText.replace(/&amp;/g, '&');
+    sanitizedText = sanitizedText.replace(/&equals;/g, '=');
+    const links = JSON.parse(sanitizedText);
+    // add the deserialized text to the actor's links field.
+    insertLinks(actor, links);
+  } catch (e) {
+    log.error('error while parsing actor link text', e);
+  }
+};
+
+export const addALink = function (actorId: string, text: Text): void {
+  // find the actor
+  const actor = getActor(actorId);
+  try {
+    const links: Record<string, string> = {};
+    let sanitizedText = sanitizeText(text.text, commonGetConfig());
+    const sep = sanitizedText.indexOf('@');
+    sanitizedText = sanitizedText.replace(/&amp;/g, '&');
+    sanitizedText = sanitizedText.replace(/&equals;/g, '=');
+    const label = sanitizedText.slice(0, sep - 1).trim();
+    const link = sanitizedText.slice(sep + 1).trim();
+
+    links[label] = link;
+    // add the deserialized text to the actor's links field.
+    insertLinks(actor, links);
+  } catch (e) {
+    log.error('error while parsing actor link text', e);
+  }
+};
+
+function insertLinks(actor: ActorData, links: Record<string, string>): void {
+  if (actor.links == null) {
+    actor.links = links;
+  } else {
+    for (const key in links) {
+      actor.links[key] = links[key];
+    }
+  }
+}
 
 const hasAtleastOneBox = function (): boolean {
   return boxes.length > 0;
@@ -192,6 +235,9 @@ export const db: SequenceDB = {
   addBox,
   addActor,
   addMessage,
+  addLinks,
+  addALink,
+  insertLinks,
   getMessages,
   hasAtleastOneBox,
   hasAtleastOneBoxWithTitle,

@@ -28,7 +28,7 @@ export interface ActorData {
   wrap?: boolean;
   prevActor?: string;
   nextActor?: string;
-  links: LinkData;
+  links: Record<string, string>;
   properties: Record<string, string>;
   actorCnt: number;
   rectData: null;
@@ -45,6 +45,9 @@ export interface SequenceDB extends DiagramDB {
   addActor: (id: string, name: string, description: Text, type: string) => void;
   addMessage: (idFrom: string, idTo: string, message: Text, answer: string) => void;
   getMessages: () => Message[];
+  addLinks: (id: string, text: Text) => void;
+  addALink: (actorId: string, text: Text) => void;
+  insertLinks: (actor: ActorData, link: Record<string, string>) => void;
   hasAtleastOneBox: () => boolean;
   hasAtleastOneBoxWithTitle: () => boolean;
   getBoxes: () => BoxData[];
