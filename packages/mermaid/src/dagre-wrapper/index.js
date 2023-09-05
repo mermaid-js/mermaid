@@ -155,9 +155,9 @@ export const render = async (elem, graph, markers, diagramtype, id) => {
   clearClusters();
   clearGraphlib();
 
-  log.warn('Graph at first:', graphlibJson.write(graph));
+  log.warn('Graph at first:', JSON.stringify(graphlibJson.write(graph)));
   adjustClustersAndEdges(graph);
-  log.warn('Graph after:', graphlibJson.write(graph));
+  log.warn('Graph after:', JSON.stringify(graphlibJson.write(graph)));
   // log.warn('Graph ever  after:', graphlibJson.write(graph.node('A').graph));
   await recursiveRender(elem, graph, diagramtype);
 };
