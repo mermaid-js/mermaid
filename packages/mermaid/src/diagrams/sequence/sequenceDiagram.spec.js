@@ -106,6 +106,7 @@ describe('more than one sequence diagram', () => {
         {
           "from": "Alice",
           "message": "Hello Bob, how are you?",
+          "textType": undefined,
           "to": "Bob",
           "type": 5,
           "wrap": false,
@@ -113,6 +114,7 @@ describe('more than one sequence diagram', () => {
         {
           "from": "Bob",
           "message": "I am good thanks!",
+          "textType": undefined,
           "to": "Alice",
           "type": 6,
           "wrap": false,
@@ -129,6 +131,7 @@ describe('more than one sequence diagram', () => {
         {
           "from": "Alice",
           "message": "Hello Bob, how are you?",
+          "textType": undefined,
           "to": "Bob",
           "type": 5,
           "wrap": false,
@@ -136,6 +139,7 @@ describe('more than one sequence diagram', () => {
         {
           "from": "Bob",
           "message": "I am good thanks!",
+          "textType": undefined,
           "to": "Alice",
           "type": 6,
           "wrap": false,
@@ -154,6 +158,7 @@ describe('more than one sequence diagram', () => {
         {
           "from": "Alice",
           "message": "Hello John, how are you?",
+          "textType": undefined,
           "to": "John",
           "type": 5,
           "wrap": false,
@@ -161,6 +166,7 @@ describe('more than one sequence diagram', () => {
         {
           "from": "John",
           "message": "I am good thanks!",
+          "textType": undefined,
           "to": "Alice",
           "type": 6,
           "wrap": false,
@@ -2112,5 +2118,48 @@ Bob-->Alice: I am good thanks!`;
     diagram = new Diagram(str2);
     diagram.renderer.draw(str2, 'tst', '1.2.3', diagram);
     expect(diagram.db.showSequenceNumbers()).toBe(false);
+  });
+});
+
+describe('Uses markdown for text', () => {
+  it('should allow markdown as message text', () => {
+    const diagram = new Diagram(`
+      sequenceDiagram
+      Alice->Bob: "\`Hello there, man\`"
+    `);
+    const messages = diagram.db.getMessages();
+    expect(messages[0].message).toBe('Hello there, man');
+    expect(messages[0].textType).toBe('markdown');
+  });
+
+  it('should parse wrap and nowrap configs with markdown text', () => {
+    const diagram = new Diagram(`
+      sequenceDiagram
+      A-->>B: wrap: "\`Hello, this is a super long message with wrap\`"
+      A-->>B: nowrap: "\`Hi, I prefer my super long messages without wrap\`"
+    `);
+
+    const messages = diagram.db.getMessages();
+    expect(messages[0].wrap).toBe(true);
+    expect(messages[0].message).toBe('Hello, this is a super long message with wrap');
+    expect(messages[0].textType).toBe('markdown');
+    expect(messages[1].wrap).toBe(false);
+    expect(messages[1].message).toBe('Hi, I prefer my super long messages without wrap');
+    expect(messages[1].textType).toBe('markdown');
+  });
+
+  it('should parse markdown in actor alias', () => {
+    const diagram = new Diagram(`
+      sequenceDiagram
+      participant A as "\`The *real* Alice\`"
+      actor B as "\`Bob **not** the actor\`"
+      A-->>B: Are you the actor Bob
+    `);
+
+    const actors = diagram.db.getActors();
+    expect(actors['A'].description).toBe('The *real* Alice');
+    expect(actors['A'].textType).toBe('markdown');
+    expect(actors['B'].description).toBe('Bob **not** the actor');
+    expect(actors['B'].textType).toBe('markdown');
   });
 });

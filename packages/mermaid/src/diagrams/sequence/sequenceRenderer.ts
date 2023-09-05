@@ -1,6 +1,11 @@
 // @ts-nocheck TODO: fix file
 import { select, selectAll } from 'd3';
-import svgDraw, { ACTOR_TYPE_WIDTH, drawText, fixLifeLineHeights } from './svgDraw.js';
+import svgDraw, {
+  ACTOR_TYPE_WIDTH,
+  drawMarkdownText,
+  drawText,
+  fixLifeLineHeights,
+} from './svgDraw.js';
 import { log } from '../../logger.js';
 import common from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
@@ -361,7 +366,8 @@ function boundMessage(_diagram, msgModel): number {
  * @param diagObj - The diagram object.
  */
 const drawMessage = function (diagram, msgModel, lineStartY: number, diagObj: Diagram) {
-  const { startx, stopx, starty, message, type, sequenceIndex, sequenceVisible } = msgModel;
+  const { startx, stopx, starty, message, textType, type, sequenceIndex, sequenceVisible } =
+    msgModel;
   const textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const textObj = svgDrawCommon.getTextObj();
   textObj.x = startx;
@@ -369,6 +375,7 @@ const drawMessage = function (diagram, msgModel, lineStartY: number, diagObj: Di
   textObj.width = stopx - startx;
   textObj.class = 'messageText';
   textObj.dy = '1em';
+  textObj.textType = textType;
   textObj.text = message;
   textObj.fontFamily = conf.messageFontFamily;
   textObj.fontSize = conf.messageFontSize;
@@ -378,7 +385,18 @@ const drawMessage = function (diagram, msgModel, lineStartY: number, diagObj: Di
   textObj.textMargin = conf.wrapPadding;
   textObj.tspan = false;
 
-  drawText(diagram, textObj);
+  if (textType) {
+    drawMarkdownText(diagram, textObj);
+
+    bounds.bumpVerticalPos(textObj.height);
+    //bounds.insert(msgModel.startx, msgModel.starty, msgModel.stopx, msgModel.stopy);
+    bounds.models.addMessage(msgModel);
+    //TODO figure out why 3 makes the padding between the line and markdown text
+    //to look like the padding between strings and lines
+    lineStartY += textObj.height - 3 * textObj.textMargin;
+  } else {
+    drawText(diagram, textObj);
+  }
 
   const textWidth = textDims.width;
 
@@ -1417,7 +1435,8 @@ const buildMessageModel = function (msg, actors, diagObj) {
     msg.message = utils.wrapLabel(
       msg.message,
       common.getMax(boundedWidth + 2 * conf.wrapPadding, conf.width),
-      messageFont(conf)
+      messageFont(conf),
+      msg.textType
     );
   }
   const msgDims = utils.calculateTextDimensions(msg.message, messageFont(conf));
@@ -1434,6 +1453,7 @@ const buildMessageModel = function (msg, actors, diagObj) {
     starty: 0,
     stopy: 0,
     message: msg.message,
+    textType: msg.textType,
     type: msg.type,
     wrap: msg.wrap,
     fromBounds: Math.min.apply(null, allBounds),

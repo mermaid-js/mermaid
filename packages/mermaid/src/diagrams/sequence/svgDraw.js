@@ -3,7 +3,9 @@ import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { addFunction } from '../../interactionDb.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
+import { createText } from '../../rendering-util/createText.js';
 
+import { select } from 'd3';
 export const ACTOR_TYPE_WIDTH = 18 * 2;
 
 export const drawRect = function (elem, rectData) {
@@ -120,15 +122,7 @@ const popupMenuDownFunc = function (popupId) {
   }
 };
 
-export const drawText = function (elem, textData) {
-  let prevTextHeight = 0;
-  let textHeight = 0;
-  const lines = textData.text.split(common.lineBreakRegex);
-
-  const [_textFontSize, _textFontSizePx] = parseFontSize(textData.fontSize);
-
-  let textElems = [];
-  let dy = 0;
+const calculateYFunc = function (textData, prevTextHeight = 0, textHeight = 0) {
   let yfunc = () => textData.y;
   if (
     textData.valign !== undefined &&
@@ -156,7 +150,10 @@ export const drawText = function (elem, textData) {
         break;
     }
   }
+  return yfunc;
+};
 
+const setXAndAnchor = function (textData) {
   if (
     textData.anchor !== undefined &&
     textData.textMargin !== undefined &&
@@ -186,6 +183,77 @@ export const drawText = function (elem, textData) {
         break;
     }
   }
+  return textData;
+};
+
+export const drawMarkdownText = function (elem, textData) {
+  const labelText = createText(elem, textData.text, {
+    class: textData.class,
+    useHtmlLabels: true,
+    width: textData.width,
+    style: 'text-align: center',
+  });
+  const messageLabel = elem.append('g');
+
+  // Create inner g, label, this will be positioned now for centering the text
+  const innerLabel = messageLabel.insert('g').attr('class', 'label');
+  innerLabel.node().appendChild(labelText);
+
+  // Center the label
+  let bbox = labelText.getBBox();
+
+  const div = labelText.children[0];
+  const dv = select(labelText);
+  bbox = div.getBoundingClientRect();
+  dv.attr('width', bbox.width);
+  dv.attr('height', bbox.height);
+
+  const [_textFontSize, _textFontSizePx] = parseFontSize(textData.fontSize);
+
+  const yfunc = calculateYFunc(textData, bbox.height);
+  textData = setXAndAnchor(textData);
+
+  if (textData.anchor !== undefined) {
+    innerLabel
+      .attr('text-anchor', textData.anchor)
+      .attr('dominant-baseline', textData.dominantBaseline)
+      .attr('alignment-baseline', textData.alignmentBaseline);
+  }
+  if (textData.fontFamily !== undefined) {
+    innerLabel.style('font-family', textData.fontFamily);
+  }
+  if (_textFontSizePx !== undefined) {
+    innerLabel.style('font-size', _textFontSizePx);
+  }
+  if (textData.fontWeight !== undefined) {
+    innerLabel.style('font-weight', textData.fontWeight);
+  }
+  if (textData.fill !== undefined) {
+    innerLabel.attr('fill', textData.fill);
+  }
+  if (textData.class !== undefined) {
+    innerLabel.attr('class', textData.class);
+  }
+
+  innerLabel.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
+  messageLabel.attr('transform', `translate(${textData.x}, ${yfunc() + textData.textMargin})`);
+
+  textData.height = bbox.height;
+
+  return labelText;
+};
+
+export const drawText = function (elem, textData) {
+  let prevTextHeight = 0;
+  let textHeight = 0;
+  const lines = textData.text.split(common.lineBreakRegex);
+
+  const [_textFontSize, _textFontSizePx] = parseFontSize(textData.fontSize);
+
+  let textElems = [];
+  let dy = 0;
+
+  textData = setXAndAnchor(textData);
 
   for (let [i, line] of lines.entries()) {
     if (
@@ -195,6 +263,8 @@ export const drawText = function (elem, textData) {
     ) {
       dy = i * _textFontSize;
     }
+
+    let yfunc = calculateYFunc(textData, prevTextHeight, textHeight);
 
     const textElem = elem.append('text');
     textElem.attr('x', textData.x);
@@ -470,17 +540,26 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   const bounds = actElem.node().getBBox();
   actor.height = bounds.height;
 
-  _drawTextCandidateFunc(conf)(
-    actor.description,
-    actElem,
-    rect.x,
-    rect.y + 35,
-    rect.width,
-    rect.height,
-    { class: 'actor' },
-    conf
-  );
-
+  if (actor.textType === 'markdown') {
+    drawMarkdownText(actElem, {
+      ...conf,
+      text: actor.description,
+      textMargin: 5,
+      y: rect.y + 50,
+      x: rect.x + 125,
+    });
+  } else {
+    _drawTextCandidateFunc(conf)(
+      actor.description,
+      actElem,
+      rect.x,
+      rect.y + 35,
+      rect.width,
+      rect.height,
+      { class: 'actor' },
+      conf
+    );
+  }
   return actor.height;
 };
 

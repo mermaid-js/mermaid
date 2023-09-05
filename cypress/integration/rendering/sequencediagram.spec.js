@@ -930,4 +930,42 @@ context('Sequence diagram', () => {
       });
     });
   });
+
+  context('markdown text', () => {
+    it('it should render markdown in messages', () => {
+      imgSnapshotTest(
+        `
+          sequenceDiagram
+          Alice -->> Bob: "\`Hello using **markdown**\`"
+          `,
+        { htmlLabels: true, sequence: { htmlLabels: true }, securityLevel: 'loose' }
+      );
+    });
+
+    it('should render markdown in messages with wrap on', () => {
+      imgSnapshotTest(
+        `
+          sequenceDiagram
+          Alice -->> Bob: wrap: "\`This is a super long message with wrap enabled with **markdown bold, a whole lot of bold** and *italics*. Maybe the line isn't solved after all\`"
+          `,
+        {
+          htmlLabels: true,
+          sequence: { htmlLabels: true, anchor: 'middle' },
+          securityLevel: 'loose',
+        }
+      );
+    });
+
+    it('should render markdown in alias', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        participant A as "\`The <em>real</em> Alice \`"
+        actor B as "\`Bob **not** the actor one\`"
+        A-->>B: Are you the actor Bob
+      `,
+        { htmlLabels: false, sequence: {}, securityLevel: 'loose' }
+      );
+    });
+  });
 });

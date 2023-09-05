@@ -16,6 +16,8 @@
 // A special state for grabbing text up to the first comment/newline
 %x ID ALIAS LINE
 
+%x MD_STR
+
 // Directive states
 %x open_directive type_directive arg_directive
 %x acc_title
@@ -34,6 +36,9 @@
 <INITIAL,ID,ALIAS,LINE,arg_directive,type_directive,open_directive>\#[^\n]*   /* skip comments */
 \%%(?!\{)[^\n]*                                                 /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */
+<MD_STR>.+														return 'markdown';
+<MD_STR>\`(?=\")\"												this.popState('MD_STR');
+["`]															this.pushState('MD_STR');
 [0-9]+(?=[ \n]+)       											return 'NUM';
 "box"															{ this.begin('LINE'); return 'box'; }
 "participant"                                                   { this.begin('ID'); return 'participant'; }
@@ -54,7 +59,7 @@
 "critical"                                                      { this.begin('LINE'); return 'critical'; }
 "option"                                                        { this.begin('LINE'); return 'option'; }
 "break"                                                         { this.begin('LINE'); return 'break'; }
-<LINE>(?:[:]?(?:no)?wrap:)?[^#\n;]*                             { this.popState(); return 'restOfLine'; }
+<LINE>(?:[:]?(?:no)?wrap:)?[^#\n;]*                             { this.popState(); return 'restOfLineToken'; }
 "end"                                                           return 'end';
 "left of"                                                       return 'left_of';
 "right of"                                                      return 'right_of';
@@ -141,10 +146,10 @@ directive
 statement
 	: participant_statement
 	| 'create' participant_statement {$2.type='createParticipant'; $$=$2;}
-	| 'box' restOfLine box_section end
+	| 'box' restOfLineToken box_section end
 	{
-		$3.unshift({type: 'boxStart', boxData:yy.parseBoxData($2) });
-		$3.push({type: 'boxEnd', boxText:$2});
+		$3.unshift({type: 'boxStart', boxData:yy.parseBoxData($restOfLineToken) });
+		$3.push({type: 'boxEnd', boxText:$restOfLineToken});
 		$$=$3;}
 	| signal 'NEWLINE'
 	| autonumber NUM NUM 'NEWLINE' { $$= {type:'sequenceIndex',sequenceIndex: Number($2), sequenceIndexStep:Number($3), sequenceVisible:true, signalType:yy.LINETYPE.AUTONUMBER};}
@@ -165,23 +170,23 @@ statement
   | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
 	| 'loop' restOfLine document end
 	{
-		$3.unshift({type: 'loopStart', loopText:yy.parseMessage($2), signalType: yy.LINETYPE.LOOP_START});
-		$3.push({type: 'loopEnd', loopText:$2, signalType: yy.LINETYPE.LOOP_END});
+		$3.unshift({type: 'loopStart', loopText:$restOfLine, signalType: yy.LINETYPE.LOOP_START});
+		$3.push({type: 'loopEnd', loopText:$restOfLine, signalType: yy.LINETYPE.LOOP_END});
 		$$=$3;}
 	| 'rect' restOfLine document end
 	{
-		$3.unshift({type: 'rectStart', color:yy.parseMessage($2), signalType: yy.LINETYPE.RECT_START });
-		$3.push({type: 'rectEnd', color:yy.parseMessage($2), signalType: yy.LINETYPE.RECT_END });
+		$3.unshift({type: 'rectStart', color:$restOfLine, signalType: yy.LINETYPE.RECT_START });
+		$3.push({type: 'rectEnd', color:$restOfLine, signalType: yy.LINETYPE.RECT_END });
 		$$=$3;}
 	| opt restOfLine document end
 	{
-		$3.unshift({type: 'optStart', optText:yy.parseMessage($2), signalType: yy.LINETYPE.OPT_START});
-		$3.push({type: 'optEnd', optText:yy.parseMessage($2), signalType: yy.LINETYPE.OPT_END});
+		$3.unshift({type: 'optStart', optText:$restOfLine, signalType: yy.LINETYPE.OPT_START});
+		$3.push({type: 'optEnd', optText:$restOfLine, signalType: yy.LINETYPE.OPT_END});
 		$$=$3;}
 	| alt restOfLine else_sections end
 	{
 		// Alt start
-		$3.unshift({type: 'altStart', altText:yy.parseMessage($2), signalType: yy.LINETYPE.ALT_START});
+		$3.unshift({type: 'altStart', altText:$restOfLine, signalType: yy.LINETYPE.ALT_START});
 		// Content in alt is already in $3
 		// End
 		$3.push({type: 'altEnd', signalType: yy.LINETYPE.ALT_END});
@@ -189,7 +194,7 @@ statement
 	| par restOfLine par_sections end
 	{
 		// Parallel start
-		$3.unshift({type: 'parStart', parText:yy.parseMessage($2), signalType: yy.LINETYPE.PAR_START});
+		$3.unshift({type: 'parStart', parText:$restOfLine, signalType: yy.LINETYPE.PAR_START});
 		// Content in par is already in $3
 		// End
 		$3.push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});
@@ -197,7 +202,7 @@ statement
 	| par_over restOfLine par_sections end
 	{
 		// Parallel (overlapped) start
-		$3.unshift({type: 'parStart', parText:yy.parseMessage($2), signalType: yy.LINETYPE.PAR_OVER_START});
+		$3.unshift({type: 'parStart', parText:$restOfLine, signalType: yy.LINETYPE.PAR_OVER_START});
 		// Content in par is already in $3
 		// End
 		$3.push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});
@@ -205,15 +210,15 @@ statement
 	| critical restOfLine option_sections end
 	{
 		// critical start
-		$3.unshift({type: 'criticalStart', criticalText:yy.parseMessage($2), signalType: yy.LINETYPE.CRITICAL_START});
+		$3.unshift({type: 'criticalStart', criticalText:$restOfLine, signalType: yy.LINETYPE.CRITICAL_START});
 		// Content in critical is already in $3
 		// critical end
 		$3.push({type: 'criticalEnd', signalType: yy.LINETYPE.CRITICAL_END});
 		$$=$3;}
 	| break restOfLine document end
 	{
-		$3.unshift({type: 'breakStart', breakText:yy.parseMessage($2), signalType: yy.LINETYPE.BREAK_START});
-		$3.push({type: 'breakEnd', optText:yy.parseMessage($2), signalType: yy.LINETYPE.BREAK_END});
+		$3.unshift({type: 'breakStart', breakText:$restOfLine, signalType: yy.LINETYPE.BREAK_START});
+		$3.push({type: 'breakEnd', optText:$restOfLine, signalType: yy.LINETYPE.BREAK_END});
 		$$=$3;}
   | directive
 	;
@@ -221,25 +226,25 @@ statement
 option_sections
 	: document
 	| document option restOfLine option_sections
-	{ $$ = $1.concat([{type: 'option', optionText:yy.parseMessage($3), signalType: yy.LINETYPE.CRITICAL_OPTION}, $4]); }
+	{ $$ = $1.concat([{type: 'option', optionText:$restOfLine, signalType: yy.LINETYPE.CRITICAL_OPTION}, $4]); }
 	;
 
 par_sections
 	: document
 	| document and restOfLine par_sections
-	{ $$ = $1.concat([{type: 'and', parText:yy.parseMessage($3), signalType: yy.LINETYPE.PAR_AND}, $4]); }
+	{ $$ = $1.concat([{type: 'and', parText:$restOfLine, signalType: yy.LINETYPE.PAR_AND}, $4]); }
 	;
 
 else_sections
 	: document
 	| document else restOfLine else_sections
-	{ $$ = $1.concat([{type: 'else', altText:yy.parseMessage($3), signalType: yy.LINETYPE.ALT_ELSE}, $4]); }
+	{ $$ = $1.concat([{type: 'else', altText:$restOfLine, signalType: yy.LINETYPE.ALT_ELSE}, $4]); }
 	;
 
 participant_statement
-	: 'participant' actor 'AS' restOfLine 'NEWLINE' {$2.draw='participant'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	: 'participant' actor 'AS' restOfLine 'NEWLINE' {$2.draw='participant'; $2.type='addParticipant';$2.description=$restOfLine; $$=$2;}
 	| 'participant' actor 'NEWLINE' {$2.draw='participant'; $2.type='addParticipant';$$=$2;}
-	| 'participant_actor' actor 'AS' restOfLine 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant_actor' actor 'AS' restOfLine 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant';$2.description=$restOfLine; $$=$2;}
 	| 'participant_actor' actor 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant'; $$=$2;}
 	| 'destroy' actor 'NEWLINE' {$2.type='destroyParticipant'; $$=$2;}
 	;
@@ -332,8 +337,14 @@ signaltype
 	;
 
 text2
-  : TXT {$$ = yy.parseMessage($1.trim().substring(1)) }
+  : TXT {$$ = yy.parseMessage($1.trim().substring(1)); }
+  | 'markdown' {$$ = yy.parseMessage($1.trim().substring(1)); }
   ;
+
+  restOfLine
+   : restOfLineToken {$$ = yy.parseMessage($restOfLineToken.trim())}
+   | 'markdown' {$$ = yy.parseMessage($TXT.trim().substring(1)); }
+   ;
 
 openDirective
   : open_directive { yy.parseDirective('%%{', 'open_directive'); }

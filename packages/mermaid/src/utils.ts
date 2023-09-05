@@ -600,14 +600,21 @@ interface WrapLabelConfig {
 
 export const wrapLabel: (label: string, maxWidth: string, config: WrapLabelConfig) => string =
   memoize(
-    (label: string, maxWidth: string, config: WrapLabelConfig): string => {
+    (label: string, maxWidth: string, config: WrapLabelConfig, isMarkdown?: string): string => {
       if (!label) {
         return label;
       }
-      config = Object.assign(
-        { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: '<br/>' },
-        config
-      );
+      if (isMarkdown) {
+        config = Object.assign(
+          { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: ' ' },
+          config
+        );
+      } else {
+        config = Object.assign(
+          { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: '<br/>' },
+          config
+        );
+      }
       if (common.lineBreakRegex.test(label)) {
         return label;
       }
