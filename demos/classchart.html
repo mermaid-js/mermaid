@@ -38,12 +38,14 @@
         +quack()
       }
       class Fish{
-        -int sizeInFeet
+        -Listint sizeInFeet
         -canEat()
       }
       class Zebra{
         +bool is_wild
-        +run()
+        +run(List~T~, List~OT~)
+        %% +run-composite(List~T, K~)
+        +run-nested(List~List~OT~~)
       }
 
     </pre>
@@ -80,6 +82,7 @@
     Class01 : #size()
     Class01 : -int chimp
     Class01 : +int gorilla
+    Class01 : +abstractAttribute string*
     class Class10~T~ {
     &lt;&lt;service&gt;&gt;
     int id
@@ -122,6 +125,8 @@
     classDiagram
     direction LR
     Animal ()-- Dog
+    Animal ()-- Cat
+    note for Cat "should have no members area"
     Dog : bark()
     Dog : species()
     </pre>
@@ -151,6 +156,7 @@
         ~InternalProperty : string
         ~AnotherInternalProperty : List~List~string~~
       }
+      class People List~List~Person~~
     </pre>
     <hr />
 
