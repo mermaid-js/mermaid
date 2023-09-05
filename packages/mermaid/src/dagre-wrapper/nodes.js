@@ -323,8 +323,12 @@ const rect = async (parent, node) => {
 
   // const totalWidth = bbox.width + node.padding * 2;
   // const totalHeight = bbox.height + node.padding * 2;
-  const totalWidth = bbox.width + node.padding;
-  const totalHeight = bbox.height + node.padding;
+  const totalWidth = node.positioned ? node.width : bbox.width + node.padding;
+  const totalHeight = node.positioned ? node.height : bbox.height + node.padding;
+  const x = node.positioned ? node.x - node.width / 2 - halfPadding : -bbox.width / 2 - halfPadding;
+  const y = node.positioned
+    ? node.y - node.height / 2 - halfPadding
+    : -bbox.height / 2 - halfPadding;
   rect
     .attr('class', 'basic label-container')
     .attr('style', node.style)
@@ -332,8 +336,8 @@ const rect = async (parent, node) => {
     .attr('ry', node.ry)
     // .attr('x', -bbox.width / 2 - node.padding)
     // .attr('y', -bbox.height / 2 - node.padding)
-    .attr('x', -bbox.width / 2 - halfPadding)
-    .attr('y', -bbox.height / 2 - halfPadding)
+    .attr('x', x)
+    .attr('y', y)
     .attr('width', totalWidth)
     .attr('height', totalHeight);
 
@@ -1037,14 +1041,14 @@ export const positionNode = (node) => {
   const padding = 8;
   const diff = node.diff || 0;
   if (node.clusterNode) {
-      el.attr(
-        'transform',
-        'translate(' +
-          (node.x + diff - node.width / 2) +
-          ', ' +
-          (node.y - node.height / 2 - padding) +
-          ')'
-      );
+    el.attr(
+      'transform',
+      'translate(' +
+        (node.x + diff - node.width / 2) +
+        ', ' +
+        (node.y - node.height / 2 - padding) +
+        ')'
+    );
   } else {
     el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
   }

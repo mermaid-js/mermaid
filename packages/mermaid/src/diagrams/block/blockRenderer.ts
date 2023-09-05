@@ -1,6 +1,6 @@
 import { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
-import { calculateBlockSizes } from './renderHelpers.js';
+import { calculateBlockSizes, insertBlocks } from './renderHelpers.js';
 import { layout } from './layout.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import {
@@ -42,14 +42,15 @@ export const draw = async function (
   const nodes = svg.insert('g').attr('class', 'block');
   await calculateBlockSizes(nodes, bl, db);
   const bounds = layout(db);
+  await insertBlocks(nodes, bl, db);
 
   console.log('Here', bl);
 
   // Establish svg dimensions and get width and height
   //
   // const bounds = nodes.node().getBoundingClientRect();
-  const height = bounds.height;
-  const width = bounds.width;
+  const height = bounds.height + 600;
+  const width = bounds.width + 699;
   const useMaxWidth = false;
   configureSvgSize(svg, height, width, useMaxWidth);
   console.log('Here Bounds', bounds);

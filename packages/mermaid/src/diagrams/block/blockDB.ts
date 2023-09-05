@@ -103,17 +103,14 @@ const getColumns = (blockid: string): number => {
 
 type IGetBlocks = () => Block[];
 const getBlocks: IGetBlocks = () => {
-  log.info('Block in test', blocks, blocks[0].id);
   return blocks || [];
 };
 type IGetBlock = (id: string) => Block | undefined;
 const getBlock: IGetBlock = (id: string) => {
-  log.info('Block in test', blocks, blocks[0].id);
   return blockDatabase[id];
 };
 type ISetBlock = (block: Block) => void;
 const setBlock: ISetBlock = (block: Block) => {
-  log.info('Block in test', blocks, blocks[0].id);
   blockDatabase[block.id] = block;
 };
 

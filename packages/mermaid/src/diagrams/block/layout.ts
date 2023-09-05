@@ -42,13 +42,9 @@ function layoutBLock(block: Block, db: BlockDB) {
 }
 
 function positionBlock(block: Block, db: BlockDB) {
-  console.log('Here Positioning', block?.size?.node);
-  // const o = db.getBlock(block.id);
-  // const node;
   if (block?.size?.node) {
     const node = block?.size?.node;
     const size = block?.size;
-    console.log('Here as well', node);
     if (node) {
       node.attr(
         'transform',
@@ -70,7 +66,6 @@ let maxY = 0;
 function findBounds(block: Block) {
   if (block.size) {
     const { x, y, width, height } = block.size;
-    console.log('Here', minX, minY, x, y, width, height);
     if (x - width < minX) {
       minX = x - width;
     }
