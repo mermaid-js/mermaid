@@ -4,6 +4,9 @@ import classDb from './classDb.js';
 import { vi, describe, it, expect } from 'vitest';
 const spyOn = vi.spyOn;
 
+const staticCssStyle = 'text-decoration:underline;';
+const abstractCssStyle = 'font-style:italic;';
+
 describe('given a basic class diagram, ', function () {
   describe('when parsing class definition', function () {
     beforeEach(function () {
@@ -127,7 +130,7 @@ describe('given a basic class diagram, ', function () {
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.members.length).toBe(1);
-      expect(c1.members[0]).toBe('member1');
+      expect(c1.members[0].getDisplayDetails().displayText).toBe('member1');
     });
 
     it('should parse a class with a text label, member and annotation', () => {
@@ -142,7 +145,7 @@ describe('given a basic class diagram, ', function () {
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.members.length).toBe(1);
-      expect(c1.members[0]).toBe('int member1');
+      expect(c1.members[0].getDisplayDetails().displayText).toBe('int member1');
       expect(c1.annotations.length).toBe(1);
       expect(c1.annotations[0]).toBe('interface');
     });
@@ -168,7 +171,7 @@ describe('given a basic class diagram, ', function () {
 
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
-      expect(c1.members[0]).toBe('int member1');
+      expect(c1.members[0].getDisplayDetails().displayText).toBe('int member1');
       expect(c1.cssClasses[0]).toBe('styleClass');
     });
 
@@ -371,6 +374,74 @@ class C13["With Città foreign language"]
                    note ${keyword}`;
       expect(() => parser.parse(str)).toThrowError(/(Expecting\s'STR'|Unrecognized\stext)/);
     });
+
+    it('should parse diagram with direction', () => {
+      parser.parse(`classDiagram
+          direction TB
+          class Student {
+            -idCard : IdCard
+          }
+          class IdCard{
+            -id : int
+            -name : string
+          }
+          class Bike{
+            -id : int
+            -name : string
+          }
+          Student "1" --o "1" IdCard : carries
+          Student "1" --o "1" Bike : rides`);
+
+      expect(Object.keys(classDb.getClasses()).length).toBe(3);
+      expect(classDb.getClasses().Student).toMatchInlineSnapshot(`
+        {
+          "annotations": [],
+          "cssClasses": [],
+          "domId": "classId-Student-134",
+          "id": "Student",
+          "label": "Student",
+          "members": [
+            ClassMember {
+              "classifier": "",
+              "id": "idCard : IdCard",
+              "memberType": "attribute",
+              "visibility": "-",
+            },
+          ],
+          "methods": [],
+          "type": "",
+        }
+      `);
+      expect(classDb.getRelations().length).toBe(2);
+      expect(classDb.getRelations()).toMatchInlineSnapshot(`
+        [
+          {
+            "id1": "Student",
+            "id2": "IdCard",
+            "relation": {
+              "lineType": 0,
+              "type1": "none",
+              "type2": 0,
+            },
+            "relationTitle1": "1",
+            "relationTitle2": "1",
+            "title": "carries",
+          },
+          {
+            "id1": "Student",
+            "id2": "Bike",
+            "relation": {
+              "lineType": 0,
+              "type1": "none",
+              "type2": 0,
+            },
+            "relationTitle1": "1",
+            "relationTitle2": "1",
+            "title": "rides",
+          },
+        ]
+      `);
+    });
   });
 
   describe('when parsing class defined in brackets', function () {
@@ -422,8 +493,8 @@ class C13["With Città foreign language"]
         'classDiagram\n' +
         'class Class1 {\n' +
         'int testMember\n' +
-        'string fooMember\n' +
         'test()\n' +
+        'string fooMember\n' +
         'foo()\n' +
         '}';
       parser.parse(str);
@@ -431,10 +502,10 @@ class C13["With Città foreign language"]
       const actual = parser.yy.getClass('Class1');
       expect(actual.members.length).toBe(2);
       expect(actual.methods.length).toBe(2);
-      expect(actual.members[0]).toBe('int testMember');
-      expect(actual.members[1]).toBe('string fooMember');
-      expect(actual.methods[0]).toBe('test()');
-      expect(actual.methods[1]).toBe('foo()');
+      expect(actual.members[0].getDisplayDetails().displayText).toBe('int testMember');
+      expect(actual.members[1].getDisplayDetails().displayText).toBe('string fooMember');
+      expect(actual.methods[0].getDisplayDetails().displayText).toBe('test()');
+      expect(actual.methods[1].getDisplayDetails().displayText).toBe('foo()');
     });
 
     it('should parse a class with a text label and members', () => {
@@ -444,7 +515,7 @@ class C13["With Città foreign language"]
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.members.length).toBe(1);
-      expect(c1.members[0]).toBe('+member1');
+      expect(c1.members[0].getDisplayDetails().displayText).toBe('+member1');
     });
 
     it('should parse a class with a text label, members and annotation', () => {
@@ -459,7 +530,7 @@ class C13["With Città foreign language"]
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.members.length).toBe(1);
-      expect(c1.members[0]).toBe('+member1');
+      expect(c1.members[0].getDisplayDetails().displayText).toBe('+member1');
       expect(c1.annotations.length).toBe(1);
       expect(c1.annotations[0]).toBe('interface');
     });
@@ -742,6 +813,20 @@ describe('given a class diagram with members and methods ', function () {
       parser.parse(str);
     });
 
+    it('should handle direct member declaration', function () {
+      parser.parse('classDiagram\n' + 'Car : wheels');
+      const car = classDb.getClass('Car');
+      expect(car.members.length).toBe(1);
+      expect(car.members[0].id).toBe('wheels');
+    });
+
+    it('should handle direct member declaration with type', function () {
+      parser.parse('classDiagram\n' + 'Car : int wheels');
+      const car = classDb.getClass('Car');
+      expect(car.members.length).toBe(1);
+      expect(car.members[0].id).toBe('int wheels');
+    });
+
     it('should handle simple member declaration with type', function () {
       const str = 'classDiagram\n' + 'class Car\n' + 'Car : int wheels';
 
@@ -762,10 +847,10 @@ describe('given a class diagram with members and methods ', function () {
       const actual = parser.yy.getClass('actual');
       expect(actual.members.length).toBe(4);
       expect(actual.methods.length).toBe(0);
-      expect(actual.members[0]).toBe('-int privateMember');
-      expect(actual.members[1]).toBe('+int publicMember');
-      expect(actual.members[2]).toBe('#int protectedMember');
-      expect(actual.members[3]).toBe('~int privatePackage');
+      expect(actual.members[0].getDisplayDetails().displayText).toBe('-int privateMember');
+      expect(actual.members[1].getDisplayDetails().displayText).toBe('+int publicMember');
+      expect(actual.members[2].getDisplayDetails().displayText).toBe('#int protectedMember');
+      expect(actual.members[3].getDisplayDetails().displayText).toBe('~int privatePackage');
     });
 
     it('should handle generic types', function () {
@@ -818,7 +903,9 @@ describe('given a class diagram with members and methods ', function () {
       expect(actual.annotations.length).toBe(0);
       expect(actual.members.length).toBe(0);
       expect(actual.methods.length).toBe(1);
-      expect(actual.methods[0]).toBe('someMethod()*');
+      const method = actual.methods[0];
+      expect(method.getDisplayDetails().displayText).toBe('someMethod()');
+      expect(method.getDisplayDetails().cssStyle).toBe(abstractCssStyle);
     });
 
     it('should handle static methods', function () {
@@ -829,7 +916,9 @@ describe('given a class diagram with members and methods ', function () {
       expect(actual.annotations.length).toBe(0);
       expect(actual.members.length).toBe(0);
       expect(actual.methods.length).toBe(1);
-      expect(actual.methods[0]).toBe('someMethod()$');
+      const method = actual.methods[0];
+      expect(method.getDisplayDetails().displayText).toBe('someMethod()');
+      expect(method.getDisplayDetails().cssStyle).toBe(staticCssStyle);
     });
 
     it('should handle generic types in arguments', function () {
@@ -953,53 +1042,6 @@ foo()
 }
 `;
       parser.parse(str);
-    });
-  });
-
-  describe('when parsing invalid generic classes', function () {
-    beforeEach(function () {
-      classDb.clear();
-      parser.yy = classDb;
-    });
-
-    it('should break when another `{`is encountered before closing the first one while defining generic class with brackets', function () {
-      const str =
-        'classDiagram\n' +
-        'class Dummy_Class~T~ {\n' +
-        'String data\n' +
-        '  void methods()\n' +
-        '}\n' +
-        '\n' +
-        'class Dummy_Class {\n' +
-        'class Flight {\n' +
-        '   flightNumber : Integer\n' +
-        '   departureTime : Date\n' +
-        '}';
-      let testPassed = false;
-      try {
-        parser.parse(str);
-      } catch (error) {
-        testPassed = true;
-      }
-      expect(testPassed).toBe(true);
-    });
-
-    it('should break when EOF is encountered before closing the first `{` while defining generic class with brackets', function () {
-      const str =
-        'classDiagram\n' +
-        'class Dummy_Class~T~ {\n' +
-        'String data\n' +
-        '  void methods()\n' +
-        '}\n' +
-        '\n' +
-        'class Dummy_Class {\n';
-      let testPassed = false;
-      try {
-        parser.parse(str);
-      } catch (error) {
-        testPassed = true;
-      }
-      expect(testPassed).toBe(true);
     });
   });
 });
@@ -1276,10 +1318,10 @@ describe('given a class diagram with relationships, ', function () {
       const testClass = parser.yy.getClass('Class1');
       expect(testClass.members.length).toBe(2);
       expect(testClass.methods.length).toBe(2);
-      expect(testClass.members[0]).toBe('int : test');
-      expect(testClass.members[1]).toBe('string : foo');
-      expect(testClass.methods[0]).toBe('test()');
-      expect(testClass.methods[1]).toBe('foo()');
+      expect(testClass.members[0].getDisplayDetails().displayText).toBe('int : test');
+      expect(testClass.members[1].getDisplayDetails().displayText).toBe('string : foo');
+      expect(testClass.methods[0].getDisplayDetails().displayText).toBe('test()');
+      expect(testClass.methods[1].getDisplayDetails().displayText).toBe('foo()');
     });
 
     it('should handle abstract methods', function () {
@@ -1290,7 +1332,9 @@ describe('given a class diagram with relationships, ', function () {
       expect(testClass.annotations.length).toBe(0);
       expect(testClass.members.length).toBe(0);
       expect(testClass.methods.length).toBe(1);
-      expect(testClass.methods[0]).toBe('someMethod()*');
+      const method = testClass.methods[0];
+      expect(method.getDisplayDetails().displayText).toBe('someMethod()');
+      expect(method.getDisplayDetails().cssStyle).toBe(abstractCssStyle);
     });
 
     it('should handle static methods', function () {
@@ -1301,7 +1345,9 @@ describe('given a class diagram with relationships, ', function () {
       expect(testClass.annotations.length).toBe(0);
       expect(testClass.members.length).toBe(0);
       expect(testClass.methods.length).toBe(1);
-      expect(testClass.methods[0]).toBe('someMethod()$');
+      const method = testClass.methods[0];
+      expect(method.getDisplayDetails().displayText).toBe('someMethod()');
+      expect(method.getDisplayDetails().cssStyle).toBe(staticCssStyle);
     });
 
     it('should associate link and css appropriately', function () {
@@ -1516,11 +1562,19 @@ class Class2
       const testClasses = parser.yy.getClasses();
       const testRelations = parser.yy.getRelations();
       expect(Object.keys(testNamespaceA.classes).length).toBe(2);
-      expect(testNamespaceA.classes['A1'].members[0]).toBe('+foo : string');
-      expect(testNamespaceA.classes['A2'].members[0]).toBe('+bar : int');
+      expect(testNamespaceA.classes['A1'].members[0].getDisplayDetails().displayText).toBe(
+        '+foo : string'
+      );
+      expect(testNamespaceA.classes['A2'].members[0].getDisplayDetails().displayText).toBe(
+        '+bar : int'
+      );
       expect(Object.keys(testNamespaceB.classes).length).toBe(2);
-      expect(testNamespaceB.classes['B1'].members[0]).toBe('+foo : bool');
-      expect(testNamespaceB.classes['B2'].members[0]).toBe('+bar : float');
+      expect(testNamespaceB.classes['B1'].members[0].getDisplayDetails().displayText).toBe(
+        '+foo : bool'
+      );
+      expect(testNamespaceB.classes['B2'].members[0].getDisplayDetails().displayText).toBe(
+        '+bar : float'
+      );
       expect(Object.keys(testClasses).length).toBe(4);
       expect(testClasses['A1'].parent).toBe('A');
       expect(testClasses['A2'].parent).toBe('A');
@@ -1572,8 +1626,8 @@ class Class2
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.members.length).toBe(1);
-      expect(c1.members[0]).toBe('+member1');
-
+      const member = c1.members[0];
+      expect(member.getDisplayDetails().displayText).toBe('+member1');
       const c2 = classDb.getClass('C2');
       expect(c2.label).toBe('C2');
     });
@@ -1589,9 +1643,10 @@ class Class2
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.members.length).toBe(1);
-      expect(c1.members[0]).toBe('+member1');
       expect(c1.annotations.length).toBe(1);
       expect(c1.annotations[0]).toBe('interface');
+      const member = c1.members[0];
+      expect(member.getDisplayDetails().displayText).toBe('+member1');
 
       const c2 = classDb.getClass('C2');
       expect(c2.label).toBe('C2');
@@ -1608,8 +1663,9 @@ C1 -->  C2
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.cssClasses.length).toBe(1);
-      expect(c1.members[0]).toBe('+member1');
       expect(c1.cssClasses[0]).toBe('styleClass');
+      const member = c1.members[0];
+      expect(member.getDisplayDetails().displayText).toBe('+member1');
     });
 
     it('should parse a class with text label and css class', () => {
@@ -1624,8 +1680,9 @@ cssClass "C1" styleClass
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.cssClasses.length).toBe(1);
-      expect(c1.members[0]).toBe('+member1');
       expect(c1.cssClasses[0]).toBe('styleClass');
+      const member = c1.members[0];
+      expect(member.getDisplayDetails().displayText).toBe('+member1');
     });
 
     it('should parse two classes with text labels and css classes', () => {
