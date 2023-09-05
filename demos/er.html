@@ -125,6 +125,21 @@
     </pre>
     <hr />
 
+    <pre class="mermaid">
+    erDiagram
+      _customer_order {
+          bigint id PK
+          bigint customer_id FK
+          text shipping_address 
+          text delivery_method 
+          timestamp_with_time_zone ordered_at 
+          numeric total_tax_amount 
+          numeric total_price 
+          text payment_method 
+      }
+    </pre>
+    <hr />
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
