@@ -1051,9 +1051,9 @@ flowchart LR
     classDef foobar stroke:#00f
 ```
 
-### Css classes
+### CSS classes
 
-It is also possible to predefine classes in css styles that can be applied from the graph definition as in the example
+It is also possible to predefine classes in CSS styles that can be applied from the graph definition as in the example
 below:
 
 **Example style**

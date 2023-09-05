@@ -14,6 +14,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../../commonDb.js';
+import { ClassMember } from './classTypes.js';
 import type {
   ClassRelation,
   ClassNode,
@@ -114,11 +115,11 @@ export const clear = function () {
   commonClear();
 };
 
-export const getClass = function (id: string) {
+export const getClass = function (id: string): ClassNode {
   return classes[id];
 };
 
-export const getClasses = function () {
+export const getClasses = function (): ClassMap {
   return classes;
 };
 
@@ -188,9 +189,9 @@ export const addMember = function (className: string, member: string) {
       theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
     } else if (memberString.indexOf(')') > 0) {
       //its a method
-      theClass.methods.push(sanitizeText(memberString));
+      theClass.methods.push(new ClassMember(memberString, 'method'));
     } else if (memberString) {
-      theClass.members.push(sanitizeText(memberString));
+      theClass.members.push(new ClassMember(memberString, 'attribute'));
     }
   }
 };
@@ -257,6 +258,7 @@ export const getTooltip = function (id: string, namespace?: string) {
 
   return classes[id].tooltip;
 };
+
 /**
  * Called by parser when a link is found. Adds the URL to the vertex data.
  *
