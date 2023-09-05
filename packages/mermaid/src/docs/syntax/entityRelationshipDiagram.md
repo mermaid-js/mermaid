@@ -56,7 +56,7 @@ Mermaid syntax for ER diagrams is compatible with PlantUML, with an extension to
 
 Where:
 
-- `first-entity` is the name of an entity. Names must begin with an alphabetic character and may also contain digits, hyphens, and underscores.
+- `first-entity` is the name of an entity. Names must begin with an alphabetic character or an underscore (from v<MERMAID_RELEASE_VERSION>+), and may also contain digits and hyphens.
 - `relationship` describes the way that both entities inter-relate. See below.
 - `second-entity` is the name of the other entity.
 - `relationship-label` describes the relationship from the perspective of the first entity.

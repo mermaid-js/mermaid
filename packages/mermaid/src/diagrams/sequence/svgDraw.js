@@ -703,7 +703,7 @@ export const insertArrowHead = function (elem) {
     .append('defs')
     .append('marker')
     .attr('id', 'arrowhead')
-    .attr('refX', 9)
+    .attr('refX', 7.9)
     .attr('refY', 5)
     .attr('markerUnits', 'userSpaceOnUse')
     .attr('markerWidth', 12)
@@ -723,7 +723,7 @@ export const insertArrowFilledHead = function (elem) {
     .append('defs')
     .append('marker')
     .attr('id', 'filled-head')
-    .attr('refX', 18)
+    .attr('refX', 15.5)
     .attr('refY', 7)
     .attr('markerWidth', 20)
     .attr('markerHeight', 28)
@@ -768,7 +768,7 @@ export const insertArrowCrossHead = function (elem) {
     .attr('markerHeight', 8)
     .attr('orient', 'auto')
     .attr('refX', 4)
-    .attr('refY', 5);
+    .attr('refY', 4.5);
   // The cross
   marker
     .append('path')
