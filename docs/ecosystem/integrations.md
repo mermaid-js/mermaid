@@ -49,6 +49,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Mermaid plugin for GitBook](https://github.com/wwformat/gitbook-plugin-mermaid-pdf)
 - [LiveBook](https://livebook.dev) (**Native support**)
 - [Atlassian Products](https://www.atlassian.com)
+  - [Mermaid Live Editor for Confluence Cloud](https://marketplace.atlassian.com/apps/1231571/mermaid-live-editor-for-confluence?hosting=cloud&tab=overview)
   - [Mermaid Plugin for Confluence](https://marketplace.atlassian.com/apps/1214124/mermaid-plugin-for-confluence?hosting=server&tab=overview)
   - [CloudScript.io Addon](https://marketplace.atlassian.com/apps/1219878/cloudscript-io-mermaid-addon?hosting=cloud&tab=overview)
   - [Auto convert diagrams in Jira](https://github.com/coddingtonbear/jirafs-mermaid)
@@ -89,7 +90,7 @@ They also serve as proof of concept, for the variety of things that can be built
 ## Communication
 
 - [Discourse](https://discourse.org)
-  - [Mermaid Theme Component](https://meta.discourse.org/t/discourse-mermaid/218242)
+  - [Mermaid Plugin](https://github.com/pnewell/discourse-mermaid), [And](https://github.com/unfoldingWord-dev/discourse-mermaid)
 - [Mattermost](https://mattermost.com/)
   - [Mermaid Plugin](https://github.com/SpikeTings/Mermaid)
 - [phpBB](https://phpbb.com)
