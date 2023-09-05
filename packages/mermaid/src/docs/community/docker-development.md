@@ -16,7 +16,7 @@ In GitHub, you first **fork** a repository when you are going to make changes an
 
 Then you **clone** a copy to your local development machine (e.g. where you code) to make a copy with all the files to work with.
 
-[Fork mermaid](https://github.com/mermaid-js/mermaid/fork) to start contributing to the main project and its documentaion, or [search for other repositories](https://github.com/orgs/mermaid-js/repositories).
+[Fork mermaid](https://github.com/mermaid-js/mermaid/fork) to start contributing to the main project and its documentation, or [search for other repositories](https://github.com/orgs/mermaid-js/repositories).
 
 [Here is a GitHub document that gives an overview of the process.](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
 
