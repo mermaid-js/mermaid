@@ -1,38 +1,45 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { CstNode, GrammarAST, ValueType } from 'langium';
 import { DefaultValueConverter } from 'langium';
 
 import { accessibilityDescrRegex, accessibilityTitleRegex, titleRegex } from './commonMatcher.js';
 
-export class CommonValueConverter extends DefaultValueConverter {
+export abstract class MermaidValueConverter extends DefaultValueConverter {
+  /**
+   * A method contains convert logic to be used by class.
+   *
+   * @param rule - Parsed rule.
+   * @param input - Matched string.
+   * @param cstNode - Node in the Concrete Syntax Tree (CST).
+   * @returns converted the value if it's available or `undefined` if it's not.
+   */
+  protected abstract runCustomConverter(
+    rule: GrammarAST.AbstractRule,
+    input: string,
+    cstNode: CstNode
+  ): ValueType | undefined;
+
   protected override runConverter(
     rule: GrammarAST.AbstractRule,
     input: string,
     cstNode: CstNode
   ): ValueType {
-    const value: ValueType | undefined = CommonValueConverter.customRunConverter(
-      rule,
-      input,
-      cstNode
-    );
+    let value: ValueType | undefined = this.runCommonConverter(rule, input, cstNode);
+
+    if (value === undefined) {
+      value = this.runCustomConverter(rule, input, cstNode);
+    }
+
     if (value === undefined) {
       return super.runConverter(rule, input, cstNode);
-    } else {
-      return value;
     }
+
+    return value;
   }
 
-  /**
-   * A method contains convert logic to be used by class itself or `MermaidValueConverter`.
-   *
-   * @param rule - Parsed rule.
-   * @param input - Matched string.
-   * @param _cstNode - Node in the Concrete Syntax Tree (CST).
-   * @returns converted the value if it's common rule or `undefined` if it's not.
-   */
-  public static customRunConverter(
+  private runCommonConverter(
     rule: GrammarAST.AbstractRule,
     input: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _cstNode: CstNode
   ): ValueType | undefined {
     let regex: RegExp | undefined;
@@ -69,6 +76,16 @@ export class CommonValueConverter extends DefaultValueConverter {
         .replaceAll(/[\t ]{2,}/gm, ' ')
         .replaceAll(/[\n\r]{2,}/gm, '\n');
     }
+    return undefined;
+  }
+}
+
+export class CommonValueConverter extends MermaidValueConverter {
+  protected runCustomConverter(
+    _rule: GrammarAST.AbstractRule,
+    _input: string,
+    _cstNode: CstNode
+  ): ValueType | undefined {
     return undefined;
   }
 }

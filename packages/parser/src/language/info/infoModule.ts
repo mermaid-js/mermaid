@@ -9,7 +9,7 @@ import { EmptyFileSystem, createDefaultModule, createDefaultSharedModule, inject
 
 import { MermaidGeneratedSharedModule, InfoGeneratedModule } from '../generated/module.js';
 import { CommonLexer } from '../common/commonLexer.js';
-import { CommonValueConverter } from '../common/commonValueConverters.js';
+import { CommonValueConverter } from '../common/valueConverter.js';
 import { InfoTokenBuilder } from './infoTokenBuilder.js';
 
 /**
