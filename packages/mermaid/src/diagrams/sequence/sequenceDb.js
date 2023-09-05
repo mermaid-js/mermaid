@@ -10,7 +10,7 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 
 let prevActor = undefined;
 let actors = {};
