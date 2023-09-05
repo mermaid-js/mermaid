@@ -89,7 +89,7 @@ They also serve as proof of concept, for the variety of things that can be built
 ## Communication
 
 - [Discourse](https://discourse.org)
-  - [Mermaid Theme Component](https://meta.discourse.org/t/discourse-mermaid/218242)
+  - [Mermaid Plugin](https://github.com/pnewell/discourse-mermaid), [And](https://github.com/unfoldingWord-dev/discourse-mermaid)
 - [Mattermost](https://mattermost.com/)
   - [Mermaid Plugin](https://github.com/SpikeTings/Mermaid)
 - [phpBB](https://phpbb.com)
