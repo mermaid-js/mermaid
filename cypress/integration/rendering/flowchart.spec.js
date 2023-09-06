@@ -916,7 +916,7 @@ graph TD
     );
   });
 
-  it('68: should render a flowchart with linkStyle - no htmlLabels', () => {
+  it('68: should render a flowchart with linkStyle - no numbers', () => {
     imgSnapshotTest(
       `flowchart TD
           Driving --> TrafficLight{ Orange? }
@@ -929,7 +929,7 @@ graph TD
           Go --> |No| Breaks[Hit the brakes]
           linkStyle - stroke:red;
       `,
-      { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
+      { flowchart: { htmlLabels: true } }
     );
   });
 });
