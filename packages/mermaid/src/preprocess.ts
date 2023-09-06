@@ -1,5 +1,6 @@
 import { cleanupComments } from './diagram-api/comments.js';
 import { extractFrontMatter } from './diagram-api/frontmatter.js';
+import type { DiagramMetadata } from './diagram-api/types.js';
 import utils, { cleanAndMerge, removeDirectives } from './utils.js';
 
 const cleanupText = (code: string) => {
@@ -44,7 +45,13 @@ const processDirectives = (code: string) => {
   };
 };
 
-export const preprocessDiagram = (code: string) => {
+/**
+ * Preprocess the given code by cleaning it up, extracting front matter and directives,
+ * cleaning and merging configuration, and removing comments.
+ * @param code - The code to preprocess.
+ * @returns The object containing the preprocessed code, title, and configuration.
+ */
+export function preprocessDiagram(code: string): DiagramMetadata & { code: string } {
   const cleanedCode = cleanupText(code);
   const frontMatterResult = processFrontmatter(cleanedCode);
   const directiveResult = processDirectives(frontMatterResult.text);
@@ -55,4 +62,4 @@ export const preprocessDiagram = (code: string) => {
     title: frontMatterResult.title,
     config,
   };
-};
+}

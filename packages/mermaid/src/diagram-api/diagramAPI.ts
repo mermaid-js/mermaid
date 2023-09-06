@@ -57,7 +57,8 @@ export const registerDiagram = (
     setupGraphViewbox,
     getCommonDb(),
     () => {
-      // parseDirective is removed. This is a no-op for legacy support.
+      // parseDirective is removed in https://github.com/mermaid-js/mermaid/pull/4759.
+      // This is a no-op for legacy support.
     }
   );
 };

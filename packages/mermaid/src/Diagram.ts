@@ -4,7 +4,7 @@ import { getDiagram, registerDiagram } from './diagram-api/diagramAPI.js';
 import { detectType, getDiagramLoader } from './diagram-api/detectType.js';
 import { UnknownDiagramError } from './errors.js';
 import type { DetailedError } from './utils.js';
-import type { DiagramDefinition } from './diagram-api/types.js';
+import type { DiagramDefinition, DiagramMetadata } from './diagram-api/types.js';
 
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
 
@@ -20,7 +20,7 @@ export class Diagram {
   private init?: DiagramDefinition['init'];
 
   private detectError?: UnknownDiagramError;
-  constructor(public text: string, public metadata: { title?: string } = {}) {
+  constructor(public text: string, public metadata: Pick<DiagramMetadata, 'title'> = {}) {
     this.text += '\n';
     const cnf = configApi.getConfig();
     try {
@@ -72,13 +72,14 @@ export class Diagram {
  * **Warning:** This function may be changed in the future.
  * @alpha
  * @param text - The mermaid diagram definition.
+ * @param metadata - Diagram metadata, defined in YAML.
  * @returns A the Promise of a Diagram object.
  * @throws {@link UnknownDiagramError} if the diagram type can not be found.
  * @privateRemarks This is exported as part of the public mermaidAPI.
  */
 export const getDiagramFromText = async (
   text: string,
-  metadata: { title?: string } = {}
+  metadata: Pick<DiagramMetadata, 'title'> = {}
 ): Promise<Diagram> => {
   const type = detectType(text, configApi.getConfig());
   try {

@@ -99,7 +99,7 @@ export interface RenderResult {
 function processAndSetConfigs(text: string) {
   const processed = preprocessDiagram(text);
   configApi.reset();
-  configApi.addDirective(processed.config);
+  configApi.addDirective(processed.config ?? {});
   return processed;
 }
 
