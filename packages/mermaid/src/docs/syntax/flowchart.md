@@ -605,8 +605,7 @@ In the example below the style defined in the linkStyle statement will belong to
 linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
 ```
 
-A new way is added to have the linkStyle attached to the previous connection, so you do not need to know the number of the link.
-Just replace the number with a minus.
+From vMERMAID_RELEASE_VERSION+, linkStyle can be attached to the previous connection by defining the style after the link definition. The link number can be replaced with a `-`, removing the need to remember link numbers.
 
 ```
 A --> B
@@ -771,3 +770,7 @@ mermaid.flowchartConfig = {
     width: 100%
 }
 ```
+
+### TODOs
+
+- [ ] linkStyle interpolate feature docs missing
