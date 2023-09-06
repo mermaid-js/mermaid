@@ -54,6 +54,15 @@ const MermaidExample = async (md: MarkdownRenderer) => {
       return `<div class="tip custom-block"><p class="custom-block-title">NOTE</p><p>${token.content}}</p></div>`;
     }
 
+    if (token.info.trim() === 'regexp') {
+      // shiki doesn't yet support regexp code blocks, but the javascript
+      // one still makes RegExes look good
+      token.info = 'javascript';
+      // use trimEnd to move trailing `\n` outside if the JavaScript regex `/` block
+      token.content = `/${token.content.trimEnd()}/\n`;
+      return defaultRenderer(tokens, index, options, env, slf);
+    }
+
     if (token.info.trim() === 'jison') {
       return `<div class="language-">
       <button class="copy"></button>

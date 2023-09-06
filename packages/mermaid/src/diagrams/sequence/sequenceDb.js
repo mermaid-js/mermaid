@@ -10,16 +10,20 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 
 let prevActor = undefined;
 let actors = {};
+let createdActors = {};
+let destroyedActors = {};
 let boxes = [];
 let messages = [];
 const notes = [];
 let sequenceNumbersEnabled = false;
 let wrapEnabled;
 let currentBox = undefined;
+let lastCreated = undefined;
+let lastDestroyed = undefined;
 
 export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
@@ -120,7 +124,8 @@ export const addSignal = function (
   idFrom,
   idTo,
   message = { text: undefined, wrap: undefined },
-  messageType
+  messageType,
+  activate = false
 ) {
   if (messageType === LINETYPE.ACTIVE_END) {
     const cnt = activationCount(idFrom.actor);
@@ -143,6 +148,7 @@ export const addSignal = function (
     message: message.text,
     wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
     type: messageType,
+    activate,
   });
   return true;
 };
@@ -164,6 +170,12 @@ export const getBoxes = function () {
 };
 export const getActors = function () {
   return actors;
+};
+export const getCreatedActors = function () {
+  return createdActors;
+};
+export const getDestroyedActors = function () {
+  return destroyedActors;
 };
 export const getActor = function (id) {
   return actors[id];
@@ -194,6 +206,8 @@ export const autoWrap = () => {
 
 export const clear = function () {
   actors = {};
+  createdActors = {};
+  destroyedActors = {};
   boxes = [];
   messages = [];
   sequenceNumbersEnabled = false;
@@ -438,6 +452,19 @@ export const getActorProperty = function (actor, key) {
   return undefined;
 };
 
+/**
+ * @typedef {object} AddMessageParams A message from one actor to another.
+ * @property {string} from - The id of the actor sending the message.
+ * @property {string} to - The id of the actor receiving the message.
+ * @property {string} msg - The message text.
+ * @property {number} signalType - The type of signal.
+ * @property {"addMessage"} type - Set to `"addMessage"` if this is an `AddMessageParams`.
+ * @property {boolean} [activate] - If `true`, this signal starts an activation.
+ */
+
+/**
+ * @param {object | object[] | AddMessageParams} param - Object of parameters.
+ */
 export const apply = function (param) {
   if (Array.isArray(param)) {
     param.forEach(function (item) {
@@ -459,10 +486,21 @@ export const apply = function (param) {
         });
         break;
       case 'addParticipant':
-        addActor(param.actor, param.actor, param.description, 'participant');
+        addActor(param.actor, param.actor, param.description, param.draw);
         break;
-      case 'addActor':
-        addActor(param.actor, param.actor, param.description, 'actor');
+      case 'createParticipant':
+        if (actors[param.actor]) {
+          throw new Error(
+            "It is not possible to have actors with the same id, even if one is destroyed before the next is created. Use 'AS' aliases to simulate the behavior"
+          );
+        }
+        lastCreated = param.actor;
+        addActor(param.actor, param.actor, param.description, param.draw);
+        createdActors[param.actor] = messages.length;
+        break;
+      case 'destroyParticipant':
+        lastDestroyed = param.actor;
+        destroyedActors[param.actor] = messages.length;
         break;
       case 'activeStart':
         addSignal(param.actor, undefined, undefined, param.signalType);
@@ -486,7 +524,28 @@ export const apply = function (param) {
         addDetails(param.actor, param.text);
         break;
       case 'addMessage':
-        addSignal(param.from, param.to, param.msg, param.signalType);
+        if (lastCreated) {
+          if (param.to !== lastCreated) {
+            throw new Error(
+              'The created participant ' +
+                lastCreated +
+                ' does not have an associated creating message after its declaration. Please check the sequence diagram.'
+            );
+          } else {
+            lastCreated = undefined;
+          }
+        } else if (lastDestroyed) {
+          if (param.to !== lastDestroyed && param.from !== lastDestroyed) {
+            throw new Error(
+              'The destroyed participant ' +
+                lastDestroyed +
+                ' does not have an associated destroying message after its declaration. Please check the sequence diagram.'
+            );
+          } else {
+            lastDestroyed = undefined;
+          }
+        }
+        addSignal(param.from, param.to, param.msg, param.signalType, param.activate);
         break;
       case 'boxStart':
         addBox(param.boxData);
@@ -566,6 +625,8 @@ export default {
   showSequenceNumbers,
   getMessages,
   getActors,
+  getCreatedActors,
+  getDestroyedActors,
   getActor,
   getActorKeys,
   getActorProperty,

@@ -1,4 +1,4 @@
-// @ts-ignore: TODO Fix ts errors
+// @ts-ignore: JISON doesn't support types
 import parser from './parser/timeline.jison';
 import * as db from './timelineDb.js';
 import renderer from './timelineRenderer.js';

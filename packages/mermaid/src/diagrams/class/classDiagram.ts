@@ -1,5 +1,5 @@
-import { DiagramDefinition } from '../../diagram-api/types.js';
-// @ts-ignore: TODO Fix ts errors
+import type { DiagramDefinition } from '../../diagram-api/types.js';
+// @ts-ignore: JISON doesn't support types
 import parser from './parser/classDiagram.jison';
 import db from './classDb.js';
 import styles from './styles.js';

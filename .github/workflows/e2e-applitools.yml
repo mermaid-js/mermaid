@@ -19,7 +19,7 @@ env:
   USE_APPLI: ${{ secrets.APPLITOOLS_API_KEY && 'true' || '' }}
 
 jobs:
-  test:
+  e2e-applitools:
     runs-on: ubuntu-latest
     strategy:
       matrix:

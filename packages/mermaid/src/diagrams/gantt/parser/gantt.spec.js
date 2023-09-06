@@ -180,4 +180,12 @@ row2`;
     expect(ganttDb.getAccTitle()).toBe(expectedTitle);
     expect(ganttDb.getAccDescription()).toBe(expectedAccDescription);
   });
+
+  it.each(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])(
+    'should allow for setting the starting weekday to %s for tick interval',
+    (day) => {
+      parser.parse(`gantt\nweekday ${day}`);
+      expect(ganttDb.getWeekday()).toBe(day);
+    }
+  );
 });

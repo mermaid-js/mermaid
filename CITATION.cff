@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+title: 'Mermaid: Generate diagrams from markdown-like text'
+message: >-
+  If you use this software, please cite it using the metadata from this file.
+type: software
+authors:
+  - family-names: Sveidqvist
+    given-names: Knut
+  - name: 'Contributors to Mermaid'
+repository-code: 'https://github.com/mermaid-js/mermaid'
+date-released: 2014-12-02
+url: 'https://mermaid.js.org/'
+abstract: >-
+  JavaScript based diagramming and charting tool that renders Markdown-inspired
+  text definitions to create and modify diagrams dynamically.
+license: MIT

@@ -304,7 +304,7 @@ where
 - the second _property_ is `color` and its _value_ is `white`
 - the third _property_ is `font-weight` and its _value_ is `bold`
 - the fourth _property_ is `stroke-width` and its _value_ is `2px`
-- the fifth _property_ is `stroke` and its _value_ is `yello`
+- the fifth _property_ is `stroke` and its _value_ is `yellow`
 
 ### Apply classDef styles to states
 

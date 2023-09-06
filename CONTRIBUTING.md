@@ -26,8 +26,13 @@ Install required packages:
 ```bash
 # npx is required for first install as volta support for pnpm is not added yet.
 npx pnpm install
-pnpm test
+pnpm test # run unit tests
+pnpm dev # starts a dev server
 ```
+
+Open <http://localhost:9000> in your browser after starting the dev server.
+You can also duplicate the `example.html` file in `demos/dev`, rename it and add your own mermaid code to it.
+That will be served at <http://localhost:9000/dev/your-file-name.html>.
 
 ### Docker
 
@@ -64,8 +69,10 @@ eg: `feature/2945_state-diagram-new-arrow-florbs`, `bug/1123_fix_random_ugly_red
 
 Documentation is necessary for all non bugfix/refactoring changes.
 
-Only make changes to files are in [`/packages/mermaid/src/docs`](packages/mermaid/src/docs)
+Only make changes to files that are in [`/packages/mermaid/src/docs`](packages/mermaid/src/docs)
 
-**_DO NOT CHANGE FILES IN `/docs`_**
+**_DO NOT CHANGE FILES IN `/docs` MANUALLY_**
+
+The `/docs` folder will be rebuilt and committed as part of a pre-commit hook.
 
 [Join our slack community if you want closer contact!](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
