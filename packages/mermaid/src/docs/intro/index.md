@@ -179,7 +179,7 @@ Update version number in `package.json`.
 npm publish
 ```
 
-The above command generates files into the `dist` folder and publishes them to [npmjs.org](npmjs.org).
+The above command generates files into the `dist` folder and publishes them to [npmjs.com](https://www.npmjs.com/).
 
 ## Security and safe diagrams
 
