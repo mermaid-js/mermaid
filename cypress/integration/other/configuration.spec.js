@@ -126,4 +126,14 @@ describe('Configuration', () => {
       );
     });
   });
+
+  it('should not render error diagram if suppressErrorRendering is set', () => {
+    const url = 'http://localhost:9000/regression/issue-1874.html';
+    cy.viewport(1440, 1024);
+    cy.visit(url);
+    cy.get('#test');
+    cy.matchImageSnapshot(
+      'configuration.spec-should-not-render-error-diagram-if-suppressErrorRendering-is-set'
+    );
+  });
 });
