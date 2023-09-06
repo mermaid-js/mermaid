@@ -10,8 +10,8 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../../commonDb.js';
-import type { SequenceDB, BoxData, ActorData, Text, Message } from './sequenceTypes.js';
+} from '../common/commonDb.js';
+import type { SequenceDB, BoxData, ActorData, Text, Message, LINETYPE } from './sequenceTypes.js';
 import type { DiagramDB, ParseDirectiveDefinition } from '../../diagram-api/types.js';
 import { parseDirective as _parseDirective } from '../../directiveUtils.js';
 
@@ -31,6 +31,21 @@ const lastDestroyed = undefined;
 const parseDirective: ParseDirectiveDefinition = (statement, context, type) => {
   _parseDirective(this, statement, context, type);
 };
+
+const activationCount = (actorId: string): number => {
+  let i;
+  let count = 0;
+  for (i = 0; i < messages.length; i++) {
+    if (messages[i].type === 'ACTIVE_START' && messages[i].from === actorId) {
+      count++;
+    }
+    if (messages[i].type === 'ACTIVE_END' && messages[i].from === actorId) {
+      count--;
+    }
+  }
+  return count;
+};
+
 const addBox = function (data: BoxData): void {
   boxes.push({
     title: data.title,
@@ -142,6 +157,30 @@ function insertLinks(actor: ActorData, links: Record<string, string>): void {
   }
 }
 
+export const addSignal = function (
+  idFrom: string,
+  idTo: string,
+  message: Text,
+  messageType: LINETYPE,
+  activate = false
+): void {
+  if (messageType === 'ACTIVE_END') {
+    const cnt = activationCount(idFrom);
+    if (cnt < 1) {
+      // Bail out as there is an activation signal from an inactive participant
+      throw new Error(`Trying to inactivate an inactive participant (${idFrom})`);
+    }
+  }
+  messages.push({
+    from: idFrom,
+    to: idTo,
+    message: message.text,
+    wrap: message.wrap ?? true,
+    type: messageType,
+    activate,
+  });
+};
+
 const hasAtleastOneBox = function (): boolean {
   return boxes.length > 0;
 };
@@ -231,10 +270,12 @@ function boxEnd(): void {
 
 export const db: SequenceDB = {
   parseDirective,
+  activationCount,
   parseText,
   addBox,
   addActor,
   addMessage,
+  addSignal,
   addLinks,
   addALink,
   insertLinks,
