@@ -120,6 +120,18 @@ g.classGroup line {
   stroke-width: 1;
 }
 
+#realizationStart, .realization {
+  fill: transparent !important;
+  stroke: ${options.lineColor} !important;
+  stroke-width: 1;
+}
+
+#realizationEnd, .realization {
+  fill: transparent !important;
+  stroke: ${options.lineColor} !important;
+  stroke-width: 1;
+}
+
 #aggregationStart, .aggregation {
   fill: transparent !important;
   stroke: ${options.lineColor} !important;
