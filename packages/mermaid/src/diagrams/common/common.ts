@@ -208,20 +208,32 @@ export const parseGenericTypes = function (input: string): string {
   return output.join('');
 };
 
+export const countOccurrence = (string: string, substring: string): number => {
+  return Math.max(0, string.split(substring).length - 1);
+};
+
 const shouldCombineSets = (previousSet: string, nextSet: string): boolean => {
-  const prevCount = [...previousSet].reduce((count, char) => (char === '~' ? count + 1 : count), 0);
-  const nextCount = [...nextSet].reduce((count, char) => (char === '~' ? count + 1 : count), 0);
+  const prevCount = countOccurrence(previousSet, '~');
+  const nextCount = countOccurrence(nextSet, '~');
 
   return prevCount === 1 && nextCount === 1;
 };
 
 const processSet = (input: string): string => {
-  const chars = [...input];
-  const tildeCount = chars.reduce((count, char) => (char === '~' ? count + 1 : count), 0);
+  const tildeCount = countOccurrence(input, '~');
+  let hasStartingTilde = false;
 
   if (tildeCount <= 1) {
     return input;
   }
+
+  // If there is an odd number of tildes, and the input starts with a tilde, we need to remove it and add it back in later
+  if (tildeCount % 2 !== 0 && input.startsWith('~')) {
+    input = input.substring(1);
+    hasStartingTilde = true;
+  }
+
+  const chars = [...input];
 
   let first = chars.indexOf('~');
   let last = chars.lastIndexOf('~');
@@ -232,6 +244,11 @@ const processSet = (input: string): string => {
 
     first = chars.indexOf('~');
     last = chars.lastIndexOf('~');
+  }
+
+  // Add the starting tilde back in if we removed it
+  if (hasStartingTilde) {
+    chars.unshift('~');
   }
 
   return chars.join('');
