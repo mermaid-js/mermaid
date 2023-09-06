@@ -20,13 +20,15 @@
       >
       <pre class="mermaid">
   flowchart
-      a[This should be visible, error diagram should not be visible above this]
+      a[This should be visible]
     </pre
       >
     </div>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
-      mermaid.initialize({ startOnLoad: true, suppressErrorRendering: true });
+      const shouldSuppress =
+        new URLSearchParams(window.location.search).get('suppressErrorRendering') === 'true';
+      mermaid.initialize({ startOnLoad: true, suppressErrorRendering: shouldSuppress });
     </script>
   </body>
 </html>
