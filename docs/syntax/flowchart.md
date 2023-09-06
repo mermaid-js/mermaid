@@ -954,8 +954,7 @@ flowchart LR
 
 ### Styling links
 
-It is possible to style links. For instance, you might want to style a link that is going backwards in the flow. As links
-have no ids in the same way as nodes, some other way of deciding what style the links should be attached to is required.
+It is possible to style links. For instance, you might want to style a link that is going backwards in the flow. As links have no ids in the same way as nodes, some other way of deciding what style the links should be attached to is required.
 Instead of ids, the order number of when the link was defined in the graph is used, or use default to apply to all links.
 In the example below the style defined in the linkStyle statement will belong to the fourth link in the graph:
 
@@ -965,8 +964,7 @@ It is also possible to add style to multiple links in a single statement, by sep
 
     linkStyle 1,2,7 color:blue;
 
-A new way is added to have the linkStyle attached to the previous connection, so you do not need to know the number of the link.
-Just replace the number with a minus.
+From vMERMAID_RELEASE_VERSION+, linkStyle can be attached to the previous connection by defining the style after the link definition. The link number can be replaced with a `-`, removing the need to remember link numbers.
 
     A --> B
     linkStyle - stroke:red;
@@ -981,8 +979,12 @@ Available curve styles include `basis`, `bumpX`, `bumpY`, `cardinal`, `catmullRo
 
 In this example, a left-to-right graph uses the `stepBefore` curve style:
 
-    %%{ init: { 'flowchart': { 'curve': 'stepBefore' } } }%%
-    graph LR
+```
+
+%%{ init: { 'flowchart': { 'curve': 'stepBefore' } } }%%
+graph LR
+
+```
 
 For a full list of available curves, including an explanation of custom curves, refer to
 the [Shapes](https://github.com/d3/d3-shape/blob/main/README.md#curves) documentation in the
@@ -1174,3 +1176,7 @@ mermaid.flowchartConfig = {
     width: 100%
 }
 ```
+
+### TODOs
+
+- [ ] linkStyle interpolate feature docs missing
