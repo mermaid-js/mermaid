@@ -54,13 +54,13 @@ export const imgSnapshotTest = (
 ): void => {
   const options: CypressMermaidConfig = {
     ..._options,
-    fontFamily: _options.fontFamily ?? 'courier',
+    fontFamily: _options.fontFamily || 'courier',
     // @ts-ignore TODO: Fix type of fontSize
-    fontSize: _options.fontSize ?? '16px',
+    fontSize: _options.fontSize || '16px',
     sequence: {
-      ...(_options.sequence ?? {}),
+      ...(_options.sequence || {}),
       actorFontFamily: 'courier',
-      noteFontFamily: _options.sequence?.noteFontFamily ?? 'courier',
+      noteFontFamily: _options.sequence?.noteFontFamily || 'courier',
       messageFontFamily: 'courier',
     },
   };
