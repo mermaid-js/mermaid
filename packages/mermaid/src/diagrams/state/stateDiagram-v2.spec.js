@@ -1,5 +1,5 @@
-import { parser } from './parser/stateDiagram';
-import stateDb from './stateDb';
+import { parser } from './parser/stateDiagram.jison';
+import stateDb from './stateDb.js';
 import stateDiagram from './parser/stateDiagram.jison';
 
 describe('state diagram V2, ', function () {

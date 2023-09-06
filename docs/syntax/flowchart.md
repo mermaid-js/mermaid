@@ -6,11 +6,10 @@
 
 # Flowcharts - Basic Syntax
 
-All Flowcharts are composed of **nodes**, the geometric shapes and **edges**, the arrows or lines. The mermaid code defines the way that these **nodes** and **edges** are made and interact.
+Flowcharts are composed of **nodes** (geometric shapes) and **edges** (arrows or lines). The Mermaid code defines how nodes and edges are made and accommodates different arrow types, multi-directional arrows, and any linking to and from subgraphs.
 
-It can also accommodate different arrow types, multi directional arrows, and linking to and from subgraphs.
-
-> **Important note**: Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).
+> **Warning**
+> If you are using the word "end" in a Flowchart node, capitalize the entire word or any of the letters (e.g., "End" or "END"), or apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897). Typing "end" in all lowercase letters will break the Flowchart.
 
 ### A node (default)
 
@@ -32,6 +31,9 @@ flowchart LR
 
 > **Note**
 > The id is what is displayed in the box.
+
+> **💡 Tip**
+> Instead of `flowchart` one can also use `graph`.
 
 ### A node with text
 
@@ -55,7 +57,45 @@ flowchart LR
     id1[This is the text in the box]
 ```
 
-## Graph
+#### Unicode text
+
+Use `"` to enclose the unicode text.
+
+```mermaid-example
+flowchart LR
+    id["This ❤ Unicode"]
+```
+
+```mermaid
+flowchart LR
+    id["This ❤ Unicode"]
+```
+
+#### Markdown formatting
+
+Use double quotes and backticks "\` text \`" to enclose the markdown text.
+
+```mermaid-example
+%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+    markdown["`This **is** _Markdown_`"]
+    newLines["`Line1
+    Line 2
+    Line 3`"]
+    markdown --> newLines
+```
+
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+    markdown["`This **is** _Markdown_`"]
+    newLines["`Line1
+    Line 2
+    Line 3`"]
+    markdown --> newLines
+```
+
+### Direction
 
 This statement declares the direction of the Flowchart.
 
@@ -83,15 +123,13 @@ flowchart LR
     Start --> Stop
 ```
 
-## Flowchart Orientation
-
 Possible FlowChart orientations are:
 
-- TB - top to bottom
-- TD - top-down/ same as top to bottom
-- BT - bottom to top
-- RL - right to left
-- LR - left to right
+- TB - Top to bottom
+- TD - Top-down/ same as top to bottom
+- BT - Bottom to top
+- RL - Right to left
+- LR - Left to right
 
 ## Node shapes
 
@@ -182,20 +220,6 @@ flowchart LR
 ```
 
 ### A hexagon node
-
-Code:
-
-```mermaid-example
-flowchart LR
-    id1{{This is the text in the box}}
-```
-
-```mermaid
-flowchart LR
-    id1{{This is the text in the box}}
-```
-
-Render:
 
 ```mermaid-example
 flowchart LR
@@ -391,6 +415,20 @@ flowchart LR
    A == text ==> B
 ```
 
+### An invisible link
+
+This can be a useful tool in some instances where you want to alter the default positioning of a node.
+
+```mermaid-example
+flowchart LR
+    A ~~~ B
+```
+
+```mermaid
+flowchart LR
+    A ~~~ B
+```
+
 ### Chaining of links
 
 It is possible declare many links in the same line as per below:
@@ -570,12 +608,12 @@ It is possible to escape characters using the syntax exemplified here.
 
 ```mermaid-example
     flowchart LR
-        A["A double quote:#quot;"] -->B["A dec char:#9829;"]
+        A["A double quote:#quot;"] --> B["A dec char:#9829;"]
 ```
 
 ```mermaid
     flowchart LR
-        A["A double quote:#quot;"] -->B["A dec char:#9829;"]
+        A["A double quote:#quot;"] --> B["A dec char:#9829;"]
 ```
 
 Numbers given are base 10, so `#` can be encoded as `#35;`. It is also supported to use HTML character names.
@@ -634,7 +672,7 @@ flowchart TB
     end
 ```
 
-## flowcharts
+### flowcharts
 
 With the graphtype flowchart it is also possible to set edges to and from subgraphs as in the flowchart below.
 
@@ -672,7 +710,7 @@ flowchart TB
     two --> c2
 ```
 
-## Direction in subgraphs
+### Direction in subgraphs
 
 With the graphtype flowcharts you can use the direction statement to set the direction which the subgraph will render like in this example.
 
@@ -710,9 +748,92 @@ flowchart LR
   B1 --> B2
 ```
 
+#### Limitation
+
+If any of a subgraph's nodes are linked to the outside, subgraph direction will be ignored. Instead the subgraph will inherit the direction of the parent graph:
+
+```mermaid-example
+flowchart LR
+    subgraph subgraph1
+        direction TB
+        top1[top] --> bottom1[bottom]
+    end
+    subgraph subgraph2
+        direction TB
+        top2[top] --> bottom2[bottom]
+    end
+    %% ^ These subgraphs are identical, except for the links to them:
+
+    %% Link *to* subgraph1: subgraph1 direction is mantained
+    outside --> subgraph1
+    %% Link *within* subgraph2:
+    %% subgraph2 inherits the direction of the top-level graph (LR)
+    outside ---> top2
+```
+
+```mermaid
+flowchart LR
+    subgraph subgraph1
+        direction TB
+        top1[top] --> bottom1[bottom]
+    end
+    subgraph subgraph2
+        direction TB
+        top2[top] --> bottom2[bottom]
+    end
+    %% ^ These subgraphs are identical, except for the links to them:
+
+    %% Link *to* subgraph1: subgraph1 direction is mantained
+    outside --> subgraph1
+    %% Link *within* subgraph2:
+    %% subgraph2 inherits the direction of the top-level graph (LR)
+    outside ---> top2
+```
+
+## Markdown Strings
+
+The "Markdown Strings" feature enhances flowcharts and mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
+
+```mermaid-example
+%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+subgraph "One"
+  a("`The **cat**
+  in the hat`") -- "edge label" --> b{{"`The **dog** in the hog`"}}
+end
+subgraph "`**Two**`"
+  c("`The **cat**
+  in the hat`") -- "`Bold **edge label**`" --> d("The dog in the hog")
+end
+```
+
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+subgraph "One"
+  a("`The **cat**
+  in the hat`") -- "edge label" --> b{{"`The **dog** in the hog`"}}
+end
+subgraph "`**Two**`"
+  c("`The **cat**
+  in the hat`") -- "`Bold **edge label**`" --> d("The dog in the hog")
+end
+```
+
+Formatting:
+
+- For bold text, use double asterisks (`**`) before and after the text.
+- For italics, use single asterisks (`*`) before and after the text.
+- With traditional strings, you needed to add `<br>` tags for text to wrap in nodes. However, markdown strings automatically wrap text when it becomes too long and allows you to start a new line by simply using a newline character instead of a `<br>` tag.
+
+This feature is applicable to node labels, edge labels, and subgraph labels.
+
 ## Interaction
 
-It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab.
+
+> **Note**
+> This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
 
     click nodeId callback
     click nodeId call callback()
@@ -840,6 +961,10 @@ In the example below the style defined in the linkStyle statement will belong to
 
     linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
 
+It is also possible to add style to multiple links in a single statement, by separating link numbers with commas:
+
+    linkStyle 1,2,7 color:blue;
+
 ### Styling line curves
 
 It is possible to style the type of curve used for lines between items, if the default method does not meet your needs.
@@ -878,9 +1003,13 @@ flowchart LR
 More convenient than defining the style every time is to define a class of styles and attach this class to the nodes that
 should have a different look.
 
-a class definition looks like the example below:
+A class definition looks like the example below:
 
         classDef className fill:#f9f,stroke:#333,stroke-width:4px;
+
+Also, it is possible to define style to multiple classes in one statement:
+
+        classDef firstClassName,secondClassName font-size:12pt;
 
 Attachment of a class to a node is done as per below:
 
@@ -904,9 +1033,27 @@ flowchart LR
     classDef someclass fill:#f96
 ```
 
-### Css classes
+This form can be used when declaring multiple links between nodes:
 
-It is also possible to predefine classes in css styles that can be applied from the graph definition as in the example
+```mermaid-example
+flowchart LR
+    A:::foo & B:::bar --> C:::foobar
+    classDef foo stroke:#f00
+    classDef bar stroke:#0f0
+    classDef foobar stroke:#00f
+```
+
+```mermaid
+flowchart LR
+    A:::foo & B:::bar --> C:::foobar
+    classDef foo stroke:#f00
+    classDef bar stroke:#0f0
+    classDef foobar stroke:#00f
+```
+
+### CSS classes
+
+It is also possible to predefine classes in CSS styles that can be applied from the graph definition as in the example
 below:
 
 **Example style**
@@ -951,7 +1098,7 @@ The icons are accessed via the syntax fa:#icon class name#.
 
 ```mermaid-example
 flowchart TD
-    B["fab:fa-twitter for peace"]
+    B["fa:fa-twitter for peace"]
     B-->C[fa:fa-ban forbidden]
     B-->D(fa:fa-spinner)
     B-->E(A fa:fa-camera-retro perhaps?)
@@ -959,13 +1106,13 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    B["fab:fa-twitter for peace"]
+    B["fa:fa-twitter for peace"]
     B-->C[fa:fa-ban forbidden]
     B-->D(fa:fa-spinner)
     B-->E(A fa:fa-camera-retro perhaps?)
 ```
 
-?> Mermaid is now only compatible with Font Awesome versions 4 and 5. Check that you are using the correct version of Font Awesome.
+Mermaid is compatible with Font Awesome up to verion 5, Free icons only. Check that the icons you use are from the [supported set of icons](https://fontawesome.com/v5/search?o=r&m=free).
 
 ## Graph declarations with spaces between vertices and link and without semicolon
 
@@ -1004,7 +1151,8 @@ You can change the renderer to elk by adding this directive:
 
     %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 
-Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
+> **Note**
+> Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
 
 ### Width
 

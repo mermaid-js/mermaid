@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
 describe('Gantt diagram', () => {
   beforeEach(() => {
@@ -133,6 +133,24 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should default to showing today marker', () => {
+    // This test only works if the environment thinks today is 1010-10-10
+    imgSnapshotTest(
+      `
+      gantt
+        title Show today marker (vertical line should be visible)
+        dateFormat YYYY-MM-DD
+        axisFormat %d
+        %% Should default to being on
+        %% todayMarker on
+        section Section1
+         Yesterday: 1010-10-09, 1d
+         Today: 1010-10-10, 1d
+      `,
+      {}
+    );
+  });
+
   it('should hide today marker', () => {
     imgSnapshotTest(
       `
@@ -142,7 +160,8 @@ describe('Gantt diagram', () => {
         axisFormat %d
         todayMarker off
         section Section1
-         Today: 1, -1h
+         Yesterday: 1010-10-09, 1d
+         Today: 1010-10-10, 1d
       `,
       {}
     );
@@ -157,7 +176,8 @@ describe('Gantt diagram', () => {
       axisFormat %d
       todayMarker stroke-width:5px,stroke:#00f,opacity:0.5
       section Section1
-       Today: 1, -1h
+       Yesterday: 1010-10-09, 1d
+       Today: 1010-10-10, 1d
       `,
       {}
     );
@@ -310,6 +330,48 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should render a gantt diagram with tick is 2 milliseconds', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title A Gantt Diagram
+        dateFormat   SSS
+        axisFormat   %Lms
+        tickInterval 2millisecond
+        excludes     weekends
+
+        section Section
+        A task           : a1, 000, 6ms
+        Another task     : after a1, 6ms
+        section Another
+        Task in sec      : a2, 006, 3ms
+        another task     : 3ms
+      `,
+      {}
+    );
+  });
+
+  it('should render a gantt diagram with tick is 2 seconds', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title A Gantt Diagram
+        dateFormat   ss
+        axisFormat   %Ss
+        tickInterval 2second
+        excludes     weekends
+
+        section Section
+        A task           : a1, 00, 6s
+        Another task     : after a1, 6s
+        section Another
+        Task in sec      : 06, 3s
+        another task     : 3s
+      `,
+      {}
+    );
+  });
+
   it('should render a gantt diagram with tick is 15 minutes', () => {
     imgSnapshotTest(
       `
@@ -394,6 +456,28 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should render a gantt diagram with tick is 1 week, with the day starting on monday', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title A Gantt Diagram
+        dateFormat   YYYY-MM-DD
+        axisFormat   %m-%d
+        tickInterval 1week
+        weekday      monday
+        excludes     weekends
+
+        section Section
+        A task           : a1, 2022-10-01, 30d
+        Another task     : after a1, 20d
+        section Another
+        Task in sec      : 2022-10-20, 12d
+        another task     : 24d
+      `,
+      {}
+    );
+  });
+
   it('should render a gantt diagram with tick is 1 month', () => {
     imgSnapshotTest(
       `
@@ -433,6 +517,41 @@ describe('Gantt diagram', () => {
         another task     : 24d
       `,
       { gantt: { topAxis: true } }
+    );
+  });
+
+  it('should render when compact is true', () => {
+    imgSnapshotTest(
+      `
+      ---
+      displayMode: compact
+      ---
+      gantt
+        title GANTT compact
+        dateFormat  HH:mm:ss
+        axisFormat  %Hh%M
+
+        section DB Clean
+        Clean: 12:00:00, 10m
+        Clean: 12:30:00, 12m
+        Clean: 13:00:00, 8m
+        Clean: 13:30:00, 9m
+        Clean: 14:00:00, 13m
+        Clean: 14:30:00, 10m
+        Clean: 15:00:00, 11m
+
+        section Sessions
+        A: 12:00:00, 63m
+        B: 12:30:00, 12m
+        C: 13:05:00, 12m
+        D: 13:06:00, 33m
+        E: 13:15:00, 55m
+        F: 13:20:00, 12m
+        G: 13:32:00, 18m
+        H: 13:50:00, 20m
+        I: 14:10:00, 10m
+    `,
+      {}
     );
   });
 });

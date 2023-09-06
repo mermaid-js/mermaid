@@ -1,246 +1,17 @@
 <html>
-  <head>
-    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
-    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      body {
-        /* background: rgb(221, 208, 208); */
-        /* background:#333; */
-        font-family: 'Arial';
-        /* font-size: 18px !important; */
-      }
-      h1 {
-        color: grey;
-      }
-      .mermaid2 {
-        display: none;
-      }
-      .mermaid svg {
-        /* font-size: 18px !important; */
-        background-color: #eee;
-        background-image: radial-gradient(#fff 1%, transparent 11%),
-          radial-gradient(#fff 1%, transparent 11%);
-        background-size: 20px 20px;
-        background-position: 0 0, 10px 10px;
-        background-repeat: repeat;
-      }
-      .malware {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 150px;
-        background: red;
-        color: black;
-        display: flex;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-family: monospace;
-        font-size: 72px;
-      }
-    </style>
-  </head>
   <body>
     <pre id="diagram" class="mermaid">
-%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
 graph TB
       a --> b
       a --> c
       b --> d
       c --> d
     </pre>
-    <pre id="diagram" class="mermaid">
-flowchart-elk LR
-  subgraph A
-  a --> b
-  end
-  subgraph B
-  b
-  end
-    </pre>
-    <pre id="diagram" class="mermaid">
-%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
-flowchart TB
-  %% I could not figure out how to use double quotes in labels in Mermaid
-  subgraph ibm[IBM Espresso CPU]
-    core0[IBM PowerPC Broadway Core 0]
-    core1[IBM PowerPC Broadway Core 1]
-    core2[IBM PowerPC Broadway Core 2]
 
-    rom[16 KB ROM]
-
-    core0 --- core2
-
-    rom --> core2
-  end
-
-  subgraph amd[AMD Latte GPU]
-    mem[Memory & I/O Bridge]
-    dram[DRAM Controller]
-    edram[32 MB EDRAM MEM1]
-    rom[512 B SEEPROM]
-
-    sata[SATA IF]
-    exi[EXI]
-
-    subgraph gx[GX]
-      sram[3 MB 1T-SRAM]
-    end
-
-    radeon[AMD Radeon R7xx GX2]
-
-    mem --- gx
-    mem --- radeon
-
-    rom --- mem
-
-    mem --- sata
-    mem --- exi
-
-    dram --- sata
-    dram --- exi
-  end
-
-  ddr3[2 GB DDR3 RAM MEM2]
-
-  mem --- ddr3
-  dram --- ddr3
-  edram --- ddr3
-
-  core1 --- mem
-
-  exi --- rtc
-  rtc{{rtc}}
-</pre
-    >
-    <br />
-    <pre id="diagram" class="mermaid">
-flowchart TB
-  %% I could not figure out how to use double quotes in labels in Mermaid
-  subgraph ibm[IBM Espresso CPU]
-    core0[IBM PowerPC Broadway Core 0]
-    core1[IBM PowerPC Broadway Core 1]
-    core2[IBM PowerPC Broadway Core 2]
-
-    rom[16 KB ROM]
-
-    core0 --- core2
-
-    rom --> core2
-  end
-
-  subgraph amd[AMD Latte GPU]
-    mem[Memory & I/O Bridge]
-    dram[DRAM Controller]
-    edram[32 MB EDRAM MEM1]
-    rom[512 B SEEPROM]
-
-    sata[SATA IF]
-    exi[EXI]
-
-    subgraph gx[GX]
-      sram[3 MB 1T-SRAM]
-    end
-
-    radeon[AMD Radeon R7xx GX2]
-
-    mem --- gx
-    mem --- radeon
-
-    rom --- mem
-
-    mem --- sata
-    mem --- exi
-
-    dram --- sata
-    dram --- exi
-  end
-
-  ddr3[2 GB DDR3 RAM MEM2]
-
-  mem --- ddr3
-  dram --- ddr3
-  edram --- ddr3
-
-  core1 --- mem
-
-  exi --- rtc
-  rtc{{rtc}}
-</pre
-    >
-    <br />
-    &nbsp;
-    <pre id="diagram" class="mermaid2">
-      flowchart LR
-  B1 --be be--x B2
-  B1 --bo bo--o B3
-  subgraph Ugge
-      B2
-      B3
-      subgraph inner
-          B4
-          B5
-      end
-      subgraph inner2
-        subgraph deeper
-          C4
-          C5
-        end
-        C6
-      end
-
-      B4 --> C4
-
-      B3 -- X --> B4
-      B2 --> inner
-
-      C4 --> C5
-  end
-
-  subgraph outer
-      B6
-  end
-  B6 --> B5
-  </pre
-    >
-    <pre id="diagram" class="mermaid2">
-sequenceDiagram
-    Customer->>+Stripe: Makes a payment request
-    Stripe->>+Bank: Forwards the payment request to the bank
-    Bank->>+Customer: Asks for authorization
-    Customer->>+Bank: Provides authorization
-    Bank->>+Stripe: Sends a response with payment details
-    Stripe->>+Merchant: Sends a notification of payment receipt
-    Merchant->>+Stripe: Confirms the payment
-    Stripe->>+Customer: Sends a confirmation of payment
-    Customer->>+Merchant: Receives goods or services
-        </pre
-    >
-    <pre id="diagram" class="mermaid2">
-      gantt
-        title Style today marker (vertical line should be 5px wide and half-transparent blue)
-        dateFormat YYYY-MM-DD
-        axisFormat %d
-        todayMarker stroke-width:5px,stroke:#00f,opacity:0.5
-        section Section1
-        Today: 1, -1h
-    </pre>
+    <div id="d2"></div>
 
     <script type="module">
-      import mermaid from '../../packages/mermaid/src/mermaid';
+      import mermaid from '/mermaid.esm.mjs';
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
@@ -265,6 +36,11 @@ sequenceDiagram
         console.error('In parse error:');
         console.error(err);
       };
+      const value = `graph TD\nHello --> World`;
+      const el = document.getElementById('d2');
+      const { svg } = await mermaid.render('d22', value);
+      console.log(svg);
+      el.innerHTML = svg;
       // mermaid.test1('first_slow', 1200).then((r) => console.info(r));
       // mermaid.test1('second_fast', 200).then((r) => console.info(r));
       // mermaid.test1('third_fast', 200).then((r) => console.info(r));

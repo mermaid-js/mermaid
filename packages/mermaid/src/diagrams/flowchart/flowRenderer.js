@@ -1,14 +1,14 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select, curveLinear, selectAll } from 'd3';
-import { getConfig } from '../../config';
+import { getConfig } from '../../config.js';
 import { render as Render } from 'dagre-d3-es';
 import { applyStyle } from 'dagre-d3-es/src/dagre-js/util.js';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
-import { log } from '../../logger';
-import common, { evaluate } from '../common/common';
-import { interpolateToCurve, getStylesFromArray } from '../../utils';
-import { setupGraphViewbox } from '../../setupGraphViewbox';
-import flowChartShapes from './flowChartShapes';
+import { log } from '../../logger.js';
+import common, { evaluate } from '../common/common.js';
+import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
+import { setupGraphViewbox } from '../../setupGraphViewbox.js';
+import flowChartShapes from './flowChartShapes.js';
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -176,9 +176,9 @@ export const addEdges = function (edges, g, diagObj) {
     cnt++;
 
     // Identify Link
-    var linkId = 'L-' + edge.start + '-' + edge.end;
-    var linkNameStart = 'LS-' + edge.start;
-    var linkNameEnd = 'LE-' + edge.end;
+    const linkId = 'L-' + edge.start + '-' + edge.end;
+    const linkNameStart = 'LS-' + edge.start;
+    const linkNameEnd = 'LE-' + edge.end;
 
     const edgeData = {};
 
@@ -273,15 +273,7 @@ export const addEdges = function (edges, g, diagObj) {
  */
 export const getClasses = function (text, diagObj) {
   log.info('Extracting classes');
-  diagObj.db.clear();
-  try {
-    // Parse the graph definition
-    diagObj.parse(text);
-    return diagObj.db.getClasses();
-  } catch (e) {
-    log.error(e);
-    return {};
-  }
+  return diagObj.db.getClasses();
 };
 
 /**
@@ -294,7 +286,6 @@ export const getClasses = function (text, diagObj) {
  */
 export const draw = function (text, id, _version, diagObj) {
   log.info('Drawing flowchart');
-  diagObj.db.clear();
   const { securityLevel, flowchart: conf } = getConfig();
   let sandboxElement;
   if (securityLevel === 'sandbox') {
@@ -305,13 +296,6 @@ export const draw = function (text, id, _version, diagObj) {
       ? select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
   const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
-
-  // Parse the graph definition
-  try {
-    diagObj.parser.parse(text);
-  } catch (err) {
-    log.debug('Parsing failed');
-  }
 
   // Fetch the default direction, use TD if none was found
   let dir = diagObj.db.getDirection();

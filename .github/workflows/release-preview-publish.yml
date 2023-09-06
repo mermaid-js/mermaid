@@ -6,7 +6,7 @@ on:
       - 'release/**'
 
 jobs:
-  publish:
+  publish-preview:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

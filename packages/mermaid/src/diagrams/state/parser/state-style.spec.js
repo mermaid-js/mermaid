@@ -1,6 +1,6 @@
-import stateDb from '../stateDb';
-import stateDiagram from './stateDiagram';
-import { setConfig } from '../../../config';
+import stateDb from '../stateDb.js';
+import stateDiagram from './stateDiagram.jison';
+import { setConfig } from '../../../config.js';
 
 setConfig({
   securityLevel: 'strict',

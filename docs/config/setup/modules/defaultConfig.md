@@ -10,47 +10,24 @@
 
 ### configKeys
 
-• `Const` **configKeys**: `string`\[]
+• `Const` **configKeys**: `Set`<`string`>
 
 #### Defined in
 
-[defaultConfig.ts:2084](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L2084)
+[defaultConfig.ts:268](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L268)
 
 ---
 
 ### default
 
-• `Const` **default**: `Partial`<`MermaidConfig`>
+• `Const` **default**: `RequiredDeep`<`MermaidConfig`>
 
-**Configuration methods in Mermaid version 8.6.0 have been updated, to learn more\[[click
-here](8.6.0_docs.md)].**
+Default mermaid configuration options.
 
-## **What follows are config instructions for older versions**
-
-These are the default options which can be overridden with the initialization call like so:
-
-**Example 1:**
-
-```js
-mermaid.initialize({ flowchart: { htmlLabels: false } });
-```
-
-**Example 2:**
-
-```html
-<script>
-  const config = {
-    startOnLoad: true,
-    flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'cardinal' },
-    securityLevel: 'loose',
-  };
-  mermaid.initialize(config);
-</script>
-```
-
-A summary of all options and their defaults is found [here](#mermaidapi-configuration-defaults).
-A description of each option follows below.
+Please see the Mermaid config JSON Schema for the default JSON values.
+Non-JSON JS default values are listed in this file, e.g. functions, or
+`undefined` (explicitly set so that `configKeys` finds them).
 
 #### Defined in
 
-[defaultConfig.ts:33](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L33)
+[defaultConfig.ts:18](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L18)

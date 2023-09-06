@@ -1,8 +1,8 @@
 import { select } from 'd3';
-import { log } from '../logger';
-import { getConfig } from '../config';
-import { evaluate } from '../diagrams/common/common';
-import { decodeEntities } from '../mermaidAPI';
+import { log } from '../logger.js';
+import { getConfig } from '../config.js';
+import { evaluate } from '../diagrams/common/common.js';
+import { decodeEntities } from '../mermaidAPI.js';
 
 /**
  * @param dom
@@ -41,7 +41,13 @@ function addHtmlLabel(node) {
   div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
   return fo.node();
 }
-
+/**
+ * @param _vertexText
+ * @param style
+ * @param isTitle
+ * @param isNode
+ * @deprecated svg-util/createText instead
+ */
 const createLabel = (_vertexText, style, isTitle, isNode) => {
   let vertexText = _vertexText || '';
   if (typeof vertexText === 'object') {

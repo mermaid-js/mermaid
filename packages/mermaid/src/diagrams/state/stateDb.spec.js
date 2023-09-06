@@ -1,4 +1,4 @@
-import stateDb from './stateDb';
+import stateDb from './stateDb.js';
 
 describe('State Diagram stateDb', () => {
   beforeEach(() => {

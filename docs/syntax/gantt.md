@@ -25,25 +25,25 @@ Mermaid can render Gantt diagrams as SVG, PNG or a MarkDown link that can be pas
 ```mermaid-example
 gantt
     title A Gantt Diagram
-    dateFormat  YYYY-MM-DD
+    dateFormat YYYY-MM-DD
     section Section
-    A task           :a1, 2014-01-01, 30d
-    Another task     :after a1  , 20d
+        A task          :a1, 2014-01-01, 30d
+        Another task    :after a1, 20d
     section Another
-    Task in sec      :2014-01-12  , 12d
-    another task      : 24d
+        Task in Another :2014-01-12, 12d
+        another task    :24d
 ```
 
 ```mermaid
 gantt
     title A Gantt Diagram
-    dateFormat  YYYY-MM-DD
+    dateFormat YYYY-MM-DD
     section Section
-    A task           :a1, 2014-01-01, 30d
-    Another task     :after a1  , 20d
+        A task          :a1, 2014-01-01, 30d
+        Another task    :after a1, 20d
     section Another
-    Task in sec      :2014-01-12  , 12d
-    another task      : 24d
+        Task in Another :2014-01-12, 12d
+        another task    :24d
 ```
 
 ## Syntax
@@ -117,17 +117,17 @@ gantt
 It is possible to set multiple dependencies separated by space:
 
 ```mermaid-example
-    gantt
-        apple :a, 2017-07-20, 1w
-        banana :crit, b, 2017-07-23, 1d
-        cherry :active, c, after b a, 1d
+gantt
+    apple :a, 2017-07-20, 1w
+    banana :crit, b, 2017-07-23, 1d
+    cherry :active, c, after b a, 1d
 ```
 
 ```mermaid
-    gantt
-        apple :a, 2017-07-20, 1w
-        banana :crit, b, 2017-07-23, 1d
-        cherry :active, c, after b a, 1d
+gantt
+    apple :a, 2017-07-20, 1w
+    banana :crit, b, 2017-07-23, 1d
+    cherry :active, c, after b a, 1d
 ```
 
 ### Title
@@ -146,22 +146,22 @@ You can add milestones to the diagrams. Milestones differ from tasks as they rep
 
 ```mermaid-example
 gantt
-dateFormat HH:mm
-axisFormat %H:%M
-Initial milestone : milestone, m1, 17:49,2min
-taska2 : 10min
-taska3 : 5min
-Final milestone : milestone, m2, 18:14, 2min
+    dateFormat HH:mm
+    axisFormat %H:%M
+    Initial milestone : milestone, m1, 17:49, 2m
+    Task A : 10m
+    Task B : 5m
+    Final milestone : milestone, m2, 18:08, 4m
 ```
 
 ```mermaid
 gantt
-dateFormat HH:mm
-axisFormat %H:%M
-Initial milestone : milestone, m1, 17:49,2min
-taska2 : 10min
-taska3 : 5min
-Final milestone : milestone, m2, 18:14, 2min
+    dateFormat HH:mm
+    axisFormat %H:%M
+    Initial milestone : milestone, m1, 17:49, 2m
+    Task A : 10m
+    Task B : 5m
+    Final milestone : milestone, m2, 18:08, 4m
 ```
 
 ## Setting dates
@@ -184,7 +184,7 @@ The following formatting options are supported:
 | `YY`       | 14             | 2 digit year                                           |
 | `Q`        | 1..4           | Quarter of year. Sets month to first month in quarter. |
 | `M MM`     | 1..12          | Month number                                           |
-| `MMM MMMM` | January..Dec   | Month name in locale set by `moment.locale()`          |
+| `MMM MMMM` | January..Dec   | Month name in locale set by `dayjs.locale()`           |
 | `D DD`     | 1..31          | Day of month                                           |
 | `Do`       | 1st..31st      | Day of month with ordinal                              |
 | `DDD DDDD` | 1..365         | Day of year                                            |
@@ -200,7 +200,7 @@ The following formatting options are supported:
 | `SSS`      | 0..999         | Thousandths of a second                                |
 | `Z ZZ`     | +12:00         | Offset from UTC as +-HH:mm, +-HHmm, or Z               |
 
-More info in: <https://momentjs.com/docs/#/parsing/string-format/>
+More info in: <https://day.js.org/docs/en/parse/string-format/>
 
 ### Output date format on the axis
 
@@ -241,7 +241,7 @@ The following formatting strings are supported:
 
 More info in: <https://github.com/d3/d3-time-format/tree/v4.0.0#locale_format>
 
-### Axis ticks
+### Axis ticks (v10.3.0+)
 
 The default output ticks are auto. You can custom your `tickInterval`, like `1day` or `1week`.
 
@@ -252,41 +252,87 @@ tickInterval 1day
 The pattern is:
 
 ```javascript
-/^([1-9][0-9]*)(minute|hour|day|week|month)$/;
+/^([1-9][0-9]*)(millisecond|second|minute|hour|day|week|month)$/;
 ```
 
 More info in: <https://github.com/d3/d3-time#interval_every>
 
+Week-based `tickInterval`s start the week on sunday by default. If you wish to specify another weekday on which the `tickInterval` should start, use the `weekday` option:
+
+```mermaid-example
+gantt
+  tickInterval 1week
+  weekday monday
+```
+
+```mermaid
+gantt
+  tickInterval 1week
+  weekday monday
+```
+
+> **Warning** > `millisecond` and `second` support was added in vMERMAID_RELEASE_VERSION
+
+## Output in compact mode
+
+The compact mode allows you to display multiple tasks in the same row. Compact mode can be enabled for a gantt chart by setting the display mode of the graph via preceeding YAML settings.
+
+```mermaid-example
+---
+displayMode: compact
+---
+gantt
+    title A Gantt Diagram
+    dateFormat  YYYY-MM-DD
+
+    section Section
+    A task           :a1, 2014-01-01, 30d
+    Another task     :a2, 2014-01-20, 25d
+    Another one      :a3, 2014-02-10, 20d
+```
+
+```mermaid
+---
+displayMode: compact
+---
+gantt
+    title A Gantt Diagram
+    dateFormat  YYYY-MM-DD
+
+    section Section
+    A task           :a1, 2014-01-01, 30d
+    Another task     :a2, 2014-01-20, 25d
+    Another one      :a3, 2014-02-10, 20d
+```
+
 ## Comments
 
-Comments can be entered within a gantt chart, which will be ignored by the parser. Comments need to be on their own line and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
+Comments can be entered within a gantt chart, which will be ignored by the parser. Comments need to be on their own line and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax.
 
 ```mermaid-example
 gantt
     title A Gantt Diagram
-    %% this is a comment
-    dateFormat  YYYY-MM-DD
+    %% This is a comment
+    dateFormat YYYY-MM-DD
     section Section
-    A task           :a1, 2014-01-01, 30d
-    Another task     :after a1  , 20d
+        A task          :a1, 2014-01-01, 30d
+        Another task    :after a1, 20d
     section Another
-    Task in sec      :2014-01-12  , 12d
-    another task      : 24d
-
+        Task in Another :2014-01-12, 12d
+        another task    :24d
 ```
 
 ```mermaid
 gantt
     title A Gantt Diagram
-    %% this is a comment
-    dateFormat  YYYY-MM-DD
+    %% This is a comment
+    dateFormat YYYY-MM-DD
     section Section
-    A task           :a1, 2014-01-01, 30d
-    Another task     :after a1  , 20d
+        A task          :a1, 2014-01-01, 30d
+        Another task    :after a1, 20d
     section Another
-    Task in sec      :2014-01-12  , 12d
-    another task      : 24d
-
+        Task in Another :2014-01-12, 12d
+        another task    :24d
 ```
 
 ## Styling
@@ -408,7 +454,7 @@ Beginner's tip—a full example using interactive links in an html context:
       dateFormat  YYYY-MM-DD
 
       section Clickable
-      Visit mermaidjs           :active, cl1, 2014-01-07, 3d
+      Visit mermaidjs         :active, cl1, 2014-01-07, 3d
       Print arguments         :cl2, after cl1, 3d
       Print task              :cl3, after cl2, 3d
 
@@ -431,4 +477,42 @@ Beginner's tip—a full example using interactive links in an html context:
     mermaid.initialize(config);
   </script>
 </body>
+```
+
+## Examples
+
+### Bar chart (using gantt chart)
+
+```mermaid-example
+gantt
+    title Git Issues - days since last update
+    dateFormat X
+    axisFormat %s
+    section Issue19062
+    71   : 0, 71
+    section Issue19401
+    36   : 0, 36
+    section Issue193
+    34   : 0, 34
+    section Issue7441
+    9    : 0, 9
+    section Issue1300
+    5    : 0, 5
+```
+
+```mermaid
+gantt
+    title Git Issues - days since last update
+    dateFormat X
+    axisFormat %s
+    section Issue19062
+    71   : 0, 71
+    section Issue19401
+    36   : 0, 36
+    section Issue193
+    34   : 0, 34
+    section Issue7441
+    9    : 0, 9
+    section Issue1300
+    5    : 0, 5
 ```

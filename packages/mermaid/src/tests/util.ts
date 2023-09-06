@@ -7,8 +7,8 @@ Jest code
 ```ts
 it.each`
 str       | expected
-${'1d'}   | ${moment.duration(1, 'd')}
-${'2w'}   | ${moment.duration(2, 'w')}
+${'1d'}   | ${dayjs.duration(1, 'd')}
+${'2w'}   | ${dayjs.duration(2, 'w')}
 `('should parse $str to $expected duration', ({ str, expected }) => {
    expect(yourFunction(str)).toEqual(expected);
  });
@@ -18,8 +18,8 @@ Vitest code
 ```ts
 it.each(convert`
 str       | expected
-${'1d'}   | ${moment.duration(1, 'd')}
-${'2w'}   | ${moment.duration(2, 'w')}
+${'1d'}   | ${dayjs.duration(1, 'd')}
+${'2w'}   | ${dayjs.duration(2, 'w')}
 `)('should parse $str to $expected duration', ({ str, expected }) => {
    expect(yourFunction(str)).toEqual(expected);
  });

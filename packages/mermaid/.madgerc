@@ -1,0 +1,22 @@
+{
+  "detectiveOptions": {
+    "ts": {
+      "skipTypeImports": true
+    },
+    "es6": {
+      "skipTypeImports": true
+    }
+  },
+  "fileExtensions": [
+    "js",
+    "ts"
+  ],
+  "excludeRegExp": [
+    "node_modules",
+    "docs",
+    "vitepress",
+    "detector",
+    "Detector"
+  ],
+  "tsConfig": "./tsconfig.json"
+}

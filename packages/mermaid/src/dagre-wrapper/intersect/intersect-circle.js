@@ -1,4 +1,4 @@
-import intersectEllipse from './intersect-ellipse';
+import intersectEllipse from './intersect-ellipse.js';
 
 /**
  * @param node

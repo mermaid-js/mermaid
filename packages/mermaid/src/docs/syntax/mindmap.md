@@ -31,7 +31,7 @@ mindmap
 
 The syntax for creating Mindmaps is simple and relies on indentation for setting the levels in the hierarchy.
 
-In the following example you can see how there are 3 different levels. One with starting at the left of the text and another level with two rows starting at the same column, defining the node A. At the end there is one more level where the text is indented further then the previous lines defining the nodes B and C.
+In the following example you can see how there are 3 different levels. One with starting at the left of the text and another level with two rows starting at the same column, defining the node A. At the end there is one more level where the text is indented further than the previous lines defining the nodes B and C.
 
 ```
 mindmap
@@ -41,7 +41,7 @@ mindmap
             C
 ```
 
-In summary is a simple text outline where there are one node at the root level called `Root` which has one child `A`. `A` in turn has two children `B`and `C`. In the diagram below we can see this rendered as a mindmap.
+In summary is a simple text outline where there is one node at the root level called `Root` which has one child `A`. `A` in turn has two children `B`and `C`. In the diagram below we can see this rendered as a mindmap.
 
 ```mermaid
 mindmap
@@ -114,7 +114,7 @@ More shapes will be added, beginning with the shapes available in flowcharts.
 
 ## Icons
 
-As with flowcharts you can add icons to your nodes but with an updated syntax. The styling for the font based icons are added during the integration so that they are available for the web page. _This is not something a diagram author can do but has to be done with the site administrator or the integrator_. Once the icon fonts are in place you add them to the mind map nodes using the `::icon()` syntax. You place the classes for the icon within the parenthesis like in the following example where icons for material design and fontawesome 4 are displayed. The intention is that this approach should be used for all diagrams supporting icons. **Experimental feature:** This wider scope is also the reason Mindmaps are experimental as this syntax and approach could change.
+As with flowcharts you can add icons to your nodes but with an updated syntax. The styling for the font based icons are added during the integration so that they are available for the web page. _This is not something a diagram author can do but has to be done with the site administrator or the integrator_. Once the icon fonts are in place you add them to the mind map nodes using the `::icon()` syntax. You place the classes for the icon within the parenthesis like in the following example where icons for material design and [Font Awesome 5](https://fontawesome.com/v5/search?o=r&m=free) are displayed. The intention is that this approach should be used for all diagrams supporting icons. **Experimental feature:** This wider scope is also the reason Mindmaps are experimental as this syntax and approach could change.
 
 ```mermaid-example
 mindmap
@@ -138,11 +138,11 @@ mindmap
         C
 ```
 
-_These classes needs top be supplied by the site administrator._
+_These classes need to be supplied by the site administrator._
 
 ## Unclear indentation
 
-The actual indentation does not really matter only compared with the previous rows. If we take the previous example and disrupt it a little we can se how the calculations are performed. Let us start with placing C with a smaller indentation than `B`but larger then `A`.
+The actual indentation does not really matter only compared with the previous rows. If we take the previous example and disrupt it a little we can see how the calculations are performed. Let us start with placing C with a smaller indentation than `B` but larger then `A`.
 
 ```
 mindmap
@@ -161,6 +161,25 @@ Root
         B
       C
 ```
+
+## Markdown Strings
+
+The "Markdown Strings" feature enhances mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
+
+```mermaid-example
+mindmap
+    id1["`**Root** with
+a second line
+Unicode works too: 🤓`"]
+      id2["`The dog in **the** hog... a *very long text* that wraps to a new line`"]
+      id3[Regular labels still works]
+```
+
+Formatting:
+
+- For bold text, use double asterisks \*\* before and after the text.
+- For italics, use single asterisks \* before and after the text.
+- With traditional strings, you needed to add <br> tags for text to wrap in nodes. However, markdown strings automatically wrap text when it becomes too long and allows you to start a new line by simply using a newline character instead of a <br> tag.
 
 ## Integrating with your library/website.
 

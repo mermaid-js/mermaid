@@ -4,39 +4,39 @@ import { vi } from 'vitest';
 // -------------------------------------
 //  Mocks and mocking
 
-import { MockedD3 } from './tests/MockedD3';
+import { MockedD3 } from './tests/MockedD3.js';
 
 // Note: If running this directly from within an IDE, the mocks directory must be at packages/mermaid/mocks
 vi.mock('d3');
 vi.mock('dagre-d3');
 
 // mermaidAPI.spec.ts:
-import * as accessibility from './accessibility'; // Import it this way so we can use spyOn(accessibility,...)
-vi.mock('./accessibility', () => ({
+import * as accessibility from './accessibility.js'; // Import it this way so we can use spyOn(accessibility,...)
+vi.mock('./accessibility.js', () => ({
   setA11yDiagramInfo: vi.fn(),
   addSVGa11yTitleDescription: vi.fn(),
 }));
 
 // Mock the renderers specifically so we can test render(). Need to mock draw() for each renderer
-vi.mock('./diagrams/c4/c4Renderer');
-vi.mock('./diagrams/class/classRenderer');
-vi.mock('./diagrams/class/classRenderer-v2');
-vi.mock('./diagrams/er/erRenderer');
-vi.mock('./diagrams/flowchart/flowRenderer-v2');
-vi.mock('./diagrams/git/gitGraphRenderer');
-vi.mock('./diagrams/gantt/ganttRenderer');
-vi.mock('./diagrams/user-journey/journeyRenderer');
-vi.mock('./diagrams/pie/pieRenderer');
-vi.mock('./diagrams/requirement/requirementRenderer');
-vi.mock('./diagrams/sequence/sequenceRenderer');
-vi.mock('./diagrams/state/stateRenderer-v2');
+vi.mock('./diagrams/c4/c4Renderer.js');
+vi.mock('./diagrams/class/classRenderer.js');
+vi.mock('./diagrams/class/classRenderer-v2.js');
+vi.mock('./diagrams/er/erRenderer.js');
+vi.mock('./diagrams/flowchart/flowRenderer-v2.js');
+vi.mock('./diagrams/git/gitGraphRenderer.js');
+vi.mock('./diagrams/gantt/ganttRenderer.js');
+vi.mock('./diagrams/user-journey/journeyRenderer.js');
+vi.mock('./diagrams/pie/pieRenderer.js');
+vi.mock('./diagrams/requirement/requirementRenderer.js');
+vi.mock('./diagrams/sequence/sequenceRenderer.js');
+vi.mock('./diagrams/state/stateRenderer-v2.js');
 
 // -------------------------------------
 
-import mermaid from './mermaid';
-import { MermaidConfig } from './config.type';
+import mermaid from './mermaid.js';
+import type { MermaidConfig } from './config.type.js';
 
-import mermaidAPI, { removeExistingElements } from './mermaidAPI';
+import mermaidAPI, { removeExistingElements } from './mermaidAPI.js';
 import {
   encodeEntities,
   decodeEntities,
@@ -45,20 +45,20 @@ import {
   appendDivSvgG,
   cleanUpSvgCode,
   putIntoIFrame,
-} from './mermaidAPI';
+} from './mermaidAPI.js';
 
-import assignWithDepth from './assignWithDepth';
+import assignWithDepth from './assignWithDepth.js';
 
 // --------------
 // Mocks
 //   To mock a module, first define a mock for it, then (if used explicitly in the tests) import it. Be sure the path points to exactly the same file as is imported in mermaidAPI (the module being tested)
-vi.mock('./styles', () => {
+vi.mock('./styles.js', () => {
   return {
     addStylesForDiagram: vi.fn(),
     default: vi.fn().mockReturnValue(' .userStyle { font-weight:bold; }'),
   };
 });
-import getStyles from './styles';
+import getStyles from './styles.js';
 
 vi.mock('stylis', () => {
   return {
@@ -666,7 +666,7 @@ describe('mermaidAPI', () => {
       ).rejects.toThrow(
         'Diagrams beginning with --- are not valid. ' +
           'If you were trying to use a YAML front-matter, please ensure that ' +
-          "you've correctly opened and closed the YAML front-matter with unindented `---` blocks"
+          "you've correctly opened and closed the YAML front-matter with un-indented `---` blocks"
       );
     });
     it('does not throw for a valid definition', async () => {
@@ -678,7 +678,7 @@ describe('mermaidAPI', () => {
       await expect(
         mermaidAPI.parse('this is not a mermaid diagram definition')
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        '"No diagram type detected for text: this is not a mermaid diagram definition"'
+        '"No diagram type detected matching given configuration for text: this is not a mermaid diagram definition"'
       );
     });
     it('returns false for invalid definition with silent option', async () => {
@@ -689,7 +689,7 @@ describe('mermaidAPI', () => {
     it('resolves for valid definition', async () => {
       await expect(
         mermaidAPI.parse('graph TD;A--x|text including URL space|B;')
-      ).resolves.not.toThrow();
+      ).resolves.toBeTruthy();
     });
     it('returns true for valid definition with silent option', async () => {
       await expect(
@@ -733,59 +733,7 @@ describe('mermaidAPI', () => {
           const diagramText = `${diagramType}\n accTitle: ${a11yTitle}\n accDescr: ${a11yDescr}\n`;
           const expectedDiagramType = testedDiagram.expectedType;
 
-          it('aria-roledscription is set to the diagram type, addSVGa11yTitleDescription is called', async () => {
-            const a11yDiagramInfo_spy = vi.spyOn(accessibility, 'setA11yDiagramInfo');
-            const a11yTitleDesc_spy = vi.spyOn(accessibility, 'addSVGa11yTitleDescription');
-            await mermaidAPI.render(id, diagramText);
-            expect(a11yDiagramInfo_spy).toHaveBeenCalledWith(
-              expect.anything(),
-              expectedDiagramType
-            );
-            expect(a11yTitleDesc_spy).toHaveBeenCalled();
-          });
-        });
-      });
-    });
-  });
-
-  describe('render', () => {
-    // Be sure to add async before each test (anonymous) method
-
-    // These are more like integration tests right now because nothing is mocked.
-    // But it is faster that a cypress test and there's no real reason to actually evaluate an image pixel by pixel.
-
-    // render(id, text, cb?, svgContainingElement?)
-
-    // Test all diagram types.  Note that old flowchart 'graph' type will invoke the flowRenderer-v2. (See the flowchart v2 detector.)
-    // We have to have both the specific textDiagramType and the expected type name because the expected type may be slightly different than was is put in the diagram text (ex: in -v2 diagrams)
-    const diagramTypesAndExpectations = [
-      { textDiagramType: 'C4Context', expectedType: 'c4' },
-      { textDiagramType: 'classDiagram', expectedType: 'classDiagram' },
-      { textDiagramType: 'classDiagram-v2', expectedType: 'classDiagram' },
-      { textDiagramType: 'erDiagram', expectedType: 'er' },
-      { textDiagramType: 'graph', expectedType: 'flowchart-v2' },
-      { textDiagramType: 'flowchart', expectedType: 'flowchart-v2' },
-      { textDiagramType: 'gitGraph', expectedType: 'gitGraph' },
-      { textDiagramType: 'gantt', expectedType: 'gantt' },
-      { textDiagramType: 'journey', expectedType: 'journey' },
-      { textDiagramType: 'pie', expectedType: 'pie' },
-      { textDiagramType: 'requirementDiagram', expectedType: 'requirement' },
-      { textDiagramType: 'sequenceDiagram', expectedType: 'sequence' },
-      { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
-    ];
-
-    describe('accessibility', () => {
-      const id = 'mermaid-fauxId';
-      const a11yTitle = 'a11y title';
-      const a11yDescr = 'a11y description';
-
-      diagramTypesAndExpectations.forEach((testedDiagram) => {
-        describe(`${testedDiagram.textDiagramType}`, () => {
-          const diagramType = testedDiagram.textDiagramType;
-          const diagramText = `${diagramType}\n accTitle: ${a11yTitle}\n accDescr: ${a11yDescr}\n`;
-          const expectedDiagramType = testedDiagram.expectedType;
-
-          it('aria-roledscription is set to the diagram type, addSVGa11yTitleDescription is called', async () => {
+          it('should set aria-roledscription to the diagram type AND should call addSVGa11yTitleDescription', async () => {
             const a11yDiagramInfo_spy = vi.spyOn(accessibility, 'setA11yDiagramInfo');
             const a11yTitleDesc_spy = vi.spyOn(accessibility, 'addSVGa11yTitleDescription');
             await mermaidAPI.render(id, diagramText);

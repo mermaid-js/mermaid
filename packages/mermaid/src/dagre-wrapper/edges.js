@@ -1,9 +1,10 @@
-import { log } from '../logger';
-import createLabel from './createLabel';
+import { log } from '../logger.js';
+import createLabel from './createLabel.js';
+import { createText } from '../rendering-util/createText.js';
 import { line, curveBasis, select } from 'd3';
-import { getConfig } from '../config';
-import utils from '../utils';
-import { evaluate } from '../diagrams/common/common';
+import { getConfig } from '../config.js';
+import utils from '../utils.js';
+import { evaluate } from '../diagrams/common/common.js';
 
 let edgeLabels = {};
 let terminalLabels = {};
@@ -14,8 +15,17 @@ export const clear = () => {
 };
 
 export const insertEdgeLabel = (elem, edge) => {
+  const useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
   // Create the actual text element
-  const labelElement = createLabel(edge.label, edge.labelStyle);
+  const labelElement =
+    edge.labelType === 'markdown'
+      ? createText(elem, edge.label, {
+          style: edge.labelStyle,
+          useHtmlLabels,
+          addSvgBackground: true,
+        })
+      : createLabel(edge.label, edge.labelStyle);
+  log.info('abc82', edge, edge.labelType);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
   const edgeLabel = elem.insert('g').attr('class', 'edgeLabel');
@@ -26,7 +36,7 @@ export const insertEdgeLabel = (elem, edge) => {
 
   // Center the label
   let bbox = labelElement.getBBox();
-  if (evaluate(getConfig().flowchart.htmlLabels)) {
+  if (useHtmlLabels) {
     const div = labelElement.children[0];
     const dv = select(labelElement);
     bbox = div.getBoundingClientRect();
@@ -358,7 +368,20 @@ const cutPathAtIntersect = (_points, boundryNode) => {
   return points;
 };
 
-//(edgePaths, e, edge, clusterDb, diagramtype, graph)
+/**
+ * Calculate the deltas and angle between two points
+ * @param {{x: number, y:number}} point1
+ * @param {{x: number, y:number}} point2
+ * @returns {{angle: number, deltaX: number, deltaY: number}}
+ */
+function calculateDeltaAndAngle(point1, point2) {
+  const [x1, y1] = [point1.x, point1.y];
+  const [x2, y2] = [point2.x, point2.y];
+  const deltaX = x2 - x1;
+  const deltaY = y2 - y1;
+  return { angle: Math.atan(deltaY / deltaX), deltaX, deltaY };
+}
+
 export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph) {
   let points = edge.points;
   let pointsHasChanged = false;
@@ -425,22 +448,62 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
   const lineData = points.filter((p) => !Number.isNaN(p.y));
 
   // This is the accessor function we talked about above
-  let curve;
+  let curve = curveBasis;
   // Currently only flowcharts get the curve from the settings, perhaps this should
   // be expanded to a common setting? Restricting it for now in order not to cause side-effects that
   // have not been thought through
-  if (diagramType === 'graph' || diagramType === 'flowchart') {
-    curve = edge.curve || curveBasis;
-  } else {
-    curve = curveBasis;
+  if (edge.curve && (diagramType === 'graph' || diagramType === 'flowchart')) {
+    curve = edge.curve;
   }
-  // curve = curveLinear;
+
+  // We need to draw the lines a bit shorter to avoid drawing
+  // under any transparent markers.
+  // The offsets are calculated from the markers' dimensions.
+  const markerOffsets = {
+    aggregation: 18,
+    extension: 18,
+    composition: 18,
+    dependency: 6,
+    lollipop: 13.5,
+    arrow_point: 5.3,
+  };
+
   const lineFunction = line()
-    .x(function (d) {
-      return d.x;
+    .x(function (d, i, data) {
+      let offset = 0;
+      if (i === 0 && Object.hasOwn(markerOffsets, edge.arrowTypeStart)) {
+        // Handle first point
+        // Calculate the angle and delta between the first two points
+        const { angle, deltaX } = calculateDeltaAndAngle(data[0], data[1]);
+        // Calculate the offset based on the angle and the marker's dimensions
+        offset = markerOffsets[edge.arrowTypeStart] * Math.cos(angle) * (deltaX >= 0 ? 1 : -1) || 0;
+      } else if (i === data.length - 1 && Object.hasOwn(markerOffsets, edge.arrowTypeEnd)) {
+        // Handle last point
+        // Calculate the angle and delta between the last two points
+        const { angle, deltaX } = calculateDeltaAndAngle(
+          data[data.length - 1],
+          data[data.length - 2]
+        );
+        offset = markerOffsets[edge.arrowTypeEnd] * Math.cos(angle) * (deltaX >= 0 ? 1 : -1) || 0;
+      }
+      return d.x + offset;
     })
-    .y(function (d) {
-      return d.y;
+    .y(function (d, i, data) {
+      // Same handling as X above
+      let offset = 0;
+      if (i === 0 && Object.hasOwn(markerOffsets, edge.arrowTypeStart)) {
+        const { angle, deltaY } = calculateDeltaAndAngle(data[0], data[1]);
+        offset =
+          markerOffsets[edge.arrowTypeStart] * Math.abs(Math.sin(angle)) * (deltaY >= 0 ? 1 : -1);
+      } else if (i === data.length - 1 && Object.hasOwn(markerOffsets, edge.arrowTypeEnd)) {
+        const { angle, deltaY } = calculateDeltaAndAngle(
+          data[data.length - 1],
+          data[data.length - 2]
+        );
+        offset =
+          markerOffsets[edge.arrowTypeEnd] * Math.abs(Math.sin(angle)) * (deltaY >= 0 ? 1 : -1);
+      }
+      return d.y + offset;
     })
     .curve(curve);
 
@@ -451,6 +514,9 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
       strokeClasses = 'edge-thickness-normal';
       break;
     case 'thick':
+      strokeClasses = 'edge-thickness-thick';
+      break;
+    case 'invisible':
       strokeClasses = 'edge-thickness-thick';
       break;
     default:

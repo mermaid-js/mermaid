@@ -1,6 +1,7 @@
-import flowDb from '../flowDb';
-import flow from './flow';
-import { setConfig } from '../../../config';
+import flowDb from '../flowDb.js';
+import flow from './flow.jison';
+import { setConfig } from '../../../config.js';
+import { cleanupComments } from '../../../diagram-api/comments.js';
 
 setConfig({
   securityLevel: 'strict',
@@ -13,7 +14,7 @@ describe('parsing a flow chart', function () {
   });
 
   it('should handle a trailing whitespaces after statements', function () {
-    const res = flow.parser.parse('graph TD;\n\n\n %% Comment\n A-->B; \n B-->C;');
+    const res = flow.parser.parse(cleanupComments('graph TD;\n\n\n %% Comment\n A-->B; \n B-->C;'));
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();

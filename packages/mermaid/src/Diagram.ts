@@ -1,17 +1,26 @@
-import * as configApi from './config';
-import { log } from './logger';
-import { getDiagram, registerDiagram } from './diagram-api/diagramAPI';
-import { detectType, getDiagramLoader } from './diagram-api/detectType';
-import { extractFrontMatter } from './diagram-api/frontmatter';
-import { UnknownDiagramError } from './errors';
-import { DetailedError } from './utils';
+import * as configApi from './config.js';
+import { log } from './logger.js';
+import { getDiagram, registerDiagram } from './diagram-api/diagramAPI.js';
+import { detectType, getDiagramLoader } from './diagram-api/detectType.js';
+import { extractFrontMatter } from './diagram-api/frontmatter.js';
+import { UnknownDiagramError } from './errors.js';
+import { cleanupComments } from './diagram-api/comments.js';
+import type { DetailedError } from './utils.js';
+import type { DiagramDefinition } from './diagram-api/types.js';
 
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
+
+/**
+ * An object representing a parsed mermaid diagram definition.
+ * @privateRemarks This is exported as part of the public mermaidAPI.
+ */
 export class Diagram {
   type = 'graph';
-  parser;
-  renderer;
-  db;
+  parser: DiagramDefinition['parser'];
+  renderer: DiagramDefinition['renderer'];
+  db: DiagramDefinition['db'];
+  private init?: DiagramDefinition['init'];
+
   private detectError?: UnknownDiagramError;
   constructor(public text: string) {
     this.text += '\n';
@@ -26,7 +35,6 @@ export class Diagram {
     log.debug('Type ' + this.type);
     // Setup diagram
     this.db = diagram.db;
-    this.db.clear?.();
     this.renderer = diagram.renderer;
     this.parser = diagram.parser;
     const originalParse = this.parser.parse.bind(this.parser);
@@ -38,12 +46,12 @@ export class Diagram {
     // Similarly, we can't do this in getDiagramFromText() because some code
     // calls diagram.db.clear(), which would reset anything set by
     // extractFrontMatter().
-    this.parser.parse = (text: string) => originalParse(extractFrontMatter(text, this.db));
+
+    this.parser.parse = (text: string) =>
+      originalParse(cleanupComments(extractFrontMatter(text, this.db, configApi.addDirective)));
+
     this.parser.parser.yy = this.db;
-    if (diagram.init) {
-      diagram.init(cnf);
-      log.info('Initialized diagram ' + this.type, cnf);
-    }
+    this.init = diagram.init;
     this.parse();
   }
 
@@ -52,6 +60,7 @@ export class Diagram {
       throw this.detectError;
     }
     this.db.clear?.();
+    this.init?.(configApi.getConfig());
     this.parser.parse(this.text);
   }
 
@@ -68,8 +77,17 @@ export class Diagram {
   }
 }
 
-export const getDiagramFromText = async (txt: string): Promise<Diagram> => {
-  const type = detectType(txt, configApi.getConfig());
+/**
+ * Parse the text asynchronously and generate a Diagram object asynchronously.
+ * **Warning:** This function may be changed in the future.
+ * @alpha
+ * @param text - The mermaid diagram definition.
+ * @returns A the Promise of a Diagram object.
+ * @throws {@link UnknownDiagramError} if the diagram type can not be found.
+ * @privateRemarks This is exported as part of the public mermaidAPI.
+ */
+export const getDiagramFromText = async (text: string): Promise<Diagram> => {
+  const type = detectType(text, configApi.getConfig());
   try {
     // Trying to find the diagram
     getDiagram(type);
@@ -78,10 +96,10 @@ export const getDiagramFromText = async (txt: string): Promise<Diagram> => {
     if (!loader) {
       throw new UnknownDiagramError(`Diagram ${type} not found.`);
     }
-    // Diagram not available, loading it
+    // Diagram not available, loading it.
     // new diagram will try getDiagram again and if fails then it is a valid throw
     const { id, diagram } = await loader();
     registerDiagram(id, diagram);
   }
-  return new Diagram(txt);
+  return new Diagram(text);
 };

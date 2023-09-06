@@ -1,4 +1,4 @@
-import { addToRender } from './flowChartShapes';
+import { addToRender } from './flowChartShapes.js';
 
 describe('flowchart shapes', function () {
   // rect-based shapes

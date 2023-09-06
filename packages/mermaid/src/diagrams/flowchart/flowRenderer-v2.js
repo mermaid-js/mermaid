@@ -1,16 +1,13 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select, curveLinear, selectAll } from 'd3';
-
-import flowDb from './flowDb';
-import { getConfig } from '../../config';
-import utils from '../../utils';
-
+import { getConfig } from '../../config.js';
+import utils from '../../utils.js';
 import { render } from '../../dagre-wrapper/index.js';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
-import { log } from '../../logger';
-import common, { evaluate } from '../common/common';
-import { interpolateToCurve, getStylesFromArray } from '../../utils';
-import { setupGraphViewbox } from '../../setupGraphViewbox';
+import { log } from '../../logger.js';
+import common, { evaluate } from '../common/common.js';
+import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
+import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -47,7 +44,7 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
     if (vertex.classes.length > 0) {
       classStr = vertex.classes.join(' ');
     }
-
+    classStr = classStr + ' flowchart-label';
     const styles = getStylesFromArray(vertex.styles);
 
     // Use vertex id as text in the box if no text is provided by the graph definition
@@ -55,31 +52,36 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
 
     // We create a SVG label, either by delegating to addHtmlLabel or manually
     let vertexNode;
-    if (evaluate(getConfig().flowchart.htmlLabels)) {
-      // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
-      const node = {
-        label: vertexText.replace(
-          /fa[blrs]?:fa-[\w-]+/g,
-          (s) => `<i class='${s.replace(':', ' ')}'></i>`
-        ),
-      };
-      vertexNode = addHtmlLabel(svg, node).node();
-      vertexNode.parentNode.removeChild(vertexNode);
+    log.info('vertex', vertex, vertex.labelType);
+    if (vertex.labelType === 'markdown') {
+      log.info('vertex', vertex, vertex.labelType);
     } else {
-      const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
-      svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
+      if (evaluate(getConfig().flowchart.htmlLabels)) {
+        // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
+        const node = {
+          label: vertexText.replace(
+            /fa[blrs]?:fa-[\w-]+/g,
+            (s) => `<i class='${s.replace(':', ' ')}'></i>`
+          ),
+        };
+        vertexNode = addHtmlLabel(svg, node).node();
+        vertexNode.parentNode.removeChild(vertexNode);
+      } else {
+        const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
+        svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
 
-      const rows = vertexText.split(common.lineBreakRegex);
+        const rows = vertexText.split(common.lineBreakRegex);
 
-      for (const row of rows) {
-        const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-        tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
-        tspan.setAttribute('dy', '1em');
-        tspan.setAttribute('x', '1');
-        tspan.textContent = row;
-        svgLabel.appendChild(tspan);
+        for (const row of rows) {
+          const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+          tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
+          tspan.setAttribute('dy', '1em');
+          tspan.setAttribute('x', '1');
+          tspan.textContent = row;
+          svgLabel.appendChild(tspan);
+        }
+        vertexNode = svgLabel;
       }
-      vertexNode = svgLabel;
     }
 
     let radious = 0;
@@ -146,6 +148,7 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
       labelStyle: styles.labelStyle,
       shape: _shape,
       labelText: vertexText,
+      labelType: vertex.labelType,
       rx: radious,
       ry: radious,
       class: classStr,
@@ -165,6 +168,7 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
 
     log.info('setNode', {
       labelStyle: styles.labelStyle,
+      labelType: vertex.labelType,
       shape: _shape,
       labelText: vertexText,
       rx: radious,
@@ -207,7 +211,7 @@ export const addEdges = function (edges, g, diagObj) {
     cnt++;
 
     // Identify Link
-    var linkIdBase = 'L-' + edge.start + '-' + edge.end;
+    const linkIdBase = 'L-' + edge.start + '-' + edge.end;
     // count the links from+to the same node to give unique id
     if (linkIdCnt[linkIdBase] === undefined) {
       linkIdCnt[linkIdBase] = 0;
@@ -218,8 +222,8 @@ export const addEdges = function (edges, g, diagObj) {
     }
     let linkId = linkIdBase + '-' + linkIdCnt[linkIdBase];
     log.info('abc78 new link id to be used is', linkIdBase, linkId, linkIdCnt[linkIdBase]);
-    var linkNameStart = 'LS-' + edge.start;
-    var linkNameEnd = 'LE-' + edge.end;
+    const linkNameStart = 'LS-' + edge.start;
+    const linkNameEnd = 'LE-' + edge.end;
 
     const edgeData = { style: '', labelStyle: '' };
     edgeData.minlen = edge.length || 1;
@@ -280,6 +284,11 @@ export const addEdges = function (edges, g, diagObj) {
         edgeData.pattern = 'solid';
         edgeData.style = 'stroke-width: 3.5px;fill:none;';
         break;
+      case 'invisible':
+        edgeData.thickness = 'invisible';
+        edgeData.pattern = 'solid';
+        edgeData.style = 'stroke-width: 0;fill:none;';
+        break;
     }
     if (edge.style !== undefined) {
       const styles = getStylesFromArray(edge.style);
@@ -307,7 +316,7 @@ export const addEdges = function (edges, g, diagObj) {
       edgeData.labelpos = 'c';
     }
 
-    edgeData.labelType = 'text';
+    edgeData.labelType = edge.labelType;
     edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');
 
     if (edge.style === undefined) {
@@ -332,15 +341,7 @@ export const addEdges = function (edges, g, diagObj) {
  * @returns {object} ClassDef styles
  */
 export const getClasses = function (text, diagObj) {
-  log.info('Extracting classes');
-  diagObj.db.clear();
-  try {
-    // Parse the graph definition
-    diagObj.parse(text);
-    return diagObj.db.getClasses();
-  } catch (e) {
-    return;
-  }
+  return diagObj.db.getClasses();
 };
 
 /**
@@ -350,12 +351,8 @@ export const getClasses = function (text, diagObj) {
  * @param id
  */
 
-export const draw = function (text, id, _version, diagObj) {
+export const draw = async function (text, id, _version, diagObj) {
   log.info('Drawing flowchart');
-  diagObj.db.clear();
-  flowDb.setGen('gen-2');
-  // Parse the graph definition
-  diagObj.parser.parse(text);
 
   // Fetch the default direction, use TD if none was found
   let dir = diagObj.db.getDirection();
@@ -400,7 +397,14 @@ export const draw = function (text, id, _version, diagObj) {
   for (let i = subGraphs.length - 1; i >= 0; i--) {
     subG = subGraphs[i];
     log.info('Subgraph - ', subG);
-    diagObj.db.addVertex(subG.id, subG.title, 'group', undefined, subG.classes, subG.dir);
+    diagObj.db.addVertex(
+      subG.id,
+      { text: subG.title, type: subG.labelType },
+      'group',
+      undefined,
+      subG.classes,
+      subG.dir
+    );
   }
 
   // Fetch the vertices/nodes and edges/links from the parsed graph definition
@@ -432,7 +436,7 @@ export const draw = function (text, id, _version, diagObj) {
 
   // Run the renderer. This is what draws the final graph.
   const element = root.select('#' + id + ' g');
-  render(element, g, ['point', 'circle', 'cross'], 'flowchart', id);
+  await render(element, g, ['point', 'circle', 'cross'], 'flowchart', id);
 
   utils.insertTitle(svg, 'flowchartTitleText', conf.titleTopMargin, diagObj.db.getDiagramTitle());
 

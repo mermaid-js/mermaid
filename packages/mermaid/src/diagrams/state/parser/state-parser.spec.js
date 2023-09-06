@@ -1,6 +1,6 @@
-import stateDb from '../stateDb';
-import stateDiagram from './stateDiagram';
-import { setConfig } from '../../../config';
+import stateDb from '../stateDb.js';
+import stateDiagram from './stateDiagram.jison';
+import { setConfig } from '../../../config.js';
 
 setConfig({
   securityLevel: 'strict',
@@ -117,7 +117,7 @@ describe('state parser can parse...', () => {
         state "Big State 1" as bigState1 {
             state "inner state 1" as inner1
             inner2: inner state 2
-            inner1 --> inner2 
+            inner1 --> inner2
         }`;
       stateDiagram.parser.parse(diagramText);
       stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());

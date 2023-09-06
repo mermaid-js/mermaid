@@ -1,6 +1,6 @@
-import { parser } from './gantt';
-import ganttDb from '../ganttDb';
-import { convert } from '../../../tests/util';
+import { parser } from './gantt.jison';
+import ganttDb from '../ganttDb.js';
+import { convert } from '../../../tests/util.js';
 import { vi } from 'vitest';
 const spyOn = vi.spyOn;
 const parserFnConstructor = (str) => {
@@ -180,4 +180,12 @@ row2`;
     expect(ganttDb.getAccTitle()).toBe(expectedTitle);
     expect(ganttDb.getAccDescription()).toBe(expectedAccDescription);
   });
+
+  it.each(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])(
+    'should allow for setting the starting weekday to %s for tick interval',
+    (day) => {
+      parser.parse(`gantt\nweekday ${day}`);
+      expect(ganttDb.getWeekday()).toBe(day);
+    }
+  );
 });

@@ -1,4 +1,5 @@
-import mermaid from '../../packages/mermaid/src/mermaid';
+// TODO: this file should be testing the ./mermaid.core.mjs file, as that's the file listed in the package.json file that users will use
+import mermaid from './mermaid.esm.mjs';
 
 let code = `flowchart LR
 Power_Supply --> Transmitter_A

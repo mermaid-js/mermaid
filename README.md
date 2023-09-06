@@ -8,7 +8,7 @@ Mermaid
 Generate diagrams from markdown-like text.
 <p>
 <p align="center">
-  <a href="https://www.npmjs.com/package/vitest"><img src="https://img.shields.io/npm/v/mermaid?color=ff3670&label="></a>
+  <a href="https://www.npmjs.com/package/mermaid"><img src="https://img.shields.io/npm/v/mermaid?color=ff3670&label="></a>
 <p>
 
 <p align="center">
@@ -27,7 +27,7 @@ Generate diagrams from markdown-like text.
 [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid)
 [![Build CI Status](https://github.com/mermaid-js/mermaid/actions/workflows/build.yml/badge.svg)](https://github.com/mermaid-js/mermaid/actions/workflows/build.yml)
 [![npm minified gzipped bundle size](https://img.shields.io/bundlephobia/minzip/mermaid)](https://bundlephobia.com/package/mermaid)
-[![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master)
+[![Coverage Status](https://codecov.io/github/mermaid-js/mermaid/branch/develop/graph/badge.svg)](https://app.codecov.io/github/mermaid-js/mermaid/tree/develop)
 [![CDN Status](https://img.shields.io/jsdelivr/npm/hm/mermaid)](https://www.jsdelivr.com/package/npm/mermaid)
 [![NPM Downloads](https://img.shields.io/npm/dm/mermaid)](https://www.npmjs.com/package/mermaid)
 [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
@@ -60,7 +60,7 @@ Use Mermaid with your favorite applications, check out the list of [Integrations
 
 You can also use Mermaid within [GitHub](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) as well many of your other favorite applications—check out the list of [Integrations and Usages of Mermaid](./docs/ecosystem/integrations.md).
 
-For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](./docs/community/n00b-overview.md), [Usage](./docs/config/usage.md) and [Tutorials](./docs/config/Tutorials.md).
+For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](./docs/intro/getting-started.md), [Usage](./docs/config/usage.md) and [Tutorials](./docs/config/Tutorials.md).
 
 In our release process we rely heavily on visual regression tests using [applitools](https://applitools.com/). Applitools is a great service which has been easy to use and integrate with our tests.
 
@@ -165,6 +165,13 @@ class Class10 {
   int id
   size()
 }
+namespace Namespace01 {
+  class Class11
+  class Class12 {
+    int id
+    size()
+  }
+}
 ```
 
 ```mermaid
@@ -183,6 +190,13 @@ class Class10 {
   <<service>>
   int id
   size()
+}
+namespace Namespace01 {
+  class Class11
+  class Class12 {
+    int id
+    size()
+  }
 }
 ```
 
@@ -225,6 +239,44 @@ pie
 ```
 
 ### Git graph [experimental - <a href="https://mermaid.live/edit#pako:eNqNkMFugzAMhl8F-VyVAR1tOW_aA-zKxSSGRCMJCk6lCvHuNZPKZdM0n-zf3_8r8QIqaIIGMqnB8kfEybQ--y4VnLP8-9RF9Mpkmm40hmlnDKmvkPiH_kfS7nFo_VN0FAf6XwocQGgxa_nGsm1bYEOOWmik1dRjGrmF1q-Cpkkj07u2HCI0PY4zHQATh8-7V9BwTPSE3iwOEd1OjQE1iWkBvk_bzQY7s0Sq4Hs7bHqKo8iGeZqbPN_WR7mpSd1RHpvPVhuMbG7XOq_L-oJlRfW5wteq0qorrpe-PBW9Pr8UJcK6rg-BLYPQ">live editor</a>]
+
+### Bar chart (using gantt chart) [<a href="https://mermaid-js.github.io/mermaid/#/gantt">docs</a> - <a href="https://mermaid.live/edit#pako:eNptkU1vhCAQhv8KIenNugiI4rkf6bmXpvEyFVxJFDYyNt1u9r8X63Z7WQ9m5pknLzieaBeMpQ3dg0dsPUkPOhwteXZIXmJcbCT3xMAxkuh8Z8kIEclyMIB209fqKcwTICFvG4IvFy_oLrZ-g9F26ILfQgvNFN94VaRXQ1iWqpumZBcu1J8p1E1TXDx59eQNr5LyEqjJn6hv5QnGNlxevZJmdLLpy5xJSzut45biYCfb0iaVxvawjNjS1p-TCguG16PvaIPzYjO67e3BwX6GiTY9jPFKH43DMF_hGMDY1J4oHg-_f8hFTJFd8L3br3yZx4QHxENsdrt1nO8dDstH3oVpF50ZYMbhU6ud4qoGLqyqBJRCmO6j0HXPZdGbihUc6Pmc0QP49xD-b5X69ZQv2gjO81IwzWqhC1lKrjJ6pA3nVS7SMiVjrKirWlYp5fs3osgrWeo00lorLWvOzz8JVbXm">live editor</a>]
+
+```
+gantt
+    title Git Issues - days since last update
+    dateFormat  X
+    axisFormat %s
+
+    section Issue19062
+    71   : 0, 71
+    section Issue19401
+    36   : 0, 36
+    section Issue193
+    34   : 0, 34
+    section Issue7441
+    9    : 0, 9
+    section Issue1300
+    5    : 0, 5
+```
+
+```mermaid
+gantt
+    title Git Issues - days since last update
+    dateFormat  X
+    axisFormat %s
+
+    section Issue19062
+    71   : 0, 71
+    section Issue19401
+    36   : 0, 36
+    section Issue193
+    34   : 0, 34
+    section Issue7441
+    9    : 0, 9
+    section Issue1300
+    5    : 0, 5
+```
 
 ### User Journey diagram [<a href="https://mermaid-js.github.io/mermaid/#/user-journey">docs</a> - <a href="https://mermaid.live/edit#pako:eNplkMFuwjAQRH9l5TMiTVIC-FqqnjhxzWWJN4khsSN7XRSh_HsdKBVt97R6Mzsj-yoqq0hIAXCywRkaSwNxWHNHsB_hYt1ZmwYUfiueKtbWwIcFtjf5zgH2eCZgQgkrCXt64GgMg2fUzkvIn5Xd_V5COtMFvCH_62ht_5yk7MU8sn61HDTfxD8VYiF6cj1qFd94nWkpuKWYKWRcFdUYOi5FaaZoDYNCpnel2Toha-w8LQQGtofRVEKyC_Qw7TQ2DvsfV2dRUTy6Ch6H-UMb7TlGVtbUupl5cF3ELfPgZZLM8rLR3IbjsrJ94rVq0XH7uS2SIis2mOVUrHNc5bmqjul2U2evaa3WL2mGYpqmL2BGiho">live editor</a>]
 
@@ -334,7 +386,7 @@ Update version number in `package.json`.
 npm publish
 ```
 
-The above command generates files into the `dist` folder and publishes them to npmjs.org.
+The above command generates files into the `dist` folder and publishes them to <https://www.npmjs.com>.
 
 ## Related projects
 
@@ -350,7 +402,7 @@ Detailed information about how to contribute can be found in the [contribution g
 
 ## Security and safe diagrams
 
-For public sites, it can be precarious to retrieve text from users on the internet, storing that content for presentation in a browser at a later stage. The reason is that the user content can contain embedded malicious scripts that will run when the data is presented. For Mermaid this is a risk, specially as mermaid diagrams contain many characters that are used in html which makes the standard sanitation unusable as it also breaks the diagrams. We still make an effort to sanitise the incoming code and keep refining the process but it is hard to guarantee that there are no loop holes.
+For public sites, it can be precarious to retrieve text from users on the internet, storing that content for presentation in a browser at a later stage. The reason is that the user content can contain embedded malicious scripts that will run when the data is presented. For Mermaid this is a risk, specially as mermaid diagrams contain many characters that are used in html which makes the standard sanitation unusable as it also breaks the diagrams. We still make an effort to sanitize the incoming code and keep refining the process but it is hard to guarantee that there are no loop holes.
 
 As an extra level of security for sites with external users we are happy to introduce a new security level in which the diagram is rendered in a sandboxed iframe preventing javascript in the code from being executed. This is a great step forward for better security.
 
@@ -358,7 +410,7 @@ _Unfortunately you can not have a cake and eat it at the same time which in this
 
 ## Reporting vulnerabilities
 
-To report a vulnerability, please e-mail security@mermaid.live with a description of the issue, the steps you took to create the issue, affected versions, and if known, mitigations for the issue.
+To report a vulnerability, please e-mail <security@mermaid.live> with a description of the issue, the steps you took to create the issue, affected versions, and if known, mitigations for the issue.
 
 ## Appreciation
 

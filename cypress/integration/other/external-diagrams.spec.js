@@ -1,4 +1,4 @@
-import { urlSnapshotTest } from '../../helpers/util';
+import { urlSnapshotTest } from '../../helpers/util.ts';
 
 describe('mermaid', () => {
   describe('registerDiagram', () => {

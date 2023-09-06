@@ -1,12 +1,12 @@
-import { addDetector } from './detectType';
-import { log as _log, setLogLevel as _setLogLevel } from '../logger';
-import { getConfig as _getConfig } from '../config';
-import { sanitizeText as _sanitizeText } from '../diagrams/common/common';
-import { setupGraphViewbox as _setupGraphViewbox } from '../setupGraphViewbox';
-import { addStylesForDiagram } from '../styles';
-import { DiagramDefinition, DiagramDetector } from './types';
-import * as _commonDb from '../commonDb';
-import { parseDirective as _parseDirective } from '../directiveUtils';
+import { addDetector } from './detectType.js';
+import { log as _log, setLogLevel as _setLogLevel } from '../logger.js';
+import { getConfig as _getConfig } from '../config.js';
+import { sanitizeText as _sanitizeText } from '../diagrams/common/common.js';
+import { setupGraphViewbox as _setupGraphViewbox } from '../setupGraphViewbox.js';
+import { addStylesForDiagram } from '../styles.js';
+import type { DiagramDefinition, DiagramDetector } from './types.js';
+import * as _commonDb from '../diagrams/common/commonDb.js';
+import { parseDirective as _parseDirective } from '../directiveUtils.js';
 
 /*
   Packaging and exposing resources for external diagrams so that they can import
@@ -69,5 +69,11 @@ export const getDiagram = (name: string): DiagramDefinition => {
   if (name in diagrams) {
     return diagrams[name];
   }
-  throw new Error(`Diagram ${name} not found.`);
+  throw new DiagramNotFoundError(name);
 };
+
+export class DiagramNotFoundError extends Error {
+  constructor(name: string) {
+    super(`Diagram ${name} not found.`);
+  }
+}

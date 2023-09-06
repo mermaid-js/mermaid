@@ -2,17 +2,19 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code!
  */
-import dedent from 'ts-dedent';
-import { MermaidConfig } from './config.type';
-import { log } from './logger';
-import utils from './utils';
-import { mermaidAPI, ParseOptions, RenderResult } from './mermaidAPI';
-import { registerLazyLoadedDiagrams } from './diagram-api/detectType';
-import type { ParseErrorFunction } from './Diagram';
-import { isDetailedError } from './utils';
-import type { DetailedError } from './utils';
-import { registerDiagram } from './diagram-api/diagramAPI';
-import { ExternalDiagramDefinition } from './diagram-api/types';
+import { dedent } from 'ts-dedent';
+import type { MermaidConfig } from './config.type.js';
+import { log } from './logger.js';
+import utils from './utils.js';
+import type { ParseOptions, RenderResult } from './mermaidAPI.js';
+import { mermaidAPI } from './mermaidAPI.js';
+import { registerLazyLoadedDiagrams, detectType } from './diagram-api/detectType.js';
+import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';
+import type { ParseErrorFunction } from './Diagram.js';
+import { isDetailedError } from './utils.js';
+import type { DetailedError } from './utils.js';
+import type { ExternalDiagramDefinition } from './diagram-api/types.js';
+import type { UnknownDiagramError } from './errors.js';
 
 export type {
   MermaidConfig,
@@ -21,21 +23,25 @@ export type {
   ParseErrorFunction,
   RenderResult,
   ParseOptions,
+  UnknownDiagramError,
 };
 
-/**
- * The options used when running mermaid.
- *
- * @param querySelector - The query selector to use when finding elements to render. Default: .mermaid
- * @param nodes - The nodes to render. If this is set, querySelector will be ignored.
- * @param postRenderCallback - A callback to call after each diagram is rendered.
- * @param suppressErrors - If true, errors will be logged to the console, but not thrown. Default: false
- */
 export interface RunOptions {
-  // Default: .mermaid
+  /**
+   * The query selector to use when finding elements to render. Default: `".mermaid"`.
+   */
   querySelector?: string;
+  /**
+   * The nodes to render. If this is set, `querySelector` will be ignored.
+   */
   nodes?: ArrayLike<HTMLElement>;
+  /**
+   * A callback to call after each diagram is rendered.
+   */
   postRenderCallback?: (id: string) => unknown;
+  /**
+   * If `true`, errors will be logged to the console, but not thrown. Default: `false`
+   */
   suppressErrors?: boolean;
 }
 
@@ -61,30 +67,6 @@ const handleError = (error: unknown, errors: DetailedError[], parseError?: Parse
         error,
       });
     }
-  }
-};
-
-/**
- * This is an internal function and should not be made public, as it will likely change.
- * @internal
- * @param diagrams - Array of {@link ExternalDiagramDefinition}.
- */
-const loadExternalDiagrams = async (...diagrams: ExternalDiagramDefinition[]) => {
-  log.debug(`Loading ${diagrams.length} external diagrams`);
-  // Load all lazy loaded diagrams in parallel
-  const results = await Promise.allSettled(
-    diagrams.map(async ({ id, detector, loader }) => {
-      const { diagram } = await loader();
-      registerDiagram(id, diagram, detector);
-    })
-  );
-  const failed = results.filter((result) => result.status === 'rejected');
-  if (failed.length > 0) {
-    log.error(`Failed to load ${failed.length} external diagrams`);
-    for (const res of failed) {
-      log.error(res);
-    }
-    throw new Error(`Failed to load ${failed.length} external diagrams`);
   }
 };
 
@@ -184,7 +166,7 @@ const runThrowsErrors = async function (
       log.debug('Detected early reinit: ', init);
     }
     try {
-      const { svg, bindFunctions } = await mermaidAPI.render(id, txt, element);
+      const { svg, bindFunctions } = await render(id, txt, element);
       element.innerHTML = svg;
       if (postRenderCallback) {
         await postRenderCallback(id);
@@ -251,7 +233,7 @@ const init = async function (
 /**
  * Used to register external diagram types.
  * @param diagrams - Array of {@link ExternalDiagramDefinition}.
- * @param opts - If opts.lazyLoad is true, the diagram will be loaded on demand.
+ * @param opts - If opts.lazyLoad is false, the diagrams will be loaded immediately.
  */
 const registerExternalDiagrams = async (
   diagrams: ExternalDiagramDefinition[],
@@ -261,10 +243,9 @@ const registerExternalDiagrams = async (
     lazyLoad?: boolean;
   } = {}
 ) => {
-  if (lazyLoad) {
-    registerLazyLoadedDiagrams(...diagrams);
-  } else {
-    await loadExternalDiagrams(...diagrams);
+  registerLazyLoadedDiagrams(...diagrams);
+  if (lazyLoad === false) {
+    await loadRegisteredDiagrams();
   }
 };
 
@@ -336,7 +317,7 @@ const executeQueue = async () => {
  */
 const parse = async (text: string, parseOptions?: ParseOptions): Promise<boolean | void> => {
   return new Promise((resolve, reject) => {
-    // This promise will resolve when the mermaidAPI.render call is done.
+    // This promise will resolve when the render call is done.
     // It will be queued first and will be executed when it is first in line
     const performCall = () =>
       new Promise((res, rej) => {
@@ -360,6 +341,29 @@ const parse = async (text: string, parseOptions?: ParseOptions): Promise<boolean
   });
 };
 
+/**
+ * Function that renders an svg with a graph from a chart definition. Usage example below.
+ *
+ * ```javascript
+ *  element = document.querySelector('#graphDiv');
+ *  const graphDefinition = 'graph TB\na-->b';
+ *  const { svg, bindFunctions } = await mermaid.render('graphDiv', graphDefinition);
+ *  element.innerHTML = svg;
+ *  bindFunctions?.(element);
+ * ```
+ *
+ * @remarks
+ * Multiple calls to this function will be enqueued to run serially.
+ *
+ * @param id - The id for the SVG element (the element to be rendered)
+ * @param text - The text for the graph definition
+ * @param container - HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
+ *   If no svgContainingElement is provided then the SVG element will be appended to the body.
+ *    Selector to element in which a div with the graph temporarily will be
+ *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
+ *   element will be removed when rendering is completed.
+ * @returns Returns the SVG Definition and BindFunctions.
+ */
 const render = (id: string, text: string, container?: Element): Promise<RenderResult> => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the mermaidAPI.render call is done.
@@ -386,7 +390,7 @@ const render = (id: string, text: string, container?: Element): Promise<RenderRe
   });
 };
 
-const mermaid: {
+export interface Mermaid {
   startOnLoad: boolean;
   parseError?: ParseErrorFunction;
   mermaidAPI: typeof mermaidAPI;
@@ -398,7 +402,10 @@ const mermaid: {
   initialize: typeof initialize;
   contentLoaded: typeof contentLoaded;
   setParseErrorHandler: typeof setParseErrorHandler;
-} = {
+  detectType: typeof detectType;
+}
+
+const mermaid: Mermaid = {
   startOnLoad: true,
   mermaidAPI,
   parse,
@@ -410,6 +417,7 @@ const mermaid: {
   parseError: undefined,
   contentLoaded,
   setParseErrorHandler,
+  detectType,
 };
 
 export default mermaid;

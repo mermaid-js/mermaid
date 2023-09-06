@@ -1,5 +1,8 @@
 import DOMPurify from 'dompurify';
-import { MermaidConfig } from '../../config.type';
+import type { MermaidConfig } from '../../config.type.js';
+
+// Remove and ignore br:s
+export const lineBreakRegex = /<br\s*\/?>/gi;
 
 /**
  * Gets the rows of lines in a string
@@ -64,8 +67,6 @@ export const sanitizeTextOrArray = (
   // TODO: Refactor to avoid flat.
   return a.flat().map((x: string) => sanitizeText(x, config));
 };
-
-export const lineBreakRegex = /<br\s*\/?>/gi;
 
 /**
  * Whether or not a text has any line breaks
@@ -139,6 +140,32 @@ export const evaluate = (val?: string | boolean): boolean =>
   val === false || ['false', 'null', '0'].includes(String(val).trim().toLowerCase()) ? false : true;
 
 /**
+ * Wrapper around Math.max which removes non-numeric values
+ * Returns the larger of a set of supplied numeric expressions.
+ * @param values - Numeric expressions to be evaluated
+ * @returns The smaller value
+ */
+export const getMax = function (...values: number[]): number {
+  const newValues: number[] = values.filter((value) => {
+    return !isNaN(value);
+  });
+  return Math.max(...newValues);
+};
+
+/**
+ * Wrapper around Math.min which removes non-numeric values
+ * Returns the smaller of a set of supplied numeric expressions.
+ * @param values - Numeric expressions to be evaluated
+ * @returns The smaller value
+ */
+export const getMin = function (...values: number[]): number {
+  const newValues: number[] = values.filter((value) => {
+    return !isNaN(value);
+  });
+  return Math.min(...newValues);
+};
+
+/**
  * Makes generics in typescript syntax
  *
  * @example
@@ -151,23 +178,80 @@ export const evaluate = (val?: string | boolean): boolean =>
  * @param text - The text to convert
  * @returns The converted string
  */
-export const parseGenericTypes = function (text: string): string {
-  let cleanedText = text;
+export const parseGenericTypes = function (input: string): string {
+  const inputSets = input.split(/(,)/);
+  const output = [];
 
-  if (text.split('~').length - 1 >= 2) {
-    let newCleanedText = cleanedText;
+  for (let i = 0; i < inputSets.length; i++) {
+    let thisSet = inputSets[i];
 
-    // use a do...while loop instead of replaceAll to detect recursion
-    // e.g. Array~Array~T~~
-    do {
-      cleanedText = newCleanedText;
-      newCleanedText = cleanedText.replace(/~([^\s,:;]+)~/, '<$1>');
-    } while (newCleanedText != cleanedText);
+    // if the original input included a value such as "~K, V~"", these will be split into
+    // an array of ["~K",","," V~"].
+    // This means that on each call of processSet, there will only be 1 ~ present
+    // To account for this, if we encounter a ",", we are checking the previous and next sets in the array
+    // to see if they contain matching ~'s
+    // in which case we are assuming that they should be rejoined and sent to be processed
+    if (thisSet === ',' && i > 0 && i + 1 < inputSets.length) {
+      const previousSet = inputSets[i - 1];
+      const nextSet = inputSets[i + 1];
 
-    return parseGenericTypes(newCleanedText);
-  } else {
-    return cleanedText;
+      if (shouldCombineSets(previousSet, nextSet)) {
+        thisSet = previousSet + ',' + nextSet;
+        i++; // Move the index forward to skip the next iteration since we're combining sets
+        output.pop();
+      }
+    }
+
+    output.push(processSet(thisSet));
   }
+
+  return output.join('');
+};
+
+export const countOccurrence = (string: string, substring: string): number => {
+  return Math.max(0, string.split(substring).length - 1);
+};
+
+const shouldCombineSets = (previousSet: string, nextSet: string): boolean => {
+  const prevCount = countOccurrence(previousSet, '~');
+  const nextCount = countOccurrence(nextSet, '~');
+
+  return prevCount === 1 && nextCount === 1;
+};
+
+const processSet = (input: string): string => {
+  const tildeCount = countOccurrence(input, '~');
+  let hasStartingTilde = false;
+
+  if (tildeCount <= 1) {
+    return input;
+  }
+
+  // If there is an odd number of tildes, and the input starts with a tilde, we need to remove it and add it back in later
+  if (tildeCount % 2 !== 0 && input.startsWith('~')) {
+    input = input.substring(1);
+    hasStartingTilde = true;
+  }
+
+  const chars = [...input];
+
+  let first = chars.indexOf('~');
+  let last = chars.lastIndexOf('~');
+
+  while (first !== -1 && last !== -1 && first !== last) {
+    chars[first] = '<';
+    chars[last] = '>';
+
+    first = chars.indexOf('~');
+    last = chars.lastIndexOf('~');
+  }
+
+  // Add the starting tilde back in if we removed it
+  if (hasStartingTilde) {
+    chars.unshift('~');
+  }
+
+  return chars.join('');
 };
 
 export default {
@@ -180,4 +264,6 @@ export default {
   removeScript,
   getUrl,
   evaluate,
+  getMax,
+  getMin,
 };

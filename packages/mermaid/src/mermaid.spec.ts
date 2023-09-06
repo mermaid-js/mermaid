@@ -1,9 +1,16 @@
-import mermaid from './mermaid';
-import { mermaidAPI } from './mermaidAPI';
-import './diagram-api/diagram-orchestration';
+import mermaid from './mermaid.js';
+import { mermaidAPI } from './mermaidAPI.js';
+import './diagram-api/diagram-orchestration.js';
+import { addDiagrams } from './diagram-api/diagram-orchestration.js';
+import { beforeAll, describe, it, expect, vi } from 'vitest';
+import type { DiagramDefinition } from './diagram-api/types.js';
+
+beforeAll(async () => {
+  addDiagrams();
+});
 const spyOn = vi.spyOn;
 
-vi.mock('./mermaidAPI');
+vi.mock('./mermaidAPI.js');
 
 afterEach(() => {
   vi.clearAllMocks();
@@ -66,9 +73,9 @@ describe('when using mermaid and ', () => {
         mermaid.registerExternalDiagrams(
           [
             {
-              id: 'dummy',
-              detector: (text) => /dummy/.test(text),
-              loader: () => Promise.reject('error'),
+              id: 'dummyError',
+              detector: (text) => /dummyError/.test(text),
+              loader: () => Promise.reject('dummyError'),
             },
           ],
           { lazyLoad: false }
@@ -86,13 +93,16 @@ describe('when using mermaid and ', () => {
 
     it('should defer diagram load based on parameter', async () => {
       let loaded = false;
-      const dummyDiagram = {
+      const dummyDiagram: DiagramDefinition = {
         db: {},
         renderer: () => {
           // do nothing
         },
-        parser: () => {
-          // do nothing
+        parser: {
+          parse: (_text) => {
+            return;
+          },
+          parser: { yy: {} },
         },
         styles: () => {
           // do nothing
@@ -146,7 +156,11 @@ describe('when using mermaid and ', () => {
 
   describe('checking validity of input ', () => {
     it('should throw for an invalid definition', async () => {
-      await expect(mermaid.parse('this is not a mermaid diagram definition')).rejects.toThrow();
+      await expect(
+        mermaid.parse('this is not a mermaid diagram definition')
+      ).rejects.toThrowErrorMatchingInlineSnapshot(
+        '"No diagram type detected matching given configuration for text: this is not a mermaid diagram definition"'
+      );
     });
 
     it('should not throw for a valid flow definition', async () => {
@@ -155,7 +169,12 @@ describe('when using mermaid and ', () => {
       ).resolves.not.toThrow();
     });
     it('should throw for an invalid flow definition', async () => {
-      await expect(mermaid.parse('graph TQ;A--x|text including URL space|B;')).rejects.toThrow();
+      await expect(mermaid.parse('graph TQ;A--x|text including URL space|B;')).rejects
+        .toThrowErrorMatchingInlineSnapshot(`
+        "Lexical error on line 1. Unrecognized text.
+        graph TQ;A--x|text includ
+        -----^"
+      `);
     });
 
     it('should not throw for a valid sequenceDiagram definition (mmds1)', async () => {
@@ -183,7 +202,12 @@ describe('when using mermaid and ', () => {
         'else isSick\n' +
         'Bob-->Alice: Feel sick...\n' +
         'end';
-      await expect(mermaid.parse(text)).rejects.toThrow();
+      await expect(mermaid.parse(text)).rejects.toThrowErrorMatchingInlineSnapshot(`
+        "Parse error on line 2:
+        ...equenceDiagramAlice:->Bob: Hello Bob, h...
+        ----------------------^
+        Expecting 'SOLID_OPEN_ARROW', 'DOTTED_OPEN_ARROW', 'SOLID_ARROW', 'DOTTED_ARROW', 'SOLID_CROSS', 'DOTTED_CROSS', 'SOLID_POINT', 'DOTTED_POINT', got 'TXT'"
+      `);
     });
 
     it('should return false for invalid definition WITH a parseError() callback defined', async () => {
@@ -191,7 +215,11 @@ describe('when using mermaid and ', () => {
       mermaid.setParseErrorHandler(() => {
         parseErrorWasCalled = true;
       });
-      await expect(mermaid.parse('this is not a mermaid diagram definition')).rejects.toThrow();
+      await expect(
+        mermaid.parse('this is not a mermaid diagram definition')
+      ).rejects.toThrowErrorMatchingInlineSnapshot(
+        '"No diagram type detected matching given configuration for text: this is not a mermaid diagram definition"'
+      );
       expect(parseErrorWasCalled).toEqual(true);
     });
   });

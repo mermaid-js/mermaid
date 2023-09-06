@@ -1,6 +1,6 @@
 /** Created by knut on 14-12-11. */
 import { select } from 'd3';
-import { log, getConfig, setupGraphViewbox } from './mermaidUtils';
+import { log, getConfig, setupGraphViewbox } from './mermaidUtils.js';
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
@@ -8,7 +8,6 @@ import { log, getConfig, setupGraphViewbox } from './mermaidUtils';
  * @param {any} text
  * @param {any} id
  * @param {any} version
- * @param diagObj
  */
 export const draw = (text, id, version) => {
   try {

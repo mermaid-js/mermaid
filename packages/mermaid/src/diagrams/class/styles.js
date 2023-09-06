@@ -41,7 +41,7 @@ const getStyles = (options) =>
 
 .divider {
   stroke: ${options.nodeBorder};
-  stroke: 1;
+  stroke-width: 1;
 }
 
 g.clickable {
@@ -109,25 +109,25 @@ g.classGroup line {
 }
 
 #extensionStart, .extension {
-  fill: ${options.mainBkg} !important;
+  fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
 #extensionEnd, .extension {
-  fill: ${options.mainBkg} !important;
+  fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
 #aggregationStart, .aggregation {
-  fill: ${options.mainBkg} !important;
+  fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
 #aggregationEnd, .aggregation {
-  fill: ${options.mainBkg} !important;
+  fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }

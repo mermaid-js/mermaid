@@ -17,7 +17,7 @@ const props = defineProps({
   },
 });
 
-const svg = ref(null);
+const svg = ref('');
 let mut = null;
 
 onMounted(async () => {

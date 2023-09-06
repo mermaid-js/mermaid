@@ -1,5 +1,5 @@
-import moment from 'moment-mini';
-import { log } from '../../logger';
+import dayjs from 'dayjs';
+import { log } from '../../logger.js';
 import {
   select,
   scaleTime,
@@ -10,25 +10,76 @@ import {
   axisBottom,
   axisTop,
   timeFormat,
+  timeMillisecond,
+  timeSecond,
   timeMinute,
   timeHour,
   timeDay,
-  timeWeek,
+  timeMonday,
+  timeTuesday,
+  timeWednesday,
+  timeThursday,
+  timeFriday,
+  timeSaturday,
+  timeSunday,
   timeMonth,
 } from 'd3';
-import common from '../common/common';
-import { getConfig } from '../../config';
-import { configureSvgSize } from '../../setupGraphViewbox';
+import common from '../common/common.js';
+import { getConfig } from '../../config.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 export const setConf = function () {
   log.debug('Something is calling, setConf, remove the call');
 };
 
+/**
+ * This will map any day of the week that can be set in the `weekday` option to
+ * the corresponding d3-time function that is used to calculate the ticks.
+ */
+const mapWeekdayToTimeFunction = {
+  monday: timeMonday,
+  tuesday: timeTuesday,
+  wednesday: timeWednesday,
+  thursday: timeThursday,
+  friday: timeFriday,
+  saturday: timeSaturday,
+  sunday: timeSunday,
+};
+
+/**
+ * For this issue:
+ * https://github.com/mermaid-js/mermaid/issues/1618
+ *
+ * Finds the number of intersections between tasks that happen at any point in time.
+ * Used to figure out how many rows are needed to display the tasks when the display
+ * mode is set to 'compact'.
+ *
+ * @param tasks
+ * @param orderOffset
+ */
+const getMaxIntersections = (tasks, orderOffset) => {
+  let timeline = [...tasks].map(() => -Infinity);
+  let sorted = [...tasks].sort((a, b) => a.startTime - b.startTime || a.order - b.order);
+  let maxIntersections = 0;
+  for (const element of sorted) {
+    for (let j = 0; j < timeline.length; j++) {
+      if (element.startTime >= timeline[j]) {
+        timeline[j] = element.endTime;
+        element.order = j + orderOffset;
+        if (j > maxIntersections) {
+          maxIntersections = j;
+        }
+        break;
+      }
+    }
+  }
+
+  return maxIntersections;
+};
+
 let w;
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().gantt;
-  // diagObj.db.clear();
-  // parser.parse(text);
 
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
@@ -56,7 +107,40 @@ export const draw = function (text, id, version, diagObj) {
   const taskArray = diagObj.db.getTasks();
 
   // Set height based on number of tasks
-  const h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding;
+
+  let categories = [];
+
+  for (const element of taskArray) {
+    categories.push(element.type);
+  }
+
+  categories = checkUnique(categories);
+  const categoryHeights = {};
+
+  let h = 2 * conf.topPadding;
+  if (diagObj.db.getDisplayMode() === 'compact' || conf.displayMode === 'compact') {
+    const categoryElements = {};
+    for (const element of taskArray) {
+      if (categoryElements[element.section] === undefined) {
+        categoryElements[element.section] = [element];
+      } else {
+        categoryElements[element.section].push(element);
+      }
+    }
+
+    let intersections = 0;
+    for (const category of Object.keys(categoryElements)) {
+      const categoryHeight = getMaxIntersections(categoryElements[category], intersections) + 1;
+      intersections += categoryHeight;
+      h += categoryHeight * (conf.barHeight + conf.barGap);
+      categoryHeights[category] = categoryHeight;
+    }
+  } else {
+    h += taskArray.length * (conf.barHeight + conf.barGap);
+    for (const category of categories) {
+      categoryHeights[category] = taskArray.filter((task) => task.type === category).length;
+    }
+  }
 
   // Set viewBox
   elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
@@ -73,16 +157,6 @@ export const draw = function (text, id, version, diagObj) {
       }),
     ])
     .rangeRound([0, w - conf.leftPadding - conf.rightPadding]);
-
-  let categories = [];
-
-  for (const element of taskArray) {
-    categories.push(element.type);
-  }
-
-  const catsUnfiltered = categories; // for vert labels
-
-  categories = checkUnique(categories);
 
   /**
    * @param a
@@ -157,11 +231,15 @@ export const draw = function (text, id, version, diagObj) {
    * @param w
    */
   function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w) {
+    // Get unique task orders. Required to draw the background rects when display mode is compact.
+    const uniqueTaskOrderIds = [...new Set(theArray.map((item) => item.order))];
+    const uniqueTasks = uniqueTaskOrderIds.map((id) => theArray.find((item) => item.order === id));
+
     // Draw background rects covering the entire width of the graph, these form the section rows.
     svg
       .append('g')
       .selectAll('rect')
-      .data(theArray)
+      .data(uniqueTasks)
       .enter()
       .append('rect')
       .attr('x', 0)
@@ -435,16 +513,16 @@ export const draw = function (text, id, version, diagObj) {
 
     const excludeRanges = [];
     let range = null;
-    let d = moment(minTime);
+    let d = dayjs(minTime);
     while (d.valueOf() <= maxTime) {
       if (diagObj.db.isInvalidDate(d, dateFormat, excludes, includes)) {
         if (!range) {
           range = {
-            start: d.clone(),
-            end: d.clone(),
+            start: d,
+            end: d,
           };
         } else {
-          range.end = d.clone();
+          range.end = d;
         }
       } else {
         if (range) {
@@ -452,7 +530,7 @@ export const draw = function (text, id, version, diagObj) {
           range = null;
         }
       }
-      d.add(1, 'd');
+      d = d.add(1, 'd');
     }
 
     const rectangles = svg.append('g').selectAll('rect').data(excludeRanges).enter();
@@ -467,7 +545,7 @@ export const draw = function (text, id, version, diagObj) {
       })
       .attr('y', conf.gridLineStartPadding)
       .attr('width', function (d) {
-        const renderEnd = d.end.clone().add(1, 'day');
+        const renderEnd = d.end.add(1, 'day');
         return timeScale(renderEnd) - timeScale(d.start);
       })
       .attr('height', h - theTopPad - conf.gridLineStartPadding)
@@ -497,7 +575,7 @@ export const draw = function (text, id, version, diagObj) {
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
       .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
 
-    const reTickInterval = /^([1-9]\d*)(minute|hour|day|week|month)$/;
+    const reTickInterval = /^([1-9]\d*)(millisecond|second|minute|hour|day|week|month)$/;
     const resultTickInterval = reTickInterval.exec(
       diagObj.db.getTickInterval() || conf.tickInterval
     );
@@ -505,7 +583,15 @@ export const draw = function (text, id, version, diagObj) {
     if (resultTickInterval !== null) {
       const every = resultTickInterval[1];
       const interval = resultTickInterval[2];
+      const weekday = diagObj.db.getWeekday() || conf.weekday;
+
       switch (interval) {
+        case 'millisecond':
+          bottomXAxis.ticks(timeMillisecond.every(every));
+          break;
+        case 'second':
+          bottomXAxis.ticks(timeSecond.every(every));
+          break;
         case 'minute':
           bottomXAxis.ticks(timeMinute.every(every));
           break;
@@ -516,7 +602,7 @@ export const draw = function (text, id, version, diagObj) {
           bottomXAxis.ticks(timeDay.every(every));
           break;
         case 'week':
-          bottomXAxis.ticks(timeWeek.every(every));
+          bottomXAxis.ticks(mapWeekdayToTimeFunction[weekday].every(every));
           break;
         case 'month':
           bottomXAxis.ticks(timeMonth.every(every));
@@ -544,7 +630,15 @@ export const draw = function (text, id, version, diagObj) {
       if (resultTickInterval !== null) {
         const every = resultTickInterval[1];
         const interval = resultTickInterval[2];
+        const weekday = diagObj.db.getWeekday() || conf.weekday;
+
         switch (interval) {
+          case 'millisecond':
+            topXAxis.ticks(timeMillisecond.every(every));
+            break;
+          case 'second':
+            topXAxis.ticks(timeSecond.every(every));
+            break;
           case 'minute':
             topXAxis.ticks(timeMinute.every(every));
             break;
@@ -555,7 +649,7 @@ export const draw = function (text, id, version, diagObj) {
             topXAxis.ticks(timeDay.every(every));
             break;
           case 'week':
-            topXAxis.ticks(timeWeek.every(every));
+            topXAxis.ticks(mapWeekdayToTimeFunction[weekday].every(every));
             break;
           case 'month':
             topXAxis.ticks(timeMonth.every(every));
@@ -582,12 +676,9 @@ export const draw = function (text, id, version, diagObj) {
    * @param theTopPad
    */
   function vertLabels(theGap, theTopPad) {
-    const numOccurances = [];
     let prevGap = 0;
 
-    for (const [i, category] of categories.entries()) {
-      numOccurances[i] = [category, getCount(category, catsUnfiltered)];
-    }
+    const numOccurances = Object.keys(categoryHeights).map((d) => [d, categoryHeights[d]]);
 
     svg
       .append('g') // without doing this, impossible to put grid lines behind text
@@ -624,7 +715,6 @@ export const draw = function (text, id, version, diagObj) {
           return (d[1] * theGap) / 2 + theTopPad;
         }
       })
-      .attr('font-size', conf.sectionFontSize)
       .attr('font-size', conf.sectionFontSize)
       .attr('class', function (d) {
         for (const [i, category] of categories.entries()) {
@@ -681,31 +771,6 @@ export const draw = function (text, id, version, diagObj) {
       }
     }
     return result;
-  }
-
-  /**
-   * From this stack exchange question:
-   * http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
-   *
-   * @param arr
-   */
-  function getCounts(arr) {
-    let i = arr.length; // const to loop over
-    const obj = {}; // obj to store results
-    while (i) {
-      obj[arr[--i]] = (obj[arr[i]] || 0) + 1; // count occurrences
-    }
-    return obj;
-  }
-
-  /**
-   * Get specific from everything
-   *
-   * @param word
-   * @param arr
-   */
-  function getCount(word, arr) {
-    return getCounts(arr)[word] || 0;
   }
 };
 
