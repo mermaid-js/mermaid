@@ -42,6 +42,7 @@ const config = {
   securityLevel: 'strict',
   startOnLoad: true,
   arrowMarkerAbsolute: false,
+  suppressErrorRendering: false,
 
   er: {
     diagramPadding: 20,
@@ -96,7 +97,7 @@ mermaid.initialize(config);
 
 #### Defined in
 
-[mermaidAPI.ts:673](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L673)
+[mermaidAPI.ts:679](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L679)
 
 ## Functions
 
