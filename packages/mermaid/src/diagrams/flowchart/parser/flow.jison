@@ -502,10 +502,14 @@ linkStyleStatement
           {$$ = $1;yy.updateLinkInterpolate([$3],$7);yy.updateLink([$3],$9);}
     | LINKSTYLE SPACE numList SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
           {$$ = $1;yy.updateLinkInterpolate($3,$7);yy.updateLink($3,$9);}
+    | LINKSTYLE SPACE MINUS SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
+          {$$ = $1;yy.updateLinkInterpolate([yy.getEdges().length-1],$7);yy.updateLink([yy.getEdges().length-1],$9);}
     | LINKSTYLE SPACE DEFAULT SPACE INTERPOLATE SPACE alphaNum
           {$$ = $1;yy.updateLinkInterpolate([$3],$7);}
     | LINKSTYLE SPACE numList SPACE INTERPOLATE SPACE alphaNum
           {$$ = $1;yy.updateLinkInterpolate($3,$7);}
+    | LINKSTYLE SPACE MINUS SPACE INTERPOLATE SPACE alphaNum
+          {$$ = $1;yy.updateLinkInterpolate([yy.getEdges().length-1],$7);}
     ;
 
 numList: NUM
