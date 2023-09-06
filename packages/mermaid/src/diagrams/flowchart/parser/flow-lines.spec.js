@@ -111,6 +111,31 @@ describe('[Lines] when parsing', () => {
     `);
   });
 
+  it('should handle non-numbered line style', function () {
+    flow.parser.parse(
+      'graph TD\n' +
+        'A-->B\n' +
+        'linkStyle - stroke-width:1px;\n' +
+        'A-->C\n' +
+        'linkStyle - stroke-width:3px;'
+    );
+
+    const edges = flow.parser.yy.getEdges();
+
+    expect(edges[0].style).toMatchInlineSnapshot(`
+      [
+        "stroke-width:1px",
+        "fill:none",
+      ]
+    `);
+    expect(edges[1].style).toMatchInlineSnapshot(`
+      [
+        "stroke-width:3px",
+        "fill:none",
+      ]
+    `);
+  });
+
   it('should handle line interpolation multi-numbered with style', function () {
     flow.parser.parse(
       'graph TD\n' + 'A-->B\n' + 'A-->C\n' + 'linkStyle 0,1 interpolate basis stroke-width:1px;'
