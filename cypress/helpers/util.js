@@ -25,7 +25,7 @@ export const imgSnapshotTest = (graphStr, _options = {}, api = false, validation
     fontFamily: _options.fontFamily || 'courier',
     fontSize: _options.fontSize || '16px',
     sequence: {
-      ...(options.sequence || {}),
+      ...(_options.sequence || {}),
       actorFontFamily: 'courier',
       noteFontFamily: _options.sequence?.noteFontFamily || 'courier',
       messageFontFamily: 'courier',
