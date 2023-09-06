@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
 import type { LangiumParser, ParseResult } from 'langium';
+import { describe, expect, it } from 'vitest';
 
 import type { PieServices } from '../src/language/index.js';
 import { Pie, createPieServices } from '../src/language/index.js';

@@ -7,10 +7,10 @@ import type {
 } from 'langium';
 import { EmptyFileSystem, createDefaultModule, createDefaultSharedModule, inject } from 'langium';
 
+import { CommonLexer } from '../common/lexer.js';
 import { MermaidGeneratedSharedModule, PieGeneratedModule } from '../generated/module.js';
-import { CommonLexer } from '../common/commonLexer.js';
-import { PieTokenBuilder } from './pieTokenBuilder.js';
-import { PieValueConverter } from './pieValueConverter.js';
+import { PieTokenBuilder } from './tokenBuilder.js';
+import { PieValueConverter } from './valueConverter.js';
 
 /**
  * Declaration of `Pie` services.
@@ -32,9 +32,9 @@ export type PieServices = LangiumServices & PieAddedServices;
  * Dependency injection module that overrides Langium default services and
  * contributes the declared `Pie` services.
  */
-const PieModule: Module<PieServices, PartialLangiumServices & PieAddedServices> = {
+export const PieModule: Module<PieServices, PartialLangiumServices & PieAddedServices> = {
   parser: {
-    Lexer: (services) => new CommonLexer(services),
+    Lexer: (services: PieServices) => new CommonLexer(services),
     TokenBuilder: () => new PieTokenBuilder(),
     ValueConverter: () => new PieValueConverter(),
   },

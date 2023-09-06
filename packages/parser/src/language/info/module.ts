@@ -7,10 +7,10 @@ import type {
 } from 'langium';
 import { EmptyFileSystem, createDefaultModule, createDefaultSharedModule, inject } from 'langium';
 
-import { MermaidGeneratedSharedModule, InfoGeneratedModule } from '../generated/module.js';
-import { CommonLexer } from '../common/commonLexer.js';
-import { CommonValueConverter } from '../common/commonValueConverters.js';
-import { InfoTokenBuilder } from './infoTokenBuilder.js';
+import { CommonLexer } from '../common/lexer.js';
+import { CommonValueConverter } from '../common/valueConverter.js';
+import { InfoGeneratedModule, MermaidGeneratedSharedModule } from '../generated/module.js';
+import { InfoTokenBuilder } from './tokenBuilder.js';
 
 /**
  * Declaration of `Info` services.
@@ -34,7 +34,7 @@ export type InfoServices = LangiumServices & InfoAddedServices;
  */
 export const InfoModule: Module<InfoServices, PartialLangiumServices & InfoAddedServices> = {
   parser: {
-    Lexer: (services) => new CommonLexer(services),
+    Lexer: (services: InfoServices) => new CommonLexer(services),
     TokenBuilder: () => new InfoTokenBuilder(),
     ValueConverter: () => new CommonValueConverter(),
   },

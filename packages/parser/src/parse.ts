@@ -1,4 +1,5 @@
 import type { LangiumParser, ParseResult } from 'langium';
+
 import type { Info, Pie } from './index.js';
 import { createInfoServices, createPieServices } from './language/index.js';
 

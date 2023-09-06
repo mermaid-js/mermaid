@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
 import type { LangiumParser, ParseResult } from 'langium';
+import { describe, expect, it } from 'vitest';
 
 import type { InfoServices } from '../src/language/index.js';
 import { Info, createInfoServices } from '../src/language/index.js';
