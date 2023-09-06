@@ -287,7 +287,7 @@ placement
 
 signal
 	: actor signaltype '+' actor text2
-	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$2, msg:$5},
+	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$2, msg:$5, activate: true},
 	              {type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $4}
 	             ]}
 	| actor signaltype '-' actor text2

@@ -8,7 +8,7 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 import { QuadrantBuilder } from './quadrantBuilder.js';
 
 const config = configApi.getConfig();

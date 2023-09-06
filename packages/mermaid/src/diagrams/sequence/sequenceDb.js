@@ -9,7 +9,7 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 
 let prevActor = undefined;
 let actors = {};
@@ -119,7 +119,8 @@ export const addSignal = function (
   idFrom,
   idTo,
   message = { text: undefined, wrap: undefined },
-  messageType
+  messageType,
+  activate = false
 ) {
   if (messageType === LINETYPE.ACTIVE_END) {
     const cnt = activationCount(idFrom.actor);
@@ -142,6 +143,7 @@ export const addSignal = function (
     message: message.text,
     wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
     type: messageType,
+    activate,
   });
   return true;
 };
@@ -445,6 +447,19 @@ export const getActorProperty = function (actor, key) {
   return undefined;
 };
 
+/**
+ * @typedef {object} AddMessageParams A message from one actor to another.
+ * @property {string} from - The id of the actor sending the message.
+ * @property {string} to - The id of the actor receiving the message.
+ * @property {string} msg - The message text.
+ * @property {number} signalType - The type of signal.
+ * @property {"addMessage"} type - Set to `"addMessage"` if this is an `AddMessageParams`.
+ * @property {boolean} [activate] - If `true`, this signal starts an activation.
+ */
+
+/**
+ * @param {object | object[] | AddMessageParams} param - Object of parameters.
+ */
 export const apply = function (param) {
   if (Array.isArray(param)) {
     param.forEach(function (item) {
@@ -525,7 +540,7 @@ export const apply = function (param) {
             lastDestroyed = undefined;
           }
         }
-        addSignal(param.from, param.to, param.msg, param.signalType);
+        addSignal(param.from, param.to, param.msg, param.signalType, param.activate);
         break;
       case 'boxStart':
         addBox(param.boxData);

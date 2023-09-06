@@ -1,7 +1,5 @@
 import { parser as timeline } from './parser/timeline.jison';
 import * as timelineDB from './timelineDb.js';
-import * as _commonDb from '../../commonDb.js';
-
 import { setLogLevel } from '../../diagram-api/diagramAPI.js';
 
 describe('when parsing a timeline ', function () {
