@@ -217,6 +217,12 @@ properties:
   fontSize:
     type: number
     default: 16
+  suppressErrorRendering:
+    type: boolean
+    default: false
+    description: |
+      Suppresses inserting 'Syntax error' diagram in the DOM.
+      This is useful when you want to control how to handle syntax errors in your application.
 
 $defs: # JSON Schema definition (maybe we should move these to a seperate file)
   BaseDiagramConfig:
