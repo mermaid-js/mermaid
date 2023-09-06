@@ -248,7 +248,7 @@ classE o-- classF : aggregation
 
 Relations can logically represent an N:M association:
 
-```mmd
+```mermaid
 classDiagram
     Animal <|--|> Zebra
 ```
@@ -276,6 +276,23 @@ And `Link` can be one of:
 | ---- | ----------- |
 | --   | Solid       |
 | ..   | Dashed      |
+
+## Define Namespace
+
+A namespace groups classes.
+
+Code:
+
+```mermaid-example
+classDiagram
+namespace BaseShapes {
+    class Triangle
+    class Rectangle {
+      double width
+      double height
+    }
+}
+```
 
 ## Cardinality / Multiplicity on relations
 
@@ -351,7 +368,7 @@ class Color{
 
 Comments can be entered within a class diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text until the next newline will be treated as a comment, including any class diagram syntax.
 
-```mmd
+```mermaid
 classDiagram
 %% This whole line is a comment classDiagram class Shape <<interface>>
 class Shape{
@@ -417,7 +434,7 @@ classDiagram
 
 _URL Link:_
 
-```mmd
+```mermaid
 classDiagram
 class Shape
 link Shape "https://www.github.com" "This is a tooltip for a link"
@@ -427,7 +444,7 @@ click Shape2 href "https://www.github.com" "This is a tooltip for a link"
 
 _Callback:_
 
-```mmd
+```mermaid
 classDiagram
 class Shape
 callback Shape "callbackFunction" "This is a tooltip for a callback"

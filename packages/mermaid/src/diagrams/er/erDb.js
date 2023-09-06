@@ -10,7 +10,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 
 let entities = {};
 let relationships = [];
@@ -20,6 +20,7 @@ const Cardinality = {
   ZERO_OR_MORE: 'ZERO_OR_MORE',
   ONE_OR_MORE: 'ONE_OR_MORE',
   ONLY_ONE: 'ONLY_ONE',
+  MD_PARENT: 'MD_PARENT',
 };
 
 const Identification = {
@@ -31,10 +32,13 @@ export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
 };
 
-const addEntity = function (name) {
+const addEntity = function (name, alias = undefined) {
   if (entities[name] === undefined) {
-    entities[name] = { attributes: [] };
+    entities[name] = { attributes: [], alias: alias };
     log.info('Added new entity :', name);
+  } else if (entities[name] && !entities[name].alias && alias) {
+    entities[name].alias = alias;
+    log.info(`Add alias '${alias}' to entity '${name}'`);
   }
 
   return entities[name];

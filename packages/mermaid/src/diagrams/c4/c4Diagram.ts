@@ -1,10 +1,10 @@
-// @ts-ignore: TODO Fix ts errors
+// @ts-ignore: JISON doesn't support types
 import c4Parser from './parser/c4Diagram.jison';
 import c4Db from './c4Db.js';
 import c4Renderer from './c4Renderer.js';
 import c4Styles from './styles.js';
-import { MermaidConfig } from '../../config.type.js';
-import { DiagramDefinition } from '../../diagram-api/types.js';
+import type { MermaidConfig } from '../../config.type.js';
+import type { DiagramDefinition } from '../../diagram-api/types.js';
 
 export const diagram: DiagramDefinition = {
   parser: c4Parser,

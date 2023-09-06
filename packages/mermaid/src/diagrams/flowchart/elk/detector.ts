@@ -1,21 +1,24 @@
-import type { MermaidConfig } from '../../../config.type.js';
-import type { ExternalDiagramDefinition, DiagramDetector } from '../../../diagram-api/types.js';
+import type {
+  ExternalDiagramDefinition,
+  DiagramDetector,
+  DiagramLoader,
+} from '../../../diagram-api/types.js';
 
 const id = 'flowchart-elk';
 
-const detector: DiagramDetector = (txt: string, config?: MermaidConfig): boolean => {
+const detector: DiagramDetector = (txt, config): boolean => {
   if (
     // If diagram explicitly states flowchart-elk
-    txt.match(/^\s*flowchart-elk/) ||
+    /^\s*flowchart-elk/.test(txt) ||
     // If a flowchart/graph diagram has their default renderer set to elk
-    (txt.match(/^\s*flowchart|graph/) && config?.flowchart?.defaultRenderer === 'elk')
+    (/^\s*flowchart|graph/.test(txt) && config?.flowchart?.defaultRenderer === 'elk')
   ) {
     return true;
   }
   return false;
 };
 
-const loader = async () => {
+const loader: DiagramLoader = async () => {
   const { diagram } = await import('./flowchart-elk-definition.js');
   return { id, diagram };
 };

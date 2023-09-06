@@ -15,6 +15,7 @@ async function createServer() {
 
   app.use(cors());
   app.use(express.static('./packages/mermaid/dist'));
+  app.use(express.static('./packages/mermaid-zenuml/dist'));
   app.use(express.static('./packages/mermaid-example-diagram/dist'));
   app.use(vite.middlewares);
   app.use(express.static('demos'));

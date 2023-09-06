@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.js';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 /**
  * Check whether the SVG Element has a Mindmap root
@@ -45,6 +45,17 @@ root[root]
     imgSnapshotTest(
       `mindmap
 root[A root with a long text that wraps to keep the node size in check]
+    `,
+      {},
+      undefined,
+      shouldHaveRoot
+    );
+  });
+
+  it('a root with wrapping text and long words that exceed width', () => {
+    imgSnapshotTest(
+      `mindmap
+root[A few smaller words but then averylongsetofcharacterswithoutwhitespacetoseparate that we expect to wrapontonextlinesandnotexceedwidthparameters]
     `,
       {},
       undefined,
@@ -231,8 +242,7 @@ mindmap
     a second line 😎\`]
       id2[\`The dog in **the** hog... a *very long text* about it
 Word!\`]
-`,
-        { titleTopMargin: 0 }
+`
       );
     });
   });

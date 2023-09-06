@@ -220,7 +220,7 @@ export const drawC4ShapeArray = function (currentBounds, diagram, c4ShapeArray, 
     let c4ShapeTypeConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
     c4ShapeTypeConf.fontSize = c4ShapeTypeConf.fontSize - 2;
     c4Shape.typeC4Shape.width = calculateTextWidth(
-      '<<' + c4Shape.typeC4Shape.text + '>>',
+      '«' + c4Shape.typeC4Shape.text + '»',
       c4ShapeTypeConf
     );
     c4Shape.typeC4Shape.height = c4ShapeTypeConf.fontSize + 2;

@@ -30,11 +30,13 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <block>\s+                      /* skip whitespace in block */
 <block>\b((?:PK)|(?:FK)|(?:UK))\b      return 'ATTRIBUTE_KEY'
 <block>(.*?)[~](.*?)*[~]        return 'ATTRIBUTE_WORD';
-<block>[A-Za-z_][A-Za-z0-9\-_\[\]\(\)]*  return 'ATTRIBUTE_WORD'
+<block>[\*A-Za-z_][A-Za-z0-9\-_\[\]\(\)]*  return 'ATTRIBUTE_WORD'
 <block>\"[^"]*\"                return 'COMMENT';
 <block>[\n]+                    /* nothing */
 <block>"}"                      { this.popState(); return 'BLOCK_STOP'; }
 <block>.                        return yytext[0];
+"["                             return 'SQS';
+"]"                             return 'SQE';
 
 "one or zero"                   return 'ZERO_OR_ONE';
 "one or more"                   return 'ONE_OR_MORE';
@@ -57,13 +59,14 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 o\|                             return 'ZERO_OR_ONE';
 o\{                             return 'ZERO_OR_MORE';
 \|\{                            return 'ONE_OR_MORE';
+\s*u                            return 'MD_PARENT';
 \.\.                            return 'NON_IDENTIFYING';
 \-\-                            return 'IDENTIFYING';
 "to"                            return 'IDENTIFYING';
 "optionally to"                 return 'NON_IDENTIFYING';
 \.\-                            return 'NON_IDENTIFYING';
 \-\.                            return 'NON_IDENTIFYING';
-[A-Za-z][A-Za-z0-9\-_]*         return 'ALPHANUM';
+[A-Za-z_][A-Za-z0-9\-_]*        return 'ALPHANUM';
 .                               return yytext[0];
 <<EOF>>                         return 'EOF';
 
@@ -101,17 +104,21 @@ statement
           yy.addEntity($1);
           yy.addEntity($3);
           yy.addRelationship($1, $5, $3, $2);
-          /*console.log($1 + $2 + $3 + ':' + $5);*/
       }
     | entityName BLOCK_START attributes BLOCK_STOP
       {
-          /* console.log('detected block'); */
           yy.addEntity($1);
           yy.addAttributes($1, $3);
-          /* console.log('handled block'); */
       }
     | entityName BLOCK_START BLOCK_STOP { yy.addEntity($1); }
     | entityName { yy.addEntity($1); }
+    | entityName SQS entityName SQE BLOCK_START attributes BLOCK_STOP
+      {
+          yy.addEntity($1, $3);
+          yy.addAttributes($1, $6);
+      }
+    | entityName SQS entityName SQE BLOCK_START BLOCK_STOP { yy.addEntity($1, $3); }
+    | entityName SQS entityName SQE { yy.addEntity($1, $3); }
     | title title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
@@ -170,6 +177,7 @@ cardinality
     | 'ZERO_OR_MORE'                 { $$ = yy.Cardinality.ZERO_OR_MORE; }
     | 'ONE_OR_MORE'                  { $$ = yy.Cardinality.ONE_OR_MORE; }
     | 'ONLY_ONE'                     { $$ = yy.Cardinality.ONLY_ONE; }
+    | 'MD_PARENT'                     { $$ = yy.Cardinality.MD_PARENT; }
     ;
 
 relType

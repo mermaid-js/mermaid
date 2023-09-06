@@ -23,13 +23,14 @@ import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
 import getStyles from './styles.js';
 import theme from './themes/index.js';
-import utils, { directiveSanitizer } from './utils.js';
+import utils from './utils.js';
 import DOMPurify from 'dompurify';
-import { MermaidConfig } from './config.type.js';
+import type { MermaidConfig } from './config.type.js';
 import { evaluate } from './diagrams/common/common.js';
 import isEmpty from 'lodash-es/isEmpty.js';
 import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
 import { parseDirective } from './directiveUtils.js';
+import { extractFrontMatter } from './diagram-api/frontmatter.js';
 
 // diagram names that support classDef statements
 const CLASSDEF_DIAGRAMS = [
@@ -78,7 +79,6 @@ export interface ParseOptions {
 }
 
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
-// @ts-ignore Could replicate the type definition in d3. This also makes it possible to use the untyped info from the js diagram files.
 export type D3Element = any;
 
 export interface RenderResult {
@@ -109,8 +109,7 @@ export interface RenderResult {
 async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean> {
   addDiagrams();
   try {
-    const diagram = await getDiagramFromText(text);
-    diagram.parse();
+    await getDiagramFromText(text);
   } catch (error) {
     if (parseOptions?.suppressErrors) {
       return false;
@@ -154,13 +153,7 @@ export const encodeEntities = function (text: string): string {
  * @returns
  */
 export const decodeEntities = function (text: string): string {
-  let txt = text;
-
-  txt = txt.replace(/ﬂ°°/g, '&#');
-  txt = txt.replace(/ﬂ°/g, '&');
-  txt = txt.replace(/¶ß/g, ';');
-
-  return txt;
+  return text.replace(/ﬂ°°/g, '&#').replace(/ﬂ°/g, '&').replace(/¶ß/g, ';');
 };
 
 // append !important; to each cssClass followed by a final !important, all enclosed in { }
@@ -269,7 +262,10 @@ export const cleanUpSvgCode = (
 
   // Replace marker-end urls with just the # anchor (remove the preceding part of the URL)
   if (!useArrowMarkerUrls && !inSandboxMode) {
-    cleanedUpSvg = cleanedUpSvg.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#');
+    cleanedUpSvg = cleanedUpSvg.replace(
+      /marker-end="url\([\d+./:=?A-Za-z-]*?#/g,
+      'marker-end="url(#'
+    );
   }
 
   cleanedUpSvg = decodeEntities(cleanedUpSvg);
@@ -289,7 +285,9 @@ export const cleanUpSvgCode = (
  * TODO replace btoa(). Replace with  buf.toString('base64')?
  */
 export const putIntoIFrame = (svgCode = '', svgElement?: D3Element): string => {
-  const height = svgElement ? svgElement.viewBox.baseVal.height + 'px' : IFRAME_HEIGHT;
+  const height = svgElement?.viewBox?.baseVal?.height
+    ? svgElement.viewBox.baseVal.height + 'px'
+    : IFRAME_HEIGHT;
   const base64encodedSrc = btoa('<body style="' + IFRAME_BODY_STYLE + '">' + svgCode + '</body>');
   return `<iframe style="width:${IFRAME_WIDTH};height:${height};${IFRAME_STYLES}" src="data:text/html;base64,${base64encodedSrc}" sandbox="${IFRAME_SANDBOX_OPTS}">
   ${IFRAME_NOT_SUPPORTED_MSG}
@@ -388,10 +386,14 @@ const render = async function (
 
   configApi.reset();
 
-  // Add Directives. Must do this before getting the config and before creating the diagram.
+  // We need to add the directives before creating the diagram.
+  // So extractFrontMatter is called twice. Once here and once in the diagram parser.
+  // This can be fixed in a future refactor.
+  extractFrontMatter(text, {}, configApi.addDirective);
+
+  // Add Directives.
   const graphInit = utils.detectInit(text);
   if (graphInit) {
-    directiveSanitizer(graphInit);
     configApi.addDirective(graphInit);
   }
 
@@ -482,7 +484,7 @@ const render = async function (
 
   // Get the temporary div element containing the svg
   const element = root.select(enclosingDivID_selector).node();
-  const graphType = diag.type;
+  const diagramType = diag.type;
 
   // -------------------------------------------------------------------------------
   // Create and insert the styles (user styles, theme styles, config styles)
@@ -490,17 +492,11 @@ const render = async function (
   // Insert an element into svg. This is where we put the styles
   const svg = element.firstChild;
   const firstChild = svg.firstChild;
-  const diagramClassDefs = CLASSDEF_DIAGRAMS.includes(graphType)
+  const diagramClassDefs = CLASSDEF_DIAGRAMS.includes(diagramType)
     ? diag.renderer.getClasses(text, diag)
     : {};
 
-  const rules = createUserStyles(
-    config,
-    graphType,
-    // @ts-ignore convert renderer to TS.
-    diagramClassDefs,
-    idSelector
-  );
+  const rules = createUserStyles(config, diagramType, diagramClassDefs, idSelector);
 
   const style1 = document.createElement('style');
   style1.innerHTML = rules;
@@ -517,9 +513,9 @@ const render = async function (
 
   // This is the d3 node for the svg element
   const svgNode = root.select(`${enclosingDivID_selector} svg`);
-  const a11yTitle = diag.db.getAccTitle?.();
-  const a11yDescr = diag.db.getAccDescription?.();
-  addA11yInfo(graphType, svgNode, a11yTitle, a11yDescr);
+  const a11yTitle: string | undefined = diag.db.getAccTitle?.();
+  const a11yDescr: string | undefined = diag.db.getAccDescription?.();
+  addA11yInfo(diagramType, svgNode, a11yTitle, a11yDescr);
 
   // -------------------------------------------------------------------------------
   // Clean up SVG code
@@ -596,14 +592,18 @@ function initialize(options: MermaidConfig = {}) {
 /**
  * Add accessibility (a11y) information to the diagram.
  *
+ * @param diagramType - diagram type
+ * @param svgNode - d3 node to insert the a11y title and desc info
+ * @param a11yTitle - a11y title
+ * @param a11yDescr - a11y description
  */
 function addA11yInfo(
-  graphType: string,
+  diagramType: string,
   svgNode: D3Element,
-  a11yTitle: string | undefined,
-  a11yDescr: string | undefined
-) {
-  setA11yDiagramInfo(svgNode, graphType);
+  a11yTitle?: string,
+  a11yDescr?: string
+): void {
+  setA11yDiagramInfo(svgNode, diagramType);
   addSVGa11yTitleDescription(svgNode, a11yTitle, a11yDescr, svgNode.attr('id'));
 }
 

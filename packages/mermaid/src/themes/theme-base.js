@@ -1,4 +1,4 @@
-import { darken, lighten, adjust, invert } from 'khroma';
+import { darken, lighten, adjust, invert, isDark, toRgba } from 'khroma';
 import { mkBorder } from './theme-helpers.js';
 import {
   oldAttributeBackgroundColorEven,
@@ -219,6 +219,31 @@ class Theme {
     this.pieOuterStrokeWidth = this.pieOuterStrokeWidth || '2px';
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
+
+    /* quadrant-graph */
+    this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
+    this.quadrant2Fill = this.quadrant2Fill || adjust(this.primaryColor, { r: 5, g: 5, b: 5 });
+    this.quadrant3Fill = this.quadrant3Fill || adjust(this.primaryColor, { r: 10, g: 10, b: 10 });
+    this.quadrant4Fill = this.quadrant4Fill || adjust(this.primaryColor, { r: 15, g: 15, b: 15 });
+    this.quadrant1TextFill = this.quadrant1TextFill || this.primaryTextColor;
+    this.quadrant2TextFill =
+      this.quadrant2TextFill || adjust(this.primaryTextColor, { r: -5, g: -5, b: -5 });
+    this.quadrant3TextFill =
+      this.quadrant3TextFill || adjust(this.primaryTextColor, { r: -10, g: -10, b: -10 });
+    this.quadrant4TextFill =
+      this.quadrant4TextFill || adjust(this.primaryTextColor, { r: -15, g: -15, b: -15 });
+    this.quadrantPointFill =
+      this.quadrantPointFill || isDark(this.quadrant1Fill)
+        ? lighten(this.quadrant1Fill)
+        : darken(this.quadrant1Fill);
+    this.quadrantPointTextFill = this.quadrantPointTextFill || this.primaryTextColor;
+    this.quadrantXAxisTextFill = this.quadrantXAxisTextFill || this.primaryTextColor;
+    this.quadrantYAxisTextFill = this.quadrantYAxisTextFill || this.primaryTextColor;
+    this.quadrantInternalBorderStrokeFill =
+      this.quadrantInternalBorderStrokeFill || this.primaryBorderColor;
+    this.quadrantExternalBorderStrokeFill =
+      this.quadrantExternalBorderStrokeFill || this.primaryBorderColor;
+    this.quadrantTitleFill = this.quadrantTitleFill || this.primaryTextColor;
 
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;

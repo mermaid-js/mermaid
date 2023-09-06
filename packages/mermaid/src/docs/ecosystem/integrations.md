@@ -1,5 +1,19 @@
 # Integrations
 
+## Recommendations
+
+### File Extension
+
+Applications that support mermaid files [SHOULD](https://datatracker.ietf.org/doc/html/rfc2119#section-3) use `.mermaid` or `.mmd` file extensions.
+
+### MIME Type
+
+The recommended [MIME type](https://www.iana.org/assignments/media-types/media-types.xhtml) for mermaid media is `text/vnd.mermaid`.
+
+[IANA](https://www.iana.org/) recognition pending.
+
+---
+
 The following list is a compilation of different integrations and plugins that allow the rendering of mermaid definitions within other applications.
 
 They also serve as proof of concept, for the variety of things that can be built with mermaid.
@@ -10,6 +24,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Using code blocks](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) (**Native support**)
   - [GitHub action: Compile mermaid to image](https://github.com/neenjaw/compile-mermaid-markdown-action)
   - [svg-generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
+  - [GitHub Writer](https://github.com/ckeditor/github-writer)
 - [GitLab](https://docs.gitlab.com/ee/user/markdown.html#diagrams-and-flowcharts) (**Native support**)
 - [Gitea](https://gitea.io) (**Native support**)
 - [Azure Devops](https://docs.microsoft.com/en-us/azure/devops/project/wiki/wiki-markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) (**Native support**)
@@ -28,6 +43,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Mermaid plugin for GitBook](https://github.com/wwformat/gitbook-plugin-mermaid-pdf)
 - [LiveBook](https://livebook.dev) (**Native support**)
 - [Atlassian Products](https://www.atlassian.com)
+  - [Mermaid Live Editor for Confluence Cloud](https://marketplace.atlassian.com/apps/1231571/mermaid-live-editor-for-confluence?hosting=cloud&tab=overview)
   - [Mermaid Plugin for Confluence](https://marketplace.atlassian.com/apps/1214124/mermaid-plugin-for-confluence?hosting=server&tab=overview)
   - [CloudScript.io Addon](https://marketplace.atlassian.com/apps/1219878/cloudscript-io-mermaid-addon?hosting=cloud&tab=overview)
   - [Auto convert diagrams in Jira](https://github.com/coddingtonbear/jirafs-mermaid)
@@ -45,13 +61,15 @@ They also serve as proof of concept, for the variety of things that can be built
 
 ## Blogs
 
-- [Wordpress](https://wordpress.org)
+- [WordPress](https://wordpress.org)
   - [WordPress Markdown Editor](https://wordpress.org/plugins/wp-githuber-md)
   - [WP-ReliableMD](https://wordpress.org/plugins/wp-reliablemd/)
 - [Hexo](https://hexo.io)
   - [hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams)
   - [hexo-tag-mermaid](https://github.com/JameChou/hexo-tag-mermaid)
   - [hexo-mermaid-diagrams](https://github.com/mslxl/hexo-mermaid-diagrams)
+- [Nextra](https://nextra.site/)
+  - [Mermaid](https://nextra.site/docs/guide/mermaid)
 
 ## CMS
 
@@ -61,7 +79,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Plugin for Mermaid.js](https://github.com/eFrane/vuepress-plugin-mermaidjs)
 - [Grav CMS](https://getgrav.org/)
   - [Mermaid Diagrams](https://github.com/DanielFlaum/grav-plugin-mermaid-diagrams)
-  - [Gitlab Markdown Adapter](https://github.com/Goutte/grav-plugin-gitlab-markdown-adapter)
+  - [GitLab Markdown Adapter](https://github.com/Goutte/grav-plugin-gitlab-markdown-adapter)
 
 ## Communication
 
@@ -81,7 +99,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Flex Diagrams Extension](https://www.mediawiki.org/wiki/Extension:Flex_Diagrams)
 - [Semantic Media Wiki](https://semantic-mediawiki.org)
   - [Mermaid Plugin](https://github.com/SemanticMediaWiki/Mermaid)
-- [FosWiki](https://foswiki.org)
+- [Foswiki](https://foswiki.org)
   - [Mermaid Plugin](https://foswiki.org/Extensions/MermaidPlugin)
 - [DokuWiki](https://dokuwiki.org)
   - [Mermaid Plugin](https://www.dokuwiki.org/plugin:mermaid)
@@ -136,14 +154,22 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Named block =Diagram](https://github.com/zag/podlite/tree/main/packages/podlite-diagrams)
 - [GNU Nano](https://www.nano-editor.org/)
   - [Nano Mermaid](https://github.com/Yash-Singh1/nano-mermaid)
+- [CKEditor](https://github.com/ckeditor/ckeditor5)
+  - [CKEditor 5 Mermaid plugin](https://github.com/ckeditor/ckeditor5-mermaid)
+- [Standard Notes](https://standardnotes.com/)
+  - [sn-mermaid](https://github.com/nienow/sn-mermaid)
 
 ## Document Generation
 
 - [Sphinx](https://www.sphinx-doc.org/en/master/)
   - [sphinxcontrib-mermaid](https://github.com/mgaitan/sphinxcontrib-mermaid)
-- [remark.js](https://remark.js.org/)
-  - [remark-mermaid](https://github.com/temando/remark-mermaid)
-- [jSDoc](https://jsdoc.app/)
+- [remark](https://remark.js.org/)
+  - [remark-mermaidjs](https://github.com/remcohaszing/remark-mermaidjs)
+- [rehype](https://github.com/rehypejs/rehype)
+  - [rehype-mermaidjs](https://github.com/remcohaszing/rehype-mermaidjs)
+- [Gatsby](https://www.gatsbyjs.com/)
+  - [gatsby-remark-mermaid](https://github.com/remcohaszing/gatsby-remark-mermaid)
+- [JSDoc](https://jsdoc.app/)
   - [jsdoc-mermaid](https://github.com/Jellyvision/jsdoc-mermaid)
 - [MkDocs](https://www.mkdocs.org)
   - [mkdocs-mermaid2-plugin](https://github.com/fralau/mkdocs-mermaid2-plugin)
@@ -156,6 +182,7 @@ They also serve as proof of concept, for the variety of things that can be built
 - [mdbook](https://rust-lang.github.io/mdBook/index.html)
   - [mdbook-mermaid](https://github.com/badboy/mdbook-mermaid)
 - [Quarto](https://quarto.org/)
+- [Typora](https://typora.io/) ([Native support](https://support.typora.io/Draw-Diagrams-With-Markdown/#mermaid))
 
 ## Browser Extensions
 
@@ -183,6 +210,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [bisheng-plugin-mermaid](https://github.com/yct21/bisheng-plugin-mermaid)
 - [Reveal CK](https://github.com/jedcn/reveal-ck)
   - [reveal-ck-mermaid-plugin](https://github.com/tmtm/reveal-ck-mermaid-plugin)
+- [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
 - [ExDoc](https://github.com/elixir-lang/ex_doc)
   - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)

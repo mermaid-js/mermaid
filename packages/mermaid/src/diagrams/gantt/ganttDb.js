@@ -1,8 +1,8 @@
 import { sanitizeUrl } from '@braintree/sanitize-url';
-import dayjs from 'dayjs/esm/index.js';
-import dayjsIsoWeek from 'dayjs/esm/plugin/isoWeek/index.js';
-import dayjsCustomParseFormat from 'dayjs/esm/plugin/customParseFormat/index.js';
-import dayjsAdvancedFormat from 'dayjs/esm/plugin/advancedFormat/index.js';
+import dayjs from 'dayjs';
+import dayjsIsoWeek from 'dayjs/plugin/isoWeek.js';
+import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat.js';
+import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
 import { log } from '../../logger.js';
 import * as configApi from '../../config.js';
 import utils from '../../utils.js';
@@ -16,7 +16,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 
 dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);
@@ -37,6 +37,7 @@ const tags = ['active', 'done', 'crit', 'milestone'];
 let funs = [];
 let inclusiveEndDates = false;
 let topAxis = false;
+let weekday = 'sunday';
 
 // The serial order of the task in the script
 let lastOrder = 0;
@@ -66,6 +67,7 @@ export const clear = function () {
   lastOrder = 0;
   links = {};
   commonClear();
+  weekday = 'sunday';
 };
 
 export const setAxisFormat = function (txt) {
@@ -179,6 +181,14 @@ export const isInvalidDate = function (date, dateFormat, excludes, includes) {
   return excludes.includes(date.format(dateFormat.trim()));
 };
 
+export const setWeekday = function (txt) {
+  weekday = txt;
+};
+
+export const getWeekday = function () {
+  return weekday;
+};
+
 /**
  * TODO: fully document what this function does and what types it accepts
  *
@@ -287,7 +297,17 @@ const getStartDate = function (prevTime, dateFormat, str) {
     log.debug('Invalid date:' + str);
     log.debug('With date format:' + dateFormat.trim());
     const d = new Date(str);
-    if (d === undefined || isNaN(d.getTime())) {
+    if (
+      d === undefined ||
+      isNaN(d.getTime()) ||
+      // WebKit browsers can mis-parse invalid dates to be ridiculously
+      // huge numbers, e.g. new Date('202304') gets parsed as January 1, 202304.
+      // This can cause virtually infinite loops while rendering, so for the
+      // purposes of Gantt charts we'll just treat any date beyond 10,000 AD/BC as
+      // invalid.
+      d.getFullYear() < -10000 ||
+      d.getFullYear() > 10000
+    ) {
       throw new Error('Invalid date:' + str);
     }
     return d;
@@ -749,6 +769,8 @@ export default {
   bindFunctions,
   parseDuration,
   isInvalidDate,
+  setWeekday,
+  getWeekday,
 };
 
 /**

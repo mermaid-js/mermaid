@@ -1,7 +1,7 @@
 # Announcements
 
-## [Automatic text wrapping in flowcharts is here!](https://www.mermaidchart.com/blog/posts/automatic-text-wrapping-in-flowcharts-is-here)
+## [Special cases broke Microsoft Zune and can ruin your code base too](https://www.mermaidchart.com/blog/posts/special-cases-broke-microsoft-zune-and-can-ruin-your-code-base-too/)
 
-3 April 2023 · 3 mins
+23 August 2023 · 15 mins
 
-Markdown Strings reduce the hassle # Starting from v10.
+Read about the pitfalls of special cases in programming, illustrating how they can lead to complexity, diminish readability, and create maintenance challenges.

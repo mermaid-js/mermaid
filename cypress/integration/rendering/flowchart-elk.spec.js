@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
 describe.skip('Flowchart ELK', () => {
   it('1-elk: should render a simple flowchart', () => {
@@ -681,8 +681,22 @@ title: Simple flowchart
 flowchart-elk TD
 A --> B
 `,
-      { titleTopMargin: 0 }
+      { flowchart: { titleTopMargin: 0 } }
     );
+  });
+  it('elk: should include classes on the edges', () => {
+    renderGraph(
+      `flowchart-elk TD
+      A --> B --> C --> D
+      `,
+      {}
+    );
+    cy.get('svg').should((svg) => {
+      const edges = svg.querySelectorAll('.edges > path');
+      edges.forEach((edge) => {
+        expect(edge).to.have.class('flowchart-link');
+      });
+    });
   });
   describe('Markdown strings flowchart-elk (#4220)', () => {
     describe('html labels', () => {
@@ -696,7 +710,7 @@ flowchart-elk LR
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
     classDef someclass fill:#f96
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('With formatting in a node', () => {
@@ -712,7 +726,7 @@ flowchart-elk LR
   b --> d(The dog in the hog)
   c --> d
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('New line in node and formatted edge label', () => {
@@ -722,7 +736,7 @@ flowchart-elk LR
 b("\`The dog in **the** hog.(1)
 NL\`") --"\`1o **bold**\`"--> c
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('Wrapping long text with a new line', () => {
@@ -735,7 +749,7 @@ Word!
 Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. \`) --> c
 
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('Sub graphs and markdown strings', () => {
@@ -752,7 +766,7 @@ subgraph "\`**Two**\`"
 end
 
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
     });
@@ -768,7 +782,7 @@ flowchart-elk LR
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
     classDef someclass fill:#f96
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('With formatting in a node', () => {
@@ -784,7 +798,7 @@ flowchart-elk LR
   b --> d(The dog in the hog)
   c --> d
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('New line in node and formatted edge label', () => {
@@ -794,7 +808,7 @@ flowchart-elk LR
 b("\`The dog in **the** hog.(1)
 NL\`") --"\`1o **bold**\`"--> c
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('Wrapping long text with a new line', () => {
@@ -807,7 +821,7 @@ Word!
 Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. \`") --> c
 
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('Sub graphs and markdown strings', () => {
@@ -824,7 +838,7 @@ subgraph "\`**Two**\`"
 end
 
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
     });

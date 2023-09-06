@@ -1,4 +1,4 @@
-import dayjs from 'dayjs/esm/index.js';
+import dayjs from 'dayjs';
 import { log } from '../../logger.js';
 import {
   select,
@@ -10,10 +10,18 @@ import {
   axisBottom,
   axisTop,
   timeFormat,
+  timeMillisecond,
+  timeSecond,
   timeMinute,
   timeHour,
   timeDay,
-  timeWeek,
+  timeMonday,
+  timeTuesday,
+  timeWednesday,
+  timeThursday,
+  timeFriday,
+  timeSaturday,
+  timeSunday,
   timeMonth,
 } from 'd3';
 import common from '../common/common.js';
@@ -22,6 +30,20 @@ import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 export const setConf = function () {
   log.debug('Something is calling, setConf, remove the call');
+};
+
+/**
+ * This will map any day of the week that can be set in the `weekday` option to
+ * the corresponding d3-time function that is used to calculate the ticks.
+ */
+const mapWeekdayToTimeFunction = {
+  monday: timeMonday,
+  tuesday: timeTuesday,
+  wednesday: timeWednesday,
+  thursday: timeThursday,
+  friday: timeFriday,
+  saturday: timeSaturday,
+  sunday: timeSunday,
 };
 
 /**
@@ -59,8 +81,6 @@ let w;
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().gantt;
 
-  // diagObj.db.clear();
-  // parser.parse(text);
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
@@ -555,7 +575,7 @@ export const draw = function (text, id, version, diagObj) {
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
       .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
 
-    const reTickInterval = /^([1-9]\d*)(minute|hour|day|week|month)$/;
+    const reTickInterval = /^([1-9]\d*)(millisecond|second|minute|hour|day|week|month)$/;
     const resultTickInterval = reTickInterval.exec(
       diagObj.db.getTickInterval() || conf.tickInterval
     );
@@ -563,7 +583,15 @@ export const draw = function (text, id, version, diagObj) {
     if (resultTickInterval !== null) {
       const every = resultTickInterval[1];
       const interval = resultTickInterval[2];
+      const weekday = diagObj.db.getWeekday() || conf.weekday;
+
       switch (interval) {
+        case 'millisecond':
+          bottomXAxis.ticks(timeMillisecond.every(every));
+          break;
+        case 'second':
+          bottomXAxis.ticks(timeSecond.every(every));
+          break;
         case 'minute':
           bottomXAxis.ticks(timeMinute.every(every));
           break;
@@ -574,7 +602,7 @@ export const draw = function (text, id, version, diagObj) {
           bottomXAxis.ticks(timeDay.every(every));
           break;
         case 'week':
-          bottomXAxis.ticks(timeWeek.every(every));
+          bottomXAxis.ticks(mapWeekdayToTimeFunction[weekday].every(every));
           break;
         case 'month':
           bottomXAxis.ticks(timeMonth.every(every));
@@ -602,7 +630,15 @@ export const draw = function (text, id, version, diagObj) {
       if (resultTickInterval !== null) {
         const every = resultTickInterval[1];
         const interval = resultTickInterval[2];
+        const weekday = diagObj.db.getWeekday() || conf.weekday;
+
         switch (interval) {
+          case 'millisecond':
+            topXAxis.ticks(timeMillisecond.every(every));
+            break;
+          case 'second':
+            topXAxis.ticks(timeSecond.every(every));
+            break;
           case 'minute':
             topXAxis.ticks(timeMinute.every(every));
             break;
@@ -613,7 +649,7 @@ export const draw = function (text, id, version, diagObj) {
             topXAxis.ticks(timeDay.every(every));
             break;
           case 'week':
-            topXAxis.ticks(timeWeek.every(every));
+            topXAxis.ticks(mapWeekdayToTimeFunction[weekday].every(every));
             break;
           case 'month':
             topXAxis.ticks(timeMonth.every(every));

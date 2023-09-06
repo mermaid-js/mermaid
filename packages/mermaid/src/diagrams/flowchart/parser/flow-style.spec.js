@@ -26,15 +26,6 @@ describe('[Style] when parsing', () => {
     expect(vert['Q'].styles[0]).toBe('background:#fff');
   });
 
-  // log.debug(flow.parser.parse('graph TD;style Q background:#fff;'));
-  it('should handle styles for edges', function () {
-    const res = flow.parser.parse('graph TD;a-->b;\nstyle #0 stroke: #f66;');
-
-    const edges = flow.parser.yy.getEdges();
-
-    expect(edges.length).toBe(1);
-  });
-
   it('should handle multiple styles for a vortex', function () {
     const res = flow.parser.parse('graph TD;style R background:#fff,border:1px solid red;');
 
@@ -111,6 +102,22 @@ describe('[Style] when parsing', () => {
     expect(classes['exClass'].styles.length).toBe(2);
     expect(classes['exClass'].styles[0]).toBe('background:#bbb');
     expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
+  });
+
+  it('should be possible to declare multiple classes', function () {
+    const res = flow.parser.parse(
+      'graph TD;classDef firstClass,secondClass background:#bbb,border:1px solid red;'
+    );
+
+    const classes = flow.parser.yy.getClasses();
+
+    expect(classes['firstClass'].styles.length).toBe(2);
+    expect(classes['firstClass'].styles[0]).toBe('background:#bbb');
+    expect(classes['firstClass'].styles[1]).toBe('border:1px solid red');
+
+    expect(classes['secondClass'].styles.length).toBe(2);
+    expect(classes['secondClass'].styles[0]).toBe('background:#bbb');
+    expect(classes['secondClass'].styles[1]).toBe('border:1px solid red');
   });
 
   it('should be possible to declare a class with a dot in the style', function () {
@@ -321,5 +328,21 @@ describe('[Style] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges[0].type).toBe('arrow_point');
+  });
+
+  it('should handle multiple vertices with style', function () {
+    const res = flow.parser.parse(`
+    graph TD
+      classDef C1 stroke-dasharray:4
+      classDef C2 stroke-dasharray:6
+      A & B:::C1 & D:::C1 --> E:::C2
+    `);
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert['A'].classes.length).toBe(0);
+    expect(vert['B'].classes[0]).toBe('C1');
+    expect(vert['D'].classes[0]).toBe('C1');
+    expect(vert['E'].classes[0]).toBe('C2');
   });
 });

@@ -1,5 +1,5 @@
 export default {
-  '!(docs/**/*)*.{ts,js,json,html,md,mts}': [
+  '!(docs/**/*)*.{ts,js,html,md,mts}': [
     'eslint --cache --cache-strategy content --fix',
     // don't cache prettier yet, since we use `prettier-plugin-jsdoc`,
     // and prettier doesn't invalidate cache on plugin updates"

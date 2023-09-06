@@ -172,7 +172,6 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
   // add class group
   const g = elem.append('g').attr('id', diagObj.db.lookUpDomId(id)).attr('class', 'classGroup');
 
-  // add title
   let title;
   if (classDef.link) {
     title = g
@@ -209,47 +208,56 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
   }
 
   const titleHeight = title.node().getBBox().height;
+  let membersLine;
+  let membersBox;
+  let methodsLine;
 
-  const membersLine = g
-    .append('line') // text label for the x axis
-    .attr('x1', 0)
-    .attr('y1', conf.padding + titleHeight + conf.dividerMargin / 2)
-    .attr('y2', conf.padding + titleHeight + conf.dividerMargin / 2);
+  // don't draw box if no members
+  if (classDef.members.length > 0) {
+    membersLine = g
+      .append('line') // text label for the x axis
+      .attr('x1', 0)
+      .attr('y1', conf.padding + titleHeight + conf.dividerMargin / 2)
+      .attr('y2', conf.padding + titleHeight + conf.dividerMargin / 2);
 
-  const members = g
-    .append('text') // text label for the x axis
-    .attr('x', conf.padding)
-    .attr('y', titleHeight + conf.dividerMargin + conf.textHeight)
-    .attr('fill', 'white')
-    .attr('class', 'classText');
+    const members = g
+      .append('text') // text label for the x axis
+      .attr('x', conf.padding)
+      .attr('y', titleHeight + conf.dividerMargin + conf.textHeight)
+      .attr('fill', 'white')
+      .attr('class', 'classText');
 
-  isFirst = true;
-  classDef.members.forEach(function (member) {
-    addTspan(members, member, isFirst, conf);
-    isFirst = false;
-  });
+    isFirst = true;
+    classDef.members.forEach(function (member) {
+      addTspan(members, member, isFirst, conf);
+      isFirst = false;
+    });
 
-  const membersBox = members.node().getBBox();
+    membersBox = members.node().getBBox();
+  }
 
-  const methodsLine = g
-    .append('line') // text label for the x axis
-    .attr('x1', 0)
-    .attr('y1', conf.padding + titleHeight + conf.dividerMargin + membersBox.height)
-    .attr('y2', conf.padding + titleHeight + conf.dividerMargin + membersBox.height);
+  // don't draw box if no methods
+  if (classDef.methods.length > 0) {
+    methodsLine = g
+      .append('line') // text label for the x axis
+      .attr('x1', 0)
+      .attr('y1', conf.padding + titleHeight + conf.dividerMargin + membersBox.height)
+      .attr('y2', conf.padding + titleHeight + conf.dividerMargin + membersBox.height);
 
-  const methods = g
-    .append('text') // text label for the x axis
-    .attr('x', conf.padding)
-    .attr('y', titleHeight + 2 * conf.dividerMargin + membersBox.height + conf.textHeight)
-    .attr('fill', 'white')
-    .attr('class', 'classText');
+    const methods = g
+      .append('text') // text label for the x axis
+      .attr('x', conf.padding)
+      .attr('y', titleHeight + 2 * conf.dividerMargin + membersBox.height + conf.textHeight)
+      .attr('fill', 'white')
+      .attr('class', 'classText');
 
-  isFirst = true;
+    isFirst = true;
 
-  classDef.methods.forEach(function (method) {
-    addTspan(methods, method, isFirst, conf);
-    isFirst = false;
-  });
+    classDef.methods.forEach(function (method) {
+      addTspan(methods, method, isFirst, conf);
+      isFirst = false;
+    });
+  }
 
   const classBox = g.node().getBBox();
   var cssClassStr = ' ';
@@ -278,8 +286,12 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
     title.insert('title').text(classDef.tooltip);
   }
 
-  membersLine.attr('x2', rectWidth);
-  methodsLine.attr('x2', rectWidth);
+  if (membersLine) {
+    membersLine.attr('x2', rectWidth);
+  }
+  if (methodsLine) {
+    methodsLine.attr('x2', rectWidth);
+  }
 
   classInfo.width = rectWidth;
   classInfo.height = classBox.height + conf.padding + 0.5 * conf.dividerMargin;
@@ -291,7 +303,7 @@ export const getClassTitleString = function (classDef) {
   let classTitleString = classDef.id;
 
   if (classDef.type) {
-    classTitleString += '<' + classDef.type + '>';
+    classTitleString += '<' + parseGenericTypes(classDef.type) + '>';
   }
 
   return classTitleString;
@@ -360,146 +372,19 @@ export const drawNote = function (elem, note, conf, diagObj) {
   return noteInfo;
 };
 
-export const parseMember = function (text) {
-  // Note: these two regular expressions don't parse the official UML syntax for attributes
-  // and methods. They parse a Java-style syntax of the form
-  // "String name" (for attributes) and "String name(int x)" for methods
-  const fieldRegEx = /^([#+~-])?(\w+)(~\w+~|\[])?\s+(\w+) *([$*])?$/;
-  const methodRegEx = /^([#+|~-])?(\w+) *\( *(.*)\) *([$*])? *(\w*[[\]|~]*\s*\w*~?)$/;
-
-  let fieldMatch = text.match(fieldRegEx);
-  let methodMatch = text.match(methodRegEx);
-
-  if (fieldMatch && !methodMatch) {
-    return buildFieldDisplay(fieldMatch);
-  } else if (methodMatch) {
-    return buildMethodDisplay(methodMatch);
-  } else {
-    return buildLegacyDisplay(text);
-  }
-};
-
-const buildFieldDisplay = function (parsedText) {
-  let cssStyle = '';
-  let displayText = '';
-
-  try {
-    let visibility = parsedText[1] ? parsedText[1].trim() : '';
-    let fieldType = parsedText[2] ? parsedText[2].trim() : '';
-    let genericType = parsedText[3] ? parseGenericTypes(parsedText[3].trim()) : '';
-    let fieldName = parsedText[4] ? parsedText[4].trim() : '';
-    let classifier = parsedText[5] ? parsedText[5].trim() : '';
-
-    displayText = visibility + fieldType + genericType + ' ' + fieldName;
-    cssStyle = parseClassifier(classifier);
-  } catch (err) {
-    displayText = parsedText;
-  }
-
-  return {
-    displayText: displayText,
-    cssStyle: cssStyle,
-  };
-};
-
-const buildMethodDisplay = function (parsedText) {
-  let cssStyle = '';
-  let displayText = '';
-
-  try {
-    let visibility = parsedText[1] ? parsedText[1].trim() : '';
-    let methodName = parsedText[2] ? parsedText[2].trim() : '';
-    let parameters = parsedText[3] ? parseGenericTypes(parsedText[3].trim()) : '';
-    let classifier = parsedText[4] ? parsedText[4].trim() : '';
-    let returnType = parsedText[5] ? ' : ' + parseGenericTypes(parsedText[5]).trim() : '';
-
-    displayText = visibility + methodName + '(' + parameters + ')' + returnType;
-    cssStyle = parseClassifier(classifier);
-  } catch (err) {
-    displayText = parsedText;
-  }
-
-  return {
-    displayText: displayText,
-    cssStyle: cssStyle,
-  };
-};
-
-const buildLegacyDisplay = function (text) {
-  // if for some reason we don't have any match, use old format to parse text
-  let displayText = '';
-  let cssStyle = '';
-  let returnType = '';
-
-  let visibility = '';
-  let firstChar = text.substring(0, 1);
-  let lastChar = text.substring(text.length - 1, text.length);
-
-  if (firstChar.match(/[#+~-]/)) {
-    visibility = firstChar;
-  }
-
-  let noClassifierRe = /[\s\w)~]/;
-  if (!lastChar.match(noClassifierRe)) {
-    cssStyle = parseClassifier(lastChar);
-  }
-
-  let startIndex = visibility === '' ? 0 : 1;
-  let endIndex = cssStyle === '' ? text.length : text.length - 1;
-  text = text.substring(startIndex, endIndex);
-
-  let methodStart = text.indexOf('(');
-  let methodEnd = text.indexOf(')');
-
-  if (methodStart > 1 && methodEnd > methodStart && methodEnd <= text.length) {
-    let methodName = text.substring(0, methodStart).trim();
-
-    const parameters = text.substring(methodStart + 1, methodEnd);
-
-    displayText = visibility + methodName + '(' + parseGenericTypes(parameters.trim()) + ')';
-
-    if (methodEnd < text.length) {
-      // special case: classifier after the closing parenthesis
-      let potentialClassifier = text.substring(methodEnd + 1, methodEnd + 2);
-      if (cssStyle === '' && !potentialClassifier.match(noClassifierRe)) {
-        cssStyle = parseClassifier(potentialClassifier);
-        returnType = text.substring(methodEnd + 2).trim();
-      } else {
-        returnType = text.substring(methodEnd + 1).trim();
-      }
-
-      if (returnType !== '') {
-        if (returnType.charAt(0) === ':') {
-          returnType = returnType.substring(1).trim();
-        }
-        returnType = ' : ' + parseGenericTypes(returnType);
-        displayText += returnType;
-      }
-    }
-  } else {
-    // finally - if all else fails, just send the text back as written (other than parsing for generic types)
-    displayText = parseGenericTypes(text);
-  }
-
-  return {
-    displayText,
-    cssStyle,
-  };
-};
 /**
  * Adds a <tspan> for a member in a diagram
  *
  * @param {SVGElement} textEl The element to append to
- * @param {string} txt The member
+ * @param {string} member The member
  * @param {boolean} isFirst
  * @param {{ padding: string; textHeight: string }} conf The configuration for the member
  */
-const addTspan = function (textEl, txt, isFirst, conf) {
-  let member = parseMember(txt);
+const addTspan = function (textEl, member, isFirst, conf) {
+  const { displayText, cssStyle } = member.getDisplayDetails();
+  const tSpan = textEl.append('tspan').attr('x', conf.padding).text(displayText);
 
-  const tSpan = textEl.append('tspan').attr('x', conf.padding).text(member.displayText);
-
-  if (member.cssStyle !== '') {
+  if (cssStyle !== '') {
     tSpan.attr('style', member.cssStyle);
   }
 
@@ -508,27 +393,9 @@ const addTspan = function (textEl, txt, isFirst, conf) {
   }
 };
 
-/**
- * Gives the styles for a classifier
- *
- * @param {'+' | '-' | '#' | '~' | '*' | '$'} classifier The classifier string
- * @returns {string} Styling for the classifier
- */
-const parseClassifier = function (classifier) {
-  switch (classifier) {
-    case '*':
-      return 'font-style:italic;';
-    case '$':
-      return 'text-decoration:underline;';
-    default:
-      return '';
-  }
-};
-
 export default {
   getClassTitleString,
   drawClass,
   drawEdge,
   drawNote,
-  parseMember,
 };
