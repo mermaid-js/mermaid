@@ -1,10 +1,9 @@
 import type { ExternalDiagramDefinition } from 'mermaid';
 
 const id = 'zenuml';
-const regexp = /^\s*zenuml/;
 
 const detector = (txt: string) => {
-  return txt.match(regexp) !== null;
+  return /^\s*zenuml/.test(txt);
 };
 
 const loader = async () => {

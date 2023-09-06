@@ -1,5 +1,9 @@
 # Directives
 
+```warning
+Directives are deprecated from v<MERMAID_RELEASE_VERSION>. Please use the `config` key in frontmatter to pass configuration. See [Configuration](./configuration.md) for more details.
+```
+
 ## Directives
 
 Directives give a diagram author the capability to alter the appearance of a diagram before rendering by changing the applied configuration.
@@ -112,7 +116,7 @@ The following code snippet changes `theme` to `forest`:
 
 `%%{init: { "theme": "forest" } }%%`
 
-Possible theme values are: `default`,`base`, `dark`, `forest` and `neutral`.
+Possible theme values are: `default`, `base`, `dark`, `forest` and `neutral`.
 Default Value is `default`.
 
 Example:
@@ -231,7 +235,7 @@ Let us see an example:
 sequenceDiagram
 
 Alice->Bob: Hello Bob, how are you?
-Bob->Alice: Fine, how did you mother like the book I suggested? And did you catch the new book about alien invasion?
+Bob->Alice: Fine, how did your mother like the book I suggested? And did you catch the new book about alien invasion?
 Alice->Bob: Good.
 Bob->Alice: Cool
 ```
@@ -248,7 +252,7 @@ By applying that snippet to the diagram above, `wrap` will be enabled:
 %%{init: { "sequence": { "wrap": true, "width":300 } } }%%
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
-Bob->Alice: Fine, how did you mother like the book I suggested? And did you catch the new book about alien invasion?
+Bob->Alice: Fine, how did your mother like the book I suggested? And did you catch the new book about alien invasion?
 Alice->Bob: Good.
 Bob->Alice: Cool
 ```

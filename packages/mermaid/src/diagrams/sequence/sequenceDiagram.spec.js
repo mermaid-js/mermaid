@@ -104,6 +104,7 @@ describe('more than one sequence diagram', () => {
     expect(diagram1.db.getMessages()).toMatchInlineSnapshot(`
       [
         {
+          "activate": false,
           "from": "Alice",
           "message": "Hello Bob, how are you?",
           "to": "Bob",
@@ -111,6 +112,7 @@ describe('more than one sequence diagram', () => {
           "wrap": false,
         },
         {
+          "activate": false,
           "from": "Bob",
           "message": "I am good thanks!",
           "to": "Alice",
@@ -127,6 +129,7 @@ describe('more than one sequence diagram', () => {
     expect(diagram2.db.getMessages()).toMatchInlineSnapshot(`
       [
         {
+          "activate": false,
           "from": "Alice",
           "message": "Hello Bob, how are you?",
           "to": "Bob",
@@ -134,6 +137,7 @@ describe('more than one sequence diagram', () => {
           "wrap": false,
         },
         {
+          "activate": false,
           "from": "Bob",
           "message": "I am good thanks!",
           "to": "Alice",
@@ -152,6 +156,7 @@ describe('more than one sequence diagram', () => {
     expect(diagram3.db.getMessages()).toMatchInlineSnapshot(`
       [
         {
+          "activate": false,
           "from": "Alice",
           "message": "Hello John, how are you?",
           "to": "John",
@@ -159,6 +164,7 @@ describe('more than one sequence diagram', () => {
           "wrap": false,
         },
         {
+          "activate": false,
           "from": "John",
           "message": "I am good thanks!",
           "to": "Alice",
@@ -172,14 +178,11 @@ describe('more than one sequence diagram', () => {
 
 describe('when parsing a sequenceDiagram', function () {
   beforeEach(function () {
-    // diagram.db = sequenceDb;
-    // diagram.db.clear();
     diagram = new Diagram(`
 sequenceDiagram
 Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`);
-    diagram.db.clear();
   });
   it('should handle a sequenceDiagram definition', async function () {
     const str = `
@@ -551,6 +554,7 @@ deactivate Bob`;
 
     expect(messages.length).toBe(4);
     expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED);
+    expect(messages[0].activate).toBeTruthy();
     expect(messages[1].type).toBe(diagram.db.LINETYPE.ACTIVE_START);
     expect(messages[1].from.actor).toBe('Bob');
     expect(messages[2].type).toBe(diagram.db.LINETYPE.DOTTED);
@@ -1404,6 +1408,62 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
     expect(boxes[0].actorKeys).toEqual(['a', 'b']);
     expect(boxes[0].fill).toEqual('Aqua');
   });
+
+  it('should handle simple actor creation', async () => {
+    const str = `
+  sequenceDiagram
+  participant a as Alice
+  a ->>b: Hello Bob?
+  create participant c
+  b-->>c: Hello c!
+  c ->> b: Hello b?
+  create actor d as Donald
+  a ->> d: Hello Donald?
+  `;
+    await mermaidAPI.parse(str);
+    const actors = diagram.db.getActors();
+    const createdActors = diagram.db.getCreatedActors();
+    expect(actors['c'].name).toEqual('c');
+    expect(actors['c'].description).toEqual('c');
+    expect(actors['c'].type).toEqual('participant');
+    expect(createdActors['c']).toEqual(1);
+    expect(actors['d'].name).toEqual('d');
+    expect(actors['d'].description).toEqual('Donald');
+    expect(actors['d'].type).toEqual('actor');
+    expect(createdActors['d']).toEqual(3);
+  });
+  it('should handle simple actor destruction', async () => {
+    const str = `
+  sequenceDiagram
+  participant a as Alice
+  a ->>b: Hello Bob?
+  destroy a
+  b-->>a: Hello Alice!
+  b ->> c: Where is Alice?
+  destroy c
+  b ->> c: Where are you?
+  `;
+    await mermaidAPI.parse(str);
+    const destroyedActors = diagram.db.getDestroyedActors();
+    expect(destroyedActors['a']).toEqual(1);
+    expect(destroyedActors['c']).toEqual(3);
+  });
+  it('should handle the creation and destruction of the same actor', async () => {
+    const str = `
+  sequenceDiagram
+  a ->>b: Hello Bob?
+  create participant c
+  b ->>c: Hello c!
+  c ->> b: Hello b?
+  destroy c
+  b ->> c : Bye c !
+  `;
+    await mermaidAPI.parse(str);
+    const createdActors = diagram.db.getCreatedActors();
+    const destroyedActors = diagram.db.getDestroyedActors();
+    expect(createdActors['c']).toEqual(1);
+    expect(destroyedActors['c']).toEqual(3);
+  });
 });
 describe('when checking the bounds in a sequenceDiagram', function () {
   beforeAll(() => {
@@ -1426,8 +1486,6 @@ describe('when checking the bounds in a sequenceDiagram', function () {
   let conf;
   beforeEach(function () {
     mermaidAPI.reset();
-    // diagram.db = sequenceDb;
-    // diagram.db.clear();
     diagram.renderer.bounds.init();
     conf = diagram.db.getConfig();
   });
@@ -1579,7 +1637,6 @@ sequenceDiagram
 Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`);
-    diagram.db.clear();
   });
   ['tspan', 'fo', 'old', undefined].forEach(function (textPlacement) {
     it(`
@@ -1953,8 +2010,6 @@ describe('when rendering a sequenceDiagram with actor mirror activated', () => {
   let conf;
   beforeEach(function () {
     mermaidAPI.reset();
-    // diagram.db = sequenceDb;
-    diagram.db.clear();
     conf = diagram.db.getConfig();
     diagram.renderer.bounds.init();
   });
@@ -1973,7 +2028,9 @@ participant Alice`;
       expect(bounds.startx).toBe(0);
       expect(bounds.starty).toBe(0);
       expect(bounds.stopx).toBe(conf.width);
-      expect(bounds.stopy).toBe(models.lastActor().y + models.lastActor().height + conf.boxMargin);
+      expect(bounds.stopy).toBe(
+        models.lastActor().stopy + models.lastActor().height + conf.boxMargin
+      );
     });
   });
 });
@@ -1994,12 +2051,8 @@ describe('when rendering a sequenceDiagram with directives', () => {
     mermaidAPI.initialize({ sequence: conf });
   });
 
-  let conf;
   beforeEach(function () {
     mermaidAPI.reset();
-    // diagram.db = sequenceDb;
-    diagram.db.clear();
-    conf = diagram.db.getConfig();
     diagram.renderer.bounds.init();
   });
 
@@ -2011,10 +2064,7 @@ sequenceDiagram
 participant Alice
 `;
     diagram = new Diagram(str);
-
     diagram.renderer.bounds.init();
-    await mermaidAPI.parse(str);
-
     diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();
@@ -2025,7 +2075,7 @@ participant Alice
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopy).toBe(
-      models.lastActor().y + models.lastActor().height + mermaid.sequence.boxMargin
+      models.lastActor().stopy + models.lastActor().height + mermaid.sequence.boxMargin
     );
   });
   it('should handle one actor, when logLevel is 3 (dfg0)', async () => {
@@ -2035,7 +2085,7 @@ sequenceDiagram
 participant Alice
 `;
 
-    diagram.parse(str);
+    diagram = new Diagram(str);
     diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();
@@ -2045,7 +2095,7 @@ participant Alice
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopy).toBe(
-      models.lastActor().y + models.lastActor().height + mermaid.sequence.boxMargin
+      models.lastActor().stopy + models.lastActor().height + mermaid.sequence.boxMargin
     );
   });
   it('should hide sequence numbers when autonumber is removed when autonumber is enabled', async () => {
@@ -2056,7 +2106,7 @@ Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
-    await mermaidAPI.parse(str1);
+    diagram = new Diagram(str1);
     diagram.renderer.draw(str1, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility auto numbers
     expect(diagram.db.showSequenceNumbers()).toBe(true);
 
@@ -2066,7 +2116,7 @@ Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
-    await mermaidAPI.parse(str2);
+    diagram = new Diagram(str2);
     diagram.renderer.draw(str2, 'tst', '1.2.3', diagram);
     expect(diagram.db.showSequenceNumbers()).toBe(false);
   });

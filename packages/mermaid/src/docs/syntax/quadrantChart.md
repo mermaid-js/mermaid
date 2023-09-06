@@ -24,8 +24,8 @@ quadrantChart
 ## Syntax
 
 ```note
-If there is no points available in the chart both **axis** text and **quadrant** will be rendered in the center of the respective quadrant.
-If there are points **x-axis** labels will rendered from left of the respective quadrant also they will be displayed in bottom of the chart, and **y-axis** lables will be rendered in bottom of the respective quadrant, the quadrant text will render at top of the respective quadrant.
+If there are no points available in the chart both **axis** text and **quadrant** will be rendered in the center of the respective quadrant.
+If there are points **x-axis** labels will rendered from the left of the respective quadrant also they will be displayed at the bottom of the chart, and **y-axis** labels will be rendered at the bottom of the respective quadrant, the quadrant text will render at the top of the respective quadrant.
 ```
 
 ```note
@@ -45,7 +45,7 @@ quadrantChart
 
 ### x-axis
 
-The x-axis determine what text would be displayed in the x-axis. In x-axis there is two part **left** and **right** you can pass **both** or you can pass only **left**. The statement should start with `x-axis` then the `left axis text` followed by the delimiter `-->` then `right axis text`.
+The x-axis determines what text would be displayed in the x-axis. In x-axis there is two part **left** and **right** you can pass **both** or you can pass only **left**. The statement should start with `x-axis` then the `left axis text` followed by the delimiter `-->` then `right axis text`.
 
 #### Example
 
@@ -54,7 +54,7 @@ The x-axis determine what text would be displayed in the x-axis. In x-axis there
 
 ### y-axis
 
-The y-axis determine what text would be displayed in the y-axis. In y-axis there is two part **top** and **bottom** you can pass **both** or you can pass only **bottom**. The statement should start with `y-axis` then the `bottom axis text` followed by the delimiter `-->` then `top axis text`.
+The y-axis determines what text would be displayed in the y-axis. In y-axis there is two part **top** and **bottom** you can pass **both** or you can pass only **bottom**. The statement should start with `y-axis` then the `bottom axis text` followed by the delimiter `-->` then `top axis text`.
 
 #### Example
 
@@ -133,6 +133,6 @@ quadrantChart
   y-axis Not Important --> "Important ❤"
   quadrant-1 Plan
   quadrant-2 Do
-  quadrant-3 Deligate
+  quadrant-3 Delegate
   quadrant-4 Delete
 ```

@@ -2,14 +2,17 @@ import { build, InlineConfig, type PluginOption } from 'vite';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import jisonPlugin from './jisonPlugin.js';
+import jsonSchemaPlugin from './jsonSchemaPlugin.js';
 import { readFileSync } from 'fs';
 import typescript from '@rollup/plugin-typescript';
 import { visualizer } from 'rollup-plugin-visualizer';
 import type { TemplateType } from 'rollup-plugin-visualizer/dist/plugin/template-types.js';
+import istanbul from 'vite-plugin-istanbul';
 
 const visualize = process.argv.includes('--visualize');
 const watch = process.argv.includes('--watch');
 const mermaidOnly = process.argv.includes('--mermaid');
+const coverage = process.env.VITE_COVERAGE === 'true';
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const sourcemap = false;
 
@@ -119,8 +122,15 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     },
     plugins: [
       jisonPlugin(),
+      jsonSchemaPlugin(), // handles `.schema.yaml` files
       // @ts-expect-error According to the type definitions, rollup plugins are incompatible with vite
       typescript({ compilerOptions: { declaration: false } }),
+      istanbul({
+        exclude: ['node_modules', 'test/', '__mocks__'],
+        extension: ['.js', '.ts'],
+        requireEnv: true,
+        forceBuildInstrument: coverage,
+      }),
       ...visualizerOptions(packageName, core),
     ],
   };

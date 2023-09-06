@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.js';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('Current diagram', () => {
   it('should render a state with states in it', () => {

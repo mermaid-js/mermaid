@@ -1,7 +1,7 @@
 # Announcements
 
-## [Bad documentation is bad for developers](https://www.mermaidchart.com/blog/posts/bad-documentation-is-bad-for-developers)
+## [Special cases broke Microsoft Zune and can ruin your code base too](https://www.mermaidchart.com/blog/posts/special-cases-broke-microsoft-zune-and-can-ruin-your-code-base-too/)
 
-26 April 2023 · 11 mins
+23 August 2023 · 15 mins
 
-Documentation tends to be bad because companies and projects don’t fully realize the costs of bad documentation.
+Read about the pitfalls of special cases in programming, illustrating how they can lead to complexity, diminish readability, and create maintenance challenges.

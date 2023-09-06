@@ -655,14 +655,7 @@ const addMarkersToEdge = function (svgPath, edgeData, diagramType, arrowMarkerAb
  */
 export const getClasses = function (text, diagObj) {
   log.info('Extracting classes');
-  diagObj.db.clear('ver-2');
-  try {
-    // Parse the graph definition
-    diagObj.parse(text);
-    return diagObj.db.getClasses();
-  } catch (e) {
-    return {};
-  }
+  return diagObj.db.getClasses();
 };
 
 const addSubGraphs = function (db) {
@@ -766,14 +759,8 @@ const insertChildren = (nodeArray, parentLookupDb) => {
  */
 
 export const draw = async function (text, id, _version, diagObj) {
-  // Add temporary render element
-  diagObj.db.clear();
   nodeDb = {};
   portPos = {};
-  diagObj.db.setGen('gen-2');
-  // Parse the graph definition
-  diagObj.parser.parse(text);
-
   const renderEl = select('body').append('div').attr('style', 'height:400px').attr('id', 'cy');
   let graph = {
     id: 'root',

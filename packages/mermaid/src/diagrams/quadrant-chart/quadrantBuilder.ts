@@ -1,7 +1,7 @@
 // @ts-ignore: TODO Fix ts errors
 import { scaleLinear } from 'd3';
 import { log } from '../../logger.js';
-import { QuadrantChartConfig } from '../../config.type.js';
+import type { BaseDiagramConfig, QuadrantChartConfig } from '../../config.type.js';
 import defaultConfig from '../../defaultConfig.js';
 import { getThemeVariables } from '../../themes/theme-default.js';
 
@@ -71,7 +71,8 @@ export interface quadrantBuilderData {
   points: QuadrantPointInputType[];
 }
 
-export interface QuadrantBuilderConfig extends QuadrantChartConfig {
+export interface QuadrantBuilderConfig
+  extends Required<Omit<QuadrantChartConfig, keyof BaseDiagramConfig>> {
   showXAxis: boolean;
   showYAxis: boolean;
   showTitle: boolean;

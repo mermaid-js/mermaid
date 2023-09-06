@@ -306,8 +306,6 @@ const elementString = (str) => {
 
 export const draw = (text, id, _version, diagObj) => {
   conf = getConfig().requirement;
-  diagObj.db.clear();
-  diagObj.parser.parse(text);
 
   const securityLevel = conf.securityLevel;
   // Handle root and Document for when rendering in sandbox mode

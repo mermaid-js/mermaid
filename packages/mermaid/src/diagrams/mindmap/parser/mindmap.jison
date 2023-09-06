@@ -40,7 +40,7 @@
 "["                { this.begin('NODE');return 'NODE_DSTART'; }
 [\s]+              return 'SPACELIST'                 /* skip all whitespace */    ;
 // !(-\()            return 'NODE_ID';
-[^\(\[\n\-\)\{\}]+         return 'NODE_ID';
+[^\(\[\n\)\{\}]+         return 'NODE_ID';
 <<EOF>>            return 'EOF';
 <NODE>["][`]          { this.begin("NSTR2");}
 <NSTR2>[^`"]+        { return "NODE_DESCR";}

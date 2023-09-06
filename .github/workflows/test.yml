@@ -1,12 +1,12 @@
 name: Unit Tests
 
-on: [push, pull_request]
+on: [push, pull_request, merge_group]
 
 permissions:
   contents: read
 
 jobs:
-  build:
+  unit-test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -31,7 +31,7 @@ jobs:
 
       - name: Run Unit Tests
         run: |
-          pnpm run ci --coverage
+          pnpm test:coverage
 
       - name: Run ganttDb tests using California timezone
         env:
@@ -39,11 +39,16 @@ jobs:
           # since some days have 25 hours instead of 24.
           TZ: America/Los_Angeles
         run: |
-          pnpm exec vitest run ./packages/mermaid/src/diagrams/gantt/ganttDb.spec.ts
+          pnpm exec vitest run ./packages/mermaid/src/diagrams/gantt/ganttDb.spec.ts --coverage
 
-      # Coveralls is throwing 500. Disabled for now.
-      # - name: Upload Coverage to Coveralls
-      #   uses: coverallsapp/github-action@v2
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     flag-name: unit
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v3
+        # Run step only pushes to develop and pull_requests
+        if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/develop' }}
+        with:
+          files: ./coverage/vitest/lcov.info
+          flags: unit
+          name: mermaid-codecov
+          fail_ci_if_error: false
+          verbose: true
+          token: 6845cc80-77ee-4e17-85a1-026cd95e0766

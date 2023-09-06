@@ -1,4 +1,4 @@
-import type { DiagramDetector } from '../../diagram-api/types.js';
+import type { DiagramDetector, DiagramLoader } from '../../diagram-api/types.js';
 import type { ExternalDiagramDefinition } from '../../diagram-api/types.js';
 
 const id = 'flowchart-v2';
@@ -12,13 +12,13 @@ const detector: DiagramDetector = (txt, config) => {
   }
 
   // If we have configured to use dagre-wrapper then we should return true in this function for graph code thus making it use the new flowchart diagram
-  if (txt.match(/^\s*graph/) !== null && config?.flowchart?.defaultRenderer === 'dagre-wrapper') {
+  if (/^\s*graph/.test(txt) && config?.flowchart?.defaultRenderer === 'dagre-wrapper') {
     return true;
   }
-  return txt.match(/^\s*flowchart/) !== null;
+  return /^\s*flowchart/.test(txt);
 };
 
-const loader = async () => {
+const loader: DiagramLoader = async () => {
   const { diagram } = await import('./flowDiagram-v2.js');
   return { id, diagram };
 };

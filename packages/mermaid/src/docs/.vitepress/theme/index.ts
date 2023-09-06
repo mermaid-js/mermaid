@@ -9,6 +9,7 @@ import HomePage from '../components/HomePage.vue';
 import { getRedirect } from './redirect.js';
 
 import { h } from 'vue';
+
 import Theme from 'vitepress/theme';
 import '../style/main.css';
 import 'uno.css';

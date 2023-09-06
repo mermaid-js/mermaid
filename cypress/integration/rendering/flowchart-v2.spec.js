@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
 describe('Flowchart v2', () => {
   it('1: should render a simple flowchart', () => {
@@ -172,7 +172,7 @@ describe('Flowchart v2', () => {
     );
   });
 
-  it('52: handle nested subgraphs in several levels', () => {
+  it('52: handle nested subgraphs in several levels.', () => {
     imgSnapshotTest(
       `flowchart TB
     b-->B
@@ -449,13 +449,38 @@ flowchart TD
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
-  it('65: text-color from classes', () => {
+  it('65-1: text-color from classes', () => {
     imgSnapshotTest(
       `
       flowchart LR
         classDef dark fill:#000,stroke:#000,stroke-width:4px,color:#fff
         Lorem --> Ipsum --> Dolor
         class Lorem,Dolor dark
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('65-2: bold text from classes', () => {
+    imgSnapshotTest(
+      `
+      flowchart
+        classDef cat fill:#f9d5e5, stroke:#233d4d,stroke-width:2px, font-weight:bold;
+        CS(A long bold text to be viewed):::cat
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('65-3: bigger font from classes', () => {
+    imgSnapshotTest(
+      `
+flowchart
+  Node1:::class1 --> Node2:::class2
+  Node1:::class1 --> Node3:::class2
+  Node3 --> Node4((I am a circle)):::larger
+
+  classDef class1 fill:lightblue
+  classDef class2 fill:pink
+  classDef larger font-size:30px,fill:yellow
       `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
@@ -671,7 +696,7 @@ title: Simple flowchart
 flowchart TD
 A --> B
 `,
-      { titleTopMargin: 0 }
+      { flowchart: { titleTopMargin: 10 } }
     );
   });
   it('3192: It should be possieble to render flowcharts with invisible edges', () => {
@@ -682,7 +707,7 @@ title: Simple flowchart with invisible edges
 flowchart TD
 A ~~~ B
 `,
-      { titleTopMargin: 0 }
+      { flowchart: { titleTopMargin: 10 } }
     );
   });
   it('4023: Should render html labels with images and-or text correctly', () => {
@@ -692,6 +717,15 @@ A ~~~ B
     B-->C[<img src="https://mermaid.js.org/mermaid-logo.svg"> more text <img src='https://mermaid.js.org/mermaid-logo.svg'>]
     B-->D(<img src='https://mermaid.js.org/mermaid-logo.svg'> some text)
     B-->E(plain)`,
+      {}
+    );
+  });
+
+  it('4439: Should render the graph even if some images are missing', () => {
+    imgSnapshotTest(
+      `flowchart TD
+    B[<img>]
+    B-->C[<img>]`,
       {}
     );
   });
@@ -707,7 +741,7 @@ flowchart LR
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
     classDef someclass fill:#f96
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('With formatting in a node', () => {
@@ -723,7 +757,7 @@ flowchart LR
   b --> d(The dog in the hog)
   c --> d
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('New line in node and formatted edge label', () => {
@@ -733,7 +767,7 @@ flowchart LR
 b("\`The dog in **the** hog.(1)
 NL\`") --"\`1o **bold**\`"--> c
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('Wrapping long text with a new line', () => {
@@ -746,7 +780,7 @@ Word!
 Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. \`") --> c
 
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('Sub graphs and markdown strings', () => {
@@ -763,7 +797,7 @@ subgraph "\`**Two**\`"
 end
 
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
     });
@@ -779,7 +813,7 @@ flowchart LR
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
     classDef someclass fill:#f96
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('With formatting in a node', () => {
@@ -795,7 +829,7 @@ flowchart LR
   b --> d(The dog in the hog)
   c --> d
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('New line in node and formatted edge label', () => {
@@ -805,7 +839,7 @@ flowchart LR
 b("\`The dog in **the** hog.(1)
 NL\`") --"\`1o **bold**\`"--> c
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('Wrapping long text with a new line', () => {
@@ -818,7 +852,7 @@ Word!
 Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. \`") --> c
 
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
       it('Sub graphs and markdown strings', () => {
@@ -835,7 +869,7 @@ subgraph "\`**Two**\`"
 end
 
 `,
-          { titleTopMargin: 0 }
+          { flowchart: { titleTopMargin: 0 } }
         );
       });
     });

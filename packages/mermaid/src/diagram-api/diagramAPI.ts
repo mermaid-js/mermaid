@@ -4,8 +4,8 @@ import { getConfig as _getConfig } from '../config.js';
 import { sanitizeText as _sanitizeText } from '../diagrams/common/common.js';
 import { setupGraphViewbox as _setupGraphViewbox } from '../setupGraphViewbox.js';
 import { addStylesForDiagram } from '../styles.js';
-import { DiagramDefinition, DiagramDetector } from './types.js';
-import * as _commonDb from '../commonDb.js';
+import type { DiagramDefinition, DiagramDetector } from './types.js';
+import * as _commonDb from '../diagrams/common/commonDb.js';
 import { parseDirective as _parseDirective } from '../directiveUtils.js';
 
 /*
@@ -69,11 +69,11 @@ export const getDiagram = (name: string): DiagramDefinition => {
   if (name in diagrams) {
     return diagrams[name];
   }
-  throw new Error(`Diagram ${name} not found.`);
+  throw new DiagramNotFoundError(name);
 };
 
 export class DiagramNotFoundError extends Error {
-  constructor(message: string) {
-    super(`Diagram ${message} not found.`);
+  constructor(name: string) {
+    super(`Diagram ${name} not found.`);
   }
 }
