@@ -161,13 +161,11 @@ export const cssImportantStyles = (
  * Create the user styles
  *
  * @param  config - configuration that has style and theme settings to use
- * @param graphType - used for checking if classDefs should be applied
  * @param  classDefs - the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...)
  * @returns  the string with all the user styles
  */
 export const createCssStyles = (
   config: MermaidConfig,
-  graphType: string,
   classDefs: Record<string, DiagramStyleClassDef> | null | undefined = {}
 ): string => {
   let cssStyles = '';
@@ -219,7 +217,7 @@ export const createUserStyles = (
   classDefs: Record<string, DiagramStyleClassDef> | undefined,
   svgId: string
 ): string => {
-  const userCSSstyles = createCssStyles(config, graphType, classDefs);
+  const userCSSstyles = createCssStyles(config, classDefs);
   const allStyles = getStyles(graphType, userCSSstyles, config.themeVariables);
 
   // Now turn all of the styles into a (compiled) string that starts with the id
