@@ -3,7 +3,7 @@ import { log } from './logger.js';
 import theme from './themes/index.js';
 import config from './defaultConfig.js';
 import type { MermaidConfig } from './config.type.js';
-import { sanitizeDirective } from './utils.js';
+import { sanitizeDirective } from './utils/sanitizeDirective.js';
 
 export const defaultConfig: MermaidConfig = Object.freeze(config);
 

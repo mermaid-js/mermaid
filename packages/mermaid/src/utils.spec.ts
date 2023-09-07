@@ -1,10 +1,11 @@
 import { vi } from 'vitest';
-import utils, { cleanAndMerge } from './utils.js';
+import utils, { cleanAndMerge, detectDirective } from './utils.js';
 import assignWithDepth from './assignWithDepth.js';
 import { detectType } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import memoize from 'lodash-es/memoize.js';
 import { MockedD3 } from './tests/MockedD3.js';
+import { preprocessDiagram } from './preprocess.js';
 
 addDiagrams();
 
@@ -158,13 +159,38 @@ describe('when detecting chart type ', function () {
     const type = detectType(str);
     expect(type).toBe('flowchart');
   });
+  it('should handle a wrap directive', () => {
+    const wrap = { type: 'wrap', args: null };
+    expect(detectDirective('%%{wrap}%%', 'wrap')).toEqual(wrap);
+    expect(
+      detectDirective(
+        `%%{
+      wrap
+    }%%`,
+        'wrap'
+      )
+    ).toEqual(wrap);
+    expect(
+      detectDirective(
+        `%%{
+
+          wrap
+
+    }%%`,
+        'wrap'
+      )
+    ).toEqual(wrap);
+    expect(detectDirective('%%{wrap:}%%', 'wrap')).toEqual(wrap);
+    expect(detectDirective('%%{wrap: }%%', 'wrap')).toEqual(wrap);
+    expect(detectDirective('graph', 'wrap')).not.toEqual(wrap);
+  });
   it('should handle an initialize definition', function () {
     const str = `
 %%{initialize: { 'logLevel': 0, 'theme': 'dark' }}%%
 sequenceDiagram
 Alice->Bob: hi`;
     const type = detectType(str);
-    const init = utils.detectInit(str);
+    const init = preprocessDiagram(str).config;
     expect(type).toBe('sequence');
     expect(init).toEqual({ logLevel: 0, theme: 'dark' });
   });
@@ -174,7 +200,7 @@ Alice->Bob: hi`;
 sequenceDiagram
 Alice->Bob: hi`;
     const type = detectType(str);
-    const init = utils.detectInit(str);
+    const init = preprocessDiagram(str).config;
     expect(type).toBe('sequence');
     expect(init).toEqual({ logLevel: 0, theme: 'dark' });
   });
@@ -184,7 +210,7 @@ Alice->Bob: hi`;
 sequenceDiagram
 Alice->Bob: hi`;
     const type = detectType(str);
-    const init = utils.detectInit(str);
+    const init = preprocessDiagram(str).config;
     expect(type).toBe('sequence');
     expect(init).toEqual({ logLevel: 0, theme: 'dark', sequence: { wrap: true } });
   });
@@ -199,7 +225,7 @@ Alice->Bob: hi`;
 sequenceDiagram
 Alice->Bob: hi`;
     const type = detectType(str);
-    const init = utils.detectInit(str);
+    const init = preprocessDiagram(str).config;
     expect(type).toBe('sequence');
     expect(init).toEqual({ logLevel: 0, theme: 'dark' });
   });
@@ -214,7 +240,7 @@ Alice->Bob: hi`;
 sequenceDiagram
 Alice->Bob: hi`;
     const type = detectType(str);
-    const init = utils.detectInit(str);
+    const init = preprocessDiagram(str).config;
     expect(type).toBe('sequence');
     expect(init).toEqual({ logLevel: 0, theme: 'dark' });
   });
