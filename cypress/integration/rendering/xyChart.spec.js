@@ -103,7 +103,14 @@ describe('XY Chart', () => {
   it('Render spark line with "plotReservedSpacePercent"', () => {
     imgSnapshotTest(
       `
-    %%{init: {"theme":"dark", "xyChart": { "width":200, "height": 20, "plotReservedSpacePercent": 100}}}%%
+---
+config:
+  theme: dark
+  xyChart:
+    width: 200
+    height: 20
+    plotReservedSpacePercent: 100
+---
     xychart-beta
       line [5000, 9000, 7500, 6200, 9500, 5500, 11000, 8200, 9200, 9500, 7000, 8800]
       `,
@@ -114,7 +121,23 @@ describe('XY Chart', () => {
   it('Render spark bar without displaying other property', () => {
     imgSnapshotTest(
       `
-    %%{init: {"theme":"dark", "xyChart": {"width": 200, "height": 20,  "xAxis": {"showLabel": false, "showTitle": false, "showTick":false, "showAxisLine": false},  "yAxis": {"showLabel": false, "showTitle": false, "showTick":false, "showAxisLine": false}}}}%%
+---
+config:
+  theme: dark
+  xyChart:
+    width: 200
+    height: 20
+    xAxis:
+      showLabel: false
+      showTitle: false
+      showTick: false
+      showAxisLine: false
+    yAxis:
+      showLabel: false
+      showTitle: false
+      showTick: false
+      showAxisLine: false
+---
     xychart-beta
       bar [5000, 9000, 7500, 6200, 9500, 5500, 11000, 8200, 9200, 9500, 7000, 8800]
       `,
@@ -137,10 +160,36 @@ describe('XY Chart', () => {
     );
     cy.get('svg');
   });
-  it('Render with showTitle false', () => {
+  it('Should use all the config from yaml', () => {
     imgSnapshotTest(
       `
-    %%{init: {"xyChart": {"showTitle": false}}}%%
+---
+config:
+  theme: forest
+  xyChart:
+    width: 1000
+    height: 600
+    titlePadding: 5
+    titleFontSize: 10
+    xAxis:
+      labelFontSize: 20
+      labelPadding: 10
+      titleFontSize: 30
+      titlePadding: 20
+      tickLength: 10
+      tickWidth: 5
+      axisLineWidth: 5
+    yAxis:
+      labelFontSize: 20
+      labelPadding: 10
+      titleFontSize: 30
+      titlePadding: 20
+      tickLength: 10
+      tickWidth: 5
+      axisLineWidth: 5
+    chartOrientation: horizontal
+    plotReservedSpacePercent: 60
+---
     xychart-beta
       title "Sales Revene"
       x-axis Months [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
@@ -155,7 +204,17 @@ describe('XY Chart', () => {
   it('Render with show axis title false', () => {
     imgSnapshotTest(
       `
-    %%{init: {"xyChart": {"yAxis": {"showTitle": false}, "xAxis": {"showTitle": false}}}}%%
+---
+config:
+  theme: dark
+  xyChart:
+    width: 200
+    height: 20
+    xAxis:
+      showTitle: false
+    yAxis:
+      showTitle: false
+---
     xychart-beta
       title "Sales Revene"
       x-axis Months [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
@@ -170,7 +229,17 @@ describe('XY Chart', () => {
   it('Render with show axis label false', () => {
     imgSnapshotTest(
       `
-    %%{init: {"xyChart": {"yAxis": {"showLabel": false}, "xAxis": {"showLabel": false}}}}%%
+---
+config:
+  theme: dark
+  xyChart:
+    width: 200
+    height: 20
+    xAxis:
+      showLabel: false
+    yAxis:
+      showLabel: false
+---
     xychart-beta
       title "Sales Revene"
       x-axis Months [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
@@ -185,7 +254,17 @@ describe('XY Chart', () => {
   it('Render with show axis tick false', () => {
     imgSnapshotTest(
       `
-    %%{init: {"xyChart": {"xAxis": {"showTick": false}, "yAxis": {"showTick": false}}}}%%
+---
+config:
+  theme: dark
+  xyChart:
+    width: 200
+    height: 20
+    xAxis:
+      showTick: false
+    yAxis:
+      showTick: false
+---
     xychart-beta
       title "Sales Revene"
       x-axis Months [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
@@ -200,7 +279,17 @@ describe('XY Chart', () => {
   it('Render with show axis line false', () => {
     imgSnapshotTest(
       `
-    %%{init: {"xyChart": {"xAxis": {"showAxisLine": false}, "yAxis": {"showAxisLine": false}}}}%%
+---
+config:
+  theme: dark
+  xyChart:
+    width: 200
+    height: 20
+    xAxis:
+      showAxisLine: false
+    yAxis:
+      showAxisLine: false
+---
     xychart-beta
       title "Sales Revene"
       x-axis Months [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
@@ -215,7 +304,22 @@ describe('XY Chart', () => {
   it('Render all the theme color', () => {
     imgSnapshotTest(
       `
-    %%{init: {"themeVariables": {"xyChart": {"titleColor": "#ff0000", "backgroundColor": "#f0f8ff", "yAxisLabelColor": "#ee82ee", "yAxisTitleColor": "#7fffd4", "yAxisTickColor": "#87ceeb", "yAxisLineColor": "#ff6347", "xAxisLabelColor": "#7fffd4", "xAxisTitleColor": "#ee82ee", "xAxisTickColor": "#ff6347", "xAxisLineColor": "#87ceeb", "plotColorPalette": "#008000, #faba63"}}}}%%
+---
+config:
+  themeVariables:
+    xyChart:
+      titleColor: #ff0000
+      backgroundColor: #f0f8ff
+      yAxisLabelColor: #ee82ee
+      yAxisTitleColor: #7fffd4
+      yAxisTickColor: #87ceeb
+      yAxisLineColor: #ff6347
+      xAxisLabelColor: #7fffd4
+      xAxisTitleColor: #ee82ee
+      xAxisTickColor: #ff6347
+      xAxisLineColor: #87ceeb
+      plotColorPalette: #008000, #faba63
+--
     xychart-beta
       title "Sales Revene"
       x-axis Months [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]

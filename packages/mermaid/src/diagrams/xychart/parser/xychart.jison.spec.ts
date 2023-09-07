@@ -1,4 +1,4 @@
-// @ts-ignore: TODO Fix ts errors
+// @ts-ignore: Jison doesn't  support type.
 import { parser } from './xychart.jison';
 import type { Mock } from 'vitest';
 import { vi } from 'vitest';

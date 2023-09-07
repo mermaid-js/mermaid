@@ -1,13 +1,17 @@
-import { log } from '../../../logger.js';
-import type { DrawableElem, XYChartData, XYChartThemeConfig, XYChartConfig } from './Interfaces.js';
-import { isBarPlot } from './Interfaces.js';
-import { getChartTitleComponent } from './components/ChartTitle.js';
-import type { ChartComponent } from './Interfaces.js';
+import type { SVGGType } from '../xychartDb.js';
+import type {
+  ChartComponent,
+  DrawableElem,
+  XYChartConfig,
+  XYChartData,
+  XYChartThemeConfig,
+} from './interfaces.js';
+import { isBarPlot } from './interfaces.js';
 import type { Axis } from './components/axis/index.js';
 import { getAxis } from './components/axis/index.js';
+import { getChartTitleComponent } from './components/chartTitle.js';
 import type { Plot } from './components/plot/index.js';
 import { getPlotComponent } from './components/plot/index.js';
-import type { SVGGType } from '../xychartDb.js';
 
 export class Orchestrator {
   private componentStore: {
@@ -70,7 +74,6 @@ export class Orchestrator {
       width: this.chartConfig.width,
       height: availableHeight,
     });
-    log.trace('space used by title: ', spaceUsed);
     plotY = spaceUsed.height;
     availableHeight -= spaceUsed.height;
     this.componentStore.xAxis.setAxisPosition('bottom');
@@ -78,14 +81,12 @@ export class Orchestrator {
       width: availableWidth,
       height: availableHeight,
     });
-    log.trace('space used by xaxis: ', spaceUsed);
     availableHeight -= spaceUsed.height;
     this.componentStore.yAxis.setAxisPosition('left');
     spaceUsed = this.componentStore.yAxis.calculateSpace({
       width: availableWidth,
       height: availableHeight,
     });
-    log.trace('space used by yaxis: ', spaceUsed);
     plotX = spaceUsed.width;
     availableWidth -= spaceUsed.width;
     if (availableWidth > 0) {
@@ -100,10 +101,6 @@ export class Orchestrator {
       width: chartWidth,
       height: chartHeight,
     });
-
-    log.trace(
-      `Final chart dimansion: x = ${plotX}, y = ${plotY}, width = ${chartWidth}, height = ${chartHeight}`
-    );
 
     this.componentStore.plot.setBoundingBoxXY({ x: plotX, y: plotY });
     this.componentStore.xAxis.setRange([plotX, plotX + chartWidth]);
@@ -136,7 +133,6 @@ export class Orchestrator {
       width: this.chartConfig.width,
       height: availableHeight,
     });
-    log.trace('space used by title: ', spaceUsed);
     titleYEnd = spaceUsed.height;
     availableHeight -= spaceUsed.height;
     this.componentStore.xAxis.setAxisPosition('left');
@@ -146,13 +142,11 @@ export class Orchestrator {
     });
     availableWidth -= spaceUsed.width;
     plotX = spaceUsed.width;
-    log.trace('space used by xaxis: ', spaceUsed);
     this.componentStore.yAxis.setAxisPosition('top');
     spaceUsed = this.componentStore.yAxis.calculateSpace({
       width: availableWidth,
       height: availableHeight,
     });
-    log.trace('space used by yaxis: ', spaceUsed);
     availableHeight -= spaceUsed.height;
     plotY = titleYEnd + spaceUsed.height;
     if (availableWidth > 0) {
@@ -167,10 +161,6 @@ export class Orchestrator {
       width: chartWidth,
       height: chartHeight,
     });
-
-    log.trace(
-      `Final chart dimansion: x = ${plotX}, y = ${plotY}, width = ${chartWidth}, height = ${chartHeight}`
-    );
 
     this.componentStore.plot.setBoundingBoxXY({ x: plotX, y: plotY });
     this.componentStore.yAxis.setRange([plotX, plotX + chartWidth]);

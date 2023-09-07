@@ -1,29 +1,28 @@
 // @ts-ignore: TODO Fix ts errors
-import { adjust, channel } from 'khroma';
 import type { Selection } from 'd3-selection';
-import mermaidAPI from '../../mermaidAPI.js';
+import {
+  clear as commonClear,
+  getAccDescription,
+  getAccTitle,
+  getDiagramTitle,
+  setAccDescription,
+  setAccTitle,
+  setDiagramTitle,
+} from '../../commonDb.js';
 import * as configApi from '../../config.js';
 import defaultConfig from '../../defaultConfig.js';
+import { getThemeVariables } from '../../themes/theme-default.js';
+import { cleanAndMerge } from '../../utils.js';
 import { sanitizeText } from '../common/common.js';
-import {
-  setAccTitle,
-  getAccTitle,
-  setDiagramTitle,
-  getDiagramTitle,
-  getAccDescription,
-  setAccDescription,
-  clear as commonClear,
-} from '../../commonDb.js';
 import { XYChartBuilder } from './chartBuilder/index.js';
 import type {
   DrawableElem,
   SimplePlotDataType,
+  XYChartConfig,
   XYChartData,
   XYChartThemeConfig,
-  XYChartConfig,
-} from './chartBuilder/Interfaces.js';
-import { isBandAxisData, isLinearAxisData } from './chartBuilder/Interfaces.js';
-import { getThemeVariables } from '../../themes/theme-default.js';
+} from './chartBuilder/interfaces.js';
+import { isBandAxisData, isLinearAxisData } from './chartBuilder/interfaces.js';
 
 export type SVGGType = Selection<SVGGElement, unknown, Element | null, unknown>;
 
@@ -46,25 +45,14 @@ interface NormalTextType {
 function getChartDefaultThemeConfig(): XYChartThemeConfig {
   const defaultThemeVariables = getThemeVariables();
   const config = configApi.getConfig();
-  return {
-    ...defaultThemeVariables.xyChart,
-    ...config.themeVariables?.xyChart,
-  };
+  return cleanAndMerge(defaultThemeVariables.xyChart, config.themeVariables.xyChart);
 }
 function getChartDefaultConfig(): XYChartConfig {
   const config = configApi.getConfig();
-  return {
-    ...(defaultConfig.xyChart as XYChartConfig),
-    ...config.xyChart,
-    yAxis: {
-      ...(defaultConfig.xyChart as XYChartConfig).yAxis,
-      ...config.xyChart?.yAxis,
-    },
-    xAxis: {
-      ...(defaultConfig.xyChart as XYChartConfig).xAxis,
-      ...config.xyChart?.xAxis,
-    },
-  };
+  return cleanAndMerge<XYChartConfig>(
+    defaultConfig.xyChart as XYChartConfig,
+    config.xyChart as XYChartConfig
+  );
 }
 
 function getChartDefalutData(): XYChartData {
@@ -88,11 +76,6 @@ function getChartDefalutData(): XYChartData {
 function textSanitizer(text: string) {
   const config = configApi.getConfig();
   return sanitizeText(text.trim(), config);
-}
-
-function parseDirective(statement: string, context: string, type: string) {
-  // @ts-ignore: TODO Fix ts errors
-  mermaidAPI.parseDirective(this, statement, context, type);
 }
 
 function setTmpSVGG(SVGG: SVGGType) {
@@ -228,7 +211,6 @@ const clear = function () {
 
 export default {
   getDrawableElem,
-  parseDirective,
   clear,
   setAccTitle,
   getAccTitle,

@@ -1,4 +1,4 @@
-import type { BarPlotData, BoundingRect, DrawableElem, XYChartConfig } from '../../Interfaces.js';
+import type { BarPlotData, BoundingRect, DrawableElem, XYChartConfig } from '../../interfaces.js';
 import type { Axis } from '../axis/index.js';
 
 export class BarPlot {
@@ -40,22 +40,21 @@ export class BarPlot {
           })),
         },
       ];
-    } else {
-      return [
-        {
-          groupTexts: ['plot', `bar-plot-${this.plotIndex}`],
-          type: 'rect',
-          data: finalData.map((data) => ({
-            x: data[0] - barWidthHalf,
-            y: data[1],
-            width: barWidth,
-            height: this.boundingRect.y + this.boundingRect.height - data[1],
-            fill: this.barData.fill,
-            strokeWidth: 0,
-            strokeFill: this.barData.fill,
-          })),
-        },
-      ];
     }
+    return [
+      {
+        groupTexts: ['plot', `bar-plot-${this.plotIndex}`],
+        type: 'rect',
+        data: finalData.map((data) => ({
+          x: data[0] - barWidthHalf,
+          y: data[1],
+          width: barWidth,
+          height: this.boundingRect.y + this.boundingRect.height - data[1],
+          fill: this.barData.fill,
+          strokeWidth: 0,
+          strokeFill: this.barData.fill,
+        })),
+      },
+    ];
   }
 }

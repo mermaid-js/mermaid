@@ -2,13 +2,13 @@ import type { SVGGType } from '../../../xychartDb.js';
 import type {
   AxisDataType,
   ChartComponent,
-  XYChartAxisThemeConfig,
   XYChartAxisConfig,
-} from '../../Interfaces.js';
-import { isBandAxisData } from '../../Interfaces.js';
-import { TextDimensionCalculatorWithFont } from '../../TextDimensionCalculator.js';
-import { BandAxis } from './BandAxis.js';
-import { LinearAxis } from './LinearAxis.js';
+  XYChartAxisThemeConfig,
+} from '../../interfaces.js';
+import { isBandAxisData } from '../../interfaces.js';
+import { TextDimensionCalculatorWithFont } from '../../textDimensionCalculator.js';
+import { BandAxis } from './bandAxis.js';
+import { LinearAxis } from './linearAxis.js';
 
 export type AxisPosition = 'left' | 'right' | 'top' | 'bottom';
 

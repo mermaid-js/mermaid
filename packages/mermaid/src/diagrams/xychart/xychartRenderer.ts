@@ -1,14 +1,14 @@
 import type { Diagram } from '../../Diagram.js';
 import { log } from '../../logger.js';
+import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type {
   DrawableElem,
   TextElem,
   TextHorizontalPos,
   TextVerticalPos,
-} from './chartBuilder/Interfaces.js';
+} from './chartBuilder/interfaces.js';
 import type XYChartDB from './xychartDb.js';
-import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 
 export const draw = (txt: string, id: string, _version: string, diagObj: Diagram) => {
   const db = diagObj.db as typeof XYChartDB;
@@ -68,18 +68,8 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
 
   for (const shape of shapes) {
     if (shape.data.length === 0) {
-      log.trace(
-        `Skipped drawing of shape of type: ${shape.type} with data: ${JSON.stringify(
-          shape.data,
-          null,
-          2
-        )}`
-      );
       continue;
     }
-    log.trace(
-      `Drawing shape of type: ${shape.type} with data: ${JSON.stringify(shape.data, null, 2)}`
-    );
 
     const shapeGroup = getGroup(shape.groupTexts);
 

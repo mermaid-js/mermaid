@@ -8,9 +8,9 @@ import type {
   XYChartData,
   XYChartThemeConfig,
   XYChartConfig,
-} from '../Interfaces.js';
-import type { TextDimensionCalculator } from '../TextDimensionCalculator.js';
-import { TextDimensionCalculatorWithFont } from '../TextDimensionCalculator.js';
+} from '../interfaces.js';
+import type { TextDimensionCalculator } from '../textDimensionCalculator.js';
+import { TextDimensionCalculatorWithFont } from '../textDimensionCalculator.js';
 
 export class ChartTitle implements ChartComponent {
   private boundingRect: BoundingRect;

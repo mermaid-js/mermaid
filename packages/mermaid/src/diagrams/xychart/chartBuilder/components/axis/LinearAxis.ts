@@ -1,9 +1,8 @@
 import type { ScaleLinear } from 'd3';
 import { scaleLinear } from 'd3';
-import { log } from '../../../../../logger.js';
-import type { TextDimensionCalculator } from '../../TextDimensionCalculator.js';
-import { BaseAxis } from './BaseAxis.js';
-import type { XYChartAxisThemeConfig, XYChartAxisConfig } from '../../Interfaces.js';
+import type { TextDimensionCalculator } from '../../textDimensionCalculator.js';
+import { BaseAxis } from './baseAxis.js';
+import type { XYChartAxisThemeConfig, XYChartAxisConfig } from '../../interfaces.js';
 
 export class LinearAxis extends BaseAxis {
   private scale: ScaleLinear<number, number>;
@@ -31,7 +30,6 @@ export class LinearAxis extends BaseAxis {
       domain.reverse(); // since y-axis in svg start from top
     }
     this.scale = scaleLinear().domain(domain).range(this.getRange());
-    log.trace('Linear axis final domain, range: ', this.domain, this.getRange());
   }
 
   getScaleValue(value: number): number {

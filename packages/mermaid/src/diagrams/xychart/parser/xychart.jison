@@ -104,6 +104,9 @@ statement
   | LINE text plotData                                          { yy.setLineData($text, $plotData); }
   | BAR plotData                                                { yy.setBarData({text: '', type: 'text'}, $plotData); }
   | BAR text plotData                                           { yy.setBarData($text, $plotData); }
+  | acc_title acc_title_value                                   { $$=$acc_title_value.trim();yy.setAccTitle($$); }
+  | acc_descr acc_descr_value                                   { $$=$acc_descr_value.trim();yy.setAccDescription($$); }
+  | acc_descr_multiline_value                                   { $$=$acc_descr_multiline_value.trim();yy.setAccDescription($$); }
   ;
 
 plotData

@@ -1,14 +1,13 @@
-import { log } from '../../../../../logger.js';
 import type {
   BoundingRect,
   Dimension,
   DrawableElem,
   Point,
-  XYChartAxisThemeConfig,
   XYChartAxisConfig,
-} from '../../Interfaces.js';
-import type { TextDimensionCalculator } from '../../TextDimensionCalculator.js';
-import type { AxisPosition, Axis } from './index.js';
+  XYChartAxisThemeConfig,
+} from '../../interfaces.js';
+import type { TextDimensionCalculator } from '../../textDimensionCalculator.js';
+import type { Axis, AxisPosition } from './index.js';
 
 const BAR_WIDTH_TO_TICK_WIDTH_RATIO = 0.7;
 const MAX_OUTER_PADDING_PERCENT_FOR_WRT_LABEL = 0.2;
@@ -96,7 +95,6 @@ export abstract class BaseAxis implements Axis {
 
       const heightRequired = spaceRequired.height + this.axisConfig.labelPadding * 2;
       this.labelTextHeight = spaceRequired.height;
-      log.trace('height required for axis label: ', heightRequired);
       if (heightRequired <= availableHeight) {
         availableHeight -= heightRequired;
         this.showLabel = true;
@@ -113,7 +111,6 @@ export abstract class BaseAxis implements Axis {
       );
       const heightRequired = spaceRequired.height + this.axisConfig.titlePadding * 2;
       this.titleTextHeight = spaceRequired.height;
-      log.trace('height required for axis title: ', heightRequired);
       if (heightRequired <= availableHeight) {
         availableHeight -= heightRequired;
         this.showTitle = true;
@@ -134,7 +131,6 @@ export abstract class BaseAxis implements Axis {
       const maxPadding = MAX_OUTER_PADDING_PERCENT_FOR_WRT_LABEL * availableSpace.height;
       this.outerPadding = Math.min(spaceRequired.height / 2, maxPadding);
       const widthRequired = spaceRequired.width + this.axisConfig.labelPadding * 2;
-      log.trace('width required for axis label: ', widthRequired);
       if (widthRequired <= availableWidth) {
         availableWidth -= widthRequired;
         this.showLabel = true;
@@ -151,7 +147,6 @@ export abstract class BaseAxis implements Axis {
       );
       const widthRequired = spaceRequired.height + this.axisConfig.titlePadding * 2;
       this.titleTextHeight = spaceRequired.height;
-      log.trace('width required for axis title: ', widthRequired);
       if (widthRequired <= availableWidth) {
         availableWidth -= widthRequired;
         this.showTitle = true;

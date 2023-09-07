@@ -1,4 +1,4 @@
-import type { Dimension } from './Interfaces.js';
+import type { Dimension } from './interfaces.js';
 import { computeDimensionOfText } from '../../../rendering-util/createText.js';
 import type { SVGGType } from '../xychartDb.js';
 

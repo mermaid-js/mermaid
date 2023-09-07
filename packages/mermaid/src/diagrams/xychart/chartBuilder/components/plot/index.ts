@@ -6,11 +6,11 @@ import type {
   Point,
   XYChartThemeConfig,
   XYChartConfig,
-} from '../../Interfaces.js';
+} from '../../interfaces.js';
 import type { Axis } from '../axis/index.js';
-import type { ChartComponent } from '../../Interfaces.js';
-import { LinePlot } from './LinePlot.js';
-import { BarPlot } from './BarPlot.js';
+import type { ChartComponent } from '../../interfaces.js';
+import { LinePlot } from './linePlot.js';
+import { BarPlot } from './barPlot.js';
 
 export interface Plot extends ChartComponent {
   setAxes(xAxis: Axis, yAxis: Axis): void;
