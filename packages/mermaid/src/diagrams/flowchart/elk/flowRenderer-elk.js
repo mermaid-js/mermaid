@@ -4,11 +4,10 @@ import insertMarkers from '../../../dagre-wrapper/markers.js';
 import { insertEdgeLabel } from '../../../dagre-wrapper/edges.js';
 import { findCommonAncestor } from './render-utils.js';
 import { labelHelper } from '../../../dagre-wrapper/shapes/util.js';
-import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
 import { getConfig } from '../../../config.js';
 import { log } from '../../../logger.js';
 import { setupGraphViewbox } from '../../../setupGraphViewbox.js';
-import common, { evaluate } from '../../common/common.js';
+import common from '../../common/common.js';
 import { interpolateToCurve, getStylesFromArray } from '../../../utils.js';
 import ELK from 'elkjs/lib/elk.bundled.js';
 const elk = new ELK();
@@ -651,7 +650,7 @@ const addMarkersToEdge = function (svgPath, edgeData, diagramType, arrowMarkerAb
  *
  * @param text
  * @param diagObj
- * @returns {object} ClassDef styles
+ * @returns {Record<string, import('../../../diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles
  */
 export const getClasses = function (text, diagObj) {
   log.info('Extracting classes');
