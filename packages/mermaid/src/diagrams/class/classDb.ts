@@ -1,11 +1,9 @@
-// @ts-nocheck - don't check until handle it
 import type { Selection } from 'd3';
 import { select } from 'd3';
 import { log } from '../../logger.js';
 import * as configApi from '../../config.js';
 import common from '../common/common.js';
 import utils from '../../utils.js';
-import mermaidAPI from '../../mermaidAPI.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -14,7 +12,8 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
+import { ClassMember } from './classTypes.js';
 import type {
   ClassRelation,
   ClassNode,
@@ -36,11 +35,6 @@ let namespaceCounter = 0;
 let functions: any[] = [];
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, configApi.getConfig());
-
-export const parseDirective = function (statement: string, context: string, type: string) {
-  // @ts-ignore Don't wanna mess it up
-  mermaidAPI.parseDirective(this, statement, context, type);
-};
 
 const splitClassNameAndType = function (id: string) {
   let genericType = '';
@@ -71,21 +65,21 @@ export const setClassLabel = function (id: string, label: string) {
  * @public
  */
 export const addClass = function (id: string) {
-  const classId = splitClassNameAndType(id);
+  const { className, type } = splitClassNameAndType(id);
   // Only add class if not exists
-  if (classes[classId.className] !== undefined) {
+  if (Object.hasOwn(classes, className)) {
     return;
   }
 
-  classes[classId.className] = {
-    id: classId.className,
-    type: classId.type,
-    label: classId.className,
+  classes[className] = {
+    id: className,
+    type: type,
+    label: className,
     cssClasses: [],
     methods: [],
     members: [],
     annotations: [],
-    domId: MERMAID_DOM_ID_PREFIX + classId.className + '-' + classCounter,
+    domId: MERMAID_DOM_ID_PREFIX + className + '-' + classCounter,
   } as ClassNode;
 
   classCounter++;
@@ -115,11 +109,11 @@ export const clear = function () {
   commonClear();
 };
 
-export const getClass = function (id: string) {
+export const getClass = function (id: string): ClassNode {
   return classes[id];
 };
 
-export const getClasses = function () {
+export const getClasses = function (): ClassMap {
   return classes;
 };
 
@@ -175,6 +169,8 @@ export const addAnnotation = function (className: string, annotation: string) {
  * @public
  */
 export const addMember = function (className: string, member: string) {
+  addClass(className);
+
   const validatedClassName = splitClassNameAndType(className).className;
   const theClass = classes[validatedClassName];
 
@@ -187,9 +183,9 @@ export const addMember = function (className: string, member: string) {
       theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
     } else if (memberString.indexOf(')') > 0) {
       //its a method
-      theClass.methods.push(sanitizeText(memberString));
+      theClass.methods.push(new ClassMember(memberString, 'method'));
     } else if (memberString) {
-      theClass.members.push(sanitizeText(memberString));
+      theClass.members.push(new ClassMember(memberString, 'attribute'));
     }
   }
 };
@@ -256,6 +252,7 @@ export const getTooltip = function (id: string, namespace?: string) {
 
   return classes[id].tooltip;
 };
+
 /**
  * Called by parser when a link is found. Adds the URL to the vertex data.
  *
@@ -368,6 +365,7 @@ export const relationType = {
 const setupToolTips = function (element: Element) {
   let tooltipElem: Selection<HTMLDivElement, unknown, HTMLElement, unknown> =
     select('.mermaidTooltip');
+  // @ts-expect-error - Incorrect types
   if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
     tooltipElem = select('body').append('div').attr('class', 'mermaidTooltip').style('opacity', 0);
   }
@@ -377,7 +375,6 @@ const setupToolTips = function (element: Element) {
   const nodes = svg.selectAll('g.node');
   nodes
     .on('mouseover', function () {
-      // @ts-expect-error - select is not part of the d3 type definition
       const el = select(this);
       const title = el.attr('title');
       // Don't try to draw a tooltip if no data is provided
@@ -387,6 +384,7 @@ const setupToolTips = function (element: Element) {
       // @ts-ignore - getBoundingClientRect is not part of the d3 type definition
       const rect = this.getBoundingClientRect();
 
+      // @ts-expect-error - Incorrect types
       tooltipElem.transition().duration(200).style('opacity', '.9');
       tooltipElem
         .text(el.attr('title'))
@@ -396,8 +394,8 @@ const setupToolTips = function (element: Element) {
       el.classed('hover', true);
     })
     .on('mouseout', function () {
+      // @ts-expect-error - Incorrect types
       tooltipElem.transition().duration(500).style('opacity', 0);
-      // @ts-expect-error - select is not part of the d3 type definition
       const el = select(this);
       el.classed('hover', false);
     });
@@ -456,7 +454,6 @@ export const addClassesToNamespace = function (id: string, classNames: string[])
 };
 
 export default {
-  parseDirective,
   setAccTitle,
   getAccTitle,
   getAccDescription,

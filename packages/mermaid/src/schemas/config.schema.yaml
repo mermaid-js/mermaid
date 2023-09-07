@@ -1653,10 +1653,10 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
           Pattern is:
 
           ```javascript
-          /^([1-9][0-9]*)(minute|hour|day|week|month)$/
+          /^([1-9][0-9]*)(millisecond|second|minute|hour|day|week|month)$/
           ```
         type: string
-        pattern: ^([1-9][0-9]*)(minute|hour|day|week|month)$
+        pattern: ^([1-9][0-9]*)(millisecond|second|minute|hour|day|week|month)$
       topAxis:
         description: |
           When this flag is set, date labels will be added to the top of the chart
