@@ -60,7 +60,10 @@ export const imgSnapshotTest = (
     sequence: {
       ...(_options.sequence || {}),
       actorFontFamily: 'courier',
-      noteFontFamily: _options.sequence?.noteFontFamily || 'courier',
+      noteFontFamily:
+        _options.sequence && _options.sequence.noteFontFamily
+          ? _options.sequence.noteFontFamily
+          : 'courier',
       messageFontFamily: 'courier',
     },
   };
