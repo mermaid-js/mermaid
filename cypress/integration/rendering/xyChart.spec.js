@@ -296,17 +296,17 @@ config:
 config:
   themeVariables:
     xyChart:
-      titleColor: #ff0000
-      backgroundColor: #f0f8ff
-      yAxisLabelColor: #ee82ee
-      yAxisTitleColor: #7fffd4
-      yAxisTickColor: #87ceeb
-      yAxisLineColor: #ff6347
-      xAxisLabelColor: #7fffd4
-      xAxisTitleColor: #ee82ee
-      xAxisTickColor: #ff6347
-      xAxisLineColor: #87ceeb
-      plotColorPalette: #008000, #faba63
+      titleColor: "#ff0000"
+      backgroundColor: "#f0f8ff"
+      yAxisLabelColor: "#ee82ee"
+      yAxisTitleColor: "#7fffd4"
+      yAxisTickColor: "#87ceeb"
+      yAxisLineColor: "#ff6347"
+      xAxisLabelColor: "#7fffd4"
+      xAxisTitleColor: "#ee82ee"
+      xAxisTickColor: "#ff6347"
+      xAxisLineColor: "#87ceeb"
+      plotColorPalette: "#008000, #faba63"
 ---
     xychart-beta
       title "Sales Revene"

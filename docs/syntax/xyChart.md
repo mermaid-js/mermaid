@@ -152,7 +152,15 @@ Every grammer are optional other than the chart name and one data set, so you wi
 ## Example on config and theme
 
 ```mermaid-example
-%%{init: {"xyChart": {"width": 900, "height": 600}, "themeVariables": {"xyChart": {"titleColor": "#ff0000"} } }}%%
+---
+config:
+    xyChart:
+        width: 900
+        height: 600
+    themeVariables:
+        xyChart:
+            titleColor: "#ff0000"
+---
 xychart-beta
     title "Sales Revenue"
     x-axis [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
@@ -162,7 +170,15 @@ xychart-beta
 ```
 
 ```mermaid
-%%{init: {"xyChart": {"width": 900, "height": 600}, "themeVariables": {"xyChart": {"titleColor": "#ff0000"} } }}%%
+---
+config:
+    xyChart:
+        width: 900
+        height: 600
+    themeVariables:
+        xyChart:
+            titleColor: "#ff0000"
+---
 xychart-beta
     title "Sales Revenue"
     x-axis [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
