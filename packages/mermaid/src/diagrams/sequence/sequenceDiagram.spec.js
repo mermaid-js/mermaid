@@ -1,5 +1,4 @@
 import { vi } from 'vitest';
-
 import * as configApi from '../../config.js';
 import mermaidAPI from '../../mermaidAPI.js';
 import { Diagram, getDiagramFromText } from '../../Diagram.js';
@@ -225,6 +224,7 @@ Bob-->Alice: I am good thanks!`;
     diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility auto numbers
     expect(diagram.db.showSequenceNumbers()).toBe(true);
   });
+
   it('should handle a sequenceDiagram definition with a title:', async () => {
     const str = `
 sequenceDiagram
@@ -2032,86 +2032,5 @@ participant Alice`;
         models.lastActor().stopy + models.lastActor().height + conf.boxMargin
       );
     });
-  });
-});
-
-describe('when rendering a sequenceDiagram with directives', () => {
-  beforeAll(function () {
-    let conf = {
-      diagramMarginX: 50,
-      diagramMarginY: 10,
-      actorMargin: 50,
-      width: 150,
-      height: 65,
-      boxMargin: 10,
-      messageMargin: 40,
-      boxTextMargin: 15,
-      noteMargin: 25,
-    };
-    mermaidAPI.initialize({ sequence: conf });
-  });
-
-  beforeEach(function () {
-    mermaidAPI.reset();
-    diagram.renderer.bounds.init();
-  });
-
-  it('should handle one actor, when theme is dark and logLevel is 1 DX1 (dfg1)', async () => {
-    const str = `
-sequenceDiagram
-participant Alice
-`;
-    diagram = new Diagram(str);
-    diagram.renderer.bounds.init();
-    diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
-
-    const { bounds, models } = diagram.renderer.bounds.getBounds();
-    const mermaid = mermaidAPI.getConfig();
-    expect(bounds.startx).toBe(0);
-    expect(bounds.startx).toBe(0);
-    expect(bounds.starty).toBe(0);
-    expect(bounds.stopy).toBe(
-      models.lastActor().stopy + models.lastActor().height + mermaid.sequence.boxMargin
-    );
-  });
-  it('should handle one actor, when logLevel is 3 (dfg0)', async () => {
-    const str = `
-sequenceDiagram
-participant Alice
-`;
-
-    diagram = new Diagram(str);
-    diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
-
-    const { bounds, models } = diagram.renderer.bounds.getBounds();
-    const mermaid = mermaidAPI.getConfig();
-    expect(bounds.startx).toBe(0);
-    expect(bounds.startx).toBe(0);
-    expect(bounds.starty).toBe(0);
-    expect(bounds.stopy).toBe(
-      models.lastActor().stopy + models.lastActor().height + mermaid.sequence.boxMargin
-    );
-  });
-  it('should hide sequence numbers when autonumber is removed when autonumber is enabled', async () => {
-    const str1 = `
-sequenceDiagram
-autonumber
-Alice->Bob:Hello Bob, how are you?
-Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!`;
-
-    diagram = new Diagram(str1);
-    diagram.renderer.draw(str1, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility auto numbers
-    expect(diagram.db.showSequenceNumbers()).toBe(true);
-
-    const str2 = `
-sequenceDiagram
-Alice->Bob:Hello Bob, how are you?
-Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!`;
-
-    diagram = new Diagram(str2);
-    diagram.renderer.draw(str2, 'tst', '1.2.3', diagram);
-    expect(diagram.db.showSequenceNumbers()).toBe(false);
   });
 });
