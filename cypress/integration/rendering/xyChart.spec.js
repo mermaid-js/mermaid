@@ -206,10 +206,7 @@ config:
       `
 ---
 config:
-  theme: dark
   xyChart:
-    width: 200
-    height: 20
     xAxis:
       showTitle: false
     yAxis:
@@ -231,10 +228,7 @@ config:
       `
 ---
 config:
-  theme: dark
   xyChart:
-    width: 200
-    height: 20
     xAxis:
       showLabel: false
     yAxis:
@@ -256,10 +250,7 @@ config:
       `
 ---
 config:
-  theme: dark
   xyChart:
-    width: 200
-    height: 20
     xAxis:
       showTick: false
     yAxis:
@@ -281,10 +272,7 @@ config:
       `
 ---
 config:
-  theme: dark
   xyChart:
-    width: 200
-    height: 20
     xAxis:
       showAxisLine: false
     yAxis:
@@ -319,7 +307,7 @@ config:
       xAxisTickColor: #ff6347
       xAxisLineColor: #87ceeb
       plotColorPalette: #008000, #faba63
---
+---
     xychart-beta
       title "Sales Revene"
       x-axis Months [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]

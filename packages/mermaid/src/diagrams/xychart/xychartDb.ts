@@ -1,4 +1,3 @@
-// @ts-ignore: TODO Fix ts errors
 import type { Selection } from 'd3-selection';
 import {
   clear as commonClear,
@@ -8,7 +7,7 @@ import {
   setAccDescription,
   setAccTitle,
   setDiagramTitle,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 import * as configApi from '../../config.js';
 import defaultConfig from '../../defaultConfig.js';
 import { getThemeVariables } from '../../themes/theme-default.js';
