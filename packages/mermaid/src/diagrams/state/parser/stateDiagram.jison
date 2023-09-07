@@ -33,10 +33,6 @@
 %x FLOATING_NOTE
 %x FLOATING_NOTE_ID
 %x struct
-%x open_directive
-%x type_directive
-%x arg_directive
-%x close_directive
 
 // A special state for grabbing text up to the first comment/newline
 %x LINE
@@ -50,18 +46,13 @@
 .*direction\s+RL[^\n]*                                      return 'direction_rl';
 .*direction\s+LR[^\n]*                                      return 'direction_lr';
 
-\%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
-<open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
-<type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
-<type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
-<arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 \%\%(?!\{)[^\n]*                                                /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */{ /*console.log('Crap after close');*/ }
 
 [\n]+                            return 'NL';
 [\s]+                              /* skip all whitespace */
-<ID,STATE,struct,LINE,open_directive,type_directive,arg_directive,close_directive>((?!\n)\s)+       /* skip same-line whitespace */
-<INITIAL,ID,STATE,struct,LINE,open_directive,type_directive,arg_directive,close_directive>\#[^\n]*  /* skip comments */
+<ID,STATE,struct,LINE>((?!\n)\s)+       /* skip same-line whitespace */
+<INITIAL,ID,STATE,struct,LINE>\#[^\n]*  /* skip comments */
 \%%[^\n]*                        /* skip comments */
 "scale"\s+            { this.pushState('SCALE'); /* console.log('Got scale', yytext);*/ return 'scale'; }
 <SCALE>\d+            return 'WIDTH';
@@ -155,7 +146,6 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 start
 	: SPACE start
 	| NL start
-	| directive start
 	| SD document { /* console.log('--> Root document', $2); */   yy.setRootDoc($2); return $2; }
 	;
 
@@ -241,7 +231,6 @@ statement
         $$={ stmt: 'state', id: $3.trim(), note:{position: $2.trim(), text: $4.trim()}};
     }
     | note NOTE_TEXT AS ID
-  	| directive
     | direction
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
@@ -264,10 +253,6 @@ cssClassStatement
         }
     ;
 
-directive
-    : openDirective typeDirective closeDirective
-    | openDirective typeDirective ':' argDirective closeDirective
-    ;
 direction
     : direction_tb
     { yy.setDirection('TB');$$={stmt:'dir', value:'TB'};}
@@ -307,21 +292,5 @@ notePosition
     : left_of
     | right_of
     ;
-
-openDirective
-  : open_directive { yy.parseDirective('%%{', 'open_directive'); }
-  ;
-
-typeDirective
-  : type_directive { yy.parseDirective($1, 'type_directive'); }
-  ;
-
-argDirective
-  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
-  ;
-
-closeDirective
-  : close_directive { yy.parseDirective('}%%', 'close_directive', 'state'); }
-  ;
 
 %%

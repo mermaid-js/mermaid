@@ -2,7 +2,6 @@ import { select } from 'd3';
 import utils from '../../utils.js';
 import * as configApi from '../../config.js';
 import common from '../common/common.js';
-import mermaidAPI from '../../mermaidAPI.js';
 import { log } from '../../logger.js';
 import {
   setAccTitle,
@@ -33,10 +32,6 @@ let version; // As in graph
 let funs = [];
 
 const sanitizeText = (txt) => common.sanitizeText(txt, config);
-
-export const parseDirective = function (statement, context, type) {
-  mermaidAPI.parseDirective(this, statement, context, type);
-};
 
 /**
  * Function to lookup domId from id in the graph definition.
@@ -771,7 +766,6 @@ export const lex = {
   firstGraph,
 };
 export default {
-  parseDirective,
   defaultConfig: () => configApi.defaultConfig.flowchart,
   setAccTitle,
   getAccTitle,
