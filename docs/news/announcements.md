@@ -6,8 +6,8 @@
 
 # Announcements
 
-## [Special cases broke Microsoft Zune and can ruin your code base too](https://www.mermaidchart.com/blog/posts/special-cases-broke-microsoft-zune-and-can-ruin-your-code-base-too/)
+## [Present flow data using Sankey diagrams in Mermaid, thanks to Nikolay Rozhkov](https://www.mermaidchart.com/blog/posts/present-flow-data-using-sankey-diagrams/)
 
-23 August 2023 · 15 mins
+8 September 2023 · 4 mins
 
-Read about the pitfalls of special cases in programming, illustrating how they can lead to complexity, diminish readability, and create maintenance challenges.
+Sankey diagrams are a powerful tool for visualizing flow data.
