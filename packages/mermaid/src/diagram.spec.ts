@@ -30,9 +30,6 @@ describe('diagram detection', () => {
               parse: () => {
                 // no-op
               },
-              parser: {
-                yy: {},
-              },
             },
             renderer: {},
             styles: {},

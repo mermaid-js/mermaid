@@ -1,11 +1,9 @@
 import type { DiagramDB } from '../../diagram-api/types.js';
 
 export interface InfoFields {
-  info: boolean;
+  version: string;
 }
 
 export interface InfoDB extends DiagramDB {
-  clear: () => void;
-  setInfo: (info: boolean) => void;
-  getInfo: () => boolean;
+  getVersion: () => string;
 }

@@ -35,7 +35,10 @@ export class Diagram {
     this.db = diagram.db;
     this.renderer = diagram.renderer;
     this.parser = diagram.parser;
-    this.parser.parser.yy = this.db;
+    if (this.parser.parser) {
+      // The parser.parser.yy is only present in JISON parsers. So, we'll only set if required.
+      this.parser.parser.yy = this.db;
+    }
     this.init = diagram.init;
     this.parse();
   }
