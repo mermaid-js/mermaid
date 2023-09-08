@@ -1,6 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Diagram } from '../Diagram.js';
 import type { BaseDiagramConfig, MermaidConfig } from '../config.type.js';
 import type * as d3 from 'd3';
+
+export interface DiagramMetadata {
+  title?: string;
+  config?: MermaidConfig;
+}
 
 export interface InjectUtils {
   _log: any;
@@ -9,6 +15,7 @@ export interface InjectUtils {
   _sanitizeText: any;
   _setupGraphViewbox: any;
   _commonDb: any;
+  /** @deprecated as directives will be pre-processed since https://github.com/mermaid-js/mermaid/pull/4759 */
   _parseDirective: any;
 }
 
@@ -45,6 +52,7 @@ export interface DiagramDefinition {
     _sanitizeText: InjectUtils['_sanitizeText'],
     _setupGraphViewbox: InjectUtils['_setupGraphViewbox'],
     _commonDb: InjectUtils['_commonDb'],
+    /** @deprecated as directives will be pre-processed since https://github.com/mermaid-js/mermaid/pull/4759 */
     _parseDirective: InjectUtils['_parseDirective']
   ) => void;
 }
@@ -82,15 +90,6 @@ export interface ParserDefinition {
   parse: (text: string) => void;
   parser?: { yy: DiagramDB };
 }
-
-/**
- * Type for function parse directive from diagram code.
- *
- * @param statement -
- * @param context -
- * @param type -
- */
-export type ParseDirectiveDefinition = (statement: string, context: string, type: string) => void;
 
 export type HTML = d3.Selection<HTMLIFrameElement, unknown, Element | null, unknown>;
 

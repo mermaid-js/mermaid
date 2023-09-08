@@ -1,4 +1,3 @@
-import mermaidAPI from '../../mermaidAPI.js';
 import * as configApi from '../../config.js';
 import { sanitizeText } from '../common/common.js';
 import {
@@ -36,10 +35,6 @@ export const getC4Type = function () {
 export const setC4Type = function (c4TypeParam) {
   let sanitizedText = sanitizeText(c4TypeParam, configApi.getConfig());
   c4Type = sanitizedText;
-};
-
-export const parseDirective = function (statement, context, type) {
-  mermaidAPI.parseDirective(this, statement, context, type);
 };
 
 //type, from, to, label, ?techn, ?descr, ?sprite, ?tags, $link
@@ -821,7 +816,6 @@ export default {
   getAccTitle,
   getAccDescription,
   setAccDescription,
-  parseDirective,
   getConfig: () => configApi.getConfig().c4,
   clear,
   LINETYPE,

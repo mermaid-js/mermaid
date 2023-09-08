@@ -72,25 +72,16 @@
 %x string_kv_key
 %x string_kv_value
 
-%x open_directive
-%x type_directive
-%x arg_directive
-%x close_directive
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
 
 %%
 
-\%\%\{                                    { this.begin('open_directive'); return 'open_directive'; }
 .*direction\s+TB[^\n]*                    return 'direction_tb';
 .*direction\s+BT[^\n]*                    return 'direction_bt';
 .*direction\s+RL[^\n]*                    return 'direction_rl';
 .*direction\s+LR[^\n]*                    return 'direction_lr';
-<open_directive>((?:(?!\}\%\%)[^:.])*)    { this.begin('type_directive'); return 'type_directive'; }
-<type_directive>":"                       { this.popState(); this.begin('arg_directive'); return ':'; }
-<type_directive,arg_directive>\}\%\%      { this.popState(); this.popState(); return 'close_directive'; }
-<arg_directive>((?:(?!\}\%\%).|\n)*)      return 'arg_directive';
 
 
 "title"\s[^#\n;]+                         return 'title';
@@ -207,7 +198,6 @@ accDescr\s*"{"\s*                         { this.begin("acc_descr_multiline");}
 start
     : mermaidDoc
     | direction
-    | directive start
     ;
 
 direction
@@ -225,26 +215,6 @@ mermaidDoc
     : graphConfig
     ;
 
-directive
-  : openDirective typeDirective closeDirective NEWLINE
-  | openDirective typeDirective ':' argDirective closeDirective NEWLINE
-  ;
-
-openDirective
-  : open_directive { yy.parseDirective('%%{', 'open_directive'); }
-  ;
-
-typeDirective
-  : type_directive {  }
-  ;
-
-argDirective
-  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
-  ;
-
-closeDirective
-  : close_directive { yy.parseDirective('}%%', 'close_directive', 'c4Context');  }
-  ;
 
 graphConfig
     : C4_CONTEXT NEWLINE statements EOF {yy.setC4Type($1)}
