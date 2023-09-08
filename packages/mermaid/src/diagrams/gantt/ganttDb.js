@@ -6,7 +6,6 @@ import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
 import { log } from '../../logger.js';
 import * as configApi from '../../config.js';
 import utils from '../../utils.js';
-import mermaidAPI from '../../mermaidAPI.js';
 
 import {
   setAccTitle,
@@ -16,7 +15,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 
 dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);
@@ -41,10 +40,6 @@ let weekday = 'sunday';
 
 // The serial order of the task in the script
 let lastOrder = 0;
-
-export const parseDirective = function (statement, context, type) {
-  mermaidAPI.parseDirective(this, statement, context, type);
-};
 
 export const clear = function () {
   sections = [];
@@ -730,7 +725,6 @@ export const bindFunctions = function (element) {
 };
 
 export default {
-  parseDirective,
   getConfig: () => configApi.getConfig().gantt,
   clear,
   setDateFormat,

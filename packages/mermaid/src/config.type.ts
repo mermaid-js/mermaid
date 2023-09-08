@@ -1048,7 +1048,7 @@ export interface GanttDiagramConfig extends BaseDiagramConfig {
    * Pattern is:
    *
    * ```javascript
-   * /^([1-9][0-9]*)(minute|hour|day|week|month)$/
+   * /^([1-9][0-9]*)(millisecond|second|minute|hour|day|week|month)$/
    * ```
    *
    */
@@ -1298,6 +1298,21 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
    */
   nodeAlignment?: 'left' | 'right' | 'center' | 'justify';
   useMaxWidth?: boolean;
+  /**
+   * Toggle to display or hide values along with title.
+   *
+   */
+  showValues?: boolean;
+  /**
+   * The prefix to use for values
+   *
+   */
+  prefix?: string;
+  /**
+   * The suffix to use for values
+   *
+   */
+  suffix?: string;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

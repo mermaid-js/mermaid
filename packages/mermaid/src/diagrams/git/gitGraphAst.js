@@ -1,6 +1,5 @@
 import { log } from '../../logger.js';
 import { random } from '../../utils.js';
-import mermaidAPI from '../../mermaidAPI.js';
 import * as configApi from '../../config.js';
 import { getConfig } from '../../config.js';
 import common from '../common/common.js';
@@ -12,7 +11,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 
 let mainBranchName = getConfig().gitGraph.mainBranchName;
 let mainBranchOrder = getConfig().gitGraph.mainBranchOrder;
@@ -32,10 +31,6 @@ let seq = 0;
 function getId() {
   return random({ length: 7 });
 }
-
-export const parseDirective = function (statement, context, type) {
-  mermaidAPI.parseDirective(this, statement, context, type);
-};
 
 // /**
 //  * @param currentCommit
@@ -507,7 +502,6 @@ export const commitType = {
 };
 
 export default {
-  parseDirective,
   getConfig: () => configApi.getConfig().gitGraph,
   setDirection,
   setOptions,

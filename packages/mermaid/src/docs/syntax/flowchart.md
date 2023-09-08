@@ -554,13 +554,13 @@ flowchart LR
     C-->D
     click A callback "Tooltip for a callback"
     click B "https://www.github.com" "This is a tooltip for a link"
-    click A call callback() "Tooltip for a callback"
-    click B href "https://www.github.com" "This is a tooltip for a link"
+    click C call callback() "Tooltip for a callback"
+    click D href "https://www.github.com" "This is a tooltip for a link"
 ```
 
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
 
-?> Due to limitations with how Docsify handles JavaScript callback functions, an alternate working demo for the above code can be viewed at [this jsfiddle](https://jsfiddle.net/s37cjoau/3/).
+?> Due to limitations with how Docsify handles JavaScript callback functions, an alternate working demo for the above code can be viewed at [this jsfiddle](https://jsfiddle.net/Ogglas/2o73vdez/7).
 
 Links are opened in the same browser tab/window by default. It is possible to change this by adding a link target to the click definition (`_self`, `_blank`, `_parent` and `_top` are supported):
 
@@ -709,9 +709,9 @@ flowchart LR
     classDef foobar stroke:#00f
 ```
 
-### Css classes
+### CSS classes
 
-It is also possible to predefine classes in css styles that can be applied from the graph definition as in the example
+It is also possible to predefine classes in CSS styles that can be applied from the graph definition as in the example
 below:
 
 **Example style**
@@ -751,7 +751,7 @@ The icons are accessed via the syntax fa:#icon class name#.
 
 ```mermaid-example
 flowchart TD
-    B["fab:fa-twitter for peace"]
+    B["fa:fa-twitter for peace"]
     B-->C[fa:fa-ban forbidden]
     B-->D(fa:fa-spinner)
     B-->E(A fa:fa-camera-retro perhaps?)

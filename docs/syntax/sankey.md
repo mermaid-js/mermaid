@@ -8,9 +8,8 @@
 
 > A sankey diagram is a visualization used to depict a flow from one set of values to another.
 
-::: warning
-This is an experimental diagram. Its syntax are very close to plain CSV, but it is to be extended in the nearest future.
-:::
+> **Warning**
+> This is an experimental diagram. Its syntax are very close to plain CSV, but it is to be extended in the nearest future.
 
 The things being connected are called nodes and the connections are called links.
 
@@ -19,6 +18,11 @@ The things being connected are called nodes and the connections are called links
 This example taken from [observable](https://observablehq.com/@d3/sankey/2?collection=@d3/d3-sankey). It may be rendered a little bit differently, though, in terms of size and colors.
 
 ```mermaid-example
+---
+config:
+  sankey:
+    showValues: false
+---
 sankey-beta
 
 Agricultural 'waste',Bio-conversion,124.729
@@ -92,6 +96,11 @@ Wind,Electricity grid,289.366
 ```
 
 ```mermaid
+---
+config:
+  sankey:
+    showValues: false
+---
 sankey-beta
 
 Agricultural 'waste',Bio-conversion,124.729
@@ -197,7 +206,7 @@ Electricity grid,H2 conversion,27.14
 
 ### Empty Lines
 
-CSV does not support empty lines without comma delimeters by default. But you can add them if needed:
+CSV does not support empty lines without comma delimiters by default. But you can add them if needed:
 
 ```mermaid-example
 sankey-beta

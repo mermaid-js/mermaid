@@ -1,5 +1,6 @@
 // @ts-nocheck : TODO Fix ts errors
 import { sanitizeUrl } from '@braintree/sanitize-url';
+import type { CurveFactory } from 'd3';
 import {
   curveBasis,
   curveBasisClosed,
@@ -13,7 +14,6 @@ import {
   curveCatmullRomClosed,
   curveCatmullRomOpen,
   curveCatmullRom,
-  CurveFactory,
   curveLinear,
   curveLinearClosed,
   curveMonotoneX,
@@ -25,12 +25,14 @@ import {
   select,
 } from 'd3';
 import common from './diagrams/common/common.js';
-import { configKeys } from './defaultConfig.js';
+import { sanitizeDirective } from './utils/sanitizeDirective.js';
 import { log } from './logger.js';
 import { detectType } from './diagram-api/detectType.js';
 import assignWithDepth from './assignWithDepth.js';
-import { MermaidConfig } from './config.type.js';
+import type { MermaidConfig } from './config.type.js';
 import memoize from 'lodash-es/memoize.js';
+import merge from 'lodash-es/merge.js';
+import { directiveRegex } from './diagram-api/regexes.js';
 
 export const ZERO_WIDTH_SPACE = '\u200b';
 
@@ -57,10 +59,9 @@ const d3CurveTypes = {
   curveStepAfter: curveStepAfter,
   curveStepBefore: curveStepBefore,
 };
-const directive = /%{2}{\s*(?:(\w+)\s*:|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;
+
 const directiveWithoutOpen =
   /\s*(?:(\w+)(?=:):|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;
-
 /**
  * Detects the init config object from the text
  *
@@ -95,32 +96,36 @@ const directiveWithoutOpen =
  * @param config - Optional mermaid configuration object.
  * @returns The json object representing the init passed to mermaid.initialize()
  */
-export const detectInit = function (text: string, config?: MermaidConfig): MermaidConfig {
+export const detectInit = function (
+  text: string,
+  config?: MermaidConfig
+): MermaidConfig | undefined {
   const inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
   let results = {};
 
   if (Array.isArray(inits)) {
     const args = inits.map((init) => init.args);
-    directiveSanitizer(args);
-
+    sanitizeDirective(args);
     results = assignWithDepth(results, [...args]);
   } else {
     results = inits.args;
   }
-  if (results) {
-    let type = detectType(text, config);
-    ['config'].forEach((prop) => {
-      if (results[prop] !== undefined) {
-        if (type === 'flowchart-v2') {
-          type = 'flowchart';
-        }
-        results[type] = results[prop];
-        delete results[prop];
-      }
-    });
+
+  if (!results) {
+    return;
   }
 
-  // Todo: refactor this, these results are never used
+  let type = detectType(text, config);
+  ['config'].forEach((prop) => {
+    if (results[prop] !== undefined) {
+      if (type === 'flowchart-v2') {
+        type = 'flowchart';
+      }
+      results[type] = results[prop];
+      delete results[prop];
+    }
+  });
+
   return results;
 };
 
@@ -162,10 +167,10 @@ export const detectDirective = function (
     );
     let match;
     const result = [];
-    while ((match = directive.exec(text)) !== null) {
+    while ((match = directiveRegex.exec(text)) !== null) {
       // This is necessary to avoid infinite loops with zero-width matches
-      if (match.index === directive.lastIndex) {
-        directive.lastIndex++;
+      if (match.index === directiveRegex.lastIndex) {
+        directiveRegex.lastIndex++;
       }
       if (
         (match && !type) ||
@@ -189,6 +194,10 @@ export const detectDirective = function (
     );
     return { type: null, args: null };
   }
+};
+
+export const removeDirectives = function (text: string): string {
+  return text.replace(directiveRegex, '');
 };
 
 /**
@@ -802,7 +811,7 @@ export const calculateTextDimensions: (
 );
 
 export const initIdGenerator = class iterator {
-  constructor(deterministic, seed) {
+  constructor(deterministic, seed?: any) {
     this.deterministic = deterministic;
     // TODO: Seed is only used for length?
     this.seed = seed;
@@ -834,92 +843,6 @@ export const entityDecode = function (html: string): string {
   // decoding
   decoder.innerHTML = html;
   return unescape(decoder.textContent);
-};
-
-/**
- * Sanitizes directive objects
- *
- * @param args - Directive's JSON
- */
-export const directiveSanitizer = (args: any) => {
-  log.debug('directiveSanitizer called with', args);
-  if (typeof args === 'object') {
-    // check for array
-    if (args.length) {
-      args.forEach((arg) => directiveSanitizer(arg));
-    } else {
-      // This is an object
-      Object.keys(args).forEach((key) => {
-        log.debug('Checking key', key);
-        if (key.startsWith('__')) {
-          log.debug('sanitize deleting __ option', key);
-          delete args[key];
-        }
-
-        if (key.includes('proto')) {
-          log.debug('sanitize deleting proto option', key);
-          delete args[key];
-        }
-
-        if (key.includes('constr')) {
-          log.debug('sanitize deleting constr option', key);
-          delete args[key];
-        }
-
-        if (key.includes('themeCSS')) {
-          log.debug('sanitizing themeCss option');
-          args[key] = sanitizeCss(args[key]);
-        }
-        if (key.includes('fontFamily')) {
-          log.debug('sanitizing fontFamily option');
-          args[key] = sanitizeCss(args[key]);
-        }
-        if (key.includes('altFontFamily')) {
-          log.debug('sanitizing altFontFamily option');
-          args[key] = sanitizeCss(args[key]);
-        }
-        if (!configKeys.includes(key)) {
-          log.debug('sanitize deleting option', key);
-          delete args[key];
-        } else {
-          if (typeof args[key] === 'object') {
-            log.debug('sanitize deleting object', key);
-            directiveSanitizer(args[key]);
-          }
-        }
-      });
-    }
-  }
-  if (args.themeVariables) {
-    const kArr = Object.keys(args.themeVariables);
-    for (const k of kArr) {
-      const val = args.themeVariables[k];
-      if (val && val.match && !val.match(/^[\d "#%(),.;A-Za-z]+$/)) {
-        args.themeVariables[k] = '';
-      }
-    }
-  }
-  log.debug('After sanitization', args);
-};
-export const sanitizeCss = (str) => {
-  let startCnt = 0;
-  let endCnt = 0;
-
-  for (const element of str) {
-    if (startCnt < endCnt) {
-      return '{ /* ERROR: Unbalanced CSS */ }';
-    }
-    if (element === '{') {
-      startCnt++;
-    } else if (element === '}') {
-      endCnt++;
-    }
-  }
-  if (startCnt !== endCnt) {
-    return '{ /* ERROR: Unbalanced CSS */ }';
-  }
-  // Todo add more checks here
-  return str;
 };
 
 export interface DetailedError {
@@ -994,12 +917,17 @@ export const parseFontSize = (fontSize: string | number | undefined): [number?, 
   }
 };
 
+export function cleanAndMerge<T>(defaultData: T, data?: Partial<T>): T {
+  return merge({}, defaultData, data);
+}
+
 export default {
   assignWithDepth,
   wrapLabel,
   calculateTextHeight,
   calculateTextWidth,
   calculateTextDimensions,
+  cleanAndMerge,
   detectInit,
   detectDirective,
   isSubstringInArray,
@@ -1013,9 +941,7 @@ export default {
   random,
   runFunc,
   entityDecode,
-  initIdGenerator: initIdGenerator,
-  directiveSanitizer,
-  sanitizeCss,
+  initIdGenerator,
   insertTitle,
   parseFontSize,
 };

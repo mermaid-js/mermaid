@@ -18,7 +18,11 @@ const utf8ToB64 = (str: string): string => {
   return Buffer.from(decodeURIComponent(encodeURIComponent(str))).toString('base64');
 };
 
-const batchId: string = 'mermaid-batch-' + Cypress.env('CYPRESS_COMMIT') || Date.now().toString();
+const batchId: string =
+  'mermaid-batch-' +
+  (Cypress.env('useAppli')
+    ? Date.now().toString()
+    : Cypress.env('CYPRESS_COMMIT') || Date.now().toString());
 
 export const mermaidUrl = (
   graphStr: string,
@@ -48,29 +52,21 @@ export const imgSnapshotTest = (
   api = false,
   validation?: any
 ): void => {
-  cy.log(JSON.stringify(_options));
-  const options: CypressMermaidConfig = Object.assign(_options);
-  if (!options.fontFamily) {
-    options.fontFamily = 'courier';
-  }
-  if (!options.sequence) {
-    options.sequence = {};
-  }
-  if (!options.sequence || (options.sequence && !options.sequence.actorFontFamily)) {
-    options.sequence.actorFontFamily = 'courier';
-  }
-  if (options.sequence && !options.sequence.noteFontFamily) {
-    options.sequence.noteFontFamily = 'courier';
-  }
-  options.sequence.actorFontFamily = 'courier';
-  options.sequence.noteFontFamily = 'courier';
-  options.sequence.messageFontFamily = 'courier';
-  if (options.sequence && !options.sequence.actorFontFamily) {
-    options.sequence.actorFontFamily = 'courier';
-  }
-  if (!options.fontSize) {
-    options.fontSize = 16;
-  }
+  const options: CypressMermaidConfig = {
+    ..._options,
+    fontFamily: _options.fontFamily || 'courier',
+    // @ts-ignore TODO: Fix type of fontSize
+    fontSize: _options.fontSize || '16px',
+    sequence: {
+      ...(_options.sequence || {}),
+      actorFontFamily: 'courier',
+      noteFontFamily:
+        _options.sequence && _options.sequence.noteFontFamily
+          ? _options.sequence.noteFontFamily
+          : 'courier',
+      messageFontFamily: 'courier',
+    },
+  };
 
   const url: string = mermaidUrl(graphStr, options, api);
   openURLAndVerifyRendering(url, options, validation);
@@ -78,11 +74,10 @@ export const imgSnapshotTest = (
 
 export const urlSnapshotTest = (
   url: string,
-  _options: CypressMermaidConfig,
+  options: CypressMermaidConfig,
   _api = false,
   validation?: any
 ): void => {
-  const options: CypressMermaidConfig = Object.assign(_options);
   openURLAndVerifyRendering(url, options, validation);
 };
 

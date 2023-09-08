@@ -23,13 +23,12 @@ import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
 import getStyles from './styles.js';
 import theme from './themes/index.js';
-import utils, { directiveSanitizer } from './utils.js';
 import DOMPurify from 'dompurify';
-import { MermaidConfig } from './config.type.js';
+import type { MermaidConfig } from './config.type.js';
 import { evaluate } from './diagrams/common/common.js';
 import isEmpty from 'lodash-es/isEmpty.js';
 import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
-import { parseDirective } from './directiveUtils.js';
+import { preprocessDiagram } from './preprocess.js';
 
 const version = packageVersion + (includeLargeDiagrams ? '' : '-tiny');
 
@@ -99,6 +98,13 @@ export interface RenderResult {
   bindFunctions?: (element: Element) => void;
 }
 
+function processAndSetConfigs(text: string) {
+  const processed = preprocessDiagram(text);
+  configApi.reset();
+  configApi.addDirective(processed.config ?? {});
+  return processed;
+}
+
 /**
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
@@ -109,6 +115,9 @@ export interface RenderResult {
 
 async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean> {
   addDiagrams();
+
+  text = processAndSetConfigs(text).code;
+
   try {
     await getDiagramFromText(text);
   } catch (error) {
@@ -385,14 +394,8 @@ const render = async function (
 ): Promise<RenderResult> {
   addDiagrams();
 
-  configApi.reset();
-
-  // Add Directives. Must do this before getting the config and before creating the diagram.
-  const graphInit = utils.detectInit(text);
-  if (graphInit) {
-    directiveSanitizer(graphInit);
-    configApi.addDirective(graphInit);
-  }
+  const processed = processAndSetConfigs(text);
+  text = processed.code;
 
   const config = configApi.getConfig();
   log.debug(config);
@@ -401,15 +404,6 @@ const render = async function (
   if (text.length > (config?.maxTextSize ?? MAX_TEXTLENGTH)) {
     text = MAX_TEXTLENGTH_EXCEEDED_MSG;
   }
-
-  // clean up text CRLFs
-  text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
-
-  // clean up html tags so that all attributes use single quotes, parser throws error on double quotes
-  text = text.replace(
-    /<(\w+)([^>]*)>/g,
-    (match, tag, attributes) => '<' + tag + attributes.replace(/="([^"]*)"/g, "='$1'") + '>'
-  );
 
   const idSelector = '#' + id;
   const iFrameID = 'i' + id;
@@ -473,7 +467,7 @@ const render = async function (
   let parseEncounteredException;
 
   try {
-    diag = await getDiagramFromText(text);
+    diag = await getDiagramFromText(text, { title: processed.title });
   } catch (error) {
     diag = new Diagram('error');
     parseEncounteredException = error;
@@ -670,7 +664,6 @@ function addA11yInfo(
 export const mermaidAPI = Object.freeze({
   render,
   parse,
-  parseDirective,
   getDiagramFromText,
   initialize,
   getConfig: configApi.getConfig,

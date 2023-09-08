@@ -13,7 +13,6 @@ export const mermaidAPI = {
     svg: '<svg></svg>',
   }),
   parse: mAPI.parse,
-  parseDirective: vi.fn(),
   initialize: vi.fn(),
   getConfig: configApi.getConfig,
   setConfig: configApi.setConfig,

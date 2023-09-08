@@ -1,4 +1,4 @@
-import { DiagramDefinition } from '../../diagram-api/types.js';
+import type { DiagramDefinition } from '../../diagram-api/types.js';
 // @ts-ignore: JISON doesn't support types
 import parser from './parser/sequenceDiagram.jison';
 import db from './sequenceDb.js';
@@ -10,4 +10,7 @@ export const diagram: DiagramDefinition = {
   db,
   renderer,
   styles,
+  init: ({ wrap }) => {
+    db.setWrap(wrap);
+  },
 };
