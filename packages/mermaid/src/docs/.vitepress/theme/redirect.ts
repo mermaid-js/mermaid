@@ -79,6 +79,7 @@ const urlRedirectMap: Record<string, string> = {
   '/misc/faq.html': 'configure/faq.html',
   '/syntax/c4c.html': 'syntax/c4.html',
   '/ecosystem/integrations.html': 'ecosystem/integrations-community.html',
+  '/ecosystem/showcases.html': 'ecosystem/integrations-create',
 };
 
 /**
