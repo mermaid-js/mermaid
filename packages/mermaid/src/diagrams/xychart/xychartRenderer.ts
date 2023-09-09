@@ -39,7 +39,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   // @ts-ignore: TODO Fix ts errors
   configureSvgSize(svg, chartConfig.height, chartConfig.width, true);
 
-  svg.attr('viewBox', '0 0 ' + chartConfig.width + ' ' + chartConfig.height);
+  svg.attr('viewBox', `0 0 ${chartConfig.width} ${chartConfig.height}`);
 
   background.attr('fill', themeConfig.backgroundColor);
 
