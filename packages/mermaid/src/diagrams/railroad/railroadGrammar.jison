@@ -119,6 +119,7 @@ syntax: 'railroad-beta' rule* EOF;
 rule
   : rule_id\[rule_id_] '=' alternative\[alternative_] ';' {
       yy.getConsole().log($rule_id_.toString(), '=', $alternative_.toString());
+      yy.addRuleOrAlternative($rule_id_, $alternative_);
     };
 
 rule_id
@@ -131,56 +132,26 @@ rule_id
   ;
 
 alternative
-  : definition_list\[definition_list_] {
-      let definitions = $definition_list_;
-
-      if(yy.isCompressed()) {
-        definitions = definitions.map(def => {
-          if(def.type() === 'Alternative') {
-            return def.chunks;
-          }
-          return def;
-        }).flat();
-      }
-
-      if(definitions.length === 1) {
-        $$ = definitions[0];
-      } else {
-        $$=yy.addAlternative(definitions);
-      }
+  : concatenations\[concatenations_] {
+      $$=yy.addAlternative($concatenations_);
     }
   ;
 
-definition_list
-  : definition\[definition_] "|" definition_list\[tail_] {
-      $$=[$definition_, ...$tail_];
+concatenations
+  : concatenation\[concatenation_] "|" concatenations\[tail_] {
+      $$=[$concatenation_, ...$tail_];
     }
-  | definition\[definition_] {
-      $$=[$definition_];
+  | concatenation\[concatenation_] {
+      $$=[$concatenation_];
     }
   | {
       $$ = [yy.addEpsilon()];
     }
   ;
 
-definition
+concatenation
   : (fact ","?)+\[facts_] {
-      let facts = Object.values($facts_);
-
-      if(yy.isCompressed()) {
-        facts = facts.map(fact => {
-          if(fact.type() === 'Definition') {
-            return fact.chunks;
-          }
-          return fact;
-        }).flat();
-      }
-
-      if(facts.length === 1) {
-        $$ = facts[0];
-      } else {
-        $$ = yy.addDefinition(facts);
-      }
+      $$ = yy.addConcatenation(Object.values($facts_));
     }
   ;
 

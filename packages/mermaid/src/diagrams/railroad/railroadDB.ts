@@ -1,8 +1,8 @@
 // import type { RailroadDB } from './railroadTypes.js';
+import * as configApi from '../../config.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 
 import { clear as commonClear } from '../../commonDb.js';
-import util from 'util';
 
 const clear = (): void => {
   commonClear();
@@ -27,7 +27,7 @@ const clear = (): void => {
 // null
 // type ruleID = string;
 
-// let rules: Record<string, Chunk> = {};
+let rules: Record<string, Chunk> = {};
 
 const getConsole = () => console;
 
@@ -93,6 +93,9 @@ class Chain extends Chunk {
   }
 }
 
+// Chain of chunks splitted by |
+// Represents choice (OR)
+//
 class Alternative extends Chain {
   type(): string {
     return 'Alternative';
@@ -103,21 +106,23 @@ class Alternative extends Chain {
     const content = this.chunks.join('|');
     // if (this.needsWrapping())
     return '(a' + content + 'a)';
-    return content;
+    // return content;
   }
 }
 
-class Definition extends Chain {
+// Chain of chunks splitted by , (optionally)
+// Represents sequence
+//
+class Concatenation extends Chain {
   type(): string {
-    return 'Definition';
+    return 'Concatenation';
   }
 
   toString(): string {
     // return '[d' + (this.needsWrapping() ? 'Y' : 'N') + this.chunks.join(',') + 'd]';
     const content = this.chunks.join(',');
     // if (this.needsWrapping())
-    return '(d' + content + 'd)';
-    return content;
+    return '(c' + content + 'c)';
   }
 }
 
@@ -148,13 +153,9 @@ class ZeroOrMany extends Chunk {
   }
 }
 
-// const terms: Record<Term['label'], Term> = {};
-// const terms: Term[] = [];
 const addTerm = (label: string, quote: string): Chunk => {
   return new Term(label, quote);
 };
-
-// const nonTerms: NonTerm[] = [];
 const addNonTerm = (label: string): Chunk => {
   return new NonTerm(label);
 };
@@ -168,19 +169,56 @@ const addOneOrMany = (chunk: Chunk): Chunk => {
 const addZeroOrMany = (chunk: Chunk): Chunk => {
   return new ZeroOrMany(chunk);
 };
-
-const addDefinition = (chunks: Chunk[]): Chunk => {
-  if (!Array.isArray(chunks)) {
-    console.error('Definition chunks are not array', chunks);
+const addRuleOrAlternative = (ID: string, chunk: Chunk) => {
+  if(rules[ID]) {
+    const value = rules[ID];
+    const alternative = addAlternative([value, chunk]);
+    rules[ID] = alternative;
+  } else {
+    rules[ID] = new Alternative([chunk]);
   }
-  return new Definition(chunks);
+}
+
+const addConcatenation = (chunks: Chunk[]): Chunk => {
+  if (!Array.isArray(chunks)) {
+    console.error('Concatenations chunks are not array', chunks);
+  }
+
+  if(configApi.getConfig().railroad?.compressed) {
+    chunks = chunks.map((chunk) => {
+      if(chunk instanceof Concatenation) {
+        return chunk.chunks;
+      }
+      return chunk;
+    }).flat();
+  }
+
+  if(chunks.length === 1) {
+    return chunks[0];
+  } else {
+    return new Concatenation(chunks);
+  }
 };
 
 const addAlternative = (chunks: Chunk[]): Chunk => {
   if (!Array.isArray(chunks)) {
     console.error('Alternative chunks are not array', chunks);
   }
-  return new Alternative(chunks);
+
+  if(configApi.getConfig().railroad?.compressed) {
+    chunks = chunks.map((chunk) => {
+      if(chunk instanceof Alternative) {
+        return chunk.chunks;
+      }
+      return chunk;
+    }).flat();
+  }
+
+  if(chunks.length === 1) {
+    return chunks[0];
+  } else {
+    return new Alternative(chunks);
+  }
 };
 
 const addEpsilon = (): Chunk => {
@@ -191,7 +229,7 @@ export interface RailroadDB extends DiagramDB {
   clear: () => void;
   addEpsilon: () => Chunk;
   addAlternative: (chunks: Chunk[]) => Chunk;
-  addDefinition: (chunks: Chunk[]) => Chunk;
+  addConcatenation: (chunks: Chunk[]) => Chunk;
   addZeroOrOne: (chunk: Chunk) => Chunk;
   addOneOrMany: (chunk: Chunk) => Chunk;
   addZeroOrMany: (chunk: Chunk) => Chunk;
@@ -199,18 +237,21 @@ export interface RailroadDB extends DiagramDB {
   addNonTerm: (label: string) => Chunk;
   getConsole: () => Console;
   isCompressed: () => boolean;
+  addRuleOrAlternative: (ID: string, chunk: Chunk) => void;
 }
 
 export const db: RailroadDB = {
+  getConfig: () => configApi.getConfig().railroad,
   addEpsilon,
   addAlternative,
-  addDefinition,
+  addConcatenation,
   addZeroOrOne,
   addOneOrMany,
   addZeroOrMany,
   addTerm,
   addNonTerm,
   getConsole,
+  addRuleOrAlternative,
   isCompressed: () => true,
   clear,
 };

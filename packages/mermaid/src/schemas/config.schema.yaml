@@ -207,6 +207,9 @@ properties:
     $ref: '#/$defs/C4DiagramConfig'
   sankey:
     $ref: '#/$defs/SankeyDiagramConfig'
+  railroad:
+    $ref: '#/$defs/RailroadDiagramConfig'
+
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -1873,6 +1876,18 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
           The suffix to use for values
         type: string
         default: ''
+
+  RailroadDiagramConfig:
+    title: Railroad Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for railroad diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      compressed:
+        type: boolean
+        default: true
+
 
   FontCalculator:
     title: Font Calculator
