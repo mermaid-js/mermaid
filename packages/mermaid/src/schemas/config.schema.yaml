@@ -1888,7 +1888,6 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         type: boolean
         default: true
 
-
   FontCalculator:
     title: Font Calculator
     description: |

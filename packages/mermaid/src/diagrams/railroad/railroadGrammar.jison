@@ -264,7 +264,7 @@ prim
   | '[' choice ']' { $$=yy.addZeroOrOne($choice); }
   | '{' choice '}' { $$=yy.addZeroOrMany($choice); }
   | '"' (QSTRING)?\[qstring_] '"' {
-      $$=yy.addTerm($qstring_, '"');
+      $$=yy.addTerm($qstring_, '"'); // TODO: add bunch of terminals instead of one?
     }
   | APOSTROPHE (STRING)?\[string_] APOSTROPHE {
       $$=yy.addTerm($string_, "'");

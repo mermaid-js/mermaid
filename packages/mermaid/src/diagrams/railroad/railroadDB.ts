@@ -2,7 +2,7 @@
 import * as configApi from '../../config.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 
-import { clear as commonClear } from '../../commonDb.js';
+import { clear as commonClear } from '../common/commonDb.js';
 
 const clear = (): void => {
   commonClear();
@@ -160,30 +160,32 @@ const addZeroOrMany = (chunk: Chunk): Chunk => {
   return new ZeroOrMany(chunk);
 };
 const addRuleOrChoice = (ID: string, chunk: Chunk) => {
-  if(rules[ID]) {
+  if (rules[ID]) {
     const value = rules[ID];
     const alternative = addChoice([value, chunk]);
     rules[ID] = alternative;
   } else {
     rules[ID] = chunk;
   }
-}
+};
 
 const addSequence = (chunks: Chunk[]): Chunk => {
   if (!Array.isArray(chunks)) {
     console.error('Sequence`s chunks are not array', chunks);
   }
 
-  if(configApi.getConfig().railroad?.compressed) {
-    chunks = chunks.map((chunk) => {
-      if(chunk instanceof Sequence) {
-        return chunk.chunks;
-      }
-      return chunk;
-    }).flat();
+  if (configApi.getConfig().railroad?.compressed) {
+    chunks = chunks
+      .map((chunk) => {
+        if (chunk instanceof Sequence) {
+          return chunk.chunks;
+        }
+        return chunk;
+      })
+      .flat();
   }
 
-  if(chunks.length === 1) {
+  if (chunks.length === 1) {
     return chunks[0];
   } else {
     return new Sequence(chunks);
@@ -195,16 +197,18 @@ const addChoice = (chunks: Chunk[]): Chunk => {
     console.error('Alternative chunks are not array', chunks);
   }
 
-  if(configApi.getConfig().railroad?.compressed) {
-    chunks = chunks.map((chunk) => {
-      if(chunk instanceof Choice) {
-        return chunk.chunks;
-      }
-      return chunk;
-    }).flat();
+  if (configApi.getConfig().railroad?.compressed) {
+    chunks = chunks
+      .map((chunk) => {
+        if (chunk instanceof Choice) {
+          return chunk.chunks;
+        }
+        return chunk;
+      })
+      .flat();
   }
 
-  if(chunks.length === 1) {
+  if (chunks.length === 1) {
     return chunks[0];
   } else {
     return new Choice(chunks);
