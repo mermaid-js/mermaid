@@ -17,6 +17,8 @@ describe('Railroad diagram', function () {
       ['rule=id', '; missing'],
       ['rule=(id;', 'parentheses are unbalanced'],
       ['rule=(id));', 'parentheses are unbalanced'],
+      ["' ::= x;", 'rule is with quote is not wrapped in <>'],
+      ["rule ::= ';", 'quote in rule definition is not wrapped in <>'],
     ])('%s when %s', (grammar: string) => {
       grammar = cleanupComments('' + grammar);
       expect(() => railroad.parser.parse(grammar)).toThrow();
@@ -45,6 +47,8 @@ describe('Railroad diagram', function () {
         ['list = element, list | ;'],
         ['expression = term { "a" term } .'],
         ["<while> ::= 'while';"],
+        ["<'> ::= <'>;"],
+        ['<"> ::= <"">;'],
         ["<while> ::= 'while' '(' <condition> ')' <statement>;"],
         ["<while-loop> ::= 'while' '(' <condition> ')' <statement>;"],
       ])('%s', (grammar: string) => {

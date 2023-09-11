@@ -114,7 +114,7 @@ C_TEXTDATA [\u0020-\u0021\u0023-\u0026\u0028-\u003B\u003D\u003F-\u007E] // every
 
 %%
 
-// W3C
+// https://www.w3.org/TR/2010/REC-xquery-20101214/#EBNFNotation
 //
 // Grammar ::= Production*
 // Production ::= NCName '::=' ( Choice | Link )
@@ -134,6 +134,44 @@ C_TEXTDATA [\u0020-\u0021\u0023-\u0026\u0028-\u003B\u003D\u003F-\u007E] // every
 // Whitespace ::= S | Comment
 // S ::= #x9 | #xA | #xD | #x20
 // Comment ::= '/*' ( [^*] | '*'+ [^*/] )* '*'* '*/' /* ws: explicit */
+
+// https://www.w3.org/2001/06/blindfold/grammar
+//
+// grammar ::= clause*                   # A grammar is zero or more clauses
+// clause  ::= clauseName "::=" pattern  # A clause associates a name with a pattern
+// pattern ::= branch ("|" branch)*      # A pattern has one or more branches (alternatives)
+// branch  ::= term+                     # A branch is one or more terms
+// term    ::=                           # A term is:
+//             string                    #  a string in single or double quotes
+//           | charset                   #  a character set (as in perl: [a-z0-9], etc)
+//           | "(" pattern ")"           #  a pattern, in parentheses
+//           | clauseName                #  a clauseName, matching a pattern by name
+//           | term [*+?]                #  a term followed by a "*", "+", or "?" operator
+
+// https://plantuml.com/ebnf
+//
+// @startebnf
+// grammar = { rule };
+// rule = lhs , "=" (* definition *) , rhs , ";" (* termination *);
+// lhs = identifier ;
+// rhs = identifier
+//      | terminal
+//      | "[" , rhs (* optional *) , "]"
+//      | "{" , rhs (* repetition *), "}"
+//      | "(" , rhs (* grouping *) , ")"
+//      | "(*" , string (* comment *) , "*)"
+//      | "?" , rhs (* special sequence, aka notation *) , "?"
+//      | rhs , "|" (* alternation *) , rhs
+//      | rhs , "," (* concatenation *), rhs ;
+// identifier = letter , { letter | digit | "_" } ;
+// terminal = "'" , character , { character } , "'"
+//          | '"' , character , { character } , '"' ;
+// character = letter | digit | symbol | "_" ;
+// symbol = "[" | "]" | "{" | "}" | "(" | ")" | "<" | ">"
+//        | "'" | '"' | "=" | "|" | "." | "," | ";" ;
+// digit = ? 0-9 ? ;
+// letter = ? A-Z or a-z ? ;
+// @endebnf
 
 // ISO-14977
 //
