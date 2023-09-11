@@ -5,7 +5,7 @@
 */
 
 // To avoid conflicts this grammar uses following notations
-// 
+//
 // `C_` prefix    means character, or character class
 // `TOKEN`, '+'   tokens or terminals must be uppper case only, without C_ prefix, or a character like '+'
 // non_terminal   non terminals must be snake_case
@@ -114,12 +114,67 @@ C_TEXTDATA [\u0020-\u0021\u0023-\u0026\u0028-\u003B\u003D\u003F-\u007E] // every
 
 %%
 
+// W3C
+//
+// Grammar ::= Production*
+// Production ::= NCName '::=' ( Choice | Link )
+// NCName ::= [http://www.w3.org/TR/xml-names/#NT-NCName]
+// Choice ::= SequenceOrDifference ( '|' SequenceOrDifference )*
+// SequenceOrDifference ::= (Item ( '-' Item | Item* ))?
+// Item ::= Primary ( '?' | '*' | '+' )*
+// Primary ::= NCName | StringLiteral | CharCode | CharClass | '(' Choice ')'
+// StringLiteral ::= '"' [^"]* '"' | "'" [^']* "'" /* ws: explicit */
+// CharCode ::= '#x' [0-9a-fA-F]+ /* ws: explicit */
+// CharClass ::= '[' '^'? ( Char | CharCode | CharRange | CharCodeRange )+ ']' /* ws: explicit */
+// Char ::= [http://www.w3.org/TR/xml#NT-Char]
+// CharRange ::= Char '-' ( Char - ']' ) /* ws: explicit */
+// CharCodeRange ::= CharCode '-' CharCode /* ws: explicit */
+// Link ::= '[' URL ']'
+// URL ::= [^#x5D:/?#]+ '://' [^#x5D#]+ ('#' NCName)? /* ws: explicit */
+// Whitespace ::= S | Comment
+// S ::= #x9 | #xA | #xD | #x20
+// Comment ::= '/*' ( [^*] | '*'+ [^*/] )* '*'* '*/' /* ws: explicit */
+
+// ISO-14977
+//
+// language ::= syntax_rule+ '.'
+// syntax_rule ::= id '::=' definitions_list ';'
+// definitions_list ::= single_definition ( '|' single_definition)*
+// single_definition ::= syntactic_term (',' syntactic_term)*
+// syntactic_term ::= syntactic_factor | syntactic_factor '-' syntactic_exception
+// syntactic_exception ::= syntactic-factor
+//
+// syntactic-exception consists of a syntactic-factor subject
+// to the restriction that the sequences of symbols represented
+// by the syntactic-exception could equally be represented by
+// a syntactic-factor containing no meta-identifiers.
+//
+// syntactic_factor ::= integer '*' syntactic_primary | syntactic_primary
+// integer ::= \d+
+// syntactic_primary ::=
+//   | optional-sequence
+//   | repeated-sequence
+//   | grouped-sequence
+//   | meta-identifier
+//   | terminal-string
+//   | special-sequence
+//   | // empty
+//   ;
+//
+// optional-sequence ::= '[' definitions_list ']'
+// repeated sequence ::= '{' definitions_list '}'
+// grouped-sequence ::= '(' definitions_list ')'
+// meta-identifier ::= letter (letter | decimal_digit )*
+// terminal-string ::= \' [^']+ \' | \" [^"]+ \"
+// special-sequence ::= '?' special-sequence-character* '?'
+// special-sequence-character ::= '?' terminal-character except ? '?'
+
 syntax: 'railroad-beta' rule* EOF;
 
 rule
-  : rule_id\[rule_id_] '=' alternative\[alternative_] ';' {
-      yy.getConsole().log($rule_id_.toString(), '=', $alternative_.toString());
-      yy.addRuleOrAlternative($rule_id_, $alternative_);
+  : rule_id\[rule_id_] '=' choice\[choice_] ';' {
+      yy.getConsole().log($rule_id_.toString(), '=', $choice_.toString());
+      yy.addRuleOrChoice($rule_id_, $choice_);
     };
 
 rule_id
@@ -131,60 +186,52 @@ rule_id
     }
   ;
 
-alternative
-  : concatenations\[concatenations_] {
-      $$=yy.addAlternative($concatenations_);
+choice
+  : alternatives {
+      $$=yy.addChoice($alternatives);
     }
   ;
 
-concatenations
-  : concatenation\[concatenation_] "|" concatenations\[tail_] {
-      $$=[$concatenation_, ...$tail_];
+alternatives
+  : sequence "|" alternatives\[tail_] {
+      $$=[$sequence, ...$tail_];
     }
-  | concatenation\[concatenation_] {
-      $$=[$concatenation_];
+  | sequence {
+      $$=[$sequence];
     }
   | {
       $$ = [yy.addEpsilon()];
     }
   ;
 
-concatenation
+sequence
   : (fact ","?)+\[facts_] {
-      $$ = yy.addConcatenation(Object.values($facts_));
+      $$ = yy.addSequence(Object.values($facts_));
     }
   ;
 
 fact
-  : prim\[prim_] QUANTIFIER?\[quantifier_] {
+  : prim QUANTIFIER?\[quantifier_] {
       switch($quantifier_) {
-        case '?': $$ = yy.addZeroOrOne($prim_); break;
-        case '+': $$ = yy.addOneOrMany($prim_); break;
-        case '*': $$ = yy.addZeroOrMany($prim_); break;
-        default: $$ = $prim_;
+        case '?': $$ = yy.addZeroOrOne($prim); break;
+        case '+': $$ = yy.addOneOrMany($prim); break;
+        case '*': $$ = yy.addZeroOrMany($prim); break;
+        default: $$ = $prim;
       };
     }
   ;
 
 prim
-  : '(' alternative\[alternative_] ')' {
-      $$=$alternative_;
-    }
-  | '[' alternative\[alternative_] ']' {
-      $$=yy.addZeroOrOne($alternative_);
-    }
-  | '{' alternative\[alternative_] '}' {
-      $$=yy.addZeroOrMany($alternative_);
-    }
+  : '(' choice ')' { $$=$choice; }
+  | '[' choice ']' { $$=yy.addZeroOrOne($choice); }
+  | '{' choice '}' { $$=yy.addZeroOrMany($choice); }
   | '"' (QSTRING)?\[qstring_] '"' {
       $$=yy.addTerm($qstring_, '"');
     }
   | APOSTROPHE (STRING)?\[string_] APOSTROPHE {
       $$=yy.addTerm($string_, "'");
     }
-  | rule_id\[rule_id_] {
-      $$=yy.addNonTerm($rule_id_);
-    }
+  | rule_id { $$=yy.addNonTerm($rule_id); }
   ;
 
 // TODO:
@@ -196,5 +243,5 @@ prim
 // * mark empty with %e ?
 
 // resolve quantifiers
-// (()?)? => ()? 
+// (()?)? => ()?
 // (()*)? => ()*

@@ -94,13 +94,8 @@ class Chain extends Chunk {
 }
 
 // Chain of chunks splitted by |
-// Represents choice (OR)
 //
-class Alternative extends Chain {
-  type(): string {
-    return 'Alternative';
-  }
-
+class Choice extends Chain {
   toString(): string {
     // const content = '[a' + (this.needsWrapping() ? 'Y' : 'N') + this.chunks.join('|') + 'a]';
     const content = this.chunks.join('|');
@@ -111,13 +106,8 @@ class Alternative extends Chain {
 }
 
 // Chain of chunks splitted by , (optionally)
-// Represents sequence
 //
-class Concatenation extends Chain {
-  type(): string {
-    return 'Concatenation';
-  }
-
+class Sequence extends Chain {
   toString(): string {
     // return '[d' + (this.needsWrapping() ? 'Y' : 'N') + this.chunks.join(',') + 'd]';
     const content = this.chunks.join(',');
@@ -169,24 +159,24 @@ const addOneOrMany = (chunk: Chunk): Chunk => {
 const addZeroOrMany = (chunk: Chunk): Chunk => {
   return new ZeroOrMany(chunk);
 };
-const addRuleOrAlternative = (ID: string, chunk: Chunk) => {
+const addRuleOrChoice = (ID: string, chunk: Chunk) => {
   if(rules[ID]) {
     const value = rules[ID];
-    const alternative = addAlternative([value, chunk]);
+    const alternative = addChoice([value, chunk]);
     rules[ID] = alternative;
   } else {
-    rules[ID] = new Alternative([chunk]);
+    rules[ID] = chunk;
   }
 }
 
-const addConcatenation = (chunks: Chunk[]): Chunk => {
+const addSequence = (chunks: Chunk[]): Chunk => {
   if (!Array.isArray(chunks)) {
-    console.error('Concatenations chunks are not array', chunks);
+    console.error('Sequence`s chunks are not array', chunks);
   }
 
   if(configApi.getConfig().railroad?.compressed) {
     chunks = chunks.map((chunk) => {
-      if(chunk instanceof Concatenation) {
+      if(chunk instanceof Sequence) {
         return chunk.chunks;
       }
       return chunk;
@@ -196,18 +186,18 @@ const addConcatenation = (chunks: Chunk[]): Chunk => {
   if(chunks.length === 1) {
     return chunks[0];
   } else {
-    return new Concatenation(chunks);
+    return new Sequence(chunks);
   }
 };
 
-const addAlternative = (chunks: Chunk[]): Chunk => {
+const addChoice = (chunks: Chunk[]): Chunk => {
   if (!Array.isArray(chunks)) {
     console.error('Alternative chunks are not array', chunks);
   }
 
   if(configApi.getConfig().railroad?.compressed) {
     chunks = chunks.map((chunk) => {
-      if(chunk instanceof Alternative) {
+      if(chunk instanceof Choice) {
         return chunk.chunks;
       }
       return chunk;
@@ -217,7 +207,7 @@ const addAlternative = (chunks: Chunk[]): Chunk => {
   if(chunks.length === 1) {
     return chunks[0];
   } else {
-    return new Alternative(chunks);
+    return new Choice(chunks);
   }
 };
 
@@ -226,32 +216,30 @@ const addEpsilon = (): Chunk => {
 };
 
 export interface RailroadDB extends DiagramDB {
-  clear: () => void;
+  addChoice: (chunks: Chunk[]) => Chunk;
   addEpsilon: () => Chunk;
-  addAlternative: (chunks: Chunk[]) => Chunk;
-  addConcatenation: (chunks: Chunk[]) => Chunk;
-  addZeroOrOne: (chunk: Chunk) => Chunk;
-  addOneOrMany: (chunk: Chunk) => Chunk;
-  addZeroOrMany: (chunk: Chunk) => Chunk;
-  addTerm: (label: string, quote: string) => Chunk;
   addNonTerm: (label: string) => Chunk;
+  addOneOrMany: (chunk: Chunk) => Chunk;
+  addRuleOrChoice: (ID: string, chunk: Chunk) => void;
+  addSequence: (chunks: Chunk[]) => Chunk;
+  addTerm: (label: string, quote: string) => Chunk;
+  addZeroOrMany: (chunk: Chunk) => Chunk;
+  addZeroOrOne: (chunk: Chunk) => Chunk;
+  clear: () => void;
   getConsole: () => Console;
-  isCompressed: () => boolean;
-  addRuleOrAlternative: (ID: string, chunk: Chunk) => void;
 }
 
 export const db: RailroadDB = {
-  getConfig: () => configApi.getConfig().railroad,
+  addChoice,
   addEpsilon,
-  addAlternative,
-  addConcatenation,
-  addZeroOrOne,
-  addOneOrMany,
-  addZeroOrMany,
-  addTerm,
   addNonTerm,
-  getConsole,
-  addRuleOrAlternative,
-  isCompressed: () => true,
+  addOneOrMany,
+  addRuleOrChoice,
+  addSequence,
+  addTerm,
+  addZeroOrMany,
+  addZeroOrOne,
   clear,
+  getConfig: () => configApi.getConfig().railroad,
+  getConsole,
 };
