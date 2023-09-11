@@ -1,0 +1,28 @@
+<html>
+  <head> </head>
+  <body>
+    <h1>Example</h1>
+    <pre class="mermaid">
+      %%{init:{"theme":"base", "themeVariables": {"lineColor":"red"}}}%%
+      flowchart LR
+      subgraph red
+      A --> B
+      end
+    </pre>
+    <pre class="mermaid">
+      %%{init:{"theme":"base", "themeVariables": {"lineColor":"blue"}}}%%
+      flowchart LR
+      subgraph black
+      A --> B
+      end
+    </pre>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({ startOnLoad: true, logLevel: 0 });
+
+      if (window.Cypress) {
+        window.rendered = true;
+      }
+    </script>
+  </body>
+</html>
