@@ -983,6 +983,11 @@ export interface TimelineDiagramConfig extends BaseDiagramConfig {
   sectionFills?: string[];
   sectionColours?: string[];
   disableMulticolor?: boolean;
+  /**
+   * Flag for setting whether or not a html tag should be used for rendering labels.
+   *
+   */
+  htmlLabels?: boolean;
 }
 /**
  * The object containing configurations specific for gantt diagrams

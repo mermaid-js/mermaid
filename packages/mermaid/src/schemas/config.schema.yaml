@@ -1324,6 +1324,7 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
       - messageAlign
       - bottomMarginAdj
       - useMaxWidth
+      - htmlLabels
     properties:
       diagramMarginX:
         $ref: '#/$defs/C4DiagramConfig/properties/diagramMarginX'
@@ -1434,6 +1435,11 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         # added by https://github.com/mermaid-js/mermaid/commit/652a42fe1aed7911a781a84716940a973b995639
         type: boolean
         default: false
+      htmlLabels:
+        description: |
+          Flag for setting whether or not a html tag should be used for rendering labels.
+        type: boolean
+        default: true
 
   GanttDiagramConfig:
     title: Gantt Diagram Config
