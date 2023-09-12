@@ -14,15 +14,20 @@ import {
 import type { SequenceDB, BoxData, ActorData, Text, Message, LINETYPE } from './sequenceTypes.js';
 import type { DiagramDB, ParseDirectiveDefinition } from '../../diagram-api/types.js';
 import { parseDirective as _parseDirective } from '../../directiveUtils.js';
+import DEFAULT_CONFIG from '../../defaultConfig.js';
+import type { SequenceDiagramConfig } from '../../config.type.js';
+
+export const DEFAULT_SEQUENCE_CONFIG: Required<SequenceDiagramConfig> = DEFAULT_CONFIG.sequence;
+const config: Required<SequenceDiagramConfig> = structuredClone(DEFAULT_SEQUENCE_CONFIG);
 
 let prevActor: string | undefined = undefined;
-const actors: Record<string, ActorData> = {};
-const createdActors: Record<string, ActorData> = {};
-const destroyedActors: Record<string, ActorData> = {};
-const boxes: BoxData[] = [];
-const messages: Message[] = [];
-const notes = [];
-const sequenceNumbersEnabled = false;
+let actors: Record<string, ActorData> = {};
+let createdActors: Record<string, ActorData> = {};
+let destroyedActors: Record<string, ActorData> = {};
+let boxes: BoxData[] = [];
+let messages: Message[] = [];
+let notes = [];
+let sequenceNumbersEnabled = false;
 let wrapEnabled;
 let currentBox: BoxData | undefined = undefined;
 const lastCreated = undefined;
@@ -49,7 +54,7 @@ const activationCount = (actorId: string): number => {
 const addBox = function (data: BoxData): void {
   boxes.push({
     title: data.title,
-    wrap: data.wrap,
+    wrap: data.wrap ?? autoWrap(),
     color: data.color,
     actorKeys: [],
   });
@@ -77,7 +82,7 @@ export const addActor = function (id: string, name: string, description: Text, t
     box: assignedBox,
     name: name,
     description: description.text ?? name,
-    wrap: description.wrap,
+    wrap: description.wrap ?? autoWrap(),
     prevActor: prevActor,
     links: {},
     properties: {},
@@ -106,7 +111,7 @@ export const addMessage = function (
     from: idFrom,
     to: idTo,
     message: message.text,
-    wrap: message.wrap ?? true,
+    wrap: message.wrap ?? autoWrap(),
     answer: answer,
   });
 };
@@ -175,7 +180,7 @@ export const addSignal = function (
     from: idFrom,
     to: idTo,
     message: message.text,
-    wrap: message.wrap ?? true,
+    wrap: message.wrap ?? autoWrap(),
     type: messageType,
     activate,
   });
@@ -221,6 +226,35 @@ export const getMessages = function () {
   return messages;
 };
 
+export const enableSequenceNumbers = function (): void {
+  sequenceNumbersEnabled = true;
+};
+
+export const disableSequenceNumbers = function () {
+  sequenceNumbersEnabled = false;
+};
+
+export const showSequenceNumbers = (): boolean => sequenceNumbersEnabled;
+
+export const setWrap = function (wrapSetting: boolean): void {
+  config.wrap = wrapSetting;
+};
+
+export const autoWrap = () => {
+  return config.wrap;
+};
+
+export const clear = function (): void {
+  actors = {};
+  createdActors = {};
+  destroyedActors = {};
+  boxes = [];
+  notes = [];
+  messages = [];
+  sequenceNumbersEnabled = false;
+  commonClear();
+};
+
 /**
  * We expect the box statement to be color first then description
  * The color can be rgb,rgba,hsl,hsla, or css code names #hex codes are not supported
@@ -250,7 +284,7 @@ export const parseBoxData = function (str: string): BoxData {
   const boxData: BoxData = {
     color: color,
     title: title ? sanitizeText(title.replace(/^:?(?:no)?wrap:/, ''), commonGetConfig()) : '',
-    wrap: title && title.match(/^:?nowrap:/) ? false : true,
+    wrap: title && title.match(/^:?nowrap:/) ? false : title.match(/^:?wrap:/) ? true : autoWrap(),
   };
   return boxData;
 };
@@ -259,7 +293,7 @@ export const parseText = function (str: string): Text {
   const _str = str.trim();
   const text = {
     text: _str.replace(/^:?(?:no)?wrap:/, '').trim(),
-    wrap: _str.match(/^:?wrap:/) ? true : _str.match(/^:?nowrap:/) ? false : undefined,
+    wrap: _str.match(/^:?wrap:/) ? true : _str.match(/^:?nowrap:/) ? false : autoWrap(),
   };
   return text;
 };
@@ -282,6 +316,12 @@ export const db: SequenceDB = {
   getMessages,
   hasAtleastOneBox,
   hasAtleastOneBoxWithTitle,
+  enableSequenceNumbers,
+  disableSequenceNumbers,
+  showSequenceNumbers,
+  setWrap,
+  autoWrap,
+  clear,
   getBoxes,
   getActors,
   getCreatedActors,

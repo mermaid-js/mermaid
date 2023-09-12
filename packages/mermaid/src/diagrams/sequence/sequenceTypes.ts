@@ -50,7 +50,7 @@ export interface Text {
 }
 
 export interface Message {
-  from?: string;
+  from: string;
   to: string;
   message: string;
   wrap?: boolean;
@@ -96,6 +96,12 @@ export interface SequenceDB extends DiagramDB {
   insertLinks: (actor: ActorData, link: Record<string, string>) => void;
   hasAtleastOneBox: () => boolean;
   hasAtleastOneBoxWithTitle: () => boolean;
+  enableSequenceNumbers: () => void;
+  disableSequenceNumbers: () => void;
+  showSequenceNumbers: () => boolean;
+  setWrap: (wrapSetting: boolean) => void;
+  autoWrap: () => boolean;
+  clear: () => void;
   getBoxes: () => BoxData[];
   getActors: () => Record<string, ActorData>;
   getCreatedActors: () => Record<string, ActorData>;
