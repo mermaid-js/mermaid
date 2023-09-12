@@ -4,13 +4,14 @@ import insertMarkers from '../../../dagre-wrapper/markers.js';
 import { insertEdgeLabel } from '../../../dagre-wrapper/edges.js';
 import { findCommonAncestor } from './render-utils.js';
 import { labelHelper } from '../../../dagre-wrapper/shapes/util.js';
-import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
 import { getConfig } from '../../../config.js';
 import { log } from '../../../logger.js';
 import { setupGraphViewbox } from '../../../setupGraphViewbox.js';
-import common, { evaluate } from '../../common/common.js';
+import common from '../../common/common.js';
 import { interpolateToCurve, getStylesFromArray } from '../../../utils.js';
 import ELK from 'elkjs/lib/elk.bundled.js';
+import { getLineFunctionsWithOffset } from '../../../utils/lineWithOffset.js';
+
 const elk = new ELK();
 
 let portPos = {};
@@ -705,8 +706,8 @@ const insertEdge = function (edgesEl, edge, edgeData, diagObj, parentLookupDb) {
     [dest.x + offset.x, dest.y + offset.y],
   ];
 
-  // const curve = line().curve(curveBasis);
-  const curve = line().curve(curveLinear);
+  const { x, y } = getLineFunctionsWithOffset(edge.edgeData);
+  const curve = line().x(x).y(y).curve(curveLinear);
   const edgePath = edgesEl
     .insert('path')
     .attr('d', curve(points))
