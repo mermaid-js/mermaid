@@ -1,4 +1,5 @@
 import { arc as d3arc, select } from 'd3';
+import { createText } from '../../rendering-util/createText.js';
 const MAX_SECTIONS = 12;
 
 export const drawRect = function (elem, rectData) {
@@ -523,23 +524,40 @@ export const drawNode = function (elem, node, fullSection, conf) {
 
   // Create the wrapped text element
   const textElem = nodeElem.append('g');
+  const description = node.descr.replace(/(<br\/*>)/g, '\n');
+  const htmlLabels = conf.timeline.htmlLabels;
 
-  const txt = textElem
-    .append('text')
-    .text(node.descr)
-    .attr('dy', '1em')
-    .attr('alignment-baseline', 'middle')
-    .attr('dominant-baseline', 'middle')
-    .attr('text-anchor', 'middle')
-    .call(wrap, node.width);
-  const bbox = txt.node().getBBox();
+  createText(textElem, description, {
+    useHtmlLabels: htmlLabels,
+    width: node.width,
+    classes: 'timeline-node-label',
+  });
+
+  if (!htmlLabels) {
+    textElem
+      .attr('dy', '1em')
+      .attr('alignment-baseline', 'middle')
+      .attr('dominant-baseline', 'middle')
+      .attr('text-anchor', 'middle');
+  }
+
+  const bbox = textElem.node().getBBox();
+
   const fontSize =
     conf.fontSize && conf.fontSize.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
   node.height = bbox.height + fontSize * 1.1 * 0.5 + node.padding;
   node.height = Math.max(node.height, node.maxHeight);
   node.width = node.width + 2 * node.padding;
 
-  textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + node.padding / 2 + ')');
+  if (!htmlLabels) {
+    const dx = node.width / 2;
+    const dy = node.padding / 2;
+    textElem.attr('transform', 'translate(' + dx + ', ' + dy + ')');
+  } else {
+    const dx = (node.width - bbox.width) / 2;
+    const dy = (node.height - bbox.height) / 2;
+    textElem.attr('transform', 'translate(' + dx + ', ' + dy + ')');
+  }
 
   // Create the background element
   defaultBkg(bkgElem, node, section, conf);

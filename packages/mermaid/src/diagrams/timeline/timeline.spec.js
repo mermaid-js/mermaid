@@ -1,13 +1,64 @@
 import { parser as timeline } from './parser/timeline.jison';
 import * as timelineDB from './timelineDb.js';
-import { setLogLevel } from '../../diagram-api/diagramAPI.js';
+// import { injectUtils } from './mermaidUtils.js';
+import * as _commonDb from '../../commonDb.js';
+import { parseDirective as _parseDirective } from '../../directiveUtils.js';
+import * as svgDraw from './svgDraw';
+import { select } from 'd3';
+
+import {
+  log,
+  setLogLevel,
+  getConfig,
+  sanitizeText,
+  setupGraphViewBox,
+} from '../../diagram-api/diagramAPI.js';
+
+// injectUtils(
+//   log,
+//   setLogLevel,
+//   getConfig,
+//   sanitizeText,
+//   setupGraphViewBox,
+//   _commonDb,
+//   _parseDirective
+// );
 
 describe('when parsing a timeline ', function () {
+  // Some of the tests are using d3 drawing and node doesn't support getComputedTextLength or getBBox
+  // because it isn't attached to a real DOM - so we need to mock them.
+  const originalGetComputedTextLength = SVGElement.prototype.getComputedTextLength;
+  const originalSVGGetBBox = SVGElement.prototype.getBBox;
+  const originalHTMLGetBBox = HTMLUnknownElement.prototype.getBBox;
+
   beforeEach(function () {
     timeline.yy = timelineDB;
     timelineDB.clear();
     setLogLevel('trace');
+    SVGElement.prototype.getComputedTextLength = () => {
+      return 150;
+    };
+
+    SVGElement.prototype.getBBox = HTMLUnknownElement.prototype.getBBox = () => {
+      return {
+        x: 0,
+        y: 0,
+        bottom: 0,
+        height: 0,
+        left: 0,
+        right: 0,
+        top: 0,
+        width: 0,
+      };
+    };
   });
+
+  afterEach(function () {
+    SVGElement.prototype.getComputedTextLength = originalGetComputedTextLength;
+    SVGElement.prototype.getBBox = originalSVGGetBBox;
+    HTMLUnknownElement.prototype.getBBox = originalHTMLGetBBox;
+  });
+
   describe('Timeline', function () {
     it('TL-1 should handle a simple section definition abc-123', function () {
       let str = `timeline
@@ -98,5 +149,55 @@ describe('when parsing a timeline ', function () {
         }
       });
     });
+  });
+
+  it('TL-6 should render markup as html if htmlLabel option is true', function () {
+    // Assemble
+    const element = select(document.createElement('div'), 'div');
+    const conf = {
+      timeline: {
+        htmlLabels: true,
+      },
+    };
+
+    // Act
+    svgDraw.drawNode(
+      element,
+      {
+        descr: '__this should be strong__',
+      },
+      1,
+      conf
+    );
+
+    // Assert
+    expect(element.html()).to.contain('<strong>this should be strong</strong>');
+  });
+
+  it('TL-6 should render markup as svg if htmlLabel option is false', function () {
+    // Assemble
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const element = select(svg, 'svg');
+
+    const conf = {
+      timeline: {
+        htmlLabels: false,
+      },
+    };
+
+    // Act
+    svgDraw.drawNode(
+      element,
+      {
+        descr: '__this should be strong__',
+      },
+      1,
+      conf
+    );
+
+    // Assert
+    expect(element.html()).to.contain(
+      '<tspan font-style="normal" class="text-inner-tspan" font-weight="bold"> strong</tspan>'
+    );
   });
 });

@@ -645,6 +645,11 @@ export interface TimelineDiagramConfig extends BaseDiagramConfig {
   sectionFills?: string[];
   sectionColours?: string[];
   disableMulticolor?: boolean;
+  /**
+  * Flag for setting whether or not a html tag should be used for rendering labels.
+  *
+  */
+  htmlLabels?: boolean;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

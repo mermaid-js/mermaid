@@ -77,5 +77,17 @@ const getStyles = (options) =>
   .eventWrapper  {
    filter: brightness(120%);
   }
+  .timeline-node-label {
+    dy: 1em;
+    alignment-baseline: middle;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    text-align: center;
+  }
+  
+  .timeline-node-label > p {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
 `;
 export default getStyles;
