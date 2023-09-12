@@ -14,3 +14,21 @@ export interface TextDimensions {
   height: number;
   lineHeight?: number;
 }
+
+export interface EdgeData {
+  arrowheadStyle?: string;
+  labelpos?: string;
+  labelType?: string;
+  label?: string;
+  classes: string;
+  pattern: string;
+  id: string;
+  arrowhead: string;
+  startLabelRight: string;
+  endLabelLeft: string;
+  arrowTypeStart: string;
+  arrowTypeEnd: string;
+  style: string;
+  labelStyle: string;
+  curve: any;
+}
