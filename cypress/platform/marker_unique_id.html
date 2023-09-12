@@ -16,6 +16,30 @@
       A --> B
       end
     </pre>
+    <pre class="mermaid">
+      ---
+      config:
+        theme: base
+        themeVariables:
+          lineColor: yellow
+      ---
+      flowchart LR
+      subgraph red
+      A --> B
+      end
+    </pre>
+    <pre class="mermaid">
+      ---
+      config:
+        theme: base
+        themeVariables:
+          lineColor: green
+      ---
+      flowchart LR
+      subgraph black
+      A --> B
+      end
+    </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({ startOnLoad: true, logLevel: 0 });
