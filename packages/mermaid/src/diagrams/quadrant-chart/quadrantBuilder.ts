@@ -4,16 +4,12 @@ import { log } from '../../logger.js';
 import type { BaseDiagramConfig, QuadrantChartConfig } from '../../config.type.js';
 import defaultConfig from '../../defaultConfig.js';
 import { getThemeVariables } from '../../themes/theme-default.js';
+import type { Point } from '../../types.js';
 
 const defaultThemeVariables = getThemeVariables();
 
 export type TextVerticalPos = 'left' | 'center' | 'right';
 export type TextHorizontalPos = 'top' | 'middle' | 'bottom';
-
-export interface Point {
-  x: number;
-  y: number;
-}
 
 export interface QuadrantPointInputType extends Point {
   text: string;
