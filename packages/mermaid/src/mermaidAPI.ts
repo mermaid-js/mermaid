@@ -28,17 +28,9 @@ import type { MermaidConfig } from './config.type.js';
 import { evaluate } from './diagrams/common/common.js';
 import isEmpty from 'lodash-es/isEmpty.js';
 import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
+import type { DiagramStyleClassDef } from './diagram-api/types.js';
 import { preprocessDiagram } from './preprocess.js';
 
-// diagram names that support classDef statements
-const CLASSDEF_DIAGRAMS = [
-  'graph',
-  'flowchart',
-  'flowchart-v2',
-  'flowchart-elk',
-  'stateDiagram',
-  'stateDiagram-v2',
-];
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
   'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -62,15 +54,6 @@ const IFRAME_NOT_SUPPORTED_MSG = 'The "iframe" tag is not supported by your brow
 // DOMPurify settings for svgCode
 const DOMPURIFY_TAGS = ['foreignobject'];
 const DOMPURIFY_ATTR = ['dominant-baseline'];
-
-// This is what is returned from getClasses(...) methods.
-// It is slightly renamed to ..StyleClassDef instead of just ClassDef because "class" is a greatly ambiguous and overloaded word.
-// It makes it clear we're working with a style class definition, even though defining the type is currently difficult.
-interface DiagramStyleClassDef {
-  id: string;
-  styles?: string[];
-  textStyles?: string[];
-}
 
 export interface ParseOptions {
   suppressErrors?: boolean;
@@ -184,15 +167,13 @@ export const cssImportantStyles = (
 
 /**
  * Create the user styles
- *
+ * @internal
  * @param  config - configuration that has style and theme settings to use
- * @param graphType - used for checking if classDefs should be applied
  * @param  classDefs - the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...)
  * @returns  the string with all the user styles
  */
 export const createCssStyles = (
   config: MermaidConfig,
-  graphType: string,
   classDefs: Record<string, DiagramStyleClassDef> | null | undefined = {}
 ): string => {
   let cssStyles = '';
@@ -212,7 +193,7 @@ export const createCssStyles = (
   }
 
   // classDefs defined in the diagram text
-  if (!isEmpty(classDefs) && CLASSDEF_DIAGRAMS.includes(graphType)) {
+  if (!isEmpty(classDefs)) {
     const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
 
     const cssHtmlElements = ['> *', 'span']; // TODO make a constant
@@ -241,10 +222,10 @@ export const createCssStyles = (
 export const createUserStyles = (
   config: MermaidConfig,
   graphType: string,
-  classDefs: Record<string, DiagramStyleClassDef>,
+  classDefs: Record<string, DiagramStyleClassDef> | undefined,
   svgId: string
 ): string => {
-  const userCSSstyles = createCssStyles(config, graphType, classDefs);
+  const userCSSstyles = createCssStyles(config, classDefs);
   const allStyles = getStyles(graphType, userCSSstyles, config.themeVariables);
 
   // Now turn all of the styles into a (compiled) string that starts with the id
@@ -481,9 +462,7 @@ const render = async function (
   // Insert an element into svg. This is where we put the styles
   const svg = element.firstChild;
   const firstChild = svg.firstChild;
-  const diagramClassDefs = CLASSDEF_DIAGRAMS.includes(diagramType)
-    ? diag.renderer.getClasses(text, diag)
-    : {};
+  const diagramClassDefs = diag.renderer.getClasses?.(text, diag);
 
   const rules = createUserStyles(config, diagramType, diagramClassDefs, idSelector);
 
