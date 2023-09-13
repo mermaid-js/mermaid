@@ -311,6 +311,14 @@ class Theme {
     this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
     this.commitLabelFontSize = this.commitLabelFontSize || '10px';
 
+    /* railroad */
+    this.railroad = {
+      backgroundColor: this.railroad?.backgroundColor || this.background,
+      titleColor: this.railroad?.titleColor || this.primaryTextColor,
+      nonTerminalColor: this.railroad?.terminalColor || this.primaryColor,
+      terminalColor: this.railroad?.terminalColor || this.secondaryColor,
+    };
+
     /* -------------------------------------------------- */
     /* EntityRelationship diagrams                        */
 

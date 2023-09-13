@@ -8,13 +8,17 @@ const clear = (): void => {
   commonClear();
 };
 
-// unite all rules
-// split by rules
-// show states
-// display states
+// Styles
+//
+// unite rules
+// split rules
+//
+// show states / display states
 // hide states
-// shape of non-terminals
-// shape of terminals
+//
+// shapes of non-terminals
+// shapes of terminals
+//
 // start
 // end
 
@@ -27,30 +31,46 @@ const clear = (): void => {
 // null
 // type ruleID = string;
 
-let rules: Record<string, Chunk> = {};
+type Rules = Record<string, Chunk>;
+
+let rules: Rules = {};
 
 const getConsole = () => console;
 
-class Chunk {
-  // start?: State;
-  // end?: State;
-  // render: () => void;
-  type(): string {
-    return 'Chunk';
+interface Chunk {
+  traverse<T>(callback: (item: Chunk, nested?: T[]) => T): T;
+  toString(): string;
+}
+
+class Leaf implements Chunk {
+  constructor(public label: string) {}
+
+  traverse<T>(callback: (item: Chunk, nested?: T[]) => T): T {
+    return callback(this);
   }
 
-  // [util.inspect.custom](): string {
-  //   return this.toString();
-  // }
-
-  // should be wrapped?
-
-  needsWrapping(): boolean {
-    return false;
+  toString(): string {
+    return this.label;
   }
+}
 
-  wrap(): string {
-    return '(' + this.toString() + ')';
+class Node implements Chunk {
+  constructor(public child: Chunk) {}
+
+  traverse<T>(callback: (item: Chunk, nested?: T[]) => T): T {
+    const nested = this.child.traverse(callback);
+
+    return callback(this, [nested]);
+  }
+}
+
+class Chain implements Chunk {
+  constructor(public children: Chunk[]) {}
+
+  traverse<T>(callback: (item: Chunk, nested?: T[]) => T): T {
+    const nested = this.children.map((child) => child.traverse(callback));
+
+    return callback(this, nested);
   }
 }
 
@@ -59,87 +79,63 @@ class Chunk {
 // It is implied that every chunk has `start` and `end` states
 // But we do not create them, simply keeping transition 'body' with label
 //
-class Epsilon extends Chunk {
-  toString(): string {
-    return 'ɛ';
+class Epsilon extends Leaf {
+  constructor() {
+    super('ɛ');
   }
 }
 
-class Term extends Chunk {
+// remote quote???
+class Term extends Leaf {
   constructor(public label: string, public quote: string) {
-    super();
+    super(label);
   }
+
   toString(): string {
-    return this.quote + this.label + this.quote;
+    return this.quote + super.toString() + this.quote;
   }
 }
 
-class NonTerm extends Chunk {
-  constructor(public label: string) {
-    super();
-  }
+class NonTerm extends Leaf {
   toString(): string {
-    return '<' + this.label + '>';
+    return '<' + super.toString() + '>';
   }
 }
 
-class Chain extends Chunk {
-  constructor(public chunks: Chunk[]) {
-    super();
-  }
-
-  needsWrapping(): boolean {
-    return this.chunks.length > 1;
-  }
-}
-
-// Chain of chunks splitted by |
-//
 class Choice extends Chain {
   toString(): string {
     // const content = '[a' + (this.needsWrapping() ? 'Y' : 'N') + this.chunks.join('|') + 'a]';
-    const content = this.chunks.join('|');
+    const content = this.children.join('|');
     // if (this.needsWrapping())
     return '(a' + content + 'a)';
     // return content;
   }
 }
 
-// Chain of chunks splitted by , (optionally)
-//
 class Sequence extends Chain {
   toString(): string {
     // return '[d' + (this.needsWrapping() ? 'Y' : 'N') + this.chunks.join(',') + 'd]';
-    const content = this.chunks.join(',');
+    const content = this.children.join(',');
     // if (this.needsWrapping())
     return '(c' + content + 'c)';
   }
 }
 
-class OneOrMany extends Chunk {
-  constructor(public chunk: Chunk) {
-    super();
-  }
+class OneOrMany extends Node {
   toString(): string {
-    return this.chunk + '+';
+    return this.child + '+';
   }
 }
 
-class ZeroOrOne extends Chunk {
-  constructor(public chunk: Chunk) {
-    super();
-  }
+class ZeroOrOne extends Node {
   toString(): string {
-    return this.chunk + '?';
+    return this.child + '?';
   }
 }
 
-class ZeroOrMany extends Chunk {
-  constructor(public chunk: Chunk) {
-    super();
-  }
+class ZeroOrMany extends Node {
   toString(): string {
-    return this.chunk + '?';
+    return this.child + '?';
   }
 }
 
@@ -178,7 +174,7 @@ const addSequence = (chunks: Chunk[]): Chunk => {
     chunks = chunks
       .map((chunk) => {
         if (chunk instanceof Sequence) {
-          return chunk.chunks;
+          return chunk.children;
         }
         return chunk;
       })
@@ -201,7 +197,7 @@ const addChoice = (chunks: Chunk[]): Chunk => {
     chunks = chunks
       .map((chunk) => {
         if (chunk instanceof Choice) {
-          return chunk.chunks;
+          return chunk.children;
         }
         return chunk;
       })
@@ -219,6 +215,10 @@ const addEpsilon = (): Chunk => {
   return new Epsilon();
 };
 
+const getRules = (): Rules => {
+  return rules;
+};
+
 export interface RailroadDB extends DiagramDB {
   addChoice: (chunks: Chunk[]) => Chunk;
   addEpsilon: () => Chunk;
@@ -231,6 +231,7 @@ export interface RailroadDB extends DiagramDB {
   addZeroOrOne: (chunk: Chunk) => Chunk;
   clear: () => void;
   getConsole: () => Console;
+  getRules: () => Rules;
 }
 
 export const db: RailroadDB = {
@@ -246,4 +247,5 @@ export const db: RailroadDB = {
   clear,
   getConfig: () => configApi.getConfig().railroad,
   getConsole,
+  getRules,
 };
