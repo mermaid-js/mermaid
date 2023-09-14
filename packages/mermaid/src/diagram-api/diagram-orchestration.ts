@@ -44,7 +44,11 @@ export const addDiagrams = () => {
         },
       },
       styles: {}, // should never be used
-      renderer: {}, // should never be used
+      renderer: {
+        draw: () => {
+          // should never be used
+        },
+      },
       parser: {
         parser: { yy: {} },
         parse: () => {

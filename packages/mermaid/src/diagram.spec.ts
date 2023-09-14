@@ -34,7 +34,11 @@ describe('diagram detection', () => {
                 yy: {},
               },
             },
-            renderer: {},
+            renderer: {
+              draw: () => {
+                // no-op
+              },
+            },
             styles: {},
           },
         })
