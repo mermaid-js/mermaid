@@ -16,6 +16,7 @@ import type { Block } from './blockTypes.js';
 // import { diagram as BlockDiagram } from './blockDiagram.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { Uid } from '../../rendering-util/uid.js';
+import { pad } from 'lodash';
 
 export const draw = async function (
   text: string,
@@ -42,19 +43,28 @@ export const draw = async function (
   const nodes = svg.insert('g').attr('class', 'block');
   await calculateBlockSizes(nodes, bl, db);
   const bounds = layout(db);
+  console.log('Here blocks', bl);
   await insertBlocks(nodes, bl, db);
 
-  console.log('Here', bl);
+  // console.log('Here', bl);
 
   // Establish svg dimensions and get width and height
   //
-  // const bounds = nodes.node().getBoundingClientRect();
-  const height = bounds.height + 600;
-  const width = bounds.width + 699;
+  // const bounds2 = nodes.node().getBoundingClientRect();
+  const bounds2 = bounds;
+  const padding = 10;
+  // Why, oh why ????
+  const magicFactor = Math.max(1, Math.round(0.125 * (bounds2.width / bounds2.height)));
+  const height = bounds2.height + magicFactor + 10;
+  const width = bounds2.width + 10;
   const useMaxWidth = false;
   configureSvgSize(svg, height, width, useMaxWidth);
-  console.log('Here Bounds', bounds);
-  svg.attr('viewBox', `${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`);
+  console.log('Here Bounds', bounds, bounds2);
+  svg.attr(
+    'viewBox',
+    `${bounds2.x - 5} ${bounds2.y - 5} ${bounds2.width + 10} ${bounds2.height + 10}`
+  );
+  // svg.attr('viewBox', `${-200} ${-200} ${400} ${400}`);
 
   // Prepare data for construction based on diagObj.db
   // This must be a mutable object with `nodes` and `links` properties:

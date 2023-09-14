@@ -1,5 +1,5 @@
 import { getStylesFromArray } from '../../utils.js';
-import { insertNode } from '../../dagre-wrapper/nodes.js';
+import { insertNode, positionNode } from '../../dagre-wrapper/nodes.js';
 import { getConfig } from '../../config.js';
 import { ContainerElement } from 'd3';
 import type { Block } from './blockTypes.js';
@@ -146,6 +146,7 @@ export async function insertBlockPositioned(elem: any, block: any, db: any) {
   // Add the element to the DOM to size it
   const obj = db.getBlock(node.id);
   const nodeEl = await insertNode(elem, node);
+  positionNode(node);
 }
 
 export async function performOperations(

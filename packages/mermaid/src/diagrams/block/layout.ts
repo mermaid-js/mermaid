@@ -66,17 +66,17 @@ let maxY = 0;
 function findBounds(block: Block) {
   if (block.size) {
     const { x, y, width, height } = block.size;
-    if (x - width < minX) {
-      minX = x - width;
+    if (x - width / 2 < minX) {
+      minX = x - width / 2;
     }
-    if (y - height < minY) {
-      minY = y - height;
+    if (y - height / 2 < minY) {
+      minY = y - height / 2;
     }
-    if (x > maxX) {
-      maxX = x;
+    if (x + width / 2 > maxX) {
+      maxX = x + width / 2;
     }
-    if (y > maxY) {
-      maxY = y;
+    if (y + height / 2 > maxY) {
+      maxY = y + height / 2;
     }
   }
   if (block.children) {
@@ -90,13 +90,14 @@ export function layout(db: BlockDB) {
   const blocks = db.getBlocks();
   const root = { id: 'root', type: 'composite', children: blocks } as Block;
   layoutBLock(root, db);
-  positionBlock(root, db);
+  // positionBlock(root, db);
 
   minX = 0;
   minY = 0;
   maxX = 0;
   maxY = 0;
   findBounds(root);
+  console.log('Here maxX', maxX);
   const height = maxY - minY;
   const width = maxX - minX;
   return { x: minX, y: minY, width, height };
