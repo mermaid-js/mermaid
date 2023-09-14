@@ -420,6 +420,16 @@ const render = async function (
   const enclosingDivID = 'd' + id;
   const enclosingDivID_selector = '#' + enclosingDivID;
 
+  const removeTempElements = () => {
+    // -------------------------------------------------------------------------------
+    // Remove the temporary HTML element if appropriate
+    const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
+    const node = select(tmpElementSelector).node();
+    if (node && 'remove' in node) {
+      node.remove();
+    }
+  };
+
   let root: any = select('body');
 
   const isSandboxed = config.securityLevel === SECURITY_LVL_SANDBOX;
@@ -479,6 +489,7 @@ const render = async function (
     diag = await getDiagramFromText(text);
   } catch (error) {
     if (config.suppressErrorRendering) {
+      removeTempElements();
       throw error;
     }
     diag = new Diagram('error');
@@ -510,10 +521,11 @@ const render = async function (
   try {
     await diag.renderer.draw(text, id, version, diag);
   } catch (e) {
-    if (!config.suppressErrorRendering) {
-      errorRenderer.draw(text, id, version);
+    if (config.suppressErrorRendering) {
+      removeTempElements();
+      throw e;
     }
-    throw e;
+    errorRenderer.draw(text, id, version);
   }
 
   // This is the d3 node for the svg element
@@ -549,13 +561,7 @@ const render = async function (
     throw parseEncounteredException;
   }
 
-  // -------------------------------------------------------------------------------
-  // Remove the temporary HTML element if appropriate
-  const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
-  const node = select(tmpElementSelector).node();
-  if (node && 'remove' in node) {
-    node.remove();
-  }
+  removeTempElements();
 
   return {
     svg: svgCode,
