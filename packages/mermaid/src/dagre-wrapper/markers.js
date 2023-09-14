@@ -14,7 +14,7 @@ const extension = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-extensionStart')
+    .attr('id', id + '_' + type + '-extensionStart')
     .attr('class', 'marker extension ' + type)
     .attr('refX', 18)
     .attr('refY', 7)
@@ -27,7 +27,7 @@ const extension = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-extensionEnd')
+    .attr('id', id + '_' + type + '-extensionEnd')
     .attr('class', 'marker extension ' + type)
     .attr('refX', 1)
     .attr('refY', 7)
@@ -38,11 +38,11 @@ const extension = (elem, type, id) => {
     .attr('d', 'M 1,1 V 13 L18,7 Z'); // this is actual shape for arrowhead
 };
 
-const composition = (elem, type) => {
+const composition = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-compositionStart')
+    .attr('id', id + '_' + type + '-compositionStart')
     .attr('class', 'marker composition ' + type)
     .attr('refX', 18)
     .attr('refY', 7)
@@ -55,7 +55,7 @@ const composition = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-compositionEnd')
+    .attr('id', id + '_' + type + '-compositionEnd')
     .attr('class', 'marker composition ' + type)
     .attr('refX', 1)
     .attr('refY', 7)
@@ -65,11 +65,11 @@ const composition = (elem, type) => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 };
-const aggregation = (elem, type) => {
+const aggregation = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-aggregationStart')
+    .attr('id', id + '_' + type + '-aggregationStart')
     .attr('class', 'marker aggregation ' + type)
     .attr('refX', 18)
     .attr('refY', 7)
@@ -82,7 +82,7 @@ const aggregation = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-aggregationEnd')
+    .attr('id', id + '_' + type + '-aggregationEnd')
     .attr('class', 'marker aggregation ' + type)
     .attr('refX', 1)
     .attr('refY', 7)
@@ -92,11 +92,11 @@ const aggregation = (elem, type) => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 };
-const dependency = (elem, type) => {
+const dependency = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-dependencyStart')
+    .attr('id', id + '_' + type + '-dependencyStart')
     .attr('class', 'marker dependency ' + type)
     .attr('refX', 6)
     .attr('refY', 7)
@@ -109,7 +109,7 @@ const dependency = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-dependencyEnd')
+    .attr('id', id + '_' + type + '-dependencyEnd')
     .attr('class', 'marker dependency ' + type)
     .attr('refX', 13)
     .attr('refY', 7)
@@ -119,11 +119,11 @@ const dependency = (elem, type) => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
-const lollipop = (elem, type) => {
+const lollipop = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-lollipopStart')
+    .attr('id', id + '_' + type + '-lollipopStart')
     .attr('class', 'marker lollipop ' + type)
     .attr('refX', 13)
     .attr('refY', 7)
@@ -140,7 +140,7 @@ const lollipop = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-lollipopEnd')
+    .attr('id', id + '_' + type + '-lollipopEnd')
     .attr('class', 'marker lollipop ' + type)
     .attr('refX', 1)
     .attr('refY', 7)
@@ -154,10 +154,10 @@ const lollipop = (elem, type) => {
     .attr('cy', 7)
     .attr('r', 6);
 };
-const point = (elem, type) => {
+const point = (elem, type, id) => {
   elem
     .append('marker')
-    .attr('id', type + '-pointEnd')
+    .attr('id', id + '_' + type + '-pointEnd')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 6)
@@ -173,7 +173,7 @@ const point = (elem, type) => {
     .style('stroke-dasharray', '1,0');
   elem
     .append('marker')
-    .attr('id', type + '-pointStart')
+    .attr('id', id + '_' + type + '-pointStart')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 4.5)
@@ -188,10 +188,10 @@ const point = (elem, type) => {
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
 };
-const circle = (elem, type) => {
+const circle = (elem, type, id) => {
   elem
     .append('marker')
-    .attr('id', type + '-circleEnd')
+    .attr('id', id + '_' + type + '-circleEnd')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 11)
@@ -210,7 +210,7 @@ const circle = (elem, type) => {
 
   elem
     .append('marker')
-    .attr('id', type + '-circleStart')
+    .attr('id', id + '_' + type + '-circleStart')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', -1)
@@ -227,10 +227,10 @@ const circle = (elem, type) => {
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
 };
-const cross = (elem, type) => {
+const cross = (elem, type, id) => {
   elem
     .append('marker')
-    .attr('id', type + '-crossEnd')
+    .attr('id', id + '_' + type + '-crossEnd')
     .attr('class', 'marker cross ' + type)
     .attr('viewBox', '0 0 11 11')
     .attr('refX', 12)
@@ -248,7 +248,7 @@ const cross = (elem, type) => {
 
   elem
     .append('marker')
-    .attr('id', type + '-crossStart')
+    .attr('id', id + '_' + type + '-crossStart')
     .attr('class', 'marker cross ' + type)
     .attr('viewBox', '0 0 11 11')
     .attr('refX', -1)
@@ -264,11 +264,11 @@ const cross = (elem, type) => {
     .style('stroke-width', 2)
     .style('stroke-dasharray', '1,0');
 };
-const barb = (elem, type) => {
+const barb = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-barbEnd')
+    .attr('id', id + '_' + type + '-barbEnd')
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)
