@@ -38,7 +38,9 @@ const pointTransformer = (data: Point | [number, number]) => {
   return data;
 };
 
-export const getLineFunctionsWithOffset = (edge: EdgeData) => {
+export const getLineFunctionsWithOffset = (
+  edge: Pick<EdgeData, 'arrowTypeStart' | 'arrowTypeEnd'>
+) => {
   return {
     x: function (d: Point | [number, number], i: number, data: (Point | [number, number])[]) {
       let offset = 0;
