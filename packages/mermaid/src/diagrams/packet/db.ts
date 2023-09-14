@@ -67,7 +67,9 @@ export const populate = ({ blocks }: { blocks: Block[] }) => {
     }
     if (start != lastByte + 1) {
       throw new Error(
-        `Packet block ${start} - ${end} is not contiguous. It should start from ${lastByte + 1}.`
+        `Packet block ${start} - ${end ?? start} is not contiguous. It should start from ${
+          lastByte + 1
+        }.`
       );
     }
     lastByte = end ?? start;
