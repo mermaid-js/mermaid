@@ -57,6 +57,14 @@ export interface Message {
   answer?: string;
   type?: string;
   activate?: boolean;
+  placement?: string;
+}
+
+export interface Note {
+  actorId: string;
+  placement: string;
+  message: string;
+  wrap: boolean;
 }
 
 export interface ActorData {
@@ -93,6 +101,10 @@ export interface SequenceDB extends DiagramDB {
   ) => void;
   addLinks: (id: string, text: Text) => void;
   addALink: (actorId: string, text: Text) => void;
+  addNote: (actorId: string, placement: string, text: Text) => void;
+  insertProperties: (actor: ActorData, properties: Record<string, string>) => void;
+  addProperties: (actorId: string, text: Text) => void;
+  addDetails: (actorId: string, text: Text) => void;
   insertLinks: (actor: ActorData, link: Record<string, string>) => void;
   hasAtleastOneBox: () => boolean;
   hasAtleastOneBoxWithTitle: () => boolean;

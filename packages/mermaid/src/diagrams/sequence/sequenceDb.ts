@@ -11,7 +11,15 @@ import {
   setAccDescription,
   clear as commonClear,
 } from '../common/commonDb.js';
-import type { SequenceDB, BoxData, ActorData, Text, Message, LINETYPE } from './sequenceTypes.js';
+import type {
+  SequenceDB,
+  BoxData,
+  ActorData,
+  Text,
+  Message,
+  Note,
+  LINETYPE,
+} from './sequenceTypes.js';
 import type { DiagramDB, ParseDirectiveDefinition } from '../../diagram-api/types.js';
 import { parseDirective as _parseDirective } from '../../directiveUtils.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
@@ -26,7 +34,7 @@ let createdActors: Record<string, ActorData> = {};
 let destroyedActors: Record<string, ActorData> = {};
 let boxes: BoxData[] = [];
 let messages: Message[] = [];
-let notes = [];
+let notes: Note[] = [];
 let sequenceNumbersEnabled = false;
 let wrapEnabled;
 let currentBox: BoxData | undefined = undefined;
@@ -255,6 +263,84 @@ export const clear = function (): void {
   commonClear();
 };
 
+export const addNote = function (actorId: string, placement: string, text: Text): void {
+  const note: Note = {
+    actorId: actorId,
+    placement: placement,
+    message: text.text,
+    wrap: text.wrap ?? autoWrap(),
+  };
+
+  // Coerce actor into a [to, from, ...] array
+  // eslint-disable-next-line unicorn/prefer-spread
+  // why do we need this? seems like it's just to indicate that the note acts as a message
+  // that goes from the actor back to themselves
+  //const actors = [].concat(actor, actor);
+
+  notes.push(note);
+  messages.push({
+    from: actorId,
+    to: actorId,
+    message: text.text,
+    wrap: text.wrap ?? autoWrap(),
+    type: 'NOTE',
+    placement: placement,
+  });
+};
+
+export const addProperties = function (actorId: string, text: Text) {
+  // find the actor
+  const actor = getActor(actorId);
+  // JSON.parse the text
+  try {
+    const sanitizedText = sanitizeText(text.text, commonGetConfig());
+    const properties = JSON.parse(sanitizedText);
+    // add the deserialized text to the actor's property field.
+    insertProperties(actor, properties);
+  } catch (e) {
+    log.error('error while parsing actor properties text', e);
+  }
+};
+
+/**
+ *
+ * @param actor - the Actor you want to add the properties to
+ * @param properties - properties to add such as css class and icon svg
+ */
+function insertProperties(actor: ActorData, properties: Record<string, string>): void {
+  if (!actor.properties) {
+    actor.properties = properties;
+  } else {
+    for (const key in properties) {
+      actor.properties[key] = properties[key];
+    }
+  }
+}
+
+//TODO: no documentation on this feature, seems to be for accessing information
+// concerning an element in the DOM and adding it to the actor
+export const addDetails = function (actorId: string, text: Text) {
+  // find the actor
+  const actor = getActor(actorId);
+  const elem = document.getElementById(text.text);
+
+  // JSON.parse the text
+  try {
+    const text = elem?.innerHTML;
+    const details = text ? JSON.parse(text) : null;
+    // add the deserialized text to the actor's property field.
+    if (details['properties']) {
+      insertProperties(actor, details['properties']);
+    }
+
+    if (details['links']) {
+      insertLinks(actor, details['links']);
+    }
+  } catch (e) {
+    log.error('error while parsing actor details text', e);
+  }
+};
+
 /**
  * We expect the box statement to be color first then description
  * The color can be rgb,rgba,hsl,hsla, or css code names #hex codes are not supported
@@ -312,6 +398,10 @@ export const db: SequenceDB = {
   addSignal,
   addLinks,
   addALink,
+  addNote,
+  insertProperties,
+  addProperties,
+  addDetails,
   insertLinks,
   getMessages,
   hasAtleastOneBox,
