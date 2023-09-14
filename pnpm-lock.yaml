@@ -475,8 +475,8 @@ importers:
         specifier: ^0.16.0
         version: 0.16.0(vite@4.3.9)(workbox-build@7.0.0)(workbox-window@7.0.0)
       vitepress:
-        specifier: 1.0.0-rc.10
-        version: 1.0.0-rc.10(@algolia/client-search@4.19.1)(@types/node@18.16.0)(search-insights@2.6.0)
+        specifier: 1.0.0-rc.12
+        version: 1.0.0-rc.12(@algolia/client-search@4.19.1)(@types/node@18.16.0)(search-insights@2.6.0)
       workbox-window:
         specifier: ^7.0.0
         version: 7.0.0
@@ -13913,6 +13913,15 @@ packages:
       vscode-textmate: 8.0.0
     dev: true
 
+  /shiki@0.14.4:
+    resolution: {integrity: sha512-IXCRip2IQzKwxArNNq1S+On4KPML3Yyn8Zzs/xRgcgOWIr8ntIK3IKzjFPfjy/7kt9ZMjc+FItfqHRBg8b6tNQ==}
+    dependencies:
+      ansi-sequence-parser: 1.1.0
+      jsonc-parser: 3.2.0
+      vscode-oniguruma: 1.7.0
+      vscode-textmate: 8.0.0
+    dev: true
+
   /side-channel@1.0.4:
     resolution: {integrity: sha512-q5XPytqFEIKHkGdiMIrY10mvLRvnQh42/+GoBlFW3b2LXLE2xxJpZFdm94we0BaoV3RwJyGqg5wS7epxTv0Zvw==}
     dependencies:
@@ -15456,8 +15465,8 @@ packages:
       - terser
     dev: true
 
-  /vitepress@1.0.0-rc.10(@algolia/client-search@4.19.1)(@types/node@18.16.0)(search-insights@2.6.0):
-    resolution: {integrity: sha512-+MsahIWqq5WUEmj6MR4obcKYbT7im07jZPCQPdNJExkeOSbOAJ4xypSLx88x7rvtzWHhHc5aXbOhCRvGEGjFrw==}
+  /vitepress@1.0.0-rc.12(@algolia/client-search@4.19.1)(@types/node@18.16.0)(search-insights@2.6.0):
+    resolution: {integrity: sha512-mZknN5l9lgbBjXwumwdOQQDM+gPivswFEykEQeenY0tv7eocS+bb801IpFZT3mFV6YRhSddmbutHlFgPPADjEg==}
     hasBin: true
     dependencies:
       '@docsearch/css': 3.5.2
@@ -15468,7 +15477,7 @@ packages:
       focus-trap: 7.5.2
       mark.js: 8.11.1
       minisearch: 6.1.0
-      shiki: 0.14.3
+      shiki: 0.14.4
       vite: 4.4.9(@types/node@18.16.0)
       vue: 3.3.4
     transitivePeerDependencies:

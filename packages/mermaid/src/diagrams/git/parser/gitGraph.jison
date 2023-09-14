@@ -9,10 +9,6 @@
 
 %x string
 %x options
-%x open_directive
-%x type_directive
-%x arg_directive
-%x close_directive
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
@@ -20,11 +16,6 @@
 
 
 %%
-\%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
-<open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
-<type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
-<type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
-<arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
 <acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
 accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
@@ -76,7 +67,6 @@ checkout(?=\s|$)                        return 'CHECKOUT';
 
 start
    : eol start
-    | directive start
     | GG document EOF{ return $3; }
     | GG ':' document EOF{ return $3; }
     | GG DIR ':' document EOF {yy.setDirection($2); return $4;}
@@ -239,27 +229,6 @@ commitType
     | REVERSE   { $$=yy.commitType.REVERSE;}
     | HIGHLIGHT { $$=yy.commitType.HIGHLIGHT;}
     ;
-
-directive
-  : openDirective typeDirective closeDirective
-  | openDirective typeDirective ':' argDirective closeDirective
-  ;
-
-openDirective
-  : open_directive { yy.parseDirective('%%{', 'open_directive'); }
-  ;
-
-typeDirective
-  : type_directive { yy.parseDirective($1, 'type_directive'); }
-  ;
-
-argDirective
-  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
-  ;
-
-closeDirective
-  : close_directive { yy.parseDirective('}%%', 'close_directive', 'gitGraph'); }
-  ;
 
 ref
     : ID
