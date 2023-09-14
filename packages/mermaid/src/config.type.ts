@@ -140,9 +140,42 @@ export interface MermaidConfig {
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
   sankey?: SankeyDiagramConfig;
+  packet?: PacketDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
+}
+/**
+ * The object containing configurations specific for packet diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "PacketDiagramConfig".
+ */
+export interface PacketDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The height of each row in the packet diagram.
+   */
+  rowHeight?: number;
+  /**
+   * The width of each bit in the packet diagram.
+   */
+  bitWidth?: number;
+  /**
+   * The number of bits to display per row.
+   */
+  bitsPerRow?: number;
+  /**
+   * Toggle to display or hide bit numbers.
+   */
+  showBits?: boolean;
+  /**
+   * The horizontal padding between the blocks in a row.
+   */
+  paddingX?: number;
+  /**
+   * The vertical padding between the rows.
+   */
+  paddingY?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

@@ -9,9 +9,10 @@ import { generateLangium } from '../.build/generateLangium.js';
 const parserCtx = await context(
   getBuildConfig({ ...defaultOptions, minify: false, core: false, entryName: 'parser' })
 );
-const mermaidCtx = await context(
-  getBuildConfig({ ...defaultOptions, minify: false, core: false, entryName: 'mermaid' })
-);
+const mermaidCtx = await context({
+  ...getBuildConfig({ ...defaultOptions, minify: false, core: false, entryName: 'mermaid' }),
+  sourcemap: 'linked',
+});
 const mermaidIIFECtx = await context(
   getBuildConfig({
     ...defaultOptions,
