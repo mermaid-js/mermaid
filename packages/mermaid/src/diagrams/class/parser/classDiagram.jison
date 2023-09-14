@@ -13,9 +13,6 @@
 %x href
 %x callback_name
 %x callback_args
-%x open_directive
-%x type_directive
-%x arg_directive
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
@@ -24,15 +21,10 @@
 %x namespace
 %x namespace-body
 %%
-\%\%\{                                       { this.begin('open_directive'); return 'open_directive'; }
 .*direction\s+TB[^\n]*                       return 'direction_tb';
 .*direction\s+BT[^\n]*                       return 'direction_bt';
 .*direction\s+RL[^\n]*                       return 'direction_rl';
 .*direction\s+LR[^\n]*                       return 'direction_lr';
-<open_directive>((?:(?!\}\%\%)[^:.])*)       { this.begin('type_directive'); return 'type_directive'; }
-<type_directive>":"                          { this.popState(); this.begin('arg_directive'); return ':'; }
-<type_directive,arg_directive>\}\%\%         { this.popState(); this.popState(); return 'close_directive'; }
-<arg_directive>((?:(?!\}\%\%).|\n)*)         return 'arg_directive';
 \%\%(?!\{)*[^\n]*(\r?\n?)+                   /* skip comments */
 \%\%[^\n]*(\r?\n)*                           /* skip comments */
 accTitle\s*":"\s*                            { this.begin("acc_title");return 'acc_title'; }
@@ -220,45 +212,12 @@ line was introduced with 'click'.
 
 start
     : mermaidDoc
-    | directive start
     | statements
-    ;
-
-direction
-    : direction_tb
-    { yy.setDirection('TB');}
-    | direction_bt
-    { yy.setDirection('BT');}
-    | direction_rl
-    { yy.setDirection('RL');}
-    | direction_lr
-    { yy.setDirection('LR');}
     ;
 
 mermaidDoc
     : graphConfig
     ;
-
-directive
-  : openDirective typeDirective closeDirective NEWLINE
-  | openDirective typeDirective ':' argDirective closeDirective NEWLINE
-  ;
-
-openDirective
-  : open_directive { yy.parseDirective('%%{', 'open_directive'); }
-  ;
-
-typeDirective
-  : type_directive { yy.parseDirective($1, 'type_directive'); }
-  ;
-
-argDirective
-  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
-  ;
-
-closeDirective
-  : close_directive { yy.parseDirective('}%%', 'close_directive', 'class'); }
-  ;
 
 graphConfig
     : CLASS_DIAGRAM NEWLINE statements EOF
@@ -292,7 +251,7 @@ statement
     | relationStatement LABEL { $1.title =  yy.cleanupLabel($2); yy.addRelation($1);        }
     | namespaceStatement
     | classStatement
-    | methodStatement
+    | memberStatement
     | annotationStatement
     | clickStatement
     | cssClassStatement
@@ -339,7 +298,7 @@ members
     | MEMBER members { $2.push($1);$$=$2;}
     ;
 
-methodStatement
+memberStatement
     : className {/*console.log('Rel found',$1);*/}
     | className LABEL {yy.addMember($1,yy.cleanupLabel($2));}
     | MEMBER {/*console.warn('Member',$1);*/}
@@ -356,6 +315,17 @@ relationStatement
 noteStatement
     : NOTE_FOR className noteText  { yy.addNote($3, $2); }
     | NOTE noteText                { yy.addNote($2); }
+    ;
+
+direction
+    : direction_tb
+    { yy.setDirection('TB');}
+    | direction_bt
+    { yy.setDirection('BT');}
+    | direction_rl
+    { yy.setDirection('RL');}
+    | direction_lr
+    { yy.setDirection('LR');}
     ;
 
 relation

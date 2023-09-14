@@ -31,7 +31,11 @@ describe('diagram detection', () => {
                 // no-op
               },
             },
-            renderer: {},
+            renderer: {
+              draw: () => {
+                // no-op
+              },
+            },
             styles: {},
           },
         })

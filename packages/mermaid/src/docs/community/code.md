@@ -31,7 +31,7 @@ Once the release happens we add a tag to the `release` branch and merge it with 
 2. Check out the `develop` branch
 3. Create a new branch for your work. Please name the branch following our naming convention below.
 
-We use the follow naming convention for branches:
+We use the following naming convention for branches:
 
 ```txt
    [feature | bug | chore | docs]/[issue number]_[short description using dashes ('-') or underscores ('_') instead of spaces]

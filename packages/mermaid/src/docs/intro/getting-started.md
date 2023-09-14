@@ -86,7 +86,7 @@ When writing the .html file, we give two instructions inside the html code to th
 
 a. The mermaid code for the diagram we want to create.
 
-b. The importing of mermaid library through the `mermaid.esm.mjs` or `mermaid.esm.min.mjs` and the `mermaid.initialize()` call, which dictates the appearance of diagrams and also starts the rendering process .
+b. The importing of mermaid library through the `mermaid.esm.mjs` or `mermaid.esm.min.mjs` and the `mermaid.initialize()` call, which dictates the appearance of diagrams and also starts the rendering process.
 
 **a. The embedded mermaid diagram definition inside a `<pre class="mermaid">`:**
 
@@ -204,4 +204,4 @@ In this example mermaid.js is referenced in `src` as a separate JavaScript file,
 
 **Comments from Knut Sveidqvist, creator of mermaid:**
 
-- In early versions of mermaid, the `<script>` tag was invoked in the `<head>` part of the web page. Nowadays we can place it in the `<body>` as seen above. Older parts of the documentation frequently reflects the previous way which still works.
+- In early versions of mermaid, the `<script>` tag was invoked in the `<head>` part of the web page. Nowadays we can place it in the `<body>` as seen above. Older parts of the documentation frequently reflect the previous way which still works.

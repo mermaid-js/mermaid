@@ -1,6 +1,6 @@
-import { CommonTokenBuilder } from '../common/index.js';
+import { MermaidTokenBuilder } from '../common/index.js';
 
-export class InfoTokenBuilder extends CommonTokenBuilder {
+export class InfoTokenBuilder extends MermaidTokenBuilder {
   public constructor() {
     super(['info', 'showInfo']);
   }

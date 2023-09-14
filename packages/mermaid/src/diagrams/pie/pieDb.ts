@@ -1,5 +1,4 @@
 import { log } from '../../logger.js';
-import { parseDirective as _parseDirective } from '../../directiveUtils.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -8,8 +7,7 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../../commonDb.js';
-import type { ParseDirectiveDefinition } from '../../diagram-api/types.js';
+} from '../common/commonDb.js';
 import type { PieFields, PieDB, Sections, D3Section } from './pieTypes.js';
 import type { RequiredDeep } from 'type-fest';
 import type { PieDiagramConfig } from '../../config.type.js';
@@ -28,10 +26,6 @@ let showData: boolean = DEFAULT_PIE_DB.showData;
 const config: Required<PieDiagramConfig> = structuredClone(DEFAULT_PIE_CONFIG);
 
 const getConfig = (): Required<PieDiagramConfig> => structuredClone(config);
-
-const parseDirective: ParseDirectiveDefinition = (statement, context, type) => {
-  _parseDirective(this, statement, context, type);
-};
 
 const clear = (): void => {
   sections = structuredClone(DEFAULT_PIE_DB.sections);
@@ -57,7 +51,6 @@ const getShowData = (): boolean => showData;
 export const db: PieDB = {
   getConfig,
 
-  parseDirective,
   clear,
   setDiagramTitle,
   getDiagramTitle,

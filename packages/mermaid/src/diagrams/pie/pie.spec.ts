@@ -55,17 +55,6 @@ describe('pie', () => {
       expect(sections['bat']).toBe(40);
     });
 
-    it('should handle simple pie with a directive', () => {
-      parser.parse(`%%{init: {'logLevel':0}}%%
-      pie
-      "ash" : 60
-      "bat" : 40
-      `);
-      const sections = db.getSections();
-      expect(sections['ash']).toBe(60);
-      expect(sections['bat']).toBe(40);
-    });
-
     it('should handle simple pie with a title', () => {
       parser.parse(`pie title a 60/40 pie
       "ash" : 60

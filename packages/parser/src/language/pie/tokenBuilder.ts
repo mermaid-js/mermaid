@@ -1,6 +1,6 @@
-import { CommonTokenBuilder } from '../common/index.js';
+import { MermaidTokenBuilder } from '../common/index.js';
 
-export class PieTokenBuilder extends CommonTokenBuilder {
+export class PieTokenBuilder extends MermaidTokenBuilder {
   public constructor() {
     super(['pie', 'showData']);
   }

@@ -1,9 +1,9 @@
 import type { GrammarAST, Stream, TokenBuilderOptions } from 'langium';
-import { DefaultTokenBuilder } from 'langium';
-
 import type { TokenType } from '../chevrotainWrapper.js';
 
-export class CommonTokenBuilder extends DefaultTokenBuilder {
+import { DefaultTokenBuilder } from 'langium';
+
+export abstract class MermaidTokenBuilder extends DefaultTokenBuilder {
   private keywords: Set<string>;
 
   public constructor(keywords: string[]) {
