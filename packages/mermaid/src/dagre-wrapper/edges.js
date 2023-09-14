@@ -5,6 +5,7 @@ import { line, curveBasis, select } from 'd3';
 import { getConfig } from '../config.js';
 import utils from '../utils.js';
 import { evaluate } from '../diagrams/common/common.js';
+import { getLineFunctionsWithOffset } from '../utils/lineWithOffset.js';
 
 let edgeLabels = {};
 let terminalLabels = {};
@@ -368,20 +369,6 @@ const cutPathAtIntersect = (_points, boundryNode) => {
   return points;
 };
 
-/**
- * Calculate the deltas and angle between two points
- * @param {{x: number, y:number}} point1
- * @param {{x: number, y:number}} point2
- * @returns {{angle: number, deltaX: number, deltaY: number}}
- */
-function calculateDeltaAndAngle(point1, point2) {
-  const [x1, y1] = [point1.x, point1.y];
-  const [x2, y2] = [point2.x, point2.y];
-  const deltaX = x2 - x1;
-  const deltaY = y2 - y1;
-  return { angle: Math.atan(deltaY / deltaX), deltaX, deltaY };
-}
-
 export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph) {
   let points = edge.points;
   let pointsHasChanged = false;
@@ -456,56 +443,8 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     curve = edge.curve;
   }
 
-  // We need to draw the lines a bit shorter to avoid drawing
-  // under any transparent markers.
-  // The offsets are calculated from the markers' dimensions.
-  const markerOffsets = {
-    aggregation: 18,
-    extension: 18,
-    composition: 18,
-    dependency: 6,
-    lollipop: 13.5,
-    arrow_point: 5.3,
-  };
-
-  const lineFunction = line()
-    .x(function (d, i, data) {
-      let offset = 0;
-      if (i === 0 && Object.hasOwn(markerOffsets, edge.arrowTypeStart)) {
-        // Handle first point
-        // Calculate the angle and delta between the first two points
-        const { angle, deltaX } = calculateDeltaAndAngle(data[0], data[1]);
-        // Calculate the offset based on the angle and the marker's dimensions
-        offset = markerOffsets[edge.arrowTypeStart] * Math.cos(angle) * (deltaX >= 0 ? 1 : -1) || 0;
-      } else if (i === data.length - 1 && Object.hasOwn(markerOffsets, edge.arrowTypeEnd)) {
-        // Handle last point
-        // Calculate the angle and delta between the last two points
-        const { angle, deltaX } = calculateDeltaAndAngle(
-          data[data.length - 1],
-          data[data.length - 2]
-        );
-        offset = markerOffsets[edge.arrowTypeEnd] * Math.cos(angle) * (deltaX >= 0 ? 1 : -1) || 0;
-      }
-      return d.x + offset;
-    })
-    .y(function (d, i, data) {
-      // Same handling as X above
-      let offset = 0;
-      if (i === 0 && Object.hasOwn(markerOffsets, edge.arrowTypeStart)) {
-        const { angle, deltaY } = calculateDeltaAndAngle(data[0], data[1]);
-        offset =
-          markerOffsets[edge.arrowTypeStart] * Math.abs(Math.sin(angle)) * (deltaY >= 0 ? 1 : -1);
-      } else if (i === data.length - 1 && Object.hasOwn(markerOffsets, edge.arrowTypeEnd)) {
-        const { angle, deltaY } = calculateDeltaAndAngle(
-          data[data.length - 1],
-          data[data.length - 2]
-        );
-        offset =
-          markerOffsets[edge.arrowTypeEnd] * Math.abs(Math.sin(angle)) * (deltaY >= 0 ? 1 : -1);
-      }
-      return d.y + offset;
-    })
-    .curve(curve);
+  const { x, y } = getLineFunctionsWithOffset(edge);
+  const lineFunction = line().x(x).y(y).curve(curve);
 
   // Construct stroke classes based on properties
   let strokeClasses;

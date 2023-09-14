@@ -10,6 +10,8 @@ import { setupGraphViewbox } from '../../../setupGraphViewbox.js';
 import common from '../../common/common.js';
 import { interpolateToCurve, getStylesFromArray } from '../../../utils.js';
 import ELK from 'elkjs/lib/elk.bundled.js';
+import { getLineFunctionsWithOffset } from '../../../utils/lineWithOffset.js';
+
 const elk = new ELK();
 
 let portPos = {};
@@ -704,8 +706,8 @@ const insertEdge = function (edgesEl, edge, edgeData, diagObj, parentLookupDb) {
     [dest.x + offset.x, dest.y + offset.y],
   ];
 
-  // const curve = line().curve(curveBasis);
-  const curve = line().curve(curveLinear);
+  const { x, y } = getLineFunctionsWithOffset(edge.edgeData);
+  const curve = line().x(x).y(y).curve(curveLinear);
   const edgePath = edgesEl
     .insert('path')
     .attr('d', curve(points))
