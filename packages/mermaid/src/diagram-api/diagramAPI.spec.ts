@@ -40,7 +40,11 @@ describe('DiagramAPI', () => {
             return;
           },
         },
-        renderer: {},
+        renderer: {
+          draw: () => {
+            // no-op
+          },
+        },
         styles: {},
       },
       detector

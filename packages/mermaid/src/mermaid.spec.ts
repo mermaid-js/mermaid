@@ -95,8 +95,10 @@ describe('when using mermaid and ', () => {
       let loaded = false;
       const dummyDiagram: DiagramDefinition = {
         db: {},
-        renderer: () => {
-          // do nothing
+        renderer: {
+          draw: () => {
+            // no-op
+          },
         },
         parser: {
           parse: (_text) => {

@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import utils, { cleanAndMerge, detectDirective } from './utils.js';
+import utils, { calculatePoint, cleanAndMerge, detectDirective } from './utils.js';
 import assignWithDepth from './assignWithDepth.js';
 import { detectType } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
@@ -342,7 +342,7 @@ describe('when initializing the id generator', function () {
   });
 
   it('should return a random number generator based on Date', function () {
-    const idGenerator = new utils.initIdGenerator(false);
+    const idGenerator = new utils.InitIDGenerator(false);
     expect(typeof idGenerator.next).toEqual('function');
     const lastId = idGenerator.next();
     vi.advanceTimersByTime(1000);
@@ -350,7 +350,7 @@ describe('when initializing the id generator', function () {
   });
 
   it('should return a non random number generator', function () {
-    const idGenerator = new utils.initIdGenerator(true);
+    const idGenerator = new utils.InitIDGenerator(true);
     expect(typeof idGenerator.next).toEqual('function');
     const start = 0;
     const lastId = idGenerator.next();
@@ -359,7 +359,7 @@ describe('when initializing the id generator', function () {
   });
 
   it('should return a non random number generator based on seed', function () {
-    const idGenerator = new utils.initIdGenerator(true, 'thisIsASeed');
+    const idGenerator = new utils.InitIDGenerator(true, 'thisIsASeed');
     expect(typeof idGenerator.next).toEqual('function');
     const start = 11;
     const lastId = idGenerator.next();
@@ -478,5 +478,109 @@ describe('cleanAndMerge', () => {
     expect(outputDeep).toEqual({ a: { b: 2 } });
     outputDeep.a.b = 3;
     expect(inputDeep).toEqual({ a: { b: 1 } });
+  });
+});
+
+describe('calculatePoint', () => {
+  it('should calculate a point on a straight line', () => {
+    const points = [
+      { x: 0, y: 0 },
+      { x: 0, y: 10 },
+      { x: 0, y: 20 },
+    ];
+    expect(calculatePoint(points, 0)).toEqual({ x: 0, y: 0 });
+    expect(calculatePoint(points, 5)).toEqual({ x: 0, y: 5 });
+    expect(calculatePoint(points, 10)).toEqual({ x: 0, y: 10 });
+  });
+
+  it('should calculate a point on a straight line with slope', () => {
+    const points = [
+      { x: 0, y: 0 },
+      { x: 10, y: 10 },
+      { x: 20, y: 20 },
+    ];
+    expect(calculatePoint(points, 0)).toMatchInlineSnapshot(`
+      {
+        "x": 0,
+        "y": 0,
+      }
+    `);
+    expect(calculatePoint(points, 5)).toMatchInlineSnapshot(`
+      {
+        "x": 3.53553,
+        "y": 3.53553,
+      }
+    `);
+    expect(calculatePoint(points, 10)).toMatchInlineSnapshot(`
+      {
+        "x": 7.07107,
+        "y": 7.07107,
+      }
+    `);
+  });
+
+  it('should calculate a point on a straight line with negative slope', () => {
+    const points = [
+      { x: 20, y: 20 },
+      { x: 10, y: 10 },
+      { x: 15, y: 15 },
+      { x: 0, y: 0 },
+    ];
+    expect(calculatePoint(points, 0)).toMatchInlineSnapshot(`
+      {
+        "x": 20,
+        "y": 20,
+      }
+    `);
+    expect(calculatePoint(points, 5)).toMatchInlineSnapshot(`
+      {
+        "x": 16.46447,
+        "y": 16.46447,
+      }
+    `);
+    expect(calculatePoint(points, 10)).toMatchInlineSnapshot(`
+      {
+        "x": 12.92893,
+        "y": 12.92893,
+      }
+    `);
+  });
+
+  it('should calculate a point on a curved line', () => {
+    const points = [
+      { x: 0, y: 0 },
+      { x: 10, y: 10 },
+      { x: 20, y: 0 },
+    ];
+    expect(calculatePoint(points, 0)).toMatchInlineSnapshot(`
+      {
+        "x": 0,
+        "y": 0,
+      }
+    `);
+    expect(calculatePoint(points, 15)).toMatchInlineSnapshot(`
+      {
+        "x": 10.6066,
+        "y": 9.3934,
+      }
+    `);
+    expect(calculatePoint(points, 20)).toMatchInlineSnapshot(`
+      {
+        "x": 14.14214,
+        "y": 5.85786,
+      }
+    `);
+  });
+
+  it('should throw an error if the new point cannot be found', () => {
+    const points = [
+      { x: 0, y: 0 },
+      { x: 10, y: 10 },
+      { x: 20, y: 20 },
+    ];
+    const distanceToTraverse = 30;
+    expect(() => calculatePoint(points, distanceToTraverse)).toThrow(
+      'Could not find a suitable point for the given distance'
+    );
   });
 });
