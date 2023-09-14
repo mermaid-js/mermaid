@@ -11,7 +11,7 @@ import common from '../../common/common.js';
 import { interpolateToCurve, getStylesFromArray } from '../../../utils.js';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { getLineFunctionsWithOffset } from '../../../utils/lineWithOffset.js';
-import { addEdgeMarker } from '../../../dagre-wrapper/edgeMarker.js';
+import { addEdgeMarkers } from '../../../dagre-wrapper/edgeMarker.js';
 
 const elk = new ELK();
 
@@ -587,8 +587,7 @@ const addMarkersToEdge = function (svgPath, edgeData, diagramType, arrowMarkerAb
   }
 
   // look in edge data and decide which marker to use
-  addEdgeMarker(svgPath, 'start', edgeData.arrowTypeStart, url, id, diagramType);
-  addEdgeMarker(svgPath, 'end', edgeData.arrowTypeEnd, url, id, diagramType);
+  addEdgeMarkers(svgPath, edgeData, url, id, diagramType);
 };
 
 /**

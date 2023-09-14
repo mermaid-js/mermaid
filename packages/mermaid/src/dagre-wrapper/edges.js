@@ -6,7 +6,7 @@ import { getConfig } from '../config.js';
 import utils from '../utils.js';
 import { evaluate } from '../diagrams/common/common.js';
 import { getLineFunctionsWithOffset } from '../utils/lineWithOffset.js';
-import { addEdgeMarker } from './edgeMarker.js';
+import { addEdgeMarkers } from './edgeMarker.js';
 
 let edgeLabels = {};
 let terminalLabels = {};
@@ -507,8 +507,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
   log.info('arrowTypeStart', edge.arrowTypeStart);
   log.info('arrowTypeEnd', edge.arrowTypeEnd);
 
-  addEdgeMarker(svgPath, 'start', edge.arrowTypeStart, url, id, diagramType);
-  addEdgeMarker(svgPath, 'end', edge.arrowTypeEnd, url, id, diagramType);
+  addEdgeMarkers(svgPath, edge, url, id, diagramType);
 
   let paths = {};
   if (pointsHasChanged) {
