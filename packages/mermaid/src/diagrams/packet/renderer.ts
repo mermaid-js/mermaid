@@ -8,7 +8,7 @@ import type { Diagram } from '../../Diagram.js';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const db = diagram.db as PacketDB;
-  const config = db.getConfig?.() as Required<PacketDiagramConfig>;
+  const config = db.getConfig();
   const { rowHeight, paddingY, bitWidth, bitsPerRow } = config;
   const words = db.getPacket();
   const svgHeight = (rowHeight + paddingY) * words.length + paddingY;

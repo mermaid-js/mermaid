@@ -1,6 +1,7 @@
 import type { Block, PacketDB, Row } from './types.js';
-import { log } from '../../logger.js';
 import type { PacketDiagramConfig } from '../../config.type.js';
+
+import { log } from '../../logger.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 import { getConfig as commonGetConfig } from '../../config.js';
 
