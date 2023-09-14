@@ -1,7 +1,7 @@
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { DrawDefinition, Group, SVG } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import type { PacketDB, Word } from './types.js';
+import type { PacketDB, Row } from './types.js';
 import type { PacketDiagramConfig } from '../../config.type.js';
 import type { Diagram } from '../../Diagram.js';
 
@@ -25,13 +25,13 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
 
 const drawWord = (
   svg: SVG,
-  word: Word,
-  row: number,
+  row: Row,
+  rowNumber: number,
   { rowHeight, paddingX, paddingY, bitWidth, bitsPerRow }: Required<PacketDiagramConfig>
 ) => {
   const group: Group = svg.append('g');
-  const wordY = row * (rowHeight + paddingY) + paddingY;
-  for (const block of word) {
+  const wordY = rowNumber * (rowHeight + paddingY) + paddingY;
+  for (const block of row) {
     const blockX = (block.start % bitsPerRow) * bitWidth + 1;
     const width = (block.end - block.start + 1) * bitWidth - paddingX;
     // Block rectangle

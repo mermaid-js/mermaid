@@ -1,11 +1,11 @@
-import type { Block, PacketDB, Word } from './types.js';
+import type { Block, PacketDB, Row } from './types.js';
 import { log } from '../../logger.js';
 import type { PacketDiagramConfig } from '../../config.type.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 import { getConfig as commonGetConfig } from '../../config.js';
 
 interface PacketData {
-  packet: Word[];
+  packet: Row[];
 }
 
 const defaultPacketData: PacketData = {
@@ -22,21 +22,23 @@ export const getConfig = (): Required<PacketDiagramConfig> => {
   });
 };
 
-export const getPacket = (): Word[] => data.packet;
+export const getPacket = (): Row[] => data.packet;
 
 export const getNextFittingBlock = (
   block: Block,
   row: number,
   bitsPerRow: number
-): [Block, Block | undefined] => {
-  block.end = block.end ?? block.start;
+): [Required<Block>, Block | undefined] => {
+  if (block.end === undefined) {
+    block.end = block.start;
+  }
 
   if (block.start > block.end) {
     throw new Error(`Block start ${block.start} is greater than block end ${block.end}.`);
   }
 
   if (block.end + 1 <= row * bitsPerRow) {
-    return [block, undefined];
+    return [block as Required<Block>, undefined];
   }
 
   return [
@@ -55,12 +57,12 @@ export const getNextFittingBlock = (
 
 export const populate = ({ blocks }: { blocks: Block[] }) => {
   let lastByte = -1;
-  let word: Block[] = [];
+  let word: Row = [];
   data.packet = [];
   let row = 1;
   const { bitsPerRow } = getConfig();
   for (let { start, end, label } of blocks) {
-    if (end < start) {
+    if (end && end < start) {
       throw new Error(`Packet block ${start} - ${end} is invalid. End must be greater than start.`);
     }
     if (start != lastByte + 1) {
