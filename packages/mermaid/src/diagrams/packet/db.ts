@@ -16,10 +16,14 @@ let data: PacketData = structuredClone(defaultPacketData);
 export const DEFAULT_PACKET_CONFIG: Required<PacketDiagramConfig> = DEFAULT_CONFIG.packet;
 
 export const getConfig = (): Required<PacketDiagramConfig> => {
-  return structuredClone({
+  const config = structuredClone({
     ...DEFAULT_PACKET_CONFIG,
     ...commonGetConfig().packet,
   });
+  if (config.showBits) {
+    config.paddingY += 10;
+  }
+  return config;
 };
 
 export const getPacket = (): Row[] => data.packet;

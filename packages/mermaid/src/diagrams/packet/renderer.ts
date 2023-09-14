@@ -27,7 +27,7 @@ const drawWord = (
   svg: SVG,
   row: Row,
   rowNumber: number,
-  { rowHeight, paddingX, paddingY, bitWidth, bitsPerRow }: Required<PacketDiagramConfig>
+  { rowHeight, paddingX, paddingY, bitWidth, bitsPerRow, showBits }: Required<PacketDiagramConfig>
 ) => {
   const group: Group = svg.append('g');
   const wordY = rowNumber * (rowHeight + paddingY) + paddingY;
@@ -53,13 +53,16 @@ const drawWord = (
       .attr('text-anchor', 'middle')
       .text(block.label);
 
+    if (!showBits) {
+      continue;
+    }
     // Start byte count
     const isSingleBlock = block.end === block.start;
-    const byteNumberY = wordY - 2;
+    const bitNumberY = wordY - 2;
     group
       .append('text')
       .attr('x', blockX + (isSingleBlock ? width / 2 : 0))
-      .attr('y', byteNumberY)
+      .attr('y', bitNumberY)
       .attr('class', 'byte start')
       .attr('dominant-baseline', 'auto')
       .attr('text-anchor', isSingleBlock ? 'middle' : 'start')
@@ -70,7 +73,7 @@ const drawWord = (
       group
         .append('text')
         .attr('x', blockX + width)
-        .attr('y', byteNumberY)
+        .attr('y', bitNumberY)
         .attr('class', 'byte end')
         .attr('dominant-baseline', 'auto')
         .attr('text-anchor', 'end')

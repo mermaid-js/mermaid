@@ -1880,7 +1880,7 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         default: 5
       paddingY:
         description: The vertical padding between the rows.
-        default: 15
+        default: 5
 
   FontCalculator:
     title: Font Calculator
