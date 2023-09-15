@@ -155,7 +155,7 @@ properties:
       in the current `currentConfig`.
 
       This prevents malicious graph directives from overriding a site's default security.
-    default: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
+    default: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize', 'suppressErrorRendering']
     type: array
     items:
       type: string

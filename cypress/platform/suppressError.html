@@ -23,6 +23,24 @@
       a[This should be visible]
     </pre
       >
+      <pre class="mermaid">
+  ---
+  config:
+    suppressErrorRendering: true # This should not affect anything, as suppressErrorRendering is a secure config
+  ---
+  flowchart
+    a --< b
+    </pre
+      >
+      <pre class="mermaid">
+  ---
+  config:
+    suppressErrorRendering: false # This should not affect anything, as suppressErrorRendering is a secure config
+  ---
+  flowchart
+    a --< b
+    </pre
+      >
     </div>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
