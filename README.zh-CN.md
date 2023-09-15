@@ -21,6 +21,10 @@ Mermaid
 <a href="./README.md">English</a>
 </p>
 
+<p align="center">
+<a href="https://beta.mermaid.live/"><b>Live Editor Beta</b></a>
+</p>
+
 <br>
 <br>
 

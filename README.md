@@ -20,6 +20,9 @@ Generate diagrams from markdown-like text.
 <p align="center">
 <a href="./README.zh-CN.md">简体中文</a>
 </p>
+<p align="center">
+<a href="https://beta.mermaid.live/"><b>Live Editor Beta</b></a>
+</p>
 
 <br>
 <br>
