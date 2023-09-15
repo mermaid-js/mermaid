@@ -121,7 +121,14 @@
         fontFamily: '"arial", sans-serif',
         curve: 'cardinal',
         securityLevel: 'strict',
+        startOnLoad: false,
       });
+
+      await mermaid.run();
+
+      if (window.Cypress) {
+        window.rendered = true;
+      }
     </script>
   </body>
 </html>
