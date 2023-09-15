@@ -491,9 +491,10 @@ const render = async function (
   } catch (e) {
     if (config.suppressErrorRendering) {
       removeTempElements();
-      throw e;
+    } else {
+      errorRenderer.draw(text, id, version);
     }
-    errorRenderer.draw(text, id, version);
+    throw e;
   }
 
   // This is the d3 node for the svg element
