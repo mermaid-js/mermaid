@@ -4,6 +4,7 @@ import insertMarkers from '../../../dagre-wrapper/markers.js';
 import { insertEdgeLabel } from '../../../dagre-wrapper/edges.js';
 import { findCommonAncestor } from './render-utils.js';
 import { labelHelper } from '../../../dagre-wrapper/shapes/util.js';
+import utils from '../../../utils.js';
 import { getConfig } from '../../../config.js';
 import { log } from '../../../logger.js';
 import { setupGraphViewbox } from '../../../setupGraphViewbox.js';
@@ -756,6 +757,12 @@ const insertEdge = function (edgesEl, edge, edgeData, diagObj, parentLookupDb, i
     .attr('d', curve(points))
     .attr('class', 'path ' + edgeData.classes)
     .attr('fill', 'none');
+  Object.entries(edgeData).forEach(([key, value]) => {
+    if (key !== 'classes'){
+      edgePath.attr(key, value);
+    }
+  });
+  log.info(edgePath);
   const edgeG = edgesEl.insert('g').attr('class', 'edgeLabel');
   const edgeWithLabel = select(edgeG.node().appendChild(edge.labelEl));
   const box = edgeWithLabel.node().firstChild.getBoundingClientRect();
@@ -805,6 +812,7 @@ const insertChildren = (nodeArray, parentLookupDb) => {
 export const draw = async function (text, id, _version, diagObj) {
   // Add temporary render element
   diagObj.db.clear();
+  const { securityLevel, flowchart: conf } = getConfig();
   nodeDb = {};
   portPos = {};
   diagObj.db.setGen('gen-2');
@@ -816,8 +824,7 @@ export const draw = async function (text, id, _version, diagObj) {
     id: 'root',
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-      'org.eclipse.elk.padding': '[top=100, left=100, bottom=110, right=110]',
-      'elk.layered.spacing.edgeNodeBetweenLayers': '30',
+      'elk.layered.spacing.edgeNodeBetweenLayers': conf?.nodeSpacing ? `${conf.nodeSpacing}` : '30',
       // 'elk.layered.mergeEdges': 'true',
       'elk.direction': 'DOWN',
       // 'elk.ports.sameLayerEdges': true,
@@ -845,7 +852,6 @@ export const draw = async function (text, id, _version, diagObj) {
       graph.layoutOptions['elk.direction'] = 'LEFT';
       break;
   }
-  const { securityLevel, flowchart: conf } = getConfig();
 
   // Find the root dom node to ne used in rendering
   // Handle root and document for when rendering in sandbox mode
@@ -861,6 +867,7 @@ export const draw = async function (text, id, _version, diagObj) {
 
   const svg = root.select(`[id="${id}"]`);
 
+  utils.insertTitle(svg, 'flowchartTitleText', conf.titleTopMargin, diagObj.db.getDiagramTitle());
   // Define the supported markers for the diagram
   const markers = ['point', 'circle', 'cross'];
 

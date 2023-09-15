@@ -844,3 +844,43 @@ end
     });
   });
 });
+
+describe('Title and arrow styling #4813', () => {
+
+  it('should render a flowchart with title', () => {
+    const titleString = 'Test Title';
+    renderGraph(
+      `---
+      title: ${titleString}
+      ---
+      flowchart LR
+      A-->B`,
+      { flowchart: { defaultRenderer: "elk" } }
+    );
+    cy.get('svg').should((svg) => {
+
+      const title = svg[0].querySelector('text');
+      expect(title.textContent).to.contain(titleString);
+    });
+  });
+
+  it('Render with stylized arrows', () => {
+    const titleString = 'Test Title';
+    renderGraph(
+      `
+      flowchart LR
+      A-->B
+      B-.-oC
+      C==xD
+      D ~~~ A`,
+      { flowchart: { defaultRenderer: "elk" } }
+    );
+    cy.get('svg').should((svg) => {
+      const edges = svg[0].querySelectorAll('.edges path');
+      expect(edges[0]).to.have.attr('pattern', 'solid');
+      expect(edges[1]).to.have.attr('pattern', 'dotted');
+      expect(edges[2]).to.have.css('stroke-width', '3.5px');
+      expect(edges[3]).to.have.css('stroke-width', '1.5px');
+    });
+  });
+})
