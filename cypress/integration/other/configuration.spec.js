@@ -132,7 +132,17 @@ describe('Configuration', () => {
       const url = 'http://localhost:9000/suppressError.html?suppressErrorRendering=true';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('#test');
+      cy.window().should('have.property', 'rendered', true);
+      cy.get('#test')
+        .find('svg')
+        .should(($svg) => {
+          expect($svg).to.have.length(2); // all failing diagrams should not appear!
+          $svg.each((_index, svg) => {
+            expect(cy.$$(svg)).to.be.visible();
+            // none of the diagrams should be error diagrams
+            expect($svg).to.not.contain('Syntax error');
+          });
+        });
       cy.matchImageSnapshot(
         'configuration.spec-should-not-render-error-diagram-if-suppressErrorRendering-is-set'
       );
@@ -142,6 +152,7 @@ describe('Configuration', () => {
       const url = 'http://localhost:9000/suppressError.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
+      cy.window().should('have.property', 'rendered', true);
       cy.get('#test');
       cy.matchImageSnapshot(
         'configuration.spec-should-render-error-diagram-if-suppressErrorRendering-is-not-set'

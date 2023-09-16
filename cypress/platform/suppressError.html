@@ -46,7 +46,11 @@
       import mermaid from './mermaid.esm.mjs';
       const shouldSuppress =
         new URLSearchParams(window.location.search).get('suppressErrorRendering') === 'true';
-      mermaid.initialize({ startOnLoad: true, suppressErrorRendering: shouldSuppress });
+      mermaid.initialize({ startOnLoad: false, suppressErrorRendering: shouldSuppress });
+      await mermaid.run();
+      if (window.Cypress) {
+        window.rendered = true;
+      }
     </script>
   </body>
 </html>
