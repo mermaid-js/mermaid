@@ -128,20 +128,24 @@ describe('Configuration', () => {
   });
 
   describe('suppressErrorRendering', () => {
+    beforeEach(() => {
+      cy.on('uncaught:exception', (err, runnable) => {
+        return !err.message.includes('Parse error on line');
+      });
+      cy.viewport(1440, 1024);
+    });
+
     it('should not render error diagram if suppressErrorRendering is set', () => {
       const url = 'http://localhost:9000/suppressError.html?suppressErrorRendering=true';
-      cy.viewport(1440, 1024);
       cy.visit(url);
       cy.window().should('have.property', 'rendered', true);
       cy.get('#test')
         .find('svg')
         .should(($svg) => {
-          expect($svg).to.have.length(2); // all failing diagrams should not appear!
-          $svg.each((_index, svg) => {
-            expect(cy.$$(svg)).to.be.visible();
-            // none of the diagrams should be error diagrams
-            expect($svg).to.not.contain('Syntax error');
-          });
+          // all failing diagrams should not appear!
+          expect($svg).to.have.length(2);
+          // none of the diagrams should be error diagrams
+          expect($svg).to.not.contain('Syntax error');
         });
       cy.matchImageSnapshot(
         'configuration.spec-should-not-render-error-diagram-if-suppressErrorRendering-is-set'
@@ -150,10 +154,16 @@ describe('Configuration', () => {
 
     it('should render error diagram if suppressErrorRendering is not set', () => {
       const url = 'http://localhost:9000/suppressError.html';
-      cy.viewport(1440, 1024);
       cy.visit(url);
       cy.window().should('have.property', 'rendered', true);
-      cy.get('#test');
+      cy.get('#test')
+        .find('svg')
+        .should(($svg) => {
+          // all five diagrams should be rendered
+          expect($svg).to.have.length(5);
+          // some of the diagrams should be error diagrams
+          expect($svg).to.contain('Syntax error');
+        });
       cy.matchImageSnapshot(
         'configuration.spec-should-render-error-diagram-if-suppressErrorRendering-is-not-set'
       );

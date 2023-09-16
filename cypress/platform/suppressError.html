@@ -47,9 +47,12 @@
       const shouldSuppress =
         new URLSearchParams(window.location.search).get('suppressErrorRendering') === 'true';
       mermaid.initialize({ startOnLoad: false, suppressErrorRendering: shouldSuppress });
-      await mermaid.run();
-      if (window.Cypress) {
-        window.rendered = true;
+      try {
+        await mermaid.run();
+      } catch {
+        if (window.Cypress) {
+          window.rendered = true;
+        }
       }
     </script>
   </body>
