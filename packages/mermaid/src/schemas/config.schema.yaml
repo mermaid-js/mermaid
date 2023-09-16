@@ -1884,9 +1884,62 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
     type: object
     unevaluatedProperties: false
     properties:
-      compressed:
+      alignment:
+        type: string
+        enum:
+          - left
+          - right
+          - center
+          - justify
+      wrap:
         type: boolean
         default: true
+        description: |
+          Wrap long grammars similarly to wrapping long lines
+      syntax:
+        type: string
+        enum:
+          - mermaid
+          - w3c
+          - iso
+      compress:
+        type: boolean
+        default: true
+        description: |
+          Compress rules to get the smallest possible diagram
+      display_grammar:
+        type: boolean
+        default: true
+        description: |
+          Draw grammar definitions inside diagram
+      angle_brackets:
+        type: boolean
+        default: true
+        description: |
+          Print angular brackets around non-terminal symbols
+      draw_arrows:
+        type: boolean
+        default: false
+      inline:
+        type: boolean
+        default: false
+      inline_items:
+        type: array
+        items:
+          type: string
+      # shapes:
+      #   type: object
+      #   unevaluatedProperties: false
+      #   properties:
+      #     terminal:
+      #       type: string
+      #       enum:
+      #         - left
+      #         - right
+      #         - center
+      #         - justify
+      #     non_terminal:
+      #       type: string
 
   FontCalculator:
     title: Font Calculator

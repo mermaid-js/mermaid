@@ -6,8 +6,11 @@ import { clear as commonClear } from '../common/commonDb.js';
 
 const clear = (): void => {
   commonClear();
+
+  rules = {};
 };
 
+// TODO: move to style config
 // Styles
 //
 // unite rules
@@ -31,22 +34,31 @@ const clear = (): void => {
 // null
 // type ruleID = string;
 
-type Rules = Record<string, Chunk>;
+export type Rules = Record<string, Chunk>;
 
 let rules: Rules = {};
 
 const getConsole = () => console;
 
-interface Chunk {
-  traverse<T>(callback: (item: Chunk, nested?: T[]) => T): T;
+type Callback<T> = (item: Chunk, index: number, parent: Chunk | undefined, result: T[]) => T;
+// type Traverse<T> = (callback: Callback<T>, index: number, parent?: Chunk) => T;
+
+interface Traversible {
+  traverse<T>(callback: Callback<T>, index?: number, parent?: Chunk): T;
+}
+
+// TODO: rewrite toString using traverse
+//
+interface Chunk extends Traversible {
   toString(): string;
 }
 
 class Leaf implements Chunk {
   constructor(public label: string) {}
 
-  traverse<T>(callback: (item: Chunk, nested?: T[]) => T): T {
-    return callback(this);
+  traverse<T>(callback: Callback<T>, index?: number, parent?: Chunk): T {
+    index ??= 0;
+    return callback(this, index, parent, []);
   }
 
   toString(): string {
@@ -57,21 +69,29 @@ class Leaf implements Chunk {
 class Node implements Chunk {
   constructor(public child: Chunk) {}
 
-  traverse<T>(callback: (item: Chunk, nested?: T[]) => T): T {
-    const nested = this.child.traverse(callback);
+  traverse<T>(callback: Callback<T>, index?: number, parent?: Chunk): T {
+    index ??= 0;
+    const nested = this.child.traverse(callback, index, this);
 
-    return callback(this, [nested]);
+    return callback(this, index, parent, [nested]);
   }
 }
 
 class Chain implements Chunk {
   constructor(public children: Chunk[]) {}
 
-  traverse<T>(callback: (item: Chunk, nested?: T[]) => T): T {
-    const nested = this.children.map((child) => child.traverse(callback));
+  traverse<T>(callback: Callback<T>, index?: number, parent?: Chunk): T {
+    index ??= 0;
+    const nested = this.children.map((child, child_index) =>
+      child.traverse(callback, child_index, this)
+    );
 
-    return callback(this, nested);
+    return callback(this, index, parent, nested);
   }
+}
+
+class Rule {
+  constructor(public ID: string, public definition: Chunk) {}
 }
 
 // Epsilon represents empty transition
@@ -104,38 +124,33 @@ class NonTerm extends Leaf {
 
 class Choice extends Chain {
   toString(): string {
-    // const content = '[a' + (this.needsWrapping() ? 'Y' : 'N') + this.chunks.join('|') + 'a]';
-    const content = this.children.join('|');
-    // if (this.needsWrapping())
-    return '(a' + content + 'a)';
-    // return content;
+    const content = this.children.map((c) => c.toString()).join('|');
+    return '(' + content + ')';
   }
 }
 
 class Sequence extends Chain {
   toString(): string {
-    // return '[d' + (this.needsWrapping() ? 'Y' : 'N') + this.chunks.join(',') + 'd]';
-    const content = this.children.join(',');
-    // if (this.needsWrapping())
-    return '(c' + content + 'c)';
+    const content = this.children.map((c) => c.toString()).join(',');
+    return '[' + content + ']';
   }
 }
 
 class OneOrMany extends Node {
   toString(): string {
-    return this.child + '+';
+    return this.child.toString() + '+';
   }
 }
 
 class ZeroOrOne extends Node {
   toString(): string {
-    return this.child + '?';
+    return this.child.toString() + '?';
   }
 }
 
 class ZeroOrMany extends Node {
   toString(): string {
-    return this.child + '?';
+    return this.child.toString() + '*';
   }
 }
 
@@ -155,7 +170,7 @@ const addOneOrMany = (chunk: Chunk): Chunk => {
 const addZeroOrMany = (chunk: Chunk): Chunk => {
   return new ZeroOrMany(chunk);
 };
-const addRuleOrChoice = (ID: string, chunk: Chunk) => {
+const addRuleOrChoice = (ID: string, chunk: Chunk): void => {
   if (rules[ID]) {
     const value = rules[ID];
     const alternative = addChoice([value, chunk]);
@@ -170,7 +185,7 @@ const addSequence = (chunks: Chunk[]): Chunk => {
     console.error('Sequence`s chunks are not array', chunks);
   }
 
-  if (configApi.getConfig().railroad?.compressed) {
+  if (configApi.getConfig().railroad?.compress) {
     chunks = chunks
       .map((chunk) => {
         if (chunk instanceof Sequence) {
@@ -193,7 +208,7 @@ const addChoice = (chunks: Chunk[]): Chunk => {
     console.error('Alternative chunks are not array', chunks);
   }
 
-  if (configApi.getConfig().railroad?.compressed) {
+  if (configApi.getConfig().railroad?.compress) {
     chunks = chunks
       .map((chunk) => {
         if (chunk instanceof Choice) {
@@ -215,8 +230,8 @@ const addEpsilon = (): Chunk => {
   return new Epsilon();
 };
 
-const getRules = (): Rules => {
-  return rules;
+const getRules = (): Rule[] => {
+  return Object.entries(rules).map(([ID, definition]) => new Rule(ID, definition))
 };
 
 export interface RailroadDB extends DiagramDB {
@@ -231,7 +246,7 @@ export interface RailroadDB extends DiagramDB {
   addZeroOrOne: (chunk: Chunk) => Chunk;
   clear: () => void;
   getConsole: () => Console;
-  getRules: () => Rules;
+  getRules: () => Rule[];
 }
 
 export const db: RailroadDB = {

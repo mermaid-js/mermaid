@@ -211,7 +211,6 @@ syntax: 'railroad-beta' rule* EOF;
 
 rule
   : rule_id\[rule_id_] '=' choice\[choice_] ';' {
-      yy.getConsole().log($rule_id_.toString(), '=', $choice_.toString());
       yy.addRuleOrChoice($rule_id_, $choice_);
     };
 

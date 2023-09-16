@@ -2,12 +2,15 @@
 import railroad from './railroadGrammar.jison';
 // import { prepareTextForParsing } from '../railroadUtils.js';
 import { cleanupComments } from '../../diagram-api/comments.js';
-import { db } from './railroadDB.js';
+import { db, Rules } from './railroadDB.js';
 
 describe('Railroad diagram', function () {
-  beforeEach(function () {
-    railroad.parser.yy = db;
-    railroad.parser.yy.clear();
+  beforeAll(() => {
+    railroad.yy = db;
+  });
+
+  afterEach(() => {
+    railroad.yy.clear();
   });
 
   describe('fails to parse', () => {
@@ -40,8 +43,8 @@ describe('Railroad diagram', function () {
         ['rule::=(id|id);'],
         ['rule::=[id|id];'],
         ['rule::={id|id};'],
-        ['rule = "term term";'],
-        ["rule = 'term term';"],
+        ['rule = "\'term term\'";'],
+        ['rule = \'"term term"\';'],
         ['rule = "";'],
         ['list = element list | ;'],
         ['list = element, list | ;'],
@@ -53,7 +56,10 @@ describe('Railroad diagram', function () {
         ["<while-loop> ::= 'while' '(' <condition> ')' <statement>;"],
       ])('%s', (grammar: string) => {
         grammar = cleanupComments('railroad-beta' + grammar);
-        expect(() => railroad.parser.parse(grammar)).not.toThrow();
+        railroad.parser.parse(grammar);
+        const x = railroad.yy.getRules() as Rules;
+        console.log(Object.entries(x).map(([r, e]) => [r, e.toString()]));
+        // expect(() => railroad.parser.parse(grammar)).not.toThrow();
         // railroad.parser.parse(grammar);
       });
     });

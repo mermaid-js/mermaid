@@ -52,18 +52,19 @@ export const draw: DrawDefinition = (_text, id, _version, diagObj): void => {
   const db = diagObj.db as RailroadDB;
   const rules = db.getRules();
 
-  Object.entries(rules).forEach(([label, chunk], index) => {
+  rules.forEach((rule, index) => {
+    const {ID: label, definition: chunk} = rule;
     console.log(`Key: ${label}, Value:`, chunk);
 
     const g = svg.append('g').attr('transform', `translate(${0},${10 + index * 20})`);
 
     g.append('text').text(label);
 
-    chunk.traverse<Dimension>((_item, nested) => {
-      if (nested === undefined) {
-        nested = [];
-      }
-      const nestedDimensions = nested.reduce((acc, curr) => acc.add(curr), new Dimension(0, 0));
+    chunk.traverse<Dimension>((item, index, parent, result) => {
+      debugger;
+      console.log(item, index, parent);
+
+      const nestedDimensions = result.reduce((acc, curr) => acc.add(curr), new Dimension(0, 0));
       return nestedDimensions;
       // item.toString()
     });

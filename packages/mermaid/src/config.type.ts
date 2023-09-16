@@ -1322,7 +1322,31 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
  * via the `definition` "RailroadDiagramConfig".
  */
 export interface RailroadDiagramConfig extends BaseDiagramConfig {
-  compressed?: boolean;
+  alignment?: 'left' | 'right' | 'center' | 'justify';
+  /**
+   * Wrap long grammars similarly to wrapping long lines
+   *
+   */
+  wrap?: boolean;
+  syntax?: 'mermaid' | 'w3c' | 'iso';
+  /**
+   * Compress rules to get the smallest possible diagram
+   *
+   */
+  compress?: boolean;
+  /**
+   * Draw grammar definitions inside diagram
+   *
+   */
+  display_grammar?: boolean;
+  /**
+   * Print angular brackets around non-terminal symbols
+   *
+   */
+  angle_brackets?: boolean;
+  draw_arrows?: boolean;
+  inline?: boolean;
+  inline_items?: string[];
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
