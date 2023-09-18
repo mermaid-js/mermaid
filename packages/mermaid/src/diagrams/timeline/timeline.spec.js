@@ -1,28 +1,8 @@
 import { parser as timeline } from './parser/timeline.jison';
 import * as timelineDB from './timelineDb.js';
-// import { injectUtils } from './mermaidUtils.js';
-import * as _commonDb from '../../commonDb.js';
-import { parseDirective as _parseDirective } from '../../directiveUtils.js';
+import { setLogLevel } from '../../diagram-api/diagramAPI.js';
 import * as svgDraw from './svgDraw';
 import { select } from 'd3';
-
-import {
-  log,
-  setLogLevel,
-  getConfig,
-  sanitizeText,
-  setupGraphViewBox,
-} from '../../diagram-api/diagramAPI.js';
-
-// injectUtils(
-//   log,
-//   setLogLevel,
-//   getConfig,
-//   sanitizeText,
-//   setupGraphViewBox,
-//   _commonDb,
-//   _parseDirective
-// );
 
 describe('when parsing a timeline ', function () {
   // Some of the tests are using d3 drawing and node doesn't support getComputedTextLength or getBBox

@@ -813,6 +813,20 @@ describe('given a class diagram with members and methods ', function () {
       parser.parse(str);
     });
 
+    it('should handle direct member declaration', function () {
+      parser.parse('classDiagram\n' + 'Car : wheels');
+      const car = classDb.getClass('Car');
+      expect(car.members.length).toBe(1);
+      expect(car.members[0].id).toBe('wheels');
+    });
+
+    it('should handle direct member declaration with type', function () {
+      parser.parse('classDiagram\n' + 'Car : int wheels');
+      const car = classDb.getClass('Car');
+      expect(car.members.length).toBe(1);
+      expect(car.members[0].id).toBe('int wheels');
+    });
+
     it('should handle simple member declaration with type', function () {
       const str = 'classDiagram\n' + 'class Car\n' + 'Car : int wheels';
 
