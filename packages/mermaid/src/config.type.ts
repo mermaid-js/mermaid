@@ -139,6 +139,7 @@ export interface MermaidConfig {
    * You can set this attribute to base the seed on a static string.
    *
    */
+  markdownAutoWrap?: boolean;
   deterministicIDSeed?: string;
   flowchart?: FlowchartDiagramConfig;
   sequence?: SequenceDiagramConfig;

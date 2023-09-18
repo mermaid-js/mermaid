@@ -2,6 +2,7 @@ import type { Content } from 'mdast';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import { dedent } from 'ts-dedent';
 import type { MarkdownLine, MarkdownWordType } from './types.js';
+import { getConfig } from '../config.js';
 
 /**
  * @param markdown - markdown to process
@@ -58,10 +59,15 @@ export function markdownToLines(markdown: string): MarkdownLine[] {
 
 export function markdownToHTML(markdown: string) {
   const { children } = fromMarkdown(markdown);
+  const markdownAutoWrap = getConfig().markdownAutoWrap;
 
   function output(node: Content): string {
     if (node.type === 'text') {
-      return node.value.replace(/\n/g, '<br/>');
+      if (!markdownAutoWrap) {
+        return node.value.replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;');
+      } else {
+        return node.value.replace(/\n/g, '<br/>');
+      }
     } else if (node.type === 'strong') {
       return `<strong>${node.children.map(output).join('')}</strong>`;
     } else if (node.type === 'emphasis') {
