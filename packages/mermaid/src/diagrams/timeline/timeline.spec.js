@@ -180,4 +180,31 @@ describe('when parsing a timeline ', function () {
       '<tspan font-style="normal" class="text-inner-tspan" font-weight="bold"> strong</tspan>'
     );
   });
+
+  it('TL-7 should render svg text elements to have correct styling if htmlLabel option is false', function () {
+    // Assemble
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const element = select(svg, 'svg');
+
+    const conf = {
+      timeline: {
+        htmlLabels: false,
+      },
+    };
+
+    // Act
+    svgDraw.drawNode(
+      element,
+      {
+        descr: 'text',
+      },
+      1,
+      conf
+    );
+
+    // Assert
+    expect(element.node().outerHTML).to.contain(
+      '<g dy="1em" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" transform="translate('
+    );
+  });
 });
