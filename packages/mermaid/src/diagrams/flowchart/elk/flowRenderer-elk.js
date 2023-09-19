@@ -949,6 +949,7 @@ export const draw = async function (text, id, _version, diagObj) {
   log.info('after layout', JSON.stringify(graph, null, 2));
   const g = await elk.layout(graph);
   drawNodes(0, 0, g.children, svg, subGraphsEl, diagObj, 0);
+  utils.insertTitle(svg, 'flowchartTitleText', conf.titleTopMargin, diagObj.db.getDiagramTitle());
   log.info('after layout', g);
   g.edges?.map((edge) => {
     insertEdge(edgesEl, edge, edge.edgeData, diagObj, parentLookupDb, id);
