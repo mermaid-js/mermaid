@@ -830,15 +830,8 @@ This feature is applicable to node labels, edge labels, and subgraph labels.
 
 The auto wrapping can be disabled by using
 
-```mermaid-example
-%%{init: {"markdownAutoWrap": false} }%%
-graph LR
-```
-
-```mermaid
-%%{init: {"markdownAutoWrap": false} }%%
-graph LR
-```
+    %%{init: {"markdownAutoWrap": false} }%%
+    graph LR
 
 ## Interaction
 
