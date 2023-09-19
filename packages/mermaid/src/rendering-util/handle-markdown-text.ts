@@ -14,11 +14,9 @@ function preprocessMarkdown(markdown: string): string {
   const withoutMultipleNewlines = markdown.replace(/\n{2,}/g, '\n');
   // Remove extra spaces at the beginning of each line
   const withoutExtraSpaces = dedent(withoutMultipleNewlines);
-  /*
   if (markdownAutoWrap === false) {
     return withoutExtraSpaces.replace(/ /g, '&nbsp;');
   }
-  */
   return withoutExtraSpaces;
 }
 
