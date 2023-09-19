@@ -139,7 +139,6 @@ export interface MermaidConfig {
    * You can set this attribute to base the seed on a static string.
    *
    */
-  markdownAutoWrap?: boolean;
   deterministicIDSeed?: string;
   flowchart?: FlowchartDiagramConfig;
   sequence?: SequenceDiagramConfig;
@@ -159,6 +158,7 @@ export interface MermaidConfig {
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
+  markdownAutoWrap?: boolean;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

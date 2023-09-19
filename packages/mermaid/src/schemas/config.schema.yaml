@@ -217,6 +217,8 @@ properties:
   fontSize:
     type: number
     default: 16
+  markdownAutoWrap:
+    type: boolean
 
 $defs: # JSON Schema definition (maybe we should move these to a seperate file)
   BaseDiagramConfig:
