@@ -829,7 +829,7 @@ export const insertTitle = (
   parent
     .append('text')
     .text(title)
-    .attr('x', '50%')
+    .attr('x', bounds.x + bounds.width / 2)
     .attr('y', -titleTopMargin)
     .attr('class', cssClass);
 };

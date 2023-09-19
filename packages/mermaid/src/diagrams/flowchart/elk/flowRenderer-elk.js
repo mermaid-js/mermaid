@@ -866,8 +866,6 @@ export const draw = async function (text, id, _version, diagObj) {
   const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
   const svg = root.select(`[id="${id}"]`);
-
-  utils.insertTitle(svg, 'flowchartTitleText', conf.titleTopMargin, diagObj.db.getDiagramTitle());
   // Define the supported markers for the diagram
   const markers = ['point', 'circle', 'cross'];
 
