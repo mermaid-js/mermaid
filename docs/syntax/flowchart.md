@@ -828,6 +828,16 @@ Formatting:
 
 This feature is applicable to node labels, edge labels, and subgraph labels.
 
+The auto wrapping can be disabled by using
+
+```mermaid-example
+%%{init: {"markdownAutoWrap": false} }%%
+```
+
+```mermaid
+%%{init: {"markdownAutoWrap": false} }%%
+```
+
 ## Interaction
 
 It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab.
