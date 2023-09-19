@@ -63,7 +63,7 @@ export function markdownToHTML(markdown: string) {
 
   function output(node: Content): string {
     if (node.type === 'text') {
-      if (!markdownAutoWrap) {
+      if (markdownAutoWrap === false) {
         return node.value.replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;');
       } else {
         return node.value.replace(/\n/g, '<br/>');

@@ -1,5 +1,6 @@
 import { markdownToLines, markdownToHTML } from './handle-markdown-text.js';
 import { test, expect } from 'vitest';
+import { setConfig } from '../config.js';
 
 test('markdownToLines - Basic test', () => {
   const input = `This is regular text
@@ -261,4 +262,12 @@ test('markdownToHTML - Unsupported formatting', () => {
   - l2
   - l3`)
   ).toMatchInlineSnapshot('"<p>Hello</p>Unsupported markdown: list"');
+});
+
+test('markdownToHTML - no auto wrapping', () => {
+  setConfig({ markdownAutoWrap: false });
+  expect(
+    markdownToHTML(`Hello, how do
+  you do?`)
+  ).toMatchInlineSnapshot('"<p>Hello,&nbsp;how&nbsp;do<br/>you&nbsp;do?</p>"');
 });
