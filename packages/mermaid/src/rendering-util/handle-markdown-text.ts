@@ -9,10 +9,16 @@ import { getConfig } from '../config.js';
  * @returns processed markdown
  */
 function preprocessMarkdown(markdown: string): string {
+  const markdownAutoWrap = getConfig().markdownAutoWrap;
   // Replace multiple newlines with a single newline
   const withoutMultipleNewlines = markdown.replace(/\n{2,}/g, '\n');
   // Remove extra spaces at the beginning of each line
   const withoutExtraSpaces = dedent(withoutMultipleNewlines);
+  /*
+  if (markdownAutoWrap === false) {
+    return withoutExtraSpaces.replace(/ /g, '&nbsp;');
+  }
+  */
   return withoutExtraSpaces;
 }
 
