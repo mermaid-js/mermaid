@@ -31,7 +31,7 @@ let tmpSVGGElem: SVGGType;
 
 let xyChartConfig: XYChartConfig = getChartDefaultConfig();
 let xyChartThemeConfig: XYChartThemeConfig = getChartDefaultThemeConfig();
-let xyChartData: XYChartData = getChartDefalutData();
+let xyChartData: XYChartData = getChartDefaultData();
 let plotColorPalette = xyChartThemeConfig.plotColorPalette.split(',').map((color) => color.trim());
 let hasSetXAxis = false;
 let hasSetYAxis = false;
@@ -54,7 +54,7 @@ function getChartDefaultConfig(): XYChartConfig {
   );
 }
 
-function getChartDefalutData(): XYChartData {
+function getChartDefaultData(): XYChartData {
   return {
     yAxis: {
       type: 'linear',
@@ -201,7 +201,7 @@ const clear = function () {
   commonClear();
   plotIndex = 0;
   xyChartConfig = getChartDefaultConfig();
-  xyChartData = getChartDefalutData();
+  xyChartData = getChartDefaultData();
   xyChartThemeConfig = getChartDefaultThemeConfig();
   plotColorPalette = xyChartThemeConfig.plotColorPalette.split(',').map((color) => color.trim());
   hasSetXAxis = false;

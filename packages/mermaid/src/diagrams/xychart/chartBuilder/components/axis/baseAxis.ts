@@ -51,6 +51,7 @@ export abstract class BaseAxis implements Axis {
 
   setAxisPosition(axisPosition: AxisPosition): void {
     this.axisPosition = axisPosition;
+    this.setRange(this.range);
   }
 
   abstract getScaleValue(value: number | string): number;
@@ -174,7 +175,7 @@ export abstract class BaseAxis implements Axis {
     this.boundingRect.y = point.y;
   }
 
-  private getDrawaableElementsForLeftAxis(): DrawableElem[] {
+  private getDrawableElementsForLeftAxis(): DrawableElem[] {
     const drawableElement: DrawableElem[] = [];
     if (this.showAxisLine) {
       const x = this.boundingRect.x + this.boundingRect.width - this.axisConfig.axisLineWidth / 2;
@@ -250,7 +251,7 @@ export abstract class BaseAxis implements Axis {
     }
     return drawableElement;
   }
-  private getDrawaableElementsForBottomAxis(): DrawableElem[] {
+  private getDrawableElementsForBottomAxis(): DrawableElem[] {
     const drawableElement: DrawableElem[] = [];
     if (this.showAxisLine) {
       const y = this.boundingRect.y + this.axisConfig.axisLineWidth / 2;
@@ -326,7 +327,7 @@ export abstract class BaseAxis implements Axis {
     }
     return drawableElement;
   }
-  private getDrawaableElementsForTopAxis(): DrawableElem[] {
+  private getDrawableElementsForTopAxis(): DrawableElem[] {
     const drawableElement: DrawableElem[] = [];
     if (this.showAxisLine) {
       const y = this.boundingRect.y + this.boundingRect.height - this.axisConfig.axisLineWidth / 2;
@@ -405,16 +406,16 @@ export abstract class BaseAxis implements Axis {
 
   getDrawableElements(): DrawableElem[] {
     if (this.axisPosition === 'left') {
-      return this.getDrawaableElementsForLeftAxis();
+      return this.getDrawableElementsForLeftAxis();
     }
     if (this.axisPosition === 'right') {
       throw Error('Drawing of right axis is not implemented');
     }
     if (this.axisPosition === 'bottom') {
-      return this.getDrawaableElementsForBottomAxis();
+      return this.getDrawableElementsForBottomAxis();
     }
     if (this.axisPosition === 'top') {
-      return this.getDrawaableElementsForTopAxis();
+      return this.getDrawableElementsForTopAxis();
     }
     return [];
   }

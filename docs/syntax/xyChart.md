@@ -33,7 +33,7 @@ xychart-beta
 ## Syntax
 
 > **Note**
-> all text values can be single word without ", if multiple line required we have to use ".
+> All text values that contain only one word can be written without `"`. If a text value has many words in it, specifically if it contains spaces, enclose the value in `"`
 
 ### Orientations
 
@@ -49,7 +49,7 @@ The title is a short description of the chart and it will always render on top o
 #### Example
 
     xychart-beta
-        title "This is a sample example"
+        title "This is a simple example"
         ...
 
 > **Note**
