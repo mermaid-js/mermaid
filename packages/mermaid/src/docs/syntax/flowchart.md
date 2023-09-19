@@ -523,6 +523,7 @@ The auto wrapping can be disabled by using
 
 ```mermaid-example
 %%{init: {"markdownAutoWrap": false} }%%
+graph LR
 ```
 
 ## Interaction
