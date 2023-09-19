@@ -42,7 +42,7 @@ The chart can be drawn horizontal or vertical, default value is vertical.
     xychart-beta horizontal
     ...
 
-### Title.
+### Title
 
 The title is a short description of the chart and it will always render on top of the chart.
 

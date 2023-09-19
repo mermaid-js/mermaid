@@ -23,7 +23,7 @@ All text values that contain only one word can be written without `"`. If a text
 
 ### Orientations
 
-The chart can be drawn horizontal or vertical, default value is vertical
+The chart can be drawn horizontal or vertical, default value is vertical.
 
 ```
 xychart-beta horizontal
@@ -57,7 +57,7 @@ The x-axis primarily serves as a categorical value, although it can also functio
 
 ### y-axis
 
-The y-axis is employed to represent numerical range values, it can't have categorical values.
+The y-axis is employed to represent numerical range values, it cannot have categorical values.
 
 #### Example
 
@@ -86,7 +86,7 @@ A bar chart offers the capability to graphically depict bars.
 
 #### Simplest example
 
-Every grammer are optional other than the chart name and one data set, so you will be able to draw a chart will a simple config like
+The only two things required are the chart name (`xychart-beta`) and one data set. So you will be able to draw a chart with a simple config like
 
 ```
 xychart-beta
@@ -104,7 +104,7 @@ xychart-beta
 | showTitle                | Title to be shown or not                       |     true      |
 | xAxis                    | xAxis configuration                            |  AxisConfig   |
 | yAxis                    | yAxis configuration                            |  AxisConfig   |
-| chartOrientation         | ('vertical' or 'horizontal')                   |  'vertical'   |
+| chartOrientation         | 'vertical' or 'horizontal'                     |  'vertical'   |
 | plotReservedSpacePercent | Minimum space plots will take inside the chart |      50       |
 
 ### AxisConfig
@@ -130,19 +130,19 @@ Themes for xychart resides inside xychart attribute so to set the variables use 
 %%{init: { "themeVariables": {"xyChart": {"titleColor": "#ff0000"} } }}%%
 ```
 
-| Parameter        | Description                                             |
-| ---------------- | ------------------------------------------------------- |
-| backgroundColor  | Background color of the whole chart                     |
-| titleColor       | Color of the Title text                                 |
-| xAxisLableColor  | Color of the x-axis labels                              |
-| xAxisTitleColor  | Color of the x-axis title                               |
-| xAxisTickColor   | Color of the x-axis tick                                |
-| xAxisLineColor   | Color of the x-axis line                                |
-| yAxisLableColor  | Color of the y-axis labels                              |
-| yAxisTitleColor  | Color of the y-axis title                               |
-| yAxisTickColor   | Color of the y-axis tick                                |
-| yAxisLineColor   | Color of the y-axis line                                |
-| plotColorPalette | String of colors seperated by comma eg "#f3456, #43445" |
+| Parameter        | Description                                               |
+| ---------------- | --------------------------------------------------------- |
+| backgroundColor  | Background color of the whole chart                       |
+| titleColor       | Color of the Title text                                   |
+| xAxisLableColor  | Color of the x-axis labels                                |
+| xAxisTitleColor  | Color of the x-axis title                                 |
+| xAxisTickColor   | Color of the x-axis tick                                  |
+| xAxisLineColor   | Color of the x-axis line                                  |
+| yAxisLableColor  | Color of the y-axis labels                                |
+| yAxisTitleColor  | Color of the y-axis title                                 |
+| yAxisTickColor   | Color of the y-axis tick                                  |
+| yAxisLineColor   | Color of the y-axis line                                  |
+| plotColorPalette | String of colors separated by comma e.g. "#f3456, #43445" |
 
 ## Example on config and theme
 
