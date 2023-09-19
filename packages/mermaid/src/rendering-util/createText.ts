@@ -169,9 +169,9 @@ export const createText = (
   log.info('createText', text, style, isTitle, classes, useHtmlLabels, isNode, addSvgBackground);
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
-    // text = text.replace(/\\n|\n/g, '<br />');
+
     const htmlText = markdownToHTML(text);
-    // log.info('markdo  wnToHTML' + text, markdownToHTML(text));
+
     const node = {
       isNode,
       label: decodeEntities(htmlText).replace(
