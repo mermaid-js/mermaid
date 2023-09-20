@@ -43,7 +43,7 @@ xychart-beta
 ```
 
 ```note
-if the title single word no need to use ", but if it has space " is needed
+If the title is a single word one no need to use `"`, but if it has space `"` is needed
 ```
 
 ### x-axis
