@@ -1,5 +1,5 @@
 import type { PieDiagramConfig } from '../../config.type.js';
-import type { DiagramDB, ParseDirectiveDefinition } from '../../diagram-api/types.js';
+import type { DiagramDB } from '../../diagram-api/types.js';
 
 export interface PieFields {
   sections: Sections;
@@ -46,7 +46,6 @@ export interface PieDB extends DiagramDB {
   getConfig: () => Required<PieDiagramConfig>;
 
   // common db
-  parseDirective: ParseDirectiveDefinition;
   clear: () => void;
   setDiagramTitle: (title: string) => void;
   getDiagramTitle: () => string;

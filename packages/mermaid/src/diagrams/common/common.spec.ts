@@ -1,4 +1,4 @@
-import { sanitizeText, removeScript, parseGenericTypes } from './common.js';
+import { sanitizeText, removeScript, parseGenericTypes, countOccurrence } from './common.js';
 
 describe('when securityLevel is antiscript, all script must be removed', () => {
   /**
@@ -59,16 +59,29 @@ describe('Sanitize text', () => {
 });
 
 describe('generic parser', () => {
-  it('should parse generic types', () => {
-    expect(parseGenericTypes('test~T~')).toEqual('test<T>');
-    expect(parseGenericTypes('test~Array~Array~string~~~')).toEqual('test<Array<Array<string>>>');
-    expect(parseGenericTypes('test~Array~Array~string[]~~~')).toEqual(
-      'test<Array<Array<string[]>>>'
-    );
-    expect(parseGenericTypes('test ~Array~Array~string[]~~~')).toEqual(
-      'test <Array<Array<string[]>>>'
-    );
-    expect(parseGenericTypes('~test')).toEqual('~test');
-    expect(parseGenericTypes('~test Array~string~')).toEqual('~test Array<string>');
+  it.each([
+    ['test~T~', 'test<T>'],
+    ['test~Array~Array~string~~~', 'test<Array<Array<string>>>'],
+    ['test~Array~Array~string[]~~~', 'test<Array<Array<string[]>>>'],
+    ['test ~Array~Array~string[]~~~', 'test <Array<Array<string[]>>>'],
+    ['~test', '~test'],
+    ['~test~T~', '~test<T>'],
+  ])('should parse generic types: %s to %s', (input: string, expected: string) => {
+    expect(parseGenericTypes(input)).toEqual(expected);
   });
 });
+
+it.each([
+  ['', '', 0],
+  ['', 'x', 0],
+  ['test', 'x', 0],
+  ['test', 't', 2],
+  ['test', 'te', 1],
+  ['test~T~', '~', 2],
+  ['test~Array~Array~string~~~', '~', 6],
+])(
+  'should count `%s` to contain occurrences of `%s` to be `%i`',
+  (str: string, substring: string, count: number) => {
+    expect(countOccurrence(str, substring)).toEqual(count);
+  }
+);

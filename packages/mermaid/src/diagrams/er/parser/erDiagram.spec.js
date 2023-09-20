@@ -33,7 +33,7 @@ describe('when parsing ER diagram it...', function () {
     describe('has non A-Za-z0-9_- chars', function () {
       // these were entered using the Mac keyboard utility.
       const chars =
-        "~ ` ! @ # $ ^ & * ( ) - _ = + [ ] { } | / ; : ' . ? ¡ ⁄ ™ € £ ‹ ¢ › ∞ ﬁ § ‡ • ° ª · º ‚ ≠ ± œ Œ ∑ „ ® † ˇ ¥ Á ¨ ˆ ˆ Ø π ∏ “ « » å Å ß Í ∂ Î ƒ Ï © ˙ Ó ∆ Ô ˚  ¬ Ò … Ú æ Æ Ω ¸ ≈ π ˛ ç Ç √ ◊ ∫ ı ˜ µ Â ≤ ¯ ≥ ˘ ÷ ¿";
+        "~ ` ! @ # $ ^ & * ( ) - = + [ ] { } | / ; : ' . ? ¡ ⁄ ™ € £ ‹ ¢ › ∞ ﬁ § ‡ • ° ª · º ‚ ≠ ± œ Œ ∑ „ ® † ˇ ¥ Á ¨ ˆ ˆ Ø π ∏ “ « » å Å ß Í ∂ Î ƒ Ï © ˙ Ó ∆ Ô ˚  ¬ Ò … Ú æ Æ Ω ¸ ≈ π ˛ ç Ç √ ◊ ∫ ı ˜ µ Â ≤ ¯ ≥ ˘ ÷ ¿";
       const allowed = chars.split(' ');
 
       allowed.forEach((allowedChar) => {
@@ -169,6 +169,13 @@ describe('when parsing ER diagram it...', function () {
       expect(entities.hasOwnProperty(secondEntity)).toBe(true);
       expect(entities[firstEntity].alias).toBe(alias);
       expect(entities[secondEntity].alias).toBeUndefined();
+    });
+
+    it('can start with an underscore', function () {
+      const entity = '_foo';
+      erDiagram.parser.parse(`erDiagram\n${entity}\n`);
+      const entities = erDb.getEntities();
+      expect(entities.hasOwnProperty(entity)).toBe(true);
     });
   });
 

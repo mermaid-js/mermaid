@@ -19,7 +19,7 @@ For instance:
 
 #### Store data found during parsing
 
-There are some jison specific sub steps here where the parser stores the data encountered when parsing the diagram, this data is later used by the renderer. You can during the parsing call a object provided to the parser by the user of the parser. This object can be called during parsing for storing data.
+There are some jison specific sub steps here where the parser stores the data encountered when parsing the diagram, this data is later used by the renderer. You can during the parsing call an object provided to the parser by the user of the parser. This object can be called during parsing for storing data.
 
 ```jison
 statement
@@ -35,7 +35,7 @@ In the extract of the grammar above, it is defined that a call to the setTitle m
 > **Note**
 > Make sure that the `parseError` function for the parser is defined and calling `mermaid.parseError`. This way a common way of detecting parse errors is provided for the end-user.
 
-For more info look in the example diagram type:
+For more info look at the example diagram type:
 
 The `yy` object has the following function:
 
@@ -54,7 +54,7 @@ parser.yy = db;
 
 ### Step 2: Rendering
 
-Write a renderer that given the data found during parsing renders the diagram. To look at an example look at sequenceRenderer.js rather then the flowchart renderer as this is a more generic example.
+Write a renderer that given the data found during parsing renders the diagram. To look at an example look at sequenceRenderer.js rather than the flowchart renderer as this is a more generic example.
 
 Place the renderer in the diagram folder.
 
@@ -62,7 +62,7 @@ Place the renderer in the diagram folder.
 
 The second thing to do is to add the capability to detect the new diagram to type to the detectType in `diagram-api/detectType.ts`. The detection should return a key for the new diagram type.
 [This key will be used to as the aria roledescription](#aria-roledescription), so it should be a word that clearly describes the diagram type.
-For example, if your new diagram use a UML deployment diagram, a good key would be "UMLDeploymentDiagram" because assistive technologies such as a screen reader
+For example, if your new diagram uses a UML deployment diagram, a good key would be "UMLDeploymentDiagram" because assistive technologies such as a screen reader
 would voice that as "U-M-L Deployment diagram." Another good key would be "deploymentDiagram" because that would be voiced as "Deployment Diagram." A bad key would be "deployment" because that would not sufficiently describe the diagram.
 
 Note that the diagram type key does not have to be the same as the diagram keyword chosen for the [grammar](#grammar), but it is helpful if they are the same.
@@ -122,7 +122,7 @@ There are a few features that are common between the different types of diagrams
 - Themes, there is a common way to modify the styling of diagrams in Mermaid.
 - Comments should follow mermaid standards
 
-Here some pointers on how to handle these different areas.
+Here are some pointers on how to handle these different areas.
 
 ## Accessibility
 
@@ -140,7 +140,7 @@ See [the definition of aria-roledescription](https://www.w3.org/TR/wai-aria-1.1/
 
 ### accessible title and description
 
-The syntax for accessible titles and descriptions is described in [the Accessibility documenation section.](../config/accessibility.md)
+The syntax for accessible titles and descriptions is described in [the Accessibility documentation section.](../config/accessibility.md)
 
 As a design goal, the jison syntax should be similar between the diagrams.
 

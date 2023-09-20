@@ -1,7 +1,6 @@
 import type { CstNode, GrammarAST, ValueType } from 'langium';
-import { DefaultValueConverter } from 'langium';
 
-import { CommonValueConverter } from '../common/commonValueConverters.js';
+import { MermaidValueConverter } from '../common/valueConverter.js';
 import {
   sankeyLinkSourceRegex,
   sankeyLinkTargetRegex,
@@ -14,37 +13,8 @@ const rulesRegexes: Record<string, RegExp> = {
   SANKEY_LINK_VALUE: sankeyLinkValueRegex,
 };
 
-export class SankeyValueConverter extends DefaultValueConverter {
-  protected override runConverter(
-    rule: GrammarAST.AbstractRule,
-    input: string,
-    cstNode: CstNode
-  ): ValueType {
-    let value: ValueType | undefined = CommonValueConverter.customRunConverter(
-      rule,
-      input,
-      cstNode
-    );
-    if (value === undefined) {
-      value = SankeyValueConverter.customRunConverter(rule, input, cstNode);
-    }
-
-    if (value === undefined) {
-      return super.runConverter(rule, input, cstNode);
-    } else {
-      return value;
-    }
-  }
-
-  /**
-   * A method contains convert logic to be used by class itself or `MermaidValueConverter`.
-   *
-   * @param rule - Parsed rule.
-   * @param input - Matched string.
-   * @param _cstNode - Node in the Concrete Syntax Tree (CST).
-   * @returns converted the value if it's sankey rule or `null` if it's not.
-   */
-  public static customRunConverter(
+export class SankeyValueConverter extends MermaidValueConverter {
+  protected runCustomConverter(
     rule: GrammarAST.AbstractRule,
     input: string,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

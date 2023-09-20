@@ -5,10 +5,6 @@
 %x string
 %x md_string
 %x title
-%x open_directive
-%x type_directive
-%x arg_directive
-%x close_directive
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
@@ -16,11 +12,6 @@
 %x point_x
 %x point_y
 %%
-\%\%\{                                   { this.begin('open_directive'); return 'open_directive'; }
-<open_directive>((?:(?!\}\%\%)[^:.])*)   { this.begin('type_directive'); return 'type_directive'; }
-<type_directive>":"                      { this.popState(); this.begin('arg_directive'); return ':'; }
-<type_directive,arg_directive>\}\%\%     { this.popState(); this.popState(); return 'close_directive'; }
-<arg_directive>((?:(?!\}\%\%).|\n)*)     return 'arg_directive';
 \%\%(?!\{)[^\n]*                         /* skip comments */
 [^\}]\%\%[^\n]*                          /* skip comments */
 [\n\r]+                                  return 'NEWLINE';
@@ -87,7 +78,6 @@ accDescr\s*"{"\s*                        { this.begin("acc_descr_multiline");}
 start
   : eol start
   | SPACE start
-  | directive start
 	| QUADRANT document
 	;
 
@@ -110,7 +100,6 @@ statement
   | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
   | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
   | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }  | section {yy.addSection($1.substr(8));$$=$1.substr(8);}
-	| directive
 	;
 
 points
@@ -133,31 +122,10 @@ quadrantDetails
   | QUADRANT_4 text {yy.setQuadrant4Text($2)}
   ;
 
-directive
-  : openDirective typeDirective closeDirective
-  | openDirective typeDirective ':' argDirective closeDirective
-  ;
-
 eol
   : NEWLINE
   | SEMI
   | EOF
-  ;
-
-openDirective
-  : open_directive { yy.parseDirective('%%{', 'open_directive'); }
-  ;
-
-typeDirective
-  : type_directive { yy.parseDirective($1, 'type_directive'); }
-  ;
-
-argDirective
-  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
-  ;
-
-closeDirective
-  : close_directive { yy.parseDirective('}%%', 'close_directive', 'quadrantChart'); }
   ;
 
 text: alphaNumToken

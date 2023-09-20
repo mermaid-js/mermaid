@@ -5,8 +5,7 @@ import { sanitizeText as _sanitizeText } from '../diagrams/common/common.js';
 import { setupGraphViewbox as _setupGraphViewbox } from '../setupGraphViewbox.js';
 import { addStylesForDiagram } from '../styles.js';
 import type { DiagramDefinition, DiagramDetector } from './types.js';
-import * as _commonDb from '../commonDb.js';
-import { parseDirective as _parseDirective } from '../directiveUtils.js';
+import * as _commonDb from '../diagrams/common/commonDb.js';
 
 /*
   Packaging and exposing resources for external diagrams so that they can import
@@ -21,8 +20,6 @@ export const setupGraphViewbox = _setupGraphViewbox;
 export const getCommonDb = () => {
   return _commonDb;
 };
-export const parseDirective = (p: any, statement: string, context: string, type: string) =>
-  _parseDirective(p, statement, context, type);
 
 const diagrams: Record<string, DiagramDefinition> = {};
 export interface Detectors {
@@ -52,17 +49,18 @@ export const registerDiagram = (
   }
   addStylesForDiagram(id, diagram.styles);
 
-  if (diagram.injectUtils) {
-    diagram.injectUtils(
-      log,
-      setLogLevel,
-      getConfig,
-      sanitizeText,
-      setupGraphViewbox,
-      getCommonDb(),
-      parseDirective
-    );
-  }
+  diagram.injectUtils?.(
+    log,
+    setLogLevel,
+    getConfig,
+    sanitizeText,
+    setupGraphViewbox,
+    getCommonDb(),
+    () => {
+      // parseDirective is removed in https://github.com/mermaid-js/mermaid/pull/4759.
+      // This is a no-op for legacy support.
+    }
+  );
 };
 
 export const getDiagram = (name: string): DiagramDefinition => {

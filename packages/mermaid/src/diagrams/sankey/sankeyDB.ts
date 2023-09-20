@@ -6,7 +6,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
   clear as commonClear,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 import type { SankeyDiagramConfig } from '../../config.type.js';
 import type { SankeyDB, SankeyLink as ISankeyLink, SankeyFields } from './sankeyTypes.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
