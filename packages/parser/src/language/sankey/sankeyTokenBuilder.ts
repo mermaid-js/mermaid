@@ -2,7 +2,7 @@ import type { GrammarAST, Stream, TokenBuilderOptions } from 'langium';
 import { DefaultTokenBuilder } from 'langium';
 
 import type { TokenType } from '../chevrotainWrapper.js';
-import { sankeyLinkSourceRegex } from './sankeyMatcher.js';
+import { sankeyLinkNodeRegex } from './sankeyMatcher.js';
 import { regexPatternFunc } from '../utils.js';
 
 export class SankeyTokenBuilder extends DefaultTokenBuilder {
@@ -10,9 +10,9 @@ export class SankeyTokenBuilder extends DefaultTokenBuilder {
     const tokenTypes: TokenType[] = super.buildTerminalTokens(rules);
     tokenTypes.forEach((tokenType: TokenType): void => {
       switch (tokenType.name) {
-        case 'SANKEY_LINK_SOURCE': {
+        case 'SANKEY_LINK_NODE': {
           tokenType.LINE_BREAKS = false;
-          tokenType.PATTERN = regexPatternFunc(sankeyLinkSourceRegex);
+          tokenType.PATTERN = regexPatternFunc(sankeyLinkNodeRegex);
           break;
         }
       }

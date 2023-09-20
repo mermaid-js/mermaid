@@ -1,14 +1,9 @@
 /**
- * Matches sankey link source node
+ * Matches sankey link source and target node
  */
-export const sankeyLinkSourceRegex = /(?:"((?:""|[^"])+)")|([^\n\r,]+(?=%%)|[^\n\r,]+)/;
-
-/**
- * Matches sankey link target node
- */
-export const sankeyLinkTargetRegex = /,(?:(?:"((?:""|[^"])+)")|([^\n\r,]+))/;
+export const sankeyLinkNodeRegex = /(?:"((?:""|[^"])+)")|([^\n\r,]+(?=%%)|[^\n\r,]+)/;
 
 /**
  * Matches sankey link value
  */
-export const sankeyLinkValueRegex = /,("(?:0|[1-9]\d*)(?:\.\d+)?"|[\t ]*(?:0|[1-9]\d*)(?:\.\d+)?)/;
+export const sankeyLinkValueRegex = /("(?:0|[1-9]\d*)(?:\.\d+)?"|[\t ]*(?:0|[1-9]\d*)(?:\.\d+)?)/;

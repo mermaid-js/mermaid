@@ -1,15 +1,10 @@
 import type { CstNode, GrammarAST, ValueType } from 'langium';
 
 import { MermaidValueConverter } from '../common/valueConverter.js';
-import {
-  sankeyLinkSourceRegex,
-  sankeyLinkTargetRegex,
-  sankeyLinkValueRegex,
-} from './sankeyMatcher.js';
+import { sankeyLinkNodeRegex, sankeyLinkValueRegex } from './sankeyMatcher.js';
 
 const rulesRegexes: Record<string, RegExp> = {
-  SANKEY_LINK_SOURCE: sankeyLinkSourceRegex,
-  SANKEY_LINK_TARGET: sankeyLinkTargetRegex,
+  SANKEY_LINK_NODE: sankeyLinkNodeRegex,
   SANKEY_LINK_VALUE: sankeyLinkValueRegex,
 };
 
