@@ -54,8 +54,8 @@ describe('sankey', () => {
   it('should handle sankey with double quotes with newline and doable quotes', () => {
     const context = `sankey-beta
 "source node
-"" with comma","target node
-"" with comma","10.00"
+"" double quotes","target node
+"" double quotes","10.00"
     `;
     const result = parse(context);
     noErrorsOrAlternatives(result);
@@ -63,16 +63,16 @@ describe('sankey', () => {
     const value = result.value;
     expect(value.$type).toBe(Sankey);
     expect(value.links[0].source).toBe(`source node
-" with comma`);
+" double quotes`);
     expect(value.links[0].target).toBe(`target node
-" with comma`);
+" double quotes`);
     expect(value.links[0].value).toBe(10);
 
     expect(value.nodes).toStrictEqual([
       `source node
-" with comma`,
+" double quotes`,
       `target node
-" with comma`,
+" double quotes`,
     ]);
   });
 
