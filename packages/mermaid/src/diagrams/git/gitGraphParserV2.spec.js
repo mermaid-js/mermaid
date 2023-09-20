@@ -1,22 +1,11 @@
-/* eslint-env jasmine */
-// Todo reintroduce without cryptoRandomString
 import gitGraphAst from './gitGraphAst.js';
 import { parser } from './parser/gitGraph.jison';
-//import randomString from 'crypto-random-string';
-//import cryptoRandomString from 'crypto-random-string';
-
-//jest.mock('crypto-random-string');
 
 describe('when parsing a gitGraph', function () {
-  let randomNumber;
   beforeEach(function () {
     parser.yy = gitGraphAst;
     parser.yy.clear();
-    randomNumber = 0;
   });
-  // afterEach(function() {
-  //   cryptoRandomString.mockReset();
-  // });
   it('should handle a gitGraph commit with NO pararms, get auto-genrated reandom ID', function () {
     const str = `gitGraph:
     commit

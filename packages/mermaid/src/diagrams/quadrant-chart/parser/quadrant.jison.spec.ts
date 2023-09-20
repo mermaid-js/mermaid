@@ -19,7 +19,6 @@ const mockDB: Record<string, Mock<any, any>> = {
   setYAxisTopText: vi.fn(),
   setYAxisBottomText: vi.fn(),
   setDiagramTitle: vi.fn(),
-  parseDirective: vi.fn(),
   addPoint: vi.fn(),
 };
 
@@ -43,23 +42,6 @@ describe('Testing quadrantChart jison file', () => {
   it('should not throw error if only quadrantChart is there', () => {
     const str = 'quadrantChart';
     expect(parserFnConstructor(str)).not.toThrow();
-  });
-
-  it('should be able to parse directive', () => {
-    const str =
-      '%%{init: {"quadrantChart": {"chartWidth": 600, "chartHeight": 600} } }%%  \n quadrantChart';
-    expect(parserFnConstructor(str)).not.toThrow();
-    expect(mockDB.parseDirective.mock.calls[0]).toEqual(['%%{', 'open_directive']);
-    expect(mockDB.parseDirective.mock.calls[1]).toEqual(['init', 'type_directive']);
-    expect(mockDB.parseDirective.mock.calls[2]).toEqual([
-      '{"quadrantChart": {"chartWidth": 600, "chartHeight": 600} }',
-      'arg_directive',
-    ]);
-    expect(mockDB.parseDirective.mock.calls[3]).toEqual([
-      '}%%',
-      'close_directive',
-      'quadrantChart',
-    ]);
   });
 
   it('should be able to parse xAxis text', () => {
@@ -243,8 +225,7 @@ describe('Testing quadrantChart jison file', () => {
   });
 
   it('should be able to parse the whole chart', () => {
-    const str = `%%{init: {"quadrantChart": {"chartWidth": 600, "chartHeight": 600} } }%%
-    quadrantChart
+    const str = `quadrantChart
       title Analytics and Business Intelligence Platforms
       x-axis "Completeness of Vision ❤" --> "x-axis-2"
       y-axis Ability to Execute --> "y-axis-2"
@@ -258,17 +239,6 @@ describe('Testing quadrantChart jison file', () => {
       Incorta: [0.20, 0.30]`;
 
     expect(parserFnConstructor(str)).not.toThrow();
-    expect(mockDB.parseDirective.mock.calls[0]).toEqual(['%%{', 'open_directive']);
-    expect(mockDB.parseDirective.mock.calls[1]).toEqual(['init', 'type_directive']);
-    expect(mockDB.parseDirective.mock.calls[2]).toEqual([
-      '{"quadrantChart": {"chartWidth": 600, "chartHeight": 600} }',
-      'arg_directive',
-    ]);
-    expect(mockDB.parseDirective.mock.calls[3]).toEqual([
-      '}%%',
-      'close_directive',
-      'quadrantChart',
-    ]);
     expect(mockDB.setXAxisLeftText).toHaveBeenCalledWith({
       text: 'Completeness of Vision ❤',
       type: 'text',

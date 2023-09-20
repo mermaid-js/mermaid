@@ -9,19 +9,10 @@
 %x string
 %x token
 %x unqString
-%x open_directive
-%x type_directive
-%x arg_directive
-%x close_directive
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
 %%
-\%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
-<open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
-<type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
-<type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
-<arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 
 "title"\s[^#\n;]+       return 'title';
 accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
@@ -99,23 +90,10 @@ start
   | RD NEWLINE diagram EOF;
 
 directive
-  : openDirective typeDirective closeDirective
-  | openDirective typeDirective ':' argDirective closeDirective
-  | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
+  : acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
   | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
   | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
   ;
-openDirective
-  : open_directive { yy.parseDirective('%%{', 'open_directive'); };
-
-typeDirective
-  : type_directive { yy.parseDirective($1, 'type_directive'); };
-
-argDirective
-  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); };
-
-closeDirective
-  : close_directive { yy.parseDirective('}%%', 'close_directive', 'pie'); };
 
 diagram
   : /* empty */ { $$ = [] }

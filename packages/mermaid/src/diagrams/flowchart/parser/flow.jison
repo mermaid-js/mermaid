@@ -23,17 +23,8 @@
 %x href
 %x callbackname
 %x callbackargs
-%x open_directive
-%x type_directive
-%x arg_directive
-%x close_directive
 
 %%
-\%\%\{                                          { this.begin('open_directive'); return 'open_directive'; }
-<open_directive>((?:(?!\}\%\%)[^:.])*)          { this.begin('type_directive'); return 'type_directive'; }
-<type_directive>":"                             { this.popState(); this.begin('arg_directive'); return ':'; }
-<type_directive,arg_directive>\}\%\%            { this.popState(); this.popState(); return 'close_directive'; }
-<arg_directive>((?:(?!\}\%\%).|\n)*)            return 'arg_directive';
 accTitle\s*":"\s*                               { this.begin("acc_title");return 'acc_title'; }
 <acc_title>(?!\n|;|#)*[^\n]*                    { this.popState(); return "acc_title_value"; }
 accDescr\s*":"\s*                               { this.begin("acc_descr");return 'acc_descr'; }
@@ -272,34 +263,9 @@ that id.
 %% /* language grammar */
 
 start
-  : mermaidDoc
-  | directive start
-  ;
-
-directive
-  : openDirective typeDirective closeDirective separator
-  | openDirective typeDirective ':' argDirective closeDirective separator
-  ;
-
-openDirective
-  : open_directive { yy.parseDirective('%%{', 'open_directive'); }
-  ;
-
-typeDirective
-  : type_directive { yy.parseDirective($type_directive, 'type_directive'); }
-  ;
-
-argDirective
-  : arg_directive { $arg_directive = $arg_directive.trim().replace(/'/g, '"'); yy.parseDirective($arg_directive, 'arg_directive'); }
-  ;
-
-closeDirective
-  : close_directive { yy.parseDirective('}%%', 'close_directive', 'flowchart'); }
-  ;
-
-mermaidDoc
   : graphConfig document
   ;
+
 
 document
 	: /* empty */

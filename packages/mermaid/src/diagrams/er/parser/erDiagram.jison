@@ -1,7 +1,7 @@
 %lex
 
 %options case-insensitive
-%x open_directive type_directive arg_directive block
+%x block
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
@@ -14,11 +14,6 @@ accDescr\s*":"\s*                                               { this.begin("ac
 accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
 <acc_descr_multiline>[\}]                       { this.popState(); }
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
-\%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
-<open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
-<type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
-<type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
-<arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 [\n]+                           return 'NEWLINE';
 \s+                             /* skip whitespace */
 [\s]+                           return 'SPACE';
@@ -77,7 +72,6 @@ o\{                             return 'ZERO_OR_MORE';
 
 start
     : 'ER_DIAGRAM' document 'EOF' { /*console.log('finished parsing');*/ }
-  	| directive start
     ;
 
 document
@@ -92,14 +86,9 @@ line
 	| EOF { $$=[];}
 	;
 
-directive
-  : openDirective typeDirective closeDirective 'NEWLINE'
-  | openDirective typeDirective ':' argDirective closeDirective 'NEWLINE'
-  ;
 
 statement
-    : directive
-    | entityName relSpec entityName ':' role
+    : entityName relSpec entityName ':' role
       {
           yy.addEntity($1);
           yy.addEntity($3);
@@ -190,21 +179,5 @@ role
     | 'ENTITY_NAME' { $$ = $1.replace(/"/g, ''); }
     | 'ALPHANUM'  { $$ = $1; }
     ;
-
-openDirective
-  : open_directive { yy.parseDirective('%%{', 'open_directive'); }
-  ;
-
-typeDirective
-  : type_directive { yy.parseDirective($1, 'type_directive'); }
-  ;
-
-argDirective
-  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
-  ;
-
-closeDirective
-  : close_directive { yy.parseDirective('}%%', 'close_directive', 'er'); }
-  ;
 
 %%
