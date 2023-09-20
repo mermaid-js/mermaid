@@ -1,7 +1,7 @@
 grammar Sankey
 
 // common stuff in ../common/common.langium
-// can't import directly because of SANKEY_LINK_SOURCE parse rule
+// can't import directly because of SANKEY_LINK_NODE parse rule
 interface Common {
   accDescr?: string;
   accTitle?: string;
