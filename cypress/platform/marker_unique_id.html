@@ -42,7 +42,8 @@
     </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
-      mermaid.initialize({ startOnLoad: true, logLevel: 0 });
+      mermaid.initialize({ startOnLoad: false, logLevel: 0 });
+      await mermaid.run();
 
       if (window.Cypress) {
         window.rendered = true;
