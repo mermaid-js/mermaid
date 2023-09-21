@@ -204,7 +204,7 @@ describe('Quadrant Chart', () => {
     );
     cy.get('svg');
   });
-  it('should render both axes labels on the left/bottom, if both axes have only one label', () => {
+  it('should render both axes labels on the left and bottom, if both axes have only one label', () => {
     imgSnapshotTest(
       `
   quadrantChart
