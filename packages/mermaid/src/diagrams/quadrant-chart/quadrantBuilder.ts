@@ -284,8 +284,8 @@ export class QuadrantBuilder {
       quadrantWidth,
     } = quadrantSpace;
 
-    const drawXAxisLabelsInMiddle = this.data.xAxisRightText ? true : false;
-    const drawYAxisLabelsInMiddle = this.data.yAxisTopText ? true : false;
+    const drawXAxisLabelsInMiddle = Boolean(this.data.xAxisRightText);
+    const drawYAxisLabelsInMiddle = Boolean(this.data.yAxisTopText);
 
     const axisLabels: QuadrantTextType[] = [];
 
