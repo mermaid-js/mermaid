@@ -209,8 +209,8 @@ describe('Quadrant Chart', () => {
       `
   quadrantChart
     title Reach and engagement of campaigns
-    x-axis Low Reach
-    y-axis Low Engagement
+    x-axis Reach -->
+    y-axis Engagement -->
     quadrant-1 We should expand
     quadrant-2 Need to promote
     quadrant-3 Re-evaluate
