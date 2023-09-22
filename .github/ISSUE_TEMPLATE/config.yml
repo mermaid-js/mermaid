@@ -12,6 +12,9 @@ contact_links:
   - name: Live Editor
     url: https://mermaid.live
     about: Try the live editor to preview graphs in no time.
-  - name: Live Editor - Beta
-    url: https://beta.mermaid.live
+  - name: Live Editor - Develop
+    url: https://develop.git.mermaid.live
     about: Try unreleased changes in the develop branch.
+  - name: Live Editor - Next
+    url: https://next.git.mermaid.live
+    about: Try unreleased changes in the next branch.

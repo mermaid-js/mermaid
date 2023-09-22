@@ -12,7 +12,7 @@ Mermaid
 <p>
 
 <p align="center">
-<a href="https://mermaid.live/"><b>Live Editor!</b></a>
+<a href="https://mermaid.live/"><b>实时编辑器!</b></a>
 </p>
 <p align="center">
  <a href="https://mermaid.js.org">📖 文档</a> | <a href="https://mermaid.js.org/intro/">🚀 入门</a> | <a href="https://www.jsdelivr.com/package/npm/mermaid">🌐 CDN</a> | <a href="https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE" title="Slack invite">🙌 加入我们</a>
@@ -22,7 +22,7 @@ Mermaid
 </p>
 
 <p align="center">
-<a href="https://beta.mermaid.live/"><b>Live Editor Beta</b></a>
+实时编辑器: <a href="https://develop.git.mermaid.live/" title="尝试来自develop分支的mermaid版本。">Develop</a> | <a href="https://next.git.mermaid.live/" title="尝试来自next分支的mermaid版本。">Next</a>
 </p>
 
 <br>
