@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
 
 set -euxo pipefail
+
+pushd packages/mermaid
+# Append commit hash to version
+jq ".version = .version + \"+${COMMIT_REF:0:7}\"" package.json > package.tmp.json
+mv package.tmp.json package.json
+popd
+
+
 pnpm build
 
-echo "$COMMIT_REF"
 
 # Clone the Mermaid Live Editor repository
 rm -rf mermaid-live-editor
