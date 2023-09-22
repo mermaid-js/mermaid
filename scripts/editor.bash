@@ -8,9 +8,9 @@ jq ".version = .version + \"+${COMMIT_REF:0:7}\"" package.json > package.tmp.jso
 mv package.tmp.json package.json
 popd
 
-
-pnpm build
-
+pnpm run -r clean
+pnpm build:types
+pnpm build:mermaid
 
 # Clone the Mermaid Live Editor repository
 rm -rf mermaid-live-editor
