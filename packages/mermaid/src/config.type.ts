@@ -1342,9 +1342,13 @@ export interface RailroadDiagramConfig extends BaseDiagramConfig {
    *
    */
   compress?: boolean;
-  render?: ('railroad' | 'definition' | 'dfa' | 'nfa')[];
   /**
-   * Print angular brackets around non-terminal symbols
+   * List of things to render
+   *
+   */
+  render?: ('railroad' | 'ebnf' | 'bnf' | 'dfa' | 'nfa')[];
+  /**
+   * Force angular brackets around non-terminal symbols
    *
    */
   angleBrackets?: boolean;

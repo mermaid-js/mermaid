@@ -1932,24 +1932,29 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         description: |
           Compress rules to get the smallest possible diagram
       render:
+        description: |
+          List of things to render
         type: array
         default:
+          - railroad
           - ebnf
         items:
           oneOf:
             - const: railroad
-              description: Railroad diagram
-            - const: definition
-              description: Rules definition
+              description: Railroad diagram, the diagram itself
+            - const: ebnf
+              description: Definition in EBNF (Extended Backus-Naur Form)
+            - const: bnf
+              description: Definition in BNF (Backus-Naur Form)
             - const: dfa
-              description: Deterministic Finite Automaton
+              description: Deterministic Finite Automata
             - const: nfa
               description: Nondeterministic Finite Automata
       angleBrackets:
         type: boolean
         default: true
         description: |
-          Print angular brackets around non-terminal symbols
+          Force angular brackets around non-terminal symbols
       drawArrows:
         type: boolean
         default: false
