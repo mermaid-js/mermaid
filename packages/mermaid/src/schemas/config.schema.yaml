@@ -48,6 +48,7 @@ required:
   - gitGraph
   - c4
   - sankey
+  - railroad
 properties:
   theme:
     description: |
@@ -1877,12 +1878,26 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         type: string
         default: ''
 
+  RailroadDiagramBoundaryShape:
+    description: |
+      Shapes of the first and the last state in the diagram
+    oneOf:
+      - const: dot
+        description: Dot, filled
+      - const: circle
+        description: Small empty circle
+      - const: forward
+        description: Small triangle pointing from the left to the right
+      - const: backward
+        description: Small triangle pointing from the right to the left
+
   RailroadDiagramConfig:
     title: Railroad Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
     description: The object containing configurations specific for railroad diagrams.
     type: object
     unevaluatedProperties: false
+    required: [alignment]
     properties:
       alignment:
         type: string
@@ -1891,55 +1906,96 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
           - right
           - center
           - justify
-      wrap:
+      verticalAlignment:
+        type: string
+        enum:
+          - top
+          - bottom
+          - center
+          - justify
+      wrapDiagram:
         type: boolean
         default: true
         description: |
           Wrap long grammars similarly to wrapping long lines
-      syntax:
-        type: string
-        enum:
-          - mermaid
-          - w3c
-          - iso
+      # syntax:
+      #   type: string
+      #   enum:
+      #     - mermaid
+      #     - w3c
+      #     - iso
+      #   description: |
+      #     Specify which standart would be applied
       compress:
         type: boolean
         default: true
         description: |
           Compress rules to get the smallest possible diagram
-      display_grammar:
-        type: boolean
-        default: true
-        description: |
-          Draw grammar definitions inside diagram
-      angle_brackets:
+      render:
+        type: array
+        default:
+          - ebnf
+        items:
+          oneOf:
+            - const: railroad
+              description: Railroad diagram
+            - const: definition
+              description: Rules definition
+            - const: dfa
+              description: Deterministic Finite Automaton
+            - const: nfa
+              description: Nondeterministic Finite Automata
+      angleBrackets:
         type: boolean
         default: true
         description: |
           Print angular brackets around non-terminal symbols
-      draw_arrows:
+      drawArrows:
         type: boolean
         default: false
       inline:
         type: boolean
         default: false
-      inline_items:
+      inlineItems:
         type: array
         items:
           type: string
-      # shapes:
-      #   type: object
-      #   unevaluatedProperties: false
-      #   properties:
-      #     terminal:
-      #       type: string
-      #       enum:
-      #         - left
-      #         - right
-      #         - center
-      #         - justify
-      #     non_terminal:
-      #       type: string
+      start:
+        description: |
+          Name of the initial rule in grammar
+          First rule will be initial if it is null
+        oneOf:
+          - type: string
+          - type: 'null'
+        default: 'null'
+      shapes:
+        type: object
+        unevaluatedProperties: false
+        properties:
+          terminal:
+            type: string
+          non_terminal:
+            type: string
+          start:
+            description: |
+              Shape or list of shapes for the start element
+              They will be applied in the order of occurrence
+            anyOf:
+              - type: array
+                items:
+                  $ref: '#/$defs/RailroadDiagramBoundaryShape'
+              - $ref: '#/$defs/RailroadDiagramBoundaryShape'
+            default: 'dot'
+          end:
+            description: |
+              Shape or list of shapes for the end element
+              They will be applied in the order of occurrence
+            anyOf:
+              - type: array
+                items:
+                  $ref: '#/$defs/RailroadDiagramBoundaryShape'
+              - $ref: '#/$defs/RailroadDiagramBoundaryShape'
+            default: 'circle'
 
   FontCalculator:
     title: Font Calculator

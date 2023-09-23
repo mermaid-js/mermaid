@@ -253,6 +253,9 @@ const config: RequiredDeep<MermaidConfig> = {
     // TODO: can we make this default to `true` instead?
     useMaxWidth: false,
   },
+  railroad: {
+    ...defaultConfigJson.railroad,
+  }
 };
 
 const keyify = (obj: any, prefix = ''): string[] =>

@@ -43,14 +43,20 @@ const getConsole = () => console;
 type Callback<T> = (item: Chunk, index: number, parent: Chunk | undefined, result: T[]) => T;
 // type Traverse<T> = (callback: Callback<T>, index: number, parent?: Chunk) => T;
 
-interface Traversible {
-  traverse<T>(callback: Callback<T>, index?: number, parent?: Chunk): T;
-}
+// interface Traversible {
+//   traverse<T>(callback: Callback<T>, index?: number, parent?: Chunk): T;
+// }
 
 // TODO: rewrite toString using traverse
 //
-interface Chunk extends Traversible {
-  toString(): string;
+// interface Chunk extends Traversible {
+  //   toString(): string;
+  // }
+  
+abstract class Chunk {
+  // static staticMethod(): void;
+  static display: ((instance: Chunk) => void) | undefined;
+  abstract traverse<T>(callback: Callback<T>, index?: number, parent?: Chunk): T;
 }
 
 class Leaf implements Chunk {

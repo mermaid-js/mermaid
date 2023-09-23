@@ -3,9 +3,12 @@ import railroad from './railroadGrammar.jison';
 // import { prepareTextForParsing } from '../railroadUtils.js';
 import { cleanupComments } from '../../diagram-api/comments.js';
 import { db, Rules } from './railroadDB.js';
+// import defaultConfigJson from '../../schemas/config.schema.yaml?only-defaults=true';
 
 describe('Railroad diagram', function () {
   beforeAll(() => {
+    // console.log(defaultConfigJson);
+    
     railroad.yy = db;
   });
 

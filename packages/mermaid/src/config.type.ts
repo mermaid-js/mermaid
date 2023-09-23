@@ -51,6 +51,14 @@ export type SankeyLinkColor = 'source' | 'target' | 'gradient';
  */
 export type SankeyNodeAlignment = 'left' | 'right' | 'center' | 'justify';
 /**
+ * Shapes of the first and the last state in the diagram
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "RailroadDiagramBoundaryShape".
+ */
+export type RailroadDiagramBoundaryShape = 'dot' | 'circle' | 'forward' | 'backward';
+/**
  * The font size to use
  */
 export type CSSFontSize = string | number;
@@ -1323,30 +1331,48 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
  */
 export interface RailroadDiagramConfig extends BaseDiagramConfig {
   alignment?: 'left' | 'right' | 'center' | 'justify';
+  verticalAlignment?: 'top' | 'bottom' | 'center' | 'justify';
   /**
    * Wrap long grammars similarly to wrapping long lines
    *
    */
-  wrap?: boolean;
-  syntax?: 'mermaid' | 'w3c' | 'iso';
+  wrapDiagram?: boolean;
   /**
    * Compress rules to get the smallest possible diagram
    *
    */
   compress?: boolean;
-  /**
-   * Draw grammar definitions inside diagram
-   *
-   */
-  display_grammar?: boolean;
+  render?: ('railroad' | 'definition' | 'dfa' | 'nfa')[];
   /**
    * Print angular brackets around non-terminal symbols
    *
    */
-  angle_brackets?: boolean;
-  draw_arrows?: boolean;
+  angleBrackets?: boolean;
+  drawArrows?: boolean;
   inline?: boolean;
-  inline_items?: string[];
+  inlineItems?: string[];
+  /**
+   * Name of the initial rule in grammar
+   * First rule will be initial if it is null
+   *
+   */
+  start?: string | null;
+  shapes?: {
+    terminal?: string;
+    non_terminal?: string;
+    /**
+     * Shape or list of shapes for the start element
+     * They will be applied in the order of occurrence
+     *
+     */
+    start?: RailroadDiagramBoundaryShape[] | RailroadDiagramBoundaryShape;
+    /**
+     * Shape or list of shapes for the end element
+     * They will be applied in the order of occurrence
+     *
+     */
+    end?: RailroadDiagramBoundaryShape[] | RailroadDiagramBoundaryShape;
+  };
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
