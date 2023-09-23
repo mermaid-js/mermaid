@@ -338,7 +338,7 @@ export const addEdges = function (edges, g, diagObj) {
  *
  * @param text
  * @param diagObj
- * @returns {object} ClassDef styles
+ * @returns {Record<string, import('../../diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles
  */
 export const getClasses = function (text, diagObj) {
   return diagObj.db.getClasses();
