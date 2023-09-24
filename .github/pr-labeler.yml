@@ -1,4 +1,13 @@
-'Type: Bug / Error': ['bug/*', fix/*]
-'Type: Enhancement': ['feature/*', 'feat/*']
-'Type: Other': ['other/*', 'chore/*', 'test/*', 'refactor/*']
-'Area: Documentation': ['docs/*']
+'Type: Bug / Error':
+  - 'bug/*'
+  - 'fix/*'
+'Type: Enhancement':
+  - 'feature/*'
+  - 'feat/*'
+'Type: Other':
+  - 'other/*'
+  - 'chore/*'
+  - 'test/*'
+  - 'refactor/*'
+'Area: Documentation':
+  - 'docs/*'
