@@ -16,6 +16,6 @@ jobs:
       pull-requests: read # required to read PR titles/labels
     steps:
       - name: Draft Release
-        uses: toolmantim/release-drafter@v5
+        uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
