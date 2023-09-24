@@ -5,9 +5,15 @@ on:
     branches:
       - develop
 
+permissions:
+  contents: read
+
 jobs:
   draft-release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # write permission is required to create a github release
+      pull-requests: read # required to read PR titles/labels
     steps:
       - name: Draft Release
         uses: toolmantim/release-drafter@v5
