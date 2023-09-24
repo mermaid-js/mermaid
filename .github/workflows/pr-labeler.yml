@@ -3,9 +3,15 @@ on:
   pull_request_target:
     types: [opened]
 
+permissions:
+  contents: read
+
 jobs:
   pr-labeler:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # read permission is required to read config file
+      pull-requests: write # write permission is required to label PRs
     steps:
       - name: Label PR
         uses: TimonVS/pr-labeler-action@v4
