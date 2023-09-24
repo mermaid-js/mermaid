@@ -1,5 +1,4 @@
 // import type { RailroadDB } from './railroadTypes.js';
-import { config } from 'process';
 import * as configApi from '../../config.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 
@@ -46,13 +45,13 @@ const getConsole = () => console;
 type Callback<T> = (item: Chunk, index: number, parent: Chunk | undefined, result: T[]) => T;
 // type Traverse<T> = (callback: Callback<T>, index: number, parent?: Chunk) => T;
 
-// interface Traversible {
+// interface Traversable {
 //   traverse<T>(callback: Callback<T>, index?: number, parent?: Chunk): T;
 // }
 
 // TODO: rewrite toEBNF using traverse
 //
-// interface Chunk extends Traversible {
+// interface Chunk extends Traversable {
 //   toEBNF(): string;
 // }
 
@@ -63,7 +62,7 @@ abstract class Chunk {
   abstract toEBNF(): string;
 }
 
-class Leaf implements Chunk {
+abstract class Leaf implements Chunk {
   constructor(public label: string) {}
 
   traverse<T>(callback: Callback<T>, index?: number, parent?: Chunk): T {
@@ -71,9 +70,7 @@ class Leaf implements Chunk {
     return callback(this, index, parent, []);
   }
 
-  toEBNF(): string {
-    return this.label;
-  }
+  abstract toEBNF(): string;
 }
 
 abstract class Node implements Chunk {
@@ -120,22 +117,43 @@ class Epsilon extends Leaf {
   constructor() {
     super('ɛ');
   }
-}
-
-// remote quote???
-class Term extends Leaf {
-  constructor(public label: string, public quote: string) {
-    super(label);
-  }
 
   toEBNF(): string {
-    return this.quote + super.toEBNF() + this.quote;
+    return this.label;
+  }
+}
+
+class Term extends Leaf {
+  toEBNF(): string {
+    const escaped = this.label.replaceAll(/\\([\\'"])/g, "\\$1");
+    
+    return '"' + escaped + '"';
   }
 }
 
 class NonTerm extends Leaf {
   toEBNF(): string {
-    return '<' + super.toEBNF() + '>';
+    const escaped = this.label.replaceAll(/\\([\\'"<>])/g, "\\$1");
+
+    return '<' + escaped + '>';
+  }
+}
+
+class Exception implements Chunk {
+  constructor(public base: Chunk, public except: Chunk) {}
+
+  traverse<T>(callback: Callback<T>, index?: number, parent?: Chunk): T {
+    index ??= 0;
+    const nested = [
+      this.base.traverse(callback, 0, this),
+      this.except.traverse(callback, 1, this),
+    ]
+
+    return callback(this, index, parent, nested);
+  }
+
+  toEBNF(): string {
+    return `(${this.base.toEBNF()}) - ${this.except.toEBNF()}`
   }
 }
 
@@ -172,13 +190,14 @@ class ZeroOrMany extends Node {
   }
 }
 
-const addTerm = (label: string, quote: string): Chunk => {
-  return new Term(label, quote);
+const addTerm = (label: string): Chunk => {
+  label.replaceAll(/\\(.)/g, "$1");
+
+  return new Term(label);
 };
 const addNonTerm = (label: string): Chunk => {
   return new NonTerm(label);
 };
-
 const addZeroOrOne = (chunk: Chunk): Chunk => {
   return new ZeroOrOne(chunk);
 };
@@ -188,6 +207,9 @@ const addOneOrMany = (chunk: Chunk): Chunk => {
 const addZeroOrMany = (chunk: Chunk): Chunk => {
   return new ZeroOrMany(chunk);
 };
+const addException = (base: Chunk, except: Chunk): Chunk => {
+  return new Exception(base, except);
+}
 const addRuleOrChoice = (ID: string, chunk: Chunk): void => {
   if (rules[ID]) {
     const value = rules[ID];
@@ -205,13 +227,12 @@ const addSequence = (chunks: Chunk[]): Chunk => {
 
   if (railroadConfig?.compress) {
     chunks = chunks
-      .map((chunk) => {
+      .flatMap((chunk) => {
         if (chunk instanceof Sequence) {
           return chunk.children;
         }
         return chunk;
-      })
-      .flat();
+      });
   }
 
   if (chunks.length === 1) {
@@ -228,13 +249,12 @@ const addChoice = (chunks: Chunk[]): Chunk => {
 
   if (configApi.getConfig().railroad?.compress) {
     chunks = chunks
-      .map((chunk) => {
+      .flatMap((chunk) => {
         if (chunk instanceof Choice) {
           return chunk.children;
         }
         return chunk;
-      })
-      .flat();
+      });
   }
 
   if (chunks.length === 1) {
@@ -259,9 +279,10 @@ export interface RailroadDB extends DiagramDB {
   addOneOrMany: (chunk: Chunk) => Chunk;
   addRuleOrChoice: (ID: string, chunk: Chunk) => void;
   addSequence: (chunks: Chunk[]) => Chunk;
-  addTerm: (label: string, quote: string) => Chunk;
+  addTerm: (label: string) => Chunk;
   addZeroOrMany: (chunk: Chunk) => Chunk;
   addZeroOrOne: (chunk: Chunk) => Chunk;
+  addException: (base: Chunk, except: Chunk) => Chunk;
   clear: () => void;
   getConsole: () => Console;
   getRules: () => Rule[];
@@ -277,6 +298,7 @@ export const db: RailroadDB = {
   addTerm,
   addZeroOrMany,
   addZeroOrOne,
+  addException,
   clear,
   getConfig: () => configApi.getConfig().railroad,
   getConsole,

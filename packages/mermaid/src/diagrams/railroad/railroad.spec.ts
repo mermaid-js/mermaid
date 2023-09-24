@@ -3,7 +3,7 @@ import railroad from './railroadGrammar.jison';
 // import { prepareTextForParsing } from '../railroadUtils.js';
 import { cleanupComments } from '../../diagram-api/comments.js';
 import { db, Rule } from './railroadDB.js';
-// @ts-ignore: yaml
+// @ts-ignore: yaml does not export types
 import defaultConfigJson from '../../schemas/config.schema.yaml?only-defaults=true';
 
 describe('Railroad diagram', function () {
@@ -19,28 +19,65 @@ describe('Railroad diagram', function () {
 
   describe('fails to parse', () => {
     test.each([
-      ['', 'keyword missing'],
+      ['', 'keyword is missing'],
+      ['rule', 'assign operator is missing'],
       ['rule==id', 'assign operator is wrong'],
-      ['rule=id', '; missing'],
+      ['rule=id', 'semicolon is missing'],
       ['rule=(id;', 'parentheses are unbalanced'],
       ['rule=(id));', 'parentheses are unbalanced'],
       ["' ::= x;", 'rule is with quote is not wrapped in <>'],
       ["rule ::= ';", 'quote in rule definition is not wrapped in <>'],
-    ])('%s when %s', (grammar: string) => {
+    ])('`%s` where %s', (grammar: string) => {
       grammar = cleanupComments('' + grammar);
       expect(() => railroad.parser.parse(grammar)).toThrow();
     });
   });
 
   describe('parses', () => {
-    describe('Simple samples', () => {
+    describe('assignment operators', () => {
+      // const grammarDefinition = prepareTextForParsing(cleanupComments('railroad-beta\n\n ' + data));
+      test.each([
+        ['rule ::= id;'],
+        ['rule := id;'],
+        ['rule : id;'],
+        ['rule => id;'],
+        ['rule = id;'],
+        ['rule -> id;'],
+      ])('`%s`', (grammar: string) => {
+        grammar = cleanupComments('railroad-beta' + grammar);
+        const grammarWithoutSpaces = grammar.replaceAll(' ', '');
+        expect(() => railroad.parser.parse(grammar)).not.toThrow();
+        expect(() => railroad.parser.parse(grammarWithoutSpaces)).not.toThrow();
+      });
+    });
+    
+    describe('rules names', () => {
+      // const grammarDefinition = prepareTextForParsing(cleanupComments('railroad-beta\n\n ' + data));
+      test.each([
+        ['rule::=id;'],
+        ['<rule>::=id ;'],
+        ['<rule with spaces>::=id;'],
+        [`<rule with "double quotes">::=id;`],
+        [`<rule with 'singe quotes'>::=id;`],
+        [`<rule with \\<angle quotes\\>>::=id;`],
+        [`<rule with different escapements \\' \\" \\< \\> \\\\ \\x>::=id;`],
+      ])('`%s` produces', (grammar: string) => {
+        grammar = cleanupComments('railroad-beta' + grammar);
+        railroad.parser.parse(grammar);
+        const x = railroad.yy.getRules() as Rule[];
+        console.log(x.map((r) => r.toEBNF()));
+        // expect(() => { railroad.parser.parse(grammar); }).not.toThrow();
+        // railroad.parser.parse(grammar);
+      });
+    });
+
+    describe('simple samples', () => {
       // const grammarDefinition = prepareTextForParsing(cleanupComments('railroad-beta\n\n ' + data));
       test.each([
         [''],
-        ['rule=;'],
-        ['rule::=;'],
         ['rule::=id;'],
         ['rule::=(id);'],
+        ['rule::=id-id;'],
         ['rule::=[id];'],
         ['rule::={id};'],
         ['rule::=id|id;'],
@@ -58,7 +95,7 @@ describe('Railroad diagram', function () {
         ['<"> ::= <"">;'],
         ["<while> ::= 'while' '(' <condition> ')' <statement>;"],
         ["<while-loop> ::= 'while' '(' <condition> ')' <statement>;"],
-      ])('%s', (grammar: string) => {
+      ])('`%s` produces', (grammar: string) => {
         grammar = cleanupComments('railroad-beta' + grammar);
         railroad.parser.parse(grammar);
         const x = railroad.yy.getRules() as Rule[];
@@ -88,7 +125,9 @@ describe('Railroad diagram', function () {
         railroad.parser.parse(grammar);
       });
     });
+  });
 
+  describe('recognizes', function () {
     it('Arithmetic Expressions', () => {
       const grammar = `
       railroad-beta

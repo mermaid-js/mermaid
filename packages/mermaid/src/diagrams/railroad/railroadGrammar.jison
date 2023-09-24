@@ -15,6 +15,8 @@
 // Lexical analysis
 //------------------
 
+// this is told to be longest rules match, but I am not sure this works
+// that is why the order in the assignment regexp matters
 %options flex
 
 %lex
@@ -27,6 +29,7 @@ C_COLON \u003A // :
 C_SEMICOLON \u003B // ;
 C_VERTICAL_LINE \u007C // |
 C_SLASH \u002f // /
+C_BACKSLASH \u005C // \
 C_APOSTROPHE \u0027 // '
 C_QUOTATION_MARK \u0022 // "
 C_LEFT_PARENTHESIS	 \u0028 // (
@@ -37,17 +40,17 @@ C_LEFT_CURLY_BRACKET \u007B // {
 C_RIGHT_CURLY_BRACKET \u007D // }
 C_LESS_THAN \u003C // <
 C_GREATER_THAN \u003E // >
-C_QUANTIFIER [\u003F\u002B\u002A] // ?+* regexp-like
-C_TEXTDATA [\u0020-\u0021\u0023-\u0026\u0028-\u003B\u003D\u003F-\u007E] // everything except ' " < >
+C_ASTERISK \u002A
+C_QUESTION_MARK \u003F
+C_PLUS_SIGN \u002B
+// TODO add classes for non symbols string symbols and quote symbols
+C_TEXTDATA [\u0020-\u0021\u0023-\u0026\u0028-\u003B\u003D\u003F-\u005B\u005D-\u007E] // everything except ' " < > \
+C_EQUALS_SIGN \u003D // =
 
 // C_CR \u000D
 // C_LF \u000A
 // C_TAB \u0009
 // C_VTAB \u000B
-// EQUALS_SIGN \u003D // =
-// QUESTION_MARK \u003F // ?
-// PLUS_SIGN \u002B // +
-// ASTERISK \u002A // *
 // EXCLAMATION_MARK \u0021 // !
 // DEFINE \u003A\u003A\u003D // ::=
 // ASSIGN \u003A\u003D // :=
@@ -71,35 +74,41 @@ C_TEXTDATA [\u0020-\u0021\u0023-\u0026\u0028-\u003B\u003D\u003F-\u007E] // every
 // https://stackoverflow.com/questions/31862815/jison-lex-without-white-spaces
 // https://github.com/zaach/jison/wiki/Deviations-From-Flex-Bison
 
-<nonterm>(({C_TEXTDATA}|{C_APOSTROPHE}|{C_QUOTATION_MARK})+) { return 'NONTERM' }
-<nonterm>({C_GREATER_THAN}) { this.popState(); return '>' }
+<nonterm>({C_BACKSLASH}?({C_TEXTDATA}|{C_APOSTROPHE}|{C_QUOTATION_MARK})|{C_BACKSLASH}({C_LESS_THAN}|{C_GREATER_THAN}|{C_BACKSLASH}))+ { return 'NONTERM' }
+<nonterm>{C_GREATER_THAN} { this.popState(); return '>' }
 
-<qstring>(({C_TEXTDATA}|{C_LESS_THAN}|{C_GREATER_THAN}|{C_APOSTROPHE})+) { return 'QSTRING' }
-<qstring>({C_QUOTATION_MARK}) { this.popState(); return '"' }
+// TODO add optional backslash
+<qstring>({C_TEXTDATA}|{C_LESS_THAN}|{C_GREATER_THAN}|{C_APOSTROPHE}|{C_BACKSLASH}{C_QUOTATION_MARK})+ { return 'QSTRING' }
+<qstring>{C_QUOTATION_MARK} { this.popState(); return '"' }
 
-<string>(({C_TEXTDATA}|{C_LESS_THAN}|{C_GREATER_THAN}|{C_QUOTATION_MARK})+) { return 'STRING' }
-<string>({C_APOSTROPHE}) { this.popState(); return 'APOSTROPHE' }
+// TODO add optional backslash
+<string>({C_TEXTDATA}|{C_LESS_THAN}|{C_GREATER_THAN}|{C_QUOTATION_MARK}|{C_BACKSLASH}{C_APOSTROPHE})+ { return 'STRING' }
+<string>{C_APOSTROPHE} { this.popState(); return 'APOSTROPHE' }
 
 <INITIAL>("railroad-beta") { this.pushState('diag'); return 'railroad-beta' }
 
-<*>([A-Za-z_][A-Za-z0-9_]*) { return 'IDENTIFIER' }
-<*>({C_VERTICAL_LINE}|{C_SLASH}) { return '|' }
-<*>({C_COMMA}) { return ',' }
-<*>("::="|":="|":"|"="|"->") { return '=' }
-<*>({C_SEMICOLON}|{C_DOT}) { return ';' }
-<*>({C_LEFT_PARENTHESIS}) { return '(' }
-<*>({C_RIGHT_PARENTHESIS}) { return ')' }
-<*>({C_LEFT_SQUARE_BRACKET}) { return '[' }
-<*>({C_RIGHT_SQUARE_BRACKET}) { return ']' }
-<*>({C_LEFT_CURLY_BRACKET}) { return '{' }
-<*>({C_RIGHT_CURLY_BRACKET}) { return '}' }
-<*>({C_LESS_THAN}) { this.pushState('nonterm'); return '<' }
-<*>({C_GREATER_THAN}) { return '>' }
-<*>({C_QUOTATION_MARK}) { this.pushState('qstring'); return '"' }
-<*>({C_APOSTROPHE}) { this.pushState('string'); return 'APOSTROPHE' }
-<*>({C_QUANTIFIER}) { return 'QUANTIFIER' }
+<*>[A-Za-z_][A-Za-z0-9_]* { return 'IDENTIFIER' }
+<*>[0-9]|[1-9][0-9]+ { return 'NUMBER' }
+<*>{C_VERTICAL_LINE}|{C_SLASH} { return '|' }
+<*>{C_COMMA} { return ',' }
+<*>"::="|":="|":"|"=>"|"="|"->" { return '=' } // assignment
+<*>{C_SEMICOLON}|{C_DOT} { return ';' }
+<*>{C_LEFT_PARENTHESIS} { return '(' }
+<*>{C_RIGHT_PARENTHESIS} { return ')' }
+<*>{C_LEFT_SQUARE_BRACKET} { return '[' }
+<*>{C_RIGHT_SQUARE_BRACKET} { return ']' }
+<*>{C_LEFT_CURLY_BRACKET} { return '{' }
+<*>{C_RIGHT_CURLY_BRACKET} { return '}' }
+<*>{C_HYPHEN} { return '-' }
+<*>{C_ASTERISK} { return '*' }
+<*>{C_PLUS_SIGN} { return '+' }
+<*>{C_QUESTION_MARK} { return '?' }
+<*>{C_LESS_THAN} { this.pushState('nonterm'); return '<' }
+<*>{C_GREATER_THAN} { return '>' }
+<*>{C_QUOTATION_MARK} { this.pushState('qstring'); return '"' }
+<*>{C_APOSTROPHE} { this.pushState('string'); return 'APOSTROPHE' }
 <*><<EOF>> { return 'EOF' } // match end of file
-<*>(\s+) {}
+<*>\s+ {}
 
 /lex
 
@@ -231,10 +240,10 @@ choice
 
 alternatives
   : sequence "|" alternatives\[tail_] {
-      $$=[$sequence, ...$tail_];
+      $$ = [$sequence, ...$tail_];
     }
   | sequence {
-      $$=[$sequence];
+      $$ = [$sequence];
     }
   | {
       $$ = [yy.addEpsilon()];
@@ -242,22 +251,31 @@ alternatives
   ;
 
 sequence
-  : (fact ","?)+\[facts_] {
-      $$ = yy.addSequence(Object.values($facts_));
+  : (item ","?)+\[items_] {
+      $$ = yy.addSequence(Object.values($items_));
     }
   ;
 
+item
+  : fact { $$ = $fact; }
+  | fact\[base_] '-' fact\[except_] { $$ = yy.addException($base_, $except_) }
+  ;
+
 fact
-  : prim QUANTIFIER?\[quantifier_] {
-      switch($quantifier_) {
-        case '?': $$ = yy.addZeroOrOne($prim); break;
-        case '+': $$ = yy.addOneOrMany($prim); break;
-        case '*': $$ = yy.addZeroOrMany($prim); break;
-        default: $$ = $prim;
-      };
-    }
-  | integer '*' prim {
-    
+  : prim '?' {
+    $$ = yy.addZeroOrOne($prim);
+  }
+  | prim '+' {
+    $$ = yy.addOneOrMany($prim);
+  }
+  | prim '*' {
+    $$ = yy.addZeroOrMany($prim);
+  }
+  | prim {
+    $$ = $prim;
+  }
+  | NUMBER '*' prim {
+    $$ = yy.addRepetitions($prim, $number_);
   }
   ;
 
@@ -266,10 +284,18 @@ prim
   | '[' choice ']' { $$=yy.addZeroOrOne($choice); }
   | '{' choice '}' { $$=yy.addZeroOrMany($choice); }
   | '"' (QSTRING)?\[qstring_] '"' {
-      $$=yy.addTerm($qstring_, '"'); // TODO: add bunch of terminals instead of one?
+      if($qstring_) {
+        $$=yy.addTerm($qstring_);
+      } else {
+        $$=yy.addEpsilon();
+      }
     }
   | APOSTROPHE (STRING)?\[string_] APOSTROPHE {
-      $$=yy.addTerm($string_, "'");
+      if($string_) {
+        $$=yy.addTerm($string_);
+      } else {
+        $$=yy.addEpsilon();
+      }
     }
   | non_term { $$=yy.addNonTerm($non_term); }
   ;
