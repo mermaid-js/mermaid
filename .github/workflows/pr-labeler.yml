@@ -9,7 +9,7 @@ on:
     # Please read the following first before reviewing/merging:
     # - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request_target
     # - https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
-    types: [opened]
+    types: [opened, reopened, synchronize]
 
 permissions:
   contents: read
@@ -22,6 +22,10 @@ jobs:
       pull-requests: write # write permission is required to label PRs
     steps:
       - name: Label PR
-        uses: TimonVS/pr-labeler-action@v4
+        uses: release-drafter/release-drafter@v5
+        with:
+          config-name: pr-labeler.yml
+          disable-autolabeler: false
+          disable-releaser: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

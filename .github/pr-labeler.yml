@@ -1,13 +1,19 @@
-'Type: Bug / Error':
-  - 'bug/*'
-  - 'fix/*'
-'Type: Enhancement':
-  - 'feature/*'
-  - 'feat/*'
-'Type: Other':
-  - 'other/*'
-  - 'chore/*'
-  - 'test/*'
-  - 'refactor/*'
-'Area: Documentation':
-  - 'docs/*'
+# yaml-language-server: $schema=https://raw.githubusercontent.com/release-drafter/release-drafter/master/schema.json
+autolabeler:
+  - label: 'Type: Bug / Error'
+    branch:
+      - '/bug\/.+/'
+      - '/fix\/.+/'
+  - label: 'Type: Enhancement'
+    branch:
+      - '/feature\/.+/'
+      - '/feat\/.+/'
+  - label: 'Type: Other'
+    branch:
+      - '/other\/.+/'
+      - '/chore\/.+/'
+      - '/test\/.+/'
+      - '/refactor\/.+/'
+  - label: 'Area: Documentation'
+    branch:
+      - '/docs\/.+/'
