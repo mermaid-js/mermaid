@@ -1,8 +1,11 @@
 // import type { RailroadDB } from './railroadTypes.js';
+import { config } from 'process';
 import * as configApi from '../../config.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 
 import { clear as commonClear } from '../common/commonDb.js';
+
+const railroadConfig = configApi.getConfig().railroad;
 
 const clear = (): void => {
   commonClear();
@@ -47,16 +50,17 @@ type Callback<T> = (item: Chunk, index: number, parent: Chunk | undefined, resul
 //   traverse<T>(callback: Callback<T>, index?: number, parent?: Chunk): T;
 // }
 
-// TODO: rewrite toString using traverse
+// TODO: rewrite toEBNF using traverse
 //
 // interface Chunk extends Traversible {
-  //   toString(): string;
-  // }
-  
+//   toEBNF(): string;
+// }
+
 abstract class Chunk {
   // static staticMethod(): void;
   static display: ((instance: Chunk) => void) | undefined;
   abstract traverse<T>(callback: Callback<T>, index?: number, parent?: Chunk): T;
+  abstract toEBNF(): string;
 }
 
 class Leaf implements Chunk {
@@ -67,12 +71,12 @@ class Leaf implements Chunk {
     return callback(this, index, parent, []);
   }
 
-  toString(): string {
+  toEBNF(): string {
     return this.label;
   }
 }
 
-class Node implements Chunk {
+abstract class Node implements Chunk {
   constructor(public child: Chunk) {}
 
   traverse<T>(callback: Callback<T>, index?: number, parent?: Chunk): T {
@@ -81,9 +85,11 @@ class Node implements Chunk {
 
     return callback(this, index, parent, [nested]);
   }
+
+  abstract toEBNF(): string;
 }
 
-class Chain implements Chunk {
+abstract class Chain implements Chunk {
   constructor(public children: Chunk[]) {}
 
   traverse<T>(callback: Callback<T>, index?: number, parent?: Chunk): T {
@@ -94,10 +100,15 @@ class Chain implements Chunk {
 
     return callback(this, index, parent, nested);
   }
+
+  abstract toEBNF(): string;
 }
 
-class Rule {
+export class Rule {
   constructor(public ID: string, public definition: Chunk) {}
+  toEBNF() {
+    return `${this.ID} ::= ${this.definition.toEBNF()}`;
+  }
 }
 
 // Epsilon represents empty transition
@@ -117,46 +128,47 @@ class Term extends Leaf {
     super(label);
   }
 
-  toString(): string {
-    return this.quote + super.toString() + this.quote;
+  toEBNF(): string {
+    return this.quote + super.toEBNF() + this.quote;
   }
 }
 
 class NonTerm extends Leaf {
-  toString(): string {
-    return '<' + super.toString() + '>';
+  toEBNF(): string {
+    return '<' + super.toEBNF() + '>';
   }
 }
 
 class Choice extends Chain {
-  toString(): string {
-    const content = this.children.map((c) => c.toString()).join('|');
+  toEBNF(): string {
+    const content = this.children.map((c) => c.toEBNF()).join('|');
     return '(' + content + ')';
   }
 }
 
 class Sequence extends Chain {
-  toString(): string {
-    const content = this.children.map((c) => c.toString()).join(',');
-    return '[' + content + ']';
+  toEBNF(): string {
+    const delimiter = railroadConfig?.format?.forceComma ? ', ' : ' ';
+    const content = this.children.map((c) => c.toEBNF()).join(delimiter);
+    return content;
   }
 }
 
 class OneOrMany extends Node {
-  toString(): string {
-    return this.child.toString() + '+';
+  toEBNF(): string {
+    return this.child.toEBNF() + '+';
   }
 }
 
 class ZeroOrOne extends Node {
-  toString(): string {
-    return this.child.toString() + '?';
+  toEBNF(): string {
+    return this.child.toEBNF() + '?';
   }
 }
 
 class ZeroOrMany extends Node {
-  toString(): string {
-    return this.child.toString() + '*';
+  toEBNF(): string {
+    return this.child.toEBNF() + '*';
   }
 }
 
@@ -191,7 +203,7 @@ const addSequence = (chunks: Chunk[]): Chunk => {
     console.error('Sequence`s chunks are not array', chunks);
   }
 
-  if (configApi.getConfig().railroad?.compress) {
+  if (railroadConfig?.compress) {
     chunks = chunks
       .map((chunk) => {
         if (chunk instanceof Sequence) {
@@ -237,7 +249,7 @@ const addEpsilon = (): Chunk => {
 };
 
 const getRules = (): Rule[] => {
-  return Object.entries(rules).map(([ID, definition]) => new Rule(ID, definition))
+  return Object.entries(rules).map(([ID, definition]) => new Rule(ID, definition));
 };
 
 export interface RailroadDB extends DiagramDB {

@@ -10,6 +10,15 @@
  */
 export type DOMPurifyConfiguration = import('dompurify').Config;
 /**
+ * Shapes of the first and the last state in the diagram
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "RailroadDiagramBoundaryShape".
+ */
+export type RailroadDiagramBoundaryShape = 'dot' | 'circle' | 'forward' | 'backward';
+export type RailroadDiagramFormat1 = RailroadDiagramFormat;
+/**
  * JavaScript function that returns a `FontConfig`.
  *
  * By default, these return the appropriate `*FontSize`, `*FontFamily`, `*FontWeight`
@@ -50,14 +59,6 @@ export type SankeyLinkColor = 'source' | 'target' | 'gradient';
  * via the `definition` "SankeyNodeAlignment".
  */
 export type SankeyNodeAlignment = 'left' | 'right' | 'center' | 'justify';
-/**
- * Shapes of the first and the last state in the diagram
- *
- *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "RailroadDiagramBoundaryShape".
- */
-export type RailroadDiagramBoundaryShape = 'dot' | 'circle' | 'forward' | 'backward';
 /**
  * The font size to use
  */
@@ -181,6 +182,78 @@ export interface BaseDiagramConfig {
    *
    */
   useMaxWidth?: boolean;
+}
+/**
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "RailroadDiagramFormat".
+ */
+export interface RailroadDiagramFormat {
+  /**
+   * Force angular brackets around non-terminal symbols
+   *
+   */
+  forceAngleBrackets?: boolean;
+  /**
+   * Force comma as a concatenation symbol in the rule definition
+   *
+   */
+  forceComma?: boolean;
+}
+/**
+ * The object containing configurations specific for railroad diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "RailroadDiagramConfig".
+ */
+export interface RailroadDiagramConfig extends BaseDiagramConfig {
+  alignment?: 'left' | 'right' | 'center' | 'justify';
+  verticalAlignment?: 'top' | 'bottom' | 'center' | 'justify';
+  /**
+   * Wrap long grammars similarly to wrapping long lines
+   *
+   */
+  wrapDiagram?: boolean;
+  /**
+   * Specify which standart would be applied
+   *
+   */
+  syntax?: 'mermaid' | 'w3c' | 'iso';
+  /**
+   * Compress rules to get the smallest possible diagram
+   *
+   */
+  compress?: boolean;
+  /**
+   * List of things to render
+   *
+   */
+  render?: ('railroad' | 'ebnf' | 'bnf' | 'dfa' | 'nfa')[];
+  format?: RailroadDiagramFormat1;
+  drawArrows?: boolean;
+  inline?: boolean;
+  inlineItems?: string[];
+  /**
+   * Name of the initial rule in grammar
+   * First rule will be initial if it is null
+   *
+   */
+  start?: string | null;
+  shapes?: {
+    terminal?: string;
+    non_terminal?: string;
+    /**
+     * Shape or list of shapes for the start element
+     * They will be applied in the order of occurrence
+     *
+     */
+    start?: RailroadDiagramBoundaryShape[] | RailroadDiagramBoundaryShape;
+    /**
+     * Shape or list of shapes for the end element
+     * They will be applied in the order of occurrence
+     *
+     */
+    end?: RailroadDiagramBoundaryShape[] | RailroadDiagramBoundaryShape;
+  };
 }
 /**
  * The object containing configurations specific for c4 diagrams
@@ -1322,61 +1395,6 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
    *
    */
   suffix?: string;
-}
-/**
- * The object containing configurations specific for railroad diagrams.
- *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "RailroadDiagramConfig".
- */
-export interface RailroadDiagramConfig extends BaseDiagramConfig {
-  alignment?: 'left' | 'right' | 'center' | 'justify';
-  verticalAlignment?: 'top' | 'bottom' | 'center' | 'justify';
-  /**
-   * Wrap long grammars similarly to wrapping long lines
-   *
-   */
-  wrapDiagram?: boolean;
-  /**
-   * Compress rules to get the smallest possible diagram
-   *
-   */
-  compress?: boolean;
-  /**
-   * List of things to render
-   *
-   */
-  render?: ('railroad' | 'ebnf' | 'bnf' | 'dfa' | 'nfa')[];
-  /**
-   * Force angular brackets around non-terminal symbols
-   *
-   */
-  angleBrackets?: boolean;
-  drawArrows?: boolean;
-  inline?: boolean;
-  inlineItems?: string[];
-  /**
-   * Name of the initial rule in grammar
-   * First rule will be initial if it is null
-   *
-   */
-  start?: string | null;
-  shapes?: {
-    terminal?: string;
-    non_terminal?: string;
-    /**
-     * Shape or list of shapes for the start element
-     * They will be applied in the order of occurrence
-     *
-     */
-    start?: RailroadDiagramBoundaryShape[] | RailroadDiagramBoundaryShape;
-    /**
-     * Shape or list of shapes for the end element
-     * They will be applied in the order of occurrence
-     *
-     */
-    end?: RailroadDiagramBoundaryShape[] | RailroadDiagramBoundaryShape;
-  };
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

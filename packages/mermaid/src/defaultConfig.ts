@@ -255,7 +255,8 @@ const config: RequiredDeep<MermaidConfig> = {
   },
   railroad: {
     ...defaultConfigJson.railroad,
-  }
+    useMaxWidth: true,
+  },
 };
 
 const keyify = (obj: any, prefix = ''): string[] =>

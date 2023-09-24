@@ -210,11 +210,11 @@ C_TEXTDATA [\u0020-\u0021\u0023-\u0026\u0028-\u003B\u003D\u003F-\u007E] // every
 syntax: 'railroad-beta' rule* EOF;
 
 rule
-  : rule_id\[rule_id_] '=' choice\[choice_] ';' {
-      yy.addRuleOrChoice($rule_id_, $choice_);
+  : non_term '=' choice ';' {
+      yy.addRuleOrChoice($non_term, $choice);
     };
 
-rule_id
+non_term
   : '<' NONTERM '>' {
       $$=$NONTERM;
     }
@@ -256,6 +256,9 @@ fact
         default: $$ = $prim;
       };
     }
+  | integer '*' prim {
+    
+  }
   ;
 
 prim
@@ -268,7 +271,7 @@ prim
   | APOSTROPHE (STRING)?\[string_] APOSTROPHE {
       $$=yy.addTerm($string_, "'");
     }
-  | rule_id { $$=yy.addNonTerm($rule_id); }
+  | non_term { $$=yy.addNonTerm($non_term); }
   ;
 
 // TODO:

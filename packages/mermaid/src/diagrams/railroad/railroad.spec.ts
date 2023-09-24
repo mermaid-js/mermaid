@@ -2,13 +2,14 @@
 import railroad from './railroadGrammar.jison';
 // import { prepareTextForParsing } from '../railroadUtils.js';
 import { cleanupComments } from '../../diagram-api/comments.js';
-import { db, Rules } from './railroadDB.js';
-// import defaultConfigJson from '../../schemas/config.schema.yaml?only-defaults=true';
+import { db, Rule } from './railroadDB.js';
+// @ts-ignore: yaml
+import defaultConfigJson from '../../schemas/config.schema.yaml?only-defaults=true';
 
 describe('Railroad diagram', function () {
   beforeAll(() => {
-    // console.log(defaultConfigJson);
-    
+    console.log(defaultConfigJson);
+
     railroad.yy = db;
   });
 
@@ -60,9 +61,9 @@ describe('Railroad diagram', function () {
       ])('%s', (grammar: string) => {
         grammar = cleanupComments('railroad-beta' + grammar);
         railroad.parser.parse(grammar);
-        const x = railroad.yy.getRules() as Rules;
-        console.log(Object.entries(x).map(([r, e]) => [r, e.toString()]));
-        // expect(() => railroad.parser.parse(grammar)).not.toThrow();
+        const x = railroad.yy.getRules() as Rule[];
+        console.log(x.map((r) => r.toEBNF()));
+        // expect(() => { railroad.parser.parse(grammar); }).not.toThrow();
         // railroad.parser.parse(grammar);
       });
     });

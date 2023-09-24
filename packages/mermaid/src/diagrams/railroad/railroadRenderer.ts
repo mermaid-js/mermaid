@@ -53,7 +53,7 @@ export const draw: DrawDefinition = (_text, id, _version, diagObj): void => {
   const rules = db.getRules();
 
   rules.forEach((rule, index) => {
-    const {ID: label, definition: chunk} = rule;
+    const { ID: label, definition: chunk } = rule;
     console.log(`Key: ${label}, Value:`, chunk);
 
     const g = svg.append('g').attr('transform', `translate(${0},${10 + index * 20})`);
@@ -61,7 +61,6 @@ export const draw: DrawDefinition = (_text, id, _version, diagObj): void => {
     g.append('text').text(label);
 
     chunk.traverse<Dimension>((item, index, parent, result) => {
-      debugger;
       console.log(item, index, parent);
 
       const nestedDimensions = result.reduce((acc, curr) => acc.add(curr), new Dimension(0, 0));
