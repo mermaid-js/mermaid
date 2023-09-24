@@ -18,7 +18,7 @@ body:
         - Fill out the text fields with as much detail as possible.
         - Never be shy to give us screenshots and/or code samples. It will help!
 
-        There is a chance that the bug is already fixed in the latest version, but not released yet. 
+        There is a chance that the bug is already fixed in the git `develop` branch, but is not released yet. 
         So please check in [Live Editor - Develop](https://develop.git.mermaid.live) before raising an issue.
   - type: textarea
     attributes:
