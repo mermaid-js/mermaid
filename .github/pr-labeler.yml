@@ -17,3 +17,6 @@ autolabeler:
   - label: 'Area: Documentation'
     branch:
       - '/docs\/.+/'
+
+template: |
+  This field is unused, as we only use this config file for labeling PRs.
