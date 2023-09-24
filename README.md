@@ -20,6 +20,9 @@ Generate diagrams from markdown-like text.
 <p align="center">
 <a href="./README.zh-CN.md">简体中文</a>
 </p>
+<p align="center">
+Try Live Editor previews of future releases: <a href="https://develop.git.mermaid.live/" title="Try the mermaid version from the develop branch.">Develop</a> | <a href="https://next.git.mermaid.live/" title="Try the mermaid version from the next branch.">Next</a>
+</p>
 
 <br>
 <br>
