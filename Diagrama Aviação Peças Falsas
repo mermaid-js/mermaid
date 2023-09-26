@@ -1,0 +1,6 @@
+graph TD;
+    A[Companhias Aéreas] --> B[Fabricantes de Aviões]
+    B --> C[Fabricantes de Motores]
+    C --> D[Fornecedores de Peças]
+    D --> E[AOG Technics Ltd.]
+    E --> F[Peças Falsificadas]
