@@ -521,7 +521,7 @@ export const draw = function (text, id, version, diagObj) {
     }
 
     if (dayjs(maxTime).diff(dayjs(minTime), 'year') > 5) {
-      console.warn(
+      log.warn(
         'The difference between the min and max time is more than 5 years. This will cause performance issues. Skipping drawing exclude days.'
       );
       return;
