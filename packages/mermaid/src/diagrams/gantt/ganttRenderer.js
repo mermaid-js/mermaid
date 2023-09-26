@@ -520,9 +520,9 @@ export const draw = function (text, id, version, diagObj) {
       return;
     }
 
-    if (dayjs(maxTime).diff(dayjs(minTime), 'year') > 10) {
+    if (dayjs(maxTime).diff(dayjs(minTime), 'year') > 5) {
       console.warn(
-        'The difference between the min and max time is more than 10 years. This will cause performance issues. Skipping drawing exclude days.'
+        'The difference between the min and max time is more than 5 years. This will cause performance issues. Skipping drawing exclude days.'
       );
       return;
     }
