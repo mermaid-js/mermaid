@@ -203,7 +203,7 @@ const getStyles = (options) =>
   /* Tasks on the critical line */
 
   .crit0,
-  .crit1,
+  .crit,
   .crit2,
   .crit3 {
     stroke: ${options.critBorderColor};
@@ -212,7 +212,7 @@ const getStyles = (options) =>
   }
 
   .activeCrit0,
-  .activeCrit1,
+  .activeCrit,
   .activeCrit2,
   .activeCrit3 {
     stroke: ${options.critBorderColor};
@@ -221,7 +221,7 @@ const getStyles = (options) =>
   }
 
   .doneCrit0,
-  .doneCrit1,
+  .doneCrit,
   .doneCrit2,
   .doneCrit3 {
     stroke: ${options.critBorderColor};
