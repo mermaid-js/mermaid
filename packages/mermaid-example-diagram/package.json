@@ -42,7 +42,7 @@
     "cytoscape": "^3.23.0",
     "cytoscape-cose-bilkent": "^4.1.0",
     "cytoscape-fcose": "^2.1.0",
-    "d3": "^7.0.0",
+    "d3": "^7.8.5",
     "khroma": "^2.0.0",
     "non-layered-tidy-tree-layout": "^2.0.2"
   },
