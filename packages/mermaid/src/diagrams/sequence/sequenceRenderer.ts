@@ -1421,8 +1421,7 @@ const buildMessageModel = function (msg, actors, diagObj) {
     return isArrowToRight ? -value : value;
   };
 
-  // 3 is max difference for +/- 1
-  if (Math.abs(startx - stopx) <= 3) {
+  if (msg.from === msg.to) {
     // This is a self reference, so we need to make sure the arrow is drawn correctly
     // There are many checks in the downstream rendering that checks for equality.
     // The lines on loops will be off by few pixels, but that's fine for now.
