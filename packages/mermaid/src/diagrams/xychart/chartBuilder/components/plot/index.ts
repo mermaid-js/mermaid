@@ -16,7 +16,7 @@ export interface Plot extends ChartComponent {
   setAxes(xAxis: Axis, yAxis: Axis): void;
 }
 
-export class Plot implements Plot {
+export class BasePlot implements Plot {
   private boundingRect: BoundingRect;
   private xAxis?: Axis;
   private yAxis?: Axis;
@@ -93,5 +93,5 @@ export function getPlotComponent(
   chartData: XYChartData,
   chartThemeConfig: XYChartThemeConfig
 ): Plot {
-  return new Plot(chartConfig, chartData, chartThemeConfig);
+  return new BasePlot(chartConfig, chartData, chartThemeConfig);
 }

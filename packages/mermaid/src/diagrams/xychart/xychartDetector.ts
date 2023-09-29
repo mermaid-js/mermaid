@@ -1,12 +1,16 @@
-import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types.js';
+import type {
+  DiagramDetector,
+  DiagramLoader,
+  ExternalDiagramDefinition,
+} from '../../diagram-api/types.js';
 
 const id = 'xychart';
 
 const detector: DiagramDetector = (txt) => {
-  return txt.match(/^\s*xychart/i) !== null;
+  return /^\s*xychart/i.test(txt);
 };
 
-const loader = async () => {
+const loader: DiagramLoader = async () => {
   const { diagram } = await import('./xychartDiagram.js');
   return { id, diagram };
 };

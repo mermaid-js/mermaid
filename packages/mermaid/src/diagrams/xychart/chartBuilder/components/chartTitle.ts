@@ -1,4 +1,4 @@
-import type { SVGGType } from '../../xychartDb.js';
+import type { Group } from '../../../../diagram-api/types.js';
 import type {
   BoundingRect,
   ChartComponent,
@@ -84,8 +84,8 @@ export function getChartTitleComponent(
   chartConfig: XYChartConfig,
   chartData: XYChartData,
   chartThemeConfig: XYChartThemeConfig,
-  tmpSVGGElem: SVGGType
+  tmpSVGGroup: Group
 ): ChartComponent {
-  const textDimensionCalculator = new TextDimensionCalculatorWithFont(tmpSVGGElem);
+  const textDimensionCalculator = new TextDimensionCalculatorWithFont(tmpSVGGroup);
   return new ChartTitle(textDimensionCalculator, chartConfig, chartData, chartThemeConfig);
 }

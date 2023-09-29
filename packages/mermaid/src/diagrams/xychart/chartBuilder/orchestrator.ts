@@ -1,4 +1,3 @@
-import type { SVGGType } from '../xychartDb.js';
 import type {
   ChartComponent,
   DrawableElem,
@@ -12,6 +11,7 @@ import { getAxis } from './components/axis/index.js';
 import { getChartTitleComponent } from './components/chartTitle.js';
 import type { Plot } from './components/plot/index.js';
 import { getPlotComponent } from './components/plot/index.js';
+import type { Group } from '../../../diagram-api/types.js';
 
 export class Orchestrator {
   private componentStore: {
@@ -24,10 +24,10 @@ export class Orchestrator {
     private chartConfig: XYChartConfig,
     private chartData: XYChartData,
     chartThemeConfig: XYChartThemeConfig,
-    tmpSVGGElem: SVGGType
+    tmpSVGGroup: Group
   ) {
     this.componentStore = {
-      title: getChartTitleComponent(chartConfig, chartData, chartThemeConfig, tmpSVGGElem),
+      title: getChartTitleComponent(chartConfig, chartData, chartThemeConfig, tmpSVGGroup),
       plot: getPlotComponent(chartConfig, chartData, chartThemeConfig),
       xAxis: getAxis(
         chartData.xAxis,
@@ -38,7 +38,7 @@ export class Orchestrator {
           tickColor: chartThemeConfig.xAxisTickColor,
           axisLineColor: chartThemeConfig.xAxisLineColor,
         },
-        tmpSVGGElem
+        tmpSVGGroup
       ),
       yAxis: getAxis(
         chartData.yAxis,
@@ -49,7 +49,7 @@ export class Orchestrator {
           tickColor: chartThemeConfig.yAxisTickColor,
           axisLineColor: chartThemeConfig.yAxisLineColor,
         },
-        tmpSVGGElem
+        tmpSVGGroup
       ),
     };
   }

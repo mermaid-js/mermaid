@@ -1,4 +1,4 @@
-import type { SVGGType } from '../../../xychartDb.js';
+import type { Group } from '../../../../../diagram-api/types.js';
 import type {
   AxisDataType,
   ChartComponent,
@@ -25,9 +25,9 @@ export function getAxis(
   data: AxisDataType,
   axisConfig: XYChartAxisConfig,
   axisThemeConfig: XYChartAxisThemeConfig,
-  tmpSVGGElem: SVGGType
+  tmpSVGGroup: Group
 ): Axis {
-  const textDimansionCalculator = new TextDimensionCalculatorWithFont(tmpSVGGElem);
+  const textDimansionCalculator = new TextDimensionCalculatorWithFont(tmpSVGGroup);
   if (isBandAxisData(data)) {
     return new BandAxis(
       axisConfig,

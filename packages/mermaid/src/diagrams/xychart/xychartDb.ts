@@ -1,4 +1,3 @@
-import type { Selection } from 'd3-selection';
 import {
   clear as commonClear,
   getAccDescription,
@@ -22,12 +21,11 @@ import type {
   XYChartThemeConfig,
 } from './chartBuilder/interfaces.js';
 import { isBandAxisData, isLinearAxisData } from './chartBuilder/interfaces.js';
-
-export type SVGGType = Selection<SVGGElement, unknown, Element | null, unknown>;
+import type { Group } from '../../diagram-api/types.js';
 
 let plotIndex = 0;
 
-let tmpSVGGElem: SVGGType;
+let tmpSVGGroup: Group;
 
 let xyChartConfig: XYChartConfig = getChartDefaultConfig();
 let xyChartThemeConfig: XYChartThemeConfig = getChartDefaultThemeConfig();
@@ -77,8 +75,8 @@ function textSanitizer(text: string) {
   return sanitizeText(text.trim(), config);
 }
 
-function setTmpSVGG(SVGG: SVGGType) {
-  tmpSVGGElem = SVGG;
+function setTmpSVGG(SVGG: Group) {
+  tmpSVGGroup = SVGG;
 }
 function setOrientation(oriantation: string) {
   if (oriantation === 'horizontal') {
@@ -186,7 +184,7 @@ function getDrawableElem(): DrawableElem[] {
     throw Error('No Plot to render, please provide a plot with some data');
   }
   xyChartData.title = getDiagramTitle();
-  return XYChartBuilder.build(xyChartConfig, xyChartData, xyChartThemeConfig, tmpSVGGElem);
+  return XYChartBuilder.build(xyChartConfig, xyChartData, xyChartThemeConfig, tmpSVGGroup);
 }
 
 function getChartThemeConfig() {

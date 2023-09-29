@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // @ts-nocheck TODO: Fix types
+import type { Group } from '../diagram-api/types.js';
+import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
 import { decodeEntities } from '../mermaidAPI.js';
 import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
@@ -76,12 +78,18 @@ function computeWidthOfText(parentNode: any, lineHeight: number, line: MarkdownL
   return textLength;
 }
 
-export function computeDimensionOfText(parentNode: any, lineHeight: number, text: string) {
-  const testElement = parentNode.append('text');
-  const testSpan = createTspan(testElement, 1, lineHeight);
+export function computeDimensionOfText(
+  parentNode: Group,
+  lineHeight: number,
+  text: string
+): DOMRect | undefined {
+  const testElement: D3TextElement = parentNode.append('text');
+  const testSpan: D3TSpanElement = createTspan(testElement, 1, lineHeight);
   updateTextContentAndStyles(testSpan, [{ content: text, type: 'normal' }]);
-  const textDimension = testSpan.node().getBoundingClientRect();
-  testElement.remove();
+  const textDimension: DOMRect | undefined = testSpan.node()?.getBoundingClientRect();
+  if (textDimension) {
+    testElement.remove();
+  }
   return textDimension;
 }
 

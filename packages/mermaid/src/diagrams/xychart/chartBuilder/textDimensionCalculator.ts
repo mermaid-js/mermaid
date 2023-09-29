@@ -1,13 +1,13 @@
 import type { Dimension } from './interfaces.js';
 import { computeDimensionOfText } from '../../../rendering-util/createText.js';
-import type { SVGGType } from '../xychartDb.js';
+import type { Group } from '../../../diagram-api/types.js';
 
 export interface TextDimensionCalculator {
   getMaxDimension(texts: string[], fontSize: number): Dimension;
 }
 
 export class TextDimensionCalculatorWithFont implements TextDimensionCalculator {
-  constructor(private parentGroup: SVGGType) {}
+  constructor(private parentGroup: Group) {}
   getMaxDimension(texts: string[], fontSize: number): Dimension {
     if (!this.parentGroup) {
       return {
@@ -28,8 +28,10 @@ export class TextDimensionCalculatorWithFont implements TextDimensionCalculator 
 
     for (const t of texts) {
       const bbox = computeDimensionOfText(elem, 1, t);
-      dimension.width = Math.max(dimension.width, bbox.width);
-      dimension.height = Math.max(dimension.height, bbox.height);
+      const width = bbox ? bbox.width : t.length * fontSize;
+      const height = bbox ? bbox.height : fontSize;
+      dimension.width = Math.max(dimension.width, width);
+      dimension.height = Math.max(dimension.height, height);
     }
     elem.remove();
     return dimension;
