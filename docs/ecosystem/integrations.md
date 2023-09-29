@@ -49,6 +49,8 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Mermaid plugin for GitBook](https://github.com/wwformat/gitbook-plugin-mermaid-pdf)
 - [LiveBook](https://livebook.dev) (**Native support**)
 - [Atlassian Products](https://www.atlassian.com)
+  - [Mermaid Charts & Diagrams for Confluence](https://marketplace.atlassian.com/apps/1222572/)
+  - [Mermaid Charts & Diagrams for Jira](https://marketplace.atlassian.com/apps/1224537/)
   - [Mermaid Live Editor for Confluence Cloud](https://marketplace.atlassian.com/apps/1231571/mermaid-live-editor-for-confluence?hosting=cloud&tab=overview)
   - [Mermaid Plugin for Confluence](https://marketplace.atlassian.com/apps/1214124/mermaid-plugin-for-confluence?hosting=server&tab=overview)
   - [CloudScript.io Addon](https://marketplace.atlassian.com/apps/1219878/cloudscript-io-mermaid-addon?hosting=cloud&tab=overview)
