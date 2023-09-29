@@ -26,7 +26,7 @@ features:
     link: https://mermaid.live/
   - title: 🧩 Integrations available!
     details: Use Mermaid with your favorite applications, check out the integrations list.
-    link: ../../ecosystem/integrations.md
+    link: ../../ecosystem/integrations-community.md
   - title: 🏆 Award winning!
     details: 2019 JavaScript Open Source Award winner for "The Most Exciting Use of Technology".
     link: https://osawards.com/javascript/2019
