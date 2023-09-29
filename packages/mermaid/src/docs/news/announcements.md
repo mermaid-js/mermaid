@@ -1,7 +1,7 @@
 # Announcements
 
-## [Present flow data using Sankey diagrams in Mermaid, thanks to Nikolay Rozhkov](https://www.mermaidchart.com/blog/posts/present-flow-data-using-sankey-diagrams/)
+## [How to Make a Git Graph with Mermaid Chart](https://www.mermaidchart.com/blog/posts/how-to-make-a-git-graph-with-mermaid-chart/)
 
-8 September 2023 · 4 mins
+22 September 2023 · 7 mins
 
-Sankey diagrams are a powerful tool for visualizing flow data.
+A git graph is one of the more useful forms of diagrams for developers and DevOps professionals.
