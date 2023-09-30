@@ -1,4 +1,4 @@
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { parseGenericTypes, sanitizeText } from '../common/common.js';
 
 export interface ClassNode {

@@ -1,5 +1,5 @@
 import { sanitizeText as _sanitizeText } from './common.js';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 
 let accTitle = '';
 let diagramTitle = '';
