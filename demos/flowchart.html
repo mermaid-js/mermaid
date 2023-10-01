@@ -261,31 +261,6 @@
     <h2>Sample 3</h2>
     <h3>graph</h3>
     <pre class="mermaid">
-    graph TD
-    A[/Christmas\]
-    A -->|Get money| B[\Go shopping/]
-    B --> C{Let me thinksssss<br/>ssssssssssssssssssssss<br/>sssssssssssssssssssssssssss}
-    C -->|One| D[/Laptop/]
-    C -->|Two| E[\iPhone\]
-    C -->|Three| F[Car]
-  </pre>
-    <hr />
-
-    <h3>flowchart</h3>
-    <pre class="mermaid">
-    flowchart TD
-    A[/Christmas\]
-    A -->|Get money| B[\Go shopping/]
-    B --> C{Let me thinksssss<br/>ssssssssssssssssssssss<br/>sssssssssssssssssssssssssss}
-    C -->|One| D[/Laptop/]
-    C -->|Two| E[\iPhone\]
-    C -->|Three| F[Car]
-  </pre>
-    <hr />
-
-    <h2>Sample 4</h2>
-    <h3>graph</h3>
-    <pre class="mermaid">
     graph LR
     47(SAM.CommonFA.FMESummary)-->48(SAM.CommonFA.CommonFAFinanceBudget)
     37(SAM.CommonFA.BudgetSubserviceLineVolume)-->48(SAM.CommonFA.CommonFAFinanceBudget)
@@ -336,7 +311,7 @@
     </pre>
     <hr />
 
-    <h2>Sample 5</h2>
+    <h2>Sample 4</h2>
     <h3>graph</h3>
     <pre class="mermaid">
     graph TD
@@ -470,6 +445,25 @@
     c0102290_1ec3_e711_8c5a_005056ad0002-->71082290_1ec3_e711_8c5a_005056ad0002
     9a072290_1ec3_e711_8c5a_005056ad0002-->d6072290_1ec3_e711_8c5a_005056ad0002
     9a072290_1ec3_e711_8c5a_005056ad0002-->71082290_1ec3_e711_8c5a_005056ad0002
+    </pre>
+    <hr />
+
+    <h2>Sample 5</h2>
+    <h3>graph</h3>
+    <pre class="mermaid">
+    graph TB
+    subgraph One
+      a1-->a2
+    end
+    </pre>
+    <hr />
+
+    <h3>flowchart</h3>
+    <pre class="mermaid">
+    flowchart TB
+    subgraph One
+      a1-->a2
+    end
     </pre>
     <hr />
 
@@ -477,87 +471,68 @@
     <h3>graph</h3>
     <pre class="mermaid">
     graph TB
-    subgraph One
-      a1-->a2
+    A
+    B
+    subgraph foo[Foo SubGraph]
+      C
+      D
     end
+    subgraph bar[Bar SubGraph]
+      E
+      F
+    end
+    G
+
+    A-->B
+    B-->C
+    C-->D
+    B-->D
+    D-->E
+    E-->A
+    E-->F
+    F-->D
+    F-->G
+    B-->G
+    G-->D
+
+    style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
+    style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
     </pre>
     <hr />
 
     <h3>flowchart</h3>
     <pre class="mermaid">
     flowchart TB
-    subgraph One
-      a1-->a2
+    A
+    B
+    subgraph foo[Foo SubGraph]
+      C
+      D
     end
+    subgraph bar[Bar SubGraph]
+      E
+      F
+    end
+    G
+
+    A-->B
+    B-->C
+    C-->D
+    B-->D
+    D-->E
+    E-->A
+    E-->F
+    F-->D
+    F-->G
+    B-->G
+    G-->D
+
+    style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
+    style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
     </pre>
     <hr />
 
     <h2>Sample 7</h2>
-    <h3>graph</h3>
-    <pre class="mermaid">
-    graph TB
-    A
-    B
-    subgraph foo[Foo SubGraph]
-      C
-      D
-    end
-    subgraph bar[Bar SubGraph]
-      E
-      F
-    end
-    G
-
-    A-->B
-    B-->C
-    C-->D
-    B-->D
-    D-->E
-    E-->A
-    E-->F
-    F-->D
-    F-->G
-    B-->G
-    G-->D
-
-    style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
-    style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
-    </pre>
-    <hr />
-
-    <h3>flowchart</h3>
-    <pre class="mermaid">
-    flowchart TB
-    A
-    B
-    subgraph foo[Foo SubGraph]
-      C
-      D
-    end
-    subgraph bar[Bar SubGraph]
-      E
-      F
-    end
-    G
-
-    A-->B
-    B-->C
-    C-->D
-    B-->D
-    D-->E
-    E-->A
-    E-->F
-    F-->D
-    F-->G
-    B-->G
-    G-->D
-
-    style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
-    style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
-    </pre>
-    <hr />
-
-    <h2>Sample 8</h2>
     <h3>graph</h3>
     <pre class="mermaid">
     graph LR
@@ -594,7 +569,7 @@
     </pre>
     <hr />
 
-    <h2>Sample 9</h2>
+    <h2>Sample 8</h2>
     <h3>graph</h3>
     <pre class="mermaid">
     graph TD
@@ -619,6 +594,41 @@
     C -->|One| D[Laptop]
     C -->|Two| E[iPhone]
     C -->|Three| F[Car]
+    click A "flowchart.html#link-clicked" "link test"
+    click B testClick "click test"
+    classDef someclass fill:#f96;
+    class A someclass;
+    class C someclass;
+  </pre>
+    <hr />
+
+    <h2>Sample 9</h2>
+    <h3>graph</h3>
+    <pre class="mermaid">
+    graph TD
+    A([stadium shape test])
+    A -->|Get money| B([Go shopping])
+    B --> C([Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?])
+    C -->|One| D([Laptop])
+    C -->|Two| E([iPhone])
+    C -->|Three| F([Car<br/>wroom wroom])
+    click A "flowchart.html#link-clicked" "link test"
+    click B testClick "click test"
+    classDef someclass fill:#f96;
+    class A someclass;
+    class C someclass;
+  </pre>
+    <hr />
+
+    <h3>flowchart</h3>
+    <pre class="mermaid">
+    flowchart TD
+    A([stadium shape test])
+    A -->|Get money| B([Go shopping])
+    B --> C([Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?])
+    C -->|One| D([Laptop])
+    C -->|Two| E([iPhone])
+    C -->|Three| F([Car<br/>wroom wroom])
     click A "flowchart.html#link-clicked" "link test"
     click B testClick "click test"
     classDef someclass fill:#f96;
@@ -630,13 +640,13 @@
     <h2>Sample 10</h2>
     <h3>graph</h3>
     <pre class="mermaid">
-    graph TD
-    A([stadium shape test])
-    A -->|Get money| B([Go shopping])
-    B --> C([Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?])
-    C -->|One| D([Laptop])
-    C -->|Two| E([iPhone])
-    C -->|Three| F([Car<br/>wroom wroom])
+    graph LR
+    A[[subroutine shape test]]
+    A -->|Get money| B[[Go shopping]]
+    B --> C[[Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?]]
+    C -->|One| D[[Laptop]]
+    C -->|Two| E[[iPhone]]
+    C -->|Three| F[[Car<br/>wroom wroom]]
     click A "flowchart.html#link-clicked" "link test"
     click B testClick "click test"
     classDef someclass fill:#f96;
@@ -647,13 +657,13 @@
 
     <h3>flowchart</h3>
     <pre class="mermaid">
-    flowchart TD
-    A([stadium shape test])
-    A -->|Get money| B([Go shopping])
-    B --> C([Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?])
-    C -->|One| D([Laptop])
-    C -->|Two| E([iPhone])
-    C -->|Three| F([Car<br/>wroom wroom])
+    flowchart LR
+    A[[subroutine shape test]]
+    A -->|Get money| B[[Go shopping]]
+    B --> C[[Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?]]
+    C -->|One| D[[Laptop]]
+    C -->|Two| E[[iPhone]]
+    C -->|Three| F[[Car<br/>wroom wroom]]
     click A "flowchart.html#link-clicked" "link test"
     click B testClick "click test"
     classDef someclass fill:#f96;
@@ -666,34 +676,42 @@
     <h3>graph</h3>
     <pre class="mermaid">
     graph LR
-    A[[subroutine shape test]]
-    A -->|Get money| B[[Go shopping]]
-    B --> C[[Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?]]
-    C -->|One| D[[Laptop]]
-    C -->|Two| E[[iPhone]]
-    C -->|Three| F[[Car<br/>wroom wroom]]
+    A[(cylindrical<br />shape<br />test)]
+    A -->|Get money| B1[(Go shopping 1)]
+    A -->|Get money| B2[(Go shopping 2)]
+    A -->|Get money| B3[(Go shopping 3)]
+    C[(Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?)]
+    B1 --> C
+    B2 --> C
+    B3 --> C
+    C -->|One| D[(Laptop)]
+    C -->|Two| E[(iPhone)]
+    C -->|Three| F[(Car)]
     click A "flowchart.html#link-clicked" "link test"
     click B testClick "click test"
     classDef someclass fill:#f96;
     class A someclass;
-    class C someclass;
   </pre>
     <hr />
 
     <h3>flowchart</h3>
     <pre class="mermaid">
     flowchart LR
-    A[[subroutine shape test]]
-    A -->|Get money| B[[Go shopping]]
-    B --> C[[Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?]]
-    C -->|One| D[[Laptop]]
-    C -->|Two| E[[iPhone]]
-    C -->|Three| F[[Car<br/>wroom wroom]]
+    A[(cylindrical<br />shape<br />test)]
+    A -->|Get money| B1[(Go shopping 1)]
+    A -->|Get money| B2[(Go shopping 2)]
+    A -->|Get money| B3[(Go shopping 3)]
+    C[(Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?)]
+    B1 --> C
+    B2 --> C
+    B3 --> C
+    C -->|One| D[(Laptop)]
+    C -->|Two| E[(iPhone)]
+    C -->|Three| F[(Car)]
     click A "flowchart.html#link-clicked" "link test"
     click B testClick "click test"
     classDef someclass fill:#f96;
     class A someclass;
-    class C someclass;
   </pre>
     <hr />
 
@@ -701,42 +719,30 @@
     <h3>graph</h3>
     <pre class="mermaid">
     graph LR
-    A[(cylindrical<br />shape<br />test)]
-    A -->|Get money| B1[(Go shopping 1)]
-    A -->|Get money| B2[(Go shopping 2)]
-    A -->|Get money| B3[(Go shopping 3)]
-    C[(Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?)]
-    B1 --> C
-    B2 --> C
-    B3 --> C
-    C -->|One| D[(Laptop)]
-    C -->|Two| E[(iPhone)]
-    C -->|Three| F[(Car)]
-    click A "flowchart.html#link-clicked" "link test"
-    click B testClick "click test"
-    classDef someclass fill:#f96;
-    class A someclass;
+    A1[Multi<br>Line] -->|Multi<br>Line| B1(Multi<br>Line)
+    C1[Multi<br/>Line] -->|Multi<br/>Line| D1(Multi<br/>Line)
+    E1[Multi<br />Line] -->|Multi<br />Line| F1(Multi<br />Line)
+    A2[Multi<br>Line] -->|Multi<br>Line| B2(Multi<br>Line)
+    C2[Multi<br/>Line] -->|Multi<br/>Line| D2(Multi<br/>Line)
+    E2[Multi<br />Line] -->|Multi<br />Line| F2(Multi<br />Line)
+    linkStyle 0 stroke:DarkGray,stroke-width:2px
+    linkStyle 1 stroke:DarkGray,stroke-width:2px
+    linkStyle 2 stroke:DarkGray,stroke-width:2px
   </pre>
     <hr />
 
     <h3>flowchart</h3>
     <pre class="mermaid">
     flowchart LR
-    A[(cylindrical<br />shape<br />test)]
-    A -->|Get money| B1[(Go shopping 1)]
-    A -->|Get money| B2[(Go shopping 2)]
-    A -->|Get money| B3[(Go shopping 3)]
-    C[(Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?)]
-    B1 --> C
-    B2 --> C
-    B3 --> C
-    C -->|One| D[(Laptop)]
-    C -->|Two| E[(iPhone)]
-    C -->|Three| F[(Car)]
-    click A "flowchart.html#link-clicked" "link test"
-    click B testClick "click test"
-    classDef someclass fill:#f96;
-    class A someclass;
+    A1[Multi<br>Line] -->|Multi<br>Line| B1(Multi<br>Line)
+    C1[Multi<br/>Line] -->|Multi<br/>Line| D1(Multi<br/>Line)
+    E1[Multi<br />Line] -->|Multi<br />Line| F1(Multi<br />Line)
+    A2[Multi<br>Line] -->|Multi<br>Line| B2(Multi<br>Line)
+    C2[Multi<br/>Line] -->|Multi<br/>Line| D2(Multi<br/>Line)
+    E2[Multi<br />Line] -->|Multi<br />Line| F2(Multi<br />Line)
+    linkStyle 0 stroke:DarkGray,stroke-width:2px
+    linkStyle 1 stroke:DarkGray,stroke-width:2px
+    linkStyle 2 stroke:DarkGray,stroke-width:2px
   </pre>
     <hr />
 
@@ -744,57 +750,26 @@
     <h3>graph</h3>
     <pre class="mermaid">
     graph LR
-    A1[Multi<br>Line] -->|Multi<br>Line| B1(Multi<br>Line)
-    C1[Multi<br/>Line] -->|Multi<br/>Line| D1(Multi<br/>Line)
-    E1[Multi<br />Line] -->|Multi<br />Line| F1(Multi<br />Line)
-    A2[Multi<br>Line] -->|Multi<br>Line| B2(Multi<br>Line)
-    C2[Multi<br/>Line] -->|Multi<br/>Line| D2(Multi<br/>Line)
-    E2[Multi<br />Line] -->|Multi<br />Line| F2(Multi<br />Line)
-    linkStyle 0 stroke:DarkGray,stroke-width:2px
-    linkStyle 1 stroke:DarkGray,stroke-width:2px
-    linkStyle 2 stroke:DarkGray,stroke-width:2px
-  </pre>
+    A(( )) -->|step 1| B(( ))
+    B(( )) -->|step 2| C(( ))
+    C(( )) -->|step 3| D(( ))
+    linkStyle 1 stroke:greenyellow,stroke-width:2px
+    style C fill:greenyellow,stroke:green,stroke-width:4px
+    </pre>
     <hr />
 
     <h3>flowchart</h3>
     <pre class="mermaid">
     flowchart LR
-    A1[Multi<br>Line] -->|Multi<br>Line| B1(Multi<br>Line)
-    C1[Multi<br/>Line] -->|Multi<br/>Line| D1(Multi<br/>Line)
-    E1[Multi<br />Line] -->|Multi<br />Line| F1(Multi<br />Line)
-    A2[Multi<br>Line] -->|Multi<br>Line| B2(Multi<br>Line)
-    C2[Multi<br/>Line] -->|Multi<br/>Line| D2(Multi<br/>Line)
-    E2[Multi<br />Line] -->|Multi<br />Line| F2(Multi<br />Line)
-    linkStyle 0 stroke:DarkGray,stroke-width:2px
-    linkStyle 1 stroke:DarkGray,stroke-width:2px
-    linkStyle 2 stroke:DarkGray,stroke-width:2px
-  </pre>
+    A(( )) -->|step 1| B(( ))
+    B(( )) -->|step 2| C(( ))
+    C(( )) -->|step 3| D(( ))
+    linkStyle 1 stroke:greenyellow,stroke-width:2px
+    style C fill:greenyellow,stroke:green,stroke-width:4px
+    </pre>
     <hr />
 
     <h2>Sample 14</h2>
-    <h3>graph</h3>
-    <pre class="mermaid">
-    graph LR
-    A(( )) -->|step 1| B(( ))
-    B(( )) -->|step 2| C(( ))
-    C(( )) -->|step 3| D(( ))
-    linkStyle 1 stroke:greenyellow,stroke-width:2px
-    style C fill:greenyellow,stroke:green,stroke-width:4px
-    </pre>
-    <hr />
-
-    <h3>flowchart</h3>
-    <pre class="mermaid">
-    flowchart LR
-    A(( )) -->|step 1| B(( ))
-    B(( )) -->|step 2| C(( ))
-    C(( )) -->|step 3| D(( ))
-    linkStyle 1 stroke:greenyellow,stroke-width:2px
-    style C fill:greenyellow,stroke:green,stroke-width:4px
-    </pre>
-    <hr />
-
-    <h2>Sample 15</h2>
     <h3>graph</h3>
     <pre class="mermaid">
     graph TB
@@ -835,7 +810,7 @@
   </pre>
     <hr />
 
-    <h2>Sample 16</h2>
+    <h2>Sample 15</h2>
     <h3>graph</h3>
     <pre class="mermaid">
     graph LR
@@ -872,7 +847,7 @@
   </pre>
     <hr />
 
-    <h2>Sample 17</h2>
+    <h2>Sample 16</h2>
     <h3>graph</h3>
     <pre class="mermaid">
     graph TD
@@ -901,7 +876,7 @@
     </pre>
     <hr />
 
-    <h2>Sample 18</h2>
+    <h2>Sample 17</h2>
     <h3>graph</h3>
     <pre class="mermaid">
     graph LR
@@ -1000,7 +975,7 @@
     </pre>
     <hr />
 
-    <h2>Sample 19</h2>
+    <h2>Sample 18</h2>
     <h3>graph</h3>
     <pre class="mermaid">
     graph TB
@@ -1200,27 +1175,6 @@
     sid-3E35A7FF-A2F4-4E07-9247-DBF884C81937-->sid-6C2120F3-D940-4958-A067-0903DCE879C4;
     sid-7CE72B24-E0C1-46D3-8132-8BA66BE05AA7-->sid-4DA958A0-26D9-4D47-93A7-70F39FD7D51A;
     sid-7CE72B24-E0C1-46D3-8132-8BA66BE05AA7-->sid-4FC27B48-A6F9-460A-A675-021F5854FE22;
-    </pre>
-    <hr />
-
-    <pre class="mermaid">
-    graph TD
-    A[Christmas] -->|Get money| B(Go shopping)
-    B --> C{Let me thinksssssx<br />sssssssssssssssssssuuu<br />tttsssssssssssssssssssssss}
-    C -->|One| D[Laptop]
-    C -->|Two| E[iPhone]
-    C -->|Three| F[Car]
-    </pre>
-    <hr />
-
-    <pre class="mermaid">
-    graph TD
-    A[/Christmas\]
-    A -->|Get money| B[\Go shopping/]
-    B --> C{Let me thinksssss<br />ssssssssssssssssssssss<br />sssssssssssssssssssssssssss}
-    C -->|One| D[/Laptop/]
-    C -->|Two| E[\iPhone\]
-    C -->|Three| F[Car]
     </pre>
     <hr />
 
