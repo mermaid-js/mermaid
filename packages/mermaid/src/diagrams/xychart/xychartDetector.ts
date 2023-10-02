@@ -7,7 +7,7 @@ import type {
 const id = 'xychart';
 
 const detector: DiagramDetector = (txt) => {
-  return /^\s*xychart/i.test(txt);
+  return /^\s*xychart-beta/.test(txt);
 };
 
 const loader: DiagramLoader = async () => {

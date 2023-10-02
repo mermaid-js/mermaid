@@ -1009,12 +1009,12 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         default: true
       labelFontSize:
         description: font size of the axis labels (tick text)
-        type: integer
+        type: number
         default: 14
         minimum: 1
       labelPadding:
         description: top and bottom space from axis label (tick text)
-        type: integer
+        type: number
         default: 5
         minimum: 0
       showTitle:
@@ -1023,12 +1023,12 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         default: true
       titleFontSize:
         description: font size of the axis title
-        type: integer
+        type: number
         default: 16
         minimum: 1
       titlePadding:
         description: top and bottom space from axis title
-        type: integer
+        type: number
         default: 5
         minimum: 0
       showTick:
@@ -1037,12 +1037,12 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         default: true
       tickLength:
         description: length of the axis tick lines
-        type: integer
+        type: number
         default: 5
         minimum: 1
       tickWidth:
         description: width of the axis tick lines
-        type: integer
+        type: number
         default: 2
         minimum: 1
       showAxisLine:
@@ -1051,7 +1051,7 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         default: true
       axisLineWidth:
         description: Width of the axis line
-        type: integer
+        type: number
         default: 2
         minimum: 1
 
@@ -1074,22 +1074,22 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
     properties:
       width:
         description: width of the chart
-        type: integer
+        type: number
         default: 700
         minimum: 1
       height:
         description: height of the chart
-        type: integer
+        type: number
         default: 500
         minimum: 1
       titleFontSize:
         description: Font size of the chart title
-        type: integer
+        type: number
         default: 20
         minimum: 1
       titlePadding:
         description: Top and bottom space from the chart title
-        type: integer
+        type: number
         default: 10
         minimum: 0
       showTitle:
@@ -1108,7 +1108,7 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         default: 'vertical'
       plotReservedSpacePercent:
         description: Minimum percent of space plots of the chart will take
-        type: integer
+        type: number
         default: 50
         minimum: 30
 
