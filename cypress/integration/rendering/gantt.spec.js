@@ -520,6 +520,25 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should render a gantt diagram with very large intervals, skipping excludes if interval > 5 years', () => {
+    imgSnapshotTest(
+      `gantt
+        title A long Gantt Diagram
+        dateFormat   YYYY-MM-DD
+        axisFormat   %m-%d
+        tickInterval 1day
+        excludes     weekends
+
+        section Section
+        A task           : a1, 9999-10-01, 30d
+        Another task     : after a1, 20d
+        section Another
+        Task in sec      : 2022-10-20, 12d
+        another task     : 24d
+      `
+    );
+  });
+
   it('should render when compact is true', () => {
     imgSnapshotTest(
       `
