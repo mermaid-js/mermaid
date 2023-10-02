@@ -6,6 +6,18 @@
 
 # Blog
 
+## [How to Make a Git Graph with Mermaid Chart](https://www.mermaidchart.com/blog/posts/how-to-make-a-git-graph-with-mermaid-chart/)
+
+22 September 2023 · 7 mins
+
+A git graph is one of the more useful forms of diagrams for developers and DevOps professionals.
+
+## [Present flow data using Sankey diagrams in Mermaid, thanks to Nikolay Rozhkov](https://www.mermaidchart.com/blog/posts/present-flow-data-using-sankey-diagrams/)
+
+8 September 2023 · 4 mins
+
+Sankey diagrams are a powerful tool for visualizing flow data.
+
 ## [Special cases broke Microsoft Zune and can ruin your code base too](https://www.mermaidchart.com/blog/posts/special-cases-broke-microsoft-zune-and-can-ruin-your-code-base-too/)
 
 23 August 2023 · 15 mins
