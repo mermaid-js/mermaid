@@ -33,7 +33,7 @@ describe('when parsing ER diagram it...', function () {
     describe('has non A-Za-z0-9_- chars', function () {
       // these were entered using the Mac keyboard utility.
       const chars =
-        "~ ` ! @ # $ ^ & * ( ) - _ = + [ ] { } | / ; : ' . ? ¡ ⁄ ™ € £ ‹ ¢ › ∞ ﬁ § ‡ • ° ª · º ‚ ≠ ± œ Œ ∑ „ ® † ˇ ¥ Á ¨ ˆ ˆ Ø π ∏ “ « » å Å ß Í ∂ Î ƒ Ï © ˙ Ó ∆ Ô ˚  ¬ Ò … Ú æ Æ Ω ¸ ≈ π ˛ ç Ç √ ◊ ∫ ı ˜ µ Â ≤ ¯ ≥ ˘ ÷ ¿";
+        "~ ` ! @ # $ ^ & * ( ) - = + [ ] { } | / ; : ' . ? ¡ ⁄ ™ € £ ‹ ¢ › ∞ ﬁ § ‡ • ° ª · º ‚ ≠ ± œ Œ ∑ „ ® † ˇ ¥ Á ¨ ˆ ˆ Ø π ∏ “ « » å Å ß Í ∂ Î ƒ Ï © ˙ Ó ∆ Ô ˚  ¬ Ò … Ú æ Æ Ω ¸ ≈ π ˛ ç Ç √ ◊ ∫ ı ˜ µ Â ≤ ¯ ≥ ˘ ÷ ¿";
       const allowed = chars.split(' ');
 
       allowed.forEach((allowedChar) => {
@@ -132,6 +132,50 @@ describe('when parsing ER diagram it...', function () {
       erDiagram.parser.parse(`erDiagram\n${hyphensUnderscore}\n`);
       const entities = erDb.getEntities();
       expect(entities.hasOwnProperty(hyphensUnderscore)).toBe(true);
+    });
+
+    it('can have an alias', function () {
+      const entity = 'foo';
+      const alias = 'bar';
+      erDiagram.parser.parse(`erDiagram\n${entity}["${alias}"]\n`);
+      const entities = erDb.getEntities();
+      expect(entities.hasOwnProperty(entity)).toBe(true);
+      expect(entities[entity].alias).toBe(alias);
+    });
+
+    it('can have an alias even if the relationship is defined before class', function () {
+      const firstEntity = 'foo';
+      const secondEntity = 'bar';
+      const alias = 'batman';
+      erDiagram.parser.parse(
+        `erDiagram\n${firstEntity} ||--o| ${secondEntity} : rel\nclass ${firstEntity}["${alias}"]\n`
+      );
+      const entities = erDb.getEntities();
+      expect(entities.hasOwnProperty(firstEntity)).toBe(true);
+      expect(entities.hasOwnProperty(secondEntity)).toBe(true);
+      expect(entities[firstEntity].alias).toBe(alias);
+      expect(entities[secondEntity].alias).toBeUndefined();
+    });
+
+    it('can have an alias even if the relationship is defined after class', function () {
+      const firstEntity = 'foo';
+      const secondEntity = 'bar';
+      const alias = 'batman';
+      erDiagram.parser.parse(
+        `erDiagram\nclass ${firstEntity}["${alias}"]\n${firstEntity} ||--o| ${secondEntity} : rel\n`
+      );
+      const entities = erDb.getEntities();
+      expect(entities.hasOwnProperty(firstEntity)).toBe(true);
+      expect(entities.hasOwnProperty(secondEntity)).toBe(true);
+      expect(entities[firstEntity].alias).toBe(alias);
+      expect(entities[secondEntity].alias).toBeUndefined();
+    });
+
+    it('can start with an underscore', function () {
+      const entity = '_foo';
+      erDiagram.parser.parse(`erDiagram\n${entity}\n`);
+      const entities = erDb.getEntities();
+      expect(entities.hasOwnProperty(entity)).toBe(true);
     });
   });
 

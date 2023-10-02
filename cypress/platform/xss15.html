@@ -42,6 +42,16 @@
         font-size: 72px;
       }
     </style>
+    <script>
+      function xssAttack() {
+        const div = document.createElement('div');
+        div.id = 'the-malware';
+        div.className = 'malware';
+        div.innerHTML = 'XSS Succeeded';
+        document.getElementsByTagName('body')[0].appendChild(div);
+        throw new Error('XSS Succeeded');
+      }
+    </script>
   </head>
   <body>
     <div>Security check</div>

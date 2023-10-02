@@ -114,7 +114,7 @@ Electricity grid,H2 conversion,27.14
 
 ### Empty Lines
 
-CSV does not support empty lines without comma delimeters by default. But you can add them if needed:
+CSV does not support empty lines without comma delimiters by default. But you can add them if needed:
 
 ```mermaid-example
 sankey-beta

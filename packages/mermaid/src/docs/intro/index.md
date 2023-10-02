@@ -4,7 +4,7 @@
 
 It is a JavaScript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically.
 
-> If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](n00b-syntaxReference.md).
+> If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](syntax-reference.md).
 
 <img src="/header.png" alt="" />
 
@@ -40,7 +40,7 @@ Mermaid allows even non-programmers to easily create detailed and diagrams throu
 
 Use Mermaid with your favorite applications, check out the list of [Community Integrations](../ecosystem/integrations-community.md).
 
-For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](../intro/n00b-gettingStarted.md) and [Usage](../config/usage.md).
+For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](../intro/getting-started.md) and [Usage](../config/usage.md).
 
 🌐 [CDN](https://www.jsdelivr.com/package/npm/mermaid) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](../community/development.md) | 🔌 [Plug-Ins](../ecosystem/integrations-community.md)
 
@@ -60,9 +60,9 @@ In our release process we rely heavily on visual regression tests using [applito
 
 ## Installation
 
-**In depth guides and examples can be found at [Getting Started](./n00b-gettingStarted.md) and [Usage](../config/usage.md).**
+**In depth guides and examples can be found at [Getting Started](./getting-started.md) and [Usage](../config/usage.md).**
 
-**It would also be helpful to learn more about mermaid's [Syntax](./n00b-syntaxReference.md).**
+**It would also be helpful to learn more about mermaid's [Syntax](./syntax-reference.md).**
 
 ### CDN
 

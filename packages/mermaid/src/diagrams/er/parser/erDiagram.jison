@@ -1,7 +1,7 @@
 %lex
 
 %options case-insensitive
-%x open_directive type_directive arg_directive block
+%x block
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
@@ -14,11 +14,6 @@ accDescr\s*":"\s*                                               { this.begin("ac
 accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
 <acc_descr_multiline>[\}]                       { this.popState(); }
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
-\%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
-<open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
-<type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
-<type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
-<arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 [\n]+                           return 'NEWLINE';
 \s+                             /* skip whitespace */
 [\s]+                           return 'SPACE';
@@ -35,6 +30,8 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <block>[\n]+                    /* nothing */
 <block>"}"                      { this.popState(); return 'BLOCK_STOP'; }
 <block>.                        return yytext[0];
+"["                             return 'SQS';
+"]"                             return 'SQE';
 
 "one or zero"                   return 'ZERO_OR_ONE';
 "one or more"                   return 'ONE_OR_MORE';
@@ -64,7 +61,7 @@ o\{                             return 'ZERO_OR_MORE';
 "optionally to"                 return 'NON_IDENTIFYING';
 \.\-                            return 'NON_IDENTIFYING';
 \-\.                            return 'NON_IDENTIFYING';
-[A-Za-z][A-Za-z0-9\-_]*         return 'ALPHANUM';
+[A-Za-z_][A-Za-z0-9\-_]*        return 'ALPHANUM';
 .                               return yytext[0];
 <<EOF>>                         return 'EOF';
 
@@ -75,7 +72,6 @@ o\{                             return 'ZERO_OR_MORE';
 
 start
     : 'ER_DIAGRAM' document 'EOF' { /*console.log('finished parsing');*/ }
-  	| directive start
     ;
 
 document
@@ -90,29 +86,28 @@ line
 	| EOF { $$=[];}
 	;
 
-directive
-  : openDirective typeDirective closeDirective 'NEWLINE'
-  | openDirective typeDirective ':' argDirective closeDirective 'NEWLINE'
-  ;
 
 statement
-    : directive
-    | entityName relSpec entityName ':' role
+    : entityName relSpec entityName ':' role
       {
           yy.addEntity($1);
           yy.addEntity($3);
           yy.addRelationship($1, $5, $3, $2);
-          /*console.log($1 + $2 + $3 + ':' + $5);*/
       }
     | entityName BLOCK_START attributes BLOCK_STOP
       {
-          /* console.log('detected block'); */
           yy.addEntity($1);
           yy.addAttributes($1, $3);
-          /* console.log('handled block'); */
       }
     | entityName BLOCK_START BLOCK_STOP { yy.addEntity($1); }
     | entityName { yy.addEntity($1); }
+    | entityName SQS entityName SQE BLOCK_START attributes BLOCK_STOP
+      {
+          yy.addEntity($1, $3);
+          yy.addAttributes($1, $6);
+      }
+    | entityName SQS entityName SQE BLOCK_START BLOCK_STOP { yy.addEntity($1, $3); }
+    | entityName SQS entityName SQE { yy.addEntity($1, $3); }
     | title title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
@@ -184,21 +179,5 @@ role
     | 'ENTITY_NAME' { $$ = $1.replace(/"/g, ''); }
     | 'ALPHANUM'  { $$ = $1; }
     ;
-
-openDirective
-  : open_directive { yy.parseDirective('%%{', 'open_directive'); }
-  ;
-
-typeDirective
-  : type_directive { yy.parseDirective($1, 'type_directive'); }
-  ;
-
-argDirective
-  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
-  ;
-
-closeDirective
-  : close_directive { yy.parseDirective('}%%', 'close_directive', 'er'); }
-  ;
 
 %%

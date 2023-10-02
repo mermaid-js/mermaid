@@ -60,7 +60,7 @@ Use Mermaid with your favorite applications, check out the list of [Integrations
 
 You can also use Mermaid within [GitHub](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) as well many of your other favorite applications—check out the list of [Integrations and Usages of Mermaid](./docs/ecosystem/integrations-community.md).
 
-For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](./docs/intro/n00b-gettingStarted.md), [Usage](./docs/config/usage.md) and [Tutorials](./docs/config/Tutorials.md).
+For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](./docs/intro/getting-started.md), [Usage](./docs/config/usage.md) and [Tutorials](./docs/config/Tutorials.md).
 
 In our release process we rely heavily on visual regression tests using [applitools](https://applitools.com/). Applitools is a great service which has been easy to use and integrate with our tests.
 
@@ -165,13 +165,7 @@ class Class10 {
   int id
   size()
 }
-namespace Namespace01 {
-  class Class11
-  class Class12 {
-    int id
-    size()
-  }
-}
+
 ```
 
 ```mermaid
@@ -191,13 +185,7 @@ class Class10 {
   int id
   size()
 }
-namespace Namespace01 {
-  class Class11
-  class Class12 {
-    int id
-    size()
-  }
-}
+
 ```
 
 ### State diagram [<a href="https://mermaid-js.github.io/mermaid/#/stateDiagram">docs</a> - <a href="https://mermaid.live/edit#pako:eNpdkEFvgzAMhf8K8nEqpYSNthx22Xbcqcexg0sCiZQQlDhIFeK_L8A6TfXp6fOz9ewJGssFVOAJSbwr7ByadGR1n8T6evpO0vQ1uZDSekOrXGFsPqJPO6q-2-imH8f_0TeHXm50lfelsAMjnEHFY6xpMdRAUhhRQxUlFy0GTTXU_RytYeAx-AdXZB1ULWovdoCB7OXWN1CRC-Ju-r3uz6UtchGHJqDbsPygU57iysb2reoWHpyOWBINvsqypb3vFMlw3TfWZF5xiY7keC6zkpUnZIUojwW-FAVvrvn51LLnvOXHQ84Q5nn-AVtLcwk">live editor</a>]
