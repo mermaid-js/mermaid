@@ -497,20 +497,37 @@ export const draw = function (text, id, version, diagObj) {
    * @param w
    * @param h
    * @param tasks
-   * @param excludes
-   * @param includes
+   * @param {unknown[]} excludes
+   * @param {unknown[]} includes
    */
   function drawExcludeDays(theGap, theTopPad, theSidePad, w, h, tasks, excludes, includes) {
-    const minTime = tasks.reduce(
-      (min, { startTime }) => (min ? Math.min(min, startTime) : startTime),
-      0
-    );
-    const maxTime = tasks.reduce((max, { endTime }) => (max ? Math.max(max, endTime) : endTime), 0);
-    const dateFormat = diagObj.db.getDateFormat();
+    if (excludes.length === 0 && includes.length === 0) {
+      return;
+    }
+
+    let minTime;
+    let maxTime;
+    for (const { startTime, endTime } of tasks) {
+      if (minTime === undefined || startTime < minTime) {
+        minTime = startTime;
+      }
+      if (maxTime === undefined || endTime > maxTime) {
+        maxTime = endTime;
+      }
+    }
+
     if (!minTime || !maxTime) {
       return;
     }
 
+    if (dayjs(maxTime).diff(dayjs(minTime), 'year') > 5) {
+      log.warn(
+        'The difference between the min and max time is more than 5 years. This will cause performance issues. Skipping drawing exclude days.'
+      );
+      return;
+    }
+
+    const dateFormat = diagObj.db.getDateFormat();
     const excludeRanges = [];
     let range = null;
     let d = dayjs(minTime);
