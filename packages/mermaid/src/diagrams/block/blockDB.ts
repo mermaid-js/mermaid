@@ -26,7 +26,11 @@ const populateBlockDatabase = (blockList: Block[], parent: Block): void => {
       parent.columns = columns;
     } else {
       if (!block.label) {
-        block.label = block.id;
+        if (block.type === 'composite') {
+          block.label = 'x';
+        } else {
+          block.label = block.id;
+        }
       }
       blockDatabase[block.id] = block;
 

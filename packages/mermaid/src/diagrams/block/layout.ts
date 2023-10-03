@@ -1,10 +1,12 @@
 import { BlockDB } from './blockDB.js';
 import type { Block } from './blockTypes.js';
 
-function layoutBLock(block: Block, db: BlockDB) {
+function calcBlockSizes(block: Block, db: BlockDB) {
+  let totalWidth = 0;
+  let totalHeight = 0;
   if (block.children) {
     for (const child of block.children) {
-      layoutBLock(child, db);
+      calcBlockSizes(child, db);
     }
     // find max width of children
     let maxWidth = 0;
@@ -27,9 +29,9 @@ function layoutBLock(block: Block, db: BlockDB) {
       }
     }
 
-    // Position items
+    // Position items relative to self
     let x = 0;
-    let y = 0;
+    const y = 0;
     const padding = 10;
     for (const child of block.children) {
       if (child.size) {
@@ -37,26 +39,38 @@ function layoutBLock(block: Block, db: BlockDB) {
         child.size.y = y;
         x += maxWidth + padding;
       }
+      if (x > totalWidth) {
+        totalWidth = x;
+      }
+      if (y > totalHeight) {
+        totalHeight = y;
+      }
     }
   }
+  if (block.children?.length > 0) {
+    block.size = { width: totalWidth, height: totalHeight, x: 0, y: 0 };
+  }
+  console.log('layoutBlock (done)', block);
 }
 
-function positionBlock(block: Block, db: BlockDB) {
-  if (block?.size?.node) {
-    const node = block?.size?.node;
-    const size = block?.size;
-    if (node) {
-      node.attr(
-        'transform',
-        'translate(' + (size.x - size.width / 2) + ', ' + (size.y - size.height / 2) + ')'
-      );
-    }
+function positionBlock(parent: Block, block: Block, db: BlockDB) {
+  console.log('layout position block', parent.id, parent?.size?.x, block.id, block?.size?.x);
+  let x = 0;
+  let y = 0;
+  if (parent) {
+    x = parent?.size?.x || 0;
+    y = parent?.size?.y || 0;
+  }
+  if (block.size) {
+    block.size.x = block.size.x + x - block.size.width / 2;
+    block.size.y = block.size.y + y;
   }
   if (block.children) {
     for (const child of block.children) {
-      positionBlock(child, db);
+      positionBlock(block, child, db);
     }
   }
+  // console.log('layout position block', block);
 }
 let minX = 0;
 let minY = 0;
@@ -89,8 +103,10 @@ function findBounds(block: Block) {
 export function layout(db: BlockDB) {
   const blocks = db.getBlocks();
   const root = { id: 'root', type: 'composite', children: blocks } as Block;
-  layoutBLock(root, db);
-  // positionBlock(root, db);
+  calcBlockSizes(root, db);
+  console.log('layout getBlocks', db.getBlocks());
+  // Position blocks relative to parents
+  positionBlock(root, root, db);
 
   minX = 0;
   minY = 0;

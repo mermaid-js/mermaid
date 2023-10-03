@@ -191,7 +191,7 @@ columnsStatement
 
 blockStatement
   : id-block nodeStatement document end { yy.getLogger().info('Rule: id-block statement : ', $2, $3); const id2 = yy.generateId(); $$ = { ...$2, children: $3 }; }
-  | block document end { yy.getLogger().info('Rule: blockStatement : ', $1, $2, $3); const id = yy.generateId(); $$ = { id, type:'composite', label:id, children: $2 }; }
+  | block document end { yy.getLogger().info('Rule: blockStatement : ', $1, $2, $3); const id = yy.generateId(); $$ = { id, type:'composite', label:'', children: $2 }; }
   ;
 
 

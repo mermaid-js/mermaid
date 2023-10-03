@@ -5,7 +5,7 @@ import { ContainerElement } from 'd3';
 import type { Block } from './blockTypes.js';
 import { BlockDB } from './blockDB.js';
 
-function getNodeFromBlock(block: Block, db: BlockDB, positioned: boolean = false) {
+function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
   const vertex = block;
 
   /**
@@ -126,7 +126,9 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned: boolean = false
 type IOperation = (elem: any, block: any, db: any) => Promise<void>;
 async function calculateBlockSize(elem: any, block: any, db: any) {
   const node = getNodeFromBlock(block, db, false);
-  if (node.type === 'group') return;
+  if (node.type === 'group') {
+    return;
+  }
 
   // Add the element to the DOM to size it
   const nodeEl = await insertNode(elem, node);
@@ -141,8 +143,9 @@ async function calculateBlockSize(elem: any, block: any, db: any) {
 export async function insertBlockPositioned(elem: any, block: any, db: any) {
   console.log('Here insertBlockPositioned');
   const node = getNodeFromBlock(block, db, true);
-  if (node.type === 'group') return;
-
+  // if (node.type === 'composite') {
+  //   return;
+  // }
   // Add the element to the DOM to size it
   const obj = db.getBlock(node.id);
   const nodeEl = await insertNode(elem, node);
