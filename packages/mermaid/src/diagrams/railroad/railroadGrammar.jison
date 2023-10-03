@@ -43,7 +43,7 @@ C_GREATER_THAN \u003E // >
 C_ASTERISK \u002A
 C_QUESTION_MARK \u003F
 C_PLUS_SIGN \u002B
-// TODO add classes for non symbols string symbols and quote symbols
+// TODO: add classes for non symbols string symbols and quote symbols
 C_TEXTDATA [\u0020-\u0021\u0023-\u0026\u0028-\u003B\u003D\u003F-\u005B\u005D-\u007E] // everything except ' " < > \
 C_EQUALS_SIGN \u003D // =
 
@@ -67,21 +67,22 @@ C_EQUALS_SIGN \u003D // =
 
 %%
 
-// Tokenization
+// Tokenization step
+//
 // Order of scanning matters
-// The more broader the token, the lower it must be
-// Everything is wrapped in parentheses intentionally
+// The more initial conditions the token meets, the lower it must be
+// Everything is wrapped in parentheses intentionally ?
 // https://stackoverflow.com/questions/31862815/jison-lex-without-white-spaces
 // https://github.com/zaach/jison/wiki/Deviations-From-Flex-Bison
 
 <nonterm>({C_BACKSLASH}?({C_TEXTDATA}|{C_APOSTROPHE}|{C_QUOTATION_MARK})|{C_BACKSLASH}({C_LESS_THAN}|{C_GREATER_THAN}|{C_BACKSLASH}))+ { return 'NONTERM' }
 <nonterm>{C_GREATER_THAN} { this.popState(); return '>' }
 
-// TODO add optional backslash
+// TODO: add optional backslash
 <qstring>({C_TEXTDATA}|{C_LESS_THAN}|{C_GREATER_THAN}|{C_APOSTROPHE}|{C_BACKSLASH}{C_QUOTATION_MARK})+ { return 'QSTRING' }
 <qstring>{C_QUOTATION_MARK} { this.popState(); return '"' }
 
-// TODO add optional backslash
+// TODO: add optional backslash
 <string>({C_TEXTDATA}|{C_LESS_THAN}|{C_GREATER_THAN}|{C_QUOTATION_MARK}|{C_BACKSLASH}{C_APOSTROPHE})+ { return 'STRING' }
 <string>{C_APOSTROPHE} { this.popState(); return 'APOSTROPHE' }
 
@@ -122,6 +123,8 @@ C_EQUALS_SIGN \u003D // =
 %ebnf
 
 %%
+
+// TODO: move references from here?
 
 // https://www.w3.org/TR/2010/REC-xquery-20101214/#EBNFNotation
 //
@@ -302,12 +305,7 @@ prim
 
 // TODO:
 // ? should we recognize some terms without quotes, such as / and others?
-//   (all, except spaces and symbols reserved for grammar defnintion)
-// ? should we allow string usage along with <non-term> at the left side?
-// * allow quotes escapement
-// * allow < > escapement in non-terminals
+//   (all, except spaces and symbols reserved for grammar defnintion) no
+// ? should we allow string usage along with <non-term> at the left side? no
 // * mark empty with %e ?
-
-// resolve quantifiers
-// (()?)? => ()?
-// (()*)? => ()*
+// Should we treat empty string as epsilon?

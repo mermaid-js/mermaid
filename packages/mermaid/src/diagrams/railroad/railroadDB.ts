@@ -198,13 +198,27 @@ const addTerm = (label: string): Chunk => {
 const addNonTerm = (label: string): Chunk => {
   return new NonTerm(label);
 };
+
+
+// resolve quantifiers
+// (()?)? => ()?
+// (()*)? => ()*
+
 const addZeroOrOne = (chunk: Chunk): Chunk => {
+  // TODO check if chunk zero or one and propagate
+  if (chunk instanceof ZeroOrOne) {
+    return chunk;
+  } else if (chunk instanceof OneOrMany) {
+    return chunk;
+  }
   return new ZeroOrOne(chunk);
 };
 const addOneOrMany = (chunk: Chunk): Chunk => {
+  // TODO check if chunk zero or many and propagate
   return new OneOrMany(chunk);
 };
 const addZeroOrMany = (chunk: Chunk): Chunk => {
+  // TODO check if chunk zero or many and propagate
   return new ZeroOrMany(chunk);
 };
 const addException = (base: Chunk, except: Chunk): Chunk => {
