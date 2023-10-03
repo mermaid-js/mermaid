@@ -97,6 +97,8 @@ Communication tools and platforms
   - [phpbb-ext-mermaid](https://github.com/AlfredoRamos/phpbb-ext-mermaid)
 - [NodeBB](https://nodebb.org)
   - [Mermaid Plugin](https://www.npmjs.com/package/nodebb-plugin-mermaid)
+- [Slack](https://slack.com)
+  - [Mermaid for Slack](https://github.com/JackuB/mermaid-for-slack)
 
 ### Wikis
 
