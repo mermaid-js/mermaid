@@ -65,8 +65,8 @@
   <body>
     <pre id="diagram" class="mermaid">
 block-beta
-  %% id1("Wide 1")
-  id2("2")
+  id1("Wide 1")
+  %%id2("2")
   block
       id3["I am a wide one"]
       block
@@ -79,9 +79,26 @@ block-beta
     </pre>
     <pre id="diagram" class="mermaid">
 block-beta
-
-      id3["I am a wide one"]
-      id4
+  id1
+  block
+  id2
+  end
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+  id1["Hello"]
+  block
+    id2["to"]
+    id3["the"]
+    id4["World"]
+  end
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+  block
+    id2["I am a wide one"]
+    id1
+  end
 
 
     </pre>
