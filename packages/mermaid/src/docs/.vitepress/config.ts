@@ -73,7 +73,7 @@ function nav() {
     },
     {
       text: 'Integrations',
-      link: '/ecosystem/integrations-community',
+      link: '/ecosystem/mermaid-chart',
       activeMatch: '/ecosystem/',
     },
     {
