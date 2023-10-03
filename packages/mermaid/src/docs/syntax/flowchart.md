@@ -783,7 +783,7 @@ The layout of the diagram is done with the renderer. The default renderer is dag
 
 Starting with Mermaid version 9.4, you can use an alternate renderer named elk. The elk renderer is better for larger and/or more complex diagrams.
 
-The _elk_ renderer is an experimenal feature.
+The _elk_ renderer is an experimental feature.
 You can change the renderer to elk by adding this directive:
 
 ```

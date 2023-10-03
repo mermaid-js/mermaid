@@ -71,7 +71,11 @@ function nav() {
       link: '/config/Tutorials',
       activeMatch: '/config/',
     },
-    { text: 'Integrations', link: '/ecosystem/integrations', activeMatch: '/ecosystem/' },
+    {
+      text: 'Integrations',
+      link: '/ecosystem/integrations-community',
+      activeMatch: '/ecosystem/',
+    },
     {
       text: 'Contributing',
       link: '/community/development.html',
@@ -180,8 +184,9 @@ function sidebarEcosystem() {
       text: '📚 Ecosystem',
       collapsed: false,
       items: [
-        { text: 'Showcases', link: '/ecosystem/showcases' },
-        { text: 'Use-Cases and Integrations', link: '/ecosystem/integrations' },
+        { text: 'Mermaid Chart', link: '/ecosystem/mermaid-chart' },
+        { text: 'Integrations - Community', link: '/ecosystem/integrations-community' },
+        { text: 'Integrations - Create', link: '/ecosystem/integrations-create' },
       ],
     },
   ];
