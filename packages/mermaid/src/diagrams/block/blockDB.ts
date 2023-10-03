@@ -27,7 +27,7 @@ const populateBlockDatabase = (blockList: Block[], parent: Block): void => {
     } else {
       if (!block.label) {
         if (block.type === 'composite') {
-          block.label = 'x';
+          block.label = '';
         } else {
           block.label = block.id;
         }

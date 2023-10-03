@@ -2,15 +2,17 @@ import { BlockDB } from './blockDB.js';
 import type { Block } from './blockTypes.js';
 
 function calcBlockSizes(block: Block, db: BlockDB) {
-  let totalWidth = 0;
-  let totalHeight = 0;
+  const totalWidth = 0;
+  const totalHeight = 0;
+  let maxWidth = 0;
+  let maxHeight = 0;
+  const padding = 20;
+
   if (block.children) {
     for (const child of block.children) {
       calcBlockSizes(child, db);
     }
     // find max width of children
-    let maxWidth = 0;
-    let maxHeight = 0;
     for (const child of block.children) {
       const { width, height, x, y } = child.size || { width: 0, height: 0, x: 0, y: 0 };
       if (width > maxWidth) {
@@ -30,39 +32,41 @@ function calcBlockSizes(block: Block, db: BlockDB) {
     }
 
     // Position items relative to self
-    let x = 0;
+    let x = -padding / 2;
     const y = 0;
-    const padding = 10;
+
+    let accumulatedPaddingX = 0;
     for (const child of block.children) {
       if (child.size) {
         child.size.x = x;
         child.size.y = y;
         x += maxWidth + padding;
       }
-      if (x > totalWidth) {
-        totalWidth = x;
-      }
-      if (y > totalHeight) {
-        totalHeight = y;
-      }
+      accumulatedPaddingX += padding;
     }
   }
   if (block.children?.length > 0) {
-    block.size = { width: totalWidth, height: totalHeight, x: 0, y: 0 };
+    const numChildren = block.children.length;
+    block.size = {
+      width: numChildren * (maxWidth + padding) + padding,
+      height: totalHeight + 4 * padding,
+      x: 0,
+      y: 0,
+    };
   }
   console.log('layoutBlock (done)', block);
 }
 
 function positionBlock(parent: Block, block: Block, db: BlockDB) {
   console.log('layout position block', parent.id, parent?.size?.x, block.id, block?.size?.x);
-  let x = 0;
+  let parentX = 0;
   let y = 0;
   if (parent) {
-    x = parent?.size?.x || 0;
+    parentX = parent?.size?.x || 0;
     y = parent?.size?.y || 0;
   }
-  if (block.size) {
-    block.size.x = block.size.x + x - block.size.width / 2;
+  if (block.size && block.id !== 'root') {
+    block.size.x = parentX + block.size.x + -block.size.width / 2;
     block.size.y = block.size.y + y;
   }
   if (block.children) {
@@ -104,9 +108,9 @@ export function layout(db: BlockDB) {
   const blocks = db.getBlocks();
   const root = { id: 'root', type: 'composite', children: blocks } as Block;
   calcBlockSizes(root, db);
-  console.log('layout getBlocks', db.getBlocks());
   // Position blocks relative to parents
   positionBlock(root, root, db);
+  console.log('getBlocks', JSON.stringify(db.getBlocks(), null, 2));
 
   minX = 0;
   minY = 0;

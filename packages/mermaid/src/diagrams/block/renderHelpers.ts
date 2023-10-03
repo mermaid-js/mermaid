@@ -26,11 +26,16 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
   let radious = 0;
   let _shape = '';
   let layoutOptions = {};
+  console.log('This is the type:', vertex.type);
   // Set the shape based parameters
   switch (vertex.type) {
     case 'round':
       radious = 5;
       _shape = 'rect';
+      break;
+    case 'composite':
+      radious = 4;
+      _shape = 'composite';
       break;
     case 'square':
       _shape = 'rect';

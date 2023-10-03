@@ -42,6 +42,8 @@ const getStyles = (options: FlowChartStyleOptions) =>
     color: ${options.titleColor};
   }
 
+
+
   .label text,span,p {
     fill: ${options.nodeTextColor || options.textColor};
     color: ${options.nodeTextColor || options.textColor};
@@ -103,9 +105,11 @@ const getStyles = (options: FlowChartStyleOptions) =>
     // background-color:
   }
 
-  .cluster rect {
-    fill: ${options.clusterBkg};
-    stroke: ${options.clusterBorder};
+  .node .cluster {
+    // fill: ${fade(options.mainBkg, 0.5)};
+    fill: ${fade(options.clusterBkg, 0.5)};
+    stroke: ${fade(options.clusterBorder, 0.2)};
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
     stroke-width: 1px;
   }
 

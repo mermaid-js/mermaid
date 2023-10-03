@@ -27,7 +27,7 @@ const question = async (parent, node) => {
   questionElem.attr('style', node.style);
   updateNodeBounds(node, questionElem);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     log.warn('Intersect called');
     return intersect.polygon(node, points, point);
   };
@@ -52,7 +52,7 @@ const choice = (parent, node) => {
   const choice = shapeSvg.insert('polygon', ':first-child').attr(
     'points',
     points
-      .map(function(d) {
+      .map(function (d) {
         return d.x + ',' + d.y;
       })
       .join(' ')
@@ -62,7 +62,7 @@ const choice = (parent, node) => {
   node.width = 28;
   node.height = 28;
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.circle(node, 14, point);
   };
 
@@ -89,7 +89,7 @@ const hexagon = async (parent, node) => {
   hex.attr('style', node.style);
   updateNodeBounds(node, hex);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.polygon(node, points, point);
   };
 
@@ -115,7 +115,7 @@ const rect_left_inv_arrow = async (parent, node) => {
   node.width = w + h;
   node.height = h;
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.polygon(node, points, point);
   };
 
@@ -138,7 +138,7 @@ const lean_right = async (parent, node) => {
   el.attr('style', node.style);
   updateNodeBounds(node, el);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.polygon(node, points, point);
   };
 
@@ -161,7 +161,7 @@ const lean_left = async (parent, node) => {
   el.attr('style', node.style);
   updateNodeBounds(node, el);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.polygon(node, points, point);
   };
 
@@ -184,7 +184,7 @@ const trapezoid = async (parent, node) => {
   el.attr('style', node.style);
   updateNodeBounds(node, el);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.polygon(node, points, point);
   };
 
@@ -207,7 +207,7 @@ const inv_trapezoid = async (parent, node) => {
   el.attr('style', node.style);
   updateNodeBounds(node, el);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.polygon(node, points, point);
   };
 
@@ -231,7 +231,7 @@ const rect_right_inv_arrow = async (parent, node) => {
   el.attr('style', node.style);
   updateNodeBounds(node, el);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.polygon(node, points, point);
   };
 
@@ -281,7 +281,7 @@ const cylinder = async (parent, node) => {
 
   updateNodeBounds(node, el);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     const pos = intersect.rect(node, point);
     const x = pos.x - node.x;
 
@@ -350,7 +350,55 @@ const rect = async (parent, node) => {
 
   updateNodeBounds(node, rect);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
+    return intersect.rect(node, point);
+  };
+
+  return shapeSvg;
+};
+
+const composite = async (parent, node) => {
+  console.log('This got called');
+  const { shapeSvg, bbox, halfPadding } = await labelHelper(
+    parent,
+    node,
+    'node ' + node.classes,
+    true
+  );
+
+  // add the rect
+  const rect = shapeSvg.insert('rect', ':first-child');
+
+  // const totalWidth = bbox.width + node.padding * 2;
+  // const totalHeight = bbox.height + node.padding * 2;
+  const totalWidth = node.positioned ? node.width : bbox.width + node.padding;
+  const totalHeight = node.positioned ? node.height : bbox.height + node.padding;
+  const x = node.positioned ? -totalWidth / 2 : -bbox.width / 2 - halfPadding;
+  const y = node.positioned ? -totalHeight / 2 : -bbox.height / 2 - halfPadding;
+  rect
+    .attr('class', 'basic cluster composite label-container')
+    .attr('style', node.style)
+    .attr('rx', node.rx)
+    .attr('ry', node.ry)
+    .attr('x', x)
+    .attr('y', y)
+    .attr('width', totalWidth)
+    .attr('height', totalHeight);
+
+  if (node.props) {
+    const propKeys = new Set(Object.keys(node.props));
+    if (node.props.borders) {
+      applyNodePropertyBorders(rect, node.props.borders, totalWidth, totalHeight);
+      propKeys.delete('borders');
+    }
+    propKeys.forEach((propKey) => {
+      log.warn(`Unknown node property ${propKey}`);
+    });
+  }
+
+  updateNodeBounds(node, rect);
+
+  node.intersect = function (point) {
     return intersect.rect(node, point);
   };
 
@@ -383,7 +431,7 @@ const labelRect = async (parent, node) => {
 
   updateNodeBounds(node, rect);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.rect(node, point);
   };
 
@@ -495,20 +543,20 @@ const rectWithTitle = (parent, node) => {
   select(descr).attr(
     'transform',
     'translate( ' +
-    // (titleBox.width - bbox.width) / 2 +
-    (bbox.width > titleBox.width ? 0 : (titleBox.width - bbox.width) / 2) +
-    ', ' +
-    (titleBox.height + halfPadding + 5) +
-    ')'
+      // (titleBox.width - bbox.width) / 2 +
+      (bbox.width > titleBox.width ? 0 : (titleBox.width - bbox.width) / 2) +
+      ', ' +
+      (titleBox.height + halfPadding + 5) +
+      ')'
   );
   select(text).attr(
     'transform',
     'translate( ' +
-    // (titleBox.width - bbox.width) / 2 +
-    (bbox.width < titleBox.width ? 0 : -(titleBox.width - bbox.width) / 2) +
-    ', ' +
-    0 +
-    ')'
+      // (titleBox.width - bbox.width) / 2 +
+      (bbox.width < titleBox.width ? 0 : -(titleBox.width - bbox.width) / 2) +
+      ', ' +
+      0 +
+      ')'
   );
   // Get the size of the label
 
@@ -537,7 +585,7 @@ const rectWithTitle = (parent, node) => {
 
   updateNodeBounds(node, rect);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.rect(node, point);
   };
 
@@ -563,7 +611,7 @@ const stadium = async (parent, node) => {
 
   updateNodeBounds(node, rect);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.rect(node, point);
   };
 
@@ -587,7 +635,7 @@ const circle = async (parent, node) => {
 
   updateNodeBounds(node, circle);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     log.info('Circle intersect', node, bbox.width / 2 + halfPadding, point);
     return intersect.circle(node, bbox.width / 2 + halfPadding, point);
   };
@@ -625,7 +673,7 @@ const doublecircle = async (parent, node) => {
 
   updateNodeBounds(node, outerCircle);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     log.info('DoubleCircle intersect', node, bbox.width / 2 + halfPadding + gap, point);
     return intersect.circle(node, bbox.width / 2 + halfPadding + gap, point);
   };
@@ -655,7 +703,7 @@ const subroutine = async (parent, node) => {
   el.attr('style', node.style);
   updateNodeBounds(node, el);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.polygon(node, points, point);
   };
 
@@ -674,7 +722,7 @@ const start = (parent, node) => {
 
   updateNodeBounds(node, circle);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.circle(node, 7, point);
   };
 
@@ -706,7 +754,7 @@ const forkJoin = (parent, node, dir) => {
   updateNodeBounds(node, shape);
   node.height = node.height + node.padding / 2;
   node.width = node.width + node.padding / 2;
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.rect(node, point);
   };
 
@@ -727,7 +775,7 @@ const end = (parent, node) => {
 
   updateNodeBounds(node, circle);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.circle(node, 7, point);
   };
 
@@ -892,10 +940,10 @@ const class_box = (parent, node) => {
   select(classTitleLabel).attr(
     'transform',
     'translate( ' +
-    ((-1 * maxWidth) / 2 + diffX) +
-    ', ' +
-    ((-1 * maxHeight) / 2 + verticalPos) +
-    ')'
+      ((-1 * maxWidth) / 2 + diffX) +
+      ', ' +
+      ((-1 * maxHeight) / 2 + verticalPos) +
+      ')'
   );
   verticalPos += classTitleBBox.height + rowPadding;
 
@@ -912,10 +960,10 @@ const class_box = (parent, node) => {
     select(lbl).attr(
       'transform',
       'translate( ' +
-      -maxWidth / 2 +
-      ', ' +
-      ((-1 * maxHeight) / 2 + verticalPos + lineHeight / 2) +
-      ')'
+        -maxWidth / 2 +
+        ', ' +
+        ((-1 * maxHeight) / 2 + verticalPos + lineHeight / 2) +
+        ')'
     );
     //get the height of the bounding box of each member if exists
     const memberBBox = lbl?.getBBox();
@@ -950,7 +998,7 @@ const class_box = (parent, node) => {
 
   updateNodeBounds(node, rect);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.rect(node, point);
   };
 
@@ -959,6 +1007,7 @@ const class_box = (parent, node) => {
 
 const shapes = {
   rhombus: question,
+  composite,
   question,
   rect,
   labelRect,
@@ -1040,10 +1089,10 @@ export const positionNode = (node) => {
     el.attr(
       'transform',
       'translate(' +
-      (node.x + diff - node.width / 2) +
-      ', ' +
-      (node.y - node.height / 2 - padding) +
-      ')'
+        (node.x + diff - node.width / 2) +
+        ', ' +
+        (node.y - node.height / 2 - padding) +
+        ')'
     );
   } else {
     el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');

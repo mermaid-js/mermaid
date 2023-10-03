@@ -69,12 +69,15 @@ block-beta
   id2("2")
   block
       id3["I am a wide one"]
-      id4
+      block
+        id44("A final one")
+        id45("B final one")
+      end
   end
-  %% id4("A final one")
+  id4("Another final one")
 
     </pre>
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 block-beta
 
       id3["I am a wide one"]
@@ -84,7 +87,9 @@ block-beta
     </pre>
     <pre id="diagram" class="mermaid2">
 flowchart RL
+  subgraph "`one`"
     id
+  end
     </pre>
     <pre id="diagram" class="mermaid2">
 flowchart RL
