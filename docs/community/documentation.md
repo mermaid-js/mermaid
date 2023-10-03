@@ -4,102 +4,86 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/community/documentation.md](../../packages/mermaid/src/docs/community/documentation.md).
 
-# Contributing Documentation
+# Contributing to Documentation
 
-**_\[TODO: This section is still a WIP. It still needs MAJOR revision.]_**
+**_If it's not in the documentation, it's like it never happened. So let's make every feature count!_**
 
-If it is not in the documentation, it's like it never happened. Wouldn't that be sad? With all the effort that was put into the feature?
+## Where is the Documentation Located?
 
-The docs are located in the `packages/mermaid/src/docs` folder and are written in Markdown. Just pick the right section and start typing.
+- **Directory:** `packages/mermaid/src/docs`.
+- **Format:** Written in Markdown.
+- [mermaid.js.org](https://mermaid.js.org/) reflects the `master` branch contents.
 
-The contents of [mermaid.js.org](https://mermaid.js.org/) are based on the docs from the `master` branch.
-Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid.js.org/) once published.
+## How to Contribute
 
-## How to Contribute to Documentation
-
-We are a little less strict here, it is OK to commit directly in the `develop` branch if you are a collaborator.
-
-The documentation is located in the `packages/mermaid/src/docs` directory and organized according to relevant subfolder.
-
-The `docs` folder will be automatically generated when committing to `packages/mermaid/src/docs` and **should not** be edited manually.
+1.  **Collaborators:** Direct commits to the `develop` branch are acceptable.
+2.  **Documentation Path:** `packages/mermaid/src/docs`.
+3.  **DO NOT** manually edit the `/docs` folder. It's auto-generated.
 
 ```mermaid-example
 flowchart LR
   classDef default fill:#fff,color:black,stroke:black
-
-  source["files in /packages/mermaid/src/docs\n(changes should be done here)"] -- automatic processing\nto generate the final documentation--> published["files in /docs\ndisplayed on the official documentation site"]
-
+  source["Edit /packages/mermaid/src/docs"] -->|Automatic Processing| published["View on /docs - Official Site"]
 ```
 
 ```mermaid
 flowchart LR
   classDef default fill:#fff,color:black,stroke:black
-
-  source["files in /packages/mermaid/src/docs\n(changes should be done here)"] -- automatic processing\nto generate the final documentation--> published["files in /docs\ndisplayed on the official documentation site"]
-
+  source["Edit /packages/mermaid/src/docs"] -->|Automatic Processing| published["View on /docs - Official Site"]
 ```
 
-You can use `note`, `tip`, `warning` and `danger` in triple backticks to add a note, tip, warning or danger box.
-Do not use vitepress specific markdown syntax `::: warning` as it will not be processed correctly.
+### Markdown Tips:
+
+You can use specialized blocks for notes, tips, warnings, or dangers:
 
 ````markdown
 ```note
-Note content
+This is a note.
 ```
 
 ```tip
-Tip content
+This is a tip.
 ```
 
 ```warning
-Warning content
+This is a warning.
 ```
 
 ```danger
-Danger content
+This is a danger alert.
 ```
 ````
 
 > **Note**
-> If the change is _only_ to the documentation, you can get your changes published to the site quicker by making a PR to the `master` branch. In that case, your branch should be based on master, not develop.
+> 📌 **Note:** If you're only updating documentation, speed up publication by creating a PR to the `master` branch. Ensure your branch is based on `master`, not `develop`.
 
-We encourage contributions to the documentation at [packages/mermaid/src/docs in the _develop_ branch](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs).
+## Running the Documentation Site Locally
 
-**_DO NOT CHANGE FILES IN `/docs`_**
+The [mermaid documentation site](https://mermaid.js.org/) uses [Vitepress](https://vitepress.vuejs.org/).
 
-## The official documentation site
+1.  Run `pnpm --filter mermaid run docs:dev` or `pnpm docs:dev` within `packages/mermaid`.
+2.  Visit <http://localhost:3333/>.
 
-**[The mermaid documentation site](https://mermaid.js.org/) is powered by [Vitepress](https://vitepress.vuejs.org/).**
+## How to Edit the Documentation
 
-To run the documentation site locally:
+### On Your Computer:
 
-1.  Run `pnpm --filter mermaid run docs:dev` to start the dev server. (Or `pnpm docs:dev` inside the `packages/mermaid` directory.)
-2.  Open <http://localhost:3333/> in your browser.
+1.  Fork the `develop` branch.
+2.  Navigate to `packages/mermaid/src/docs` to find the `.md` file.
+3.  Edit or add content.
+4.  Commit and push your changes to GitHub (creating a new branch).
+5.  Make a Pull Request from your branch.
 
-Markdown is used to format the text, for more information about Markdown [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
+### Directly on GitHub:
 
-To edit Docs on your computer:
+1.  Go to [GitHub.com](https://www.github.com).
+2.  Find [packages/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs) in the mermaid-js repo.
+3.  Click the pencil icon on the file you wish to edit.
+4.  Describe your changes in the **Propose file change** section.
+5.  Click **Propose file change** to automatically fork and branch.
+6.  Go to `https://github.com/<Your Username>/mermaid/actions` and activate the actions for your fork.
+7.  Click **Create Pull Request** for your new branch.
 
-_\[TODO: need to keep this in sync with [check out a git branch in Contributing Code above](#1-checkout-a-git-branch) ]_
+## Documentation Organization: Sidebar Navigation
 
-1.  Create a fork of the develop branch to work on.
-2.  Find the Markdown file (.md) to edit in the `packages/mermaid/src/docs` directory.
-3.  Make changes or add new documentation.
-4.  Commit changes to your branch and push it to GitHub (which should create a new branch).
-5.  Create a Pull Request from the branch of your fork.
-
-To edit Docs on GitHub:
-
-1.  Login to [GitHub.com](https://www.github.com).
-2.  Navigate to [packages/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs) in the mermaid-js repository.
-3.  To edit a file, click the pencil icon at the top-right of the file contents panel.
-4.  Describe what you changed in the **Propose file change** section, located at the bottom of the page.
-5.  Submit your changes by clicking the button **Propose file change** at the bottom (by automatic creation of a fork and a new branch).
-6.  Visit the Actions tab in Github, `https://github.com/<Your Username>/mermaid/actions` and enable the actions for your fork. This will ensure that the documentation is built and updated in your fork.
-7.  Create a Pull Request of your newly forked branch by clicking the green **Create Pull Request** button.
-
-## Documentation organization: Sidebar navigation
-
-If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation.**
-
-The sidebar navigation is defined in [the vitepress configuration file config.ts](../.vitepress/config.ts).
+To modify how documentation is structured, update the **sidebar navigation** in [config.ts](../.vitepress/config.ts).
