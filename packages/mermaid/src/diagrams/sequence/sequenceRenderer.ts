@@ -1421,23 +1421,30 @@ const buildMessageModel = function (msg, actors, diagObj) {
     return isArrowToRight ? -value : value;
   };
 
-  /**
-   * This is an edge case for the first activation.
-   * Proper fix would require significant changes.
-   * So, we set an activate flag in the message, and cross check that with isToActivation
-   * In cases where the message is to an activation that was properly detected, we don't want to move the arrow head
-   * The activation will not be detected on the first message, so we need to move the arrow head
-   */
-  if (msg.activate && !isArrowToActivation) {
-    stopx += adjustValue(conf.activationWidth / 2 - 1);
-  }
+  if (msg.from === msg.to) {
+    // This is a self reference, so we need to make sure the arrow is drawn correctly
+    // There are many checks in the downstream rendering that checks for equality.
+    // The lines on loops will be off by few pixels, but that's fine for now.
+    stopx = startx;
+  } else {
+    /**
+     * This is an edge case for the first activation.
+     * Proper fix would require significant changes.
+     * So, we set an activate flag in the message, and cross check that with isToActivation
+     * In cases where the message is to an activation that was properly detected, we don't want to move the arrow head
+     * The activation will not be detected on the first message, so we need to move the arrow head
+     */
+    if (msg.activate && !isArrowToActivation) {
+      stopx += adjustValue(conf.activationWidth / 2 - 1);
+    }
 
-  /**
-   * Shorten the length of arrow at the end and move the marker forward (using refX) to have a clean arrowhead
-   * This is not required for open arrows that don't have arrowheads
-   */
-  if (![diagObj.db.LINETYPE.SOLID_OPEN, diagObj.db.LINETYPE.DOTTED_OPEN].includes(msg.type)) {
-    stopx += adjustValue(3);
+    /**
+     * Shorten the length of arrow at the end and move the marker forward (using refX) to have a clean arrowhead
+     * This is not required for open arrows that don't have arrowheads
+     */
+    if (![diagObj.db.LINETYPE.SOLID_OPEN, diagObj.db.LINETYPE.DOTTED_OPEN].includes(msg.type)) {
+      stopx += adjustValue(3);
+    }
   }
 
   const allBounds = [fromLeft, fromRight, toLeft, toRight];

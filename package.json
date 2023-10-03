@@ -123,7 +123,7 @@
     "vitest": "^0.34.0"
   },
   "volta": {
-    "node": "18.17.1"
+    "node": "18.18.0"
   },
   "nyc": {
     "report-dir": "coverage/cypress"

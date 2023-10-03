@@ -11,7 +11,7 @@ This section talks about the different ways to deploy Mermaid. Learning the [Syn
 ## Four ways of using mermaid:
 
 1. Using the Mermaid Live Editor at [mermaid.live](https://mermaid.live).
-2. Using [mermaid plugins](../ecosystem/integrations.md) with programs you are familiar with.
+2. Using [mermaid plugins](../ecosystem/integrations-community.md) with programs you are familiar with.
 3. Calling the Mermaid JavaScript API.
 4. Deploying Mermaid as a dependency.
 
@@ -68,7 +68,7 @@ and to View, https://mermaid.live/view?gist=https://gist.github.com/sidharthv96/
 
 ## 2. Using Mermaid Plugins:
 
-You can generate mermaid diagrams from within popular applications using plug-ins. It can be done in the same way, you would use the Live Editor. Here's a list of [Mermaid Plugins](../ecosystem/integrations.md).
+You can generate mermaid diagrams from within popular applications using plug-ins. It can be done in the same way, you would use the Live Editor. Here's a list of [Mermaid Plugins](../ecosystem/integrations-community.md).
 
 **This is covered in greater detail in the [Usage section](../config/usage.md)**
 
