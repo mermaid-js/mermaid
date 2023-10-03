@@ -227,4 +227,96 @@ describe('when parsing a timeline ', function () {
       '<g dy="1em" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" transform="translate('
     );
   });
+
+  it('TL-8 should render a newline if a break element present', function () {
+    // Assemble
+    const element = select(document.createElement('div'), 'div');
+    const conf = {
+      timeline: {
+        htmlLabels: true,
+      },
+    };
+
+    // Act
+    svgDraw.drawNode(
+      element,
+      {
+        descr: 'a<br/>b',
+      },
+      1,
+      conf
+    );
+
+    // Assert
+    expect(element.html()).to.contain('a<br>b');
+  });
+
+  it('TL-9 should render a newline if a none closing break element is present', function () {
+    // Assemble
+    const element = select(document.createElement('div'), 'div');
+    const conf = {
+      timeline: {
+        htmlLabels: true,
+      },
+    };
+
+    // Act
+    svgDraw.drawNode(
+      element,
+      {
+        descr: 'a<br>b',
+      },
+      1,
+      conf
+    );
+
+    // Assert
+    expect(element.html()).to.contain('a<br>b');
+  });
+
+  it('TL-10 should render a newline if a break element is present with spaces', function () {
+    // Assemble
+    const element = select(document.createElement('div'), 'div');
+    const conf = {
+      timeline: {
+        htmlLabels: true,
+      },
+    };
+
+    // Act
+    svgDraw.drawNode(
+      element,
+      {
+        descr: 'a<br >b',
+      },
+      1,
+      conf
+    );
+
+    // Assert
+    expect(element.html()).to.contain('a<br>b');
+  });
+
+  it('TL-11 should not render a newline if a break element has anything other than spaces', function () {
+    // Assemble
+    const element = select(document.createElement('div'), 'div');
+    const conf = {
+      timeline: {
+        htmlLabels: true,
+      },
+    };
+
+    // Act
+    svgDraw.drawNode(
+      element,
+      {
+        descr: 'a<bring>b',
+      },
+      1,
+      conf
+    );
+
+    // Assert
+    expect(element.html()).to.not.contain('a<br>b');
+  });
 });

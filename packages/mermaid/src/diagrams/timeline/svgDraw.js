@@ -524,7 +524,7 @@ export const drawNode = function (elem, node, fullSection, conf) {
 
   // Create the wrapped text element
   const textElem = nodeElem.append('g');
-  const description = node.descr.replace(/(<br\/*>)/g, '\n');
+  const description = node.descr.replace(/(<br\s*\/?>)/g, '\n');
   const htmlLabels = conf.timeline.htmlLabels;
 
   createText(textElem, description, {
