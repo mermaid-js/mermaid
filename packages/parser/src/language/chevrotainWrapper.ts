@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-type CustomPatternMatcherReturn = [string] & { payload?: any };
+export type CustomPatternMatcherReturn = [string] & { payload?: any };
 
 export type CustomPatternMatcherFunc = (
   text: string,
