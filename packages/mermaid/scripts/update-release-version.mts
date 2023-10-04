@@ -22,6 +22,7 @@ const main = async () => {
   const sourceDirGlob = posix.join('.', SOURCE_DOCS_DIR, '**');
   const mdFileGlobs = getGlobs([posix.join(sourceDirGlob, '*.md')]);
   mdFileGlobs.push('!**/community/development.md');
+  mdFileGlobs.push('!**/community/code.md');
   const mdFiles = await getFilesFromGlobs(mdFileGlobs);
   mdFiles.sort();
   const mdFilesWithPlaceholder: string[] = [];
