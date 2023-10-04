@@ -4,7 +4,9 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/ecosystem/integrations-community.md](../../packages/mermaid/src/docs/ecosystem/integrations-community.md).
 
-# Integrations - community
+# Integrations
+
+## Official integration: [Mermaid Chart](./mermaid-chart.md)
 
 We're excited about the growth of the Mermaid community, and the number of plugins and integrations that have been created with Mermaid.
 
