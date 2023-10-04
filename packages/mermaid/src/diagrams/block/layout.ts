@@ -54,7 +54,7 @@ function calcBlockSizes(block: Block, db: BlockDB) {
     const numChildren = block.children.length;
     block.size = {
       width: numChildren * (maxWidth + padding) + padding,
-      height: totalHeight + 4 * padding,
+      height: maxHeight + 2 * padding,
       x: 0,
       y: 0,
     };
