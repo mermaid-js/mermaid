@@ -523,9 +523,8 @@ describe('Gantt diagram', () => {
   // TODO: fix it
   //
   // This test is skipped deliberately
+  // because it fails and blocks our development pipeline
   // It was added as an attempt to fix gantt performance issues
-  // Unfortunately this test falis, so we are commenting it out
-  // because it blocks our development pipeline
   //
   // https://github.com/mermaid-js/mermaid/issues/3274
   //
