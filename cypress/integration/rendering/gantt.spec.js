@@ -522,31 +522,31 @@ describe('Gantt diagram', () => {
 
   // TODO: fix it
   //
-  // This test is hidden deliberately
-  // It was added in attempt to fix gantt performance issues
-  // Unfortunately it didn't work, so we are commenting the test
+  // This test is skipped deliberately
+  // It was added as an attempt to fix gantt performance issues
+  // Unfortunately this test falis, so we are commenting it out
   // because it blocks our development pipeline
   //
   // https://github.com/mermaid-js/mermaid/issues/3274
   //
-  // it('should render a gantt diagram with very large intervals, skipping excludes if interval > 5 years', () => {
-  //   imgSnapshotTest(
-  //     `gantt
-  //       title A long Gantt Diagram
-  //       dateFormat   YYYY-MM-DD
-  //       axisFormat   %m-%d
-  //       tickInterval 1day
-  //       excludes     weekends
-  //
-  //       section Section
-  //       A task           : a1, 9999-10-01, 30d
-  //       Another task     : after a1, 20d
-  //       section Another
-  //       Task in sec      : 2022-10-20, 12d
-  //       another task     : 24d
-  //     `
-  //   );
-  // });
+  it.skip('should render a gantt diagram with very large intervals, skipping excludes if interval > 5 years', () => {
+    imgSnapshotTest(
+      `gantt
+        title A long Gantt Diagram
+        dateFormat   YYYY-MM-DD
+        axisFormat   %m-%d
+        tickInterval 1day
+        excludes     weekends
+  
+        section Section
+        A task           : a1, 9999-10-01, 30d
+        Another task     : after a1, 20d
+        section Another
+        Task in sec      : 2022-10-20, 12d
+        another task     : 24d
+      `
+    );
+  });
 
   it('should render when compact is true', () => {
     imgSnapshotTest(
