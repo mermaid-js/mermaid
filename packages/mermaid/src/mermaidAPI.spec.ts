@@ -28,6 +28,7 @@ vi.mock('./diagrams/gantt/ganttRenderer.js');
 vi.mock('./diagrams/user-journey/journeyRenderer.js');
 vi.mock('./diagrams/pie/pieRenderer.js');
 vi.mock('./diagrams/requirement/requirementRenderer.js');
+vi.mock('./diagrams/sankey/sankeyRenderer.ts');
 vi.mock('./diagrams/sequence/sequenceRenderer.js');
 vi.mock('./diagrams/state/stateRenderer-v2.js');
 
