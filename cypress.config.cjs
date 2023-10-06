@@ -19,6 +19,7 @@ module.exports = defineConfig({
     },
   },
   video: false,
+  numTestsKeptInMemory: 25,
 });
 
 require('@applitools/eyes-cypress')(module);
