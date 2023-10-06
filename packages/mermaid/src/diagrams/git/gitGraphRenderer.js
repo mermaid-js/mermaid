@@ -410,7 +410,7 @@ const drawArrow = (svg, commit1, commit2, allCommits) => {
     radius = 10;
     offset = 10;
     // Figure out the color of the arrow,arrows going down take the color from the destination branch
-    colorClassNum = branchPos[commit2.branch].index;
+    colorClassNum = branchPos[(p1.y > p2.y ? commit1 : commit2).branch].index;
 
     const lineY = p1.y < p2.y ? findLane(p1.y, p2.y) : findLane(p2.y, p1.y);
     const lineX = p1.x < p2.x ? findLane(p1.x, p2.x) : findLane(p2.x, p1.x);
