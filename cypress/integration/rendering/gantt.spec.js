@@ -536,7 +536,6 @@ describe('Gantt diagram', () => {
         axisFormat   %m-%d
         tickInterval 1day
         excludes     weekends
-  
         section Section
         A task           : a1, 9999-10-01, 30d
         Another task     : after a1, 20d
