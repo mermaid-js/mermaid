@@ -6,8 +6,15 @@ set -euxo pipefail
 # Increase heap size
 export NODE_OPTIONS="--max_old_space_size=4096"
 
-# Build mermaid
-pnpm build
+pushd packages/mermaid
+# Append commit hash to version
+jq ".version = .version + \"+${COMMIT_REF:0:7}\"" package.json > package.tmp.json
+mv package.tmp.json package.json
+popd
+
+pnpm run -r clean
+pnpm build:types
+pnpm build:mermaid
 
 # Clone the Mermaid Live Editor repository
 rm -rf mermaid-live-editor

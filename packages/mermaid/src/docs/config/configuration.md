@@ -4,7 +4,7 @@ When mermaid starts, configuration is extracted to determine a configuration to 
 
 - The default configuration
 - Overrides at the site level are set by the initialize call, and will be applied to all diagrams in the site/app. The term for this is the **siteConfig**.
-- Frontmatter (v<MERMAID_RELEASE_VERSION>+) - diagram authors can update select configuration parameters in the frontmatter of the diagram. These are applied to the render config.
+- Frontmatter (v10.5.0+) - diagram authors can update select configuration parameters in the frontmatter of the diagram. These are applied to the render config.
 - Directives (Deprecated by Frontmatter) - diagram authors can update select configuration parameters directly in the diagram code via directives. These are applied to the render config.
 
 **The render config** is configuration that is used when rendering by applying these configurations.

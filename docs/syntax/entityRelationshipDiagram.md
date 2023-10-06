@@ -90,7 +90,7 @@ Mermaid syntax for ER diagrams is compatible with PlantUML, with an extension to
 
 Where:
 
-- `first-entity` is the name of an entity. Names must begin with an alphabetic character or an underscore (from v\<MERMAID_RELEASE_VERSION>+), and may also contain digits and hyphens.
+- `first-entity` is the name of an entity. Names must begin with an alphabetic character or an underscore (from v10.5.0+), and may also contain digits and hyphens.
 - `relationship` describes the way that both entities inter-relate. See below.
 - `second-entity` is the name of the other entity.
 - `relationship-label` describes the relationship from the perspective of the first entity.
@@ -198,7 +198,7 @@ erDiagram
 
 The `type` values must begin with an alphabetic character and may contain digits, hyphens, underscores, parentheses and square brackets. The `name` values follow a similar format to `type`, but may start with an asterisk as another option to indicate an attribute is a primary key. Other than that, there are no restrictions, and there is no implicit set of valid data types.
 
-### Entity Name Aliases (v\<MERMAID_RELEASE_VERSION>+)
+### Entity Name Aliases (v10.5.0+)
 
 An alias can be added to an entity using square brackets. If provided, the alias will be showed in the diagram instead of the entity name.
 
