@@ -2,7 +2,9 @@
 outline: 'deep' # shows all h3 headings in outline in Vitepress
 ---
 
-# Integrations - community
+# Integrations
+
+## Official integration: [Mermaid Chart](./mermaid-chart.md)
 
 We're excited about the growth of the Mermaid community, and the number of plugins and integrations that have been created with Mermaid.
 
