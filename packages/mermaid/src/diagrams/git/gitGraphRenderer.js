@@ -338,29 +338,24 @@ const drawCommits = (svg, commits, modifyGraph) => {
 };
 
 /**
- * Detect if there are other commits between commit1's x-position and commit2's x-position on the
- * same branch as commit2.
+ * Detect if there are commits
+ * between commitA's x-position
+ * and commitB's x-position on the
+ * same branch as commitA
  *
- * @param {any} commit1
- * @param {any} commit2
+ * @param {any} commitA
+ * @param {any} commitB
  * @param allCommits
- * @returns {boolean} If there are commits between commit1's x-position and commit2's x-position
+ * @returns {boolean}
+ * If there are commits between
+ * commitA's x-position
+ * and commitB's x-position
  */
-const hasOverlappingCommits = (commit1, commit2, allCommits) => {
-  const keys = Object.keys(allCommits);
-  const overlappingComits = keys.filter((key) => {
-    return (
-      // Find commits on the same branch as commit1,
-      // after commit1 but before commit2
-      // to avoid collision
-      allCommits[key].branch === commit1.branch &&
-      allCommits[key].seq > commit1.seq &&
-      allCommits[key].seq < commit2.seq
-    );
-  });
-
-  return overlappingComits.length > 0;
-};
+const hasOverlappingCommits = (commitA, commitB, allCommits) =>
+  Object.entries(allCommits).some(
+    (commitX) =>
+      commitX.branch === commitA.branch && commitX.seq > commitA.seq && commitX.seq < commitB.seq
+  );
 
 /**
  * This function find a lane in the y-axis that is not overlapping with any other lanes. This is
