@@ -17,25 +17,87 @@
     <h1>Git diagram demo</h1>
     <pre class="mermaid">
     ---
-    title: Simple Git diagram
+    title: Simple "branch and merge"
     ---
     gitGraph:
-    options
-    {
-    "nodeSpacing": 50,
-    "nodeRadius": 5
-    }
-    end
-    branch master
     commit
     branch newbranch
     checkout newbranch
     commit
-    commit
-    checkout master
-    commit
-    commit
+    checkout main
     merge newbranch
+    </pre>
+
+    <pre class="mermaid">
+    ---
+    title: Continuous development
+    ---
+    gitGraph:
+    commit
+    branch develop
+    checkout develop
+    commit
+    checkout main
+    merge develop
+    checkout develop
+    commit
+    checkout main
+    merge develop
+    </pre>
+    <pre class="mermaid">
+    ---
+    title: Two-way merges
+    ---
+    gitGraph:
+    commit
+    branch develop
+    checkout develop
+    commit
+    checkout main
+    merge develop
+    commit
+    checkout develop
+    merge main
+    commit
+    checkout main
+    merge develop
+    </pre>
+    <pre class="mermaid">
+    ---
+    title: Cherry-pick
+    ---
+    gitGraph:
+    commit
+    branch newbranch
+    checkout newbranch
+    commit id: "Pick me"
+    checkout main
+    commit
+    checkout newbranch
+    commit
+    checkout main
+    cherry-pick id: "Pick me"
+    merge newbranch
+    </pre>
+    <pre class="mermaid">
+    ---
+    title: Three branches
+    ---
+    gitGraph:
+    commit
+    branch develop
+    checkout develop
+    commit
+    branch feature
+    checkout feature
+    commit
+    checkout main
+    merge feature id:"Direct to main"
+    checkout develop
+    merge feature
+    commit
+    checkout main
+    merge develop
     </pre>
 
     <script type="module">
