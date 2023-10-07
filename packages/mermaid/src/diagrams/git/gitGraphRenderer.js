@@ -347,11 +347,13 @@ const drawCommits = (svg, commits, modifyGraph) => {
  * @returns {boolean} If there are commits between commit1's x-position and commit2's x-position
  */
 const hasOverlappingCommits = (commit1, commit2, allCommits) => {
-  // Find commits on the same branch as commit2
   const keys = Object.keys(allCommits);
   const overlappingComits = keys.filter((key) => {
     return (
-      allCommits[key].branch === commit2.branch &&
+      // Find commits on the same branch as commit1,
+      // after commit1 but before commit2
+      // to avoid collision
+      allCommits[key].branch === commit1.branch &&
       allCommits[key].seq > commit1.seq &&
       allCommits[key].seq < commit2.seq
     );
