@@ -227,6 +227,9 @@ importers:
       elkjs:
         specifier: ^0.8.2
         version: 0.8.2
+      html-void-elements:
+        specifier: ^3.0.0
+        version: 3.0.0
       khroma:
         specifier: ^2.0.0
         version: 2.0.0
@@ -9861,6 +9864,10 @@ packages:
 
   /html-to-image@1.11.11:
     resolution: {integrity: sha512-9gux8QhvjRO/erSnDPv28noDZcPZmYE7e1vFsBLKLlRlKDSqNJYebj6Qz1TGd5lsRV+X+xYyjCKjuZdABinWjA==}
+    dev: false
+
+  /html-void-elements@3.0.0:
+    resolution: {integrity: sha512-bEqo66MRXsUGxWHV5IP0PUiAWwoEjba4VCzg0LjFJBpchPaTfyfCKTG6bc5F8ucKec3q5y6qOdGyYTSBEvhCrg==}
     dev: false
 
   /htmlparser2@8.0.2:

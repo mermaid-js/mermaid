@@ -12,6 +12,7 @@
  */
 // @ts-ignore TODO: Investigate D3 issue
 import { select } from 'd3';
+import { htmlVoidElements } from 'html-void-elements';
 import { compile, serialize, stringify } from 'stylis';
 // @ts-ignore: TODO Fix ts errors
 import { version } from '../package.json';
@@ -234,6 +235,8 @@ export const createUserStyles = (
   return serialize(compile(`${svgId}{${allStyles}}`), stringify);
 };
 
+const voidElementRegex = new RegExp('<(' + htmlVoidElements.join('|') + ')>', 'g');
+
 /**
  * Clean up svgCode. Do replacements needed
  *
@@ -260,7 +263,7 @@ export const cleanUpSvgCode = (
   cleanedUpSvg = decodeEntities(cleanedUpSvg);
 
   // replace old br tags with newer style
-  cleanedUpSvg = cleanedUpSvg.replace(/<br>/g, '<br/>');
+  cleanedUpSvg = cleanedUpSvg.replace(voidElementRegex, '<$1/>');
 
   return cleanedUpSvg;
 };
@@ -501,6 +504,7 @@ const render = async function (
   } else if (!isLooseSecurityLevel) {
     // Sanitize the svgCode using DOMPurify
     svgCode = DOMPurify.sanitize(svgCode, {
+      NAMESPACE: 'http://www.w3.org/2000/svg',
       ADD_TAGS: DOMPURIFY_TAGS,
       ADD_ATTR: DOMPURIFY_ATTR,
     });
