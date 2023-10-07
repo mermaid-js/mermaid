@@ -6,6 +6,9 @@ import Mermaid from './Mermaid.vue';
 import Contributors from '../components/Contributors.vue';
 // @ts-ignore
 import HomePage from '../components/HomePage.vue';
+// @ts-ignore
+import TopBar from '../components/TopBar.vue';
+
 import { getRedirect } from './redirect.js';
 
 import { h } from 'vue';
@@ -18,6 +21,7 @@ export default {
   ...DefaultTheme,
   Layout() {
     return h(Theme.Layout, null, {
+      'home-hero-before': () => h(TopBar),
       'home-features-after': () => h(HomePage),
     });
   },

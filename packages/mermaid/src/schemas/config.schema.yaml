@@ -43,6 +43,7 @@ required:
   - er
   - pie
   - quadrantChart
+  - xyChart
   - requirement
   - mindmap
   - gitGraph
@@ -197,6 +198,8 @@ properties:
     $ref: '#/$defs/PieDiagramConfig'
   quadrantChart:
     $ref: '#/$defs/QuadrantChartConfig'
+  xyChart:
+    $ref: '#/$defs/XYChartConfig'
   requirement:
     $ref: '#/$defs/RequirementDiagramConfig'
   mindmap:
@@ -982,6 +985,132 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         type: number
         minimum: 0
         default: 2
+  XYChartAxisConfig:
+    title: XYChart axis config
+    description: This object contains configuration for XYChart axis config
+    type: object
+    unevaluatedProperties: true
+    required:
+      - showLabel
+      - labelFontSize
+      - labelPadding
+      - showTitle
+      - titleFontSize
+      - titlePadding
+      - showTick
+      - tickLength
+      - tickWidth
+      - showAxisLine
+      - axisLineWidth
+    properties:
+      showLabel:
+        description: Should show the axis labels (tick text)
+        type: boolean
+        default: true
+      labelFontSize:
+        description: font size of the axis labels (tick text)
+        type: number
+        default: 14
+        minimum: 1
+      labelPadding:
+        description: top and bottom space from axis label (tick text)
+        type: number
+        default: 5
+        minimum: 0
+      showTitle:
+        description: Should show the axis title
+        type: boolean
+        default: true
+      titleFontSize:
+        description: font size of the axis title
+        type: number
+        default: 16
+        minimum: 1
+      titlePadding:
+        description: top and bottom space from axis title
+        type: number
+        default: 5
+        minimum: 0
+      showTick:
+        description: Should show the axis tick lines
+        type: boolean
+        default: true
+      tickLength:
+        description: length of the axis tick lines
+        type: number
+        default: 5
+        minimum: 1
+      tickWidth:
+        description: width of the axis tick lines
+        type: number
+        default: 2
+        minimum: 1
+      showAxisLine:
+        description: Show line across the axis
+        type: boolean
+        default: true
+      axisLineWidth:
+        description: Width of the axis line
+        type: number
+        default: 2
+        minimum: 1
+
+  XYChartConfig:
+    title: XYChart Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: This object contains configuration specific to XYCharts
+    type: object
+    unevaluatedProperties: false
+    required:
+      - width
+      - height
+      - titleFontSize
+      - titlePadding
+      - xAxis
+      - yAxis
+      - showTitle
+      - chartOrientation
+      - plotReservedSpacePercent
+    properties:
+      width:
+        description: width of the chart
+        type: number
+        default: 700
+        minimum: 1
+      height:
+        description: height of the chart
+        type: number
+        default: 500
+        minimum: 1
+      titleFontSize:
+        description: Font size of the chart title
+        type: number
+        default: 20
+        minimum: 1
+      titlePadding:
+        description: Top and bottom space from the chart title
+        type: number
+        default: 10
+        minimum: 0
+      showTitle:
+        description: Should show the chart title
+        type: boolean
+        default: true
+      xAxis:
+        $ref: '#/$defs/XYChartAxisConfig'
+        default: { '$ref': '#/$defs/XYChartAxisConfig' }
+      yAxis:
+        $ref: '#/$defs/XYChartAxisConfig'
+        default: { '$ref': '#/$defs/XYChartAxisConfig' }
+      chartOrientation:
+        description: How to plot will be drawn horizontal or vertical
+        tsType: '"vertical" | "horizontal"'
+        default: 'vertical'
+      plotReservedSpacePercent:
+        description: Minimum percent of space plots of the chart will take
+        type: number
+        default: 50
+        minimum: 30
 
   ErDiagramConfig:
     title: Er Diagram Config
