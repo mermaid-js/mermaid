@@ -37,7 +37,7 @@ let functions: any[] = [];
 const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
 
 const splitClassNameAndType = function (_id: string) {
-  const id = common.sanitizeText(_id, configApi.getConfig());
+  const id = common.sanitizeText(_id, getConfig());
   let genericType = '';
   let className = id;
 
@@ -51,7 +51,7 @@ const splitClassNameAndType = function (_id: string) {
 };
 
 export const setClassLabel = function (_id: string, label: string) {
-  const id = common.sanitizeText(_id, configApi.getConfig());
+  const id = common.sanitizeText(_id, getConfig());
   if (label) {
     label = sanitizeText(label);
   }
@@ -67,14 +67,14 @@ export const setClassLabel = function (_id: string, label: string) {
  * @public
  */
 export const addClass = function (_id: string) {
-  const id = common.sanitizeText(_id, configApi.getConfig());
+  const id = common.sanitizeText(_id, getConfig());
   const { className, type } = splitClassNameAndType(id);
   // Only add class if not exists
   if (Object.hasOwn(classes, className)) {
     return;
   }
   // alert('Adding class: ' + className);
-  const name = common.sanitizeText(className, configApi.getConfig());
+  const name = common.sanitizeText(className, getConfig());
   // alert('Adding class after: ' + name);
   classes[name] = {
     id: name,
@@ -97,7 +97,7 @@ export const addClass = function (_id: string) {
  * @public
  */
 export const lookUpDomId = function (_id: string): string {
-  const id = common.sanitizeText(_id, configApi.getConfig());
+  const id = common.sanitizeText(_id, getConfig());
   if (id in classes) {
     return classes[id].domId;
   }
@@ -297,7 +297,7 @@ export const setClickEvent = function (ids: string, functionName: string, functi
 };
 
 const setClickFunc = function (_domId: string, functionName: string, functionArgs: string) {
-  const domId = common.sanitizeText(_domId, configApi.getConfig());
+  const domId = common.sanitizeText(_domId, getConfig());
   const config = getConfig();
   if (config.securityLevel !== 'loose') {
     return;
