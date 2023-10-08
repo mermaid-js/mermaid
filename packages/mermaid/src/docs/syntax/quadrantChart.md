@@ -96,7 +96,7 @@ Points are used to plot a circle inside the quadrantChart. The syntax is `<text>
 | quadrantExternalBorderStrokeWidth | Quadrant external border stroke width                                                             |       2       |
 | xAxisLabelPadding                 | Top and bottom padding of x-axis text                                                             |       5       |
 | xAxisLabelFontSize                | X-axis texts font size                                                                            |      16       |
-| xAxisPosition                     | Position of x-axis (top , bottom) if there are points the x-axis will alway be rendered in bottom |     'top'     |
+| xAxisPosition                     | Position of x-axis (top , bottom) if there are points the x-axis will always be rendered in bottom |     'top'     |
 | yAxisLabelPadding                 | Left and Right padding of y-axis text                                                             |       5       |
 | yAxisLabelFontSize                | Y-axis texts font size                                                                            |      16       |
 | yAxisPosition                     | Position of y-axis (left , right)                                                                 |    'left'     |
