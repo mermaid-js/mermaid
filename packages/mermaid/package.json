@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "10.5.0-rc.1",
+  "version": "10.5.0",
   "description": "Markdown-ish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
   "module": "./dist/mermaid.core.mjs",
@@ -40,7 +40,7 @@
     "types:verify-config": "ts-node-esm scripts/create-types-from-json-schema.mts --verify",
     "checkCircle": "npx madge --circular ./src",
     "release": "pnpm build",
-    "prepublishOnly": "cpy '../../README.*' ./ --cwd=. && pnpm -w run build"
+    "prepublishOnly": "cpy '../../README.*' ./ --cwd=. && pnpm docs:release-version && pnpm -w run build"
   },
   "repository": {
     "type": "git",

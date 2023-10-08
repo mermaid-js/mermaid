@@ -36,7 +36,8 @@ let functions: any[] = [];
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, configApi.getConfig());
 
-const splitClassNameAndType = function (id: string) {
+const splitClassNameAndType = function (_id: string) {
+  const id = common.sanitizeText(_id, configApi.getConfig());
   let genericType = '';
   let className = id;
 
@@ -49,7 +50,8 @@ const splitClassNameAndType = function (id: string) {
   return { className: className, type: genericType };
 };
 
-export const setClassLabel = function (id: string, label: string) {
+export const setClassLabel = function (_id: string, label: string) {
+  const id = common.sanitizeText(_id, configApi.getConfig());
   if (label) {
     label = sanitizeText(label);
   }
@@ -64,22 +66,25 @@ export const setClassLabel = function (id: string, label: string) {
  * @param id - Id of the class to add
  * @public
  */
-export const addClass = function (id: string) {
+export const addClass = function (_id: string) {
+  const id = common.sanitizeText(_id, configApi.getConfig());
   const { className, type } = splitClassNameAndType(id);
   // Only add class if not exists
   if (Object.hasOwn(classes, className)) {
     return;
   }
-
-  classes[className] = {
-    id: className,
+  // alert('Adding class: ' + className);
+  const name = common.sanitizeText(className, configApi.getConfig());
+  // alert('Adding class after: ' + name);
+  classes[name] = {
+    id: name,
     type: type,
-    label: className,
+    label: name,
     cssClasses: [],
     methods: [],
     members: [],
     annotations: [],
-    domId: MERMAID_DOM_ID_PREFIX + className + '-' + classCounter,
+    domId: MERMAID_DOM_ID_PREFIX + name + '-' + classCounter,
   } as ClassNode;
 
   classCounter++;
@@ -91,7 +96,8 @@ export const addClass = function (id: string) {
  * @param id - class ID to lookup
  * @public
  */
-export const lookUpDomId = function (id: string): string {
+export const lookUpDomId = function (_id: string): string {
+  const id = common.sanitizeText(_id, configApi.getConfig());
   if (id in classes) {
     return classes[id].domId;
   }
@@ -296,7 +302,8 @@ export const setClickEvent = function (ids: string, functionName: string, functi
   setCssClass(ids, 'clickable');
 };
 
-const setClickFunc = function (domId: string, functionName: string, functionArgs: string) {
+const setClickFunc = function (_domId: string, functionName: string, functionArgs: string) {
+  const domId = common.sanitizeText(_domId, configApi.getConfig());
   const config = configApi.getConfig();
   if (config.securityLevel !== 'loose') {
     return;
