@@ -28,6 +28,21 @@ export const removeScript = (txt: string): string => {
   return DOMPurify.sanitize(txt);
 };
 
+DOMPurify.addHook('afterSanitizeAttributes', function (node) {
+  // set all elements owning target to target=_blank
+  if ('target' in node) {
+    node.setAttribute('target', '_blank');
+    node.setAttribute('rel', 'noopener noreferrer');
+  }
+  // set non-HTML/MathML links to xlink:show=new
+  if (
+    !node.hasAttribute('target') &&
+    (node.hasAttribute('xlink:href') || node.hasAttribute('href'))
+  ) {
+    node.setAttribute('xlink:show', 'new');
+  }
+});
+
 const sanitizeMore = (text: string, config: MermaidConfig) => {
   if (config.flowchart?.htmlLabels !== false) {
     const level = config.securityLevel;
