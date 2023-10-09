@@ -30,7 +30,7 @@ export const removeScript = (txt: string): string => {
 
 DOMPurify.addHook('afterSanitizeAttributes', function (node) {
   // set all elements owning target to target=_blank
-  if ('target' in node) {
+  if (node.tagName === 'A' && node.hasAttribute('href') && 'target' in node) {
     node.setAttribute('target', '_blank');
     node.setAttribute('rel', 'noopener noreferrer');
   }
