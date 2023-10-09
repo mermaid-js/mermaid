@@ -192,6 +192,12 @@ export const updateLinkInterpolate = function (positions, interp) {
  */
 export const updateLink = function (positions, style) {
   positions.forEach(function (pos) {
+    if (pos >= edges.length) {
+      let error = new Error(
+        `Incorrect index ${pos} of linkStyle. (Help: Index must be from 0 to ${edges.length - 1})`
+      );
+      throw error;
+    }
     if (pos === 'default') {
       edges.defaultStyle = style;
     } else {

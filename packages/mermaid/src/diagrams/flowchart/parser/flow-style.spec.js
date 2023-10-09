@@ -286,6 +286,14 @@ describe('[Style] when parsing', () => {
     expect(edges[0].type).toBe('arrow_point');
   });
 
+  it('should handle style definitions within number of edges', function () {
+    const res = flow.parser.parse('graph TD\n' + 'A-->B\n' + 'linkStyle 0 stroke-width:1px;');
+
+    const edges = flow.parser.yy.getEdges();
+
+    expect(edges[0].style[0]).toBe('stroke-width:1px');
+  });
+
   it('should handle multi-numbered style definitions with more then 1 digit in a row', function () {
     const res = flow.parser.parse(
       'graph TD\n' +
