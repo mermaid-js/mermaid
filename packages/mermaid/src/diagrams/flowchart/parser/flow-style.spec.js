@@ -287,7 +287,23 @@ describe('[Style] when parsing', () => {
   });
 
   it('should handle style definitions within number of edges', function () {
-    const res = flow.parser.parse('graph TD\n' + 'A-->B\n' + 'linkStyle 0 stroke-width:1px;');
+    try {
+      flow.parser.parse(`graph TD
+      A-->B
+      linkStyle 1 stroke-width:1px;`);
+      // Fail test if above expression doesn't throw anything.
+      expect(true).toBe(false);
+    } catch (e) {
+      expect(e.message).toBe(
+        `The index for linkStyle is out of bounds. (Help: Ensure that the index is within the range of existing edges.)`
+      );
+    }
+  });
+
+  it('should handle style definitions within number of edges', function () {
+    const res = flow.parser.parse(`graph TD
+    A-->B
+    linkStyle 0 stroke-width:1px;`);
 
     const edges = flow.parser.yy.getEdges();
 

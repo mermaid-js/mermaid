@@ -194,7 +194,7 @@ export const updateLink = function (positions, style) {
   positions.forEach(function (pos) {
     if (pos >= edges.length) {
       let error = new Error(
-        `Incorrect index ${pos} of linkStyle. (Help: Index must be from 0 to ${edges.length - 1})`
+        `The index for linkStyle is out of bounds. (Help: Ensure that the index is within the range of existing edges.)`
       );
       throw error;
     }
