@@ -7,7 +7,6 @@ import Contributors from '../components/Contributors.vue';
 // @ts-ignore
 import HomePage from '../components/HomePage.vue';
 // @ts-ignore
-import TopBar from '../components/TopBar.vue';
 
 import { getRedirect } from './redirect.js';
 
@@ -21,7 +20,6 @@ export default {
   ...DefaultTheme,
   Layout() {
     return h(Theme.Layout, null, {
-      'home-hero-before': () => h(TopBar),
       'home-features-after': () => h(HomePage),
     });
   },
