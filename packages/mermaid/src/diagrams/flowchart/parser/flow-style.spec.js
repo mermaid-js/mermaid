@@ -287,17 +287,17 @@ describe('[Style] when parsing', () => {
   });
 
   it('should handle style definitions within number of edges', function () {
-    try {
-      flow.parser.parse(`graph TD
-      A-->B
-      linkStyle 1 stroke-width:1px;`);
-      // Fail test if above expression doesn't throw anything.
-      expect(true).toBe(false);
-    } catch (e) {
-      expect(e.message).toBe(
-        `The index for linkStyle is out of bounds. (Help: Ensure that the index is within the range of existing edges.)`
-      );
-    }
+    expect(() =>
+      flow.parser
+        .parse(
+          `graph TD
+    A-->B
+    linkStyle 1 stroke-width:1px;`
+        )
+        .toThrow(
+          'The index 1 for linkStyle is out of bounds. Valid indices for linkStyle are between 0 and 0. (Help: Ensure that the index is within the range of existing edges.)'
+        )
+    );
   });
 
   it('should handle style definitions within number of edges', function () {
