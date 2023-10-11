@@ -1,13 +1,13 @@
 version: '3.9'
 services:
   mermaid:
-    image: node:18.16.1-alpine3.18
+    image: node:18.18.0-alpine3.18
     stdin_open: true
     tty: true
     working_dir: /mermaid
-    mem_limit: '2G'
+    mem_limit: '4G'
     environment:
-      - NODE_OPTIONS=--max_old_space_size=2048
+      - NODE_OPTIONS=--max_old_space_size=4096
     volumes:
       - ./:/mermaid
       - root_cache:/root/.cache
@@ -17,7 +17,7 @@ services:
       - 9000:9000
       - 3333:3333
   cypress:
-    image: cypress/included:12.16.0
+    image: cypress/included:12.17.4
     stdin_open: true
     tty: true
     working_dir: /mermaid

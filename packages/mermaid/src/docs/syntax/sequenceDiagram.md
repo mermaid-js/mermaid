@@ -58,7 +58,7 @@ sequenceDiagram
     J->>A: Great!
 ```
 
-### Actor Creation and Destruction
+### Actor Creation and Destruction (v10.3.0+)
 
 It is possible to create and destroy actors by messages. To do so, add a create or destroy directive before the message.
 
@@ -121,7 +121,7 @@ end
     end
     A->>J: Hello John, how are you?
     J->>A: Great!
-    A->>B: Hello Bob, how is Charly ?
+    A->>B: Hello Bob, how is Charly?
     B->>C: Hello Charly, how are you?
 ```
 

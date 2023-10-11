@@ -13,10 +13,10 @@
 #     Non-JSON values, like functions or `undefined`, still need to be manually
 #     set in `src/defaultConfig.ts`)
 #   - `src/docs.mts`
-#     Used to genereate Markdown documentation for this JSON Schema by using
+#     Used to generate Markdown documentation for this JSON Schema by using
 #     the `@adobe/jsonschema2md` NPM package.
 
-# Useful things to know when editting this file
+# Useful things to know when editing this file
 # - Use the `|` character for multi-line strings
 # - Use `meta:enum` to document enum values (from jsonschema2md)
 # - Use `tsType` to override the TypeScript type (from json-schema-to-typescript)
@@ -43,6 +43,7 @@ required:
   - er
   - pie
   - quadrantChart
+  - xyChart
   - requirement
   - mindmap
   - gitGraph
@@ -205,6 +206,8 @@ properties:
     $ref: '#/$defs/PieDiagramConfig'
   quadrantChart:
     $ref: '#/$defs/QuadrantChartConfig'
+  xyChart:
+    $ref: '#/$defs/XYChartConfig'
   requirement:
     $ref: '#/$defs/RequirementDiagramConfig'
   mindmap:
@@ -990,6 +993,132 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         type: number
         minimum: 0
         default: 2
+  XYChartAxisConfig:
+    title: XYChart axis config
+    description: This object contains configuration for XYChart axis config
+    type: object
+    unevaluatedProperties: true
+    required:
+      - showLabel
+      - labelFontSize
+      - labelPadding
+      - showTitle
+      - titleFontSize
+      - titlePadding
+      - showTick
+      - tickLength
+      - tickWidth
+      - showAxisLine
+      - axisLineWidth
+    properties:
+      showLabel:
+        description: Should show the axis labels (tick text)
+        type: boolean
+        default: true
+      labelFontSize:
+        description: font size of the axis labels (tick text)
+        type: number
+        default: 14
+        minimum: 1
+      labelPadding:
+        description: top and bottom space from axis label (tick text)
+        type: number
+        default: 5
+        minimum: 0
+      showTitle:
+        description: Should show the axis title
+        type: boolean
+        default: true
+      titleFontSize:
+        description: font size of the axis title
+        type: number
+        default: 16
+        minimum: 1
+      titlePadding:
+        description: top and bottom space from axis title
+        type: number
+        default: 5
+        minimum: 0
+      showTick:
+        description: Should show the axis tick lines
+        type: boolean
+        default: true
+      tickLength:
+        description: length of the axis tick lines
+        type: number
+        default: 5
+        minimum: 1
+      tickWidth:
+        description: width of the axis tick lines
+        type: number
+        default: 2
+        minimum: 1
+      showAxisLine:
+        description: Show line across the axis
+        type: boolean
+        default: true
+      axisLineWidth:
+        description: Width of the axis line
+        type: number
+        default: 2
+        minimum: 1
+
+  XYChartConfig:
+    title: XYChart Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: This object contains configuration specific to XYCharts
+    type: object
+    unevaluatedProperties: false
+    required:
+      - width
+      - height
+      - titleFontSize
+      - titlePadding
+      - xAxis
+      - yAxis
+      - showTitle
+      - chartOrientation
+      - plotReservedSpacePercent
+    properties:
+      width:
+        description: width of the chart
+        type: number
+        default: 700
+        minimum: 1
+      height:
+        description: height of the chart
+        type: number
+        default: 500
+        minimum: 1
+      titleFontSize:
+        description: Font size of the chart title
+        type: number
+        default: 20
+        minimum: 1
+      titlePadding:
+        description: Top and bottom space from the chart title
+        type: number
+        default: 10
+        minimum: 0
+      showTitle:
+        description: Should show the chart title
+        type: boolean
+        default: true
+      xAxis:
+        $ref: '#/$defs/XYChartAxisConfig'
+        default: { '$ref': '#/$defs/XYChartAxisConfig' }
+      yAxis:
+        $ref: '#/$defs/XYChartAxisConfig'
+        default: { '$ref': '#/$defs/XYChartAxisConfig' }
+      chartOrientation:
+        description: How to plot will be drawn horizontal or vertical
+        tsType: '"vertical" | "horizontal"'
+        default: 'vertical'
+      plotReservedSpacePercent:
+        description: Minimum percent of space plots of the chart will take
+        type: number
+        default: 50
+        minimum: 30
 
   ErDiagramConfig:
     title: Er Diagram Config
@@ -1463,6 +1592,7 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
       - axisFormat
       - useMaxWidth
       - topAxis
+      - weekday
     properties:
       titleTopMargin:
         $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
@@ -1531,10 +1661,10 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
           Pattern is:
 
           ```javascript
-          /^([1-9][0-9]*)(minute|hour|day|week|month)$/
+          /^([1-9][0-9]*)(millisecond|second|minute|hour|day|week|month)$/
           ```
         type: string
-        pattern: ^([1-9][0-9]*)(minute|hour|day|week|month)$
+        pattern: ^([1-9][0-9]*)(millisecond|second|minute|hour|day|week|month)$
       topAxis:
         description: |
           When this flag is set, date labels will be added to the top of the chart
@@ -1552,6 +1682,20 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         default: ''
         # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
         tsType: 'string | "compact"'
+      weekday:
+        description: |
+          On which day a week-based interval should start
+        type: string
+        tsType: '"monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday"'
+        enum:
+          - monday
+          - tuesday
+          - wednesday
+          - thursday
+          - friday
+          - saturday
+          - sunday
+        default: sunday
 
   SequenceDiagramConfig:
     title: Sequence Diagram Config
@@ -1844,7 +1988,7 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
           The color of the links in the sankey diagram.
         anyOf:
           - $ref: '#/$defs/SankeyLinkColor'
-          - description: An arbtirary [CSS color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)
+          - description: An arbitrary [CSS color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)
             type: string
         default: gradient
       nodeAlignment:
@@ -1852,6 +1996,20 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         default: justify
       useMaxWidth:
         default: false
+      showValues:
+        description: |
+          Toggle to display or hide values along with title.
+        default: true
+      prefix:
+        description: |
+          The prefix to use for values
+        type: string
+        default: ''
+      suffix:
+        description: |
+          The suffix to use for values
+        type: string
+        default: ''
 
   FontCalculator:
     title: Font Calculator

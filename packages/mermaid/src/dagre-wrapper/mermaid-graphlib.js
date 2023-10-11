@@ -291,8 +291,8 @@ export const adjustClustersAndEdges = (graph, depth) => {
         shape: 'labelRect',
         style: '',
       });
-      const edge1 = JSON.parse(JSON.stringify(edge));
-      const edge2 = JSON.parse(JSON.stringify(edge));
+      const edge1 = structuredClone(edge);
+      const edge2 = structuredClone(edge);
       edge1.label = '';
       edge1.arrowTypeEnd = 'none';
       edge2.label = '';

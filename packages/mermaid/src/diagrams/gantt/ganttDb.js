@@ -6,7 +6,6 @@ import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
 import { log } from '../../logger.js';
 import * as configApi from '../../config.js';
 import utils from '../../utils.js';
-import mermaidAPI from '../../mermaidAPI.js';
 
 import {
   setAccTitle,
@@ -16,7 +15,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 
 dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);
@@ -37,13 +36,10 @@ const tags = ['active', 'done', 'crit', 'milestone'];
 let funs = [];
 let inclusiveEndDates = false;
 let topAxis = false;
+let weekday = 'sunday';
 
 // The serial order of the task in the script
 let lastOrder = 0;
-
-export const parseDirective = function (statement, context, type) {
-  mermaidAPI.parseDirective(this, statement, context, type);
-};
 
 export const clear = function () {
   sections = [];
@@ -66,6 +62,7 @@ export const clear = function () {
   lastOrder = 0;
   links = {};
   commonClear();
+  weekday = 'sunday';
 };
 
 export const setAxisFormat = function (txt) {
@@ -177,6 +174,14 @@ export const isInvalidDate = function (date, dateFormat, excludes, includes) {
     return true;
   }
   return excludes.includes(date.format(dateFormat.trim()));
+};
+
+export const setWeekday = function (txt) {
+  weekday = txt;
+};
+
+export const getWeekday = function () {
+  return weekday;
 };
 
 /**
@@ -720,7 +725,6 @@ export const bindFunctions = function (element) {
 };
 
 export default {
-  parseDirective,
   getConfig: () => configApi.getConfig().gantt,
   clear,
   setDateFormat,
@@ -759,6 +763,8 @@ export default {
   bindFunctions,
   parseDuration,
   isInvalidDate,
+  setWeekday,
+  getWeekday,
 };
 
 /**

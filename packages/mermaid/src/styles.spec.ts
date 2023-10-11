@@ -19,10 +19,9 @@ import classDiagram from './diagrams/class/styles.js';
 import flowchart from './diagrams/flowchart/styles.js';
 import flowchartElk from './diagrams/flowchart/elk/styles.js';
 import er from './diagrams/er/styles.js';
-import error from './diagrams/error/styles.js';
 import git from './diagrams/git/styles.js';
 import gantt from './diagrams/gantt/styles.js';
-import pie from './diagrams/pie/styles.js';
+import pie from './diagrams/pie/pieStyles.js';
 import requirement from './diagrams/requirement/styles.js';
 import sequence from './diagrams/sequence/styles.js';
 import state from './diagrams/state/styles.js';
@@ -86,7 +85,6 @@ describe('styles', () => {
         c4,
         classDiagram,
         er,
-        error,
         flowchart,
         flowchartElk,
         gantt,

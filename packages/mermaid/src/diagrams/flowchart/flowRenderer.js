@@ -275,19 +275,11 @@ export const addEdges = async function (edges, g, diagObj) {
  *
  * @param text
  * @param diagObj
- * @returns {object} ClassDef styles
+ * @returns {Record<string, import('../../diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles
  */
 export const getClasses = function (text, diagObj) {
   log.info('Extracting classes');
-  diagObj.db.clear();
-  try {
-    // Parse the graph definition
-    diagObj.parse(text);
-    return diagObj.db.getClasses();
-  } catch (e) {
-    log.error(e);
-    return {};
-  }
+  return diagObj.db.getClasses();
 };
 
 /**
@@ -300,7 +292,6 @@ export const getClasses = function (text, diagObj) {
  */
 export const draw = async function (text, id, _version, diagObj) {
   log.info('Drawing flowchart');
-  diagObj.db.clear();
   const { securityLevel, flowchart: conf } = getConfig();
   let sandboxElement;
   if (securityLevel === 'sandbox') {

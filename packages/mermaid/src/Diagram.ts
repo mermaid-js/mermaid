@@ -2,10 +2,9 @@ import * as configApi from './config.js';
 import { log } from './logger.js';
 import { getDiagram, registerDiagram } from './diagram-api/diagramAPI.js';
 import { detectType, getDiagramLoader } from './diagram-api/detectType.js';
-import { extractFrontMatter } from './diagram-api/frontmatter.js';
 import { UnknownDiagramError } from './errors.js';
-import { DetailedError } from './utils.js';
-import { cleanupComments } from './diagram-api/comments.js';
+import type { DetailedError } from './utils.js';
+import type { DiagramDefinition, DiagramMetadata } from './diagram-api/types.js';
 
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
 
@@ -15,11 +14,13 @@ export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: 
  */
 export class Diagram {
   type = 'graph';
-  parser;
-  renderer;
-  db;
+  parser: DiagramDefinition['parser'];
+  renderer: DiagramDefinition['renderer'];
+  db: DiagramDefinition['db'];
+  private init?: DiagramDefinition['init'];
+
   private detectError?: UnknownDiagramError;
-  constructor(public text: string) {
+  constructor(public text: string, public metadata: Pick<DiagramMetadata, 'title'> = {}) {
     this.text += '\n';
     const cnf = configApi.getConfig();
     try {
@@ -32,27 +33,10 @@ export class Diagram {
     log.debug('Type ' + this.type);
     // Setup diagram
     this.db = diagram.db;
-    this.db.clear?.();
     this.renderer = diagram.renderer;
     this.parser = diagram.parser;
-    const originalParse = this.parser.parse.bind(this.parser);
-    // Wrap the jison parse() method to handle extracting frontmatter.
-    //
-    // This can't be done in this.parse() because some code
-    // directly calls diagram.parser.parse(), bypassing this.parse().
-    //
-    // Similarly, we can't do this in getDiagramFromText() because some code
-    // calls diagram.db.clear(), which would reset anything set by
-    // extractFrontMatter().
-
-    this.parser.parse = (text: string) =>
-      originalParse(cleanupComments(extractFrontMatter(text, this.db)));
-
     this.parser.parser.yy = this.db;
-    if (diagram.init) {
-      diagram.init(cnf);
-      log.info('Initialized diagram ' + this.type, cnf);
-    }
+    this.init = diagram.init;
     this.parse();
   }
 
@@ -61,11 +45,17 @@ export class Diagram {
       throw this.detectError;
     }
     this.db.clear?.();
+    const config = configApi.getConfig();
+    this.init?.(config);
+    // This block was added for legacy compatibility. Use frontmatter instead of adding more special cases.
+    if (this.metadata.title) {
+      this.db.setDiagramTitle?.(this.metadata.title);
+    }
     this.parser.parse(this.text);
   }
 
   async render(id: string, version: string) {
-    await this.renderer.draw(this.text, id, version, this);
+    await this.renderer.draw(this.text, id, version, this, null);
   }
 
   getParser() {
@@ -82,11 +72,15 @@ export class Diagram {
  * **Warning:** This function may be changed in the future.
  * @alpha
  * @param text - The mermaid diagram definition.
+ * @param metadata - Diagram metadata, defined in YAML.
  * @returns A the Promise of a Diagram object.
  * @throws {@link UnknownDiagramError} if the diagram type can not be found.
  * @privateRemarks This is exported as part of the public mermaidAPI.
  */
-export const getDiagramFromText = async (text: string): Promise<Diagram> => {
+export const getDiagramFromText = async (
+  text: string,
+  metadata: Pick<DiagramMetadata, 'title'> = {}
+): Promise<Diagram> => {
   const type = detectType(text, configApi.getConfig());
   try {
     // Trying to find the diagram
@@ -101,5 +95,5 @@ export const getDiagramFromText = async (text: string): Promise<Diagram> => {
     const { id, diagram } = await loader();
     registerDiagram(id, diagram);
   }
-  return new Diagram(text);
+  return new Diagram(text, metadata);
 };

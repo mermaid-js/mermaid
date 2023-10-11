@@ -1,4 +1,3 @@
-import mermaidAPI from '../../mermaidAPI.js';
 import * as configApi from '../../config.js';
 import {
   setAccTitle,
@@ -8,17 +7,13 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 
 let currentSection = '';
 
 const sections = [];
 const tasks = [];
 const rawTasks = [];
-
-export const parseDirective = function (statement, context, type) {
-  mermaidAPI.parseDirective(this, statement, context, type);
-};
 
 export const clear = function () {
   sections.length = 0;
@@ -118,7 +113,6 @@ const getActors = function () {
 };
 
 export default {
-  parseDirective,
   getConfig: () => configApi.getConfig().journey,
   clear,
   setDiagramTitle,

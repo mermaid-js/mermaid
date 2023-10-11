@@ -326,7 +326,7 @@ const drawEntities = function (svgNode, entities, graph) {
       .style('text-anchor', 'middle')
       .style('font-family', getConfig().fontFamily)
       .style('font-size', conf.fontSize + 'px')
-      .text(entityName);
+      .text(entities[entityName].alias ?? entityName);
 
     const { width: entityWidth, height: entityHeight } = drawAttributes(
       groupNode,
@@ -555,7 +555,6 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
 export const draw = function (text, id, _version, diagObj) {
   conf = getConfig().er;
   log.info('Drawing ER diagram');
-  //  diag.db.clear();
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;

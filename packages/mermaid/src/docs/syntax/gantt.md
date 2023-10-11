@@ -173,7 +173,7 @@ The following formatting strings are supported:
 
 More info in: [https://github.com/d3/d3-time-format/tree/v4.0.0#locale_format](https://github.com/d3/d3-time-format/tree/v4.0.0#locale_format)
 
-### Axis ticks
+### Axis ticks (v10.3.0+)
 
 The default output ticks are auto. You can custom your `tickInterval`, like `1day` or `1week`.
 
@@ -184,10 +184,22 @@ tickInterval 1day
 The pattern is:
 
 ```javascript
-/^([1-9][0-9]*)(minute|hour|day|week|month)$/;
+/^([1-9][0-9]*)(millisecond|second|minute|hour|day|week|month)$/;
 ```
 
 More info in: [https://github.com/d3/d3-time#interval_every](https://github.com/d3/d3-time#interval_every)
+
+Week-based `tickInterval`s start the week on sunday by default. If you wish to specify another weekday on which the `tickInterval` should start, use the `weekday` option:
+
+```mermaid-example
+gantt
+  tickInterval 1week
+  weekday monday
+```
+
+```warning
+`millisecond` and `second` support was added in vMERMAID_RELEASE_VERSION
+```
 
 ## Output in compact mode
 

@@ -19,12 +19,14 @@ let branchPos = {};
 let commitPos = {};
 let lanes = [];
 let maxPos = 0;
+let dir = 'LR';
 const clear = () => {
   branchPos = {};
   commitPos = {};
   allCommitsDict = {};
   maxPos = 0;
   lanes = [];
+  dir = 'LR';
 };
 
 /**
@@ -77,6 +79,10 @@ const drawCommits = (svg, commits, modifyGraph) => {
   const gLabels = svg.append('g').attr('class', 'commit-labels');
   let pos = 0;
 
+  if (dir === 'TB') {
+    pos = 30;
+  }
+
   const keys = Object.keys(commits);
   const sortedKeys = keys.sort((a, b) => {
     return commits[a].seq - commits[b].seq;
@@ -84,8 +90,9 @@ const drawCommits = (svg, commits, modifyGraph) => {
   sortedKeys.forEach((key) => {
     const commit = commits[key];
 
-    const y = branchPos[commit.branch].pos;
-    const x = pos + 10;
+    const y = dir === 'TB' ? pos + 10 : branchPos[commit.branch].pos;
+    const x = dir === 'TB' ? branchPos[commit.branch].pos : pos + 10;
+
     // Don't draw the commits now but calculate the positioning which is used by the branch lines etc.
     if (modifyGraph) {
       let typeClass;
@@ -208,7 +215,11 @@ const drawCommits = (svg, commits, modifyGraph) => {
         }
       }
     }
-    commitPos[commit.id] = { x: pos + 10, y: y };
+    if (dir === 'TB') {
+      commitPos[commit.id] = { x: x, y: pos + 10 };
+    } else {
+      commitPos[commit.id] = { x: pos + 10, y: y };
+    }
 
     // The first iteration over the commits are for positioning purposes, this
     // is required for drawing the lines. The circles and labels is drawn after the labels
@@ -240,14 +251,27 @@ const drawCommits = (svg, commits, modifyGraph) => {
           .attr('y', y + 13.5)
           .attr('width', bbox.width + 2 * py)
           .attr('height', bbox.height + 2 * py);
-        text.attr('x', pos + 10 - bbox.width / 2);
+
+        if (dir === 'TB') {
+          labelBkg.attr('x', x - (bbox.width + 4 * px + 5)).attr('y', y - 12);
+          text.attr('x', x - (bbox.width + 4 * px)).attr('y', y + bbox.height - 12);
+        }
+
+        if (dir !== 'TB') {
+          text.attr('x', pos + 10 - bbox.width / 2);
+        }
         if (gitGraphConfig.rotateCommitLabel) {
-          let r_x = -7.5 - ((bbox.width + 10) / 25) * 9.5;
-          let r_y = 10 + (bbox.width / 25) * 8.5;
-          wrapper.attr(
-            'transform',
-            'translate(' + r_x + ', ' + r_y + ') rotate(' + -45 + ', ' + pos + ', ' + y + ')'
-          );
+          if (dir === 'TB') {
+            text.attr('transform', 'rotate(' + -45 + ', ' + x + ', ' + y + ')');
+            labelBkg.attr('transform', 'rotate(' + -45 + ', ' + x + ', ' + y + ')');
+          } else {
+            let r_x = -7.5 - ((bbox.width + 10) / 25) * 9.5;
+            let r_y = 10 + (bbox.width / 25) * 8.5;
+            wrapper.attr(
+              'transform',
+              'translate(' + r_x + ', ' + r_y + ') rotate(' + -45 + ', ' + pos + ', ' + y + ')'
+            );
+          }
         }
       }
       if (commit.tag) {
@@ -280,6 +304,30 @@ const drawCommits = (svg, commits, modifyGraph) => {
           .attr('cy', ly)
           .attr('r', 1.5)
           .attr('class', 'tag-hole');
+
+        if (dir === 'TB') {
+          rect
+            .attr('class', 'tag-label-bkg')
+            .attr(
+              'points',
+              `
+            ${x},${pos + py}
+            ${x},${pos - py}
+            ${x + 10},${pos - h2 - py}
+            ${x + 10 + tagBbox.width + px},${pos - h2 - py}
+            ${x + 10 + tagBbox.width + px},${pos + h2 + py}
+            ${x + 10},${pos + h2 + py}`
+            )
+            .attr('transform', 'translate(12,12) rotate(45, ' + x + ',' + pos + ')');
+          hole
+            .attr('cx', x + px / 2)
+            .attr('cy', pos)
+            .attr('transform', 'translate(12,12) rotate(45, ' + x + ',' + pos + ')');
+          tag
+            .attr('x', x + 5)
+            .attr('y', pos + 3)
+            .attr('transform', 'translate(14,14) rotate(45, ' + x + ',' + pos + ')');
+        }
       }
     }
     pos += 50;
@@ -365,46 +413,94 @@ const drawArrow = (svg, commit1, commit2, allCommits) => {
     colorClassNum = branchPos[commit2.branch].index;
 
     const lineY = p1.y < p2.y ? findLane(p1.y, p2.y) : findLane(p2.y, p1.y);
+    const lineX = p1.x < p2.x ? findLane(p1.x, p2.x) : findLane(p2.x, p1.x);
 
-    if (p1.y < p2.y) {
-      lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY - radius} ${arc} ${p1.x + offset} ${lineY} L ${
-        p2.x - radius
-      } ${lineY} ${arc2} ${p2.x} ${lineY + offset} L ${p2.x} ${p2.y}`;
+    if (dir === 'TB') {
+      if (p1.x < p2.x) {
+        lineDef = `M ${p1.x} ${p1.y} L ${lineX - radius} ${p1.y} ${arc2} ${lineX} ${
+          p1.y + offset
+        } L ${lineX} ${p2.y - radius} ${arc} ${lineX + offset} ${p2.y} L ${p2.x} ${p2.y}`;
+      } else {
+        lineDef = `M ${p1.x} ${p1.y} L ${lineX + radius} ${p1.y} ${arc} ${lineX} ${
+          p1.y + offset
+        } L ${lineX} ${p2.y - radius} ${arc2} ${lineX - offset} ${p2.y} L ${p2.x} ${p2.y}`;
+      }
     } else {
-      lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY + radius} ${arc2} ${
-        p1.x + offset
-      } ${lineY} L ${p2.x - radius} ${lineY} ${arc} ${p2.x} ${lineY - offset} L ${p2.x} ${p2.y}`;
+      if (p1.y < p2.y) {
+        lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY - radius} ${arc} ${
+          p1.x + offset
+        } ${lineY} L ${p2.x - radius} ${lineY} ${arc2} ${p2.x} ${lineY + offset} L ${p2.x} ${p2.y}`;
+      } else {
+        lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY + radius} ${arc2} ${
+          p1.x + offset
+        } ${lineY} L ${p2.x - radius} ${lineY} ${arc} ${p2.x} ${lineY - offset} L ${p2.x} ${p2.y}`;
+      }
     }
   } else {
-    if (p1.y < p2.y) {
-      arc = 'A 20 20, 0, 0, 0,';
-      radius = 20;
-      offset = 20;
+    if (dir === 'TB') {
+      if (p1.x < p2.x) {
+        arc = 'A 20 20, 0, 0, 0,';
+        arc2 = 'A 20 20, 0, 0, 1,';
+        radius = 20;
+        offset = 20;
 
-      // Figure out the color of the arrow,arrows going down take the color from the destination branch
-      colorClassNum = branchPos[commit2.branch].index;
+        // Figure out the color of the arrow,arrows going down take the color from the destination branch
+        colorClassNum = branchPos[commit2.branch].index;
 
-      lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y - radius} ${arc} ${p1.x + offset} ${p2.y} L ${
-        p2.x
-      } ${p2.y}`;
-    }
-    if (p1.y > p2.y) {
-      arc = 'A 20 20, 0, 0, 0,';
-      radius = 20;
-      offset = 20;
+        lineDef = `M ${p1.x} ${p1.y} L ${p2.x - radius} ${p1.y} ${arc2} ${p2.x} ${
+          p1.y + offset
+        } L ${p2.x} ${p2.y}`;
+      }
+      if (p1.x > p2.x) {
+        arc = 'A 20 20, 0, 0, 0,';
+        arc2 = 'A 20 20, 0, 0, 1,';
+        radius = 20;
+        offset = 20;
 
-      // Arrows going up take the color from the source branch
-      colorClassNum = branchPos[commit1.branch].index;
-      lineDef = `M ${p1.x} ${p1.y} L ${p2.x - radius} ${p1.y} ${arc} ${p2.x} ${p1.y - offset} L ${
-        p2.x
-      } ${p2.y}`;
-    }
+        // Arrows going up take the color from the source branch
+        colorClassNum = branchPos[commit1.branch].index;
+        lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y - radius} ${arc2} ${p1.x - offset} ${
+          p2.y
+        } L ${p2.x} ${p2.y}`;
+      }
 
-    if (p1.y === p2.y) {
-      colorClassNum = branchPos[commit1.branch].index;
-      lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y - radius} ${arc} ${p1.x + offset} ${p2.y} L ${
-        p2.x
-      } ${p2.y}`;
+      if (p1.x === p2.x) {
+        colorClassNum = branchPos[commit1.branch].index;
+        lineDef = `M ${p1.x} ${p1.y} L ${p1.x + radius} ${p1.y} ${arc} ${p1.x + offset} ${
+          p2.y + radius
+        } L ${p2.x} ${p2.y}`;
+      }
+    } else {
+      if (p1.y < p2.y) {
+        arc = 'A 20 20, 0, 0, 0,';
+        radius = 20;
+        offset = 20;
+
+        // Figure out the color of the arrow,arrows going down take the color from the destination branch
+        colorClassNum = branchPos[commit2.branch].index;
+
+        lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y - radius} ${arc} ${p1.x + offset} ${p2.y} L ${
+          p2.x
+        } ${p2.y}`;
+      }
+      if (p1.y > p2.y) {
+        arc = 'A 20 20, 0, 0, 0,';
+        radius = 20;
+        offset = 20;
+
+        // Arrows going up take the color from the source branch
+        colorClassNum = branchPos[commit1.branch].index;
+        lineDef = `M ${p1.x} ${p1.y} L ${p2.x - radius} ${p1.y} ${arc} ${p2.x} ${p1.y - offset} L ${
+          p2.x
+        } ${p2.y}`;
+      }
+
+      if (p1.y === p2.y) {
+        colorClassNum = branchPos[commit1.branch].index;
+        lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y - radius} ${arc} ${p1.x + offset} ${p2.y} L ${
+          p2.x
+        } ${p2.y}`;
+      }
     }
   }
   svg
@@ -445,6 +541,13 @@ const drawBranches = (svg, branches) => {
     line.attr('y2', pos);
     line.attr('class', 'branch branch' + adjustIndexForTheme);
 
+    if (dir === 'TB') {
+      line.attr('y1', 30);
+      line.attr('x1', pos);
+      line.attr('y2', maxPos);
+      line.attr('x2', pos);
+    }
+
     lanes.push(pos);
 
     let name = branch.name;
@@ -467,7 +570,6 @@ const drawBranches = (svg, branches) => {
       .attr('y', -bbox.height / 2 + 8)
       .attr('width', bbox.width + 18)
       .attr('height', bbox.height + 4);
-
     label.attr(
       'transform',
       'translate(' +
@@ -476,7 +578,13 @@ const drawBranches = (svg, branches) => {
         (pos - bbox.height / 2 - 1) +
         ')'
     );
-    bkg.attr('transform', 'translate(' + -19 + ', ' + (pos - bbox.height / 2) + ')');
+    if (dir === 'TB') {
+      bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', 0);
+      label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + 0 + ')');
+    }
+    if (dir !== 'TB') {
+      bkg.attr('transform', 'translate(' + -19 + ', ' + (pos - bbox.height / 2) + ')');
+    }
   });
 };
 
@@ -495,15 +603,24 @@ export const draw = function (txt, id, ver, diagObj) {
 
   allCommitsDict = diagObj.db.getCommits();
   const branches = diagObj.db.getBranchesAsObjArray();
-
-  // Position branches vertically
+  dir = diagObj.db.getDirection();
+  const diagram = select(`[id="${id}"]`);
+  // Position branches
   let pos = 0;
   branches.forEach((branch, index) => {
-    branchPos[branch.name] = { pos, index };
-    pos += 50 + (gitGraphConfig.rotateCommitLabel ? 40 : 0);
-  });
+    const labelElement = drawText(branch.name);
+    const g = diagram.append('g');
+    const branchLabel = g.insert('g').attr('class', 'branchLabel');
+    const label = branchLabel.insert('g').attr('class', 'label branch-label');
+    label.node().appendChild(labelElement);
+    let bbox = labelElement.getBBox();
 
-  const diagram = select(`[id="${id}"]`);
+    branchPos[branch.name] = { pos, index };
+    pos += 50 + (gitGraphConfig.rotateCommitLabel ? 40 : 0) + (dir === 'TB' ? bbox.width / 2 : 0);
+    label.remove();
+    branchLabel.remove();
+    g.remove();
+  });
 
   drawCommits(diagram, allCommitsDict, false);
   if (gitGraphConfig.showBranches) {

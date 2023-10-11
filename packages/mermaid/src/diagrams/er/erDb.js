@@ -1,5 +1,4 @@
 import { log } from '../../logger.js';
-import mermaidAPI from '../../mermaidAPI.js';
 import * as configApi from '../../config.js';
 
 import {
@@ -10,7 +9,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 
 let entities = {};
 let relationships = [];
@@ -28,14 +27,13 @@ const Identification = {
   IDENTIFYING: 'IDENTIFYING',
 };
 
-export const parseDirective = function (statement, context, type) {
-  mermaidAPI.parseDirective(this, statement, context, type);
-};
-
-const addEntity = function (name) {
+const addEntity = function (name, alias = undefined) {
   if (entities[name] === undefined) {
-    entities[name] = { attributes: [] };
+    entities[name] = { attributes: [], alias: alias };
     log.info('Added new entity :', name);
+  } else if (entities[name] && !entities[name].alias && alias) {
+    entities[name].alias = alias;
+    log.info(`Add alias '${alias}' to entity '${name}'`);
   }
 
   return entities[name];
@@ -85,7 +83,6 @@ const clear = function () {
 export default {
   Cardinality,
   Identification,
-  parseDirective,
   getConfig: () => configApi.getConfig().er,
   addEntity,
   addAttributes,
