@@ -352,7 +352,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
  * and commitB's x-position
  */
 const hasOverlappingCommits = (commitA, commitB, allCommits) =>
-  Object.entries(allCommits).some(
+  Object.values(allCommits).some(
     (commitX) =>
       commitX.branch === commitA.branch && commitX.seq > commitA.seq && commitX.seq < commitB.seq
   );
