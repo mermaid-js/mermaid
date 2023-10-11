@@ -2,7 +2,7 @@ import { log } from '../../logger.js';
 import type { Group, SVG } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { Diagram } from '../../Diagram.js';
+import type { Diagram } from '../../Diagram.js';
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
