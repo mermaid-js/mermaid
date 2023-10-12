@@ -406,28 +406,38 @@ const drawArrow = (svg, commitA, commitB, allCommits) => {
     arc2 = 'A 10 10, 0, 0, 1,';
     radius = 10;
     offset = 10;
-    // Figure out the color of the arrow,arrows going down take the color from the destination branch
-    colorClassNum = branchPos[(p1.y > p2.y ? commitA : commitB).branch].index;
 
     const lineY = p1.y < p2.y ? findLane(p1.y, p2.y) : findLane(p2.y, p1.y);
     const lineX = p1.x < p2.x ? findLane(p1.x, p2.x) : findLane(p2.x, p1.x);
 
     if (dir === 'TB') {
       if (p1.x < p2.x) {
+        // Destination commit is on branch position left of source commit
+        // so render arrow leftward with colour of destination branch
+        colorClassNum = branchPos[commitB.branch].index;
         lineDef = `M ${p1.x} ${p1.y} L ${lineX - radius} ${p1.y} ${arc2} ${lineX} ${
           p1.y + offset
         } L ${lineX} ${p2.y - radius} ${arc} ${lineX + offset} ${p2.y} L ${p2.x} ${p2.y}`;
       } else {
+        // Destination commit is on branch position right of source commit
+        // so render arrow rightward with colour of source branch
+        colorClassNum = branchPos[commitA.branch].index;
         lineDef = `M ${p1.x} ${p1.y} L ${lineX + radius} ${p1.y} ${arc} ${lineX} ${
           p1.y + offset
         } L ${lineX} ${p2.y - radius} ${arc2} ${lineX - offset} ${p2.y} L ${p2.x} ${p2.y}`;
       }
     } else {
       if (p1.y < p2.y) {
+        // Destination commit is on branch positioned below source commit
+        // so render arrow downward with colour of destination branch
+        colorClassNum = branchPos[commitB.branch].index;
         lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY - radius} ${arc} ${
           p1.x + offset
         } ${lineY} L ${p2.x - radius} ${lineY} ${arc2} ${p2.x} ${lineY + offset} L ${p2.x} ${p2.y}`;
       } else {
+        // Destination commit is on branch positioned above source commit
+        // so render arrow upward with colour of source branch
+        colorClassNum = branchPos[commitA.branch].index;
         lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY + radius} ${arc2} ${
           p1.x + offset
         } ${lineY} L ${p2.x - radius} ${lineY} ${arc} ${p2.x} ${lineY - offset} L ${p2.x} ${p2.y}`;
