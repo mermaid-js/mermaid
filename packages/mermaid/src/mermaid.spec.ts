@@ -174,7 +174,7 @@ describe('when using mermaid and ', () => {
       await expect(mermaid.parse('graph TQ;A--x|text including URL space|B;')).rejects
         .toThrowErrorMatchingInlineSnapshot(`
         "Lexical error on line 1. Unrecognized text.
-        graph TQ;A--x|text include
+        graph TQ;A--x|text includ
         -----^"
       `);
     });
