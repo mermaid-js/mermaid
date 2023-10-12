@@ -14,12 +14,13 @@
   </head>
 
   <body>
-    <h1>Git diagram demo</h1>
+    <h1>Git graph demo</h1>
+    <h2>Simple "branch and merge" graph</h2>
     <pre class="mermaid">
     ---
-    title: Simple "branch and merge"
+    title: Simple "branch and merge" (left-to-right)
     ---
-    gitGraph:
+    gitGraph LR:
     commit
     branch newbranch
     checkout newbranch
@@ -27,12 +28,24 @@
     checkout main
     merge newbranch
     </pre>
-
     <pre class="mermaid">
     ---
-    title: Continuous development
+    title: Simple "branch and merge" (top-to-bottom)
     ---
-    gitGraph:
+    gitGraph TB:
+    commit
+    branch newbranch
+    checkout newbranch
+    commit
+    checkout main
+    merge newbranch
+    </pre>
+    <h2>Continuous development graph</h2>
+    <pre class="mermaid">
+    ---
+    title: Continuous development (left-to-right)
+    ---
+    gitGraph LR:
     commit
     branch develop
     checkout develop
@@ -46,7 +59,24 @@
     </pre>
     <pre class="mermaid">
     ---
-    title: Two-way merges
+    title: Continuous development (top-to-bottom)
+    ---
+    gitGraph TB:
+    commit
+    branch develop
+    checkout develop
+    commit
+    checkout main
+    merge develop
+    checkout develop
+    commit
+    checkout main
+    merge develop
+    </pre>
+    <h2>Two-way merges</h2>
+    <pre class="mermaid">
+    ---
+    title: Two-way merges (left-to-right)
     ---
     gitGraph:
     commit
@@ -64,9 +94,28 @@
     </pre>
     <pre class="mermaid">
     ---
-    title: Cherry-pick
+    title: Two-way merges (top-to-bottom)
     ---
-    gitGraph:
+    gitGraph TB:
+    commit
+    branch develop
+    checkout develop
+    commit
+    checkout main
+    merge develop
+    commit
+    checkout develop
+    merge main
+    commit
+    checkout main
+    merge develop
+    </pre>
+    <h2>Simple "cherry-pick" graph</h2>
+    <pre class="mermaid">
+    ---
+    title: Cherry-pick (left-to-right)
+    ---
+    gitGraph LR:
     commit
     branch newbranch
     checkout newbranch
@@ -81,9 +130,27 @@
     </pre>
     <pre class="mermaid">
     ---
-    title: Three branches
+    title: Cherry-pick (top-to-bottom)
     ---
-    gitGraph:
+    gitGraph TB:
+    commit
+    branch newbranch
+    checkout newbranch
+    commit id: "Pick me"
+    checkout main
+    commit
+    checkout newbranch
+    commit
+    checkout main
+    cherry-pick id: "Pick me"
+    merge newbranch
+    </pre>
+    <h2>Three branches graph</h2>
+    <pre class="mermaid">
+    ---
+    title: Three branches (left-to-right)
+    ---
+    gitGraph LR:
     commit
     branch develop
     checkout develop
@@ -99,7 +166,26 @@
     checkout main
     merge develop
     </pre>
-
+    <pre class="mermaid">
+    ---
+    title: Three branches (top-to-bottom)
+    ---
+    gitGraph TB:
+    commit
+    branch develop
+    checkout develop
+    commit
+    branch feature
+    checkout feature
+    commit
+    checkout main
+    merge feature id:"Direct to main"
+    checkout develop
+    merge feature
+    commit
+    checkout main
+    merge develop
+    </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       const ALLOWED_TAGS = [
