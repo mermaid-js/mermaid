@@ -10,7 +10,7 @@ interface CypressConfig {
 type CypressMermaidConfig = MermaidConfig & CypressConfig;
 
 interface CodeObject {
-  code: string;
+  code: string | string[];
   mermaid: CypressMermaidConfig;
 }
 
@@ -25,7 +25,7 @@ const batchId: string =
     : Cypress.env('CYPRESS_COMMIT') || Date.now().toString());
 
 export const mermaidUrl = (
-  graphStr: string,
+  graphStr: string | string[],
   options: CypressMermaidConfig,
   api: boolean
 ): string => {
@@ -82,7 +82,7 @@ export const urlSnapshotTest = (
 };
 
 export const renderGraph = (
-  graphStr: string,
+  graphStr: string | string[],
   options: CypressMermaidConfig = {},
   api = false
 ): void => {
