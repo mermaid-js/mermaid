@@ -932,6 +932,10 @@ context('Sequence diagram', () => {
   });
   context('db clear', () => {
     it('should render diagram after fixing destroy participant error', () => {
+      cy.on('uncaught:exception', (err) => {
+        return false;
+      });
+
       renderGraph([
         `sequenceDiagram
     Alice->>Bob: Hello Bob, how are you ?
