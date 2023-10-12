@@ -78,7 +78,7 @@
     ---
     title: Two-way merges (left-to-right)
     ---
-    gitGraph:
+    gitGraph LR:
     commit
     branch develop
     checkout develop
@@ -110,10 +110,72 @@
     checkout main
     merge develop
     </pre>
-    <h2>Simple "cherry-pick" graph</h2>
+    <h2>Cherry-pick from branch graph</h2>
     <pre class="mermaid">
     ---
-    title: Cherry-pick (left-to-right)
+    title: Cherry-pick from branch (left-to-right)
+    ---
+    gitGraph LR:
+    commit
+    branch newbranch
+    checkout newbranch
+    commit id: "Pick me"
+    checkout main
+    commit
+    checkout newbranch
+    commit
+    checkout main
+    cherry-pick id: "Pick me"
+    </pre>
+    <pre class="mermaid">
+    ---
+    title: Cherry-pick from branch (top-to-bottom)
+    ---
+    gitGraph TB:
+    commit
+    branch newbranch
+    checkout newbranch
+    commit id: "Pick me"
+    checkout main
+    commit
+    checkout newbranch
+    commit
+    checkout main
+    cherry-pick id: "Pick me"
+    </pre>
+    <h2>Cherry-pick from main graph</h2>
+    <pre class="mermaid">
+    ---
+    title: Cherry-pick from main (left-to-right)
+    ---
+    gitGraph LR:
+    commit
+    branch develop
+    commit
+    checkout main
+    commit id:"A"
+    checkout develop
+    commit
+    cherry-pick id: "A"
+    </pre>
+    <pre class="mermaid">
+    ---
+    title: Cherry-pick from main (top-to-bottom)
+    ---
+    gitGraph TB:
+    commit
+    branch develop
+    commit
+    checkout main
+    commit id:"A"
+    checkout develop
+    commit
+    cherry-pick id: "A"
+    </pre>
+    <h2>Cherry-pick then merge graph</h2>
+    <pre class="mermaid">
+    ---
+    title: Cherry-pick then merge (left-to-right)
     ---
     gitGraph LR:
     commit
@@ -130,7 +192,7 @@
     </pre>
     <pre class="mermaid">
     ---
-    title: Cherry-pick (top-to-bottom)
+    title: Cherry-pick then merge (top-to-bottom)
     ---
     gitGraph TB:
     commit
@@ -144,6 +206,35 @@
     checkout main
     cherry-pick id: "Pick me"
     merge newbranch
+    </pre>
+    <h2>Merge from main graph</h2>
+    <pre class="mermaid">
+    ---
+    title: Merge from main (left-to-right)
+    ---
+    gitGraph LR:
+    commit
+    branch develop
+    commit
+    checkout main
+    commit id:"A"
+    checkout develop
+    commit
+    merge main
+    </pre>
+    <pre class="mermaid">
+    ---
+    title: Merge from main (top-to-bottom)
+    ---
+    gitGraph TB:
+    commit
+    branch develop
+    commit
+    checkout main
+    commit id:"A"
+    checkout develop
+    commit
+    merge main
     </pre>
     <h2>Three branches graph</h2>
     <pre class="mermaid">
