@@ -1,7 +1,6 @@
 const getStyles = (options) =>
   `g.classGroup text {
-  fill: ${options.nodeBorder};
-  fill: ${options.classText};
+  fill: ${options.nodeBorder || options.classText};
   stroke: none;
   font-family: ${options.fontFamily};
   font-size: 10px;
