@@ -930,7 +930,7 @@ context('Sequence diagram', () => {
       });
     });
   });
-  context('db clear', () => {
+  context('render after error', () => {
     it('should render diagram after fixing destroy participant error', () => {
       cy.on('uncaught:exception', (err) => {
         return false;
