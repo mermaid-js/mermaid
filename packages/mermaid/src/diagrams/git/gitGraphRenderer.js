@@ -353,14 +353,10 @@ const drawCommits = (svg, commits, modifyGraph) => {
  */
 const hasOverlappingCommits = (commitA, commitB, allCommits) => {
   const isOnSourceBranch = (x) => x.branch === commitA.branch;
-  const isOnTargetBranch = (x) => x.branch === commitB.branch;
   const isBetweenCommits = (x) => x.seq > commitA.seq && x.seq < commitB.seq;
-  const isTargetMain = (x) => x.branch === getConfig().gitGraph.mainBranchName;
+  const sourceIsMain = commitA.branch === getConfig().gitGraph.mainBranchName;
   return Object.values(allCommits).some((commitX) => {
-    return (
-      (isOnSourceBranch(commitX) || (isOnTargetBranch(commitX) && !isTargetMain(commitX))) &&
-      isBetweenCommits(commitX)
-    );
+    return isBetweenCommits(commitX) && (sourceIsMain || isOnSourceBranch(commitX));
   });
 };
 
