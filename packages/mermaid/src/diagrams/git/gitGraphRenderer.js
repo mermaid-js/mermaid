@@ -351,17 +351,18 @@ const drawCommits = (svg, commits, modifyGraph) => {
  * commitA's x-position
  * and commitB's x-position
  */
-const hasOverlappingCommits = (commitA, commitB, allCommits) =>
-  Object.values(allCommits).some((commitX) => {
-    const isOnSourceBranch = (x) => x.branch === commitA.branch;
-    const isOnTargetBranch = (x) => x.branch === commitB.branch;
-    const isBetweenCommits = (x) => x.seq > commitA.seq && x.seq < commitB.seq;
-    const isTargetMain = (x) => x.branch === getConfig().gitGraph.mainBranchName;
+const hasOverlappingCommits = (commitA, commitB, allCommits) => {
+  const isOnSourceBranch = (x) => x.branch === commitA.branch;
+  const isOnTargetBranch = (x) => x.branch === commitB.branch;
+  const isBetweenCommits = (x) => x.seq > commitA.seq && x.seq < commitB.seq;
+  const isTargetMain = (x) => x.branch === getConfig().gitGraph.mainBranchName;
+  return Object.values(allCommits).some((commitX) => {
     return (
       (isOnSourceBranch(commitX) || (isOnTargetBranch(commitX) && !isTargetMain(commitX))) &&
       isBetweenCommits(commitX)
     );
   });
+};
 
 /**
  * This function find a lane in the y-axis that is not overlapping with any other lanes. This is
