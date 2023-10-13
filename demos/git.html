@@ -73,6 +73,33 @@
     checkout main
     merge develop
     </pre>
+    <h2>Merge feature to advanced main graph</h2>
+    <pre class="mermaid">
+    ---
+    title: Merge feature to advanced main (left-to-right)
+    ---
+    gitGraph LR:
+    commit
+    branch newbranch
+    checkout newbranch
+    commit
+    checkout main
+    commit
+    merge newbranch
+    </pre>
+    <pre class="mermaid">
+    ---
+    title: Merge feature to advanced main (top-to-bottom)
+    ---
+    gitGraph TB:
+    commit
+    branch newbranch
+    checkout newbranch
+    commit
+    checkout main
+    commit
+    merge newbranch
+    </pre>
     <h2>Two-way merges</h2>
     <pre class="mermaid">
     ---
@@ -236,46 +263,54 @@
     commit
     merge main
     </pre>
-    <h2>Three branches graph</h2>
+    <h2>Three branches and a cherry-pick from each graph</h2>
     <pre class="mermaid">
     ---
-    title: Three branches (left-to-right)
+    title: Three branches and a cherry-pick from each (left-to-right)
     ---
     gitGraph LR:
-    commit
+    commit id: "ZERO"
     branch develop
-    checkout develop
-    commit
-    branch feature
-    checkout feature
-    commit
+    commit id:"A"
     checkout main
-    merge feature id:"Direct to main"
+    commit id:"ONE"
     checkout develop
-    merge feature
-    commit
+    commit id:"B"
+    branch featureA
+    commit id:"FIX"
+    commit id: "FIX-2"
     checkout main
-    merge develop
+    commit id:"TWO"
+    cherry-pick id:"A"
+    commit id:"THREE"
+    cherry-pick id:"FIX"
+    checkout develop
+    commit id:"C"
+    merge featureA
     </pre>
     <pre class="mermaid">
     ---
-    title: Three branches (top-to-bottom)
+    title: Three branches and a cherry-pick from each (top-to-bottom)
     ---
     gitGraph TB:
-    commit
+    commit id: "ZERO"
     branch develop
-    checkout develop
-    commit
-    branch feature
-    checkout feature
-    commit
+    commit id:"A"
     checkout main
-    merge feature id:"Direct to main"
+    commit id:"ONE"
     checkout develop
-    merge feature
-    commit
+    commit id:"B"
+    branch featureA
+    commit id:"FIX"
+    commit id: "FIX-2"
     checkout main
-    merge develop
+    commit id:"TWO"
+    cherry-pick id:"A"
+    commit id:"THREE"
+    cherry-pick id:"FIX"
+    checkout develop
+    commit id:"C"
+    merge featureA
     </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
