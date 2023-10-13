@@ -341,7 +341,8 @@ const drawCommits = (svg, commits, modifyGraph) => {
  * Detect if there are commits
  * between commitA's x-position
  * and commitB's x-position on the
- * same branch as commitA
+ * same branch as commitA, where
+ * commitA isn't main
  *
  * @param {any} commitA
  * @param {any} commitB
@@ -350,8 +351,11 @@ const drawCommits = (svg, commits, modifyGraph) => {
  * If there are commits between
  * commitA's x-position
  * and commitB's x-position
+ * on the source branch, where
+ * source branch is not main
+ * return true
  */
-const hasOverlappingCommits = (commitA, commitB, allCommits) => {
+const shouldRerouteArrow = (commitA, commitB, allCommits) => {
   const isOnSourceBranch = (x) => x.branch === commitA.branch;
   const isBetweenCommits = (x) => x.seq > commitA.seq && x.seq < commitB.seq;
   const sourceIsMain = commitA.branch === getConfig().gitGraph.mainBranchName;
@@ -395,8 +399,8 @@ const findLane = (y1, y2, depth = 0) => {
 const drawArrow = (svg, commitA, commitB, allCommits) => {
   const p1 = commitPos[commitA.id];
   const p2 = commitPos[commitB.id];
-  const overlappingCommits = hasOverlappingCommits(commitA, commitB, allCommits);
-  // log.debug('drawArrow', p1, p2, overlappingCommits, commitA.id, commitB.id);
+  const arrowNeedsRerouting = shouldRerouteArrow(commitA, commitB, allCommits);
+  // log.debug('drawArrow', p1, p2, arrowNeedsReroute, commitA.id, commitB.id);
 
   let arc = '';
   let arc2 = '';
@@ -404,7 +408,7 @@ const drawArrow = (svg, commitA, commitB, allCommits) => {
   let offset = 0;
   let colorClassNum = branchPos[commitB.branch].index;
   let lineDef;
-  if (overlappingCommits) {
+  if (arrowNeedsRerouting) {
     arc = 'A 10 10, 0, 0, 0,';
     arc2 = 'A 10 10, 0, 0, 1,';
     radius = 10;
