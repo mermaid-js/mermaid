@@ -256,11 +256,12 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
   log.debug('in mergeBranch');
 };
 
-export const cherryPick = function (sourceId, targetId, tag, parentCommit) {
+export const cherryPick = function (sourceId, targetId, tag, parentCommitId) {
   log.debug('Entering cherryPick:', sourceId, targetId, tag);
   sourceId = common.sanitizeText(sourceId, configApi.getConfig());
   targetId = common.sanitizeText(targetId, configApi.getConfig());
   tag = common.sanitizeText(tag, configApi.getConfig());
+  parentCommitId = common.sanitizeText(parentCommitId, configApi.getConfig());
 
   if (!sourceId || commits[sourceId] === undefined) {
     let error = new Error(
@@ -278,9 +279,9 @@ export const cherryPick = function (sourceId, targetId, tag, parentCommit) {
   let sourceCommit = commits[sourceId];
   let sourceCommitBranch = sourceCommit.branch;
   if (sourceCommit.type === commitType.MERGE) {
-    if (!parentCommit) {
+    if (!parentCommitId) {
       let error = new Error(
-        'Incorrect usage of cherryPick: If the source commit is a merge commit, an immediate parent commit must be specified.'
+        'Incorrect usage of cherry-pick: If the source commit is a merge commit, an immediate parent commit must be specified.'
       );
       error.hash = {
         text: 'cherryPick ' + sourceId + ' ' + targetId,
@@ -291,7 +292,7 @@ export const cherryPick = function (sourceId, targetId, tag, parentCommit) {
       };
       throw error;
     }
-    if (!(Array.isArray(sourceCommit.parents) && sourceCommit.parents.includes(parentCommit))) {
+    if (!(Array.isArray(sourceCommit.parents) && sourceCommit.parents.includes(parentCommitId))) {
       let error = new Error(
         'Invalid operation: The specified parent commit is not an immediate parent of the cherry-picked commit.'
       );
@@ -342,11 +343,11 @@ export const cherryPick = function (sourceId, targetId, tag, parentCommit) {
       parents: [head == null ? null : head.id, sourceCommit.id],
       branch: curBranch,
       type: commitType.CHERRY_PICK,
-      tag: tag
-        ? `${tag}${sourceCommit.type === commitType.MERGE ? ` | parent: ${parentCommit}` : ''}`
-        : `cherry-pick: ${sourceCommit.id}${
-            sourceCommit.type === commitType.MERGE ? ` | parent: ${parentCommit}` : ''
-          }`,
+      tag:
+        tag ??
+        `cherry-pick: ${sourceCommit.id}${
+          sourceCommit.type === commitType.MERGE && ` | parent: ${parentCommitId}`
+        }`,
     };
     head = commit;
     commits[commit.id] = commit;
