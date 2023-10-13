@@ -28,18 +28,21 @@ export const removeScript = (txt: string): string => {
   return DOMPurify.sanitize(txt);
 };
 
-DOMPurify.addHook('afterSanitizeAttributes', function (node) {
-  // set all elements owning target to target=_blank
-  if (node.tagName === 'A' && node.hasAttribute('href') && 'target' in node) {
-    node.setAttribute('target', '_blank');
-    node.setAttribute('rel', 'noopener noreferrer');
+const TEMPORARY_ATTRIBUTE = 'data-temp-href-target';
+
+DOMPurify.addHook('beforeSanitizeAttributes', function (node) {
+  if (node.tagName === 'A' && node.hasAttribute('target')) {
+    node.setAttribute(TEMPORARY_ATTRIBUTE, node.getAttribute('target') || '');
   }
-  // set non-HTML/MathML links to xlink:show=new
-  if (
-    !node.hasAttribute('target') &&
-    (node.hasAttribute('xlink:href') || node.hasAttribute('href'))
-  ) {
-    node.setAttribute('xlink:show', 'new');
+});
+
+DOMPurify.addHook('afterSanitizeAttributes', function (node) {
+  if (node.tagName === 'A' && node.hasAttribute(TEMPORARY_ATTRIBUTE)) {
+    node.setAttribute('target', node.getAttribute(TEMPORARY_ATTRIBUTE) || '');
+    node.removeAttribute(TEMPORARY_ATTRIBUTE);
+    if (node.getAttribute('target') === '_blank') {
+      node.setAttribute('rel', 'noopener');
+    }
   }
 });
 
