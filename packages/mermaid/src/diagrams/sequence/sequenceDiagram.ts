@@ -10,4 +10,7 @@ export const diagram: DiagramDefinition = {
   db,
   renderer,
   styles,
+  init: ({ wrap }) => {
+    db.setWrap(wrap);
+  },
 };

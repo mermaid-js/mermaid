@@ -1,7 +1,17 @@
 # Announcements
 
-## [Special cases broke Microsoft Zune and can ruin your code base too](https://www.mermaidchart.com/blog/posts/special-cases-broke-microsoft-zune-and-can-ruin-your-code-base-too/)
+<br />
 
-23 August 2023 · 15 mins
+<a href="https://www.producthunt.com/posts/mermaid-chart?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-mermaid&#0045;chart" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=416671&theme=light" alt="Mermaid&#0032;Chart - A&#0032;smarter&#0032;way&#0032;to&#0032;create&#0032;diagrams | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 
-Read about the pitfalls of special cases in programming, illustrating how they can lead to complexity, diminish readability, and create maintenance challenges.
+## Calling all fans of Mermaid and Mermaid Chart! 🎉
+
+We’ve officially made our Product Hunt debut, and would love any and all support from the community!
+
+[Click here](https://www.producthunt.com/posts/mermaid-chart?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-mermaid-chart) to check out our Product Hunt launch.
+
+Feel free to drop us a comment and let us know what you think. All new sign ups will receive a 30-day free trial of our Pro subscription, plus 25% off your first year.
+
+We’re on a mission to make text-based diagramming fun again. And we need your help to make that happen.
+
+Your support means the world to us. Thank you for being part of the diagramming movement.

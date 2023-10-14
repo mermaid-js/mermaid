@@ -1,6 +1,5 @@
 import type { MermaidConfig } from '../config.type.js';
 import { frontMatterRegex } from './regexes.js';
-import type { DiagramDB } from './types.js';
 // The "* as yaml" part is necessary for tree-shaking
 import * as yaml from 'js-yaml';
 
@@ -11,43 +10,51 @@ interface FrontMatterMetadata {
   config?: MermaidConfig;
 }
 
+export interface FrontMatterResult {
+  text: string;
+  metadata: FrontMatterMetadata;
+}
+
 /**
  * Extract and parse frontmatter from text, if present, and sets appropriate
  * properties in the provided db.
  * @param text - The text that may have a YAML frontmatter.
- * @param db - Diagram database, could be of any diagram.
- * @param setDiagramConfig - Optional function to set diagram config.
  * @returns text with frontmatter stripped out
  */
-export function extractFrontMatter(
-  text: string,
-  db: DiagramDB,
-  setDiagramConfig?: (config: MermaidConfig) => void
-): string {
+export function extractFrontMatter(text: string): FrontMatterResult {
   const matches = text.match(frontMatterRegex);
   if (!matches) {
-    return text;
+    return {
+      text,
+      metadata: {},
+    };
   }
 
-  const parsed: FrontMatterMetadata = yaml.load(matches[1], {
-    // To support config, we need JSON schema.
-    // https://www.yaml.org/spec/1.2/spec.html#id2803231
-    schema: yaml.JSON_SCHEMA,
-  }) as FrontMatterMetadata;
+  let parsed: FrontMatterMetadata =
+    yaml.load(matches[1], {
+      // To support config, we need JSON schema.
+      // https://www.yaml.org/spec/1.2/spec.html#id2803231
+      schema: yaml.JSON_SCHEMA,
+    }) ?? {};
 
-  if (parsed?.title) {
-    // toString() is necessary because YAML could parse the title as a number/boolean
-    db.setDiagramTitle?.(parsed.title.toString());
+  // To handle runtime data type changes
+  parsed = typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+
+  const metadata: FrontMatterMetadata = {};
+
+  // Only add properties that are explicitly supported, if they exist
+  if (parsed.displayMode) {
+    metadata.displayMode = parsed.displayMode.toString();
+  }
+  if (parsed.title) {
+    metadata.title = parsed.title.toString();
+  }
+  if (parsed.config) {
+    metadata.config = parsed.config;
   }
 
-  if (parsed?.displayMode) {
-    // toString() is necessary because YAML could parse the title as a number/boolean
-    db.setDisplayMode?.(parsed.displayMode.toString());
-  }
-
-  if (parsed?.config) {
-    setDiagramConfig?.(parsed.config);
-  }
-
-  return text.slice(matches[0].length);
+  return {
+    text: text.slice(matches[0].length),
+    metadata,
+  };
 }

@@ -10,6 +10,8 @@ import {
   axisBottom,
   axisTop,
   timeFormat,
+  timeMillisecond,
+  timeSecond,
   timeMinute,
   timeHour,
   timeDay,
@@ -495,20 +497,37 @@ export const draw = function (text, id, version, diagObj) {
    * @param w
    * @param h
    * @param tasks
-   * @param excludes
-   * @param includes
+   * @param {unknown[]} excludes
+   * @param {unknown[]} includes
    */
   function drawExcludeDays(theGap, theTopPad, theSidePad, w, h, tasks, excludes, includes) {
-    const minTime = tasks.reduce(
-      (min, { startTime }) => (min ? Math.min(min, startTime) : startTime),
-      0
-    );
-    const maxTime = tasks.reduce((max, { endTime }) => (max ? Math.max(max, endTime) : endTime), 0);
-    const dateFormat = diagObj.db.getDateFormat();
+    if (excludes.length === 0 && includes.length === 0) {
+      return;
+    }
+
+    let minTime;
+    let maxTime;
+    for (const { startTime, endTime } of tasks) {
+      if (minTime === undefined || startTime < minTime) {
+        minTime = startTime;
+      }
+      if (maxTime === undefined || endTime > maxTime) {
+        maxTime = endTime;
+      }
+    }
+
     if (!minTime || !maxTime) {
       return;
     }
 
+    if (dayjs(maxTime).diff(dayjs(minTime), 'year') > 5) {
+      log.warn(
+        'The difference between the min and max time is more than 5 years. This will cause performance issues. Skipping drawing exclude days.'
+      );
+      return;
+    }
+
+    const dateFormat = diagObj.db.getDateFormat();
     const excludeRanges = [];
     let range = null;
     let d = dayjs(minTime);
@@ -573,7 +592,7 @@ export const draw = function (text, id, version, diagObj) {
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
       .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
 
-    const reTickInterval = /^([1-9]\d*)(minute|hour|day|week|month)$/;
+    const reTickInterval = /^([1-9]\d*)(millisecond|second|minute|hour|day|week|month)$/;
     const resultTickInterval = reTickInterval.exec(
       diagObj.db.getTickInterval() || conf.tickInterval
     );
@@ -584,6 +603,12 @@ export const draw = function (text, id, version, diagObj) {
       const weekday = diagObj.db.getWeekday() || conf.weekday;
 
       switch (interval) {
+        case 'millisecond':
+          bottomXAxis.ticks(timeMillisecond.every(every));
+          break;
+        case 'second':
+          bottomXAxis.ticks(timeSecond.every(every));
+          break;
         case 'minute':
           bottomXAxis.ticks(timeMinute.every(every));
           break;
@@ -625,6 +650,12 @@ export const draw = function (text, id, version, diagObj) {
         const weekday = diagObj.db.getWeekday() || conf.weekday;
 
         switch (interval) {
+          case 'millisecond':
+            topXAxis.ticks(timeMillisecond.every(every));
+            break;
+          case 'second':
+            topXAxis.ticks(timeSecond.every(every));
+            break;
           case 'minute':
             topXAxis.ticks(timeMinute.every(every));
             break;

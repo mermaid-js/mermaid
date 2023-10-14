@@ -136,7 +136,7 @@ const runThrowsErrors = async function (
   }
 
   // generate the id of the diagram
-  const idGenerator = new utils.initIdGenerator(conf.deterministicIds, conf.deterministicIDSeed);
+  const idGenerator = new utils.InitIDGenerator(conf.deterministicIds, conf.deterministicIDSeed);
 
   let txt: string;
   const errors: DetailedError[] = [];
