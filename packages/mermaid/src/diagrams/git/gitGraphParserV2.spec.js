@@ -690,7 +690,7 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
     const commits = parser.yy.getCommits();
     const cherryPickCommitID = Object.keys(commits)[4];
-    expect(commits[cherryPickCommitID].tag).toBe('cherry-pick: M | parent: B');
+    expect(commits[cherryPickCommitID].tag).toBe('cherry-pick:M|parent:B');
     expect(commits[cherryPickCommitID].branch).toBe('release');
   });
 

@@ -345,8 +345,8 @@ export const cherryPick = function (sourceId, targetId, tag, parentCommitId) {
       type: commitType.CHERRY_PICK,
       tag:
         tag ??
-        `cherry-pick: ${sourceCommit.id}${
-          sourceCommit.type === commitType.MERGE ? ` | parent: ${parentCommitId}` : ''
+        `cherry-pick:${sourceCommit.id}${
+          sourceCommit.type === commitType.MERGE ? `|parent:${parentCommitId}` : ''
         }`,
     };
     head = commit;
