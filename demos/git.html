@@ -234,34 +234,94 @@
     cherry-pick id: "Pick me"
     merge newbranch
     </pre>
-    <h2>Merge from main graph</h2>
+    <h2>Merge from main onto undeveloped branch graph</h2>
     <pre class="mermaid">
     ---
-    title: Merge from main (left-to-right)
+    title: Merge from main onto undeveloped branch (left-to-right)
     ---
     gitGraph LR:
     commit
     branch develop
     commit
     checkout main
-    commit id:"A"
-    checkout develop
     commit
+    checkout develop
     merge main
     </pre>
     <pre class="mermaid">
     ---
-    title: Merge from main (top-to-bottom)
+    title: Merge from main onto undeveloped branch (top-to-bottom)
     ---
     gitGraph TB:
     commit
     branch develop
     commit
     checkout main
-    commit id:"A"
+    commit
+    checkout develop
+    merge main
+    </pre>
+    <h2>Merge from main onto developed branch graph</h2>
+    <pre class="mermaid">
+    ---
+    title: Merge from main onto developed branch (left-to-right)
+    ---
+    gitGraph LR:
+    commit
+    branch develop
+    commit
+    checkout main
+    commit
     checkout develop
     commit
     merge main
+    </pre>
+    <pre class="mermaid">
+    ---
+    title: Merge from main onto developed branch (top-to-bottom)
+    ---
+    gitGraph TB:
+    commit
+    branch develop
+    commit
+    checkout main
+    commit
+    checkout develop
+    commit
+    merge main
+    </pre>
+    <h2>Two branches from same commit graph</h2>
+    <pre class="mermaid">
+    ---
+    title: Two branches from same commit (left-to-right)
+    ---
+    gitGraph LR:
+    commit
+    commit
+    branch feature-001
+    commit
+    commit
+    checkout main
+    branch feature-002
+    commit
+    checkout feature-001
+    merge feature-002
+    </pre>
+    <pre class="mermaid">
+    ---
+    title: Two branches from same commit (top-to-bottom)
+    ---
+    gitGraph TB:
+    commit
+    commit
+    branch feature-001
+    commit
+    commit
+    checkout main
+    branch feature-002
+    commit
+    checkout feature-001
+    merge feature-002
     </pre>
     <h2>Three branches and a cherry-pick from each graph</h2>
     <pre class="mermaid">
