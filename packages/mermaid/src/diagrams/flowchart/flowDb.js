@@ -1,6 +1,6 @@
 import { select } from 'd3';
 import utils from '../../utils.js';
-import * as configApi from '../../config.js';
+import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
 import { log } from '../../logger.js';
 import {
@@ -15,7 +15,7 @@ import {
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
-let config = configApi.getConfig();
+let config = getConfig();
 let vertices = {};
 let edges = [];
 let classes = {};
@@ -84,7 +84,7 @@ export const addVertex = function (_id, textObj, type, style, classes, dir, prop
   }
   vertexCounter++;
   if (textObj !== undefined) {
-    config = configApi.getConfig();
+    config = getConfig();
     txt = sanitizeText(textObj.text.trim());
     vertices[id].labelType = textObj.type;
     // strip quotes if string starts and ends with a quote
@@ -277,7 +277,7 @@ const setTooltip = function (ids, tooltip) {
 const setClickFun = function (id, functionName, functionArgs) {
   let domId = lookUpDomId(id);
   // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
-  if (configApi.getConfig().securityLevel !== 'loose') {
+  if (getConfig().securityLevel !== 'loose') {
     return;
   }
   if (functionName === undefined) {
@@ -766,7 +766,7 @@ export const lex = {
   firstGraph,
 };
 export default {
-  defaultConfig: () => configApi.defaultConfig.flowchart,
+  defaultConfig: () => defaultConfig.flowchart,
   setAccTitle,
   getAccTitle,
   getAccDescription,

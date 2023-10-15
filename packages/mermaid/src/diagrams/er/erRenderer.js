@@ -1,7 +1,7 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { line, curveBasis, select } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import utils from '../../utils.js';
 import erMarkers from './erMarkers.js';
