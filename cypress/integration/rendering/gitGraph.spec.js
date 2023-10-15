@@ -701,4 +701,38 @@ gitGraph TB:
       {}
     );
   });
+  it('34: should render a simple gitgraph with two branches from same commit', () => {
+    imgSnapshotTest(
+      `gitGraph
+      commit
+      commit
+      branch feature-001
+      commit
+      commit
+      checkout main
+      branch feature-002
+      commit
+      checkout feature-001
+      merge feature-002
+      `,
+      {}
+    );
+  });
+  it('35: should render a simple gitgraph with two branches from same commit | Vertical Branch', () => {
+    imgSnapshotTest(
+      `gitGraph
+      commit
+      commit
+      branch feature-001
+      commit
+      commit
+      checkout main
+      branch feature-002
+      commit
+      checkout feature-001
+      merge feature-002
+      `,
+      {}
+    );
+  });
 });
