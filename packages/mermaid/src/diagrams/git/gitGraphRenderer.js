@@ -358,9 +358,8 @@ const drawCommits = (svg, commits, modifyGraph) => {
 const shouldRerouteArrow = (commitA, commitB, allCommits) => {
   const isOnSourceBranch = (x) => x.branch === commitA.branch;
   const isBetweenCommits = (x) => x.seq > commitA.seq && x.seq < commitB.seq;
-  const sourceIsMain = commitA.branch === getConfig().gitGraph.mainBranchName;
   return Object.values(allCommits).some((commitX) => {
-    return isBetweenCommits(commitX) && (sourceIsMain || isOnSourceBranch(commitX));
+    return isBetweenCommits(commitX) && isOnSourceBranch(commitX);
   });
 };
 
