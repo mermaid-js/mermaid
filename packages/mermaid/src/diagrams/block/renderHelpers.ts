@@ -145,8 +145,8 @@ export async function insertBlockPositioned(elem: any, block: any, db: any) {
   //   return;
   // }
   // Add the element to the DOM to size it
-  // const obj = db.getBlock(node.id);
-  // const nodeEl = await insertNode(elem, node);
+  const obj = db.getBlock(node.id);
+  const nodeEl = await insertNode(elem, node);
   positionNode(node);
 }
 
