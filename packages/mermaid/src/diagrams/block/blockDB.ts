@@ -1,9 +1,8 @@
 // import type { BlockDB } from './blockTypes.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
-import { BlockConfig, BlockType, Block, Link } from './blockTypes.js';
+import type { BlockConfig, BlockType, Block, Link } from './blockTypes.js';
 
 import * as configApi from '../../config.js';
-// import common from '../common/common.js';
 import {
   // setAccTitle,
   // getAccTitle,
@@ -37,9 +36,8 @@ const populateBlockDatabase = (blockList: Block[], parent: Block): void => {
       if (block.children) {
         populateBlockDatabase(block.children, block);
       }
-      if (block.type !== 'column-setting') {
-        children.push(block);
-      }
+
+      children.push(block);
     }
   }
   parent.children = children;
@@ -79,9 +77,10 @@ export const generateId = () => {
 
 type ISetHierarchy = (block: Block[]) => void;
 const setHierarchy = (block: Block[]): void => {
+  rootBlock.children = block;
   populateBlockDatabase(block, rootBlock);
-  log.debug('The hierarchy', JSON.stringify(block, null, 2));
-  blocks = block;
+  log.debug('The hierarchy', JSON.stringify(rootBlock, null, 2));
+  blocks = rootBlock.children;
 };
 
 type IAddLink = (link: Link) => Link;

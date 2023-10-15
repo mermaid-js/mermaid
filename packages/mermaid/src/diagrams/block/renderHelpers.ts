@@ -5,28 +5,23 @@ import { ContainerElement } from 'd3';
 import type { Block } from './blockTypes.js';
 import { BlockDB } from './blockDB.js';
 
+interface Node {
+  classes: string;
+}
+
 function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
   const vertex = block;
 
-  /**
-   * Variable for storing the classes for the vertex
-   *
-   * @type {string}
-   */
   let classStr = 'default';
-  if ((vertex?.classes?.length || []) > 0) {
-    classStr = vertex.classes.join(' ');
+  if ((vertex?.classes?.length || 0) > 0) {
+    classStr = (vertex?.classes || []).join(' ');
   }
   classStr = classStr + ' flowchart-label';
 
   // We create a SVG label, either by delegating to addHtmlLabel or manually
-  let vertexNode;
-  const labelData = { width: 0, height: 0 };
-
   let radious = 0;
   let _shape = '';
   let layoutOptions = {};
-  console.log('This is the type:', vertex.type);
   // Set the shape based parameters
   switch (vertex.type) {
     case 'round':
@@ -140,20 +135,18 @@ async function calculateBlockSize(elem: any, block: any, db: any) {
   const boundingBox = nodeEl.node().getBBox();
   const obj = db.getBlock(node.id);
   obj.size = { width: boundingBox.width, height: boundingBox.height, x: 0, y: 0, node: nodeEl };
-  console.log('Here boundsíng', boundingBox.width);
   db.setBlock(obj);
   nodeEl.remove();
 }
 
 export async function insertBlockPositioned(elem: any, block: any, db: any) {
-  console.log('Here insertBlockPositioned');
   const node = getNodeFromBlock(block, db, true);
   // if (node.type === 'composite') {
   //   return;
   // }
   // Add the element to the DOM to size it
-  const obj = db.getBlock(node.id);
-  const nodeEl = await insertNode(elem, node);
+  // const obj = db.getBlock(node.id);
+  // const nodeEl = await insertNode(elem, node);
   positionNode(node);
 }
 

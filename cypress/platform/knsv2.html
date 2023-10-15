@@ -65,27 +65,62 @@
   <body>
     <pre id="diagram" class="mermaid">
 block-beta
-  id1("Wide 1")
-  %%id2("2")
   block
-      id3["I am a wide one"]
-      block
-        id44("A final one")
-        id45("B final one")
-      end
+  columns 1
+    id1
+    id2
+    id3("Wider then")
   end
-  id4("Another final one")
-
+  id4
     </pre>
 
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
+block-beta
+  block
+  columns 1
+  block
+    columns 3
+    id1
+    id2
+    id2.1
+    %%id2.2
+  end
+  id48
+  end
+  id3
+%%  id3
+%%  id4
+  %% block
+    %% columns 2
+    %% id2
+    %% id3
+  %% end
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+  block
+    columns 1
+    id1
+    id2
+    %%id2.1
+  end
+  id3
+%%  id3
+%%  id4
+  %% block
+    %% columns 2
+    %% id2
+    %% id3
+  %% end
+    </pre>
+    <pre id="diagram" class="mermaid2">
 block-beta
   id1
   block
   id2
   end
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 block-beta
   id1["Hello"]
   block
@@ -96,7 +131,7 @@ block-beta
     id5["World"]
   end
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 block-beta
   columns 2
   block

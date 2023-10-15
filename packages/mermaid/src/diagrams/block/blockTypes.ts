@@ -39,6 +39,7 @@ export interface Block {
   };
   node?: any;
   columns?: number; // | TBlockColumnsDefaultValue;
+  classes?: string[];
 }
 
 export interface Link {
