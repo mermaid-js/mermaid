@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-console */
-const mermaid = require('mermaid');
+import mermaid from 'mermaid';
 import mindmap from '@mermaid-js/mermaid-mindmap';
 
 const render = async (graph) => {
