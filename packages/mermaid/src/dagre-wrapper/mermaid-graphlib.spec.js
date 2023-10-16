@@ -419,7 +419,7 @@ describe('extractDescendants', function () {
       return {};
     });
   });
-  it('Simple case of one level decendants GLB9', function () {
+  it('Simple case of one level descendants GLB9', function () {
     /*
     subgraph A
       a
