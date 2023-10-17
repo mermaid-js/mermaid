@@ -720,7 +720,7 @@ gitGraph TB:
   });
   it('35: should render a simple gitgraph with two branches from same commit | Vertical Branch', () => {
     imgSnapshotTest(
-      `gitGraph
+      `gitGraph TB:
       commit
       commit
       branch feature-001
