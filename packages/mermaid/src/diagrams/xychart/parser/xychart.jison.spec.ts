@@ -386,7 +386,7 @@ describe('Testing xychart jison file', () => {
       'xychart-beta\nx-axis xAxisName\ny-axis yAxisName\n bar "barTitle with space"   [  +23 , -4aa5  , 56.6 ]   ';
     expect(parserFnConstructor(str)).toThrow();
   });
-  it('parse multiple bar and line varient 1', () => {
+  it('parse multiple bar and line variant 1', () => {
     const str =
       'xychart-beta\nx-axis xAxisName\ny-axis yAxisName\n bar barTitle1 [23, 45, 56.6] \n line lineTitle1 [11, 45.5, 67, 23] \n bar barTitle2 [13, 42, 56.89] \n line lineTitle2 [45, 99, 012]';
     expect(parserFnConstructor(str)).not.toThrow();
@@ -409,7 +409,7 @@ describe('Testing xychart jison file', () => {
       [45, 99, 12]
     );
   });
-  it('parse multiple bar and line varient 2', () => {
+  it('parse multiple bar and line variant 2', () => {
     const str = `
     xychart-beta horizontal
     title Basic xychart

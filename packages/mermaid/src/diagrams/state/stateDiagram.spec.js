@@ -212,14 +212,14 @@ describe('state diagram, ', function () {
 
       parser.parse(str);
     });
-    it('should handle state defintions with separation of id', function () {
+    it('should handle state definitions with separation of id', function () {
       const str = `stateDiagram\n
         state "Long state description" as state1
         `;
 
       parser.parse(str);
     });
-    it('should handle state defintions with separation of id', function () {
+    it('should handle state definitions with separation of id', function () {
       const str = `stateDiagram
       state "Not Shooting State" as NotShooting {
         state "Idle mode" as Idle
@@ -360,7 +360,7 @@ describe('state diagram, ', function () {
 
       parser.parse(str);
     });
-    it('should handle notes for composit states', function () {
+    it('should handle notes for composite states', function () {
       const str = `stateDiagram\n
         [*] --> NotShooting
 
