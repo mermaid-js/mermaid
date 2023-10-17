@@ -704,14 +704,14 @@ gitGraph TB:
   it('34: should render a simple gitgraph with two branches from same commit', () => {
     imgSnapshotTest(
       `gitGraph
-      commit
-      commit
+      commit id:"1-abcdefg"
+      commit id:"2-abcdefg"
       branch feature-001
-      commit
-      commit
+      commit id:"3-abcdefg"
+      commit id:"4-abcdefg"
       checkout main
       branch feature-002
-      commit
+      commit id:"5-abcdefg"
       checkout feature-001
       merge feature-002
       `,
@@ -721,14 +721,14 @@ gitGraph TB:
   it('35: should render a simple gitgraph with two branches from same commit | Vertical Branch', () => {
     imgSnapshotTest(
       `gitGraph TB:
-      commit
-      commit
+      commit id:"1-abcdefg"
+      commit id:"2-abcdefg"
       branch feature-001
-      commit
-      commit
+      commit id:"3-abcdefg"
+      commit id:"4-abcdefg"
       checkout main
       branch feature-002
-      commit
+      commit id:"5-abcdefg"
       checkout feature-001
       merge feature-002
       `,
