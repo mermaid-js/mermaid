@@ -284,11 +284,10 @@ export const cherryPick = function (sourceId, targetId, tag, parentCommitId) {
         'Incorrect usage of cherry-pick: If the source commit is a merge commit, an immediate parent commit must be specified.'
       );
       error.hash = {
-        text: 'cherryPick ' + sourceId + ' ' + targetId,
-        token: 'cherryPick ' + sourceId + ' ' + targetId,
+        text: `cherryPick ${sourceId} ${targetId}`,
+        token: `cherryPick ${sourceId} ${targetId}`,
         line: '1',
         loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
-        expected: ['cherry-pick abc'],
       };
       throw error;
     }
@@ -297,11 +296,10 @@ export const cherryPick = function (sourceId, targetId, tag, parentCommitId) {
         'Invalid operation: The specified parent commit is not an immediate parent of the cherry-picked commit.'
       );
       error.hash = {
-        text: 'cherryPick ' + sourceId + ' ' + targetId,
-        token: 'cherryPick ' + sourceId + ' ' + targetId,
+        text: `cherryPick ${sourceId} ${targetId}`,
+        token: `cherryPick ${sourceId} ${targetId}`,
         line: '1',
         loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
-        expected: ['cherry-pick abc'],
       };
       throw error;
     }
