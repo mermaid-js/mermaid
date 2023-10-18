@@ -83,26 +83,26 @@ Points are used to plot a circle inside the quadrantChart. The syntax is `<text>
 
 ## Chart Configurations
 
-| Parameter                         | Description                                                                                       | Default value |
-| --------------------------------- | ------------------------------------------------------------------------------------------------- | :-----------: |
-| chartWidth                        | Width of the chart                                                                                |      500      |
-| chartHeight                       | Height of the chart                                                                               |      500      |
-| titlePadding                      | Top and Bottom padding of the title                                                               |      10       |
-| titleFontSize                     | Title font size                                                                                   |      20       |
-| quadrantPadding                   | Padding outside all the quadrants                                                                 |       5       |
-| quadrantTextTopPadding            | Quadrant text top padding when text is drawn on top ( not data points are there)                  |       5       |
-| quadrantLabelFontSize             | Quadrant text font size                                                                           |      16       |
-| quadrantInternalBorderStrokeWidth | Border stroke width inside the quadrants                                                          |       1       |
-| quadrantExternalBorderStrokeWidth | Quadrant external border stroke width                                                             |       2       |
-| xAxisLabelPadding                 | Top and bottom padding of x-axis text                                                             |       5       |
-| xAxisLabelFontSize                | X-axis texts font size                                                                            |      16       |
-| xAxisPosition                     | Position of x-axis (top , bottom) if there are points the x-axis will alway be rendered in bottom |     'top'     |
-| yAxisLabelPadding                 | Left and Right padding of y-axis text                                                             |       5       |
-| yAxisLabelFontSize                | Y-axis texts font size                                                                            |      16       |
-| yAxisPosition                     | Position of y-axis (left , right)                                                                 |    'left'     |
-| pointTextPadding                  | Padding between point and the below text                                                          |       5       |
-| pointLabelFontSize                | Point text font size                                                                              |      12       |
-| pointRadius                       | Radius of the point to be drawn                                                                   |       5       |
+| Parameter                         | Description                                                                                        | Default value |
+| --------------------------------- | -------------------------------------------------------------------------------------------------- | :-----------: |
+| chartWidth                        | Width of the chart                                                                                 |      500      |
+| chartHeight                       | Height of the chart                                                                                |      500      |
+| titlePadding                      | Top and Bottom padding of the title                                                                |      10       |
+| titleFontSize                     | Title font size                                                                                    |      20       |
+| quadrantPadding                   | Padding outside all the quadrants                                                                  |       5       |
+| quadrantTextTopPadding            | Quadrant text top padding when text is drawn on top ( not data points are there)                   |       5       |
+| quadrantLabelFontSize             | Quadrant text font size                                                                            |      16       |
+| quadrantInternalBorderStrokeWidth | Border stroke width inside the quadrants                                                           |       1       |
+| quadrantExternalBorderStrokeWidth | Quadrant external border stroke width                                                              |       2       |
+| xAxisLabelPadding                 | Top and bottom padding of x-axis text                                                              |       5       |
+| xAxisLabelFontSize                | X-axis texts font size                                                                             |      16       |
+| xAxisPosition                     | Position of x-axis (top , bottom) if there are points the x-axis will always be rendered in bottom |     'top'     |
+| yAxisLabelPadding                 | Left and Right padding of y-axis text                                                              |       5       |
+| yAxisLabelFontSize                | Y-axis texts font size                                                                             |      16       |
+| yAxisPosition                     | Position of y-axis (left , right)                                                                  |    'left'     |
+| pointTextPadding                  | Padding between point and the below text                                                           |       5       |
+| pointLabelFontSize                | Point text font size                                                                               |      12       |
+| pointRadius                       | Radius of the point to be drawn                                                                    |       5       |
 
 ## Chart Theme Variables
 

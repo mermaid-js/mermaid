@@ -561,7 +561,7 @@ export const addEdges = function (edges, diagObj, graph, svg) {
 };
 
 // TODO: break out and share with dagre wrapper. The current code in dagre wrapper also adds
-// adds the line to the graph, but we don't need that here. This is why we cant use the dagre
+// adds the line to the graph, but we don't need that here. This is why we can't use the dagre
 // wrapper directly for this
 /**
  * Add the markers to the edge depending on the type of arrow is
