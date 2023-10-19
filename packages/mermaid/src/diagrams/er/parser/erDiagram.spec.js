@@ -92,7 +92,7 @@ describe('when parsing ER diagram it...', function () {
       });
     });
 
-    it('cannot contain % because it interfers with parsing comments', function () {
+    it('cannot contain % because it interferes with parsing comments', function () {
       expect(() => {
         erDiagram.parser.parse(`erDiagram\n "Blo%rf"\n`);
         const entities = erDb.getEntities();

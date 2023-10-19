@@ -3,7 +3,7 @@ import type { Selection } from 'd3';
 import { select } from 'd3';
 import svgDraw from './svgDraw.js';
 import { log } from '../../logger.js';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import type { Diagram } from '../../Diagram.js';
 import type { MermaidConfig } from '../../config.type.js';
