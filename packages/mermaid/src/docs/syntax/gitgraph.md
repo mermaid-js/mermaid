@@ -513,16 +513,23 @@ Here, we have changed the default main branch name to `MetroLine1`.
 
 ## Orientation (v10.3.0+)
 
-In Mermaid, the default orientation is Left to Right. The branches are lined vertically.
+Mermaid supports two graph orientations: **Left-to-Right** (default) and **Top-to-Bottom**.
+
+You can set this with either `LR:` (for [**Left-to-Right**](#left-to-right-default-lr)) or `TB:` (for [**Top-to-Bottom**](#top-to-bottom-tb)) after `gitGraph`.
+
+### Left to Right (default, `LR:`)
+
+In Mermaid, the default orientation is for commits to run from left to right and for branches to be stacked on top of one another.
+
+However, you can set this explicitly with `LR:` after `gitGraph`.
 
 Usage example:
 
 ```mermaid-example
-    gitGraph
+    gitGraph LR:
        commit
        commit
        branch develop
-       commit
        commit
        commit
        checkout main
@@ -533,9 +540,11 @@ Usage example:
        commit
 ```
 
-Sometimes we may want to change the orientation. Currently, Mermaid supports two orientations: **Left to Right**(default) and **Top to Bottom**.
+### Top to Bottom (`TB:`)
 
-In order to change the orientation from top to bottom i.e. branches lined horizontally, you need to add `TB` along with `gitGraph`.
+In `TB` (**Top-to-Bottom**) orientation, the commits run from top to bottom of the graph and branches are arranged side-by-side.
+
+To orient the graph this way, you need to add `TB:` after gitGraph.
 
 Usage example:
 
@@ -544,7 +553,6 @@ Usage example:
        commit
        commit
        branch develop
-       commit
        commit
        commit
        checkout main

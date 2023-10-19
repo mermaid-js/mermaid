@@ -4,7 +4,7 @@ import svgDraw, { ACTOR_TYPE_WIDTH, drawText, fixLifeLineHeights } from './svgDr
 import { log } from '../../logger.js';
 import common from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import assignWithDepth from '../../assignWithDepth.js';
 import utils from '../../utils.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
@@ -91,7 +91,7 @@ export const bounds = {
       stopy: undefined,
     };
     this.verticalPos = 0;
-    setConf(configApi.getConfig());
+    setConf(getConfig());
   },
   updateVal: function (obj, key, val, fun) {
     if (obj[key] === undefined) {
@@ -747,7 +747,7 @@ function adjustCreatedDestroyedData(
  * @param diagObj - A standard diagram containing the db and the text and type etc of the diagram
  */
 export const draw = function (_text: string, id: string, _version: string, diagObj: Diagram) {
-  const { securityLevel, sequence } = configApi.getConfig();
+  const { securityLevel, sequence } = getConfig();
   conf = sequence;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;

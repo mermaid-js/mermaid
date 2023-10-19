@@ -4,7 +4,9 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/ecosystem/integrations-community.md](../../packages/mermaid/src/docs/ecosystem/integrations-community.md).
 
-# Integrations - community
+# Integrations
+
+## Official integration: [Mermaid Chart](./mermaid-chart.md)
 
 We're excited about the growth of the Mermaid community, and the number of plugins and integrations that have been created with Mermaid.
 
@@ -39,6 +41,8 @@ Below are a list of community plugins and integrations created with Mermaid.
   - [Mermaid plugin for GitBook](https://github.com/wwformat/gitbook-plugin-mermaid-pdf)
 - [LiveBook](https://livebook.dev) ✅
 - [Atlassian Products](https://www.atlassian.com)
+  - [Mermaid Charts & Diagrams for Confluence](https://marketplace.atlassian.com/apps/1222572/)
+  - [Mermaid Charts & Diagrams for Jira](https://marketplace.atlassian.com/apps/1224537/)
   - [Mermaid Live Editor for Confluence Cloud](https://marketplace.atlassian.com/apps/1231571/mermaid-live-editor-for-confluence?hosting=cloud&tab=overview)
   - [Mermaid Plugin for Confluence](https://marketplace.atlassian.com/apps/1214124/mermaid-plugin-for-confluence?hosting=server&tab=overview)
   - [CloudScript.io Addon](https://marketplace.atlassian.com/apps/1219878/cloudscript-io-mermaid-addon?hosting=cloud&tab=overview)
@@ -47,7 +51,7 @@ Below are a list of community plugins and integrations created with Mermaid.
   - [Mermaid Macro](https://www.redmine.org/plugins/redmine_mermaid_macro)
   - [redmine-mermaid](https://github.com/styz/redmine_mermaid)
   - [markdown-for-mermaid-plugin](https://github.com/jamieh-mongolian/markdown-for-mermaid-plugin)
-- [JetBrains IDE eg Pycharm](https://www.jetbrains.com/go/guide/tips/mermaid-js-support-in-markdown/)
+- [Mermaid Plugin for JetBrains IDEs](https://plugins.jetbrains.com/plugin/20146-mermaid)
 - [mermerd](https://github.com/KarnerTh/mermerd)
 - Visual Studio Code [Polyglot Interactive Notebooks](https://github.com/dotnet/interactive#net-interactive)
 
