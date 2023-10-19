@@ -211,4 +211,4 @@ const themes = {
 };
 ```
 
-The actual options and values for the colors are defined in **src/theme/theme-[xyz].js**. If you provide the options your diagram needs in the existing theme files then the theming will work smoothly without hiccups.
+The actual options and values for the colors are defined in **src/theme/theme-[xyz].js**. If you provide the options your diagram needs in the existing theme files then the theming will work smoothly without hiccups here.
