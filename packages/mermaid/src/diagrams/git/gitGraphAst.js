@@ -257,10 +257,10 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
 
 export const cherryPick = function (sourceId, targetId, tag, parentCommitId) {
   log.debug('Entering cherryPick:', sourceId, targetId, tag);
-  sourceId = common.sanitizeText(sourceId, configApi.getConfig());
-  targetId = common.sanitizeText(targetId, configApi.getConfig());
-  tag = common.sanitizeText(tag, configApi.getConfig());
-  parentCommitId = common.sanitizeText(parentCommitId, configApi.getConfig());
+  sourceId = common.sanitizeText(sourceId, getConfig());
+  targetId = common.sanitizeText(targetId, getConfig());
+  tag = common.sanitizeText(tag, getConfig());
+  parentCommitId = common.sanitizeText(parentCommitId, getConfig());
 
   if (!sourceId || commits[sourceId] === undefined) {
     let error = new Error(
