@@ -803,8 +803,14 @@ const insertChildren = (nodeArray, parentLookupDb) => {
  */
 
 export const draw = async function (text, id, _version, diagObj) {
+  // Add temporary render element
+  diagObj.db.clear();
   nodeDb = {};
   portPos = {};
+  diagObj.db.setGen('gen-2');
+  // Parse the graph definition
+  diagObj.parser.parse(text);
+
   const renderEl = select('body').append('div').attr('style', 'height:400px').attr('id', 'cy');
   let graph = {
     id: 'root',
