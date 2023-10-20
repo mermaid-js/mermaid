@@ -183,13 +183,13 @@ Communication tools and platforms
   - [mkdocs-material](https://github.com/squidfunk/mkdocs-material), check the [docs](https://squidfunk.github.io/mkdocs-material/reference/diagrams/)
 - [Type Doc](https://typedoc.org/)
   - [typedoc-plugin-mermaid](https://www.npmjs.com/package/typedoc-plugin-mermaid)
-- [Docsy Hugo Theme](https://www.docsy.dev/docs/adding-content/lookandfeel/#diagrams-with-mermaid) (native support in theme)
+- [Docsy Hugo Theme](https://www.docsy.dev/docs/adding-content/lookandfeel/#diagrams-with-mermaid) (native support in theme)✅
 - [Codedoc](https://codedoc.cc/)
   - [codedoc-mermaid-plugin](https://www.npmjs.com/package/codedoc-mermaid-plugin)
 - [mdbook](https://rust-lang.github.io/mdBook/index.html)
   - [mdbook-mermaid](https://github.com/badboy/mdbook-mermaid)
 - [Quarto](https://quarto.org/)
-- [Typora](https://typora.io/) ([native support](https://support.typora.io/Draw-Diagrams-With-Markdown/#mermaid))
+- [Typora](https://typora.io/) ([native support](https://support.typora.io/Draw-Diagrams-With-Markdown/#mermaid))✅
 
 ### Browser Extensions
 
