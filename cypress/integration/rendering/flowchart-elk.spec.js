@@ -340,7 +340,7 @@ flowchart-elk TB
     flowchart-elk LR
     id1(Start)-->id2(Stop)
     style id1 fill:#f9f,stroke:#333,stroke-width:4px
-    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
       `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
@@ -707,7 +707,7 @@ flowchart-elk LR
     A:::someclass --> B["\`The **cat** in the hat\`"]:::someclass
     id1(Start)-->id2(Stop)
     style id1 fill:#f9f,stroke:#333,stroke-width:4px
-    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
     classDef someclass fill:#f96
 `,
           { flowchart: { titleTopMargin: 0 } }
@@ -779,7 +779,7 @@ flowchart-elk LR
     A:::someclass --> B["\`The **cat** in the hat\`"]:::someclass
     id1(Start)-->id2(Stop)
     style id1 fill:#f9f,stroke:#333,stroke-width:4px
-    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
     classDef someclass fill:#f96
 `,
           { flowchart: { titleTopMargin: 0 } }
