@@ -26,7 +26,7 @@ describe('Git Graph diagram', () => {
       `gitGraph
        commit id: "Normal Commit"
        commit id: "Reverse Commit" type: REVERSE
-       commit id: "Hightlight Commit" type: HIGHLIGHT
+       commit id: "Highlight Commit" type: HIGHLIGHT
       `,
       {}
     );
@@ -36,7 +36,7 @@ describe('Git Graph diagram', () => {
       `gitGraph
        commit id: "Normal Commit with tag" tag: "v1.0.0"
        commit id: "Reverse Commit with tag" type: REVERSE tag: "RC_1"
-       commit id: "Hightlight Commit" type: HIGHLIGHT  tag: "8.8.4"
+       commit id: "Highlight Commit" type: HIGHLIGHT  tag: "8.8.4"
       `,
       {}
     );
@@ -102,7 +102,7 @@ describe('Git Graph diagram', () => {
       {}
     );
   });
-  it('8: should render a simple gitgraph with more than 8 branchs &  overriding variables', () => {
+  it('8: should render a simple gitgraph with more than 8 branches &  overriding variables', () => {
     imgSnapshotTest(
       `%%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
         'gitBranchLabel0': '#ffffff',
@@ -358,7 +358,7 @@ gitGraph
       `gitGraph TB:
        commit id: "Normal Commit"
        commit id: "Reverse Commit" type: REVERSE
-       commit id: "Hightlight Commit" type: HIGHLIGHT
+       commit id: "Highlight Commit" type: HIGHLIGHT
       `,
       {}
     );
@@ -368,7 +368,7 @@ gitGraph
       `gitGraph TB:
        commit id: "Normal Commit with tag" tag: "v1.0.0"
        commit id: "Reverse Commit with tag" type: REVERSE tag: "RC_1"
-       commit id: "Hightlight Commit" type: HIGHLIGHT  tag: "8.8.4"
+       commit id: "Highlight Commit" type: HIGHLIGHT  tag: "8.8.4"
       `,
       {}
     );
@@ -434,7 +434,7 @@ gitGraph
       {}
     );
   });
-  it('22: should render a simple gitgraph with more than 8 branchs &  overriding variables | Vertical Branch', () => {
+  it('22: should render a simple gitgraph with more than 8 branches &  overriding variables | Vertical Branch', () => {
     imgSnapshotTest(
       `%%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
         'gitBranchLabel0': '#ffffff',

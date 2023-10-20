@@ -203,7 +203,7 @@ class Theme {
         this['surfacePeer' + i] || adjust(this.mainBkg, { h: 30, s: -30, l: -(-7 + i * 4) });
     }
 
-    // Setup teh label color for the set
+    // Setup the label color for the set
     this.scaleLabelColor = this.scaleLabelColor || (this.darkMode ? 'black' : this.labelTextColor);
 
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
