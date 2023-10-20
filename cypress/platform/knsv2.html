@@ -27,7 +27,6 @@
       .mermaid {
         border: 1px solid #ddd;
         margin: 10px;
-        background: pink;
       }
       .mermaid2 {
         display: none;
@@ -40,7 +39,7 @@
         background-size: 20px 20px;
         background-position: 0 0, 10px 10px;
         background-repeat: repeat;
-        border: 1px solid red;
+        border: 2px solid rgb(131, 142, 205);
       }
       .malware {
         position: fixed;
@@ -63,29 +62,53 @@
     </style>
   </head>
   <body>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 block-beta
   block
+    id3("Wider then")
+  end
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+    columns 3
+    space:2
+    id1("Wider then")
+    space:9
+    space
+    id2{{"Wider then"}}
+    space
+    id3("Wider then")
+    space
+    space
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
   columns 1
+  block
     id1
     id2
-    id3("Wider then")
+    block
+      columns 1
+      id3("Wider then")
+      id5(("id5"))
+    end
   end
   id4
     </pre>
 
     <pre id="diagram" class="mermaid2">
 block-beta
-  block
   columns 1
   block
-    columns 3
-    id1
-    id2
-    id2.1
-    %%id2.2
-  end
-  id48
+    columns 1
+    block
+      columns 3
+      id1
+      id2
+      id2.1(("XYZ"))
+      %%id2.2
+    end
+    id48
   end
   id3
 %%  id3
@@ -124,7 +147,7 @@ block-beta
 block-beta
   id1["Hello"]
   block
-    columns 2
+    columns 3
     id2["to"]
     id3["the"]
     id4["World"]
