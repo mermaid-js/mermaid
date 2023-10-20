@@ -13,6 +13,7 @@ import {
   clear as commonClear,
 } from '../../commonDb.js';
 import { log } from '../../logger.js';
+import clone from 'lodash-es/clone.js';
 
 // Initialize the node database for simple lookups
 let blockDatabase: Record<string, Block> = {};
@@ -37,7 +38,16 @@ const populateBlockDatabase = (blockList: Block[], parent: Block): void => {
         populateBlockDatabase(block.children, block);
       }
 
-      children.push(block);
+      if (block.type === 'space') {
+        for (let j = 0; j < block.width; j++) {
+          const newBlock = clone(block);
+          newBlock.id = newBlock.id + '-' + j;
+          blockDatabase[newBlock.id] = newBlock;
+          children.push(newBlock);
+        }
+      } else {
+        children.push(block);
+      }
     }
   }
   parent.children = children;
@@ -57,12 +67,38 @@ const clear = (): void => {
 
 type ITypeStr2Type = (typeStr: string) => BlockType;
 export function typeStr2Type(typeStr: string) {
+  log.debug('typeStr2Type', typeStr);
   // TODO: add all types
   switch (typeStr) {
     case '[]':
       return 'square';
     case '()':
+      log.debug('we have a round');
       return 'round';
+    case '(())':
+      return 'circle';
+    case '>]':
+      return 'rect_left_inv_arrow';
+    case '{}':
+      return 'question';
+    case '{{}}':
+      return 'hexagon';
+    case '([])':
+      return 'stadium';
+    case '[[]]':
+      return 'subroutine';
+    case '[()]':
+      return 'cylinder';
+    case '((()))':
+      return 'doublecircle';
+    case '[//]':
+      return 'lean_right';
+    case '[\\\\]':
+      return 'lean_left';
+    case '[/\\]':
+      return 'trapezoid';
+    case '[\\/]':
+      return 'inv_trapezoid';
     default:
       return 'square';
   }

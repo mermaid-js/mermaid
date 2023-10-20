@@ -163,7 +163,7 @@ describe('Block diagram', function () {
 
       expect(blocks[0].children.length).toBe(2);
       expect(blocks[0].id).not.toBe(undefined);
-      expect(blocks[0].label).toBe(blocks[0].id);
+      expect(blocks[0].label).toBe('');
       expect(blocks[0].type).toBe('composite');
 
       const aBlock = blocks[0].children[0];
@@ -196,12 +196,12 @@ describe('Block diagram', function () {
 
       expect(blocks[0].children.length).toBe(2);
       expect(blocks[0].id).not.toBe(undefined);
-      expect(blocks[0].label).toBe(blocks[0].id);
+      expect(blocks[0].label).toBe('');
       expect(blocks[0].type).toBe('composite');
 
       expect(secondComposite.children.length).toBe(1);
       expect(secondComposite.id).not.toBe(undefined);
-      expect(secondComposite.label).toBe(secondComposite.id);
+      expect(secondComposite.label).toBe('');
       expect(secondComposite.type).toBe('composite');
 
       expect(aBlock.id).not.toBe(aBlock);
@@ -284,7 +284,7 @@ describe('Block diagram', function () {
 
       block.parse(str);
     });
-    it.skip('empty blocks', async () => {
+    it('empty blocks', async () => {
       const str = `block-beta
         columns 3
         space
@@ -308,7 +308,7 @@ describe('Block diagram', function () {
         columns 2
         mc["Memcache"]:2::black
         `;
-
+      const apa = 'apan hopar i träden';
       block.parse(str);
     });
 

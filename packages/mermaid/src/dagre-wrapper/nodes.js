@@ -358,7 +358,6 @@ const rect = async (parent, node) => {
 };
 
 const composite = async (parent, node) => {
-  console.log('This got called');
   const { shapeSvg, bbox, halfPadding } = await labelHelper(
     parent,
     node,
@@ -1075,7 +1074,6 @@ export const clear = () => {
 };
 
 export const positionNode = (node) => {
-  console.log('Node id = ', node.id);
   const el = nodeElems[node.id];
   log.trace(
     'Transforming node',

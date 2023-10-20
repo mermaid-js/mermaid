@@ -22,15 +22,21 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
   let radious = 0;
   let _shape = '';
   let layoutOptions = {};
+  let padding;
   // Set the shape based parameters
   switch (vertex.type) {
     case 'round':
       radious = 5;
       _shape = 'rect';
       break;
+    // case 'composite-subgraph':
+    //   radious = 0;
+    //   _shape = 'composite';
+    //   break;
     case 'composite':
-      radious = 4;
+      radious = 0;
       _shape = 'composite';
+      padding = 0;
       break;
     case 'square':
       _shape = 'rect';
@@ -119,7 +125,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     positioned,
     type: vertex.type,
     // props: vertex.props,
-    padding: getConfig()?.flowchart?.padding || 0,
+    padding: padding ?? (getConfig()?.flowchart?.padding || 0),
   };
   return node;
 }
@@ -139,15 +145,17 @@ async function calculateBlockSize(elem: any, block: any, db: any) {
   nodeEl.remove();
 }
 
-export async function insertBlockPositioned(elem: any, block: any, db: any) {
+export async function insertBlockPositioned(elem: any, block: Block, db: any) {
   const node = getNodeFromBlock(block, db, true);
   // if (node.type === 'composite') {
   //   return;
   // }
   // Add the element to the DOM to size it
   const obj = db.getBlock(node.id);
-  const nodeEl = await insertNode(elem, node);
-  positionNode(node);
+  if (obj.type !== 'space') {
+    const nodeEl = await insertNode(elem, node);
+    positionNode(node);
+  }
 }
 
 export async function performOperations(

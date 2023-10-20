@@ -13,6 +13,7 @@
 %x acc_descr
 %x acc_descr_multiline
 %x string
+%x space
 %x md_string
 %x NODE
 
@@ -43,6 +44,9 @@ CRLF \u000D\u000A
 ["]                     this.pushState("string");
 <string>["]             this.popState();
 <string>[^"]*           return "STR";
+space[:]\d+            {  yytext = yytext.replace(/space\:/,'');yy.getLogger().info('SPACE NUM (LEX)', yytext); return 'SPACE_BLOCK'; }
+space                  { yytext = '1'; yy.getLogger().info('COLUMNS (LEX)', yytext); return 'SPACE_BLOCK'; }
+<string>[^"]*           return "STR";
 "style"               return 'STYLE';
 "default"             return 'DEFAULT';
 "linkStyle"           return 'LINKSTYLE';
@@ -64,7 +68,7 @@ accDescr\s*"{"\s*                                { this.pushState("acc_descr_mul
 .*direction\s+LR[^\n]*                                      return 'direction_lr';
 
 // Start of nodes with shapes and description
-"-)"                   { yy.getLogger().info('Lex: -)'); this.pushState('NODE');return 'NODE_D START'; }
+"-)"                   { yy.getLogger().info('Lex: -)'); this.pushState('NODE');return 'NODE_DSTART'; }
 "(-"                   { yy.getLogger().info('Lex: (-'); this.pushState('NODE');return 'NODE_DSTART'; }
 "))"                   { yy.getLogger().info('Lex: ))'); this.pushState('NODE');return 'NODE_DSTART';  }
 ")"                    { yy.getLogger().info('Lex: )'); this.pushState('NODE');return 'NODE_DSTART';      }
@@ -167,6 +171,8 @@ link
 statement
   : nodeStatement
   | columnsStatement
+  | SPACE_BLOCK
+    { const num=parseInt($1); const spaceId = yy.generateId(); $$ = { id: spaceId, type:'space', label:'', width: num, children: [] }}
   | blockStatement
 //   SPACELIST node       { yy.getLogger().info('Node: ',$2.id);yy.addNode($1.length, $2.id, $2.descr, $2.type);  }
 // 	| SPACELIST ICON       { yy.getLogger().info('Icon: ',$2);yy.decorateNode({icon: $2}); }
@@ -182,7 +188,7 @@ statement
 
 nodeStatement
   : nodeStatement link node { yy.getLogger().info('Rule: nodeStatement (nodeStatement link node) '); $$ = {id: $1.id}; }
-  | node { yy.getLogger().info('Rule: nodeStatement (node) ', $1); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1)}; }
+  | node { yy.getLogger().info('Rule: nodeStatement (node) ', $1); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1.typeStr)}; }
   ;
 
 columnsStatement
