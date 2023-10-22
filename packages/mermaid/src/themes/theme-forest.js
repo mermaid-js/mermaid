@@ -128,7 +128,7 @@ class Theme {
       this['cScaleInv' + i] = this['cScaleInv' + i] || adjust(this['cScale' + i], { h: 180 });
     }
 
-    // Setup teh label color for the set
+    // Setup the label color for the set
     this.scaleLabelColor =
       this.scaleLabelColor !== 'calculated' && this.scaleLabelColor
         ? this.scaleLabelColor
