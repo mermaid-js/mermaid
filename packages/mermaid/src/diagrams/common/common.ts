@@ -30,13 +30,13 @@ export const removeScript = (txt: string): string => {
 
 const TEMPORARY_ATTRIBUTE = 'data-temp-href-target';
 
-DOMPurify.addHook('beforeSanitizeAttributes', function (node) {
+DOMPurify.addHook('beforeSanitizeAttributes', (node: Element) => {
   if (node.tagName === 'A' && node.hasAttribute('target')) {
     node.setAttribute(TEMPORARY_ATTRIBUTE, node.getAttribute('target') || '');
   }
 });
 
-DOMPurify.addHook('afterSanitizeAttributes', function (node) {
+DOMPurify.addHook('afterSanitizeAttributes', (node: Element) => {
   if (node.tagName === 'A' && node.hasAttribute(TEMPORARY_ATTRIBUTE)) {
     node.setAttribute('target', node.getAttribute(TEMPORARY_ATTRIBUTE) || '');
     node.removeAttribute(TEMPORARY_ATTRIBUTE);
