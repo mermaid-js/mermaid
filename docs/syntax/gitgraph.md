@@ -405,7 +405,81 @@ Let see an example:
        commit id:"C"
 ```
 
+```mermaid-example
+    gitGraph
+       commit id: "ZERO"
+       branch develop
+       commit id:"A"
+       checkout main
+       commit id:"ONE"
+       checkout develop
+       commit id:"B"
+       checkout main
+       commit id:"TWO"
+       cherry-pick id:"A"
+       commit id:"THREE"
+       checkout develop
+       commit id:"C"
+```
+
+```mermaid
+    gitGraph
+       commit id: "ZERO"
+       branch develop
+       commit id:"A"
+       checkout main
+       commit id:"ONE"
+       checkout develop
+       commit id:"B"
+       checkout main
+       commit id:"TWO"
+       cherry-pick id:"A"
+       commit id:"THREE"
+       checkout develop
+       commit id:"C"
+```
+
 Cherry Picking Merge Commit:
+
+```mermaid-example
+    gitGraph
+        commit id: "ZERO"
+        branch develop
+        branch release
+        commit id:"A"
+        checkout main
+        commit id:"ONE"
+        checkout develop
+        commit id:"B"
+        checkout main
+        merge develop id:"MERGE"
+        commit id:"TWO"
+        checkout release
+        cherry-pick id:"MERGE" parent:"B"
+        commit id:"THREE"
+        checkout develop
+        commit id:"C"
+```
+
+```mermaid
+    gitGraph
+        commit id: "ZERO"
+        branch develop
+        branch release
+        commit id:"A"
+        checkout main
+        commit id:"ONE"
+        checkout develop
+        commit id:"B"
+        checkout main
+        merge develop id:"MERGE"
+        commit id:"TWO"
+        checkout release
+        cherry-pick id:"MERGE" parent:"B"
+        commit id:"THREE"
+        checkout develop
+        commit id:"C"
+```
 
 ```mermaid-example
     gitGraph
