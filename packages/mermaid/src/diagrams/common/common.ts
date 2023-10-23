@@ -30,21 +30,21 @@ export const removeScript = (txt: string): string => {
 
 const TEMPORARY_ATTRIBUTE = 'data-temp-href-target';
 
-DOMPurify.addHook('beforeSanitizeAttributes', function (node) {
-  if (node.tagName === 'A' && node.hasAttribute('target')) {
-    node.setAttribute(TEMPORARY_ATTRIBUTE, node.getAttribute('target') || '');
-  }
-});
+// DOMPurify.addHook('beforeSanitizeAttributes', (node: Element) => {
+//   if (node.tagName === 'A' && node.hasAttribute('target')) {
+//     node.setAttribute(TEMPORARY_ATTRIBUTE, node.getAttribute('target') || '');
+//   }
+// });
 
-DOMPurify.addHook('afterSanitizeAttributes', function (node) {
-  if (node.tagName === 'A' && node.hasAttribute(TEMPORARY_ATTRIBUTE)) {
-    node.setAttribute('target', node.getAttribute(TEMPORARY_ATTRIBUTE) || '');
-    node.removeAttribute(TEMPORARY_ATTRIBUTE);
-    if (node.getAttribute('target') === '_blank') {
-      node.setAttribute('rel', 'noopener');
-    }
-  }
-});
+// DOMPurify.addHook('afterSanitizeAttributes', (node: Element) => {
+//   if (node.tagName === 'A' && node.hasAttribute(TEMPORARY_ATTRIBUTE)) {
+//     node.setAttribute('target', node.getAttribute(TEMPORARY_ATTRIBUTE) || '');
+//     node.removeAttribute(TEMPORARY_ATTRIBUTE);
+//     if (node.getAttribute('target') === '_blank') {
+//       node.setAttribute('rel', 'noopener');
+//     }
+//   }
+// });
 
 const sanitizeMore = (text: string, config: MermaidConfig) => {
   if (config.flowchart?.htmlLabels !== false) {
