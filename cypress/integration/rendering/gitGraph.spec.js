@@ -735,4 +735,34 @@ gitGraph TB:
       {}
     );
   });
+  it('36: should render GitGraph with branch that is not used immediately', () => {
+    imgSnapshotTest(
+      `gitGraph LR:
+      commit
+      branch x
+      checkout main
+      commit
+      checkout x
+      commit
+      checkout main
+      merge x
+      `,
+      {}
+    );
+  });
+  it('37: should render GitGraph with branch that is not used immediately | Vertical Branch', () => {
+    imgSnapshotTest(
+      `gitGraph TB:
+      commit
+      branch x
+      checkout main
+      commit
+      checkout x
+      commit
+      checkout main
+      merge x
+      `,
+      {}
+    );
+  });
 });
