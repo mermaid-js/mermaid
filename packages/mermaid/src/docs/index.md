@@ -31,7 +31,7 @@ features:
   - title: 🏆 Award winning!
     details: 2019 JavaScript Open Source Award winner for "The Most Exciting Use of Technology".
     link: https://osawards.com/javascript/2019
-  - title: 🎉 We are on Product Hunt!
-    details: We would love any and all support from the Mermaid community!
-    link: https://www.producthunt.com/posts/mermaid-chart
+  - title: 🥰 Mermaid + Mermaid Chart
+    details: Mermaid Chart is a major supporter of the Mermaid project.
+    link: https://www.mermaidchart.com/
 ---

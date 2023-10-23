@@ -78,8 +78,8 @@ function textSanitizer(text: string) {
 function setTmpSVGG(SVGG: Group) {
   tmpSVGGroup = SVGG;
 }
-function setOrientation(oriantation: string) {
-  if (oriantation === 'horizontal') {
+function setOrientation(orientation: string) {
+  if (orientation === 'horizontal') {
     xyChartConfig.chartOrientation = 'horizontal';
   } else {
     xyChartConfig.chartOrientation = 'vertical';

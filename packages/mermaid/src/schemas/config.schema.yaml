@@ -221,7 +221,7 @@ properties:
     type: number
     default: 16
 
-$defs: # JSON Schema definition (maybe we should move these to a seperate file)
+$defs: # JSON Schema definition (maybe we should move these to a separate file)
   BaseDiagramConfig:
     # TODO: More config needs to be moved here
     title: Base Diagram Config
