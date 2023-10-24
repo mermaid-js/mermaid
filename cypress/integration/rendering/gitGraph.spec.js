@@ -765,4 +765,50 @@ gitGraph TB:
       {}
     );
   });
+  it('38: should render GitGraph with branch and sub-branch neither of which used immediately', () => {
+    imgSnapshotTest(
+      `gitGraph LR:
+      commit
+      branch x
+      checkout main
+      commit
+      checkout x
+      commit
+      checkout main
+      merge x
+      checkout x
+      branch y
+      checkout x
+      commit
+      checkout y
+      commit
+      checkout x
+      merge y
+      `,
+      {}
+    );
+  });
+  it('39: should render GitGraph with branch and sub-branch neither of which used immediately | Vertical Branch', () => {
+    imgSnapshotTest(
+      `gitGraph TB:
+      commit
+      branch x
+      checkout main
+      commit
+      checkout x
+      commit
+      checkout main
+      merge x
+      checkout x
+      branch y
+      checkout x
+      commit
+      checkout y
+      commit
+      checkout x
+      merge y
+      `,
+      {}
+    );
+  });
 });
