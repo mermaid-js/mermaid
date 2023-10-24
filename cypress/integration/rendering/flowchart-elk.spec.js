@@ -846,7 +846,6 @@ end
 });
 
 describe('Title and arrow styling #4813', () => {
-
   it('should render a flowchart with title', () => {
     const titleString = 'Test Title';
     renderGraph(
@@ -855,10 +854,9 @@ describe('Title and arrow styling #4813', () => {
       ---
       flowchart LR
       A-->B`,
-      { flowchart: { defaultRenderer: "elk" } }
+      { flowchart: { defaultRenderer: 'elk' } }
     );
     cy.get('svg').should((svg) => {
-
       const title = svg[0].querySelector('text');
       expect(title.textContent).to.contain(titleString);
     });
@@ -873,7 +871,7 @@ describe('Title and arrow styling #4813', () => {
       B-.-oC
       C==xD
       D ~~~ A`,
-      { flowchart: { defaultRenderer: "elk" } }
+      { flowchart: { defaultRenderer: 'elk' } }
     );
     cy.get('svg').should((svg) => {
       const edges = svg[0].querySelectorAll('.edges path');
@@ -883,4 +881,4 @@ describe('Title and arrow styling #4813', () => {
       expect(edges[3]).to.have.css('stroke-width', '1.5px');
     });
   });
-})
+});

@@ -758,7 +758,7 @@ const insertEdge = function (edgesEl, edge, edgeData, diagObj, parentLookupDb, i
     .attr('class', 'path ' + edgeData.classes)
     .attr('fill', 'none');
   Object.entries(edgeData).forEach(([key, value]) => {
-    if (key !== 'classes'){
+    if (key !== 'classes') {
       edgePath.attr(key, value);
     }
   });
