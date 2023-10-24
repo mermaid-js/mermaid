@@ -346,6 +346,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
  *
  * @param {any} commitA
  * @param {any} commitB
+ * @param branchToGetCurve
  * @param allCommits
  * @returns {boolean}
  * If there are commits between
@@ -355,11 +356,11 @@ const drawCommits = (svg, commits, modifyGraph) => {
  * source branch is not main
  * return true
  */
-const shouldRerouteArrow = (commitA, commitB, allCommits) => {
-  const isOnSourceBranch = (x) => x.branch === commitA.branch;
+const shouldRerouteArrow = (commitA, commitB, branchToGetCurve, allCommits) => {
+  const isOnBranchToGetCurve = (x) => x.branch === branchToGetCurve;
   const isBetweenCommits = (x) => x.seq > commitA.seq && x.seq < commitB.seq;
   return Object.values(allCommits).some((commitX) => {
-    return isBetweenCommits(commitX) && isOnSourceBranch(commitX);
+    return isBetweenCommits(commitX) && isOnBranchToGetCurve(commitX);
   });
 };
 
@@ -396,10 +397,20 @@ const findLane = (y1, y2, depth = 0) => {
  * @param {any} allCommits
  */
 const drawArrow = (svg, commitA, commitB, allCommits) => {
-  const p1 = commitPos[commitA.id];
-  const p2 = commitPos[commitB.id];
-  const arrowNeedsRerouting = shouldRerouteArrow(commitA, commitB, allCommits);
+  const p1 = commitPos[commitA.id]; // arrowStart
+  const p2 = commitPos[commitB.id]; // arrowEnd
+  const branchToGetCurve =
+    dir === 'TB'
+      ? p1.x < p2.x
+        ? commitB.branch
+        : commitA.branch
+      : p1.y < p2.y
+      ? commitB.branch
+      : commitA.branch;
+  const arrowNeedsRerouting = shouldRerouteArrow(commitA, commitB, branchToGetCurve, allCommits);
   // log.debug('drawArrow', p1, p2, arrowNeedsReroute, commitA.id, commitB.id);
+
+  // Lower-right quadrant logic; top-left is 0,0
 
   let arc = '';
   let arc2 = '';
@@ -418,15 +429,15 @@ const drawArrow = (svg, commitA, commitB, allCommits) => {
 
     if (dir === 'TB') {
       if (p1.x < p2.x) {
-        // Destination commit is on branch position left of source commit
-        // so render arrow leftward with colour of destination branch
+        // Source commit is on branch position left of destination commit
+        // so render arrow rightward with colour of destination branch
         colorClassNum = branchPos[commitB.branch].index;
         lineDef = `M ${p1.x} ${p1.y} L ${lineX - radius} ${p1.y} ${arc2} ${lineX} ${
           p1.y + offset
         } L ${lineX} ${p2.y - radius} ${arc} ${lineX + offset} ${p2.y} L ${p2.x} ${p2.y}`;
       } else {
-        // Destination commit is on branch position right of source commit
-        // so render arrow rightward with colour of source branch
+        // Source commit is on branch position right of destination commit
+        // so render arrow leftward with colour of source branch
         colorClassNum = branchPos[commitA.branch].index;
         lineDef = `M ${p1.x} ${p1.y} L ${lineX + radius} ${p1.y} ${arc} ${lineX} ${
           p1.y + offset
@@ -434,14 +445,14 @@ const drawArrow = (svg, commitA, commitB, allCommits) => {
       }
     } else {
       if (p1.y < p2.y) {
-        // Destination commit is on branch positioned below source commit
+        // Source commit is on branch positioned above destination commit
         // so render arrow downward with colour of destination branch
         colorClassNum = branchPos[commitB.branch].index;
         lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY - radius} ${arc} ${
           p1.x + offset
         } ${lineY} L ${p2.x - radius} ${lineY} ${arc2} ${p2.x} ${lineY + offset} L ${p2.x} ${p2.y}`;
       } else {
-        // Destination commit is on branch positioned above source commit
+        // Source commit is on branch positioned below destination commit
         // so render arrow upward with colour of source branch
         colorClassNum = branchPos[commitA.branch].index;
         lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY + radius} ${arc2} ${
@@ -488,10 +499,8 @@ const drawArrow = (svg, commitA, commitB, allCommits) => {
         arc = 'A 20 20, 0, 0, 0,';
         radius = 20;
         offset = 20;
-
-        // Figure out the color of the arrow,arrows going down take the color from the destination branch
+        // Arrows going up take the color from the target branch
         colorClassNum = branchPos[commitB.branch].index;
-
         lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y - radius} ${arc} ${p1.x + offset} ${p2.y} L ${
           p2.x
         } ${p2.y}`;
@@ -500,7 +509,6 @@ const drawArrow = (svg, commitA, commitB, allCommits) => {
         arc = 'A 20 20, 0, 0, 0,';
         radius = 20;
         offset = 20;
-
         // Arrows going up take the color from the source branch
         colorClassNum = branchPos[commitA.branch].index;
         lineDef = `M ${p1.x} ${p1.y} L ${p2.x - radius} ${p1.y} ${arc} ${p2.x} ${p1.y - offset} L ${
