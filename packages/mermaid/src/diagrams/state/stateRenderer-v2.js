@@ -1,6 +1,6 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select } from 'd3';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { render } from '../../dagre-wrapper/index.js';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
@@ -81,20 +81,11 @@ export const setConf = function (cnf) {
  *
  * @param {string} text - the diagram text to be parsed
  * @param diagramObj
- * @returns {object} ClassDef styles (a Map with keys = strings, values = )
+ * @returns {Record<string, import('../../diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles (a Map with keys = strings, values = )
  */
 export const getClasses = function (text, diagramObj) {
-  log.trace('Extracting classes');
-  diagramObj.db.clear();
-  try {
-    // Parse the graph definition
-    diagramObj.parser.parse(text);
-    // must run extract() to turn the parsed statements into states, relationships, classes, etc.
-    diagramObj.db.extract(diagramObj.db.getRootDocV2());
-    return diagramObj.db.getClasses();
-  } catch (e) {
-    return e;
-  }
+  diagramObj.db.extract(diagramObj.db.getRootDocV2());
+  return diagramObj.db.getClasses();
 };
 
 /**
@@ -358,7 +349,7 @@ const setupDoc = (g, parentParsedItem, doc, diagramStates, diagramDb, altFlag) =
  * Look through all of the documents (docs) in the parsedItems
  * Because is a _document_ direction, the default direction is not necessarily the same as the overall default _diagram_ direction.
  * @param {object[]} parsedItem - the parsed statement item to look through
- * @param [defaultDir=DEFAULT_NESTED_DOC_DIR] - the direction to use if none is found
+ * @param [defaultDir] - the direction to use if none is found
  * @returns {string}
  */
 const getDir = (parsedItem, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
@@ -384,7 +375,6 @@ const getDir = (parsedItem, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
  */
 export const draw = async function (text, id, _version, diag) {
   log.info('Drawing state diagram (v2)', id);
-  // diag.sb.clear();
   nodeDb = {};
   // Fetch the default direction, use TD if none was found
   let dir = diag.db.getDirection();

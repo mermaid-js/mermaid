@@ -3,6 +3,7 @@ import { mermaidAPI } from './mermaidAPI.js';
 import './diagram-api/diagram-orchestration.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import { beforeAll, describe, it, expect, vi } from 'vitest';
+import type { DiagramDefinition } from './diagram-api/types.js';
 
 beforeAll(async () => {
   addDiagrams();
@@ -92,13 +93,18 @@ describe('when using mermaid and ', () => {
 
     it('should defer diagram load based on parameter', async () => {
       let loaded = false;
-      const dummyDiagram = {
+      const dummyDiagram: DiagramDefinition = {
         db: {},
-        renderer: () => {
-          // do nothing
+        renderer: {
+          draw: () => {
+            // no-op
+          },
         },
-        parser: () => {
-          // do nothing
+        parser: {
+          parse: (_text) => {
+            return;
+          },
+          parser: { yy: {} },
         },
         styles: () => {
           // do nothing

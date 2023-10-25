@@ -4,9 +4,10 @@ import flowchartV2 from '../diagrams/flowchart/flowDetector-v2.js';
 import er from '../diagrams/er/erDetector.js';
 import git from '../diagrams/git/gitGraphDetector.js';
 import gantt from '../diagrams/gantt/ganttDetector.js';
-import info from '../diagrams/info/infoDetector.js';
-import pie from '../diagrams/pie/pieDetector.js';
+import { info } from '../diagrams/info/infoDetector.js';
+import { pie } from '../diagrams/pie/pieDetector.js';
 import quadrantChart from '../diagrams/quadrant-chart/quadrantDetector.js';
+import xychart from '../diagrams/xychart/xychartDetector.js';
 import requirement from '../diagrams/requirement/requirementDetector.js';
 import sequence from '../diagrams/sequence/sequenceDetector.js';
 import classDiagram from '../diagrams/class/classDetector.js';
@@ -19,6 +20,7 @@ import swimlane from '../diagrams/flowchart/swimlane/detector.js';
 import flowchartElk from '../diagrams/flowchart/elk/detector.js';
 import timeline from '../diagrams/timeline/detector.js';
 import mindmap from '../diagrams/mindmap/detector.js';
+import sankey from '../diagrams/sankey/sankeyDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
 
@@ -43,7 +45,11 @@ export const addDiagrams = () => {
         },
       },
       styles: {}, // should never be used
-      renderer: {}, // should never be used
+      renderer: {
+        draw: () => {
+          // should never be used
+        },
+      },
       parser: {
         parser: { yy: {} },
         parse: () => {
@@ -81,6 +87,8 @@ export const addDiagrams = () => {
     stateV2,
     state,
     journey,
-    quadrantChart
+    quadrantChart,
+    sankey,
+    xychart
   );
 };

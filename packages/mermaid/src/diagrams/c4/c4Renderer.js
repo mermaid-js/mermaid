@@ -4,7 +4,7 @@ import { log } from '../../logger.js';
 import { parser } from './parser/c4Diagram.jison';
 import common from '../common/common.js';
 import c4Db from './c4Db.js';
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import assignWithDepth from '../../assignWithDepth.js';
 import { wrapLabel, calculateTextWidth, calculateTextHeight } from '../../utils.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
@@ -220,7 +220,7 @@ export const drawC4ShapeArray = function (currentBounds, diagram, c4ShapeArray, 
     let c4ShapeTypeConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
     c4ShapeTypeConf.fontSize = c4ShapeTypeConf.fontSize - 2;
     c4Shape.typeC4Shape.width = calculateTextWidth(
-      '<<' + c4Shape.typeC4Shape.text + '>>',
+      '«' + c4Shape.typeC4Shape.text + '»',
       c4ShapeTypeConf
     );
     c4Shape.typeC4Shape.height = c4ShapeTypeConf.fontSize + 2;
@@ -580,8 +580,8 @@ function drawInsideBoundary(
  * @param diagObj
  */
 export const draw = function (_text, id, _version, diagObj) {
-  conf = configApi.getConfig().c4;
-  const securityLevel = configApi.getConfig().securityLevel;
+  conf = getConfig().c4;
+  const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {

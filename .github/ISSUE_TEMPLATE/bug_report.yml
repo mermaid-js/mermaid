@@ -17,6 +17,9 @@ body:
         - Use a clear and concise title
         - Fill out the text fields with as much detail as possible.
         - Never be shy to give us screenshots and/or code samples. It will help!
+
+        There is a chance that the bug is already fixed in the git `develop` branch, but is not released yet. 
+        So please check in [Live Editor - Develop](https://develop.git.mermaid.live) before raising an issue.
   - type: textarea
     attributes:
       label: Description
@@ -43,7 +46,7 @@ body:
     attributes:
       label: Code Sample
       description: |-
-        If applicable, add the code sample or a link to the [Live Editor](https://mermaid.live).
+        If applicable, add the code sample or a link to the [Live Editor - Develop](https://develop.git.mermaid.live).
         Any text pasted here will be rendered as a Code block.
       render: text
   - type: textarea
@@ -53,8 +56,17 @@ body:
         Please fill out the info below.
         Note that you only need to fill out the relevant section
       value: |-
-        - Mermaid version: 
+        - Mermaid version:
         - Browser and Version: [Chrome, Edge, Firefox]
+  - type: textarea
+    attributes:
+      label: Suggested Solutions
+      description: >
+        If applicable, suggest solutions that could resolve the bug.
+        It would help maintainers/contributors to not waste time looking for the solution. Even pointing the line causing the bug would be great!
+      placeholder: |-
+        - Variable `parser` in file <filepath> is not initialised ...
+        - Add a new type for ...
   - type: textarea
     attributes:
       label: Additional Context

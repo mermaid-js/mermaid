@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.js';
+import { imgSnapshotTest, urlSnapshotTest } from '../../helpers/util.ts';
 
 describe('Configuration and directives - nodes should be light blue', () => {
   it('No config - use default', () => {
@@ -14,7 +14,6 @@ describe('Configuration and directives - nodes should be light blue', () => {
         `,
       {}
     );
-    cy.get('svg');
   });
   it('Settings from initialize - nodes should be green', () => {
     imgSnapshotTest(
@@ -28,7 +27,6 @@ graph TD
           end          `,
       { theme: 'forest' }
     );
-    cy.get('svg');
   });
   it('Settings from initialize overriding themeVariable - nodes should be red', () => {
     imgSnapshotTest(
@@ -46,7 +44,6 @@ graph TD
         `,
       { theme: 'base', themeVariables: { primaryColor: '#ff0000' }, logLevel: 0 }
     );
-    cy.get('svg');
   });
   it('Settings from directive - nodes should be grey', () => {
     imgSnapshotTest(
@@ -62,7 +59,24 @@ graph TD
         `,
       {}
     );
-    cy.get('svg');
+  });
+  it('Settings from frontmatter - nodes should be grey', () => {
+    imgSnapshotTest(
+      `
+---
+config:
+  theme: neutral
+---
+graph TD
+          A(Start) --> B[/Another/]
+          A[/Another/] --> C[End]
+          subgraph section
+            B
+            C
+          end
+        `,
+      {}
+    );
   });
 
   it('Settings from directive overriding theme variable - nodes should be red', () => {
@@ -79,7 +93,6 @@ graph TD
         `,
       {}
     );
-    cy.get('svg');
   });
   it('Settings from initialize and directive - nodes should be grey', () => {
     imgSnapshotTest(
@@ -95,7 +108,6 @@ graph TD
         `,
       { theme: 'forest' }
     );
-    cy.get('svg');
   });
   it('Theme from initialize, directive overriding theme variable - nodes should be red', () => {
     imgSnapshotTest(
@@ -111,8 +123,71 @@ graph TD
         `,
       { theme: 'base' }
     );
-    cy.get('svg');
   });
+  it('Theme from initialize, frontmatter overriding theme variable - nodes should be red', () => {
+    imgSnapshotTest(
+      `
+---
+config:
+  theme: base
+  themeVariables:
+    primaryColor: '#ff0000'
+---
+graph TD
+          A(Start) --> B[/Another/]
+          A[/Another/] --> C[End]
+          subgraph section
+            B
+            C
+          end
+        `,
+      { theme: 'forest' }
+    );
+  });
+  it('Theme from initialize, frontmatter overriding theme variable, directive overriding primaryColor - nodes should be red', () => {
+    imgSnapshotTest(
+      `
+---
+config:
+  theme: base
+  themeVariables:
+    primaryColor: '#00ff00'
+---
+%%{init: {'theme': 'base', 'themeVariables':{ 'primaryColor': '#ff0000'}}}%%
+graph TD
+          A(Start) --> B[/Another/]
+          A[/Another/] --> C[End]
+          subgraph section
+            B
+            C
+          end
+        `,
+      { theme: 'forest' }
+    );
+  });
+
+  it('should render if values are not quoted properly', () => {
+    // #ff0000 is not quoted properly, and will evaluate to null.
+    // This test ensures that the rendering still works.
+    imgSnapshotTest(
+      `---
+config:
+  theme: base
+  themeVariables:
+    primaryColor: #ff0000
+---
+graph TD
+          A(Start) --> B[/Another/]
+          A[/Another/] --> C[End]
+          subgraph section
+            B
+            C
+          end
+        `,
+      { theme: 'forest' }
+    );
+  });
+
   it('Theme variable from initialize, theme from directive - nodes should be red', () => {
     imgSnapshotTest(
       `
@@ -127,14 +202,11 @@ graph TD
         `,
       { themeVariables: { primaryColor: '#ff0000' } }
     );
-    cy.get('svg');
   });
   describe('when rendering several diagrams', () => {
     it('diagrams should not taint later diagrams', () => {
       const url = 'http://localhost:9000/theme-directives.html';
-      cy.visit(url);
-      cy.get('svg');
-      cy.matchImageSnapshot('conf-and-directives.spec-when-rendering-several-diagrams-diagram-1');
+      urlSnapshotTest(url, {});
     });
   });
 });

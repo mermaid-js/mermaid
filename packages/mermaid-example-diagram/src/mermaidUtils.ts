@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const warning = (s: string) => {
   // Todo remove debug code
   // eslint-disable-next-line no-console
@@ -28,7 +29,6 @@ export let setLogLevel: (level: keyof typeof LEVELS | number | string) => void;
 export let getConfig: () => object;
 export let sanitizeText: (str: string) => string;
 export let commonDb: () => object;
-// eslint-disable @typescript-eslint/no-explicit-any
 export let setupGraphViewbox: (
   graph: any,
   svgElem: any,

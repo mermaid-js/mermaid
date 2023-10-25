@@ -1,78 +1,171 @@
-import { vi } from 'vitest';
 import { extractFrontMatter } from './frontmatter.js';
-
-const dbMock = () => ({ setDiagramTitle: vi.fn() });
 
 describe('extractFrontmatter', () => {
   it('returns text unchanged if no frontmatter', () => {
-    expect(extractFrontMatter('diagram', dbMock())).toEqual('diagram');
+    expect(extractFrontMatter('diagram')).toMatchInlineSnapshot(`
+      {
+        "metadata": {},
+        "text": "diagram",
+      }
+    `);
   });
 
   it('returns text unchanged if frontmatter lacks closing delimiter', () => {
     const text = `---\ntitle: foo\ndiagram`;
-    expect(extractFrontMatter(text, dbMock())).toEqual(text);
+    expect(extractFrontMatter(text)).toMatchInlineSnapshot(`
+      {
+        "metadata": {},
+        "text": "---
+      title: foo
+      diagram",
+      }
+    `);
   });
 
   it('handles empty frontmatter', () => {
-    const db = dbMock();
     const text = `---\n\n---\ndiagram`;
-    expect(extractFrontMatter(text, db)).toEqual('diagram');
-    expect(db.setDiagramTitle).not.toHaveBeenCalled();
+    expect(extractFrontMatter(text)).toMatchInlineSnapshot(`
+      {
+        "metadata": {},
+        "text": "diagram",
+      }
+    `);
   });
 
   it('handles frontmatter without mappings', () => {
-    const db = dbMock();
-    const text = `---\n1\n---\ndiagram`;
-    expect(extractFrontMatter(text, db)).toEqual('diagram');
-    expect(db.setDiagramTitle).not.toHaveBeenCalled();
+    expect(extractFrontMatter(`---\n1\n---\ndiagram`)).toMatchInlineSnapshot(`
+      {
+        "metadata": {},
+        "text": "diagram",
+      }
+    `);
+    expect(extractFrontMatter(`---\n-1\n-2\n---\ndiagram`)).toMatchInlineSnapshot(`
+      {
+        "metadata": {},
+        "text": "diagram",
+      }
+    `);
+    expect(extractFrontMatter(`---\nnull\n---\ndiagram`)).toMatchInlineSnapshot(`
+      {
+        "metadata": {},
+        "text": "diagram",
+      }
+    `);
   });
 
   it('does not try to parse frontmatter at the end', () => {
-    const db = dbMock();
     const text = `diagram\n---\ntitle: foo\n---\n`;
-    expect(extractFrontMatter(text, db)).toEqual(text);
-    expect(db.setDiagramTitle).not.toHaveBeenCalled();
+    expect(extractFrontMatter(text)).toMatchInlineSnapshot(`
+      {
+        "metadata": {},
+        "text": "diagram
+      ---
+      title: foo
+      ---
+      ",
+      }
+    `);
   });
 
   it('handles frontmatter with multiple delimiters', () => {
-    const db = dbMock();
     const text = `---\ntitle: foo---bar\n---\ndiagram\n---\ntest`;
-    expect(extractFrontMatter(text, db)).toEqual('diagram\n---\ntest');
-    expect(db.setDiagramTitle).toHaveBeenCalledWith('foo---bar');
+    expect(extractFrontMatter(text)).toMatchInlineSnapshot(`
+      {
+        "metadata": {
+          "title": "foo---bar",
+        },
+        "text": "diagram
+      ---
+      test",
+      }
+    `);
   });
 
   it('handles frontmatter with multi-line string and multiple delimiters', () => {
-    const db = dbMock();
     const text = `---\ntitle: |\n   multi-line string\n   ---\n---\ndiagram`;
-    expect(extractFrontMatter(text, db)).toEqual('diagram');
-    expect(db.setDiagramTitle).toHaveBeenCalledWith('multi-line string\n---\n');
+    expect(extractFrontMatter(text)).toMatchInlineSnapshot(`
+      {
+        "metadata": {
+          "title": "multi-line string
+      ---
+      ",
+        },
+        "text": "diagram",
+      }
+    `);
   });
 
   it('handles frontmatter with title', () => {
-    const db = dbMock();
     const text = `---\ntitle: foo\n---\ndiagram`;
-    expect(extractFrontMatter(text, db)).toEqual('diagram');
-    expect(db.setDiagramTitle).toHaveBeenCalledWith('foo');
+    expect(extractFrontMatter(text)).toMatchInlineSnapshot(`
+      {
+        "metadata": {
+          "title": "foo",
+        },
+        "text": "diagram",
+      }
+    `);
   });
 
   it('handles booleans in frontmatter properly', () => {
-    const db = dbMock();
     const text = `---\ntitle: true\n---\ndiagram`;
-    expect(extractFrontMatter(text, db)).toEqual('diagram');
-    expect(db.setDiagramTitle).toHaveBeenCalledWith('true');
+    expect(extractFrontMatter(text)).toMatchInlineSnapshot(`
+      {
+        "metadata": {
+          "title": "true",
+        },
+        "text": "diagram",
+      }
+    `);
   });
 
   it('ignores unspecified frontmatter keys', () => {
-    const db = dbMock();
     const text = `---\ninvalid: true\ntitle: foo\ntest: bar\n---\ndiagram`;
-    expect(extractFrontMatter(text, db)).toEqual('diagram');
-    expect(db.setDiagramTitle).toHaveBeenCalledWith('foo');
+    expect(extractFrontMatter(text)).toMatchInlineSnapshot(`
+      {
+        "metadata": {
+          "title": "foo",
+        },
+        "text": "diagram",
+      }
+    `);
   });
 
   it('throws exception for invalid YAML syntax', () => {
     const text = `---\n!!!\n---\ndiagram`;
-    expect(() => extractFrontMatter(text, dbMock())).toThrow(
-      'tag suffix cannot contain exclamation marks'
-    );
+    expect(() => extractFrontMatter(text)).toThrow('tag suffix cannot contain exclamation marks');
+  });
+
+  it('handles frontmatter with config', () => {
+    const text = `---
+title: hello
+config:
+  graph:
+    string: hello
+    number: 14
+    boolean: false
+    array: [1, 2, 3]
+---
+diagram`;
+    expect(extractFrontMatter(text)).toMatchInlineSnapshot(`
+      {
+        "metadata": {
+          "config": {
+            "graph": {
+              "array": [
+                1,
+                2,
+                3,
+              ],
+              "boolean": false,
+              "number": 14,
+              "string": "hello",
+            },
+          },
+          "title": "hello",
+        },
+        "text": "diagram",
+      }
+    `);
   });
 });

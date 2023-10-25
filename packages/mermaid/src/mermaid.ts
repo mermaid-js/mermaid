@@ -3,20 +3,18 @@
  * functionality and to render the diagrams to svg code!
  */
 import { dedent } from 'ts-dedent';
-import { MermaidConfig } from './config.type.js';
+import type { MermaidConfig } from './config.type.js';
 import { log } from './logger.js';
 import utils from './utils.js';
-import { mermaidAPI, ParseOptions, RenderResult } from './mermaidAPI.js';
-import {
-  registerLazyLoadedDiagrams,
-  loadRegisteredDiagrams,
-  detectType,
-} from './diagram-api/detectType.js';
+import type { ParseOptions, RenderResult } from './mermaidAPI.js';
+import { mermaidAPI } from './mermaidAPI.js';
+import { registerLazyLoadedDiagrams, detectType } from './diagram-api/detectType.js';
+import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';
 import type { ParseErrorFunction } from './Diagram.js';
 import { isDetailedError } from './utils.js';
 import type { DetailedError } from './utils.js';
-import { ExternalDiagramDefinition } from './diagram-api/types.js';
-import { UnknownDiagramError } from './errors.js';
+import type { ExternalDiagramDefinition } from './diagram-api/types.js';
+import type { UnknownDiagramError } from './errors.js';
 
 export type {
   MermaidConfig,
@@ -138,7 +136,7 @@ const runThrowsErrors = async function (
   }
 
   // generate the id of the diagram
-  const idGenerator = new utils.initIdGenerator(conf.deterministicIds, conf.deterministicIDSeed);
+  const idGenerator = new utils.InitIDGenerator(conf.deterministicIds, conf.deterministicIDSeed);
 
   let txt: string;
   const errors: DetailedError[] = [];

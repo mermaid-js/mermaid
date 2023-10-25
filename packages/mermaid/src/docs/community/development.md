@@ -1,4 +1,8 @@
-# Development and Contribution 🙌
+# Contributing to Mermaid
+
+> The following documentation describes how to work with Mermaid in your host environment.
+> There's also a [Docker installation guide](../community/docker-development.md)
+> if you prefer to work in a Docker environment.
 
 So you want to help? That's great!
 
@@ -6,125 +10,76 @@ So you want to help? That's great!
 
 Here are a few things to get you started on the right path.
 
-**The Docs Structure is dictated by [.vitepress/config.ts](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/docs/.vitepress/config.ts)**.
+## Get the Source Code
 
-**Note: Commits and Pull Requests should be directed to the develop branch.**
+In GitHub, you first **fork** a repository when you are going to make changes and submit pull requests.
 
-## Branching
+Then you **clone** a copy to your local development machine (e.g. where you code) to make a copy with all the files to work with.
 
-Mermaid uses a [Git Flow](https://guides.github.com/introduction/flow/)–inspired approach to branching. So development is done in the `develop` branch.
+[Fork mermaid](https://github.com/mermaid-js/mermaid/fork) to start contributing to the main project and its documentation, or [search for other repositories](https://github.com/orgs/mermaid-js/repositories).
 
-Once development is done we branch a `release` branch from `develop` for testing.
+[Here is a GitHub document that gives an overview of the process.](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
 
-Once the release happens we merge the `release` branch with `master` and kill the `release` branch.
+## Technical Requirements
 
-This means that **you should branch off your pull request from develop** and direct all Pull Requests to it.
+> The following documentation describes how to work with Mermaid in your host environment.
+> There's also a [Docker installation guide](../community/docker-development.md)
+> if you prefer to work in a Docker environment.
 
-## Contributing Code
+These are the tools we use for working with the code and documentation:
 
-We make all changes via Pull Requests. As we have many Pull Requests from developers new to mermaid, we have put in place a process, wherein _knsv, Knut Sveidqvist_ is the primary reviewer of changes and merging pull requests. The process is as follows:
+- [volta](https://volta.sh/) to manage node versions.
+- [Node.js](https://nodejs.org/en/). `volta install node`
+- [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
+- [npx](https://docs.npmjs.com/cli/v8/commands/npx) the packaged executor in npm. This is needed [to install pnpm.](#install-packages)
 
-- Large changes reviewed by knsv or other developer asked to review by knsv
-- Smaller, low-risk changes like dependencies, documentation, etc. can be merged by active collaborators
-- Documentation (we encourage updates to the `/packages/mermaid/src/docs` folder; you can submit them via direct commits)
+Follow the setup steps below to install them and start the development.
 
-When you commit code, create a branch with the following naming convention:
+## Setup and Launch
 
-Start with the type, such as **feature** or **bug**, followed by the issue number for reference, and a text that describes the issue.
+### Switch to project
 
-**One example:**
+Once you have cloned the repository onto your development machine, change into the `mermaid` project folder (the top level directory of the mermaid project repository)
 
-`feature/945_state_diagrams`
-
-**Another example:**
-
-`bug/123_nasty_bug_branch`
-
-## Contributing to Documentation
-
-If it is not in the documentation, it's like it never happened. Wouldn't that be sad? With all the effort that was put into the feature?
-
-The docs are located in the `src/docs` folder and are written in Markdown. Just pick the right section and start typing. If you want to propose changes to the structure of the documentation, such as adding a new section or a new file you do that via **[.vitepress/config.ts](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/docs/.vitepress/config.ts)**.
-
-> **All the documents displayed in the GitHub.io page are listed in [.vitepress/config.ts](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/docs/.vitepress/config.ts)**.
-
-The contents of [https://mermaid-js.github.io/mermaid/](https://mermaid-js.github.io/mermaid/) are based on the docs from the `master` branch. Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid-js.github.io/mermaid/) once released.
-
-## How to Contribute to Documentation
-
-We are a little less strict here, it is OK to commit directly in the `develop` branch if you are a collaborator.
-
-The documentation is located in the `src/docs` directory and organized according to relevant subfolder.
-
-The `docs` folder will be automatically generated when committing to `src/docs` and should not be edited manually.
-
-We encourage contributions to the documentation at [mermaid-js/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs). We publish documentation using GitHub Pages with [Docsify](https://www.youtube.com/watch?v=TV88lp7egMw&t=3s)
-
-### Add Unit Tests for Parsing
-
-This is important so that, if someone that does not know about this great feature suggests a change to the grammar, they get notified early on when that change breaks the parser. Another important aspect is that, without proper parsing, tests refactoring is pretty much impossible.
-
-### Add E2E Tests
-
-This tests the rendering and visual appearance of the diagrams. This ensures that the rendering of that feature in the e2e will be reviewed in the release process going forward. Less chance that it breaks!
-
-To start working with the e2e tests:
-
-1. Run `pnpm run dev` to start the dev server
-2. Start **Cypress** by running `pnpm exec cypress open` in the **mermaid** folder.
-
-The rendering tests are very straightforward to create. There is a function `imgSnapshotTest`, which takes a diagram in text form and the mermaid options, and it renders that diagram in Cypress.
-
-When running in CI it will take a snapshot of the rendered diagram and compare it with the snapshot from last build and flag it for review if it differs.
-
-This is what a rendering test looks like:
-
-```js
-it('should render forks and joins', () => {
-  imgSnapshotTest(
-    `
-    stateDiagram
-    state fork_state &lt;&lt;fork&gt;&gt;
-      [*] --> fork_state
-      fork_state --> State2
-      fork_state --> State3
-
-      state join_state &lt;&lt;join&gt;&gt;
-      State2 --> join_state
-      State3 --> join_state
-      join_state --> State4
-      State4 --> [*]
-    `,
-    { logLevel: 0 }
-  );
-  cy.get('svg');
-});
+```bash
+cd mermaid
 ```
 
-### Any Questions or Suggestions?
+### Install packages
 
-After logging in at [GitHub.com](https://www.github.com), open or append to an issue [using the GitHub issue tracker of the mermaid-js repository](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Area%3A+Documentation%22).
+Run `npx pnpm install`. You will need `npx` for this because volta doesn't support it yet.
 
-### How to Contribute a Suggestion
+```bash
+npx pnpm install # npx is required for first install
+```
 
-Markdown is used to format the text, for more information about Markdown [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
+### Launch
 
-To edit Docs on your computer:
+```bash
+npx pnpm run dev
+```
 
-1. Find the Markdown file (.md) to edit in the [packages/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs) directory in the `develop` branch.
-2. Create a fork of the develop branch.
-3. Make changes or add new documentation.
-4. Commit changes to your fork and push it to GitHub.
-5. Create a Pull Request of your fork.
+Now you are ready to make your changes! Edit whichever files in `src` as required.
 
-To edit Docs on GitHub:
+Open <http://localhost:9000> in your browser, after starting the dev server.
+There is a list of demos that can be used to see and test your changes.
 
-1. Login to [GitHub.com](https://www.github.com).
-2. Navigate to [packages/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs).
-3. To edit a file, click the pencil icon at the top-right of the file contents panel.
-4. Describe what you changed in the **Propose file change** section, located at the bottom of the page.
-5. Submit your changes by clicking the button **Propose file change** at the bottom (by automatic creation of a fork and a new branch).
-6. Create a Pull Request of your newly forked branch by clicking the green **Create Pull Request** button.
+If you need a specific diagram, you can duplicate the `example.html` file in `/demos/dev` and add your own mermaid code to your copy.
+
+That will be served at <http://localhost:9000/dev/your-file-name.html>.
+After making code changes, the dev server will rebuild the mermaid library. You will need to reload the browser page yourself to see the changes. (PRs for auto reload are welcome!)
+
+## Verify Everything is Working
+
+You can run the `test` script to verify that pnpm is working _and_ that the repository has been cloned correctly:
+
+```bash
+pnpm test
+```
+
+The `test` script and others are in the top-level `package.json` file.
+
+All tests should run successfully without any errors or failures. (You might see _lint_ or _formatting_ warnings; those are ok during this step.)
 
 ## Last Words
 

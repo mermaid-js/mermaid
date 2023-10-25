@@ -4,7 +4,7 @@ import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger.js';
 import svgDraw from './svgDraw.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 
 let idCache = {};
 const padding = 20;
@@ -141,8 +141,6 @@ const insertMarkers = function (elem) {
 export const draw = function (text, id, _version, diagObj) {
   const conf = getConfig().class;
   idCache = {};
-  // diagObj.db.clear();
-  // diagObj.parser.parse(text);
 
   log.info('Rendering diagram ' + text);
 

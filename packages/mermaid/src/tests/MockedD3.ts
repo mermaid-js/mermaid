@@ -1,5 +1,3 @@
-import type {} from '@vitest/spy/dist/index.js';
-
 /**
  * This is a mocked/stubbed version of the d3 Selection type. Each of the main functions are all
  * mocked (via vi.fn()) so you can track if they have been called, etc.
@@ -7,9 +5,8 @@ import type {} from '@vitest/spy/dist/index.js';
  * Note that node() returns a HTML Element with tag 'svg'. It is an empty element (no innerHTML, no children, etc).
  * This potentially allows testing of mermaidAPI render().
  */
-
 export class MockedD3 {
-  public attribs = new Map<string, string | null>();
+  public attribs = new Map<string, string>();
   public id: string | undefined = '';
   _children: MockedD3[] = [];
 
@@ -72,9 +69,9 @@ export class MockedD3 {
     return newMock;
   };
 
-  attr(attrName: string): null | undefined | string | number;
-  // attr(attrName: string, attrValue: string): MockedD3;
-  attr(attrName: string, attrValue?: string): null | undefined | string | number | MockedD3 {
+  attr(attrName: string): undefined | string;
+  attr(attrName: string, attrValue: string): MockedD3;
+  attr(attrName: string, attrValue?: string): undefined | string | MockedD3 {
     if (arguments.length === 1) {
       return this.attribs.get(attrName);
     } else {

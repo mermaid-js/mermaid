@@ -1,7 +1,7 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { line, curveBasis, select } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import utils from '../../utils.js';
 import erMarkers from './erMarkers.js';
@@ -202,7 +202,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
     let attribStyle = 'attributeBoxOdd'; // We will flip the style on alternate rows to achieve a banded effect
 
     attributeNodes.forEach((attributeNode) => {
-      // Calculate the alignment y co-ordinate for the type/name of the attribute
+      // Calculate the alignment y coordinate for the type/name of the attribute
       const alignY = heightOffset + heightPadding + attributeNode.height / 2;
 
       // Position the type attribute
@@ -326,7 +326,7 @@ const drawEntities = function (svgNode, entities, graph) {
       .style('text-anchor', 'middle')
       .style('font-family', getConfig().fontFamily)
       .style('font-size', conf.fontSize + 'px')
-      .text(entityName);
+      .text(entities[entityName].alias ?? entityName);
 
     const { width: entityWidth, height: entityHeight } = drawAttributes(
       groupNode,
@@ -555,7 +555,6 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
 export const draw = function (text, id, _version, diagObj) {
   conf = getConfig().er;
   log.info('Drawing ER diagram');
-  //  diag.db.clear();
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
@@ -567,13 +566,6 @@ export const draw = function (text, id, _version, diagObj) {
       ? select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
   // const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
-
-  // Parse the text to populate erDb
-  // try {
-  //   parser.parse(text);
-  // } catch (err) {
-  //   log.debug('Parsing failed');
-  // }
 
   // Get a reference to the svg node that contains the text
   const svg = root.select(`[id='${id}']`);
@@ -587,8 +579,8 @@ export const draw = function (text, id, _version, diagObj) {
   // 2. Make sure they are all added to the graph
   // 3. Add all the edges (relationships) to the graph as well
   // 4. Let dagre do its magic to lay out the graph.  This assigns:
-  //    - the centre co-ordinates for each node, bearing in mind the dimensions and edge relationships
-  //    - the path co-ordinates for each edge
+  //    - the centre coordinates for each node, bearing in mind the dimensions and edge relationships
+  //    - the path coordinates for each edge
   //    But it has no impact on the svg child nodes - the diagram remains with every entity rooted at 0,0
   // 5. Now assign a transform to each entity in the svg node so that it gets drawn in the correct place, as determined by
   //    its centre point, which is obtained from the graph, and it's width and height

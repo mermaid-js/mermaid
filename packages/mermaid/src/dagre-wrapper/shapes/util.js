@@ -1,6 +1,6 @@
 import createLabel from '../createLabel.js';
 import { createText } from '../../rendering-util/createText.js';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { decodeEntities } from '../../mermaidAPI.js';
 import { select } from 'd3';
 import { evaluate, sanitizeText } from '../../diagrams/common/common.js';
@@ -13,6 +13,7 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
   } else {
     classes = _classes;
   }
+
   // Add outer g element
   const shapeSvg = parent
     .insert('g')
@@ -49,7 +50,6 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
       )
     );
   }
-
   // Get the size of the label
   let bbox = text.getBBox();
   const halfPadding = node.padding / 2;
@@ -66,8 +66,11 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
       await Promise.all(
         [...images].map(
           (img) =>
-            new Promise((res) =>
-              img.addEventListener('load', function () {
+            new Promise((res) => {
+              /**
+               *
+               */
+              function setupImage() {
                 img.style.display = 'flex';
                 img.style.flexDirection = 'column';
 
@@ -82,8 +85,15 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
                   img.style.width = '100%';
                 }
                 res(img);
-              })
-            )
+              }
+              setTimeout(() => {
+                if (img.complete) {
+                  setupImage();
+                }
+              });
+              img.addEventListener('error', setupImage);
+              img.addEventListener('load', setupImage);
+            })
         )
       );
     }

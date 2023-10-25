@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.js';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('Git Graph diagram', () => {
   it('1: should render a simple gitgraph with commit on main branch', () => {

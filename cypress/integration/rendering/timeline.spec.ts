@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.js';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('Timeline diagram', () => {
   it('1: should render a simple timeline with no specific sections', () => {
@@ -57,7 +57,7 @@ describe('Timeline diagram', () => {
       {}
     );
   });
-  it('5: should render a simple timeline with directive overriden colors', () => {
+  it('5: should render a simple timeline with directive overridden colors', () => {
     imgSnapshotTest(
       ` %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
               'cScale0': '#ff0000',

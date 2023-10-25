@@ -55,9 +55,9 @@ To make a custom theme, modify `themeVariables` via `init`.
 
 You will need to use the [base](#available-themes) theme as it is the only modifiable theme.
 
-| Parameter      | Description                          | Type   | Properties                                                                                          |
-| -------------- | ------------------------------------ | ------ | --------------------------------------------------------------------------------------------------- |
-| themeVariables | Modifiable with the `init` directive | Object | `primaryColor`, `primaryTextColor`, `lineColor` ([see full list](#theme-variables-reference-table)) |
+| Parameter      | Description                          | Type   | Properties                                                                          |
+| -------------- | ------------------------------------ | ------ | ----------------------------------------------------------------------------------- |
+| themeVariables | Modifiable with the `init` directive | Object | `primaryColor`, `primaryTextColor`, `lineColor` ([see full list](#theme-variables)) |
 
 Example of modifying `themeVariables` using the `init` directive:
 
