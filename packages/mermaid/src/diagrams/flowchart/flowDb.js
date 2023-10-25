@@ -12,6 +12,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
+import errorDiagram from '../error/errorDiagram.js';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
@@ -156,7 +157,15 @@ export const addSingleLink = function (_start, _end, type) {
     edge.stroke = type.stroke;
     edge.length = type.length;
   }
-  edges.push(edge);
+  if (edge?.length > 10) {
+    edge.length = 10;
+  }
+  if (edges.length < 280) {
+    log.info('abc78 pushing edge...');
+    edges.push(edge);
+  } else {
+    throw new Error('Too many edges');
+  }
 };
 export const addLink = function (_start, _end, type) {
   log.info('addLink (abc78)', _start, _end, type);
