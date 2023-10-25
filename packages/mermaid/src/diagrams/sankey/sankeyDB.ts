@@ -1,4 +1,4 @@
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
 import {
   setAccTitle,
@@ -42,7 +42,7 @@ class SankeyNode {
 }
 
 const findOrCreateNode = (ID: string): SankeyNode => {
-  ID = common.sanitizeText(ID, configApi.getConfig());
+  ID = common.sanitizeText(ID, getConfig());
 
   if (!nodesMap[ID]) {
     nodesMap[ID] = new SankeyNode(ID);
@@ -65,7 +65,7 @@ const getGraph = () => ({
 
 export default {
   nodesMap,
-  getConfig: () => configApi.getConfig().sankey,
+  getConfig: () => getConfig().sankey,
   getNodes,
   getLinks,
   getGraph,

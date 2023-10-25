@@ -450,7 +450,7 @@ describe('when parsing font sizes', function () {
     expect(utils.parseFontSize(undefined)).toEqual([undefined, undefined]);
   });
 
-  it('handles unparseable input', function () {
+  it('handles unparsable input', function () {
     // @ts-expect-error Explicitly testing unparsable input
     expect(utils.parseFontSize({ fontSize: 14 })).toEqual([undefined, undefined]);
   });
