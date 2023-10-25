@@ -23,7 +23,7 @@ export const setConf = function (cnf) {
  * @param {object} g The graph object
  * @param diagObj
  */
-export const addEdges = function (edges, g, diagObj) {
+export const addEdges = function (edges, g, diagObj,svg) {
   log.info('abc78 edges = ', edges);
   let cnt = 0;
   let linkIdCnt = {};

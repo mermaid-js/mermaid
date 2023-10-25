@@ -1,16 +1,21 @@
-import type { MermaidConfig } from '../../../config.type.js';
-import type { ExternalDiagramDefinition, DiagramDetector } from '../../../diagram-api/types.js';
 
+import type {
+  ExternalDiagramDefinition,
+  DiagramDetector,
+  DiagramLoader,
+} from '../../../diagram-api/types.js';
 const id = 'swimlane';
 
-const detector: DiagramDetector = (txt: string, config?: MermaidConfig): boolean => {
-  if (txt.match(/^\s*swimlane/)) {
+
+const detector: DiagramDetector = (txt, config): boolean => {
+   if (txt.match(/^\s*swimlane/)) {
     return true;
   }
   return false;
 };
 
-const loader = async () => {
+
+const loader: DiagramLoader = async () => {
   const { diagram } = await import('./swimlane-definition.js');
   return { id, diagram };
 };

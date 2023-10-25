@@ -14,7 +14,7 @@ import { insertCluster, clear as clearClusters } from './clusters.js';
 import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } from './edges.js';
 import { log } from '../logger.js';
 
-const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster) => {
+const recursiveRender = async (_elem, graph, diagramtype, parentCluster) => {
   log.info('Graph in recursive render: XXX', graphlibJson.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
   log.trace('Dir in recursive render - dir:', dir);
@@ -52,7 +52,7 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster) => 
       if (node && node.clusterNode) {
         // const children = graph.children(v);
         log.info('Cluster identified', v, node.width, graph.node(v));
-        const o = await recursiveRender(nodes, node.graph, diagramtype, id, graph.node(v));
+        const o = await recursiveRender(nodes, node.graph, diagramtype, graph.node(v));
         const newEl = o.elem;
         updateNodeBounds(node, newEl);
         node.diff = o.diff || 0;
@@ -134,7 +134,9 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster) => 
     const edge = graph.edge(e);
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
-    const paths = insertEdge(edgePaths, e, edge, clusterDb, diagramtype, graph, id);
+
+
+    const paths = insertEdge(edgePaths, e, edge, clusterDb, diagramtype, graph);
     positionEdgeLabel(edge, paths);
   });
 
@@ -156,11 +158,11 @@ export const render = async (elem, graph, markers, diagramtype, id) => {
   clearClusters();
   clearGraphlib();
 
-  log.warn('Graph at first:', JSON.stringify(graphlibJson.write(graph)));
+  log.warn('Graph at first:', graphlibJson.write(graph));
   adjustClustersAndEdges(graph);
-  log.warn('Graph after:', JSON.stringify(graphlibJson.write(graph)));
+  log.warn('Graph after:', graphlibJson.write(graph));
   // log.warn('Graph ever  after:', graphlibJson.write(graph.node('A').graph));
-  await recursiveRender(elem, graph, diagramtype, id);
+  await recursiveRender(elem, graph, diagramtype);
 };
 
 // const shapeDefinitions = {};
