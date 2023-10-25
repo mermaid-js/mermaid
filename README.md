@@ -58,7 +58,7 @@ Mermaid addresses this problem by enabling users to create easily modifiable dia
 <br/>
 
 Mermaid allows even non-programmers to easily create detailed diagrams through the [Mermaid Live Editor](https://mermaid.live/).<br/>
-[Tutorials](./docs/config/Tutorials.md) have video tutorials.
+For video tutorials, visit our [Tutorials](./docs/config/Tutorials.md) page.
 Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./docs/ecosystem/integrations-community.md).
 
 You can also use Mermaid within [GitHub](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) as well many of your other favorite applications—check out the list of [Integrations and Usages of Mermaid](./docs/ecosystem/integrations-community.md).
