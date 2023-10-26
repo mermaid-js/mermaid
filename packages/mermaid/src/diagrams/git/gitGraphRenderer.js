@@ -408,7 +408,7 @@ const drawArrow = (svg, commitA, commitB, allCommits) => {
       ? commitB.branch
       : commitA.branch;
   const arrowNeedsRerouting = shouldRerouteArrow(commitA, commitB, branchToGetCurve, allCommits);
-  // log.debug('drawArrow', p1, p2, arrowNeedsReroute, commitA.id, commitB.id);
+  // log.debug('drawArrow', p1, p2, arrowNeedsRerouting, commitA.id, commitB.id);
 
   // Lower-right quadrant logic; top-left is 0,0
 
