@@ -1,3 +1,9 @@
+const styles = getStyles({
+  fontFamily: 'Arial',
+  textColor: 'black',
+  customTextColor: 'red',
+});
+
 const getStyles = (options) =>
   `g.classGroup text {
   fill: ${options.nodeBorder || options.classText};
@@ -150,7 +156,7 @@ g.classGroup line {
 .classTitleText {
   text-anchor: middle;
   font-size: 18px;
-  fill: ${options.textColor};
+  fill: ${options.customTextColor || options.textColor};
 }
 `;
 
