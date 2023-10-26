@@ -16,6 +16,8 @@
 %x space
 %x md_string
 %x NODE
+%x BLOCK_ARROW
+%x ARROW_DIR
 
 
 // as per section 6.1 of RFC 2234 [2]
@@ -42,11 +44,10 @@ CRLF \u000D\u000A
 <md_string>[^`"]+        { return "MD_STR";}
 <md_string>[`]["]          { this.popState();}
 ["]                     this.pushState("string");
-<string>["]             this.popState();
-<string>[^"]*           return "STR";
+<string>["]             { log.debug('LEX: POPPING STR:', yytext);this.popState();}
+<string>[^"]*           { log.debug('LEX: STR ebd:', yytext); return "STR";}
 space[:]\d+            {  yytext = yytext.replace(/space\:/,'');yy.getLogger().info('SPACE NUM (LEX)', yytext); return 'SPACE_BLOCK'; }
 space                  { yytext = '1'; yy.getLogger().info('COLUMNS (LEX)', yytext); return 'SPACE_BLOCK'; }
-<string>[^"]*           return "STR";
 "style"               return 'STYLE';
 "default"             return 'DEFAULT';
 "linkStyle"           return 'LINKSTYLE';
@@ -68,15 +69,15 @@ accDescr\s*"{"\s*                                { this.pushState("acc_descr_mul
 .*direction\s+LR[^\n]*                                      return 'direction_lr';
 
 // Start of nodes with shapes and description
-"-)"                   { yy.getLogger().info('Lex: -)'); this.pushState('NODE');return 'NODE_DSTART'; }
-"(-"                   { yy.getLogger().info('Lex: (-'); this.pushState('NODE');return 'NODE_DSTART'; }
-"))"                   { yy.getLogger().info('Lex: ))'); this.pushState('NODE');return 'NODE_DSTART';  }
-")"                    { yy.getLogger().info('Lex: )'); this.pushState('NODE');return 'NODE_DSTART';      }
-"(("                   { yy.getLogger().info('Lex: )'); this.pushState('NODE');return 'NODE_DSTART'; }
-"{{"                   { yy.getLogger().info('Lex: )'); this.pushState('NODE');return 'NODE_DSTART'; }
-"("                    { yy.getLogger().info('Lex: )'); this.pushState('NODE');return 'NODE_DSTART'; }
-"["                    { yy.getLogger().info('Lex: ['); this.pushState('NODE');return 'NODE_DSTART'; }
-"(["                   { yy.getLogger().info('Lex: )'); this.pushState('NODE');return 'NODE_DSTART'; }
+"-)"                   { yy.getLogger().info('Lexa: -)'); this.pushState('NODE');return 'NODE_DSTART'; }
+"(-"                   { yy.getLogger().info('Lexa: (-'); this.pushState('NODE');return 'NODE_DSTART'; }
+"))"                   { yy.getLogger().info('Lexa: ))'); this.pushState('NODE');return 'NODE_DSTART';  }
+")"                    { yy.getLogger().info('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART';      }
+"(("                   { yy.getLogger().info('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART'; }
+"{{"                   { yy.getLogger().info('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART'; }
+"("                    { yy.getLogger().info('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART'; }
+"["                    { yy.getLogger().info('Lexa: ['); this.pushState('NODE');return 'NODE_DSTART'; }
+"(["                   { yy.getLogger().info('Lexa: (['); this.pushState('NODE');return 'NODE_DSTART'; }
 "[["                   { this.pushState('NODE');return 'NODE_DSTART'; }
 "[|"                   { this.pushState('NODE');return 'NODE_DSTART'; }
 "[("                   { this.pushState('NODE');return 'NODE_DSTART'; }
@@ -85,19 +86,23 @@ accDescr\s*"{"\s*                                { this.pushState("acc_descr_mul
 "[/"                   { this.pushState('NODE');return 'NODE_DSTART'; }
 "[\\"                  { this.pushState('NODE');return 'NODE_DSTART'; }
 
+"<["                   { this.pushState('BLOCK_ARROW');log.debug('LEX ARR START');return 'BLOCK_ARROW_START'; }
 
-[^\(\[\n\-\)\{\}]+     { yy.getLogger().info('Lex: NODE_ID', yytext);return 'NODE_ID'; }
+[^\(\[\n\-\)\{\}\s\<]+     { yy.getLogger().info('Lex: NODE_ID', yytext);return 'NODE_ID'; }
 <<EOF>>                { yy.getLogger().info('Lex: EOF', yytext);return 'EOF'; }
 
 // Handling of strings in node
+<BLOCK_ARROW>["][`]           { this.pushState("md_string");}
 <NODE>["][`]           { this.pushState("md_string");}
 <md_string>[^`"]+      { return "NODE_DESCR";}
 <md_string>[`]["]      { this.popState();}
 <NODE>["]              { yy.getLogger().info('Lex: Starting string');this.pushState("string");}
-<string>[^"]+          { yy.getLogger().info('Lex: NODE_DESCR:', yytext); return "NODE_DESCR";}
-<string>["]            {this.popState();}
+<BLOCK_ARROW>["]              { yy.getLogger().info('LEX ARR: Starting string');this.pushState("string");}
+<string>[^"]+          { log.debug('LEX: NODE_DESCR:', yytext); return "NODE_DESCR";}
+<string>["]            {log.debug('LEX POPPING');this.popState();}
 
 // Node end of shape
+<NODE>\]\>             { this.popState();yy.getLogger().info('Lex: ]>'); return "NODE_DEND"; }
 <NODE>[\)]\)           { this.popState();yy.getLogger().info('Lex: ))'); return "NODE_DEND"; }
 <NODE>[\)]             { this.popState();yy.getLogger().info('Lex: )');  return "NODE_DEND"; }
 <NODE>[\]]             { this.popState();yy.getLogger().info('Lex: ]'); return "NODE_DEND"; }
@@ -110,6 +115,15 @@ accDescr\s*"{"\s*                                { this.pushState("acc_descr_mul
 <NODE>"]]"             { this.popState();yy.getLogger().info('Lex: ]]'); return "NODE_DEND"; }
 <NODE>"/]"             { this.popState();yy.getLogger().info('Lex: /]'); return "NODE_DEND"; }
 <NODE>")]"             { this.popState();yy.getLogger().info('Lex: )]'); return "NODE_DEND"; }
+
+<BLOCK_ARROW>"]>"\s*"("       { log.debug('Lex: =>BAE');  this.pushState('ARROW_DIR');  }
+<ARROW_DIR>","?right\s*           { log.debug('Lex (right): dir:',yytext);return "DIR"; }
+<ARROW_DIR>","?left\s*            { log.debug('Lex (left):',yytext);return "DIR"; }
+<ARROW_DIR>","?x\s*               { log.debug('Lex (x):',yytext); return "DIR"; }
+<ARROW_DIR>","?y\s*               { log.debug('Lex (y):',yytext); return "DIR"; }
+<ARROW_DIR>","?up\s*              { log.debug('Lex (up):',yytext); return "DIR"; }
+<ARROW_DIR>","?\s*down\s*     { yytext = yytext.replace(/^,\s*/, ''); log.debug('Lex (down):',yytext); return "DIR"; }
+<ARROW_DIR>")"\s*             { yytext=']>';log.debug('Lex (ARROW_DIR end):',yytext);this.popState();this.popState();return "BLOCK_ARROW_END"; }
 
 // Edges
 \s*[xo<]?\-\-+[-xo>]\s*                 { yy.getLogger().info('Lex: LINK', '#'+yytext+'#'); return 'LINK'; }
@@ -174,16 +188,6 @@ statement
   | SPACE_BLOCK
     { const num=parseInt($1); const spaceId = yy.generateId(); $$ = { id: spaceId, type:'space', label:'', width: num, children: [] }}
   | blockStatement
-//   SPACELIST node       { yy.getLogger().info('Node: ',$2.id);yy.addNode($1.length, $2.id, $2.descr, $2.type);  }
-// 	| SPACELIST ICON       { yy.getLogger().info('Icon: ',$2);yy.decorateNode({icon: $2}); }
-// 	| SPACELIST CLASS      { yy.decorateNode({class: $2}); }
-//   | SPACELINE { yy.getLogger().info('SPACELIST');}
-// 	|
-//    node					       { yy.getLogger().info('Node: ',$1.id);yy.addNode(0, $1.id, $1.descr, $1.type);  }
-// 	| ICON                 { yy.decorateNode({icon: $1}); }
-// 	| CLASS                { yy.decorateNode({class: $1}); }
-//   // | SPACELIST
-
 	;
 
 nodeStatement
@@ -200,7 +204,6 @@ blockStatement
   | block document end { yy.getLogger().info('Rule: blockStatement : ', $1, $2, $3); const id = yy.generateId(); $$ = { id, type:'composite', label:'', children: $2 }; }
   ;
 
-
 node
   : NODE_ID
   { yy.getLogger().info("Rule: node (NODE_ID seperator): ", $1); $$ = { id: $1 }; }
@@ -210,9 +213,15 @@ node
   // { yy.getLogger().info("Rule: node (nodeShapeNLabel seperator): ", $1, $2, $3); }
   ;
 
+dirList: DIR { yy.getLogger().info("Rule: dirList: ", $1); $$ = [$1]; }
+  | DIR dirList { yy.getLogger().info("Rule: dirList: ", $1, $2); $$ = [$1].concat($2); }
+  ;
+
 nodeShapeNLabel
   :   NODE_DSTART STR NODE_DEND
 	      { yy.getLogger().info("Rule: nodeShapeNLabel: ", $1, $2, $3); $$ = { typeStr: $1 + $3, label: $2 }; }
+	|    BLOCK_ARROW_START STR dirList BLOCK_ARROW_END
+    	      { yy.getLogger().info("Rule: BLOCK_ARROW nodeShapeNLabel: ", $1, $2, $3, $4); $$ = { typeStr: $1 + $4, label: $2, directions: $3}; }
   ;
 
 %%

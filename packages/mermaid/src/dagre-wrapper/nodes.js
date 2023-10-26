@@ -95,6 +95,32 @@ const hexagon = async (parent, node) => {
 
   return shapeSvg;
 };
+const block_arrow = async (parent, node) => {
+  const { shapeSvg, bbox } = await labelHelper(parent, node, undefined, true);
+
+  const f = 2;
+  const h = bbox.height + node.padding;
+  const m = h / f;
+  const w = bbox.width + 2 * m + node.padding;
+  const points = [
+    { x: m, y: 0 },
+    { x: w - m, y: 0 },
+    { x: w, y: -h / 2 },
+    { x: w - m, y: -h },
+    { x: m, y: -h },
+    { x: 0, y: -h / 2 },
+  ];
+
+  const hex = insertPolygonShape(shapeSvg, w, h, points);
+  hex.attr('style', node.style);
+  updateNodeBounds(node, hex);
+
+  node.intersect = function (point) {
+    return intersect.polygon(node, points, point);
+  };
+
+  return shapeSvg;
+};
 
 const rect_left_inv_arrow = async (parent, node) => {
   const { shapeSvg, bbox } = await labelHelper(parent, node, undefined, true);
@@ -1016,6 +1042,7 @@ const shapes = {
   doublecircle,
   stadium,
   hexagon,
+  block_arrow,
   rect_left_inv_arrow,
   lean_right,
   lean_left,

@@ -50,6 +50,9 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     case 'hexagon':
       _shape = 'hexagon';
       break;
+    case 'block_arrow':
+      _shape = 'block_arrow';
+      break;
     case 'odd':
       _shape = 'rect_left_inv_arrow';
       break;

@@ -62,24 +62,23 @@
     </style>
   </head>
   <body>
-    <pre id="diagram" class="mermaid2">
-block-beta
-  block
-    id3("Wider then")
-  end
-    </pre>
     <pre id="diagram" class="mermaid">
 block-beta
+      blockArrowId<["Label"]>(right, down)
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
     columns 3
-    space:2
-    id1("Wider then")
-    space:9
-    space
-    id2{{"Wider then"}}
-    space
-    id3("Wider then")
-    space
-    space
+    space:3
+    ida idb idc
+    id1  id2
+      blockArrowId<["Label"]>(right)
+      blockArrowId2<["Label"]>(left)
+      blockArrowId3<["Label"]>(up)
+      blockArrowId4<["Label"]>(down)
+      blockArrowId5<["Label"]>(x)
+      blockArrowId6<["Label"]>(y)
+      blockArrowId6<["Label"]>(x, down)
     </pre>
     <pre id="diagram" class="mermaid2">
 block-beta

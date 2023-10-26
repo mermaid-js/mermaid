@@ -99,6 +99,8 @@ export function typeStr2Type(typeStr: string) {
       return 'trapezoid';
     case '[\\/]':
       return 'inv_trapezoid';
+    case '<[]>':
+      return 'block_arrow';
     default:
       return 'square';
   }

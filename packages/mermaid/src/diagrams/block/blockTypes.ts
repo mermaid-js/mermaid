@@ -7,6 +7,8 @@ export interface BlockConfig extends BaseDiagramConfig {
 export type BlockType =
   | 'column-setting'
   | 'round'
+  | 'block_arrow'
+  | 'space'
   | 'square'
   | 'diamond'
   | 'hexagon'
@@ -40,6 +42,7 @@ export interface Block {
   node?: any;
   columns?: number; // | TBlockColumnsDefaultValue;
   classes?: string[];
+  directions?: string[];
 }
 
 export interface Link {
