@@ -22,8 +22,7 @@ const populateBlockDatabase = (blockList: Block[], parent: Block): void => {
   const children = [];
   for (const block of blockList) {
     if (block.type === 'column-setting') {
-      const columns = block.columns || -1;
-      parent.columns = columns;
+      parent.columns = block.columns || -1;
     } else {
       if (!block.label) {
         if (block.type === 'composite') {
@@ -39,7 +38,8 @@ const populateBlockDatabase = (blockList: Block[], parent: Block): void => {
       }
 
       if (block.type === 'space') {
-        for (let j = 0; j < block.width; j++) {
+        const w = block.width || 1;
+        for (let j = 0; j < w; j++) {
           const newBlock = clone(block);
           newBlock.id = newBlock.id + '-' + j;
           blockDatabase[newBlock.id] = newBlock;

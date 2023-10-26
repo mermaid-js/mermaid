@@ -17,6 +17,7 @@ export type BlockType =
   | 'lean_left'
   | 'trapezoid'
   | 'inv_trapezoid'
+  | 'rect_left_inv_arrow'
   | 'odd_right'
   | 'circle'
   | 'ellipse'
@@ -28,6 +29,7 @@ export type BlockType =
   | 'composite';
 
 export interface Block {
+  width?: number;
   id: string;
   label?: string;
   parent?: Block;
