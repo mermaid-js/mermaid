@@ -359,9 +359,8 @@ const drawCommits = (svg, commits, modifyGraph) => {
  * return true
  */
 const shouldRerouteArrow = (commitA, commitB, p1, p2, allCommits) => {
-  const branchToGetCurve = (dir === 'TB' ? p1.x < p2.x : p1.y < p2.y)
-    ? commitB.branch
-    : commitA.branch;
+  const commitBIsFurthest = dir === 'TB' ? p1.x < p2.x : p1.y < p2.y;
+  const branchToGetCurve = commitBIsFurthest ? commitB.branch : commitA.branch;
   const isOnBranchToGetCurve = (x) => x.branch === branchToGetCurve;
   const isBetweenCommits = (x) => x.seq > commitA.seq && x.seq < commitB.seq;
   return Object.values(allCommits).some((commitX) => {
