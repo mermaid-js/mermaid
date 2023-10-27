@@ -738,12 +738,12 @@ gitGraph TB:
   it('36: should render GitGraph with branch that is not used immediately', () => {
     imgSnapshotTest(
       `gitGraph LR:
-      commit
+      commit id:"1-abcdefg"
       branch x
       checkout main
-      commit
+      commit id:"2-abcdefg"
       checkout x
-      commit
+      commit id:"3-abcdefg"
       checkout main
       merge x
       `,
@@ -753,12 +753,12 @@ gitGraph TB:
   it('37: should render GitGraph with branch that is not used immediately | Vertical Branch', () => {
     imgSnapshotTest(
       `gitGraph TB:
-      commit
+      commit id:"1-abcdefg"
       branch x
       checkout main
-      commit
+      commit id:"2-abcdefg"
       checkout x
-      commit
+      commit id:"3-abcdefg"
       checkout main
       merge x
       `,
@@ -768,20 +768,20 @@ gitGraph TB:
   it('38: should render GitGraph with branch and sub-branch neither of which used immediately', () => {
     imgSnapshotTest(
       `gitGraph LR:
-      commit
+      commit id:"1-abcdefg"
       branch x
       checkout main
-      commit
+      commit id:"2-abcdefg"
       checkout x
-      commit
+      commit id:"3-abcdefg"
       checkout main
       merge x
       checkout x
       branch y
       checkout x
-      commit
+      commit id:"4-abcdefg"
       checkout y
-      commit
+      commit id:"5-abcdefg"
       checkout x
       merge y
       `,
@@ -791,20 +791,20 @@ gitGraph TB:
   it('39: should render GitGraph with branch and sub-branch neither of which used immediately | Vertical Branch', () => {
     imgSnapshotTest(
       `gitGraph TB:
-      commit
+      commit id:"1-abcdefg"
       branch x
       checkout main
-      commit
+      commit id:"2-abcdefg"
       checkout x
-      commit
+      commit id:"3-abcdefg"
       checkout main
       merge x
       checkout x
       branch y
       checkout x
-      commit
+      commit id:"4-abcdefg"
       checkout y
-      commit
+      commit id:"5-abcdefg"
       checkout x
       merge y
       `,
