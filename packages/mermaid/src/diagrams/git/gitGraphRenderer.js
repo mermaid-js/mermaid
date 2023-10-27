@@ -347,6 +347,8 @@ const drawCommits = (svg, commits, modifyGraph) => {
  * @param {any} commitA
  * @param {any} commitB
  * @param branchToGetCurve
+ * @param p1
+ * @param p2
  * @param allCommits
  * @returns {boolean}
  * If there are commits between
@@ -356,7 +358,15 @@ const drawCommits = (svg, commits, modifyGraph) => {
  * source branch is not main
  * return true
  */
-const shouldRerouteArrow = (commitA, commitB, branchToGetCurve, allCommits) => {
+const shouldRerouteArrow = (commitA, commitB, p1, p2, allCommits) => {
+  const branchToGetCurve =
+    dir === 'TB'
+      ? p1.x < p2.x
+        ? commitB.branch
+        : commitA.branch
+      : p1.y < p2.y
+      ? commitB.branch
+      : commitA.branch;
   const isOnBranchToGetCurve = (x) => x.branch === branchToGetCurve;
   const isBetweenCommits = (x) => x.seq > commitA.seq && x.seq < commitB.seq;
   return Object.values(allCommits).some((commitX) => {
@@ -399,15 +409,7 @@ const findLane = (y1, y2, depth = 0) => {
 const drawArrow = (svg, commitA, commitB, allCommits) => {
   const p1 = commitPos[commitA.id]; // arrowStart
   const p2 = commitPos[commitB.id]; // arrowEnd
-  const branchToGetCurve =
-    dir === 'TB'
-      ? p1.x < p2.x
-        ? commitB.branch
-        : commitA.branch
-      : p1.y < p2.y
-      ? commitB.branch
-      : commitA.branch;
-  const arrowNeedsRerouting = shouldRerouteArrow(commitA, commitB, branchToGetCurve, allCommits);
+  const arrowNeedsRerouting = shouldRerouteArrow(commitA, commitB, p1, p2, allCommits);
   // log.debug('drawArrow', p1, p2, arrowNeedsRerouting, commitA.id, commitB.id);
 
   // Lower-right quadrant logic; top-left is 0,0
