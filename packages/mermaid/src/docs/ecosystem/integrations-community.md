@@ -30,6 +30,7 @@ Below are a list of community plugins and integrations created with Mermaid.
 - [Joplin](https://joplinapp.org) ✅
 - [Slab](https://slab.com) ✅
 - [Swimm](https://swimm.io) ✅
+- [NotesHub](https://noteshub.app) ✅
 - [Notion](https://notion.so) ✅
 - [Observable](https://observablehq.com/@observablehq/mermaid) ✅
 - [Obsidian](https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram) ✅
