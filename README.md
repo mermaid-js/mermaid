@@ -405,7 +405,7 @@ To report a vulnerability, please e-mail <security@mermaid.live> with a descript
 
 ## Appreciation
 
-A quick note from Knut Sveidqvist:
+#A quick note from Knut Sveidqvist:
 
 > _Many thanks to the [d3](https://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing the graphical layout and drawing libraries!_
 >
