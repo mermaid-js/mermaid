@@ -91,7 +91,7 @@ See [the accTitle and accDescr usage examples](#acctitle-and-accdescr-usage-exam
   graph LR
       accTitle: Big Decisions
       accDescr: Bob's Burgers process for making big decisions
-      A[Identify Big Descision] --> B{Make Big Decision}
+      A[Identify Big Decision] --> B{Make Big Decision}
       B --> D[Be done]
 ```
 
@@ -123,7 +123,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
         for making very, very big decisions.
         This is actually a very simple flow: identify the big decision and then make the big decision.
          }
-      A[Identify Big Descision] --> B{Make Big Decision}
+      A[Identify Big Decision] --> B{Make Big Decision}
       B --> D[Be done]
 ```
 

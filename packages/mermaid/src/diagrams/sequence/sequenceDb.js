@@ -1,4 +1,4 @@
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import { sanitizeText } from '../common/common.js';
 import {
@@ -205,7 +205,7 @@ export const autoWrap = () => {
   if (state.records.wrapEnabled !== undefined) {
     return state.records.wrapEnabled;
   }
-  return configApi.getConfig().sequence.wrap;
+  return getConfig().sequence.wrap;
 };
 
 export const clear = function () {
@@ -255,7 +255,7 @@ export const parseBoxData = function (str) {
     color: color,
     text:
       title !== undefined
-        ? sanitizeText(title.replace(/^:?(?:no)?wrap:/, ''), configApi.getConfig())
+        ? sanitizeText(title.replace(/^:?(?:no)?wrap:/, ''), getConfig())
         : undefined,
     wrap:
       title !== undefined
@@ -340,7 +340,7 @@ export const addLinks = function (actorId, text) {
   const actor = getActor(actorId);
   // JSON.parse the text
   try {
-    let sanitizedText = sanitizeText(text.text, configApi.getConfig());
+    let sanitizedText = sanitizeText(text.text, getConfig());
     sanitizedText = sanitizedText.replace(/&amp;/g, '&');
     sanitizedText = sanitizedText.replace(/&equals;/g, '=');
     const links = JSON.parse(sanitizedText);
@@ -356,7 +356,7 @@ export const addALink = function (actorId, text) {
   const actor = getActor(actorId);
   try {
     const links = {};
-    let sanitizedText = sanitizeText(text.text, configApi.getConfig());
+    let sanitizedText = sanitizeText(text.text, getConfig());
     var sep = sanitizedText.indexOf('@');
     sanitizedText = sanitizedText.replace(/&amp;/g, '&');
     sanitizedText = sanitizedText.replace(/&equals;/g, '=');
@@ -390,7 +390,7 @@ export const addProperties = function (actorId, text) {
   const actor = getActor(actorId);
   // JSON.parse the text
   try {
-    let sanitizedText = sanitizeText(text.text, configApi.getConfig());
+    let sanitizedText = sanitizeText(text.text, getConfig());
     const properties = JSON.parse(sanitizedText);
     // add the deserialized text to the actor's property field.
     insertProperties(actor, properties);
@@ -635,7 +635,7 @@ export default {
   getBoxes,
   getDiagramTitle,
   setDiagramTitle,
-  getConfig: () => configApi.getConfig().sequence,
+  getConfig: () => getConfig().sequence,
   clear,
   parseMessage,
   parseBoxData,

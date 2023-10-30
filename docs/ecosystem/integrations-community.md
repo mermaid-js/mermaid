@@ -175,7 +175,7 @@ Communication tools and platforms
 - [remark](https://remark.js.org/)
   - [remark-mermaidjs](https://github.com/remcohaszing/remark-mermaidjs)
 - [rehype](https://github.com/rehypejs/rehype)
-  - [rehype-mermaidjs](https://github.com/remcohaszing/rehype-mermaidjs)
+  - [rehype-mermaid](https://github.com/remcohaszing/rehype-mermaid)
 - [Gatsby](https://www.gatsbyjs.com/)
   - [gatsby-remark-mermaid](https://github.com/remcohaszing/gatsby-remark-mermaid)
 - [JSDoc](https://jsdoc.app/)
