@@ -4,7 +4,7 @@ import { defineConfig, MarkdownOptions } from 'vitepress';
 
 const allMarkdownTransformers: MarkdownOptions = {
   // the shiki theme to highlight code blocks
-  theme: 'github-dark',
+  theme: { dark: 'github-dark', light: 'github-light' },
   config: async (md) => {
     await MermaidExample(md);
   },
