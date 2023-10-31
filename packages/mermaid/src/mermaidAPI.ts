@@ -436,8 +436,6 @@ const render = async function (
     appendDivSvgG(root, id, enclosingDivID);
   }
 
-  text = encodeEntities(text);
-
   // -------------------------------------------------------------------------------
   // Create the diagram
 

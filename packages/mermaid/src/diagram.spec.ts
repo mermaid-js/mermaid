@@ -69,4 +69,18 @@ Expecting 'TXT', got 'NEWLINE'"
       '"No diagram type detected matching given configuration for text: thor TD; A-->B"'
     );
   });
+
+  test('should consider entity codes when present in diagram defination', async () => {
+    const diagram = await getDiagramFromText(`sequenceDiagram
+    A->>B: I #9829; you!
+    B->>A: I #9829; you #infin; times more!`);
+    const messages = diagram.db?.getMessages?.();
+    if (!messages) {
+      throw new Error('Messages not found!');
+    }
+    const result = ['I ﬂ°°9829¶ß you!', 'I ﬂ°°9829¶ß you ﬂ°infin¶ß times more!'];
+    messages.forEach((message, index: number) => {
+      expect(message.message).toBe(result[index]);
+    });
+  });
 });

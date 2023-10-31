@@ -19,6 +19,14 @@ export interface InjectUtils {
   _parseDirective: any;
 }
 
+export type Message = {
+  type: number;
+  to: string;
+  from: string;
+  message: string;
+  wrap: boolean;
+};
+
 /**
  * Generic Diagram DB that may apply to any diagram type.
  */
@@ -37,6 +45,7 @@ export interface DiagramDB {
 
   setDisplayMode?: (title: string) => void;
   bindFunctions?: (element: Element) => void;
+  getMessages?: () => Message[];
 }
 
 // This is what is returned from getClasses(...) methods.
