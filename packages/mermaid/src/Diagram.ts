@@ -5,6 +5,7 @@ import { detectType, getDiagramLoader } from './diagram-api/detectType.js';
 import { UnknownDiagramError } from './errors.js';
 import type { DetailedError } from './utils.js';
 import type { DiagramDefinition, DiagramMetadata } from './diagram-api/types.js';
+import { encodeEntities } from './mermaidAPI.js';
 
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
 
@@ -81,6 +82,8 @@ export const getDiagramFromText = async (
   text: string,
   metadata: Pick<DiagramMetadata, 'title'> = {}
 ): Promise<Diagram> => {
+  text = encodeEntities(text);
+
   const type = detectType(text, configApi.getConfig());
   try {
     // Trying to find the diagram
