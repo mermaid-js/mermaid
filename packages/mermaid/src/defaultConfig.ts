@@ -236,6 +236,10 @@ const config: RequiredDeep<MermaidConfig> = {
     ...defaultConfigJson.pie,
     useWidth: 984,
   },
+  xyChart: {
+    ...defaultConfigJson.xyChart,
+    useWidth: undefined,
+  },
   requirement: {
     ...defaultConfigJson.requirement,
     useWidth: undefined,
