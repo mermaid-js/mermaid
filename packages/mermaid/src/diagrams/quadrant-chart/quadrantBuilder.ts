@@ -283,14 +283,17 @@ export class QuadrantBuilder {
       quadrantTop,
       quadrantWidth,
     } = quadrantSpace;
-    const drawAxisLabelInMiddle = this.data.points.length === 0;
+
+    const drawXAxisLabelsInMiddle = Boolean(this.data.xAxisRightText);
+    const drawYAxisLabelsInMiddle = Boolean(this.data.yAxisTopText);
+
     const axisLabels: QuadrantTextType[] = [];
 
     if (this.data.xAxisLeftText && showXAxis) {
       axisLabels.push({
         text: this.data.xAxisLeftText,
         fill: this.themeConfig.quadrantXAxisTextFill,
-        x: quadrantLeft + (drawAxisLabelInMiddle ? quadrantHalfWidth / 2 : 0),
+        x: quadrantLeft + (drawXAxisLabelsInMiddle ? quadrantHalfWidth / 2 : 0),
         y:
           xAxisPosition === 'top'
             ? this.config.xAxisLabelPadding + titleSpace.top
@@ -299,7 +302,7 @@ export class QuadrantBuilder {
               quadrantHeight +
               this.config.quadrantPadding,
         fontSize: this.config.xAxisLabelFontSize,
-        verticalPos: drawAxisLabelInMiddle ? 'center' : 'left',
+        verticalPos: drawXAxisLabelsInMiddle ? 'center' : 'left',
         horizontalPos: 'top',
         rotation: 0,
       });
@@ -308,7 +311,7 @@ export class QuadrantBuilder {
       axisLabels.push({
         text: this.data.xAxisRightText,
         fill: this.themeConfig.quadrantXAxisTextFill,
-        x: quadrantLeft + quadrantHalfWidth + (drawAxisLabelInMiddle ? quadrantHalfWidth / 2 : 0),
+        x: quadrantLeft + quadrantHalfWidth + (drawXAxisLabelsInMiddle ? quadrantHalfWidth / 2 : 0),
         y:
           xAxisPosition === 'top'
             ? this.config.xAxisLabelPadding + titleSpace.top
@@ -317,7 +320,7 @@ export class QuadrantBuilder {
               quadrantHeight +
               this.config.quadrantPadding,
         fontSize: this.config.xAxisLabelFontSize,
-        verticalPos: drawAxisLabelInMiddle ? 'center' : 'left',
+        verticalPos: drawXAxisLabelsInMiddle ? 'center' : 'left',
         horizontalPos: 'top',
         rotation: 0,
       });
@@ -334,9 +337,9 @@ export class QuadrantBuilder {
               quadrantLeft +
               quadrantWidth +
               this.config.quadrantPadding,
-        y: quadrantTop + quadrantHeight - (drawAxisLabelInMiddle ? quadrantHalfHeight / 2 : 0),
+        y: quadrantTop + quadrantHeight - (drawYAxisLabelsInMiddle ? quadrantHalfHeight / 2 : 0),
         fontSize: this.config.yAxisLabelFontSize,
-        verticalPos: drawAxisLabelInMiddle ? 'center' : 'left',
+        verticalPos: drawYAxisLabelsInMiddle ? 'center' : 'left',
         horizontalPos: 'top',
         rotation: -90,
       });
@@ -352,9 +355,10 @@ export class QuadrantBuilder {
               quadrantLeft +
               quadrantWidth +
               this.config.quadrantPadding,
-        y: quadrantTop + quadrantHalfHeight - (drawAxisLabelInMiddle ? quadrantHalfHeight / 2 : 0),
+        y:
+          quadrantTop + quadrantHalfHeight - (drawYAxisLabelsInMiddle ? quadrantHalfHeight / 2 : 0),
         fontSize: this.config.yAxisLabelFontSize,
-        verticalPos: drawAxisLabelInMiddle ? 'center' : 'left',
+        verticalPos: drawYAxisLabelsInMiddle ? 'center' : 'left',
         horizontalPos: 'top',
         rotation: -90,
       });
