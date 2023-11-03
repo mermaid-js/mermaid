@@ -1,5 +1,5 @@
 import type { GrammarAST, Stream, TokenBuilderOptions } from 'langium';
-import type { TokenType } from 'chevrotain';
+import type { TokenType, TokenVocabulary } from 'chevrotain';
 
 import { DefaultTokenBuilder } from 'langium';
 
@@ -9,6 +9,14 @@ export abstract class MermaidTokenBuilder extends DefaultTokenBuilder {
   public constructor(keywords: string[]) {
     super();
     this.keywords = new Set<string>(keywords);
+  }
+
+  public override buildTokens(
+    grammar: GrammarAST.Grammar,
+    options?: TokenBuilderOptions | undefined
+  ): TokenVocabulary {
+    this.rearrangeRules(grammar.rules);
+    return super.buildTokens(grammar, options);
   }
 
   protected override buildKeywordTokens(
@@ -24,5 +32,13 @@ export abstract class MermaidTokenBuilder extends DefaultTokenBuilder {
       }
     });
     return tokenTypes;
+  }
+
+  private rearrangeRules(rules: GrammarAST.AbstractRule[]): GrammarAST.AbstractRule[] {
+    const pivotIndex = rules.findIndex((rule) => rule.name === 'TitleAndAccessibilities');
+    if (pivotIndex === -1) {
+      return rules;
+    }
+    return [...rules.slice(pivotIndex), ...rules.slice(0, pivotIndex)];
   }
 }
