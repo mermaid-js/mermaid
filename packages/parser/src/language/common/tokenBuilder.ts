@@ -20,7 +20,7 @@ export abstract class MermaidTokenBuilder extends DefaultTokenBuilder {
     // to restrict users, they mustn't have any non-whitespace characters after the keyword.
     tokenTypes.forEach((tokenType: TokenType): void => {
       if (this.keywords.has(tokenType.name) && tokenType.PATTERN !== undefined) {
-        tokenType.PATTERN = new RegExp(tokenType.PATTERN.toString() + '(?!\\S)');
+        tokenType.PATTERN = new RegExp(tokenType.PATTERN.toString() + '(?:(?=%%)|(?!\\S))');
       }
     });
     return tokenTypes;
