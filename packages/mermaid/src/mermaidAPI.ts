@@ -30,6 +30,7 @@ import isEmpty from 'lodash-es/isEmpty.js';
 import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
 import type { DiagramStyleClassDef } from './diagram-api/types.js';
 import { preprocessDiagram } from './preprocess.js';
+import { decodeEntities } from './utils.js';
 
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
@@ -109,43 +110,6 @@ async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean
   }
   return true;
 }
-
-/**
- * @param  text - text to be encoded
- * @returns
- */
-export const encodeEntities = function (text: string): string {
-  let txt = text;
-
-  txt = txt.replace(/style.*:\S*#.*;/g, function (s): string {
-    return s.substring(0, s.length - 1);
-  });
-  txt = txt.replace(/classDef.*:\S*#.*;/g, function (s): string {
-    return s.substring(0, s.length - 1);
-  });
-
-  txt = txt.replace(/#\w+;/g, function (s) {
-    const innerTxt = s.substring(1, s.length - 1);
-
-    const isInt = /^\+?\d+$/.test(innerTxt);
-    if (isInt) {
-      return 'ﬂ°°' + innerTxt + '¶ß';
-    } else {
-      return 'ﬂ°' + innerTxt + '¶ß';
-    }
-  });
-
-  return txt;
-};
-
-/**
- *
- * @param  text - text to be decoded
- * @returns
- */
-export const decodeEntities = function (text: string): string {
-  return text.replace(/ﬂ°°/g, '&#').replace(/ﬂ°/g, '&').replace(/¶ß/g, ';');
-};
 
 // append !important; to each cssClass followed by a final !important, all enclosed in { }
 //

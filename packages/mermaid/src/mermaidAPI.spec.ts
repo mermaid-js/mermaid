@@ -38,8 +38,6 @@ import type { MermaidConfig } from './config.type.js';
 
 import mermaidAPI, { removeExistingElements } from './mermaidAPI.js';
 import {
-  encodeEntities,
-  decodeEntities,
   createCssStyles,
   createUserStyles,
   appendDivSvgG,
@@ -68,6 +66,7 @@ vi.mock('stylis', () => {
   };
 });
 import { compile, serialize } from 'stylis';
+import { decodeEntities, encodeEntities } from './utils.js';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
