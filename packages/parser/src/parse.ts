@@ -6,17 +6,14 @@ import { createInfoServices, createPieServices } from './language/index.js';
 export type DiagramAST = Info | Pie;
 
 const parsers: Record<string, LangiumParser> = {};
-
 const initializers = {
   info: () => {
     // Will have to make parse async to use this. Can try later...
     // const { createInfoServices } = await import('./language/info/index.js');
-    const parser = createInfoServices().Info.parser.LangiumParser;
-    parsers['info'] = parser;
+    parsers['info'] = createInfoServices().Info.parser.LangiumParser;
   },
   pie: () => {
-    const parser = createPieServices().Pie.parser.LangiumParser;
-    parsers['pie'] = parser;
+    parsers['pie'] = createPieServices().Pie.parser.LangiumParser;
   },
 } as const;
 
