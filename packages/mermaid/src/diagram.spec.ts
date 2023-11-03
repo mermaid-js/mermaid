@@ -74,7 +74,7 @@ Expecting 'TXT', got 'NEWLINE'"
     const diagram = await getDiagramFromText(`sequenceDiagram
     A->>B: I #9829; you!
     B->>A: I #9829; you #infin; times more!`);
-    //@ts-ignore
+    // @ts-ignore: we need to add types for sequenceDb which will be done in separate PR
     const messages = diagram.db?.getMessages?.();
     if (!messages) {
       throw new Error('Messages not found!');
