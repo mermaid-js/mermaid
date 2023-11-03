@@ -42,3 +42,5 @@ export abstract class MermaidTokenBuilder extends DefaultTokenBuilder {
     return [...rules.slice(pivotIndex), ...rules.slice(0, pivotIndex)];
   }
 }
+
+export class CommonTokenBuilder extends MermaidTokenBuilder {}

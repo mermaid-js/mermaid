@@ -1,2 +1,2 @@
-export * from './tokenBuilder.js';
+export { MermaidTokenBuilder } from './tokenBuilder.js';
 export { MermaidValueConverter } from './valueConverter.js';
