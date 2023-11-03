@@ -41,5 +41,8 @@
   ],
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "chevrotain": "^11.0.3"
   }
 }

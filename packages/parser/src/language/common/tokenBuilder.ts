@@ -1,5 +1,5 @@
 import type { GrammarAST, Stream, TokenBuilderOptions } from 'langium';
-import type { TokenType } from '../chevrotainWrapper.js';
+import type { TokenType } from 'chevrotain';
 
 import { DefaultTokenBuilder } from 'langium';
 

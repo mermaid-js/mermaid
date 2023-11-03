@@ -486,6 +486,10 @@ importers:
       langium:
         specifier: 2.1.0
         version: 2.1.0
+    devDependencies:
+      chevrotain:
+        specifier: ^11.0.3
+        version: 11.0.3
 
   tests/webpack:
     dependencies:
