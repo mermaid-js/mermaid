@@ -1,6 +1,6 @@
 import type { CstNode, GrammarAST, ValueType } from 'langium';
 
-import { MermaidValueConverter } from '../common/valueConverter.js';
+import { MermaidValueConverter } from '../common/index.js';
 
 export class PieValueConverter extends MermaidValueConverter {
   protected runCustomConverter(

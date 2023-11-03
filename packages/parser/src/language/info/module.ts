@@ -7,7 +7,7 @@ import type {
 } from 'langium';
 import { EmptyFileSystem, createDefaultModule, createDefaultSharedModule, inject } from 'langium';
 
-import { CommonValueConverter } from '../common/valueConverter.js';
+import { CommonValueConverter } from '../common/index.js';
 import { InfoGeneratedModule, MermaidGeneratedSharedModule } from '../generated/module.js';
 import { InfoTokenBuilder } from './tokenBuilder.js';
 
