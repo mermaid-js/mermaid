@@ -3,7 +3,9 @@ import { log } from './logger.js';
 import { getDiagram, registerDiagram } from './diagram-api/diagramAPI.js';
 import { detectType, getDiagramLoader } from './diagram-api/detectType.js';
 import { UnknownDiagramError } from './errors.js';
-import { encodeEntities, type DetailedError } from './utils.js';
+import { encodeEntities } from './utils.js';
+
+import type { DetailedError } from './utils.js';
 import type { DiagramDefinition, DiagramMetadata } from './diagram-api/types.js';
 
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
