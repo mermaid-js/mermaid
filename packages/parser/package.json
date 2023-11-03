@@ -36,9 +36,6 @@
   "dependencies": {
     "langium": "2.0.1"
   },
-  "devDependencies": {
-    "langium-cli": "2.0.1"
-  },
   "files": [
     "dist/"
   ],

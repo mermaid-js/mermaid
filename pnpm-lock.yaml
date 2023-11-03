@@ -476,7 +476,7 @@ importers:
         version: 0.16.0(vite@4.3.9)(workbox-build@7.0.0)(workbox-window@7.0.0)
       vitepress:
         specifier: 1.0.0-rc.14
-        version: 1.0.0-rc.14(@algolia/client-search@4.19.1)(@types/node@18.16.0)(search-insights@2.6.0)
+        version: 1.0.0-rc.14(@algolia/client-search@4.19.1)(@types/node@18.16.0)(search-insights@2.7.0)
       workbox-window:
         specifier: ^7.0.0
         version: 7.0.0
@@ -484,10 +484,6 @@ importers:
   packages/parser:
     dependencies:
       langium:
-        specifier: 2.0.1
-        version: 2.0.1
-    devDependencies:
-      langium-cli:
         specifier: 2.0.1
         version: 2.0.1
 
@@ -15775,7 +15771,7 @@ packages:
       - universal-cookie
     dev: true
 
-  /vitepress@1.0.0-rc.14(@algolia/client-search@4.19.1)(@types/node@18.16.0)(search-insights@2.6.0):
+  /vitepress@1.0.0-rc.14(@algolia/client-search@4.19.1)(@types/node@18.16.0)(search-insights@2.7.0):
     resolution: {integrity: sha512-yChIeXOAcNvVnSVjhziH1vte0uhKb00PuZf7KdIMfx3ixTMAz73Nn+6gREvCv0SdH+anteGUKz5eljv0ygcgGQ==}
     hasBin: true
     peerDependencies:
