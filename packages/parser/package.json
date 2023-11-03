@@ -34,7 +34,7 @@
     "ast"
   ],
   "dependencies": {
-    "langium": "2.0.1"
+    "langium": "2.1.0"
   },
   "files": [
     "dist/"

@@ -150,8 +150,8 @@ importers:
         specifier: ^22.0.0
         version: 22.0.0
       langium-cli:
-        specifier: 2.0.1
-        version: 2.0.1
+        specifier: 2.1.0
+        version: 2.1.0
       lint-staged:
         specifier: ^13.2.1
         version: 13.2.1
@@ -484,8 +484,8 @@ importers:
   packages/parser:
     dependencies:
       langium:
-        specifier: 2.0.1
-        version: 2.0.1
+        specifier: 2.1.0
+        version: 2.1.0
 
   tests/webpack:
     dependencies:
@@ -6974,6 +6974,11 @@ packages:
     engines: {node: '>=14'}
     dev: true
 
+  /commander@11.0.0:
+    resolution: {integrity: sha512-9HMlXtt/BNoYr8ooyjjNRdIilOTkVJXB+GhxMTtOKwk0R4j4lS4NpjuqmRxroBfnfTSHQIHQB7wryHhXarNjmQ==}
+    engines: {node: '>=16'}
+    dev: true
+
   /commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
     dev: true
@@ -11438,36 +11443,36 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
-  /langium-cli@2.0.1:
-    resolution: {integrity: sha512-dPPaHimIoCgELED4tvRGdU3i26tjWuyVwexXgPtTtTzp1MBdGCBLppLADXHkL8yFVdWM/PWlCq06YyqAT4eV3A==}
+  /langium-cli@2.1.0:
+    resolution: {integrity: sha512-Gbj4CvfAc1gP/6ihxikd2Je95j1FWjXZu8bbji2/t2vQ6kEP+vs9Fx7kSGOM0AbU/hjZfy6E35bJPOdwsiyqTA==}
     engines: {node: '>=16.0.0'}
     hasBin: true
     dependencies:
       chalk: 5.3.0
-      commander: 10.0.1
+      commander: 11.0.0
       fs-extra: 11.1.1
       jsonschema: 1.4.1
-      langium: 2.0.1
-      langium-railroad: 2.0.0
+      langium: 2.1.0
+      langium-railroad: 2.1.0
       lodash: 4.17.21
     dev: true
 
-  /langium-railroad@2.0.0:
-    resolution: {integrity: sha512-g6y8vPh4i7ll/Q4D9aFrjk4UgtkuzkE6WGfiTHJHTFlDwHoiKrPSIIBZO4wjEb3XUF9P5vIt7aRjerTy7Jgm0g==}
+  /langium-railroad@2.1.0:
+    resolution: {integrity: sha512-2IeAIUSTQzbDjNnJA+0ql8tyN/mhCSN4FS50Mo9LOtLj523qUEBwHflDmCiOGZzW9iZdni6NXJgh8nLqjhTlDw==}
     dependencies:
-      langium: 2.0.1
+      langium: 2.1.0
       railroad-diagrams: 1.0.0
     dev: true
 
-  /langium@2.0.1:
-    resolution: {integrity: sha512-EGi8NNN/5zxcUL//sA4kqpV9YVOZfDngwkkSxsZ/zfx4Wjdg9von71rWIMCV6kW1M40kPOKF6e8oMTyWeX92fg==}
+  /langium@2.1.0:
+    resolution: {integrity: sha512-VDJNyJHfFkamwX+IGp2cLiVIsdOqeVwEZ7b95DWs1jcJmf5e47NGLsfb4aLb0mVrCTU4mvfghfoiTkOMVSdpqA==}
     engines: {node: '>=16.0.0'}
     dependencies:
       chevrotain: 11.0.3
       chevrotain-allstar: 0.3.0(chevrotain@11.0.3)
-      vscode-languageserver: 8.0.2
-      vscode-languageserver-textdocument: 1.0.8
-      vscode-uri: 3.0.7
+      vscode-languageserver: 9.0.1
+      vscode-languageserver-textdocument: 1.0.11
+      vscode-uri: 3.0.8
 
   /layout-base@1.0.2:
     resolution: {integrity: sha512-8h2oVEZNktL4BH2JCOI90iD1yXwL6iNW7KcCKT2QZgQJR2vbqDsldCTPRU9NifTCqHZci57XvQQ15YTu+sTYPg==}
@@ -15895,31 +15900,35 @@ packages:
       vscode-uri: 3.0.7
     dev: true
 
-  /vscode-jsonrpc@8.0.2:
-    resolution: {integrity: sha512-RY7HwI/ydoC1Wwg4gJ3y6LpU9FJRZAUnTYMXthqhFXXu77ErDd/xkREpGuk4MyYkk4a+XDWAMqe0S3KkelYQEQ==}
+  /vscode-jsonrpc@8.2.0:
+    resolution: {integrity: sha512-C+r0eKJUIfiDIfwJhria30+TYWPtuHJXHtI7J0YlOmKAo7ogxP20T0zxB7HZQIFhIyvoBPwWskjxrvAtfjyZfA==}
     engines: {node: '>=14.0.0'}
 
-  /vscode-languageserver-protocol@3.17.2:
-    resolution: {integrity: sha512-8kYisQ3z/SQ2kyjlNeQxbkkTNmVFoQCqkmGrzLH6A9ecPlgTbp3wDTnUNqaUxYr4vlAcloxx8zwy7G5WdguYNg==}
+  /vscode-languageserver-protocol@3.17.5:
+    resolution: {integrity: sha512-mb1bvRJN8SVznADSGWM9u/b07H7Ecg0I3OgXDuLdn307rl/J3A9YD6/eYOssqhecL27hK1IPZAsaqh00i/Jljg==}
     dependencies:
-      vscode-jsonrpc: 8.0.2
-      vscode-languageserver-types: 3.17.2
+      vscode-jsonrpc: 8.2.0
+      vscode-languageserver-types: 3.17.5
+
+  /vscode-languageserver-textdocument@1.0.11:
+    resolution: {integrity: sha512-X+8T3GoiwTVlJbicx/sIAF+yuJAqz8VvwJyoMVhwEMoEKE/fkDmrqUgDMyBECcM2A2frVZIUj5HI/ErRXCfOeA==}
 
   /vscode-languageserver-textdocument@1.0.8:
     resolution: {integrity: sha512-1bonkGqQs5/fxGT5UchTgjGVnfysL0O8v1AYMBjqTbWQTFn721zaPGDYFkOKtfDgFiSgXM3KwaG3FMGfW4Ed9Q==}
-
-  /vscode-languageserver-types@3.17.2:
-    resolution: {integrity: sha512-zHhCWatviizPIq9B7Vh9uvrH6x3sK8itC84HkamnBWoDFJtzBf7SWlpLCZUit72b3os45h6RWQNC9xHRDF8dRA==}
+    dev: true
 
   /vscode-languageserver-types@3.17.3:
     resolution: {integrity: sha512-SYU4z1dL0PyIMd4Vj8YOqFvHu7Hz/enbWtpfnVbJHU4Nd1YNYx8u0ennumc6h48GQNeOLxmwySmnADouT/AuZA==}
     dev: true
 
-  /vscode-languageserver@8.0.2:
-    resolution: {integrity: sha512-bpEt2ggPxKzsAOZlXmCJ50bV7VrxwCS5BI4+egUmure/oI/t4OlFzi/YNtVvY24A2UDOZAgwFGgnZPwqSJubkA==}
+  /vscode-languageserver-types@3.17.5:
+    resolution: {integrity: sha512-Ld1VelNuX9pdF39h2Hgaeb5hEZM2Z3jUrrMgWQAu82jMtZp7p3vJT3BzToKtZI7NgQssZje5o0zryOrhQvzQAg==}
+
+  /vscode-languageserver@9.0.1:
+    resolution: {integrity: sha512-woByF3PDpkHFUreUa7Hos7+pUWdeWMXRd26+ZX2A8cFx6v/JPTtd4/uN0/jB6XQHYaOlHbio03NTHCqrgG5n7g==}
     hasBin: true
     dependencies:
-      vscode-languageserver-protocol: 3.17.2
+      vscode-languageserver-protocol: 3.17.5
 
   /vscode-nls@5.2.0:
     resolution: {integrity: sha512-RAaHx7B14ZU04EU31pT+rKz2/zSl7xMsfIZuo8pd+KZO6PXtQmpevpq3vxvWNcrGbdmhM/rr5Uw5Mz+NBfhVng==}
@@ -15935,6 +15944,10 @@ packages:
 
   /vscode-uri@3.0.7:
     resolution: {integrity: sha512-eOpPHogvorZRobNqJGhapa0JdwaxpjVvyBp0QIUMRMSf8ZAlqOdEquKuRmw9Qwu0qXtJIWqFtMkmvJjUZmMjVA==}
+    dev: true
+
+  /vscode-uri@3.0.8:
+    resolution: {integrity: sha512-AyFQ0EVmsOZOlAnxoFOGOq1SQDWAB7C6aqMGS23svWAllfOaxbuFvcT8D1i8z3Gyn8fraVeZNNmN6e9bxxXkKw==}
 
   /vue-demi@0.14.5(vue@3.3.0):
     resolution: {integrity: sha512-o9NUVpl/YlsGJ7t+xuqJKx8EBGf1quRhCiT6D/J0pfwmk9zUwYkC7yrF4SZCe6fETvSM3UNL2edcbYrSyc4QHA==}
