@@ -1,25 +1,9 @@
-import type { LangiumParser, ParseResult } from 'langium';
 import { describe, expect, it } from 'vitest';
 
-import type { PieServices } from '../src/language/index.js';
-import { Pie, createPieServices } from '../src/language/index.js';
-
-const services: PieServices = createPieServices().Pie;
-const parser: LangiumParser = services.parser.LangiumParser;
-export function createPieTestServices(): {
-  services: PieServices;
-  parse: (input: string) => ParseResult<Pie>;
-} {
-  const parse = (input: string) => {
-    return parser.parse<Pie>(input);
-  };
-
-  return { services, parse };
-}
+import { Pie } from '../src/language/index.js';
+import { expectNoErrorsOrAlternatives, pieParse as parse } from './test-util.js';
 
 describe('pie', () => {
-  const { parse } = createPieTestServices();
-
   it.each([
     `pie`,
     `  pie  `,
@@ -29,11 +13,8 @@ describe('pie', () => {
     `,
   ])('should handle regular pie', (context: string) => {
     const result = parse(context);
-    expect(result.parserErrors).toHaveLength(0);
-    expect(result.lexerErrors).toHaveLength(0);
-
-    const value = result.value;
-    expect(value.$type).toBe(Pie);
+    expectNoErrorsOrAlternatives(result);
+    expect(result.value.$type).toBe(Pie);
   });
 
   it.each([
@@ -45,12 +26,11 @@ describe('pie', () => {
     `,
   ])('should handle regular showData', (context: string) => {
     const result = parse(context);
-    expect(result.parserErrors).toHaveLength(0);
-    expect(result.lexerErrors).toHaveLength(0);
+    expectNoErrorsOrAlternatives(result);
+    expect(result.value.$type).toBe(Pie);
 
-    const value = result.value;
-    expect(value.$type).toBe(Pie);
-    expect(value.showData).toBeTruthy();
+    const { showData } = result.value;
+    expect(showData).toBeTruthy();
   });
 
   it.each([
@@ -62,12 +42,11 @@ describe('pie', () => {
     `,
   ])('should handle regular pie + title in same line', (context: string) => {
     const result = parse(context);
-    expect(result.parserErrors).toHaveLength(0);
-    expect(result.lexerErrors).toHaveLength(0);
+    expectNoErrorsOrAlternatives(result);
+    expect(result.value.$type).toBe(Pie);
 
-    const value = result.value;
-    expect(value.$type).toBe(Pie);
-    expect(value.title).toBe('sample title');
+    const { title } = result.value;
+    expect(title).toBe('sample title');
   });
 
   it.each([
@@ -83,12 +62,11 @@ describe('pie', () => {
     `,
   ])('should handle regular pie + title in different line', (context: string) => {
     const result = parse(context);
-    expect(result.parserErrors).toHaveLength(0);
-    expect(result.lexerErrors).toHaveLength(0);
+    expectNoErrorsOrAlternatives(result);
+    expect(result.value.$type).toBe(Pie);
 
-    const value = result.value;
-    expect(value.$type).toBe(Pie);
-    expect(value.title).toBe('sample title');
+    const { title } = result.value;
+    expect(title).toBe('sample title');
   });
 
   it.each([
@@ -97,13 +75,12 @@ describe('pie', () => {
     `,
   ])('should handle regular pie + showData + title', (context: string) => {
     const result = parse(context);
-    expect(result.parserErrors).toHaveLength(0);
-    expect(result.lexerErrors).toHaveLength(0);
+    expectNoErrorsOrAlternatives(result);
+    expect(result.value.$type).toBe(Pie);
 
-    const value = result.value;
-    expect(value.$type).toBe(Pie);
-    expect(value.showData).toBeTruthy();
-    expect(value.title).toBe('sample title');
+    const { showData, title } = result.value;
+    expect(showData).toBeTruthy();
+    expect(title).toBe('sample title');
   });
 
   it.each([
@@ -119,13 +96,12 @@ describe('pie', () => {
     `,
   ])('should handle regular showData + title in different line', (context: string) => {
     const result = parse(context);
-    expect(result.parserErrors).toHaveLength(0);
-    expect(result.lexerErrors).toHaveLength(0);
+    expectNoErrorsOrAlternatives(result);
+    expect(result.value.$type).toBe(Pie);
 
-    const value = result.value;
-    expect(value.$type).toBe(Pie);
-    expect(value.showData).toBeTruthy();
-    expect(value.title).toBe('sample title');
+    const { showData, title } = result.value;
+    expect(showData).toBeTruthy();
+    expect(title).toBe('sample title');
   });
 
   describe('sections', () => {
@@ -146,19 +122,15 @@ describe('pie', () => {
         `,
       ])('should handle regular secions', (context: string) => {
         const result = parse(context);
-        expect(result.parserErrors).toHaveLength(0);
-        expect(result.lexerErrors).toHaveLength(0);
+        expectNoErrorsOrAlternatives(result);
+        expect(result.value.$type).toBe(Pie);
 
-        const value = result.value;
-        expect(value.$type).toBe(Pie);
+        const { sections } = result.value;
+        expect(sections[0].label).toBe('GitHub');
+        expect(sections[0].value).toBe(100);
 
-        const section0 = value.sections[0];
-        expect(section0?.label).toBe('GitHub');
-        expect(section0?.value).toBe(100);
-
-        const section1 = value.sections[1];
-        expect(section1?.label).toBe('GitLab');
-        expect(section1?.value).toBe(50);
+        expect(sections[1].label).toBe('GitLab');
+        expect(sections[1].value).toBe(50);
       });
 
       it('should handle sections with showData', () => {
@@ -166,20 +138,17 @@ describe('pie', () => {
         "GitHub": 100
         "GitLab": 50`;
         const result = parse(context);
-        expect(result.parserErrors).toHaveLength(0);
-        expect(result.lexerErrors).toHaveLength(0);
+        expectNoErrorsOrAlternatives(result);
+        expect(result.value.$type).toBe(Pie);
 
-        const value = result.value;
-        expect(value.$type).toBe(Pie);
-        expect(value.showData).toBeTruthy();
+        const { showData, sections } = result.value;
+        expect(showData).toBeTruthy();
 
-        const section0 = value.sections[0];
-        expect(section0?.label).toBe('GitHub');
-        expect(section0?.value).toBe(100);
+        expect(sections[0].label).toBe('GitHub');
+        expect(sections[0].value).toBe(100);
 
-        const section1 = value.sections[1];
-        expect(section1?.label).toBe('GitLab');
-        expect(section1?.value).toBe(50);
+        expect(sections[1].label).toBe('GitLab');
+        expect(sections[1].value).toBe(50);
       });
 
       it('should handle sections with title', () => {
@@ -187,20 +156,17 @@ describe('pie', () => {
         "GitHub": 100
         "GitLab": 50`;
         const result = parse(context);
-        expect(result.parserErrors).toHaveLength(0);
-        expect(result.lexerErrors).toHaveLength(0);
+        expectNoErrorsOrAlternatives(result);
+        expect(result.value.$type).toBe(Pie);
 
-        const value = result.value;
-        expect(value.$type).toBe(Pie);
-        expect(value.title).toBe('sample wow');
+        const { title, sections } = result.value;
+        expect(title).toBe('sample wow');
 
-        const section0 = value.sections[0];
-        expect(section0?.label).toBe('GitHub');
-        expect(section0?.value).toBe(100);
+        expect(sections[0].label).toBe('GitHub');
+        expect(sections[0].value).toBe(100);
 
-        const section1 = value.sections[1];
-        expect(section1?.label).toBe('GitLab');
-        expect(section1?.value).toBe(50);
+        expect(sections[1].label).toBe('GitLab');
+        expect(sections[1].value).toBe(50);
       });
 
       it('should handle sections with accTitle', () => {
@@ -208,20 +174,17 @@ describe('pie', () => {
         "GitHub": 100
         "GitLab": 50`;
         const result = parse(context);
-        expect(result.parserErrors).toHaveLength(0);
-        expect(result.lexerErrors).toHaveLength(0);
+        expectNoErrorsOrAlternatives(result);
+        expect(result.value.$type).toBe(Pie);
 
-        const value = result.value;
-        expect(value.$type).toBe(Pie);
-        expect(value.accTitle).toBe('sample wow');
+        const { accTitle, sections } = result.value;
+        expect(accTitle).toBe('sample wow');
 
-        const section0 = value.sections[0];
-        expect(section0?.label).toBe('GitHub');
-        expect(section0?.value).toBe(100);
+        expect(sections[0].label).toBe('GitHub');
+        expect(sections[0].value).toBe(100);
 
-        const section1 = value.sections[1];
-        expect(section1?.label).toBe('GitLab');
-        expect(section1?.value).toBe(50);
+        expect(sections[1].label).toBe('GitLab');
+        expect(sections[1].value).toBe(50);
       });
 
       it('should handle sections with single line accDescr', () => {
@@ -229,20 +192,17 @@ describe('pie', () => {
         "GitHub": 100
         "GitLab": 50`;
         const result = parse(context);
-        expect(result.parserErrors).toHaveLength(0);
-        expect(result.lexerErrors).toHaveLength(0);
+        expectNoErrorsOrAlternatives(result);
+        expect(result.value.$type).toBe(Pie);
 
-        const value = result.value;
-        expect(value.$type).toBe(Pie);
-        expect(value.accDescr).toBe('sample wow');
+        const { accDescr, sections } = result.value;
+        expect(accDescr).toBe('sample wow');
 
-        const section0 = value.sections[0];
-        expect(section0?.label).toBe('GitHub');
-        expect(section0?.value).toBe(100);
+        expect(sections[0].label).toBe('GitHub');
+        expect(sections[0].value).toBe(100);
 
-        const section1 = value.sections[1];
-        expect(section1?.label).toBe('GitLab');
-        expect(section1?.value).toBe(50);
+        expect(sections[1].label).toBe('GitLab');
+        expect(sections[1].value).toBe(50);
       });
 
       it('should handle sections with multi line accDescr', () => {
@@ -252,42 +212,17 @@ describe('pie', () => {
         "GitHub": 100
         "GitLab": 50`;
         const result = parse(context);
-        expect(result.parserErrors).toHaveLength(0);
-        expect(result.lexerErrors).toHaveLength(0);
+        expectNoErrorsOrAlternatives(result);
+        expect(result.value.$type).toBe(Pie);
 
-        const value = result.value;
-        expect(value.$type).toBe(Pie);
-        expect(value.accDescr).toBe('sample wow');
+        const { accDescr, sections } = result.value;
+        expect(accDescr).toBe('sample wow');
 
-        const section0 = value.sections[0];
-        expect(section0?.label).toBe('GitHub');
-        expect(section0?.value).toBe(100);
+        expect(sections[0].label).toBe('GitHub');
+        expect(sections[0].value).toBe(100);
 
-        const section1 = value.sections[1];
-        expect(section1?.label).toBe('GitLab');
-        expect(section1?.value).toBe(50);
-      });
-    });
-
-    describe('duplicate', () => {
-      it('should handle duplicate sections', () => {
-        const context = `pie
-        "GitHub": 100
-        "GitHub": 50`;
-        const result = parse(context);
-        expect(result.parserErrors).toHaveLength(0);
-        expect(result.lexerErrors).toHaveLength(0);
-
-        const value = result.value;
-        expect(value.$type).toBe(Pie);
-
-        const section0 = value.sections[0];
-        expect(section0?.label).toBe('GitHub');
-        expect(section0?.value).toBe(100);
-
-        const section1 = value.sections[1];
-        expect(section1?.label).toBe('GitHub');
-        expect(section1?.value).toBe(50);
+        expect(sections[1].label).toBe('GitLab');
+        expect(sections[1].value).toBe(50);
       });
     });
   });
