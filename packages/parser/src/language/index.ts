@@ -1,6 +1,9 @@
-export * from './generated/ast.js';
-export * from './generated/grammar.js';
-export * from './generated/module.js';
+export { Info, MermaidAstType, Pie, PieSection } from './generated/ast.js';
+export {
+  InfoGeneratedModule,
+  MermaidGeneratedSharedModule,
+  PieGeneratedModule,
+} from './generated/module.js';
 
 export * from './common/index.js';
 export * from './info/index.js';
