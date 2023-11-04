@@ -1,4 +1,13 @@
-export { Info, MermaidAstType, Pie, PieSection } from './generated/ast.js';
+export {
+  Info,
+  MermaidAstType,
+  Pie,
+  PieSection,
+  isCommon,
+  isInfo,
+  isPie,
+  isPieSection,
+} from './generated/ast.js';
 export {
   InfoGeneratedModule,
   MermaidGeneratedSharedModule,
