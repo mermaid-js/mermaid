@@ -34,12 +34,26 @@ export abstract class MermaidTokenBuilder extends DefaultTokenBuilder {
     return tokenTypes;
   }
 
-  private rearrangeRules(rules: GrammarAST.AbstractRule[]): GrammarAST.AbstractRule[] {
-    const pivotIndex = rules.findIndex((rule) => rule.name === 'TitleAndAccessibilities');
-    if (pivotIndex === -1) {
-      return rules;
+  /**
+   * Reorders rules using a pivot rule.
+   *
+   * We use this function to reorder rules because imported rules are
+   *  inserted at the end of the array.
+   *
+   * @param rules - the grammar rules.
+   */
+  private rearrangeRules(rules: GrammarAST.AbstractRule[]): void {
+    const index = rules.findIndex((rule) => rule.name === 'TitleAndAccessibilities');
+    if (index === -1) {
+      return;
     }
-    return [...rules.slice(pivotIndex), ...rules.slice(0, pivotIndex)];
+
+    const [item] = rules.splice(index, 1);
+
+    rules.unshift(item);
+
+    const itemsToMove = rules.splice(1, index);
+    rules.push(...itemsToMove);
   }
 }
 
