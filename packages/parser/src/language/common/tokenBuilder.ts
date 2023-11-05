@@ -3,7 +3,7 @@ import type { TokenType, TokenVocabulary } from 'chevrotain';
 
 import { DefaultTokenBuilder } from 'langium';
 
-export abstract class MermaidTokenBuilder extends DefaultTokenBuilder {
+export abstract class AbstractMermaidTokenBuilder extends DefaultTokenBuilder {
   private keywords: Set<string>;
 
   public constructor(keywords: string[]) {
@@ -57,4 +57,4 @@ export abstract class MermaidTokenBuilder extends DefaultTokenBuilder {
   }
 }
 
-export class CommonTokenBuilder extends MermaidTokenBuilder {}
+export class CommonTokenBuilder extends AbstractMermaidTokenBuilder {}

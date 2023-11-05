@@ -1,8 +1,8 @@
 import type { CstNode, GrammarAST, ValueType } from 'langium';
 
-import { MermaidValueConverter } from '../common/index.js';
+import { AbstractMermaidValueConverter } from '../common/index.js';
 
-export class PieValueConverter extends MermaidValueConverter {
+export class PieValueConverter extends AbstractMermaidValueConverter {
   protected runCustomConverter(
     rule: GrammarAST.AbstractRule,
     input: string,
