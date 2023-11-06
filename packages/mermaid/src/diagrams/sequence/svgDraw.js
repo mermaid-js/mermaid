@@ -324,7 +324,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 5;
 
-  const boxpluslineGroup = elem.append('g').lower();
+  const boxpluslineGroup = elem.append('g').raise();
   var g = boxpluslineGroup;
 
   if (!isFooter) {
@@ -1038,6 +1038,7 @@ export default {
   drawText,
   drawLabel,
   drawActor,
+  drawActorTypeParticipant,
   drawBox,
   drawPopup,
   anchorElement,
