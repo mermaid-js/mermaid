@@ -23,6 +23,7 @@ export class Diagram {
 
   private detectError?: UnknownDiagramError;
   constructor(public text: string, public metadata: Pick<DiagramMetadata, 'title'> = {}) {
+    this.text = encodeEntities(text);
     this.text += '\n';
     const cnf = configApi.getConfig();
     try {
@@ -83,8 +84,6 @@ export const getDiagramFromText = async (
   text: string,
   metadata: Pick<DiagramMetadata, 'title'> = {}
 ): Promise<Diagram> => {
-  text = encodeEntities(text);
-
   const type = detectType(text, configApi.getConfig());
   try {
     // Trying to find the diagram
