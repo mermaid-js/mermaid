@@ -1038,7 +1038,6 @@ export default {
   drawText,
   drawLabel,
   drawActor,
-  drawActorTypeParticipant,
   drawBox,
   drawPopup,
   anchorElement,
