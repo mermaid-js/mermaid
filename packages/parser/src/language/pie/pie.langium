@@ -12,7 +12,7 @@ entry Pie:
 ;
 
 PieSection:
-  label=PIE_SECTION_LABEL ":" value=PIE_SECTION_VALUE NEWLINE+
+  label=PIE_SECTION_LABEL ":" value=PIE_SECTION_VALUE EOL
 ;
 
 terminal PIE_SECTION_LABEL: /"[^"]+"/;
