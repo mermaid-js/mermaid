@@ -484,8 +484,8 @@ importers:
   packages/parser:
     dependencies:
       langium:
-        specifier: 2.1.0
-        version: 2.1.0
+        specifier: 2.1.2
+        version: 2.1.2
     devDependencies:
       chevrotain:
         specifier: ^11.0.3
@@ -11534,7 +11534,7 @@ packages:
       commander: 11.0.0
       fs-extra: 11.1.1
       jsonschema: 1.4.1
-      langium: 2.1.0
+      langium: 2.1.2
       langium-railroad: 2.1.0
       lodash: 4.17.21
     dev: true
@@ -11542,12 +11542,12 @@ packages:
   /langium-railroad@2.1.0:
     resolution: {integrity: sha512-2IeAIUSTQzbDjNnJA+0ql8tyN/mhCSN4FS50Mo9LOtLj523qUEBwHflDmCiOGZzW9iZdni6NXJgh8nLqjhTlDw==}
     dependencies:
-      langium: 2.1.0
+      langium: 2.1.2
       railroad-diagrams: 1.0.0
     dev: true
 
-  /langium@2.1.0:
-    resolution: {integrity: sha512-VDJNyJHfFkamwX+IGp2cLiVIsdOqeVwEZ7b95DWs1jcJmf5e47NGLsfb4aLb0mVrCTU4mvfghfoiTkOMVSdpqA==}
+  /langium@2.1.2:
+    resolution: {integrity: sha512-1NDUmhm111xs6NLh1DzQ9YPrOhL6JqJryY9igPIGrG0AbKKGmGf3fahAiY1MUChwIYSec6Fvoj+igwKzvGXQog==}
     engines: {node: '>=16.0.0'}
     dependencies:
       chevrotain: 11.0.3
@@ -16001,10 +16001,10 @@ packages:
     resolution: {integrity: sha512-xGmv9QIWs2H8obGbWg+sIPI/3/pFgj/5OWBhNzs00BkYQ9UaB2F6JJaGB/2/YOZJ3BvLXQTC4Q7muqU25QgAhA==}
     dependencies:
       jsonc-parser: 3.2.0
-      vscode-languageserver-textdocument: 1.0.8
-      vscode-languageserver-types: 3.17.3
+      vscode-languageserver-textdocument: 1.0.11
+      vscode-languageserver-types: 3.17.5
       vscode-nls: 5.2.0
-      vscode-uri: 3.0.7
+      vscode-uri: 3.0.8
     dev: true
 
   /vscode-jsonrpc@8.2.0:
@@ -16022,10 +16022,6 @@ packages:
 
   /vscode-languageserver-textdocument@1.0.8:
     resolution: {integrity: sha512-1bonkGqQs5/fxGT5UchTgjGVnfysL0O8v1AYMBjqTbWQTFn721zaPGDYFkOKtfDgFiSgXM3KwaG3FMGfW4Ed9Q==}
-    dev: true
-
-  /vscode-languageserver-types@3.17.3:
-    resolution: {integrity: sha512-SYU4z1dL0PyIMd4Vj8YOqFvHu7Hz/enbWtpfnVbJHU4Nd1YNYx8u0ennumc6h48GQNeOLxmwySmnADouT/AuZA==}
     dev: true
 
   /vscode-languageserver-types@3.17.5:

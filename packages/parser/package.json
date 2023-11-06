@@ -34,15 +34,15 @@
     "ast"
   ],
   "dependencies": {
-    "langium": "2.1.0"
+    "langium": "2.1.2"
+  },
+  "devDependencies": {
+    "chevrotain": "^11.0.3"
   },
   "files": [
     "dist/"
   ],
   "publishConfig": {
     "access": "public"
-  },
-  "devDependencies": {
-    "chevrotain": "^11.0.3"
   }
 }
