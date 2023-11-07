@@ -6,18 +6,16 @@
 
 # Announcements
 
-<br />
+Check out our latest blog posts below.
 
-<a href="https://www.producthunt.com/posts/mermaid-chart?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-mermaid&#0045;chart" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=416671&theme=light" alt="Mermaid&#0032;Chart - A&#0032;smarter&#0032;way&#0032;to&#0032;create&#0032;diagrams | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+## [How to Use Mermaid Chart as an AI Diagram Generator](https://www.mermaidchart.com/blog/posts/how-to-use-mermaid-chart-as-an-ai-diagram-generator/)
 
-## Calling all fans of Mermaid and Mermaid Chart! 🎉
+1 November 2023 · 5 mins
 
-We’ve officially made our Product Hunt debut, and would love any and all support from the community!
+Would an AI diagram generator make your life easier?
 
-[Click here](https://www.producthunt.com/posts/mermaid-chart?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-mermaid-chart) to check out our Product Hunt launch.
+## [Diagrams, Made Even Easier: Introducing “Code Snippets” in the Mermaid Chart Editor](https://www.mermaidchart.com/blog/posts/easier-diagram-editing-with-code-snippets/)
 
-Feel free to drop us a comment and let us know what you think. All new sign ups will receive a 30-day free trial of our Pro subscription, plus 25% off your first year.
+12 October 2023 · 4 mins
 
-We’re on a mission to make text-based diagramming fun again. And we need your help to make that happen.
-
-Your support means the world to us. Thank you for being part of the diagramming movement.
+Mermaid Chart introduces Code Snippets in its editor, streamlining the diagramming process for developers and professionals.
