@@ -888,3 +888,40 @@ export default {
   parseFontSize,
   InitIDGenerator,
 };
+
+/**
+ * @param  text - text to be encoded
+ * @returns
+ */
+export const encodeEntities = function (text: string): string {
+  let txt = text;
+
+  txt = txt.replace(/style.*:\S*#.*;/g, function (s): string {
+    return s.substring(0, s.length - 1);
+  });
+  txt = txt.replace(/classDef.*:\S*#.*;/g, function (s): string {
+    return s.substring(0, s.length - 1);
+  });
+
+  txt = txt.replace(/#\w+;/g, function (s) {
+    const innerTxt = s.substring(1, s.length - 1);
+
+    const isInt = /^\+?\d+$/.test(innerTxt);
+    if (isInt) {
+      return 'ﬂ°°' + innerTxt + '¶ß';
+    } else {
+      return 'ﬂ°' + innerTxt + '¶ß';
+    }
+  });
+
+  return txt;
+};
+
+/**
+ *
+ * @param  text - text to be decoded
+ * @returns
+ */
+export const decodeEntities = function (text: string): string {
+  return text.replace(/ﬂ°°/g, '&#').replace(/ﬂ°/g, '&').replace(/¶ß/g, ';');
+};
