@@ -33,6 +33,7 @@ Below are a list of community plugins and integrations created with Mermaid.
 - [Notion](https://notion.so) ✅
 - [Observable](https://observablehq.com/@observablehq/mermaid) ✅
 - [Obsidian](https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram) ✅
+- [NotesHub](https://noteshub.app) ✅
 - [GitBook](https://gitbook.com)
   - [Mermaid Plugin](https://github.com/JozoVilcek/gitbook-plugin-mermaid)
   - [Markdown with Mermaid CLI](https://github.com/miao1007/gitbook-plugin-mermaid-cli)
@@ -167,6 +168,7 @@ Communication tools and platforms
 
 ### Document Generation
 
+- [Docusaurus](https://docusaurus.io/docs/markdown-features/diagrams) ✅
 - [Swimm - Up-to-date diagrams with Swimm, the knowledge management tool for code](https://docs.swimm.io/Features/diagrams-and-charts)
 - [Sphinx](https://www.sphinx-doc.org/en/master/)
   - [sphinxcontrib-mermaid](https://github.com/mgaitan/sphinxcontrib-mermaid)
