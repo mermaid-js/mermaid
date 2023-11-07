@@ -1,4 +1,27 @@
----
+graph TD
+    A[Inicio] --> B{Experiencia 1}
+    B -- Si --> C[Agregar ácido oxálico y agua]
+    C --> D[Agitar 5 min] 
+    D --> E[Observar y registrar]
+    E --> F[Experiencia 2]
+    
+    F -- Si --> G[Calentar solución] 
+    G --> H[Agitar 10 min]
+    H --> I[Observar y registrar]
+    I --> J[Enfriar solución]
+    J --> K[Agitar 10 min]
+    K --> L[Observar y registrar]
+    
+    L --> M{Experiencia 3}
+    M -- Si --> N[Agregar sustancia y solvente]
+    N --> O[Agitar]
+    O --> P{¿Se disuelve completamente?}
+    P -- Si --> Q[Registrar como soluble]
+    P -- No --> R[Registrar como insoluble]
+    Q --> S[Probar con otra muestra]
+    R --> S
+    
+    S --> T[Fin]---
 title: Flowcharts Syntax
 outline: 'deep' # shows all h3 headings in outline in Vitepress
 ---
