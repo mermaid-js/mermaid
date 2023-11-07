@@ -91,7 +91,7 @@ function nav() {
       items: [
         {
           text: 'Changelog',
-          link: 'https://github.com/mermaid-js/mermaid/blob/develop/CHANGELOG.md',
+          link: 'https://github.com/mermaid-js/mermaid/releases',
         },
         {
           text: 'Contributing',
