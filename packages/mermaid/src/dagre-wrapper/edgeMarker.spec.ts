@@ -64,4 +64,11 @@ describe('addEdgeMarker', () => {
       `url(${url}#${id}_${diagramType}-compositionEnd)`
     );
   });
+
+  it('should not add invalid markers', () => {
+    const arrowTypeStart = 'this is an invalid marker';
+    const arrowTypeEnd = ') url(https://my-malicious-site.example)';
+    addEdgeMarkers(svgPath, { arrowTypeStart, arrowTypeEnd }, url, id, diagramType);
+    expect(svgPath.attr).not.toHaveBeenCalled();
+  });
 });
