@@ -535,6 +535,10 @@ describe('[Text] when parsing', () => {
     expect(vert['A'].text).toBe('this is an ellipse');
   });
 
+  it('should not freeze when ellipse text has a `(`', function () {
+    expect(() => flow.parser.parse('graph\nX(- My Text (')).toThrowError();
+  });
+
   it('should handle text in diamond vertices with space', function () {
     const res = flow.parser.parse('graph TD;A(chimpansen hoppar)-->C;');
 

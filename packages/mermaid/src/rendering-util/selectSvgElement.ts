@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import { getConfig } from '../config.js';
+import { getConfig } from '../diagram-api/diagramAPI.js';
 import type { HTML, SVG } from '../diagram-api/types.js';
 
 /**

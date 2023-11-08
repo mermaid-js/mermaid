@@ -22,7 +22,7 @@ const load = async () => {
       Popularisation
         British popular psychology author Tony Buzan
     Research
-      On effectivness<br/>and features
+      On effectiveness<br/>and features
       On Automatic creation
         Uses
             Creative techniques

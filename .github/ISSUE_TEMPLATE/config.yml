@@ -7,8 +7,14 @@ contact_links:
     url: https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE
     about: Join our Community on Slack for Help and a casual chat.
   - name: Documentation
-    url: https://mermaid-js.github.io
+    url: https://mermaid.js.org
     about: Read our documentation for all that Mermaid.js can offer.
   - name: Live Editor
     url: https://mermaid.live
     about: Try the live editor to preview graphs in no time.
+  - name: Live Editor - Develop
+    url: https://develop.git.mermaid.live
+    about: Try unreleased changes in the develop branch.
+  - name: Live Editor - Next
+    url: https://next.git.mermaid.live
+    about: Try unreleased changes in the next branch.

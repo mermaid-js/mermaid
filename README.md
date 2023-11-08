@@ -20,6 +20,9 @@ Generate diagrams from markdown-like text.
 <p align="center">
 <a href="./README.zh-CN.md">简体中文</a>
 </p>
+<p align="center">
+Try Live Editor previews of future releases: <a href="https://develop.git.mermaid.live/" title="Try the mermaid version from the develop branch.">Develop</a> | <a href="https://next.git.mermaid.live/" title="Try the mermaid version from the next branch.">Next</a>
+</p>
 
 <br>
 <br>
@@ -31,7 +34,7 @@ Generate diagrams from markdown-like text.
 [![CDN Status](https://img.shields.io/jsdelivr/npm/hm/mermaid)](https://www.jsdelivr.com/package/npm/mermaid)
 [![NPM Downloads](https://img.shields.io/npm/dm/mermaid)](https://www.npmjs.com/package/mermaid)
 [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
-[![Twitter Follow](https://img.shields.io/badge/Social-mermaidjs__-blue?style=social&logo=twitter)](https://twitter.com/mermaidjs_)
+[![Twitter Follow](https://img.shields.io/badge/Social-mermaidjs__-blue?style=social&logo=X)](https://twitter.com/mermaidjs_)
 
 <img src="./img/header.png" alt="" />
 
@@ -55,10 +58,10 @@ Mermaid addresses this problem by enabling users to create easily modifiable dia
 <br/>
 
 Mermaid allows even non-programmers to easily create detailed diagrams through the [Mermaid Live Editor](https://mermaid.live/).<br/>
-[Tutorials](./docs/config/Tutorials.md) has video tutorials.
-Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./docs/ecosystem/integrations.md).
+For video tutorials, visit our [Tutorials](./docs/config/Tutorials.md) page.
+Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./docs/ecosystem/integrations-community.md).
 
-You can also use Mermaid within [GitHub](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) as well many of your other favorite applications—check out the list of [Integrations and Usages of Mermaid](./docs/ecosystem/integrations.md).
+You can also use Mermaid within [GitHub](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) as well many of your other favorite applications—check out the list of [Integrations and Usages of Mermaid](./docs/ecosystem/integrations-community.md).
 
 For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](./docs/intro/getting-started.md), [Usage](./docs/config/usage.md) and [Tutorials](./docs/config/Tutorials.md).
 

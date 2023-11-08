@@ -1,4 +1,4 @@
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -113,7 +113,7 @@ const getActors = function () {
 };
 
 export default {
-  getConfig: () => configApi.getConfig().journey,
+  getConfig: () => getConfig().journey,
   clear,
   setDiagramTitle,
   getDiagramTitle,

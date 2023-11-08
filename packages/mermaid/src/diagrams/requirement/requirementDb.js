@@ -1,4 +1,4 @@
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 
 import {
@@ -144,7 +144,7 @@ export default {
   VerifyType,
   Relationships,
 
-  getConfig: () => configApi.getConfig().req,
+  getConfig: () => getConfig().req,
 
   addRequirement,
   getRequirements,

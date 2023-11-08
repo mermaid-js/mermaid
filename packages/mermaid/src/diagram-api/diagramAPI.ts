@@ -1,6 +1,11 @@
 import { addDetector } from './detectType.js';
 import { log as _log, setLogLevel as _setLogLevel } from '../logger.js';
-import { getConfig as _getConfig } from '../config.js';
+import {
+  getConfig as _getConfig,
+  setConfig as _setConfig,
+  defaultConfig as _defaultConfig,
+  setSiteConfig as _setSiteConfig,
+} from '../config.js';
 import { sanitizeText as _sanitizeText } from '../diagrams/common/common.js';
 import { setupGraphViewbox as _setupGraphViewbox } from '../setupGraphViewbox.js';
 import { addStylesForDiagram } from '../styles.js';
@@ -15,6 +20,9 @@ import * as _commonDb from '../diagrams/common/commonDb.js';
 export const log = _log;
 export const setLogLevel = _setLogLevel;
 export const getConfig = _getConfig;
+export const setConfig = _setConfig;
+export const defaultConfig = _defaultConfig;
+export const setSiteConfig = _setSiteConfig;
 export const sanitizeText = (text: string) => _sanitizeText(text, getConfig());
 export const setupGraphViewbox = _setupGraphViewbox;
 export const getCommonDb = () => {
