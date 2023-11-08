@@ -1,49 +1,62 @@
-const getStyles = (options) =>
-  `
-  .entityBox {
-    fill: ${options.mainBkg};
-    stroke: ${options.nodeBorder};
-  }
+const getStyles = (options) => {
+  const defaultOptions = {
+    mainBkg: 'white',
+    nodeBorder: 'black',
+    attributeBackgroundColorOdd: 'lightgray',
+    attributeBackgroundColorEven: 'white',
+    tertiaryColor: 'gray',
+    lineColor: 'black',
+    textColor: 'black',
+  };
 
-  .attributeBoxOdd {
-    fill: ${options.attributeBackgroundColorOdd};
-    stroke: ${options.nodeBorder};
-  }
+  const mergedOptions = { ...defaultOptions, ...options };
 
-  .attributeBoxEven {
-    fill:  ${options.attributeBackgroundColorEven};
-    stroke: ${options.nodeBorder};
-  }
+  return `
+    .entityBox {
+      fill: ${mergedOptions.mainBkg};
+      stroke: ${mergedOptions.nodeBorder};
+    }
 
-  .relationshipLabelBox {
-    fill: ${options.tertiaryColor};
-    opacity: 0.7;
-    background-color: ${options.tertiaryColor};
+    .attributeBoxOdd {
+      fill: ${mergedOptions.attributeBackgroundColorOdd};
+      stroke: ${mergedOptions.nodeBorder};
+    }
+
+    .attributeBoxEven {
+      fill: ${mergedOptions.attributeBackgroundColorEven};
+      stroke: ${mergedOptions.nodeBorder};
+    }
+
+    .relationshipLabelBox {
+      fill: ${mergedOptions.tertiaryColor};
+      opacity: 0.7;
+      background-color: ${mergedOptions.tertiaryColor};
       rect {
         opacity: 0.5;
       }
-  }
-
-    .relationshipLine {
-      stroke: ${options.lineColor};
     }
 
-  .entityTitleText {
-    text-anchor: middle;
-    font-size: 18px;
-    fill: ${options.textColor};
-  }    
-  #MD_PARENT_START {
-    fill: #f5f5f5 !important;
-    stroke: ${options.lineColor} !important;
-    stroke-width: 1;
-  }
-  #MD_PARENT_END {
-    fill: #f5f5f5 !important;
-    stroke: ${options.lineColor} !important;
-    stroke-width: 1;
-  }
-  
-`;
+    .relationshipLine {
+      stroke: ${mergedOptions.lineColor};
+    }
+
+    .entityTitleText {
+      text-anchor: middle;
+      font-size: 18px;
+      fill: ${mergedOptions.textColor};
+    }    
+    
+    #MD_PARENT_START {
+      fill: #f5f5f5 !important;
+      stroke: ${mergedOptions.lineColor} !important;
+      stroke-width: 1;
+    }
+    #MD_PARENT_END {
+      fill: #f5f5f5 !important;
+      stroke: ${mergedOptions.lineColor} !important;
+      stroke-width: 1;
+    }
+  `;
+};
 
 export default getStyles;

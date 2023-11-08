@@ -1,5 +1,5 @@
-const getStyles = (options) =>
-  `
+const getStyles = (options) => `
+  
   .commit-id,
   .commit-msg,
   .branch-label {
@@ -28,8 +28,8 @@ const getStyles = (options) =>
   }
   .commit-label { font-size: ${options.commitLabelFontSize}; fill: ${options.commitLabelColor};}
   .commit-label-bkg { font-size: ${options.commitLabelFontSize}; fill: ${
-    options.commitLabelBackground
-  }; opacity: 0.5; }
+  options.commitLabelBackground
+}; opacity: 0.5; }
   .tag-label { font-size: ${options.tagLabelFontSize}; fill: ${options.tagLabelColor};}
   .tag-label-bkg { fill: ${options.tagLabelBackground}; stroke: ${options.tagLabelBorder}; }
   .tag-hole { fill: ${options.textColor}; }

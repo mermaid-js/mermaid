@@ -16,6 +16,9 @@ export interface FlowChartStyleOptions {
   tertiaryColor: string;
   textColor: string;
   titleColor: string;
+  customNodeColor?: string;
+  customLineColor?: string;
+  customEdgeLabelBackground?: string;
 }
 
 const fade = (color: string, opacity: number) => {
@@ -52,7 +55,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
   .node ellipse,
   .node polygon,
   .node path {
-    fill: ${options.mainBkg};
+    fill: ${options.mainBkg || options.customNodeColor};
     stroke: ${options.nodeBorder};
     stroke-width: 1px;
   }
@@ -78,7 +81,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
   }
 
   .edgePath .path {
-    stroke: ${options.lineColor};
+    stroke: ${options.lineColor || options.customLineColor};
     stroke-width: 2.0px;
   }
 
@@ -88,11 +91,11 @@ const getStyles = (options: FlowChartStyleOptions) =>
   }
 
   .edgeLabel {
-    background-color: ${options.edgeLabelBackground};
+    background-color: ${options.edgeLabelBackground || options.customEdgeLabelBackground};
     rect {
       opacity: 0.5;
-      background-color: ${options.edgeLabelBackground};
-      fill: ${options.edgeLabelBackground};
+      background-color: ${options.edgeLabelBackground || options.customEdgeLabelBackground};
+      fill: ${options.edgeLabelBackground || options.customEdgeLabelBackground};
     }
     text-align: center;
   }

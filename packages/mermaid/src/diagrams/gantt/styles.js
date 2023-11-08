@@ -49,6 +49,7 @@ const getStyles = (options) =>
     // text-height: 14px;
     font-family: 'trebuchet ms', verdana, arial, sans-serif;
     font-family: var(--mermaid-font-family);
+    fill: ${options.titleColor};
 
   }
 
@@ -255,7 +256,7 @@ const getStyles = (options) =>
   .titleText {
     text-anchor: middle;
     font-size: 18px;
-    fill: ${options.textColor}    ;
+    fill: ${options.titleTextColor || options.textColor}    ;
     font-family: 'trebuchet ms', verdana, arial, sans-serif;
     font-family: var(--mermaid-font-family);
   }
