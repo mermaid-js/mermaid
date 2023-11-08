@@ -1,48 +1,47 @@
-# Integrations
-
-## Recommendations
-
-### File Extension
-
-Applications that support mermaid files [SHOULD](https://datatracker.ietf.org/doc/html/rfc2119#section-3) use `.mermaid` or `.mmd` file extensions.
-
-### MIME Type
-
-The recommended [MIME type](https://www.iana.org/assignments/media-types/media-types.xhtml) for mermaid media is `text/vnd.mermaid`.
-
-[IANA](https://www.iana.org/) recognition pending.
-
+---
+outline: 'deep' # shows all h3 headings in outline in Vitepress
 ---
 
-The following list is a compilation of different integrations and plugins that allow the rendering of mermaid definitions within other applications.
+# Integrations
 
-They also serve as proof of concept, for the variety of things that can be built with mermaid.
+## Official integration: [Mermaid Chart](./mermaid-chart.md)
 
-## Productivity
+We're excited about the growth of the Mermaid community, and the number of plugins and integrations that have been created with Mermaid.
 
-- [GitHub](https://github.com) (**Native support**)
-  - [Using code blocks](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) (**Native support**)
+## Community integrations
+
+Below are a list of community plugins and integrations created with Mermaid.
+
+### Productivity tools
+
+✅ = Native support
+
+- [GitHub](https://github.com) ✅
+  - [Using code blocks](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) ✅
   - [GitHub action: Compile mermaid to image](https://github.com/neenjaw/compile-mermaid-markdown-action)
   - [svg-generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
   - [GitHub Writer](https://github.com/ckeditor/github-writer)
-- [GitLab](https://docs.gitlab.com/ee/user/markdown.html#diagrams-and-flowcharts) (**Native support**)
-- [Gitea](https://gitea.io) (**Native support**)
-- [Azure Devops](https://docs.microsoft.com/en-us/azure/devops/project/wiki/wiki-markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) (**Native support**)
-- [Tuleap](https://docs.tuleap.org/user-guide/writing-in-tuleap.html#graphs) (**Native support**)
-- [Mermaid Flow Visual Editor](https://www.mermaidflow.app) (**Native support**)
-- [Deepdwn](https://billiam.itch.io/deepdwn) (**Native support**)
-- [Joplin](https://joplinapp.org) (**Native support**)
-- [Slab](https://slab.com) (**Native support**)
-- [Swimm](https://swimm.io) (**Native support**)
-- [Notion](https://notion.so) (**Native support**)
-- [Observable](https://observablehq.com/@observablehq/mermaid) (**Native support**)
-- [Obsidian](https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram) (**Native support**)
+- [GitLab](https://docs.gitlab.com/ee/user/markdown.html#diagrams-and-flowcharts) ✅
+- [Gitea](https://gitea.io) ✅
+- [Azure Devops](https://docs.microsoft.com/en-us/azure/devops/project/wiki/wiki-markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) ✅
+- [Tuleap](https://docs.tuleap.org/user-guide/writing-in-tuleap.html#graphs) ✅
+- [Mermaid Flow Visual Editor](https://www.mermaidflow.app) ✅
+- [Deepdwn](https://billiam.itch.io/deepdwn) ✅
+- [Joplin](https://joplinapp.org) ✅
+- [Slab](https://slab.com) ✅
+- [Swimm](https://swimm.io) ✅
+- [Notion](https://notion.so) ✅
+- [Observable](https://observablehq.com/@observablehq/mermaid) ✅
+- [Obsidian](https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram) ✅
+- [NotesHub](https://noteshub.app) ✅
 - [GitBook](https://gitbook.com)
   - [Mermaid Plugin](https://github.com/JozoVilcek/gitbook-plugin-mermaid)
   - [Markdown with Mermaid CLI](https://github.com/miao1007/gitbook-plugin-mermaid-cli)
   - [Mermaid plugin for GitBook](https://github.com/wwformat/gitbook-plugin-mermaid-pdf)
-- [LiveBook](https://livebook.dev) (**Native support**)
+- [LiveBook](https://livebook.dev) ✅
 - [Atlassian Products](https://www.atlassian.com)
+  - [Mermaid Charts & Diagrams for Confluence](https://marketplace.atlassian.com/apps/1222572/)
+  - [Mermaid Charts & Diagrams for Jira](https://marketplace.atlassian.com/apps/1224537/)
   - [Mermaid Live Editor for Confluence Cloud](https://marketplace.atlassian.com/apps/1231571/mermaid-live-editor-for-confluence?hosting=cloud&tab=overview)
   - [Mermaid Plugin for Confluence](https://marketplace.atlassian.com/apps/1214124/mermaid-plugin-for-confluence?hosting=server&tab=overview)
   - [CloudScript.io Addon](https://marketplace.atlassian.com/apps/1219878/cloudscript-io-mermaid-addon?hosting=cloud&tab=overview)
@@ -51,15 +50,19 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Mermaid Macro](https://www.redmine.org/plugins/redmine_mermaid_macro)
   - [redmine-mermaid](https://github.com/styz/redmine_mermaid)
   - [markdown-for-mermaid-plugin](https://github.com/jamieh-mongolian/markdown-for-mermaid-plugin)
-- [JetBrains IDE eg Pycharm](https://www.jetbrains.com/go/guide/tips/mermaid-js-support-in-markdown/)
+- [Mermaid Plugin for JetBrains IDEs](https://plugins.jetbrains.com/plugin/20146-mermaid)
 - [mermerd](https://github.com/KarnerTh/mermerd)
 - Visual Studio Code [Polyglot Interactive Notebooks](https://github.com/dotnet/interactive#net-interactive)
 
-## CRM/ERP/Similar
+### CRM/ERP
+
+Customer Relationship Management/Enterprise Resource Planning
 
 - [coreBOS](https://blog.corebos.org/blog/december2019)
 
-## Blogs
+### Blogging
+
+Blogging frameworks and platforms
 
 - [WordPress](https://wordpress.org)
   - [WordPress Markdown Editor](https://wordpress.org/plugins/wp-githuber-md)
@@ -71,7 +74,9 @@ They also serve as proof of concept, for the variety of things that can be built
 - [Nextra](https://nextra.site/)
   - [Mermaid](https://nextra.site/docs/guide/mermaid)
 
-## CMS
+### CMS/ECM
+
+Content Management Systems/Enterprise Content Management
 
 - [VitePress](https://vitepress.vuejs.org/)
   - [Plugin for Mermaid.js](https://emersonbottero.github.io/vitepress-plugin-mermaid/)
@@ -81,7 +86,9 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Mermaid Diagrams](https://github.com/DanielFlaum/grav-plugin-mermaid-diagrams)
   - [GitLab Markdown Adapter](https://github.com/Goutte/grav-plugin-gitlab-markdown-adapter)
 
-## Communication
+### Communication
+
+Communication tools and platforms
 
 - [Discourse](https://discourse.org)
   - [Mermaid Plugin](https://github.com/pnewell/discourse-mermaid), [And](https://github.com/unfoldingWord-dev/discourse-mermaid)
@@ -91,8 +98,10 @@ They also serve as proof of concept, for the variety of things that can be built
   - [phpbb-ext-mermaid](https://github.com/AlfredoRamos/phpbb-ext-mermaid)
 - [NodeBB](https://nodebb.org)
   - [Mermaid Plugin](https://www.npmjs.com/package/nodebb-plugin-mermaid)
+- [Slack](https://slack.com)
+  - [Mermaid for Slack](https://github.com/JackuB/mermaid-for-slack)
 
-## Wikis
+### Wikis
 
 - [MediaWiki](https://www.mediawiki.org)
   - [Mermaid Extension](https://www.mediawiki.org/wiki/Extension:Mermaid)
@@ -108,7 +117,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [mermaid-tw5: full js library](https://github.com/efurlanm/mermaid-tw5)
   - [tw5-mermaid: wrapper for Mermaid Live](https://github.com/jasonmhoule/tw5-mermaid)
 
-## Editor Plugins
+### Editor Plugins
 
 - [VS Code](https://code.visualstudio.com/)
   - [Markdown Preview Mermaid Support](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid)
@@ -159,14 +168,16 @@ They also serve as proof of concept, for the variety of things that can be built
 - [Standard Notes](https://standardnotes.com/)
   - [sn-mermaid](https://github.com/nienow/sn-mermaid)
 
-## Document Generation
+### Document Generation
 
+- [Docusaurus](https://docusaurus.io/docs/markdown-features/diagrams) ✅
+- [Swimm - Up-to-date diagrams with Swimm, the knowledge management tool for code](https://docs.swimm.io/Features/diagrams-and-charts)
 - [Sphinx](https://www.sphinx-doc.org/en/master/)
   - [sphinxcontrib-mermaid](https://github.com/mgaitan/sphinxcontrib-mermaid)
 - [remark](https://remark.js.org/)
   - [remark-mermaidjs](https://github.com/remcohaszing/remark-mermaidjs)
 - [rehype](https://github.com/rehypejs/rehype)
-  - [rehype-mermaidjs](https://github.com/remcohaszing/rehype-mermaidjs)
+  - [rehype-mermaid](https://github.com/remcohaszing/rehype-mermaid)
 - [Gatsby](https://www.gatsbyjs.com/)
   - [gatsby-remark-mermaid](https://github.com/remcohaszing/gatsby-remark-mermaid)
 - [JSDoc](https://jsdoc.app/)
@@ -176,15 +187,15 @@ They also serve as proof of concept, for the variety of things that can be built
   - [mkdocs-material](https://github.com/squidfunk/mkdocs-material), check the [docs](https://squidfunk.github.io/mkdocs-material/reference/diagrams/)
 - [Type Doc](https://typedoc.org/)
   - [typedoc-plugin-mermaid](https://www.npmjs.com/package/typedoc-plugin-mermaid)
-- [Docsy Hugo Theme](https://www.docsy.dev/docs/adding-content/lookandfeel/#diagrams-with-mermaid) (Native support in theme)
+- [Docsy Hugo Theme](https://www.docsy.dev/docs/adding-content/lookandfeel/#diagrams-with-mermaid) (native support in theme)
 - [Codedoc](https://codedoc.cc/)
   - [codedoc-mermaid-plugin](https://www.npmjs.com/package/codedoc-mermaid-plugin)
 - [mdbook](https://rust-lang.github.io/mdBook/index.html)
   - [mdbook-mermaid](https://github.com/badboy/mdbook-mermaid)
 - [Quarto](https://quarto.org/)
-- [Typora](https://typora.io/) ([Native support](https://support.typora.io/Draw-Diagrams-With-Markdown/#mermaid))
+- [Typora](https://typora.io/) ([native support](https://support.typora.io/Draw-Diagrams-With-Markdown/#mermaid))
 
-## Browser Extensions
+### Browser Extensions
 
 | Name                     | Chrome Web Store                                                                                             | Firefox Add-ons                                                                | Opera                                                                          | Edge                                                                                                                         | Source/Repository                                                                                    |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -199,7 +210,7 @@ They also serve as proof of concept, for the variety of things that can be built
 | Monkeys                  | [🎡🔗](https://chrome.google.com/webstore/detail/monkeys-mermaid-for-githu/cplfdpoajbclbgphaphphcldamfkjlgi) | -                                                                              | -                                                                              | -                                                                                                                            | -                                                                                                    |
 | Mermaid Previewer        | [🎡🔗](https://chrome.google.com/webstore/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl)         | -                                                                              | -                                                                              | -                                                                                                                            | -                                                                                                    |
 
-## Other
+### Other
 
 - [Jekyll](https://jekyllrb.com/)
   - [jekyll-mermaid](https://rubygems.org/gems/jekyll-mermaid)

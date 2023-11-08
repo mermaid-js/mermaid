@@ -2,7 +2,7 @@ import { log } from '../logger.js';
 import createLabel from './createLabel.js';
 import { createText } from '../rendering-util/createText.js';
 import { line, curveBasis, select } from 'd3';
-import { getConfig } from '../config.js';
+import { getConfig } from '../diagram-api/diagramAPI.js';
 import utils from '../utils.js';
 import { evaluate } from '../diagrams/common/common.js';
 import { getLineFunctionsWithOffset } from '../utils/lineWithOffset.js';
