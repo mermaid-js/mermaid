@@ -1,4 +1,5 @@
 import type { SVG } from '../diagram-api/types.js';
+import { log } from '../logger.js';
 import type { EdgeData } from '../types.js';
 /**
  * Adds SVG markers to a path element based on the arrow types specified in the edge.
@@ -24,6 +25,18 @@ export const addEdgeMarkers = (
   }
 };
 
+const arrowTypesMap = {
+  arrow_cross: 'cross',
+  arrow_point: 'point',
+  arrow_barb: 'barb',
+  arrow_circle: 'circle',
+  aggregation: 'aggregation',
+  extension: 'extension',
+  composition: 'composition',
+  dependency: 'dependency',
+  lollipop: 'lollipop',
+} as const;
+
 const addEdgeMarker = (
   svgPath: SVG,
   position: 'start' | 'end',
@@ -32,10 +45,13 @@ const addEdgeMarker = (
   id: string,
   diagramType: string
 ) => {
-  if (arrowType.startsWith('arrow_')) {
-    arrowType = arrowType.replace('arrow_', '');
+  const endMarkerType = arrowTypesMap[arrowType as keyof typeof arrowTypesMap];
+
+  if (!endMarkerType) {
+    log.warn(`Unknown arrow type: ${arrowType}`);
+    return; // unknown arrow type, ignore
   }
 
   const suffix = position === 'start' ? 'Start' : 'End';
-  svgPath.attr(`marker-${position}`, `url(${url}#${id}_${diagramType}-${arrowType}${suffix})`);
+  svgPath.attr(`marker-${position}`, `url(${url}#${id}_${diagramType}-${endMarkerType}${suffix})`);
 };
