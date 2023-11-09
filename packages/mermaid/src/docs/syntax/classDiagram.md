@@ -281,8 +281,6 @@ And `Link` can be one of:
 
 A namespace groups classes.
 
-Code:
-
 ```mermaid-example
 classDiagram
 namespace BaseShapes {
