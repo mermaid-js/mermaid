@@ -41,7 +41,7 @@ Below are a list of community plugins and integrations created with Mermaid.
 - [LiveBook](https://livebook.dev) ✅
 - [Atlassian Products](https://www.atlassian.com)
   - [Mermaid for Confluence](https://marketplace.atlassian.com/apps/1224722/mermaid-for-confluence?hosting=cloud&tab=overview)
-  - [Mermaid Integration for Confluence](https://marketplace.atlassian.com/apps/1222792/mermaid-integration-for-confluence?hosting=cloud&tab=overview) 
+  - [Mermaid Integration for Confluence](https://marketplace.atlassian.com/apps/1222792/mermaid-integration-for-confluence?hosting=cloud&tab=overview)
   - [Mermaid Diagrams for Confluence](https://marketplace.atlassian.com/apps/1226945/mermaid-diagrams-for-confluence?hosting=cloud&tab=overview)
   - [Mermaid Macro for Confluence](https://marketplace.atlassian.com/apps/1231150/mermaid-macro-for-confluence?hosting=cloud&tab=overview)
   - [EliteSoft Mermaid Charts and Diagrams](https://marketplace.atlassian.com/apps/1227286/elitesoft-mermaid-charts-and-diagrams?hosting=cloud&tab=overview)
