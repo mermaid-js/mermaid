@@ -6,3 +6,4 @@ cypress/plugins/index.js
 coverage
 *.json
 node_modules
+THIS IS FEATURE
