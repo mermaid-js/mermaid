@@ -6,7 +6,7 @@ const allMarkdownTransformers: MarkdownOptions = {
   // the shiki theme to highlight code blocks
   theme: {
     light: 'github-light',
-    dark: 'github-dark'
+    dark: 'github-dark',
   },
   config: async (md) => {
     await MermaidExample(md);
