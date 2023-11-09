@@ -2,9 +2,10 @@ import { log } from '../logger.js';
 import createLabel from './createLabel.js';
 import { createText } from '../rendering-util/createText.js';
 import { line, curveBasis, select } from 'd3';
-import { getConfig } from '../config.js';
+import { getConfig } from '../diagram-api/diagramAPI.js';
 import utils from '../utils.js';
 import { evaluate } from '../diagrams/common/common.js';
+import { getLineFunctionsWithOffset } from '../utils/lineWithOffset.js';
 
 let edgeLabels = {};
 let terminalLabels = {};
@@ -368,8 +369,7 @@ const cutPathAtIntersect = (_points, boundryNode) => {
   return points;
 };
 
-//(edgePaths, e, edge, clusterDb, diagramtype, graph)
-export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph) {
+export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph, id) {
   let points = edge.points;
   let pointsHasChanged = false;
   const tail = graph.node(e.v);
@@ -435,24 +435,16 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
   const lineData = points.filter((p) => !Number.isNaN(p.y));
 
   // This is the accessor function we talked about above
-  let curve;
+  let curve = curveBasis;
   // Currently only flowcharts get the curve from the settings, perhaps this should
   // be expanded to a common setting? Restricting it for now in order not to cause side-effects that
   // have not been thought through
-  if (diagramType === 'graph' || diagramType === 'flowchart') {
-    curve = edge.curve || curveBasis;
-  } else {
-    curve = curveBasis;
+  if (edge.curve && (diagramType === 'graph' || diagramType === 'flowchart')) {
+    curve = edge.curve;
   }
-  // curve = curveLinear;
-  const lineFunction = line()
-    .x(function (d) {
-      return d.x;
-    })
-    .y(function (d) {
-      return d.y;
-    })
-    .curve(curve);
+
+  const { x, y } = getLineFunctionsWithOffset(edge);
+  const lineFunction = line().x(x).y(y).curve(curve);
 
   // Construct stroke classes based on properties
   let strokeClasses;
@@ -516,61 +508,103 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
 
   switch (edge.arrowTypeStart) {
     case 'arrow_cross':
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-crossStart' + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + id + '_' + diagramType + '-crossStart' + ')'
+      );
       break;
     case 'arrow_point':
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-pointStart' + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + id + '_' + diagramType + '-pointStart' + ')'
+      );
       break;
     case 'arrow_barb':
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-barbStart' + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + id + '_' + diagramType + '-barbStart' + ')'
+      );
       break;
     case 'arrow_circle':
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-circleStart' + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + id + '_' + diagramType + '-circleStart' + ')'
+      );
       break;
     case 'aggregation':
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-aggregationStart' + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + id + '_' + diagramType + '-aggregationStart' + ')'
+      );
       break;
     case 'extension':
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-extensionStart' + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + id + '_' + diagramType + '-extensionStart' + ')'
+      );
       break;
     case 'composition':
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-compositionStart' + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + id + '_' + diagramType + '-compositionStart' + ')'
+      );
       break;
     case 'dependency':
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-dependencyStart' + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + id + '_' + diagramType + '-dependencyStart' + ')'
+      );
       break;
     case 'lollipop':
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-lollipopStart' + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + id + '_' + diagramType + '-lollipopStart' + ')'
+      );
       break;
     default:
   }
   switch (edge.arrowTypeEnd) {
     case 'arrow_cross':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-crossEnd' + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + id + '_' + diagramType + '-crossEnd' + ')');
       break;
     case 'arrow_point':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-pointEnd' + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + id + '_' + diagramType + '-pointEnd' + ')');
       break;
     case 'arrow_barb':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-barbEnd' + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + id + '_' + diagramType + '-barbEnd' + ')');
       break;
     case 'arrow_circle':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-circleEnd' + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + id + '_' + diagramType + '-circleEnd' + ')');
       break;
     case 'aggregation':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-aggregationEnd' + ')');
+      svgPath.attr(
+        'marker-end',
+        'url(' + url + '#' + id + '_' + diagramType + '-aggregationEnd' + ')'
+      );
       break;
     case 'extension':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-extensionEnd' + ')');
+      svgPath.attr(
+        'marker-end',
+        'url(' + url + '#' + id + '_' + diagramType + '-extensionEnd' + ')'
+      );
       break;
     case 'composition':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-compositionEnd' + ')');
+      svgPath.attr(
+        'marker-end',
+        'url(' + url + '#' + id + '_' + diagramType + '-compositionEnd' + ')'
+      );
       break;
     case 'dependency':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-dependencyEnd' + ')');
+      svgPath.attr(
+        'marker-end',
+        'url(' + url + '#' + id + '_' + diagramType + '-dependencyEnd' + ')'
+      );
       break;
     case 'lollipop':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-lollipopEnd' + ')');
+      svgPath.attr(
+        'marker-end',
+        'url(' + url + '#' + id + '_' + diagramType + '-lollipopEnd' + ')'
+      );
       break;
     default:
   }

@@ -303,4 +303,21 @@ ORDER ||--|{ LINE-ITEM : contains
 `
     );
   });
+
+  it('should render entities with entity name aliases', () => {
+    imgSnapshotTest(
+      `
+    erDiagram
+      p[Person] {
+        varchar(64) firstName
+        varchar(64) lastName
+      }
+      c["Customer Account"] {
+        varchar(128) email
+      }
+      p ||--o| c : has
+      `,
+      { logLevel: 1 }
+    );
+  });
 });

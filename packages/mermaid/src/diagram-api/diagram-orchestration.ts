@@ -5,8 +5,9 @@ import er from '../diagrams/er/erDetector.js';
 import git from '../diagrams/git/gitGraphDetector.js';
 import gantt from '../diagrams/gantt/ganttDetector.js';
 import { info } from '../diagrams/info/infoDetector.js';
-import pie from '../diagrams/pie/pieDetector.js';
+import { pie } from '../diagrams/pie/pieDetector.js';
 import quadrantChart from '../diagrams/quadrant-chart/quadrantDetector.js';
+import xychart from '../diagrams/xychart/xychartDetector.js';
 import requirement from '../diagrams/requirement/requirementDetector.js';
 import sequence from '../diagrams/sequence/sequenceDetector.js';
 import classDiagram from '../diagrams/class/classDetector.js';
@@ -43,7 +44,11 @@ export const addDiagrams = () => {
         },
       },
       styles: {}, // should never be used
-      renderer: {}, // should never be used
+      renderer: {
+        draw: () => {
+          // should never be used
+        },
+      },
       parser: {
         parser: { yy: {} },
         parse: () => {
@@ -81,6 +86,7 @@ export const addDiagrams = () => {
     state,
     journey,
     quadrantChart,
-    sankey
+    sankey,
+    xychart
   );
 };

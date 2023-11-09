@@ -14,7 +14,11 @@ interface CodeObject {
   mermaid: CypressMermaidConfig;
 }
 
-const batchId: string = 'mermaid-batch-' + Cypress.env('CYPRESS_COMMIT') || Date.now().toString();
+const batchId: string =
+  'mermaid-batch-' +
+  (Cypress.env('useAppli')
+    ? Date.now().toString()
+    : Cypress.env('CYPRESS_COMMIT') || Date.now().toString());
 
 /**
  * encodes, then decodes, then converts the `utf-8` {@link str} into `base64`.
@@ -117,11 +121,11 @@ export const imgSnapshotTest = (
   cy.log(JSON.stringify(_options));
   const options: CypressMermaidConfig = {
     ...(_options || {}),
-    fontFamily: (_options && _options.fontFamily) || 'courier',
-    fontSize: (_options && _options.fontSize) || 16,
+    fontFamily: _options?.fontFamily || 'courier',
+    fontSize: _options?.fontSize || 16,
     sequence: {
       actorFontFamily: 'courier',
-      noteFontFamily: 'courier',
+      noteFontFamily: _options?.sequence?.noteFontFamily || 'courier',
       messageFontFamily: 'courier',
     },
   };
