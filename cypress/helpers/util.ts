@@ -39,12 +39,12 @@ const convertUtf8ToBase64 = (str: string): string => {
  */
 export const createMermaidUrl = (
   diagramStr: string,
-  options?: CypressMermaidConfig,
-  api?: boolean
+  options: CypressMermaidConfig = {},
+  api: boolean = false
 ): string => {
   const codeObject: CodeObject = {
     code: diagramStr,
-    mermaid: options || {},
+    mermaid: options,
   };
   const objStr: string = JSON.stringify(codeObject);
   const url = `http://localhost:9000/${api ? 'xss' : 'e2e'}.html?graph=${convertUtf8ToBase64(
@@ -68,14 +68,13 @@ export const createMermaidUrl = (
  */
 export const openUrlAndVerifyRendering = (
   url: string,
-  options?: CypressMermaidConfig,
+  options: CypressMermaidConfig = {},
   validation?: any
 ): void => {
   const useAppli: boolean = Cypress.env('useAppli');
-  const name: string = ((options && options.name) || cy.state('runnable').fullTitle()).replace(
-    /\s+/g,
-    '-'
-  );
+  const name: string = (
+    options && options.name ? options.name : cy.state('runnable').fullTitle()
+  ).replace(/\s+/g, '-');
 
   if (useAppli) {
     cy.log(`Opening eyes ${Cypress.spec.name} --- ${name}`);
@@ -114,18 +113,21 @@ export const openUrlAndVerifyRendering = (
  */
 export const imgSnapshotTest = (
   diagramStr: string,
-  _options?: CypressMermaidConfig,
-  api?: boolean,
+  _options: CypressMermaidConfig = {},
+  api: boolean = false,
   validation?: any
 ): void => {
   cy.log(JSON.stringify(_options));
   const options: CypressMermaidConfig = {
-    ...(_options || {}),
-    fontFamily: _options?.fontFamily || 'courier',
-    fontSize: _options?.fontSize || 16,
+    ..._options,
+    fontFamily: _options && _options.fontFamily ? _options.fontFamily : 'courier',
+    fontSize: _options && _options.fontSize ? _options.fontSize : 16,
     sequence: {
       actorFontFamily: 'courier',
-      noteFontFamily: _options?.sequence?.noteFontFamily || 'courier',
+      noteFontFamily:
+        _options && _options.sequence && _options.sequence.noteFontFamily
+          ? _options?.sequence?.noteFontFamily
+          : 'courier',
       messageFontFamily: 'courier',
     },
   };
@@ -143,8 +145,8 @@ export const imgSnapshotTest = (
  */
 export const urlSnapshotTest = (
   url: string,
-  _options?: CypressMermaidConfig,
-  _api?: boolean,
+  _options: CypressMermaidConfig = {},
+  _api: boolean = false,
   validation?: any
 ): void => {
   const options: CypressMermaidConfig = Object.assign(_options);
