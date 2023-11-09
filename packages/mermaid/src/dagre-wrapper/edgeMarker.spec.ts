@@ -1,13 +1,18 @@
+import type { Mocked } from 'vitest';
 import type { SVG } from '../diagram-api/types.js';
 import { addEdgeMarkers } from './edgeMarker.js';
 
 describe('addEdgeMarker', () => {
   const svgPath = {
     attr: vitest.fn(),
-  } as unknown as SVG;
+  } as unknown as Mocked<SVG>;
   const url = 'http://example.com';
   const id = 'test';
   const diagramType = 'test';
+
+  beforeEach(() => {
+    svgPath.attr.mockReset();
+  });
 
   it('should add markers for arrow_cross:arrow_point', () => {
     const arrowTypeStart = 'arrow_cross';
