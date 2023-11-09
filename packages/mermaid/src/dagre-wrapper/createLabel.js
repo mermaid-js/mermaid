@@ -2,7 +2,7 @@ import { select } from 'd3';
 import { log } from '../logger.js';
 import { getConfig } from '../diagram-api/diagramAPI.js';
 import { evaluate } from '../diagrams/common/common.js';
-import { decodeEntities } from '../mermaidAPI.js';
+import { decodeEntities } from '../utils.js';
 
 /**
  * @param dom

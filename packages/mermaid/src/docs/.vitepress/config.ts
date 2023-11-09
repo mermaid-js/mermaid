@@ -91,7 +91,7 @@ function nav() {
       items: [
         {
           text: 'Changelog',
-          link: 'https://github.com/mermaid-js/mermaid/blob/develop/CHANGELOG.md',
+          link: 'https://github.com/mermaid-js/mermaid/releases',
         },
         {
           text: 'Contributing',
@@ -150,7 +150,7 @@ function sidebarSyntax() {
         { text: 'Timeline 🔥', link: '/syntax/timeline' },
         { text: 'Zenuml 🔥', link: '/syntax/zenuml' },
         { text: 'Sankey 🔥', link: '/syntax/sankey' },
-        { text: 'XYChart 🔥', link: '/syntax/xychart' },
+        { text: 'XYChart 🔥', link: '/syntax/xyChart' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },

@@ -97,7 +97,7 @@ To Deploy Mermaid:
 </script>
 ```
 
-**Doing so commands the mermaid parser to look for the `<div>` or `<pre>` tags with `class="mermaid"`. From these tags, mermaid tries read the diagram/chart definitions and render them into SVG charts.**
+**Doing so commands the mermaid parser to look for the `<div>` or `<pre>` tags with `class="mermaid"`. From these tags, mermaid tries to read the diagram/chart definitions and render them into SVG charts.**
 
 **Examples can be found in** [Other examples](../syntax/examples.md)
 

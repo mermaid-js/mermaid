@@ -134,7 +134,7 @@ that id.
 <*>\s*\~\~[\~]+\s*              return 'LINK';
 
 <ellipseText>[-/\)][\)]         { this.popState(); return '-)'; }
-<ellipseText>[^\(\)\[\]\{\}]|-/!\)+       return "TEXT"
+<ellipseText>[^\(\)\[\]\{\}]|-\!\)+       return "TEXT"
 <*>"(-"                         { this.pushState("ellipseText"); return '(-'; }
 
 <text>"])"                { this.popState(); return 'STADIUMEND'; }
