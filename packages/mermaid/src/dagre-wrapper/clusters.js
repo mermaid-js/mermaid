@@ -5,6 +5,7 @@ import { createText } from '../rendering-util/createText.js';
 import { select } from 'd3';
 import { getConfig } from '../diagram-api/diagramAPI.js';
 import { evaluate } from '../diagrams/common/common.js';
+import { getSubGraphTitleMargins } from '../utils/getSubGraphTitleMargins.js';
 
 const rect = (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
@@ -63,17 +64,22 @@ const rect = (parent, node) => {
     .attr('width', width)
     .attr('height', node.height + padding);
 
+  const { subGraphTitleTopMargin } = getSubGraphTitleMargins();
   if (useHtmlLabels) {
     label.attr(
       'transform',
       // This puts the labal on top of the box instead of inside it
-      'translate(' + (node.x - bbox.width / 2) + ', ' + (node.y - node.height / 2) + ')'
+      'translate(' +
+        (node.x - bbox.width / 2) +
+        ', ' +
+        (node.y - node.height / 2 + subGraphTitleTopMargin) +
+        ')'
     );
   } else {
     label.attr(
       'transform',
       // This puts the labal on top of the box instead of inside it
-      'translate(' + node.x + ', ' + (node.y - node.height / 2) + ')'
+      'translate(' + node.x + ', ' + (node.y - node.height / 2 + subGraphTitleTopMargin) + ')'
     );
   }
   // Center the label
@@ -175,6 +181,7 @@ const roundedWithTitle = (parent, node) => {
     .attr('width', width + padding)
     .attr('height', node.height + padding - bbox.height - 3);
 
+  const { subGraphTitleTopMargin } = getSubGraphTitleMargins();
   // Center the label
   label.attr(
     'transform',
@@ -185,6 +192,7 @@ const roundedWithTitle = (parent, node) => {
         node.height / 2 -
         node.padding / 3 +
         (evaluate(getConfig().flowchart.htmlLabels) ? 5 : 3)) +
+      subGraphTitleTopMargin +
       ')'
   );
 
