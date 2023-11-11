@@ -595,24 +595,24 @@ describe('calculatePoint', () => {
       'Could not find a suitable point for the given distance'
     );
   });
+});
 
-  describe('getSubGraphTitleMargins', () => {
-    it('should get subgraph title margins after config has been set', () => {
-      const config_0 = {
-        flowchart: {
-          subGraphTitleMargin: {
-            top: 10,
-            bottom: 5,
-          },
+describe('getSubGraphTitleMargins', () => {
+  it('should get subgraph title margins after config has been set', () => {
+    const config_0 = {
+      flowchart: {
+        subGraphTitleMargin: {
+          top: 10,
+          bottom: 5,
         },
-      };
+      },
+    };
 
-      configApi.setSiteConfig(config_0);
-      expect(getSubGraphTitleMargins()).toEqual({
-        subGraphTitleTopMargin: 10,
-        subGraphTitleBottomMargin: 5,
-        subGraphTitleTotalMargin: 15,
-      });
+    configApi.setSiteConfig(config_0);
+    expect(getSubGraphTitleMargins()).toEqual({
+      subGraphTitleTopMargin: 10,
+      subGraphTitleBottomMargin: 5,
+      subGraphTitleTotalMargin: 15,
     });
   });
 });
