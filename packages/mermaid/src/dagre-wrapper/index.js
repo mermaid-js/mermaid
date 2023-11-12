@@ -13,6 +13,9 @@ import { insertNode, positionNode, clear as clearNodes, setNodeElem } from './no
 import { insertCluster, clear as clearClusters } from './clusters.js';
 import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } from './edges.js';
 import { log } from '../logger.js';
+import { getSubGraphTitleMargins } from '../utils/getSubGraphTitleMargins.js';
+
+const { subGraphTitleTotalMargin } = getSubGraphTitleMargins();
 
 const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster) => {
   log.info('Graph in recursive render: XXX', graphlibJson.write(graph), parentCluster);
@@ -114,13 +117,20 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster) => 
     );
     if (node && node.clusterNode) {
       // clusterDb[node.id].node = node;
-
+      node.y += subGraphTitleTotalMargin;
       positionNode(node);
     } else {
       // Non cluster node
       if (graph.children(v).length > 0) {
         // A cluster in the non-recursive way
         // positionCluster(node);
+        node.height += subGraphTitleTotalMargin * 2;
+        graph.children(v).forEach((c) => {
+          if (!clusterDb[c]) return;
+          if (!clusterDb[c].clusterData) {
+            node.height += subGraphTitleTotalMargin * 2;
+          }
+        });
         insertCluster(clusters, node);
         clusterDb[node.id].node = node;
       } else {
