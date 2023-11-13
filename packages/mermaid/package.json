@@ -1,5 +1,5 @@
 {
-  "name": "mermaid",
+  "name": "@MermaidChart/mermaid",
   "version": "10.6.1",
   "description": "Markdown-ish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",

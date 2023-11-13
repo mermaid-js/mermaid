@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/config/setup/README.md](../../../packages/mermaid/src/docs/config/setup/README.md).
 
-# mermaid
+# @MermaidChart/mermaid
 
 ## Modules
 

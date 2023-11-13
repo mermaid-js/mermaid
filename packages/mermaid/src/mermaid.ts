@@ -10,6 +10,7 @@ import type { ParseOptions, RenderResult } from './mermaidAPI.js';
 import { mermaidAPI } from './mermaidAPI.js';
 import { registerLazyLoadedDiagrams, detectType } from './diagram-api/detectType.js';
 import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';
+import type { Diagram } from './Diagram.js';
 import type { ParseErrorFunction } from './Diagram.js';
 import { isDetailedError } from './utils.js';
 import type { DetailedError } from './utils.js';
@@ -315,7 +316,10 @@ const executeQueue = async () => {
  * @returns true if the diagram is valid, false otherwise if parseOptions.suppressErrors is true.
  * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false.
  */
-const parse = async (text: string, parseOptions?: ParseOptions): Promise<boolean | void> => {
+const parse = async (
+  text: string,
+  parseOptions?: ParseOptions
+): Promise<boolean | void | Diagram> => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the render call is done.
     // It will be queued first and will be executed when it is first in line

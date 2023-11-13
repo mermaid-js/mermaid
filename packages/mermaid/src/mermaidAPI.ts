@@ -95,13 +95,15 @@ function processAndSetConfigs(text: string) {
  * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false.
  */
 
-async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean> {
+async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean | Diagram> {
   addDiagrams();
 
   text = processAndSetConfigs(text).code;
 
   try {
-    await getDiagramFromText(text);
+    const diagram = await getDiagramFromText(text);
+    // diagram.parse();
+    return diagram;
   } catch (error) {
     if (parseOptions?.suppressErrors) {
       return false;

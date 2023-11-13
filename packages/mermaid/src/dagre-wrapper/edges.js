@@ -477,6 +477,8 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     .append('path')
     .attr('d', lineFunction(lineData))
     .attr('id', edge.id)
+    // MC
+    .attr('data-edge', 'true')
     .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
     .attr('style', edge.style);
 
