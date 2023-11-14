@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Validate Configuration
         uses: Yash-Singh1/pr-labeler-config-validator@releases/v0.0.3
         with:

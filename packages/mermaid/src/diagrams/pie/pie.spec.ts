@@ -1,6 +1,6 @@
 import { parser } from './pieParser.js';
 import { DEFAULT_PIE_DB, db } from './pieDb.js';
-import { setConfig } from '../../config.js';
+import { setConfig } from '../../diagram-api/diagramAPI.js';
 
 setConfig({
   securityLevel: 'strict',

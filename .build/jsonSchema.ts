@@ -17,6 +17,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'er',
   'pie',
   'quadrantChart',
+  'xyChart',
   'requirement',
   'mindmap',
   'timeline',
@@ -34,7 +35,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
  * @param mermaidConfigSchema - The Mermaid JSON Schema to use.
  * @returns The default mermaid config object.
  */
-export function generateDefaults(mermaidConfigSchema: JSONSchemaType<MermaidConfig>) {
+function generateDefaults(mermaidConfigSchema: JSONSchemaType<MermaidConfig>) {
   const ajv = new Ajv2019({
     useDefaults: true,
     allowUnionTypes: true,
