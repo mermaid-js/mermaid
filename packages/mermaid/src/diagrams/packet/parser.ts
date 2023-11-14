@@ -6,6 +6,8 @@ import { populateCommonDb } from '../common/populateCommonDb.js';
 import { db } from './db.js';
 import type { Block, Row } from './types.js';
 
+const maxPacketSize = 10_000;
+
 const populate = (ast: Packet) => {
   populateCommonDb(ast, db);
   let lastByte = -1;
@@ -16,7 +18,7 @@ const populate = (ast: Packet) => {
     if (end && end < start) {
       throw new Error(`Packet block ${start} - ${end} is invalid. End must be greater than start.`);
     }
-    if (start != lastByte + 1) {
+    if (start !== lastByte + 1) {
       throw new Error(
         `Packet block ${start} - ${end ?? start} is not contiguous. It should start from ${
           lastByte + 1
@@ -26,7 +28,7 @@ const populate = (ast: Packet) => {
     lastByte = end ?? start;
     log.debug(`Packet block ${start} - ${lastByte} with label ${label}`);
 
-    while (word.length <= bitsPerRow + 1 && db.getPacket().length < 10_000) {
+    while (word.length <= bitsPerRow + 1 && db.getPacket().length < maxPacketSize) {
       const [block, nextBlock] = getNextFittingBlock({ start, end, label }, row, bitsPerRow);
       word.push(block);
       if (block.end + 1 === row * bitsPerRow) {
