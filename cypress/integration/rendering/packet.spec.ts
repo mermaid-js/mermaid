@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util';
+import { imgSnapshotTest } from '../../helpers/util';
 
 describe('packet structure', () => {
   it('should render a simple packet diagram', () => {

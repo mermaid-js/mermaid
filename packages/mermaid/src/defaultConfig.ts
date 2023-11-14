@@ -259,10 +259,6 @@ const config: RequiredDeep<MermaidConfig> = {
   },
   packet: {
     ...defaultConfigJson.packet,
-    useWidth: undefined,
-    // this is false, unlike every other diagram (other than gitGraph)
-    // TODO: can we make this default to `true` instead?
-    useMaxWidth: false,
   },
 };
 

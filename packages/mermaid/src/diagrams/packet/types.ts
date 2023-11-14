@@ -9,4 +9,20 @@ export type Row = Required<Block>[];
 export interface PacketDB extends DiagramDB {
   getPacket: () => Row[];
   getConfig: () => Required<PacketDiagramConfig>;
+  clear: () => void;
+}
+
+export interface PacketStyleOptions {
+  byteFontSize?: string;
+  startByteColor?: string;
+  endByteColor?: string;
+  labelColor?: string;
+  labelFontSize?: string;
+  blockStrokeColor?: string;
+  blockStrokeWidth?: string;
+  blockFillColor?: string;
+}
+
+export interface PacketData {
+  packet: Row[];
 }

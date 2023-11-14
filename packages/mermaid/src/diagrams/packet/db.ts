@@ -1,13 +1,9 @@
-import type { Block, PacketDB, Row } from './types.js';
+import type { Block, PacketDB, PacketData, Row } from './types.js';
 import type { PacketDiagramConfig } from '../../config.type.js';
-
 import { log } from '../../logger.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 import { getConfig as commonGetConfig } from '../../config.js';
-
-interface PacketData {
-  packet: Row[];
-}
+import { cleanAndMerge } from '../../utils.js';
 
 const defaultPacketData: PacketData = {
   packet: [],
@@ -17,7 +13,7 @@ let data: PacketData = structuredClone(defaultPacketData);
 export const DEFAULT_PACKET_CONFIG: Required<PacketDiagramConfig> = DEFAULT_CONFIG.packet;
 
 export const getConfig = (): Required<PacketDiagramConfig> => {
-  const config = structuredClone({
+  const config = cleanAndMerge({
     ...DEFAULT_PACKET_CONFIG,
     ...commonGetConfig().packet,
   });
@@ -61,9 +57,9 @@ export const getNextFittingBlock = (
 };
 
 export const populate = ({ blocks }: { blocks: Block[] }) => {
+  clear();
   let lastByte = -1;
   let word: Row = [];
-  data.packet = [];
   let row = 1;
   const { bitsPerRow } = getConfig();
   for (let { start, end, label } of blocks) {
@@ -97,7 +93,6 @@ export const populate = ({ blocks }: { blocks: Block[] }) => {
   if (word.length > 0) {
     data.packet.push(word);
   }
-  log.debug(data);
 };
 
 export const clear = () => {
@@ -107,4 +102,5 @@ export const clear = () => {
 export const db: PacketDB = {
   getPacket,
   getConfig,
+  clear,
 };

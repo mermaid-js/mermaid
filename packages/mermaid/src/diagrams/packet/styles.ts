@@ -1,6 +1,8 @@
+import type { DiagramStylesProvider } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
+import type { PacketStyleOptions } from './types.js';
 
-export const styles = (options: any = {}) => {
+export const styles: DiagramStylesProvider = (options: { packet?: PacketStyleOptions } = {}) => {
   log.debug({ options });
   return `
 	.byte {

@@ -2,13 +2,19 @@ grammar Packet
 import "../common/common";
 
 entry Packet:
-	"packet-beta" NEWLINE*
-  TitleAndAccessibilities?
-  (blocks+=Block)*;
+  NEWLINE*
+	"packet-beta"
+  (  
+    NEWLINE* TitleAndAccessibilities blocks+=PacketBlock*  
+    | NEWLINE+ blocks+=PacketBlock+  
+    | NEWLINE*  
+  )
+;
 
-Block:
-    start=INT ('-' end=INT)? ':' label=STRING;
+PacketBlock:
+    start=INT('-' end=INT)? ':' label=STRING NEWLINE+
+;
 
 hidden terminal WS: /\s+/;
-terminal INT returns number: /[0-9]+/;
+terminal INT returns number: /0|[1-9][0-9]*/;
 terminal STRING: /"[^"]*"|'[^']*'/;
