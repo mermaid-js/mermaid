@@ -829,6 +829,11 @@ export const draw = function (_text: string, id: string, _version: string, diagO
     bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos);
   }
 
+  log.debug('createdActors', createdActors);
+  log.debug('destroyedActors', destroyedActors);
+
+  drawActors(diagram, actors, actorKeys, false);
+
   // Draw the messages/signals
   let sequenceIndex = 1;
   let sequenceIndexStep = 1;
@@ -1028,14 +1033,12 @@ export const draw = function (_text: string, id: string, _version: string, diagO
     }
   });
 
-  log.debug('createdActors', createdActors);
-  log.debug('destroyedActors', destroyedActors);
-
-  drawActors(diagram, actors, actorKeys, false);
   messagesToDraw.forEach((e) => drawMessage(diagram, e.messageModel, e.lineStartY, diagObj));
+
   if (conf.mirrorActors) {
     drawActors(diagram, actors, actorKeys, true);
   }
+
   backgrounds.forEach((e) => svgDraw.drawBackgroundRect(diagram, e));
   fixLifeLineHeights(diagram, actors, actorKeys, conf);
 
