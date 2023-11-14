@@ -201,6 +201,13 @@ export const updateLinkInterpolate = function (positions, interp) {
  */
 export const updateLink = function (positions, style) {
   positions.forEach(function (pos) {
+    if (pos >= edges.length) {
+      throw new Error(
+        `The index ${pos} for linkStyle is out of bounds. Valid indices for linkStyle are between 0 and ${
+          edges.length - 1
+        }. (Help: Ensure that the index is within the range of existing edges.)`
+      );
+    }
     if (pos === 'default') {
       edges.defaultStyle = style;
     } else {
