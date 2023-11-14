@@ -1,31 +1,45 @@
 import type { DiagramStylesProvider } from '../../diagram-api/types.js';
-import { log } from '../../logger.js';
+import { cleanAndMerge } from '../../utils.js';
 import type { PacketStyleOptions } from './types.js';
 
-export const styles: DiagramStylesProvider = (options: { packet?: PacketStyleOptions } = {}) => {
-  log.debug({ options });
+const defaultPacketStyleOptions: PacketStyleOptions = {
+  byteFontSize: '10px',
+  startByteColor: 'black',
+  endByteColor: 'black',
+  labelColor: 'black',
+  labelFontSize: '12px',
+  titleColor: 'black',
+  titleFontSize: '14px',
+  blockStrokeColor: 'black',
+  blockStrokeWidth: '1',
+  blockFillColor: '#efefef',
+};
+
+export const styles: DiagramStylesProvider = ({ packet }: { packet?: PacketStyleOptions } = {}) => {
+  const options = cleanAndMerge(defaultPacketStyleOptions, packet);
+
   return `
 	.packetByte {
-		font-size: ${options.packet?.byteFontSize ?? '10px'};
+		font-size: ${options.byteFontSize};
 	}
 	.packetByte.start {
-		fill: ${options.packet?.startByteColor ?? 'black'};
+		fill: ${options.startByteColor};
 	}
 	.packetByte.end {
-		fill: ${options.packet?.endByteColor ?? 'black'};
+		fill: ${options.endByteColor};
 	}
 	.packetLabel {
-		fill: ${options.packet?.labelColor ?? 'black'};
-		font-size: ${options.packet?.labelFontSize ?? '12px'};
+		fill: ${options.labelColor};
+		font-size: ${options.labelFontSize};
 	}
 	.packetTitle {
-		fill: ${options.packet?.titleColor ?? 'black'};
-		font-size: ${options.packet?.titleFontSize ?? '14px'};
+		fill: ${options.titleColor};
+		font-size: ${options.titleFontSize};
 	}
 	.packetBlock {
-		stroke: ${options.packet?.blockStrokeColor ?? 'black'};
-		stroke-width: ${options.packet?.blockStrokeWidth ?? '1'};
-		fill: ${options.packet?.blockFillColor ?? '#efefef'};
+		stroke: ${options.blockStrokeColor};
+		stroke-width: ${options.blockStrokeWidth};
+		fill: ${options.blockFillColor};
 	}
 	`;
 };
