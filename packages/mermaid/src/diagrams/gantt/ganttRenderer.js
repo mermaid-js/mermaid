@@ -25,7 +25,7 @@ import {
   timeMonth,
 } from 'd3';
 import common from '../common/common.js';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 export const setConf = function () {

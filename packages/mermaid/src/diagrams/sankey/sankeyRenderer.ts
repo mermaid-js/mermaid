@@ -1,5 +1,5 @@
 import type { Diagram } from '../../Diagram.js';
-import * as configApi from '../../config.js';
+import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 
 import {
   select as d3select,
@@ -41,8 +41,8 @@ const alignmentsMap: Record<
  */
 export const draw = function (text: string, id: string, _version: string, diagObj: Diagram): void {
   // Get Sankey config
-  const { securityLevel, sankey: conf } = configApi.getConfig();
-  const defaultSankeyConfig = configApi!.defaultConfig!.sankey!;
+  const { securityLevel, sankey: conf } = getConfig();
+  const defaultSankeyConfig = defaultConfig!.sankey!;
 
   // TODO:
   // This code repeats for every diagram

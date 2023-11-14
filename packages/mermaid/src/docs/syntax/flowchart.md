@@ -293,7 +293,7 @@ flowchart TB
     A & B--> C & D
 ```
 
-If you describe the same diagram using the the basic syntax, it will take four lines. A
+If you describe the same diagram using the basic syntax, it will take four lines. A
 word of warning, one could go overboard with this making the flowchart harder to read in
 markdown form. The Swedish word `lagom` comes to mind. It means, not too much and not too little.
 This goes for expressive syntaxes as well.
@@ -487,7 +487,7 @@ flowchart LR
     end
     %% ^ These subgraphs are identical, except for the links to them:
 
-    %% Link *to* subgraph1: subgraph1 direction is mantained
+    %% Link *to* subgraph1: subgraph1 direction is maintained
     outside --> subgraph1
     %% Link *within* subgraph2:
     %% subgraph2 inherits the direction of the top-level graph (LR)
@@ -757,7 +757,7 @@ flowchart TD
     B-->E(A fa:fa-camera-retro perhaps?)
 ```
 
-Mermaid is compatible with Font Awesome up to verion 5, Free icons only. Check that the icons you use are from the [supported set of icons](https://fontawesome.com/v5/search?o=r&m=free).
+Mermaid is compatible with Font Awesome up to version 5, Free icons only. Check that the icons you use are from the [supported set of icons](https://fontawesome.com/v5/search?o=r&m=free).
 
 ## Graph declarations with spaces between vertices and link and without semicolon
 
