@@ -3,7 +3,7 @@ import "../common/common";
 
 entry Packet:
   NEWLINE*
-	"packet-beta"
+  "packet-beta"
   (  
     NEWLINE* TitleAndAccessibilities blocks+=PacketBlock*  
     | NEWLINE+ blocks+=PacketBlock+  
@@ -12,7 +12,7 @@ entry Packet:
 ;
 
 PacketBlock:
-    start=INT('-' end=INT)? ':' label=STRING NEWLINE+
+  start=INT('-' end=INT)? ':' label=STRING NEWLINE+
 ;
 
 terminal INT returns number: /0|[1-9][0-9]*/;
