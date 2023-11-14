@@ -1,5 +1,8 @@
+import { db } from './db.js';
 import { parser } from './parser.js';
-import { clear, getPacket } from './db.js';
+
+const { clear, getPacket } = db;
+
 describe('packet diagrams', () => {
   beforeEach(() => {
     clear();

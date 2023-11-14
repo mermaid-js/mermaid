@@ -5,20 +5,24 @@ import type { PacketStyleOptions } from './types.js';
 export const styles: DiagramStylesProvider = (options: { packet?: PacketStyleOptions } = {}) => {
   log.debug({ options });
   return `
-	.byte {
+	.packetByte {
 		font-size: ${options.packet?.byteFontSize ?? '10px'};
 	}
-	.byte.start {
+	.packetByte.start {
 		fill: ${options.packet?.startByteColor ?? 'black'};
 	}
-	.byte.end {
+	.packetByte.end {
 		fill: ${options.packet?.endByteColor ?? 'black'};
 	}
-	.label {
+	.packetLabel {
 		fill: ${options.packet?.labelColor ?? 'black'};
 		font-size: ${options.packet?.labelFontSize ?? '12px'};
 	}
-	.block {
+	.packetTitle {
+		fill: ${options.packet?.titleColor ?? 'black'};
+		font-size: ${options.packet?.titleFontSize ?? '14px'};
+	}
+	.packetBlock {
 		stroke: ${options.packet?.blockStrokeColor ?? 'black'};
 		stroke-width: ${options.packet?.blockStrokeWidth ?? '1'};
 		fill: ${options.packet?.blockFillColor ?? '#efefef'};

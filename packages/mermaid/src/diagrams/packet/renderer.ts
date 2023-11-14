@@ -1,9 +1,9 @@
-import { configureSvgSize } from '../../setupGraphViewbox.js';
+import type { Diagram } from '../../Diagram.js';
+import type { PacketDiagramConfig } from '../../config.type.js';
 import type { DrawDefinition, Group, SVG } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { PacketDB, Row } from './types.js';
-import type { PacketDiagramConfig } from '../../config.type.js';
-import type { Diagram } from '../../Diagram.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
@@ -11,16 +11,27 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const config = db.getConfig();
   const { rowHeight, paddingY, bitWidth, bitsPerRow } = config;
   const words = db.getPacket();
-  const svgHeight = (rowHeight + paddingY) * words.length + paddingY;
+  const title = db.getDiagramTitle();
+  const totalRowHeight = rowHeight + paddingY;
+  const svgHeight = totalRowHeight * (words.length + 1) - (title ? 0 : rowHeight);
   const svgWidth = bitWidth * bitsPerRow + 2;
-
   const svg: SVG = selectSvgElement(id);
+
   configureSvgSize(svg, svgHeight, svgWidth, true);
   svg.attr('height', svgHeight + 'px');
 
   for (const [row, packet] of words.entries()) {
     drawWord(svg, packet, row, config);
   }
+
+  svg
+    .append('text')
+    .text(title)
+    .attr('x', svgWidth / 2)
+    .attr('y', svgHeight - rowHeight)
+    .attr('dominant-baseline', 'middle')
+    .attr('text-anchor', 'middle')
+    .attr('class', 'packetTitle');
 };
 
 const drawWord = (
@@ -41,14 +52,14 @@ const drawWord = (
       .attr('y', wordY)
       .attr('width', width)
       .attr('height', rowHeight)
-      .attr('class', 'block');
+      .attr('class', 'packetBlock');
 
     // Block label
     group
       .append('text')
       .attr('x', blockX + width / 2)
       .attr('y', wordY + rowHeight / 2)
-      .attr('class', 'label')
+      .attr('class', 'packetLabel')
       .attr('dominant-baseline', 'middle')
       .attr('text-anchor', 'middle')
       .text(block.label);
@@ -63,7 +74,7 @@ const drawWord = (
       .append('text')
       .attr('x', blockX + (isSingleBlock ? width / 2 : 0))
       .attr('y', bitNumberY)
-      .attr('class', 'byte start')
+      .attr('class', 'packetByte start')
       .attr('dominant-baseline', 'auto')
       .attr('text-anchor', isSingleBlock ? 'middle' : 'start')
       .text(block.start);
@@ -74,7 +85,7 @@ const drawWord = (
         .append('text')
         .attr('x', blockX + width)
         .attr('y', bitNumberY)
-        .attr('class', 'byte end')
+        .attr('class', 'packetByte end')
         .attr('dominant-baseline', 'auto')
         .attr('text-anchor', 'end')
         .text(block.end);

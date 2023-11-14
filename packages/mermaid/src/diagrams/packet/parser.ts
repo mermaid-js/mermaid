@@ -1,17 +1,18 @@
 import type { Packet } from 'mermaid-parser';
-import type { ParserDefinition } from '../../diagram-api/types.js';
 import { parse } from 'mermaid-parser';
+import type { ParserDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
+import { populateCommonDb } from '../common/populateCommonDb.js';
+import { db } from './db.js';
 import type { Block, Row } from './types.js';
-import { clear, getConfig, getPacket, pushWord } from './db.js';
 
-const populate = ({ blocks }: { blocks: Block[] }) => {
-  clear();
+const populate = (ast: Packet) => {
+  populateCommonDb(ast, db);
   let lastByte = -1;
   let word: Row = [];
   let row = 1;
-  const { bitsPerRow } = getConfig();
-  for (let { start, end, label } of blocks) {
+  const { bitsPerRow } = db.getConfig();
+  for (let { start, end, label } of ast.blocks) {
     if (end && end < start) {
       throw new Error(`Packet block ${start} - ${end} is invalid. End must be greater than start.`);
     }
@@ -25,11 +26,11 @@ const populate = ({ blocks }: { blocks: Block[] }) => {
     lastByte = end ?? start;
     log.debug(`Packet block ${start} - ${lastByte} with label ${label}`);
 
-    while (word.length <= bitsPerRow + 1 && getPacket().length < 10_000) {
+    while (word.length <= bitsPerRow + 1 && db.getPacket().length < 10_000) {
       const [block, nextBlock] = getNextFittingBlock({ start, end, label }, row, bitsPerRow);
       word.push(block);
       if (block.end + 1 === row * bitsPerRow) {
-        pushWord(word);
+        db.pushWord(word);
         word = [];
         row++;
       }
@@ -39,7 +40,7 @@ const populate = ({ blocks }: { blocks: Block[] }) => {
       ({ start, end, label } = nextBlock);
     }
   }
-  pushWord(word);
+  db.pushWord(word);
 };
 
 const getNextFittingBlock = (
