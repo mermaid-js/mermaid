@@ -4,6 +4,7 @@ describe('packet structure', () => {
   it('should render a simple packet diagram', () => {
     imgSnapshotTest(
       `packet-beta
+  title Hello world
   0-10: "hello"
 `
     );
@@ -37,6 +38,7 @@ describe('packet structure', () => {
     imgSnapshotTest(
       `
       ---
+      title: "Packet Diagram"
       config:
         packet:
           showBits: false
