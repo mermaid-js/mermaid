@@ -1,6 +1,6 @@
 import type { Diagram } from '../../Diagram.js';
 import type { PacketDiagramConfig } from '../../config.type.js';
-import type { DrawDefinition, Group, SVG } from '../../diagram-api/types.js';
+import type { DiagramRenderer, DrawDefinition, Group, SVG } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { PacketDB, Row } from './types.js';
@@ -92,4 +92,4 @@ const drawWord = (
     }
   }
 };
-export const renderer = { draw };
+export const renderer: DiagramRenderer = { draw };
