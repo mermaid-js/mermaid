@@ -16,10 +16,12 @@ This diagram type is particularly useful for network engineers, educators, and s
 
 ## Syntax
 
-    packet-beta
-    start: "Block name" %% Single-bit block
-    start-end: "Block name" %% Multi-bit blocks
-    ... More Fields ...
+```md
+packet-beta
+start: "Block name" %% Single-bit block
+start-end: "Block name" %% Multi-bit blocks
+... More Fields ...
+```
 
 ## Examples
 

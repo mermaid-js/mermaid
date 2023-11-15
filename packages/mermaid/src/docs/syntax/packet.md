@@ -10,7 +10,7 @@ This diagram type is particularly useful for network engineers, educators, and s
 
 ## Syntax
 
-```
+```md
 packet-beta
 start: "Block name" %% Single-bit block
 start-end: "Block name" %% Multi-bit blocks
