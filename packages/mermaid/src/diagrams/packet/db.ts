@@ -11,7 +11,7 @@ import {
   setAccTitle,
   setDiagramTitle,
 } from '../common/commonDb.js';
-import type { PacketDB, PacketData, Row } from './types.js';
+import type { PacketDB, PacketData, PacketWord } from './types.js';
 
 const defaultPacketData: PacketData = {
   packet: [],
@@ -32,9 +32,9 @@ const getConfig = (): Required<PacketDiagramConfig> => {
   return config;
 };
 
-const getPacket = (): Row[] => data.packet;
+const getPacket = (): PacketWord[] => data.packet;
 
-const pushWord = (word: Row) => {
+const pushWord = (word: PacketWord) => {
   if (word.length > 0) {
     data.packet.push(word);
   }

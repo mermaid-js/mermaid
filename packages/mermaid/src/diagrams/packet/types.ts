@@ -1,14 +1,14 @@
-import type { Packet } from 'mermaid-parser';
+import type { Packet, RecursiveAstOmit } from 'mermaid-parser';
 import type { PacketDiagramConfig } from '../../config.type.js';
 import type { DiagramDBBase } from '../../diagram-api/types.js';
+import type { ArrayElement } from '../../types.js';
 
-export type ArrayElement<A> = A extends readonly (infer T)[] ? T : never;
-export type Block = Pick<ArrayElement<Packet['blocks']>, 'start' | 'end' | 'label'>;
-export type Row = Required<Block>[];
+export type PacketBlock = RecursiveAstOmit<ArrayElement<Packet['blocks']>>;
+export type PacketWord = Required<PacketBlock>[];
 
 export interface PacketDB extends DiagramDBBase<PacketDiagramConfig> {
-  pushWord: (word: Row) => void;
-  getPacket: () => Row[];
+  pushWord: (word: PacketWord) => void;
+  getPacket: () => PacketWord[];
 }
 
 export interface PacketStyleOptions {
@@ -25,5 +25,5 @@ export interface PacketStyleOptions {
 }
 
 export interface PacketData {
-  packet: Row[];
+  packet: PacketWord[];
 }

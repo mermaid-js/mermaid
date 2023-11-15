@@ -4,14 +4,14 @@ import type { ParserDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';
 import { db } from './db.js';
-import type { Block, Row } from './types.js';
+import type { PacketBlock, PacketWord } from './types.js';
 
 const maxPacketSize = 10_000;
 
 const populate = (ast: Packet) => {
   populateCommonDb(ast, db);
   let lastByte = -1;
-  let word: Row = [];
+  let word: PacketWord = [];
   let row = 1;
   const { bitsPerRow } = db.getConfig();
   for (let { start, end, label } of ast.blocks) {
@@ -46,10 +46,10 @@ const populate = (ast: Packet) => {
 };
 
 const getNextFittingBlock = (
-  block: Block,
+  block: PacketBlock,
   row: number,
   bitsPerRow: number
-): [Required<Block>, Block | undefined] => {
+): [Required<PacketBlock>, PacketBlock | undefined] => {
   if (block.end === undefined) {
     block.end = block.start;
   }
@@ -59,7 +59,7 @@ const getNextFittingBlock = (
   }
 
   if (block.end + 1 <= row * bitsPerRow) {
-    return [block as Required<Block>, undefined];
+    return [block as Required<PacketBlock>, undefined];
   }
 
   return [
