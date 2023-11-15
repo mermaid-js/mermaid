@@ -1,4 +1,4 @@
-import type { Pie, PieSection } from 'mermaid-parser';
+import type { Pie } from 'mermaid-parser';
 import { parse } from 'mermaid-parser';
 
 import { log } from '../../logger.js';
@@ -10,9 +10,7 @@ import { db } from './pieDb.js';
 function populateDb(ast: Pie, db: PieDB) {
   populateCommonDb(ast, db);
   db.setShowData(ast.showData);
-  ast.sections.map((section: PieSection) => {
-    db.addSection(section);
-  });
+  ast.sections.map(db.addSection);
 }
 
 export const parser: ParserDefinition = {
