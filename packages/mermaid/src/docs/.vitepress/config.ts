@@ -1,6 +1,6 @@
+import { defineConfig, MarkdownOptions } from 'vitepress';
 import { version } from '../../../package.json';
 import MermaidExample from './mermaid-markdown-all.js';
-import { defineConfig, MarkdownOptions } from 'vitepress';
 
 const allMarkdownTransformers: MarkdownOptions = {
   // the shiki theme to highlight code blocks
@@ -144,13 +144,14 @@ function sidebarSyntax() {
         { text: 'Pie Chart', link: '/syntax/pie' },
         { text: 'Quadrant Chart', link: '/syntax/quadrantChart' },
         { text: 'Requirement Diagram', link: '/syntax/requirementDiagram' },
-        { text: 'Gitgraph (Git) Diagram 🔥', link: '/syntax/gitgraph' },
+        { text: 'Gitgraph (Git) Diagram', link: '/syntax/gitgraph' },
         { text: 'C4 Diagram 🦺⚠️', link: '/syntax/c4' },
-        { text: 'Mindmaps 🔥', link: '/syntax/mindmap' },
-        { text: 'Timeline 🔥', link: '/syntax/timeline' },
-        { text: 'Zenuml 🔥', link: '/syntax/zenuml' },
+        { text: 'Mindmaps', link: '/syntax/mindmap' },
+        { text: 'Timeline', link: '/syntax/timeline' },
+        { text: 'Zenuml', link: '/syntax/zenuml' },
         { text: 'Sankey 🔥', link: '/syntax/sankey' },
         { text: 'XYChart 🔥', link: '/syntax/xyChart' },
+        { text: 'Packet 🔥', link: '/syntax/packet' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },

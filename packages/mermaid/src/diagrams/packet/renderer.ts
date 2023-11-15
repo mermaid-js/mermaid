@@ -27,7 +27,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     .append('text')
     .text(title)
     .attr('x', svgWidth / 2)
-    .attr('y', svgHeight - rowHeight)
+    .attr('y', svgHeight - totalRowHeight / 2)
     .attr('dominant-baseline', 'middle')
     .attr('text-anchor', 'middle')
     .attr('class', 'packetTitle');
