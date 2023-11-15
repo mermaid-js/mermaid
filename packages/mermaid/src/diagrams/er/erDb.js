@@ -1,5 +1,5 @@
 import { log } from '../../logger.js';
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 
 import {
   setAccTitle,
@@ -83,7 +83,7 @@ const clear = function () {
 export default {
   Cardinality,
   Identification,
-  getConfig: () => configApi.getConfig().er,
+  getConfig: () => getConfig().er,
   addEntity,
   addAttributes,
   getEntities,

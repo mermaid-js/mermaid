@@ -561,7 +561,7 @@ export const addEdges = function (edges, diagObj, graph, svg) {
 };
 
 // TODO: break out and share with dagre wrapper. The current code in dagre wrapper also adds
-// adds the line to the graph, but we don't need that here. This is why we cant use the dagre
+// adds the line to the graph, but we don't need that here. This is why we can't use the dagre
 // wrapper directly for this
 /**
  * Add the markers to the edge depending on the type of arrow is
@@ -803,8 +803,14 @@ const insertChildren = (nodeArray, parentLookupDb) => {
  */
 
 export const draw = async function (text, id, _version, diagObj) {
+  // Add temporary render element
+  diagObj.db.clear();
   nodeDb = {};
   portPos = {};
+  diagObj.db.setGen('gen-2');
+  // Parse the graph definition
+  diagObj.parser.parse(text);
+
   const renderEl = select('body').append('div').attr('style', 'height:400px').attr('id', 'cy');
   let graph = {
     id: 'root',

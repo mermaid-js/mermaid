@@ -129,7 +129,7 @@ root
       expect(child.nodeId).toEqual('theId');
       expect(child.type).toEqual(mindmap.yy.nodeType.ROUNDED_RECT);
     });
-    it('MMP-10 mutiple types (circle)', function () {
+    it('MMP-10 multiple types (circle)', function () {
       let str = `mindmap
  root((the root))
  `;
@@ -141,7 +141,7 @@ root
       expect(mm.type).toEqual(mindmap.yy.nodeType.CIRCLE);
     });
 
-    it('MMP-11 mutiple types (cloud)', function () {
+    it('MMP-11 multiple types (cloud)', function () {
       let str = `mindmap
  root)the root(
 `;
@@ -152,7 +152,7 @@ root
       expect(mm.children.length).toEqual(0);
       expect(mm.type).toEqual(mindmap.yy.nodeType.CLOUD);
     });
-    it('MMP-12 mutiple types (bang)', function () {
+    it('MMP-12 multiple types (bang)', function () {
       let str = `mindmap
  root))the root((
 `;
@@ -164,7 +164,7 @@ root
       expect(mm.type).toEqual(mindmap.yy.nodeType.BANG);
     });
 
-    it('MMP-12-a mutiple types (hexagon)', function () {
+    it('MMP-12-a multiple types (hexagon)', function () {
       let str = `mindmap
  root{{the root}}
 `;
