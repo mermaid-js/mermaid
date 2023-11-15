@@ -1,13 +1,31 @@
 name: Apply labels to PR
 on:
   pull_request_target:
-    types: [opened]
+    # required for pr-labeler to support PRs from forks
+    # ===================== ⛔ ☢️ 🚫 ⚠️ Warning ⚠️ 🚫 ☢️ ⛔ =======================
+    # Be very careful what you put in this GitHub Action workflow file to avoid
+    # malicious PRs from getting access to the Mermaid-js repo.
+    #
+    # Please read the following first before reviewing/merging:
+    # - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request_target
+    # - https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
 
 jobs:
   pr-labeler:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # read permission is required to read config file
+      pull-requests: write # write permission is required to label PRs
     steps:
       - name: Label PR
-        uses: TimonVS/pr-labeler-action@v4
+        uses: release-drafter/release-drafter@v5
+        with:
+          config-name: pr-labeler.yml
+          disable-autolabeler: false
+          disable-releaser: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
