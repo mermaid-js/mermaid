@@ -13,8 +13,8 @@ mv package.tmp.json package.json
 popd
 
 pnpm run -r clean
+pnpm build:esbuild
 pnpm build:types
-pnpm build:mermaid
 
 # Clone the Mermaid Live Editor repository
 rm -rf mermaid-live-editor
@@ -27,7 +27,8 @@ cd mermaid-live-editor
 npm install
 
 # Link local mermaid to live editor
-npm link ../packages/mermaid
+npm link ../packages/mermaid     
 
 # Force Build the site
 npm run build -- --force
+
