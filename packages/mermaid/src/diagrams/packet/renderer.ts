@@ -2,6 +2,7 @@ import type { Diagram } from '../../Diagram.js';
 import type { PacketDiagramConfig } from '../../config.type.js';
 import type { DiagramRenderer, DrawDefinition, Group, SVG } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { PacketDB, PacketWord } from './types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -16,11 +17,11 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const svgWidth = bitWidth * bitsPerRow + 2;
   const svg: SVG = selectSvgElement(id);
 
-  svg.attr('width', '100%');
   svg.attr('viewbox', `0 0 ${svgWidth} ${svgHeight}`);
+  configureSvgSize(svg, svgHeight, svgWidth, config.useMaxWidth);
 
-  for (const [row, packet] of words.entries()) {
-    drawWord(svg, packet, row, config);
+  for (const [word, packet] of words.entries()) {
+    drawWord(svg, packet, word, config);
   }
 
   svg
