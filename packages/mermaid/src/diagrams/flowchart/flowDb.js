@@ -201,6 +201,13 @@ export const updateLinkInterpolate = function (positions, interp) {
  */
 export const updateLink = function (positions, style) {
   positions.forEach(function (pos) {
+    if (pos >= edges.length) {
+      throw new Error(
+        `The index ${pos} for linkStyle is out of bounds. Valid indices for linkStyle are between 0 and ${
+          edges.length - 1
+        }. (Help: Ensure that the index is within the range of existing edges.)`
+      );
+    }
     if (pos === 'default') {
       edges.defaultStyle = style;
     } else {
@@ -425,7 +432,7 @@ const setupToolTips = function (element) {
       tooltipElem
         .text(el.attr('title'))
         .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
-        .style('top', window.scrollY + rect.top - 14 + document.body.scrollTop + 'px');
+        .style('top', window.scrollY + rect.bottom + 'px');
       tooltipElem.html(tooltipElem.html().replace(/&lt;br\/&gt;/g, '<br/>'));
       el.classed('hover', true);
     })

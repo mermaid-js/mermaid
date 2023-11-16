@@ -42,6 +42,12 @@ Below are a list of community plugins and integrations created with Mermaid.
   - [Mermaid plugin for GitBook](https://github.com/wwformat/gitbook-plugin-mermaid-pdf)
 - [LiveBook](https://livebook.dev) ✅
 - [Atlassian Products](https://www.atlassian.com)
+  - [Mermaid for Confluence](https://marketplace.atlassian.com/apps/1224722/mermaid-for-confluence?hosting=cloud&tab=overview)
+  - [Mermaid Integration for Confluence](https://marketplace.atlassian.com/apps/1222792/mermaid-integration-for-confluence?hosting=cloud&tab=overview)
+  - [Mermaid Diagrams for Confluence](https://marketplace.atlassian.com/apps/1226945/mermaid-diagrams-for-confluence?hosting=cloud&tab=overview)
+  - [Mermaid Macro for Confluence](https://marketplace.atlassian.com/apps/1231150/mermaid-macro-for-confluence?hosting=cloud&tab=overview)
+  - [EliteSoft Mermaid Charts and Diagrams](https://marketplace.atlassian.com/apps/1227286/elitesoft-mermaid-charts-and-diagrams?hosting=cloud&tab=overview)
+  - [Mermaid for Jira Cloud - Draw UML diagrams easily](https://marketplace.atlassian.com/apps/1223053/mermaid-for-jira-cloud-draw-uml-diagrams-easily?hosting=cloud&tab=overview)
   - [Mermaid Charts & Diagrams for Confluence](https://marketplace.atlassian.com/apps/1222572/)
   - [Mermaid Charts & Diagrams for Jira](https://marketplace.atlassian.com/apps/1224537/)
   - [Mermaid Live Editor for Confluence Cloud](https://marketplace.atlassian.com/apps/1231571/mermaid-live-editor-for-confluence?hosting=cloud&tab=overview)
