@@ -1,4 +1,3 @@
-'use strict';
 import { vi } from 'vitest';
 
 // -------------------------------------
@@ -27,25 +26,25 @@ vi.mock('./diagrams/git/gitGraphRenderer.js');
 vi.mock('./diagrams/gantt/ganttRenderer.js');
 vi.mock('./diagrams/user-journey/journeyRenderer.js');
 vi.mock('./diagrams/pie/pieRenderer.js');
+vi.mock('./diagrams/packet/renderer.js');
+vi.mock('./diagrams/xychart/xychartRenderer.js');
 vi.mock('./diagrams/requirement/requirementRenderer.js');
 vi.mock('./diagrams/sequence/sequenceRenderer.js');
 vi.mock('./diagrams/state/stateRenderer-v2.js');
 
 // -------------------------------------
 
-import mermaid from './mermaid.js';
+import assignWithDepth from './assignWithDepth.js';
 import type { MermaidConfig } from './config.type.js';
-
-import mermaidAPI, { removeExistingElements } from './mermaidAPI.js';
-import {
-  createCssStyles,
-  createUserStyles,
+import mermaid from './mermaid.js';
+import mermaidAPI, {
   appendDivSvgG,
   cleanUpSvgCode,
+  createCssStyles,
+  createUserStyles,
   putIntoIFrame,
+  removeExistingElements,
 } from './mermaidAPI.js';
-
-import assignWithDepth from './assignWithDepth.js';
 
 // --------------
 // Mocks
@@ -56,6 +55,7 @@ vi.mock('./styles.js', () => {
     default: vi.fn().mockReturnValue(' .userStyle { font-weight:bold; }'),
   };
 });
+
 import getStyles from './styles.js';
 
 vi.mock('stylis', () => {
@@ -65,6 +65,7 @@ vi.mock('stylis', () => {
     serialize: vi.fn().mockReturnValue('stylis serialized css'),
   };
 });
+
 import { compile, serialize } from 'stylis';
 import { decodeEntities, encodeEntities } from './utils.js';
 
@@ -714,6 +715,8 @@ describe('mermaidAPI', () => {
       { textDiagramType: 'gantt', expectedType: 'gantt' },
       { textDiagramType: 'journey', expectedType: 'journey' },
       { textDiagramType: 'pie', expectedType: 'pie' },
+      { textDiagramType: 'packet-beta', expectedType: 'packet' },
+      { textDiagramType: 'xychart-beta', expectedType: 'xychart' },
       { textDiagramType: 'requirementDiagram', expectedType: 'requirement' },
       { textDiagramType: 'sequenceDiagram', expectedType: 'sequence' },
       { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
