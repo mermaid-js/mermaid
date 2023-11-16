@@ -1,7 +1,7 @@
 import { db } from './db.js';
 import { parser } from './parser.js';
 
-const { clear, getPacket } = db;
+const { clear, getPacket, getDiagramTitle, getAccTitle, getAccDescription } = db;
 
 describe('packet diagrams', () => {
   beforeEach(() => {
@@ -16,13 +16,19 @@ describe('packet diagrams', () => {
     expect(getPacket()).toMatchInlineSnapshot('[]');
   });
 
-  it('should handle diagram with data', () => {
+  it('should handle diagram with data and title', () => {
     const str = `packet-beta
+    title Packet diagram
+    accTitle: Packet accTitle
+    accDescr: Packet accDescription
     0-10: "test"
     `;
     expect(() => {
       parser.parse(str);
     }).not.toThrow();
+    expect(getDiagramTitle()).toMatchInlineSnapshot('"Packet diagram"');
+    expect(getAccTitle()).toMatchInlineSnapshot('"Packet accTitle"');
+    expect(getAccDescription()).toMatchInlineSnapshot('"Packet accDescription"');
     expect(getPacket()).toMatchInlineSnapshot(`
       [
         [
