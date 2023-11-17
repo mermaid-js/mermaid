@@ -701,7 +701,117 @@ gitGraph TB:
       {}
     );
   });
-  it('34: should render a simple gitgraph with cherry pick merge commit', () => {
+  it('34: should render a simple gitgraph with two branches from same commit', () => {
+    imgSnapshotTest(
+      `gitGraph
+      commit id:"1-abcdefg"
+      commit id:"2-abcdefg"
+      branch feature-001
+      commit id:"3-abcdefg"
+      commit id:"4-abcdefg"
+      checkout main
+      branch feature-002
+      commit id:"5-abcdefg"
+      checkout feature-001
+      merge feature-002
+      `,
+      {}
+    );
+  });
+  it('35: should render a simple gitgraph with two branches from same commit | Vertical Branch', () => {
+    imgSnapshotTest(
+      `gitGraph TB:
+      commit id:"1-abcdefg"
+      commit id:"2-abcdefg"
+      branch feature-001
+      commit id:"3-abcdefg"
+      commit id:"4-abcdefg"
+      checkout main
+      branch feature-002
+      commit id:"5-abcdefg"
+      checkout feature-001
+      merge feature-002
+      `,
+      {}
+    );
+  });
+  it('36: should render GitGraph with branch that is not used immediately', () => {
+    imgSnapshotTest(
+      `gitGraph LR:
+      commit id:"1-abcdefg"
+      branch x
+      checkout main
+      commit id:"2-abcdefg"
+      checkout x
+      commit id:"3-abcdefg"
+      checkout main
+      merge x
+      `,
+      {}
+    );
+  });
+  it('37: should render GitGraph with branch that is not used immediately | Vertical Branch', () => {
+    imgSnapshotTest(
+      `gitGraph TB:
+      commit id:"1-abcdefg"
+      branch x
+      checkout main
+      commit id:"2-abcdefg"
+      checkout x
+      commit id:"3-abcdefg"
+      checkout main
+      merge x
+      `,
+      {}
+    );
+  });
+  it('38: should render GitGraph with branch and sub-branch neither of which used immediately', () => {
+    imgSnapshotTest(
+      `gitGraph LR:
+      commit id:"1-abcdefg"
+      branch x
+      checkout main
+      commit id:"2-abcdefg"
+      checkout x
+      commit id:"3-abcdefg"
+      checkout main
+      merge x
+      checkout x
+      branch y
+      checkout x
+      commit id:"4-abcdefg"
+      checkout y
+      commit id:"5-abcdefg"
+      checkout x
+      merge y
+      `,
+      {}
+    );
+  });
+  it('39: should render GitGraph with branch and sub-branch neither of which used immediately | Vertical Branch', () => {
+    imgSnapshotTest(
+      `gitGraph TB:
+      commit id:"1-abcdefg"
+      branch x
+      checkout main
+      commit id:"2-abcdefg"
+      checkout x
+      commit id:"3-abcdefg"
+      checkout main
+      merge x
+      checkout x
+      branch y
+      checkout x
+      commit id:"4-abcdefg"
+      checkout y
+      commit id:"5-abcdefg"
+      checkout x
+      merge y
+      `,
+      {}
+    );
+  });
+  it('40: should render a simple gitgraph with cherry pick merge commit', () => {
     imgSnapshotTest(
       `gitGraph
       commit id: "ZERO"
@@ -713,9 +823,7 @@ gitGraph TB:
       checkout main
       merge feature id: "M"
       checkout release
-      cherry-pick id: "M" parent:"B"
-      `,
-      {}
+      cherry-pick id: "M" parent:"B"`
     );
   });
 });

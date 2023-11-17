@@ -33,12 +33,19 @@ Below are a list of community plugins and integrations created with Mermaid.
 - [Notion](https://notion.so) ✅
 - [Observable](https://observablehq.com/@observablehq/mermaid) ✅
 - [Obsidian](https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram) ✅
+- [NotesHub](https://noteshub.app) ✅
 - [GitBook](https://gitbook.com)
   - [Mermaid Plugin](https://github.com/JozoVilcek/gitbook-plugin-mermaid)
   - [Markdown with Mermaid CLI](https://github.com/miao1007/gitbook-plugin-mermaid-cli)
   - [Mermaid plugin for GitBook](https://github.com/wwformat/gitbook-plugin-mermaid-pdf)
 - [LiveBook](https://livebook.dev) ✅
 - [Atlassian Products](https://www.atlassian.com)
+  - [Mermaid for Confluence](https://marketplace.atlassian.com/apps/1224722/mermaid-for-confluence?hosting=cloud&tab=overview)
+  - [Mermaid Integration for Confluence](https://marketplace.atlassian.com/apps/1222792/mermaid-integration-for-confluence?hosting=cloud&tab=overview)
+  - [Mermaid Diagrams for Confluence](https://marketplace.atlassian.com/apps/1226945/mermaid-diagrams-for-confluence?hosting=cloud&tab=overview)
+  - [Mermaid Macro for Confluence](https://marketplace.atlassian.com/apps/1231150/mermaid-macro-for-confluence?hosting=cloud&tab=overview)
+  - [EliteSoft Mermaid Charts and Diagrams](https://marketplace.atlassian.com/apps/1227286/elitesoft-mermaid-charts-and-diagrams?hosting=cloud&tab=overview)
+  - [Mermaid for Jira Cloud - Draw UML diagrams easily](https://marketplace.atlassian.com/apps/1223053/mermaid-for-jira-cloud-draw-uml-diagrams-easily?hosting=cloud&tab=overview)
   - [Mermaid Charts & Diagrams for Confluence](https://marketplace.atlassian.com/apps/1222572/)
   - [Mermaid Charts & Diagrams for Jira](https://marketplace.atlassian.com/apps/1224537/)
   - [Mermaid Live Editor for Confluence Cloud](https://marketplace.atlassian.com/apps/1231571/mermaid-live-editor-for-confluence?hosting=cloud&tab=overview)
@@ -97,6 +104,8 @@ Communication tools and platforms
   - [phpbb-ext-mermaid](https://github.com/AlfredoRamos/phpbb-ext-mermaid)
 - [NodeBB](https://nodebb.org)
   - [Mermaid Plugin](https://www.npmjs.com/package/nodebb-plugin-mermaid)
+- [Slack](https://slack.com)
+  - [Mermaid for Slack](https://github.com/JackuB/mermaid-for-slack)
 
 ### Wikis
 
@@ -167,6 +176,7 @@ Communication tools and platforms
 
 ### Document Generation
 
+- [Docusaurus](https://docusaurus.io/docs/markdown-features/diagrams) ✅
 - [Swimm - Up-to-date diagrams with Swimm, the knowledge management tool for code](https://docs.swimm.io/Features/diagrams-and-charts)
 - [Sphinx](https://www.sphinx-doc.org/en/master/)
   - [sphinxcontrib-mermaid](https://github.com/mgaitan/sphinxcontrib-mermaid)
