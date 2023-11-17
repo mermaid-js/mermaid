@@ -125,12 +125,6 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster) => 
         // A cluster in the non-recursive way
         // positionCluster(node);
         node.height += subGraphTitleTotalMargin * 2;
-        graph.children(v).forEach((c) => {
-          if (!clusterDb[c]) return;
-          if (!clusterDb[c].clusterData) {
-            node.height += subGraphTitleTotalMargin * 2;
-          }
-        });
         insertCluster(clusters, node);
         clusterDb[node.id].node = node;
       } else {

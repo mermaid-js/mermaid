@@ -6,7 +6,6 @@ import { getConfig } from '../diagram-api/diagramAPI.js';
 import utils from '../utils.js';
 import { evaluate } from '../diagrams/common/common.js';
 import { getLineFunctionsWithOffset } from '../utils/lineWithOffset.js';
-import { getSubGraphTitleMargins } from '../utils/getSubGraphTitleMargins.js';
 
 let edgeLabels = {};
 let terminalLabels = {};
@@ -264,7 +263,6 @@ export const intersection = (node, outsidePoint, insidePoint) => {
 
   const Q = Math.abs(outsidePoint.y - insidePoint.y);
   const R = Math.abs(outsidePoint.x - insidePoint.x);
-  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins();
   // log.warn();
   if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) {
     // Intersection is top or bottom of rect.
@@ -282,9 +280,6 @@ export const intersection = (node, outsidePoint, insidePoint) => {
     }
     if (R === 0) {
       res.x = outsidePoint.x;
-      if (q && subGraphTitleTotalMargin) {
-        res.y = insidePoint.y < outsidePoint.y ? y + h : y - h;
-      }
     }
     if (Q === 0) {
       res.y = outsidePoint.y;
