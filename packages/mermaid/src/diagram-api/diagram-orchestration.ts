@@ -31,7 +31,7 @@ export const addDiagrams = () => {
   // This is added here to avoid race-conditions.
   // We could optimize the loading logic somehow.
   hasLoadedDiagrams = true;
-  registerDiagram('error', errorDiagram, (text) => {
+  registerDiagram('error', errorDiagram, 0, (text) => {
     return text.toLowerCase().trim() === 'error';
   });
   registerDiagram(
@@ -60,6 +60,7 @@ export const addDiagrams = () => {
       },
       init: () => null, // no op
     },
+    0,
     (text) => {
       return text.toLowerCase().trimStart().startsWith('---');
     }

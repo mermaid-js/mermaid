@@ -29,7 +29,7 @@ export const getCommonDb = () => {
   return _commonDb;
 };
 
-const diagrams: Record<string, DiagramDefinition> = {};
+const diagrams: Record<string, DiagramDefinition & { priority: number }> = {};
 export interface Detectors {
   [key: string]: DiagramDetector;
 }
@@ -37,7 +37,8 @@ export interface Detectors {
 /**
  * Registers the given diagram with Mermaid.
  *
- * Can be used for third-party custom diagrams.
+ * To be used internally by Mermaid.
+ * Use `mermaid.registerExternalDiagrams` to register external diagrams.
  *
  * @param id - A unique ID for the given diagram.
  * @param diagram - The diagram definition.
@@ -46,14 +47,17 @@ export interface Detectors {
 export const registerDiagram = (
   id: string,
   diagram: DiagramDefinition,
+  priority: number,
   detector?: DiagramDetector
 ) => {
-  if (diagrams[id]) {
-    throw new Error(`Diagram ${id} already registered.`);
+  if (diagrams[id] && priority <= diagrams[id].priority) {
+    throw new Error(
+      `Diagram ${id} already registered with priority ${diagrams[id].priority}. Cannot add new diagram with priority ${priority}`
+    );
   }
-  diagrams[id] = diagram;
+  diagrams[id] = { ...diagram, priority };
   if (detector) {
-    addDetector(id, detector);
+    addDetector(id, detector, priority);
   }
   addStylesForDiagram(id, diagram.styles);
 

@@ -21,6 +21,7 @@ describe('diagram detection', () => {
     addDetector(
       'loki',
       (str) => str.startsWith('loki'),
+      0,
       () =>
         Promise.resolve({
           id: 'loki',
@@ -43,6 +44,37 @@ describe('diagram detection', () => {
     const diagram = (await getDiagramFromText('loki TD; A-->B')) as Diagram;
     expect(diagram).toBeInstanceOf(Diagram);
     expect(diagram.type).toBe('loki');
+  });
+
+  test('should allow external diagrams to override internal ones with same ID', async () => {
+    addDetector(
+      'flowchart-elk',
+      (str) => str.startsWith('flowchart-elk'),
+      1,
+      () =>
+        Promise.resolve({
+          id: 'flowchart-elk',
+          diagram: {
+            db: {
+              getDiagramTitle: () => 'overridden',
+            },
+            parser: {
+              parse: () => {
+                // no-op
+              },
+            },
+            renderer: {
+              draw: () => {
+                // no-op
+              },
+            },
+            styles: {},
+          },
+        })
+    );
+    const diagram = (await getDiagramFromText('flowchart-elk TD; A-->B')) as Diagram;
+    expect(diagram).toBeInstanceOf(Diagram);
+    expect(diagram.db.getDiagramTitle?.()).toBe('overridden');
   });
 
   test('should throw the right error for incorrect diagram', async () => {

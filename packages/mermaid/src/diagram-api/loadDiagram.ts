@@ -6,7 +6,7 @@ export const loadRegisteredDiagrams = async () => {
   log.debug(`Loading registered diagrams`);
   // Load all lazy loaded diagrams in parallel
   const results = await Promise.allSettled(
-    Object.entries(detectors).map(async ([key, { detector, loader }]) => {
+    Object.entries(detectors).map(async ([key, { detector, loader, priority }]) => {
       if (loader) {
         try {
           getDiagram(key);
@@ -14,7 +14,7 @@ export const loadRegisteredDiagrams = async () => {
           try {
             // Register diagram if it is not already registered
             const { diagram, id } = await loader();
-            registerDiagram(id, diagram, detector);
+            registerDiagram(id, diagram, priority, detector);
           } catch (err) {
             // Remove failed diagram from detectors
             log.error(`Failed to load external diagram with key ${key}. Removing from detectors.`);

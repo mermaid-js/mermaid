@@ -47,6 +47,7 @@ describe('DiagramAPI', () => {
         },
         styles: {},
       },
+      0,
       detector
     );
     expect(getDiagram('loki')).not.toBeNull();

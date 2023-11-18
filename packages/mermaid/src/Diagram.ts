@@ -1,7 +1,7 @@
 import * as configApi from './config.js';
 import { log } from './logger.js';
 import { getDiagram, registerDiagram } from './diagram-api/diagramAPI.js';
-import { detectType, getDiagramLoader } from './diagram-api/detectType.js';
+import { detectType, getDiagramLoaderAndPriority } from './diagram-api/detectType.js';
 import { UnknownDiagramError } from './errors.js';
 import { encodeEntities } from './utils.js';
 
@@ -92,14 +92,14 @@ export const getDiagramFromText = async (
     // Trying to find the diagram
     getDiagram(type);
   } catch (error) {
-    const loader = getDiagramLoader(type);
+    const { loader, priority } = getDiagramLoaderAndPriority(type);
     if (!loader) {
       throw new UnknownDiagramError(`Diagram ${type} not found.`);
     }
     // Diagram not available, loading it.
     // new diagram will try getDiagram again and if fails then it is a valid throw
     const { id, diagram } = await loader();
-    registerDiagram(id, diagram);
+    registerDiagram(id, diagram, priority);
   }
   return new Diagram(text, metadata);
 };

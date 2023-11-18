@@ -76,13 +76,23 @@ export interface DiagramDefinition {
 
 export interface DetectorRecord {
   detector: DiagramDetector;
+  priority: number;
   loader?: DiagramLoader;
 }
 
+/**
+ * External diagrams, which are not bundled with mermaid should expose the following to be registered using the `mermaid.registerExternalDiagrams` function.
+ *
+ * @param id - An ID for the given diagram. If two diagrams are registered with the same ID, the one with the higher priority will be used.
+ * @param detector - Function that returns `true` if a given mermaid text satisfies with this diagram definition.
+ * @param loader - Function that returns a promise of the diagram definition.
+ * @param priority - The priority of the diagram. Optional, defaults to 0.
+ */
 export interface ExternalDiagramDefinition {
   id: string;
   detector: DiagramDetector;
   loader: DiagramLoader;
+  priority?: number;
 }
 
 export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;

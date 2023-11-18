@@ -61,23 +61,37 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
  * The first detector to return `true` is the diagram that will be loaded
  * and used, so put more specific detectors at the beginning!
  *
+ * If two diagrams are registered with the same id,
+ * the one with higher `priority` property will be used.
+ *
  * @param diagrams - Diagrams to lazy load, and their detectors, in order of importance.
  */
 export const registerLazyLoadedDiagrams = (...diagrams: ExternalDiagramDefinition[]) => {
-  for (const { id, detector, loader } of diagrams) {
-    addDetector(id, detector, loader);
+  for (const { id, detector, priority, loader } of diagrams) {
+    addDetector(id, detector, priority ?? 0, loader);
   }
 };
 
-export const addDetector = (key: string, detector: DiagramDetector, loader?: DiagramLoader) => {
-  if (detectors[key]) {
-    log.error(`Detector with key ${key} already exists`);
-  } else {
-    detectors[key] = { detector, loader };
+export const addDetector = (
+  key: string,
+  detector: DiagramDetector,
+  priority: number,
+  loader?: DiagramLoader
+) => {
+  if (detectors[key] && priority <= detectors[key].priority) {
+    log.error(
+      `Detector with key ${key} already exists with priority ${detectors[key].priority}. Cannot add new detector with priority ${priority}`
+    );
+    return;
   }
-  log.debug(`Detector with key ${key} added${loader ? ' with loader' : ''}`);
+
+  detectors[key] = { detector, loader, priority };
+  log.debug(
+    `Detector with key ${key} added with priority ${priority} ${loader ? 'and loader' : ''}`
+  );
 };
 
-export const getDiagramLoader = (key: string) => {
-  return detectors[key].loader;
+export const getDiagramLoaderAndPriority = (key: string) => {
+  const { loader, priority } = detectors[key];
+  return { loader, priority };
 };
