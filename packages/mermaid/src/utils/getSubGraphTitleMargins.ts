@@ -5,8 +5,9 @@ export const getSubGraphTitleMargins = (): {
   subGraphTitleBottomMargin: number;
   subGraphTitleTotalMargin: number;
 } => {
-  const subGraphTitleTopMargin = getConfig().flowchart?.subGraphTitleMargin?.top || 0;
-  const subGraphTitleBottomMargin = getConfig().flowchart?.subGraphTitleMargin?.bottom || 0;
+  const { flowchart } = getConfig();
+  const subGraphTitleTopMargin = flowchart?.subGraphTitleMargin?.top ?? 0;
+  const subGraphTitleBottomMargin = flowchart?.subGraphTitleMargin?.bottom ?? 0;
   const subGraphTitleTotalMargin = subGraphTitleTopMargin + subGraphTitleBottomMargin;
 
   return {
