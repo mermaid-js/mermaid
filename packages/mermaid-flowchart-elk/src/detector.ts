@@ -2,8 +2,7 @@ import type {
   ExternalDiagramDefinition,
   DiagramDetector,
   DiagramLoader,
-} from '../../../diagram-api/types.js';
-import { log } from '../../../logger.js';
+} from '../../mermaid/src/diagram-api/types.js';
 
 const id = 'flowchart-elk';
 
@@ -14,21 +13,13 @@ const detector: DiagramDetector = (txt, config): boolean => {
     // If a flowchart/graph diagram has their default renderer set to elk
     (/^\s*flowchart|graph/.test(txt) && config?.flowchart?.defaultRenderer === 'elk')
   ) {
-    // This will log at the end, hopefully.
-    setTimeout(
-      () =>
-        log.warn(
-          'flowchart-elk was moved to an external package in Mermaid v11. Please refer [release notes](link) for more details. This diagram will be rendered using `dagre` layout as a fallback.'
-        ),
-      500
-    );
     return true;
   }
   return false;
 };
 
 const loader: DiagramLoader = async () => {
-  const { diagram } = await import('../flowDiagram-v2.js');
+  const { diagram } = await import('./diagram-definition.js');
   return { id, diagram };
 };
 

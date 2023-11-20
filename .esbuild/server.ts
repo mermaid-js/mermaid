@@ -5,6 +5,7 @@ import { getBuildConfig, defaultOptions } from './util.js';
 import { context } from 'esbuild';
 import chokidar from 'chokidar';
 import { generateLangium } from '../.build/generateLangium.js';
+import { packageOptions } from '../.build/common.js';
 
 const parserCtx = await context(
   getBuildConfig({ ...defaultOptions, minify: false, core: false, entryName: 'parser' })
@@ -101,10 +102,9 @@ async function createServer() {
 
   app.use(cors());
   app.get('/events', eventsHandler);
-  app.use(express.static('./packages/parser/dist'));
-  app.use(express.static('./packages/mermaid/dist'));
-  app.use(express.static('./packages/mermaid-zenuml/dist'));
-  app.use(express.static('./packages/mermaid-example-diagram/dist'));
+  for (const { packageName } of Object.values(packageOptions)) {
+    app.use(express.static(`./packages/${packageName}/dist`));
+  }
   app.use(express.static('demos'));
   app.use(express.static('cypress/platform'));
 
