@@ -609,7 +609,7 @@ describe('getSubGraphTitleMargins', () => {
     };
 
     configApi.setSiteConfig(config_0);
-    expect(getSubGraphTitleMargins()).toEqual({
+    expect(getSubGraphTitleMargins(config_0)).toEqual({
       subGraphTitleTopMargin: 10,
       subGraphTitleBottomMargin: 5,
       subGraphTitleTotalMargin: 15,

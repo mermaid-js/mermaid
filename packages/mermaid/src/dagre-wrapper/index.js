@@ -14,8 +14,7 @@ import { insertCluster, clear as clearClusters } from './clusters.js';
 import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } from './edges.js';
 import { log } from '../logger.js';
 import { getSubGraphTitleMargins } from '../utils/getSubGraphTitleMargins.js';
-
-const { subGraphTitleTotalMargin } = getSubGraphTitleMargins();
+import { getConfig } from '../diagram-api/diagramAPI.js';
 
 const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster) => {
   log.info('Graph in recursive render: XXX', graphlibJson.write(graph), parentCluster);
@@ -104,6 +103,7 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster) => 
   log.info('Graph after layout:', graphlibJson.write(graph));
   // Move the nodes to the correct place
   let diff = 0;
+  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(getConfig());
   sortNodesByHierarchy(graph).forEach(function (v) {
     const node = graph.node(v);
     log.info('Position ' + v + ': ' + JSON.stringify(graph.node(v)));

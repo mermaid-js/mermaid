@@ -1,11 +1,14 @@
-import { getConfig } from '../diagram-api/diagramAPI.js';
+import { FlowchartDiagramConfig } from '../config.type.js';
 
-export const getSubGraphTitleMargins = (): {
+export const getSubGraphTitleMargins = ({
+  flowchart,
+}: {
+  flowchart: FlowchartDiagramConfig;
+}): {
   subGraphTitleTopMargin: number;
   subGraphTitleBottomMargin: number;
   subGraphTitleTotalMargin: number;
 } => {
-  const { flowchart } = getConfig();
   const subGraphTitleTopMargin = flowchart?.subGraphTitleMargin?.top ?? 0;
   const subGraphTitleBottomMargin = flowchart?.subGraphTitleMargin?.bottom ?? 0;
   const subGraphTitleTotalMargin = subGraphTitleTopMargin + subGraphTitleBottomMargin;

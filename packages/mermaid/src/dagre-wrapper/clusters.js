@@ -64,7 +64,7 @@ const rect = (parent, node) => {
     .attr('width', width)
     .attr('height', node.height + padding);
 
-  const { subGraphTitleTopMargin } = getSubGraphTitleMargins();
+  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(getConfig());
   if (useHtmlLabels) {
     label.attr(
       'transform',
@@ -181,7 +181,7 @@ const roundedWithTitle = (parent, node) => {
     .attr('width', width + padding)
     .attr('height', node.height + padding - bbox.height - 3);
 
-  const { subGraphTitleTopMargin } = getSubGraphTitleMargins();
+  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(getConfig());
   // Center the label
   label.attr(
     'transform',
