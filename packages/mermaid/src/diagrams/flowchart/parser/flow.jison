@@ -332,7 +332,7 @@ spaceList
 
 statement
     : verticeStatement separator
-    { /* console.warn('finat vs', $1.nodes); */ $$=$1.nodes}
+    { $$=$1.nodes}
     | styleStatement separator
     {$$=[];}
     | linkStyleStatement separator
@@ -359,9 +359,9 @@ statement
 
 separator: NEWLINE | SEMI | EOF ;
 
- 
+
 verticeStatement: verticeStatement link node
-        { /* console.warn('vs',$1.stmt,$3); */ yy.addLink($1.stmt,$3,$2); $$ = { stmt: $3, nodes: $3.concat($1.nodes) } }
+        {/* console.warn('vs',$1.stmt,$3); */ yy.addLink($1.stmt,$3,$2); $$ = { stmt: $3, nodes: $3.concat($1.nodes) } }
     |  verticeStatement link node spaceList
         { /* console.warn('vs',$1.stmt,$3); */ yy.addLink($1.stmt,$3,$2); $$ = { stmt: $3, nodes: $3.concat($1.nodes) } }
     |node spaceList {/*console.warn('noda', $1);*/ $$ = {stmt: $1, nodes:$1 }}
@@ -377,7 +377,7 @@ node: styledVertex
 styledVertex: vertex
         { /* console.warn('nod', $1); */ $$ = $1;}
     | vertex STYLE_SEPARATOR idString
-        {$$ = $1;yy.setClass($1,$3)}
+        { $$ = $1;yy.setClass($1,$3)}
     ;
 
 vertex:  idString SQS text SQE

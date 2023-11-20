@@ -7,6 +7,7 @@ import createLabel from './createLabel.js';
 import note from './shapes/note.js';
 import { parseMember } from '../diagrams/class/svgDraw.js';
 import { evaluate } from '../diagrams/common/common.js';
+import { getArrowPoints } from './blockArrowHelper.js';
 
 const question = async (parent, node) => {
   const { shapeSvg, bbox } = await labelHelper(parent, node, undefined, true);
@@ -14,6 +15,7 @@ const question = async (parent, node) => {
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
   const s = w + h;
+
   const points = [
     { x: s / 2, y: 0 },
     { x: s, y: -s / 2 },
@@ -95,21 +97,33 @@ const hexagon = async (parent, node) => {
 
   return shapeSvg;
 };
+
 const block_arrow = async (parent, node) => {
   const { shapeSvg, bbox } = await labelHelper(parent, node, undefined, true);
 
   const f = 2;
-  const h = bbox.height + node.padding;
+  const h = bbox.height + 2 * node.padding;
   const m = h / f;
   const w = bbox.width + 2 * m + node.padding;
-  const points = [
-    { x: m, y: 0 },
-    { x: w - m, y: 0 },
-    { x: w, y: -h / 2 },
-    { x: w - m, y: -h },
-    { x: m, y: -h },
-    { x: 0, y: -h / 2 },
-  ];
+
+  const p = node.padding / 2;
+  //
+  // const points = [
+  //   { x: m, y: 0 },
+  //   { x: m, y: -p },
+  //   { x: w - m, y: -p },
+  //   { x: w - m, y: 0 },
+  //   // Right point
+  //   { x: w, y: -h / 2 },
+  //   // Point moving left and up from right point
+  //   { x: w - m, y: -h },
+  //   { x: w - m, y: -h + p },
+  //   { x: m, y: -h + p },
+  //   { x: m, y: -h },
+  //   { x: 0, y: -h / 2 },
+  // ];
+
+  const points = getArrowPoints(node.directions, bbox, node);
 
   const hex = insertPolygonShape(shapeSvg, w, h, points);
   hex.attr('style', node.style);
@@ -1085,6 +1099,9 @@ export const insertNode = async (elem, node, dir) => {
   if (node.class) {
     el.attr('class', 'node default ' + node.class);
   }
+  // MC Special
+  newEl.attr('data-node', 'true');
+  newEl.attr('data-id', node.id);
 
   nodeElems[node.id] = newEl;
 

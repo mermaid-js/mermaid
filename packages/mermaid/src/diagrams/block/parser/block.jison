@@ -44,8 +44,8 @@ CRLF \u000D\u000A
 <md_string>[^`"]+        { return "MD_STR";}
 <md_string>[`]["]          { this.popState();}
 ["]                     this.pushState("string");
-<string>["]             { log.debug('LEX: POPPING STR:', yytext);this.popState();}
-<string>[^"]*           { log.debug('LEX: STR ebd:', yytext); return "STR";}
+<string>["]             { yy.getLogger().debug('LEX: POPPING STR:', yytext);this.popState();}
+<string>[^"]*           { yy.getLogger().debug('LEX: STR ebd:', yytext); return "STR";}
 space[:]\d+            {  yytext = yytext.replace(/space\:/,'');yy.getLogger().info('SPACE NUM (LEX)', yytext); return 'SPACE_BLOCK'; }
 space                  { yytext = '1'; yy.getLogger().info('COLUMNS (LEX)', yytext); return 'SPACE_BLOCK'; }
 "style"               return 'STYLE';
@@ -86,7 +86,7 @@ accDescr\s*"{"\s*                                { this.pushState("acc_descr_mul
 "[/"                   { this.pushState('NODE');return 'NODE_DSTART'; }
 "[\\"                  { this.pushState('NODE');return 'NODE_DSTART'; }
 
-"<["                   { this.pushState('BLOCK_ARROW');log.debug('LEX ARR START');return 'BLOCK_ARROW_START'; }
+"<["                   { this.pushState('BLOCK_ARROW');yy.getLogger().debug('LEX ARR START');return 'BLOCK_ARROW_START'; }
 
 [^\(\[\n\-\)\{\}\s\<]+     { yy.getLogger().info('Lex: NODE_ID', yytext);return 'NODE_ID'; }
 <<EOF>>                { yy.getLogger().info('Lex: EOF', yytext);return 'EOF'; }
@@ -98,8 +98,8 @@ accDescr\s*"{"\s*                                { this.pushState("acc_descr_mul
 <md_string>[`]["]      { this.popState();}
 <NODE>["]              { yy.getLogger().info('Lex: Starting string');this.pushState("string");}
 <BLOCK_ARROW>["]              { yy.getLogger().info('LEX ARR: Starting string');this.pushState("string");}
-<string>[^"]+          { log.debug('LEX: NODE_DESCR:', yytext); return "NODE_DESCR";}
-<string>["]            {log.debug('LEX POPPING');this.popState();}
+<string>[^"]+          { yy.getLogger().debug('LEX: NODE_DESCR:', yytext); return "NODE_DESCR";}
+<string>["]            {yy.getLogger().debug('LEX POPPING');this.popState();}
 
 // Node end of shape
 <NODE>\]\>             { this.popState();yy.getLogger().info('Lex: ]>'); return "NODE_DEND"; }
@@ -116,14 +116,14 @@ accDescr\s*"{"\s*                                { this.pushState("acc_descr_mul
 <NODE>"/]"             { this.popState();yy.getLogger().info('Lex: /]'); return "NODE_DEND"; }
 <NODE>")]"             { this.popState();yy.getLogger().info('Lex: )]'); return "NODE_DEND"; }
 
-<BLOCK_ARROW>"]>"\s*"("       { log.debug('Lex: =>BAE');  this.pushState('ARROW_DIR');  }
-<ARROW_DIR>","?right\s*           { log.debug('Lex (right): dir:',yytext);return "DIR"; }
-<ARROW_DIR>","?left\s*            { log.debug('Lex (left):',yytext);return "DIR"; }
-<ARROW_DIR>","?x\s*               { log.debug('Lex (x):',yytext); return "DIR"; }
-<ARROW_DIR>","?y\s*               { log.debug('Lex (y):',yytext); return "DIR"; }
-<ARROW_DIR>","?up\s*              { log.debug('Lex (up):',yytext); return "DIR"; }
-<ARROW_DIR>","?\s*down\s*     { yytext = yytext.replace(/^,\s*/, ''); log.debug('Lex (down):',yytext); return "DIR"; }
-<ARROW_DIR>")"\s*             { yytext=']>';log.debug('Lex (ARROW_DIR end):',yytext);this.popState();this.popState();return "BLOCK_ARROW_END"; }
+<BLOCK_ARROW>"]>"\s*"("       { yy.getLogger().debug('Lex: =>BAE');  this.pushState('ARROW_DIR');  }
+<ARROW_DIR>","?\s*right\s*           { yytext = yytext.replace(/^,\s*/, ''); yy.getLogger().debug('Lex (right): dir:',yytext);return "DIR"; }
+<ARROW_DIR>","?\s*left\s*            { yytext = yytext.replace(/^,\s*/, ''); yy.getLogger().debug('Lex (left):',yytext);return "DIR"; }
+<ARROW_DIR>","?\s*x\s*               { yytext = yytext.replace(/^,\s*/, ''); yy.getLogger().debug('Lex (x):',yytext); return "DIR"; }
+<ARROW_DIR>","?\s*y\s*               { yytext = yytext.replace(/^,\s*/, ''); yy.getLogger().debug('Lex (y):',yytext); return "DIR"; }
+<ARROW_DIR>","?\s*up\s*              { yytext = yytext.replace(/^,\s*/, ''); yy.getLogger().debug('Lex (up):',yytext); return "DIR"; }
+<ARROW_DIR>","?\s*down\s*     { yytext = yytext.replace(/^,\s*/, ''); yy.getLogger().debug('Lex (down):',yytext); return "DIR"; }
+<ARROW_DIR>")"\s*             { yytext=']>';yy.getLogger().debug('Lex (ARROW_DIR end):',yytext);this.popState();this.popState();return "BLOCK_ARROW_END"; }
 
 // Edges
 \s*[xo<]?\-\-+[-xo>]\s*                 { yy.getLogger().info('Lex: LINK', '#'+yytext+'#'); return 'LINK'; }
@@ -157,7 +157,7 @@ seperator
   ;
 
 start: BLOCK_DIAGRAM_KEY document EOF
-  { yy.setHierarchy($2); }
+  { yy.getLogger().info("Rule: hierarchy: ", $2); yy.setHierarchy($2); }
   ;
 
 
@@ -171,8 +171,8 @@ stop
 
 //array of statements
 document
-	: statement { yy.getLogger().info("Rule: statement: ", $1); $$ = [$1]; }
-	| statement document { yy.getLogger().info("Rule: document statement: ", $1, $2); $$ = [$1].concat($2); }
+	: statement { yy.getLogger().info("Rule: statement: ", $1); typeof $1.length === 'number'?$$ = $1:$$ = [$1]; }
+	| statement document { yy.getLogger().info("Rule: statement #2: ", $1); $$ = [$1].concat($2); }
 	;
 
 link
@@ -191,12 +191,12 @@ statement
 	;
 
 nodeStatement
-  : nodeStatement link node { yy.getLogger().info('Rule: nodeStatement (nodeStatement link node) '); $$ = {id: $1.id}; }
-  | node { yy.getLogger().info('Rule: nodeStatement (node) ', $1); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1.typeStr)}; }
+  : nodeStatement link node { yy.getLogger().info('Rule: (nodeStatement link node) ', $1, $2, $3); $$ = [{id: $1.id, label: $1.label, type:$1.type, directions: $1.directions}, {id: $3.id, label: $3.label, type: yy.typeStr2Type($3.typeStr), directions: $3.directions}]; }
+  | node { yy.getLogger().info('Rule: nodeStatement (node) ', $1); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1.typeStr), directions: $1.directions}; }
   ;
 
 columnsStatement
-  : COLUMNS { yy.getLogger().info("COLUMNS: ", $1); $$ = {type: 'column-setting', columns: $1 === 'auto'?-1:parseInt($1) } }
+  : COLUMNS { yy.getLogger().info('APA123', this? this:'na'); yy.getLogger().info("COLUMNS: ", $1); $$ = {type: 'column-setting', columns: $1 === 'auto'?-1:parseInt($1) } }
   ;
 
 blockStatement
@@ -207,10 +207,11 @@ blockStatement
 node
   : NODE_ID
   { yy.getLogger().info("Rule: node (NODE_ID seperator): ", $1); $$ = { id: $1 }; }
-  |NODE_ID nodeShapeNLabel
-    { yy.getLogger().info("Rule: node (NODE_ID nodeShapeNLabel seperator): ", $1, $2); $$ = { id: $1, label: $2.label, typeStr: $2.typeStr };}
-  // |nodeShapeNLabel seperator
-  // { yy.getLogger().info("Rule: node (nodeShapeNLabel seperator): ", $1, $2, $3); }
+  | NODE_ID nodeShapeNLabel
+  {
+    yy.getLogger().info("Rule: node (NODE_ID nodeShapeNLabel seperator): ", $1, $2);
+    $$ = { id: $1, label: $2.label, typeStr: $2.typeStr, directions: $2.directions };
+  }
   ;
 
 dirList: DIR { yy.getLogger().info("Rule: dirList: ", $1); $$ = [$1]; }
@@ -221,7 +222,7 @@ nodeShapeNLabel
   :   NODE_DSTART STR NODE_DEND
 	      { yy.getLogger().info("Rule: nodeShapeNLabel: ", $1, $2, $3); $$ = { typeStr: $1 + $3, label: $2 }; }
 	|    BLOCK_ARROW_START STR dirList BLOCK_ARROW_END
-    	      { yy.getLogger().info("Rule: BLOCK_ARROW nodeShapeNLabel: ", $1, $2, $3, $4); $$ = { typeStr: $1 + $4, label: $2, directions: $3}; }
+    	      { yy.getLogger().info("Rule: BLOCK_ARROW nodeShapeNLabel: ", $1, $2, " #3:",$3, $4); $$ = { typeStr: $1 + $4, label: $2, directions: $3}; }
   ;
 
 %%

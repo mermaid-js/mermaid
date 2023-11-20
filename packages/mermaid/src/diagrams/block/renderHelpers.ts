@@ -114,6 +114,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     class: classStr,
     style: styles.style,
     id: vertex.id,
+    directions: vertex.directions,
     // link: vertex.link,
     // linkTarget: vertex.linkTarget,
     // tooltip: diagObj.db.getTooltip(vertex.id) || '',

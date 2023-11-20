@@ -66,9 +66,8 @@ const clear = (): void => {
 };
 
 type ITypeStr2Type = (typeStr: string) => BlockType;
-export function typeStr2Type(typeStr: string) {
+export function typeStr2Type(typeStr: string): BlockType {
   log.debug('typeStr2Type', typeStr);
-  // TODO: add all types
   switch (typeStr) {
     case '[]':
       return 'square';
@@ -80,7 +79,7 @@ export function typeStr2Type(typeStr: string) {
     case '>]':
       return 'rect_left_inv_arrow';
     case '{}':
-      return 'question';
+      return 'diamond';
     case '{{}}':
       return 'hexagon';
     case '([])':
@@ -115,9 +114,10 @@ export const generateId = () => {
 
 type ISetHierarchy = (block: Block[]) => void;
 const setHierarchy = (block: Block[]): void => {
+  // log.debug('The hierarchy', JSON.stringify(block, null, 2));
   rootBlock.children = block;
   populateBlockDatabase(block, rootBlock);
-  log.debug('The hierarchy', JSON.stringify(rootBlock, null, 2));
+  // log.debug('The hierarchy', JSON.stringify(rootBlock, null, 2));
   blocks = rootBlock.children;
 };
 
