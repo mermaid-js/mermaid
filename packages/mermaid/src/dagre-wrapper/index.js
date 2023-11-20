@@ -13,7 +13,7 @@ import { insertNode, positionNode, clear as clearNodes, setNodeElem } from './no
 import { insertCluster, clear as clearClusters } from './clusters.js';
 import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } from './edges.js';
 import { log } from '../logger.js';
-import { getSubGraphTitleMargins } from '../utils/getSubGraphTitleMargins.js';
+import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
 import { getConfig } from '../diagram-api/diagramAPI.js';
 
 const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster) => {

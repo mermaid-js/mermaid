@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 import utils, { calculatePoint, cleanAndMerge, detectDirective } from './utils.js';
-import { getSubGraphTitleMargins } from './utils/getSubGraphTitleMargins.js';
+import { getSubGraphTitleMargins } from './utils/subGraphTitleMargins.js';
 import * as configApi from './config.js';
 import assignWithDepth from './assignWithDepth.js';
 import { detectType } from './diagram-api/detectType.js';

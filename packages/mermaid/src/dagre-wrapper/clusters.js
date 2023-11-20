@@ -5,7 +5,7 @@ import { createText } from '../rendering-util/createText.js';
 import { select } from 'd3';
 import { getConfig } from '../diagram-api/diagramAPI.js';
 import { evaluate } from '../diagrams/common/common.js';
-import { getSubGraphTitleMargins } from '../utils/getSubGraphTitleMargins.js';
+import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
 
 const rect = (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
