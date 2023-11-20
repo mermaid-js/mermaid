@@ -22,4 +22,9 @@ export const packageOptions = {
     packageName: 'mermaid-zenuml',
     file: 'detector.ts',
   },
+  'mermaid-flowchart-elk': {
+    name: 'mermaid-flowchart-elk',
+    packageName: 'mermaid-flowchart-elk',
+    file: 'detector.ts',
+  },
 } as const;
