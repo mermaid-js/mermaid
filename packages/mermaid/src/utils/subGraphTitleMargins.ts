@@ -1,4 +1,4 @@
-import { FlowchartDiagramConfig } from '../config.type.js';
+import type { FlowchartDiagramConfig } from '../config.type.js';
 
 export const getSubGraphTitleMargins = ({
   flowchart,
