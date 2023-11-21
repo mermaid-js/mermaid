@@ -69,17 +69,13 @@ const rect = (parent, node) => {
     label.attr(
       'transform',
       // This puts the labal on top of the box instead of inside it
-      'translate(' +
-        (node.x - bbox.width / 2) +
-        ', ' +
-        (node.y - node.height / 2 + subGraphTitleTopMargin) +
-        ')'
+      `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
     );
   } else {
     label.attr(
       'transform',
       // This puts the labal on top of the box instead of inside it
-      'translate(' + node.x + ', ' + (node.y - node.height / 2 + subGraphTitleTopMargin) + ')'
+      `translate(${node.x}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
     );
   }
   // Center the label
