@@ -163,6 +163,7 @@ The theming engine will only recognize hex colors and not color names. So, the v
 | defaultLinkColor    | lineColor                      | Link Color                  |
 | titleColor          | tertiaryTextColor              | Title Color                 |
 | edgeLabelBackground | calculated from secondaryColor |                             |
+| edgeLabelTextColor  | secondaryTextColor             |                             |
 | nodeTextColor       | primaryTextColor               | Color for text inside Nodes |
 
 ## Sequence Diagram Variables
