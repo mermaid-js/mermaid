@@ -63,6 +63,7 @@ class Theme {
     this.edgeLabelBackground =
       this.edgeLabelBackground ||
       (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
+    this.edgeLabelTextColor = this.secondaryTextColor;
     this.nodeTextColor = this.nodeTextColor || this.primaryTextColor;
     /* Sequence Diagram variables */
 

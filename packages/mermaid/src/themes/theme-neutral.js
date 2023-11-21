@@ -52,6 +52,7 @@ class Theme {
     this.defaultLinkColor = 'calculated';
     this.titleColor = 'calculated';
     this.edgeLabelBackground = 'white';
+    this.edgeLabelTextColor = 'calculated';
 
     /* Sequence Diagram variables */
 
@@ -176,6 +177,7 @@ class Theme {
     this.clusterBorder = this.border2;
     this.defaultLinkColor = this.lineColor;
     this.titleColor = this.text;
+    this.edgeLabelTextColor = this.secondaryTextColor;
 
     /* Gantt chart variables */
 

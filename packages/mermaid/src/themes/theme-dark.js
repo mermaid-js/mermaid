@@ -39,6 +39,7 @@ class Theme {
     this.defaultLinkColor = 'calculated';
     this.titleColor = '#F9FFFE';
     this.edgeLabelBackground = 'calculated';
+    this.edgeLabelTextColor = 'calculated';
 
     /* Sequence Diagram variables */
 
@@ -103,6 +104,7 @@ class Theme {
     this.clusterBorder = this.border2;
     this.defaultLinkColor = this.lineColor;
     this.edgeLabelBackground = lighten(this.labelBackground, 25);
+    this.edgeLabelTextColor = this.secondaryTextColor;
 
     /* Sequence Diagram variables */
 

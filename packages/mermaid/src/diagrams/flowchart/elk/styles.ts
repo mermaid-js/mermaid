@@ -5,6 +5,7 @@ export interface FlowChartStyleOptions {
   clusterBkg: string;
   clusterBorder: string;
   edgeLabelBackground: string;
+  edgeLabelTextColor: string;
   fontFamily: string;
   lineColor: string;
   mainBkg: string;
@@ -85,6 +86,8 @@ const getStyles = (options: FlowChartStyleOptions) =>
       background-color: ${options.edgeLabelBackground};
       fill: ${options.edgeLabelBackground};
     }
+    fill: ${options.edgeLabelTextColor || options.textColor};
+    color: ${options.edgeLabelTextColor || options.textColor};
     text-align: center;
   }
 
