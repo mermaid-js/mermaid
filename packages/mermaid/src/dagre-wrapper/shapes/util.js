@@ -60,6 +60,7 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
 
     // if there are images, need to wait for them to load before getting the bounding box
     const images = div.getElementsByTagName('img');
+    console.log('images', images);
     if (images) {
       const noImgText = labelText.replace(/<img[^>]*>/g, '').trim() === '';
 
