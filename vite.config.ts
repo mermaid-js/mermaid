@@ -24,7 +24,6 @@ export default defineConfig({
       reportsDirectory: './coverage/vitest',
       exclude: ['**/node_modules/**', '**/tests/**', '**/__mocks__/**'],
     },
-    testTimeout: 10000,
   },
   build: {
     /** If you set esmExternals to true, this plugins assumes that
