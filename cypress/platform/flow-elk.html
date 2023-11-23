@@ -17,7 +17,12 @@
       }
       mermaid.initialize({
         logLevel: 3,
+        startOnLoad: false,
       });
+      await mermaid.run();
+      if (window.Cypress) {
+        window.rendered = true;
+      }
     </script>
   </body>
 </html>
