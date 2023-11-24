@@ -28,8 +28,8 @@ Below are a list of community plugins and integrations created with Mermaid.
   - [Auto convert diagrams in Jira](https://github.com/coddingtonbear/jirafs-mermaid)
   - [Mermaid Charts & Diagrams for Jira](https://marketplace.atlassian.com/apps/1224537/)
   - [Mermaid for Jira Cloud - Draw UML diagrams easily](https://marketplace.atlassian.com/apps/1223053/mermaid-for-jira-cloud-draw-uml-diagrams-easily?hosting=cloud&tab=overview)
-  - [CloudScript.io Addon](https://marketplace.atlassian.com/apps/1219878/cloudscript-io-mermaid-addon?hosting=cloud&tab=overview)
-- [Azure Devops](https://docs.microsoft.com/en-us/azure/devops/project/wiki/wiki-markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) ✅
+  - [CloudScript.io Mermaid Addon](https://marketplace.atlassian.com/apps/1219878/cloudscript-io-mermaid-addon?hosting=cloud&tab=overview)
+- [Azure Devops](https://learn.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) ✅
 - [Deepdwn](https://billiam.itch.io/deepdwn) ✅
 - [GitBook](https://gitbook.com)
   - [Mermaid Plugin](https://github.com/JozoVilcek/gitbook-plugin-mermaid)
@@ -40,23 +40,23 @@ Below are a list of community plugins and integrations created with Mermaid.
   - [Using code blocks](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) ✅
   - [GitHub action: Compile mermaid to image](https://github.com/neenjaw/compile-mermaid-markdown-action)
   - [GitHub Writer](https://github.com/ckeditor/github-writer)
-  - [svg-generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
+  - [SVG diagram generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
 - [GitLab](https://docs.gitlab.com/ee/user/markdown.html#diagrams-and-flowcharts) ✅
 - [Mermaid Plugin for JetBrains IDEs](https://plugins.jetbrains.com/plugin/20146-mermaid)
 - [Joplin](https://joplinapp.org) ✅
 - [LiveBook](https://livebook.dev) ✅
 - [Tuleap](https://docs.tuleap.org/user-guide/writing-in-tuleap.html#graphs) ✅
 - [Mermaid Flow Visual Editor](https://www.mermaidflow.app) ✅
-- [mermerd](https://github.com/KarnerTh/mermerd)
+- [Mermerd](https://github.com/KarnerTh/mermerd)
 - [Slab](https://slab.com) ✅
-- [Swimm](https://swimm.io) ✅
+- [Swimm](https://docs.swimm.io/Features/diagrams-and-charts#mermaid--swimm--up-to-date-diagrams-) ✅
 - [NotesHub](https://noteshub.app) ✅
 - [Notion](https://notion.so) ✅
 - [Observable](https://observablehq.com/@observablehq/mermaid) ✅
 - [Obsidian](https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram) ✅
 - [Redmine](https://redmine.org)
   - [Mermaid Macro](https://www.redmine.org/plugins/redmine_mermaid_macro)
-  - [markdown-for-mermaid-plugin](https://github.com/jamieh-mongolian/markdown-for-mermaid-plugin)
+  - [Markdown for mermaid plugin](https://github.com/jamieh-mongolian/markdown-for-mermaid-plugin)
   - [redmine-mermaid](https://github.com/styz/redmine_mermaid)
 - Visual Studio Code [Polyglot Interactive Notebooks](https://github.com/dotnet/interactive#net-interactive)
 
@@ -85,7 +85,7 @@ Blogging frameworks and platforms
 Content Management Systems/Enterprise Content Management
 
 - [Grav CMS](https://getgrav.org/)
-  - [Mermaid Diagrams](https://github.com/DanielFlaum/grav-plugin-mermaid-diagrams)
+  - [Mermaid Diagrams Plugin](https://github.com/DanielFlaum/grav-plugin-mermaid-diagrams)
   - [GitLab Markdown Adapter](https://github.com/Goutte/grav-plugin-gitlab-markdown-adapter)
 - [VitePress](https://vitepress.vuejs.org/)
   - [Plugin for Mermaid.js](https://emersonbottero.github.io/vitepress-plugin-mermaid/)
@@ -97,15 +97,15 @@ Content Management Systems/Enterprise Content Management
 Communication tools and platforms
 
 - [Discourse](https://discourse.org)
-  - [Mermaid Plugin](https://github.com/pnewell/discourse-mermaid), [And](https://github.com/unfoldingWord-dev/discourse-mermaid)
+  - [Mermaid Plugin](https://github.com/pnewell/discourse-mermaid)
 - [Mattermost](https://mattermost.com/)
   - [Mermaid Plugin](https://github.com/SpikeTings/Mermaid)
 - [NodeBB](https://nodebb.org)
-  - [Mermaid Plugin](https://www.npmjs.com/package/nodebb-plugin-mermaid)
+  - [Mermaid Parser Plugin](https://www.npmjs.com/package/nodebb-plugin-mermaid)
 - [phpBB](https://phpbb.com)
   - [phpbb-ext-mermaid](https://github.com/AlfredoRamos/phpbb-ext-mermaid)
 - [Slack](https://slack.com)
-  - [Mermaid for Slack](https://github.com/JackuB/mermaid-for-slack)
+  - [Mermaid Preview](https://github.com/JackuB/mermaid-for-slack)
 
 ### Wikis
 
@@ -120,8 +120,8 @@ Communication tools and platforms
 - [Semantic Media Wiki](https://semantic-mediawiki.org)
   - [Mermaid Plugin](https://github.com/SemanticMediaWiki/Mermaid)
 - [TiddlyWiki](https://tiddlywiki.com/)
-  - [mermaid-tw5: full js library](https://github.com/efurlanm/mermaid-tw5)
-  - [tw5-mermaid: wrapper for Mermaid Live](https://github.com/jasonmhoule/tw5-mermaid)
+  - [mermaid-tw5: wrapper for Mermaid Live](https://github.com/efurlanm/mermaid-tw5)
+  - [tw5-mermaid: plugin for managing Mermaid.js tiddlers](https://github.com/jasonmhoule/tw5-mermaid)
 
 ### Editor Plugins
 
@@ -135,7 +135,8 @@ Communication tools and platforms
   - [Mermaid Preview](https://github.com/AlanHohn/mermaid-preview)
 - [CKEditor](https://github.com/ckeditor/ckeditor5)
   - [CKEditor 5 Mermaid plugin](https://github.com/ckeditor/ckeditor5-mermaid)
-- [Draw.io](https://draw.io) - [Plugin](https://github.com/nopeslide/drawio_mermaid_plugin)
+- [Draw.io](https://draw.io)
+  - [Mermaid Plugin](https://github.com/nopeslide/drawio_mermaid_plugin)
 - [GNU Emacs](https://www.gnu.org/software/emacs/)
   - [Major mode for .mmd files](https://github.com/abrochard/mermaid-mode)
   - [Org-Mode integration](https://github.com/arnm/ob-mermaid)
@@ -143,9 +144,8 @@ Communication tools and platforms
   - [Nano Mermaid](https://github.com/Yash-Singh1/nano-mermaid)
 - [Google docs](https://docs.google.com/)
   - [Mermaid plugin for google docs](https://workspace.google.com/marketplace/app/mermaid/636321283856)
-- [Inkdrop](https://www.inkdrop.app) - [Plugin](https://github.com/inkdropapp/inkdrop-mermaid)
-- [Iodide](https://github.com/iodide-project/iodide)
-  - [iodide-mermaid-plugin](https://github.com/iodide-project/iodide-mermaid-plugin)
+- [Inkdrop](https://www.inkdrop.app)
+  - [Mermaid Plugin](https://github.com/inkdropapp/inkdrop-mermaid)
 - [Light Table](http://lighttable.com/)
   - [Mermaid Plugin](https://github.com/cldwalker/Mermaid)
 - [Markdown-It](https://github.com/markdown-it/markdown-it)
@@ -155,9 +155,9 @@ Communication tools and platforms
   - [markdown-it-mermaid-fence-new](https://github.com/Revomatico/markdown-it-mermaid-fence-new)
   - [markdown-it-mermaid-less](https://github.com/searKing/markdown-it-mermaid-less)
 - [Podlite](https://github.com/zag/podlite-desktop)
-  - [Named block =Diagram](https://github.com/zag/podlite/tree/main/packages/podlite-diagrams)
+  - [=Diagram block](https://github.com/zag/podlite/tree/main/packages/podlite-diagrams)
 - [Standard Notes](https://standardnotes.com/)
-  - [sn-mermaid](https://github.com/nienow/sn-mermaid)
+  - [Mermaid Extension](https://github.com/nienow/sn-mermaid)
 - [Sublime Text 3](https://sublimetext.com)
   - [Mermaid Package](https://packagecontrol.io/packages/Mermaid)
 - [VS Code](https://code.visualstudio.com/)
@@ -172,7 +172,7 @@ Communication tools and platforms
   - [Mermaid Markdown Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=bpruitt-goddard.mermaid-markdown-syntax-highlighting)
 - [Vim](https://www.vim.org)
   - [Vim Diagram Syntax](https://github.com/zhaozg/vim-diagram)
-  - [Official Vim Syntax and ftplugin](https://github.com/craigmac/vim-mermaid)
+  - [Official Vim Syntax and ft plugin](https://github.com/craigmac/vim-mermaid)
 
 ### Document Generation
 
@@ -184,7 +184,7 @@ Communication tools and platforms
   - [gatsby-remark-mermaid](https://github.com/remcohaszing/gatsby-remark-mermaid)
 - [JSDoc](https://jsdoc.app/)
   - [jsdoc-mermaid](https://github.com/Jellyvision/jsdoc-mermaid)
-- [mdbook](https://rust-lang.github.io/mdBook/index.html)
+- [mdBook](https://rust-lang.github.io/mdBook/index.html)
   - [mdbook-mermaid](https://github.com/badboy/mdbook-mermaid)
 - [MkDocs](https://www.mkdocs.org)
   - [mkdocs-mermaid2-plugin](https://github.com/fralau/mkdocs-mermaid2-plugin)
@@ -196,10 +196,9 @@ Communication tools and platforms
   - [remark-mermaidjs](https://github.com/remcohaszing/remark-mermaidjs)
 - [Sphinx](https://www.sphinx-doc.org/en/master/)
   - [sphinxcontrib-mermaid](https://github.com/mgaitan/sphinxcontrib-mermaid)
-- [Swimm - Up-to-date diagrams with Swimm, the knowledge management tool for code](https://docs.swimm.io/Features/diagrams-and-charts#mermaid--swimm--up-to-date-diagrams-)
 - [Type Doc](https://typedoc.org/)
   - [typedoc-plugin-mermaid](https://www.npmjs.com/package/typedoc-plugin-mermaid)
-- [Typora](https://typora.io/) ([native support](https://support.typora.io/Draw-Diagrams-With-Markdown/#mermaid))
+- [Typora](https://support.typora.io/Draw-Diagrams-With-Markdown/#mermaid) ✅
 
 ### Browser Extensions
 
@@ -210,7 +209,7 @@ Communication tools and platforms
 | Diagram Tab              | -                                                                                                            | -                                                                              | -                                                                              | -                                                                                                                            | [🐙🔗](https://github.com/khafast/diagramtab)                                                        |
 | Markdown Diagrams        | [🎡🔗](https://chrome.google.com/webstore/detail/markdown-diagrams/pmoglnmodacnbbofbgcagndelmgaclel/)        | [🦊🔗](https://addons.mozilla.org/en-US/firefox/addon/markdown-diagrams/)      | [🔴🔗](https://addons.opera.com/en/extensions/details/markdown-diagrams/)      | [🌀🔗](https://microsoftedge.microsoft.com/addons/detail/markdown-diagrams/hceenoomhhdkjjijnmlclkpenkapfihe)                 | [🐙🔗](https://github.com/marcozaccari/markdown-diagrams-browser-extension/tree/master/doc/examples) |
 | Markdown Viewer          | -                                                                                                            | [🦊🔗](https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/) | -                                                                              | -                                                                                                                            | [🐙🔗](https://github.com/simov/markdown-viewer)                                                     |
-| Extensions for Mermaid   | -                                                                                                            | [🦊🔗](https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/) | [🔴🔗](https://addons.opera.com/en/extensions/details/extensions-for-mermaid/) | -                                                                                                                            | [🐙🔗](https://github.com/Stefan-S/mermaid-extension)                                                |
+| Extensions for Mermaid   | -                                                                                                            | -                                                                              | [🔴🔗](https://addons.opera.com/en/extensions/details/extensions-for-mermaid/) | -                                                                                                                            | [🐙🔗](https://github.com/Stefan-S/mermaid-extension)                                                |
 | Chrome Diagrammer        | [🎡🔗](https://chrome.google.com/webstore/detail/chrome-diagrammer/bkpbgjmkomfoakfklcjeoegkklgjnnpk)         | -                                                                              | -                                                                              | -                                                                                                                            | -                                                                                                    |
 | Mermaid Diagrams         | [🎡🔗](https://chrome.google.com/webstore/detail/mermaid-diagrams/phfcghedmopjadpojhmmaffjmfiakfil)          | -                                                                              | -                                                                              | -                                                                                                                            | -                                                                                                    |
 | Monkeys                  | [🎡🔗](https://chrome.google.com/webstore/detail/monkeys-mermaid-for-githu/cplfdpoajbclbgphaphphcldamfkjlgi) | -                                                                              | -                                                                              | -                                                                                                                            | -                                                                                                    |
@@ -228,8 +227,7 @@ Communication tools and platforms
 - [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
 - [NiceGUI: Let any browser be the frontend of your Python code](https://nicegui.io)
-  - [ui.markdown(..., extras=['mermaid'])](https://nicegui.io/reference#markdown_element)
-  - [ui.mermaid(...)](https://nicegui.io/reference#mermaid_diagrams)
+  - [ui.mermaid(...)](https://nicegui.io/documentation/mermaid)
 - [Reveal.js](https://github.com/hakimel/reveal.js)
   - [reveal.js-mermaid-plugin](https://github.com/ludwick/reveal.js-mermaid-plugin)
 - [Reveal CK](https://github.com/jedcn/reveal-ck)
