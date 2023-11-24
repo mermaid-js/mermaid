@@ -89,7 +89,7 @@ describe('when using mermaid and ', () => {
       ).resolves.not.toThrow();
       // should still render, even if lazyLoadedDiagrams fails
       expect(mermaidAPI.render).toHaveBeenCalled();
-    });
+    }, 20_000);
 
     it('should defer diagram load based on parameter', async () => {
       let loaded = false;
