@@ -1,6 +1,6 @@
 {
   "name": "@mermaid-js/flowchart-elk",
-  "version": "1.0.0",
+  "version": "1.0.0-rc.1",
   "description": "Flowchart plugin for mermaid with ELK layout",
   "module": "dist/mermaid-flowchart-elk.core.mjs",
   "types": "dist/packages/mermaid-flowchart-elk/src/detector.d.ts",
