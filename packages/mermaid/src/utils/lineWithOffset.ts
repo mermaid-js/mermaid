@@ -24,6 +24,9 @@ function calculateDeltaAndAngle(
 ): { angle: number; deltaX: number; deltaY: number } {
   point1 = pointTransformer(point1);
   point2 = pointTransformer(point2);
+  if (point1 === undefined || point2 === undefined) {
+    return { angle: 0, deltaX: 0, deltaY: 0 };
+  }
   const [x1, y1] = [point1.x, point1.y];
   const [x2, y2] = [point2.x, point2.y];
   const deltaX = x2 - x1;
