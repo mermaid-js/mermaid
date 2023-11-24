@@ -19,7 +19,7 @@
     "build:esbuild": "pnpm run -r clean && ts-node-esm --transpileOnly .esbuild/build.ts",
     "build:mermaid": "pnpm build:esbuild --mermaid",
     "build:viz": "pnpm build:esbuild --visualize",
-    "build:types": "tsc -p ./packages/parser/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-zenuml/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-example-diagram/tsconfig.json --emitDeclarationOnly",
+    "build:types": "ts-node-esm --transpileOnly .build/types.ts",
     "build:types:watch": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly --watch",
     "dev": "ts-node-esm --transpileOnly .esbuild/server.ts",
     "dev:vite": "ts-node-esm --transpileOnly .vite/server.ts",

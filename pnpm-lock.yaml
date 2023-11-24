@@ -224,9 +224,6 @@ importers:
       dompurify:
         specifier: ^3.0.5
         version: 3.0.5
-      elkjs:
-        specifier: ^0.8.2
-        version: 0.8.2
       khroma:
         specifier: ^2.0.0
         version: 2.0.0
@@ -411,6 +408,31 @@ importers:
         version: 8.0.0
       mermaid:
         specifier: workspace:*
+        version: link:../mermaid
+      rimraf:
+        specifier: ^5.0.0
+        version: 5.0.0
+
+  packages/mermaid-flowchart-elk:
+    dependencies:
+      d3:
+        specifier: ^7.4.0
+        version: 7.8.5
+      dagre-d3-es:
+        specifier: 7.0.10
+        version: 7.0.10
+      elkjs:
+        specifier: ^0.8.2
+        version: 0.8.2
+      khroma:
+        specifier: ^2.0.0
+        version: 2.0.0
+    devDependencies:
+      concurrently:
+        specifier: ^8.0.0
+        version: 8.0.1
+      mermaid:
+        specifier: workspace:^
         version: link:../mermaid
       rimraf:
         specifier: ^5.0.0
