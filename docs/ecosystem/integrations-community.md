@@ -51,7 +51,7 @@ Below are a list of community plugins and integrations created with Mermaid.
 - [Mermaid Flow Visual Editor](https://www.mermaidflow.app) ✅
 - [Mermerd](https://github.com/KarnerTh/mermerd)
 - [Slab](https://slab.com) ✅
-- [Swimm](https://docs.swimm.io/Features/diagrams-and-charts) ✅
+- [Swimm](https://docs.swimm.io/Features/diagrams-and-charts#mermaid--swimm--up-to-date-diagrams-) ✅
 - [NotesHub](https://noteshub.app) ✅
 - [Notion](https://notion.so) ✅
 - [Observable](https://observablehq.com/@observablehq/mermaid) ✅
@@ -198,7 +198,6 @@ Communication tools and platforms
   - [remark-mermaidjs](https://github.com/remcohaszing/remark-mermaidjs)
 - [Sphinx](https://www.sphinx-doc.org/en/master/)
   - [sphinxcontrib-mermaid](https://github.com/mgaitan/sphinxcontrib-mermaid)
-- [Swimm - Up-to-date diagrams with Swimm, the knowledge management tool for code](https://docs.swimm.io/features/diagrams-and-charts/#mermaid--swimm--up-to-date-diagrams-)
 - [Type Doc](https://typedoc.org/)
   - [typedoc-plugin-mermaid](https://www.npmjs.com/package/typedoc-plugin-mermaid)
 - [Typora](https://support.typora.io/Draw-Diagrams-With-Markdown/#mermaid) ✅
