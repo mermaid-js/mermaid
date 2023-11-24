@@ -3,7 +3,7 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "types": ["vitest/importMeta"]
+    "types": ["vitest/importMeta", "vitest/globals"]
   },
   "include": ["./src/**/*.ts", "./package.json"]
 }
