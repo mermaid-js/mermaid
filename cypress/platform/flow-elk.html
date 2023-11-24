@@ -11,7 +11,7 @@
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
-      import elk from './mermaid-flowchart-elk.esm.mjs';
+      import elk from './mermaid-flowchart-elk.esm.min.mjs';
       if (window.location.search.includes('elk')) {
         await mermaid.registerExternalDiagrams([elk]);
       }
