@@ -9,6 +9,7 @@ import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
 
 const rect = (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
+  const siteConfig = getConfig();
 
   // Add outer g element
   const shapeSvg = parent
@@ -19,7 +20,7 @@ const rect = (parent, node) => {
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 
-  const useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
+  const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
 
   // Create the label and insert it after the rect
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');
@@ -35,7 +36,7 @@ const rect = (parent, node) => {
   // Get the size of the label
   let bbox = text.getBBox();
 
-  if (evaluate(getConfig().flowchart.htmlLabels)) {
+  if (evaluate(siteConfig.flowchart.htmlLabels)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -64,7 +65,7 @@ const rect = (parent, node) => {
     .attr('width', width)
     .attr('height', node.height + padding);
 
-  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(getConfig());
+  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
   if (useHtmlLabels) {
     label.attr(
       'transform',
@@ -129,6 +130,8 @@ const noteGroup = (parent, node) => {
   return shapeSvg;
 };
 const roundedWithTitle = (parent, node) => {
+  const siteConfig = getConfig();
+
   // Add outer g element
   const shapeSvg = parent.insert('g').attr('class', node.classes).attr('id', node.id);
 
@@ -145,7 +148,7 @@ const roundedWithTitle = (parent, node) => {
 
   // Get the size of the label
   let bbox = text.getBBox();
-  if (evaluate(getConfig().flowchart.htmlLabels)) {
+  if (evaluate(siteConfig.flowchart.htmlLabels)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -177,7 +180,7 @@ const roundedWithTitle = (parent, node) => {
     .attr('width', width + padding)
     .attr('height', node.height + padding - bbox.height - 3);
 
-  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(getConfig());
+  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
   // Center the label
   label.attr(
     'transform',
@@ -187,7 +190,7 @@ const roundedWithTitle = (parent, node) => {
       (node.y -
         node.height / 2 -
         node.padding / 3 +
-        (evaluate(getConfig().flowchart.htmlLabels) ? 5 : 3)) +
+        (evaluate(siteConfig.flowchart.htmlLabels) ? 5 : 3)) +
       subGraphTitleTopMargin +
       ')'
   );
