@@ -729,6 +729,18 @@ A ~~~ B
       {}
     );
   });
+
+  it('5064: Should render when subgraph child has links to outside node and subgraph', () => {
+    imgSnapshotTest(
+      `flowchart TB
+    Out --> In
+    subgraph Sub
+      In
+    end
+    Sub --> In`
+    );
+  });
+
   describe('Markdown strings flowchart (#4220)', () => {
     describe('html labels', () => {
       it('With styling and classes', () => {
