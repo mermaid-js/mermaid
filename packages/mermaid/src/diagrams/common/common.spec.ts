@@ -38,6 +38,20 @@ describe('when securityLevel is antiscript, all script must be removed', () => {
     compareRemoveScript(`<img onerror="alert('hello');">`, `<img>`);
   });
 
+  it('should detect unsecured target attribute, if value is _blank then generate a secured link', () => {
+    compareRemoveScript(
+      `<a href="https://mermaid.js.org/" target="_blank">note about mermaid</a>`,
+      `<a href="https://mermaid.js.org/" target="_blank" rel="noopener">note about mermaid</a>`
+    );
+  });
+
+  it('should detect unsecured target attribute from links', () => {
+    compareRemoveScript(
+      `<a href="https://mermaid.js.org/" target="_self">note about mermaid</a>`,
+      `<a href="https://mermaid.js.org/" target="_self">note about mermaid</a>`
+    );
+  });
+
   it('should detect iframes', () => {
     compareRemoveScript(
       `<iframe src="http://abc.com/script1.js"></iframe>
