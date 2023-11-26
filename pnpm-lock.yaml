@@ -200,6 +200,9 @@ importers:
       '@braintree/sanitize-url':
         specifier: ^6.0.1
         version: 6.0.2
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
       cytoscape:
         specifier: ^3.23.0
         version: 3.23.0
@@ -233,9 +236,6 @@ importers:
       mdast-util-from-markdown:
         specifier: ^1.3.0
         version: 1.3.0
-      mermaid-parser:
-        specifier: workspace:^
-        version: link:../parser
       stylis:
         specifier: ^4.1.3
         version: 4.1.3
