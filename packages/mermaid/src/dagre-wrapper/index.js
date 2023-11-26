@@ -16,7 +16,7 @@ import { log } from '../logger.js';
 import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
 import { getConfig } from '../diagram-api/diagramAPI.js';
 
-const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster) => {
+const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, siteConfig) => {
   log.info('Graph in recursive render: XXX', graphlibJson.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
   log.trace('Dir in recursive render - dir:', dir);
@@ -54,7 +54,14 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster) => 
       if (node && node.clusterNode) {
         // const children = graph.children(v);
         log.info('Cluster identified', v, node.width, graph.node(v));
-        const o = await recursiveRender(nodes, node.graph, diagramtype, id, graph.node(v));
+        const o = await recursiveRender(
+          nodes,
+          node.graph,
+          diagramtype,
+          id,
+          graph.node(v),
+          siteConfig
+        );
         const newEl = o.elem;
         updateNodeBounds(node, newEl);
         node.diff = o.diff || 0;
@@ -103,7 +110,7 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster) => 
   log.info('Graph after layout:', graphlibJson.write(graph));
   // Move the nodes to the correct place
   let diff = 0;
-  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(getConfig());
+  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
   sortNodesByHierarchy(graph).forEach(function (v) {
     const node = graph.node(v);
     log.info('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
@@ -163,7 +170,8 @@ export const render = async (elem, graph, markers, diagramtype, id) => {
   adjustClustersAndEdges(graph);
   log.warn('Graph after:', JSON.stringify(graphlibJson.write(graph)));
   // log.warn('Graph ever  after:', graphlibJson.write(graph.node('A').graph));
-  await recursiveRender(elem, graph, diagramtype, id);
+  const siteConfig = getConfig();
+  await recursiveRender(elem, graph, diagramtype, id, undefined, siteConfig);
 };
 
 // const shapeDefinitions = {};
