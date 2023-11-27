@@ -87,8 +87,6 @@ export const getDiagramFromText = async (
   metadata: Pick<DiagramMetadata, 'title'> = {}
 ): Promise<Diagram> => {
   const type = detectType(text, configApi.getConfig());
-  let title;
-
   try {
     // Trying to find the diagram
     getDiagram(type);
