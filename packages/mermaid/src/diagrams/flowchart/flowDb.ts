@@ -20,7 +20,7 @@ const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
 let config = getConfig();
 let vertices: Record<string, FlowVertex> = {};
-let edges: any[] & { defaultInterpolate?: string; defaultStyle?: string } = [];
+let edges: FlowEdge[] & { defaultInterpolate?: string; defaultStyle?: string[] } = [];
 let classes: Record<string, FlowClass> = {};
 let subGraphs: FlowSubGraph[] = [];
 let subGraphLookup: Record<string, FlowSubGraph> = {};
@@ -59,8 +59,8 @@ export const addVertex = function (
   _id: string,
   textObj: FlowText,
   type: 'group',
-  style: any[],
-  classes: any[],
+  style: string[],
+  classes: string[],
   dir: string,
   props = {}
 ) {
@@ -128,9 +128,6 @@ export const addVertex = function (
 export const addSingleLink = function (_start: string, _end: string, type: any) {
   const start = _start;
   const end = _end;
-  // if (start[0].match(/\d/)) start = MERMAID_DOM_ID_PREFIX + start;
-  // if (end[0].match(/\d/)) end = MERMAID_DOM_ID_PREFIX + end;
-  // log.info('Got edge...', start, end);
 
   const edge: FlowEdge = { start: start, end: end, type: undefined, text: '', labelType: 'text' };
   log.info('abc78 Got edge...', edge);
@@ -160,7 +157,7 @@ export const addSingleLink = function (_start: string, _end: string, type: any) 
   edges.push(edge);
 };
 
-export const addLink = function (_start: string[], _end: string[], type: any) {
+export const addLink = function (_start: string[], _end: string[], type: unknown) {
   log.info('addLink', _start, _end, type);
   for (const start of _start) {
     for (const end of _end) {
@@ -190,7 +187,7 @@ export const updateLinkInterpolate = function (
  * Updates a link with a style
  *
  */
-export const updateLink = function (positions: ('default' | number)[], style: any) {
+export const updateLink = function (positions: ('default' | number)[], style: string[]) {
   positions.forEach(function (pos) {
     if (typeof pos === 'number' && pos >= edges.length) {
       throw new Error(

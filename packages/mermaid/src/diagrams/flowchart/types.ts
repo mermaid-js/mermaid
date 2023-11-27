@@ -1,16 +1,16 @@
 export interface FlowVertex {
+  classes: string[];
+  dir?: string;
+  domId: string;
+  haveCallback?: boolean;
   id: string;
   labelType: 'text';
-  dir?: string;
-  props?: any;
-  type?: string;
-  text?: string;
   link?: string;
   linkTarget?: string;
-  haveCallback?: boolean;
-  domId: string;
-  styles: any[];
-  classes: any[];
+  props?: any;
+  styles: string[];
+  text?: string;
+  type?: string;
 }
 
 export interface FlowText {
@@ -21,8 +21,10 @@ export interface FlowText {
 export interface FlowEdge {
   start: string;
   end: string;
+  interpolate?: string;
   type?: string;
   stroke?: string;
+  style?: string[];
   length?: number;
   text: string;
   labelType: 'text';
@@ -35,16 +37,17 @@ export interface FlowClass {
 }
 
 export interface FlowSubGraph {
-  id: string;
-  nodes: string[];
-  title: string;
   classes: string[];
   dir?: string;
+  id: string;
   labelType: string;
+  nodes: string[];
+  title: string;
 }
 
 export interface FlowLink {
-  type: string;
-  stroke: string;
   length?: number;
+  stroke: string;
+  type: string;
+  text?: string;
 }
