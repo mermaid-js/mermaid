@@ -6,8 +6,8 @@ import Mermaid from './Mermaid.vue';
 import Contributors from '../components/Contributors.vue';
 // @ts-ignore
 import HomePage from '../components/HomePage.vue';
-// // @ts-ignore
-// import TopBar from '../components/TopBar.vue';
+// @ts-ignore
+import TopBar from '../components/TopBar.vue';
 
 import { getRedirect } from './redirect.js';
 
@@ -22,7 +22,7 @@ export default {
   Layout() {
     return h(Theme.Layout, null, {
       // Keeping this as comment as it took a lot of time to figure out how to add a component to the top bar.
-      // 'home-hero-before': () => h(TopBar),
+      'home-hero-before': () => h(TopBar),
       'home-features-after': () => h(HomePage),
     });
   },

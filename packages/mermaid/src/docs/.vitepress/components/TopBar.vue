@@ -2,13 +2,16 @@
   <div
     class="w-full top-bar bg-gradient-to-r from-[#bd34fe] to-[#ff3670] flex items-center text-center justify-center p-1 text-white"
   >
-    <a
-      href="https://www.producthunt.com/posts/mermaid-chart?utm_source=badge-featured&amp;utm_medium=badge&amp;utm_souce=badge-mermaid-chart"
-      target="_blank"
-    >
-      We've made our Product Hunt debut! &nbsp;
-      <span class="underline">Show us some love and help spread the word</span>, plus receive 25%
-      off on annual Pro subscription!</a
-    >
+    <p class="flex-grow text-center tracking-wide text-text">
+      Happy Holidays! Get AI, team collaboration, storage, and more with
+      <strong>Mermaid Chart Pro</strong>. Use promo code: <strong>HOLIDAYS2023 </strong>to get
+      <strong>25%</strong> off.<a
+        href="https://www.mermaidchart.com/holiday-promo"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="unstyled ml-2 text-white underline"
+        >View more details here.</a
+      >
+    </p>
   </div>
 </template>
