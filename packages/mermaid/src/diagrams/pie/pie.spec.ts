@@ -1,7 +1,7 @@
 // @ts-ignore: JISON doesn't support types
 import { parser } from './parser/pie.jison';
 import { DEFAULT_PIE_DB, db } from './pieDb.js';
-import { setConfig } from '../../config.js';
+import { setConfig } from '../../diagram-api/diagramAPI.js';
 
 setConfig({
   securityLevel: 'strict',
@@ -57,17 +57,6 @@ describe('pie', () => {
       "bat" : 40
       `);
 
-      const sections = db.getSections();
-      expect(sections['ash']).toBe(60);
-      expect(sections['bat']).toBe(40);
-    });
-
-    it('should handle simple pie with a directive', () => {
-      parser.parse(`%%{init: {'logLevel':0}}%%
-      pie
-      "ash" : 60
-      "bat" : 40
-      `);
       const sections = db.getSections();
       expect(sections['ash']).toBe(60);
       expect(sections['bat']).toBe(40);

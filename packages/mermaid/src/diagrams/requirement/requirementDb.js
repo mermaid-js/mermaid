@@ -1,6 +1,5 @@
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
-import mermaidAPI from '../../mermaidAPI.js';
 
 import {
   setAccTitle,
@@ -46,10 +45,6 @@ const Relationships = {
   VERIFIES: 'verifies',
   REFINES: 'refines',
   TRACES: 'traces',
-};
-
-export const parseDirective = function (statement, context, type) {
-  mermaidAPI.parseDirective(this, statement, context, type);
 };
 
 const addRequirement = (name, type) => {
@@ -149,8 +144,7 @@ export default {
   VerifyType,
   Relationships,
 
-  parseDirective,
-  getConfig: () => configApi.getConfig().req,
+  getConfig: () => getConfig().req,
 
   addRequirement,
   getRequirements,

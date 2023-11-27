@@ -86,6 +86,8 @@ const urlRedirectMap: Record<string, string> = {
   // Old URL: New URL
   '/misc/faq.html': 'configure/faq.html',
   '/syntax/c4c.html': 'syntax/c4.html',
+  '/ecosystem/integrations.html': 'ecosystem/integrations-community.html',
+  '/ecosystem/showcases.html': 'ecosystem/integrations-create',
   '/config/n00b-advanced.html': 'config/advanced',
   '/intro/n00b-gettingStarted.html': 'intro/getting-started',
   '/intro/n00b-syntaxReference.html': 'intro/syntax-reference',

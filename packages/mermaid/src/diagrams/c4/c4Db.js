@@ -1,5 +1,4 @@
-import mermaidAPI from '../../mermaidAPI.js';
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { sanitizeText } from '../common/common.js';
 import {
   setAccTitle,
@@ -34,12 +33,8 @@ export const getC4Type = function () {
 };
 
 export const setC4Type = function (c4TypeParam) {
-  let sanitizedText = sanitizeText(c4TypeParam, configApi.getConfig());
+  let sanitizedText = sanitizeText(c4TypeParam, getConfig());
   c4Type = sanitizedText;
-};
-
-export const parseDirective = function (statement, context, type) {
-  mermaidAPI.parseDirective(this, statement, context, type);
 };
 
 //type, from, to, label, ?techn, ?descr, ?sprite, ?tags, $link
@@ -788,7 +783,7 @@ export const PLACEMENT = {
 };
 
 export const setTitle = function (txt) {
-  let sanitizedText = sanitizeText(txt, configApi.getConfig());
+  let sanitizedText = sanitizeText(txt, getConfig());
   title = sanitizedText;
 };
 
@@ -821,8 +816,7 @@ export default {
   getAccTitle,
   getAccDescription,
   setAccDescription,
-  parseDirective,
-  getConfig: () => configApi.getConfig().c4,
+  getConfig: () => getConfig().c4,
   clear,
   LINETYPE,
   ARROWTYPE,

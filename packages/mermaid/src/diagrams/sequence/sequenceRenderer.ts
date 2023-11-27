@@ -4,7 +4,7 @@ import svgDraw, { ACTOR_TYPE_WIDTH, drawText, fixLifeLineHeights } from './svgDr
 import { log } from '../../logger.js';
 import common from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import assignWithDepth from '../../assignWithDepth.js';
 import utils from '../../utils.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
@@ -91,7 +91,7 @@ export const bounds = {
       stopy: undefined,
     };
     this.verticalPos = 0;
-    setConf(configApi.getConfig());
+    setConf(getConfig());
   },
   updateVal: function (obj, key, val, fun) {
     if (obj[key] === undefined) {
@@ -747,7 +747,7 @@ function adjustCreatedDestroyedData(
  * @param diagObj - A standard diagram containing the db and the text and type etc of the diagram
  */
 export const draw = function (_text: string, id: string, _version: string, diagObj: Diagram) {
-  const { securityLevel, sequence } = configApi.getConfig();
+  const { securityLevel, sequence } = getConfig();
   conf = sequence;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
@@ -828,6 +828,11 @@ export const draw = function (_text: string, id: string, _version: string, diagO
 
     bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos);
   }
+
+  log.debug('createdActors', createdActors);
+  log.debug('destroyedActors', destroyedActors);
+
+  drawActors(diagram, actors, actorKeys, false);
 
   // Draw the messages/signals
   let sequenceIndex = 1;
@@ -1028,14 +1033,12 @@ export const draw = function (_text: string, id: string, _version: string, diagO
     }
   });
 
-  log.debug('createdActors', createdActors);
-  log.debug('destroyedActors', destroyedActors);
-
-  drawActors(diagram, actors, actorKeys, false);
   messagesToDraw.forEach((e) => drawMessage(diagram, e.messageModel, e.lineStartY, diagObj));
+
   if (conf.mirrorActors) {
     drawActors(diagram, actors, actorKeys, true);
   }
+
   backgrounds.forEach((e) => svgDraw.drawBackgroundRect(diagram, e));
   fixLifeLineHeights(diagram, actors, actorKeys, conf);
 
@@ -1421,23 +1424,30 @@ const buildMessageModel = function (msg, actors, diagObj) {
     return isArrowToRight ? -value : value;
   };
 
-  /**
-   * This is an edge case for the first activation.
-   * Proper fix would require significant changes.
-   * So, we set an activate flag in the message, and cross check that with isToActivation
-   * In cases where the message is to an activation that was properly detected, we don't want to move the arrow head
-   * The activation will not be detected on the first message, so we need to move the arrow head
-   */
-  if (msg.activate && !isArrowToActivation) {
-    stopx += adjustValue(conf.activationWidth / 2 - 1);
-  }
+  if (msg.from === msg.to) {
+    // This is a self reference, so we need to make sure the arrow is drawn correctly
+    // There are many checks in the downstream rendering that checks for equality.
+    // The lines on loops will be off by few pixels, but that's fine for now.
+    stopx = startx;
+  } else {
+    /**
+     * This is an edge case for the first activation.
+     * Proper fix would require significant changes.
+     * So, we set an activate flag in the message, and cross check that with isToActivation
+     * In cases where the message is to an activation that was properly detected, we don't want to move the arrow head
+     * The activation will not be detected on the first message, so we need to move the arrow head
+     */
+    if (msg.activate && !isArrowToActivation) {
+      stopx += adjustValue(conf.activationWidth / 2 - 1);
+    }
 
-  /**
-   * Shorten the length of arrow at the end and move the marker forward (using refX) to have a clean arrowhead
-   * This is not required for open arrows that don't have arrowheads
-   */
-  if (![diagObj.db.LINETYPE.SOLID_OPEN, diagObj.db.LINETYPE.DOTTED_OPEN].includes(msg.type)) {
-    stopx += adjustValue(3);
+    /**
+     * Shorten the length of arrow at the end and move the marker forward (using refX) to have a clean arrowhead
+     * This is not required for open arrows that don't have arrowheads
+     */
+    if (![diagObj.db.LINETYPE.SOLID_OPEN, diagObj.db.LINETYPE.DOTTED_OPEN].includes(msg.type)) {
+      stopx += adjustValue(3);
+    }
   }
 
   const allBounds = [fromLeft, fromRight, toLeft, toRight];

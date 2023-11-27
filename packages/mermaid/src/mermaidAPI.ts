@@ -23,24 +23,15 @@ import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
 import getStyles from './styles.js';
 import theme from './themes/index.js';
-import utils from './utils.js';
 import DOMPurify from 'dompurify';
 import type { MermaidConfig } from './config.type.js';
 import { evaluate } from './diagrams/common/common.js';
 import isEmpty from 'lodash-es/isEmpty.js';
 import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
-import { parseDirective } from './directiveUtils.js';
-import { extractFrontMatter } from './diagram-api/frontmatter.js';
+import type { DiagramStyleClassDef } from './diagram-api/types.js';
+import { preprocessDiagram } from './preprocess.js';
+import { decodeEntities } from './utils.js';
 
-// diagram names that support classDef statements
-const CLASSDEF_DIAGRAMS = [
-  'graph',
-  'flowchart',
-  'flowchart-v2',
-  'flowchart-elk',
-  'stateDiagram',
-  'stateDiagram-v2',
-];
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
   'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -64,15 +55,6 @@ const IFRAME_NOT_SUPPORTED_MSG = 'The "iframe" tag is not supported by your brow
 // DOMPurify settings for svgCode
 const DOMPURIFY_TAGS = ['foreignobject'];
 const DOMPURIFY_ATTR = ['dominant-baseline'];
-
-// This is what is returned from getClasses(...) methods.
-// It is slightly renamed to ..StyleClassDef instead of just ClassDef because "class" is a greatly ambiguous and overloaded word.
-// It makes it clear we're working with a style class definition, even though defining the type is currently difficult.
-interface DiagramStyleClassDef {
-  id: string;
-  styles?: string[];
-  textStyles?: string[];
-}
 
 export interface ParseOptions {
   suppressErrors?: boolean;
@@ -98,6 +80,13 @@ export interface RenderResult {
   bindFunctions?: (element: Element) => void;
 }
 
+function processAndSetConfigs(text: string) {
+  const processed = preprocessDiagram(text);
+  configApi.reset();
+  configApi.addDirective(processed.config ?? {});
+  return processed;
+}
+
 /**
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
@@ -108,6 +97,9 @@ export interface RenderResult {
 
 async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean> {
   addDiagrams();
+
+  text = processAndSetConfigs(text).code;
+
   try {
     await getDiagramFromText(text);
   } catch (error) {
@@ -118,43 +110,6 @@ async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean
   }
   return true;
 }
-
-/**
- * @param  text - text to be encoded
- * @returns
- */
-export const encodeEntities = function (text: string): string {
-  let txt = text;
-
-  txt = txt.replace(/style.*:\S*#.*;/g, function (s): string {
-    return s.substring(0, s.length - 1);
-  });
-  txt = txt.replace(/classDef.*:\S*#.*;/g, function (s): string {
-    return s.substring(0, s.length - 1);
-  });
-
-  txt = txt.replace(/#\w+;/g, function (s) {
-    const innerTxt = s.substring(1, s.length - 1);
-
-    const isInt = /^\+?\d+$/.test(innerTxt);
-    if (isInt) {
-      return 'ﬂ°°' + innerTxt + '¶ß';
-    } else {
-      return 'ﬂ°' + innerTxt + '¶ß';
-    }
-  });
-
-  return txt;
-};
-
-/**
- *
- * @param  text - text to be decoded
- * @returns
- */
-export const decodeEntities = function (text: string): string {
-  return text.replace(/ﬂ°°/g, '&#').replace(/ﬂ°/g, '&').replace(/¶ß/g, ';');
-};
 
 // append !important; to each cssClass followed by a final !important, all enclosed in { }
 //
@@ -176,15 +131,13 @@ export const cssImportantStyles = (
 
 /**
  * Create the user styles
- *
+ * @internal
  * @param  config - configuration that has style and theme settings to use
- * @param graphType - used for checking if classDefs should be applied
  * @param  classDefs - the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...)
  * @returns  the string with all the user styles
  */
 export const createCssStyles = (
   config: MermaidConfig,
-  graphType: string,
   classDefs: Record<string, DiagramStyleClassDef> | null | undefined = {}
 ): string => {
   let cssStyles = '';
@@ -204,7 +157,7 @@ export const createCssStyles = (
   }
 
   // classDefs defined in the diagram text
-  if (!isEmpty(classDefs) && CLASSDEF_DIAGRAMS.includes(graphType)) {
+  if (!isEmpty(classDefs)) {
     const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
 
     const cssHtmlElements = ['> *', 'span']; // TODO make a constant
@@ -233,10 +186,10 @@ export const createCssStyles = (
 export const createUserStyles = (
   config: MermaidConfig,
   graphType: string,
-  classDefs: Record<string, DiagramStyleClassDef>,
+  classDefs: Record<string, DiagramStyleClassDef> | undefined,
   svgId: string
 ): string => {
-  const userCSSstyles = createCssStyles(config, graphType, classDefs);
+  const userCSSstyles = createCssStyles(config, classDefs);
   const allStyles = getStyles(graphType, userCSSstyles, config.themeVariables);
 
   // Now turn all of the styles into a (compiled) string that starts with the id
@@ -384,18 +337,8 @@ const render = async function (
 ): Promise<RenderResult> {
   addDiagrams();
 
-  configApi.reset();
-
-  // We need to add the directives before creating the diagram.
-  // So extractFrontMatter is called twice. Once here and once in the diagram parser.
-  // This can be fixed in a future refactor.
-  extractFrontMatter(text, {}, configApi.addDirective);
-
-  // Add Directives.
-  const graphInit = utils.detectInit(text);
-  if (graphInit) {
-    configApi.addDirective(graphInit);
-  }
+  const processed = processAndSetConfigs(text);
+  text = processed.code;
 
   const config = configApi.getConfig();
   log.debug(config);
@@ -404,15 +347,6 @@ const render = async function (
   if (text.length > (config?.maxTextSize ?? MAX_TEXTLENGTH)) {
     text = MAX_TEXTLENGTH_EXCEEDED_MSG;
   }
-
-  // clean up text CRLFs
-  text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
-
-  // clean up html tags so that all attributes use single quotes, parser throws error on double quotes
-  text = text.replace(
-    /<(\w+)([^>]*)>/g,
-    (match, tag, attributes) => '<' + tag + attributes.replace(/="([^"]*)"/g, "='$1'") + '>'
-  );
 
   const idSelector = '#' + id;
   const iFrameID = 'i' + id;
@@ -466,8 +400,6 @@ const render = async function (
     appendDivSvgG(root, id, enclosingDivID);
   }
 
-  text = encodeEntities(text);
-
   // -------------------------------------------------------------------------------
   // Create the diagram
 
@@ -476,7 +408,7 @@ const render = async function (
   let parseEncounteredException;
 
   try {
-    diag = await getDiagramFromText(text);
+    diag = await getDiagramFromText(text, { title: processed.title });
   } catch (error) {
     diag = new Diagram('error');
     parseEncounteredException = error;
@@ -492,9 +424,7 @@ const render = async function (
   // Insert an element into svg. This is where we put the styles
   const svg = element.firstChild;
   const firstChild = svg.firstChild;
-  const diagramClassDefs = CLASSDEF_DIAGRAMS.includes(diagramType)
-    ? diag.renderer.getClasses(text, diag)
-    : {};
+  const diagramClassDefs = diag.renderer.getClasses?.(text, diag);
 
   const rules = createUserStyles(config, diagramType, diagramClassDefs, idSelector);
 
@@ -673,7 +603,6 @@ function addA11yInfo(
 export const mermaidAPI = Object.freeze({
   render,
   parse,
-  parseDirective,
   getDiagramFromText,
   initialize,
   getConfig: configApi.getConfig,

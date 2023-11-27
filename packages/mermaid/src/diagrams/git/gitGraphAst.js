@@ -1,8 +1,6 @@
 import { log } from '../../logger.js';
 import { random } from '../../utils.js';
-import mermaidAPI from '../../mermaidAPI.js';
-import * as configApi from '../../config.js';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
 import {
   setAccTitle,
@@ -32,10 +30,6 @@ let seq = 0;
 function getId() {
   return random({ length: 7 });
 }
-
-export const parseDirective = function (statement, context, type) {
-  mermaidAPI.parseDirective(this, statement, context, type);
-};
 
 // /**
 //  * @param currentCommit
@@ -111,9 +105,9 @@ export const getOptions = function () {
 
 export const commit = function (msg, id, type, tag) {
   log.debug('Entering commit:', msg, id, type, tag);
-  id = common.sanitizeText(id, configApi.getConfig());
-  msg = common.sanitizeText(msg, configApi.getConfig());
-  tag = common.sanitizeText(tag, configApi.getConfig());
+  id = common.sanitizeText(id, getConfig());
+  msg = common.sanitizeText(msg, getConfig());
+  tag = common.sanitizeText(tag, getConfig());
   const commit = {
     id: id ? id : seq + '-' + getId(),
     message: msg,
@@ -130,7 +124,7 @@ export const commit = function (msg, id, type, tag) {
 };
 
 export const branch = function (name, order) {
-  name = common.sanitizeText(name, configApi.getConfig());
+  name = common.sanitizeText(name, getConfig());
   if (branches[name] === undefined) {
     branches[name] = head != null ? head.id : null;
     branchesConfig[name] = { name, order: order ? parseInt(order, 10) : null };
@@ -154,8 +148,8 @@ export const branch = function (name, order) {
 };
 
 export const merge = function (otherBranch, custom_id, override_type, custom_tag) {
-  otherBranch = common.sanitizeText(otherBranch, configApi.getConfig());
-  custom_id = common.sanitizeText(custom_id, configApi.getConfig());
+  otherBranch = common.sanitizeText(otherBranch, getConfig());
+  custom_id = common.sanitizeText(custom_id, getConfig());
 
   const currentCommit = commits[branches[curBranch]];
   const otherCommit = commits[branches[otherBranch]];
@@ -263,9 +257,9 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
 
 export const cherryPick = function (sourceId, targetId, tag) {
   log.debug('Entering cherryPick:', sourceId, targetId, tag);
-  sourceId = common.sanitizeText(sourceId, configApi.getConfig());
-  targetId = common.sanitizeText(targetId, configApi.getConfig());
-  tag = common.sanitizeText(tag, configApi.getConfig());
+  sourceId = common.sanitizeText(sourceId, getConfig());
+  targetId = common.sanitizeText(targetId, getConfig());
+  tag = common.sanitizeText(tag, getConfig());
 
   if (!sourceId || commits[sourceId] === undefined) {
     let error = new Error(
@@ -343,7 +337,7 @@ export const cherryPick = function (sourceId, targetId, tag) {
   }
 };
 export const checkout = function (branch) {
-  branch = common.sanitizeText(branch, configApi.getConfig());
+  branch = common.sanitizeText(branch, getConfig());
   if (branches[branch] === undefined) {
     let error = new Error(
       'Trying to checkout branch which is not yet created. (Help try using "branch ' + branch + '")'
@@ -507,8 +501,7 @@ export const commitType = {
 };
 
 export default {
-  parseDirective,
-  getConfig: () => configApi.getConfig().gitGraph,
+  getConfig: () => getConfig().gitGraph,
   setDirection,
   setOptions,
   getOptions,

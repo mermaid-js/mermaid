@@ -1,6 +1,6 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select, curveLinear, selectAll } from 'd3';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import utils from '../../utils.js';
 import { render } from '../../dagre-wrapper/index.js';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
@@ -338,7 +338,7 @@ export const addEdges = function (edges, g, diagObj) {
  *
  * @param text
  * @param diagObj
- * @returns {object} ClassDef styles
+ * @returns {Record<string, import('../../diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles
  */
 export const getClasses = function (text, diagObj) {
   return diagObj.db.getClasses();
