@@ -6,10 +6,15 @@
 
 # Announcements
 
-Check out our latest blog posts below. See more blog posts [here](blog.md).
+## [Mermaid Chart](https://www.mermaidchart.com/) is running a Holiday promotion 🎉
 
-## [5 Reasons You Should Be Using Mermaid Chart As Your Diagram Generator](https://www.mermaidchart.com/blog/posts/5-reasons-you-should-be-using-mermaid-chart-as-your-diagram-generator/)
+### Use <span class="text-[#FE3470]">HOLIDAYS2023</span> to get 25% off a Pro subscription
 
-14 November 2023 · 5 mins
+With a Pro subscription, you will get access to:
 
-Mermaid Chart, a user-friendly, code-based diagram generator with AI integrations, templates, collaborative tools, and plugins for developers, streamlines the process of creating and sharing diagrams, enhancing both creativity and collaboration.
+- AI functionality
+- Team collaboration and multi-user editing
+- Unlimited diagrams
+- and more!
+
+View details on how to redeem the promo code on the [Mermaid Chart website](https://www.mermaidchart.com/holiday-promo).
