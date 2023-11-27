@@ -83,4 +83,14 @@ Expecting 'TXT', got 'NEWLINE'"
     expect(messages[0].message).toBe('I ﬂ°°9829¶ß you!');
     expect(messages[1].message).toBe('I ﬂ°°9829¶ß you ﬂ°infin¶ß times more!');
   });
+
+  test('should clean up comments when present in diagram defination', async () => {
+    const diagram = await getDiagramFromText(
+      `flowchart LR
+    %% this is a comment A -- text --> B{node}
+    A -- text --> B -- text2 --> C`
+    );
+    expect(diagram).toBeInstanceOf(Diagram);
+    expect(diagram.type).toBe('flowchart-v2');
+  });
 });
