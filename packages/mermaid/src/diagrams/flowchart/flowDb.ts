@@ -12,59 +12,9 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
+import type { FlowVertex, FlowClass, FlowSubGraph, FlowText, FlowEdge, FlowLink } from './types.js';
 
 const MAX_EDGE_COUNT = 280;
-
-interface FlowVertex {
-  id: string;
-  labelType: 'text';
-  dir?: string;
-  props?: any;
-  type?: string;
-  text?: string;
-  link?: string;
-  linkTarget?: string;
-  haveCallback?: boolean;
-  domId: string;
-  styles: any[];
-  classes: any[];
-}
-
-interface FlowText {
-  text: string;
-  type: 'text';
-}
-
-interface FlowEdge {
-  start: string;
-  end: string;
-  type?: string;
-  stroke?: string;
-  length?: number;
-  text: string;
-  labelType: 'text';
-}
-
-interface FlowClass {
-  id: string;
-  styles: string[];
-  textStyles: string[];
-}
-
-interface FlowSubGraph {
-  id: string;
-  nodes: string[];
-  title: string;
-  classes: string[];
-  dir?: string;
-  labelType: string;
-}
-
-interface FlowLink {
-  type: string;
-  stroke: string;
-  length?: number;
-}
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
