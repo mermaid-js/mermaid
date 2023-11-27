@@ -32,7 +32,7 @@ let direction: string;
 let version: string; // As in graph
 
 // Functions to be run after graph rendering
-let funs: ((element: HTMLElement) => void)[] = [];
+let funs: ((element: Element) => void)[] = [];
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, config);
 
@@ -362,7 +362,7 @@ export const setClickEvent = function (ids: string, functionName: string, functi
   setClass(ids, 'clickable');
 };
 
-export const bindFunctions = function (element: HTMLElement) {
+export const bindFunctions = function (element: Element) {
   funs.forEach(function (fun) {
     fun(element);
   });
@@ -394,7 +394,7 @@ export const getClasses = function () {
   return classes;
 };
 
-const setupToolTips = function (element: HTMLElement) {
+const setupToolTips = function (element: Element) {
   let tooltipElem = select('.mermaidTooltip');
   // @ts-ignore TODO: fix this
   if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
