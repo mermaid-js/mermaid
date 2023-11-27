@@ -507,7 +507,7 @@ linkStyleStatement
     : LINKSTYLE SPACE DEFAULT SPACE stylesOpt
           {$$ = $LINKSTYLE;yy.updateLink([$DEFAULT],$stylesOpt);}
     | LINKSTYLE SPACE MINUS SPACE stylesOpt
-          {$$ = $LINKSTYLE;yy.updateLink([yy.getEdges().length-1],$stylesOpt);}
+          {$$ = $LINKSTYLE;yy.updateLink([yy.lastEdgeIndex()],$stylesOpt);}
     | LINKSTYLE SPACE numList SPACE stylesOpt
           {$$ = $LINKSTYLE;yy.updateLink($numList,$stylesOpt);}
     | LINKSTYLE SPACE DEFAULT SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
@@ -515,13 +515,13 @@ linkStyleStatement
     | LINKSTYLE SPACE numList SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
           {$$ = $LINKSTYLE;yy.updateLinkInterpolate($numList,$alphaNum);yy.updateLink($numList,$stylesOpt);}
     | LINKSTYLE SPACE MINUS SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
-          {$$ = $LINKSTYLE;yy.updateLinkInterpolate([yy.getEdges().length-1],$alphaNum);yy.updateLink([yy.getEdges().length-1],$stylesOpt);}
+          {$$ = $LINKSTYLE;yy.updateLinkInterpolate([yy.lastEdgeIndex()],$alphaNum);yy.updateLink([yy.lastEdgeIndex()],$stylesOpt);}
     | LINKSTYLE SPACE DEFAULT SPACE INTERPOLATE SPACE alphaNum
           {$$ = $LINKSTYLE;yy.updateLinkInterpolate([$DEFAULT],$alphaNum);}
     | LINKSTYLE SPACE numList SPACE INTERPOLATE SPACE alphaNum
           {$$ = $LINKSTYLE;yy.updateLinkInterpolate($numList,$alphaNum);}
     | LINKSTYLE SPACE MINUS SPACE INTERPOLATE SPACE alphaNum
-          {$$ = $LINKSTYLE;yy.updateLinkInterpolate([yy.getEdges().length-1],$alphaNum);}
+          {$$ = $LINKSTYLE;yy.updateLinkInterpolate([yy.lastEdgeIndex()],$alphaNum);}
     ;
 
 numList: NUM
