@@ -496,7 +496,7 @@ export const addSubGraph = function (
 
   let nodeList: string[] = [];
 
-  const { nodeList: nl, dir } = uniq([...nodeList, ...list]);
+  const { nodeList: nl, dir } = uniq(list.flat());
   nodeList = nl;
   if (version === 'gen-1') {
     for (let i = 0; i < nodeList.length; i++) {
