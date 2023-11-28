@@ -1432,6 +1432,11 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    */
   htmlLabels?: boolean;
   /**
+   * Defines the maximum number of edges that can be drawn in a graph.
+   *
+   */
+  maxEdges?: number;
+  /**
    * Defines the spacing between nodes on the same level
    *
    * Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs,
