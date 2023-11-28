@@ -8,7 +8,7 @@ import type { DrawDefinition, Group, SVG } from '../../diagram-api/types.js';
 import type { D3Sections, PieDB, Sections } from './pieTypes.js';
 import type { MermaidConfig, PieDiagramConfig } from '../../config.type.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import { computeWidthOfText } from '../../rendering-util/createText.js';
+import { computeDimensionOfText } from '../../rendering-util/createText.js';
 
 const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Sections>[] => {
   // Compute the position of each group on the pie:
@@ -48,6 +48,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   const width: number =
     document.getElementById(id)?.parentElement?.offsetWidth ?? pieConfig.useWidth;
   const svg: SVG = selectSvgElement(id);
+  const group: Group = svg.append('g');
   const sections: Sections = db.getSections();
   const legendShowData = db.getShowData();
   const legendTexts = Object.keys(sections).map((key) => {
@@ -58,7 +59,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   });
   const longestTextWidth = Math.max(
     ...legendTexts.map((text) => {
-      return computeWidthOfText(svg, 1, text);
+      return computeDimensionOfText(group, 1, text)?.width ?? 0;
     })
   );
   const newWidth = width + MARGIN + LEGEND_RECT_SIZE + LEGEND_SPACING + longestTextWidth;
@@ -67,7 +68,6 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   svg.attr('viewBox', `0 0 ${newWidth} ${height}`);
   configureSvgSize(svg, height, newWidth, pieConfig.useMaxWidth);
 
-  const group: Group = svg.append('g');
   group.attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
   const { themeVariables } = globalConfig;
