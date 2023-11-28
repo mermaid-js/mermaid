@@ -941,5 +941,26 @@ end
         }
       );
     });
+    it('Should render subgraphs with title margins and edge labels', () => {
+      imgSnapshotTest(
+        `flowchart LR
+
+          subgraph TOP
+              direction TB
+              subgraph B1
+                  direction RL
+                  i1 --lb1-->f1
+              end
+              subgraph B2
+                  direction BT
+                  i2 --lb2-->f2
+              end
+          end
+          A --lb3--> TOP --lb4--> B
+          B1 --lb5--> B2
+        `,
+        { flowchart: { subGraphTitleMargin: { top: 10, bottom: 5 } } }
+      );
+    });
   });
 });
