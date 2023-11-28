@@ -109,6 +109,8 @@ Communication tools and platforms
 
 ### Wikis
 
+- [PmWiki](https://www.pmwiki.org)
+  - [MermaidJs Cookbook Recipe](https://www.pmwiki.org/wiki/Cookbook/MermaidJs)
 - [MediaWiki](https://www.mediawiki.org)
   - [Mermaid Extension](https://www.mediawiki.org/wiki/Extension:Mermaid)
   - [Flex Diagrams Extension](https://www.mediawiki.org/wiki/Extension:Flex_Diagrams)
