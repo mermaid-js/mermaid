@@ -750,7 +750,7 @@ describe('mermaidAPI', () => {
     it('should clean up comments when present in diagram definition', async () => {
       const diagram = await mermaidAPI.getDiagramFromText(
         `flowchart LR
-      %% this is a comment A -- text --> B{node}
+      %% This is a comment A -- text --> B{node}
       A -- text --> B -- text2 --> C`
       );
       expect(diagram).toBeInstanceOf(Diagram);
