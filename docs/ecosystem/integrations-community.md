@@ -114,6 +114,8 @@ Communication tools and platforms
 - [MediaWiki](https://www.mediawiki.org)
   - [Mermaid Extension](https://www.mediawiki.org/wiki/Extension:Mermaid)
   - [Flex Diagrams Extension](https://www.mediawiki.org/wiki/Extension:Flex_Diagrams)
+- [PmWiki](https://www.pmwiki.org)
+  - [MermaidJs Cookbook Recipe](https://www.pmwiki.org/wiki/Cookbook/MermaidJs)
 - [Semantic Media Wiki](https://semantic-mediawiki.org)
   - [Mermaid Plugin](https://github.com/SemanticMediaWiki/Mermaid)
 - [Foswiki](https://foswiki.org)
