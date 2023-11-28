@@ -69,11 +69,7 @@ function createTspan(textElement: any, lineIndex: number, lineHeight: number) {
     .attr('dy', lineHeight + 'em');
 }
 
-export function computeWidthOfText(
-  parentNode: any,
-  lineHeight: number,
-  line: MarkdownLine
-): number {
+function computeWidthOfText(parentNode: any, lineHeight: number, line: MarkdownLine): number {
   const testElement = parentNode.append('text');
   const testSpan = createTspan(testElement, 1, lineHeight);
   updateTextContentAndStyles(testSpan, line);
