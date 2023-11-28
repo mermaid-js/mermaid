@@ -1,5 +1,5 @@
-import { Diagram } from '../../Diagram.js';
-import * as configApi from '../../config.js';
+import type { Diagram } from '../../Diagram.js';
+import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 
 import {
   select as d3select,
@@ -7,6 +7,7 @@ import {
   schemeTableau10 as d3schemeTableau10,
 } from 'd3';
 
+import type { SankeyNode as d3SankeyNode } from 'd3-sankey';
 import {
   sankey as d3Sankey,
   sankeyLinkHorizontal as d3SankeyLinkHorizontal,
@@ -14,11 +15,10 @@ import {
   sankeyRight as d3SankeyRight,
   sankeyCenter as d3SankeyCenter,
   sankeyJustify as d3SankeyJustify,
-  SankeyNode as d3SankeyNode,
 } from 'd3-sankey';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { Uid } from '../../rendering-util/uid.js';
-import type { SankeyLinkColor, SankeyNodeAlignment } from '../../config.type.js';
+import type { SankeyNodeAlignment } from '../../config.type.js';
 
 // Map config options to alignment functions
 const alignmentsMap: Record<
@@ -41,8 +41,8 @@ const alignmentsMap: Record<
  */
 export const draw = function (text: string, id: string, _version: string, diagObj: Diagram): void {
   // Get Sankey config
-  const { securityLevel, sankey: conf } = configApi.getConfig();
-  const defaultSankeyConfig = configApi!.defaultConfig!.sankey!;
+  const { securityLevel, sankey: conf } = getConfig();
+  const defaultSankeyConfig = defaultConfig!.sankey!;
 
   // TODO:
   // This code repeats for every diagram
@@ -62,10 +62,13 @@ export const draw = function (text: string, id: string, _version: string, diagOb
 
   // Establish svg dimensions and get width and height
   //
-  const width = conf?.width || defaultSankeyConfig.width!;
-  const height = conf?.height || defaultSankeyConfig.width!;
-  const useMaxWidth = conf?.useMaxWidth || defaultSankeyConfig.useMaxWidth!;
-  const nodeAlignment = conf?.nodeAlignment || defaultSankeyConfig.nodeAlignment!;
+  const width = conf?.width ?? defaultSankeyConfig.width!;
+  const height = conf?.height ?? defaultSankeyConfig.width!;
+  const useMaxWidth = conf?.useMaxWidth ?? defaultSankeyConfig.useMaxWidth!;
+  const nodeAlignment = conf?.nodeAlignment ?? defaultSankeyConfig.nodeAlignment!;
+  const prefix = conf?.prefix ?? defaultSankeyConfig.prefix!;
+  const suffix = conf?.suffix ?? defaultSankeyConfig.suffix!;
+  const showValues = conf?.showValues ?? defaultSankeyConfig.showValues!;
 
   // FIX: using max width prevents height from being set, is it intended?
   // to add height directly one can use `svg.attr('height', height)`
@@ -94,7 +97,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   const sankey = d3Sankey()
     .nodeId((d: any) => d.id) // we use 'id' property to identify node
     .nodeWidth(nodeWidth)
-    .nodePadding(10)
+    .nodePadding(10 + (showValues ? 15 : 0))
     .nodeAlign(nodeAlign)
     .extent([
       [0, 0],
@@ -130,6 +133,13 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .attr('width', (d: any) => d.x1 - d.x0)
     .attr('fill', (d: any) => colorScheme(d.id));
 
+  const getText = ({ id, value }: { id: string; value: number }) => {
+    if (!showValues) {
+      return id;
+    }
+    return `${id}\n${prefix}${Math.round(value * 100) / 100}${suffix}`;
+  };
+
   // Create labels for nodes
   svg
     .append('g')
@@ -141,9 +151,9 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .join('text')
     .attr('x', (d: any) => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
     .attr('y', (d: any) => (d.y1 + d.y0) / 2)
-    .attr('dy', '0.35em')
+    .attr('dy', `${showValues ? '0' : '0.35'}em`)
     .attr('text-anchor', (d: any) => (d.x0 < width / 2 ? 'start' : 'end'))
-    .text((d: any) => d.id);
+    .text(getText);
 
   // Creates the paths that represent the links.
   const link = svg

@@ -4,9 +4,8 @@ import dayjsIsoWeek from 'dayjs/plugin/isoWeek.js';
 import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat.js';
 import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
 import { log } from '../../logger.js';
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import utils from '../../utils.js';
-import mermaidAPI from '../../mermaidAPI.js';
 
 import {
   setAccTitle,
@@ -16,7 +15,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 
 dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);
@@ -41,10 +40,6 @@ let weekday = 'sunday';
 
 // The serial order of the task in the script
 let lastOrder = 0;
-
-export const parseDirective = function (statement, context, type) {
-  mermaidAPI.parseDirective(this, statement, context, type);
-};
 
 export const clear = function () {
   sections = [];
@@ -608,7 +603,7 @@ const compileTasks = function () {
  */
 export const setLink = function (ids, _linkStr) {
   let linkStr = _linkStr;
-  if (configApi.getConfig().securityLevel !== 'loose') {
+  if (getConfig().securityLevel !== 'loose') {
     linkStr = sanitizeUrl(_linkStr);
   }
   ids.split(',').forEach(function (id) {
@@ -639,7 +634,7 @@ export const setClass = function (ids, className) {
 };
 
 const setClickFun = function (id, functionName, functionArgs) {
-  if (configApi.getConfig().securityLevel !== 'loose') {
+  if (getConfig().securityLevel !== 'loose') {
     return;
   }
   if (functionName === undefined) {
@@ -730,8 +725,7 @@ export const bindFunctions = function (element) {
 };
 
 export default {
-  parseDirective,
-  getConfig: () => configApi.getConfig().gantt,
+  getConfig: () => getConfig().gantt,
   clear,
   setDateFormat,
   getDateFormat,

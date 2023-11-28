@@ -1,7 +1,6 @@
 const getStyles = (options) =>
   `g.classGroup text {
-  fill: ${options.nodeBorder};
-  fill: ${options.classText};
+  fill: ${options.nodeBorder || options.classText};
   stroke: none;
   font-family: ${options.fontFamily};
   font-size: 10px;
@@ -109,25 +108,25 @@ g.classGroup line {
 }
 
 #extensionStart, .extension {
-  fill: ${options.mainBkg} !important;
+  fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
 #extensionEnd, .extension {
-  fill: ${options.mainBkg} !important;
+  fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
 #aggregationStart, .aggregation {
-  fill: ${options.mainBkg} !important;
+  fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
 #aggregationEnd, .aggregation {
-  fill: ${options.mainBkg} !important;
+  fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
@@ -146,6 +145,7 @@ g.classGroup line {
 
 .edgeTerminals {
   font-size: 11px;
+  line-height: initial;
 }
 
 .classTitleText {

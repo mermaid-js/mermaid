@@ -1,10 +1,10 @@
 // @ts-nocheck - don't check until handle it
 import { select } from 'd3';
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { Diagram } from '../../Diagram.js';
-import {
+import type { Diagram } from '../../Diagram.js';
+import type {
   QuadrantBuildType,
   QuadrantLineType,
   QuadrantPointType,
@@ -27,7 +27,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
     return `translate(${data.x}, ${data.y}) rotate(${data.rotation || 0})`;
   }
 
-  const conf = configApi.getConfig();
+  const conf = getConfig();
 
   log.debug('Rendering quadrant chart\n' + txt);
 

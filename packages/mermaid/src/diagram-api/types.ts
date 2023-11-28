@@ -1,6 +1,12 @@
-import { Diagram } from '../Diagram.js';
-import { MermaidConfig } from '../config.type.js';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { Diagram } from '../Diagram.js';
+import type { BaseDiagramConfig, MermaidConfig } from '../config.type.js';
 import type * as d3 from 'd3';
+
+export interface DiagramMetadata {
+  title?: string;
+  config?: MermaidConfig;
+}
 
 export interface InjectUtils {
   _log: any;
@@ -9,6 +15,7 @@ export interface InjectUtils {
   _sanitizeText: any;
   _setupGraphViewbox: any;
   _commonDb: any;
+  /** @deprecated as directives will be pre-processed since https://github.com/mermaid-js/mermaid/pull/4759 */
   _parseDirective: any;
 }
 
@@ -16,18 +23,43 @@ export interface InjectUtils {
  * Generic Diagram DB that may apply to any diagram type.
  */
 export interface DiagramDB {
+  // config
+  getConfig?: () => BaseDiagramConfig | undefined;
+
+  // db
   clear?: () => void;
   setDiagramTitle?: (title: string) => void;
-  setDisplayMode?: (title: string) => void;
+  getDiagramTitle?: () => string;
+  setAccTitle?: (title: string) => void;
   getAccTitle?: () => string;
+  setAccDescription?: (describetion: string) => void;
   getAccDescription?: () => string;
+
+  setDisplayMode?: (title: string) => void;
   bindFunctions?: (element: Element) => void;
+}
+
+// This is what is returned from getClasses(...) methods.
+// It is slightly renamed to ..StyleClassDef instead of just ClassDef because "class" is a greatly ambiguous and overloaded word.
+// It makes it clear we're working with a style class definition, even though defining the type is currently difficult.
+export interface DiagramStyleClassDef {
+  id: string;
+  styles?: string[];
+  textStyles?: string[];
+}
+
+export interface DiagramRenderer {
+  draw: DrawDefinition;
+  getClasses?: (
+    text: string,
+    diagram: Pick<DiagramDefinition, 'db'>
+  ) => Record<string, DiagramStyleClassDef>;
 }
 
 export interface DiagramDefinition {
   db: DiagramDB;
-  renderer: any;
-  parser: any;
+  renderer: DiagramRenderer;
+  parser: ParserDefinition;
   styles?: any;
   init?: (config: MermaidConfig) => void;
   injectUtils?: (
@@ -37,6 +69,7 @@ export interface DiagramDefinition {
     _sanitizeText: InjectUtils['_sanitizeText'],
     _setupGraphViewbox: InjectUtils['_setupGraphViewbox'],
     _commonDb: InjectUtils['_commonDb'],
+    /** @deprecated as directives will be pre-processed since https://github.com/mermaid-js/mermaid/pull/4759 */
     _parseDirective: InjectUtils['_parseDirective']
   ) => void;
 }
@@ -68,19 +101,17 @@ export type DrawDefinition = (
   id: string,
   version: string,
   diagramObject: Diagram
-) => void;
+) => void | Promise<void>;
 
-/**
- * Type for function parse directive from diagram code.
- *
- * @param statement -
- * @param context -
- * @param type -
- */
-export type ParseDirectiveDefinition = (statement: string, context: string, type: string) => void;
+export interface ParserDefinition {
+  parse: (text: string) => void;
+  parser: { yy: DiagramDB };
+}
 
-export type HTML = d3.Selection<HTMLIFrameElement, unknown, Element, unknown>;
+export type HTML = d3.Selection<HTMLIFrameElement, unknown, Element | null, unknown>;
 
-export type SVG = d3.Selection<SVGSVGElement, unknown, Element, unknown>;
+export type SVG = d3.Selection<SVGSVGElement, unknown, Element | null, unknown>;
+
+export type Group = d3.Selection<SVGGElement, unknown, Element | null, unknown>;
 
 export type DiagramStylesProvider = (options?: any) => string;

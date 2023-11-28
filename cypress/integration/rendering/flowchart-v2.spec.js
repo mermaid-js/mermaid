@@ -449,13 +449,38 @@ flowchart TD
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
-  it('65: text-color from classes', () => {
+  it('65-1: text-color from classes', () => {
     imgSnapshotTest(
       `
       flowchart LR
         classDef dark fill:#000,stroke:#000,stroke-width:4px,color:#fff
         Lorem --> Ipsum --> Dolor
         class Lorem,Dolor dark
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('65-2: bold text from classes', () => {
+    imgSnapshotTest(
+      `
+      flowchart
+        classDef cat fill:#f9d5e5, stroke:#233d4d,stroke-width:2px, font-weight:bold;
+        CS(A long bold text to be viewed):::cat
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('65-3: bigger font from classes', () => {
+    imgSnapshotTest(
+      `
+flowchart
+  Node1:::class1 --> Node2:::class2
+  Node1:::class1 --> Node3:::class2
+  Node3 --> Node4((I am a circle)):::larger
+
+  classDef class1 fill:lightblue
+  classDef class2 fill:pink
+  classDef larger font-size:30px,fill:yellow
       `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
@@ -671,7 +696,7 @@ title: Simple flowchart
 flowchart TD
 A --> B
 `,
-      { flowchart: { titleTopMargin: 0 } }
+      { flowchart: { titleTopMargin: 10 } }
     );
   });
   it('3192: It should be possieble to render flowcharts with invisible edges', () => {
@@ -682,7 +707,7 @@ title: Simple flowchart with invisible edges
 flowchart TD
 A ~~~ B
 `,
-      { flowchart: { titleTopMargin: 0 } }
+      { flowchart: { titleTopMargin: 10 } }
     );
   });
   it('4023: Should render html labels with images and-or text correctly', () => {
@@ -704,6 +729,18 @@ A ~~~ B
       {}
     );
   });
+
+  it('5064: Should render when subgraph child has links to outside node and subgraph', () => {
+    imgSnapshotTest(
+      `flowchart TB
+    Out --> In
+    subgraph Sub
+      In
+    end
+    Sub --> In`
+    );
+  });
+
   describe('Markdown strings flowchart (#4220)', () => {
     describe('html labels', () => {
       it('With styling and classes', () => {

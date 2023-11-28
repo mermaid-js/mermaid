@@ -1,5 +1,4 @@
-import mermaidAPI from '../../mermaidAPI.js';
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import { sanitizeText } from '../common/common.js';
 import {
@@ -10,7 +9,7 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 
 let prevActor = undefined;
 let actors = {};
@@ -24,10 +23,6 @@ let wrapEnabled;
 let currentBox = undefined;
 let lastCreated = undefined;
 let lastDestroyed = undefined;
-
-export const parseDirective = function (statement, context, type) {
-  mermaidAPI.parseDirective(this, statement, context, type);
-};
 
 export const addBox = function (data) {
   boxes.push({
@@ -124,7 +119,8 @@ export const addSignal = function (
   idFrom,
   idTo,
   message = { text: undefined, wrap: undefined },
-  messageType
+  messageType,
+  activate = false
 ) {
   if (messageType === LINETYPE.ACTIVE_END) {
     const cnt = activationCount(idFrom.actor);
@@ -147,6 +143,7 @@ export const addSignal = function (
     message: message.text,
     wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
     type: messageType,
+    activate,
   });
   return true;
 };
@@ -199,7 +196,7 @@ export const autoWrap = () => {
   if (wrapEnabled !== undefined) {
     return wrapEnabled;
   }
-  return configApi.getConfig().sequence.wrap;
+  return getConfig().sequence.wrap;
 };
 
 export const clear = function () {
@@ -254,7 +251,7 @@ export const parseBoxData = function (str) {
     color: color,
     text:
       title !== undefined
-        ? sanitizeText(title.replace(/^:?(?:no)?wrap:/, ''), configApi.getConfig())
+        ? sanitizeText(title.replace(/^:?(?:no)?wrap:/, ''), getConfig())
         : undefined,
     wrap:
       title !== undefined
@@ -340,7 +337,7 @@ export const addLinks = function (actorId, text) {
   const actor = getActor(actorId);
   // JSON.parse the text
   try {
-    let sanitizedText = sanitizeText(text.text, configApi.getConfig());
+    let sanitizedText = sanitizeText(text.text, getConfig());
     sanitizedText = sanitizedText.replace(/&amp;/g, '&');
     sanitizedText = sanitizedText.replace(/&equals;/g, '=');
     const links = JSON.parse(sanitizedText);
@@ -356,7 +353,7 @@ export const addALink = function (actorId, text) {
   const actor = getActor(actorId);
   try {
     const links = {};
-    let sanitizedText = sanitizeText(text.text, configApi.getConfig());
+    let sanitizedText = sanitizeText(text.text, getConfig());
     var sep = sanitizedText.indexOf('@');
     sanitizedText = sanitizedText.replace(/&amp;/g, '&');
     sanitizedText = sanitizedText.replace(/&equals;/g, '=');
@@ -390,7 +387,7 @@ export const addProperties = function (actorId, text) {
   const actor = getActor(actorId);
   // JSON.parse the text
   try {
-    let sanitizedText = sanitizeText(text.text, configApi.getConfig());
+    let sanitizedText = sanitizeText(text.text, getConfig());
     const properties = JSON.parse(sanitizedText);
     // add the deserialized text to the actor's property field.
     insertProperties(actor, properties);
@@ -450,6 +447,19 @@ export const getActorProperty = function (actor, key) {
   return undefined;
 };
 
+/**
+ * @typedef {object} AddMessageParams A message from one actor to another.
+ * @property {string} from - The id of the actor sending the message.
+ * @property {string} to - The id of the actor receiving the message.
+ * @property {string} msg - The message text.
+ * @property {number} signalType - The type of signal.
+ * @property {"addMessage"} type - Set to `"addMessage"` if this is an `AddMessageParams`.
+ * @property {boolean} [activate] - If `true`, this signal starts an activation.
+ */
+
+/**
+ * @param {object | object[] | AddMessageParams} param - Object of parameters.
+ */
 export const apply = function (param) {
   if (Array.isArray(param)) {
     param.forEach(function (item) {
@@ -530,7 +540,7 @@ export const apply = function (param) {
             lastDestroyed = undefined;
           }
         }
-        addSignal(param.from, param.to, param.msg, param.signalType);
+        addSignal(param.from, param.to, param.msg, param.signalType, param.activate);
         break;
       case 'boxStart':
         addBox(param.boxData);
@@ -619,8 +629,7 @@ export default {
   getBoxes,
   getDiagramTitle,
   setDiagramTitle,
-  parseDirective,
-  getConfig: () => configApi.getConfig().sequence,
+  getConfig: () => getConfig().sequence,
   clear,
   parseMessage,
   parseBoxData,

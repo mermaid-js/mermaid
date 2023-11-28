@@ -1,9 +1,9 @@
 const getStyles = (options) =>
   `
   .mermaid-main-font {
-    font-family: "trebuchet ms", verdana, arial, sans-serif;
-    font-family: var(--mermaid-font-family);
+    font-family: var(--mermaid-font-family, "trebuchet ms", verdana, arial, sans-serif);
   }
+
   .exclude-range {
     fill: ${options.excludeBkgColor};
   }
@@ -45,11 +45,7 @@ const getStyles = (options) =>
 
   .sectionTitle {
     text-anchor: start;
-    // font-size: ${options.ganttFontSize};
-    // text-height: 14px;
-    font-family: 'trebuchet ms', verdana, arial, sans-serif;
-    font-family: var(--mermaid-font-family);
-
+    font-family: var(--mermaid-font-family, "trebuchet ms", verdana, arial, sans-serif);
   }
 
 
@@ -59,10 +55,11 @@ const getStyles = (options) =>
     stroke: ${options.gridColor};
     opacity: 0.8;
     shape-rendering: crispEdges;
-    text {
-      font-family: ${options.fontFamily};
-      fill: ${options.textColor};
-    }
+  }
+
+  .grid .tick text {
+    font-family: ${options.fontFamily};
+    fill: ${options.textColor};
   }
 
   .grid path {
@@ -89,33 +86,27 @@ const getStyles = (options) =>
 
   .taskText {
     text-anchor: middle;
-    font-family: 'trebuchet ms', verdana, arial, sans-serif;
-    font-family: var(--mermaid-font-family);
+    font-family: var(--mermaid-font-family, "trebuchet ms", verdana, arial, sans-serif);
   }
-
-  // .taskText:not([font-size]) {
-  //   font-size: ${options.ganttFontSize};
-  // }
 
   .taskTextOutsideRight {
     fill: ${options.taskTextDarkColor};
     text-anchor: start;
-    // font-size: ${options.ganttFontSize};
-    font-family: 'trebuchet ms', verdana, arial, sans-serif;
-    font-family: var(--mermaid-font-family);
-
+    font-family: var(--mermaid-font-family, "trebuchet ms", verdana, arial, sans-serif);
   }
 
   .taskTextOutsideLeft {
     fill: ${options.taskTextDarkColor};
     text-anchor: end;
-    // font-size: ${options.ganttFontSize};
   }
 
+
   /* Special case clickable */
+
   .task.clickable {
     cursor: pointer;
   }
+
   .taskText.clickable {
     cursor: pointer;
     fill: ${options.taskTextClickableColor} !important;
@@ -133,6 +124,7 @@ const getStyles = (options) =>
     fill: ${options.taskTextClickableColor} !important;
     font-weight: bold;
   }
+
 
   /* Specific task settings for the sections*/
 
@@ -255,9 +247,8 @@ const getStyles = (options) =>
   .titleText {
     text-anchor: middle;
     font-size: 18px;
-    fill: ${options.textColor}    ;
-    font-family: 'trebuchet ms', verdana, arial, sans-serif;
-    font-family: var(--mermaid-font-family);
+    fill: ${options.titleColor || options.textColor};
+    font-family: var(--mermaid-font-family, "trebuchet ms", verdana, arial, sans-serif);
   }
 `;
 

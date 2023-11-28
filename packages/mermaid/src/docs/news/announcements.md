@@ -1,7 +1,9 @@
 # Announcements
 
-## [Mermaid Chart’s ChatGPT Plugin Combines Generative AI and Smart Diagramming For Users](https://www.mermaidchart.com/blog/posts/mermaid-chart-chatgpt-plugin-combines-generative-ai-and-smart-diagramming)
+Check out our latest blog posts below. See more blog posts [here](blog.md).
 
-29 June 2023 · 4 mins
+## [5 Reasons You Should Be Using Mermaid Chart As Your Diagram Generator](https://www.mermaidchart.com/blog/posts/5-reasons-you-should-be-using-mermaid-chart-as-your-diagram-generator/)
 
-Mermaid Chart’s new ChatGPT plugin integrates AI-powered text prompts with Mermaid’s intuitive diagramming editor, enabling users to generate, edit, and share complex diagrams with ease and efficiency.
+14 November 2023 · 5 mins
+
+Mermaid Chart, a user-friendly, code-based diagram generator with AI integrations, templates, collaborative tools, and plugins for developers, streamlines the process of creating and sharing diagrams, enhancing both creativity and collaboration.
