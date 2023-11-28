@@ -3,14 +3,16 @@
     class="w-full top-bar bg-gradient-to-r from-[#bd34fe] to-[#ff3670] flex items-center text-center justify-center p-1 text-white"
   >
     <p class="flex-grow text-center tracking-wide text-text">
-      Happy Holidays! Get AI, team collaboration, storage, and more with
-      <strong>Mermaid Chart Pro</strong>. Use promo code: <strong>HOLIDAYS2023 </strong>to get
-      <strong>25%</strong> off.<a
+      <a
         href="https://www.mermaidchart.com/holiday-promo"
         target="_blank"
-        class="unstyled ml-2 text-white underline"
-        >View more details here.</a
+        class="unstyled text-white"
       >
+        Get AI, team collaboration, storage, and more with
+        <span class="font-bold underline"
+          >Mermaid Chart Pro. Start free trial today & get 25% off.</span
+        >
+      </a>
     </p>
   </div>
 </template>
