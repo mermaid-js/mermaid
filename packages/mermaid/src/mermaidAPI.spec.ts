@@ -67,6 +67,7 @@ vi.mock('stylis', () => {
 });
 import { compile, serialize } from 'stylis';
 import { decodeEntities, encodeEntities } from './utils.js';
+import { Diagram } from './Diagram.js';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
@@ -742,6 +743,18 @@ describe('mermaidAPI', () => {
           });
         });
       });
+    });
+  });
+
+  describe('getDiagramFromText', () => {
+    it('should clean up comments when present in diagram definition', async () => {
+      const diagram = await mermaidAPI.getDiagramFromText(
+        `flowchart LR
+      %% this is a comment A -- text --> B{node}
+      A -- text --> B -- text2 --> C`
+      );
+      expect(diagram).toBeInstanceOf(Diagram);
+      expect(diagram.type).toBe('flowchart-v2');
     });
   });
 });

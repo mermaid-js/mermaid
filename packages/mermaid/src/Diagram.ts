@@ -8,8 +8,6 @@ import { encodeEntities } from './utils.js';
 import type { DetailedError } from './utils.js';
 import type { DiagramDefinition, DiagramMetadata } from './diagram-api/types.js';
 
-import { cleanupComments } from './diagram-api/comments.js';
-
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
 
 /**
@@ -25,7 +23,7 @@ export class Diagram {
 
   private detectError?: UnknownDiagramError;
   constructor(public text: string, public metadata: Pick<DiagramMetadata, 'title'> = {}) {
-    this.text = encodeEntities(cleanupComments(text));
+    this.text = encodeEntities(text);
     this.text += '\n';
     const cnf = configApi.getConfig();
     try {
