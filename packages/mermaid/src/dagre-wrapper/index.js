@@ -131,10 +131,11 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, sit
       if (graph.children(v).length > 0) {
         // A cluster in the non-recursive way
         // positionCluster(node);
-        node.height += subGraphTitleTotalMargin * 2;
+        node.height += subGraphTitleTotalMargin;
         insertCluster(clusters, node);
         clusterDb[node.id].node = node;
       } else {
+        node.y += subGraphTitleTotalMargin / 2;
         positionNode(node);
       }
     }
@@ -145,6 +146,7 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, sit
     const edge = graph.edge(e);
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
+    edge.points.forEach((point) => (point.y += subGraphTitleTotalMargin / 2));
     const paths = insertEdge(edgePaths, e, edge, clusterDb, diagramtype, graph, id);
     positionEdgeLabel(edge, paths);
   });
