@@ -106,7 +106,7 @@ export class ClassMember {
         this.visibility = firstChar as Visibility;
       }
 
-      if (lastChar.match(/[*?]/)) {
+      if (lastChar.match(/[$*]/)) {
         potentialClassifier = lastChar;
       }
 
