@@ -15,4 +15,4 @@ With a Pro subscription, you will get access to:
 - Unlimited diagrams
 - and more!
 
-View details on how to redeem the promo code on the [Mermaid Chart website](https://www.mermaidchart.com/holiday-promo).
+View details on how to redeem the promo code on the [Mermaid Chart website](https://www.mermaidchart.com/app/user/billing/checkout?coupon=HOLIDAYS2023).

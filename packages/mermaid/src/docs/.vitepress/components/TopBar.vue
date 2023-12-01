@@ -4,7 +4,7 @@
   >
     <p class="flex-grow text-center tracking-wide text-text">
       <a
-        href="https://www.mermaidchart.com/holiday-promo"
+        href="https://www.mermaidchart.com/app/user/billing/checkout?coupon=HOLIDAYS2023"
         target="_blank"
         class="unstyled text-white"
       >
