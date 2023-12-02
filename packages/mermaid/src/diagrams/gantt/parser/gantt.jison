@@ -27,7 +27,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 
 \%\%(?!\{)*[^\n]*                                               /* skip comments */
 [^\}]\%\%*[^\n]*                                                /* skip comments */
-\%\%*[^\n]*[\n]*           /* do nothing */
+\%\%*[^\n]*[\n]*                                                /* do nothing */
 
 [\n]+                   return 'NL';
 \s+                     /* skip whitespace */
