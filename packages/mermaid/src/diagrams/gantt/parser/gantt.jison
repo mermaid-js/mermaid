@@ -5,7 +5,7 @@
  */
 %lex
 
-%options case-insensitivegit
+%options case-insensitive
 
 %x click
 %x href
