@@ -17,7 +17,7 @@ import { compile, serialize, stringify } from 'stylis';
 import { version } from '../package.json';
 import * as configApi from './config.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
-import { Diagram, getDiagramFromText } from './Diagram.js';
+import { Diagram, getDiagramFromText as getDiagramFromTextInternal } from './Diagram.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
 import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
@@ -28,7 +28,7 @@ import type { MermaidConfig } from './config.type.js';
 import { evaluate } from './diagrams/common/common.js';
 import isEmpty from 'lodash-es/isEmpty.js';
 import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
-import type { DiagramStyleClassDef } from './diagram-api/types.js';
+import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { preprocessDiagram } from './preprocess.js';
 import { decodeEntities } from './utils.js';
 
@@ -518,6 +518,11 @@ function initialize(options: MermaidConfig = {}) {
   setLogLevel(config.logLevel);
   addDiagrams();
 }
+
+const getDiagramFromText = (text: string, metadata: Pick<DiagramMetadata, 'title'> = {}) => {
+  const { code } = preprocessDiagram(text);
+  return getDiagramFromTextInternal(code, metadata);
+};
 
 /**
  * Add accessibility (a11y) information to the diagram.
