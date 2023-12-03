@@ -122,9 +122,6 @@
     "vite-plugin-istanbul": "^4.1.0",
     "vitest": "^0.34.0"
   },
-  "volta": {
-    "node": "18.18.2"
-  },
   "nyc": {
     "report-dir": "coverage/cypress"
   }

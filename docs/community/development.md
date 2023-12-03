@@ -34,10 +34,9 @@ Then you **clone** a copy to your local development machine (e.g. where you code
 
 These are the tools we use for working with the code and documentation:
 
-- [volta](https://volta.sh/) to manage node versions.
-- [Node.js](https://nodejs.org/en/). `volta install node`
-- [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
-- [npx](https://docs.npmjs.com/cli/v8/commands/npx) the packaged executor in npm. This is needed [to install pnpm.](#install-packages)
+- [nvm](https://github.com/nvm-sh/nvm) to manage node versions.
+- [Node.js](https://nodejs.org/en/). `nvm install`
+- [pnpm](https://pnpm.io/) package manager. `corepack enable`
 
 Follow the setup steps below to install them and start the development.
 
@@ -53,10 +52,12 @@ cd mermaid
 
 ### Install packages
 
-Run `npx pnpm install`. You will need `npx` for this because volta doesn't support it yet.
+Run `pnpm install`.
+Assuming you've ran [`corepack enable`](https://nodejs.org/api/corepack.html#how-does-corepack-interact-with-npm),
+Node.JS will automatically install the correct version of `pnpm` for you.
 
 ```bash
-npx pnpm install # npx is required for first install
+pnpm install
 ```
 
 ### Launch

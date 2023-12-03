@@ -382,17 +382,16 @@ Detailed information about how to contribute can be found in the [contribution g
 
 ### Requirements
 
-- [volta](https://volta.sh/) to manage node versions.
-- [Node.js](https://nodejs.org/en/). `volta install node`
-- [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
+- [nvm](https://github.com/nvm-sh/nvm) to manage node versions.
+- [Node.js](https://nodejs.org/en/). `nvm install`
+- [pnpm](https://pnpm.io/) package manager. `corepack enable`
 
 ### Development Installation
 
 ```bash
 git clone git@github.com:mermaid-js/mermaid.git
 cd mermaid
-# npx is required for first install as volta support for pnpm is not added yet.
-npx pnpm install
+pnpm install # if pnpm is not installed, use `corepack enable` to tell Node.JS to auto-install it
 pnpm test
 ```
 
