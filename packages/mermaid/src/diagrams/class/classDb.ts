@@ -84,6 +84,7 @@ export const addClass = function (_id: string) {
     methods: [],
     members: [],
     annotations: [],
+    styles: [],
     domId: MERMAID_DOM_ID_PREFIX + name + '-' + classCounter,
   } as ClassNode;
 
@@ -454,6 +455,24 @@ export const addClassesToNamespace = function (id: string, classNames: string[])
   }
 };
 
+export const setCssStyle = function (id: string, style: string[]) {
+  if (style !== undefined && style !== null) {
+    const thisClass = classes[id];
+    if (thisClass !== undefined) {
+      style.forEach(function (s) {
+        if (s.includes(',')) {
+          const styles = s.split(',');
+          styles.forEach(function (newStyle) {
+            thisClass.styles.push(newStyle);
+          });
+        } else {
+          thisClass.styles.push(s);
+        }
+      });
+    }
+  }
+};
+
 export default {
   setAccTitle,
   getAccTitle,
@@ -490,4 +509,5 @@ export default {
   addClassesToNamespace,
   getNamespace,
   getNamespaces,
+  setCssStyle,
 };

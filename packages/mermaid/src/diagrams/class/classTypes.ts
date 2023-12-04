@@ -15,6 +15,7 @@ export interface ClassNode {
   linkTarget?: string;
   haveCallback?: boolean;
   tooltip?: string;
+  styles?: string[];
 }
 
 export type Visibility = '#' | '+' | '~' | '-' | '';
