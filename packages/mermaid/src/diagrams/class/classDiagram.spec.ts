@@ -1044,7 +1044,7 @@ foo()
       parser.parse(str);
     });
 
-    it('should handle namespace with nested types', () => {
+    it('should handle namespace with generic types', () => {
       parser.parse(`classDiagram
 
 namespace space {
