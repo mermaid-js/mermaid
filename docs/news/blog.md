@@ -6,6 +6,12 @@
 
 # Blog
 
+## [7 best practices (+ examples) for good developer documentation](https://www.mermaidchart.com/blog/posts/7-best-practices-for-good-documentation/)
+
+4 December 2023 · 11 min
+
+Essential strategies for crafting grate developer documentation, with practical examples and insights from leading tech companies.
+
 ## [5 Reasons You Should Be Using Mermaid Chart As Your Diagram Generator](https://www.mermaidchart.com/blog/posts/5-reasons-you-should-be-using-mermaid-chart-as-your-diagram-generator/)
 
 14 November 2023 · 5 mins
