@@ -277,7 +277,10 @@ export const cherryPick = function (sourceId, targetId, tag, parentCommitId) {
   }
   let sourceCommit = commits[sourceId];
   let sourceCommitBranch = sourceCommit.branch;
-  if (!(Array.isArray(sourceCommit.parents) && sourceCommit.parents.includes(parentCommitId))) {
+  if (
+    parentCommitId &&
+    !(Array.isArray(sourceCommit.parents) && sourceCommit.parents.includes(parentCommitId))
+  ) {
     let error = new Error(
       'Invalid operation: The specified parent commit is not an immediate parent of the cherry-picked commit.'
     );
