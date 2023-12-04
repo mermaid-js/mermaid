@@ -447,11 +447,13 @@ const getNamespaces = function (): NamespaceMap {
  * @public
  */
 export const addClassesToNamespace = function (id: string, classNames: string[]) {
-  if (namespaces[id] !== undefined) {
-    classNames.map((className) => {
-      classes[className].parent = id;
-      namespaces[id].classes[className] = classes[className];
-    });
+  if (namespaces[id] === undefined) {
+    return;
+  }
+  for (const name of classNames) {
+    const { className } = splitClassNameAndType(name);
+    classes[className].parent = id;
+    namespaces[id].classes[className] = classes[className];
   }
 };
 
