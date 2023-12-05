@@ -457,20 +457,16 @@ export const addClassesToNamespace = function (id: string, classNames: string[])
   }
 };
 
-export const setCssStyle = function (id: string, style: string[]) {
-  if (style !== undefined && style !== null) {
-    const thisClass = classes[id];
-    if (thisClass !== undefined) {
-      style.forEach(function (s) {
-        if (s.includes(',')) {
-          const styles = s.split(',');
-          styles.forEach(function (newStyle) {
-            thisClass.styles.push(newStyle);
-          });
-        } else {
-          thisClass.styles.push(s);
-        }
-      });
+export const setCssStyle = function (id: string, styles: string[]) {
+  const thisClass = classes[id];
+  if (!styles || !thisClass) {
+    return;
+  }
+  for (const s of styles) {
+    if (s.includes(',')) {
+      thisClass.styles = thisClass.styles.concat(s.split(','));
+    } else {
+      thisClass.styles.push(s);
     }
   }
 };
