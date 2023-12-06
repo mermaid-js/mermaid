@@ -682,14 +682,13 @@ describe('mermaidAPI', () => {
     it('returns false for invalid definition with silent option', async () => {
       await expect(
         mermaidAPI.parse('this is not a mermaid diagram definition', { suppressErrors: true })
-      ).resolves.toStrictEqual({ isValid: false });
+      ).resolves.toBe(false);
     });
     it('resolves for valid definition', async () => {
       await expect(mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).resolves
         .toMatchInlineSnapshot(`
         {
           "diagramType": "flowchart-v2",
-          "isValid": true,
         }
       `);
     });
@@ -699,7 +698,6 @@ describe('mermaidAPI', () => {
       ).resolves.toMatchInlineSnapshot(`
         {
           "diagramType": "flowchart-v2",
-          "isValid": true,
         }
       `);
     });
