@@ -100,8 +100,7 @@ export type DrawDefinition = (
   text: string,
   id: string,
   version: string,
-  diagramObject: Diagram,
-  error: Error | null,
+  diagramObject: Diagram
 ) => void | Promise<void>;
 
 export interface ParserDefinition {

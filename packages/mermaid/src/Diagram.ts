@@ -58,7 +58,7 @@ export class Diagram {
   }
 
   async render(id: string, version: string) {
-    await this.renderer.draw(this.text, id, version, this, null);
+    await this.renderer.draw(this.text, id, version, this);
   }
 
   getParser() {
