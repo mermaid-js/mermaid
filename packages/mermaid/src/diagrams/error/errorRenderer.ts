@@ -2,10 +2,9 @@ import { log } from '../../logger.js';
 import type { Group, SVG } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import type { Diagram } from '../../Diagram.js';
 
 /**
- * Draws a an info picture in the tag with id: id based on the graph definition in text.
+ * Draws an info picture in the tag with id: id based on the graph definition in text.
  *
  * @param _text - Mermaid graph definition.
  * @param id - The text for the error
@@ -16,15 +15,15 @@ export const draw = (
   _text: string,
   id: string,
   version: string,
-  _diagramObject: Diagram,
+  _diagramObject: unknown,
   error?: Error
 ) => {
-  log.debug('renering svg for syntax error\n');
+  log.debug('rendering svg for syntax error\n');
   const svg: SVG = selectSvgElement(id);
   const g: Group = svg.append('g');
   if (error?.message?.includes('KaTeX')) {
     const title = error.message.split(': ')[0];
-    const body = error.message.replace(/[A-z]*:/, '').replace('KaTeX parse ', '');
+    const body = error.message.slice(title.length + 2).replace('KaTeX parse ', '');
     g.append('foreignObject')
       .attr('height', 100)
       .attr('width', 500)
