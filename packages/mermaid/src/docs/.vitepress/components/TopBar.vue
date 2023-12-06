@@ -6,7 +6,7 @@
       <a
         href="https://www.mermaidchart.com/app/user/billing/checkout?coupon=HOLIDAYS2023"
         target="_blank"
-        class="unstyled text-white"
+        class="unstyled text-white plausible-event-name=bannerClick"
       >
         Get AI, team collaboration, storage, and more with
         <span class="font-bold underline"
