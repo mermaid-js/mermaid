@@ -315,8 +315,8 @@ const executeQueue = async () => {
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
  * @param parseOptions - Options for parsing.
- * @returns - If the diagram is valid, returns an object with isValid set to true and the diagramType set to type of the diagram.
- * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false.
+ * @returns An object with the diagramType set to type of the diagram if valid. Otherwise false if parseOptions.suppressErrors is true.
+ * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false or not set.
  */
 const parse = async (text: string, parseOptions?: ParseOptions): Promise<ParseResult | void> => {
   return new Promise((resolve, reject) => {

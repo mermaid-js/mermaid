@@ -62,15 +62,12 @@ export interface ParseOptions {
 
 export type ParseResult =
   | {
-      isValid: true;
       /**
        * The diagram type, e.g. 'flowchart', 'sequence', etc.
        */
       diagramType: string;
     }
-  | {
-      isValid: false;
-    };
+  | false;
 
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
 export type D3Element = any;
@@ -107,8 +104,8 @@ function processAndSetConfigs(text: string) {
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
  * @param parseOptions - Options for parsing.
- * @returns - If the diagram is valid, returns an object with isValid set to true and the diagramType set to type of the diagram.
- * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false.
+ * @returns An object with the diagramType set to type of the diagram if valid. Otherwise false if parseOptions.suppressErrors is true.
+ * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false or not set.
  */
 
 async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult> {
@@ -116,10 +113,10 @@ async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseRe
   try {
     const { code } = processAndSetConfigs(text);
     const diagram = await getDiagramFromText(code);
-    return { isValid: true, diagramType: diagram.type };
+    return { diagramType: diagram.type };
   } catch (error) {
     if (parseOptions?.suppressErrors) {
-      return { isValid: false };
+      return false;
     }
     throw error;
   }
