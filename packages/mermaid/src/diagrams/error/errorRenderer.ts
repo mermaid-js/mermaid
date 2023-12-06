@@ -9,33 +9,11 @@ import { configureSvgSize } from '../../setupGraphViewbox.js';
  * @param _text - Mermaid graph definition.
  * @param id - The text for the error
  * @param version - The version
- * @param error - The caught error
  */
-export const draw = (
-  _text: string,
-  id: string,
-  version: string,
-  _diagramObject: unknown,
-  error?: Error
-) => {
+export const draw = (_text: string, id: string, version: string) => {
   log.debug('rendering svg for syntax error\n');
   const svg: SVG = selectSvgElement(id);
   const g: Group = svg.append('g');
-  if (error?.message?.includes('KaTeX')) {
-    const title = error.message.split(': ')[0];
-    const body = error.message.slice(title.length + 2).replace('KaTeX parse ', '');
-    g.append('foreignObject')
-      .attr('height', 100)
-      .attr('width', 500)
-      .append('xhtml:div')
-      .style('font-size', '18px')
-      .style('color', '#552222')
-      .html(`<div style="font-size: 26px; margin-bottom: 8px">${title}</div><div>${body}</div>`);
-    svg.attr('height', 100);
-    svg.attr('width', 500);
-    svg.attr('viewBox', '0 0 500 100');
-    return;
-  }
 
   svg.attr('viewBox', '0 0 2412 512');
   configureSvgSize(svg, 100, 512, true);

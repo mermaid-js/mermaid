@@ -436,8 +436,8 @@ const render = async function (
   // Draw the diagram with the renderer
   try {
     await diag.renderer.draw(text, id, version, diag);
-  } catch (e: any) {
-    errorRenderer.draw(text, id, version, diag, e);
+  } catch (e) {
+    errorRenderer.draw(text, id, version);
     throw e;
   }
 
