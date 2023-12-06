@@ -91,6 +91,7 @@
     "@types/d3-shape": "^3.1.1",
     "@types/dompurify": "^3.0.2",
     "@types/jsdom": "^21.1.1",
+    "@types/katex": "^0.16.7",
     "@types/lodash-es": "^4.17.7",
     "@types/micromatch": "^4.0.2",
     "@types/prettier": "^2.7.2",

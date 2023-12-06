@@ -318,33 +318,37 @@ export const calculateMathMLDimensions = async (text: string, config: MermaidCon
  * @returns String containing MathML if KaTeX is supported, or an error message if it is not and stylesheets aren't present
  */
 export const renderKatex = async (text: string, config: MermaidConfig): Promise<string> => {
-  if (hasKatex(text) && (isMathMLSupported() || config.legacyMathML)) {
-    // @ts-ignore @types/katex does not work
-    const katex = (await import('katex')).default;
-    return text
-      .split(lineBreakRegex)
-      .map((line) =>
-        hasKatex(line)
-          ? `
+  if (!hasKatex(text)) {
+    return text;
+  }
+
+  if (!isMathMLSupported() && !config.legacyMathML) {
+    return text.replace(katexRegex, 'MathML is unsupported in this environment.');
+  }
+
+  const { default: katex } = await import('katex');
+  return text
+    .split(lineBreakRegex)
+    .map((line) =>
+      hasKatex(line)
+        ? `
             <div style="display: flex; align-items: center; justify-content: center; white-space: nowrap;">
               ${line}
             </div>
           `
-          : `<div>${line}</div>`
-      )
-      .join('')
-      .replace(katexRegex, (r, c) =>
-        katex
-          .renderToString(c, {
-            throwOnError: true,
-            displayMode: true,
-            output: isMathMLSupported() ? 'mathml' : 'htmlAndMathml',
-          })
-          .replace(/\n/g, ' ')
-          .replace(/<annotation.*<\/annotation>/g, '')
-      );
-  }
-  return text.replace(katexRegex, 'MathML is unsupported in this environment.');
+        : `<div>${line}</div>`
+    )
+    .join('')
+    .replace(katexRegex, (_, c) =>
+      katex
+        .renderToString(c, {
+          throwOnError: true,
+          displayMode: true,
+          output: isMathMLSupported() ? 'mathml' : 'htmlAndMathml',
+        })
+        .replace(/\n/g, ' ')
+        .replace(/<annotation.*<\/annotation>/g, '')
+    );
 };
 
 export default {

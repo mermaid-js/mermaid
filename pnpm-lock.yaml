@@ -279,6 +279,9 @@ importers:
       '@types/jsdom':
         specifier: ^21.1.1
         version: 21.1.1
+      '@types/katex':
+        specifier: ^0.16.7
+        version: 0.16.7
       '@types/lodash-es':
         specifier: ^4.17.7
         version: 4.17.7
@@ -4942,6 +4945,10 @@ packages:
 
   /@types/json-schema@7.0.12:
     resolution: {integrity: sha512-Hr5Jfhc9eYOQNPYO5WLDq/n4jqijdHNlDXjuAQkkt+mWdQR+XJToOHrsD4cPaMXpn6KO7y2+wM8AZEs8VpBLVA==}
+    dev: true
+
+  /@types/katex@0.16.7:
+    resolution: {integrity: sha512-HMwFiRujE5PjrgwHQ25+bsLJgowjGjm5Z8FVSf0N6PwgJrwxH0QxzHYDcKsTfV3wva0vzrpqMTJS2jXPr5BMEQ==}
     dev: true
 
   /@types/keyv@3.1.4:
