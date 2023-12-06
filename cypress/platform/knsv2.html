@@ -58,8 +58,19 @@
   </head>
   <body>
     <pre id="diagram" class="mermaid">
-      classDiagram
-  `Class<img src=x onerror=alert(1)>` <|-- `Class2<img src=x onerror=alert(2)>`
+flowchart TB
+    C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W & X & Y & Z & A1 & A2 & A3 & A4 & A5 & A6 & A7 & A8
+      ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+    C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W & X & Y & Z & A1 & A2 & A3 & A4 & A5 & A6 & A7 & A8
+
+    </pre>
+    <pre id="diagram" class="mermaid2">
+    flowchart TB
+      A & A & A & A & A & A & A & A --->  C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W & X & Y & Z
+    </pre>
+    <pre id="diagram" class="mermaid2">
+    flowchart TB
+      A1 & A2 & A3 & A4 & A5 & A6 & A7 & A8 -->  C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W & X & Y & Z
     </pre>
     <pre id="diagram" class="mermaid2">
 flowchart
@@ -439,6 +450,7 @@ mindmap
           messageFontFamily: 'courier',
         },
         fontSize: 16,
+        logLevel: 0,
       });
       function callback() {
         alert('It worked');

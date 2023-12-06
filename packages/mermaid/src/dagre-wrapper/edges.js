@@ -2,10 +2,12 @@ import { log } from '../logger.js';
 import createLabel from './createLabel.js';
 import { createText } from '../rendering-util/createText.js';
 import { line, curveBasis, select } from 'd3';
-import { getConfig } from '../config.js';
+import { getConfig } from '../diagram-api/diagramAPI.js';
 import utils from '../utils.js';
 import { evaluate } from '../diagrams/common/common.js';
 import { getLineFunctionsWithOffset } from '../utils/lineWithOffset.js';
+import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
+import { addEdgeMarkers } from './edgeMarker.js';
 
 let edgeLabels = {};
 let terminalLabels = {};
@@ -135,6 +137,8 @@ function setTerminalWidth(fo, value) {
 export const positionEdgeLabel = (edge, paths) => {
   log.info('Moving label abc78 ', edge.id, edge.label, edgeLabels[edge.id]);
   let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
+  const siteConfig = getConfig();
+  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
   if (edge.label) {
     const el = edgeLabels[edge.id];
     let x = edge.x;
@@ -158,7 +162,7 @@ export const positionEdgeLabel = (edge, paths) => {
         y = pos.y;
       }
     }
-    el.attr('transform', 'translate(' + x + ', ' + y + ')');
+    el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 2})`);
   }
 
   //let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
@@ -172,7 +176,7 @@ export const positionEdgeLabel = (edge, paths) => {
       x = pos.x;
       y = pos.y;
     }
-    el.attr('transform', 'translate(' + x + ', ' + y + ')');
+    el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.startLabelRight) {
     const el = terminalLabels[edge.id].startRight;
@@ -188,7 +192,7 @@ export const positionEdgeLabel = (edge, paths) => {
       x = pos.x;
       y = pos.y;
     }
-    el.attr('transform', 'translate(' + x + ', ' + y + ')');
+    el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.endLabelLeft) {
     const el = terminalLabels[edge.id].endLeft;
@@ -200,7 +204,7 @@ export const positionEdgeLabel = (edge, paths) => {
       x = pos.x;
       y = pos.y;
     }
-    el.attr('transform', 'translate(' + x + ', ' + y + ')');
+    el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.endLabelRight) {
     const el = terminalLabels[edge.id].endRight;
@@ -212,7 +216,7 @@ export const positionEdgeLabel = (edge, paths) => {
       x = pos.x;
       y = pos.y;
     }
-    el.attr('transform', 'translate(' + x + ', ' + y + ')');
+    el.attr('transform', `translate(${x}, ${y})`);
   }
 };
 
@@ -506,108 +510,8 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
   log.info('arrowTypeStart', edge.arrowTypeStart);
   log.info('arrowTypeEnd', edge.arrowTypeEnd);
 
-  switch (edge.arrowTypeStart) {
-    case 'arrow_cross':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-crossStart' + ')'
-      );
-      break;
-    case 'arrow_point':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-pointStart' + ')'
-      );
-      break;
-    case 'arrow_barb':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-barbStart' + ')'
-      );
-      break;
-    case 'arrow_circle':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-circleStart' + ')'
-      );
-      break;
-    case 'aggregation':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-aggregationStart' + ')'
-      );
-      break;
-    case 'extension':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-extensionStart' + ')'
-      );
-      break;
-    case 'composition':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-compositionStart' + ')'
-      );
-      break;
-    case 'dependency':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-dependencyStart' + ')'
-      );
-      break;
-    case 'lollipop':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-lollipopStart' + ')'
-      );
-      break;
-    default:
-  }
-  switch (edge.arrowTypeEnd) {
-    case 'arrow_cross':
-      svgPath.attr('marker-end', 'url(' + url + '#' + id + '_' + diagramType + '-crossEnd' + ')');
-      break;
-    case 'arrow_point':
-      svgPath.attr('marker-end', 'url(' + url + '#' + id + '_' + diagramType + '-pointEnd' + ')');
-      break;
-    case 'arrow_barb':
-      svgPath.attr('marker-end', 'url(' + url + '#' + id + '_' + diagramType + '-barbEnd' + ')');
-      break;
-    case 'arrow_circle':
-      svgPath.attr('marker-end', 'url(' + url + '#' + id + '_' + diagramType + '-circleEnd' + ')');
-      break;
-    case 'aggregation':
-      svgPath.attr(
-        'marker-end',
-        'url(' + url + '#' + id + '_' + diagramType + '-aggregationEnd' + ')'
-      );
-      break;
-    case 'extension':
-      svgPath.attr(
-        'marker-end',
-        'url(' + url + '#' + id + '_' + diagramType + '-extensionEnd' + ')'
-      );
-      break;
-    case 'composition':
-      svgPath.attr(
-        'marker-end',
-        'url(' + url + '#' + id + '_' + diagramType + '-compositionEnd' + ')'
-      );
-      break;
-    case 'dependency':
-      svgPath.attr(
-        'marker-end',
-        'url(' + url + '#' + id + '_' + diagramType + '-dependencyEnd' + ')'
-      );
-      break;
-    case 'lollipop':
-      svgPath.attr(
-        'marker-end',
-        'url(' + url + '#' + id + '_' + diagramType + '-lollipopEnd' + ')'
-      );
-      break;
-    default:
-  }
+  addEdgeMarkers(svgPath, edge, url, id, diagramType);
+
   let paths = {};
   if (pointsHasChanged) {
     paths.updatedPath = points;

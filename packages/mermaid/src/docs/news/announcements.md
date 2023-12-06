@@ -1,17 +1,9 @@
 # Announcements
 
-<br />
+Check out our latest blog posts below. See more blog posts [here](blog.md).
 
-<a href="https://www.producthunt.com/posts/mermaid-chart?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-mermaid&#0045;chart" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=416671&theme=light" alt="Mermaid&#0032;Chart - A&#0032;smarter&#0032;way&#0032;to&#0032;create&#0032;diagrams | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+## [5 Reasons You Should Be Using Mermaid Chart As Your Diagram Generator](https://www.mermaidchart.com/blog/posts/5-reasons-you-should-be-using-mermaid-chart-as-your-diagram-generator/)
 
-## Calling all fans of Mermaid and Mermaid Chart! 🎉
+14 November 2023 · 5 mins
 
-We’ve officially made our Product Hunt debut, and would love any and all support from the community!
-
-[Click here](https://www.producthunt.com/posts/mermaid-chart?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-mermaid-chart) to check out our Product Hunt launch.
-
-Feel free to drop us a comment and let us know what you think. All new sign ups will receive a 30-day free trial of our Pro subscription, plus 25% off your first year.
-
-We’re on a mission to make text-based diagramming fun again. And we need your help to make that happen.
-
-Your support means the world to us. Thank you for being part of the diagramming movement.
+Mermaid Chart, a user-friendly, code-based diagram generator with AI integrations, templates, collaborative tools, and plugins for developers, streamlines the process of creating and sharing diagrams, enhancing both creativity and collaboration.

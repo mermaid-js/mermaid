@@ -1,4 +1,4 @@
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { parseGenericTypes, sanitizeText } from '../common/common.js';
 
 export interface ClassNode {
@@ -106,7 +106,7 @@ export class ClassMember {
         this.visibility = firstChar as Visibility;
       }
 
-      if (lastChar.match(/[*?]/)) {
+      if (lastChar.match(/[$*]/)) {
         potentialClassifier = lastChar;
       }
 

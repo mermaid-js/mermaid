@@ -4,7 +4,7 @@ import svgDraw, { drawKatex, ACTOR_TYPE_WIDTH, drawText, fixLifeLineHeights } fr
 import { log } from '../../logger.js';
 import common, { calculateMathMLDimensions, hasKatex } from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import assignWithDepth from '../../assignWithDepth.js';
 import utils from '../../utils.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
@@ -91,7 +91,7 @@ export const bounds = {
       stopy: undefined,
     };
     this.verticalPos = 0;
-    setConf(configApi.getConfig());
+    setConf(getConfig());
   },
   updateVal: function (obj, key, val, fun) {
     if (obj[key] === undefined) {
@@ -754,7 +754,7 @@ function adjustCreatedDestroyedData(
  * @param diagObj - A standard diagram containing the db and the text and type etc of the diagram
  */
 export const draw = async function (_text: string, id: string, _version: string, diagObj: Diagram) {
-  const { securityLevel, sequence } = configApi.getConfig();
+  const { securityLevel, sequence } = getConfig();
   conf = sequence;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
@@ -835,6 +835,11 @@ export const draw = async function (_text: string, id: string, _version: string,
 
     bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos);
   }
+
+  log.debug('createdActors', createdActors);
+  log.debug('destroyedActors', destroyedActors);
+
+  drawActors(diagram, actors, actorKeys, false);
 
   // Draw the messages/signals
   let sequenceIndex = 1;
@@ -1047,6 +1052,7 @@ export const draw = async function (_text: string, id: string, _version: string,
   if (conf.mirrorActors) {
     await drawActors(diagram, actors, actorKeys, true);
   }
+
   backgrounds.forEach((e) => svgDraw.drawBackgroundRect(diagram, e));
   fixLifeLineHeights(diagram, actors, actorKeys, conf);
 

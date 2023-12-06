@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import * as configApi from '../../config.js';
+import { setSiteConfig } from '../../diagram-api/diagramAPI.js';
 import mermaidAPI from '../../mermaidAPI.js';
 import { Diagram, getDiagramFromText } from '../../Diagram.js';
 import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
@@ -1610,7 +1610,7 @@ describe('when rendering a sequenceDiagram APA', function () {
       wrap: false,
       mirrorActors: false,
     };
-    configApi.setSiteConfig({ logLevel: 5, sequence: conf });
+    setSiteConfig({ logLevel: 5, sequence: conf });
   });
   let conf;
   beforeEach(function () {
@@ -1631,7 +1631,7 @@ describe('when rendering a sequenceDiagram APA', function () {
       wrap: false,
       mirrorActors: false,
     };
-    configApi.setSiteConfig({ logLevel: 5, sequence: conf });
+    setSiteConfig({ logLevel: 5, sequence: conf });
     diagram = new Diagram(`
 sequenceDiagram
 Alice->Bob:Hello Bob, how are you?

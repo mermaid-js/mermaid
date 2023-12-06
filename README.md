@@ -44,6 +44,22 @@ Try Live Editor previews of future releases: <a href="https://develop.git.mermai
 
 <a href="https://mermaid-js.github.io/mermaid/landing/"><img src="https://github.com/mermaid-js/mermaid/blob/master/docs/intro/img/book-banner-post-release.jpg" alt="Explore Mermaid.js in depth, with real-world examples, tips & tricks from the creator... The first official book on Mermaid is available for purchase. Check it out!"></a>
 
+## Table of content
+
+<details>
+<summary>Expand contents</summary>
+
+- [About](#about)
+- [Examples](#examples)
+- [Release](#release)
+- [Related projects](#related-projects)
+- [Contributors](#contributors)
+- [Security and safe diagrams](#security-and-safe-diagrams)
+- [Reporting vulnerabilities](#reporting-vulnerabilities)
+- [Appreciation](#appreciation)
+
+</details>
+
 ## About
 
 <!-- <Main description>   -->
@@ -58,7 +74,7 @@ Mermaid addresses this problem by enabling users to create easily modifiable dia
 <br/>
 
 Mermaid allows even non-programmers to easily create detailed diagrams through the [Mermaid Live Editor](https://mermaid.live/).<br/>
-[Tutorials](./docs/config/Tutorials.md) has video tutorials.
+For video tutorials, visit our [Tutorials](./docs/config/Tutorials.md) page.
 Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./docs/ecosystem/integrations-community.md).
 
 You can also use Mermaid within [GitHub](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) as well many of your other favorite applications—check out the list of [Integrations and Usages of Mermaid](./docs/ecosystem/integrations-community.md).
