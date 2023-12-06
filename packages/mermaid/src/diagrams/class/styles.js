@@ -145,6 +145,7 @@ g.classGroup line {
 
 .edgeTerminals {
   font-size: 11px;
+  line-height: initial;
 }
 
 .classTitleText {

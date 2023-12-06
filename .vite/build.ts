@@ -74,6 +74,9 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
         output,
       },
     },
+    define: {
+      'import.meta.vitest': 'undefined',
+    },
     resolve: {
       extensions: [],
     },
