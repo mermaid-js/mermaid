@@ -317,7 +317,7 @@ async function boundMessage(_diagram, msgModel): number {
   const lines = common.splitBreaks(message).length;
   const isKatexMsg = hasKatex(message);
   const textDims = isKatexMsg
-    ? await calculateMathMLDimensions(message, configApi.getConfig())
+    ? await calculateMathMLDimensions(message, getConfig())
     : utils.calculateTextDimensions(message, messageFont(conf));
 
   if (!isKatexMsg) {
@@ -1160,7 +1160,7 @@ async function getMaxMessageWidthPerActor(
         ? utils.wrapLabel(msg.message, conf.width - 2 * conf.wrapPadding, textFont)
         : msg.message;
       const messageDimensions = hasKatex(wrappedMessage)
-        ? await calculateMathMLDimensions(msg.message, configApi.getConfig())
+        ? await calculateMathMLDimensions(msg.message, getConfig())
         : utils.calculateTextDimensions(wrappedMessage, textFont);
       const messageWidth = messageDimensions.width + 2 * conf.wrapPadding;
 
@@ -1273,7 +1273,7 @@ async function calculateActorMargins(
       );
     }
     const actDims = hasKatex(actor.description)
-      ? await calculateMathMLDimensions(actor.description, configApi.getConfig())
+      ? await calculateMathMLDimensions(actor.description, getConfig())
       : utils.calculateTextDimensions(actor.description, actorFont(conf));
 
     actor.width = actor.wrap
@@ -1339,7 +1339,7 @@ const buildNoteModel = async function (msg, actors, diagObj) {
   const shouldWrap = msg.wrap && msg.message;
 
   let textDimensions: { width: number; height: number; lineHeight?: number } = hasKatex(msg.message)
-    ? await calculateMathMLDimensions(msg.message, configApi.getConfig())
+    ? await calculateMathMLDimensions(msg.message, getConfig())
     : utils.calculateTextDimensions(
         shouldWrap ? utils.wrapLabel(msg.message, conf.width, noteFont(conf)) : msg.message,
         noteFont(conf)
