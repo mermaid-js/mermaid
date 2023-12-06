@@ -6,7 +6,7 @@ import { dedent } from 'ts-dedent';
 import type { MermaidConfig } from './config.type.js';
 import { log } from './logger.js';
 import utils from './utils.js';
-import type { ParseOptions, RenderResult } from './mermaidAPI.js';
+import type { ParseOptions, ParseResult, RenderResult } from './mermaidAPI.js';
 import { mermaidAPI } from './mermaidAPI.js';
 import { registerLazyLoadedDiagrams, detectType } from './diagram-api/detectType.js';
 import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';
@@ -24,6 +24,7 @@ export type {
   ParseErrorFunction,
   RenderResult,
   ParseOptions,
+  ParseResult,
   UnknownDiagramError,
 };
 
@@ -314,10 +315,10 @@ const executeQueue = async () => {
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
  * @param parseOptions - Options for parsing.
- * @returns true if the diagram is valid, false otherwise if parseOptions.suppressErrors is true.
+ * @returns - If the diagram is valid, returns an object with isValid set to true and the diagramType set to type of the diagram.
  * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false.
  */
-const parse = async (text: string, parseOptions?: ParseOptions): Promise<boolean | void> => {
+const parse = async (text: string, parseOptions?: ParseOptions): Promise<ParseResult | void> => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the render call is done.
     // It will be queued first and will be executed when it is first in line

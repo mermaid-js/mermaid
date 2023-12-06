@@ -60,6 +60,18 @@ export interface ParseOptions {
   suppressErrors?: boolean;
 }
 
+export type ParseResult =
+  | {
+      isValid: true;
+      /**
+       * The diagram type, e.g. 'flowchart', 'sequence', etc.
+       */
+      diagramType: string;
+    }
+  | {
+      isValid: false;
+    };
+
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
 export type D3Element = any;
 
@@ -68,6 +80,10 @@ export interface RenderResult {
    * The svg code for the rendered graph.
    */
   svg: string;
+  /**
+   * The diagram type, e.g. 'flowchart', 'sequence', etc.
+   */
+  diagramType: string;
   /**
    * Bind function to be called after the svg has been inserted into the DOM.
    * This is necessary for adding event listeners to the elements in the svg.
@@ -91,28 +107,24 @@ function processAndSetConfigs(text: string) {
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
  * @param parseOptions - Options for parsing.
- * @returns true if the diagram is valid, false otherwise if parseOptions.suppressErrors is true.
+ * @returns - If the diagram is valid, returns an object with isValid set to true and the diagramType set to type of the diagram.
  * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false.
  */
 
-async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean> {
+async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult> {
   addDiagrams();
-
-  text = processAndSetConfigs(text).code;
-
   try {
-    await getDiagramFromText(text);
+    const { code } = processAndSetConfigs(text);
+    const diagram = await getDiagramFromText(code);
+    return { isValid: true, diagramType: diagram.type };
   } catch (error) {
     if (parseOptions?.suppressErrors) {
-      return false;
+      return { isValid: false };
     }
     throw error;
   }
-  return true;
 }
 
-// append !important; to each cssClass followed by a final !important, all enclosed in { }
-//
 /**
  * Create a CSS style that starts with the given class name, then the element,
  * with an enclosing block that has each of the cssClasses followed by !important;
@@ -483,6 +495,7 @@ const render = async function (
   }
 
   return {
+    diagramType,
     svg: svgCode,
     bindFunctions: diag.db.bindFunctions,
   };
