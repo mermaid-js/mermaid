@@ -839,7 +839,7 @@ export const draw = async function (_text: string, id: string, _version: string,
   log.debug('createdActors', createdActors);
   log.debug('destroyedActors', destroyedActors);
 
-  drawActors(diagram, actors, actorKeys, false);
+  await drawActors(diagram, actors, actorKeys, false);
 
   // Draw the messages/signals
   let sequenceIndex = 1;
