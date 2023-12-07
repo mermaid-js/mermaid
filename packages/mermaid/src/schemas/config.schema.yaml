@@ -21,8 +21,9 @@
 # - Use `meta:enum` to document enum values (from jsonschema2md)
 # - Use `tsType` to override the TypeScript type (from json-schema-to-typescript)
 # - If adding a new object to `MermaidConfig` (e.g. a new diagram type),
-#   you may need to add it to `.vite/jsonSchemaPlugin.ts` and `src/docs.mts`
-#   to get the docs/default values to generate properly.
+#   you may need to add it to `.vite/jsonSchemaPlugin.ts`, `src/docs.mts`
+#   and `scripts/create-types-from-json-schema.mjs`
+#   to get the docs/default values/types to generate properly.
 $id: https://mermaid-js.github.io/schemas/config.schema.json
 $schema: https://json-schema.org/draft/2019-09/schema
 title: Mermaid Config
@@ -2002,10 +2003,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         $ref: '#/$defs/SankeyNodeAlignment'
         default: justify
       useMaxWidth:
+        type: boolean
         default: false
       showValues:
         description: |
           Toggle to display or hide values along with title.
+        type: boolean
         default: true
       prefix:
         description: |
