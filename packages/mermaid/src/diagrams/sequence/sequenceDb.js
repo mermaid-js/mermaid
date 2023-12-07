@@ -10,9 +10,9 @@ import {
   setAccTitle,
   setDiagramTitle,
 } from '../common/commonDb.js';
-import { createImperativeState } from '../../utils/imperativeState.js';
+import { ImperativeState } from '../../utils/imperativeState.js';
 
-const state = createImperativeState(() => ({
+const state = new ImperativeState(() => ({
   prevActor: undefined,
   actors: {},
   createdActors: {},

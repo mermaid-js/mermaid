@@ -1,37 +1,49 @@
-export const createImperativeState = <S extends Record<string, unknown>>(init: () => S) => {
-  const state = init();
+/**
+ * Resettable state storage.
+ * @example
+ * ```
+ * const state = new ImperativeState(() => {
+ *   foo: undefined as string | undefined,
+ *   bar: [] as number[],
+ *   baz: 1 as number | undefined,
+ * });
+ *
+ * state.records.foo = "hi";
+ * console.log(state.records.foo); // prints "hi";
+ * state.reset();
+ * console.log(state.records.foo); // prints "default";
+ *
+ * // typeof state.records:
+ * // {
+ * //   foo: string | undefined, // actual: undefined
+ * //   bar: number[],           // actual: []
+ * //   baz: number | undefined, // actual: 1
+ * // }
+ * ```
+ */
+export class ImperativeState<S extends Record<string, unknown>> {
+  init: () => S;
+  records: S;
 
-  return {
-    get records() {
-      return state;
-    },
-    reset: () => {
-      Object.keys(state).forEach((key) => {
-        delete state[key];
-      });
-      Object.entries(init()).forEach(([key, value]: [keyof S, any]) => {
-        state[key] = value;
-      });
-    },
-  };
-};
+  /**
+   * @param init - Function that creates the default state.
+   */
+  constructor(init: () => S) {
+    this.init = init;
+    this.records = init();
+  }
 
-export const domain = {
-  optional: <V>(value?: V) => value,
-  identity: <V>(value: V) => value,
-} as const;
-
-/*
-const state = createImperativeState(() => ({
-  foo: domain.optional<string>(),
-  bar: domain.identity<number[]>([]),
-  baz: domain.optional(1),
-}));
-
-typeof state.records:
-{
-  foo: string | undefined, // actual: undefined
-  bar: number[],           // actual: []
-  baz: number | undefined, // actual: 1
+  reset() {
+    Object.keys(this.records).forEach((key) => {
+      delete this.records[key];
+    });
+    Object.entries(this.init()).forEach(
+      ([key, value]: [
+        keyof S,
+        any // eslint-disable-line @typescript-eslint/no-explicit-any
+      ]) => {
+        this.records[key] = value;
+      }
+    );
+  }
 }
-*/
