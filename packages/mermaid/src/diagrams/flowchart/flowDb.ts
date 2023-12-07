@@ -56,7 +56,7 @@ export const lookUpDomId = function (id: string) {
  *
  */
 export const addVertex = function (
-  _id: string,
+  id: string,
   textObj: FlowText,
   type: 'group',
   style: string[],
@@ -64,18 +64,14 @@ export const addVertex = function (
   dir: string,
   props = {}
 ) {
+  if (!id || id.trim().length === 0) {
+    return;
+  }
   let txt;
-  const id = _id;
-  if (id === undefined) {
-    return;
-  }
-  if (id.trim().length === 0) {
-    return;
-  }
 
   if (vertices[id] === undefined) {
     vertices[id] = {
-      id: id,
+      id,
       labelType: 'text',
       domId: MERMAID_DOM_ID_PREFIX + id + '-' + vertexCounter,
       styles: [],
@@ -95,7 +91,7 @@ export const addVertex = function (
     vertices[id].text = txt;
   } else {
     if (vertices[id].text === undefined) {
-      vertices[id].text = _id;
+      vertices[id].text = id;
     }
   }
   if (type !== undefined) {
@@ -255,24 +251,24 @@ export const setDirection = function (dir: string) {
  * @param className - Class to add
  */
 export const setClass = function (ids: string, className: string) {
-  ids.split(',').forEach(function (_id) {
-    const id = _id;
-    if (vertices[id] !== undefined) {
+  for (const id of ids.split(',')) {
+    if (vertices[id]) {
       vertices[id].classes.push(className);
     }
-
-    if (subGraphLookup[id] !== undefined) {
+    if (subGraphLookup[id]) {
       subGraphLookup[id].classes.push(className);
     }
-  });
+  }
 };
 
 const setTooltip = function (ids: string, tooltip: string) {
-  ids.split(',').forEach(function (id) {
-    if (tooltip !== undefined) {
-      tooltips[version === 'gen-1' ? lookUpDomId(id) : id] = sanitizeText(tooltip);
-    }
-  });
+  if (!tooltip) {
+    return;
+  }
+  tooltip = sanitizeText(tooltip);
+  for (const id of ids.split(',')) {
+    tooltips[version === 'gen-1' ? lookUpDomId(id) : id] = tooltip;
+  }
 };
 
 const setClickFun = function (id: string, functionName: string, functionArgs: string) {
@@ -491,10 +487,7 @@ export const addSubGraph = function (
     return { nodeList, dir };
   }
 
-  let nodeList: string[] = [];
-
-  const { nodeList: nl, dir } = uniq(list.flat());
-  nodeList = nl;
+  const { nodeList, dir } = uniq(list.flat());
   if (version === 'gen-1') {
     for (let i = 0; i < nodeList.length; i++) {
       nodeList[i] = lookUpDomId(nodeList[i]);
