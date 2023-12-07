@@ -158,11 +158,17 @@ export const addSingleLink = function (_start, _end, type) {
   if (edge?.length > 10) {
     edge.length = 10;
   }
-  if (edges.length < (config.flowchart.maxEdges ?? 500)) {
+  if (edges.length < (config.maxEdges ?? 500)) {
     log.info('abc78 pushing edge...');
     edges.push(edge);
   } else {
-    throw new Error(`Edge limit exceeded. Increase config.flowchart.maxEdges to allow more edges.`);
+    throw new Error(
+      `Edge limit exceeded. ${edges.length} edges found, but the limit is ${config.maxEdges}.
+
+Initialize mermaid with maxEdges set to a higher number to allow more edges. 
+You cannot set this config via configuration inside the diagram as it is a secure config. 
+You have to call mermaid.initialize.`
+    );
   }
 };
 export const addLink = function (_start, _end, type) {

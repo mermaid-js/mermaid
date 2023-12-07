@@ -74,6 +74,12 @@ properties:
     description: The maximum allowed size of the users text diagram
     type: number
     default: 50000
+  maxEdges:
+    description: |
+      Defines the maximum number of edges that can be drawn in a graph.
+    type: integer
+    default: 500
+    minimum: 0
   darkMode:
     type: boolean
     default: false
@@ -1900,12 +1906,6 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           Flag for setting whether or not a html tag should be used for rendering labels on the edges.
         type: boolean
         default: true
-      maxEdges:
-        description: |
-          Defines the maximum number of edges that can be drawn in a graph.
-        type: integer
-        default: 500
-        minimum: 0
       nodeSpacing:
         description: |
           Defines the spacing between nodes on the same level
