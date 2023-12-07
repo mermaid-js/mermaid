@@ -1045,7 +1045,6 @@ export const draw = async function (_text: string, id: string, _version: string,
   log.debug('createdActors', createdActors);
   log.debug('destroyedActors', destroyedActors);
 
-  await drawActors(diagram, actors, actorKeys, false);
   for (const e of messagesToDraw) {
     await drawMessage(diagram, e.messageModel, e.lineStartY, diagObj);
   }
