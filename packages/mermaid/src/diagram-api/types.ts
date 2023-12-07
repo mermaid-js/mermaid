@@ -39,9 +39,26 @@ export interface DiagramDB {
   bindFunctions?: (element: Element) => void;
 }
 
+// This is what is returned from getClasses(...) methods.
+// It is slightly renamed to ..StyleClassDef instead of just ClassDef because "class" is a greatly ambiguous and overloaded word.
+// It makes it clear we're working with a style class definition, even though defining the type is currently difficult.
+export interface DiagramStyleClassDef {
+  id: string;
+  styles?: string[];
+  textStyles?: string[];
+}
+
+export interface DiagramRenderer {
+  draw: DrawDefinition;
+  getClasses?: (
+    text: string,
+    diagram: Pick<DiagramDefinition, 'db'>
+  ) => Record<string, DiagramStyleClassDef>;
+}
+
 export interface DiagramDefinition {
   db: DiagramDB;
-  renderer: any;
+  renderer: DiagramRenderer;
   parser: ParserDefinition;
   styles?: any;
   init?: (config: MermaidConfig) => void;
@@ -84,11 +101,11 @@ export type DrawDefinition = (
   id: string,
   version: string,
   diagramObject: Diagram
-) => void;
+) => void | Promise<void>;
 
 export interface ParserDefinition {
   parse: (text: string) => void;
-  parser: { yy: DiagramDB };
+  parser?: { yy: DiagramDB };
 }
 
 export type HTML = d3.Selection<HTMLIFrameElement, unknown, Element | null, unknown>;

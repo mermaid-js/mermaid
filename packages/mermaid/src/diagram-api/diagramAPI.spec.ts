@@ -39,9 +39,12 @@ describe('DiagramAPI', () => {
           parse: (_text) => {
             return;
           },
-          parser: { yy: {} },
         },
-        renderer: {},
+        renderer: {
+          draw: () => {
+            // no-op
+          },
+        },
         styles: {},
       },
       detector

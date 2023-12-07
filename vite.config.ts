@@ -1,7 +1,7 @@
 import jison from './.vite/jisonPlugin.js';
 import jsonSchemaPlugin from './.vite/jsonSchemaPlugin.js';
 import typescript from '@rollup/plugin-typescript';
-import { defineConfig } from 'vitest/config';
+import { defaultExclude, defineConfig } from 'vitest/config';
 
 export default defineConfig({
   resolve: {
@@ -22,8 +22,9 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
       reportsDirectory: './coverage/vitest',
-      exclude: ['**/node_modules/**', '**/tests/**', '**/__mocks__/**'],
+      exclude: [...defaultExclude, './tests/**', '**/__mocks__/**', '**/generated/'],
     },
+    includeSource: ['packages/*/src/**/*.{js,ts}'],
   },
   build: {
     /** If you set esmExternals to true, this plugins assumes that
@@ -32,5 +33,8 @@ export default defineConfig({
     commonjsOptions: {
       esmExternals: true,
     },
+  },
+  define: {
+    'import.meta.vitest': 'undefined',
   },
 });

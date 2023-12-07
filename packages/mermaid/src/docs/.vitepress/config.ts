@@ -4,7 +4,10 @@ import { defineConfig, MarkdownOptions } from 'vitepress';
 
 const allMarkdownTransformers: MarkdownOptions = {
   // the shiki theme to highlight code blocks
-  theme: 'github-dark',
+  theme: {
+    light: 'github-light',
+    dark: 'github-dark',
+  },
   config: async (md) => {
     await MermaidExample(md);
   },
@@ -71,7 +74,11 @@ function nav() {
       link: '/config/Tutorials',
       activeMatch: '/config/',
     },
-    { text: 'Integrations', link: '/ecosystem/integrations', activeMatch: '/ecosystem/' },
+    {
+      text: 'Integrations',
+      link: '/ecosystem/integrations-community',
+      activeMatch: '/ecosystem/',
+    },
     {
       text: 'Contributing',
       link: '/community/development.html',
@@ -87,7 +94,7 @@ function nav() {
       items: [
         {
           text: 'Changelog',
-          link: 'https://github.com/mermaid-js/mermaid/blob/develop/CHANGELOG.md',
+          link: 'https://github.com/mermaid-js/mermaid/releases',
         },
         {
           text: 'Contributing',
@@ -146,6 +153,7 @@ function sidebarSyntax() {
         { text: 'Timeline 🔥', link: '/syntax/timeline' },
         { text: 'Zenuml 🔥', link: '/syntax/zenuml' },
         { text: 'Sankey 🔥', link: '/syntax/sankey' },
+        { text: 'XYChart 🔥', link: '/syntax/xyChart' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
@@ -180,8 +188,9 @@ function sidebarEcosystem() {
       text: '📚 Ecosystem',
       collapsed: false,
       items: [
-        { text: 'Showcases', link: '/ecosystem/showcases' },
-        { text: 'Use-Cases and Integrations', link: '/ecosystem/integrations' },
+        { text: 'Mermaid Chart', link: '/ecosystem/mermaid-chart' },
+        { text: 'Integrations - Community', link: '/ecosystem/integrations-community' },
+        { text: 'Integrations - Create', link: '/ecosystem/integrations-create' },
       ],
     },
   ];

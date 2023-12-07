@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.ts';
+import { imgSnapshotTest, urlSnapshotTest } from '../../helpers/util.ts';
 
 describe('Configuration and directives - nodes should be light blue', () => {
   it('No config - use default', () => {
@@ -206,8 +206,7 @@ graph TD
   describe('when rendering several diagrams', () => {
     it('diagrams should not taint later diagrams', () => {
       const url = 'http://localhost:9000/theme-directives.html';
-      cy.visit(url);
-      cy.matchImageSnapshot('conf-and-directives.spec-when-rendering-several-diagrams-diagram-1');
+      urlSnapshotTest(url, {});
     });
   });
 });

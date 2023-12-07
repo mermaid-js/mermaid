@@ -6,8 +6,10 @@
 
 # Announcements
 
-## [Special cases broke Microsoft Zune and can ruin your code base too](https://www.mermaidchart.com/blog/posts/special-cases-broke-microsoft-zune-and-can-ruin-your-code-base-too/)
+Check out our latest blog posts below. See more blog posts [here](blog.md).
 
-23 August 2023 · 15 mins
+## [5 Reasons You Should Be Using Mermaid Chart As Your Diagram Generator](https://www.mermaidchart.com/blog/posts/5-reasons-you-should-be-using-mermaid-chart-as-your-diagram-generator/)
 
-Read about the pitfalls of special cases in programming, illustrating how they can lead to complexity, diminish readability, and create maintenance challenges.
+14 November 2023 · 5 mins
+
+Mermaid Chart, a user-friendly, code-based diagram generator with AI integrations, templates, collaborative tools, and plugins for developers, streamlines the process of creating and sharing diagrams, enhancing both creativity and collaboration.

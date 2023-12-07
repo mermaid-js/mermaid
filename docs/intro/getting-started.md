@@ -17,7 +17,7 @@ This section talks about the different ways to deploy Mermaid. Learning the [Syn
 ## Four ways of using mermaid:
 
 1.  Using the Mermaid Live Editor at [mermaid.live](https://mermaid.live).
-2.  Using [mermaid plugins](../ecosystem/integrations.md) with programs you are familiar with.
+2.  Using [mermaid plugins](../ecosystem/integrations-community.md) with programs you are familiar with.
 3.  Calling the Mermaid JavaScript API.
 4.  Deploying Mermaid as a dependency.
 
@@ -85,7 +85,7 @@ and to View, <https://mermaid.live/view?gist=https://gist.github.com/sidharthv96
 
 ## 2. Using Mermaid Plugins:
 
-You can generate mermaid diagrams from within popular applications using plug-ins. It can be done in the same way, you would use the Live Editor. Here's a list of [Mermaid Plugins](../ecosystem/integrations.md).
+You can generate mermaid diagrams from within popular applications using plug-ins. It can be done in the same way, you would use the Live Editor. Here's a list of [Mermaid Plugins](../ecosystem/integrations-community.md).
 
 **This is covered in greater detail in the [Usage section](../config/usage.md)**
 
@@ -128,7 +128,7 @@ b. The importing of mermaid library through the `mermaid.esm.mjs` or `mermaid.es
 ```html
 <body>
   <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true });
   </script>
 </body>
@@ -168,7 +168,7 @@ Rendering in Mermaid is initialized by `mermaid.initialize()` call. However, doi
     </pre>
 
     <script type="module">
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
       mermaid.initialize({ startOnLoad: true });
     </script>
   </body>

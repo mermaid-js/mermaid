@@ -3,6 +3,8 @@ import { log } from './logger.js';
 import { getDiagram, registerDiagram } from './diagram-api/diagramAPI.js';
 import { detectType, getDiagramLoader } from './diagram-api/detectType.js';
 import { UnknownDiagramError } from './errors.js';
+import { encodeEntities } from './utils.js';
+
 import type { DetailedError } from './utils.js';
 import type { DiagramDefinition, DiagramMetadata } from './diagram-api/types.js';
 
@@ -21,6 +23,7 @@ export class Diagram {
 
   private detectError?: UnknownDiagramError;
   constructor(public text: string, public metadata: Pick<DiagramMetadata, 'title'> = {}) {
+    this.text = encodeEntities(text);
     this.text += '\n';
     const cnf = configApi.getConfig();
     try {
@@ -35,7 +38,10 @@ export class Diagram {
     this.db = diagram.db;
     this.renderer = diagram.renderer;
     this.parser = diagram.parser;
-    this.parser.parser.yy = this.db;
+    if (this.parser.parser) {
+      // The parser.parser.yy is only present in JISON parsers. So, we'll only set if required.
+      this.parser.parser.yy = this.db;
+    }
     this.init = diagram.init;
     this.parse();
   }

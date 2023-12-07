@@ -16,4 +16,4 @@
 
 #### Defined in
 
-[mermaidAPI.ts:76](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L76)
+[mermaidAPI.ts:60](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L60)

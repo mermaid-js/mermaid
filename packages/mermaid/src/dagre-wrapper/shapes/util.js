@@ -1,9 +1,9 @@
 import createLabel from '../createLabel.js';
 import { createText } from '../../rendering-util/createText.js';
-import { getConfig } from '../../config.js';
-import { decodeEntities } from '../../mermaidAPI.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { select } from 'd3';
 import { evaluate, sanitizeText } from '../../diagrams/common/common.js';
+import { decodeEntities } from '../../utils.js';
 
 export const labelHelper = async (parent, node, _classes, isNode) => {
   let classes;
@@ -80,7 +80,9 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
                     ? getConfig().fontSize
                     : window.getComputedStyle(document.body).fontSize;
                   const enlargingFactor = 5;
-                  img.style.width = parseInt(bodyFontSize, 10) * enlargingFactor + 'px';
+                  const width = parseInt(bodyFontSize, 10) * enlargingFactor + 'px';
+                  img.style.minWidth = width;
+                  img.style.maxWidth = width;
                 } else {
                   img.style.width = '100%';
                 }
