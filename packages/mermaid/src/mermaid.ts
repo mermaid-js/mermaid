@@ -318,7 +318,7 @@ const executeQueue = async () => {
  * @returns An object with the diagramType set to type of the diagram if valid. Otherwise false if parseOptions.suppressErrors is true.
  * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false or not set.
  */
-const parse = async (text: string, parseOptions?: ParseOptions): Promise<ParseResult | void> => {
+const parse: typeof mermaidAPI.parse = async (text, parseOptions) => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the render call is done.
     // It will be queued first and will be executed when it is first in line
@@ -367,7 +367,7 @@ const parse = async (text: string, parseOptions?: ParseOptions): Promise<ParseRe
  *   element will be removed when rendering is completed.
  * @returns Returns the SVG Definition and BindFunctions.
  */
-const render = (id: string, text: string, container?: Element): Promise<RenderResult> => {
+const render: typeof mermaidAPI.render = (id, text, container) => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the mermaidAPI.render call is done.
     // It will be queued first and will be executed when it is first in line

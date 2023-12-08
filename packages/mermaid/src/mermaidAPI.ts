@@ -60,15 +60,12 @@ export interface ParseOptions {
   suppressErrors?: boolean;
 }
 
-export type ParseResult =
-  | {
-      /**
-       * The diagram type, e.g. 'flowchart', 'sequence', etc.
-       */
-      diagramType: string;
-    }
-  | false;
-
+export interface ParseResult {
+  /**
+   * The diagram type, e.g. 'flowchart', 'sequence', etc.
+   */
+  diagramType: string;
+}
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
 export type D3Element = any;
 
@@ -108,7 +105,12 @@ function processAndSetConfigs(text: string) {
  * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false or not set.
  */
 
-async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult> {
+async function parse(
+  text: string,
+  parseOptions: ParseOptions & { suppressErrors: true }
+): Promise<ParseResult | false>;
+async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult>;
+async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult | false> {
   addDiagrams();
   try {
     const { code } = processAndSetConfigs(text);
