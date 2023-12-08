@@ -18,4 +18,4 @@ The diagram type, e.g. 'flowchart', 'sequence', etc.
 
 #### Defined in
 
-[mermaidAPI.ts:67](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L67)
+[mermaidAPI.ts:71](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L71)

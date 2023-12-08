@@ -57,6 +57,10 @@ const DOMPURIFY_TAGS = ['foreignobject'];
 const DOMPURIFY_ATTR = ['dominant-baseline'];
 
 export interface ParseOptions {
+  /**
+   * If `true`, parse will return `false` instead of throwing error when the diagram is invalid.
+   * The `parseError` function will not be called.
+   */
   suppressErrors?: boolean;
 }
 
@@ -100,8 +104,8 @@ function processAndSetConfigs(text: string) {
 /**
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
- * @param parseOptions - Options for parsing.
- * @returns An object with the diagramType set to type of the diagram if valid. Otherwise false if parseOptions.suppressErrors is true.
+ * @param parseOptions - Options for parsing. @see {@link ParseOptions}
+ * @returns An object with the `diagramType` set to type of the diagram if valid. Otherwise `false` if parseOptions.suppressErrors is `true`.
  * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false or not set.
  */
 
