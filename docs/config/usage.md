@@ -337,9 +337,9 @@ The `mermaid.parse(text, parseOptions)` function validates graph definitions wit
 
 The function `mermaid.parse(text, parseOptions)`, takes a text string as an argument and returns `{ diagramType: string }` if the definition follows mermaid's syntax.
 
-If the definition is invalid, the function returns `false` if `parseOptions.supressError` is set to `true`. Otherwise, it throws an error.
+If the definition is invalid, the function returns `false` if `parseOptions.suppressErrors` is set to `true`. Otherwise, it throws an error.
 
-The parseError function will be called when the parse function throws an error. It will not be called if `parseOptions.supressError` is set to `true`.
+The parseError function will be called when the parse function throws an error. It will not be called if `parseOptions.suppressErrors` is set to `true`.
 
 It is possible to override this function in order to handle the error in an application-specific way.
 
