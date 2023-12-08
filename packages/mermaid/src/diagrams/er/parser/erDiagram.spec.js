@@ -218,6 +218,16 @@ describe('when parsing ER diagram it...', function () {
       expect(entities[entity].attributes.length).toBe(1);
     });
 
+    it('should allow commas within an attribute type', () => {
+      const entity = 'BUILDING';
+      const attribute = 'location geometry(point,4326)';
+
+      erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}}`);
+      const entities = erDb.getEntities();
+      expect(Object.keys(entities).length).toBe(1);
+      expect(entities[entity].attributes.length).toBe(1);
+    });
+
     it('should not allow leading numbers, dashes or brackets', function () {
       const entity = 'BOOK';
       const nonLeadingChars = '0-[]()';
