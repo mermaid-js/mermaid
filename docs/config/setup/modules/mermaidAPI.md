@@ -97,7 +97,7 @@ mermaid.initialize(config);
 
 #### Defined in
 
-[mermaidAPI.ts:624](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L624)
+[mermaidAPI.ts:623](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L623)
 
 ## Functions
 
@@ -128,7 +128,7 @@ Return the last node appended
 
 #### Defined in
 
-[mermaidAPI.ts:278](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L278)
+[mermaidAPI.ts:277](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L277)
 
 ---
 
@@ -154,7 +154,7 @@ the cleaned up svgCode
 
 #### Defined in
 
-[mermaidAPI.ts:224](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L224)
+[mermaidAPI.ts:223](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L223)
 
 ---
 
@@ -179,7 +179,7 @@ the string with all the user styles
 
 #### Defined in
 
-[mermaidAPI.ts:154](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L154)
+[mermaidAPI.ts:153](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L153)
 
 ---
 
@@ -202,7 +202,7 @@ the string with all the user styles
 
 #### Defined in
 
-[mermaidAPI.ts:201](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L201)
+[mermaidAPI.ts:200](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L200)
 
 ---
 
@@ -229,7 +229,7 @@ with an enclosing block that has each of the cssClasses followed by !important;
 
 #### Defined in
 
-[mermaidAPI.ts:139](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L139)
+[mermaidAPI.ts:138](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L138)
 
 ---
 
@@ -255,7 +255,7 @@ Put the svgCode into an iFrame. Return the iFrame code
 
 #### Defined in
 
-[mermaidAPI.ts:255](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L255)
+[mermaidAPI.ts:254](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L254)
 
 ---
 
@@ -280,4 +280,4 @@ Remove any existing elements from the given document
 
 #### Defined in
 
-[mermaidAPI.ts:328](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L328)
+[mermaidAPI.ts:327](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L327)

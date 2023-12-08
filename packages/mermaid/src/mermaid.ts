@@ -314,9 +314,21 @@ const executeQueue = async () => {
 /**
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
- * @param parseOptions - Options for parsing.
- * @returns An object with the diagramType set to type of the diagram if valid. Otherwise false if parseOptions.suppressErrors is true.
+ * @param parseOptions - Options for parsing. @see {@link ParseOptions}
+ * @returns If valid, {@link ParseResult} otherwise `false` if parseOptions.suppressErrors is `true`.
  * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false or not set.
+ *
+ * @example
+ * ```js
+ * console.log(await mermaid.parse('flowchart \n a --> b'));
+ * // { diagramType: 'flowchart-v2' }
+ * console.log(await mermaid.parse('wrong \n a --> b', { suppressErrors: true }));
+ * // false
+ * console.log(await mermaid.parse('wrong \n a --> b', { suppressErrors: false }));
+ * // throws Error
+ * console.log(await mermaid.parse('wrong \n a --> b'));
+ * // throws Error
+ * ```
  */
 const parse: typeof mermaidAPI.parse = async (text, parseOptions) => {
   return new Promise((resolve, reject) => {

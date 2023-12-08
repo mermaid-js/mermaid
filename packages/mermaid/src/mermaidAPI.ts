@@ -108,7 +108,6 @@ function processAndSetConfigs(text: string) {
  * @returns An object with the `diagramType` set to type of the diagram if valid. Otherwise `false` if parseOptions.suppressErrors is `true`.
  * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false or not set.
  */
-
 async function parse(
   text: string,
   parseOptions: ParseOptions & { suppressErrors: true }
