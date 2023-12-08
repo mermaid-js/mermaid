@@ -39,7 +39,6 @@ describe('DiagramAPI', () => {
           parse: (_text) => {
             return;
           },
-          parser: { yy: {} },
         },
         renderer: {
           draw: () => {

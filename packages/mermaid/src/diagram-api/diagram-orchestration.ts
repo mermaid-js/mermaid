@@ -50,7 +50,6 @@ export const addDiagrams = () => {
         },
       },
       parser: {
-        parser: { yy: {} },
         parse: () => {
           throw new Error(
             'Diagrams beginning with --- are not valid. ' +

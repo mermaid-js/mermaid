@@ -1,0 +1,48 @@
+{
+  "name": "@mermaid-js/parser",
+  "version": "0.1.0-rc.1",
+  "description": "MermaidJS parser",
+  "author": "Yokozuna59",
+  "contributors": [
+    "Yokozuna59",
+    "Sidharth Vinod (https://sidharth.dev)"
+  ],
+  "homepage": "https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/parser/#readme",
+  "types": "dist/src/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/mermaid-parser.esm.mjs",
+      "types": "./dist/src/index.d.ts"
+    }
+  },
+  "scripts": {
+    "clean": "rimraf dist src/language/generated",
+    "langium:generate": "langium generate",
+    "langium:watch": "langium generate --watch",
+    "prepublishOnly": "pnpm -w run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid.git",
+    "directory": "packages/parser"
+  },
+  "license": "MIT",
+  "keywords": [
+    "mermaid",
+    "parser",
+    "ast"
+  ],
+  "dependencies": {
+    "langium": "2.0.1"
+  },
+  "devDependencies": {
+    "langium-cli": "2.0.1"
+  },
+  "files": [
+    "dist/"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

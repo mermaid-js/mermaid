@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
+# Fail on errors
 set -euxo pipefail
+
+# Increase heap size
+export NODE_OPTIONS="--max_old_space_size=4096"
 
 pushd packages/mermaid
 # Append commit hash to version

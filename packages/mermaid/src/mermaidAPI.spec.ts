@@ -561,7 +561,7 @@ describe('mermaidAPI', () => {
       const config = {
         logLevel: 0,
         securityLevel: 'loose',
-      };
+      } as const;
       mermaidAPI.initialize(config);
       mermaidAPI.setConfig({ securityLevel: 'strict', logLevel: 1 });
       expect(mermaidAPI.getConfig().logLevel).toBe(1);

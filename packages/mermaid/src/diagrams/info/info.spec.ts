@@ -1,24 +1,31 @@
-// @ts-ignore - jison doesn't export types
-import { parser } from './parser/info.jison';
-import { db } from './infoDb.js';
+import { parser } from './infoParser.js';
 
-describe('info diagram', () => {
-  beforeEach(() => {
-    parser.yy = db;
-    parser.yy.clear();
-  });
-
+describe('info', () => {
   it('should handle an info definition', () => {
     const str = `info`;
-    parser.parse(str);
-
-    expect(db.getInfo()).toBeFalsy();
+    expect(() => {
+      parser.parse(str);
+    }).not.toThrow();
   });
 
   it('should handle an info definition with showInfo', () => {
     const str = `info showInfo`;
-    parser.parse(str);
+    expect(() => {
+      parser.parse(str);
+    }).not.toThrow();
+  });
 
-    expect(db.getInfo()).toBeTruthy();
+  it('should throw because of unsupported info grammar', () => {
+    const str = `info unsupported`;
+    expect(() => {
+      parser.parse(str);
+    }).toThrow('Parsing failed: unexpected character: ->u<- at offset: 5, skipped 11 characters.');
+  });
+
+  it('should throw because of unsupported info grammar', () => {
+    const str = `info unsupported`;
+    expect(() => {
+      parser.parse(str);
+    }).toThrow('Parsing failed: unexpected character: ->u<- at offset: 5, skipped 11 characters.');
   });
 });
