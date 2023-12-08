@@ -1043,6 +1043,19 @@ foo()
 `;
       parser.parse(str);
     });
+
+    it('should handle namespace with generic types', () => {
+      parser.parse(`classDiagram
+
+namespace space {
+    class Square~Shape~{
+        int id
+        List~int~ position
+        setPoints(List~int~ points)
+        getPoints() List~int~
+    }
+}`);
+    });
   });
 });
 

@@ -811,4 +811,19 @@ gitGraph TB:
       {}
     );
   });
+  it('40: should render a simple gitgraph with cherry pick merge commit', () => {
+    imgSnapshotTest(
+      `gitGraph
+      commit id: "ZERO"
+      branch feature
+      branch release
+      checkout feature
+      commit id: "A"
+      commit id: "B"
+      checkout main
+      merge feature id: "M"
+      checkout release
+      cherry-pick id: "M" parent:"B"`
+    );
+  });
 });
