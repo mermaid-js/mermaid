@@ -8,6 +8,8 @@ const buildType = (packageName: string) => {
     out.length > 0 && console.log(out.toString());
   } catch (e) {
     console.error(e);
+    e.stdout.length > 0 && console.error(e.stdout.toString());
+    e.stderr.length > 0 && console.error(e.stderr.toString());
   }
 };
 
