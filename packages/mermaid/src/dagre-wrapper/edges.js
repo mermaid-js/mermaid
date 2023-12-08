@@ -32,7 +32,7 @@ export const insertEdgeLabel = (elem, edge) => {
   const edgeLabel = elem.insert('g').attr('class', 'edgeLabel');
 
   // Create inner g, label, this will be positioned now for centering the text
-  const label = edgeLabel.insert('g').attr('class', 'label');
+  const label = edgeLabel.insert('g').attr('class', 'label').attr('data-id', edge.id);
   label.node().appendChild(labelElement);
 
   // Center the label

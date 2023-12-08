@@ -362,7 +362,7 @@ verticeStatement: verticeStatement link node
     |  verticeStatement link node spaceList
         { /* console.warn('vs',$verticeStatement.stmt,$node); */ yy.addLink($verticeStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($verticeStatement.nodes) } }
     |node spaceList {/*console.warn('noda', $node);*/ $$ = {stmt: $node, nodes:$node }}
-    |node { /*console.warn('noda', $node);*/ $$ = {stmt: $node, nodes:$node }}
+    |node { $$ = {stmt: $node, nodes:$node }}
     ;
 
 node: styledVertex

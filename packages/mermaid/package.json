@@ -1,6 +1,6 @@
 {
-  "name": "@MermaidChart/mermaid",
-  "version": "10.6.1",
+  "name": "@mermaid-chart/mermaid",
+  "version": "10.6.2-b1",
   "description": "Markdown-ish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
   "module": "./dist/mermaid.core.mjs",
@@ -44,7 +44,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mermaid-js/mermaid"
+    "url": "https://github.com/Mermaid-Chart/mermaid"
   },
   "author": "Knut Sveidqvist",
   "license": "MIT",
@@ -129,8 +129,5 @@
     "dist/",
     "README.md"
   ],
-  "sideEffects": false,
-  "publishConfig": {
-    "access": "public"
-  }
+  "sideEffects": false
 }
