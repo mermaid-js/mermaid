@@ -10,12 +10,12 @@ export interface ClassNode {
   members: ClassMember[];
   annotations: string[];
   domId: string;
+  styles: string[];
   parent?: string;
   link?: string;
   linkTarget?: string;
   haveCallback?: boolean;
   tooltip?: string;
-  styles?: string[];
 }
 
 export type Visibility = '#' | '+' | '~' | '-' | '';

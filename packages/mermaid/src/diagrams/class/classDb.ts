@@ -464,9 +464,9 @@ export const setCssStyle = function (id: string, styles: string[]) {
   }
   for (const s of styles) {
     if (s.includes(',')) {
-      thisClass.styles = thisClass.styles.concat(s.split(','));
+      thisClass.styles = [...thisClass.styles, ...s.split(',')];
     } else {
-      thisClass.styles.push(s);
+      thisClass.styles?.push(s);
     }
   }
 };
