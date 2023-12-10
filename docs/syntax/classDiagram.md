@@ -242,7 +242,7 @@ class BankAccount{
 
 Members can be defined using generic types, such as `List<int>`, for fields, parameters, and return types by enclosing the type within `~` (**tilde**). **Nested** type declarations such as `List<List<int>>` are supported.
 
-Generics can be represented as part of a class definition and also in the parameters or the return value of a method/function:
+Generics can be represented as part of a class definition and also in the parameters or the return value of a method/function (note that any references to the class later in diagram code is used without the type )
 
 ```mermaid-example
 classDiagram
@@ -769,6 +769,22 @@ Beginner's tip—a full example using interactive links in an HTML page:
 ### Styling a node
 
 It is possible to apply specific styles such as a thicker border or a different background color to a node.
+
+```mermaid-example
+classDiagram
+  class Animal
+  class Mineral
+  style Animal fill:#f9f,stroke:#333,stroke-width:4px
+  style Mineral fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+```
+
+```mermaid
+classDiagram
+  class Animal
+  class Mineral
+  style Animal fill:#f9f,stroke:#333,stroke-width:4px
+  style Mineral fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+```
 
 ```mermaid-example
 classDiagram
