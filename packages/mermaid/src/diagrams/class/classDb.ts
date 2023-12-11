@@ -464,7 +464,7 @@ export const setCssStyle = function (id: string, styles: string[]) {
   }
   for (const s of styles) {
     if (s.includes(',')) {
-      thisClass.styles = [...thisClass.styles, ...s.split(',')];
+      thisClass.styles.push(...s.split(','));
     } else {
       thisClass.styles.push(s);
     }
