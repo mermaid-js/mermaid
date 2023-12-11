@@ -235,5 +235,4 @@ Communication tools and platforms
 - [ExDoc](https://github.com/elixir-lang/ex_doc)
   - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)
 - [NiceGUI: Let any browser be the frontend of your Python code](https://nicegui.io)
-  - [ui.mermaid(...)](https://nicegui.io/reference#mermaid_diagrams)
-  - [ui.markdown(..., extras=['mermaid'])](https://nicegui.io/reference#markdown_element)
+  - [ui.mermaid](https://nicegui.io/documentation/mermaid#mermaid_diagrams) ✅
