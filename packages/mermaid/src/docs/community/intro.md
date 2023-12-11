@@ -29,6 +29,10 @@ mindmap
 
 [Join our slack community if you want closer contact!](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
 
+## Help with testing
+
+## Manage tasks
+
 ## Where do I start?
 
 * You could confirm the bugs in [these issues](https://github.com/knsv/mermaid/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22Type%3A+Bug+%2F+Error%22+label%3A%22Status%3A+Pending%22).
