@@ -4,7 +4,13 @@ The basic steps for contributing code are:
 
 ```mermaid
 graph LR
-    git[1. Checkout a  git branch] --> codeTest[2. Write tests and code] --> doc[3. Update documentation] --> submit[4. Submit a PR] --> review[5. Review and merge]
+  git --> codeTest --> doc --> submit --> review
+
+  git[1. Checkout a  git branch]
+  codeTest[2. Write tests and code]
+  doc[3. Update documentation]
+  submit[4. Submit a PR]
+  review[5. Review and merge]
 ```
 
 1. **Create** and checkout a git branch and work on your code in the branch
@@ -47,12 +53,17 @@ You can always check current [configuration of labelling and branch prefixes](ht
 
 If your work is specific to a single diagram type, it is a good idea to put the diagram type at the start of the description. This will help us keep release notes organized: it will help us keep changes for a diagram type together.
 
+```tip
 **Ex: A new feature described in issue 2945 that adds a new arrow type called 'florbs' to state diagrams**
 
 `feature/2945_state-diagram-new-arrow-florbs`
+```
 
+```tip
 **Ex: A bug described in issue 1123 that causes random ugly red text in multiple diagram types**
+
 `bug/1123_fix_random_ugly_red_text`
+```
 
 ## 2. Write Tests
 

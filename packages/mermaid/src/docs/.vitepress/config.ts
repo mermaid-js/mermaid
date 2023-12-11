@@ -71,8 +71,8 @@ function nav() {
     { text: 'Docs', link: '/intro/', activeMatch: '/intro/' },
     {
       text: 'Tutorials',
-      link: '/config/Tutorials',
-      activeMatch: '/config/',
+      link: '/ecosystem/tutorials',
+      activeMatch: '/ecosystem/',
     },
     {
       text: 'Integrations',
@@ -81,8 +81,8 @@ function nav() {
     },
     {
       text: 'Contributing',
-      link: '/community/development.html',
-      activeMatch: '/community/',
+      link: '/contributing/intro',
+      activeMatch: '/contributing/',
     },
     {
       text: 'Latest News',
@@ -95,11 +95,7 @@ function nav() {
         {
           text: 'Changelog',
           link: 'https://github.com/mermaid-js/mermaid/releases',
-        },
-        {
-          text: 'Contributing',
-          link: '/community/development',
-        },
+        }
       ],
     },
     {
@@ -167,7 +163,6 @@ function sidebarConfig() {
       collapsed: false,
       items: [
         { text: 'Configuration', link: '/config/configuration' },
-        { text: 'Tutorials', link: '/config/Tutorials' },
         { text: 'API-Usage', link: '/config/usage' },
         { text: 'Mermaid API Configuration', link: '/config/setup/README' },
         { text: 'Mermaid Configuration Options', link: '/config/schema-docs/config' },
@@ -175,7 +170,6 @@ function sidebarConfig() {
         { text: 'Theming', link: '/config/theming' },
         { text: 'Accessibility', link: '/config/accessibility' },
         { text: 'Mermaid CLI', link: '/config/mermaidCLI' },
-        { text: 'Advanced usage', link: '/config/advanced' },
         { text: 'FAQ', link: '/config/faq' },
       ],
     },
@@ -189,6 +183,7 @@ function sidebarEcosystem() {
       collapsed: false,
       items: [
         { text: 'Mermaid Chart', link: '/ecosystem/mermaid-chart' },
+        { text: 'Tutorials', link: '/ecosystem/tutorials' },
         { text: 'Integrations - Community', link: '/ecosystem/integrations-community' },
         { text: 'Integrations - Create', link: '/ecosystem/integrations-create' },
       ],
@@ -199,15 +194,18 @@ function sidebarEcosystem() {
 function sidebarCommunity() {
   return [
     {
-      text: '🙌 Contributions and Community',
+      text: '🙌 Contributing',
       collapsed: false,
       items: [
-        { text: 'Contributing to Mermaid', link: '/community/development' },
-        { text: 'Contributing Code', link: '/community/code' },
-        { text: 'Contributing Documentation', link: '/community/documentation' },
-        { text: 'Questions and Suggestions', link: '/community/questions-and-suggestions' },
-        { text: 'Adding Diagrams', link: '/community/newDiagram' },
-        { text: 'Security', link: '/community/security' },
+        { text: 'Contributing to Mermaid', link: '/contributing/intro' },
+        { text: 'Quick start guide', link: '/contributing/quick-start' },
+        { text: 'Initial setup', link: '/contributing/setup' },
+        { text: 'Workflow', link: '/contributing/workflow' },
+        { text: 'Code', link: '/contributing/code' },
+        { text: 'Documentation', link: '/contributing/documentation' },
+        { text: 'Questions and Suggestions', link: '/contributing/questions-and-suggestions' },
+        { text: 'Adding Diagrams', link: '/contributing/new-diagram' },
+        { text: 'Security', link: '/contributing/security' },
       ],
     },
   ];

@@ -1,21 +1,18 @@
 # Contributing Documentation
 
-**_[TODO: This section is still a WIP. It still needs MAJOR revision.]_**
-
 If it is not in the documentation, it's like it never happened. Wouldn't that be sad? With all the effort that was put into the feature?
 
-The docs are located in the `packages/mermaid/src/docs` folder and are written in Markdown. Just pick the right section and start typing.
+The documentation is written in Markdown. It is located in the [`packages/mermaid/src/docs`](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs) folder and organized according to relevant subfolder. Just pick the right section and start typing.
 
-The contents of [mermaid.js.org](https://mermaid.js.org/) are based on the docs from the `master` branch.
-Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid.js.org/) once published.
+The contents of [mermaid.js.org](https://mermaid.js.org/) are based on the docs from the `master` branch. Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid.js.org/) once published.
 
 ## How to Contribute to Documentation
 
-We are a little less strict here, it is OK to commit directly in the `develop` branch if you are a collaborator.
-
-The documentation is located in the `packages/mermaid/src/docs` directory and organized according to relevant subfolder.
+```warning
+DO NOT CHANGE FILES IN `/docs`
 
 The `docs` folder will be automatically generated when committing to `packages/mermaid/src/docs` and **should not** be edited manually.
+```
 
 ```mermaid
 flowchart LR
@@ -23,6 +20,12 @@ flowchart LR
 
   source["files in /packages/mermaid/src/docs\n(changes should be done here)"] -- automatic processing\nto generate the final documentation--> published["files in /docs\ndisplayed on the official documentation site"]
 
+```
+
+It is OK to commit directly in the `develop` branch if you are a collaborator.
+
+```tip
+If the change is **only** to the documentation, you can get your changes published to the site quicker by making a PR to the `master` branch. In that case, your branch should be based on master, not develop.
 ```
 
 You can use `note`, `tip`, `warning` and `danger` in triple backticks to add a note, tip, warning or danger box.
@@ -45,14 +48,6 @@ Warning content
 Danger content
 ```
 ````
-
-```note
-If the change is _only_ to the documentation, you can get your changes published to the site quicker by making a PR to the `master` branch. In that case, your branch should be based on master, not develop.
-```
-
-We encourage contributions to the documentation at [packages/mermaid/src/docs in the _develop_ branch](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs).
-
-**_DO NOT CHANGE FILES IN `/docs`_**
 
 ## The official documentation site
 

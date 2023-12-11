@@ -1,14 +1,20 @@
-# Contributing to Mermaid via Docker
+# Initial setup with Docker
 
 > The following documentation describes how to work with Mermaid in a Docker environment.
-> There's also a [host installation guide](../community/development.md)
+> There's also a [host installation guide](../community/setup.md)
 > if you prefer to work without a Docker environment.
 
-So you want to help? That's great!
+Initial setup consists of 3 main steps::
 
-![Image of happy people jumping with excitement](https://media.giphy.com/media/BlVnrxJgTGsUw/giphy.gif)
+```mermaid-nocode
+flowchart LR
+  source --> requirements --> setup
+  
+  source[Get the source code]
+  requirements[Install the requirements]
+  setup[Setup and launch]
 
-Here are a few things to get you started on the right path.
+```
 
 ## Get the Source Code
 
@@ -23,7 +29,7 @@ Then you **clone** a copy to your local development machine (e.g. where you code
 ## Technical Requirements
 
 > The following documentation describes how to work with Mermaid in a Docker environment.
-> There's also a [host installation guide](../community/development.md)
+> There's also a [host installation guide](../community/setup.md)
 > if you prefer to work without a Docker environment.
 
 [Install Docker](https://docs.docker.com/engine/install/). And that is pretty much all you need.
@@ -87,18 +93,16 @@ After making code changes, the dev server will rebuild the mermaid library. You 
 
 ## Verify Everything is Working
 
+This step is optional, but it helps to make sure that everything in development branch was OK before you started making any changes.
+
+You can run the `test` script to verify that pnpm is working _and_ that the repository has been cloned correctly:
+
 ```bash
-./run pnpm test
+pnpm test
 ```
 
 The `test` script and others are in the top-level `package.json` file.
 
 All tests should run successfully without any errors or failures. (You might see _lint_ or _formatting_ warnings; those are ok during this step.)
 
-## Last Words
 
-Don't get daunted if it is hard in the beginning. We have a great community with only encouraging words. So, if you get stuck, ask for help and hints in the Slack forum. If you want to show off something good, show it off there.
-
-[Join our Slack community if you want closer contact!](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
-
-![Image of superhero wishing you good luck](https://media.giphy.com/media/l49JHz7kJvl6MCj3G/giphy.gif)
