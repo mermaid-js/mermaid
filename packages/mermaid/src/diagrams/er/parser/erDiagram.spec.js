@@ -228,6 +228,18 @@ describe('when parsing ER diagram it...', function () {
         }).toThrow();
       });
     });
+
+    it('should allow special characters inside of backticks', () => {
+      const entity = 'BOOK';
+      const specialChars = '.?",';
+      [...specialChars].forEach((specialChar, i) => {
+        const attribute = `String \`author${specialChar}firstname\``;
+        erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}}`);
+        const entities = erDb.getEntities();
+        expect(Object.keys(entities).length).toBe(1);
+        expect(entities[entity].attributes.length).toBe(i + 1);
+      });
+    });
   });
 
   it('should allow an entity with a single attribute to be defined', function () {
