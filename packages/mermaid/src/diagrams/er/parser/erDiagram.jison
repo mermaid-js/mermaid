@@ -26,6 +26,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <block>\b((?:PK)|(?:FK)|(?:UK))\b      return 'ATTRIBUTE_KEY'
 <block>(.*?)[~](.*?)*[~]        return 'ATTRIBUTE_WORD';
 <block>[\*A-Za-z_][A-Za-z0-9\-_\[\]\(\)]*  return 'ATTRIBUTE_WORD'
+<block>\`[^`\n]*\`              return 'BACKTICK_STRING';
 <block>\"[^"]*\"                return 'COMMENT';
 <block>[\n]+                    /* nothing */
 <block>"}"                      { this.popState(); return 'BLOCK_STOP'; }
@@ -138,6 +139,7 @@ attributeType
 
 attributeName
     : ATTRIBUTE_WORD { $$=$1; }
+    | 'BACKTICK_STRING' { $$=$1.replace(/\`/g, ''); }
     ;
 
 attributeKeyTypeList
