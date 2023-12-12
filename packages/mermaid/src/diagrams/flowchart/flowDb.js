@@ -12,7 +12,6 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
-import errorDiagram from '../error/errorDiagram.js';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
@@ -92,7 +91,6 @@ export const addVertex = function (_id, textObj, type, style, classes, dir, prop
     if (txt[0] === '"' && txt[txt.length - 1] === '"') {
       txt = txt.substring(1, txt.length - 1);
     }
-
     vertices[id].text = txt;
   } else {
     if (vertices[id].text === undefined) {
@@ -160,11 +158,17 @@ export const addSingleLink = function (_start, _end, type) {
   if (edge?.length > 10) {
     edge.length = 10;
   }
-  if (edges.length < 280) {
+  if (edges.length < (config.maxEdges ?? 500)) {
     log.info('abc78 pushing edge...');
     edges.push(edge);
   } else {
-    throw new Error('Too many edges');
+    throw new Error(
+      `Edge limit exceeded. ${edges.length} edges found, but the limit is ${config.maxEdges}.
+
+Initialize mermaid with maxEdges set to a higher number to allow more edges. 
+You cannot set this config via configuration inside the diagram as it is a secure config. 
+You have to call mermaid.initialize.`
+    );
   }
 };
 export const addLink = function (_start, _end, type) {
@@ -460,6 +464,7 @@ export const clear = function (ver = 'gen-1') {
   tooltips = {};
   firstGraphFlag = true;
   version = ver;
+  config = getConfig();
   commonClear();
 };
 export const setGen = (ver) => {

@@ -68,6 +68,11 @@ export interface MermaidConfig {
    * The maximum allowed size of the users text diagram
    */
   maxTextSize?: number;
+  /**
+   * Defines the maximum number of edges that can be drawn in a graph.
+   *
+   */
+  maxEdges?: number;
   darkMode?: boolean;
   htmlLabels?: boolean;
   /**
