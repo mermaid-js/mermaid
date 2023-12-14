@@ -62,7 +62,6 @@ o\{                             return 'ZERO_OR_MORE';
 \.\-                            return 'NON_IDENTIFYING';
 \-\.                            return 'NON_IDENTIFYING';
 [A-Za-z_\u0080-\uFFFF][A-Za-z0-9\-_\u0080-\uFFFF]*   return 'ALPHANUM';
-
 .                               return yytext[0];
 <<EOF>>                         return 'EOF';
 
