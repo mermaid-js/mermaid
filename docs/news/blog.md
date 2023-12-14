@@ -6,6 +6,12 @@
 
 # Blog
 
+## [Mermaid Chart Releases New Visual Editor For Flowcharts](https://www.mermaidchart.com/blog/posts/mermaid-chart-releases-new-visual-editor-for-flowcharts/)
+
+14 December 2023 · 5 mins
+
+Mermaid Chart introduces a new Visual Editor for flowcharts, enabling users of all skill levels to create diagrams easily and efficiently, with both GUI and code-based editing options.
+
 ## [7 best practices (+ examples) for good developer documentation](https://www.mermaidchart.com/blog/posts/7-best-practices-for-good-documentation/)
 
 4 December 2023 · 11 min
