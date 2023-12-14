@@ -518,9 +518,9 @@ Beginner's tip—a full example using interactive links in an HTML page:
 
 ## Styling
 
-### Styling a node
+### Styling a node (v<MERMAID_RELEASE_VERSION>+)
 
-It is possible to apply specific styles such as a thicker border or a different background color to an individual node using the `style` keyword.(v<MERMAID_RELEASE_VERSION>+)
+It is possible to apply specific styles such as a thicker border or a different background color to an individual node using the `style` keyword.
 
 ```mermaid-example
 classDiagram
