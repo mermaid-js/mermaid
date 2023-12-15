@@ -114,6 +114,7 @@ that id.
 ":::"                        return 'STYLE_SEPARATOR';
 ":"                          return 'COLON';
 "&"                          return 'AMP';
+"+"                          return 'PLUS';
 ";"                          return 'SEMI';
 ","                          return 'COMMA';
 "*"                          return 'MULT';
@@ -169,6 +170,7 @@ that id.
 "*"                   return 'MULT';
 "#"                   return 'BRKT';
 "&"                   return 'AMP';
+"+"                   return 'PLUS';
 ([A-Za-z0-9!"\#$%&'*+\.`?\\_\/]|\-(?=[^\>\-\.])|=(?!=))+  return 'NODE_STRING';
 "-"                   return 'MINUS'
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
@@ -538,15 +540,15 @@ style: styleComponent
 styleComponent: NUM | NODE_STRING| COLON | UNIT | SPACE | BRKT | STYLE | PCT ;
 
 /* Token lists */
-idStringToken  :  NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON | AMP | BRKT | MULT | UNICODE_TEXT;
+idStringToken  :  NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON | AMP | PLUS | BRKT | MULT | UNICODE_TEXT;
 
 textToken      :   TEXT | TAGSTART | TAGEND | UNICODE_TEXT;
 
-textNoTagsToken: NUM | NODE_STRING | SPACE | MINUS | AMP | UNICODE_TEXT | COLON | MULT | BRKT | keywords | START_LINK ;
+textNoTagsToken: NUM | NODE_STRING | SPACE | MINUS | AMP | PLUS | UNICODE_TEXT | COLON | MULT | BRKT | keywords | START_LINK ;
 
 edgeTextToken  :  EDGE_TEXT | UNICODE_TEXT ;
 
-alphaNumToken  :  NUM | UNICODE_TEXT | NODE_STRING | DIR | DOWN | MINUS | COMMA | COLON | AMP | BRKT | MULT;
+alphaNumToken  :  NUM | UNICODE_TEXT | NODE_STRING | DIR | DOWN | MINUS | COMMA | COLON | AMP | PLUS | BRKT | MULT;
 
 idString
     :idStringToken
