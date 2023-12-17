@@ -69,14 +69,13 @@ flowchart LR
   slash --> 1123 --> underscore
   underscore --> short_description_1
   underscore --> short_description_2
-  
+
   underscore["_"]
   slash["/"]
-  
+
   short_description_1["state-diagram-new-arrow-florbs"]
   short_description_2["fix_random_ugly_red_text"]
 ```
-
 
 If your work is specific to a single diagram type, it is a good idea to put the diagram type at the start of the description. This will help us keep release notes organized by a diagram type.
 
@@ -116,6 +115,7 @@ In case in its description contains a [magic comment](https://docs.github.com/en
 ```
 Resolves #<your issue id here>
 ```
+
 You can edit it if needed.
 
 ## Congratulations

@@ -35,14 +35,13 @@ mindmap
 
 ## Where do I start?
 
-* You could confirm the bugs in [these issues](https://github.com/knsv/mermaid/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22Type%3A+Bug+%2F+Error%22+label%3A%22Status%3A+Pending%22).
-* You could help write and improve the documentation! [Here's ](https://github.com/knsv/mermaid/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22Help+wanted%21%22+label%3A%22Area%3A+Documentation%22)some inspiration.
-* You could start getting some knowledge of the code base by working on [these "good first issues"](https://github.com/knsv/mermaid/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22Good+first+issue%21%22+).
-* You could jump right in and help us fix any of [these bugs](https://github.com/knsv/mermaid/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22Type%3A+Bug+%2F+Error%22+label%3A%22Help+wanted%21%22+label%3A%22Area%3A+Development%22)!
-* You could work on a new feature! [These](https://github.com/knsv/mermaid/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22Area%3A+Development%22+label%3A%22Help+wanted%21%22+label%3A%22Type%3A+Enhancement%22+label%3A%22Status%3A+Approved%22) are some ideas!
+- You could confirm the bugs in [these issues](https://github.com/knsv/mermaid/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22Type%3A+Bug+%2F+Error%22+label%3A%22Status%3A+Pending%22).
+- You could help write and improve the documentation! [Here's ](https://github.com/knsv/mermaid/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22Help+wanted%21%22+label%3A%22Area%3A+Documentation%22)some inspiration.
+- You could start getting some knowledge of the code base by working on [these "good first issues"](https://github.com/knsv/mermaid/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22Good+first+issue%21%22+).
+- You could jump right in and help us fix any of [these bugs](https://github.com/knsv/mermaid/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22Type%3A+Bug+%2F+Error%22+label%3A%22Help+wanted%21%22+label%3A%22Area%3A+Development%22)!
+- You could work on a new feature! [These](https://github.com/knsv/mermaid/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22Area%3A+Development%22+label%3A%22Help+wanted%21%22+label%3A%22Type%3A+Enhancement%22+label%3A%22Status%3A+Approved%22) are some ideas!
 
 Detailed information about contributing can be found in the [contribution guide](https://github.com/mermaid-js/mermaid/blob/master/CONTRIBUTING.md).
-
 
 ## Last Words
 

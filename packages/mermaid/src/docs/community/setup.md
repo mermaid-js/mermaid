@@ -9,7 +9,7 @@ Initial setup consists of 3 main steps:
 ```mermaid-nocode
 flowchart LR
   source --> requirements --> setup
-  
+
   source[Get the source code]
   requirements[Install the requirements]
   setup[Setup and launch]

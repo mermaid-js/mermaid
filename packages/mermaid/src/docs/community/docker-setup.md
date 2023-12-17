@@ -9,7 +9,7 @@ Initial setup consists of 3 main steps::
 ```mermaid-nocode
 flowchart LR
   source --> requirements --> setup
-  
+
   source[Get the source code]
   requirements[Install the requirements]
   setup[Setup and launch]
@@ -104,5 +104,3 @@ pnpm test
 The `test` script and others are in the top-level `package.json` file.
 
 All tests should run successfully without any errors or failures. (You might see _lint_ or _formatting_ warnings; those are ok during this step.)
-
-
