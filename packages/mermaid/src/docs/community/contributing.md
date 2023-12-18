@@ -1,10 +1,7 @@
-
 ---
-
 # Old Contributing Guide
 
 Please read in detail about how to contribute documentation and code on the [Mermaid documentation site.](https://mermaid-js.github.io/mermaid/#/development)
-
 ---
 
 # Mermaid contribution cheat-sheet

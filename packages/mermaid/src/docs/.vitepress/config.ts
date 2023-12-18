@@ -98,7 +98,7 @@ function nav() {
         {
           text: 'Changelog',
           link: 'https://github.com/mermaid-js/mermaid/releases',
-        }
+        },
       ],
     },
     {

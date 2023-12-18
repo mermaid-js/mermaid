@@ -41,7 +41,6 @@ Detailed information about contributing can be found in the [contribution guide]
 - You could work on a new feature! [These](https://github.com/knsv/mermaid/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22Area%3A+Development%22+label%3A%22Help+wanted%21%22+label%3A%22Type%3A+Enhancement%22+label%3A%22Status%3A+Approved%22) are some ideas!
 - [Join our slack community if you want closer contact!](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
 
-
 ## Last Words
 
 Don't get daunted if it is hard in the beginning. We have a great community with only encouraging words. So, if you get stuck, ask for help and hints in the Slack forum. If you want to show off something good, show it off there.

@@ -14,7 +14,6 @@ It is located in the [`packages/mermaid/src/docs`](https://github.com/mermaid-js
 
 The contents of [mermaid.js.org](https://mermaid.js.org/) are based on the docs from the `master` branch. Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid.js.org/) once published.
 
-
 ```mermaid
 flowchart LR
   classDef default fill:#fff,color:black,stroke:black
@@ -33,6 +32,7 @@ Start development server for the documentation site
 ```bash
 pnpm --filter mermaid run docs:dev
 ```
+
 or
 
 ```
