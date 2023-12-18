@@ -1,8 +1,4 @@
-# Initial setup
-
-> The following documentation describes how to work with Mermaid in your host environment.
-> There's also a [Docker installation guide](../community/docker-setup.md)
-> if you prefer to work in a Docker environment.
+# Initial Setup
 
 Initial setup consists of 3 main steps:
 
@@ -10,11 +6,38 @@ Initial setup consists of 3 main steps:
 flowchart LR
   source --> requirements --> setup
 
-  source[Get the source code]
   requirements[Install the requirements]
-  setup[Setup and launch]
-
+  source[Get the source code]
+  setup[Install packages]
 ```
+
+## Choose Your Environment
+
+We support **development within Docker** environment along with **host setup**. You may choose it up to your preferences.
+
+## Install Requirements
+
+### Host
+
+These are the tools we use for working with the code and documentation:
+
+- [volta](https://volta.sh/) to manage node versions.
+- [Node.js](https://nodejs.org/en/). `volta install node`
+- [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
+- [npx](https://docs.npmjs.com/cli/v8/commands/npx) the packaged executor in npm. This is needed [to install pnpm.](#install-packages)
+
+### Docker
+
+[Install Docker](https://docs.docker.com/engine/install/). And that is pretty much all you need.
+
+Optionally, to run GUI (Cypress) within Docker you will also need an X11 server installed.
+You might already have it installed, so check this by running:
+
+```bash
+echo $DISPLAY
+```
+
+If the `$DISPLAY` variable is not empty, then an X11 server is running. Otherwise you may need to install one.
 
 ## Get the Source Code
 
@@ -26,24 +49,9 @@ Then you **clone** a copy to your local development machine (e.g. where you code
 
 [Here is a GitHub document that gives an overview of the process](https://docs.github.com/en/get-started/quickstart/fork-a-repo).
 
-## Technical Requirements
-
-> The following documentation describes how to work with Mermaid in your host environment.
-> There's also a [Docker installation guide](../community/docker-setup.md)
-> if you prefer to work in a Docker environment.
-
-These are the tools we use for working with the code and documentation:
-
-- [volta](https://volta.sh/) to manage node versions.
-- [Node.js](https://nodejs.org/en/). `volta install node`
-- [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
-- [npx](https://docs.npmjs.com/cli/v8/commands/npx) the packaged executor in npm. This is needed [to install pnpm.](#install-packages)
-
-Follow the setup steps below to start the development.
-
-## Setup and Launch
-
-### Switch to project
+```bash
+git clone git@github.com/your-fork/mermaid
+```
 
 Once you have cloned the repository onto your development machine, change into the `mermaid` project folder (the top level directory of the mermaid project repository)
 
@@ -51,42 +59,52 @@ Once you have cloned the repository onto your development machine, change into t
 cd mermaid
 ```
 
-### Install packages
+## Setup
 
-Run `npx pnpm install`. You will need `npx` for this because volta doesn't support it yet.
+### Host
+
+Run `npx pnpm install`. You will need `npx` for this because `volta` doesn't support it yet.
 
 ```bash
 npx pnpm install # npx is required for first install
 ```
 
-### Launch Mermaid
+### Docker
+
+For development using Docker there is a self-documented `run` bash script, which provides convenient aliases for `docker compose` commands.
+
+Make sure that `./run` script is executable:
 
 ```bash
-npx pnpm run dev
+chmod +x run
 ```
 
-Now you are ready to make your changes! Edit whichever files in `src` as required.
+```tip
+To get detailed help simply type `./run` or `./run help`.
 
-Open <http://localhost:9000> in your browser, after starting the dev server.
-There is a list of demos that can be used to see and test your changes.
+It also has short _Development quick start guide_ embedded.
+```
 
-If you need a specific diagram, you can duplicate the `example.html` file in `/demos/dev` and add your own mermaid code to your copy.
+```bash
+./run pnpm install # Install packages
+```
 
-That will be served at <http://localhost:9000/dev/your-file-name.html>.
-After making code changes, the dev server will rebuild the mermaid library. You will need to reload the browser page yourself to see the changes. (PRs for auto reload are welcome!)
-
-### Launch Documentaion Website
-
-
-
-## Verify Everything is Working
+## Verify Everything Works
 
 This step is optional, but it helps to make sure that everything in development branch was OK before you started making any changes.
 
 You can run the `test` script to verify that pnpm is working _and_ that the repository has been cloned correctly:
 
+**Host**
+
 ```bash
 pnpm test
+```
+
+**Docker**
+
+```bash
+./run pnpm test
 ```
 
 The `test` script and others are in the top-level `package.json` file.

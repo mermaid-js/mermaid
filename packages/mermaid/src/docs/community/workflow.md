@@ -93,8 +93,10 @@ A bug described in issue 1123 that causes random ugly red text in multiple diagr
 
 ## Make changes
 
-Source code along with the documentation is located in packages [`packages/mermaid`](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs) folder.
+Source code and the documentation are located [`packages/mermaid`]((https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid) folder.
 You may need to update both, depending on your task.
+
+Read our guides on [how to contribute to code](./code.md) and [how to contribute to documentation](./documentation.md).
 
 ## Submit your pull request
 

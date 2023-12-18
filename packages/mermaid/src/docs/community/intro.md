@@ -25,15 +25,14 @@ mindmap
       Classification and monitoring of incoming issues
 ```
 
-<!-- ## Join the development -->
+## Join the development
+
+Detailed information about contributing can be found in the [contribution guide](../contributing/contributing.md).
+
 <!-- ## Help with testing -->
 <!-- ## Manage tasks -->
 
 ## Where do I start?
-
-```tip
-Detailed information about contributing can be found in the [contribution guide](../contributing/contributing.md).
-```
 
 - You could confirm the bugs in [these issues](https://github.com/knsv/mermaid/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22Type%3A+Bug+%2F+Error%22+label%3A%22Status%3A+Pending%22).
 - You could help write and improve the documentation! [Here's ](https://github.com/knsv/mermaid/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22Help+wanted%21%22+label%3A%22Area%3A+Documentation%22)some inspiration.
