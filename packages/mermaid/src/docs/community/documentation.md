@@ -1,4 +1,5 @@
-# Contributing Documentation
+
+# Contributing to Documentation
 
 If it is not in the documentation, it's like it never happened. Wouldn't that be sad? With all the effort that was put into the feature?
 
@@ -6,7 +7,7 @@ The documentation is written in Markdown. It is located in the [`packages/mermai
 
 The contents of [mermaid.js.org](https://mermaid.js.org/) are based on the docs from the `master` branch. Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid.js.org/) once published.
 
-## How to Contribute to Documentation
+## How to Contribute
 
 ```warning
 DO NOT CHANGE FILES IN `/docs`
@@ -18,15 +19,21 @@ The `docs` folder will be automatically generated when committing to `packages/m
 flowchart LR
   classDef default fill:#fff,color:black,stroke:black
 
-  source["files in /packages/mermaid/src/docs\n(changes should be done here)"] -- automatic processing\nto generate the final documentation--> published["files in /docs\ndisplayed on the official documentation site"]
+  source["Edit /packages/mermaid/src/docs"] -- automatic processing--> published["View /docs which will be publised on Official Website"]
 
 ```
 
-It is OK to commit directly in the `develop` branch if you are a collaborator.
+## Runing the Documentation Website
 
-```tip
-If the change is **only** to the documentation, you can get your changes published to the site quicker by making a PR to the `master` branch. In that case, your branch should be based on master, not develop.
-```
+**[The mermaid documentation site](https://mermaid.js.org/) is powered by [Vitepress](https://vitepress.vuejs.org/).**
+
+To run the documentation site locally:
+
+1.  Run `pnpm --filter mermaid run docs:dev` to start the dev server. (Or `pnpm docs:dev` inside the `packages/mermaid` directory.)
+2.  Open [http://localhost:3333/](http://localhost:3333/) in your browser.
+
+
+### Markdown extensions
 
 You can use `note`, `tip`, `warning` and `danger` in triple backticks to add a note, tip, warning or danger box.
 Do not use vitepress specific markdown syntax `::: warning` as it will not be processed correctly.
@@ -49,14 +56,6 @@ Danger content
 ```
 ````
 
-## The official documentation site
-
-**[The mermaid documentation site](https://mermaid.js.org/) is powered by [Vitepress](https://vitepress.vuejs.org/).**
-
-To run the documentation site locally:
-
-1.  Run `pnpm --filter mermaid run docs:dev` to start the dev server. (Or `pnpm docs:dev` inside the `packages/mermaid` directory.)
-2.  Open [http://localhost:3333/](http://localhost:3333/) in your browser.
 
 Markdown is used to format the text, for more information about Markdown [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
 

@@ -49,6 +49,9 @@ export default defineConfig({
     sidebar: {
       '/': sidebarAll(),
     },
+    outline: {
+      level: 'deep',
+    },
     socialLinks: [
       { icon: 'github', link: 'https://github.com/mermaid-js/mermaid' },
       {
@@ -198,7 +201,7 @@ function sidebarCommunity() {
       collapsed: false,
       items: [
         { text: 'Contributing to Mermaid', link: '/contributing/intro' },
-        { text: 'Quick start guide', link: '/contributing/quick-start' },
+        { text: 'Contributing guide', link: '/contributing/contributing' },
         { text: 'Initial setup', link: '/contributing/setup' },
         { text: 'Workflow', link: '/contributing/workflow' },
         { text: 'Code', link: '/contributing/code' },

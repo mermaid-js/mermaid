@@ -16,8 +16,6 @@ flowchart LR
 
 ```
 
-Here are a few things to get you started on the right path.
-
 ## Get the Source Code
 
 In GitHub, you first **fork** a repository when you are going to make changes and submit pull requests.
@@ -41,7 +39,7 @@ These are the tools we use for working with the code and documentation:
 - [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
 - [npx](https://docs.npmjs.com/cli/v8/commands/npx) the packaged executor in npm. This is needed [to install pnpm.](#install-packages)
 
-Follow the setup steps below to install them and start the development.
+Follow the setup steps below to start the development.
 
 ## Setup and Launch
 
@@ -61,7 +59,7 @@ Run `npx pnpm install`. You will need `npx` for this because volta doesn't suppo
 npx pnpm install # npx is required for first install
 ```
 
-### Launch
+### Launch Mermaid
 
 ```bash
 npx pnpm run dev
@@ -76,6 +74,10 @@ If you need a specific diagram, you can duplicate the `example.html` file in `/d
 
 That will be served at <http://localhost:9000/dev/your-file-name.html>.
 After making code changes, the dev server will rebuild the mermaid library. You will need to reload the browser page yourself to see the changes. (PRs for auto reload are welcome!)
+
+### Launch Documentaion Website
+
+
 
 ## Verify Everything is Working
 
