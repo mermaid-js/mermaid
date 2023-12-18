@@ -215,7 +215,7 @@ export const cleanupLabel = function (label: string) {
 };
 
 /**
- * Called by parser when a special node is found, e.g. a clickable element.
+ * Called by parser when assigning cssClass to a class
  *
  * @param ids - Comma separated list of ids
  * @param className - Class to add

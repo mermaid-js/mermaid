@@ -377,7 +377,7 @@ styleStatement
     ;
 
 cssClassStatement
-    : CSSCLASS STR stylesOpt                            {yy.setCssClass($2, $3);}
+    : CSSCLASS STR ALPHA                            {yy.setCssClass($2, $3);}
     ;
 
 stylesOpt
