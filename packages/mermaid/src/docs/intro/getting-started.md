@@ -7,8 +7,8 @@ outline: 'deep' # shows all h3 headings in outline in Vitepress
 ## Mermaid is composed of three parts
 
 1. Deployment
-1. Syntax
-1. Configuration
+2. Syntax
+3. Configuration
 
 This section talks about the different ways to **deploy** Mermaid.
 
@@ -19,32 +19,15 @@ If you are a beginner:
 
 ## Ways to use Mermaid
 
-1. [Using the Mermaid Chart Editor](getting-started.html#_1-using-the-mermaid-chart-editor)
-1. [Using the Mermaid Live Editor](getting-started.html#_1-using-the-mermaid-chart-editor)
-1. [Using Mermaid Plugins and Integrations](getting-started.html#_3-using-mermaid-plugins)
-1. [Calling the Mermaid JavaScript API](getting-started.html#_4-calling-the-mermaid-javascript-api)
-1. [Adding Mermaid as a dependency](getting-started.html#_5-adding-mermaid-as-a-dependency)
+1. [Using the Mermaid Live Editor](getting-started.md#_1-using-the-mermaid-live-editor)
+2. [Using the Mermaid Chart Editor](getting-started.md#_2-using-the-mermaid-chart-editor)
+3. [Using Mermaid Plugins and Integrations](getting-started.md#_3-using-mermaid-plugins)
+4. [Calling the Mermaid JavaScript API](getting-started.md#_4-calling-the-mermaid-javascript-api)
+5. [Adding Mermaid as a dependency](getting-started.md#_5-adding-mermaid-as-a-dependency)
 
 To learn more, visit the [Usage](../config/usage.md) page.
 
-## 1. Using the Mermaid Chart Editor
-
-Available at the [Mermaid Chart](https://www.mermaidchart.com/) website.
-
-Mermaid Chart is a web-based diagram editor that allows you to create and edit diagrams in your browser. It is built by the team behind Mermaid.
-
-Features include:
-
-- AI diagramming
-- Collaboration & multi-user editing
-- Storage
-- and more
-
-To learn more, visit the [Mermaid Chart page](/ecosystem/mermaid-chart.html) in the Ecosystem section of the documentation.
-
-Or go to the [Mermaid Chart website](https://www.mermaidchart.com/app/sign-up) to sign up for a Free account.
-
-## 2. Using the Mermaid Live Editor
+## 1. Using the Mermaid Live Editor
 
 Available at the [Mermaid Live Editor](https://mermaid.live) website.
 
@@ -134,6 +117,23 @@ And, here is the diagram view from the above example:
 
 <https://mermaid.live/view?gist=https://gist.github.com/sidharthv96/6268a23e673a533dcb198f241fd7012a>
 
+## 2. Using the Mermaid Chart Editor
+
+Available at the [Mermaid Chart](https://www.mermaidchart.com/) website.
+
+Mermaid Chart is a web-based diagram editor that allows you to create and edit diagrams in your browser. It is built by the team behind Mermaid.
+
+Features include:
+
+- AI diagramming
+- Collaboration & multi-user editing
+- Storage
+- and more
+
+To learn more, visit the [Mermaid Chart page](/ecosystem/mermaid-chart.html) in the Ecosystem section of the documentation.
+
+Or go to the [Mermaid Chart website](https://www.mermaidchart.com/app/sign-up) to sign up for a Free account.
+
 ## 3. Using Mermaid Plugins
 
 ### Mermaid Plugins
@@ -148,10 +148,24 @@ Mermaid Chart plugins are available for:
 
 - [ChatGPT](https://docs.mermaidchart.com/plugins/chatgpt)
 - [JetBrains IDE](https://docs.mermaidchart.com/plugins/jetbrains-ide)
-- [Microsoft PowerPoint & Word](https://docs.mermaidchart.com/plugins/microsoft-office)
+- [Microsoft PowerPoint](https://docs.mermaidchart.com/plugins/microsoft-powerpoint)
+- [Microsoft Word](https://docs.mermaidchart.com/plugins/microsoft-word)
 - [Visual Studio Code](https://docs.mermaidchart.com/plugins/visual-studio-code)
 
 To learn more, visit the [Mermaid Chart Plugins](https://www.mermaidchart.com/plugins) page.
+
+### Native Mermaid Support
+
+For apps that support markdown (e.g. [GitHub](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams) and [GitLab](https://handbook.gitlab.com/handbook/tools-and-tips/mermaid/)), you can add Mermaid diagrams by making a `mermaid` code block.
+
+````markdown
+The following code-block will be rendered as a Mermaid diagram:
+
+```mermaid
+flowchart LR
+  A --> B
+```
+````
 
 ## 4. Calling the Mermaid JavaScript API
 
@@ -193,8 +207,6 @@ b. The importing of the Mermaid library through the `mermaid.esm.mjs` or `mermai
 Every Mermaid chart/graph/diagram definition should have separate `<pre>` tags.
 ```
 
-<br />
-
 - This is an example of a Mermaid import and the `mermaid.initialize()` call.
 
 ```note
@@ -219,8 +231,6 @@ Rendering in Mermaid is initialized by the `mermaid.initialize()` call. However,
 | Parameter   | Description                       | Type    | Values      |
 | ----------- | --------------------------------- | ------- | ----------- |
 | startOnLoad | Toggle for Rendering upon loading | Boolean | true, false |
-
-<br />
 
 In this example, the `mermaidAPI` is being called through the `CDN`:
 
@@ -251,8 +261,6 @@ In this example, the `mermaidAPI` is being called through the `CDN`:
   </body>
 </html>
 ```
-
-<br />
 
 In this example, `mermaid.js` is referenced in `src` as a separate JavaScript file:
 
