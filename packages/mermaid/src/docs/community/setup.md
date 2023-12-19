@@ -6,16 +6,34 @@ Initial setup consists of 3 main steps:
 flowchart LR
   source --> requirements --> setup
 
-  requirements[Install the requirements]
   source[Get the source code]
+  requirements[Install the requirements]
   setup[Install packages]
 ```
 
-## Choose Your Environment
+## Get the Source Code
 
-We support **development within Docker** environment along with **host setup**. You may choose it up to your preferences.
+In GitHub, you first **fork** a repository when you are going to make changes and submit pull requests.
+
+Then you **clone** a copy to your local development machine (e.g. where you code) to make a copy with all the files to work with.
+
+[Fork mermaid](https://github.com/mermaid-js/mermaid/fork) to start contributing to the main project and its documentation, or [search for other repositories](https://github.com/orgs/mermaid-js/repositories).
+
+[Here is a GitHub document that gives an overview of the process](https://docs.github.com/en/get-started/quickstart/fork-a-repo).
+
+```bash
+git clone git@github.com/your-fork/mermaid
+```
+
+Once you have cloned the repository onto your development machine, change into the `mermaid` project folder (the top level directory of the mermaid project repository)
+
+```bash
+cd mermaid
+```
 
 ## Install Requirements
+
+We support **development within Docker** environment along with **host setup**. You may choose it up to your preferences.
 
 ### Host
 
@@ -39,27 +57,7 @@ echo $DISPLAY
 
 If the `$DISPLAY` variable is not empty, then an X11 server is running. Otherwise you may need to install one.
 
-## Get the Source Code
-
-In GitHub, you first **fork** a repository when you are going to make changes and submit pull requests.
-
-Then you **clone** a copy to your local development machine (e.g. where you code) to make a copy with all the files to work with.
-
-[Fork mermaid](https://github.com/mermaid-js/mermaid/fork) to start contributing to the main project and its documentation, or [search for other repositories](https://github.com/orgs/mermaid-js/repositories).
-
-[Here is a GitHub document that gives an overview of the process](https://docs.github.com/en/get-started/quickstart/fork-a-repo).
-
-```bash
-git clone git@github.com/your-fork/mermaid
-```
-
-Once you have cloned the repository onto your development machine, change into the `mermaid` project folder (the top level directory of the mermaid project repository)
-
-```bash
-cd mermaid
-```
-
-## Setup
+## Install packages
 
 ### Host
 

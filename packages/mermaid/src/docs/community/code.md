@@ -107,8 +107,8 @@ it('should render forks and joins', () => {
 });
 ```
 
-**_[TODO - running the tests against what is expected in development. ]_**
-**_[TODO - how to generate new screenshots]_**
+<!-- **_[TODO - running the tests against what is expected in development. ]_** -->
+<!-- **_[TODO - how to generate new screenshots]_** -->
 
 ## Update Documentation
 

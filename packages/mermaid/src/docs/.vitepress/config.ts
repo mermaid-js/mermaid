@@ -201,8 +201,8 @@ function sidebarCommunity() {
       collapsed: false,
       items: [
         { text: 'Contributing to Mermaid', link: '/contributing/intro' },
-        { text: 'Contributing guide', link: '/contributing/contributing' },
-        { text: 'Initial setup', link: '/contributing/setup' },
+        { text: 'Contributing Guide', link: '/contributing/contributing' },
+        { text: 'Initial Setup', link: '/contributing/setup' },
         { text: 'Workflow', link: '/contributing/workflow' },
         { text: 'Code', link: '/contributing/code' },
         { text: 'Documentation', link: '/contributing/documentation' },
