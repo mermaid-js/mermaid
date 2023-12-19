@@ -14,20 +14,17 @@ Once development is done we create a `release/vX.X.X` branch from `develop` for 
 
 Once the release happens we add a tag to the `release` branch and merge it with `master`. The live product and on-line documentation are what is in the `master` branch.
 
-The basic steps to start contributing code and documentation are:
-
 ```mermaid
   flowchart TB
 
-  fetch --> branch --> update --> submit --> review --> fetch
-  fetch[Fetch development branch]
+  branch --> update --> submit --> review --> branch
   branch[Checkout a new branch]
   update[Make changes]
   submit[Submit a PR]
   review[Review and merge]
 ```
 
-## Fech latest code
+## Checkout a New Branch
 
 > **💡 Tip**
 > All new work should be based on the `develop` branch.
@@ -41,12 +38,9 @@ git checkout develop
 git fetch # or `git pull`
 ```
 
-## Checkout new branch
-
 Create a new branch for your work:
 
 ```bash
-git checkout develop # make sure you are on development branch
 git checkout -b docs/2910_update-contributing-guidelines
 ```
 

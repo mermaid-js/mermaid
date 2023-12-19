@@ -6,7 +6,24 @@
 
 # Mermaid Contributing Guide
 
-## Get the Source Code
+You decided to take part in the development? Welcome!
+
+We were trying to make our guidelines for you as explicit and detailed as possible.
+
+## Initial Setup
+
+Initial setup consists of 3 main steps:
+
+```mermaid
+flowchart LR
+  source --> requirements --> setup
+
+  source[Get the source code]
+  requirements[Install the requirements]
+  setup[Install packages]
+```
+
+### Get the Source Code
 
 In GitHub, you first **fork** a repository when you are going to make changes and submit pull requests.
 
@@ -26,7 +43,7 @@ Once you have cloned the repository onto your development machine, change into t
 cd mermaid
 ```
 
-## Install Requirements
+### Install Requirements
 
 We support **development within Docker** environment along with **host setup**. You may choose it up to your preferences.
 
@@ -118,15 +135,14 @@ The basic steps to start contributing code and documentation are:
 ```mermaid
   flowchart TB
 
-  fetch --> branch --> update --> submit --> review --> fetch
-  fetch[Fetch development branch]
+  branch --> update --> submit --> review --> branch
   branch[Checkout a new branch]
   update[Make changes]
   submit[Submit a PR]
   review[Review and merge]
 ```
 
-### Fech latest code
+## Checkout a New Branch
 
 > **💡 Tip**
 > All new work should be based on the `develop` branch.
@@ -140,12 +156,9 @@ git checkout develop
 git fetch # or `git pull`
 ```
 
-### Checkout new branch
-
 Create a new branch for your work:
 
 ```bash
-git checkout develop # make sure you are on development branch
 git checkout -b docs/2910_update-contributing-guidelines
 ```
 
@@ -192,13 +205,6 @@ If your work is specific to a single diagram type, it is a good idea to put the 
 > A bug described in issue 1123 that causes random ugly red text in multiple diagram types
 >
 > `bug/1123_fix_random_ugly_red_text`
-
-### Make changes
-
-Source code and the documentation are located \[`packages/mermaid`]\((<https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid>) folder.
-You may need to update both, depending on your task.
-
-Read our guides on [how to contribute to code](./code.md) and [how to contribute to documentation](./documentation.md).
 
 ## Contributing Code
 
@@ -345,7 +351,7 @@ If it is not in the documentation, it's like it never happened. Wouldn't that be
 >
 > The `docs` folder will be automatically generated when committing to `packages/mermaid/src/docs` and **should not** be edited manually.
 
-It is located in the [`packages/mermaid/src/docs`](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs) folder. Just pick the right section and start typing.
+Documentation is located in the [`packages/mermaid/src/docs`](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs) folder. Just pick the right section and start typing.
 
 The contents of [mermaid.js.org](https://mermaid.js.org/) are based on the docs from the `master` branch. Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid.js.org/) once published.
 
@@ -420,7 +426,7 @@ This is a danger alert
 ```
 ````
 
-### Documentation organization: Sidebar navigation
+### Navigation
 
 If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation.**
 
