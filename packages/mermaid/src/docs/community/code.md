@@ -2,7 +2,7 @@
 
 Code it the heart of every software project. We strive to make it better. Who if not us?
 
-## Where is the code located?
+## Where is the Code Located?
 
 The core of Mermaid is located under `packages/mermaid/src`.
 

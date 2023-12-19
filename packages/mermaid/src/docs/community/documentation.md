@@ -10,7 +10,7 @@ DO NOT CHANGE FILES IN `/docs`
 The `docs` folder will be automatically generated when committing to `packages/mermaid/src/docs` and **should not** be edited manually.
 ```
 
-It is located in the [`packages/mermaid/src/docs`](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs) folder. Just pick the right section and start typing.
+Documentation is located in the [`packages/mermaid/src/docs`](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs) folder. Just pick the right section and start typing.
 
 The contents of [mermaid.js.org](https://mermaid.js.org/) are based on the docs from the `master` branch. Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid.js.org/) once published.
 
@@ -82,7 +82,7 @@ This is a danger alert
 ```
 ````
 
-## Documentation organization: Sidebar navigation
+## Navigation
 
 If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation.**
 
