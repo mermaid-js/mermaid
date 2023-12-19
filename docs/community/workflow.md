@@ -116,7 +116,9 @@ Right now we are not following any strict rules about naming PRs. Give it a repr
 
 In case in its description contains a [magic comment](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue) your PR will be automatically attached to the issue:
 
-    Resolves #<your issue id here>
+```markdown
+Resolves #<your issue ID here>
+```
 
 You can edit it if needed.
 

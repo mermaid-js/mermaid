@@ -33,6 +33,11 @@ flowchart LR
   source["Edit /packages/mermaid/src/docs"] -- automatic processing--> published["View /docs which will be publised on Official Website"]
 ```
 
+## Enable Github Actions
+
+> **Warning**
+> So as to allow automatic compilation of documentation pages you have to enable github actions on your fork first
+
 ## Running the Documentation Website Locally
 
 **[The mermaid documentation site](https://mermaid.js.org/) is powered by [Vitepress](https://vitepress.vuejs.org/).**
@@ -47,8 +52,10 @@ pnpm --filter mermaid run docs:dev
 
 or
 
-    cd packages/mermaid
-    pnpm docs:dev
+```bash
+cd packages/mermaid
+pnpm docs:dev
+```
 
 **Docker**
 
@@ -58,38 +65,30 @@ Open <http://localhost:3333/> in your browser.
 
 ## Format
 
-The documentation is written in Markdown.
+The documentation is written in Markdown. To get acquainted with its syntax [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
 
 You can use `note`, `tip`, `warning` and `danger` in triple backticks to add a note, tip, warning or danger box.
-Do not use vitepress specific markdown syntax `::: warning` as it will not be processed correctly.
+
+> **‼️ Danger**
+> Do not use vitepress specific markdown syntax `::: warning` as it will not be processed correctly.
 
 ````markdown
 ```note
-Note content
+This is a note
 ```
 
 ```tip
-Tip content
+This is a tip
 ```
 
 ```warning
-Warning content
+This is a warning
 ```
 
 ```danger
-Danger content
+This is a danger alert
 ```
 ````
-
-Markdown is used to format the text, for more information about Markdown [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
-
-_\[TODO: need to keep this in sync with [check out a git branch in Contributing Code above](#1-checkout-a-git-branch) ]_
-
-1.  Create a fork of the develop branch to work on.
-2.  Find the Markdown file (.md) to edit in the `packages/mermaid/src/docs` directory.
-3.  Make changes or add new documentation.
-4.  Commit changes to your branch and push it to GitHub (which should create a new branch).
-5.  Create a Pull Request from the branch of your fork.
 
 ## Documentation organization: Sidebar navigation
 
