@@ -154,6 +154,7 @@ function sidebarSyntax() {
         { text: 'Zenuml 🔥', link: '/syntax/zenuml' },
         { text: 'Sankey 🔥', link: '/syntax/sankey' },
         { text: 'XYChart 🔥', link: '/syntax/xyChart' },
+        { text: 'MatrixChart 🔥', link: '/syntax/matrixChart' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },

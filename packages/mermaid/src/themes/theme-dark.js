@@ -268,6 +268,23 @@ class Theme {
         '#3498db,#2ecc71,#e74c3c,#f1c40f,#bdc3c7,#ffffff,#34495e,#9b59b6,#1abc9c,#e67e22',
     };
 
+    /* Matrixchart */
+    this.matrixChart = {
+      backgroundColor: this.matrixChart?.backgroundColor || this.background,
+      titleColor: this.matrixChart?.titleColor || this.primaryTextColor,
+      xAxisTitleColor: this.matrixChart?.xAxisTitleColor || this.primaryTextColor,
+      xAxisLabelColor: this.matrixChart?.xAxisLabelColor || this.primaryTextColor,
+      xAxisTickColor: this.matrixChart?.xAxisTickColor || this.primaryTextColor,
+      xAxisLineColor: this.matrixChart?.xAxisLineColor || this.primaryTextColor,
+      yAxisTitleColor: this.matrixChart?.yAxisTitleColor || this.primaryTextColor,
+      yAxisLabelColor: this.matrixChart?.yAxisLabelColor || this.primaryTextColor,
+      yAxisTickColor: this.matrixChart?.yAxisTickColor || this.primaryTextColor,
+      yAxisLineColor: this.matrixChart?.yAxisLineColor || this.primaryTextColor,
+      plotColorPalette:
+        this.matrixChart?.plotColorPalette ||
+        '#3498db,#2ecc71,#e74c3c,#f1c40f,#bdc3c7,#ffffff,#34495e,#9b59b6,#1abc9c,#e67e22',
+    };
+
     /* class */
     this.classText = this.primaryTextColor;
 

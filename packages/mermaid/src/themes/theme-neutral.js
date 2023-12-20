@@ -288,6 +288,23 @@ class Theme {
         '#EEE,#6BB8E4,#8ACB88,#C7ACD6,#E8DCC2,#FFB2A8,#FFF380,#7E8D91,#FFD8B1,#FAF3E0',
     };
 
+    /* Matrixchart */
+    this.matrixChart = {
+      backgroundColor: this.matrixChart?.backgroundColor || this.background,
+      titleColor: this.matrixChart?.titleColor || this.primaryTextColor,
+      xAxisTitleColor: this.matrixChart?.xAxisTitleColor || this.primaryTextColor,
+      xAxisLabelColor: this.matrixChart?.xAxisLabelColor || this.primaryTextColor,
+      xAxisTickColor: this.matrixChart?.xAxisTickColor || this.primaryTextColor,
+      xAxisLineColor: this.matrixChart?.xAxisLineColor || this.primaryTextColor,
+      yAxisTitleColor: this.matrixChart?.yAxisTitleColor || this.primaryTextColor,
+      yAxisLabelColor: this.matrixChart?.yAxisLabelColor || this.primaryTextColor,
+      yAxisTickColor: this.matrixChart?.yAxisTickColor || this.primaryTextColor,
+      yAxisLineColor: this.matrixChart?.yAxisLineColor || this.primaryTextColor,
+      plotColorPalette:
+        this.matrixChart?.plotColorPalette ||
+        '#EEE,#6BB8E4,#8ACB88,#C7ACD6,#E8DCC2,#FFB2A8,#FFF380,#7E8D91,#FFD8B1,#FAF3E0',
+    };
+
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;
     this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
