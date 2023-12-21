@@ -59,7 +59,9 @@ pnpm docs:dev
 
 **Docker**
 
-    ./run docs:dev
+```bash
+./run docs:dev
+```
 
 Open <http://localhost:3333/> in your browser.
 
