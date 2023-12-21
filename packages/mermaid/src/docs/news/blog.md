@@ -1,5 +1,11 @@
 # Blog
 
+## [Introducing Mermaid Chart’s JetBrains IDE Extension](https://www.mermaidchart.com/blog/posts/introducing-mermaid-charts-jetbrains-ide-extension/)
+
+20 December 2023 · 5 mins
+
+Diagrams are essential for documenting your code.
+
 ## [Mermaid Chart Releases New Visual Editor For Flowcharts](https://www.mermaidchart.com/blog/posts/mermaid-chart-releases-new-visual-editor-for-flowcharts/)
 
 14 December 2023 · 5 mins
