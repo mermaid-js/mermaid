@@ -48,7 +48,7 @@ pnpm docs:dev
 
 **Docker**
 
-```
+```bash
 ./run docs:dev
 ```
 

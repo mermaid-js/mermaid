@@ -12,9 +12,9 @@ Initial setup consists of 3 main steps:
 flowchart LR
   source --> requirements --> setup
 
-  source[Get the source code]
-  requirements[Install the requirements]
-  setup[Install packages]
+  source[Get the Source Code]
+  requirements[Install the Requirements]
+  setup[Install Packages]
 ```
 
 ### Get the Source Code
@@ -41,7 +41,7 @@ cd mermaid
 
 We support **development within Docker** environment along with **host setup**. You may choose it up to your preferences.
 
-#### Host
+**Host**
 
 These are the tools we use for working with the code and documentation:
 
@@ -50,7 +50,7 @@ These are the tools we use for working with the code and documentation:
 - [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
 - [npx](https://docs.npmjs.com/cli/v8/commands/npx) the packaged executor in npm. This is needed [to install pnpm.](#install-packages)
 
-#### Docker
+**Docker**
 
 [Install Docker](https://docs.docker.com/engine/install/). And that is pretty much all you need.
 
@@ -63,9 +63,9 @@ echo $DISPLAY
 
 If the `$DISPLAY` variable is not empty, then an X11 server is running. Otherwise you may need to install one.
 
-### Install packages
+### Install Packages
 
-#### Host
+**Host**
 
 Run `npx pnpm install`. You will need `npx` for this because `volta` doesn't support it yet.
 
@@ -73,7 +73,7 @@ Run `npx pnpm install`. You will need `npx` for this because `volta` doesn't sup
 npx pnpm install # npx is required for first install
 ```
 
-#### Docker
+**Docker**
 
 For development using Docker there is a self-documented `run` bash script, which provides convenient aliases for `docker compose` commands.
 
@@ -113,29 +113,48 @@ pnpm test
 
 The `test` script and others are in the top-level `package.json` file.
 
-All tests should run successfully without any errors or failures. (You might see _lint_ or _formatting_ warnings; those are ok during this step.)
+All tests should run successfully without any errors or failures.
+
+```note
+You might see _lint_ or _formatting_ warnings. Those are ok during this step.
+```
 
 ## Workflow
+
+Contributing process is very simple and strightforward:
+
+```mermaid-nocode
+  flowchart LR
+
+  branch --> changes --> submit
+  branch[Checkout a New Branch]
+  changes[Make Changes]
+  submit[Submit a PR]
+```
 
 Mermaid uses a [Git Flow](https://guides.github.com/introduction/flow/)–inspired approach to branching.
 
 Development is done in the `develop` branch.
 
-Once development is done we create a `release/vX.X.X` branch from `develop` for testing.
-
-Once the release happens we add a tag to the `release` branch and merge it with `master`. The live product and on-line documentation are what is in the `master` branch.
-
-The basic steps to start contributing code and documentation are:
-
 ```mermaid-nocode
-  flowchart TB
-
-  branch --> update --> submit --> review --> branch
-  branch[Checkout a new branch]
-  update[Make changes]
-  submit[Submit a PR]
-  review[Review and merge]
+---
+config:
+  gitGraph:
+    mainBranchName: develop
+---
+gitGraph LR:
+  commit
+  commit
+  branch "docs/2910_update-guidelines" order: 1
+  commit
+  commit
+  commit
+  checkout develop
+  merge "docs/2910_update-guidelines"
+  commit
 ```
+
+To prepare a new version we create a `release/vX.X.X` branch from `develop` for testing. Once the release happens we add a tag to the `release` branch and merge it with `master`. The live product and on-line documentation are what is in the `master` branch.
 
 ## Checkout a New Branch
 
@@ -388,13 +407,13 @@ pnpm docs:dev
 
 **Docker**
 
-```
+```bash
 ./run docs:dev
 ```
 
 Open [http://localhost:3333/](http://localhost:3333/) in your browser.
 
-### Format
+### Formatting
 
 The documentation is written in Markdown. To get acquainted with its syntax [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
 
@@ -403,6 +422,8 @@ You can use `note`, `tip`, `warning` and `danger` in triple backticks to add a n
 ```danger
 Do not use vitepress specific markdown syntax `::: warning` as it will not be processed correctly.
 ```
+
+Here are a few examples:
 
 ````markdown
 ```note
@@ -422,11 +443,25 @@ This is a danger alert
 ```
 ````
 
+```note
+This is a note
+```
+
+```tip
+This is a tip
+```
+
+```warning
+This is a warning
+```
+
+```danger
+This is a danger alert
+```
+
 ### Navigation
 
-If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation.**
-
-The sidebar navigation is defined in [the vitepress configuration file config.ts](../.vitepress/config.ts).
+If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation**, which is defined in [the vitepress config](../.vitepress/config.ts). The same goes to **topbar**.
 
 ## Submit your pull request
 
@@ -440,15 +475,13 @@ git push -u origin docs/2910_update-contributing-guidelines
 
 We make all changes via Pull Requests (PRs). Open a new one.
 
-Right now we are not following any strict rules about naming PRs. Give it a representative title and short description. There is also a [pull_request_template](https://github.com/mermaid-js/mermaid/blob/develop/.github/pull_request_template.md) which will help you with it.
+Right now we are not following any strict rules about naming PRs. Give it a representative title and short description. There is also a [pull request template](https://github.com/mermaid-js/mermaid/blob/develop/.github/pull_request_template.md) which will help you with it.
 
 In case in its description contains a [magic comment](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue) your PR will be automatically attached to the issue:
 
 ```markdown
 Resolves #<your issue ID here>
 ```
-
-You can edit it if needed.
 
 ## Congratulations
 

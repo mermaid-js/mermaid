@@ -75,12 +75,12 @@ function nav() {
     {
       text: 'Tutorials',
       link: '/ecosystem/tutorials',
-      activeMatch: '/ecosystem/',
+      activeMatch: '/ecosystem/tutorials',
     },
     {
       text: 'Integrations',
       link: '/ecosystem/integrations-community',
-      activeMatch: '/ecosystem/',
+      activeMatch: '/ecosystem/integrations-community',
     },
     {
       text: 'Contributing',
