@@ -65,6 +65,29 @@ const drawText = (txt) => {
 };
 
 /**
+ * Searches for the closest parent from the parents list passed as argument.
+ * The parents list comes from an individual commit. The closest parent is actually
+ * the one farther down the graph, since that means it is closer to its child.
+ *
+ * @param {string[]} parents
+ * @returns {string}
+ */
+const findClosestParent = (parents) => {
+  let closestParent = '';
+  let maxPosition = 0;
+
+  parents.forEach((parent) => {
+    const parentPosition = dir === 'TB' ? commitPos[parent].y : commitPos[parent].x;
+    if (parentPosition >= maxPosition) {
+      closestParent = parent;
+      maxPosition = parentPosition;
+    }
+  });
+
+  return closestParent;
+};
+
+/**
  * Draws the commits with its symbol and labels. The function has two modes, one which only
  * calculates the positions and one that does the actual drawing. This for a simple way getting the
  * vertical layering correct in the graph.
@@ -87,8 +110,17 @@ const drawCommits = (svg, commits, modifyGraph) => {
   const sortedKeys = keys.sort((a, b) => {
     return commits[a].seq - commits[b].seq;
   });
+
+  const isParallelCommits = getConfig().gitGraph.parallelCommits;
   sortedKeys.forEach((key) => {
     const commit = commits[key];
+
+    if (isParallelCommits) {
+      if (commit.parents.length) {
+        const closestParent = findClosestParent(commit.parents, commits);
+        pos = dir === 'TB' ? commitPos[closestParent].y + 40 : commitPos[closestParent].x + 40;
+      }
+    }
 
     const y = dir === 'TB' ? pos + 10 : branchPos[commit.branch].pos;
     const x = dir === 'TB' ? branchPos[commit.branch].pos : pos + 10;
