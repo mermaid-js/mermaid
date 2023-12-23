@@ -811,7 +811,22 @@ gitGraph TB:
       {}
     );
   });
-  it('40: should render default GitGraph with parallelCommits set to false', () => {
+  it('40: should render a simple gitgraph with cherry pick merge commit', () => {
+    imgSnapshotTest(
+      `gitGraph
+      commit id: "ZERO"
+      branch feature
+      branch release
+      checkout feature
+      commit id: "A"
+      commit id: "B"
+      checkout main
+      merge feature id: "M"
+      checkout release
+      cherry-pick id: "M" parent:"B"`
+    );
+  });
+  it('41: should render default GitGraph with parallelCommits set to false', () => {
     imgSnapshotTest(
       `gitGraph
       commit id:"1-abcdefg"
@@ -830,7 +845,7 @@ gitGraph TB:
       { gitGraph: { parallelCommits: false } }
     );
   });
-  it('41: should render GitGraph with parallel commits', () => {
+  it('42: should render GitGraph with parallel commits', () => {
     imgSnapshotTest(
       `gitGraph
       commit id:"1-abcdefg"
@@ -849,7 +864,7 @@ gitGraph TB:
       { gitGraph: { parallelCommits: true } }
     );
   });
-  it('42: should render GitGraph with parallel commits | Vertical Branch', () => {
+  it('43: should render GitGraph with parallel commits | Vertical Branch', () => {
     imgSnapshotTest(
       `gitGraph TB:
       commit id:"1-abcdefg"

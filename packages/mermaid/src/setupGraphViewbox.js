@@ -45,6 +45,7 @@ export const configureSvgSize = function (svgElem, height, width, useMaxWidth) {
   d3Attrs(svgElem, attrs);
 };
 
+// TODO v11: Remove the graph parameter. It is not used.
 export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth) {
   const svgBounds = svgElem.node().getBBox();
   const sWidth = svgBounds.width;

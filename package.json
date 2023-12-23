@@ -4,7 +4,7 @@
   "version": "10.2.4",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
-  "packageManager": "pnpm@8.11.0",
+  "packageManager": "pnpm@8.12.0",
   "keywords": [
     "diagram",
     "markdown",
@@ -15,26 +15,26 @@
     "git graph"
   ],
   "scripts": {
-    "build:vite": "ts-node-esm --transpileOnly .vite/build.ts",
+    "build:vite": "tsx .vite/build.ts",
     "build:mermaid": "pnpm build:vite --mermaid",
     "build:viz": "pnpm build:mermaid --visualize",
     "build:types": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-zenuml/tsconfig.json --emitDeclarationOnly && tsc -p ./packages/mermaid-example-diagram/tsconfig.json --emitDeclarationOnly",
     "build:types:watch": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly --watch",
     "build:watch": "pnpm build:vite --watch",
     "build": "pnpm run -r clean && pnpm build:types && pnpm build:vite",
-    "dev": "concurrently \"pnpm build:vite --watch\" \"ts-node-esm .vite/server.ts\"",
+    "dev": "concurrently \"pnpm build:vite --watch\" \"tsx .vite/server.ts\"",
     "dev:coverage": "pnpm coverage:cypress:clean && VITE_COVERAGE=true pnpm dev",
     "release": "pnpm build",
     "lint": "eslint --cache --cache-strategy content --ignore-path .gitignore . && pnpm lint:jison && prettier --cache --check .",
-    "lint:fix": "eslint --cache --cache-strategy content --fix --ignore-path .gitignore . && prettier --write . && ts-node-esm scripts/fixCSpell.ts",
-    "lint:jison": "ts-node-esm ./scripts/jison/lint.mts",
-    "contributors": "ts-node-esm scripts/updateContributors.ts",
+    "lint:fix": "eslint --cache --cache-strategy content --fix --ignore-path .gitignore . && prettier --write . && tsx scripts/fixCSpell.ts",
+    "lint:jison": "tsx ./scripts/jison/lint.mts",
+    "contributors": "tsx scripts/updateContributors.ts",
     "cypress": "cypress run",
     "cypress:open": "cypress open",
     "e2e": "start-server-and-test dev http://localhost:9000/ cypress",
     "coverage:cypress:clean": "rimraf .nyc_output coverage/cypress",
     "e2e:coverage": "pnpm coverage:cypress:clean && VITE_COVERAGE=true pnpm e2e",
-    "coverage:merge": "ts-node-esm scripts/coverage.ts",
+    "coverage:merge": "tsx scripts/coverage.ts",
     "coverage": "pnpm test:coverage --run && pnpm e2e:coverage && pnpm coverage:merge",
     "ci": "vitest run",
     "test": "pnpm lint && vitest run",
@@ -116,14 +116,14 @@
     "rimraf": "^5.0.0",
     "rollup-plugin-visualizer": "^5.9.2",
     "start-server-and-test": "^2.0.0",
-    "ts-node": "^10.9.1",
+    "tsx": "^4.6.2",
     "typescript": "^5.1.3",
-    "vite": "^4.3.9",
+    "vite": "^4.4.12",
     "vite-plugin-istanbul": "^4.1.0",
     "vitest": "^0.34.0"
   },
   "volta": {
-    "node": "18.18.2"
+    "node": "18.19.0"
   },
   "nyc": {
     "report-dir": "coverage/cypress"
