@@ -115,11 +115,9 @@ const drawCommits = (svg, commits, modifyGraph) => {
   sortedKeys.forEach((key) => {
     const commit = commits[key];
 
-    if (isParallelCommits) {
-      if (commit.parents.length) {
-        const closestParent = findClosestParent(commit.parents, commits);
-        pos = dir === 'TB' ? commitPos[closestParent].y + 40 : commitPos[closestParent].x + 40;
-      }
+    if (isParallelCommits && commit.parents.length) {
+      const closestParent = findClosestParent(commit.parents, commits);
+      pos = dir === 'TB' ? commitPos[closestParent].y + 40 : commitPos[closestParent].x + 40;
     }
 
     const y = dir === 'TB' ? pos + 10 : branchPos[commit.branch].pos;
