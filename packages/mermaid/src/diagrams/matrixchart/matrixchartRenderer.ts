@@ -47,6 +47,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
 
   const shapes: DrawableElem[] = db.getDrawableElem();
 
+  // @ts-ignore: TODO Fix ts errors
   const groups: Record<string, any> = {};
 
   function getGroup(gList: string[]) {
@@ -102,17 +103,6 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
           .attr('text-anchor', (data) => getTextAnchor(data.horizontalPos))
           .attr('transform', (data) => getTextTransformation(data))
           .text((data) => data.text);
-        break;
-      case 'path':
-        shapeGroup
-          .selectAll('path')
-          .data(shape.data)
-          .enter()
-          .append('path')
-          .attr('d', (data) => data.path)
-          .attr('fill', (data) => (data.fill ? data.fill : 'none'))
-          .attr('stroke', (data) => data.strokeFill)
-          .attr('stroke-width', (data) => data.strokeWidth);
         break;
     }
   }

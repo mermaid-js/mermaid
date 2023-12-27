@@ -12,16 +12,18 @@
       }
     </style>
   </head>
-
+  <!-- green - #4feb34
+   yellow - #f9fc1e
+   brown - #fc9117
+   red - #fc1717  -->
   <body>
-    <h1>XY Charts demos</h1>
+    <h1>Matrix Chart demos</h1>
     <pre class="mermaid">
-    matrix-beta
-    title "Sales Revenue (in $)"
-    x-axis [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
-    y-axis "Revenue (in $)" 4000 --> 11000
-    bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
-    line [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+    matrixchart-beta
+    title "Probability - Impact"
+    x-axis [low, moderate, high]
+    y-axis [low, moderate, high]
+    color [green, green, yellow, green, yellow, brown, yellow,  brown, red]
     </pre>
     <hr />
     <script type="module">

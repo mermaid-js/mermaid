@@ -9,13 +9,13 @@ import type {
 } from '../../interfaces.js';
 import type { Axis } from '../axis/index.js';
 import type { ChartComponent } from '../../interfaces.js';
-import { BarPlot } from './barPlot.js';
+import { Backdrop } from './backdrop.js';
 
-export interface Plot extends ChartComponent {
+export interface BackdropPlot extends ChartComponent {
   setAxes(xAxis: Axis, yAxis: Axis): void;
 }
 
-export class BasePlot implements Plot {
+export class BaseBackdrop implements BackdropPlot {
   private boundingRect: BoundingRect;
   private xAxis?: Axis;
   private yAxis?: Axis;
@@ -23,7 +23,8 @@ export class BasePlot implements Plot {
   constructor(
     private chartConfig: MatrixChartConfig,
     private chartData: MatrixChartData,
-    private chartThemeConfig: MatrixChartThemeConfig
+    private chartThemeConfig: MatrixChartThemeConfig,
+    private colorConfig: object
   ) {
     this.boundingRect = {
       x: 0,
@@ -54,25 +55,36 @@ export class BasePlot implements Plot {
       throw Error('Axes must be passed to render Plots');
     }
     const drawableElem: DrawableElem[] = [];
-    for (const [i, plot] of this.chartData.plots.entries()) {
-      const barPlot = new BarPlot(
-        plot,
-        this.boundingRect,
-        this.xAxis,
-        this.yAxis,
-        this.chartConfig.chartOrientation,
-        i
-      );
-      drawableElem.push(...barPlot.getDrawableElement());
-    }
+    this.chartData.plots = [];
+
+    this.chartData.xAxis.categories.forEach((a) => {
+      this.chartData.yAxis.categories.forEach((b) => {
+        const backdrop = new Backdrop(
+          {
+            type: 'bar',
+            // @ts-ignore: TODO Fix ts errors
+            fill: this.colorConfig[`${a}-${b}`],
+            data: [[a, b]],
+          },
+          this.boundingRect,
+          this.chartConfig.chartOrientation,
+          `${a}-${b}`,
+          this.xAxis,
+          this.yAxis
+        );
+        drawableElem.push(...backdrop.getDrawableElement());
+      });
+    });
+
     return drawableElem;
   }
 }
 
-export function getPlotComponent(
+export function getBackdropComponent(
   chartConfig: MatrixChartConfig,
   chartData: MatrixChartData,
-  chartThemeConfig: MatrixChartThemeConfig
-): Plot {
-  return new BasePlot(chartConfig, chartData, chartThemeConfig);
+  chartThemeConfig: MatrixChartThemeConfig,
+  colorConfig: object
+): BaseBackdrop {
+  return new BaseBackdrop(chartConfig, chartData, chartThemeConfig, colorConfig);
 }

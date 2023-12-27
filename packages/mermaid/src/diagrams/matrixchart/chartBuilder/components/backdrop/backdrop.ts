@@ -1,27 +1,32 @@
 import type {
-  BarPlotData,
+  BackdropData,
   BoundingRect,
   DrawableElem,
   MatrixChartConfig,
-  PlotData,
 } from '../../interfaces.js';
 import type { Axis } from '../axis/index.js';
 
-export class BarPlot {
+export class Backdrop {
   constructor(
-    private barData: BarPlotData | PlotData,
+    private barData: BackdropData,
     private boundingRect: BoundingRect,
-    private xAxis: Axis,
-    private yAxis: Axis,
     private orientation: MatrixChartConfig['chartOrientation'],
-    private plotIndex: number
+    private plotIndex: string,
+    private xAxis?: Axis,
+    private yAxis?: Axis
   ) {}
 
   getDrawableElement(): DrawableElem[] {
-    const finalData: [number, number][] = this.barData.data.map((d) => [
-      this.xAxis.getScaleValue(d[0]),
-      this.yAxis.getScaleValue(d[1]),
-    ]);
+    if (!(this.xAxis && this.yAxis)) {
+      throw Error('Axes must be passed to render Plots');
+    }
+    const finalData: [number, number][] = this.barData.data.map((d) => {
+      if (this.xAxis && this.yAxis) {
+        return [this.xAxis.getScaleValue(d[0]), this.yAxis.getScaleValue(d[1])];
+      } else {
+        return [0, 0];
+      }
+    });
 
     const barPaddingPercent = 0.05;
 
@@ -39,7 +44,7 @@ export class BarPlot {
             x: this.boundingRect.x,
             y: data[0] - barWidthHalf,
             height: barWidth,
-            width: data[1] - this.boundingRect.x,
+            width: barWidth,
             fill: this.barData.fill,
             strokeWidth: 0,
             strokeFill: this.barData.fill,
@@ -55,7 +60,7 @@ export class BarPlot {
           x: data[0] - barWidthHalf,
           y: data[1],
           width: barWidth,
-          height: this.boundingRect.y + this.boundingRect.height - data[1],
+          height: barWidth,
           fill: this.barData.fill,
           strokeWidth: 0,
           strokeFill: this.barData.fill,

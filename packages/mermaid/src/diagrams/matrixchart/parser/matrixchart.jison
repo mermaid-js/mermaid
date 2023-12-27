@@ -9,12 +9,15 @@
 %x acc_descr_multiline
 %s axis_data
 %s axis_band_data
+%s color_data
+%s color_band_data
 %s data
 %s data_inner
 %%
 \%\%(?!\{)[^\n]*                          /* skip comments */
 [^\}]\%\%[^\n]*                           /* skip comments */
 <axis_data>(\r?\n)                        { this.popState(); return 'NEWLINE'; }
+<color_data>(\r?\n)                       { this.popState(); return 'NEWLINE'; }
 <data>(\r?\n)                             { this.popState(); return 'NEWLINE'; }
 [\n\r]+                                   return 'NEWLINE';
 \%\%[^\n]*                                /* do nothing */
@@ -38,7 +41,13 @@
 <axis_data>"-->"                          { return 'ARROW_DELIMITER'; }
 
 
-"line"                                    { this.pushState("data"); return 'LINE'; }
+"color"                                    { this.pushState("color_data"); return "COLOR"; }
+<color_data>"["                            { this.pushState("color_band_data"); return 'SQUARE_BRACES_START'; }
+<color_data>"-->"                          { return 'ARROW_DELIMITER'; }
+
+
+
+
 "bar"                                     { this.pushState("data"); return 'BAR'; }
 <data>"["                                 { this.pushState("data_inner"); return 'SQUARE_BRACES_START'; }
 <axis_data,data_inner>[+-]?(?:\d+(?:\.\d+)?|\.\d+)   { return 'NUMBER_WITH_DECIMAL'; }
@@ -100,6 +109,7 @@ statement
   | title text                                                  { yy.setDiagramTitle($text.text.trim()); }
   | X_AXIS parseXAxis
   | Y_AXIS parseYAxis
+  | COLOR colorData                                             { yy.setColorData($colorData); }
   | LINE plotData                                               { yy.setLineData({text: '', type: 'text'}, $plotData); }
   | LINE text plotData                                          { yy.setLineData($text, $plotData); }
   | BAR plotData                                                { yy.setBarData({text: '', type: 'text'}, $plotData); }
@@ -111,6 +121,10 @@ statement
 
 plotData
   : SQUARE_BRACES_START commaSeparatedNumbers SQUARE_BRACES_END   { $$ = $commaSeparatedNumbers }
+  ;
+
+colorData
+  : SQUARE_BRACES_START commaSeparatedTexts SQUARE_BRACES_END   { $$ = $commaSeparatedTexts }
   ;
 
 commaSeparatedNumbers
@@ -126,7 +140,6 @@ parseXAxis
 
 xAxisData
   : bandData                                                 {yy.setXAxisBand($bandData);}
-  | NUMBER_WITH_DECIMAL ARROW_DELIMITER NUMBER_WITH_DECIMAL  {yy.setXAxisRangeData(Number($NUMBER_WITH_DECIMAL1), Number($NUMBER_WITH_DECIMAL2));}
   ;
 
 bandData
@@ -144,8 +157,10 @@ parseYAxis
   | yAxisData                                                 {yy.setYAxisTitle({type: "text", text: ""});}
   ;
 
+
+
 yAxisData
-  : NUMBER_WITH_DECIMAL ARROW_DELIMITER NUMBER_WITH_DECIMAL  {yy.setYAxisRangeData(Number($NUMBER_WITH_DECIMAL1), Number($NUMBER_WITH_DECIMAL2));}
+  : bandData                                                 {yy.setYAxisBand($bandData);}
   ;
 
 eol

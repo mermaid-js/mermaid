@@ -1,14 +1,12 @@
 import type { Group } from '../../../../../diagram-api/types.js';
 import type {
-  AxisDataType,
+  BandAxisDataType,
   ChartComponent,
   MatrixChartAxisConfig,
   MatrixChartAxisThemeConfig,
 } from '../../interfaces.js';
-import { isBandAxisData } from '../../interfaces.js';
 import { TextDimensionCalculatorWithFont } from '../../textDimensionCalculator.js';
 import { BandAxis } from './bandAxis.js';
-import { LinearAxis } from './linearAxis.js';
 
 export type AxisPosition = 'left' | 'right' | 'top' | 'bottom';
 
@@ -22,25 +20,16 @@ export interface Axis extends ChartComponent {
 }
 
 export function getAxis(
-  data: AxisDataType,
+  data: BandAxisDataType,
   axisConfig: MatrixChartAxisConfig,
   axisThemeConfig: MatrixChartAxisThemeConfig,
   tmpSVGGroup: Group
 ): Axis {
   const textDimansionCalculator = new TextDimensionCalculatorWithFont(tmpSVGGroup);
-  if (isBandAxisData(data)) {
-    return new BandAxis(
-      axisConfig,
-      axisThemeConfig,
-      data.categories,
-      data.title,
-      textDimansionCalculator
-    );
-  }
-  return new LinearAxis(
+  return new BandAxis(
     axisConfig,
     axisThemeConfig,
-    [data.min, data.max],
+    data.categories,
     data.title,
     textDimansionCalculator
   );

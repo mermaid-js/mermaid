@@ -20,7 +20,6 @@ import type {
   MatrixChartData,
   MatrixChartThemeConfig,
 } from './chartBuilder/interfaces.js';
-import { isBandAxisData, isLinearAxisData } from './chartBuilder/interfaces.js';
 import type { Group } from '../../diagram-api/types.js';
 
 let plotIndex = 0;
@@ -57,10 +56,9 @@ function getChartDefaultConfig(): MatrixChartConfig {
 function getChartDefaultData(): MatrixChartData {
   return {
     yAxis: {
-      type: 'linear',
+      type: 'band',
       title: '',
-      min: Infinity,
-      max: -Infinity,
+      categories: [],
     },
     xAxis: {
       type: 'band',
@@ -69,6 +67,7 @@ function getChartDefaultData(): MatrixChartData {
     },
     title: '',
     plots: [],
+    color: [],
   };
 }
 
@@ -90,10 +89,7 @@ function setOrientation(orientation: string) {
 function setXAxisTitle(title: NormalTextType) {
   matrixChartData.xAxis.title = textSanitizer(title.text);
 }
-function setXAxisRangeData(min: number, max: number) {
-  matrixChartData.xAxis = { type: 'linear', title: matrixChartData.xAxis.title, min, max };
-  hasSetXAxis = true;
-}
+
 function setXAxisBand(categories: NormalTextType[]) {
   matrixChartData.xAxis = {
     type: 'band',
@@ -105,94 +101,25 @@ function setXAxisBand(categories: NormalTextType[]) {
 function setYAxisTitle(title: NormalTextType) {
   matrixChartData.yAxis.title = textSanitizer(title.text);
 }
-function setYAxisRangeData(min: number, max: number) {
-  matrixChartData.yAxis = { type: 'linear', title: matrixChartData.yAxis.title, min, max };
-  hasSetYAxis = true;
+
+function setColorData(colors: NormalTextType[]) {
+  matrixChartData.color = colors.map((c) => textSanitizer(c.text));
 }
 
-// this function does not set `hasSetYAxis` as there can be multiple data so we should calculate the range accordingly
-function setYAxisRangeFromPlotData(data: number[]) {
-  const minValue = Math.min(...data);
-  const maxValue = Math.max(...data);
-  const prevMinValue = isLinearAxisData(matrixChartData.yAxis)
-    ? matrixChartData.yAxis.min
-    : Infinity;
-  const prevMaxValue = isLinearAxisData(matrixChartData.yAxis)
-    ? matrixChartData.yAxis.max
-    : -Infinity;
+function setYAxisBand(categories: NormalTextType[]) {
   matrixChartData.yAxis = {
-    type: 'linear',
+    type: 'band',
     title: matrixChartData.yAxis.title,
-    min: Math.min(prevMinValue, minValue),
-    max: Math.max(prevMaxValue, maxValue),
+    categories: categories.map((c) => textSanitizer(c.text)),
   };
-}
-
-function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
-  let retData: SimplePlotDataType = [];
-  if (data.length === 0) {
-    return retData;
-  }
-  if (!hasSetXAxis) {
-    const prevMinValue = isLinearAxisData(matrixChartData.xAxis)
-      ? matrixChartData.xAxis.min
-      : Infinity;
-    const prevMaxValue = isLinearAxisData(matrixChartData.xAxis)
-      ? matrixChartData.xAxis.max
-      : -Infinity;
-    setXAxisRangeData(Math.min(prevMinValue, 1), Math.max(prevMaxValue, data.length));
-  }
-  if (!hasSetYAxis) {
-    setYAxisRangeFromPlotData(data);
-  }
-
-  if (isBandAxisData(matrixChartData.xAxis)) {
-    retData = matrixChartData.xAxis.categories.map((c, i) => [c, data[i]]);
-  }
-
-  if (isLinearAxisData(matrixChartData.xAxis)) {
-    const min = matrixChartData.xAxis.min;
-    const max = matrixChartData.xAxis.max;
-    const step = (max - min + 1) / data.length;
-    const categories: string[] = [];
-    for (let i = min; i <= max; i += step) {
-      categories.push(`${i}`);
-    }
-    retData = categories.map((c, i) => [c, data[i]]);
-  }
-
-  return retData;
+  hasSetXAxis = true;
 }
 
 function getPlotColorFromPalette(plotIndex: number): string {
   return plotColorPalette[plotIndex === 0 ? 0 : plotIndex % plotColorPalette.length];
 }
 
-function setLineData(title: NormalTextType, data: number[]) {
-  const plotData = transformDataWithoutCategory(data);
-  matrixChartData.plots.push({
-    type: 'line',
-    strokeFill: getPlotColorFromPalette(plotIndex),
-    strokeWidth: 2,
-    data: plotData,
-  });
-  plotIndex++;
-}
-
-function setBarData(title: NormalTextType, data: number[]) {
-  const plotData = transformDataWithoutCategory(data);
-  matrixChartData.plots.push({
-    type: 'bar',
-    fill: getPlotColorFromPalette(plotIndex),
-    data: plotData,
-  });
-  plotIndex++;
-}
-
 function getDrawableElem(): DrawableElem[] {
-  if (matrixChartData.plots.length === 0) {
-    throw Error('No Plot to render, please provide a plot with some data');
-  }
   matrixChartData.title = getDiagramTitle();
   return MatrixChartBuilder.build(
     matrixChartConfig,
@@ -234,13 +161,11 @@ export default {
   setAccDescription,
   setOrientation,
   setXAxisTitle,
-  setXAxisRangeData,
   setXAxisBand,
+  setYAxisBand,
   setYAxisTitle,
-  setYAxisRangeData,
-  setLineData,
-  setBarData,
   setTmpSVGG,
   getChartThemeConfig,
   getChartConfig,
+  setColorData,
 };

@@ -26,18 +26,26 @@ export interface ChartComponent {
 }
 
 export type SimplePlotDataType = [string, number][];
+export type SimpleBackdropDataType = [string, string][];
 
 export interface LinePlotData {
   type: 'line';
   strokeFill: string;
   strokeWidth: number;
   data: SimplePlotDataType;
+  fill: string;
 }
 
 export interface BarPlotData {
   type: 'bar';
   fill: string;
   data: SimplePlotDataType;
+}
+
+export interface BackdropData {
+  type: string;
+  fill: string;
+  data: SimpleBackdropDataType;
 }
 
 export type PlotData = LinePlotData | BarPlotData;
@@ -50,23 +58,6 @@ export interface BandAxisDataType {
   type: 'band';
   title: string;
   categories: string[];
-}
-
-export interface LinearAxisDataType {
-  type: 'linear';
-  title: string;
-  min: number;
-  max: number;
-}
-
-export type AxisDataType = LinearAxisDataType | BandAxisDataType;
-
-export function isBandAxisData(data: AxisDataType): data is BandAxisDataType {
-  return data.type === 'band';
-}
-
-export function isLinearAxisData(data: AxisDataType): data is LinearAxisDataType {
-  return data.type === 'linear';
 }
 
 /**
@@ -100,10 +91,11 @@ export interface MatrixChartConfig {
 }
 
 export interface MatrixChartData {
-  xAxis: AxisDataType;
-  yAxis: AxisDataType;
+  xAxis: BandAxisDataType;
+  yAxis: BandAxisDataType;
   title: string;
   plots: PlotData[];
+  color: string[];
 }
 
 export interface Dimension {
