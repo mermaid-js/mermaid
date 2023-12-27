@@ -17,6 +17,7 @@ export interface Axis extends ChartComponent {
   getTickDistance(): number;
   recalculateOuterPaddingToDrawBar(): void;
   setRange(range: [number, number]): void;
+  getBandwidth(): number;
 }
 
 export function getAxis(

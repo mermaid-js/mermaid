@@ -26,12 +26,7 @@ export class BandAxis extends BaseAxis {
   }
 
   recalculateScale(): void {
-    this.scale = scaleBand()
-      .domain(this.categories)
-      .range(this.getRange())
-      .paddingInner(1)
-      .paddingOuter(0)
-      .align(0.5);
+    this.scale = scaleBand().domain(this.categories).range(this.getRange()).padding(0.1);
     log.trace('BandAxis axis final categories, range: ', this.categories, this.getRange());
   }
 
@@ -41,5 +36,9 @@ export class BandAxis extends BaseAxis {
 
   getScaleValue(value: string): number {
     return this.scale(value) || this.getRange()[0];
+  }
+
+  getBandwidth(): number {
+    return this.scale.bandwidth();
   }
 }

@@ -44,6 +44,7 @@ export class Orchestrator {
     );
 
     colorConfigArr.forEach((item: string | number, i: number) => {
+      // @ts-ignore: TODO Fix ts errors
       colorConfig[item] = chartData.color[i];
     });
 
@@ -125,10 +126,10 @@ export class Orchestrator {
     });
 
     this.componentStore.plot.setBoundingBoxMatrix({ x: plotX, y: plotY });
-    this.componentStore.xAxis.setRange([plotX, plotX + chartWidth]);
+    this.componentStore.xAxis.setRange([plotX * 2, plotX + chartWidth]);
     this.componentStore.xAxis.setBoundingBoxMatrix({ x: plotX, y: plotY + chartHeight });
 
-    this.componentStore.yAxis.setRange([plotY + chartHeight, plotY]);
+    this.componentStore.yAxis.setRange([plotY + chartHeight, plotY * 2]);
     this.componentStore.yAxis.setBoundingBoxMatrix({ x: 0, y: plotY });
 
     if (this.chartData.plots.some((p) => isBarPlot(p))) {

@@ -60,6 +60,8 @@ export abstract class BaseAxis implements Axis {
 
   abstract getTickValues(): Array<string | number>;
 
+  abstract getBandwidth(): number;
+
   getTickDistance(): number {
     const range = this.getRange();
     return Math.abs(range[0] - range[1]) / this.getTickValues().length;

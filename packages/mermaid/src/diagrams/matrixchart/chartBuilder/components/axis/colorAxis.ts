@@ -42,4 +42,8 @@ export class ColorAxis extends BaseAxis {
   getScaleValue(value: string): number {
     return this.scale(value) || this.getRange()[0];
   }
+
+  getBandwidth(): number {
+    return this.scale.bandwidth();
+  }
 }

@@ -30,9 +30,7 @@ export class Backdrop {
 
     const barPaddingPercent = 0.05;
 
-    const barWidth =
-      Math.min(this.xAxis.getAxisOuterPadding() * 2, this.xAxis.getTickDistance()) *
-      (1 - barPaddingPercent);
+    const barWidth = this.yAxis.getBandwidth();
     const barWidthHalf = barWidth / 2;
 
     if (this.orientation === 'horizontal') {
@@ -58,7 +56,7 @@ export class Backdrop {
         type: 'rect',
         data: finalData.map((data) => ({
           x: data[0] - barWidthHalf,
-          y: data[1],
+          y: data[1] - barWidthHalf,
           width: barWidth,
           height: barWidth,
           fill: this.barData.fill,
