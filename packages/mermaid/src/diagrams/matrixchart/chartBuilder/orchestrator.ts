@@ -31,16 +31,19 @@ export class Orchestrator {
   ) {
     const colorConfig: object = {};
 
-    const categoriesArr: string[][] = chartData.xAxis.categories.map((row) =>
-      chartData.yAxis.categories.map((column) => {
-        return `${row}-${column}`;
-      })
-    );
     // @ts-ignore: TODO Fix ts errors
-    const colorConfigArr: string[] = [...categoriesArr];
+    // eslint-disable-next-line prefer-spread, unicorn/prefer-spread, @typescript-eslint/no-explicit-any
+    const colorConfigArr: any = [].concat(
+      ...chartData.xAxis.categories.map((row) =>
+        // @ts-ignore: TODO Fix ts errors
+        chartData.yAxis.categories.map((column) => {
+          // @ts-ignore: TODO Fix ts errors
+          return `${row}-${column}`;
+        })
+      )
+    );
 
     colorConfigArr.forEach((item: string | number, i: number) => {
-      // @ts-ignore: TODO Fix ts errors
       colorConfig[item] = chartData.color[i];
     });
 
