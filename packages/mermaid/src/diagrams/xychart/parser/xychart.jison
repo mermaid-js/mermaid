@@ -102,11 +102,26 @@ statement
   | Y_AXIS parseYAxis
   | LINE plotData                                               { yy.setLineData({text: '', type: 'text'}, $plotData); }
   | LINE text plotData                                          { yy.setLineData($text, $plotData); }
-  | BAR plotData                                                { yy.setBarData({text: '', type: 'text'}, $plotData); }
-  | BAR text plotData                                           { yy.setBarData($text, $plotData); }
+  | BAR datasets                                                { yy.setBarData($datasets); }
   | acc_title acc_title_value                                   { $$=$acc_title_value.trim();yy.setAccTitle($$); }
   | acc_descr acc_descr_value                                   { $$=$acc_descr_value.trim();yy.setAccDescription($$); }
   | acc_descr_multiline_value                                   { $$=$acc_descr_multiline_value.trim();yy.setAccDescription($$); }
+  ;
+
+datasets
+  : SQUARE_BRACES_START datasetBraced COMMA datasets SQUARE_BRACES_END { $$ = [$datasetBraced, ...$datasets] }
+  | SQUARE_BRACES_START datasetBraced SQUARE_BRACES_END                { $$ = [$datasetBraced] }
+  | datasetBraced                                                      { $$ = [$datasetBraced] }
+  | dataset                                                            { $$ = [$dataset] }
+  ;
+
+datasetBraced
+  : SQUARE_BRACES_START dataset SQUARE_BRACES_END                      { $$ = $dataset }
+  ;
+
+dataset
+  : plotData                                                           { $$ = ['', $plotData] }
+  | text plotData                                                      { $$ = [$text, $plotData] }
   ;
 
 plotData

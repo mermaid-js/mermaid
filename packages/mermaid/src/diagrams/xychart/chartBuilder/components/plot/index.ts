@@ -6,6 +6,8 @@ import type {
   Point,
   XYChartThemeConfig,
   XYChartConfig,
+  BarPlotData,
+  LinePlotData,
 } from '../../interfaces.js';
 import type { Axis } from '../axis/index.js';
 import type { ChartComponent } from '../../interfaces.js';
@@ -55,34 +57,31 @@ export class BasePlot implements Plot {
       throw Error('Axes must be passed to render Plots');
     }
     const drawableElem: DrawableElem[] = [];
-    for (const [i, plot] of this.chartData.plots.entries()) {
-      switch (plot.type) {
-        case 'line':
-          {
-            const linePlot = new LinePlot(
-              plot,
-              this.xAxis,
-              this.yAxis,
-              this.chartConfig.chartOrientation,
-              i
-            );
-            drawableElem.push(...linePlot.getDrawableElement());
-          }
-          break;
-        case 'bar':
-          {
-            const barPlot = new BarPlot(
-              plot,
-              this.boundingRect,
-              this.xAxis,
-              this.yAxis,
-              this.chartConfig.chartOrientation,
-              i
-            );
-            drawableElem.push(...barPlot.getDrawableElement());
-          }
-          break;
-      }
+    const linePlots = this.chartData.plots.filter(plot => plot.type === 'line') as LinePlotData[];
+    const barPlots = this.chartData.plots.filter(plot => plot.type === 'bar') as BarPlotData[];
+
+    let plotIndex = 0;
+    if(linePlots.length) {
+      const linePlot = new LinePlot(
+        linePlots[0],
+        this.xAxis,
+        this.yAxis,
+        this.chartConfig.chartOrientation,
+        plotIndex
+      );
+      drawableElem.push(...linePlot.getDrawableElement());
+    }
+    if(barPlots.length) {
+      const barPlot = new BarPlot(
+        barPlots,
+        this.boundingRect,
+        this.xAxis,
+        this.yAxis,
+        this.chartConfig.chartOrientation,
+        plotIndex
+      );
+      drawableElem.push(...barPlot.getDrawableElement());
+      plotIndex++;
     }
     return drawableElem;
   }

@@ -169,14 +169,18 @@ function setLineData(title: NormalTextType, data: number[]) {
   plotIndex++;
 }
 
-function setBarData(title: NormalTextType, data: number[]) {
-  const plotData = transformDataWithoutCategory(data);
-  xyChartData.plots.push({
-    type: 'bar',
-    fill: getPlotColorFromPalette(plotIndex),
-    data: plotData,
+type NamedDataset = [title: NormalTextType, data: number[]];
+
+function setBarData(datasets: NamedDataset[]) {
+  datasets.forEach(dataset => {
+    const plotData = transformDataWithoutCategory(dataset[1]);
+    xyChartData.plots.push({
+      type: 'bar',
+      fill: getPlotColorFromPalette(plotIndex),
+      data: plotData,
+    });
+    plotIndex++;
   });
-  plotIndex++;
 }
 
 function getDrawableElem(): DrawableElem[] {
