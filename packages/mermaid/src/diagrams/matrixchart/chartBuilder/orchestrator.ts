@@ -34,6 +34,7 @@ export class Orchestrator {
     // @ts-ignore: TODO Fix ts errors
     // eslint-disable-next-line prefer-spread, unicorn/prefer-spread, @typescript-eslint/no-explicit-any
     const colorConfigArr: any = [].concat(
+      // @ts-ignore: TODO Fix ts errors
       ...chartData.xAxis.categories.map((row) =>
         // @ts-ignore: TODO Fix ts errors
         chartData.yAxis.categories.map((column) => {
