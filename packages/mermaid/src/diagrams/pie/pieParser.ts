@@ -1,5 +1,5 @@
-import type { Pie } from 'mermaid-parser';
-import { parse } from 'mermaid-parser';
+import type { Pie } from '@mermaid-js/parser';
+import { parse } from '@mermaid-js/parser';
 import { log } from '../../logger.js';
 import type { ParserDefinition } from '../../diagram-api/types.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';

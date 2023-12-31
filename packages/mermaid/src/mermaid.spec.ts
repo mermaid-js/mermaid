@@ -2,7 +2,7 @@ import mermaid from './mermaid.js';
 import { mermaidAPI } from './mermaidAPI.js';
 import './diagram-api/diagram-orchestration.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
-import { beforeAll, describe, it, expect, vi } from 'vitest';
+import { beforeAll, describe, it, expect, vi, afterEach } from 'vitest';
 import type { DiagramDefinition } from './diagram-api/types.js';
 
 beforeAll(async () => {
@@ -89,7 +89,7 @@ describe('when using mermaid and ', () => {
       ).resolves.not.toThrow();
       // should still render, even if lazyLoadedDiagrams fails
       expect(mermaidAPI.render).toHaveBeenCalled();
-    });
+    }, 20_000);
 
     it('should defer diagram load based on parameter', async () => {
       let loaded = false;

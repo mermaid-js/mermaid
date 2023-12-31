@@ -768,8 +768,8 @@ export interface XYChartConfig extends BaseDiagramConfig {
    * Should show the chart title
    */
   showTitle?: boolean;
-  xAxis?: XYChartAxisConfig1;
-  yAxis?: XYChartAxisConfig2;
+  xAxis?: XYChartAxisConfig;
+  yAxis?: XYChartAxisConfig;
   /**
    * How to plot will be drawn horizontal or vertical
    */
@@ -778,104 +778,6 @@ export interface XYChartConfig extends BaseDiagramConfig {
    * Minimum percent of space plots of the chart will take
    */
   plotReservedSpacePercent?: number;
-}
-/**
- * This object contains configuration for XYChart axis config
- */
-export interface XYChartAxisConfig1 {
-  /**
-   * Should show the axis labels (tick text)
-   */
-  showLabel?: boolean;
-  /**
-   * font size of the axis labels (tick text)
-   */
-  labelFontSize?: number;
-  /**
-   * top and bottom space from axis label (tick text)
-   */
-  labelPadding?: number;
-  /**
-   * Should show the axis title
-   */
-  showTitle?: boolean;
-  /**
-   * font size of the axis title
-   */
-  titleFontSize?: number;
-  /**
-   * top and bottom space from axis title
-   */
-  titlePadding?: number;
-  /**
-   * Should show the axis tick lines
-   */
-  showTick?: boolean;
-  /**
-   * length of the axis tick lines
-   */
-  tickLength?: number;
-  /**
-   * width of the axis tick lines
-   */
-  tickWidth?: number;
-  /**
-   * Show line across the axis
-   */
-  showAxisLine?: boolean;
-  /**
-   * Width of the axis line
-   */
-  axisLineWidth?: number;
-}
-/**
- * This object contains configuration for XYChart axis config
- */
-export interface XYChartAxisConfig2 {
-  /**
-   * Should show the axis labels (tick text)
-   */
-  showLabel?: boolean;
-  /**
-   * font size of the axis labels (tick text)
-   */
-  labelFontSize?: number;
-  /**
-   * top and bottom space from axis label (tick text)
-   */
-  labelPadding?: number;
-  /**
-   * Should show the axis title
-   */
-  showTitle?: boolean;
-  /**
-   * font size of the axis title
-   */
-  titleFontSize?: number;
-  /**
-   * top and bottom space from axis title
-   */
-  titlePadding?: number;
-  /**
-   * Should show the axis tick lines
-   */
-  showTick?: boolean;
-  /**
-   * length of the axis tick lines
-   */
-  tickLength?: number;
-  /**
-   * width of the axis tick lines
-   */
-  tickWidth?: number;
-  /**
-   * Show line across the axis
-   */
-  showAxisLine?: boolean;
-  /**
-   * Width of the axis line
-   */
-  axisLineWidth?: number;
 }
 /**
  * The object containing configurations specific for entity relationship diagrams
@@ -1396,6 +1298,14 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    * Margin top for the text over the diagram
    */
   titleTopMargin?: number;
+  /**
+   * Defines a top/bottom margin for subgraph titles
+   *
+   */
+  subGraphTitleMargin?: {
+    top?: number;
+    bottom?: number;
+  };
   arrowMarkerAbsolute?: boolean;
   /**
    * The amount of padding around the diagram as a whole so that embedded
@@ -1464,13 +1374,7 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
    *
    */
   linkColor?: SankeyLinkColor | string;
-  /**
-   * Controls the alignment of the Sankey diagrams.
-   *
-   * See <https://github.com/d3/d3-sankey#alignments>.
-   *
-   */
-  nodeAlignment?: 'left' | 'right' | 'center' | 'justify';
+  nodeAlignment?: SankeyNodeAlignment;
   useMaxWidth?: boolean;
   /**
    * Toggle to display or hide values along with title.

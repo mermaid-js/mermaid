@@ -109,6 +109,8 @@ Communication tools and platforms
 
 ### Wikis
 
+- [PmWiki](https://www.pmwiki.org)
+  - [MermaidJs Cookbook recipe](https://www.pmwiki.org/wiki/Cookbook/MermaidJs)
 - [MediaWiki](https://www.mediawiki.org)
   - [Mermaid Extension](https://www.mediawiki.org/wiki/Extension:Mermaid)
   - [Flex Diagrams Extension](https://www.mediawiki.org/wiki/Extension:Flex_Diagrams)
@@ -177,7 +179,7 @@ Communication tools and platforms
 ### Document Generation
 
 - [Docusaurus](https://docusaurus.io/docs/markdown-features/diagrams) ✅
-- [Swimm - Up-to-date diagrams with Swimm, the knowledge management tool for code](https://docs.swimm.io/Features/diagrams-and-charts)
+- [Swimm - Up-to-date diagrams with Swimm, the knowledge management tool for code](https://docs.swimm.io/features/diagrams-and-charts/#mermaid--swimm--up-to-date-diagrams-)
 - [Sphinx](https://www.sphinx-doc.org/en/master/)
   - [sphinxcontrib-mermaid](https://github.com/mgaitan/sphinxcontrib-mermaid)
 - [remark](https://remark.js.org/)
@@ -232,5 +234,5 @@ Communication tools and platforms
 - [ExDoc](https://github.com/elixir-lang/ex_doc)
   - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)
 - [NiceGUI: Let any browser be the frontend of your Python code](https://nicegui.io)
-  - [ui.mermaid(...)](https://nicegui.io/reference#mermaid_diagrams)
-  - [ui.markdown(..., extras=['mermaid'])](https://nicegui.io/reference#markdown_element)
+  - [ui.mermaid(...)](https://nicegui.io/documentation/section_text_elements#markdown_element)
+  - [ui.markdown(..., extras=['mermaid'])](https://nicegui.io/documentation/section_text_elements#mermaid_diagrams)

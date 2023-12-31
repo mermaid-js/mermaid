@@ -1,6 +1,5 @@
 import type d3 from 'd3';
 import { scaleOrdinal, pie as d3pie, arc } from 'd3';
-
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
@@ -38,33 +37,24 @@ const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Section>[] => {
  */
 export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   log.debug('rendering pie chart\n' + text);
-
   const db = diagObj.db as PieDB;
   const globalConfig: MermaidConfig = getConfig();
   const pieConfig: Required<PieDiagramConfig> = cleanAndMerge(db.getConfig(), globalConfig.pie);
-
-  const height = 450;
-  // TODO: remove document width
-  const width: number =
-    document.getElementById(id)?.parentElement?.offsetWidth ?? pieConfig.useWidth;
-  const svg: SVG = selectSvgElement(id);
-  // Set viewBox
-  svg.attr('viewBox', `0 0 ${width} ${height}`);
-  configureSvgSize(svg, height, width, pieConfig.useMaxWidth);
-
   const MARGIN = 40;
   const LEGEND_RECT_SIZE = 18;
   const LEGEND_SPACING = 4;
-
+  const height = 450;
+  const pieWidth: number = height;
+  const svg: SVG = selectSvgElement(id);
   const group: Group = svg.append('g');
-  group.attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+  group.attr('transform', 'translate(' + pieWidth / 2 + ',' + height / 2 + ')');
 
   const { themeVariables } = globalConfig;
   let [outerStrokeWidth] = parseFontSize(themeVariables.pieOuterStrokeWidth);
   outerStrokeWidth ??= 2;
 
   const textPosition: number = pieConfig.textPosition;
-  const radius: number = Math.min(width, height) / 2 - MARGIN;
+  const radius: number = Math.min(pieWidth, height) / 2 - MARGIN;
   // Shape helper to build arcs:
   const arcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Section>> = arc<d3.PieArcDatum<D3Section>>()
     .innerRadius(0)
@@ -175,6 +165,19 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
       }
       return label;
     });
+
+  const longestTextWidth = Math.max(
+    ...legend
+      .selectAll('text')
+      .nodes()
+      .map((node) => (node as Element)?.getBoundingClientRect().width ?? 0)
+  );
+
+  const totalWidth = pieWidth + MARGIN + LEGEND_RECT_SIZE + LEGEND_SPACING + longestTextWidth;
+
+  // Set viewBox
+  svg.attr('viewBox', `0 0 ${totalWidth} ${height}`);
+  configureSvgSize(svg, height, totalWidth, pieConfig.useMaxWidth);
 };
 
 export const renderer = { draw };
