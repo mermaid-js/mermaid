@@ -1,5 +1,5 @@
 import type { GrammarAST, Stream, TokenBuilderOptions } from 'langium';
-import type { TokenType, TokenVocabulary } from 'chevrotain';
+import type { TokenType } from 'chevrotain';
 
 import { DefaultTokenBuilder } from 'langium';
 
@@ -9,14 +9,6 @@ export abstract class AbstractMermaidTokenBuilder extends DefaultTokenBuilder {
   public constructor(keywords: string[]) {
     super();
     this.keywords = new Set<string>(keywords);
-  }
-
-  public override buildTokens(
-    grammar: GrammarAST.Grammar,
-    options?: TokenBuilderOptions | undefined
-  ): TokenVocabulary {
-    this.rearrangeRules(grammar.rules);
-    return super.buildTokens(grammar, options);
   }
 
   protected override buildKeywordTokens(
@@ -32,28 +24,6 @@ export abstract class AbstractMermaidTokenBuilder extends DefaultTokenBuilder {
       }
     });
     return tokenTypes;
-  }
-
-  /**
-   * Reorders rules using a pivot rule.
-   *
-   * We use this function to reorder rules because imported rules are
-   *  inserted at the end of the array.
-   *
-   * @param rules - the grammar rules.
-   */
-  private rearrangeRules(rules: GrammarAST.AbstractRule[]): void {
-    const index = rules.findIndex((rule) => rule.name === 'TitleAndAccessibilities');
-    if (index === -1) {
-      return;
-    }
-
-    const [item] = rules.splice(index, 1);
-
-    rules.unshift(item);
-
-    const itemsToMove = rules.splice(1, index);
-    rules.push(...itemsToMove);
   }
 }
 
