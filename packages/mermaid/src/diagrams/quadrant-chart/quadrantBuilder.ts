@@ -12,6 +12,10 @@ export type TextHorizontalPos = 'top' | 'middle' | 'bottom';
 
 export interface QuadrantPointInputType extends Point {
   text: string;
+  radius: number;
+  color: string;
+  strokeColor: string;
+  strokeWidth: string;
 }
 
 export interface QuadrantTextType extends Point {
@@ -27,6 +31,8 @@ export interface QuadrantPointType extends Point {
   fill: string;
   radius: number;
   text: QuadrantTextType;
+  strokeColor: string;
+  strokeWidth: string;
 }
 
 export interface QuadrantQuadrantsType extends Point {
@@ -473,8 +479,11 @@ export class QuadrantBuilder {
       const props: QuadrantPointType = {
         x: xAxis(point.x),
         y: yAxis(point.y),
-        fill: this.themeConfig.quadrantPointFill,
-        radius: this.config.pointRadius,
+        fill:
+          point.color !== undefined && point.color !== ''
+            ? point.color
+            : this.themeConfig.quadrantPointFill,
+        radius: point.radius !== undefined && point.radius ? point.radius : this.config.pointRadius,
         text: {
           text: point.text,
           fill: this.themeConfig.quadrantPointTextFill,
@@ -485,6 +494,12 @@ export class QuadrantBuilder {
           fontSize: this.config.pointLabelFontSize,
           rotation: 0,
         },
+        strokeColor:
+          point.strokeColor !== undefined && point.strokeColor !== ''
+            ? point.strokeColor
+            : this.themeConfig.quadrantPointFill,
+        strokeWidth:
+          point.strokeWidth !== undefined && point.strokeWidth !== '' ? point.strokeWidth : '0px',
       };
       return props;
     });

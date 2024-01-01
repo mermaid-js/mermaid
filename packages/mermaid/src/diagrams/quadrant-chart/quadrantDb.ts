@@ -53,8 +53,26 @@ function setYAxisBottomText(textObj: LexTextObj) {
   quadrantBuilder.setData({ yAxisBottomText: textSanitizer(textObj.text) });
 }
 
-function addPoint(textObj: LexTextObj, x: number, y: number) {
-  quadrantBuilder.addPoints([{ x, y, text: textSanitizer(textObj.text) }]);
+function addPoint(
+  textObj: LexTextObj,
+  x: number,
+  y: number,
+  radius: number,
+  color: string,
+  stroke_color: string,
+  stroke_width: string
+) {
+  quadrantBuilder.addPoints([
+    {
+      x,
+      y,
+      text: textSanitizer(textObj.text),
+      radius,
+      color,
+      strokeColor: stroke_color,
+      strokeWidth: stroke_width,
+    },
+  ]);
 }
 
 function setWidth(width: number) {
