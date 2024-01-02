@@ -20,7 +20,7 @@ outline: 'deep' # shows all h3 headings in outline in Vitepress
 
 - **Collaboration** - A web based collaboration feature for multi-user editing on Mermaid diagrams in real-time (Pro plan).
 
-- **Plugins** - A plugin system for extending the functionality of Mermaid. Currently includes [VS Code](https://marketplace.visualstudio.com/items?itemName=MermaidChart.vscode-mermaid-chart) and [ChatGPT](https://www.mermaidchart.com/plugins/chatgpt).
+- **Plugins** - A plugin system for extending the functionality of Mermaid. Currently includes [VS Code](https://marketplace.visualstudio.com/items?itemName=MermaidChart.vscode-mermaid-chart) and [ChatGPT](https://docs.mermaidchart.com/plugins/chatgpt).
 
 - **AI** - An AI chatbot that can generate Mermaid diagrams from text (Pro plan).
 
