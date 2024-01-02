@@ -226,4 +226,27 @@ describe('Quadrant Chart', () => {
     );
     cy.get('svg');
   });
+
+  it('it should render data points with styles', () => {
+    imgSnapshotTest(
+      `
+  quadrantChart
+    title Reach and engagement of campaigns
+    x-axis Reach -->
+    y-axis Engagement -->
+    quadrant-1 We should expand
+    quadrant-2 Need to promote
+    quadrant-3 Re-evaluate
+    quadrant-4 May be improved
+    Campaign A: [0.3, 0.6] radius: 20
+    Campaign B: [0.45, 0.23] color: #ff0000
+    Campaign C: [0.57, 0.69] stroke_color: #ff00ff
+    Campaign D: [0.78, 0.34] stroke_width: 3px
+    Campaign E: [0.40, 0.34] radius: 20 color: #ff0000 stroke_color: #ff00ff stroke_width: 3px
+    Campaign F: [0.35, 0.78]
+      `,
+      {}
+    );
+    cy.get('svg');
+  });
 });
