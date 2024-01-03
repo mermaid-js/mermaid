@@ -1,6 +1,7 @@
 # Ref: https://github.com/codespell-project/codespell#using-a-config-file
 [codespell]
-skip = .git,*.pdf,*.svg,go.sum,*.css,.codespellrc
+skip = .git,*.pdf,*.svg,go.sum,*.css,.codespellrc,*-lock.yaml
 check-hidden = true
-# ignore-regex = 
-# ignore-words-list =
+# Python regex.  Ignore some variable
+ignore-regex = \b(classE|curveLinear|afterAll|totalY)\b
+ignore-words-list = fo,ot,thi,te,implementors,cript,composit
