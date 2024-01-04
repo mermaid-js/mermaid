@@ -183,9 +183,9 @@ document
 
 link
   : LINK
-  { yy.getLogger().info("Rule: link: ", $1, yytext); }
+  { yy.getLogger().info("Rule: link: ", $1, yytext); $$={edgeTypeStr: $1, label:''}; }
   | START_LINK LINK_LABEL STR LINK
-  { yy.getLogger().info("Rule: LABEL link: ", $1, $3, $4); $$=$4; }
+  { yy.getLogger().info("Rule: LABEL link: ", $1, $3, $4); $$={edgeTypeStr: $4, label:$3}; }
   ;
 
 statement
@@ -198,11 +198,11 @@ statement
 
 nodeStatement
   : nodeStatement link node {
-    yy.getLogger().info('Rule: (nodeStatement link node) ', $1, $2, $3, 'abc88 typestr: ',$2);
-    const edgeData = yy.edgeStrToEdgeData($2)
+    yy.getLogger().info('Rule: (nodeStatement link node) ', $1, $2, $3, 'abc88 typestr: ',$2.edgeTypeStr);
+    const edgeData = yy.edgeStrToEdgeData($2.edgeTypeStr)
     $$ = [
       {id: $1.id, label: $1.label, type:$1.type, directions: $1.directions},
-      {id: $1.id + '-' + $3.id, start: $1.id, end: $3.id, label: $3.label, type: 'edge', directions: $3.directions, arrowTypeEnd: edgeData, arrowTypeStart: 'arrow_open' },
+      {id: $1.id + '-' + $3.id, start: $1.id, end: $3.id, label: $2.label, type: 'edge', directions: $3.directions, arrowTypeEnd: edgeData, arrowTypeStart: 'arrow_open' },
       {id: $3.id, label: $3.label, type: yy.typeStr2Type($3.typeStr), directions: $3.directions}
       ];
     }

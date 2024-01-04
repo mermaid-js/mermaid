@@ -1,6 +1,6 @@
 import { getStylesFromArray } from '../../utils.js';
 import { insertNode, positionNode } from '../../dagre-wrapper/nodes.js';
-import { insertEdge } from '../../dagre-wrapper/edges.js';
+import { insertEdge, insertEdgeLabel } from '../../dagre-wrapper/edges.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { getConfig } from '../../config.js';
 import { ContainerElement } from 'd3';
@@ -243,7 +243,6 @@ export async function insertEdges(
           { v: edge.start, w: edge.end, name: edge.id },
           {
             ...edge,
-            // arrowHead: 'normal',
             arrowTypeEnd: edge.arrowTypeEnd,
             arrowTypeStart: edge.arrowTypeStart,
             points,
@@ -253,6 +252,17 @@ export async function insertEdges(
           'block',
           g
         );
+        if (edge.label) {
+          await insertEdgeLabel(elem, {
+            ...edge,
+            label: edge.label,
+            labelStyle: 'stroke: #333; stroke-width: 1.5px;fill:none;',
+            arrowTypeEnd: edge.arrowTypeEnd,
+            arrowTypeStart: edge.arrowTypeStart,
+            points,
+            classes: 'edge-thickness-normal edge-pattern-solid flowchart-link LS-a1 LE-b1',
+          });
+        }
       }
     }
   }
