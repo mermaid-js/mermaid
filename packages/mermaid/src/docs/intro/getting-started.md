@@ -6,7 +6,7 @@ This section talks about the different ways to deploy Mermaid. Learning the [Syn
 
 > Generally the live editor is enough for most general uses of mermaid, and is a good place to start learning.
 
-**Absolute beginners are advised to view the Video [Tutorials](../config/Tutorials.md) on the Live Editor, to gain a better understanding of mermaid.**
+**Absolute beginners are advised to view the Video [Tutorials](../ecosystem/tutorials.md) on the Live Editor, to gain a better understanding of mermaid.**
 
 ## Four ways of using mermaid:
 
