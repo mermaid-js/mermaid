@@ -134,6 +134,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     // props: vertex.props,
     padding: padding ?? (getConfig()?.flowchart?.padding || 0),
   };
+  console.log('abc88 return node', vertex.id, node);
   return node;
 }
 type IOperation = (elem: any, block: any, db: any) => Promise<void>;
@@ -208,6 +209,7 @@ export async function insertEdges(
 
   for (const block of blocks) {
     if (block.size) {
+      console.log('abc88 block', block, block.id);
       g.setNode(block.id, {
         width: block.size.width,
         height: block.size.height,
@@ -216,12 +218,16 @@ export async function insertEdges(
     }
   }
 
-  // log.debug('abc88 edges', edges);
+  console.log('abc88 edges', edges);
   for (const edge of edges) {
     // elem, e, edge, clusterDb, diagramType, graph;
     if (edge.start && edge.end) {
       const startBlock = db.getBlock(edge.start);
+      const startBlock2 = g.node(edge.start);
       const endBlock = db.getBlock(edge.end);
+      const endBlock2 = g.node(edge.end);
+      console.log('abc88 startBlock', startBlock2);
+      console.log('abc88 endBlock', endBlock2);
 
       if (startBlock?.size && endBlock?.size) {
         const start = startBlock.size;

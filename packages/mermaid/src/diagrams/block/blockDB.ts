@@ -19,7 +19,9 @@ import clone from 'lodash-es/clone.js';
 let blockDatabase: Record<string, Block> = {};
 let edgeList: Block[] = [];
 let edgeCount: Record<string, number> = {};
-const populateBlockDatabase = (blockList: Block[], parent: Block): void => {
+
+const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
+  const blockList = _blockList.flat();
   const children = [];
   for (const block of blockList) {
     if (block.type === 'column-setting') {
@@ -161,10 +163,10 @@ export const generateId = () => {
 
 type ISetHierarchy = (block: Block[]) => void;
 const setHierarchy = (block: Block[]): void => {
-  log.debug('The hierarchy', JSON.stringify(block, null, 2));
+  log.debug('The document from parsing', JSON.stringify(block, null, 2));
   rootBlock.children = block;
   populateBlockDatabase(block, rootBlock);
-  log.debug('The hierarchy', JSON.stringify(rootBlock, null, 2));
+  log.debug('The document after popuplation', JSON.stringify(rootBlock, null, 2));
   blocks = rootBlock.children;
 };
 
@@ -190,6 +192,23 @@ const getColumns = (blockid: string): number => {
 };
 
 type IGetBlocks = () => Block[];
+/**
+ * Returns all the blocks as a flat array
+ * @returns
+ */
+const getBlocksFlat: IGetBlocks = () => {
+  const result: Block[] = [];
+  console.log('abc88 getBlocksFlat', blockDatabase);
+  const keys = Object.keys(blockDatabase);
+  for (const key of keys) {
+    result.push(blockDatabase[key]);
+  }
+  return result;
+};
+/**
+ * Returns the the hirarchy of blocks
+ * @returns
+ */
 const getBlocks: IGetBlocks = () => {
   return blocks || [];
 };
@@ -218,6 +237,7 @@ export interface BlockDB extends DiagramDB {
   addLink: IAddLink;
   getLogger: IGetLogger;
   getEdges: IGetEdges;
+  getBlocksFlat: IGetBlocks;
   getBlocks: IGetBlocks;
   getBlock: IGetBlock;
   setBlock: ISetBlock;
@@ -237,6 +257,7 @@ const db: BlockDB = {
   edgeTypeStr2Type: edgeTypeStr2Type,
   edgeStrToEdgeData,
   getLogger, // TODO: remove
+  getBlocksFlat,
   getBlocks,
   getEdges,
   getLinks,

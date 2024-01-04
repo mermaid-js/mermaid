@@ -375,9 +375,9 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
   let pointsHasChanged = false;
   const tail = graph.node(e.v);
   var head = graph.node(e.w);
-  log.info('abc88 InsertEdge (head & tail): ', head, tail);
+  log.info('abc88 InsertEdge (head & tail): ', e.v, head, ' --- ', e.w, tail);
 
-  if (head.intersect && tail.intersect) {
+  if (head?.intersect && tail?.intersect) {
     points = points.slice(1, edge.points.length - 1);
     points.unshift(tail.intersect(points[0]));
     log.info(
@@ -387,6 +387,8 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
       head.intersect(points[points.length - 1])
     );
     points.push(head.intersect(points[points.length - 1]));
+  } else {
+    log.info('abc88 No intersect');
   }
   if (edge.toCluster) {
     log.info('to cluster abc88', clusterDb[edge.toCluster]);

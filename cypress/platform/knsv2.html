@@ -73,8 +73,41 @@ block-beta
     <pre id="diagram" class="mermaid">
 block-beta
       columns 3
-      A space space:3 B("GORILLA")
-      A("APA") --o B
+      A
+      space
+      block
+        E
+        F
+      end
+      E --> A
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+      columns 3
+      C space A space B
+      B --> A
+      B --> C
+      block
+        D
+        E
+      end
+      E --> A
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+      columns 2
+      C A B
+      block
+        D
+        E
+      end
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+      columns 2
+      A B C D
+      A --o B
+      A --> C
 
     </pre>
     <pre id="diagram" class="mermaid2">

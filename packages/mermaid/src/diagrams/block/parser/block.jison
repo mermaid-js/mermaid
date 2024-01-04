@@ -18,6 +18,7 @@
 %x NODE
 %x BLOCK_ARROW
 %x ARROW_DIR
+%x LLABEL
 
 
 // as per section 6.1 of RFC 2234 [2]
@@ -45,7 +46,7 @@ CRLF \u000D\u000A
 <md_string>[`]["]          { this.popState();}
 ["]                     this.pushState("string");
 <string>["]             { yy.getLogger().debug('LEX: POPPING STR:', yytext);this.popState();}
-<string>[^"]*           { yy.getLogger().debug('LEX: STR ebd:', yytext); return "STR";}
+<string>[^"]*           { yy.getLogger().debug('LEX: STR end:', yytext); return "STR";}
 space[:]\d+            {  yytext = yytext.replace(/space\:/,'');yy.getLogger().info('SPACE NUM (LEX)', yytext); return 'SPACE_BLOCK'; }
 space                  { yytext = '1'; yy.getLogger().info('COLUMNS (LEX)', yytext); return 'SPACE_BLOCK'; }
 "style"               return 'STYLE';
@@ -130,9 +131,14 @@ accDescr\s*"{"\s*                                { this.pushState("acc_descr_mul
 \s*[xo<]?\=\=+[=xo>]\s*                 { yy.getLogger().info('Lex: LINK', yytext); return 'LINK'; }
 \s*[xo<]?\-?\.+\-[xo>]?\s*              { yy.getLogger().info('Lex: LINK', yytext); return 'LINK'; }
 \s*\~\~[\~]+\s*                         { yy.getLogger().info('Lex: LINK', yytext); return 'LINK'; }
-\s*[xo<]?\-\-\s*                        { yy.getLogger().info('Lex: START_LINK', yytext); return 'START_LINK'; }
-\s*[xo<]?\=\=\s*                        { yy.getLogger().info('Lex: START_LINK', yytext); return 'START_LINK'; }
-\s*[xo<]?\-\.\s*                        { yy.getLogger().info('Lex: START_LINK', yytext); return 'START_LINK'; }
+\s*[xo<]?\-\-\s*                        { yy.getLogger().info('Lex: START_LINK', yytext);this.pushState("LLABEL");return 'START_LINK'; }
+\s*[xo<]?\=\=\s*                        { yy.getLogger().info('Lex: START_LINK', yytext);this.pushState("LLABEL");return 'START_LINK'; }
+\s*[xo<]?\-\.\s*                        { yy.getLogger().info('Lex: START_LINK', yytext);this.pushState("LLABEL");return 'START_LINK'; }
+<LLABEL>["][`]           { this.pushState("md_string");}
+<LLABEL>["]              { yy.getLogger().info('Lex: Starting string');this.pushState("string"); return "LINK_LABEL";}
+<LLABEL>\s*[xo<]?\-\-+[-xo>]\s*                 { this.popState(); yy.getLogger().info('Lex: LINK', '#'+yytext+'#'); return 'LINK'; }
+<LLABEL>\s*[xo<]?\=\=+[=xo>]\s*                 { this.popState(); yy.getLogger().info('Lex: LINK', yytext); return 'LINK'; }
+<LLABEL>\s*[xo<]?\-?\.+\-[xo>]?\s*              { this.popState(); yy.getLogger().info('Lex: LINK', yytext); return 'LINK'; }
 
 /lex
 
@@ -177,9 +183,9 @@ document
 
 link
   : LINK
-  { yy.getLogger().info("Rule: link: ", $1); }
-  | START_LINK
-  { yy.getLogger().info("Rule: link: ", $1); }
+  { yy.getLogger().info("Rule: link: ", $1, yytext); }
+  | START_LINK LINK_LABEL STR LINK
+  { yy.getLogger().info("Rule: LABEL link: ", $1, $3, $4); $$=$4; }
   ;
 
 statement
@@ -192,7 +198,7 @@ statement
 
 nodeStatement
   : nodeStatement link node {
-    yy.getLogger().info('Rule: (nodeStatement link node) ', $1, $2, $3, 'abc88 typestr =>',$2);
+    yy.getLogger().info('Rule: (nodeStatement link node) ', $1, $2, $3, 'abc88 typestr: ',$2);
     const edgeData = yy.edgeStrToEdgeData($2)
     $$ = [
       {id: $1.id, label: $1.label, type:$1.type, directions: $1.directions},

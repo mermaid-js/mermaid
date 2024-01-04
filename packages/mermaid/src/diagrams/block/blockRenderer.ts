@@ -45,6 +45,7 @@ export const draw = async function (
   insertMarkers(svg, markers, diagObj.type, true);
 
   const bl = db.getBlocks();
+  const blArr = db.getBlocksFlat();
   const edges = db.getEdges();
 
   const nodes = svg.insert('g').attr('class', 'block');
@@ -52,7 +53,7 @@ export const draw = async function (
   const bounds = layout(db);
   // log.debug('Here be blocks', bl);
   await insertBlocks(nodes, bl, db);
-  await insertEdges(nodes, edges, bl, db);
+  await insertEdges(nodes, edges, blArr, db);
 
   // log.debug('Here', bl);
 
