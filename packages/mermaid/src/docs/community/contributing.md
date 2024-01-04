@@ -313,13 +313,13 @@ To start working with the e2e tests:
 **Host**
 
 - Run `pnpm dev` to start the dev server
-- Start **Cypress** by running `pnpm cypress:open`.
+- Start **Cypress** by running `pnpm cypress:open`
 
 **Docker**
 
 - Enable local connections for x11 server `xhost +local:`
 - Run `./run pnpm dev` to start the dev server
-- Start **Cypress** by running `./run pnpm cypress:open --project .`.
+- Start **Cypress** by running `./run pnpm cypress:open --project .`
 
 The rendering tests are very straightforward to create. There is a function `imgSnapshotTest`, which takes a diagram in text form and the mermaid options, and it renders that diagram in Cypress.
 
@@ -395,12 +395,6 @@ flowchart LR
   classDef default fill:#fff,color:black,stroke:black
 
   source["Edit /packages/mermaid/src/docs"] -- automatic processing--> published["View /docs which will be publised on Official Website"]
-```
-
-### Enable Github Actions
-
-```warning
-So as to allow automatic compilation of documentation pages you have to enable github actions on your fork first
 ```
 
 ### Running the Documentation Website Locally
@@ -479,6 +473,14 @@ This is a danger alert
 ### Navigation
 
 If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation**, which is defined in [the vitepress config](../.vitepress/config.ts). The same goes to **topbar**.
+
+### Build Docs
+
+The content of `/docs` folder is built with Github Actions.
+
+```warning
+So as to allow automatic compilation of documentation pages you have to enable Github Actions on your fork first
+```
 
 ## Submit your pull request
 
