@@ -191,9 +191,18 @@ statement
 	;
 
 nodeStatement
-  : nodeStatement link node { yy.getLogger().info('Rule: (nodeStatement link node) ', $1, $2, $3); $$ = [{id: $1.id, label: $1.label, type:$1.type, directions: $1.directions}, {id: $3.id, label: $3.label, type: yy.typeStr2Type($3.typeStr), directions: $3.directions}]; }
+  : nodeStatement link node {
+    yy.getLogger().info('Rule: (nodeStatement link node) ', $1, $2, $3, 'abc88 typestr =>',$2);
+    const edgeData = yy.edgeStrToEdgeData($2)
+    $$ = [
+      {id: $1.id, label: $1.label, type:$1.type, directions: $1.directions},
+      {id: $1.id + '-' + $3.id, start: $1.id, end: $3.id, label: $3.label, type: 'edge', directions: $3.directions, arrowTypeEnd: edgeData, arrowTypeStart: 'arrow_open' },
+      {id: $3.id, label: $3.label, type: yy.typeStr2Type($3.typeStr), directions: $3.directions}
+      ];
+    }
   | node { yy.getLogger().info('Rule: nodeStatement (node) ', $1); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1.typeStr), directions: $1.directions}; }
   ;
+
 
 columnsStatement
   : COLUMNS { yy.getLogger().info('APA123', this? this:'na'); yy.getLogger().info("COLUMNS: ", $1); $$ = {type: 'column-setting', columns: $1 === 'auto'?-1:parseInt($1) } }

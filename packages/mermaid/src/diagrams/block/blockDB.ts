@@ -17,12 +17,21 @@ import clone from 'lodash-es/clone.js';
 
 // Initialize the node database for simple lookups
 let blockDatabase: Record<string, Block> = {};
-
+let edgeList: Block[] = [];
+let edgeCount: Record<string, number> = {};
 const populateBlockDatabase = (blockList: Block[], parent: Block): void => {
   const children = [];
   for (const block of blockList) {
     if (block.type === 'column-setting') {
       parent.columns = block.columns || -1;
+    } else if (block.type === 'edge') {
+      if (edgeCount[block.id]) {
+        edgeCount[block.id]++;
+      } else {
+        edgeCount[block.id] = 1;
+      }
+      block.id = edgeCount[block.id] + '-' + block.id;
+      edgeList.push(block);
     } else {
       if (!block.label) {
         if (block.type === 'composite') {
@@ -31,7 +40,18 @@ const populateBlockDatabase = (blockList: Block[], parent: Block): void => {
           block.label = block.id;
         }
       }
-      blockDatabase[block.id] = block;
+      const newBlock = !blockDatabase[block.id];
+      if (newBlock) {
+        blockDatabase[block.id] = block;
+      } else {
+        // Add newer relevant data to aggregated node
+        if (block.type !== 'na') {
+          blockDatabase[block.id].type = block.type;
+        }
+        if (block.label !== block.id) {
+          blockDatabase[block.id].label = block.label;
+        }
+      }
 
       if (block.children) {
         populateBlockDatabase(block.children, block);
@@ -46,7 +66,9 @@ const populateBlockDatabase = (blockList: Block[], parent: Block): void => {
           children.push(newBlock);
         }
       } else {
-        children.push(block);
+        if (newBlock) {
+          children.push(block);
+        }
       }
     }
   }
@@ -63,6 +85,9 @@ const clear = (): void => {
   rootBlock = { id: 'root', type: 'composite', children: [], columns: -1 } as Block;
   blockDatabase = { root: rootBlock };
   blocks = [] as Block[];
+
+  edgeList = [];
+  edgeCount = {};
 };
 
 type ITypeStr2Type = (typeStr: string) => BlockType;
@@ -101,7 +126,29 @@ export function typeStr2Type(typeStr: string): BlockType {
     case '<[]>':
       return 'block_arrow';
     default:
-      return 'square';
+      return 'na';
+  }
+}
+
+type IEdgeTypeStr2Type = (typeStr: string) => string;
+export function edgeTypeStr2Type(typeStr: string): string {
+  log.debug('typeStr2Type', typeStr);
+  switch (typeStr) {
+    case '==':
+      return 'thick';
+    default:
+      return 'normal';
+  }
+}
+type IEdgeStrToEdgeDataType = (typeStr: string) => string;
+export function edgeStrToEdgeData(typeStr: string): string {
+  switch (typeStr.trim()) {
+    case '--x':
+      return 'arrow_cross';
+    case '--o':
+      return 'arrow_circle';
+    default:
+      return 'arrow_point';
   }
 }
 
@@ -114,10 +161,10 @@ export const generateId = () => {
 
 type ISetHierarchy = (block: Block[]) => void;
 const setHierarchy = (block: Block[]): void => {
-  // log.debug('The hierarchy', JSON.stringify(block, null, 2));
+  log.debug('The hierarchy', JSON.stringify(block, null, 2));
   rootBlock.children = block;
   populateBlockDatabase(block, rootBlock);
-  // log.debug('The hierarchy', JSON.stringify(rootBlock, null, 2));
+  log.debug('The hierarchy', JSON.stringify(rootBlock, null, 2));
   blocks = rootBlock.children;
 };
 
@@ -146,6 +193,10 @@ type IGetBlocks = () => Block[];
 const getBlocks: IGetBlocks = () => {
   return blocks || [];
 };
+type IGetEdges = () => Block[];
+const getEdges: IGetEdges = () => {
+  return edgeList;
+};
 type IGetBlock = (id: string) => Block | undefined;
 const getBlock: IGetBlock = (id: string) => {
   return blockDatabase[id];
@@ -166,12 +217,15 @@ export interface BlockDB extends DiagramDB {
   getConfig: () => BlockConfig | undefined;
   addLink: IAddLink;
   getLogger: IGetLogger;
+  getEdges: IGetEdges;
   getBlocks: IGetBlocks;
   getBlock: IGetBlock;
   setBlock: ISetBlock;
   getLinks: IGetLinks;
   getColumns: IGetColumns;
   typeStr2Type: ITypeStr2Type;
+  edgeTypeStr2Type: IEdgeTypeStr2Type;
+  edgeStrToEdgeData: IEdgeStrToEdgeDataType;
   setHierarchy: ISetHierarchy;
   generateId: IGenerateId;
 }
@@ -180,8 +234,11 @@ const db: BlockDB = {
   getConfig: () => configApi.getConfig().block,
   addLink: addLink,
   typeStr2Type: typeStr2Type,
+  edgeTypeStr2Type: edgeTypeStr2Type,
+  edgeStrToEdgeData,
   getLogger, // TODO: remove
   getBlocks,
+  getEdges,
   getLinks,
   setHierarchy,
   getBlock,

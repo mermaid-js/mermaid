@@ -5,7 +5,9 @@ export interface BlockConfig extends BaseDiagramConfig {
 }
 
 export type BlockType =
+  | 'na'
   | 'column-setting'
+  | 'edge'
   | 'round'
   | 'block_arrow'
   | 'space'
@@ -29,9 +31,15 @@ export type BlockType =
   | 'composite';
 
 export interface Block {
+  // When the block have the type edge, the start and end are the id of the source and target blocks
+  start?: string;
+  end?: string;
+  arrowTypeEnd?: string;
+  arrowTypeStart?: string;
   width?: number;
   id: string;
   label?: string;
+  intersect?: any;
   parent?: Block;
   type?: BlockType;
   children: Block[];

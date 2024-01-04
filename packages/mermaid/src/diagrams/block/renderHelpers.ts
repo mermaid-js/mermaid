@@ -1,5 +1,7 @@
 import { getStylesFromArray } from '../../utils.js';
 import { insertNode, positionNode } from '../../dagre-wrapper/nodes.js';
+import { insertEdge } from '../../dagre-wrapper/edges.js';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { getConfig } from '../../config.js';
 import { ContainerElement } from 'd3';
 import type { Block } from './blockTypes.js';
@@ -127,6 +129,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     x: bounds.x,
     y: bounds.y,
     positioned,
+    intersect: undefined,
     type: vertex.type,
     // props: vertex.props,
     padding: padding ?? (getConfig()?.flowchart?.padding || 0),
@@ -158,6 +161,7 @@ export async function insertBlockPositioned(elem: any, block: Block, db: any) {
   const obj = db.getBlock(node.id);
   if (obj.type !== 'space') {
     const nodeEl = await insertNode(elem, node);
+    block.intersect = node?.intersect;
     positionNode(node);
   }
 }
@@ -182,4 +186,68 @@ export async function calculateBlockSizes(elem: ContainerElement, blocks: Block[
 
 export async function insertBlocks(elem: ContainerElement, blocks: Block[], db: BlockDB) {
   await performOperations(elem, blocks, db, insertBlockPositioned);
+}
+
+export async function insertEdges(
+  elem: ContainerElement,
+  edges: Block[],
+  blocks: Block[],
+  db: BlockDB
+) {
+  const g = new graphlib.Graph({
+    multigraph: true,
+    compound: true,
+  });
+  g.setGraph({
+    rankdir: 'TB',
+    nodesep: 10,
+    ranksep: 10,
+    marginx: 8,
+    marginy: 8,
+  });
+
+  for (const block of blocks) {
+    if (block.size) {
+      g.setNode(block.id, {
+        width: block.size.width,
+        height: block.size.height,
+        intersect: block.intersect,
+      });
+    }
+  }
+
+  // log.debug('abc88 edges', edges);
+  for (const edge of edges) {
+    // elem, e, edge, clusterDb, diagramType, graph;
+    if (edge.start && edge.end) {
+      const startBlock = db.getBlock(edge.start);
+      const endBlock = db.getBlock(edge.end);
+
+      if (startBlock?.size && endBlock?.size) {
+        const start = startBlock.size;
+        const end = endBlock.size;
+        const points = [
+          { x: start.x, y: start.y },
+          { x: start.x + (end.x - start.x) / 2, y: start.y + (end.y - start.y) / 2 },
+          { x: end.x, y: end.y },
+        ];
+        // edge.points = points;
+        await insertEdge(
+          elem,
+          { v: edge.start, w: edge.end, name: edge.id },
+          {
+            ...edge,
+            // arrowHead: 'normal',
+            arrowTypeEnd: edge.arrowTypeEnd,
+            arrowTypeStart: edge.arrowTypeStart,
+            points,
+            classes: 'edge-thickness-normal edge-pattern-solid flowchart-link LS-a1 LE-b1',
+          },
+          undefined,
+          'block',
+          g
+        );
+      }
+    }
+  }
 }

@@ -1,8 +1,9 @@
 import { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
-import { calculateBlockSizes, insertBlocks } from './renderHelpers.js';
+import { calculateBlockSizes, insertBlocks, insertEdges } from './renderHelpers.js';
 import { layout } from './layout.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
+import insertMarkers from '../../dagre-wrapper/markers.js';
 import {
   select as d3select,
   scaleOrdinal as d3scaleOrdinal,
@@ -36,13 +37,22 @@ export const draw = async function (
   // @ts-ignore TODO root.select is not callable
   const svg = securityLevel === 'sandbox' ? root.select(`[id="${id}"]`) : d3select(`[id="${id}"]`);
 
+  // Define the supported markers for the diagram
+  const markers = ['point', 'circle', 'cross'];
+
+  // Add the marker definitions to the svg as marker tags
+  // insertMarkers(svg, markers, diagObj.type, diagObj.arrowMarkerAbsolute);
+  insertMarkers(svg, markers, diagObj.type, true);
+
   const bl = db.getBlocks();
+  const edges = db.getEdges();
 
   const nodes = svg.insert('g').attr('class', 'block');
   await calculateBlockSizes(nodes, bl, db);
   const bounds = layout(db);
-  log.debug('Here blocks', bl);
+  // log.debug('Here be blocks', bl);
   await insertBlocks(nodes, bl, db);
+  await insertEdges(nodes, edges, bl, db);
 
   // log.debug('Here', bl);
 

@@ -72,7 +72,10 @@ block-beta
     </pre>
     <pre id="diagram" class="mermaid">
 block-beta
-      A("APA") --> B("GORILLA")
+      columns 3
+      A space space:3 B("GORILLA")
+      A("APA") --o B
+
     </pre>
     <pre id="diagram" class="mermaid2">
 block-beta
@@ -144,11 +147,8 @@ block-beta
   %% end
     </pre>
     <pre id="diagram" class="mermaid2">
-block-beta
-  id1
-  block
-  id2
-  end
+      flowchart LR
+      a1 -- apa --> b1
     </pre>
     <pre id="diagram" class="mermaid2">
 block-beta
