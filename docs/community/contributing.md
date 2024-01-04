@@ -25,13 +25,11 @@ flowchart LR
 
 ### Get the Source Code
 
-In GitHub, you first **fork** a repository when you are going to make changes and submit pull requests.
+In GitHub, you first [**fork a mermaid repository**](https://github.com/mermaid-js/mermaid/fork) when you are going to make changes and submit pull requests.
 
 Then you **clone** a copy to your local development machine (e.g. where you code) to make a copy with all the files to work with.
 
-[Fork mermaid](https://github.com/mermaid-js/mermaid/fork) to start contributing to the main project and its documentation, or [search for other repositories](https://github.com/orgs/mermaid-js/repositories).
-
-[Here is a GitHub document that gives an overview of the process](https://docs.github.com/en/get-started/quickstart/fork-a-repo).
+> **💡 Tip** > [Here is a GitHub document that gives an overview of the process](https://docs.github.com/en/get-started/quickstart/fork-a-repo).
 
 ```bash
 git clone git@github.com/your-fork/mermaid
@@ -228,7 +226,7 @@ If your work is specific to a single diagram type, it is a good idea to put the 
 
 Code it the heart of every software project. We strive to make it better. Who if not us?
 
-### Where is the code located?
+### Where is the Code Located?
 
 The core of Mermaid is located under `packages/mermaid/src`.
 
@@ -263,8 +261,7 @@ Edit files in `packages/mermaid/src` as required.
 
 ### Write Tests
 
-Tests ensure that each function, module, or part of code does what it says it will do. This is critically
-important when other changes are made to ensure that existing code is not broken (no regression).
+Tests ensure that each function, module, or part of code does what it says it will do. This is critically important when other changes are made to ensure that existing code is not broken (no regression).
 
 Just as important, the tests act as _specifications:_ they specify what the code does (or should do).
 Whenever someone is new to a section of code, they should be able to read the tests to get a thorough understanding of what it does and why.
@@ -283,6 +280,8 @@ Unit tests are mandatory all code except the renderers. (The renderers are teste
 
 We use [Vitest](https://vitest.dev) to run unit tests.
 
+**Host**
+
 You can use the following command to run the unit tests:
 
 ```sh
@@ -295,6 +294,14 @@ When writing new tests, it's easier to have the tests automatically run as you m
 pnpm test:watch
 ```
 
+**Docker**
+
+When using Docker prepend your command with `./run`:
+
+```sh
+./run pnpm test
+```
+
 #### Integration/End-to-End (e2e) tests
 
 These test the rendering and visual appearance of the diagrams.
@@ -302,8 +309,16 @@ This ensures that the rendering of that feature in the e2e will be reviewed in t
 
 To start working with the e2e tests:
 
-1.  Run `pnpm dev` to start the dev server
-2.  Start **Cypress** by running `pnpm cypress:open`.
+**Host**
+
+- Run `pnpm dev` to start the dev server
+- Start **Cypress** by running `pnpm cypress:open`.
+
+**Docker**
+
+- Enable local connections for x11 server `xhost +local:`
+- Run `./run pnpm dev` to start the dev server
+- Start **Cypress** by running `./run pnpm cypress:open --project .`.
 
 The rendering tests are very straightforward to create. There is a function `imgSnapshotTest`, which takes a diagram in text form and the mermaid options, and it renders that diagram in Cypress.
 
@@ -470,7 +485,7 @@ If you want to propose changes to how the documentation is _organized_, such as 
 > Do not forget to push your changes
 >
 > ```bash
-> git push -u origin docs/2910_update-contributing-guidelines
+> git push -u origin docs/2910_update-guidelines
 > ```
 
 We make all changes via Pull Requests (PRs). Open a new one.
@@ -492,4 +507,4 @@ You have successfully submitted your improvements! What is next?
 - Once the PR is approved, the maintainers will merge the PR into the `develop` branch.
 - When a release is ready, the `release/x.x.x` branch will be created, extensively tested and knsv will be in charge of the release process.
 
-_knsv, Knut Sveidqvist_ is in charge of the final release process and the active maintainers are in charge of reviewing and merging most PRs.
+Thanks for you help!
