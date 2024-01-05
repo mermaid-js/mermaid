@@ -20,7 +20,7 @@ Please note that you can switch versions through the dropdown box at the top rig
 
 For the majority of users, Using the [Live Editor](https://mermaid.live/) would be sufficient, however you may also opt to deploy mermaid as a dependency or using the [Mermaid API](./setup/README.md).
 
-We have compiled some Video [Tutorials](../comminuty/tutorials.md) on how to use the Mermaid Live Editor.
+We have compiled some Video [Tutorials](../ecosystem/tutorials.md) on how to use the Mermaid Live Editor.
 
 ### Installing and Hosting Mermaid on a Webpage
 
