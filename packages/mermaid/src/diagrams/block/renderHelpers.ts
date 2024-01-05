@@ -16,8 +16,10 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
 
   let classStr = 'default';
   if ((vertex?.classes?.length || 0) > 0) {
+    console.log('abc88 vertex.classes', block.id, vertex?.classes);
     classStr = (vertex?.classes || []).join(' ');
   }
+  console.log('abc88 vertex.classes done');
   classStr = classStr + ' flowchart-label';
 
   // We create a SVG label, either by delegating to addHtmlLabel or manually

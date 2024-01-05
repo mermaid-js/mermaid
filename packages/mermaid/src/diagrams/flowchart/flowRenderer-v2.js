@@ -363,7 +363,7 @@ export const getClasses = function (text, diagObj) {
  * @param _version
  * @param diagObj
  */
-// [MermaidChart: 33a97b35-1f95-4ce9-81b5-3038669bc170]
+
 export const draw = async function (text, id, _version, diagObj) {
   log.info('Drawing flowchart');
   diagObj.db.clear();

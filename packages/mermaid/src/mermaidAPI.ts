@@ -39,6 +39,7 @@ const CLASSDEF_DIAGRAMS = [
   'flowchart-elk',
   'stateDiagram',
   'stateDiagram-v2',
+  'block',
 ];
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
@@ -202,6 +203,8 @@ export const createCssStyles = (
   if (config.altFontFamily !== undefined) {
     cssStyles += `\n:root { --mermaid-alt-font-family: ${config.altFontFamily}}`;
   }
+
+  console.log('abc88 expr check', !isEmpty(classDefs), classDefs);
 
   // classDefs defined in the diagram text
   if (!isEmpty(classDefs) && CLASSDEF_DIAGRAMS.includes(graphType)) {

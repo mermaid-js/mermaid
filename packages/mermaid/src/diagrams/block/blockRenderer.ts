@@ -17,6 +17,22 @@ import type { Block } from './blockTypes.js';
 // import { diagram as BlockDiagram } from './blockDiagram.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 
+/**
+ * Returns the all the styles from classDef statements in the graph definition.
+ *
+ * @param text
+ * @param diagObj
+ * @returns {object} ClassDef styles
+ */
+export const getClasses = function (text: any, diagObj: any) {
+  log.info('abc88 Extracting classes', diagObj.db.getClasses());
+  try {
+    return diagObj.db.getClasses();
+  } catch (e) {
+    return;
+  }
+};
+
 export const draw = async function (
   text: string,
   id: string,
@@ -99,4 +115,5 @@ export const draw = async function (
 
 export default {
   draw,
+  getClasses,
 };

@@ -19,6 +19,10 @@
 %x BLOCK_ARROW
 %x ARROW_DIR
 %x LLABEL
+%x CLASS
+%x CLASS_STYLE
+%x CLASSDEF
+%x CLASSDEFID
 
 
 // as per section 6.1 of RFC 2234 [2]
@@ -53,8 +57,16 @@ space                  { yytext = '1'; yy.getLogger().info('COLUMNS (LEX)', yyte
 "default"             return 'DEFAULT';
 "linkStyle"           return 'LINKSTYLE';
 "interpolate"         return 'INTERPOLATE';
-"classDef"            return 'CLASSDEF';
-"class"               return 'CLASS';
+
+"classDef"\s+   { this.pushState('CLASSDEF'); return 'classDef'; }
+<CLASSDEF>DEFAULT\s+            { this.popState(); this.pushState('CLASSDEFID'); return 'DEFAULT_CLASSDEF_ID' }
+<CLASSDEF>\w+\s+                { this.popState(); this.pushState('CLASSDEFID'); return 'CLASSDEF_ID' }
+<CLASSDEFID>[^\n]*              { this.popState(); return 'CLASSDEF_STYLEOPTS' }
+
+"class"\s+      { this.pushState('CLASS'); return 'class'; }
+<CLASS>(\w+)+((","\s*\w+)*)     { this.popState(); this.pushState('CLASS_STYLE'); return 'CLASSENTITY_IDS' }
+<CLASS_STYLE>[^\n]*             { this.popState(); return 'STYLECLASS' }
+
 accTitle\s*":"\s*                                               { this.pushState("acc_title");return 'acc_title'; }
 <acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
 accDescr\s*":"\s*                                               { this.pushState("acc_descr");return 'acc_descr'; }
@@ -194,6 +206,8 @@ statement
   | SPACE_BLOCK
     { const num=parseInt($1); const spaceId = yy.generateId(); $$ = { id: spaceId, type:'space', label:'', width: num, children: [] }}
   | blockStatement
+  | classDefStatement
+  | cssClassStatement
 	;
 
 nodeStatement
@@ -239,5 +253,22 @@ nodeShapeNLabel
 	|    BLOCK_ARROW_START STR dirList BLOCK_ARROW_END
     	      { yy.getLogger().info("Rule: BLOCK_ARROW nodeShapeNLabel: ", $1, $2, " #3:",$3, $4); $$ = { typeStr: $1 + $4, label: $2, directions: $3}; }
   ;
+
+
+classDefStatement
+  : classDef CLASSDEF_ID CLASSDEF_STYLEOPTS {
+      $$ = { type: 'classDef', id: $2.trim(), css: $3.trim() };
+      }
+  | classDef DEFAULT CLASSDEF_STYLEOPTS {
+      $$ = { type: 'classDef', id: $2.trim(), css: $3.trim() };
+      }
+  ;
+
+cssClassStatement
+    : class CLASSENTITY_IDS STYLECLASS {
+        //console.log('apply class: id(s): ',$2, '  style class: ', $3);
+        $$={ type: 'applyClass', id: $2.trim(), styleClass: $3.trim() };
+        }
+    ;
 
 %%

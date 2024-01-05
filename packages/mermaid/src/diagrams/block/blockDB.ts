@@ -1,6 +1,6 @@
 // import type { BlockDB } from './blockTypes.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
-import type { BlockConfig, BlockType, Block, Link } from './blockTypes.js';
+import type { BlockConfig, BlockType, Block, Link, ClassDef } from './blockTypes.js';
 
 import * as configApi from '../../config.js';
 import {
@@ -20,10 +20,112 @@ let blockDatabase: Record<string, Block> = {};
 let edgeList: Block[] = [];
 let edgeCount: Record<string, number> = {};
 
+const COLOR_KEYWORD = 'color';
+const FILL_KEYWORD = 'fill';
+const BG_FILL = 'bgFill';
+const STYLECLASS_SEP = ',';
+
+let classes = {} as Record<string, ClassDef>;
+
+/**
+ * Called when the parser comes across a (style) class definition
+ * @example classDef my-style fill:#f96;
+ *
+ * @param {string} id - the id of this (style) class
+ * @param  {string | null} styleAttributes - the string with 1 or more style attributes (each separated by a comma)
+ */
+export const addStyleClass = function (id: string, styleAttributes = '') {
+  // create a new style class object with this id
+  if (classes[id] === undefined) {
+    classes[id] = { id: id, styles: [], textStyles: [] }; // This is a classDef
+  }
+  const foundClass = classes[id];
+  if (styleAttributes !== undefined && styleAttributes !== null) {
+    styleAttributes.split(STYLECLASS_SEP).forEach((attrib) => {
+      // remove any trailing ;
+      const fixedAttrib = attrib.replace(/([^;]*);/, '$1').trim();
+
+      // replace some style keywords
+      if (attrib.match(COLOR_KEYWORD)) {
+        const newStyle1 = fixedAttrib.replace(FILL_KEYWORD, BG_FILL);
+        const newStyle2 = newStyle1.replace(COLOR_KEYWORD, FILL_KEYWORD);
+        foundClass.textStyles.push(newStyle2);
+      }
+      foundClass.styles.push(fixedAttrib);
+    });
+  }
+};
+
+/**
+ * Add a (style) class or css class to a state with the given id.
+ * If the state isn't already in the list of known states, add it.
+ * Might be called by parser when a style class or CSS class should be applied to a state
+ *
+ * @param {string | string[]} itemIds The id or a list of ids of the item(s) to apply the css class to
+ * @param {string} cssClassName CSS class name
+ */
+export const setCssClass = function (itemIds: string, cssClassName: string) {
+  console.log('abc88 setCssClass enter', itemIds, cssClassName);
+  itemIds.split(',').forEach(function (id: string) {
+    let foundBlock = blockDatabase[id];
+    if (foundBlock === undefined) {
+      const trimmedId = id.trim();
+      blockDatabase[trimmedId] = { id: trimmedId, type: 'na', children: [] } as Block;
+      foundBlock = blockDatabase[trimmedId];
+    }
+    if (!foundBlock.classes) {
+      foundBlock.classes = [];
+    }
+    foundBlock.classes.push(cssClassName);
+    console.log('abc88 setCssClass', foundBlock);
+  });
+};
+
+// /**
+//  * Add a style to a state with the given id.
+//  * @example style stateId fill:#f9f,stroke:#333,stroke-width:4px
+//  *   where 'style' is the keyword
+//  *   stateId is the id of a state
+//  *   the rest of the string is the styleText (all of the attributes to be applied to the state)
+//  *
+//  * @param itemId The id of item to apply the style to
+//  * @param styleText - the text of the attributes for the style
+//  */
+// export const setStyle = function (itemId, styleText) {
+//   const item = getState(itemId);
+//   if (item !== undefined) {
+//     item.textStyles.push(styleText);
+//   }
+// };
+
+// /**
+//  * Add a text style to a state with the given id
+//  *
+//  * @param itemId The id of item to apply the css class to
+//  * @param cssClassName CSS class name
+//  */
+// export const setTextStyle = function (itemId, cssClassName) {
+//   const item = getState(itemId);
+//   if (item !== undefined) {
+//     item.textStyles.push(cssClassName);
+//   }
+// };
+
 const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
   const blockList = _blockList.flat();
   const children = [];
   for (const block of blockList) {
+    if (block.type === 'classDef') {
+      console.log('abc88 classDef', block);
+      addStyleClass(block.id, block.css);
+      continue;
+    }
+    if (block.type === 'applyClass') {
+      console.log('abc88 applyClass', block);
+      // addStyleClass(block.id, block.css);
+      setCssClass(block.id, block.styleClass);
+      continue;
+    }
     if (block.type === 'column-setting') {
       parent.columns = block.columns || -1;
     } else if (block.type === 'edge') {
@@ -87,6 +189,7 @@ const clear = (): void => {
   rootBlock = { id: 'root', type: 'composite', children: [], columns: -1 } as Block;
   blockDatabase = { root: rootBlock };
   blocks = [] as Block[];
+  classes = {} as Record<string, ClassDef>;
 
   edgeList = [];
   edgeCount = {};
@@ -166,7 +269,7 @@ const setHierarchy = (block: Block[]): void => {
   log.debug('The document from parsing', JSON.stringify(block, null, 2));
   rootBlock.children = block;
   populateBlockDatabase(block, rootBlock);
-  log.debug('The document after popuplation', JSON.stringify(rootBlock, null, 2));
+  log.debug('abc88 The document after popuplation', JSON.stringify(rootBlock, null, 2));
   blocks = rootBlock.children;
 };
 
@@ -231,6 +334,15 @@ const getLinks: IGetLinks = () => links;
 type IGetLogger = () => Console;
 const getLogger: IGetLogger = () => console;
 
+type IGetClasses = () => Record<string, ClassDef>;
+/**
+ * Return all of the style classes
+ * @returns {{} | any | classes}
+ */
+export const getClasses = function () {
+  console.log('abc88 block db getClasses', classes);
+  return classes;
+};
 export interface BlockDB extends DiagramDB {
   clear: () => void;
   getConfig: () => BlockConfig | undefined;
@@ -243,6 +355,7 @@ export interface BlockDB extends DiagramDB {
   setBlock: ISetBlock;
   getLinks: IGetLinks;
   getColumns: IGetColumns;
+  getClasses: IGetClasses;
   typeStr2Type: ITypeStr2Type;
   edgeTypeStr2Type: IEdgeTypeStr2Type;
   edgeStrToEdgeData: IEdgeStrToEdgeDataType;
@@ -271,6 +384,7 @@ const db: BlockDB = {
   // getDiagramTitle,
   // setDiagramTitle,
   getColumns,
+  getClasses,
   clear,
   generateId,
 };

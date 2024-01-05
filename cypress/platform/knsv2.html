@@ -73,6 +73,22 @@ block-beta
     <pre id="diagram" class="mermaid">
 block-beta
       columns 3
+      classDef green fill:#9f6,stroke:#333,stroke-width:2px;
+      A
+      B
+      class A green
+    </pre>
+    <pre id="diagram" class="mermaid">
+stateDiagram-v2
+      classDef green fill:#9f6,stroke:#333,stroke-width:2px;
+      A
+      class A green
+
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+      columns 3
+      classDef green fill:#9f6,stroke:#333,stroke-width:2px;
       A
       space
       block
@@ -80,6 +96,7 @@ block-beta
         F
       end
       E -- "apa" --> A
+
     </pre>
     <pre id="diagram" class="mermaid2">
 block-beta
@@ -538,7 +555,7 @@ mindmap
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        // theme: 'forest',
+        theme: 'forest',
         startOnLoad: true,
         logLevel: 0,
         flowchart: {

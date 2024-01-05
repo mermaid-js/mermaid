@@ -28,6 +28,8 @@ export type BlockType =
   | 'cylinder'
   | 'group'
   | 'doublecircle'
+  | 'classDef'
+  | 'applyClass'
   | 'composite';
 
 export interface Block {
@@ -53,9 +55,17 @@ export interface Block {
   columns?: number; // | TBlockColumnsDefaultValue;
   classes?: string[];
   directions?: string[];
+  css?: string;
+  styleClass?: string;
 }
 
 export interface Link {
   source: Block;
   target: Block;
+}
+
+export interface ClassDef {
+  id: string;
+  textStyles: string[];
+  styles: string[];
 }
