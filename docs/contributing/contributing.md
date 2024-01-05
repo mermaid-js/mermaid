@@ -355,7 +355,7 @@ it('should render forks and joins', () => {
 ### Update Documentation
 
 > **💡 Tip**
-> Our documentation is managed in `packages/mermaid/src/docs`. Details on how to edit is in the [documentation section](documentation)
+> Our documentation is managed in `packages/mermaid/src/docs`. Details on how to edit is in the [documentation section](#documentation)
 
 If the users have no way to know that things have changed, then you haven't really _fixed_ anything for the users; you've just added to making Mermaid feel broken.
 Likewise, if users don't know that there is a new feature that you've implemented, it will forever remain unknown and unused.
