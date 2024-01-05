@@ -1,4 +1,4 @@
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { sanitizeText as _sanitizeText } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 

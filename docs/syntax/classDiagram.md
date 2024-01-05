@@ -240,9 +240,9 @@ class BankAccount{
 
 #### Generic Types
 
-Members can be defined using generic types, such as `List<int>`, for fields, parameters, and return types by enclosing the type within `~` (**tilde**). **Nested** type declarations such as `List<List<int>>` are supported.
+Generics can be representated as part of a class definition, and for class members/return types. In order to denote an item as generic, you enclose that type within `~` (**tilde**). **Nested** type declarations such as `List<List<int>>` are supported, though generics that include a comma are currently not supported. (such as `List<List<K, V>>`)
 
-Generics can be represented as part of a class definition and also in the parameters or the return value of a method/function:
+> _note_ when a generic is used within a class definition, the generic type is NOT considered part of the class name. i.e.: for any syntax which required you to reference the class name, you need to drop the type part of the definition. This also means that mermaid does not currently support having two classes with the same name, but different generic types.
 
 ```mermaid-example
 classDiagram
@@ -424,8 +424,6 @@ And `Link` can be one of:
 ## Define Namespace
 
 A namespace groups classes.
-
-Code:
 
 ```mermaid-example
 classDiagram
@@ -768,9 +766,30 @@ Beginner's tip—a full example using interactive links in an HTML page:
 
 ## Styling
 
-### Styling a node
+### Styling a node (v\<MERMAID_RELEASE_VERSION>+)
 
-It is possible to apply specific styles such as a thicker border or a different background color to individual nodes. This is done by predefining classes in css styles that can be applied from the graph definition using the `cssClass` statement or the `:::` short hand.
+It is possible to apply specific styles such as a thicker border or a different background color to an individual node using the `style` keyword.
+
+```mermaid-example
+classDiagram
+  class Animal
+  class Mineral
+  style Animal fill:#f9f,stroke:#333,stroke-width:4px
+  style Mineral fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+```
+
+```mermaid
+classDiagram
+  class Animal
+  class Mineral
+  style Animal fill:#f9f,stroke:#333,stroke-width:4px
+  style Mineral fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+```
+
+#### Classes
+
+More convenient than defining the style every time is to define a class of styles and attach this class to the nodes that
+should have a different look. This is done by predefining classes in css styles that can be applied from the graph definition using the `cssClass` statement or the `:::` short hand.
 
 ```html
 <style>
