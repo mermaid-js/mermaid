@@ -50,7 +50,7 @@ Development quick start guide:
 
 $(bold ./$name pnpm install)                 # Install packages
 $(bold ./$name dev)                          # Run dev server with examples, open http://localhost:9000
-$(bold ./$name pnpm vitest)                  # Run watcher for unit tests
+$(bold ./$name pnpm test)                    # Run watcher for unit tests
 $(bold ./$name cypress)                      # Run integration tests (after starting dev server)
 $(bold ./$name pnpm build)                   # Prepare it for production
 $(bold ./$name docs:dev)                     # Then add documentation, open http://localhost:3333

@@ -84,8 +84,8 @@ function nav() {
     },
     {
       text: 'Contributing',
-      link: '/contributing/intro',
-      activeMatch: '/contributing/',
+      link: '/comminuty/intro',
+      activeMatch: '/comminuty/',
     },
     {
       text: 'Latest News',
