@@ -8,7 +8,7 @@
 
 You decided to take part in the development? Welcome!
 
-We were trying to make our guidelines for you as explicit and detailed as possible.
+We are trying to make our guidelines for you as explicit and detailed as possible.
 
 ## Initial Setup
 
@@ -111,7 +111,7 @@ pnpm test
 **Docker**
 
 ```bash
-./run pnpm test
+./run pnpm vitest
 ```
 
 The `test` script and others are in the top-level `package.json` file.

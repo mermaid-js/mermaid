@@ -84,8 +84,8 @@ function nav() {
     },
     {
       text: 'Contributing',
-      link: '/comminuty/intro',
-      activeMatch: '/comminuty/',
+      link: '/community/intro',
+      activeMatch: '/community/',
     },
     {
       text: 'Latest News',
@@ -200,11 +200,11 @@ function sidebarCommunity() {
       text: '🙌 Contributing',
       collapsed: false,
       items: [
-        { text: 'Getting Started', link: '/contributing/intro' },
-        { text: 'Contributing to Mermaid', link: '/contributing/contributing' },
-        { text: 'Adding Diagrams', link: '/contributing/new-diagram' },
-        { text: 'Questions and Suggestions', link: '/contributing/questions-and-suggestions' },
-        { text: 'Security', link: '/contributing/security' },
+        { text: 'Getting Started', link: '/community/intro' },
+        { text: 'Contributing to Mermaid', link: '/community/contributing' },
+        { text: 'Adding Diagrams', link: '/community/new-diagram' },
+        { text: 'Questions and Suggestions', link: '/community/questions-and-suggestions' },
+        { text: 'Security', link: '/community/security' },
       ],
     },
   ];

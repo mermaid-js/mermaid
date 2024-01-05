@@ -2,7 +2,7 @@
 
 You decided to take part in the development? Welcome!
 
-We were trying to make our guidelines for you as explicit and detailed as possible.
+We are trying to make our guidelines for you as explicit and detailed as possible.
 
 ## Initial Setup
 

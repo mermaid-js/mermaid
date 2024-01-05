@@ -58,7 +58,7 @@ const idRedirectMap: Record<string, string> = {
   'n00b-gettingstarted': 'intro/getting-started',
   'n00b-overview': 'intro/getting-started',
   'n00b-syntaxreference': 'intro/syntax-reference',
-  newdiagram: 'community/newDiagram',
+  newdiagram: 'community/new-diagram',
   pie: 'syntax/pie',
   plugins: '',
   quickstart: 'intro/getting-started',
@@ -88,10 +88,15 @@ const urlRedirectMap: Record<string, string> = {
   '/syntax/c4c.html': 'syntax/c4.html',
   '/ecosystem/integrations.html': 'ecosystem/integrations-community.html',
   '/ecosystem/showcases.html': 'ecosystem/integrations-create',
-  '/config/n00b-advanced.html': 'config/advanced',
-  '/intro/n00b-gettingStarted.html': 'intro/getting-started',
-  '/intro/n00b-syntaxReference.html': 'intro/syntax-reference',
-  '/community/n00b-overview.html': 'intro/getting-started',
+  '/config/n00b-advanced.html': 'config/configuration.html',
+  '/intro/n00b-gettingStarted.html': 'intro/getting-started.html',
+  '/intro/n00b-syntaxReference.html': 'intro/syntax-reference.html',
+  '/community/n00b-overview.html': 'intro/getting-started.html',
+  '/community/newDiagram.html': 'community/new-diagram.html',
+  '/community/development.html': 'community/contributing.html#initial-setup',
+  '/community/docker-development.html': 'community/contributing.html#initial-setup',
+  '/community/code.html': 'community/contributing.html#contributing-code',
+  '/community/documentation.html': 'community/contributing.html#contributing-documentation',
 };
 
 /**
