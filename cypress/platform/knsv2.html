@@ -72,18 +72,38 @@ block-beta
     </pre>
     <pre id="diagram" class="mermaid">
 block-beta
-      columns 3
+columns 3
+  space Browser space
+  space:3
+
+    A
+    B
+    C
+
+    space:3
+    space
+    db{{"This is the text in the box"}}
+
       classDef green fill:#9f6,stroke:#333,stroke-width:2px;
-      A
-      B
-      class A green
-    </pre>
-    <pre id="diagram" class="mermaid">
-stateDiagram-v2
-      classDef green fill:#9f6,stroke:#333,stroke-width:2px;
-      A
+      style B fill:#f9F,stroke:#333,stroke-width:4px
       class A green
 
+      Browser --> A
+      Browser --> B
+      Browser --> C
+      A --> db
+      B --> db
+      C--> db
+
+      block
+        D
+        E
+      end
+    </pre>
+    <pre id="diagram" class="mermaid2">
+flowchart
+      B
+      style B fill:#f9F,stroke:#333,stroke-width:4px
     </pre>
     <pre id="diagram" class="mermaid2">
 block-beta

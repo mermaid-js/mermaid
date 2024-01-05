@@ -23,6 +23,8 @@
 %x CLASS_STYLE
 %x CLASSDEF
 %x CLASSDEFID
+%x STYLE_STMNT
+%x STYLE_DEFINITION
 
 
 // as per section 6.1 of RFC 2234 [2]
@@ -53,7 +55,6 @@ CRLF \u000D\u000A
 <string>[^"]*           { yy.getLogger().debug('LEX: STR end:', yytext); return "STR";}
 space[:]\d+            {  yytext = yytext.replace(/space\:/,'');yy.getLogger().info('SPACE NUM (LEX)', yytext); return 'SPACE_BLOCK'; }
 space                  { yytext = '1'; yy.getLogger().info('COLUMNS (LEX)', yytext); return 'SPACE_BLOCK'; }
-"style"               return 'STYLE';
 "default"             return 'DEFAULT';
 "linkStyle"           return 'LINKSTYLE';
 "interpolate"         return 'INTERPOLATE';
@@ -66,6 +67,10 @@ space                  { yytext = '1'; yy.getLogger().info('COLUMNS (LEX)', yyte
 "class"\s+      { this.pushState('CLASS'); return 'class'; }
 <CLASS>(\w+)+((","\s*\w+)*)     { this.popState(); this.pushState('CLASS_STYLE'); return 'CLASSENTITY_IDS' }
 <CLASS_STYLE>[^\n]*             { this.popState(); return 'STYLECLASS' }
+
+"style"\s+      { this.pushState('STYLE_STMNT'); return 'style'; }
+<STYLE_STMNT>(\w+)+((","\s*\w+)*)     { this.popState(); this.pushState('STYLE_DEFINITION'); return 'STYLE_ENTITY_IDS' }
+<STYLE_DEFINITION>[^\n]*             { this.popState(); return 'STYLE_DEFINITION_DATA' }
 
 accTitle\s*":"\s*                                               { this.pushState("acc_title");return 'acc_title'; }
 <acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
@@ -208,6 +213,7 @@ statement
   | blockStatement
   | classDefStatement
   | cssClassStatement
+  | styleStatement
 	;
 
 nodeStatement
@@ -268,6 +274,13 @@ cssClassStatement
     : class CLASSENTITY_IDS STYLECLASS {
         //console.log('apply class: id(s): ',$2, '  style class: ', $3);
         $$={ type: 'applyClass', id: $2.trim(), styleClass: $3.trim() };
+        }
+    ;
+
+styleStatement
+    : style STYLE_ENTITY_IDS STYLE_DEFINITION_DATA {
+        console.log('abc88 apply class: id(s): ',$2, '  style class: ', $3);
+        $$={ type: 'applyStyles', id: $2.trim(), styles: $3.trim() };
         }
     ;
 

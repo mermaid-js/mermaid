@@ -30,6 +30,7 @@ export type BlockType =
   | 'doublecircle'
   | 'classDef'
   | 'applyClass'
+  | 'applyStyles'
   | 'composite';
 
 export interface Block {
@@ -57,6 +58,7 @@ export interface Block {
   directions?: string[];
   css?: string;
   styleClass?: string;
+  styles?: string[];
 }
 
 export interface Link {

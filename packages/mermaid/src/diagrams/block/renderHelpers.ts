@@ -16,10 +16,9 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
 
   let classStr = 'default';
   if ((vertex?.classes?.length || 0) > 0) {
-    console.log('abc88 vertex.classes', block.id, vertex?.classes);
     classStr = (vertex?.classes || []).join(' ');
   }
-  console.log('abc88 vertex.classes done');
+  console.log('abc88 vertex.classes styles', block.id, vertex?.styles);
   classStr = classStr + ' flowchart-label';
 
   // We create a SVG label, either by delegating to addHtmlLabel or manually
@@ -100,8 +99,8 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
       _shape = 'rect';
   }
 
-  // const styles = getStylesFromArray(vertex.styles);
-  const styles = getStylesFromArray([]);
+  const styles = getStylesFromArray(vertex?.styles || '');
+  // const styles = getStylesFromArray([]);
 
   // Use vertex id as text in the box if no text is provided by the graph definition
   const vertexText = vertex.label;
@@ -116,7 +115,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     rx: radious,
     ry: radious,
     class: classStr,
-    style: styles.style,
+    style: styles.style, // + 'fill:#9f9;stroke:#333;stroke-width:4px;',
     id: vertex.id,
     directions: vertex.directions,
     // link: vertex.link,

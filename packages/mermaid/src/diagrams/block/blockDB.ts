@@ -57,6 +57,20 @@ export const addStyleClass = function (id: string, styleAttributes = '') {
 };
 
 /**
+ * Called when the parser comes across a (style) class definition
+ * @example classDef my-style fill:#f96;
+ *
+ * @param {string} id - the id of this (style) class
+ * @param  {string | null} styles - the string with 1 or more style attributes (each separated by a comma)
+ */
+export const addStyle2Node = function (id: string, styles = '') {
+  let foundBlock = blockDatabase[id];
+  if (styles !== undefined && styles !== null) {
+    foundBlock.styles = styles.split(STYLECLASS_SEP);
+  }
+};
+
+/**
  * Add a (style) class or css class to a state with the given id.
  * If the state isn't already in the list of known states, add it.
  * Might be called by parser when a style class or CSS class should be applied to a state
@@ -116,14 +130,21 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
   const children = [];
   for (const block of blockList) {
     if (block.type === 'classDef') {
-      console.log('abc88 classDef', block);
+      // console.log('abc88 classDef', block);
       addStyleClass(block.id, block.css);
       continue;
     }
     if (block.type === 'applyClass') {
-      console.log('abc88 applyClass', block);
+      // console.log('abc88 applyClass', block);
       // addStyleClass(block.id, block.css);
-      setCssClass(block.id, block.styleClass);
+      setCssClass(block.id, block?.styleClass || '');
+      continue;
+    }
+    if (block.type === 'applyStyles') {
+      console.log('abc88 applyStyles', block);
+      addStyle2Node(block.id, block.styles);
+      // addStyleClass(block.id, block.css);
+      // setCssClass(block.id, block.styles);
       continue;
     }
     if (block.type === 'column-setting') {
