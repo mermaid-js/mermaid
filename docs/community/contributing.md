@@ -111,7 +111,7 @@ pnpm test
 **Docker**
 
 ```bash
-./run pnpm vitest
+./run pnpm test
 ```
 
 The `test` script and others are in the top-level `package.json` file.
