@@ -50,7 +50,7 @@ Development quick start guide:
 
 $(bold ./$name pnpm install)                 # Install packages
 $(bold ./$name dev)                          # Run dev server with examples, open http://localhost:9000
-$(bold ./$name pnpm test)                    # Run watcher for unit tests
+$(bold ./$name pnpm vitest)                  # Run watcher for unit tests
 $(bold ./$name cypress)                      # Run integration tests (after starting dev server)
 $(bold ./$name pnpm build)                   # Prepare it for production
 $(bold ./$name docs:dev)                     # Then add documentation, open http://localhost:3333
@@ -70,6 +70,9 @@ Examples of frequiently used commands:
 
 $(bold ./$name pnpm add --filter mermaid) $(underline package)
         Add package to mermaid
+
+$(bold ./$name pnpm -w run lint:fix)
+        Run prettier and ES lint
 
 $(bold git diff --name-only develop \| xargs ./$name pnpm prettier --write)
         Prettify everything you added so far
