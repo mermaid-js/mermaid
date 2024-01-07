@@ -32,7 +32,10 @@ export class BarPlot {
           type: 'rect',
           data: finalData.map((data, index) => {
             const x = offset[index] + this.boundingRect.x;
-            const width = data[1] - this.boundingRect.x;
+            const width =
+              data[1] -
+              this.boundingRect.x -
+              (dataIndex > 0 ? this.yAxis.getAxisOuterPadding() : 0);
             offset[index] += width;
             return {
               x,
@@ -50,8 +53,10 @@ export class BarPlot {
         groupTexts: ['plot', `bar-plot-${this.plotIndex}-${dataIndex}`],
         type: 'rect',
         data: finalData.map((data, index) => {
-          const y = data[1] - offset[index];
-          const height = this.boundingRect.y + this.boundingRect.height - data[1];
+          const adjustForAxisOuterPadding = dataIndex > 0 ? this.yAxis.getAxisOuterPadding() : 0;
+          const y = data[1] - offset[index] + adjustForAxisOuterPadding;
+          const height =
+            this.boundingRect.y + this.boundingRect.height - data[1] - adjustForAxisOuterPadding;
           offset[index] += height;
           return {
             x: data[0] - barWidthHalf,

@@ -172,15 +172,20 @@ function setLineData(title: NormalTextType, data: number[]) {
 type NamedDataset = [title: NormalTextType, data: number[]];
 
 function setBarData(datasets: NamedDataset[]) {
-  datasets.forEach((dataset) => {
-    const plotData = transformDataWithoutCategory(dataset[1]);
-    xyChartData.plots.push({
-      type: 'bar',
-      fill: getPlotColorFromPalette(plotIndex),
-      data: plotData,
+  datasets[0]
+    .filter((dataset) => Array.isArray(dataset))
+    .forEach((dataset) => {
+      const data = dataset as any as NamedDataset;
+      const plotData = transformDataWithoutCategory(
+        Array.isArray(data[1]) ? data[1] : (dataset as any as number[])
+      );
+      xyChartData.plots.push({
+        type: 'bar',
+        fill: getPlotColorFromPalette(plotIndex),
+        data: plotData,
+      });
+      plotIndex++;
     });
-    plotIndex++;
-  });
 }
 
 function getDrawableElem(): DrawableElem[] {

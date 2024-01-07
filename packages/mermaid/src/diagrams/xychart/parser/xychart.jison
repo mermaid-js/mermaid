@@ -109,14 +109,14 @@ statement
   ;
 
 datasets
-  : SQUARE_BRACES_START datasetBraced COMMA datasets SQUARE_BRACES_END { $$ = [$datasetBraced, ...$datasets] }
-  | SQUARE_BRACES_START datasetBraced SQUARE_BRACES_END                { $$ = [$datasetBraced] }
+  : SQUARE_BRACES_START datasetBraced SQUARE_BRACES_END                { $$ = [$datasetBraced] }
   | datasetBraced                                                      { $$ = [$datasetBraced] }
   | dataset                                                            { $$ = [$dataset] }
   ;
 
 datasetBraced
-  : SQUARE_BRACES_START dataset SQUARE_BRACES_END                      { $$ = $dataset }
+  : SQUARE_BRACES_START dataset SQUARE_BRACES_END COMMA datasetBraced  { $$ = [$dataset, ...$datasetBraced] }
+  | SQUARE_BRACES_START dataset SQUARE_BRACES_END                      { $$ = [$dataset] }
   ;
 
 dataset
