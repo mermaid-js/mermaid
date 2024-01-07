@@ -335,10 +335,10 @@ describe('Testing xychart jison file', () => {
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yAxisName', type: 'text' });
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
-    expect(mockDB.setBarData).toHaveBeenCalledWith(
+    expect(mockDB.setBarData).toHaveBeenCalledWith([[
       { text: 'barTitle', type: 'text' },
       [23, 45, 56.6, 0.22]
-    );
+    ]]);
   });
   it('parse bar Data spaces and +,- symbol', () => {
     const str =
@@ -346,10 +346,10 @@ describe('Testing xychart jison file', () => {
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yAxisName', type: 'text' });
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
-    expect(mockDB.setBarData).toHaveBeenCalledWith(
+    expect(mockDB.setBarData).toHaveBeenCalledWith([[
       { text: 'barTitle with space', type: 'text' },
       [23, -45, 56.6]
-    );
+    ]]);
   });
   it('parse bar Data without plot title', () => {
     const str =
@@ -357,7 +357,7 @@ describe('Testing xychart jison file', () => {
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yAxisName', type: 'text' });
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
-    expect(mockDB.setBarData).toHaveBeenCalledWith({ text: '', type: 'text' }, [23, -45, 56.6]);
+    expect(mockDB.setBarData).toHaveBeenCalledWith([['', [23, -45, 56.6]]]);
   });
   it('parse bar should throw for unbalanced brackets', () => {
     let str =
@@ -392,13 +392,17 @@ describe('Testing xychart jison file', () => {
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yAxisName', type: 'text' });
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
-    expect(mockDB.setBarData).toHaveBeenCalledWith(
+    expect(mockDB.setBarData).toHaveBeenCalledWith([[
       { text: 'barTitle1', type: 'text' },
       [23, 45, 56.6]
-    );
+    ]]);
     expect(mockDB.setBarData).toHaveBeenCalledWith(
-      { text: 'barTitle2', type: 'text' },
-      [13, 42, 56.89]
+      [
+        [
+          { text: 'barTitle2', type: 'text' },
+          [13, 42, 56.89]
+        ],
+      ],
     );
     expect(mockDB.setLineData).toHaveBeenCalledWith(
       { text: 'lineTitle1', type: 'text' },
@@ -428,14 +432,14 @@ describe('Testing xychart jison file', () => {
       { text: 'category 2', type: 'text' },
       { text: 'category3', type: 'text' },
     ]);
-    expect(mockDB.setBarData).toHaveBeenCalledWith(
+    expect(mockDB.setBarData).toHaveBeenCalledWith([[
       { text: 'barTitle1', type: 'text' },
       [23, 45, 56.6]
-    );
-    expect(mockDB.setBarData).toHaveBeenCalledWith(
+    ]]);
+    expect(mockDB.setBarData).toHaveBeenCalledWith([[
       { text: 'barTitle2', type: 'text' },
       [13, 42, 56.89]
-    );
+    ]]);
     expect(mockDB.setLineData).toHaveBeenCalledWith(
       { text: 'lineTitle1', type: 'text' },
       [11, 45.5, 67, 23]
