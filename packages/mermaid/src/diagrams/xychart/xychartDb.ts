@@ -172,7 +172,7 @@ function setLineData(title: NormalTextType, data: number[]) {
 type NamedDataset = [title: NormalTextType, data: number[]];
 
 function setBarData(datasets: NamedDataset[]) {
-  datasets.forEach(dataset => {
+  datasets.forEach((dataset) => {
     const plotData = transformDataWithoutCategory(dataset[1]);
     xyChartData.plots.push({
       type: 'bar',
