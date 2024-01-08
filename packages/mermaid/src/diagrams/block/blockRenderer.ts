@@ -25,7 +25,7 @@ import { configureSvgSize } from '../../setupGraphViewbox.js';
  * @returns {object} ClassDef styles
  */
 export const getClasses = function (text: any, diagObj: any) {
-  log.info('abc88 Extracting classes', diagObj.db.getClasses());
+  log.info('Extracting classes', diagObj.db.getClasses());
   try {
     return diagObj.db.getClasses();
   } catch (e) {

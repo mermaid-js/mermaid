@@ -34,28 +34,38 @@ export function calculateBlockPosition(columns: number, position: number): Block
   return { px, py };
 }
 
-function calcBlockSizes(block: Block, db: BlockDB) {
-  log.debug('calculateSize (start)', block.id, block?.size?.x, block?.size?.width);
+const getMaxChildSize = (block: Block) => {
+  let maxWidth = 0;
+  let maxHeight = 0;
+  // find max width of children
+  for (const child of block.children) {
+    const { width, height, x, y } = child.size || { width: 0, height: 0, x: 0, y: 0 };
+    log.debug('abc88', child.id, width, height, x, y);
+    if (width > maxWidth) {
+      maxWidth = width;
+    }
+    if (height > maxHeight) {
+      maxHeight = height;
+    }
+  }
+  return { width: maxWidth, height: maxHeight };
+};
+
+function setBlockSizes(block: Block, db: BlockDB, sieblingWidth: number = 0) {
+  log.debug('calculateSize abc88 (start)', block.id, block?.size?.x, block?.size?.width);
   const totalWidth = 0;
   const totalHeight = 0;
   let maxWidth = 0;
   let maxHeight = 0;
 
-  if (block.children) {
+  if (block.children?.length > 0) {
     for (const child of block.children) {
-      calcBlockSizes(child, db);
+      setBlockSizes(child, db);
     }
     // find max width of children
-    for (const child of block.children) {
-      const { width, height, x, y } = child.size || { width: 0, height: 0, x: 0, y: 0 };
-      // log.debug('APA', child.id, width, height, x, y);
-      if (width > maxWidth) {
-        maxWidth = width;
-      }
-      if (height > maxHeight) {
-        maxHeight = height;
-      }
-    }
+    const childSize = getMaxChildSize(block);
+    maxWidth = childSize.width;
+    maxHeight = childSize.height;
 
     // set width of block to max width of children
     for (const child of block.children) {
@@ -66,22 +76,10 @@ function calcBlockSizes(block: Block, db: BlockDB) {
         child.size.y = 0;
       }
     }
+    for (const child of block.children) {
+      setBlockSizes(child, db, maxWidth);
+    }
 
-    // // Position items relative to self
-    // let x = -padding / 2;
-    // const y = 0;
-
-    // let accumulatedPaddingX = 0;
-    // for (const child of block.children) {
-    //   if (child.size) {
-    //     child.size.x = x;
-    //     child.size.y = y;
-    //     x += maxWidth + padding;
-    //   }
-    //   accumulatedPaddingX += padding;
-    // }
-  }
-  if (block.children?.length > 0) {
     const columns = block.columns || -1;
     const numItems = block.children.length;
 
@@ -91,6 +89,33 @@ function calcBlockSizes(block: Block, db: BlockDB) {
       xSize = columns;
     }
     const ySize = Math.ceil(numItems / xSize);
+
+    let width = xSize * (maxWidth + padding) + padding;
+    // If maxWidth
+    if (width < sieblingWidth) {
+      console.log(
+        'Detected to small siebling: abc88',
+        block.id,
+        'sieblingWidth',
+        sieblingWidth,
+        'width',
+        width
+      );
+      width = sieblingWidth;
+      const childWidth = (sieblingWidth - xSize * padding - padding) / xSize;
+      log.debug('Size indata abc88', block.id, 'childWidth', childWidth, 'maxWidth', maxWidth);
+      log.debug('Size indata abc88 xSize', xSize, 'paddiong', padding);
+
+      // // set width of block to max width of children
+      for (const child of block.children) {
+        if (child.size) {
+          child.size.width = childWidth;
+          child.size.height = maxHeight;
+          child.size.x = 0;
+          child.size.y = 0;
+        }
+      }
+    }
 
     log.debug(
       '(calc)',
@@ -105,13 +130,14 @@ function calcBlockSizes(block: Block, db: BlockDB) {
     );
 
     block.size = {
-      width: xSize * (maxWidth + padding) + padding,
+      width,
       height: ySize * (maxHeight + padding) + padding,
       x: 0,
       y: 0,
     };
   }
-  log.debug('calculateSize APA (done)', block.id, block?.size?.x, block?.size?.width);
+
+  log.debug('calculateSize abc88 (done)', block.id, block?.size?.x, block?.size?.width);
 }
 
 function layoutBlocks(block: Block, db: BlockDB) {
@@ -240,7 +266,8 @@ export function layout(db: BlockDB) {
   if (!root) {
     return;
   }
-  calcBlockSizes(root, db);
+
+  setBlockSizes(root, db, 0);
   layoutBlocks(root, db);
   // Position blocks relative to parents
   // positionBlock(root, root, db);

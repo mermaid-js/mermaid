@@ -169,7 +169,7 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
       padding: getConfig().flowchart.padding,
     });
 
-    log.info('abc88 setNode', {
+    log.info('setNode', {
       labelStyle: styles.labelStyle,
       labelType: vertex.labelType,
       shape: _shape,

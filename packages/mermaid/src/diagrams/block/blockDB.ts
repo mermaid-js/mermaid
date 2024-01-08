@@ -79,7 +79,6 @@ export const addStyle2Node = function (id: string, styles = '') {
  * @param {string} cssClassName CSS class name
  */
 export const setCssClass = function (itemIds: string, cssClassName: string) {
-  console.log('abc88 setCssClass enter', itemIds, cssClassName);
   itemIds.split(',').forEach(function (id: string) {
     let foundBlock = blockDatabase[id];
     if (foundBlock === undefined) {
@@ -91,7 +90,6 @@ export const setCssClass = function (itemIds: string, cssClassName: string) {
       foundBlock.classes = [];
     }
     foundBlock.classes.push(cssClassName);
-    console.log('abc88 setCssClass', foundBlock);
   });
 };
 
@@ -130,21 +128,15 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
   const children = [];
   for (const block of blockList) {
     if (block.type === 'classDef') {
-      // console.log('abc88 classDef', block);
       addStyleClass(block.id, block.css);
       continue;
     }
     if (block.type === 'applyClass') {
-      // console.log('abc88 applyClass', block);
-      // addStyleClass(block.id, block.css);
       setCssClass(block.id, block?.styleClass || '');
       continue;
     }
     if (block.type === 'applyStyles') {
-      console.log('abc88 applyStyles', block);
-      addStyle2Node(block.id, block.styles);
-      // addStyleClass(block.id, block.css);
-      // setCssClass(block.id, block.styles);
+      addStyle2Node(block.id, block?.styles);
       continue;
     }
     if (block.type === 'column-setting') {
@@ -361,7 +353,6 @@ type IGetClasses = () => Record<string, ClassDef>;
  * @returns {{} | any | classes}
  */
 export const getClasses = function () {
-  console.log('abc88 block db getClasses', classes);
   return classes;
 };
 export interface BlockDB extends DiagramDB {

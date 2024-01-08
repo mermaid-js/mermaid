@@ -301,4 +301,39 @@ describe('Block diagram', () => {
       {}
     );
   });
+
+  it('BL22: sizing - it should be possible to make a block wider', () => {
+    imgSnapshotTest(
+      `block-beta
+      A("rounded):2
+      B:2
+      C
+      `,
+      {}
+    );
+  });
+
+  it('BL23: sizing - it should be possieble to make a composite block wider', () => {
+    imgSnapshotTest(
+      `block-beta
+      block:2
+        A
+      end
+      B
+      `,
+      {}
+    );
+  });
+
+  it('BL23: sizing - it should be possieble to make a composite block wider', () => {
+    imgSnapshotTest(
+      `block-beta
+      block:2
+        A
+      end
+      B
+      `,
+      {}
+    );
+  });
 });

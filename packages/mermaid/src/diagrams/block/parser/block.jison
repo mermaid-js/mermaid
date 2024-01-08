@@ -225,7 +225,7 @@ statement
 
 nodeStatement
   : nodeStatement link node {
-    yy.getLogger().info('Rule: (nodeStatement link node) ', $1, $2, $3, 'abc88 typestr: ',$2.edgeTypeStr);
+    yy.getLogger().info('Rule: (nodeStatement link node) ', $1, $2, $3, ' typestr: ',$2.edgeTypeStr);
     const edgeData = yy.edgeStrToEdgeData($2.edgeTypeStr)
     $$ = [
       {id: $1.id, label: $1.label, type:$1.type, directions: $1.directions},
@@ -286,7 +286,6 @@ cssClassStatement
 
 styleStatement
     : style STYLE_ENTITY_IDS STYLE_DEFINITION_DATA {
-        console.log('abc88 apply class: id(s): ',$2, '  style class: ', $3);
         $$={ type: 'applyStyles', id: $2.trim(), styles: $3.trim() };
         }
     ;

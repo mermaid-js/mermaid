@@ -204,7 +204,7 @@ export const createCssStyles = (
     cssStyles += `\n:root { --mermaid-alt-font-family: ${config.altFontFamily}}`;
   }
 
-  console.log('abc88 expr check', !isEmpty(classDefs), classDefs);
+  console.log('expr check', !isEmpty(classDefs), classDefs);
 
   // classDefs defined in the diagram text
   if (!isEmpty(classDefs) && CLASSDEF_DIAGRAMS.includes(graphType)) {
