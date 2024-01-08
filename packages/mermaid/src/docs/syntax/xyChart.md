@@ -1,10 +1,32 @@
 # XY Chart
 
-> In the context of mermaid-js, the XY chart is a comprehensive charting module that encompasses various types of charts that utilize both x-axis and y-axis for data representation. Presently, it includes two fundamental chart types: the bar chart and the line chart. These charts are designed to visually display and analyze data that involve two numerical variables.
+> In the context of mermaid-js, the XY chart is a comprehensive charting module that encompasses various types of charts that utilize both x-axis and y-axis for data representation. Presently, it includes two fundamental chart types: the bar chart and the line chart. These charts are designed to display one or more datasets containing categories of data.
 
 > It's important to note that while the current implementation of mermaid-js includes these two chart types, the framework is designed to be dynamic and adaptable. Therefore, it has the capacity for expansion and the inclusion of additional chart types in the future. This means that users can expect an evolving suite of charting options within the XY chart module, catering to various data visualization needs as new chart types are introduced over time.
 
 ## Example
+
+### bar chart displaying single dataset
+
+```mermaid-example
+xychart-beta
+    title "Sales Revenue"
+    x-axis [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
+    y-axis "Revenue (in $)" 4000 --> 11000
+    bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+```
+
+### bar chart displaying 3 datasets
+
+```mermaid-example
+      xychart-beta
+      title "Basic xychart with multiple datasets"
+      x-axis "Relevant categories" [category1, "category 2", category3, category4]
+      y-axis Animals 0 --> 160
+      bar [["dogs" [40, 20, 40, 30]],["cats" [20, 40, 50, 30]],["birds" [30, 60, 50, 30]]]
+```
+
+### combined bar/line chart displaying 2 datasets
 
 ```mermaid-example
 xychart-beta
