@@ -71,7 +71,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     case 'inv_trapezoid':
       _shape = 'inv_trapezoid';
       break;
-    case 'odd_right':
+    case 'rect_left_inv_arrow':
       _shape = 'rect_left_inv_arrow';
       break;
     case 'circle':

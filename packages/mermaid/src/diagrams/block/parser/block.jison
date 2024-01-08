@@ -86,27 +86,49 @@ accDescr\s*"{"\s*                                { this.pushState("acc_descr_mul
 .*direction\s+RL[^\n]*                                      return 'direction_rl';
 .*direction\s+LR[^\n]*                                      return 'direction_lr';
 
+// Node end of shape
+<NODE>"((("             { this.popState();yy.getLogger().info('Lex: (('); return "NODE_DEND"; }
+<NODE>")))"             { this.popState();yy.getLogger().info('Lex: (('); return "NODE_DEND"; }
+<NODE>[\)]\)           { this.popState();yy.getLogger().info('Lex: ))'); return "NODE_DEND"; }
+<NODE>"}}"             { this.popState();yy.getLogger().info('Lex: (('); return "NODE_DEND"; }
+<NODE>"}"             { this.popState();yy.getLogger().info('Lex: (('); return "NODE_DEND"; }
+<NODE>"(-"             { this.popState();yy.getLogger().info('Lex: (-'); return "NODE_DEND"; }
+<NODE>"-)"             { this.popState();yy.getLogger().info('Lex: -)'); return "NODE_DEND"; }
+<NODE>"(("             { this.popState();yy.getLogger().info('Lex: (('); return "NODE_DEND"; }
+<NODE>"]]"             { this.popState();yy.getLogger().info('Lex: ]]'); return "NODE_DEND"; }
+<NODE>"("              { this.popState();yy.getLogger().info('Lex: (');  return "NODE_DEND";  }
+<NODE>"])"             { this.popState();yy.getLogger().info('Lex: ])'); return "NODE_DEND"; }
+<NODE>"\\]"             { this.popState();yy.getLogger().info('Lex: /]'); return "NODE_DEND"; }
+<NODE>"/]"             { this.popState();yy.getLogger().info('Lex: /]'); return "NODE_DEND"; }
+<NODE>")]"             { this.popState();yy.getLogger().info('Lex: )]'); return "NODE_DEND"; }
+<NODE>[\)]             { this.popState();yy.getLogger().info('Lex: )');  return "NODE_DEND"; }
+<NODE>\]\>             { this.popState();yy.getLogger().info('Lex: ]>'); return "NODE_DEND"; }
+<NODE>[\]]             { this.popState();yy.getLogger().info('Lex: ]'); return "NODE_DEND"; }
+
 // Start of nodes with shapes and description
 "-)"                   { yy.getLogger().info('Lexa: -)'); this.pushState('NODE');return 'NODE_DSTART'; }
 "(-"                   { yy.getLogger().info('Lexa: (-'); this.pushState('NODE');return 'NODE_DSTART'; }
 "))"                   { yy.getLogger().info('Lexa: ))'); this.pushState('NODE');return 'NODE_DSTART';  }
 ")"                    { yy.getLogger().info('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART';      }
+"((("                  { yy.getLogger().info('Lex: (((');  this.pushState('NODE');return 'NODE_DSTART'; }
 "(("                   { yy.getLogger().info('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART'; }
 "{{"                   { yy.getLogger().info('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART'; }
-"("                    { yy.getLogger().info('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART'; }
-"["                    { yy.getLogger().info('Lexa: ['); this.pushState('NODE');return 'NODE_DSTART'; }
+"{"                   { yy.getLogger().info('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART'; }
+">"                   { yy.getLogger().info('Lexc: >'); this.pushState('NODE');return 'NODE_DSTART'; }
 "(["                   { yy.getLogger().info('Lexa: (['); this.pushState('NODE');return 'NODE_DSTART'; }
+"("                    { yy.getLogger().info('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART'; }
 "[["                   { this.pushState('NODE');return 'NODE_DSTART'; }
 "[|"                   { this.pushState('NODE');return 'NODE_DSTART'; }
 "[("                   { this.pushState('NODE');return 'NODE_DSTART'; }
-"((("                  { this.pushState('NODE');return 'NODE_DSTART'; }
 ")))"                  { this.pushState('NODE');return 'NODE_DSTART'; }
+"[\\"                   { this.pushState('NODE');return 'NODE_DSTART'; }
 "[/"                   { this.pushState('NODE');return 'NODE_DSTART'; }
 "[\\"                  { this.pushState('NODE');return 'NODE_DSTART'; }
+"["                    { yy.getLogger().info('Lexa: ['); this.pushState('NODE');return 'NODE_DSTART'; }
 
 "<["                   { this.pushState('BLOCK_ARROW');yy.getLogger().debug('LEX ARR START');return 'BLOCK_ARROW_START'; }
 
-[^\(\[\n\-\)\{\}\s\<]+     { yy.getLogger().info('Lex: NODE_ID', yytext);return 'NODE_ID'; }
+[^\(\[\n\-\)\{\}\s\<\>]+     { yy.getLogger().info('Lex: NODE_ID', yytext);return 'NODE_ID'; }
 <<EOF>>                { yy.getLogger().info('Lex: EOF', yytext);return 'EOF'; }
 
 // Handling of strings in node
@@ -118,21 +140,6 @@ accDescr\s*"{"\s*                                { this.pushState("acc_descr_mul
 <BLOCK_ARROW>["]              { yy.getLogger().info('LEX ARR: Starting string');this.pushState("string");}
 <string>[^"]+          { yy.getLogger().debug('LEX: NODE_DESCR:', yytext); return "NODE_DESCR";}
 <string>["]            {yy.getLogger().debug('LEX POPPING');this.popState();}
-
-// Node end of shape
-<NODE>\]\>             { this.popState();yy.getLogger().info('Lex: ]>'); return "NODE_DEND"; }
-<NODE>[\)]\)           { this.popState();yy.getLogger().info('Lex: ))'); return "NODE_DEND"; }
-<NODE>[\)]             { this.popState();yy.getLogger().info('Lex: )');  return "NODE_DEND"; }
-<NODE>[\]]             { this.popState();yy.getLogger().info('Lex: ]'); return "NODE_DEND"; }
-<NODE>"}}"             { this.popState();yy.getLogger().info('Lex: (('); return "NODE_DEND"; }
-<NODE>"(-"             { this.popState();yy.getLogger().info('Lex: (-'); return "NODE_DEND"; }
-<NODE>"-)"             { this.popState();yy.getLogger().info('Lex: -)'); return "NODE_DEND"; }
-<NODE>"(("             { this.popState();yy.getLogger().info('Lex: (('); return "NODE_DEND"; }
-<NODE>"("              { this.popState();yy.getLogger().info('Lex: (');  return "NODE_DEND";  }
-<NODE>"])"             { this.popState();yy.getLogger().info('Lex: ])'); return "NODE_DEND"; }
-<NODE>"]]"             { this.popState();yy.getLogger().info('Lex: ]]'); return "NODE_DEND"; }
-<NODE>"/]"             { this.popState();yy.getLogger().info('Lex: /]'); return "NODE_DEND"; }
-<NODE>")]"             { this.popState();yy.getLogger().info('Lex: )]'); return "NODE_DEND"; }
 
 <BLOCK_ARROW>"]>"\s*"("       { yy.getLogger().debug('Lex: =>BAE');  this.pushState('ARROW_DIR');  }
 <ARROW_DIR>","?\s*right\s*           { yytext = yytext.replace(/^,\s*/, ''); yy.getLogger().debug('Lex (right): dir:',yytext);return "DIR"; }

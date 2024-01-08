@@ -64,184 +64,45 @@
   <body>
     <pre id="diagram" class="mermaid2">
 block-beta
-      columns 3
-      space blockArrowId1<["down"]>(down) space
-      blockArrowId2<["right"]>(right) blockArrowId3<["Sync"]>(x, y) blockArrowId4<["left"]>(left)
-      space blockArrowId5<["up"]>(up) space
-      blockArrowId6<["x"]>(x) space blockArrowId7<["y"]>(y)
+    A["square"]
+    B("rounded")
+    C(("circle"))
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+    A>"rect_left_inv_arrow"]
+    B{"diamond"}
+    C{{"hexagon"}}
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+    A(["stadium"])
     </pre>
     <pre id="diagram" class="mermaid">
 block-beta
-columns 3
-  space Browser space
-  space:3
-
-    A
-    B
-    C
-
-    space:3
-    space
-    db{{"This is the text in the box"}}
-
-      classDef green fill:#9f6,stroke:#333,stroke-width:2px;
-      style B fill:#f9F,stroke:#333,stroke-width:4px
-      class A green
-
-      Browser --> A
-      Browser --> B
-      Browser --> C
-      A --> db
-      B --> db
-      C--> db
-
-      block
-        D
-        E
-      end
+    %% A[["subroutine"]]
+    %% B[("cylinder")]
+    C>"surprise"]
     </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+    A[/"lean right"/]
+    B[\"lean left"\]
+    C[/"trapezoid"\]
+    D[\"trapezoid"/]
+    </pre>
+
     <pre id="diagram" class="mermaid2">
 flowchart
       B
       style B fill:#f9F,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-      columns 3
-      classDef green fill:#9f6,stroke:#333,stroke-width:2px;
-      A
-      space
-      block
-        E
-        F
-      end
-      E -- "apa" --> A
 
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-      columns 3
-      C space A space B
-      B --> A
-      B --> C
-      block
-        D
-        E
-      end
-      E --> A
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-      columns 2
-      C A B
-      block
-        D
-        E
-      end
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-      columns 2
-      A B C D
-      A --o B
-      A --> C
-
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-    columns 3
-    space:3
-    ida idb idc
-    id1  id2
-      blockArrowId<["Label"]>(right)
-      blockArrowId2<["Label"]>(left)
-      blockArrowId3<["Label"]>(up)
-      blockArrowId4<["Label"]>(down)
-      blockArrowId5<["Label"]>(x)
-      blockArrowId6<["Label"]>(y)
-      blockArrowId6<["Label"]>(x, down)
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-  columns 1
-  block
-    id1
-    id2
-    block
-      columns 1
-      id3("Wider then")
-      id5(("id5"))
-    end
-  end
-  id4
-    </pre>
-
-    <pre id="diagram" class="mermaid2">
-block-beta
-  columns 1
-  block
-    columns 1
-    block
-      columns 3
-      id1
-      id2
-      id2.1(("XYZ"))
-      %%id2.2
-    end
-    id48
-  end
-  id3
-%%  id3
-%%  id4
-  %% block
-    %% columns 2
-    %% id2
-    %% id3
-  %% end
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-  block
-    columns 1
-    id1
-    id2
-    %%id2.1
-  end
-  id3
-%%  id3
-%%  id4
-  %% block
-    %% columns 2
-    %% id2
-    %% id3
-  %% end
-    </pre>
     <pre id="diagram" class="mermaid2">
       flowchart LR
       a1 -- apa --> b1
     </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-  id1["Hello"]
-  block
-    columns 3
-    id2["to"]
-    id3["the"]
-    id4["World"]
-    id5["World"]
-  end
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-  columns 2
-  block
-    id2["I am a wide one"]
-    id1
-  end
-  id[Next row]
 
-
-    </pre>
     <pre id="diagram" class="mermaid2">
 flowchart RL
   subgraph "`one`"
