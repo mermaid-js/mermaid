@@ -128,7 +128,7 @@ accDescr\s*"{"\s*                                { this.pushState("acc_descr_mul
 
 "<["                   { this.pushState('BLOCK_ARROW');yy.getLogger().debug('LEX ARR START');return 'BLOCK_ARROW_START'; }
 
-[^\(\[\n\-\)\{\}\s\<\>]+     { yy.getLogger().info('Lex: NODE_ID', yytext);return 'NODE_ID'; }
+[^\(\[\n\-\)\{\}\s\<\>:]+     { yy.getLogger().info('Lex: NODE_ID', yytext);return 'NODE_ID'; }
 <<EOF>>                { yy.getLogger().info('Lex: EOF', yytext);return 'EOF'; }
 
 // Handling of strings in node
@@ -163,6 +163,7 @@ accDescr\s*"{"\s*                                { this.pushState("acc_descr_mul
 <LLABEL>\s*[xo<]?\-\-+[-xo>]\s*                 { this.popState(); yy.getLogger().info('Lex: LINK', '#'+yytext+'#'); return 'LINK'; }
 <LLABEL>\s*[xo<]?\=\=+[=xo>]\s*                 { this.popState(); yy.getLogger().info('Lex: LINK', yytext); return 'LINK'; }
 <LLABEL>\s*[xo<]?\-?\.+\-[xo>]?\s*              { this.popState(); yy.getLogger().info('Lex: LINK', yytext); return 'LINK'; }
+':'\d+                   { yy.getLogger().info('Lex: COLON', yytext); yytext=yytext.slice(1);return 'SIZE'; }
 
 /lex
 
@@ -233,7 +234,8 @@ nodeStatement
       {id: $3.id, label: $3.label, type: yy.typeStr2Type($3.typeStr), directions: $3.directions}
       ];
     }
-  | node { yy.getLogger().info('Rule: nodeStatement (node) ', $1); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1.typeStr), directions: $1.directions}; }
+  | node SIZE { yy.getLogger().info('Rule: nodeStatement (abc88 node size) ', $1, $2); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1.typeStr), directions: $1.directions, w: $2}; }
+  | node { yy.getLogger().info('Rule: nodeStatement (node) ', $1); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1.typeStr), directions: $1.directions, w:1}; }
   ;
 
 

@@ -64,33 +64,21 @@
   <body>
     <pre id="diagram" class="mermaid">
 block-beta
-columns 3
-  space Browser space
-  space:3
-
+columns 2
+  db(("This is the text "))
+  block
     A
-    B
-    C
+  end
 
-    space:3
-    space
-    db{{"This is the text in the box"}}
 
-      classDef green fill:#9f6,stroke:#333,stroke-width:2px;
-      style B fill:#f9F,stroke:#333,stroke-width:4px
-      class A green
 
-      Browser --> A
-      Browser --> B
-      Browser --> C
-      A --> db
-      B --> db
-      C--> db
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
 
-      block
-        D
-        E
-      end
+  A1:3
+  A2:1
+  A3
     </pre>
     <pre id="diagram" class="mermaid">
 block-beta

@@ -173,7 +173,6 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
       if (block.children) {
         populateBlockDatabase(block.children, block);
       }
-
       if (block.type === 'space') {
         const w = block.width || 1;
         for (let j = 0; j < w; j++) {
@@ -186,6 +185,14 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
         if (newBlock) {
           children.push(block);
         }
+        // const w = block.w || 1;
+        // for (let j = 1; j < w; j++) {
+        //   const newBlock = clone(block);
+        //   newBlock.type = 'space';
+        //   newBlock.id = newBlock.id + '-' + j;
+        //   blockDatabase[newBlock.id] = newBlock;
+        //   children.push(newBlock);
+        // }
       }
     }
   }
