@@ -25,7 +25,27 @@ export const getRows = (s?: string): string[] => {
  * @returns The safer text
  */
 export const removeScript = (txt: string): string => {
-  return DOMPurify.sanitize(txt);
+  const TEMPORARY_ATTRIBUTE = 'data-temp-href-target';
+
+  DOMPurify.addHook('beforeSanitizeAttributes', (node: Element) => {
+    if (node.tagName === 'A' && node.hasAttribute('target')) {
+      node.setAttribute(TEMPORARY_ATTRIBUTE, node.getAttribute('target') || '');
+    }
+  });
+
+  const sanitizedText = DOMPurify.sanitize(txt);
+
+  DOMPurify.addHook('afterSanitizeAttributes', (node: Element) => {
+    if (node.tagName === 'A' && node.hasAttribute(TEMPORARY_ATTRIBUTE)) {
+      node.setAttribute('target', node.getAttribute(TEMPORARY_ATTRIBUTE) || '');
+      node.removeAttribute(TEMPORARY_ATTRIBUTE);
+      if (node.getAttribute('target') === '_blank') {
+        node.setAttribute('rel', 'noopener');
+      }
+    }
+  });
+
+  return sanitizedText;
 };
 
 const sanitizeMore = (text: string, config: MermaidConfig) => {
