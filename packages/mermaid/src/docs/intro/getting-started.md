@@ -1,27 +1,45 @@
-# A Mermaid User-Guide for Beginners
+---
+outline: 'deep' # shows all h3 headings in outline in Vitepress
+---
 
-Mermaid is composed of three parts: Deployment, Syntax and Configuration.
+# Mermaid User Guide
 
-This section talks about the different ways to deploy Mermaid. Learning the [Syntax](syntax-reference.md) would be of great help to the beginner.
+## Mermaid is composed of three parts
 
-> Generally the live editor is enough for most general uses of mermaid, and is a good place to start learning.
+1. Deployment
+2. Syntax
+3. Configuration
 
-**Absolute beginners are advised to view the Video [Tutorials](../ecosystem/tutorials.md) on the Live Editor, to gain a better understanding of mermaid.**
+This section talks about the different ways to **deploy** Mermaid.
 
-## Four ways of using mermaid:
+If you are a beginner:
 
-1. Using the Mermaid Live Editor at [mermaid.live](https://mermaid.live).
-2. Using [mermaid plugins](../ecosystem/integrations-community.md) with programs you are familiar with.
-3. Calling the Mermaid JavaScript API.
-4. Deploying Mermaid as a dependency.
+- Check out the [Diagram Syntax](syntax-reference.md) page
+- Check out the [Tutorials](../config/Tutorials.md) page
 
-**Note: It is our recommendation that you review all approaches, and choose the one that is best for your project.**
+## Ways to use Mermaid
 
-> More in depth information can be found at [Usage](../config/usage.md).
+1. [Using the Mermaid Live Editor](getting-started.md#_1-using-the-mermaid-live-editor)
+2. [Using the Mermaid Chart Editor](getting-started.md#_2-using-the-mermaid-chart-editor)
+3. [Using Mermaid Plugins and Integrations](getting-started.md#_3-using-mermaid-plugins)
+4. [Calling the Mermaid JavaScript API](getting-started.md#_4-calling-the-mermaid-javascript-api)
+5. [Adding Mermaid as a dependency](getting-started.md#_5-adding-mermaid-as-a-dependency)
 
-## 1. Using the Live Editor
+To learn more, visit the [Usage](../config/usage.md) page.
 
-Available at [mermaid.live](https://mermaid.live)
+## 1. Using the Mermaid Live Editor
+
+Available at the [Mermaid Live Editor](https://mermaid.live) website.
+
+### Features
+
+<br />
+
+#### • Diagram Code
+
+In the `Code` panel, write or edit Mermaid code, and instantly `Preview` the rendered result in the diagram panel.
+
+Here is an example of Mermaid code and its rendered result:
 
 ```mermaid
 graph TD
@@ -34,79 +52,166 @@ graph TD
     F --> B
 ```
 
-In the `Code` section one can write or edit raw mermaid code, and instantly `Preview` the rendered result on the panel beside it.
+<br />
 
-The `Configuration` Section is for changing the appearance and behavior of mermaid diagrams. A complete configuration reference cataloging the default values can be found on the [mermaidAPI](../config/setup/README.md) page.
+#### • Configurations
+
+Configuration options are available in the `Configuration` panel. The options are applied to the diagram in the `Preview` panel.
+
+To learn more, visit the [Configuration Reference](../config/setup/README.md) page
 
 ![Code,Config and Preview](./img/Code-Preview-Config.png)
 
-### Editing History
+<br />
 
-Your code will be autosaved every minute into the Timeline tab of History which shows the most recent 30 items.
+#### • Editing History
 
-You can manually save code by clicking the Save icon in the History section. It can also be accessed in the Saved tab. This is stored in the browser storage only.
+Your code will be autosaved and appear in the `Timeline` tab of the `History` section. Edits are saved every minute and only the last 30 edits are viewable.
 
-### Saving a Diagram:
+Alternatively, you can manually save code by clicking on the `Save` icon from the `History` section.
 
-You may choose any of the methods below, to save it
+```note
+History is stored in the browser storage only.
+```
 
-**We recommend that you save your diagram code on top of any method you choose, in order to make edits and modifications further down the line.**
+<br />
+
+#### • Saving a diagram
+
+There are multiple ways of saving your diagram from the `Actions` section:
+
+- export PNG
+- export SVG
+- export as Markdown
 
 ![Flowchart](./img/Live-Editor-Choices.png)
 
-### Editing your diagrams
+<br />
 
-Editing is as easy as pasting your **Diagram code**, into the `code` section of the `Live Editor`.
+#### • Editing your diagrams
 
-### Loading from Gists
+To edit your diagram, you can copy paste existing Mermaid diagram code into the `Code` section of the `Live Editor`.
 
-The Gist you create should have a code.mmd file and optionally a config.json. [Example](https://gist.github.com/sidharthv96/6268a23e673a533dcb198f241fd7012a)
+Or:
 
-To load a gist into the Editor, you can use https://mermaid.live/edit?gist=https://gist.github.com/sidharthv96/6268a23e673a533dcb198f241fd7012a
+- create a new diagram from scratch
+- use a Sample Diagram from the `Sample Diagrams` section
 
-and to View, https://mermaid.live/view?gist=https://gist.github.com/sidharthv96/6268a23e673a533dcb198f241fd7012a
+<br />
 
-## 2. Using Mermaid Plugins:
+#### • Loading from Gists
 
-You can generate mermaid diagrams from within popular applications using plug-ins. It can be done in the same way, you would use the Live Editor. Here's a list of [Mermaid Plugins](../ecosystem/integrations-community.md).
+The Gist you create should have a `code.mmd` file and optionally a `config.json`, similar to this [example](https://gist.github.com/sidharthv96/6268a23e673a533dcb198f241fd7012a).
 
-**This is covered in greater detail in the [Usage section](../config/usage.md)**
+```note
+To learn about Gists, visit the GitHub documentation page on [Creating gists](https://docs.github.com/en/get-started/writing-on-github/editing-and-sharing-content-with-gists/creating-gists).
+```
 
-## 3. Calling the JavaScript API
+Once you have created a Gist, copy paste the Gist URL into the respective field in the `Actions` section and click on the `Load Gist` button.
 
-This method can be used with any common web server like Apache, IIS, nginx, node express.
+Here is an example of a Gist being loaded into the Editor:
 
-You will also need a text editing tool like Notepad++ to generate a .html file. It is then deployed by a web browser (such as Firefox, Chrome, Safari, but not Internet Explorer).
+<https://mermaid.live/edit?gist=https://gist.github.com/sidharthv96/6268a23e673a533dcb198f241fd7012a>
+
+And, here is the diagram view from the above example:
+
+<https://mermaid.live/view?gist=https://gist.github.com/sidharthv96/6268a23e673a533dcb198f241fd7012a>
+
+## 2. Using the Mermaid Chart Editor
+
+Available at the [Mermaid Chart](https://www.mermaidchart.com/) website.
+
+Mermaid Chart is a web-based diagram editor that allows you to create and edit diagrams in your browser. It is built by the team behind Mermaid.
+
+Features include:
+
+- AI diagramming
+- Collaboration & multi-user editing
+- Storage
+- and more
+
+To learn more, visit the [Mermaid Chart page](/ecosystem/mermaid-chart.html) in the Ecosystem section of the documentation.
+
+Or go to the [Mermaid Chart website](https://www.mermaidchart.com/app/sign-up) to sign up for a Free account.
+
+## 3. Using Mermaid Plugins
+
+### Mermaid Plugins
+
+You can generate Mermaid diagrams from within popular applications using plug-ins.
+
+For a list of Mermaid Plugins and Integrations, visit the [Integrations page](../ecosystem/integrations-community.md).
+
+### Mermaid Chart Plugins
+
+Mermaid Chart plugins are available for:
+
+- [ChatGPT](https://docs.mermaidchart.com/plugins/chatgpt)
+- [JetBrains IDE](https://docs.mermaidchart.com/plugins/jetbrains-ide)
+- [Microsoft PowerPoint](https://docs.mermaidchart.com/plugins/microsoft-powerpoint)
+- [Microsoft Word](https://docs.mermaidchart.com/plugins/microsoft-word)
+- [Visual Studio Code](https://docs.mermaidchart.com/plugins/visual-studio-code)
+
+To learn more, visit the [Mermaid Chart Plugins](https://www.mermaidchart.com/plugins) page.
+
+### Native Mermaid Support
+
+For apps that support markdown (e.g. [GitHub](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams) and [GitLab](https://handbook.gitlab.com/handbook/tools-and-tips/mermaid/)), you can add Mermaid diagrams by making a `mermaid` code block.
+
+````markdown
+The following code-block will be rendered as a Mermaid diagram:
+
+```mermaid
+flowchart LR
+  A --> B
+```
+````
+
+## 4. Calling the Mermaid JavaScript API
+
+This method can be used with any common web server like `Apache`, `IIS`, `Nginx`, and `Node Express`.
+
+You will also need a text editing tool like `Notepad++` to generate an `html` file. It is then deployed by a web browser, i.e. `Firefox`, `Chrome`, `Safari`.
+
+```note
+Internet Explorer is not supported.
+```
 
 The API works by pulling rendering instructions from the source `mermaid.js` in order to render diagrams on the page.
 
-### Requirements for the Mermaid API.
+### Requirements for the Mermaid API
 
-When writing the .html file, we give two instructions inside the html code to the web browser:
+When writing the `html` file, we give two instructions inside the `html code` to the `web browser`:
 
-a. The mermaid code for the diagram we want to create.
+a. The Mermaid code for the diagram we want to create.
 
-b. The importing of mermaid library through the `mermaid.esm.mjs` or `mermaid.esm.min.mjs` and the `mermaid.initialize()` call, which dictates the appearance of diagrams and also starts the rendering process.
+b. The importing of the Mermaid library through the `mermaid.esm.mjs` or `mermaid.esm.min.mjs`, and the `mermaid.initialize()` call, which dictates the appearance of diagrams and also starts the rendering process.
 
-**a. The embedded mermaid diagram definition inside a `<pre class="mermaid">`:**
+#### Examples
+
+- This is an example of an embedded Mermaid diagram definition inside a `<pre class="mermaid">`:
 
 ```html
 <body>
   Here is a mermaid diagram:
   <pre class="mermaid">
-        graph TD 
-        A[Client] --> B[Load Balancer] 
-        B --> C[Server01] 
+        graph TD
+        A[Client] --> B[Load Balancer]
+        B --> C[Server01]
         B --> D[Server02]
   </pre>
 </body>
 ```
 
-**Notes**: Every Mermaid chart/graph/diagram definition, should have separate `<pre>` tags.
+```note
+Every Mermaid chart/graph/diagram definition should have separate `<pre>` tags.
+```
 
-**b. The import of mermaid and the `mermaid.initialize()` call.**
+- This is an example of a Mermaid import and the `mermaid.initialize()` call.
 
-`mermaid.initialize()` call takes all the definitions contained in all the `<pre class="mermaid">` tags that it finds in the html body and renders them into diagrams. Example:
+```note
+A `mermaid.initialize()` call takes all the definitions contained within `<pre class="mermaid">` tags and renders them into diagrams.
+```
 
 ```html
 <body>
@@ -117,8 +222,9 @@ b. The importing of mermaid library through the `mermaid.esm.mjs` or `mermaid.es
 </body>
 ```
 
-**Notes**:
-Rendering in Mermaid is initialized by `mermaid.initialize()` call. However, doing the opposite lets you control when it starts looking for `<pre>` tags inside the web page with `mermaid.initialize()`. This is useful when you think that not all `<pre>` tags may have loaded on the execution of `mermaid.esm.min.mjs` file.
+```note
+Rendering in Mermaid is initialized by the `mermaid.initialize()` call. However, doing the opposite lets you control when it starts looking for `<pre>` tags inside the web page with `mermaid.initialize()`. This is useful when you think that not all `<pre>` tags may have loaded on the execution of `mermaid.esm.min.mjs` file.
+```
 
 `startOnLoad` is one of the parameters that can be defined by `mermaid.initialize()`
 
@@ -126,9 +232,7 @@ Rendering in Mermaid is initialized by `mermaid.initialize()` call. However, doi
 | ----------- | --------------------------------- | ------- | ----------- |
 | startOnLoad | Toggle for Rendering upon loading | Boolean | true, false |
 
-### Working Examples
-
-**Here is a full working example of the mermaidAPI being called through the CDN:**
+In this example, the `mermaidAPI` is being called through the `CDN`:
 
 ```html
 <html>
@@ -158,8 +262,7 @@ Rendering in Mermaid is initialized by `mermaid.initialize()` call. However, doi
 </html>
 ```
 
-**Another Option:**
-In this example mermaid.js is referenced in `src` as a separate JavaScript file, in an example Path.
+In this example, `mermaid.js` is referenced in `src` as a separate JavaScript file:
 
 ```html
 <html lang="en">
@@ -187,21 +290,32 @@ In this example mermaid.js is referenced in `src` as a separate JavaScript file,
 </html>
 ```
 
----
+## 5. Adding Mermaid as a dependency
 
-## 4. Adding Mermaid as a dependency.
+Below are the steps for adding Mermaid as a dependency:
 
-1. install node v16, which would have npm
+1. Install `node v16`
 
-2. download yarn using npm by entering the command below:
-   npm install -g yarn
+```note
+To learn more about downloading and installing `Node.js` and `npm`, visit the [npm Docs website](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
+```
 
-3. After yarn installs, enter the following command:
-   yarn add mermaid
+1. Install `yarn` using `npm` with this command:
 
-4. To add Mermaid as a Dev Dependency
-   yarn add --dev mermaid
+   `npm install -g yarn`
 
-**Comments from Knut Sveidqvist, creator of mermaid:**
+1. After yarn installs, enter this command:
 
-- In early versions of mermaid, the `<script>` tag was invoked in the `<head>` part of the web page. Nowadays we can place it in the `<body>` as seen above. Older parts of the documentation frequently reflect the previous way which still works.
+   `yarn add mermaid`
+
+1. To add Mermaid as a dev dependency, enter this command:
+
+   `yarn add --dev mermaid`
+
+## Closing note
+
+```note
+Comments from Knut Sveidqvist, creator of Mermaid:
+
+- In early versions of Mermaid, the `<script>` tag was invoked in the `<head>` part of the web page. Nowadays, we can place it in the `<body>` as seen above. Older parts of the documentation frequently reflect the previous way, which still works.
+```

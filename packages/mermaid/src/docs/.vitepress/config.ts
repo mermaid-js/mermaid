@@ -31,7 +31,7 @@ export default defineConfig({
         defer: 'true',
         'data-domain': 'mermaid.js.org',
         // All tracked stats are public and available at https://p.mermaid.live/mermaid.js.org
-        src: 'https://p.mermaid.live/js/script.js',
+        src: 'https://p.mermaid.live/js/script.tagged-events.outbound-links.js',
       },
     ],
   ],

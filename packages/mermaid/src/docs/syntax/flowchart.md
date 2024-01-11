@@ -10,6 +10,14 @@ Flowcharts are composed of **nodes** (geometric shapes) and **edges** (arrows or
 If you are using the word "end" in a Flowchart node, capitalize the entire word or any of the letters (e.g., "End" or "END"), or apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897). Typing "end" in all lowercase letters will break the Flowchart.
 ```
 
+```warning
+If you are using the letter "o" or "x" as the first letter in a connecting Flowchart node, add a space before the letter or capitalize the letter (e.g., "dev--- ops", "dev---Ops").
+
+Typing "A---oB" will create a [circle edge](#circle-edge-example).
+
+Typing "A---xB" will create a [cross edge](#cross-edge-example).
+```
+
 ### A node (default)
 
 ```mermaid-example
@@ -305,17 +313,28 @@ flowchart TB
     B --> D
 ```
 
-### New arrow types
+## New arrow types
 
-There are new types of arrows supported as per below:
+There are new types of arrows supported:
+
+- circle edge
+- cross edge
+
+### Circle edge example
 
 ```mermaid-example
 flowchart LR
     A --o B
-    B --x C
 ```
 
-### Multi directional arrows
+### Cross edge example
+
+```mermaid-example
+flowchart LR
+    A --x B
+```
+
+## Multi directional arrows
 
 There is the possibility to use multidirectional arrows.
 
