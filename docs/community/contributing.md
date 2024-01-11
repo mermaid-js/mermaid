@@ -52,7 +52,13 @@ These are the tools we use for working with the code and documentation:
 - [volta](https://volta.sh/) to manage node versions.
 - [Node.js](https://nodejs.org/en/). `volta install node`
 - [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
-- [npx](https://docs.npmjs.com/cli/v8/commands/npx) the packaged executor in npm. This is needed [to install pnpm.](#install-packages)
+
+In case you do not use `volta` the following commands must be sufficient enough to start with:
+
+```bash
+curl -fsSL https://get.pnpm.io/install.sh | sh -
+pnpm env use --global 18
+```
 
 **Docker**
 
@@ -71,10 +77,10 @@ If the `$DISPLAY` variable is not empty, then an X11 server is running. Otherwis
 
 **Host**
 
-Run `npx pnpm install`. You will need `npx` for this because `volta` doesn't support it yet.
+Install packages:
 
 ```bash
-npx pnpm install # npx is required for first install
+pnpm install
 ```
 
 **Docker**
@@ -92,8 +98,10 @@ chmod +x run
 >
 > It also has short _Development quick start guide_ embedded.
 
+Then install packages:
+
 ```bash
-./run pnpm install # Install packages
+./run pnpm install
 ```
 
 ### Verify Everything Works
@@ -156,7 +164,7 @@ gitGraph LR:
   commit
 ```
 
-To prepare a new version we create a `release/vX.X.X` branch from `develop` for testing. Once the release happens we add a tag to the `release` branch and merge it with `master`. The live product and on-line documentation are what is in the `master` branch.
+To prepare a new version for release the maintainers create a `release/vX.X.X` branch from `develop` for testing. Once the release happens we add a tag to the `release` branch and merge it with `master`. The live product and on-line documentation are what is in the `master` branch.
 
 ## Checkout a New Branch
 
@@ -224,7 +232,7 @@ If your work is specific to a single diagram type, it is a good idea to put the 
 
 ## Contributing Code
 
-Code it the heart of every software project. We strive to make it better. Who if not us?
+Code is the heart of every software project. We strive to make it better. Who if not us?
 
 ### Where is the Code Located?
 
@@ -235,7 +243,7 @@ The core of Mermaid is located under `packages/mermaid/src`.
 **Host**
 
 ```bash
-npx pnpm run dev
+pnpm run dev
 ```
 
 **Docker**
@@ -255,7 +263,7 @@ Have a look at <http://localhost:9000>. There is a list of demos that can be use
 If you need a specific diagram, you can duplicate the `example.html` file in `/demos/dev` and add your own mermaid code to your copy.
 
 That will be served at <http://localhost:9000/dev/your-file-name.html>.
-After making code changes, the dev server will rebuild the mermaid library. You will need to reload the browser page yourself to see the changes. (PRs for auto reload are welcome!)
+After making code changes, the dev server will rebuild the mermaid library and automatically reload the page.
 
 Edit files in `packages/mermaid/src` as required.
 
@@ -276,7 +284,7 @@ If you are adding a feature, you will definitely need to add tests. Depending on
 
 Unit tests are tests that test a single function or module. They are the easiest to write and the fastest to run.
 
-Unit tests are mandatory all code except the renderers. (The renderers are tested with integration tests.)
+Unit tests are mandatory for all code except the renderers. (The renderers are tested with integration tests.)
 
 We use [Vitest](https://vitest.dev) to run unit tests.
 
@@ -302,12 +310,13 @@ When using Docker prepend your command with `./run`:
 ./run pnpm test
 ```
 
-#### Integration/End-to-End (e2e) tests
+#### Integration / End-to-End (E2E) Tests
 
 These test the rendering and visual appearance of the diagrams.
-This ensures that the rendering of that feature in the e2e will be reviewed in the release process going forward. Less chance that it breaks!
 
-To start working with the e2e tests:
+This ensures that the rendering of that feature in the E2E will be reviewed in the release process going forward. Less chance that it breaks!
+
+To start working with the E2E tests:
 
 **Host**
 
@@ -344,7 +353,6 @@ it('should render forks and joins', () => {
     `,
     { logLevel: 0 }
   );
-  cy.get('svg');
 });
 ```
 
@@ -360,7 +368,7 @@ it('should render forks and joins', () => {
 If the users have no way to know that things have changed, then you haven't really _fixed_ anything for the users; you've just added to making Mermaid feel broken.
 Likewise, if users don't know that there is a new feature that you've implemented, it will forever remain unknown and unused.
 
-The documentation has to be updated to users know that things have changed and added!
+The documentation has to be updated for users to know that things have been changed and added!
 If you are adding a new feature, add `(v<MERMAID_RELEASE_VERSION>+)` in the title or description. It will be replaced automatically with the current version number when the release happens.
 
 eg: `# Feature Name (v<MERMAID_RELEASE_VERSION>+)`
