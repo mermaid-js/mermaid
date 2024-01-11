@@ -6,17 +6,26 @@
 
 # Integrations
 
-## Official integration: [Mermaid Chart](./mermaid-chart.md)
+## Official integration
 
-We're excited about the growth of the Mermaid community, and the number of plugins and integrations that have been created with Mermaid.
+### Mermaid Chart
+
+Mermaid Chart is built by the team behind Mermaid JS.
+
+For more details, visit the [Mermaid Chart page](./mermaid-chart.md), or visit the [Mermaid Chart website](https://www.mermaidchart.com) .
 
 ## Community integrations
 
-Below are a list of community plugins and integrations created with Mermaid.
+We're excited about the growth of the Mermaid community, and the number of plugins and integrations that have been created by the community.
+
+See the list below of community plugins and integrations created with Mermaid.
+
+> **Note**
+> A ✅ indicates Native support for Mermaid on the respective platform.
+
+To add an integration to this list, see the [Integrations - create page](./integrations-create.md).
 
 ### Productivity tools
-
-✅ = Native support
 
 - [GitHub](https://github.com) ✅
   - [Using code blocks](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) ✅
@@ -198,13 +207,14 @@ Communication tools and platforms
   - [mkdocs-material](https://github.com/squidfunk/mkdocs-material), check the [docs](https://squidfunk.github.io/mkdocs-material/reference/diagrams/)
 - [Type Doc](https://typedoc.org/)
   - [typedoc-plugin-mermaid](https://www.npmjs.com/package/typedoc-plugin-mermaid)
-- [Docsy Hugo Theme](https://www.docsy.dev/docs/adding-content/lookandfeel/#diagrams-with-mermaid) (native support in theme)
+- [Docsy Hugo Theme](https://www.docsy.dev/docs/adding-content/lookandfeel/#diagrams-with-mermaid) ✅
 - [Codedoc](https://codedoc.cc/)
   - [codedoc-mermaid-plugin](https://www.npmjs.com/package/codedoc-mermaid-plugin)
 - [mdbook](https://rust-lang.github.io/mdBook/index.html)
   - [mdbook-mermaid](https://github.com/badboy/mdbook-mermaid)
 - [Quarto](https://quarto.org/)
-- [Typora](https://typora.io/) ([native support](https://support.typora.io/Draw-Diagrams-With-Markdown/#mermaid))
+- [Typora](https://typora.io/) ✅
+  - [See docs](https://support.typora.io/Draw-Diagrams-With-Markdown/#mermaid)
 
 ### Browser Extensions
 
@@ -236,6 +246,6 @@ Communication tools and platforms
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
 - [ExDoc](https://github.com/elixir-lang/ex_doc)
   - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)
-- [NiceGUI: Let any browser be the frontend of your Python code](https://nicegui.io)
+- [NiceGUI: Let any browser be the frontend of your Python code](https://nicegui.io) ✅
   - [ui.mermaid(...)](https://nicegui.io/documentation/section_text_elements#markdown_element)
   - [ui.markdown(..., extras=\['mermaid'\])](https://nicegui.io/documentation/section_text_elements#mermaid_diagrams)
