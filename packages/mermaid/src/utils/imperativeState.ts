@@ -22,28 +22,16 @@
  * ```
  */
 export class ImperativeState<S extends Record<string, unknown>> {
-  init: () => S;
-  records: S;
+  public records: S;
 
   /**
    * @param init - Function that creates the default state.
    */
-  constructor(init: () => S) {
-    this.init = init;
-    this.records = init();
+  constructor(private init: () => S) {
+    this.records = this.init();
   }
 
   reset() {
-    Object.keys(this.records).forEach((key) => {
-      delete this.records[key];
-    });
-    Object.entries(this.init()).forEach(
-      ([key, value]: [
-        keyof S,
-        any // eslint-disable-line @typescript-eslint/no-explicit-any
-      ]) => {
-        this.records[key] = value;
-      }
-    );
+    this.records = this.init();
   }
 }
