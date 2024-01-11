@@ -69,7 +69,7 @@ const idRedirectMap: Record<string, string> = {
   statediagram: 'syntax/stateDiagram',
   themes: 'config/theming',
   theming: 'config/theming',
-  tutorials: 'config/Tutorials',
+  tutorials: 'ecosystem/tutorials',
   upgrading: '',
   usage: 'config/usage',
   'user-journey': 'syntax/userJourney',

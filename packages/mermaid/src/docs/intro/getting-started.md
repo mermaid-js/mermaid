@@ -15,7 +15,7 @@ This section talks about the different ways to **deploy** Mermaid.
 If you are a beginner:
 
 - Check out the [Diagram Syntax](syntax-reference.md) page
-- Check out the [Tutorials](../config/Tutorials.md) page
+- Check out the [Tutorials](../ecosystem/tutorials.md) page
 
 ## Ways to use Mermaid
 
