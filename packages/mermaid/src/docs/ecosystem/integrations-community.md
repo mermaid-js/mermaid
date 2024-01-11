@@ -69,6 +69,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [Mermaid Plugin for JetBrains IDEs](https://plugins.jetbrains.com/plugin/20146-mermaid)
 - [mermerd](https://github.com/KarnerTh/mermerd)
 - Visual Studio Code [Polyglot Interactive Notebooks](https://github.com/dotnet/interactive#net-interactive)
+- Codemia [a tool to practice system design problems](https://codemia.io)
 
 ### CRM/ERP
 
