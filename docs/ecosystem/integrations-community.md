@@ -181,6 +181,7 @@ Communication tools and platforms
 ### Document Generation
 
 - [Docusaurus](https://docusaurus.io/docs/markdown-features/diagrams) ✅
+- [Unison programming language](https://www.unison-lang.org/docs/usage-topics/documentation/) ✅
 - [Swimm - Up-to-date diagrams with Swimm, the knowledge management tool for code](https://docs.swimm.io/features/diagrams-and-charts/#mermaid--swimm--up-to-date-diagrams-)
 - [Sphinx](https://www.sphinx-doc.org/en/master/)
   - [sphinxcontrib-mermaid](https://github.com/mgaitan/sphinxcontrib-mermaid)
