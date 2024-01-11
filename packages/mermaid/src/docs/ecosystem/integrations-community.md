@@ -151,7 +151,6 @@ Communication tools and platforms
   - [Textual UML Parser](https://github.com/manastalukdar/markdown-it-textual-uml)
   - [Mermaid Plugin](https://github.com/tylingsoft/markdown-it-mermaid)
   - [md-it-mermaid](https://github.com/iamcco/md-it-mermaid)
-  - [markdown-it-mermaid-fence-new](https://github.com/Revomatico/markdown-it-mermaid-fence-new)
   - [markdown-it-mermaid-less](https://github.com/searKing/markdown-it-mermaid-less)
 - Atom _(Atom has been [archived.](https://github.blog/2022-06-08-sunsetting-atom/))_
   - [Markdown Preview Enhanced](https://github.com/shd101wyy/markdown-preview-enhanced)
