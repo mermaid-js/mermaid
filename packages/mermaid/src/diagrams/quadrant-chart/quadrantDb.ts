@@ -53,24 +53,39 @@ function setYAxisBottomText(textObj: LexTextObj) {
   quadrantBuilder.setData({ yAxisBottomText: textSanitizer(textObj.text) });
 }
 
-function addPoint(
-  textObj: LexTextObj,
-  x: number,
-  y: number,
-  radius: number,
-  color: string,
-  stroke_color: string,
-  stroke_width: string
-) {
+function addPoint(textObj: LexTextObj, x: number, y: number, styles_string: string) {
+  const styles_object: {
+    radius?: number;
+    color?: string;
+    strokeColor?: string;
+    strokeWidth?: string;
+  } = {};
+  if (styles_string !== '') {
+    const styles = styles_string.trim().split(/\s*,\s*/);
+    for (const item of styles) {
+      const style = item.split(/\s*:\s*/);
+      if (style[0] == 'radius') {
+        styles_object.radius = parseInt(style[1]);
+      } else if (style[0] == 'color') {
+        styles_object.color = style[1];
+      } else if (style[0] == 'strokeColor') {
+        styles_object.strokeColor = style[1];
+      } else if (style[0] == 'strokeWidth') {
+        styles_object.strokeWidth = style[1];
+      } else {
+        // do we add error if an unknown style is added or do we ignore it
+      }
+    }
+  }
   quadrantBuilder.addPoints([
     {
       x,
       y,
       text: textSanitizer(textObj.text),
-      radius,
-      color,
-      strokeColor: stroke_color,
-      strokeWidth: stroke_width,
+      radius: styles_object.radius,
+      color: styles_object.color,
+      strokeColor: styles_object.strokeColor,
+      strokeWidth: styles_object.strokeWidth,
     },
   ]);
 }

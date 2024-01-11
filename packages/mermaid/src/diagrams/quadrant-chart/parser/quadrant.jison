@@ -11,10 +11,7 @@
 %x point_start
 %x point_x
 %x point_y
-%x point_radius
-%x point_color
-%x stroke_color
-%x stroke_width
+%x styles_string
 %%
 \%\%(?!\{)[^\n]*                         /* skip comments */
 [^\}]\%\%[^\n]*                          /* skip comments */
@@ -49,17 +46,10 @@ accDescr\s*"{"\s*                        { this.begin("acc_descr_multiline");}
 
 \s*\:\s*\[\s*                            {this.begin("point_start"); return 'point_start';}
 <point_start>(1)|(0(.\d+)?)              {this.begin('point_x'); return 'point_x';}
-<point_start>\s*\]" "*                       {this.popState();}
+<point_start>\s*\]" "*                       {this.popState(); this.begin('styles_string')}
+<styles_string>.*                        {this.popState(); return 'styles_string';}
 <point_x>\s*\,\s*                        {this.popState(); this.begin('point_y');}
 <point_y>(1)|(0(.\d+)?)                  {this.popState(); return 'point_y';}
-\s*radius\:\s*                           {this.begin('point_radius');}
-<point_radius>\d+                        {this.popState(); return 'point_radius';}
-\s*color\:\s*                            {this.begin('point_color');}
-<point_color>\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})                        {this.popState(); return 'point_color';}
-\s*stroke_color\:\s*                     {this.begin('stroke_color');}
-<stroke_color>\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})                       {this.popState(); return 'stroke_color';}
-\s*stroke_width\:\s*                     {this.begin('stroke_width');}
-<stroke_width>\d+px                      {this.popState(); return 'stroke_width';}
 
 " "*"quadrantChart"" "*		                   return 'QUADRANT';
 
@@ -115,14 +105,7 @@ statement
 	;
 
 points
-  : text point_start point_x point_y {yy.addPoint($1, $3, $4);}
-  | text point_start point_x point_y point_radius {yy.addPoint($1, $3, $4, $5);}
-  | text point_start point_x point_y point_color  {yy.addPoint($1, $3, $4, "", $5);}
-  | text point_start point_x point_y stroke_color {yy.addPoint($1, $3, $4, "", "", $5);}
-  | text point_start point_x point_y stroke_width {yy.addPoint($1, $3, $4, "", "", "", $5);}
-  | text point_start point_x point_y point_radius point_color {yy.addPoint($1, $3, $4, $5, $6);}
-  | text point_start point_x point_y point_radius point_color stroke_color {yy.addPoint($1, $3, $4, $5, $6, $7);}
-  | text point_start point_x point_y point_radius point_color stroke_color stroke_width {yy.addPoint($1, $3, $4, $5, $6, $7, $8);}
+  : text point_start point_x point_y styles_string {yy.addPoint($1, $3, $4, $5);}
   ;
 
 axisDetails

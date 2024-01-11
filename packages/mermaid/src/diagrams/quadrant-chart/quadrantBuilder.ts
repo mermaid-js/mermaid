@@ -12,10 +12,10 @@ export type TextHorizontalPos = 'top' | 'middle' | 'bottom';
 
 export interface QuadrantPointInputType extends Point {
   text: string;
-  radius: number;
-  color: string;
-  strokeColor: string;
-  strokeWidth: string;
+  radius?: number;
+  color?: string;
+  strokeColor?: string;
+  strokeWidth?: string;
 }
 
 export interface QuadrantTextType extends Point {
