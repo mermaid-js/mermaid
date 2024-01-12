@@ -6,7 +6,7 @@
       <a
         href="https://www.mermaidchart.com/app/user/billing/checkout"
         target="_blank"
-        class="unstyled flex-grow tracking-wide"
+        class="unstyled flex-grow tracking-wide plausible-event-name=bannerClick"
       >
         <span class="text-primary-50 font-semibold">{{
           [
