@@ -12,6 +12,8 @@
 %x point_x
 %x point_y
 %x styles_string
+%x class_styles
+%x class_name
 %%
 \%\%(?!\{)[^\n]*                         /* skip comments */
 [^\}]\%\%[^\n]*                          /* skip comments */
@@ -44,12 +46,17 @@ accDescr\s*"{"\s*                        { this.begin("acc_descr_multiline");}
 <string>["]                              this.popState();
 <string>[^"]*                            return "STR";
 
+\:\:\:                                   {this.begin('class_name')}
+<class_name>^\w+                           {this.popState(); return 'class_name';}
+
 \s*\:\s*\[\s*                            {this.begin("point_start"); return 'point_start';}
 <point_start>(1)|(0(.\d+)?)              {this.begin('point_x'); return 'point_x';}
 <point_start>\s*\]" "*                       {this.popState(); this.begin('styles_string')}
 <styles_string>.*                        {this.popState(); return 'styles_string';}
 <point_x>\s*\,\s*                        {this.popState(); this.begin('point_y');}
 <point_y>(1)|(0(.\d+)?)                  {this.popState(); return 'point_y';}
+\s*classDef\s*                           {this.begin('class_styles')}
+<class_styles>.*                         {this.popState(); yy.addClass(this.match);}
 
 " "*"quadrantChart"" "*		                   return 'QUADRANT';
 
@@ -105,7 +112,8 @@ statement
 	;
 
 points
-  : text point_start point_x point_y styles_string {yy.addPoint($1, $3, $4, $5);}
+  : text point_start point_x point_y styles_string {yy.addPoint($1, "", $3, $4, $5);}
+  | text class_name point_start point_x point_y styles_string {yy.addPoint($1, $2, $4, $5, $6);}
   ;
 
 axisDetails

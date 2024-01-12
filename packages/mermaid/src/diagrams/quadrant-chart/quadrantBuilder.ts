@@ -10,8 +10,17 @@ const defaultThemeVariables = getThemeVariables();
 export type TextVerticalPos = 'left' | 'center' | 'right';
 export type TextHorizontalPos = 'top' | 'middle' | 'bottom';
 
+export interface stylesObject {
+  className?: string;
+  radius?: number;
+  color?: string;
+  strokeColor?: string;
+  strokeWidth?: string;
+}
+
 export interface QuadrantPointInputType extends Point {
   text: string;
+  className?: string;
   radius?: number;
   color?: string;
   strokeColor?: string;
@@ -123,6 +132,7 @@ export class QuadrantBuilder {
   private config: QuadrantBuilderConfig;
   private themeConfig: QuadrantBuilderThemeConfig;
   private data: quadrantBuilderData;
+  private classes: stylesObject[] = [];
 
   constructor() {
     this.config = this.getDefaultConfig();
@@ -206,6 +216,13 @@ export class QuadrantBuilder {
 
   addPoints(points: QuadrantPointInputType[]) {
     this.data.points = [...points, ...this.data.points];
+  }
+
+  addClass(className: string, styles: stylesObject) {
+    this.classes.push({
+      className,
+      ...styles,
+    });
   }
 
   setConfig(config: Partial<QuadrantBuilderConfig>) {
@@ -476,6 +493,21 @@ export class QuadrantBuilder {
       .range([quadrantHeight + quadrantTop, quadrantTop]);
 
     const points: QuadrantPointType[] = this.data.points.map((point) => {
+      const classStyles = this.classes.find((obj) => obj.className === point.className);
+      if (classStyles !== undefined) {
+        if (classStyles.color !== undefined) {
+          point.color = classStyles.color;
+        }
+        if (classStyles.radius !== undefined) {
+          point.radius = classStyles.radius;
+        }
+        if (classStyles.strokeColor !== undefined) {
+          point.strokeColor = classStyles.strokeColor;
+        }
+        if (classStyles.strokeWidth !== undefined) {
+          point.strokeWidth = classStyles.strokeWidth;
+        }
+      }
       const props: QuadrantPointType = {
         x: xAxis(point.x),
         y: yAxis(point.y),

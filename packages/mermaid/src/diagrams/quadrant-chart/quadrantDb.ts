@@ -9,6 +9,7 @@ import {
   setAccDescription,
   clear as commonClear,
 } from '../common/commonDb.js';
+import type { stylesObject } from './quadrantBuilder.js';
 import { QuadrantBuilder } from './quadrantBuilder.js';
 
 const config = getConfig();
@@ -53,41 +54,61 @@ function setYAxisBottomText(textObj: LexTextObj) {
   quadrantBuilder.setData({ yAxisBottomText: textSanitizer(textObj.text) });
 }
 
-function addPoint(textObj: LexTextObj, x: number, y: number, styles_string: string) {
-  const styles_object: {
-    radius?: number;
-    color?: string;
-    strokeColor?: string;
-    strokeWidth?: string;
-  } = {};
-  if (styles_string !== '') {
-    const styles = styles_string.trim().split(/\s*,\s*/);
+function parseStyles(stylesString: string): stylesObject {
+  const stylesObject: stylesObject = {};
+  if (stylesString !== '') {
+    const styles = stylesString.trim().split(/\s*,\s*/);
     for (const item of styles) {
       const style = item.split(/\s*:\s*/);
       if (style[0] == 'radius') {
-        styles_object.radius = parseInt(style[1]);
+        stylesObject.radius = parseInt(style[1]);
       } else if (style[0] == 'color') {
-        styles_object.color = style[1];
-      } else if (style[0] == 'strokeColor') {
-        styles_object.strokeColor = style[1];
-      } else if (style[0] == 'strokeWidth') {
-        styles_object.strokeWidth = style[1];
+        stylesObject.color = style[1];
+      } else if (style[0] == 'stroke-color') {
+        stylesObject.strokeColor = style[1];
+      } else if (style[0] == 'stroke-width') {
+        stylesObject.strokeWidth = style[1];
       } else {
-        // do we add error if an unknown style is added or do we ignore it
+        // do we add error if an unknown style is added or do we ignore it ???
       }
     }
   }
+  return stylesObject;
+}
+
+function addPoint(
+  textObj: LexTextObj,
+  className: string,
+  x: number,
+  y: number,
+  stylesString: string
+) {
+  const stylesObject = parseStyles(stylesString);
   quadrantBuilder.addPoints([
     {
       x,
       y,
+      className: className,
       text: textSanitizer(textObj.text),
-      radius: styles_object.radius,
-      color: styles_object.color,
-      strokeColor: styles_object.strokeColor,
-      strokeWidth: styles_object.strokeWidth,
+      radius: stylesObject.radius,
+      color: stylesObject.color,
+      strokeColor: stylesObject.strokeColor,
+      strokeWidth: stylesObject.strokeWidth,
     },
   ]);
+}
+
+function addClass(stylesString: string) {
+  const ind = stylesString.indexOf(' ');
+  const className = stylesString.slice(0, ind);
+  const styles = parseStyles(stylesString.slice(ind + 1));
+  if (className === undefined || className === '') {
+    // throw error
+  }
+  if (Object.keys(styles).length === 0) {
+    // no styles added, throw error ???
+  }
+  quadrantBuilder.addClass(className, styles);
 }
 
 function setWidth(width: number) {
@@ -142,6 +163,7 @@ export default {
   setYAxisTopText,
   setYAxisBottomText,
   addPoint,
+  addClass,
   getQuadrantData,
   clear,
   setAccTitle,
