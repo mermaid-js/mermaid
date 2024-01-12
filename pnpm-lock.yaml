@@ -225,8 +225,8 @@ importers:
         specifier: ^3.0.5
         version: 3.0.5
       elkjs:
-        specifier: ^0.8.2
-        version: 0.8.2
+        specifier: ^0.9.0
+        version: 0.9.1
       khroma:
         specifier: ^2.0.0
         version: 2.0.0
@@ -9437,12 +9437,8 @@ packages:
     resolution: {integrity: sha512-6s7NVJz+sATdYnIwhdshx/N/9O6rvMxmhVoDSDFdj6iA45gHR8EQje70+RYsF4GeB+k0IeNSBnP7yG9ZXJFr7A==}
     dev: true
 
-  /electron-to-chromium@1.4.614:
-    resolution: {integrity: sha512-X4ze/9Sc3QWs6h92yerwqv7aB/uU8vCjZcrMjA8N9R1pjMFRe44dLsck5FzLilOYvcXuDn93B+bpGYyufc70gQ==}
-    dev: true
-
-  /elkjs@0.8.2:
-    resolution: {integrity: sha512-L6uRgvZTH+4OF5NE/MBbzQx/WYpru1xCBE9respNj6qznEewGUIfhzmm7horWWxbNO2M0WckQypGctR8lH79xQ==}
+  /elkjs@0.9.1:
+    resolution: {integrity: sha512-JWKDyqAdltuUcyxaECtYG6H4sqysXSLeoXuGUBfRNESMTkj+w+qdb0jya8Z/WI0jVd03WQtCGhS6FOFtlhD5FQ==}
     dev: false
 
   /emittery@0.13.1:
