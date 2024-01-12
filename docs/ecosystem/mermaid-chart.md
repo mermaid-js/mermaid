@@ -22,9 +22,16 @@
 
 - **Collaboration** - A web based collaboration feature for multi-user editing on Mermaid diagrams in real-time (Pro plan).
 
-- **Plugins** - A plugin system for extending the functionality of Mermaid. Currently includes [VS Code](https://marketplace.visualstudio.com/items?itemName=MermaidChart.vscode-mermaid-chart) and [ChatGPT](https://www.mermaidchart.com/plugins/chatgpt).
+- **Plugins** - A plugin system for extending the functionality of Mermaid.
 
-- **AI** - An AI chatbot that can generate Mermaid diagrams from text (Pro plan).
+  Plugins are available for:
+
+  - [ChatGPT](https://docs.mermaidchart.com/plugins/chatgpt)
+  - [JetBrains IDE](https://plugins.jetbrains.com/plugin/23043-mermaid-chart)
+  - [Microsoft PowerPoint and Word](https://appsource.microsoft.com/en-us/product/office/WA200006214?tab=Overview)
+  - [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=MermaidChart.vscode-mermaid-chart)
+
+- **AI diagramming** - A feature for generating Mermaid diagrams from text using AI (Pro plan).
 
 - **More** - To learn more, visit our [Product](https://www.mermaidchart.com/product) page.
 
@@ -40,7 +47,7 @@
 
 Sign up for a free account at [Mermaid Chart](https://www.mermaidchart.com/app/sign-up).
 
-Mermaid Chart is currently offering a 30-day free trial of our newly-launched Pro tier. To learn more, visit our [Pricing](https://mermaidchart.com/pricing) page.
+Mermaid Chart is currently offering a 14-day free trial of our newly-launched Pro tier. To learn more, visit our [Pricing](https://mermaidchart.com/pricing) page.
 
 ## Mermaid JS contributions
 
