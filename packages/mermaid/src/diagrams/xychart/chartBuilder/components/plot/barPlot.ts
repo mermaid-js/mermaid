@@ -32,15 +32,14 @@ export class BarPlot {
           groupTexts: ['plot', `bar-plot-${this.plotIndex}-${dataIndex}`],
           type: 'rect',
           data: finalData.map((data, index) => {
+            const adjustForAxisOuterPadding = dataIndex > 0 ? this.yAxis.getAxisOuterPadding() : 0;
             let x = offset[index] + this.boundingRect.x;
-            let width =
-              data[1] -
-              this.boundingRect.x -
-              (dataIndex > 0 ? this.yAxis.getAxisOuterPadding() : 0);
+            let width = data[1] - this.boundingRect.x - adjustForAxisOuterPadding;
             if (enlarge[index] > 0) {
               x -= enlarge[index];
               width += enlarge[index];
               enlarge[index] = 0;
+              offset[index] -= adjustForAxisOuterPadding;
             }
             offset[index] += width;
             if (barData.data[index][1] === 0 && enlarge[index] === 0) {
@@ -72,6 +71,7 @@ export class BarPlot {
           if (enlarge[index] > 0) {
             height += enlarge[index];
             enlarge[index] = 0;
+            offset[index] -= adjustForAxisOuterPadding;
           }
           offset[index] += height;
           if (barData.data[index][1] === 0 && enlarge[index] === 0) {
