@@ -137,7 +137,7 @@ function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
   }
 
   if (isBandAxisData(xyChartData.xAxis)) {
-    retData = xyChartData.xAxis.categories.map((c, i) => [c, data[i]]);
+    retData = xyChartData.xAxis.categories.map((c, i) => [c, data[i] ?? 0]);
   }
 
   if (isLinearAxisData(xyChartData.xAxis)) {
@@ -148,7 +148,7 @@ function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
     for (let i = min; i <= max; i += step) {
       categories.push(`${i}`);
     }
-    retData = categories.map((c, i) => [c, data[i]]);
+    retData = categories.map((c, i) => [c, data[i] ?? 0]);
   }
 
   return retData;
