@@ -19,7 +19,7 @@ docker compose build $args
 ;;
 
 sh)
-$RUN mermaid sh # -c "npx $args" 
+$RUN mermaid sh
 ;;
 
 pnpm)
