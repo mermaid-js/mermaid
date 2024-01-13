@@ -45,16 +45,17 @@ We support **development within Docker** environment along with **host setup**. 
 
 These are the tools we use for working with the code and documentation:
 
-- [volta](https://volta.sh/) to manage node versions.
-- [Node.js](https://nodejs.org/en/). `volta install node`
-- [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
+- [Node.js](https://nodejs.org/en/).
+- [pnpm](https://pnpm.io/) package manager.
 
-In case you do not use `volta` the following commands must be sufficient enough to start with:
+The following commands must be sufficient enough to start with:
 
 ```bash
 curl -fsSL https://get.pnpm.io/install.sh | sh -
 pnpm env use --global 18
 ```
+
+You may also need to reload `.shrc` or `.bashrc` afterwards.
 
 **Docker**
 
