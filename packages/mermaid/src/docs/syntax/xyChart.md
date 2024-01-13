@@ -23,7 +23,9 @@ xychart-beta
       title "Basic xychart with multiple datasets"
       x-axis "Relevant categories" [category1, "category 2", category3, category4]
       y-axis Animals 0 --> 160
-      bar [["dogs" [40, 20, 40, 30]],["cats" [20, 40, 50, 30]],["birds" [30, 60, 50, 30]]]
+      bar "dogs" [40, 20, 40, 30]
+      bar "cats" [20, 40, 50, 30]
+      bar "birds" [30, 60, 50, 30]
 ```
 
 ### combined bar/line chart displaying 2 datasets
