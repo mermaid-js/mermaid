@@ -13,6 +13,7 @@ export class BarPlot {
 
   getDrawableElement(): DrawableElem[] {
     const offset = new Array(this.barData[0].data.length).fill(0);
+    const enlarge = new Array(this.barData[0].data.length).fill(0);
     return this.barData.map((barData, dataIndex) => {
       const finalData: [number, number][] = barData.data.map((d) => [
         this.xAxis.getScaleValue(d[0]),
@@ -31,12 +32,23 @@ export class BarPlot {
           groupTexts: ['plot', `bar-plot-${this.plotIndex}-${dataIndex}`],
           type: 'rect',
           data: finalData.map((data, index) => {
-            const x = offset[index] + this.boundingRect.x;
-            const width =
+            let x = offset[index] + this.boundingRect.x;
+            let width =
               data[1] -
               this.boundingRect.x -
               (dataIndex > 0 ? this.yAxis.getAxisOuterPadding() : 0);
+            if (enlarge[index] > 0) {
+              x -= enlarge[index];
+              width += enlarge[index];
+              enlarge[index] = 0;
+            }
             offset[index] += width;
+            if (barData.data[index][1] === 0 && enlarge[index] === 0) {
+              enlarge[index] = width;
+            }
+            if (barData.data[index][1] === 0) {
+              width = 0;
+            }
             return {
               x,
               y: data[0] - barWidthHalf,
@@ -55,9 +67,19 @@ export class BarPlot {
         data: finalData.map((data, index) => {
           const adjustForAxisOuterPadding = dataIndex > 0 ? this.yAxis.getAxisOuterPadding() : 0;
           const y = data[1] - offset[index] + adjustForAxisOuterPadding;
-          const height =
+          let height =
             this.boundingRect.y + this.boundingRect.height - data[1] - adjustForAxisOuterPadding;
+          if (enlarge[index] > 0) {
+            height += enlarge[index];
+            enlarge[index] = 0;
+          }
           offset[index] += height;
+          if (barData.data[index][1] === 0 && enlarge[index] === 0) {
+            enlarge[index] = height;
+          }
+          if (barData.data[index][1] === 0) {
+            height = 0;
+          }
           return {
             x: data[0] - barWidthHalf,
             y,
