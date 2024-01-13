@@ -242,8 +242,35 @@ describe('Quadrant Chart', () => {
     Campaign B: [0.45, 0.23] color: #ff0000
     Campaign C: [0.57, 0.69] stroke_color: #ff00ff
     Campaign D: [0.78, 0.34] stroke_width: 3px
-    Campaign E: [0.40, 0.34] radius: 20 color: #ff0000 stroke_color: #ff00ff stroke_width: 3px
-    Campaign F: [0.35, 0.78]
+    Campaign E: [0.40, 0.34] radius: 20, color: #ff0000, stroke_color: #ff00ff, stroke_width: 3px
+    Campaign F: [0.35, 0.78] stroke_width: 3px, color: #ff0000, radius: 20, stroke_color: #ff00ff
+    Campaign G: [0.22, 0.22] stroke_width: 3px, color: #309708, radius: 20, stroke_color: #5060ff
+    Campaign H: [0.22, 0.44]
+      `,
+      {}
+    );
+    cy.get('svg');
+  });
+
+  it('it should render data points with styles + classes', () => {
+    imgSnapshotTest(
+      `
+  quadrantChart
+    title Reach and engagement of campaigns
+    x-axis Reach -->
+    y-axis Engagement -->
+    quadrant-1 We should expand
+    quadrant-2 Need to promote
+    quadrant-3 Re-evaluate
+    quadrant-4 May be improved
+    Campaign A:::class1: [0.3, 0.6] radius: 20
+    Campaign B: [0.45, 0.23] color: #ff0000
+    Campaign C: [0.57, 0.69] stroke_color: #ff00ff
+    Campaign D:::class2: [0.78, 0.34] stroke_width: 3px
+    Campaign E:::class2: [0.40, 0.34] radius: 20 color: #ff0000, stroke_color: #ff00ff, stroke_width: 3px
+    Campaign F:::class1: [0.35, 0.78]
+    classDef class1 color: #908342, radius : 10, stroke-color: #310085, stroke-width: 10px
+    classDef class2 color: #f00fff, radius : 10
       `,
       {}
     );
