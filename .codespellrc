@@ -3,5 +3,5 @@
 skip = .git,*.pdf,*.svg,go.sum,*.css,.codespellrc,*-lock.yaml
 check-hidden = true
 # Python regex.  Ignore some variable
-ignore-regex = \b(classE|curveLinear|afterAll|totalY)\b
+ignore-regex = \b(classE|curveLinear|afterAll|totalY)\b|.*\bpragma: codespell-ignore.*
 ignore-words-list = fo,ot,thi,te,implementors,cript,composit,lightening
