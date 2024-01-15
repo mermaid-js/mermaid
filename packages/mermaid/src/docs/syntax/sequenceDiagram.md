@@ -89,7 +89,7 @@ If an error of the following type occurs when creating or deleting an actor/part
 
 > The destroyed participant **participant-name** does not have an associated destroying message after its declaration. Please check the sequence diagram.
 
-And fixing diagram code does not get rid of this error and rendering of all other diagrams results in the same error, then you need to update the mermaid version to (v<MERMAID_RELEASE_VERSION>+).
+And fixing diagram code does not get rid of this error and rendering of all other diagrams results in the same error, then you need to update the mermaid version to (v10.7.0+).
 
 ### Grouping / Box
 

@@ -4,14 +4,22 @@
   >
     <p class="flex-grow text-center tracking-wide text-text">
       <a
-        href="https://www.mermaidchart.com/app/user/billing/checkout?coupon=HOLIDAYS2023"
+        href="https://www.mermaidchart.com/app/user/billing/checkout"
         target="_blank"
-        class="unstyled text-white plausible-event-name=bannerClick"
+        class="unstyled flex-grow tracking-wide plausible-event-name=bannerClick"
       >
-        Get AI, team collaboration, storage, and more with
-        <span class="font-bold underline"
-          >Mermaid Chart Pro. Start free trial today & get 25% off.</span
+        <span class="text-primary-50 font-semibold">{{
+          [
+            'Try diagramming with ChatGPT at Mermaid Chart',
+            'Try Mermaid’s Visual Editor at Mermaid Chart',
+            'Enjoy live collaboration with teammates at Mermaid Chart',
+          ][Math.floor(Math.random() * 3)]
+        }}</span>
+        <button
+          class="ml-4 rounded bg-[#111113] p-1 px-2 text-sm font-semibold tracking-wide text-white"
         >
+          Try it now
+        </button>
       </a>
     </p>
   </div>
