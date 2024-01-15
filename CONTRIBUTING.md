@@ -39,8 +39,8 @@ That will be served at <http://localhost:9000/dev/your-file-name.html>.
 If you are using docker and docker-compose, you have self-documented `run` bash script, which is a convenient alias for docker-compose commands:
 
 ```bash
-./run install # npx pnpm install
-./run test # pnpm test
+./run pnpm install
+./run pnpm test
 ```
 
 ## Testing
