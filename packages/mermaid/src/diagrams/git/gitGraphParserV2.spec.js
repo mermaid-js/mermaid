@@ -6,7 +6,7 @@ describe('when parsing a gitGraph', function () {
     parser.yy = gitGraphAst;
     parser.yy.clear();
   });
-  it('should handle a gitGraph commit with NO pararms, get auto-generated reandom ID', function () {
+  it('should handle a gitGraph commit with NO params, get auto-generated reandom ID', function () {
     const str = `gitGraph:
     commit
     `;

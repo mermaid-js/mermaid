@@ -11,7 +11,7 @@ let c4ShapeArray = [];
 let boundaryParseStack = [''];
 let currentBoundaryParse = 'global';
 let parentBoundaryParse = '';
-let boundarys = [
+let boundaries = [
   {
     alias: 'global',
     label: { text: 'global' },
@@ -312,12 +312,12 @@ export const addPersonOrSystemBoundary = function (alias, label, type, tags, lin
   }
 
   let boundary = {};
-  const old = boundarys.find((boundary) => boundary.alias === alias);
+  const old = boundaries.find((boundary) => boundary.alias === alias);
   if (old && alias === old.alias) {
     boundary = old;
   } else {
     boundary.alias = alias;
-    boundarys.push(boundary);
+    boundaries.push(boundary);
   }
 
   // Don't allow null labels, either
@@ -368,12 +368,12 @@ export const addContainerBoundary = function (alias, label, type, tags, link) {
   }
 
   let boundary = {};
-  const old = boundarys.find((boundary) => boundary.alias === alias);
+  const old = boundaries.find((boundary) => boundary.alias === alias);
   if (old && alias === old.alias) {
     boundary = old;
   } else {
     boundary.alias = alias;
-    boundarys.push(boundary);
+    boundaries.push(boundary);
   }
 
   // Don't allow null labels, either
@@ -433,12 +433,12 @@ export const addDeploymentNode = function (
   }
 
   let boundary = {};
-  const old = boundarys.find((boundary) => boundary.alias === alias);
+  const old = boundaries.find((boundary) => boundary.alias === alias);
   if (old && alias === old.alias) {
     boundary = old;
   } else {
     boundary.alias = alias;
-    boundarys.push(boundary);
+    boundaries.push(boundary);
   }
 
   // Don't allow null labels, either
@@ -514,7 +514,7 @@ export const updateElStyle = function (
 ) {
   let old = c4ShapeArray.find((element) => element.alias === elementName);
   if (old === undefined) {
-    old = boundarys.find((element) => element.alias === elementName);
+    old = boundaries.find((element) => element.alias === elementName);
     if (old === undefined) {
       return;
     }
@@ -699,9 +699,9 @@ export const getC4ShapeKeys = function (parentBoundary) {
 
 export const getBoundarys = function (parentBoundary) {
   if (parentBoundary === undefined || parentBoundary === null) {
-    return boundarys;
+    return boundaries;
   } else {
-    return boundarys.filter((boundary) => boundary.parentBoundary === parentBoundary);
+    return boundaries.filter((boundary) => boundary.parentBoundary === parentBoundary);
   }
 };
 
@@ -723,7 +723,7 @@ export const autoWrap = function () {
 
 export const clear = function () {
   c4ShapeArray = [];
-  boundarys = [
+  boundaries = [
     {
       alias: 'global',
       label: { text: 'global' },

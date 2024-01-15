@@ -100,7 +100,7 @@ Exciting news for all Mermaid OSS fans: Mermaid Chart has officially launched wi
 
 8 March 2023 · 9 mins
 
-The hype around AI in general and ChatGPT, in particular, is so intense that it’s very understandable to assume the hype train is driving straight toward the trough of disillusionment.
+The hype around AI in general and ChatGPT, in particular, is so intense that it’s very understandable to assume the hype train is driving straight toward the through of disillusionment.
 
 ## [Flow charts are O(n)2 complex, so don't go over 100 connections](https://www.mermaidchart.com/blog/posts/flow-charts-are-on2-complex-so-dont-go-over-100-connections/)
 

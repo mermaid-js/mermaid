@@ -1540,7 +1540,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(bounds.stopx).toBe(300);
     expect(bounds.stopy).toBe(400);
   });
-  it('should handle multiple loops withtout expanding the bounds', async () => {
+  it('should handle multiple loops without expanding the bounds', async () => {
     diagram.renderer.bounds.insert(100, 100, 1000, 1000);
     diagram.renderer.bounds.verticalPos = 200;
     diagram.renderer.bounds.newLoop();

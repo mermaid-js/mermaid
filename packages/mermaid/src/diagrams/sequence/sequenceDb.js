@@ -126,7 +126,7 @@ export const addSignal = function (
     const cnt = activationCount(idFrom.actor);
     if (cnt < 1) {
       // Bail out as there is an activation signal from an inactive participant
-      let error = new Error('Trying to inactivate an inactive participant (' + idFrom.actor + ')');
+      let error = new Error('Trying to deactivate an inactive participant (' + idFrom.actor + ')');
       error.hash = {
         text: '->>-',
         token: '->>-',
