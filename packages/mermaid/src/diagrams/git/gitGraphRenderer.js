@@ -111,7 +111,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
     return commits[a].seq - commits[b].seq;
   });
 
-  const isParallelCommits = getConfig().gitGraph.parallelCommits;
+  const isParallelCommits = gitGraphConfig.parallelCommits;
   sortedKeys.forEach((key) => {
     const commit = commits[key];
 
