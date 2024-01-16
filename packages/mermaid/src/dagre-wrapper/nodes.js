@@ -1013,6 +1013,7 @@ const class_box = (parent, node) => {
   });
 
   rect
+    .attr('style', node.style)
     .attr('class', 'outer title-state')
     .attr('x', -maxWidth / 2 - halfPadding)
     .attr('y', -(maxHeight / 2) - halfPadding)

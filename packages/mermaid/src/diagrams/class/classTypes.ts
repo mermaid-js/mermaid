@@ -10,6 +10,7 @@ export interface ClassNode {
   members: ClassMember[];
   annotations: string[];
   domId: string;
+  styles: string[];
   parent?: string;
   link?: string;
   linkTarget?: string;
@@ -106,7 +107,7 @@ export class ClassMember {
         this.visibility = firstChar as Visibility;
       }
 
-      if (lastChar.match(/[*?]/)) {
+      if (lastChar.match(/[$*]/)) {
         potentialClassifier = lastChar;
       }
 

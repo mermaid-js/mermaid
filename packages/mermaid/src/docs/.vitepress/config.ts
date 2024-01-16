@@ -4,7 +4,10 @@ import { defineConfig, MarkdownOptions } from 'vitepress';
 
 const allMarkdownTransformers: MarkdownOptions = {
   // the shiki theme to highlight code blocks
-  theme: 'github-dark',
+  theme: {
+    light: 'github-light',
+    dark: 'github-dark',
+  },
   config: async (md) => {
     await MermaidExample(md);
   },
@@ -28,7 +31,7 @@ export default defineConfig({
         defer: 'true',
         'data-domain': 'mermaid.js.org',
         // All tracked stats are public and available at https://p.mermaid.live/mermaid.js.org
-        src: 'https://p.mermaid.live/js/script.js',
+        src: 'https://p.mermaid.live/js/script.tagged-events.outbound-links.js',
       },
     ],
   ],
