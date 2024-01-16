@@ -13,10 +13,8 @@ import { insertNode, positionNode, clear as clearNodes, setNodeElem } from './no
 import { insertCluster, clear as clearClusters } from './clusters.js';
 import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } from './edges.js';
 import { log } from '../logger.js';
-import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
-import { getConfig } from '../diagram-api/diagramAPI.js';
 
-const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, siteConfig) => {
+const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster) => {
   log.info('Graph in recursive render: XXX', graphlibJson.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
   log.trace('Dir in recursive render - dir:', dir);
@@ -54,14 +52,7 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, sit
       if (node && node.clusterNode) {
         // const children = graph.children(v);
         log.info('Cluster identified', v, node.width, graph.node(v));
-        const o = await recursiveRender(
-          nodes,
-          node.graph,
-          diagramtype,
-          id,
-          graph.node(v),
-          siteConfig
-        );
+        const o = await recursiveRender(nodes, node.graph, diagramtype, id, graph.node(v));
         const newEl = o.elem;
         updateNodeBounds(node, newEl);
         node.diff = o.diff || 0;
@@ -110,7 +101,6 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, sit
   log.info('Graph after layout:', graphlibJson.write(graph));
   // Move the nodes to the correct place
   let diff = 0;
-  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
   sortNodesByHierarchy(graph).forEach(function (v) {
     const node = graph.node(v);
     log.info('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
@@ -124,18 +114,16 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, sit
     );
     if (node && node.clusterNode) {
       // clusterDb[node.id].node = node;
-      node.y += subGraphTitleTotalMargin;
+
       positionNode(node);
     } else {
       // Non cluster node
       if (graph.children(v).length > 0) {
         // A cluster in the non-recursive way
         // positionCluster(node);
-        node.height += subGraphTitleTotalMargin;
         insertCluster(clusters, node);
         clusterDb[node.id].node = node;
       } else {
-        node.y += subGraphTitleTotalMargin / 2;
         positionNode(node);
       }
     }
@@ -146,7 +134,6 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, sit
     const edge = graph.edge(e);
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
-    edge.points.forEach((point) => (point.y += subGraphTitleTotalMargin / 2));
     const paths = insertEdge(edgePaths, e, edge, clusterDb, diagramtype, graph, id);
     positionEdgeLabel(edge, paths);
   });
@@ -172,8 +159,7 @@ export const render = async (elem, graph, markers, diagramtype, id) => {
   adjustClustersAndEdges(graph);
   log.warn('Graph after:', JSON.stringify(graphlibJson.write(graph)));
   // log.warn('Graph ever  after:', graphlibJson.write(graph.node('A').graph));
-  const siteConfig = getConfig();
-  await recursiveRender(elem, graph, diagramtype, id, undefined, siteConfig);
+  await recursiveRender(elem, graph, diagramtype, id);
 };
 
 // const shapeDefinitions = {};
