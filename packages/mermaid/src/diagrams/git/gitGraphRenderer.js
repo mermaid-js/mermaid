@@ -70,7 +70,7 @@ const drawText = (txt) => {
  * the one farther down the graph, since that means it is closer to its child.
  *
  * @param {string[]} parents
- * @returns {string}
+ * @returns {string | undefined}
  */
 const findClosestParent = (parents) => {
   let closestParent = '';
@@ -84,7 +84,7 @@ const findClosestParent = (parents) => {
     }
   });
 
-  return closestParent;
+  return closestParent || undefined;
 };
 
 /**
