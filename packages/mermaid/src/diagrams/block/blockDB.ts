@@ -153,7 +153,7 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
       if (!block.label) {
         if (block.type === 'composite') {
           block.label = '';
-          console.log('abc89 composite', block);
+          // log.debug('abc89 composite', block);
         } else {
           block.label = block.id;
         }
@@ -175,6 +175,7 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
         populateBlockDatabase(block.children, block);
       }
       if (block.type === 'space') {
+        // log.debug('abc95 space', block);
         const w = block.width || 1;
         for (let j = 0; j < w; j++) {
           const newBlock = clone(block);
@@ -182,6 +183,7 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
           blockDatabase[newBlock.id] = newBlock;
           children.push(newBlock);
         }
+        // log.debug('abc95 space2', children);
       } else {
         if (newBlock) {
           children.push(block);
@@ -205,7 +207,7 @@ const links: Link[] = [];
 let rootBlock = { id: 'root', type: 'composite', children: [], columns: -1 } as Block;
 
 const clear = (): void => {
-  log.info('Clear called');
+  log.debug('Clear called');
   commonClear();
   rootBlock = { id: 'root', type: 'composite', children: [], columns: -1 } as Block;
   blockDatabase = { root: rootBlock };
@@ -290,7 +292,7 @@ const setHierarchy = (block: Block[]): void => {
   log.debug('The document from parsing', JSON.stringify(block, null, 2));
   rootBlock.children = block;
   populateBlockDatabase(block, rootBlock);
-  log.debug('abc88 The document after popuplation', JSON.stringify(rootBlock, null, 2));
+  // log.debug('abc95 The document after popuplation', JSON.stringify(rootBlock, null, 2));
   blocks = rootBlock.children;
 };
 
@@ -322,7 +324,7 @@ type IGetBlocks = () => Block[];
  */
 const getBlocksFlat: IGetBlocks = () => {
   const result: Block[] = [];
-  console.log('abc88 getBlocksFlat', blockDatabase);
+  // log.debug('abc88 getBlocksFlat', blockDatabase);
   const keys = Object.keys(blockDatabase);
   for (const key of keys) {
     result.push(blockDatabase[key]);

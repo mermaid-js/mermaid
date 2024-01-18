@@ -204,8 +204,6 @@ export const createCssStyles = (
     cssStyles += `\n:root { --mermaid-alt-font-family: ${config.altFontFamily}}`;
   }
 
-  console.log('expr check', !isEmpty(classDefs), classDefs);
-
   // classDefs defined in the diagram text
   if (!isEmpty(classDefs) && CLASSDEF_DIAGRAMS.includes(graphType)) {
     const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?

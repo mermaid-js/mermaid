@@ -3,657 +3,501 @@ title: Block Diagram Syntax
 outline: 'deep' # shows all h3 headings in outline in Vitepress
 ---
 
-# Block Diagrams - Basic Syntax
+# Block Diagrams Documentation
 
-Block diagrams are a fundamental tool in technical and engineering documentation, offering a straightforward way to represent complex systems and processes.
+## 1. Introduction to Block Diagrams
 
-A block diagram, at its core, is a graphical representation of a system that uses blocks to depict different components or functions and arrows to show the relationship or flow between them. This form of diagram is invaluable in simplifying the understanding of large-scale systems, breaking them down into individual, easily digestible components.
+### Definition and Purpose
 
-With block diagrams you can create clear, concise, and visually appealing representations of systems. This is particularly beneficial for technical teams and stakeholders who need to document, analyze, or communicate complex processes without getting entangled in the intricacies of detailed schematics. Whether it's for software architecture, network systems, or process management, Mermaid's block diagrams offer an accessible and efficient way to visualize and convey crucial information.
+Block diagrams are an intuitive and efficient way to represent complex systems, processes, or architectures visually. They are composed of blocks and connectors, where blocks represent the fundamental components or functions, and connectors show the relationship or flow between these components. This method of diagramming is essential in various fields such as engineering, software development, and process management.
 
-```warning
-If you are using the word "end" in a Flowchart block, capitalize the entire word or any of the letters (e.g., "End" or "END"), or apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897). Typing "end" in all lowercase letters will break the Flowchart.
-```
+The primary purpose of block diagrams is to provide a high-level view of a system, allowing for easy understanding and analysis without delving into the intricate details of each component. This makes them particularly useful for simplifying complex systems and for explaining the overall structure and interaction of components within a system.
 
-### A block (default)
+### General Use Cases
 
-```mermaid-example
----
-title: Block
----
-block-beta
-    id
-```
+Block diagrams have a wide range of applications across various industries and disciplines. Some of the key use cases include:
 
-```note
-The id is what is displayed in the box.
-```
+- **Software Architecture**: In software development, block diagrams can be used to illustrate the architecture of a software application. This includes showing how different modules or services interact, data flow, and high-level component interaction.
 
-### A block with text
+- **Network Diagrams**: Block diagrams are ideal for representing network architectures in IT and telecommunications. They can depict how different network devices and services are interconnected, including routers, switches, firewalls, and the flow of data across the network.
 
-It is also possible to set text in the box that differs from the id. If this is done several times, it is the last text
-found for the block that will be used. Also if you define edges for the block later on, you can omit text definitions. The
-one previously defined will be used when rendering the box.
+- **Process Flowcharts**: In business and manufacturing, block diagrams can be employed to create process flowcharts. These flowcharts represent various stages of a business or manufacturing process, helping to visualize the sequence of steps, decision points, and the flow of control.
 
-```mermaid-example
----
-title: Node with text
----
-block-beta
-    id1[This is the text in the box]
-```
+- **Electrical Systems**: Engineers use block diagrams to represent electrical systems and circuitry. They can illustrate the high-level structure of an electrical system, the interaction between different electrical components, and the flow of electrical currents.
 
-#### Unicode text
+- **Educational Purposes**: Block diagrams are also extensively used in educational materials to explain complex concepts and systems in a simplified manner. They help in breaking down and visualizing scientific theories, engineering principles, and technological systems.
 
-Use `"` to enclose the unicode text.
+These examples demonstrate the versatility of block diagrams in providing clear and concise representations of complex systems. Their simplicity and clarity make them a valuable tool for professionals across various fields to communicate complex ideas effectively.
+
+In the following sections, we will delve into the specifics of creating and manipulating block diagrams using Mermaid, covering everything from basic syntax to advanced configurations and styling.
+
+Creating block diagrams with Mermaid is straightforward and accessible. This section introduces the basic syntax and structure needed to start building simple diagrams. Understanding these foundational concepts is key to efficiently utilizing Mermaid for more complex diagramming tasks.
+
+### Simple Block Diagrams
+
+#### Basic Structure
+
+At its core, a block diagram consists of blocks representing different entities or components. In Mermaid, these blocks are easily created using simple text labels. The most basic form of a block diagram can be a series of blocks without any connectors.
+
+**Example - Simple Block Diagram**:
+To create a simple block diagram with three blocks labeled 'a', 'b', and 'c', the syntax is as follows:
 
 ```mermaid-example
 block-beta
-    id["This ❤ Unicode"]
+  a b c
 ```
 
-#### Markdown formatting
+This example will produce a horizontal sequence of three blocks. Each block is automatically spaced and aligned for optimal readability.
 
-Use double quotes and backticks "\` text \`" to enclose the markdown text.
+### Diagrams with Multiple Columns
+
+#### Column Usage
+
+While simple block diagrams are linear and straightforward, more complex systems may require a structured layout. Mermaid allows for the organization of blocks into multiple columns, facilitating the creation of more intricate and detailed diagrams.
+
+**Example - Multi-Column Diagram:**
+In scenarios where you need to distribute blocks across multiple columns, you can specify the number of columns and arrange the blocks accordingly. Here's how to create a block diagram with three columns and four blocks, where the fourth block appears in a second row:
 
 ```mermaid-example
-%%{init: {"flowchart": {"htmlLabels": false}} }%%
 block-beta
-    markdown["`This **is** _Markdown_`"]
-    newLines["`Line1
-    Line 2
-    Line 3`"]
-    markdown --> newLines
+  columns 3
+  a b c d
 ```
 
-## Block shapes
+This syntax instructs Mermaid to arrange the blocks 'a', 'b', 'c', and 'd' across three columns, wrapping to the next row as needed. This feature is particularly useful for representing layered or multi-tiered systems, such as network layers or hierarchical structures.
 
-### A block with round edges
+These basic building blocks of Mermaid's block diagrams provide a foundation for more complex diagramming. The simplicity of the syntax allows for quick creation and iteration of diagrams, making it an efficient tool for visualizing ideas and concepts. In the next section, we'll explore advanced block configuration options, including setting block widths and creating composite blocks.
+
+## 3. Advanced Block Configuration
+
+Building upon the basics, this section delves into more advanced features of block diagramming in Mermaid. These features allow for greater flexibility and complexity in diagram design, accommodating a wider range of use cases and scenarios.
+
+### Setting Block Width
+
+#### Spanning Multiple Columns
+
+In more complex diagrams, you may need blocks that span multiple columns to emphasize certain components or to represent larger entities. Mermaid allows for the adjustment of block widths to cover multiple columns, enhancing the diagram's readability and structure.
+
+**Example - Block Spanning Multiple Columns**:
+To create a block diagram where one block spans across two columns, you can specify the desired width for each block:
+
+```mermaid-example
+block-beta
+  columns 3
+  a["A wide one"] b:2 c:2 d
+```
+
+In this example, the block labeled "A wide one" spans two columns, while blocks 'b', 'c', and 'd' are allocated their own columns. This flexibility in block sizing is crucial for accurately representing systems with components of varying significance or size.
+
+### Creating Composite Blocks
+
+#### Nested Blocks
+
+Composite blocks, or blocks within blocks, are an advanced feature in Mermaid's block diagram syntax. They allow for the representation of nested or hierarchical systems, where one component encompasses several subcomponents.
+
+**Example - Composite Blocks:**
+Creating a composite block involves defining a parent block and then nesting other blocks within it. Here's how to define a composite block with nested elements:
+
+```mermaid-example
+block-beta
+    block
+      D
+    end
+    A["A: I am a wide one"]
+```
+
+In this syntax, 'D' is a nested block within a larger parent block. This feature is particularly useful for depicting complex structures, such as a server with multiple services or a department within a larger organizational framework.
+
+### Column Width Dynamics
+
+#### Adjusting Widths
+
+Mermaid also allows for dynamic adjustment of column widths based on the content of the blocks. The width of the columns is determined by the widest block in the column, ensuring that the diagram remains balanced and readable.
+
+**Example - Dynamic Column Widths:**
+In diagrams with varying block sizes, Mermaid automatically adjusts the column widths to fit the largest block in each column. Here's an example:
+
+```mermaid-example
+block-beta
+columns 3
+a:3
+block:e:3
+f
+end
+g
+```
+
+This example demonstrates how Mermaid dynamically adjusts the width of the columns to accommodate the widest block, in this case, 'a' and the composite block 'e'. This dynamic adjustment is essential for creating visually balanced and easy-to-understand diagrams.
+
+With these advanced configuration options, Mermaid's block diagrams can be tailored to represent a wide array of complex systems and structures. The flexibility offered by these features enables users to create diagrams that are both informative and visually appealing. In the following sections, we will explore further capabilities, including different block shapes and linking options.
+
+## 4. Block Varieties and Shapes
+
+Mermaid's block diagrams are not limited to standard rectangular shapes. A variety of block shapes are available, allowing for a more nuanced and tailored representation of different types of information or entities. This section outlines the different block shapes you can use in Mermaid and their specific applications.
+
+### Standard and Special Block Shapes
+
+Mermaid supports a range of block shapes to suit different diagramming needs, from basic geometric shapes to more specialized forms.
+
+#### Example - Round Edged Block
+
+To create a block with round edges, which can be used to represent a softer or more flexible component:
 
 ```mermaid-example
 block-beta
     id1(This is the text in the box)
 ```
 
-### A stadium-shaped block
+#### Example - Stadium-Shaped Block
+
+A stadium-shaped block, resembling an elongated circle, can be used for components that are process-oriented:
 
 ```mermaid-example
 block-beta
     id1([This is the text in the box])
 ```
 
-### A block in a subroutine shape
+#### Example - Subroutine Shape
+
+For representing subroutines or contained processes, a block with double vertical lines is useful:
 
 ```mermaid-example
 block-beta
     id1[[This is the text in the box]]
 ```
 
-### A block in a cylindrical shape
+#### Example - Cylindrical Shape
+
+The cylindrical shape is ideal for representing databases or storage components:
 
 ```mermaid-example
 block-beta
     id1[(Database)]
 ```
 
-### A block in the form of a circle
+#### Example - Circle Shape
+
+A circle can be used for centralized or pivotal components:
 
 ```mermaid-example
 block-beta
     id1((This is the text in the circle))
 ```
 
-### A block in an asymmetric shape
+#### Example - Asymmetric, Rhombus, and Hexagon Shapes
+
+For decision points, use a rhombus, and for unique or specialized processes, asymmetric and hexagon shapes can be utilized:
+
+**Asymmetric**
 
 ```mermaid-example
 block-beta
-    id1>This is the text in the box]
+  id1>This is the text in the box]
 ```
 
-### A block (rhombus)
+**Rhombus**
 
 ```mermaid-example
 block-beta
     id1{This is the text in the box}
 ```
 
-### A hexagon block
+**Hexagon**
 
 ```mermaid-example
 block-beta
     id1{{This is the text in the box}}
 ```
 
-### Parallelogram
+#### Example - Parallelogram and Trapezoid Shapes
+
+Parallelogram and trapezoid shapes are perfect for inputs/outputs and transitional processes:
 
 ```mermaid-example
 flowchart TD
-    id1[/This is the text in the box/]
+  id1[/This is the text in the box/]
+  id2[\This is the text in the box\]
+  A[/Christmas\]
+  B[\Go shopping/]
 ```
 
-### Parallelogram alt
+#### Example - Double Circle
 
-```mermaid-example
-flowchart TD
-    id1[\This is the text in the box\]
-```
-
-### Trapezoid
-
-```mermaid-example
-flowchart TD
-    A[/Christmas\]
-```
-
-### Trapezoid alt
-
-```mermaid-example
-flowchart TD
-    B[\Go shopping/]
-```
-
-### Double circle
+For highlighting critical or high-priority components, a double circle can be effective:
 
 ```mermaid-example
 flowchart TD
     id1(((This is the text in the circle)))
 ```
 
-## Links between blocks
+### Block Arrows and Space Blocks
 
-Blocks can be connected with links/edges. It is possible to have different types of links or attach a text string to a link.
+Mermaid also offers unique shapes like block arrows and space blocks for directional flow and spacing.
 
-### A link with arrow head
+#### Example - Block Arrows
 
-```mermaid-example
-block-beta
-    A-->B
-```
-
-### An open link
+Block arrows can visually indicate direction or flow within a process:
 
 ```mermaid-example
 block-beta
-    A --- B
+  blockArrowId<["Label"]>(right)
+  blockArrowId2<["Label"]>(left)
+  blockArrowId3<["Label"]>(up)
+  blockArrowId4<["Label"]>(down)
+  blockArrowId5<["Label"]>(x)
+  blockArrowId6<["Label"]>(y)
+  blockArrowId6<["Label"]>(x, down)
 ```
 
-### Text on links
+#### Example - Space Blocks
+
+Space blocks can be used to create intentional empty spaces in the diagram, which is useful for layout and readability:
 
 ```mermaid-example
 block-beta
-    A-- This is the text! ---B
+  space:3
+  ida idb idc
 ```
 
-or
+Note that you can set how many columns the spece block occupied using the number notaion `space:num` where num is a number indicating the num columns width. You can alsio use `space` which defaults to one column.
+
+The variety of shapes and special blocks in Mermaid enhances the expressive power of block diagrams, allowing for more accurate and context-specific representations. These options give users the flexibility to create diagrams that are both informative and visually appealing. In the next sections, we will explore the ways to connect these blocks and customize their appearance.
+
+### Standard and Special Block Shapes
+
+Discuss the various shapes available for blocks, including standard shapes and special forms like block arrows and space blocks.
+
+## 5. Connecting Blocks with Edges
+
+One of the key features of block diagrams in Mermaid is the ability to connect blocks using various types of edges or links. This section explores the different ways blocks can be interconnected to represent relationships and flows between components.
+
+### Basic Linking and Arrow Types
+
+The most fundamental aspect of connecting blocks is the use of arrows or links. These connectors depict the relationships or the flow of information between the blocks. Mermaid offers a range of arrow types to suit different diagramming needs.
+
+**Example - Basic Links**
+
+A simple link with an arrow can be created to show direction or flow from one block to another:
 
 ```mermaid-example
 block-beta
-    A---|This is the text|B
+  A-->B
 ```
 
-### A link with arrow head and text
+This example illustrates a direct connection from block 'A' to block 'B', using a straightforward arrow.
+
+**Example - Open Link:**
+For connections that are less direct or to represent a different type of relationship, an open link (without an arrowhead) can be used:
 
 ```mermaid-example
 block-beta
-    A-->|text|B
+  A --- B
 ```
 
-or
+This syntax creates a line connecting 'A' and 'B', implying a relationship or connection without indicating a specific direction.
+
+### Text on Links
+
+In addition to connecting blocks, it's often necessary to describe or label the relationship. Mermaid allows for the inclusion of text on links, providing context to the connections.
+
+Example - Text with Links
+To add text to a link, the syntax includes the text within the link definition:
 
 ```mermaid-example
 block-beta
-    A-- text -->B
+  A-- This is the text! ---B
 ```
 
-### Dotted link
+This example show how to add descriptive text to the links, enhancing the information conveyed by the diagram.
+
+### Advanced Link Types
+
+Mermaid also supports various advanced link types, such as dotted lines, thick links, and different arrowheads, to represent different kinds of relationships or interactions.
+
+**Example - Dotted and Thick Links**
+A dotted link can be used to represent a weaker or less formal relationship:
 
 ```mermaid-example
 block-beta
-   A-.->B;
+  A-.->B
 ```
 
-### Dotted link with text
+For a more pronounced connection, a thick link can be used:
 
 ```mermaid-example
 block-beta
-   A-. text .-> B
+  A==>B
 ```
 
-### Thick link
+Example - Edges and Styles:
 
 ```mermaid-example
 block-beta
-   A ==> B
-```
-
-### Thick link with text
-
-```mermaid-example
-block-beta
-   A == text ==> B
-```
-
-### Different types of links
-
-There are new types of arrows supported as per below:
-
-```mermaid-example
-block-beta
-    A --o B
-    B --x C
-```
-
-### Multi directional arrows
-
-There is the possibility to use multidirectional arrows.
-
-```mermaid-example
-block-beta
-    A o--o B
-    B <--> C
-    C x--x D
-```
-
-## Special characters that break syntax
-
-It is possible to put text within quotes in order to render more troublesome characters. As in the example below:
-
-```mermaid-example
-block-beta
-    id1["This is the (text) in the box"]
-```
-
-### Entity codes to escape characters
-
-It is possible to escape characters using the syntax exemplified here.
-
-```mermaid-example
-    block-beta
-        A["A double quote:#quot;"] -->B["A dec char:#9829;"]
-```
-
-Numbers given are base 10, so `#` can be encoded as `#35;`. It is also supported to use HTML character names.
-
-## Blocks in blocks
-
-```
-block-beta
-    block definition
-end
-```
-
-An example below:
-
-```mermaid-example
-block-beta
-    block
-        A["square"]
-        B("rounded")
-    end
-    C(("circle"))
-```
-
-You can also set an explicit id for the subgraph.
-
-```mermaid-example
-flowchart TB
-    c1-->a2
-    subgraph ide1 [one]
-    a1-->a2
-    end
-```
-
-### flowcharts
-
-With the graphtype flowchart it is also possible to set edges to and from subgraphs as in the flowchart below.
-
-```mermaid-example
-flowchart TB
-    c1-->a2
-    subgraph one
-    a1-->a2
-    end
-    subgraph two
-    b1-->b2
-    end
-    subgraph three
-    c1-->c2
-    end
-    one --> two
-    three --> two
-    two --> c2
-```
-
-### Direction in subgraphs
-
-With the graphtype flowcharts you can use the direction statement to set the direction which the subgraph will render like in this example.
-
-```mermaid-example
-block-beta
-  subgraph TOP
-    direction TB
-    subgraph B1
-        direction RL
-        i1 -->f1
-    end
-    subgraph B2
-        direction BT
-        i2 -->f2
-    end
+columns 1
+  db(("DB"))
+  blockArrowId6<["&nbsp;&nbsp;&nbsp;"]>(down)
+  block:ID
+    A
+    B["A wide one in the middle"]
+    C
   end
-  A --> TOP --> B
-  B1 --> B2
+  space
+  D
+  ID --> D
+  C --> D
+  style B fill:#f9F,stroke:#333,stroke-width:4px
 ```
 
-## Markdown Strings
+## 6. Styling and Customization
 
-The "Markdown Strings" feature enhances flowcharts and mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
+Beyond the structure and layout of block diagrams, Mermaid offers extensive styling options. These customization features allow for the creation of more visually distinctive and informative diagrams. This section covers how to apply individual styles to blocks and how to use classes for consistent styling across multiple elements.
 
-```mermaid-example
-%%{init: {"flowchart": {"htmlLabels": false}} }%%
-block-beta
-subgraph "One"
-  a("`The **cat**
-  in the hat`") -- "edge label" --> b{{"`The **dog** in the hog`"}}
-end
-subgraph "`**Two**`"
-  c("`The **cat**
-  in the hat`") -- "`Bold **edge label**`" --> d("The dog in the hog")
-end
-```
+### Individual Block Styling
 
-Formatting:
+Mermaid enables detailed styling of individual blocks, allowing you to apply various CSS properties such as color, stroke, and border thickness. This feature is especially useful for highlighting specific parts of a diagram or for adhering to certain visual themes.
 
-- For bold text, use double asterisks (`**`) before and after the text.
-- For italics, use single asterisks (`*`) before and after the text.
-- With traditional strings, you needed to add `<br>` tags for text to wrap in blocks. However, markdown strings automatically wrap text when it becomes too long and allows you to start a new line by simply using a newline character instead of a `<br>` tag.
+#### Example - Styling a Single Block
 
-This feature is applicable to block labels, edge labels, and subgraph labels.
-
-## Interaction
-
-It is possible to bind a click event to a block, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab.
-
-```note
-This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
-```
-
-```
-click blockId callback
-click blockId call callback()
-```
-
-- blockId is the id of the block
-- callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the blockId as parameter.
-
-Examples of tooltip usage below:
-
-```html
-<script>
-  const callback = function () {
-    alert('A callback was triggered');
-  };
-</script>
-```
-
-The tooltip text is surrounded in double quotes. The styles of the tooltip are set by the class `.mermaidTooltip`.
+To apply custom styles to a block, you can use the `style` keyword followed by the block identifier and the desired CSS properties:
 
 ```mermaid-example
 block-beta
-    A-->B
-    B-->C
-    C-->D
-    click A callback "Tooltip for a callback"
-    click B "https://www.github.com" "This is a tooltip for a link"
-    click A call callback() "Tooltip for a callback"
-    click B href "https://www.github.com" "This is a tooltip for a link"
+  id1(Start)-->id2(Stop)
+  style id1 fill:#f9f,stroke:#333,stroke-width:4px
+  style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 
-> **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
+In this example, a class named 'blue' is defined and applied to block 'A', while block 'B' receives individual styling. This demonstrates the flexibility of Mermaid in applying both shared and unique styles within the same diagram.
 
-?> Due to limitations with how Docsify handles JavaScript callback functions, an alternate working demo for the above code can be viewed at [this jsfiddle](https://jsfiddle.net/s37cjoau/3/).
+The ability to style blocks individually or through classes provides a powerful tool for enhancing the visual impact and clarity of block diagrams. Whether emphasizing certain elements or maintaining a cohesive design across the diagram, these styling capabilities are central to effective diagramming. The next sections will present practical examples and use cases, followed by tips for troubleshooting common issues.
 
-Links are opened in the same browser tab/window by default. It is possible to change this by adding a link target to the click definition (`_self`, `_blank`, `_parent` and `_top` are supported):
+### 7. Practical Examples and Use Cases
 
-```mermaid-example
-block-beta
-    A-->B
-    B-->C
-    C-->D
-    D-->E
-    click A "https://www.github.com" _blank
-    click B "https://www.github.com" "Open this in a new tab" _blank
-    click C href "https://www.github.com" _blank
-    click D href "https://www.github.com" "Open this in a new tab" _blank
-```
+The versatility of Mermaid's block diagrams becomes evident when applied to real-world scenarios. This section provides practical examples demonstrating the application of various features discussed in previous sections. These examples showcase how block diagrams can be used to represent complex systems and processes in an accessible and informative manner.
 
-Beginner's tip—a full example using interactive links in a html context:
+### Detailed Examples Illustrating Various Features
 
-```html
-<body>
-  <pre class="mermaid">
-    block-beta
-        A-->B
-        B-->C
-        C-->D
-        click A callback "Tooltip"
-        click B "https://www.github.com" "This is a link"
-        click C call callback() "Tooltip"
-        click D href "https://www.github.com" "This is a link"
-  </pre>
+Combining the elements of structure, linking, and styling, we can create comprehensive diagrams that serve specific purposes in different contexts.
 
-  <script>
-    const callback = function () {
-      alert('A callback was triggered');
-    };
-    const config = {
-      startOnLoad: true,
-      flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'cardinal' },
-      securityLevel: 'loose',
-    };
-    mermaid.initialize(config);
-  </script>
-</body>
-```
+#### Example - System Architecture
 
-### Comments
-
-Comments can be entered within a flow diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any flow syntax
+Illustrating a simple software system architecture with interconnected components:
 
 ```mermaid
 block-beta
-%% this is a comment A -- text --> B{block}
-   A -- text --> B -- text2 --> C
+  columns 2
+  Frontend Backend
+  Frontend-->Backend
+  Database[(Database)]
+  Backend-->Database
+  class Frontend,Backend fill:#f96,stroke:#333;
+  class Database fill:#9f9,stroke:#333;
 ```
 
-## Styling and classes
+This example shows a basic architecture with a frontend, backend, and database. The blocks are styled to differentiate between types of components.
 
-### Styling links
+#### Example - Business Process Flow
 
-It is possible to style links. For instance, you might want to style a link that is going backwards in the flow. As links
-have no ids in the same way as blocks, some other way of deciding what style the links should be attached to is required.
-Instead of ids, the order number of when the link was defined in the graph is used, or use default to apply to all links.
-In the example below the style defined in the linkStyle statement will belong to the fourth link in the graph:
-
-```
-linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
-```
-
-It is also possible to add style to multiple links in a single statement, by separating link numbers with commas:
-
-```
-linkStyle 1,2,7 color:blue;
-```
-
-### Styling line curves
-
-It is possible to style the type of curve used for lines between items, if the default method does not meet your needs.
-Available curve styles include `basis`, `bumpX`, `bumpY`, `cardinal`, `catmullRom`, `linear`, `monotoneX`, `monotoneY`,
-`natural`, `step`, `stepAfter`, and `stepBefore`.
-
-In this example, a left-to-right graph uses the `stepBefore` curve style:
-
-```
-%%{ init: { 'flowchart': { 'curve': 'stepBefore' } } }%%
-graph LR
-```
-
-For a full list of available curves, including an explanation of custom curves, refer to
-the [Shapes](https://github.com/d3/d3-shape/blob/main/README.md#curves) documentation in the
-[d3-shape](https://github.com/d3/d3-shape/) project.
-
-### Styling a block
-
-It is possible to apply specific styles such as a thicker border or a different background color to a block.
+Representing a business process flow with decision points and multiple stages:
 
 ```mermaid-example
 block-beta
-    id1(Start)-->id2(Stop)
-    style id1 fill:#f9f,stroke:#333,stroke-width:4px
-    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
-```
-
-#### Classes
-
-More convenient than defining the style every time is to define a class of styles and attach this class to the blocks that
-should have a different look.
-
-A class definition looks like the example below:
-
-```
-    classDef className fill:#f9f,stroke:#333,stroke-width:4px;
-```
-
-Also, it is possible to define style to multiple classes in one statement:
+  Start{Start}
+  Decision{Make Decision}
+  Process1[Process A]
+  Process2[Process B]
+  End((End))
+  Start --> Decision
+  Decision -- Yes --> Process1
+  Decision -- No --> Process2
+  Process1 --> End
+  Process2 --> End
+  style Start fill:#f9f;
+  style End fill:#bbf;
 
 ```
-    classDef firstClassName,secondClassName font-size:12pt;
+
+This diagram depicts a simple decision-making process with two possible paths leading to an endpoint, demonstrating the use of different shapes and directional arrows.
+
+### Real works Application Scenarios
+
+Block diagrams can be employed in a variety of real-world scenarios. Here are a few examples:
+
+- **IT Network Layouts**: Visualize the structure of IT networks, showing how different devices and services are connected.
+- **Educational Diagrams**: Explain complex scientific concepts, engineering systems, or historical timelines.
+- **Organizational Charts**: Represent the hierarchy and relationships within an organization or department.
+
+These practical examples and scenarios underscore the utility of Mermaid block diagrams in simplifying and effectively communicating complex information across various domains.
+
+The next section, 'Troubleshooting and Common Issues', will provide insights into resolving common challenges encountered when working with Mermaid block diagrams, ensuring a smooth diagramming experience.
+
+```mermaid-example
+
 ```
 
-Attachment of a class to a block is done as per below:
+```mermaid-example
 
 ```
-    class blockId1 className;
+
+## 8. Troubleshooting and Common Issues
+
+Working with Mermaid block diagrams can sometimes present challenges, especially as the complexity of the diagrams increases. This section aims to provide guidance on resolving common issues and offers tips for managing more intricate diagram structures.
+
+### Common Syntax Errors
+
+Understanding and avoiding common syntax errors is key to a smooth experience with Mermaid diagrams.
+
+#### Example - Incorrect Linking
+
+A common mistake is incorrect linking syntax, which can lead to unexpected results or broken diagrams:
+
+```
+block-beta
+  A - B
 ```
 
-It is also possible to attach a class to a list of blocks in one statement:
-
-```
-    class blockId1,blockId2 className;
-```
-
-A shorter form of adding a class is to attach the classname to the block using the `:::`operator as per below:
+**Correction**:
+Ensure that links between blocks are correctly specified with arrows (--> or ---) to define the direction and type of connection:
 
 ```mermaid-example
 block-beta
-    A:::someclass --> B
-    classDef someclass fill:#f96
+  A --> B
 ```
 
-This form can be used when declaring multiple links between blocks:
+#### Example - Misplaced Styling
+
+Applying styles in the wrong context or with incorrect syntax can lead to blocks not being styled as intended:
+
+```mermaid-example
+  block-beta
+    A
+    style A fill#f9f;
+```
+
+**Correction:**
+Correct the syntax by ensuring proper separation of style properties with commas and using the correct CSS property format:
 
 ```mermaid-example
 block-beta
-    A:::foo & B:::bar --> C:::foobar
-    classDef foo stroke:#f00
-    classDef bar stroke:#0f0
-    classDef foobar stroke:#00f
-```
-
-### Css classes
-
-It is also possible to predefine classes in css styles that can be applied from the graph definition as in the example
-below:
-
-**Example style**
-
-```html
-<style>
-  .cssClass > rect {
-    fill: #ff0000;
-    stroke: #ffff00;
-    stroke-width: 4px;
-  }
-</style>
-```
-
-**Example definition**
-
-```mermaid-example
-block-beta
-    A-->B[AAA<span>BBB</span>]
-    B-->D
-    class A cssClass
-```
-
-### Default class
-
-If a class is named default it will be assigned to all classes without specific class definitions.
+  A
+  style A fill:#f9f,stroke:#333;
 
 ```
-    classDef default fill:#f9f,stroke:#333,stroke-width:4px;
-```
 
-## Basic support for fontawesome
+### Tips for Complex Diagram Structures
 
-It is possible to add icons from fontawesome.
+Managing complexity in Mermaid diagrams involves planning and employing best practices.
 
-The icons are accessed via the syntax fa:#icon class name#.
+#### Modular Design
 
-```mermaid-example
-flowchart TD
-    B["fab:fa-twitter for peace"]
-    B-->C[fa:fa-ban forbidden]
-    B-->D(fa:fa-spinner)
-    B-->E(A fa:fa-camera-retro perhaps?)
-```
+Break down complex diagrams into smaller, more manageable components. This approach not only makes the diagram easier to understand but also simplifies the creation and maintenance process.
 
-Mermaid is compatible with Font Awesome up to verion 5, Free icons only. Check that the icons you use are from the [supported set of icons](https://fontawesome.com/v5/search?o=r&m=free).
+#### Consistent Styling
 
-## Graph declarations with spaces between vertices and link and without semicolon
+Use classes to maintain consistent styling across similar elements. This not only saves time but also ensures a cohesive and professional appearance.
 
-- In graph declarations, the statements also can now end without a semicolon. After release 0.2.16, ending a graph statement with semicolon is just optional. So the below graph declaration is also valid along with the old declarations of the graph.
+#### Comments and Documentation
 
-- A single space is allowed between vertices and the link. However there should not be any space between a vertex and its text and a link and its text. The old syntax of graph declaration will also work and hence this new feature is optional and is introduced to improve readability.
+Use comments within the Mermaid syntax to document the purpose of various parts of the diagram. This practice is invaluable for maintaining clarity, especially when working in teams or returning to a diagram after some time.
 
-Below is the new declaration of the graph edges which is also valid along with the old declaration of the graph edges.
-
-```mermaid-example
-block-beta
-    A[Hard edge] -->|Link text| B(Round edge)
-    B --> C{Decision}
-    C -->|One| D[Result one]
-    C -->|Two| E[Result two]
-```
-
-## Configuration
-
-### Renderer
-
-The layout of the diagram is done with the renderer. The default renderer is dagre.
-
-Starting with Mermaid version 9.4, you can use an alternate renderer named elk. The elk renderer is better for larger and/or more complex diagrams.
-
-The _elk_ renderer is an experimenal feature.
-You can change the renderer to elk by adding this directive:
-
-```
-%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
-```
-
-```note
-Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
-```
-
-### Width
-
-It is possible to adjust the width of the rendered flowchart.
-
-This is done by defining **mermaid.flowchartConfig** or by the CLI to use a JSON file with the configuration. How to use the CLI is described in the mermaidCLI page.
-mermaid.flowchartConfig can be set to a JSON string with config parameters or the corresponding object.
-
-```javascript
-mermaid.flowchartConfig = {
-    width: 100%
-}
-```
+With these troubleshooting tips and best practices, you can effectively manage and resolve common issues in Mermaid block diagrams. The final section, 'Conclusion', will summarize the key points covered in this documentation and invite user feedback for continuous improvement.

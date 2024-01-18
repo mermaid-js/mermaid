@@ -47,10 +47,10 @@ describe('Block diagram', function () {
       expect(blocks.length).toBe(2);
       expect(blocks[0].id).toBe('id1');
       expect(blocks[0].label).toBe('id1');
-      expect(blocks[0].type).toBe('square');
+      expect(blocks[0].type).toBe('na');
       expect(blocks[1].id).toBe('id2');
       expect(blocks[1].label).toBe('id2');
-      expect(blocks[1].type).toBe('square');
+      expect(blocks[1].type).toBe('na');
     });
     it('a diagram with multiple nodes', async () => {
       const str = `block-beta
@@ -64,13 +64,13 @@ describe('Block diagram', function () {
       expect(blocks.length).toBe(3);
       expect(blocks[0].id).toBe('id1');
       expect(blocks[0].label).toBe('id1');
-      expect(blocks[0].type).toBe('square');
+      expect(blocks[0].type).toBe('na');
       expect(blocks[1].id).toBe('id2');
       expect(blocks[1].label).toBe('id2');
-      expect(blocks[1].type).toBe('square');
+      expect(blocks[1].type).toBe('na');
       expect(blocks[2].id).toBe('id3');
       expect(blocks[2].label).toBe('id3');
-      expect(blocks[2].type).toBe('square');
+      expect(blocks[2].type).toBe('na');
     });
 
     it('a node with a square shape and a label', async () => {
@@ -86,7 +86,7 @@ describe('Block diagram', function () {
       expect(blocks[0].type).toBe('square');
       expect(blocks[1].id).toBe('id2');
       expect(blocks[1].label).toBe('id2');
-      expect(blocks[1].type).toBe('square');
+      expect(blocks[1].type).toBe('na');
     });
     it('a diagram with multiple nodes with edges', async () => {
       const str = `block-beta
@@ -231,14 +231,14 @@ describe('Block diagram', function () {
       expect(compoundBlock.children.length).toBe(1);
       expect(compoundBlock.id).toBe('compoundBlock');
       expect(compoundBlock.label).toBe('Compound block');
-      expect(compoundBlock.type).toBe('square');
+      expect(compoundBlock.type).toBe('composite');
 
       expect(block2.id).toBe('block2');
       expect(block2.label).toBe('Block 2');
       expect(block2.type).toBe('square');
     });
-    it.skip('blocks mixed with compound blocks', async () => {
-      const str = `block
+    it('blocks mixed with compound blocks', async () => {
+      const str = `block-beta
           columns 1
           block1["Block 1"]
 
@@ -250,16 +250,43 @@ describe('Block diagram', function () {
         `;
 
       block.parse(str);
+
+      const blocks = db.getBlocks();
+      expect(blocks.length).toBe(2);
+
+      const compoundBlock = blocks[1];
+      const block2 = compoundBlock.children[0];
+
+      expect(compoundBlock.children.length).toBe(2);
+
+      expect(block2.id).toBe('block2');
+      expect(block2.label).toBe('Block 2');
+      expect(block2.type).toBe('square');
     });
 
-    it.skip('Arrow blocks', async () => {
-      const str = `block
+    it('Arrow blocks', async () => {
+      const str = `block-beta
         columns 3
         block1["Block 1"]
-        blockArrow
+        blockArrow<["&nbsp;&nbsp;&nbsp;"]>(right)
         block2["Block 2"]`;
 
       block.parse(str);
+
+      const blocks = db.getBlocks();
+      expect(blocks.length).toBe(3);
+
+      const block1 = blocks[0];
+      const blockArrow = blocks[1];
+      const block2 = blocks[2];
+
+      expect(block1.id).toBe('block1');
+      expect(blockArrow.id).toBe('blockArrow');
+      expect(block2.id).toBe('block2');
+      expect(block2.label).toBe('Block 2');
+      expect(block2.type).toBe('square');
+      expect(blockArrow.type).toBe('block_arrow');
+      console.log('blockArrow', blockArrow);
     });
     it.skip('Arrow blocks with multiple points', async () => {
       const str = `block-beta
@@ -275,7 +302,7 @@ describe('Block diagram', function () {
 
       block.parse(str);
     });
-    it.skip('blocks with different widths', async () => {
+    it('blocks with different widths', async () => {
       const str = `block-beta
         columns 3
         one["One Slot"]
@@ -283,6 +310,13 @@ describe('Block diagram', function () {
         `;
 
       block.parse(str);
+
+      const blocks = db.getBlocks();
+      expect(blocks.length).toBe(2);
+      const one = blocks[0];
+      const two = blocks[1];
+      console.log('Obe and Two', one, two);
+      expect(two.w).toBe(2);
     });
     it('empty blocks', async () => {
       const str = `block-beta

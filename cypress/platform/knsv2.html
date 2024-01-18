@@ -65,10 +65,23 @@
   <body>
     <pre id="diagram" class="mermaid">
 block-beta
+        columns 3
+        block1["Block 1"]
+        blockArrow<["&nbsp;&nbsp;&nbsp;"]>(right)
+        block2["Block 2"]
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+columns 5
+   A space B
+   A --x B
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
 columns 3
   a["A wide one"] b:2 c:2 d
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 block-beta
   block:e
       f
@@ -96,7 +109,7 @@ block-beta
   j
 
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 block-beta
 columns 3
   a b:2
@@ -105,14 +118,14 @@ columns 3
   end
   g h i
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 block-beta
 columns 3
   a b c
   e:3
   f g h
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 block-beta
 columns 1
   db(("DB"))
@@ -128,14 +141,14 @@ columns 1
   C --> D
   style B fill:#f9F,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 block-beta
 
   A1:3
   A2:1
   A3
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 block-beta
   block
     D
@@ -143,7 +156,7 @@ block-beta
   end
   db("This is the text in the box")
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 block-beta
 
       block
@@ -151,7 +164,7 @@ block-beta
       end
       A["A: I am a wide one"]
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 block-beta
     A["square"]
     B("rounded")

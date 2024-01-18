@@ -37,24 +37,24 @@ CRLF \u000D\u000A
 %%
 
 "block-beta"                                             { return 'BLOCK_DIAGRAM_KEY'; }
-"block"\s+            { yy.getLogger().info('Found space-block'); return 'block';}
-"block"\n+            { yy.getLogger().info('Found nl-block'); return 'block';}
-"block:"            { yy.getLogger().info('Found space-block'); return 'id-block';}
-// \s*\%\%.*                                                       { yy.getLogger().info('Found comment',yytext); }
-[\s]+                                                           { yy.getLogger().info('.', yytext); /* skip all whitespace */  }
-[\n]+ {yy.getLogger().info('_', yytext);                 /* skip all whitespace */   }
+"block"\s+            { yy.getLogger().debug('Found space-block'); return 'block';}
+"block"\n+            { yy.getLogger().debug('Found nl-block'); return 'block';}
+"block:"            { yy.getLogger().debug('Found space-block'); return 'id-block';}
+// \s*\%\%.*                                                       { yy.getLogger().debug('Found comment',yytext); }
+[\s]+                                                           { yy.getLogger().debug('.', yytext); /* skip all whitespace */  }
+[\n]+ {yy.getLogger().debug('_', yytext);                 /* skip all whitespace */   }
 // [\n]                return 'NL';
 <INITIAL>({CRLF}|{LF})                     { return 'NL' }
 "columns"\s+"auto"             { yytext=-1; return 'COLUMNS'; }
-"columns"\s+[\d]+            { yytext = yytext.replace(/columns\s+/,''); yy.getLogger().info('COLUMNS (LEX)', yytext); return 'COLUMNS'; }
+"columns"\s+[\d]+            { yytext = yytext.replace(/columns\s+/,''); yy.getLogger().debug('COLUMNS (LEX)', yytext); return 'COLUMNS'; }
 ["][`]          { this.pushState("md_string");}
 <md_string>[^`"]+        { return "MD_STR";}
 <md_string>[`]["]          { this.popState();}
 ["]                     this.pushState("string");
 <string>["]             { yy.getLogger().debug('LEX: POPPING STR:', yytext);this.popState();}
 <string>[^"]*           { yy.getLogger().debug('LEX: STR end:', yytext); return "STR";}
-space[:]\d+            {  yytext = yytext.replace(/space\:/,'');yy.getLogger().info('SPACE NUM (LEX)', yytext); return 'SPACE_BLOCK'; }
-space                  { yytext = '1'; yy.getLogger().info('COLUMNS (LEX)', yytext); return 'SPACE_BLOCK'; }
+space[:]\d+            {  yytext = yytext.replace(/space\:/,'');yy.getLogger().debug('SPACE NUM (LEX)', yytext); return 'SPACE_BLOCK'; }
+space                  { yytext = '1'; yy.getLogger().debug('COLUMNS (LEX)', yytext); return 'SPACE_BLOCK'; }
 "default"             return 'DEFAULT';
 "linkStyle"           return 'LINKSTYLE';
 "interpolate"         return 'INTERPOLATE';
@@ -87,36 +87,36 @@ accDescr\s*"{"\s*                                { this.pushState("acc_descr_mul
 .*direction\s+LR[^\n]*                                      return 'direction_lr';
 
 // Node end of shape
-<NODE>"((("             { this.popState();yy.getLogger().info('Lex: (('); return "NODE_DEND"; }
-<NODE>")))"             { this.popState();yy.getLogger().info('Lex: (('); return "NODE_DEND"; }
-<NODE>[\)]\)           { this.popState();yy.getLogger().info('Lex: ))'); return "NODE_DEND"; }
-<NODE>"}}"             { this.popState();yy.getLogger().info('Lex: (('); return "NODE_DEND"; }
-<NODE>"}"             { this.popState();yy.getLogger().info('Lex: (('); return "NODE_DEND"; }
-<NODE>"(-"             { this.popState();yy.getLogger().info('Lex: (-'); return "NODE_DEND"; }
-<NODE>"-)"             { this.popState();yy.getLogger().info('Lex: -)'); return "NODE_DEND"; }
-<NODE>"(("             { this.popState();yy.getLogger().info('Lex: (('); return "NODE_DEND"; }
-<NODE>"]]"             { this.popState();yy.getLogger().info('Lex: ]]'); return "NODE_DEND"; }
-<NODE>"("              { this.popState();yy.getLogger().info('Lex: (');  return "NODE_DEND";  }
-<NODE>"])"             { this.popState();yy.getLogger().info('Lex: ])'); return "NODE_DEND"; }
-<NODE>"\\]"             { this.popState();yy.getLogger().info('Lex: /]'); return "NODE_DEND"; }
-<NODE>"/]"             { this.popState();yy.getLogger().info('Lex: /]'); return "NODE_DEND"; }
-<NODE>")]"             { this.popState();yy.getLogger().info('Lex: )]'); return "NODE_DEND"; }
-<NODE>[\)]             { this.popState();yy.getLogger().info('Lex: )');  return "NODE_DEND"; }
-<NODE>\]\>             { this.popState();yy.getLogger().info('Lex: ]>'); return "NODE_DEND"; }
-<NODE>[\]]             { this.popState();yy.getLogger().info('Lex: ]'); return "NODE_DEND"; }
+<NODE>"((("             { this.popState();yy.getLogger().debug('Lex: (('); return "NODE_DEND"; }
+<NODE>")))"             { this.popState();yy.getLogger().debug('Lex: (('); return "NODE_DEND"; }
+<NODE>[\)]\)           { this.popState();yy.getLogger().debug('Lex: ))'); return "NODE_DEND"; }
+<NODE>"}}"             { this.popState();yy.getLogger().debug('Lex: (('); return "NODE_DEND"; }
+<NODE>"}"             { this.popState();yy.getLogger().debug('Lex: (('); return "NODE_DEND"; }
+<NODE>"(-"             { this.popState();yy.getLogger().debug('Lex: (-'); return "NODE_DEND"; }
+<NODE>"-)"             { this.popState();yy.getLogger().debug('Lex: -)'); return "NODE_DEND"; }
+<NODE>"(("             { this.popState();yy.getLogger().debug('Lex: (('); return "NODE_DEND"; }
+<NODE>"]]"             { this.popState();yy.getLogger().debug('Lex: ]]'); return "NODE_DEND"; }
+<NODE>"("              { this.popState();yy.getLogger().debug('Lex: (');  return "NODE_DEND";  }
+<NODE>"])"             { this.popState();yy.getLogger().debug('Lex: ])'); return "NODE_DEND"; }
+<NODE>"\\]"             { this.popState();yy.getLogger().debug('Lex: /]'); return "NODE_DEND"; }
+<NODE>"/]"             { this.popState();yy.getLogger().debug('Lex: /]'); return "NODE_DEND"; }
+<NODE>")]"             { this.popState();yy.getLogger().debug('Lex: )]'); return "NODE_DEND"; }
+<NODE>[\)]             { this.popState();yy.getLogger().debug('Lex: )');  return "NODE_DEND"; }
+<NODE>\]\>             { this.popState();yy.getLogger().debug('Lex: ]>'); return "NODE_DEND"; }
+<NODE>[\]]             { this.popState();yy.getLogger().debug('Lex: ]'); return "NODE_DEND"; }
 
 // Start of nodes with shapes and description
-"-)"                   { yy.getLogger().info('Lexa: -)'); this.pushState('NODE');return 'NODE_DSTART'; }
-"(-"                   { yy.getLogger().info('Lexa: (-'); this.pushState('NODE');return 'NODE_DSTART'; }
-"))"                   { yy.getLogger().info('Lexa: ))'); this.pushState('NODE');return 'NODE_DSTART';  }
-")"                    { yy.getLogger().info('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART';      }
-"((("                  { yy.getLogger().info('Lex: (((');  this.pushState('NODE');return 'NODE_DSTART'; }
-"(("                   { yy.getLogger().info('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART'; }
-"{{"                   { yy.getLogger().info('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART'; }
-"{"                   { yy.getLogger().info('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART'; }
-">"                   { yy.getLogger().info('Lexc: >'); this.pushState('NODE');return 'NODE_DSTART'; }
-"(["                   { yy.getLogger().info('Lexa: (['); this.pushState('NODE');return 'NODE_DSTART'; }
-"("                    { yy.getLogger().info('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART'; }
+"-)"                   { yy.getLogger().debug('Lexa: -)'); this.pushState('NODE');return 'NODE_DSTART'; }
+"(-"                   { yy.getLogger().debug('Lexa: (-'); this.pushState('NODE');return 'NODE_DSTART'; }
+"))"                   { yy.getLogger().debug('Lexa: ))'); this.pushState('NODE');return 'NODE_DSTART';  }
+")"                    { yy.getLogger().debug('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART';      }
+"((("                  { yy.getLogger().debug('Lex: (((');  this.pushState('NODE');return 'NODE_DSTART'; }
+"(("                   { yy.getLogger().debug('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART'; }
+"{{"                   { yy.getLogger().debug('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART'; }
+"{"                   { yy.getLogger().debug('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART'; }
+">"                   { yy.getLogger().debug('Lexc: >'); this.pushState('NODE');return 'NODE_DSTART'; }
+"(["                   { yy.getLogger().debug('Lexa: (['); this.pushState('NODE');return 'NODE_DSTART'; }
+"("                    { yy.getLogger().debug('Lexa: )'); this.pushState('NODE');return 'NODE_DSTART'; }
 "[["                   { this.pushState('NODE');return 'NODE_DSTART'; }
 "[|"                   { this.pushState('NODE');return 'NODE_DSTART'; }
 "[("                   { this.pushState('NODE');return 'NODE_DSTART'; }
@@ -124,20 +124,20 @@ accDescr\s*"{"\s*                                { this.pushState("acc_descr_mul
 "[\\"                   { this.pushState('NODE');return 'NODE_DSTART'; }
 "[/"                   { this.pushState('NODE');return 'NODE_DSTART'; }
 "[\\"                  { this.pushState('NODE');return 'NODE_DSTART'; }
-"["                    { yy.getLogger().info('Lexa: ['); this.pushState('NODE');return 'NODE_DSTART'; }
+"["                    { yy.getLogger().debug('Lexa: ['); this.pushState('NODE');return 'NODE_DSTART'; }
 
 "<["                   { this.pushState('BLOCK_ARROW');yy.getLogger().debug('LEX ARR START');return 'BLOCK_ARROW_START'; }
 
-[^\(\[\n\-\)\{\}\s\<\>:]+     { yy.getLogger().info('Lex: NODE_ID', yytext);return 'NODE_ID'; }
-<<EOF>>                { yy.getLogger().info('Lex: EOF', yytext);return 'EOF'; }
+[^\(\[\n\-\)\{\}\s\<\>:]+     { yy.getLogger().debug('Lex: NODE_ID', yytext);return 'NODE_ID'; }
+<<EOF>>                { yy.getLogger().debug('Lex: EOF', yytext);return 'EOF'; }
 
 // Handling of strings in node
 <BLOCK_ARROW>["][`]           { this.pushState("md_string");}
 <NODE>["][`]           { this.pushState("md_string");}
 <md_string>[^`"]+      { return "NODE_DESCR";}
 <md_string>[`]["]      { this.popState();}
-<NODE>["]              { yy.getLogger().info('Lex: Starting string');this.pushState("string");}
-<BLOCK_ARROW>["]              { yy.getLogger().info('LEX ARR: Starting string');this.pushState("string");}
+<NODE>["]              { yy.getLogger().debug('Lex: Starting string');this.pushState("string");}
+<BLOCK_ARROW>["]              { yy.getLogger().debug('LEX ARR: Starting string');this.pushState("string");}
 <string>[^"]+          { yy.getLogger().debug('LEX: NODE_DESCR:', yytext); return "NODE_DESCR";}
 <string>["]            {yy.getLogger().debug('LEX POPPING');this.popState();}
 
@@ -151,19 +151,19 @@ accDescr\s*"{"\s*                                { this.pushState("acc_descr_mul
 <ARROW_DIR>")"\s*             { yytext=']>';yy.getLogger().debug('Lex (ARROW_DIR end):',yytext);this.popState();this.popState();return "BLOCK_ARROW_END"; }
 
 // Edges
-\s*[xo<]?\-\-+[-xo>]\s*                 { yy.getLogger().info('Lex: LINK', '#'+yytext+'#'); return 'LINK'; }
-\s*[xo<]?\=\=+[=xo>]\s*                 { yy.getLogger().info('Lex: LINK', yytext); return 'LINK'; }
-\s*[xo<]?\-?\.+\-[xo>]?\s*              { yy.getLogger().info('Lex: LINK', yytext); return 'LINK'; }
-\s*\~\~[\~]+\s*                         { yy.getLogger().info('Lex: LINK', yytext); return 'LINK'; }
-\s*[xo<]?\-\-\s*                        { yy.getLogger().info('Lex: START_LINK', yytext);this.pushState("LLABEL");return 'START_LINK'; }
-\s*[xo<]?\=\=\s*                        { yy.getLogger().info('Lex: START_LINK', yytext);this.pushState("LLABEL");return 'START_LINK'; }
-\s*[xo<]?\-\.\s*                        { yy.getLogger().info('Lex: START_LINK', yytext);this.pushState("LLABEL");return 'START_LINK'; }
+\s*[xo<]?\-\-+[-xo>]\s*                 { yy.getLogger().debug('Lex: LINK', '#'+yytext+'#'); return 'LINK'; }
+\s*[xo<]?\=\=+[=xo>]\s*                 { yy.getLogger().debug('Lex: LINK', yytext); return 'LINK'; }
+\s*[xo<]?\-?\.+\-[xo>]?\s*              { yy.getLogger().debug('Lex: LINK', yytext); return 'LINK'; }
+\s*\~\~[\~]+\s*                         { yy.getLogger().debug('Lex: LINK', yytext); return 'LINK'; }
+\s*[xo<]?\-\-\s*                        { yy.getLogger().debug('Lex: START_LINK', yytext);this.pushState("LLABEL");return 'START_LINK'; }
+\s*[xo<]?\=\=\s*                        { yy.getLogger().debug('Lex: START_LINK', yytext);this.pushState("LLABEL");return 'START_LINK'; }
+\s*[xo<]?\-\.\s*                        { yy.getLogger().debug('Lex: START_LINK', yytext);this.pushState("LLABEL");return 'START_LINK'; }
 <LLABEL>["][`]           { this.pushState("md_string");}
-<LLABEL>["]              { yy.getLogger().info('Lex: Starting string');this.pushState("string"); return "LINK_LABEL";}
-<LLABEL>\s*[xo<]?\-\-+[-xo>]\s*                 { this.popState(); yy.getLogger().info('Lex: LINK', '#'+yytext+'#'); return 'LINK'; }
-<LLABEL>\s*[xo<]?\=\=+[=xo>]\s*                 { this.popState(); yy.getLogger().info('Lex: LINK', yytext); return 'LINK'; }
-<LLABEL>\s*[xo<]?\-?\.+\-[xo>]?\s*              { this.popState(); yy.getLogger().info('Lex: LINK', yytext); return 'LINK'; }
-':'\d+                   { yy.getLogger().info('Lex: COLON', yytext); yytext=yytext.slice(1);return 'SIZE'; }
+<LLABEL>["]              { yy.getLogger().debug('Lex: Starting string');this.pushState("string"); return "LINK_LABEL";}
+<LLABEL>\s*[xo<]?\-\-+[-xo>]\s*                 { this.popState(); yy.getLogger().debug('Lex: LINK', '#'+yytext+'#'); return 'LINK'; }
+<LLABEL>\s*[xo<]?\=\=+[=xo>]\s*                 { this.popState(); yy.getLogger().debug('Lex: LINK', yytext); return 'LINK'; }
+<LLABEL>\s*[xo<]?\-?\.+\-[xo>]?\s*              { this.popState(); yy.getLogger().debug('Lex: LINK', yytext); return 'LINK'; }
+':'\d+                   { yy.getLogger().debug('Lex: COLON', yytext); yytext=yytext.slice(1);return 'SIZE'; }
 
 /lex
 
@@ -180,37 +180,37 @@ spaceLines
 
 seperator
   : NL
-  {yy.getLogger().info('Rule: seperator (NL) ');}
+  {yy.getLogger().debug('Rule: seperator (NL) ');}
   | SPACE
-  {yy.getLogger().info('Rule: seperator (Space) ');}
+  {yy.getLogger().debug('Rule: seperator (Space) ');}
   | EOF
-    {yy.getLogger().info('Rule: seperator (EOF) ');}
+    {yy.getLogger().debug('Rule: seperator (EOF) ');}
   ;
 
 start: BLOCK_DIAGRAM_KEY document EOF
-  { yy.getLogger().info("Rule: hierarchy: ", $2); yy.setHierarchy($2); }
+  { yy.getLogger().debug("Rule: hierarchy: ", $2); yy.setHierarchy($2); }
   ;
 
 
 stop
-  : NL {yy.getLogger().info('Stop NL ');}
-  | EOF {yy.getLogger().info('Stop EOF ');}
+  : NL {yy.getLogger().debug('Stop NL ');}
+  | EOF {yy.getLogger().debug('Stop EOF ');}
   // | SPACELINE
-  | stop NL {yy.getLogger().info('Stop NL2 ');}
-  | stop EOF {yy.getLogger().info('Stop EOF2 ');}
+  | stop NL {yy.getLogger().debug('Stop NL2 ');}
+  | stop EOF {yy.getLogger().debug('Stop EOF2 ');}
   ;
 
 //array of statements
 document
-	: statement { yy.getLogger().info("Rule: statement: ", $1); typeof $1.length === 'number'?$$ = $1:$$ = [$1]; }
-	| statement document { yy.getLogger().info("Rule: statement #2: ", $1); $$ = [$1].concat($2); }
+	: statement { yy.getLogger().debug("Rule: statement: ", $1); typeof $1.length === 'number'?$$ = $1:$$ = [$1]; }
+	| statement document { yy.getLogger().debug("Rule: statement #2: ", $1); $$ = [$1].concat($2); }
 	;
 
 link
   : LINK
-  { yy.getLogger().info("Rule: link: ", $1, yytext); $$={edgeTypeStr: $1, label:''}; }
+  { yy.getLogger().debug("Rule: link: ", $1, yytext); $$={edgeTypeStr: $1, label:''}; }
   | START_LINK LINK_LABEL STR LINK
-  { yy.getLogger().info("Rule: LABEL link: ", $1, $3, $4); $$={edgeTypeStr: $4, label:$3}; }
+  { yy.getLogger().debug("Rule: LABEL link: ", $1, $3, $4); $$={edgeTypeStr: $4, label:$3}; }
   ;
 
 statement
@@ -226,7 +226,7 @@ statement
 
 nodeStatement
   : nodeStatement link node {
-    yy.getLogger().info('Rule: (nodeStatement link node) ', $1, $2, $3, ' typestr: ',$2.edgeTypeStr);
+    yy.getLogger().debug('Rule: (nodeStatement link node) ', $1, $2, $3, ' typestr: ',$2.edgeTypeStr);
     const edgeData = yy.edgeStrToEdgeData($2.edgeTypeStr)
     $$ = [
       {id: $1.id, label: $1.label, type:$1.type, directions: $1.directions},
@@ -234,39 +234,39 @@ nodeStatement
       {id: $3.id, label: $3.label, type: yy.typeStr2Type($3.typeStr), directions: $3.directions}
       ];
     }
-  | node SIZE { yy.getLogger().info('Rule: nodeStatement (abc88 node size) ', $1, $2); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1.typeStr), directions: $1.directions, w: parseInt($2,10)}; }
-  | node { yy.getLogger().info('Rule: nodeStatement (node) ', $1); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1.typeStr), directions: $1.directions, w:1}; }
+  | node SIZE { yy.getLogger().debug('Rule: nodeStatement (abc88 node size) ', $1, $2); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1.typeStr), directions: $1.directions, w: parseInt($2,10)}; }
+  | node { yy.getLogger().debug('Rule: nodeStatement (node) ', $1); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1.typeStr), directions: $1.directions, w:1}; }
   ;
 
 
 columnsStatement
-  : COLUMNS { yy.getLogger().info('APA123', this? this:'na'); yy.getLogger().info("COLUMNS: ", $1); $$ = {type: 'column-setting', columns: $1 === 'auto'?-1:parseInt($1) } }
+  : COLUMNS { yy.getLogger().debug('APA123', this? this:'na'); yy.getLogger().debug("COLUMNS: ", $1); $$ = {type: 'column-setting', columns: $1 === 'auto'?-1:parseInt($1) } }
   ;
 
 blockStatement
-  : id-block nodeStatement document end { yy.getLogger().info('Rule: id-block statement : ', $2, $3); const id2 = yy.generateId(); $$ = { ...$2, type:'composite', children: $3 }; }
-  | block document end { yy.getLogger().info('Rule: blockStatement : ', $1, $2, $3); const id = yy.generateId(); $$ = { id, type:'composite', label:'', children: $2 }; }
+  : id-block nodeStatement document end { yy.getLogger().debug('Rule: id-block statement : ', $2, $3); const id2 = yy.generateId(); $$ = { ...$2, type:'composite', children: $3 }; }
+  | block document end { yy.getLogger().debug('Rule: blockStatement : ', $1, $2, $3); const id = yy.generateId(); $$ = { id, type:'composite', label:'', children: $2 }; }
   ;
 
 node
   : NODE_ID
-  { yy.getLogger().info("Rule: node (NODE_ID seperator): ", $1); $$ = { id: $1 }; }
+  { yy.getLogger().debug("Rule: node (NODE_ID seperator): ", $1); $$ = { id: $1 }; }
   | NODE_ID nodeShapeNLabel
   {
-    yy.getLogger().info("Rule: node (NODE_ID nodeShapeNLabel seperator): ", $1, $2);
+    yy.getLogger().debug("Rule: node (NODE_ID nodeShapeNLabel seperator): ", $1, $2);
     $$ = { id: $1, label: $2.label, typeStr: $2.typeStr, directions: $2.directions };
   }
   ;
 
-dirList: DIR { yy.getLogger().info("Rule: dirList: ", $1); $$ = [$1]; }
-  | DIR dirList { yy.getLogger().info("Rule: dirList: ", $1, $2); $$ = [$1].concat($2); }
+dirList: DIR { yy.getLogger().debug("Rule: dirList: ", $1); $$ = [$1]; }
+  | DIR dirList { yy.getLogger().debug("Rule: dirList: ", $1, $2); $$ = [$1].concat($2); }
   ;
 
 nodeShapeNLabel
   :   NODE_DSTART STR NODE_DEND
-	      { yy.getLogger().info("Rule: nodeShapeNLabel: ", $1, $2, $3); $$ = { typeStr: $1 + $3, label: $2 }; }
+	      { yy.getLogger().debug("Rule: nodeShapeNLabel: ", $1, $2, $3); $$ = { typeStr: $1 + $3, label: $2 }; }
 	|    BLOCK_ARROW_START STR dirList BLOCK_ARROW_END
-    	      { yy.getLogger().info("Rule: BLOCK_ARROW nodeShapeNLabel: ", $1, $2, " #3:",$3, $4); $$ = { typeStr: $1 + $4, label: $2, directions: $3}; }
+    	      { yy.getLogger().debug("Rule: BLOCK_ARROW nodeShapeNLabel: ", $1, $2, " #3:",$3, $4); $$ = { typeStr: $1 + $4, label: $2, directions: $3}; }
   ;
 
 
@@ -281,7 +281,7 @@ classDefStatement
 
 cssClassStatement
     : class CLASSENTITY_IDS STYLECLASS {
-        //console.log('apply class: id(s): ',$2, '  style class: ', $3);
+        //log.debug('apply class: id(s): ',$2, '  style class: ', $3);
         $$={ type: 'applyClass', id: $2.trim(), styleClass: $3.trim() };
         }
     ;
