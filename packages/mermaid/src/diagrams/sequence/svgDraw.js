@@ -708,7 +708,7 @@ export const insertArrowHead = function (elem) {
     .attr('markerUnits', 'userSpaceOnUse')
     .attr('markerWidth', 12)
     .attr('markerHeight', 12)
-    .attr('orient', 'auto')
+    .attr('orient', 'auto-start-reverse')
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 10 z'); // this is actual shape for arrowhead
 };
