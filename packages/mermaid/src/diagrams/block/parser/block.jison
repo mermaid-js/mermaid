@@ -234,7 +234,7 @@ nodeStatement
       {id: $3.id, label: $3.label, type: yy.typeStr2Type($3.typeStr), directions: $3.directions}
       ];
     }
-  | node SIZE { yy.getLogger().info('Rule: nodeStatement (abc88 node size) ', $1, $2); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1.typeStr), directions: $1.directions, w: $2}; }
+  | node SIZE { yy.getLogger().info('Rule: nodeStatement (abc88 node size) ', $1, $2); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1.typeStr), directions: $1.directions, w: parseInt($2,10)}; }
   | node { yy.getLogger().info('Rule: nodeStatement (node) ', $1); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1.typeStr), directions: $1.directions, w:1}; }
   ;
 
@@ -244,7 +244,7 @@ columnsStatement
   ;
 
 blockStatement
-  : id-block nodeStatement document end { yy.getLogger().info('Rule: id-block statement : ', $2, $3); const id2 = yy.generateId(); $$ = { ...$2, children: $3 }; }
+  : id-block nodeStatement document end { yy.getLogger().info('Rule: id-block statement : ', $2, $3); const id2 = yy.generateId(); $$ = { ...$2, type:'composite', children: $3 }; }
   | block document end { yy.getLogger().info('Rule: blockStatement : ', $1, $2, $3); const id = yy.generateId(); $$ = { id, type:'composite', label:'', children: $2 }; }
   ;
 

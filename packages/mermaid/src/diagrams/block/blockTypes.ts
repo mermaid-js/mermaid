@@ -59,6 +59,7 @@ export interface Block {
   css?: string;
   styleClass?: string;
   styles?: string[];
+  w?: number;
 }
 
 export interface Link {

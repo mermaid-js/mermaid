@@ -17,7 +17,7 @@
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        /* background:#333; */
+        background: #333;
         font-family: 'Arial';
         /* font-size: 18px !important; */
       }
@@ -33,9 +33,10 @@
       }
       .mermaid svg {
         /* font-size: 18px !important; */
-        background-color: #efefef;
-        background-image: radial-gradient(#fff 51%, transparent 91%),
-          radial-gradient(#fff 51%, transparent 91%);
+        /* background-color: #efefef; */
+        background-color: #333;
+        background-image: radial-gradient(#333 51%, transparent 91%),
+          radial-gradient(#333 51%, transparent 91%);
         background-size: 20px 20px;
         background-position: 0 0, 10px 10px;
         background-repeat: repeat;
@@ -64,14 +65,68 @@
   <body>
     <pre id="diagram" class="mermaid">
 block-beta
-columns 2
-  db(("This is the text "))
-  block
-    A
+columns 3
+  a["A wide one"] b:2 c:2 d
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+  block:e
+      f
   end
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+  columns 3
+  a:3
+  block:e:3
+      f
+  end
+  g
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+  columns 3
+  a:3
+  block:e:3
+      f
+      g
+  end
+  h
+  i
+  j
 
-
-
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+columns 3
+  a b:2
+  block:e:3
+      f
+  end
+  g h i
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+columns 3
+  a b c
+  e:3
+  f g h
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+columns 1
+  db(("DB"))
+  blockArrowId6<["&nbsp;&nbsp;&nbsp;"]>(down)
+  block:ID
+    A
+    B["A wide one in the middle"]
+    C
+  end
+  space
+  D
+  ID --> D
+  C --> D
+  style B fill:#f9F,stroke:#333,stroke-width:4px
     </pre>
     <pre id="diagram" class="mermaid">
 block-beta
@@ -96,7 +151,7 @@ block-beta
       end
       A["A: I am a wide one"]
     </pre>
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 block-beta
     A["square"]
     B("rounded")
@@ -470,7 +525,7 @@ mindmap
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'forest',
+        theme: 'dark',
         startOnLoad: true,
         logLevel: 0,
         flowchart: {

@@ -153,6 +153,7 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
       if (!block.label) {
         if (block.type === 'composite') {
           block.label = '';
+          console.log('abc89 composite', block);
         } else {
           block.label = block.id;
         }
