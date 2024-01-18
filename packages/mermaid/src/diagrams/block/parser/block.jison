@@ -288,7 +288,7 @@ cssClassStatement
 
 styleStatement
     : style STYLE_ENTITY_IDS STYLE_DEFINITION_DATA {
-        $$={ type: 'applyStyles', id: $2.trim(), styles: $3.trim() };
+        $$={ type: 'applyStyles', id: $2.trim(), stylesStr: $3.trim() };
         }
     ;
 

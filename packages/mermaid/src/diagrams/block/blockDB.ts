@@ -136,8 +136,11 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
       continue;
     }
     if (block.type === 'applyStyles') {
-      addStyle2Node(block.id, block?.styles);
-      continue;
+      console.log('applyStyles', block.stylesStr);
+      if (block?.stylesStr) {
+        addStyle2Node(block.id, block?.stylesStr);
+        continue;
+      }
     }
     if (block.type === 'column-setting') {
       parent.columns = block.columns || -1;
@@ -289,7 +292,7 @@ export const generateId = () => {
 
 type ISetHierarchy = (block: Block[]) => void;
 const setHierarchy = (block: Block[]): void => {
-  log.debug('The document from parsing', JSON.stringify(block, null, 2));
+  console.log('The document from parsing', JSON.stringify(block, null, 2));
   rootBlock.children = block;
   populateBlockDatabase(block, rootBlock);
   // log.debug('abc95 The document after popuplation', JSON.stringify(rootBlock, null, 2));

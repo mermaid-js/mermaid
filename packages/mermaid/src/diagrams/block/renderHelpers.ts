@@ -98,7 +98,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
       _shape = 'rect';
   }
 
-  const styles = getStylesFromArray(vertex?.styles || '');
+  const styles = getStylesFromArray(vertex?.styles || []);
   // const styles = getStylesFromArray([]);
 
   // Use vertex id as text in the box if no text is provided by the graph definition
@@ -117,13 +117,6 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     style: styles.style, // + 'fill:#9f9;stroke:#333;stroke-width:4px;',
     id: vertex.id,
     directions: vertex.directions,
-    // link: vertex.link,
-    // linkTarget: vertex.linkTarget,
-    // tooltip: diagObj.db.getTooltip(vertex.id) || '',
-    // domId: diagObj.db.lookUpDomId(vertex.id),
-    // haveCallback: vertex.haveCallback,
-    // width: vertex.type === 'group' ? 500 : undefined,
-    // dir: vertex.dir,
     width: bounds.width,
     height: bounds.height,
     x: bounds.x,

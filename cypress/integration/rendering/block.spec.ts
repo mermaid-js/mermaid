@@ -313,7 +313,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL23: sizing - it should be possieble to make a composite block wider', () => {
+  it('BL23: sizing - it should be possible to make a composite block wider', () => {
     imgSnapshotTest(
       `block-beta
       block:2
@@ -325,13 +325,61 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL23: sizing - it should be possieble to make a composite block wider', () => {
+  it('BL24: block in the middle with space on each side', () => {
     imgSnapshotTest(
       `block-beta
-      block:2
-        A
-      end
-      B
+        columns 3
+        space
+        middle["In the middle"]
+        space
+      `,
+      {}
+    );
+  });
+  it('BL25: space and an edge', () => {
+    imgSnapshotTest(
+      `block-beta
+  columns 5
+    A space B
+    A --x B
+      `,
+      {}
+    );
+  });
+  it('BL26: block sizes for regular blocks', () => {
+    imgSnapshotTest(
+      `block-beta
+  columns 3
+    a["A wide one"] b:2 c:2 d
+      `,
+      {}
+    );
+  });
+  it('BL27: composite block with a set width - f should use the available space', () => {
+    imgSnapshotTest(
+      `block-beta
+  columns 3
+  a:3
+  block:e:3
+      f
+  end
+  g
+      `,
+      {}
+    );
+  });
+  it('BL23: composite block with a set width - f and g should split the available space', () => {
+    imgSnapshotTest(
+      `block-beta
+  columns 3
+  a:3
+  block:e:3
+      f
+      g
+  end
+  h
+  i
+  j
       `,
       {}
     );

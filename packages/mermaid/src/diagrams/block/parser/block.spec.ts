@@ -4,6 +4,7 @@ import db from '../blockDB.js';
 import { cleanupComments } from '../../../diagram-api/comments.js';
 import { prepareTextForParsing } from '../blockUtils.js';
 import { setConfig } from '../../../config.js';
+import getStyles from '../../../../dist/diagrams/pie/styles';
 
 describe('Block diagram', function () {
   describe('when parsing an block diagram graph it should handle > ', function () {
@@ -88,12 +89,34 @@ describe('Block diagram', function () {
       expect(blocks[1].label).toBe('id2');
       expect(blocks[1].type).toBe('na');
     });
-    it('a diagram with multiple nodes with edges', async () => {
+    it('a diagram with multiple nodes with edges abc123', async () => {
       const str = `block-beta
           id1["first"]  -->   id2["second"]
       `;
 
       block.parse(str);
+      const blocks = db.getBlocks();
+      const edges = db.getEdges();
+      expect(blocks.length).toBe(2);
+      expect(edges.length).toBe(1);
+      expect(edges[0].start).toBe('id1');
+      expect(edges[0].end).toBe('id2');
+      expect(edges[0].arrowTypeEnd).toBe('arrow_point');
+    });
+    it('a diagram with multiple nodes with edges abc123', async () => {
+      const str = `block-beta
+          id1["first"]  -- "a label" -->   id2["second"]
+      `;
+
+      block.parse(str);
+      const blocks = db.getBlocks();
+      const edges = db.getEdges();
+      expect(blocks.length).toBe(2);
+      expect(edges.length).toBe(1);
+      expect(edges[0].start).toBe('id1');
+      expect(edges[0].end).toBe('id2');
+      expect(edges[0].arrowTypeEnd).toBe('arrow_point');
+      expect(edges[0].label).toBe('a label');
     });
     it('a diagram with column statements', async () => {
       const str = `block-beta
@@ -103,7 +126,8 @@ describe('Block diagram', function () {
 
       block.parse(str);
       expect(db.getColumns('root')).toBe(2);
-      // Todo: DB check that the we have one block and that the root block has one column
+      const blocks = db.getBlocks();
+      expect(blocks.length).toBe(1);
     });
     it('a diagram withput column statements', async () => {
       const str = `block-beta
@@ -112,7 +136,8 @@ describe('Block diagram', function () {
 
       block.parse(str);
       expect(db.getColumns('root')).toBe(-1);
-      // Todo: DB check that the we have one block and that the root block has one column
+      const blocks = db.getBlocks();
+      expect(blocks.length).toBe(1);
     });
     it('a diagram with auto column statements', async () => {
       const str = `block-beta
@@ -122,7 +147,8 @@ describe('Block diagram', function () {
 
       block.parse(str);
       expect(db.getColumns('root')).toBe(-1);
-      // Todo: DB check that the we have one block and that the root block has one column
+      const blocks = db.getBlocks();
+      expect(blocks.length).toBe(1);
     });
 
     it('blocks next to each other', async () => {
@@ -134,7 +160,9 @@ describe('Block diagram', function () {
 
       block.parse(str);
 
-      // Todo: DB check that the we have two blocks and that the root block has two columns
+      const blocks = db.getBlocks();
+      expect(db.getColumns('root')).toBe(2);
+      expect(blocks.length).toBe(2);
     });
 
     it('blocks on top of each other', async () => {
@@ -146,7 +174,9 @@ describe('Block diagram', function () {
 
       block.parse(str);
 
-      // Todo: DB check that the we have two blocks and that the root block has one column
+      const blocks = db.getBlocks();
+      expect(db.getColumns('root')).toBe(1);
+      expect(blocks.length).toBe(2);
     });
 
     it('compound blocks 2', async () => {
@@ -287,12 +317,13 @@ describe('Block diagram', function () {
       expect(block2.type).toBe('square');
       expect(blockArrow.type).toBe('block_arrow');
       console.log('blockArrow', blockArrow);
+      expect(blockArrow.directions).toContain('right');
     });
-    it.skip('Arrow blocks with multiple points', async () => {
+    it('Arrow blocks with multiple points', async () => {
       const str = `block-beta
         columns 1
         A
-        blockArrow(1,3)
+        blockArrow<["&nbsp;&nbsp;&nbsp;"]>(up, down)
         block
           columns 3
             B
@@ -301,6 +332,16 @@ describe('Block diagram', function () {
         end`;
 
       block.parse(str);
+
+      const blocks = db.getBlocks();
+      expect(blocks.length).toBe(3);
+
+      const blockArrow = blocks[1];
+      expect(blockArrow.type).toBe('block_arrow');
+      console.log('blockArrow', blockArrow);
+      expect(blockArrow.directions).toContain('up');
+      expect(blockArrow.directions).toContain('down');
+      expect(blockArrow.directions).not.toContain('right');
     });
     it('blocks with different widths', async () => {
       const str = `block-beta
@@ -315,7 +356,7 @@ describe('Block diagram', function () {
       expect(blocks.length).toBe(2);
       const one = blocks[0];
       const two = blocks[1];
-      console.log('Obe and Two', one, two);
+      console.log('One and Two', one, two);
       expect(two.w).toBe(2);
     });
     it('empty blocks', async () => {
@@ -323,46 +364,52 @@ describe('Block diagram', function () {
         columns 3
         space
         middle["In the middle"]
+        space
         `;
 
       block.parse(str);
+
+      const blocks = db.getBlocks();
+      expect(blocks.length).toBe(3);
+      const sp1 = blocks[0];
+      const middle = blocks[1];
+      const sp2 = blocks[2];
+      expect(sp1.type).toBe('space');
+      expect(sp2.type).toBe('space');
+      expect(middle.label).toBe('In the middle');
     });
-    it.skip('classDef statements applied to a block', async () => {
+    it('classDef statements applied to a block', async () => {
       const str = `block-beta
         classDef black color:#ffffff, fill:#000000;
 
-        mc["Memcache"]:::black
+        mc["Memcache"]
+        class mc black
         `;
 
       block.parse(str);
+      const blocks = db.getBlocks();
+      expect(blocks.length).toBe(1);
+      const mc = blocks[0];
+      expect(mc.classes).toContain('black');
+      const classes = db.getClasses();
+      console.log(classes);
+      const black = classes.black;
+      expect(black.id).toBe('black');
+      expect(black.styles[0]).toEqual('color:#ffffff');
     });
-    it.skip('classDef statements applied to a block with a width', async () => {
+    it('style statements applied to a block', async () => {
       const str = `block-beta
-        classDef black color:#ffffff, fill:#000000;
-        columns 2
-        mc["Memcache"]:2::black
+columns 1
+    B["A wide one in the middle"]
+  style B fill:#f9F,stroke:#333,stroke-width:4px
         `;
-      const apa = 'apan hopar i träden';
-      block.parse(str);
-    });
-
-    it.skip('classDef statements', async () => {
-      const str = `block-beta
-        classDef black color:#ffffff, fill:#000000;
-
-        block DataServices["Data Services"]
-          columns H
-          block Relational
-            mssql["Microsoft SQL<br/>Server"]
-          end
-          block Tabular
-            columns 3
-            gds["Google Data Store"]:1
-            mc["Memcache"]:2:::black
-          end
-        end`;
 
       block.parse(str);
+      const blocks = db.getBlocks();
+      expect(blocks.length).toBe(1);
+      const B = blocks[0];
+      console.log(B);
+      expect(B.styles).toContain('fill:#f9F');
     });
   });
 });
