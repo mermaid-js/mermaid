@@ -16,6 +16,9 @@ var transformJison = (src) => {
 
 // .vite/jisonPlugin.ts
 var fileRegex = /\.(jison)$/;
+/**
+ *
+ */
 function jison2() {
   return {
     name: 'jison',
@@ -55,6 +58,10 @@ var MERMAID_CONFIG_DIAGRAM_KEYS = [
   'c4',
   'sankey',
 ];
+/**
+ *
+ * @param mermaidConfigSchema
+ */
 function generateDefaults(mermaidConfigSchema) {
   const ajv = new Ajv2019({
     useDefaults: true,
@@ -113,6 +120,9 @@ function generateDefaults(mermaidConfigSchema) {
   }
   return mermaidDefaultConfig;
 }
+/**
+ *
+ */
 function jsonSchemaPlugin() {
   return {
     name: 'json-schema-plugin',

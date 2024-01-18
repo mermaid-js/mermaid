@@ -6,13 +6,49 @@
 
 # Block Diagrams Documentation
 
-## 1. Introduction to Block Diagrams
+## Introduction to Block Diagrams
+
+```mermaid-example
+block-beta
+columns 1
+  db(("DB"))
+  blockArrowId6<["&nbsp;&nbsp;&nbsp;"]>(down)
+  block:ID
+    A
+    B["A wide one in the middle"]
+    C
+  end
+  space
+  D
+  ID --> D
+  C --> D
+  style B fill:#969,stroke:#333,stroke-width:4px
+```
+
+```mermaid
+block-beta
+columns 1
+  db(("DB"))
+  blockArrowId6<["&nbsp;&nbsp;&nbsp;"]>(down)
+  block:ID
+    A
+    B["A wide one in the middle"]
+    C
+  end
+  space
+  D
+  ID --> D
+  C --> D
+  style B fill:#969,stroke:#333,stroke-width:4px
+```
 
 ### Definition and Purpose
 
 Block diagrams are an intuitive and efficient way to represent complex systems, processes, or architectures visually. They are composed of blocks and connectors, where blocks represent the fundamental components or functions, and connectors show the relationship or flow between these components. This method of diagramming is essential in various fields such as engineering, software development, and process management.
 
 The primary purpose of block diagrams is to provide a high-level view of a system, allowing for easy understanding and analysis without delving into the intricate details of each component. This makes them particularly useful for simplifying complex systems and for explaining the overall structure and interaction of components within a system.
+
+Many people use mermaid flowcharts for this purpose. A side-effect of this is that the automatic layout sometimes move shapes to positions that the diagram maker does not want. Block diagrams use a different approach. In this diagram we give the author full control over where the shapes are positioned.
 
 ### General Use Cases
 
@@ -181,12 +217,12 @@ To create a block with round edges, which can be used to represent a softer or m
 
 ```mermaid-example
 block-beta
-    id1(This is the text in the box)
+    id1("This is the text in the box")
 ```
 
 ```mermaid
 block-beta
-    id1(This is the text in the box)
+    id1("This is the text in the box")
 ```
 
 #### Example - Stadium-Shaped Block
@@ -195,12 +231,12 @@ A stadium-shaped block, resembling an elongated circle, can be used for componen
 
 ```mermaid-example
 block-beta
-    id1([This is the text in the box])
+    id1(["This is the text in the box"])
 ```
 
 ```mermaid
 block-beta
-    id1([This is the text in the box])
+    id1(["This is the text in the box"])
 ```
 
 #### Example - Subroutine Shape
@@ -209,12 +245,12 @@ For representing subroutines or contained processes, a block with double vertica
 
 ```mermaid-example
 block-beta
-    id1[[This is the text in the box]]
+    id1[["This is the text in the box"]]
 ```
 
 ```mermaid
 block-beta
-    id1[[This is the text in the box]]
+    id1[["This is the text in the box"]]
 ```
 
 #### Example - Cylindrical Shape
@@ -223,12 +259,12 @@ The cylindrical shape is ideal for representing databases or storage components:
 
 ```mermaid-example
 block-beta
-    id1[(Database)]
+    id1[("Database")]
 ```
 
 ```mermaid
 block-beta
-    id1[(Database)]
+    id1[("Database")]
 ```
 
 #### Example - Circle Shape
@@ -237,12 +273,12 @@ A circle can be used for centralized or pivotal components:
 
 ```mermaid-example
 block-beta
-    id1((This is the text in the circle))
+    id1(("This is the text in the circle"))
 ```
 
 ```mermaid
 block-beta
-    id1((This is the text in the circle))
+    id1(("This is the text in the circle"))
 ```
 
 #### Example - Asymmetric, Rhombus, and Hexagon Shapes
@@ -253,36 +289,36 @@ For decision points, use a rhombus, and for unique or specialized processes, asy
 
 ```mermaid-example
 block-beta
-  id1>This is the text in the box]
+  id1>"This is the text in the box"]
 ```
 
 ```mermaid
 block-beta
-  id1>This is the text in the box]
+  id1>"This is the text in the box"]
 ```
 
 **Rhombus**
 
 ```mermaid-example
 block-beta
-    id1{This is the text in the box}
+    id1{"This is the text in the box"}
 ```
 
 ```mermaid
 block-beta
-    id1{This is the text in the box}
+    id1{"This is the text in the box"}
 ```
 
 **Hexagon**
 
 ```mermaid-example
 block-beta
-    id1{{This is the text in the box}}
+    id1{{"This is the text in the box"}}
 ```
 
 ```mermaid
 block-beta
-    id1{{This is the text in the box}}
+    id1{{"This is the text in the box"}}
 ```
 
 #### Example - Parallelogram and Trapezoid Shapes
@@ -291,18 +327,18 @@ Parallelogram and trapezoid shapes are perfect for inputs/outputs and transition
 
 ```mermaid-example
 flowchart TD
-  id1[/This is the text in the box/]
-  id2[\This is the text in the box\]
-  A[/Christmas\]
-  B[\Go shopping/]
+  id1[/"This is the text in the box"/]
+  id2[\"This is the text in the box"\]
+  A[/"Christmas"\]
+  B[\"Go shopping"/]
 ```
 
 ```mermaid
 flowchart TD
-  id1[/This is the text in the box/]
-  id2[\This is the text in the box\]
-  A[/Christmas\]
-  B[\Go shopping/]
+  id1[/"This is the text in the box"/]
+  id2[\"This is the text in the box"\]
+  A[/"Christmas"\]
+  B[\"Go shopping"/]
 ```
 
 #### Example - Double Circle
@@ -311,12 +347,12 @@ For highlighting critical or high-priority components, a double circle can be ef
 
 ```mermaid-example
 flowchart TD
-    id1(((This is the text in the circle)))
+    id1((("This is the text in the circle")))
 ```
 
 ```mermaid
 flowchart TD
-    id1(((This is the text in the circle)))
+    id1((("This is the text in the circle")))
 ```
 
 ### Block Arrows and Space Blocks
@@ -387,11 +423,13 @@ A simple link with an arrow can be created to show direction or flow from one bl
 
 ```mermaid-example
 block-beta
+  A space B
   A-->B
 ```
 
 ```mermaid
 block-beta
+  A space B
   A-->B
 ```
 
@@ -402,11 +440,13 @@ For connections that are less direct or to represent a different type of relatio
 
 ```mermaid-example
 block-beta
+  A space B
   A --- B
 ```
 
 ```mermaid
 block-beta
+  A space B
   A --- B
 ```
 
@@ -421,12 +461,14 @@ To add text to a link, the syntax includes the text within the link definition:
 
 ```mermaid-example
 block-beta
-  A-- This is the text! ---B
+  A space:2 B
+  A-- "X" -->B
 ```
 
 ```mermaid
 block-beta
-  A-- This is the text! ---B
+  A space:2 B
+  A-- "X" -->B
 ```
 
 This example show how to add descriptive text to the links, enhancing the information conveyed by the diagram.
@@ -440,24 +482,14 @@ A dotted link can be used to represent a weaker or less formal relationship:
 
 ```mermaid-example
 block-beta
+  A space:2 B
   A-.->B
 ```
 
 ```mermaid
 block-beta
+  A space:2 B
   A-.->B
-```
-
-For a more pronounced connection, a thick link can be used:
-
-```mermaid-example
-block-beta
-  A==>B
-```
-
-```mermaid
-block-beta
-  A==>B
 ```
 
 Example - Edges and Styles:
@@ -476,7 +508,7 @@ columns 1
   D
   ID --> D
   C --> D
-  style B fill:#f9F,stroke:#333,stroke-width:4px
+  style B fill:#939,stroke:#333,stroke-width:4px
 ```
 
 ```mermaid
@@ -493,7 +525,7 @@ columns 1
   D
   ID --> D
   C --> D
-  style B fill:#f9F,stroke:#333,stroke-width:4px
+  style B fill:#939,stroke:#333,stroke-width:4px
 ```
 
 ## 6. Styling and Customization
@@ -510,15 +542,17 @@ To apply custom styles to a block, you can use the `style` keyword followed by t
 
 ```mermaid-example
 block-beta
-  id1(Start)-->id2(Stop)
-  style id1 fill:#f9f,stroke:#333,stroke-width:4px
+  id1 space id2
+  id1("Start")-->id2("Stop")
+  style id1 fill:#636,stroke:#333,stroke-width:4px
   style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 
 ```mermaid
 block-beta
-  id1(Start)-->id2(Stop)
-  style id1 fill:#f9f,stroke:#333,stroke-width:4px
+  id1 space id2
+  id1("Start")-->id2("Stop")
+  style id1 fill:#636,stroke:#333,stroke-width:4px
   style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 
@@ -540,24 +574,28 @@ Illustrating a simple software system architecture with interconnected component
 
 ```mermaid-example
 block-beta
-  columns 2
-  Frontend Backend
-  Frontend-->Backend
-  Database[(Database)]
-  Backend-->Database
-  class Frontend,Backend fill:#f96,stroke:#333;
-  class Database fill:#9f9,stroke:#333;
+  columns 3
+  Frontend blockArrowId6<["&nbsp;&nbsp;"]>(right) Backend
+  space:2 down<["&nbsp;&nbsp;"]>(down)
+  Disk left<["&nbsp;&nbsp;"]>(left) Database[("Database")]
+
+  classDef front fill:#696,stroke:#333;
+  classDef back fill:#969,stroke:#333;
+  class Frontend front
+  class Backend,Database back
 ```
 
 ```mermaid
 block-beta
-  columns 2
-  Frontend Backend
-  Frontend-->Backend
-  Database[(Database)]
-  Backend-->Database
-  class Frontend,Backend fill:#f96,stroke:#333;
-  class Database fill:#9f9,stroke:#333;
+  columns 3
+  Frontend blockArrowId6<["&nbsp;&nbsp;"]>(right) Backend
+  space:2 down<["&nbsp;&nbsp;"]>(down)
+  Disk left<["&nbsp;&nbsp;"]>(left) Database[("Database")]
+
+  classDef front fill:#696,stroke:#333;
+  classDef back fill:#969,stroke:#333;
+  class Frontend front
+  class Backend,Database back
 ```
 
 This example shows a basic architecture with a frontend, backend, and database. The blocks are styled to differentiate between types of components.
@@ -568,41 +606,35 @@ Representing a business process flow with decision points and multiple stages:
 
 ```mermaid-example
 block-beta
-  Start{Start}
-  Decision{Make Decision}
-  Process1[Process A]
-  Process2[Process B]
-  End((End))
-  Start --> Decision
-  Decision -- Yes --> Process1
-  Decision -- No --> Process2
-  Process1 --> End
-  Process2 --> End
-  style Start fill:#f9f;
-  style End fill:#bbf;
+  columns 3
+  Start(("Start")) space:2
+  down<["&nbsp;&nbsp;"]>(down) space:2
+  Decision{{"Make Decision"}} right<["Yes"]>(right) Process1["Process A"]
+  downAgain<["No"]>(down) space r3<["Done"]>(down)
+  Process2["Process B"] r2<["Done"]>(right) End(("End"))
+
+  style Start fill:#969;
+  style End fill:#696;
 
 ```
 
 ```mermaid
 block-beta
-  Start{Start}
-  Decision{Make Decision}
-  Process1[Process A]
-  Process2[Process B]
-  End((End))
-  Start --> Decision
-  Decision -- Yes --> Process1
-  Decision -- No --> Process2
-  Process1 --> End
-  Process2 --> End
-  style Start fill:#f9f;
-  style End fill:#bbf;
+  columns 3
+  Start(("Start")) space:2
+  down<["&nbsp;&nbsp;"]>(down) space:2
+  Decision{{"Make Decision"}} right<["Yes"]>(right) Process1["Process A"]
+  downAgain<["No"]>(down) space r3<["Done"]>(down)
+  Process2["Process B"] r2<["Done"]>(right) End(("End"))
+
+  style Start fill:#969;
+  style End fill:#696;
 
 ```
 
 This diagram depicts a simple decision-making process with two possible paths leading to an endpoint, demonstrating the use of different shapes and directional arrows.
 
-### Real works Application Scenarios
+### Real world Scenarios
 
 Block diagrams can be employed in a variety of real-world scenarios. Here are a few examples:
 
@@ -613,22 +645,6 @@ Block diagrams can be employed in a variety of real-world scenarios. Here are a 
 These practical examples and scenarios underscore the utility of Mermaid block diagrams in simplifying and effectively communicating complex information across various domains.
 
 The next section, 'Troubleshooting and Common Issues', will provide insights into resolving common challenges encountered when working with Mermaid block diagrams, ensuring a smooth diagramming experience.
-
-```mermaid-example
-
-```
-
-```mermaid
-
-```
-
-```mermaid-example
-
-```
-
-```mermaid
-
-```
 
 ## 8. Troubleshooting and Common Issues
 
@@ -646,15 +662,17 @@ A common mistake is incorrect linking syntax, which can lead to unexpected resul
       A - B
 
 **Correction**:
-Ensure that links between blocks are correctly specified with arrows (--> or ---) to define the direction and type of connection:
+Ensure that links between blocks are correctly specified with arrows (--> or ---) to define the direction and type of connection. Also rememeber that one of the fundaments for block diagram is to give the author full control of where the boxes are positioned so in the example you need to add a space between the boxes:
 
 ```mermaid-example
 block-beta
+  A space B
   A --> B
 ```
 
 ```mermaid
 block-beta
+  A space B
   A --> B
 ```
 
@@ -665,13 +683,13 @@ Applying styles in the wrong context or with incorrect syntax can lead to blocks
 ```mermaid-example
   block-beta
     A
-    style A fill#f9f;
+    style A fill#969;
 ```
 
 ```mermaid
   block-beta
     A
-    style A fill#f9f;
+    style A fill#969;
 ```
 
 **Correction:**
@@ -680,14 +698,14 @@ Correct the syntax by ensuring proper separation of style properties with commas
 ```mermaid-example
 block-beta
   A
-  style A fill:#f9f,stroke:#333;
+  style A fill:#969,stroke:#333;
 
 ```
 
 ```mermaid
 block-beta
   A
-  style A fill:#f9f,stroke:#333;
+  style A fill:#969,stroke:#333;
 
 ```
 

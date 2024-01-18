@@ -27,7 +27,10 @@ export const setConf = function (cnf) {
  * @param element
  * @param graph
  * @param layout
+ * @param vert
  * @param elem
+ * @param g
+ * @param id
  * @param conf
  */
 async function swimlaneRender(layout, vert, elem, g, id, conf) {
