@@ -1,10 +1,10 @@
-// @ts-ignore: TODO Fix ts errors
+// @ts-ignore: JISON doesn't support types
 import flowParser from './parser/flow.jison';
 import flowDb from './flowDb.js';
 import flowRenderer from './flowRenderer.js';
 import flowRendererV2 from './flowRenderer-v2.js';
 import flowStyles from './styles.js';
-import { MermaidConfig } from '../../config.type.js';
+import type { MermaidConfig } from '../../config.type.js';
 
 export const diagram = {
   parser: flowParser,

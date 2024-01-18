@@ -58,7 +58,7 @@ sequenceDiagram
     J->>A: Great!
 ```
 
-### Actor Creation and Destruction
+### Actor Creation and Destruction (v10.3.0+)
 
 It is possible to create and destroy actors by messages. To do so, add a create or destroy directive before the message.
 
@@ -82,6 +82,14 @@ sequenceDiagram
     destroy Bob
     Bob->>Alice: I agree
 ```
+
+#### Unfixable actor/participant creation/deletion error
+
+If an error of the following type occurs when creating or deleting an actor/participant:
+
+> The destroyed participant **participant-name** does not have an associated destroying message after its declaration. Please check the sequence diagram.
+
+And fixing diagram code does not get rid of this error and rendering of all other diagrams results in the same error, then you need to update the mermaid version to (v10.7.0+).
 
 ### Grouping / Box
 
@@ -121,7 +129,7 @@ end
     end
     A->>J: Hello John, how are you?
     J->>A: Great!
-    A->>B: Hello Bob, how is Charly ?
+    A->>B: Hello Bob, how is Charly?
     B->>C: Hello Charly, how are you?
 ```
 

@@ -536,21 +536,26 @@ mindmap
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
+      // mermaid.initialize({
+      //   // theme: 'forest',
+      //   startOnLoad: true,
+      //   logLevel: 0,
+      //   flowchart: {
+      //     // defaultRenderer: 'elk',
+      //     useMaxWidth: false,
+      //     // htmlLabels: false,
+      //     htmlLabels: true,
+      //   },
+      //   // htmlLabels: false,
+      //   gantt: {
+      //     useMaxWidth: false,
+      //   },
+      //   useMaxWidth: false,
+      // });
       mermaid.initialize({
         theme: 'dark',
         startOnLoad: true,
         logLevel: 0,
-        flowchart: {
-          // defaultRenderer: 'elk',
-          useMaxWidth: false,
-          // htmlLabels: false,
-          htmlLabels: true,
-        },
-        // htmlLabels: false,
-        gantt: {
-          useMaxWidth: false,
-        },
-        useMaxWidth: false,
       });
       function callback() {
         alert('It worked');

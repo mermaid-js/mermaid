@@ -6,6 +6,84 @@
 
 # Blog
 
+## [Introducing Mermaid Chart’s JetBrains IDE Extension](https://www.mermaidchart.com/blog/posts/introducing-mermaid-charts-jetbrains-ide-extension/)
+
+20 December 2023 · 5 mins
+
+Diagrams are essential for documenting your code.
+
+## [Mermaid Chart Releases New Visual Editor For Flowcharts](https://www.mermaidchart.com/blog/posts/mermaid-chart-releases-new-visual-editor-for-flowcharts/)
+
+14 December 2023 · 5 mins
+
+Mermaid Chart introduces a new Visual Editor for flowcharts, enabling users of all skill levels to create diagrams easily and efficiently, with both GUI and code-based editing options.
+
+## [7 best practices (+ examples) for good developer documentation](https://www.mermaidchart.com/blog/posts/7-best-practices-for-good-documentation/)
+
+4 December 2023 · 11 min
+
+Essential strategies for crafting grate developer documentation, with practical examples and insights from leading tech companies.
+
+## [5 Reasons You Should Be Using Mermaid Chart As Your Diagram Generator](https://www.mermaidchart.com/blog/posts/5-reasons-you-should-be-using-mermaid-chart-as-your-diagram-generator/)
+
+14 November 2023 · 5 mins
+
+Mermaid Chart, a user-friendly, code-based diagram generator with AI integrations, templates, collaborative tools, and plugins for developers, streamlines the process of creating and sharing diagrams, enhancing both creativity and collaboration.
+
+## [How to Use Mermaid Chart as an AI Diagram Generator](https://www.mermaidchart.com/blog/posts/how-to-use-mermaid-chart-as-an-ai-diagram-generator/)
+
+1 November 2023 · 5 mins
+
+Would an AI diagram generator make your life easier?
+
+## [Diagrams, Made Even Easier: Introducing “Code Snippets” in the Mermaid Chart Editor](https://www.mermaidchart.com/blog/posts/easier-diagram-editing-with-code-snippets/)
+
+12 October 2023 · 4 mins
+
+Mermaid Chart introduces Code Snippets in its editor, streamlining the diagramming process for developers and professionals.
+
+## [How to Make a Git Graph with Mermaid Chart](https://www.mermaidchart.com/blog/posts/how-to-make-a-git-graph-with-mermaid-chart/)
+
+22 September 2023 · 7 mins
+
+A git graph is one of the more useful forms of diagrams for developers and DevOps professionals.
+
+## [Present flow data using Sankey diagrams in Mermaid, thanks to Nikolay Rozhkov](https://www.mermaidchart.com/blog/posts/present-flow-data-using-sankey-diagrams/)
+
+8 September 2023 · 4 mins
+
+Sankey diagrams are a powerful tool for visualizing flow data.
+
+## [Special cases broke Microsoft Zune and can ruin your code base too](https://www.mermaidchart.com/blog/posts/special-cases-broke-microsoft-zune-and-can-ruin-your-code-base-too/)
+
+23 August 2023 · 15 mins
+
+Read about the pitfalls of special cases in programming, illustrating how they can lead to complexity, diminish readability, and create maintenance challenges.
+
+## [New AI chatbot now available on Mermaid Chart to simplify text-based diagram creation](https://www.mermaidchart.com/blog/posts/ai-chatbot-now-available-on-mermaid-chart-to-simplify-text-based-diagram-creation/)
+
+14 August 2023 · 4 mins
+
+Introducing Mermaid Chart’s new AI chatbot, a diagramming assistant that simplifies text-based diagram creation for everyone, from developers to educators, offering features to start, edit, and fix diagrams, and embodying our vision to make diagramming accessible, user-friendly, and fun.
+
+## [Believe It or Not, You Still Need an Online UML Diagram Tool](https://www.mermaidchart.com/blog/posts/uml-diagram-tool/)
+
+14 August 2023 · 8 mins
+
+A UML diagram tool helps developers and other professionals quickly create and share UML diagrams that communicate information about complex software systems.
+
+## [From Chaos to Clarity: Exploring Mind Maps with MermaidJS](https://www.mermaidchart.com/blog/posts/from-chaos-to-clarity-exploring-mind-maps-with-mermaidjs)
+
+24 July 2023 · 4 mins
+
+Introducing the concept of mind mapping as a tool for organizing complex information, and highlights Mermaid as a user-friendly software that simplifies the creation and editing of mind maps for applications in IT solution design, business decision-making, and knowledge organization.
+
+## [Mermaid Chart Announces Visual Studio Code Plugin to Simplify Development Workflows](https://www.mermaidchart.com/blog/posts/mermaid-chart-announces-visual-studio-code-plugin)
+
+17 July 2023 · 3 mins
+
+New Integration Enhances Workflows By Enabling Developers To Reference And Edit Diagrams Within Visual Studio Code.
+
 ## [Mermaid Chart’s ChatGPT Plugin Combines Generative AI and Smart Diagramming For Users](https://www.mermaidchart.com/blog/posts/mermaid-chart-chatgpt-plugin-combines-generative-ai-and-smart-diagramming)
 
 29 June 2023 · 4 mins

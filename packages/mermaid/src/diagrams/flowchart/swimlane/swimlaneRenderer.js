@@ -12,13 +12,7 @@ import { setupGraphViewbox } from '../../../setupGraphViewbox.js';
 import common, { evaluate } from '../../common/common.js';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
 import { insertEdge, positionEdgeLabel } from '../../../dagre-wrapper/edges.js';
-import {
-  clear as clearGraphlib,
-  clusterDb,
-  adjustClustersAndEdges,
-  findNonClusterChild,
-  sortNodesByHierarchy,
-} from '../../../dagre-wrapper/mermaid-graphlib.js';
+import { clear as clearGraphlib, clusterDb } from '../../../dagre-wrapper/mermaid-graphlib.js';
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -49,7 +43,7 @@ async function swimlaneRender(layout, vert, elem, g, id, conf) {
   for (const node of nodes) {
     const nodeFromLayout = layout.graph.node(node);
     const vertex = vert[node];
-    //Initialise the node
+    //Initialize the node
     /**
      * Variable for storing the classes for the vertex
      *
@@ -82,20 +76,19 @@ async function swimlaneRender(layout, vert, elem, g, id, conf) {
         vertexNode = addHtmlLabel(elem, node).node();
         vertexNode.parentNode.removeChild(vertexNode);
       } else {
-        const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
-        svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
-
-        const rows = vertexText.split(common.lineBreakRegex);
-
-        for (const row of rows) {
-          const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-          tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
-          tspan.setAttribute('dy', '1em');
-          tspan.setAttribute('x', '1');
-          tspan.textContent = row;
-          svgLabel.appendChild(tspan);
-        }
-        vertexNode = svgLabel;
+        // doc is undefined ???
+        // const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
+        // svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
+        // const rows = vertexText.split(common.lineBreakRegex);
+        // for (const row of rows) {
+        //   const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+        //   tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
+        //   tspan.setAttribute('dy', '1em');
+        //   tspan.setAttribute('x', '1');
+        //   tspan.textContent = row;
+        //   svgLabel.appendChild(tspan);
+        // }
+        // vertexNode = svgLabel;
       }
     }
 
@@ -274,10 +267,10 @@ export const draw = async function (text, id, _version, diagObj) {
 
   // Run the renderer. This is what draws the final graph.
   // const element = root.select('#' + id + ' g');
-  console.log('diagObj', diagObj);
-  console.log('subGraphs', diagObj.db.getSubGraphs());
+  // console.log('diagObj', diagObj);
+  // console.log('subGraphs', diagObj.db.getSubGraphs());
   const layout = swimlaneLayout(g, diagObj);
-  console.log('custom layout', layout);
+  // console.log('custom layout', layout);
 
   // draw lanes as vertical lines
   const lanesElements = svg.insert('g').attr('class', 'lanes');
@@ -370,16 +363,16 @@ export const draw = async function (text, id, _version, diagObj) {
     //get start node x, y coordinates
     const sourceNode = layout.graph.node(e.v);
     //get end node x, y coordinates
-    sourceNode.x = sourceNode.x;
-    sourceNode.y = sourceNode.y;
+    // sourceNode.x = sourceNode.x;
+    // sourceNode.y = sourceNode.y;
 
     const targetNode = layout.graph.node(e.w);
-    targetNode.x = targetNode.x;
-    targetNode.y = targetNode.y;
+    // targetNode.x = targetNode.x;
+    // targetNode.y = targetNode.y;
 
-    edge.points = [];
-    edge.points.push({ x: sourceNode.x, y: sourceNode.y / 2 });
-    edge.points.push({ x: targetNode.x, y: targetNode.y / 2 });
+    // edge.points = [];
+    // edge.points.push({ x: sourceNode.x, y: sourceNode.y / 2 });
+    // edge.points.push({ x: targetNode.x, y: targetNode.y / 2 });
 
     const paths = insertEdge(edgePaths, e, edge, clusterDb, 'flowchart', g);
     //positionEdgeLabel(edge, paths);

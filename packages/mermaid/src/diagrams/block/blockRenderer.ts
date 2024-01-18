@@ -1,4 +1,4 @@
-import { Diagram } from '../../Diagram.js';
+import type { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
 import { calculateBlockSizes, insertBlocks, insertEdges } from './renderHelpers.js';
 import { layout } from './layout.js';
@@ -11,7 +11,7 @@ import {
 } from 'd3';
 import { log } from '../../logger.js';
 
-import { BlockDB } from './blockDB.js';
+import type { BlockDB } from './blockDB.js';
 import type { Block } from './blockTypes.js';
 
 // import { diagram as BlockDiagram } from './blockDiagram.js';
@@ -20,9 +20,9 @@ import { configureSvgSize } from '../../setupGraphViewbox.js';
 /**
  * Returns the all the styles from classDef statements in the graph definition.
  *
- * @param text
- * @param diagObj
- * @returns {object} ClassDef styles
+ * @param text - The text with the classes
+ * @param diagObj - The diagram object
+ * @returns ClassDef - The styles
  */
 export const getClasses = function (text: any, diagObj: any) {
   log.debug('Extracting classes', diagObj.db.getClasses());

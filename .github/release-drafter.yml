@@ -1,19 +1,30 @@
 name-template: '$NEXT_PATCH_VERSION'
 tag-template: '$NEXT_PATCH_VERSION'
 categories:
+  - title: '🚨 **Breaking Changes**'
+    labels:
+      - 'Breaking Change'
   - title: '🚀 Features'
     labels:
       - 'Type: Enhancement'
+      - 'feature' # deprecated, new PRs shouldn't have this
   - title: '🐛 Bug Fixes'
     labels:
       - 'Type: Bug / Error'
+      - 'fix' # deprecated, new PRs shouldn't have this
   - title: '🧰 Maintenance'
-    label: 'Type: Other'
+    labels:
+      - 'Type: Other'
+      - 'chore' # deprecated, new PRs shouldn't have this
+  - title: '⚡️ Performance'
+    labels:
+      - 'Type: Performance'
+  - title: '📚 Documentation'
+    labels:
+      - 'Area: Documentation'
 change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
 sort-by: title
 sort-direction: ascending
-branches:
-  - develop
 exclude-labels:
   - 'Skip changelog'
 no-changes-template: 'This release contains minor changes and bugfixes.'

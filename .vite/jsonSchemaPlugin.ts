@@ -18,12 +18,14 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'er',
   'pie',
   'quadrantChart',
+  'xyChart',
   'requirement',
   'mindmap',
   'timeline',
   'gitGraph',
   'c4',
   'sankey',
+  'block',
 ] as const;
 
 /**

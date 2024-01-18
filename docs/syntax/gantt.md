@@ -241,7 +241,7 @@ The following formatting strings are supported:
 
 More info in: <https://github.com/d3/d3-time-format/tree/v4.0.0#locale_format>
 
-### Axis ticks
+### Axis ticks (v10.3.0+)
 
 The default output ticks are auto. You can custom your `tickInterval`, like `1day` or `1week`.
 
@@ -252,7 +252,7 @@ tickInterval 1day
 The pattern is:
 
 ```javascript
-/^([1-9][0-9]*)(minute|hour|day|week|month)$/;
+/^([1-9][0-9]*)(millisecond|second|minute|hour|day|week|month)$/;
 ```
 
 More info in: <https://github.com/d3/d3-time#interval_every>
@@ -270,6 +270,8 @@ gantt
   tickInterval 1week
   weekday monday
 ```
+
+> **Warning** > `millisecond` and `second` support was added in vMERMAID_RELEASE_VERSION
 
 ## Output in compact mode
 
@@ -418,11 +420,21 @@ mermaid.ganttConfig can be set to a JSON string with config parameters or the co
 
 ```javascript
 mermaid.ganttConfig = {
-  titleTopMargin: 25,
-  barHeight: 20,
-  barGap: 4,
-  topPadding: 75,
-  sidePadding: 75,
+  titleTopMargin: 25, // Margin top for the text over the diagram
+  barHeight: 20, // The height of the bars in the graph
+  barGap: 4, // The margin between the different activities in the gantt diagram
+  topPadding: 75, // Margin between title and gantt diagram and between axis and gantt diagram.
+  rightPadding: 75, // The space allocated for the section name to the right of the activities
+  leftPadding: 75, // The space allocated for the section name to the left of the activities
+  gridLineStartPadding: 10, // Vertical starting position of the grid lines
+  fontSize: 12, // Font size
+  sectionFontSize: 24, // Font size for sections
+  numberSectionStyles: 1, // The number of alternating section styles
+  axisFormat: '%d/%m', // Date/time format of the axis
+  tickInterval: '1 week', // Axis ticks
+  topAxis: true, // When this flag is set, date labels will be added to the top of the chart
+  displayMode: 'compact', // Turns compact mode on
+  weekday: 'sunday', // On which day a week-based interval should start
 };
 ```
 

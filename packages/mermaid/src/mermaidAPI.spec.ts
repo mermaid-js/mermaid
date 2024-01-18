@@ -34,12 +34,10 @@ vi.mock('./diagrams/state/stateRenderer-v2.js');
 // -------------------------------------
 
 import mermaid from './mermaid.js';
-import { MermaidConfig } from './config.type.js';
+import type { MermaidConfig } from './config.type.js';
 
 import mermaidAPI, { removeExistingElements } from './mermaidAPI.js';
 import {
-  encodeEntities,
-  decodeEntities,
   createCssStyles,
   createUserStyles,
   appendDivSvgG,
@@ -68,6 +66,8 @@ vi.mock('stylis', () => {
   };
 });
 import { compile, serialize } from 'stylis';
+import { decodeEntities, encodeEntities } from './utils.js';
+import { Diagram } from './Diagram.js';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
@@ -287,15 +287,15 @@ describe('mermaidAPI', () => {
     };
 
     it('gets the cssStyles from the theme', () => {
-      const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', null);
+      const styles = createCssStyles(mocked_config_with_htmlLabels, null);
       expect(styles).toMatch(/^\ndefault(.*)/);
     });
     it('gets the fontFamily from the config', () => {
-      const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', {});
+      const styles = createCssStyles(mocked_config_with_htmlLabels, {});
       expect(styles).toMatch(/(.*)\n:root { --mermaid-font-family: serif(.*)/);
     });
     it('gets the alt fontFamily from the config', () => {
-      const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', undefined);
+      const styles = createCssStyles(mocked_config_with_htmlLabels, undefined);
       expect(styles).toMatch(/(.*)\n:root { --mermaid-alt-font-family: sans-serif(.*)/);
     });
 
@@ -306,8 +306,6 @@ describe('mermaidAPI', () => {
       const classDefs = { classDef1, classDef2, classDef3 };
 
       describe('the graph supports classDefs', () => {
-        const graphType = 'flowchart-v2';
-
         const REGEXP_SPECIALS = ['^', '$', '?', '(', '{', '[', '.', '*', '!'];
 
         // prefix any special RegExp characters in the given string with a \ so we can use the literal character in a RegExp
@@ -373,7 +371,7 @@ describe('mermaidAPI', () => {
               // @todo TODO Can't figure out how to spy on the cssImportantStyles method.
               //   That would be a much better approach than manually checking the result
 
-              const styles = createCssStyles(mocked_config, graphType, classDefs);
+              const styles = createCssStyles(mocked_config, classDefs);
               htmlElements.forEach((htmlElement) => {
                 expect_styles_matchesHtmlElements(styles, htmlElement);
               });
@@ -411,7 +409,7 @@ describe('mermaidAPI', () => {
             it('creates CSS styles for every style and textStyle in every classDef', () => {
               // TODO Can't figure out how to spy on the cssImportantStyles method. That would be a much better approach than manually checking the result.
 
-              const styles = createCssStyles(mocked_config_no_htmlLabels, graphType, classDefs);
+              const styles = createCssStyles(mocked_config_no_htmlLabels, classDefs);
               htmlElements.forEach((htmlElement) => {
                 expect_styles_matchesHtmlElements(styles, htmlElement);
               });
@@ -745,6 +743,18 @@ describe('mermaidAPI', () => {
           });
         });
       });
+    });
+  });
+
+  describe('getDiagramFromText', () => {
+    it('should clean up comments when present in diagram definition', async () => {
+      const diagram = await mermaidAPI.getDiagramFromText(
+        `flowchart LR
+      %% This is a comment A -- text --> B{node}
+      A -- text --> B -- text2 --> C`
+      );
+      expect(diagram).toBeInstanceOf(Diagram);
+      expect(diagram.type).toBe('flowchart-v2');
     });
   });
 });

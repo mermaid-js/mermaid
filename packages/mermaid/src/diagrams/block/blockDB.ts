@@ -11,7 +11,7 @@ import {
   // setDiagramTitle,
   // getDiagramTitle,
   clear as commonClear,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 import { log } from '../../logger.js';
 import clone from 'lodash-es/clone.js';
 

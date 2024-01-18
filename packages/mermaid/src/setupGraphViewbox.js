@@ -35,7 +35,7 @@ export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
 /**
  * Applies attributes from `calculateSvgSizeAttrs`
  *
- * @param {SVGSVGElement} svgElem The SVG Element to configure
+ * @param {import('./diagram-api/types.js').SVG} svgElem The SVG Element to configure
  * @param {number} height The height of the SVG
  * @param {number} width The width of the SVG
  * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
@@ -44,6 +44,8 @@ export const configureSvgSize = function (svgElem, height, width, useMaxWidth) {
   const attrs = calculateSvgSizeAttrs(height, width, useMaxWidth);
   d3Attrs(svgElem, attrs);
 };
+
+// TODO v11: Remove the graph parameter. It is not used.
 export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth) {
   const svgBounds = svgElem.node().getBBox();
   const sWidth = svgBounds.width;
@@ -55,26 +57,13 @@ export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth)
   let height = 0;
   log.info(`Graph bounds: ${width}x${height}`, graph);
 
-  // let tx = 0;
-  // let ty = 0;
-  // if (sWidth > width) {
-  //   tx = (sWidth - width) / 2 + padding;
   width = sWidth + padding * 2;
-  // } else {
-  //   if (Math.abs(sWidth - width) >= 2 * padding + 1) {
-  //     width = width - padding;
-  //   }
-  // }
-  // if (sHeight > height) {
-  //   ty = (sHeight - height) / 2 + padding;
   height = sHeight + padding * 2;
-  // }
 
   log.info(`Calculated bounds: ${width}x${height}`);
   configureSvgSize(svgElem, height, width, useMaxWidth);
 
   // Ensure the viewBox includes the whole svgBounds area with extra space for padding
-  // const vBox = `0 0 ${width} ${height}`;
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${
     svgBounds.width + 2 * padding
   } ${svgBounds.height + 2 * padding}`;

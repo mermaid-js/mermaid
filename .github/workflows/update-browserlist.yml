@@ -8,7 +8,7 @@ jobs:
   update-browser-list:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: npx browserslist@latest --update-db
       - name: Commit changes
         uses: EndBug/add-and-commit@v9

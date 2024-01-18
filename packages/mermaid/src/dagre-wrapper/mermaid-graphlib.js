@@ -231,12 +231,12 @@ export const adjustClustersAndEdges = (graph, depth) => {
     if (children.length > 0) {
       log.debug('Cluster identified', id, descendants);
       edges.forEach((edge) => {
-        // log.debug('Edge, decendants: ', edge, decendants[id]);
+        // log.debug('Edge, descendants: ', edge, descendants[id]);
 
         // Check if any edge leaves the cluster (not the actual cluster, that's a link from the box)
         if (edge.v !== id && edge.w !== id) {
           // Any edge where either the one of the nodes is descending to the cluster but not the other
-          // if (decendants[id].indexOf(edge.v) < 0 && decendants[id].indexOf(edge.w) < 0) {
+          // if (descendants[id].indexOf(edge.v) < 0 && descendants[id].indexOf(edge.w) < 0) {
 
           const d1 = isDescendant(edge.v, id);
           const d2 = isDescendant(edge.w, id);
@@ -291,8 +291,8 @@ export const adjustClustersAndEdges = (graph, depth) => {
         shape: 'labelRect',
         style: '',
       });
-      const edge1 = JSON.parse(JSON.stringify(edge));
-      const edge2 = JSON.parse(JSON.stringify(edge));
+      const edge1 = structuredClone(edge);
+      const edge2 = structuredClone(edge);
       edge1.label = '';
       edge1.arrowTypeEnd = 'none';
       edge2.label = '';

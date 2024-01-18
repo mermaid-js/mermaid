@@ -1,4 +1,4 @@
-import { BlockDB } from './blockDB.js';
+import type { BlockDB } from './blockDB.js';
 import type { Block } from './blockTypes.js';
 import { log } from '../../logger.js';
 const padding = 8;

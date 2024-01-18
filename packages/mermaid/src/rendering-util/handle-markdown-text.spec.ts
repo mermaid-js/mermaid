@@ -152,9 +152,8 @@ test('markdownToLines - Only italic formatting', () => {
 });
 
 it('markdownToLines - Mixed formatting', () => {
-  const input = `*Italic* and **bold** formatting`;
-
-  const expectedOutput = [
+  let input = `*Italic* and **bold** formatting`;
+  let expected = [
     [
       { content: 'Italic', type: 'emphasis' },
       { content: 'and', type: 'normal' },
@@ -162,9 +161,21 @@ it('markdownToLines - Mixed formatting', () => {
       { content: 'formatting', type: 'normal' },
     ],
   ];
+  expect(markdownToLines(input)).toEqual(expected);
 
-  const output = markdownToLines(input);
-  expect(output).toEqual(expectedOutput);
+  input = `*Italic with space* and **bold ws** formatting`;
+  expected = [
+    [
+      { content: 'Italic', type: 'emphasis' },
+      { content: 'with', type: 'emphasis' },
+      { content: 'space', type: 'emphasis' },
+      { content: 'and', type: 'normal' },
+      { content: 'bold', type: 'strong' },
+      { content: 'ws', type: 'strong' },
+      { content: 'formatting', type: 'normal' },
+    ],
+  ];
+  expect(markdownToLines(input)).toEqual(expected);
 });
 
 it('markdownToLines - Mixed formatting', () => {

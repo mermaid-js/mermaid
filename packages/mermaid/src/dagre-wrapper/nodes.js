@@ -1,16 +1,32 @@
 import { select } from 'd3';
 import { log } from '../logger.js';
 import { labelHelper, updateNodeBounds, insertPolygonShape } from './shapes/util.js';
-import { getConfig } from '../config.js';
+import { getConfig } from '../diagram-api/diagramAPI.js';
 import intersect from './intersect/index.js';
 import createLabel from './createLabel.js';
 import note from './shapes/note.js';
-import { parseMember } from '../diagrams/class/svgDraw.js';
 import { evaluate } from '../diagrams/common/common.js';
 import { getArrowPoints } from './blockArrowHelper.js';
 
+const formatClass = (str) => {
+  if (str) {
+    return ' ' + str;
+  }
+  return '';
+};
+const getClassesFromNode = (node, otherClasses) => {
+  return `${otherClasses ? otherClasses : 'node default'}${formatClass(node.classes)} ${formatClass(
+    node.class
+  )}`;
+};
+
 const question = async (parent, node) => {
-  const { shapeSvg, bbox } = await labelHelper(parent, node, undefined, true);
+  const { shapeSvg, bbox } = await labelHelper(
+    parent,
+    node,
+    getClassesFromNode(node, undefined),
+    true
+  );
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
@@ -72,7 +88,12 @@ const choice = (parent, node) => {
 };
 
 const hexagon = async (parent, node) => {
-  const { shapeSvg, bbox } = await labelHelper(parent, node, undefined, true);
+  const { shapeSvg, bbox } = await labelHelper(
+    parent,
+    node,
+    getClassesFromNode(node, undefined),
+    true
+  );
 
   const f = 4;
   const h = bbox.height + node.padding;
@@ -137,7 +158,12 @@ const block_arrow = async (parent, node) => {
 };
 
 const rect_left_inv_arrow = async (parent, node) => {
-  const { shapeSvg, bbox } = await labelHelper(parent, node, undefined, true);
+  const { shapeSvg, bbox } = await labelHelper(
+    parent,
+    node,
+    getClassesFromNode(node, undefined),
+    true
+  );
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
@@ -163,7 +189,7 @@ const rect_left_inv_arrow = async (parent, node) => {
 };
 
 const lean_right = async (parent, node) => {
-  const { shapeSvg, bbox } = await labelHelper(parent, node, undefined, true);
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getClassesFromNode(node), true);
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
@@ -186,7 +212,12 @@ const lean_right = async (parent, node) => {
 };
 
 const lean_left = async (parent, node) => {
-  const { shapeSvg, bbox } = await labelHelper(parent, node, undefined, true);
+  const { shapeSvg, bbox } = await labelHelper(
+    parent,
+    node,
+    getClassesFromNode(node, undefined),
+    true
+  );
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
@@ -209,7 +240,12 @@ const lean_left = async (parent, node) => {
 };
 
 const trapezoid = async (parent, node) => {
-  const { shapeSvg, bbox } = await labelHelper(parent, node, undefined, true);
+  const { shapeSvg, bbox } = await labelHelper(
+    parent,
+    node,
+    getClassesFromNode(node, undefined),
+    true
+  );
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
@@ -232,7 +268,12 @@ const trapezoid = async (parent, node) => {
 };
 
 const inv_trapezoid = async (parent, node) => {
-  const { shapeSvg, bbox } = await labelHelper(parent, node, undefined, true);
+  const { shapeSvg, bbox } = await labelHelper(
+    parent,
+    node,
+    getClassesFromNode(node, undefined),
+    true
+  );
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
@@ -255,7 +296,12 @@ const inv_trapezoid = async (parent, node) => {
 };
 
 const rect_right_inv_arrow = async (parent, node) => {
-  const { shapeSvg, bbox } = await labelHelper(parent, node, undefined, true);
+  const { shapeSvg, bbox } = await labelHelper(
+    parent,
+    node,
+    getClassesFromNode(node, undefined),
+    true
+  );
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
@@ -279,7 +325,12 @@ const rect_right_inv_arrow = async (parent, node) => {
 };
 
 const cylinder = async (parent, node) => {
-  const { shapeSvg, bbox } = await labelHelper(parent, node, undefined, true);
+  const { shapeSvg, bbox } = await labelHelper(
+    parent,
+    node,
+    getClassesFromNode(node, undefined),
+    true
+  );
 
   const w = bbox.width + node.padding;
   const rx = w / 2;
@@ -354,7 +405,7 @@ const rect = async (parent, node) => {
   const { shapeSvg, bbox, halfPadding } = await labelHelper(
     parent,
     node,
-    'node ' + node.classes,
+    'node ' + node.classes + ' ' + node.class,
     true
   );
 
@@ -447,7 +498,7 @@ const composite = async (parent, node) => {
 const labelRect = async (parent, node) => {
   const { shapeSvg } = await labelHelper(parent, node, 'label', true);
 
-  log.trace('Classes = ', node.classes);
+  log.trace('Classes = ', node.class);
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 
@@ -632,7 +683,12 @@ const rectWithTitle = (parent, node) => {
 };
 
 const stadium = async (parent, node) => {
-  const { shapeSvg, bbox } = await labelHelper(parent, node, undefined, true);
+  const { shapeSvg, bbox } = await labelHelper(
+    parent,
+    node,
+    getClassesFromNode(node, undefined),
+    true
+  );
 
   const h = bbox.height + node.padding;
   const w = bbox.width + h / 4 + node.padding;
@@ -658,7 +714,12 @@ const stadium = async (parent, node) => {
 };
 
 const circle = async (parent, node) => {
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, undefined, true);
+  const { shapeSvg, bbox, halfPadding } = await labelHelper(
+    parent,
+    node,
+    getClassesFromNode(node, undefined),
+    true
+  );
   const circle = shapeSvg.insert('circle', ':first-child');
 
   // center the circle around its coordinate
@@ -683,7 +744,12 @@ const circle = async (parent, node) => {
 };
 
 const doublecircle = async (parent, node) => {
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, undefined, true);
+  const { shapeSvg, bbox, halfPadding } = await labelHelper(
+    parent,
+    node,
+    getClassesFromNode(node, undefined),
+    true
+  );
   const gap = 5;
   const circleGroup = shapeSvg.insert('g', ':first-child');
   const outerCircle = circleGroup.insert('circle');
@@ -721,7 +787,12 @@ const doublecircle = async (parent, node) => {
 };
 
 const subroutine = async (parent, node) => {
-  const { shapeSvg, bbox } = await labelHelper(parent, node, undefined, true);
+  const { shapeSvg, bbox } = await labelHelper(
+    parent,
+    node,
+    getClassesFromNode(node, undefined),
+    true
+  );
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
@@ -895,8 +966,8 @@ const class_box = (parent, node) => {
     maxWidth = classTitleBBox.width;
   }
   const classAttributes = [];
-  node.classData.members.forEach((str) => {
-    const parsedInfo = parseMember(str);
+  node.classData.members.forEach((member) => {
+    const parsedInfo = member.getDisplayDetails();
     let parsedText = parsedInfo.displayText;
     if (getConfig().flowchart.htmlLabels) {
       parsedText = parsedText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -929,8 +1000,8 @@ const class_box = (parent, node) => {
   maxHeight += lineHeight;
 
   const classMethods = [];
-  node.classData.methods.forEach((str) => {
-    const parsedInfo = parseMember(str);
+  node.classData.methods.forEach((member) => {
+    const parsedInfo = member.getDisplayDetails();
     let displayText = parsedInfo.displayText;
     if (getConfig().flowchart.htmlLabels) {
       displayText = displayText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -1029,6 +1100,7 @@ const class_box = (parent, node) => {
   });
 
   rect
+    .attr('style', node.style)
     .attr('class', 'outer title-state')
     .attr('x', -maxWidth / 2 - halfPadding)
     .attr('y', -(maxHeight / 2) - halfPadding)

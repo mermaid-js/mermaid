@@ -56,5 +56,18 @@ describe('class diagram, ', function () {
       expect(parser.yy.getClass('Class01').cssClasses[0]).toBe('exClass');
       expect(parser.yy.getClass('Class02').cssClasses[0]).toBe('exClass');
     });
+    it('should be possible to apply a style to an individual node', function () {
+      const str =
+        'classDiagram\n' +
+        'class Class01\n class Class02\n style Class01 fill:#f9f,stroke:#333,stroke-width:4px';
+
+      parser.parse(str);
+
+      const styleElements = parser.yy.getClass('Class01').styles;
+
+      expect(styleElements[0]).toBe('fill:#f9f');
+      expect(styleElements[1]).toBe('stroke:#333');
+      expect(styleElements[2]).toBe('stroke-width:4px');
+    });
   });
 });

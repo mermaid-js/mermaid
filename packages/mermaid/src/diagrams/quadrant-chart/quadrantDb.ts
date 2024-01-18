@@ -1,6 +1,4 @@
-import { log } from '../../logger.js';
-import mermaidAPI from '../../mermaidAPI.js';
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { sanitizeText } from '../common/common.js';
 import {
   setAccTitle,
@@ -10,10 +8,10 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 import { QuadrantBuilder } from './quadrantBuilder.js';
 
-const config = configApi.getConfig();
+const config = getConfig();
 
 function textSanitizer(text: string) {
   return sanitizeText(text.trim(), config);
@@ -68,7 +66,7 @@ function setHeight(height: number) {
 }
 
 function getQuadrantData() {
-  const config = configApi.getConfig();
+  const config = getConfig();
   const { themeVariables, quadrantChart: quadrantChartConfig } = config;
   if (quadrantChartConfig) {
     quadrantBuilder.setConfig(quadrantChartConfig);
@@ -94,11 +92,6 @@ function getQuadrantData() {
   return quadrantBuilder.build();
 }
 
-export const parseDirective = function (statement: string, context: string, type: string) {
-  // @ts-ignore: TODO Fix ts errors
-  mermaidAPI.parseDirective(this, statement, context, type);
-};
-
 const clear = function () {
   quadrantBuilder.clear();
   commonClear();
@@ -117,7 +110,6 @@ export default {
   setYAxisBottomText,
   addPoint,
   getQuadrantData,
-  parseDirective,
   clear,
   setAccTitle,
   getAccTitle,
