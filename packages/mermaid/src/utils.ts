@@ -492,8 +492,6 @@ export function getStylesFromArray(arr: string[]): { style: string; labelStyle: 
       }
     }
   }
-  console.log(arr, style, labelStyle);
-
   return { style: style, labelStyle: labelStyle };
 }
 
