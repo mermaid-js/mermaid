@@ -31,8 +31,8 @@ let classes = {} as Record<string, ClassDef>;
  * Called when the parser comes across a (style) class definition
  * @example classDef my-style fill:#f96;
  *
- * @param {string} id - the id of this (style) class
- * @param  {string | null} styleAttributes - the string with 1 or more style attributes (each separated by a comma)
+ * @param id - the id of this (style) class
+ * @param styleAttributes - the string with 1 or more style attributes (each separated by a comma)
  */
 export const addStyleClass = function (id: string, styleAttributes = '') {
   // create a new style class object with this id
@@ -60,11 +60,11 @@ export const addStyleClass = function (id: string, styleAttributes = '') {
  * Called when the parser comes across a (style) class definition
  * @example classDef my-style fill:#f96;
  *
- * @param {string} id - the id of this (style) class
- * @param  {string | null} styles - the string with 1 or more style attributes (each separated by a comma)
+ * @param id - the id of this (style) class
+ * @param styles - the string with 1 or more style attributes (each separated by a comma)
  */
 export const addStyle2Node = function (id: string, styles = '') {
-  let foundBlock = blockDatabase[id];
+  const foundBlock = blockDatabase[id];
   if (styles !== undefined && styles !== null) {
     foundBlock.styles = styles.split(STYLECLASS_SEP);
   }
@@ -75,8 +75,8 @@ export const addStyle2Node = function (id: string, styles = '') {
  * If the state isn't already in the list of known states, add it.
  * Might be called by parser when a style class or CSS class should be applied to a state
  *
- * @param {string | string[]} itemIds The id or a list of ids of the item(s) to apply the css class to
- * @param {string} cssClassName CSS class name
+ * @param itemIds - The id or a list of ids of the item(s) to apply the css class to
+ * @param cssClassName - CSS class name
  */
 export const setCssClass = function (itemIds: string, cssClassName: string) {
   itemIds.split(',').forEach(function (id: string) {
@@ -93,36 +93,6 @@ export const setCssClass = function (itemIds: string, cssClassName: string) {
   });
 };
 
-// /**
-//  * Add a style to a state with the given id.
-//  * @example style stateId fill:#f9f,stroke:#333,stroke-width:4px
-//  *   where 'style' is the keyword
-//  *   stateId is the id of a state
-//  *   the rest of the string is the styleText (all of the attributes to be applied to the state)
-//  *
-//  * @param itemId The id of item to apply the style to
-//  * @param styleText - the text of the attributes for the style
-//  */
-// export const setStyle = function (itemId, styleText) {
-//   const item = getState(itemId);
-//   if (item !== undefined) {
-//     item.textStyles.push(styleText);
-//   }
-// };
-
-// /**
-//  * Add a text style to a state with the given id
-//  *
-//  * @param itemId The id of item to apply the css class to
-//  * @param cssClassName CSS class name
-//  */
-// export const setTextStyle = function (itemId, cssClassName) {
-//   const item = getState(itemId);
-//   if (item !== undefined) {
-//     item.textStyles.push(cssClassName);
-//   }
-// };
-
 const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
   const blockList = _blockList.flat();
   const children = [];
@@ -135,12 +105,9 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
       setCssClass(block.id, block?.styleClass || '');
       continue;
     }
-    if (block.type === 'applyStyles') {
-      console.log('applyStyles', block.stylesStr);
-      if (block?.stylesStr) {
-        addStyle2Node(block.id, block?.stylesStr);
-        continue;
-      }
+    if (block.type === 'applyStyles' && block?.stylesStr) {
+      addStyle2Node(block.id, block?.stylesStr);
+      continue;
     }
     if (block.type === 'column-setting') {
       parent.columns = block.columns || -1;
@@ -292,10 +259,8 @@ export const generateId = () => {
 
 type ISetHierarchy = (block: Block[]) => void;
 const setHierarchy = (block: Block[]): void => {
-  console.log('The document from parsing', JSON.stringify(block, null, 2));
   rootBlock.children = block;
   populateBlockDatabase(block, rootBlock);
-  // log.debug('abc95 The document after popuplation', JSON.stringify(rootBlock, null, 2));
   blocks = rootBlock.children;
 };
 
@@ -335,7 +300,7 @@ const getBlocksFlat: IGetBlocks = () => {
   return result;
 };
 /**
- * Returns the the hirarchy of blocks
+ * Returns the the hierarchy of blocks
  * @returns
  */
 const getBlocks: IGetBlocks = () => {
@@ -363,7 +328,6 @@ const getLogger: IGetLogger = () => console;
 type IGetClasses = () => Record<string, ClassDef>;
 /**
  * Return all of the style classes
- * @returns {{} | any | classes}
  */
 export const getClasses = function () {
   return classes;

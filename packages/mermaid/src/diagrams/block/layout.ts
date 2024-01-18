@@ -68,12 +68,7 @@ const getMaxChildSize = (block: Block) => {
   return { width: maxWidth, height: maxHeight };
 };
 
-function setBlockSizes(
-  block: Block,
-  db: BlockDB,
-  sieblingWidth: number = 0,
-  sieblingHeight: number = 0
-) {
+function setBlockSizes(block: Block, db: BlockDB, sieblingWidth = 0, sieblingHeight = 0) {
   log.debug(
     'setBlockSizes abc95 (start)',
     block.id,
@@ -118,7 +113,7 @@ function setBlockSizes(
           maxHeight,
           child.size
         );
-        child.size.width = maxWidth * child.w + padding * (child.w - 1);
+        child.size.width = maxWidth * (child.w || 1) + padding * ((child.w || 1) - 1);
         child.size.height = maxHeight;
         child.size.x = 0;
         child.size.y = 0;

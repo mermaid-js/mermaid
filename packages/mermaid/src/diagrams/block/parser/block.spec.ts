@@ -4,7 +4,6 @@ import db from '../blockDB.js';
 import { cleanupComments } from '../../../diagram-api/comments.js';
 import { prepareTextForParsing } from '../blockUtils.js';
 import { setConfig } from '../../../config.js';
-import getStyles from '../../../../dist/diagrams/pie/styles';
 
 describe('Block diagram', function () {
   describe('when parsing an block diagram graph it should handle > ', function () {
@@ -316,7 +315,6 @@ describe('Block diagram', function () {
       expect(block2.label).toBe('Block 2');
       expect(block2.type).toBe('square');
       expect(blockArrow.type).toBe('block_arrow');
-      console.log('blockArrow', blockArrow);
       expect(blockArrow.directions).toContain('right');
     });
     it('Arrow blocks with multiple points', async () => {
@@ -338,7 +336,6 @@ describe('Block diagram', function () {
 
       const blockArrow = blocks[1];
       expect(blockArrow.type).toBe('block_arrow');
-      console.log('blockArrow', blockArrow);
       expect(blockArrow.directions).toContain('up');
       expect(blockArrow.directions).toContain('down');
       expect(blockArrow.directions).not.toContain('right');
@@ -356,7 +353,6 @@ describe('Block diagram', function () {
       expect(blocks.length).toBe(2);
       const one = blocks[0];
       const two = blocks[1];
-      console.log('One and Two', one, two);
       expect(two.w).toBe(2);
     });
     it('empty blocks', async () => {
@@ -392,7 +388,6 @@ describe('Block diagram', function () {
       const mc = blocks[0];
       expect(mc.classes).toContain('black');
       const classes = db.getClasses();
-      console.log(classes);
       const black = classes.black;
       expect(black.id).toBe('black');
       expect(black.styles[0]).toEqual('color:#ffffff');
@@ -408,7 +403,6 @@ columns 1
       const blocks = db.getBlocks();
       expect(blocks.length).toBe(1);
       const B = blocks[0];
-      console.log(B);
       expect(B.styles).toContain('fill:#f9F');
     });
   });
