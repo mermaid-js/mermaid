@@ -60,12 +60,10 @@ const CDN_URL = 'https://cdn.jsdelivr.net/npm'; // 'https://unpkg.com';
 
 const MERMAID_KEYWORD = 'mermaid';
 const MERMAID_CODE_ONLY_KEYWORD = 'mermaid-example';
+const MERMAID_DIAGRAM_ONLY = 'mermaid-nocode';
 
 // These keywords will produce both a mermaid diagram and a code block with the diagram source
 const MERMAID_EXAMPLE_KEYWORDS = [MERMAID_KEYWORD, 'mmd', MERMAID_CODE_ONLY_KEYWORD]; // 'mmd' is an old keyword that used to be used
-
-// This keyword will only produce a mermaid diagram
-const MERMAID_DIAGRAM_ONLY = 'mermaid-nocode';
 
 // These will be transformed into block quotes
 const BLOCK_QUOTE_KEYWORDS = ['note', 'tip', 'warning', 'danger'];
