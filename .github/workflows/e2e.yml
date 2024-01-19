@@ -149,5 +149,5 @@ jobs:
       - name: Notify Users
         if: ${{ failure() }}
         run: |
-          echo "::error,title=Visual tests failed::You can view images that failed by downloading the error-snapshots artifact: ${{ steps.upload-artifacts.outputs.artifact-url }}"
+          echo "::error title=Visual tests failed::You can view images that failed by downloading the error-snapshots artifact: ${{ steps.upload-artifacts.outputs.artifact-url }}"
         
