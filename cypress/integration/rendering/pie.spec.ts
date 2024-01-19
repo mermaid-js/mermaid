@@ -52,7 +52,7 @@ describe('pie chart', () => {
     renderGraph(
       `pie title Sports in Sweden
         "Bandy": 40
-        "Ice-Hockey": 80
+        "Ice-Hockey": 180
         "Football": 90
       `,
       { pie: { useMaxWidth: false } }
