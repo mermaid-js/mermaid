@@ -141,11 +141,9 @@ export const addSingleLink = function (_start: string, _end: string, type: any) 
     edge.stroke = type.stroke;
     edge.length = type.length > 10 ? 10 : type.length;
   }
-  if (edge?.length && edge.length > 10) {
-    edge.length = 10;
-  }
+
   if (edges.length < (config.maxEdges ?? 500)) {
-    log.info('abc78 pushing edge...');
+    log.info('Pushing edge...');
     edges.push(edge);
   } else {
     throw new Error(
@@ -156,9 +154,6 @@ You cannot set this config via configuration inside the diagram as it is a secur
 You have to call mermaid.initialize.`
     );
   }
-
-  log.info('Pushing edge...');
-  edges.push(edge);
 };
 
 export const addLink = function (_start: string[], _end: string[], type: unknown) {
