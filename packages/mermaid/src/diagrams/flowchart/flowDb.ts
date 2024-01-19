@@ -12,38 +12,38 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
+import type { FlowVertex, FlowClass, FlowSubGraph, FlowText, FlowEdge, FlowLink } from './types.js';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
 let config = getConfig();
-let vertices = {};
-let edges = [];
-let classes = {};
-let subGraphs = [];
-let subGraphLookup = {};
-let tooltips = {};
+let vertices: Record<string, FlowVertex> = {};
+let edges: FlowEdge[] & { defaultInterpolate?: string; defaultStyle?: string[] } = [];
+let classes: Record<string, FlowClass> = {};
+let subGraphs: FlowSubGraph[] = [];
+let subGraphLookup: Record<string, FlowSubGraph> = {};
+let tooltips: Record<string, string> = {};
 let subCount = 0;
 let firstGraphFlag = true;
-let direction;
+let direction: string;
 
-let version; // As in graph
+let version: string; // As in graph
 
 // Functions to be run after graph rendering
-let funs = [];
+let funs: ((element: Element) => void)[] = [];
 
-const sanitizeText = (txt) => common.sanitizeText(txt, config);
+const sanitizeText = (txt: string) => common.sanitizeText(txt, config);
 
 /**
  * Function to lookup domId from id in the graph definition.
  *
- * @param id
- * @public
+ * @param id - id of the node
  */
-export const lookUpDomId = function (id) {
-  const veritceKeys = Object.keys(vertices);
-  for (const veritceKey of veritceKeys) {
-    if (vertices[veritceKey].id === id) {
-      return vertices[veritceKey].domId;
+export const lookUpDomId = function (id: string) {
+  const vertexKeys = Object.keys(vertices);
+  for (const vertexKey of vertexKeys) {
+    if (vertices[vertexKey].id === id) {
+      return vertices[vertexKey].domId;
     }
   }
   return id;
@@ -52,30 +52,24 @@ export const lookUpDomId = function (id) {
 /**
  * Function called by parser when a node definition has been found
  *
- * @param _id
- * @param text
- * @param textObj
- * @param type
- * @param style
- * @param classes
- * @param dir
- * @param props
  */
-export const addVertex = function (_id, textObj, type, style, classes, dir, props = {}) {
+export const addVertex = function (
+  id: string,
+  textObj: FlowText,
+  type: 'group',
+  style: string[],
+  classes: string[],
+  dir: string,
+  props = {}
+) {
+  if (!id || id.trim().length === 0) {
+    return;
+  }
   let txt;
-  let id = _id;
-  if (id === undefined) {
-    return;
-  }
-  if (id.trim().length === 0) {
-    return;
-  }
-
-  // if (id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
   if (vertices[id] === undefined) {
     vertices[id] = {
-      id: id,
+      id,
       labelType: 'text',
       domId: MERMAID_DOM_ID_PREFIX + id + '-' + vertexCounter,
       styles: [],
@@ -94,7 +88,7 @@ export const addVertex = function (_id, textObj, type, style, classes, dir, prop
     vertices[id].text = txt;
   } else {
     if (vertices[id].text === undefined) {
-      vertices[id].text = _id;
+      vertices[id].text = id;
     }
   }
   if (type !== undefined) {
@@ -123,20 +117,12 @@ export const addVertex = function (_id, textObj, type, style, classes, dir, prop
 /**
  * Function called by parser when a link/edge definition has been found
  *
- * @param _start
- * @param _end
- * @param type
- * @param linkText
- * @param linkTextObj
  */
-export const addSingleLink = function (_start, _end, type) {
-  let start = _start;
-  let end = _end;
-  // if (start[0].match(/\d/)) start = MERMAID_DOM_ID_PREFIX + start;
-  // if (end[0].match(/\d/)) end = MERMAID_DOM_ID_PREFIX + end;
-  // log.info('Got edge...', start, end);
+export const addSingleLink = function (_start: string, _end: string, type: any) {
+  const start = _start;
+  const end = _end;
 
-  const edge = { start: start, end: end, type: undefined, text: '', labelType: 'text' };
+  const edge: FlowEdge = { start: start, end: end, type: undefined, text: '', labelType: 'text' };
   log.info('abc78 Got edge...', edge);
   const linkTextObj = type.text;
 
@@ -153,13 +139,11 @@ export const addSingleLink = function (_start, _end, type) {
   if (type !== undefined) {
     edge.type = type.type;
     edge.stroke = type.stroke;
-    edge.length = type.length;
+    edge.length = type.length > 10 ? 10 : type.length;
   }
-  if (edge?.length > 10) {
-    edge.length = 10;
-  }
+
   if (edges.length < (config.maxEdges ?? 500)) {
-    log.info('abc78 pushing edge...');
+    log.info('Pushing edge...');
     edges.push(edge);
   } else {
     throw new Error(
@@ -171,12 +155,12 @@ You have to call mermaid.initialize.`
     );
   }
 };
-export const addLink = function (_start, _end, type) {
-  log.info('addLink (abc78)', _start, _end, type);
-  let i, j;
-  for (i = 0; i < _start.length; i++) {
-    for (j = 0; j < _end.length; j++) {
-      addSingleLink(_start[i], _end[j], type);
+
+export const addLink = function (_start: string[], _end: string[], type: unknown) {
+  log.info('addLink', _start, _end, type);
+  for (const start of _start) {
+    for (const end of _end) {
+      addSingleLink(start, end, type);
     }
   }
 };
@@ -184,15 +168,16 @@ export const addLink = function (_start, _end, type) {
 /**
  * Updates a link's line interpolation algorithm
  *
- * @param positions
- * @param interp
  */
-export const updateLinkInterpolate = function (positions, interp) {
+export const updateLinkInterpolate = function (
+  positions: ('default' | number)[],
+  interpolate: string
+) {
   positions.forEach(function (pos) {
     if (pos === 'default') {
-      edges.defaultInterpolate = interp;
+      edges.defaultInterpolate = interpolate;
     } else {
-      edges[pos].interpolate = interp;
+      edges[pos].interpolate = interpolate;
     }
   });
 };
@@ -200,12 +185,10 @@ export const updateLinkInterpolate = function (positions, interp) {
 /**
  * Updates a link with a style
  *
- * @param positions
- * @param style
  */
-export const updateLink = function (positions, style) {
+export const updateLink = function (positions: ('default' | number)[], style: string[]) {
   positions.forEach(function (pos) {
-    if (pos >= edges.length) {
+    if (typeof pos === 'number' && pos >= edges.length) {
       throw new Error(
         `The index ${pos} for linkStyle is out of bounds. Valid indices for linkStyle are between 0 and ${
           edges.length - 1
@@ -223,7 +206,7 @@ export const updateLink = function (positions, style) {
   });
 };
 
-export const addClass = function (ids, style) {
+export const addClass = function (ids: string, style: string[]) {
   ids.split(',').forEach(function (id) {
     if (classes[id] === undefined) {
       classes[id] = { id, styles: [], textStyles: [] };
@@ -244,9 +227,8 @@ export const addClass = function (ids, style) {
 /**
  * Called by parser when a graph definition is found, stores the direction of the chart.
  *
- * @param dir
  */
-export const setDirection = function (dir) {
+export const setDirection = function (dir: string) {
   direction = dir;
   if (direction.match(/.*</)) {
     direction = 'RL';
@@ -268,34 +250,32 @@ export const setDirection = function (dir) {
 /**
  * Called by parser when a special node is found, e.g. a clickable element.
  *
- * @param ids Comma separated list of ids
- * @param className Class to add
+ * @param ids - Comma separated list of ids
+ * @param className - Class to add
  */
-export const setClass = function (ids, className) {
-  ids.split(',').forEach(function (_id) {
-    // let id = version === 'gen-2' ? lookUpDomId(_id) : _id;
-    let id = _id;
-    // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
-    if (vertices[id] !== undefined) {
+export const setClass = function (ids: string, className: string) {
+  for (const id of ids.split(',')) {
+    if (vertices[id]) {
       vertices[id].classes.push(className);
     }
-
-    if (subGraphLookup[id] !== undefined) {
+    if (subGraphLookup[id]) {
       subGraphLookup[id].classes.push(className);
     }
-  });
+  }
 };
 
-const setTooltip = function (ids, tooltip) {
-  ids.split(',').forEach(function (id) {
-    if (tooltip !== undefined) {
-      tooltips[version === 'gen-1' ? lookUpDomId(id) : id] = sanitizeText(tooltip);
-    }
-  });
+const setTooltip = function (ids: string, tooltip: string) {
+  if (tooltip === undefined) {
+    return;
+  }
+  tooltip = sanitizeText(tooltip);
+  for (const id of ids.split(',')) {
+    tooltips[version === 'gen-1' ? lookUpDomId(id) : id] = tooltip;
+  }
 };
 
-const setClickFun = function (id, functionName, functionArgs) {
-  let domId = lookUpDomId(id);
+const setClickFun = function (id: string, functionName: string, functionArgs: string) {
+  const domId = lookUpDomId(id);
   // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
   if (getConfig().securityLevel !== 'loose') {
     return;
@@ -303,7 +283,7 @@ const setClickFun = function (id, functionName, functionArgs) {
   if (functionName === undefined) {
     return;
   }
-  let argList = [];
+  let argList: string[] = [];
   if (typeof functionArgs === 'string') {
     /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
     argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
@@ -343,11 +323,11 @@ const setClickFun = function (id, functionName, functionArgs) {
 /**
  * Called by parser when a link is found. Adds the URL to the vertex data.
  *
- * @param ids Comma separated list of ids
- * @param linkStr URL to create a link for
- * @param target
+ * @param ids - Comma separated list of ids
+ * @param linkStr - URL to create a link for
+ * @param target - Target attribute for the link
  */
-export const setLink = function (ids, linkStr, target) {
+export const setLink = function (ids: string, linkStr: string, target: string) {
   ids.split(',').forEach(function (id) {
     if (vertices[id] !== undefined) {
       vertices[id].link = utils.formatUrl(linkStr, config);
@@ -356,7 +336,8 @@ export const setLink = function (ids, linkStr, target) {
   });
   setClass(ids, 'clickable');
 };
-export const getTooltip = function (id) {
+
+export const getTooltip = function (id: string) {
   if (tooltips.hasOwnProperty(id)) {
     return tooltips[id];
   }
@@ -366,18 +347,18 @@ export const getTooltip = function (id) {
 /**
  * Called by parser when a click definition is found. Registers an event handler.
  *
- * @param ids Comma separated list of ids
- * @param functionName Function to be called on click
- * @param functionArgs
+ * @param ids - Comma separated list of ids
+ * @param functionName - Function to be called on click
+ * @param functionArgs - Arguments to be passed to the function
  */
-export const setClickEvent = function (ids, functionName, functionArgs) {
+export const setClickEvent = function (ids: string, functionName: string, functionArgs: string) {
   ids.split(',').forEach(function (id) {
     setClickFun(id, functionName, functionArgs);
   });
   setClass(ids, 'clickable');
 };
 
-export const bindFunctions = function (element) {
+export const bindFunctions = function (element: Element) {
   funs.forEach(function (fun) {
     fun(element);
   });
@@ -388,7 +369,6 @@ export const getDirection = function () {
 /**
  * Retrieval function for fetching the found nodes after parsing has completed.
  *
- * @returns {{} | any | vertices}
  */
 export const getVertices = function () {
   return vertices;
@@ -397,7 +377,6 @@ export const getVertices = function () {
 /**
  * Retrieval function for fetching the found links after parsing has completed.
  *
- * @returns {{} | any | edges}
  */
 export const getEdges = function () {
   return edges;
@@ -406,15 +385,16 @@ export const getEdges = function () {
 /**
  * Retrieval function for fetching the found class definitions after parsing has completed.
  *
- * @returns {{} | any | classes}
  */
 export const getClasses = function () {
   return classes;
 };
 
-const setupToolTips = function (element) {
+const setupToolTips = function (element: Element) {
   let tooltipElem = select('.mermaidTooltip');
+  // @ts-ignore TODO: fix this
   if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
+    // @ts-ignore TODO: fix this
     tooltipElem = select('body').append('div').attr('class', 'mermaidTooltip').style('opacity', 0);
   }
 
@@ -430,8 +410,9 @@ const setupToolTips = function (element) {
       if (title === null) {
         return;
       }
-      const rect = this.getBoundingClientRect();
+      const rect = (this as Element)?.getBoundingClientRect();
 
+      // @ts-ignore TODO: fix this
       tooltipElem.transition().duration(200).style('opacity', '.9');
       tooltipElem
         .text(el.attr('title'))
@@ -441,6 +422,7 @@ const setupToolTips = function (element) {
       el.classed('hover', true);
     })
     .on('mouseout', function () {
+      // @ts-ignore TODO: fix this
       tooltipElem.transition().duration(500).style('opacity', 0);
       const el = select(this);
       el.classed('hover', false);
@@ -451,7 +433,6 @@ funs.push(setupToolTips);
 /**
  * Clears the internal graph db so that a new graph can be parsed.
  *
- * @param ver
  */
 export const clear = function (ver = 'gen-1') {
   vertices = {};
@@ -467,31 +448,29 @@ export const clear = function (ver = 'gen-1') {
   config = getConfig();
   commonClear();
 };
-export const setGen = (ver) => {
+
+export const setGen = (ver: string) => {
   version = ver || 'gen-2';
 };
-/** @returns {string} */
+
 export const defaultStyle = function () {
   return 'fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;';
 };
 
-/**
- * Clears the internal graph db so that a new graph can be parsed.
- *
- * @param _id
- * @param list
- * @param _title
- */
-export const addSubGraph = function (_id, list, _title) {
-  let id = _id.text.trim();
+export const addSubGraph = function (
+  _id: { text: string },
+  list: string[],
+  _title: { text: string; type: string }
+) {
+  let id: string | undefined = _id.text.trim();
   let title = _title.text;
   if (_id === _title && _title.text.match(/\s/)) {
     id = undefined;
   }
-  /** @param a */
-  function uniq(a) {
-    const prims = { boolean: {}, number: {}, string: {} };
-    const objs = [];
+
+  function uniq(a: any[]) {
+    const prims: any = { boolean: {}, number: {}, string: {} };
+    const objs: any[] = [];
 
     let dir; //  = undefined; direction.trim();
     const nodeList = a.filter(function (item) {
@@ -512,10 +491,7 @@ export const addSubGraph = function (_id, list, _title) {
     return { nodeList, dir };
   }
 
-  let nodeList = [];
-
-  const { nodeList: nl, dir } = uniq(nodeList.concat.apply(nodeList, list));
-  nodeList = nl;
+  const { nodeList, dir } = uniq(list.flat());
   if (version === 'gen-1') {
     for (let i = 0; i < nodeList.length; i++) {
       nodeList[i] = lookUpDomId(nodeList[i]);
@@ -523,7 +499,6 @@ export const addSubGraph = function (_id, list, _title) {
   }
 
   id = id || 'subGraph' + subCount;
-  // if (id[0].match(/\d/)) id = lookUpDomId(id);
   title = title || '';
   title = sanitizeText(title);
   subCount = subCount + 1;
@@ -538,19 +513,6 @@ export const addSubGraph = function (_id, list, _title) {
 
   log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);
 
-  /** Deletes an id from all subgraphs */
-  // const del = _id => {
-  //   subGraphs.forEach(sg => {
-  //     const pos = sg.nodes.indexOf(_id);
-  //     if (pos >= 0) {
-  //       sg.nodes.splice(pos, 1);
-  //     }
-  //   });
-  // };
-
-  // // Removes the members of this subgraph from any other subgraphs, a node only belong to one subgraph
-  // subGraph.nodes.forEach(_id => del(_id));
-
   // Remove the members in the new subgraph if they already belong to another subgraph
   subGraph.nodes = makeUniq(subGraph, subGraphs).nodes;
   subGraphs.push(subGraph);
@@ -558,7 +520,7 @@ export const addSubGraph = function (_id, list, _title) {
   return id;
 };
 
-const getPosForId = function (id) {
+const getPosForId = function (id: string) {
   for (const [i, subGraph] of subGraphs.entries()) {
     if (subGraph.id === id) {
       return i;
@@ -567,12 +529,15 @@ const getPosForId = function (id) {
   return -1;
 };
 let secCount = -1;
-const posCrossRef = [];
-const indexNodes2 = function (id, pos) {
+const posCrossRef: number[] = [];
+const indexNodes2 = function (id: string, pos: number): { result: boolean; count: number } {
   const nodes = subGraphs[pos].nodes;
   secCount = secCount + 1;
   if (secCount > 2000) {
-    return;
+    return {
+      result: false,
+      count: 0,
+    };
   }
   posCrossRef[secCount] = pos;
   // Check if match
@@ -608,13 +573,13 @@ const indexNodes2 = function (id, pos) {
   };
 };
 
-export const getDepthFirstPos = function (pos) {
+export const getDepthFirstPos = function (pos: number) {
   return posCrossRef[pos];
 };
 export const indexNodes = function () {
   secCount = -1;
   if (subGraphs.length > 0) {
-    indexNodes2('none', subGraphs.length - 1, 0);
+    indexNodes2('none', subGraphs.length - 1);
   }
 };
 
@@ -630,7 +595,7 @@ export const firstGraph = () => {
   return false;
 };
 
-const destructStartLink = (_str) => {
+const destructStartLink = (_str: string): FlowLink => {
   let str = _str.trim();
   let type = 'arrow_open';
 
@@ -662,7 +627,7 @@ const destructStartLink = (_str) => {
   return { type, stroke };
 };
 
-const countChar = (char, str) => {
+const countChar = (char: string, str: string) => {
   const length = str.length;
   let count = 0;
   for (let i = 0; i < length; ++i) {
@@ -673,7 +638,7 @@ const countChar = (char, str) => {
   return count;
 };
 
-const destructEndLink = (_str) => {
+const destructEndLink = (_str: string) => {
   const str = _str.trim();
   let line = str.slice(0, -1);
   let type = 'arrow_open';
@@ -713,7 +678,7 @@ const destructEndLink = (_str) => {
     stroke = 'invisible';
   }
 
-  let dots = countChar('.', line);
+  const dots = countChar('.', line);
 
   if (dots) {
     stroke = 'dotted';
@@ -723,7 +688,7 @@ const destructEndLink = (_str) => {
   return { type, stroke, length };
 };
 
-export const destructLink = (_str, _startStr) => {
+export const destructLink = (_str: string, _startStr: string) => {
   const info = destructEndLink(_str);
   let startInfo;
   if (_startStr) {
@@ -757,7 +722,7 @@ export const destructLink = (_str, _startStr) => {
 };
 
 // Todo optimizer this by caching existing nodes
-const exists = (allSgs, _id) => {
+const exists = (allSgs: FlowSubGraph[], _id: string) => {
   let res = false;
   allSgs.forEach((sg) => {
     const pos = sg.nodes.indexOf(_id);
@@ -770,11 +735,9 @@ const exists = (allSgs, _id) => {
 /**
  * Deletes an id from all subgraphs
  *
- * @param sg
- * @param allSubgraphs
  */
-const makeUniq = (sg, allSubgraphs) => {
-  const res = [];
+const makeUniq = (sg: FlowSubGraph, allSubgraphs: FlowSubGraph[]) => {
+  const res: string[] = [];
   sg.nodes.forEach((_id, pos) => {
     if (!exists(allSubgraphs, _id)) {
       res.push(sg.nodes[pos]);
@@ -786,6 +749,7 @@ const makeUniq = (sg, allSubgraphs) => {
 export const lex = {
   firstGraph,
 };
+
 export default {
   defaultConfig: () => defaultConfig.flowchart,
   setAccTitle,
