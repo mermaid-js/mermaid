@@ -9,7 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm install pnpm -g && npx update-browserslist-db@latest
+      - uses: pnpm/action-setup@v2
+      - run: npx update-browserslist-db@latest
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
