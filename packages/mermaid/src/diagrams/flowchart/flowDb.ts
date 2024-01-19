@@ -270,7 +270,7 @@ export const setClass = function (ids: string, className: string) {
 };
 
 const setTooltip = function (ids: string, tooltip: string) {
-  if (!tooltip) {
+  if (tooltip === undefined) {
     return;
   }
   tooltip = sanitizeText(tooltip);
