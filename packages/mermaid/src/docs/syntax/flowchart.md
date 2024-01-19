@@ -1,6 +1,5 @@
 ---
 title: Flowcharts Syntax
-outline: 'deep' # shows all h3 headings in outline in Vitepress
 ---
 
 # Flowcharts - Basic Syntax

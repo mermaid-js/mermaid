@@ -1416,6 +1416,14 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    * Margin top for the text over the diagram
    */
   titleTopMargin?: number;
+  /**
+   * Defines a top/bottom margin for subgraph titles
+   *
+   */
+  subGraphTitleMargin?: {
+    top?: number;
+    bottom?: number;
+  };
   arrowMarkerAbsolute?: boolean;
   /**
    * The amount of padding around the diagram as a whole so that embedded

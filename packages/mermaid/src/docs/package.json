@@ -32,7 +32,7 @@
     "unplugin-vue-components": "^0.26.0",
     "vite": "^4.4.12",
     "vite-plugin-pwa": "^0.17.0",
-    "vitepress": "1.0.0-rc.31",
+    "vitepress": "1.0.0-rc.39",
     "workbox-window": "^7.0.0"
   }
 }
