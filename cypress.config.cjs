@@ -4,7 +4,6 @@ const { defineConfig } = require('cypress');
 const { addMatchImageSnapshotPlugin } = require('cypress-image-snapshot/plugin');
 const coverage = require('@cypress/code-coverage/task');
 
-
 module.exports = defineConfig({
   projectId: 'n2sma2',
   viewportWidth: 1440,
