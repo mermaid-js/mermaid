@@ -39,7 +39,19 @@ bindFunctions?.(div); // To call bindFunctions only if it's present.
 
 #### Defined in
 
-[mermaidAPI.ts:80](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L80)
+[mermaidAPI.ts:94](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L94)
+
+---
+
+### diagramType
+
+• **diagramType**: `string`
+
+The diagram type, e.g. 'flowchart', 'sequence', etc.
+
+#### Defined in
+
+[mermaidAPI.ts:84](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L84)
 
 ---
 
@@ -51,4 +63,4 @@ The svg code for the rendered graph.
 
 #### Defined in
 
-[mermaidAPI.ts:70](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L70)
+[mermaidAPI.ts:80](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L80)

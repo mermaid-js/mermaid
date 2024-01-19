@@ -14,8 +14,6 @@ import {
 } from '../common/commonDb.js';
 import type { FlowVertex, FlowClass, FlowSubGraph, FlowText, FlowEdge, FlowLink } from './types.js';
 
-const MAX_EDGE_COUNT = 280;
-
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
 let config = getConfig();
@@ -87,7 +85,6 @@ export const addVertex = function (
     if (txt[0] === '"' && txt[txt.length - 1] === '"') {
       txt = txt.substring(1, txt.length - 1);
     }
-
     vertices[id].text = txt;
   } else {
     if (vertices[id].text === undefined) {
@@ -144,9 +141,20 @@ export const addSingleLink = function (_start: string, _end: string, type: any) 
     edge.stroke = type.stroke;
     edge.length = type.length > 10 ? 10 : type.length;
   }
+  if (edge?.length && edge.length > 10) {
+    edge.length = 10;
+  }
+  if (edges.length < (config.maxEdges ?? 500)) {
+    log.info('abc78 pushing edge...');
+    edges.push(edge);
+  } else {
+    throw new Error(
+      `Edge limit exceeded. ${edges.length} edges found, but the limit is ${config.maxEdges}.
 
-  if (edges.length > MAX_EDGE_COUNT) {
-    throw new Error('Too many edges');
+Initialize mermaid with maxEdges set to a higher number to allow more edges. 
+You cannot set this config via configuration inside the diagram as it is a secure config. 
+You have to call mermaid.initialize.`
+    );
   }
 
   log.info('Pushing edge...');
@@ -442,6 +450,7 @@ export const clear = function (ver = 'gen-1') {
   tooltips = {};
   firstGraphFlag = true;
   version = ver;
+  config = getConfig();
   commonClear();
 };
 

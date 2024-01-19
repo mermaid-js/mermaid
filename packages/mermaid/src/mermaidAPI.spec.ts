@@ -1,5 +1,5 @@
 'use strict';
-import { vi } from 'vitest';
+import { vi, it, expect, describe, beforeEach } from 'vitest';
 
 // -------------------------------------
 //  Mocks and mocking
@@ -67,6 +67,7 @@ vi.mock('stylis', () => {
 });
 import { compile, serialize } from 'stylis';
 import { decodeEntities, encodeEntities } from './utils.js';
+import { Diagram } from './Diagram.js';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
@@ -684,14 +685,21 @@ describe('mermaidAPI', () => {
       ).resolves.toBe(false);
     });
     it('resolves for valid definition', async () => {
-      await expect(
-        mermaidAPI.parse('graph TD;A--x|text including URL space|B;')
-      ).resolves.toBeTruthy();
+      await expect(mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).resolves
+        .toMatchInlineSnapshot(`
+        {
+          "diagramType": "flowchart-v2",
+        }
+      `);
     });
     it('returns true for valid definition with silent option', async () => {
       await expect(
         mermaidAPI.parse('graph TD;A--x|text including URL space|B;', { suppressErrors: true })
-      ).resolves.toBe(true);
+      ).resolves.toMatchInlineSnapshot(`
+        {
+          "diagramType": "flowchart-v2",
+        }
+      `);
     });
   });
 
@@ -733,7 +741,8 @@ describe('mermaidAPI', () => {
           it('should set aria-roledscription to the diagram type AND should call addSVGa11yTitleDescription', async () => {
             const a11yDiagramInfo_spy = vi.spyOn(accessibility, 'setA11yDiagramInfo');
             const a11yTitleDesc_spy = vi.spyOn(accessibility, 'addSVGa11yTitleDescription');
-            await mermaidAPI.render(id, diagramText);
+            const result = await mermaidAPI.render(id, diagramText);
+            expect(result.diagramType).toBe(expectedDiagramType);
             expect(a11yDiagramInfo_spy).toHaveBeenCalledWith(
               expect.anything(),
               expectedDiagramType
@@ -742,6 +751,18 @@ describe('mermaidAPI', () => {
           });
         });
       });
+    });
+  });
+
+  describe('getDiagramFromText', () => {
+    it('should clean up comments when present in diagram definition', async () => {
+      const diagram = await mermaidAPI.getDiagramFromText(
+        `flowchart LR
+      %% This is a comment A -- text --> B{node}
+      A -- text --> B -- text2 --> C`
+      );
+      expect(diagram).toBeInstanceOf(Diagram);
+      expect(diagram.type).toBe('flowchart-v2');
     });
   });
 });
