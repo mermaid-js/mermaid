@@ -15,7 +15,7 @@ This section talks about the different ways to **deploy** Mermaid.
 If you are a beginner:
 
 - Check out the [Diagram Syntax](syntax-reference.md) page
-- Check out the [Tutorials](../config/Tutorials.md) page
+- Check out the [Tutorials](../ecosystem/tutorials.md) page
 
 ## Ways to use Mermaid
 
@@ -58,7 +58,7 @@ graph TD
 
 Configuration options are available in the `Configuration` panel. The options are applied to the diagram in the `Preview` panel.
 
-For learn more, visit the [Configuration Reference](../config/setup/README.md) page
+To learn more, visit the [Configuration Reference](../config/setup/README.md) page
 
 ![Code,Config and Preview](./img/Code-Preview-Config.png)
 
