@@ -52,8 +52,6 @@ jobs:
           start: pnpm run dev
           wait-on: 'http://localhost:9000'
           browser: chrome
-          spec:
-            cypress/integration/rendering/sequencediagram.spec.js
 
   e2e:
     runs-on: ubuntu-latest
@@ -98,8 +96,6 @@ jobs:
           # e.g. if this action was run from a fork
           record: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
           parallel: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
-          spec:
-            cypress/integration/rendering/sequencediagram.spec.js
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           VITEST_COVERAGE: true
