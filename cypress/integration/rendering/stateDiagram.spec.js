@@ -5,8 +5,8 @@ describe('State diagram', () => {
     imgSnapshotTest(
       `
     stateDiagram
-    [*] --> State1
-    State1 --> [*]
+    [*] --> State122
+    State122 --> [*]
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );
@@ -18,7 +18,7 @@ describe('State diagram', () => {
       stateDiagram
 
       [*] --> S1
-      state "Some long name" as S1
+      state "Some long names" as S1
       `,
       { logLevel: 0, fontFamily: 'courier' }
     );

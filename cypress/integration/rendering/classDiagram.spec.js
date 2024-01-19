@@ -19,7 +19,7 @@ describe('Class diagram', () => {
       Class07 : Object[] elementData
       Class01 : size()
       Class01 : int chimp
-      Class01 : int gorilla
+      Class01 : int gorillaGorilla
       Class01 : -int privateChimp
       Class01 : +int publicGorilla
       Class01 : #int protectedMarmoset

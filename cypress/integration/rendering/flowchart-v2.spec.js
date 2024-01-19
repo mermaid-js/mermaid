@@ -8,7 +8,6 @@ describe('Flowchart v2', () => {
       B --> C{Let me think}
       C -->|One| D[Laptop]
       C -->|Two| E[iPhone]
-      C -->|Three| F[fa:fa-car Car]
       `,
       {}
     );

@@ -51,7 +51,7 @@ describe('pie chart', () => {
   it('should render a pie diagram when useMaxWidth is false', () => {
     renderGraph(
       `pie title Sports in Sweden
-        "Bandy": 40
+        "Bandy": 140
         "Ice-Hockey": 80
         "Football": 90
       `,
