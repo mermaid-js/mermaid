@@ -22,7 +22,8 @@ jobs:
   cache:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "${{ toJSON(github) }}" | sed 's/::/:/g'
+      - run: |
+          echo "${{ toJSON(github) }}" | sed 's/::/:/g'
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2
       - name: Setup Node.js
