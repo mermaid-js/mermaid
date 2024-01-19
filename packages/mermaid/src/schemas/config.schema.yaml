@@ -1851,6 +1851,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     unevaluatedProperties: false
     required:
       - titleTopMargin
+      - subGraphTitleMargin
       - diagramPadding
       - htmlLabels
       - nodeSpacing
@@ -1863,6 +1864,20 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       titleTopMargin:
         $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
         default: 25
+      subGraphTitleMargin:
+        description: |
+          Defines a top/bottom margin for subgraph titles
+        type: object
+        properties:
+          top:
+            type: integer
+            minimum: 0
+          bottom:
+            type: integer
+            minimum: 0
+        default:
+          top: 0
+          bottom: 0
       arrowMarkerAbsolute:
         type: boolean # TODO, is this actually used here (it has no default value but was in types)
       diagramPadding:
