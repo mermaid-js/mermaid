@@ -22,7 +22,7 @@ jobs:
   cache:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "${{ github.event }}"
+      - run: echo "${{ toJSON(github) }}"
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2
       - name: Setup Node.js
