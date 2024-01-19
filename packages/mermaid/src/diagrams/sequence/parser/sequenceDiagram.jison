@@ -75,9 +75,9 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 ";"                                                             return 'NEWLINE';
 [^\+\->:\n,;]+((?!(\-x|\-\-x|\-\)|\-\-\)))[\-]*[^\+\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; }
 "->>"                                                           return 'SOLID_ARROW';
-"-><"                                                           return 'BIDIRECTIONAL_SOLID_ARROW';
+"->*>"                                                           return 'BIDIRECTIONAL_SOLID_ARROW';
 "-->>"                                                          return 'DOTTED_ARROW';
-"--><"                                                          return 'BIDIRECTIONAL_DOTTED_ARROW';
+"-->*>"                                                          return 'BIDIRECTIONAL_DOTTED_ARROW';
 "->"                                                            return 'SOLID_OPEN_ARROW';
 "-->"                                                           return 'DOTTED_OPEN_ARROW';
 \-[x]                                                           return 'SOLID_CROSS';

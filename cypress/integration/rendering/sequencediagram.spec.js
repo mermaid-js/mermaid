@@ -68,6 +68,21 @@ context('Sequence diagram', () => {
       { sequence: { actorFontFamily: 'courier' } }
     );
   });
+  it('should render bidirectional arrows', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      Alice->*>John: Hello John, how are you?
+      Alice-->*>John: Hi Alice, I can hear you!
+      John->*>Alice: This also works the other way
+      John-->*>Alice: Yes
+      Alice->John: Test
+      John->>Alice: Still works
+      `,
+      { logLevel: 0 }
+    );
+    cy.get('svg');
+  });
   it('should handle different line breaks', () => {
     imgSnapshotTest(
       `

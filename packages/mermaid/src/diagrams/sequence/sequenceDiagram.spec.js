@@ -519,7 +519,7 @@ Alice->>Bob:Hello Bob, how are you?`;
   it('should handle bidirectional arrow messages', async () => {
     const str = `
 sequenceDiagram
-Alice-><Bob:Hello Bob, how are you?`;
+Alice->*>Bob:Hello Bob, how are you?`;
 
     await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
@@ -532,7 +532,9 @@ Alice-><Bob:Hello Bob, how are you?`;
     expect(messages[0].type).toBe(diagram.db.LINETYPE.BIDIRECTIONAL_SOLID);
   });
   it('should handle bidirectional dotted arrow messages', async () => {
-    const str = 'sequenceDiagram\n' + 'Alice--><Bob:Hello Bob, how are you?';
+    const str = `
+    sequenceDiagram
+    Alice-->*>Bob:Hello Bob, how are you?`;
 
     await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
