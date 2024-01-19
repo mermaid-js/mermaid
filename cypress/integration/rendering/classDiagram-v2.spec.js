@@ -571,4 +571,14 @@ class C13["With Città foreign language"]
       { logLevel: 1, flowchart: { htmlLabels: false } }
     );
   });
+  it('should render a simple class diagram with style definition', () => {
+    imgSnapshotTest(
+      `
+      classDiagram-v2
+        class Class10
+        style Class10 fill:#f9f,stroke:#333,stroke-width:4px
+        `,
+      { logLevel: 1, flowchart: { htmlLabels: false } }
+    );
+  });
 });

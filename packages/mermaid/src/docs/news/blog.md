@@ -1,5 +1,23 @@
 # Blog
 
+## [Introducing Mermaid Chart’s JetBrains IDE Extension](https://www.mermaidchart.com/blog/posts/introducing-mermaid-charts-jetbrains-ide-extension/)
+
+20 December 2023 · 5 mins
+
+Diagrams are essential for documenting your code.
+
+## [Mermaid Chart Releases New Visual Editor For Flowcharts](https://www.mermaidchart.com/blog/posts/mermaid-chart-releases-new-visual-editor-for-flowcharts/)
+
+14 December 2023 · 5 mins
+
+Mermaid Chart introduces a new Visual Editor for flowcharts, enabling users of all skill levels to create diagrams easily and efficiently, with both GUI and code-based editing options.
+
+## [7 best practices (+ examples) for good developer documentation](https://www.mermaidchart.com/blog/posts/7-best-practices-for-good-documentation/)
+
+4 December 2023 · 11 min
+
+Essential strategies for crafting grate developer documentation, with practical examples and insights from leading tech companies.
+
 ## [5 Reasons You Should Be Using Mermaid Chart As Your Diagram Generator](https://www.mermaidchart.com/blog/posts/5-reasons-you-should-be-using-mermaid-chart-as-your-diagram-generator/)
 
 14 November 2023 · 5 mins
