@@ -16,12 +16,13 @@ permissions:
 
 env:
   # For PRs and MergeQueues, the target commit is used, and for push events, github.event.previous is used.
-  targetHash: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || github.event.before }}
+  targetHash: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event_name == 'merge_group' && github.event.merge_group.base_sha || github.event.before }}
 
 jobs:
   cache:
     runs-on: ubuntu-latest
     steps:
+      - run: echo "${{ github.event }}"
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2
       - name: Setup Node.js
