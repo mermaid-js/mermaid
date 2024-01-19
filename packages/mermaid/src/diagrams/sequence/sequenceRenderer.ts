@@ -836,11 +836,6 @@ export const draw = async function (_text: string, id: string, _version: string,
     bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos);
   }
 
-  log.debug('createdActors', createdActors);
-  log.debug('destroyedActors', destroyedActors);
-
-  await drawActors(diagram, actors, actorKeys, false);
-
   // Draw the messages/signals
   let sequenceIndex = 1;
   let sequenceIndexStep = 1;
@@ -1044,6 +1039,7 @@ export const draw = async function (_text: string, id: string, _version: string,
 
   log.debug('createdActors', createdActors);
   log.debug('destroyedActors', destroyedActors);
+  await drawActors(diagram, actors, actorKeys, false);
 
   for (const e of messagesToDraw) {
     await drawMessage(diagram, e.messageModel, e.lineStartY, diagObj);
@@ -1051,7 +1047,6 @@ export const draw = async function (_text: string, id: string, _version: string,
   if (conf.mirrorActors) {
     await drawActors(diagram, actors, actorKeys, true);
   }
-
   backgrounds.forEach((e) => svgDraw.drawBackgroundRect(diagram, e));
   fixLifeLineHeights(diagram, actors, actorKeys, conf);
 
