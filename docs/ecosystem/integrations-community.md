@@ -6,17 +6,26 @@
 
 # Integrations
 
-## Official integration: [Mermaid Chart](./mermaid-chart.md)
+## Official integration
 
-We're excited about the growth of the Mermaid community, and the number of plugins and integrations that have been created with Mermaid.
+### Mermaid Chart
+
+Mermaid Chart is built by the team behind Mermaid JS.
+
+For more details, visit the [Mermaid Chart page](./mermaid-chart.md), or visit the [Mermaid Chart website](https://www.mermaidchart.com) .
 
 ## Community integrations
 
-Below are a list of community plugins and integrations created with Mermaid.
+We're excited about the growth of the Mermaid community, and the number of plugins and integrations that have been created by the community.
+
+See the list below of community plugins and integrations created with Mermaid.
+
+> **Note**
+> A ✅ indicates Native support for Mermaid on the respective platform.
+
+To add an integration to this list, see the [Integrations - create page](./integrations-create.md).
 
 ### Productivity tools
-
-✅ = Native support
 
 - [Atlassian Products](https://www.atlassian.com)
   - [Mermaid for Confluence](https://marketplace.atlassian.com/apps/1224722/mermaid-for-confluence?hosting=cloud&tab=overview)
@@ -156,7 +165,6 @@ Communication tools and platforms
   - [Textual UML Parser](https://github.com/manastalukdar/markdown-it-textual-uml)
   - [Mermaid Plugin](https://github.com/tylingsoft/markdown-it-mermaid)
   - [md-it-mermaid](https://github.com/iamcco/md-it-mermaid)
-  - [markdown-it-mermaid-fence-new](https://github.com/Revomatico/markdown-it-mermaid-fence-new)
   - [markdown-it-mermaid-less](https://github.com/searKing/markdown-it-mermaid-less)
 - [Podlite](https://github.com/zag/podlite-desktop)
   - [=Diagram block](https://github.com/zag/podlite/tree/main/packages/podlite-diagrams)
@@ -182,7 +190,7 @@ Communication tools and platforms
 
 - [Codedoc](https://codedoc.cc/)
   - [codedoc-mermaid-plugin](https://www.npmjs.com/package/codedoc-mermaid-plugin)
-- [Docsy Hugo Theme](https://www.docsy.dev/docs/adding-content/lookandfeel/#diagrams-with-mermaid) (native support in theme)
+- [Docsy Hugo Theme](https://www.docsy.dev/docs/adding-content/lookandfeel/#diagrams-with-mermaid) ✅
 - [Docusaurus](https://docusaurus.io/docs/markdown-features/diagrams) ✅
 - [Gatsby](https://www.gatsbyjs.com/)
   - [gatsby-remark-mermaid](https://github.com/remcohaszing/gatsby-remark-mermaid)
@@ -203,6 +211,7 @@ Communication tools and platforms
 - [Type Doc](https://typedoc.org/)
   - [typedoc-plugin-mermaid](https://www.npmjs.com/package/typedoc-plugin-mermaid)
 - [Typora](https://support.typora.io/Draw-Diagrams-With-Markdown/#mermaid) ✅
+- [Unison programming language](https://www.unison-lang.org/docs/usage-topics/documentation/) ✅
 
 ### Browser Extensions
 
@@ -223,6 +232,7 @@ Communication tools and platforms
 
 - [Bisheng](https://www.npmjs.com/package/bisheng)
   - [bisheng-plugin-mermaid](https://github.com/yct21/bisheng-plugin-mermaid)
+- [Codemia: A tool to practice system design problems](https://codemia.io) ✅
 - [ExDoc](https://github.com/elixir-lang/ex_doc)
   - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)
 - [Jekyll](https://jekyllrb.com/)
@@ -230,7 +240,7 @@ Communication tools and platforms
   - [jekyll-mermaid-diagrams](https://github.com/fuzhibo/jekyll-mermaid-diagrams)
 - [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
-- [NiceGUI: Let any browser be the frontend of your Python code](https://nicegui.io)
+- [NiceGUI: Let any browser be the frontend of your Python code](https://nicegui.io) ✅
   - [ui.mermaid(...)](https://nicegui.io/documentation/mermaid)
 - [Reveal.js](https://github.com/hakimel/reveal.js)
   - [reveal.js-mermaid-plugin](https://github.com/ludwick/reveal.js-mermaid-plugin)
@@ -240,6 +250,3 @@ Communication tools and platforms
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
 - [ExDoc](https://github.com/elixir-lang/ex_doc)
   - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)
-- [NiceGUI: Let any browser be the frontend of your Python code](https://nicegui.io)
-  - [ui.mermaid(...)](https://nicegui.io/documentation/section_text_elements#markdown_element)
-  - [ui.markdown(..., extras=\['mermaid'\])](https://nicegui.io/documentation/section_text_elements#mermaid_diagrams)

@@ -324,7 +324,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 5;
 
-  const boxpluslineGroup = elem.append('g');
+  const boxpluslineGroup = elem.append('g').lower();
   var g = boxpluslineGroup;
 
   if (!isFooter) {
