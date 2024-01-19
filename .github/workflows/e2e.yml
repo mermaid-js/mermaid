@@ -115,6 +115,7 @@ jobs:
   combineArtifacts:
     needs: e2e
     runs-on: ubuntu-latest
+    if: ${{ always() }}
     steps:
       - name: Download All Artifacts
         uses: actions/download-artifact@v4
