@@ -8,6 +8,9 @@ on:
 permissions:
   contents: read
 
+env:
+  targetHash: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event_name == 'merge_group' && github.event.merge_group.base.sha || github.event.before }}
+
 jobs:
   cache:
     runs-on: ubuntu-latest
@@ -25,13 +28,13 @@ jobs:
         with:
           save-always: true
           path: ./cypress/snapshots
-          key: ${{ runner.os }}-snapshots
+          key: ${{ runner.os }}-snapshots-${{ env.targetHash }}
 
       - name: Switch to base branch
         if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event_name == 'merge_group' && github.event.merge_group.base.sha || 'develop' }}
+          ref: ${{ env.targetHash }}
 
       - name: Cypress run
         uses: cypress-io/github-action@v4
@@ -66,7 +69,7 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           path: ./cypress/snapshots
-          key: ${{ runner.os }}-snapshots
+          key: ${{ runner.os }}-snapshots-${{ env.targetHash }}
 
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
@@ -108,6 +111,14 @@ jobs:
           name: error-snapshots-${{ matrix.containers }}
           retention-days: 1
           path: cypress/snapshots/**/__diff_output__/*
+
+      - name: Save snapshots cache
+        id: cache-upload
+        if: ${{ github.event_name == 'push' }}
+        uses: actions/cache/save@v3
+        with:
+          path: ./cypress/snapshots
+          key: ${{ runner.os }}-snapshots-${{ github.event.after }}
 
   combineArtifacts:
     needs: e2e
