@@ -111,6 +111,7 @@ jobs:
 
   combineArtifacts:
     needs: e2e
+    if: ${{ failure() }}
     runs-on: ubuntu-latest
     steps:
       - name: Download All Artifacts
@@ -125,7 +126,12 @@ jobs:
           find . -mindepth 2 -type f -print -exec mv {} ../errors/ \;
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
+        id: upload-artifacts
         with:
           name: error-snapshots
           retention-days: 10
           path: errors/
+      - name: Notify Users
+        run: |
+          echo "::error,title=Visual tests failed::You can view images that failed by downloading the error-snapshots artifact: ${{ steps.upload-artifacts.outputs.artifact-url }}"
+        
