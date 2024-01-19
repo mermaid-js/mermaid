@@ -108,34 +108,38 @@ jobs:
         uses: actions/upload-artifact@v4
         if: ${{ failure() && steps.cypress.conclusion == 'failure' }}
         with:
-          name: error-snapshots-${{ matrix.containers }}
+          name: snapshots-${{ matrix.containers }}
           retention-days: 1
-          path: cypress/snapshots/**/__diff_output__/*
-
-      - name: Save snapshots cache
-        id: cache-upload
-        if: ${{ github.event_name == 'push' }}
-        uses: actions/cache/save@v3
-        with:
           path: ./cypress/snapshots
-          key: ${{ runner.os }}-snapshots-${{ github.event.after }}
 
   combineArtifacts:
     needs: e2e
-    if: ${{ failure() }}
     runs-on: ubuntu-latest
     steps:
       - name: Download All Artifacts
         uses: actions/download-artifact@v4
         with:
           path: snapshots
-          pattern: error-snapshots-*
+          pattern: snapshots-*
           merge-multiple: true
-      - run: |
+      
+      - name: Save snapshots cache
+        id: cache-upload
+        if: ${{ github.event_name == 'push' }}
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ./cypress/snapshots
+            !./**/__diff_output__/*
+          key: ${{ runner.os }}-snapshots-${{ github.event.after }}
+
+      - if: ${{ failure() }}
+        run: |
           mkdir errors
           cd snapshots
-          find . -mindepth 2 -type f -print -exec mv {} ../errors/ \;
-      - name: Upload Artifacts
+          find . -mindepth 2 -type d -name "*__diff_output__*" -exec sh -c 'mv "$0"/*.png ../errors/' {} \;
+      - name: Upload Error snapshots
+        if: ${{ failure() }}
         uses: actions/upload-artifact@v4
         id: upload-artifacts
         with:
@@ -143,6 +147,7 @@ jobs:
           retention-days: 10
           path: errors/
       - name: Notify Users
+        if: ${{ failure() }}
         run: |
           echo "::error,title=Visual tests failed::You can view images that failed by downloading the error-snapshots artifact: ${{ steps.upload-artifacts.outputs.artifact-url }}"
         
