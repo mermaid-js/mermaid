@@ -9,8 +9,44 @@ permissions:
   contents: read
 
 jobs:
+  cache:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+
+      - name: Cache snapshots
+        id: cache-snapshot
+        uses: actions/cache@v4
+        with:
+          save-always: true
+          path: ./cypress/snapshots
+          key: ${{ runner.os }}-snapshots
+
+      - name: Switch to base branch
+        if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event_name == 'merge_group' && github.event.merge_group.base.sha || 'develop' }}
+  
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        id: cypress-snapshot-gen
+        if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
+        with:
+          start: pnpm run dev
+          wait-on: 'http://localhost:9000'
+          browser: chrome
+          spec: |
+            cypress/integration/rendering/flowchart-v2.spec.js
+  
   e2e:
     runs-on: ubuntu-latest
+    needs: cache
     strategy:
       fail-fast: false
       matrix:
@@ -27,6 +63,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Cache snapshots
+        id: cache-snapshot
+        uses: actions/cache/restore@v3
+        with:
+          path: ./cypress/snapshots
+          key: ${{ runner.os }}-snapshots
+
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
@@ -38,14 +81,19 @@ jobs:
         with:
           start: pnpm run dev:coverage
           wait-on: 'http://localhost:9000'
+          browser: chrome
           # Disable recording if we don't have an API key
           # e.g. if this action was run from a fork
           record: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
           parallel: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
+          # TODO: Remove
+          spec: |
+            cypress/integration/rendering/flowchart-v2.spec.js
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           VITEST_COVERAGE: true
           CYPRESS_COMMIT: ${{ github.sha }}
+
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v3
         # Run step only pushes to develop and pull_requests
@@ -57,6 +105,7 @@ jobs:
           fail_ci_if_error: false
           verbose: true
           token: 6845cc80-77ee-4e17-85a1-026cd95e0766
+
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         if: ${{ failure() && steps.cypress.conclusion == 'failure' }}
