@@ -26,12 +26,4 @@
 
 import { addMatchImageSnapshotCommand } from 'cypress-image-snapshot/command';
 
-addMatchImageSnapshotCommand({
-  comparisonMethod: 'ssim',
-  failureThreshold: 0.01,
-  failureThresholdType: 'percent',
-  customDiffConfig: {
-    ssim: 'fast',
-  },
-  blur: 1,
-});
+addMatchImageSnapshotCommand();
