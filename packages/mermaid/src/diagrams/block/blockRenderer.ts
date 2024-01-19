@@ -58,7 +58,8 @@ export const draw = async function (
 
   // Add the marker definitions to the svg as marker tags
   // insertMarkers(svg, markers, diagObj.type, diagObj.arrowMarkerAbsolute);
-  insertMarkers(svg, markers, diagObj.type, true);
+  // insertMarkers(svg, markers, diagObj.type, true);
+  insertMarkers(svg, markers, diagObj.type, id);
 
   const bl = db.getBlocks();
   const blArr = db.getBlocksFlat();
@@ -69,7 +70,7 @@ export const draw = async function (
   const bounds = layout(db);
   // log.debug('Here be blocks', bl);
   await insertBlocks(nodes, bl, db);
-  await insertEdges(nodes, edges, blArr, db);
+  await insertEdges(nodes, edges, blArr, db, id);
 
   // log.debug('Here', bl);
 

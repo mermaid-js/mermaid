@@ -134,7 +134,7 @@ function setTerminalWidth(fo, value) {
 }
 
 export const positionEdgeLabel = (edge, paths) => {
-  log.info('Moving label abc78 ', edge.id, edge.label, edgeLabels[edge.id]);
+  log.info('Moving label abc88 ', edge.id, edge.label, edgeLabels[edge.id], paths);
   let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   if (edge.label) {
     const el = edgeLabels[edge.id];
@@ -152,7 +152,7 @@ export const positionEdgeLabel = (edge, paths) => {
         pos.x,
         ',',
         pos.y,
-        ') abc78'
+        ') abc88'
       );
       if (paths.updatedPath) {
         x = pos.x;
@@ -376,7 +376,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
   let pointsHasChanged = false;
   const tail = graph.node(e.v);
   var head = graph.node(e.w);
-  log.info('abc88 InsertEdge (head & tail): ', e.v, head, ' --- ', e.w, tail);
+  log.info('abc88 InsertEdge (head & tail) fin: ', e.v, head, ' --- ', e.w, tail);
 
   if (head?.intersect && tail?.intersect) {
     points = points.slice(1, edge.points.length - 1);

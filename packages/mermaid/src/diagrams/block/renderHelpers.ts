@@ -1,6 +1,6 @@
 import { getStylesFromArray } from '../../utils.js';
 import { insertNode, positionNode } from '../../dagre-wrapper/nodes.js';
-import { insertEdge, insertEdgeLabel } from '../../dagre-wrapper/edges.js';
+import { insertEdge, insertEdgeLabel, positionEdgeLabel } from '../../dagre-wrapper/edges.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { getConfig } from '../../config.js';
 import type { ContainerElement } from 'd3';
@@ -185,7 +185,8 @@ export async function insertEdges(
   elem: ContainerElement,
   edges: Block[],
   blocks: Block[],
-  db: BlockDB
+  db: BlockDB,
+  id: string
 ) {
   const g = new graphlib.Graph({
     multigraph: true,
@@ -238,7 +239,8 @@ export async function insertEdges(
           },
           undefined,
           'block',
-          g
+          g,
+          id
         );
         if (edge.label) {
           await insertEdgeLabel(elem, {
@@ -250,6 +252,12 @@ export async function insertEdges(
             points,
             classes: 'edge-thickness-normal edge-pattern-solid flowchart-link LS-a1 LE-b1',
           });
+          await positionEdgeLabel(
+            { ...edge, x: points[1].x, y: points[1].y },
+            {
+              originalPath: points,
+            }
+          );
         }
       }
     }
