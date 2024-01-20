@@ -345,6 +345,12 @@ const getStartDate = function (prevTime, dateFormat, str) {
     }
   }
 
+  if (str === '') {
+    // If only an end-only dateRange is provided, we determine the start date
+    // by comparing the start times of the tasks.
+    return getStartRange();
+  }
+
   // Check for actual date set
   let mDate = dayjs(str, dateFormat.trim(), true);
   if (mDate.isValid()) {
