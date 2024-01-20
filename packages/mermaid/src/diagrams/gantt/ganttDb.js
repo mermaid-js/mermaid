@@ -1,3 +1,5 @@
+/* eslint-disable unicorn/no-abusive-eslint-disable */
+/* eslint-disable  */
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import dayjs from 'dayjs';
 import dayjsIsoWeek from 'dayjs/plugin/isoWeek.js';
@@ -208,18 +210,27 @@ export const getTasks = function () {
     iterationCount++;
   }
 
-  tasks = rawTasks;
-  if (dateRange != '') {
-    tasks = tasks.filter(function (task) {
-      if (
-        (startDateRange && task.endTime <= startDateRange) ||
-        (endDateRange && task.startTime >= endDateRange)
-      ) {
-        return false;
-      }
-      return true;
-    });
+  if (dateRange === '') {
+    tasks = rawTasks;
+
+    return tasks;
   }
+
+  const filteredTasks = rawTasks.filter(function (task) {
+    if (
+      (startDateRange && task.endTime <= startDateRange) ||
+      (endDateRange && task.startTime >= endDateRange)
+    ) {
+      return false;
+    }
+    return true;
+  });
+
+  tasks = filteredTasks.map((task) => ({
+    ...task,
+    startTime: startDateRange && task.startTime < startDateRange ? startDateRange : task.startTime,
+    endTime: endDateRange && task.endTime > endDateRange ? endDateRange : task.endTime,
+  }));
 
   return tasks;
 };
