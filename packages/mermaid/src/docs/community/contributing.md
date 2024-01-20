@@ -358,6 +358,12 @@ it('should render forks and joins', () => {
 });
 ```
 
+**Verifying Snapshots**
+
+```sh
+pnpm e2e open cypress/snapshots
+```
+
 <!-- **_[TODO - running the tests against what is expected in development. ]_** -->
 <!-- **_[TODO - how to generate new screenshots]_** -->
 
