@@ -26,6 +26,11 @@ describe('when parsing a gantt diagram it', function () {
 
     expect(parserFnConstructor(str)).not.toThrow();
   });
+  it('should handle a dateRange definition', function () {
+    const str = 'gantt\ndateRange : 2023-06-01, 2023-07-01';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+  });
   it('should handle a title definition', function () {
     const str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid';
 
