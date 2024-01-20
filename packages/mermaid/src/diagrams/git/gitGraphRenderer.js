@@ -112,8 +112,11 @@ const drawCommits = (svg, commits, modifyGraph) => {
   });
 
   const isParallelCommits = gitGraphConfig.parallelCommits;
+  const layoutOffset = 10;
+  const commitStep = 40;
   sortedKeys.forEach((key) => {
     const commit = commits[key];
+    const posWithOffset = pos + layoutOffset;
 
     if (isParallelCommits) {
       if (!commit.parents.length) {
@@ -123,12 +126,15 @@ const drawCommits = (svg, commits, modifyGraph) => {
         }
       } else {
         const closestParent = findClosestParent(commit.parents);
-        pos = dir === 'TB' ? commitPos[closestParent].y + 40 : commitPos[closestParent].x + 40;
+        pos =
+          dir === 'TB'
+            ? commitPos[closestParent].y + commitStep
+            : commitPos[closestParent].x + commitStep;
       }
     }
 
-    const y = dir === 'TB' ? pos + 10 : branchPos[commit.branch].pos;
-    const x = dir === 'TB' ? branchPos[commit.branch].pos : pos + 10;
+    const y = dir === 'TB' ? posWithOffset : branchPos[commit.branch].pos;
+    const x = dir === 'TB' ? branchPos[commit.branch].pos : posWithOffset;
 
     // Don't draw the commits now but calculate the positioning which is used by the branch lines etc.
     if (modifyGraph) {
@@ -253,9 +259,9 @@ const drawCommits = (svg, commits, modifyGraph) => {
       }
     }
     if (dir === 'TB') {
-      commitPos[commit.id] = { x: x, y: pos + 10 };
+      commitPos[commit.id] = { x: x, y: posWithOffset };
     } else {
-      commitPos[commit.id] = { x: pos + 10, y: y };
+      commitPos[commit.id] = { x: posWithOffset, y: y };
     }
 
     // The first iteration over the commits are for positioning purposes, this
@@ -284,7 +290,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
 
         // Now we have the label, lets position the background
         labelBkg
-          .attr('x', pos + 10 - bbox.width / 2 - py)
+          .attr('x', posWithOffset - bbox.width / 2 - py)
           .attr('y', y + 13.5)
           .attr('width', bbox.width + 2 * py)
           .attr('height', bbox.height + 2 * py);
@@ -295,7 +301,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
         }
 
         if (dir !== 'TB') {
-          text.attr('x', pos + 10 - bbox.width / 2);
+          text.attr('x', posWithOffset - bbox.width / 2);
         }
         if (gitGraphConfig.rotateCommitLabel) {
           if (dir === 'TB') {
@@ -321,7 +327,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
           .attr('class', 'tag-label')
           .text(commit.tag);
         let tagBbox = tag.node().getBBox();
-        tag.attr('x', pos + 10 - tagBbox.width / 2);
+        tag.attr('x', posWithOffset - tagBbox.width / 2);
 
         const h2 = tagBbox.height / 2;
         const ly = y - 19.2;
@@ -330,10 +336,10 @@ const drawCommits = (svg, commits, modifyGraph) => {
           `
           ${pos - tagBbox.width / 2 - px / 2},${ly + py}
           ${pos - tagBbox.width / 2 - px / 2},${ly - py}
-          ${pos + 10 - tagBbox.width / 2 - px},${ly - h2 - py}
-          ${pos + 10 + tagBbox.width / 2 + px},${ly - h2 - py}
-          ${pos + 10 + tagBbox.width / 2 + px},${ly + h2 + py}
-          ${pos + 10 - tagBbox.width / 2 - px},${ly + h2 + py}`
+          ${posWithOffset - tagBbox.width / 2 - px},${ly - h2 - py}
+          ${posWithOffset + tagBbox.width / 2 + px},${ly - h2 - py}
+          ${posWithOffset + tagBbox.width / 2 + px},${ly + h2 + py}
+          ${posWithOffset - tagBbox.width / 2 - px},${ly + h2 + py}`
         );
 
         hole
@@ -350,10 +356,10 @@ const drawCommits = (svg, commits, modifyGraph) => {
               `
             ${x},${pos + py}
             ${x},${pos - py}
-            ${x + 10},${pos - h2 - py}
-            ${x + 10 + tagBbox.width + px},${pos - h2 - py}
-            ${x + 10 + tagBbox.width + px},${pos + h2 + py}
-            ${x + 10},${pos + h2 + py}`
+            ${x + layoutOffset},${pos - h2 - py}
+            ${x + layoutOffset + tagBbox.width + px},${pos - h2 - py}
+            ${x + layoutOffset + tagBbox.width + px},${pos + h2 + py}
+            ${x + layoutOffset},${pos + h2 + py}`
             )
             .attr('transform', 'translate(12,12) rotate(45, ' + x + ',' + pos + ')');
           hole
@@ -367,7 +373,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
         }
       }
     }
-    pos += 50;
+    pos += commitStep + layoutOffset;
     if (pos > maxPos) {
       maxPos = pos;
     }
