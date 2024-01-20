@@ -34,6 +34,7 @@ describe('when using the ganttDb', function () {
     beforeEach(function () {
       ganttDb.setDateFormat('YYYY-MM-DD');
       ganttDb.enableInclusiveEndDates();
+      ganttDb.setDateRange('2019-02-01, 2019-03-01');
       ganttDb.setDisplayMode('compact');
       ganttDb.setTodayMarker('off');
       ganttDb.setExcludes('weekends 2019-02-06,friday');
@@ -50,6 +51,9 @@ describe('when using the ganttDb', function () {
       ${'getAccDescription'}    | ${''}
       ${'getDateFormat'}        | ${''}
       ${'getAxisFormat'}        | ${''}
+      ${'getDateRange'}         | ${''}
+      ${'getStartRange'}        | ${''}
+      ${'getEndRange'}          | ${''}
       ${'getTodayMarker'}       | ${''}
       ${'getExcludes'}          | ${[]}
       ${'getSections'}          | ${[]}
@@ -157,6 +161,28 @@ describe('when using the ganttDb', function () {
     expect(tasks[2].task).toEqual('test3');
     expect(tasks[2].startTime).toEqual(new Date(2013, 0, 15));
     expect(tasks[2].endTime).toEqual(new Date(2013, 0, 17));
+  });
+  it('should handle fixed date ranges', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setDateRange('2023-07-01, 2023-07-30');
+    ganttDb.addSection('testa1');
+    ganttDb.addTask('test1', 'id1,2013-07-01,2w');
+    ganttDb.addTask('test2', 'id2,2023-06-25,2w');
+    ganttDb.addSection('testa2');
+    ganttDb.addTask('test3', 'id3,after id2,2d');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks.length).toEqual(2);
+    expect(tasks[0].startTime).toEqual(new Date(2023, 5, 25));
+    expect(tasks[0].endTime).toEqual(new Date(2023, 6, 9));
+    expect(tasks[0].id).toEqual('id2');
+    expect(tasks[0].task).toEqual('test2');
+
+    expect(tasks[1].id).toEqual('id3');
+    expect(tasks[1].task).toEqual('test3');
+    expect(tasks[1].startTime).toEqual(new Date(2023, 6, 9));
+    expect(tasks[1].endTime).toEqual(new Date(2023, 6, 11));
   });
   it('should ignore weekends', function () {
     ganttDb.setDateFormat('YYYY-MM-DD');
@@ -436,6 +462,30 @@ describe('when using the ganttDb', function () {
   it('should reject dates with ridiculous years', function () {
     ganttDb.setDateFormat('YYYYMMDD');
     ganttDb.addTask('test1', 'id1,202304,1d');
-    expect(() => ganttDb.getTasks()).toThrowError('Invalid date:202304');
+    expect(() => ganttDb.getTasks()).toThrowError(
+      "Invalid date: '202304' with date format: 'YYYYMMDD'"
+    );
+  });
+
+  it.each(convert`
+    testName                   | dateRange                   | expStartRange   | expEndRange     | expTasksLength
+    ${'No dateRange'}          | ${''}                       | ${'2023-06-01'} | ${'2023-07-07'} | ${2}
+    ${'Wide dateRange'}        | ${'2023-01-01, 2023-12-31'} | ${'2023-01-01'} | ${'2023-12-31'} | ${2}
+    ${'Narrow dateRange'}      | ${'2023-06-29, 2023-06-30'} | ${'2023-06-29'} | ${'2023-06-30'} | ${0}
+    ${'Overlapping dateRange'} | ${'2023-06-06, 2023-07-03'} | ${'2023-06-06'} | ${'2023-07-03'} | ${2}
+    ${'Starting dateRange'}    | ${'2023-06-06'}             | ${'2023-06-06'} | ${'2023-07-07'} | ${2}
+    ${'Ending dateRange'}      | ${',2023-06-06'}            | ${'2023-06-01'} | ${'2023-06-06'} | ${1}
+  `)('$testName', ({ dateFormat, dateRange, expStartRange, expEndRange, expTasksLength }) => {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    expect('').toEqual(ganttDb.getDateRange());
+    ganttDb.setDateRange(dateRange);
+    ganttDb.addTask('task1', 't1, 2023-06-01, 2023-06-07');
+    ganttDb.addTask('task2', 't2, 2023-07-02, 2023-07-07');
+    const tasks = ganttDb.getTasks();
+    const startRange = ganttDb.getStartRange();
+    const endRange = ganttDb.getEndRange();
+    expect(expTasksLength).toEqual(tasks.length);
+    expect(dayjs(expStartRange, 'YYYY-MM-DD').toDate()).toEqual(startRange);
+    expect(dayjs(expEndRange, 'YYYY-MM-DD').toDate()).toEqual(endRange);
   });
 });
