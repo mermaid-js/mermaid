@@ -63,7 +63,7 @@ export class BasePlot implements Plot {
     let plotIndex = 0;
     if (linePlots.length) {
       const linePlot = new LinePlot(
-        linePlots[0],
+        linePlots,
         this.xAxis,
         this.yAxis,
         this.chartConfig.chartOrientation,

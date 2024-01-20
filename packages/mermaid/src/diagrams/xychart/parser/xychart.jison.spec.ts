@@ -453,8 +453,11 @@ describe('Testing xychart jison file', () => {
 
   describe('multiple datasets', () => {
     it('parse 2 datasets', () => {
-      const str =
-        'xychart-beta\nx-axis xAxisName\ny-axis yAxisName\nbar "barTitle1" [23, 45, 56.6]\nbar "barTitle2" [13, 42, 56.89]';
+      const str = `xychart-beta
+        x-axis xAxisName
+        y-axis yAxisName
+        bar "barTitle1" [23, 45, 56.6]
+        bar "barTitle2" [13, 42, 56.89]`;
       expect(parserFnConstructor(str)).not.toThrow();
       expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yAxisName', type: 'text' });
       expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
@@ -471,8 +474,12 @@ describe('Testing xychart jison file', () => {
     });
 
     it('parse 3 datasets', () => {
-      const str =
-        'xychart-beta\nx-axis xAxisName\ny-axis yAxisName\nbar "barTitle1" [23, 45, 56.6]\nbar "barTitle2" [13, 42, 56.89]\nbar "barTitle3" [18, 37, 56.1]';
+      const str = `xychart-beta
+        x-axis xAxisName
+        y-axis yAxisName
+        bar "barTitle1" [23, 45, 56.6]
+        bar "barTitle2" [13, 42, 56.89]
+        bar "barTitle3" [18, 37, 56.1]`;
       expect(parserFnConstructor(str)).not.toThrow();
       expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yAxisName', type: 'text' });
       expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
