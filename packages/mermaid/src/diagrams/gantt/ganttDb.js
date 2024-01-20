@@ -22,6 +22,9 @@ dayjs.extend(dayjsCustomParseFormat);
 dayjs.extend(dayjsAdvancedFormat);
 
 let dateFormat = '';
+let dateRange = '';
+let startDateRange = '';
+let endDateRange = '';
 let axisFormat = '';
 let tickInterval = undefined;
 let todayMarker = '';
@@ -51,6 +54,9 @@ export const clear = function () {
   lastTaskID = undefined;
   rawTasks = [];
   dateFormat = '';
+  dateRange = '';
+  startDateRange = '';
+  endDateRange = '';
   axisFormat = '';
   displayMode = '';
   tickInterval = undefined;
@@ -101,6 +107,22 @@ export const endDatesAreInclusive = function () {
   return inclusiveEndDates;
 };
 
+export const setDateRange = function (txt) {
+  dateRange = txt;
+
+  if (!dateRange) {
+    return;
+  }
+  const [startStr, endStr] = dateRange.split(',');
+
+  if (startStr) {
+    startDateRange = getStartDate(undefined, dateFormat, startStr);
+  }
+  if (endStr) {
+    endDateRange = getEndDate(undefined, dateFormat, endStr);
+  }
+};
+
 export const enableTopAxis = function () {
   topAxis = true;
 };
@@ -119,6 +141,34 @@ export const getDisplayMode = function () {
 
 export const getDateFormat = function () {
   return dateFormat;
+};
+
+export const getDateRange = function () {
+  return dateRange;
+};
+
+export const getStartRange = function () {
+  if (startDateRange) {
+    return startDateRange;
+  }
+  if (getTasks().length > 0) {
+    return getTasks().reduce((min, task) => {
+      return task.startTime < min ? task.startTime : min;
+    }, Infinity);
+  }
+  return '';
+};
+
+export const getEndRange = function () {
+  if (endDateRange) {
+    return endDateRange;
+  }
+  if (getTasks().length > 0) {
+    return getTasks().reduce((max, task) => {
+      return task.endTime > max ? task.endTime : max;
+    }, -Infinity);
+  }
+  return '';
 };
 
 export const setIncludes = function (txt) {
@@ -159,6 +209,17 @@ export const getTasks = function () {
   }
 
   tasks = rawTasks;
+  if (dateRange != '') {
+    tasks = tasks.filter(function (task) {
+      if (
+        (startDateRange && task.endTime <= startDateRange) ||
+        (endDateRange && task.startTime >= endDateRange)
+      ) {
+        return false;
+      }
+      return true;
+    });
+  }
 
   return tasks;
 };
@@ -303,7 +364,7 @@ const getStartDate = function (prevTime, dateFormat, str) {
       d.getFullYear() < -10000 ||
       d.getFullYear() > 10000
     ) {
-      throw new Error('Invalid date:' + str);
+      throw new Error(`Invalid date: '${str}' with date format: '${dateFormat}'`);
     }
     return d;
   }
@@ -730,6 +791,10 @@ export default {
   setDateFormat,
   getDateFormat,
   enableInclusiveEndDates,
+  setDateRange,
+  getDateRange,
+  getStartRange,
+  getEndRange,
   endDatesAreInclusive,
   enableTopAxis,
   topAxisEnabled,
