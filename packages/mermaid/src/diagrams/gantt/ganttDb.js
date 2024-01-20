@@ -1,5 +1,3 @@
-/* eslint-disable unicorn/no-abusive-eslint-disable */
-/* eslint-disable  */
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import dayjs from 'dayjs';
 import dayjsIsoWeek from 'dayjs/plugin/isoWeek.js';
