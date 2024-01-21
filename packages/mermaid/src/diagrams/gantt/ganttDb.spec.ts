@@ -163,26 +163,40 @@ describe('when using the ganttDb', function () {
     expect(tasks[2].endTime).toEqual(new Date(2013, 0, 17));
   });
   it('should handle fixed date ranges', function () {
-    ganttDb.setDateFormat('YYYY-MM-DD');
+    const DATE_FORMAT = 'YYYY-MM-DD';
+    ganttDb.setDateFormat(DATE_FORMAT);
     ganttDb.setDateRange('2023-07-01, 2023-07-30');
     ganttDb.addSection('testa1');
     ganttDb.addTask('test1', 'id1,2013-07-01,2w');
-    ganttDb.addTask('test2', 'id2,2023-06-25,2w');
+    ganttDb.addTask('test2', 'id2,2023-07-02,2w');
     ganttDb.addSection('testa2');
     ganttDb.addTask('test3', 'id3,after id2,2d');
+    ganttDb.addSection('testa3');
+    ganttDb.addTask('test4', 'id4,2023-06-25,2w');
+    ganttDb.addTask('test5', 'id5,2023-07-25,2w');
 
     const tasks = ganttDb.getTasks();
 
-    expect(tasks.length).toEqual(2);
-    expect(tasks[0].startTime).toEqual(new Date(2023, 5, 25));
-    expect(tasks[0].endTime).toEqual(new Date(2023, 6, 9));
+    expect(tasks.length).toEqual(4);
     expect(tasks[0].id).toEqual('id2');
     expect(tasks[0].task).toEqual('test2');
+    expect(tasks[0].startTime).toEqual(dayjs('2023-07-02', DATE_FORMAT, true).toDate());
+    expect(tasks[0].endTime).toEqual(dayjs('2023-07-16', DATE_FORMAT, true).toDate());
 
     expect(tasks[1].id).toEqual('id3');
     expect(tasks[1].task).toEqual('test3');
-    expect(tasks[1].startTime).toEqual(new Date(2023, 6, 9));
-    expect(tasks[1].endTime).toEqual(new Date(2023, 6, 11));
+    expect(tasks[1].startTime).toEqual(dayjs('2023-07-16', DATE_FORMAT, true).toDate());
+    expect(tasks[1].endTime).toEqual(dayjs('2023-07-18', DATE_FORMAT, true).toDate());
+
+    expect(tasks[2].id).toEqual('id4');
+    expect(tasks[2].task).toEqual('test4');
+    expect(tasks[2].startTime).toEqual(dayjs('2023-07-01', DATE_FORMAT, true).toDate());
+    expect(tasks[2].endTime).toEqual(dayjs('2023-07-09', DATE_FORMAT, true).toDate());
+
+    expect(tasks[3].id).toEqual('id5');
+    expect(tasks[3].task).toEqual('test5');
+    expect(tasks[3].startTime).toEqual(dayjs('2023-07-25', DATE_FORMAT, true).toDate());
+    expect(tasks[3].endTime).toEqual(dayjs('2023-07-30', DATE_FORMAT, true).toDate());
   });
   it('should ignore weekends', function () {
     ganttDb.setDateFormat('YYYY-MM-DD');
