@@ -273,7 +273,7 @@ gantt
 
 > **Warning** > `millisecond` and `second` support was added in vMERMAID_RELEASE_VERSION
 
-### Date Ranges
+### Date Ranges (v\<MERMAID_RELEASE_VERSION>+)
 
 The default behavior is to set the x range to include all of the data in the chart. You can override
 the range by specifying `dateRange`. Any tasks falling outside the specified range will be removed
