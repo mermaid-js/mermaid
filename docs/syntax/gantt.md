@@ -300,8 +300,8 @@ gantt
     Dropped : 14:01, 14:20
 ```
 
-It is also possible to specify only a lower bound using `dateRange lower` or only an upper bound
-using `dateRange ,upper`.
+It is also possible to specify only a lower bound using `dateRange <date>` or only an upper bound
+using `dateRange ,<date>`.
 
 ## Output in compact mode
 
