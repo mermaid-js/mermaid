@@ -198,10 +198,10 @@ function setBlockSizes(block: Block, db: BlockDB, sieblingWidth = 0, sieblingHei
       width = block?.size?.width || 0;
 
       // Grow children to fit
-      const num = block.children.length;
+      const num = columns > 0 ? Math.min(block.children.length, columns) : block.children.length;
       if (num > 0) {
         const childWidth = (width - num * padding - padding) / num;
-        // log.debug('abc95 (finale calc) width', block.id, width, block.size?.width, childWidth);
+        log.debug('abc95 (growing to fit) width', block.id, width, block.size?.width, childWidth);
         for (const child of block.children) {
           if (child.size) {
             child.size.width = childWidth;
@@ -264,7 +264,8 @@ function layoutBlocks(block: Block, db: BlockDB) {
       const { px, py } = calculateBlockPosition(columns, columnPos);
       if (py != rowPos) {
         rowPos = py;
-        startingPosX = block?.size?.x || -padding;
+        startingPosX = block?.size?.x ? block?.size?.x + (-block?.size?.width / 2 || 0) : -padding;
+        log.debug('New row in layout for block', block.id, ' and child ', child.id, rowPos);
       }
       log.debug(
         'abc89 layout blocks (child) id:',

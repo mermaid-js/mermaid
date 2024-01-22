@@ -181,22 +181,22 @@ In diagrams with varying block sizes, Mermaid automatically adjusts the column w
 
 ```mermaid-example
 block-beta
-columns 3
-a:3
-block:e:3
-f
-end
-g
+  columns 3
+  a:3
+  block:e:3
+    f
+  end
+  g
 ```
 
 ```mermaid
 block-beta
-columns 3
-a:3
-block:e:3
-f
-end
-g
+  columns 3
+  a:3
+  block:e:3
+    f
+  end
+  g
 ```
 
 This example demonstrates how Mermaid dynamically adjusts the width of the columns to accommodate the widest block, in this case, 'a' and the composite block 'e'. This dynamic adjustment is essential for creating visually balanced and easy-to-understand diagrams.
@@ -326,7 +326,7 @@ block-beta
 Parallelogram and trapezoid shapes are perfect for inputs/outputs and transitional processes:
 
 ```mermaid-example
-flowchart TD
+block-beta
   id1[/"This is the text in the box"/]
   id2[\"This is the text in the box"\]
   A[/"Christmas"\]
@@ -334,7 +334,7 @@ flowchart TD
 ```
 
 ```mermaid
-flowchart TD
+block-beta
   id1[/"This is the text in the box"/]
   id2[\"This is the text in the box"\]
   A[/"Christmas"\]
@@ -346,12 +346,12 @@ flowchart TD
 For highlighting critical or high-priority components, a double circle can be effective:
 
 ```mermaid-example
-flowchart TD
+block-beta
     id1((("This is the text in the circle")))
 ```
 
 ```mermaid
-flowchart TD
+block-beta
     id1((("This is the text in the circle")))
 ```
 
@@ -388,6 +388,22 @@ block-beta
 #### Example - Space Blocks
 
 Space blocks can be used to create intentional empty spaces in the diagram, which is useful for layout and readability:
+
+```mermaid-example
+block-beta
+  columns 3
+  a space b
+  c   d   e
+```
+
+```mermaid
+block-beta
+  columns 3
+  a space b
+  c   d   e
+```
+
+or
 
 ```mermaid-example
 block-beta
@@ -435,21 +451,6 @@ block-beta
 
 This example illustrates a direct connection from block 'A' to block 'B', using a straightforward arrow.
 
-**Example - Open Link:**
-For connections that are less direct or to represent a different type of relationship, an open link (without an arrowhead) can be used:
-
-```mermaid-example
-block-beta
-  A space B
-  A --- B
-```
-
-```mermaid
-block-beta
-  A space B
-  A --- B
-```
-
 This syntax creates a line connecting 'A' and 'B', implying a relationship or connection without indicating a specific direction.
 
 ### Text on Links
@@ -472,25 +473,6 @@ block-beta
 ```
 
 This example show how to add descriptive text to the links, enhancing the information conveyed by the diagram.
-
-### Advanced Link Types
-
-Mermaid also supports various advanced link types, such as dotted lines, thick links, and different arrowheads, to represent different kinds of relationships or interactions.
-
-**Example - Dotted and Thick Links**
-A dotted link can be used to represent a weaker or less formal relationship:
-
-```mermaid-example
-block-beta
-  A space:2 B
-  A-.->B
-```
-
-```mermaid
-block-beta
-  A space:2 B
-  A-.->B
-```
 
 Example - Edges and Styles:
 
@@ -575,9 +557,9 @@ Illustrating a simple software system architecture with interconnected component
 ```mermaid-example
 block-beta
   columns 3
-  Frontend blockArrowId6<["&nbsp;&nbsp;"]>(right) Backend
-  space:2 down<["&nbsp;&nbsp;"]>(down)
-  Disk left<["&nbsp;&nbsp;"]>(left) Database[("Database")]
+  Frontend blockArrowId6<[" "]>(right) Backend
+  space:2 down<[" "]>(down)
+  Disk left<[" "]>(left) Database[("Database")]
 
   classDef front fill:#696,stroke:#333;
   classDef back fill:#969,stroke:#333;
@@ -588,9 +570,9 @@ block-beta
 ```mermaid
 block-beta
   columns 3
-  Frontend blockArrowId6<["&nbsp;&nbsp;"]>(right) Backend
-  space:2 down<["&nbsp;&nbsp;"]>(down)
-  Disk left<["&nbsp;&nbsp;"]>(left) Database[("Database")]
+  Frontend blockArrowId6<[" "]>(right) Backend
+  space:2 down<[" "]>(down)
+  Disk left<[" "]>(left) Database[("Database")]
 
   classDef front fill:#696,stroke:#333;
   classDef back fill:#969,stroke:#333;
@@ -608,7 +590,7 @@ Representing a business process flow with decision points and multiple stages:
 block-beta
   columns 3
   Start(("Start")) space:2
-  down<["&nbsp;&nbsp;"]>(down) space:2
+  down<[" "]>(down) space:2
   Decision{{"Make Decision"}} right<["Yes"]>(right) Process1["Process A"]
   downAgain<["No"]>(down) space r3<["Done"]>(down)
   Process2["Process B"] r2<["Done"]>(right) End(("End"))
@@ -622,7 +604,7 @@ block-beta
 block-beta
   columns 3
   Start(("Start")) space:2
-  down<["&nbsp;&nbsp;"]>(down) space:2
+  down<[" "]>(down) space:2
   Decision{{"Make Decision"}} right<["Yes"]>(right) Process1["Process A"]
   downAgain<["No"]>(down) space r3<["Done"]>(down)
   Process2["Process B"] r2<["Done"]>(right) End(("End"))

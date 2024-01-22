@@ -65,10 +65,47 @@
   <body>
     <pre id="diagram" class="mermaid">
 block-beta
-  a space:2 c
-  a-- "b" --> c
+columns 3
+a:3
+block:e:3
+f
+end
+g
+
     </pre>
     <pre id="diagram" class="mermaid">
+block-beta
+  block:e:4
+    columns 2
+      f
+      g
+  end
+
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+  block:e:4
+    columns 2
+      f
+      g
+      h
+  end
+
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+  columns 4
+  a b c d
+  block:e:4
+    columns 2
+      f
+      g
+      h
+  end
+  i:4
+
+    </pre>
+    <pre id="diagram" class="mermaid2">
 flowchart LR
   X-- "y" -->z
     </pre>
