@@ -459,9 +459,9 @@ The different cardinality options are :
 - `0..1` Zero or One
 - `1..*` One or more
 - `*` Many
-- `n` n {where n>1}
-- `0..n` zero to n {where n>1}
-- `1..n` one to n {where n>1}
+- `n` n (where n>1)
+- `0..n` zero to n (where n>1)
+- `1..n` one to n (where n>1)
 
 Cardinality can be easily defined by placing the text option within quotes `"` before or after a given arrow. For example:
 
@@ -766,9 +766,30 @@ Beginner's tip—a full example using interactive links in an HTML page:
 
 ## Styling
 
-### Styling a node
+### Styling a node (v10.7.0+)
 
-It is possible to apply specific styles such as a thicker border or a different background color to individual nodes. This is done by predefining classes in css styles that can be applied from the graph definition using the `cssClass` statement or the `:::` short hand.
+It is possible to apply specific styles such as a thicker border or a different background color to an individual node using the `style` keyword.
+
+```mermaid-example
+classDiagram
+  class Animal
+  class Mineral
+  style Animal fill:#f9f,stroke:#333,stroke-width:4px
+  style Mineral fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+```
+
+```mermaid
+classDiagram
+  class Animal
+  class Mineral
+  style Animal fill:#f9f,stroke:#333,stroke-width:4px
+  style Mineral fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+```
+
+#### Classes
+
+More convenient than defining the style every time is to define a class of styles and attach this class to the nodes that
+should have a different look. This is done by predefining classes in css styles that can be applied from the graph definition using the `cssClass` statement or the `:::` short hand.
 
 ```html
 <style>
