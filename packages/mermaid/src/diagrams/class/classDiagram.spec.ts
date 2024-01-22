@@ -859,6 +859,24 @@ describe('given a class diagram with members and methods ', function () {
 
       parser.parse(str);
     });
+
+    it('should handle multiple classes with same name, and different types types', function () {
+      const str = `classDiagram
+      class Car~T~
+      Car-T : int numSeats'
+      class Car~L~`;
+
+      parser.parse(str);
+
+      const classes = parser.yy.getClasses();
+      expect(Object.keys(classes).length).toBe(2);
+      expect(classes['Car-T'].id).toBe('Car-T');
+      expect(classes['Car-T'].name).toBe('Car');
+      expect(classes['Car-T'].type).toBe('T');
+      expect(classes['Car-L'].id).toBe('Car-L');
+      expect(classes['Car-L'].name).toBe('Car');
+      expect(classes['Car-L'].type).toBe('L');
+    });
   });
 
   describe('when parsing method definition', function () {

@@ -39,15 +39,17 @@ const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
 const splitClassNameAndType = function (_id: string) {
   const id = common.sanitizeText(_id, getConfig());
   let genericType = '';
+  let classId = id;
   let className = id;
 
   if (id.indexOf('~') > 0) {
     const split = id.split('~');
     className = sanitizeText(split[0]);
     genericType = sanitizeText(split[1]);
+    classId = `${className}-${genericType}`;
   }
 
-  return { className: className, type: genericType };
+  return { classId: classId, className: className, type: genericType };
 };
 
 export const setClassLabel = function (_id: string, label: string) {
@@ -56,28 +58,29 @@ export const setClassLabel = function (_id: string, label: string) {
     label = sanitizeText(label);
   }
 
-  const { className } = splitClassNameAndType(id);
-  classes[className].label = label;
+  const { classId } = splitClassNameAndType(id);
+  classes[classId].label = label;
 };
 
 /**
  * Function called by parser when a node definition has been found.
  *
- * @param id - Id of the class to add
+ * @param id - Id of the class to add, which can include generic type info
  * @public
  */
 export const addClass = function (_id: string) {
   const id = common.sanitizeText(_id, getConfig());
-  const { className, type } = splitClassNameAndType(id);
+  const { classId, className, type } = splitClassNameAndType(id);
   // Only add class if not exists
-  if (Object.hasOwn(classes, className)) {
-    return;
+  if (Object.hasOwn(classes, classId)) {
+    return classes[classId];
   }
   // alert('Adding class: ' + className);
   const name = common.sanitizeText(className, getConfig());
   // alert('Adding class after: ' + name);
-  classes[name] = {
-    id: name,
+  const newClass = {
+    id: classId,
+    name: name,
     type: type,
     label: name,
     cssClasses: [],
@@ -88,7 +91,10 @@ export const addClass = function (_id: string) {
     domId: MERMAID_DOM_ID_PREFIX + name + '-' + classCounter,
   } as ClassNode;
 
+  classes[classId] = newClass;
   classCounter++;
+
+  return newClass;
 };
 
 /**
@@ -134,14 +140,13 @@ export const getNotes = function () {
 
 export const addRelation = function (relation: ClassRelation) {
   log.debug('Adding relation: ' + JSON.stringify(relation));
-  addClass(relation.id1);
-  addClass(relation.id2);
+  const relation1 = addClass(relation.id1);
+  const relation2 = addClass(relation.id2);
 
-  relation.id1 = splitClassNameAndType(relation.id1).className;
-  relation.id2 = splitClassNameAndType(relation.id2).className;
+  relation.id1 = relation1.id;
+  relation.id2 = relation2.id;
 
   relation.relationTitle1 = common.sanitizeText(relation.relationTitle1.trim(), getConfig());
-
   relation.relationTitle2 = common.sanitizeText(relation.relationTitle2.trim(), getConfig());
 
   relations.push(relation);
@@ -156,8 +161,8 @@ export const addRelation = function (relation: ClassRelation) {
  * @public
  */
 export const addAnnotation = function (className: string, annotation: string) {
-  const validatedClassName = splitClassNameAndType(className).className;
-  classes[validatedClassName].annotations.push(annotation);
+  const { classId } = splitClassNameAndType(className);
+  classes[classId].annotations.push(annotation);
 };
 
 /**
@@ -170,23 +175,19 @@ export const addAnnotation = function (className: string, annotation: string) {
  * @public
  */
 export const addMember = function (className: string, member: string) {
-  addClass(className);
-
-  const validatedClassName = splitClassNameAndType(className).className;
-  const theClass = classes[validatedClassName];
+  const newClass = addClass(className);
 
   if (typeof member === 'string') {
-    // Member can contain white spaces, we trim them out
     const memberString = member.trim();
 
     if (memberString.startsWith('<<') && memberString.endsWith('>>')) {
       // its an annotation
-      theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
+      newClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
     } else if (memberString.indexOf(')') > 0) {
       //its a method
-      theClass.methods.push(new ClassMember(memberString, 'method'));
+      newClass.methods.push(new ClassMember(memberString, 'method'));
     } else if (memberString) {
-      theClass.members.push(new ClassMember(memberString, 'attribute'));
+      newClass.members.push(new ClassMember(memberString, 'attribute'));
     }
   }
 };
@@ -218,16 +219,16 @@ export const cleanupLabel = function (label: string) {
  * Called by parser when assigning cssClass to a class
  *
  * @param ids - Comma separated list of ids
- * @param className - Class to add
+ * @param cssClassName - Class to add
  */
-export const setCssClass = function (ids: string, className: string) {
+export const setCssClass = function (ids: string, cssClassName: string) {
   ids.split(',').forEach(function (_id) {
     let id = _id;
     if (_id[0].match(/\d/)) {
       id = MERMAID_DOM_ID_PREFIX + id;
     }
     if (classes[id] !== undefined) {
-      classes[id].cssClasses.push(className);
+      classes[id].cssClasses.push(cssClassName);
     }
   });
 };
