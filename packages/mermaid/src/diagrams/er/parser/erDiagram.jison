@@ -139,7 +139,7 @@ attributeType
 
 attributeName
     : ATTRIBUTE_WORD { $$=$1; }
-    | 'BACKTICK_STRING' { $$=$1.replace(/\`/g, ''); }
+    | BACKTICK_STRING { $$=$1.replace(/\`/g, ''); }
     ;
 
 attributeKeyTypeList
