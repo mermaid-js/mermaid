@@ -75,21 +75,6 @@ describe('XY Chart', () => {
       );
       cy.get('svg');
     });
-    it('Multiple plots can be rendered', () => {
-      imgSnapshotTest(
-        `
-      xychart-beta
-        line [23, 46, 77, 34]
-        line [45, 32, 33, 12]
-        bar [87, 54, 99, 85]
-        line [78, 88, 22, 4]
-        line [22, 29, 75, 33]
-        bar [52, 96, 35, 10]
-      `,
-        {}
-      );
-      cy.get('svg');
-    });
     it('Decimals and negative numbers are supported', () => {
       imgSnapshotTest(
         `
@@ -323,9 +308,10 @@ describe('XY Chart', () => {
   });
 
   describe('multiple datasets', () => {
-    it('should render 3 datasets', () => {
-      imgSnapshotTest(
-        `
+    describe('vertical', () => {
+      it('should render bar diagram for 3 datasets', () => {
+        imgSnapshotTest(
+          `
       xychart-beta
       title "Basic xychart with multiple datasets"
       x-axis "Relevant categories" [category1, "category 2", category3, category4]
@@ -334,14 +320,48 @@ describe('XY Chart', () => {
       bar "cats" [20, 40, 0, 30]
       bar "birds" [30, 60, 50, 30]
       `,
-        {}
-      );
-      cy.get('svg');
+          {}
+        );
+        cy.get('svg');
+      });
+
+      it('should render line diagram for 3 datasets', () => {
+        imgSnapshotTest(
+          `
+      xychart-beta
+      title "Basic xychart with multiple datasets"
+      x-axis "Relevant categories" [category1, "category 2", category3, category4]
+      y-axis Animals 0 --> 160
+      line "dogs" [0, 20, 40, 30]
+      line "cats" [20, 40, 0, 30]
+      line "birds" [30, 60, 50, 30]
+      `,
+          {}
+        );
+        cy.get('svg');
+      });
+
+      it('should render a mix of multiple bar and line plots', () => {
+        imgSnapshotTest(
+          `
+      xychart-beta
+        line [23, 46, 77, 34]
+        line [45, 32, 33, 12]
+        bar [87, 54, 99, 85]
+        line [78, 88, 22, 4]
+        line [22, 29, 75, 33]
+        bar [52, 96, 35, 10]
+      `,
+          {}
+        );
+        cy.get('svg');
+      });
     });
 
-    it('should render 3 datasets in horizontal orientation', () => {
-      imgSnapshotTest(
-        `
+    describe('horizontal', () => {
+      it('should render bar diagram for 3 datasets', () => {
+        imgSnapshotTest(
+          `
       xychart-beta horizontal
       title "Basic xychart with multiple datasets"
       x-axis "Relevant categories" [category1, "category 2", category3, category4]
@@ -350,9 +370,42 @@ describe('XY Chart', () => {
       bar "cats" [20, 40, 0, 30]
       bar "birds" [30, 60, 50, 30]
       `,
-        {}
-      );
-      cy.get('svg');
+          {}
+        );
+        cy.get('svg');
+      });
+
+      it('should render line diagram for 3 datasets', () => {
+        imgSnapshotTest(
+          `
+      xychart-beta horizontal
+      title "Basic xychart with multiple datasets"
+      x-axis "Relevant categories" [category1, "category 2", category3, category4]
+      y-axis Animals 0 --> 160
+      line "dogs" [0, 20, 40, 30]
+      line "cats" [20, 40, 0, 30]
+      line "birds" [30, 60, 50, 30]
+      `,
+          {}
+        );
+        cy.get('svg');
+      });
+
+      it('should render a mix of multiple bar and line plots', () => {
+        imgSnapshotTest(
+          `
+      xychart-beta horizontal
+        line [23, 46, 77, 34]
+        line [45, 32, 33, 12]
+        bar [87, 54, 99, 85]
+        line [78, 88, 22, 4]
+        line [22, 29, 75, 33]
+        bar [52, 96, 35, 10]
+      `,
+          {}
+        );
+        cy.get('svg');
+      });
     });
   });
 });
