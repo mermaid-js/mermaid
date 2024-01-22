@@ -1,7 +1,3 @@
----
-outline: 'deep' # shows all h3 headings in outline in Vitepress
----
-
 # Integrations - create
 
 ## Recommendations

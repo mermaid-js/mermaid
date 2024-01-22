@@ -60,6 +60,7 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 <string>["]                     this.popState();
 <string>[^"]*                   return "STR";
 <*>["]                          this.begin("string");
+"style"                         return 'STYLE';
 
 <INITIAL,namespace>"namespace"  { this.begin('namespace'); return 'NAMESPACE'; }
 <namespace>\s*(\r?\n)+          { this.popState(); return 'NEWLINE'; }
@@ -127,6 +128,10 @@ line was introduced with 'click'.
 <*>\-                           return 'MINUS';
 <*>"."                          return 'DOT';
 <*>\+                           return 'PLUS';
+":"                             return 'COLON';
+","                             return 'COMMA';
+\#                              return 'BRKT';
+"#"                             return 'BRKT';
 <*>\%                           return 'PCT';
 <*>"="                          return 'EQUALS';
 <*>\=                           return 'EQUALS';
@@ -198,6 +203,7 @@ line was introduced with 'click'.
 [\uFFD2-\uFFD7\uFFDA-\uFFDC]
                                 return 'UNICODE_TEXT';
 <*>\s                           return 'SPACE';
+\s                              return 'SPACE';
 <*><<EOF>>                      return 'EOF';
 
 /lex
@@ -254,6 +260,7 @@ statement
     | memberStatement
     | annotationStatement
     | clickStatement
+    | styleStatement
     | cssClassStatement
     | noteStatement
     | direction
@@ -365,9 +372,25 @@ clickStatement
     | CLICK className HREF STR STR LINK_TARGET          {$$ = $1;yy.setLink($2, $4, $6);yy.setTooltip($2, $5);}
     ;
 
-cssClassStatement
-    : CSSCLASS STR alphaNumToken  {yy.setCssClass($2, $3);}
+styleStatement
+    :STYLE ALPHA stylesOpt                              {$$ = $STYLE;yy.setCssStyle($2,$stylesOpt);}
     ;
+
+cssClassStatement
+    : CSSCLASS STR ALPHA                            {yy.setCssClass($2, $3);}
+    ;
+
+stylesOpt
+    : style {$$ = [$style]}
+    | stylesOpt COMMA style {$stylesOpt.push($style);$$ = $stylesOpt;}
+    ;
+
+style
+    : styleComponent
+    | style styleComponent  {$$ = $style + $styleComponent;}
+    ;
+
+styleComponent: ALPHA | NUM | COLON | UNIT | SPACE | BRKT | STYLE | PCT | LABEL;
 
 commentToken   : textToken | graphCodeTokens ;
 
