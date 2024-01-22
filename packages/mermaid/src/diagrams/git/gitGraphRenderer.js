@@ -118,17 +118,17 @@ const drawCommits = (svg, commits, modifyGraph) => {
     const commit = commits[key];
 
     if (isParallelCommits) {
-      if (!commit.parents.length) {
-        pos = 0;
-        if (dir === 'TB') {
-          pos = 30;
-        }
-      } else {
+      if (commit.parents.length) {
         const closestParent = findClosestParent(commit.parents);
         pos =
           dir === 'TB'
             ? commitPos[closestParent].y + commitStep
             : commitPos[closestParent].x + commitStep;
+      } else {
+        pos = 0;
+        if (dir === 'TB') {
+          pos = 30;
+        }
       }
     }
 
