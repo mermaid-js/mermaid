@@ -343,6 +343,35 @@ const parseDuration = function (str) {
 const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   str = str.trim();
 
+  // Test for until
+  const re = /^until\s+([\d\w- ]+)/;
+  const untilStatement = re.exec(str.trim());
+
+  if (untilStatement !== null) {
+    // check all until ids and take the earliest
+    let earliestStartingTask = null;
+    untilStatement[1].split(' ').forEach(function (id) {
+      let task = findTaskById(id);
+      if (task !== undefined) {
+        if (!earliestStartingTask) {
+          earliestStartingTask = task;
+        } else {
+          if (task.startTime < earliestStartingTask.startTime) {
+            earliestStartingTask = task;
+          }
+        }
+      }
+    });
+
+    if (!earliestStartingTask) {
+      const dt = new Date();
+      dt.setHours(0, 0, 0, 0);
+      return dt;
+    } else {
+      return earliestStartingTask.startTime;
+    }
+  }
+
   // Check for actual date
   let mDate = dayjs(str, dateFormat.trim(), true);
   if (mDate.isValid()) {

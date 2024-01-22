@@ -49,8 +49,8 @@ gantt
     Create tests for parser             :crit, active, 3d
     Future task in critical line        :crit, 5d
     Create tests for renderer           :2d
-    Add to mermaid                      :1d
-    Functionality added                 :milestone, 2014-01-25, 0d
+    Add to mermaid                      :until isadded
+    Functionality added                 :milestone, isadded, 2014-01-25, 0d
 
     section Documentation
     Describe gantt syntax               :active, a1, after des1, 3d
@@ -63,6 +63,10 @@ gantt
     Add another diagram to demo page    :48h
 ```
 
+```note
+Support for keyword `until` was added in (v<MERMAID_RELEASE_VERSION>+). This can be used to define a task which is running until some other specific task or milestone starts.
+```
+
 It is possible to set multiple dependencies separated by space:
 
 ```mermaid-example
@@ -70,6 +74,7 @@ gantt
     apple :a, 2017-07-20, 1w
     banana :crit, b, 2017-07-23, 1d
     cherry :active, c, after b a, 1d
+    kiwi   :d, 2017-07-20, until b c
 ```
 
 ### Title
