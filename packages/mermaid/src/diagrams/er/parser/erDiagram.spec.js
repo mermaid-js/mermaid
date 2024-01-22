@@ -231,7 +231,7 @@ describe('when parsing ER diagram it...', function () {
 
     it('should allow special characters inside of backticks', () => {
       const entity = 'BOOK';
-      const specialChars = '.?",';
+      const specialChars = '?!@#$%^&*".,{}[]()';
       [...specialChars].forEach((specialChar, i) => {
         const attribute = `String \`author${specialChar}firstname\``;
         erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}}`);
