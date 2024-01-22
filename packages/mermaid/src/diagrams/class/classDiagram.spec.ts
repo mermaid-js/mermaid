@@ -258,9 +258,30 @@ class C13["With Città foreign language"]
       expect(classDb.getClass('C13').label).toBe('With Città foreign language');
     });
 
+    it('should handle link if class not created first', function () {
+      const str = `classDiagram
+                      link Class1 "/#anchor"`;
+      parser.parse(str);
+
+      const actual = parser.yy.getClass('Class1');
+      expect(actual.link).toBe('/#anchor');
+    });
+
+    it('should handle "note for" without pre-defining class', function () {
+      const str = `classDiagram
+                      note for Class1 "test"`;
+      parser.parse(str);
+
+      const actual = parser.yy.getClass('Class1');
+
+      expect(classDb.getNotes()[0].text).toEqual(`test`);
+    });
+
     it('should handle "note for"', function () {
       const str = 'classDiagram\n' + 'Class11 <|.. Class12\n' + 'note for Class11 "test"\n';
       parser.parse(str);
+
+      expect(classDb.getNotes()[0].text).toEqual(`test`);
     });
 
     it('should handle "note"', function () {
@@ -632,6 +653,16 @@ foo()
       classDb.clear();
       parser.yy = classDb;
     });
+
+    it('should handle link if class not created first', function () {
+      const str = `classDiagram
+                      link Class1 "/#anchor"`;
+      parser.parse(str);
+
+      const actual = parser.yy.getClass('Class1');
+      expect(actual.link).toBe('/#anchor');
+    });
+
     it('should handle href link', function () {
       spyOn(classDb, 'setLink');
       const str = 'classDiagram\n' + 'class Class1 \n' + 'click Class1 href "google.com" ';
@@ -690,6 +721,15 @@ foo()
       expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
     });
 
+    it('should handle function call when class not created first', function () {
+      spyOn(classDb, 'setClickEvent');
+      const str = `classDiagram
+        click Class1 call functionCall()`;
+      parser.parse(str);
+
+      expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
+    });
+
     it('should handle function call with tooltip', function () {
       spyOn(classDb, 'setClickEvent');
       spyOn(classDb, 'setTooltip');
@@ -742,6 +782,17 @@ foo()
     beforeEach(function () {
       classDb.clear();
       parser.yy = classDb;
+    });
+
+    it('should handle annotation if class not created first', function () {
+      const str = 'classDiagram\n' + '<<interface>> Class1';
+      parser.parse(str);
+
+      const actual = parser.yy.getClass('Class1');
+      expect(actual.annotations.length).toBe(1);
+      expect(actual.members.length).toBe(0);
+      expect(actual.methods.length).toBe(0);
+      expect(actual.annotations[0]).toBe('interface');
     });
 
     it('should handle class annotations', function () {

@@ -116,8 +116,8 @@ export const clear = function () {
   commonClear();
 };
 
-export const getClass = function (id: string): ClassNode {
-  return classes[id];
+export const getClass = function (className: string): ClassNode {
+  return classes[className];
 };
 
 export const getClasses = function (): ClassMap {
@@ -156,6 +156,7 @@ export const addRelation = function (relation: ClassRelation) {
  * @public
  */
 export const addAnnotation = function (className: string, annotation: string) {
+  addClass(className);
   const validatedClassName = splitClassNameAndType(className).className;
   classes[validatedClassName].annotations.push(annotation);
 };
@@ -199,6 +200,8 @@ export const addMembers = function (className: string, members: string[]) {
 };
 
 export const addNote = function (text: string, className: string) {
+  addClass(className);
+
   const note = {
     id: `note${notes.length}`,
     class: className,
@@ -217,17 +220,19 @@ export const cleanupLabel = function (label: string) {
 /**
  * Called by parser when assigning cssClass to a class
  *
- * @param ids - Comma separated list of ids
- * @param className - Class to add
+ * @param classNames - Comma separated list of ids
+ * @param cssClass - Class to add
  */
-export const setCssClass = function (ids: string, className: string) {
-  ids.split(',').forEach(function (_id) {
-    let id = _id;
-    if (_id[0].match(/\d/)) {
-      id = MERMAID_DOM_ID_PREFIX + id;
+export const setCssClass = function (classNames: string, cssClass: string) {
+  classNames.split(',').forEach(function (_className) {
+    let className = _className;
+    addClass(className);
+
+    if (_className[0].match(/\d/)) {
+      className = MERMAID_DOM_ID_PREFIX + className;
     }
-    if (classes[id] !== undefined) {
-      classes[id].cssClasses.push(className);
+    if (classes[className] !== undefined) {
+      classes[className].cssClasses.push(cssClass);
     }
   });
 };
@@ -235,66 +240,73 @@ export const setCssClass = function (ids: string, className: string) {
 /**
  * Called by parser when a tooltip is found, e.g. a clickable element.
  *
- * @param ids - Comma separated list of ids
+ * @param classNames - Comma separated list of ids
  * @param tooltip - Tooltip to add
  */
-const setTooltip = function (ids: string, tooltip?: string) {
-  ids.split(',').forEach(function (id) {
+const setTooltip = function (classNames: string, tooltip?: string) {
+  classNames.split(',').forEach(function (className) {
     if (tooltip !== undefined) {
-      classes[id].tooltip = sanitizeText(tooltip);
+      addClass(className);
+      classes[className].tooltip = sanitizeText(tooltip);
     }
   });
 };
 
-export const getTooltip = function (id: string, namespace?: string) {
+export const getTooltip = function (className: string, namespace?: string) {
   if (namespace) {
-    return namespaces[namespace].classes[id].tooltip;
+    return namespaces[namespace].classes[className].tooltip;
   }
 
-  return classes[id].tooltip;
+  return classes[className].tooltip;
 };
 
 /**
  * Called by parser when a link is found. Adds the URL to the vertex data.
  *
- * @param ids - Comma separated list of ids
+ * @param classNames - Comma separated list of class ids
  * @param linkStr - URL to create a link for
  * @param target - Target of the link, _blank by default as originally defined in the svgDraw.js file
  */
-export const setLink = function (ids: string, linkStr: string, target: string) {
+export const setLink = function (classNames: string, linkStr: string, target: string) {
   const config = getConfig();
-  ids.split(',').forEach(function (_id) {
-    let id = _id;
-    if (_id[0].match(/\d/)) {
-      id = MERMAID_DOM_ID_PREFIX + id;
+  classNames.split(',').forEach(function (_className) {
+    let className = _className;
+    if (_className[0].match(/\d/)) {
+      className = MERMAID_DOM_ID_PREFIX + className;
     }
-    if (classes[id] !== undefined) {
-      classes[id].link = utils.formatUrl(linkStr, config);
+    addClass(className);
+    if (classes[className] !== undefined) {
+      classes[className].link = utils.formatUrl(linkStr, config);
       if (config.securityLevel === 'sandbox') {
-        classes[id].linkTarget = '_top';
+        classes[className].linkTarget = '_top';
       } else if (typeof target === 'string') {
-        classes[id].linkTarget = sanitizeText(target);
+        classes[className].linkTarget = sanitizeText(target);
       } else {
-        classes[id].linkTarget = '_blank';
+        classes[className].linkTarget = '_blank';
       }
     }
   });
-  setCssClass(ids, 'clickable');
+  setCssClass(classNames, 'clickable');
 };
 
 /**
  * Called by parser when a click definition is found. Registers an event handler.
  *
- * @param ids - Comma separated list of ids
+ * @param classNames - Comma separated list of class ids
  * @param functionName - Function to be called on click
  * @param functionArgs - Function args the function should be called with
  */
-export const setClickEvent = function (ids: string, functionName: string, functionArgs: string) {
-  ids.split(',').forEach(function (id) {
-    setClickFunc(id, functionName, functionArgs);
-    classes[id].haveCallback = true;
+export const setClickEvent = function (
+  classNames: string,
+  functionName: string,
+  functionArgs: string
+) {
+  classNames.split(',').forEach(function (className) {
+    addClass(className);
+    setClickFunc(className, functionName, functionArgs);
+    classes[className].haveCallback = true;
   });
-  setCssClass(ids, 'clickable');
+  setCssClass(classNames, 'clickable');
 };
 
 const setClickFunc = function (_domId: string, functionName: string, functionArgs: string) {
@@ -308,6 +320,7 @@ const setClickFunc = function (_domId: string, functionName: string, functionArg
   }
 
   const id = domId;
+  addClass(id);
   if (classes[id] !== undefined) {
     const elemId = lookUpDomId(id);
     let argList: string[] = [];
@@ -447,9 +460,8 @@ const getNamespaces = function (): NamespaceMap {
  * @public
  */
 export const addClassesToNamespace = function (id: string, classNames: string[]) {
-  if (namespaces[id] === undefined) {
-    return;
-  }
+  addNamespace(id);
+
   for (const name of classNames) {
     const { className } = splitClassNameAndType(name);
     classes[className].parent = id;
@@ -458,6 +470,7 @@ export const addClassesToNamespace = function (id: string, classNames: string[])
 };
 
 export const setCssStyle = function (id: string, styles: string[]) {
+  addClass(id);
   const thisClass = classes[id];
   if (!styles || !thisClass) {
     return;
