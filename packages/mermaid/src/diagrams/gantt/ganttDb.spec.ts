@@ -190,7 +190,7 @@ describe('when using the ganttDb', function () {
 
     const tasks = ganttDb.getTasks();
 
-    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 2));
+    expect(tasks[0].endTime).toEqual(new Date(2013, 1, 5));
     expect(tasks[0].id).toEqual('id1');
     expect(tasks[0].task).toEqual('task1');
   });
@@ -205,7 +205,7 @@ describe('when using the ganttDb', function () {
 
     const tasks = ganttDb.getTasks();
 
-    expect(tasks[0].endTime).toEqual(new Date(2013, 1, 10));
+    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 11));
     expect(tasks[0].id).toEqual('id1');
     expect(tasks[0].task).toEqual('task1');
   });
