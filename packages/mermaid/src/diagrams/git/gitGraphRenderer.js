@@ -116,7 +116,6 @@ const drawCommits = (svg, commits, modifyGraph) => {
   const commitStep = 40;
   sortedKeys.forEach((key) => {
     const commit = commits[key];
-    const posWithOffset = pos + layoutOffset;
 
     if (isParallelCommits) {
       if (!commit.parents.length) {
@@ -133,6 +132,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
       }
     }
 
+    const posWithOffset = pos + layoutOffset;
     const y = dir === 'TB' ? posWithOffset : branchPos[commit.branch].pos;
     const x = dir === 'TB' ? branchPos[commit.branch].pos : posWithOffset;
 
