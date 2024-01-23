@@ -30,7 +30,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
-
+      - run: |
+          echo '${{ toJson(github.event) }}'
       - name: Cache snapshots
         id: cache-snapshot
         uses: actions/cache@v4
