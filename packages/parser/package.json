@@ -1,6 +1,6 @@
 {
-  "name": "mermaid-parser",
-  "version": "0.2.0",
+  "name": "@mermaid-js/parser",
+  "version": "0.1.0-rc.1",
   "description": "MermaidJS parser",
   "author": "Yokozuna59",
   "contributors": [

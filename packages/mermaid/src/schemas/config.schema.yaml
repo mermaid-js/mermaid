@@ -21,8 +21,9 @@
 # - Use `meta:enum` to document enum values (from jsonschema2md)
 # - Use `tsType` to override the TypeScript type (from json-schema-to-typescript)
 # - If adding a new object to `MermaidConfig` (e.g. a new diagram type),
-#   you may need to add it to `.build/jsonSchema.ts` and `src/docs.mts`
-#   to get the docs/default values to generate properly.
+#   you may need to add it to `.build/jsonSchema.ts`, `src/docs.mts`
+#   and `scripts/create-types-from-json-schema.mjs`
+#   to get the default values/docs/types to generate properly.
 $id: https://mermaid-js.github.io/schemas/config.schema.json
 $schema: https://json-schema.org/draft/2019-09/schema
 title: Mermaid Config
@@ -73,6 +74,12 @@ properties:
     description: The maximum allowed size of the users text diagram
     type: number
     default: 50000
+  maxEdges:
+    description: |
+      Defines the maximum number of edges that can be drawn in a graph.
+    type: integer
+    default: 500
+    minimum: 0
   darkMode:
     type: boolean
     default: false
@@ -151,7 +158,7 @@ properties:
       in the current `currentConfig`.
 
       This prevents malicious graph directives from overriding a site's default security.
-    default: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
+    default: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize', 'maxEdges']
     type: array
     items:
       type: string
@@ -777,6 +784,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       rotateCommitLabel:
         type: boolean
         default: true
+      parallelCommits:
+        type: boolean
+        default: false
       # YAML anchor reference, don't use $ref since ajv doesn't load defaults
       arrowMarkerAbsolute: *arrowMarkerAbsolute
 
@@ -1847,6 +1857,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     unevaluatedProperties: false
     required:
       - titleTopMargin
+      - subGraphTitleMargin
       - diagramPadding
       - htmlLabels
       - nodeSpacing
@@ -1859,6 +1870,20 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       titleTopMargin:
         $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
         default: 25
+      subGraphTitleMargin:
+        description: |
+          Defines a top/bottom margin for subgraph titles
+        type: object
+        properties:
+          top:
+            type: integer
+            minimum: 0
+          bottom:
+            type: integer
+            minimum: 0
+        default:
+          top: 0
+          bottom: 0
       arrowMarkerAbsolute:
         type: boolean # TODO, is this actually used here (it has no default value but was in types)
       diagramPadding:
@@ -1969,10 +1994,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         $ref: '#/$defs/SankeyNodeAlignment'
         default: justify
       useMaxWidth:
+        type: boolean
         default: false
       showValues:
         description: |
           Toggle to display or hide values along with title.
+        type: boolean
         default: true
       prefix:
         description: |

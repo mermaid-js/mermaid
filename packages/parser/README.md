@@ -10,7 +10,7 @@ Mermaid Parser
 Mermaid parser package
 <p>
 
-[![NPM](https://img.shields.io/npm/v/mermaid-parser)](https://www.npmjs.com/package/mermaid-parser)
+[![NPM](https://img.shields.io/npm/v/@mermaid-js/parser)](https://www.npmjs.com/package/@mermaid-js/parser)
 
 ## How the package works
 

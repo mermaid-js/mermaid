@@ -1,5 +1,5 @@
-import type { Packet } from 'mermaid-parser';
-import { parse } from 'mermaid-parser';
+import type { Packet } from '@mermaid-js/parser';
+import { parse } from '@mermaid-js/parser';
 import type { ParserDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';

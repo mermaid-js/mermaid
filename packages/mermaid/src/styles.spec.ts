@@ -17,7 +17,6 @@ import theme from './themes/index.js';
 import c4 from './diagrams/c4/styles.js';
 import classDiagram from './diagrams/class/styles.js';
 import flowchart from './diagrams/flowchart/styles.js';
-import flowchartElk from './diagrams/flowchart/elk/styles.js';
 import er from './diagrams/er/styles.js';
 import git from './diagrams/git/styles.js';
 import gantt from './diagrams/gantt/styles.js';
@@ -87,7 +86,6 @@ describe('styles', () => {
         classDiagram,
         er,
         flowchart,
-        flowchartElk,
         gantt,
         git,
         journey,

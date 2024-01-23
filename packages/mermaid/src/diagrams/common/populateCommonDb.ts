@@ -1,5 +1,4 @@
-import type { DiagramAST } from 'mermaid-parser';
-
+import type { DiagramAST } from '@mermaid-js/parser';
 import type { DiagramDB } from '../../diagram-api/types.js';
 
 export function populateCommonDb(ast: DiagramAST, db: DiagramDB) {

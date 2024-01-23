@@ -1,4 +1,4 @@
-import type { Packet, RecursiveAstOmit } from 'mermaid-parser';
+import type { Packet, RecursiveAstOmit } from '@mermaid-js/parser';
 import type { PacketDiagramConfig } from '../../config.type.js';
 import type { DiagramDBBase } from '../../diagram-api/types.js';
 import type { ArrayElement } from '../../types.js';
