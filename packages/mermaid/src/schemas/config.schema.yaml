@@ -781,6 +781,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       rotateCommitLabel:
         type: boolean
         default: true
+      parallelCommits:
+        type: boolean
+        default: false
       # YAML anchor reference, don't use $ref since ajv doesn't load defaults
       arrowMarkerAbsolute: *arrowMarkerAbsolute
 
