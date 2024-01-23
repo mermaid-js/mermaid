@@ -141,18 +141,20 @@ Messages can be of two displayed either solid or with a dotted line.
 [Actor][Arrow][Actor]:Message text
 ```
 
-There are six types of arrows currently supported:
+There are ten types of arrows currently supported:
 
-| Type   | Description                                      |
-| ------ | ------------------------------------------------ |
-| `->`   | Solid line without arrow                         |
-| `-->`  | Dotted line without arrow                        |
-| `->>`  | Solid line with arrowhead                        |
-| `-->>` | Dotted line with arrowhead                       |
-| `-x`   | Solid line with a cross at the end               |
-| `--x`  | Dotted line with a cross at the end.             |
-| `-)`   | Solid line with an open arrow at the end (async) |
-| `--)`  | Dotted line with a open arrow at the end (async) |
+| Type    | Description                                                             |
+| ------- | ----------------------------------------------------------------------- |
+| `->`    | Solid line without arrow                                                |
+| `-->`   | Dotted line without arrow                                               |
+| `->>`   | Solid line with arrowhead                                               |
+| `-->>`  | Dotted line with arrowhead                                              |
+| `->*>`  | Solid line with bidirectional arrowheads (v<MERMAID_RELEASE_VERSION>+)  |
+| `-->*>` | Dotted line with bidirectional arrowheads (v<MERMAID_RELEASE_VERSION>+) |
+| `-x`    | Solid line with a cross at the end                                      |
+| `--x`   | Dotted line with a cross at the end.                                    |
+| `-)`    | Solid line with an open arrow at the end (async)                        |
+| `--)`   | Dotted line with a open arrow at the end (async)                        |
 
 ## Activations
 
