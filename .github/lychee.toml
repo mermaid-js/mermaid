@@ -34,8 +34,8 @@ exclude = [
 # Don't check files that are generated during the build via `pnpm docs:code`
 'packages/mermaid/src/docs/config/setup/*',
 
-# Ignore slack invite
-"https://join.slack.com/"
+# Ignore Discord invite
+"https://discord.gg"
 ]
 
 # Exclude all private IPs from checking.
