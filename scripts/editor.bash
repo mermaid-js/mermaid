@@ -13,8 +13,8 @@ mv package.tmp.json package.json
 popd
 
 pnpm run -r clean
+pnpm build:esbuild
 pnpm build:types
-pnpm build:mermaid
 
 # Clone the Mermaid Live Editor repository
 rm -rf mermaid-live-editor
