@@ -18,7 +18,7 @@ permissions:
 
 env:
   # For PRs and MergeQueues, the target commit is used, and for push events, github.event.previous is used.
-  targetHash: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || github.event.before }}
+  targetHash: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || (github.event.before == '0000000000000000000000000000000000000000' && 'develop' || github.event.before)  }}
 
 jobs:
   cache:
@@ -31,6 +31,7 @@ jobs:
         with:
           node-version: 18.x
       - run: |
+          echo '${{ env.targetHash }}'
           echo '${{ toJson(github.event) }}'
       - name: Cache snapshots
         id: cache-snapshot
