@@ -76,6 +76,7 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
     define: {
       // This needs to be stringified for esbuild
       includeLargeDiagrams: `${includeLargeDiagrams}`,
+      'import.meta.vitest': 'undefined',
     },
   });
 

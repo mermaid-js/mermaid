@@ -1,5 +1,4 @@
-'use strict';
-import { vi } from 'vitest';
+import { vi, it, expect, describe, beforeEach } from 'vitest';
 
 // -------------------------------------
 //  Mocks and mocking
@@ -27,27 +26,25 @@ vi.mock('./diagrams/git/gitGraphRenderer.js');
 vi.mock('./diagrams/gantt/ganttRenderer.js');
 vi.mock('./diagrams/user-journey/journeyRenderer.js');
 vi.mock('./diagrams/pie/pieRenderer.js');
+vi.mock('./diagrams/packet/renderer.js');
+vi.mock('./diagrams/xychart/xychartRenderer.js');
 vi.mock('./diagrams/requirement/requirementRenderer.js');
 vi.mock('./diagrams/sequence/sequenceRenderer.js');
 vi.mock('./diagrams/state/stateRenderer-v2.js');
 
 // -------------------------------------
 
-import mermaid from './mermaid.js';
+import assignWithDepth from './assignWithDepth.js';
 import type { MermaidConfig } from './config.type.js';
-
-import mermaidAPI, { removeExistingElements } from './mermaidAPI.js';
-import {
-  encodeEntities,
-  decodeEntities,
-  createCssStyles,
-  createUserStyles,
+import mermaid from './mermaid.js';
+import mermaidAPI, {
   appendDivSvgG,
   cleanUpSvgCode,
+  createCssStyles,
+  createUserStyles,
   putIntoIFrame,
+  removeExistingElements,
 } from './mermaidAPI.js';
-
-import assignWithDepth from './assignWithDepth.js';
 
 // --------------
 // Mocks
@@ -58,6 +55,7 @@ vi.mock('./styles.js', () => {
     default: vi.fn().mockReturnValue(' .userStyle { font-weight:bold; }'),
   };
 });
+
 import getStyles from './styles.js';
 
 vi.mock('stylis', () => {
@@ -67,7 +65,10 @@ vi.mock('stylis', () => {
     serialize: vi.fn().mockReturnValue('stylis serialized css'),
   };
 });
+
 import { compile, serialize } from 'stylis';
+import { decodeEntities, encodeEntities } from './utils.js';
+import { Diagram } from './Diagram.js';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
@@ -287,15 +288,15 @@ describe('mermaidAPI', () => {
     };
 
     it('gets the cssStyles from the theme', () => {
-      const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', null);
+      const styles = createCssStyles(mocked_config_with_htmlLabels, null);
       expect(styles).toMatch(/^\ndefault(.*)/);
     });
     it('gets the fontFamily from the config', () => {
-      const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', {});
+      const styles = createCssStyles(mocked_config_with_htmlLabels, {});
       expect(styles).toMatch(/(.*)\n:root { --mermaid-font-family: serif(.*)/);
     });
     it('gets the alt fontFamily from the config', () => {
-      const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', undefined);
+      const styles = createCssStyles(mocked_config_with_htmlLabels, undefined);
       expect(styles).toMatch(/(.*)\n:root { --mermaid-alt-font-family: sans-serif(.*)/);
     });
 
@@ -306,8 +307,6 @@ describe('mermaidAPI', () => {
       const classDefs = { classDef1, classDef2, classDef3 };
 
       describe('the graph supports classDefs', () => {
-        const graphType = 'flowchart-v2';
-
         const REGEXP_SPECIALS = ['^', '$', '?', '(', '{', '[', '.', '*', '!'];
 
         // prefix any special RegExp characters in the given string with a \ so we can use the literal character in a RegExp
@@ -373,7 +372,7 @@ describe('mermaidAPI', () => {
               // @todo TODO Can't figure out how to spy on the cssImportantStyles method.
               //   That would be a much better approach than manually checking the result
 
-              const styles = createCssStyles(mocked_config, graphType, classDefs);
+              const styles = createCssStyles(mocked_config, classDefs);
               htmlElements.forEach((htmlElement) => {
                 expect_styles_matchesHtmlElements(styles, htmlElement);
               });
@@ -411,7 +410,7 @@ describe('mermaidAPI', () => {
             it('creates CSS styles for every style and textStyle in every classDef', () => {
               // TODO Can't figure out how to spy on the cssImportantStyles method. That would be a much better approach than manually checking the result.
 
-              const styles = createCssStyles(mocked_config_no_htmlLabels, graphType, classDefs);
+              const styles = createCssStyles(mocked_config_no_htmlLabels, classDefs);
               htmlElements.forEach((htmlElement) => {
                 expect_styles_matchesHtmlElements(styles, htmlElement);
               });
@@ -687,14 +686,21 @@ describe('mermaidAPI', () => {
       ).resolves.toBe(false);
     });
     it('resolves for valid definition', async () => {
-      await expect(
-        mermaidAPI.parse('graph TD;A--x|text including URL space|B;')
-      ).resolves.toBeTruthy();
+      await expect(mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).resolves
+        .toMatchInlineSnapshot(`
+        {
+          "diagramType": "flowchart-v2",
+        }
+      `);
     });
     it('returns true for valid definition with silent option', async () => {
       await expect(
         mermaidAPI.parse('graph TD;A--x|text including URL space|B;', { suppressErrors: true })
-      ).resolves.toBe(true);
+      ).resolves.toMatchInlineSnapshot(`
+        {
+          "diagramType": "flowchart-v2",
+        }
+      `);
     });
   });
 
@@ -717,6 +723,8 @@ describe('mermaidAPI', () => {
       { textDiagramType: 'gantt', expectedType: 'gantt' },
       { textDiagramType: 'journey', expectedType: 'journey' },
       { textDiagramType: 'pie', expectedType: 'pie' },
+      { textDiagramType: 'packet-beta', expectedType: 'packet' },
+      { textDiagramType: 'xychart-beta', expectedType: 'xychart' },
       { textDiagramType: 'requirementDiagram', expectedType: 'requirement' },
       { textDiagramType: 'sequenceDiagram', expectedType: 'sequence' },
       { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
@@ -736,7 +744,8 @@ describe('mermaidAPI', () => {
           it('should set aria-roledscription to the diagram type AND should call addSVGa11yTitleDescription', async () => {
             const a11yDiagramInfo_spy = vi.spyOn(accessibility, 'setA11yDiagramInfo');
             const a11yTitleDesc_spy = vi.spyOn(accessibility, 'addSVGa11yTitleDescription');
-            await mermaidAPI.render(id, diagramText);
+            const result = await mermaidAPI.render(id, diagramText);
+            expect(result.diagramType).toBe(expectedDiagramType);
             expect(a11yDiagramInfo_spy).toHaveBeenCalledWith(
               expect.anything(),
               expectedDiagramType
@@ -745,6 +754,18 @@ describe('mermaidAPI', () => {
           });
         });
       });
+    });
+  });
+
+  describe('getDiagramFromText', () => {
+    it('should clean up comments when present in diagram definition', async () => {
+      const diagram = await mermaidAPI.getDiagramFromText(
+        `flowchart LR
+      %% This is a comment A -- text --> B{node}
+      A -- text --> B -- text2 --> C`
+      );
+      expect(diagram).toBeInstanceOf(Diagram);
+      expect(diagram.type).toBe('flowchart-v2');
     });
   });
 });

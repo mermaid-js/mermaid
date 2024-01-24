@@ -14,6 +14,9 @@
 
 • `Optional` **suppressErrors**: `boolean`
 
+If `true`, parse will return `false` instead of throwing error when the diagram is invalid.
+The `parseError` function will not be called.
+
 #### Defined in
 
-[mermaidAPI.ts:78](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L78)
+[mermaidAPI.ts:66](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L66)

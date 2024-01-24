@@ -1,5 +1,5 @@
 import { log } from '../../logger.js';
-import { getConfig as commonGetConfig } from '../../config.js';
+import { getConfig as commonGetConfig } from '../../diagram-api/diagramAPI.js';
 import { sanitizeText } from '../common/common.js';
 import {
   setAccTitle,

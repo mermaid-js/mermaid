@@ -2,13 +2,14 @@
 import { select, curveLinear } from 'd3';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger.js';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { render } from '../../dagre-wrapper/index.js';
 import utils from '../../utils.js';
 import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import common from '../common/common.js';
-import type { ClassRelation, ClassNote, ClassMap, EdgeData, NamespaceMap } from './classTypes.js';
+import type { ClassRelation, ClassNote, ClassMap, NamespaceMap } from './classTypes.js';
+import type { EdgeData } from '../../types.js';
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
 
@@ -103,7 +104,7 @@ export const addClasses = function (
        */
       const cssClassStr = vertex.cssClasses.join(' ');
 
-      const styles = { labelStyle: '', style: '' }; //getStylesFromArray(vertex.styles);
+      const styles = getStylesFromArray(vertex.styles);
 
       // Use vertex id as text in the box if no text is provided by the graph definition
       const vertexText = vertex.label ?? vertex.id;
@@ -230,7 +231,7 @@ export const addRelations = function (relations: ClassRelation[], g: graphlib.Gr
       //Set relationship style and line type
       classes: 'relation',
       pattern: edge.relation.lineType == 1 ? 'dashed' : 'solid',
-      id: 'id' + cnt,
+      id: `id_${edge.id1}_${edge.id2}_${cnt}`,
       // Set link type for rendering
       arrowhead: edge.type === 'arrow_open' ? 'none' : 'normal',
       //Set edge extra labels

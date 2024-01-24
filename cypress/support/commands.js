@@ -24,8 +24,18 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-// import '@percy/cypress';
-
 import { addMatchImageSnapshotCommand } from 'cypress-image-snapshot/command';
+
+// The SSIM comparison method can be used if the pixelmatch is throwing lots of false positives.
+// SSIM actually does not catch minute changes in the image, so it is not as accurate as pixelmatch.
+// addMatchImageSnapshotCommand({
+//   comparisonMethod: 'ssim',
+//   failureThreshold: 0.01,
+//   failureThresholdType: 'percent',
+//   customDiffConfig: {
+//     ssim: 'fast',
+//   },
+//   blur: 1,
+// });
 
 addMatchImageSnapshotCommand();

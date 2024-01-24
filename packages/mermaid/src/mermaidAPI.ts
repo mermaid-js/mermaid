@@ -17,7 +17,7 @@ import { compile, serialize, stringify } from 'stylis';
 import { version as packageVersion } from '../package.json';
 import * as configApi from './config.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
-import { Diagram, getDiagramFromText } from './Diagram.js';
+import { Diagram, getDiagramFromText as getDiagramFromTextInternal } from './Diagram.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
 import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
@@ -28,19 +28,12 @@ import type { MermaidConfig } from './config.type.js';
 import { evaluate } from './diagrams/common/common.js';
 import isEmpty from 'lodash-es/isEmpty.js';
 import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
+import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { preprocessDiagram } from './preprocess.js';
+import { decodeEntities } from './utils.js';
 
 const version = packageVersion + (includeLargeDiagrams ? '' : '-tiny');
 
-// diagram names that support classDef statements
-const CLASSDEF_DIAGRAMS = [
-  'graph',
-  'flowchart',
-  'flowchart-v2',
-  'flowchart-elk',
-  'stateDiagram',
-  'stateDiagram-v2',
-];
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
   'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -65,19 +58,20 @@ const IFRAME_NOT_SUPPORTED_MSG = 'The "iframe" tag is not supported by your brow
 const DOMPURIFY_TAGS = ['foreignobject'];
 const DOMPURIFY_ATTR = ['dominant-baseline'];
 
-// This is what is returned from getClasses(...) methods.
-// It is slightly renamed to ..StyleClassDef instead of just ClassDef because "class" is a greatly ambiguous and overloaded word.
-// It makes it clear we're working with a style class definition, even though defining the type is currently difficult.
-interface DiagramStyleClassDef {
-  id: string;
-  styles?: string[];
-  textStyles?: string[];
-}
-
 export interface ParseOptions {
+  /**
+   * If `true`, parse will return `false` instead of throwing error when the diagram is invalid.
+   * The `parseError` function will not be called.
+   */
   suppressErrors?: boolean;
 }
 
+export interface ParseResult {
+  /**
+   * The diagram type, e.g. 'flowchart', 'sequence', etc.
+   */
+  diagramType: string;
+}
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
 export type D3Element = any;
 
@@ -86,6 +80,10 @@ export interface RenderResult {
    * The svg code for the rendered graph.
    */
   svg: string;
+  /**
+   * The diagram type, e.g. 'flowchart', 'sequence', etc.
+   */
+  diagramType: string;
   /**
    * Bind function to be called after the svg has been inserted into the DOM.
    * This is necessary for adding event listeners to the elements in the svg.
@@ -108,66 +106,29 @@ function processAndSetConfigs(text: string) {
 /**
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
- * @param parseOptions - Options for parsing.
- * @returns true if the diagram is valid, false otherwise if parseOptions.suppressErrors is true.
- * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false.
+ * @param parseOptions - Options for parsing. @see {@link ParseOptions}
+ * @returns An object with the `diagramType` set to type of the diagram if valid. Otherwise `false` if parseOptions.suppressErrors is `true`.
+ * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false or not set.
  */
-
-async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean> {
+async function parse(
+  text: string,
+  parseOptions: ParseOptions & { suppressErrors: true }
+): Promise<ParseResult | false>;
+async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult>;
+async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult | false> {
   addDiagrams();
-
-  text = processAndSetConfigs(text).code;
-
   try {
-    await getDiagramFromText(text);
+    const { code } = processAndSetConfigs(text);
+    const diagram = await getDiagramFromText(code);
+    return { diagramType: diagram.type };
   } catch (error) {
     if (parseOptions?.suppressErrors) {
       return false;
     }
     throw error;
   }
-  return true;
 }
 
-/**
- * @param  text - text to be encoded
- * @returns
- */
-export const encodeEntities = function (text: string): string {
-  let txt = text;
-
-  txt = txt.replace(/style.*:\S*#.*;/g, function (s): string {
-    return s.substring(0, s.length - 1);
-  });
-  txt = txt.replace(/classDef.*:\S*#.*;/g, function (s): string {
-    return s.substring(0, s.length - 1);
-  });
-
-  txt = txt.replace(/#\w+;/g, function (s) {
-    const innerTxt = s.substring(1, s.length - 1);
-
-    const isInt = /^\+?\d+$/.test(innerTxt);
-    if (isInt) {
-      return 'ﬂ°°' + innerTxt + '¶ß';
-    } else {
-      return 'ﬂ°' + innerTxt + '¶ß';
-    }
-  });
-
-  return txt;
-};
-
-/**
- *
- * @param  text - text to be decoded
- * @returns
- */
-export const decodeEntities = function (text: string): string {
-  return text.replace(/ﬂ°°/g, '&#').replace(/ﬂ°/g, '&').replace(/¶ß/g, ';');
-};
-
-// append !important; to each cssClass followed by a final !important, all enclosed in { }
-//
 /**
  * Create a CSS style that starts with the given class name, then the element,
  * with an enclosing block that has each of the cssClasses followed by !important;
@@ -186,15 +147,13 @@ export const cssImportantStyles = (
 
 /**
  * Create the user styles
- *
+ * @internal
  * @param  config - configuration that has style and theme settings to use
- * @param graphType - used for checking if classDefs should be applied
  * @param  classDefs - the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...)
  * @returns  the string with all the user styles
  */
 export const createCssStyles = (
   config: MermaidConfig,
-  graphType: string,
   classDefs: Record<string, DiagramStyleClassDef> | null | undefined = {}
 ): string => {
   let cssStyles = '';
@@ -214,7 +173,7 @@ export const createCssStyles = (
   }
 
   // classDefs defined in the diagram text
-  if (!isEmpty(classDefs) && CLASSDEF_DIAGRAMS.includes(graphType)) {
+  if (!isEmpty(classDefs)) {
     const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
 
     const cssHtmlElements = ['> *', 'span']; // TODO make a constant
@@ -243,10 +202,10 @@ export const createCssStyles = (
 export const createUserStyles = (
   config: MermaidConfig,
   graphType: string,
-  classDefs: Record<string, DiagramStyleClassDef>,
+  classDefs: Record<string, DiagramStyleClassDef> | undefined,
   svgId: string
 ): string => {
-  const userCSSstyles = createCssStyles(config, graphType, classDefs);
+  const userCSSstyles = createCssStyles(config, classDefs);
   const allStyles = getStyles(graphType, userCSSstyles, config.themeVariables);
 
   // Now turn all of the styles into a (compiled) string that starts with the id
@@ -457,8 +416,6 @@ const render = async function (
     appendDivSvgG(root, id, enclosingDivID);
   }
 
-  text = encodeEntities(text);
-
   // -------------------------------------------------------------------------------
   // Create the diagram
 
@@ -483,9 +440,7 @@ const render = async function (
   // Insert an element into svg. This is where we put the styles
   const svg = element.firstChild;
   const firstChild = svg.firstChild;
-  const diagramClassDefs = CLASSDEF_DIAGRAMS.includes(diagramType)
-    ? diag.renderer.getClasses(text, diag)
-    : {};
+  const diagramClassDefs = diag.renderer.getClasses?.(text, diag);
 
   const rules = createUserStyles(config, diagramType, diagramClassDefs, idSelector);
 
@@ -544,6 +499,7 @@ const render = async function (
   }
 
   return {
+    diagramType,
     svg: svgCode,
     bindFunctions: diag.db.bindFunctions,
   };
@@ -579,6 +535,11 @@ function initialize(options: MermaidConfig = {}) {
   setLogLevel(config.logLevel);
   addDiagrams();
 }
+
+const getDiagramFromText = (text: string, metadata: Pick<DiagramMetadata, 'title'> = {}) => {
+  const { code } = preprocessDiagram(text);
+  return getDiagramFromTextInternal(code, metadata);
+};
 
 /**
  * Add accessibility (a11y) information to the diagram.

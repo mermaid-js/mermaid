@@ -1,6 +1,6 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select } from 'd3';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { render } from '../../dagre-wrapper/index.js';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
@@ -81,7 +81,7 @@ export const setConf = function (cnf) {
  *
  * @param {string} text - the diagram text to be parsed
  * @param diagramObj
- * @returns {object} ClassDef styles (a Map with keys = strings, values = )
+ * @returns {Record<string, import('../../diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles (a Map with keys = strings, values = )
  */
 export const getClasses = function (text, diagramObj) {
   diagramObj.db.extract(diagramObj.db.getRootDocV2());

@@ -68,6 +68,11 @@ export interface MermaidConfig {
    * The maximum allowed size of the users text diagram
    */
   maxTextSize?: number;
+  /**
+   * Defines the maximum number of edges that can be drawn in a graph.
+   *
+   */
+  maxEdges?: number;
   darkMode?: boolean;
   htmlLabels?: boolean;
   /**
@@ -135,14 +140,48 @@ export interface MermaidConfig {
   er?: ErDiagramConfig;
   pie?: PieDiagramConfig;
   quadrantChart?: QuadrantChartConfig;
+  xyChart?: XYChartConfig;
   requirement?: RequirementDiagramConfig;
   mindmap?: MindmapDiagramConfig;
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
   sankey?: SankeyDiagramConfig;
+  packet?: PacketDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
+}
+/**
+ * The object containing configurations specific for packet diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "PacketDiagramConfig".
+ */
+export interface PacketDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The height of each row in the packet diagram.
+   */
+  rowHeight?: number;
+  /**
+   * The width of each bit in the packet diagram.
+   */
+  bitWidth?: number;
+  /**
+   * The number of bits to display per row.
+   */
+  bitsPerRow?: number;
+  /**
+   * Toggle to display or hide bit numbers.
+   */
+  showBits?: boolean;
+  /**
+   * The horizontal padding between the blocks in a row.
+   */
+  paddingX?: number;
+  /**
+   * The vertical padding between the rows.
+   */
+  paddingY?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -555,6 +594,7 @@ export interface GitGraphDiagramConfig extends BaseDiagramConfig {
   showCommitLabel?: boolean;
   showBranches?: boolean;
   rotateCommitLabel?: boolean;
+  parallelCommits?: boolean;
   /**
    * Controls whether or arrow markers in html code are absolute paths or anchors.
    * This matters if you are using base tag settings.
@@ -687,6 +727,96 @@ export interface QuadrantChartConfig extends BaseDiagramConfig {
    * stroke width of edges of the box that are outside the quadrant
    */
   quadrantExternalBorderStrokeWidth?: number;
+}
+/**
+ * This object contains configuration for XYChart axis config
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "XYChartAxisConfig".
+ */
+export interface XYChartAxisConfig {
+  /**
+   * Should show the axis labels (tick text)
+   */
+  showLabel?: boolean;
+  /**
+   * font size of the axis labels (tick text)
+   */
+  labelFontSize?: number;
+  /**
+   * top and bottom space from axis label (tick text)
+   */
+  labelPadding?: number;
+  /**
+   * Should show the axis title
+   */
+  showTitle?: boolean;
+  /**
+   * font size of the axis title
+   */
+  titleFontSize?: number;
+  /**
+   * top and bottom space from axis title
+   */
+  titlePadding?: number;
+  /**
+   * Should show the axis tick lines
+   */
+  showTick?: boolean;
+  /**
+   * length of the axis tick lines
+   */
+  tickLength?: number;
+  /**
+   * width of the axis tick lines
+   */
+  tickWidth?: number;
+  /**
+   * Show line across the axis
+   */
+  showAxisLine?: boolean;
+  /**
+   * Width of the axis line
+   */
+  axisLineWidth?: number;
+}
+/**
+ * This object contains configuration specific to XYCharts
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "XYChartConfig".
+ */
+export interface XYChartConfig extends BaseDiagramConfig {
+  /**
+   * width of the chart
+   */
+  width?: number;
+  /**
+   * height of the chart
+   */
+  height?: number;
+  /**
+   * Font size of the chart title
+   */
+  titleFontSize?: number;
+  /**
+   * Top and bottom space from the chart title
+   */
+  titlePadding?: number;
+  /**
+   * Should show the chart title
+   */
+  showTitle?: boolean;
+  xAxis?: XYChartAxisConfig;
+  yAxis?: XYChartAxisConfig;
+  /**
+   * How to plot will be drawn horizontal or vertical
+   */
+  chartOrientation?: 'vertical' | 'horizontal';
+  /**
+   * Minimum percent of space plots of the chart will take
+   */
+  plotReservedSpacePercent?: number;
 }
 /**
  * The object containing configurations specific for entity relationship diagrams
@@ -1207,6 +1337,14 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    * Margin top for the text over the diagram
    */
   titleTopMargin?: number;
+  /**
+   * Defines a top/bottom margin for subgraph titles
+   *
+   */
+  subGraphTitleMargin?: {
+    top?: number;
+    bottom?: number;
+  };
   arrowMarkerAbsolute?: boolean;
   /**
    * The amount of padding around the diagram as a whole so that embedded
@@ -1275,13 +1413,7 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
    *
    */
   linkColor?: SankeyLinkColor | string;
-  /**
-   * Controls the alignment of the Sankey diagrams.
-   *
-   * See <https://github.com/d3/d3-sankey#alignments>.
-   *
-   */
-  nodeAlignment?: 'left' | 'right' | 'center' | 'justify';
+  nodeAlignment?: SankeyNodeAlignment;
   useMaxWidth?: boolean;
   /**
    * Toggle to display or hide values along with title.

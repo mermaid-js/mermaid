@@ -217,7 +217,7 @@ Note that there are no sections defined, and each time period and its correspond
 
 2.  Disable the multiColor option using the `disableMultiColor` option. This will make all time periods and events follow the same color scheme.
 
-You will need to add this option either via mermaid.intialize function or directives.
+You will need to add this option either via mermaid.initialize function or directives.
 
 ```javascript
 mermaid.initialize({

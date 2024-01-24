@@ -1,4 +1,4 @@
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { parseGenericTypes, sanitizeText } from '../common/common.js';
 
 export interface ClassNode {
@@ -10,6 +10,7 @@ export interface ClassNode {
   members: ClassMember[];
   annotations: string[];
   domId: string;
+  styles: string[];
   parent?: string;
   link?: string;
   linkTarget?: string;
@@ -106,7 +107,7 @@ export class ClassMember {
         this.visibility = firstChar as Visibility;
       }
 
-      if (lastChar.match(/[*?]/)) {
+      if (lastChar.match(/[$*]/)) {
         potentialClassifier = lastChar;
       }
 
@@ -135,24 +136,6 @@ export interface ClassNote {
   id: string;
   class: string;
   text: string;
-}
-
-export interface EdgeData {
-  arrowheadStyle?: string;
-  labelpos?: string;
-  labelType?: string;
-  label?: string;
-  classes: string;
-  pattern: string;
-  id: string;
-  arrowhead: string;
-  startLabelRight: string;
-  endLabelLeft: string;
-  arrowTypeStart: string;
-  arrowTypeEnd: string;
-  style: string;
-  labelStyle: string;
-  curve: any;
 }
 
 export type ClassRelation = {
