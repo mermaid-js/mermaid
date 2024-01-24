@@ -311,42 +311,6 @@ const executeQueue = async () => {
   executionQueueRunning = false;
 };
 
-// eslint-disable-next-line no-console
-console.log(`This should increase size
-export interface Mermaid {
-  startOnLoad: boolean;
-  parseError?: ParseErrorFunction;
-  mermaidAPI: typeof mermaidAPI;
-  parse: typeof parse;
-  render: typeof render;
-  init: typeof init;
-  run: typeof run;
-  registerExternalDiagrams: typeof registerExternalDiagrams;
-  initialize: typeof initialize;
-  contentLoaded: typeof contentLoaded;
-  setParseErrorHandler: typeof setParseErrorHandler;
-  detectType: typeof detectType;
-}
-
-const mermaid: Mermaid = {
-  startOnLoad: true,
-  mermaidAPI,
-  parse,
-  render,
-  init,
-  run,
-  registerExternalDiagrams,
-  initialize,
-  parseError: undefined,
-  contentLoaded,
-  setParseErrorHandler,
-  detectType,
-};
-
-export default mermaid;
-
-`);
-
 /**
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
