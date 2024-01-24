@@ -56,18 +56,21 @@ const main = async () => {
   const oldStats = await readStats('./cypress/snapshots/stats/base/**/*.json');
   const newStats = await readStats('./cypress/snapshots/stats/head/**/*.json');
   const diff = Object.entries(newStats)
+    .filter(([, value]) => value > 2048)
     .map(([key, value]) => {
       const oldValue = oldStats[key];
       const delta = value - oldValue;
-      return [
+      const output = [
         key,
         formatSize(oldValue),
         formatSize(value),
         formatSize(delta),
         percentageDifference(oldValue, value),
-      ].map((v) => v.toString());
+      ];
+      console.log(output);
+      return output;
     })
-    .filter(([, , , delta]) => delta !== '0');
+    .filter(([, , , delta]) => delta !== '0 Bytes');
   if (diff.length === 0) {
     console.log('No changes in bundle sizes');
     return;
