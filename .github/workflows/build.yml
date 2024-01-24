@@ -40,13 +40,13 @@ jobs:
         run: pnpm run build
 
       - name: Upload Mermaid Build as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: mermaid-build
+          name: mermaid
           path: packages/mermaid/dist
 
-      - name: Upload Mermaid Mindmap Build as Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload all packages as Artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: mermaid-mindmap-build
-          path: packages/mermaid-mindmap/dist
+          name: mermaid-all
+          path: packages/**/dist
