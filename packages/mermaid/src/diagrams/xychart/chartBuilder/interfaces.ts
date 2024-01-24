@@ -1,3 +1,5 @@
+import { PlotType } from './components/plot/PlotType.js';
+
 export interface XYChartAxisThemeConfig {
   titleColor: string;
   labelColor: string;
@@ -28,14 +30,14 @@ export interface ChartComponent {
 export type SimplePlotDataType = [string, number][];
 
 export interface LinePlotData {
-  type: 'line';
+  type: PlotType.LINE;
   strokeFill: string;
   strokeWidth: number;
   data: SimplePlotDataType;
 }
 
 export interface BarPlotData {
-  type: 'bar';
+  type: PlotType.BAR;
   fill: string;
   data: SimplePlotDataType;
 }
@@ -43,7 +45,7 @@ export interface BarPlotData {
 export type PlotData = LinePlotData | BarPlotData;
 
 export function isBarPlot(data: PlotData): data is BarPlotData {
-  return data.type === 'bar';
+  return data.type === PlotType.BAR;
 }
 
 export interface BandAxisDataType {

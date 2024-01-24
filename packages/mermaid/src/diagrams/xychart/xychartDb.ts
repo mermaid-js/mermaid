@@ -22,6 +22,7 @@ import type {
 } from './chartBuilder/interfaces.js';
 import { isBandAxisData, isLinearAxisData } from './chartBuilder/interfaces.js';
 import type { Group } from '../../diagram-api/types.js';
+import { PlotType } from './chartBuilder/components/plot/PlotType.js';
 
 let plotIndex = 0;
 
@@ -109,7 +110,7 @@ function setYAxisRangeData(min: number, max: number) {
 }
 
 // this function does not set `hasSetYAxis` as there can be multiple data so we should calculate the range accordingly
-function setYAxisRangeFromPlotData(data: number[]) {
+function setYAxisRangeFromPlotData(data: number[], plotType: PlotType) {
   const minValue = Math.min(...data);
   const maxValue = Math.max(...data);
   const prevMinValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.min : Infinity;
@@ -118,11 +119,16 @@ function setYAxisRangeFromPlotData(data: number[]) {
     type: 'linear',
     title: xyChartData.yAxis.title,
     min: Math.min(prevMinValue, minValue),
-    max: Math.max(prevMaxValue, maxValue),
+    max:
+      plotType === PlotType.BAR
+        ? prevMaxValue > -Infinity
+          ? prevMaxValue + maxValue
+          : maxValue
+        : Math.max(prevMaxValue, maxValue),
   };
 }
 
-function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
+function transformDataWithoutCategory(data: number[], plotType: PlotType): SimplePlotDataType {
   let retData: SimplePlotDataType = [];
   if (data.length === 0) {
     return retData;
@@ -133,7 +139,7 @@ function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
     setXAxisRangeData(Math.min(prevMinValue, 1), Math.max(prevMaxValue, data.length));
   }
   if (!hasSetYAxis) {
-    setYAxisRangeFromPlotData(data);
+    setYAxisRangeFromPlotData(data, plotType);
   }
 
   if (isBandAxisData(xyChartData.xAxis)) {
@@ -159,9 +165,9 @@ function getPlotColorFromPalette(plotIndex: number): string {
 }
 
 function setLineData(title: NormalTextType, data: number[]) {
-  const plotData = transformDataWithoutCategory(data);
+  const plotData = transformDataWithoutCategory(data, PlotType.LINE);
   xyChartData.plots.push({
-    type: 'line',
+    type: PlotType.LINE,
     strokeFill: getPlotColorFromPalette(plotIndex),
     strokeWidth: 2,
     data: plotData,
@@ -170,9 +176,9 @@ function setLineData(title: NormalTextType, data: number[]) {
 }
 
 function setBarData(title: NormalTextType, data: number[]) {
-  const plotData = transformDataWithoutCategory(data);
+  const plotData = transformDataWithoutCategory(data, PlotType.BAR);
   xyChartData.plots.push({
-    type: 'bar',
+    type: PlotType.BAR,
     fill: getPlotColorFromPalette(plotIndex),
     data: plotData,
   });

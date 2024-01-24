@@ -13,6 +13,7 @@ import type { Axis } from '../axis/index.js';
 import type { ChartComponent } from '../../interfaces.js';
 import { LinePlot } from './linePlot.js';
 import { BarPlot } from './barPlot.js';
+import { PlotType } from './PlotType.js';
 
 export interface Plot extends ChartComponent {
   setAxes(xAxis: Axis, yAxis: Axis): void;
@@ -57,8 +58,12 @@ export class BasePlot implements Plot {
       throw Error('Axes must be passed to render Plots');
     }
     const drawableElem: DrawableElem[] = [];
-    const linePlots = this.chartData.plots.filter((plot) => plot.type === 'line') as LinePlotData[];
-    const barPlots = this.chartData.plots.filter((plot) => plot.type === 'bar') as BarPlotData[];
+    const linePlots = this.chartData.plots.filter(
+      (plot) => plot.type === PlotType.LINE
+    ) as LinePlotData[];
+    const barPlots = this.chartData.plots.filter(
+      (plot) => plot.type === PlotType.BAR
+    ) as BarPlotData[];
 
     let plotIndex = 0;
     if (linePlots.length) {
