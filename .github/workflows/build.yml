@@ -49,4 +49,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mermaid-all
-          path: packages/**/dist
+          path: |
+            packages/**/dist
+            !**/node_modules
