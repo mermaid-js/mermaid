@@ -776,12 +776,13 @@ flowchart TD
     B-->E(A fa:fa-camera-retro perhaps?)
 ```
 
-Mermaid supports Font Awesome if the CSS is included on the website. 
-Mermaid does not have any restriction on the version of Font Awesome that can be used. 
+Mermaid supports Font Awesome if the CSS is included on the website.
+Mermaid does not have any restriction on the version of Font Awesome that can be used.
 
 Please refer the [Official Font Awesome Documentation](https://fontawesome.com/start) on how to include it in your website.
 
 Adding this snippet in the `<head>` would add support for Font Awesome v6.5.1
+
 ```html
 <link
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
