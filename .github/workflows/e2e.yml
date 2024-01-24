@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 env:
   # For PRs and MergeQueues, the target commit is used, and for push events, github.event.previous is used.
@@ -45,11 +46,26 @@ jobs:
         with:
           ref: ${{ env.targetHash }}
 
+      - name: Install dependencies
+        if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
+        uses: cypress-io/github-action@v6
+        with:
+          # just perform install
+          runTests: false
+
+      - name: Build
+        if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' && github.event_name == 'pull_request' }}
+        run: |
+          pnpm run build:viz
+          mkdir -p cypress/snapshots/stats/base
+          mv stats cypress/snapshots/stats/base
+
       - name: Cypress run
-        uses: cypress-io/github-action@v4
+        uses: cypress-io/github-action@v6
         id: cypress-snapshot-gen
         if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
         with:
+          install: false
           start: pnpm run dev
           wait-on: 'http://localhost:9000'
           browser: chrome
@@ -81,15 +97,27 @@ jobs:
           path: ./cypress/snapshots
           key: ${{ runner.os }}-snapshots-${{ env.targetHash }}
 
+      - name: Install dependencies
+        uses: cypress-io/github-action@v6
+        with:
+          runTests: false
+
+      - name: Build
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          pnpm run build:viz
+          mv stats cypress/snapshots/stats/head
+
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
-        uses: cypress-io/github-action@v4
+        uses: cypress-io/github-action@v6
         id: cypress
         # If CYPRESS_RECORD_KEY is set, run in parallel on all containers
         # Otherwise (e.g. if running from fork), we run on a single container only
         if: ${{ ( env.CYPRESS_RECORD_KEY != '' ) || ( matrix.containers == 1 ) }}
         with:
+          install: false
           start: pnpm run dev:coverage
           wait-on: 'http://localhost:9000'
           browser: chrome
@@ -135,6 +163,19 @@ jobs:
           path: snapshots
           pattern: snapshots-*
           merge-multiple: true
+
+      - name: Calculate Size difference
+        id: size
+        if: ${{ github.event_name == 'pull_request' }}
+        run: echo "::set-output name=size_diff::$(npx tsx scripts/size.ts)"
+
+      - name: Comment PR size difference
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            ${{ steps.size.outputs.size_diff }}
+          comment_tag: size-diff
 
       # For successful push events, we save the snapshots cache
       - name: Save snapshots cache

@@ -1,0 +1,57 @@
+/* eslint-disable no-console */
+import type { Metafile } from 'esbuild';
+import { readFile } from 'fs/promises';
+import { globby } from 'globby';
+import { markdownTable } from 'markdown-table';
+export const getSizes = (metafile: Metafile) => {
+  const { outputs } = metafile;
+  const sizes = Object.keys(outputs)
+    .filter((key) => key.endsWith('js') && !key.includes('chunk'))
+    .map((key) => {
+      const { bytes } = outputs[key];
+      return [key.replace('dist/', ''), bytes];
+    });
+  return sizes;
+};
+
+const readStats = async (path: string): Promise<Record<string, number>> => {
+  const files = await globby(path);
+  const contents = await Promise.all(files.map((file) => readFile(file, 'utf-8')));
+  const sizes = contents.flatMap((content) => getSizes(JSON.parse(content)));
+  return Object.fromEntries(sizes);
+};
+
+const percentageDifference = (oldValue: number, newValue: number): string => {
+  const difference = Math.abs(newValue - oldValue);
+  const avg = (newValue + oldValue) / 2;
+  const percentage = (difference / avg) * 100;
+  const roundedPercentage = percentage.toFixed(2); // Round to two decimal places
+  if (roundedPercentage === '0.00') {
+    return '0.00%';
+  }
+  const sign = newValue > oldValue ? '+' : '-';
+  return `${sign}${roundedPercentage}%`;
+};
+
+const main = async () => {
+  const oldStats = await readStats('./cypress/snapshots/base/*.json');
+  const newStats = await readStats('./cypress/snapshots/head/*.json');
+  const diff = Object.entries(newStats)
+    .map(([key, value]) => {
+      const oldValue = oldStats[key];
+      const delta = value - oldValue;
+      return [key, oldValue, value, delta, percentageDifference(oldValue, value)].map((v) =>
+        v.toString()
+      );
+    })
+    .filter(([, , , delta]) => delta !== '0');
+  if (diff.length === 0) {
+    console.log('No changes in bundle sizes');
+    return;
+  }
+  console.log(
+    markdownTable([['File', 'Previous Size', 'New Size', 'Difference', '% Change'], ...diff])
+  );
+};
+
+void main().catch((e) => console.error(e));
