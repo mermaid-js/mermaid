@@ -16,7 +16,6 @@ export const getSizes = (metafile: Metafile) => {
 
 const readStats = async (path: string): Promise<Record<string, number>> => {
   const files = await globby(path);
-  console.log(path, files);
   const contents = await Promise.all(files.map((file) => readFile(file, 'utf-8')));
   const sizes = contents.flatMap((content) => getSizes(JSON.parse(content)));
   return Object.fromEntries(sizes);
@@ -37,7 +36,6 @@ const percentageDifference = (oldValue: number, newValue: number): string => {
 const main = async () => {
   const oldStats = await readStats('./cypress/snapshots/stats/base/**/*.json');
   const newStats = await readStats('./cypress/snapshots/stats/head/**/*.json');
-  console.log(oldStats, newStats);
   const diff = Object.entries(newStats)
     .map(([key, value]) => {
       const oldValue = oldStats[key];
