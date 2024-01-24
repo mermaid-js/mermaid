@@ -256,31 +256,25 @@ const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim();
 
   // Test for after
-  const re = /^after\s+([\d\w- ]+)/;
-  const afterStatement = re.exec(str.trim());
+  const afterRePattern = /^after\s+(?<ids>[\d\w- ]+)/;
+  const afterStatement = afterRePattern.exec(str);
 
   if (afterStatement !== null) {
     // check all after ids and take the latest
-    let latestEndingTask = null;
-    afterStatement[1].split(' ').forEach(function (id) {
+    let latestTask = null;
+    for (const id of afterStatement.groups.ids.split(' ')) {
       let task = findTaskById(id);
-      if (task !== undefined) {
-        if (!latestEndingTask) {
-          latestEndingTask = task;
-        } else {
-          if (task.endTime > latestEndingTask.endTime) {
-            latestEndingTask = task;
-          }
-        }
+      if (task !== undefined && (!latestTask || task.endTime > latestTask.endTime)) {
+        latestTask = task;
       }
-    });
+    }
 
-    if (!latestEndingTask) {
-      const dt = new Date();
-      dt.setHours(0, 0, 0, 0);
-      return dt;
+    if (latestTask) {
+      return latestTask.endTime;
     } else {
-      return latestEndingTask.endTime;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return today;
     }
   }
 
@@ -343,42 +337,36 @@ const parseDuration = function (str) {
 const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   str = str.trim();
 
-  // Test for until
-  const re = /^until\s+([\d\w- ]+)/;
-  const untilStatement = re.exec(str.trim());
+  // test for until
+  const untilRePattern = /^until\s+(?<ids>[\d\w- ]+)/;
+  const untilStatement = untilRePattern.exec(str);
 
   if (untilStatement !== null) {
     // check all until ids and take the earliest
-    let earliestStartingTask = null;
-    untilStatement[1].split(' ').forEach(function (id) {
+    let earliestTask = null;
+    for (const id of untilStatement.groups.ids.split(' ')) {
       let task = findTaskById(id);
-      if (task !== undefined) {
-        if (!earliestStartingTask) {
-          earliestStartingTask = task;
-        } else {
-          if (task.startTime < earliestStartingTask.startTime) {
-            earliestStartingTask = task;
-          }
-        }
+      if (task !== undefined && (!earliestTask || task.startTime < earliestTask.startTime)) {
+        earliestTask = task;
       }
-    });
+    }
 
-    if (!earliestStartingTask) {
-      const dt = new Date();
-      dt.setHours(0, 0, 0, 0);
-      return dt;
+    if (earliestTask) {
+      return earliestTask.startTime;
     } else {
-      return earliestStartingTask.startTime;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return today;
     }
   }
 
-  // Check for actual date
-  let mDate = dayjs(str, dateFormat.trim(), true);
-  if (mDate.isValid()) {
+  // check for actual date
+  let parsedDate = dayjs(str, dateFormat.trim(), true);
+  if (parsedDate.isValid()) {
     if (inclusive) {
-      mDate = mDate.add(1, 'd');
+      parsedDate = parsedDate.add(1, 'd');
     }
-    return mDate.toDate();
+    return parsedDate.toDate();
   }
 
   let endTime = dayjs(prevTime);
