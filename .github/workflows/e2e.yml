@@ -108,8 +108,6 @@ jobs:
         run: |
           pnpm run build:viz
           mv stats cypress/snapshots/stats/head
-          ls -l cypress/snapshots/stats/base
-          ls -l cypress/snapshots/stats/head
           {
             echo 'size_diff<<EOF'
             npx tsx scripts/size.ts

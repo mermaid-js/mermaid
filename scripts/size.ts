@@ -21,6 +21,25 @@ const readStats = async (path: string): Promise<Record<string, number>> => {
   return Object.fromEntries(sizes);
 };
 
+const formatBytes = (bytes: number): string => {
+  if (bytes == 0) {
+    return '0 Bytes';
+  }
+  const base = 1024;
+  const decimals = 2;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(base));
+  return parseFloat((bytes / Math.pow(base, i)).toFixed(decimals)) + ' ' + sizes[i];
+};
+
+const formatSize = (bytes: number): string => {
+  const formatted = formatBytes(bytes);
+  if (formatted.includes('Bytes')) {
+    return formatted;
+  }
+  return `${formatBytes(bytes)} (${bytes} Bytes)`;
+};
+
 const percentageDifference = (oldValue: number, newValue: number): string => {
   const difference = Math.abs(newValue - oldValue);
   const avg = (newValue + oldValue) / 2;
@@ -40,9 +59,13 @@ const main = async () => {
     .map(([key, value]) => {
       const oldValue = oldStats[key];
       const delta = value - oldValue;
-      return [key, oldValue, value, delta, percentageDifference(oldValue, value)].map((v) =>
-        v.toString()
-      );
+      return [
+        key,
+        formatSize(oldValue),
+        formatSize(value),
+        formatSize(delta),
+        percentageDifference(oldValue, value),
+      ].map((v) => v.toString());
     })
     .filter(([, , , delta]) => delta !== '0');
   if (diff.length === 0) {
