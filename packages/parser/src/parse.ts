@@ -1,35 +1,34 @@
 import type { LangiumParser, ParseResult } from 'langium';
 import type { Info, Packet } from './index.js';
-import { createInfoServices, createPacketServices } from './language/index.js';
 
 export type DiagramAST = Info | Packet;
 
 const parsers: Record<string, LangiumParser> = {};
 
 const initializers = {
-  info: () => {
-    // Will have to make parse async to use this. Can try later...
-    // const { createInfoServices } = await import('./language/info/index.js');
+  info: async () => {
+    const { createInfoServices } = await import('./language/info/index.js');
     const parser = createInfoServices().Info.parser.LangiumParser;
     parsers['info'] = parser;
   },
-  packet: () => {
+  packet: async () => {
+    const { createPacketServices } = await import('./language/packet/index.js');
     const parser = createPacketServices().Packet.parser.LangiumParser;
     parsers['packet'] = parser;
   },
 } as const;
-export function parse(diagramType: 'info', text: string): Info;
-export function parse(diagramType: 'packet', text: string): Packet;
-export function parse<T extends DiagramAST>(
+export async function parse(diagramType: 'info', text: string): Promise<Info>;
+export async function parse(diagramType: 'packet', text: string): Promise<Packet>;
+export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,
   text: string
-): T {
+): Promise<T> {
   const initializer = initializers[diagramType];
   if (!initializer) {
     throw new Error(`Unknown diagram type: ${diagramType}`);
   }
   if (!parsers[diagramType]) {
-    initializer();
+    await initializer();
   }
   const parser: LangiumParser = parsers[diagramType];
   const result: ParseResult<T> = parser.parse<T>(text);
