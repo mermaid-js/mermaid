@@ -67,7 +67,6 @@ const main = async () => {
         formatSize(delta),
         percentageDifference(oldValue, value),
       ];
-      console.log(output);
       return output;
     })
     .filter(([, , , delta]) => delta !== '0 Bytes');
