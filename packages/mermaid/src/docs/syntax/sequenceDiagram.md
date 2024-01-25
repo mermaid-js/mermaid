@@ -520,8 +520,9 @@ Styling of a sequence diagram is done by defining a number of css classes. Durin
 
 | Class        | Description                                                 |
 | ------------ | ----------------------------------------------------------- |
-| actor        | Style for the actor box at the top of the diagram.          |
-| text.actor   | Styles for text in the actor box at the top of the diagram. |
+| actor        | Styles for the actor box.                                   |
+| actor-top    | Styles for the actor figure/ box at the top of the diagram. |
+| text.actor   | Styles for text in the actor box.                           |
 | actor-line   | The vertical line for an actor.                             |
 | messageLine0 | Styles for the solid message line.                          |
 | messageLine1 | Styles for the dotted message line.                         |
