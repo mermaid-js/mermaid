@@ -8,6 +8,7 @@ function b64ToUtf8(str) {
 
 // Adds a rendered flag to window when rendering is done, so cypress can wait for it.
 function markRendered() {
+  window.renderTime = Date.now() - window.loadTime;
   if (window.Cypress) {
     window.rendered = true;
   }
@@ -131,6 +132,7 @@ if (typeof document !== 'undefined') {
   window.addEventListener(
     'load',
     function () {
+      this.window.loadTime = Date.now();
       if (this.location.href.match('xss.html')) {
         this.console.log('Using api');
         void contentLoadedApi().finally(markRendered);
