@@ -17,6 +17,11 @@ const getRuntimes = (csv: string): RunTimes => {
     const [testName, timeTaken] = line.split(',');
     if (testName && timeTaken) {
       runtimes[testName] = Number(timeTaken);
+
+      // TODO: Add some variation to test logging. Should remove.
+      if (Math.random() < 0.3) {
+        runtimes[testName] *= Math.random() * 2;
+      }
     }
   }
   return runtimes;
