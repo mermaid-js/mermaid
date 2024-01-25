@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import { readFile } from 'fs/promises';
 import { globby } from 'globby';
-import { markdownTable } from 'markdown-table';
 
 interface RunTimes {
   [key: string]: number;
@@ -56,6 +55,9 @@ const main = async () => {
   const newStats = await readStats(`${base}/runtimes/head/**/*.csv`);
   const fullData: string[][] = [];
   const changed: string[][] = [];
+  let oldRuntimeSum = 0;
+  let newRuntimeSum = 0;
+  let testCount = 0;
   for (const [fileName, runtimes] of Object.entries(newStats)) {
     const oldStat = oldStats[fileName];
     if (!oldStat) {
@@ -66,6 +68,9 @@ const main = async () => {
       if (!oldTimeTaken) {
         continue;
       }
+      oldRuntimeSum += oldTimeTaken;
+      newRuntimeSum += timeTaken;
+      testCount++;
       const delta = timeTaken - oldTimeTaken;
 
       const { change, crossedThreshold } = percentageDifference(oldTimeTaken, timeTaken);
@@ -81,8 +86,22 @@ const main = async () => {
       fullData.push(out);
     }
   }
+  const oldAverage = oldRuntimeSum / testCount;
+  const newAverage = newRuntimeSum / testCount;
+  const { change, crossedThreshold } = percentageDifference(oldAverage, newAverage);
+
   const headers = ['File', 'Test', 'Time Old/New', 'Change (%)'];
-  console.log(markdownTable([headers, ...changed]));
+  console.log(`## Runtime Changes
+Old runtime average: ${oldAverage.toFixed(2)}ms
+New runtime average: ${newAverage.toFixed(2)}ms
+Change: ${change} ${crossedThreshold ? '⚠️' : ''}
+  `);
+  console.log(`
+  <details>
+  <summary>Changed tests</summary>
+  ${htmlTable([headers, ...changed])}
+</details>
+`);
   console.log(`
   <details>
   <summary>Full Data</summary>
