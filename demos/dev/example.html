@@ -3,10 +3,24 @@
 <html>
   <head>
     <title>Mermaid development page</title>
+    <style>
+      .container {
+        display: flex;
+        flex-direction: row;
+      }
+
+      #code {
+        max-width: 30vw;
+        width: 30vw;
+      }
+
+      #dynamicDiagram {
+        padding-left: 2em;
+        flex: 1;
+      }
+    </style>
   </head>
   <body>
-    <pre class="mermaid">info</pre>
-
     <pre id="diagram" class="mermaid">
 graph TB
       a --> b
@@ -15,22 +29,35 @@ graph TB
       c --> d
     </pre>
 
-    <div id="dynamicDiagram"></div>
+    <hr />
+    Type code to view diagram:
+    <div class="container">
+      <textarea name="code" id="code" cols="30" rows="10"></textarea>
+      <div id="dynamicDiagram"></div>
+    </div>
+    <pre class="mermaid">info</pre>
 
     <script type="module">
       import mermaid from '/mermaid.esm.mjs';
-      mermaid.parseError = function (err, hash) {
-        console.error('Mermaid error: ', err);
-      };
+      async function render(str) {
+        const { svg } = await mermaid.render('dynamic', str);
+        document.getElementById('dynamicDiagram').innerHTML = svg;
+      }
+      const storeKey = window.location.pathname;
+      const code = localStorage.getItem(storeKey);
+      if (code) {
+        document.getElementById('code').value = code;
+        await render(code);
+      }
       mermaid.initialize({
         startOnLoad: true,
         logLevel: 0,
       });
-      const value = `graph TD\nHello --> World`;
-      const el = document.getElementById('dynamicDiagram');
-      const { svg } = await mermaid.render('dd', value);
-      console.log(svg);
-      el.innerHTML = svg;
+      document.getElementById('code').addEventListener('input', async (e) => {
+        const value = e.target.value;
+        localStorage.setItem(storeKey, value);
+        await render(value);
+      });
     </script>
 
     <script src="/dev/reload.js"></script>

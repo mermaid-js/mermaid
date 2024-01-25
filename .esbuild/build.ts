@@ -1,8 +1,8 @@
 import { build } from 'esbuild';
 import { mkdir, writeFile } from 'node:fs/promises';
-import { MermaidBuildOptions, defaultOptions, getBuildConfig } from './util.js';
 import { packageOptions } from '../.build/common.js';
 import { generateLangium } from '../.build/generateLangium.js';
+import { MermaidBuildOptions, defaultOptions, getBuildConfig } from './util.js';
 
 const shouldVisualize = process.argv.includes('--visualize');
 
@@ -56,7 +56,7 @@ const main = async () => {
   await generateLangium();
   await mkdir('stats').catch(() => {});
   const packageNames = Object.keys(packageOptions) as (keyof typeof packageOptions)[];
-  // it should build `parser` before `mermaid` because it's a dependecy
+  // it should build `parser` before `mermaid` because it's a dependency
   for (const pkg of packageNames) {
     await buildPackage(pkg).catch(handler);
   }

@@ -1,6 +1,6 @@
+import { defineConfig, MarkdownOptions } from 'vitepress';
 import { version } from '../../../package.json';
 import MermaidExample from './mermaid-markdown-all.js';
-import { defineConfig, MarkdownOptions } from 'vitepress';
 
 const allMarkdownTransformers: MarkdownOptions = {
   // the shiki theme to highlight code blocks
@@ -55,8 +55,8 @@ export default defineConfig({
     socialLinks: [
       { icon: 'github', link: 'https://github.com/mermaid-js/mermaid' },
       {
-        icon: 'slack',
-        link: 'https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE',
+        icon: 'discord',
+        link: 'https://discord.gg/wwtabKgp8y',
       },
       {
         icon: {
@@ -146,13 +146,14 @@ function sidebarSyntax() {
         { text: 'Pie Chart', link: '/syntax/pie' },
         { text: 'Quadrant Chart', link: '/syntax/quadrantChart' },
         { text: 'Requirement Diagram', link: '/syntax/requirementDiagram' },
-        { text: 'Gitgraph (Git) Diagram 🔥', link: '/syntax/gitgraph' },
+        { text: 'Gitgraph (Git) Diagram', link: '/syntax/gitgraph' },
         { text: 'C4 Diagram 🦺⚠️', link: '/syntax/c4' },
-        { text: 'Mindmaps 🔥', link: '/syntax/mindmap' },
-        { text: 'Timeline 🔥', link: '/syntax/timeline' },
-        { text: 'Zenuml 🔥', link: '/syntax/zenuml' },
+        { text: 'Mindmaps', link: '/syntax/mindmap' },
+        { text: 'Timeline', link: '/syntax/timeline' },
+        { text: 'Zenuml', link: '/syntax/zenuml' },
         { text: 'Sankey 🔥', link: '/syntax/sankey' },
         { text: 'XYChart 🔥', link: '/syntax/xyChart' },
+        { text: 'Packet 🔥', link: '/syntax/packet' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },

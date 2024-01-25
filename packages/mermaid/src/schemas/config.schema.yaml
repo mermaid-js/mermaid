@@ -50,6 +50,7 @@ required:
   - gitGraph
   - c4
   - sankey
+  - packet
 properties:
   theme:
     description: |
@@ -211,6 +212,8 @@ properties:
     $ref: '#/$defs/C4DiagramConfig'
   sankey:
     $ref: '#/$defs/SankeyDiagramConfig'
+  packet:
+    $ref: '#/$defs/PacketDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -781,6 +784,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       rotateCommitLabel:
         type: boolean
         default: true
+      parallelCommits:
+        type: boolean
+        default: false
       # YAML anchor reference, don't use $ref since ajv doesn't load defaults
       arrowMarkerAbsolute: *arrowMarkerAbsolute
 
@@ -2005,6 +2011,43 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           The suffix to use for values
         type: string
         default: ''
+
+  PacketDiagramConfig:
+    title: Packet Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for packet diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      rowHeight:
+        description: The height of each row in the packet diagram.
+        type: number
+        minimum: 1
+        default: 32
+      bitWidth:
+        description: The width of each bit in the packet diagram.
+        type: number
+        minimum: 1
+        default: 32
+      bitsPerRow:
+        description: The number of bits to display per row.
+        type: number
+        minimum: 1
+        default: 32
+      showBits:
+        description: Toggle to display or hide bit numbers.
+        type: boolean
+        default: true
+      paddingX:
+        description: The horizontal padding between the blocks in a row.
+        type: number
+        minimum: 0
+        default: 5
+      paddingY:
+        description: The vertical padding between the rows.
+        type: number
+        minimum: 0
+        default: 5
 
   FontCalculator:
     title: Font Calculator
