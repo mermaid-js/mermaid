@@ -19,9 +19,9 @@ const getRuntimes = (csv: string): RunTimes => {
       runtimes[testName] = Number(timeTaken);
 
       // TODO: Add some variation to test logging. Should remove.
-      if (Math.random() < 0.3) {
-        runtimes[testName] *= Math.random() * 2;
-      }
+      // if (Math.random() < 0.3) {
+      //   runtimes[testName] *= Math.random() * 2;
+      // }
     }
   }
   return runtimes;
@@ -56,8 +56,9 @@ const percentageDifference = (
 };
 
 const main = async () => {
-  const oldStats = await readStats('./snapshots/runtimes/base/**/*.csv');
-  const newStats = await readStats('./snapshots/runtimes/head/**/*.csv');
+  const base = process.argv[2] || './cypress/snapshots';
+  const oldStats = await readStats(`${base}/runtimes/base/**/*.csv`);
+  const newStats = await readStats(`${base}/runtimes/head/**/*.csv`);
   const fullData: string[][] = [];
   const changed: string[][] = [];
   for (const [fileName, runtimes] of Object.entries(newStats)) {
@@ -75,26 +76,46 @@ const main = async () => {
       const out = [
         fileName,
         testName,
-        oldTimeTaken.toString(),
-        timeTaken.toString(),
-        change,
-        `${delta.toString()}ms`,
+        `${oldTimeTaken}/${timeTaken}`,
+        `${delta.toString()}ms ${change}`,
       ];
       if (crossedThreshold) {
         changed.push(out);
-        console.warn(`${testName} (${fileName}): ${timeTaken}ms (${delta}ms, ${change})`);
       }
       fullData.push(out);
     }
   }
-  const headers = ['File', 'Test', 'Old Time', 'New Time', '% Change', 'Difference'];
+  const headers = ['File', 'Test', 'Time Old/New', 'Change (%)'];
   console.log(markdownTable([headers, ...changed]));
   console.log(`
   <details>
   <summary>Full Data</summary>
-  ${markdownTable([headers, ...fullData])}
+  ${htmlTable([headers, ...fullData])}
 </details>
 `);
+};
+
+const htmlTable = (data: string[][]): string => {
+  let table = `<table border='1' style="border-collapse: collapse">`;
+
+  // Generate table header
+  table += '<tr>';
+  for (const header of data[0]) {
+    table += `<th>${header}</th>`;
+  }
+  table += '</tr>';
+
+  // Generate table rows
+  for (let i = 1; i < data.length; i++) {
+    table += '<tr>';
+    for (let j = 0; j < data[i].length; j++) {
+      table += `<td>${data[i][j]}</td>`;
+    }
+    table += '</tr>';
+  }
+
+  table += '</table>';
+  return table;
 };
 
 void main().catch((e) => console.error(e));

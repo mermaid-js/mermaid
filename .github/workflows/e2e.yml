@@ -204,17 +204,12 @@ jobs:
         id: runtime
         if: ${{ needs.e2e.result != 'failure' && github.event_name == 'pull_request' }}
         run: |
-          ls -l ./snapshots/runtimes
           mv ./snapshots/runtimes/current ./snapshots/runtimes/head
-          ls -l ./snapshots/runtimes
-          ls -l ./snapshots/runtimes/base
-          ls -l ./snapshots/runtimes/head
-          tree ./snapshots/runtimes
           npm config set ignore-scripts true
           pnpm install --frozen-lockfile
           {
             echo 'runtime_diff<<EOF'
-            npx tsx scripts/runTime.ts
+            npx tsx scripts/runTime.ts ./snapshots
             echo EOF
           } >> "$GITHUB_OUTPUT"
 
