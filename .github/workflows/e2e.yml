@@ -69,9 +69,6 @@ jobs:
           start: pnpm run dev
           wait-on: 'http://localhost:9000'
           browser: chrome
-          spec: |
-            cypress/integration/rendering/classDiagram.spec.js
-            cypress/integration/rendering/flowchart-v2.spec.js
 
       - name: Move runtime data
         if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
@@ -148,9 +145,6 @@ jobs:
           # e.g. if this action was run from a fork
           record: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
           parallel: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
-          spec: |
-            cypress/integration/rendering/classDiagram.spec.js
-            cypress/integration/rendering/flowchart-v2.spec.js
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           VITEST_COVERAGE: true

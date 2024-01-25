@@ -114,19 +114,18 @@ const htmlTable = (data: string[][]): string => {
   let table = `<table border='1' style="border-collapse: collapse">`;
 
   // Generate table header
-  table += '<tr>';
-  for (const header of data[0]) {
-    table += `<th>${header}</th>`;
-  }
-  table += '</tr>';
+  table += `<tr>
+    ${data
+      .shift()!
+      .map((header) => `<th>${header}</th>`)
+      .join('')}
+    </tr>`;
 
   // Generate table rows
-  for (let i = 1; i < data.length; i++) {
-    table += '<tr>';
-    for (let j = 0; j < data[i].length; j++) {
-      table += `<td>${data[i][j]}</td>`;
-    }
-    table += '</tr>';
+  for (const row of data) {
+    table += `<tr>
+    ${row.map((cell) => `<td>${cell}</td>`).join('')}
+    </tr>`;
   }
 
   table += '</table>';
