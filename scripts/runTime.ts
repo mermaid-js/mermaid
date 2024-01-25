@@ -17,11 +17,6 @@ const getRuntimes = (csv: string): RunTimes => {
     const [testName, timeTaken] = line.split(',');
     if (testName && timeTaken) {
       runtimes[testName] = Number(timeTaken);
-
-      // TODO: Add some variation to test logging. Should remove.
-      // if (Math.random() < 0.3) {
-      //   runtimes[testName] *= Math.random() * 2;
-      // }
     }
   }
   return runtimes;
@@ -72,14 +67,15 @@ const main = async () => {
         continue;
       }
       const delta = timeTaken - oldTimeTaken;
+
       const { change, crossedThreshold } = percentageDifference(oldTimeTaken, timeTaken);
       const out = [
         fileName,
-        testName,
+        testName.replace('#', ''),
         `${oldTimeTaken}/${timeTaken}`,
         `${delta.toString()}ms ${change}`,
       ];
-      if (crossedThreshold) {
+      if (crossedThreshold && Math.abs(delta) > 25) {
         changed.push(out);
       }
       fullData.push(out);
