@@ -21,7 +21,7 @@ export default eyesPlugin(
         });
         on('task', {
           recordRenderTime({ fileName, testName, timeTaken }) {
-            const resultsPath = path.join('cypress', 'runtimes');
+            const resultsPath = path.join('cypress', 'snapshots', 'runtimes', 'current');
             if (!fs.existsSync(resultsPath)) {
               fs.mkdirSync(resultsPath, { recursive: true });
             }

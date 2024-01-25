@@ -69,15 +69,11 @@ jobs:
           start: pnpm run dev
           wait-on: 'http://localhost:9000'
           browser: chrome
-          spec: |
-            cypress/integration/rendering/classDiagram.spec.js
-            cypress/integration/rendering/flowchart-v2.spec.js
 
       - name: Move runtime data
         if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
         run: |
-          mkdir -p cypress/snapshots/runtimes
-          mv cypress/runtimes cypress/snapshots/runtimes/base
+          mv cypress/snapshots/runtimes/current cypress/snapshots/runtimes/base
 
   e2e:
     runs-on: ubuntu-latest
@@ -149,9 +145,6 @@ jobs:
           # e.g. if this action was run from a fork
           record: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
           parallel: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
-          spec: |
-            cypress/integration/rendering/classDiagram.spec.js
-            cypress/integration/rendering/flowchart-v2.spec.js
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           VITEST_COVERAGE: true
@@ -205,17 +198,12 @@ jobs:
         id: runtime
         if: ${{ needs.e2e.result != 'failure' && github.event_name == 'pull_request' }}
         run: |
-          ls -l cypress/snapshots/runtimes
-          mv cypress/snapshots/runtimes cypress/snapshots/runtimes/head
-          ls -l cypress/snapshots/runtimes
-          ls -l cypress/snapshots/runtimes/base
-          ls -l cypress/snapshots/runtimes/head
-          tree cypress/snapshots/runtimes
+          mv ./snapshots/runtimes/current ./snapshots/runtimes/head
           npm config set ignore-scripts true
           pnpm install --frozen-lockfile
           {
             echo 'runtime_diff<<EOF'
-            npx tsx scripts/runTime.ts
+            npx tsx scripts/runTime.ts ./snapshots
             echo EOF
           } >> "$GITHUB_OUTPUT"
 

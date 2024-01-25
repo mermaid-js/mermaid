@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import { readFile } from 'fs/promises';
 import { globby } from 'globby';
-import { markdownTable } from 'markdown-table';
 
 interface RunTimes {
   [key: string]: number;
@@ -51,10 +50,14 @@ const percentageDifference = (
 };
 
 const main = async () => {
-  const oldStats = await readStats('./cypress/snapshots/runtimes/base/**/*.csv');
-  const newStats = await readStats('./cypress/snapshots/runtimes/head/**/*.csv');
+  const base = process.argv[2] || './cypress/snapshots';
+  const oldStats = await readStats(`${base}/runtimes/base/**/*.csv`);
+  const newStats = await readStats(`${base}/runtimes/head/**/*.csv`);
   const fullData: string[][] = [];
   const changed: string[][] = [];
+  let oldRuntimeSum = 0;
+  let newRuntimeSum = 0;
+  let testCount = 0;
   for (const [fileName, runtimes] of Object.entries(newStats)) {
     const oldStat = oldStats[fileName];
     if (!oldStat) {
@@ -65,31 +68,68 @@ const main = async () => {
       if (!oldTimeTaken) {
         continue;
       }
+      oldRuntimeSum += oldTimeTaken;
+      newRuntimeSum += timeTaken;
+      testCount++;
       const delta = timeTaken - oldTimeTaken;
+
       const { change, crossedThreshold } = percentageDifference(oldTimeTaken, timeTaken);
       const out = [
         fileName,
-        testName,
-        oldTimeTaken.toString(),
-        timeTaken.toString(),
-        change,
-        `${delta.toString()}ms`,
+        testName.replace('#', ''),
+        `${oldTimeTaken}/${timeTaken}`,
+        `${delta.toString()}ms ${change}`,
       ];
-      if (crossedThreshold) {
+      if (crossedThreshold && Math.abs(delta) > 25) {
         changed.push(out);
-        console.warn(`${testName} (${fileName}): ${timeTaken}ms (${delta}ms, ${change})`);
       }
       fullData.push(out);
     }
   }
-  const headers = ['File', 'Test', 'Old Time', 'New Time', '% Change', 'Difference'];
-  console.log(markdownTable([headers, ...changed]));
+  const oldAverage = oldRuntimeSum / testCount;
+  const newAverage = newRuntimeSum / testCount;
+  const { change, crossedThreshold } = percentageDifference(oldAverage, newAverage);
+
+  const headers = ['File', 'Test', 'Time Old/New', 'Change (%)'];
+  console.log(`## Runtime Changes
+Old runtime average: ${oldAverage.toFixed(2)}ms
+New runtime average: ${newAverage.toFixed(2)}ms
+Change: ${change} ${crossedThreshold ? '⚠️' : ''}
+  `);
+  console.log(`
+  <details>
+  <summary>Changed tests</summary>
+  ${htmlTable([headers, ...changed])}
+</details>
+`);
   console.log(`
   <details>
   <summary>Full Data</summary>
-  ${markdownTable([headers, ...fullData])}
+  ${htmlTable([headers, ...fullData])}
 </details>
 `);
+};
+
+const htmlTable = (data: string[][]): string => {
+  let table = `<table border='1' style="border-collapse: collapse">`;
+
+  // Generate table header
+  table += `<tr>
+    ${data
+      .shift()!
+      .map((header) => `<th>${header}</th>`)
+      .join('')}
+    </tr>`;
+
+  // Generate table rows
+  for (const row of data) {
+    table += `<tr>
+    ${row.map((cell) => `<td>${cell}</td>`).join('')}
+    </tr>`;
+  }
+
+  table += '</table>';
+  return table;
 };
 
 void main().catch((e) => console.error(e));
