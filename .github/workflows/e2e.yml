@@ -76,8 +76,7 @@ jobs:
       - name: Move runtime data
         if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
         run: |
-          mkdir -p cypress/snapshots/runtimes
-          mv cypress/runtimes cypress/snapshots/runtimes/base
+          mv cypress/snapshots/runtimes/current cypress/snapshots/runtimes/base
 
   e2e:
     runs-on: ubuntu-latest
@@ -206,7 +205,7 @@ jobs:
         if: ${{ needs.e2e.result != 'failure' && github.event_name == 'pull_request' }}
         run: |
           ls -l ./snapshots/runtimes
-          mv ./snapshots/runtimes ./snapshots/runtimes/head
+          mv ./snapshots/runtimes/current ./snapshots/runtimes/head
           ls -l ./snapshots/runtimes
           ls -l ./snapshots/runtimes/base
           ls -l ./snapshots/runtimes/head
