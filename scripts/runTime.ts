@@ -56,8 +56,8 @@ const percentageDifference = (
 };
 
 const main = async () => {
-  const oldStats = await readStats('./cypress/snapshots/runtimes/base/**/*.csv');
-  const newStats = await readStats('./cypress/snapshots/runtimes/head/**/*.csv');
+  const oldStats = await readStats('./snapshots/runtimes/base/**/*.csv');
+  const newStats = await readStats('./snapshots/runtimes/head/**/*.csv');
   const fullData: string[][] = [];
   const changed: string[][] = [];
   for (const [fileName, runtimes] of Object.entries(newStats)) {

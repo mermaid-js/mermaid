@@ -205,12 +205,12 @@ jobs:
         id: runtime
         if: ${{ needs.e2e.result != 'failure' && github.event_name == 'pull_request' }}
         run: |
-          ls -l cypress/snapshots/runtimes
-          mv cypress/snapshots/runtimes cypress/snapshots/runtimes/head
-          ls -l cypress/snapshots/runtimes
-          ls -l cypress/snapshots/runtimes/base
-          ls -l cypress/snapshots/runtimes/head
-          tree cypress/snapshots/runtimes
+          ls -l ./snapshots/runtimes
+          mv ./snapshots/runtimes ./snapshots/runtimes/head
+          ls -l ./snapshots/runtimes
+          ls -l ./snapshots/runtimes/base
+          ls -l ./snapshots/runtimes/head
+          tree ./snapshots/runtimes
           npm config set ignore-scripts true
           pnpm install --frozen-lockfile
           {
