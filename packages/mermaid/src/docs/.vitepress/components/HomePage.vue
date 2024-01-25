@@ -16,11 +16,7 @@ import { teamMembers } from '../contributors';
           <p text-lg max-w-200 text-center leading-7>
             <Contributors />
             <br />
-            <a
-              href="https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE"
-              rel="noopener noreferrer"
-              >Join the community</a
-            >
+            <a href="https://discord.gg/wwtabKgp8y" rel="noopener noreferrer">Join the community</a>
             and get involved!
           </p>
         </div>

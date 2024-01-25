@@ -55,8 +55,8 @@ export default defineConfig({
     socialLinks: [
       { icon: 'github', link: 'https://github.com/mermaid-js/mermaid' },
       {
-        icon: 'slack',
-        link: 'https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE',
+        icon: 'discord',
+        link: 'https://discord.gg/wwtabKgp8y',
       },
       {
         icon: {

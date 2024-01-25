@@ -741,6 +741,25 @@ A ~~~ B
     );
   });
 
+  it('5059: Should render when subgraph contains only subgraphs, has link to outside and itself is part of a link', () => {
+    imgSnapshotTest(
+      `flowchart
+
+      subgraph Main
+        subgraph Child1
+          Node1
+          Node2
+        end
+        subgraph Child2
+          Node3
+          Node4
+        end
+      end
+      Main --> Out1
+      Child2 --> Out2`
+    );
+  });
+
   describe('Markdown strings flowchart (#4220)', () => {
     describe('html labels', () => {
       it('With styling and classes', () => {

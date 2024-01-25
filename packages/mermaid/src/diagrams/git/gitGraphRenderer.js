@@ -65,6 +65,29 @@ const drawText = (txt) => {
 };
 
 /**
+ * Searches for the closest parent from the parents list passed as argument.
+ * The parents list comes from an individual commit. The closest parent is actually
+ * the one farther down the graph, since that means it is closer to its child.
+ *
+ * @param {string[]} parents
+ * @returns {string | undefined}
+ */
+const findClosestParent = (parents) => {
+  let closestParent = '';
+  let maxPosition = 0;
+
+  parents.forEach((parent) => {
+    const parentPosition = dir === 'TB' ? commitPos[parent].y : commitPos[parent].x;
+    if (parentPosition >= maxPosition) {
+      closestParent = parent;
+      maxPosition = parentPosition;
+    }
+  });
+
+  return closestParent || undefined;
+};
+
+/**
  * Draws the commits with its symbol and labels. The function has two modes, one which only
  * calculates the positions and one that does the actual drawing. This for a simple way getting the
  * vertical layering correct in the graph.
@@ -87,11 +110,31 @@ const drawCommits = (svg, commits, modifyGraph) => {
   const sortedKeys = keys.sort((a, b) => {
     return commits[a].seq - commits[b].seq;
   });
+
+  const isParallelCommits = gitGraphConfig.parallelCommits;
+  const layoutOffset = 10;
+  const commitStep = 40;
   sortedKeys.forEach((key) => {
     const commit = commits[key];
 
-    const y = dir === 'TB' ? pos + 10 : branchPos[commit.branch].pos;
-    const x = dir === 'TB' ? branchPos[commit.branch].pos : pos + 10;
+    if (isParallelCommits) {
+      if (commit.parents.length) {
+        const closestParent = findClosestParent(commit.parents);
+        pos =
+          dir === 'TB'
+            ? commitPos[closestParent].y + commitStep
+            : commitPos[closestParent].x + commitStep;
+      } else {
+        pos = 0;
+        if (dir === 'TB') {
+          pos = 30;
+        }
+      }
+    }
+
+    const posWithOffset = pos + layoutOffset;
+    const y = dir === 'TB' ? posWithOffset : branchPos[commit.branch].pos;
+    const x = dir === 'TB' ? branchPos[commit.branch].pos : posWithOffset;
 
     // Don't draw the commits now but calculate the positioning which is used by the branch lines etc.
     if (modifyGraph) {
@@ -216,9 +259,9 @@ const drawCommits = (svg, commits, modifyGraph) => {
       }
     }
     if (dir === 'TB') {
-      commitPos[commit.id] = { x: x, y: pos + 10 };
+      commitPos[commit.id] = { x: x, y: posWithOffset };
     } else {
-      commitPos[commit.id] = { x: pos + 10, y: y };
+      commitPos[commit.id] = { x: posWithOffset, y: y };
     }
 
     // The first iteration over the commits are for positioning purposes, this
@@ -247,7 +290,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
 
         // Now we have the label, lets position the background
         labelBkg
-          .attr('x', pos + 10 - bbox.width / 2 - py)
+          .attr('x', posWithOffset - bbox.width / 2 - py)
           .attr('y', y + 13.5)
           .attr('width', bbox.width + 2 * py)
           .attr('height', bbox.height + 2 * py);
@@ -258,7 +301,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
         }
 
         if (dir !== 'TB') {
-          text.attr('x', pos + 10 - bbox.width / 2);
+          text.attr('x', posWithOffset - bbox.width / 2);
         }
         if (gitGraphConfig.rotateCommitLabel) {
           if (dir === 'TB') {
@@ -284,7 +327,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
           .attr('class', 'tag-label')
           .text(commit.tag);
         let tagBbox = tag.node().getBBox();
-        tag.attr('x', pos + 10 - tagBbox.width / 2);
+        tag.attr('x', posWithOffset - tagBbox.width / 2);
 
         const h2 = tagBbox.height / 2;
         const ly = y - 19.2;
@@ -293,10 +336,10 @@ const drawCommits = (svg, commits, modifyGraph) => {
           `
           ${pos - tagBbox.width / 2 - px / 2},${ly + py}
           ${pos - tagBbox.width / 2 - px / 2},${ly - py}
-          ${pos + 10 - tagBbox.width / 2 - px},${ly - h2 - py}
-          ${pos + 10 + tagBbox.width / 2 + px},${ly - h2 - py}
-          ${pos + 10 + tagBbox.width / 2 + px},${ly + h2 + py}
-          ${pos + 10 - tagBbox.width / 2 - px},${ly + h2 + py}`
+          ${posWithOffset - tagBbox.width / 2 - px},${ly - h2 - py}
+          ${posWithOffset + tagBbox.width / 2 + px},${ly - h2 - py}
+          ${posWithOffset + tagBbox.width / 2 + px},${ly + h2 + py}
+          ${posWithOffset - tagBbox.width / 2 - px},${ly + h2 + py}`
         );
 
         hole
@@ -313,10 +356,10 @@ const drawCommits = (svg, commits, modifyGraph) => {
               `
             ${x},${pos + py}
             ${x},${pos - py}
-            ${x + 10},${pos - h2 - py}
-            ${x + 10 + tagBbox.width + px},${pos - h2 - py}
-            ${x + 10 + tagBbox.width + px},${pos + h2 + py}
-            ${x + 10},${pos + h2 + py}`
+            ${x + layoutOffset},${pos - h2 - py}
+            ${x + layoutOffset + tagBbox.width + px},${pos - h2 - py}
+            ${x + layoutOffset + tagBbox.width + px},${pos + h2 + py}
+            ${x + layoutOffset},${pos + h2 + py}`
             )
             .attr('transform', 'translate(12,12) rotate(45, ' + x + ',' + pos + ')');
           hole
@@ -330,7 +373,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
         }
       }
     }
-    pos += 50;
+    pos += commitStep + layoutOffset;
     if (pos > maxPos) {
       maxPos = pos;
     }

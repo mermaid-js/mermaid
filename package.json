@@ -61,11 +61,11 @@
     ]
   },
   "devDependencies": {
-    "@applitools/eyes-cypress": "^3.33.1",
+    "@applitools/eyes-cypress": "^3.40.6",
     "@commitlint/cli": "^17.6.1",
     "@commitlint/config-conventional": "^17.6.1",
     "@cspell/eslint-plugin": "^6.31.1",
-    "@cypress/code-coverage": "^3.10.7",
+    "@cypress/code-coverage": "^3.12.18",
     "@rollup/plugin-typescript": "^11.1.1",
     "@types/cors": "^2.8.13",
     "@types/eslint": "^8.37.0",
@@ -85,7 +85,7 @@
     "ajv": "^8.12.0",
     "concurrently": "^8.0.1",
     "cors": "^2.8.5",
-    "cypress": "^12.10.0",
+    "cypress": "^12.17.4",
     "cypress-image-snapshot": "^4.0.1",
     "esbuild": "^0.19.0",
     "eslint": "^8.47.0",

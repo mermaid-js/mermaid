@@ -16,9 +16,9 @@ Currently pending [IANA](https://www.iana.org/) recognition.
 
 ## Showcase
 
-### Mermaid Slack workspace
+### Mermaid Discord workspace
 
-We would love to see what you create with Mermaid. Please share your creations with us in our [Slack](https://join.slack.com/t/mermaid-talk/shared_invite/zt-22p2r8p9y-qiyP1H38GjFQ6S6jbBkOxQ) workspace [#community-showcase](https://mermaid-talk.slack.com/archives/C05NK37LT40) channel.
+We would love to see what you create with Mermaid. Please share your creations with us in our [Discord](https://discord.gg/wwtabKgp8y) server [#showcase](https://discord.com/channels/1079455296289788015/1079502635054399649) channel.
 
 ### Add to Mermaid Ecosystem
 

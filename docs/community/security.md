@@ -16,7 +16,7 @@ We aim to reply within three working days, probably much sooner.
 
 You should expect a close collaboration as we work to resolve the issue you have reported. Please reach out to <security@mermaid.live> again if you do not receive prompt attention and regular updates.
 
-You may also reach out to the team via our public Slack chat channels; however, please make sure to e-mail <security@mermaid.live> when reporting an issue, and avoid revealing information about vulnerabilities in public as that could that could put users at risk.
+You may also reach out to the team via our public Discord chat channels; however, please make sure to e-mail <security@mermaid.live> when reporting an issue, and avoid revealing information about vulnerabilities in public as that could that could put users at risk.
 
 ## Best practices
 
