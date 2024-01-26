@@ -28,8 +28,12 @@ describe('when parsing a gantt diagram it', function () {
   });
   it('should handle a title definition', function () {
     const str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid';
+    const semi = 'gantt\ndateFormat yyyy-mm-dd\ntitle ;Gantt diagram titles support semicolons';
+    const hash = 'gantt\ndateFormat yyyy-mm-dd\ntitle #Gantt diagram titles support hashtags';
 
     expect(parserFnConstructor(str)).not.toThrow();
+    expect(parserFnConstructor(semi)).not.toThrow();
+    expect(parserFnConstructor(hash)).not.toThrow();
   });
   it('should handle an excludes definition', function () {
     const str =
@@ -53,7 +57,23 @@ describe('when parsing a gantt diagram it', function () {
       'excludes weekdays 2019-02-01\n' +
       'section Documentation';
 
+    const semi =
+      'gantt\n' +
+      'dateFormat yyyy-mm-dd\n' +
+      'title Adding gantt diagram functionality to mermaid\n' +
+      'excludes weekdays 2019-02-01\n' +
+      'section ;Documentation';
+
+    const hash =
+      'gantt\n' +
+      'dateFormat yyyy-mm-dd\n' +
+      'title Adding gantt diagram functionality to mermaid\n' +
+      'excludes weekdays 2019-02-01\n' +
+      'section #Documentation';
+
     expect(parserFnConstructor(str)).not.toThrow();
+    expect(parserFnConstructor(semi)).not.toThrow();
+    expect(parserFnConstructor(hash)).not.toThrow();
   });
   it('should handle multiline section titles with different line breaks', function () {
     const str =
@@ -73,7 +93,23 @@ describe('when parsing a gantt diagram it', function () {
       'section Documentation\n' +
       'Design jison grammar:des1, 2014-01-01, 2014-01-04';
 
+    const semi =
+      'gantt\n' +
+      'dateFormat YYYY-MM-DD\n' +
+      'title Adding gantt diagram functionality to mermaid\n' +
+      'section Documentation\n' +
+      ';Design jison grammar:des1, 2014-01-01, 2014-01-04';
+
+    const hash =
+      'gantt\n' +
+      'dateFormat YYYY-MM-DD\n' +
+      'title Adding gantt diagram functionality to mermaid\n' +
+      'section Documentation\n' +
+      '#Design jison grammar:des1, 2014-01-01, 2014-01-04';
+
     expect(parserFnConstructor(str)).not.toThrow();
+    expect(parserFnConstructor(semi)).not.toThrow();
+    expect(parserFnConstructor(hash)).not.toThrow();
 
     const tasks = parser.yy.getTasks();
 

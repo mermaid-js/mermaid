@@ -27,11 +27,10 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 
 \%\%(?!\{)*[^\n]*                                               /* skip comments */
 [^\}]\%\%*[^\n]*                                                /* skip comments */
-\%\%*[^\n]*[\n]*           /* do nothing */
+\%\%*[^\n]*[\n]*                                                /* do nothing */
 
 [\n]+                   return 'NL';
 \s+                     /* skip whitespace */
-\#[^\n]*                /* skip comments */
 \%%[^\n]*               /* skip comments */
 
 /*
@@ -86,10 +85,10 @@ weekday\s+friday                return 'weekday_friday'
 weekday\s+saturday              return 'weekday_saturday'
 weekday\s+sunday                return 'weekday_sunday'
 \d\d\d\d"-"\d\d"-"\d\d          return 'date';
-"title"\s[^#\n;]+               return 'title';
+"title"\s[^\n]+               return 'title';
 "accDescription"\s[^#\n;]+      return 'accDescription'
-"section"\s[^#:\n;]+            return 'section';
-[^#:\n;]+                       return 'taskTxt';
+"section"\s[^\n]+            return 'section';
+[^:\n]+                       return 'taskTxt';
 ":"[^#\n;]+                     return 'taskData';
 ":"                             return ':';
 <<EOF>>                         return 'EOF';
