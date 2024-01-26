@@ -375,6 +375,19 @@ context('Sequence diagram', () => {
         {}
       );
     });
+    it('should have actor-top class on top actor box and symbol', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+          actor Bob
+          Alice->>Bob: Hi Bob
+          Bob->>Alice: Hi Alice
+      `,
+        {}
+      );
+      cy.get('.actor').should('have.class', 'actor-top');
+      cy.get('.actor-man').should('have.class', 'actor-top');
+    });
     it('should render long notes left of actor', () => {
       imgSnapshotTest(
         `
