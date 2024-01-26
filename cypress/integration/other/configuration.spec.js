@@ -131,7 +131,6 @@ describe('Configuration', () => {
       cy.on('uncaught:exception', (err, runnable) => {
         return !err.message.includes('Parse error on line');
       });
-      cy.viewport(1440, 1024);
     });
 
     it('should not render error diagram if suppressErrorRendering is set', () => {
