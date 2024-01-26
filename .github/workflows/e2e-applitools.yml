@@ -28,7 +28,7 @@ jobs:
       - if: ${{ ! env.USE_APPLI }}
         name: Warn if not using Applitools
         run: |
-          echo "::error,title=Not using Applitols::APPLITOOLS_API_KEY is empty, disabling Applitools for this run."
+          echo "::error,title=Not using Applitools::APPLITOOLS_API_KEY is empty, disabling Applitools for this run."
 
       - uses: actions/checkout@v4
 

@@ -68,6 +68,11 @@ export interface MermaidConfig {
    * The maximum allowed size of the users text diagram
    */
   maxTextSize?: number;
+  /**
+   * Defines the maximum number of edges that can be drawn in a graph.
+   *
+   */
+  maxEdges?: number;
   darkMode?: boolean;
   htmlLabels?: boolean;
   /**
@@ -577,6 +582,7 @@ export interface GitGraphDiagramConfig extends BaseDiagramConfig {
   showCommitLabel?: boolean;
   showBranches?: boolean;
   rotateCommitLabel?: boolean;
+  parallelCommits?: boolean;
   /**
    * Controls whether or arrow markers in html code are absolute paths or anchors.
    * This matters if you are using base tag settings.
