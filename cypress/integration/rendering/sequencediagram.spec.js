@@ -792,6 +792,34 @@ context('Sequence diagram', () => {
     });
   });
   context('links', () => {
+    it('should support actor links', () => {
+      renderGraph(
+        `
+      sequenceDiagram
+        link Alice: Dashboard @ https://dashboard.contoso.com/alice
+        link Alice: Wiki @ https://wiki.contoso.com/alice
+        link John: Dashboard @ https://dashboard.contoso.com/john
+        link John: Wiki @ https://wiki.contoso.com/john
+        Alice->>John: Hello John<br/>
+        John-->>Alice: Great<br/><br/>day!
+      `,
+        { securityLevel: 'loose' }
+      );
+      cy.get('#actor0_popup').should((popupMenu) => {
+        const style = popupMenu.attr('style');
+        expect(style).to.undefined;
+      });
+      cy.get('#root-0').click();
+      cy.get('#actor0_popup').should((popupMenu) => {
+        const style = popupMenu.attr('style');
+        expect(style).to.match(/^display: block;$/);
+      });
+      cy.get('#root-0').click();
+      cy.get('#actor0_popup').should((popupMenu) => {
+        const style = popupMenu.attr('style');
+        expect(style).to.match(/^display: none;$/);
+      });
+    });
     it('should support actor links and properties EXPERIMENTAL: USE WITH CAUTION', () => {
       //Be aware that the syntax for "properties" is likely to be changed.
       imgSnapshotTest(
