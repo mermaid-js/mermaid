@@ -84,6 +84,7 @@ export const addClass = function (_id: string) {
     methods: [],
     members: [],
     annotations: [],
+    styles: [],
     domId: MERMAID_DOM_ID_PREFIX + name + '-' + classCounter,
   } as ClassNode;
 
@@ -214,7 +215,7 @@ export const cleanupLabel = function (label: string) {
 };
 
 /**
- * Called by parser when a special node is found, e.g. a clickable element.
+ * Called by parser when assigning cssClass to a class
  *
  * @param ids - Comma separated list of ids
  * @param className - Class to add
@@ -446,11 +447,27 @@ const getNamespaces = function (): NamespaceMap {
  * @public
  */
 export const addClassesToNamespace = function (id: string, classNames: string[]) {
-  if (namespaces[id] !== undefined) {
-    classNames.map((className) => {
-      classes[className].parent = id;
-      namespaces[id].classes[className] = classes[className];
-    });
+  if (namespaces[id] === undefined) {
+    return;
+  }
+  for (const name of classNames) {
+    const { className } = splitClassNameAndType(name);
+    classes[className].parent = id;
+    namespaces[id].classes[className] = classes[className];
+  }
+};
+
+export const setCssStyle = function (id: string, styles: string[]) {
+  const thisClass = classes[id];
+  if (!styles || !thisClass) {
+    return;
+  }
+  for (const s of styles) {
+    if (s.includes(',')) {
+      thisClass.styles.push(...s.split(','));
+    } else {
+      thisClass.styles.push(s);
+    }
   }
 };
 
@@ -490,4 +507,5 @@ export default {
   addClassesToNamespace,
   getNamespace,
   getNamespaces,
+  setCssStyle,
 };
