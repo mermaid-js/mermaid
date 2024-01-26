@@ -356,6 +356,9 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   } else {
     rect.fill = '#eaeaea';
   }
+  if (!isFooter) {
+    cssclass += ' actor-top';
+  }
   rect.x = actor.x;
   rect.y = actorY;
   rect.width = actor.width;
@@ -420,7 +423,11 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
     actor.actorCnt = actorCnt;
   }
   const actElem = elem.append('g');
-  actElem.attr('class', 'actor-man');
+  let cssClass = 'actor-man';
+  if (!isFooter) {
+    cssClass += ' actor-top';
+  }
+  actElem.attr('class', cssClass);
 
   const rect = svgDrawCommon.getNoteRect();
   rect.x = actor.x;
