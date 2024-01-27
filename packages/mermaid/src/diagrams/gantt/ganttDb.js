@@ -271,11 +271,10 @@ const getStartDate = function (prevTime, dateFormat, str) {
 
     if (latestTask) {
       return latestTask.endTime;
-    } else {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      return today;
     }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
   }
 
   // Check for actual date set
@@ -353,11 +352,10 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
 
     if (earliestTask) {
       return earliestTask.startTime;
-    } else {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      return today;
     }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
   }
 
   // check for actual date
