@@ -826,4 +826,121 @@ gitGraph TB:
       cherry-pick id: "M" parent:"B"`
     );
   });
+  it('41: should render default GitGraph with parallelCommits set to false', () => {
+    imgSnapshotTest(
+      `gitGraph
+      commit id:"1-abcdefg"
+      commit id:"2-abcdefg"
+      branch develop
+      commit id:"3-abcdefg"
+      commit id:"4-abcdefg"
+      checkout main
+      branch feature
+      commit id:"5-abcdefg"
+      commit id:"6-abcdefg"
+      checkout main
+      commit id:"7-abcdefg"
+      commit id:"8-abcdefg"
+      `,
+      { gitGraph: { parallelCommits: false } }
+    );
+  });
+  it('42: should render GitGraph with parallel commits', () => {
+    imgSnapshotTest(
+      `gitGraph
+      commit id:"1-abcdefg"
+      commit id:"2-abcdefg"
+      branch develop
+      commit id:"3-abcdefg"
+      commit id:"4-abcdefg"
+      checkout main
+      branch feature
+      commit id:"5-abcdefg"
+      commit id:"6-abcdefg"
+      checkout main
+      commit id:"7-abcdefg"
+      commit id:"8-abcdefg"
+      `,
+      { gitGraph: { parallelCommits: true } }
+    );
+  });
+  it('43: should render GitGraph with parallel commits | Vertical Branch', () => {
+    imgSnapshotTest(
+      `gitGraph TB:
+      commit id:"1-abcdefg"
+      commit id:"2-abcdefg"
+      branch develop
+      commit id:"3-abcdefg"
+      commit id:"4-abcdefg"
+      checkout main
+      branch feature
+      commit id:"5-abcdefg"
+      commit id:"6-abcdefg"
+      checkout main
+      commit id:"7-abcdefg"
+      commit id:"8-abcdefg"
+      `,
+      { gitGraph: { parallelCommits: true } }
+    );
+  });
+  it('44: should render GitGraph with unconnected branches and no parallel commits', () => {
+    imgSnapshotTest(
+      `gitGraph
+      branch dev
+      branch v2
+      branch feat
+      commit id:"1-abcdefg"
+      commit id:"2-abcdefg"
+      checkout main
+      commit id:"3-abcdefg"
+      checkout dev
+      commit id:"4-abcdefg"
+      checkout v2
+      commit id:"5-abcdefg"
+      checkout main
+      commit id:"6-abcdefg"
+      `,
+      { gitGraph: { parallelCommits: false } }
+    );
+  });
+  it('45: should render GitGraph with unconnected branches and parallel commits', () => {
+    imgSnapshotTest(
+      `gitGraph
+      branch dev
+      branch v2
+      branch feat
+      commit id:"1-abcdefg"
+      commit id:"2-abcdefg"
+      checkout main
+      commit id:"3-abcdefg"
+      checkout dev
+      commit id:"4-abcdefg"
+      checkout v2
+      commit id:"5-abcdefg"
+      checkout main
+      commit id:"6-abcdefg"
+      `,
+      { gitGraph: { parallelCommits: true } }
+    );
+  });
+  it('46: should render GitGraph with unconnected branches and parallel commits | Vertical Branch', () => {
+    imgSnapshotTest(
+      `gitGraph TB:
+      branch dev
+      branch v2
+      branch feat
+      commit id:"1-abcdefg"
+      commit id:"2-abcdefg"
+      checkout main
+      commit id:"3-abcdefg"
+      checkout dev
+      commit id:"4-abcdefg"
+      checkout v2
+      commit id:"5-abcdefg"
+      checkout main
+      commit id:"6-abcdefg"
+      `,
+      { gitGraph: { parallelCommits: true } }
+    );
+  });
 });

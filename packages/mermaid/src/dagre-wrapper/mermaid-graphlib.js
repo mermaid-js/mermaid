@@ -254,6 +254,16 @@ export const adjustClustersAndEdges = (graph, depth) => {
     }
   });
 
+  for (let id of Object.keys(clusterDb)) {
+    const nonClusterChild = clusterDb[id].id;
+    const parent = graph.parent(nonClusterChild);
+
+    // Change replacement node of id to parent of current replacement node if valid
+    if (parent !== id && clusterDb[parent] && !clusterDb[parent].externalConnections) {
+      clusterDb[id].id = parent;
+    }
+  }
+
   // For clusters with incoming and/or outgoing edges translate those edges to a real node
   // in the cluster in order to fake the edge
   graph.edges().forEach(function (e) {
@@ -307,9 +317,13 @@ export const adjustClustersAndEdges = (graph, depth) => {
       w = getAnchorId(e.w);
       graph.removeEdge(e.v, e.w, e.name);
       if (v !== e.v) {
+        const parent = graph.parent(v);
+        clusterDb[parent].externalConnections = true;
         edge.fromCluster = e.v;
       }
       if (w !== e.w) {
+        const parent = graph.parent(w);
+        clusterDb[parent].externalConnections = true;
         edge.toCluster = e.w;
       }
       log.warn('Fix Replacing with XXX', v, w, e.name);
