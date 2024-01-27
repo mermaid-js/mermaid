@@ -35,6 +35,8 @@ let plotColorPalette = xyChartThemeConfig.plotColorPalette.split(',').map((color
 let hasSetXAxis = false;
 let hasSetYAxis = false;
 
+let dataSets: number[][] = [];
+
 interface NormalTextType {
   type: 'text';
   text: string;
@@ -58,7 +60,7 @@ function getChartDefaultData(): XYChartData {
     yAxis: {
       type: 'linear',
       title: '',
-      min: Infinity,
+      min: 0,
       max: -Infinity,
     },
     xAxis: {
@@ -111,21 +113,34 @@ function setYAxisRangeData(min: number, max: number) {
 
 // this function does not set `hasSetYAxis` as there can be multiple data so we should calculate the range accordingly
 function setYAxisRangeFromPlotData(data: number[], plotType: PlotType) {
-  const minValue = Math.min(...data);
-  const maxValue = Math.max(...data);
-  const prevMinValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.min : Infinity;
-  const prevMaxValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.max : -Infinity;
-  xyChartData.yAxis = {
-    type: 'linear',
-    title: xyChartData.yAxis.title,
-    min: Math.min(prevMinValue, minValue),
-    max:
-      plotType === PlotType.BAR
-        ? prevMaxValue > -Infinity
-          ? prevMaxValue + maxValue
-          : maxValue
-        : Math.max(prevMaxValue, maxValue),
-  };
+  if (plotType === PlotType.BAR) {
+    dataSets.push(data);
+
+    let sum = new Array(data.length).fill(0);
+    for (let i = 0; i < data.length; i++) {
+      for (let dataSetIndex = 0; dataSetIndex < dataSets.length; dataSetIndex++) {
+        sum[i] += dataSets[dataSetIndex][i];
+      }
+    }
+
+    xyChartData.yAxis = {
+      type: 'linear',
+      title: xyChartData.yAxis.title,
+      min: isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.min : Math.min(...sum),
+      max: Math.max(...sum),
+    };
+  } else if (plotType === PlotType.LINE) {
+    const minValue = Math.min(...data);
+    const maxValue = Math.max(...data);
+    const prevMinValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.min : Infinity;
+    const prevMaxValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.max : -Infinity;
+    xyChartData.yAxis = {
+      type: 'linear',
+      title: xyChartData.yAxis.title,
+      min: Math.min(prevMinValue, minValue),
+      max: Math.max(prevMaxValue, maxValue),
+    };
+  }
 }
 
 function transformDataWithoutCategory(data: number[], plotType: PlotType): SimplePlotDataType {
@@ -210,6 +225,7 @@ const clear = function () {
   plotColorPalette = xyChartThemeConfig.plotColorPalette.split(',').map((color) => color.trim());
   hasSetXAxis = false;
   hasSetYAxis = false;
+  dataSets = [];
 };
 
 export default {
