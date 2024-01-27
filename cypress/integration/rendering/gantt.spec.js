@@ -14,18 +14,18 @@ describe('Gantt diagram', () => {
       excludes weekdays 2014-01-10
 
       section A section
-      Completed task                      :done, des1, 2014-01-06,2014-01-08
-      Active task                         :active, des2, 2014-01-09, 3d
-      Future task                         :des3, after des2, 5d
-      Future task2                        :des4, after des3, 5d
-      Waiting for task 2                  :after des1, until des4
+      Completed task            :done,    des1, 2014-01-06,2014-01-08
+      Active task               :active,  des2, 2014-01-09, 3d
+      Future task               :         des3, after des2, 5d
+      Future task2               :         des4, after des3, 5d
 
       section Critical tasks
       Completed task in the critical line :crit, done, 2014-01-06,24h
-      Implement parser and jison          :crit, done, after des1, 2d
+      Implement parser and jison :crit, done, after des1, 2d
       Create tests for parser             :crit, active, 3d
       Future task in critical line        :crit, 5d
       Create tests for renderer           :2d
+      Add to mermaid                      :1d
 
       section Documentation
       Describe gantt syntax               :active, a1, after des1, 3d
@@ -88,7 +88,31 @@ describe('Gantt diagram', () => {
       apple :a, 2017-07-20, 1w
       banana :crit, b, 2017-07-23, 1d
       cherry :active, c, after b a, 1d
-      kiwi   :d, 2017-07-20, until b c
+      `,
+      {}
+    );
+  });
+  it('should handle multiple dependencies syntax with after and until', () => {
+    imgSnapshotTest(
+      `
+      gantt
+      dateFormat  YYYY-MM-DD
+      axisFormat  %d/%m
+      title Adding GANTT diagram to mermaid
+      excludes weekdays 2014-01-10
+      todayMarker off
+  
+      section team's critical event
+      deadline A           :milestone, crit, deadlineA, 2024-02-01, 0
+      deadline B           :milestone, crit, deadlineB, 2024-02-15, 0
+      boss on leave        :bossaway, 2024-01-28, 2024-02-11
+  
+      section new intern
+      onboarding           :onboarding, 2024-01-02, 1w
+      literature review    :litreview, 2024-01-02, 10d
+      project A            :projectA, after onboarding litreview, until deadlineA bossaway
+      chilling             :chilling, after projectA, until deadlineA
+      project B            :projectB, after deadlineA, until deadlineB
       `,
       {}
     );
