@@ -25,7 +25,8 @@ describe('Gantt diagram', () => {
       Create tests for parser             :crit, active, 3d
       Future task in critical line        :crit, 5d
       Create tests for renderer           :2d
-      Add to mermaid                      :1d
+      Add to mermaid                      :adding, 1d
+      Thinking about adding to mermaid    :after des1, until adding
 
       section Documentation
       Describe gantt syntax               :active, a1, after des1, 3d
@@ -88,6 +89,7 @@ describe('Gantt diagram', () => {
       apple :a, 2017-07-20, 1w
       banana :crit, b, 2017-07-23, 1d
       cherry :active, c, after b a, 1d
+      kiwi   :d, 2017-07-20, until b c
       `,
       {}
     );
