@@ -68,7 +68,7 @@ try {
 
 ### Init deprecated and InitThrowsErrors removed
 
-The config passed to `init` was not being used eariler.
+The config passed to `init` was not being used earlier.
 It will now be used.
 The `init` function is deprecated and will be removed in the next major release.
 init currently works as a wrapper to `initialize` and `run`.
@@ -195,7 +195,7 @@ mermaid.run({
 - "Cannot activate" in sequenceDiagram [\#647](https://github.com/knsv/mermaid/issues/647)
 - Link \("click" statement\) in flowchart does not work in exported SVG [\#646](https://github.com/knsv/mermaid/issues/646)
 - How to pass styling [\#639](https://github.com/knsv/mermaid/issues/639)
-- The live editor cant show seq diagram with notes for 8.0.0-alpha.3 [\#638](https://github.com/knsv/mermaid/issues/638)
+- The live editor can't show seq diagram with notes for 8.0.0-alpha.3 [\#638](https://github.com/knsv/mermaid/issues/638)
 - import mermaid.css with ES6 + NPM [\#634](https://github.com/knsv/mermaid/issues/634)
 - Actor line cuts through other elements [\#633](https://github.com/knsv/mermaid/issues/633)
 - Graph TD line out of the picture \(left side\) [\#630](https://github.com/knsv/mermaid/issues/630)
@@ -504,7 +504,7 @@ mermaid.run({
 
 - Docs css: code hard to read [\#324](https://github.com/knsv/mermaid/issues/324)
 - About Markpad integration [\#323](https://github.com/knsv/mermaid/issues/323)
-- How to link backwords in flowchat? [\#321](https://github.com/knsv/mermaid/issues/321)
+- How to link backwards in flowchat? [\#321](https://github.com/knsv/mermaid/issues/321)
 - Help with editor [\#310](https://github.com/knsv/mermaid/issues/310)
 - +1 [\#293](https://github.com/knsv/mermaid/issues/293)
 - Basic chart does not render on Chome, but does in Firefox [\#290](https://github.com/knsv/mermaid/issues/290)
@@ -619,7 +619,7 @@ mermaid.run({
 - render to png from the cli does not display the marker-end arrow heads [\#181](https://github.com/knsv/mermaid/issues/181)
 - Links in sequence diagrams [\#159](https://github.com/knsv/mermaid/issues/159)
 - comment characters `%%` cause parse error [\#141](https://github.com/knsv/mermaid/issues/141)
-- Add a reversed assymetric shape [\#124](https://github.com/knsv/mermaid/issues/124)
+- Add a reversed asymmetric shape [\#124](https://github.com/knsv/mermaid/issues/124)
 - Add syntax for double headed arrows [\#123](https://github.com/knsv/mermaid/issues/123)
 - Support for font-awesome [\#49](https://github.com/knsv/mermaid/issues/49)
 
@@ -659,7 +659,7 @@ mermaid.run({
 - Auto linewrap for notes in sequence diagrams [\#178](https://github.com/knsv/mermaid/issues/178)
 - Execute code after initialize [\#176](https://github.com/knsv/mermaid/issues/176)
 - Autoscaling for all diagram types [\#175](https://github.com/knsv/mermaid/issues/175)
-- Problem wit click event callback [\#174](https://github.com/knsv/mermaid/issues/174)
+- Problem with click event callback [\#174](https://github.com/knsv/mermaid/issues/174)
 - How to escape characters? [\#170](https://github.com/knsv/mermaid/issues/170)
 - it can not work [\#167](https://github.com/knsv/mermaid/issues/167)
 - UML Class diagram [\#154](https://github.com/knsv/mermaid/issues/154)
@@ -762,7 +762,7 @@ mermaid.run({
 - subgraph background is black in rendered flowchart PNG via CLI [\#121](https://github.com/knsv/mermaid/issues/121)
 - Integrate editor at https://github.com/naseer/mermaid-webapp [\#110](https://github.com/knsv/mermaid/issues/110)
 - Internet Explorer Support [\#99](https://github.com/knsv/mermaid/issues/99)
-- Assymetric shapes not documented [\#82](https://github.com/knsv/mermaid/issues/82)
+- Asymmetric shapes not documented [\#82](https://github.com/knsv/mermaid/issues/82)
 - NoModificationAllowedError [\#23](https://github.com/knsv/mermaid/issues/23)
 - Improve arrows [\#3](https://github.com/knsv/mermaid/issues/3)
 
@@ -908,7 +908,7 @@ mermaid.run({
 
 - Question marks don't render properly with /dist/mermaid.full.min.js [\#30](https://github.com/knsv/mermaid/issues/30)
 - Error with some characters [\#25](https://github.com/knsv/mermaid/issues/25)
-- Provide parse function in browser widthout `require`? [\#21](https://github.com/knsv/mermaid/issues/21)
+- Provide parse function in browser without `require`? [\#21](https://github.com/knsv/mermaid/issues/21)
 - Better label text support [\#18](https://github.com/knsv/mermaid/issues/18)
 - Cap-cased words break parser [\#8](https://github.com/knsv/mermaid/issues/8)
 

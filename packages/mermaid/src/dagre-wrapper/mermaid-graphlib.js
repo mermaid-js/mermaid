@@ -231,12 +231,12 @@ export const adjustClustersAndEdges = (graph, depth) => {
     if (children.length > 0) {
       log.debug('Cluster identified', id, descendants);
       edges.forEach((edge) => {
-        // log.debug('Edge, decendants: ', edge, decendants[id]);
+        // log.debug('Edge, descendants: ', edge, descendants[id]);
 
         // Check if any edge leaves the cluster (not the actual cluster, that's a link from the box)
         if (edge.v !== id && edge.w !== id) {
           // Any edge where either the one of the nodes is descending to the cluster but not the other
-          // if (decendants[id].indexOf(edge.v) < 0 && decendants[id].indexOf(edge.w) < 0) {
+          // if (descendants[id].indexOf(edge.v) < 0 && descendants[id].indexOf(edge.w) < 0) {
 
           const d1 = isDescendant(edge.v, id);
           const d2 = isDescendant(edge.w, id);
@@ -253,6 +253,16 @@ export const adjustClustersAndEdges = (graph, depth) => {
       log.debug('Not a cluster ', id, descendants);
     }
   });
+
+  for (let id of Object.keys(clusterDb)) {
+    const nonClusterChild = clusterDb[id].id;
+    const parent = graph.parent(nonClusterChild);
+
+    // Change replacement node of id to parent of current replacement node if valid
+    if (parent !== id && clusterDb[parent] && !clusterDb[parent].externalConnections) {
+      clusterDb[id].id = parent;
+    }
+  }
 
   // For clusters with incoming and/or outgoing edges translate those edges to a real node
   // in the cluster in order to fake the edge
@@ -307,9 +317,13 @@ export const adjustClustersAndEdges = (graph, depth) => {
       w = getAnchorId(e.w);
       graph.removeEdge(e.v, e.w, e.name);
       if (v !== e.v) {
+        const parent = graph.parent(v);
+        clusterDb[parent].externalConnections = true;
         edge.fromCluster = e.v;
       }
       if (w !== e.w) {
+        const parent = graph.parent(w);
+        clusterDb[parent].externalConnections = true;
         edge.toCluster = e.w;
       }
       log.warn('Fix Replacing with XXX', v, w, e.name);

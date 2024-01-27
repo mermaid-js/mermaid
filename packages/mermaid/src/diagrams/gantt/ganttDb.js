@@ -4,7 +4,7 @@ import dayjsIsoWeek from 'dayjs/plugin/isoWeek.js';
 import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat.js';
 import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
 import { log } from '../../logger.js';
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import utils from '../../utils.js';
 
 import {
@@ -603,7 +603,7 @@ const compileTasks = function () {
  */
 export const setLink = function (ids, _linkStr) {
   let linkStr = _linkStr;
-  if (configApi.getConfig().securityLevel !== 'loose') {
+  if (getConfig().securityLevel !== 'loose') {
     linkStr = sanitizeUrl(_linkStr);
   }
   ids.split(',').forEach(function (id) {
@@ -634,7 +634,7 @@ export const setClass = function (ids, className) {
 };
 
 const setClickFun = function (id, functionName, functionArgs) {
-  if (configApi.getConfig().securityLevel !== 'loose') {
+  if (getConfig().securityLevel !== 'loose') {
     return;
   }
   if (functionName === undefined) {
@@ -725,7 +725,7 @@ export const bindFunctions = function (element) {
 };
 
 export default {
-  getConfig: () => configApi.getConfig().gantt,
+  getConfig: () => getConfig().gantt,
   clear,
   setDateFormat,
   getDateFormat,

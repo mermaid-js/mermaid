@@ -1,7 +1,7 @@
 import type { Selection } from 'd3';
 import { select } from 'd3';
 import { log } from '../../logger.js';
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
 import utils from '../../utils.js';
 import {
@@ -34,9 +34,10 @@ let namespaceCounter = 0;
 
 let functions: any[] = [];
 
-const sanitizeText = (txt: string) => common.sanitizeText(txt, configApi.getConfig());
+const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
 
-const splitClassNameAndType = function (id: string) {
+const splitClassNameAndType = function (_id: string) {
+  const id = common.sanitizeText(_id, getConfig());
   let genericType = '';
   let className = id;
 
@@ -49,7 +50,8 @@ const splitClassNameAndType = function (id: string) {
   return { className: className, type: genericType };
 };
 
-export const setClassLabel = function (id: string, label: string) {
+export const setClassLabel = function (_id: string, label: string) {
+  const id = common.sanitizeText(_id, getConfig());
   if (label) {
     label = sanitizeText(label);
   }
@@ -64,22 +66,26 @@ export const setClassLabel = function (id: string, label: string) {
  * @param id - Id of the class to add
  * @public
  */
-export const addClass = function (id: string) {
+export const addClass = function (_id: string) {
+  const id = common.sanitizeText(_id, getConfig());
   const { className, type } = splitClassNameAndType(id);
   // Only add class if not exists
   if (Object.hasOwn(classes, className)) {
     return;
   }
-
-  classes[className] = {
-    id: className,
+  // alert('Adding class: ' + className);
+  const name = common.sanitizeText(className, getConfig());
+  // alert('Adding class after: ' + name);
+  classes[name] = {
+    id: name,
     type: type,
-    label: className,
+    label: name,
     cssClasses: [],
     methods: [],
     members: [],
     annotations: [],
-    domId: MERMAID_DOM_ID_PREFIX + className + '-' + classCounter,
+    styles: [],
+    domId: MERMAID_DOM_ID_PREFIX + name + '-' + classCounter,
   } as ClassNode;
 
   classCounter++;
@@ -91,7 +97,8 @@ export const addClass = function (id: string) {
  * @param id - class ID to lookup
  * @public
  */
-export const lookUpDomId = function (id: string): string {
+export const lookUpDomId = function (_id: string): string {
+  const id = common.sanitizeText(_id, getConfig());
   if (id in classes) {
     return classes[id].domId;
   }
@@ -133,15 +140,9 @@ export const addRelation = function (relation: ClassRelation) {
   relation.id1 = splitClassNameAndType(relation.id1).className;
   relation.id2 = splitClassNameAndType(relation.id2).className;
 
-  relation.relationTitle1 = common.sanitizeText(
-    relation.relationTitle1.trim(),
-    configApi.getConfig()
-  );
+  relation.relationTitle1 = common.sanitizeText(relation.relationTitle1.trim(), getConfig());
 
-  relation.relationTitle2 = common.sanitizeText(
-    relation.relationTitle2.trim(),
-    configApi.getConfig()
-  );
+  relation.relationTitle2 = common.sanitizeText(relation.relationTitle2.trim(), getConfig());
 
   relations.push(relation);
 };
@@ -214,7 +215,7 @@ export const cleanupLabel = function (label: string) {
 };
 
 /**
- * Called by parser when a special node is found, e.g. a clickable element.
+ * Called by parser when assigning cssClass to a class
  *
  * @param ids - Comma separated list of ids
  * @param className - Class to add
@@ -261,7 +262,7 @@ export const getTooltip = function (id: string, namespace?: string) {
  * @param target - Target of the link, _blank by default as originally defined in the svgDraw.js file
  */
 export const setLink = function (ids: string, linkStr: string, target: string) {
-  const config = configApi.getConfig();
+  const config = getConfig();
   ids.split(',').forEach(function (_id) {
     let id = _id;
     if (_id[0].match(/\d/)) {
@@ -296,8 +297,9 @@ export const setClickEvent = function (ids: string, functionName: string, functi
   setCssClass(ids, 'clickable');
 };
 
-const setClickFunc = function (domId: string, functionName: string, functionArgs: string) {
-  const config = configApi.getConfig();
+const setClickFunc = function (_domId: string, functionName: string, functionArgs: string) {
+  const domId = common.sanitizeText(_domId, getConfig());
+  const config = getConfig();
   if (config.securityLevel !== 'loose') {
     return;
   }
@@ -445,11 +447,27 @@ const getNamespaces = function (): NamespaceMap {
  * @public
  */
 export const addClassesToNamespace = function (id: string, classNames: string[]) {
-  if (namespaces[id] !== undefined) {
-    classNames.map((className) => {
-      classes[className].parent = id;
-      namespaces[id].classes[className] = classes[className];
-    });
+  if (namespaces[id] === undefined) {
+    return;
+  }
+  for (const name of classNames) {
+    const { className } = splitClassNameAndType(name);
+    classes[className].parent = id;
+    namespaces[id].classes[className] = classes[className];
+  }
+};
+
+export const setCssStyle = function (id: string, styles: string[]) {
+  const thisClass = classes[id];
+  if (!styles || !thisClass) {
+    return;
+  }
+  for (const s of styles) {
+    if (s.includes(',')) {
+      thisClass.styles.push(...s.split(','));
+    } else {
+      thisClass.styles.push(s);
+    }
   }
 };
 
@@ -458,7 +476,7 @@ export default {
   getAccTitle,
   getAccDescription,
   setAccDescription,
-  getConfig: () => configApi.getConfig().class,
+  getConfig: () => getConfig().class,
   addClass,
   bindFunctions,
   clear,
@@ -489,4 +507,5 @@ export default {
   addClassesToNamespace,
   getNamespace,
   getNamespaces,
+  setCssStyle,
 };

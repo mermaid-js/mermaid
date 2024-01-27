@@ -18,6 +18,37 @@ export const getRows = (s?: string): string[] => {
   return str.split('#br#');
 };
 
+const setupDompurifyHooksIfNotSetup = (() => {
+  let setup = false;
+
+  return () => {
+    if (!setup) {
+      setupDompurifyHooks();
+      setup = true;
+    }
+  };
+})();
+
+function setupDompurifyHooks() {
+  const TEMPORARY_ATTRIBUTE = 'data-temp-href-target';
+
+  DOMPurify.addHook('beforeSanitizeAttributes', (node: Element) => {
+    if (node.tagName === 'A' && node.hasAttribute('target')) {
+      node.setAttribute(TEMPORARY_ATTRIBUTE, node.getAttribute('target') || '');
+    }
+  });
+
+  DOMPurify.addHook('afterSanitizeAttributes', (node: Element) => {
+    if (node.tagName === 'A' && node.hasAttribute(TEMPORARY_ATTRIBUTE)) {
+      node.setAttribute('target', node.getAttribute(TEMPORARY_ATTRIBUTE) || '');
+      node.removeAttribute(TEMPORARY_ATTRIBUTE);
+      if (node.getAttribute('target') === '_blank') {
+        node.setAttribute('rel', 'noopener');
+      }
+    }
+  });
+}
+
 /**
  * Removes script tags from a text
  *
@@ -25,7 +56,11 @@ export const getRows = (s?: string): string[] => {
  * @returns The safer text
  */
 export const removeScript = (txt: string): string => {
-  return DOMPurify.sanitize(txt);
+  setupDompurifyHooksIfNotSetup();
+
+  const sanitizedText = DOMPurify.sanitize(txt);
+
+  return sanitizedText;
 };
 
 const sanitizeMore = (text: string, config: MermaidConfig) => {

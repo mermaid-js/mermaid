@@ -1,7 +1,7 @@
 import { select } from 'd3';
 import { log } from '../logger.js';
 import { labelHelper, updateNodeBounds, insertPolygonShape } from './shapes/util.js';
-import { getConfig } from '../config.js';
+import { getConfig } from '../diagram-api/diagramAPI.js';
 import intersect from './intersect/index.js';
 import createLabel from './createLabel.js';
 import note from './shapes/note.js';
@@ -1013,6 +1013,7 @@ const class_box = (parent, node) => {
   });
 
   rect
+    .attr('style', node.style)
     .attr('class', 'outer title-state')
     .attr('x', -maxWidth / 2 - halfPadding)
     .attr('y', -(maxHeight / 2) - halfPadding)
