@@ -55,16 +55,6 @@ describe('state diagram V2, ', function () {
       const title = stateDb.getAccTitle();
       expect(title).toBe('a simple title of the diagram');
     });
-    it('simple with directive', function () {
-      const str = `%%{init: {'logLevel': 0 }}%%
-      stateDiagram-v2\n
-      State1 : this is another string
-      [*] --> State1
-      State1 --> [*]
-      `;
-
-      parser.parse(str);
-    });
     it('should handle relation definitions', function () {
       const str = `stateDiagram-v2\n
       [*] --> State1

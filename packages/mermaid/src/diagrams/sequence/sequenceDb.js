@@ -1,63 +1,61 @@
-import mermaidAPI from '../../mermaidAPI.js';
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import { sanitizeText } from '../common/common.js';
 import {
-  setAccTitle,
-  getAccTitle,
-  setDiagramTitle,
-  getDiagramTitle,
-  getAccDescription,
-  setAccDescription,
   clear as commonClear,
-} from '../../commonDb.js';
+  getAccDescription,
+  getAccTitle,
+  getDiagramTitle,
+  setAccDescription,
+  setAccTitle,
+  setDiagramTitle,
+} from '../common/commonDb.js';
+import { ImperativeState } from '../../utils/imperativeState.js';
 
-let prevActor = undefined;
-let actors = {};
-let createdActors = {};
-let destroyedActors = {};
-let boxes = [];
-let messages = [];
-const notes = [];
-let sequenceNumbersEnabled = false;
-let wrapEnabled;
-let currentBox = undefined;
-let lastCreated = undefined;
-let lastDestroyed = undefined;
-
-export const parseDirective = function (statement, context, type) {
-  mermaidAPI.parseDirective(this, statement, context, type);
-};
+const state = new ImperativeState(() => ({
+  prevActor: undefined,
+  actors: {},
+  createdActors: {},
+  destroyedActors: {},
+  boxes: [],
+  messages: [],
+  notes: [],
+  sequenceNumbersEnabled: false,
+  wrapEnabled: undefined,
+  currentBox: undefined,
+  lastCreated: undefined,
+  lastDestroyed: undefined,
+}));
 
 export const addBox = function (data) {
-  boxes.push({
+  state.records.boxes.push({
     name: data.text,
     wrap: (data.wrap === undefined && autoWrap()) || !!data.wrap,
     fill: data.color,
     actorKeys: [],
   });
-  currentBox = boxes.slice(-1)[0];
+  state.records.currentBox = state.records.boxes.slice(-1)[0];
 };
 
 export const addActor = function (id, name, description, type) {
-  let assignedBox = currentBox;
-  const old = actors[id];
+  let assignedBox = state.records.currentBox;
+  const old = state.records.actors[id];
   if (old) {
     // If already set and trying to set to a new one throw error
-    if (currentBox && old.box && currentBox !== old.box) {
+    if (state.records.currentBox && old.box && state.records.currentBox !== old.box) {
       throw new Error(
         'A same participant should only be defined in one Box: ' +
           old.name +
           " can't be in '" +
           old.box.name +
           "' and in '" +
-          currentBox.name +
+          state.records.currentBox.name +
           "' at the same time."
       );
     }
 
     // Don't change the box if already
-    assignedBox = old.box ? old.box : currentBox;
+    assignedBox = old.box ? old.box : state.records.currentBox;
     old.box = assignedBox;
 
     // Don't allow description nulling
@@ -74,36 +72,42 @@ export const addActor = function (id, name, description, type) {
     description = { text: name, wrap: null, type };
   }
 
-  actors[id] = {
+  state.records.actors[id] = {
     box: assignedBox,
     name: name,
     description: description.text,
     wrap: (description.wrap === undefined && autoWrap()) || !!description.wrap,
-    prevActor: prevActor,
+    prevActor: state.records.prevActor,
     links: {},
     properties: {},
     actorCnt: null,
     rectData: null,
     type: type || 'participant',
   };
-  if (prevActor && actors[prevActor]) {
-    actors[prevActor].nextActor = id;
+  if (state.records.prevActor && state.records.actors[state.records.prevActor]) {
+    state.records.actors[state.records.prevActor].nextActor = id;
   }
 
-  if (currentBox) {
-    currentBox.actorKeys.push(id);
+  if (state.records.currentBox) {
+    state.records.currentBox.actorKeys.push(id);
   }
-  prevActor = id;
+  state.records.prevActor = id;
 };
 
 const activationCount = (part) => {
   let i;
   let count = 0;
-  for (i = 0; i < messages.length; i++) {
-    if (messages[i].type === LINETYPE.ACTIVE_START && messages[i].from.actor === part) {
+  for (i = 0; i < state.records.messages.length; i++) {
+    if (
+      state.records.messages[i].type === LINETYPE.ACTIVE_START &&
+      state.records.messages[i].from.actor === part
+    ) {
       count++;
     }
-    if (messages[i].type === LINETYPE.ACTIVE_END && messages[i].from.actor === part) {
+    if (
+      state.records.messages[i].type === LINETYPE.ACTIVE_END &&
+      state.records.messages[i].from.actor === part
+    ) {
       count--;
     }
   }
@@ -111,7 +115,7 @@ const activationCount = (part) => {
 };
 
 export const addMessage = function (idFrom, idTo, message, answer) {
-  messages.push({
+  state.records.messages.push({
     from: idFrom,
     to: idTo,
     message: message.text,
@@ -124,7 +128,8 @@ export const addSignal = function (
   idFrom,
   idTo,
   message = { text: undefined, wrap: undefined },
-  messageType
+  messageType,
+  activate = false
 ) {
   if (messageType === LINETYPE.ACTIVE_END) {
     const cnt = activationCount(idFrom.actor);
@@ -141,74 +146,70 @@ export const addSignal = function (
       throw error;
     }
   }
-  messages.push({
+  state.records.messages.push({
     from: idFrom,
     to: idTo,
     message: message.text,
     wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
     type: messageType,
+    activate,
   });
   return true;
 };
 
 export const hasAtLeastOneBox = function () {
-  return boxes.length > 0;
+  return state.records.boxes.length > 0;
 };
 
 export const hasAtLeastOneBoxWithTitle = function () {
-  return boxes.some((b) => b.name);
+  return state.records.boxes.some((b) => b.name);
 };
 
 export const getMessages = function () {
-  return messages;
+  return state.records.messages;
 };
 
 export const getBoxes = function () {
-  return boxes;
+  return state.records.boxes;
 };
 export const getActors = function () {
-  return actors;
+  return state.records.actors;
 };
 export const getCreatedActors = function () {
-  return createdActors;
+  return state.records.createdActors;
 };
 export const getDestroyedActors = function () {
-  return destroyedActors;
+  return state.records.destroyedActors;
 };
 export const getActor = function (id) {
-  return actors[id];
+  return state.records.actors[id];
 };
 export const getActorKeys = function () {
-  return Object.keys(actors);
+  return Object.keys(state.records.actors);
 };
 export const enableSequenceNumbers = function () {
-  sequenceNumbersEnabled = true;
+  state.records.sequenceNumbersEnabled = true;
 };
 export const disableSequenceNumbers = function () {
-  sequenceNumbersEnabled = false;
+  state.records.sequenceNumbersEnabled = false;
 };
-export const showSequenceNumbers = () => sequenceNumbersEnabled;
+export const showSequenceNumbers = () => state.records.sequenceNumbersEnabled;
 
 export const setWrap = function (wrapSetting) {
-  wrapEnabled = wrapSetting;
+  state.records.wrapEnabled = wrapSetting;
 };
 
 export const autoWrap = () => {
   // if setWrap has been called, use that value, otherwise use the value from the config
   // TODO: refactor, always use the config value let setWrap update the config value
-  if (wrapEnabled !== undefined) {
-    return wrapEnabled;
+  if (state.records.wrapEnabled !== undefined) {
+    return state.records.wrapEnabled;
   }
-  return configApi.getConfig().sequence.wrap;
+  return getConfig().sequence.wrap;
 };
 
 export const clear = function () {
-  actors = {};
-  createdActors = {};
-  destroyedActors = {};
-  boxes = [];
-  messages = [];
-  sequenceNumbersEnabled = false;
+  state.reset();
   commonClear();
 };
 
@@ -250,11 +251,11 @@ export const parseBoxData = function (str) {
     }
   }
 
-  const boxData = {
+  return {
     color: color,
     text:
       title !== undefined
-        ? sanitizeText(title.replace(/^:?(?:no)?wrap:/, ''), configApi.getConfig())
+        ? sanitizeText(title.replace(/^:?(?:no)?wrap:/, ''), getConfig())
         : undefined,
     wrap:
       title !== undefined
@@ -265,7 +266,6 @@ export const parseBoxData = function (str) {
           : undefined
         : undefined,
   };
-  return boxData;
 };
 
 export const LINETYPE = {
@@ -326,8 +326,8 @@ export const addNote = function (actor, placement, message) {
   // eslint-disable-next-line unicorn/prefer-spread
   const actors = [].concat(actor, actor);
 
-  notes.push(note);
-  messages.push({
+  state.records.notes.push(note);
+  state.records.messages.push({
     from: actors[0],
     to: actors[1],
     message: message.text,
@@ -342,7 +342,7 @@ export const addLinks = function (actorId, text) {
   const actor = getActor(actorId);
   // JSON.parse the text
   try {
-    let sanitizedText = sanitizeText(text.text, configApi.getConfig());
+    let sanitizedText = sanitizeText(text.text, getConfig());
     sanitizedText = sanitizedText.replace(/&amp;/g, '&');
     sanitizedText = sanitizedText.replace(/&equals;/g, '=');
     const links = JSON.parse(sanitizedText);
@@ -358,7 +358,7 @@ export const addALink = function (actorId, text) {
   const actor = getActor(actorId);
   try {
     const links = {};
-    let sanitizedText = sanitizeText(text.text, configApi.getConfig());
+    let sanitizedText = sanitizeText(text.text, getConfig());
     var sep = sanitizedText.indexOf('@');
     sanitizedText = sanitizedText.replace(/&amp;/g, '&');
     sanitizedText = sanitizedText.replace(/&equals;/g, '=');
@@ -392,7 +392,7 @@ export const addProperties = function (actorId, text) {
   const actor = getActor(actorId);
   // JSON.parse the text
   try {
-    let sanitizedText = sanitizeText(text.text, configApi.getConfig());
+    let sanitizedText = sanitizeText(text.text, getConfig());
     const properties = JSON.parse(sanitizedText);
     // add the deserialized text to the actor's property field.
     insertProperties(actor, properties);
@@ -419,7 +419,7 @@ function insertProperties(actor, properties) {
  *
  */
 function boxEnd() {
-  currentBox = undefined;
+  state.records.currentBox = undefined;
 }
 
 export const addDetails = function (actorId, text) {
@@ -452,6 +452,19 @@ export const getActorProperty = function (actor, key) {
   return undefined;
 };
 
+/**
+ * @typedef {object} AddMessageParams A message from one actor to another.
+ * @property {string} from - The id of the actor sending the message.
+ * @property {string} to - The id of the actor receiving the message.
+ * @property {string} msg - The message text.
+ * @property {number} signalType - The type of signal.
+ * @property {"addMessage"} type - Set to `"addMessage"` if this is an `AddMessageParams`.
+ * @property {boolean} [activate] - If `true`, this signal starts an activation.
+ */
+
+/**
+ * @param {object | object[] | AddMessageParams} param - Object of parameters.
+ */
 export const apply = function (param) {
   if (Array.isArray(param)) {
     param.forEach(function (item) {
@@ -460,7 +473,7 @@ export const apply = function (param) {
   } else {
     switch (param.type) {
       case 'sequenceIndex':
-        messages.push({
+        state.records.messages.push({
           from: undefined,
           to: undefined,
           message: {
@@ -476,18 +489,18 @@ export const apply = function (param) {
         addActor(param.actor, param.actor, param.description, param.draw);
         break;
       case 'createParticipant':
-        if (actors[param.actor]) {
+        if (state.records.actors[param.actor]) {
           throw new Error(
             "It is not possible to have actors with the same id, even if one is destroyed before the next is created. Use 'AS' aliases to simulate the behavior"
           );
         }
-        lastCreated = param.actor;
+        state.records.lastCreated = param.actor;
         addActor(param.actor, param.actor, param.description, param.draw);
-        createdActors[param.actor] = messages.length;
+        state.records.createdActors[param.actor] = state.records.messages.length;
         break;
       case 'destroyParticipant':
-        lastDestroyed = param.actor;
-        destroyedActors[param.actor] = messages.length;
+        state.records.lastDestroyed = param.actor;
+        state.records.destroyedActors[param.actor] = state.records.messages.length;
         break;
       case 'activeStart':
         addSignal(param.actor, undefined, undefined, param.signalType);
@@ -511,28 +524,31 @@ export const apply = function (param) {
         addDetails(param.actor, param.text);
         break;
       case 'addMessage':
-        if (lastCreated) {
-          if (param.to !== lastCreated) {
+        if (state.records.lastCreated) {
+          if (param.to !== state.records.lastCreated) {
             throw new Error(
               'The created participant ' +
-                lastCreated +
+                state.records.lastCreated +
                 ' does not have an associated creating message after its declaration. Please check the sequence diagram.'
             );
           } else {
-            lastCreated = undefined;
+            state.records.lastCreated = undefined;
           }
-        } else if (lastDestroyed) {
-          if (param.to !== lastDestroyed && param.from !== lastDestroyed) {
+        } else if (state.records.lastDestroyed) {
+          if (
+            param.to !== state.records.lastDestroyed &&
+            param.from !== state.records.lastDestroyed
+          ) {
             throw new Error(
               'The destroyed participant ' +
-                lastDestroyed +
+                state.records.lastDestroyed +
                 ' does not have an associated destroying message after its declaration. Please check the sequence diagram.'
             );
           } else {
-            lastDestroyed = undefined;
+            state.records.lastDestroyed = undefined;
           }
         }
-        addSignal(param.from, param.to, param.msg, param.signalType);
+        addSignal(param.from, param.to, param.msg, param.signalType, param.activate);
         break;
       case 'boxStart':
         addBox(param.boxData);
@@ -627,8 +643,7 @@ export default {
   getBoxes,
   getDiagramTitle,
   setDiagramTitle,
-  parseDirective,
-  getConfig: () => configApi.getConfig().sequence,
+  getConfig: () => getConfig().sequence,
   clear,
   parseMessage,
   parseBoxData,

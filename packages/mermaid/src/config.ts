@@ -3,15 +3,16 @@ import { log } from './logger.js';
 import theme from './themes/index.js';
 import config from './defaultConfig.js';
 import type { MermaidConfig } from './config.type.js';
+import { sanitizeDirective } from './utils/sanitizeDirective.js';
 
 export const defaultConfig: MermaidConfig = Object.freeze(config);
 
 let siteConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
 let configFromInitialize: MermaidConfig;
-let directives: any[] = [];
+let directives: MermaidConfig[] = [];
 let currentConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
 
-export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: any[]) => {
+export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: MermaidConfig[]) => {
   // start with config being the siteConfig
   let cfg: MermaidConfig = assignWithDepth({}, siteCfg);
   // let sCfg = assignWithDepth(defaultConfig, siteConfigDelta);
@@ -20,7 +21,6 @@ export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: any[]) 
   let sumOfDirectives: MermaidConfig = {};
   for (const d of _directives) {
     sanitize(d);
-
     // Apply the data from the directive where the the overrides the themeVariables
     sumOfDirectives = assignWithDepth(sumOfDirectives, d);
   }
@@ -111,12 +111,6 @@ export const getSiteConfig = (): MermaidConfig => {
  * @returns The currentConfig merged with the sanitized conf
  */
 export const setConfig = (conf: MermaidConfig): MermaidConfig => {
-  // sanitize(conf);
-  // Object.keys(conf).forEach(key => {
-  //   const manipulator = manipulators[key];
-  //   conf[key] = manipulator ? manipulator(conf[key]) : conf[key];
-  // });
-
   checkConfig(conf);
   assignWithDepth(currentConfig, conf);
 
@@ -150,9 +144,12 @@ export const getConfig = (): MermaidConfig => {
  * @param options - The potential setConfig parameter
  */
 export const sanitize = (options: any) => {
+  if (!options) {
+    return;
+  }
   // Checking that options are not in the list of excluded options
   ['secure', ...(siteConfig.secure ?? [])].forEach((key) => {
-    if (options[key] !== undefined) {
+    if (Object.hasOwn(options, key)) {
       // DO NOT attempt to print options[key] within `${}` as a malicious script
       // can exploit the logger's attempt to stringify the value and execute arbitrary code
       log.debug(`Denied attempt to modify a secure key ${key}`, options[key]);
@@ -162,7 +159,7 @@ export const sanitize = (options: any) => {
 
   // Check that there no attempts of prototype pollution
   Object.keys(options).forEach((key) => {
-    if (key.indexOf('__') === 0) {
+    if (key.startsWith('__')) {
       delete options[key];
     }
   });
@@ -188,16 +185,14 @@ export const sanitize = (options: any) => {
  *
  * @param directive - The directive to push in
  */
-export const addDirective = (directive: any) => {
-  if (directive.fontFamily) {
-    if (!directive.themeVariables) {
-      directive.themeVariables = { fontFamily: directive.fontFamily };
-    } else {
-      if (!directive.themeVariables.fontFamily) {
-        directive.themeVariables = { fontFamily: directive.fontFamily };
-      }
-    }
+export const addDirective = (directive: MermaidConfig) => {
+  sanitizeDirective(directive);
+
+  // If the directive has a fontFamily, but no themeVariables, add the fontFamily to the themeVariables
+  if (directive.fontFamily && (!directive.themeVariables || !directive.themeVariables.fontFamily)) {
+    directive.themeVariables = { fontFamily: directive.fontFamily };
   }
+
   directives.push(directive);
   updateCurrentConfig(siteConfig, directives);
 };

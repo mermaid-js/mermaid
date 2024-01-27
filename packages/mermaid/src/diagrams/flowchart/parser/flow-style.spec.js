@@ -26,15 +26,6 @@ describe('[Style] when parsing', () => {
     expect(vert['Q'].styles[0]).toBe('background:#fff');
   });
 
-  // log.debug(flow.parser.parse('graph TD;style Q background:#fff;'));
-  it('should handle styles for edges', function () {
-    const res = flow.parser.parse('graph TD;a-->b;\nstyle #0 stroke: #f66;');
-
-    const edges = flow.parser.yy.getEdges();
-
-    expect(edges.length).toBe(1);
-  });
-
   it('should handle multiple styles for a vortex', function () {
     const res = flow.parser.parse('graph TD;style R background:#fff,border:1px solid red;');
 
@@ -293,6 +284,30 @@ describe('[Style] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges[0].type).toBe('arrow_point');
+  });
+
+  it('should handle style definitions within number of edges', function () {
+    expect(() =>
+      flow.parser
+        .parse(
+          `graph TD
+    A-->B
+    linkStyle 1 stroke-width:1px;`
+        )
+        .toThrow(
+          'The index 1 for linkStyle is out of bounds. Valid indices for linkStyle are between 0 and 0. (Help: Ensure that the index is within the range of existing edges.)'
+        )
+    );
+  });
+
+  it('should handle style definitions within number of edges', function () {
+    const res = flow.parser.parse(`graph TD
+    A-->B
+    linkStyle 0 stroke-width:1px;`);
+
+    const edges = flow.parser.yy.getEdges();
+
+    expect(edges[0].style[0]).toBe('stroke-width:1px');
   });
 
   it('should handle multi-numbered style definitions with more then 1 digit in a row', function () {

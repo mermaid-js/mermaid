@@ -15,10 +15,13 @@ Generate diagrams from markdown-like text.
 <a href="https://mermaid.live/"><b>Live Editor!</b></a>
 </p>
 <p align="center">
- <a href="https://mermaid.js.org">📖 Documentation</a> | <a href="https://mermaid.js.org/intro/">🚀 Getting Started</a> | <a href="https://www.jsdelivr.com/package/npm/mermaid">🌐 CDN</a> | <a href="https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE" title="Slack invite">🙌 Join Us</a>
+ <a href="https://mermaid.js.org">📖 Documentation</a> | <a href="https://mermaid.js.org/intro/">🚀 Getting Started</a> | <a href="https://www.jsdelivr.com/package/npm/mermaid">🌐 CDN</a> | <a href="https://discord.gg/wwtabKgp8y" title="Discord invite">🙌 Join Us</a>
 </p>
 <p align="center">
 <a href="./README.zh-CN.md">简体中文</a>
+</p>
+<p align="center">
+Try Live Editor previews of future releases: <a href="https://develop.git.mermaid.live/" title="Try the mermaid version from the develop branch.">Develop</a> | <a href="https://next.git.mermaid.live/" title="Try the mermaid version from the next branch.">Next</a>
 </p>
 
 <br>
@@ -30,8 +33,8 @@ Generate diagrams from markdown-like text.
 [![Coverage Status](https://codecov.io/github/mermaid-js/mermaid/branch/develop/graph/badge.svg)](https://app.codecov.io/github/mermaid-js/mermaid/tree/develop)
 [![CDN Status](https://img.shields.io/jsdelivr/npm/hm/mermaid)](https://www.jsdelivr.com/package/npm/mermaid)
 [![NPM Downloads](https://img.shields.io/npm/dm/mermaid)](https://www.npmjs.com/package/mermaid)
-[![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
-[![Twitter Follow](https://img.shields.io/badge/Social-mermaidjs__-blue?style=social&logo=twitter)](https://twitter.com/mermaidjs_)
+[![Join our Discord!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=discord&label=discord)](https://discord.gg/wwtabKgp8y)
+[![Twitter Follow](https://img.shields.io/badge/Social-mermaidjs__-blue?style=social&logo=X)](https://twitter.com/mermaidjs_)
 
 <img src="./img/header.png" alt="" />
 
@@ -40,6 +43,22 @@ Generate diagrams from markdown-like text.
 **Thanks to all involved, people committing pull requests, people answering questions! 🙏**
 
 <a href="https://mermaid-js.github.io/mermaid/landing/"><img src="https://github.com/mermaid-js/mermaid/blob/master/docs/intro/img/book-banner-post-release.jpg" alt="Explore Mermaid.js in depth, with real-world examples, tips & tricks from the creator... The first official book on Mermaid is available for purchase. Check it out!"></a>
+
+## Table of content
+
+<details>
+<summary>Expand contents</summary>
+
+- [About](#about)
+- [Examples](#examples)
+- [Release](#release)
+- [Related projects](#related-projects)
+- [Contributors](#contributors)
+- [Security and safe diagrams](#security-and-safe-diagrams)
+- [Reporting vulnerabilities](#reporting-vulnerabilities)
+- [Appreciation](#appreciation)
+
+</details>
 
 ## About
 
@@ -55,12 +74,12 @@ Mermaid addresses this problem by enabling users to create easily modifiable dia
 <br/>
 
 Mermaid allows even non-programmers to easily create detailed diagrams through the [Mermaid Live Editor](https://mermaid.live/).<br/>
-[Tutorials](./docs/config/Tutorials.md) has video tutorials.
-Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./docs/ecosystem/integrations.md).
+For video tutorials, visit our [Tutorials](./docs/ecosystem/tutorials.md) page.
+Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./docs/ecosystem/integrations-community.md).
 
-You can also use Mermaid within [GitHub](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) as well many of your other favorite applications—check out the list of [Integrations and Usages of Mermaid](./docs/ecosystem/integrations.md).
+You can also use Mermaid within [GitHub](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) as well many of your other favorite applications—check out the list of [Integrations and Usages of Mermaid](./docs/ecosystem/integrations-community.md).
 
-For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](./docs/community/n00b-overview.md), [Usage](./docs/config/usage.md) and [Tutorials](./docs/config/Tutorials.md).
+For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](./docs/intro/getting-started.md), [Usage](./docs/config/usage.md) and [Tutorials](./docs/ecosystem/tutorials.md).
 
 In our release process we rely heavily on visual regression tests using [applitools](https://applitools.com/). Applitools is a great service which has been easy to use and integrate with our tests.
 
@@ -165,13 +184,7 @@ class Class10 {
   int id
   size()
 }
-namespace Namespace01 {
-  class Class11
-  class Class12 {
-    int id
-    size()
-  }
-}
+
 ```
 
 ```mermaid
@@ -191,13 +204,7 @@ class Class10 {
   int id
   size()
 }
-namespace Namespace01 {
-  class Class11
-  class Class12 {
-    int id
-    size()
-  }
-}
+
 ```
 
 ### State diagram [<a href="https://mermaid-js.github.io/mermaid/#/stateDiagram">docs</a> - <a href="https://mermaid.live/edit#pako:eNpdkEFvgzAMhf8K8nEqpYSNthx22Xbcqcexg0sCiZQQlDhIFeK_L8A6TfXp6fOz9ewJGssFVOAJSbwr7ByadGR1n8T6evpO0vQ1uZDSekOrXGFsPqJPO6q-2-imH8f_0TeHXm50lfelsAMjnEHFY6xpMdRAUhhRQxUlFy0GTTXU_RytYeAx-AdXZB1ULWovdoCB7OXWN1CRC-Ju-r3uz6UtchGHJqDbsPygU57iysb2reoWHpyOWBINvsqypb3vFMlw3TfWZF5xiY7keC6zkpUnZIUojwW-FAVvrvn51LLnvOXHQ84Q5nn-AVtLcwk">live editor</a>]

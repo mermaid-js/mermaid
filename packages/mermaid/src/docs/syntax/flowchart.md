@@ -1,6 +1,5 @@
 ---
 title: Flowcharts Syntax
-outline: 'deep' # shows all h3 headings in outline in Vitepress
 ---
 
 # Flowcharts - Basic Syntax
@@ -9,6 +8,14 @@ Flowcharts are composed of **nodes** (geometric shapes) and **edges** (arrows or
 
 ```warning
 If you are using the word "end" in a Flowchart node, capitalize the entire word or any of the letters (e.g., "End" or "END"), or apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897). Typing "end" in all lowercase letters will break the Flowchart.
+```
+
+```warning
+If you are using the letter "o" or "x" as the first letter in a connecting Flowchart node, add a space before the letter or capitalize the letter (e.g., "dev--- ops", "dev---Ops").
+
+Typing "A---oB" will create a [circle edge](#circle-edge-example).
+
+Typing "A---xB" will create a [cross edge](#cross-edge-example).
 ```
 
 ### A node (default)
@@ -293,7 +300,7 @@ flowchart TB
     A & B--> C & D
 ```
 
-If you describe the same diagram using the the basic syntax, it will take four lines. A
+If you describe the same diagram using the basic syntax, it will take four lines. A
 word of warning, one could go overboard with this making the flowchart harder to read in
 markdown form. The Swedish word `lagom` comes to mind. It means, not too much and not too little.
 This goes for expressive syntaxes as well.
@@ -306,17 +313,28 @@ flowchart TB
     B --> D
 ```
 
-### New arrow types
+## New arrow types
 
-There are new types of arrows supported as per below:
+There are new types of arrows supported:
+
+- circle edge
+- cross edge
+
+### Circle edge example
 
 ```mermaid-example
 flowchart LR
     A --o B
-    B --x C
 ```
 
-### Multi directional arrows
+### Cross edge example
+
+```mermaid-example
+flowchart LR
+    A --x B
+```
+
+## Multi directional arrows
 
 There is the possibility to use multidirectional arrows.
 
@@ -390,7 +408,7 @@ It is possible to escape characters using the syntax exemplified here.
 
 ```mermaid-example
     flowchart LR
-        A["A double quote:#quot;"] -->B["A dec char:#9829;"]
+        A["A double quote:#quot;"] --> B["A dec char:#9829;"]
 ```
 
 Numbers given are base 10, so `#` can be encoded as `#35;`. It is also supported to use HTML character names.
@@ -471,6 +489,29 @@ flowchart LR
   B1 --> B2
 ```
 
+#### Limitation
+
+If any of a subgraph's nodes are linked to the outside, subgraph direction will be ignored. Instead the subgraph will inherit the direction of the parent graph:
+
+```mermaid-example
+flowchart LR
+    subgraph subgraph1
+        direction TB
+        top1[top] --> bottom1[bottom]
+    end
+    subgraph subgraph2
+        direction TB
+        top2[top] --> bottom2[bottom]
+    end
+    %% ^ These subgraphs are identical, except for the links to them:
+
+    %% Link *to* subgraph1: subgraph1 direction is maintained
+    outside --> subgraph1
+    %% Link *within* subgraph2:
+    %% subgraph2 inherits the direction of the top-level graph (LR)
+    outside ---> top2
+```
+
 ## Markdown Strings
 
 The "Markdown Strings" feature enhances flowcharts and mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
@@ -531,13 +572,13 @@ flowchart LR
     C-->D
     click A callback "Tooltip for a callback"
     click B "https://www.github.com" "This is a tooltip for a link"
-    click A call callback() "Tooltip for a callback"
-    click B href "https://www.github.com" "This is a tooltip for a link"
+    click C call callback() "Tooltip for a callback"
+    click D href "https://www.github.com" "This is a tooltip for a link"
 ```
 
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
 
-?> Due to limitations with how Docsify handles JavaScript callback functions, an alternate working demo for the above code can be viewed at [this jsfiddle](https://jsfiddle.net/s37cjoau/3/).
+?> Due to limitations with how Docsify handles JavaScript callback functions, an alternate working demo for the above code can be viewed at [this jsfiddle](https://jsfiddle.net/Ogglas/2o73vdez/7).
 
 Links are opened in the same browser tab/window by default. It is possible to change this by adding a link target to the click definition (`_self`, `_blank`, `_parent` and `_top` are supported):
 
@@ -686,9 +727,9 @@ flowchart LR
     classDef foobar stroke:#00f
 ```
 
-### Css classes
+### CSS classes
 
-It is also possible to predefine classes in css styles that can be applied from the graph definition as in the example
+It is also possible to predefine classes in CSS styles that can be applied from the graph definition as in the example
 below:
 
 **Example style**
@@ -728,13 +769,25 @@ The icons are accessed via the syntax fa:#icon class name#.
 
 ```mermaid-example
 flowchart TD
-    B["fab:fa-twitter for peace"]
+    B["fa:fa-twitter for peace"]
     B-->C[fa:fa-ban forbidden]
     B-->D(fa:fa-spinner)
     B-->E(A fa:fa-camera-retro perhaps?)
 ```
 
-Mermaid is compatible with Font Awesome up to verion 5, Free icons only. Check that the icons you use are from the [supported set of icons](https://fontawesome.com/v5/search?o=r&m=free).
+Mermaid supports Font Awesome if the CSS is included on the website.
+Mermaid does not have any restriction on the version of Font Awesome that can be used.
+
+Please refer the [Official Font Awesome Documentation](https://fontawesome.com/start) on how to include it in your website.
+
+Adding this snippet in the `<head>` would add support for Font Awesome v6.5.1
+
+```html
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  rel="stylesheet"
+/>
+```
 
 ## Graph declarations with spaces between vertices and link and without semicolon
 
@@ -760,7 +813,7 @@ The layout of the diagram is done with the renderer. The default renderer is dag
 
 Starting with Mermaid version 9.4, you can use an alternate renderer named elk. The elk renderer is better for larger and/or more complex diagrams.
 
-The _elk_ renderer is an experimenal feature.
+The _elk_ renderer is an experimental feature.
 You can change the renderer to elk by adding this directive:
 
 ```

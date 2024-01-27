@@ -131,6 +131,14 @@ sequenceDiagram
     Bob->>Alice: I agree
 ```
 
+#### Unfixable actor/participant creation/deletion error
+
+If an error of the following type occurs when creating or deleting an actor/participant:
+
+> The destroyed participant **participant-name** does not have an associated destroying message after its declaration. Please check the sequence diagram.
+
+And fixing diagram code does not get rid of this error and rendering of all other diagrams results in the same error, then you need to update the mermaid version to (v10.7.0+).
+
 ### Grouping / Box
 
 The actor(s) can be grouped in vertical boxes. You can define a color (if not, it will be transparent) and/or a descriptive label using the following notation:
@@ -164,7 +172,7 @@ The actor(s) can be grouped in vertical boxes. You can define a color (if not, i
     end
     A->>J: Hello John, how are you?
     J->>A: Great!
-    A->>B: Hello Bob, how is Charly ?
+    A->>B: Hello Bob, how is Charly?
     B->>C: Hello Charly, how are you?
 ```
 
@@ -180,7 +188,7 @@ The actor(s) can be grouped in vertical boxes. You can define a color (if not, i
     end
     A->>J: Hello John, how are you?
     J->>A: Great!
-    A->>B: Hello Bob, how is Charly ?
+    A->>B: Hello Bob, how is Charly?
     B->>C: Hello Charly, how are you?
 ```
 

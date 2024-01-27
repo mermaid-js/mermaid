@@ -19,8 +19,17 @@ test.each([
     'https://mermaid-js.github.io/mermaid/#/flowchart?another=test&id=my-id&one=more', // with multiple params
     'syntax/flowchart.html#my-id',
   ],
-  ['https://mermaid-js.github.io/mermaid/#/n00b-advanced', 'config/n00b-advanced.html'], // without .md
-  ['https://mermaid-js.github.io/mermaid/#/n00b-advanced.md', 'config/n00b-advanced.html'], // with .md
+  ['https://mermaid-js.github.io/mermaid/#/n00b-advanced', 'config/advanced.html'], // without .md
+  ['https://mermaid-js.github.io/mermaid/#/n00b-advanced.md', 'config/advanced.html'], // with .md
+
+  ['https://mermaid-js.github.io/mermaid/#/n00b-gettingstarted', 'intro/getting-started.html'],
+  ['https://mermaid-js.github.io/mermaid/#/n00b-gettingstarted.md', 'intro/getting-started.html'],
+  ['https://mermaid-js.github.io/mermaid/#/n00b-overview', 'intro/getting-started.html'],
+  ['https://mermaid-js.github.io/mermaid/#/n00b-overview.md', 'intro/getting-started.html'],
+  ['https://mermaid-js.github.io/mermaid/#/n00b-syntaxreference', 'intro/syntax-reference.html'],
+  ['https://mermaid-js.github.io/mermaid/#/n00b-syntaxreference.md', 'intro/syntax-reference.html'],
+  ['https://mermaid-js.github.io/mermaid/#/quickstart', 'intro/getting-started.html'],
+  ['https://mermaid-js.github.io/mermaid/#/quickstart.md', 'intro/getting-started.html'],
   [
     'https://mermaid-js.github.io/mermaid/#/flowchart?id=a-node-in-the-form-of-a-circle', // with id, without .md
     'syntax/flowchart.html#a-node-in-the-form-of-a-circle',
@@ -29,6 +38,20 @@ test.each([
   ['https://mermaid.js.org/#/flowchart.md', 'syntax/flowchart.html'],
   // New docs, without base path, new domain
   ['https://mermaid.js.org/misc/faq.html', 'configure/faq.html'],
+  ['https://mermaid.js.org/community/newDiagram.html', 'community/new-diagram.html'],
+  [
+    'https://mermaid.js.org/community/development.html',
+    'community/contributing.html#initial-setup',
+  ],
+  [
+    'https://mermaid.js.org/community/docker-development.html',
+    'community/contributing.html#initial-setup',
+  ],
+  ['https://mermaid.js.org/community/code.html', 'community/contributing.html#contributing-code'],
+  [
+    'https://mermaid.js.org/community/documentation.html',
+    'community/contributing.html#contributing-documentation',
+  ],
   [
     'https://mermaid.js.org/misc/faq.html#frequently-asked-questions',
     'configure/faq.html#frequently-asked-questions',

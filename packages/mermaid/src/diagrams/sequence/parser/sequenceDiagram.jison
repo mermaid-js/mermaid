@@ -16,22 +16,15 @@
 // A special state for grabbing text up to the first comment/newline
 %x ID ALIAS LINE GROUP
 
-// Directive states
-%x open_directive type_directive arg_directive
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
 %%
 
-\%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
-<open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
-<type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
-<type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
-<arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 [\n]+                                                           return 'NEWLINE';
 \s+                                                             /* skip all whitespace */
 <ID,ALIAS,LINE>((?!\n)\s)+                                      /* skip same-line whitespace */
-<INITIAL,ID,ALIAS,LINE,arg_directive,type_directive,open_directive>\#[^\n]*   /* skip comments */
+<INITIAL,ID,ALIAS,LINE>\#[^\n]*   															/* skip comments */
 \%%(?!\{)[^\n]*                                                 /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */
 [0-9]+(?=[ \n]+)       											return 'NUM';
@@ -108,7 +101,6 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 start
 	: SPACE start
 	| NEWLINE start
-	| directive start
 	| SD document { yy.apply($2);return $2; }
 	;
 
@@ -134,11 +126,6 @@ box_line
 	| NEWLINE { $$=[]; }
 	;
 
-
-directive
-  : openDirective typeDirective closeDirective 'NEWLINE'
-  | openDirective typeDirective ':' argDirective closeDirective 'NEWLINE'
-  ;
 
 statement
 	: participant_statement
@@ -222,7 +209,6 @@ statement
 		$4.unshift({type: 'groupStart', groupText:yy.parseMessage($3), signalType: yy.LINETYPE.GROUP_START});
 		$4.push({type: 'groupEnd', groupLabel:yy.parseMessage($2), signalType: yy.LINETYPE.GROUP_END});
 		$$=$4;}
-  | directive
 	;
 
 option_sections
@@ -308,7 +294,7 @@ placement
 
 signal
 	: actor signaltype '+' actor text2
-	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$2, msg:$5},
+	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$2, msg:$5, activate: true},
 	              {type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $4}
 	             ]}
 	| actor signaltype '-' actor text2
@@ -340,22 +326,6 @@ signaltype
 
 text2
   : TXT {$$ = yy.parseMessage($1.trim().substring(1)) }
-  ;
-
-openDirective
-  : open_directive { yy.parseDirective('%%{', 'open_directive'); }
-  ;
-
-typeDirective
-  : type_directive { yy.parseDirective($1, 'type_directive'); }
-  ;
-
-argDirective
-  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
-  ;
-
-closeDirective
-  : close_directive { yy.parseDirective('}%%', 'close_directive', 'sequence'); }
   ;
 
 %%

@@ -1,8 +1,7 @@
 import { log } from '../../logger.js';
 import { generateId } from '../../utils.js';
-import mermaidAPI from '../../mermaidAPI.js';
 import common from '../common/common.js';
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -11,7 +10,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../../commonDb.js';
+} from '../common/commonDb.js';
 
 import {
   DEFAULT_DIAGRAM_DIRECTION,
@@ -76,10 +75,6 @@ export const relationType = {
 };
 
 const clone = (o) => JSON.parse(JSON.stringify(o));
-
-export const parseDirective = function (statement, context, type) {
-  mermaidAPI.parseDirective(this, statement, context, type);
-};
 
 const setRootDoc = (o) => {
   log.info('Setting root doc', o);
@@ -258,7 +253,7 @@ export const addState = function (
     currentDocument.states[trimmedId].note = note;
     currentDocument.states[trimmedId].note.text = common.sanitizeText(
       currentDocument.states[trimmedId].note.text,
-      configApi.getConfig()
+      getConfig()
     );
   }
 
@@ -403,7 +398,7 @@ export function addRelationObjs(item1, item2, relationTitle) {
   currentDocument.relations.push({
     id1,
     id2,
-    relationTitle: common.sanitizeText(relationTitle, configApi.getConfig()),
+    relationTitle: common.sanitizeText(relationTitle, getConfig()),
   });
 }
 
@@ -428,7 +423,7 @@ export const addRelation = function (item1, item2, title) {
     currentDocument.relations.push({
       id1,
       id2,
-      title: common.sanitizeText(title, configApi.getConfig()),
+      title: common.sanitizeText(title, getConfig()),
     });
   }
 };
@@ -436,7 +431,7 @@ export const addRelation = function (item1, item2, title) {
 export const addDescription = function (id, descr) {
   const theState = currentDocument.states[id];
   const _descr = descr.startsWith(':') ? descr.replace(':', '').trim() : descr;
-  theState.descriptions.push(common.sanitizeText(_descr, configApi.getConfig()));
+  theState.descriptions.push(common.sanitizeText(_descr, getConfig()));
 };
 
 export const cleanupLabel = function (label) {
@@ -547,8 +542,7 @@ const setDirection = (dir) => {
 const trimColon = (str) => (str && str[0] === ':' ? str.substr(1).trim() : str.trim());
 
 export default {
-  parseDirective,
-  getConfig: () => configApi.getConfig().state,
+  getConfig: () => getConfig().state,
   addState,
   clear,
   getState,

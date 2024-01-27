@@ -449,13 +449,38 @@ flowchart TD
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
-  it('65: text-color from classes', () => {
+  it('65-1: text-color from classes', () => {
     imgSnapshotTest(
       `
       flowchart LR
         classDef dark fill:#000,stroke:#000,stroke-width:4px,color:#fff
         Lorem --> Ipsum --> Dolor
         class Lorem,Dolor dark
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('65-2: bold text from classes', () => {
+    imgSnapshotTest(
+      `
+      flowchart
+        classDef cat fill:#f9d5e5, stroke:#233d4d,stroke-width:2px, font-weight:bold;
+        CS(A long bold text to be viewed):::cat
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('65-3: bigger font from classes', () => {
+    imgSnapshotTest(
+      `
+flowchart
+  Node1:::class1 --> Node2:::class2
+  Node1:::class1 --> Node3:::class2
+  Node3 --> Node4((I am a circle)):::larger
+
+  classDef class1 fill:lightblue
+  classDef class2 fill:pink
+  classDef larger font-size:30px,fill:yellow
       `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
@@ -704,6 +729,37 @@ A ~~~ B
       {}
     );
   });
+
+  it('5064: Should render when subgraph child has links to outside node and subgraph', () => {
+    imgSnapshotTest(
+      `flowchart TB
+    Out --> In
+    subgraph Sub
+      In
+    end
+    Sub --> In`
+    );
+  });
+
+  it('5059: Should render when subgraph contains only subgraphs, has link to outside and itself is part of a link', () => {
+    imgSnapshotTest(
+      `flowchart
+
+      subgraph Main
+        subgraph Child1
+          Node1
+          Node2
+        end
+        subgraph Child2
+          Node3
+          Node4
+        end
+      end
+      Main --> Out1
+      Child2 --> Out2`
+    );
+  });
+
   describe('Markdown strings flowchart (#4220)', () => {
     describe('html labels', () => {
       it('With styling and classes', () => {
@@ -847,6 +903,95 @@ end
           { flowchart: { titleTopMargin: 0 } }
         );
       });
+    });
+  });
+  describe('Subgraph title margins', () => {
+    it('Should render subgraphs with title margins set (LR)', () => {
+      imgSnapshotTest(
+        `flowchart LR
+
+          subgraph TOP
+              direction TB
+              subgraph B1
+                  direction RL
+                  i1 -->f1
+              end
+              subgraph B2
+                  direction BT
+                  i2 -->f2
+              end
+          end
+          A --> TOP --> B
+          B1 --> B2
+        `,
+        { flowchart: { subGraphTitleMargin: { top: 10, bottom: 5 } } }
+      );
+    });
+    it('Should render subgraphs with title margins set (TD)', () => {
+      imgSnapshotTest(
+        `flowchart TD
+
+          subgraph TOP
+              direction LR
+              subgraph B1
+                  direction RL
+                  i1 -->f1
+              end
+              subgraph B2
+                  direction BT
+                  i2 -->f2
+              end
+          end
+          A --> TOP --> B
+          B1 --> B2
+        `,
+        { flowchart: { subGraphTitleMargin: { top: 8, bottom: 16 } } }
+      );
+    });
+    it('Should render subgraphs with title margins set (LR) and htmlLabels set to false', () => {
+      imgSnapshotTest(
+        `flowchart LR
+
+          subgraph TOP
+              direction TB
+              subgraph B1
+                  direction RL
+                  i1 -->f1
+              end
+              subgraph B2
+                  direction BT
+                  i2 -->f2
+              end
+          end
+          A --> TOP --> B
+          B1 --> B2
+        `,
+        {
+          htmlLabels: false,
+          flowchart: { htmlLabels: false, subGraphTitleMargin: { top: 10, bottom: 5 } },
+        }
+      );
+    });
+    it('Should render subgraphs with title margins and edge labels', () => {
+      imgSnapshotTest(
+        `flowchart LR
+
+          subgraph TOP
+              direction TB
+              subgraph B1
+                  direction RL
+                  i1 --lb1-->f1
+              end
+              subgraph B2
+                  direction BT
+                  i2 --lb2-->f2
+              end
+          end
+          A --lb3--> TOP --lb4--> B
+          B1 --lb5--> B2
+        `,
+        { flowchart: { subGraphTitleMargin: { top: 10, bottom: 5 } } }
+      );
     });
   });
 });

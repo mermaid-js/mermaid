@@ -1,5 +1,5 @@
 import common from '../common/common.js';
-import * as svgDrawCommon from '../common/svgDrawCommon';
+import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { addFunction } from '../../interactionDb.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
@@ -8,22 +8,6 @@ export const ACTOR_TYPE_WIDTH = 18 * 2;
 
 export const drawRect = function (elem, rectData) {
   return svgDrawCommon.drawRect(elem, rectData);
-};
-
-const addPopupInteraction = (id, actorCnt) => {
-  addFunction(() => {
-    const arr = document.querySelectorAll(id);
-    // This will be the case when running in sandboxed mode
-    if (arr.length === 0) {
-      return;
-    }
-    arr[0].addEventListener('mouseover', function () {
-      popupMenuUpFunc('actor' + actorCnt + '_popup');
-    });
-    arr[0].addEventListener('mouseout', function () {
-      popupMenuDownFunc('actor' + actorCnt + '_popup');
-    });
-  });
 };
 
 export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMenus) {
@@ -44,7 +28,6 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   g.attr('id', 'actor' + actorCnt + '_popup');
   g.attr('class', 'actorPopupMenu');
   g.attr('display', displayValue);
-  addPopupInteraction('#actor' + actorCnt + '_popup', actorCnt);
   var actorClass = '';
   if (rectData.class !== undefined) {
     actorClass = ' ' + rectData.class;
@@ -90,34 +73,12 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   return { height: rectData.height + linkY, width: menuWidth };
 };
 
-export const popupMenu = function (popid) {
+const popupMenuToggle = function (popid) {
   return (
     "var pu = document.getElementById('" +
     popid +
-    "'); if (pu != null) { pu.style.display = 'block'; }"
+    "'); if (pu != null) { pu.style.display = pu.style.display == 'block' ? 'none' : 'block'; }"
   );
-};
-
-export const popdownMenu = function (popid) {
-  return (
-    "var pu = document.getElementById('" +
-    popid +
-    "'); if (pu != null) { pu.style.display = 'none'; }"
-  );
-};
-
-const popupMenuUpFunc = function (popupId) {
-  var pu = document.getElementById(popupId);
-  if (pu != null) {
-    pu.style.display = 'block';
-  }
-};
-
-const popupMenuDownFunc = function (popupId) {
-  var pu = document.getElementById(popupId);
-  if (pu != null) {
-    pu.style.display = 'none';
-  }
 };
 
 export const drawText = function (elem, textData) {
@@ -329,6 +290,9 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
 
   if (!isFooter) {
     actorCnt++;
+    if (Object.keys(actor.links || {}).length && !conf.forceMenus) {
+      g.attr('onclick', popupMenuToggle(`actor${actorCnt}_popup`)).attr('cursor', 'pointer');
+    }
     g.append('line')
       .attr('id', 'actor' + actorCnt)
       .attr('x1', center)
@@ -345,7 +309,6 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
 
     if (actor.links != null) {
       g.attr('id', 'root-' + actorCnt);
-      addPopupInteraction('#root-' + actorCnt, actorCnt);
     }
   }
 
@@ -703,7 +666,7 @@ export const insertArrowHead = function (elem) {
     .append('defs')
     .append('marker')
     .attr('id', 'arrowhead')
-    .attr('refX', 9)
+    .attr('refX', 7.9)
     .attr('refY', 5)
     .attr('markerUnits', 'userSpaceOnUse')
     .attr('markerWidth', 12)
@@ -723,7 +686,7 @@ export const insertArrowFilledHead = function (elem) {
     .append('defs')
     .append('marker')
     .attr('id', 'filled-head')
-    .attr('refX', 18)
+    .attr('refX', 15.5)
     .attr('refY', 7)
     .attr('markerWidth', 20)
     .attr('markerHeight', 28)
@@ -768,7 +731,7 @@ export const insertArrowCrossHead = function (elem) {
     .attr('markerHeight', 8)
     .attr('orient', 'auto')
     .attr('refX', 4)
-    .attr('refY', 5);
+    .attr('refY', 4.5);
   // The cross
   marker
     .append('path')
@@ -1053,8 +1016,6 @@ export default {
   insertClockIcon,
   getTextObj,
   getNoteRect,
-  popupMenu,
-  popdownMenu,
   fixLifeLineHeights,
   sanitizeUrl,
 };

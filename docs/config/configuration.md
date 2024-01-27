@@ -10,9 +10,40 @@ When mermaid starts, configuration is extracted to determine a configuration to 
 
 - The default configuration
 - Overrides at the site level are set by the initialize call, and will be applied to all diagrams in the site/app. The term for this is the **siteConfig**.
-- Directives - diagram authors can update select configuration parameters directly in the diagram code via directives. These are applied to the render config.
+- Frontmatter (v10.5.0+) - diagram authors can update selected configuration parameters in the frontmatter of the diagram. These are applied to the render config.
+- Directives (Deprecated by Frontmatter) - diagram authors can update selected configuration parameters directly in the diagram code via directives. These are applied to the render config.
 
 **The render config** is configuration that is used when rendering by applying these configurations.
+
+## Frontmatter config
+
+The entire mermaid configuration (except the secure configs) can be overridden by the diagram author in the frontmatter of the diagram. The frontmatter is a YAML block at the top of the diagram.
+
+```mermaid-example
+---
+title: Hello Title
+config:
+  theme: base
+  themeVariables:
+    primaryColor: "#00ff00"
+---
+flowchart
+	Hello --> World
+
+```
+
+```mermaid
+---
+title: Hello Title
+config:
+  theme: base
+  themeVariables:
+    primaryColor: "#00ff00"
+---
+flowchart
+	Hello --> World
+
+```
 
 ## Theme configuration
 

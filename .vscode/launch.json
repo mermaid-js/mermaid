@@ -18,7 +18,8 @@
       "type": "node",
       "request": "launch",
       "args": ["scripts/docs.cli.mts"],
-      "runtimeArgs": ["--loader", "ts-node/esm"],
+      // we'll need to change this to --import in Node.JS v20.6.0 and up
+      "runtimeArgs": ["--loader", "tsx/esm"],
       "cwd": "${workspaceRoot}/packages/mermaid",
       "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
       "smartStep": true,

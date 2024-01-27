@@ -58,12 +58,30 @@
   </head>
   <body>
     <pre id="diagram" class="mermaid">
----
-title: Simple flowchart with invisible edges
----
-flowchart TD
-A ~~~ B
-  </pre
+flowchart TB
+    C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W & X & Y & Z & A1 & A2 & A3 & A4 & A5 & A6 & A7 & A8
+      ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+    C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W & X & Y & Z & A1 & A2 & A3 & A4 & A5 & A6 & A7 & A8
+
+    </pre>
+    <pre id="diagram" class="mermaid2">
+    flowchart TB
+      A & A & A & A & A & A & A & A --->  C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W & X & Y & Z
+    </pre>
+    <pre id="diagram" class="mermaid2">
+    flowchart TB
+      A1 & A2 & A3 & A4 & A5 & A6 & A7 & A8 -->  C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W & X & Y & Z
+    </pre>
+    <pre id="diagram" class="mermaid2">
+flowchart
+Node1:::class1 --> Node2:::class2
+Node1:::class1 --> Node3:::class2
+Node3 --> Node4((I am a circle)):::larger
+
+classDef class1 fill:lightblue
+classDef class2 fill:pink
+classDef larger font-size:30px,fill:yellow
+      </pre
     >
     <pre id="diagram" class="mermaid2">
 stateDiagram-v2
@@ -432,6 +450,7 @@ mindmap
           messageFontFamily: 'courier',
         },
         fontSize: 16,
+        logLevel: 0,
       });
       function callback() {
         alert('It worked');

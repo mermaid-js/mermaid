@@ -10,11 +10,22 @@
 
 It is a JavaScript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically.
 
-> If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](n00b-syntaxReference.md).
+> If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](syntax-reference.md).
 
 <img src="/header.png" alt="" />
 
-[![Build CI Status](https://github.com/mermaid-js/mermaid/actions/workflows/build.yml/badge.svg)](https://github.com/mermaid-js/mermaid/actions/workflows/build.yml) [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid) [![npm minified gzipped bundle size](https://img.shields.io/bundlephobia/minzip/mermaid)](https://bundlephobia.com/package/mermaid) [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master) [![CDN Status](https://img.shields.io/jsdelivr/npm/hm/mermaid)](https://www.jsdelivr.com/package/npm/mermaid) [![NPM](https://img.shields.io/npm/dm/mermaid)](https://www.npmjs.com/package/mermaid) [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE) [![Twitter Follow](https://img.shields.io/twitter/follow/mermaidjs_?style=social)](https://twitter.com/mermaidjs_)
+<div class='badges'>
+
+[![Build CI Status](https://github.com/mermaid-js/mermaid/actions/workflows/build.yml/badge.svg)](https://github.com/mermaid-js/mermaid/actions/workflows/build.yml)
+[![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid)
+[![npm minified gzipped bundle size](https://img.shields.io/bundlephobia/minzip/mermaid)](https://bundlephobia.com/package/mermaid)
+[![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master)
+[![CDN Status](https://img.shields.io/jsdelivr/npm/hm/mermaid)](https://www.jsdelivr.com/package/npm/mermaid)
+[![NPM](https://img.shields.io/npm/dm/mermaid)](https://www.npmjs.com/package/mermaid)
+[![Join our Discord!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=discord&label=discord)](https://discord.gg/wwtabKgp8y)
+[![Twitter Follow](https://img.shields.io/twitter/follow/mermaidjs_?style=social)](https://twitter.com/mermaidjs_)
+
+</div>
 
 <!-- Mermaid book banner -->
 
@@ -30,12 +41,13 @@ Diagramming and documentation costs precious developer time and gets outdated qu
 But not having diagrams or docs ruins productivity and hurts organizational learning.<br/>
 Mermaid addresses this problem by enabling users to create easily modifiable diagrams, it can also be made part of production scripts (and other pieces of code).<br/> <br/>
 Mermaid allows even non-programmers to easily create detailed and diagrams through the [Mermaid Live Editor](https://mermaid.live/).<br/>
-[Tutorials](../config/Tutorials.md) has video tutorials.
-Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](../ecosystem/integrations.md).
+[Tutorials](../ecosystem/tutorials.md) has video tutorials.
 
-For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](../community/n00b-overview.md) and [Usage](../config/usage.md).
+Use Mermaid with your favorite applications, check out the list of [Community Integrations](../ecosystem/integrations-community.md).
 
-🌐 [CDN](https://www.jsdelivr.com/package/npm/mermaid) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](../community/development.md) | 🔌 [Plug-Ins](../ecosystem/integrations.md)
+For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](../intro/getting-started.md) and [Usage](../config/usage.md).
+
+🌐 [CDN](https://www.jsdelivr.com/package/npm/mermaid) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](../community/contributing.md) | 🔌 [Plug-Ins](../ecosystem/integrations-community.md)
 
 > 🖖 Keep a steady pulse: mermaid needs more Collaborators, [Read More](https://github.com/knsv/mermaid/issues/866).
 
@@ -271,11 +283,31 @@ quadrantChart
     Campaign F: [0.35, 0.78]
 ```
 
+### [XY Chart](../syntax/xyChart.md)
+
+```mermaid-example
+xychart-beta
+    title "Sales Revenue"
+    x-axis [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
+    y-axis "Revenue (in $)" 4000 --> 11000
+    bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+    line [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+```
+
+```mermaid
+xychart-beta
+    title "Sales Revenue"
+    x-axis [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
+    y-axis "Revenue (in $)" 4000 --> 11000
+    bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+    line [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+```
+
 ## Installation
 
-**In depth guides and examples can be found at [Getting Started](./n00b-gettingStarted.md) and [Usage](../config/usage.md).**
+**In depth guides and examples can be found at [Getting Started](./getting-started.md) and [Usage](../config/usage.md).**
 
-**It would also be helpful to learn more about mermaid's [Syntax](./n00b-syntaxReference.md).**
+**It would also be helpful to learn more about mermaid's [Syntax](./syntax-reference.md).**
 
 ### CDN
 
@@ -308,7 +340,7 @@ To Deploy Mermaid:
 </script>
 ```
 
-**Doing so commands the mermaid parser to look for the `<div>` or `<pre>` tags with `class="mermaid"`. From these tags, mermaid tries read the diagram/chart definitions and render them into SVG charts.**
+**Doing so commands the mermaid parser to look for the `<div>` or `<pre>` tags with `class="mermaid"`. From these tags, mermaid tries to read the diagram/chart definitions and render them into SVG charts.**
 
 **Examples can be found in** [Other examples](../syntax/examples.md)
 
@@ -334,7 +366,19 @@ Together we could continue the work with things like:
 
 Don't hesitate to contact me if you want to get involved!
 
-## For contributors
+## Contributors
+
+<div class='badges'>
+
+[![Good first issue](https://img.shields.io/github/labels/mermaid-js/mermaid/Good%20first%20issue%21)](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Good+first+issue%21%22)
+[![Contributors](https://img.shields.io/github/contributors/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors)
+[![Commits](https://img.shields.io/github/commit-activity/m/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors)
+
+</div>
+
+Mermaid is a growing community and is always accepting new contributors. There's a lot of different ways to help out and we're always looking for extra hands! Look at [this issue](https://github.com/mermaid-js/mermaid/issues/866) if you want to know where to start helping out.
+
+Detailed information about how to contribute can be found in the [contribution guideline](../community/contributing.md).
 
 ### Requirements
 
@@ -342,7 +386,7 @@ Don't hesitate to contact me if you want to get involved!
 - [Node.js](https://nodejs.org/en/). `volta install node`
 - [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
 
-## Development Installation
+### Development Installation
 
 ```bash
 git clone git@github.com:mermaid-js/mermaid.git
@@ -379,19 +423,7 @@ Update version number in `package.json`.
 npm publish
 ```
 
-The above command generates files into the `dist` folder and publishes them to \<npmjs.org>.
-
-## Related projects
-
-- [Command Line Interface](https://github.com/mermaid-js/mermaid-cli)
-- [Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
-- [HTTP Server](https://github.com/TomWright/mermaid-server)
-
-## Contributors [![Good first issue](https://img.shields.io/github/labels/mermaid-js/mermaid/Good%20first%20issue%21)](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Good+first+issue%21%22) [![Contributors](https://img.shields.io/github/contributors/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors) [![Commits](https://img.shields.io/github/commit-activity/m/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors)
-
-Mermaid is a growing community and is always accepting new contributors. There's a lot of different ways to help out and we're always looking for extra hands! Look at [this issue](https://github.com/mermaid-js/mermaid/issues/866) if you want to know where to start helping out.
-
-Detailed information about how to contribute can be found in the [contribution guide](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md)
+The above command generates files into the `dist` folder and publishes them to [npmjs.com](https://www.npmjs.com/).
 
 ## Security and safe diagrams
 
@@ -422,20 +454,15 @@ A quick note from Knut Sveidqvist:
 _Mermaid was created by Knut Sveidqvist for easier documentation._
 
 <style scoped>
-  #contributors + p,
-  #about-mermaid + p + p + blockquote + img + p
-  {
-    display: flex
+ .badges > p {
+    display: flex;
   }
 
-  #contributors + p a,
-  #about-mermaid + p + p + blockquote + img + p a
-  {
-    margin: 0 0.5rem
+  .badges > p > a {
+    margin: 0 0.5rem;
   }
 
-  .dark #VPContent > div > div > div.content > div > main > div > div > img
-  {
+  .dark #VPContent > div > div > div.content > div > main > div > div > img {
     filter: invert(1) hue-rotate(217deg)  contrast(0.72);
   }
 </style>
