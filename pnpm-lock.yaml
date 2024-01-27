@@ -228,8 +228,8 @@ importers:
         specifier: ^0.9.0
         version: 0.9.1
       katex:
-        specifier: ^0.15.2
-        version: 0.15.6
+        specifier: ^0.16.9
+        version: 0.16.9
       khroma:
         specifier: ^2.0.0
         version: 2.0.0
@@ -11978,8 +11978,8 @@ packages:
     engines: {node: '>=12.20'}
     dev: true
 
-  /katex@0.15.6:
-    resolution: {integrity: sha512-UpzJy4yrnqnhXvRPhjEuLA4lcPn6eRngixW7Q3TJErjg3Aw2PuLFBzTkdUb89UtumxjhHTqL3a5GDGETMSwgJA==}
+  /katex@0.16.9:
+    resolution: {integrity: sha512-fsSYjWS0EEOwvy81j3vRA8TEAhQhKiqO+FQaKWp0m39qwOzHVBgAUBIXWj1pB+O2W3fIpNa6Y9KSKCVbfPhyAQ==}
     hasBin: true
     dependencies:
       commander: 8.3.0
