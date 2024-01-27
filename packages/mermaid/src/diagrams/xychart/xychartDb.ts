@@ -113,12 +113,13 @@ function setYAxisRangeData(min: number, max: number) {
 
 // this function does not set `hasSetYAxis` as there can be multiple data so we should calculate the range accordingly
 function setYAxisRangeFromPlotData(data: number[], plotType: PlotType) {
-  dataSets.push(data);
-
   const sum = new Array(data.length).fill(0);
-  for (let i = 0; i < data.length; i++) {
-    for (const entry of dataSets) {
-      sum[i] += entry[i];
+  if (plotType === PlotType.BAR) {
+    dataSets.push(data);
+    for (let i = 0; i < data.length; i++) {
+      for (const entry of dataSets) {
+        sum[i] += entry[i];
+      }
     }
   }
 
