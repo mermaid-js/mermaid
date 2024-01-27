@@ -49,7 +49,7 @@ const splitClassNameAndType = function (_id: string) {
     classId = `${className}-${genericType}`;
   }
 
-  return { classId: classId, className: className, type: genericType };
+  return { classId, className, type: genericType };
 };
 
 export const setClassLabel = function (_id: string, label: string) {
