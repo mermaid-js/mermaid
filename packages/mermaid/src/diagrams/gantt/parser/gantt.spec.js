@@ -135,8 +135,8 @@ describe('when parsing a gantt diagram it', function () {
 
     expect(tasks[0].startTime).toEqual(new Date(2024, 0, 27));
     expect(tasks[0].endTime).toEqual(new Date(2024, 0, 28));
-    expect(tasks[0].id).toEqual('b');
-    expect(tasks[0].task).toEqual('task B');
+    expect(tasks[0].id).toEqual('a');
+    expect(tasks[0].task).toEqual('task A');
     expect(tasks[1].startTime).toEqual(new Date(2024, 0, 28));
     expect(tasks[1].endTime).toEqual(new Date(2024, 0, 30));
     expect(tasks[1].id).toEqual('b');
