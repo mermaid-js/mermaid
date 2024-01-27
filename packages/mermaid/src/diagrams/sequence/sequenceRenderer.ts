@@ -1138,12 +1138,12 @@ async function getMaxMessageWidthPerActor(
 
       // If this is the first actor, and the message is left of it, no need to calculate the margin
       if (msg.placement === diagObj.db.PLACEMENT.LEFTOF && !actor.prevActor) {
-        return;
+        continue;
       }
 
       // If this is the last actor, and the message is right of it, no need to calculate the margin
       if (msg.placement === diagObj.db.PLACEMENT.RIGHTOF && !actor.nextActor) {
-        return;
+        continue;
       }
 
       const isNote = msg.placement !== undefined;
