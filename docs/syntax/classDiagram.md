@@ -279,11 +279,11 @@ classDiagram
 class Thing~T~{
     int id
 }
-class Thing~L~
-
+class Thing~L~{
     List~int~ position
     setPoints(List~int~ points)
     getPoints() List~int~
+}
 
 Thing~T~: int id
 Thing~L~: int lId
@@ -296,11 +296,11 @@ classDiagram
 class Thing~T~{
     int id
 }
-class Thing~L~
-
+class Thing~L~{
     List~int~ position
     setPoints(List~int~ points)
     getPoints() List~int~
+}
 
 Thing~T~: int id
 Thing~L~: int lId
