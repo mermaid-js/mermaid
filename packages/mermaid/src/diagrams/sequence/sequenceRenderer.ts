@@ -311,7 +311,7 @@ const actorFont = (cnf) => {
  * @param msgModel - The model containing fields describing a message
  * @returns `lineStartY` - The Y coordinate at which the message line starts
  */
-async function boundMessage(_diagram, msgModel): number {
+async function boundMessage(_diagram, msgModel): Promise<number> {
   bounds.bumpVerticalPos(10);
   const { startx, stopx, message } = msgModel;
   const lines = common.splitBreaks(message).length;
