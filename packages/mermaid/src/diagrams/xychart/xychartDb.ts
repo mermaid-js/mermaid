@@ -113,34 +113,21 @@ function setYAxisRangeData(min: number, max: number) {
 
 // this function does not set `hasSetYAxis` as there can be multiple data so we should calculate the range accordingly
 function setYAxisRangeFromPlotData(data: number[], plotType: PlotType) {
-  if (plotType === PlotType.BAR) {
-    dataSets.push(data);
+  dataSets.push(data);
 
-    let sum = new Array(data.length).fill(0);
-    for (let i = 0; i < data.length; i++) {
-      for (let dataSetIndex = 0; dataSetIndex < dataSets.length; dataSetIndex++) {
-        sum[i] += dataSets[dataSetIndex][i];
-      }
+  const sum = new Array(data.length).fill(0);
+  for (let i = 0; i < data.length; i++) {
+    for (const entry of dataSets) {
+      sum[i] += entry[i];
     }
-
-    xyChartData.yAxis = {
-      type: 'linear',
-      title: xyChartData.yAxis.title,
-      min: isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.min : Math.min(...sum),
-      max: Math.max(...sum),
-    };
-  } else if (plotType === PlotType.LINE) {
-    const minValue = Math.min(...data);
-    const maxValue = Math.max(...data);
-    const prevMinValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.min : Infinity;
-    const prevMaxValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.max : -Infinity;
-    xyChartData.yAxis = {
-      type: 'linear',
-      title: xyChartData.yAxis.title,
-      min: Math.min(prevMinValue, minValue),
-      max: Math.max(prevMaxValue, maxValue),
-    };
   }
+
+  xyChartData.yAxis = {
+    type: 'linear',
+    title: xyChartData.yAxis.title,
+    min: isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.min : Math.min(...sum),
+    max: Math.max(...sum),
+  };
 }
 
 function transformDataWithoutCategory(data: number[], plotType: PlotType): SimplePlotDataType {
