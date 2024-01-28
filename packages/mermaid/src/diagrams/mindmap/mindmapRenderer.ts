@@ -1,23 +1,21 @@
-/** Created by knut on 14-12-11. */
 import { select } from 'd3';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import svgDraw from './svgDraw.js';
-import cytoscape from 'cytoscape/dist/cytoscape.umd.js';
+import cytoscape from 'cytoscape';
+// @ts-expect-error No types available
 import coseBilkent from 'cytoscape-cose-bilkent';
 import * as db from './mindmapDb.js';
+import type { MermaidConfig, MermaidConfigWithDefaults } from '../../config.type.js';
+import type { Diagram } from '../../Diagram.js';
+import type { MindmapDB } from './mindmapTypes.js';
+import type { D3Element } from '../../mermaidAPI.js';
 
 // Inject the layout algorithm into cytoscape
 cytoscape.use(coseBilkent);
 
-/**
- * @param {any} svg The svg element to draw the diagram onto
- * @param {object} mindmap The mindmap data and hierarchy
- * @param section
- * @param {object} conf The configuration object
- */
-function drawNodes(svg, mindmap, section, conf) {
+function drawNodes(svg: D3Element, mindmap: db.MindMapNode, section: number, conf: MermaidConfig) {
   svgDraw.drawNode(svg, mindmap, section, conf);
   if (mindmap.children) {
     mindmap.children.forEach((child, index) => {
@@ -26,11 +24,23 @@ function drawNodes(svg, mindmap, section, conf) {
   }
 }
 
-/**
- * @param edgesEl
- * @param cy
- */
-function drawEdges(edgesEl, cy) {
+declare module 'cytoscape' {
+  interface EdgeSingular {
+    _private: {
+      bodyBounds: unknown;
+      rscratch: {
+        startX: number;
+        startY: number;
+        midX: number;
+        midY: number;
+        endX: number;
+        endY: number;
+      };
+    };
+  }
+}
+
+function drawEdges(edgesEl: D3Element, cy: cytoscape.Core) {
   cy.edges().map((edge, id) => {
     const data = edge.data();
     if (edge[0]._private.bodyBounds) {
@@ -47,17 +57,11 @@ function drawEdges(edgesEl, cy) {
   });
 }
 
-/**
- * @param mindmap The mindmap data and hierarchy
- * @param cy
- * @param conf The configuration object
- * @param level
- */
-function addNodes(mindmap, cy, conf, level) {
+function addNodes(mindmap: db.MindMapNode, cy: cytoscape.Core, conf: MermaidConfig, level: number) {
   cy.add({
     group: 'nodes',
     data: {
-      id: mindmap.id,
+      id: mindmap.id.toString(),
       labelText: mindmap.descr,
       height: mindmap.height,
       width: mindmap.width,
@@ -67,8 +71,8 @@ function addNodes(mindmap, cy, conf, level) {
       type: mindmap.type,
     },
     position: {
-      x: mindmap.x,
-      y: mindmap.y,
+      x: mindmap.x!,
+      y: mindmap.y!,
     },
   });
   if (mindmap.children) {
@@ -88,12 +92,10 @@ function addNodes(mindmap, cy, conf, level) {
   }
 }
 
-/**
- * @param node
- * @param conf
- * @param cy
- */
-function layoutMindmap(node, conf) {
+function layoutMindmap(
+  node: db.MindMapNode,
+  conf: MermaidConfigWithDefaults
+): Promise<cytoscape.Core> {
   return new Promise((resolve) => {
     // Add temporary render element
     const renderEl = select('body').append('div').attr('id', 'cy').attr('style', 'display:none');
@@ -122,8 +124,8 @@ function layoutMindmap(node, conf) {
 
     cy.layout({
       name: 'cose-bilkent',
+      // @ts-ignore Types for cose-bilkent are not correct?
       quality: 'proof',
-      // headless: true,
       styleEnabled: false,
       animate: false,
     }).run();
@@ -133,13 +135,8 @@ function layoutMindmap(node, conf) {
     });
   });
 }
-/**
- * @param node
- * @param cy
- * @param positionedMindmap
- * @param conf
- */
-function positionNodes(cy) {
+
+function positionNodes(cy: cytoscape.Core) {
   cy.nodes().map((node, id) => {
     const data = node.data();
     data.x = node.position().x;
@@ -155,38 +152,33 @@ function positionNodes(cy) {
   });
 }
 
-/**
- * Draws a an info picture in the tag with id: id based on the graph definition in text.
- *
- * @param {any} text
- * @param {any} id
- * @param {any} version
- * @param diagObj
- */
-
-export const draw = async (text, id, version, diagObj) => {
+export const draw = async (text: string, id: string, version: string, diagObj: Diagram) => {
   const conf = getConfig();
 
   conf.htmlLabels = false;
 
   log.debug('Rendering mindmap diagram\n' + text, diagObj.parser);
 
-  const securityLevel = getConfig().securityLevel;
+  const securityLevel = conf.securityLevel;
   // Handle root and Document for when rendering in sandbox mode
-  let sandboxElement;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let sandboxElement: any;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
   }
-  const root =
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const root: any =
     securityLevel === 'sandbox'
       ? select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
-  // Parse the graph definition
 
   const svg = root.select('#' + id);
 
   svg.append('g');
-  const mm = diagObj.db.getMindmap();
+  const mm = (diagObj.db as MindmapDB).getMindmap();
+  if (!mm) {
+    return;
+  }
 
   // Draw the graph and start with drawing the nodes without proper position
   // this gives us the size of the nodes and we can set the positions later
@@ -201,9 +193,9 @@ export const draw = async (text, id, version, diagObj) => {
 
   const cy = await layoutMindmap(mm, conf);
 
-  // // After this we can draw, first the edges and the then nodes with the correct position
-  drawEdges(edgesElem, cy, conf);
-  positionNodes(cy, conf);
+  // After this we can draw, first the edges and the then nodes with the correct position
+  drawEdges(edgesElem, cy);
+  positionNodes(cy);
 
   // Setup the view box and size of the svg element
   setupGraphViewbox(undefined, svg, conf.mindmap.padding, conf.mindmap.useMaxWidth);
