@@ -7,10 +7,11 @@ import cytoscape from 'cytoscape';
 // @ts-expect-error No types available
 import coseBilkent from 'cytoscape-cose-bilkent';
 import * as db from './mindmapDb.js';
-import type { MermaidConfig, MermaidConfigWithDefaults } from '../../config.type.js';
+import type { MermaidConfig } from '../../config.type.js';
 import type { Diagram } from '../../Diagram.js';
 import type { MindmapDB } from './mindmapTypes.js';
 import type { D3Element } from '../../mermaidAPI.js';
+import type { MermaidConfigWithDefaults } from '../../config.js';
 
 // Inject the layout algorithm into cytoscape
 cytoscape.use(coseBilkent);

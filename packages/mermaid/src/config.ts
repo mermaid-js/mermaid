@@ -2,8 +2,12 @@ import assignWithDepth from './assignWithDepth.js';
 import { log } from './logger.js';
 import theme from './themes/index.js';
 import config from './defaultConfig.js';
-import type { MermaidConfig, MermaidConfigWithDefaults } from './config.type.js';
+import type { MermaidConfig } from './config.type.js';
 import { sanitizeDirective } from './utils/sanitizeDirective.js';
+import type { RequiredDeep } from 'type-fest';
+
+// I'd prefer this to be named MermaidConfig, so all the functions can use the shorter name.
+export type MermaidConfigWithDefaults = RequiredDeep<MermaidConfig>;
 
 export const defaultConfig: MermaidConfig = Object.freeze(config);
 

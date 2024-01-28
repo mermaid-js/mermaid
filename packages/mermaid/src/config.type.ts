@@ -5,8 +5,6 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-import { RequiredDeep } from 'type-fest';
-
 /**
  * Configuration options to pass to the `dompurify` library.
  */
@@ -167,9 +165,6 @@ export interface MermaidConfig {
   wrap?: boolean;
   fontSize?: number;
 }
-
-// I'd prefer this to be named MermaidConfig, so all the functions can use the shorter name.
-export type MermaidConfigWithDefaults = RequiredDeep<MermaidConfig>;
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
  * via the `definition` "BaseDiagramConfig".
