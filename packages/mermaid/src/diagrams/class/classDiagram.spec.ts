@@ -2,7 +2,6 @@
 import { parser } from './parser/classDiagram.jison';
 import classDb from './classDb.js';
 import { vi, describe, it, expect } from 'vitest';
-import { getClasses } from './classDb';
 import type { ClassNode } from './classTypes.js';
 const spyOn = vi.spyOn;
 
