@@ -1,53 +1,6 @@
-import { select } from 'd3';
 import * as db from './mindmapDb.js';
 import { createText } from '../../rendering-util/createText.js';
 const MAX_SECTIONS = 12;
-
-/**
- * @param {string} text The text to be wrapped
- * @param {number} width The max width of the text
- */
-function wrap(text, width) {
-  text.each(function () {
-    var text = select(this),
-      words = text
-        .text()
-        .split(/(\s+|<br\/>)/)
-        .reverse(),
-      word,
-      line = [],
-      lineHeight = 1.1, // ems
-      y = text.attr('y'),
-      dy = parseFloat(text.attr('dy')),
-      tspan = text
-        .text(null)
-        .append('tspan')
-        .attr('x', 0)
-        .attr('y', y)
-        .attr('dy', dy + 'em');
-    for (let j = 0; j < words.length; j++) {
-      word = words[words.length - 1 - j];
-      line.push(word);
-      tspan.text(line.join(' ').trim());
-      if (tspan.node().getComputedTextLength() > width || word === '<br/>') {
-        line.pop();
-        tspan.text(line.join(' ').trim());
-        if (word === '<br/>') {
-          line = [''];
-        } else {
-          line = [word];
-        }
-
-        tspan = text
-          .append('tspan')
-          .attr('x', 0)
-          .attr('y', y)
-          .attr('dy', lineHeight + 'em')
-          .text(word);
-      }
-    }
-  });
-}
 
 const defaultBkg = function (elem, node, section) {
   const rd = 5;
@@ -317,10 +270,6 @@ export const drawNode = function (elem, node, fullSection, conf) {
       break;
   }
 
-  // Position the node to its coordinate
-  // if (typeof node.x !== 'undefined' && typeof node.y !== 'undefined') {
-  //   nodeElem.attr('transform', 'translate(' + node.x + ',' + node.y + ')');
-  // }
   db.setElementForId(node.id, nodeElem);
   return node.height;
 };
