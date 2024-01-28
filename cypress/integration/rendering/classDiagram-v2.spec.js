@@ -201,9 +201,9 @@ describe('Class diagram V2', () => {
       `
     classDiagram-v2
     class Class01~T~
-      Class01 : size()
-      Class01 : int chimp
-      Class01 : int gorilla
+      Class01-T : size()
+      Class01-T : int chimp
+      Class01-T : int gorilla
       Class08 <--> C2: Cool label
       class Class10~T~ {
         &lt;&lt;service&gt;&gt;
@@ -221,9 +221,9 @@ describe('Class diagram V2', () => {
     classDiagram-v2
     Class01~T~ <|-- AveryLongClass : Cool
     Class03~T~ *-- Class04~T~
-      Class01 : size()
-      Class01 : int chimp
-      Class01 : int gorilla
+      Class01-T : size()
+      Class01-T : int chimp
+      Class01-T : int gorilla
       Class08 <--> C2: Cool label
       class Class10~T~ {
         &lt;&lt;service&gt;&gt;
@@ -241,9 +241,9 @@ describe('Class diagram V2', () => {
     classDiagram-v2
     Class01~T~ <|-- AveryLongClass : Cool
     Class03~T~ *-- Class04~T~
-      Class01 : size()
-      Class01 : int chimp
-      Class01 : int gorilla
+      Class01-T : size()
+      Class01-T : int chimp
+      Class01-T : int gorilla
       Class08 <--> C2: Cool label
       class Class10~T~ {
         &lt;&lt;service&gt;&gt;
@@ -262,9 +262,9 @@ describe('Class diagram V2', () => {
     classDiagram-v2
     Class01~T~ <|-- AveryLongClass : Cool
     Class03~T~ *-- Class04~T~
-      Class01 : size()
-      Class01 : int chimp
-      Class01 : int gorilla
+      Class01-T : size()
+      Class01-T : int chimp
+      Class01-T : int gorilla
       Class08 <--> C2: Cool label
       class Class10~T~ {
         &lt;&lt;service&gt;&gt;
