@@ -68,16 +68,16 @@ export const setClassLabel = function (_id: string, label: string) {
  * @param id - Id of the class to add, which can include generic type info
  * @public
  */
-export const addClass = function (_id: string) {
+export const getOrAddClass = function (_id: string) {
   const id = common.sanitizeText(_id, getConfig());
   const { classId, className, type } = splitClassNameAndType(id);
+
   // Only add class if not exists
   if (Object.hasOwn(classes, classId)) {
     return classes[classId];
   }
-  // alert('Adding class: ' + className);
+
   const name = common.sanitizeText(className, getConfig());
-  // alert('Adding class after: ' + name);
   const newClass = {
     id: classId,
     name: name,
@@ -140,8 +140,8 @@ export const getNotes = function () {
 
 export const addRelation = function (relation: ClassRelation) {
   log.debug('Adding relation: ' + JSON.stringify(relation));
-  const relation1 = addClass(relation.id1);
-  const relation2 = addClass(relation.id2);
+  const relation1 = getOrAddClass(relation.id1);
+  const relation2 = getOrAddClass(relation.id2);
 
   relation.id1 = relation1.id;
   relation.id2 = relation2.id;
@@ -175,19 +175,19 @@ export const addAnnotation = function (className: string, annotation: string) {
  * @public
  */
 export const addMember = function (className: string, member: string) {
-  const newClass = addClass(className);
+  const theClass = getOrAddClass(className);
 
   if (typeof member === 'string') {
     const memberString = member.trim();
 
     if (memberString.startsWith('<<') && memberString.endsWith('>>')) {
       // its an annotation
-      newClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
+      theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
     } else if (memberString.indexOf(')') > 0) {
       //its a method
-      newClass.methods.push(new ClassMember(memberString, 'method'));
+      theClass.methods.push(new ClassMember(memberString, 'method'));
     } else if (memberString) {
-      newClass.members.push(new ClassMember(memberString, 'attribute'));
+      theClass.members.push(new ClassMember(memberString, 'attribute'));
     }
   }
 };
@@ -418,18 +418,19 @@ const setDirection = (dir: string) => {
  * @public
  */
 export const addNamespace = function (id: string) {
-  if (namespaces[id] !== undefined) {
-    return;
+  // Only add namespace if it does not exist
+  if (!Object.hasOwn(namespaces, id)) {
+    namespaces[id] = {
+      id: id,
+      classes: {},
+      children: {},
+      domId: MERMAID_DOM_ID_PREFIX + id + '-' + namespaceCounter,
+    } as NamespaceNode;
+
+    namespaceCounter++;
   }
 
-  namespaces[id] = {
-    id: id,
-    classes: {},
-    children: {},
-    domId: MERMAID_DOM_ID_PREFIX + id + '-' + namespaceCounter,
-  } as NamespaceNode;
-
-  namespaceCounter++;
+  return namespaces[id];
 };
 
 const getNamespace = function (name: string): NamespaceNode {
@@ -448,13 +449,16 @@ const getNamespaces = function (): NamespaceMap {
  * @public
  */
 export const addClassesToNamespace = function (id: string, classNames: string[]) {
-  if (namespaces[id] === undefined) {
+  const namespace = addNamespace(id);
+
+  if (namespace === undefined) {
     return;
   }
+
   for (const name of classNames) {
-    const { className } = splitClassNameAndType(name);
-    classes[className].parent = id;
-    namespaces[id].classes[className] = classes[className];
+    const theClass = getOrAddClass(name);
+    theClass.parent = id;
+    namespace.classes[theClass.id] = theClass;
   }
 };
 
@@ -478,7 +482,7 @@ export default {
   getAccDescription,
   setAccDescription,
   getConfig: () => getConfig().class,
-  addClass,
+  addClass: getOrAddClass,
   bindFunctions,
   clear,
   getClass,

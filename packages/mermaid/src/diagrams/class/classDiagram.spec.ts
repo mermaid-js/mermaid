@@ -2,6 +2,8 @@
 import { parser } from './parser/classDiagram.jison';
 import classDb from './classDb.js';
 import { vi, describe, it, expect } from 'vitest';
+import { getClasses } from './classDb';
+import type { ClassNode } from './classTypes.js';
 const spyOn = vi.spyOn;
 
 const staticCssStyle = 'text-decoration:underline;';
@@ -397,7 +399,7 @@ class C13["With Città foreign language"]
         {
           "annotations": [],
           "cssClasses": [],
-          "domId": "classId-Student-134",
+          "domId": "classId-Student-0",
           "id": "Student",
           "label": "Student",
           "members": [
@@ -409,6 +411,7 @@ class C13["With Città foreign language"]
             },
           ],
           "methods": [],
+          "name": "Student",
           "styles": [],
           "type": "",
         }
@@ -1064,16 +1067,18 @@ foo()
     });
 
     it('should handle namespace with generic types', () => {
-      parser.parse(`classDiagram
+      const str = `classDiagram
+      namespace space {
+        class Square~Shape~{
+            int : id
+            List~int~ position
+            setPoints(List~int~ points)
+            getPoints() List~int~
+        }
+      }
+      `;
 
-namespace space {
-    class Square~Shape~{
-        int id
-        List~int~ position
-        setPoints(List~int~ points)
-        getPoints() List~int~
-    }
-}`);
+      parser.parse(str);
     });
   });
 });
@@ -1115,9 +1120,11 @@ describe('given a class diagram with relationships, ', function () {
       parser.parse(str);
 
       const relations = parser.yy.getRelations();
+      const classNode1 = parser.yy.getClass('Class1-T') as ClassNode;
 
-      expect(parser.yy.getClass('Class1').id).toBe('Class1');
-      expect(parser.yy.getClass('Class1').type).toBe('T');
+      expect(classNode1.id).toBe('Class1-T');
+      expect(classNode1.type).toBe('T');
+      expect(classNode1.name).toBe('Class1');
       expect(parser.yy.getClass('Class02').id).toBe('Class02');
       expect(relations[0].relation.type1).toBe(classDb.relationType.EXTENSION);
       expect(relations[0].relation.type2).toBe('none');
@@ -1265,14 +1272,16 @@ describe('given a class diagram with relationships, ', function () {
     });
 
     it('should handle generic class with relation definitions', function () {
-      const str = 'classDiagram\n' + 'Class01~T~ <|-- Class02';
+      const str = 'classDiagram\n' + 'Class1~T~ <|-- Class02';
 
       parser.parse(str);
 
       const relations = parser.yy.getRelations();
+      const classNode1 = parser.yy.getClass('Class1-T') as ClassNode;
 
-      expect(parser.yy.getClass('Class01').id).toBe('Class01');
-      expect(parser.yy.getClass('Class01').type).toBe('T');
+      expect(classNode1.id).toBe('Class1-T');
+      expect(classNode1.type).toBe('T');
+      expect(classNode1.name).toBe('Class1');
       expect(parser.yy.getClass('Class02').id).toBe('Class02');
       expect(relations[0].relation.type1).toBe(classDb.relationType.EXTENSION);
       expect(relations[0].relation.type2).toBe('none');
