@@ -1,19 +1,36 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { sanitizeText as _sanitizeText } from '../../diagrams/common/common.js';
+import { sanitizeText } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
+import type { D3Element } from '../../mermaidAPI.js';
 
-export const sanitizeText = (text) => _sanitizeText(text, getConfig());
+export interface MindMapNode {
+  id: number;
+  nodeId: string;
+  level: number;
+  descr: string;
+  type: number;
+  children: MindMapNode[];
+  width: number;
+  padding: number;
+  section?: number;
+  height?: number;
+  class?: string;
+  icon?: string;
+  x?: number;
+  y?: number;
+}
 
-let nodes = [];
+let nodes: MindMapNode[] = [];
 let cnt = 0;
-let elements = {};
+let elements: Record<string, D3Element> = {};
+
 export const clear = () => {
   nodes = [];
   cnt = 0;
   elements = {};
 };
 
-const getParent = function (level) {
+const getParent = function (level: number) {
   for (let i = nodes.length - 1; i >= 0; i--) {
     if (nodes[i].level < level) {
       return nodes[i];
@@ -26,31 +43,29 @@ const getParent = function (level) {
 export const getMindmap = () => {
   return nodes.length > 0 ? nodes[0] : null;
 };
-export const addNode = (level, id, descr, type) => {
+
+export const addNode = (level: number, id: string, descr: string, type: number) => {
   log.info('addNode', level, id, descr, type);
   const conf = getConfig();
+  let padding: number = conf.mindmap?.padding ?? 10;
+  switch (type) {
+    case nodeType.ROUNDED_RECT:
+    case nodeType.RECT:
+    case nodeType.HEXAGON:
+      padding *= 2;
+  }
+
   const node = {
     id: cnt++,
-    nodeId: sanitizeText(id),
+    nodeId: sanitizeText(id, conf),
     level,
-    descr: sanitizeText(descr),
+    descr: sanitizeText(descr, conf),
     type,
     children: [],
-    width: getConfig().mindmap.maxNodeWidth,
-  };
-  switch (node.type) {
-    case nodeType.ROUNDED_RECT:
-      node.padding = 2 * conf.mindmap.padding;
-      break;
-    case nodeType.RECT:
-      node.padding = 2 * conf.mindmap.padding;
-      break;
-    case nodeType.HEXAGON:
-      node.padding = 2 * conf.mindmap.padding;
-      break;
-    default:
-      node.padding = conf.mindmap.padding;
-  }
+    width: conf.mindmap?.maxNodeWidth ?? 200,
+    padding,
+  } satisfies MindMapNode;
+
   const parent = getParent(level);
   if (parent) {
     parent.children.push(node);
@@ -62,16 +77,9 @@ export const addNode = (level, id, descr, type) => {
       nodes.push(node);
     } else {
       // Syntax error ... there can only bee one root
-      let error = new Error(
+      const error = new Error(
         'There can be only one root. No parent could be found for ("' + node.descr + '")'
       );
-      error.hash = {
-        text: 'branch ' + name,
-        token: 'branch ' + name,
-        line: '1',
-        loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
-        expected: ['"checkout ' + name + '"'],
-      };
       throw error;
     }
   }
@@ -88,7 +96,7 @@ export const nodeType = {
   HEXAGON: 6,
 };
 
-export const getType = (startStr, endStr) => {
+export const getType = (startStr: string, endStr: string): number => {
   log.debug('In get type', startStr, endStr);
   switch (startStr) {
     case '[':
@@ -108,21 +116,25 @@ export const getType = (startStr, endStr) => {
   }
 };
 
-export const setElementForId = (id, element) => {
+export const setElementForId = (id: string, element: D3Element) => {
   elements[id] = element;
 };
 
-export const decorateNode = (decoration) => {
-  const node = nodes[nodes.length - 1];
-  if (decoration && decoration.icon) {
-    node.icon = sanitizeText(decoration.icon);
+export const decorateNode = (decoration?: { class?: string; icon?: string }) => {
+  if (!decoration) {
+    return;
   }
-  if (decoration && decoration.class) {
-    node.class = sanitizeText(decoration.class);
+  const config = getConfig();
+  const node = nodes[nodes.length - 1];
+  if (decoration.icon) {
+    node.icon = sanitizeText(decoration.icon, config);
+  }
+  if (decoration.class) {
+    node.class = sanitizeText(decoration.class, config);
   }
 };
 
-export const type2Str = (type) => {
+export const type2Str = (type: number) => {
   switch (type) {
     case nodeType.DEFAULT:
       return 'no-border';
@@ -143,13 +155,6 @@ export const type2Str = (type) => {
   }
 };
 
-export let parseError;
-export const setErrorHandler = (handler) => {
-  parseError = handler;
-};
-
 // Expose logger to grammar
 export const getLogger = () => log;
-
-export const getNodeById = (id) => nodes[id];
-export const getElementById = (id) => elements[id];
+export const getElementById = (id: string) => elements[id];
