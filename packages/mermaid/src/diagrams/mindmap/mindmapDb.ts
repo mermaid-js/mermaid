@@ -8,7 +8,7 @@ let nodes: MindMapNode[] = [];
 let cnt = 0;
 let elements: Record<string, D3Element> = {};
 
-export const clear = () => {
+const clear = () => {
   nodes = [];
   cnt = 0;
   elements = {};
@@ -24,11 +24,11 @@ const getParent = function (level: number) {
   return null;
 };
 
-export const getMindmap = () => {
+const getMindmap = () => {
   return nodes.length > 0 ? nodes[0] : null;
 };
 
-export const addNode = (level: number, id: string, descr: string, type: number) => {
+const addNode = (level: number, id: string, descr: string, type: number) => {
   log.info('addNode', level, id, descr, type);
   const conf = getConfig();
   let padding: number = conf.mindmap?.padding ?? 10;
@@ -69,7 +69,7 @@ export const addNode = (level: number, id: string, descr: string, type: number) 
   }
 };
 
-export const nodeType = {
+const nodeType = {
   DEFAULT: 0,
   NO_BORDER: 0,
   ROUNDED_RECT: 1,
@@ -80,7 +80,7 @@ export const nodeType = {
   HEXAGON: 6,
 };
 
-export const getType = (startStr: string, endStr: string): number => {
+const getType = (startStr: string, endStr: string): number => {
   log.debug('In get type', startStr, endStr);
   switch (startStr) {
     case '[':
@@ -100,11 +100,11 @@ export const getType = (startStr: string, endStr: string): number => {
   }
 };
 
-export const setElementForId = (id: string, element: D3Element) => {
+const setElementForId = (id: string, element: D3Element) => {
   elements[id] = element;
 };
 
-export const decorateNode = (decoration?: { class?: string; icon?: string }) => {
+const decorateNode = (decoration?: { class?: string; icon?: string }) => {
   if (!decoration) {
     return;
   }
@@ -118,7 +118,7 @@ export const decorateNode = (decoration?: { class?: string; icon?: string }) => 
   }
 };
 
-export const type2Str = (type: number) => {
+const type2Str = (type: number) => {
   switch (type) {
     case nodeType.DEFAULT:
       return 'no-border';
@@ -140,14 +140,15 @@ export const type2Str = (type: number) => {
 };
 
 // Expose logger to grammar
-export const getLogger = () => log;
-export const getElementById = (id: string) => elements[id];
+const getLogger = () => log;
+const getElementById = (id: string) => elements[id];
 
 const db = {
   clear,
   addNode,
   getMindmap,
   nodeType,
+  getType,
   setElementForId,
   decorateNode,
   type2Str,
