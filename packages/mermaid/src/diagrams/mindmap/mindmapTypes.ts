@@ -1,12 +1,13 @@
+import { RequiredDeep } from 'type-fest';
 import type mindmapDb from './mindmapDb.js';
 
-export interface MindMapNode {
+export interface MindmapNode {
   id: number;
   nodeId: string;
   level: number;
   descr: string;
   type: number;
-  children: MindMapNode[];
+  children: MindmapNode[];
   width: number;
   padding: number;
   section?: number;
@@ -17,4 +18,5 @@ export interface MindMapNode {
   y?: number;
 }
 
+export type FilledMindMapNode = RequiredDeep<MindmapNode>;
 export type MindmapDB = typeof mindmapDb;

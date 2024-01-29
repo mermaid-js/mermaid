@@ -1,12 +1,12 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import type { D3Element } from '../../mermaidAPI.js';
 import { sanitizeText } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
-import type { D3Element } from '../../mermaidAPI.js';
-import type { MindMapNode } from './mindmapTypes.js';
+import type { MindmapNode } from './mindmapTypes.js';
 
-let nodes: MindMapNode[] = [];
+let nodes: MindmapNode[] = [];
 let cnt = 0;
-let elements: Record<string, D3Element> = {};
+let elements: Record<number, D3Element> = {};
 
 const clear = () => {
   nodes = [];
@@ -14,7 +14,7 @@ const clear = () => {
   elements = {};
 };
 
-const getParent = function (level: number) {
+const getParent = function(level: number) {
   for (let i = nodes.length - 1; i >= 0; i--) {
     if (nodes[i].level < level) {
       return nodes[i];
@@ -48,7 +48,7 @@ const addNode = (level: number, id: string, descr: string, type: number) => {
     children: [],
     width: conf.mindmap?.maxNodeWidth ?? 200,
     padding,
-  } satisfies MindMapNode;
+  } satisfies MindmapNode;
 
   const parent = getParent(level);
   if (parent) {
@@ -100,7 +100,7 @@ const getType = (startStr: string, endStr: string): number => {
   }
 };
 
-const setElementForId = (id: string, element: D3Element) => {
+const setElementForId = (id: number, element: D3Element) => {
   elements[id] = element;
 };
 
@@ -141,7 +141,7 @@ const type2Str = (type: number) => {
 
 // Expose logger to grammar
 const getLogger = () => log;
-const getElementById = (id: string) => elements[id];
+const getElementById = (id: number) => elements[id];
 
 const db = {
   clear,

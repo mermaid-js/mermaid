@@ -6,7 +6,7 @@ import { drawNode, positionNode } from './svgDraw.js';
 import cytoscape from 'cytoscape';
 // @ts-expect-error No types available
 import coseBilkent from 'cytoscape-cose-bilkent';
-import type { MindMapNode, MindmapDB } from './mindmapTypes.js';
+import type { MindmapNode, MindmapDB, FilledMindMapNode } from './mindmapTypes.js';
 import type { MermaidConfig } from '../../config.type.js';
 import type { Diagram } from '../../Diagram.js';
 import type { D3Element } from '../../mermaidAPI.js';
@@ -18,9 +18,9 @@ cytoscape.use(coseBilkent);
 function drawNodes(
   db: MindmapDB,
   svg: D3Element,
-  mindmap: MindMapNode,
+  mindmap: FilledMindMapNode,
   section: number,
-  conf: MermaidConfig
+  conf: MermaidConfigWithDefaults
 ) {
   drawNode(db, svg, mindmap, section, conf);
   if (mindmap.children) {
@@ -63,7 +63,7 @@ function drawEdges(edgesEl: D3Element, cy: cytoscape.Core) {
   });
 }
 
-function addNodes(mindmap: MindMapNode, cy: cytoscape.Core, conf: MermaidConfig, level: number) {
+function addNodes(mindmap: MindmapNode, cy: cytoscape.Core, conf: MermaidConfig, level: number) {
   cy.add({
     group: 'nodes',
     data: {
@@ -99,7 +99,7 @@ function addNodes(mindmap: MindMapNode, cy: cytoscape.Core, conf: MermaidConfig,
 }
 
 function layoutMindmap(
-  node: MindMapNode,
+  node: MindmapNode,
   conf: MermaidConfigWithDefaults
 ): Promise<cytoscape.Core> {
   return new Promise((resolve) => {
@@ -193,7 +193,7 @@ export const draw = async (text: string, id: string, version: string, diagObj: D
   edgesElem.attr('class', 'mindmap-edges');
   const nodesElem = svg.append('g');
   nodesElem.attr('class', 'mindmap-nodes');
-  drawNodes(db, nodesElem, mm, -1, conf);
+  drawNodes(db, nodesElem, mm as FilledMindMapNode, -1, conf);
 
   // Next step is to layout the mindmap, giving each node a position
 
