@@ -1,6 +1,7 @@
+// @ts-expect-error Incorrect khroma types
 import { darken, lighten, isDark } from 'khroma';
 
-const genSections = (options) => {
+const genSections = (options: any) => {
   let sections = '';
 
   for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
@@ -49,7 +50,8 @@ const genSections = (options) => {
   return sections;
 };
 
-const getStyles = (options) =>
+// TODO: These options seem incorrect.
+const getStyles = (options: any) =>
   `
   .edge {
     stroke-width: 3;
