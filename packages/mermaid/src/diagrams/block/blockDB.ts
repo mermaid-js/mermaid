@@ -1,17 +1,7 @@
-// import type { BlockDB } from './blockTypes.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import type { BlockConfig, BlockType, Block, Link, ClassDef } from './blockTypes.js';
-
 import * as configApi from '../../config.js';
-import {
-  // setAccTitle,
-  // getAccTitle,
-  // getAccDescription,
-  // setAccDescription,
-  // setDiagramTitle,
-  // getDiagramTitle,
-  clear as commonClear,
-} from '../common/commonDb.js';
+import { clear as commonClear } from '../common/commonDb.js';
 import { log } from '../../logger.js';
 import clone from 'lodash-es/clone.js';
 
@@ -57,10 +47,10 @@ export const addStyleClass = function (id: string, styleAttributes = '') {
 };
 
 /**
- * Called when the parser comes across a (style) class definition
- * @example classDef my-style fill:#f96;
+ * Called when the parser comes across a style definition
+ * @example style my-block-id fill:#f96;
  *
- * @param id - the id of this (style) class
+ * @param id - the id of the block to style
  * @param styles - the string with 1 or more style attributes (each separated by a comma)
  */
 export const addStyle2Node = function (id: string, styles = '') {
@@ -71,9 +61,9 @@ export const addStyle2Node = function (id: string, styles = '') {
 };
 
 /**
- * Add a (style) class or css class to a state with the given id.
- * If the state isn't already in the list of known states, add it.
- * Might be called by parser when a style class or CSS class should be applied to a state
+ * Add a CSS/style class to the block with the given id.
+ * If the block isn't already in the list of known blocks, add it.
+ * Might be called by parser when a CSS/style class should be applied to a block
  *
  * @param itemIds - The id or a list of ids of the item(s) to apply the css class to
  * @param cssClassName - CSS class name
@@ -105,8 +95,10 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
       setCssClass(block.id, block?.styleClass || '');
       continue;
     }
-    if (block.type === 'applyStyles' && block?.stylesStr) {
-      addStyle2Node(block.id, block?.stylesStr);
+    if (block.type === 'applyStyles') {
+      if (block?.stylesStr) {
+        addStyle2Node(block.id, block?.stylesStr);
+      }
       continue;
     }
     if (block.type === 'column-setting') {
@@ -153,19 +145,8 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
           blockDatabase[newBlock.id] = newBlock;
           children.push(newBlock);
         }
-        // log.debug('abc95 space2', children);
-      } else {
-        if (newBlock) {
-          children.push(block);
-        }
-        // const w = block.w || 1;
-        // for (let j = 1; j < w; j++) {
-        //   const newBlock = clone(block);
-        //   newBlock.type = 'space';
-        //   newBlock.id = newBlock.id + '-' + j;
-        //   blockDatabase[newBlock.id] = newBlock;
-        //   children.push(newBlock);
-        // }
+      } else if (newBlock) {
+        children.push(block);
       }
     }
   }
@@ -188,8 +169,7 @@ const clear = (): void => {
   edgeCount = {};
 };
 
-type ITypeStr2Type = (typeStr: string) => BlockType;
-export function typeStr2Type(typeStr: string): BlockType {
+export function typeStr2Type(typeStr: string) {
   log.debug('typeStr2Type', typeStr);
   switch (typeStr) {
     case '[]':
@@ -228,7 +208,6 @@ export function typeStr2Type(typeStr: string): BlockType {
   }
 }
 
-type IEdgeTypeStr2Type = (typeStr: string) => string;
 export function edgeTypeStr2Type(typeStr: string): string {
   log.debug('typeStr2Type', typeStr);
   switch (typeStr) {
@@ -238,7 +217,7 @@ export function edgeTypeStr2Type(typeStr: string): string {
       return 'normal';
   }
 }
-type IEdgeStrToEdgeDataType = (typeStr: string) => string;
+
 export function edgeStrToEdgeData(typeStr: string): string {
   switch (typeStr.trim()) {
     case '--x':
@@ -251,26 +230,22 @@ export function edgeStrToEdgeData(typeStr: string): string {
 }
 
 let cnt = 0;
-type IGenerateId = () => string;
 export const generateId = () => {
   cnt++;
   return 'id-' + Math.random().toString(36).substr(2, 12) + '-' + cnt;
 };
 
-type ISetHierarchy = (block: Block[]) => void;
 const setHierarchy = (block: Block[]): void => {
   rootBlock.children = block;
   populateBlockDatabase(block, rootBlock);
   blocks = rootBlock.children;
 };
 
-type IAddLink = (link: Link) => Link;
-const addLink: IAddLink = (link: Link): Link => {
+const addLink = (link: Link): Link => {
   links.push(link);
   return link;
 };
 
-type IGetColumns = (blockid: string) => number;
 const getColumns = (blockid: string): number => {
   const block = blockDatabase[blockid];
   if (!block) {
@@ -285,12 +260,11 @@ const getColumns = (blockid: string): number => {
   return block.children.length;
 };
 
-type IGetBlocks = () => Block[];
 /**
  * Returns all the blocks as a flat array
  * @returns
  */
-const getBlocksFlat: IGetBlocks = () => {
+const getBlocksFlat = () => {
   const result: Block[] = [];
   // log.debug('abc88 getBlocksFlat', blockDatabase);
   const keys = Object.keys(blockDatabase);
@@ -303,56 +277,33 @@ const getBlocksFlat: IGetBlocks = () => {
  * Returns the the hierarchy of blocks
  * @returns
  */
-const getBlocks: IGetBlocks = () => {
+const getBlocks = () => {
   return blocks || [];
 };
-type IGetEdges = () => Block[];
-const getEdges: IGetEdges = () => {
+const getEdges = () => {
   return edgeList;
 };
-type IGetBlock = (id: string) => Block | undefined;
-const getBlock: IGetBlock = (id: string) => {
+const getBlock = (id: string) => {
   return blockDatabase[id];
 };
-type ISetBlock = (block: Block) => void;
-const setBlock: ISetBlock = (block: Block) => {
+
+const setBlock = (block: Block) => {
   blockDatabase[block.id] = block;
 };
 
-type IGetLinks = () => Link[];
-const getLinks: IGetLinks = () => links;
+const getLinks = () => links;
 
-type IGetLogger = () => Console;
-const getLogger: IGetLogger = () => console;
+const getLogger = () => console;
 
-type IGetClasses = () => Record<string, ClassDef>;
+// type IGetClasses = () => Record<string, ClassDef>;
 /**
  * Return all of the style classes
  */
 export const getClasses = function () {
   return classes;
 };
-export interface BlockDB extends DiagramDB {
-  clear: () => void;
-  getConfig: () => BlockConfig | undefined;
-  addLink: IAddLink;
-  getLogger: IGetLogger;
-  getEdges: IGetEdges;
-  getBlocksFlat: IGetBlocks;
-  getBlocks: IGetBlocks;
-  getBlock: IGetBlock;
-  setBlock: ISetBlock;
-  getLinks: IGetLinks;
-  getColumns: IGetColumns;
-  getClasses: IGetClasses;
-  typeStr2Type: ITypeStr2Type;
-  edgeTypeStr2Type: IEdgeTypeStr2Type;
-  edgeStrToEdgeData: IEdgeStrToEdgeDataType;
-  setHierarchy: ISetHierarchy;
-  generateId: IGenerateId;
-}
 
-const db: BlockDB = {
+const db = {
   getConfig: () => configApi.getConfig().block,
   addLink: addLink,
   typeStr2Type: typeStr2Type,
@@ -366,16 +317,11 @@ const db: BlockDB = {
   setHierarchy,
   getBlock,
   setBlock,
-  // getAccTitle,
-  // setAccTitle,
-  // getAccDescription,
-  // setAccDescription,
-  // getDiagramTitle,
-  // setDiagramTitle,
   getColumns,
   getClasses,
   clear,
   generateId,
-};
+} as const;
 
+export type BlockDB = typeof db & DiagramDB;
 export default db;

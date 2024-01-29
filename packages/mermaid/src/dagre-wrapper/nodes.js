@@ -127,28 +127,11 @@ const block_arrow = async (parent, node) => {
   const m = h / f;
   const w = bbox.width + 2 * m + node.padding;
 
-  const p = node.padding / 2;
-  //
-  // const points = [
-  //   { x: m, y: 0 },
-  //   { x: m, y: -p },
-  //   { x: w - m, y: -p },
-  //   { x: w - m, y: 0 },
-  //   // Right point
-  //   { x: w, y: -h / 2 },
-  //   // Point moving left and up from right point
-  //   { x: w - m, y: -h },
-  //   { x: w - m, y: -h + p },
-  //   { x: m, y: -h + p },
-  //   { x: m, y: -h },
-  //   { x: 0, y: -h / 2 },
-  // ];
-
   const points = getArrowPoints(node.directions, bbox, node);
 
-  const hex = insertPolygonShape(shapeSvg, w, h, points);
-  hex.attr('style', node.style);
-  updateNodeBounds(node, hex);
+  const blockArrow = insertPolygonShape(shapeSvg, w, h, points);
+  blockArrow.attr('style', node.style);
+  updateNodeBounds(node, blockArrow);
 
   node.intersect = function (point) {
     return intersect.polygon(node, points, point);

@@ -19,200 +19,224 @@ const expandAndDeduplicateDirections = (directions) => {
 
   return uniqueDirections;
 };
-export const getArrowPoints = (directions, bbox, node) => {
-  const ud = expandAndDeduplicateDirections(directions);
+export const getArrowPoints = (duplicatedDirections, bbox, node) => {
+  // Expand and deduplicate the provided directions.
+  // for instance: x, right => right, left
+  const directions = expandAndDeduplicateDirections(duplicatedDirections);
 
-  // console.log('block_arrow abc123', node.id, node.directions, ud);
-
+  // Factor to divide height for some calculations.
   const f = 2;
-  const h = bbox.height + 2 * node.padding;
-  const m = h / f;
-  const w = bbox.width + 2 * m + node.padding;
-  const p = node.padding / 2;
 
+  // Calculated height of the bounding box, accounting for node padding.
+  const height = bbox.height + 2 * node.padding;
+  // Midpoint calculation based on height.
+  const midpoint = height / f;
+  // Calculated width of the bounding box, accounting for additional width and node padding.
+  const width = bbox.width + 2 * midpoint + node.padding;
+  // Padding to use, half of the node padding.
+  const padding = node.padding / 2;
+
+  // Initialize an empty array to store points for the arrow.
   let points = [];
 
-  if (ud.has('right') && ud.has('left') && ud.has('up') && ud.has('down')) {
+  if (
+    directions.has('right') &&
+    directions.has('left') &&
+    directions.has('up') &&
+    directions.has('down')
+  ) {
     // SQUARE
-    points = [
+    return [
       // Bottom
       { x: 0, y: 0 },
-      { x: m, y: 0 },
-      { x: w / 2, y: 2 * p },
-      { x: w - m, y: 0 },
-      { x: w, y: 0 },
+      { x: midpoint, y: 0 },
+      { x: width / 2, y: 2 * padding },
+      { x: width - midpoint, y: 0 },
+      { x: width, y: 0 },
 
       // Right
-      { x: w, y: -h / 3 },
-      { x: w + 2 * p, y: -h / 2 },
-      { x: w, y: (-2 * h) / 3 },
-      { x: w, y: -h },
+      { x: width, y: -height / 3 },
+      { x: width + 2 * padding, y: -height / 2 },
+      { x: width, y: (-2 * height) / 3 },
+      { x: width, y: -height },
 
       // Top
-      { x: w - m, y: -h },
-      { x: w / 2, y: -h - 2 * p },
-      { x: m, y: -h },
+      { x: width - midpoint, y: -height },
+      { x: width / 2, y: -height - 2 * padding },
+      { x: midpoint, y: -height },
 
       // Left
-      { x: 0, y: -h },
-      { x: 0, y: (-2 * h) / 3 },
-      { x: -2 * p, y: -h / 2 },
-      { x: 0, y: -h / 3 },
+      { x: 0, y: -height },
+      { x: 0, y: (-2 * height) / 3 },
+      { x: -2 * padding, y: -height / 2 },
+      { x: 0, y: -height / 3 },
     ];
-  } else if (ud.has('right') && ud.has('left') && ud.has('up')) {
+  }
+  if (directions.has('right') && directions.has('left') && directions.has('up')) {
     // RECTANGLE_VERTICAL (Top Open)
-    points = [
-      { x: m, y: 0 },
-      { x: w - m, y: 0 },
-      { x: w, y: -h / 2 },
-      { x: w - m, y: -h },
-      { x: m, y: -h },
-      { x: 0, y: -h / 2 },
+    return [
+      { x: midpoint, y: 0 },
+      { x: width - midpoint, y: 0 },
+      { x: width, y: -height / 2 },
+      { x: width - midpoint, y: -height },
+      { x: midpoint, y: -height },
+      { x: 0, y: -height / 2 },
     ];
-  } else if (ud.has('right') && ud.has('left') && ud.has('down')) {
+  }
+  if (directions.has('right') && directions.has('left') && directions.has('down')) {
     // RECTANGLE_VERTICAL (Bottom Open)
-    points = [
+    return [
       { x: 0, y: 0 },
-      { x: m, y: -h },
-      { x: w - m, y: -h },
-      { x: w, y: 0 },
+      { x: midpoint, y: -height },
+      { x: width - midpoint, y: -height },
+      { x: width, y: 0 },
     ];
-  } else if (ud.has('right') && ud.has('up') && ud.has('down')) {
+  }
+  if (directions.has('right') && directions.has('up') && directions.has('down')) {
     // RECTANGLE_HORIZONTAL (Right Open)
-    points = [
+    return [
       { x: 0, y: 0 },
-      { x: w, y: -m },
-      { x: w, y: -h + m },
-      { x: 0, y: -h },
+      { x: width, y: -midpoint },
+      { x: width, y: -height + midpoint },
+      { x: 0, y: -height },
     ];
-  } else if (ud.has('left') && ud.has('up') && ud.has('down')) {
+  }
+  if (directions.has('left') && directions.has('up') && directions.has('down')) {
     // RECTANGLE_HORIZONTAL (Left Open)
-    points = [
-      { x: w, y: 0 },
-      { x: 0, y: -m },
-      { x: 0, y: -h + m },
-      { x: w, y: -h },
+    return [
+      { x: width, y: 0 },
+      { x: 0, y: -midpoint },
+      { x: 0, y: -height + midpoint },
+      { x: width, y: -height },
     ];
-  } else if (ud.has('right') && ud.has('left')) {
+  }
+  if (directions.has('right') && directions.has('left')) {
     // HORIZONTAL_LINE
-    points = [
-      { x: m, y: 0 },
-      { x: m, y: -p },
-      { x: w - m, y: -p },
-      { x: w - m, y: 0 },
-      { x: w, y: -h / 2 },
-      { x: w - m, y: -h },
-      { x: w - m, y: -h + p },
-      { x: m, y: -h + p },
-      { x: m, y: -h },
-      { x: 0, y: -h / 2 },
+    return [
+      { x: midpoint, y: 0 },
+      { x: midpoint, y: -padding },
+      { x: width - midpoint, y: -padding },
+      { x: width - midpoint, y: 0 },
+      { x: width, y: -height / 2 },
+      { x: width - midpoint, y: -height },
+      { x: width - midpoint, y: -height + padding },
+      { x: midpoint, y: -height + padding },
+      { x: midpoint, y: -height },
+      { x: 0, y: -height / 2 },
     ];
-  } else if (ud.has('up') && ud.has('down')) {
+  }
+  if (directions.has('up') && directions.has('down')) {
     // VERTICAL_LINE
-    points = [
+    return [
       // Bottom center
-      { x: w / 2, y: 0 },
+      { x: width / 2, y: 0 },
       // Left pont of bottom arrow
-      { x: 0, y: -p },
-      { x: m, y: -p },
+      { x: 0, y: -padding },
+      { x: midpoint, y: -padding },
       // Left top over vertical section
-      { x: m, y: -h + p },
-      { x: 0, y: -h + p },
+      { x: midpoint, y: -height + padding },
+      { x: 0, y: -height + padding },
       // Top of arrow
-      { x: w / 2, y: -h },
-      { x: w, y: -h + p },
+      { x: width / 2, y: -height },
+      { x: width, y: -height + padding },
       // Top of right vertical bar
-      { x: w - m, y: -h + p },
-      { x: w - m, y: -p },
-      { x: w, y: -p },
+      { x: width - midpoint, y: -height + padding },
+      { x: width - midpoint, y: -padding },
+      { x: width, y: -padding },
     ];
-  } else if (ud.has('right') && ud.has('up')) {
+  }
+  if (directions.has('right') && directions.has('up')) {
     // ANGLE_RT
-    points = [
+    return [
       { x: 0, y: 0 },
-      { x: w, y: -m },
-      { x: 0, y: -h },
+      { x: width, y: -midpoint },
+      { x: 0, y: -height },
     ];
-  } else if (ud.has('right') && ud.has('down')) {
+  }
+  if (directions.has('right') && directions.has('down')) {
     // ANGLE_RB
-    points = [
+    return [
       { x: 0, y: 0 },
-      { x: w, y: 0 },
-      { x: 0, y: -h },
+      { x: width, y: 0 },
+      { x: 0, y: -height },
     ];
-  } else if (ud.has('left') && ud.has('up')) {
+  }
+  if (directions.has('left') && directions.has('up')) {
     // ANGLE_LT
-    points = [
-      { x: w, y: 0 },
-      { x: 0, y: -m },
-      { x: w, y: -h },
+    return [
+      { x: width, y: 0 },
+      { x: 0, y: -midpoint },
+      { x: width, y: -height },
     ];
-  } else if (ud.has('left') && ud.has('down')) {
+  }
+  if (directions.has('left') && directions.has('down')) {
     // ANGLE_LB
-    points = [
-      { x: w, y: 0 },
+    return [
+      { x: width, y: 0 },
       { x: 0, y: 0 },
-      { x: w, y: -h },
+      { x: width, y: -height },
     ];
-  } else if (ud.has('right')) {
+  }
+  if (directions.has('right')) {
     // ARROW_RIGHT
-    points = [
-      { x: m, y: -p },
-      { x: m, y: -p },
-      { x: w - m, y: -p },
-      { x: w - m, y: 0 },
-      { x: w, y: -h / 2 },
-      { x: w - m, y: -h },
-      { x: w - m, y: -h + p },
+    return [
+      { x: midpoint, y: -padding },
+      { x: midpoint, y: -padding },
+      { x: width - midpoint, y: -padding },
+      { x: width - midpoint, y: 0 },
+      { x: width, y: -height / 2 },
+      { x: width - midpoint, y: -height },
+      { x: width - midpoint, y: -height + padding },
       // top left corner of arrow
-      { x: m, y: -h + p },
-      { x: m, y: -h + p },
+      { x: midpoint, y: -height + padding },
+      { x: midpoint, y: -height + padding },
     ];
-  } else if (ud.has('left')) {
+  }
+  if (directions.has('left')) {
     // ARROW_LEFT
-    points = [
-      { x: m, y: 0 },
-      { x: m, y: -p },
+    return [
+      { x: midpoint, y: 0 },
+      { x: midpoint, y: -padding },
       // Two points, the right corners
-      { x: w - m, y: -p },
-      { x: w - m, y: -h + p },
-      { x: m, y: -h + p },
-      { x: m, y: -h },
-      { x: 0, y: -h / 2 },
+      { x: width - midpoint, y: -padding },
+      { x: width - midpoint, y: -height + padding },
+      { x: midpoint, y: -height + padding },
+      { x: midpoint, y: -height },
+      { x: 0, y: -height / 2 },
     ];
-  } else if (ud.has('up')) {
+  }
+  if (directions.has('up')) {
     // ARROW_TOP
-    points = [
+    return [
       // Bottom center
-      { x: m, y: -p },
+      { x: midpoint, y: -padding },
       // Left top over vertical section
-      { x: m, y: -h + p },
-      { x: 0, y: -h + p },
+      { x: midpoint, y: -height + padding },
+      { x: 0, y: -height + padding },
       // Top of arrow
-      { x: w / 2, y: -h },
-      { x: w, y: -h + p },
+      { x: width / 2, y: -height },
+      { x: width, y: -height + padding },
       // Top of right vertical bar
-      { x: w - m, y: -h + p },
-      { x: w - m, y: -p },
+      { x: width - midpoint, y: -height + padding },
+      { x: width - midpoint, y: -padding },
     ];
-  } else if (ud.has('down')) {
+  }
+  if (directions.has('down')) {
     // ARROW_BOTTOM
-    points = [
+    return [
       // Bottom center
-      { x: w / 2, y: 0 },
+      { x: width / 2, y: 0 },
       // Left pont of bottom arrow
-      { x: 0, y: -p },
-      { x: m, y: -p },
+      { x: 0, y: -padding },
+      { x: midpoint, y: -padding },
       // Left top over vertical section
-      { x: m, y: -h + p },
-      { x: w - m, y: -h + p },
-      { x: w - m, y: -p },
-      { x: w, y: -p },
+      { x: midpoint, y: -height + padding },
+      { x: width - midpoint, y: -height + padding },
+      { x: width - midpoint, y: -padding },
+      { x: width, y: -padding },
     ];
-  } else {
-    // POINT
-    points = [{ x: 0, y: 0 }];
   }
 
-  return points;
+  // POINT
+  return [{ x: 0, y: 0 }];
 };

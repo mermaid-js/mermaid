@@ -68,7 +68,7 @@ block-beta
 
 This example will produce a horizontal sequence of three blocks. Each block is automatically spaced and aligned for optimal readability.
 
-### Diagrams with Multiple Columns
+### Defining the number of columns to use
 
 #### Column Usage
 
@@ -103,7 +103,7 @@ To create a block diagram where one block spans across two columns, you can spec
 ```mermaid-example
 block-beta
   columns 3
-  a["A wide one"] b:2 c:2 d
+  a["A label"] b:2 c:2 d
 ```
 
 In this example, the block labeled "A wide one" spans two columns, while blocks 'b', 'c', and 'd' are allocated their own columns. This flexibility in block sizing is crucial for accurately representing systems with components of varying significance or size.
@@ -140,10 +140,15 @@ In diagrams with varying block sizes, Mermaid automatically adjusts the column w
 block-beta
   columns 3
   a:3
-  block:e:3
-    f
+  block:group1:2
+    columns 2
+    h i j k
   end
   g
+  block:group2:3
+    %% columns auto (default)
+    l m n o p q r
+  end
 ```
 
 This example demonstrates how Mermaid dynamically adjusts the width of the columns to accommodate the widest block, in this case, 'a' and the composite block 'e'. This dynamic adjustment is essential for creating visually balanced and easy-to-understand diagrams.
@@ -283,8 +288,7 @@ or
 
 ```mermaid-example
 block-beta
-  space:3
-  ida idb idc
+  ida space:3 idb idc
 ```
 
 Note that you can set how many columns the spece block occupied using the number notaion `space:num` where num is a number indicating the num columns width. You can alsio use `space` which defaults to one column.
@@ -417,18 +421,7 @@ block-beta
 
   style Start fill:#969;
   style End fill:#696;
-
 ```
-
-This diagram depicts a simple decision-making process with two possible paths leading to an endpoint, demonstrating the use of different shapes and directional arrows.
-
-### Real world Scenarios
-
-Block diagrams can be employed in a variety of real-world scenarios. Here are a few examples:
-
-- **IT Network Layouts**: Visualize the structure of IT networks, showing how different devices and services are connected.
-- **Educational Diagrams**: Explain complex scientific concepts, engineering systems, or historical timelines.
-- **Organizational Charts**: Represent the hierarchy and relationships within an organization or department.
 
 These practical examples and scenarios underscore the utility of Mermaid block diagrams in simplifying and effectively communicating complex information across various domains.
 
@@ -494,6 +487,6 @@ Use classes to maintain consistent styling across similar elements. This not onl
 
 #### Comments and Documentation
 
-Use comments within the Mermaid syntax to document the purpose of various parts of the diagram. This practice is invaluable for maintaining clarity, especially when working in teams or returning to a diagram after some time.
+Use comments with `%%` within the Mermaid syntax to document the purpose of various parts of the diagram. This practice is invaluable for maintaining clarity, especially when working in teams or returning to a diagram after some time.
 
 With these troubleshooting tips and best practices, you can effectively manage and resolve common issues in Mermaid block diagrams. The final section, 'Conclusion', will summarize the key points covered in this documentation and invite user feedback for continuous improvement.
