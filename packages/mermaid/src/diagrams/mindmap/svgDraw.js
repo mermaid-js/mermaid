@@ -1,8 +1,7 @@
-import * as db from './mindmapDb.js';
 import { createText } from '../../rendering-util/createText.js';
 const MAX_SECTIONS = 12;
 
-const defaultBkg = function (elem, node, section) {
+const defaultBkg = function (db, elem, node, section) {
   const rd = 5;
   elem
     .append('path')
@@ -24,7 +23,7 @@ const defaultBkg = function (elem, node, section) {
     .attr('y2', node.height);
 };
 
-const rectBkg = function (elem, node) {
+const rectBkg = function (db, elem, node) {
   elem
     .append('rect')
     .attr('id', 'node-' + node.id)
@@ -33,7 +32,7 @@ const rectBkg = function (elem, node) {
     .attr('width', node.width);
 };
 
-const cloudBkg = function (elem, node) {
+const cloudBkg = function (db, elem, node) {
   const w = node.width;
   const h = node.height;
   const r1 = 0.15 * w;
@@ -64,7 +63,7 @@ const cloudBkg = function (elem, node) {
     );
 };
 
-const bangBkg = function (elem, node) {
+const bangBkg = function (db, elem, node) {
   const w = node.width;
   const h = node.height;
   const r = 0.15 * w;
@@ -96,7 +95,7 @@ const bangBkg = function (elem, node) {
     );
 };
 
-const circleBkg = function (elem, node) {
+const circleBkg = function (db, elem, node) {
   elem
     .append('circle')
     .attr('id', 'node-' + node.id)
@@ -126,7 +125,7 @@ function insertPolygonShape(parent, w, h, points, node) {
     .attr('transform', 'translate(' + (node.width - w) / 2 + ', ' + h + ')');
 }
 
-const hexagonBkg = function (elem, node) {
+const hexagonBkg = function (db, elem, node) {
   const h = node.height;
   const f = 4;
   const m = h / f;
@@ -142,7 +141,7 @@ const hexagonBkg = function (elem, node) {
   const shapeSvg = insertPolygonShape(elem, w, h, points, node);
 };
 
-const roundedRectBkg = function (elem, node) {
+const roundedRectBkg = function (db, elem, node) {
   elem
     .append('rect')
     .attr('id', 'node-' + node.id)
@@ -154,13 +153,14 @@ const roundedRectBkg = function (elem, node) {
 };
 
 /**
+ * @param {import('./mindmapTypes.js').MindmapDB} db The database
  * @param {object} elem The D3 dom element in which the node is to be added
  * @param {object} node The node to be added
  * @param fullSection
  * @param {object} conf The configuration object
  * @returns {number} The height nodes dom element
  */
-export const drawNode = function (elem, node, fullSection, conf) {
+export const drawNode = function (db, elem, node, fullSection, conf) {
   const htmlLabels = conf.htmlLabels;
   const section = fullSection % (MAX_SECTIONS - 1);
   const nodeElem = elem.append('g');
@@ -247,26 +247,26 @@ export const drawNode = function (elem, node, fullSection, conf) {
 
   switch (node.type) {
     case db.nodeType.DEFAULT:
-      defaultBkg(bkgElem, node, section, conf);
+      defaultBkg(db, bkgElem, node, section, conf);
       break;
     case db.nodeType.ROUNDED_RECT:
-      roundedRectBkg(bkgElem, node, section, conf);
+      roundedRectBkg(db, bkgElem, node, section, conf);
       break;
     case db.nodeType.RECT:
-      rectBkg(bkgElem, node, section, conf);
+      rectBkg(db, bkgElem, node, section, conf);
       break;
     case db.nodeType.CIRCLE:
       bkgElem.attr('transform', 'translate(' + node.width / 2 + ', ' + +node.height / 2 + ')');
-      circleBkg(bkgElem, node, section, conf);
+      circleBkg(db, bkgElem, node, section, conf);
       break;
     case db.nodeType.CLOUD:
-      cloudBkg(bkgElem, node, section, conf);
+      cloudBkg(db, bkgElem, node, section, conf);
       break;
     case db.nodeType.BANG:
-      bangBkg(bkgElem, node, section, conf);
+      bangBkg(db, bkgElem, node, section, conf);
       break;
     case db.nodeType.HEXAGON:
-      hexagonBkg(bkgElem, node, section, conf);
+      hexagonBkg(db, bkgElem, node, section, conf);
       break;
   }
 
@@ -274,29 +274,7 @@ export const drawNode = function (elem, node, fullSection, conf) {
   return node.height;
 };
 
-export const drawEdge = function drawEdge(edgesElem, mindmap, parent, depth, fullSection) {
-  const section = fullSection % (MAX_SECTIONS - 1);
-  const sx = parent.x + parent.width / 2;
-  const sy = parent.y + parent.height / 2;
-  const ex = mindmap.x + mindmap.width / 2;
-  const ey = mindmap.y + mindmap.height / 2;
-  const mx = ex > sx ? sx + Math.abs(sx - ex) / 2 : sx - Math.abs(sx - ex) / 2;
-  const my = ey > sy ? sy + Math.abs(sy - ey) / 2 : sy - Math.abs(sy - ey) / 2;
-  const qx = ex > sx ? Math.abs(sx - mx) / 2 + sx : -Math.abs(sx - mx) / 2 + sx;
-  const qy = ey > sy ? Math.abs(sy - my) / 2 + sy : -Math.abs(sy - my) / 2 + sy;
-
-  edgesElem
-    .append('path')
-    .attr(
-      'd',
-      parent.direction === 'TB' || parent.direction === 'BT'
-        ? `M${sx},${sy} Q${sx},${qy} ${mx},${my} T${ex},${ey}`
-        : `M${sx},${sy} Q${qx},${sy} ${mx},${my} T${ex},${ey}`
-    )
-    .attr('class', 'edge section-edge-' + section + ' edge-depth-' + depth);
-};
-
-export const positionNode = function (node) {
+export const positionNode = function (db, node) {
   const nodeElem = db.getElementById(node.id);
 
   const x = node.x || 0;
@@ -304,5 +282,3 @@ export const positionNode = function (node) {
   // Position the node to its coordinate
   nodeElem.attr('transform', 'translate(' + x + ',' + y + ')');
 };
-
-export default { drawNode, positionNode, drawEdge };

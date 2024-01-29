@@ -2,7 +2,7 @@ import { select } from 'd3';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
-import svgDraw from './svgDraw.js';
+import { drawNode, positionNode } from './svgDraw.js';
 import cytoscape from 'cytoscape';
 // @ts-expect-error No types available
 import coseBilkent from 'cytoscape-cose-bilkent';
@@ -15,11 +15,17 @@ import type { MermaidConfigWithDefaults } from '../../config.js';
 // Inject the layout algorithm into cytoscape
 cytoscape.use(coseBilkent);
 
-function drawNodes(svg: D3Element, mindmap: MindMapNode, section: number, conf: MermaidConfig) {
-  svgDraw.drawNode(svg, mindmap, section, conf);
+function drawNodes(
+  db: MindmapDB,
+  svg: D3Element,
+  mindmap: MindMapNode,
+  section: number,
+  conf: MermaidConfig
+) {
+  drawNode(db, svg, mindmap, section, conf);
   if (mindmap.children) {
     mindmap.children.forEach((child, index) => {
-      drawNodes(svg, child, section < 0 ? index : section, conf);
+      drawNodes(db, svg, child, section < 0 ? index : section, conf);
     });
   }
 }
@@ -141,7 +147,7 @@ function positionNodes(db: MindmapDB, cy: cytoscape.Core) {
     const data = node.data();
     data.x = node.position().x;
     data.y = node.position().y;
-    svgDraw.positionNode(data);
+    positionNode(db, data);
     const el = db.getElementById(data.nodeId);
     log.info('Id:', id, 'Position: (', node.position().x, ', ', node.position().y, ')', data);
     el.attr(
@@ -187,7 +193,7 @@ export const draw = async (text: string, id: string, version: string, diagObj: D
   edgesElem.attr('class', 'mindmap-edges');
   const nodesElem = svg.append('g');
   nodesElem.attr('class', 'mindmap-nodes');
-  drawNodes(nodesElem, mm, -1, conf);
+  drawNodes(db, nodesElem, mm, -1, conf);
 
   // Next step is to layout the mindmap, giving each node a position
 
