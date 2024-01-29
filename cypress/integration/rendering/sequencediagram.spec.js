@@ -72,10 +72,10 @@ context('Sequence diagram', () => {
     imgSnapshotTest(
       `
       sequenceDiagram
-      Alice->*>John: Hello John, how are you?
-      Alice-->*>John: Hi Alice, I can hear you!
-      John->*>Alice: This also works the other way
-      John-->*>Alice: Yes
+      Alice-*>John: Hello John, how are you?
+      Alice--*>John: Hi Alice, I can hear you!
+      John-*>Alice: This also works the other way
+      John--*>Alice: Yes
       Alice->John: Test
       John->>Alice: Still works
       `,
