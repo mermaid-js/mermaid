@@ -6,6 +6,7 @@ import { sanitizeUrl } from '@braintree/sanitize-url';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
 const TOP_ACTOR_CLASS = 'actor-top';
+const BOTTOM_ACTOR_CLASS = 'actor-bottom';
 
 export const drawRect = function (elem, rectData) {
   return svgDrawCommon.drawRect(elem, rectData);
@@ -320,7 +321,9 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   } else {
     rect.fill = '#eaeaea';
   }
-  if (!isFooter) {
+  if (isFooter) {
+    cssclass += ` ${BOTTOM_ACTOR_CLASS}`;
+  } else {
     cssclass += ` ${TOP_ACTOR_CLASS}`;
   }
   rect.x = actor.x;
@@ -388,7 +391,9 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   }
   const actElem = elem.append('g');
   let cssClass = 'actor-man';
-  if (!isFooter) {
+  if (isFooter) {
+    cssClass += ` ${BOTTOM_ACTOR_CLASS}`;
+  } else {
     cssClass += ` ${TOP_ACTOR_CLASS}`;
   }
   actElem.attr('class', cssClass);

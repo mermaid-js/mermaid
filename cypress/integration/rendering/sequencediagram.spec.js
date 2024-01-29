@@ -375,7 +375,7 @@ context('Sequence diagram', () => {
         {}
       );
     });
-    it('should have actor-top class on top actor box and symbol', () => {
+    it('should have actor-top and actor-bottom classes on top and bottom actor box and symbol', () => {
       imgSnapshotTest(
         `
         sequenceDiagram
@@ -387,6 +387,13 @@ context('Sequence diagram', () => {
       );
       cy.get('.actor').should('have.class', 'actor-top');
       cy.get('.actor-man').should('have.class', 'actor-top');
+      cy.get('.actor.actor-top').should('not.have.class', 'actor-bottom');
+      cy.get('.actor-man.actor-top').should('not.have.class', 'actor-bottom');
+
+      cy.get('.actor').should('have.class', 'actor-bottom');
+      cy.get('.actor-man').should('have.class', 'actor-bottom');
+      cy.get('.actor.actor-bottom').should('not.have.class', 'actor-top');
+      cy.get('.actor-man.actor-bottom').should('not.have.class', 'actor-top');
     });
     it('should render long notes left of actor', () => {
       imgSnapshotTest(
