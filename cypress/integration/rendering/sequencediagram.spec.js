@@ -78,10 +78,8 @@ context('Sequence diagram', () => {
       John--*>Alice: Yes
       Alice->John: Test
       John->>Alice: Still works
-      `,
-      { logLevel: 0 }
+      `
     );
-    cy.get('svg');
   });
   it('should handle different line breaks', () => {
     imgSnapshotTest(
