@@ -29,7 +29,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
       - name: Cache snapshots
         id: cache-snapshot
         uses: actions/cache@v4
@@ -60,7 +60,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18.x]
+        node-version: [20.x]
         containers: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v4

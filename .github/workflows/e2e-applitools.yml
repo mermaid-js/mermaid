@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [20.x]
     steps:
       - if: ${{ ! env.USE_APPLI }}
         name: Warn if not using Applitools
