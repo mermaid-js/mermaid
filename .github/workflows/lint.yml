@@ -13,23 +13,23 @@ on:
 permissions:
   contents: write
 
+env:
+  node-version: 20.x
+
 jobs:
   lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.x]
     steps:
       - uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v2
         # uses version from "packageManager" field in package.json
 
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js ${{ env.node-version }}
         uses: actions/setup-node@v4
         with:
           cache: pnpm
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ env.node-version }}
 
       - name: Install Packages
         run: |
