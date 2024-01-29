@@ -1,13 +1,13 @@
 // @ts-ignore: JISON doesn't support types
-import mindmapParser from './parser/mindmap.jison';
-import * as mindmapDb from './mindmapDb.js';
-import mindmapRenderer from './mindmapRenderer.js';
-import mindmapStyles from './styles.js';
+import parser from './parser/mindmap.jison';
+import db from './mindmapDb.js';
+import renderer from './mindmapRenderer.js';
+import styles from './styles.js';
 import type { DiagramDefinition } from '../../diagram-api/types.js';
 
 export const diagram: DiagramDefinition = {
-  db: mindmapDb,
-  renderer: mindmapRenderer,
-  parser: mindmapParser,
-  styles: mindmapStyles,
+  db,
+  renderer,
+  parser,
+  styles,
 };

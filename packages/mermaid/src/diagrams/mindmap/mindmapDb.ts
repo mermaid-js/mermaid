@@ -2,23 +2,7 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { sanitizeText } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 import type { D3Element } from '../../mermaidAPI.js';
-
-export interface MindMapNode {
-  id: number;
-  nodeId: string;
-  level: number;
-  descr: string;
-  type: number;
-  children: MindMapNode[];
-  width: number;
-  padding: number;
-  section?: number;
-  height?: number;
-  class?: string;
-  icon?: string;
-  x?: number;
-  y?: number;
-}
+import type { MindMapNode } from './mindmapTypes.js';
 
 let nodes: MindMapNode[] = [];
 let cnt = 0;
@@ -158,3 +142,17 @@ export const type2Str = (type: number) => {
 // Expose logger to grammar
 export const getLogger = () => log;
 export const getElementById = (id: string) => elements[id];
+
+const db = {
+  clear,
+  addNode,
+  getMindmap,
+  nodeType,
+  setElementForId,
+  decorateNode,
+  type2Str,
+  getLogger,
+  getElementById,
+} as const;
+
+export default db;

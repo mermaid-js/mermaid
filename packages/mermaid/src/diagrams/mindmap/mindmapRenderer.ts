@@ -6,17 +6,16 @@ import svgDraw from './svgDraw.js';
 import cytoscape from 'cytoscape';
 // @ts-expect-error No types available
 import coseBilkent from 'cytoscape-cose-bilkent';
-import * as db from './mindmapDb.js';
+import type { MindMapNode, MindmapDB } from './mindmapTypes.js';
 import type { MermaidConfig } from '../../config.type.js';
 import type { Diagram } from '../../Diagram.js';
-import type { MindmapDB } from './mindmapTypes.js';
 import type { D3Element } from '../../mermaidAPI.js';
 import type { MermaidConfigWithDefaults } from '../../config.js';
 
 // Inject the layout algorithm into cytoscape
 cytoscape.use(coseBilkent);
 
-function drawNodes(svg: D3Element, mindmap: db.MindMapNode, section: number, conf: MermaidConfig) {
+function drawNodes(svg: D3Element, mindmap: MindMapNode, section: number, conf: MermaidConfig) {
   svgDraw.drawNode(svg, mindmap, section, conf);
   if (mindmap.children) {
     mindmap.children.forEach((child, index) => {
@@ -58,7 +57,7 @@ function drawEdges(edgesEl: D3Element, cy: cytoscape.Core) {
   });
 }
 
-function addNodes(mindmap: db.MindMapNode, cy: cytoscape.Core, conf: MermaidConfig, level: number) {
+function addNodes(mindmap: MindMapNode, cy: cytoscape.Core, conf: MermaidConfig, level: number) {
   cy.add({
     group: 'nodes',
     data: {
@@ -94,7 +93,7 @@ function addNodes(mindmap: db.MindMapNode, cy: cytoscape.Core, conf: MermaidConf
 }
 
 function layoutMindmap(
-  node: db.MindMapNode,
+  node: MindMapNode,
   conf: MermaidConfigWithDefaults
 ): Promise<cytoscape.Core> {
   return new Promise((resolve) => {
@@ -137,7 +136,7 @@ function layoutMindmap(
   });
 }
 
-function positionNodes(cy: cytoscape.Core) {
+function positionNodes(db: MindmapDB, cy: cytoscape.Core) {
   cy.nodes().map((node, id) => {
     const data = node.data();
     data.x = node.position().x;
@@ -155,7 +154,7 @@ function positionNodes(cy: cytoscape.Core) {
 
 export const draw = async (text: string, id: string, version: string, diagObj: Diagram) => {
   const conf = getConfig();
-
+  const db = diagObj.db as MindmapDB;
   conf.htmlLabels = false;
 
   log.debug('Rendering mindmap diagram\n' + text, diagObj.parser);
@@ -176,7 +175,7 @@ export const draw = async (text: string, id: string, version: string, diagObj: D
   const svg = root.select('#' + id);
 
   svg.append('g');
-  const mm = (diagObj.db as MindmapDB).getMindmap();
+  const mm = db.getMindmap();
   if (!mm) {
     return;
   }
@@ -196,7 +195,7 @@ export const draw = async (text: string, id: string, version: string, diagObj: D
 
   // After this we can draw, first the edges and the then nodes with the correct position
   drawEdges(edgesElem, cy);
-  positionNodes(cy);
+  positionNodes(db, cy);
 
   // Setup the view box and size of the svg element
   setupGraphViewbox(undefined, svg, conf.mindmap.padding, conf.mindmap.useMaxWidth);

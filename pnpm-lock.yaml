@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  cytoscape@3.28.1:
+    hash: claipxynndhyqyu2csninuoh5e
+    path: patches/cytoscape@3.28.1.patch
+
 importers:
 
   .:
@@ -201,14 +206,11 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       cytoscape:
-        specifier: ^3.23.0
-        version: 3.23.0
+        specifier: ^3.28.1
+        version: 3.28.1(patch_hash=claipxynndhyqyu2csninuoh5e)
       cytoscape-cose-bilkent:
         specifier: ^4.1.0
-        version: 4.1.0(cytoscape@3.23.0)
-      cytoscape-fcose:
-        specifier: ^2.1.0
-        version: 2.1.0(cytoscape@3.23.0)
+        version: 4.1.0(cytoscape@3.28.1)
       d3:
         specifier: ^7.4.0
         version: 7.4.0
@@ -384,28 +386,13 @@ importers:
       '@braintree/sanitize-url':
         specifier: ^6.0.1
         version: 6.0.2
-      cytoscape:
-        specifier: ^3.23.0
-        version: 3.23.0
-      cytoscape-cose-bilkent:
-        specifier: ^4.1.0
-        version: 4.1.0(cytoscape@3.23.0)
-      cytoscape-fcose:
-        specifier: ^2.1.0
-        version: 2.1.0(cytoscape@3.23.0)
       d3:
         specifier: ^7.0.0
         version: 7.0.0
       khroma:
         specifier: ^2.0.0
         version: 2.0.0
-      non-layered-tidy-tree-layout:
-        specifier: ^2.0.2
-        version: 2.0.2
     devDependencies:
-      '@types/cytoscape':
-        specifier: ^3.19.9
-        version: 3.19.9
       concurrently:
         specifier: ^8.0.0
         version: 8.0.0
@@ -7739,12 +7726,6 @@ packages:
       layout-base: 1.0.2
     dev: false
 
-  /cose-base@2.2.0:
-    resolution: {integrity: sha512-AzlgcsCbUMymkADOJtQm3wO9S3ltPfYOFD5033keQn9NJzIbtnZj+UdBJe7DYml/8TdbtHJW3j58SOnKhWY/5g==}
-    dependencies:
-      layout-base: 2.0.1
-    dev: false
-
   /cosmiconfig-typescript-loader@4.4.0(@types/node@20.4.7)(cosmiconfig@8.2.0)(ts-node@10.9.1)(typescript@5.1.6):
     resolution: {integrity: sha512-BabizFdC3wBHhbI4kJh0VkQP9GkBfoHPydD0COMce1nJ1kJAB3F2TmJ/I7diULBKtmEWSwEbuN/KDtgnmUUVmw==}
     engines: {node: '>=v14.21.3'}
@@ -8135,31 +8116,23 @@ packages:
       yauzl: 2.10.0
     dev: true
 
-  /cytoscape-cose-bilkent@4.1.0(cytoscape@3.23.0):
+  /cytoscape-cose-bilkent@4.1.0(cytoscape@3.28.1):
     resolution: {integrity: sha512-wgQlVIUJF13Quxiv5e1gstZ08rnZj2XaLHGoFMYXz7SkNfCDOOteKBE6SYRfA9WxxI/iBc3ajfDoc6hb/MRAHQ==}
     peerDependencies:
       cytoscape: ^3.2.0
     dependencies:
       cose-base: 1.0.3
-      cytoscape: 3.23.0
+      cytoscape: 3.28.1(patch_hash=claipxynndhyqyu2csninuoh5e)
     dev: false
 
-  /cytoscape-fcose@2.1.0(cytoscape@3.23.0):
-    resolution: {integrity: sha512-Q3apPl66jf8/2sMsrCjNP247nbDkyIPjA9g5iPMMWNLZgP3/mn9aryF7EFY/oRPEpv7bKJ4jYmCoU5r5/qAc1Q==}
-    peerDependencies:
-      cytoscape: ^3.2.0
-    dependencies:
-      cose-base: 2.2.0
-      cytoscape: 3.23.0
-    dev: false
-
-  /cytoscape@3.23.0:
-    resolution: {integrity: sha512-gRZqJj/1kiAVPkrVFvz/GccxsXhF3Qwpptl32gKKypO4IlqnKBjTOu+HbXtEggSGzC5KCaHp3/F7GgENrtsFkA==}
+  /cytoscape@3.28.1(patch_hash=claipxynndhyqyu2csninuoh5e):
+    resolution: {integrity: sha512-xyItz4O/4zp9/239wCcH8ZcFuuZooEeF8KHRmzjDfGdXsj3OG9MFSMA0pJE0uX3uCN/ygof6hHf4L7lst+JaDg==}
     engines: {node: '>=0.10'}
     dependencies:
       heap: 0.2.7
       lodash: 4.17.21
     dev: false
+    patched: true
 
   /d3-array@2.12.1:
     resolution: {integrity: sha512-B0ErZK/66mHtEsR1TkPEEkwdy+WDesimkM5gpZr5Dsg54BiTA5RXtYW5qTLIAcekaS9xfZrzBLF/OAkB3Qn1YQ==}
@@ -11998,10 +11971,6 @@ packages:
 
   /layout-base@1.0.2:
     resolution: {integrity: sha512-8h2oVEZNktL4BH2JCOI90iD1yXwL6iNW7KcCKT2QZgQJR2vbqDsldCTPRU9NifTCqHZci57XvQQ15YTu+sTYPg==}
-    dev: false
-
-  /layout-base@2.0.1:
-    resolution: {integrity: sha512-dp3s92+uNI1hWIpPGH3jK2kxE2lMjdXdr+DH8ynZHpd6PUlH6x6cbuXnoMmiNumznqaNO31xu9e79F0uuZ0JFg==}
     dev: false
 
   /lazy-ass@1.6.0:
