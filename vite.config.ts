@@ -22,6 +22,7 @@ export default defineConfig({
       reportsDirectory: './coverage/vitest',
       exclude: ['**/node_modules/**', '**/tests/**', '**/__mocks__/**'],
     },
+    includeSource: ['packages/*/src/**/*.{js,ts}'],
   },
   build: {
     /** If you set esmExternals to true, this plugins assumes that
@@ -30,5 +31,8 @@ export default defineConfig({
     commonjsOptions: {
       esmExternals: true,
     },
+  },
+  define: {
+    'import.meta.vitest': 'undefined',
   },
 });

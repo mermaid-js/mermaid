@@ -3,7 +3,7 @@ import idCache from './id-cache.js';
 import stateDb from './stateDb.js';
 import utils from '../../utils.js';
 import common from '../common/common.js';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 
 /**

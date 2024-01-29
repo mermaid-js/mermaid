@@ -11,6 +11,7 @@ import common from '../../common/common.js';
 import { interpolateToCurve, getStylesFromArray } from '../../../utils.js';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { getLineFunctionsWithOffset } from '../../../utils/lineWithOffset.js';
+import { addEdgeMarkers } from '../../../dagre-wrapper/edgeMarker.js';
 
 const elk = new ELK();
 
@@ -561,7 +562,7 @@ export const addEdges = function (edges, diagObj, graph, svg) {
 };
 
 // TODO: break out and share with dagre wrapper. The current code in dagre wrapper also adds
-// adds the line to the graph, but we don't need that here. This is why we cant use the dagre
+// adds the line to the graph, but we don't need that here. This is why we can't use the dagre
 // wrapper directly for this
 /**
  * Add the markers to the edge depending on the type of arrow is
@@ -586,108 +587,7 @@ const addMarkersToEdge = function (svgPath, edgeData, diagramType, arrowMarkerAb
   }
 
   // look in edge data and decide which marker to use
-  switch (edgeData.arrowTypeStart) {
-    case 'arrow_cross':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-crossStart' + ')'
-      );
-      break;
-    case 'arrow_point':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-pointStart' + ')'
-      );
-      break;
-    case 'arrow_barb':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-barbStart' + ')'
-      );
-      break;
-    case 'arrow_circle':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-circleStart' + ')'
-      );
-      break;
-    case 'aggregation':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-aggregationStart' + ')'
-      );
-      break;
-    case 'extension':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-extensionStart' + ')'
-      );
-      break;
-    case 'composition':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-compositionStart' + ')'
-      );
-      break;
-    case 'dependency':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-dependencyStart' + ')'
-      );
-      break;
-    case 'lollipop':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-lollipopStart' + ')'
-      );
-      break;
-    default:
-  }
-  switch (edgeData.arrowTypeEnd) {
-    case 'arrow_cross':
-      svgPath.attr('marker-end', 'url(' + url + '#' + id + '_' + diagramType + '-crossEnd' + ')');
-      break;
-    case 'arrow_point':
-      svgPath.attr('marker-end', 'url(' + url + '#' + id + '_' + diagramType + '-pointEnd' + ')');
-      break;
-    case 'arrow_barb':
-      svgPath.attr('marker-end', 'url(' + url + '#' + id + '_' + diagramType + '-barbEnd' + ')');
-      break;
-    case 'arrow_circle':
-      svgPath.attr('marker-end', 'url(' + url + '#' + id + '_' + diagramType + '-circleEnd' + ')');
-      break;
-    case 'aggregation':
-      svgPath.attr(
-        'marker-end',
-        'url(' + url + '#' + id + '_' + diagramType + '-aggregationEnd' + ')'
-      );
-      break;
-    case 'extension':
-      svgPath.attr(
-        'marker-end',
-        'url(' + url + '#' + id + '_' + diagramType + '-extensionEnd' + ')'
-      );
-      break;
-    case 'composition':
-      svgPath.attr(
-        'marker-end',
-        'url(' + url + '#' + id + '_' + diagramType + '-compositionEnd' + ')'
-      );
-      break;
-    case 'dependency':
-      svgPath.attr(
-        'marker-end',
-        'url(' + url + '#' + id + '_' + diagramType + '-dependencyEnd' + ')'
-      );
-      break;
-    case 'lollipop':
-      svgPath.attr(
-        'marker-end',
-        'url(' + url + '#' + id + '_' + diagramType + '-lollipopEnd' + ')'
-      );
-      break;
-    default:
-  }
+  addEdgeMarkers(svgPath, edgeData, url, id, diagramType);
 };
 
 /**
@@ -803,8 +703,14 @@ const insertChildren = (nodeArray, parentLookupDb) => {
  */
 
 export const draw = async function (text, id, _version, diagObj) {
+  // Add temporary render element
+  diagObj.db.clear();
   nodeDb = {};
   portPos = {};
+  diagObj.db.setGen('gen-2');
+  // Parse the graph definition
+  diagObj.parser.parse(text);
+
   const renderEl = select('body').append('div').attr('style', 'height:400px').attr('id', 'cy');
   let graph = {
     id: 'root',

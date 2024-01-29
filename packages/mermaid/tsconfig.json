@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "types": ["vitest/importMeta", "vitest/globals"]
   },
   "include": ["./src/**/*.ts", "./package.json"]
 }

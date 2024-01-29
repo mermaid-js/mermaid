@@ -1,5 +1,41 @@
 # Blog
 
+## [Introducing Mermaid Chart’s JetBrains IDE Extension](https://www.mermaidchart.com/blog/posts/introducing-mermaid-charts-jetbrains-ide-extension/)
+
+20 December 2023 · 5 mins
+
+Diagrams are essential for documenting your code.
+
+## [Mermaid Chart Releases New Visual Editor For Flowcharts](https://www.mermaidchart.com/blog/posts/mermaid-chart-releases-new-visual-editor-for-flowcharts/)
+
+14 December 2023 · 5 mins
+
+Mermaid Chart introduces a new Visual Editor for flowcharts, enabling users of all skill levels to create diagrams easily and efficiently, with both GUI and code-based editing options.
+
+## [7 best practices (+ examples) for good developer documentation](https://www.mermaidchart.com/blog/posts/7-best-practices-for-good-documentation/)
+
+4 December 2023 · 11 min
+
+Essential strategies for crafting grate developer documentation, with practical examples and insights from leading tech companies.
+
+## [5 Reasons You Should Be Using Mermaid Chart As Your Diagram Generator](https://www.mermaidchart.com/blog/posts/5-reasons-you-should-be-using-mermaid-chart-as-your-diagram-generator/)
+
+14 November 2023 · 5 mins
+
+Mermaid Chart, a user-friendly, code-based diagram generator with AI integrations, templates, collaborative tools, and plugins for developers, streamlines the process of creating and sharing diagrams, enhancing both creativity and collaboration.
+
+## [How to Use Mermaid Chart as an AI Diagram Generator](https://www.mermaidchart.com/blog/posts/how-to-use-mermaid-chart-as-an-ai-diagram-generator/)
+
+1 November 2023 · 5 mins
+
+Would an AI diagram generator make your life easier?
+
+## [Diagrams, Made Even Easier: Introducing “Code Snippets” in the Mermaid Chart Editor](https://www.mermaidchart.com/blog/posts/easier-diagram-editing-with-code-snippets/)
+
+12 October 2023 · 4 mins
+
+Mermaid Chart introduces Code Snippets in its editor, streamlining the diagramming process for developers and professionals.
+
 ## [How to Make a Git Graph with Mermaid Chart](https://www.mermaidchart.com/blog/posts/how-to-make-a-git-graph-with-mermaid-chart/)
 
 22 September 2023 · 7 mins

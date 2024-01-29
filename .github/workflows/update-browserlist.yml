@@ -8,11 +8,18 @@ jobs:
   update-browser-list:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - run: npx browserslist@latest --update-db
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+      - run: npx update-browserslist-db@latest
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
           author_name: ${{ github.actor }}
           author_email: ${{ github.actor }}@users.noreply.github.com
           message: 'chore: update browsers list'
+          push: false
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          branch: update-browserslist
+          title: Update Browserslist

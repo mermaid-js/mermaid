@@ -11,6 +11,13 @@ Flowcharts are composed of **nodes** (geometric shapes) and **edges** (arrows or
 > **Warning**
 > If you are using the word "end" in a Flowchart node, capitalize the entire word or any of the letters (e.g., "End" or "END"), or apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897). Typing "end" in all lowercase letters will break the Flowchart.
 
+> **Warning**
+> If you are using the letter "o" or "x" as the first letter in a connecting Flowchart node, add a space before the letter or capitalize the letter (e.g., "dev--- ops", "dev---Ops").
+>
+> Typing "A---oB" will create a [circle edge](#circle-edge-example).
+>
+> Typing "A---xB" will create a [cross edge](#cross-edge-example).
+
 ### A node (default)
 
 ```mermaid-example
@@ -467,7 +474,7 @@ flowchart TB
     A & B--> C & D
 ```
 
-If you describe the same diagram using the the basic syntax, it will take four lines. A
+If you describe the same diagram using the basic syntax, it will take four lines. A
 word of warning, one could go overboard with this making the flowchart harder to read in
 markdown form. The Swedish word `lagom` comes to mind. It means, not too much and not too little.
 This goes for expressive syntaxes as well.
@@ -488,23 +495,38 @@ flowchart TB
     B --> D
 ```
 
-### New arrow types
+## New arrow types
 
-There are new types of arrows supported as per below:
+There are new types of arrows supported:
+
+- circle edge
+- cross edge
+
+### Circle edge example
 
 ```mermaid-example
 flowchart LR
     A --o B
-    B --x C
 ```
 
 ```mermaid
 flowchart LR
     A --o B
-    B --x C
 ```
 
-### Multi directional arrows
+### Cross edge example
+
+```mermaid-example
+flowchart LR
+    A --x B
+```
+
+```mermaid
+flowchart LR
+    A --x B
+```
+
+## Multi directional arrows
 
 There is the possibility to use multidirectional arrows.
 
@@ -764,7 +786,7 @@ flowchart LR
     end
     %% ^ These subgraphs are identical, except for the links to them:
 
-    %% Link *to* subgraph1: subgraph1 direction is mantained
+    %% Link *to* subgraph1: subgraph1 direction is maintained
     outside --> subgraph1
     %% Link *within* subgraph2:
     %% subgraph2 inherits the direction of the top-level graph (LR)
@@ -783,7 +805,7 @@ flowchart LR
     end
     %% ^ These subgraphs are identical, except for the links to them:
 
-    %% Link *to* subgraph1: subgraph1 direction is mantained
+    %% Link *to* subgraph1: subgraph1 direction is maintained
     outside --> subgraph1
     %% Link *within* subgraph2:
     %% subgraph2 inherits the direction of the top-level graph (LR)
@@ -1112,7 +1134,19 @@ flowchart TD
     B-->E(A fa:fa-camera-retro perhaps?)
 ```
 
-Mermaid is compatible with Font Awesome up to verion 5, Free icons only. Check that the icons you use are from the [supported set of icons](https://fontawesome.com/v5/search?o=r&m=free).
+Mermaid supports Font Awesome if the CSS is included on the website.
+Mermaid does not have any restriction on the version of Font Awesome that can be used.
+
+Please refer the [Official Font Awesome Documentation](https://fontawesome.com/start) on how to include it in your website.
+
+Adding this snippet in the `<head>` would add support for Font Awesome v6.5.1
+
+```html
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  rel="stylesheet"
+/>
+```
 
 ## Graph declarations with spaces between vertices and link and without semicolon
 

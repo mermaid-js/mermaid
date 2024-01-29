@@ -9,6 +9,7 @@ hero:
   name: Mermaid
   text: Diagramming and charting tool
   tagline: JavaScript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically.
+
   image:
     src: /mermaid-logo.svg
     alt: Mermaid

@@ -26,7 +26,7 @@ describe('Git Graph diagram', () => {
       `gitGraph
        commit id: "Normal Commit"
        commit id: "Reverse Commit" type: REVERSE
-       commit id: "Hightlight Commit" type: HIGHLIGHT
+       commit id: "Highlight Commit" type: HIGHLIGHT
       `,
       {}
     );
@@ -36,7 +36,7 @@ describe('Git Graph diagram', () => {
       `gitGraph
        commit id: "Normal Commit with tag" tag: "v1.0.0"
        commit id: "Reverse Commit with tag" type: REVERSE tag: "RC_1"
-       commit id: "Hightlight Commit" type: HIGHLIGHT  tag: "8.8.4"
+       commit id: "Highlight Commit" type: HIGHLIGHT  tag: "8.8.4"
       `,
       {}
     );
@@ -102,7 +102,7 @@ describe('Git Graph diagram', () => {
       {}
     );
   });
-  it('8: should render a simple gitgraph with more than 8 branchs &  overriding variables', () => {
+  it('8: should render a simple gitgraph with more than 8 branches &  overriding variables', () => {
     imgSnapshotTest(
       `%%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
         'gitBranchLabel0': '#ffffff',
@@ -358,7 +358,7 @@ gitGraph
       `gitGraph TB:
        commit id: "Normal Commit"
        commit id: "Reverse Commit" type: REVERSE
-       commit id: "Hightlight Commit" type: HIGHLIGHT
+       commit id: "Highlight Commit" type: HIGHLIGHT
       `,
       {}
     );
@@ -368,7 +368,7 @@ gitGraph
       `gitGraph TB:
        commit id: "Normal Commit with tag" tag: "v1.0.0"
        commit id: "Reverse Commit with tag" type: REVERSE tag: "RC_1"
-       commit id: "Hightlight Commit" type: HIGHLIGHT  tag: "8.8.4"
+       commit id: "Highlight Commit" type: HIGHLIGHT  tag: "8.8.4"
       `,
       {}
     );
@@ -434,7 +434,7 @@ gitGraph
       {}
     );
   });
-  it('22: should render a simple gitgraph with more than 8 branchs &  overriding variables | Vertical Branch', () => {
+  it('22: should render a simple gitgraph with more than 8 branches &  overriding variables | Vertical Branch', () => {
     imgSnapshotTest(
       `%%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
         'gitBranchLabel0': '#ffffff',
@@ -699,6 +699,248 @@ gitGraph TB:
        merge main
       `,
       {}
+    );
+  });
+  it('34: should render a simple gitgraph with two branches from same commit', () => {
+    imgSnapshotTest(
+      `gitGraph
+      commit id:"1-abcdefg"
+      commit id:"2-abcdefg"
+      branch feature-001
+      commit id:"3-abcdefg"
+      commit id:"4-abcdefg"
+      checkout main
+      branch feature-002
+      commit id:"5-abcdefg"
+      checkout feature-001
+      merge feature-002
+      `,
+      {}
+    );
+  });
+  it('35: should render a simple gitgraph with two branches from same commit | Vertical Branch', () => {
+    imgSnapshotTest(
+      `gitGraph TB:
+      commit id:"1-abcdefg"
+      commit id:"2-abcdefg"
+      branch feature-001
+      commit id:"3-abcdefg"
+      commit id:"4-abcdefg"
+      checkout main
+      branch feature-002
+      commit id:"5-abcdefg"
+      checkout feature-001
+      merge feature-002
+      `,
+      {}
+    );
+  });
+  it('36: should render GitGraph with branch that is not used immediately', () => {
+    imgSnapshotTest(
+      `gitGraph LR:
+      commit id:"1-abcdefg"
+      branch x
+      checkout main
+      commit id:"2-abcdefg"
+      checkout x
+      commit id:"3-abcdefg"
+      checkout main
+      merge x
+      `,
+      {}
+    );
+  });
+  it('37: should render GitGraph with branch that is not used immediately | Vertical Branch', () => {
+    imgSnapshotTest(
+      `gitGraph TB:
+      commit id:"1-abcdefg"
+      branch x
+      checkout main
+      commit id:"2-abcdefg"
+      checkout x
+      commit id:"3-abcdefg"
+      checkout main
+      merge x
+      `,
+      {}
+    );
+  });
+  it('38: should render GitGraph with branch and sub-branch neither of which used immediately', () => {
+    imgSnapshotTest(
+      `gitGraph LR:
+      commit id:"1-abcdefg"
+      branch x
+      checkout main
+      commit id:"2-abcdefg"
+      checkout x
+      commit id:"3-abcdefg"
+      checkout main
+      merge x
+      checkout x
+      branch y
+      checkout x
+      commit id:"4-abcdefg"
+      checkout y
+      commit id:"5-abcdefg"
+      checkout x
+      merge y
+      `,
+      {}
+    );
+  });
+  it('39: should render GitGraph with branch and sub-branch neither of which used immediately | Vertical Branch', () => {
+    imgSnapshotTest(
+      `gitGraph TB:
+      commit id:"1-abcdefg"
+      branch x
+      checkout main
+      commit id:"2-abcdefg"
+      checkout x
+      commit id:"3-abcdefg"
+      checkout main
+      merge x
+      checkout x
+      branch y
+      checkout x
+      commit id:"4-abcdefg"
+      checkout y
+      commit id:"5-abcdefg"
+      checkout x
+      merge y
+      `,
+      {}
+    );
+  });
+  it('40: should render a simple gitgraph with cherry pick merge commit', () => {
+    imgSnapshotTest(
+      `gitGraph
+      commit id: "ZERO"
+      branch feature
+      branch release
+      checkout feature
+      commit id: "A"
+      commit id: "B"
+      checkout main
+      merge feature id: "M"
+      checkout release
+      cherry-pick id: "M" parent:"B"`
+    );
+  });
+  it('41: should render default GitGraph with parallelCommits set to false', () => {
+    imgSnapshotTest(
+      `gitGraph
+      commit id:"1-abcdefg"
+      commit id:"2-abcdefg"
+      branch develop
+      commit id:"3-abcdefg"
+      commit id:"4-abcdefg"
+      checkout main
+      branch feature
+      commit id:"5-abcdefg"
+      commit id:"6-abcdefg"
+      checkout main
+      commit id:"7-abcdefg"
+      commit id:"8-abcdefg"
+      `,
+      { gitGraph: { parallelCommits: false } }
+    );
+  });
+  it('42: should render GitGraph with parallel commits', () => {
+    imgSnapshotTest(
+      `gitGraph
+      commit id:"1-abcdefg"
+      commit id:"2-abcdefg"
+      branch develop
+      commit id:"3-abcdefg"
+      commit id:"4-abcdefg"
+      checkout main
+      branch feature
+      commit id:"5-abcdefg"
+      commit id:"6-abcdefg"
+      checkout main
+      commit id:"7-abcdefg"
+      commit id:"8-abcdefg"
+      `,
+      { gitGraph: { parallelCommits: true } }
+    );
+  });
+  it('43: should render GitGraph with parallel commits | Vertical Branch', () => {
+    imgSnapshotTest(
+      `gitGraph TB:
+      commit id:"1-abcdefg"
+      commit id:"2-abcdefg"
+      branch develop
+      commit id:"3-abcdefg"
+      commit id:"4-abcdefg"
+      checkout main
+      branch feature
+      commit id:"5-abcdefg"
+      commit id:"6-abcdefg"
+      checkout main
+      commit id:"7-abcdefg"
+      commit id:"8-abcdefg"
+      `,
+      { gitGraph: { parallelCommits: true } }
+    );
+  });
+  it('44: should render GitGraph with unconnected branches and no parallel commits', () => {
+    imgSnapshotTest(
+      `gitGraph
+      branch dev
+      branch v2
+      branch feat
+      commit id:"1-abcdefg"
+      commit id:"2-abcdefg"
+      checkout main
+      commit id:"3-abcdefg"
+      checkout dev
+      commit id:"4-abcdefg"
+      checkout v2
+      commit id:"5-abcdefg"
+      checkout main
+      commit id:"6-abcdefg"
+      `,
+      { gitGraph: { parallelCommits: false } }
+    );
+  });
+  it('45: should render GitGraph with unconnected branches and parallel commits', () => {
+    imgSnapshotTest(
+      `gitGraph
+      branch dev
+      branch v2
+      branch feat
+      commit id:"1-abcdefg"
+      commit id:"2-abcdefg"
+      checkout main
+      commit id:"3-abcdefg"
+      checkout dev
+      commit id:"4-abcdefg"
+      checkout v2
+      commit id:"5-abcdefg"
+      checkout main
+      commit id:"6-abcdefg"
+      `,
+      { gitGraph: { parallelCommits: true } }
+    );
+  });
+  it('46: should render GitGraph with unconnected branches and parallel commits | Vertical Branch', () => {
+    imgSnapshotTest(
+      `gitGraph TB:
+      branch dev
+      branch v2
+      branch feat
+      commit id:"1-abcdefg"
+      commit id:"2-abcdefg"
+      checkout main
+      commit id:"3-abcdefg"
+      checkout dev
+      commit id:"4-abcdefg"
+      checkout v2
+      commit id:"5-abcdefg"
+      checkout main
+      commit id:"6-abcdefg"
+      `,
+      { gitGraph: { parallelCommits: true } }
     );
   });
 });
