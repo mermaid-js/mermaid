@@ -18,13 +18,18 @@ export const getRows = (s?: string): string[] => {
   return str.split('#br#');
 };
 
-/**
- * Removes script tags from a text
- *
- * @param txt - The text to sanitize
- * @returns The safer text
- */
-export const removeScript = (txt: string): string => {
+const setupDompurifyHooksIfNotSetup = (() => {
+  let setup = false;
+
+  return () => {
+    if (!setup) {
+      setupDompurifyHooks();
+      setup = true;
+    }
+  };
+})();
+
+function setupDompurifyHooks() {
   const TEMPORARY_ATTRIBUTE = 'data-temp-href-target';
 
   DOMPurify.addHook('beforeSanitizeAttributes', (node: Element) => {
@@ -32,8 +37,6 @@ export const removeScript = (txt: string): string => {
       node.setAttribute(TEMPORARY_ATTRIBUTE, node.getAttribute('target') || '');
     }
   });
-
-  const sanitizedText = DOMPurify.sanitize(txt);
 
   DOMPurify.addHook('afterSanitizeAttributes', (node: Element) => {
     if (node.tagName === 'A' && node.hasAttribute(TEMPORARY_ATTRIBUTE)) {
@@ -44,6 +47,18 @@ export const removeScript = (txt: string): string => {
       }
     }
   });
+}
+
+/**
+ * Removes script tags from a text
+ *
+ * @param txt - The text to sanitize
+ * @returns The safer text
+ */
+export const removeScript = (txt: string): string => {
+  setupDompurifyHooksIfNotSetup();
+
+  const sanitizedText = DOMPurify.sanitize(txt);
 
   return sanitizedText;
 };

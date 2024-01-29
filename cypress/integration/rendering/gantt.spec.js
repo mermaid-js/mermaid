@@ -583,4 +583,106 @@ describe('Gantt diagram', () => {
       {}
     );
   });
+
+  it("should render when there's a semicolon in the title", () => {
+    imgSnapshotTest(
+      `
+      gantt
+      title ;Gantt With a Semicolon in the Title
+      dateFormat  YYYY-MM-DD
+      section Section
+      A task           :a1, 2014-01-01, 30d
+      Another task     :after a1  , 20d
+      section Another
+      Task in sec      :2014-01-12  , 12d
+      another task      : 24d
+    `,
+      {}
+    );
+  });
+
+  it("should render when there's a semicolon in a section is true", () => {
+    imgSnapshotTest(
+      `
+      gantt
+      title Gantt Digram
+      dateFormat  YYYY-MM-DD
+      section ;Section With a Semicolon
+      A task           :a1, 2014-01-01, 30d
+      Another task     :after a1  , 20d
+      section Another
+      Task in sec      :2014-01-12  , 12d
+      another task      : 24d
+    `,
+      {}
+    );
+  });
+
+  it("should render when there's a semicolon in the task data", () => {
+    imgSnapshotTest(
+      `
+      gantt
+      title Gantt Digram
+      dateFormat  YYYY-MM-DD
+      section Section
+      ;A task with a semiclon           :a1, 2014-01-01, 30d
+      Another task     :after a1  , 20d
+      section Another
+      Task in sec      :2014-01-12  , 12d
+      another task      : 24d
+    `,
+      {}
+    );
+  });
+
+  it("should render when there's a hashtag in the title", () => {
+    imgSnapshotTest(
+      `
+      gantt
+      title #Gantt With a Hashtag in the Title
+      dateFormat  YYYY-MM-DD
+      section Section
+      A task           :a1, 2014-01-01, 30d
+      Another task     :after a1  , 20d
+      section Another
+      Task in sec      :2014-01-12  , 12d
+      another task      : 24d
+    `,
+      {}
+    );
+  });
+
+  it("should render when there's a hashtag in a section is true", () => {
+    imgSnapshotTest(
+      `
+      gantt
+      title Gantt Digram
+      dateFormat  YYYY-MM-DD
+      section #Section With a Hashtag
+      A task           :a1, 2014-01-01, 30d
+      Another task     :after a1  , 20d
+      section Another
+      Task in sec      :2014-01-12  , 12d
+      another task      : 24d
+    `,
+      {}
+    );
+  });
+
+  it("should render when there's a hashtag in the task data", () => {
+    imgSnapshotTest(
+      `
+      gantt
+      title Gantt Digram
+      dateFormat  YYYY-MM-DD
+      section Section
+      #A task with a hashtag           :a1, 2014-01-01, 30d
+      Another task     :after a1  , 20d
+      section Another
+      Task in sec      :2014-01-12  , 12d
+      another task      : 24d
+    `,
+      {}
+    );
+  });
 });
