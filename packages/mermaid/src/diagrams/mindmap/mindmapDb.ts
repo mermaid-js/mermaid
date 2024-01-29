@@ -14,7 +14,7 @@ const clear = () => {
   elements = {};
 };
 
-const getParent = function(level: number) {
+const getParent = function (level: number) {
   for (let i = nodes.length - 1; i >= 0; i--) {
     if (nodes[i].level < level) {
       return nodes[i];

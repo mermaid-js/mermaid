@@ -5,9 +5,14 @@ import { MermaidConfigWithDefaults } from '../../config.js';
 import { Point } from '../../types.js';
 const MAX_SECTIONS = 12;
 
-type ShapeFunction = (db: MindmapDB, elem: D3Element, node: FilledMindMapNode, section?: number) => void;
+type ShapeFunction = (
+  db: MindmapDB,
+  elem: D3Element,
+  node: FilledMindMapNode,
+  section?: number
+) => void;
 
-const defaultBkg: ShapeFunction = function(db, elem, node, section) {
+const defaultBkg: ShapeFunction = function (db, elem, node, section) {
   const rd = 5;
   elem
     .append('path')
@@ -15,7 +20,8 @@ const defaultBkg: ShapeFunction = function(db, elem, node, section) {
     .attr('class', 'node-bkg node-' + db.type2Str(node.type))
     .attr(
       'd',
-      `M0 ${node.height - rd} v${-node.height + 2 * rd} q0,-5 5,-5 h${node.width - 2 * rd
+      `M0 ${node.height - rd} v${-node.height + 2 * rd} q0,-5 5,-5 h${
+        node.width - 2 * rd
       } q5,0 5,5 v${node.height - rd} H0 Z`
     );
 
@@ -28,7 +34,7 @@ const defaultBkg: ShapeFunction = function(db, elem, node, section) {
     .attr('y2', node.height);
 };
 
-const rectBkg: ShapeFunction = function(db, elem, node) {
+const rectBkg: ShapeFunction = function (db, elem, node) {
   elem
     .append('rect')
     .attr('id', 'node-' + node.id)
@@ -37,7 +43,7 @@ const rectBkg: ShapeFunction = function(db, elem, node) {
     .attr('width', node.width);
 };
 
-const cloudBkg: ShapeFunction = function(db, elem, node) {
+const cloudBkg: ShapeFunction = function (db, elem, node) {
   const w = node.width;
   const h = node.height;
   const r1 = 0.15 * w;
@@ -68,7 +74,7 @@ const cloudBkg: ShapeFunction = function(db, elem, node) {
     );
 };
 
-const bangBkg: ShapeFunction = function(db, elem, node) {
+const bangBkg: ShapeFunction = function (db, elem, node) {
   const w = node.width;
   const h = node.height;
   const r = 0.15 * w;
@@ -100,7 +106,7 @@ const bangBkg: ShapeFunction = function(db, elem, node) {
     );
 };
 
-const circleBkg: ShapeFunction = function(db, elem, node) {
+const circleBkg: ShapeFunction = function (db, elem, node) {
   elem
     .append('circle')
     .attr('id', 'node-' + node.id)
@@ -116,13 +122,19 @@ const circleBkg: ShapeFunction = function(db, elem, node) {
  * @param points
  * @param node
  */
-function insertPolygonShape(parent: D3Element, w: number, h: number, points: Point[], node: FilledMindMapNode) {
+function insertPolygonShape(
+  parent: D3Element,
+  w: number,
+  h: number,
+  points: Point[],
+  node: FilledMindMapNode
+) {
   return parent
     .insert('polygon', ':first-child')
     .attr(
       'points',
       points
-        .map(function(d) {
+        .map(function (d) {
           return d.x + ',' + d.y;
         })
         .join(' ')
@@ -130,7 +142,11 @@ function insertPolygonShape(parent: D3Element, w: number, h: number, points: Poi
     .attr('transform', 'translate(' + (node.width - w) / 2 + ', ' + h + ')');
 }
 
-const hexagonBkg: ShapeFunction = function(_db: MindmapDB, elem: D3Element, node: FilledMindMapNode) {
+const hexagonBkg: ShapeFunction = function (
+  _db: MindmapDB,
+  elem: D3Element,
+  node: FilledMindMapNode
+) {
   const h = node.height;
   const f = 4;
   const m = h / f;
@@ -146,7 +162,7 @@ const hexagonBkg: ShapeFunction = function(_db: MindmapDB, elem: D3Element, node
   insertPolygonShape(elem, w, h, points, node);
 };
 
-const roundedRectBkg: ShapeFunction = function(db, elem, node) {
+const roundedRectBkg: ShapeFunction = function (db, elem, node) {
   elem
     .append('rect')
     .attr('id', 'node-' + node.id)
@@ -165,7 +181,13 @@ const roundedRectBkg: ShapeFunction = function(db, elem, node) {
  * @param conf The configuration object
  * @returns The height nodes dom element
  */
-export const drawNode = function(db: MindmapDB, elem: D3Element, node: FilledMindMapNode, fullSection: number, conf: MermaidConfigWithDefaults): number {
+export const drawNode = function (
+  db: MindmapDB,
+  elem: D3Element,
+  node: FilledMindMapNode,
+  fullSection: number,
+  conf: MermaidConfigWithDefaults
+): number {
   const htmlLabels = conf.htmlLabels;
   const section = fullSection % (MAX_SECTIONS - 1);
   const nodeElem = elem.append('g');
@@ -280,7 +302,7 @@ export const drawNode = function(db: MindmapDB, elem: D3Element, node: FilledMin
   return node.height;
 };
 
-export const positionNode = function(db: MindmapDB, node: FilledMindMapNode) {
+export const positionNode = function (db: MindmapDB, node: FilledMindMapNode) {
   const nodeElem = db.getElementById(node.id);
 
   const x = node.x || 0;
