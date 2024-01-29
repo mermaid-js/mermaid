@@ -104,7 +104,7 @@ export const addClasses = function (
        */
       const cssClassStr = vertex.cssClasses.join(' ');
 
-      const styles = { labelStyle: '', style: '' }; //getStylesFromArray(vertex.styles);
+      const styles = getStylesFromArray(vertex.styles);
 
       // Use vertex id as text in the box if no text is provided by the graph definition
       const vertexText = vertex.label ?? vertex.id;
