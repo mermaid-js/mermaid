@@ -23,6 +23,10 @@
 			participant Alice
 			participant Bob
 			participant John as John<br />Second Line
+			link Alice: Dashboard @ https://dashboard.contoso.com/alice
+			link Alice: Wiki @ https://wiki.contoso.com/alice
+			link John: Dashboard @ https://dashboard.contoso.com/john
+			link John: Wiki @ https://wiki.contoso.com/john
 			autonumber 10 10
 			rect rgb(200, 220, 100)
 			rect rgb(200, 255, 200)
@@ -60,6 +64,26 @@
 			Alice -->> John: Parallel message 2
 			end
 	</pre>
+    <hr />
+    <pre class="mermaid">
+    ---
+    title: With forced menus
+    config:
+      sequence:
+        forceMenus: true
+    ---
+    sequenceDiagram
+      participant Alice
+      participant John
+      link Alice: Dashboard @ https://dashboard.contoso.com/alice
+      link Alice: Wiki @ https://wiki.contoso.com/alice
+      link John: Dashboard @ https://dashboard.contoso.com/john
+      link John: Wiki @ https://wiki.contoso.com/john
+      Alice->>John: Hello John, how are you?
+      John-->>Alice: Great!
+      Alice-)John: See you later!
+  </pre
+    >
     <hr />
     <pre class="mermaid">
     sequenceDiagram
@@ -164,13 +188,6 @@
       end
     </pre>
 
-    <pre class="mermaid">
-    sequenceDiagram
-      actor Alice
-      actor John
-      Alice-xJohn: Hello John, how are you?
-      John--xAlice: Great!
-    </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
