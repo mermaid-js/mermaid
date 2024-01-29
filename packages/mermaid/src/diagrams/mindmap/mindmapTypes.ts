@@ -1,4 +1,4 @@
-import { RequiredDeep } from 'type-fest';
+import type { RequiredDeep } from 'type-fest';
 import type mindmapDb from './mindmapDb.js';
 
 export interface MindmapNode {

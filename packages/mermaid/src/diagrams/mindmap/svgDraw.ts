@@ -1,8 +1,8 @@
 import type { D3Element } from '../../mermaidAPI.js';
 import { createText } from '../../rendering-util/createText.js';
 import type { FilledMindMapNode, MindmapDB } from './mindmapTypes.js';
-import { MermaidConfigWithDefaults } from '../../config.js';
-import { Point } from '../../types.js';
+import type { MermaidConfigWithDefaults } from '../../config.js';
+import type { Point } from '../../types.js';
 const MAX_SECTIONS = 12;
 
 type ShapeFunction = (
@@ -114,14 +114,6 @@ const circleBkg: ShapeFunction = function (db, elem, node) {
     .attr('r', node.width / 2);
 };
 
-/**
- *
- * @param parent
- * @param w
- * @param h
- * @param points
- * @param node
- */
 function insertPolygonShape(
   parent: D3Element,
   w: number,
@@ -174,11 +166,11 @@ const roundedRectBkg: ShapeFunction = function (db, elem, node) {
 };
 
 /**
- * @param db The database
- * @param elem The D3 dom element in which the node is to be added
- * @param node The node to be added
- * @param fullSection
- * @param conf The configuration object
+ * @param db - The database
+ * @param elem - The D3 dom element in which the node is to be added
+ * @param node - The node to be added
+ * @param fullSection - ?
+ * @param conf - The configuration object
  * @returns The height nodes dom element
  */
 export const drawNode = function (
