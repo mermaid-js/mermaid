@@ -2034,8 +2034,6 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     type: object
     unevaluatedProperties: false
     properties:
-      useMaxWidth:
-        default: false
       padding:
         default: 8
 
