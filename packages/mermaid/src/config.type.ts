@@ -173,7 +173,6 @@ export interface MermaidConfig {
  * via the `definition` "BlockDiagramConfig".
  */
 export interface BlockDiagramConfig extends BaseDiagramConfig {
-  useMaxWidth?: boolean;
   padding?: number;
 }
 /**
