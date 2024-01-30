@@ -1,9 +1,9 @@
 import type { D3Element } from '../../mermaidAPI.js';
 import { createText } from '../../rendering-util/createText.js';
 import type { FilledMindMapNode, MindmapDB } from './mindmapTypes.js';
-import type { MermaidConfigWithDefaults } from '../../config.js';
 import type { Point } from '../../types.js';
 import { parseFontSize } from '../../utils.js';
+import type { MermaidConfig } from '../../config.type.js';
 
 const MAX_SECTIONS = 12;
 
@@ -180,7 +180,7 @@ export const drawNode = function (
   elem: D3Element,
   node: FilledMindMapNode,
   fullSection: number,
-  conf: MermaidConfigWithDefaults
+  conf: MermaidConfig
 ): number {
   const htmlLabels = conf.htmlLabels;
   const section = fullSection % (MAX_SECTIONS - 1);

@@ -6,10 +6,7 @@ import type { MermaidConfig } from './config.type.js';
 import { sanitizeDirective } from './utils/sanitizeDirective.js';
 import type { RequiredDeep } from 'type-fest';
 
-// I'd prefer this to be named MermaidConfig, so all the functions can use the shorter name.
-export type MermaidConfigWithDefaults = RequiredDeep<MermaidConfig>;
-
-export const defaultConfig: MermaidConfig = Object.freeze(config);
+export const defaultConfig: RequiredDeep<MermaidConfig> = Object.freeze(config);
 
 let siteConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
 let configFromInitialize: MermaidConfig;
@@ -132,7 +129,7 @@ export const setConfig = (conf: MermaidConfig): MermaidConfig => {
  *
  * @returns The currentConfig
  */
-export const getConfig = (): MermaidConfigWithDefaults => {
+export const getConfig = (): MermaidConfig => {
   return assignWithDepth({}, currentConfig);
 };
 /**

@@ -2,7 +2,6 @@ import cytoscape from 'cytoscape';
 // @ts-expect-error No types available
 import coseBilkent from 'cytoscape-cose-bilkent';
 import { select } from 'd3';
-import type { MermaidConfigWithDefaults } from '../../config.js';
 import type { MermaidConfig } from '../../config.type.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
@@ -12,6 +11,7 @@ import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import type { FilledMindMapNode, MindmapDB, MindmapNode } from './mindmapTypes.js';
 import { drawNode, positionNode } from './svgDraw.js';
+import { defaultConfig } from '../../config.js';
 
 // Inject the layout algorithm into cytoscape
 cytoscape.use(coseBilkent);
@@ -21,7 +21,7 @@ function drawNodes(
   svg: D3Element,
   mindmap: FilledMindMapNode,
   section: number,
-  conf: MermaidConfigWithDefaults
+  conf: MermaidConfig
 ) {
   drawNode(db, svg, mindmap, section, conf);
   if (mindmap.children) {
@@ -99,10 +99,7 @@ function addNodes(mindmap: MindmapNode, cy: cytoscape.Core, conf: MermaidConfig,
   }
 }
 
-function layoutMindmap(
-  node: MindmapNode,
-  conf: MermaidConfigWithDefaults
-): Promise<cytoscape.Core> {
+function layoutMindmap(node: MindmapNode, conf: MermaidConfig): Promise<cytoscape.Core> {
   return new Promise((resolve) => {
     // Add temporary render element
     const renderEl = select('body').append('div').attr('id', 'cy').attr('style', 'display:none');
@@ -160,16 +157,16 @@ function positionNodes(db: MindmapDB, cy: cytoscape.Core) {
 }
 
 export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
-  const conf = getConfig();
-  const db = diagObj.db as MindmapDB;
-  conf.htmlLabels = false;
-
   log.debug('Rendering mindmap diagram\n' + text);
 
+  const db = diagObj.db as MindmapDB;
   const mm = db.getMindmap();
   if (!mm) {
     return;
   }
+
+  const conf = getConfig();
+  conf.htmlLabels = false;
 
   const svg = selectSvgElement(id);
 
@@ -191,7 +188,12 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   positionNodes(db, cy);
 
   // Setup the view box and size of the svg element
-  setupGraphViewbox(undefined, svg, conf.mindmap.padding, conf.mindmap.useMaxWidth);
+  setupGraphViewbox(
+    undefined,
+    svg,
+    conf.mindmap?.padding ?? defaultConfig.mindmap.padding,
+    conf.mindmap?.useMaxWidth ?? defaultConfig.mindmap.useMaxWidth
+  );
 };
 
 export default {
