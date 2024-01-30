@@ -31,7 +31,7 @@ const getMindmap = () => {
 const addNode = (level: number, id: string, descr: string, type: number) => {
   log.info('addNode', level, id, descr, type);
   const conf = getConfig();
-  let padding: number = conf.mindmap?.padding ?? 10;
+  let padding: number = conf.mindmap.padding;
   switch (type) {
     case nodeType.ROUNDED_RECT:
     case nodeType.RECT:
@@ -61,10 +61,9 @@ const addNode = (level: number, id: string, descr: string, type: number) => {
       nodes.push(node);
     } else {
       // Syntax error ... there can only bee one root
-      const error = new Error(
+      throw new Error(
         'There can be only one root. No parent could be found for ("' + node.descr + '")'
       );
-      throw error;
     }
   }
 };

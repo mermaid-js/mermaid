@@ -11,6 +11,8 @@ import type { MermaidConfig } from '../../config.type.js';
 import type { Diagram } from '../../Diagram.js';
 import type { D3Element } from '../../mermaidAPI.js';
 import type { MermaidConfigWithDefaults } from '../../config.js';
+import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
+import { DiagramRenderer, DrawDefinition } from '../../diagram-api/types.js';
 
 // Inject the layout algorithm into cytoscape
 cytoscape.use(coseBilkent);
@@ -158,33 +160,19 @@ function positionNodes(db: MindmapDB, cy: cytoscape.Core) {
   });
 }
 
-export const draw = async (text: string, id: string, version: string, diagObj: Diagram) => {
+export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   const conf = getConfig();
   const db = diagObj.db as MindmapDB;
   conf.htmlLabels = false;
 
-  log.debug('Rendering mindmap diagram\n' + text, diagObj.parser);
+  log.debug('Rendering mindmap diagram\n' + text);
 
-  const securityLevel = conf.securityLevel;
-  // Handle root and Document for when rendering in sandbox mode
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let sandboxElement: any;
-  if (securityLevel === 'sandbox') {
-    sandboxElement = select('#i' + id);
-  }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const root: any =
-    securityLevel === 'sandbox'
-      ? select(sandboxElement.nodes()[0].contentDocument.body)
-      : select('body');
-
-  const svg = root.select('#' + id);
-
-  svg.append('g');
   const mm = db.getMindmap();
   if (!mm) {
     return;
   }
+
+  const svg = selectSvgElement(id);
 
   // Draw the graph and start with drawing the nodes without proper position
   // this gives us the size of the nodes and we can set the positions later

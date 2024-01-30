@@ -3,6 +3,8 @@ import { createText } from '../../rendering-util/createText.js';
 import type { FilledMindMapNode, MindmapDB } from './mindmapTypes.js';
 import type { MermaidConfigWithDefaults } from '../../config.js';
 import type { Point } from '../../types.js';
+import { parseFontSize } from '../../utils.js';
+
 const MAX_SECTIONS = 12;
 
 type ShapeFunction = (
@@ -207,11 +209,9 @@ export const drawNode = function (
       .attr('dominant-baseline', 'middle')
       .attr('text-anchor', 'middle');
   }
-  // .call(wrap, node.width);
   const bbox = textElem.node().getBBox();
-  // @ts-expect-error TODO: Check if fontSize can be string?
-  const fontSize = conf.fontSize.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
-  node.height = bbox.height + fontSize * 1.1 * 0.5 + node.padding;
+  const [fontSize] = parseFontSize(conf.fontSize);
+  node.height = bbox.height + fontSize! * 1.1 * 0.5 + node.padding;
   node.width = bbox.width + 2 * node.padding;
   if (node.icon) {
     if (node.type === db.nodeType.CIRCLE) {
