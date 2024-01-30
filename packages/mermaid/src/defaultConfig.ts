@@ -257,12 +257,6 @@ const config: RequiredDeep<MermaidConfig> = {
     // TODO: can we make this default to `true` instead?
     useMaxWidth: false,
   },
-  block: {
-    ...defaultConfigJson.block,
-    // this is false, unlike every other diagram (other than gitGraph)
-    // TODO: can we make this default to `true` instead?
-    useMaxWidth: false,
-  },
 };
 
 const keyify = (obj: any, prefix = ''): string[] =>
