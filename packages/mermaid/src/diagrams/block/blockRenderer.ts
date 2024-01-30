@@ -42,11 +42,13 @@ export const draw = async function (
   }
   const root =
     securityLevel === 'sandbox'
-      ? d3select(sandboxElement.nodes()[0].contentDocument.body)
-      : d3select('body');
+      ? d3select<HTMLBodyElement, unknown>(sandboxElement.nodes()[0].contentDocument.body)
+      : d3select<HTMLBodyElement, unknown>('body');
 
-  // @ts-ignore TODO root.select is not callable
-  const svg = securityLevel === 'sandbox' ? root.select(`[id="${id}"]`) : d3select(`[id="${id}"]`);
+  const svg =
+    securityLevel === 'sandbox'
+      ? root.select<SVGSVGElement>(`[id="${id}"]`)
+      : d3select<SVGSVGElement, unknown>(`[id="${id}"]`);
 
   // Define the supported markers for the diagram
   const markers = ['point', 'circle', 'cross'];
