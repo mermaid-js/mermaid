@@ -1,8 +1,7 @@
-// import khroma from 'khroma';
 import * as khroma from 'khroma';
 
 /** Returns the styles given options */
-export interface FlowChartStyleOptions {
+export interface BlockChartStyleOptions {
   arrowheadColor: string;
   border2: string;
   clusterBkg: string;
@@ -30,7 +29,7 @@ const fade = (color: string, opacity: number) => {
   return khroma.rgba(r, g, b, opacity);
 };
 
-const getStyles = (options: FlowChartStyleOptions) =>
+const getStyles = (options: BlockChartStyleOptions) =>
   `.label {
     font-family: ${options.fontFamily};
     color: ${options.nodeTextColor || options.textColor};

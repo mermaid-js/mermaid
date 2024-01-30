@@ -79,7 +79,7 @@ accDescr\s*":"\s*                                               { this.pushState
 accDescr\s*"{"\s*                                { this.pushState("acc_descr_multiline");}
 <acc_descr_multiline>[\}]                       { this.popState(); }
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
-
+"end"\b\s*            return 'end';
 
 // Node end of shape
 <NODE>"((("             { this.popState();yy.getLogger().debug('Lex: (('); return "NODE_DEND"; }
@@ -229,8 +229,8 @@ nodeStatement
       {id: $3.id, label: $3.label, type: yy.typeStr2Type($3.typeStr), directions: $3.directions}
       ];
     }
-  | node SIZE { yy.getLogger().debug('Rule: nodeStatement (abc88 node size) ', $1, $2); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1.typeStr), directions: $1.directions, w: parseInt($2,10)}; }
-  | node { yy.getLogger().debug('Rule: nodeStatement (node) ', $1); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1.typeStr), directions: $1.directions, w:1}; }
+  | node SIZE { yy.getLogger().debug('Rule: nodeStatement (abc88 node size) ', $1, $2); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1.typeStr), directions: $1.directions, widthInColumns: parseInt($2,10)}; }
+  | node { yy.getLogger().debug('Rule: nodeStatement (node) ', $1); $$ = {id: $1.id, label: $1.label, type: yy.typeStr2Type($1.typeStr), directions: $1.directions, widthInColumns:1}; }
   ;
 
 

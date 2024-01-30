@@ -21,85 +21,80 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
   classStr = classStr + ' flowchart-label';
 
   // We create a SVG label, either by delegating to addHtmlLabel or manually
-  let radious = 0;
-  let _shape = '';
+  let radius = 0;
+  let shape = '';
   let layoutOptions = {};
   let padding;
   // Set the shape based parameters
   switch (vertex.type) {
     case 'round':
-      radious = 5;
-      _shape = 'rect';
+      radius = 5;
+      shape = 'rect';
       break;
-    // case 'composite-subgraph':
-    //   radious = 0;
-    //   _shape = 'composite';
-    //   break;
     case 'composite':
-      radious = 0;
-      _shape = 'composite';
+      radius = 0;
+      shape = 'composite';
       padding = 0;
       break;
     case 'square':
-      _shape = 'rect';
+      shape = 'rect';
       break;
     case 'diamond':
-      _shape = 'question';
+      shape = 'question';
       layoutOptions = {
         portConstraints: 'FIXED_SIDE',
       };
       break;
     case 'hexagon':
-      _shape = 'hexagon';
+      shape = 'hexagon';
       break;
     case 'block_arrow':
-      _shape = 'block_arrow';
+      shape = 'block_arrow';
       break;
     case 'odd':
-      _shape = 'rect_left_inv_arrow';
+      shape = 'rect_left_inv_arrow';
       break;
     case 'lean_right':
-      _shape = 'lean_right';
+      shape = 'lean_right';
       break;
     case 'lean_left':
-      _shape = 'lean_left';
+      shape = 'lean_left';
       break;
     case 'trapezoid':
-      _shape = 'trapezoid';
+      shape = 'trapezoid';
       break;
     case 'inv_trapezoid':
-      _shape = 'inv_trapezoid';
+      shape = 'inv_trapezoid';
       break;
     case 'rect_left_inv_arrow':
-      _shape = 'rect_left_inv_arrow';
+      shape = 'rect_left_inv_arrow';
       break;
     case 'circle':
-      _shape = 'circle';
+      shape = 'circle';
       break;
     case 'ellipse':
-      _shape = 'ellipse';
+      shape = 'ellipse';
       break;
     case 'stadium':
-      _shape = 'stadium';
+      shape = 'stadium';
       break;
     case 'subroutine':
-      _shape = 'subroutine';
+      shape = 'subroutine';
       break;
     case 'cylinder':
-      _shape = 'cylinder';
+      shape = 'cylinder';
       break;
     case 'group':
-      _shape = 'rect';
+      shape = 'rect';
       break;
     case 'doublecircle':
-      _shape = 'doublecircle';
+      shape = 'doublecircle';
       break;
     default:
-      _shape = 'rect';
+      shape = 'rect';
   }
 
   const styles = getStylesFromArray(vertex?.styles || []);
-  // const styles = getStylesFromArray([]);
 
   // Use vertex id as text in the box if no text is provided by the graph definition
   const vertexText = vertex.label;
@@ -108,13 +103,12 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
   // Add the node
   const node = {
     labelStyle: styles.labelStyle,
-    shape: _shape,
+    shape: shape,
     labelText: vertexText,
-    // labelType: vertex.labelType,
-    rx: radious,
-    ry: radious,
+    rx: radius,
+    ry: radius,
     class: classStr,
-    style: styles.style, // + 'fill:#9f9;stroke:#333;stroke-width:4px;',
+    style: styles.style,
     id: vertex.id,
     directions: vertex.directions,
     width: bounds.width,
@@ -124,8 +118,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     positioned,
     intersect: undefined,
     type: vertex.type,
-    // props: vertex.props,
-    padding: padding ?? (getConfig()?.flowchart?.padding || 0),
+    padding: padding ?? (getConfig()?.block?.padding || 0),
   };
   return node;
 }

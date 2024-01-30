@@ -304,7 +304,7 @@ describe('Block diagram', () => {
   it('BL22: sizing - it should be possible to make a block wider', () => {
     imgSnapshotTest(
       `block-beta
-      A("rounded):2
+      A("rounded"):2
       B:2
       C
       `,
