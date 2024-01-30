@@ -64,3 +64,5 @@ export interface ClassDef {
   textStyles: string[];
   styles: string[];
 }
+
+export type Direction = 'up' | 'down' | 'left' | 'right' | 'x' | 'y';

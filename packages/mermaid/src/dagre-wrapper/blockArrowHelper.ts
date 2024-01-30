@@ -1,4 +1,6 @@
-const expandAndDeduplicateDirections = (directions) => {
+import type { Direction } from '../../src/diagrams/block/blockTypes.js';
+
+const expandAndDeduplicateDirections = (directions: Direction[]) => {
   const uniqueDirections = new Set();
 
   for (const direction of directions) {
@@ -19,7 +21,11 @@ const expandAndDeduplicateDirections = (directions) => {
 
   return uniqueDirections;
 };
-export const getArrowPoints = (duplicatedDirections, bbox, node) => {
+export const getArrowPoints = (
+  duplicatedDirections: Direction[],
+  bbox: { width: number; height: number },
+  node: any
+) => {
   // Expand and deduplicate the provided directions.
   // for instance: x, right => right, left
   const directions = expandAndDeduplicateDirections(duplicatedDirections);
@@ -37,7 +43,7 @@ export const getArrowPoints = (duplicatedDirections, bbox, node) => {
   const padding = node.padding / 2;
 
   // Initialize an empty array to store points for the arrow.
-  let points = [];
+  const points = [];
 
   if (
     directions.has('right') &&
