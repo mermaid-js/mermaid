@@ -2,19 +2,17 @@ import type { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
 import { calculateBlockSizes, insertBlocks, insertEdges } from './renderHelpers.js';
 import { layout } from './layout.js';
-import { setupGraphViewbox } from '../../setupGraphViewbox.js';
+import type { MermaidConfig, BaseDiagramConfig } from '../../config.type.js';
 import insertMarkers from '../../dagre-wrapper/markers.js';
 import {
   select as d3select,
   scaleOrdinal as d3scaleOrdinal,
   schemeTableau10 as d3schemeTableau10,
 } from 'd3';
+import type { ContainerElement } from 'd3';
 import { log } from '../../logger.js';
-
 import type { BlockDB } from './blockDB.js';
 import type { Block } from './blockTypes.js';
-
-// import { diagram as BlockDiagram } from './blockDiagram.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 /**
@@ -34,7 +32,7 @@ export const draw = async function (
   _version: string,
   diagObj: Diagram
 ): Promise<void> {
-  const { securityLevel, flowchart: conf } = configApi.getConfig();
+  const { securityLevel, block: conf } = configApi.getConfig();
   const db = diagObj.db as BlockDB;
   let sandboxElement: any;
   if (securityLevel === 'sandbox') {
@@ -65,7 +63,6 @@ export const draw = async function (
   const nodes = svg.insert('g').attr('class', 'block');
   await calculateBlockSizes(nodes, bl, db);
   const bounds = layout(db);
-  // log.debug('Here be blocks', bl);
   await insertBlocks(nodes, bl, db);
   await insertEdges(nodes, edges, blArr, db, id);
 
@@ -80,31 +77,13 @@ export const draw = async function (
     const magicFactor = Math.max(1, Math.round(0.125 * (bounds2.width / bounds2.height)));
     const height = bounds2.height + magicFactor + 10;
     const width = bounds2.width + 10;
-    const useMaxWidth = false;
-    configureSvgSize(svg, height, width, useMaxWidth);
+    const { useMaxWidth } = conf as Exclude<MermaidConfig['block'], undefined>;
+    configureSvgSize(svg, height, width, !!useMaxWidth);
     log.debug('Here Bounds', bounds, bounds2);
     svg.attr(
       'viewBox',
       `${bounds2.x - 5} ${bounds2.y - 5} ${bounds2.width + 10} ${bounds2.height + 10}`
     );
-  }
-  // svg.attr('viewBox', `${-200} ${-200} ${400} ${400}`);
-
-  // Prepare data for construction based on diagObj.db
-  // This must be a mutable object with `nodes` and `links` properties:
-  //
-  // @ts-ignore TODO: db type
-  // const graph = diagObj.db.getGraph();
-
-  // const nodeWidth = 10;
-
-  // Create rectangles for nodes
-  // const db:BlockDB = diagObj.db;
-
-  interface LayedBlock extends Block {
-    children?: LayedBlock[];
-    x?: number;
-    y?: number;
   }
 
   // Get color scheme for the graph

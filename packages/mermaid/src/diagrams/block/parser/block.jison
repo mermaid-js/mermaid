@@ -79,12 +79,7 @@ accDescr\s*":"\s*                                               { this.pushState
 accDescr\s*"{"\s*                                { this.pushState("acc_descr_multiline");}
 <acc_descr_multiline>[\}]                       { this.popState(); }
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
-"subgraph"            return 'subgraph';
-"end"\b\s*            return 'end';
-.*direction\s+TB[^\n]*                                      return 'direction_tb';
-.*direction\s+BT[^\n]*                                      return 'direction_bt';
-.*direction\s+RL[^\n]*                                      return 'direction_rl';
-.*direction\s+LR[^\n]*                                      return 'direction_lr';
+
 
 // Node end of shape
 <NODE>"((("             { this.popState();yy.getLogger().debug('Lex: (('); return "NODE_DEND"; }

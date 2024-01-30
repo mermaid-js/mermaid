@@ -56,12 +56,7 @@ export interface Block {
   styleClass?: string;
   styles?: string[];
   stylesStr?: string;
-  w?: number;
-}
-
-export interface Link {
-  source: Block;
-  target: Block;
+  widthInColumns?: number;
 }
 
 export interface ClassDef {

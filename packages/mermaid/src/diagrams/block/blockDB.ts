@@ -1,5 +1,5 @@
 import type { DiagramDB } from '../../diagram-api/types.js';
-import type { BlockConfig, BlockType, Block, Link, ClassDef } from './blockTypes.js';
+import type { BlockConfig, BlockType, Block, ClassDef } from './blockTypes.js';
 import * as configApi from '../../config.js';
 import { clear as commonClear } from '../common/commonDb.js';
 import { log } from '../../logger.js';
@@ -240,11 +240,6 @@ const setHierarchy = (block: Block[]): void => {
   blocks = rootBlock.children;
 };
 
-const addLink = (link: Link): Link => {
-  links.push(link);
-  return link;
-};
-
 const getColumns = (blockid: string): number => {
   const block = blockDatabase[blockid];
   if (!block) {
@@ -264,13 +259,6 @@ const getColumns = (blockid: string): number => {
  * @returns
  */
 const getBlocksFlat = () => {
-  // const result: Block[] = [];
-  // // log.debug('abc88 getBlocksFlat', blockDatabase);
-  // const keys = Object.keys(blockDatabase);
-  // for (const key of keys) {
-  //   result.push(blockDatabase[key]);
-  // }
-  // return result;
   return [...Object.values(blockDatabase)];
 };
 /**
@@ -292,11 +280,8 @@ const setBlock = (block: Block) => {
   blockDatabase[block.id] = block;
 };
 
-const getLinks = () => links;
-
 const getLogger = () => console;
 
-// type IGetClasses = () => Record<string, ClassDef>;
 /**
  * Return all of the style classes
  */
@@ -306,15 +291,13 @@ export const getClasses = function () {
 
 const db = {
   getConfig: () => configApi.getConfig().block,
-  addLink: addLink,
   typeStr2Type: typeStr2Type,
   edgeTypeStr2Type: edgeTypeStr2Type,
   edgeStrToEdgeData,
-  getLogger, // TODO: remove
+  getLogger,
   getBlocksFlat,
   getBlocks,
   getEdges,
-  getLinks,
   setHierarchy,
   getBlock,
   setBlock,

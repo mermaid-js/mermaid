@@ -1,7 +1,8 @@
 import type { BlockDB } from './blockDB.js';
 import type { Block } from './blockTypes.js';
 import { log } from '../../logger.js';
-const padding = 8;
+import { getConfig } from '../../diagram-api/diagramAPI.js';
+const padding = getConfig()?.block?.padding || 8;
 
 interface BlockPosition {
   px: number;
@@ -59,7 +60,7 @@ const getMaxChildSize = (block: Block) => {
       continue;
     }
     if (width > maxWidth) {
-      maxWidth = width / (block.w || 1);
+      maxWidth = width / (block.widthInColumns || 1);
     }
     if (height > maxHeight) {
       maxHeight = height;
@@ -68,7 +69,7 @@ const getMaxChildSize = (block: Block) => {
   return { width: maxWidth, height: maxHeight };
 };
 
-function setBlockSizes(block: Block, db: BlockDB, sieblingWidth = 0, sieblingHeight = 0) {
+function setBlockSizes(block: Block, db: BlockDB, siblingWidth = 0, siblingHeight = 0) {
   log.debug(
     'setBlockSizes abc95 (start)',
     block.id,
@@ -76,18 +77,16 @@ function setBlockSizes(block: Block, db: BlockDB, sieblingWidth = 0, sieblingHei
     'block width =',
     block?.size,
     'sieblingWidth',
-    sieblingWidth
+    siblingWidth
   );
   if (!block?.size?.width) {
     block.size = {
-      width: sieblingWidth,
-      height: sieblingHeight,
+      width: siblingWidth,
+      height: siblingHeight,
       x: 0,
       y: 0,
     };
   }
-  const totalWidth = 0;
-  const totalHeight = 0;
   let maxWidth = 0;
   let maxHeight = 0;
 
@@ -105,34 +104,21 @@ function setBlockSizes(block: Block, db: BlockDB, sieblingWidth = 0, sieblingHei
     for (const child of block.children) {
       if (child.size) {
         log.debug(
-          'abc95 Setting size of children of',
-          block.id,
-          'id=',
-          child.id,
-          maxWidth,
-          maxHeight,
-          child.size
+          `abc95 Setting size of children of ${block.id} id=${child.id} ${maxWidth} ${maxHeight} ${child.size}`
         );
-        child.size.width = maxWidth * (child.w || 1) + padding * ((child.w || 1) - 1);
+        child.size.width =
+          maxWidth * (child.widthInColumns || 1) + padding * ((child.widthInColumns || 1) - 1);
         child.size.height = maxHeight;
         child.size.x = 0;
         child.size.y = 0;
+
         log.debug(
-          'abc95 updating size of ',
-          block.id,
-          ' children child:',
-          child.id,
-          'maxWidth:',
-          maxWidth,
-          'maxHeight:',
-          maxHeight
+          `abc95 updating size of ${block.id} children child:${child.id} maxWidth:${maxWidth} maxHeight:${maxHeight}`
         );
       }
     }
     for (const child of block.children) {
-      // log.debug('abc95 fin 2 Setting size', child.id, maxWidth, maxHeight, child.size);
       setBlockSizes(child, db, maxWidth, maxHeight);
-      // log.debug('abc95 fin 3 Setting size', child.id, maxWidth, maxHeight, child.size);
     }
 
     const columns = block.columns || -1;
@@ -144,28 +130,21 @@ function setBlockSizes(block: Block, db: BlockDB, sieblingWidth = 0, sieblingHei
       xSize = columns;
     }
 
-    const w = block.w || 1;
+    const w = block.widthInColumns || 1;
 
     const ySize = Math.ceil(numItems / xSize);
 
     let width = xSize * (maxWidth + padding) + padding;
     let height = ySize * (maxHeight + padding) + padding;
     // If maxWidth
-    if (width < sieblingWidth) {
+    if (width < siblingWidth) {
       log.debug(
-        'Detected to small siebling: abc95',
-        block.id,
-        'sieblingWidth',
-        sieblingWidth,
-        'sieblingHeight',
-        sieblingHeight,
-        'width',
-        width
+        `Detected to small siebling: abc95 ${block.id} sieblingWidth ${siblingWidth} sieblingHeight ${siblingHeight} width ${width}`
       );
-      width = sieblingWidth;
-      height = sieblingHeight;
-      const childWidth = (sieblingWidth - xSize * padding - padding) / xSize;
-      const childHeight = (sieblingHeight - ySize * padding - padding) / ySize;
+      width = siblingWidth;
+      height = siblingHeight;
+      const childWidth = (siblingWidth - xSize * padding - padding) / xSize;
+      const childHeight = (siblingHeight - ySize * padding - padding) / ySize;
       log.debug('Size indata abc88', block.id, 'childWidth', childWidth, 'maxWidth', maxWidth);
       log.debug('Size indata abc88', block.id, 'childHeight', childHeight, 'maxHeight', maxHeight);
       log.debug('Size indata abc88 xSize', xSize, 'paddiong', padding);
@@ -182,17 +161,9 @@ function setBlockSizes(block: Block, db: BlockDB, sieblingWidth = 0, sieblingHei
     }
 
     log.debug(
-      'abc95 (finale calc)',
-      block.id,
-      'xSize',
-      xSize,
-      'ySize',
-      ySize,
-      'columns',
-      columns,
-      block.children.length,
-      'width=',
-      Math.max(width, block.size?.width || 0)
+      `abc95 (finale calc) ${block.id} xSize ${xSize} ySize ${ySize} columns ${columns}${
+        block.children.length
+      } width=${Math.max(width, block.size?.width || 0)}`
     );
     if (width < (block?.size?.width || 0)) {
       width = block?.size?.width || 0;
@@ -229,14 +200,7 @@ function setBlockSizes(block: Block, db: BlockDB, sieblingWidth = 0, sieblingHei
 
 function layoutBlocks(block: Block, db: BlockDB) {
   log.debug(
-    'abc85 layout blocks (=>layoutBlocks)',
-    block.id,
-    'x:',
-    block?.size?.x,
-    'y:',
-    block?.size?.y,
-    'width:',
-    block?.size?.width
+    `abc85 layout blocks (=>layoutBlocks) ${block.id} x: ${block?.size?.x} y: ${block?.size?.y} width: ${block?.size?.width}`
   );
   const columns = block.columns || -1;
   log.debug('layoutBlocks columns abc95', block.id, '=>', columns, block);
@@ -268,56 +232,22 @@ function layoutBlocks(block: Block, db: BlockDB) {
         log.debug('New row in layout for block', block.id, ' and child ', child.id, rowPos);
       }
       log.debug(
-        'abc89 layout blocks (child) id:',
-        child.id,
-        'Pos:',
-        columnPos,
-        ' (px, py)',
-        px,
-        py,
-        ' (',
-        parent?.size?.x,
-        ',',
-        parent?.size?.y,
-        ')',
-        'parent:',
-        parent.id,
-        'width:',
-        width,
-        padding
+        `abc89 layout blocks (child) id: ${child.id} Pos: ${columnPos} (px, py) ${px},${py} (${parent?.size?.x},${parent?.size?.y}) parent: ${parent.id} width: ${width}${padding}`
       );
       if (parent.size) {
-        // child.size.x =
-        //   block.size.x -
-        //   block.size.width / 2 +
-        //   px * (child?.w || 1) * (width + padding) +
-        //   width / 2 +
-        //   padding;
         const halfWidth = width / 2;
         child.size.x = startingPosX + padding + halfWidth;
 
         log.debug(
-          'abc91 layout blocks (calc) px, py',
-          'id:',
-          child.id,
-          'startingPosX',
-          startingPosX,
-          'new startingPosX',
-          child.size.x + halfWidth,
-          'padding',
-          padding,
-          'width=',
-          width,
-          'halfWidth',
-          halfWidth,
-          '=>',
-          'x:',
-          child.size.x,
-          'y:',
-          child.size.y,
-          child.w,
-          '(width * (child?.w || 1)) / 2',
-          (width * (child?.w || 1)) / 2
+          `abc91 layout blocks (calc) px, pyid:${
+            child.id
+          } startingPos=X${startingPosX} new startingPosX${
+            child.size.x
+          } ${halfWidth} padding=${padding} width=${width} halfWidth=${halfWidth} => x:${
+            child.size.x
+          } y:${child.size.y} ${child.widthInColumns} (width * (child?.w || 1)) / 2 ${
+            (width * (child?.widthInColumns || 1)) / 2
+          }`
         );
 
         startingPosX = child.size.x + halfWidth;
@@ -326,21 +256,11 @@ function layoutBlocks(block: Block, db: BlockDB) {
           parent.size.y - parent.size.height / 2 + py * (height + padding) + height / 2 + padding;
 
         log.debug(
-          'abc88 layout blocks (calc) px, py',
-          'id:',
-          child.id,
-          'startingPosX',
-          startingPosX,
-          padding,
-          halfWidth,
-          '=>',
-          'x:',
-          child.size.x,
-          'y:',
-          child.size.y,
-          child.w,
-          '(width * (child?.w || 1)) / 2',
-          (width * (child?.w || 1)) / 2
+          `abc88 layout blocks (calc) px, pyid:${
+            child.id
+          }startingPosX${startingPosX}${padding}${halfWidth}=>x:${child.size.x}y:${child.size.y}${
+            child.widthInColumns
+          }(width * (child?.w || 1)) / 2${(width * (child?.widthInColumns || 1)) / 2}`
         );
       }
 
@@ -348,19 +268,12 @@ function layoutBlocks(block: Block, db: BlockDB) {
       if (child.children) {
         layoutBlocks(child, db);
       }
-      columnPos += child?.w || 1;
+      columnPos += child?.widthInColumns || 1;
       log.debug('abc88 columnsPos', child, columnPos);
     }
   }
   log.debug(
-    'layout blocks (<==layoutBlocks)',
-    block.id,
-    'x:',
-    block?.size?.x,
-    'y:',
-    block?.size?.y,
-    'width:',
-    block?.size?.width
+    `layout blocks (<==layoutBlocks) ${block.id} x: ${block?.size?.x} y: ${block?.size?.y} width: ${block?.size?.width}`
   );
 }
 

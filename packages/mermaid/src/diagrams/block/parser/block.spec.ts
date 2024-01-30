@@ -353,7 +353,7 @@ describe('Block diagram', function () {
       expect(blocks.length).toBe(2);
       const one = blocks[0];
       const two = blocks[1];
-      expect(two.w).toBe(2);
+      expect(two.widthInColumns).toBe(2);
     });
     it('empty blocks', async () => {
       const str = `block-beta

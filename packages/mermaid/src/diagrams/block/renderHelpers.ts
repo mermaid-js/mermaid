@@ -130,7 +130,11 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
   return node;
 }
 type IOperation = (elem: any, block: any, db: any) => Promise<void>;
-async function calculateBlockSize(elem: any, block: any, db: any) {
+async function calculateBlockSize(
+  elem: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
+  block: any,
+  db: any
+) {
   const node = getNodeFromBlock(block, db, false);
   if (node.type === 'group') {
     return;
@@ -147,9 +151,6 @@ async function calculateBlockSize(elem: any, block: any, db: any) {
 
 export async function insertBlockPositioned(elem: any, block: Block, db: any) {
   const node = getNodeFromBlock(block, db, true);
-  // if (node.type === 'composite') {
-  //   return;
-  // }
   // Add the element to the DOM to size it
   const obj = db.getBlock(node.id);
   if (obj.type !== 'space') {
@@ -160,7 +161,7 @@ export async function insertBlockPositioned(elem: any, block: Block, db: any) {
 }
 
 export async function performOperations(
-  elem: ContainerElement,
+  elem: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
   blocks: Block[],
   db: BlockDB,
   operation: IOperation
@@ -173,16 +174,20 @@ export async function performOperations(
   }
 }
 
-export async function calculateBlockSizes(elem: ContainerElement, blocks: Block[], db: BlockDB) {
+export async function calculateBlockSizes(elem: any, blocks: Block[], db: BlockDB) {
   await performOperations(elem, blocks, db, calculateBlockSize);
 }
 
-export async function insertBlocks(elem: ContainerElement, blocks: Block[], db: BlockDB) {
+export async function insertBlocks(
+  elem: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
+  blocks: Block[],
+  db: BlockDB
+) {
   await performOperations(elem, blocks, db, insertBlockPositioned);
 }
 
 export async function insertEdges(
-  elem: ContainerElement,
+  elem: any,
   edges: Block[],
   blocks: Block[],
   db: BlockDB,
@@ -214,9 +219,7 @@ export async function insertEdges(
     // elem, e, edge, clusterDb, diagramType, graph;
     if (edge.start && edge.end) {
       const startBlock = db.getBlock(edge.start);
-      const startBlock2 = g.node(edge.start);
       const endBlock = db.getBlock(edge.end);
-      const endBlock2 = g.node(edge.end);
 
       if (startBlock?.size && endBlock?.size) {
         const start = startBlock.size;
