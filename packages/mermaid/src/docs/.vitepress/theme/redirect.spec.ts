@@ -43,5 +43,5 @@ test.each([
     'configure/faq.html#frequently-asked-questions',
   ], // with hash
 ])('should process url %s to %s', (link: string, path: string) => {
-  expect(getRedirect(link)).toBe(path);
+  expect(getRedirect(new URL(link))).toBe(path);
 });
