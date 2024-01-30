@@ -17,8 +17,9 @@ permissions:
   contents: read
 
 env:
+  node-version: 18.x
   # For PRs and MergeQueues, the target commit is used, and for push events, github.event.previous is used.
-  targetHash: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || github.event.before }}
+  targetHash: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || (github.event.before == '0000000000000000000000000000000000000000' && 'develop' || github.event.before)  }}
 
 jobs:
   cache:
@@ -30,7 +31,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
-
       - name: Cache snapshots
         id: cache-snapshot
         uses: actions/cache@v4
@@ -61,7 +61,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18.x]
         containers: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v4
@@ -69,10 +68,10 @@ jobs:
       - uses: pnpm/action-setup@v2
         # uses version from "packageManager" field in package.json
 
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js ${{ env.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ env.node-version }}
 
       # These cached snapshots are downloaded, providing the reference snapshots.
       - name: Cache snapshots
