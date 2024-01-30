@@ -4,9 +4,8 @@ import theme from './themes/index.js';
 import config from './defaultConfig.js';
 import type { MermaidConfig } from './config.type.js';
 import { sanitizeDirective } from './utils/sanitizeDirective.js';
-import type { RequiredDeep } from 'type-fest';
 
-export const defaultConfig: RequiredDeep<MermaidConfig> = Object.freeze(config);
+export const defaultConfig: MermaidConfig = Object.freeze(config);
 
 let siteConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
 let configFromInitialize: MermaidConfig;

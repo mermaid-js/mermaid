@@ -10,11 +10,11 @@
 
 ### defaultConfig
 
-• `Const` **defaultConfig**: `RequiredDeep`<`MermaidConfig`>
+• `Const` **defaultConfig**: `MermaidConfig`
 
 #### Defined in
 
-[config.ts:9](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L9)
+[config.ts:8](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L8)
 
 ## Functions
 
@@ -36,7 +36,7 @@ Pushes in a directive to the configuration
 
 #### Defined in
 
-[config.ts:189](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L189)
+[config.ts:188](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L188)
 
 ---
 
@@ -60,7 +60,7 @@ The currentConfig
 
 #### Defined in
 
-[config.ts:132](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L132)
+[config.ts:131](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L131)
 
 ---
 
@@ -84,7 +84,7 @@ The siteConfig
 
 #### Defined in
 
-[config.ts:97](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L97)
+[config.ts:96](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L96)
 
 ---
 
@@ -118,7 +118,7 @@ The siteConfig
 
 #### Defined in
 
-[config.ts:219](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L219)
+[config.ts:218](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L218)
 
 ---
 
@@ -147,7 +147,7 @@ options in-place
 
 #### Defined in
 
-[config.ts:147](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L147)
+[config.ts:146](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L146)
 
 ---
 
@@ -167,7 +167,7 @@ options in-place
 
 #### Defined in
 
-[config.ts:76](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L76)
+[config.ts:75](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L75)
 
 ---
 
@@ -199,7 +199,7 @@ The currentConfig merged with the sanitized conf
 
 #### Defined in
 
-[config.ts:114](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L114)
+[config.ts:113](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L113)
 
 ---
 
@@ -232,7 +232,7 @@ The new siteConfig
 
 #### Defined in
 
-[config.ts:62](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L62)
+[config.ts:61](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L61)
 
 ---
 
@@ -253,7 +253,7 @@ The new siteConfig
 
 #### Defined in
 
-[config.ts:16](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L16)
+[config.ts:15](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L15)
 
 ---
 
@@ -273,4 +273,4 @@ The new siteConfig
 
 #### Defined in
 
-[config.ts:80](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L80)
+[config.ts:79](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L79)

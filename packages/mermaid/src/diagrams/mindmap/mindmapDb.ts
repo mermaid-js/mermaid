@@ -3,7 +3,7 @@ import type { D3Element } from '../../mermaidAPI.js';
 import { sanitizeText } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 import type { MindmapNode } from './mindmapTypes.js';
-import { defaultConfig } from '../../config.js';
+import defaultConfig from '../../defaultConfig.js';
 
 let nodes: MindmapNode[] = [];
 let cnt = 0;
