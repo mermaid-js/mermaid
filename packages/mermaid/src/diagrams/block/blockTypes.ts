@@ -1,8 +1,4 @@
-import type { BaseDiagramConfig } from '../../config.type.js';
-
-export interface BlockConfig extends BaseDiagramConfig {
-  padding?: number;
-}
+export type { BlockDiagramConfig as BlockConfig } from '../../config.type.js';
 
 export type BlockType =
   | 'na'
