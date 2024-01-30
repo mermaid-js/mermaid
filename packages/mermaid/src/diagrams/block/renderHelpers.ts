@@ -129,7 +129,11 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
   };
   return node;
 }
-type IOperation = (elem: any, block: any, db: any) => Promise<void>;
+type IOperation = (
+  elem: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
+  block: Block,
+  db: BlockDB
+) => Promise<void>;
 async function calculateBlockSize(
   elem: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
   block: any,
