@@ -25,12 +25,7 @@ import { configureSvgSize } from '../../setupGraphViewbox.js';
  * @returns ClassDef - The styles
  */
 export const getClasses = function (text: any, diagObj: any) {
-  log.debug('Extracting classes', diagObj.db.getClasses());
-  try {
-    return diagObj.db.getClasses();
-  } catch (e) {
-    return;
-  }
+  return diagObj.db.getClasses();
 };
 
 export const draw = async function (

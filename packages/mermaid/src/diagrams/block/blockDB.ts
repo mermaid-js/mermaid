@@ -83,7 +83,7 @@ export const setCssClass = function (itemIds: string, cssClassName: string) {
   });
 };
 
-const populateBlockDatabase = (_blockList: (Block[] | Block[][]), parent: Block): void => {
+const populateBlockDatabase = (_blockList: Block[] | Block[][], parent: Block): void => {
   const blockList = _blockList.flat();
   const children = [];
   for (const block of blockList) {
@@ -265,13 +265,14 @@ const getColumns = (blockid: string): number => {
  * @returns
  */
 const getBlocksFlat = () => {
-  const result: Block[] = [];
-  // log.debug('abc88 getBlocksFlat', blockDatabase);
-  const keys = Object.keys(blockDatabase);
-  for (const key of keys) {
-    result.push(blockDatabase[key]);
-  }
-  return result;
+  // const result: Block[] = [];
+  // // log.debug('abc88 getBlocksFlat', blockDatabase);
+  // const keys = Object.keys(blockDatabase);
+  // for (const key of keys) {
+  //   result.push(blockDatabase[key]);
+  // }
+  // return result;
+  return [...Object.values(blockDatabase)];
 };
 /**
  * Returns the the hierarchy of blocks
@@ -280,6 +281,7 @@ const getBlocksFlat = () => {
 const getBlocks = () => {
   return blocks || [];
 };
+
 const getEdges = () => {
   return edgeList;
 };
