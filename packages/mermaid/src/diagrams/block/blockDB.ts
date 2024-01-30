@@ -83,7 +83,7 @@ export const setCssClass = function (itemIds: string, cssClassName: string) {
   });
 };
 
-const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
+const populateBlockDatabase = (_blockList: (Block[] | Block[][]), parent: Block): void => {
   const blockList = _blockList.flat();
   const children = [];
   for (const block of blockList) {
