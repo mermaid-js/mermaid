@@ -154,7 +154,6 @@ const populateBlockDatabase = (_blockList: (Block[] | Block[][]), parent: Block)
 };
 
 let blocks: Block[] = [];
-const links: Link[] = [];
 let rootBlock = { id: 'root', type: 'composite', children: [], columns: -1 } as Block;
 
 const clear = (): void => {
