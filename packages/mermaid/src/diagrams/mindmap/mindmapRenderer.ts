@@ -1,18 +1,17 @@
-import { select } from 'd3';
-import { log } from '../../logger.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { setupGraphViewbox } from '../../setupGraphViewbox.js';
-import { drawNode, positionNode } from './svgDraw.js';
 import cytoscape from 'cytoscape';
 // @ts-expect-error No types available
 import coseBilkent from 'cytoscape-cose-bilkent';
-import type { MindmapNode, MindmapDB, FilledMindMapNode } from './mindmapTypes.js';
-import type { MermaidConfig } from '../../config.type.js';
-import type { Diagram } from '../../Diagram.js';
-import type { D3Element } from '../../mermaidAPI.js';
+import { select } from 'd3';
 import type { MermaidConfigWithDefaults } from '../../config.js';
+import type { MermaidConfig } from '../../config.type.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
+import type { DrawDefinition } from '../../diagram-api/types.js';
+import { log } from '../../logger.js';
+import type { D3Element } from '../../mermaidAPI.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import { DiagramRenderer, DrawDefinition } from '../../diagram-api/types.js';
+import { setupGraphViewbox } from '../../setupGraphViewbox.js';
+import type { FilledMindMapNode, MindmapDB, MindmapNode } from './mindmapTypes.js';
+import { drawNode, positionNode } from './svgDraw.js';
 
 // Inject the layout algorithm into cytoscape
 cytoscape.use(coseBilkent);
