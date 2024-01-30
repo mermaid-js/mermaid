@@ -10,8 +10,7 @@ describe('Block diagram', () => {
     id1
   end
   id["Next row"]
-      `,
-      {}
+      `
     );
   });
 
