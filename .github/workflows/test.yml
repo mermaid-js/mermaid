@@ -5,9 +5,6 @@ on: [push, pull_request, merge_group]
 permissions:
   contents: read
 
-env:
-  node-version: 20.x
-
 jobs:
   unit-test:
     runs-on: ubuntu-latest
@@ -17,11 +14,11 @@ jobs:
       - uses: pnpm/action-setup@v2
         # uses version from "packageManager" field in package.json
 
-      - name: Setup Node.js ${{ env.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           cache: pnpm
-          node-version: ${{ env.node-version }}
+          node-version-file: '.node-version'
 
       - name: Install Packages
         run: |
