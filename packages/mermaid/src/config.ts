@@ -4,7 +4,8 @@ import theme from './themes/index.js';
 import config from './defaultConfig.js';
 import type { MermaidConfig } from './config.type.js';
 import { sanitizeDirective } from './utils/sanitizeDirective.js';
-import type { RequiredDeep } from 'type-fest';
+import lodashGet from 'lodash-es/get.js';
+import type { RequiredDeep, Get, Paths } from 'type-fest';
 
 export const defaultConfig: RequiredDeep<MermaidConfig> = Object.freeze(config);
 
@@ -245,4 +246,21 @@ const checkConfig = (config: MermaidConfig) => {
   if (config.lazyLoadedDiagrams || config.loadExternalDiagramsAtStartup) {
     issueWarning('LAZY_LOAD_DEPRECATED');
   }
+};
+
+/**
+ * Get a value from the provided config, or the default config if it doesn't exist
+ * @param config - Mermaid Config
+ * @param path - Path of the value to get
+ * @returns Value from provided config if it exists, otherwise from default config
+ */
+export const getConfigValue = <Path extends Paths<RequiredDeep<MermaidConfig>>>(
+  config: MermaidConfig,
+  path: Path
+): Get<RequiredDeep<MermaidConfig>, Path> => {
+  let value = lodashGet(config, path) as Get<RequiredDeep<MermaidConfig>, Path>;
+  if (!value) {
+    value = lodashGet(defaultConfig, path) as Get<RequiredDeep<MermaidConfig>, Path>;
+  }
+  return value;
 };

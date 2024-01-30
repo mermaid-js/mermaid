@@ -3,7 +3,7 @@ import type { D3Element } from '../../mermaidAPI.js';
 import { sanitizeText } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 import type { MindmapNode } from './mindmapTypes.js';
-import { defaultConfig } from '../../config.js';
+import { getConfigValue } from '../../config.js';
 
 let nodes: MindmapNode[] = [];
 let cnt = 0;
@@ -32,7 +32,7 @@ const getMindmap = () => {
 const addNode = (level: number, id: string, descr: string, type: number) => {
   log.info('addNode', level, id, descr, type);
   const conf = getConfig();
-  let padding: number = conf.mindmap?.padding ?? defaultConfig.mindmap.padding;
+  let padding: number = getConfigValue(conf, 'mindmap.padding');
   switch (type) {
     case nodeType.ROUNDED_RECT:
     case nodeType.RECT:
@@ -47,7 +47,7 @@ const addNode = (level: number, id: string, descr: string, type: number) => {
     descr: sanitizeText(descr, conf),
     type,
     children: [],
-    width: conf.mindmap?.maxNodeWidth ?? defaultConfig.mindmap.maxNodeWidth,
+    width: getConfigValue(conf, 'mindmap.maxNodeWidth'),
     padding,
   } satisfies MindmapNode;
 

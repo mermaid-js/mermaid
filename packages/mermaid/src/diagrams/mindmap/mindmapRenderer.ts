@@ -3,7 +3,6 @@ import cytoscape from 'cytoscape';
 import coseBilkent from 'cytoscape-cose-bilkent';
 import { select } from 'd3';
 import type { MermaidConfig } from '../../config.type.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import type { D3Element } from '../../mermaidAPI.js';
@@ -11,7 +10,7 @@ import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import type { FilledMindMapNode, MindmapDB, MindmapNode } from './mindmapTypes.js';
 import { drawNode, positionNode } from './svgDraw.js';
-import { defaultConfig } from '../../config.js';
+import { getConfig, getConfigValue } from '../../config.js';
 
 // Inject the layout algorithm into cytoscape
 cytoscape.use(coseBilkent);
@@ -191,8 +190,8 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   setupGraphViewbox(
     undefined,
     svg,
-    conf.mindmap?.padding ?? defaultConfig.mindmap.padding,
-    conf.mindmap?.useMaxWidth ?? defaultConfig.mindmap.useMaxWidth
+    getConfigValue(conf, 'mindmap.padding'),
+    getConfigValue(conf, 'mindmap.useMaxWidth')
   );
 };
 
