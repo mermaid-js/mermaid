@@ -66,7 +66,7 @@ module.exports = {
     '@typescript-eslint/naming-convention': [
       'error',
       {
-        selector: 'interface',
+        selector: 'typeLike',
         format: ['PascalCase'],
         custom: {
           regex: '^I[A-Z]',
