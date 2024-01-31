@@ -121,8 +121,8 @@
     "typescript": "^5.0.4",
     "unist-util-flatmap": "^1.0.0",
     "unist-util-visit": "^4.1.2",
-    "vitepress": "^1.0.0-alpha.72",
-    "vitepress-plugin-search": "^1.0.4-alpha.20"
+    "vitepress": "^1.0.0-rc.40",
+    "vitepress-plugin-search": "^1.0.4-alpha.22"
   },
   "files": [
     "dist/",
