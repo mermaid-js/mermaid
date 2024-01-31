@@ -35,7 +35,6 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          cache: pnpm
           node-version-file: '.node-version'
 
       - if: ${{ env.USE_APPLI }}

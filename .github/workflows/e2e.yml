@@ -29,7 +29,6 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          cache: pnpm
           node-version-file: '.node-version'
       - name: Cache snapshots
         id: cache-snapshot
@@ -71,7 +70,6 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          cache: pnpm
           node-version-file: '.node-version'
 
       # These cached snapshots are downloaded, providing the reference snapshots.
