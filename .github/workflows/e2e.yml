@@ -59,6 +59,9 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
+    container:
+      image: cypress/browsers:node-20.11.0-chrome-121.0.6167.85-1-ff-120.0-edge-121.0.2277.83-1
+      options: --user 1001
     needs: cache
     strategy:
       fail-fast: false
