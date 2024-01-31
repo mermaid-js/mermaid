@@ -240,6 +240,10 @@ const config: RequiredDeep<MermaidConfig> = {
     ...defaultConfigJson.xyChart,
     useWidth: undefined,
   },
+  matrixChart: {
+    ...defaultConfigJson.matrixChart,
+    useWidth: undefined,
+  },
   requirement: {
     ...defaultConfigJson.requirement,
     useWidth: undefined,

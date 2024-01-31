@@ -19,6 +19,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'pie',
   'quadrantChart',
   'xyChart',
+  'matrixChart',
   'requirement',
   'mindmap',
   'timeline',

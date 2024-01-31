@@ -8,6 +8,7 @@ import { info } from '../diagrams/info/infoDetector.js';
 import { pie } from '../diagrams/pie/pieDetector.js';
 import quadrantChart from '../diagrams/quadrant-chart/quadrantDetector.js';
 import xychart from '../diagrams/xychart/xychartDetector.js';
+import matrixChart from '../diagrams/matrixchart/matrixchartDetector.js';
 import requirement from '../diagrams/requirement/requirementDetector.js';
 import sequence from '../diagrams/sequence/sequenceDetector.js';
 import classDiagram from '../diagrams/class/classDetector.js';
@@ -87,6 +88,7 @@ export const addDiagrams = () => {
     journey,
     quadrantChart,
     sankey,
-    xychart
+    xychart,
+    matrixChart
   );
 };
