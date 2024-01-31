@@ -122,11 +122,6 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
   };
   return node;
 }
-type IOperation = (
-  elem: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
-  block: Block,
-  db: BlockDB
-) => Promise<void>;
 async function calculateBlockSize(
   elem: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
   block: any,
@@ -145,6 +140,7 @@ async function calculateBlockSize(
   db.setBlock(obj);
   nodeEl.remove();
 }
+type ActionFun = typeof calculateBlockSize;
 
 export async function insertBlockPositioned(elem: any, block: Block, db: any) {
   const node = getNodeFromBlock(block, db, true);
@@ -161,7 +157,7 @@ export async function performOperations(
   elem: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
   blocks: Block[],
   db: BlockDB,
-  operation: IOperation
+  operation: ActionFun
 ) {
   for (const block of blocks) {
     await operation(elem, block, db);
