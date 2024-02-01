@@ -277,17 +277,14 @@ function layoutBlocks(block: Block, db: BlockDB) {
   );
 }
 
-let minX = 0;
-let minY = 0;
-let maxX = 0;
-let maxY = 0;
-
-function findBounds(block: Block) {
+function findBounds(
+  block: Block,
+  { minX, minY, maxX, maxY } = { minX: 0, minY: 0, maxX: 0, maxY: 0 }
+) {
   if (block.size && block.id !== 'root') {
     const { x, y, width, height } = block.size;
     if (x - width / 2 < minX) {
       minX = x - width / 2;
-      // log.debug('Here APA minX', block.id, x, width, minX);
     }
     if (y - height / 2 < minY) {
       minY = y - height / 2;
@@ -301,9 +298,10 @@ function findBounds(block: Block) {
   }
   if (block.children) {
     for (const child of block.children) {
-      findBounds(child);
+      ({ minX, minY, maxX, maxY } = findBounds(child, { minX, minY, maxX, maxY }));
     }
   }
+  return { minX, minY, maxX, maxY };
 }
 
 export function layout(db: BlockDB) {
@@ -318,12 +316,8 @@ export function layout(db: BlockDB) {
   // positionBlock(root, root, db);
   log.debug('getBlocks', JSON.stringify(root, null, 2));
 
-  minX = 0;
-  minY = 0;
-  maxX = 0;
-  maxY = 0;
-  findBounds(root);
-  // log.debug('Here maxX', minX, '--', maxX);
+  const { minX, minY, maxX, maxY } = findBounds(root);
+
   const height = maxY - minY;
   const width = maxX - minX;
   return { x: minX, y: minY, width, height };
