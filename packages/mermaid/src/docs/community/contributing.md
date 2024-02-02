@@ -371,7 +371,7 @@ If the users have no way to know that things have changed, then you haven't real
 Likewise, if users don't know that there is a new feature that you've implemented, it will forever remain unknown and unused.
 
 The documentation has to be updated for users to know that things have been changed and added!
-If you are adding a new feature, add `(v<MERMAID_RELEASE_VERSION>+)` in the title or description. It will be replaced automatically with the current version number when the release happens.
+If you are adding a new feature, add `(v10.8.0+)` in the title or description. It will be replaced automatically with the current version number when the release happens.
 
 eg: `# Feature Name (v<MERMAID_RELEASE_VERSION>+)`
 
