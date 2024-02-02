@@ -104,7 +104,7 @@ export const addClasses = function (
        */
       const cssClassStr = vertex.cssClasses.join(' ');
 
-      const styles = { labelStyle: '', style: '' }; //getStylesFromArray(vertex.styles);
+      const styles = getStylesFromArray(vertex.styles);
 
       // Use vertex id as text in the box if no text is provided by the graph definition
       const vertexText = vertex.label ?? vertex.id;
@@ -231,7 +231,7 @@ export const addRelations = function (relations: ClassRelation[], g: graphlib.Gr
       //Set relationship style and line type
       classes: 'relation',
       pattern: edge.relation.lineType == 1 ? 'dashed' : 'solid',
-      id: 'id' + cnt,
+      id: `id_${edge.id1}_${edge.id2}_${cnt}`,
       // Set link type for rendering
       arrowhead: edge.type === 'arrow_open' ? 'none' : 'normal',
       //Set edge extra labels

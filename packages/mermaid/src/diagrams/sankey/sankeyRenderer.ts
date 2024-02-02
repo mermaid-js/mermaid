@@ -1,6 +1,5 @@
 import type { Diagram } from '../../Diagram.js';
 import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
-
 import {
   select as d3select,
   scaleOrdinal as d3scaleOrdinal,
@@ -16,7 +15,7 @@ import {
   sankeyCenter as d3SankeyCenter,
   sankeyJustify as d3SankeyJustify,
 } from 'd3-sankey';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import { Uid } from '../../rendering-util/uid.js';
 import type { SankeyNodeAlignment } from '../../config.type.js';
 
@@ -69,12 +68,6 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   const prefix = conf?.prefix ?? defaultSankeyConfig.prefix!;
   const suffix = conf?.suffix ?? defaultSankeyConfig.suffix!;
   const showValues = conf?.showValues ?? defaultSankeyConfig.showValues!;
-
-  // FIX: using max width prevents height from being set, is it intended?
-  // to add height directly one can use `svg.attr('height', height)`
-  //
-  // @ts-ignore TODO: svg type vs selection mismatch
-  configureSvgSize(svg, height, width, useMaxWidth);
 
   // Prepare data for construction based on diagObj.db
   // This must be a mutable object with `nodes` and `links` properties:
@@ -208,6 +201,8 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .attr('d', d3SankeyLinkHorizontal())
     .attr('stroke', coloring)
     .attr('stroke-width', (d: any) => Math.max(1, d.width));
+
+  setupGraphViewbox(undefined, svg, 0, useMaxWidth);
 };
 
 export default {

@@ -49,6 +49,7 @@ required:
   - gitGraph
   - c4
   - sankey
+  - block
 properties:
   theme:
     description: |
@@ -74,6 +75,12 @@ properties:
     description: The maximum allowed size of the users text diagram
     type: number
     default: 50000
+  maxEdges:
+    description: |
+      Defines the maximum number of edges that can be drawn in a graph.
+    type: integer
+    default: 500
+    minimum: 0
   darkMode:
     type: boolean
     default: false
@@ -156,7 +163,7 @@ properties:
       in the current `currentConfig`.
 
       This prevents malicious graph directives from overriding a site's default security.
-    default: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
+    default: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize', 'maxEdges']
     type: array
     items:
       type: string
@@ -210,6 +217,8 @@ properties:
     $ref: '#/$defs/C4DiagramConfig'
   sankey:
     $ref: '#/$defs/SankeyDiagramConfig'
+  block:
+    $ref: '#/$defs/BlockDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -780,6 +789,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       rotateCommitLabel:
         type: boolean
         default: true
+      parallelCommits:
+        type: boolean
+        default: false
       # YAML anchor reference, don't use $ref since ajv doesn't load defaults
       arrowMarkerAbsolute: *arrowMarkerAbsolute
 
@@ -1863,6 +1875,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     unevaluatedProperties: false
     required:
       - titleTopMargin
+      - subGraphTitleMargin
       - diagramPadding
       - htmlLabels
       - nodeSpacing
@@ -1875,6 +1888,20 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       titleTopMargin:
         $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
         default: 25
+      subGraphTitleMargin:
+        description: |
+          Defines a top/bottom margin for subgraph titles
+        type: object
+        properties:
+          top:
+            type: integer
+            minimum: 0
+          bottom:
+            type: integer
+            minimum: 0
+        default:
+          top: 0
+          bottom: 0
       arrowMarkerAbsolute:
         type: boolean # TODO, is this actually used here (it has no default value but was in types)
       diagramPadding:
@@ -2002,6 +2029,16 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           The suffix to use for values
         type: string
         default: ''
+
+  BlockDiagramConfig:
+    title: Block Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for block diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      padding:
+        default: 8
 
   FontCalculator:
     title: Font Calculator

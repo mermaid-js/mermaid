@@ -80,7 +80,9 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
                     ? getConfig().fontSize
                     : window.getComputedStyle(document.body).fontSize;
                   const enlargingFactor = 5;
-                  img.style.width = parseInt(bodyFontSize, 10) * enlargingFactor + 'px';
+                  const width = parseInt(bodyFontSize, 10) * enlargingFactor + 'px';
+                  img.style.minWidth = width;
+                  img.style.maxWidth = width;
                 } else {
                   img.style.width = '100%';
                 }
@@ -113,6 +115,7 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
     label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
   }
   label.insert('rect', ':first-child');
+
   return { shapeSvg, bbox, halfPadding, label };
 };
 

@@ -19,9 +19,12 @@ const markerOffsets = {
  * @returns The angle, deltaX and deltaY
  */
 function calculateDeltaAndAngle(
-  point1: Point | [number, number],
-  point2: Point | [number, number]
+  point1?: Point | [number, number],
+  point2?: Point | [number, number]
 ): { angle: number; deltaX: number; deltaY: number } {
+  if (point1 === undefined || point2 === undefined) {
+    return { angle: 0, deltaX: 0, deltaY: 0 };
+  }
   point1 = pointTransformer(point1);
   point2 = pointTransformer(point2);
   const [x1, y1] = [point1.x, point1.y];
@@ -90,3 +93,44 @@ export const getLineFunctionsWithOffset = (
     },
   };
 };
+
+if (import.meta.vitest) {
+  const { it, expect, describe } = import.meta.vitest;
+  describe('calculateDeltaAndAngle', () => {
+    it('should calculate the angle and deltas between two points', () => {
+      expect(calculateDeltaAndAngle([0, 0], [0, 1])).toStrictEqual({
+        angle: 1.5707963267948966,
+        deltaX: 0,
+        deltaY: 1,
+      });
+      expect(calculateDeltaAndAngle([1, 0], [0, -1])).toStrictEqual({
+        angle: 0.7853981633974483,
+        deltaX: -1,
+        deltaY: -1,
+      });
+      expect(calculateDeltaAndAngle({ x: 1, y: 0 }, [0, -1])).toStrictEqual({
+        angle: 0.7853981633974483,
+        deltaX: -1,
+        deltaY: -1,
+      });
+      expect(calculateDeltaAndAngle({ x: 1, y: 0 }, { x: 1, y: 0 })).toStrictEqual({
+        angle: NaN,
+        deltaX: 0,
+        deltaY: 0,
+      });
+    });
+
+    it('should calculate the angle and deltas if one point in undefined', () => {
+      expect(calculateDeltaAndAngle(undefined, [0, 1])).toStrictEqual({
+        angle: 0,
+        deltaX: 0,
+        deltaY: 0,
+      });
+      expect(calculateDeltaAndAngle([0, 1], undefined)).toStrictEqual({
+        angle: 0,
+        deltaX: 0,
+        deltaY: 0,
+      });
+    });
+  });
+}

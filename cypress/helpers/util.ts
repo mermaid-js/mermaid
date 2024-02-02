@@ -10,7 +10,7 @@ interface CypressConfig {
 type CypressMermaidConfig = MermaidConfig & CypressConfig;
 
 interface CodeObject {
-  code: string;
+  code: string | string[];
   mermaid: CypressMermaidConfig;
 }
 

@@ -26,7 +26,7 @@ jobs:
       # lychee only uses the GITHUB_TOKEN to avoid rate-limiting
       contents: read
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Restore lychee cache
         uses: actions/cache@v3
@@ -36,7 +36,7 @@ jobs:
           restore-keys: cache-lychee-
 
       - name: Link Checker
-        uses: lycheeverse/lychee-action@v1.8.0
+        uses: lycheeverse/lychee-action@v1.9.1
         with:
           args: >-
             --config .github/lychee.toml

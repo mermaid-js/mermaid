@@ -15,7 +15,7 @@ Mermaid
 <a href="https://mermaid.live/"><b>实时编辑器!</b></a>
 </p>
 <p align="center">
- <a href="https://mermaid.js.org">📖 文档</a> | <a href="https://mermaid.js.org/intro/">🚀 入门</a> | <a href="https://www.jsdelivr.com/package/npm/mermaid">🌐 CDN</a> | <a href="https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE" title="Slack invite">🙌 加入我们</a>
+ <a href="https://mermaid.js.org">📖 文档</a> | <a href="https://mermaid.js.org/intro/">🚀 入门</a> | <a href="https://www.jsdelivr.com/package/npm/mermaid">🌐 CDN</a> | <a href="https://discord.gg/AgrbSrBer3" title="Discord invite">🙌 加入我们</a>
 </p>
 <p align="center">
 <a href="./README.md">English</a>
@@ -34,7 +34,7 @@ Mermaid
 [![Coverage Status](https://codecov.io/github/mermaid-js/mermaid/branch/develop/graph/badge.svg)](https://app.codecov.io/github/mermaid-js/mermaid/tree/develop)
 [![CDN Status](https://img.shields.io/jsdelivr/npm/hm/mermaid)](https://www.jsdelivr.com/package/npm/mermaid)
 [![NPM Downloads](https://img.shields.io/npm/dm/mermaid)](https://www.npmjs.com/package/mermaid)
-[![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
+[![Join our Discord!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=discord&label=discord)](https://discord.gg/AgrbSrBer3)
 [![Twitter Follow](https://img.shields.io/badge/Social-mermaidjs__-blue?style=social&logo=X)](https://twitter.com/mermaidjs_)
 
 <img src="./img/header.png" alt="" />
@@ -57,9 +57,9 @@ Mermaid 是一个基于 Javascript 的图表绘制工具，通过解析类 Markd
 Mermaid 通过允许用户创建便于修改的图表来解决这一难题，它也可以作为生产脚本（或其他代码）的一部分。<br/>
 <br/>
 Mermaid 甚至能让非程序员也能通过 [Mermaid Live Editor](https://mermaid.live/) 轻松创建详细的图表。<br/>
-你可以访问 [教程](./docs/config/Tutorials.md) 来查看 Live Editor 的视频教程，也可以查看 [Mermaid 的集成和使用](./docs/ecosystem/integrations-community.md) 这个清单来检查你的文档工具是否已经集成了 Mermaid 支持。
+你可以访问 [教程](./docs/ecosystem/tutorials.md) 来查看 Live Editor 的视频教程，也可以查看 [Mermaid 的集成和使用](./docs/ecosystem/integrations-community.md) 这个清单来检查你的文档工具是否已经集成了 Mermaid 支持。
 
-如果想要查看关于 Mermaid 更详细的介绍及基础使用方式，可以查看 [入门指引](./docs/intro/getting-started.md), [用法](./docs/config/usage.md) 和 [教程](./docs/config/Tutorials.md).
+如果想要查看关于 Mermaid 更详细的介绍及基础使用方式，可以查看 [入门指引](./docs/intro/getting-started.md), [用法](./docs/config/usage.md) 和 [教程](./docs/ecosystem/tutorials.md).
 
 <!-- </Main description> -->
 

@@ -17,24 +17,30 @@
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        /* background:#333; */
+        background: #333;
         font-family: 'Arial';
         /* font-size: 18px !important; */
       }
       h1 {
         color: grey;
       }
+      .mermaid {
+        border: 1px solid #ddd;
+        margin: 10px;
+      }
       .mermaid2 {
         display: none;
       }
       .mermaid svg {
         /* font-size: 18px !important; */
-        background-color: #efefef;
-        background-image: radial-gradient(#fff 51%, transparent 91%),
-          radial-gradient(#fff 51%, transparent 91%);
+        /* background-color: #efefef; */
+        background-color: #333;
+        background-image: radial-gradient(#333 51%, transparent 91%),
+          radial-gradient(#333 51%, transparent 91%);
         background-size: 20px 20px;
         background-position: 0 0, 10px 10px;
         background-repeat: repeat;
+        border: 2px solid rgb(131, 142, 205);
       }
       .malware {
         position: fixed;
@@ -58,46 +64,192 @@
   </head>
   <body>
     <pre id="diagram" class="mermaid">
-flowchart TB
-    C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W & X & Y & Z & A1 & A2 & A3 & A4 & A5 & A6 & A7 & A8
-      ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
-    C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W & X & Y & Z & A1 & A2 & A3 & A4 & A5 & A6 & A7 & A8
+      block-beta
+  blockArrowId<["Label"]>(right)
+  blockArrowId2<["Label"]>(left)
+  blockArrowId3<["Label"]>(up)
+  blockArrowId4<["Label"]>(down)
+  blockArrowId5<["Label"]>(x)
+  blockArrowId6<["Label"]>(y)
+  blockArrowId6<["Label"]>(x, down)
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+  block:e:4
+    columns 2
+      f
+      g
+  end
+
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+  block:e:4
+    columns 2
+      f
+      g
+      h
+  end
+
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+  columns 4
+  a b c d
+  block:e:4
+    columns 2
+      f
+      g
+      h
+  end
+  i:4
 
     </pre>
     <pre id="diagram" class="mermaid2">
-    flowchart TB
-      A & A & A & A & A & A & A & A --->  C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W & X & Y & Z
+flowchart LR
+  X-- "y" -->z
     </pre>
     <pre id="diagram" class="mermaid2">
-    flowchart TB
-      A1 & A2 & A3 & A4 & A5 & A6 & A7 & A8 -->  C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W & X & Y & Z
+block-beta
+columns 5
+   A space B
+   A --x B
     </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+columns 3
+  a["A wide one"] b:2 c:2 d
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+  block:e
+      f
+  end
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+  columns 3
+  a:3
+  block:e:3
+      f
+  end
+  g
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+  columns 3
+  a:3
+  block:e:3
+      f
+      g
+  end
+  h
+  i
+  j
+
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+columns 3
+  a b:2
+  block:e:3
+      f
+  end
+  g h i
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+columns 3
+  a b c
+  e:3
+  f g h
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+columns 1
+  db(("DB"))
+  blockArrowId6<["&nbsp;&nbsp;&nbsp;"]>(down)
+  block:ID
+    A
+    B["A wide one in the middle"]
+    C
+  end
+  space
+  D
+  ID --> D
+  C --> D
+  style B fill:#f9F,stroke:#333,stroke-width:4px
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+  columns 5
+  A1:3
+  A2:1
+  A3
+  B1 B2 B3:3
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+  block
+    D
+    E
+  end
+  db("This is the text in the box")
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+
+      block
+        D
+      end
+      A["A: I am a wide one"]
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+    A["square"]
+    B("rounded")
+    C(("circle"))
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+    A>"rect_left_inv_arrow"]
+    B{"diamond"}
+    C{{"hexagon"}}
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+    A(["stadium"])
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+    %% A[["subroutine"]]
+    %% B[("cylinder")]
+    C>"surprise"]
+    </pre>
+    <pre id="diagram" class="mermaid2">
+block-beta
+    A[/"lean right"/]
+    B[\"lean left"\]
+    C[/"trapezoid"\]
+    D[\"trapezoid"/]
+    </pre>
+
     <pre id="diagram" class="mermaid2">
 flowchart
-Node1:::class1 --> Node2:::class2
-Node1:::class1 --> Node3:::class2
-Node3 --> Node4((I am a circle)):::larger
+      B
+      style B fill:#f9F,stroke:#333,stroke-width:4px
+    </pre>
 
-classDef class1 fill:lightblue
-classDef class2 fill:pink
-classDef larger font-size:30px,fill:yellow
-      </pre
-    >
     <pre id="diagram" class="mermaid2">
-stateDiagram-v2
-    [*] --> Still
-    Still --> [*]
-    Still --> Moving
-    Moving --> Still
-    Moving --> Crash
-    Crash --> [*]    </pre
-    >
+      flowchart LR
+      a1 -- apa --> b1
+    </pre>
+
     <pre id="diagram" class="mermaid2">
 flowchart RL
-    subgraph "`one`"
-      a1 -- l1 --> a2
-      a1 -- l2 --> a2
-    end
+  subgraph "`one`"
+    id
+  end
     </pre>
     <pre id="diagram" class="mermaid2">
 flowchart RL
@@ -442,14 +594,8 @@ mindmap
       //   useMaxWidth: false,
       // });
       mermaid.initialize({
-        flowchart: { titleTopMargin: 10 },
-        fontFamily: 'courier',
-        sequence: {
-          actorFontFamily: 'courier',
-          noteFontFamily: 'courier',
-          messageFontFamily: 'courier',
-        },
-        fontSize: 16,
+        theme: 'dark',
+        startOnLoad: true,
         logLevel: 0,
       });
       function callback() {

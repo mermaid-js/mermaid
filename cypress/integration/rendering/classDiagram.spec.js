@@ -466,4 +466,16 @@ describe('Class diagram', () => {
         B : -methods()
       `);
   });
+
+  it('should handle notes with anchor tag having target attribute', () => {
+    renderGraph(
+      `classDiagram
+        class test { }
+        note for test "<a href='https://mermaid.js.org/' target="_blank"><code>note about mermaid</code></a>"`
+    );
+
+    cy.get('svg').then((svg) => {
+      cy.get('a').should('have.attr', 'target', '_blank').should('have.attr', 'rel', 'noopener');
+    });
+  });
 });
