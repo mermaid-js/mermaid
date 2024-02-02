@@ -122,7 +122,10 @@ function setBlockSizes(block: Block, db: BlockDB, siblingWidth = 0, siblingHeigh
     }
 
     const columns = block.columns || -1;
-    const numItems = block.children.length;
+    let numItems = 0;
+    for (const child of block.children) {
+      numItems += child.widthInColumns || 1;
+    }
 
     // The width and height in number blocks
     let xSize = block.children.length;
