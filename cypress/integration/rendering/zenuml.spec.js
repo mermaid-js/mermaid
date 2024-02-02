@@ -8,7 +8,7 @@ describe('Zen UML', () => {
 			A.method() {
         if(x) {
           B.method() {
-            selfCall() { return x }
+            selfCall() { return X }
           }
         }
       }
