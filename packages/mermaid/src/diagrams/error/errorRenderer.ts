@@ -11,7 +11,7 @@ import { configureSvgSize } from '../../setupGraphViewbox.js';
  * @param version - The version
  */
 export const draw = (_text: string, id: string, version: string) => {
-  log.debug('renering svg for syntax error\n');
+  log.debug('rendering svg for syntax error\n');
 
   const svg: SVG = selectSvgElement(id);
   svg.attr('viewBox', '0 0 2412 512');
