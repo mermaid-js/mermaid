@@ -6,6 +6,12 @@
 
 # Blog
 
+## [How one data scientist uses Mermaid Chart to quickly and easily build flowcharts](https://www.mermaidchart.com/blog/posts/customer-spotlight-ari-tal/)
+
+23 January 2024 · 4 mins
+
+Read about how Ari Tal, a data scientist and founder of Leveling Up with XAI, utilizes Mermaid Chart for its easy-to-use flowchart creation capabilities to enhance his work in explainable AI (XAI).
+
 ## [Introducing Mermaid Chart’s JetBrains IDE Extension](https://www.mermaidchart.com/blog/posts/introducing-mermaid-charts-jetbrains-ide-extension/)
 
 20 December 2023 · 5 mins

@@ -24,7 +24,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           cache: pnpm
-          node-version: 18
+          node-version-file: '.node-version'
 
       - name: Install Packages
         run: pnpm install --frozen-lockfile
