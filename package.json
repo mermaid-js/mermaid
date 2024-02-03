@@ -118,7 +118,7 @@
     "start-server-and-test": "^2.0.0",
     "tsx": "^4.6.2",
     "typescript": "^5.1.3",
-    "vite": "^4.4.12",
+    "vite": "^4.5.2",
     "vite-plugin-istanbul": "^4.1.0",
     "vitest": "^0.34.0"
   },
