@@ -30,9 +30,9 @@
     "pathe": "^1.1.0",
     "unocss": "^0.58.0",
     "unplugin-vue-components": "^0.26.0",
-    "vite": "^4.4.12",
-    "vite-plugin-pwa": "^0.17.0",
-    "vitepress": "1.0.0-rc.39",
+    "vite": "^4.5.2",
+    "vite-plugin-pwa": "^0.17.5",
+    "vitepress": "1.0.0-rc.40",
     "workbox-window": "^7.0.0"
   }
 }

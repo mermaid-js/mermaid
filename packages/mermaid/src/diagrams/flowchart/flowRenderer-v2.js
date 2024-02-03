@@ -349,6 +349,8 @@ export const getClasses = function (text, diagObj) {
  *
  * @param text
  * @param id
+ * @param _version
+ * @param diagObj
  */
 
 export const draw = async function (text, id, _version, diagObj) {
