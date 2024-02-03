@@ -468,7 +468,7 @@ describe('Class diagram', () => {
   });
 
   it('should handle notes with anchor tag having target attribute', () => {
-    renderGraph(
+    imgSnapshotTest(
       `classDiagram
         class test { }
         note for test "<a href='https://mermaid.js.org/' target="_blank"><code>note about mermaid</code></a>"`

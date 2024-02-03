@@ -783,7 +783,7 @@ context('Sequence diagram', () => {
   });
   context('links', () => {
     it('should support actor links', () => {
-      renderGraph(
+      imgSnapshotTest(
         `
       sequenceDiagram
         link Alice: Dashboard @ https://dashboard.contoso.com/alice
@@ -954,7 +954,7 @@ context('Sequence diagram', () => {
         return false;
       });
 
-      renderGraph([
+      imgSnapshotTest([
         `sequenceDiagram
     Alice->>Bob: Hello Bob, how are you ?
     Bob->>Alice: Fine, thank you. And you?
