@@ -41,6 +41,8 @@ Where to start:
 
 [Join our slack community if you want closer contact!](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
 
+[You can also join our Discord server!](https://discord.gg/vVDmXwhpaS)
+
 ## A Question Or a Suggestion?
 
 ```tip
