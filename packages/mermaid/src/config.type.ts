@@ -161,9 +161,19 @@ export interface MermaidConfig {
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
   sankey?: SankeyDiagramConfig;
+  block?: BlockDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
+}
+/**
+ * The object containing configurations specific for block diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "BlockDiagramConfig".
+ */
+export interface BlockDiagramConfig extends BaseDiagramConfig {
+  padding?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -576,6 +586,7 @@ export interface GitGraphDiagramConfig extends BaseDiagramConfig {
   showCommitLabel?: boolean;
   showBranches?: boolean;
   rotateCommitLabel?: boolean;
+  parallelCommits?: boolean;
   /**
    * Controls whether or arrow markers in html code are absolute paths or anchors.
    * This matters if you are using base tag settings.
@@ -1416,6 +1427,14 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    * Margin top for the text over the diagram
    */
   titleTopMargin?: number;
+  /**
+   * Defines a top/bottom margin for subgraph titles
+   *
+   */
+  subGraphTitleMargin?: {
+    top?: number;
+    bottom?: number;
+  };
   arrowMarkerAbsolute?: boolean;
   /**
    * The amount of padding around the diagram as a whole so that embedded
