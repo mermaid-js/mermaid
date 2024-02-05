@@ -641,9 +641,9 @@ export interface PieDiagramConfig extends BaseDiagramConfig {
    *
    */
   textPosition?: number;
-
   /**
    * The number of decimal places to show in the percentage label.
+   *
    */
   percentageDecimals?: number;
 }
