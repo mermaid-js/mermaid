@@ -879,7 +879,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       percentageDecimals:
         type: number
         minimum: 0
-        maximum: 100
+        maximum: 20
         description: |
           The number of decimal places to show in the percentage label.
         default: 0
