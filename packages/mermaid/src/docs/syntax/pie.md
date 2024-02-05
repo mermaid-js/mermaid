@@ -51,4 +51,4 @@ Possible pie diagram configuration parameters:
 | Parameter            | Description                                                                                                  | Default value |
 | -------------------- | ------------------------------------------------------------------------------------------------------------ | ------------- |
 | `textPosition`       | The axial position of the pie slice labels, from 0.0 at the center to 1.0 at the outside edge of the circle. | `0.75`        |
-| `percentageDecimals` | The number of decimal places to show in the percentage label, from 0 to 100.                                 | `0`           |
+| `percentageDecimals` | The number of decimal places to show in the percentage label, from 0 to 100. (v<MERMAID_RELEASE_VERSION>+)   | `0`           |
