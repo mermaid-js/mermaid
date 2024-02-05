@@ -43,9 +43,7 @@ Where to start:
 - You could work on a new feature! [These](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Area%3A+Development%22+label%3A%22Type%3A+Enhancement%22+label%3A%22Status%3A+Approved%22+) are some ideas!
 - You could confirm the bugs in [these issues](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Status%3A+Triage%22++label%3A%22Type%3A+Bug+%2F+Error%22).
 
-[Join our slack community if you want closer contact!](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
-
-[You can also join our Discord server!](https://discord.gg/vVDmXwhpaS)
+[Join our Discord server for closer contact!](https://discord.gg/vVDmXwhpaS)
 
 ## A Question Or a Suggestion?
 
