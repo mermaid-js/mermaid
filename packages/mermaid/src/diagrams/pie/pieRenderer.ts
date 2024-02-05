@@ -50,6 +50,12 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   const sections: Sections = db.getSections();
   group.attr('transform', 'translate(' + pieWidth / 2 + ',' + height / 2 + ')');
 
+  const percentFormatter = new Intl.NumberFormat('en-US', {
+    style: 'percent',
+    roundingMode: 'halfEven', // Half even rounding is used to avoid the sum of the percentages to be greater than 100%.
+    minimumFractionDigits: pieConfig.percentageDecimals,
+  } as Intl.NumberFormatOptions);
+
   const { themeVariables } = globalConfig;
   let [outerStrokeWidth] = parseFontSize(themeVariables.pieOuterStrokeWidth);
   outerStrokeWidth ??= 2;
@@ -118,7 +124,15 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .enter()
     .append('text')
     .text((datum: d3.PieArcDatum<D3Sections>): string => {
-      return ((datum.data.value / sum) * 100).toFixed(0) + '%';
+      let num = datum.data.value / sum;
+
+      // "Half even" rounding mode rounds exactly .5 to the nearest, even number.
+      // By using 3 decimal places, we can round "close to .5" to the nearest even number too.
+      if (pieConfig.percentageDecimals === 0) {
+        num = Number(num.toFixed(3));
+      }
+
+      return percentFormatter.format(num);
     })
     .attr('transform', (datum: d3.PieArcDatum<D3Sections>): string => {
       return 'translate(' + labelArcGenerator.centroid(datum) + ')';
