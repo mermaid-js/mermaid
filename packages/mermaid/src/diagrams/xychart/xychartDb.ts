@@ -22,6 +22,7 @@ import type {
 } from './chartBuilder/interfaces.js';
 import { isBandAxisData, isLinearAxisData } from './chartBuilder/interfaces.js';
 import type { Group } from '../../diagram-api/types.js';
+import { PlotType } from './chartBuilder/components/plot/PlotType.js';
 
 let plotIndex = 0;
 
@@ -33,6 +34,8 @@ let xyChartData: XYChartData = getChartDefaultData();
 let plotColorPalette = xyChartThemeConfig.plotColorPalette.split(',').map((color) => color.trim());
 let hasSetXAxis = false;
 let hasSetYAxis = false;
+
+let dataSets: number[][] = [];
 
 interface NormalTextType {
   type: 'text';
@@ -57,7 +60,7 @@ function getChartDefaultData(): XYChartData {
     yAxis: {
       type: 'linear',
       title: '',
-      min: Infinity,
+      min: 0,
       max: -Infinity,
     },
     xAxis: {
@@ -109,20 +112,26 @@ function setYAxisRangeData(min: number, max: number) {
 }
 
 // this function does not set `hasSetYAxis` as there can be multiple data so we should calculate the range accordingly
-function setYAxisRangeFromPlotData(data: number[]) {
-  const minValue = Math.min(...data);
-  const maxValue = Math.max(...data);
-  const prevMinValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.min : Infinity;
-  const prevMaxValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.max : -Infinity;
+function setYAxisRangeFromPlotData(data: number[], plotType: PlotType) {
+  const sum = new Array(data.length).fill(0);
+  if (plotType === PlotType.BAR) {
+    dataSets.push(data);
+    for (let i = 0; i < data.length; i++) {
+      for (const entry of dataSets) {
+        sum[i] += entry[i];
+      }
+    }
+  }
+
   xyChartData.yAxis = {
     type: 'linear',
     title: xyChartData.yAxis.title,
-    min: Math.min(prevMinValue, minValue),
-    max: Math.max(prevMaxValue, maxValue),
+    min: isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.min : Math.min(...sum),
+    max: Math.max(...sum),
   };
 }
 
-function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
+function transformDataWithoutCategory(data: number[], plotType: PlotType): SimplePlotDataType {
   let retData: SimplePlotDataType = [];
   if (data.length === 0) {
     return retData;
@@ -133,11 +142,11 @@ function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
     setXAxisRangeData(Math.min(prevMinValue, 1), Math.max(prevMaxValue, data.length));
   }
   if (!hasSetYAxis) {
-    setYAxisRangeFromPlotData(data);
+    setYAxisRangeFromPlotData(data, plotType);
   }
 
   if (isBandAxisData(xyChartData.xAxis)) {
-    retData = xyChartData.xAxis.categories.map((c, i) => [c, data[i]]);
+    retData = xyChartData.xAxis.categories.map((c, i) => [c, data[i] ?? 0]);
   }
 
   if (isLinearAxisData(xyChartData.xAxis)) {
@@ -148,7 +157,7 @@ function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
     for (let i = min; i <= max; i += step) {
       categories.push(`${i}`);
     }
-    retData = categories.map((c, i) => [c, data[i]]);
+    retData = categories.map((c, i) => [c, data[i] ?? 0]);
   }
 
   return retData;
@@ -159,9 +168,9 @@ function getPlotColorFromPalette(plotIndex: number): string {
 }
 
 function setLineData(title: NormalTextType, data: number[]) {
-  const plotData = transformDataWithoutCategory(data);
+  const plotData = transformDataWithoutCategory(data, PlotType.LINE);
   xyChartData.plots.push({
-    type: 'line',
+    type: PlotType.LINE,
     strokeFill: getPlotColorFromPalette(plotIndex),
     strokeWidth: 2,
     data: plotData,
@@ -170,9 +179,9 @@ function setLineData(title: NormalTextType, data: number[]) {
 }
 
 function setBarData(title: NormalTextType, data: number[]) {
-  const plotData = transformDataWithoutCategory(data);
+  const plotData = transformDataWithoutCategory(data, PlotType.BAR);
   xyChartData.plots.push({
-    type: 'bar',
+    type: PlotType.BAR,
     fill: getPlotColorFromPalette(plotIndex),
     data: plotData,
   });
@@ -204,6 +213,7 @@ const clear = function () {
   plotColorPalette = xyChartThemeConfig.plotColorPalette.split(',').map((color) => color.trim());
   hasSetXAxis = false;
   hasSetYAxis = false;
+  dataSets = [];
 };
 
 export default {

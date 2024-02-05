@@ -52,7 +52,7 @@
     line [+1.3, .6, 2.4, -.34]
     </pre>
 
-    <h1>XY Charts Bar with multiple category</h1>
+    <h1>XY Charts bar with single dataset</h1>
     <pre class="mermaid">
     xychart-beta
     title "Basic xychart with many categories"
@@ -61,7 +61,28 @@
     bar "sample bar" [52, 96, 35, 10, 87, 34, 67, 99]
     </pre>
 
-    <h1>XY Charts line with multiple category</h1>
+    <h1>XY Charts bar with multiple datasets</h1>
+    <pre class="mermaid">
+      xychart-beta
+      title "Basic xychart with multiple datasets"
+      x-axis "Relevant categories" [category1, "category 2", category3, category4]
+      bar "dogs" [0, 60, 40, 30]
+      bar "cats" [20, 40, 50, 30]
+      bar "birds" [30, 60, 50, 30]
+    </pre>
+
+    <h1>XY Charts bar horizontal with multiple datasets</h1>
+    <pre class="mermaid">
+      xychart-beta horizontal
+      title "Basic xychart with multiple datasets"
+      x-axis "Relevant categories" [category1, "category 2", category3, category4]
+      y-axis Animals 0 --> 160
+      bar "dogs" [0, 60, 40, 30]
+      bar "cats" [20, 40, 50, 30]
+      bar "birds" [30, 60, 50, 30]
+    </pre>
+
+    <h1>XY Charts line single dataset</h1>
     <pre class="mermaid">
     xychart-beta
     title "Line chart with many category"
@@ -70,7 +91,7 @@
     line "sample line" [52, 96, 35, 10, 87, 34, 67, 99]
     </pre>
 
-    <h1>XY Charts category with large text</h1>
+    <h1>XY Charts bar with large text</h1>
     <pre class="mermaid">
     xychart-beta
     title "Basic xychart with many categories with category overlap"

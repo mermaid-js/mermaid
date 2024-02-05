@@ -6,11 +6,14 @@ import type {
   Point,
   XYChartThemeConfig,
   XYChartConfig,
+  BarPlotData,
+  LinePlotData,
 } from '../../interfaces.js';
 import type { Axis } from '../axis/index.js';
 import type { ChartComponent } from '../../interfaces.js';
 import { LinePlot } from './linePlot.js';
 import { BarPlot } from './barPlot.js';
+import { PlotType } from './PlotType.js';
 
 export interface Plot extends ChartComponent {
   setAxes(xAxis: Axis, yAxis: Axis): void;
@@ -55,34 +58,35 @@ export class BasePlot implements Plot {
       throw Error('Axes must be passed to render Plots');
     }
     const drawableElem: DrawableElem[] = [];
-    for (const [i, plot] of this.chartData.plots.entries()) {
-      switch (plot.type) {
-        case 'line':
-          {
-            const linePlot = new LinePlot(
-              plot,
-              this.xAxis,
-              this.yAxis,
-              this.chartConfig.chartOrientation,
-              i
-            );
-            drawableElem.push(...linePlot.getDrawableElement());
-          }
-          break;
-        case 'bar':
-          {
-            const barPlot = new BarPlot(
-              plot,
-              this.boundingRect,
-              this.xAxis,
-              this.yAxis,
-              this.chartConfig.chartOrientation,
-              i
-            );
-            drawableElem.push(...barPlot.getDrawableElement());
-          }
-          break;
-      }
+    const linePlots = this.chartData.plots.filter(
+      (plot) => plot.type === PlotType.LINE
+    ) as LinePlotData[];
+    const barPlots = this.chartData.plots.filter(
+      (plot) => plot.type === PlotType.BAR
+    ) as BarPlotData[];
+
+    let plotIndex = 0;
+    if (linePlots.length) {
+      const linePlot = new LinePlot(
+        linePlots,
+        this.xAxis,
+        this.yAxis,
+        this.chartConfig.chartOrientation,
+        plotIndex
+      );
+      drawableElem.push(...linePlot.getDrawableElement());
+    }
+    if (barPlots.length) {
+      const barPlot = new BarPlot(
+        barPlots,
+        this.boundingRect,
+        this.xAxis,
+        this.yAxis,
+        this.chartConfig.chartOrientation,
+        plotIndex
+      );
+      drawableElem.push(...barPlot.getDrawableElement());
+      plotIndex++;
     }
     return drawableElem;
   }
