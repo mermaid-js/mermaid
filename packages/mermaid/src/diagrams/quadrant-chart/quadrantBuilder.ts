@@ -10,7 +10,7 @@ const defaultThemeVariables = getThemeVariables();
 export type TextVerticalPos = 'left' | 'center' | 'right';
 export type TextHorizontalPos = 'top' | 'middle' | 'bottom';
 
-export interface stylesObject {
+export interface StylesObject {
   className?: string;
   radius?: number;
   color?: string;
@@ -132,8 +132,7 @@ export class QuadrantBuilder {
   private config: QuadrantBuilderConfig;
   private themeConfig: QuadrantBuilderThemeConfig;
   private data: QuadrantBuilderData;
-  private data: quadrantBuilderData;
-  private classes: stylesObject[] = [];
+  private classes: StylesObject[] = [];
 
   constructor() {
     this.config = this.getDefaultConfig();
@@ -219,7 +218,7 @@ export class QuadrantBuilder {
     this.data.points = [...points, ...this.data.points];
   }
 
-  addClass(className: string, styles: stylesObject) {
+  addClass(className: string, styles: StylesObject) {
     this.classes.push({
       className,
       ...styles,

@@ -9,7 +9,7 @@ import {
   setAccDescription,
   clear as commonClear,
 } from '../common/commonDb.js';
-import type { stylesObject } from './quadrantBuilder.js';
+import type { StylesObject } from './quadrantBuilder.js';
 import { QuadrantBuilder } from './quadrantBuilder.js';
 
 const config = getConfig();
@@ -54,12 +54,11 @@ function setYAxisBottomText(textObj: LexTextObj) {
   quadrantBuilder.setData({ yAxisBottomText: textSanitizer(textObj.text) });
 }
 
-function parseStyles(stylesString: string): stylesObject {
-  const stylesObject: stylesObject = {};
-  if (stylesString !== '') {
-    const styles = stylesString.trim().split(/\s*,\s*/);
+function parseStyles(styles: string[]): StylesObject {
+  const stylesObject: StylesObject = {};
+  if (styles.length !== 0) {
     for (const item of styles) {
-      const style = item.split(/\s*:\s*/);
+      const style = item.trim().split(/\s*:\s*/);
       if (style[0] == 'radius') {
         stylesObject.radius = parseInt(style[1]);
       } else if (style[0] == 'color') {
@@ -69,21 +68,15 @@ function parseStyles(stylesString: string): stylesObject {
       } else if (style[0] == 'stroke-width') {
         stylesObject.strokeWidth = style[1];
       } else {
-        // do we add error if an unknown style is added or do we ignore it ???
+        throw new Error(`stlye named ${style[0]} is unacceptable`);
       }
     }
   }
   return stylesObject;
 }
 
-function addPoint(
-  textObj: LexTextObj,
-  className: string,
-  x: number,
-  y: number,
-  stylesString: string
-) {
-  const stylesObject = parseStyles(stylesString);
+function addPoint(textObj: LexTextObj, className: string, x: number, y: number, styles: string[]) {
+  const stylesObject = parseStyles(styles);
   quadrantBuilder.addPoints([
     {
       x,
@@ -98,17 +91,12 @@ function addPoint(
   ]);
 }
 
-function addClass(stylesString: string) {
-  const ind = stylesString.indexOf(' ');
-  const className = stylesString.slice(0, ind);
-  const styles = parseStyles(stylesString.slice(ind + 1));
-  if (className === undefined || className === '') {
-    // throw error
+function addClass(className: string, styles: string[]) {
+  const ss = parseStyles(styles);
+  if (Object.keys(ss).length === 0) {
+    throw new Error('class defintions require ss');
   }
-  if (Object.keys(styles).length === 0) {
-    // no styles added, throw error ???
-  }
-  quadrantBuilder.addClass(className, styles);
+  quadrantBuilder.addClass(className, ss);
 }
 
 function setWidth(width: number) {
