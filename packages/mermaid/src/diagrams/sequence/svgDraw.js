@@ -7,6 +7,8 @@ import { sanitizeUrl } from '@braintree/sanitize-url';
 export const ACTOR_TYPE_WIDTH = 18 * 2;
 const TOP_ACTOR_CLASS = 'actor-top';
 const BOTTOM_ACTOR_CLASS = 'actor-bottom';
+const ACTOR_BOX_CLASS = 'actor-box';
+const ACTOR_MAN_FIGURE_CLASS = 'actor-man';
 
 export const drawRect = function (elem, rectData) {
   return svgDrawCommon.drawRect(elem, rectData);
@@ -352,7 +354,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
     rect.y,
     rect.width,
     rect.height,
-    { class: 'actor' },
+    { class: `actor ${ACTOR_BOX_CLASS}` },
     conf
   );
 
@@ -390,7 +392,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
     actor.actorCnt = actorCnt;
   }
   const actElem = elem.append('g');
-  let cssClass = 'actor-man';
+  let cssClass = ACTOR_MAN_FIGURE_CLASS;
   if (isFooter) {
     cssClass += ` ${BOTTOM_ACTOR_CLASS}`;
   } else {
@@ -453,7 +455,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
     rect.y + 35,
     rect.width,
     rect.height,
-    { class: 'actor' },
+    { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
     conf
   );
 
