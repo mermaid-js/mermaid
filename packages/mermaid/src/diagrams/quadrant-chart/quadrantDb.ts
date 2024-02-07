@@ -92,11 +92,7 @@ function addPoint(textObj: LexTextObj, className: string, x: number, y: number, 
 }
 
 function addClass(className: string, styles: string[]) {
-  const ss = parseStyles(styles);
-  if (Object.keys(ss).length === 0) {
-    throw new Error('class defintions require ss');
-  }
-  quadrantBuilder.addClass(className, ss);
+  quadrantBuilder.addClass(className, parseStyles(styles));
 }
 
 function setWidth(width: number) {
@@ -150,6 +146,7 @@ export default {
   setXAxisRightText,
   setYAxisTopText,
   setYAxisBottomText,
+  parseStyles,
   addPoint,
   addClass,
   getQuadrantData,

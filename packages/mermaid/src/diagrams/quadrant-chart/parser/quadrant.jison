@@ -96,9 +96,9 @@ style: styleComponent
   ;
 
 stylesOpt: style
-    {$$ = [$style]}
+    {$$ = [$style.trim()]}
   | stylesOpt COMMA style
-    {$stylesOpt.push($style);$$ = $stylesOpt;}
+    {$stylesOpt.push($style.trim());$$ = $stylesOpt;}
   ;
 
 classDefStatement

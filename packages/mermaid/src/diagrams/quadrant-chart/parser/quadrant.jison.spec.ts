@@ -203,20 +203,34 @@ describe('Testing quadrantChart jison file', () => {
   it('should be able to parse points', () => {
     let str = 'quadrantChart\npoint1: [0.1, 0.4]';
     expect(parserFnConstructor(str)).not.toThrow();
-    expect(mockDB.addPoint).toHaveBeenCalledWith({ text: 'point1', type: 'text' }, '0.1', '0.4');
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'point1', type: 'text' },
+      '',
+      '0.1',
+      '0.4',
+      []
+    );
 
     clearMocks();
     str = 'QuadRantChart   \n     Point1      : [0.1, 0.4]   ';
     expect(parserFnConstructor(str)).not.toThrow();
-    expect(mockDB.addPoint).toHaveBeenCalledWith({ text: 'Point1', type: 'text' }, '0.1', '0.4');
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'Point1', type: 'text' },
+      '',
+      '0.1',
+      '0.4',
+      []
+    );
 
     clearMocks();
     str = 'QuadRantChart   \n     "Point1 : (* +=[❤": [1, 0]   ';
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.addPoint).toHaveBeenCalledWith(
       { text: 'Point1 : (* +=[❤', type: 'text' },
+      '',
       '1',
-      '0'
+      '0',
+      []
     );
 
     clearMocks();
@@ -255,16 +269,32 @@ describe('Testing quadrantChart jison file', () => {
     expect(mockDB.setQuadrant4Text).toHaveBeenCalledWith({ text: 'Visionaries', type: 'text' });
     expect(mockDB.addPoint).toHaveBeenCalledWith(
       { text: 'Microsoft', type: 'text' },
+      '',
       '0.75',
-      '0.75'
+      '0.75',
+      []
     );
     expect(mockDB.addPoint).toHaveBeenCalledWith(
       { text: 'Salesforce', type: 'text' },
+      '',
       '0.55',
-      '0.60'
+      '0.60',
+      []
     );
-    expect(mockDB.addPoint).toHaveBeenCalledWith({ text: 'IBM', type: 'text' }, '0.51', '0.40');
-    expect(mockDB.addPoint).toHaveBeenCalledWith({ text: 'Incorta', type: 'text' }, '0.20', '0.30');
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'IBM', type: 'text' },
+      '',
+      '0.51',
+      '0.40',
+      []
+    );
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'Incorta', type: 'text' },
+      '',
+      '0.20',
+      '0.30',
+      []
+    );
   });
 
   it('should be able to parse the whole chart with point styling with all params or some params', () => {
@@ -301,7 +331,7 @@ describe('Testing quadrantChart jison file', () => {
       '',
       '0.75',
       '0.75',
-      'radius: 10'
+      ['radius: 10']
     );
     expect(mockDB.addPoint).toHaveBeenCalledWith(
       { text: 'Salesforce', type: 'text' },
