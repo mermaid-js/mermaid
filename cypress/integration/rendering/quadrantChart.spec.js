@@ -267,7 +267,7 @@ describe('Quadrant Chart', () => {
     Campaign B: [0.45, 0.23] color: #ff0000
     Campaign C: [0.57, 0.69] stroke-color: #ff00ff
     Campaign D:::class2: [0.78, 0.34] stroke-width: 3px
-    Campaign E:::class2: [0.40, 0.34] radius: 20 color: #ff0000, stroke-color: #ff00ff, stroke-width: 3px
+    Campaign E:::class2: [0.40, 0.34] radius: 20, color: #ff0000, stroke-color: #ff00ff, stroke-width: 3px
     Campaign F:::class1: [0.35, 0.78]
     classDef class1 color: #908342, radius : 10, stroke-color: #310085, stroke-width: 10px
     classDef class2 color: #f00fff, radius : 10
