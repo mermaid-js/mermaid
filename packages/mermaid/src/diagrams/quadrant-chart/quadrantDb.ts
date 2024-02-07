@@ -60,12 +60,28 @@ function parseStyles(styles: string[]): StylesObject {
     for (const item of styles) {
       const style = item.trim().split(/\s*:\s*/);
       if (style[0] == 'radius') {
+        if (!/^\d+$/.test(style[1])) {
+          throw new Error(`value for radius ${style[1]} is unvalid, requires a number`);
+        }
         stylesObject.radius = parseInt(style[1]);
       } else if (style[0] == 'color') {
+        if (!/^#?([\dA-Fa-f]{6}|[\dA-Fa-f]{3})$/.test(style[1])) {
+          throw new Error(`value for color ${style[1]} is unvalid, requires a valid hex code`);
+        }
         stylesObject.color = style[1];
       } else if (style[0] == 'stroke-color') {
+        if (!/^#?([\dA-Fa-f]{6}|[\dA-Fa-f]{3})$/.test(style[1])) {
+          throw new Error(
+            `value for stroke-color ${style[1]} is unvalid, requires a valid hex code`
+          );
+        }
         stylesObject.strokeColor = style[1];
       } else if (style[0] == 'stroke-width') {
+        if (!/^\d+px$/.test(style[1])) {
+          throw new Error(
+            `value for stroke-width ${style[1]} is unvalid, requires a valid number of pixels (eg. 10px)`
+          );
+        }
         stylesObject.strokeWidth = style[1];
       } else {
         throw new Error(`stlye named ${style[0]} is unacceptable`);
