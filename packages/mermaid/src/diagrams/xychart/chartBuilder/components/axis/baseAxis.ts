@@ -54,6 +54,8 @@ export abstract class BaseAxis implements Axis {
     this.setRange(this.range);
   }
 
+  abstract isZeroBasedDomain(): boolean;
+
   abstract getScaleValue(value: number | string): number;
 
   abstract recalculateScale(): void;

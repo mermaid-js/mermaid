@@ -66,16 +66,6 @@ export class BasePlot implements Plot {
     ) as BarPlotData[];
 
     let plotIndex = 0;
-    if (linePlots.length) {
-      const linePlot = new LinePlot(
-        linePlots,
-        this.xAxis,
-        this.yAxis,
-        this.chartConfig.chartOrientation,
-        plotIndex
-      );
-      drawableElem.push(...linePlot.getDrawableElement());
-    }
     if (barPlots.length) {
       const barPlot = new BarPlot(
         barPlots,
@@ -87,6 +77,16 @@ export class BasePlot implements Plot {
       );
       drawableElem.push(...barPlot.getDrawableElement());
       plotIndex++;
+    }
+    if (linePlots.length) {
+      const linePlot = new LinePlot(
+        linePlots,
+        this.xAxis,
+        this.yAxis,
+        this.chartConfig.chartOrientation,
+        plotIndex
+      );
+      drawableElem.push(...linePlot.getDrawableElement());
     }
     return drawableElem;
   }

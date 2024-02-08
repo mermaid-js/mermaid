@@ -21,6 +21,10 @@ export class BandAxis extends BaseAxis {
     this.scale = scaleBand().domain(this.categories).range(this.getRange());
   }
 
+  isZeroBasedDomain(): boolean {
+    return true;
+  }
+
   setRange(range: [number, number]): void {
     super.setRange(range);
   }

@@ -20,6 +20,9 @@ export class LinearAxis extends BaseAxis {
     this.scale = scaleLinear().domain(this.domain).range(this.getRange());
   }
 
+  isZeroBasedDomain(): boolean {
+    return this.domain[0] < 0;
+  }
   getTickValues(): (string | number)[] {
     return this.scale.ticks();
   }

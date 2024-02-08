@@ -28,6 +28,8 @@ let plotIndex = 0;
 
 let tmpSVGGroup: Group;
 
+let barPlotMaxData: number[] = [];
+
 let xyChartConfig: XYChartConfig = getChartDefaultConfig();
 let xyChartThemeConfig: XYChartThemeConfig = getChartDefaultThemeConfig();
 let xyChartData: XYChartData = getChartDefaultData();
@@ -60,7 +62,7 @@ function getChartDefaultData(): XYChartData {
     yAxis: {
       type: 'linear',
       title: '',
-      min: 0,
+      min: Infinity,
       max: -Infinity,
     },
     xAxis: {
@@ -113,21 +115,27 @@ function setYAxisRangeData(min: number, max: number) {
 
 // this function does not set `hasSetYAxis` as there can be multiple data so we should calculate the range accordingly
 function setYAxisRangeFromPlotData(data: number[], plotType: PlotType) {
-  const sum = new Array(data.length).fill(0);
+  let minValue = 0;
+  let maxValue = -Infinity;
   if (plotType === PlotType.BAR) {
-    dataSets.push(data);
-    for (let i = 0; i < data.length; i++) {
-      for (const entry of dataSets) {
-        sum[i] += entry[i];
-      }
+    let i = 0;
+    for (const d of data) {
+      barPlotMaxData[i] = (barPlotMaxData[i] || 0) + d;
+      maxValue = Math.max(...barPlotMaxData);
+      minValue = Math.min(...barPlotMaxData);
+      i++;
     }
+  } else {
+    maxValue = Math.max(...data);
+    minValue = Math.min(...data);
   }
-
+  const prevMinValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.min : Infinity;
+  const prevMaxValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.max : -Infinity;
   xyChartData.yAxis = {
     type: 'linear',
     title: xyChartData.yAxis.title,
-    min: isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.min : Math.min(...sum),
-    max: Math.max(...sum),
+    min: Math.min(prevMinValue, minValue),
+    max: Math.max(prevMaxValue, maxValue),
   };
 }
 
@@ -207,6 +215,7 @@ function getChartConfig() {
 const clear = function () {
   commonClear();
   plotIndex = 0;
+  barPlotMaxData = [];
   xyChartConfig = getChartDefaultConfig();
   xyChartData = getChartDefaultData();
   xyChartThemeConfig = getChartDefaultThemeConfig();
