@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 RUN="docker compose run --rm"
 
 ansi()          { echo -e "\e[${1}m${*:2}\e[0m"; }
@@ -6,7 +6,7 @@ bold()          { ansi 1 "$@"; }
 # italic()        { ansi 3 "$@"; }
 underline()     { ansi 4 "$@"; }
 # strikethrough() { ansi 9 "$@"; }
-# red()           { ansi 31 "$@"; }
+red()           { ansi 31 "$@"; }
 
 name=$(basename $0)
 command=$1
@@ -38,7 +38,7 @@ cypress)
 $RUN cypress $args
 ;;
 
-help)
+help|"")
 
 # Alignment of help message must be as it is, it will be nice looking when printed
 usage=$(
@@ -99,7 +99,10 @@ echo -n -e "$usage"
 ;;
 
 *)
-$name help
+message="$(red Unknown command: $command). See $(bold ./$name help) for available commands."
+echo -n -e "$message\n" >&2
+$0 help
+exit 1
 ;;
 
 esac

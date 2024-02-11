@@ -147,10 +147,12 @@ export interface MermaidConfig {
   c4?: C4DiagramConfig;
   sankey?: SankeyDiagramConfig;
   packet?: PacketDiagramConfig;
+  block?: BlockDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
 }
+
 /**
  * The object containing configurations specific for packet diagrams.
  *
@@ -182,6 +184,16 @@ export interface PacketDiagramConfig extends BaseDiagramConfig {
    * The vertical padding between the rows.
    */
   paddingY?: number;
+}
+
+/**
+ * The object containing configurations specific for block diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "BlockDiagramConfig".
+ */
+export interface BlockDiagramConfig extends BaseDiagramConfig {
+  padding?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
