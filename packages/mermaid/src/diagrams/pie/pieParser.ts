@@ -13,8 +13,8 @@ const populateDb = (ast: Pie, db: PieDB) => {
 };
 
 export const parser: ParserDefinition = {
-  parse: (input: string): void => {
-    const ast: Pie = parse('pie', input);
+  parse: async (input: string): Promise<void> => {
+    const ast: Pie = await parse('pie', input);
     log.debug(ast);
     populateDb(ast, db);
   },

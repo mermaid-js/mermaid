@@ -1,34 +1,41 @@
 import type { LangiumParser, ParseResult } from 'langium';
 
-import type { Info, Pie } from './index.js';
-import { createInfoServices, createPieServices } from './language/index.js';
+import type { Info, Packet, Pie } from './index.js';
 
-export type DiagramAST = Info | Pie;
+export type DiagramAST = Info | Packet | Pie;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
-  info: () => {
-    // Will have to make parse async to use this. Can try later...
-    // const { createInfoServices } = await import('./language/info/index.js');
-    parsers['info'] = createInfoServices().Info.parser.LangiumParser;
+  info: async () => {
+    const { createInfoServices } = await import('./language/info/index.js');
+    const parser = createInfoServices().Info.parser.LangiumParser;
+    parsers['info'] = parser;
   },
-  pie: () => {
-    parsers['pie'] = createPieServices().Pie.parser.LangiumParser;
+  packet: async () => {
+    const { createPacketServices } = await import('./language/packet/index.js');
+    const parser = createPacketServices().Packet.parser.LangiumParser;
+    parsers['packet'] = parser;
+  },
+  pie: async () => {
+    const { createPieServices } = await import('./language/pie/index.js');
+    const parser = createPieServices().Pie.parser.LangiumParser;
+    parsers['pie'] = parser;
   },
 } as const;
 
-export function parse(diagramType: 'info', text: string): Info;
-export function parse(diagramType: 'pie', text: string): Pie;
-export function parse<T extends DiagramAST>(
+export async function parse(diagramType: 'info', text: string): Promise<Info>;
+export async function parse(diagramType: 'packet', text: string): Promise<Packet>;
+export async function parse(diagramType: 'pie', text: string): Promise<Pie>;
+export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,
   text: string
-): T {
+): Promise<T> {
   const initializer = initializers[diagramType];
   if (!initializer) {
     throw new Error(`Unknown diagram type: ${diagramType}`);
   }
   if (!parsers[diagramType]) {
-    initializer();
+    await initializer();
   }
   const parser: LangiumParser = parsers[diagramType];
   const result: ParseResult<T> = parser.parse<T>(text);

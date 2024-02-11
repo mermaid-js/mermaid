@@ -7,6 +7,11 @@
       "fileExtensions": [".mmd", ".mermaid"]
     },
     {
+      "id": "packet",
+      "grammar": "src/language/packet/packet.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
       "id": "pie",
       "grammar": "src/language/pie/pie.langium",
       "fileExtensions": [".mmd", ".mermaid"]

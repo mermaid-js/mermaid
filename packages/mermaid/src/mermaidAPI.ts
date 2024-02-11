@@ -17,7 +17,7 @@ import { compile, serialize, stringify } from 'stylis';
 import { version } from '../package.json';
 import * as configApi from './config.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
-import { Diagram, getDiagramFromText as getDiagramFromTextInternal } from './Diagram.js';
+import { Diagram } from './Diagram.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
 import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
@@ -422,9 +422,9 @@ const render = async function (
   let parseEncounteredException;
 
   try {
-    diag = await getDiagramFromText(text, { title: processed.title });
+    diag = await Diagram.fromText(text, { title: processed.title });
   } catch (error) {
-    diag = new Diagram('error');
+    diag = await Diagram.fromText('error');
     parseEncounteredException = error;
   }
 
@@ -536,7 +536,7 @@ function initialize(options: MermaidConfig = {}) {
 
 const getDiagramFromText = (text: string, metadata: Pick<DiagramMetadata, 'title'> = {}) => {
   const { code } = preprocessDiagram(text);
-  return getDiagramFromTextInternal(code, metadata);
+  return Diagram.fromText(code, metadata);
 };
 
 /**
