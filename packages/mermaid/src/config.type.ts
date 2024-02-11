@@ -152,7 +152,6 @@ export interface MermaidConfig {
   wrap?: boolean;
   fontSize?: number;
 }
-
 /**
  * The object containing configurations specific for packet diagrams.
  *
@@ -185,16 +184,6 @@ export interface PacketDiagramConfig extends BaseDiagramConfig {
    */
   paddingY?: number;
 }
-
-/**
- * The object containing configurations specific for block diagrams.
- *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "BlockDiagramConfig".
- */
-export interface BlockDiagramConfig extends BaseDiagramConfig {
-  padding?: number;
-}
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
  * via the `definition` "BaseDiagramConfig".
@@ -208,6 +197,15 @@ export interface BaseDiagramConfig {
    *
    */
   useMaxWidth?: boolean;
+}
+/**
+ * The object containing configurations specific for block diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "BlockDiagramConfig".
+ */
+export interface BlockDiagramConfig extends BaseDiagramConfig {
+  padding?: number;
 }
 /**
  * The object containing configurations specific for c4 diagrams
