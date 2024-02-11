@@ -205,7 +205,7 @@ export interface BaseDiagramConfig {
  * via the `definition` "BlockDiagramConfig".
  */
 export interface BlockDiagramConfig extends BaseDiagramConfig {
-  padding?: unknown;
+  padding?: number;
 }
 /**
  * The object containing configurations specific for c4 diagrams
