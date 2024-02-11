@@ -51,6 +51,7 @@ required:
   - c4
   - sankey
   - packet
+  - block
 properties:
   theme:
     description: |
@@ -214,6 +215,8 @@ properties:
     $ref: '#/$defs/SankeyDiagramConfig'
   packet:
     $ref: '#/$defs/PacketDiagramConfig'
+  block:
+    $ref: '#/$defs/BlockDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -2048,6 +2051,16 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 5
+
+  BlockDiagramConfig:
+    title: Block Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for block diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      padding:
+        default: 8
 
   FontCalculator:
     title: Font Calculator

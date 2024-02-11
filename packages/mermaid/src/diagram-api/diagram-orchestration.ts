@@ -21,6 +21,7 @@ import timeline from '../diagrams/timeline/detector.js';
 import mindmap from '../diagrams/mindmap/detector.js';
 import sankey from '../diagrams/sankey/sankeyDetector.js';
 import { packet } from '../diagrams/packet/detector.js';
+import block from '../diagrams/block/blockDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
 
@@ -88,6 +89,7 @@ export const addDiagrams = () => {
     quadrantChart,
     sankey,
     packet,
-    xychart
+    xychart,
+    block
   );
 };

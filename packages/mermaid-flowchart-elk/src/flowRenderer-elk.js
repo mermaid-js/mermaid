@@ -309,13 +309,12 @@ const getNextPosition = (position, edgeDirection, graphDirection) => {
     },
   };
   portPos.TD = portPos.TB;
-  log.info('abc88', graphDirection, edgeDirection, position);
   return portPos[graphDirection][edgeDirection][position];
   // return 'south';
 };
 
 const getNextPort = (node, edgeDirection, graphDirection) => {
-  log.info('getNextPort abc88', { node, edgeDirection, graphDirection });
+  log.info('getNextPort', { node, edgeDirection, graphDirection });
   if (!portPos[node]) {
     switch (graphDirection) {
       case 'TB':

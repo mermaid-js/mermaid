@@ -61,9 +61,8 @@
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.1",
     "@mermaid-js/parser": "workspace:^",
-    "cytoscape": "^3.23.0",
+    "cytoscape": "^3.28.1",
     "cytoscape-cose-bilkent": "^4.1.0",
-    "cytoscape-fcose": "^2.1.0",
     "d3": "^7.4.0",
     "d3-sankey": "^0.12.3",
     "dagre-d3-es": "7.0.10",
@@ -119,8 +118,8 @@
     "typescript": "^5.0.4",
     "unist-util-flatmap": "^1.0.0",
     "unist-util-visit": "^4.1.2",
-    "vitepress": "^1.0.0-alpha.72",
-    "vitepress-plugin-search": "^1.0.4-alpha.20"
+    "vitepress": "^1.0.0-rc.40",
+    "vitepress-plugin-search": "^1.0.4-alpha.22"
   },
   "files": [
     "dist/",
