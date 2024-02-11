@@ -7,33 +7,33 @@ import type {
 } from 'langium';
 import { EmptyFileSystem, createDefaultModule, createDefaultSharedModule, inject } from 'langium';
 
-import { CommonValueConverter } from '../common/index.js';
-import { InfoGeneratedModule, MermaidGeneratedSharedModule } from '../generated/module.js';
-import { InfoTokenBuilder } from './tokenBuilder.js';
+import { MermaidGeneratedSharedModule, PieGeneratedModule } from '../generated/module.js';
+import { PieTokenBuilder } from './tokenBuilder.js';
+import { PieValueConverter } from './valueConverter.js';
 
 /**
- * Declaration of `Info` services.
+ * Declaration of `Pie` services.
  */
-type InfoAddedServices = {
+type PieAddedServices = {
   parser: {
-    TokenBuilder: InfoTokenBuilder;
-    ValueConverter: CommonValueConverter;
+    TokenBuilder: PieTokenBuilder;
+    ValueConverter: PieValueConverter;
   };
 };
 
 /**
- * Union of Langium default services and `Info` services.
+ * Union of Langium default services and `Pie` services.
  */
-export type InfoServices = LangiumServices & InfoAddedServices;
+export type PieServices = LangiumServices & PieAddedServices;
 
 /**
  * Dependency injection module that overrides Langium default services and
- * contributes the declared `Info` services.
+ * contributes the declared `Pie` services.
  */
-export const InfoModule: Module<InfoServices, PartialLangiumServices & InfoAddedServices> = {
+export const PieModule: Module<PieServices, PartialLangiumServices & PieAddedServices> = {
   parser: {
-    TokenBuilder: () => new InfoTokenBuilder(),
-    ValueConverter: () => new CommonValueConverter(),
+    TokenBuilder: () => new PieTokenBuilder(),
+    ValueConverter: () => new PieValueConverter(),
   },
 };
 
@@ -51,19 +51,15 @@ export const InfoModule: Module<InfoServices, PartialLangiumServices & InfoAdded
  * @param context - Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
-export function createInfoServices(context: DefaultSharedModuleContext = EmptyFileSystem): {
+export function createPieServices(context: DefaultSharedModuleContext = EmptyFileSystem): {
   shared: LangiumSharedServices;
-  Info: InfoServices;
+  Pie: PieServices;
 } {
   const shared: LangiumSharedServices = inject(
     createDefaultSharedModule(context),
     MermaidGeneratedSharedModule
   );
-  const Info: InfoServices = inject(
-    createDefaultModule({ shared }),
-    InfoGeneratedModule,
-    InfoModule
-  );
-  shared.ServiceRegistry.register(Info);
-  return { shared, Info };
+  const Pie: PieServices = inject(createDefaultModule({ shared }), PieGeneratedModule, PieModule);
+  shared.ServiceRegistry.register(Pie);
+  return { shared, Pie };
 }
