@@ -239,12 +239,12 @@ describe('Quadrant Chart', () => {
     quadrant-3 Re-evaluate
     quadrant-4 May be improved
     Campaign A: [0.3, 0.6] radius: 20
-    Campaign B: [0.45, 0.23] color: #ff0000
-    Campaign C: [0.57, 0.69] stroke-color: #ff00ff
-    Campaign D: [0.78, 0.34] stroke-width: 3px
-    Campaign E: [0.40, 0.34] radius: 20, color: #ff0000, stroke-color: #ff00ff, stroke-width: 3px
-    Campaign F: [0.35, 0.78] stroke-width: 3px, color: #ff0000, radius: 20, stroke-color: #ff00ff
-    Campaign G: [0.22, 0.22] stroke-width: 3px, color: #309708, radius: 20, stroke-color: #5060ff
+    Campaign B: [0.45, 0.23]     color: #ff0000  
+    Campaign C: [0.57, 0.69]  stroke-color: #ff00ff  
+    Campaign D: [0.78, 0.34]        stroke-width: 3px    
+    Campaign E: [0.40, 0.34] radius: 20,   color: #ff0000  , stroke-color  : #ff00ff,     stroke-width    :   3px   
+    Campaign F: [0.35, 0.78] stroke-width: 3px , color: #ff0000, radius: 20, stroke-color:     #ff00ff
+    Campaign G: [0.22, 0.22] stroke-width: 3px  , color: #309708  ,  radius  : 20  ,  stroke-color:    #5060ff
     Campaign H: [0.22, 0.44]
       `,
       {}

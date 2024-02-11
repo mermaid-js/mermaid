@@ -11,6 +11,12 @@ import {
 } from '../common/commonDb.js';
 import type { StylesObject } from './quadrantBuilder.js';
 import { QuadrantBuilder } from './quadrantBuilder.js';
+import {
+  validateHexCode,
+  validateSizeInPixels,
+  validateNumber,
+  InvalidStyleError,
+} from './utils.js';
 
 const config = getConfig();
 
@@ -56,36 +62,30 @@ function setYAxisBottomText(textObj: LexTextObj) {
 
 function parseStyles(styles: string[]): StylesObject {
   const stylesObject: StylesObject = {};
-  if (styles.length !== 0) {
-    for (const item of styles) {
-      const style = item.trim().split(/\s*:\s*/);
-      if (style[0] == 'radius') {
-        if (!/^\d+$/.test(style[1])) {
-          throw new Error(`value for radius ${style[1]} is unvalid, requires a number`);
-        }
-        stylesObject.radius = parseInt(style[1]);
-      } else if (style[0] == 'color') {
-        if (!/^#?([\dA-Fa-f]{6}|[\dA-Fa-f]{3})$/.test(style[1])) {
-          throw new Error(`value for color ${style[1]} is unvalid, requires a valid hex code`);
-        }
-        stylesObject.color = style[1];
-      } else if (style[0] == 'stroke-color') {
-        if (!/^#?([\dA-Fa-f]{6}|[\dA-Fa-f]{3})$/.test(style[1])) {
-          throw new Error(
-            `value for stroke-color ${style[1]} is unvalid, requires a valid hex code`
-          );
-        }
-        stylesObject.strokeColor = style[1];
-      } else if (style[0] == 'stroke-width') {
-        if (!/^\d+px$/.test(style[1])) {
-          throw new Error(
-            `value for stroke-width ${style[1]} is unvalid, requires a valid number of pixels (eg. 10px)`
-          );
-        }
-        stylesObject.strokeWidth = style[1];
-      } else {
-        throw new Error(`stlye named ${style[0]} is unacceptable`);
+  for (const style of styles) {
+    const [key, value] = style.trim().split(/\s*:\s*/);
+    if (key == 'radius') {
+      if (validateNumber(value)) {
+        throw new InvalidStyleError(key, value, 'number');
       }
+      stylesObject.radius = parseInt(value);
+    } else if (key == 'color') {
+      if (validateHexCode(value)) {
+        throw new InvalidStyleError(key, value, 'hex code');
+      }
+      stylesObject.color = value;
+    } else if (key == 'stroke-color') {
+      if (validateHexCode(value)) {
+        throw new InvalidStyleError(key, value, 'hex code');
+      }
+      stylesObject.strokeColor = value;
+    } else if (key == 'stroke-width') {
+      if (validateSizeInPixels(value)) {
+        throw new InvalidStyleError(key, value, 'number of pixels (eg. 10px)');
+      }
+      stylesObject.strokeWidth = value;
+    } else {
+      throw new Error(`stlye named ${key} is unacceptable`);
     }
   }
   return stylesObject;
@@ -97,12 +97,9 @@ function addPoint(textObj: LexTextObj, className: string, x: number, y: number, 
     {
       x,
       y,
-      className: className,
       text: textSanitizer(textObj.text),
-      radius: stylesObject.radius,
-      color: stylesObject.color,
-      strokeColor: stylesObject.strokeColor,
-      strokeWidth: stylesObject.strokeWidth,
+      className,
+      ...stylesObject,
     },
   ]);
 }

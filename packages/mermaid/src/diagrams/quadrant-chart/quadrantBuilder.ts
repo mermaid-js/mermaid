@@ -18,13 +18,8 @@ export interface StylesObject {
   strokeWidth?: string;
 }
 
-export interface QuadrantPointInputType extends Point {
+export interface QuadrantPointInputType extends Point, StylesObject {
   text: string;
-  className?: string;
-  radius?: number;
-  color?: string;
-  strokeColor?: string;
-  strokeWidth?: string;
 }
 
 export interface QuadrantTextType extends Point {
@@ -36,12 +31,12 @@ export interface QuadrantTextType extends Point {
   rotation: number;
 }
 
-export interface QuadrantPointType extends Point {
+export interface QuadrantPointType
+  extends Point,
+    Pick<StylesObject, 'strokeColor' | 'strokeWidth'> {
   fill: string;
   radius: number;
   text: QuadrantTextType;
-  strokeColor: string;
-  strokeWidth: string;
 }
 
 export interface QuadrantQuadrantsType extends Point {
@@ -132,7 +127,7 @@ export class QuadrantBuilder {
   private config: QuadrantBuilderConfig;
   private themeConfig: QuadrantBuilderThemeConfig;
   private data: QuadrantBuilderData;
-  private classes: StylesObject[] = [];
+  private classes: Record<string, StylesObject> = {};
 
   constructor() {
     this.config = this.getDefaultConfig();
@@ -219,10 +214,7 @@ export class QuadrantBuilder {
   }
 
   addClass(className: string, styles: StylesObject) {
-    this.classes.push({
-      className,
-      ...styles,
-    });
+    this.classes[className] = styles;
   }
 
   setConfig(config: Partial<QuadrantBuilderConfig>) {
@@ -493,7 +485,7 @@ export class QuadrantBuilder {
       .range([quadrantHeight + quadrantTop, quadrantTop]);
 
     const points: QuadrantPointType[] = this.data.points.map((point) => {
-      const classStyles = this.classes.find((obj) => obj.className === point.className);
+      const classStyles = this.classes[point.className as keyof typeof this.classes];
       if (classStyles !== undefined) {
         if (classStyles.color !== undefined) {
           point.color = classStyles.color;
@@ -511,11 +503,8 @@ export class QuadrantBuilder {
       const props: QuadrantPointType = {
         x: xAxis(point.x),
         y: yAxis(point.y),
-        fill:
-          point.color !== undefined && point.color !== ''
-            ? point.color
-            : this.themeConfig.quadrantPointFill,
-        radius: point.radius !== undefined && point.radius ? point.radius : this.config.pointRadius,
+        fill: point.color || this.themeConfig.quadrantPointFill,
+        radius: point.radius || this.config.pointRadius,
         text: {
           text: point.text,
           fill: this.themeConfig.quadrantPointTextFill,

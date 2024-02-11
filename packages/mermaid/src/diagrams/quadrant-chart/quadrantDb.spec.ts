@@ -29,22 +29,22 @@ describe('quadrant unit tests', () => {
   it('should throw an error for unacceptable style value', () => {
     let styles: string[] = ['radius: f'];
     expect(() => quadrantDb.parseStyles(styles)).toThrowError(
-      'value for radius f is unvalid, requires a number'
+      'value for radius f is invalid, please use a valid number'
     );
 
     styles = ['color: ffaa'];
     expect(() => quadrantDb.parseStyles(styles)).toThrowError(
-      'value for color ffaa is unvalid, requires a valid hex code'
+      'value for color ffaa is invalid, please use a valid hex code'
     );
 
     styles = ['stroke-color: #f677779'];
     expect(() => quadrantDb.parseStyles(styles)).toThrowError(
-      'value for stroke-color #f677779 is unvalid, requires a valid hex code'
+      'value for stroke-color #f677779 is invalid, please use a valid hex code'
     );
 
     styles = ['stroke-width: 30'];
     expect(() => quadrantDb.parseStyles(styles)).toThrowError(
-      'value for stroke-width 30 is unvalid, requires a valid number of pixels (eg. 10px)'
+      'value for stroke-width 30 is invalid, please use a valid number of pixels (eg. 10px)'
     );
   });
 });
