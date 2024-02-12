@@ -436,7 +436,7 @@ importers:
         version: 0.58.0
       '@vite-pwa/vitepress':
         specifier: ^0.3.0
-        version: 0.3.0(vite-plugin-pwa@0.17.5)
+        version: 0.3.0(vite-plugin-pwa@0.18.1)
       '@vitejs/plugin-vue':
         specifier: ^4.2.1
         version: 4.2.1(vite@4.5.2)(vue@3.3.4)
@@ -459,11 +459,11 @@ importers:
         specifier: ^4.5.2
         version: 4.5.2(@types/node@20.11.10)
       vite-plugin-pwa:
-        specifier: ^0.17.5
-        version: 0.17.5(vite@4.5.2)(workbox-build@7.0.0)(workbox-window@7.0.0)
+        specifier: ^0.18.0
+        version: 0.18.1(vite@4.5.2)(workbox-build@7.0.0)(workbox-window@7.0.0)
       vitepress:
-        specifier: 1.0.0-rc.41
-        version: 1.0.0-rc.41(@algolia/client-search@4.19.1)(@types/node@20.11.10)(postcss@8.4.33)(search-insights@2.7.0)(typescript@5.1.6)
+        specifier: 1.0.0-rc.42
+        version: 1.0.0-rc.42(@algolia/client-search@4.19.1)(@types/node@20.11.10)(postcss@8.4.33)(search-insights@2.7.0)(typescript@5.1.6)
       workbox-window:
         specifier: ^7.0.0
         version: 7.0.0
@@ -4397,14 +4397,14 @@ packages:
     dev: true
     optional: true
 
-  /@shikijs/core@1.0.0-beta.6:
-    resolution: {integrity: sha512-dHbpxvRz8G3NcEWLYh3TkVwqVswqDyHKHqWi+7c72hm+yIumYJwdDuQIEjT4z5qxNzyzKQGnEeb9b5jWPdy3vA==}
+  /@shikijs/core@1.1.1:
+    resolution: {integrity: sha512-WSHuW0i4W04+UZgim378oxHBAp4S5X3hVI2zXh+t5v2fx2u/7QXz9VNisoOD/CA4O9Lc6Zs97TrKiDbWyZua6Q==}
     dev: true
 
-  /@shikijs/transformers@1.0.0-beta.6:
-    resolution: {integrity: sha512-VuZ+drxEUO67uEEkpy2RTODjuO3oI49JW5JlNeqR7dHACbaybxKMwuf3g0EqqQ9ZpJ40YhdXy3GjCsohs6dSDw==}
+  /@shikijs/transformers@1.1.1:
+    resolution: {integrity: sha512-kOGqxMWtgPxivmDB6WH/lq3oUv0FrGPleovfBCqNVYsyGwRDa01OBOqQxO6oz8a7QbdEq0fbt7CaK1yjv4epXw==}
     dependencies:
-      shiki: 1.0.0-beta.6
+      shiki: 1.1.1
     dev: true
 
   /@sideway/address@4.1.4:
@@ -5658,12 +5658,12 @@ packages:
       - rollup
     dev: true
 
-  /@vite-pwa/vitepress@0.3.0(vite-plugin-pwa@0.17.5):
+  /@vite-pwa/vitepress@0.3.0(vite-plugin-pwa@0.18.1):
     resolution: {integrity: sha512-7akiTt0laHJRSJ7lxPttGHYBoC2J+FgWJr0TGYQd2jPe/8nou+YSDwBGpOV+/qeobX2uzff8kew02n/07JRe9Q==}
     peerDependencies:
       vite-plugin-pwa: '>=0.17.0 <1'
     dependencies:
-      vite-plugin-pwa: 0.17.5(vite@4.5.2)(workbox-build@7.0.0)(workbox-window@7.0.0)
+      vite-plugin-pwa: 0.18.1(vite@4.5.2)(workbox-build@7.0.0)(workbox-window@7.0.0)
     dev: true
 
   /@vitejs/plugin-vue@4.2.1(vite@4.5.2)(vue@3.3.4):
@@ -9623,7 +9623,7 @@ packages:
     dependencies:
       ajv: 6.12.6
       deepmerge: 4.3.1
-      rfdc: 1.3.0
+      rfdc: 1.3.1
       string-similarity: 4.0.4
     dev: true
 
@@ -9667,7 +9667,7 @@ packages:
       pino: 6.14.0
       process-warning: 1.0.0
       proxy-addr: 2.0.7
-      rfdc: 1.3.0
+      rfdc: 1.3.1
       secure-json-parse: 2.7.0
       semver: 7.5.4
       tiny-lru: 8.0.2
@@ -11961,7 +11961,7 @@ packages:
       enquirer: 2.4.1
       log-update: 4.0.0
       p-map: 4.0.0
-      rfdc: 1.3.0
+      rfdc: 1.3.1
       rxjs: 7.8.1
       through: 2.3.8
       wrap-ansi: 7.0.0
@@ -11980,7 +11980,7 @@ packages:
       colorette: 2.0.20
       log-update: 4.0.0
       p-map: 4.0.0
-      rfdc: 1.3.0
+      rfdc: 1.3.1
       rxjs: 7.8.1
       through: 2.3.8
       wrap-ansi: 7.0.0
@@ -14230,10 +14230,6 @@ packages:
     resolution: {integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==}
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
 
-  /rfdc@1.3.0:
-    resolution: {integrity: sha512-V2hovdzFbOi77/WajaSMXk2OLm+xNIeQdMMuB7icj7bk6zi2F8GGAxigcnDFpJHbNyNcgyJDiP+8nOrY5cZGrA==}
-    dev: true
-
   /rfdc@1.3.1:
     resolution: {integrity: sha512-r5a3l5HzYlIC68TpmYKlxWjmOP6wiPJ1vWv2HeLhNsRZMrCkxeqxiHlQ21oXmQ4F3SiryXBHhAD7JZqvOJjFmg==}
     dev: true
@@ -14594,10 +14590,10 @@ packages:
       vscode-textmate: 8.0.0
     dev: true
 
-  /shiki@1.0.0-beta.6:
-    resolution: {integrity: sha512-lS60hZmzma3ZDVVjk0k33zwUgsB/12QfWNAsKy1gsGpG211JNfAdMN+FBGs4qTTxUNLqfS7nxmpckqDadIwiWQ==}
+  /shiki@1.1.1:
+    resolution: {integrity: sha512-7ksyiu01NltBvEcLq9GcguF+7RGa5lDwozjgdbiXnlkro1FtMCcrVtHUWbKuYBSOZW74gC4KlnBcgRCwK2ERAw==}
     dependencies:
-      '@shikijs/core': 1.0.0-beta.6
+      '@shikijs/core': 1.1.1
     dev: true
 
   /shikiji-core@0.10.2:
@@ -16053,8 +16049,8 @@ packages:
       - supports-color
     dev: true
 
-  /vite-plugin-pwa@0.17.5(vite@4.5.2)(workbox-build@7.0.0)(workbox-window@7.0.0):
-    resolution: {integrity: sha512-UxRNPiJBzh4tqU/vc8G2TxmrUTzT6BqvSzhszLk62uKsf+npXdvLxGDz9C675f4BJi6MbD2tPnJhi5txlMzxbQ==}
+  /vite-plugin-pwa@0.18.1(vite@4.5.2)(workbox-build@7.0.0)(workbox-window@7.0.0):
+    resolution: {integrity: sha512-2A3BF52l9F8hCkdPy/VP2C+hA+fmBvzJGynCZc9XS6mHTcMvo9046FKc2NqlnkKwTOGtQEwXLEIduML/+eYtdw==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       vite: ^3.1.0 || ^4.0.0 || ^5.0.0
@@ -16215,12 +16211,12 @@ packages:
       - universal-cookie
     dev: true
 
-  /vitepress@1.0.0-rc.41(@algolia/client-search@4.19.1)(@types/node@20.11.10)(postcss@8.4.33)(search-insights@2.7.0)(typescript@5.1.6):
-    resolution: {integrity: sha512-PAEoIIc9J//k/Wg39C6k86hZpXPmLZjRiTBwieDNeYGdevD7xr5Ve8o1W/w+e9dtyQMkuvzgianEamXDX3aj7g==}
+  /vitepress@1.0.0-rc.42(@algolia/client-search@4.19.1)(@types/node@20.11.10)(postcss@8.4.33)(search-insights@2.7.0)(typescript@5.1.6):
+    resolution: {integrity: sha512-VeiVVXFblt/sjruFSJBNChMWwlztMrRMe8UXdNpf4e05mKtTYEY38MF5qoP90KxPTCfMQiKqwEGwXAGuOTK8HQ==}
     hasBin: true
     peerDependencies:
       markdown-it-mathjax3: ^4.3.2
-      postcss: ^8.4.33
+      postcss: ^8.4.34
     peerDependenciesMeta:
       markdown-it-mathjax3:
         optional: true
@@ -16229,8 +16225,8 @@ packages:
     dependencies:
       '@docsearch/css': 3.5.2
       '@docsearch/js': 3.5.2(@algolia/client-search@4.19.1)(search-insights@2.7.0)
-      '@shikijs/core': 1.0.0-beta.6
-      '@shikijs/transformers': 1.0.0-beta.6
+      '@shikijs/core': 1.1.1
+      '@shikijs/transformers': 1.1.1
       '@types/markdown-it': 13.0.7
       '@vitejs/plugin-vue': 5.0.3(vite@5.0.12)(vue@3.4.15)
       '@vue/devtools-api': 7.0.14
@@ -16240,7 +16236,7 @@ packages:
       mark.js: 8.11.1
       minisearch: 6.3.0
       postcss: 8.4.33
-      shiki: 1.0.0-beta.6
+      shiki: 1.1.1
       vite: 5.0.12(@types/node@20.11.10)
       vue: 3.4.15(typescript@5.1.6)
     transitivePeerDependencies:
@@ -16908,6 +16904,7 @@ packages:
 
   /workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
+    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
     dependencies:
       workbox-background-sync: 7.0.0
       workbox-core: 7.0.0
