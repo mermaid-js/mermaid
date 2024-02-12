@@ -23,9 +23,10 @@ import type {
   SankeyNodeDatum,
   SankeyNodeOverride,
 } from './sankeyTypes.js';
+import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import { Uid } from '../../rendering-util/uid.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import { getConfig } from '../../config.js';
 import { cleanAndMerge } from '../../utils.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 
@@ -206,6 +207,8 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .attr('d', d3SankeyLinkHorizontal())
     .attr('stroke', coloring)
     .attr('stroke-width', (d: SankeyLinkDatum): number => Math.max(1, d.width));
+
+  setupGraphViewbox(undefined, svg, 0, useMaxWidth);
 };
 
 export const renderer = { draw };

@@ -1,12 +1,12 @@
 import { vi } from 'vitest';
-import * as configApi from '../../config.js';
+import { setSiteConfig } from '../../diagram-api/diagramAPI.js';
 import mermaidAPI from '../../mermaidAPI.js';
-import { Diagram, getDiagramFromText } from '../../Diagram.js';
+import { Diagram } from '../../Diagram.js';
 import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
 
 beforeAll(async () => {
   // Is required to load the sequence diagram
-  await getDiagramFromText('sequenceDiagram');
+  await Diagram.fromText('sequenceDiagram');
 });
 
 /**
@@ -95,8 +95,8 @@ function addConf(conf, key, value) {
 let diagram;
 
 describe('more than one sequence diagram', () => {
-  it('should not have duplicated messages', () => {
-    const diagram1 = new Diagram(`
+  it('should not have duplicated messages', async () => {
+    const diagram1 = await Diagram.fromText(`
         sequenceDiagram
         Alice->Bob:Hello Bob, how are you?
         Bob-->Alice: I am good thanks!`);
@@ -120,7 +120,7 @@ describe('more than one sequence diagram', () => {
         },
       ]
     `);
-    const diagram2 = new Diagram(`
+    const diagram2 = await Diagram.fromText(`
         sequenceDiagram
         Alice->Bob:Hello Bob, how are you?
         Bob-->Alice: I am good thanks!`);
@@ -147,7 +147,7 @@ describe('more than one sequence diagram', () => {
     `);
 
     // Add John actor
-    const diagram3 = new Diagram(`
+    const diagram3 = await Diagram.fromText(`
         sequenceDiagram
         Alice->John:Hello John, how are you?
         John-->Alice: I am good thanks!`);
@@ -176,8 +176,8 @@ describe('more than one sequence diagram', () => {
 });
 
 describe('when parsing a sequenceDiagram', function () {
-  beforeEach(function () {
-    diagram = new Diagram(`
+  beforeEach(async function () {
+    diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
@@ -1610,10 +1610,10 @@ describe('when rendering a sequenceDiagram APA', function () {
       wrap: false,
       mirrorActors: false,
     };
-    configApi.setSiteConfig({ logLevel: 5, sequence: conf });
+    setSiteConfig({ logLevel: 5, sequence: conf });
   });
   let conf;
-  beforeEach(function () {
+  beforeEach(async function () {
     mermaidAPI.reset();
 
     // });
@@ -1631,8 +1631,8 @@ describe('when rendering a sequenceDiagram APA', function () {
       wrap: false,
       mirrorActors: false,
     };
-    configApi.setSiteConfig({ logLevel: 5, sequence: conf });
-    diagram = new Diagram(`
+    setSiteConfig({ logLevel: 5, sequence: conf });
+    diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks

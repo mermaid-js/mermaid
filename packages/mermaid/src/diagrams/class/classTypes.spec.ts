@@ -681,3 +681,82 @@ describe('given text representing a method, ', function () {
     });
   });
 });
+
+describe('given text representing an attribute', () => {
+  describe('when the attribute has no modifiers', () => {
+    it('should parse the display text correctly', () => {
+      const str = 'name String';
+
+      const displayDetails = new ClassMember(str, 'attribute').getDisplayDetails();
+
+      expect(displayDetails.displayText).toBe('name String');
+      expect(displayDetails.cssStyle).toBe('');
+    });
+  });
+
+  describe('when the attribute has public "+" modifier', () => {
+    it('should parse the display text correctly', () => {
+      const str = '+name String';
+
+      const displayDetails = new ClassMember(str, 'attribute').getDisplayDetails();
+
+      expect(displayDetails.displayText).toBe('+name String');
+      expect(displayDetails.cssStyle).toBe('');
+    });
+  });
+
+  describe('when the attribute has protected "#" modifier', () => {
+    it('should parse the display text correctly', () => {
+      const str = '#name String';
+
+      const displayDetails = new ClassMember(str, 'attribute').getDisplayDetails();
+
+      expect(displayDetails.displayText).toBe('#name String');
+      expect(displayDetails.cssStyle).toBe('');
+    });
+  });
+
+  describe('when the attribute has private "-" modifier', () => {
+    it('should parse the display text correctly', () => {
+      const str = '-name String';
+
+      const displayDetails = new ClassMember(str, 'attribute').getDisplayDetails();
+
+      expect(displayDetails.displayText).toBe('-name String');
+      expect(displayDetails.cssStyle).toBe('');
+    });
+  });
+
+  describe('when the attribute has internal "~" modifier', () => {
+    it('should parse the display text correctly', () => {
+      const str = '~name String';
+
+      const displayDetails = new ClassMember(str, 'attribute').getDisplayDetails();
+
+      expect(displayDetails.displayText).toBe('~name String');
+      expect(displayDetails.cssStyle).toBe('');
+    });
+  });
+
+  describe('when the attribute has static "$" modifier', () => {
+    it('should parse the display text correctly and apply static css style', () => {
+      const str = 'name String$';
+
+      const displayDetails = new ClassMember(str, 'attribute').getDisplayDetails();
+
+      expect(displayDetails.displayText).toBe('name String');
+      expect(displayDetails.cssStyle).toBe(staticCssStyle);
+    });
+  });
+
+  describe('when the attribute has abstract "*" modifier', () => {
+    it('should parse the display text correctly and apply abstract css style', () => {
+      const str = 'name String*';
+
+      const displayDetails = new ClassMember(str, 'attribute').getDisplayDetails();
+
+      expect(displayDetails.displayText).toBe('name String');
+      expect(displayDetails.cssStyle).toBe(abstractCssStyle);
+    });
+  });
+});

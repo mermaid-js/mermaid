@@ -7,6 +7,7 @@ import gantt from '../diagrams/gantt/ganttDetector.js';
 import { info } from '../diagrams/info/infoDetector.js';
 import { pie } from '../diagrams/pie/pieDetector.js';
 import quadrantChart from '../diagrams/quadrant-chart/quadrantDetector.js';
+import xychart from '../diagrams/xychart/xychartDetector.js';
 import requirement from '../diagrams/requirement/requirementDetector.js';
 import sequence from '../diagrams/sequence/sequenceDetector.js';
 import classDiagram from '../diagrams/class/classDetector.js';
@@ -19,6 +20,8 @@ import flowchartElk from '../diagrams/flowchart/elk/detector.js';
 import timeline from '../diagrams/timeline/detector.js';
 import mindmap from '../diagrams/mindmap/detector.js';
 import { sankey } from '../diagrams/sankey/sankeyDetector.js';
+import { packet } from '../diagrams/packet/detector.js';
+import block from '../diagrams/block/blockDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
 
@@ -84,6 +87,9 @@ export const addDiagrams = () => {
     state,
     journey,
     quadrantChart,
-    sankey
+    sankey,
+    packet,
+    xychart,
+    block
   );
 };

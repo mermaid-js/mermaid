@@ -49,8 +49,10 @@ module.exports = {
     'no-unused-vars': 'off',
     'cypress/no-async-tests': 'off',
     '@typescript-eslint/consistent-type-imports': 'error',
+    '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-floating-promises': 'error',
     '@typescript-eslint/no-misused-promises': 'error',
+    '@typescript-eslint/no-unused-vars': 'warn',
     '@typescript-eslint/ban-ts-comment': [
       'error',
       {
@@ -59,6 +61,17 @@ module.exports = {
         'ts-nocheck': 'allow-with-description',
         'ts-check': 'allow-with-description',
         minimumDescriptionLength: 10,
+      },
+    ],
+    '@typescript-eslint/naming-convention': [
+      'error',
+      {
+        selector: 'typeLike',
+        format: ['PascalCase'],
+        custom: {
+          regex: '^I[A-Z]',
+          match: false,
+        },
       },
     ],
     'json/*': ['error', 'allowComments'],

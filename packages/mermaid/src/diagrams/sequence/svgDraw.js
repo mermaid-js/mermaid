@@ -5,25 +5,11 @@ import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
+const TOP_ACTOR_CLASS = 'actor-top';
+const BOTTOM_ACTOR_CLASS = 'actor-bottom';
 
 export const drawRect = function (elem, rectData) {
   return svgDrawCommon.drawRect(elem, rectData);
-};
-
-const addPopupInteraction = (id, actorCnt) => {
-  addFunction(() => {
-    const arr = document.querySelectorAll(id);
-    // This will be the case when running in sandboxed mode
-    if (arr.length === 0) {
-      return;
-    }
-    arr[0].addEventListener('mouseover', function () {
-      popupMenuUpFunc('actor' + actorCnt + '_popup');
-    });
-    arr[0].addEventListener('mouseout', function () {
-      popupMenuDownFunc('actor' + actorCnt + '_popup');
-    });
-  });
 };
 
 export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMenus) {
@@ -44,7 +30,6 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   g.attr('id', 'actor' + actorCnt + '_popup');
   g.attr('class', 'actorPopupMenu');
   g.attr('display', displayValue);
-  addPopupInteraction('#actor' + actorCnt + '_popup', actorCnt);
   var actorClass = '';
   if (rectData.class !== undefined) {
     actorClass = ' ' + rectData.class;
@@ -90,34 +75,12 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   return { height: rectData.height + linkY, width: menuWidth };
 };
 
-export const popupMenu = function (popid) {
+const popupMenuToggle = function (popid) {
   return (
     "var pu = document.getElementById('" +
     popid +
-    "'); if (pu != null) { pu.style.display = 'block'; }"
+    "'); if (pu != null) { pu.style.display = pu.style.display == 'block' ? 'none' : 'block'; }"
   );
-};
-
-export const popdownMenu = function (popid) {
-  return (
-    "var pu = document.getElementById('" +
-    popid +
-    "'); if (pu != null) { pu.style.display = 'none'; }"
-  );
-};
-
-const popupMenuUpFunc = function (popupId) {
-  var pu = document.getElementById(popupId);
-  if (pu != null) {
-    pu.style.display = 'block';
-  }
-};
-
-const popupMenuDownFunc = function (popupId) {
-  var pu = document.getElementById(popupId);
-  if (pu != null) {
-    pu.style.display = 'none';
-  }
 };
 
 export const drawText = function (elem, textData) {
@@ -329,6 +292,9 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
 
   if (!isFooter) {
     actorCnt++;
+    if (Object.keys(actor.links || {}).length && !conf.forceMenus) {
+      g.attr('onclick', popupMenuToggle(`actor${actorCnt}_popup`)).attr('cursor', 'pointer');
+    }
     g.append('line')
       .attr('id', 'actor' + actorCnt)
       .attr('x1', center)
@@ -345,7 +311,6 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
 
     if (actor.links != null) {
       g.attr('id', 'root-' + actorCnt);
-      addPopupInteraction('#root-' + actorCnt, actorCnt);
     }
   }
 
@@ -355,6 +320,11 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
     cssclass = actor.properties['class'];
   } else {
     rect.fill = '#eaeaea';
+  }
+  if (isFooter) {
+    cssclass += ` ${BOTTOM_ACTOR_CLASS}`;
+  } else {
+    cssclass += ` ${TOP_ACTOR_CLASS}`;
   }
   rect.x = actor.x;
   rect.y = actorY;
@@ -420,7 +390,13 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
     actor.actorCnt = actorCnt;
   }
   const actElem = elem.append('g');
-  actElem.attr('class', 'actor-man');
+  let cssClass = 'actor-man';
+  if (isFooter) {
+    cssClass += ` ${BOTTOM_ACTOR_CLASS}`;
+  } else {
+    cssClass += ` ${TOP_ACTOR_CLASS}`;
+  }
+  actElem.attr('class', cssClass);
 
   const rect = svgDrawCommon.getNoteRect();
   rect.x = actor.x;
@@ -1053,8 +1029,6 @@ export default {
   insertClockIcon,
   getTextObj,
   getNoteRect,
-  popupMenu,
-  popdownMenu,
   fixLifeLineHeights,
   sanitizeUrl,
 };

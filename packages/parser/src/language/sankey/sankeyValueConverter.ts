@@ -1,6 +1,6 @@
 import type { CstNode, GrammarAST, ValueType } from 'langium';
 
-import { MermaidValueConverter } from '../common/valueConverter.js';
+import { AbstractMermaidValueConverter } from '../common/valueConverter.js';
 import { sankeyLinkNodeRegex, sankeyLinkValueRegex } from './sankeyMatcher.js';
 
 const rulesRegexes: Record<string, RegExp> = {
@@ -8,7 +8,7 @@ const rulesRegexes: Record<string, RegExp> = {
   SANKEY_LINK_VALUE: sankeyLinkValueRegex,
 };
 
-export class SankeyValueConverter extends MermaidValueConverter {
+export class SankeyValueConverter extends AbstractMermaidValueConverter {
   protected runCustomConverter(
     rule: GrammarAST.AbstractRule,
     input: string,

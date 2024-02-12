@@ -9,7 +9,6 @@ import type {
 import { EmptyFileSystem, createDefaultModule, createDefaultSharedModule, inject } from 'langium';
 
 import { MermaidGeneratedSharedModule, SankeyGeneratedModule } from '../generated/module.js';
-import { CommonLexer } from '../common/lexer.js';
 import { SankeyTokenBuilder } from './sankeyTokenBuilder.js';
 import { SankeyValueConverter } from './sankeyValueConverter.js';
 import { createSankeyParser } from './sankeyParser.js';
@@ -20,7 +19,6 @@ import { createSankeyParser } from './sankeyParser.js';
 export type SankeyAddedServices = {
   parser: {
     LangiumParser: LangiumParser;
-    Lexer: CommonLexer;
     TokenBuilder: SankeyTokenBuilder;
     ValueConverter: SankeyValueConverter;
   };
@@ -38,7 +36,6 @@ export type SankeyServices = LangiumServices & SankeyAddedServices;
 export const SankeyModule: Module<SankeyServices, PartialLangiumServices & SankeyAddedServices> = {
   parser: {
     LangiumParser: (services) => createSankeyParser(services),
-    Lexer: (services) => new CommonLexer(services),
     TokenBuilder: () => new SankeyTokenBuilder(),
     ValueConverter: () => new SankeyValueConverter(),
   },

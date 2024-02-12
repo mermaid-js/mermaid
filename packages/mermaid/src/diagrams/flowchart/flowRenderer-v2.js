@@ -1,6 +1,6 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select, curveLinear, selectAll } from 'd3';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import utils from '../../utils.js';
 import { render } from '../../dagre-wrapper/index.js';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
@@ -349,6 +349,8 @@ export const getClasses = function (text, diagObj) {
  *
  * @param text
  * @param id
+ * @param _version
+ * @param diagObj
  */
 
 export const draw = async function (text, id, _version, diagObj) {

@@ -6,11 +6,11 @@ import * as path from 'path';
 describe('sankey', () => {
   beforeEach(() => db.clear());
 
-  it('should parse csv', () => {
+  it('should parse csv', async () => {
     const csv = path.resolve(__dirname, './parser/energy.csv');
     const data = fs.readFileSync(csv, 'utf8');
     const graphDefinition = 'sankey-beta\n\n ' + data;
 
-    parser.parse(graphDefinition);
+    await parser.parse(graphDefinition);
   });
 });

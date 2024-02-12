@@ -47,6 +47,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'er',
   'pie',
   'quadrantChart',
+  'xyChart',
   'requirement',
   'mindmap',
   'timeline',
@@ -232,6 +233,23 @@ async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidCon
   }
 }
 
+/**
+ * Workaround for type duplication when a $ref property has siblings.
+ *
+ * @param json - The input JSON object.
+ *
+ * @see https://github.com/bcherny/json-schema-to-typescript/issues/193
+ */
+function removeProp(json: any, name: string) {
+  for (const prop in json) {
+    if (prop === name) {
+      delete json[prop];
+    } else if (typeof json[prop] === 'object') {
+      removeProp(json[prop], name);
+    }
+  }
+}
+
 /** Main function */
 async function main() {
   if (verifyOnly) {
@@ -241,6 +259,8 @@ async function main() {
   }
 
   const configJsonSchema = await loadJsonSchemaFromYaml();
+
+  removeProp(configJsonSchema, 'default');
 
   validateSchema(configJsonSchema);
 

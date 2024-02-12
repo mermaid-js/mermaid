@@ -1,5 +1,5 @@
-import type { Sankey, SankeyLink } from 'mermaid-parser';
-import { parse } from 'mermaid-parser';
+import type { Sankey, SankeyLink } from '@mermaid-js/parser';
+import { parse } from '@mermaid-js/parser';
 
 import { log } from '../../logger.js';
 import type { ParserDefinition } from '../../diagram-api/types.js';
@@ -18,8 +18,8 @@ function populateDb(ast: Sankey, db: SankeyDB) {
 }
 
 export const parser: ParserDefinition = {
-  parse: (input: string): void => {
-    const ast: Sankey = parse('sankey', input);
+  parse: async (input: string): Promise<void> => {
+    const ast: Sankey = await parse('sankey', input);
     log.debug(ast);
     populateDb(ast, db);
   },

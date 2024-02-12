@@ -5,38 +5,25 @@ import { getBuildConfig, defaultOptions } from './util.js';
 import { context } from 'esbuild';
 import chokidar from 'chokidar';
 import { generateLangium } from '../.build/generateLangium.js';
+import { packageOptions } from '../.build/common.js';
 
-const parserCtx = await context(
-  getBuildConfig({ ...defaultOptions, minify: false, core: false, entryName: 'parser' })
+const configs = Object.values(packageOptions).map(({ packageName }) =>
+  getBuildConfig({ ...defaultOptions, minify: false, core: false, entryName: packageName })
 );
-const mermaidCtx = await context(
-  getBuildConfig({ ...defaultOptions, minify: false, core: false, entryName: 'mermaid' })
-);
-const mermaidIIFECtx = await context(
-  getBuildConfig({
-    ...defaultOptions,
-    minify: false,
-    core: false,
-    entryName: 'mermaid',
-    format: 'iife',
-  })
-);
-const externalCtx = await context(
-  getBuildConfig({
-    ...defaultOptions,
-    minify: false,
-    core: false,
-    entryName: 'mermaid-example-diagram',
-  })
-);
-const zenumlCtx = await context(
-  getBuildConfig({ ...defaultOptions, minify: false, core: false, entryName: 'mermaid-zenuml' })
-);
-const contexts = [parserCtx, mermaidCtx, mermaidIIFECtx, externalCtx, zenumlCtx];
+const mermaidIIFEConfig = getBuildConfig({
+  ...defaultOptions,
+  minify: false,
+  core: false,
+  entryName: 'mermaid',
+  format: 'iife',
+});
+configs.push(mermaidIIFEConfig);
+
+const contexts = await Promise.all(configs.map((config) => context(config)));
 
 const rebuildAll = async () => {
   console.time('Rebuild time');
-  await Promise.all(contexts.map((ctx) => ctx.rebuild()));
+  await Promise.all(contexts.map((ctx) => ctx.rebuild())).catch((e) => console.error(e));
   console.timeEnd('Rebuild time');
 };
 
@@ -101,10 +88,9 @@ async function createServer() {
 
   app.use(cors());
   app.get('/events', eventsHandler);
-  app.use(express.static('./packages/parser/dist'));
-  app.use(express.static('./packages/mermaid/dist'));
-  app.use(express.static('./packages/mermaid-zenuml/dist'));
-  app.use(express.static('./packages/mermaid-example-diagram/dist'));
+  for (const { packageName } of Object.values(packageOptions)) {
+    app.use(express.static(`./packages/${packageName}/dist`));
+  }
   app.use(express.static('demos'));
   app.use(express.static('cypress/platform'));
 

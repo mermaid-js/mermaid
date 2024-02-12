@@ -1,12 +1,11 @@
-import type { Info } from 'mermaid-parser';
-import { parse } from 'mermaid-parser';
-
-import { log } from '../../logger.js';
+import type { Info } from '@mermaid-js/parser';
+import { parse } from '@mermaid-js/parser';
 import type { ParserDefinition } from '../../diagram-api/types.js';
+import { log } from '../../logger.js';
 
 export const parser: ParserDefinition = {
-  parse: (input: string): void => {
-    const ast: Info = parse('info', input);
+  parse: async (input: string): Promise<void> => {
+    const ast: Info = await parse('info', input);
     log.debug(ast);
   },
 };

@@ -53,8 +53,8 @@ const getNodes = (): string[] => nodes;
 
 export const db: SankeyDB = {
   getConfig,
-
   clear,
+
   setDiagramTitle,
   getDiagramTitle,
   setAccTitle,

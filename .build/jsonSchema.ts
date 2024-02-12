@@ -1,7 +1,6 @@
 import { load, JSON_SCHEMA } from 'js-yaml';
 import assert from 'node:assert';
 import Ajv2019, { type JSONSchemaType } from 'ajv/dist/2019.js';
-
 import type { MermaidConfig, BaseDiagramConfig } from '../packages/mermaid/src/config.type.js';
 
 /**
@@ -17,12 +16,15 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'er',
   'pie',
   'quadrantChart',
+  'xyChart',
   'requirement',
   'mindmap',
   'timeline',
   'gitGraph',
   'c4',
   'sankey',
+  'block',
+  'packet',
 ] as const;
 
 /**
@@ -34,7 +36,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
  * @param mermaidConfigSchema - The Mermaid JSON Schema to use.
  * @returns The default mermaid config object.
  */
-export function generateDefaults(mermaidConfigSchema: JSONSchemaType<MermaidConfig>) {
+function generateDefaults(mermaidConfigSchema: JSONSchemaType<MermaidConfig>) {
   const ajv = new Ajv2019({
     useDefaults: true,
     allowUnionTypes: true,

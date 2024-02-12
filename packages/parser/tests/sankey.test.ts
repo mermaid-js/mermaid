@@ -3,7 +3,7 @@ import type { LangiumParser, ParseResult } from 'langium';
 
 import type { SankeyServices } from '../src/language/index.js';
 import { Sankey, createSankeyServices } from '../src/language/index.js';
-import { noErrorsOrAlternatives } from './test-util.js';
+import { expectNoErrorsOrAlternatives } from './test-util.js';
 
 const services: SankeyServices = createSankeyServices().Sankey;
 const parser: LangiumParser = services.parser.LangiumParser;
@@ -24,7 +24,7 @@ describe('sankey', () => {
     const context = `sankey-beta
     sourceNode, targetNode, 10`;
     const result = parse(context);
-    noErrorsOrAlternatives(result);
+    expectNoErrorsOrAlternatives(result);
 
     const value = result.value;
     expect(value.$type).toBe(Sankey);
@@ -40,7 +40,7 @@ describe('sankey', () => {
 "source node, with comma","target node, with comma","10.00"
     `;
     const result = parse(context);
-    noErrorsOrAlternatives(result);
+    expectNoErrorsOrAlternatives(result);
 
     const value = result.value;
     expect(value.$type).toBe(Sankey);
@@ -58,7 +58,7 @@ describe('sankey', () => {
 "" double quotes","10.00"
     `;
     const result = parse(context);
-    noErrorsOrAlternatives(result);
+    expectNoErrorsOrAlternatives(result);
 
     const value = result.value;
     expect(value.$type).toBe(Sankey);
@@ -81,7 +81,7 @@ describe('sankey', () => {
     source node 1, target node 1, 10
     source node 2, target node 2, 50`;
     const result = parse(context);
-    noErrorsOrAlternatives(result);
+    expectNoErrorsOrAlternatives(result);
 
     const value = result.value;
     expect(value.$type).toBe(Sankey);
@@ -106,7 +106,7 @@ describe('sankey', () => {
     source, target, 10
     target, another target, 20`;
     const result = parse(context);
-    noErrorsOrAlternatives(result);
+    expectNoErrorsOrAlternatives(result);
 
     const value = result.value;
     expect(value.$type).toBe(Sankey);
@@ -126,7 +126,7 @@ describe('sankey', () => {
       const context = `sankey-beta title awesome title
       source, target, 10`;
       const result = parse(context);
-      noErrorsOrAlternatives(result);
+      expectNoErrorsOrAlternatives(result);
 
       const value = result.value;
       expect(value.$type).toBe(Sankey);
@@ -139,7 +139,7 @@ describe('sankey', () => {
       const context = `sankey-beta accTitle: awesome accTitle
       source, target, 10`;
       const result = parse(context);
-      noErrorsOrAlternatives(result);
+      expectNoErrorsOrAlternatives(result);
 
       const value = result.value;
       expect(value.$type).toBe(Sankey);
@@ -152,7 +152,7 @@ describe('sankey', () => {
       const context = `sankey-beta accDescr: awesome accDescr
       source, target, 10`;
       const result = parse(context);
-      noErrorsOrAlternatives(result);
+      expectNoErrorsOrAlternatives(result);
 
       const value = result.value;
       expect(value.$type).toBe(Sankey);
@@ -167,7 +167,7 @@ describe('sankey', () => {
       }
       source, target, 10`;
       const result = parse(context);
-      noErrorsOrAlternatives(result);
+      expectNoErrorsOrAlternatives(result);
 
       const value = result.value;
       expect(value.$type).toBe(Sankey);
@@ -182,7 +182,7 @@ describe('sankey', () => {
       accDescr: awesome accDescr
       source, target, 10`;
       const result = parse(context);
-      noErrorsOrAlternatives(result);
+      expectNoErrorsOrAlternatives(result);
 
       const value = result.value;
       expect(value.$type).toBe(Sankey);
