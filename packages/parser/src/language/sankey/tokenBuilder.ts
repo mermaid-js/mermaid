@@ -2,7 +2,7 @@ import type { GrammarAST, Stream, TokenBuilderOptions } from 'langium';
 import { DefaultTokenBuilder } from 'langium';
 import type { TokenType } from 'chevrotain';
 
-import { matchSankeyLinkNode } from './sankeyMatcher.js';
+import { matchSankeyLinkNode } from './matcher.js';
 
 export class SankeyTokenBuilder extends DefaultTokenBuilder {
   protected override buildTerminalTokens(rules: Stream<GrammarAST.AbstractRule>): TokenType[] {

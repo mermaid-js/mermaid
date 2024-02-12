@@ -1,7 +1,7 @@
 import type { AstNode, LangiumParser, ParseResult } from 'langium';
 import { createLangiumParser } from 'langium';
 
-import type { SankeyServices } from './sankeyModule.js';
+import type { SankeyServices } from './module.js';
 import type { SankeyLink } from '../generated/ast.js';
 import { isSankey } from '../generated/ast.js';
 

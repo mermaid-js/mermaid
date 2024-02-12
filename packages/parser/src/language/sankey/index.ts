@@ -1,1 +1,1 @@
-export * from './sankeyModule.js';
+export * from './module.js';

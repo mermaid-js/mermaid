@@ -9,9 +9,9 @@ import type {
 import { EmptyFileSystem, createDefaultModule, createDefaultSharedModule, inject } from 'langium';
 
 import { MermaidGeneratedSharedModule, SankeyGeneratedModule } from '../generated/module.js';
-import { SankeyTokenBuilder } from './sankeyTokenBuilder.js';
-import { SankeyValueConverter } from './sankeyValueConverter.js';
-import { createSankeyParser } from './sankeyParser.js';
+import { SankeyTokenBuilder } from './tokenBuilder.js';
+import { SankeyValueConverter } from './valueConverter.js';
+import { createSankeyParser } from './parser.js';
 
 /**
  * Declaration of `Sankey` services.
