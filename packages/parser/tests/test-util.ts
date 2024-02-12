@@ -1,7 +1,18 @@
 import type { LangiumParser, ParseResult } from 'langium';
 import { expect, vi } from 'vitest';
-import type { Info, InfoServices, Pie, PieServices } from '../src/language/index.js';
-import { createInfoServices, createPieServices } from '../src/language/index.js';
+import type {
+  Info,
+  InfoServices,
+  Pie,
+  PieServices,
+  Sankey,
+  SankeyServices,
+} from '../src/language/index.js';
+import {
+  createInfoServices,
+  createPieServices,
+  createSankeyServices,
+} from '../src/language/index.js';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
@@ -40,3 +51,13 @@ export function createPieTestServices() {
   return { services: pieServices, parse };
 }
 export const pieParse = createPieTestServices().parse;
+
+const sankeyServices: SankeyServices = createSankeyServices().Sankey;
+const sankeyParser: LangiumParser = sankeyServices.parser.LangiumParser;
+export function createSankeyTestServices() {
+  const parse = (input: string) => {
+    return sankeyParser.parse<Sankey>(input);
+  };
+  return { services: sankeyServices, parse };
+}
+export const sankeyParse = createSankeyTestServices().parse;

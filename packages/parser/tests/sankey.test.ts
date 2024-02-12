@@ -1,25 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import type { LangiumParser, ParseResult } from 'langium';
 
-import type { SankeyServices } from '../src/language/index.js';
-import { Sankey, createSankeyServices } from '../src/language/index.js';
-import { expectNoErrorsOrAlternatives } from './test-util.js';
-
-const services: SankeyServices = createSankeyServices().Sankey;
-const parser: LangiumParser = services.parser.LangiumParser;
-export function createSankeyTestServices(): {
-  services: SankeyServices;
-  parse: (input: string) => ParseResult<Sankey>;
-} {
-  const parse = (input: string) => {
-    return parser.parse<Sankey>(input);
-  };
-  return { services, parse };
-}
+import { Sankey } from '../src/language/index.js';
+import { expectNoErrorsOrAlternatives, sankeyParse as parse } from './test-util.js';
 
 describe('sankey', () => {
-  const { parse } = createSankeyTestServices();
-
   it('should handle simple sankey', () => {
     const context = `sankey-beta
     sourceNode, targetNode, 10`;
