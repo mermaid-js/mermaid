@@ -1,4 +1,3 @@
-export type { Info, Sankey, SankeyLink } from './language/index.js';
 import type { AstNode } from 'langium';
 
 export * from './language/index.js';
