@@ -436,7 +436,7 @@ importers:
         version: 0.58.0
       '@vite-pwa/vitepress':
         specifier: ^0.3.0
-        version: 0.3.0(vite-plugin-pwa@0.17.5)
+        version: 0.3.0(vite-plugin-pwa@0.18.1)
       '@vitejs/plugin-vue':
         specifier: ^4.2.1
         version: 4.2.1(vite@4.5.2)(vue@3.3.4)
@@ -459,8 +459,8 @@ importers:
         specifier: ^4.5.2
         version: 4.5.2(@types/node@20.11.10)
       vite-plugin-pwa:
-        specifier: ^0.17.5
-        version: 0.17.5(vite@4.5.2)(workbox-build@7.0.0)(workbox-window@7.0.0)
+        specifier: ^0.18.0
+        version: 0.18.1(vite@4.5.2)(workbox-build@7.0.0)(workbox-window@7.0.0)
       vitepress:
         specifier: 1.0.0-rc.41
         version: 1.0.0-rc.41(@algolia/client-search@4.19.1)(@types/node@20.11.10)(postcss@8.4.33)(search-insights@2.7.0)(typescript@5.1.6)
@@ -5658,12 +5658,12 @@ packages:
       - rollup
     dev: true
 
-  /@vite-pwa/vitepress@0.3.0(vite-plugin-pwa@0.17.5):
+  /@vite-pwa/vitepress@0.3.0(vite-plugin-pwa@0.18.1):
     resolution: {integrity: sha512-7akiTt0laHJRSJ7lxPttGHYBoC2J+FgWJr0TGYQd2jPe/8nou+YSDwBGpOV+/qeobX2uzff8kew02n/07JRe9Q==}
     peerDependencies:
       vite-plugin-pwa: '>=0.17.0 <1'
     dependencies:
-      vite-plugin-pwa: 0.17.5(vite@4.5.2)(workbox-build@7.0.0)(workbox-window@7.0.0)
+      vite-plugin-pwa: 0.18.1(vite@4.5.2)(workbox-build@7.0.0)(workbox-window@7.0.0)
     dev: true
 
   /@vitejs/plugin-vue@4.2.1(vite@4.5.2)(vue@3.3.4):
@@ -16053,8 +16053,8 @@ packages:
       - supports-color
     dev: true
 
-  /vite-plugin-pwa@0.17.5(vite@4.5.2)(workbox-build@7.0.0)(workbox-window@7.0.0):
-    resolution: {integrity: sha512-UxRNPiJBzh4tqU/vc8G2TxmrUTzT6BqvSzhszLk62uKsf+npXdvLxGDz9C675f4BJi6MbD2tPnJhi5txlMzxbQ==}
+  /vite-plugin-pwa@0.18.1(vite@4.5.2)(workbox-build@7.0.0)(workbox-window@7.0.0):
+    resolution: {integrity: sha512-2A3BF52l9F8hCkdPy/VP2C+hA+fmBvzJGynCZc9XS6mHTcMvo9046FKc2NqlnkKwTOGtQEwXLEIduML/+eYtdw==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       vite: ^3.1.0 || ^4.0.0 || ^5.0.0
@@ -16908,6 +16908,7 @@ packages:
 
   /workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
+    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
     dependencies:
       workbox-background-sync: 7.0.0
       workbox-core: 7.0.0
