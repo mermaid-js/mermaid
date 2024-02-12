@@ -1,36 +1,43 @@
 // import khroma from 'khroma';
 import * as khroma from 'khroma';
 
-/** Returns the styles given options */
-export interface FlowChartStyleOptions {
-  arrowheadColor: string;
-  border2: string;
-  clusterBkg: string;
-  clusterBorder: string;
-  edgeLabelBackground: string;
-  fontFamily: string;
-  lineColor: string;
-  mainBkg: string;
-  nodeBorder: string;
-  nodeTextColor: string;
-  tertiaryColor: string;
-  textColor: string;
-  titleColor: string;
-}
+/**
+ * Returns the styles given options
+ * 
+ * @typedef {object} FlowChartStyleOptions
+ * @property {string} arrowheadColor
+ * @property {string} border2
+ * @property {string} clusterBkg
+ * @property {string} clusterBorder
+ * @property {string} edgeLabelBackground
+ * @property {string} fontFamily
+ * @property {string} lineColor
+ * @property {string} mainBkg
+ * @property {string} nodeBorder
+ * @property {string} nodeTextColor
+ * @property {string} tertiaryColor
+ * @property {string} textColor
+ * @property {string} titleColor
+ */
 
-const fade = (color: string, opacity: number) => {
-  // @ts-ignore TODO: incorrect types from khroma
+/**
+ * @param {string} color
+ * @param {number} opacity
+ */
+const fade = (color, opacity) => {
   const channel = khroma.channel;
 
   const r = channel(color, 'r');
   const g = channel(color, 'g');
   const b = channel(color, 'b');
 
-  // @ts-ignore incorrect types from khroma
   return khroma.rgba(r, g, b, opacity);
 };
 
-const getStyles = (options: FlowChartStyleOptions) =>
+/**
+ * @param {FlowChartStyleOptions} options
+ */
+const getStyles = (options) =>
   `.label {
     font-family: ${options.fontFamily};
     color: ${options.nodeTextColor || options.textColor};
