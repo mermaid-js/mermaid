@@ -49,6 +49,7 @@ required:
   - gitGraph
   - c4
   - sankey
+  - block
 properties:
   theme:
     description: |
@@ -224,6 +225,8 @@ properties:
     $ref: '#/$defs/C4DiagramConfig'
   sankey:
     $ref: '#/$defs/SankeyDiagramConfig'
+  block:
+    $ref: '#/$defs/BlockDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -2034,6 +2037,16 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           The suffix to use for values
         type: string
         default: ''
+
+  BlockDiagramConfig:
+    title: Block Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for block diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      padding:
+        default: 8
 
   FontCalculator:
     title: Font Calculator
