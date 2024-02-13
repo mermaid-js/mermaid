@@ -169,8 +169,8 @@ that id.
 "*"                   return 'MULT';
 "#"                   return 'BRKT';
 "&"                   return 'AMP';
+"-"                   return 'MINUS';
 ([A-Za-z0-9!"\#$%&'*+\.`?\\_\/]|\-(?=[^\>\-\.])|=(?!=))+  return 'NODE_STRING';
-"-"                   return 'MINUS'
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
 [\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|
@@ -506,16 +506,22 @@ styleStatement:STYLE SPACE idString SPACE stylesOpt
 linkStyleStatement
     : LINKSTYLE SPACE DEFAULT SPACE stylesOpt
           {$$ = $LINKSTYLE;yy.updateLink([$DEFAULT],$stylesOpt);}
+    | LINKSTYLE SPACE MINUS SPACE stylesOpt
+          {$$ = $LINKSTYLE;yy.updateLink([yy.lastEdgeIndex()],$stylesOpt);}
     | LINKSTYLE SPACE numList SPACE stylesOpt
           {$$ = $LINKSTYLE;yy.updateLink($numList,$stylesOpt);}
     | LINKSTYLE SPACE DEFAULT SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
           {$$ = $LINKSTYLE;yy.updateLinkInterpolate([$DEFAULT],$alphaNum);yy.updateLink([$DEFAULT],$stylesOpt);}
     | LINKSTYLE SPACE numList SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
           {$$ = $LINKSTYLE;yy.updateLinkInterpolate($numList,$alphaNum);yy.updateLink($numList,$stylesOpt);}
+    | LINKSTYLE SPACE MINUS SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
+          {$$ = $LINKSTYLE;yy.updateLinkInterpolate([yy.lastEdgeIndex()],$alphaNum);yy.updateLink([yy.lastEdgeIndex()],$stylesOpt);}
     | LINKSTYLE SPACE DEFAULT SPACE INTERPOLATE SPACE alphaNum
           {$$ = $LINKSTYLE;yy.updateLinkInterpolate([$DEFAULT],$alphaNum);}
     | LINKSTYLE SPACE numList SPACE INTERPOLATE SPACE alphaNum
           {$$ = $LINKSTYLE;yy.updateLinkInterpolate($numList,$alphaNum);}
+    | LINKSTYLE SPACE MINUS SPACE INTERPOLATE SPACE alphaNum
+          {$$ = $LINKSTYLE;yy.updateLinkInterpolate([yy.lastEdgeIndex()],$alphaNum);}
     ;
 
 numList: NUM

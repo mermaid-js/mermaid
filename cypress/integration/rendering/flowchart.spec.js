@@ -891,6 +891,7 @@ graph TD
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
+
   it('66: apply class called default on node called default', () => {
     imgSnapshotTest(
       `
@@ -912,6 +913,23 @@ graph TD
       style default stroke:#000,stroke-width:4px
     `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+
+  it('68: should render a flowchart with linkStyle - no numbers', () => {
+    imgSnapshotTest(
+      `flowchart TD
+          Driving --> TrafficLight{ Orange? }
+          TrafficLight --> |No| Go{Green?}
+          linkStyle - stroke:blue;
+          TrafficLight ---> |Yes| SpeedUp
+          linkStyle - stroke:orange;
+          Go --> |Yes| JustCruise
+          linkStyle - stroke:green;
+          Go --> |No| Breaks[Hit the brakes]
+          linkStyle - stroke:red;
+      `,
+      { flowchart: { htmlLabels: true } }
     );
   });
 });

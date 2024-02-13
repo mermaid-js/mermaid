@@ -53,7 +53,7 @@ describe('diagram detection', () => {
       "Parse error on line 2:
       graph TD; A-->
       --------------^
-      Expecting 'AMP', 'COLON', 'PIPE', 'TESTSTR', 'DOWN', 'DEFAULT', 'NUM', 'COMMA', 'NODE_STRING', 'BRKT', 'MINUS', 'MULT', 'UNICODE_TEXT', got 'EOF'"
+      Expecting 'AMP', 'COLON', 'PIPE', 'TESTSTR', 'DOWN', 'DEFAULT', 'MINUS', 'NUM', 'COMMA', 'NODE_STRING', 'BRKT', 'MULT', 'UNICODE_TEXT', got 'EOF'"
     `);
     await expect(getDiagramFromText('sequenceDiagram; A-->B')).rejects
       .toThrowErrorMatchingInlineSnapshot(`

@@ -783,6 +783,10 @@ const makeUniq = (sg, allSubgraphs) => {
   return { nodes: res };
 };
 
+const lastEdgeIndex = () => {
+  return edges.length - 1;
+};
+
 export const lex = {
   firstGraph,
 };
@@ -822,4 +826,5 @@ export default {
   makeUniq,
   setDiagramTitle,
   getDiagramTitle,
+  lastEdgeIndex,
 };
