@@ -1,7 +1,6 @@
 grammar Sankey
 import "../common/common";
 
-// actual grammar
 interface Sankey extends Common {
   links: SankeyLink[];
   nodes: string[];
@@ -17,9 +16,8 @@ entry Sankey returns Sankey:
 ;
 
 SankeyLink:
-  source=SANKEY_LINK_NODE SANKEY_LINK_COMMA target=SANKEY_LINK_NODE SANKEY_LINK_COMMA value=SANKEY_LINK_VALUE EOL
+  source=SANKEY_LINK_NODE "," target=SANKEY_LINK_NODE "," value=SANKEY_LINK_VALUE EOL
 ;
 
-terminal SANKEY_LINK_COMMA: /,/;
 terminal SANKEY_LINK_VALUE returns number: /"(0|[1-9][0-9]*)(\.[0-9]+)?"|[\t ]*(0|[1-9][0-9]*)(\.[0-9]+)?/;
 terminal SANKEY_LINK_NODE: /sankey-link-node/;
