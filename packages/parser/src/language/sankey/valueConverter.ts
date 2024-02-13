@@ -23,6 +23,7 @@ export class SankeyValueConverter extends AbstractMermaidValueConverter {
     if (match === null) {
       return undefined;
     }
+
     // source and target with double quote and value
     if (match[1] !== undefined) {
       if (rule.name === 'SANKEY_LINK_VALUE') {
