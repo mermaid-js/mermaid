@@ -132,7 +132,7 @@ All tests should run successfully without any errors or failures.
 
 ## Workflow
 
-Contributing process is very simple and strightforward:
+Contributing process is very simple and straightforward:
 
 ```mermaid
   flowchart LR
@@ -376,7 +376,7 @@ eg: `# Feature Name (v<MERMAID_RELEASE_VERSION>+)`
 
 We know it can sometimes be hard to code _and_ write user documentation.
 
-Create another issue specifically for the documentation.\
+Create another issue specifically for the documentation.
 You will need to help with the PR, but definitely ask for help if you feel stuck.
 When it feels hard to write stuff out, explaining it to someone and having that person ask you clarifying questions can often be 80% of the work!
 
@@ -401,14 +401,14 @@ The contents of [mermaid.js.org](https://mermaid.js.org/) are based on the docs 
 flowchart LR
   classDef default fill:#fff,color:black,stroke:black
 
-  source["Edit /packages/mermaid/src/docs"] -- automatic processing--> published["View /docs which will be publised on Official Website"]
+  source["Edit /packages/mermaid/src/docs"] -- automatic processing--> published["View /docs which will be published on Official Website"]
 ```
 
 ```mermaid
 flowchart LR
   classDef default fill:#fff,color:black,stroke:black
 
-  source["Edit /packages/mermaid/src/docs"] -- automatic processing--> published["View /docs which will be publised on Official Website"]
+  source["Edit /packages/mermaid/src/docs"] -- automatic processing--> published["View /docs which will be published on Official Website"]
 ```
 
 ### Running the Documentation Website Locally
@@ -519,3 +519,5 @@ You have successfully submitted your improvements! What is next?
 - When a release is ready, the `release/x.x.x` branch will be created, extensively tested and knsv will be in charge of the release process.
 
 Thanks for you help!
+
+<!--- cspell:ignore florbs --->

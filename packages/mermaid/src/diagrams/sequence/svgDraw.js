@@ -76,10 +76,10 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   return { height: rectData.height + linkY, width: menuWidth };
 };
 
-const popupMenuToggle = function (popid) {
+const popupMenuToggle = function (popId) {
   return (
     "var pu = document.getElementById('" +
-    popid +
+    popId +
     "'); if (pu != null) { pu.style.display = pu.style.display == 'block' ? 'none' : 'block'; }"
   );
 };
@@ -329,8 +329,8 @@ const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 5;
 
-  const boxpluslineGroup = elem.append('g').lower();
-  var g = boxpluslineGroup;
+  const boxplusLineGroup = elem.append('g').lower();
+  var g = boxplusLineGroup;
 
   if (!isFooter) {
     actorCnt++;
@@ -348,7 +348,7 @@ const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
       .attr('stroke-width', '0.5px')
       .attr('stroke', '#999');
 
-    g = boxpluslineGroup.append('g');
+    g = boxplusLineGroup.append('g');
     actor.actorCnt = actorCnt;
 
     if (actor.links != null) {
@@ -512,8 +512,8 @@ export const drawActor = async function (elem, actor, conf, isFooter) {
 };
 
 export const drawBox = async function (elem, box, conf) {
-  const boxplustextGroup = elem.append('g');
-  const g = boxplustextGroup;
+  const boxplusTextGroup = elem.append('g');
+  const g = boxplusTextGroup;
   drawBackgroundRect(g, box);
   if (box.name) {
     await _drawTextCandidateFunc(conf)(

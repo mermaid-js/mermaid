@@ -191,7 +191,7 @@ As explained earlier, each section has a color scheme, and each time period and 
 
 However, if there is no section defined, then we have two possibilities:
 
-1.  Style time periods individually, i.e. each time period(and its coressponding events) will have its own color scheme. This is the DEFAULT behavior.
+1.  Style time periods individually, i.e. each time period(and its corresponding events) will have its own color scheme. This is the DEFAULT behavior.
 
 ```mermaid-example
     timeline

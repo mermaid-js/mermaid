@@ -173,13 +173,13 @@ spaceLines
   | spaceLines NL
   ;
 
-seperator
+separator
   : NL
-  {yy.getLogger().debug('Rule: seperator (NL) ');}
+  {yy.getLogger().debug('Rule: separator (NL) ');}
   | SPACE
-  {yy.getLogger().debug('Rule: seperator (Space) ');}
+  {yy.getLogger().debug('Rule: separator (Space) ');}
   | EOF
-    {yy.getLogger().debug('Rule: seperator (EOF) ');}
+    {yy.getLogger().debug('Rule: separator (EOF) ');}
   ;
 
 start: BLOCK_DIAGRAM_KEY document EOF
@@ -245,10 +245,10 @@ blockStatement
 
 node
   : NODE_ID
-  { yy.getLogger().debug("Rule: node (NODE_ID seperator): ", $1); $$ = { id: $1 }; }
+  { yy.getLogger().debug("Rule: node (NODE_ID separator): ", $1); $$ = { id: $1 }; }
   | NODE_ID nodeShapeNLabel
   {
-    yy.getLogger().debug("Rule: node (NODE_ID nodeShapeNLabel seperator): ", $1, $2);
+    yy.getLogger().debug("Rule: node (NODE_ID nodeShapeNLabel separator): ", $1, $2);
     $$ = { id: $1, label: $2.label, typeStr: $2.typeStr, directions: $2.directions };
   }
   ;

@@ -72,7 +72,7 @@ $(bold ./$name pnpm)                   # Run any 'pnpm' command
 $(bold ./$name sh)                     # Open 'sh' inside docker container for development
 __________________________________________________________________________________________
 
-Examples of frequiently used commands:
+Examples of frequently used commands:
 
 $(bold ./$name pnpm add --filter mermaid) $(underline package)
         Add package to mermaid

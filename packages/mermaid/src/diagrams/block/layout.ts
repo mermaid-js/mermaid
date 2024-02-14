@@ -22,11 +22,11 @@ export function calculateBlockPosition(columns: number, position: number): Block
   }
 
   if (columns < 0) {
-    // Auto coulumns is set
+    // Auto columns is set
     return { px: position, py: 0 };
   }
   if (columns === 1) {
-    // Auto coulumns is set
+    // Auto columns is set
     return { px: 0, py: position };
   }
   // Calculate posX and posY
@@ -145,9 +145,10 @@ function setBlockSizes(block: Block, db: BlockDB, siblingWidth = 0, siblingHeigh
       height = siblingHeight;
       const childWidth = (siblingWidth - xSize * padding - padding) / xSize;
       const childHeight = (siblingHeight - ySize * padding - padding) / ySize;
+      // cspell:ignore indata
       log.debug('Size indata abc88', block.id, 'childWidth', childWidth, 'maxWidth', maxWidth);
       log.debug('Size indata abc88', block.id, 'childHeight', childHeight, 'maxHeight', maxHeight);
-      log.debug('Size indata abc88 xSize', xSize, 'paddiong', padding);
+      log.debug('Size indata abc88 xSize', xSize, 'padding', padding);
 
       // set width of block to max width of children
       for (const child of block.children) {
@@ -238,6 +239,7 @@ function layoutBlocks(block: Block, db: BlockDB) {
         const halfWidth = width / 2;
         child.size.x = startingPosX + padding + halfWidth;
 
+        // cspell:ignore pyid
         log.debug(
           `abc91 layout blocks (calc) px, pyid:${
             child.id
