@@ -21,6 +21,7 @@ export const drawRect = (element: SVG | Group, rectData: RectData): D3RectElemen
   rectElement.attr('stroke', rectData.stroke);
   rectElement.attr('width', rectData.width);
   rectElement.attr('height', rectData.height);
+  rectElement.attr('name', rectData.name);
   rectData.rx !== undefined && rectElement.attr('rx', rectData.rx);
   rectData.ry !== undefined && rectElement.attr('ry', rectData.ry);
 

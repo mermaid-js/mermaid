@@ -333,6 +333,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   rect.class = cssclass;
   rect.rx = 3;
   rect.ry = 3;
+  rect.name = actor.name;
   const rectElem = drawRect(g, rect);
   actor.rectData = rect;
 
@@ -397,6 +398,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
     cssClass += ` ${TOP_ACTOR_CLASS}`;
   }
   actElem.attr('class', cssClass);
+  actElem.attr('name', actor.name);
 
   const rect = svgDrawCommon.getNoteRect();
   rect.x = actor.x;
