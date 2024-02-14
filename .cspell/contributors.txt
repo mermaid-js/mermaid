@@ -1,8 +1,8 @@
 # Contributors to mermaidjs, one per line
+Ashish Jain
 cpettitt
 Dong Cai
 Nikolay Rozhkov
 Peng Xiao
 subhash-halder
 Vinod Sidharth
-Ashish Jain
