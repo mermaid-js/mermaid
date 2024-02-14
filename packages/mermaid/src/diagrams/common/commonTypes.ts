@@ -11,7 +11,7 @@ export interface RectData {
   ry?: number;
   attrs?: Record<string, string | number>;
   anchor?: string;
-  name: string;
+  name?: string;
 }
 
 export interface Bound {
