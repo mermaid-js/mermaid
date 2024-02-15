@@ -2,7 +2,7 @@
 
 $schema: https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json
 version: '0.2'
-language: en
+language: en-US,en-GB
 
 import:
   - ./.cspell/cspell.config.yaml
