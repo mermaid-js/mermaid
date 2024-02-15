@@ -102,6 +102,8 @@ Content Management Systems/Enterprise Content Management
   - [Plugin for Mermaid.js](https://emersonbottero.github.io/vitepress-plugin-mermaid/)
 - [VuePress](https://vuepress.vuejs.org/)
   - [Plugin for Mermaid.js](https://github.com/eFrane/vuepress-plugin-mermaidjs)
+- [ApostropheCMS](https://apostrophecms.com/)
+  - [Extension for Mermaid.js](https://github.com/BoDonkey/mermaid-extension)
 
 ### Communication
 
