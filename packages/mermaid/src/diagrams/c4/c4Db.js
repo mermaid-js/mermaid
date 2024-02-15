@@ -706,7 +706,7 @@ export const getBoundaries = function (parentBoundary) {
 };
 
 /**
- * @deprecated Use getBoundaries instead
+ * @deprecated Use {@link getBoundaries} instead
  */
 export const getBoundarys = getBoundaries;
 
