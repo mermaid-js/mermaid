@@ -10,6 +10,12 @@ red()           { ansi 31 "$@"; }
 
 name=$(basename "$0")
 command=$1
+# TODO: fix this one to become spaces tollerant etc
+#       If to be used as an array, make it
+# args=( "${@:2}" )
+#       If to concatenated into a single string and thus loosing ability to pass args with spaces
+# args="${*:2}"
+# shellcheck disable=SC2124
 args=${@:2}
 
 case $command in
