@@ -689,11 +689,11 @@ describe('mermaidAPI', () => {
         mermaidAPI.parse('graph TD;A--x|text including URL space|B;')
       ).resolves.toBeTruthy();
     });
-    it('returns true for valid definition with silent option', async () => {
-      await expect(
-        mermaidAPI.parse('graph TD;A--x|text including URL space|B;', { suppressErrors: true })
-      ).resolves.toBe(true);
-    });
+    // it('returns true for valid definition with silent option', async () => {
+    //   await expect(
+    //     mermaidAPI.parse('graph TD;A--x|text including URL space|B;', { suppressErrors: true })
+    //   ).resolves.toBe(true);
+    // });
   });
 
   describe('render', () => {

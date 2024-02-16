@@ -64,6 +64,22 @@
   </head>
   <body>
     <pre id="diagram" class="mermaid">
+sequenceDiagram
+  actor Alice as Alice
+  participant John as John
+
+  Alice ->>+ John: Hello John, how are you?
+  Alice ->>+ John: John, can you hear me?
+  John -->>- Alice: Hi Alice, I can hear you!
+  John -->>- Alice: I feel great!
+
+    </pre>
+    <pre id="diagram" class="mermaid2">
+flowchart
+  A --> B
+
+    </pre>
+    <pre id="diagram" class="mermaid2">
       block-beta
   blockArrowId<["Label"]>(right)
   blockArrowId2<["Label"]>(left)
@@ -73,7 +89,7 @@
   blockArrowId6<["Label"]>(y)
   blockArrowId6<["Label"]>(x, down)
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 block-beta
   block:e:4
     columns 2
@@ -82,7 +98,7 @@ block-beta
   end
 
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 block-beta
   block:e:4
     columns 2
@@ -92,7 +108,7 @@ block-beta
   end
 
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 block-beta
   columns 4
   a b c d
@@ -157,14 +173,14 @@ columns 3
   end
   g h i
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 block-beta
 columns 3
   a b c
   e:3
   f g h
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 block-beta
 columns 1
   db(("DB"))
@@ -180,7 +196,7 @@ columns 1
   C --> D
   style B fill:#f9F,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 block-beta
   columns 5
   A1:3

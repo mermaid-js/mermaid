@@ -437,6 +437,9 @@ const drawMessage = function (diagram, msgModel, lineStartY: number, diagObj: Di
     line.attr('class', 'messageLine0');
   }
 
+  line.attr('data-et', 'message');
+  line.attr('data-id', 'i' + msgModel.id);
+
   let url = '';
   if (conf.arrowMarkerAbsolute) {
     url =
@@ -835,6 +838,7 @@ export const draw = function (_text: string, id: string, _version: string, diagO
   const messagesToDraw = [];
   const backgrounds = [];
   messages.forEach(function (msg, index) {
+    // console.log('msg', msg);
     let loopModel, noteModel, msgModel;
 
     switch (msg.type) {
@@ -994,6 +998,7 @@ export const draw = function (_text: string, id: string, _version: string, diagO
           msgModel.starty = bounds.getVerticalPos();
           msgModel.sequenceIndex = sequenceIndex;
           msgModel.sequenceVisible = diagObj.db.showSequenceNumbers();
+          msgModel.id = msg.id;
           const lineStartY = boundMessage(diagram, msgModel);
           adjustCreatedDestroyedData(
             msg,
@@ -1032,7 +1037,9 @@ export const draw = function (_text: string, id: string, _version: string, diagO
   log.debug('destroyedActors', destroyedActors);
 
   drawActors(diagram, actors, actorKeys, false);
-  messagesToDraw.forEach((e) => drawMessage(diagram, e.messageModel, e.lineStartY, diagObj));
+  messagesToDraw.forEach((e) => {
+    drawMessage(diagram, e.messageModel, e.lineStartY, diagObj);
+  });
   if (conf.mirrorActors) {
     drawActors(diagram, actors, actorKeys, true);
   }

@@ -297,6 +297,8 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
     }
     g.append('line')
       .attr('id', 'actor' + actorCnt)
+      .attr('data-et', 'life-line')
+      .attr('data-id', actor.name)
       .attr('x1', center)
       .attr('y1', centerY)
       .attr('x2', center)
@@ -345,6 +347,9 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
     }
   }
 
+  g.attr('data-et', 'participant');
+  g.attr('data-id', actor.name);
+
   _drawTextCandidateFunc(conf)(
     actor.description,
     g,
@@ -382,6 +387,8 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
       .attr('y1', centerY)
       .attr('x2', center)
       .attr('y2', 2000)
+      .attr('data-et', 'life-line')
+      .attr('data-id', actor.name)
       .attr('class', 'actor-line')
       .attr('class', '200')
       .attr('stroke-width', '0.5px')
@@ -397,6 +404,8 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
     cssClass += ` ${TOP_ACTOR_CLASS}`;
   }
   actElem.attr('class', cssClass);
+
+  actElem.attr('data-et', 'participant').attr('data-id', actor.name);
 
   const rect = svgDrawCommon.getNoteRect();
   rect.x = actor.x;
