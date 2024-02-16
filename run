@@ -8,14 +8,14 @@ underline()     { ansi 4 "$@"; }
 # strikethrough() { ansi 9 "$@"; }
 red()           { ansi 31 "$@"; }
 
-name=$(basename $0)
+name=$(basename "$0")
 command=$1
 args=${@:2}
 
 case $command in
 
 build)
-docker compose build $args
+docker compose build "$args"
 ;;
 
 sh)
@@ -35,7 +35,7 @@ $RUN --service-ports mermaid sh -c "pnpm run --filter mermaid docs:dev:docker"
 ;;
 
 cypress)
-$RUN cypress $args
+$RUN cypress "$args"
 ;;
 
 help|"")
@@ -52,41 +52,41 @@ ________________________________________________________________________________
 
 Development Quick Start Guide:
 
-$(bold ./$name pnpm install)           # Install packages
-$(bold ./$name dev)                    # Launch dev server with examples, open http://localhost:9000
-$(bold ./$name docs:dev)               # Launch official website, open http://localhost:3333
+$(bold ./"$name" pnpm install)           # Install packages
+$(bold ./"$name" dev)                    # Launch dev server with examples, open http://localhost:9000
+$(bold ./"$name" docs:dev)               # Launch official website, open http://localhost:3333
 
-$(bold ./$name pnpm vitest)            # Run watcher for unit tests
-$(bold ./$name cypress)                # Run integration tests (after starting dev server)
-$(bold ./$name pnpm build)             # Prepare it for production
+$(bold ./"$name" pnpm vitest)            # Run watcher for unit tests
+$(bold ./"$name" cypress)                # Run integration tests (after starting dev server)
+$(bold ./"$name" pnpm build)             # Prepare it for production
 __________________________________________________________________________________________
 
 Commands:
 
-$(bold ./$name build)                  # Build image
-$(bold ./$name cypress)                # Run integration tests
-$(bold ./$name dev)                    # Run dev server with examples, open http://localhost:9000
-$(bold ./$name docs:dev)               # For docs contributions, open http://localhost:3333
-$(bold ./$name help)                   # Show this help
-$(bold ./$name pnpm)                   # Run any 'pnpm' command
-$(bold ./$name sh)                     # Open 'sh' inside docker container for development
+$(bold ./"$name" build)                  # Build image
+$(bold ./"$name" cypress)                # Run integration tests
+$(bold ./"$name" dev)                    # Run dev server with examples, open http://localhost:9000
+$(bold ./"$name" docs:dev)               # For docs contributions, open http://localhost:3333
+$(bold ./"$name" help)                   # Show this help
+$(bold ./"$name" pnpm)                   # Run any 'pnpm' command
+$(bold ./"$name" sh)                     # Open 'sh' inside docker container for development
 __________________________________________________________________________________________
 
 Examples of frequently used commands:
 
-$(bold ./$name pnpm add --filter mermaid) $(underline package)
+$(bold ./"$name" pnpm add --filter mermaid) $(underline package)
         Add package to mermaid
 
-$(bold ./$name pnpm -w run lint:fix)
+$(bold ./"$name" pnpm -w run lint:fix)
         Run prettier and ES lint
 
-$(bold git diff --name-only develop \| xargs ./$name pnpm prettier --write)
+$(bold git diff --name-only develop \| xargs ./"$name" pnpm prettier --write)
         Prettify everything you added so far
 
-$(bold ./$name cypress open --project .)
+$(bold ./"$name" cypress open --project .)
         Open cypress interactive GUI
 
-$(bold ./$name cypress run --spec cypress/integration/rendering/)$(underline test.spec.ts)
+$(bold ./"$name" cypress run --spec cypress/integration/rendering/)$(underline test.spec.ts)
         Run specific test in cypress
 
 $(bold xhost +local:)
@@ -99,7 +99,7 @@ echo -n -e "$usage"
 ;;
 
 *)
-message="$(red Unknown command: $command). See $(bold ./$name help) for available commands."
+message="$(red Unknown command: "$command"). See $(bold ./"$name" help) for available commands."
 echo -n -e "$message\n" >&2
 $0 help
 exit 1
