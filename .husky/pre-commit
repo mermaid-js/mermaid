@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC1091
 . "$(dirname "$0")/_/husky.sh"
 
 pnpm run pre-commit
