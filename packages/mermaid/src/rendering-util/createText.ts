@@ -188,11 +188,11 @@ export const createText = (
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
     // text = text.replace(/\\n|\n/g, '<br />');
     const htmlText = markdownToHTML(text);
-    // log.info('markdo  wnToHTML' + text, markdownToHTML(text));
+    // log.info('markdownToHTML' + text, markdownToHTML(text));
     const node = {
       isNode,
       label: decodeEntities(htmlText).replace(
-        /fa[blrs]?:fa-[\w-]+/g,
+        /fa[blrs]?:fa-[\w-]+/g, // cspell: disable-line
         (s) => `<i class='${s.replace(':', ' ')}'></i>`
       ),
       labelStyle: style.replace('fill:', 'color:'),

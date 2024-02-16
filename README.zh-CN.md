@@ -93,7 +93,7 @@ C -->|Two| E[Result 2]
 ```
 sequenceDiagram
 Alice->>John: Hello John, how are you?
-loop Healthcheck
+loop HealthCheck
     John->>John: Fight against hypochondria
 end
 Note right of John: Rational thoughts!
@@ -105,7 +105,7 @@ Bob-->>John: Jolly good!
 ```mermaid
 sequenceDiagram
 Alice->>John: Hello John, how are you?
-loop Healthcheck
+loop HealthCheck
     John->>John: Fight against hypochondria
 end
 Note right of John: Rational thoughts!
