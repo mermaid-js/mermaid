@@ -53,7 +53,7 @@ export const addTask = function (period, length, event) {
 };
 
 export const addEvent = function (event) {
-  // fetch current task with currnetTaskId
+  // fetch current task with currentTaskId
   const currentTask = rawTasks.find((task) => task.id === currentTaskId - 1);
   //add event to the events array
   currentTask.events.push(event);

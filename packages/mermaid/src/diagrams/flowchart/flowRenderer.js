@@ -59,7 +59,7 @@ export const addVertices = async function (vert, g, svgId, root, _doc, diagObj) 
       const node = {
         label: await renderKatex(
           vertexText.replace(
-            /fa[blrs]?:fa-[\w-]+/g,
+            /fa[blrs]?:fa-[\w-]+/g, // cspell:disable-line
             (s) => `<i class='${s.replace(':', ' ')}'></i>`
           ),
           getConfig()
@@ -84,12 +84,12 @@ export const addVertices = async function (vert, g, svgId, root, _doc, diagObj) 
       vertexNode = svgLabel;
     }
 
-    let radious = 0;
+    let radius = 0;
     let _shape = '';
     // Set the shape based parameters
     switch (vertex.type) {
       case 'round':
-        radious = 5;
+        radius = 5;
         _shape = 'rect';
         break;
       case 'square':
@@ -147,8 +147,8 @@ export const addVertices = async function (vert, g, svgId, root, _doc, diagObj) 
       labelStyle: styles.labelStyle,
       shape: _shape,
       label: vertexNode,
-      rx: radious,
-      ry: radious,
+      rx: radius,
+      ry: radius,
       class: classStr,
       style: styles.style,
       id: diagObj.db.lookUpDomId(vertex.id),
@@ -244,7 +244,7 @@ export const addEdges = async function (edges, g, diagObj) {
           edgeData.labelStyle
         }">${await renderKatex(
           edge.text.replace(
-            /fa[blrs]?:fa-[\w-]+/g,
+            /fa[blrs]?:fa-[\w-]+/g, // cspell:disable-line
             (s) => `<i class='${s.replace(':', ' ')}'></i>`
           ),
           getConfig()
