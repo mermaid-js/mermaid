@@ -86,7 +86,7 @@ const newBodyNode = (parentNode, id, txts, yStart) => {
   // );
 
   let currentRow = 0;
-  const charLimit = 30;
+  const charLimit = 24;
   let wrappedTxts = [];
   txts.forEach((textStr) => {
     let currentTextLen = textStr.length;
