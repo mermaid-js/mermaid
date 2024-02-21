@@ -439,6 +439,8 @@ const drawMessage = function (diagram, msgModel, lineStartY: number, diagObj: Di
 
   line.attr('data-et', 'message');
   line.attr('data-id', 'i' + msgModel.id);
+  line.attr('data-from', msgModel.from);
+  line.attr('data-to', msgModel.to);
 
   let url = '';
   if (conf.arrowMarkerAbsolute) {
@@ -838,7 +840,6 @@ export const draw = function (_text: string, id: string, _version: string, diagO
   const messagesToDraw = [];
   const backgrounds = [];
   messages.forEach(function (msg, index) {
-    // console.log('msg', msg);
     let loopModel, noteModel, msgModel;
 
     switch (msg.type) {
@@ -999,6 +1000,8 @@ export const draw = function (_text: string, id: string, _version: string, diagO
           msgModel.sequenceIndex = sequenceIndex;
           msgModel.sequenceVisible = diagObj.db.showSequenceNumbers();
           msgModel.id = msg.id;
+          msgModel.from = msg.from;
+          msgModel.to = msg.to;
           const lineStartY = boundMessage(diagram, msgModel);
           adjustCreatedDestroyedData(
             msg,
