@@ -734,7 +734,7 @@ export const insertArrowHead = function (elem) {
     .attr('markerHeight', 12)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 0 0 L 10 5 L 0 10 z'); // this is actual shape for arrowhead
+    .attr('d', 'M -1 0 L 10 5 L 0 10 z'); // this is actual shape for arrowhead
 };
 
 /**
