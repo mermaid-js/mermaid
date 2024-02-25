@@ -139,7 +139,7 @@ However, if there is no section defined, then we have two possibilities:
 
 ```
 
-**NOTE** that there are no sections defined, and each time period and its corresponding events will have its own color scheme.
+**NOTE**: that there are no sections defined, and each time period and its corresponding events will have its own color scheme.
 
 2. Disable the multiColor option using the `disableMultiColor` option. This will make all time periods and events follow the same color scheme.
 
