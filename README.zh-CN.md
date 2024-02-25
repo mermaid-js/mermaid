@@ -338,7 +338,7 @@ npm publish
 
 Mermaid 是一个不断发展中的社区，并且还在接收新的贡献者。有很多不同的方式可以参与进来，而且我们还在寻找额外的帮助。如果你想知道如何开始贡献，请查看 [这个 issue](https://github.com/mermaid-js/mermaid/issues/866)。
 
-关于如何贡献的详细信息可以在 [贡献指南](CONTRIBUTING.md) 中找到。
+关于如何贡献的详细信息可以在 [贡献指南](https://mermaid.js.org/community/contributing.html) 中找到。
 
 ## 安全
 

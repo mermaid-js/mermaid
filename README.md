@@ -405,7 +405,7 @@ The above command generates files into the `dist` folder and publishes them to <
 
 Mermaid is a growing community and is always accepting new contributors. There's a lot of different ways to help out and we're always looking for extra hands! Look at [this issue](https://github.com/mermaid-js/mermaid/issues/866) if you want to know where to start helping out.
 
-Detailed information about how to contribute can be found in the [contribution guide](CONTRIBUTING.md)
+Detailed information about how to contribute can be found in the [contribution guide](https://mermaid.js.org/community/contributing.html)
 
 ## Security and safe diagrams
 
