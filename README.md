@@ -53,7 +53,7 @@ Try Live Editor previews of future releases: <a href="https://develop.git.mermai
 - [Examples](#examples)
 - [Release](#release)
 - [Related projects](#related-projects)
-- [Contributors](#contributors)
+- [Contributors](#contributors---)
 - [Security and safe diagrams](#security-and-safe-diagrams)
 - [Reporting vulnerabilities](#reporting-vulnerabilities)
 - [Appreciation](#appreciation)
