@@ -2,6 +2,7 @@ import DefaultTheme from 'vitepress/theme';
 import './custom.css';
 // @ts-ignore
 import Mermaid from './Mermaid.vue';
+import MermaidRun from './MermaidRun.vue';
 // @ts-ignore
 import Contributors from '../components/Contributors.vue';
 // @ts-ignore
@@ -14,6 +15,8 @@ import Theme from 'vitepress/theme';
 import '../style/main.css';
 import 'uno.css';
 import type { EnhanceAppContext } from 'vitepress';
+import './codapi.css';
+import './codapi.js';
 
 export default {
   ...DefaultTheme,
@@ -27,6 +30,7 @@ export default {
   enhanceApp({ app, router }: EnhanceAppContext) {
     // register global components
     app.component('Mermaid', Mermaid);
+    app.component('MermaidRun', MermaidRun);
     app.component('Contributors', Contributors);
     router.onBeforeRouteChange = (to) => {
       try {

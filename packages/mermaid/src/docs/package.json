@@ -15,6 +15,7 @@
     "fetch-contributors": "tsx .vitepress/scripts/fetch-contributors.ts"
   },
   "dependencies": {
+    "@antonz/codapi": "^0.16.0",
     "@vueuse/core": "^10.1.0",
     "jiti": "^1.18.2",
     "vue": "^3.3",

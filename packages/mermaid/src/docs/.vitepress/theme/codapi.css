@@ -1,0 +1,69 @@
+/* editor styles */
+.vp-doc .language-mermaid pre {
+  padding: 0;
+}
+
+.vp-doc .language-mermaid code {
+  border-radius: 8px;
+  padding: 20px 24px;
+}
+
+.vp-doc .language-mermaid code:focus::after {
+  position: absolute;
+  bottom: 2px;
+  right: 8px;
+  content: 'Ctrl+Enter to run';
+  color: var(--vp-code-lang-color);
+  font-family: var(--vp-font-family-base);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* widget styles */
+codapi-snippet {
+  display: block;
+}
+
+codapi-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1em;
+  margin-bottom: 1em;
+}
+codapi-toolbar button {
+  font-size: 1em;
+  font-weight: 500;
+  color: var(--vp-c-brand-1);
+  text-decoration: none;
+  text-underline-offset: 2px;
+  transition: color 0.25s, opacity 0.25s;
+}
+codapi-toolbar button::after {
+  content: ' ▶';
+}
+.vp-doc codapi-toolbar a {
+  text-decoration: none;
+}
+
+codapi-status {
+  display: block;
+  white-space: nowrap;
+}
+
+.vp-doc codapi-ref a {
+  color: var(--vp-c-text-1);
+  font-weight: 400;
+  text-decoration: underline;
+}
+
+codapi-output {
+  position: relative;
+  display: block;
+}
+codapi-output[hidden] {
+  display: none;
+}
+codapi-output a[href='#close'] {
+  display: none;
+}

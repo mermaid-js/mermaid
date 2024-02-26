@@ -1,0 +1,9 @@
+<template>
+  <codapi-snippet
+    engine="mermaid"
+    sandbox="mermaid"
+    editor="basic"
+    output-mode="svg"
+    output="@next"
+  ></codapi-snippet>
+</template>

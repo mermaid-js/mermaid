@@ -31,7 +31,8 @@ const MermaidExample = async (md: MarkdownRenderer) => {
           // (it also adds `v-pre` to ignore Vue template syntax)
           md.options.highlight(token.content, 'mermaid', langAttrs)
         }
-      </div>`;
+      </div>
+      <MermaidRun/>`;
     } else if (token.info.trim() === 'mermaid') {
       const key = index;
       return `

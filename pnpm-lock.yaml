@@ -421,6 +421,9 @@ importers:
 
   packages/mermaid/src/docs:
     dependencies:
+      '@antonz/codapi':
+        specifier: ^0.16.0
+        version: 0.16.0
       '@vueuse/core':
         specifier: ^10.1.0
         version: 10.1.0(vue@3.3.4)
@@ -694,6 +697,10 @@ packages:
   /@antfu/utils@0.7.6:
     resolution: {integrity: sha512-pvFiLP2BeOKA/ZOS6jxx4XhKzdVLHDhGlFEaZ2flWWYf2xOqVniqpk38I04DFRyz+L0ASggl7SkItTc+ZLju4w==}
     dev: true
+
+  /@antonz/codapi@0.16.0:
+    resolution: {integrity: sha512-H6OxJhtMJ9yPXb4YQNG5NIM8+fPzHhtai3s3IfseDL16AfaU4dkd7KL0ToVIKVez3FW63nxJ1EsvIayTxinE+Q==}
+    dev: false
 
   /@apideck/better-ajv-errors@0.3.6(ajv@8.12.0):
     resolution: {integrity: sha512-P+ZygBLZtkp0qqOAJJVX4oX/sFo5JR3eBWwwuqHHhK0GIgQOKWrAfiAaWX0aArHkRWHMuggFEgAZNxVPwPZYaA==}

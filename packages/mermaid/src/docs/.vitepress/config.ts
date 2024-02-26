@@ -66,6 +66,13 @@ export default defineConfig({
       },
     ],
   },
+  vue: {
+    template: {
+      compilerOptions: {
+        isCustomElement: (tag) => tag.includes('-'),
+      },
+    },
+  },
 });
 
 // Top (across the page) menu
