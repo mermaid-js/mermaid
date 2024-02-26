@@ -63,6 +63,7 @@ Kaufmann
 keyify
 LABELPOS
 LABELTYPE
+lcov
 LEFTOF
 Lexa
 linebreak
