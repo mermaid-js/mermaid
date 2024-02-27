@@ -98,5 +98,30 @@ describe('when parsing a timeline ', function () {
         }
       });
     });
+
+    it('TL-6 should handle a section, and task and its multi line events with semicolons', function () {
+      let str = `timeline
+    section ;a;bc-123;
+      ;ta;sk1;: ;ev;ent1;
+      ;tas;k2;: ;eve;nt2;: ;event;3;
+           : ;eve;nt4: ;even;t5;
+   `;
+      timeline.parse(str);
+      expect(timelineDB.getSections()[0]).to.deep.equal(';a;bc-123;');
+      timelineDB.getTasks().forEach((t) => {
+        switch (t.task.trim()) {
+          case ';ta;sk1;':
+            expect(t.events).to.deep.equal([';ev;ent1;']);
+            break;
+
+          case ';tas;k2;':
+            expect(t.events).to.deep.equal([';eve;nt2;', ';event;3;', ';eve;nt4', ';even;t5;']);
+            break;
+
+          default:
+            break;
+        }
+      });
+    });
   });
 });
