@@ -294,7 +294,7 @@ gantt
   weekday monday
 ```
 
-> **Warning** > `millisecond` and `second` support was added in vMERMAID_RELEASE_VERSION
+> **Warning** > `millisecond` and `second` support was added in v10.3.0
 
 ## Output in compact mode
 
