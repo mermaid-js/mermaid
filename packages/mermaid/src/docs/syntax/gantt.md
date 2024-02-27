@@ -221,7 +221,7 @@ gantt
 ```
 
 ```warning
-`millisecond` and `second` support was added in vMERMAID_RELEASE_VERSION
+`millisecond` and `second` support was added in v10.3.0
 ```
 
 ## Output in compact mode
