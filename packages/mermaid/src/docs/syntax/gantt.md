@@ -89,7 +89,7 @@ After processing the tags, the remaining metadata items are interpreted as follo
 | `after <otherTaskId>, until <otherTaskId>`           | End date of previously specified task `otherTaskID` | Start date of previously specified task `otherTaskID` | n/a      |
 | `<endDate>`                                          | End date of preceding task                          | `enddate` as interpreted using `dateformat`           | n/a      |
 | `<length>`                                           | End date of preceding task                          | Start date + `length`                                 | n/a      |
-| `until <otherTqskId>`                                | End date of preceding task                          | Start date of previously specified task `otherTaskID` | n/a      |
+| `until <otherTaskId>`                                | End date of preceding task                          | Start date of previously specified task `otherTaskID` | n/a      |
 
 ```note
 Support for keyword `until` was added in (v<MERMAID_RELEASE_VERSION>+). This can be used to define a task which is running until some other specific task or milestone starts.
@@ -449,3 +449,5 @@ gantt
     section Issue1300
     5    : 0, 5
 ```
+
+<!--- cspell:ignore isadded --->
