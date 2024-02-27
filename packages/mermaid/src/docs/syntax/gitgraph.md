@@ -576,29 +576,37 @@ Commits in Mermaid display temporal information in gitgraph by default. For exam
 ### Temporal Commits (default, `parallelCommits: false`)
 
 ```mermaid-example
-    %%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'parallelCommits': false}} }%%
-    gitGraph:
-       commit
-       branch develop
-       commit
-       commit
-       checkout main
-       commit
-       commit
+---
+config:
+  gitGraph:
+    parallelCommits: false
+---
+gitGraph:
+  commit
+  branch develop
+  commit
+  commit
+  checkout main
+  commit
+  commit
 ```
 
 ### Parallel commits (`parallelCommits: true`)
 
 ```mermaid-example
-    %%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'parallelCommits': true}} }%%
-    gitGraph:
-       commit
-       branch develop
-       commit
-       commit
-       checkout main
-       commit
-       commit
+---
+config:
+  gitGraph:
+    parallelCommits: true
+---
+gitGraph:
+  commit
+  branch develop
+  commit
+  commit
+  checkout main
+  commit
+  commit
 ```
 
 ## Themes
