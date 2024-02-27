@@ -959,7 +959,7 @@ See how the commit label color and background color are changed to the values sp
 
 ### Customizing Commit Label Font Size
 
-You can customize commit using the `commitLabelFontSize` theme variables for changing in the font soze of the commit label .
+You can customize commit using the `commitLabelFontSize` theme variables for changing in the font size of the commit label .
 
 Example:
 Now let's override the default values for the `commitLabelFontSize` variable:
@@ -989,7 +989,7 @@ See how the commit label font size changed.
 
 ### Customizing Tag Label Font Size
 
-You can customize commit using the `tagLabelFontSize` theme variables for changing in the font soze of the tag label .
+You can customize commit using the `tagLabelFontSize` theme variables for changing in the font size of the tag label .
 
 Example:
 Now let's override the default values for the `tagLabelFontSize` variable:
