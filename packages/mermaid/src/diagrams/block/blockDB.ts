@@ -240,8 +240,8 @@ const setHierarchy = (block: Block[]): void => {
   blocks = rootBlock.children;
 };
 
-const getColumns = (blockid: string): number => {
-  const block = blockDatabase[blockid];
+const getColumns = (blockId: string): number => {
+  const block = blockDatabase[blockId];
   if (!block) {
     return -1;
   }

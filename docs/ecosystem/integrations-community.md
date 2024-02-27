@@ -95,6 +95,8 @@ Blogging frameworks and platforms
 
 Content Management Systems/Enterprise Content Management
 
+- [ApostropheCMS](https://apostrophecms.com/)
+  - [Extension for Mermaid.js](https://github.com/BoDonkey/mermaid-extension)
 - [Grav CMS](https://getgrav.org/)
   - [Mermaid Diagrams Plugin](https://github.com/DanielFlaum/grav-plugin-mermaid-diagrams)
   - [GitLab Markdown Adapter](https://github.com/Goutte/grav-plugin-gitlab-markdown-adapter)

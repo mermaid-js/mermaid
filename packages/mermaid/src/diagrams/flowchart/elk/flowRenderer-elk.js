@@ -93,13 +93,13 @@ export const addVertices = async function (vert, svgId, root, doc, diagObj, pare
         },
       ];
 
-      let radious = 0;
+      let radius = 0;
       let _shape = '';
       let layoutOptions = {};
       // Set the shape based parameters
       switch (vertex.type) {
         case 'round':
-          radious = 5;
+          radius = 5;
           _shape = 'rect';
           break;
         case 'square':
@@ -163,8 +163,8 @@ export const addVertices = async function (vert, svgId, root, doc, diagObj, pare
         shape: _shape,
         labelText: vertexText,
         labelType: vertex.labelType,
-        rx: radious,
-        ry: radious,
+        rx: radius,
+        ry: radius,
         class: classStr,
         style: styles.style,
         id: vertex.id,
