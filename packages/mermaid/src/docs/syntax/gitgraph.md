@@ -277,6 +277,7 @@ In Mermaid, you have the option to configure the gitgraph diagram. You can confi
 - `showCommitLabel` : Boolean, default is `true`. If set to `false`, the commit labels are not shown in the diagram.
 - `mainBranchName` : String, default is `main`. The name of the default/root branch.
 - `mainBranchOrder` : Position of the main branch in the list of branches. default is `0`, meaning, by default `main` branch is the first in the order.
+- `parallelCommits`: Boolean, default is `false`. If set to `true`, commits x distance away from the parent are shown at the same level in the diagram.
 
 Let's look at them one by one.
 
@@ -564,6 +565,38 @@ Usage example:
        commit
        commit
        merge develop
+       commit
+       commit
+```
+
+## Parallel commits (v10.8.0+)
+
+Commits in Mermaid display temporal information in gitgraph by default. For example if two commits are one commit away from its parent, the commit that was made earlier is rendered closer to its parent. You can turn this off by enabling the `parallelCommits` flag.
+
+### Temporal Commits (default, `parallelCommits: false`)
+
+```mermaid-example
+    %%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'parallelCommits': false}} }%%
+    gitGraph:
+       commit
+       branch develop
+       commit
+       commit
+       checkout main
+       commit
+       commit
+```
+
+### Parallel commits (`parallelCommits: true`)
+
+```mermaid-example
+    %%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'parallelCommits': true}} }%%
+    gitGraph:
+       commit
+       branch develop
+       commit
+       commit
+       checkout main
        commit
        commit
 ```
