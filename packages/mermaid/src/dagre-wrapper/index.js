@@ -56,7 +56,12 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, sit
         log.info('Cluster identified', v, node.width, graph.node(v));
         // node.graph.setGraph applies the graph configurations such as nodeSpacing to subgraphs as without this the default values would be used
         // We override the `rankdir` variable to allow for the subgraph's direction to override the graphs direction in the subgraph
-        node.graph.setGraph({ ...graph.graph(), rankdir: node.graph.graph().rankdir });
+        const { ranksep, nodesep } = graph.graph();
+        node.graph.setGraph({
+          ...node.graph.graph(),
+          ranksep,
+          nodesep,
+        });
         const o = await recursiveRender(
           nodes,
           node.graph,
