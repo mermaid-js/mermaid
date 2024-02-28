@@ -407,7 +407,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   }
   actElem.attr('class', cssClass);
 
-  if (isFooter) {
+  if (!isFooter) {
     actElem.attr('data-et', 'participant').attr('data-id', actor.name);
   }
 
