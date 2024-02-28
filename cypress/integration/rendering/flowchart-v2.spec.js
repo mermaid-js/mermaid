@@ -760,6 +760,28 @@ A ~~~ B
     );
   });
 
+  it('3258: Should render subgraphs with main graph nodeSpacing and rankSpacing', () => {
+    imgSnapshotTest(
+      `---
+      title: Subgraph nodeSpacing and rankSpacing example
+      ---
+      flowchart LR
+        X --> Y
+        subgraph X
+          direction LR
+          A
+          C
+        end
+        subgraph Y
+          direction LR
+          B
+          D
+        end
+      `,
+      { flowchart: { nodeSpacing: 1, rankSpacing: 1 } }
+    );
+  });
+
   describe('Markdown strings flowchart (#4220)', () => {
     describe('html labels', () => {
       it('With styling and classes', () => {
