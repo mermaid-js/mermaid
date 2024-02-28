@@ -347,8 +347,10 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
     }
   }
 
-  g.attr('data-et', 'participant');
-  g.attr('data-id', actor.name);
+  if (!isFooter) {
+    g.attr('data-et', 'participant');
+    g.attr('data-id', actor.name);
+  }
 
   _drawTextCandidateFunc(conf)(
     actor.description,
@@ -405,7 +407,9 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   }
   actElem.attr('class', cssClass);
 
-  actElem.attr('data-et', 'participant').attr('data-id', actor.name);
+  if (isFooter) {
+    actElem.attr('data-et', 'participant').attr('data-id', actor.name);
+  }
 
   const rect = svgDrawCommon.getNoteRect();
   rect.x = actor.x;

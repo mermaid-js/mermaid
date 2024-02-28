@@ -16,6 +16,7 @@ import { isDetailedError } from './utils.js';
 import type { DetailedError } from './utils.js';
 import type { ExternalDiagramDefinition } from './diagram-api/types.js';
 import type { UnknownDiagramError } from './errors.js';
+// import { defaultConfig } from './config';
 
 export type {
   MermaidConfig,
@@ -309,6 +310,10 @@ const executeQueue = async () => {
   executionQueueRunning = false;
 };
 
+interface ConfigTuple {
+  defaultConfig: MermaidConfig;
+  config: MermaidConfig;
+}
 /**
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
@@ -319,7 +324,7 @@ const executeQueue = async () => {
 const parse = async (
   text: string,
   parseOptions?: ParseOptions
-): Promise<boolean | void | Diagram> => {
+): Promise<boolean | void | (Diagram & ConfigTuple)> => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the render call is done.
     // It will be queued first and will be executed when it is first in line
@@ -327,10 +332,13 @@ const parse = async (
       new Promise((res, rej) => {
         mermaidAPI.parse(text, parseOptions).then(
           (r) => {
+            const result = r as Diagram & ConfigTuple;
+            result.defaultConfig = mermaidAPI.defaultConfig;
+            result.config = mermaidAPI.getConfig();
             // This resolves for the promise for the queue handling
-            res(r);
+            res(result);
             // This fulfills the promise sent to the value back to the original caller
-            resolve(r);
+            resolve(result);
           },
           (e) => {
             log.error('Error parsing', e);
