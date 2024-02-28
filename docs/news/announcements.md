@@ -14,19 +14,6 @@ Create flowchart nodes, connect them with edges, update shapes, change colors, a
 
 Read more about it in our latest [BLOG POST](https://www.mermaidchart.com/blog/posts/mermaid-chart-releases-new-visual-editor-for-flowcharts) and watch a [DEMO VIDEO](https://www.youtube.com/watch?v=5aja0gijoO0) on our YouTube page.
 
-## 🎉 Mermaid Chart is running a Holiday promotion
-
-### Use <span class="text-[#FE3470]">HOLIDAYS2023</span> to get a 14-day free trial and 25% off a Pro subscription
-
-With a Pro subscription, you get access to:
-
-- AI functionality
-- Team collaboration and multi-user editing
-- Unlimited diagrams and presentations
-- And more!
-
-Redeem the promo code on the [Mermaid Chart website](https://www.mermaidchart.com/app/user/billing/checkout?coupon=HOLIDAYS2023).
-
 ## 📖 Blog posts
 
 Visit our [Blog](./blog.md) to see the latest blog posts.

@@ -836,3 +836,5 @@ mermaid.flowchartConfig = {
     width: 100%
 }
 ```
+
+<!--- cspell:ignore lagom --->

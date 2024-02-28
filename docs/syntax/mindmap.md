@@ -305,3 +305,8 @@ From version 9.4.0 you can simplify this code to:
 ```
 
 You can also refer the implementation in the live editor [here](https://github.com/mermaid-js/mermaid-live-editor/blob/develop/src/lib/util/mermaid.ts) to see how the async loading is done.
+
+<!---
+cspell:locale en,en-gb
+cspell:ignore Buzan
+--->

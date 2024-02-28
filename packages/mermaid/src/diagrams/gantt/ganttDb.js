@@ -332,6 +332,7 @@ const getStartDate = function (prevTime, dateFormat, str) {
  * @returns {[value: number, unit: dayjs.ManipulateType]} Arguments to pass to `dayjs.add()`
  */
 const parseDuration = function (str) {
+  // cspell:disable-next-line
   const statement = /^(\d+(?:\.\d+)?)([Mdhmswy]|ms)$/.exec(str.trim());
   if (statement !== null) {
     return [Number.parseFloat(statement[1]), statement[2]];

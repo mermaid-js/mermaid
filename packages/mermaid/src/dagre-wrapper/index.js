@@ -16,7 +16,7 @@ import { log } from '../logger.js';
 import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
 import { getConfig } from '../diagram-api/diagramAPI.js';
 
-const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, siteConfig) => {
+const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, siteConfig) => {
   log.info('Graph in recursive render: XXX', graphlibJson.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
   log.trace('Dir in recursive render - dir:', dir);
@@ -65,7 +65,7 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, sit
         const o = await recursiveRender(
           nodes,
           node.graph,
-          diagramtype,
+          diagramType,
           id,
           graph.node(v),
           siteConfig
@@ -103,7 +103,7 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, sit
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ', e, ' ', JSON.stringify(graph.edge(e)));
 
     // Check if link is either from or to a cluster
-    log.info('Fix', clusterDb, 'ids:', e.v, e.w, 'Translateing: ', clusterDb[e.v], clusterDb[e.w]);
+    log.info('Fix', clusterDb, 'ids:', e.v, e.w, 'Translating: ', clusterDb[e.v], clusterDb[e.w]);
     insertEdgeLabel(edgeLabels, edge);
   });
 
@@ -155,7 +155,7 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, sit
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
     edge.points.forEach((point) => (point.y += subGraphTitleTotalMargin / 2));
-    const paths = insertEdge(edgePaths, e, edge, clusterDb, diagramtype, graph, id);
+    const paths = insertEdge(edgePaths, e, edge, clusterDb, diagramType, graph, id);
     positionEdgeLabel(edge, paths);
   });
 
@@ -169,8 +169,8 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, sit
   return { elem, diff };
 };
 
-export const render = async (elem, graph, markers, diagramtype, id) => {
-  insertMarkers(elem, markers, diagramtype, id);
+export const render = async (elem, graph, markers, diagramType, id) => {
+  insertMarkers(elem, markers, diagramType, id);
   clearNodes();
   clearEdges();
   clearClusters();
@@ -181,7 +181,7 @@ export const render = async (elem, graph, markers, diagramtype, id) => {
   log.warn('Graph after:', JSON.stringify(graphlibJson.write(graph)));
   // log.warn('Graph ever  after:', graphlibJson.write(graph.node('A').graph));
   const siteConfig = getConfig();
-  await recursiveRender(elem, graph, diagramtype, id, undefined, siteConfig);
+  await recursiveRender(elem, graph, diagramType, id, undefined, siteConfig);
 };
 
 // const shapeDefinitions = {};

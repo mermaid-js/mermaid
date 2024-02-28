@@ -294,11 +294,11 @@ gantt
   weekday monday
 ```
 
-> **Warning** > `millisecond` and `second` support was added in vMERMAID_RELEASE_VERSION
+> **Warning** > `millisecond` and `second` support was added in v10.3.0
 
 ## Output in compact mode
 
-The compact mode allows you to display multiple tasks in the same row. Compact mode can be enabled for a gantt chart by setting the display mode of the graph via preceeding YAML settings.
+The compact mode allows you to display multiple tasks in the same row. Compact mode can be enabled for a gantt chart by setting the display mode of the graph via preceding YAML settings.
 
 ```mermaid-example
 ---

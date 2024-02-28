@@ -27,14 +27,14 @@ export function getAxis(
   axisThemeConfig: XYChartAxisThemeConfig,
   tmpSVGGroup: Group
 ): Axis {
-  const textDimansionCalculator = new TextDimensionCalculatorWithFont(tmpSVGGroup);
+  const textDimensionCalculator = new TextDimensionCalculatorWithFont(tmpSVGGroup);
   if (isBandAxisData(data)) {
     return new BandAxis(
       axisConfig,
       axisThemeConfig,
       data.categories,
       data.title,
-      textDimansionCalculator
+      textDimensionCalculator
     );
   }
   return new LinearAxis(
@@ -42,6 +42,6 @@ export function getAxis(
     axisThemeConfig,
     [data.min, data.max],
     data.title,
-    textDimansionCalculator
+    textDimensionCalculator
   );
 }
