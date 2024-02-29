@@ -234,6 +234,7 @@ Communication tools and platforms
 
 - [Bisheng](https://www.npmjs.com/package/bisheng)
   - [bisheng-plugin-mermaid](https://github.com/yct21/bisheng-plugin-mermaid)
+- [Blazorade Mermaid: Render Mermaid diagrams in Blazor applications](https://github.com/Blazorade/Blazorade-Mermaid/wiki)
 - [Codemia: A tool to practice system design problems](https://codemia.io) ✅
 - [ExDoc](https://github.com/elixir-lang/ex_doc)
   - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)
@@ -250,5 +251,5 @@ Communication tools and platforms
   - [reveal-ck-mermaid-plugin](https://github.com/tmtm/reveal-ck-mermaid-plugin)
 - [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
-- [ExDoc](https://github.com/elixir-lang/ex_doc)
-  - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)
+
+<!--- cspell:ignore Blazorade --->
