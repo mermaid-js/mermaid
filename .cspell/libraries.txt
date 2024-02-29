@@ -8,6 +8,7 @@ Astah
 automerge
 bilkent
 bisheng
+Blazor
 codedoc
 Codemia
 codepaths
