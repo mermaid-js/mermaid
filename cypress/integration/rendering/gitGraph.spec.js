@@ -943,4 +943,74 @@ gitGraph TB:
       { gitGraph: { parallelCommits: true } }
     );
   });
+  it('46: should render GitGraph with merge back and merge forward', () => {
+    imgSnapshotTest(
+      `gitGraph LR:
+      commit
+
+      branch branch-A
+      branch branch-B
+      commit
+
+      checkout branch-A
+      merge branch-B
+
+      checkout branch-B
+      merge branch-A
+      `,
+      { gitGraph: { parallelCommits: true } }
+    );
+  });
+  it('47: should render GitGraph with merge back and merge forward | Vertical Branch', () => {
+    imgSnapshotTest(
+      `gitGraph TB:
+      commit
+
+      branch branch-A
+      branch branch-B
+      commit
+
+      checkout branch-A
+      merge branch-B
+
+      checkout branch-B
+      merge branch-A
+      `,
+      { gitGraph: { parallelCommits: true } }
+    );
+  });
+  it('48: should render GitGraph with merge on a new branch | Vertical Branch', () => {
+    imgSnapshotTest(
+      `gitGraph LR:
+      commit
+
+      branch branch-B order: 2
+      commit
+
+      branch branch-A
+      merge main
+
+      checkout branch-B
+      merge branch-A
+      `,
+      { gitGraph: { parallelCommits: true } }
+    );
+  });
+  it('49: should render GitGraph with merge on a new branch | Vertical Branch', () => {
+    imgSnapshotTest(
+      `gitGraph TB:
+      commit
+
+      branch branch-B order: 2
+      commit
+
+      branch branch-A
+      merge main
+
+      checkout branch-B
+      merge branch-A
+      `,
+      { gitGraph: { parallelCommits: true } }
+    );
+  });
 });
