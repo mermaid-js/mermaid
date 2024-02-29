@@ -946,11 +946,11 @@ gitGraph TB:
   it('46: should render GitGraph with merge back and merge forward', () => {
     imgSnapshotTest(
       `gitGraph LR:
-      commit
+      commit id:"1-abcdefg"
 
       branch branch-A
       branch branch-B
-      commit
+      commit id:"2-abcdefg"
 
       checkout branch-A
       merge branch-B
@@ -964,11 +964,11 @@ gitGraph TB:
   it('47: should render GitGraph with merge back and merge forward | Vertical Branch', () => {
     imgSnapshotTest(
       `gitGraph TB:
-      commit
+      commit id:"1-abcdefg"
 
       branch branch-A
       branch branch-B
-      commit
+      commit id:"2-abcdefg"
 
       checkout branch-A
       merge branch-B
@@ -982,10 +982,10 @@ gitGraph TB:
   it('48: should render GitGraph with merge on a new branch | Vertical Branch', () => {
     imgSnapshotTest(
       `gitGraph LR:
-      commit
+      commit id:"1-abcdefg"
 
       branch branch-B order: 2
-      commit
+      commit id:"2-abcdefg"
 
       branch branch-A
       merge main
@@ -999,10 +999,10 @@ gitGraph TB:
   it('49: should render GitGraph with merge on a new branch | Vertical Branch', () => {
     imgSnapshotTest(
       `gitGraph TB:
-      commit
+      commit id:"1-abcdefg"
 
       branch branch-B order: 2
-      commit
+      commit id:"2-abcdefg"
 
       branch branch-A
       merge main
