@@ -92,6 +92,31 @@ describe('Gantt diagram', () => {
       {}
     );
   });
+  it('should handle multiple dependencies syntax with after and until', () => {
+    imgSnapshotTest(
+      `
+      gantt
+      dateFormat  YYYY-MM-DD
+      axisFormat  %d/%m
+      title Adding GANTT diagram to mermaid
+      excludes weekdays 2014-01-10
+      todayMarker off
+  
+      section team's critical event
+      deadline A           :milestone, crit, deadlineA, 2024-02-01, 0
+      deadline B           :milestone, crit, deadlineB, 2024-02-15, 0
+      boss on leave        :bossaway, 2024-01-28, 2024-02-11
+  
+      section new intern
+      onboarding           :onboarding, 2024-01-02, 1w
+      literature review    :litreview, 2024-01-02, 10d
+      project A            :projectA, after onboarding litreview, until deadlineA bossaway
+      chilling             :chilling, after projectA, until deadlineA
+      project B            :projectB, after deadlineA, until deadlineB
+      `,
+      {}
+    );
+  });
   it('should FAIL redering a gantt chart for issue #1060 with invalid date', () => {
     imgSnapshotTest(
       `
