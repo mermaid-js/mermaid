@@ -64,14 +64,43 @@
   </head>
   <body>
     <pre id="diagram" class="mermaid">
-sequenceDiagram
-  actor Alice as Alice
-  participant John as John
+%%{ init: {}}%%
 
-  Alice ->>+ John: Hello John, how are you?
-  Alice ->>+ John: John, can you hear me?
-  John -->>- Alice: Hi Alice, I can hear you!
-  John -->>- Alice: I feel great!
+flowchart TB
+  subgraph Simple
+    subgraph Simple2
+      A
+    end
+  end
+
+  subgraph Leak
+    B
+  end
+
+  B --> C
+
+
+
+    </pre>
+    <pre id="diagram" class="mermaid2">
+%%{ init: {}}%%
+
+sequenceDiagram
+  participant H as H
+  participant Alice as Alice
+  participant Bob as Bob
+
+  Alice ->> Bob: Hello Bob, how are you ?
+  Bob ->> Alice: Fine, thank you. And you?
+  create participant Carl as Carl
+  Alice ->> Carl: Hi Carl!
+  create actor D as Donald
+  Carl ->> D: Hi!
+  D ->> H: sss
+  destroy Carl
+  Alice -x Carl: We are too many
+  destroy Bob
+  Bob ->> Alice: I agree
 
     </pre>
     <pre id="diagram" class="mermaid2">

@@ -15,6 +15,8 @@ const rect = (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'cluster' + (node.class ? ' ' + node.class : ''))
+    .attr('data-et', 'cluster')
+    .attr('data-id', node.id)
     .attr('id', node.id);
 
   // add the rect

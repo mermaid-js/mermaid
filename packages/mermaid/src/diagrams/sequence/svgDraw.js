@@ -300,7 +300,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
       .attr('data-et', 'life-line')
       .attr('data-id', actor.name)
       .attr('x1', center)
-      .attr('y1', actor.height)
+      .attr('y1', actor.starty || 0 + actor.height)
       .attr('x2', center)
       .attr('y2', 2000)
       .attr('class', 'actor-line')
