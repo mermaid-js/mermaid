@@ -1,11 +1,16 @@
 import type {
-  DefaultSharedModuleContext,
-  LangiumServices,
-  LangiumSharedServices,
+  DefaultSharedCoreModuleContext,
+  LangiumCoreServices,
+  LangiumSharedCoreServices,
   Module,
-  PartialLangiumServices,
+  PartialLangiumCoreServices,
 } from 'langium';
-import { EmptyFileSystem, createDefaultModule, createDefaultSharedModule, inject } from 'langium';
+import {
+  EmptyFileSystem,
+  createDefaultCoreModule,
+  createDefaultSharedCoreModule,
+  inject,
+} from 'langium';
 
 import { MermaidGeneratedSharedModule, PieGeneratedModule } from '../generated/module.js';
 import { PieTokenBuilder } from './tokenBuilder.js';
@@ -24,13 +29,13 @@ type PieAddedServices = {
 /**
  * Union of Langium default services and `Pie` services.
  */
-export type PieServices = LangiumServices & PieAddedServices;
+export type PieServices = LangiumCoreServices & PieAddedServices;
 
 /**
  * Dependency injection module that overrides Langium default services and
  * contributes the declared `Pie` services.
  */
-export const PieModule: Module<PieServices, PartialLangiumServices & PieAddedServices> = {
+export const PieModule: Module<PieServices, PartialLangiumCoreServices & PieAddedServices> = {
   parser: {
     TokenBuilder: () => new PieTokenBuilder(),
     ValueConverter: () => new PieValueConverter(),
@@ -51,15 +56,19 @@ export const PieModule: Module<PieServices, PartialLangiumServices & PieAddedSer
  * @param context - Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
-export function createPieServices(context: DefaultSharedModuleContext = EmptyFileSystem): {
-  shared: LangiumSharedServices;
+export function createPieServices(context: DefaultSharedCoreModuleContext = EmptyFileSystem): {
+  shared: LangiumSharedCoreServices;
   Pie: PieServices;
 } {
-  const shared: LangiumSharedServices = inject(
-    createDefaultSharedModule(context),
+  const shared: LangiumSharedCoreServices = inject(
+    createDefaultSharedCoreModule(context),
     MermaidGeneratedSharedModule
   );
-  const Pie: PieServices = inject(createDefaultModule({ shared }), PieGeneratedModule, PieModule);
+  const Pie: PieServices = inject(
+    createDefaultCoreModule({ shared }),
+    PieGeneratedModule,
+    PieModule
+  );
   shared.ServiceRegistry.register(Pie);
   return { shared, Pie };
 }
