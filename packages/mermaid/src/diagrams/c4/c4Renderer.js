@@ -542,15 +542,15 @@ function drawInsideBoundary(
       );
     }
     parentBoundaryAlias = currentBoundary.alias;
-    let nextCurrentBoundarys = diagObj.db.getBoundarys(parentBoundaryAlias);
+    let nextCurrentBoundaries = diagObj.db.getBoundarys(parentBoundaryAlias);
 
-    if (nextCurrentBoundarys.length > 0) {
+    if (nextCurrentBoundaries.length > 0) {
       // draw boundary inside currentBoundary
       drawInsideBoundary(
         diagram,
         parentBoundaryAlias,
         currentBounds,
-        nextCurrentBoundarys,
+        nextCurrentBoundaries,
         diagObj
       );
     }
