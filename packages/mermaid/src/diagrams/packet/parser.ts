@@ -77,8 +77,8 @@ const getNextFittingBlock = (
 };
 
 export const parser: ParserDefinition = {
-  parse: (input: string): void => {
-    const ast: Packet = parse('packet', input);
+  parse: async (input: string): Promise<void> => {
+    const ast: Packet = await parse('packet', input);
     log.debug(ast);
     populate(ast);
   },

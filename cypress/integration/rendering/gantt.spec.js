@@ -92,6 +92,31 @@ describe('Gantt diagram', () => {
       {}
     );
   });
+  it('should handle multiple dependencies syntax with after and until', () => {
+    imgSnapshotTest(
+      `
+      gantt
+      dateFormat  YYYY-MM-DD
+      axisFormat  %d/%m
+      title Adding GANTT diagram to mermaid
+      excludes weekdays 2014-01-10
+      todayMarker off
+  
+      section team's critical event
+      deadline A           :milestone, crit, deadlineA, 2024-02-01, 0
+      deadline B           :milestone, crit, deadlineB, 2024-02-15, 0
+      boss on leave        :bossaway, 2024-01-28, 2024-02-11
+  
+      section new intern
+      onboarding           :onboarding, 2024-01-02, 1w
+      literature review    :litreview, 2024-01-02, 10d
+      project A            :projectA, after onboarding litreview, until deadlineA bossaway
+      chilling             :chilling, after projectA, until deadlineA
+      project B            :projectB, after deadlineA, until deadlineB
+      `,
+      {}
+    );
+  });
   it('should FAIL redering a gantt chart for issue #1060 with invalid date', () => {
     imgSnapshotTest(
       `
@@ -579,6 +604,108 @@ describe('Gantt diagram', () => {
         G: 13:32:00, 18m
         H: 13:50:00, 20m
         I: 14:10:00, 10m
+    `,
+      {}
+    );
+  });
+
+  it("should render when there's a semicolon in the title", () => {
+    imgSnapshotTest(
+      `
+      gantt
+      title ;Gantt With a Semicolon in the Title
+      dateFormat  YYYY-MM-DD
+      section Section
+      A task           :a1, 2014-01-01, 30d
+      Another task     :after a1  , 20d
+      section Another
+      Task in sec      :2014-01-12  , 12d
+      another task      : 24d
+    `,
+      {}
+    );
+  });
+
+  it("should render when there's a semicolon in a section is true", () => {
+    imgSnapshotTest(
+      `
+      gantt
+      title Gantt Digram
+      dateFormat  YYYY-MM-DD
+      section ;Section With a Semicolon
+      A task           :a1, 2014-01-01, 30d
+      Another task     :after a1  , 20d
+      section Another
+      Task in sec      :2014-01-12  , 12d
+      another task      : 24d
+    `,
+      {}
+    );
+  });
+
+  it("should render when there's a semicolon in the task data", () => {
+    imgSnapshotTest(
+      `
+      gantt
+      title Gantt Digram
+      dateFormat  YYYY-MM-DD
+      section Section
+      ;A task with a semiclon           :a1, 2014-01-01, 30d
+      Another task     :after a1  , 20d
+      section Another
+      Task in sec      :2014-01-12  , 12d
+      another task      : 24d
+    `,
+      {}
+    );
+  });
+
+  it("should render when there's a hashtag in the title", () => {
+    imgSnapshotTest(
+      `
+      gantt
+      title #Gantt With a Hashtag in the Title
+      dateFormat  YYYY-MM-DD
+      section Section
+      A task           :a1, 2014-01-01, 30d
+      Another task     :after a1  , 20d
+      section Another
+      Task in sec      :2014-01-12  , 12d
+      another task      : 24d
+    `,
+      {}
+    );
+  });
+
+  it("should render when there's a hashtag in a section is true", () => {
+    imgSnapshotTest(
+      `
+      gantt
+      title Gantt Digram
+      dateFormat  YYYY-MM-DD
+      section #Section With a Hashtag
+      A task           :a1, 2014-01-01, 30d
+      Another task     :after a1  , 20d
+      section Another
+      Task in sec      :2014-01-12  , 12d
+      another task      : 24d
+    `,
+      {}
+    );
+  });
+
+  it("should render when there's a hashtag in the task data", () => {
+    imgSnapshotTest(
+      `
+      gantt
+      title Gantt Digram
+      dateFormat  YYYY-MM-DD
+      section Section
+      #A task with a hashtag           :a1, 2014-01-01, 30d
+      Another task     :after a1  , 20d
+      section Another
+      Task in sec      :2014-01-12  , 12d
+      another task      : 24d
     `,
       {}
     );

@@ -6,7 +6,6 @@ import type {
   PartialLangiumServices,
 } from 'langium';
 import { EmptyFileSystem, createDefaultModule, createDefaultSharedModule, inject } from 'langium';
-import { CommonLexer } from '../common/lexer.js';
 import { CommonValueConverter } from '../common/valueConverter.js';
 import { MermaidGeneratedSharedModule, PacketGeneratedModule } from '../generated/module.js';
 import { PacketTokenBuilder } from './tokenBuilder.js';
@@ -16,7 +15,6 @@ import { PacketTokenBuilder } from './tokenBuilder.js';
  */
 type PacketAddedServices = {
   parser: {
-    Lexer: CommonLexer;
     TokenBuilder: PacketTokenBuilder;
     ValueConverter: CommonValueConverter;
   };
@@ -33,7 +31,6 @@ export type PacketServices = LangiumServices & PacketAddedServices;
  */
 export const PacketModule: Module<PacketServices, PartialLangiumServices & PacketAddedServices> = {
   parser: {
-    Lexer: (services: PacketServices) => new CommonLexer(services),
     TokenBuilder: () => new PacketTokenBuilder(),
     ValueConverter: () => new CommonValueConverter(),
   },

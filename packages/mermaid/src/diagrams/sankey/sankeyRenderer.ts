@@ -1,6 +1,5 @@
 import type { Diagram } from '../../Diagram.js';
 import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
-
 import {
   select as d3select,
   scaleOrdinal as d3scaleOrdinal,

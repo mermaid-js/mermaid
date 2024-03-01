@@ -104,7 +104,7 @@ Please refer to the [configuration](/config/schema-docs/config-defs-packet-diagr
 
 <!--
 
-Theme variables are not currently working due to a mermaid bug. The passed values are not being propogated into styles function.
+Theme variables are not currently working due to a mermaid bug. The passed values are not being propagated into styles function.
 
 ## Theme Variables
 

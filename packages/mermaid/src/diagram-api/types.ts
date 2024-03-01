@@ -121,7 +121,7 @@ export type DrawDefinition = (
 ) => void | Promise<void>;
 
 export interface ParserDefinition {
-  parse: (text: string) => void;
+  parse: (text: string) => void | Promise<void>;
   parser?: { yy: DiagramDB };
 }
 

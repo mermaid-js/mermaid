@@ -2,9 +2,9 @@
 
 > Timeline: This is an experimental diagram for now. The syntax and properties can change in future releases. The syntax is stable except for the icon integration which is the experimental part.
 
-"A timeline is a type of diagram used to illustrate a chronology of events, dates, or periods of time. It is usually presented graphically to indicate the passing of time, and it is usually organized chronologically. A basic timeline presents a list of events in chronological order, usually using dates as markers. A timeline can also be used to show the relationship between events, such as the relationship between the events of a person's life." Wikipedia
+"A timeline is a type of diagram used to illustrate a chronology of events, dates, or periods of time. It is usually presented graphically to indicate the passing of time, and it is usually organized chronologically. A basic timeline presents a list of events in chronological order, usually using dates as markers. A timeline can also be used to show the relationship between events, such as the relationship between the events of a person's life" [(Wikipedia)](https://en.wikipedia.org/wiki/Timeline).
 
-### An example of a timeline.
+### An example of a timeline
 
 ```mermaid
 timeline
@@ -42,7 +42,7 @@ or
               : {event}
 ```
 
-NOTE: Both time period and event are simple text, and not limited to numbers.
+**NOTE**: Both time period and event are simple text, and not limited to numbers.
 
 Let us look at the syntax for the example above.
 
@@ -79,7 +79,7 @@ timeline
         Industry 3.0 : Electronics, Computers, Automation
     section 21st century
         Industry 4.0 : Internet, Robotics, Internet of Things
-        Industry 5.0 : Artificial intelligence, Big data,3D printing
+        Industry 5.0 : Artificial intelligence, Big data, 3D printing
 ```
 
 As you can see, the time periods are placed in the sections, and the sections are placed in the order they are defined.
@@ -112,11 +112,11 @@ timeline
 timeline
         title MermaidChart 2023 Timeline
         section 2023 Q1 <br> Release Personal Tier
-          Buttet 1 : sub-point 1a : sub-point 1b
+          Bullet 1 : sub-point 1a : sub-point 1b
                : sub-point 1c
           Bullet 2 : sub-point 2a : sub-point 2b
         section 2023 Q2 <br> Release XYZ Tier
-          Buttet 3 : sub-point <br> 3a : sub-point 3b
+          Bullet 3 : sub-point <br> 3a : sub-point 3b
                : sub-point 3c
           Bullet 4 : sub-point 4a : sub-point 4b
 ```
@@ -127,7 +127,7 @@ As explained earlier, each section has a color scheme, and each time period and 
 
 However, if there is no section defined, then we have two possibilities:
 
-1. Style time periods individually, i.e. each time period(and its coressponding events) will have its own color scheme. This is the DEFAULT behavior.
+1. Style time periods individually, i.e. each time period(and its corresponding events) will have its own color scheme. This is the DEFAULT behavior.
 
 ```mermaid-example
     timeline
@@ -139,7 +139,7 @@ However, if there is no section defined, then we have two possibilities:
 
 ```
 
-Note that there are no sections defined, and each time period and its corresponding events will have its own color scheme.
+**NOTE**: that there are no sections defined, and each time period and its corresponding events will have its own color scheme.
 
 2. Disable the multiColor option using the `disableMultiColor` option. This will make all time periods and events follow the same color scheme.
 
@@ -177,7 +177,7 @@ In case you have more than 12 sections, the color scheme will start to repeat.
 
 If you also want to change the foreground color of a section, you can do so use theme variables corresponding `cScaleLabel0` to `cScaleLabel11` variables.
 
-NOTE: Default values for these theme variables are picked from the selected theme. If you want to override the default values, you can use the `initialize` call to add your custom theme variable values.
+**NOTE**: Default values for these theme variables are picked from the selected theme. If you want to override the default values, you can use the `initialize` call to add your custom theme variable values.
 
 Example:
 
@@ -293,7 +293,7 @@ Let's put them to use, and see how our sample diagram looks in different themes:
           2010 : Pinterest
 ```
 
-## Integrating with your library/website.
+## Integrating with your library/website
 
 Timeline uses experimental lazy loading & async rendering features which could change in the future.The lazy loading is important in order to be able to add additional diagrams going forward.
 
