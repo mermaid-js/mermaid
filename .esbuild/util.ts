@@ -14,7 +14,7 @@ export interface MermaidBuildOptions {
   metafile: boolean;
   format: 'esm' | 'iife';
   entryName: keyof typeof packageOptions;
-  includeLargeDiagrams: boolean;
+  includeLargeFeatures: boolean;
 }
 
 export const defaultOptions: Omit<MermaidBuildOptions, 'entryName'> = {
@@ -22,7 +22,7 @@ export const defaultOptions: Omit<MermaidBuildOptions, 'entryName'> = {
   metafile: false,
   core: false,
   format: 'esm',
-  includeLargeDiagrams: true,
+  includeLargeFeatures: true,
 } as const;
 
 const buildOptions = (override: BuildOptions): BuildOptions => {
@@ -43,14 +43,14 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
 
 const getFileName = (
   fileName: string,
-  { core, format, minify, includeLargeDiagrams }: MermaidBuildOptions
+  { core, format, minify, includeLargeFeatures }: MermaidBuildOptions
 ) => {
   if (core) {
     fileName += '.core';
   } else if (format === 'esm') {
     fileName += '.esm';
   }
-  if (!includeLargeDiagrams) {
+  if (!includeLargeFeatures) {
     fileName += '.tiny';
   }
   if (minify) {
@@ -60,7 +60,7 @@ const getFileName = (
 };
 
 export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
-  const { core, entryName, metafile, format, includeLargeDiagrams, minify } = options;
+  const { core, entryName, metafile, format, includeLargeFeatures, minify } = options;
   const external: string[] = ['require', 'fs', 'path'];
   const { name, file, packageName } = packageOptions[entryName];
   const outFileName = getFileName(name, options);
@@ -75,7 +75,7 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
     chunkNames: `chunks/${outFileName}/[name]-[hash]`,
     define: {
       // This needs to be stringified for esbuild
-      includeLargeDiagrams: `${includeLargeDiagrams}`,
+      includeLargeFeatures: `${includeLargeFeatures}`,
       'import.meta.vitest': 'undefined',
     },
   });

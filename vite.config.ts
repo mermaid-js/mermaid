@@ -36,7 +36,7 @@ export default defineConfig({
   },
   define: {
     // Needs to be string
-    includeLargeDiagrams: 'true',
+    includeLargeFeatures: 'true',
     'import.meta.vitest': 'undefined',
   },
 });

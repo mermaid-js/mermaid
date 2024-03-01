@@ -32,7 +32,7 @@ import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.
 import { preprocessDiagram } from './preprocess.js';
 import { decodeEntities } from './utils.js';
 
-const version = packageVersion + (includeLargeDiagrams ? '' : '-tiny');
+const version = packageVersion + (includeLargeFeatures ? '' : '-tiny');
 
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =

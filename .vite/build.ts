@@ -95,7 +95,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     ],
     define: {
       // Needs to be string
-      includeLargeDiagrams: 'true',
+      includeLargeFeatures: 'true',
     },
   };
 

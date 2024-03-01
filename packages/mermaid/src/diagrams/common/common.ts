@@ -341,29 +341,36 @@ export const renderKatex = async (text: string, config: MermaidConfig): Promise<
     return text.replace(katexRegex, 'MathML is unsupported in this environment.');
   }
 
-  const { default: katex } = await import('katex');
-  return text
-    .split(lineBreakRegex)
-    .map((line) =>
-      hasKatex(line)
-        ? `
+  if (includeLargeFeatures) {
+    const { default: katex } = await import('katex');
+    return text
+      .split(lineBreakRegex)
+      .map((line) =>
+        hasKatex(line)
+          ? `
             <div style="display: flex; align-items: center; justify-content: center; white-space: nowrap;">
               ${line}
             </div>
           `
-        : `<div>${line}</div>`
-    )
-    .join('')
-    .replace(katexRegex, (_, c) =>
-      katex
-        .renderToString(c, {
-          throwOnError: true,
-          displayMode: true,
-          output: isMathMLSupported() ? 'mathml' : 'htmlAndMathml',
-        })
-        .replace(/\n/g, ' ')
-        .replace(/<annotation.*<\/annotation>/g, '')
-    );
+          : `<div>${line}</div>`
+      )
+      .join('')
+      .replace(katexRegex, (_, c) =>
+        katex
+          .renderToString(c, {
+            throwOnError: true,
+            displayMode: true,
+            output: isMathMLSupported() ? 'mathml' : 'htmlAndMathml',
+          })
+          .replace(/\n/g, ' ')
+          .replace(/<annotation.*<\/annotation>/g, '')
+      );
+  }
+
+  return text.replace(
+    katexRegex,
+    'Katex is unsupported in mermaid.tiny.js. Please use mermaid.js or mermaid.min.js.'
+  );
 };
 
 export default {

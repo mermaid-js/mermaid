@@ -32,7 +32,7 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
       {
         ...iifeOptions,
         minify: true,
-        includeLargeDiagrams: false,
+        includeLargeFeatures: false,
         metafile: shouldVisualize,
       }
     );
