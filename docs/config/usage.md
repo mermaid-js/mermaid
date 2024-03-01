@@ -393,3 +393,8 @@ mermaid.startOnLoad = true;
 
 > **Warning**
 > This way of setting the configuration is deprecated. Instead the preferred way is to use the initialize method. This functionality is only kept for backwards compatibility.
+
+<!---
+cspell:locale en,en-gb
+cspell:ignore pumbaa
+--->
