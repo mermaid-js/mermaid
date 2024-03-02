@@ -421,9 +421,15 @@ importers:
 
   packages/mermaid/src/docs:
     dependencies:
+      '@mdi/font':
+        specifier: ^6.9.96
+        version: 6.9.96
       '@vueuse/core':
         specifier: ^10.1.0
         version: 10.8.0(vue@3.4.20)
+      font-awesome:
+        specifier: ^4.7.0
+        version: 4.7.0
       jiti:
         specifier: ^1.18.2
         version: 1.21.0
@@ -4546,6 +4552,10 @@ packages:
   /@leichtgewicht/ip-codec@2.0.4:
     resolution: {integrity: sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==}
     dev: true
+
+  /@mdi/font@6.9.96:
+    resolution: {integrity: sha512-z3QVZStyHVwkDsFR7A7F2PIvZJPWgdSFw4BEEy2Gc9HUN5NfK9mGbjgaYClRcbMWiYEV45srmiYtczmBtCqR8w==}
+    dev: false
 
   /@microsoft/tsdoc-config@0.16.2:
     resolution: {integrity: sha512-OGiIzzoBLgWWR0UdRJX98oYO+XKGf7tiK4Zk6tQ/E4IJqGCe7dvkTvgDZV5cFJUzLGDOjeAXrnZoA6QkVySuxw==}
@@ -10193,6 +10203,11 @@ packages:
     dependencies:
       debug: 4.3.4(supports-color@8.1.1)
     dev: true
+
+  /font-awesome@4.7.0:
+    resolution: {integrity: sha512-U6kGnykA/6bFmg1M/oT9EkFeIYv7JlX3bozwQJWiiLz6L0w3F5vBVPxHlwyX/vtNq1ckcpRKOB9f2Qal/VtFpg==}
+    engines: {node: '>=0.10.3'}
+    dev: false
 
   /for-each@0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
