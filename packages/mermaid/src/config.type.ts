@@ -1281,6 +1281,11 @@ export interface GanttDiagramConfig extends BaseDiagramConfig {
    *
    */
   weekday?: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+  /**
+   * On which day a weekend interval should start
+   *
+   */
+  weekend?: 'friday' | 'saturday';
 }
 /**
  * The object containing configurations specific for sequence diagrams
