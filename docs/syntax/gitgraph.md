@@ -419,6 +419,7 @@ In Mermaid, you have the option to configure the gitgraph diagram. You can confi
 - `showCommitLabel` : Boolean, default is `true`. If set to `false`, the commit labels are not shown in the diagram.
 - `mainBranchName` : String, default is `main`. The name of the default/root branch.
 - `mainBranchOrder` : Position of the main branch in the list of branches. default is `0`, meaning, by default `main` branch is the first in the order.
+- `parallelCommits`: Boolean, default is `false`. If set to `true`, commits x distance away from the parent are shown at the same level in the diagram.
 
 Let's look at them one by one.
 
@@ -913,6 +914,78 @@ Usage example:
        merge develop
        commit
        commit
+```
+
+## Parallel commits (v10.8.0+)
+
+Commits in Mermaid display temporal information in gitgraph by default. For example if two commits are one commit away from its parent, the commit that was made earlier is rendered closer to its parent. You can turn this off by enabling the `parallelCommits` flag.
+
+### Temporal Commits (default, `parallelCommits: false`)
+
+```mermaid-example
+---
+config:
+  gitGraph:
+    parallelCommits: false
+---
+gitGraph:
+  commit
+  branch develop
+  commit
+  commit
+  checkout main
+  commit
+  commit
+```
+
+```mermaid
+---
+config:
+  gitGraph:
+    parallelCommits: false
+---
+gitGraph:
+  commit
+  branch develop
+  commit
+  commit
+  checkout main
+  commit
+  commit
+```
+
+### Parallel commits (`parallelCommits: true`)
+
+```mermaid-example
+---
+config:
+  gitGraph:
+    parallelCommits: true
+---
+gitGraph:
+  commit
+  branch develop
+  commit
+  commit
+  checkout main
+  commit
+  commit
+```
+
+```mermaid
+---
+config:
+  gitGraph:
+    parallelCommits: true
+---
+gitGraph:
+  commit
+  branch develop
+  commit
+  commit
+  checkout main
+  commit
+  commit
 ```
 
 ## Themes
@@ -1626,7 +1699,7 @@ See how the commit label color and background color are changed to the values sp
 
 ### Customizing Commit Label Font Size
 
-You can customize commit using the `commitLabelFontSize` theme variables for changing in the font soze of the commit label .
+You can customize commit using the `commitLabelFontSize` theme variables for changing in the font size of the commit label .
 
 Example:
 Now let's override the default values for the `commitLabelFontSize` variable:
@@ -1677,7 +1750,7 @@ See how the commit label font size changed.
 
 ### Customizing Tag Label Font Size
 
-You can customize commit using the `tagLabelFontSize` theme variables for changing in the font soze of the tag label .
+You can customize commit using the `tagLabelFontSize` theme variables for changing in the font size of the tag label .
 
 Example:
 Now let's override the default values for the `tagLabelFontSize` variable:

@@ -112,7 +112,7 @@ export class Orchestrator {
     }
   }
 
-  private calculateHorizonatalSpace() {
+  private calculateHorizontalSpace() {
     let availableWidth = this.chartConfig.width;
     let availableHeight = this.chartConfig.height;
     let titleYEnd = 0;
@@ -174,7 +174,7 @@ export class Orchestrator {
 
   private calculateSpace() {
     if (this.chartConfig.chartOrientation === 'horizontal') {
-      this.calculateHorizonatalSpace();
+      this.calculateHorizontalSpace();
     } else {
       this.calculateVerticalSpace();
     }

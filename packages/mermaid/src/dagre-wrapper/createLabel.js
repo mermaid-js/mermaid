@@ -60,7 +60,7 @@ const createLabel = (_vertexText, style, isTitle, isNode) => {
     const node = {
       isNode,
       label: decodeEntities(vertexText).replace(
-        /fa[blrs]?:fa-[\w-]+/g,
+        /fa[blrs]?:fa-[\w-]+/g, // cspell: disable-line
         (s) => `<i class='${s.replace(':', ' ')}'></i>`
       ),
       labelStyle: style.replace('fill:', 'color:'),
