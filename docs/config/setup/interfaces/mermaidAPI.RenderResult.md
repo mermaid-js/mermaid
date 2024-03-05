@@ -14,10 +14,6 @@
 
 • `Optional` **bindFunctions**: (`element`: `Element`) => `void`
 
-#### Type declaration
-
-▸ (`element`): `void`
-
 Bind function to be called after the svg has been inserted into the DOM.
 This is necessary for adding event listeners to the elements in the svg.
 
@@ -26,6 +22,10 @@ const { svg, bindFunctions } = mermaidAPI.render('id1', 'graph TD;A-->B');
 div.innerHTML = svg;
 bindFunctions?.(div); // To call bindFunctions only if it's present.
 ```
+
+#### Type declaration
+
+▸ (`element`): `void`
 
 ##### Parameters
 
