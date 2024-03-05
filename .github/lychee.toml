@@ -38,7 +38,10 @@ exclude = [
 "https://discord.gg",
 
 # BundlePhobia has frequent downtime
-"https://bundlephobia.com"
+"https://bundlephobia.com",
+
+# Chrome webstore redirect issue
+"https://chromewebstore.google.com"
 ]
 
 # Exclude all private IPs from checking.
