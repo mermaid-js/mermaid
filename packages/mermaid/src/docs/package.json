@@ -15,7 +15,9 @@
     "fetch-contributors": "tsx .vitepress/scripts/fetch-contributors.ts"
   },
   "dependencies": {
+    "@mdi/font": "^6.9.96",
     "@vueuse/core": "^10.1.0",
+    "font-awesome": "^4.7.0",
     "jiti": "^1.18.2",
     "vue": "^3.3",
     "mermaid": "workspace:^"
