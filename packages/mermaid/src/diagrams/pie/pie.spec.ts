@@ -164,6 +164,9 @@ describe('pie', () => {
       // db.setConfig({ textPosition: 0 });
       // db.resetConfig();
       expect(db.getConfig().textPosition).toStrictEqual(DEFAULT_PIE_DB.config.textPosition);
+      expect(db.getConfig().percentageDecimals).toStrictEqual(
+        DEFAULT_PIE_DB.config.percentageDecimals
+      );
     });
   });
 });

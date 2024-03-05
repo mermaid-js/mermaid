@@ -74,11 +74,33 @@ describe('pie chart', () => {
     );
   });
 
+  it('should render a pie diagram when percentageDecimals is setted', () => {
+    imgSnapshotTest(
+      `pie
+        "Dogs" : 80
+        "Cats" : 86
+        "Rats" : 80
+      `,
+      { logLevel: 1, pie: { percentageDecimals: 2 } }
+    );
+  });
+
   it('should render a pie diagram with showData', () => {
     imgSnapshotTest(
       `pie showData
         "Dogs": 50
         "Cats": 25
+      `
+    );
+  });
+
+  it('should render a pie diagram and use half even rounding by default', () => {
+    // depending on the rounding method, the sum of the percentages can be 101 (default rounding), or 99 (half even)
+    imgSnapshotTest(
+      `pie
+        "Dogs" : 80
+        "Cats" : 86
+        "Rats" : 80
       `
     );
   });

@@ -884,6 +884,13 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: |
           Axial position of slice's label from zero at the center to 1 at the outside edges.
         default: 0.75
+      percentageDecimals:
+        type: number
+        minimum: 0
+        maximum: 20
+        description: |
+          The number of decimal places to show in the percentage label.
+        default: 0
 
   QuadrantChartConfig:
     title: Quadrant Chart Config
