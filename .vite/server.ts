@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { createServer as createViteServer } from 'vite';
+import { packageOptions } from '../.build/common.js';
 
 async function createServer() {
   const app = express();
@@ -14,9 +15,9 @@ async function createServer() {
   });
 
   app.use(cors());
-  app.use(express.static('./packages/mermaid/dist'));
-  app.use(express.static('./packages/mermaid-zenuml/dist'));
-  app.use(express.static('./packages/mermaid-example-diagram/dist'));
+  for (const { packageName } of Object.values(packageOptions)) {
+    app.use(express.static(`./packages/${packageName}/dist`));
+  }
   app.use(vite.middlewares);
   app.use(express.static('demos'));
   app.use(express.static('cypress/platform'));
