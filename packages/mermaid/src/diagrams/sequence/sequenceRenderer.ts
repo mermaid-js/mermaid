@@ -1010,7 +1010,7 @@ export const draw = async function (_text: string, id: string, _version: string,
           msgModel.id = msg.id;
           msgModel.from = msg.from;
           msgModel.to = msg.to;
-          const lineStartY = boundMessage(diagram, msgModel);
+          const lineStartY = await boundMessage(diagram, msgModel);
           adjustCreatedDestroyedData(
             msg,
             msgModel,

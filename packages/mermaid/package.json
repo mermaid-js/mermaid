@@ -1,6 +1,6 @@
 {
-  "name": "mermaid",
-  "version": "10.9.0",
+  "name": "@mermaid-chart/mermaid",
+  "version": "10.9.0-b.1",
   "description": "Markdown-ish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
   "module": "./dist/mermaid.core.mjs",
@@ -49,8 +49,14 @@
   "author": "Knut Sveidqvist",
   "license": "MIT",
   "standard": {
-    "ignore": ["**/parser/*.js", "dist/**/*.js", "cypress/**/*.js"],
-    "globals": ["page"]
+    "ignore": [
+      "**/parser/*.js",
+      "dist/**/*.js",
+      "cypress/**/*.js"
+    ],
+    "globals": [
+      "page"
+    ]
   },
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.1",
@@ -119,6 +125,9 @@
     "vitepress": "^1.0.0-rc.40",
     "vitepress-plugin-search": "^1.0.4-alpha.22"
   },
-  "files": ["dist/", "README.md"],
+  "files": [
+    "dist/",
+    "README.md"
+  ],
   "sideEffects": false
 }
