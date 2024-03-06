@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "./dist",
+    "allowJs": false,
+    "preserveSymlinks": false,
+    "strictPropertyInitialization": false
+  },
+  "include": ["./src/**/*.ts", "./tests/**/*.ts"],
+  "typeRoots": ["./src/types"]
+}
