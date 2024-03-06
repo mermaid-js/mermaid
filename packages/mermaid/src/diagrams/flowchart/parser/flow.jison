@@ -292,15 +292,15 @@ graphConfig
     | NEWLINE graphConfig
     | GRAPH NODIR
         { yy.setDirection('TB');$$ = 'TB';}
-    | GRAPH DIR FirstStmtSeperator
+    | GRAPH DIR FirstStmtSeparator
         { yy.setDirection($DIR);$$ = $DIR;}
-    // | GRAPH SPACE TAGEND FirstStmtSeperator
+    // | GRAPH SPACE TAGEND FirstStmtSeparator
     //     { yy.setDirection("LR");$$ = $TAGEND;}
-    // | GRAPH SPACE TAGSTART FirstStmtSeperator
+    // | GRAPH SPACE TAGSTART FirstStmtSeparator
     //     { yy.setDirection("RL");$$ = $TAGSTART;}
-    // | GRAPH SPACE UP FirstStmtSeperator
+    // | GRAPH SPACE UP FirstStmtSeparator
     //     { yy.setDirection("BT");$$ = $UP;}
-    // | GRAPH SPACE DOWN FirstStmtSeperator
+    // | GRAPH SPACE DOWN FirstStmtSeparator
     //     { yy.setDirection("TB");$$ = $DOWN;}
     ;
 
@@ -310,7 +310,7 @@ ending: endToken ending
 
 endToken: NEWLINE | SPACE | EOF;
 
-FirstStmtSeperator
+FirstStmtSeparator
     : SEMI | NEWLINE | spaceList NEWLINE ;
 
 
@@ -328,8 +328,8 @@ spaceList
     ;
 
 statement
-    : verticeStatement separator
-    { /* console.warn('finat vs', $verticeStatement.nodes); */ $$=$verticeStatement.nodes}
+    : vertexStatement separator
+    { /* console.warn('finat vs', $vertexStatement.nodes); */ $$=$vertexStatement.nodes}
     | styleStatement separator
     {$$=[];}
     | linkStyleStatement separator
@@ -357,10 +357,10 @@ statement
 separator: NEWLINE | SEMI | EOF ;
 
 
-verticeStatement: verticeStatement link node
-        { /* console.warn('vs',$verticeStatement.stmt,$node); */ yy.addLink($verticeStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($verticeStatement.nodes) } }
-    |  verticeStatement link node spaceList
-        { /* console.warn('vs',$verticeStatement.stmt,$node); */ yy.addLink($verticeStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($verticeStatement.nodes) } }
+vertexStatement: vertexStatement link node
+        { /* console.warn('vs',$vertexStatement.stmt,$node); */ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+    |  vertexStatement link node spaceList
+        { /* console.warn('vs',$vertexStatement.stmt,$node); */ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     |node spaceList {/*console.warn('noda', $node);*/ $$ = {stmt: $node, nodes:$node }}
     |node { $$ = {stmt: $node, nodes:$node }}
     ;

@@ -133,7 +133,7 @@ const type2Str = (type: number) => {
     case nodeType.BANG:
       return 'bang';
     case nodeType.HEXAGON:
-      return 'hexgon';
+      return 'hexgon'; // cspell: disable-line
     default:
       return 'no-border';
   }

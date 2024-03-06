@@ -145,3 +145,5 @@ const createCheckFn = (width: number): CheckFitFunction => {
     return characters.length <= width;
   };
 };
+
+// cspell:ignore worl
