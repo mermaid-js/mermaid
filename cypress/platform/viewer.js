@@ -1,6 +1,6 @@
-import mermaid2 from './mermaid.esm.mjs';
-import externalExample from '../../packages/mermaid-example-diagram/dist/mermaid-example-diagram.core.mjs';
-import zenUml from '../../packages/mermaid-zenuml/dist/mermaid-zenuml.core.mjs';
+import mermaid from './mermaid.esm.mjs';
+import externalExample from './mermaid-example-diagram.esm.mjs';
+import zenUml from './mermaid-zenuml.esm.mjs';
 
 function b64ToUtf8(str) {
   return decodeURIComponent(escape(window.atob(str)));
@@ -45,9 +45,9 @@ const contentLoaded = async function () {
       document.getElementsByTagName('body')[0].appendChild(div);
     }
 
-    await mermaid2.registerExternalDiagrams([externalExample, zenUml]);
-    mermaid2.initialize(graphObj.mermaid);
-    await mermaid2.run();
+    await mermaid.registerExternalDiagrams([externalExample, zenUml]);
+    mermaid.initialize(graphObj.mermaid);
+    await mermaid.run();
   }
 };
 
@@ -95,18 +95,14 @@ const contentLoadedApi = async function () {
         divs[i] = div;
       }
 
-      const defaultE2eCnf = { theme: 'forest' };
+      const defaultE2eCnf = { theme: 'forest', startOnLoad: false };
 
       const cnf = merge(defaultE2eCnf, graphObj.mermaid);
 
-      mermaid2.initialize(cnf);
+      mermaid.initialize(cnf);
 
       for (let i = 0; i < numCodes; i++) {
-        const { svg, bindFunctions } = await mermaid2.render(
-          'newid' + i,
-          graphObj.code[i],
-          divs[i]
-        );
+        const { svg, bindFunctions } = await mermaid.render('newid' + i, graphObj.code[i], divs[i]);
         div.innerHTML = svg;
         bindFunctions(div);
       }
@@ -114,18 +110,21 @@ const contentLoadedApi = async function () {
       const div = document.createElement('div');
       div.id = 'block';
       div.className = 'mermaid';
-      console.warn('graphObj.mermaid', graphObj.mermaid);
+      console.warn('graphObj', graphObj);
       document.getElementsByTagName('body')[0].appendChild(div);
-      mermaid2.initialize(graphObj.mermaid);
-
-      const { svg, bindFunctions } = await mermaid2.render('newid', graphObj.code, div);
+      mermaid.initialize(graphObj.mermaid);
+      const { svg, bindFunctions } = await mermaid.render('newid', graphObj.code, div);
       div.innerHTML = svg;
+      console.log(div.innerHTML);
       bindFunctions(div);
     }
   }
 };
 
 if (typeof document !== 'undefined') {
+  mermaid.initialize({
+    startOnLoad: false,
+  });
   /*!
    * Wait for document loaded before starting the execution
    */

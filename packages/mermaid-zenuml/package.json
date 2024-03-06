@@ -19,6 +19,7 @@
     "mermaid"
   ],
   "scripts": {
+    "clean": "rimraf dist",
     "prepublishOnly": "pnpm -w run build"
   },
   "repository": {
