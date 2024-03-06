@@ -372,7 +372,7 @@ Likewise, if users don't know that there is a new feature that you've implemente
 The documentation has to be updated for users to know that things have been changed and added!
 If you are adding a new feature, add `(v10.8.0+)` in the title or description. It will be replaced automatically with the current version number when the release happens.
 
-eg: `# Feature Name (v10.8.0+)`
+eg: `# Feature Name (v10.8.0-b.2+)`
 
 We know it can sometimes be hard to code _and_ write user documentation.
 
