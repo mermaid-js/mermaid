@@ -53,7 +53,7 @@ class Theme {
     this.actorBorder = 'calculated';
     this.actorBkg = 'calculated';
     this.actorTextColor = 'black';
-    this.actorLineColor = 'grey';
+    this.actorLineColor = 'calculated';
     this.signalColor = 'calculated';
     this.signalTextColor = 'calculated';
     this.labelBoxBkgColor = 'calculated';

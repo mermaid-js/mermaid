@@ -58,7 +58,7 @@ class Theme {
     this.actorBorder = 'calculated';
     this.actorBkg = 'calculated';
     this.actorTextColor = 'calculated';
-    this.actorLineColor = 'calculated';
+    this.actorLineColor = this.actorBorder;
     this.signalColor = 'calculated';
     this.signalTextColor = 'calculated';
     this.labelBoxBkgColor = 'calculated';
