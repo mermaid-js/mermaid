@@ -1,6 +1,6 @@
-import { MermaidTokenBuilder } from '../common/index.js';
+import { AbstractMermaidTokenBuilder } from '../common/index.js';
 
-export class PacketTokenBuilder extends MermaidTokenBuilder {
+export class PacketTokenBuilder extends AbstractMermaidTokenBuilder {
   public constructor() {
     super(['packet-beta']);
   }

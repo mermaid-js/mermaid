@@ -10,7 +10,7 @@ const rulesRegexes: Record<string, RegExp> = {
   TITLE: titleRegex,
 };
 
-export abstract class MermaidValueConverter extends DefaultValueConverter {
+export abstract class AbstractMermaidValueConverter extends DefaultValueConverter {
   /**
    * A method contains convert logic to be used by class.
    *
@@ -71,8 +71,8 @@ export abstract class MermaidValueConverter extends DefaultValueConverter {
   }
 }
 
-export class CommonValueConverter extends MermaidValueConverter {
-  protected runCustomConverter(
+export class CommonValueConverter extends AbstractMermaidValueConverter {
+  protected override runCustomConverter(
     _rule: GrammarAST.AbstractRule,
     _input: string,
     _cstNode: CstNode

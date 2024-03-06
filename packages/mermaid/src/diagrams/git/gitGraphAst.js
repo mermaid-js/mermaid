@@ -36,8 +36,8 @@ function getId() {
 //  * @param otherCommit
 //  */
 // eslint-disable-next-line @cspell/spellchecker
-// function isfastforwardable(currentCommit, otherCommit) {
-//   log.debug('Entering isfastforwardable:', currentCommit.id, otherCommit.id);
+// function isFastForwardable(currentCommit, otherCommit) {
+//   log.debug('Entering isFastForwardable:', currentCommit.id, otherCommit.id);
 //   let cnt = 0;
 //   while (currentCommit.seq <= otherCommit.seq && currentCommit !== otherCommit && cnt < 1000) {
 //     cnt++;
@@ -46,8 +46,8 @@ function getId() {
 //     if (Array.isArray(otherCommit.parent)) {
 //       log.debug('In merge commit:', otherCommit.parent);
 //       return (
-//         isfastforwardable(currentCommit, commits[otherCommit.parent[0]]) ||
-//         isfastforwardable(currentCommit, commits[otherCommit.parent[1]])
+//         isFastForwardable(currentCommit, commits[otherCommit.parent[0]]) ||
+//         isFastForwardable(currentCommit, commits[otherCommit.parent[1]])
 //       );
 //     } else {
 //       otherCommit = commits[otherCommit.parent];
@@ -64,7 +64,7 @@ function getId() {
 // function isReachableFrom(currentCommit, otherCommit) {
 //   const currentSeq = currentCommit.seq;
 //   const otherSeq = otherCommit.seq;
-//   if (currentSeq > otherSeq) return isfastforwardable(otherCommit, currentCommit);
+//   if (currentSeq > otherSeq) return isFastForwardable(otherCommit, currentCommit);
 //   return false;
 // }
 
@@ -231,7 +231,7 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
   //   log.debug('Already merged');
   //   return;
   // }
-  // if (isfastforwardable(currentCommit, otherCommit)) {
+  // if (isFastForwardable(currentCommit, otherCommit)) {
   //   branches[curBranch] = branches[otherBranch];
   //   head = commits[branches[curBranch]];
   // } else {

@@ -65,7 +65,7 @@ Example of `init` directive setting the `theme` to `forest`:
     a --> b
 ```
 
-> **Reminder**: the only theme that can be customed is the `base` theme. The following section covers how to use `themeVariables` for customizations.
+> **Reminder**: the only theme that can be customized is the `base` theme. The following section covers how to use `themeVariables` for customizations.
 
 ## Customizing Themes with `themeVariables`
 
