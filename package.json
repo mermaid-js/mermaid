@@ -111,6 +111,7 @@
     "jsdom": "^22.0.0",
     "langium-cli": "3.0.1",
     "lint-staged": "^13.2.1",
+    "markdown-table": "^3.0.3",
     "nyc": "^15.1.0",
     "path-browserify": "^1.0.1",
     "pnpm": "^8.6.8",
