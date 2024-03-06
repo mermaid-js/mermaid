@@ -29,6 +29,7 @@ Gemfile.lock
 
 cypress/screenshots/
 cypress/snapshots/
+cypress/runtimes/
 
 # eslint --cache file
 .eslintcache

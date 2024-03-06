@@ -110,6 +110,14 @@ export const openURLAndVerifyRendering = (
 
   cy.visit(url);
   cy.window().should('have.property', 'rendered', true);
+  cy.window().then((win) => {
+    cy.task('recordRenderTime', {
+      fileName: Cypress.spec.name,
+      testName: name,
+      // @ts-ignore Dynamically added property.
+      timeTaken: win.renderTime,
+    });
+  });
   cy.get('svg').should('be.visible');
 
   if (validation) {
