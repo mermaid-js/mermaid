@@ -172,8 +172,8 @@ export const isInvalidDate = function (date, dateFormat, excludes, includes) {
   }
   if (
     excludes.includes('weekends') &&
-    (date.isoWeekday() == WEEKEND_START_DAY[weekend] ||
-      date.isoWeekday() == WEEKEND_START_DAY[weekend] + 1)
+    (date.isoWeekday() === WEEKEND_START_DAY[weekend] ||
+      date.isoWeekday() === WEEKEND_START_DAY[weekend] + 1)
   ) {
     return true;
   }
@@ -193,10 +193,6 @@ export const getWeekday = function () {
 
 export const setWeekend = function (startDay) {
   weekend = startDay;
-};
-
-export const getWeekend = function () {
-  return weekend;
 };
 
 /**
@@ -797,7 +793,6 @@ export default {
   setWeekday,
   getWeekday,
   setWeekend,
-  getWeekend,
 };
 
 /**
