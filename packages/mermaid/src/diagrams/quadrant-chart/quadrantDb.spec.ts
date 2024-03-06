@@ -16,7 +16,7 @@ describe('quadrant unit tests', () => {
   it('should throw an error for unacceptable style name', () => {
     const styles: string[] = ['test_name: value'];
     expect(() => quadrantDb.parseStyles(styles)).toThrowError(
-      'stlye named test_name is unacceptable'
+      'style named test_name is unacceptable'
     );
   });
 

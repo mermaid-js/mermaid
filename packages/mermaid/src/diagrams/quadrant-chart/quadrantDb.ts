@@ -85,7 +85,7 @@ function parseStyles(styles: string[]): StylesObject {
       }
       stylesObject.strokeWidth = value;
     } else {
-      throw new Error(`stlye named ${key} is unacceptable`);
+      throw new Error(`style named ${key} is unacceptable`);
     }
   }
   return stylesObject;
