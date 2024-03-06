@@ -2,12 +2,12 @@ import { detectType } from './detectType.js';
 import { getDiagram, registerDiagram } from './diagramAPI.js';
 import { addDiagrams } from './diagram-orchestration.js';
 import type { DiagramDetector } from './types.js';
-import { getDiagramFromText } from '../Diagram.js';
+import { Diagram } from '../Diagram.js';
 import { it, describe, expect, beforeAll } from 'vitest';
 
 addDiagrams();
 beforeAll(async () => {
-  await getDiagramFromText('sequenceDiagram');
+  await Diagram.fromText('sequenceDiagram');
 });
 
 describe('DiagramAPI', () => {

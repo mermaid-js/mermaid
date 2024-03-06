@@ -35,7 +35,13 @@ exclude = [
 'packages/mermaid/src/docs/config/setup/*',
 
 # Ignore Discord invite
-"https://discord.gg"
+"https://discord.gg",
+
+# BundlePhobia has frequent downtime
+"https://bundlephobia.com",
+
+# Chrome webstore redirect issue
+"https://chromewebstore.google.com"
 ]
 
 # Exclude all private IPs from checking.

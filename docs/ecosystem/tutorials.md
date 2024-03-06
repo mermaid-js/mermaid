@@ -80,3 +80,5 @@ graph LR;
 **Output**
 
 ![Example graph of the Python integration](img/python-mermaid-integration.png)
+
+<!--- cspell:ignore Elle Jaoude Neurodiverse graphbytes --->
