@@ -20,6 +20,7 @@ import flowchartElk from '../diagrams/flowchart/elk/detector.js';
 import timeline from '../diagrams/timeline/detector.js';
 import mindmap from '../diagrams/mindmap/detector.js';
 import sankey from '../diagrams/sankey/sankeyDetector.js';
+import { packet } from '../diagrams/packet/detector.js';
 import block from '../diagrams/block/blockDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
@@ -51,7 +52,6 @@ export const addDiagrams = () => {
         },
       },
       parser: {
-        parser: { yy: {} },
         parse: () => {
           throw new Error(
             'Diagrams beginning with --- are not valid. ' +
@@ -88,6 +88,7 @@ export const addDiagrams = () => {
     journey,
     quadrantChart,
     sankey,
+    packet,
     xychart,
     block
   );
