@@ -20,10 +20,12 @@ export class LinePlot {
     let path: string | null;
     if (this.orientation === 'horizontal') {
       path = line()
+        .defined((d) => !isNaN(d[0]) && !isNaN(d[1]))
         .y((d) => d[0])
         .x((d) => d[1])(finalData);
     } else {
       path = line()
+        .defined((d) => !isNaN(d[0]) && !isNaN(d[1]))
         .x((d) => d[0])
         .y((d) => d[1])(finalData);
     }

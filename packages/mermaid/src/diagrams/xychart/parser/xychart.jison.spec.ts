@@ -445,4 +445,97 @@ describe('Testing xychart jison file', () => {
       [45, 99, 12]
     );
   });
+  it('parse bar Data with NaN', () => {
+    const str =
+      'xychart-beta\nx-axis xAxisName\ny-axis yAxisName\n bar barTitle [23, NaN, 56.6, .22]';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yAxisName', type: 'text' });
+    expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
+    expect(mockDB.setBarData).toHaveBeenCalledWith({ text: 'barTitle', type: 'text' }, [
+      23,
+      NaN,
+      56.6,
+      0.22,
+    ]);
+  });
+  it('parse line Data with NaN', () => {
+    const str = 'xychart-beta\nx-axis xAxisName\ny-axis yAxisName\n line lineTitle [23, NaN, 56.6]';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setLineData).toHaveBeenCalledWith({ text: 'lineTitle', type: 'text' }, [
+      23,
+      NaN,
+      56.6,
+    ]);
+    expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
+    expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yAxisName', type: 'text' });
+  });
+  it('parse multiple bar and line variant 1 with NaN', () => {
+    const str =
+      'xychart-beta\nx-axis xAxisName\ny-axis yAxisName\n bar barTitle1 [23, 45, NaN] \n line lineTitle1 [11, NaN, 67, 23] \n bar barTitle2 [NaN, 42, 56.89] \n line lineTitle2 [NaN, 99, 012]';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yAxisName', type: 'text' });
+    expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
+    expect(mockDB.setBarData).toHaveBeenCalledWith({ text: 'barTitle1', type: 'text' }, [
+      23,
+      45,
+      NaN,
+    ]);
+    expect(mockDB.setBarData).toHaveBeenCalledWith({ text: 'barTitle2', type: 'text' }, [
+      NaN,
+      42,
+      56.89,
+    ]);
+    expect(mockDB.setLineData).toHaveBeenCalledWith({ text: 'lineTitle1', type: 'text' }, [
+      11,
+      NaN,
+      67,
+      23,
+    ]);
+    expect(mockDB.setLineData).toHaveBeenCalledWith({ text: 'lineTitle2', type: 'text' }, [
+      NaN,
+      99,
+      12,
+    ]);
+  });
+  it('parse multiple bar and line variant 2 with NaN', () => {
+    const str = `
+    xychart-beta horizontal
+    title Basic xychart
+    x-axis "this is x axis" [category1, "category 2", category3]
+    y-axis yaxisText 10 --> 150
+    bar barTitle1 [NaN, 45, 56.6]
+    line lineTitle1 [11, NaN, 67, 23]
+    bar barTitle2 [13, 42, NaN]
+    line lineTitle2 [45, NaN, 012]`;
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yaxisText', type: 'text' });
+    expect(mockDB.setYAxisRangeData).toHaveBeenCalledWith(10, 150);
+    expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'this is x axis', type: 'text' });
+    expect(mockDB.setXAxisBand).toHaveBeenCalledWith([
+      { text: 'category1', type: 'text' },
+      { text: 'category 2', type: 'text' },
+      { text: 'category3', type: 'text' },
+    ]);
+    expect(mockDB.setBarData).toHaveBeenCalledWith({ text: 'barTitle1', type: 'text' }, [
+      NaN,
+      45,
+      56.6,
+    ]);
+    expect(mockDB.setBarData).toHaveBeenCalledWith({ text: 'barTitle2', type: 'text' }, [
+      13,
+      42,
+      NaN,
+    ]);
+    expect(mockDB.setLineData).toHaveBeenCalledWith({ text: 'lineTitle1', type: 'text' }, [
+      11,
+      NaN,
+      67,
+      23,
+    ]);
+    expect(mockDB.setLineData).toHaveBeenCalledWith({ text: 'lineTitle2', type: 'text' }, [
+      45,
+      NaN,
+      12,
+    ]);
+  });
 });

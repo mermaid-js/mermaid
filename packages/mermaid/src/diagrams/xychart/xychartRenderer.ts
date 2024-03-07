@@ -82,8 +82,8 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
           .append('rect')
           .attr('x', (data) => data.x)
           .attr('y', (data) => data.y)
-          .attr('width', (data) => data.width)
-          .attr('height', (data) => data.height)
+          .attr('width', (data) => (!Number.isNaN(data.width) ? data.width : 0))
+          .attr('height', (data) => (!Number.isNaN(data.height) ? data.height : 0))
           .attr('fill', (data) => data.fill)
           .attr('stroke', (data) => data.strokeFill)
           .attr('stroke-width', (data) => data.strokeWidth);
