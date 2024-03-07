@@ -8,6 +8,7 @@ Astah
 automerge
 bilkent
 bisheng
+Blazor
 codedoc
 Codemia
 codepaths
@@ -35,6 +36,7 @@ jsfiddle
 jsonschema
 katex
 khroma
+langium
 mathml
 matplotlib
 mdbook

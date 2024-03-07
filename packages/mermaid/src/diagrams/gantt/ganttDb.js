@@ -256,32 +256,25 @@ const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim();
 
   // Test for after
-  const re = /^after\s+([\d\w- ]+)/;
-  const afterStatement = re.exec(str.trim());
+  const afterRePattern = /^after\s+(?<ids>[\d\w- ]+)/;
+  const afterStatement = afterRePattern.exec(str);
 
   if (afterStatement !== null) {
     // check all after ids and take the latest
-    let latestEndingTask = null;
-    afterStatement[1].split(' ').forEach(function (id) {
+    let latestTask = null;
+    for (const id of afterStatement.groups.ids.split(' ')) {
       let task = findTaskById(id);
-      if (task !== undefined) {
-        if (!latestEndingTask) {
-          latestEndingTask = task;
-        } else {
-          if (task.endTime > latestEndingTask.endTime) {
-            latestEndingTask = task;
-          }
-        }
+      if (task !== undefined && (!latestTask || task.endTime > latestTask.endTime)) {
+        latestTask = task;
       }
-    });
-
-    if (!latestEndingTask) {
-      const dt = new Date();
-      dt.setHours(0, 0, 0, 0);
-      return dt;
-    } else {
-      return latestEndingTask.endTime;
     }
+
+    if (latestTask) {
+      return latestTask.endTime;
+    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
   }
 
   // Check for actual date set
@@ -344,13 +337,35 @@ const parseDuration = function (str) {
 const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   str = str.trim();
 
-  // Check for actual date
-  let mDate = dayjs(str, dateFormat.trim(), true);
-  if (mDate.isValid()) {
-    if (inclusive) {
-      mDate = mDate.add(1, 'd');
+  // test for until
+  const untilRePattern = /^until\s+(?<ids>[\d\w- ]+)/;
+  const untilStatement = untilRePattern.exec(str);
+
+  if (untilStatement !== null) {
+    // check all until ids and take the earliest
+    let earliestTask = null;
+    for (const id of untilStatement.groups.ids.split(' ')) {
+      let task = findTaskById(id);
+      if (task !== undefined && (!earliestTask || task.startTime < earliestTask.startTime)) {
+        earliestTask = task;
+      }
     }
-    return mDate.toDate();
+
+    if (earliestTask) {
+      return earliestTask.startTime;
+    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+  }
+
+  // check for actual date
+  let parsedDate = dayjs(str, dateFormat.trim(), true);
+  if (parsedDate.isValid()) {
+    if (inclusive) {
+      parsedDate = parsedDate.add(1, 'd');
+    }
+    return parsedDate.toDate();
   }
 
   let endTime = dayjs(prevTime);

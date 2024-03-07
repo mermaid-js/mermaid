@@ -1,9 +1,9 @@
-import { darken, lighten, adjust, invert, isDark } from 'khroma';
-import { mkBorder } from './theme-helpers.js';
+import { adjust, darken, invert, isDark, lighten } from 'khroma';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
 } from './erDiagram-oldHardcodedValues.js';
+import { mkBorder } from './theme-helpers.js';
 
 class Theme {
   constructor() {
@@ -239,6 +239,15 @@ class Theme {
     this.quadrantExternalBorderStrokeFill =
       this.quadrantExternalBorderStrokeFill || this.primaryBorderColor;
     this.quadrantTitleFill = this.quadrantTitleFill || this.primaryTextColor;
+
+    this.packet = {
+      startByteColor: this.primaryTextColor,
+      endByteColor: this.primaryTextColor,
+      labelColor: this.primaryTextColor,
+      titleColor: this.primaryTextColor,
+      blockStrokeColor: this.primaryTextColor,
+      blockFillColor: this.mainBkg,
+    };
 
     /* xychart */
     this.xyChart = {
