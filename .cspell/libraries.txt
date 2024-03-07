@@ -36,6 +36,7 @@ jsfiddle
 jsonschema
 katex
 khroma
+langium
 mathml
 matplotlib
 mdbook

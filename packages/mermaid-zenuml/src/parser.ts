@@ -5,7 +5,6 @@
  * This is a dummy parser that satisfies the mermaid API logic.
  */
 export default {
-  parser: { yy: {} },
   parse: () => {
     // no op
   },
