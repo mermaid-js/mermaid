@@ -1,11 +1,16 @@
 import type {
-  DefaultSharedModuleContext,
-  LangiumServices,
-  LangiumSharedServices,
+  DefaultSharedCoreModuleContext,
+  LangiumCoreServices,
+  LangiumSharedCoreServices,
   Module,
-  PartialLangiumServices,
+  PartialLangiumCoreServices,
 } from 'langium';
-import { EmptyFileSystem, createDefaultModule, createDefaultSharedModule, inject } from 'langium';
+import {
+  EmptyFileSystem,
+  createDefaultCoreModule,
+  createDefaultSharedCoreModule,
+  inject,
+} from 'langium';
 
 import { CommonValueConverter } from '../common/index.js';
 import { InfoGeneratedModule, MermaidGeneratedSharedModule } from '../generated/module.js';
@@ -24,13 +29,13 @@ type InfoAddedServices = {
 /**
  * Union of Langium default services and `Info` services.
  */
-export type InfoServices = LangiumServices & InfoAddedServices;
+export type InfoServices = LangiumCoreServices & InfoAddedServices;
 
 /**
  * Dependency injection module that overrides Langium default services and
  * contributes the declared `Info` services.
  */
-export const InfoModule: Module<InfoServices, PartialLangiumServices & InfoAddedServices> = {
+export const InfoModule: Module<InfoServices, PartialLangiumCoreServices & InfoAddedServices> = {
   parser: {
     TokenBuilder: () => new InfoTokenBuilder(),
     ValueConverter: () => new CommonValueConverter(),
@@ -51,16 +56,16 @@ export const InfoModule: Module<InfoServices, PartialLangiumServices & InfoAdded
  * @param context - Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
-export function createInfoServices(context: DefaultSharedModuleContext = EmptyFileSystem): {
-  shared: LangiumSharedServices;
+export function createInfoServices(context: DefaultSharedCoreModuleContext = EmptyFileSystem): {
+  shared: LangiumSharedCoreServices;
   Info: InfoServices;
 } {
-  const shared: LangiumSharedServices = inject(
-    createDefaultSharedModule(context),
+  const shared: LangiumSharedCoreServices = inject(
+    createDefaultSharedCoreModule(context),
     MermaidGeneratedSharedModule
   );
   const Info: InfoServices = inject(
-    createDefaultModule({ shared }),
+    createDefaultCoreModule({ shared }),
     InfoGeneratedModule,
     InfoModule
   );

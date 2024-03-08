@@ -48,11 +48,26 @@ jobs:
         with:
           ref: ${{ env.targetHash }}
 
+      - name: Install dependencies
+        if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
+        uses: cypress-io/github-action@v6
+        with:
+          # just perform install
+          runTests: false
+
+      - name: Calculate bundle size
+        if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true'}}
+        run: |
+          pnpm run build:viz
+          mkdir -p cypress/snapshots/stats/base
+          mv stats cypress/snapshots/stats/base
+
       - name: Cypress run
-        uses: cypress-io/github-action@v4
+        uses: cypress-io/github-action@v6
         id: cypress-snapshot-gen
         if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
         with:
+          install: false
           start: pnpm run dev
           wait-on: 'http://localhost:9000'
           browser: chrome
@@ -86,15 +101,30 @@ jobs:
           path: ./cypress/snapshots
           key: ${{ runner.os }}-snapshots-${{ env.targetHash }}
 
+      - name: Install dependencies
+        uses: cypress-io/github-action@v6
+        with:
+          runTests: false
+
+      - name: Output size diff
+        if: ${{ matrix.containers == 1 }}
+        run: |
+          pnpm run build:viz
+          mv stats cypress/snapshots/stats/head
+          echo '## Bundle size difference' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          npx tsx scripts/size.ts >> "$GITHUB_STEP_SUMMARY"
+
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
-        uses: cypress-io/github-action@v4
+        uses: cypress-io/github-action@v6
         id: cypress
         # If CYPRESS_RECORD_KEY is set, run in parallel on all containers
         # Otherwise (e.g. if running from fork), we run on a single container only
         if: ${{ ( env.CYPRESS_RECORD_KEY != '' ) || ( matrix.containers == 1 ) }}
         with:
+          install: false
           start: pnpm run dev:coverage
           wait-on: 'http://localhost:9000'
           browser: chrome
