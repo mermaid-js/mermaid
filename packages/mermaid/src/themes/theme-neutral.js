@@ -113,7 +113,7 @@ class Theme {
     this.actorBorder = lighten(this.border1, 23);
     this.actorBkg = this.mainBkg;
     this.actorTextColor = this.text;
-    this.actorLineColor = this.lineColor;
+    this.actorLineColor = this.actorBorder;
     this.signalColor = this.text;
     this.signalTextColor = this.text;
     this.labelBoxBkgColor = this.actorBkg;
