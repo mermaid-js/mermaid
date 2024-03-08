@@ -113,7 +113,7 @@ Communication tools and platforms
 - [phpBB](https://phpbb.com)
   - [phpbb-ext-mermaid](https://github.com/AlfredoRamos/phpbb-ext-mermaid)
 - [Slack](https://slack.com)
-  - [Mermaid Preview](https://github.com/JackuB/mermaid-for-slack)
+  - [Mermaid Preview](https://mermaid-preview.com)
 
 ### Wikis
 
