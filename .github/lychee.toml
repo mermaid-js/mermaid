@@ -40,7 +40,7 @@ exclude = [
 # BundlePhobia has frequent downtime
 "https://bundlephobia.com",
 
-# Chrome webstore redirect issue
+# Chrome webstore migration issue. Temporary
 "https://chromewebstore.google.com"
 ]
 
