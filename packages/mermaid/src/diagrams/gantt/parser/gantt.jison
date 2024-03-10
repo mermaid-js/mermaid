@@ -133,7 +133,7 @@ weekday
 statement
   : dateFormat {yy.setDateFormat($1.substr(11));$$=$1.substr(11);}
   | inclusiveEndDates {yy.enableInclusiveEndDates();$$=$1.substr(18);}
-  | dateRange {yy.setDateRange($1.substr(11));$$=$1.substr(11);}
+  | dateRange {yy.setDateRange($1.substr(10));$$=$1.substr(10);}
   | topAxis {yy.TopAxis();$$=$1.substr(8);}
   | axisFormat {yy.setAxisFormat($1.substr(11));$$=$1.substr(11);}
   | tickInterval {yy.setTickInterval($1.substr(13));$$=$1.substr(13);}
