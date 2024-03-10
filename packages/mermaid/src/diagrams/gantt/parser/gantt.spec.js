@@ -43,6 +43,23 @@ describe('when parsing a gantt diagram it', function () {
 
     expect(parserFnConstructor(str)).not.toThrow();
   });
+  it.each([
+    ['dateRange: 2023-06-01, 2023-07-01', 'YYYY-MM-DD'],
+    ['dateRange: 13:00, 14:00', 'HH:mm'],
+  ])('should ignore improper dateRange syntax (%s)', function (dateRange, dateFormat) {
+    const str = `gantt\ndateFormat ${dateFormat}\n${dateRange}`;
+
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(ganttDb.getDateRange()).toEqual('');
+  });
+  it.each([
+    ['dateRange : 2023-06-01, 2023-07-01', 'YYYY-MM-DD'],
+    ['dateRange : 13:00, 14:00', 'HH:mm'],
+  ])(`should reject invalid dateRange definition (%s)`, function (dateRange, dateFormat) {
+    const str = `gantt\ndateFormat ${dateFormat}\n${dateRange}`;
+
+    expect(parserFnConstructor(str)).toThrow();
+  });
   it('should handle an excludes definition', function () {
     const str =
       'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid\nexcludes weekdays 2019-02-01';
