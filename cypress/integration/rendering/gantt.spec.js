@@ -622,9 +622,6 @@ describe('Gantt diagram', () => {
   it('should render when there is a time-only dateRange with both start and end dates', () => {
     imgSnapshotTest(
       `
-      ---
-      displayMode: compact
-      ---
       gantt
         title GANTT compact
         dateFormat  HH:mm:ss
@@ -656,9 +653,6 @@ describe('Gantt diagram', () => {
   it('should render when there is a time-only dateRange with a startDate only', () => {
     imgSnapshotTest(
       `
-      ---
-      displayMode: compact
-      ---
       gantt
         title GANTT compact
         dateFormat  HH:mm:ss
@@ -690,9 +684,6 @@ describe('Gantt diagram', () => {
   it('should render when there is a time-only dateRange with an endDate only', () => {
     imgSnapshotTest(
       `
-      ---
-      displayMode: compact
-      ---
       gantt
         title GANTT compact
         dateFormat  HH:mm:ss
