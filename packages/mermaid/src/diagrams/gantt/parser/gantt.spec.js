@@ -26,11 +26,18 @@ describe('when parsing a gantt diagram it', function () {
 
     expect(parserFnConstructor(str)).not.toThrow();
   });
-  it('should handle a dateRange definition', function () {
-    const str = 'gantt\ndateRange : 2023-06-01, 2023-07-01';
+  it.each([
+    ['2023-06-01', '2023-07-01', 'YYYY-MM-DD'],
+    ['13:00', '14:00', 'HH:mm'],
+    ['2023-06-01 13:00', '2023-07-01 14:00', 'YYYY-MM-DD HH:mm'],
+  ])(
+    'should handle a dateRange definition (startDate: %s, endDate: %s)',
+    function (startDate, endDate, dateFormat) {
+      const str = `gantt\ndateFormat ${dateFormat}\ndateRange ${startDate}, ${endDate}`;
 
-    expect(parserFnConstructor(str)).not.toThrow();
-  });
+      expect(parserFnConstructor(str)).not.toThrow();
+    }
+  );
   it('should handle a title definition', function () {
     const str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid';
 
