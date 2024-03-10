@@ -12,7 +12,7 @@ Describe the way your implementation works or what design decisions you made if 
 
 Make sure you
 
-- [ ] :book: have read the [contribution guidelines](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md)
+- [ ] :book: have read the [contribution guidelines](https://mermaid.js.org/community/contributing.html)
 - [ ] :computer: have added necessary unit/e2e tests.
-- [ ] :notebook: have added documentation. Make sure [`MERMAID_RELEASE_VERSION`](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/docs/community/contributing.md#update-documentation) is used for all new features.
+- [ ] :notebook: have added documentation. Make sure [`MERMAID_RELEASE_VERSION`](https://mermaid.js.org/community/contributing.html#update-documentation) is used for all new features.
 - [ ] :bookmark: targeted `develop` branch

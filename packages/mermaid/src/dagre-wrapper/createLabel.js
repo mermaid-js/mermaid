@@ -56,11 +56,11 @@ const createLabel = (_vertexText, style, isTitle, isNode) => {
   if (evaluate(getConfig().flowchart.htmlLabels)) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
     vertexText = vertexText.replace(/\\n|\n/g, '<br />');
-    log.info('vertexText' + vertexText);
+    log.debug('vertexText' + vertexText);
     const node = {
       isNode,
       label: decodeEntities(vertexText).replace(
-        /fa[blrs]?:fa-[\w-]+/g,
+        /fa[blrs]?:fa-[\w-]+/g, // cspell: disable-line
         (s) => `<i class='${s.replace(':', ' ')}'></i>`
       ),
       labelStyle: style.replace('fill:', 'color:'),

@@ -193,6 +193,7 @@ export const draw = function (text, id, _version, diagObj) {
   const relations = diagObj.db.getRelations();
   relations.forEach(function (relation) {
     log.info(
+      // cspell:ignore tjoho
       'tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation)
     );
     g.setEdge(

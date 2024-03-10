@@ -144,10 +144,10 @@ describe('when using the ganttDb', function () {
 
   it('should handle relative start date based on id regardless of sections', function () {
     ganttDb.setDateFormat('YYYY-MM-DD');
-    ganttDb.addSection('testa1');
+    ganttDb.addSection('sec1');
     ganttDb.addTask('test1', 'id1,2013-01-01,2w');
     ganttDb.addTask('test2', 'id2,after id3,1d');
-    ganttDb.addSection('testa2');
+    ganttDb.addSection('sec2');
     ganttDb.addTask('test3', 'id3,after id1,2d');
 
     const tasks = ganttDb.getTasks();
@@ -198,6 +198,58 @@ describe('when using the ganttDb', function () {
     expect(tasks[3].startTime).toEqual(dayjs('2023-07-25', DATE_FORMAT, true).toDate());
     expect(tasks[3].endTime).toEqual(dayjs('2023-07-30', DATE_FORMAT, true).toDate());
   });
+
+  it('should handle relative end date based on id regardless of sections', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('sec1');
+    ganttDb.addTask('task1', 'id1,2013-01-01,until id3');
+    ganttDb.addSection('sec2');
+    ganttDb.addTask('task2', 'id2,2013-01-10,until id3');
+    ganttDb.addTask('task3', 'id3,2013-02-01,2d');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1));
+    expect(tasks[0].endTime).toEqual(new Date(2013, 1, 1));
+    expect(tasks[0].id).toEqual('id1');
+    expect(tasks[0].task).toEqual('task1');
+
+    expect(tasks[1].id).toEqual('id2');
+    expect(tasks[1].task).toEqual('task2');
+    expect(tasks[1].startTime).toEqual(new Date(2013, 0, 10));
+    expect(tasks[1].endTime).toEqual(new Date(2013, 1, 1));
+  });
+
+  it('should handle relative start date based on multiple id', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('sec1');
+    ganttDb.addTask('task1', 'id1,after id2 id3 id4,1d');
+    ganttDb.addTask('task2', 'id2,2013-01-01,1d');
+    ganttDb.addTask('task3', 'id3,2013-02-01,3d');
+    ganttDb.addTask('task4', 'id4,2013-02-01,2d');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].endTime).toEqual(new Date(2013, 1, 5));
+    expect(tasks[0].id).toEqual('id1');
+    expect(tasks[0].task).toEqual('task1');
+  });
+
+  it('should handle relative end date based on multiple id', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('sec1');
+    ganttDb.addTask('task1', 'id1,2013-01-01,until id2 id3 id4');
+    ganttDb.addTask('task2', 'id2,2013-01-11,1d');
+    ganttDb.addTask('task3', 'id3,2013-02-10,1d');
+    ganttDb.addTask('task4', 'id4,2013-02-12,1d');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 11));
+    expect(tasks[0].id).toEqual('id1');
+    expect(tasks[0].task).toEqual('task1');
+  });
+
   it('should ignore weekends', function () {
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.setExcludes('weekends 2019-02-06,friday');
