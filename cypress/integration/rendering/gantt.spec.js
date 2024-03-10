@@ -523,7 +523,7 @@ describe('Gantt diagram', () => {
     );
   });
 
-  it('should render when there is a dateRange', () => {
+  it('should render when there is a time-only dateRange with both start and end dates', () => {
     imgSnapshotTest(
       `
       ---
@@ -557,7 +557,7 @@ describe('Gantt diagram', () => {
     );
   });
 
-  it('should render with a start-only dateRange', () => {
+  it('should render when there is a time-only dateRange with a startDate only', () => {
     imgSnapshotTest(
       `
       ---
@@ -591,7 +591,7 @@ describe('Gantt diagram', () => {
     );
   });
 
-  it('should render with an end-only dateRange', () => {
+  it('should render when there is a time-only dateRange with an endDate only', () => {
     imgSnapshotTest(
       `
       ---
