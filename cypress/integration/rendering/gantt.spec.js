@@ -619,6 +619,27 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should render when there is a date-only dateRange with startDate and endDate, with tasks before and after the dateRange', () => {
+    imgSnapshotTest(
+      `gantt
+        title Gantt diagram with date range and tasks before and after the date range
+        dateFormat  YYYY-MM-DD
+        dateRange   2022-01-01,2022-03-31
+        axisFormat  %m-%d
+        tickInterval 1week
+        section Section
+        A task before     : 2021-12-01, 20d
+        A task within     : 2022-01-15, 40d
+        A task after      : 2022-04-01, 20d
+        section Another
+        A task before     : 2021-11-01, 40d
+        A task within     : 2022-02-15, 30d
+        A task after      : 2023-04-01, 20d
+      `,
+      {}
+    );
+  });
+
   it('should render when there is a time-only dateRange with both start and end dates', () => {
     imgSnapshotTest(
       `
