@@ -523,6 +523,102 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should render when there is a date-only dateRange with both start and end dates', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title GANTT compact
+        dateFormat  YYYY-MM-DD
+        dateRange   2022-01-01,2022-03-31
+        axisFormat  %m-%d
+        tickInterval 1week
+        section DB Clean
+        Clean: 2022-01-01, 2d
+        Clean: 2022-01-05, 3d
+        Clean: 2022-01-30, 6d
+        Clean: 2022-02-02, 3d
+        Clean: 2022-02-15, 6d
+        Clean: 2022-03-10, 1d
+        Clean: 2022-03-29, 1d
+        section Sessions
+        A: 2022-01-01, 3d
+        B: 2022-01-07, 4d
+        C: 2022-01-31, 5d
+        D: 2022-02-03, 6d
+        E: 2022-02-22, 1d
+        F: 2022-02-25, 2d
+        G: 2022-03-01, 12d
+        H: 2022-03-19, 8d
+        I: 2022-03-23, 7d
+    `,
+      {}
+    );
+  });
+
+  it('should render when there is a date-only dateRange with a startDate only', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title GANTT compact
+        dateFormat  YYYY-MM-DD
+        dateRange   2022-01-01
+        axisFormat  %m-%d
+        tickInterval 1week
+        section DB Clean
+        Clean: 2022-01-01, 2d
+        Clean: 2022-01-05, 3d
+        Clean: 2022-01-30, 6d
+        Clean: 2022-02-02, 3d
+        Clean: 2022-02-15, 6d
+        Clean: 2022-03-10, 1d
+        Clean: 2022-03-29, 1d
+        section Sessions
+        A: 2022-01-01, 3d
+        B: 2022-01-07, 4d
+        C: 2022-01-31, 5d
+        D: 2022-02-03, 6d
+        E: 2022-02-22, 1d
+        F: 2022-02-25, 2d
+        G: 2022-03-01, 12d
+        H: 2022-03-19, 8d
+        I: 2022-03-23, 7d
+    `,
+      {}
+    );
+  });
+
+  it('should render when there is a date-only dateRange with an endDate only', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title GANTT compact
+        dateFormat  YYYY-MM-DD
+        dateRange   ,2022-03-31
+        axisFormat  %m-%d
+        tickInterval 1week
+        section DB Clean
+        Clean: 2022-01-01, 2d
+        Clean: 2022-01-05, 3d
+        Clean: 2022-01-30, 6d
+        Clean: 2022-02-02, 3d
+        Clean: 2022-02-15, 6d
+        Clean: 2022-03-10, 1d
+        Clean: 2022-03-29, 1d
+        section Sessions
+        A: 2022-01-01, 3d
+        B: 2022-01-07, 4d
+        C: 2022-01-31, 5d
+        D: 2022-02-03, 6d
+        E: 2022-02-22, 1d
+        F: 2022-02-25, 2d
+        G: 2022-03-01, 12d
+        H: 2022-03-19, 8d
+        I: 2022-03-23, 7d
+    `,
+      {}
+    );
+  });
+
   it('should render when there is a time-only dateRange with both start and end dates', () => {
     imgSnapshotTest(
       `
