@@ -209,9 +209,7 @@ export const getTasks = function () {
   }
 
   if (dateRange === '') {
-    tasks = rawTasks;
-
-    return tasks;
+    return rawTasks;
   }
 
   const filteredTasks = rawTasks.filter(function (task) {
