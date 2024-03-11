@@ -1,12 +1,14 @@
 <template>
-  <h5>Code:</h5>
-  <div class="language-mermaid">
-    <button class="copy"></button>
-    <span class="lang">mermaid</span>
-    <pre><code contenteditable="true" @input="updateCode"  @keydown.meta.enter="renderChart" ref="editableContent" class="editable-code"></code></pre>
-    <div class="buttons-container">
-      <span>{{ ctrlSymbol }} + Enter</span><span>|</span>
-      <button @click="renderChart">Run ▶</button>
+  <div v-if="props.showCode">
+    <h5>Code:</h5>
+    <div class="language-mermaid">
+      <button class="copy"></button>
+      <span class="lang">mermaid</span>
+      <pre><code contenteditable="plaintext-only" @input="updateCode"  @keydown.meta.enter="renderChart" @keydown.ctrl.enter="renderChart" ref="editableContent" class="editable-code"></code></pre>
+      <div class="buttons-container">
+        <span>{{ ctrlSymbol }} + Enter</span><span>|</span>
+        <button @click="renderChart">Run ▶</button>
+      </div>
     </div>
   </div>
   <div v-html="svg"></div>
@@ -25,6 +27,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  showCode: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const svg = ref('');
@@ -42,10 +48,12 @@ onMounted(async () => {
   mut = new MutationObserver(() => renderChart());
   mut.observe(document.documentElement, { attributes: true });
 
-  // Set the initial value of the contenteditable element
-  // We cannot bind using `{{ code }}` because it will rerender the whole component
-  // when the value changes, shifting the cursor when enter is used
-  editableContent.value.textContent = code.value;
+  if (editableContent.value) {
+    // Set the initial value of the contenteditable element
+    // We cannot bind using `{{ code }}` because it will rerender the whole component
+    // when the value changes, shifting the cursor when enter is used
+    editableContent.value.textContent = code.value;
+  }
 
   await renderChart();
 
