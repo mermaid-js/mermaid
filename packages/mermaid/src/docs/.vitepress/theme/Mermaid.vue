@@ -4,7 +4,7 @@
     <div class="language-mermaid">
       <button class="copy"></button>
       <span class="lang">mermaid</span>
-      <pre><code contenteditable="plaintext-only" @input="updateCode"  @keydown.meta.enter="renderChart" @keydown.ctrl.enter="renderChart" ref="editableContent" class="editable-code"></code></pre>
+      <pre><code :contenteditable="contentEditable" @input="updateCode"  @keydown.meta.enter="renderChart" @keydown.ctrl.enter="renderChart" ref="editableContent" class="editable-code"></code></pre>
       <div class="buttons-container">
         <span>{{ ctrlSymbol }} + Enter</span><span>|</span>
         <button @click="renderChart">Run ▶</button>
@@ -37,6 +37,8 @@ const svg = ref('');
 const code = ref(decodeURIComponent(props.graph));
 const ctrlSymbol = ref(navigator.platform.includes('Mac') ? '⌘' : 'Ctrl');
 const editableContent = ref(null);
+const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
+const contentEditable = ref(isFirefox ? 'true' : 'plaintext-only');
 
 let mut = null;
 
