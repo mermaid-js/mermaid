@@ -45,6 +45,7 @@ required:
   - quadrantChart
   - xyChart
   - requirement
+  - architecture
   - mindmap
   - gitGraph
   - c4
@@ -217,6 +218,8 @@ properties:
     $ref: '#/$defs/XYChartConfig'
   requirement:
     $ref: '#/$defs/RequirementDiagramConfig'
+  architecture:
+    $ref: '#/$defs/ArchitectureDiagramConfig'
   mindmap:
     $ref: '#/$defs/MindmapDiagramConfig'
   gitGraph:
@@ -852,6 +855,24 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       line_height:
         type: number
         default: 20
+
+  ArchitectureDiagramConfig:
+    title: Architecture Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig'}]
+    description: The object containing configurations specific for architecture diagrams
+    type: object
+    unevaluatedProperties: false
+    required:
+      - useMaxWidth
+      - padding
+      - maxNodeWidth
+    properties:
+      padding:
+        type: number
+        default: 10
+      maxNodeWidth:
+        type: number
+        default: 200
 
   MindmapDiagramConfig:
     title: Mindmap Diagram Config

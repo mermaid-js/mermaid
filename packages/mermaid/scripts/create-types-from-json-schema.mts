@@ -54,6 +54,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'gitGraph',
   'c4',
   'sankey',
+  'architecture'
 ];
 
 /**

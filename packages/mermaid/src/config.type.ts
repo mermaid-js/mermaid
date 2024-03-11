@@ -165,6 +165,7 @@ export interface MermaidConfig {
   quadrantChart?: QuadrantChartConfig;
   xyChart?: XYChartConfig;
   requirement?: RequirementDiagramConfig;
+  architecture?: ArchitectureDiagramConfig;
   mindmap?: MindmapDiagramConfig;
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
@@ -628,6 +629,16 @@ export interface RequirementDiagramConfig extends BaseDiagramConfig {
   fontSize?: number;
   rect_padding?: number;
   line_height?: number;
+}
+/**
+ * The object containing configurations specific for architecture diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "ArchitectureDiagramConfig".
+ */
+export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
+  padding?: number;
+  maxNodeWidth?: number;
 }
 /**
  * The object containing configurations specific for mindmap diagrams
