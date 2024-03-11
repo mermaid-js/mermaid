@@ -64,6 +64,7 @@
     "@types/d3-scale-chromatic": "^3.0.0",
     "cytoscape": "^3.28.1",
     "cytoscape-cose-bilkent": "^4.1.0",
+    "cytoscape-fcose": "^2.2.0",
     "d3": "^7.4.0",
     "d3-sankey": "^0.12.3",
     "dagre-d3-es": "7.0.10",
@@ -83,6 +84,7 @@
   "devDependencies": {
     "@adobe/jsonschema2md": "^7.1.4",
     "@types/cytoscape": "^3.19.9",
+    "@types/cytoscape-fcose": "^2.2.4",
     "@types/d3": "^7.4.0",
     "@types/d3-sankey": "^0.12.1",
     "@types/d3-scale": "^4.0.3",

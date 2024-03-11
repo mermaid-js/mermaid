@@ -214,6 +214,9 @@ importers:
       cytoscape-cose-bilkent:
         specifier: ^4.1.0
         version: 4.1.0(cytoscape@3.28.1)
+      cytoscape-fcose:
+        specifier: ^2.2.0
+        version: 2.2.0(cytoscape@3.28.1)
       d3:
         specifier: ^7.4.0
         version: 7.8.5
@@ -266,6 +269,9 @@ importers:
       '@types/cytoscape':
         specifier: ^3.19.9
         version: 3.19.16
+      '@types/cytoscape-fcose':
+        specifier: ^2.2.4
+        version: 2.2.4
       '@types/d3':
         specifier: ^7.4.0
         version: 7.4.3
@@ -4811,6 +4817,12 @@ packages:
       '@types/node': 20.11.24
     dev: true
 
+  /@types/cytoscape-fcose@2.2.4:
+    resolution: {integrity: sha512-QwWtnT8HI9h+DHhG5krGc1ZY0Ex+cn85MvX96ZNAjSxuXiZDnjIZW/ypVkvvubTjIY4rSdkJY1D/Nsn8NDpmAw==}
+    dependencies:
+      '@types/cytoscape': 3.19.16
+    dev: true
+
   /@types/cytoscape@3.19.16:
     resolution: {integrity: sha512-A3zkjaZ6cOGyqEvrVuC1YUgiRSJhDZOj8Qhd1ALH2/+YxH2za1BOmR4RWQsKYHsc+aMP/IWoqg1COuUbZ39t/g==}
     dev: true
@@ -7885,6 +7897,12 @@ packages:
       layout-base: 1.0.2
     dev: false
 
+  /cose-base@2.2.0:
+    resolution: {integrity: sha512-AzlgcsCbUMymkADOJtQm3wO9S3ltPfYOFD5033keQn9NJzIbtnZj+UdBJe7DYml/8TdbtHJW3j58SOnKhWY/5g==}
+    dependencies:
+      layout-base: 2.0.1
+    dev: false
+
   /cosmiconfig-typescript-loader@4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6)(ts-node@10.9.2)(typescript@5.3.3):
     resolution: {integrity: sha512-BabizFdC3wBHhbI4kJh0VkQP9GkBfoHPydD0COMce1nJ1kJAB3F2TmJ/I7diULBKtmEWSwEbuN/KDtgnmUUVmw==}
     engines: {node: '>=v14.21.3'}
@@ -8227,6 +8245,15 @@ packages:
       cytoscape: ^3.2.0
     dependencies:
       cose-base: 1.0.3
+      cytoscape: 3.28.1(patch_hash=claipxynndhyqyu2csninuoh5e)
+    dev: false
+
+  /cytoscape-fcose@2.2.0(cytoscape@3.28.1):
+    resolution: {integrity: sha512-ki1/VuRIHFCzxWNrsshHYPs6L7TvLu3DL+TyIGEsRcvVERmxokbf5Gdk7mFxZnTdiGtnA4cfSmjZJMviqSuZrQ==}
+    peerDependencies:
+      cytoscape: ^3.2.0
+    dependencies:
+      cose-base: 2.2.0
       cytoscape: 3.28.1(patch_hash=claipxynndhyqyu2csninuoh5e)
     dev: false
 
@@ -12123,6 +12150,10 @@ packages:
 
   /layout-base@1.0.2:
     resolution: {integrity: sha512-8h2oVEZNktL4BH2JCOI90iD1yXwL6iNW7KcCKT2QZgQJR2vbqDsldCTPRU9NifTCqHZci57XvQQ15YTu+sTYPg==}
+    dev: false
+
+  /layout-base@2.0.1:
+    resolution: {integrity: sha512-dp3s92+uNI1hWIpPGH3jK2kxE2lMjdXdr+DH8ynZHpd6PUlH6x6cbuXnoMmiNumznqaNO31xu9e79F0uuZ0JFg==}
     dev: false
 
   /lazy-ass@1.6.0:
