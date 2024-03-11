@@ -6,7 +6,7 @@
     <pre><code contenteditable="true" @input="updateCode"  @keydown.meta.enter="renderChart" ref="editableContent" class="editable-code"></code></pre>
     <div class="buttons-container">
       <span>{{ ctrlSymbol }} + Enter</span><span>|</span>
-      <button @click="renderChart">Run ►</button>
+      <button @click="renderChart">Run ▶</button>
     </div>
   </div>
   <div v-html="svg"></div>
