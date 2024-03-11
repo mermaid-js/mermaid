@@ -18,20 +18,7 @@ const MermaidExample = async (md: MarkdownRenderer) => {
           'Missing MarkdownIt highlight function (should be automatically created by vitepress'
         );
       }
-
-      // doing ```mermaid-example {line-numbers=5 highlight=14-17} is not supported
-      const langAttrs = '';
-      return `
-      <h5>Code:</h5>
-      <div class="language-mermaid">
-        <button class="copy"></button>
-        <span class="lang">mermaid</span>
-        ${
-          // html is pre-escaped by the highlight function
-          // (it also adds `v-pre` to ignore Vue template syntax)
-          md.options.highlight(token.content, 'mermaid', langAttrs)
-        }
-      </div>`;
+      return '';
     } else if (token.info.trim() === 'mermaid') {
       const key = index;
       return `
