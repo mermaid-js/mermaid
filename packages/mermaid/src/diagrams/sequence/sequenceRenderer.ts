@@ -237,7 +237,8 @@ interface NoteModel {
  * @param elem - The diagram to draw to.
  * @param noteModel - Note model options.
  */
-const drawNote = async function (elem: any, noteModel: NoteModel) {
+const drawNote = async function (elem: any, noteModel: NoteModel, id: string) {
+  console.log('drawNote', noteModel);
   bounds.bumpVerticalPos(conf.boxMargin);
   noteModel.height = conf.boxMargin;
   noteModel.starty = bounds.getVerticalPos();
@@ -249,7 +250,7 @@ const drawNote = async function (elem: any, noteModel: NoteModel) {
 
   const g = elem.append('g');
   g.attr('data-et', 'note');
-  g.attr('data-id', 'i' + noteModel.id);
+  g.attr('data-id', 'i' + id);
   const rectElem = svgDraw.drawRect(g, rect);
   const textObj = svgDrawCommon.getTextObj();
   textObj.x = noteModel.startx;
@@ -854,9 +855,10 @@ export const draw = async function (_text: string, id: string, _version: string,
 
     switch (msg.type) {
       case diagObj.db.LINETYPE.NOTE:
+        console.log('Message', msg);
         bounds.resetVerticalPos();
         noteModel = msg.noteModel;
-        await drawNote(diagram, noteModel);
+        await drawNote(diagram, noteModel, msg.id);
         break;
       case diagObj.db.LINETYPE.ACTIVE_START:
         bounds.newActivation(msg, diagram, actors);
