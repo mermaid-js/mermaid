@@ -248,6 +248,8 @@ const drawNote = async function (elem: any, noteModel: NoteModel) {
   rect.class = 'note';
 
   const g = elem.append('g');
+  g.attr('data-et', 'note');
+  g.attr('data-id', 'i' + noteModel.id);
   const rectElem = svgDraw.drawRect(g, rect);
   const textObj = svgDrawCommon.getTextObj();
   textObj.x = noteModel.startx;
