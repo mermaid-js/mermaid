@@ -576,9 +576,10 @@ export const drawActivation = function (elem, bounds, verticalPos, conf, actorAc
  * @param {any} loopModel - LoopModel of the given loop.
  * @param {any} labelText - Text within the loop.
  * @param {any} conf - Diagram configuration
+ * @param msg
  * @returns {any}
  */
-export const drawLoop = async function (elem, loopModel, labelText, conf) {
+export const drawLoop = async function (elem, loopModel, labelText, conf, msg) {
   const {
     boxMargin,
     boxTextMargin,
@@ -588,7 +589,8 @@ export const drawLoop = async function (elem, loopModel, labelText, conf) {
     messageFontSize: fontSize,
     messageFontWeight: fontWeight,
   } = conf;
-  const g = elem.append('g');
+  const g = elem.append('g').attr('data-et', 'control-structure').attr('data-id', msg.id);
+
   const drawLoopLine = function (startx, starty, stopx, stopy) {
     return g
       .append('line')
