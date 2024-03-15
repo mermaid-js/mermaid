@@ -256,7 +256,7 @@ boundaryStartStatement
 
 boundaryStart
     : ENTERPRISE_BOUNDARY attributes {$2.splice(2, 0, 'ENTERPRISE'); yy.addPersonOrSystemBoundary(...$2); $$=$2;}
-    | SYSTEM_BOUNDARY attributes {$2.splice(2, 0, 'ENTERPRISE'); yy.addPersonOrSystemBoundary(...$2); $$=$2;}
+    | SYSTEM_BOUNDARY attributes {$2.splice(2, 0, 'SYSTEM'); yy.addPersonOrSystemBoundary(...$2); $$=$2;}
     | BOUNDARY attributes {yy.addPersonOrSystemBoundary(...$2); $$=$2;}
     | CONTAINER_BOUNDARY attributes {$2.splice(2, 0, 'CONTAINER'); yy.addContainerBoundary(...$2); $$=$2;}
     | NODE attributes {yy.addDeploymentNode('node', ...$2); $$=$2;}
