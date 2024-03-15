@@ -1220,7 +1220,7 @@ export interface SequenceDiagramConfig extends BaseDiagramConfig {
    */
   diagramMarginX?: number;
   /**
-   * Margin to the over and under the sequence diagram
+   * Margin to the top and bottom of the sequence diagram
    */
   diagramMarginY?: number;
   /**
