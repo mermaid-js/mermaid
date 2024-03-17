@@ -25,6 +25,8 @@ export interface ArchitectureService {
     icon?: string;
     title?: string;
     in?: string;
+    width?: number;
+    height?: number;
 }
 
 export interface ArchitectureGroup {

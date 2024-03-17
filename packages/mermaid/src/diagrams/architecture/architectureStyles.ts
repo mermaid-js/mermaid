@@ -68,6 +68,13 @@ const getStyles: DiagramStylesProvider = (options: ArchitectureStyleOptions) =>
   .edge {
     fill: none;
   }
+
+  .node-bkg {
+    fill: none;
+    stroke: #000;
+    stroke-width: 2px;
+    stroke-dasharray: 8;
+  }
 `;
 
 export default getStyles;
