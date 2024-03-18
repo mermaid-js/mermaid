@@ -589,7 +589,10 @@ export const drawLoop = async function (elem, loopModel, labelText, conf, msg) {
     messageFontSize: fontSize,
     messageFontWeight: fontWeight,
   } = conf;
-  const g = elem.append('g').attr('data-et', 'control-structure').attr('data-id', msg.id);
+  const g = elem
+    .append('g')
+    .attr('data-et', 'control-structure')
+    .attr('data-id', 'i' + msg.id);
 
   const drawLoopLine = function (startx, starty, stopx, stopy) {
     return g
