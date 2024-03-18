@@ -104,7 +104,6 @@ describe('when using mermaid and ', () => {
           parse: (_text) => {
             return;
           },
-          parser: { yy: {} },
         },
         styles: () => {
           // do nothing
