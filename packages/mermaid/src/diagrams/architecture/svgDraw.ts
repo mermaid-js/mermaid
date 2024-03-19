@@ -1,6 +1,9 @@
 import type { D3Element } from '../../mermaidAPI.js';
 import { createText } from '../../rendering-util/createText.js';
-import type { ArchitectureDB, ArchitectureGroup, ArchitectureService } from './architectureTypes.js';
+import type {
+  ArchitectureDB,
+  ArchitectureService,
+} from './architectureTypes.js';
 import type { MermaidConfig } from '../../config.type.js';
 import type cytoscape from 'cytoscape';
 import { log } from '../../logger.js';
@@ -30,25 +33,27 @@ declare module 'cytoscape' {
         y1: number;
         y2: number;
       };
-      children: cytoscape.NodeSingular[]
+      children: cytoscape.NodeSingular[];
     };
-    data: () => {
-      type: 'service',
-      id: string,
-      icon?: string,
-      label?: string,
-      parent?: string,
-      width: number,
-      height: number,
-      [key: string]: any
-    } | {
-      type: 'group',
-      id: string,
-      icon?: string,
-      label?: string,
-      parent?: string,
-      [key: string]: any
-    }
+    data: () =>
+      | {
+          type: 'service';
+          id: string;
+          icon?: string;
+          label?: string;
+          parent?: string;
+          width: number;
+          height: number;
+          [key: string]: any;
+        }
+      | {
+          type: 'group';
+          id: string;
+          icon?: string;
+          label?: string;
+          parent?: string;
+          [key: string]: any;
+        };
   }
 }
 
@@ -65,20 +70,18 @@ export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
           'd',
           `M ${bounds.startX},${bounds.startY} L ${bounds.midX},${bounds.midY} L${bounds.endX},${bounds.endY} `
         )
-        .attr('class', 'edge')
+        .attr('class', 'edge');
     }
-  })
-}
+  });
+};
 
-export const drawGroups = function (
-  groupsEl: D3Element,
-  cy: cytoscape.Core
-) {
+export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
   cy.nodes().map((node, id) => {
     const data = node.data();
     if (data.type === 'group') {
       const { h, w, x1, x2, y1, y2 } = node.boundingBox();
-      let bkgElem = groupsEl.append('rect')
+      let bkgElem = groupsEl
+        .append('rect')
         .attr('x', x1 + 40)
         .attr('y', y1 + 40)
         .attr('width', w)
@@ -97,13 +100,10 @@ export const drawGroups = function (
         .attr('dominant-baseline', 'start')
         .attr('text-anchor', 'start');
 
-      textElem.attr(
-        'transform',
-        'translate(' + (x1 + 44) + ', ' + (y1 + 42) + ')'
-      );
+      textElem.attr('transform', 'translate(' + (x1 + 44) + ', ' + (y1 + 42) + ')');
     }
-  })
-}
+  });
+};
 
 export const drawService = function (
   db: ArchitectureDB,
@@ -131,21 +131,20 @@ export const drawService = function (
       // TODO: dynamic size
       'translate(' + 80 / 2 + ', ' + 80 + ')'
     );
-
   }
 
   let bkgElem = serviceElem.append('g');
   if (service.icon) {
     if (!isIconNameInUse(service.icon)) {
-      throw new Error(`Invalid SVG Icon name: "${service.icon}"`)
+      throw new Error(`Invalid SVG Icon name: "${service.icon}"`);
     }
     bkgElem = getIcon(service.icon)?.(bkgElem);
   } else {
-    bkgElem.append('path').attr('class', 'node-bkg').attr('id', 'node-' + service.id).attr(
-      'd',
-      `M0 ${80 - 0} v${-80 + 2 * 0} q0,-5 5,-5 h${80 - 2 * 0
-      } q5,0 5,5 v${80 - 0} H0 Z`
-    );
+    bkgElem
+      .append('path')
+      .attr('class', 'node-bkg')
+      .attr('id', 'node-' + service.id)
+      .attr('d', `M0 ${80 - 0} v${-80 + 2 * 0} q0,-5 5,-5 h${80 - 2 * 0} q5,0 5,5 v${80 - 0} H0 Z`);
   }
 
   serviceElem.attr('class', 'architecture-service');

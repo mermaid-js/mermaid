@@ -858,7 +858,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
 
   ArchitectureDiagramConfig:
     title: Architecture Diagram Config
-    allOf: [{ $ref: '#/$defs/BaseDiagramConfig'}]
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
     description: The object containing configurations specific for architecture diagrams
     type: object
     unevaluatedProperties: false

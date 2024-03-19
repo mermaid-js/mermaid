@@ -37,7 +37,7 @@ function addServices(services: ArchitectureService[], cy: cytoscape.Core) {
         width: 80,
         height: 80,
       },
-      classes: 'node-service'
+      classes: 'node-service',
     });
   });
 }
@@ -60,16 +60,15 @@ function addGroups(groups: ArchitectureGroup[], cy: cytoscape.Core) {
         id: group.id,
         icon: group.icon,
         label: group.title,
-        parent: group.in
+        parent: group.in,
       },
-      classes: 'node-group'
+      classes: 'node-group',
     });
   });
 }
 
 function positionServices(db: ArchitectureDB, cy: cytoscape.Core) {
   cy.nodes().map((node, id) => {
-
     const data = node.data();
     if (data.type === 'group') return;
     data.x = node.position().x;
@@ -118,7 +117,7 @@ function layoutArchitecture(
           style: {
             //@ts-ignore
             'compound-sizing-wrt-labels': 'include',
-          }
+          },
         },
         {
           selector: 'node[label]',
@@ -126,23 +125,23 @@ function layoutArchitecture(
             'text-valign': 'bottom',
             'text-halign': 'center',
             'font-size': '16px',
-          }
+          },
         },
         {
           selector: '.node-service',
           style: {
-            'label': 'data(label)',
-            'width': 'data(width)',
-            'height': 'data(height)',
-          }
+            label: 'data(label)',
+            width: 'data(width)',
+            height: 'data(height)',
+          },
         },
         {
           selector: '.node-group',
           style: {
             //@ts-ignore
-            "padding": '30px'
-          }
-        }
+            padding: '30px',
+          },
+        },
       ],
     });
     // Remove element after layout
@@ -150,11 +149,11 @@ function layoutArchitecture(
 
     addGroups(groups, cy);
     addServices(services, cy);
-    addEdges(lines, cy);   
+    addEdges(lines, cy);
 
     /**
      * Merge alignment pairs together if they share a common node.
-     * 
+     *
      * Example: [["a", "b"], ["b", "c"], ["d", "e"]] -> [["a", "b", "c"], ["d", "e"]]
      */
     const mergeAlignments = (orig: string[][]): string[][] => {
@@ -195,7 +194,7 @@ function layoutArchitecture(
 
       console.log('End: ', newAlignments);
       return newAlignments;
-    }
+    };
 
     const horizontalAlignments = cy
       .edges()
@@ -223,7 +222,7 @@ function layoutArchitecture(
       nodeDimensionsIncludeLabels: true,
       alignmentConstraint: {
         horizontal: mergeAlignments(horizontalAlignments),
-        vertical: mergeAlignments(verticalAlignments)
+        vertical: mergeAlignments(verticalAlignments),
       },
       relativePlacementConstraint: cy.edges().map((edge) => {
         const sourceDir = edge.data('sourceDir') as ArchitectureDirection;
@@ -231,19 +230,20 @@ function layoutArchitecture(
         const sourceId = edge.data('source') as string;
         const targetId = edge.data('target') as string;
 
-        if (
-          isArchitectureDirectionX(sourceDir) &&
-          isArchitectureDirectionX(targetDir)
-        ) {
-          return { left: sourceDir === 'R' ? sourceId : targetId, right: sourceDir === 'L' ? sourceId : targetId, gap: 180 }
-        } else if (
-          isArchitectureDirectionY(sourceDir) &&
-          isArchitectureDirectionY(targetDir)
-        ) {
-          return { top: sourceDir === 'B' ? sourceId : targetId, bottom: sourceDir === 'T' ? sourceId : targetId, gap: 180 }
+        if (isArchitectureDirectionX(sourceDir) && isArchitectureDirectionX(targetDir)) {
+          return {
+            left: sourceDir === 'R' ? sourceId : targetId,
+            right: sourceDir === 'L' ? sourceId : targetId,
+            gap: 180,
+          };
+        } else if (isArchitectureDirectionY(sourceDir) && isArchitectureDirectionY(targetDir)) {
+          return {
+            top: sourceDir === 'B' ? sourceId : targetId,
+            bottom: sourceDir === 'T' ? sourceId : targetId,
+            gap: 180,
+          };
         }
         // TODO: fallback case + RB, TL, etc
-
       }),
     } as FcoseLayoutOptions).run();
     cy.ready((e) => {
@@ -289,8 +289,6 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
     conf.architecture?.padding ?? defaultConfig.architecture.padding,
     conf.architecture?.useMaxWidth ?? defaultConfig.architecture.useMaxWidth
   );
-
-
 };
 
 export const renderer = { draw };
