@@ -1,5 +1,6 @@
 import { parser as timeline } from './parser/timeline.jison';
 import * as timelineDB from './timelineDb.js';
+import * as commonDb from '../common/commonDb.js';
 import { setLogLevel } from '../../diagram-api/diagramAPI.js';
 
 describe('when parsing a timeline ', function () {
@@ -99,29 +100,19 @@ describe('when parsing a timeline ', function () {
       });
     });
 
-    it('TL-6 should handle a section, and task and its multi line events with semicolons', function () {
+    it('TL-6 should handle a title, section, task, and events with semicolons', function () {
       let str = `timeline
-    section ;a;bc-123;
-      ;ta;sk1;: ;ev;ent1;
-      ;tas;k2;: ;eve;nt2;: ;event;3;
-           : ;eve;nt4: ;even;t5;
+      title ;my;title;
+      section ;a;bc-123;
+      ;ta;sk1;: ;ev;ent1; : ;ev;ent2; : ;ev;ent3;
    `;
       timeline.parse(str);
-      expect(timelineDB.getSections()[0]).to.deep.equal(';a;bc-123;');
-      timelineDB.getTasks().forEach((t) => {
-        switch (t.task.trim()) {
-          case ';ta;sk1;':
-            expect(t.events).to.deep.equal([';ev;ent1;']);
-            break;
-
-          case ';tas;k2;':
-            expect(t.events).to.deep.equal([';eve;nt2;', ';event;3;', ';eve;nt4', ';even;t5;']);
-            break;
-
-          default:
-            break;
-        }
-      });
+      expect(commonDb.getDiagramTitle()).equal(';my;title;');
+      expect(timelineDB.getSections()).to.deep.equal([';a;bc-123;']);
+      expect(timelineDB.getTasks()[0].task).equal(';ta;sk1;');
+      expect(timelineDB.getTasks()[0].events[0]).equal(';ev;ent1; ');
+      expect(timelineDB.getTasks()[0].events[1]).equal(';ev;ent2; ');
+      expect(timelineDB.getTasks()[0].events[2]).equal(';ev;ent3;');
     });
   });
 });
