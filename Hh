@@ -1,0 +1,23 @@
+graph LR
+A[Barangay Ordinance on Teenager Safety] --> B{Awareness}
+B --> C{Social Norms Theory}
+C --> D{Difficulty conforming to safety standards}
+D --> E{Negative impact on safety norms}
+B --> F{Knowledge-Attitude-Practice (KAP) Model}
+F --> G{Knowledge: Lack of awareness of ordinance & risks}
+G --> H{Attitude: Negative attitude towards safety measures}
+H --> I{Practice: Reduced engagement in safe behaviors}
+E --> J{Impact on Ordinance Efficacy}
+I --> J
+
+subgraph cluster_knowledge
+G
+end
+
+subgraph cluster_attitude
+H
+end
+
+subgraph cluster_practice
+I
+end
