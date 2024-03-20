@@ -1,7 +1,7 @@
 {
   "name": "mermaid",
   "version": "11.0.0-alpha.6",
-  "description": "Markdown-ish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
+  "description": "Markdown-ish syntax for generating flowcharts, mindmaps, sequence diagrams, class diagrams, gantt charts, git graphs and more.",
   "type": "module",
   "module": "./dist/mermaid.core.mjs",
   "types": "./dist/mermaid.d.ts",
@@ -20,7 +20,16 @@
     "sequence diagram",
     "gantt",
     "class diagram",
-    "git graph"
+    "git graph",
+    "mindmap",
+    "packet diagram",
+    "c4 diagram",
+    "er diagram",
+    "pie chart",
+    "pie diagram",
+    "quadrant chart",
+    "requirement diagram",
+    "graph"
   ],
   "scripts": {
     "clean": "rimraf dist",

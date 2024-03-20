@@ -71,6 +71,12 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [redmine-mermaid](https://github.com/styz/redmine_mermaid)
 - Visual Studio Code [Polyglot Interactive Notebooks](https://github.com/dotnet/interactive#net-interactive)
 
+### LLM integrations
+
+LLM integrations to create mermaid diagrams using AI from text descriptions.
+
+- [HueHive - Create mermaid diagrams with text](https://huehive.co/tools/diagrams)
+
 ### CRM/ERP
 
 Customer Relationship Management/Enterprise Resource Planning
@@ -118,7 +124,7 @@ Communication tools and platforms
 - [phpBB](https://phpbb.com)
   - [phpbb-ext-mermaid](https://github.com/AlfredoRamos/phpbb-ext-mermaid)
 - [Slack](https://slack.com)
-  - [Mermaid Preview](https://github.com/JackuB/mermaid-for-slack)
+  - [Mermaid Preview](https://mermaid-preview.com)
 
 ### Wikis
 
@@ -252,4 +258,4 @@ Communication tools and platforms
 - [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
 
-<!--- cspell:ignore Blazorade --->
+<!--- cspell:ignore Blazorade HueHive --->

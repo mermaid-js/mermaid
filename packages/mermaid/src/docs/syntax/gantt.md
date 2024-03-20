@@ -92,7 +92,7 @@ After processing the tags, the remaining metadata items are interpreted as follo
 | `until <otherTaskId>`                                | End date of preceding task                          | Start date of previously specified task `otherTaskID` | n/a      |
 
 ```note
-Support for keyword `until` was added in (v<MERMAID_RELEASE_VERSION>+). This can be used to define a task which is running until some other specific task or milestone starts.
+Support for keyword `until` was added in (v10.9.0+). This can be used to define a task which is running until some other specific task or milestone starts.
 ```
 
 For simplicity, the table does not show the use of multiple tasks listed with the `after` keyword. Here is an example of how to use it and how it's interpreted:
