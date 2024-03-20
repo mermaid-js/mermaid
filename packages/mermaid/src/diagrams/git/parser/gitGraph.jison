@@ -85,7 +85,7 @@ options
     | NL
     ;
 body
-    : /*emmpty*/ {$$ = []}
+    : /*empty*/ {$$ = []}
     | body line {$1.push($2); $$=$1;}
     ;
 line
