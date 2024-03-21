@@ -21,6 +21,22 @@ describe('when parsing a gantt diagram it', function () {
     expect(parserFnConstructor(str)).not.toThrow();
   });
 
+  it('should handle a wdStartTime definition', function () {
+    spyOn(ganttDb, 'setWDStartTime');
+    const str = 'gantt\nwdStartTime 09:00';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(ganttDb.setWDStartTime).toHaveBeenCalledWith('09:00');
+  });
+
+  it('should handle a wdEndTime definition', function () {
+    spyOn(ganttDb, 'setWDEndTime');
+    const str = 'gantt\nwdEndTime 17:00';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(ganttDb.setWDEndTime).toHaveBeenCalledWith('17:00');
+  });
+
   it('should handle a inclusive end date definition', function () {
     const str = 'gantt\ndateFormat yyyy-mm-dd\ninclusiveEndDates';
 
