@@ -20,7 +20,7 @@ We're thrilled to announce that Mermaid Chart has successfully raised $7.5 milli
 
 We are incredibly excited about the future and are grateful to the community, our team, and our investors for being part of this journey. Together, we're not just creating diagrams; we're designing the future of collaboration.
 
-🌐 Learn more about our groundbreaking tools and what's next for Mermaid Chart by visiting [our website](www.mermaidchart.com).
+🌐 Learn more about our groundbreaking tools and what's next for Mermaid Chart by visiting [our website](https://www.mermaidchart.com/blog/posts/mermaid-chart-raises-7.5m-to-reinvent-visual-collaoration-for-enterprises).
 
 Thank you for being part of our story. Here's to creating, innovating, and collaborating on a global scale!
 
