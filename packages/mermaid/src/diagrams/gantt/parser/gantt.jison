@@ -84,6 +84,8 @@ weekday\s+thursday              return 'weekday_thursday'
 weekday\s+friday                return 'weekday_friday'
 weekday\s+saturday              return 'weekday_saturday'
 weekday\s+sunday                return 'weekday_sunday'
+weekend\s+friday                return 'weekend_friday'
+weekend\s+saturday              return 'weekend_saturday'
 \d\d\d\d"-"\d\d"-"\d\d          return 'date';
 "title"\s[^\n]+               return 'title';
 "accDescription"\s[^#\n;]+      return 'accDescription'
@@ -128,6 +130,11 @@ weekday
   | weekday_sunday { yy.setWeekday("sunday");}
   ;
 
+weekend
+  : weekend_friday { yy.setWeekend("friday");}
+  | weekend_saturday { yy.setWeekend("saturday");}
+  ;
+
 statement
   : dateFormat {yy.setDateFormat($1.substr(11));$$=$1.substr(11);}
   | inclusiveEndDates {yy.enableInclusiveEndDates();$$=$1.substr(18);}
@@ -138,6 +145,7 @@ statement
   | includes {yy.setIncludes($1.substr(9));$$=$1.substr(9);}
   | todayMarker {yy.setTodayMarker($1.substr(12));$$=$1.substr(12);}
   | weekday
+  | weekend
   | title {yy.setDiagramTitle($1.substr(6));$$=$1.substr(6);}
   | acc_title acc_title_value { $$=$2.trim();yy.setAccTitle($$); }
   | acc_descr acc_descr_value { $$=$2.trim();yy.setAccDescription($$); }
