@@ -26,6 +26,18 @@ describe('when parsing a gantt diagram it', function () {
 
     expect(parserFnConstructor(str)).not.toThrow();
   });
+  it.each([
+    ['2023-06-01', '2023-07-01', 'YYYY-MM-DD'],
+    ['13:00', '14:00', 'HH:mm'],
+    ['2023-06-01 13:00', '2023-07-01 14:00', 'YYYY-MM-DD HH:mm'],
+  ])(
+    'should handle a dateRange definition (startDate: %s, endDate: %s)',
+    function (startDate, endDate, dateFormat) {
+      const str = `gantt\ndateFormat ${dateFormat}\ndateRange ${startDate}, ${endDate}`;
+
+      expect(parserFnConstructor(str)).not.toThrow();
+    }
+  );
   it('should handle a title definition', function () {
     const str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid';
     const semi = 'gantt\ndateFormat yyyy-mm-dd\ntitle ;Gantt diagram titles support semicolons';
@@ -34,6 +46,23 @@ describe('when parsing a gantt diagram it', function () {
     expect(parserFnConstructor(str)).not.toThrow();
     expect(parserFnConstructor(semi)).not.toThrow();
     expect(parserFnConstructor(hash)).not.toThrow();
+  });
+  it.each([
+    ['dateRange: 2023-06-01, 2023-07-01', 'YYYY-MM-DD'],
+    ['dateRange: 13:00, 14:00', 'HH:mm'],
+  ])('should ignore improper dateRange syntax (%s)', function (dateRange, dateFormat) {
+    const str = `gantt\ndateFormat ${dateFormat}\n${dateRange}`;
+
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(ganttDb.getDateRange()).toEqual('');
+  });
+  it.each([
+    ['dateRange : 2023-06-01, 2023-07-01', 'YYYY-MM-DD'],
+    ['dateRange : 13:00, 14:00', 'HH:mm'],
+  ])(`should reject invalid dateRange definition (%s)`, function (dateRange, dateFormat) {
+    const str = `gantt\ndateFormat ${dateFormat}\n${dateRange}`;
+
+    expect(parserFnConstructor(str)).toThrow();
   });
   it('should handle an excludes definition', function () {
     const str =
