@@ -552,7 +552,7 @@ describe('Gantt diagram', () => {
     imgSnapshotTest(
       `
       gantt
-        title GANTT compact
+        title GANTT with date-only startDate and endDate dateRange
         dateFormat  YYYY-MM-DD
         dateRange   2022-01-01,2022-03-31
         axisFormat  %m-%d
@@ -584,7 +584,7 @@ describe('Gantt diagram', () => {
     imgSnapshotTest(
       `
       gantt
-        title GANTT compact
+        title GANTT with date-only startDate dateRange
         dateFormat  YYYY-MM-DD
         dateRange   2022-01-01
         axisFormat  %m-%d
@@ -616,7 +616,7 @@ describe('Gantt diagram', () => {
     imgSnapshotTest(
       `
       gantt
-        title GANTT compact
+        title GANTT with date-only endDate dateRange
         dateFormat  YYYY-MM-DD
         dateRange   ,2022-03-31
         axisFormat  %m-%d
@@ -647,7 +647,7 @@ describe('Gantt diagram', () => {
   it('should render when there is a date-only dateRange with startDate and endDate, with tasks before and after the dateRange', () => {
     imgSnapshotTest(
       `gantt
-        title Gantt diagram with date range and tasks before and after the date range
+        title Gantt diagram with date-only date range and tasks before and after the date range
         dateFormat  YYYY-MM-DD
         dateRange   2022-01-01,2022-03-31
         axisFormat  %m-%d
@@ -671,7 +671,7 @@ describe('Gantt diagram', () => {
     imgSnapshotTest(
       `
       gantt
-        title GANTT compact
+        title GANTT with time-only startDate and endDate dateRange
         dateFormat  HH:mm:ss
         dateRange   12:30:00,13:30:00
         axisFormat  %Hh%M
@@ -694,7 +694,7 @@ describe('Gantt diagram', () => {
     imgSnapshotTest(
       `
       gantt
-        title GANTT compact
+        title GANTT with time-Only startDate dateRange
         dateFormat  HH:mm:ss
         dateRange   12:30:00
         axisFormat  %Hh%M
@@ -723,7 +723,7 @@ describe('Gantt diagram', () => {
     imgSnapshotTest(
       `
       gantt
-        title GANTT compact
+        title GANTT with time-Only endDate dateRange
         dateFormat  HH:mm:ss
         dateRange   ,13:30:00
         axisFormat  %Hh%M
@@ -746,7 +746,7 @@ describe('Gantt diagram', () => {
   it('should render when there is a time-only dateRange with startDate and endDate, with tasks before and after the dateRange', () => {
     imgSnapshotTest(
       `gantt
-        title Gantt diagram with date range and tasks before and after the date range
+        title Gantt diagram with time-only date range and tasks before and after the date range
         dateFormat  HH:mm:ss
         dateRange   12:00:00, 18:00:00
         axisFormat  %m-%d
