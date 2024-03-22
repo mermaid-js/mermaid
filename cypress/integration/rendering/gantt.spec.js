@@ -749,7 +749,7 @@ describe('Gantt diagram', () => {
         title Gantt diagram with time-only date range and tasks before and after the date range
         dateFormat  HH:mm:ss
         dateRange   12:00:00, 18:00:00
-        axisFormat  %m-%d
+        axisFormat  %Hh%M
         tickInterval 1week
         section Section
         A task before     : 11:30:00, 25m
