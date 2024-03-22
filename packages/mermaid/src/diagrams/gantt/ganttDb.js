@@ -21,7 +21,7 @@ dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);
 dayjs.extend(dayjsAdvancedFormat);
 
-let dateFormat = '';
+let dateFormat = 'YYYY-MM-DD';
 let dateRange = '';
 let startDateRange = '';
 let endDateRange = '';
