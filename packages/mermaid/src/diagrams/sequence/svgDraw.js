@@ -343,10 +343,10 @@ const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
       .attr('y1', centerY)
       .attr('x2', center)
       .attr('y2', 2000)
-      .attr('class', 'actor-line')
-      .attr('class', '200')
+      .attr('class', 'actor-line 200')
       .attr('stroke-width', '0.5px')
-      .attr('stroke', '#999');
+      .attr('stroke', '#999')
+      .attr('name', actor.name);
 
     g = boxplusLineGroup.append('g');
     actor.actorCnt = actorCnt;
@@ -425,10 +425,10 @@ const drawActorTypeActor = async function (elem, actor, conf, isFooter) {
       .attr('y1', centerY)
       .attr('x2', center)
       .attr('y2', 2000)
-      .attr('class', 'actor-line')
-      .attr('class', '200')
+      .attr('class', 'actor-line 200')
       .attr('stroke-width', '0.5px')
-      .attr('stroke', '#999');
+      .attr('stroke', '#999')
+      .attr('name', actor.name);
 
     actor.actorCnt = actorCnt;
   }
