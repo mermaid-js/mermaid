@@ -766,6 +766,29 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should render when there is a date and time dateRange, with both start and end dates, and tasks before and after the dateRange', () => {
+    imgSnapshotTest(
+      `gantt
+        title Gantt diagram with time-only date range and tasks before and after the date range
+        dateFormat  DD-MM-YYYY HH:mm:ss
+        dateRange   01-01-2021 12:00:00, 08-01-2021 18:00:00
+        axisFormat  %m-%d
+        tickInterval 1week
+        section Section
+        A task before     : 01-01-2021 11:30:00, 25m
+        A task starting before and completing within: 01-01-2021 10:00:00, 2d
+        A task within     : 02-01-2021 12:05:00, 4d
+        A task starting within and ending after: 05-01-2021 12:30:00, 4d
+        A task after      : 08-01-2021 18:30:00, 30m
+        section Another
+        A task before     : 31-12-2020 10:00:00, 1d
+        A task within     : 01-01-2021 12:00:00, 7d
+        A task after      : 15-01-2021 12:00:00, 1d
+      `,
+      {}
+    );
+  });
+
   // TODO: fix it
   //
   // This test is skipped deliberately
