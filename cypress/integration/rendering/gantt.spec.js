@@ -654,7 +654,9 @@ describe('Gantt diagram', () => {
         tickInterval 1week
         section Section
         A task before     : 2021-12-01, 20d
+        A task starting before and completing within: 2021-12-25, 10d 
         A task within     : 2022-01-15, 40d
+        A task starting within and ending after: 2022-03-25, 10d
         A task after      : 2022-04-01, 20d
         section Another
         A task before     : 2021-11-01, 40d
