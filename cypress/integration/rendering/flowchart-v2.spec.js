@@ -773,12 +773,35 @@ A ~~~ B
           C
         end
         subgraph Y
-          direction LR
           B
           D
         end
       `,
       { flowchart: { nodeSpacing: 1, rankSpacing: 1 } }
+    );
+  });
+
+  it('3258: Should render subgraphs with large nodeSpacing and rankSpacing', () => {
+    imgSnapshotTest(
+      `---
+      title: Subgraph nodeSpacing and rankSpacing example
+      config:
+        flowchart: 
+          nodeSpacing: 250
+          rankSpacing: 250
+      ---
+      flowchart LR
+        X --> Y
+        subgraph X
+          direction LR
+          A
+          C
+        end
+        subgraph Y
+          B
+          D
+        end
+      `
     );
   });
 
