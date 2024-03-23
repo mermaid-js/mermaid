@@ -22,8 +22,7 @@ function addHtmlSpan(element, node, width, classes, addBackground = false) {
   const label = node.label;
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
   div.html(
-    `
-    <span class="${labelClass} ${classes}" ` +
+    `<span class="${labelClass} ${classes}" ` +
       (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') +
       '>' +
       label +
