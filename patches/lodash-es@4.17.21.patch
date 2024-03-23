@@ -1,0 +1,28 @@
+diff --git a/_root.js b/_root.js
+index 281f81280ec9ea137b644ba60b9f5c6ccede4f88..4f97e318c0fb9b3f43962f9351f0c3d06dec29c8 100644
+--- a/_root.js
++++ b/_root.js
+@@ -3,7 +3,22 @@ import freeGlobal from './_freeGlobal.js';
+ /** Detect free variable `self`. */
+ var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+ 
++// From https://mathiasbynens.be/notes/globalthis#robust-polyfill
++var root = freeGlobal || freeSelf || null;
++if (root == null) {
++  (function() {
++    if (typeof globalThis === 'object') return root = globalThis;
++    Object.defineProperty(Object.prototype, '__magic__', {
++      get: function() {
++        return this;
++      },
++      configurable: true
++    });
++    root = __magic__;
++    delete Object.prototype.__magic__;  
++  })();
++}
++
+ /** Used as a reference to the global object. */
+-var root = freeGlobal || freeSelf || Function('return this')();
+ 
+ export default root;
