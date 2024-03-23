@@ -863,7 +863,6 @@ describe('Title and arrow styling #4813', () => {
   });
 
   it('Render with stylized arrows', () => {
-    const titleString = 'Test Title';
     renderGraph(
       `
       flowchart LR
