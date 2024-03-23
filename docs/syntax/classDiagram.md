@@ -272,7 +272,7 @@ Square : +getMessages() List~string~
 Square : +getDistanceMatrix() List~List~int~~
 ```
 
-> _note_ `(v<MERMAID_RELEASE_VERSION>+)` classes defined with a generic type (e.g.: ThisClass~~T~~) will have the type information added to the classname to create a unique classID. This means that you can have multiple classes defined with the same name, but different types. For any syntax where you are required to add the **class name** you should now use the same syntax as adding a class to reference this object (e.g.: ThisClass~~T~~), or just add a `-` in between the classname and type so that the parser associates items correctly.
+> **Note** > `(v<MERMAID_RELEASE_VERSION>+)` classes defined with a generic type (e.g.: ThisClass\~T\~) will have the type information added to the classname to create a unique classID. This means that you can have multiple classes defined with the same name, but different types. For any syntax where you are required to add the **class name** you should now use the same syntax as adding a class to reference this object (e.g.: ThisClass\~T\~), or just add a `-` in between the classname and type so that the parser associates items correctly.
 
 ```mermaid-example
 classDiagram
