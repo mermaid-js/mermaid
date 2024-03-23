@@ -25,7 +25,11 @@ const clear = (): void => {
 };
 
 class SankeyLink {
-  constructor(public source: SankeyNode, public target: SankeyNode, public value: number = 0) {}
+  constructor(
+    public source: SankeyNode,
+    public target: SankeyNode,
+    public value: number = 0
+  ) {}
 }
 
 /**
