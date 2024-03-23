@@ -53,6 +53,7 @@ GENERICTYPE
 getBoundarys
 grammr
 graphtype
+iife
 interp
 introdcued
 INVTRAPEND
@@ -74,11 +75,13 @@ loglevel
 LOGMSG
 lookaheads
 mdast
+metafile
 minlen
 Mstartx
 MULT
 NODIR
 NSTR
+outdir
 Qcontrolx
 reinit
 rels
