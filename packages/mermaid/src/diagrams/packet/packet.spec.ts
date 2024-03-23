@@ -138,7 +138,7 @@ describe('packet diagrams', () => {
     18-20: "error"
     `;
     await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
-      '"Packet block 18 - 20 is not contiguous. It should start from 17."'
+      `[Error: Packet block 18 - 20 is not contiguous. It should start from 17.]`
     );
   });
 
@@ -148,7 +148,7 @@ describe('packet diagrams', () => {
     18: "error"
     `;
     await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
-      '"Packet block 18 - 18 is not contiguous. It should start from 17."'
+      `[Error: Packet block 18 - 18 is not contiguous. It should start from 17.]`
     );
   });
 
@@ -159,7 +159,7 @@ describe('packet diagrams', () => {
     19: "error"
     `;
     await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
-      '"Packet block 19 - 19 is not contiguous. It should start from 18."'
+      `[Error: Packet block 19 - 19 is not contiguous. It should start from 18.]`
     );
   });
 
@@ -169,7 +169,7 @@ describe('packet diagrams', () => {
     25-20: "error"
     `;
     await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
-      '"Packet block 25 - 20 is invalid. End must be greater than start."'
+      `[Error: Packet block 25 - 20 is invalid. End must be greater than start.]`
     );
   });
 });

@@ -810,7 +810,10 @@ context('Sequence diagram', () => {
         note left of Alice: config: mirrorActors=true<br/>directive: mirrorActors=false
         Bob->>Alice: Short as well
       `,
-        { logLevel: 0, sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' } }
+        {
+          logLevel: 0,
+          sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' },
+        }
       );
     });
   });
@@ -861,7 +864,10 @@ context('Sequence diagram', () => {
         a->>j: Hello John, how are you?
         j-->>a: Great!
       `,
-        { logLevel: 0, sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' } }
+        {
+          logLevel: 0,
+          sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' },
+        }
       );
     });
     it('should support actor links and properties when not mirrored EXPERIMENTAL: USE WITH CAUTION', () => {
