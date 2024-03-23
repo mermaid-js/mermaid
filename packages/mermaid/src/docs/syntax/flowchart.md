@@ -540,7 +540,10 @@ This feature is applicable to node labels, edge labels, and subgraph labels.
 The auto wrapping can be disabled by using
 
 ```
-%%{init: {"markdownAutoWrap": false} }%%
+---
+config:
+  markdownAutoWrap: false
+---
 graph LR
 ```
 

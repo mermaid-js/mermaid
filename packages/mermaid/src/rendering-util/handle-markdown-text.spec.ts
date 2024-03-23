@@ -1,6 +1,6 @@
+/* eslint-disable no-irregular-whitespace */
 import { markdownToLines, markdownToHTML } from './handle-markdown-text.js';
 import { test, expect } from 'vitest';
-import { setConfig } from '../config.js';
 
 test('markdownToLines - Basic test', () => {
   const input = `This is regular text
@@ -204,6 +204,31 @@ Word!`;
   expect(output).toEqual(expectedOutput);
 });
 
+test('markdownToLines - No auto wrapping', () => {
+  expect(
+    markdownToLines(
+      `Hello, how do
+  you do?`,
+      { markdownAutoWrap: false }
+    )
+  ).toMatchInlineSnapshot(`
+    [
+      [
+        {
+          "content": "Hello, how do",
+          "type": "normal",
+        },
+      ],
+      [
+        {
+          "content": "you do?",
+          "type": "normal",
+        },
+      ],
+    ]
+  `);
+});
+
 test('markdownToHTML - Basic test', () => {
   const input = `This is regular text
 Here is a new line
@@ -265,9 +290,11 @@ test('markdownToHTML - Unsupported formatting', () => {
 });
 
 test('markdownToHTML - no auto wrapping', () => {
-  setConfig({ markdownAutoWrap: false });
   expect(
-    markdownToHTML(`Hello, how do
-  you do?`)
+    markdownToHTML(
+      `Hello, how do
+  you do?`,
+      { markdownAutoWrap: false }
+    )
   ).toMatchInlineSnapshot('"<p>Hello,&nbsp;how&nbsp;do<br/>you&nbsp;do?</p>"');
 });

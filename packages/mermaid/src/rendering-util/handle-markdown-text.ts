@@ -2,14 +2,13 @@ import type { Content } from 'mdast';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import { dedent } from 'ts-dedent';
 import type { MarkdownLine, MarkdownWordType } from './types.js';
-import { getConfig } from '../config.js';
+import type { MermaidConfig } from '../config.type.js';
 
 /**
  * @param markdown - markdown to process
  * @returns processed markdown
  */
-function preprocessMarkdown(markdown: string): string {
-  const markdownAutoWrap = getConfig().markdownAutoWrap;
+function preprocessMarkdown(markdown: string, { markdownAutoWrap }: MermaidConfig): string {
   // Replace multiple newlines with a single newline
   const withoutMultipleNewlines = markdown.replace(/\n{2,}/g, '\n');
   // Remove extra spaces at the beginning of each line
@@ -23,8 +22,8 @@ function preprocessMarkdown(markdown: string): string {
 /**
  * @param markdown - markdown to split into lines
  */
-export function markdownToLines(markdown: string): MarkdownLine[] {
-  const preprocessedMarkdown = preprocessMarkdown(markdown);
+export function markdownToLines(markdown: string, config: MermaidConfig = {}): MarkdownLine[] {
+  const preprocessedMarkdown = preprocessMarkdown(markdown, config);
   const { children } = fromMarkdown(preprocessedMarkdown);
   const lines: MarkdownLine[] = [[]];
   let currentLine = 0;
@@ -61,17 +60,15 @@ export function markdownToLines(markdown: string): MarkdownLine[] {
   return lines;
 }
 
-export function markdownToHTML(markdown: string) {
+export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidConfig = {}) {
   const { children } = fromMarkdown(markdown);
-  const markdownAutoWrap = getConfig().markdownAutoWrap;
 
   function output(node: Content): string {
     if (node.type === 'text') {
       if (markdownAutoWrap === false) {
         return node.value.replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;');
-      } else {
-        return node.value.replace(/\n/g, '<br/>');
       }
+      return node.value.replace(/\n/g, '<br/>');
     } else if (node.type === 'strong') {
       return `<strong>${node.children.map(output).join('')}</strong>`;
     } else if (node.type === 'emphasis') {

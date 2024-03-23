@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // @ts-nocheck TODO: Fix types
+import type { MermaidConfig } from '../config.type.js';
 import type { Group } from '../diagram-api/types.js';
 import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
@@ -181,13 +182,14 @@ export const createText = (
     isNode = true,
     width = 200,
     addSvgBackground = false,
-  } = {}
+  } = {},
+  config: MermaidConfig = {}
 ) => {
   log.info('createText', text, style, isTitle, classes, useHtmlLabels, isNode, addSvgBackground);
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
 
-    const htmlText = markdownToHTML(text);
+    const htmlText = markdownToHTML(text, config);
     const node = {
       isNode,
       label: decodeEntities(htmlText).replace(
@@ -199,7 +201,7 @@ export const createText = (
     const vertexNode = addHtmlSpan(el, node, width, classes, addSvgBackground);
     return vertexNode;
   } else {
-    const structuredText = markdownToLines(text);
+    const structuredText = markdownToLines(text, config);
     const svgLabel = createFormattedText(width, el, structuredText, addSvgBackground);
     return svgLabel;
   }
