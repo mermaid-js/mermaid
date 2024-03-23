@@ -1,4 +1,5 @@
 import gitGraphAst from './gitGraphAst.js';
+// @ts-expect-error No types available for JISON
 import { parser } from './parser/gitGraph.jison';
 
 describe('when parsing a gitGraph', function () {
