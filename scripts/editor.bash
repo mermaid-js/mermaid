@@ -32,5 +32,5 @@ yarn install
 yarn link mermaid     
 
 # Force Build the site
-yarn run build -- --force
+yarn run build
 

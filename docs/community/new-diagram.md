@@ -64,13 +64,15 @@ The syntax for accessible titles and descriptions is described in [the Accessibi
 
 The functions for setting title and description are provided by a common module. This is the import in flowDb.js:
 
-    import {
-      setAccTitle,
-      getAccTitle,
-      getAccDescription,
-      setAccDescription,
-      clear as commonClear,
-    } from '../../commonDb';
+```
+import {
+  setAccTitle,
+  getAccTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
+```
 
 The accessibility title and description are inserted into the SVG element in the `render` function in mermaidAPI.
 
