@@ -38,10 +38,24 @@ test.each([
   ['https://mermaid.js.org/#/flowchart.md', 'syntax/flowchart.html'],
   // New docs, without base path, new domain
   ['https://mermaid.js.org/misc/faq.html', 'configure/faq.html'],
+  ['https://mermaid.js.org/community/newDiagram.html', 'community/new-diagram.html'],
+  [
+    'https://mermaid.js.org/community/development.html',
+    'community/contributing.html#initial-setup',
+  ],
+  [
+    'https://mermaid.js.org/community/docker-development.html',
+    'community/contributing.html#initial-setup',
+  ],
+  ['https://mermaid.js.org/community/code.html', 'community/contributing.html#contributing-code'],
+  [
+    'https://mermaid.js.org/community/documentation.html',
+    'community/contributing.html#contributing-documentation',
+  ],
   [
     'https://mermaid.js.org/misc/faq.html#frequently-asked-questions',
     'configure/faq.html#frequently-asked-questions',
   ], // with hash
 ])('should process url %s to %s', (link: string, path: string) => {
-  expect(getRedirect(link)).toBe(path);
+  expect(getRedirect(new URL(link))).toBe(path);
 });

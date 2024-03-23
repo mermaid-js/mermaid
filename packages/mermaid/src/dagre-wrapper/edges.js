@@ -2,10 +2,12 @@ import { log } from '../logger.js';
 import createLabel from './createLabel.js';
 import { createText } from '../rendering-util/createText.js';
 import { line, curveBasis, select } from 'd3';
-import { getConfig } from '../config.js';
+import { getConfig } from '../diagram-api/diagramAPI.js';
 import utils from '../utils.js';
 import { evaluate } from '../diagrams/common/common.js';
 import { getLineFunctionsWithOffset } from '../utils/lineWithOffset.js';
+import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
+import { addEdgeMarkers } from './edgeMarker.js';
 
 let edgeLabels = {};
 let terminalLabels = {};
@@ -26,7 +28,6 @@ export const insertEdgeLabel = (elem, edge) => {
           addSvgBackground: true,
         })
       : createLabel(edge.label, edge.labelStyle);
-  log.info('abc82', edge, edge.labelType);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
   const edgeLabel = elem.insert('g').attr('class', 'edgeLabel');
@@ -133,8 +134,10 @@ function setTerminalWidth(fo, value) {
 }
 
 export const positionEdgeLabel = (edge, paths) => {
-  log.info('Moving label abc78 ', edge.id, edge.label, edgeLabels[edge.id]);
+  log.debug('Moving label abc88 ', edge.id, edge.label, edgeLabels[edge.id], paths);
   let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
+  const siteConfig = getConfig();
+  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
   if (edge.label) {
     const el = edgeLabels[edge.id];
     let x = edge.x;
@@ -142,7 +145,7 @@ export const positionEdgeLabel = (edge, paths) => {
     if (path) {
       //   // debugger;
       const pos = utils.calcLabelPosition(path);
-      log.info(
+      log.debug(
         'Moving label ' + edge.label + ' from (',
         x,
         ',',
@@ -151,14 +154,14 @@ export const positionEdgeLabel = (edge, paths) => {
         pos.x,
         ',',
         pos.y,
-        ') abc78'
+        ') abc88'
       );
       if (paths.updatedPath) {
         x = pos.x;
         y = pos.y;
       }
     }
-    el.attr('transform', 'translate(' + x + ', ' + y + ')');
+    el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 2})`);
   }
 
   //let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
@@ -172,7 +175,7 @@ export const positionEdgeLabel = (edge, paths) => {
       x = pos.x;
       y = pos.y;
     }
-    el.attr('transform', 'translate(' + x + ', ' + y + ')');
+    el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.startLabelRight) {
     const el = terminalLabels[edge.id].startRight;
@@ -188,7 +191,7 @@ export const positionEdgeLabel = (edge, paths) => {
       x = pos.x;
       y = pos.y;
     }
-    el.attr('transform', 'translate(' + x + ', ' + y + ')');
+    el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.endLabelLeft) {
     const el = terminalLabels[edge.id].endLeft;
@@ -200,7 +203,7 @@ export const positionEdgeLabel = (edge, paths) => {
       x = pos.x;
       y = pos.y;
     }
-    el.attr('transform', 'translate(' + x + ', ' + y + ')');
+    el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.endLabelRight) {
     const el = terminalLabels[edge.id].endRight;
@@ -212,12 +215,11 @@ export const positionEdgeLabel = (edge, paths) => {
       x = pos.x;
       y = pos.y;
     }
-    el.attr('transform', 'translate(' + x + ', ' + y + ')');
+    el.attr('transform', `translate(${x}, ${y})`);
   }
 };
 
 const outsideNode = (node, point) => {
-  // log.warn('Checking bounds ', node, point);
   const x = node.x;
   const y = node.y;
   const dx = Math.abs(point.x - x);
@@ -231,7 +233,7 @@ const outsideNode = (node, point) => {
 };
 
 export const intersection = (node, outsidePoint, insidePoint) => {
-  log.warn(`intersection calc abc89:
+  log.debug(`intersection calc abc89:
   outsidePoint: ${JSON.stringify(outsidePoint)}
   insidePoint : ${JSON.stringify(insidePoint)}
   node        : x:${node.x} y:${node.y} w:${node.width} h:${node.height}`);
@@ -244,29 +246,11 @@ export const intersection = (node, outsidePoint, insidePoint) => {
   let r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
   const h = node.height / 2;
 
-  // const edges = {
-  //   x1: x - w,
-  //   x2: x + w,
-  //   y1: y - h,
-  //   y2: y + h
-  // };
-
-  // if (
-  //   outsidePoint.x === edges.x1 ||
-  //   outsidePoint.x === edges.x2 ||
-  //   outsidePoint.y === edges.y1 ||
-  //   outsidePoint.y === edges.y2
-  // ) {
-  //   log.warn('abc89 calc equals on edge', outsidePoint, edges);
-  //   return outsidePoint;
-  // }
-
   const Q = Math.abs(outsidePoint.y - insidePoint.y);
   const R = Math.abs(outsidePoint.x - insidePoint.x);
-  // log.warn();
+
   if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) {
     // Intersection is top or bottom of rect.
-    // let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
     let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
     r = (R * q) / Q;
     const res = {
@@ -285,7 +269,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
       res.y = outsidePoint.y;
     }
 
-    log.warn(`abc89 topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res);
+    log.debug(`abc89 topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res); // cspell: disable-line
 
     return res;
   } else {
@@ -302,7 +286,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
     let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - R + r;
     // let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
     let _y = insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q;
-    log.warn(`sides calc abc89, Q ${Q}, q ${q}, R ${R}, r ${r}`, { _x, _y });
+    log.debug(`sides calc abc89, Q ${Q}, q ${q}, R ${R}, r ${r}`, { _x, _y });
     if (r === 0) {
       _x = outsidePoint.x;
       _y = outsidePoint.y;
@@ -322,25 +306,20 @@ export const intersection = (node, outsidePoint, insidePoint) => {
  * and return an update path ending by the border of the node.
  *
  * @param {Array} _points
- * @param {any} boundryNode
+ * @param {any} boundaryNode
  * @returns {Array} Points
  */
-const cutPathAtIntersect = (_points, boundryNode) => {
-  log.warn('abc88 cutPathAtIntersect', _points, boundryNode);
+const cutPathAtIntersect = (_points, boundaryNode) => {
+  log.debug('abc88 cutPathAtIntersect', _points, boundaryNode);
   let points = [];
   let lastPointOutside = _points[0];
   let isInside = false;
   _points.forEach((point) => {
-    // const node = clusterDb[edge.toCluster].node;
-    log.info('abc88 checking point', point, boundryNode);
-
     // check if point is inside the boundary rect
-    if (!outsideNode(boundryNode, point) && !isInside) {
+    if (!outsideNode(boundaryNode, point) && !isInside) {
       // First point inside the rect found
       // Calc the intersection coord between the point anf the last point outside the rect
-      const inter = intersection(boundryNode, lastPointOutside, point);
-      log.warn('abc88 inside', point, lastPointOutside, inter);
-      log.warn('abc88 intersection', inter);
+      const inter = intersection(boundaryNode, lastPointOutside, point);
 
       // // Check case where the intersection is the same as the last point
       let pointPresent = false;
@@ -350,14 +329,11 @@ const cutPathAtIntersect = (_points, boundryNode) => {
       // // if (!pointPresent) {
       if (!points.some((e) => e.x === inter.x && e.y === inter.y)) {
         points.push(inter);
-      } else {
-        log.warn('abc88 no intersect', inter, points);
       }
-      // points.push(inter);
+
       isInside = true;
     } else {
       // Outside
-      log.warn('abc88 outside', point, lastPointOutside);
       lastPointOutside = point;
       // points.push(point);
       if (!isInside) {
@@ -365,67 +341,31 @@ const cutPathAtIntersect = (_points, boundryNode) => {
       }
     }
   });
-  log.warn('abc88 returning points', points);
   return points;
 };
 
 export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph, id) {
   let points = edge.points;
+  log.debug('abc88 InsertEdge: edge=', edge, 'e=', e);
   let pointsHasChanged = false;
   const tail = graph.node(e.v);
   var head = graph.node(e.w);
 
-  log.info('abc88 InsertEdge: ', edge);
-  if (head.intersect && tail.intersect) {
+  if (head?.intersect && tail?.intersect) {
     points = points.slice(1, edge.points.length - 1);
     points.unshift(tail.intersect(points[0]));
-    log.info(
-      'Last point',
-      points[points.length - 1],
-      head,
-      head.intersect(points[points.length - 1])
-    );
     points.push(head.intersect(points[points.length - 1]));
   }
+
   if (edge.toCluster) {
-    log.info('to cluster abc88', clusterDb[edge.toCluster]);
+    log.debug('to cluster abc88', clusterDb[edge.toCluster]);
     points = cutPathAtIntersect(edge.points, clusterDb[edge.toCluster].node);
-    // log.trace('edge', edge);
-    // points = [];
-    // let lastPointOutside; // = edge.points[0];
-    // let isInside = false;
-    // edge.points.forEach(point => {
-    //   const node = clusterDb[edge.toCluster].node;
-    //   log.warn('checking from', edge.fromCluster, point, node);
 
-    //   if (!outsideNode(node, point) && !isInside) {
-    //     log.trace('inside', edge.toCluster, point, lastPointOutside);
-
-    //     // First point inside the rect
-    //     const inter = intersection(node, lastPointOutside, point);
-
-    //     let pointPresent = false;
-    //     points.forEach(p => {
-    //       pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
-    //     });
-    //     // if (!pointPresent) {
-    //     if (!points.find(e => e.x === inter.x && e.y === inter.y)) {
-    //       points.push(inter);
-    //     } else {
-    //       log.warn('no intersect', inter, points);
-    //     }
-    //     isInside = true;
-    // } else {
-    //   // outside
-    //   lastPointOutside = point;
-    //   if (!isInside) points.push(point);
-    // }
-    // });
     pointsHasChanged = true;
   }
 
   if (edge.fromCluster) {
-    log.info('from cluster abc88', clusterDb[edge.fromCluster]);
+    log.debug('from cluster abc88', clusterDb[edge.fromCluster]);
     points = cutPathAtIntersect(points.reverse(), clusterDb[edge.fromCluster].node).reverse();
 
     pointsHasChanged = true;
@@ -503,111 +443,9 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     url = url.replace(/\(/g, '\\(');
     url = url.replace(/\)/g, '\\)');
   }
-  log.info('arrowTypeStart', edge.arrowTypeStart);
-  log.info('arrowTypeEnd', edge.arrowTypeEnd);
 
-  switch (edge.arrowTypeStart) {
-    case 'arrow_cross':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-crossStart' + ')'
-      );
-      break;
-    case 'arrow_point':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-pointStart' + ')'
-      );
-      break;
-    case 'arrow_barb':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-barbStart' + ')'
-      );
-      break;
-    case 'arrow_circle':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-circleStart' + ')'
-      );
-      break;
-    case 'aggregation':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-aggregationStart' + ')'
-      );
-      break;
-    case 'extension':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-extensionStart' + ')'
-      );
-      break;
-    case 'composition':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-compositionStart' + ')'
-      );
-      break;
-    case 'dependency':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-dependencyStart' + ')'
-      );
-      break;
-    case 'lollipop':
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + id + '_' + diagramType + '-lollipopStart' + ')'
-      );
-      break;
-    default:
-  }
-  switch (edge.arrowTypeEnd) {
-    case 'arrow_cross':
-      svgPath.attr('marker-end', 'url(' + url + '#' + id + '_' + diagramType + '-crossEnd' + ')');
-      break;
-    case 'arrow_point':
-      svgPath.attr('marker-end', 'url(' + url + '#' + id + '_' + diagramType + '-pointEnd' + ')');
-      break;
-    case 'arrow_barb':
-      svgPath.attr('marker-end', 'url(' + url + '#' + id + '_' + diagramType + '-barbEnd' + ')');
-      break;
-    case 'arrow_circle':
-      svgPath.attr('marker-end', 'url(' + url + '#' + id + '_' + diagramType + '-circleEnd' + ')');
-      break;
-    case 'aggregation':
-      svgPath.attr(
-        'marker-end',
-        'url(' + url + '#' + id + '_' + diagramType + '-aggregationEnd' + ')'
-      );
-      break;
-    case 'extension':
-      svgPath.attr(
-        'marker-end',
-        'url(' + url + '#' + id + '_' + diagramType + '-extensionEnd' + ')'
-      );
-      break;
-    case 'composition':
-      svgPath.attr(
-        'marker-end',
-        'url(' + url + '#' + id + '_' + diagramType + '-compositionEnd' + ')'
-      );
-      break;
-    case 'dependency':
-      svgPath.attr(
-        'marker-end',
-        'url(' + url + '#' + id + '_' + diagramType + '-dependencyEnd' + ')'
-      );
-      break;
-    case 'lollipop':
-      svgPath.attr(
-        'marker-end',
-        'url(' + url + '#' + id + '_' + diagramType + '-lollipopEnd' + ')'
-      );
-      break;
-    default:
-  }
+  addEdgeMarkers(svgPath, edge, url, id, diagramType);
+
   let paths = {};
   if (pointsHasChanged) {
     paths.updatedPath = points;

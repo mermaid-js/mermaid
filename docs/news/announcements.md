@@ -6,8 +6,36 @@
 
 # Announcements
 
-## [Special cases broke Microsoft Zune and can ruin your code base too](https://www.mermaidchart.com/blog/posts/special-cases-broke-microsoft-zune-and-can-ruin-your-code-base-too/)
+## 🚀 Exciting News from Mermaid Chart! 🚀
 
-23 August 2023 · 15 mins
+We're thrilled to announce that Mermaid Chart has successfully raised $7.5 million in Seed funding! 🌟 This achievement marks the beginning of a new era for Mermaid and Mermaid Chart.
 
-Read about the pitfalls of special cases in programming, illustrating how they can lead to complexity, diminish readability, and create maintenance challenges.
+**Why It Matters for Mermaid Chart:**
+
+- **Empowering Collaboration**: Our tools are designed to enable faster, more efficient team collaboration across any distance, leveraging the best of text, voice, and automation.
+- **Opening New Doors**: Mermaid AI and our Visual Editor are breaking down barriers, making sophisticated diagramming accessible to everyone, not just software engineers.
+- **Looking Forward**: We're not stopping here! Expect groundbreaking features like automated documentation tools, advanced AI diagramming, and high-security on-premise solutions.
+
+**Why It Matters for Mermaid JS:**
+
+- **Continued support from Mermaid Chart**: At Mermaid Chart, we value our still-growing Mermaid JS roots. As such, we have funneled back development and support to the project. Thanks to the successful seed round, we can continue to ramp up these efforts.
+
+We are incredibly excited about the future and are grateful to the community, our team, and our investors for being part of this journey. Together, we're not just creating diagrams; we're designing the future of collaboration.
+
+🌐 Learn more about our groundbreaking tools and what's next for Mermaid Chart by visiting [our website](https://www.mermaidchart.com/blog/posts/mermaid-chart-raises-7.5m-to-reinvent-visual-collaoration-for-enterprises).
+
+Thank you for being part of our story. Here's to creating, innovating, and collaborating on a global scale!
+
+Knut Sveidqvist 🧜‍♂️✨
+
+## Mermaid Chart's Visual Editor for Flowcharts
+
+The Mermaid Chart team is excited to introduce a new Visual Editor for flowcharts, enabling users of all skill levels to create diagrams easily and efficiently, with both GUI and code-based editing options.
+
+Create flowchart nodes, connect them with edges, update shapes, change colors, and edit labels with just a few clicks that automatically reflect in your diagram’s code for easy customizability.
+
+Read more about it in our latest [BLOG POST](https://www.mermaidchart.com/blog/posts/mermaid-chart-releases-new-visual-editor-for-flowcharts) and watch a [DEMO VIDEO](https://www.youtube.com/watch?v=5aja0gijoO0) on our YouTube page.
+
+## 📖 Blog posts
+
+Visit our [Blog](./blog.md) to see the latest blog posts.

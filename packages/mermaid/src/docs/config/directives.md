@@ -1,7 +1,7 @@
 # Directives
 
 ```warning
-Directives are deprecated from v<MERMAID_RELEASE_VERSION>. Please use the `config` key in frontmatter to pass configuration. See [Configuration](./configuration.md) for more details.
+Directives are deprecated from v10.5.0. Please use the `config` key in frontmatter to pass configuration. See [Configuration](./configuration.md) for more details.
 ```
 
 ## Directives

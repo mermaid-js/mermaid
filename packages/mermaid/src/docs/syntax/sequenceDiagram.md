@@ -30,8 +30,8 @@ appearance by doing the following:
 sequenceDiagram
     participant Alice
     participant Bob
-    Alice->>Bob: Hi Bob
     Bob->>Alice: Hi Alice
+    Alice->>Bob: Hi Bob
 ```
 
 ### Actors
@@ -83,6 +83,14 @@ sequenceDiagram
     Bob->>Alice: I agree
 ```
 
+#### Unfixable actor/participant creation/deletion error
+
+If an error of the following type occurs when creating or deleting an actor/participant:
+
+> The destroyed participant **participant-name** does not have an associated destroying message after its declaration. Please check the sequence diagram.
+
+And fixing diagram code does not get rid of this error and rendering of all other diagrams results in the same error, then you need to update the mermaid version to (v10.7.0+).
+
 ### Grouping / Box
 
 The actor(s) can be grouped in vertical boxes. You can define a color (if not, it will be transparent) and/or a descriptive label using the following notation:
@@ -121,8 +129,8 @@ end
     end
     A->>J: Hello John, how are you?
     J->>A: Great!
-    A->>B: Hello Bob, how is Charly?
-    B->>C: Hello Charly, how are you?
+    A->>B: Hello Bob, how is Charley?
+    B->>C: Hello Charley, how are you?
 ```
 
 ## Messages
@@ -449,7 +457,7 @@ It can also be turned on via the diagram code as in the diagram:
 sequenceDiagram
     autonumber
     Alice->>John: Hello John, how are you?
-    loop Healthcheck
+    loop HealthCheck
         John->>John: Fight against hypochondria
     end
     Note right of John: Rational thoughts!
@@ -510,20 +518,24 @@ Styling of a sequence diagram is done by defining a number of css classes. Durin
 
 ### Classes used
 
-| Class        | Description                                                 |
-| ------------ | ----------------------------------------------------------- |
-| actor        | Style for the actor box at the top of the diagram.          |
-| text.actor   | Styles for text in the actor box at the top of the diagram. |
-| actor-line   | The vertical line for an actor.                             |
-| messageLine0 | Styles for the solid message line.                          |
-| messageLine1 | Styles for the dotted message line.                         |
-| messageText  | Defines styles for the text on the message arrows.          |
-| labelBox     | Defines styles label to left in a loop.                     |
-| labelText    | Styles for the text in label for loops.                     |
-| loopText     | Styles for the text in the loop box.                        |
-| loopLine     | Defines styles for the lines in the loop box.               |
-| note         | Styles for the note box.                                    |
-| noteText     | Styles for the text on in the note boxes.                   |
+| Class          | Description                                                    |
+| -------------- | -------------------------------------------------------------- |
+| actor          | Styles for the actor box.                                      |
+| actor-top      | Styles for the actor figure/ box at the top of the diagram.    |
+| actor-bottom   | Styles for the actor figure/ box at the bottom of the diagram. |
+| text.actor     | Styles for text of all of the actors.                          |
+| text.actor-box | Styles for text of the actor box.                              |
+| text.actor-man | Styles for text of the actor figure.                           |
+| actor-line     | The vertical line for an actor.                                |
+| messageLine0   | Styles for the solid message line.                             |
+| messageLine1   | Styles for the dotted message line.                            |
+| messageText    | Defines styles for the text on the message arrows.             |
+| labelBox       | Defines styles label to left in a loop.                        |
+| labelText      | Styles for the text in label for loops.                        |
+| loopText       | Styles for the text in the loop box.                           |
+| loopLine       | Defines styles for the lines in the loop box.                  |
+| note           | Styles for the note box.                                       |
+| noteText       | Styles for the text on in the note boxes.                      |
 
 ### Sample stylesheet
 

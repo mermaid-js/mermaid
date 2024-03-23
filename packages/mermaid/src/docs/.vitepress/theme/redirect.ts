@@ -58,7 +58,7 @@ const idRedirectMap: Record<string, string> = {
   'n00b-gettingstarted': 'intro/getting-started',
   'n00b-overview': 'intro/getting-started',
   'n00b-syntaxreference': 'intro/syntax-reference',
-  newdiagram: 'community/newDiagram',
+  newdiagram: 'community/new-diagram',
   pie: 'syntax/pie',
   plugins: '',
   quickstart: 'intro/getting-started',
@@ -69,7 +69,7 @@ const idRedirectMap: Record<string, string> = {
   statediagram: 'syntax/stateDiagram',
   themes: 'config/theming',
   theming: 'config/theming',
-  tutorials: 'config/Tutorials',
+  tutorials: 'ecosystem/tutorials',
   upgrading: '',
   usage: 'config/usage',
   'user-journey': 'syntax/userJourney',
@@ -86,10 +86,17 @@ const urlRedirectMap: Record<string, string> = {
   // Old URL: New URL
   '/misc/faq.html': 'configure/faq.html',
   '/syntax/c4c.html': 'syntax/c4.html',
-  '/config/n00b-advanced.html': 'config/advanced',
-  '/intro/n00b-gettingStarted.html': 'intro/getting-started',
-  '/intro/n00b-syntaxReference.html': 'intro/syntax-reference',
-  '/community/n00b-overview.html': 'intro/getting-started',
+  '/ecosystem/integrations.html': 'ecosystem/integrations-community.html',
+  '/ecosystem/showcases.html': 'ecosystem/integrations-create',
+  '/config/n00b-advanced.html': 'config/configuration.html',
+  '/intro/n00b-gettingStarted.html': 'intro/getting-started.html',
+  '/intro/n00b-syntaxReference.html': 'intro/syntax-reference.html',
+  '/community/n00b-overview.html': 'intro/getting-started.html',
+  '/community/newDiagram.html': 'community/new-diagram.html',
+  '/community/development.html': 'community/contributing.html#initial-setup',
+  '/community/docker-development.html': 'community/contributing.html#initial-setup',
+  '/community/code.html': 'community/contributing.html#contributing-code',
+  '/community/documentation.html': 'community/contributing.html#contributing-documentation',
 };
 
 /**
@@ -97,8 +104,7 @@ const urlRedirectMap: Record<string, string> = {
  * @param link - The old documentation URL.
  * @returns The new documentation path.
  */
-export const getRedirect = (link: string): string | undefined => {
-  const url = new URL(link);
+export const getRedirect = (url: URL): string | undefined => {
   // Redirects for deprecated vitepress URLs
   if (url.pathname in urlRedirectMap) {
     return `${urlRedirectMap[url.pathname]}${url.hash}`;

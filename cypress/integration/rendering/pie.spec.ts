@@ -44,7 +44,7 @@ describe('pie chart', () => {
       const style = svg.attr('style');
       expect(style).to.match(/^max-width: [\d.]+px;$/);
       const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-      expect(maxWidthValue).to.eq(984);
+      expect(maxWidthValue).to.be.within(590, 600); // depends on installed fonts: 596.2 on my PC, 597.5 on CI
     });
   });
 
@@ -59,7 +59,7 @@ describe('pie chart', () => {
     );
     cy.get('svg').should((svg) => {
       const width = parseFloat(svg.attr('width'));
-      expect(width).to.eq(984);
+      expect(width).to.be.within(590, 600); // depends on installed fonts: 596.2 on my PC, 597.5 on CI
       expect(svg).to.not.have.attr('style');
     });
   });

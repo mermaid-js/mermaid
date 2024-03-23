@@ -60,12 +60,10 @@ const CDN_URL = 'https://cdn.jsdelivr.net/npm'; // 'https://unpkg.com';
 
 const MERMAID_KEYWORD = 'mermaid';
 const MERMAID_CODE_ONLY_KEYWORD = 'mermaid-example';
+const MERMAID_DIAGRAM_ONLY = 'mermaid-nocode';
 
 // These keywords will produce both a mermaid diagram and a code block with the diagram source
 const MERMAID_EXAMPLE_KEYWORDS = [MERMAID_KEYWORD, 'mmd', MERMAID_CODE_ONLY_KEYWORD]; // 'mmd' is an old keyword that used to be used
-
-// This keyword will only produce a mermaid diagram
-const MERMAID_DIAGRAM_ONLY = 'mermaid-nocode';
 
 // These will be transformed into block quotes
 const BLOCK_QUOTE_KEYWORDS = ['note', 'tip', 'warning', 'danger'];
@@ -254,11 +252,12 @@ export function transformMarkdownAst({
         node.lang = MERMAID_KEYWORD;
         return [node];
       } else if (MERMAID_EXAMPLE_KEYWORDS.includes(node.lang)) {
-        // Return 2 nodes:
+        // If Vitepress, return only the original node with the language now set to 'mermaid-example' (will be rendered using custom renderer)
+        // Else Return 2 nodes:
         //   1. the original node with the language now set to 'mermaid-example' (will be rendered as code), and
         //   2. a copy of the original node with the language set to 'mermaid' (will be rendered as a diagram)
         node.lang = MERMAID_CODE_ONLY_KEYWORD;
-        return [node, Object.assign({}, node, { lang: MERMAID_KEYWORD })];
+        return vitepress ? [node] : [node, Object.assign({}, node, { lang: MERMAID_KEYWORD })];
       }
 
       // Transform these blocks into block quotes.

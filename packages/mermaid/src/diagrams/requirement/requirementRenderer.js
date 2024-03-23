@@ -5,7 +5,7 @@ import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import common from '../common/common.js';
 import markers from './requirementMarkers.js';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 
 let conf = {};
 let relCnt = 0;
@@ -361,6 +361,8 @@ export const draw = (text, id, _version, diagObj) => {
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
 };
+
+// cspell:ignore txts
 
 export default {
   draw,

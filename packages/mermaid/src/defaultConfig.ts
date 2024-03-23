@@ -236,6 +236,10 @@ const config: RequiredDeep<MermaidConfig> = {
     ...defaultConfigJson.pie,
     useWidth: 984,
   },
+  xyChart: {
+    ...defaultConfigJson.xyChart,
+    useWidth: undefined,
+  },
   requirement: {
     ...defaultConfigJson.requirement,
     useWidth: undefined,
@@ -252,6 +256,9 @@ const config: RequiredDeep<MermaidConfig> = {
     // this is false, unlike every other diagram (other than gitGraph)
     // TODO: can we make this default to `true` instead?
     useMaxWidth: false,
+  },
+  packet: {
+    ...defaultConfigJson.packet,
   },
 };
 

@@ -375,6 +375,29 @@ context('Sequence diagram', () => {
         {}
       );
     });
+    it('should have actor-top and actor-bottom classes on top and bottom actor box and symbol and actor-box and actor-man classes for text tags', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+          actor Bob
+          Alice->>Bob: Hi Bob
+          Bob->>Alice: Hi Alice
+      `,
+        {}
+      );
+      cy.get('.actor').should('have.class', 'actor-top');
+      cy.get('.actor-man').should('have.class', 'actor-top');
+      cy.get('.actor.actor-top').should('not.have.class', 'actor-bottom');
+      cy.get('.actor-man.actor-top').should('not.have.class', 'actor-bottom');
+
+      cy.get('.actor').should('have.class', 'actor-bottom');
+      cy.get('.actor-man').should('have.class', 'actor-bottom');
+      cy.get('.actor.actor-bottom').should('not.have.class', 'actor-top');
+      cy.get('.actor-man.actor-bottom').should('not.have.class', 'actor-top');
+
+      cy.get('text.actor-box').should('include.text', 'Alice');
+      cy.get('text.actor-man').should('include.text', 'Bob');
+    });
     it('should render long notes left of actor', () => {
       imgSnapshotTest(
         `
@@ -792,6 +815,34 @@ context('Sequence diagram', () => {
     });
   });
   context('links', () => {
+    it('should support actor links', () => {
+      renderGraph(
+        `
+      sequenceDiagram
+        link Alice: Dashboard @ https://dashboard.contoso.com/alice
+        link Alice: Wiki @ https://wiki.contoso.com/alice
+        link John: Dashboard @ https://dashboard.contoso.com/john
+        link John: Wiki @ https://wiki.contoso.com/john
+        Alice->>John: Hello John<br/>
+        John-->>Alice: Great<br/><br/>day!
+      `,
+        { securityLevel: 'loose' }
+      );
+      cy.get('#actor0_popup').should((popupMenu) => {
+        const style = popupMenu.attr('style');
+        expect(style).to.undefined;
+      });
+      cy.get('#root-0').click();
+      cy.get('#actor0_popup').should((popupMenu) => {
+        const style = popupMenu.attr('style');
+        expect(style).to.match(/^display: block;$/);
+      });
+      cy.get('#root-0').click();
+      cy.get('#actor0_popup').should((popupMenu) => {
+        const style = popupMenu.attr('style');
+        expect(style).to.match(/^display: none;$/);
+      });
+    });
     it('should support actor links and properties EXPERIMENTAL: USE WITH CAUTION', () => {
       //Be aware that the syntax for "properties" is likely to be changed.
       imgSnapshotTest(
@@ -928,6 +979,38 @@ context('Sequence diagram', () => {
         expect(width).to.be.within(820 * 0.95, 820 * 1.05);
         expect(svg).to.not.have.attr('style');
       });
+    });
+  });
+  context('render after error', () => {
+    it('should render diagram after fixing destroy participant error', () => {
+      cy.on('uncaught:exception', (err) => {
+        return false;
+      });
+
+      renderGraph([
+        `sequenceDiagram
+    Alice->>Bob: Hello Bob, how are you ?
+    Bob->>Alice: Fine, thank you. And you?
+    create participant Carl
+    Alice->>Carl: Hi Carl!
+    create actor D as Donald
+    Carl->>D: Hi!
+    destroy Carl
+    Alice-xCarl: We are too many
+    destroy Bo
+    Bob->>Alice: I agree`,
+        `sequenceDiagram
+    Alice->>Bob: Hello Bob, how are you ?
+    Bob->>Alice: Fine, thank you. And you?
+    create participant Carl
+    Alice->>Carl: Hi Carl!
+    create actor D as Donald
+    Carl->>D: Hi!
+    destroy Carl
+    Alice-xCarl: We are too many
+    destroy Bob
+    Bob->>Alice: I agree`,
+      ]);
     });
   });
 });

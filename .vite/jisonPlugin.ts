@@ -1,10 +1,10 @@
-import { transformJison } from './jisonTransformer.js';
+import { transformJison } from '../.build/jisonTransformer.js';
+
 const fileRegex = /\.(jison)$/;
 
 export default function jison() {
   return {
     name: 'jison',
-
     transform(src: string, id: string) {
       if (fileRegex.test(id)) {
         return {

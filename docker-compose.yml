@@ -1,13 +1,16 @@
 version: '3.9'
 services:
   mermaid:
-    image: node:18.17.1-alpine3.18
+    build:
+      context: .
+      dockerfile: Dockerfile
     stdin_open: true
     tty: true
     working_dir: /mermaid
-    mem_limit: '4G'
+    mem_limit: '8G'
+    entrypoint: docker-entrypoint.sh
     environment:
-      - NODE_OPTIONS=--max_old_space_size=4096
+      - NODE_OPTIONS=--max_old_space_size=8192
     volumes:
       - ./:/mermaid
       - root_cache:/root/.cache

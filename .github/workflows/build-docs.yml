@@ -16,20 +16,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           cache: pnpm
-          node-version: 18
+          node-version-file: '.node-version'
 
       - name: Install Packages
         run: pnpm install --frozen-lockfile
 
-      - name: Verify release verion
+      - name: Verify release version
         if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release')) }}
         run: pnpm --filter mermaid run docs:verify-version
 

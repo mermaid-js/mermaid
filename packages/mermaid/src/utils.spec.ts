@@ -286,56 +286,46 @@ describe('when formatting urls', function () {
   it('should handle links', function () {
     const url = 'https://mermaid-js.github.io/mermaid/#/';
 
-    const config = { securityLevel: 'loose' };
-    let result = utils.formatUrl(url, config);
+    let result = utils.formatUrl(url, { securityLevel: 'loose' });
     expect(result).toEqual(url);
 
-    config.securityLevel = 'strict';
-    result = utils.formatUrl(url, config);
+    result = utils.formatUrl(url, { securityLevel: 'strict' });
     expect(result).toEqual(url);
   });
   it('should handle anchors', function () {
     const url = '#interaction';
 
-    const config = { securityLevel: 'loose' };
-    let result = utils.formatUrl(url, config);
+    let result = utils.formatUrl(url, { securityLevel: 'loose' });
     expect(result).toEqual(url);
 
-    config.securityLevel = 'strict';
-    result = utils.formatUrl(url, config);
+    result = utils.formatUrl(url, { securityLevel: 'strict' });
     expect(result).toEqual(url);
   });
   it('should handle mailto', function () {
     const url = 'mailto:user@user.user';
 
-    const config = { securityLevel: 'loose' };
-    let result = utils.formatUrl(url, config);
+    let result = utils.formatUrl(url, { securityLevel: 'loose' });
     expect(result).toEqual(url);
 
-    config.securityLevel = 'strict';
-    result = utils.formatUrl(url, config);
+    result = utils.formatUrl(url, { securityLevel: 'strict' });
     expect(result).toEqual(url);
   });
   it('should handle other protocols', function () {
     const url = 'notes://do-your-thing/id';
 
-    const config = { securityLevel: 'loose' };
-    let result = utils.formatUrl(url, config);
+    let result = utils.formatUrl(url, { securityLevel: 'loose' });
     expect(result).toEqual(url);
 
-    config.securityLevel = 'strict';
-    result = utils.formatUrl(url, config);
+    result = utils.formatUrl(url, { securityLevel: 'strict' });
     expect(result).toEqual(url);
   });
   it('should handle scripts', function () {
     const url = 'javascript:alert("test")';
 
-    const config = { securityLevel: 'loose' };
-    let result = utils.formatUrl(url, config);
+    let result = utils.formatUrl(url, { securityLevel: 'loose' });
     expect(result).toEqual(url);
 
-    config.securityLevel = 'strict';
-    result = utils.formatUrl(url, config);
+    result = utils.formatUrl(url, { securityLevel: 'strict' });
     expect(result).toEqual('about:blank');
   });
 });
@@ -450,7 +440,7 @@ describe('when parsing font sizes', function () {
     expect(utils.parseFontSize(undefined)).toEqual([undefined, undefined]);
   });
 
-  it('handles unparseable input', function () {
+  it('handles unparsable input', function () {
     // @ts-expect-error Explicitly testing unparsable input
     expect(utils.parseFontSize({ fontSize: 14 })).toEqual([undefined, undefined]);
   });
