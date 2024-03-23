@@ -1,29 +1,18 @@
-import common from '../common/common.js';
+import common, { calculateMathMLDimensions, hasKatex, renderKatex } from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { addFunction } from '../../interactionDb.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
+import * as configApi from '../../config.js';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
+const TOP_ACTOR_CLASS = 'actor-top';
+const BOTTOM_ACTOR_CLASS = 'actor-bottom';
+const ACTOR_BOX_CLASS = 'actor-box';
+const ACTOR_MAN_FIGURE_CLASS = 'actor-man';
 
 export const drawRect = function (elem, rectData) {
   return svgDrawCommon.drawRect(elem, rectData);
-};
-
-const addPopupInteraction = (id, actorCnt) => {
-  addFunction(() => {
-    const arr = document.querySelectorAll(id);
-    // This will be the case when running in sandboxed mode
-    if (arr.length === 0) {
-      return;
-    }
-    arr[0].addEventListener('mouseover', function () {
-      popupMenuUpFunc('actor' + actorCnt + '_popup');
-    });
-    arr[0].addEventListener('mouseout', function () {
-      popupMenuDownFunc('actor' + actorCnt + '_popup');
-    });
-  });
 };
 
 export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMenus) {
@@ -44,7 +33,6 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   g.attr('id', 'actor' + actorCnt + '_popup');
   g.attr('class', 'actorPopupMenu');
   g.attr('display', displayValue);
-  addPopupInteraction('#actor' + actorCnt + '_popup', actorCnt);
   var actorClass = '';
   if (rectData.class !== undefined) {
     actorClass = ' ' + rectData.class;
@@ -90,34 +78,53 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   return { height: rectData.height + linkY, width: menuWidth };
 };
 
-export const popupMenu = function (popid) {
+const popupMenuToggle = function (popId) {
   return (
     "var pu = document.getElementById('" +
-    popid +
-    "'); if (pu != null) { pu.style.display = 'block'; }"
+    popId +
+    "'); if (pu != null) { pu.style.display = pu.style.display == 'block' ? 'none' : 'block'; }"
   );
 };
 
-export const popdownMenu = function (popid) {
-  return (
-    "var pu = document.getElementById('" +
-    popid +
-    "'); if (pu != null) { pu.style.display = 'none'; }"
-  );
-};
+export const drawKatex = async function (elem, textData, msgModel = null) {
+  let textElem = elem.append('foreignObject');
+  const lines = await renderKatex(textData.text, configApi.getConfig());
 
-const popupMenuUpFunc = function (popupId) {
-  var pu = document.getElementById(popupId);
-  if (pu != null) {
-    pu.style.display = 'block';
-  }
-};
+  const divElem = textElem
+    .append('xhtml:div')
+    .attr('style', 'width: fit-content;')
+    .attr('xmlns', 'http://www.w3.org/1999/xhtml')
+    .html(lines);
+  const dim = divElem.node().getBoundingClientRect();
 
-const popupMenuDownFunc = function (popupId) {
-  var pu = document.getElementById(popupId);
-  if (pu != null) {
-    pu.style.display = 'none';
+  textElem.attr('height', Math.round(dim.height)).attr('width', Math.round(dim.width));
+
+  if (textData.class === 'noteText') {
+    const rectElem = elem.node().firstChild;
+
+    rectElem.setAttribute('height', dim.height + 2 * textData.textMargin);
+    const rectDim = rectElem.getBBox();
+
+    textElem
+      .attr('x', Math.round(rectDim.x + rectDim.width / 2 - dim.width / 2))
+      .attr('y', Math.round(rectDim.y + rectDim.height / 2 - dim.height / 2));
+  } else if (msgModel) {
+    let { startx, stopx, starty } = msgModel;
+    if (startx > stopx) {
+      const temp = startx;
+      startx = stopx;
+      stopx = temp;
+    }
+
+    textElem.attr('x', Math.round(startx + Math.abs(startx - stopx) / 2 - dim.width / 2));
+    if (textData.class === 'loopText') {
+      textElem.attr('y', Math.round(starty));
+    } else {
+      textElem.attr('y', Math.round(starty - dim.height));
+    }
   }
+
+  return [textElem];
 };
 
 export const drawText = function (elem, textData) {
@@ -319,33 +326,35 @@ export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
  * @param {any} conf - DrawText implementation discriminator object
  * @param {boolean} isFooter - If the actor is the footer one
  */
-const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
+const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 5;
 
-  const boxpluslineGroup = elem.append('g').lower();
-  var g = boxpluslineGroup;
+  const boxplusLineGroup = elem.append('g').lower();
+  var g = boxplusLineGroup;
 
   if (!isFooter) {
     actorCnt++;
+    if (Object.keys(actor.links || {}).length && !conf.forceMenus) {
+      g.attr('onclick', popupMenuToggle(`actor${actorCnt}_popup`)).attr('cursor', 'pointer');
+    }
     g.append('line')
       .attr('id', 'actor' + actorCnt)
       .attr('x1', center)
       .attr('y1', centerY)
       .attr('x2', center)
       .attr('y2', 2000)
-      .attr('class', 'actor-line')
-      .attr('class', '200')
+      .attr('class', 'actor-line 200')
       .attr('stroke-width', '0.5px')
-      .attr('stroke', '#999');
+      .attr('stroke', '#999')
+      .attr('name', actor.name);
 
-    g = boxpluslineGroup.append('g');
+    g = boxplusLineGroup.append('g');
     actor.actorCnt = actorCnt;
 
     if (actor.links != null) {
       g.attr('id', 'root-' + actorCnt);
-      addPopupInteraction('#root-' + actorCnt, actorCnt);
     }
   }
 
@@ -356,6 +365,11 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   } else {
     rect.fill = '#eaeaea';
   }
+  if (isFooter) {
+    cssclass += ` ${BOTTOM_ACTOR_CLASS}`;
+  } else {
+    cssclass += ` ${TOP_ACTOR_CLASS}`;
+  }
   rect.x = actor.x;
   rect.y = actorY;
   rect.width = actor.width;
@@ -363,6 +377,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   rect.class = cssclass;
   rect.rx = 3;
   rect.ry = 3;
+  rect.name = actor.name;
   const rectElem = drawRect(g, rect);
   actor.rectData = rect;
 
@@ -375,14 +390,14 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
     }
   }
 
-  _drawTextCandidateFunc(conf)(
+  await _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     g,
     rect.x,
     rect.y,
     rect.width,
     rect.height,
-    { class: 'actor' },
+    { class: `actor ${ACTOR_BOX_CLASS}` },
     conf
   );
 
@@ -396,7 +411,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   return height;
 };
 
-const drawActorTypeActor = function (elem, actor, conf, isFooter) {
+const drawActorTypeActor = async function (elem, actor, conf, isFooter) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 80;
@@ -412,15 +427,22 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
       .attr('y1', centerY)
       .attr('x2', center)
       .attr('y2', 2000)
-      .attr('class', 'actor-line')
-      .attr('class', '200')
+      .attr('class', 'actor-line 200')
       .attr('stroke-width', '0.5px')
-      .attr('stroke', '#999');
+      .attr('stroke', '#999')
+      .attr('name', actor.name);
 
     actor.actorCnt = actorCnt;
   }
   const actElem = elem.append('g');
-  actElem.attr('class', 'actor-man');
+  let cssClass = ACTOR_MAN_FIGURE_CLASS;
+  if (isFooter) {
+    cssClass += ` ${BOTTOM_ACTOR_CLASS}`;
+  } else {
+    cssClass += ` ${TOP_ACTOR_CLASS}`;
+  }
+  actElem.attr('class', cssClass);
+  actElem.attr('name', actor.name);
 
   const rect = svgDrawCommon.getNoteRect();
   rect.x = actor.x;
@@ -470,35 +492,35 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   const bounds = actElem.node().getBBox();
   actor.height = bounds.height;
 
-  _drawTextCandidateFunc(conf)(
+  await _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     actElem,
     rect.x,
     rect.y + 35,
     rect.width,
     rect.height,
-    { class: 'actor' },
+    { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
     conf
   );
 
   return actor.height;
 };
 
-export const drawActor = function (elem, actor, conf, isFooter) {
+export const drawActor = async function (elem, actor, conf, isFooter) {
   switch (actor.type) {
     case 'actor':
-      return drawActorTypeActor(elem, actor, conf, isFooter);
+      return await drawActorTypeActor(elem, actor, conf, isFooter);
     case 'participant':
-      return drawActorTypeParticipant(elem, actor, conf, isFooter);
+      return await drawActorTypeParticipant(elem, actor, conf, isFooter);
   }
 };
 
-export const drawBox = function (elem, box, conf) {
-  const boxplustextGroup = elem.append('g');
-  const g = boxplustextGroup;
+export const drawBox = async function (elem, box, conf) {
+  const boxplusTextGroup = elem.append('g');
+  const g = boxplusTextGroup;
   drawBackgroundRect(g, box);
   if (box.name) {
-    _drawTextCandidateFunc(conf)(
+    await _drawTextCandidateFunc(conf)(
       box.name,
       g,
       box.x,
@@ -545,7 +567,7 @@ export const drawActivation = function (elem, bounds, verticalPos, conf, actorAc
  * @param {any} conf - Diagram configuration
  * @returns {any}
  */
-export const drawLoop = function (elem, loopModel, labelText, conf) {
+export const drawLoop = async function (elem, loopModel, labelText, conf) {
   const {
     boxMargin,
     boxTextMargin,
@@ -607,10 +629,10 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
   txt.fontWeight = fontWeight;
   txt.wrap = true;
 
-  let textElem = drawText(g, txt);
+  let textElem = hasKatex(txt.text) ? await drawKatex(g, txt, loopModel) : drawText(g, txt);
 
   if (loopModel.sectionTitles !== undefined) {
-    loopModel.sectionTitles.forEach(function (item, idx) {
+    for (const [idx, item] of Object.entries(loopModel.sectionTitles)) {
       if (item.message) {
         txt.text = item.message;
         txt.x = loopModel.startx + (loopModel.stopx - loopModel.startx) / 2;
@@ -623,7 +645,13 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
         txt.fontSize = fontSize;
         txt.fontWeight = fontWeight;
         txt.wrap = loopModel.wrap;
-        textElem = drawText(g, txt);
+
+        if (hasKatex(txt.text)) {
+          loopModel.starty = loopModel.sections[idx].y;
+          await drawKatex(g, txt, loopModel);
+        } else {
+          drawText(g, txt);
+        }
         let sectionHeight = Math.round(
           textElem
             .map((te) => (te._groups || te)[0][0].getBBox().height)
@@ -631,7 +659,7 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
         );
         loopModel.sections[idx].height += sectionHeight - (boxMargin + boxTextMargin);
       }
-    });
+    }
   }
 
   loopModel.height = Math.round(loopModel.stopy - loopModel.starty);
@@ -710,7 +738,7 @@ export const insertArrowHead = function (elem) {
     .attr('markerHeight', 12)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 0 0 L 10 5 L 0 10 z'); // this is actual shape for arrowhead
+    .attr('d', 'M -1 0 L 10 5 L 0 10 z'); // this is actual shape for arrowhead
 };
 
 /**
@@ -909,6 +937,41 @@ const _drawTextCandidateFunc = (function () {
   }
 
   /**
+   *
+   * @param content
+   * @param g
+   * @param x
+   * @param y
+   * @param width
+   * @param height
+   * @param textAttrs
+   * @param conf
+   */
+  async function byKatex(content, g, x, y, width, height, textAttrs, conf) {
+    // TODO duplicate render calls, optimize
+
+    const dim = await calculateMathMLDimensions(content, configApi.getConfig());
+    const s = g.append('switch');
+    const f = s
+      .append('foreignObject')
+      .attr('x', x + width / 2 - dim.width / 2)
+      .attr('y', y + height / 2 - dim.height / 2)
+      .attr('width', dim.width)
+      .attr('height', dim.height);
+
+    const text = f.append('xhtml:div').style('height', '100%').style('width', '100%');
+
+    text
+      .append('div')
+      .style('text-align', 'center')
+      .style('vertical-align', 'middle')
+      .html(await renderKatex(content, configApi.getConfig()));
+
+    byTspan(content, s, x, y, width, height, textAttrs, conf);
+    _setTextAttrs(text, textAttrs);
+  }
+
+  /**
    * @param {any} toText
    * @param {any} fromTextAttrsDict
    */
@@ -920,7 +983,10 @@ const _drawTextCandidateFunc = (function () {
     }
   }
 
-  return function (conf) {
+  return function (conf, hasKatex = false) {
+    if (hasKatex) {
+      return byKatex;
+    }
     return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'old' ? byText : byTspan;
   };
 })();
@@ -1053,8 +1119,6 @@ export default {
   insertClockIcon,
   getTextObj,
   getNoteRect,
-  popupMenu,
-  popdownMenu,
   fixLifeLineHeights,
   sanitizeUrl,
 };

@@ -63,13 +63,24 @@ module.exports = {
         minimumDescriptionLength: 10,
       },
     ],
+    '@typescript-eslint/naming-convention': [
+      'error',
+      {
+        selector: 'typeLike',
+        format: ['PascalCase'],
+        custom: {
+          regex: '^I[A-Z]',
+          match: false,
+        },
+      },
+    ],
     'json/*': ['error', 'allowComments'],
     '@cspell/spellchecker': [
       'error',
       {
-        checkIdentifiers: false,
-        checkStrings: false,
-        checkStringTemplates: false,
+        checkIdentifiers: true,
+        checkStrings: true,
+        checkStringTemplates: true,
       },
     ],
     'no-empty': [
@@ -146,6 +157,19 @@ module.exports = {
       rules: {
         'jsdoc/require-jsdoc': 'off',
         '@typescript-eslint/no-unused-vars': 'off',
+      },
+    },
+    {
+      files: ['*.spec.{ts,js}', 'tests/**', 'cypress/**/*.js'],
+      rules: {
+        '@cspell/spellchecker': [
+          'error',
+          {
+            checkIdentifiers: false,
+            checkStrings: false,
+            checkStringTemplates: false,
+          },
+        ],
       },
     },
     {

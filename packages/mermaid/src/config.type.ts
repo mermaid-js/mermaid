@@ -61,7 +61,7 @@ export interface MermaidConfig {
    * You may also use `themeCSS` to override this value.
    *
    */
-  theme?: string | 'default' | 'forest' | 'dark' | 'neutral' | 'null';
+  theme?: 'default' | 'forest' | 'dark' | 'neutral' | 'null';
   themeVariables?: any;
   themeCSS?: string;
   /**
@@ -87,26 +87,11 @@ export interface MermaidConfig {
    * This option decides the amount of logging to be used by mermaid.
    *
    */
-  logLevel?:
-    | number
-    | string
-    | 0
-    | 2
-    | 1
-    | 'trace'
-    | 'debug'
-    | 'info'
-    | 'warn'
-    | 'error'
-    | 'fatal'
-    | 3
-    | 4
-    | 5
-    | undefined;
+  logLevel?: 'trace' | 0 | 'debug' | 1 | 'info' | 2 | 'warn' | 3 | 'error' | 4 | 'fatal' | 5;
   /**
    * Level of trust for parsed diagram
    */
-  securityLevel?: string | 'strict' | 'loose' | 'antiscript' | 'sandbox' | undefined;
+  securityLevel?: 'strict' | 'loose' | 'antiscript' | 'sandbox';
   /**
    * Dictates whether mermaid starts on Page load
    */
@@ -127,6 +112,14 @@ export interface MermaidConfig {
    *
    */
   secure?: string[];
+  /**
+   * This option specifies if Mermaid can expect the dependent to include KaTeX stylesheets for browsers
+   * without their own MathML implementation. If this option is disabled and MathML is not supported, the math
+   * equations are replaced with a warning. If this option is enabled and MathML is not supported, Mermaid will
+   * fall back to legacy rendering for KaTeX.
+   *
+   */
+  legacyMathML?: boolean;
   /**
    * This option controls if the generated ids of nodes in the SVG are
    * generated randomly or based on a seed.
@@ -161,9 +154,43 @@ export interface MermaidConfig {
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
   sankey?: SankeyDiagramConfig;
+  packet?: PacketDiagramConfig;
+  block?: BlockDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
+}
+/**
+ * The object containing configurations specific for packet diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "PacketDiagramConfig".
+ */
+export interface PacketDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The height of each row in the packet diagram.
+   */
+  rowHeight?: number;
+  /**
+   * The width of each bit in the packet diagram.
+   */
+  bitWidth?: number;
+  /**
+   * The number of bits to display per row.
+   */
+  bitsPerRow?: number;
+  /**
+   * Toggle to display or hide bit numbers.
+   */
+  showBits?: boolean;
+  /**
+   * The horizontal padding between the blocks in a row.
+   */
+  paddingX?: number;
+  /**
+   * The vertical padding between the rows.
+   */
+  paddingY?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -178,6 +205,15 @@ export interface BaseDiagramConfig {
    *
    */
   useMaxWidth?: boolean;
+}
+/**
+ * The object containing configurations specific for block diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "BlockDiagramConfig".
+ */
+export interface BlockDiagramConfig extends BaseDiagramConfig {
+  padding?: number;
 }
 /**
  * The object containing configurations specific for c4 diagrams
@@ -576,6 +612,7 @@ export interface GitGraphDiagramConfig extends BaseDiagramConfig {
   showCommitLabel?: boolean;
   showBranches?: boolean;
   rotateCommitLabel?: boolean;
+  parallelCommits?: boolean;
   /**
    * Controls whether or arrow markers in html code are absolute paths or anchors.
    * This matters if you are using base tag settings.
@@ -788,8 +825,8 @@ export interface XYChartConfig extends BaseDiagramConfig {
    * Should show the chart title
    */
   showTitle?: boolean;
-  xAxis?: XYChartAxisConfig1;
-  yAxis?: XYChartAxisConfig2;
+  xAxis?: XYChartAxisConfig;
+  yAxis?: XYChartAxisConfig;
   /**
    * How to plot will be drawn horizontal or vertical
    */
@@ -798,104 +835,6 @@ export interface XYChartConfig extends BaseDiagramConfig {
    * Minimum percent of space plots of the chart will take
    */
   plotReservedSpacePercent?: number;
-}
-/**
- * This object contains configuration for XYChart axis config
- */
-export interface XYChartAxisConfig1 {
-  /**
-   * Should show the axis labels (tick text)
-   */
-  showLabel?: boolean;
-  /**
-   * font size of the axis labels (tick text)
-   */
-  labelFontSize?: number;
-  /**
-   * top and bottom space from axis label (tick text)
-   */
-  labelPadding?: number;
-  /**
-   * Should show the axis title
-   */
-  showTitle?: boolean;
-  /**
-   * font size of the axis title
-   */
-  titleFontSize?: number;
-  /**
-   * top and bottom space from axis title
-   */
-  titlePadding?: number;
-  /**
-   * Should show the axis tick lines
-   */
-  showTick?: boolean;
-  /**
-   * length of the axis tick lines
-   */
-  tickLength?: number;
-  /**
-   * width of the axis tick lines
-   */
-  tickWidth?: number;
-  /**
-   * Show line across the axis
-   */
-  showAxisLine?: boolean;
-  /**
-   * Width of the axis line
-   */
-  axisLineWidth?: number;
-}
-/**
- * This object contains configuration for XYChart axis config
- */
-export interface XYChartAxisConfig2 {
-  /**
-   * Should show the axis labels (tick text)
-   */
-  showLabel?: boolean;
-  /**
-   * font size of the axis labels (tick text)
-   */
-  labelFontSize?: number;
-  /**
-   * top and bottom space from axis label (tick text)
-   */
-  labelPadding?: number;
-  /**
-   * Should show the axis title
-   */
-  showTitle?: boolean;
-  /**
-   * font size of the axis title
-   */
-  titleFontSize?: number;
-  /**
-   * top and bottom space from axis title
-   */
-  titlePadding?: number;
-  /**
-   * Should show the axis tick lines
-   */
-  showTick?: boolean;
-  /**
-   * length of the axis tick lines
-   */
-  tickLength?: number;
-  /**
-   * width of the axis tick lines
-   */
-  tickWidth?: number;
-  /**
-   * Show line across the axis
-   */
-  showAxisLine?: boolean;
-  /**
-   * Width of the axis line
-   */
-  axisLineWidth?: number;
 }
 /**
  * The object containing configurations specific for entity relationship diagrams
@@ -917,7 +856,7 @@ export interface ErDiagramConfig extends BaseDiagramConfig {
   /**
    * Directional bias for layout of entities
    */
-  layoutDirection?: string | 'TB' | 'BT' | 'LR' | 'RL';
+  layoutDirection?: 'TB' | 'BT' | 'LR' | 'RL';
   /**
    * The minimum width of an entity box. Expressed in pixels.
    */
@@ -982,7 +921,7 @@ export interface StateDiagramConfig extends BaseDiagramConfig {
    * Decides which rendering engine that is to be used for the rendering.
    *
    */
-  defaultRenderer?: string | 'dagre-d3' | 'dagre-wrapper' | 'elk';
+  defaultRenderer?: 'dagre-d3' | 'dagre-wrapper' | 'elk';
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -1006,7 +945,7 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
    * Decides which rendering engine that is to be used for the rendering.
    *
    */
-  defaultRenderer?: string | 'dagre-d3' | 'dagre-wrapper' | 'elk';
+  defaultRenderer?: 'dagre-d3' | 'dagre-wrapper' | 'elk';
   nodeSpacing?: number;
   rankSpacing?: number;
   /**
@@ -1066,7 +1005,7 @@ export interface JourneyDiagramConfig extends BaseDiagramConfig {
   /**
    * Multiline message alignment
    */
-  messageAlign?: string | 'left' | 'center' | 'right';
+  messageAlign?: 'left' | 'center' | 'right';
   /**
    * Prolongs the edge of the diagram downwards.
    *
@@ -1145,7 +1084,7 @@ export interface TimelineDiagramConfig extends BaseDiagramConfig {
   /**
    * Multiline message alignment
    */
-  messageAlign?: string | 'left' | 'center' | 'right';
+  messageAlign?: 'left' | 'center' | 'right';
   /**
    * Prolongs the edge of the diagram downwards.
    *
@@ -1256,7 +1195,7 @@ export interface GanttDiagramConfig extends BaseDiagramConfig {
    * Controls the display mode.
    *
    */
-  displayMode?: string | 'compact';
+  displayMode?: '' | 'compact';
   /**
    * On which day a week-based interval should start
    *
@@ -1315,7 +1254,7 @@ export interface SequenceDiagramConfig extends BaseDiagramConfig {
   /**
    * Multiline message alignment
    */
-  messageAlign?: string | 'left' | 'center' | 'right';
+  messageAlign?: 'left' | 'center' | 'right';
   /**
    * Mirror actors under diagram
    *
@@ -1372,7 +1311,7 @@ export interface SequenceDiagramConfig extends BaseDiagramConfig {
   /**
    * This sets the text alignment of actor-attached notes
    */
-  noteAlign?: string | 'left' | 'center' | 'right';
+  noteAlign?: 'left' | 'center' | 'right';
   /**
    * This sets the font size of actor messages
    */
@@ -1456,7 +1395,7 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    * Defines how mermaid renders curves for flowcharts.
    *
    */
-  curve?: string | 'basis' | 'linear' | 'cardinal';
+  curve?: 'basis' | 'linear' | 'cardinal';
   /**
    * Represents the padding between the labels and the shape
    *
@@ -1468,7 +1407,7 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    * Decides which rendering engine that is to be used for the rendering.
    *
    */
-  defaultRenderer?: string | 'dagre-d3' | 'dagre-wrapper' | 'elk';
+  defaultRenderer?: 'dagre-d3' | 'dagre-wrapper' | 'elk';
   /**
    * Width of nodes where text is wrapped.
    *
@@ -1492,13 +1431,7 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
    *
    */
   linkColor?: SankeyLinkColor | string;
-  /**
-   * Controls the alignment of the Sankey diagrams.
-   *
-   * See <https://github.com/d3/d3-sankey#alignments>.
-   *
-   */
-  nodeAlignment?: 'left' | 'right' | 'center' | 'justify';
+  nodeAlignment?: SankeyNodeAlignment;
   useMaxWidth?: boolean;
   /**
    * Toggle to display or hide values along with title.
