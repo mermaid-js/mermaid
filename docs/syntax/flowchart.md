@@ -854,11 +854,13 @@ This feature is applicable to node labels, edge labels, and subgraph labels.
 
 The auto wrapping can be disabled by using
 
-    ---
-    config:
-      markdownAutoWrap: false
-    ---
-    graph LR
+```
+---
+config:
+  markdownAutoWrap: false
+---
+graph LR
+```
 
 ## Interaction
 
