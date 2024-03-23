@@ -4,7 +4,7 @@
   >
     <p class="flex-grow text-center tracking-wide text-text">
       <a
-        href="https://www.mermaidchart.com/app/landing"
+        href="https://www.mermaidchart.com/landing"
         target="_blank"
         class="unstyled flex-grow tracking-wide plausible-event-name=bannerClick"
       >
