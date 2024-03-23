@@ -183,7 +183,7 @@ export const createText = (
     width = 200,
     addSvgBackground = false,
   } = {},
-  config: MermaidConfig = {}
+  config: MermaidConfig
 ) => {
   log.info('createText', text, style, isTitle, classes, useHtmlLabels, isNode, addSvgBackground);
   if (useHtmlLabels) {
