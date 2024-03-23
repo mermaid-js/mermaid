@@ -16,7 +16,7 @@ describe('when using mermaid and ', function () {
       flowDb.clear();
       flowDb.setGen('gen-2');
     });
-    it('should handle edges with text', () => {
+    it('should handle edges with text', async () => {
       parser.parse('graph TD;A-->|text ex|B;');
       flowDb.getVertices();
       const edges = flowDb.getEdges();
@@ -30,7 +30,7 @@ describe('when using mermaid and ', function () {
         },
       };
 
-      flowRenderer.addEdges(edges, mockG, diag);
+      await flowRenderer.addEdges(edges, mockG, diag);
     });
 
     it('should handle edges without text', async function () {
@@ -46,10 +46,10 @@ describe('when using mermaid and ', function () {
         },
       };
 
-      flowRenderer.addEdges(edges, mockG, diag);
+      await flowRenderer.addEdges(edges, mockG, diag);
     });
 
-    it('should handle open-ended edges', () => {
+    it('should handle open-ended edges', async () => {
       parser.parse('graph TD;A---B;');
       flowDb.getVertices();
       const edges = flowDb.getEdges();
@@ -62,10 +62,10 @@ describe('when using mermaid and ', function () {
         },
       };
 
-      flowRenderer.addEdges(edges, mockG, diag);
+      await flowRenderer.addEdges(edges, mockG, diag);
     });
 
-    it('should handle edges with styles defined', () => {
+    it('should handle edges with styles defined', async () => {
       parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;');
       flowDb.getVertices();
       const edges = flowDb.getEdges();
@@ -79,9 +79,9 @@ describe('when using mermaid and ', function () {
         },
       };
 
-      flowRenderer.addEdges(edges, mockG, diag);
+      await flowRenderer.addEdges(edges, mockG, diag);
     });
-    it('should handle edges with interpolation defined', () => {
+    it('should handle edges with interpolation defined', async () => {
       parser.parse('graph TD;A---B; linkStyle 0 interpolate basis');
       flowDb.getVertices();
       const edges = flowDb.getEdges();
@@ -95,9 +95,9 @@ describe('when using mermaid and ', function () {
         },
       };
 
-      flowRenderer.addEdges(edges, mockG, diag);
+      await flowRenderer.addEdges(edges, mockG, diag);
     });
-    it('should handle edges with text and styles defined', () => {
+    it('should handle edges with text and styles defined', async () => {
       parser.parse('graph TD;A---|the text|B; linkStyle 0 stroke:val1,stroke-width:val2;');
       flowDb.getVertices();
       const edges = flowDb.getEdges();
@@ -112,10 +112,10 @@ describe('when using mermaid and ', function () {
         },
       };
 
-      flowRenderer.addEdges(edges, mockG, diag);
+      await flowRenderer.addEdges(edges, mockG, diag);
     });
 
-    it('should set fill to "none" by default when handling edges', () => {
+    it('should set fill to "none" by default when handling edges', async () => {
       parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;');
       flowDb.getVertices();
       const edges = flowDb.getEdges();
@@ -129,10 +129,10 @@ describe('when using mermaid and ', function () {
         },
       };
 
-      flowRenderer.addEdges(edges, mockG, diag);
+      await flowRenderer.addEdges(edges, mockG, diag);
     });
 
-    it('should not set fill to none if fill is set in linkStyle', () => {
+    it('should not set fill to none if fill is set in linkStyle', async () => {
       parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2,fill:blue;');
       flowDb.getVertices();
       const edges = flowDb.getEdges();
@@ -145,7 +145,7 @@ describe('when using mermaid and ', function () {
         },
       };
 
-      flowRenderer.addEdges(edges, mockG, diag);
+      await flowRenderer.addEdges(edges, mockG, diag);
     });
   });
 });

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Packet diagram demo</h1>
+
+    <div class="diagrams">
+      <pre class="mermaid">
+      packet-beta
+        0-15: "Source Port"
+        16-31: "Destination Port"
+        32-63: "Sequence Number"
+        64-95: "Acknowledgment Number"
+        96-99: "Data Offset"
+        100-105: "Reserved"
+        106: "URG"
+        107: "ACK"
+        108: "PSH"
+        109: "RST"
+        110: "SYN"
+        111: "FIN"
+        112-127: "Window"
+        128-143: "Checksum"
+        144-159: "Urgent Pointer"
+        160-191: "(Options and Padding)"
+        192-223: "data"
+    </pre
+      >
+
+      <pre class="mermaid">
+      ---
+      config:
+        packet:
+          showBits: false
+      ---
+      packet-beta
+        0-15: "Source Port"
+        16-31: "Destination Port"
+        32-63: "Sequence Number"
+        64-95: "Acknowledgment Number"
+        96-99: "Data Offset"
+        100-105: "Reserved"
+        106: "URG"
+        107: "ACK"
+        108: "PSH"
+        109: "RST"
+        110: "SYN"
+        111: "FIN"
+        112-127: "Window"
+        128-143: "Checksum"
+        144-159: "Urgent Pointer"
+        160-191: "(Options and Padding)"
+        192-223: "data"
+    </pre
+      >
+
+      <pre class="mermaid">
+      ---
+      config:
+        theme: forest
+      ---
+      packet-beta
+        title Forest theme
+        0-15: "Source Port"
+        16-31: "Destination Port"
+        32-63: "Sequence Number"
+        64-95: "Acknowledgment Number"
+        96-99: "Data Offset"
+        100-105: "Reserved"
+        106: "URG"
+        107: "ACK"
+        108: "PSH"
+        109: "RST"
+        110: "SYN"
+        111: "FIN"
+        112-127: "Window"
+        128-143: "Checksum"
+        144-159: "Urgent Pointer"
+        160-191: "(Options and Padding)"
+        192-223: "data"
+    </pre
+      >
+
+      <pre class="mermaid" style="background-color: black">
+      ---
+      config:
+        theme: dark
+      ---
+      packet-beta
+        title Dark theme
+        0-15: "Source Port"
+        16-31: "Destination Port"
+        32-63: "Sequence Number"
+        64-95: "Acknowledgment Number"
+        96-99: "Data Offset"
+        100-105: "Reserved"
+        106: "URG"
+        107: "ACK"
+        108: "PSH"
+        109: "RST"
+        110: "SYN"
+        111: "FIN"
+        112-127: "Window"
+        128-143: "Checksum"
+        144-159: "Urgent Pointer"
+        160-191: "(Options and Padding)"
+        192-223: "data"
+    </pre
+      >
+    </div>
+    <script type="module">
+      import mermaid from '/mermaid.esm.mjs';
+      mermaid.initialize({
+        logLevel: 3,
+        securityLevel: 'loose',
+      });
+    </script>
+
+    <style>
+      .diagrams {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      pre {
+        width: 45vw;
+        padding: 2em;
+      }
+    </style>
+  </body>
+</html>
