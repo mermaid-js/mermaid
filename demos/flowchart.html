@@ -1591,6 +1591,33 @@
     </pre>
     <hr />
 
+    <pre class="mermaid">
+      ---
+      title: Subgraph nodeSpacing and rankSpacing example
+      config:
+        flowchart:
+          nodeSpacing: 1
+          rankSpacing: 1
+      ---
+
+      flowchart LR
+      
+      X --> Y
+      
+      subgraph X
+        direction LR
+        A
+        C
+      end
+      
+      subgraph Y
+        direction LR
+        B
+        D
+      end
+    </pre>
+    <hr />
+
     <h1 id="link-clicked">Anchor for "link-clicked" test</h1>
 
     <script type="module">
