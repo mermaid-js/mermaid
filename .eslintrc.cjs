@@ -14,7 +14,7 @@ module.exports = {
     },
     tsconfigRootDir: __dirname,
     sourceType: 'module',
-    ecmaVersion: 2020,
+    ecmaVersion: 2022,
     allowAutomaticSingleRunInference: true,
     project: ['./tsconfig.eslint.json', './packages/*/tsconfig.json'],
     parser: '@typescript-eslint/parser',
