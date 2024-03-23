@@ -42,16 +42,16 @@ appearance by doing the following:
 sequenceDiagram
     participant Alice
     participant Bob
-    Alice->>Bob: Hi Bob
     Bob->>Alice: Hi Alice
+    Alice->>Bob: Hi Bob
 ```
 
 ```mermaid
 sequenceDiagram
     participant Alice
     participant Bob
-    Alice->>Bob: Hi Bob
     Bob->>Alice: Hi Alice
+    Alice->>Bob: Hi Bob
 ```
 
 ### Actors
