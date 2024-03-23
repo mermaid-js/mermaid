@@ -243,6 +243,9 @@ properties:
   fontSize:
     type: number
     default: 16
+  markdownAutoWrap:
+    type: boolean
+    default: true
   suppressErrorRendering:
     type: boolean
     default: false

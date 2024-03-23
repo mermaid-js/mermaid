@@ -904,6 +904,18 @@ end
         );
       });
     });
+
+    it('should not auto wrap when markdownAutoWrap is false', () => {
+      imgSnapshotTest(
+        `flowchart TD
+    angular_velocity["\`**angular_velocity**
+      *angular_displacement / duration*
+      [rad/s, 1/s]
+      {vector}\`"]
+    frequency["frequency\n(1 / period_duration)\n[Hz, 1/s]"]`,
+        { markdownAutoWrap: false }
+      );
+    });
   });
   describe('Subgraph title margins', () => {
     it('Should render subgraphs with title margins set (LR)', () => {
