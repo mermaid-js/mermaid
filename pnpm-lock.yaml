@@ -9,7 +9,7 @@ patchedDependencies:
     hash: ptwxhyirnys2z5yt6vr2mafuxi
     path: patches/cytoscape@3.28.1.patch
   lodash-es@4.17.21:
-    hash: 7yahbriyrg2v3fa64fwe6gectm
+    hash: ydmcafcp526qosq3djhzm4m6uy
     path: patches/lodash-es@4.17.21.patch
 
 importers:
@@ -243,7 +243,7 @@ importers:
         version: 2.1.0
       lodash-es:
         specifier: ^4.17.21
-        version: 4.17.21(patch_hash=7yahbriyrg2v3fa64fwe6gectm)
+        version: 4.17.21(patch_hash=ydmcafcp526qosq3djhzm4m6uy)
       mdast-util-from-markdown:
         specifier: ^2.0.0
         version: 2.0.0
@@ -491,7 +491,7 @@ importers:
         version: 1.1.2
       unocss:
         specifier: ^0.58.6
-        version: 0.58.6(postcss@8.4.35)(rollup@2.79.1)(vite@4.5.2)
+        version: 0.58.6(postcss@8.4.38)(rollup@2.79.1)(vite@4.5.2)
       unplugin-vue-components:
         specifier: ^0.26.0
         version: 0.26.0(rollup@2.79.1)(vue@3.4.21)
@@ -503,7 +503,7 @@ importers:
         version: 0.19.7(vite@4.5.2)(workbox-build@7.0.0)(workbox-window@7.0.0)
       vitepress:
         specifier: 1.0.0-rc.45
-        version: 1.0.0-rc.45(@algolia/client-search@4.22.1)(@types/node@20.11.30)(postcss@8.4.35)(search-insights@2.13.0)(typescript@5.4.3)
+        version: 1.0.0-rc.45(@algolia/client-search@4.22.1)(@types/node@20.11.30)(postcss@8.4.38)(search-insights@2.13.0)(typescript@5.4.3)
       workbox-window:
         specifier: ^7.0.0
         version: 7.0.0
@@ -2476,13 +2476,13 @@ packages:
     dependencies:
       '@chevrotain/gast': 11.0.3
       '@chevrotain/types': 11.0.3
-      lodash-es: 4.17.21(patch_hash=7yahbriyrg2v3fa64fwe6gectm)
+      lodash-es: 4.17.21(patch_hash=ydmcafcp526qosq3djhzm4m6uy)
 
   /@chevrotain/gast@11.0.3:
     resolution: {integrity: sha512-+qNfcoNk70PyS/uxmj3li5NiECO+2YKZZQMbmjTqRI3Qchu8Hig/Q9vgkHpI3alNjr7M+a2St5pw5w5F6NL5/Q==}
     dependencies:
       '@chevrotain/types': 11.0.3
-      lodash-es: 4.17.21(patch_hash=7yahbriyrg2v3fa64fwe6gectm)
+      lodash-es: 4.17.21(patch_hash=ydmcafcp526qosq3djhzm4m6uy)
 
   /@chevrotain/regexp-to-ast@11.0.3:
     resolution: {integrity: sha512-1fMHaBZxLFvWI067AVbGJav1eRY7N8DDvYCTwGBiE/ytKBgP8azTdgyrKyWZ9Mfh09eHWb5PgTSO8wi7U824RA==}
@@ -5337,7 +5337,7 @@ packages:
       sirv: 2.0.4
     dev: true
 
-  /@unocss/postcss@0.58.6(postcss@8.4.35):
+  /@unocss/postcss@0.58.6(postcss@8.4.38):
     resolution: {integrity: sha512-jTwu7llhRm7luscsk0JekCeo6RS2W98CXiCJRE1H6IDQnjGQQ/9uRAqW4wuLsv7OQ1ThF8m9NKEj0wFJv7ePNg==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -5349,7 +5349,7 @@ packages:
       css-tree: 2.3.1
       fast-glob: 3.3.2
       magic-string: 0.30.8
-      postcss: 8.4.35
+      postcss: 8.4.38
     dev: true
 
   /@unocss/preset-attributify@0.58.6:
@@ -6950,7 +6950,7 @@ packages:
       chevrotain: ^11.0.0
     dependencies:
       chevrotain: 11.0.3
-      lodash-es: 4.17.21(patch_hash=7yahbriyrg2v3fa64fwe6gectm)
+      lodash-es: 4.17.21(patch_hash=ydmcafcp526qosq3djhzm4m6uy)
 
   /chevrotain@11.0.3:
     resolution: {integrity: sha512-ci2iJH6LeIkvP9eJW6gpueU8cnZhv85ELY8w8WiFtNjMHA5ad6pQLaJo9mEly/9qUyCpvqX8/POVUTf18/HFdw==}
@@ -6960,7 +6960,7 @@ packages:
       '@chevrotain/regexp-to-ast': 11.0.3
       '@chevrotain/types': 11.0.3
       '@chevrotain/utils': 11.0.3
-      lodash-es: 4.17.21(patch_hash=7yahbriyrg2v3fa64fwe6gectm)
+      lodash-es: 4.17.21(patch_hash=ydmcafcp526qosq3djhzm4m6uy)
 
   /chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
@@ -7980,7 +7980,7 @@ packages:
     resolution: {integrity: sha512-qTCQmEhcynucuaZgY5/+ti3X/rnszKZhEQH/ZdWdtP1tA/y3VoHJzcVrO9pjjJCNpigfscAtoUB5ONcd2wNn0A==}
     dependencies:
       d3: 7.9.0
-      lodash-es: 4.17.21(patch_hash=7yahbriyrg2v3fa64fwe6gectm)
+      lodash-es: 4.17.21(patch_hash=ydmcafcp526qosq3djhzm4m6uy)
     dev: false
 
   /dashdash@1.14.1:
@@ -11742,7 +11742,7 @@ packages:
       p-locate: 6.0.0
     dev: true
 
-  /lodash-es@4.17.21(patch_hash=7yahbriyrg2v3fa64fwe6gectm):
+  /lodash-es@4.17.21(patch_hash=ydmcafcp526qosq3djhzm4m6uy):
     resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
     patched: true
 
@@ -15879,7 +15879,7 @@ packages:
     engines: {node: '>= 10.0.0'}
     dev: true
 
-  /unocss@0.58.6(postcss@8.4.35)(rollup@2.79.1)(vite@4.5.2):
+  /unocss@0.58.6(postcss@8.4.38)(rollup@2.79.1)(vite@4.5.2):
     resolution: {integrity: sha512-HBstDtC6KKD5yCYh5hHpPdHGZai0B/iLlDwkOIK+xfQYrvl8tNBvKfRz3xgiaI5MJ+fLmEOxbfXQIjleU1A0iA==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -15895,7 +15895,7 @@ packages:
       '@unocss/cli': 0.58.6(rollup@2.79.1)
       '@unocss/core': 0.58.6
       '@unocss/extractor-arbitrary-variants': 0.58.6
-      '@unocss/postcss': 0.58.6(postcss@8.4.35)
+      '@unocss/postcss': 0.58.6(postcss@8.4.38)
       '@unocss/preset-attributify': 0.58.6
       '@unocss/preset-icons': 0.58.6
       '@unocss/preset-mini': 0.58.6
@@ -16269,7 +16269,7 @@ packages:
       vue: 3.4.21(typescript@5.4.3)
     dev: true
 
-  /vitepress@1.0.0-rc.45(@algolia/client-search@4.22.1)(@types/node@20.11.30)(postcss@8.4.35)(search-insights@2.13.0)(typescript@5.4.3):
+  /vitepress@1.0.0-rc.45(@algolia/client-search@4.22.1)(@types/node@20.11.30)(postcss@8.4.38)(search-insights@2.13.0)(typescript@5.4.3):
     resolution: {integrity: sha512-/OiYsu5UKpQKA2c0BAZkfyywjfauDjvXyv6Mo4Ra57m5n4Bxg1HgUGoth1CLH2vwUbR/BHvDA9zOM0RDvgeSVQ==}
     hasBin: true
     peerDependencies:
@@ -16293,7 +16293,7 @@ packages:
       focus-trap: 7.5.4
       mark.js: 8.11.1
       minisearch: 6.3.0
-      postcss: 8.4.35
+      postcss: 8.4.38
       shiki: 1.1.7
       vite: 5.1.5(@types/node@20.11.30)
       vue: 3.4.21(typescript@5.4.3)

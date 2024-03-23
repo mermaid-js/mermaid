@@ -1,5 +1,5 @@
 diff --git a/_root.js b/_root.js
-index 281f81280ec9ea137b644ba60b9f5c6ccede4f88..ceb914c0fa8db7d7064d2a6b79f065ec59c826e9 100644
+index 281f81280ec9ea137b644ba60b9f5c6ccede4f88..4f97e318c0fb9b3f43962f9351f0c3d06dec29c8 100644
 --- a/_root.js
 +++ b/_root.js
 @@ -3,7 +3,22 @@ import freeGlobal from './_freeGlobal.js';
@@ -10,7 +10,7 @@ index 281f81280ec9ea137b644ba60b9f5c6ccede4f88..ceb914c0fa8db7d7064d2a6b79f065ec
 +var root = freeGlobal || freeSelf || null;
 +if (root == null) {
 +  (function() {
-+    if (typeof globalThis === 'object') return;
++    if (typeof globalThis === 'object') return root = globalThis;
 +    Object.defineProperty(Object.prototype, '__magic__', {
 +      get: function() {
 +        return this;
