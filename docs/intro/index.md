@@ -88,7 +88,7 @@ sequenceDiagram
     participant Alice
     participant Bob
     Alice->>John: Hello John, how are you?
-    loop Healthcheck
+    loop HealthCheck
         John->>John: Fight against hypochondria
     end
     Note right of John: Rational thoughts <br/>prevail!
@@ -102,7 +102,7 @@ sequenceDiagram
     participant Alice
     participant Bob
     Alice->>John: Hello John, how are you?
-    loop Healthcheck
+    loop HealthCheck
         John->>John: Fight against hypochondria
     end
     Note right of John: Rational thoughts <br/>prevail!
@@ -317,7 +317,7 @@ To select a version:
 
 Replace `<version>` with the desired version number.
 
-Latest Version: <https://cdn.jsdelivr.net/npm/mermaid@10>
+Latest Version: <https://cdn.jsdelivr.net/npm/mermaid@11>
 
 ## Deploying Mermaid
 
@@ -335,7 +335,7 @@ To Deploy Mermaid:
 
 ```html
 <script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad: true });
 </script>
 ```

@@ -30,8 +30,8 @@ appearance by doing the following:
 sequenceDiagram
     participant Alice
     participant Bob
-    Alice->>Bob: Hi Bob
     Bob->>Alice: Hi Alice
+    Alice->>Bob: Hi Bob
 ```
 
 ### Actors
@@ -129,8 +129,8 @@ end
     end
     A->>J: Hello John, how are you?
     J->>A: Great!
-    A->>B: Hello Bob, how is Charly?
-    B->>C: Hello Charly, how are you?
+    A->>B: Hello Bob, how is Charley?
+    B->>C: Hello Charley, how are you?
 ```
 
 ## Messages
@@ -457,7 +457,7 @@ It can also be turned on via the diagram code as in the diagram:
 sequenceDiagram
     autonumber
     Alice->>John: Hello John, how are you?
-    loop Healthcheck
+    loop HealthCheck
         John->>John: Fight against hypochondria
     end
     Note right of John: Rational thoughts!

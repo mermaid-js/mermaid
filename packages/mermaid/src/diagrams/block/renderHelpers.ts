@@ -1,15 +1,10 @@
-import { getStylesFromArray } from '../../utils.js';
-import { insertNode, positionNode } from '../../dagre-wrapper/nodes.js';
-import { insertEdge, insertEdgeLabel, positionEdgeLabel } from '../../dagre-wrapper/edges.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { getConfig } from '../../config.js';
-import type { ContainerElement } from 'd3';
-import type { Block } from './blockTypes.js';
+import { insertEdge, insertEdgeLabel, positionEdgeLabel } from '../../dagre-wrapper/edges.js';
+import { insertNode, positionNode } from '../../dagre-wrapper/nodes.js';
+import { getStylesFromArray } from '../../utils.js';
 import type { BlockDB } from './blockDB.js';
-
-interface Node {
-  classes: string;
-}
+import type { Block } from './blockTypes.js';
 
 function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
   const vertex = block;
