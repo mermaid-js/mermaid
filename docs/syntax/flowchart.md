@@ -642,9 +642,11 @@ Numbers given are base 10, so `#` can be encoded as `#35;`. It is also supported
 
 ## Subgraphs
 
-    subgraph title
-        graph definition
-    end
+```
+subgraph title
+    graph definition
+end
+```
 
 An example below:
 
@@ -865,8 +867,10 @@ It is possible to bind a click event to a node, the click can lead to either a j
 > **Note**
 > This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
 
-    click nodeId callback
-    click nodeId call callback()
+```
+click nodeId callback
+click nodeId call callback()
+```
 
 - nodeId is the id of the node
 - callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.
@@ -989,11 +993,15 @@ have no ids in the same way as nodes, some other way of deciding what style the 
 Instead of ids, the order number of when the link was defined in the graph is used, or use default to apply to all links.
 In the example below the style defined in the linkStyle statement will belong to the fourth link in the graph:
 
-    linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
+```
+linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
+```
 
 It is also possible to add style to multiple links in a single statement, by separating link numbers with commas:
 
-    linkStyle 1,2,7 color:blue;
+```
+linkStyle 1,2,7 color:blue;
+```
 
 ### Styling line curves
 
@@ -1003,8 +1011,10 @@ Available curve styles include `basis`, `bumpX`, `bumpY`, `cardinal`, `catmullRo
 
 In this example, a left-to-right graph uses the `stepBefore` curve style:
 
-    %%{ init: { 'flowchart': { 'curve': 'stepBefore' } } }%%
-    graph LR
+```
+%%{ init: { 'flowchart': { 'curve': 'stepBefore' } } }%%
+graph LR
+```
 
 For a full list of available curves, including an explanation of custom curves, refer to
 the [Shapes](https://github.com/d3/d3-shape/blob/main/README.md#curves) documentation in the
@@ -1035,19 +1045,27 @@ should have a different look.
 
 A class definition looks like the example below:
 
-        classDef className fill:#f9f,stroke:#333,stroke-width:4px;
+```
+    classDef className fill:#f9f,stroke:#333,stroke-width:4px;
+```
 
 Also, it is possible to define style to multiple classes in one statement:
 
-        classDef firstClassName,secondClassName font-size:12pt;
+```
+    classDef firstClassName,secondClassName font-size:12pt;
+```
 
 Attachment of a class to a node is done as per below:
 
-        class nodeId1 className;
+```
+    class nodeId1 className;
+```
 
 It is also possible to attach a class to a list of nodes in one statement:
 
-        class nodeId1,nodeId2 className;
+```
+    class nodeId1,nodeId2 className;
+```
 
 A shorter form of adding a class is to attach the classname to the node using the `:::`operator as per below:
 
@@ -1118,7 +1136,9 @@ flowchart LR
 
 If a class is named default it will be assigned to all classes without specific class definitions.
 
-        classDef default fill:#f9f,stroke:#333,stroke-width:4px;
+```
+    classDef default fill:#f9f,stroke:#333,stroke-width:4px;
+```
 
 ## Basic support for fontawesome
 
@@ -1191,7 +1211,9 @@ Starting with Mermaid version 9.4, you can use an alternate renderer named elk. 
 The _elk_ renderer is an experimental feature.
 You can change the renderer to elk by adding this directive:
 
-    %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
+```
+%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
+```
 
 > **Note**
 > Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
