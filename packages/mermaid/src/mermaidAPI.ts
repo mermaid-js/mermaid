@@ -370,6 +370,16 @@ const render = async function (
   const enclosingDivID = 'd' + id;
   const enclosingDivID_selector = '#' + enclosingDivID;
 
+  const removeTempElements = () => {
+    // -------------------------------------------------------------------------------
+    // Remove the temporary HTML element if appropriate
+    const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
+    const node = select(tmpElementSelector).node();
+    if (node && 'remove' in node) {
+      node.remove();
+    }
+  };
+
   let root: any = select('body');
 
   const isSandboxed = config.securityLevel === SECURITY_LVL_SANDBOX;
@@ -426,6 +436,10 @@ const render = async function (
   try {
     diag = await Diagram.fromText(text, { title: processed.title });
   } catch (error) {
+    if (config.suppressErrorRendering) {
+      removeTempElements();
+      throw error;
+    }
     diag = await Diagram.fromText('error');
     parseEncounteredException = error;
   }
@@ -453,7 +467,11 @@ const render = async function (
   try {
     await diag.renderer.draw(text, id, version, diag);
   } catch (e) {
-    errorRenderer.draw(text, id, version);
+    if (config.suppressErrorRendering) {
+      removeTempElements();
+    } else {
+      errorRenderer.draw(text, id, version);
+    }
     throw e;
   }
 
@@ -489,13 +507,7 @@ const render = async function (
     throw parseEncounteredException;
   }
 
-  // -------------------------------------------------------------------------------
-  // Remove the temporary HTML element if appropriate
-  const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
-  const node = select(tmpElementSelector).node();
-  if (node && 'remove' in node) {
-    node.remove();
-  }
+  removeTempElements();
 
   return {
     diagramType,
@@ -568,6 +580,7 @@ function addA11yInfo(
  *     securityLevel: 'strict',
  *     startOnLoad: true,
  *     arrowMarkerAbsolute: false,
+ *     suppressErrorRendering: false,
  *
  *     er: {
  *       diagramPadding: 20,

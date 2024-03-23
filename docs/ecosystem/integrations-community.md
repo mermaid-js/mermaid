@@ -103,6 +103,8 @@ Content Management Systems/Enterprise Content Management
 
 - [ApostropheCMS](https://apostrophecms.com/)
   - [Extension for Mermaid.js](https://github.com/BoDonkey/mermaid-extension)
+- [Drupal](https://drupal.org/)
+  - [Mermaid Diagram Field module](https://www.drupal.org/project/mermaid_diagram_field)
 - [Grav CMS](https://getgrav.org/)
   - [Mermaid Diagrams Plugin](https://github.com/DanielFlaum/grav-plugin-mermaid-diagrams)
   - [GitLab Markdown Adapter](https://github.com/Goutte/grav-plugin-gitlab-markdown-adapter)
@@ -124,7 +126,7 @@ Communication tools and platforms
 - [phpBB](https://phpbb.com)
   - [phpbb-ext-mermaid](https://github.com/AlfredoRamos/phpbb-ext-mermaid)
 - [Slack](https://slack.com)
-  - [Mermaid Preview](https://github.com/JackuB/mermaid-for-slack)
+  - [Mermaid Preview](https://mermaid-preview.com)
 
 ### Wikis
 

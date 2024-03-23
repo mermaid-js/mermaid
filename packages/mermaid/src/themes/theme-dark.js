@@ -109,7 +109,7 @@ class Theme {
     this.actorBorder = this.border1;
     this.actorBkg = this.mainBkg;
     this.actorTextColor = this.mainContrastColor;
-    this.actorLineColor = this.mainContrastColor;
+    this.actorLineColor = this.actorBorder;
     this.signalColor = this.mainContrastColor;
     this.signalTextColor = this.mainContrastColor;
     this.labelBoxBkgColor = this.actorBkg;

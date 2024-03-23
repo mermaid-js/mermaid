@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/config/math.md](../../packages/mermaid/src/docs/config/math.md).
 
-# Math Configuration (v\<MERMAID_RELEASE_VERSION>+)
+# Math Configuration (v10.9.0+)
 
 Mermaid supports rendering mathematical expressions through the [KaTeX](https://katex.org/) typesetter.
 
@@ -61,7 +61,7 @@ By default, MathML is used for rendering mathematical expressions. If you have u
 Example with legacy mode enabled (the latest version of KaTeX's stylesheet can be found on their [docs](https://katex.org/docs/browser.html)):
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <!-- KaTeX requires the use of the HTML5 doctype. Without it, KaTeX may not render properly -->
 <html lang="en">
   <head>

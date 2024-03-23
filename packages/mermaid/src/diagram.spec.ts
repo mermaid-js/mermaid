@@ -65,23 +65,23 @@ describe('diagram detection', () => {
 
   test('should throw the right error for incorrect diagram', async () => {
     await expect(Diagram.fromText('graph TD; A-->')).rejects.toThrowErrorMatchingInlineSnapshot(`
-      "Parse error on line 2:
+      [Error: Parse error on line 2:
       graph TD; A-->
       --------------^
-      Expecting 'AMP', 'COLON', 'PIPE', 'TESTSTR', 'DOWN', 'DEFAULT', 'NUM', 'COMMA', 'NODE_STRING', 'BRKT', 'MINUS', 'MULT', 'UNICODE_TEXT', got 'EOF'"
+      Expecting 'AMP', 'COLON', 'PIPE', 'TESTSTR', 'DOWN', 'DEFAULT', 'NUM', 'COMMA', 'NODE_STRING', 'BRKT', 'MINUS', 'MULT', 'UNICODE_TEXT', got 'EOF']
     `);
     await expect(Diagram.fromText('sequenceDiagram; A-->B')).rejects
       .toThrowErrorMatchingInlineSnapshot(`
-"Parse error on line 1:
-...quenceDiagram; A-->B
------------------------^
-Expecting 'TXT', got 'NEWLINE'"
-		`);
+      [Error: Parse error on line 1:
+      ...quenceDiagram; A-->B
+      -----------------------^
+      Expecting 'TXT', got 'NEWLINE']
+    `);
   });
 
   test('should throw the right error for unregistered diagrams', async () => {
     await expect(Diagram.fromText('thor TD; A-->B')).rejects.toThrowErrorMatchingInlineSnapshot(
-      '"No diagram type detected matching given configuration for text: thor TD; A-->B"'
+      `[UnknownDiagramError: No diagram type detected matching given configuration for text: thor TD; A-->B]`
     );
   });
 
