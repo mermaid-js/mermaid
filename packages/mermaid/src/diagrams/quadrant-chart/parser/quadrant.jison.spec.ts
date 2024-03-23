@@ -98,7 +98,10 @@ describe('Testing quadrantChart jison file', () => {
     str =
       'quadrantChart\n       Y-AxIs         "Urgent(* +=[❤"     -->        "Not Urgent (* +=[❤"\n    ';
     expect(parserFnConstructor(str)).not.toThrow();
-    expect(mockDB.setYAxisBottomText).toHaveBeenCalledWith({ text: 'Urgent(* +=[❤', type: 'text' });
+    expect(mockDB.setYAxisBottomText).toHaveBeenCalledWith({
+      text: 'Urgent(* +=[❤',
+      type: 'text',
+    });
     expect(mockDB.setYAxisTopText).toHaveBeenCalledWith({
       text: 'Not Urgent (* +=[❤',
       type: 'text',
@@ -107,7 +110,10 @@ describe('Testing quadrantChart jison file', () => {
     clearMocks();
     str = 'quadrantChart\n       y-AxIs         "Urgent(* +=[❤"';
     expect(parserFnConstructor(str)).not.toThrow();
-    expect(mockDB.setYAxisBottomText).toHaveBeenCalledWith({ text: 'Urgent(* +=[❤', type: 'text' });
+    expect(mockDB.setYAxisBottomText).toHaveBeenCalledWith({
+      text: 'Urgent(* +=[❤',
+      type: 'text',
+    });
     expect(mockDB.setYAxisTopText).not.toHaveBeenCalled();
 
     clearMocks();
@@ -165,7 +171,10 @@ describe('Testing quadrantChart jison file', () => {
     clearMocks();
     str = 'QuadRantChart   \n     QuaDrant-3 "Deligate(* +=[❤"';
     expect(parserFnConstructor(str)).not.toThrow();
-    expect(mockDB.setQuadrant3Text).toHaveBeenCalledWith({ text: 'Deligate(* +=[❤', type: 'text' });
+    expect(mockDB.setQuadrant3Text).toHaveBeenCalledWith({
+      text: 'Deligate(* +=[❤',
+      type: 'text',
+    });
   });
 
   it('should be able to parse quadrant4 text', () => {

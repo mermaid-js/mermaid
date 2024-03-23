@@ -44,6 +44,7 @@ cherry\-pick(?=\s|$)                    return 'CHERRY_PICK';
 checkout(?=\s|$)                        return 'CHECKOUT';
 "LR"                                    return 'DIR';
 "TB"                                    return 'DIR';
+"BT"                                    return 'DIR';
 ":"                                     return ':';
 "^"                                     return 'CARET'
 "options"\r?\n                          this.begin("options"); //
