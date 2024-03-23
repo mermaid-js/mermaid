@@ -23,7 +23,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:json/recommended',
-    'plugin:markdown/recommended',
+    'plugin:markdown/recommended-legacy',
     'plugin:@cspell/recommended',
     'prettier',
   ],
