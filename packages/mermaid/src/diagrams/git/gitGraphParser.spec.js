@@ -54,7 +54,7 @@ describe('when parsing a gitGraph', function () {
     expect(Object.keys(parser.yy.getBranches()).length).toBe(1);
   });
 
-  it('should handle set direction', function () {
+  it('should handle set direction top to bottom', function () {
     const str = 'gitGraph TB:\n' + 'commit\n';
 
     parser.parse(str);
@@ -63,6 +63,18 @@ describe('when parsing a gitGraph', function () {
     expect(Object.keys(commits).length).toBe(1);
     expect(parser.yy.getCurrentBranch()).toBe('main');
     expect(parser.yy.getDirection()).toBe('TB');
+    expect(Object.keys(parser.yy.getBranches()).length).toBe(1);
+  });
+
+  it('should handle set direction bottom to top', function () {
+    const str = 'gitGraph BT:\n' + 'commit\n';
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+
+    expect(Object.keys(commits).length).toBe(1);
+    expect(parser.yy.getCurrentBranch()).toBe('main');
+    expect(parser.yy.getDirection()).toBe('BT');
     expect(Object.keys(parser.yy.getBranches()).length).toBe(1);
   });
 

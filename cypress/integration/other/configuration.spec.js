@@ -118,8 +118,8 @@ describe('Configuration', () => {
     it('should not taint the initial configuration when using multiple directives', () => {
       const url = 'http://localhost:9000/regression/issue-1874.html';
       cy.visit(url);
-
-      cy.get('svg');
+      cy.window().should('have.property', 'rendered', true);
+      cy.get('svg').should('be.visible');
       cy.matchImageSnapshot(
         'configuration.spec-should-not-taint-initial-configuration-when-using-multiple-directives'
       );
