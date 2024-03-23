@@ -17,7 +17,7 @@ import { compile, serialize, stringify } from 'stylis';
 import { version } from '../package.json';
 import * as configApi from './config.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
-import { Diagram, getDiagramFromText as getDiagramFromTextInternal } from './Diagram.js';
+import { Diagram } from './Diagram.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
 import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
@@ -57,9 +57,19 @@ const DOMPURIFY_TAGS = ['foreignobject'];
 const DOMPURIFY_ATTR = ['dominant-baseline'];
 
 export interface ParseOptions {
+  /**
+   * If `true`, parse will return `false` instead of throwing error when the diagram is invalid.
+   * The `parseError` function will not be called.
+   */
   suppressErrors?: boolean;
 }
 
+export interface ParseResult {
+  /**
+   * The diagram type, e.g. 'flowchart', 'sequence', etc.
+   */
+  diagramType: string;
+}
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
 export type D3Element = any;
 
@@ -68,6 +78,10 @@ export interface RenderResult {
    * The svg code for the rendered graph.
    */
   svg: string;
+  /**
+   * The diagram type, e.g. 'flowchart', 'sequence', etc.
+   */
+  diagramType: string;
   /**
    * Bind function to be called after the svg has been inserted into the DOM.
    * This is necessary for adding event listeners to the elements in the svg.
@@ -90,29 +104,29 @@ function processAndSetConfigs(text: string) {
 /**
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
- * @param parseOptions - Options for parsing.
- * @returns true if the diagram is valid, false otherwise if parseOptions.suppressErrors is true.
- * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false.
+ * @param parseOptions - Options for parsing. @see {@link ParseOptions}
+ * @returns An object with the `diagramType` set to type of the diagram if valid. Otherwise `false` if parseOptions.suppressErrors is `true`.
+ * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false or not set.
  */
-
-async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean> {
+async function parse(
+  text: string,
+  parseOptions: ParseOptions & { suppressErrors: true },
+): Promise<ParseResult | false>;
+async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult>;
+async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult | false> {
   addDiagrams();
-
-  text = processAndSetConfigs(text).code;
-
   try {
-    await getDiagramFromText(text);
+    const { code } = processAndSetConfigs(text);
+    const diagram = await getDiagramFromText(code);
+    return { diagramType: diagram.type };
   } catch (error) {
     if (parseOptions?.suppressErrors) {
       return false;
     }
     throw error;
   }
-  return true;
 }
 
-// append !important; to each cssClass followed by a final !important, all enclosed in { }
-//
 /**
  * Create a CSS style that starts with the given class name, then the element,
  * with an enclosing block that has each of the cssClasses followed by !important;
@@ -124,7 +138,7 @@ async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean
 export const cssImportantStyles = (
   cssClass: string,
   element: string,
-  cssClasses: string[] = []
+  cssClasses: string[] = [],
 ): string => {
   return `\n.${cssClass} ${element} { ${cssClasses.join(' !important; ')} !important; }`;
 };
@@ -138,7 +152,7 @@ export const cssImportantStyles = (
  */
 export const createCssStyles = (
   config: MermaidConfig,
-  classDefs: Record<string, DiagramStyleClassDef> | null | undefined = {}
+  classDefs: Record<string, DiagramStyleClassDef> | null | undefined = {},
 ): string => {
   let cssStyles = '';
 
@@ -187,7 +201,7 @@ export const createUserStyles = (
   config: MermaidConfig,
   graphType: string,
   classDefs: Record<string, DiagramStyleClassDef> | undefined,
-  svgId: string
+  svgId: string,
 ): string => {
   const userCSSstyles = createCssStyles(config, classDefs);
   const allStyles = getStyles(graphType, userCSSstyles, config.themeVariables);
@@ -209,7 +223,7 @@ export const createUserStyles = (
 export const cleanUpSvgCode = (
   svgCode = '',
   inSandboxMode: boolean,
-  useArrowMarkerUrls: boolean
+  useArrowMarkerUrls: boolean,
 ): string => {
   let cleanedUpSvg = svgCode;
 
@@ -217,7 +231,7 @@ export const cleanUpSvgCode = (
   if (!useArrowMarkerUrls && !inSandboxMode) {
     cleanedUpSvg = cleanedUpSvg.replace(
       /marker-end="url\([\d+./:=?A-Za-z-]*?#/g,
-      'marker-end="url(#'
+      'marker-end="url(#',
     );
   }
 
@@ -265,7 +279,7 @@ export const appendDivSvgG = (
   id: string,
   enclosingDivId: string,
   divStyle?: string,
-  svgXlink?: string
+  svgXlink?: string,
 ): D3Element => {
   const enclosingDiv = parentRoot.append('div');
   enclosingDiv.attr('id', enclosingDivId);
@@ -314,7 +328,7 @@ export const removeExistingElements = (
   doc: Document,
   id: string,
   divId: string,
-  iFrameId: string
+  iFrameId: string,
 ) => {
   // Remove existing SVG element if it exists
   doc.getElementById(id)?.remove();
@@ -333,7 +347,7 @@ export const removeExistingElements = (
 const render = async function (
   id: string,
   text: string,
-  svgContainingElement?: Element
+  svgContainingElement?: Element,
 ): Promise<RenderResult> {
   addDiagrams();
 
@@ -418,13 +432,13 @@ const render = async function (
   let parseEncounteredException;
 
   try {
-    diag = await getDiagramFromText(text, { title: processed.title });
+    diag = await Diagram.fromText(text, { title: processed.title });
   } catch (error) {
     if (config.suppressErrorRendering) {
       removeTempElements();
       throw error;
     }
-    diag = new Diagram('error');
+    diag = await Diagram.fromText('error');
     parseEncounteredException = error;
   }
 
@@ -464,7 +478,6 @@ const render = async function (
   const a11yTitle: string | undefined = diag.db.getAccTitle?.();
   const a11yDescr: string | undefined = diag.db.getAccDescription?.();
   addA11yInfo(diagramType, svgNode, a11yTitle, a11yDescr);
-
   // -------------------------------------------------------------------------------
   // Clean up SVG code
   root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
@@ -495,6 +508,7 @@ const render = async function (
   removeTempElements();
 
   return {
+    diagramType,
     svg: svgCode,
     bindFunctions: diag.db.bindFunctions,
   };
@@ -518,7 +532,7 @@ function initialize(options: MermaidConfig = {}) {
   if (options?.theme && options.theme in theme) {
     // Todo merge with user options
     options.themeVariables = theme[options.theme as keyof typeof theme].getThemeVariables(
-      options.themeVariables
+      options.themeVariables,
     );
   } else if (options) {
     options.themeVariables = theme.default.getThemeVariables(options.themeVariables);
@@ -533,7 +547,7 @@ function initialize(options: MermaidConfig = {}) {
 
 const getDiagramFromText = (text: string, metadata: Pick<DiagramMetadata, 'title'> = {}) => {
   const { code } = preprocessDiagram(text);
-  return getDiagramFromTextInternal(code, metadata);
+  return Diagram.fromText(code, metadata);
 };
 
 /**
@@ -548,7 +562,7 @@ function addA11yInfo(
   diagramType: string,
   svgNode: D3Element,
   a11yTitle?: string,
-  a11yDescr?: string
+  a11yDescr?: string,
 ): void {
   setA11yDiagramInfo(svgNode, diagramType);
   addSVGa11yTitleDescription(svgNode, a11yTitle, a11yDescr, svgNode.attr('id'));

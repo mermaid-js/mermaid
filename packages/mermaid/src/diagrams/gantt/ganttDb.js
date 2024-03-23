@@ -21,6 +21,7 @@ dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);
 dayjs.extend(dayjsAdvancedFormat);
 
+const WEEKEND_START_DAY = { friday: 5, saturday: 6 };
 let dateFormat = '';
 let axisFormat = '';
 let tickInterval = undefined;
@@ -37,6 +38,7 @@ let funs = [];
 let inclusiveEndDates = false;
 let topAxis = false;
 let weekday = 'sunday';
+let weekend = 'saturday';
 
 // The serial order of the task in the script
 let lastOrder = 0;
@@ -63,6 +65,7 @@ export const clear = function () {
   links = {};
   commonClear();
   weekday = 'sunday';
+  weekend = 'saturday';
 };
 
 export const setAxisFormat = function (txt) {
@@ -167,7 +170,11 @@ export const isInvalidDate = function (date, dateFormat, excludes, includes) {
   if (includes.includes(date.format(dateFormat.trim()))) {
     return false;
   }
-  if (date.isoWeekday() >= 6 && excludes.includes('weekends')) {
+  if (
+    excludes.includes('weekends') &&
+    (date.isoWeekday() === WEEKEND_START_DAY[weekend] ||
+      date.isoWeekday() === WEEKEND_START_DAY[weekend] + 1)
+  ) {
     return true;
   }
   if (excludes.includes(date.format('dddd').toLowerCase())) {
@@ -182,6 +189,10 @@ export const setWeekday = function (txt) {
 
 export const getWeekday = function () {
   return weekday;
+};
+
+export const setWeekend = function (startDay) {
+  weekend = startDay;
 };
 
 /**
@@ -256,32 +267,25 @@ const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim();
 
   // Test for after
-  const re = /^after\s+([\d\w- ]+)/;
-  const afterStatement = re.exec(str.trim());
+  const afterRePattern = /^after\s+(?<ids>[\d\w- ]+)/;
+  const afterStatement = afterRePattern.exec(str);
 
   if (afterStatement !== null) {
     // check all after ids and take the latest
-    let latestEndingTask = null;
-    afterStatement[1].split(' ').forEach(function (id) {
+    let latestTask = null;
+    for (const id of afterStatement.groups.ids.split(' ')) {
       let task = findTaskById(id);
-      if (task !== undefined) {
-        if (!latestEndingTask) {
-          latestEndingTask = task;
-        } else {
-          if (task.endTime > latestEndingTask.endTime) {
-            latestEndingTask = task;
-          }
-        }
+      if (task !== undefined && (!latestTask || task.endTime > latestTask.endTime)) {
+        latestTask = task;
       }
-    });
-
-    if (!latestEndingTask) {
-      const dt = new Date();
-      dt.setHours(0, 0, 0, 0);
-      return dt;
-    } else {
-      return latestEndingTask.endTime;
     }
+
+    if (latestTask) {
+      return latestTask.endTime;
+    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
   }
 
   // Check for actual date set
@@ -332,6 +336,7 @@ const getStartDate = function (prevTime, dateFormat, str) {
  * @returns {[value: number, unit: dayjs.ManipulateType]} Arguments to pass to `dayjs.add()`
  */
 const parseDuration = function (str) {
+  // cspell:disable-next-line
   const statement = /^(\d+(?:\.\d+)?)([Mdhmswy]|ms)$/.exec(str.trim());
   if (statement !== null) {
     return [Number.parseFloat(statement[1]), statement[2]];
@@ -343,13 +348,35 @@ const parseDuration = function (str) {
 const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   str = str.trim();
 
-  // Check for actual date
-  let mDate = dayjs(str, dateFormat.trim(), true);
-  if (mDate.isValid()) {
-    if (inclusive) {
-      mDate = mDate.add(1, 'd');
+  // test for until
+  const untilRePattern = /^until\s+(?<ids>[\d\w- ]+)/;
+  const untilStatement = untilRePattern.exec(str);
+
+  if (untilStatement !== null) {
+    // check all until ids and take the earliest
+    let earliestTask = null;
+    for (const id of untilStatement.groups.ids.split(' ')) {
+      let task = findTaskById(id);
+      if (task !== undefined && (!earliestTask || task.startTime < earliestTask.startTime)) {
+        earliestTask = task;
+      }
     }
-    return mDate.toDate();
+
+    if (earliestTask) {
+      return earliestTask.startTime;
+    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+  }
+
+  // check for actual date
+  let parsedDate = dayjs(str, dateFormat.trim(), true);
+  if (parsedDate.isValid()) {
+    if (inclusive) {
+      parsedDate = parsedDate.add(1, 'd');
+    }
+    return parsedDate.toDate();
   }
 
   let endTime = dayjs(prevTime);
@@ -765,6 +792,7 @@ export default {
   isInvalidDate,
   setWeekday,
   getWeekday,
+  setWeekend,
 };
 
 /**

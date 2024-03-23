@@ -1,6 +1,6 @@
+import { defineConfig, MarkdownOptions } from 'vitepress';
 import { version } from '../../../package.json';
 import MermaidExample from './mermaid-markdown-all.js';
-import { defineConfig, MarkdownOptions } from 'vitepress';
 
 const allMarkdownTransformers: MarkdownOptions = {
   // the shiki theme to highlight code blocks
@@ -56,7 +56,7 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/mermaid-js/mermaid' },
       {
         icon: 'discord',
-        link: 'https://discord.gg/wwtabKgp8y',
+        link: 'https://discord.gg/AgrbSrBer3',
       },
       {
         icon: {
@@ -146,13 +146,15 @@ function sidebarSyntax() {
         { text: 'Pie Chart', link: '/syntax/pie' },
         { text: 'Quadrant Chart', link: '/syntax/quadrantChart' },
         { text: 'Requirement Diagram', link: '/syntax/requirementDiagram' },
-        { text: 'Gitgraph (Git) Diagram 🔥', link: '/syntax/gitgraph' },
+        { text: 'Gitgraph (Git) Diagram', link: '/syntax/gitgraph' },
         { text: 'C4 Diagram 🦺⚠️', link: '/syntax/c4' },
-        { text: 'Mindmaps 🔥', link: '/syntax/mindmap' },
-        { text: 'Timeline 🔥', link: '/syntax/timeline' },
-        { text: 'Zenuml 🔥', link: '/syntax/zenuml' },
+        { text: 'Mindmaps', link: '/syntax/mindmap' },
+        { text: 'Timeline', link: '/syntax/timeline' },
+        { text: 'Zenuml', link: '/syntax/zenuml' },
         { text: 'Sankey 🔥', link: '/syntax/sankey' },
         { text: 'XYChart 🔥', link: '/syntax/xyChart' },
+        { text: 'Block Diagram 🔥', link: '/syntax/block' },
+        { text: 'Packet 🔥', link: '/syntax/packet' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
@@ -171,6 +173,7 @@ function sidebarConfig() {
         { text: 'Mermaid Configuration Options', link: '/config/schema-docs/config' },
         { text: 'Directives', link: '/config/directives' },
         { text: 'Theming', link: '/config/theming' },
+        { text: 'Math', link: '/config/math' },
         { text: 'Accessibility', link: '/config/accessibility' },
         { text: 'Mermaid CLI', link: '/config/mermaidCLI' },
         { text: 'FAQ', link: '/config/faq' },

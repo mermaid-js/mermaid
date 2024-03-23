@@ -217,3 +217,5 @@ The following CSS class selectors are available for richer styling:
 | `.er.relationshipLabel`    | The label for a relationship                          |
 | `.er.relationshipLabelBox` | The box surrounding a relationship label              |
 | `.er.relationshipLine`     | The line representing a relationship between entities |
+
+<!--- cspell:locale en,en-gb --->

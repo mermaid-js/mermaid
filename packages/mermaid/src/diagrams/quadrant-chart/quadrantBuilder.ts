@@ -53,7 +53,7 @@ export interface QuadrantBuildType {
   borderLines?: QuadrantLineType[];
 }
 
-export interface quadrantBuilderData {
+export interface QuadrantBuilderData {
   titleText: string;
   quadrant1Text: string;
   quadrant2Text: string;
@@ -116,7 +116,7 @@ interface CalculateSpaceData {
 export class QuadrantBuilder {
   private config: QuadrantBuilderConfig;
   private themeConfig: QuadrantBuilderThemeConfig;
-  private data: quadrantBuilderData;
+  private data: QuadrantBuilderData;
 
   constructor() {
     this.config = this.getDefaultConfig();
@@ -124,7 +124,7 @@ export class QuadrantBuilder {
     this.data = this.getDefaultData();
   }
 
-  getDefaultData(): quadrantBuilderData {
+  getDefaultData(): QuadrantBuilderData {
     return {
       titleText: '',
       quadrant1Text: '',
@@ -194,7 +194,7 @@ export class QuadrantBuilder {
     log.info('clear called');
   }
 
-  setData(data: Partial<quadrantBuilderData>) {
+  setData(data: Partial<QuadrantBuilderData>) {
     this.data = { ...this.data, ...data };
   }
 
