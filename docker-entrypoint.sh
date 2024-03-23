@@ -1,3 +1,5 @@
 #!/bin/sh
-source /root/.shrc
+
+# shellcheck disable=SC1091
+. /root/.shrc
 exec "$@"
