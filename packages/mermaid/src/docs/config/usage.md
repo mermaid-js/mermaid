@@ -14,7 +14,7 @@ Please note that you can switch versions through the dropdown box at the top rig
 
 For the majority of users, Using the [Live Editor](https://mermaid.live/) would be sufficient, however you may also opt to deploy mermaid as a dependency or using the [Mermaid API](./setup/README.md).
 
-We have compiled some Video [Tutorials](./Tutorials.md) on how to use the Mermaid Live Editor.
+We have compiled some Video [Tutorials](../ecosystem/tutorials.md) on how to use the Mermaid Live Editor.
 
 ### Installing and Hosting Mermaid on a Webpage
 
@@ -67,7 +67,7 @@ Example:
 ## Simple full example:
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <body>
     <pre class="mermaid">
@@ -328,15 +328,17 @@ module.exports = (options) ->
 
 ## Advanced usage
 
-**Syntax validation without rendering (Work in Progress)**
+### Syntax validation without rendering
 
-The **mermaid.parse(txt)** function validates graph definitions without rendering a graph. **[This function is still a work in progress](https://github.com/mermaid-js/mermaid/issues/1066), find alternatives below.**
+The `mermaid.parse(text, parseOptions)` function validates graph definitions without rendering a graph.
 
-The function **mermaid.parse(txt)**, takes a text string as an argument and returns true if the definition follows mermaid's syntax and
-false if it does not. The parseError function will be called when the parse function returns false.
+The function `mermaid.parse(text, parseOptions)`, takes a text string as an argument and returns `{ diagramType: string }` if the definition follows mermaid's syntax.
 
-When the parser encounters invalid syntax the **mermaid.parseError** function is called. It is possible to override this
-function in order to handle the error in an application-specific way.
+If the definition is invalid, the function returns `false` if `parseOptions.suppressErrors` is set to `true`. Otherwise, it throws an error.
+
+The parseError function will be called when the parse function throws an error. It will not be called if `parseOptions.suppressErrors` is set to `true`.
+
+It is possible to override this function in order to handle the error in an application-specific way.
 
 The code-example below in meta code illustrates how this could work:
 
@@ -356,26 +358,10 @@ const textFieldUpdated = async function () {
 bindEventHandler('change', 'code', textFieldUpdated);
 ```
 
-**Alternative to mermaid.parse():**
-One effective and more future-proof method of validating your graph definitions, is to paste and render them via the [Mermaid Live Editor](https://mermaid.live/). This will ensure that your code is compliant with the syntax of Mermaid's most recent version.
-
 ## Configuration
 
-Mermaid takes a number of options which lets you tweak the rendering of the diagrams. Currently there are three ways of
-setting the options in mermaid.
-
-1. Instantiation of the configuration using the initialize call
-2. _Using the global mermaid object_ - **Deprecated**
-3. _using the global mermaid_config object_ - **Deprecated**
-4. Instantiation of the configuration using the **mermaid.init** call- **Deprecated**
-
-The list above has two ways too many of doing this. Three are deprecated and will eventually be removed. The list of
-configuration objects are described [in the mermaidAPI documentation](./setup/README.md).
-
-## Using the `mermaidAPI.initialize`/`mermaid.initialize` call
-
-The future proof way of setting the configuration is by using the initialization call to mermaid or mermaidAPI depending
-on what kind of integration you use.
+You can pass the required configuration to the `mermaid.initialize` call. This is the preferred way of configuring mermaid.
+The list of configuration objects are described [in the mermaidAPI documentation](./setup/README.md).
 
 ```html
 <script type="module">
@@ -407,33 +393,7 @@ mermaid.startOnLoad = true;
 This way of setting the configuration is deprecated. Instead the preferred way is to use the initialize method. This functionality is only kept for backwards compatibility.
 ```
 
-## Using the mermaid_config
-
-It is possible to set some configuration via the mermaid object. The two parameters that are supported using this
-approach are:
-
-- mermaid_config.startOnLoad
-- mermaid_config.htmlLabels
-
-```javascript
-mermaid_config.startOnLoad = true;
-```
-
-```warning
-This way of setting the configuration is deprecated. Instead the preferred way is to use the initialize method. This functionality is only kept for backwards compatibility.
-```
-
-## Using the mermaid.init call
-
-To set some configuration via the mermaid object. The two parameters that are supported using this approach are:
-
-- mermaid_config.startOnLoad
-- mermaid_config.htmlLabels
-
-```javascript
-mermaid_config.startOnLoad = true;
-```
-
-```warning
-This way of setting the configuration is deprecated. Instead the preferred way is to use the initialize method. This functionality is only kept for backwards compatibility.
-```
+<!---
+cspell:locale en,en-gb
+cspell:ignore pumbaa
+--->

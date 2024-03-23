@@ -13,11 +13,11 @@ export const clear = () => {
   clusterDb = {};
 };
 
-const isDescendant = (id, ancenstorId) => {
-  // if (id === ancenstorId) return true;
+const isDescendant = (id, ancestorId) => {
+  // if (id === ancestorId) return true;
 
-  log.trace('In isDecendant', ancenstorId, ' ', id, ' = ', descendants[ancenstorId].includes(id));
-  if (descendants[ancenstorId].includes(id)) {
+  log.trace('In isDescendant', ancestorId, ' ', id, ' = ', descendants[ancestorId].includes(id));
+  if (descendants[ancestorId].includes(id)) {
     return true;
   }
 
@@ -25,7 +25,7 @@ const isDescendant = (id, ancenstorId) => {
 };
 
 const edgeInCluster = (edge, clusterId) => {
-  log.info('Decendants of ', clusterId, ' is ', descendants[clusterId]);
+  log.info('Descendants of ', clusterId, ' is ', descendants[clusterId]);
   log.info('Edge is ', edge);
   // Edges to/from the cluster is not in the cluster, they are in the parent
   if (edge.v === clusterId) {
@@ -36,7 +36,7 @@ const edgeInCluster = (edge, clusterId) => {
   }
 
   if (!descendants[clusterId]) {
-    log.debug('Tilt, ', clusterId, ',not in decendants');
+    log.debug('Tilt, ', clusterId, ',not in descendants');
     return false;
   }
   return (
@@ -244,7 +244,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
           // d1 xor d2 - if either d1 is true and d2 is false or the other way around
           if (d1 ^ d2) {
             log.warn('Edge: ', edge, ' leaves cluster ', id);
-            log.warn('Decendants of XXX ', id, ': ', descendants[id]);
+            log.warn('Descendants of XXX ', id, ': ', descendants[id]);
             clusterDb[id].externalConnections = true;
           }
         }
@@ -253,6 +253,16 @@ export const adjustClustersAndEdges = (graph, depth) => {
       log.debug('Not a cluster ', id, descendants);
     }
   });
+
+  for (let id of Object.keys(clusterDb)) {
+    const nonClusterChild = clusterDb[id].id;
+    const parent = graph.parent(nonClusterChild);
+
+    // Change replacement node of id to parent of current replacement node if valid
+    if (parent !== id && clusterDb[parent] && !clusterDb[parent].externalConnections) {
+      clusterDb[id].id = parent;
+    }
+  }
 
   // For clusters with incoming and/or outgoing edges translate those edges to a real node
   // in the cluster in order to fake the edge
@@ -276,6 +286,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
       clusterDb[e.w]
     );
     if (clusterDb[e.v] && clusterDb[e.w] && clusterDb[e.v] === clusterDb[e.w]) {
+      // cspell:ignore trixing
       log.warn('Fixing and trixing link to self - removing XXX', e.v, e.w, e.name);
       log.warn('Fixing and trixing - removing XXX', e.v, e.w, e.name);
       v = getAnchorId(e.v);
@@ -307,9 +318,13 @@ export const adjustClustersAndEdges = (graph, depth) => {
       w = getAnchorId(e.w);
       graph.removeEdge(e.v, e.w, e.name);
       if (v !== e.v) {
+        const parent = graph.parent(v);
+        clusterDb[parent].externalConnections = true;
         edge.fromCluster = e.v;
       }
       if (w !== e.w) {
+        const parent = graph.parent(w);
+        clusterDb[parent].externalConnections = true;
         edge.toCluster = e.w;
       }
       log.warn('Fix Replacing with XXX', v, w, e.name);
@@ -323,7 +338,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
 
   // Remove references to extracted cluster
   // graph.edges().forEach(edge => {
-  //   if (isDecendant(edge.v, clusterId) || isDecendant(edge.w, clusterId)) {
+  //   if (isDescendant(edge.v, clusterId) || isDescendant(edge.w, clusterId)) {
   //     graph.removeEdge(edge);
   //   }
   // });

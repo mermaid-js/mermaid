@@ -3,7 +3,7 @@ name: Draft Release
 on:
   push:
     branches:
-      - develop
+      - master
 
 permissions:
   contents: read
@@ -12,7 +12,7 @@ jobs:
   draft-release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # write permission is required to create a github release
+      contents: write # write permission is required to create a GitHub release
       pull-requests: read # required to read PR titles/labels
     steps:
       - name: Draft Release

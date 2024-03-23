@@ -1,5 +1,47 @@
 # Blog
 
+## [Mermaid Chart Raises $7.5M to Reinvent Visual Collaboration for Enterprises](https://www.mermaidchart.com/blog/posts/mermaid-chart-raises-7.5m-to-reinvent-visual-collaoration-for-enterprises/)
+
+20 March 2024 · 4 mins
+
+Mermaid Chart, the company offering text-based diagramming and workflow management tools, today announced it has raised $7.5 million in Seed funding.
+
+## [Mermaid Chart GPT Is Now Available In the GPT Store!](https://www.mermaidchart.com/blog/posts/mermaid-chart-gpt-is-now-available-in-the-gpt-store/)
+
+7 March 2024 · 3 mins
+
+Mermaid Chart GPT is Now Available In the GPT Store!
+
+## [How to Make a Flowchart with Mermaid Chart](https://www.mermaidchart.com/blog/posts/how-to-make-flowcharts-with-mermaid-chart/)
+
+30 January 2024 · 6 mins
+
+Learn how to make a flowchart with Mermaid Chart, the leading text-to-diagram platform for both developers and non-developers.
+
+## [How one data scientist uses Mermaid Chart to quickly and easily build flowcharts](https://www.mermaidchart.com/blog/posts/customer-spotlight-ari-tal/)
+
+23 January 2024 · 4 mins
+
+Read about how Ari Tal, a data scientist and founder of Leveling Up with XAI, utilizes Mermaid Chart for its easy-to-use flowchart creation capabilities to enhance his work in explainable AI (XAI).
+
+## [Introducing Mermaid Chart’s JetBrains IDE Extension](https://www.mermaidchart.com/blog/posts/introducing-mermaid-charts-jetbrains-ide-extension/)
+
+20 December 2023 · 5 mins
+
+Diagrams are essential for documenting your code.
+
+## [Mermaid Chart Releases New Visual Editor For Flowcharts](https://www.mermaidchart.com/blog/posts/mermaid-chart-releases-new-visual-editor-for-flowcharts/)
+
+14 December 2023 · 5 mins
+
+Mermaid Chart introduces a new Visual Editor for flowcharts, enabling users of all skill levels to create diagrams easily and efficiently, with both GUI and code-based editing options.
+
+## [7 best practices (+ examples) for good developer documentation](https://www.mermaidchart.com/blog/posts/7-best-practices-for-good-documentation/)
+
+4 December 2023 · 11 min
+
+Essential strategies for crafting grate developer documentation, with practical examples and insights from leading tech companies.
+
 ## [5 Reasons You Should Be Using Mermaid Chart As Your Diagram Generator](https://www.mermaidchart.com/blog/posts/5-reasons-you-should-be-using-mermaid-chart-as-your-diagram-generator/)
 
 14 November 2023 · 5 mins

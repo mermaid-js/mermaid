@@ -21,8 +21,9 @@
 # - Use `meta:enum` to document enum values (from jsonschema2md)
 # - Use `tsType` to override the TypeScript type (from json-schema-to-typescript)
 # - If adding a new object to `MermaidConfig` (e.g. a new diagram type),
-#   you may need to add it to `.build/jsonSchema.ts` and `src/docs.mts`
-#   to get the docs/default values to generate properly.
+#   you may need to add it to `.build/jsonSchema.ts`, `src/docs.mts`
+#   and `scripts/create-types-from-json-schema.mjs`
+#   to get the default values/docs/types to generate properly.
 $id: https://mermaid-js.github.io/schemas/config.schema.json
 $schema: https://json-schema.org/draft/2019-09/schema
 title: Mermaid Config
@@ -49,6 +50,8 @@ required:
   - gitGraph
   - c4
   - sankey
+  - packet
+  - block
 properties:
   theme:
     description: |
@@ -72,6 +75,12 @@ properties:
     description: The maximum allowed size of the users text diagram
     type: number
     default: 50000
+  maxEdges:
+    description: |
+      Defines the maximum number of edges that can be drawn in a graph.
+    type: integer
+    default: 500
+    minimum: 0
   darkMode:
     type: boolean
     default: false
@@ -150,11 +159,27 @@ properties:
       in the current `currentConfig`.
 
       This prevents malicious graph directives from overriding a site's default security.
-    default: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
+    default:
+      [
+        'secure',
+        'securityLevel',
+        'startOnLoad',
+        'maxTextSize',
+        'suppressErrorRendering',
+        'maxEdges',
+      ]
     type: array
     items:
       type: string
     uniqueItems: false # Should be enabled, but it may be a breaking change from the old config
+  legacyMathML:
+    description: |
+      This option specifies if Mermaid can expect the dependent to include KaTeX stylesheets for browsers
+      without their own MathML implementation. If this option is disabled and MathML is not supported, the math
+      equations are replaced with a warning. If this option is enabled and MathML is not supported, Mermaid will
+      fall back to legacy rendering for KaTeX.
+    type: boolean
+    default: false
   deterministicIds:
     description: |
       This option controls if the generated ids of nodes in the SVG are
@@ -204,6 +229,10 @@ properties:
     $ref: '#/$defs/C4DiagramConfig'
   sankey:
     $ref: '#/$defs/SankeyDiagramConfig'
+  packet:
+    $ref: '#/$defs/PacketDiagramConfig'
+  block:
+    $ref: '#/$defs/BlockDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -214,6 +243,12 @@ properties:
   fontSize:
     type: number
     default: 16
+  suppressErrorRendering:
+    type: boolean
+    default: false
+    description: |
+      Suppresses inserting 'Syntax error' diagram in the DOM.
+      This is useful when you want to control how to handle syntax errors in your application.
 
 $defs: # JSON Schema definition (maybe we should move these to a separate file)
   BaseDiagramConfig:
@@ -774,6 +809,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       rotateCommitLabel:
         type: boolean
         default: true
+      parallelCommits:
+        type: boolean
+        default: false
       # YAML anchor reference, don't use $ref since ajv doesn't load defaults
       arrowMarkerAbsolute: *arrowMarkerAbsolute
 
@@ -1981,10 +2019,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         $ref: '#/$defs/SankeyNodeAlignment'
         default: justify
       useMaxWidth:
+        type: boolean
         default: false
       showValues:
         description: |
           Toggle to display or hide values along with title.
+        type: boolean
         default: true
       prefix:
         description: |
@@ -1996,6 +2036,55 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           The suffix to use for values
         type: string
         default: ''
+
+  PacketDiagramConfig:
+    title: Packet Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for packet diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      rowHeight:
+        description: The height of each row in the packet diagram.
+        type: number
+        minimum: 1
+        default: 32
+      bitWidth:
+        description: The width of each bit in the packet diagram.
+        type: number
+        minimum: 1
+        default: 32
+      bitsPerRow:
+        description: The number of bits to display per row.
+        type: number
+        minimum: 1
+        default: 32
+      showBits:
+        description: Toggle to display or hide bit numbers.
+        type: boolean
+        default: true
+      paddingX:
+        description: The horizontal padding between the blocks in a row.
+        type: number
+        minimum: 0
+        default: 5
+      paddingY:
+        description: The vertical padding between the rows.
+        type: number
+        minimum: 0
+        default: 5
+
+  BlockDiagramConfig:
+    title: Block Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for block diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      padding:
+        type: number
+        minimum: 0
+        default: 8
 
   FontCalculator:
     title: Font Calculator

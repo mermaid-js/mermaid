@@ -68,6 +68,11 @@ export interface MermaidConfig {
    * The maximum allowed size of the users text diagram
    */
   maxTextSize?: number;
+  /**
+   * Defines the maximum number of edges that can be drawn in a graph.
+   *
+   */
+  maxEdges?: number;
   darkMode?: boolean;
   htmlLabels?: boolean;
   /**
@@ -108,6 +113,14 @@ export interface MermaidConfig {
    */
   secure?: string[];
   /**
+   * This option specifies if Mermaid can expect the dependent to include KaTeX stylesheets for browsers
+   * without their own MathML implementation. If this option is disabled and MathML is not supported, the math
+   * equations are replaced with a warning. If this option is enabled and MathML is not supported, Mermaid will
+   * fall back to legacy rendering for KaTeX.
+   *
+   */
+  legacyMathML?: boolean;
+  /**
    * This option controls if the generated ids of nodes in the SVG are
    * generated randomly or based on a seed.
    * If set to `false`, the IDs are generated based on the current date and
@@ -141,9 +154,49 @@ export interface MermaidConfig {
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
   sankey?: SankeyDiagramConfig;
+  packet?: PacketDiagramConfig;
+  block?: BlockDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
+  /**
+   * Suppresses inserting 'Syntax error' diagram in the DOM.
+   * This is useful when you want to control how to handle syntax errors in your application.
+   *
+   */
+  suppressErrorRendering?: boolean;
+}
+/**
+ * The object containing configurations specific for packet diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "PacketDiagramConfig".
+ */
+export interface PacketDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The height of each row in the packet diagram.
+   */
+  rowHeight?: number;
+  /**
+   * The width of each bit in the packet diagram.
+   */
+  bitWidth?: number;
+  /**
+   * The number of bits to display per row.
+   */
+  bitsPerRow?: number;
+  /**
+   * Toggle to display or hide bit numbers.
+   */
+  showBits?: boolean;
+  /**
+   * The horizontal padding between the blocks in a row.
+   */
+  paddingX?: number;
+  /**
+   * The vertical padding between the rows.
+   */
+  paddingY?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -158,6 +211,15 @@ export interface BaseDiagramConfig {
    *
    */
   useMaxWidth?: boolean;
+}
+/**
+ * The object containing configurations specific for block diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "BlockDiagramConfig".
+ */
+export interface BlockDiagramConfig extends BaseDiagramConfig {
+  padding?: number;
 }
 /**
  * The object containing configurations specific for c4 diagrams
@@ -556,6 +618,7 @@ export interface GitGraphDiagramConfig extends BaseDiagramConfig {
   showCommitLabel?: boolean;
   showBranches?: boolean;
   rotateCommitLabel?: boolean;
+  parallelCommits?: boolean;
   /**
    * Controls whether or arrow markers in html code are absolute paths or anchors.
    * This matters if you are using base tag settings.
@@ -768,8 +831,8 @@ export interface XYChartConfig extends BaseDiagramConfig {
    * Should show the chart title
    */
   showTitle?: boolean;
-  xAxis?: XYChartAxisConfig1;
-  yAxis?: XYChartAxisConfig2;
+  xAxis?: XYChartAxisConfig;
+  yAxis?: XYChartAxisConfig;
   /**
    * How to plot will be drawn horizontal or vertical
    */
@@ -778,104 +841,6 @@ export interface XYChartConfig extends BaseDiagramConfig {
    * Minimum percent of space plots of the chart will take
    */
   plotReservedSpacePercent?: number;
-}
-/**
- * This object contains configuration for XYChart axis config
- */
-export interface XYChartAxisConfig1 {
-  /**
-   * Should show the axis labels (tick text)
-   */
-  showLabel?: boolean;
-  /**
-   * font size of the axis labels (tick text)
-   */
-  labelFontSize?: number;
-  /**
-   * top and bottom space from axis label (tick text)
-   */
-  labelPadding?: number;
-  /**
-   * Should show the axis title
-   */
-  showTitle?: boolean;
-  /**
-   * font size of the axis title
-   */
-  titleFontSize?: number;
-  /**
-   * top and bottom space from axis title
-   */
-  titlePadding?: number;
-  /**
-   * Should show the axis tick lines
-   */
-  showTick?: boolean;
-  /**
-   * length of the axis tick lines
-   */
-  tickLength?: number;
-  /**
-   * width of the axis tick lines
-   */
-  tickWidth?: number;
-  /**
-   * Show line across the axis
-   */
-  showAxisLine?: boolean;
-  /**
-   * Width of the axis line
-   */
-  axisLineWidth?: number;
-}
-/**
- * This object contains configuration for XYChart axis config
- */
-export interface XYChartAxisConfig2 {
-  /**
-   * Should show the axis labels (tick text)
-   */
-  showLabel?: boolean;
-  /**
-   * font size of the axis labels (tick text)
-   */
-  labelFontSize?: number;
-  /**
-   * top and bottom space from axis label (tick text)
-   */
-  labelPadding?: number;
-  /**
-   * Should show the axis title
-   */
-  showTitle?: boolean;
-  /**
-   * font size of the axis title
-   */
-  titleFontSize?: number;
-  /**
-   * top and bottom space from axis title
-   */
-  titlePadding?: number;
-  /**
-   * Should show the axis tick lines
-   */
-  showTick?: boolean;
-  /**
-   * length of the axis tick lines
-   */
-  tickLength?: number;
-  /**
-   * width of the axis tick lines
-   */
-  tickWidth?: number;
-  /**
-   * Show line across the axis
-   */
-  showAxisLine?: boolean;
-  /**
-   * Width of the axis line
-   */
-  axisLineWidth?: number;
 }
 /**
  * The object containing configurations specific for entity relationship diagrams
@@ -1472,13 +1437,7 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
    *
    */
   linkColor?: SankeyLinkColor | string;
-  /**
-   * Controls the alignment of the Sankey diagrams.
-   *
-   * See <https://github.com/d3/d3-sankey#alignments>.
-   *
-   */
-  nodeAlignment?: 'left' | 'right' | 'center' | 'justify';
+  nodeAlignment?: SankeyNodeAlignment;
   useMaxWidth?: boolean;
   /**
    * Toggle to display or hide values along with title.

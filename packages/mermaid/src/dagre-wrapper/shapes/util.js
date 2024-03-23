@@ -115,6 +115,7 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
     label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
   }
   label.insert('rect', ':first-child');
+
   return { shapeSvg, bbox, halfPadding, label };
 };
 

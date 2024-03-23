@@ -1,26 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import type { LangiumParser, ParseResult } from 'langium';
 
-import type { InfoServices } from '../src/language/index.js';
-import { Info, createInfoServices } from '../src/language/index.js';
-import { noErrorsOrAlternatives } from './test-util.js';
-
-const services: InfoServices = createInfoServices().Info;
-const parser: LangiumParser = services.parser.LangiumParser;
-function createInfoTestServices(): {
-  services: InfoServices;
-  parse: (input: string) => ParseResult<Info>;
-} {
-  const parse = (input: string) => {
-    return parser.parse<Info>(input);
-  };
-
-  return { services, parse };
-}
+import { Info } from '../src/language/index.js';
+import { expectNoErrorsOrAlternatives, infoParse as parse } from './test-util.js';
 
 describe('info', () => {
-  const { parse } = createInfoTestServices();
-
   it.each([
     `info`,
     `
@@ -32,15 +15,18 @@ describe('info', () => {
     `,
   ])('should handle empty info', (context: string) => {
     const result = parse(context);
-    noErrorsOrAlternatives(result);
-
+    expectNoErrorsOrAlternatives(result);
     expect(result.value.$type).toBe(Info);
   });
 
   it.each([
     `info showInfo`,
+    `info showInfo
+    `,
     `
     info showInfo`,
+    `info
+    showInfo`,
     `info
     showInfo
     `,
@@ -48,10 +34,15 @@ describe('info', () => {
     info
     showInfo
     `,
+    `
+    info
+    showInfo`,
+    `
+    info showInfo
+    `,
   ])('should handle showInfo', (context: string) => {
     const result = parse(context);
-    noErrorsOrAlternatives(result);
-
+    expectNoErrorsOrAlternatives(result);
     expect(result.value.$type).toBe(Info);
   });
 });

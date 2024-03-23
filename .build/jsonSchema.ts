@@ -1,7 +1,6 @@
 import { load, JSON_SCHEMA } from 'js-yaml';
 import assert from 'node:assert';
 import Ajv2019, { type JSONSchemaType } from 'ajv/dist/2019.js';
-
 import type { MermaidConfig, BaseDiagramConfig } from '../packages/mermaid/src/config.type.js';
 
 /**
@@ -24,6 +23,8 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'gitGraph',
   'c4',
   'sankey',
+  'block',
+  'packet',
 ] as const;
 
 /**

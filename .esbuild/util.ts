@@ -65,6 +65,9 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
     minify,
     logLevel: 'info',
     chunkNames: `chunks/${outFileName}/[name]-[hash]`,
+    define: {
+      'import.meta.vitest': 'undefined',
+    },
   });
 
   if (core) {

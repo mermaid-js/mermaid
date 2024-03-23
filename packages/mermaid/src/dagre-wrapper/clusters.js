@@ -69,13 +69,13 @@ const rect = (parent, node) => {
   if (useHtmlLabels) {
     label.attr(
       'transform',
-      // This puts the labal on top of the box instead of inside it
+      // This puts the label on top of the box instead of inside it
       `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
     );
   } else {
     label.attr(
       'transform',
-      // This puts the labal on top of the box instead of inside it
+      // This puts the label on top of the box instead of inside it
       `translate(${node.x}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
     );
   }
@@ -184,15 +184,13 @@ const roundedWithTitle = (parent, node) => {
   // Center the label
   label.attr(
     'transform',
-    'translate(' +
-      (node.x - bbox.width / 2) +
-      ', ' +
-      (node.y -
-        node.height / 2 -
-        node.padding / 3 +
-        (evaluate(siteConfig.flowchart.htmlLabels) ? 5 : 3)) +
-      subGraphTitleTopMargin +
-      ')'
+    `translate(${node.x - bbox.width / 2}, ${
+      node.y -
+      node.height / 2 -
+      node.padding / 3 +
+      (evaluate(siteConfig.flowchart.htmlLabels) ? 5 : 3) +
+      subGraphTitleTopMargin
+    })`
   );
 
   const rectBox = rect.node().getBBox();
