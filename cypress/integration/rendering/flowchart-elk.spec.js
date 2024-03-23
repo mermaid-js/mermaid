@@ -853,7 +853,8 @@ describe('Title and arrow styling #4813', () => {
       title: ${titleString}
       ---
       flowchart LR
-      A-->B`,
+      A-->B
+      A-->C`,
       { flowchart: { defaultRenderer: 'elk' } }
     );
     cy.get('svg').should((svg) => {
@@ -874,6 +875,7 @@ describe('Title and arrow styling #4813', () => {
     );
     cy.get('svg').should((svg) => {
       const edges = svg[0].querySelectorAll('.edges path');
+      console.log(edges);
       expect(edges[0]).to.have.attr('pattern', 'solid');
       expect(edges[1]).to.have.attr('pattern', 'dotted');
       expect(edges[2]).to.have.css('stroke-width', '3.5px');
