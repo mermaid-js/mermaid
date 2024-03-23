@@ -368,7 +368,7 @@ context('Sequence diagram', () => {
       `
       );
     });
-    it('should have actor-top and actor-bottom classes on top and bottom actor box and symbol', () => {
+    it('should have actor-top and actor-bottom classes on top and bottom actor box and symbol and actor-box and actor-man classes for text tags', () => {
       imgSnapshotTest(
         `
         sequenceDiagram
@@ -387,6 +387,9 @@ context('Sequence diagram', () => {
       cy.get('.actor-man').should('have.class', 'actor-bottom');
       cy.get('.actor.actor-bottom').should('not.have.class', 'actor-top');
       cy.get('.actor-man.actor-bottom').should('not.have.class', 'actor-top');
+
+      cy.get('text.actor-box').should('include.text', 'Alice');
+      cy.get('text.actor-man').should('include.text', 'Bob');
     });
     it('should render long notes left of actor', () => {
       imgSnapshotTest(

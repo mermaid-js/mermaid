@@ -250,7 +250,7 @@ The theming engine will only recognize hex colors and not color names. So, the v
 | actorBkg              | mainBkg                        | Actor Background Color      |
 | actorBorder           | primaryBorderColor             | Actor Border Color          |
 | actorTextColor        | primaryTextColor               | Actor Text Color            |
-| actorLineColor        | grey                           | Actor Line Color            |
+| actorLineColor        | actorBorder                    | Actor Line Color            |
 | signalColor           | textColor                      | Signal Color                |
 | signalTextColor       | textColor                      | Signal Text Color           |
 | labelBoxBkgColor      | actorBkg                       | Label Box Background Color  |
