@@ -110,7 +110,7 @@ function processAndSetConfigs(text: string) {
  */
 async function parse(
   text: string,
-  parseOptions: ParseOptions & { suppressErrors: true }
+  parseOptions: ParseOptions & { suppressErrors: true },
 ): Promise<ParseResult | false>;
 async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult>;
 async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult | false> {
@@ -138,7 +138,7 @@ async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseRe
 export const cssImportantStyles = (
   cssClass: string,
   element: string,
-  cssClasses: string[] = []
+  cssClasses: string[] = [],
 ): string => {
   return `\n.${cssClass} ${element} { ${cssClasses.join(' !important; ')} !important; }`;
 };
@@ -152,7 +152,7 @@ export const cssImportantStyles = (
  */
 export const createCssStyles = (
   config: MermaidConfig,
-  classDefs: Record<string, DiagramStyleClassDef> | null | undefined = {}
+  classDefs: Record<string, DiagramStyleClassDef> | null | undefined = {},
 ): string => {
   let cssStyles = '';
 
@@ -201,7 +201,7 @@ export const createUserStyles = (
   config: MermaidConfig,
   graphType: string,
   classDefs: Record<string, DiagramStyleClassDef> | undefined,
-  svgId: string
+  svgId: string,
 ): string => {
   const userCSSstyles = createCssStyles(config, classDefs);
   const allStyles = getStyles(graphType, userCSSstyles, config.themeVariables);
@@ -223,7 +223,7 @@ export const createUserStyles = (
 export const cleanUpSvgCode = (
   svgCode = '',
   inSandboxMode: boolean,
-  useArrowMarkerUrls: boolean
+  useArrowMarkerUrls: boolean,
 ): string => {
   let cleanedUpSvg = svgCode;
 
@@ -231,7 +231,7 @@ export const cleanUpSvgCode = (
   if (!useArrowMarkerUrls && !inSandboxMode) {
     cleanedUpSvg = cleanedUpSvg.replace(
       /marker-end="url\([\d+./:=?A-Za-z-]*?#/g,
-      'marker-end="url(#'
+      'marker-end="url(#',
     );
   }
 
@@ -279,7 +279,7 @@ export const appendDivSvgG = (
   id: string,
   enclosingDivId: string,
   divStyle?: string,
-  svgXlink?: string
+  svgXlink?: string,
 ): D3Element => {
   const enclosingDiv = parentRoot.append('div');
   enclosingDiv.attr('id', enclosingDivId);
@@ -328,7 +328,7 @@ export const removeExistingElements = (
   doc: Document,
   id: string,
   divId: string,
-  iFrameId: string
+  iFrameId: string,
 ) => {
   // Remove existing SVG element if it exists
   doc.getElementById(id)?.remove();
@@ -347,7 +347,7 @@ export const removeExistingElements = (
 const render = async function (
   id: string,
   text: string,
-  svgContainingElement?: Element
+  svgContainingElement?: Element,
 ): Promise<RenderResult> {
   addDiagrams();
 
@@ -367,6 +367,16 @@ const render = async function (
   const iFrameID_selector = '#' + iFrameID;
   const enclosingDivID = 'd' + id;
   const enclosingDivID_selector = '#' + enclosingDivID;
+
+  const removeTempElements = () => {
+    // -------------------------------------------------------------------------------
+    // Remove the temporary HTML element if appropriate
+    const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
+    const node = select(tmpElementSelector).node();
+    if (node && 'remove' in node) {
+      node.remove();
+    }
+  };
 
   let root: any = select('body');
 
@@ -424,6 +434,10 @@ const render = async function (
   try {
     diag = await Diagram.fromText(text, { title: processed.title });
   } catch (error) {
+    if (config.suppressErrorRendering) {
+      removeTempElements();
+      throw error;
+    }
     diag = await Diagram.fromText('error');
     parseEncounteredException = error;
   }
@@ -451,7 +465,11 @@ const render = async function (
   try {
     await diag.renderer.draw(text, id, version, diag);
   } catch (e) {
-    errorRenderer.draw(text, id, version);
+    if (config.suppressErrorRendering) {
+      removeTempElements();
+    } else {
+      errorRenderer.draw(text, id, version);
+    }
     throw e;
   }
 
@@ -487,13 +505,7 @@ const render = async function (
     throw parseEncounteredException;
   }
 
-  // -------------------------------------------------------------------------------
-  // Remove the temporary HTML element if appropriate
-  const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
-  const node = select(tmpElementSelector).node();
-  if (node && 'remove' in node) {
-    node.remove();
-  }
+  removeTempElements();
 
   return {
     diagramType,
@@ -520,7 +532,7 @@ function initialize(options: MermaidConfig = {}) {
   if (options?.theme && options.theme in theme) {
     // Todo merge with user options
     options.themeVariables = theme[options.theme as keyof typeof theme].getThemeVariables(
-      options.themeVariables
+      options.themeVariables,
     );
   } else if (options) {
     options.themeVariables = theme.default.getThemeVariables(options.themeVariables);
@@ -550,7 +562,7 @@ function addA11yInfo(
   diagramType: string,
   svgNode: D3Element,
   a11yTitle?: string,
-  a11yDescr?: string
+  a11yDescr?: string,
 ): void {
   setA11yDiagramInfo(svgNode, diagramType);
   addSVGa11yTitleDescription(svgNode, a11yTitle, a11yDescr, svgNode.attr('id'));
@@ -566,6 +578,7 @@ function addA11yInfo(
  *     securityLevel: 'strict',
  *     startOnLoad: true,
  *     arrowMarkerAbsolute: false,
+ *     suppressErrorRendering: false,
  *
  *     er: {
  *       diagramPadding: 20,

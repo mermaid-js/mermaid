@@ -159,6 +159,12 @@ export interface MermaidConfig {
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
+  /**
+   * Suppresses inserting 'Syntax error' diagram in the DOM.
+   * This is useful when you want to control how to handle syntax errors in your application.
+   *
+   */
+  suppressErrorRendering?: boolean;
 }
 /**
  * The object containing configurations specific for packet diagrams.
