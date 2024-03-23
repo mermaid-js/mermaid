@@ -14,6 +14,7 @@ export interface MermaidBuildOptions {
   metafile: boolean;
   format: 'esm' | 'iife';
   entryName: keyof typeof packageOptions;
+  includeLargeFeatures: boolean;
 }
 
 export const defaultOptions: Omit<MermaidBuildOptions, 'entryName'> = {
@@ -21,6 +22,7 @@ export const defaultOptions: Omit<MermaidBuildOptions, 'entryName'> = {
   metafile: false,
   core: false,
   format: 'esm',
+  includeLargeFeatures: true,
 } as const;
 
 const buildOptions = (override: BuildOptions): BuildOptions => {
@@ -34,16 +36,22 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     external: ['require', 'fs', 'path'],
     outdir: 'dist',
     plugins: [jisonPlugin, jsonSchemaPlugin],
-    sourcemap: 'external',
+    // sourcemap: 'linked',
     ...override,
   };
 };
 
-const getFileName = (fileName: string, { core, format, minify }: MermaidBuildOptions) => {
+const getFileName = (
+  fileName: string,
+  { core, format, minify, includeLargeFeatures }: MermaidBuildOptions
+) => {
   if (core) {
     fileName += '.core';
   } else if (format === 'esm') {
     fileName += '.esm';
+  }
+  if (!includeLargeFeatures) {
+    fileName += '.tiny';
   }
   if (minify) {
     fileName += '.min';
@@ -52,7 +60,7 @@ const getFileName = (fileName: string, { core, format, minify }: MermaidBuildOpt
 };
 
 export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
-  const { core, entryName, metafile, format, minify } = options;
+  const { core, entryName, metafile, format, includeLargeFeatures, minify } = options;
   const external: string[] = ['require', 'fs', 'path'];
   const { name, file, packageName } = packageOptions[entryName];
   const outFileName = getFileName(name, options);
@@ -66,6 +74,8 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
     logLevel: 'info',
     chunkNames: `chunks/${outFileName}/[name]-[hash]`,
     define: {
+      // This needs to be stringified for esbuild
+      includeLargeFeatures: `${includeLargeFeatures}`,
       'import.meta.vitest': 'undefined',
     },
   });

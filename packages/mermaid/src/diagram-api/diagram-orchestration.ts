@@ -24,6 +24,7 @@ import { packet } from '../diagrams/packet/detector.js';
 import block from '../diagrams/block/blockDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
+import '../type.d.ts';
 
 let hasLoadedDiagrams = false;
 export const addDiagrams = () => {
@@ -66,6 +67,11 @@ export const addDiagrams = () => {
       return text.toLowerCase().trimStart().startsWith('---');
     }
   );
+
+  if (includeLargeFeatures) {
+    registerLazyLoadedDiagrams(flowchartElk, mindmap);
+  }
+
   // Ordering of detectors is important. The first one to return true will be used.
   registerLazyLoadedDiagrams(
     c4,
@@ -77,10 +83,8 @@ export const addDiagrams = () => {
     pie,
     requirement,
     sequence,
-    flowchartElk,
     flowchartV2,
     flowchart,
-    mindmap,
     timeline,
     git,
     stateV2,
