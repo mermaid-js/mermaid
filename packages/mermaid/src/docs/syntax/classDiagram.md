@@ -143,7 +143,7 @@ class BankAccount{
 
 #### Generic Types
 
-Generics can be representated as part of a class definition, and for class members/return types. In order to denote an item as generic, you enclose that type within `~` (**tilde**). **Nested** type declarations such as `List<List<int>>` are supported, though generics that include a comma are currently not supported. (such as `List<List<K, V>>`, however there is a workaround that you can use, which is to substitue the `,` with the HTML Entity code #44; (e.g.: Dictionary ~decimal#44; Queue~Order~~ BuyQueue)
+Generics can be represented as part of a class definition, and for class members/return types. In order to denote an item as generic, you enclose that type within `~` (**tilde**). **Nested** type declarations such as `List<List<int>>` are supported, though generics that include a comma are currently not supported. (such as `List<List<K, V>>`, however there is a workaround that you can use, which is to substitute the `,` with the HTML Entity code #44; (e.g.: `Dictionary ~decimal#44; Queue~Order~~ BuyQueue`)
 
 ```mermaid-example
 classDiagram
@@ -160,7 +160,7 @@ Square : +getMessages() List~string~
 Square : +getDistanceMatrix() List~List~int~~
 ```
 
-> _note_ `(v<MERMAID_RELEASE_VERSION>+)` classes defined with a generic type (e.g.: ThisClass~T~) will have the type information added to the classname to createa unique classId. This means that you can have multiple classes defined with the same name, but different types. For any syntax where you are required to add the **class name** you should now use the same syntax as adding a class to reference this object (e.g.: ThisClass~T~), or just add a `-` in between the classname and type so that the parser associates items correctly.
+> _note_ `(v<MERMAID_RELEASE_VERSION>+)` classes defined with a generic type (e.g.: ThisClass~T~) will have the type information added to the classname to create a unique classID. This means that you can have multiple classes defined with the same name, but different types. For any syntax where you are required to add the **class name** you should now use the same syntax as adding a class to reference this object (e.g.: ThisClass~T~), or just add a `-` in between the classname and type so that the parser associates items correctly.
 
 ```mermaid-example
 classDiagram

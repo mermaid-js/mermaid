@@ -118,10 +118,52 @@ describe('Configuration', () => {
     it('should not taint the initial configuration when using multiple directives', () => {
       const url = 'http://localhost:9000/regression/issue-1874.html';
       cy.visit(url);
-
-      cy.get('svg');
+      cy.window().should('have.property', 'rendered', true);
+      cy.get('svg').should('be.visible');
       cy.matchImageSnapshot(
         'configuration.spec-should-not-taint-initial-configuration-when-using-multiple-directives'
+      );
+    });
+  });
+
+  describe('suppressErrorRendering', () => {
+    beforeEach(() => {
+      cy.on('uncaught:exception', (err, runnable) => {
+        return !err.message.includes('Parse error on line');
+      });
+    });
+
+    it('should not render error diagram if suppressErrorRendering is set', () => {
+      const url = 'http://localhost:9000/suppressError.html?suppressErrorRendering=true';
+      cy.visit(url);
+      cy.window().should('have.property', 'rendered', true);
+      cy.get('#test')
+        .find('svg')
+        .should(($svg) => {
+          // all failing diagrams should not appear!
+          expect($svg).to.have.length(2);
+          // none of the diagrams should be error diagrams
+          expect($svg).to.not.contain('Syntax error');
+        });
+      cy.matchImageSnapshot(
+        'configuration.spec-should-not-render-error-diagram-if-suppressErrorRendering-is-set'
+      );
+    });
+
+    it('should render error diagram if suppressErrorRendering is not set', () => {
+      const url = 'http://localhost:9000/suppressError.html';
+      cy.visit(url);
+      cy.window().should('have.property', 'rendered', true);
+      cy.get('#test')
+        .find('svg')
+        .should(($svg) => {
+          // all five diagrams should be rendered
+          expect($svg).to.have.length(5);
+          // some of the diagrams should be error diagrams
+          expect($svg).to.contain('Syntax error');
+        });
+      cy.matchImageSnapshot(
+        'configuration.spec-should-render-error-diagram-if-suppressErrorRendering-is-not-set'
       );
     });
   });

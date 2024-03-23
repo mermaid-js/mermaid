@@ -8,7 +8,7 @@
 
 > "In software engineering, a class diagram in the Unified Modeling Language (UML) is a type of static structure diagram that describes the structure of a system by showing the system's classes, their attributes, operations (or methods), and the relationships among objects."
 >
-> \-Wikipedia
+> -Wikipedia
 
 The class diagram is the main building block of object-oriented modeling. It is used for general conceptual modeling of the structure of the application, and for detailed modeling to translate the models into programming code. Class diagrams can also be used for data modeling. The classes in a class diagram represent both the main elements, interactions in the application, and the classes to be programmed.
 
@@ -240,7 +240,7 @@ class BankAccount{
 
 #### Generic Types
 
-Generics can be representated as part of a class definition, and for class members/return types. In order to denote an item as generic, you enclose that type within `~` (**tilde**). **Nested** type declarations such as `List<List<int>>` are supported, though generics that include a comma are currently not supported. (such as `List<List<K, V>>`, however there is a workaround that you can use, which is to substitue the `,` with the HTML Entity code #44; (e.g.: Dictionary ~~decimal#44; Queue~~Order\~\~ BuyQueue)
+Generics can be represented as part of a class definition, and for class members/return types. In order to denote an item as generic, you enclose that type within `~` (**tilde**). **Nested** type declarations such as `List<List<int>>` are supported, though generics that include a comma are currently not supported. (such as `List<List<K, V>>`, however there is a workaround that you can use, which is to substitute the `,` with the HTML Entity code #44; (e.g.: `Dictionary ~decimal#44; Queue~Order~~ BuyQueue`)
 
 ```mermaid-example
 classDiagram
@@ -272,7 +272,7 @@ Square : +getMessages() List~string~
 Square : +getDistanceMatrix() List~List~int~~
 ```
 
-> _note_ `(v<MERMAID_RELEASE_VERSION>+)` classes defined with a generic type (e.g.: ThisClass~~T~~) will have the type information added to the classname to createa unique classId. This means that you can have multiple classes defined with the same name, but different types. For any syntax where you are required to add the **class name** you should now use the same syntax as adding a class to reference this object (e.g.: ThisClass~~T~~), or just add a `-` in between the classname and type so that the parser associates items correctly.
+> _note_ `(v<MERMAID_RELEASE_VERSION>+)` classes defined with a generic type (e.g.: ThisClass~~T~~) will have the type information added to the classname to create a unique classID. This means that you can have multiple classes defined with the same name, but different types. For any syntax where you are required to add the **class name** you should now use the same syntax as adding a class to reference this object (e.g.: ThisClass~~T~~), or just add a `-` in between the classname and type so that the parser associates items correctly.
 
 ```mermaid-example
 classDiagram
@@ -330,7 +330,9 @@ To describe the visibility (or encapsulation) of an attribute or method/function
 
 A relationship is a general term covering the specific types of logical connections found on class and object diagrams.
 
-    [classA][Arrow][ClassB]
+```
+[classA][Arrow][ClassB]
+```
 
 There are eight different types of relations defined for classes under UML which are currently supported:
 
@@ -403,7 +405,9 @@ classO .. classP : Link(Dashed)
 
 It is possible to add label text to a relation:
 
-    [classA][Arrow][ClassB]:LabelText
+```
+[classA][Arrow][ClassB]:LabelText
+```
 
 ```mermaid-example
 classDiagram
@@ -435,7 +439,9 @@ classDiagram
 
 Here is the syntax:
 
-    [Relation Type][Link][Relation Type]
+```
+[Relation Type][Link][Relation Type]
+```
 
 Where `Relation Type` can be one of:
 
@@ -499,7 +505,9 @@ The different cardinality options are :
 
 Cardinality can be easily defined by placing the text option within quotes `"` before or after a given arrow. For example:
 
-    [classA] "cardinality1" [Arrow] "cardinality2" [ClassB]:LabelText
+```
+[classA] "cardinality1" [Arrow] "cardinality2" [ClassB]:LabelText
+```
 
 ```mermaid-example
 classDiagram
@@ -652,9 +660,11 @@ It is possible to bind a click event to a node. The click can lead to either a j
 
 You would define these actions on a separate line after all classes have been declared.
 
-    action className "reference" "tooltip"
-    click className call callback() "tooltip"
-    click className href "url" "tooltip"
+```
+action className "reference" "tooltip"
+click className call callback() "tooltip"
+click className href "url" "tooltip"
+```
 
 - _action_ is either `link` or `callback`, depending on which type of interaction you want to have called
 - _className_ is the id of the node that the action will be associated with
@@ -837,11 +847,15 @@ should have a different look. This is done by predefining classes in css styles 
 
 Then attaching that class to a specific node:
 
-        cssClass "nodeId1" styleClass;
+```
+    cssClass "nodeId1" styleClass;
+```
 
 It is also possible to attach a class to a list of nodes in one statement:
 
-        cssClass "nodeId1,nodeId2" styleClass;
+```
+    cssClass "nodeId1,nodeId2" styleClass;
+```
 
 A shorter form of adding a class is to attach the classname to the node using the `:::` operator:
 
