@@ -120,7 +120,7 @@ describe('pie', () => {
         \t"GitHub" \t : \t 100
         \t"GitLab" \t : \t  50
         `,
-      ])('should handle regular secions', (context: string) => {
+      ])('should handle regular sections', (context: string) => {
         const result = parse(context);
         expectNoErrorsOrAlternatives(result);
         expect(result.value.$type).toBe(Pie);

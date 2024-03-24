@@ -1,9 +1,9 @@
-import type { DiagramDB } from '../../diagram-api/types.js';
-import type { BlockConfig, BlockType, Block, ClassDef } from './blockTypes.js';
-import * as configApi from '../../config.js';
-import { clear as commonClear } from '../common/commonDb.js';
-import { log } from '../../logger.js';
 import clone from 'lodash-es/clone.js';
+import * as configApi from '../../config.js';
+import type { DiagramDB } from '../../diagram-api/types.js';
+import { log } from '../../logger.js';
+import { clear as commonClear } from '../common/commonDb.js';
+import type { Block, ClassDef } from './blockTypes.js';
 
 // Initialize the node database for simple lookups
 let blockDatabase: Record<string, Block> = {};
@@ -240,8 +240,8 @@ const setHierarchy = (block: Block[]): void => {
   blocks = rootBlock.children;
 };
 
-const getColumns = (blockid: string): number => {
-  const block = blockDatabase[blockid];
+const getColumns = (blockId: string): number => {
+  const block = blockDatabase[blockId];
   if (!block) {
     return -1;
   }

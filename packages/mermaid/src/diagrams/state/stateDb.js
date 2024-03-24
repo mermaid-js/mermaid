@@ -260,7 +260,7 @@ export const addState = function (
   if (classes) {
     log.info('Setting state classes', trimmedId, classes);
     const classesList = typeof classes === 'string' ? [classes] : classes;
-    classesList.forEach((klass) => setCssClass(trimmedId, klass.trim()));
+    classesList.forEach((cssClass) => setCssClass(trimmedId, cssClass.trim()));
   }
 
   if (styles) {

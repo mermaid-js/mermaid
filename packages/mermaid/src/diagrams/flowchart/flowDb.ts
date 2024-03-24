@@ -30,7 +30,7 @@ let direction: string;
 let version: string; // As in graph
 
 // Functions to be run after graph rendering
-let funs: ((element: Element) => void)[] = [];
+let funs: ((element: Element) => void)[] = []; // cspell:ignore funs
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, config);
 
@@ -149,8 +149,8 @@ export const addSingleLink = function (_start: string, _end: string, type: any) 
     throw new Error(
       `Edge limit exceeded. ${edges.length} edges found, but the limit is ${config.maxEdges}.
 
-Initialize mermaid with maxEdges set to a higher number to allow more edges. 
-You cannot set this config via configuration inside the diagram as it is a secure config. 
+Initialize mermaid with maxEdges set to a higher number to allow more edges.
+You cannot set this config via configuration inside the diagram as it is a secure config.
 You have to call mermaid.initialize.`
     );
   }
@@ -406,7 +406,7 @@ const setupToolTips = function (element: Element) {
       const el = select(this);
       const title = el.attr('title');
 
-      // Dont try to draw a tooltip if no data is provided
+      // Don't try to draw a tooltip if no data is provided
       if (title === null) {
         return;
       }

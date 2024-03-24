@@ -88,7 +88,7 @@ sequenceDiagram
     participant Alice
     participant Bob
     Alice->>John: Hello John, how are you?
-    loop Healthcheck
+    loop HealthCheck
         John->>John: Fight against hypochondria
     end
     Note right of John: Rational thoughts <br/>prevail!
@@ -102,7 +102,7 @@ sequenceDiagram
     participant Alice
     participant Bob
     Alice->>John: Hello John, how are you?
-    loop Healthcheck
+    loop HealthCheck
         John->>John: Fight against hypochondria
     end
     Note right of John: Rational thoughts <br/>prevail!
@@ -311,7 +311,9 @@ xychart-beta
 
 ### CDN
 
-    https://cdn.jsdelivr.net/npm/mermaid@<version>/dist/
+```
+https://cdn.jsdelivr.net/npm/mermaid@<version>/dist/
+```
 
 To select a version:
 
@@ -323,11 +325,11 @@ Latest Version: <https://cdn.jsdelivr.net/npm/mermaid@11>
 
 To Deploy Mermaid:
 
-1.  You will need to install node v16, which would have npm
-2.  Install mermaid
-    - NPM: `npm i mermaid`
-    - Yarn: `yarn add mermaid`
-    - Pnpm: `pnpm add mermaid`
+1. You will need to install node v16, which would have npm
+2. Install mermaid
+   - NPM: `npm i mermaid`
+   - Yarn: `yarn add mermaid`
+   - Pnpm: `pnpm add mermaid`
 
 ### [Mermaid API](../config/setup/README.md):
 

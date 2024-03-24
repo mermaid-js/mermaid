@@ -1,11 +1,17 @@
 import type {
-  DefaultSharedModuleContext,
-  LangiumServices,
-  LangiumSharedServices,
+  DefaultSharedCoreModuleContext,
+  LangiumCoreServices,
+  LangiumSharedCoreServices,
   Module,
-  PartialLangiumServices,
+  PartialLangiumCoreServices,
 } from 'langium';
-import { EmptyFileSystem, createDefaultModule, createDefaultSharedModule, inject } from 'langium';
+import {
+  EmptyFileSystem,
+  createDefaultCoreModule,
+  createDefaultSharedCoreModule,
+  inject,
+} from 'langium';
+
 import { CommonValueConverter } from '../common/valueConverter.js';
 import { MermaidGeneratedSharedModule, PacketGeneratedModule } from '../generated/module.js';
 import { PacketTokenBuilder } from './tokenBuilder.js';
@@ -23,13 +29,16 @@ type PacketAddedServices = {
 /**
  * Union of Langium default services and `Packet` services.
  */
-export type PacketServices = LangiumServices & PacketAddedServices;
+export type PacketServices = LangiumCoreServices & PacketAddedServices;
 
 /**
  * Dependency injection module that overrides Langium default services and
  * contributes the declared `Packet` services.
  */
-export const PacketModule: Module<PacketServices, PartialLangiumServices & PacketAddedServices> = {
+export const PacketModule: Module<
+  PacketServices,
+  PartialLangiumCoreServices & PacketAddedServices
+> = {
   parser: {
     TokenBuilder: () => new PacketTokenBuilder(),
     ValueConverter: () => new CommonValueConverter(),
@@ -50,16 +59,16 @@ export const PacketModule: Module<PacketServices, PartialLangiumServices & Packe
  * @param context - Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
-export function createPacketServices(context: DefaultSharedModuleContext = EmptyFileSystem): {
-  shared: LangiumSharedServices;
+export function createPacketServices(context: DefaultSharedCoreModuleContext = EmptyFileSystem): {
+  shared: LangiumSharedCoreServices;
   Packet: PacketServices;
 } {
-  const shared: LangiumSharedServices = inject(
-    createDefaultSharedModule(context),
+  const shared: LangiumSharedCoreServices = inject(
+    createDefaultSharedCoreModule(context),
     MermaidGeneratedSharedModule
   );
   const Packet: PacketServices = inject(
-    createDefaultModule({ shared }),
+    createDefaultCoreModule({ shared }),
     PacketGeneratedModule,
     PacketModule
   );

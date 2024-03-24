@@ -73,7 +73,7 @@ Example:
 ## Simple full example:
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <body>
     <pre class="mermaid">
@@ -286,11 +286,11 @@ const drawDiagram = async function () {
 };
 ```
 
-1.  The graph is generated using the render call.
-2.  After generation the render function calls the provided callback function, in this case it's called insertSvg.
-3.  The callback function is called with two parameters, the SVG code of the generated graph and a function. This function binds events to the SVG **after** it is inserted into the DOM.
-4.  Insert the SVG code into the DOM for presentation.
-5.  Call the binding function that binds the events.
+1. The graph is generated using the render call.
+2. After generation the render function calls the provided callback function, in this case it's called insertSvg.
+3. The callback function is called with two parameters, the SVG code of the generated graph and a function. This function binds events to the SVG **after** it is inserted into the DOM.
+4. Insert the SVG code into the DOM for presentation.
+5. Call the binding function that binds the events.
 
 ## Example of a marked renderer
 
@@ -393,3 +393,8 @@ mermaid.startOnLoad = true;
 
 > **Warning**
 > This way of setting the configuration is deprecated. Instead the preferred way is to use the initialize method. This functionality is only kept for backwards compatibility.
+
+<!---
+cspell:locale en,en-gb
+cspell:ignore pumbaa
+--->

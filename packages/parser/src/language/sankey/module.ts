@@ -1,12 +1,17 @@
 import type {
-  DefaultSharedModuleContext,
+  DefaultSharedCoreModuleContext,
+  LangiumCoreServices,
   LangiumParser,
-  LangiumServices,
-  LangiumSharedServices,
+  LangiumSharedCoreServices,
   Module,
-  PartialLangiumServices,
+  PartialLangiumCoreServices,
 } from 'langium';
-import { EmptyFileSystem, createDefaultModule, createDefaultSharedModule, inject } from 'langium';
+import {
+  EmptyFileSystem,
+  createDefaultCoreModule,
+  createDefaultSharedCoreModule,
+  inject,
+} from 'langium';
 
 import { MermaidGeneratedSharedModule, SankeyGeneratedModule } from '../generated/module.js';
 import { SankeyTokenBuilder } from './tokenBuilder.js';
@@ -27,13 +32,16 @@ export type SankeyAddedServices = {
 /**
  * Union of Langium default services and `Sankey` services.
  */
-export type SankeyServices = LangiumServices & SankeyAddedServices;
+export type SankeyServices = LangiumCoreServices & SankeyAddedServices;
 
 /**
  * Dependency injection module that overrides Langium default services and
  * contributes the declared `Sankey` services.
  */
-export const SankeyModule: Module<SankeyServices, PartialLangiumServices & SankeyAddedServices> = {
+export const SankeyModule: Module<
+  SankeyServices,
+  PartialLangiumCoreServices & SankeyAddedServices
+> = {
   parser: {
     LangiumParser: (services) => createSankeyParser(services),
     TokenBuilder: () => new SankeyTokenBuilder(),
@@ -55,16 +63,16 @@ export const SankeyModule: Module<SankeyServices, PartialLangiumServices & Sanke
  * @param context - Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
-export function createSankeyServices(context: DefaultSharedModuleContext = EmptyFileSystem): {
-  shared: LangiumSharedServices;
+export function createSankeyServices(context: DefaultSharedCoreModuleContext = EmptyFileSystem): {
+  shared: LangiumSharedCoreServices;
   Sankey: SankeyServices;
 } {
-  const shared: LangiumSharedServices = inject(
-    createDefaultSharedModule(context),
+  const shared: LangiumSharedCoreServices = inject(
+    createDefaultSharedCoreModule(context),
     MermaidGeneratedSharedModule
   );
   const Sankey: SankeyServices = inject(
-    createDefaultModule({ shared }),
+    createDefaultCoreModule({ shared }),
     SankeyGeneratedModule,
     SankeyModule
   );

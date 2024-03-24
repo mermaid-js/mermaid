@@ -6,6 +6,7 @@ import { findCommonAncestor } from './render-utils.js';
 import { labelHelper } from '../../mermaid/src/dagre-wrapper/shapes/util.js';
 import { getConfig } from '../../mermaid/src/config.js';
 import { log } from '../../mermaid/src/logger.js';
+import utils from '../../mermaid/src/utils.js';
 import { setupGraphViewbox } from '../../mermaid/src/setupGraphViewbox.js';
 import common from '../../mermaid/src/diagrams/common/common.js';
 import { interpolateToCurve, getStylesFromArray } from '../../mermaid/src/utils.js';
@@ -93,13 +94,13 @@ export const addVertices = async function (vert, svgId, root, doc, diagObj, pare
         },
       ];
 
-      let radious = 0;
+      let radius = 0;
       let _shape = '';
       let layoutOptions = {};
       // Set the shape based parameters
       switch (vertex.type) {
         case 'round':
-          radious = 5;
+          radius = 5;
           _shape = 'rect';
           break;
         case 'square':
@@ -163,8 +164,8 @@ export const addVertices = async function (vert, svgId, root, doc, diagObj, pare
         shape: _shape,
         labelText: vertexText,
         labelType: vertex.labelType,
-        rx: radious,
-        ry: radious,
+        rx: radius,
+        ry: radius,
         class: classStr,
         style: styles.style,
         id: vertex.id,
@@ -655,6 +656,11 @@ const insertEdge = function (edgesEl, edge, edgeData, diagObj, parentLookupDb, i
     .attr('d', curve(points))
     .attr('class', 'path ' + edgeData.classes)
     .attr('fill', 'none');
+  Object.entries(edgeData).forEach(([key, value]) => {
+    if (key !== 'classes') {
+      edgePath.attr(key, value);
+    }
+  });
   const edgeG = edgesEl.insert('g').attr('class', 'edgeLabel');
   const edgeWithLabel = select(edgeG.node().appendChild(edge.labelEl));
   const box = edgeWithLabel.node().firstChild.getBoundingClientRect();
@@ -702,21 +708,15 @@ const insertChildren = (nodeArray, parentLookupDb) => {
  */
 
 export const draw = async function (text, id, _version, diagObj) {
-  // Add temporary render element
-  diagObj.db.clear();
+  const { securityLevel, flowchart: conf } = getConfig();
   nodeDb = {};
   portPos = {};
-  diagObj.db.setGen('gen-2');
-  // Parse the graph definition
-  diagObj.parser.parse(text);
-
   const renderEl = select('body').append('div').attr('style', 'height:400px').attr('id', 'cy');
   let graph = {
     id: 'root',
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-      'org.eclipse.elk.padding': '[top=100, left=100, bottom=110, right=110]',
-      'elk.layered.spacing.edgeNodeBetweenLayers': '30',
+      'elk.layered.spacing.edgeNodeBetweenLayers': conf?.nodeSpacing ? `${conf.nodeSpacing}` : '30',
       // 'elk.layered.mergeEdges': 'true',
       'elk.direction': 'DOWN',
       // 'elk.ports.sameLayerEdges': true,
@@ -744,7 +744,6 @@ export const draw = async function (text, id, _version, diagObj) {
       graph.layoutOptions['elk.direction'] = 'LEFT';
       break;
   }
-  const { securityLevel, flowchart: conf } = getConfig();
 
   // Find the root dom node to ne used in rendering
   // Handle root and document for when rendering in sandbox mode
@@ -759,7 +758,6 @@ export const draw = async function (text, id, _version, diagObj) {
   const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
   const svg = root.select(`[id="${id}"]`);
-
   // Define the supported markers for the diagram
   const markers = ['point', 'circle', 'cross'];
 
@@ -841,6 +839,7 @@ export const draw = async function (text, id, _version, diagObj) {
   log.info('after layout', JSON.stringify(graph, null, 2));
   const g = await elk.layout(graph);
   drawNodes(0, 0, g.children, svg, subGraphsEl, diagObj, 0);
+  utils.insertTitle(svg, 'flowchartTitleText', conf.titleTopMargin, diagObj.db.getDiagramTitle());
   log.info('after layout', g);
   g.edges?.map((edge) => {
     insertEdge(edgesEl, edge, edge.edgeData, diagObj, parentLookupDb, id);
