@@ -13,10 +13,10 @@ describe('quadrant unit tests', () => {
     });
   });
 
-  it('should throw an error for unacceptable style name', () => {
+  it('should throw an error for non supported style name', () => {
     const styles: string[] = ['test_name: value'];
     expect(() => quadrantDb.parseStyles(styles)).toThrowError(
-      'style named test_name is unacceptable'
+      'style named test_name is not supported.'
     );
   });
 
@@ -26,7 +26,7 @@ describe('quadrant unit tests', () => {
     expect(result).toEqual({});
   });
 
-  it('should throw an error for unacceptable style value', () => {
+  it('should throw an error for non supported style value', () => {
     let styles: string[] = ['radius: f'];
     expect(() => quadrantDb.parseStyles(styles)).toThrowError(
       'value for radius f is invalid, please use a valid number'
