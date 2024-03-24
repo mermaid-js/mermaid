@@ -64,28 +64,28 @@ function parseStyles(styles: string[]): StylesObject {
   const stylesObject: StylesObject = {};
   for (const style of styles) {
     const [key, value] = style.trim().split(/\s*:\s*/);
-    if (key == 'radius') {
+    if (key === 'radius') {
       if (validateNumber(value)) {
         throw new InvalidStyleError(key, value, 'number');
       }
       stylesObject.radius = parseInt(value);
-    } else if (key == 'color') {
+    } else if (key === 'color') {
       if (validateHexCode(value)) {
         throw new InvalidStyleError(key, value, 'hex code');
       }
       stylesObject.color = value;
-    } else if (key == 'stroke-color') {
+    } else if (key === 'stroke-color') {
       if (validateHexCode(value)) {
         throw new InvalidStyleError(key, value, 'hex code');
       }
       stylesObject.strokeColor = value;
-    } else if (key == 'stroke-width') {
+    } else if (key === 'stroke-width') {
       if (validateSizeInPixels(value)) {
         throw new InvalidStyleError(key, value, 'number of pixels (eg. 10px)');
       }
       stylesObject.strokeWidth = value;
     } else {
-      throw new Error(`style named ${key} is unacceptable`);
+      throw new Error(`style named ${key} is not supported.`);
     }
   }
   return stylesObject;
