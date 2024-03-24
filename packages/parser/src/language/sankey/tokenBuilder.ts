@@ -1,4 +1,4 @@
-import type { GrammarAST, Stream, TokenBuilderOptions } from 'langium';
+import type { GrammarAST, Stream } from 'langium';
 import type { TokenType } from 'chevrotain';
 
 import { AbstractMermaidTokenBuilder } from '../common/index.js';
