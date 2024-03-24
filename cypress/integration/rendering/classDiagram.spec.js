@@ -141,9 +141,9 @@ describe('Class diagram', () => {
       `
     classDiagram
     class Class01~T~
-      Class01-T : size()
-      Class01-T : int chimp
-      Class01~T~ : int gorilla
+      Class01 : size()
+      Class01 : int chimp
+      Class01 : int gorilla
       Class08 <--> C2: Cool label
       class Class10~T~ {
         &lt;&lt;service&gt;&gt;
@@ -162,9 +162,9 @@ describe('Class diagram', () => {
     classDiagram
     Class01~T~ <|-- AveryLongClass : Cool
     Class03~T~ *-- Class04~T~
-      Class01-T : size()
-      Class01-T : int chimp
-      Class01-T : int gorilla
+      Class01 : size()
+      Class01 : int chimp
+      Class01 : int gorilla
       Class08 <--> C2: Cool label
       class Class10~T~ {
         &lt;&lt;service&gt;&gt;
@@ -183,9 +183,9 @@ describe('Class diagram', () => {
     classDiagram
     Class01~T~ <|-- AveryLongClass : Cool
     Class03~T~ *-- Class04~T~
-      Class01-T : size()
-      Class01-T : int chimp
-      Class01-T : int gorilla
+      Class01 : size()
+      Class01 : int chimp
+      Class01 : int gorilla
       Class08 <--> C2: Cool label
       class Class10~T~ {
         &lt;&lt;service&gt;&gt;
@@ -205,9 +205,9 @@ describe('Class diagram', () => {
     classDiagram
     Class01~T~ <|-- AveryLongClass : Cool
     Class03~T~ *-- Class04~T~
-      Class01-T : size()
-      Class01-T : int chimp
-      Class01-T : int gorilla
+      Class01 : size()
+      Class01 : int chimp
+      Class01 : int gorilla
       Class08 <--> C2: Cool label
       class Class10~T~ {
         &lt;&lt;service&gt;&gt;
@@ -511,6 +511,125 @@ describe('Class diagram', () => {
 
     cy.get('svg').then((svg) => {
       cy.get('a').should('have.attr', 'target', '_blank').should('have.attr', 'rel', 'noopener');
+    });
+  });
+
+  describe('when adding generic types', () => {
+    it('should add properties when type is mentioned in classID', () => {
+      imgSnapshotTest(
+        `
+        classDiagram
+          class Class01~T~
+            Class01-T : size()
+            Class01-T : int chimp
+            Class01-T : int gorilla
+        `
+      );
+    });
+
+    it('should fallback to matching class name when type is not mentioned in property', () => {
+      imgSnapshotTest(
+        `
+        classDiagram
+          class Class01~T~
+            Class01-T : size()
+            Class01-T : int chimp
+            Class01 : int gorilla
+        `
+      );
+    });
+
+    it('should fallback to the first matching class name when type is not mentioned in property', () => {
+      imgSnapshotTest(
+        `
+        classDiagram
+          class Class01~T~
+          class Class01~X~
+            Class01-T : int inClassT
+            Class01-X : int inClassX
+            Class01 : int alsoInClassT
+        `
+      );
+    });
+
+    it('should detect generic classes correctly when using different classIDs', () => {
+      imgSnapshotTest(
+        `
+        classDiagram
+          class Class01~T~
+            Class01-T : size()
+            Class01-T : int chimp
+            Class01 : int gorillaInClassT
+          class Class01~X~
+            Class01-X : size()
+            Class01-X : int chimp
+            Class01-X : int gorilla
+        `
+      );
+    });
+
+    it('should render with Generic class and relations', () => {
+      imgSnapshotTest(
+        `
+        classDiagram
+          Class01~T~ <|-- AveryLongClass : Cool
+          Class03~T~ *-- Class04~T~
+            Class01-T : size()
+            Class01-T : int chimp
+            Class01-T : int gorilla
+            Class08 <--> C2: Cool label
+            class Class10~T~ {
+              &lt;&lt;service&gt;&gt;
+              int id
+              test()
+            }
+        `
+      );
+    });
+
+    // TODO: @jgreywolf These tests should ideally be unit tests, as links cannot be verified visually.
+    it('should render with clickable link when type is not mentioned', () => {
+      imgSnapshotTest(
+        `
+        classDiagram
+          Class01~T~ <|-- AveryLongClass : Cool
+            Class01-T : size()
+            link Class01 "google.com" "A Tooltip"
+      `
+      );
+    });
+
+    it('should render with clickable callback when type is not mentioned', () => {
+      imgSnapshotTest(
+        `
+        classDiagram
+          Class01~T~ <|-- AveryLongClass : Cool
+            Class01-T : size()
+            callback Class01 "functionCall" "A Tooltip"
+      `
+      );
+    });
+
+    it('should render with clickable link when type is mentioned', () => {
+      imgSnapshotTest(
+        `
+        classDiagram
+          Class01~T~ <|-- AveryLongClass : Cool
+            Class01-T : size()
+            link Class01-T "google.com" "A Tooltip"
+      `
+      );
+    });
+
+    it('should render with clickable callback when type is mentioned', () => {
+      imgSnapshotTest(
+        `
+        classDiagram
+          Class01~T~ <|-- AveryLongClass : Cool
+            Class01-T : size()
+            callback Class01-T "functionCall" "A Tooltip"
+      `
+      );
     });
   });
 });
