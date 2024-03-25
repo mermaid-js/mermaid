@@ -17,9 +17,9 @@ import {
 } from './architectureTypes.js';
 import { select } from 'd3';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
-import defaultConfig from '../../defaultConfig.js';
 import type { D3Element } from '../../mermaidAPI.js';
 import { drawEdges, drawGroups, drawService } from './svgDraw.js';
+import { getConfigField } from './architectureDb.js';
 
 cytoscape.use(fcose);
 
@@ -33,9 +33,8 @@ function addServices(services: ArchitectureService[], cy: cytoscape.Core) {
         icon: service.icon,
         label: service.title,
         parent: service.in,
-        // TODO: dynamic size
-        width: 80,
-        height: 80,
+        width: getConfigField('iconSize'),
+        height: getConfigField('iconSize'),
       },
       classes: 'node-service',
     });
@@ -286,8 +285,8 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   setupGraphViewbox(
     undefined,
     svg,
-    conf.architecture?.padding ?? defaultConfig.architecture.padding,
-    conf.architecture?.useMaxWidth ?? defaultConfig.architecture.useMaxWidth
+    getConfigField('padding'),
+    getConfigField('useMaxWidth')
   );
 };
 

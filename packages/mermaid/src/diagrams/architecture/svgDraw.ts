@@ -8,6 +8,7 @@ import type { MermaidConfig } from '../../config.type.js';
 import type cytoscape from 'cytoscape';
 import { log } from '../../logger.js';
 import { getIcon, isIconNameInUse } from '../../rendering-util/svgRegister.js';
+import { getConfigField } from './architectureDb.js';
 
 declare module 'cytoscape' {
   interface EdgeSingular {
@@ -76,20 +77,23 @@ export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
 };
 
 export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
+  const iconSize = getConfigField('iconSize')
+  const halfIconSize = iconSize / 2
+
   cy.nodes().map((node, id) => {
     const data = node.data();
     if (data.type === 'group') {
       const { h, w, x1, x2, y1, y2 } = node.boundingBox();
       let bkgElem = groupsEl
         .append('rect')
-        .attr('x', x1 + 40)
-        .attr('y', y1 + 40)
+        .attr('x', x1 + halfIconSize)
+        .attr('y', y1 + halfIconSize)
         .attr('width', w)
         .attr('height', h)
         .attr('class', 'node-bkg');
 
       const textElem = groupsEl.append('g');
-      createText(textElem, data.title, {
+      createText(textElem, data.label, {
         useHtmlLabels: false,
         width: w,
         classes: 'architecture-service-label',
@@ -100,7 +104,7 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
         .attr('dominant-baseline', 'start')
         .attr('text-anchor', 'start');
 
-      textElem.attr('transform', 'translate(' + (x1 + 44) + ', ' + (y1 + 42) + ')');
+      textElem.attr('transform', 'translate(' + (x1 + halfIconSize + 4) + ', ' + (y1 + halfIconSize + 2) + ')');
     }
   });
 };
@@ -112,6 +116,7 @@ export const drawService = function (
   conf: MermaidConfig
 ): number {
   const serviceElem = elem.append('g');
+  const iconSize = getConfigField('iconSize')
 
   if (service.title) {
     const textElem = serviceElem.append('g');
@@ -129,7 +134,7 @@ export const drawService = function (
     textElem.attr(
       'transform',
       // TODO: dynamic size
-      'translate(' + 80 / 2 + ', ' + 80 + ')'
+      'translate(' + (iconSize / 2) + ', ' + iconSize + ')'
     );
   }
 
@@ -138,13 +143,13 @@ export const drawService = function (
     if (!isIconNameInUse(service.icon)) {
       throw new Error(`Invalid SVG Icon name: "${service.icon}"`);
     }
-    bkgElem = getIcon(service.icon)?.(bkgElem);
+    bkgElem = getIcon(service.icon)?.(bkgElem, iconSize);
   } else {
     bkgElem
       .append('path')
       .attr('class', 'node-bkg')
       .attr('id', 'node-' + service.id)
-      .attr('d', `M0 ${80 - 0} v${-80 + 2 * 0} q0,-5 5,-5 h${80 - 2 * 0} q5,0 5,5 v${80 - 0} H0 Z`);
+      .attr('d', `M0 ${iconSize - 0} v${-iconSize + 2 * 0} q0,-5 5,-5 h${iconSize - 2 * 0} q5,0 5,5 v${iconSize - 0} H0 Z`);
   }
 
   serviceElem.attr('class', 'architecture-service');

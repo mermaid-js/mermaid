@@ -6,6 +6,7 @@ import type {
   ArchitectureDirection,
   ArchitectureLine,
 } from './architectureTypes.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { isArchitectureDirection } from './architectureTypes.js';
 import {
   setAccTitle,
@@ -35,10 +36,6 @@ let groups = DEFAULT_ARCHITECTURE_DB.groups;
 let lines = DEFAULT_ARCHITECTURE_DB.lines;
 let elements: Record<string, D3Element> = {};
 let cnt = DEFAULT_ARCHITECTURE_DB.cnt;
-
-const config: Required<ArchitectureDiagramConfig> = structuredClone(DEFAULT_ARCHITECTURE_CONFIG);
-
-const getConfig = (): Required<ArchitectureDiagramConfig> => structuredClone(config);
 
 const clear = (): void => {
   services = structuredClone(DEFAULT_ARCHITECTURE_DB.services);
@@ -109,7 +106,6 @@ const setElementForId = (id: string, element: D3Element) => {
 const getElementById = (id: string) => elements[id];
 
 export const db: ArchitectureDB = {
-  getConfig,
   clear,
   setDiagramTitle,
   getDiagramTitle,
@@ -127,3 +123,14 @@ export const db: ArchitectureDB = {
   setElementForId,
   getElementById,
 };
+
+function getConfigField<T extends keyof ArchitectureDiagramConfig>(field: T): Required<ArchitectureDiagramConfig>[T] {
+  const arch = getConfig().architecture;
+  if (arch && arch[field] !== undefined) {
+    const a = arch[field];
+    return arch[field] as Required<ArchitectureDiagramConfig>[T]
+  }
+  return DEFAULT_ARCHITECTURE_CONFIG[field]
+}
+
+export { getConfigField }
