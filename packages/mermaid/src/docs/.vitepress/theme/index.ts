@@ -8,14 +8,12 @@ import Contributors from '../components/Contributors.vue';
 import HomePage from '../components/HomePage.vue';
 // @ts-ignore
 import TopBar from '../components/TopBar.vue';
-
 import { getRedirect } from './redirect.js';
-
 import { h } from 'vue';
-
 import Theme from 'vitepress/theme';
 import '../style/main.css';
 import 'uno.css';
+import type { EnhanceAppContext } from 'vitepress';
 
 export default {
   ...DefaultTheme,
@@ -26,19 +24,22 @@ export default {
       'home-features-after': () => h(HomePage),
     });
   },
-  enhanceApp({ app, router }) {
+  enhanceApp({ app, router }: EnhanceAppContext) {
     // register global components
     app.component('Mermaid', Mermaid);
     app.component('Contributors', Contributors);
     router.onBeforeRouteChange = (to) => {
       try {
-        const newPath = getRedirect(to);
+        const url = new URL(window.location.origin + to);
+        const newPath = getRedirect(url);
         if (newPath) {
           console.log(`Redirecting to ${newPath} from ${window.location}`);
           // router.go isn't loading the ID properly.
           window.location.href = `/${newPath}`;
         }
-      } catch (e) {}
+      } catch (e) {
+        console.error(e);
+      }
     };
   },
 };
