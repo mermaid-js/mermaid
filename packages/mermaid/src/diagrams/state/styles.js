@@ -202,4 +202,7 @@ g.stateGroup line {
 }
 `;
 
+// todo: change composit to composite
+// cspell:ignore composit
+
 export default getStyles;

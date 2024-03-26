@@ -1,9 +1,9 @@
-import { darken, lighten, adjust, invert, isDark } from 'khroma';
-import { mkBorder } from './theme-helpers.js';
+import { adjust, darken, invert, isDark, lighten } from 'khroma';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
 } from './erDiagram-oldHardcodedValues.js';
+import { mkBorder } from './theme-helpers.js';
 
 class Theme {
   constructor() {
@@ -46,7 +46,7 @@ class Theme {
     this.actorBorder = 'calculated';
     this.actorBkg = 'calculated';
     this.actorTextColor = 'black';
-    this.actorLineColor = 'grey';
+    this.actorLineColor = 'calculated';
     this.signalColor = '#333';
     this.signalTextColor = '#333';
     this.labelBoxBkgColor = 'calculated';
@@ -101,6 +101,7 @@ class Theme {
     this.loopTextColor = this.actorTextColor;
     this.noteBorderColor = this.border2;
     this.noteTextColor = this.actorTextColor;
+    this.actorLineColor = this.actorBorder;
 
     /* Each color-set will have a background, a foreground and a border color */
     this.cScale0 = this.cScale0 || this.primaryColor;
@@ -239,6 +240,15 @@ class Theme {
     this.quadrantExternalBorderStrokeFill =
       this.quadrantExternalBorderStrokeFill || this.primaryBorderColor;
     this.quadrantTitleFill = this.quadrantTitleFill || this.primaryTextColor;
+
+    this.packet = {
+      startByteColor: this.primaryTextColor,
+      endByteColor: this.primaryTextColor,
+      labelColor: this.primaryTextColor,
+      titleColor: this.primaryTextColor,
+      blockStrokeColor: this.primaryTextColor,
+      blockFillColor: this.mainBkg,
+    };
 
     /* xychart */
     this.xyChart = {

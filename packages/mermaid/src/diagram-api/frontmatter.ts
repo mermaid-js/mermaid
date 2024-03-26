@@ -1,4 +1,4 @@
-import type { MermaidConfig } from '../config.type.js';
+import type { GanttDiagramConfig, MermaidConfig } from '../config.type.js';
 import { frontMatterRegex } from './regexes.js';
 // The "* as yaml" part is necessary for tree-shaking
 import * as yaml from 'js-yaml';
@@ -6,7 +6,7 @@ import * as yaml from 'js-yaml';
 interface FrontMatterMetadata {
   title?: string;
   // Allows custom display modes. Currently used for compact mode in gantt charts.
-  displayMode?: string;
+  displayMode?: GanttDiagramConfig['displayMode'];
   config?: MermaidConfig;
 }
 
@@ -44,7 +44,7 @@ export function extractFrontMatter(text: string): FrontMatterResult {
 
   // Only add properties that are explicitly supported, if they exist
   if (parsed.displayMode) {
-    metadata.displayMode = parsed.displayMode.toString();
+    metadata.displayMode = parsed.displayMode.toString() as GanttDiagramConfig['displayMode'];
   }
   if (parsed.title) {
     metadata.title = parsed.title.toString();

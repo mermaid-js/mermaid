@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json
+
+$schema: https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json
+version: '0.2'
+language: en-US,en-GB
+
+import:
+  - ./.cspell/cspell.config.yaml
+
+ignoreRegExpList:
+  - character-set-cyrillic
+  - svg-block
+ignorePaths:
+  - '*lock.{yaml,json}'
+  - dist
+  - CHANGELOG.md
+  - packages/mermaid/src/docs/.vitepress/redirect.ts
+  - packages/mermaid/src/docs/.vitepress/contributor-names.json
+  - backup
+  - '**/*.spec.{js,ts}' # checked by eslint
+  - 'tests/webpack/src/index.js' # checked by eslint
+  - 'cypress/**/*.js' # checked by eslint
+  - '*.csv'
+  - '*.patch'
+  - 'docs/**/*.html'
+  - 'cypress/platform/**'
+dictionaries:
+  - misc-terms
+overrides:
+  - filename:
+      - '**/*.{jison,ts,mts,cjs,mjs,js,json,yaml,yml,md,html}'
+      - 'run'
+      - Dockerfile
+    ignoreRegExpList:
+      - js-unicode-escape
+    dictionaries:
+      - code-terms
+      - 3rd-party-terms
+      - fonts
+      - html
+      - lorem-ipsum
+  - filename: '**/package.json'
+    ignoreRegExpList:
+      - json-property
+# cspell:dictionaries code-terms

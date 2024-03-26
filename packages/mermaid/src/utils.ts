@@ -925,3 +925,7 @@ export const encodeEntities = function (text: string): string {
 export const decodeEntities = function (text: string): string {
   return text.replace(/ﬂ°°/g, '&#').replace(/ﬂ°/g, '&').replace(/¶ß/g, ';');
 };
+
+export const isString = (value: unknown): value is string => {
+  return typeof value === 'string';
+};

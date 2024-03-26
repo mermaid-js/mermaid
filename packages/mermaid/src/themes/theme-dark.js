@@ -1,4 +1,4 @@
-import { invert, lighten, darken, rgba, adjust, isDark } from 'khroma';
+import { adjust, darken, invert, isDark, lighten, rgba } from 'khroma';
 import { mkBorder } from './theme-helpers.js';
 
 class Theme {
@@ -109,7 +109,7 @@ class Theme {
     this.actorBorder = this.border1;
     this.actorBkg = this.mainBkg;
     this.actorTextColor = this.mainContrastColor;
-    this.actorLineColor = this.mainContrastColor;
+    this.actorLineColor = this.actorBorder;
     this.signalColor = this.mainContrastColor;
     this.signalTextColor = this.mainContrastColor;
     this.labelBoxBkgColor = this.actorBkg;
@@ -266,6 +266,15 @@ class Theme {
       plotColorPalette:
         this.xyChart?.plotColorPalette ||
         '#3498db,#2ecc71,#e74c3c,#f1c40f,#bdc3c7,#ffffff,#34495e,#9b59b6,#1abc9c,#e67e22',
+    };
+
+    this.packet = {
+      startByteColor: this.primaryTextColor,
+      endByteColor: this.primaryTextColor,
+      labelColor: this.primaryTextColor,
+      titleColor: this.primaryTextColor,
+      blockStrokeColor: this.primaryTextColor,
+      blockFillColor: this.background,
     };
 
     /* class */

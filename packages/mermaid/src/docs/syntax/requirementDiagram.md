@@ -156,3 +156,5 @@ This example uses all features of the diagram.
     test_entity3 - verifies -> test_req5
     test_req <- copies - test_entity2
 ```
+
+<!--- cspell:ignore reqs --->

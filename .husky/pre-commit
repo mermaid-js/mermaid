@@ -1,4 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-pnpm run pre-commit
+NODE_OPTIONS="--max_old_space_size=8192" pnpm run pre-commit

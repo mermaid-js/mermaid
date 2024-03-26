@@ -295,7 +295,7 @@ function renderCommitHistory(svg, commitId, branches, direction) {
   }
 
   if (Array.isArray(commitId)) {
-    logger.debug('found merge commmit', commitId);
+    logger.debug('found merge commit', commitId);
     renderCommitHistory(svg, commitId[0], branches, direction);
     branchNum++;
     renderCommitHistory(svg, commitId[1], branches, direction);

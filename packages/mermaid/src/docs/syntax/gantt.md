@@ -49,8 +49,8 @@ gantt
     Create tests for parser             :crit, active, 3d
     Future task in critical line        :crit, 5d
     Create tests for renderer           :2d
-    Add to mermaid                      :1d
-    Functionality added                 :milestone, 2014-01-25, 0d
+    Add to mermaid                      :until isadded
+    Functionality added                 :milestone, isadded, 2014-01-25, 0d
 
     section Documentation
     Describe gantt syntax               :active, a1, after des1, 3d
@@ -73,18 +73,27 @@ After processing the tags, the remaining metadata items are interpreted as follo
 2. If two items are specified, the last item is interpreted as in the previous case. The first item can either specify an explicit start date/time (in the format specified by `dateFormat`) or reference another task using `after <otherTaskID> [[otherTaskID2 [otherTaskID3]]...]`. In the latter case, the start date of the task will be set according to the latest end date of any referenced task.
 3. If three items are specified, the last two will be interpreted as in the previous case. The first item will denote the ID of the task, which can be referenced using the `later <taskID>` syntax.
 
-| Metadata syntax                            | Start date                                          | End date                                    | ID       |
-| ------------------------------------------ | --------------------------------------------------- | ------------------------------------------- | -------- |
-| `<taskID>, <startDate>, <endDate>`         | `startdate` as interpreted using `dateformat`       | `endDate` as interpreted using `dateformat` | `taskID` |
-| `<taskID>, <startDate>, <length>`          | `startdate` as interpreted using `dateformat`       | Start date + `length`                       | `taskID` |
-| `<taskID>, after <otherTaskId>, <endDate>` | End date of previously specified task `otherTaskID` | `endDate` as interpreted using `dateformat` | `taskID` |
-| `<taskID>, after <otherTaskId>, <length>`  | End date of previously specified task `otherTaskID` | Start date + `length`                       | `taskID` |
-| `<startDate>, <endDate>`                   | `startdate` as interpreted using `dateformat`       | `enddate` as interpreted using `dateformat` | n/a      |
-| `<startDate>, <length>`                    | `startdate` as interpreted using `dateformat`       | Start date + `length`                       | n/a      |
-| `after <otherTaskID>, <endDate>`           | End date of previously specified task `otherTaskID` | `enddate` as interpreted using `dateformat` | n/a      |
-| `after <otherTaskID>, <length>`            | End date of previously specified task `otherTaskID` | Start date + `length`                       | n/a      |
-| `<endDate>`                                | End date of preceding task                          | `enddate` as interpreted using `dateformat` | n/a      |
-| `<length>`                                 | End date of preceding task                          | Start date + `length`                       | n/a      |
+| Metadata syntax                                      | Start date                                          | End date                                              | ID       |
+| ---------------------------------------------------- | --------------------------------------------------- | ----------------------------------------------------- | -------- |
+| `<taskID>, <startDate>, <endDate>`                   | `startdate` as interpreted using `dateformat`       | `endDate` as interpreted using `dateformat`           | `taskID` |
+| `<taskID>, <startDate>, <length>`                    | `startdate` as interpreted using `dateformat`       | Start date + `length`                                 | `taskID` |
+| `<taskID>, after <otherTaskId>, <endDate>`           | End date of previously specified task `otherTaskID` | `endDate` as interpreted using `dateformat`           | `taskID` |
+| `<taskID>, after <otherTaskId>, <length>`            | End date of previously specified task `otherTaskID` | Start date + `length`                                 | `taskID` |
+| `<taskID>, <startDate>, until <otherTaskId>`         | `startdate` as interpreted using `dateformat`       | Start date of previously specified task `otherTaskID` | `taskID` |
+| `<taskID>, after <otherTaskId>, until <otherTaskId>` | End date of previously specified task `otherTaskID` | Start date of previously specified task `otherTaskID` | `taskID` |
+| `<startDate>, <endDate>`                             | `startdate` as interpreted using `dateformat`       | `enddate` as interpreted using `dateformat`           | n/a      |
+| `<startDate>, <length>`                              | `startdate` as interpreted using `dateformat`       | Start date + `length`                                 | n/a      |
+| `after <otherTaskID>, <endDate>`                     | End date of previously specified task `otherTaskID` | `enddate` as interpreted using `dateformat`           | n/a      |
+| `after <otherTaskID>, <length>`                      | End date of previously specified task `otherTaskID` | Start date + `length`                                 | n/a      |
+| `<startDate>, until <otherTaskId>`                   | `startdate` as interpreted using `dateformat`       | Start date of previously specified task `otherTaskID` | n/a      |
+| `after <otherTaskId>, until <otherTaskId>`           | End date of previously specified task `otherTaskID` | Start date of previously specified task `otherTaskID` | n/a      |
+| `<endDate>`                                          | End date of preceding task                          | `enddate` as interpreted using `dateformat`           | n/a      |
+| `<length>`                                           | End date of preceding task                          | Start date + `length`                                 | n/a      |
+| `until <otherTaskId>`                                | End date of preceding task                          | Start date of previously specified task `otherTaskID` | n/a      |
+
+```note
+Support for keyword `until` was added in (v10.9.0+). This can be used to define a task which is running until some other specific task or milestone starts.
+```
 
 For simplicity, the table does not show the use of multiple tasks listed with the `after` keyword. Here is an example of how to use it and how it's interpreted:
 
@@ -93,11 +102,33 @@ gantt
     apple :a, 2017-07-20, 1w
     banana :crit, b, 2017-07-23, 1d
     cherry :active, c, after b a, 1d
+    kiwi   :d, 2017-07-20, until b c
 ```
 
 ### Title
 
 The `title` is an _optional_ string to be displayed at the top of the Gantt chart to describe the chart as a whole.
+
+### Excludes
+
+The `excludes` is an _optional_ attribute that accepts specific dates in YYYY-MM-DD format, days of the week ("sunday") or "weekends", but not the word "weekdays".
+These date will be marked on the graph, and be excluded from the duration calculation of tasks. Meaning that if there are excluded dates during a task interval, the number of 'skipped' days will be added to the end of the task to ensure the duration is as specified in the code.
+
+#### Weekend (v\<MERMAID_RELEASE_VERSION>+)
+
+When excluding weekends, it is possible to configure the weekends to be either Friday and Saturday or Saturday and Sunday. By default weekends are Saturday and Sunday.
+To define the weekend start day, there is an _optional_ attribute `weekend` that can be added in a new line followed by either `friday` or `saturday`.
+
+```mermaid-example
+gantt
+    title A Gantt Diagram Excluding Fri - Sat weekends
+    dateFormat YYYY-MM-DD
+    excludes weekends
+    weekend friday
+    section Section
+        A task          :a1, 2024-01-01, 30d
+        Another task    :after a1, 20d
+```
 
 ### Section statements
 
@@ -221,12 +252,12 @@ gantt
 ```
 
 ```warning
-`millisecond` and `second` support was added in vMERMAID_RELEASE_VERSION
+`millisecond` and `second` support was added in v10.3.0
 ```
 
 ## Output in compact mode
 
-The compact mode allows you to display multiple tasks in the same row. Compact mode can be enabled for a gantt chart by setting the display mode of the graph via preceeding YAML settings.
+The compact mode allows you to display multiple tasks in the same row. Compact mode can be enabled for a gantt chart by setting the display mode of the graph via preceding YAML settings.
 
 ```mermaid
 ---
@@ -439,3 +470,5 @@ gantt
     section Issue1300
     5    : 0, 5
 ```
+
+<!--- cspell:ignore isadded --->

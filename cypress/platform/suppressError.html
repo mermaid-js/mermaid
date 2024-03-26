@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+  </head>
+  <body>
+    <div id="test">
+      <pre class="mermaid">
+  flowchart
+      a[This should be visible]
+    </pre
+      >
+      <pre class="mermaid">
+  flowchart
+    a --< b
+    </pre
+      >
+      <pre class="mermaid">
+  flowchart
+      a[This should be visible]
+    </pre
+      >
+      <pre class="mermaid">
+  ---
+  config:
+    suppressErrorRendering: true # This should not affect anything, as suppressErrorRendering is a secure config
+  ---
+  flowchart
+    a --< b
+    </pre
+      >
+      <pre class="mermaid">
+  ---
+  config:
+    suppressErrorRendering: false # This should not affect anything, as suppressErrorRendering is a secure config
+  ---
+  flowchart
+    a --< b
+    </pre
+      >
+    </div>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      const shouldSuppress =
+        new URLSearchParams(window.location.search).get('suppressErrorRendering') === 'true';
+      mermaid.initialize({ startOnLoad: false, suppressErrorRendering: shouldSuppress });
+      try {
+        await mermaid.run();
+      } catch {
+        if (window.Cypress) {
+          window.rendered = true;
+        }
+      }
+    </script>
+  </body>
+</html>

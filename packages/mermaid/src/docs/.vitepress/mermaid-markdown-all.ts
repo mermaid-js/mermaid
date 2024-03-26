@@ -9,35 +9,15 @@ const MermaidExample = async (md: MarkdownRenderer) => {
 
   md.renderer.rules.fence = (tokens, index, options, env, slf) => {
     const token = tokens[index];
-
-    if (token.info.trim() === 'mermaid-example') {
-      if (!md.options.highlight) {
-        // this function is always created by vitepress, but we need to check it
-        // anyway to make TypeScript happy
-        throw new Error(
-          'Missing MarkdownIt highlight function (should be automatically created by vitepress'
-        );
-      }
-
-      // doing ```mermaid-example {line-numbers=5 highlight=14-17} is not supported
-      const langAttrs = '';
-      return `
-      <h5>Code:</h5>
-      <div class="language-mermaid">
-        <button class="copy"></button>
-        <span class="lang">mermaid</span>
-        ${
-          // html is pre-escaped by the highlight function
-          // (it also adds `v-pre` to ignore Vue template syntax)
-          md.options.highlight(token.content, 'mermaid', langAttrs)
-        }
-      </div>`;
-    } else if (token.info.trim() === 'mermaid') {
+    const language = token.info.trim();
+    if (language.startsWith('mermaid')) {
       const key = index;
       return `
       <Suspense> 
       <template #default>
-      <Mermaid id="mermaid-${key}"  graph="${encodeURIComponent(token.content)}"></Mermaid>
+      <Mermaid id="mermaid-${key}" :showCode="${
+        language === 'mermaid-example'
+      }" graph="${encodeURIComponent(token.content)}"></Mermaid>
       </template>
         <!-- loading state via #fallback slot -->
         <template #fallback>
@@ -45,25 +25,18 @@ const MermaidExample = async (md: MarkdownRenderer) => {
         </template>
       </Suspense>
 `;
-    }
-    if (token.info.trim() === 'warning') {
+    } else if (language === 'warning') {
       return `<div class="warning custom-block"><p class="custom-block-title">WARNING</p><p>${token.content}}</p></div>`;
-    }
-
-    if (token.info.trim() === 'note') {
+    } else if (language === 'note') {
       return `<div class="tip custom-block"><p class="custom-block-title">NOTE</p><p>${token.content}}</p></div>`;
-    }
-
-    if (token.info.trim() === 'regexp') {
+    } else if (language === 'regexp') {
       // shiki doesn't yet support regexp code blocks, but the javascript
       // one still makes RegExes look good
       token.info = 'javascript';
       // use trimEnd to move trailing `\n` outside if the JavaScript regex `/` block
       token.content = `/${token.content.trimEnd()}/\n`;
       return defaultRenderer(tokens, index, options, env, slf);
-    }
-
-    if (token.info.trim() === 'jison') {
+    } else if (language === 'jison') {
       return `<div class="language-">
       <button class="copy"></button>
       <span class="lang">jison</span>

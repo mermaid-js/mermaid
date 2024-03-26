@@ -1,0 +1,45 @@
+{
+  "name": "@mermaid-js/flowchart-elk",
+  "version": "1.0.0-rc.1",
+  "description": "Flowchart plugin for mermaid with ELK layout",
+  "module": "dist/mermaid-flowchart-elk.core.mjs",
+  "types": "dist/packages/mermaid-flowchart-elk/src/detector.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/mermaid-flowchart-elk.core.mjs",
+      "types": "./dist/packages/mermaid-flowchart-elk/src/detector.d.ts"
+    },
+    "./*": "./*"
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "flowchart",
+    "elk",
+    "mermaid"
+  ],
+  "scripts": {
+    "prepublishOnly": "pnpm -w run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid"
+  },
+  "author": "Knut Sveidqvist",
+  "license": "MIT",
+  "dependencies": {
+    "d3": "^7.9.0",
+    "dagre-d3-es": "7.0.10",
+    "elkjs": "^0.9.2",
+    "khroma": "^2.1.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "mermaid": "workspace:^",
+    "rimraf": "^5.0.5"
+  },
+  "files": [
+    "dist"
+  ]
+}

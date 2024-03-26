@@ -362,6 +362,8 @@ export const draw = (text, id, _version, diagObj) => {
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
 };
 
+// cspell:ignore txts
+
 export default {
   draw,
 };

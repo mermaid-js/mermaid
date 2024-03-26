@@ -66,6 +66,12 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [redmine-mermaid](https://github.com/styz/redmine_mermaid)
 - Visual Studio Code [Polyglot Interactive Notebooks](https://github.com/dotnet/interactive#net-interactive)
 
+### LLM integrations
+
+LLM integrations to create mermaid diagrams using AI from text descriptions.
+
+- [HueHive - Create mermaid diagrams with text](https://huehive.co/tools/diagrams)
+
 ### CRM/ERP
 
 Customer Relationship Management/Enterprise Resource Planning
@@ -90,6 +96,10 @@ Blogging frameworks and platforms
 
 Content Management Systems/Enterprise Content Management
 
+- [ApostropheCMS](https://apostrophecms.com/)
+  - [Extension for Mermaid.js](https://github.com/BoDonkey/mermaid-extension)
+- [Drupal](https://drupal.org/)
+  - [Mermaid Diagram Field module](https://www.drupal.org/project/mermaid_diagram_field)
 - [Grav CMS](https://getgrav.org/)
   - [Mermaid Diagrams Plugin](https://github.com/DanielFlaum/grav-plugin-mermaid-diagrams)
   - [GitLab Markdown Adapter](https://github.com/Goutte/grav-plugin-gitlab-markdown-adapter)
@@ -111,7 +121,7 @@ Communication tools and platforms
 - [phpBB](https://phpbb.com)
   - [phpbb-ext-mermaid](https://github.com/AlfredoRamos/phpbb-ext-mermaid)
 - [Slack](https://slack.com)
-  - [Mermaid Preview](https://github.com/JackuB/mermaid-for-slack)
+  - [Mermaid Preview](https://mermaid-preview.com)
 
 ### Wikis
 
@@ -210,23 +220,24 @@ Communication tools and platforms
 
 ### Browser Extensions
 
-| Name                     | Chrome Web Store                                                                                             | Firefox Add-ons                                                                | Opera                                                                          | Edge                                                                                                                         | Source/Repository                                                                                    |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| GitHub + Mermaid         | -                                                                                                            | [🦊🔗](https://addons.mozilla.org/firefox/addon/github-mermaid/)               | -                                                                              | -                                                                                                                            | [🐙🔗](https://github.com/BackMarket/github-mermaid-extension)                                       |
-| Asciidoctor Live Preview | [🎡🔗](https://chrome.google.com/webstore/detail/asciidoctorjs-live-previe/iaalpfgpbocpdfblpnhhgllgbdbchmia) | -                                                                              | -                                                                              | [🌀🔗](https://microsoftedge.microsoft.com/addons/detail/asciidoctorjs-live-previ/pefkelkanablhjdekgdahplkccnbdggd?hl=en-US) | -                                                                                                    |
-| Diagram Tab              | -                                                                                                            | -                                                                              | -                                                                              | -                                                                                                                            | [🐙🔗](https://github.com/khafast/diagramtab)                                                        |
-| Markdown Diagrams        | [🎡🔗](https://chrome.google.com/webstore/detail/markdown-diagrams/pmoglnmodacnbbofbgcagndelmgaclel/)        | [🦊🔗](https://addons.mozilla.org/en-US/firefox/addon/markdown-diagrams/)      | [🔴🔗](https://addons.opera.com/en/extensions/details/markdown-diagrams/)      | [🌀🔗](https://microsoftedge.microsoft.com/addons/detail/markdown-diagrams/hceenoomhhdkjjijnmlclkpenkapfihe)                 | [🐙🔗](https://github.com/marcozaccari/markdown-diagrams-browser-extension/tree/master/doc/examples) |
-| Markdown Viewer          | -                                                                                                            | [🦊🔗](https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/) | -                                                                              | -                                                                                                                            | [🐙🔗](https://github.com/simov/markdown-viewer)                                                     |
-| Extensions for Mermaid   | -                                                                                                            | -                                                                              | [🔴🔗](https://addons.opera.com/en/extensions/details/extensions-for-mermaid/) | -                                                                                                                            | [🐙🔗](https://github.com/Stefan-S/mermaid-extension)                                                |
-| Chrome Diagrammer        | [🎡🔗](https://chrome.google.com/webstore/detail/chrome-diagrammer/bkpbgjmkomfoakfklcjeoegkklgjnnpk)         | -                                                                              | -                                                                              | -                                                                                                                            | -                                                                                                    |
-| Mermaid Diagrams         | [🎡🔗](https://chrome.google.com/webstore/detail/mermaid-diagrams/phfcghedmopjadpojhmmaffjmfiakfil)          | -                                                                              | -                                                                              | -                                                                                                                            | -                                                                                                    |
-| Monkeys                  | [🎡🔗](https://chrome.google.com/webstore/detail/monkeys-mermaid-for-githu/cplfdpoajbclbgphaphphcldamfkjlgi) | -                                                                              | -                                                                              | -                                                                                                                            | -                                                                                                    |
-| Mermaid Previewer        | [🎡🔗](https://chrome.google.com/webstore/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl)         | -                                                                              | -                                                                              | -                                                                                                                            | -                                                                                                    |
+| Name                     | Chrome Web Store                                                                                            | Firefox Add-ons                                                                | Opera                                                                          | Edge                                                                                                                         | Source/Repository                                                                                    |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| GitHub + Mermaid         | -                                                                                                           | [🦊🔗](https://addons.mozilla.org/firefox/addon/github-mermaid/)               | -                                                                              | -                                                                                                                            | [🐙🔗](https://github.com/BackMarket/github-mermaid-extension)                                       |
+| Asciidoctor Live Preview | [🎡🔗](https://chromewebstore.google.com/detail/asciidoctorjs-live-previe/iaalpfgpbocpdfblpnhhgllgbdbchmia) | -                                                                              | -                                                                              | [🌀🔗](https://microsoftedge.microsoft.com/addons/detail/asciidoctorjs-live-previ/pefkelkanablhjdekgdahplkccnbdggd?hl=en-US) | -                                                                                                    |
+| Diagram Tab              | -                                                                                                           | -                                                                              | -                                                                              | -                                                                                                                            | [🐙🔗](https://github.com/khafast/diagramtab)                                                        |
+| Markdown Diagrams        | [🎡🔗](https://chromewebstore.google.com/detail/markdown-diagrams/pmoglnmodacnbbofbgcagndelmgaclel)         | [🦊🔗](https://addons.mozilla.org/en-US/firefox/addon/markdown-diagrams/)      | [🔴🔗](https://addons.opera.com/en/extensions/details/markdown-diagrams/)      | [🌀🔗](https://microsoftedge.microsoft.com/addons/detail/markdown-diagrams/hceenoomhhdkjjijnmlclkpenkapfihe)                 | [🐙🔗](https://github.com/marcozaccari/markdown-diagrams-browser-extension/tree/master/doc/examples) |
+| Markdown Viewer          | -                                                                                                           | [🦊🔗](https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/) | -                                                                              | -                                                                                                                            | [🐙🔗](https://github.com/simov/markdown-viewer)                                                     |
+| Extensions for Mermaid   | -                                                                                                           | -                                                                              | [🔴🔗](https://addons.opera.com/en/extensions/details/extensions-for-mermaid/) | -                                                                                                                            | [🐙🔗](https://github.com/Stefan-S/mermaid-extension)                                                |
+| Chrome Diagrammer        | [🎡🔗](https://chromewebstore.google.com/detail/chrome-diagrammer/bkpbgjmkomfoakfklcjeoegkklgjnnpk)         | -                                                                              | -                                                                              | -                                                                                                                            | -                                                                                                    |
+| Mermaid Diagrams         | [🎡🔗](https://chromewebstore.google.com/detail/mermaid-diagrams/phfcghedmopjadpojhmmaffjmfiakfil)          | -                                                                              | -                                                                              | -                                                                                                                            | -                                                                                                    |
+| Monkeys                  | [🎡🔗](https://chromewebstore.google.com/detail/monkeys-mermaid-for-githu/cplfdpoajbclbgphaphphcldamfkjlgi) | -                                                                              | -                                                                              | -                                                                                                                            | -                                                                                                    |
+| Mermaid Previewer        | [🎡🔗](https://chromewebstore.google.com/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl)         | -                                                                              | -                                                                              | -                                                                                                                            | -                                                                                                    |
 
 ### Other
 
 - [Bisheng](https://www.npmjs.com/package/bisheng)
   - [bisheng-plugin-mermaid](https://github.com/yct21/bisheng-plugin-mermaid)
+- [Blazorade Mermaid: Render Mermaid diagrams in Blazor applications](https://github.com/Blazorade/Blazorade-Mermaid/wiki)
 - [Codemia: A tool to practice system design problems](https://codemia.io) ✅
 - [ExDoc](https://github.com/elixir-lang/ex_doc)
   - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)
@@ -243,5 +254,5 @@ Communication tools and platforms
   - [reveal-ck-mermaid-plugin](https://github.com/tmtm/reveal-ck-mermaid-plugin)
 - [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
-- [ExDoc](https://github.com/elixir-lang/ex_doc)
-  - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)
+
+<!--- cspell:ignore Blazorade HueHive --->

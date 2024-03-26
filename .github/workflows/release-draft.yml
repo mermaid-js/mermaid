@@ -12,11 +12,11 @@ jobs:
   draft-release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # write permission is required to create a github release
+      contents: write # write permission is required to create a GitHub release
       pull-requests: read # required to read PR titles/labels
     steps:
       - name: Draft Release
-        uses: release-drafter/release-drafter@v5
+        uses: release-drafter/release-drafter@v6
         with:
           disable-autolabeler: true
         env:

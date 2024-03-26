@@ -1,5 +1,23 @@
 # Blog
 
+## [Mermaid Chart Raises $7.5M to Reinvent Visual Collaboration for Enterprises](https://www.mermaidchart.com/blog/posts/mermaid-chart-raises-7.5m-to-reinvent-visual-collaoration-for-enterprises/)
+
+20 March 2024 · 4 mins
+
+Mermaid Chart, the company offering text-based diagramming and workflow management tools, today announced it has raised $7.5 million in Seed funding.
+
+## [Mermaid Chart GPT Is Now Available In the GPT Store!](https://www.mermaidchart.com/blog/posts/mermaid-chart-gpt-is-now-available-in-the-gpt-store/)
+
+7 March 2024 · 3 mins
+
+Mermaid Chart GPT is Now Available In the GPT Store!
+
+## [How to Make a Flowchart with Mermaid Chart](https://www.mermaidchart.com/blog/posts/how-to-make-flowcharts-with-mermaid-chart/)
+
+30 January 2024 · 6 mins
+
+Learn how to make a flowchart with Mermaid Chart, the leading text-to-diagram platform for both developers and non-developers.
+
 ## [How one data scientist uses Mermaid Chart to quickly and easily build flowcharts](https://www.mermaidchart.com/blog/posts/customer-spotlight-ari-tal/)
 
 23 January 2024 · 4 mins

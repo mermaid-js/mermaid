@@ -1,0 +1,20 @@
+diff --git a/package.json b/package.json
+index f2f77fa79c99382b079f4051ed51eafe8d2379c8..0bfddf55394e86f3a386eb7ab681369d410bae07 100644
+--- a/package.json
++++ b/package.json
+@@ -30,7 +30,15 @@
+   "engines": {
+     "node": ">=0.10"
+   },
++  "exports": {
++    ".": {
++      "import": "./dist/cytoscape.umd.js",
++      "default": "./dist/cytoscape.cjs.js"
++    },
++    "./*": "./*"
++  },
+   "main": "dist/cytoscape.cjs.js",
++  "module": "dist/cytoscape.umd.js",
+   "unpkg": "dist/cytoscape.min.js",
+   "jsdelivr": "dist/cytoscape.min.js",
+   "scripts": {

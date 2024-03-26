@@ -6,7 +6,7 @@
 
 # Entity Relationship Diagrams
 
-> An entity–relationship model (or ER model) describes interrelated things of interest in a specific domain of knowledge. A basic ER model is composed of entity types (which classify the things of interest) and specifies relationships that can exist between entities (instances of those entity types). Wikipedia.
+> An entity–relationship model (or ER model) describes interrelated things of interest in a specific domain of knowledge. A basic ER model is composed of entity types (which classify the things of interest) and specifies relationships that can exist between entities (instances of those entity types) [Wikipedia](https://en.wikipedia.org/wiki/Entity%E2%80%93relationship_model).
 
 Note that practitioners of ER modelling almost always refer to _entity types_ simply as _entities_. For example the `CUSTOMER` entity _type_ would be referred to simply as the `CUSTOMER` entity. This is so common it would be inadvisable to do anything else, but technically an entity is an abstract _instance_ of an entity type, and this is what an ER diagram shows - abstract instances, and the relationships between them. This is why entities are always named using singular nouns.
 
@@ -86,7 +86,9 @@ When including attributes on ER diagrams, you must decide whether to include for
 
 Mermaid syntax for ER diagrams is compatible with PlantUML, with an extension to label the relationship. Each statement consists of the following parts:
 
-        <first-entity> [<relationship> <second-entity> : <relationship-label>]
+```
+    <first-entity> [<relationship> <second-entity> : <relationship-label>]
+```
 
 Where:
 
@@ -97,7 +99,9 @@ Where:
 
 For example:
 
-        PROPERTY ||--|{ ROOM : contains
+```
+    PROPERTY ||--|{ ROOM : contains
+```
 
 This statement can be read as _a property contains one or more rooms, and a room is part of one and only one property_. You can see that the label here is from the first entity's perspective: a property contains a room, but a room does not contain a property. When considered from the perspective of the second entity, the equivalent label is usually very easy to infer. (Some ER diagrams label relationships from both perspectives, but this is not supported here, and is usually superfluous).
 
@@ -107,7 +111,7 @@ Only the `first-entity` part of a statement is mandatory. This makes it possible
 
 The `relationship` part of each statement can be broken down into three sub-components:
 
-- the cardinality of the first entity with respect to the second,
+- the cardinality of the first entity with respect to the second
 - whether the relationship confers identity on a 'child' entity
 - the cardinality of the second entity with respect to the first
 
@@ -228,7 +232,7 @@ erDiagram
 
 #### Attribute Keys and Comments
 
-Attributes may also have a `key` or comment defined. Keys can be `PK`, `FK` or `UK`, for Primary Key, Foreign Key or Unique Key. To specify multiple key constraints on a single attribute, separate them with a comma (e.g., `PK, FK`).. A `comment` is defined by double quotes at the end of an attribute. Comments themselves cannot have double-quote characters in them.
+Attributes may also have a `key` or comment defined. Keys can be `PK`, `FK` or `UK`, for Primary Key, Foreign Key or Unique Key. To specify multiple key constraints on a single attribute, separate them with a comma (e.g., `PK, FK`). A `comment` is defined by double quotes at the end of an attribute. Comments themselves cannot have double-quote characters in them.
 
 ```mermaid-example
 erDiagram
@@ -307,3 +311,5 @@ The following CSS class selectors are available for richer styling:
 | `.er.relationshipLabel`    | The label for a relationship                          |
 | `.er.relationshipLabelBox` | The box surrounding a relationship label              |
 | `.er.relationshipLine`     | The line representing a relationship between entities |
+
+<!--- cspell:locale en,en-gb --->

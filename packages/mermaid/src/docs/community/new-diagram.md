@@ -1,51 +1,17 @@
 # Adding a New Diagram/Chart 📊
 
+### Examples
+
+Please refer to the following PRs on how to use Langium to add a new diagram grammar.
+
+- https://github.com/mermaid-js/mermaid/pull/4839
+- https://github.com/mermaid-js/mermaid/pull/4751
+
+```warning
+The below steps are a work in progress and will be updated soon.
+```
+
 ### Step 1: Grammar & Parsing
-
-#### Grammar
-
-This would be to define a JISON grammar for the new diagram type. That should start with a way to identify that the text in the mermaid tag is a diagram of that type. Create a new folder under diagrams for your new diagram type and a parser folder in it. This leads us to step 2.
-
-For instance:
-
-- the flowchart starts with the keyword _graph_
-- the sequence diagram starts with the keyword _sequenceDiagram_
-
-#### Store data found during parsing
-
-There are some jison specific sub steps here where the parser stores the data encountered when parsing the diagram, this data is later used by the renderer. You can during the parsing call an object provided to the parser by the user of the parser. This object can be called during parsing for storing data.
-
-```jison
-statement
-	: 'participant' actor  { $$='actor'; }
-	| signal               { $$='signal'; }
-	| note_statement       { $$='note';  }
-	| 'title' message      { yy.setTitle($2);  }
-	;
-```
-
-In the extract of the grammar above, it is defined that a call to the setTitle method in the data object will be done when parsing and the title keyword is encountered.
-
-```note
-Make sure that the `parseError` function for the parser is defined and calling `mermaid.parseError`. This way a common way of detecting parse errors is provided for the end-user.
-```
-
-For more info look at the example diagram type:
-
-The `yy` object has the following function:
-
-```javascript
-exports.parseError = function (err, hash) {
-  mermaid.parseError(err, hash);
-};
-```
-
-when parsing the `yy` object is initialized as per below:
-
-```javascript
-const parser = exampleParser.parser;
-parser.yy = db;
-```
 
 ### Step 2: Rendering
 
@@ -61,52 +27,6 @@ For example, if your new diagram uses a UML deployment diagram, a good key would
 would voice that as "U-M-L Deployment diagram." Another good key would be "deploymentDiagram" because that would be voiced as "Deployment Diagram." A bad key would be "deployment" because that would not sufficiently describe the diagram.
 
 Note that the diagram type key does not have to be the same as the diagram keyword chosen for the [grammar](#grammar), but it is helpful if they are the same.
-
-### Step 4: The final piece - triggering the rendering
-
-At this point when mermaid is trying to render the diagram, it will detect it as being of the new type but there will be no match when trying to render the diagram. To fix this add a new case in the switch statement in main.js:init this should match the diagram type returned from step #2. The code in this new case statement should call the renderer for the diagram type with the data found by the parser as an argument.
-
-## Usage of the parser as a separate module
-
-### Setup
-
-```javascript
-const graph = require('./graphDb');
-const flow = require('./parser/flow');
-flow.parser.yy = graph;
-```
-
-### Parsing
-
-```javascript
-flow.parser.parse(text);
-```
-
-### Data extraction
-
-```javascript
-graph.getDirection();
-graph.getVertices();
-graph.getEdges();
-```
-
-The parser is also exposed in the mermaid api by calling:
-
-```javascript
-const parser = mermaid.getParser();
-```
-
-Note that the parse needs a graph object to store the data as per:
-
-```javascript
-flow.parser.yy = graph;
-```
-
-Look at `graphDb.js` for more details on that object.
-
-## Layout
-
-If you are using a dagre based layout, please use flowchart-v2 as a template and by doing that you will be using dagre-wrapper instead of dagreD3 which we are migrating away from.
 
 ### Common parts of a diagram
 
@@ -137,33 +57,7 @@ See [the definition of aria-roledescription](https://www.w3.org/TR/wai-aria-1.1/
 
 The syntax for accessible titles and descriptions is described in [the Accessibility documentation section.](../config/accessibility.md)
 
-As a design goal, the jison syntax should be similar between the diagrams.
-
-```jison
-
-* lexical grammar */
-%lex
-%x acc_title
-%x acc_descr
-%x acc_descr_multiline
-
-%%
-accTitle\s*":"\s*                                { this.begin("acc_title");return 'acc_title'; }
-<acc_title>(?!\n|;|#)*[^\n]*                     { this.popState(); return "acc_title_value"; }
-accDescr\s*":"\s*                                { this.begin("acc_descr");return 'acc_descr'; }
-<acc_descr>(?!\n|;|#)*[^\n]*                     { this.popState(); return "acc_descr_value"; }
-accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
-<acc_descr_multiline>[\}]                        { this.popState(); }
-<acc_descr_multiline>[^\}]*                      return "acc_descr_multiline_value";
-
-statement
-    : acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
-    | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
-    | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
-
-```
-
-The functions for setting title and description are provided by a common module. This is the import from flowDb.js:
+The functions for setting title and description are provided by a common module. This is the import in flowDb.js:
 
 ```
 import {

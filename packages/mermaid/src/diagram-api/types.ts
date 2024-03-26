@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type * as d3 from 'd3';
+import type { SetRequired } from 'type-fest';
 import type { Diagram } from '../Diagram.js';
 import type { BaseDiagramConfig, MermaidConfig } from '../config.type.js';
-import type * as d3 from 'd3';
 
 export interface DiagramMetadata {
   title?: string;
@@ -32,12 +33,28 @@ export interface DiagramDB {
   getDiagramTitle?: () => string;
   setAccTitle?: (title: string) => void;
   getAccTitle?: () => string;
-  setAccDescription?: (describetion: string) => void;
+  setAccDescription?: (description: string) => void;
   getAccDescription?: () => string;
 
   setDisplayMode?: (title: string) => void;
   bindFunctions?: (element: Element) => void;
 }
+
+/**
+ * DiagramDB with fields that is required for all new diagrams.
+ */
+export type DiagramDBBase<T extends BaseDiagramConfig> = {
+  getConfig: () => Required<T>;
+} & SetRequired<
+  DiagramDB,
+  | 'clear'
+  | 'getAccTitle'
+  | 'getDiagramTitle'
+  | 'getAccDescription'
+  | 'setAccDescription'
+  | 'setAccTitle'
+  | 'setDiagramTitle'
+>;
 
 // This is what is returned from getClasses(...) methods.
 // It is slightly renamed to ..StyleClassDef instead of just ClassDef because "class" is a greatly ambiguous and overloaded word.
@@ -104,8 +121,8 @@ export type DrawDefinition = (
 ) => void | Promise<void>;
 
 export interface ParserDefinition {
-  parse: (text: string) => void;
-  parser: { yy: DiagramDB };
+  parse: (text: string) => void | Promise<void>;
+  parser?: { yy: DiagramDB };
 }
 
 export type HTML = d3.Selection<HTMLIFrameElement, unknown, Element | null, unknown>;

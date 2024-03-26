@@ -687,3 +687,5 @@ export default {
   insertComputerIcon,
   insertClockIcon,
 };
+
+// cspell:ignoreRegExp /'Mstartx.*/g

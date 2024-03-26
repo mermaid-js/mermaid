@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // @ts-nocheck TODO: Fix types
+import type { MermaidConfig } from '../config.type.js';
 import type { Group } from '../diagram-api/types.js';
 import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
@@ -21,8 +22,7 @@ function addHtmlSpan(element, node, width, classes, addBackground = false) {
   const label = node.label;
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
   div.html(
-    `
-    <span class="${labelClass} ${classes}" ` +
+    `<span class="${labelClass} ${classes}" ` +
       (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') +
       '>' +
       label +
@@ -181,18 +181,18 @@ export const createText = (
     isNode = true,
     width = 200,
     addSvgBackground = false,
-  } = {}
+  } = {},
+  config: MermaidConfig
 ) => {
   log.info('createText', text, style, isTitle, classes, useHtmlLabels, isNode, addSvgBackground);
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
-    // text = text.replace(/\\n|\n/g, '<br />');
-    const htmlText = markdownToHTML(text);
-    // log.info('markdo  wnToHTML' + text, markdownToHTML(text));
+
+    const htmlText = markdownToHTML(text, config);
     const node = {
       isNode,
       label: decodeEntities(htmlText).replace(
-        /fa[blrs]?:fa-[\w-]+/g,
+        /fa[blrs]?:fa-[\w-]+/g, // cspell: disable-line
         (s) => `<i class='${s.replace(':', ' ')}'></i>`
       ),
       labelStyle: style.replace('fill:', 'color:'),
@@ -200,7 +200,7 @@ export const createText = (
     const vertexNode = addHtmlSpan(el, node, width, classes, addSvgBackground);
     return vertexNode;
   } else {
-    const structuredText = markdownToLines(text);
+    const structuredText = markdownToLines(text, config);
     const svgLabel = createFormattedText(width, el, structuredText, addSvgBackground);
     return svgLabel;
   }
