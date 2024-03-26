@@ -1,4 +1,8 @@
-import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types.js';
+import type {
+  DiagramDetector,
+  DiagramLoader,
+  ExternalDiagramDefinition,
+} from '../../diagram-api/types.js';
 
 const id = 'sankey';
 
@@ -6,15 +10,13 @@ const detector: DiagramDetector = (txt) => {
   return /^\s*sankey-beta/.test(txt);
 };
 
-const loader = async () => {
+const loader: DiagramLoader = async () => {
   const { diagram } = await import('./sankeyDiagram.js');
   return { id, diagram };
 };
 
-const plugin: ExternalDiagramDefinition = {
+export const sankey: ExternalDiagramDefinition = {
   id,
   detector,
   loader,
 };
-
-export default plugin;

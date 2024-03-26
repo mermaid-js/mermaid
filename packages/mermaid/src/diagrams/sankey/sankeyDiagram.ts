@@ -1,12 +1,7 @@
 import type { DiagramDefinition } from '../../diagram-api/types.js';
-// @ts-ignore: jison doesn't export types
-import parser from './parser/sankey.jison';
-import db from './sankeyDB.js';
-import renderer from './sankeyRenderer.js';
-import { prepareTextForParsing } from './sankeyUtils.js';
-
-const originalParse = parser.parse.bind(parser);
-parser.parse = (text: string) => originalParse(prepareTextForParsing(text));
+import { parser } from './sankeyParser.js';
+import { db } from './sankeyDB.js';
+import { renderer } from './sankeyRenderer.js';
 
 export const diagram: DiagramDefinition = {
   parser,

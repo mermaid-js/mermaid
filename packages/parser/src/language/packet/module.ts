@@ -40,7 +40,7 @@ export const PacketModule: Module<
   PartialLangiumCoreServices & PacketAddedServices
 > = {
   parser: {
-    TokenBuilder: () => new PacketTokenBuilder(),
+    TokenBuilder: (services) => new PacketTokenBuilder(services),
     ValueConverter: () => new CommonValueConverter(),
   },
 };

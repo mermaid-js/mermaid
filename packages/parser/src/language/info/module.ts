@@ -37,7 +37,7 @@ export type InfoServices = LangiumCoreServices & InfoAddedServices;
  */
 export const InfoModule: Module<InfoServices, PartialLangiumCoreServices & InfoAddedServices> = {
   parser: {
-    TokenBuilder: () => new InfoTokenBuilder(),
+    TokenBuilder: (services) => new InfoTokenBuilder(services),
     ValueConverter: () => new CommonValueConverter(),
   },
 };

@@ -15,6 +15,11 @@
       "id": "pie",
       "grammar": "src/language/pie/pie.langium",
       "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "sankey",
+      "grammar": "src/language/sankey/sankey.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "mode": "production",

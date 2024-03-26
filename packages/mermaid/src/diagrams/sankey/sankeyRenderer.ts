@@ -1,12 +1,6 @@
-import type { Diagram } from '../../Diagram.js';
-import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
-import {
-  select as d3select,
-  scaleOrdinal as d3scaleOrdinal,
-  schemeTableau10 as d3schemeTableau10,
-} from 'd3';
-
-import type { SankeyNode as d3SankeyNode } from 'd3-sankey';
+import type { ScaleOrdinal } from 'd3';
+import { scaleOrdinal as d3scaleOrdinal, schemeTableau10 as d3schemeTableau10 } from 'd3';
+import type { SankeyGraph as d3SankeyGraph, SankeyNode as d3SankeyNode } from 'd3-sankey';
 import {
   sankey as d3Sankey,
   sankeyLinkHorizontal as d3SankeyLinkHorizontal,
@@ -15,9 +9,26 @@ import {
   sankeyCenter as d3SankeyCenter,
   sankeyJustify as d3SankeyJustify,
 } from 'd3-sankey';
+
+import { log } from '../../logger.js';
+import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
+import type { MermaidConfig, SankeyDiagramConfig, SankeyNodeAlignment } from '../../config.type.js';
+import type {
+  SankeyDB,
+  SankeyGraph,
+  SankeyLinkData,
+  SankeyLinkDatum,
+  SankeyLinkOverride,
+  SankeyNodeData,
+  SankeyNodeDatum,
+  SankeyNodeOverride,
+} from './sankeyTypes.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import { Uid } from '../../rendering-util/uid.js';
-import type { SankeyNodeAlignment } from '../../config.type.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
+import { cleanAndMerge } from '../../utils.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 // Map config options to alignment functions
 const alignmentsMap: Record<
@@ -28,109 +39,102 @@ const alignmentsMap: Record<
   right: d3SankeyRight,
   center: d3SankeyCenter,
   justify: d3SankeyJustify,
-};
+} as const;
 
 /**
- * Draws Sankey diagram.
+ * Prepare data for construction based DB.
  *
- * @param text - The text of the diagram
- * @param id - The id of the diagram which will be used as a DOM element id¨
- * @param _version - Mermaid version from package.json
- * @param diagObj - A standard diagram containing the db and the text and type etc of the diagram
+ * This must be a mutable object with `nodes` and `links` properties:
+ *
+ * ```json
+ * {
+ *   "nodes": [{ "name": "Alice", "id": "node-1" }, { "name": "Bob", "id": "node-2" }],
+ *   "links": [{ "id": "linearGradient-1", "source": "Alice", "target": "Bob", "value": 23 }]
+ * }
+ * ```
+ *
+ * @param db - The sankey db.
+ * @param config - The required config of sankey diagram.
+ * @returns The prepared sankey data.
  */
-export const draw = function (text: string, id: string, _version: string, diagObj: Diagram): void {
-  // Get Sankey config
-  const { securityLevel, sankey: conf } = getConfig();
-  const defaultSankeyConfig = defaultConfig!.sankey!;
+const createSankeyGraph = (db: SankeyDB, config: Required<SankeyDiagramConfig>) => {
+  const graph: SankeyGraph = structuredClone({
+    nodes: db.getNodes().map((node: string) => {
+      return {
+        id: Uid.next('node-').id,
+        name: node,
+      };
+    }),
+    links: db.getLinks(),
+  });
 
-  // TODO:
-  // This code repeats for every diagram
-  // Figure out what is happening there, probably it should be separated
-  // The main thing is svg object that is a d3 wrapper for svg operations
-  //
-  let sandboxElement: any;
-  if (securityLevel === 'sandbox') {
-    sandboxElement = d3select('#i' + id);
-  }
-  const root =
-    securityLevel === 'sandbox'
-      ? d3select(sandboxElement.nodes()[0].contentDocument.body)
-      : d3select('body');
-  // @ts-ignore TODO root.select is not callable
-  const svg = securityLevel === 'sandbox' ? root.select(`[id="${id}"]`) : d3select(`[id="${id}"]`);
-
-  // Establish svg dimensions and get width and height
-  //
-  const width = conf?.width ?? defaultSankeyConfig.width!;
-  const height = conf?.height ?? defaultSankeyConfig.width!;
-  const useMaxWidth = conf?.useMaxWidth ?? defaultSankeyConfig.useMaxWidth!;
-  const nodeAlignment = conf?.nodeAlignment ?? defaultSankeyConfig.nodeAlignment!;
-  const prefix = conf?.prefix ?? defaultSankeyConfig.prefix!;
-  const suffix = conf?.suffix ?? defaultSankeyConfig.suffix!;
-  const showValues = conf?.showValues ?? defaultSankeyConfig.showValues!;
-
-  // Prepare data for construction based on diagObj.db
-  // This must be a mutable object with `nodes` and `links` properties:
-  //
-  //    {
-  //      "nodes": [ { "id": "Alice" }, { "id": "Bob" }, { "id": "Carol" } ],
-  //      "links": [ { "source": "Alice", "target": "Bob", "value": 23 }, { "source": "Bob", "target": "Carol", "value": 43 } ]
-  //    }
-  //
-  // @ts-ignore TODO: db should be coerced to sankey DB type
-  const graph = diagObj.db.getGraph();
-
-  // Get alignment function
-  const nodeAlign = alignmentsMap[nodeAlignment];
-
-  // Construct and configure a Sankey generator
-  // That will be a function that calculates nodes and links dimensions
-  //
+  const nodeAlign = alignmentsMap[config.nodeAlignment];
   const nodeWidth = 10;
-  const sankey = d3Sankey()
-    .nodeId((d: any) => d.id) // we use 'id' property to identify node
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  const sankey = d3Sankey<SankeyNodeData, {}>()
+    .nodeId((node): string => node.name)
     .nodeWidth(nodeWidth)
-    .nodePadding(10 + (showValues ? 15 : 0))
+    .nodePadding(10 + (config.showValues ? 15 : 0))
     .nodeAlign(nodeAlign)
     .extent([
       [0, 0],
-      [width, height],
+      [config.width, config.height],
     ]);
+  return sankey(graph) as d3SankeyGraph<
+    SankeyNodeData & SankeyNodeOverride,
+    SankeyLinkData & SankeyLinkOverride
+  >;
+};
 
-  // Compute the Sankey layout: calculate nodes and links positions
-  // Our `graph` object will be mutated by this and enriched with other properties
-  //
-  sankey(graph);
+export const draw: DrawDefinition = (text, id, _version, diagObj) => {
+  log.debug('rendering sankey diagram\n' + text);
+
+  const db = diagObj.db as SankeyDB;
+  const globalConfig: MermaidConfig = getConfig();
+  const sankeyConfig: Required<SankeyDiagramConfig> = cleanAndMerge(
+    db.getConfig(),
+    globalConfig.sankey
+  );
+
+  const svg: SVG = selectSvgElement(id);
+
+  const width: number = sankeyConfig.width;
+  const height: number = sankeyConfig.height;
+  const useMaxWidth: boolean = sankeyConfig.useMaxWidth;
+  configureSvgSize(svg, height, width, useMaxWidth);
+
+  const graph = createSankeyGraph(db, sankeyConfig);
 
   // Get color scheme for the graph
-  const colorScheme = d3scaleOrdinal(d3schemeTableau10);
+  const colorScheme: ScaleOrdinal<string, string, never> = d3scaleOrdinal(d3schemeTableau10);
 
   // Create rectangles for nodes
   svg
     .append('g')
     .attr('class', 'nodes')
     .selectAll('.node')
-    .data(graph.nodes)
+    .data<SankeyNodeDatum>(graph.nodes)
     .join('g')
     .attr('class', 'node')
-    .attr('id', (d: any) => (d.uid = Uid.next('node-')).id)
-    .attr('transform', function (d: any) {
-      return 'translate(' + d.x0 + ',' + d.y0 + ')';
+    .attr('id', (d: SankeyNodeDatum) => d.id)
+    .attr('transform', (d: SankeyNodeDatum) => {
+      return `translate(${d.x0},${d.y0})`;
     })
-    .attr('x', (d: any) => d.x0)
-    .attr('y', (d: any) => d.y0)
+    .attr('x', (d: SankeyNodeDatum): number => d.x0)
+    .attr('y', (d: SankeyNodeDatum): number => d.y0)
     .append('rect')
-    .attr('height', (d: any) => {
-      return d.y1 - d.y0;
-    })
-    .attr('width', (d: any) => d.x1 - d.x0)
-    .attr('fill', (d: any) => colorScheme(d.id));
+    .attr('height', (d: SankeyNodeDatum): number => d.y1 - d.y0)
+    .attr('width', (d: SankeyNodeDatum): number => d.x1 - d.x0)
+    .attr('fill', (d: SankeyNodeDatum): string => colorScheme(d.id));
 
-  const getText = ({ id, value }: { id: string; value: number }) => {
+  const showValues: boolean = sankeyConfig.showValues;
+  const prefix: string = sankeyConfig.prefix;
+  const suffix: string = sankeyConfig.suffix;
+  const getText = ({ name, value }: SankeyNodeDatum): string => {
     if (!showValues) {
-      return id;
+      return name;
     }
-    return `${id}\n${prefix}${Math.round(value * 100) / 100}${suffix}`;
+    return `${name}\n${prefix}${Math.round((value ?? 0) * 100) / 100}${suffix}`;
   };
 
   // Create labels for nodes
@@ -140,71 +144,71 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .attr('font-family', 'sans-serif')
     .attr('font-size', 14)
     .selectAll('text')
-    .data(graph.nodes)
+    .data<SankeyNodeDatum>(graph.nodes)
     .join('text')
-    .attr('x', (d: any) => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
-    .attr('y', (d: any) => (d.y1 + d.y0) / 2)
+    .attr('x', (d: SankeyNodeDatum) => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
+    .attr('y', (d: SankeyNodeDatum): number => (d.y1 + d.y0) / 2)
     .attr('dy', `${showValues ? '0' : '0.35'}em`)
-    .attr('text-anchor', (d: any) => (d.x0 < width / 2 ? 'start' : 'end'))
+    .attr('text-anchor', (d: SankeyNodeDatum) => (d.x0 < width / 2 ? 'start' : 'end'))
     .text(getText);
 
   // Creates the paths that represent the links.
-  const link = svg
+  const links = svg
     .append('g')
     .attr('class', 'links')
     .attr('fill', 'none')
     .attr('stroke-opacity', 0.5)
     .selectAll('.link')
-    .data(graph.links)
+    .data<SankeyLinkDatum>(graph.links)
     .join('g')
     .attr('class', 'link')
     .style('mix-blend-mode', 'multiply');
 
-  const linkColor = conf?.linkColor || 'gradient';
-
+  const linkColor = sankeyConfig.linkColor;
   if (linkColor === 'gradient') {
-    const gradient = link
+    const gradient = links
       .append('linearGradient')
-      .attr('id', (d: any) => (d.uid = Uid.next('linearGradient-')).id)
+      .attr('id', (d: SankeyLinkDatum) => {
+        // @ts-ignore - figure how to stop using this approach
+        return (d.id = Uid.next('linearGradient-')).id;
+      })
       .attr('gradientUnits', 'userSpaceOnUse')
-      .attr('x1', (d: any) => d.source.x1)
-      .attr('x2', (d: any) => d.target.x0);
+      .attr('x1', (d: SankeyLinkDatum): number => d.source.x1)
+      .attr('x2', (d: SankeyLinkDatum): number => d.target.x0);
 
     gradient
       .append('stop')
       .attr('offset', '0%')
-      .attr('stop-color', (d: any) => colorScheme(d.source.id));
+      .attr('stop-color', (d: SankeyLinkDatum): string => colorScheme(d.source.id));
 
     gradient
       .append('stop')
       .attr('offset', '100%')
-      .attr('stop-color', (d: any) => colorScheme(d.target.id));
+      .attr('stop-color', (d: SankeyLinkDatum): string => colorScheme(d.target.id));
   }
 
-  let coloring: any;
+  let coloring: (d: SankeyLinkDatum) => string;
   switch (linkColor) {
     case 'gradient':
-      coloring = (d: any) => d.uid;
+      coloring = (d: SankeyLinkDatum): string => d.id;
       break;
     case 'source':
-      coloring = (d: any) => colorScheme(d.source.id);
+      coloring = (d: SankeyLinkDatum): string => colorScheme(d.source.id);
       break;
     case 'target':
-      coloring = (d: any) => colorScheme(d.target.id);
+      coloring = (d: SankeyLinkDatum): string => colorScheme(d.target.id);
       break;
     default:
-      coloring = linkColor;
+      coloring = (): string => linkColor;
   }
 
-  link
+  links
     .append('path')
     .attr('d', d3SankeyLinkHorizontal())
     .attr('stroke', coloring)
-    .attr('stroke-width', (d: any) => Math.max(1, d.width));
+    .attr('stroke-width', (d: SankeyLinkDatum): number => Math.max(1, d.width));
 
   setupGraphViewbox(undefined, svg, 0, useMaxWidth);
 };
 
-export default {
-  draw,
-};
+export const renderer = { draw };
