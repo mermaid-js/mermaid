@@ -18,16 +18,28 @@ export abstract class AbstractMermaidTokenBuilder extends DefaultTokenBuilder {
     this.commentProvider = services.documentation.CommentProvider;
   }
 
+  // TODO: This responsibility might better belong in CommentProvider (e.g. AbstractMermaidCommentProvider that is a subclass of CommentProvider).
+  private ruleHasGreedyComment(rule: GrammarAST.AbstractRule): boolean {
+    const comment = this.commentProvider.getComment(rule);
+    return !!comment && /@greedy/.test(comment);
+  }
+
   protected override buildTerminalTokens(rules: Stream<GrammarAST.AbstractRule>): TokenType[] {
-    // put the greedy annotated terminal rules at the end of the array
-    const rulesArray = rules.toArray();
-    rules.forEach((rule, index) => {
-      const comment = this.commentProvider.getComment(rule);
-      if (comment && /@greedy/.test(comment)) {
-        rulesArray.push(rulesArray.splice(index, 1)[0]);
-      }
-    });
-    return super.buildTerminalTokens(stream(rulesArray));
+    if (rules.some((rule: GrammarAST.AbstractRule) => this.ruleHasGreedyComment(rule))) {
+      const notGreedyRules: GrammarAST.AbstractRule[] = [];
+      const lastRules: GrammarAST.AbstractRule[] = [];
+      // put terminal rules with @greedy in their comment at the end of the array
+      rules.forEach((rule) => {
+        if (this.ruleHasGreedyComment(rule)) {
+          lastRules.push(rule);
+        } else {
+          notGreedyRules.push(rule);
+        }
+      });
+      return super.buildTerminalTokens(stream([...notGreedyRules, ...lastRules]));
+    } else {
+      return super.buildTerminalTokens(rules);
+    }
   }
 
   protected override buildKeywordTokens(

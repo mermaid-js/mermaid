@@ -52,7 +52,7 @@ export function createPieTestServices() {
 }
 export const pieParse = createPieTestServices().parse;
 
-const sankeyServices: SankeyServices = createSankeyServices().Sankey;
+export const sankeyServices: SankeyServices = createSankeyServices().Sankey;
 const sankeyParser: LangiumParser = sankeyServices.parser.LangiumParser;
 export function createSankeyTestServices() {
   const parse = (input: string) => {
