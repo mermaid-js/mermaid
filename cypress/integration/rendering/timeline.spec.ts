@@ -161,4 +161,29 @@ describe('Timeline diagram', () => {
       {}
     );
   });
+  it('11: should render a simple timeline with markdown in nodes', () => {
+    imgSnapshotTest(
+      `timeline
+    title History of Social Media Platform
+    2002 : LinkedIn
+    2004 : __Facebook in bold__ : Google
+    2005 : Youtube
+    2006 : Twitter
+      `,
+      { timeline: { htmlLabels: true } }
+    );
+  });
+
+  it('12: should render a simple timeline with markdown in nodes as svg', () => {
+    imgSnapshotTest(
+      `timeline
+    title History of Social Media Platform
+    2002 : LinkedIn
+    2004 : __Facebook in bold__ : Google
+    2005 : Youtube
+    2006 : Twitter
+      `,
+      { timeline: { htmlLabels: false } }
+    );
+  });
 });

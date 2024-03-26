@@ -2,6 +2,7 @@ import flowDb from './flowDb.js';
 import { parser } from './parser/flow.jison';
 import flowRenderer from './flowRenderer.js';
 import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
+import { curveBasis } from 'd3';
 
 const diag = {
   db: flowDb,
@@ -90,7 +91,7 @@ describe('when using mermaid and ', function () {
           expect(start).toContain('flowchart-A-');
           expect(end).toContain('flowchart-B-');
           expect(options.arrowhead).toBe('none');
-          expect(options.curve).toBe('basis'); // mocked as string
+          expect(options.curve().prototype).toBe(curveBasis().prototype); // D3 Basis function overrides its prototype and wipes the type so we referentially compare prototypes instead
         },
       };
 
