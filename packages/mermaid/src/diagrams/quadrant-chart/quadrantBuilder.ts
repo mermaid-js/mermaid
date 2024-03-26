@@ -10,7 +10,15 @@ const defaultThemeVariables = getThemeVariables();
 export type TextVerticalPos = 'left' | 'center' | 'right';
 export type TextHorizontalPos = 'top' | 'middle' | 'bottom';
 
-export interface QuadrantPointInputType extends Point {
+export interface StylesObject {
+  className?: string;
+  radius?: number;
+  color?: string;
+  strokeColor?: string;
+  strokeWidth?: string;
+}
+
+export interface QuadrantPointInputType extends Point, StylesObject {
   text: string;
 }
 
@@ -23,7 +31,9 @@ export interface QuadrantTextType extends Point {
   rotation: number;
 }
 
-export interface QuadrantPointType extends Point {
+export interface QuadrantPointType
+  extends Point,
+    Pick<StylesObject, 'strokeColor' | 'strokeWidth'> {
   fill: string;
   radius: number;
   text: QuadrantTextType;
@@ -117,6 +127,7 @@ export class QuadrantBuilder {
   private config: QuadrantBuilderConfig;
   private themeConfig: QuadrantBuilderThemeConfig;
   private data: QuadrantBuilderData;
+  private classes: Record<string, StylesObject> = {};
 
   constructor() {
     this.config = this.getDefaultConfig();
@@ -200,6 +211,10 @@ export class QuadrantBuilder {
 
   addPoints(points: QuadrantPointInputType[]) {
     this.data.points = [...points, ...this.data.points];
+  }
+
+  addClass(className: string, styles: StylesObject) {
+    this.classes[className] = styles;
   }
 
   setConfig(config: Partial<QuadrantBuilderConfig>) {
@@ -470,11 +485,26 @@ export class QuadrantBuilder {
       .range([quadrantHeight + quadrantTop, quadrantTop]);
 
     const points: QuadrantPointType[] = this.data.points.map((point) => {
+      const classStyles = this.classes[point.className as keyof typeof this.classes];
+      if (classStyles !== undefined) {
+        if (classStyles.color !== undefined) {
+          point.color = classStyles.color;
+        }
+        if (classStyles.radius !== undefined) {
+          point.radius = classStyles.radius;
+        }
+        if (classStyles.strokeColor !== undefined) {
+          point.strokeColor = classStyles.strokeColor;
+        }
+        if (classStyles.strokeWidth !== undefined) {
+          point.strokeWidth = classStyles.strokeWidth;
+        }
+      }
       const props: QuadrantPointType = {
         x: xAxis(point.x),
         y: yAxis(point.y),
-        fill: this.themeConfig.quadrantPointFill,
-        radius: this.config.pointRadius,
+        fill: point.color || this.themeConfig.quadrantPointFill,
+        radius: point.radius || this.config.pointRadius,
         text: {
           text: point.text,
           fill: this.themeConfig.quadrantPointTextFill,
@@ -485,6 +515,12 @@ export class QuadrantBuilder {
           fontSize: this.config.pointLabelFontSize,
           rotation: 0,
         },
+        strokeColor:
+          point.strokeColor !== undefined && point.strokeColor !== ''
+            ? point.strokeColor
+            : this.themeConfig.quadrantPointFill,
+        strokeWidth:
+          point.strokeWidth !== undefined && point.strokeWidth !== '' ? point.strokeWidth : '0px',
       };
       return props;
     });
