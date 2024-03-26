@@ -130,7 +130,7 @@ export const drawCircle = function (element, circleData) {
 
 export const drawText = function (elem, textData) {
   // Remove and ignore br:s
-  const nText = textData.text.replace(/<br\s*\/?>/gi, ' ');
+  const nText = replaceEscapedColon(textData.text.replace(/<br\s*\/?>/gi, ' '));
 
   const textElem = elem.append('text');
   textElem.attr('x', textData.x);
@@ -526,12 +526,13 @@ export const drawNode = function (elem, node, fullSection, conf) {
 
   const txt = textElem
     .append('text')
-    .text(node.descr)
+    .text(replaceEscapedColon(node.descr))
     .attr('dy', '1em')
     .attr('alignment-baseline', 'middle')
     .attr('dominant-baseline', 'middle')
     .attr('text-anchor', 'middle')
     .call(wrap, node.width);
+
   const bbox = txt.node().getBBox();
   const fontSize =
     conf.fontSize && conf.fontSize.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
@@ -585,6 +586,15 @@ const defaultBkg = function (elem, node, section) {
     .attr('x2', node.width)
     .attr('y2', node.height);
 };
+
+/**
+ * Replaces "\ESCAPE_COLON" with a regular colon in the provided text.
+ * @param {string} text - The text to be modified.
+ * @returns {string} - The text with "\ESCAPE_COLON" replaced with ":".
+ */
+function replaceEscapedColon(text) {
+  return text.replace(/ESC_COLON/g, ':');
+}
 
 export default {
   drawRect,
