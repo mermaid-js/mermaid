@@ -100,7 +100,7 @@
     "eslint-plugin-no-only-tests": "^3.1.0",
     "eslint-plugin-tsdoc": "^0.2.17",
     "eslint-plugin-unicorn": "^51.0.1",
-    "express": "^4.19.1",
+    "express": "^4.19.2",
     "globby": "^14.0.1",
     "husky": "^9.0.11",
     "jest": "^29.7.0",
