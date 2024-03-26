@@ -38,7 +38,7 @@
     ]
   },
   "dependencies": {
-    "@braintree/sanitize-url": "^6.0.4",
+    "@braintree/sanitize-url": "^7.0.0",
     "d3": "^7.9.0",
     "khroma": "^2.1.0"
   },
