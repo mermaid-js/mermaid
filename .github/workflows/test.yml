@@ -39,7 +39,7 @@ jobs:
           pnpm exec vitest run ./packages/mermaid/src/diagrams/gantt/ganttDb.spec.ts --coverage
 
       - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         # Run step only pushes to develop and pull_requests
         if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/develop' }}
         with:
