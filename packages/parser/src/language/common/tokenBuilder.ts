@@ -1,14 +1,33 @@
-import type { GrammarAST, Stream, TokenBuilderOptions } from 'langium';
 import type { TokenType } from 'chevrotain';
-
-import { DefaultTokenBuilder } from 'langium';
+import type {
+  CommentProvider,
+  GrammarAST,
+  LangiumCoreServices,
+  Stream,
+  TokenBuilderOptions,
+} from 'langium';
+import { DefaultTokenBuilder, stream } from 'langium';
 
 export abstract class AbstractMermaidTokenBuilder extends DefaultTokenBuilder {
   private keywords: Set<string>;
+  private commentProvider: CommentProvider;
 
-  public constructor(keywords: string[]) {
+  public constructor(keywords: string[], services: LangiumCoreServices) {
     super();
     this.keywords = new Set<string>(keywords);
+    this.commentProvider = services.documentation.CommentProvider;
+  }
+
+  protected override buildTerminalTokens(rules: Stream<GrammarAST.AbstractRule>): TokenType[] {
+    // put the greedy annotated terminal rules at the end of the array
+    const rulesArray = rules.toArray();
+    rules.forEach((rule, index) => {
+      const comment = this.commentProvider.getComment(rule);
+      if (comment && /@greedy/.test(comment)) {
+        rulesArray.push(rulesArray.splice(index, 1)[0]);
+      }
+    });
+    return super.buildTerminalTokens(stream(rulesArray));
   }
 
   protected override buildKeywordTokens(

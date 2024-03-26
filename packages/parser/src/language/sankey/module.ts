@@ -44,7 +44,7 @@ export const SankeyModule: Module<
 > = {
   parser: {
     LangiumParser: (services) => createSankeyParser(services),
-    TokenBuilder: () => new SankeyTokenBuilder(),
+    TokenBuilder: (services) => new SankeyTokenBuilder(services),
     ValueConverter: () => new SankeyValueConverter(),
   },
 };

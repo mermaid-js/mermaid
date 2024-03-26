@@ -37,7 +37,7 @@ export type PieServices = LangiumCoreServices & PieAddedServices;
  */
 export const PieModule: Module<PieServices, PartialLangiumCoreServices & PieAddedServices> = {
   parser: {
-    TokenBuilder: () => new PieTokenBuilder(),
+    TokenBuilder: (services) => new PieTokenBuilder(services),
     ValueConverter: () => new PieValueConverter(),
   },
 };

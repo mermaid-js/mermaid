@@ -20,4 +20,7 @@ SankeyLink:
 ;
 
 terminal SANKEY_LINK_VALUE returns number: /"(0|[1-9][0-9]*)(\.[0-9]+)?"|[\t ]*(0|[1-9][0-9]*)(\.[0-9]+)?/;
+/**
+ * @greedy
+ */
 terminal SANKEY_LINK_NODE: /sankey-link-node/;

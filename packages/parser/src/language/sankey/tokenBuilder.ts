@@ -3,10 +3,11 @@ import type { TokenType } from 'chevrotain';
 
 import { AbstractMermaidTokenBuilder } from '../common/index.js';
 import { matchSankeyLinkNode } from './matcher.js';
+import type { SankeyServices } from './module.js';
 
 export class SankeyTokenBuilder extends AbstractMermaidTokenBuilder {
-  public constructor() {
-    super(['sankey-beta']);
+  public constructor(services: SankeyServices) {
+    super(['sankey-beta'], services);
   }
 
   protected override buildTerminalTokens(rules: Stream<GrammarAST.AbstractRule>): TokenType[] {
