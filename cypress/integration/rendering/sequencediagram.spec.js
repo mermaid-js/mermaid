@@ -1,4 +1,4 @@
-/// <reference types="Cypress" />
+// <reference types="Cypress" />
 
 import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
@@ -66,6 +66,19 @@ context('Sequence diagram', () => {
         end
       `,
       { sequence: { actorFontFamily: 'courier' } }
+    );
+  });
+  it('should render bidirectional arrows', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      Alice<<->>John: Hello John, how are you?
+      Alice<<-->>John: Hi Alice, I can hear you!
+      John<<->>Alice: This also works the other way
+      John<<-->>Alice: Yes
+      Alice->John: Test
+      John->>Alice: Still works
+      `
     );
   });
   it('should handle different line breaks', () => {
