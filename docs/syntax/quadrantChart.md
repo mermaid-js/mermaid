@@ -102,6 +102,45 @@ Points are used to plot a circle inside the quadrantChart. The syntax is `<text>
 1. `Point 1: [0.75, 0.80]` here the Point 1 will be drawn in the top right quadrant.
 2. `Point 2: [0.35, 0.24]` here the Point 2 will be drawn in the bottom left quadrant.
 
+
+
+### Point styling
+Points cant either be styled directly or with defined shared classes
+1. direct styling
+```md
+Point A: [0.9, 0.0] radius: 12
+Point B: [0.8, 0.1] color: #ff3300, radius: 10
+Point C: [0.7, 0.2] radius: 25, color: #00ff33, stroke-color: #10f0f0      
+Point D: [0.6, 0.3] radius: 15, stroke-color: #00ff0f, stroke-width: 5px ,color: #ff33f0 
+```
+2. classes styling
+```md
+Point A:::class1: [0.9, 0.0]
+Point B:::class2: [0.8, 0.1]
+Point C:::class3: [0.7, 0.2]
+Point D:::class3: [0.7, 0.2]
+classDef class1 color: #109060
+classDef class2 color: #908342, radius : 10, stroke-color: #310085, stroke-width: 10px
+classDef class3 color: #f00fff, radius : 10
+```
+
+
+#### available styles:
+
+| Parameter                        | Description                                                             |
+| -------------------------------- | ------------------------------------------------------------------------|
+| color                            | Fill color of the point                                                 |
+| radius                           | Radius of the point                                                     |
+| stroke-width                     | Border width of the point                                               |
+| stroke-color                     | Border color of the point (useless when stroke-width is not specified)  |
+
+
+```note
+class styles take priority over direct styles and direct styles take priority over theme styles
+```
+
+
+
 ## Chart Configurations
 
 | Parameter                         | Description                                                                                        | Default value |
@@ -167,4 +206,24 @@ quadrantChart
   quadrant-2 Do
   quadrant-3 Delegate
   quadrant-4 Delete
+```
+## Example on styling
+```mermaid
+quadrantChart
+  title Reach and engagement of campaigns
+  x-axis Low Reach --> High Reach
+  y-axis Low Engagement --> High Engagement
+  quadrant-1 We should expand
+  quadrant-2 Need to promote
+  quadrant-3 Re-evaluate
+  quadrant-4 May be improved
+  Campaign A: [0.9, 0.0] radius: 12
+  Campaign B:::class1: [0.8, 0.1] color: #ff3300, radius: 10
+  Campaign C: [0.7, 0.2] radius: 25, color: #00ff33, stroke-color: #10f0f0      
+  Campaign D: [0.6, 0.3] radius: 15, stroke-color: #00ff0f, stroke-width: 5px ,color: #ff33f0        
+  Campaign E:::class2: [0.5, 0.4]
+  Campaign F:::class3: [0.4, 0.5] color: #0000ff
+  classDef class1 color: #109060
+  classDef class2 color: #908342, radius : 10, stroke-color: #310085, stroke-width: 10px
+  classDef class3 color: #f00fff, radius : 10
 ```
