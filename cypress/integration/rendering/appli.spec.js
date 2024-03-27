@@ -7,8 +7,7 @@ describe('Git Graph diagram', () => {
        commit id: "1"
        commit id: "2"
        commit id: "3"
-      `,
-      {}
+      `
     );
   });
   // it(`ultraFastTest`, function () {

@@ -1,4 +1,4 @@
-import { urlSnapshotTest, openURLAndVerifyRendering } from '../../helpers/util.ts';
+import { urlSnapshotTest, openUrlAndVerifyRendering } from '../../helpers/util.ts';
 
 describe('CSS injections', () => {
   it('should not allow CSS injections outside of the diagram', () => {
@@ -14,7 +14,7 @@ describe('CSS injections', () => {
     });
   });
   it('should not allow manipulating styletags using arrowheads', () => {
-    openURLAndVerifyRendering('http://localhost:9000/xss23-css.html', {
+    openUrlAndVerifyRendering('http://localhost:9000/xss23-css.html', {
       logLevel: 1,
       arrowMarkerAbsolute: false,
       flowchart: { htmlLabels: true },

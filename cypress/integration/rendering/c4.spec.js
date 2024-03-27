@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('C4 diagram', () => {
   it('should render a simple C4Context diagram', () => {
@@ -27,10 +27,8 @@ describe('C4 diagram', () => {
       UpdateElementStyle(customerA, $fontColor="red", $bgColor="grey", $borderColor="red")
       UpdateRelStyle(customerA, SystemAA, $textColor="blue", $lineColor="blue", $offsetX="5")
       UpdateRelStyle(SystemC, customerA, $textColor="red", $lineColor="red", $offsetX="-50", $offsetY="20")
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
   it('should render a simple C4Container diagram', () => {
     imgSnapshotTest(
@@ -47,10 +45,8 @@ describe('C4 diagram', () => {
 
       Rel(customer, spa, "Uses", "HTTPS")
       Rel(email_system, customer, "Sends e-mails to")
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
   it('should render a simple C4Component diagram', () => {
     imgSnapshotTest(
@@ -66,10 +62,8 @@ describe('C4 diagram', () => {
 
       Rel_Back(spa, sign, "Uses", "JSON/HTTPS")
       UpdateRelStyle(spa, sign, $offsetY="-40")
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
   it('should render a simple C4Dynamic diagram', () => {
     imgSnapshotTest(
@@ -90,10 +84,8 @@ describe('C4 diagram', () => {
       UpdateRelStyle(c1, c2, $textColor="red", $offsetY="-40")
       UpdateRelStyle(c2, c3, $textColor="red", $offsetX="-40", $offsetY="60")
       UpdateRelStyle(c3, c4, $textColor="red", $offsetY="-40", $offsetX="10")
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
   it('should render a simple C4Deployment diagram', () => {
     imgSnapshotTest(
@@ -114,9 +106,7 @@ describe('C4 diagram', () => {
       }
 
       Rel(mobile, api, "Makes API calls to", "json/HTTPS")
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
 });

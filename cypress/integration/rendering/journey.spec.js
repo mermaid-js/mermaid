@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('User journey diagram', () => {
   it('Simple test', () => {
@@ -6,8 +6,7 @@ describe('User journey diagram', () => {
       `journey
 title Adding journey diagram functionality to mermaid
 section Order from website
-    `,
-      {}
+    `
     );
   });
 
@@ -23,13 +22,12 @@ section Order from website
     section Go home
       Go downstairs: 5: Me
       Sit down: 3: Me
-      `,
-      {}
+      `
     );
   });
 
   it('should render a user journey diagram when useMaxWidth is true (default)', () => {
-    renderGraph(
+    imgSnapshotTest(
       `journey
 title E-Commerce
 section Order from website

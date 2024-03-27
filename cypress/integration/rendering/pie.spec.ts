@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('pie chart', () => {
   it('should render a simple pie diagram', () => {
@@ -31,7 +31,7 @@ describe('pie chart', () => {
   });
 
   it('should render a pie diagram when useMaxWidth is true (default)', () => {
-    renderGraph(
+    imgSnapshotTest(
       `pie title Sports in Sweden
         "Bandy": 40
         "Ice-Hockey": 80
@@ -49,7 +49,7 @@ describe('pie chart', () => {
   });
 
   it('should render a pie diagram when useMaxWidth is false', () => {
-    renderGraph(
+    imgSnapshotTest(
       `pie title Sports in Sweden
         "Bandy": 40
         "Ice-Hockey": 80
