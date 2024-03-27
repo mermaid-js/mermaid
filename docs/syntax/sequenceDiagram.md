@@ -556,6 +556,26 @@ sequenceDiagram
     API-->BillingService: Start billing process
 ```
 
+## Custom Grouping (v\<MERMAID_RELEASE_VERSION>+)
+
+It is possible to create a group of actions similar to those described above, but with a custom label.
+
+This is done by the notation
+
+    group:label [description]
+    ... statements ...
+    end
+
+See the example below:
+
+    sequenceDiagram
+        Alice-->Bob: I have a secret
+        Bob-->Alice: What is it?
+        group:Whisper So nobody hears
+            Alice-->Bob: I love you
+        end
+        Bob-->Alice: AAAAAAHHhhh!!!
+
 ## Background Highlighting
 
 It is possible to highlight flows by providing colored background rects. This is done by the notation
