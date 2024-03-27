@@ -408,9 +408,16 @@ const render: typeof mermaidAPI.render = (id, text, container) => {
 export interface Mermaid {
   startOnLoad: boolean;
   parseError?: ParseErrorFunction;
+  /**
+   * @deprecated Use {@link parse} and {@link render} instead.
+   * @internal
+   */
   mermaidAPI: typeof mermaidAPI;
   parse: typeof parse;
   render: typeof render;
+  /**
+   * @deprecated Use {@link initialize} and {@link run} instead.
+   */
   init: typeof init;
   run: typeof run;
   registerExternalDiagrams: typeof registerExternalDiagrams;
