@@ -177,6 +177,12 @@ properties:
       fall back to legacy rendering for KaTeX.
     type: boolean
     default: false
+  iconLibraries:
+    description: |
+      This option specifies an object contianing a mappig of SVG icon names to a resolver that returns the svg code.
+      For supported diagrams (i.e., Architecture), their syntax allows refering to key names in this object to display the corresponding SVG icon in the rendered diagram.
+    tsType: Array<import('./rendering-util/svgRegister.js').IconLibrary>
+    # tsType: Record<string, IconResolver>
   deterministicIds:
     description: |
       This option controls if the generated ids of nodes in the SVG are

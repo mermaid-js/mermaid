@@ -136,6 +136,12 @@ export interface MermaidConfig {
    */
   legacyMathML?: boolean;
   /**
+   * This option specifies an object contianing a mappig of SVG icon names to a resolver that returns the svg code.
+   * For supported diagrams (i.e., Architecture), their syntax allows refering to key names in this object to display the corresponding SVG icon in the rendered diagram.
+   *
+   */
+  iconLibraries?: Array<import('./rendering-util/svgRegister.js').IconLibrary>;
+  /**
    * This option controls if the generated ids of nodes in the SVG are
    * generated randomly or based on a seed.
    * If set to `false`, the IDs are generated based on the current date and

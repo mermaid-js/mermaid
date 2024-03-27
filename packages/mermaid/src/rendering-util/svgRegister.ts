@@ -1,33 +1,42 @@
-import { Selection } from "d3-selection";
+import { Selection } from 'd3-selection';
 
-type IconResolver =  (parent: Selection<SVGGElement, unknown, Element | null, unknown>) => Selection<SVGGElement, unknown, Element | null, unknown>
-type IconLibrary = Record<string, IconResolver>
+type IconResolver = (
+  parent: Selection<SVGGElement, unknown, Element | null, unknown>, width?: number
+) => Selection<SVGGElement, unknown, Element | null, unknown>;
+type IconLibrary = Record<string, IconResolver>;
 
-const icons: IconLibrary = {}
+const icons: IconLibrary = {};
 
 const isIconNameInUse = (name: string): boolean => {
-    return icons[name] !== undefined;
-}
+  return icons[name] !== undefined;
+};
 
 const registerIcon = (name: string, resolver: IconResolver) => {
-    if(!isIconNameInUse(name)) {
-        icons[name] = resolver;
-    }
-}
+  if (!isIconNameInUse(name)) {
+    icons[name] = resolver;
+  }
+};
 
 const registerIcons = (library: IconLibrary) => {
-    Object.entries(library).forEach(([name, resolver]) => {
-        if (!isIconNameInUse(name)) {
-            icons[name] = resolver;
-        }
-    })
-}
+  Object.entries(library).forEach(([name, resolver]) => {
+    if (!isIconNameInUse(name)) {
+      icons[name] = resolver;
+    }
+  });
+};
 
 const getIcon = (name: string): IconResolver | null => {
-    if (isIconNameInUse(name)) {
-        return icons[name];
-    }
-    return null; // TODO: return default
+  if (isIconNameInUse(name)) {
+    return icons[name];
+  }
+  return null; // TODO: return default
+};
+
+const createIcon = (icon: string, originalSize: number): IconResolver => {
+  return (parent: Selection<SVGGElement, unknown, Element | null, unknown>, size: number = originalSize) => {
+    parent.html(`<g style="transform: scale(${size / originalSize})">${icon}</g>`)
+    return parent
+  }
 }
 
-export { registerIcon, registerIcons, getIcon, isIconNameInUse, IconLibrary }
+export { registerIcon, registerIcons, getIcon, isIconNameInUse, createIcon, IconLibrary };
