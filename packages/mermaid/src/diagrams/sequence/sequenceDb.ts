@@ -256,7 +256,7 @@ export const disableSequenceNumbers = function () {
 };
 export const showSequenceNumbers = () => state.records.sequenceNumbersEnabled;
 
-export const setWrap = function (wrapSetting: boolean) {
+export const setWrap = function (wrapSetting?: boolean) {
   state.records.wrapEnabled = wrapSetting;
 };
 
