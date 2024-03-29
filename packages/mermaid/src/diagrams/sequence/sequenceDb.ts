@@ -184,7 +184,7 @@ export const addMessage = function (
 export const addSignal = function (
   idFrom?: Message['from'],
   idTo?: Message['to'],
-  message?: { text: string; wrap?: boolean },
+  message: { text?: string; wrap?: boolean } = { text: undefined, wrap: undefined },
   messageType?: number,
   activate: boolean = false
 ) {
@@ -385,10 +385,9 @@ export const addNote = function (
     wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
   };
 
-  // Coerce actor into a [to, from, ...] array
+  //@ts-ignore: Coerce actor into a [to, from, ...] array
   // eslint-disable-next-line unicorn/prefer-spread
-  const actors = [actor, actor];
-
+  const actors = [].concat(actor, actor);
   state.records.notes.push(note);
   state.records.messages.push({
     from: actors[0],
