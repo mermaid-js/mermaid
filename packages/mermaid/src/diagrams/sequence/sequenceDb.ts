@@ -36,7 +36,7 @@ type Actor = {
 type Message = {
   from?: { actor: string };
   to?: { actor: string };
-  message?:
+  message:
     | string
     | {
         start: number;
@@ -146,19 +146,23 @@ export const addActor = function (
   state.records.prevActor = id;
 };
 
-const activationCount = (part?: string) => {
+const activationCount = (part: string) => {
   let i;
   let count = 0;
+  if (!part) {
+    return 0;
+  }
+
   for (i = 0; i < state.records.messages.length; i++) {
     if (
       state.records.messages[i].type === LINETYPE.ACTIVE_START &&
-      state.records.messages[i].from?.actor === part
+      state.records.messages[i].from!.actor === part
     ) {
       count++;
     }
     if (
       state.records.messages[i].type === LINETYPE.ACTIVE_END &&
-      state.records.messages[i].from?.actor === part
+      state.records.messages[i].from!.actor === part
     ) {
       count--;
     }
@@ -189,7 +193,7 @@ export const addSignal = function (
   activate: boolean = false
 ) {
   if (messageType === LINETYPE.ACTIVE_END) {
-    const cnt = activationCount(idFrom?.actor);
+    const cnt = activationCount(idFrom?.actor || '');
     if (cnt < 1) {
       // Bail out as there is an activation signal from an inactive participant
       const error = new Error(
@@ -210,7 +214,7 @@ export const addSignal = function (
   state.records.messages.push({
     from: idFrom,
     to: idTo,
-    message: message?.text,
+    message: message?.text ?? '',
     wrap: (message?.wrap === undefined && autoWrap()) || !!message?.wrap,
     type: messageType,
     activate,
