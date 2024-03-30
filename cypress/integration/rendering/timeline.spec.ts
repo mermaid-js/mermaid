@@ -161,4 +161,20 @@ describe('Timeline diagram', () => {
       {}
     );
   });
+
+  it('11: should render with semicolons in the sections, period, and events', () => {
+    imgSnapshotTest(
+      `timeline
+      title England's History Timeline
+      section ESC_COLONStESC_COLONone AgeESC_COLON
+      ESC_COLON760ESC_COLON0 BCESC_COLON : BritESC_COLONain's oldest known hoESC_COLONuse was built in Orkney, ScotlandESC_COLON
+        6000 BC : Sea levels rise and Britain becomes an island.<br> The people who live here are hunter-gatherers.
+      section ESC_COLONBroESC_COLONze AgeESC_COLON
+        2300 BC : People arrive from Europe and settle in Britain. <br>They bring farming and metalworking. : ESC_COLONNew styles of potterESC_COLONy and ways of burying the dead appear.ESC_COLON
+        2200 BC : The last major building works are completed at Stonehenge.<br> People now bury their dead in stone circles.
+                : The first metal objects are made in Britain.Some other nice things happen. it is a good time to be alive.
+    `,
+      {}
+    );
+  });
 });
