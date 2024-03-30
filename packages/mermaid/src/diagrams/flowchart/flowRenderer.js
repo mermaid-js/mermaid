@@ -59,7 +59,7 @@ export const addVertices = async function (vert, g, svgId, root, _doc, diagObj) 
       const node = {
         label: await renderKatex(
           vertexText.replace(
-            /fa[blrs]?:fa-[\w-]+/g, // cspell:disable-line
+            /fa[bklrs]?:fa-[\w-]+/g, // cspell:disable-line
             (s) => `<i class='${s.replace(':', ' ')}'></i>`
           ),
           getConfig()
@@ -244,7 +244,7 @@ export const addEdges = async function (edges, g, diagObj) {
           edgeData.labelStyle
         }">${await renderKatex(
           edge.text.replace(
-            /fa[blrs]?:fa-[\w-]+/g, // cspell:disable-line
+            /fa[bklrs]?:fa-[\w-]+/g, // cspell:disable-line
             (s) => `<i class='${s.replace(':', ' ')}'></i>`
           ),
           getConfig()
