@@ -196,11 +196,16 @@ export const drawNode = function (
   // Create the wrapped text element
   const textElem = nodeElem.append('g');
   const description = node.descr.replace(/(<br\/*>)/g, '\n');
-  const newEl = createText(textElem, description, {
-    useHtmlLabels: htmlLabels,
-    width: node.width,
-    classes: 'mindmap-node-label',
-  });
+  const newEl = createText(
+    textElem,
+    description,
+    {
+      useHtmlLabels: htmlLabels,
+      width: node.width,
+      classes: 'mindmap-node-label',
+    },
+    conf
+  );
 
   if (!htmlLabels) {
     textElem

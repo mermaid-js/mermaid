@@ -15,21 +15,24 @@
       "automerge": true
     },
     {
-      "groupName": "all patch dependencies",
-      "groupSlug": "all-patch",
+      "groupName": "all major dependencies",
+      "groupSlug": "all-major",
       "matchPackagePatterns": ["*"],
-      "matchUpdateTypes": ["patch"]
+      "matchUpdateTypes": ["major"]
     },
     {
       "groupName": "all minor dependencies",
       "groupSlug": "all-minor",
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor"]
+    },
+    {
+      "groupName": "all patch dependencies",
+      "groupSlug": "all-patch",
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["patch"]
     }
   ],
-  "dependencyDashboard": true,
-  "major": {
-    "dependencyDashboardApproval": true
-  },
+  "dependencyDashboard": false,
   "dependencyDashboardAutoclose": true
 }
