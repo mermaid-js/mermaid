@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -1588,6 +1588,33 @@
       class D unactive_node;
       class G finish_node;
       class I bugged_node
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+      ---
+      title: Subgraph nodeSpacing and rankSpacing example
+      config:
+        flowchart:
+          nodeSpacing: 1
+          rankSpacing: 1
+      ---
+
+      flowchart LR
+      
+      X --> Y
+      
+      subgraph X
+        direction LR
+        A
+        C
+      end
+      
+      subgraph Y
+        direction LR
+        B
+        D
+      end
     </pre>
     <hr />
 
