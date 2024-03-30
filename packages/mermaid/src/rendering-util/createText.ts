@@ -192,7 +192,7 @@ export const createText = (
     const node = {
       isNode,
       label: decodeEntities(htmlText).replace(
-        /fa[blrs]?:fa-[\w-]+/g, // cspell: disable-line
+        /fa[bklrs]?:fa-[\w-]+/g, // cspell: disable-line
         (s) => `<i class='${s.replace(':', ' ')}'></i>`
       ),
       labelStyle: style.replace('fill:', 'color:'),
