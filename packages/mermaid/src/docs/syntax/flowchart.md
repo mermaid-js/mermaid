@@ -799,14 +799,20 @@ Adding this snippet in the `<head>` would add support for Font Awesome v6.5.1
 />
 ```
 
-It is possible to use custom icons served from Font Awesome as long as the website imports the corresponding kit. Note that this is currently a paid feature from Font Awesome.
+### Custom icons
+
+It is possible to use custom icons served from Font Awesome as long as the website imports the corresponding kit.
+
+Note that this is currently a paid feature from Font Awesome.
 
 For custom icons, you need to use the `fak` prefix.
 
+**Example**
+
 ```
 flowchart TD
-    B["fa:fa-twitter for peace"]
-    B-->E(fak:fa-custom-icon-name) %% this will try to find your kit's custom icon
+    B[fa:fa-twitter] %% standard icon
+    B-->E(fak:fa-custom-icon-name) %% custom icon
 ```
 
 ## Graph declarations with spaces between vertices and link and without semicolon
