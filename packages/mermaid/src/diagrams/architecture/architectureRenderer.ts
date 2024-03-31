@@ -72,6 +72,7 @@ function positionServices(db: ArchitectureDB, cy: cytoscape.Core) {
     if (data.type === 'group') return;
     data.x = node.position().x;
     data.y = node.position().y;
+    console.log(`Position service (${data.id}): (${data.x}, ${data.y})`)
 
     const nodeElem = db.getElementById(data.id);
     nodeElem.attr('transform', 'translate(' + (data.x || 0) + ',' + (data.y || 0) + ')');
@@ -156,6 +157,8 @@ function layoutArchitecture(
      * Example: [["a", "b"], ["b", "c"], ["d", "e"]] -> [["a", "b", "c"], ["d", "e"]]
      */
     const mergeAlignments = (orig: string[][]): string[][] => {
+      if (orig.length < 1) return orig;
+      console.log('===== mergeAlignments =====');
       console.log('Start: ', orig);
       // Mapping of discovered ids to their index in the new alignment array
       const map: Record<string, number> = {};
@@ -192,6 +195,8 @@ function layoutArchitecture(
       }
 
       console.log('End: ', newAlignments);
+      console.log('===========================');
+
       return newAlignments;
     };
 
@@ -219,6 +224,23 @@ function layoutArchitecture(
       styleEnabled: false,
       animate: false,
       nodeDimensionsIncludeLabels: true,
+      // Adjust the edge parameters if it passes through the border of a group
+      // Hacky fix for: https://github.com/iVis-at-Bilkent/cytoscape.js-fcose/issues/67
+      idealEdgeLength(edge) {
+        const [nodeA, nodeB] = edge.connectedNodes()
+        const {parent: parentA} = nodeA.data();
+        const {parent: parentB} = nodeB.data();
+        const elasticity = parentA === parentB ? 1.25*getConfigField('iconSize') : 0.5*getConfigField('iconSize');
+        return elasticity;
+      },
+      edgeElasticity(edge) {
+        const [nodeA, nodeB] = edge.connectedNodes()
+        console.log(nodeA.data());
+        const {parent: parentA} = nodeA.data();
+        const {parent: parentB} = nodeB.data();
+        const elasticity = parentA === parentB ? 0.45 : 0.001;
+        return elasticity
+      },      
       alignmentConstraint: {
         horizontal: mergeAlignments(horizontalAlignments),
         vertical: mergeAlignments(verticalAlignments),
@@ -228,19 +250,23 @@ function layoutArchitecture(
         const targetDir = edge.data('targetDir') as ArchitectureDirection;
         const sourceId = edge.data('source') as string;
         const targetId = edge.data('target') as string;
-
+        
+        let gap = 1.25*getConfigField('iconSize');
+        console.log(`relativeConstraint: ${sourceId} ${sourceDir}--${targetDir} ${targetId} (gap=${gap})`);
         if (isArchitectureDirectionX(sourceDir) && isArchitectureDirectionX(targetDir)) {
           return {
             left: sourceDir === 'R' ? sourceId : targetId,
             right: sourceDir === 'L' ? sourceId : targetId,
-            gap: 180,
+            gap,
           };
         } else if (isArchitectureDirectionY(sourceDir) && isArchitectureDirectionY(targetDir)) {
           return {
             top: sourceDir === 'B' ? sourceId : targetId,
             bottom: sourceDir === 'T' ? sourceId : targetId,
-            gap: 180,
+            gap,
           };
+        } else {
+          console.log('FALLBACK CASE NEEDED')
         }
         // TODO: fallback case + RB, TL, etc
       }),
@@ -277,6 +303,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   drawServices(db, servicesElem, services, conf);
 
   const cy = await layoutArchitecture(services, groups, lines);
+  console.log(cy.nodes().map(node => ({a: node.data()})));
 
   drawEdges(edgesElem, cy);
   drawGroups(groupElem, cy);
@@ -288,6 +315,8 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
     getConfigField('padding'),
     getConfigField('useMaxWidth')
   );
+
+  console.log('==============================================================')
 };
 
 export const renderer = { draw };
