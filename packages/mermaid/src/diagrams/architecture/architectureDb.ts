@@ -27,27 +27,44 @@ export const DEFAULT_ARCHITECTURE_DB: ArchitectureFields = {
   services: [],
   groups: [],
   lines: [],
-  cnt: 0,
+  registeredIds: {},
   config: DEFAULT_ARCHITECTURE_CONFIG,
 } as const;
 
 let services = DEFAULT_ARCHITECTURE_DB.services;
 let groups = DEFAULT_ARCHITECTURE_DB.groups;
 let lines = DEFAULT_ARCHITECTURE_DB.lines;
+let registeredIds = DEFAULT_ARCHITECTURE_DB.registeredIds;
 let elements: Record<string, D3Element> = {};
-let cnt = DEFAULT_ARCHITECTURE_DB.cnt;
 
 const clear = (): void => {
   services = structuredClone(DEFAULT_ARCHITECTURE_DB.services);
   groups = structuredClone(DEFAULT_ARCHITECTURE_DB.groups);
   lines = structuredClone(DEFAULT_ARCHITECTURE_DB.lines);
+  registeredIds = structuredClone(DEFAULT_ARCHITECTURE_DB.registeredIds)
   elements = {};
-  cnt = 0;
   commonClear();
 };
 
 const addService = function (id: string, opts: Omit<ArchitectureService, 'id'> = {}) {
   const { icon, in: inside, title } = opts;
+  if (registeredIds[id] !== undefined) {
+    throw new Error(`The service id [${id}] is already in use by another ${registeredIds[id]}`)
+  }
+  if (inside !== undefined) {
+    if (id === inside) {
+      throw new Error(`The service [${id}] cannot be placed within itself`)
+    }
+    if (registeredIds[inside] === undefined) {
+      throw new Error(`The service [${id}]'s parent does not exist. Please make sure the parent is created before this service`)
+    }
+    if (registeredIds[inside] === 'service') {
+      throw new Error(`The service [${id}]'s parent is not a group`);
+    }
+  }
+
+  registeredIds[id] = 'service';
+
   services.push({
     id,
     icon,
@@ -59,6 +76,23 @@ const getServices = (): ArchitectureService[] => services;
 
 const addGroup = function (id: string, opts: Omit<ArchitectureGroup, 'id'> = {}) {
   const { icon, in: inside, title } = opts;
+  if (registeredIds[id] !== undefined) {
+    throw new Error(`The group id [${id}] is already in use by another ${registeredIds[id]}`)
+  }
+  if (inside !== undefined) {
+    if (id === inside) {
+      throw new Error(`The group [${id}] cannot be placed within itself`)
+    }
+    if (registeredIds[inside] === undefined) {
+      throw new Error(`The group [${id}]'s parent does not exist. Please make sure the parent is created before this group`)
+    }
+    if (registeredIds[inside] === 'service') {
+      throw new Error(`The group [${id}]'s parent is not a group`);
+    }
+  }
+
+  registeredIds[id] = 'group';
+
   groups.push({
     id,
     icon,

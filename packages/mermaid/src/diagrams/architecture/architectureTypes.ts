@@ -51,6 +51,7 @@ export interface ArchitectureLine {
 }
 
 export interface ArchitectureDB extends DiagramDB {
+  clear: () => void;
   addService: (id: string, opts: Omit<ArchitectureService, 'id'>) => void;
   getServices: () => ArchitectureService[];
   addGroup: (id: string, opts: Omit<ArchitectureGroup, 'id'>) => void;
@@ -71,6 +72,6 @@ export interface ArchitectureFields {
   services: ArchitectureService[];
   groups: ArchitectureGroup[];
   lines: ArchitectureLine[];
-  cnt: number;
+  registeredIds: Record<string, 'service' | 'group'>;
   config: ArchitectureDiagramConfig;
 }
