@@ -101,12 +101,12 @@ describe('Gantt diagram', () => {
       title Adding GANTT diagram to mermaid
       excludes weekdays 2014-01-10
       todayMarker off
-  
+
       section team's critical event
       deadline A           :milestone, crit, deadlineA, 2024-02-01, 0
       deadline B           :milestone, crit, deadlineB, 2024-02-15, 0
       boss on leave        :bossaway, 2024-01-28, 2024-02-11
-  
+
       section new intern
       onboarding           :onboarding, 2024-01-02, 1w
       literature review    :litreview, 2024-01-02, 10d
@@ -814,7 +814,28 @@ describe('Gantt diagram', () => {
       `
     );
   });
-
+  it('should render a gantt diagram exculding friday and saturday', () => {
+    imgSnapshotTest(
+      `gantt
+      title A Gantt Diagram
+      dateFormat  YYYY-MM-DD
+      excludes weekends
+      weekend friday
+      section Section1
+      A task :a1, 2024-02-28, 10d`
+    );
+  });
+  it('should render a gantt diagram exculding saturday and sunday', () => {
+    imgSnapshotTest(
+      `gantt
+      title A Gantt Diagram
+      dateFormat  YYYY-MM-DD
+      excludes weekends
+      weekend saturday
+      section Section1
+      A task :a1, 2024-02-28, 10d`
+    );
+  });
   it('should render when compact is true', () => {
     imgSnapshotTest(
       `

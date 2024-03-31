@@ -30,8 +30,8 @@ appearance by doing the following:
 sequenceDiagram
     participant Alice
     participant Bob
-    Alice->>Bob: Hi Bob
     Bob->>Alice: Hi Alice
+    Alice->>Bob: Hi Bob
 ```
 
 ### Actors
@@ -518,22 +518,24 @@ Styling of a sequence diagram is done by defining a number of css classes. Durin
 
 ### Classes used
 
-| Class        | Description                                                    |
-| ------------ | -------------------------------------------------------------- |
-| actor        | Styles for the actor box.                                      |
-| actor-top    | Styles for the actor figure/ box at the top of the diagram.    |
-| actor-bottom | Styles for the actor figure/ box at the bottom of the diagram. |
-| text.actor   | Styles for text in the actor box.                              |
-| actor-line   | The vertical line for an actor.                                |
-| messageLine0 | Styles for the solid message line.                             |
-| messageLine1 | Styles for the dotted message line.                            |
-| messageText  | Defines styles for the text on the message arrows.             |
-| labelBox     | Defines styles label to left in a loop.                        |
-| labelText    | Styles for the text in label for loops.                        |
-| loopText     | Styles for the text in the loop box.                           |
-| loopLine     | Defines styles for the lines in the loop box.                  |
-| note         | Styles for the note box.                                       |
-| noteText     | Styles for the text on in the note boxes.                      |
+| Class          | Description                                                    |
+| -------------- | -------------------------------------------------------------- |
+| actor          | Styles for the actor box.                                      |
+| actor-top      | Styles for the actor figure/ box at the top of the diagram.    |
+| actor-bottom   | Styles for the actor figure/ box at the bottom of the diagram. |
+| text.actor     | Styles for text of all of the actors.                          |
+| text.actor-box | Styles for text of the actor box.                              |
+| text.actor-man | Styles for text of the actor figure.                           |
+| actor-line     | The vertical line for an actor.                                |
+| messageLine0   | Styles for the solid message line.                             |
+| messageLine1   | Styles for the dotted message line.                            |
+| messageText    | Defines styles for the text on the message arrows.             |
+| labelBox       | Defines styles label to left in a loop.                        |
+| labelText      | Styles for the text in label for loops.                        |
+| loopText       | Styles for the text in the loop box.                           |
+| loopLine       | Defines styles for the lines in the loop box.                  |
+| note           | Styles for the note box.                                       |
+| noteText       | Styles for the text on in the note boxes.                      |
 
 ### Sample stylesheet
 
