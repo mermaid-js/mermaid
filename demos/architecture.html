@@ -15,6 +15,7 @@
 
   <body>
     <h1>Architecture diagram demo</h1>
+    <h2>Simple diagram with groups</h2>
     <pre class="mermaid">
       architecture
         group api[API]
@@ -29,6 +30,66 @@
         disk1 T--B server
         disk2 T--B db
         server T--B gateway
+    </pre>
+
+    <hr />
+    <h2>Groups within groups</h2>
+    <pre class="mermaid">
+      architecture
+        group api[API]
+        group public[Public API] in api
+        group private[Private API] in api
+
+
+        service serv1(server)[Server] in public
+
+
+        service serv2(server)[Server] in private
+        service db(database)[Database] in private
+
+        service gateway(internet)[Gateway] in api
+
+        serv1 B--T serv2
+
+        serv2 L--R db
+
+        serv1 L--R gateway
+    </pre>
+
+    <hr />
+
+    <h2>Default icon (?) from uknown icon name</h2>
+    <pre class="mermaid">
+      architecture
+        service unknown(iconnamedoesntexist)[Uknown Icon]
+    </pre>
+
+    <hr />
+
+    <pre class="mermaid">
+        architecture
+            group vpc[Private VPC]
+            group vpc2[Public VPC]
+
+            service s3(s3)[S3 Bucket]
+            service rds(database)[RDS DB]
+            service ddb(dynamodb)[DynamoDB]
+            service ec2(ec2)[EC2 Server] in vpc
+            service gateway(api_gateway)[API Gateway] in vpc
+            service docdb(documentdb)[DocumentDB]
+            service lambda(lambda)[Lambda] in vpc
+
+            service serv1(ec2)[Public Server] in vpc2
+            service serv2(ec2)[Private Server] in vpc2
+
+            serv1 L--R serv2
+
+            s3 L--R rds
+            s3 B--T ddb
+            s3 R--L docdb
+            gateway L--R ec2
+            gateway T--B rds
+            gateway B--T lambda
     </pre>
 
     <script type="module">
