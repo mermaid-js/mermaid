@@ -815,6 +815,14 @@ flowchart TD
     B-->E(fak:fa-custom-icon-name) %% custom icon
 ```
 
+And trying to render it
+
+```mermaid-example
+flowchart TD
+    B["fa:fa-twitter for peace"]
+    B-->C["fab:fa-truck-bold a custom icon"]
+```
+
 ## Graph declarations with spaces between vertices and link and without semicolon
 
 - In graph declarations, the statements also can now end without a semicolon. After release 0.2.16, ending a graph statement with semicolon is just optional. So the below graph declaration is also valid along with the old declarations of the graph.
