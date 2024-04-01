@@ -372,10 +372,13 @@ const rect = async (parent, node) => {
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 
+
+  // console.log('Rect node:', node, 'bbox:', bbox, 'halfPadding:', halfPadding, 'node.padding:', node.padding);
   // const totalWidth = bbox.width + node.padding * 2;
   // const totalHeight = bbox.height + node.padding * 2;
   const totalWidth = bbox.width + node.padding;
   const totalHeight = bbox.height + node.padding;
+  console.log('Rect node:', node, rect.node(), 'bbox:', bbox, 'halfPadding:', halfPadding, 'node.padding:', node.padding, 'totalWidth:', totalWidth, 'totalHeight:', totalHeight);
   rect
     .attr('class', 'basic label-container')
     .attr('style', node.style)
@@ -1062,6 +1065,8 @@ export const insertNode = async (elem, node, dir) => {
   let newEl;
   let el;
 
+  console.log('insertNode element', elem, elem.node());
+  // debugger;
   // Add link when appropriate
   if (node.link) {
     let target;

@@ -541,8 +541,43 @@ const setDirection = (dir) => {
 
 const trimColon = (str) => (str && str[0] === ':' ? str.substr(1).trim() : str.trim());
 
+const dataFetcher = (parentId, doc, nodes, edges) => {
+  doc.forEach((item) => {
+    switch (item.stmt) {
+      case STMT_STATE:
+        if(parentId) {
+          nodes.push({...item, labelText: item.id, labelType:'text', parentId});
+        } else {
+          nodes.push({...item, labelText: item.id, labelType:'text'});
+        }
+        if(item.doc) {
+          dataFetcher(item.id, item.doc, nodes, edges);
+        }
+        break;
+      case STMT_RELATION:
+        edges.push(item);
+        break;
+    }
+  });
+}
+export const getData = () => {
+  const nodes = [];
+  const edges = [];
+
+  // for (const key in currentDocument.states) {
+  //   if (currentDocument.states.hasOwnProperty(key)) {
+  //     nodes.push({...currentDocument.states[key]});
+  //   }
+  // }
+  dataFetcher(undefined, rootDoc, nodes, edges);
+
+
+  return {nodes, edges, other: {}};
+}
+
 export default {
   getConfig: () => getConfig().state,
+  getData,
   addState,
   clear,
   getState,
