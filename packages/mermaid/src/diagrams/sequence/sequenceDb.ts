@@ -12,14 +12,14 @@ import {
 } from '../common/commonDb.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
 
-type Box = {
+interface Box {
   name: string;
   wrap: boolean;
   fill: string;
   actorKeys: string[];
-};
+}
 
-type Actor = {
+interface Actor {
   box?: Box;
   name: string;
   description: string;
@@ -31,9 +31,9 @@ type Actor = {
   actorCnt: number | null;
   rectData: unknown;
   type: string;
-};
+}
 
-type Message = {
+interface Message {
   from?: { actor: string };
   to?: { actor: string };
   message:
@@ -48,7 +48,55 @@ type Message = {
   type?: number;
   activate?: boolean;
   placement?: string;
-};
+}
+
+interface AddMessageParams {
+  from: string;
+  to: string;
+  msg: string;
+  signalType: number;
+  type:
+    | 'addMessage'
+    | 'sequenceIndex'
+    | 'addParticipant'
+    | 'createParticipant'
+    | 'destroyParticipant'
+    | 'activeStart'
+    | 'activeEnd'
+    | 'addNote'
+    | 'addLinks'
+    | 'addALink'
+    | 'addProperties'
+    | 'addDetails'
+    | 'boxStart'
+    | 'boxEnd'
+    | 'loopStart'
+    | 'loopEnd'
+    | 'rectStart'
+    | 'rectEnd'
+    | 'optStart'
+    | 'optEnd'
+    | 'altStart'
+    | 'else'
+    | 'altEnd'
+    | 'setAccTitle'
+    | 'parStart'
+    | 'parAnd'
+    | 'parEnd'
+    | 'and'
+    | 'criticalStart'
+    | 'criticalOption'
+    | 'option'
+    | 'criticalEnd'
+    | 'breakStart'
+    | 'breakEnd'
+    | 'parOverStart'
+    | 'parOverEnd'
+    | 'parOverAnd'
+    | 'parOverEnd';
+
+  activate: boolean;
+}
 
 type State = {
   prevActor?: string;
@@ -134,7 +182,7 @@ export const addActor = function (
     properties: {},
     actorCnt: null,
     rectData: null,
-    type: type || 'participant',
+    type: type ?? 'participant',
   };
   if (state.records.prevActor && state.records.actors[state.records.prevActor]) {
     state.records.actors[state.records.prevActor].nextActor = id;
@@ -188,7 +236,7 @@ export const addMessage = function (
 export const addSignal = function (
   idFrom?: Message['from'],
   idTo?: Message['to'],
-  message: { text?: string; wrap?: boolean } = { text: undefined, wrap: undefined },
+  message?: { text: string; wrap: boolean },
   messageType?: number,
   activate: boolean = false
 ) {
@@ -423,7 +471,7 @@ export const addALink = function (actorId: string, text: { text: string }) {
   // find the actor
   const actor = getActor(actorId);
   try {
-    const links: { [key: string]: string } = {};
+    const links: Record<string, string> = {};
     let sanitizedText = sanitizeText(text.text, getConfig());
     const sep = sanitizedText.indexOf('@');
     sanitizedText = sanitizedText.replace(/&amp;/g, '&');
@@ -513,54 +561,6 @@ export const getActorProperty = function (actor: Actor, key: string) {
   }
 
   return undefined;
-};
-
-type AddMessageParams = {
-  from: string;
-  to: string;
-  msg: string;
-  signalType: number;
-  type:
-    | 'addMessage'
-    | 'sequenceIndex'
-    | 'addParticipant'
-    | 'createParticipant'
-    | 'destroyParticipant'
-    | 'activeStart'
-    | 'activeEnd'
-    | 'addNote'
-    | 'addLinks'
-    | 'addALink'
-    | 'addProperties'
-    | 'addDetails'
-    | 'boxStart'
-    | 'boxEnd'
-    | 'loopStart'
-    | 'loopEnd'
-    | 'rectStart'
-    | 'rectEnd'
-    | 'optStart'
-    | 'optEnd'
-    | 'altStart'
-    | 'else'
-    | 'altEnd'
-    | 'setAccTitle'
-    | 'parStart'
-    | 'parAnd'
-    | 'parEnd'
-    | 'and'
-    | 'criticalStart'
-    | 'criticalOption'
-    | 'option'
-    | 'criticalEnd'
-    | 'breakStart'
-    | 'breakEnd'
-    | 'parOverStart'
-    | 'parOverEnd'
-    | 'parOverAnd'
-    | 'parOverEnd';
-
-  activate: boolean;
 };
 
 export const apply = function (param: any | AddMessageParams | AddMessageParams[]) {
