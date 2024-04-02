@@ -162,7 +162,7 @@ describe('Timeline diagram', () => {
     );
   });
 
-  it('11: should render with semicolons in the sections, period, and events', () => {
+  it('11: should render with colons in the sections, period, and events', () => {
     imgSnapshotTest(
       `timeline
       title England's History Timeline
