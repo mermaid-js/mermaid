@@ -11,92 +11,7 @@ import {
   setDiagramTitle,
 } from '../common/commonDb.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
-
-interface Box {
-  name: string;
-  wrap: boolean;
-  fill: string;
-  actorKeys: string[];
-}
-
-interface Actor {
-  box?: Box;
-  name: string;
-  description: string;
-  wrap: boolean;
-  prevActor?: string;
-  nextActor?: string;
-  links: Record<string, unknown>;
-  properties: Record<string, unknown>;
-  actorCnt: number | null;
-  rectData: unknown;
-  type: string;
-}
-
-interface Message {
-  from?: { actor: string };
-  to?: { actor: string };
-  message:
-    | string
-    | {
-        start: number;
-        step: number;
-        visible: boolean;
-      };
-  wrap: boolean;
-  answer?: unknown;
-  type?: number;
-  activate?: boolean;
-  placement?: string;
-}
-
-interface AddMessageParams {
-  from: string;
-  to: string;
-  msg: string;
-  signalType: number;
-  type:
-    | 'addMessage'
-    | 'sequenceIndex'
-    | 'addParticipant'
-    | 'createParticipant'
-    | 'destroyParticipant'
-    | 'activeStart'
-    | 'activeEnd'
-    | 'addNote'
-    | 'addLinks'
-    | 'addALink'
-    | 'addProperties'
-    | 'addDetails'
-    | 'boxStart'
-    | 'boxEnd'
-    | 'loopStart'
-    | 'loopEnd'
-    | 'rectStart'
-    | 'rectEnd'
-    | 'optStart'
-    | 'optEnd'
-    | 'altStart'
-    | 'else'
-    | 'altEnd'
-    | 'setAccTitle'
-    | 'parStart'
-    | 'parAnd'
-    | 'parEnd'
-    | 'and'
-    | 'criticalStart'
-    | 'criticalOption'
-    | 'option'
-    | 'criticalEnd'
-    | 'breakStart'
-    | 'breakEnd'
-    | 'parOverStart'
-    | 'parOverEnd'
-    | 'parOverAnd'
-    | 'parOverEnd';
-
-  activate: boolean;
-}
+import type { Actor, AddMessageParams, Box, Message } from './types.js';
 
 type State = {
   prevActor?: string;
@@ -204,13 +119,13 @@ const activationCount = (part: string) => {
   for (i = 0; i < state.records.messages.length; i++) {
     if (
       state.records.messages[i].type === LINETYPE.ACTIVE_START &&
-      state.records.messages[i].from!.actor === part
+      state.records.messages[i].from === part
     ) {
       count++;
     }
     if (
       state.records.messages[i].type === LINETYPE.ACTIVE_END &&
-      state.records.messages[i].from!.actor === part
+      state.records.messages[i].from === part
     ) {
       count--;
     }
@@ -241,12 +156,10 @@ export const addSignal = function (
   activate: boolean = false
 ) {
   if (messageType === LINETYPE.ACTIVE_END) {
-    const cnt = activationCount(idFrom?.actor || '');
+    const cnt = activationCount(idFrom || '');
     if (cnt < 1) {
       // Bail out as there is an activation signal from an inactive participant
-      const error = new Error(
-        'Trying to inactivate an inactive participant (' + idFrom?.actor + ')'
-      );
+      const error = new Error('Trying to inactivate an inactive participant (' + idFrom + ')');
 
       // @ts-ignore: we are passing hash param to the error object, however we should define our own custom error class to make it type safe
       error.hash = {
