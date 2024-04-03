@@ -7,6 +7,7 @@ import type {
   ArchitectureLine,
   ArchitectureDirectionPairMap,
   ArchitectureDirectionPair,
+  ArchitectureSpatialMap,
 } from './architectureTypes.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { getArchitectureDirectionPair, isArchitectureDirection, shiftPositionByArchitectureDirectionPair } from './architectureTypes.js';
@@ -135,29 +136,44 @@ const getDataStructures = () => {
       return prev
     }, {});
     
+    // Configuration for the initial pass of BFS
     const [firstId, _] = Object.entries(adjList)[0];
-    const spatialMap = {[firstId]: [0,0]};
     const visited = {[firstId]: 1};
-    const queue = [firstId];
+    const notVisited = Object.keys(adjList).reduce((prev, id) => (
+      id === firstId ? prev : {...prev, [id]: 1}
+    ), {} as Record<string, number>);
+    
     // Perform BFS on adjacency list
-    while(queue.length > 0) {
-      const id = queue.shift();
-      if (id) {
-        visited[id] = 1
-        const adj = adjList[id];
-        const [posX, posY] = spatialMap[id];
-        Object.entries(adj).forEach(([dir, rhsId]) => {
-          if (!visited[rhsId]) {
-            console.log(`${id} -- ${rhsId}`);
-            spatialMap[rhsId] = shiftPositionByArchitectureDirectionPair([posX, posY], dir as ArchitectureDirectionPair)
-            queue.push(rhsId);
-          }
-        })
+    const BFS = (startingId: string): ArchitectureSpatialMap => {
+      const spatialMap = {[startingId]: [0,0]};
+      const queue = [startingId];
+      while(queue.length > 0) {
+        const id = queue.shift();
+        if (id) {
+          visited[id] = 1
+          delete notVisited[id]
+          const adj = adjList[id];
+          const [posX, posY] = spatialMap[id];
+          Object.entries(adj).forEach(([dir, rhsId]) => {
+            if (!visited[rhsId]) {
+              console.log(`${id} -- ${rhsId}`);
+              spatialMap[rhsId] = shiftPositionByArchitectureDirectionPair([posX, posY], dir as ArchitectureDirectionPair)
+              queue.push(rhsId);
+            }
+          })
+        }
       }
+      return spatialMap;
+    }
+    const spatialMaps = [BFS(firstId)];
+    
+    // If our diagram is disconnected, keep adding additional spatial maps until all disconnected graphs have been found
+    while (Object.keys(notVisited).length > 0) {
+      spatialMaps.push(BFS(Object.keys(notVisited)[0]))
     }
     datastructures = {
       adjList,
-      spatialMap
+      spatialMaps
     }
     console.log(datastructures)
   }

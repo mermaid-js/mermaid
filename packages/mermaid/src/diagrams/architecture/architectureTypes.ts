@@ -148,7 +148,7 @@ export type ArchitectureAdjacencyList = {[id: string]: ArchitectureDirectionPair
 export type ArchitectureSpatialMap = Record<string, number[]>
 export type ArchitectureDataStructures = {
   adjList: ArchitectureAdjacencyList;
-  spatialMap: ArchitectureSpatialMap;
+  spatialMaps: ArchitectureSpatialMap[];
 }
 
 export interface ArchitectureFields {

@@ -7,16 +7,12 @@ import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import {
-  isArchitectureDirectionX,
   type ArchitectureDB,
   type ArchitectureDirection,
   type ArchitectureGroup,
   type ArchitectureLine,
   type ArchitectureService,
-  isArchitectureDirectionY,
   ArchitectureDataStructures,
-  ArchitectureDirectionPair,
-  isArchitectureDirectionXY,
   ArchitectureDirectionName,
   getOppositeArchitectureDirection,
 } from './architectureTypes.js';
@@ -25,7 +21,6 @@ import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import type { D3Element } from '../../mermaidAPI.js';
 import { drawEdges, drawGroups, drawService } from './svgDraw.js';
 import { getConfigField } from './architectureDb.js';
-import { X } from 'vitest/dist/reporters-5f784f42.js';
 
 cytoscape.use(fcose);
 
@@ -104,7 +99,7 @@ function layoutArchitecture(
   services: ArchitectureService[],
   groups: ArchitectureGroup[],
   lines: ArchitectureLine[],
-  {adjList, spatialMap}: ArchitectureDataStructures
+  {adjList, spatialMaps}: ArchitectureDataStructures
 ): Promise<cytoscape.Core> {
   return new Promise((resolve) => {
     const renderEl = select('body').append('div').attr('id', 'cy').attr('style', 'display:none');
@@ -160,21 +155,28 @@ function layoutArchitecture(
 
     // Use the spatial map to create alignment arrays for fcose
     const [horizontalAlignments, verticalAlignments] = (() => {
-      const _horizontalAlignments: Record<number, string[]> = {}
-      const _verticalAlignments: Record<number, string[]> = {}
-      // Group service ids in an object with their x and y coordinate as the key
-      Object.entries(spatialMap).forEach(([id, [x, y]]) => {
-        if (!_horizontalAlignments[y]) _horizontalAlignments[y] = [];
-        if (!_verticalAlignments[x]) _verticalAlignments[x] = [];
-        _horizontalAlignments[y].push(id);
-        _verticalAlignments[x].push(id);
+      const alignments = spatialMaps.map(spatialMap => {
+        const _horizontalAlignments: Record<number, string[]> = {}
+        const _verticalAlignments: Record<number, string[]> = {}
+        // Group service ids in an object with their x and y coordinate as the key
+        Object.entries(spatialMap).forEach(([id, [x, y]]) => {
+          if (!_horizontalAlignments[y]) _horizontalAlignments[y] = [];
+          if (!_verticalAlignments[x]) _verticalAlignments[x] = [];
+          _horizontalAlignments[y].push(id);
+          _verticalAlignments[x].push(id);
+        })
+        // Merge the values of each object into a list if the inner list has at least 2 elements
+        return {
+          horiz: Object.values(_horizontalAlignments).filter(arr => arr.length > 1), 
+          vert: Object.values(_verticalAlignments).filter(arr => arr.length > 1)
+        }
       })
 
-      // Merge the values of each object into a list if the inner list has at least 2 elements
-      return [
-        Object.values(_horizontalAlignments).filter(arr => arr.length > 1), 
-        Object.values(_verticalAlignments).filter(arr => arr.length > 1)
-      ]
+      // Merge the alginment lists for each spatial map into one 2d array per axis
+      return alignments.reduce(([prevHoriz, prevVert], {horiz, vert}) => {
+        return [[...prevHoriz, ...horiz], [...prevVert, ...vert]]
+      }, [[] as string[][], [] as string[][]])
+
     })();
 
     // Create the relative constraints for fcose by using an inverse of the spatial map and performing BFS on it
@@ -182,44 +184,46 @@ function layoutArchitecture(
       const _relativeConstraints: fcose.FcoseRelativePlacementConstraint[] = []
       const posToStr = (pos: number[]) => `${pos[0]},${pos[1]}`
       const strToPos = (pos: string) => pos.split(',').map(p => parseInt(p));
-      const invSpatialMap = Object.fromEntries(Object.entries(spatialMap).map(([id, pos]) => [posToStr(pos), id]))
-      console.log('===== invSpatialMap =====')
-      console.log(invSpatialMap);
 
-      // perform BFS
-      const queue = [posToStr([0,0])];
-      const visited: Record<string, number> = {};
-      const directions: Record<ArchitectureDirection, number[]> = {
-        "L": [-1, 0],
-        "R": [1, 0],
-        "T": [0, 1],
-        "B": [0, -1]
-      }
-      while (queue.length > 0) {
-        const curr = queue.shift();
-        if (curr) {
-          visited[curr] = 1
-          const currId = invSpatialMap[curr];
-          if (currId) {
-            const currPos = strToPos(curr);
-            Object.entries(directions).forEach(([dir, shift]) => {
-              const newPos = posToStr([(currPos[0]+shift[0]), (currPos[1]+shift[1])]);
-              const newId = invSpatialMap[newPos];
-              // If there is an adjacent service to the current one and it has not yet been visited
-              if (newId  && !visited[newPos]) {
-                queue.push(newPos);
-                // @ts-ignore cannot determine if left/right or top/bottom are paired together
-                _relativeConstraints.push({
-                  [ArchitectureDirectionName[dir as ArchitectureDirection]]: newId,
-                  [ArchitectureDirectionName[getOppositeArchitectureDirection(dir as ArchitectureDirection)]]: currId,
-                  gap: 100
-                })
-              }
-            })
-            
-          }
+      spatialMaps.forEach(spatialMap => {
+        const invSpatialMap = Object.fromEntries(Object.entries(spatialMap).map(([id, pos]) => [posToStr(pos), id]))
+        console.log('===== invSpatialMap =====')
+        console.log(invSpatialMap);
+  
+        // perform BFS
+        const queue = [posToStr([0,0])];
+        const visited: Record<string, number> = {};
+        const directions: Record<ArchitectureDirection, number[]> = {
+          "L": [-1, 0],
+          "R": [1, 0],
+          "T": [0, 1],
+          "B": [0, -1]
         }
-      }
+        while (queue.length > 0) {
+          const curr = queue.shift();
+          if (curr) {
+            visited[curr] = 1
+            const currId = invSpatialMap[curr];
+            if (currId) {
+              const currPos = strToPos(curr);
+              Object.entries(directions).forEach(([dir, shift]) => {
+                const newPos = posToStr([(currPos[0]+shift[0]), (currPos[1]+shift[1])]);
+                const newId = invSpatialMap[newPos];
+                // If there is an adjacent service to the current one and it has not yet been visited
+                if (newId  && !visited[newPos]) {
+                  queue.push(newPos);
+                  // @ts-ignore cannot determine if left/right or top/bottom are paired together
+                  _relativeConstraints.push({
+                    [ArchitectureDirectionName[dir as ArchitectureDirection]]: newId,
+                    [ArchitectureDirectionName[getOppositeArchitectureDirection(dir as ArchitectureDirection)]]: currId,
+                    gap: 100
+                  })
+                }
+              })
+            }
+          }
+        } 
+      })
       return _relativeConstraints;
     })();
     console.log(`Horizontal Alignments:`)
