@@ -5,9 +5,11 @@ import type {
   ArchitectureGroup,
   ArchitectureDirection,
   ArchitectureLine,
+  ArchitectureDirectionPairMap,
+  ArchitectureDirectionPair,
 } from './architectureTypes.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { isArchitectureDirection } from './architectureTypes.js';
+import { getArchitectureDirectionPair, isArchitectureDirection, shiftPositionByArchitectureDirectionPair } from './architectureTypes.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -24,7 +26,7 @@ import type { D3Element } from '../../mermaidAPI.js';
 export const DEFAULT_ARCHITECTURE_CONFIG: Required<ArchitectureDiagramConfig> =
   DEFAULT_CONFIG.architecture;
 export const DEFAULT_ARCHITECTURE_DB: ArchitectureFields = {
-  services: [],
+  services: {},
   groups: [],
   lines: [],
   registeredIds: {},
@@ -35,18 +37,20 @@ let services = DEFAULT_ARCHITECTURE_DB.services;
 let groups = DEFAULT_ARCHITECTURE_DB.groups;
 let lines = DEFAULT_ARCHITECTURE_DB.lines;
 let registeredIds = DEFAULT_ARCHITECTURE_DB.registeredIds;
+let datastructures = DEFAULT_ARCHITECTURE_DB.datastructures;
 let elements: Record<string, D3Element> = {};
 
 const clear = (): void => {
   services = structuredClone(DEFAULT_ARCHITECTURE_DB.services);
   groups = structuredClone(DEFAULT_ARCHITECTURE_DB.groups);
   lines = structuredClone(DEFAULT_ARCHITECTURE_DB.lines);
-  registeredIds = structuredClone(DEFAULT_ARCHITECTURE_DB.registeredIds)
+  registeredIds = structuredClone(DEFAULT_ARCHITECTURE_DB.registeredIds);
+  datastructures = undefined;
   elements = {};
   commonClear();
 };
 
-const addService = function (id: string, opts: Omit<ArchitectureService, 'id'> = {}) {
+const addService = function (id: string, opts: Omit<ArchitectureService, 'id' | 'edges'> = {}) {
   const { icon, in: inside, title } = opts;
   if (registeredIds[id] !== undefined) {
     throw new Error(`The service id [${id}] is already in use by another ${registeredIds[id]}`)
@@ -65,14 +69,16 @@ const addService = function (id: string, opts: Omit<ArchitectureService, 'id'> =
 
   registeredIds[id] = 'service';
 
-  services.push({
+  services[id] = {
     id,
     icon,
     title,
+    edges: [],
     in: inside,
-  });
+  };
 };
-const getServices = (): ArchitectureService[] => services;
+
+const getServices = (): ArchitectureService[] => Object.values(services);
 
 const addGroup = function (id: string, opts: Omit<ArchitectureGroup, 'id'> = {}) {
   const { icon, in: inside, title } = opts;
@@ -100,7 +106,63 @@ const addGroup = function (id: string, opts: Omit<ArchitectureGroup, 'id'> = {})
     in: inside,
   });
 };
-const getGroups = (): ArchitectureGroup[] => groups;
+const getGroups = (): ArchitectureGroup[] => {
+  return groups
+};
+
+
+const getDataStructures = () => {
+  console.log('===== createSpatialMap =====')
+  if (datastructures === undefined) {
+    // Create an adjacency list of the diagram to perform BFS on
+    // Outer reduce applied on all services
+    // Inner reduce applied on the edges for a service
+    const adjList = Object.entries(services).reduce<{[id: string]: ArchitectureDirectionPairMap}>((prev, [id, service]) => {
+      prev[id] = service.edges.reduce<ArchitectureDirectionPairMap>((prev, edge) => {
+        if (edge.lhs_id === id) { // source is LHS
+          const pair = getArchitectureDirectionPair(edge.lhs_dir, edge.rhs_dir);
+          if (pair) {
+            prev[pair] = edge.rhs_id
+          }
+        } else { // source is RHS
+          const pair = getArchitectureDirectionPair(edge.rhs_dir, edge.lhs_dir);
+          if (pair) {
+            prev[pair] = edge.lhs_id
+          }
+        }
+        return prev;
+      }, {})
+      return prev
+    }, {});
+    
+    const [firstId, _] = Object.entries(adjList)[0];
+    const spatialMap = {[firstId]: [0,0]};
+    const visited = {[firstId]: 1};
+    const queue = [firstId];
+    // Perform BFS on adjacency list
+    while(queue.length > 0) {
+      const id = queue.shift();
+      if (id) {
+        visited[id] = 1
+        const adj = adjList[id];
+        const [posX, posY] = spatialMap[id];
+        Object.entries(adj).forEach(([dir, rhsId]) => {
+          if (!visited[rhsId]) {
+            console.log(`${id} -- ${rhsId}`);
+            spatialMap[rhsId] = shiftPositionByArchitectureDirectionPair([posX, posY], dir as ArchitectureDirectionPair)
+            queue.push(rhsId);
+          }
+        })
+      }
+    }
+    datastructures = {
+      adjList,
+      spatialMap
+    }
+    console.log(datastructures)
+  }
+  return datastructures;
+}
 
 const addLine = function (
   lhs_id: string,
@@ -110,7 +172,6 @@ const addLine = function (
   opts: Omit<ArchitectureLine, 'lhs_id' | 'lhs_dir' | 'rhs_id' | 'rhs_dir'> = {}
 ) {
   const { title, lhs_into, rhs_into } = opts;
-
   if (!isArchitectureDirection(lhs_dir)) {
     throw new Error(
       `Invalid direction given for left hand side of line ${lhs_id}--${rhs_id}. Expected (L,R,T,B) got ${lhs_dir}`
@@ -121,8 +182,18 @@ const addLine = function (
       `Invalid direction given for right hand side of line ${lhs_id}--${rhs_id}. Expected (L,R,T,B) got ${rhs_dir}`
     );
   }
+  if (services[lhs_id] === undefined) {
+    throw new Error(
+      `The left-hand service [${lhs_id}] does not yet exist. Please create the service before declaring an edge to it.`
+    );
+  }
+  if (services[rhs_id] === undefined) {
+    throw new Error(
+      `The right-hand service [${rhs_id}] does not yet exist. Please create the service before declaring an edge to it.`
+    );
+  }
 
-  lines.push({
+  const edge = {
     lhs_id,
     lhs_dir,
     rhs_id,
@@ -130,7 +201,12 @@ const addLine = function (
     title,
     lhs_into,
     rhs_into,
-  });
+  }
+  
+  lines.push(edge);
+  
+  services[lhs_id].edges.push(lines[lines.length - 1])
+  services[rhs_id].edges.push(lines[lines.length - 1])
 };
 const getLines = (): ArchitectureLine[] => lines;
 
@@ -156,6 +232,7 @@ export const db: ArchitectureDB = {
   getLines,
   setElementForId,
   getElementById,
+  getDataStructures,
 };
 
 function getConfigField<T extends keyof ArchitectureDiagramConfig>(field: T): Required<ArchitectureDiagramConfig>[T] {

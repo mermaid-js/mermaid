@@ -14,12 +14,18 @@ import {
   type ArchitectureLine,
   type ArchitectureService,
   isArchitectureDirectionY,
+  ArchitectureDataStructures,
+  ArchitectureDirectionPair,
+  isArchitectureDirectionXY,
+  ArchitectureDirectionName,
+  getOppositeArchitectureDirection,
 } from './architectureTypes.js';
 import { select } from 'd3';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import type { D3Element } from '../../mermaidAPI.js';
 import { drawEdges, drawGroups, drawService } from './svgDraw.js';
 import { getConfigField } from './architectureDb.js';
+import { X } from 'vitest/dist/reporters-5f784f42.js';
 
 cytoscape.use(fcose);
 
@@ -97,7 +103,8 @@ function addEdges(lines: ArchitectureLine[], cy: cytoscape.Core) {
 function layoutArchitecture(
   services: ArchitectureService[],
   groups: ArchitectureGroup[],
-  lines: ArchitectureLine[]
+  lines: ArchitectureLine[],
+  {adjList, spatialMap}: ArchitectureDataStructures
 ): Promise<cytoscape.Core> {
   return new Promise((resolve) => {
     const renderEl = select('body').append('div').attr('id', 'cy').attr('style', 'display:none');
@@ -151,72 +158,76 @@ function layoutArchitecture(
     addServices(services, cy);
     addEdges(lines, cy);
 
-    /**
-     * Merge alignment pairs together if they share a common node.
-     *
-     * Example: [["a", "b"], ["b", "c"], ["d", "e"]] -> [["a", "b", "c"], ["d", "e"]]
-     */
-    const mergeAlignments = (orig: string[][]): string[][] => {
-      if (orig.length < 1) return orig;
-      console.log('===== mergeAlignments =====');
-      console.log('Start: ', orig);
-      // Mapping of discovered ids to their index in the new alignment array
-      const map: Record<string, number> = {};
-      const newAlignments: string[][] = [orig[0]];
-      map[orig[0][0]] = 0;
-      map[orig[0][1]] = 0;
-      orig = orig.slice(1);
-      while (orig.length > 0) {
-        const pair = orig[0];
-        const pairLHSIdx = map[pair[0]];
-        const pairRHSIdx = map[pair[1]];
-        console.log(pair);
-        console.log(map);
-        console.log(newAlignments);
-        // If neither id appears in the new array, add the pair to the new array
-        if (pairLHSIdx === undefined && pairRHSIdx === undefined) {
-          newAlignments.push(pair);
-          map[pair[0]] = newAlignments.length - 1;
-          map[pair[1]] = newAlignments.length - 1;
-          // If the LHS of the pair doesn't appear in the new array, add the LHS to the existing array it shares an id with
-        } else if (pairLHSIdx === undefined) {
-          newAlignments[pairRHSIdx].push(pair[0]);
-          map[pair[0]] = pairRHSIdx;
-          // If the RHS of the pair doesn't appear in the new array, add the RHS to the existing array it shares an id with
-        } else if (pairRHSIdx === undefined) {
-          newAlignments[pairLHSIdx].push(pair[1]);
-          map[pair[1]] = pairLHSIdx;
-          // If both ids already have been added to the new array and their index is different, merge all 3 arrays
-        } else if (pairLHSIdx != pairRHSIdx) {
-          console.log('ELSE');
-          newAlignments.push(pair);
-        }
-        orig = orig.slice(1);
+    // Use the spatial map to create alignment arrays for fcose
+    const [horizontalAlignments, verticalAlignments] = (() => {
+      const _horizontalAlignments: Record<number, string[]> = {}
+      const _verticalAlignments: Record<number, string[]> = {}
+      // Group service ids in an object with their x and y coordinate as the key
+      Object.entries(spatialMap).forEach(([id, [x, y]]) => {
+        if (!_horizontalAlignments[y]) _horizontalAlignments[y] = [];
+        if (!_verticalAlignments[x]) _verticalAlignments[x] = [];
+        _horizontalAlignments[y].push(id);
+        _verticalAlignments[x].push(id);
+      })
+
+      // Merge the values of each object into a list if the inner list has at least 2 elements
+      return [
+        Object.values(_horizontalAlignments).filter(arr => arr.length > 1), 
+        Object.values(_verticalAlignments).filter(arr => arr.length > 1)
+      ]
+    })();
+
+    // Create the relative constraints for fcose by using an inverse of the spatial map and performing BFS on it
+    const relativeConstraints = (() => {
+      const _relativeConstraints: fcose.FcoseRelativePlacementConstraint[] = []
+      const posToStr = (pos: number[]) => `${pos[0]},${pos[1]}`
+      const strToPos = (pos: string) => pos.split(',').map(p => parseInt(p));
+      const invSpatialMap = Object.fromEntries(Object.entries(spatialMap).map(([id, pos]) => [posToStr(pos), id]))
+      console.log('===== invSpatialMap =====')
+      console.log(invSpatialMap);
+
+      // perform BFS
+      const queue = [posToStr([0,0])];
+      const visited: Record<string, number> = {};
+      const directions: Record<ArchitectureDirection, number[]> = {
+        "L": [-1, 0],
+        "R": [1, 0],
+        "T": [0, 1],
+        "B": [0, -1]
       }
-
-      console.log('End: ', newAlignments);
-      console.log('===========================');
-
-      return newAlignments;
-    };
-
-    const horizontalAlignments = cy
-      .edges()
-      .filter(
-        (edge) =>
-          isArchitectureDirectionX(edge.data('sourceDir')) &&
-          isArchitectureDirectionX(edge.data('targetDir'))
-      )
-      .map((edge) => [edge.data('source'), edge.data('target')]);
-
-    const verticalAlignments = cy
-      .edges()
-      .filter(
-        (edge) =>
-          isArchitectureDirectionY(edge.data('sourceDir')) &&
-          isArchitectureDirectionY(edge.data('targetDir'))
-      )
-      .map((edge) => [edge.data('source'), edge.data('target')]);
+      while (queue.length > 0) {
+        const curr = queue.shift();
+        if (curr) {
+          visited[curr] = 1
+          const currId = invSpatialMap[curr];
+          if (currId) {
+            const currPos = strToPos(curr);
+            Object.entries(directions).forEach(([dir, shift]) => {
+              const newPos = posToStr([(currPos[0]+shift[0]), (currPos[1]+shift[1])]);
+              const newId = invSpatialMap[newPos];
+              // If there is an adjacent service to the current one and it has not yet been visited
+              if (newId  && !visited[newPos]) {
+                queue.push(newPos);
+                // @ts-ignore cannot determine if left/right or top/bottom are paired together
+                _relativeConstraints.push({
+                  [ArchitectureDirectionName[dir as ArchitectureDirection]]: newId,
+                  [ArchitectureDirectionName[getOppositeArchitectureDirection(dir as ArchitectureDirection)]]: currId,
+                  gap: 100
+                })
+              }
+            })
+            
+          }
+        }
+      }
+      return _relativeConstraints;
+    })();
+    console.log(`Horizontal Alignments:`)
+    console.log(horizontalAlignments);
+    console.log(`Vertical Alignments:`)
+    console.log(verticalAlignments);
+    console.log(`Relative Alignments:`)
+    console.log(relativeConstraints);
 
     cy.layout({
       name: 'fcose',
@@ -242,34 +253,10 @@ function layoutArchitecture(
         return elasticity
       },      
       alignmentConstraint: {
-        horizontal: mergeAlignments(horizontalAlignments),
-        vertical: mergeAlignments(verticalAlignments),
+        horizontal: horizontalAlignments,
+        vertical: verticalAlignments,
       },
-      relativePlacementConstraint: cy.edges().map((edge) => {
-        const sourceDir = edge.data('sourceDir') as ArchitectureDirection;
-        const targetDir = edge.data('targetDir') as ArchitectureDirection;
-        const sourceId = edge.data('source') as string;
-        const targetId = edge.data('target') as string;
-        
-        let gap = 1.25*getConfigField('iconSize');
-        console.log(`relativeConstraint: ${sourceId} ${sourceDir}--${targetDir} ${targetId} (gap=${gap})`);
-        if (isArchitectureDirectionX(sourceDir) && isArchitectureDirectionX(targetDir)) {
-          return {
-            left: sourceDir === 'R' ? sourceId : targetId,
-            right: sourceDir === 'L' ? sourceId : targetId,
-            gap,
-          };
-        } else if (isArchitectureDirectionY(sourceDir) && isArchitectureDirectionY(targetDir)) {
-          return {
-            top: sourceDir === 'B' ? sourceId : targetId,
-            bottom: sourceDir === 'T' ? sourceId : targetId,
-            gap,
-          };
-        } else {
-          console.log('FALLBACK CASE NEEDED')
-        }
-        // TODO: fallback case + RB, TL, etc
-      }),
+      relativePlacementConstraint: relativeConstraints
     } as FcoseLayoutOptions).run();
     cy.ready((e) => {
       log.info('Ready', e);
@@ -285,6 +272,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   const services = db.getServices();
   const groups = db.getGroups();
   const lines = db.getLines();
+  const ds = db.getDataStructures();
   console.log('Services: ', services);
   console.log('Lines: ', lines);
   console.log('Groups: ', groups);
@@ -302,7 +290,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
 
   drawServices(db, servicesElem, services, conf);
 
-  const cy = await layoutArchitecture(services, groups, lines);
+  const cy = await layoutArchitecture(services, groups, lines, ds);
   console.log(cy.nodes().map(node => ({a: node.data()})));
 
   drawEdges(edgesElem, cy);

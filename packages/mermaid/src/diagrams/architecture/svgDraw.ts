@@ -2,6 +2,7 @@ import type { D3Element } from '../../mermaidAPI.js';
 import { createText } from '../../rendering-util/createText.js';
 import type {
   ArchitectureDB,
+  ArchitectureDirection,
   ArchitectureService,
 } from './architectureTypes.js';
 import type { MermaidConfig } from '../../config.type.js';
@@ -10,7 +11,16 @@ import { log } from '../../logger.js';
 import { getIcon, isIconNameInUse } from '../../rendering-util/svgRegister.js';
 import { getConfigField } from './architectureDb.js';
 
+
 declare module 'cytoscape' {
+  type _EdgeSingularData = {
+    id: string;
+    source: string;
+    sourceDir: ArchitectureDirection;
+    target: string;
+    targetDir: ArchitectureDirection;
+    [key: string]: any;
+  }
   interface EdgeSingular {
     _private: {
       bodyBounds: unknown;
@@ -23,6 +33,9 @@ declare module 'cytoscape' {
         endY: number;
       };
     };
+    // data: (() => _EdgeSingularData) | (<T extends keyof _EdgeSingularData>(key: T) => _EdgeSingularData[T])
+    data(): _EdgeSingularData
+    data<T extends keyof _EdgeSingularData>(key: T): _EdgeSingularData[T]
   }
   interface NodeSingular {
     _private: {
@@ -84,6 +97,7 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
     const data = node.data();
     if (data.type === 'group') {
       const { h, w, x1, x2, y1, y2 } = node.boundingBox();
+      console.log(`Draw group (${data.id}): pos=(${x1}, ${y1}), dim=(${w}, ${h})`)
       let bkgElem = groupsEl
         .append('rect')
         .attr('x', x1 + halfIconSize)
@@ -122,7 +136,7 @@ export const drawService = function (
     const textElem = serviceElem.append('g');
     createText(textElem, service.title, {
       useHtmlLabels: false,
-      width: 110,
+      width: iconSize * 1.5, 
       classes: 'architecture-service-label',
     });
     textElem
@@ -133,16 +147,16 @@ export const drawService = function (
 
     textElem.attr(
       'transform',
-      // TODO: dynamic size
       'translate(' + (iconSize / 2) + ', ' + iconSize + ')'
     );
   }
 
   let bkgElem = serviceElem.append('g');
   if (service.icon) {
-    if (!isIconNameInUse(service.icon)) {
-      throw new Error(`Invalid SVG Icon name: "${service.icon}"`);
-    }
+    // TODO: should a warning be given to end-users saying which icon names are available?
+    // if (!isIconNameInUse(service.icon)) {
+    //   throw new Error(`Invalid SVG Icon name: "${service.icon}"`);
+    // }
     bkgElem = getIcon(service.icon)?.(bkgElem, iconSize);
   } else {
     bkgElem
@@ -157,7 +171,7 @@ export const drawService = function (
   const { width, height } = serviceElem._groups[0][0].getBBox();
   service.width = width;
   service.height = height;
-
+  console.log(`Draw service (${service.id})`)
   db.setElementForId(service.id, serviceElem);
   return 0;
 };
