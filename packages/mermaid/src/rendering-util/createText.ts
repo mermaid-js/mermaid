@@ -169,14 +169,12 @@ function updateTextContentAndStyles(tspan: any, wrappedLine: MarkdownWord[]) {
 }
 
 /**
- *
- * @param text - The raw string to adjust
- * @returns
+ * Convert fontawesome labels into fontawesome icons by using a regex pattern
+ * @param text - The raw string to convert
+ * @returns string with fontawesome icons as i tags
  */
-
-// Used for converting substrings in node labels/edges/text into fontawesome icons by using a regex pattern
-// The letters 'bklrs' stand for possible endings of the fontawesome prefix (e.g. 'fab' for brands, 'fak' for fa-kit) // cspell: disable-line
 export function replaceIconSubstring(text: string) {
+  // The letters 'bklrs' stand for possible endings of the fontawesome prefix (e.g. 'fab' for brands, 'fak' for fa-kit) // cspell: disable-line
   return text.replace(
     /fa[bklrs]?:fa-[\w-]+/g, // cspell: disable-line
     (s) => `<i class='${s.replace(':', ' ')}'></i>`
