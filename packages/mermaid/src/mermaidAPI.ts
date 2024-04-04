@@ -504,7 +504,7 @@ function initialize(options: MermaidConfig = {}) {
   // Set default options
   configApi.saveConfigFromInitialize(options);
 
-  registerIcons(defaultIconLibrary)
+  registerIcons(defaultIconLibrary);
   if (options?.iconLibraries) {
     options.iconLibraries.forEach((library) => {
       registerIcons(library);

@@ -8,9 +8,8 @@ import type {
 import type { MermaidConfig } from '../../config.type.js';
 import type cytoscape from 'cytoscape';
 import { log } from '../../logger.js';
-import { getIcon, isIconNameInUse } from '../../rendering-util/svgRegister.js';
+import { getIcon } from '../../rendering-util/svgRegister.js';
 import { getConfigField } from './architectureDb.js';
-
 
 declare module 'cytoscape' {
   type _EdgeSingularData = {
@@ -20,7 +19,7 @@ declare module 'cytoscape' {
     target: string;
     targetDir: ArchitectureDirection;
     [key: string]: any;
-  }
+  };
   interface EdgeSingular {
     _private: {
       bodyBounds: unknown;
@@ -33,9 +32,8 @@ declare module 'cytoscape' {
         endY: number;
       };
     };
-    // data: (() => _EdgeSingularData) | (<T extends keyof _EdgeSingularData>(key: T) => _EdgeSingularData[T])
-    data(): _EdgeSingularData
-    data<T extends keyof _EdgeSingularData>(key: T): _EdgeSingularData[T]
+    data(): _EdgeSingularData;
+    data<T extends keyof _EdgeSingularData>(key: T): _EdgeSingularData[T];
   }
   interface NodeSingular {
     _private: {
@@ -90,14 +88,14 @@ export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
 };
 
 export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
-  const iconSize = getConfigField('iconSize')
-  const halfIconSize = iconSize / 2
+  const iconSize = getConfigField('iconSize');
+  const halfIconSize = iconSize / 2;
 
   cy.nodes().map((node, id) => {
     const data = node.data();
     if (data.type === 'group') {
       const { h, w, x1, x2, y1, y2 } = node.boundingBox();
-      console.log(`Draw group (${data.id}): pos=(${x1}, ${y1}), dim=(${w}, ${h})`)
+      console.log(`Draw group (${data.id}): pos=(${x1}, ${y1}), dim=(${w}, ${h})`);
       let bkgElem = groupsEl
         .append('rect')
         .attr('x', x1 + halfIconSize)
@@ -118,7 +116,10 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
         .attr('dominant-baseline', 'start')
         .attr('text-anchor', 'start');
 
-      textElem.attr('transform', 'translate(' + (x1 + halfIconSize + 4) + ', ' + (y1 + halfIconSize + 2) + ')');
+      textElem.attr(
+        'transform',
+        'translate(' + (x1 + halfIconSize + 4) + ', ' + (y1 + halfIconSize + 2) + ')'
+      );
     }
   });
 };
@@ -130,13 +131,13 @@ export const drawService = function (
   conf: MermaidConfig
 ): number {
   const serviceElem = elem.append('g');
-  const iconSize = getConfigField('iconSize')
+  const iconSize = getConfigField('iconSize');
 
   if (service.title) {
     const textElem = serviceElem.append('g');
     createText(textElem, service.title, {
       useHtmlLabels: false,
-      width: iconSize * 1.5, 
+      width: iconSize * 1.5,
       classes: 'architecture-service-label',
     });
     textElem
@@ -145,10 +146,7 @@ export const drawService = function (
       .attr('dominant-baseline', 'middle')
       .attr('text-anchor', 'middle');
 
-    textElem.attr(
-      'transform',
-      'translate(' + (iconSize / 2) + ', ' + iconSize + ')'
-    );
+    textElem.attr('transform', 'translate(' + iconSize / 2 + ', ' + iconSize + ')');
   }
 
   let bkgElem = serviceElem.append('g');
@@ -163,7 +161,7 @@ export const drawService = function (
       .append('path')
       .attr('class', 'node-bkg')
       .attr('id', 'node-' + service.id)
-      .attr('d', `M0 ${iconSize - 0} v${-iconSize + 2 * 0} q0,-5 5,-5 h${iconSize - 2 * 0} q5,0 5,5 v${iconSize - 0} H0 Z`);
+      .attr('d', `M0 ${iconSize} v${-iconSize} q0,-5 5,-5 h${iconSize} q5,0 5,5 v${iconSize} H0 Z`);
   }
 
   serviceElem.attr('class', 'architecture-service');
@@ -171,7 +169,7 @@ export const drawService = function (
   const { width, height } = serviceElem._groups[0][0].getBBox();
   service.width = width;
   service.height = height;
-  console.log(`Draw service (${service.id})`)
+  console.log(`Draw service (${service.id})`);
   db.setElementForId(service.id, serviceElem);
   return 0;
 };

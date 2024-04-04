@@ -3,22 +3,24 @@ import type { ArchitectureDiagramConfig } from '../../config.type.js';
 import type { D3Element } from '../../mermaidAPI.js';
 
 export type ArchitectureDirection = 'L' | 'R' | 'T' | 'B';
-export type ArchitectureDirectionX = Extract<ArchitectureDirection, 'L' | 'R'>
-export type ArchitectureDirectionY = Extract<ArchitectureDirection, 'T' | 'B'>
+export type ArchitectureDirectionX = Extract<ArchitectureDirection, 'L' | 'R'>;
+export type ArchitectureDirectionY = Extract<ArchitectureDirection, 'T' | 'B'>;
 export const ArchitectureDirectionName = {
-  'L': 'left',
-  'R': 'right',
-  'T': 'top',
-  'B': 'bottom',
+  L: 'left',
+  R: 'right',
+  T: 'top',
+  B: 'bottom',
 } as const;
 
-export const getOppositeArchitectureDirection = function(x: ArchitectureDirection): ArchitectureDirection {
+export const getOppositeArchitectureDirection = function (
+  x: ArchitectureDirection
+): ArchitectureDirection {
   if (isArchitectureDirectionX(x)) {
-    return x === 'L' ? 'R' : 'L'
+    return x === 'L' ? 'R' : 'L';
   } else {
-    return x === 'T' ? 'B' : 'T'
+    return x === 'T' ? 'B' : 'T';
   }
-}
+};
 
 export const isArchitectureDirection = function (x: unknown): x is ArchitectureDirection {
   const temp = x as ArchitectureDirection;
@@ -41,7 +43,7 @@ export const isArchitectureDirectionY = function (
 
 export const isArchitectureDirectionXY = function (
   a: ArchitectureDirection,
-  b: ArchitectureDirection,
+  b: ArchitectureDirection
 ) {
   const aX_bY = isArchitectureDirectionX(a) && isArchitectureDirectionY(b);
   const aY_bX = isArchitectureDirectionY(a) && isArchitectureDirectionX(b);
@@ -51,48 +53,57 @@ export const isArchitectureDirectionXY = function (
 /**
  * Contains LL, RR, TT, BB which are impossible conections
  */
-export type InvalidArchitectureDirectionPair = `${ArchitectureDirection}${ArchitectureDirection}`
-export type ArchitectureDirectionPair = Exclude<InvalidArchitectureDirectionPair, 'LL' | 'RR' | 'TT' | 'BB'>
-export const isValidArchitectureDirectionPair = function(x: InvalidArchitectureDirectionPair): x is ArchitectureDirectionPair {
-  return x !== 'LL' && x !== 'RR' && x !== 'TT' && x !== 'BB'
-}
+export type InvalidArchitectureDirectionPair = `${ArchitectureDirection}${ArchitectureDirection}`;
+export type ArchitectureDirectionPair = Exclude<
+  InvalidArchitectureDirectionPair,
+  'LL' | 'RR' | 'TT' | 'BB'
+>;
+export const isValidArchitectureDirectionPair = function (
+  x: InvalidArchitectureDirectionPair
+): x is ArchitectureDirectionPair {
+  return x !== 'LL' && x !== 'RR' && x !== 'TT' && x !== 'BB';
+};
 export type ArchitectureDirectionPairMap = {
-  [key in ArchitectureDirectionPair]?: string
-}
+  [key in ArchitectureDirectionPair]?: string;
+};
 
 /**
- * Creates a pair of the directions of each side of an edge. This function should be used instead of manually creating it to ensure that the source is always the first character. 
- * 
- * Note: Undefined is returned when sourceDir and targetDir are the same. In theory this should never happen since the diagram parser throws an error if a user defines it as such. 
- * @param sourceDir 
- * @param targetDir 
- * @returns 
+ * Creates a pair of the directions of each side of an edge. This function should be used instead of manually creating it to ensure that the source is always the first character.
+ *
+ * Note: Undefined is returned when sourceDir and targetDir are the same. In theory this should never happen since the diagram parser throws an error if a user defines it as such.
+ * @param sourceDir
+ * @param targetDir
+ * @returns
  */
-export const getArchitectureDirectionPair = function (sourceDir: ArchitectureDirection, targetDir: ArchitectureDirection): ArchitectureDirectionPair | undefined {
+export const getArchitectureDirectionPair = function (
+  sourceDir: ArchitectureDirection,
+  targetDir: ArchitectureDirection
+): ArchitectureDirectionPair | undefined {
   const pair: `${ArchitectureDirection}${ArchitectureDirection}` = `${sourceDir}${targetDir}`;
-  return isValidArchitectureDirectionPair(pair) ? pair : undefined
-}
+  return isValidArchitectureDirectionPair(pair) ? pair : undefined;
+};
 
-export const shiftPositionByArchitectureDirectionPair = function ([x, y]: number[], pair: ArchitectureDirectionPair): number[] {
+export const shiftPositionByArchitectureDirectionPair = function (
+  [x, y]: number[],
+  pair: ArchitectureDirectionPair
+): number[] {
   const lhs = pair[0] as ArchitectureDirection;
   const rhs = pair[1] as ArchitectureDirection;
   console.log(`${pair}: (${x},${y})`);
   if (isArchitectureDirectionX(lhs)) {
     if (isArchitectureDirectionY(rhs)) {
-      return [x + (lhs === 'L' ? -1 : 1), y + (rhs === 'T' ? 1 : -1)]
+      return [x + (lhs === 'L' ? -1 : 1), y + (rhs === 'T' ? 1 : -1)];
     } else {
-      return [x + (lhs === 'L' ? -1 : 1), y]
+      return [x + (lhs === 'L' ? -1 : 1), y];
     }
   } else {
     if (isArchitectureDirectionX(rhs)) {
-      return [x + (rhs === 'L' ? 1 : -1), y + (lhs === 'T' ? 1 : -1)]
+      return [x + (rhs === 'L' ? 1 : -1), y + (lhs === 'T' ? 1 : -1)];
     } else {
-      return [x, y + (lhs === 'T' ? 1 : -1)]
+      return [x, y + (lhs === 'T' ? 1 : -1)];
     }
   }
-}
-
-
+};
 
 export interface ArchitectureStyleOptions {
   fontFamily: string;
@@ -144,12 +155,12 @@ export interface ArchitectureDB extends DiagramDB {
   getDataStructures: () => ArchitectureDataStructures;
 }
 
-export type ArchitectureAdjacencyList = {[id: string]: ArchitectureDirectionPairMap}
-export type ArchitectureSpatialMap = Record<string, number[]>
+export type ArchitectureAdjacencyList = { [id: string]: ArchitectureDirectionPairMap };
+export type ArchitectureSpatialMap = Record<string, number[]>;
 export type ArchitectureDataStructures = {
   adjList: ArchitectureAdjacencyList;
   spatialMaps: ArchitectureSpatialMap[];
-}
+};
 
 export interface ArchitectureFields {
   services: Record<string, ArchitectureService>;
