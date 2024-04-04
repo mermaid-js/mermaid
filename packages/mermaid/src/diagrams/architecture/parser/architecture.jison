@@ -18,9 +18,9 @@
 <GROUP,SERVICE>\([\w]*\)                                        return 'icon';
 <GROUP,SERVICE>\[[\w ]*\]                                       return 'title';
 [\w]+                                                           { this.begin('LINE'); return 'id'; }
-<LINE>\<[L|R|T|B]"-"                                            return 'ARROW_LEFT_INTO';
+<LINE>\([L|R|T|B]"-"                                            return 'ARROW_LEFT_INTO';
 <LINE>[L|R|T|B]"-"                                              return 'ARROW_LEFT';
-<LINE>"-"[L|R|T|B]\>                                            return 'ARROW_RIGHT_INTO';
+<LINE>"-"[L|R|T|B]\)                                            return 'ARROW_RIGHT_INTO';
 <LINE>"-"[L|R|T|B]                                              return 'ARROW_RIGHT';
 <LINE>[\w]+                                                     return 'id';
 <LINE>\[[\w ]*\]                                                return 'title';

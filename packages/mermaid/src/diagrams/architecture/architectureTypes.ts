@@ -5,11 +5,26 @@ import type { D3Element } from '../../mermaidAPI.js';
 export type ArchitectureDirection = 'L' | 'R' | 'T' | 'B';
 export type ArchitectureDirectionX = Extract<ArchitectureDirection, 'L' | 'R'>;
 export type ArchitectureDirectionY = Extract<ArchitectureDirection, 'T' | 'B'>;
+
 export const ArchitectureDirectionName = {
   L: 'left',
   R: 'right',
   T: 'top',
   B: 'bottom',
+} as const;
+
+export const ArchitectureDirectionArrow = {
+  L: (scale: number) => `${scale},${scale / 2} 0,${scale} 0,0`,
+  R: (scale: number) => `0,${scale / 2} ${scale},0 ${scale},${scale}`,
+  T: (scale: number) => `0,0 ${scale},0 ${scale / 2},${scale}`,
+  B: (scale: number) => `${scale / 2},0 ${scale},${scale} 0,${scale}`,
+} as const;
+
+export const ArchitectureDirectionArrowShift = {
+  L: (orig: number, iconSize: number, arrowSize: number) => orig - iconSize / 2 - arrowSize + 2,
+  R: (orig: number, iconSize: number, arrowSize: number) => orig + iconSize / 2 - 2,
+  T: (orig: number, iconSize: number, arrowSize: number) => orig - iconSize / 2 - arrowSize + 2,
+  B: (orig: number, iconSize: number, arrowSize: number) => orig + iconSize / 2 - 2,
 } as const;
 
 export const getOppositeArchitectureDirection = function (

@@ -88,8 +88,10 @@ function addEdges(lines: ArchitectureLine[], cy: cytoscape.Core) {
         id: `${line.lhs_id}-${line.rhs_id}`,
         source: line.lhs_id,
         sourceDir: line.lhs_dir,
+        sourceArrow: line.lhs_into,
         target: line.rhs_id,
         targetDir: line.rhs_dir,
+        targetArrow: line.rhs_into,
       },
     });
   });

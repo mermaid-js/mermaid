@@ -58,6 +58,9 @@ const getStyles: DiagramStylesProvider = (options: ArchitectureStyleOptions) =>
     stroke-width: 3;
     stroke: #777;
   }
+  .arrow {
+    fill: #777;
+  }
   .section-root rect, .section-root path, .section-root circle, .section-root polygon  {
     fill: #333;
   }

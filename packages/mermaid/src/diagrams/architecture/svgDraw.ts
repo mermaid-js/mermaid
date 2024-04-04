@@ -1,9 +1,13 @@
 import type { D3Element } from '../../mermaidAPI.js';
 import { createText } from '../../rendering-util/createText.js';
-import type {
-  ArchitectureDB,
-  ArchitectureDirection,
-  ArchitectureService,
+import {
+  ArchitectureDirectionArrow,
+  type ArchitectureDB,
+  type ArchitectureDirection,
+  type ArchitectureService,
+  ArchitectureDirectionArrowShift,
+  isArchitectureDirectionX,
+  isArchitectureDirectionY,
 } from './architectureTypes.js';
 import type { MermaidConfig } from '../../config.type.js';
 import type cytoscape from 'cytoscape';
@@ -16,8 +20,10 @@ declare module 'cytoscape' {
     id: string;
     source: string;
     sourceDir: ArchitectureDirection;
+    sourceArrow?: boolean;
     target: string;
     targetDir: ArchitectureDirection;
+    targetArrow?: boolean;
     [key: string]: any;
   };
   interface EdgeSingular {
@@ -70,19 +76,51 @@ declare module 'cytoscape' {
 }
 
 export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
+  const iconSize = getConfigField('iconSize');
+  const halfIconSize = iconSize / 2;
+  const arrowSize = iconSize / 6;
+  const halfArrowSize = arrowSize / 2;
   cy.edges().map((edge, id) => {
-    const data = edge.data();
+    const { source, sourceDir, sourceArrow, target, targetDir, targetArrow } = edge.data();
     if (edge[0]._private.bodyBounds) {
       const bounds = edge[0]._private.rscratch;
 
-      log.trace('Edge: ', id, data);
-      edgesEl
-        .insert('path')
+      const g = edgesEl.insert('g');
+
+      g.insert('path')
         .attr(
           'd',
           `M ${bounds.startX},${bounds.startY} L ${bounds.midX},${bounds.midY} L${bounds.endX},${bounds.endY} `
         )
         .attr('class', 'edge');
+
+      if (sourceArrow) {
+        console.log(`New source arrow: ${sourceDir} for ${source}`);
+        const xShift = isArchitectureDirectionX(sourceDir)
+          ? ArchitectureDirectionArrowShift[sourceDir](bounds.startX, iconSize, arrowSize)
+          : bounds.startX - halfArrowSize;
+        const yShift = isArchitectureDirectionY(sourceDir)
+          ? ArchitectureDirectionArrowShift[sourceDir](bounds.startY, iconSize, arrowSize)
+          : bounds.startY - halfArrowSize;
+
+        g.insert('polygon')
+          .attr('points', ArchitectureDirectionArrow[sourceDir](arrowSize))
+          .attr('transform', `translate(${xShift},${yShift})`)
+          .attr('class', 'arrow');
+      }
+      if (targetArrow) {
+        console.log(`New target arrow: ${targetDir} for ${target}`);
+        const xShift = isArchitectureDirectionX(targetDir)
+          ? ArchitectureDirectionArrowShift[targetDir](bounds.endX, iconSize, arrowSize)
+          : bounds.endX - halfArrowSize;
+        const yShift = isArchitectureDirectionY(targetDir)
+          ? ArchitectureDirectionArrowShift[targetDir](bounds.endY, iconSize, arrowSize)
+          : bounds.endY - halfArrowSize;
+        g.insert('polygon')
+          .attr('points', ArchitectureDirectionArrow[targetDir](arrowSize))
+          .attr('transform', `translate(${xShift},${yShift})`)
+          .attr('class', 'arrow');
+      }
     }
   });
 };
