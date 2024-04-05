@@ -83,3 +83,10 @@ export interface AddMessageParams {
 
   activate: boolean;
 }
+
+export interface Note {
+  actor: { actor: string };
+  placement: Message['placement'];
+  message: string;
+  wrap: boolean;
+}

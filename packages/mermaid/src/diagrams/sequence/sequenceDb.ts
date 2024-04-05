@@ -11,8 +11,9 @@ import {
   setDiagramTitle,
 } from '../common/commonDb.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
-import type { Actor, AddMessageParams, Box, Message } from './types.js';
+import type { Actor, AddMessageParams, Box, Message, Note } from './types.js';
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type State = {
   prevActor?: string;
   actors: Record<string, Actor>;
@@ -20,7 +21,7 @@ type State = {
   destroyedActors: Record<string, number>;
   boxes: Box[];
   messages: Message[];
-  notes: unknown[];
+  notes: Note[];
   sequenceNumbersEnabled: boolean;
   wrapEnabled?: boolean;
   currentBox?: Box;
@@ -343,7 +344,7 @@ export const addNote = function (
   placement: Message['placement'],
   message: { text: string; wrap?: boolean }
 ) {
-  const note = {
+  const note: Note = {
     actor: actor,
     placement: placement,
     message: message.text,
