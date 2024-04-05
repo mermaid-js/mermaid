@@ -168,6 +168,19 @@ function updateTextContentAndStyles(tspan: any, wrappedLine: MarkdownWord[]) {
   });
 }
 
+/**
+ * Convert fontawesome labels into fontawesome icons by using a regex pattern
+ * @param text - The raw string to convert
+ * @returns string with fontawesome icons as i tags
+ */
+export function replaceIconSubstring(text: string) {
+  // The letters 'bklrs' stand for possible endings of the fontawesome prefix (e.g. 'fab' for brands, 'fak' for fa-kit) // cspell: disable-line
+  return text.replace(
+    /fa[bklrs]?:fa-[\w-]+/g, // cspell: disable-line
+    (s) => `<i class='${s.replace(':', ' ')}'></i>`
+  );
+}
+
 // Note when using from flowcharts converting the API isNode means classes should be set accordingly. When using htmlLabels => to sett classes to'nodeLabel' when isNode=true otherwise 'edgeLabel'
 // When not using htmlLabels => to set classes to 'title-row' when isTitle=true otherwise 'title-row'
 export const createText = (
@@ -189,12 +202,10 @@ export const createText = (
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
 
     const htmlText = markdownToHTML(text, config);
+    const decodedReplacedText = replaceIconSubstring(decodeEntities(htmlText));
     const node = {
       isNode,
-      label: decodeEntities(htmlText).replace(
-        /fa[blrs]?:fa-[\w-]+/g, // cspell: disable-line
-        (s) => `<i class='${s.replace(':', ' ')}'></i>`
-      ),
+      label: decodedReplacedText,
       labelStyle: style.replace('fill:', 'color:'),
     };
     const vertexNode = addHtmlSpan(el, node, width, classes, addSvgBackground);
