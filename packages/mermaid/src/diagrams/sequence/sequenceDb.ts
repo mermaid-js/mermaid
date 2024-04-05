@@ -120,13 +120,13 @@ const activationCount = (part: string) => {
   for (i = 0; i < state.records.messages.length; i++) {
     if (
       state.records.messages[i].type === LINETYPE.ACTIVE_START &&
-      state.records.messages[i].from === part
+      state.records.messages[i].from?.actor === part
     ) {
       count++;
     }
     if (
       state.records.messages[i].type === LINETYPE.ACTIVE_END &&
-      state.records.messages[i].from === part
+      state.records.messages[i].from?.actor === part
     ) {
       count--;
     }
@@ -157,10 +157,12 @@ export const addSignal = function (
   activate: boolean = false
 ) {
   if (messageType === LINETYPE.ACTIVE_END) {
-    const cnt = activationCount(idFrom || '');
+    const cnt = activationCount(idFrom?.actor || '');
     if (cnt < 1) {
       // Bail out as there is an activation signal from an inactive participant
-      const error = new Error('Trying to inactivate an inactive participant (' + idFrom + ')');
+      const error = new Error(
+        'Trying to inactivate an inactive participant (' + idFrom?.actor + ')'
+      );
 
       // @ts-ignore: we are passing hash param to the error object, however we should define our own custom error class to make it type safe
       error.hash = {

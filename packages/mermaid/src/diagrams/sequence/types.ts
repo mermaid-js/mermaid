@@ -20,8 +20,8 @@ export interface Actor {
 }
 
 export interface Message {
-  from?: string;
-  to?: string;
+  from?: { actor: string };
+  to?: { actor: string };
   message:
     | string
     | {
