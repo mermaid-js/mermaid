@@ -3,77 +3,15 @@ import { createText } from '../../rendering-util/createText.js';
 import {
   ArchitectureDirectionArrow,
   type ArchitectureDB,
-  type ArchitectureDirection,
   type ArchitectureService,
   ArchitectureDirectionArrowShift,
   isArchitectureDirectionX,
   isArchitectureDirectionY,
 } from './architectureTypes.js';
-import type { MermaidConfig } from '../../config.type.js';
 import type cytoscape from 'cytoscape';
 import { log } from '../../logger.js';
 import { getIcon } from '../../rendering-util/svgRegister.js';
 import { getConfigField } from './architectureDb.js';
-
-declare module 'cytoscape' {
-  type _EdgeSingularData = {
-    id: string;
-    source: string;
-    sourceDir: ArchitectureDirection;
-    sourceArrow?: boolean;
-    target: string;
-    targetDir: ArchitectureDirection;
-    targetArrow?: boolean;
-    [key: string]: any;
-  };
-  interface EdgeSingular {
-    _private: {
-      bodyBounds: unknown;
-      rscratch: {
-        startX: number;
-        startY: number;
-        midX: number;
-        midY: number;
-        endX: number;
-        endY: number;
-      };
-    };
-    data(): _EdgeSingularData;
-    data<T extends keyof _EdgeSingularData>(key: T): _EdgeSingularData[T];
-  }
-  interface NodeSingular {
-    _private: {
-      bodyBounds: {
-        h: number;
-        w: number;
-        x1: number;
-        x2: number;
-        y1: number;
-        y2: number;
-      };
-      children: cytoscape.NodeSingular[];
-    };
-    data: () =>
-      | {
-          type: 'service';
-          id: string;
-          icon?: string;
-          label?: string;
-          parent?: string;
-          width: number;
-          height: number;
-          [key: string]: any;
-        }
-      | {
-          type: 'group';
-          id: string;
-          icon?: string;
-          label?: string;
-          parent?: string;
-          [key: string]: any;
-        };
-  }
-}
 
 export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
   const iconSize = getConfigField('iconSize');
@@ -161,51 +99,55 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
   });
 };
 
-export const drawService = function (
+export const drawServices = function (
   db: ArchitectureDB,
   elem: D3Element,
-  service: ArchitectureService,
-  conf: MermaidConfig
+  services: ArchitectureService[]
 ): number {
-  const serviceElem = elem.append('g');
-  const iconSize = getConfigField('iconSize');
+  services.forEach((service) => {
+    const serviceElem = elem.append('g');
+    const iconSize = getConfigField('iconSize');
 
-  if (service.title) {
-    const textElem = serviceElem.append('g');
-    createText(textElem, service.title, {
-      useHtmlLabels: false,
-      width: iconSize * 1.5,
-      classes: 'architecture-service-label',
-    });
-    textElem
-      .attr('dy', '1em')
-      .attr('alignment-baseline', 'middle')
-      .attr('dominant-baseline', 'middle')
-      .attr('text-anchor', 'middle');
+    if (service.title) {
+      const textElem = serviceElem.append('g');
+      createText(textElem, service.title, {
+        useHtmlLabels: false,
+        width: iconSize * 1.5,
+        classes: 'architecture-service-label',
+      });
+      textElem
+        .attr('dy', '1em')
+        .attr('alignment-baseline', 'middle')
+        .attr('dominant-baseline', 'middle')
+        .attr('text-anchor', 'middle');
 
-    textElem.attr('transform', 'translate(' + iconSize / 2 + ', ' + iconSize + ')');
-  }
+      textElem.attr('transform', 'translate(' + iconSize / 2 + ', ' + iconSize + ')');
+    }
 
-  let bkgElem = serviceElem.append('g');
-  if (service.icon) {
-    // TODO: should a warning be given to end-users saying which icon names are available?
-    // if (!isIconNameInUse(service.icon)) {
-    //   throw new Error(`Invalid SVG Icon name: "${service.icon}"`);
-    // }
-    bkgElem = getIcon(service.icon)?.(bkgElem, iconSize);
-  } else {
-    bkgElem
-      .append('path')
-      .attr('class', 'node-bkg')
-      .attr('id', 'node-' + service.id)
-      .attr('d', `M0 ${iconSize} v${-iconSize} q0,-5 5,-5 h${iconSize} q5,0 5,5 v${iconSize} H0 Z`);
-  }
+    let bkgElem = serviceElem.append('g');
+    if (service.icon) {
+      // TODO: should a warning be given to end-users saying which icon names are available?
+      // if (!isIconNameInUse(service.icon)) {
+      //   throw new Error(`Invalid SVG Icon name: "${service.icon}"`);
+      // }
+      bkgElem = getIcon(service.icon)?.(bkgElem, iconSize);
+    } else {
+      bkgElem
+        .append('path')
+        .attr('class', 'node-bkg')
+        .attr('id', 'node-' + service.id)
+        .attr(
+          'd',
+          `M0 ${iconSize} v${-iconSize} q0,-5 5,-5 h${iconSize} q5,0 5,5 v${iconSize} H0 Z`
+        );
+    }
 
-  serviceElem.attr('class', 'architecture-service');
+    serviceElem.attr('class', 'architecture-service');
 
-  const { width, height } = serviceElem._groups[0][0].getBBox();
-  service.width = width;
-  service.height = height;
-  db.setElementForId(service.id, serviceElem);
+    const { width, height } = serviceElem._groups[0][0].getBBox();
+    service.width = width;
+    service.height = height;
+    db.setElementForId(service.id, serviceElem);
+  });
   return 0;
 };

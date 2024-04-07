@@ -55,21 +55,21 @@ statement
 
 line_statement
     : id ARROW_LEFT_INTO ARROW_RIGHT_INTO id
-        { yy.addLine($1, $2[1], $4, $3[1], {lhs_into: true, rhs_into: true}) }
+        { yy.addEdge($1, $2[1], $4, $3[1], {lhs_into: true, rhs_into: true}) }
     | id ARROW_LEFT_INTO ARROW_RIGHT id
-        { yy.addLine($1, $2[1], $4, $3[1], {lhs_into: true}) }
+        { yy.addEdge($1, $2[1], $4, $3[1], {lhs_into: true}) }
     | id ARROW_LEFT ARROW_RIGHT_INTO id
-        { yy.addLine($1, $2[0], $4, $3[1], {rhs_into: true}) }
+        { yy.addEdge($1, $2[0], $4, $3[1], {rhs_into: true}) }
     | id ARROW_LEFT ARROW_RIGHT id
-        { yy.addLine($1, $2[0], $4, $3[1]) }
+        { yy.addEdge($1, $2[0], $4, $3[1]) }
     | id ARROW_LEFT_INTO title ARROW_RIGHT_INTO id
-        { yy.addLine($1, $2[1], $5, $4[1], { title: $3.slice(1,-1), lhs_into: true, rhs_into: true }) }
+        { yy.addEdge($1, $2[1], $5, $4[1], { title: $3.slice(1,-1), lhs_into: true, rhs_into: true }) }
     | id ARROW_LEFT_INTO title ARROW_RIGHT id
-        { yy.addLine($1, $2[1], $5, $4[1], { title: $3.slice(1,-1), lhs_into: true }) }
+        { yy.addEdge($1, $2[1], $5, $4[1], { title: $3.slice(1,-1), lhs_into: true }) }
     | id ARROW_LEFT title ARROW_RIGHT_INTO id
-        { yy.addLine($1, $2[0], $5, $4[1], { title: $3.slice(1,-1), rhs_into: true }) }
+        { yy.addEdge($1, $2[0], $5, $4[1], { title: $3.slice(1,-1), rhs_into: true }) }
     | id ARROW_LEFT title ARROW_RIGHT id
-        { yy.addLine($1, $2[0], $5, $4[1], { title: $3.slice(1,-1) }) }
+        { yy.addEdge($1, $2[0], $5, $4[1], { title: $3.slice(1,-1) }) }
     ;
 
 group_statement

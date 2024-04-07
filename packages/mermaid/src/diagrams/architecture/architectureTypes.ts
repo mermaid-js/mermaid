@@ -2,6 +2,10 @@ import type { DiagramDB } from '../../diagram-api/types.js';
 import type { ArchitectureDiagramConfig } from '../../config.type.js';
 import type { D3Element } from '../../mermaidAPI.js';
 
+/*=======================================*\
+|       Architecture Diagram Types        |
+\*=======================================*/
+
 export type ArchitectureDirection = 'L' | 'R' | 'T' | 'B';
 export type ArchitectureDirectionX = Extract<ArchitectureDirection, 'L' | 'R'>;
 export type ArchitectureDirectionY = Extract<ArchitectureDirection, 'T' | 'B'>;
@@ -66,13 +70,18 @@ export const isArchitectureDirectionXY = function (
 };
 
 /**
- * Contains LL, RR, TT, BB which are impossible conections
+ * Contains LL, RR, TT, BB which are impossible connections
  */
 export type InvalidArchitectureDirectionPair = `${ArchitectureDirection}${ArchitectureDirection}`;
 export type ArchitectureDirectionPair = Exclude<
   InvalidArchitectureDirectionPair,
   'LL' | 'RR' | 'TT' | 'BB'
 >;
+/**
+ * Verifies that the architecture direction pair does not contain an invalid match (LL, RR, TT, BB)
+ * @param x architecture direction pair which could potentially be invalid
+ * @returns true if the pair is not LL, RR, TT, or BB
+ */
 export const isValidArchitectureDirectionPair = function (
   x: InvalidArchitectureDirectionPair
 ): x is ArchitectureDirectionPair {
@@ -98,6 +107,12 @@ export const getArchitectureDirectionPair = function (
   return isValidArchitectureDirectionPair(pair) ? pair : undefined;
 };
 
+/**
+ * Given an x,y position for an arrow and the direction of the edge it belongs to, return a factor for slightly shifting the edge
+ * @param param0 [x, y] coordinate pair
+ * @param pair architecture direction pair
+ * @returns a new [x, y] coordinate pair
+ */
 export const shiftPositionByArchitectureDirectionPair = function (
   [x, y]: number[],
   pair: ArchitectureDirectionPair
@@ -156,14 +171,14 @@ export interface ArchitectureDB extends DiagramDB {
   getServices: () => ArchitectureService[];
   addGroup: (id: string, opts: Omit<ArchitectureGroup, 'id'>) => void;
   getGroups: () => ArchitectureGroup[];
-  addLine: (
+  addEdge: (
     lhs_id: string,
     lhs_dir: ArchitectureDirection,
     rhs_id: string,
     rhs_dir: ArchitectureDirection,
     opts: Omit<ArchitectureLine, 'lhs_id' | 'lhs_dir' | 'rhs_id' | 'rhs_dir'>
   ) => void;
-  getLines: () => ArchitectureLine[];
+  getEdges: () => ArchitectureLine[];
   setElementForId: (id: string, element: D3Element) => void;
   getElementById: (id: string) => D3Element;
   getDataStructures: () => ArchitectureDataStructures;
@@ -183,4 +198,68 @@ export interface ArchitectureFields {
   registeredIds: Record<string, 'service' | 'group'>;
   datastructures?: ArchitectureDataStructures;
   config: ArchitectureDiagramConfig;
+}
+
+/*=======================================*\
+|        Cytoscape Override Types         |
+\*=======================================*/
+
+declare module 'cytoscape' {
+  type _EdgeSingularData = {
+    id: string;
+    source: string;
+    sourceDir: ArchitectureDirection;
+    sourceArrow?: boolean;
+    target: string;
+    targetDir: ArchitectureDirection;
+    targetArrow?: boolean;
+    [key: string]: any;
+  };
+  interface EdgeSingular {
+    _private: {
+      bodyBounds: unknown;
+      rscratch: {
+        startX: number;
+        startY: number;
+        midX: number;
+        midY: number;
+        endX: number;
+        endY: number;
+      };
+    };
+    data(): _EdgeSingularData;
+    data<T extends keyof _EdgeSingularData>(key: T): _EdgeSingularData[T];
+  }
+  interface NodeSingular {
+    _private: {
+      bodyBounds: {
+        h: number;
+        w: number;
+        x1: number;
+        x2: number;
+        y1: number;
+        y2: number;
+      };
+      children: cytoscape.NodeSingular[];
+    };
+    data: () =>
+      | {
+          type: 'service';
+          id: string;
+          icon?: string;
+          label?: string;
+          parent?: string;
+          width: number;
+          height: number;
+          [key: string]: any;
+        }
+      | {
+          type: 'group';
+          id: string;
+          icon?: string;
+          label?: string;
+          parent?: string;
+          [key: string]: any;
+        };
+  }
 }

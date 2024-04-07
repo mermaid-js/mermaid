@@ -17,11 +17,12 @@ import {
   getOppositeArchitectureDirection,
   isArchitectureDirectionXY,
   isArchitectureDirectionY,
+  ArchitectureSpatialMap,
 } from './architectureTypes.js';
 import { select } from 'd3';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import type { D3Element } from '../../mermaidAPI.js';
-import { drawEdges, drawGroups, drawService } from './svgDraw.js';
+import { drawEdges, drawGroups, drawServices } from './svgDraw.js';
 import { getConfigField } from './architectureDb.js';
 
 cytoscape.use(fcose);
@@ -44,15 +45,6 @@ function addServices(services: ArchitectureService[], cy: cytoscape.Core) {
   });
 }
 
-function drawServices(
-  db: ArchitectureDB,
-  svg: D3Element,
-  services: ArchitectureService[],
-  conf: MermaidConfig
-) {
-  services.forEach((service) => drawService(db, svg, service, conf));
-}
-
 function positionServices(db: ArchitectureDB, cy: cytoscape.Core) {
   cy.nodes().map((node, id) => {
     const data = node.data();
@@ -64,7 +56,6 @@ function positionServices(db: ArchitectureDB, cy: cytoscape.Core) {
     nodeElem.attr('transform', 'translate(' + (data.x || 0) + ',' + (data.y || 0) + ')');
   });
 }
-
 
 function addGroups(groups: ArchitectureGroup[], cy: cytoscape.Core) {
   groups.forEach((group) => {
@@ -119,6 +110,92 @@ function addEdges(lines: ArchitectureLine[], cy: cytoscape.Core) {
       classes: edgeType,
     });
   });
+}
+
+function getAlignments(spatialMaps: ArchitectureSpatialMap[]): fcose.FcoseAlignmentConstraint {
+  const alignments = spatialMaps.map((spatialMap) => {
+    const horizontalAlignments: Record<number, string[]> = {};
+    const verticalAlignments: Record<number, string[]> = {};
+    // Group service ids in an object with their x and y coordinate as the key
+    Object.entries(spatialMap).forEach(([id, [x, y]]) => {
+      if (!horizontalAlignments[y]) horizontalAlignments[y] = [];
+      if (!verticalAlignments[x]) verticalAlignments[x] = [];
+      horizontalAlignments[y].push(id);
+      verticalAlignments[x].push(id);
+    });
+    // Merge the values of each object into a list if the inner list has at least 2 elements
+    return {
+      horiz: Object.values(horizontalAlignments).filter((arr) => arr.length > 1),
+      vert: Object.values(verticalAlignments).filter((arr) => arr.length > 1),
+    };
+  });
+
+  // Merge the alginment lists for each spatial map into one 2d array per axis
+  const [horizontal, vertical] = alignments.reduce(
+    ([prevHoriz, prevVert], { horiz, vert }) => {
+      return [
+        [...prevHoriz, ...horiz],
+        [...prevVert, ...vert],
+      ];
+    },
+    [[] as string[][], [] as string[][]]
+  );
+
+  return {
+    horizontal,
+    vertical,
+  };
+}
+
+function getRelativeConstraints(
+  spatialMaps: ArchitectureSpatialMap[]
+): fcose.FcoseRelativePlacementConstraint[] {
+  const relativeConstraints: fcose.FcoseRelativePlacementConstraint[] = [];
+  const posToStr = (pos: number[]) => `${pos[0]},${pos[1]}`;
+  const strToPos = (pos: string) => pos.split(',').map((p) => parseInt(p));
+
+  spatialMaps.forEach((spatialMap) => {
+    const invSpatialMap = Object.fromEntries(
+      Object.entries(spatialMap).map(([id, pos]) => [posToStr(pos), id])
+    );
+
+    // perform BFS
+    const queue = [posToStr([0, 0])];
+    const visited: Record<string, number> = {};
+    const directions: Record<ArchitectureDirection, number[]> = {
+      L: [-1, 0],
+      R: [1, 0],
+      T: [0, 1],
+      B: [0, -1],
+    };
+    while (queue.length > 0) {
+      const curr = queue.shift();
+      if (curr) {
+        visited[curr] = 1;
+        const currId = invSpatialMap[curr];
+        if (currId) {
+          const currPos = strToPos(curr);
+          Object.entries(directions).forEach(([dir, shift]) => {
+            const newPos = posToStr([currPos[0] + shift[0], currPos[1] + shift[1]]);
+            const newId = invSpatialMap[newPos];
+            // If there is an adjacent service to the current one and it has not yet been visited
+            if (newId && !visited[newPos]) {
+              queue.push(newPos);
+              // @ts-ignore cannot determine if left/right or top/bottom are paired together
+              relativeConstraints.push({
+                [ArchitectureDirectionName[dir as ArchitectureDirection]]: newId,
+                [ArchitectureDirectionName[
+                  getOppositeArchitectureDirection(dir as ArchitectureDirection)
+                ]]: currId,
+                gap: 1.5 * getConfigField('iconSize'),
+              });
+            }
+          });
+        }
+      }
+    }
+  });
+  return relativeConstraints;
 }
 
 function layoutArchitecture(
@@ -192,91 +269,17 @@ function layoutArchitecture(
     addEdges(lines, cy);
 
     // Use the spatial map to create alignment arrays for fcose
-    const [horizontalAlignments, verticalAlignments] = (() => {
-      const alignments = spatialMaps.map((spatialMap) => {
-        const _horizontalAlignments: Record<number, string[]> = {};
-        const _verticalAlignments: Record<number, string[]> = {};
-        // Group service ids in an object with their x and y coordinate as the key
-        Object.entries(spatialMap).forEach(([id, [x, y]]) => {
-          if (!_horizontalAlignments[y]) _horizontalAlignments[y] = [];
-          if (!_verticalAlignments[x]) _verticalAlignments[x] = [];
-          _horizontalAlignments[y].push(id);
-          _verticalAlignments[x].push(id);
-        });
-        // Merge the values of each object into a list if the inner list has at least 2 elements
-        return {
-          horiz: Object.values(_horizontalAlignments).filter((arr) => arr.length > 1),
-          vert: Object.values(_verticalAlignments).filter((arr) => arr.length > 1),
-        };
-      });
-
-      // Merge the alginment lists for each spatial map into one 2d array per axis
-      return alignments.reduce(
-        ([prevHoriz, prevVert], { horiz, vert }) => {
-          return [
-            [...prevHoriz, ...horiz],
-            [...prevVert, ...vert],
-          ];
-        },
-        [[] as string[][], [] as string[][]]
-      );
-    })();
+    const alignmentConstraint = getAlignments(spatialMaps);
 
     // Create the relative constraints for fcose by using an inverse of the spatial map and performing BFS on it
-    const relativeConstraints = (() => {
-      const _relativeConstraints: fcose.FcoseRelativePlacementConstraint[] = [];
-      const posToStr = (pos: number[]) => `${pos[0]},${pos[1]}`;
-      const strToPos = (pos: string) => pos.split(',').map((p) => parseInt(p));
+    const relativePlacementConstraint = getRelativeConstraints(spatialMaps);
 
-      spatialMaps.forEach((spatialMap) => {
-        const invSpatialMap = Object.fromEntries(
-          Object.entries(spatialMap).map(([id, pos]) => [posToStr(pos), id])
-        );
-
-        // perform BFS
-        const queue = [posToStr([0, 0])];
-        const visited: Record<string, number> = {};
-        const directions: Record<ArchitectureDirection, number[]> = {
-          L: [-1, 0],
-          R: [1, 0],
-          T: [0, 1],
-          B: [0, -1],
-        };
-        while (queue.length > 0) {
-          const curr = queue.shift();
-          if (curr) {
-            visited[curr] = 1;
-            const currId = invSpatialMap[curr];
-            if (currId) {
-              const currPos = strToPos(curr);
-              Object.entries(directions).forEach(([dir, shift]) => {
-                const newPos = posToStr([currPos[0] + shift[0], currPos[1] + shift[1]]);
-                const newId = invSpatialMap[newPos];
-                // If there is an adjacent service to the current one and it has not yet been visited
-                if (newId && !visited[newPos]) {
-                  queue.push(newPos);
-                  // @ts-ignore cannot determine if left/right or top/bottom are paired together
-                  _relativeConstraints.push({
-                    [ArchitectureDirectionName[dir as ArchitectureDirection]]: newId,
-                    [ArchitectureDirectionName[
-                      getOppositeArchitectureDirection(dir as ArchitectureDirection)
-                    ]]: currId,
-                    gap: 1.5 * getConfigField('iconSize'),
-                  });
-                }
-              });
-            }
-          }
-        }
-      });
-      return _relativeConstraints;
-    })();
     console.log(`Horizontal Alignments:`);
-    console.log(horizontalAlignments);
+    console.log(alignmentConstraint.horizontal);
     console.log(`Vertical Alignments:`);
-    console.log(verticalAlignments);
+    console.log(alignmentConstraint.vertical);
     console.log(`Relative Alignments:`);
-    console.log(relativeConstraints);
+    console.log(relativePlacementConstraint);
 
     const layout = cy.layout({
       name: 'fcose',
@@ -301,13 +304,11 @@ function layoutArchitecture(
         const elasticity = parentA === parentB ? 0.45 : 0.001;
         return elasticity;
       },
-      alignmentConstraint: {
-        horizontal: horizontalAlignments,
-        vertical: verticalAlignments,
-      },
-      relativePlacementConstraint: relativeConstraints,
+      alignmentConstraint,
+      relativePlacementConstraint,
     } as FcoseLayoutOptions);
 
+    // Once the diagram has been generated and the service's position cords are set, adjust the XY edges to have a 90deg bend
     layout.one('layoutstop', (_event) => {
       function getSegmentWeights(
         source: Position,
@@ -392,7 +393,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
 
   const services = db.getServices();
   const groups = db.getGroups();
-  const lines = db.getLines();
+  const lines = db.getEdges();
   const ds = db.getDataStructures();
   console.log('Services: ', services);
   console.log('Lines: ', lines);
@@ -409,7 +410,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   const groupElem = svg.append('g');
   groupElem.attr('class', 'architecture-groups');
 
-  drawServices(db, servicesElem, services, conf);
+  drawServices(db, servicesElem, services);
 
   const cy = await layoutArchitecture(services, groups, lines, ds);
   // console.log(cy.nodes().map((node) => ({ a: node.data() })));

@@ -119,82 +119,7 @@ const getGroups = (): ArchitectureGroup[] => {
   return groups;
 };
 
-const getDataStructures = () => {
-  if (datastructures === undefined) {
-    // Create an adjacency list of the diagram to perform BFS on
-    // Outer reduce applied on all services
-    // Inner reduce applied on the edges for a service
-    const adjList = Object.entries(services).reduce<{ [id: string]: ArchitectureDirectionPairMap }>(
-      (prev, [id, service]) => {
-        prev[id] = service.edges.reduce<ArchitectureDirectionPairMap>((prev, edge) => {
-          if (edge.lhs_id === id) {
-            // source is LHS
-            const pair = getArchitectureDirectionPair(edge.lhs_dir, edge.rhs_dir);
-            if (pair) {
-              prev[pair] = edge.rhs_id;
-            }
-          } else {
-            // source is RHS
-            const pair = getArchitectureDirectionPair(edge.rhs_dir, edge.lhs_dir);
-            if (pair) {
-              prev[pair] = edge.lhs_id;
-            }
-          }
-          return prev;
-        }, {});
-        return prev;
-      },
-      {}
-    );
-
-    // Configuration for the initial pass of BFS
-    const [firstId, _] = Object.entries(adjList)[0];
-    const visited = { [firstId]: 1 };
-    const notVisited = Object.keys(adjList).reduce(
-      (prev, id) => (id === firstId ? prev : { ...prev, [id]: 1 }),
-      {} as Record<string, number>
-    );
-
-    // Perform BFS on adjacency list
-    const BFS = (startingId: string): ArchitectureSpatialMap => {
-      const spatialMap = { [startingId]: [0, 0] };
-      const queue = [startingId];
-      while (queue.length > 0) {
-        const id = queue.shift();
-        if (id) {
-          visited[id] = 1;
-          delete notVisited[id];
-          const adj = adjList[id];
-          const [posX, posY] = spatialMap[id];
-          Object.entries(adj).forEach(([dir, rhsId]) => {
-            if (!visited[rhsId]) {
-              spatialMap[rhsId] = shiftPositionByArchitectureDirectionPair(
-                [posX, posY],
-                dir as ArchitectureDirectionPair
-              );
-              queue.push(rhsId);
-            }
-          });
-        }
-      }
-      return spatialMap;
-    };
-    const spatialMaps = [BFS(firstId)];
-
-    // If our diagram is disconnected, keep adding additional spatial maps until all disconnected graphs have been found
-    while (Object.keys(notVisited).length > 0) {
-      spatialMaps.push(BFS(Object.keys(notVisited)[0]));
-    }
-    datastructures = {
-      adjList,
-      spatialMaps,
-    };
-    console.log(datastructures);
-  }
-  return datastructures;
-};
-
-const addLine = function (
+const addEdge = function (
   lhs_id: string,
   lhs_dir: ArchitectureDirection,
   rhs_id: string,
@@ -238,7 +163,87 @@ const addLine = function (
   services[lhs_id].edges.push(lines[lines.length - 1]);
   services[rhs_id].edges.push(lines[lines.length - 1]);
 };
-const getLines = (): ArchitectureLine[] => lines;
+const getEdges = (): ArchitectureLine[] => lines;
+
+/**
+ * Returns the current diagram's adjacency list & spatial map.
+ * If they have not been created, run the algorithms to generate them.
+ * @returns
+ */
+const getDataStructures = () => {
+  if (datastructures === undefined) {
+    // Create an adjacency list of the diagram to perform BFS on
+    // Outer reduce applied on all services
+    // Inner reduce applied on the edges for a service
+    const adjList = Object.entries(services).reduce<{ [id: string]: ArchitectureDirectionPairMap }>(
+      (prev, [id, service]) => {
+        prev[id] = service.edges.reduce<ArchitectureDirectionPairMap>((prev, edge) => {
+          if (edge.lhs_id === id) {
+            // source is LHS
+            const pair = getArchitectureDirectionPair(edge.lhs_dir, edge.rhs_dir);
+            if (pair) {
+              prev[pair] = edge.rhs_id;
+            }
+          } else {
+            // source is RHS
+            const pair = getArchitectureDirectionPair(edge.rhs_dir, edge.lhs_dir);
+            if (pair) {
+              prev[pair] = edge.lhs_id;
+            }
+          }
+          return prev;
+        }, {});
+        return prev;
+      },
+      {}
+    );
+
+    // Configuration for the initial pass of BFS
+    const [firstId, _] = Object.entries(adjList)[0];
+    const visited = { [firstId]: 1 };
+    const notVisited = Object.keys(adjList).reduce(
+      (prev, id) => (id === firstId ? prev : { ...prev, [id]: 1 }),
+      {} as Record<string, number>
+    );
+
+    // Perform BFS on the adjacency list
+    const BFS = (startingId: string): ArchitectureSpatialMap => {
+      const spatialMap = { [startingId]: [0, 0] };
+      const queue = [startingId];
+      while (queue.length > 0) {
+        const id = queue.shift();
+        if (id) {
+          visited[id] = 1;
+          delete notVisited[id];
+          const adj = adjList[id];
+          const [posX, posY] = spatialMap[id];
+          Object.entries(adj).forEach(([dir, rhsId]) => {
+            if (!visited[rhsId]) {
+              spatialMap[rhsId] = shiftPositionByArchitectureDirectionPair(
+                [posX, posY],
+                dir as ArchitectureDirectionPair
+              );
+              queue.push(rhsId);
+            }
+          });
+        }
+      }
+      return spatialMap;
+    };
+    const spatialMaps = [BFS(firstId)];
+
+    // If our diagram is disconnected, keep adding additional spatial maps until all disconnected graphs have been found
+    while (Object.keys(notVisited).length > 0) {
+      spatialMaps.push(BFS(Object.keys(notVisited)[0]));
+    }
+    datastructures = {
+      adjList,
+      spatialMaps,
+    };
+    console.log(datastructures);
+  }
+  return datastructures;
+};
 
 const setElementForId = (id: string, element: D3Element) => {
   elements[id] = element;
@@ -258,13 +263,18 @@ export const db: ArchitectureDB = {
   getServices,
   addGroup,
   getGroups,
-  addLine,
-  getLines,
+  addEdge: addEdge,
+  getEdges: getEdges,
   setElementForId,
   getElementById,
   getDataStructures,
 };
 
+/**
+ * Typed wrapper for resolving an architecture diagram's config fields. Returns the default value if undefined
+ * @param field
+ * @returns
+ */
 function getConfigField<T extends keyof ArchitectureDiagramConfig>(
   field: T
 ): Required<ArchitectureDiagramConfig>[T] {
