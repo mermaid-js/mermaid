@@ -1,10 +1,10 @@
 import type {
-  ArchitectureFields,
+  ArchitectureState,
   ArchitectureDB,
   ArchitectureService,
   ArchitectureGroup,
   ArchitectureDirection,
-  ArchitectureLine,
+  ArchitectureEdge,
   ArchitectureDirectionPairMap,
   ArchitectureDirectionPair,
   ArchitectureSpatialMap,
@@ -27,56 +27,48 @@ import {
 import type { ArchitectureDiagramConfig } from '../../config.type.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 import type { D3Element } from '../../mermaidAPI.js';
+import { ImperativeState } from '../../utils/imperativeState.js';
 
-export const DEFAULT_ARCHITECTURE_CONFIG: Required<ArchitectureDiagramConfig> =
+const DEFAULT_ARCHITECTURE_CONFIG: Required<ArchitectureDiagramConfig> =
   DEFAULT_CONFIG.architecture;
-export const DEFAULT_ARCHITECTURE_DB: ArchitectureFields = {
+
+const state = new ImperativeState<ArchitectureState>(() => ({
   services: {},
   groups: [],
-  lines: [],
+  edges: [],
   registeredIds: {},
   config: DEFAULT_ARCHITECTURE_CONFIG,
-} as const;
-
-let services = DEFAULT_ARCHITECTURE_DB.services;
-let groups = DEFAULT_ARCHITECTURE_DB.groups;
-let lines = DEFAULT_ARCHITECTURE_DB.lines;
-let registeredIds = DEFAULT_ARCHITECTURE_DB.registeredIds;
-let datastructures = DEFAULT_ARCHITECTURE_DB.datastructures;
-let elements: Record<string, D3Element> = {};
+  datastructures: undefined,
+  elements: {}
+}))
 
 const clear = (): void => {
-  services = structuredClone(DEFAULT_ARCHITECTURE_DB.services);
-  groups = structuredClone(DEFAULT_ARCHITECTURE_DB.groups);
-  lines = structuredClone(DEFAULT_ARCHITECTURE_DB.lines);
-  registeredIds = structuredClone(DEFAULT_ARCHITECTURE_DB.registeredIds);
-  datastructures = undefined;
-  elements = {};
+  state.reset()
   commonClear();
 };
 
 const addService = function (id: string, opts: Omit<ArchitectureService, 'id' | 'edges'> = {}) {
   const { icon, in: inside, title } = opts;
-  if (registeredIds[id] !== undefined) {
-    throw new Error(`The service id [${id}] is already in use by another ${registeredIds[id]}`);
+  if (state.records.registeredIds[id] !== undefined) {
+    throw new Error(`The service id [${id}] is already in use by another ${state.records.registeredIds[id]}`);
   }
   if (inside !== undefined) {
     if (id === inside) {
       throw new Error(`The service [${id}] cannot be placed within itself`);
     }
-    if (registeredIds[inside] === undefined) {
+    if (state.records.registeredIds[inside] === undefined) {
       throw new Error(
         `The service [${id}]'s parent does not exist. Please make sure the parent is created before this service`
       );
     }
-    if (registeredIds[inside] === 'service') {
+    if (state.records.registeredIds[inside] === 'service') {
       throw new Error(`The service [${id}]'s parent is not a group`);
     }
   }
 
-  registeredIds[id] = 'service';
+  state.records.registeredIds[id] = 'service';
 
-  services[id] = {
+  state.records.services[id] = {
     id,
     icon,
     title,
@@ -85,30 +77,30 @@ const addService = function (id: string, opts: Omit<ArchitectureService, 'id' | 
   };
 };
 
-const getServices = (): ArchitectureService[] => Object.values(services);
+const getServices = (): ArchitectureService[] => Object.values(state.records.services);
 
 const addGroup = function (id: string, opts: Omit<ArchitectureGroup, 'id'> = {}) {
   const { icon, in: inside, title } = opts;
-  if (registeredIds[id] !== undefined) {
-    throw new Error(`The group id [${id}] is already in use by another ${registeredIds[id]}`);
+  if (state.records.registeredIds[id] !== undefined) {
+    throw new Error(`The group id [${id}] is already in use by another ${state.records.registeredIds[id]}`);
   }
   if (inside !== undefined) {
     if (id === inside) {
       throw new Error(`The group [${id}] cannot be placed within itself`);
     }
-    if (registeredIds[inside] === undefined) {
+    if (state.records.registeredIds[inside] === undefined) {
       throw new Error(
         `The group [${id}]'s parent does not exist. Please make sure the parent is created before this group`
       );
     }
-    if (registeredIds[inside] === 'service') {
+    if (state.records.registeredIds[inside] === 'service') {
       throw new Error(`The group [${id}]'s parent is not a group`);
     }
   }
 
-  registeredIds[id] = 'group';
+  state.records.registeredIds[id] = 'group';
 
-  groups.push({
+  state.records.groups.push({
     id,
     icon,
     title,
@@ -116,54 +108,55 @@ const addGroup = function (id: string, opts: Omit<ArchitectureGroup, 'id'> = {})
   });
 };
 const getGroups = (): ArchitectureGroup[] => {
-  return groups;
+  return state.records.groups;
 };
 
 const addEdge = function (
-  lhs_id: string,
-  lhs_dir: ArchitectureDirection,
-  rhs_id: string,
-  rhs_dir: ArchitectureDirection,
-  opts: Omit<ArchitectureLine, 'lhs_id' | 'lhs_dir' | 'rhs_id' | 'rhs_dir'> = {}
+  lhsId: string,
+  lhsDir: ArchitectureDirection,
+  rhsId: string,
+  rhsDir: ArchitectureDirection,
+  opts: Omit<ArchitectureEdge, 'lhsId' | 'lhsDir' | 'rhsId' | 'rhsDir'> = {}
 ) {
-  const { title, lhs_into, rhs_into } = opts;
-  if (!isArchitectureDirection(lhs_dir)) {
+  const { title, lhsInto: lhsInto, rhsInto: rhsInto } = opts;
+  if (!isArchitectureDirection(lhsDir)) {
     throw new Error(
-      `Invalid direction given for left hand side of line ${lhs_id}--${rhs_id}. Expected (L,R,T,B) got ${lhs_dir}`
+      `Invalid direction given for left hand side of edge ${lhsId}--${rhsId}. Expected (L,R,T,B) got ${lhsDir}`
     );
   }
-  if (!isArchitectureDirection(rhs_dir)) {
+  if (!isArchitectureDirection(rhsDir)) {
     throw new Error(
-      `Invalid direction given for right hand side of line ${lhs_id}--${rhs_id}. Expected (L,R,T,B) got ${rhs_dir}`
+      `Invalid direction given for right hand side of edge ${lhsId}--${rhsId}. Expected (L,R,T,B) got ${rhsDir}`
     );
   }
-  if (services[lhs_id] === undefined) {
+  if (state.records.services[lhsId] === undefined) {
     throw new Error(
-      `The left-hand service [${lhs_id}] does not yet exist. Please create the service before declaring an edge to it.`
+      `The left-hand service [${lhsId}] does not yet exist. Please create the service before declaring an edge to it.`
     );
   }
-  if (services[rhs_id] === undefined) {
+  if (state.records.services[rhsId] === undefined) {
     throw new Error(
-      `The right-hand service [${rhs_id}] does not yet exist. Please create the service before declaring an edge to it.`
+      `The right-hand service [${rhsId}] does not yet exist. Please create the service before declaring an edge to it.`
     );
   }
 
   const edge = {
-    lhs_id,
-    lhs_dir,
-    rhs_id,
-    rhs_dir,
+    lhsId,
+    lhsDir,
+    rhsId,
+    rhsDir,
     title,
-    lhs_into,
-    rhs_into,
+    lhsInto,
+    rhsInto,
   };
 
-  lines.push(edge);
+  state.records.edges.push(edge);
 
-  services[lhs_id].edges.push(lines[lines.length - 1]);
-  services[rhs_id].edges.push(lines[lines.length - 1]);
+  state.records.services[lhsId].edges.push(state.records.edges[state.records.edges.length - 1]);
+  state.records.services[rhsId].edges.push(state.records.edges[state.records.edges.length - 1]);
 };
-const getEdges = (): ArchitectureLine[] => lines;
+
+const getEdges = (): ArchitectureEdge[] => state.records.edges;
 
 /**
  * Returns the current diagram's adjacency list & spatial map.
@@ -171,24 +164,24 @@ const getEdges = (): ArchitectureLine[] => lines;
  * @returns
  */
 const getDataStructures = () => {
-  if (datastructures === undefined) {
+  if (state.records.datastructures === undefined) {
     // Create an adjacency list of the diagram to perform BFS on
     // Outer reduce applied on all services
     // Inner reduce applied on the edges for a service
-    const adjList = Object.entries(services).reduce<{ [id: string]: ArchitectureDirectionPairMap }>(
+    const adjList = Object.entries(state.records.services).reduce<{ [id: string]: ArchitectureDirectionPairMap }>(
       (prev, [id, service]) => {
         prev[id] = service.edges.reduce<ArchitectureDirectionPairMap>((prev, edge) => {
-          if (edge.lhs_id === id) {
+          if (edge.lhsId === id) {
             // source is LHS
-            const pair = getArchitectureDirectionPair(edge.lhs_dir, edge.rhs_dir);
+            const pair = getArchitectureDirectionPair(edge.lhsDir, edge.rhsDir);
             if (pair) {
-              prev[pair] = edge.rhs_id;
+              prev[pair] = edge.rhsId;
             }
           } else {
             // source is RHS
-            const pair = getArchitectureDirectionPair(edge.rhs_dir, edge.lhs_dir);
+            const pair = getArchitectureDirectionPair(edge.rhsDir, edge.lhsDir);
             if (pair) {
-              prev[pair] = edge.lhs_id;
+              prev[pair] = edge.lhsId;
             }
           }
           return prev;
@@ -236,19 +229,19 @@ const getDataStructures = () => {
     while (Object.keys(notVisited).length > 0) {
       spatialMaps.push(BFS(Object.keys(notVisited)[0]));
     }
-    datastructures = {
+    state.records.datastructures = {
       adjList,
       spatialMaps,
     };
-    console.log(datastructures);
+    console.log(state.records.datastructures);
   }
-  return datastructures;
+  return state.records.datastructures;
 };
 
 const setElementForId = (id: string, element: D3Element) => {
-  elements[id] = element;
+  state.records.elements[id] = element;
 };
-const getElementById = (id: string) => elements[id];
+const getElementById = (id: string) => state.records.elements[id];
 
 export const db: ArchitectureDB = {
   clear,
@@ -275,7 +268,7 @@ export const db: ArchitectureDB = {
  * @param field
  * @returns
  */
-function getConfigField<T extends keyof ArchitectureDiagramConfig>(
+export function getConfigField<T extends keyof ArchitectureDiagramConfig>(
   field: T
 ): Required<ArchitectureDiagramConfig>[T] {
   const arch = getConfig().architecture;
@@ -285,5 +278,3 @@ function getConfigField<T extends keyof ArchitectureDiagramConfig>(
   }
   return DEFAULT_ARCHITECTURE_CONFIG[field];
 }
-
-export { getConfigField };

@@ -10,7 +10,7 @@ import {
   type ArchitectureDB,
   type ArchitectureDirection,
   type ArchitectureGroup,
-  type ArchitectureLine,
+  type ArchitectureEdge,
   type ArchitectureService,
   ArchitectureDataStructures,
   ArchitectureDirectionName,
@@ -20,14 +20,11 @@ import {
   ArchitectureSpatialMap,
   EdgeSingularData,
   EdgeSingular,
-  NodeSingular,
-  NodeSingularData,
   nodeData,
   edgeData
 } from './architectureTypes.js';
 import { select } from 'd3';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
-import type { D3Element } from '../../mermaidAPI.js';
 import { drawEdges, drawGroups, drawServices } from './svgDraw.js';
 import { getConfigField } from './architectureDb.js';
 
@@ -79,34 +76,34 @@ function addGroups(groups: ArchitectureGroup[], cy: cytoscape.Core) {
   });
 }
 
-function addEdges(lines: ArchitectureLine[], cy: cytoscape.Core) {
-  lines.forEach((line) => {
-    const { lhs_id, rhs_id, lhs_into, rhs_into, lhs_dir, rhs_dir } = line;
-    const edgeType = isArchitectureDirectionXY(line.lhs_dir, line.rhs_dir)
+function addEdges(edges: ArchitectureEdge[], cy: cytoscape.Core) {
+  edges.forEach((parsedEdge) => {
+    const { lhsId, rhsId, lhsInto, rhsInto, lhsDir, rhsDir } = parsedEdge;
+    const edgeType = isArchitectureDirectionXY(parsedEdge.lhsDir, parsedEdge.rhsDir)
       ? 'segments'
       : 'straight';
     const edge: EdgeSingularData = {
-      id: `${lhs_id}-${rhs_id}`,
-      source: lhs_id,
-      sourceDir: lhs_dir,
-      sourceArrow: lhs_into,
+      id: `${lhsId}-${rhsId}`,
+      source: lhsId,
+      sourceDir: lhsDir,
+      sourceArrow: lhsInto,
       sourceEndpoint:
-        lhs_dir === 'L'
+        lhsDir === 'L'
           ? '0 50%'
-          : lhs_dir === 'R'
+          : lhsDir === 'R'
           ? '100% 50%'
-          : lhs_dir === 'T'
+          : lhsDir === 'T'
           ? '50% 0'
           : '50% 100%',
-      target: rhs_id,
-      targetDir: rhs_dir,
-      targetArrow: rhs_into,
+      target: rhsId,
+      targetDir: rhsDir,
+      targetArrow: rhsInto,
       targetEndpoint:
-        rhs_dir === 'L'
+        rhsDir === 'L'
           ? '0 50%'
-          : rhs_dir === 'R'
+          : rhsDir === 'R'
           ? '100% 50%'
-          : rhs_dir === 'T'
+          : rhsDir === 'T'
           ? '50% 0'
           : '50% 100%',
     };
@@ -207,7 +204,7 @@ function getRelativeConstraints(
 function layoutArchitecture(
   services: ArchitectureService[],
   groups: ArchitectureGroup[],
-  lines: ArchitectureLine[],
+  edges: ArchitectureEdge[],
   { spatialMaps }: ArchitectureDataStructures
 ): Promise<cytoscape.Core> {
   return new Promise((resolve) => {
@@ -272,7 +269,7 @@ function layoutArchitecture(
 
     addGroups(groups, cy);
     addServices(services, cy);
-    addEdges(lines, cy);
+    addEdges(edges, cy);
 
     // Use the spatial map to create alignment arrays for fcose
     const alignmentConstraint = getAlignments(spatialMaps);
@@ -366,9 +363,9 @@ function layoutArchitecture(
       cy.startBatch();
       for (let edge of Object.values(cy.edges())) {
         if (edge.data?.()) {
-          let { x: s_x, y: s_y } = edge.source().position();
-          let { x: t_x, y: t_y } = edge.target().position();
-          if (s_x !== t_x && s_y !== t_y) {
+          let { x: sX, y: sY } = edge.source().position();
+          let { x: tX, y: tY } = edge.target().position();
+          if (sX !== tX && sY !== tY) {
             let sEP = edge.sourceEndpoint();
             let tEP = edge.targetEndpoint();
             const { sourceDir } = edgeData(edge)
@@ -395,14 +392,13 @@ function layoutArchitecture(
 
 export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram) => {
   const db = diagObj.db as ArchitectureDB;
-  const conf: MermaidConfig = getConfig();
 
   const services = db.getServices();
   const groups = db.getGroups();
-  const lines = db.getEdges();
+  const edges = db.getEdges();
   const ds = db.getDataStructures();
   console.log('Services: ', services);
-  console.log('Lines: ', lines);
+  console.log('Edges: ', edges);
   console.log('Groups: ', groups);
 
   const svg: SVG = selectSvgElement(id);
@@ -418,7 +414,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
 
   drawServices(db, servicesElem, services);
 
-  const cy = await layoutArchitecture(services, groups, lines, ds);
+  const cy = await layoutArchitecture(services, groups, edges, ds);
 
   drawEdges(edgesElem, cy);
   drawGroups(groupElem, cy);

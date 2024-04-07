@@ -141,7 +141,7 @@ export interface ArchitectureStyleOptions {
 
 export interface ArchitectureService {
   id: string;
-  edges: ArchitectureLine[];
+  edges: ArchitectureEdge[];
   icon?: string;
   title?: string;
   in?: string;
@@ -156,14 +156,14 @@ export interface ArchitectureGroup {
   in?: string;
 }
 
-export interface ArchitectureLine {
-  lhs_id: string;
-  lhs_dir: ArchitectureDirection;
+export interface ArchitectureEdge {
+  lhsId: string;
+  lhsDir: ArchitectureDirection;
   title?: string;
-  rhs_id: string;
-  rhs_dir: ArchitectureDirection;
-  lhs_into?: boolean;
-  rhs_into?: boolean;
+  rhsId: string;
+  rhsDir: ArchitectureDirection;
+  lhsInto?: boolean;
+  rhsInto?: boolean;
 }
 
 export interface ArchitectureDB extends DiagramDB {
@@ -173,13 +173,13 @@ export interface ArchitectureDB extends DiagramDB {
   addGroup: (id: string, opts: Omit<ArchitectureGroup, 'id'>) => void;
   getGroups: () => ArchitectureGroup[];
   addEdge: (
-    lhs_id: string,
-    lhs_dir: ArchitectureDirection,
-    rhs_id: string,
-    rhs_dir: ArchitectureDirection,
-    opts: Omit<ArchitectureLine, 'lhs_id' | 'lhs_dir' | 'rhs_id' | 'rhs_dir'>
+    lhsId: string,
+    lhsDir: ArchitectureDirection,
+    rhsId: string,
+    rhsDir: ArchitectureDirection,
+    opts: Omit<ArchitectureEdge, 'lhsId' | 'lhsDir' | 'rhsId' | 'rhsDir'>
   ) => void;
-  getEdges: () => ArchitectureLine[];
+  getEdges: () => ArchitectureEdge[];
   setElementForId: (id: string, element: D3Element) => void;
   getElementById: (id: string) => D3Element;
   getDataStructures: () => ArchitectureDataStructures;
@@ -192,18 +192,20 @@ export type ArchitectureDataStructures = {
   spatialMaps: ArchitectureSpatialMap[];
 };
 
-export interface ArchitectureFields {
+export interface ArchitectureState extends Record<string, unknown> {
   services: Record<string, ArchitectureService>;
   groups: ArchitectureGroup[];
-  lines: ArchitectureLine[];
+  edges: ArchitectureEdge[];
   registeredIds: Record<string, 'service' | 'group'>;
   datastructures?: ArchitectureDataStructures;
+  elements: Record<string, D3Element>;
   config: ArchitectureDiagramConfig;
 }
 
 /*=======================================*\
 |        Cytoscape Override Types         |
 \*=======================================*/
+
 export type EdgeSingularData = {
     id: string;
     source: string;
@@ -215,7 +217,7 @@ export type EdgeSingularData = {
     [key: string]: any;
 };
 
-export function edgeData(edge: cytoscape.EdgeSingular) {
+export const edgeData = (edge: cytoscape.EdgeSingular) => {
   return edge.data() as EdgeSingularData;
 }
 
@@ -254,7 +256,7 @@ export type NodeSingularData = {
   [key: string]: any;
 };
 
-export function nodeData(node: cytoscape.NodeSingular) {
+export const nodeData = (node: cytoscape.NodeSingular) => {
   return node.data() as NodeSingularData;
 }
 
