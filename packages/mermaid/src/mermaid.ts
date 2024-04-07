@@ -15,6 +15,7 @@ import { isDetailedError } from './utils.js';
 import type { DetailedError } from './utils.js';
 import type { ExternalDiagramDefinition } from './diagram-api/types.js';
 import type { UnknownDiagramError } from './errors.js';
+import type { IconLibrary, IconResolver } from './rendering-util/svgRegister.js';
 
 export type {
   MermaidConfig,
@@ -24,6 +25,8 @@ export type {
   RenderResult,
   ParseOptions,
   UnknownDiagramError,
+  IconLibrary,
+  IconResolver
 };
 
 export interface RunOptions {
