@@ -121,7 +121,7 @@ it('should handle strings with newlines', () => {
   expect(() =>
     splitLineToFitWidth(getLineFromString(str), checkFn)
   ).toThrowErrorMatchingInlineSnapshot(
-    '"splitLineToFitWidth does not support newlines in the line"'
+    `[Error: splitLineToFitWidth does not support newlines in the line]`
   );
 });
 

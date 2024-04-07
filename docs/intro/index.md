@@ -311,23 +311,25 @@ xychart-beta
 
 ### CDN
 
-    https://cdn.jsdelivr.net/npm/mermaid@<version>/dist/
+```
+https://cdn.jsdelivr.net/npm/mermaid@<version>/dist/
+```
 
 To select a version:
 
 Replace `<version>` with the desired version number.
 
-Latest Version: <https://cdn.jsdelivr.net/npm/mermaid@10>
+Latest Version: <https://cdn.jsdelivr.net/npm/mermaid@11>
 
 ## Deploying Mermaid
 
 To Deploy Mermaid:
 
-1.  You will need to install node v16, which would have npm
-2.  Install mermaid
-    - NPM: `npm i mermaid`
-    - Yarn: `yarn add mermaid`
-    - Pnpm: `pnpm add mermaid`
+1. You will need to install node v16, which would have npm
+2. Install mermaid
+   - NPM: `npm i mermaid`
+   - Yarn: `yarn add mermaid`
+   - Pnpm: `pnpm add mermaid`
 
 ### [Mermaid API](../config/setup/README.md):
 
@@ -335,7 +337,7 @@ To Deploy Mermaid:
 
 ```html
 <script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad: true });
 </script>
 ```

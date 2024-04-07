@@ -67,49 +67,49 @@ describe('the flowchart renderer', function () {
       });
     });
 
-    ['Multi<br>Line', 'Multi<br/>Line', 'Multi<br />Line', 'Multi<br\t/>Line'].forEach(function (
-      labelText
-    ) {
-      it('should handle multiline texts with different line breaks', async function () {
-        const addedNodes = [];
-        const fakeDiag = {
-          db: {
-            lookUpDomId: () => {
-              return 'my-node-id';
+    ['Multi<br>Line', 'Multi<br/>Line', 'Multi<br />Line', 'Multi<br\t/>Line'].forEach(
+      function (labelText) {
+        it('should handle multiline texts with different line breaks', async function () {
+          const addedNodes = [];
+          const fakeDiag = {
+            db: {
+              lookUpDomId: () => {
+                return 'my-node-id';
+              },
             },
-          },
-        };
-        const mockG = {
-          setNode: function (id, object) {
-            addedNodes.push([id, object]);
-          },
-        };
-        await addVertices(
-          {
-            v1: {
-              type: 'rect',
-              id: 'my-node-id',
-              classes: [],
-              styles: [],
-              text: 'Multi<br>Line',
+          };
+          const mockG = {
+            setNode: function (id, object) {
+              addedNodes.push([id, object]);
             },
-          },
-          mockG,
-          'svg-id',
-          false,
-          document,
-          fakeDiag
-        );
-        expect(addedNodes).toHaveLength(1);
-        expect(addedNodes[0][0]).toEqual('my-node-id');
-        expect(addedNodes[0][1]).toHaveProperty('id', 'my-node-id');
-        expect(addedNodes[0][1]).toHaveProperty('labelType', 'svg');
-        expect(addedNodes[0][1].label).toBeDefined();
-        expect(addedNodes[0][1].label).toBeDefined(); // <text> node
-        expect(addedNodes[0][1].label.firstChild.innerHTML).toEqual('Multi'); // <tspan> node, line 1
-        expect(addedNodes[0][1].label.lastChild.innerHTML).toEqual('Line'); // <tspan> node, line 2
-      });
-    });
+          };
+          await addVertices(
+            {
+              v1: {
+                type: 'rect',
+                id: 'my-node-id',
+                classes: [],
+                styles: [],
+                text: 'Multi<br>Line',
+              },
+            },
+            mockG,
+            'svg-id',
+            false,
+            document,
+            fakeDiag
+          );
+          expect(addedNodes).toHaveLength(1);
+          expect(addedNodes[0][0]).toEqual('my-node-id');
+          expect(addedNodes[0][1]).toHaveProperty('id', 'my-node-id');
+          expect(addedNodes[0][1]).toHaveProperty('labelType', 'svg');
+          expect(addedNodes[0][1].label).toBeDefined();
+          expect(addedNodes[0][1].label).toBeDefined(); // <text> node
+          expect(addedNodes[0][1].label.firstChild.innerHTML).toEqual('Multi'); // <tspan> node, line 1
+          expect(addedNodes[0][1].label.lastChild.innerHTML).toEqual('Line'); // <tspan> node, line 2
+        });
+      }
+    );
 
     [
       [['fill:#fff'], 'fill:#fff;', ''],

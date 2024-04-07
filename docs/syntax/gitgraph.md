@@ -363,11 +363,11 @@ Here, a new commit representing the cherry-pick is created on the current branch
 
 A few important rules to note here are:
 
-1.  You need to provide the `id` for an existing commit to be cherry-picked. If given commit id does not exist it will result in an error. For this, make use of the `commit id:$value` format of declaring commits. See the examples from above.
-2.  The given commit must not exist on the current branch. The cherry-picked commit must always be a different branch than the current branch.
-3.  Current branch must have at least one commit, before you can cherry-pick, otherwise it will cause an error is throw.
-4.  When cherry-picking a merge commit, providing a parent commit ID is mandatory. If the parent attribute is omitted or an invalid parent commit ID is provided, an error will be thrown.
-5.  The specified parent commit must be an immediate parent of the merge commit being cherry-picked.
+1. You need to provide the `id` for an existing commit to be cherry-picked. If given commit id does not exist it will result in an error. For this, make use of the `commit id:$value` format of declaring commits. See the examples from above.
+2. The given commit must not exist on the current branch. The cherry-picked commit must always be a different branch than the current branch.
+3. Current branch must have at least one commit, before you can cherry-pick, otherwise it will cause an error is throw.
+4. When cherry-picking a merge commit, providing a parent commit ID is mandatory. If the parent attribute is omitted or an invalid parent commit ID is provided, an error will be thrown.
+5. The specified parent commit must be an immediate parent of the merge commit being cherry-picked.
 
 Let see an example:
 
@@ -836,9 +836,9 @@ Here, we have changed the default main branch name to `MetroLine1`.
 
 ## Orientation (v10.3.0+)
 
-Mermaid supports two graph orientations: **Left-to-Right** (default) and **Top-to-Bottom**.
+Mermaid supports three graph orientations: **Left-to-Right** (default), **Top-to-Bottom**, and **Bottom-to-Top**.
 
-You can set this with either `LR:` (for [**Left-to-Right**](#left-to-right-default-lr)) or `TB:` (for [**Top-to-Bottom**](#top-to-bottom-tb)) after `gitGraph`.
+You can set this with either `LR:` (for [**Left-to-Right**](#left-to-right-default-lr)), `TB:` (for [**Top-to-Bottom**](#top-to-bottom-tb)) or `BT:` (for [**Bottom-to-Top**](#bottom-to-top-bt)) after `gitGraph`.
 
 ### Left to Right (default, `LR:`)
 
@@ -903,6 +903,44 @@ Usage example:
 
 ```mermaid
     gitGraph TB:
+       commit
+       commit
+       branch develop
+       commit
+       commit
+       checkout main
+       commit
+       commit
+       merge develop
+       commit
+       commit
+```
+
+### Bottom to Top (`BT:`) (v\<MERMAID_RELEASE_VERSION>+)
+
+In `BT` (**Bottom-to-Top**) orientation, the commits run from bottom to top of the graph and branches are arranged side-by-side.
+
+To orient the graph this way, you need to add `BT:` after gitGraph.
+
+Usage example:
+
+```mermaid-example
+    gitGraph BT:
+       commit
+       commit
+       branch develop
+       commit
+       commit
+       checkout main
+       commit
+       commit
+       merge develop
+       commit
+       commit
+```
+
+```mermaid
+    gitGraph BT:
        commit
        commit
        branch develop

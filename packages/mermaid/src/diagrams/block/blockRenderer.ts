@@ -1,19 +1,17 @@
-import type { Diagram } from '../../Diagram.js';
-import * as configApi from '../../config.js';
-import { calculateBlockSizes, insertBlocks, insertEdges } from './renderHelpers.js';
-import { layout } from './layout.js';
-import type { MermaidConfig, BaseDiagramConfig } from '../../config.type.js';
-import insertMarkers from '../../dagre-wrapper/markers.js';
 import {
-  select as d3select,
   scaleOrdinal as d3scaleOrdinal,
   schemeTableau10 as d3schemeTableau10,
+  select as d3select,
 } from 'd3';
-import type { ContainerElement } from 'd3';
+import type { Diagram } from '../../Diagram.js';
+import * as configApi from '../../config.js';
+import type { MermaidConfig } from '../../config.type.js';
+import insertMarkers from '../../dagre-wrapper/markers.js';
 import { log } from '../../logger.js';
-import type { BlockDB } from './blockDB.js';
-import type { Block } from './blockTypes.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
+import type { BlockDB } from './blockDB.js';
+import { layout } from './layout.js';
+import { calculateBlockSizes, insertBlocks, insertEdges } from './renderHelpers.js';
 
 /**
  * Returns the all the styles from classDef statements in the graph definition.

@@ -120,9 +120,9 @@ A colon, `:`, separates the task title from its metadata.
 Metadata items are separated by a comma, `,`. Valid tags are `active`, `done`, `crit`, and `milestone`. Tags are optional, but if used, they must be specified first.
 After processing the tags, the remaining metadata items are interpreted as follows:
 
-1.  If a single item is specified, it determines when the task ends. It can either be a specific date/time or a duration. If a duration is specified, it is added to the start date of the task to determine the end date of the task, taking into account any exclusions.
-2.  If two items are specified, the last item is interpreted as in the previous case. The first item can either specify an explicit start date/time (in the format specified by `dateFormat`) or reference another task using `after <otherTaskID> [[otherTaskID2 [otherTaskID3]]...]`. In the latter case, the start date of the task will be set according to the latest end date of any referenced task.
-3.  If three items are specified, the last two will be interpreted as in the previous case. The first item will denote the ID of the task, which can be referenced using the `later <taskID>` syntax.
+1. If a single item is specified, it determines when the task ends. It can either be a specific date/time or a duration. If a duration is specified, it is added to the start date of the task to determine the end date of the task, taking into account any exclusions.
+2. If two items are specified, the last item is interpreted as in the previous case. The first item can either specify an explicit start date/time (in the format specified by `dateFormat`) or reference another task using `after <otherTaskID> [[otherTaskID2 [otherTaskID3]]...]`. In the latter case, the start date of the task will be set according to the latest end date of any referenced task.
+3. If three items are specified, the last two will be interpreted as in the previous case. The first item will denote the ID of the task, which can be referenced using the `later <taskID>` syntax.
 
 | Metadata syntax                                      | Start date                                          | End date                                              | ID       |
 | ---------------------------------------------------- | --------------------------------------------------- | ----------------------------------------------------- | -------- |
@@ -143,7 +143,7 @@ After processing the tags, the remaining metadata items are interpreted as follo
 | `until <otherTaskId>`                                | End date of preceding task                          | Start date of previously specified task `otherTaskID` | n/a      |
 
 > **Note**
-> Support for keyword `until` was added in (v\<MERMAID_RELEASE_VERSION>+). This can be used to define a task which is running until some other specific task or milestone starts.
+> Support for keyword `until` was added in (v10.9.0+). This can be used to define a task which is running until some other specific task or milestone starts.
 
 For simplicity, the table does not show the use of multiple tasks listed with the `after` keyword. Here is an example of how to use it and how it's interpreted:
 
@@ -166,6 +166,38 @@ gantt
 ### Title
 
 The `title` is an _optional_ string to be displayed at the top of the Gantt chart to describe the chart as a whole.
+
+### Excludes
+
+The `excludes` is an _optional_ attribute that accepts specific dates in YYYY-MM-DD format, days of the week ("sunday") or "weekends", but not the word "weekdays".
+These date will be marked on the graph, and be excluded from the duration calculation of tasks. Meaning that if there are excluded dates during a task interval, the number of 'skipped' days will be added to the end of the task to ensure the duration is as specified in the code.
+
+#### Weekend (v\<MERMAID_RELEASE_VERSION>+)
+
+When excluding weekends, it is possible to configure the weekends to be either Friday and Saturday or Saturday and Sunday. By default weekends are Saturday and Sunday.
+To define the weekend start day, there is an _optional_ attribute `weekend` that can be added in a new line followed by either `friday` or `saturday`.
+
+```mermaid-example
+gantt
+    title A Gantt Diagram Excluding Fri - Sat weekends
+    dateFormat YYYY-MM-DD
+    excludes weekends
+    weekend friday
+    section Section
+        A task          :a1, 2024-01-01, 30d
+        Another task    :after a1, 20d
+```
+
+```mermaid
+gantt
+    title A Gantt Diagram Excluding Fri - Sat weekends
+    dateFormat YYYY-MM-DD
+    excludes weekends
+    weekend friday
+    section Section
+        A task          :a1, 2024-01-01, 30d
+        Another task    :after a1, 20d
+```
 
 ### Section statements
 
@@ -436,11 +468,15 @@ Styling of the Gantt diagram is done by defining a number of CSS classes. During
 
 You can style or hide the marker for the current date. To style it, add a value for the `todayMarker` key.
 
-    todayMarker stroke-width:5px,stroke:#0f0,opacity:0.5
+```
+todayMarker stroke-width:5px,stroke:#0f0,opacity:0.5
+```
 
 To hide the marker, set `todayMarker` to `off`.
 
-    todayMarker off
+```
+todayMarker off
+```
 
 ## Configuration
 
@@ -482,8 +518,10 @@ mermaid.ganttConfig = {
 
 It is possible to bind a click event to a task. The click can lead to either a javascript callback or to a link which will be opened in the current browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
 
-    click taskId call callback(arguments)
-    click taskId href URL
+```
+click taskId call callback(arguments)
+click taskId href URL
+```
 
 - taskId is the id of the task
 - callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the taskId as the parameter if no other arguments are specified.
