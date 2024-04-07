@@ -7,11 +7,14 @@ import {
   ArchitectureDirectionArrowShift,
   isArchitectureDirectionX,
   isArchitectureDirectionY,
+  edgeData,
+  nodeData,
 } from './architectureTypes.js';
 import type cytoscape from 'cytoscape';
 import { log } from '../../logger.js';
 import { getIcon } from '../../rendering-util/svgRegister.js';
 import { getConfigField } from './architectureDb.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 
 export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
   const iconSize = getConfigField('iconSize');
@@ -19,7 +22,7 @@ export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
   const halfArrowSize = arrowSize / 2;
 
   cy.edges().map((edge, id) => {
-    const { sourceDir, sourceArrow, targetDir, targetArrow } = edge.data();
+    const { sourceDir, sourceArrow, targetDir, targetArrow } = edgeData(edge);
     const { x: startX, y: startY } = edge[0].sourceEndpoint();
     const { x: midX, y: midY } = edge[0].midpoint();
     const { x: endX, y: endY } = edge[0].targetEndpoint();
@@ -67,7 +70,7 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
   const halfIconSize = iconSize / 2;
 
   cy.nodes().map((node, id) => {
-    const data = node.data();
+    const data = nodeData(node);
     if (data.type === 'group') {
       const { h, w, x1, x2, y1, y2 } = node.boundingBox();
       console.log(`Draw group (${data.id}): pos=(${x1}, ${y1}), dim=(${w}, ${h})`);
@@ -79,22 +82,25 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
         .attr('height', h)
         .attr('class', 'node-bkg');
 
-      const textElem = groupsEl.append('g');
-      createText(textElem, data.label, {
-        useHtmlLabels: false,
-        width: w,
-        classes: 'architecture-service-label',
-      });
-      textElem
-        .attr('dy', '1em')
-        .attr('alignment-baseline', 'middle')
-        .attr('dominant-baseline', 'start')
-        .attr('text-anchor', 'start');
-
-      textElem.attr(
-        'transform',
-        'translate(' + (x1 + halfIconSize + 4) + ', ' + (y1 + halfIconSize + 2) + ')'
-      );
+      if (data.label) {
+        const textElem = groupsEl.append('g');
+        createText(textElem, data.label, {
+          useHtmlLabels: false,
+          width: w,
+          classes: 'architecture-service-label',
+        },
+        getConfig());
+        textElem
+          .attr('dy', '1em')
+          .attr('alignment-baseline', 'middle')
+          .attr('dominant-baseline', 'start')
+          .attr('text-anchor', 'start');
+  
+        textElem.attr(
+          'transform',
+          'translate(' + (x1 + halfIconSize + 4) + ', ' + (y1 + halfIconSize + 2) + ')'
+        );
+      }
     }
   });
 };
@@ -114,7 +120,8 @@ export const drawServices = function (
         useHtmlLabels: false,
         width: iconSize * 1.5,
         classes: 'architecture-service-label',
-      });
+      },
+      getConfig());
       textElem
         .attr('dy', '1em')
         .attr('alignment-baseline', 'middle')

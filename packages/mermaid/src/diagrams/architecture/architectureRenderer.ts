@@ -18,6 +18,12 @@ import {
   isArchitectureDirectionXY,
   isArchitectureDirectionY,
   ArchitectureSpatialMap,
+  EdgeSingularData,
+  EdgeSingular,
+  NodeSingular,
+  NodeSingularData,
+  nodeData,
+  edgeData
 } from './architectureTypes.js';
 import { select } from 'd3';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
@@ -47,7 +53,7 @@ function addServices(services: ArchitectureService[], cy: cytoscape.Core) {
 
 function positionServices(db: ArchitectureDB, cy: cytoscape.Core) {
   cy.nodes().map((node, id) => {
-    const data = node.data();
+    const data = nodeData(node)
     if (data.type === 'group') return;
     data.x = node.position().x;
     data.y = node.position().y;
@@ -79,7 +85,7 @@ function addEdges(lines: ArchitectureLine[], cy: cytoscape.Core) {
     const edgeType = isArchitectureDirectionXY(line.lhs_dir, line.rhs_dir)
       ? 'segments'
       : 'straight';
-    const edge: cytoscape._EdgeSingularData = {
+    const edge: EdgeSingularData = {
       id: `${lhs_id}-${rhs_id}`,
       source: lhs_id,
       sourceDir: lhs_dir,
@@ -289,18 +295,18 @@ function layoutArchitecture(
       nodeDimensionsIncludeLabels: false,
       // Adjust the edge parameters if it passes through the border of a group
       // Hacky fix for: https://github.com/iVis-at-Bilkent/cytoscape.js-fcose/issues/67
-      idealEdgeLength(edge) {
+      idealEdgeLength(edge: EdgeSingular) {
         const [nodeA, nodeB] = edge.connectedNodes();
-        const { parent: parentA } = nodeA.data();
-        const { parent: parentB } = nodeB.data();
+        const { parent: parentA } = nodeData(nodeA)
+        const { parent: parentB } = nodeData(nodeB)
         const elasticity =
           parentA === parentB ? 1.5 * getConfigField('iconSize') : 0.5 * getConfigField('iconSize');
         return elasticity;
       },
-      edgeElasticity(edge) {
+      edgeElasticity(edge: EdgeSingular) {
         const [nodeA, nodeB] = edge.connectedNodes();
-        const { parent: parentA } = nodeA.data();
-        const { parent: parentB } = nodeB.data();
+        const { parent: parentA } = nodeData(nodeA)
+        const { parent: parentB } = nodeData(nodeB)
         const elasticity = parentA === parentB ? 0.45 : 0.001;
         return elasticity;
       },
@@ -359,13 +365,13 @@ function layoutArchitecture(
       }
       cy.startBatch();
       for (let edge of Object.values(cy.edges())) {
-        if (edge.data) {
+        if (edge.data?.()) {
           let { x: s_x, y: s_y } = edge.source().position();
           let { x: t_x, y: t_y } = edge.target().position();
           if (s_x !== t_x && s_y !== t_y) {
             let sEP = edge.sourceEndpoint();
             let tEP = edge.targetEndpoint();
-            const { sourceDir } = edge.data();
+            const { sourceDir } = edgeData(edge)
             const [pointX, pointY] = isArchitectureDirectionY(sourceDir)
               ? [sEP.x, tEP.y]
               : [tEP.x, sEP.y];
@@ -413,7 +419,6 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   drawServices(db, servicesElem, services);
 
   const cy = await layoutArchitecture(services, groups, lines, ds);
-  // console.log(cy.nodes().map((node) => ({ a: node.data() })));
 
   drawEdges(edgesElem, cy);
   drawGroups(groupElem, cy);

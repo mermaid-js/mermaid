@@ -1,6 +1,7 @@
 import type { DiagramDB } from '../../diagram-api/types.js';
 import type { ArchitectureDiagramConfig } from '../../config.type.js';
 import type { D3Element } from '../../mermaidAPI.js';
+import cytoscape from 'cytoscape';
 
 /*=======================================*\
 |       Architecture Diagram Types        |
@@ -203,9 +204,7 @@ export interface ArchitectureFields {
 /*=======================================*\
 |        Cytoscape Override Types         |
 \*=======================================*/
-
-declare module 'cytoscape' {
-  type _EdgeSingularData = {
+export type EdgeSingularData = {
     id: string;
     source: string;
     sourceDir: ArchitectureDirection;
@@ -214,23 +213,52 @@ declare module 'cytoscape' {
     targetDir: ArchitectureDirection;
     targetArrow?: boolean;
     [key: string]: any;
-  };
-  interface EdgeSingular {
-    _private: {
-      bodyBounds: unknown;
-      rscratch: {
-        startX: number;
-        startY: number;
-        midX: number;
-        midY: number;
-        endX: number;
-        endY: number;
-      };
+};
+
+export function edgeData(edge: cytoscape.EdgeSingular) {
+  return edge.data() as EdgeSingularData;
+}
+
+export interface EdgeSingular extends cytoscape.EdgeSingular{
+  _private: {
+    bodyBounds: unknown;
+    rscratch: {
+      startX: number;
+      startY: number;
+      midX: number;
+      midY: number;
+      endX: number;
+      endY: number;
     };
-    data(): _EdgeSingularData;
-    data<T extends keyof _EdgeSingularData>(key: T): _EdgeSingularData[T];
-  }
-  interface NodeSingular {
+  };
+  data(): EdgeSingularData;
+  data<T extends keyof EdgeSingularData>(key: T): EdgeSingularData[T];
+}
+
+export type NodeSingularData = {
+  type: 'service';
+  id: string;
+  icon?: string;
+  label?: string;
+  parent?: string;
+  width: number;
+  height: number;
+  [key: string]: any;
+}
+| {
+  type: 'group';
+  id: string;
+  icon?: string;
+  label?: string;
+  parent?: string;
+  [key: string]: any;
+};
+
+export function nodeData(node: cytoscape.NodeSingular) {
+  return node.data() as NodeSingularData;
+}
+
+export interface NodeSingular extends cytoscape.NodeSingular{
     _private: {
       bodyBounds: {
         h: number;
@@ -242,24 +270,6 @@ declare module 'cytoscape' {
       };
       children: cytoscape.NodeSingular[];
     };
-    data: () =>
-      | {
-          type: 'service';
-          id: string;
-          icon?: string;
-          label?: string;
-          parent?: string;
-          width: number;
-          height: number;
-          [key: string]: any;
-        }
-      | {
-          type: 'group';
-          id: string;
-          icon?: string;
-          label?: string;
-          parent?: string;
-          [key: string]: any;
-        };
-  }
+    data(): NodeSingularData;
+    data<T extends keyof NodeSingularData>(key: T): NodeSingularData[T];
 }
