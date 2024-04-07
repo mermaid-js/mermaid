@@ -1,4 +1,4 @@
-import cytoscape from 'cytoscape';
+import cytoscape, { Position } from 'cytoscape';
 import type { Diagram } from '../../Diagram.js';
 import fcose, { FcoseLayoutOptions } from 'cytoscape-fcose';
 import type { MermaidConfig } from '../../config.type.js';
@@ -15,6 +15,8 @@ import {
   ArchitectureDataStructures,
   ArchitectureDirectionName,
   getOppositeArchitectureDirection,
+  isArchitectureDirectionXY,
+  isArchitectureDirectionY,
 } from './architectureTypes.js';
 import { select } from 'd3';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
@@ -51,6 +53,19 @@ function drawServices(
   services.forEach((service) => drawService(db, svg, service, conf));
 }
 
+function positionServices(db: ArchitectureDB, cy: cytoscape.Core) {
+  cy.nodes().map((node, id) => {
+    const data = node.data();
+    if (data.type === 'group') return;
+    data.x = node.position().x;
+    data.y = node.position().y;
+
+    const nodeElem = db.getElementById(data.id);
+    nodeElem.attr('transform', 'translate(' + (data.x || 0) + ',' + (data.y || 0) + ')');
+  });
+}
+
+
 function addGroups(groups: ArchitectureGroup[], cy: cytoscape.Core) {
   groups.forEach((group) => {
     cy.add({
@@ -67,32 +82,41 @@ function addGroups(groups: ArchitectureGroup[], cy: cytoscape.Core) {
   });
 }
 
-function positionServices(db: ArchitectureDB, cy: cytoscape.Core) {
-  cy.nodes().map((node, id) => {
-    const data = node.data();
-    if (data.type === 'group') return;
-    data.x = node.position().x;
-    data.y = node.position().y;
-    console.log(`Position service (${data.id}): (${data.x}, ${data.y})`);
-
-    const nodeElem = db.getElementById(data.id);
-    nodeElem.attr('transform', 'translate(' + (data.x || 0) + ',' + (data.y || 0) + ')');
-  });
-}
-
 function addEdges(lines: ArchitectureLine[], cy: cytoscape.Core) {
   lines.forEach((line) => {
+    const { lhs_id, rhs_id, lhs_into, rhs_into, lhs_dir, rhs_dir } = line;
+    const edgeType = isArchitectureDirectionXY(line.lhs_dir, line.rhs_dir)
+      ? 'segments'
+      : 'straight';
+    const edge: cytoscape._EdgeSingularData = {
+      id: `${lhs_id}-${rhs_id}`,
+      source: lhs_id,
+      sourceDir: lhs_dir,
+      sourceArrow: lhs_into,
+      sourceEndpoint:
+        lhs_dir === 'L'
+          ? '0 50%'
+          : lhs_dir === 'R'
+          ? '100% 50%'
+          : lhs_dir === 'T'
+          ? '50% 0'
+          : '50% 100%',
+      target: rhs_id,
+      targetDir: rhs_dir,
+      targetArrow: rhs_into,
+      targetEndpoint:
+        rhs_dir === 'L'
+          ? '0 50%'
+          : rhs_dir === 'R'
+          ? '100% 50%'
+          : rhs_dir === 'T'
+          ? '50% 0'
+          : '50% 100%',
+    };
     cy.add({
       group: 'edges',
-      data: {
-        id: `${line.lhs_id}-${line.rhs_id}`,
-        source: line.lhs_id,
-        sourceDir: line.lhs_dir,
-        sourceArrow: line.lhs_into,
-        target: line.rhs_id,
-        targetDir: line.rhs_dir,
-        targetArrow: line.rhs_into,
-      },
+      data: edge,
+      classes: edgeType,
     });
   });
 }
@@ -112,8 +136,20 @@ function layoutArchitecture(
           selector: 'edge',
           style: {
             'curve-style': 'straight',
-            'source-endpoint': '50% 50%',
-            'target-endpoint': '50% 50%',
+            'source-endpoint': 'data(sourceEndpoint)',
+            'target-endpoint': 'data(targetEndpoint)',
+          },
+        },
+        {
+          selector: 'edge.segments',
+          style: {
+            'curve-style': 'segments',
+            'segment-weights': '0',
+            'segment-distances': [0.5],
+            //@ts-ignore
+            'edge-distances': 'endpoints',
+            'source-endpoint': 'data(sourceEndpoint)',
+            'target-endpoint': 'data(targetEndpoint)',
           },
         },
         {
@@ -196,8 +232,6 @@ function layoutArchitecture(
         const invSpatialMap = Object.fromEntries(
           Object.entries(spatialMap).map(([id, pos]) => [posToStr(pos), id])
         );
-        console.log('===== invSpatialMap =====');
-        console.log(invSpatialMap);
 
         // perform BFS
         const queue = [posToStr([0, 0])];
@@ -227,7 +261,7 @@ function layoutArchitecture(
                     [ArchitectureDirectionName[
                       getOppositeArchitectureDirection(dir as ArchitectureDirection)
                     ]]: currId,
-                    gap: 100,
+                    gap: 1.5 * getConfigField('iconSize'),
                   });
                 }
               });
@@ -244,12 +278,12 @@ function layoutArchitecture(
     console.log(`Relative Alignments:`);
     console.log(relativeConstraints);
 
-    cy.layout({
+    const layout = cy.layout({
       name: 'fcose',
       quality: 'proof',
       styleEnabled: false,
       animate: false,
-      nodeDimensionsIncludeLabels: true,
+      nodeDimensionsIncludeLabels: false,
       // Adjust the edge parameters if it passes through the border of a group
       // Hacky fix for: https://github.com/iVis-at-Bilkent/cytoscape.js-fcose/issues/67
       idealEdgeLength(edge) {
@@ -257,14 +291,11 @@ function layoutArchitecture(
         const { parent: parentA } = nodeA.data();
         const { parent: parentB } = nodeB.data();
         const elasticity =
-          parentA === parentB
-            ? 1.25 * getConfigField('iconSize')
-            : 0.5 * getConfigField('iconSize');
+          parentA === parentB ? 1.5 * getConfigField('iconSize') : 0.5 * getConfigField('iconSize');
         return elasticity;
       },
       edgeElasticity(edge) {
         const [nodeA, nodeB] = edge.connectedNodes();
-        console.log(nodeA.data());
         const { parent: parentA } = nodeA.data();
         const { parent: parentB } = nodeB.data();
         const elasticity = parentA === parentB ? 0.45 : 0.001;
@@ -275,7 +306,79 @@ function layoutArchitecture(
         vertical: verticalAlignments,
       },
       relativePlacementConstraint: relativeConstraints,
-    } as FcoseLayoutOptions).run();
+    } as FcoseLayoutOptions);
+
+    layout.one('layoutstop', (_event) => {
+      function getSegmentWeights(
+        source: Position,
+        target: Position,
+        pointX: number,
+        pointY: number
+      ) {
+        let W, D;
+        const { x: sX, y: sY } = source;
+        const { x: tX, y: tY } = target;
+
+        D =
+          (pointY - sY + ((sX - pointX) * (sY - tY)) / (sX - tX)) /
+          Math.sqrt(1 + Math.pow((sY - tY) / (sX - tX), 2));
+        W = Math.sqrt(Math.pow(pointY - sY, 2) + Math.pow(pointX - sX, 2) - Math.pow(D, 2));
+
+        const distAB = Math.sqrt(Math.pow(tX - sX, 2) + Math.pow(tY - sY, 2));
+        W = W / distAB;
+
+        //check whether the point (pointX, pointY) is on right or left of the line src to tgt. for instance : a point C(X, Y) and line (AB).  d=(xB-xA)(yC-yA)-(yB-yA)(xC-xA). if d>0, then C is on left of the line. if d<0, it is on right. if d=0, it is on the line.
+        let delta1 = (tX - sX) * (pointY - sY) - (tY - sY) * (pointX - sX);
+        switch (true) {
+          case delta1 >= 0:
+            delta1 = 1;
+            break;
+          case delta1 < 0:
+            delta1 = -1;
+            break;
+        }
+        //check whether the point (pointX, pointY) is "behind" the line src to tgt
+        let delta2 = (tX - sX) * (pointX - sX) + (tY - sY) * (pointY - sY);
+        switch (true) {
+          case delta2 >= 0:
+            delta2 = 1;
+            break;
+          case delta2 < 0:
+            delta2 = -1;
+            break;
+        }
+
+        D = Math.abs(D) * delta1; //ensure that sign of D is same as sign of delta1. Hence we need to take absolute value of D and multiply by delta1
+        W = W * delta2;
+
+        return {
+          distances: D,
+          weights: W,
+        };
+      }
+      cy.startBatch();
+      for (let edge of Object.values(cy.edges())) {
+        if (edge.data) {
+          let { x: s_x, y: s_y } = edge.source().position();
+          let { x: t_x, y: t_y } = edge.target().position();
+          if (s_x !== t_x && s_y !== t_y) {
+            let sEP = edge.sourceEndpoint();
+            let tEP = edge.targetEndpoint();
+            const { sourceDir } = edge.data();
+            const [pointX, pointY] = isArchitectureDirectionY(sourceDir)
+              ? [sEP.x, tEP.y]
+              : [tEP.x, sEP.y];
+            const { weights, distances } = getSegmentWeights(sEP, tEP, pointX, pointY);
+            edge.style('segment-distances', distances);
+            edge.style('segment-weights', weights);
+          }
+        }
+      }
+      cy.endBatch();
+      layout.run();
+    });
+    layout.run();
+
     cy.ready((e) => {
       log.info('Ready', e);
       resolve(cy);
@@ -309,7 +412,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   drawServices(db, servicesElem, services, conf);
 
   const cy = await layoutArchitecture(services, groups, lines, ds);
-  console.log(cy.nodes().map((node) => ({ a: node.data() })));
+  // console.log(cy.nodes().map((node) => ({ a: node.data() })));
 
   drawEdges(edgesElem, cy);
   drawGroups(groupElem, cy);

@@ -21,10 +21,10 @@ export const ArchitectureDirectionArrow = {
 } as const;
 
 export const ArchitectureDirectionArrowShift = {
-  L: (orig: number, iconSize: number, arrowSize: number) => orig - iconSize / 2 - arrowSize + 2,
-  R: (orig: number, iconSize: number, arrowSize: number) => orig + iconSize / 2 - 2,
-  T: (orig: number, iconSize: number, arrowSize: number) => orig - iconSize / 2 - arrowSize + 2,
-  B: (orig: number, iconSize: number, arrowSize: number) => orig + iconSize / 2 - 2,
+  L: (orig: number, arrowSize: number) => orig - arrowSize + 2,
+  R: (orig: number, arrowSize: number) => orig - 2,
+  T: (orig: number, arrowSize: number) => orig - arrowSize + 2,
+  B: (orig: number, arrowSize: number) => orig - 2,
 } as const;
 
 export const getOppositeArchitectureDirection = function (
@@ -104,7 +104,6 @@ export const shiftPositionByArchitectureDirectionPair = function (
 ): number[] {
   const lhs = pair[0] as ArchitectureDirection;
   const rhs = pair[1] as ArchitectureDirection;
-  console.log(`${pair}: (${x},${y})`);
   if (isArchitectureDirectionX(lhs)) {
     if (isArchitectureDirectionY(rhs)) {
       return [x + (lhs === 'L' ? -1 : 1), y + (rhs === 'T' ? 1 : -1)];

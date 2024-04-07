@@ -77,30 +77,29 @@ declare module 'cytoscape' {
 
 export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
   const iconSize = getConfigField('iconSize');
-  const halfIconSize = iconSize / 2;
   const arrowSize = iconSize / 6;
   const halfArrowSize = arrowSize / 2;
+
   cy.edges().map((edge, id) => {
-    const { source, sourceDir, sourceArrow, target, targetDir, targetArrow } = edge.data();
-    if (edge[0]._private.bodyBounds) {
+    const { sourceDir, sourceArrow, targetDir, targetArrow } = edge.data();
+    const { x: startX, y: startY } = edge[0].sourceEndpoint();
+    const { x: midX, y: midY } = edge[0].midpoint();
+    const { x: endX, y: endY } = edge[0].targetEndpoint();
+    if (edge[0]._private.rscratch) {
       const bounds = edge[0]._private.rscratch;
 
       const g = edgesEl.insert('g');
 
       g.insert('path')
-        .attr(
-          'd',
-          `M ${bounds.startX},${bounds.startY} L ${bounds.midX},${bounds.midY} L${bounds.endX},${bounds.endY} `
-        )
+        .attr('d', `M ${startX},${startY} L ${midX},${midY} L${endX},${endY} `)
         .attr('class', 'edge');
 
       if (sourceArrow) {
-        console.log(`New source arrow: ${sourceDir} for ${source}`);
         const xShift = isArchitectureDirectionX(sourceDir)
-          ? ArchitectureDirectionArrowShift[sourceDir](bounds.startX, iconSize, arrowSize)
+          ? ArchitectureDirectionArrowShift[sourceDir](bounds.startX, arrowSize)
           : bounds.startX - halfArrowSize;
         const yShift = isArchitectureDirectionY(sourceDir)
-          ? ArchitectureDirectionArrowShift[sourceDir](bounds.startY, iconSize, arrowSize)
+          ? ArchitectureDirectionArrowShift[sourceDir](bounds.startY, arrowSize)
           : bounds.startY - halfArrowSize;
 
         g.insert('polygon')
@@ -109,13 +108,13 @@ export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
           .attr('class', 'arrow');
       }
       if (targetArrow) {
-        console.log(`New target arrow: ${targetDir} for ${target}`);
         const xShift = isArchitectureDirectionX(targetDir)
-          ? ArchitectureDirectionArrowShift[targetDir](bounds.endX, iconSize, arrowSize)
+          ? ArchitectureDirectionArrowShift[targetDir](bounds.endX, arrowSize)
           : bounds.endX - halfArrowSize;
         const yShift = isArchitectureDirectionY(targetDir)
-          ? ArchitectureDirectionArrowShift[targetDir](bounds.endY, iconSize, arrowSize)
+          ? ArchitectureDirectionArrowShift[targetDir](bounds.endY, arrowSize)
           : bounds.endY - halfArrowSize;
+
         g.insert('polygon')
           .attr('points', ArchitectureDirectionArrow[targetDir](arrowSize))
           .attr('transform', `translate(${xShift},${yShift})`)
@@ -207,7 +206,6 @@ export const drawService = function (
   const { width, height } = serviceElem._groups[0][0].getBBox();
   service.width = width;
   service.height = height;
-  console.log(`Draw service (${service.id})`);
   db.setElementForId(service.id, serviceElem);
   return 0;
 };

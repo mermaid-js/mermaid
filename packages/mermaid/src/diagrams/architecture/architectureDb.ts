@@ -120,7 +120,6 @@ const getGroups = (): ArchitectureGroup[] => {
 };
 
 const getDataStructures = () => {
-  console.log('===== createSpatialMap =====');
   if (datastructures === undefined) {
     // Create an adjacency list of the diagram to perform BFS on
     // Outer reduce applied on all services
@@ -169,7 +168,6 @@ const getDataStructures = () => {
           const [posX, posY] = spatialMap[id];
           Object.entries(adj).forEach(([dir, rhsId]) => {
             if (!visited[rhsId]) {
-              console.log(`${id} -- ${rhsId}`);
               spatialMap[rhsId] = shiftPositionByArchitectureDirectionPair(
                 [posX, posY],
                 dir as ArchitectureDirectionPair
