@@ -15,6 +15,7 @@
 
   <body>
     <h1>Architecture diagram demo</h1>
+
     <h2>Simple diagram with groups</h2>
     <pre class="mermaid">
       architecture
@@ -31,8 +32,8 @@
         disk2 T--B db
         server T--B gateway
     </pre>
-
     <hr />
+
     <h2>Groups within groups</h2>
     <pre class="mermaid">
       architecture
@@ -55,7 +56,6 @@
 
         serv1 L--R gateway
     </pre>
-
     <hr />
 
     <h2>Default icon (?) from uknown icon name</h2>
@@ -63,34 +63,62 @@
       architecture
         service unknown(iconnamedoesntexist)[Uknown Icon]
     </pre>
-
     <hr />
 
+    <h2>Split Direction</h2>
     <pre class="mermaid">
-        architecture
-            group vpc[Private VPC]
-            group vpc2[Public VPC]
+      architecture
+        service db(database)[Database]
+        service s3(storage)[Storage]
+        service serv1(server)[Server 1]
+        service serv2(server)[Server 2]
+        service disk(disk)[Disk]
 
-            service s3(s3)[S3 Bucket]
-            service rds(database)[RDS DB]
-            service ddb(dynamodb)[DynamoDB]
-            service ec2(ec2)[EC2 Server] in vpc
-            service gateway(api_gateway)[API Gateway] in vpc
-            service docdb(documentdb)[DocumentDB]
-            service lambda(lambda)[Lambda] in vpc
-
-            service serv1(ec2)[Public Server] in vpc2
-            service serv2(ec2)[Private Server] in vpc2
-
-            serv1 L--R serv2
-
-            s3 L--R rds
-            s3 B--T ddb
-            s3 R--L docdb
-            gateway L--R ec2
-            gateway T--B rds
-            gateway B--T lambda
+        db L--R s3
+        serv1 L--T s3
+        serv2 L--B s3
+        serv1 T--B disk
     </pre>
+    <hr />
+
+    <h2>Arrow Tests</h2>
+    <pre class="mermaid">
+      architecture
+        service servC(server)[Server 1]
+        service servL(server)[Server 2]
+        service servR(server)[Server 3]
+        service servT(server)[Server 4]
+        service servB(server)[Server 5]
+
+        servC (L--R) servL
+        servC (R--L) servR
+        servC (T--B) servT
+        servC (B--T) servB
+
+        servL (T--L) servT
+        servL (B--L) servB
+        servR (T--R) servT
+        servR (B--R) servB
+    </pre>
+    <pre class="mermaid">
+      architecture
+        service servC(server)[Server 1]
+        service servL(server)[Server 2]
+        service servR(server)[Server 3]
+        service servT(server)[Server 4]
+        service servB(server)[Server 5]
+
+        servC (L--R) servL
+        servC (R--L) servR
+        servC (T--B) servT
+        servC (B--T) servB
+
+        servT (L--T) servL
+        servB (L--B) servL
+        servT (R--T) servR
+        servB (R--B) servR
+    </pre>
+    <hr />
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
@@ -147,7 +175,7 @@
           useMaxWidth: false,
         },
         architecture: {
-          iconSize: 80
+          iconSize: 80,
         },
         useMaxWidth: false,
       });
