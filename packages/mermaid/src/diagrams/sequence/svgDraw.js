@@ -243,12 +243,15 @@ export const drawText = function (elem, textData) {
     } else {
       textElem.text(text);
     }
+
+    const textElemNode = (textElem._groups || textElem)[0][0]
     if (
+      textElemNode &&
       textData.valign !== undefined &&
       textData.textMargin !== undefined &&
       textData.textMargin > 0
     ) {
-      textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
+      textHeight += textElemNode.getBBox().height;
       prevTextHeight = textHeight;
     }
 
