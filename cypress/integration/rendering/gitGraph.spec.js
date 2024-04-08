@@ -1458,5 +1458,79 @@ gitGraph TB:
         { gitGraph: { parallelCommits: true } }
       );
     });
+    it('73: should render a simple gitgraph with three branches and tagged merge commit using switch instead of checkout', () => {
+      imgSnapshotTest(
+        `gitGraph
+         commit id: "1"
+         commit id: "2"
+         branch nice_feature
+         switch nice_feature
+         commit id: "3"
+         switch main
+         commit id: "4"
+         switch nice_feature
+         branch very_nice_feature
+         switch very_nice_feature
+         commit id: "5"
+         switch main
+         commit id: "6"
+         switch nice_feature
+         commit id: "7"
+         switch main
+         merge nice_feature id: "12345" tag: "my merge commit"
+         switch very_nice_feature
+         commit id: "8"
+         switch main
+         commit id: "9"
+        `,
+        {}
+      );
+    });
+    it('74: should render commits for more than 8 branches using switch instead of checkout', () => {
+      imgSnapshotTest(
+        `
+        gitGraph
+        switch main
+        %% Make sure to manually set the ID of all commits, for consistent visual tests
+        commit id: "1-abcdefg"
+        switch main
+        branch branch1
+        commit id: "2-abcdefg"
+        switch main
+        merge branch1
+        branch branch2
+        commit id: "3-abcdefg"
+        switch main
+        merge branch2
+        branch branch3
+        commit id: "4-abcdefg"
+        switch main
+        merge branch3
+        branch branch4
+        commit id: "5-abcdefg"
+        switch main
+        merge branch4
+        branch branch5
+        commit id: "6-abcdefg"
+        switch main
+        merge branch5
+        branch branch6
+        commit id: "7-abcdefg"
+        switch main
+        merge branch6
+        branch branch7
+        commit id: "8-abcdefg"
+        switch main
+        merge branch7
+        branch branch8
+        commit id: "9-abcdefg"
+        switch main
+        merge branch8
+        branch branch9
+        commit id: "10-abcdefg"
+        `,
+        {}
+      );
+    });
   });
 });
