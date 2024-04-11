@@ -1,4 +1,4 @@
-import { IconLibrary } from '../svgRegister.js';
+import type { IconLibrary } from '../svgRegister.js';
 import database from './database.js';
 import server from './server.js';
 import disk from './disk.js';

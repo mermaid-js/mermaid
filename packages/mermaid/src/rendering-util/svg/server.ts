@@ -1,5 +1,5 @@
 /**
- * @author Nicolas Newman
+ * Designer: Nicolas Newman
  * @see https://github.com/NicolasNewman/IconLibrary
  */
 import { createIcon } from '../svgRegister.js';

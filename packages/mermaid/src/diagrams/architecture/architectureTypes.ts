@@ -1,7 +1,7 @@
 import type { DiagramDB } from '../../diagram-api/types.js';
 import type { ArchitectureDiagramConfig } from '../../config.type.js';
 import type { D3Element } from '../../mermaidAPI.js';
-import cytoscape from 'cytoscape';
+import type cytoscape from 'cytoscape';
 
 /*=======================================*\
 |       Architecture Diagram Types        |
@@ -27,9 +27,9 @@ export const ArchitectureDirectionArrow = {
 
 export const ArchitectureDirectionArrowShift = {
   L: (orig: number, arrowSize: number) => orig - arrowSize + 2,
-  R: (orig: number, arrowSize: number) => orig - 2,
+  R: (orig: number, _arrowSize: number) => orig - 2,
   T: (orig: number, arrowSize: number) => orig - arrowSize + 2,
-  B: (orig: number, arrowSize: number) => orig - 2,
+  B: (orig: number, _arrowSize: number) => orig - 2,
 } as const;
 
 export const getOppositeArchitectureDirection = function (
@@ -80,7 +80,7 @@ export type ArchitectureDirectionPair = Exclude<
 >;
 /**
  * Verifies that the architecture direction pair does not contain an invalid match (LL, RR, TT, BB)
- * @param x architecture direction pair which could potentially be invalid
+ * @param x - architecture direction pair which could potentially be invalid
  * @returns true if the pair is not LL, RR, TT, or BB
  */
 export const isValidArchitectureDirectionPair = function (
@@ -96,8 +96,8 @@ export type ArchitectureDirectionPairMap = {
  * Creates a pair of the directions of each side of an edge. This function should be used instead of manually creating it to ensure that the source is always the first character.
  *
  * Note: Undefined is returned when sourceDir and targetDir are the same. In theory this should never happen since the diagram parser throws an error if a user defines it as such.
- * @param sourceDir
- * @param targetDir
+ * @param sourceDir - source direction
+ * @param targetDir - target direction
  * @returns
  */
 export const getArchitectureDirectionPair = function (
@@ -110,8 +110,8 @@ export const getArchitectureDirectionPair = function (
 
 /**
  * Given an x,y position for an arrow and the direction of the edge it belongs to, return a factor for slightly shifting the edge
- * @param param0 [x, y] coordinate pair
- * @param pair architecture direction pair
+ * @param param0 - [x, y] coordinate pair
+ * @param pair - architecture direction pair
  * @returns a new [x, y] coordinate pair
  */
 export const shiftPositionByArchitectureDirectionPair = function (
@@ -197,7 +197,7 @@ export interface ArchitectureState extends Record<string, unknown> {
   groups: ArchitectureGroup[];
   edges: ArchitectureEdge[];
   registeredIds: Record<string, 'service' | 'group'>;
-  datastructures?: ArchitectureDataStructures;
+  dataStructures?: ArchitectureDataStructures;
   elements: Record<string, D3Element>;
   config: ArchitectureDiagramConfig;
 }
@@ -207,21 +207,21 @@ export interface ArchitectureState extends Record<string, unknown> {
 \*=======================================*/
 
 export type EdgeSingularData = {
-    id: string;
-    source: string;
-    sourceDir: ArchitectureDirection;
-    sourceArrow?: boolean;
-    target: string;
-    targetDir: ArchitectureDirection;
-    targetArrow?: boolean;
-    [key: string]: any;
+  id: string;
+  source: string;
+  sourceDir: ArchitectureDirection;
+  sourceArrow?: boolean;
+  target: string;
+  targetDir: ArchitectureDirection;
+  targetArrow?: boolean;
+  [key: string]: any;
 };
 
 export const edgeData = (edge: cytoscape.EdgeSingular) => {
   return edge.data() as EdgeSingularData;
 }
 
-export interface EdgeSingular extends cytoscape.EdgeSingular{
+export interface EdgeSingular extends cytoscape.EdgeSingular {
   _private: {
     bodyBounds: unknown;
     rscratch: {
@@ -247,31 +247,31 @@ export type NodeSingularData = {
   height: number;
   [key: string]: any;
 }
-| {
-  type: 'group';
-  id: string;
-  icon?: string;
-  label?: string;
-  parent?: string;
-  [key: string]: any;
-};
+  | {
+    type: 'group';
+    id: string;
+    icon?: string;
+    label?: string;
+    parent?: string;
+    [key: string]: any;
+  };
 
 export const nodeData = (node: cytoscape.NodeSingular) => {
   return node.data() as NodeSingularData;
 }
 
-export interface NodeSingular extends cytoscape.NodeSingular{
-    _private: {
-      bodyBounds: {
-        h: number;
-        w: number;
-        x1: number;
-        x2: number;
-        y1: number;
-        y2: number;
-      };
-      children: cytoscape.NodeSingular[];
+export interface NodeSingular extends cytoscape.NodeSingular {
+  _private: {
+    bodyBounds: {
+      h: number;
+      w: number;
+      x1: number;
+      x2: number;
+      y1: number;
+      y2: number;
     };
-    data(): NodeSingularData;
-    data<T extends keyof NodeSingularData>(key: T): NodeSingularData[T];
+    children: cytoscape.NodeSingular[];
+  };
+  data(): NodeSingularData;
+  data<T extends keyof NodeSingularData>(key: T): NodeSingularData[T];
 }

@@ -11,7 +11,6 @@ import {
   nodeData,
 } from './architectureTypes.js';
 import type cytoscape from 'cytoscape';
-import { log } from '../../logger.js';
 import { getIcon } from '../../rendering-util/svgRegister.js';
 import { getConfigField } from './architectureDb.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
@@ -74,7 +73,8 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
     if (data.type === 'group') {
       const { h, w, x1, x2, y1, y2 } = node.boundingBox();
       console.log(`Draw group (${data.id}): pos=(${x1}, ${y1}), dim=(${w}, ${h})`);
-      let bkgElem = groupsEl
+
+      groupsEl
         .append('rect')
         .attr('x', x1 + halfIconSize)
         .attr('y', y1 + halfIconSize)
@@ -89,13 +89,13 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
           width: w,
           classes: 'architecture-service-label',
         },
-        getConfig());
+          getConfig());
         textElem
           .attr('dy', '1em')
           .attr('alignment-baseline', 'middle')
           .attr('dominant-baseline', 'start')
           .attr('text-anchor', 'start');
-  
+
         textElem.attr(
           'transform',
           'translate(' + (x1 + halfIconSize + 4) + ', ' + (y1 + halfIconSize + 2) + ')'
@@ -121,7 +121,7 @@ export const drawServices = function (
         width: iconSize * 1.5,
         classes: 'architecture-service-label',
       },
-      getConfig());
+        getConfig());
       textElem
         .attr('dy', '1em')
         .attr('alignment-baseline', 'middle')

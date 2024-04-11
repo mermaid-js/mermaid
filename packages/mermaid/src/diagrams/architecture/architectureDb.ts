@@ -38,7 +38,7 @@ const state = new ImperativeState<ArchitectureState>(() => ({
   edges: [],
   registeredIds: {},
   config: DEFAULT_ARCHITECTURE_CONFIG,
-  datastructures: undefined,
+  dataStructures: undefined,
   elements: {}
 }))
 
@@ -164,7 +164,7 @@ const getEdges = (): ArchitectureEdge[] => state.records.edges;
  * @returns
  */
 const getDataStructures = () => {
-  if (state.records.datastructures === undefined) {
+  if (state.records.dataStructures === undefined) {
     // Create an adjacency list of the diagram to perform BFS on
     // Outer reduce applied on all services
     // Inner reduce applied on the edges for a service
@@ -192,7 +192,7 @@ const getDataStructures = () => {
     );
 
     // Configuration for the initial pass of BFS
-    const [firstId, _] = Object.entries(adjList)[0];
+    const firstId = Object.keys(adjList)[0];
     const visited = { [firstId]: 1 };
     const notVisited = Object.keys(adjList).reduce(
       (prev, id) => (id === firstId ? prev : { ...prev, [id]: 1 }),
@@ -229,13 +229,13 @@ const getDataStructures = () => {
     while (Object.keys(notVisited).length > 0) {
       spatialMaps.push(BFS(Object.keys(notVisited)[0]));
     }
-    state.records.datastructures = {
+    state.records.dataStructures = {
       adjList,
       spatialMaps,
     };
-    console.log(state.records.datastructures);
+    console.log(state.records.dataStructures);
   }
-  return state.records.datastructures;
+  return state.records.dataStructures;
 };
 
 const setElementForId = (id: string, element: D3Element) => {
@@ -265,7 +265,7 @@ export const db: ArchitectureDB = {
 
 /**
  * Typed wrapper for resolving an architecture diagram's config fields. Returns the default value if undefined
- * @param field
+ * @param field - the config field to access
  * @returns
  */
 export function getConfigField<T extends keyof ArchitectureDiagramConfig>(
@@ -273,7 +273,6 @@ export function getConfigField<T extends keyof ArchitectureDiagramConfig>(
 ): Required<ArchitectureDiagramConfig>[T] {
   const arch = getConfig().architecture;
   if (arch && arch[field] !== undefined) {
-    const a = arch[field];
     return arch[field] as Required<ArchitectureDiagramConfig>[T];
   }
   return DEFAULT_ARCHITECTURE_CONFIG[field];

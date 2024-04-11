@@ -1,4 +1,4 @@
-import { Selection } from 'd3-selection';
+import type { Selection } from 'd3-selection';
 
 type IconResolver = (
   parent: Selection<SVGGElement, unknown, Element | null, unknown>,

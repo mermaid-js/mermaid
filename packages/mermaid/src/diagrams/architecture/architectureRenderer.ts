@@ -1,25 +1,27 @@
-import cytoscape, { Position } from 'cytoscape';
+import type { Position } from 'cytoscape';
+import cytoscape from 'cytoscape';
 import type { Diagram } from '../../Diagram.js';
-import fcose, { FcoseLayoutOptions } from 'cytoscape-fcose';
-import type { MermaidConfig } from '../../config.type.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
+import type { FcoseLayoutOptions } from 'cytoscape-fcose';
+import fcose from 'cytoscape-fcose';
 import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
+import type {
+  ArchitectureDataStructures,
+  ArchitectureSpatialMap,
+  EdgeSingularData,
+  EdgeSingular
+} from './architectureTypes.js';
 import {
   type ArchitectureDB,
   type ArchitectureDirection,
   type ArchitectureGroup,
   type ArchitectureEdge,
   type ArchitectureService,
-  ArchitectureDataStructures,
   ArchitectureDirectionName,
   getOppositeArchitectureDirection,
   isArchitectureDirectionXY,
   isArchitectureDirectionY,
-  ArchitectureSpatialMap,
-  EdgeSingularData,
-  EdgeSingular,
   nodeData,
   edgeData
 } from './architectureTypes.js';
@@ -49,9 +51,9 @@ function addServices(services: ArchitectureService[], cy: cytoscape.Core) {
 }
 
 function positionServices(db: ArchitectureDB, cy: cytoscape.Core) {
-  cy.nodes().map((node, id) => {
+  cy.nodes().map((node) => {
     const data = nodeData(node)
-    if (data.type === 'group') return;
+    if (data.type === 'group') { return; }
     data.x = node.position().x;
     data.y = node.position().y;
 
@@ -91,10 +93,10 @@ function addEdges(edges: ArchitectureEdge[], cy: cytoscape.Core) {
         lhsDir === 'L'
           ? '0 50%'
           : lhsDir === 'R'
-          ? '100% 50%'
-          : lhsDir === 'T'
-          ? '50% 0'
-          : '50% 100%',
+            ? '100% 50%'
+            : lhsDir === 'T'
+              ? '50% 0'
+              : '50% 100%',
       target: rhsId,
       targetDir: rhsDir,
       targetArrow: rhsInto,
@@ -102,10 +104,10 @@ function addEdges(edges: ArchitectureEdge[], cy: cytoscape.Core) {
         rhsDir === 'L'
           ? '0 50%'
           : rhsDir === 'R'
-          ? '100% 50%'
-          : rhsDir === 'T'
-          ? '50% 0'
-          : '50% 100%',
+            ? '100% 50%'
+            : rhsDir === 'T'
+              ? '50% 0'
+              : '50% 100%',
     };
     cy.add({
       group: 'edges',
@@ -121,8 +123,8 @@ function getAlignments(spatialMaps: ArchitectureSpatialMap[]): fcose.FcoseAlignm
     const verticalAlignments: Record<number, string[]> = {};
     // Group service ids in an object with their x and y coordinate as the key
     Object.entries(spatialMap).forEach(([id, [x, y]]) => {
-      if (!horizontalAlignments[y]) horizontalAlignments[y] = [];
-      if (!verticalAlignments[x]) verticalAlignments[x] = [];
+      if (!horizontalAlignments[y]) { horizontalAlignments[y] = []; }
+      if (!verticalAlignments[x]) { verticalAlignments[x] = []; }
       horizontalAlignments[y].push(id);
       verticalAlignments[x].push(id);
     });
@@ -133,7 +135,7 @@ function getAlignments(spatialMaps: ArchitectureSpatialMap[]): fcose.FcoseAlignm
     };
   });
 
-  // Merge the alginment lists for each spatial map into one 2d array per axis
+  // Merge the alignment lists for each spatial map into one 2d array per axis
   const [horizontal, vertical] = alignments.reduce(
     ([prevHoriz, prevVert], { horiz, vert }) => {
       return [
@@ -226,7 +228,7 @@ function layoutArchitecture(
             'curve-style': 'segments',
             'segment-weights': '0',
             'segment-distances': [0.5],
-            //@ts-ignore
+            // @ts-ignore Incorrect library types
             'edge-distances': 'endpoints',
             'source-endpoint': 'data(sourceEndpoint)',
             'target-endpoint': 'data(targetEndpoint)',
@@ -235,7 +237,7 @@ function layoutArchitecture(
         {
           selector: 'node',
           style: {
-            //@ts-ignore
+            // @ts-ignore Incorrect library types
             'compound-sizing-wrt-labels': 'include',
           },
         },
@@ -258,7 +260,7 @@ function layoutArchitecture(
         {
           selector: '.node-group',
           style: {
-            //@ts-ignore
+            // @ts-ignore Incorrect library types
             padding: '30px',
           },
         },
@@ -312,7 +314,7 @@ function layoutArchitecture(
     } as FcoseLayoutOptions);
 
     // Once the diagram has been generated and the service's position cords are set, adjust the XY edges to have a 90deg bend
-    layout.one('layoutstop', (_event) => {
+    layout.one('layoutstop', () => {
       function getSegmentWeights(
         source: Position,
         target: Position,
@@ -361,13 +363,13 @@ function layoutArchitecture(
         };
       }
       cy.startBatch();
-      for (let edge of Object.values(cy.edges())) {
+      for (const edge of Object.values(cy.edges())) {
         if (edge.data?.()) {
-          let { x: sX, y: sY } = edge.source().position();
-          let { x: tX, y: tY } = edge.target().position();
+          const { x: sX, y: sY } = edge.source().position();
+          const { x: tX, y: tY } = edge.target().position();
           if (sX !== tX && sY !== tY) {
-            let sEP = edge.sourceEndpoint();
-            let tEP = edge.targetEndpoint();
+            const sEP = edge.sourceEndpoint();
+            const tEP = edge.targetEndpoint();
             const { sourceDir } = edgeData(edge)
             const [pointX, pointY] = isArchitectureDirectionY(sourceDir)
               ? [sEP.x, tEP.y]

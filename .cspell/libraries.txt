@@ -23,6 +23,7 @@ Docsy
 DokuWiki
 dompurify
 elkjs
+fcose
 fontawesome
 Foswiki
 Gitea
