@@ -1050,9 +1050,22 @@ export const draw = async function (_text: string, id: string, _version: string,
   for (const e of messagesToDraw) {
     await drawMessage(diagram, e.messageModel, e.lineStartY, diagObj);
   }
+
+  // all remaining activations in 'bounds' were not drawn, because the 'deactivate' is missing -> draw them from the activation y until the bottom / the destroying of the actor
+  for (const notDrawnActivation of bounds.activations) {
+    let stopY = bounds.getVerticalPos();
+    const actorToDeactivate = bounds.models.actors.find((actor) => actor.name == notDrawnActivation.actor)
+    if (actorToDeactivate.stopy) { // if actor was destroyed -> use it's last y
+      stopY = actorToDeactivate.stopy;
+    }
+
+    svgDraw.drawActivation(diagram, notDrawnActivation, stopY, conf, actorActivations(notDrawnActivation.actor).length);
+  }
+
   if (conf.mirrorActors) {
     await drawActors(diagram, actors, actorKeys, true);
   }
+
   backgrounds.forEach((e) => svgDraw.drawBackgroundRect(diagram, e));
   fixLifeLineHeights(diagram, actors, actorKeys, conf);
 
