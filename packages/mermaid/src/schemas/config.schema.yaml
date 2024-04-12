@@ -24,7 +24,7 @@
 #   you may need to add it to `.build/jsonSchema.ts`, `src/docs.mts`
 #   and `scripts/create-types-from-json-schema.mjs`
 #   to get the default values/docs/types to generate properly.
-$id: https://mermaid-js.github.io/schemas/config.schema.json
+$id: https://mermaid.js.org/schemas/config.schema.json
 $schema: https://json-schema.org/draft/2019-09/schema
 title: Mermaid Config
 type: object
