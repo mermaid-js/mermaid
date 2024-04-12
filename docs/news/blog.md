@@ -6,6 +6,12 @@
 
 # Blog
 
+## [Mermaid Chart Unveils Visual Editor for Sequence Diagrams](https://www.mermaidchart.com/blog/posts/mermaid-chart-unveils-visual-editor-for-sequence-diagrams/)
+
+8 April 2024 · 5 mins
+
+Sequence diagrams are excellent tools for communication and documentation.
+
 ## [Modeling system states: It starts with a Turing machine](https://www.mermaidchart.com/blog/posts/modeling-system-states/)
 
 27 March 2024 · 12 mins

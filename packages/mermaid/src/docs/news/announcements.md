@@ -26,13 +26,23 @@ Thank you for being part of our story. Here's to creating, innovating, and colla
 
 Knut Sveidqvist 🧜‍♂️✨
 
-## Mermaid Chart's Visual Editor for Flowcharts
+## Mermaid Chart's Visual Editor for Flowcharts and Sequence diagrams
 
-The Mermaid Chart team is excited to introduce a new Visual Editor for flowcharts, enabling users of all skill levels to create diagrams easily and efficiently, with both GUI and code-based editing options.
+The Mermaid Chart team is excited to introduce a new Visual Editor for Flowcharts and Sequence diagrams, enabling users of all skill levels to create diagrams easily and efficiently, with both GUI and code-based editing options.
 
-Create flowchart nodes, connect them with edges, update shapes, change colors, and edit labels with just a few clicks that automatically reflect in your diagram’s code for easy customizability.
+Learn more:
 
-Read more about it in our latest [BLOG POST](https://www.mermaidchart.com/blog/posts/mermaid-chart-releases-new-visual-editor-for-flowcharts) and watch a [DEMO VIDEO](https://www.youtube.com/watch?v=5aja0gijoO0) on our YouTube page.
+- Visual Editor For Flowcharts
+
+  - [Blog post](https://www.mermaidchart.com/blog/posts/mermaid-chart-releases-new-visual-editor-for-flowcharts)
+
+  - [Demo video](https://www.youtube.com/watch?v=5aja0gijoO0)
+
+- Visual Editor For Sequence diagrams
+
+  - [Blog post](https://www.mermaidchart.com/blog/posts/mermaid-chart-unveils-visual-editor-for-sequence-diagrams)
+
+  - [Demo video](https://youtu.be/imc2u5_N6Dc)
 
 ## 📖 Blog posts
 
