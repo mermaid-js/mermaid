@@ -1,6 +1,6 @@
 import common, { calculateMathMLDimensions, hasKatex, renderKatex } from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
-import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
+import { ZERO_WIDTH_SPACE, parseFontSize, renderMarkdown } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
 
@@ -256,6 +256,46 @@ export const drawText = function (elem, textData) {
   }
 
   return textElems;
+};
+
+export const drawMarkdown = async function (elem, textData, msgModel = null) {
+  let textElem = elem.append('foreignObject');
+  const lines = await renderMarkdown(textData.text, configApi.getConfig());
+
+  const divElem = textElem
+    .append('xhtml:div')
+    .attr('style', 'width: fit-content;')
+    .attr('xmlns', 'http://www.w3.org/1999/xhtml')
+    .html(lines);
+  const dim = divElem.node().getBoundingClientRect();
+
+  textElem.attr('height', Math.round(dim.height)).attr('width', Math.round(dim.width));
+
+  if (textData.class === 'noteText') {
+    const rectElem = elem.node().firstChild;
+
+    rectElem.setAttribute('height', dim.height + 2 * textData.textMargin);
+    const rectDim = rectElem.getBBox();
+
+    textElem
+      .attr('x', Math.round(rectDim.x + rectDim.width / 2 - dim.width / 2))
+      .attr('y', Math.round(rectDim.y + rectDim.height / 2 - dim.height / 2));
+  } else if (msgModel) {
+    let { startx, stopx, starty } = msgModel;
+    if (startx > stopx) {
+      const temp = startx;
+      startx = stopx;
+      stopx = temp;
+    }
+
+    textElem.attr('x', Math.round(startx + Math.abs(startx - stopx) / 2 - dim.width / 2));
+    if (textData.class === 'loopText') {
+      textElem.attr('y', Math.round(starty));
+    } else {
+      textElem.attr('y', Math.round(starty - dim.height));
+    }
+  }
+  return [textElem];
 };
 
 export const drawLabel = function (elem, txtObject) {

@@ -83,6 +83,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 \-[\)]                                                          return 'SOLID_POINT';
 \-\-[\)]                                                        return 'DOTTED_POINT';
 ":"(?:(?:no)?wrap:)?[^#\n;]+                                    return 'TXT';
+""(?:(?:no)?wrap:)?[^#\n;]+                                     return 'TXT2';
 "+"                                                             return '+';
 "-"                                                             return '-';
 <<EOF>>                                                         return 'NEWLINE';
@@ -105,6 +106,17 @@ start
 document
 	: /* empty */ { $$ = [] }
 	| document line {$1.push($2);$$ = $1}
+	;
+
+note_section
+	: /* empty */ { $$ = "" }
+	| note_section note_line {$1=$1.concat($2);$$ = $1}
+	;
+
+note_line
+	: ACTOR { $$ = $1 }
+	| TXT { $$ = $1 }
+	| NEWLINE {  }
 	;
 
 line
@@ -241,6 +253,9 @@ note_statement
 		$2[0] = $2[0].actor;
 		$2[1] = $2[1].actor;
 		$$ = [$3, {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$2.slice(0, 2), text:$4}];}
+	| 'note' placement actor note_section end
+	{
+		$$ = [$3, {type:'addNote', placement:$2, actor:$3.actor, text:yy.parseNoteStatement($4)}];}
 	;
 
 links_statement

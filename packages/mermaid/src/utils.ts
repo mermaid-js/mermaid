@@ -7,12 +7,12 @@ import {
   curveBumpX,
   curveBumpY,
   curveBundle,
+  curveCardinal,
   curveCardinalClosed,
   curveCardinalOpen,
-  curveCardinal,
+  curveCatmullRom,
   curveCatmullRomClosed,
   curveCatmullRomOpen,
-  curveCatmullRom,
   curveLinear,
   curveLinearClosed,
   curveMonotoneX,
@@ -23,18 +23,20 @@ import {
   curveStepBefore,
   select,
 } from 'd3';
-import common from './diagrams/common/common.js';
-import { sanitizeDirective } from './utils/sanitizeDirective.js';
-import { log } from './logger.js';
-import { detectType } from './diagram-api/detectType.js';
-import assignWithDepth from './assignWithDepth.js';
-import type { MermaidConfig } from './config.type.js';
+import hljs from 'highlight.js';
 import memoize from 'lodash-es/memoize.js';
 import merge from 'lodash-es/merge.js';
+import { Marked } from "marked";
+import { markedHighlight } from "marked-highlight";
+import assignWithDepth from './assignWithDepth.js';
+import type { MermaidConfig } from './config.type.js';
+import { detectType } from './diagram-api/detectType.js';
 import { directiveRegex } from './diagram-api/regexes.js';
+import common, { hasMarkdown } from './diagrams/common/common.js';
+import { log } from './logger.js';
 import type { D3Element } from './mermaidAPI.js';
 import type { Point, TextDimensionConfig, TextDimensions } from './types.js';
-
+import { sanitizeDirective } from './utils/sanitizeDirective.js';
 export const ZERO_WIDTH_SPACE = '\u200b';
 
 // Effectively an enum of the supported curve types, accessible by name
@@ -754,6 +756,60 @@ export const calculateTextDimensions: (
   (text, config) => `${text}${config.fontSize}${config.fontWeight}${config.fontFamily}`
 );
 
+/**
+ * This calculates the dimensions of the given text, font size, font family, font weight, and
+ * margins.
+ *
+ * @param text - The text to calculate the width of
+ * @param config - The config for fontSize, fontFamily, fontWeight, and margin all impacting
+ *   the resulting size
+ * @returns The dimensions for the given text
+ */
+export const calculateMarkdownDimensions = async (text: string, config: TextDimensionConfig) => {
+  const { fontSize = 12, fontFamily = 'Arial', fontWeight = 400 } = config;
+  const [, _fontSizePx="12px"] = parseFontSize(fontSize);
+  text = await renderMarkdown(text, config);
+  const divElem = document.createElement('div');
+  divElem.innerHTML = text;
+  divElem.id = 'markdown-temp';
+  divElem.style.visibility = 'hidden';
+  divElem.style.position = 'absolute';
+  divElem.style.fontSize = _fontSizePx;
+  divElem.style.fontFamily = fontFamily;
+  divElem.style.fontWeight = ""+fontWeight;
+  divElem.style.top = '0';
+  const body = document.querySelector('body');
+  body?.insertAdjacentElement('beforeend', divElem);
+  const dim = { width: divElem.clientWidth, height: divElem.clientHeight };
+  divElem.remove();
+  return dim;
+};
+
+/**
+ * Attempts to render and return the KaTeX portion of a string with MathML
+ *
+ * @param text - The text to test
+ * @param config - Configuration for Mermaid
+ * @returns String containing MathML if KaTeX is supported, or an error message if it is not and stylesheets aren't present
+ */
+export const renderMarkdown = async (text: string, config: MermaidConfig): Promise<string> => {
+  if (!hasMarkdown(text)) {
+    return text;
+  }
+
+  const marked = new Marked(
+    markedHighlight({
+      langPrefix: 'hljs language-',
+      highlight(code, lang, info) {
+        const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+        return hljs.highlight(code, { language }).value;
+      }
+    })
+  );
+
+  return marked.parse(text);
+}
+
 export class InitIDGenerator {
   private count = 0;
   public next: () => number;
@@ -870,6 +926,7 @@ export default {
   calculateTextHeight,
   calculateTextWidth,
   calculateTextDimensions,
+  calculateMarkdownDimensions,
   cleanAndMerge,
   detectInit,
   detectDirective,
