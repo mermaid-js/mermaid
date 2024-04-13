@@ -33,6 +33,8 @@ In Mermaid, we support the basic git operations like:
 With the help of these key git commands, you will be able to draw a gitgraph in Mermaid very easily and quickly.
 Entity names are often capitalized, although there is no accepted standard on this, and it is not required in Mermaid.
 
+**NOTE**: `checkout` and `switch` can be used interchangeably.
+
 ## Syntax
 
 Mermaid syntax for a gitgraph is very straight-forward and simple. It follows a declarative-approach, where each commit is drawn on the timeline in the diagram, in order of its occurrences/presence in code. Basically, it follows the insertion order for each command.

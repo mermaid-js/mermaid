@@ -88,6 +88,16 @@ describe('when parsing a gitGraph', function () {
     expect(parser.yy.getCurrentBranch()).toBe('new');
   });
 
+  it('should switch a branch', function () {
+    const str = 'gitGraph:\n' + 'branch new\n' + 'switch new\n';
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+
+    expect(Object.keys(commits).length).toBe(0);
+    expect(parser.yy.getCurrentBranch()).toBe('new');
+  });
+
   it('should add commits to checked out branch', function () {
     const str = 'gitGraph:\n' + 'branch new\n' + 'checkout new\n' + 'commit\n' + 'commit\n';
 
