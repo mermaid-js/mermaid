@@ -1,5 +1,6 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
+import { ImperativeState } from '../../utils/imperativeState.js';
 import { sanitizeText } from '../common/common.js';
 import {
   clear as commonClear,
@@ -10,7 +11,6 @@ import {
   setAccTitle,
   setDiagramTitle,
 } from '../common/commonDb.js';
-import { ImperativeState } from '../../utils/imperativeState.js';
 
 const state = new ImperativeState(() => ({
   prevActor: undefined,
@@ -267,6 +267,25 @@ export const parseBoxData = function (str) {
         : undefined,
   };
 };
+
+export const parseNoteStatement = function (str) {
+  try {
+    const _str = str.trim();
+    const _text = _str.match(/^:?json:/) !== null 
+          ? JSON.stringify(JSON.parse(_str.replace(/^:json:/, '').trim()),null,2)
+          : _str;
+    const message = {
+      text: 
+        _text,
+      wrap:
+        false
+    };
+    return message;
+  } catch (exception) {
+    let error = new Error('Invalid JSON');
+    throw error;
+  }
+}
 
 export const LINETYPE = {
   SOLID: 0,
@@ -639,6 +658,7 @@ export default {
   clear,
   parseMessage,
   parseBoxData,
+  parseNoteStatement,
   LINETYPE,
   ARROWTYPE,
   PLACEMENT,
@@ -649,4 +669,5 @@ export default {
   getAccDescription,
   hasAtLeastOneBox,
   hasAtLeastOneBoxWithTitle,
+
 };

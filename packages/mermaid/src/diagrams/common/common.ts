@@ -294,6 +294,7 @@ const processSet = (input: string): string => {
 export const isMathMLSupported = () => window.MathMLElement !== undefined;
 
 export const katexRegex = /\$\$(.*)\$\$/g;
+export const markdownRegex = /```((.|\n)*)```/g;
 
 /**
  * Whether or not a text has KaTeX delimiters
@@ -302,6 +303,14 @@ export const katexRegex = /\$\$(.*)\$\$/g;
  * @returns Whether or not the text has KaTeX delimiters
  */
 export const hasKatex = (text: string): boolean => (text.match(katexRegex)?.length ?? 0) > 0;
+
+/**
+ * Whether or not a text has markdown delimiters
+ *
+ * @param text - The text to test
+ * @returns Whether or not the text has markdown delimiters
+ */
+export const hasMarkdown = (text: string): boolean => (text.match(markdownRegex)?.length ?? 0) > 0;
 
 /**
  * Computes the minimum dimensions needed to display a div containing MathML
