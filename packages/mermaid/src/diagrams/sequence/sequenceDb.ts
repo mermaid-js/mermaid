@@ -1,5 +1,6 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
+import { ImperativeState } from '../../utils/imperativeState.js';
 import { sanitizeText } from '../common/common.js';
 import {
   clear as commonClear,
@@ -10,11 +11,9 @@ import {
   setAccTitle,
   setDiagramTitle,
 } from '../common/commonDb.js';
-import { ImperativeState } from '../../utils/imperativeState.js';
 import type { Actor, AddMessageParams, Box, Message, Note } from './types.js';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-type State = {
+interface SequenceState {
   prevActor?: string;
   actors: Record<string, Actor>;
   createdActors: Record<string, number>;
@@ -27,9 +26,9 @@ type State = {
   currentBox?: Box;
   lastCreated?: Actor;
   lastDestroyed?: Actor;
-};
+}
 
-const state = new ImperativeState<State>(() => ({
+const state = new ImperativeState<SequenceState>(() => ({
   prevActor: undefined,
   actors: {},
   createdActors: {},
