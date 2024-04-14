@@ -2,7 +2,7 @@ import type { GrammarAST, Stream } from 'langium';
 import type { TokenType } from 'chevrotain';
 
 import { AbstractMermaidTokenBuilder } from '../common/index.js';
-import { matchSankeyLinkNode } from './matcher.js';
+import { sankeyLinkNodeRegex } from './matcher.js';
 import type { SankeyServices } from './module.js';
 
 export class SankeyTokenBuilder extends AbstractMermaidTokenBuilder {
@@ -16,7 +16,7 @@ export class SankeyTokenBuilder extends AbstractMermaidTokenBuilder {
       switch (tokenType.name) {
         case 'SANKEY_LINK_NODE': {
           tokenType.LINE_BREAKS = false;
-          tokenType.PATTERN = matchSankeyLinkNode;
+          tokenType.PATTERN = super.regexPatternFunction(sankeyLinkNodeRegex);
           break;
         }
       }
