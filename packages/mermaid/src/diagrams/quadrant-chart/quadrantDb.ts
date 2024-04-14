@@ -17,7 +17,10 @@ function textSanitizer(text: string) {
   return sanitizeText(text.trim(), config);
 }
 
-type LexTextObj = { text: string; type: 'text' | 'markdown' };
+interface LexTextObj {
+  text: string;
+  type: 'text' | 'markdown';
+}
 
 const quadrantBuilder = new QuadrantBuilder();
 

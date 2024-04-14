@@ -19,12 +19,12 @@ import { PieValueConverter } from './valueConverter.js';
 /**
  * Declaration of `Pie` services.
  */
-type PieAddedServices = {
+interface PieAddedServices {
   parser: {
     TokenBuilder: PieTokenBuilder;
     ValueConverter: PieValueConverter;
   };
-};
+}
 
 /**
  * Union of Langium default services and `Pie` services.
