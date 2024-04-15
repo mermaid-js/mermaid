@@ -19,12 +19,12 @@ import { InfoTokenBuilder } from './tokenBuilder.js';
 /**
  * Declaration of `Info` services.
  */
-type InfoAddedServices = {
+interface InfoAddedServices {
   parser: {
     TokenBuilder: InfoTokenBuilder;
     ValueConverter: CommonValueConverter;
   };
-};
+}
 
 /**
  * Union of Langium default services and `Info` services.
