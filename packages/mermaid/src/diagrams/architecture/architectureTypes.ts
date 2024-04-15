@@ -168,16 +168,12 @@ export interface ArchitectureEdge {
 
 export interface ArchitectureDB extends DiagramDB {
   clear: () => void;
-  addService: (id: string, opts: Omit<ArchitectureService, 'id'>) => void;
+  addService: (service: Omit<ArchitectureService, "edges">) => void;
   getServices: () => ArchitectureService[];
-  addGroup: (id: string, opts: Omit<ArchitectureGroup, 'id'>) => void;
+  addGroup: (group: ArchitectureGroup) => void;
   getGroups: () => ArchitectureGroup[];
   addEdge: (
-    lhsId: string,
-    lhsDir: ArchitectureDirection,
-    rhsId: string,
-    rhsDir: ArchitectureDirection,
-    opts: Omit<ArchitectureEdge, 'lhsId' | 'lhsDir' | 'rhsId' | 'rhsDir'>
+    edge: ArchitectureEdge
   ) => void;
   getEdges: () => ArchitectureEdge[];
   setElementForId: (id: string, element: D3Element) => void;

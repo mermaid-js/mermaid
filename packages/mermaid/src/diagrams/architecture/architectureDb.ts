@@ -3,7 +3,6 @@ import type {
   ArchitectureDB,
   ArchitectureService,
   ArchitectureGroup,
-  ArchitectureDirection,
   ArchitectureEdge,
   ArchitectureDirectionPairMap,
   ArchitectureDirectionPair,
@@ -47,21 +46,20 @@ const clear = (): void => {
   commonClear();
 };
 
-const addService = function (id: string, opts: Omit<ArchitectureService, 'id' | 'edges'> = {}) {
-  const { icon, in: inside, title } = opts;
+const addService = function ({id, icon, in: parent, title}: Omit<ArchitectureService, "edges">) {
   if (state.records.registeredIds[id] !== undefined) {
     throw new Error(`The service id [${id}] is already in use by another ${state.records.registeredIds[id]}`);
   }
-  if (inside !== undefined) {
-    if (id === inside) {
+  if (parent !== undefined) {
+    if (id === parent) {
       throw new Error(`The service [${id}] cannot be placed within itself`);
     }
-    if (state.records.registeredIds[inside] === undefined) {
+    if (state.records.registeredIds[parent] === undefined) {
       throw new Error(
         `The service [${id}]'s parent does not exist. Please make sure the parent is created before this service`
       );
     }
-    if (state.records.registeredIds[inside] === 'service') {
+    if (state.records.registeredIds[parent] === 'service') {
       throw new Error(`The service [${id}]'s parent is not a group`);
     }
   }
@@ -73,27 +71,27 @@ const addService = function (id: string, opts: Omit<ArchitectureService, 'id' | 
     icon,
     title,
     edges: [],
-    in: inside,
+    in: parent,
   };
 };
 
 const getServices = (): ArchitectureService[] => Object.values(state.records.services);
 
-const addGroup = function (id: string, opts: Omit<ArchitectureGroup, 'id'> = {}) {
-  const { icon, in: inside, title } = opts;
+const addGroup = function ({id, icon, in: parent, title}: ArchitectureGroup) {
+  // const { icon, in: inside, title } = opts;
   if (state.records.registeredIds[id] !== undefined) {
     throw new Error(`The group id [${id}] is already in use by another ${state.records.registeredIds[id]}`);
   }
-  if (inside !== undefined) {
-    if (id === inside) {
+  if (parent !== undefined) {
+    if (id === parent) {
       throw new Error(`The group [${id}] cannot be placed within itself`);
     }
-    if (state.records.registeredIds[inside] === undefined) {
+    if (state.records.registeredIds[parent] === undefined) {
       throw new Error(
         `The group [${id}]'s parent does not exist. Please make sure the parent is created before this group`
       );
     }
-    if (state.records.registeredIds[inside] === 'service') {
+    if (state.records.registeredIds[parent] === 'service') {
       throw new Error(`The group [${id}]'s parent is not a group`);
     }
   }
@@ -104,7 +102,7 @@ const addGroup = function (id: string, opts: Omit<ArchitectureGroup, 'id'> = {})
     id,
     icon,
     title,
-    in: inside,
+    in: parent,
   });
 };
 const getGroups = (): ArchitectureGroup[] => {
@@ -112,13 +110,8 @@ const getGroups = (): ArchitectureGroup[] => {
 };
 
 const addEdge = function (
-  lhsId: string,
-  lhsDir: ArchitectureDirection,
-  rhsId: string,
-  rhsDir: ArchitectureDirection,
-  opts: Omit<ArchitectureEdge, 'lhsId' | 'lhsDir' | 'rhsId' | 'rhsDir'> = {}
+  {lhsId, rhsId, lhsDir, rhsDir, lhsInto, rhsInto, title}: ArchitectureEdge
 ) {
-  const { title, lhsInto: lhsInto, rhsInto: rhsInto } = opts;
   if (!isArchitectureDirection(lhsDir)) {
     throw new Error(
       `Invalid direction given for left hand side of edge ${lhsId}--${rhsId}. Expected (L,R,T,B) got ${lhsDir}`
