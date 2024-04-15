@@ -19,9 +19,18 @@
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
+%x text
+%x string
+%x md_string
 %%
 
 [\n]+                                                           return 'NEWLINE';
+<md_string>[^`"]+       { return "MD_STR";}
+<md_string>[`]["]       { this.popState();}
+<*>["][`]               { this.begin("md_string");}
+<string>[^"]+           return "STR";
+<string>["]             this.popState();
+<*>["]                  this.pushState("string");
 \s+                                                             /* skip all whitespace */
 <ID,ALIAS,LINE>((?!\n)\s)+                                      /* skip same-line whitespace */
 <INITIAL,ID,ALIAS,LINE>\#[^\n]*   															/* skip comments */
@@ -73,7 +82,9 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "off"															return 'off';
 ","                                                             return ',';
 ";"                                                             return 'NEWLINE';
-[^\+\->:\n,;]+((?!(\-x|\-\-x|\-\)|\-\-\)))[\-]*[^\+\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; }
+<text>"]"               										{ this.popState(); return 'SQE'; }
+<*>"["                  										{ this.pushState("text"); return 'SQS'; }
+([A-Za-z0-9!"\#$%&'*+\.`?\\_\/]|\-(?=[^\>\-\.])|=(?!=))+        return 'ACTOR';
 "->>"                                                           return 'SOLID_ARROW';
 "-->>"                                                          return 'DOTTED_ARROW';
 "->"                                                            return 'SOLID_OPEN_ARROW';
@@ -83,7 +94,6 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 \-[\)]                                                          return 'SOLID_POINT';
 \-\-[\)]                                                        return 'DOTTED_POINT';
 ":"(?:(?:no)?wrap:)?[^#\n;]+                                    return 'TXT';
-""(?:(?:no)?wrap:)?[^#\n;]+                                     return 'TXT2';
 "+"                                                             return '+';
 "-"                                                             return '-';
 <<EOF>>                                                         return 'NEWLINE';
@@ -106,17 +116,6 @@ start
 document
 	: /* empty */ { $$ = [] }
 	| document line {$1.push($2);$$ = $1}
-	;
-
-note_section
-	: /* empty */ { $$ = "" }
-	| note_section note_line {$1=$1.concat($2);$$ = $1}
-	;
-
-note_line
-	: ACTOR { $$ = $1 }
-	| TXT { $$ = $1 }
-	| NEWLINE {  }
 	;
 
 line
@@ -253,9 +252,10 @@ note_statement
 		$2[0] = $2[0].actor;
 		$2[1] = $2[1].actor;
 		$$ = [$3, {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$2.slice(0, 2), text:$4}];}
-	| 'note' placement actor note_section end
+	| 'note' placement noteStatementText
 	{
-		$$ = [$3, {type:'addNote', placement:$2, actor:$3.actor, text:yy.parseNoteStatement($4)}];}
+		console.log($3);
+		$$ = [$3, {type:'addNote', placement:$2, actor:$3.actor, text:$3.text }];}
 	;
 
 links_statement
@@ -336,4 +336,15 @@ text2
   : TXT {$$ = yy.parseMessage($1.trim().substring(1)) }
   ;
 
+text3
+  : STR
+  { $$ = {text: $STR, type: 'string'};}
+  | MD_STR
+  { $$ = {text: $MD_STR, type: 'markdown'};}
+  ;
+
+noteStatementText
+  : ACTOR SQS text3 SQE
+  {$$ = {actor: $ACTOR, text: $text3 }}
+  ;
 %%
