@@ -21,13 +21,13 @@ import { createSankeyParser } from './parser.js';
 /**
  * Declaration of `Sankey` services.
  */
-export type SankeyAddedServices = {
+export interface SankeyAddedServices {
   parser: {
     LangiumParser: LangiumParser;
     TokenBuilder: SankeyTokenBuilder;
     ValueConverter: SankeyValueConverter;
   };
-};
+}
 
 /**
  * Union of Langium default services and `Sankey` services.
