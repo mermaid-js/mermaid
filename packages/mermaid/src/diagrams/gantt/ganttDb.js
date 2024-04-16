@@ -23,6 +23,7 @@ dayjs.extend(dayjsCustomParseFormat);
 dayjs.extend(dayjsAdvancedFormat);
 dayjs.extend(isSameOrAfter);
 
+const WEEKEND_START_DAY = { friday: 5, saturday: 6 };
 let dateFormat = '';
 let axisFormat = '';
 let tickInterval = undefined;
@@ -41,6 +42,8 @@ let topAxis = false;
 let weekday = 'sunday';
 let wdStartTime = undefined;
 let wdEndTime = undefined;
+let weekend = 'saturday';
+
 
 // The serial order of the task in the script
 let lastOrder = 0;
@@ -69,6 +72,7 @@ export const clear = function () {
   weekday = 'sunday';
   wdStartTime = undefined;
   wdEndTime = undefined;
+  weekend = 'saturday';
 };
 
 export const setAxisFormat = function (txt) {
@@ -189,7 +193,11 @@ export const isInvalidDate = function (date, dateFormat, excludes, includes) {
   if (includes.includes(date.format(dateFormat.trim()))) {
     return false;
   }
-  if (date.isoWeekday() >= 6 && excludes.includes('weekends')) {
+  if (
+    excludes.includes('weekends') &&
+    (date.isoWeekday() === WEEKEND_START_DAY[weekend] ||
+      date.isoWeekday() === WEEKEND_START_DAY[weekend] + 1)
+  ) {
     return true;
   }
   if (excludes.includes(date.format('dddd').toLowerCase())) {
@@ -204,6 +212,10 @@ export const setWeekday = function (txt) {
 
 export const getWeekday = function () {
   return weekday;
+};
+
+export const setWeekend = function (startDay) {
+  weekend = startDay;
 };
 
 /**
@@ -853,6 +865,8 @@ export default {
   getWDStartTime,
   setWDEndTime,
   getWDEndTime,
+  setWeekend,
+
 };
 
 /**

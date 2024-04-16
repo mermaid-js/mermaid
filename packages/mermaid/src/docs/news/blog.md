@@ -1,5 +1,23 @@
 # Blog
 
+## [Mermaid Chart Unveils Visual Editor for Sequence Diagrams](https://www.mermaidchart.com/blog/posts/mermaid-chart-unveils-visual-editor-for-sequence-diagrams/)
+
+8 April 2024 · 5 mins
+
+Sequence diagrams are excellent tools for communication and documentation.
+
+## [Modeling system states: It starts with a Turing machine](https://www.mermaidchart.com/blog/posts/modeling-system-states/)
+
+27 March 2024 · 12 mins
+
+In computer science, there are a few fundamental papers that, without exaggeration, changed everything.
+
+## [Mermaid Chart Raises $7.5M to Reinvent Visual Collaboration for Enterprises](https://www.mermaidchart.com/blog/posts/mermaid-chart-raises-7.5m-to-reinvent-visual-collaoration-for-enterprises/)
+
+20 March 2024 · 4 mins
+
+Mermaid Chart, the company offering text-based diagramming and workflow management tools, today announced it has raised $7.5 million in Seed funding.
+
 ## [Mermaid Chart GPT Is Now Available In the GPT Store!](https://www.mermaidchart.com/blog/posts/mermaid-chart-gpt-is-now-available-in-the-gpt-store/)
 
 7 March 2024 · 3 mins

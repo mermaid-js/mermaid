@@ -537,6 +537,16 @@ Formatting:
 
 This feature is applicable to node labels, edge labels, and subgraph labels.
 
+The auto wrapping can be disabled by using
+
+```
+---
+config:
+  markdownAutoWrap: false
+---
+graph LR
+```
+
 ## Interaction
 
 It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab.
@@ -787,6 +797,30 @@ Adding this snippet in the `<head>` would add support for Font Awesome v6.5.1
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
   rel="stylesheet"
 />
+```
+
+### Custom icons
+
+It is possible to use custom icons served from Font Awesome as long as the website imports the corresponding kit.
+
+Note that this is currently a paid feature from Font Awesome.
+
+For custom icons, you need to use the `fak` prefix.
+
+**Example**
+
+```
+flowchart TD
+    B[fa:fa-twitter] %% standard icon
+    B-->E(fak:fa-custom-icon-name) %% custom icon
+```
+
+And trying to render it
+
+```mermaid-example
+flowchart TD
+    B["fa:fa-twitter for peace"]
+    B-->C["fab:fa-truck-bold a custom icon"]
 ```
 
 ## Graph declarations with spaces between vertices and link and without semicolon

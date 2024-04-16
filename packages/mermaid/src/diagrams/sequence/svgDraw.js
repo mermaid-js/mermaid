@@ -1,6 +1,5 @@
 import common, { calculateMathMLDimensions, hasKatex, renderKatex } from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
-import { addFunction } from '../../interactionDb.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
@@ -8,6 +7,8 @@ import * as configApi from '../../config.js';
 export const ACTOR_TYPE_WIDTH = 18 * 2;
 const TOP_ACTOR_CLASS = 'actor-top';
 const BOTTOM_ACTOR_CLASS = 'actor-bottom';
+const ACTOR_BOX_CLASS = 'actor-box';
+const ACTOR_MAN_FIGURE_CLASS = 'actor-man';
 
 export const drawRect = function (elem, rectData) {
   return svgDrawCommon.drawRect(elem, rectData);
@@ -395,7 +396,7 @@ const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
     rect.y,
     rect.width,
     rect.height,
-    { class: 'actor' },
+    { class: `actor ${ACTOR_BOX_CLASS}` },
     conf
   );
 
@@ -433,7 +434,7 @@ const drawActorTypeActor = async function (elem, actor, conf, isFooter) {
     actor.actorCnt = actorCnt;
   }
   const actElem = elem.append('g');
-  let cssClass = 'actor-man';
+  let cssClass = ACTOR_MAN_FIGURE_CLASS;
   if (isFooter) {
     cssClass += ` ${BOTTOM_ACTOR_CLASS}`;
   } else {
@@ -497,7 +498,7 @@ const drawActorTypeActor = async function (elem, actor, conf, isFooter) {
     rect.y + 35,
     rect.width,
     rect.height,
-    { class: 'actor' },
+    { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
     conf
   );
 
@@ -736,7 +737,7 @@ export const insertArrowHead = function (elem) {
     .attr('markerHeight', 12)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 0 0 L 10 5 L 0 10 z'); // this is actual shape for arrowhead
+    .attr('d', 'M -1 0 L 10 5 L 0 10 z'); // this is actual shape for arrowhead
 };
 
 /**
