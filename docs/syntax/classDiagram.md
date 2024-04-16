@@ -285,8 +285,9 @@ To describe the visibility (or encapsulation) of an attribute or method/function
 
 > _note_ you can also include additional _classifiers_ to a method definition by adding the following notation to the _end_ of the method, i.e.: after the `()` or after the return type:
 >
-> - `*` Abstract e.g.: `someAbstractMethod()*` or `someAbstractMethod() int*`
 > - `$` Static e.g.: `someStaticMethod()$` or `someStaticMethod() String$`
+> - `*` Abstract e.g.: `someAbstractMethod()*` or `someAbstractMethod() int*`
+> - `$*` Both e.g: `someAbstractMethod()$*` or `someAbstractMethod() int$*`
 
 > _note_ you can also include additional _classifiers_ to a field definition by adding the following notation to the very end:
 >
