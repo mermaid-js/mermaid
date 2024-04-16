@@ -194,4 +194,47 @@ describe('parsing a flow chart', function () {
 with a second line`
     );
   });
+
+  for (const unsafeProp of ['__proto__', 'constructor', 'prototype']) {
+    it(`should work with node id ${unsafeProp}`, function () {
+      const flowChart = `graph LR
+      ${unsafeProp} --> A;`;
+
+      expect(() => {
+        flow.parser.parse(flowChart);
+      }).not.toThrow();
+    });
+
+    it(`should work with tooltip id ${unsafeProp}`, function () {
+      const flowChart = `graph LR
+      click ${unsafeProp} callback "${unsafeProp}";`;
+
+      expect(() => {
+        flow.parser.parse(flowChart);
+      }).not.toThrow();
+    });
+
+    it(`should work with class id ${unsafeProp}`, function () {
+      const flowChart = `graph LR
+      ${unsafeProp} --> A;
+      classDef ${unsafeProp} color:#ffffff,fill:#000000;
+      class ${unsafeProp} ${unsafeProp};`;
+
+      expect(() => {
+        flow.parser.parse(flowChart);
+      }).not.toThrow();
+    });
+
+    it(`should work with subgraph id ${unsafeProp}`, function () {
+      const flowChart = `graph LR
+      ${unsafeProp} --> A;
+      subgraph ${unsafeProp}
+        C --> D;
+      end;`;
+
+      expect(() => {
+        flow.parser.parse(flowChart);
+      }).not.toThrow();
+    });
+  }
 });
