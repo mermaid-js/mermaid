@@ -138,6 +138,14 @@ describe('pie', () => {
         `);
       }).rejects.toThrowError();
     });
+
+    it('should handle unsafe properties', async () => {
+      await expect(parser.parse(`pie title Unsafe props test
+        "__proto__" : 386
+        "constructor" : 85
+        "prototype" : 15`)).resolves.toBeUndefined();
+      expect([...db.getSections().keys()]).toEqual(['__proto__', 'constructor', 'prototype']);
+    });
   });
 
   describe('config', () => {

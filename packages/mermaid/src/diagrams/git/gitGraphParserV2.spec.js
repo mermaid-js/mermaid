@@ -1095,4 +1095,26 @@ describe('when parsing a gitGraph', function () {
       expect(parser.yy.getAccDescription()).toBe('This is a description\nusing multiple lines');
     });
   });
+
+  describe('unsafe properties', () => {
+    for (const prop of ['__proto__', 'constructor', 'prototype']) {
+      it(`should work with custom commit id or branch name ${prop}`, () => {
+        const str = `gitGraph
+    commit id:"${prop}"
+    branch ${prop}
+    checkout ${prop}
+    commit
+    checkout main
+    merge ${prop}
+    `;
+        parser.parse(str);
+        const commits = parser.yy.getCommits();
+        expect(commits.size).toBe(3);
+        expect(commits.keys().next().value).toBe(prop);
+        expect(parser.yy.getCurrentBranch()).toBe('main');
+        expect(parser.yy.getBranches().size).toBe(2);
+        expect(parser.yy.getBranchesAsObjArray()[1].name).toBe(prop);
+      });
+    }
+  });
 });

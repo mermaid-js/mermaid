@@ -809,5 +809,5 @@ describe('when parsing ER diagram it...', function () {
     it('should work with a constructor property', function () {
       validateProperty('constructor');
     });
-  })
+  });
 });

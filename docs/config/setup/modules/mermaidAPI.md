@@ -190,12 +190,12 @@ the string with all the user styles
 
 #### Parameters
 
-| Name        | Type                                                      |
-| :---------- | :-------------------------------------------------------- |
-| `config`    | `MermaidConfig`                                           |
-| `graphType` | `string`                                                  |
+| Name        | Type                                                   |
+| :---------- | :----------------------------------------------------- |
+| `config`    | `MermaidConfig`                                        |
+| `graphType` | `string`                                               |
 | `classDefs` | `undefined` \| `Map`<`string`, `DiagramStyleClassDef`> |
-| `svgId`     | `string`                                                  |
+| `svgId`     | `string`                                               |
 
 #### Returns
 
