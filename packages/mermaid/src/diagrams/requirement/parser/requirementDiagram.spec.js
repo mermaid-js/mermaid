@@ -33,14 +33,14 @@ describe('when parsing requirement diagram it...', function () {
 
     reqDiagram.parser.parse(doc);
 
-    expect(Object.keys(requirementDb.getRequirements()).length).toBe(1);
+    expect(requirementDb.getRequirements().size).toBe(1);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.id).toBe(expectedId);
     expect(foundReq.text).toBe(expectedText);
 
-    expect(Object.keys(requirementDb.getElements()).length).toBe(0);
+    expect(requirementDb.getElements().size).toBe(0);
     expect(Object.keys(requirementDb.getRelationships()).length).toBe(0);
   });
 
@@ -61,10 +61,10 @@ describe('when parsing requirement diagram it...', function () {
 
     reqDiagram.parser.parse(doc);
 
-    expect(Object.keys(requirementDb.getRequirements()).length).toBe(0);
-    expect(Object.keys(requirementDb.getElements()).length).toBe(1);
+    expect(requirementDb.getRequirements().size).toBe(0);
+    expect(requirementDb.getElements().size).toBe(1);
 
-    let foundElement = requirementDb.getElements()[expectedName];
+    let foundElement = requirementDb.getElements().get(expectedName);
     expect(foundElement).toBeDefined();
     expect(foundElement.type).toBe(expectedType);
     expect(foundElement.docRef).toBe(expectedDocRef);
@@ -121,8 +121,8 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    expect(Object.keys(requirementDb.getRequirements()).length).toBe(0);
-    expect(Object.keys(requirementDb.getElements()).length).toBe(0);
+    expect(requirementDb.getRequirements().size).toBe(0);
+    expect(requirementDb.getElements().size).toBe(0);
     expect(Object.keys(requirementDb.getRelationships()).length).toBe(1);
 
     let foundRelationship = requirementDb.getRelationships()[0];
@@ -152,7 +152,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.type).toBe(expectedType);
   });
@@ -179,7 +179,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.type).toBe(expectedType);
   });
@@ -206,7 +206,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.type).toBe(expectedType);
   });
@@ -233,7 +233,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.type).toBe(expectedType);
   });
@@ -260,7 +260,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.type).toBe(expectedType);
   });
@@ -287,7 +287,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.type).toBe(expectedType);
   });
@@ -314,7 +314,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.risk).toBe(expectedRisk);
   });
@@ -341,7 +341,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.risk).toBe(expectedRisk);
   });
@@ -368,7 +368,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.risk).toBe(expectedRisk);
   });
@@ -395,7 +395,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.verifyMethod).toBe(expectedVerifyMethod);
   });
@@ -422,7 +422,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.verifyMethod).toBe(expectedVerifyMethod);
   });
@@ -449,7 +449,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.verifyMethod).toBe(expectedVerifyMethod);
   });
@@ -476,7 +476,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.verifyMethod).toBe(expectedVerifyMethod);
   });

@@ -44,13 +44,13 @@ export const addNamespaces = function (
   _id: string,
   diagObj: any
 ) {
-  const keys = Object.keys(namespaces);
+  const keys = [...namespaces.keys()];
   log.info('keys:', keys);
   log.info(namespaces);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   keys.forEach(function (id) {
-    const vertex = namespaces[id];
+    const vertex = namespaces.get(id)!;
 
     // parent node must be one of [rect, roundedWithTitle, noteGroup, divider]
     const shape = 'rect';
@@ -89,15 +89,15 @@ export const addClasses = function (
   diagObj: any,
   parent?: string
 ) {
-  const keys = Object.keys(classes);
+  const keys = [...classes.keys()];
   log.info('keys:', keys);
   log.info(classes);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   keys
-    .filter((id) => classes[id].parent == parent)
+    .filter((id) => classes.get(id)!.parent == parent)
     .forEach(function (id) {
-      const vertex = classes[id];
+      const vertex = classes.get(id)!;
 
       /**
        * Variable for storing the classes for the vertex
@@ -346,7 +346,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   }
   const root =
     securityLevel === 'sandbox'
-      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      ? select(sandboxElement!.nodes()[0]!.contentDocument.body)
       : select('body');
   const svg = root.select(`[id="${id}"]`);
 
@@ -366,7 +366,8 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   // Add label rects for non html labels
   if (!conf?.htmlLabels) {
-    const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+    const doc =
+      securityLevel === 'sandbox' ? sandboxElement!.nodes()[0]!.contentDocument : document;
     const labels = doc.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
     for (const label of labels) {
       // Get dimensions of label

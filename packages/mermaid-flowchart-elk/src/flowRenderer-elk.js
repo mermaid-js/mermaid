@@ -41,12 +41,12 @@ let nodeDb = {};
 export const addVertices = async function (vert, svgId, root, doc, diagObj, parentLookupDb, graph) {
   const svg = root.select(`[id="${svgId}"]`);
   const nodes = svg.insert('g').attr('class', 'nodes');
-  const keys = Object.keys(vert);
+  const keys = [...vert.keys()];
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   await Promise.all(
     keys.map(async function (id) {
-      const vertex = vert[id];
+      const vertex = vert.get(id);
 
       /**
        * Variable for storing the classes for the vertex
@@ -595,7 +595,7 @@ const addMarkersToEdge = function (svgPath, edgeData, diagramType, arrowMarkerAb
  *
  * @param text
  * @param diagObj
- * @returns {Record<string, import('../../mermaid/src/diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles
+ * @returns {Map<string, import('../../mermaid/src/diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles
  */
 export const getClasses = function (text, diagObj) {
   log.info('Extracting classes');

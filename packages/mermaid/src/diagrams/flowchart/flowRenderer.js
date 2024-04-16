@@ -265,7 +265,7 @@ export const addEdges = async function (edges, g, diagObj) {
  *
  * @param text
  * @param diagObj
- * @returns {Record<string, import('../../diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles
+ * @returns {Map<string, import('../../diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles
  */
 export const getClasses = function (text, diagObj) {
   log.info('Extracting classes');
@@ -452,9 +452,9 @@ export const draw = async function (text, id, _version, diagObj) {
   setupGraphViewbox(g, svg, conf.diagramPadding, conf.useMaxWidth);
 
   // If node has a link, wrap it in an anchor SVG object.
-  const keys = Object.keys(vert);
+  const keys = [...vert.keys()];
   keys.forEach(function (key) {
-    const vertex = vert[key];
+    const vertex = vert.get(key);
 
     if (vertex.link) {
       const node = root.select('#' + id + ' [id="' + diagObj.db.lookUpDomId(key) + '"]');

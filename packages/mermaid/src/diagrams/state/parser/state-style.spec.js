@@ -19,8 +19,8 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const styleClasses = stateDb.getClasses();
-        expect(styleClasses['exampleClass'].styles.length).toEqual(1);
-        expect(styleClasses['exampleClass'].styles[0]).toEqual('background:#bbb');
+        expect(styleClasses.get('exampleClass').styles.length).toEqual(1);
+        expect(styleClasses.get('exampleClass').styles[0]).toEqual('background:#bbb');
       });
 
       it('can define multiple attributes separated by commas', function () {
@@ -30,10 +30,10 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const styleClasses = stateDb.getClasses();
-        expect(styleClasses['exampleClass'].styles.length).toEqual(3);
-        expect(styleClasses['exampleClass'].styles[0]).toEqual('background:#bbb');
-        expect(styleClasses['exampleClass'].styles[1]).toEqual('font-weight:bold');
-        expect(styleClasses['exampleClass'].styles[2]).toEqual('font-style:italic');
+        expect(styleClasses.get('exampleClass').styles.length).toEqual(3);
+        expect(styleClasses.get('exampleClass').styles[0]).toEqual('background:#bbb');
+        expect(styleClasses.get('exampleClass').styles[1]).toEqual('font-weight:bold');
+        expect(styleClasses.get('exampleClass').styles[2]).toEqual('font-style:italic');
       });
 
       // need to look at what the lexer is doing
@@ -44,9 +44,9 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const classes = stateDiagram.parser.yy.getClasses();
-        expect(classes['exampleStyleClass'].styles.length).toBe(2);
-        expect(classes['exampleStyleClass'].styles[0]).toBe('background:#bbb');
-        expect(classes['exampleStyleClass'].styles[1]).toBe('border:1.5px solid red');
+        expect(classes.get('exampleStyleClass').styles.length).toBe(2);
+        expect(classes.get('exampleStyleClass').styles[0]).toBe('background:#bbb');
+        expect(classes.get('exampleStyleClass').styles[1]).toBe('border:1.5px solid red');
       });
 
       it('an attribute can have a space in the style', function () {
@@ -56,9 +56,9 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const classes = stateDiagram.parser.yy.getClasses();
-        expect(classes['exampleStyleClass'].styles.length).toBe(2);
-        expect(classes['exampleStyleClass'].styles[0]).toBe('background:  #bbb');
-        expect(classes['exampleStyleClass'].styles[1]).toBe('border:1.5px solid red');
+        expect(classes.get('exampleStyleClass').styles.length).toBe(2);
+        expect(classes.get('exampleStyleClass').styles[0]).toBe('background:  #bbb');
+        expect(classes.get('exampleStyleClass').styles[1]).toBe('border:1.5px solid red');
       });
     });
 
@@ -74,9 +74,9 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const classes = stateDb.getClasses();
-        expect(classes['exampleStyleClass'].styles.length).toEqual(2);
-        expect(classes['exampleStyleClass'].styles[0]).toEqual('background:#bbb');
-        expect(classes['exampleStyleClass'].styles[1]).toEqual('border:1px solid red');
+        expect(classes.get('exampleStyleClass').styles.length).toEqual(2);
+        expect(classes.get('exampleStyleClass').styles[0]).toEqual('background:#bbb');
+        expect(classes.get('exampleStyleClass').styles[1]).toEqual('border:1px solid red');
 
         const state_a = stateDb.getState('a');
         expect(state_a.classes.length).toEqual(1);
@@ -95,9 +95,9 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const classes = stateDiagram.parser.yy.getClasses();
-        expect(classes['exampleStyleClass'].styles.length).toBe(2);
-        expect(classes['exampleStyleClass'].styles[0]).toBe('background:#bbb');
-        expect(classes['exampleStyleClass'].styles[1]).toBe('border:1px solid red');
+        expect(classes.get('exampleStyleClass').styles.length).toBe(2);
+        expect(classes.get('exampleStyleClass').styles[0]).toBe('background:#bbb');
+        expect(classes.get('exampleStyleClass').styles[1]).toBe('border:1px solid red');
 
         const state_a_a = stateDiagram.parser.yy.getState('a_a');
         expect(state_a_a.classes.length).toEqual(1);
@@ -117,11 +117,11 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           const states = stateDiagram.parser.yy.getStates();
           const classes = stateDiagram.parser.yy.getClasses();
 
-          expect(classes['exampleStyleClass'].styles.length).toEqual(2);
-          expect(classes['exampleStyleClass'].styles[0]).toEqual('background:#bbb');
-          expect(classes['exampleStyleClass'].styles[1]).toEqual('border:1px solid red');
+          expect(classes.get('exampleStyleClass').styles.length).toEqual(2);
+          expect(classes.get('exampleStyleClass').styles[0]).toEqual('background:#bbb');
+          expect(classes.get('exampleStyleClass').styles[1]).toEqual('border:1px solid red');
 
-          expect(states['b'].classes[0]).toEqual('exampleStyleClass');
+          expect(states.get('b').classes[0]).toEqual('exampleStyleClass');
         });
 
         it('can be applied to a [*] state', () => {
@@ -136,11 +136,11 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           const states = stateDiagram.parser.yy.getStates();
           const classes = stateDiagram.parser.yy.getClasses();
 
-          expect(classes['exampleStyleClass'].styles.length).toEqual(2);
-          expect(classes['exampleStyleClass'].styles[0]).toEqual('background:#bbb');
-          expect(classes['exampleStyleClass'].styles[1]).toEqual('border:1px solid red');
+          expect(classes.get('exampleStyleClass').styles.length).toEqual(2);
+          expect(classes.get('exampleStyleClass').styles[0]).toEqual('background:#bbb');
+          expect(classes.get('exampleStyleClass').styles[1]).toEqual('border:1px solid red');
 
-          expect(states['root_start'].classes[0]).toEqual('exampleStyleClass');
+          expect(states.get('root_start').classes[0]).toEqual('exampleStyleClass');
         });
 
         it('can be applied to a comma separated list of states', function () {
@@ -155,11 +155,11 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           let classes = stateDiagram.parser.yy.getClasses();
           let states = stateDiagram.parser.yy.getStates();
 
-          expect(classes['exampleStyleClass'].styles.length).toEqual(2);
-          expect(classes['exampleStyleClass'].styles[0]).toEqual('background:#bbb');
-          expect(classes['exampleStyleClass'].styles[1]).toEqual('border:1px solid red');
-          expect(states['a'].classes[0]).toEqual('exampleStyleClass');
-          expect(states['b'].classes[0]).toEqual('exampleStyleClass');
+          expect(classes.get('exampleStyleClass').styles.length).toEqual(2);
+          expect(classes.get('exampleStyleClass').styles[0]).toEqual('background:#bbb');
+          expect(classes.get('exampleStyleClass').styles[1]).toEqual('border:1px solid red');
+          expect(states.get('a').classes[0]).toEqual('exampleStyleClass');
+          expect(states.get('b').classes[0]).toEqual('exampleStyleClass');
         });
 
         it('a comma separated list of states may or may not have spaces after commas', function () {
@@ -174,13 +174,13 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           const classes = stateDiagram.parser.yy.getClasses();
           const states = stateDiagram.parser.yy.getStates();
 
-          expect(classes['exampleStyleClass'].styles.length).toEqual(2);
-          expect(classes['exampleStyleClass'].styles[0]).toEqual('background:#bbb');
-          expect(classes['exampleStyleClass'].styles[1]).toEqual('border:1px solid red');
+          expect(classes.get('exampleStyleClass').styles.length).toEqual(2);
+          expect(classes.get('exampleStyleClass').styles[0]).toEqual('background:#bbb');
+          expect(classes.get('exampleStyleClass').styles[1]).toEqual('border:1px solid red');
 
           const statesList = ['a', 'b', 'c', 'd', 'e'];
           statesList.forEach((stateId) => {
-            expect(states[stateId].classes[0]).toEqual('exampleStyleClass');
+            expect(states.get(stateId).classes[0]).toEqual('exampleStyleClass');
           });
         });
       });
@@ -202,7 +202,7 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
 
           const states = stateDiagram.parser.yy.getStates();
 
-          expect(states['Moving'].doc.length).toEqual(1);
+          expect(states.get('Moving').doc.length).toEqual(1);
         });
       });
     });

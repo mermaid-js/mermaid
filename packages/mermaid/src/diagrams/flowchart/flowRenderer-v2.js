@@ -29,11 +29,11 @@ export const setConf = function (cnf) {
  */
 export const addVertices = async function (vert, g, svgId, root, doc, diagObj) {
   const svg = root.select(`[id="${svgId}"]`);
-  const keys = Object.keys(vert);
+  const keys = vert.keys();
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   for (const id of keys) {
-    const vertex = vert[id];
+    const vertex = vert.get(id);
 
     /**
      * Variable for storing the classes for the vertex
@@ -336,7 +336,7 @@ export const addEdges = async function (edges, g, diagObj) {
  *
  * @param text
  * @param diagObj
- * @returns {Record<string, import('../../diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles
+ * @returns {Map<string, import('../../diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles
  */
 export const getClasses = function (text, diagObj) {
   return diagObj.db.getClasses();
@@ -463,9 +463,9 @@ export const draw = async function (text, id, _version, diagObj) {
   }
 
   // If node has a link, wrap it in an anchor SVG object.
-  const keys = Object.keys(vert);
-  keys.forEach(function (key) {
-    const vertex = vert[key];
+  const keys = [...vert.keys()];
+  keys.forEach((key) => {
+    const vertex = vert.get(key);
 
     if (vertex.link) {
       const node = select('#' + id + ' [id="' + key + '"]');

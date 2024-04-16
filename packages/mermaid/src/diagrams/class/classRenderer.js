@@ -175,10 +175,10 @@ export const draw = function (text, id, _version, diagObj) {
   });
 
   const classes = diagObj.db.getClasses();
-  const keys = Object.keys(classes);
+  const keys = [...classes.keys()];
 
   for (const key of keys) {
-    const classDef = classes[key];
+    const classDef = classes.get(key);
     const node = svgDraw.drawClass(diagram, classDef, conf, diagObj);
     idCache[node.id] = node;
 

@@ -161,5 +161,5 @@ export interface NamespaceNode {
   children: NamespaceMap;
 }
 
-export type ClassMap = Record<string, ClassNode>;
-export type NamespaceMap = Record<string, NamespaceNode>;
+export type ClassMap = Map<string, ClassNode>;
+export type NamespaceMap = Map<string, NamespaceNode>;

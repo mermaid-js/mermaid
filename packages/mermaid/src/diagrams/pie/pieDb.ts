@@ -16,7 +16,7 @@ import DEFAULT_CONFIG from '../../defaultConfig.js';
 export const DEFAULT_PIE_CONFIG: Required<PieDiagramConfig> = DEFAULT_CONFIG.pie;
 
 export const DEFAULT_PIE_DB: RequiredDeep<PieFields> = {
-  sections: {},
+  sections: new Map(),
   showData: false,
   config: DEFAULT_PIE_CONFIG,
 } as const;
@@ -28,14 +28,14 @@ const config: Required<PieDiagramConfig> = structuredClone(DEFAULT_PIE_CONFIG);
 const getConfig = (): Required<PieDiagramConfig> => structuredClone(config);
 
 const clear = (): void => {
-  sections = structuredClone(DEFAULT_PIE_DB.sections);
+  sections = new Map();
   showData = DEFAULT_PIE_DB.showData;
   commonClear();
 };
 
 const addSection = ({ label, value }: D3Section): void => {
-  if (sections[label] === undefined) {
-    sections[label] = value;
+  if (!sections.has(label)) {
+    sections.set(label, value);
     log.debug(`added new section: ${label}, with value: ${value}`);
   }
 };

@@ -81,7 +81,7 @@ export const setConf = function (cnf) {
  *
  * @param {string} text - the diagram text to be parsed
  * @param diagramObj
- * @returns {Record<string, import('../../diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles (a Map with keys = strings, values = )
+ * @returns {Map<string, import('../../diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles (a Map with keys = strings, values = )
  */
 export const getClasses = function (text, diagramObj) {
   diagramObj.db.extract(diagramObj.db.getRootDocV2());

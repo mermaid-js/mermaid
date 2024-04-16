@@ -194,7 +194,7 @@ the string with all the user styles
 | :---------- | :-------------------------------------------------------- |
 | `config`    | `MermaidConfig`                                           |
 | `graphType` | `string`                                                  |
-| `classDefs` | `undefined` \| `Record`<`string`, `DiagramStyleClassDef`> |
+| `classDefs` | `undefined` \| `Map`<`string`, `DiagramStyleClassDef`> |
 | `svgId`     | `string`                                                  |
 
 #### Returns

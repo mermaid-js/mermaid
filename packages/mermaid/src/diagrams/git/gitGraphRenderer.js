@@ -129,7 +129,7 @@ const setParallelBTPos = (sortedKeys, commits, defaultPos, commitStep, layoutOff
   let maxPosition = defaultPos;
   let roots = [];
   sortedKeys.forEach((key) => {
-    const commit = commits[key];
+    const commit = commits.get(key);
     if (commit.parents.length) {
       const closestParent = findClosestParent(commit.parents);
       curPos = commitPos[closestParent].y + commitStep;
@@ -151,7 +151,7 @@ const setParallelBTPos = (sortedKeys, commits, defaultPos, commitStep, layoutOff
     commitPos[commit.id] = { x: x, y: y };
   });
   sortedKeys.forEach((key) => {
-    const commit = commits[key];
+    const commit = commits.get(key);
     if (commit.parents.length) {
       const closestParent = findClosestParentBT(commit.parents);
       curPos = commitPos[closestParent].y - commitStep;
@@ -183,18 +183,18 @@ const drawCommits = (svg, commits, modifyGraph) => {
   if (dir === 'TB' || dir === 'BT') {
     pos = defaultPos;
   }
-  const keys = Object.keys(commits);
+  const keys = [...commits.keys()];
   const isParallelCommits = gitGraphConfig.parallelCommits;
   const layoutOffset = 10;
   const commitStep = 40;
   let sortedKeys =
     dir !== 'BT' || (dir === 'BT' && isParallelCommits)
       ? keys.sort((a, b) => {
-          return commits[a].seq - commits[b].seq;
+          return commits.get(a).seq - commits.get(b).seq;
         })
       : keys
           .sort((a, b) => {
-            return commits[a].seq - commits[b].seq;
+            return commits.get(a).seq - commits.get(b).seq;
           })
           .reverse();
 
@@ -203,7 +203,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
     sortedKeys = sortedKeys.reverse();
   }
   sortedKeys.forEach((key) => {
-    const commit = commits[key];
+    const commit = commits.get(key);
     if (isParallelCommits) {
       if (commit.parents.length) {
         const closestParent =
@@ -712,11 +712,11 @@ const drawArrow = (svg, commitA, commitB, allCommits) => {
 
 const drawArrows = (svg, commits) => {
   const gArrows = svg.append('g').attr('class', 'commit-arrows');
-  Object.keys(commits).forEach((key) => {
-    const commit = commits[key];
+  [...commits.keys()].forEach((key) => {
+    const commit = commits.get(key);
     if (commit.parents && commit.parents.length > 0) {
       commit.parents.forEach((parent) => {
-        drawArrow(gArrows, commits[parent], commit, commits);
+        drawArrow(gArrows, commits.get(parent), commit, commits);
       });
     }
   });

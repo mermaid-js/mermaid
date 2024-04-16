@@ -192,8 +192,8 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
 };
 
 export const drawReqs = (reqs, graph, svgNode) => {
-  Object.keys(reqs).forEach((reqName) => {
-    let req = reqs[reqName];
+  [...reqs.keys()].forEach((reqName) => {
+    let req = reqs.get(reqName);
     reqName = elementString(reqName);
     log.info('Added new requirement: ', reqName);
 
@@ -237,8 +237,8 @@ export const drawReqs = (reqs, graph, svgNode) => {
 };
 
 export const drawElements = (els, graph, svgNode) => {
-  Object.keys(els).forEach((elName) => {
-    let el = els[elName];
+  [...els.keys()].forEach((elName) => {
+    let el = els.get(elName);
     const id = elementString(elName);
 
     const groupNode = svgNode.append('g').attr('id', id);

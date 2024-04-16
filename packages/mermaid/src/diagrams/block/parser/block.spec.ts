@@ -388,7 +388,7 @@ describe('Block diagram', function () {
       const mc = blocks[0];
       expect(mc.classes).toContain('black');
       const classes = db.getClasses();
-      const black = classes.black;
+      const black = classes.get('black')!;
       expect(black.id).toBe('black');
       expect(black.styles[0]).toEqual('color:#ffffff');
     });
