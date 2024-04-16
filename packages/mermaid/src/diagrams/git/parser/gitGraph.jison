@@ -41,7 +41,7 @@ merge(?=\s|$)                           return 'MERGE';
 cherry\-pick(?=\s|$)                    return 'CHERRY_PICK';
 "parent:"                               return 'PARENT_COMMIT'
 // "reset"                                 return 'RESET';
-checkout(?=\s|$)                        return 'CHECKOUT';
+\b(checkout|switch)(?=\s|$)             return 'CHECKOUT';
 "LR"                                    return 'DIR';
 "TB"                                    return 'DIR';
 "BT"                                    return 'DIR';
