@@ -1,7 +1,7 @@
 import { scaleLinear } from 'd3';
-import { log } from '../../logger.js';
 import type { BaseDiagramConfig, QuadrantChartConfig } from '../../config.type.js';
 import defaultConfig from '../../defaultConfig.js';
+import { log } from '../../logger.js';
 import { getThemeVariables } from '../../themes/theme-default.js';
 import type { Point } from '../../types.js';
 
@@ -202,6 +202,7 @@ export class QuadrantBuilder {
     this.config = this.getDefaultConfig();
     this.themeConfig = this.getDefaultThemeConfig();
     this.data = this.getDefaultData();
+    this.classes = {};
     log.info('clear called');
   }
 
@@ -486,19 +487,8 @@ export class QuadrantBuilder {
 
     const points: QuadrantPointType[] = this.data.points.map((point) => {
       const classStyles = this.classes[point.className as keyof typeof this.classes];
-      if (classStyles !== undefined) {
-        if (classStyles.color !== undefined) {
-          point.color = classStyles.color;
-        }
-        if (classStyles.radius !== undefined) {
-          point.radius = classStyles.radius;
-        }
-        if (classStyles.strokeColor !== undefined) {
-          point.strokeColor = classStyles.strokeColor;
-        }
-        if (classStyles.strokeWidth !== undefined) {
-          point.strokeWidth = classStyles.strokeWidth;
-        }
+      if (classStyles) {
+        point = { ...classStyles, ...point };
       }
       const props: QuadrantPointType = {
         x: xAxis(point.x),
@@ -515,12 +505,8 @@ export class QuadrantBuilder {
           fontSize: this.config.pointLabelFontSize,
           rotation: 0,
         },
-        strokeColor:
-          point.strokeColor !== undefined && point.strokeColor !== ''
-            ? point.strokeColor
-            : this.themeConfig.quadrantPointFill,
-        strokeWidth:
-          point.strokeWidth !== undefined && point.strokeWidth !== '' ? point.strokeWidth : '0px',
+        strokeColor: point.strokeColor || this.themeConfig.quadrantPointFill,
+        strokeWidth: point.strokeWidth || '0px',
       };
       return props;
     });
