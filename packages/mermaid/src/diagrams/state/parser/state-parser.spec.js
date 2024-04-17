@@ -130,4 +130,16 @@ describe('state parser can parse...', () => {
       expect(states.get('bigState1').doc[1].description).toEqual('inner state 2');
     });
   });
+
+  describe('unsafe properties as state names', () => {
+    it.each(['__proto__', 'constructor'])('should allow %s as a state name', function (prop) {
+      stateDiagram.parser.parse(`
+stateDiagram-v2
+[*] --> ${prop}
+${prop} --> [*]`);
+      stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
+      const states = stateDiagram.parser.yy.getStates();
+      expect(states.get(prop)).not.toBeUndefined();
+    });
+  });
 });

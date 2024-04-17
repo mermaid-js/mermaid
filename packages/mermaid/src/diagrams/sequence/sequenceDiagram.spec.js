@@ -2033,4 +2033,10 @@ participant Alice`;
       );
     });
   });
+
+  it.each(['__proto__', 'constructor'])('should allow %s as an actor name', function (prop) {
+    mermaidAPI.parse(`
+sequenceDiagram
+${prop}-->>A: Hello, how are you?`);
+  });
 });

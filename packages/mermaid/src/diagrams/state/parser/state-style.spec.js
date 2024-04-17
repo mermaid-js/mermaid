@@ -60,6 +60,16 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         expect(classes.get('exampleStyleClass').styles[0]).toBe('background:  #bbb');
         expect(classes.get('exampleStyleClass').styles[1]).toBe('border:1.5px solid red');
       });
+
+      it('can have __proto__ or constructor as a class name', function () {
+        stateDiagram.parser.parse(
+          'stateDiagram-v2\n classDef __proto__ background:#bbb,border:1.5px solid red;\n classDef constructor background:#bbb,border:1.5px solid red;'
+        );
+        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
+        const classes = stateDiagram.parser.yy.getClasses();
+        expect(classes.get('__proto__').styles.length).toBe(2);
+        expect(classes.get('constructor').styles.length).toBe(2);
+      });
     });
 
     describe('applying to states in the diagram', () => {
