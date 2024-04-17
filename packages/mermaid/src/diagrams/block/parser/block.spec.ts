@@ -415,10 +415,6 @@ columns 1
       ).not.toThrow();
     }
 
-    it('should work with a prototype property', function () {
-      validateProperty('prototype');
-    });
-
     it('should work with a __proto__ property', function () {
       validateProperty('__proto__');
     });

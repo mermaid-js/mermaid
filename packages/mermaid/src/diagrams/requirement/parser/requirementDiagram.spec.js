@@ -578,4 +578,25 @@ line 2`;
     let foundRelationship = requirementDb.getRelationships()[0];
     expect(foundRelationship.type).toBe(expectedType);
   });
+
+  for (const property of ['__proto__', 'constructor']) {
+    it(`will accept ${property} as requirement id`, function () {
+      reqDiagram.parser.parse(`requirementDiagram
+      requirement ${property} {
+        id: 1
+        text: the test text.
+        risk: high
+        verifymethod: test
+      }`);
+      expect(reqDiagram.parser.yy.getRequirements().size).toBe(1);
+    });
+
+    it(`will accept ${property} as element id`, function () {
+      reqDiagram.parser.parse(`requirementDiagram
+      element ${property} {
+        type: simulation
+      }`);
+      expect(reqDiagram.parser.yy.getElements().size).toBe(1);
+    });
+  }
 });

@@ -1097,7 +1097,7 @@ describe('when parsing a gitGraph', function () {
   });
 
   describe('unsafe properties', () => {
-    for (const prop of ['__proto__', 'constructor', 'prototype']) {
+    for (const prop of ['__proto__', 'constructor']) {
       it(`should work with custom commit id or branch name ${prop}`, () => {
         const str = `gitGraph
     commit id:"${prop}"

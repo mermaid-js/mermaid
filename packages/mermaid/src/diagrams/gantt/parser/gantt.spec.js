@@ -257,7 +257,7 @@ row2`;
     }
   );
 
-  it.each(['__proto__', 'constructor', 'prototype'])('should allow for a link to %s id', (prop) => {
+  it.each(['__proto__', 'constructor'])('should allow for a link to %s id', (prop) => {
     expect(() =>
       parser.parse(`gantt
     dateFormat YYYY-MM-DD

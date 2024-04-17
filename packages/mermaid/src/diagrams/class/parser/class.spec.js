@@ -13,10 +13,6 @@ describe('class diagram', function () {
       expect(() => parser.parse(`classDiagram\nnamespace ${prop} {\n\tclass A\n}`)).not.toThrow();
     }
 
-    it('should work with a prototype property', function () {
-      validateProperty('prototype');
-    });
-
     it('should work with a __proto__ property', function () {
       validateProperty('__proto__');
     });

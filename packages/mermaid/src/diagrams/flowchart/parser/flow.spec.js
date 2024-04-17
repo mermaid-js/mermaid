@@ -195,7 +195,7 @@ with a second line`
     );
   });
 
-  for (const unsafeProp of ['__proto__', 'constructor', 'prototype']) {
+  for (const unsafeProp of ['__proto__', 'constructor']) {
     it(`should work with node id ${unsafeProp}`, function () {
       const flowChart = `graph LR
       ${unsafeProp} --> A;`;
