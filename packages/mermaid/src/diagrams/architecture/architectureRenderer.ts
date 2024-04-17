@@ -1,3 +1,5 @@
+// TODO remove no-console
+/* eslint-disable no-console */
 import type { Position } from 'cytoscape';
 import cytoscape from 'cytoscape';
 import type { Diagram } from '../../Diagram.js';
@@ -80,12 +82,13 @@ function addGroups(groups: ArchitectureGroup[], cy: cytoscape.Core) {
 
 function addEdges(edges: ArchitectureEdge[], cy: cytoscape.Core) {
   edges.forEach((parsedEdge) => {
-    const { lhsId, rhsId, lhsInto, rhsInto, lhsDir, rhsDir } = parsedEdge;
+    const { lhsId, rhsId, lhsInto, rhsInto, lhsDir, rhsDir, title } = parsedEdge;
     const edgeType = isArchitectureDirectionXY(parsedEdge.lhsDir, parsedEdge.rhsDir)
       ? 'segments'
       : 'straight';
     const edge: EdgeSingularData = {
       id: `${lhsId}-${rhsId}`,
+      label: title,
       source: lhsId,
       sourceDir: lhsDir,
       sourceArrow: lhsInto,
@@ -218,6 +221,7 @@ function layoutArchitecture(
           selector: 'edge',
           style: {
             'curve-style': 'straight',
+            'label': 'data(label)',
             'source-endpoint': 'data(sourceEndpoint)',
             'target-endpoint': 'data(targetEndpoint)',
           },

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -118,6 +118,46 @@
         servT (R--T) servR
         servB (R--B) servR
     </pre>
+    <hr />
+
+    <h2>Edge Label Test</h2>
+    <pre class="mermaid">
+      architecture
+        service servC(server)[Server 1]
+        service servL(server)[Server 2]
+        service servR(server)[Server 3]
+        service servT(server)[Server 4]
+        service servB(server)[Server 5]
+
+        servC L-[Label]-R servL
+        servC R-[Label]-L servR
+        servC T-[Label]-B servT
+        servC B-[Label]-T servB
+
+        servL T-[Label]-L servT
+        servL B-[Label]-L servB
+        servR T-[Label]-R servT
+        servR B-[Label]-R servB
+    </pre>
+    <pre class="mermaid">
+      architecture
+        service servC(server)[Server 1]
+        service servL(server)[Server 2]
+        service servR(server)[Server 3]
+        service servT(server)[Server 4]
+        service servB(server)[Server 5]
+
+        servC L-[Label that is Long]-R servL
+        servC R-[Label that is Long]-L servR
+        servC T-[Label that is Long]-B servT
+        servC B-[Label that is Long]-T servB
+
+        servL T-[Label that is Long]-L servT
+        servL B-[Label that is Long]-L servB
+        servR T-[Label that is Long]-R servT
+        servR B-[Label that is Long]-R servB
+    </pre>
+
     <hr />
 
     <script type="module">

@@ -1,3 +1,5 @@
+// TODO remove no-console
+/* eslint-disable no-console */
 import type { D3Element } from '../../mermaidAPI.js';
 import { createText } from '../../rendering-util/createText.js';
 import {
@@ -9,6 +11,10 @@ import {
   isArchitectureDirectionY,
   edgeData,
   nodeData,
+  isArchitectureDirectionXY,
+  getArchitectureDirectionPair,
+  getArchitectureDirectionXYFactors,
+  isArchitecturePairXY,
 } from './architectureTypes.js';
 import type cytoscape from 'cytoscape';
 import { getIcon } from '../../rendering-util/svgRegister.js';
@@ -21,7 +27,7 @@ export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
   const halfArrowSize = arrowSize / 2;
 
   cy.edges().map((edge, id) => {
-    const { sourceDir, sourceArrow, targetDir, targetArrow } = edgeData(edge);
+    const { sourceDir, sourceArrow, targetDir, targetArrow, label } = edgeData(edge);
     const { x: startX, y: startY } = edge[0].sourceEndpoint();
     const { x: midX, y: midY } = edge[0].midpoint();
     const { x: endX, y: endY } = edge[0].targetEndpoint();
@@ -60,6 +66,68 @@ export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
           .attr('transform', `translate(${xShift},${yShift})`)
           .attr('class', 'arrow');
       }
+
+      if (label) {
+        const axis = !isArchitectureDirectionXY(sourceDir, targetDir)
+          ? isArchitectureDirectionX(sourceDir)
+            ? 'X'
+            : 'Y'
+          : 'XY';
+
+        let width = 0;
+        if (axis === 'X') {
+          width = Math.abs(startX - endX);
+        } else if (axis === 'Y') {
+          // Reduce width by a factor of 1.5 to avoid overlapping service labels
+          width = Math.abs(startY - endY) / 1.5;
+        } else {
+          width = Math.abs(startX - endX) / 2;
+        }
+
+        const textElem = g.append('g');
+        createText(
+          textElem,
+          label,
+          {
+            useHtmlLabels: false,
+            width,
+            classes: 'architecture-service-label',
+          },
+          getConfig()
+        );
+
+        textElem
+          .attr('dy', '1em')
+          .attr('alignment-baseline', 'middle')
+          .attr('dominant-baseline', 'middle')
+          .attr('text-anchor', 'middle');
+
+        if (axis === 'X') {
+          textElem.attr('transform', 'translate(' + midX + ', ' + midY + ')');
+        } else if (axis === 'Y') {
+          textElem.attr('transform', 'translate(' + midX + ', ' + midY + ') rotate(90)');
+        } else if (axis === 'XY') {
+          const pair = getArchitectureDirectionPair(sourceDir, targetDir);
+          if (pair && isArchitecturePairXY(pair)) {
+            const bboxOrig = textElem.node().getBoundingClientRect();
+            const [x, y] = getArchitectureDirectionXYFactors(pair);
+
+            textElem
+              .attr('dominant-baseline', 'auto')
+              .attr('transform', `rotate(${-1 * x * y * 45})`);
+
+            // Calculate the new width/height with the rotation and transform to the proper position
+            const bboxNew = textElem.node().getBoundingClientRect();
+            textElem
+              .attr('transform', `
+                translate(${midX}, ${midY - (bboxOrig.height / 2)}) 
+                translate(${x * bboxNew.width / 2}, ${y * bboxNew.height / 2}) 
+                rotate(${-1 * x * y * 45}, 0, ${bboxOrig.height / 2})
+              `);
+          }
+        }
+
+      }
     }
   });
 };
@@ -84,12 +152,16 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
 
       if (data.label) {
         const textElem = groupsEl.append('g');
-        createText(textElem, data.label, {
-          useHtmlLabels: false,
-          width: w,
-          classes: 'architecture-service-label',
-        },
-          getConfig());
+        createText(
+          textElem,
+          data.label,
+          {
+            useHtmlLabels: false,
+            width: w,
+            classes: 'architecture-service-label',
+          },
+          getConfig()
+        );
         textElem
           .attr('dy', '1em')
           .attr('alignment-baseline', 'middle')
@@ -116,12 +188,16 @@ export const drawServices = function (
 
     if (service.title) {
       const textElem = serviceElem.append('g');
-      createText(textElem, service.title, {
-        useHtmlLabels: false,
-        width: iconSize * 1.5,
-        classes: 'architecture-service-label',
-      },
-        getConfig());
+      createText(
+        textElem,
+        service.title,
+        {
+          useHtmlLabels: false,
+          width: iconSize * 1.5,
+          classes: 'architecture-service-label',
+        },
+        getConfig()
+      );
       textElem
         .attr('dy', '1em')
         .attr('alignment-baseline', 'middle')

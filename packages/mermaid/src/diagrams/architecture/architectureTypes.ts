@@ -11,6 +11,20 @@ export type ArchitectureDirection = 'L' | 'R' | 'T' | 'B';
 export type ArchitectureDirectionX = Extract<ArchitectureDirection, 'L' | 'R'>;
 export type ArchitectureDirectionY = Extract<ArchitectureDirection, 'T' | 'B'>;
 
+/**
+ * Contains LL, RR, TT, BB which are impossible connections
+ */
+export type InvalidArchitectureDirectionPair = `${ArchitectureDirection}${ArchitectureDirection}`;
+export type ArchitectureDirectionPair = Exclude<
+  InvalidArchitectureDirectionPair,
+  'LL' | 'RR' | 'TT' | 'BB'
+>;
+export type ArchitectureDirectionPairXY = Exclude<
+  InvalidArchitectureDirectionPair,
+  'LL' | 'RR' | 'TT' | 'BB'
+  | 'LR' | 'RL' | 'TB' | 'BT'
+>;
+
 export const ArchitectureDirectionName = {
   L: 'left',
   R: 'right',
@@ -70,14 +84,16 @@ export const isArchitectureDirectionXY = function (
   return aX_bY || aY_bX;
 };
 
-/**
- * Contains LL, RR, TT, BB which are impossible connections
- */
-export type InvalidArchitectureDirectionPair = `${ArchitectureDirection}${ArchitectureDirection}`;
-export type ArchitectureDirectionPair = Exclude<
-  InvalidArchitectureDirectionPair,
-  'LL' | 'RR' | 'TT' | 'BB'
->;
+export const isArchitecturePairXY = function (
+  pair: ArchitectureDirectionPair,
+): pair is ArchitectureDirectionPairXY {
+  const lhs = pair[0] as ArchitectureDirection;
+  const rhs = pair[1] as ArchitectureDirection;
+  const aX_bY = isArchitectureDirectionX(lhs) && isArchitectureDirectionY(rhs);
+  const aY_bX = isArchitectureDirectionY(lhs) && isArchitectureDirectionX(rhs);
+  return aX_bY || aY_bX;
+};
+
 /**
  * Verifies that the architecture direction pair does not contain an invalid match (LL, RR, TT, BB)
  * @param x - architecture direction pair which could potentially be invalid
@@ -88,6 +104,7 @@ export const isValidArchitectureDirectionPair = function (
 ): x is ArchitectureDirectionPair {
   return x !== 'LL' && x !== 'RR' && x !== 'TT' && x !== 'BB';
 };
+
 export type ArchitectureDirectionPairMap = {
   [key in ArchitectureDirectionPair]?: string;
 };
@@ -132,6 +149,25 @@ export const shiftPositionByArchitectureDirectionPair = function (
     } else {
       return [x, y + (lhs === 'T' ? 1 : -1)];
     }
+  }
+};
+
+/**
+ * Given the directional pair of an XY edge, get the scale factors necessary to shift the coordinates inwards towards the edge
+ * @param pair - XY pair of an edge
+ * @returns - number[] containing [+/- 1, +/- 1]
+ */
+export const getArchitectureDirectionXYFactors = function (
+  pair: ArchitectureDirectionPairXY
+): number[] {
+  if (pair === 'LT' || pair === 'TL') {
+    return [1, 1]
+  } else if (pair === 'BL' || pair === 'LB') {
+    return [1, -1]
+  } else if (pair === 'BR' || pair === 'RB') {
+    return [-1, -1]
+  } else {
+    return [-1, 1]
   }
 };
 
@@ -204,6 +240,7 @@ export interface ArchitectureState extends Record<string, unknown> {
 
 export type EdgeSingularData = {
   id: string;
+  label?: string;
   source: string;
   sourceDir: ArchitectureDirection;
   sourceArrow?: boolean;

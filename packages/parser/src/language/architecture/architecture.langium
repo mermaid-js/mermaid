@@ -18,7 +18,7 @@ fragment Statement:
 ;
 
 fragment Arrow:
-    lhsInto?=ARROW_INTO? lhsDir=ARROW_DIRECTION '--' rhsDir=ARROW_DIRECTION rhsInto?=ARROW_INTO?
+    lhsInto?=ARROW_INTO? lhsDir=ARROW_DIRECTION ('--' | '-' title=ARCH_TITLE '-') rhsDir=ARROW_DIRECTION rhsInto?=ARROW_INTO?
 ;
 
 Group:
