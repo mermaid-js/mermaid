@@ -1052,14 +1052,18 @@ export const draw = async function (_text: string, id: string, _version: string,
   }
 
   // all remaining activations in 'bounds' were not drawn, because the 'deactivate' is missing -> draw them from the activation y until the bottom / the destroying of the actor
-  for (const notDrawnActivation of bounds.activations) {
+  for (const actor of bounds.models.actors) {
+    const notDrawnActivationsForThisActor = actorActivations(actor.name);
     let stopY = bounds.getVerticalPos();
-    const actorToDeactivate = bounds.models.actors.find((actor) => actor.name == notDrawnActivation.actor)
-    if (actorToDeactivate.stopy) { // if actor was destroyed -> use it's last y
-      stopY = actorToDeactivate.stopy;
-    }
+    let index = 0;
+    for (const notDrawnActivation of notDrawnActivationsForThisActor) {
+      if (actor.stopy) { // if actor was destroyed -> use it's last y
+        stopY = actor.stopy;
+      }
 
-    svgDraw.drawActivation(diagram, notDrawnActivation, stopY, conf, actorActivations(notDrawnActivation.actor).length);
+      svgDraw.drawActivation(diagram, notDrawnActivation, stopY, conf, index);
+      index++;
+    }
   }
 
   if (conf.mirrorActors) {

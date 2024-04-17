@@ -231,6 +231,32 @@ context('Sequence diagram', () => {
       `
     );
   });
+  it('should render a sequence diagram with activations even if there are no deactivations', () => {
+    renderGraph(
+        `
+    sequenceDiagram
+      participant a
+      participant b
+      participant c
+      participant d
+      activate d
+      a->>b:halloB
+      activate b
+      b->>+c:halloC
+      c->>+b:back
+      create participant e
+      a-->>e:createE
+      activate e
+      a-->>e:halloE
+      destroy e
+      e->>a:destroyE
+      a-->>d : halloD
+    `,
+        { sequence: { useMaxWidth: false } }
+      );
+    cy.get('rect.activation0').should('have.length', 4);
+    cy.get('rect.activation1').should('have.length', 1);
+    });
   context('font settings', () => {
     it('should render different note fonts when configured', () => {
       imgSnapshotTest(
