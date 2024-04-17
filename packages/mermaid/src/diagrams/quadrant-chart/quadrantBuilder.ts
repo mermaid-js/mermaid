@@ -1,7 +1,7 @@
 import { scaleLinear } from 'd3';
-import { log } from '../../logger.js';
 import type { BaseDiagramConfig, QuadrantChartConfig } from '../../config.type.js';
 import defaultConfig from '../../defaultConfig.js';
+import { log } from '../../logger.js';
 import { getThemeVariables } from '../../themes/theme-default.js';
 import type { Point } from '../../types.js';
 
@@ -10,7 +10,15 @@ const defaultThemeVariables = getThemeVariables();
 export type TextVerticalPos = 'left' | 'center' | 'right';
 export type TextHorizontalPos = 'top' | 'middle' | 'bottom';
 
-export interface QuadrantPointInputType extends Point {
+export interface StylesObject {
+  className?: string;
+  radius?: number;
+  color?: string;
+  strokeColor?: string;
+  strokeWidth?: string;
+}
+
+export interface QuadrantPointInputType extends Point, StylesObject {
   text: string;
 }
 
@@ -23,7 +31,9 @@ export interface QuadrantTextType extends Point {
   rotation: number;
 }
 
-export interface QuadrantPointType extends Point {
+export interface QuadrantPointType
+  extends Point,
+    Pick<StylesObject, 'strokeColor' | 'strokeWidth'> {
   fill: string;
   radius: number;
   text: QuadrantTextType;
@@ -117,6 +127,7 @@ export class QuadrantBuilder {
   private config: QuadrantBuilderConfig;
   private themeConfig: QuadrantBuilderThemeConfig;
   private data: QuadrantBuilderData;
+  private classes: Record<string, StylesObject> = {};
 
   constructor() {
     this.config = this.getDefaultConfig();
@@ -191,6 +202,7 @@ export class QuadrantBuilder {
     this.config = this.getDefaultConfig();
     this.themeConfig = this.getDefaultThemeConfig();
     this.data = this.getDefaultData();
+    this.classes = {};
     log.info('clear called');
   }
 
@@ -200,6 +212,10 @@ export class QuadrantBuilder {
 
   addPoints(points: QuadrantPointInputType[]) {
     this.data.points = [...points, ...this.data.points];
+  }
+
+  addClass(className: string, styles: StylesObject) {
+    this.classes[className] = styles;
   }
 
   setConfig(config: Partial<QuadrantBuilderConfig>) {
@@ -470,11 +486,15 @@ export class QuadrantBuilder {
       .range([quadrantHeight + quadrantTop, quadrantTop]);
 
     const points: QuadrantPointType[] = this.data.points.map((point) => {
+      const classStyles = this.classes[point.className as keyof typeof this.classes];
+      if (classStyles) {
+        point = { ...classStyles, ...point };
+      }
       const props: QuadrantPointType = {
         x: xAxis(point.x),
         y: yAxis(point.y),
-        fill: this.themeConfig.quadrantPointFill,
-        radius: this.config.pointRadius,
+        fill: point.color || this.themeConfig.quadrantPointFill,
+        radius: point.radius || this.config.pointRadius,
         text: {
           text: point.text,
           fill: this.themeConfig.quadrantPointTextFill,
@@ -485,6 +505,8 @@ export class QuadrantBuilder {
           fontSize: this.config.pointLabelFontSize,
           rotation: 0,
         },
+        strokeColor: point.strokeColor || this.themeConfig.quadrantPointFill,
+        strokeWidth: point.strokeWidth || '0px',
       };
       return props;
     });
