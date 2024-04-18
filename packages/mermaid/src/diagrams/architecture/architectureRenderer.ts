@@ -265,7 +265,7 @@ function layoutArchitecture(
           selector: '.node-group',
           style: {
             // @ts-ignore Incorrect library types
-            padding: '30px',
+            padding: '40px',
           },
         },
       ],

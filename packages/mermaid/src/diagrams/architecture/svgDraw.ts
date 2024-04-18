@@ -150,8 +150,23 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
         .attr('height', h)
         .attr('class', 'node-bkg');
 
+      const groupLabelContainer = groupsEl.append('g');
+      let shiftedX1 = x1;
+      let shiftedY1 = y1;
+      if (data.icon) {
+        const bkgElem = groupLabelContainer.append('g');
+        // TODO: magic number
+        getIcon(data.icon)?.(bkgElem, 32);
+        bkgElem.attr(
+          'transform',
+          'translate(' + (shiftedX1 + halfIconSize + 1) + ', ' + (shiftedY1 + halfIconSize + 1) + ')'
+        );
+        shiftedX1 += 32;
+        // TODO: proper values once dynamic sizes are implemented
+        shiftedY1 += 4;
+      }
       if (data.label) {
-        const textElem = groupsEl.append('g');
+        const textElem = groupLabelContainer.append('g');
         createText(
           textElem,
           data.label,
@@ -170,7 +185,7 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
 
         textElem.attr(
           'transform',
-          'translate(' + (x1 + halfIconSize + 4) + ', ' + (y1 + halfIconSize + 2) + ')'
+          'translate(' + (shiftedX1 + halfIconSize + 4) + ', ' + (shiftedY1 + halfIconSize + 2) + ')'
         );
       }
     }
