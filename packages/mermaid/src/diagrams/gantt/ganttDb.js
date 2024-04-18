@@ -44,7 +44,6 @@ let wdStartTime = undefined;
 let wdEndTime = undefined;
 let weekend = 'saturday';
 
-
 // The serial order of the task in the script
 let lastOrder = 0;
 
@@ -866,7 +865,6 @@ export default {
   setWDEndTime,
   getWDEndTime,
   setWeekend,
-
 };
 
 /**
