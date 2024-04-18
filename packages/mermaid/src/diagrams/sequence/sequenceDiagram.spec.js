@@ -534,10 +534,10 @@ deactivate Bob`;
     expect(messages.length).toBe(4);
     expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED);
     expect(messages[1].type).toBe(diagram.db.LINETYPE.ACTIVE_START);
-    expect(messages[1].from.actor).toBe('Bob');
+    expect(messages[1].from).toBe('Bob');
     expect(messages[2].type).toBe(diagram.db.LINETYPE.DOTTED);
     expect(messages[3].type).toBe(diagram.db.LINETYPE.ACTIVE_END);
-    expect(messages[3].from.actor).toBe('Bob');
+    expect(messages[3].from).toBe('Bob');
   });
   it('should handle actor one line notation activation', async () => {
     const str = `
@@ -556,10 +556,10 @@ deactivate Bob`;
     expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED);
     expect(messages[0].activate).toBeTruthy();
     expect(messages[1].type).toBe(diagram.db.LINETYPE.ACTIVE_START);
-    expect(messages[1].from.actor).toBe('Bob');
+    expect(messages[1].from).toBe('Bob');
     expect(messages[2].type).toBe(diagram.db.LINETYPE.DOTTED);
     expect(messages[3].type).toBe(diagram.db.LINETYPE.ACTIVE_END);
-    expect(messages[3].from.actor).toBe('Bob');
+    expect(messages[3].from).toBe('Bob');
   });
   it('should handle stacked activations', async () => {
     const str = `
@@ -579,14 +579,14 @@ deactivate Bob`;
     expect(messages.length).toBe(8);
     expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED);
     expect(messages[1].type).toBe(diagram.db.LINETYPE.ACTIVE_START);
-    expect(messages[1].from.actor).toBe('Bob');
+    expect(messages[1].from).toBe('Bob');
     expect(messages[2].type).toBe(diagram.db.LINETYPE.DOTTED);
     expect(messages[3].type).toBe(diagram.db.LINETYPE.ACTIVE_START);
-    expect(messages[3].from.actor).toBe('Carol');
+    expect(messages[3].from).toBe('Carol');
     expect(messages[5].type).toBe(diagram.db.LINETYPE.ACTIVE_END);
-    expect(messages[5].from.actor).toBe('Bob');
+    expect(messages[5].from).toBe('Bob');
     expect(messages[7].type).toBe(diagram.db.LINETYPE.ACTIVE_END);
-    expect(messages[7].from.actor).toBe('Carol');
+    expect(messages[7].from).toBe('Carol');
   });
   it('should handle fail parsing when activating an inactive participant', async () => {
     const str = `
