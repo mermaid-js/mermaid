@@ -1,3 +1,5 @@
+// TODO remove no-console
+/* eslint-disable no-console */
 import type {
   ArchitectureState,
   ArchitectureDB,
@@ -46,7 +48,7 @@ const clear = (): void => {
   commonClear();
 };
 
-const addService = function ({id, icon, in: parent, title}: Omit<ArchitectureService, "edges">) {
+const addService = function ({ id, icon, in: parent, title }: Omit<ArchitectureService, "edges">) {
   if (state.records.registeredIds[id] !== undefined) {
     throw new Error(`The service id [${id}] is already in use by another ${state.records.registeredIds[id]}`);
   }
@@ -77,7 +79,7 @@ const addService = function ({id, icon, in: parent, title}: Omit<ArchitectureSer
 
 const getServices = (): ArchitectureService[] => Object.values(state.records.services);
 
-const addGroup = function ({id, icon, in: parent, title}: ArchitectureGroup) {
+const addGroup = function ({ id, icon, in: parent, title }: ArchitectureGroup) {
   // const { icon, in: inside, title } = opts;
   if (state.records.registeredIds[id] !== undefined) {
     throw new Error(`The group id [${id}] is already in use by another ${state.records.registeredIds[id]}`);
@@ -110,7 +112,7 @@ const getGroups = (): ArchitectureGroup[] => {
 };
 
 const addEdge = function (
-  {lhsId, rhsId, lhsDir, rhsDir, lhsInto, rhsInto, title}: ArchitectureEdge
+  { lhsId, rhsId, lhsDir, rhsDir, lhsInto, rhsInto, title }: ArchitectureEdge
 ) {
   if (!isArchitectureDirection(lhsDir)) {
     throw new Error(
