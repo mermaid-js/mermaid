@@ -4,7 +4,13 @@ import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
 import type { Actor } from './types.js';
-import type { D3RectElement, RectData, TextData } from '../common/commonTypes.js';
+import type {
+  D3RectElement,
+  D3TextElement,
+  RectData,
+  TextData,
+  TextObject,
+} from '../common/commonTypes.js';
 import type { SVG } from '../../diagram-api/types.js';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
@@ -149,128 +155,129 @@ export const drawKatex = async (
   return [textElem];
 };
 
-export const drawText = function (elem, textData) {
+export const drawText = function (elem: SVG, textObject: TextObject): D3TextElement[] {
   let prevTextHeight = 0;
   let textHeight = 0;
-  const lines = textData.text.split(common.lineBreakRegex);
+  const lines = textObject.text.split(common.lineBreakRegex);
 
-  const [_textFontSize, _textFontSizePx] = parseFontSize(textData.fontSize);
+  const [_textFontSize, _textFontSizePx] = parseFontSize(textObject.fontSize);
 
-  let textElems = [];
+  const textElems: D3TextElement[] = [];
   let dy = 0;
-  let yfunc = () => textData.y;
+  let yfunc = () => textObject.y;
   if (
-    textData.valign !== undefined &&
-    textData.textMargin !== undefined &&
-    textData.textMargin > 0
+    textObject.valign !== undefined &&
+    textObject.textMargin !== undefined &&
+    textObject.textMargin > 0
   ) {
-    switch (textData.valign) {
+    switch (textObject.valign) {
       case 'top':
       case 'start':
-        yfunc = () => Math.round(textData.y + textData.textMargin);
+        yfunc = () => Math.round(textObject.y + textObject.textMargin);
         break;
       case 'middle':
       case 'center':
         yfunc = () =>
-          Math.round(textData.y + (prevTextHeight + textHeight + textData.textMargin) / 2);
+          Math.round(textObject.y + (prevTextHeight + textHeight + textObject.textMargin) / 2);
         break;
       case 'bottom':
       case 'end':
         yfunc = () =>
           Math.round(
-            textData.y +
-              (prevTextHeight + textHeight + 2 * textData.textMargin) -
-              textData.textMargin
+            textObject.y +
+              (prevTextHeight + textHeight + 2 * textObject.textMargin) -
+              textObject.textMargin
           );
         break;
     }
   }
 
   if (
-    textData.anchor !== undefined &&
-    textData.textMargin !== undefined &&
-    textData.width !== undefined
+    textObject.anchor !== undefined &&
+    textObject.textMargin !== undefined &&
+    textObject.width !== undefined
   ) {
-    switch (textData.anchor) {
+    switch (textObject.anchor) {
       case 'left':
       case 'start':
-        textData.x = Math.round(textData.x + textData.textMargin);
-        textData.anchor = 'start';
-        textData.dominantBaseline = 'middle';
-        textData.alignmentBaseline = 'middle';
+        textObject.x = Math.round(textObject.x + textObject.textMargin);
+        textObject.anchor = 'start';
+        textObject.dominantBaseline = 'middle';
+        textObject.alignmentBaseline = 'middle';
         break;
       case 'middle':
       case 'center':
-        textData.x = Math.round(textData.x + textData.width / 2);
-        textData.anchor = 'middle';
-        textData.dominantBaseline = 'middle';
-        textData.alignmentBaseline = 'middle';
+        textObject.x = Math.round(textObject.x + textObject.width / 2);
+        textObject.anchor = 'middle';
+        textObject.dominantBaseline = 'middle';
+        textObject.alignmentBaseline = 'middle';
         break;
       case 'right':
       case 'end':
-        textData.x = Math.round(textData.x + textData.width - textData.textMargin);
-        textData.anchor = 'end';
-        textData.dominantBaseline = 'middle';
-        textData.alignmentBaseline = 'middle';
+        textObject.x = Math.round(textObject.x + textObject.width - textObject.textMargin);
+        textObject.anchor = 'end';
+        textObject.dominantBaseline = 'middle';
+        textObject.alignmentBaseline = 'middle';
         break;
     }
   }
 
-  for (let [i, line] of lines.entries()) {
+  for (const [i, line] of lines.entries()) {
     if (
-      textData.textMargin !== undefined &&
-      textData.textMargin === 0 &&
+      textObject.textMargin !== undefined &&
+      textObject.textMargin === 0 &&
       _textFontSize !== undefined
     ) {
       dy = i * _textFontSize;
     }
 
     const textElem = elem.append('text');
-    textElem.attr('x', textData.x);
+    textElem.attr('x', textObject.x);
     textElem.attr('y', yfunc());
-    if (textData.anchor !== undefined) {
+    if (textObject.anchor !== undefined) {
       textElem
-        .attr('text-anchor', textData.anchor)
-        .attr('dominant-baseline', textData.dominantBaseline)
-        .attr('alignment-baseline', textData.alignmentBaseline);
+        .attr('text-anchor', textObject.anchor)
+        .attr('dominant-baseline', textObject.dominantBaseline)
+        .attr('alignment-baseline', textObject.alignmentBaseline);
     }
-    if (textData.fontFamily !== undefined) {
-      textElem.style('font-family', textData.fontFamily);
+    if (textObject.fontFamily !== undefined) {
+      textElem.style('font-family', textObject.fontFamily);
     }
     if (_textFontSizePx !== undefined) {
       textElem.style('font-size', _textFontSizePx);
     }
-    if (textData.fontWeight !== undefined) {
-      textElem.style('font-weight', textData.fontWeight);
+    if (textObject.fontWeight !== undefined) {
+      textElem.style('font-weight', textObject.fontWeight);
     }
-    if (textData.fill !== undefined) {
-      textElem.attr('fill', textData.fill);
+    if (textObject.fill !== undefined) {
+      textElem.attr('fill', textObject.fill);
     }
-    if (textData.class !== undefined) {
-      textElem.attr('class', textData.class);
+    if (textObject.class !== undefined) {
+      textElem.attr('class', textObject.class);
     }
-    if (textData.dy !== undefined) {
-      textElem.attr('dy', textData.dy);
+    if (textObject.dy !== undefined) {
+      textElem.attr('dy', textObject.dy);
     } else if (dy !== 0) {
       textElem.attr('dy', dy);
     }
 
     const text = line || ZERO_WIDTH_SPACE;
-    if (textData.tspan) {
+    if (textObject.tspan) {
       const span = textElem.append('tspan');
-      span.attr('x', textData.x);
-      if (textData.fill !== undefined) {
-        span.attr('fill', textData.fill);
+      span.attr('x', textObject.x);
+      if (textObject.fill !== undefined) {
+        span.attr('fill', textObject.fill);
       }
       span.text(text);
     } else {
       textElem.text(text);
     }
     if (
-      textData.valign !== undefined &&
-      textData.textMargin !== undefined &&
-      textData.textMargin > 0
+      textObject.valign !== undefined &&
+      textObject.textMargin !== undefined &&
+      textObject.textMargin > 0
     ) {
+      // @ts-expect-error - Incorrect types
       textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
       prevTextHeight = textHeight;
     }
@@ -698,7 +705,7 @@ export const drawBackgroundRect = function (elem, bounds) {
   svgDrawCommon.drawBackgroundRect(elem, bounds);
 };
 
-export const insertDatabaseIcon = function (elem) {
+export const insertDatabaseIcon = function (elem: SVG) {
   elem
     .append('defs')
     .append('symbol')
@@ -746,9 +753,9 @@ export const insertClockIcon = function (elem) {
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  *
- * @param elem
+ * @param elem - The svg element to append the arrowhead to.
  */
-export const insertArrowHead = function (elem) {
+export const insertArrowHead = function (elem: SVG) {
   elem
     .append('defs')
     .append('marker')
@@ -766,9 +773,9 @@ export const insertArrowHead = function (elem) {
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  *
- * @param {any} elem
+ * @param elem - The svg element to append the filled arrowhead to.
  */
-export const insertArrowFilledHead = function (elem) {
+export const insertArrowFilledHead = function (elem: SVG) {
   elem
     .append('defs')
     .append('marker')
@@ -785,9 +792,9 @@ export const insertArrowFilledHead = function (elem) {
 /**
  * Setup node number. The result is appended to the svg.
  *
- * @param {any} elem
+ * @param elem - The svg element to append the sequence number to.
  */
-export const insertSequenceNumber = function (elem) {
+export const insertSequenceNumber = function (elem: SVG) {
   elem
     .append('defs')
     .append('marker')
@@ -807,9 +814,9 @@ export const insertSequenceNumber = function (elem) {
 /**
  * Setup cross head and define the marker. The result is appended to the svg.
  *
- * @param {any} elem
+ * @param elem - The svg element to append the arrow crosshead to.
  */
-export const insertArrowCrossHead = function (elem) {
+export const insertArrowCrossHead = function (elem: SVG) {
   const defs = elem.append('defs');
   const marker = defs
     .append('marker')
@@ -830,7 +837,7 @@ export const insertArrowCrossHead = function (elem) {
   // this is actual shape for arrowhead
 };
 
-export const getTextObj = function () {
+export const getTextObj = () => {
   return {
     x: 0,
     y: 0,
@@ -847,7 +854,7 @@ export const getTextObj = function () {
   };
 };
 
-export const getNoteRect = function () {
+export const getNoteRect = () => {
   return {
     x: 0,
     y: 0,
@@ -863,15 +870,23 @@ export const getNoteRect = function () {
 
 const _drawTextCandidateFunc = (function () {
   /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
+   * @param content - The text to be drawn.
+   * @param g - The svg group to append the text to.
+   * @param x - The x coordinate of the text.
+   * @param y - The y coordinate of the text.
+   * @param width - The width of the text.
+   * @param height - The height of the text.height
+   * @param textAttrs - The text attributes to be applied.
    */
-  function byText(content, g, x, y, width, height, textAttrs) {
+  function byText(
+    content: string,
+    g: SVG,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs
+  ) {
     const text = g
       .append('text')
       .attr('x', x + width / 2)
@@ -1078,7 +1093,7 @@ const _drawMenuItemTextCandidateFunc = (function () {
    * @param {any} textAttrs
    * @param {any} conf
    */
-  function byFo(content, g, x, y, width, height, textAttrs, conf) {
+  const byFo = (content, g, x, y, width, height, textAttrs, conf) => {
     const s = g.append('switch');
     const f = s
       .append('foreignObject')
@@ -1102,19 +1117,19 @@ const _drawMenuItemTextCandidateFunc = (function () {
 
     byTspan(content, s, x, y, width, height, textAttrs, conf);
     _setTextAttrs(text, textAttrs);
-  }
+  };
 
   /**
    * @param {any} toText
    * @param {any} fromTextAttrsDict
    */
-  function _setTextAttrs(toText, fromTextAttrsDict) {
+  const _setTextAttrs = (toText, fromTextAttrsDict) => {
     for (const key in fromTextAttrsDict) {
       if (fromTextAttrsDict.hasOwnProperty(key)) {
         toText.attr(key, fromTextAttrsDict[key]);
       }
     }
-  }
+  };
 
   return function (conf) {
     return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'old' ? byText : byTspan;
