@@ -4,7 +4,7 @@ import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
 import type { Actor } from './types.js';
-import type { D3RectElement, RectData } from '../common/commonTypes.js';
+import type { D3RectElement, RectData, TextData } from '../common/commonTypes.js';
 import type { SVG } from '../../diagram-api/types.js';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
@@ -92,8 +92,20 @@ const popupMenuToggle = (elementId: string) => {
   return `const popupMenu = document.getElementById('${elementId}'); if (popupMenu != null) { popupMenu.style.display = popupMenu.style.display == 'block' ? 'none' : 'block'; }`;
 };
 
-export const drawKatex = async function (elem, textData, msgModel = null) {
-  let textElem = elem.append('foreignObject');
+interface MessageModel {
+  startx: number;
+  stopx: number;
+  starty: number;
+  stopy: number;
+  sequenceIndex: number;
+  sequenceVisible: boolean;
+}
+export const drawKatex = async (
+  elem: SVG,
+  textData: TextData,
+  msgModel: MessageModel | null = null
+) => {
+  const textElem = elem.append('foreignObject');
   const lines = await renderKatex(textData.text, configApi.getConfig());
 
   const divElem = textElem
@@ -101,32 +113,36 @@ export const drawKatex = async function (elem, textData, msgModel = null) {
     .attr('style', 'width: fit-content;')
     .attr('xmlns', 'http://www.w3.org/1999/xhtml')
     .html(lines);
-  const dim = divElem.node().getBoundingClientRect();
 
-  textElem.attr('height', Math.round(dim.height)).attr('width', Math.round(dim.width));
+  const node = divElem?.node();
+  if (!(node instanceof Element)) {
+    return [textElem];
+  }
+
+  const dims = node.getBoundingClientRect();
+
+  textElem.attr('height', Math.round(dims.height)).attr('width', Math.round(dims.width));
 
   if (textData.class === 'noteText') {
-    const rectElem = elem.node().firstChild;
+    const rectElem = elem?.node()?.firstChild as SVGRectElement;
 
-    rectElem.setAttribute('height', dim.height + 2 * textData.textMargin);
+    rectElem.setAttribute('height', `${dims.height + 2 * textData.textMargin}`);
     const rectDim = rectElem.getBBox();
 
     textElem
-      .attr('x', Math.round(rectDim.x + rectDim.width / 2 - dim.width / 2))
-      .attr('y', Math.round(rectDim.y + rectDim.height / 2 - dim.height / 2));
+      .attr('x', Math.round(rectDim.x + rectDim.width / 2 - dims.width / 2))
+      .attr('y', Math.round(rectDim.y + rectDim.height / 2 - dims.height / 2));
   } else if (msgModel) {
-    let { startx, stopx, starty } = msgModel;
+    let { startx, stopx } = msgModel;
     if (startx > stopx) {
-      const temp = startx;
-      startx = stopx;
-      stopx = temp;
+      [startx, stopx] = [stopx, startx];
     }
 
-    textElem.attr('x', Math.round(startx + Math.abs(startx - stopx) / 2 - dim.width / 2));
+    textElem.attr('x', Math.round(startx + Math.abs(startx - stopx) / 2 - dims.width / 2));
     if (textData.class === 'loopText') {
-      textElem.attr('y', Math.round(starty));
+      textElem.attr('y', Math.round(msgModel.starty));
     } else {
-      textElem.attr('y', Math.round(starty - dim.height));
+      textElem.attr('y', Math.round(msgModel.starty - dims.height));
     }
   }
 
