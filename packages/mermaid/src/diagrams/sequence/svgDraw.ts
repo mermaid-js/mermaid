@@ -3,7 +3,9 @@ import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
-import { Actor } from './types.js';
+import type { Actor } from './types.js';
+import type { D3RectElement, RectData } from '../common/commonTypes.js';
+import type { SVG } from '../../diagram-api/types.js';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
 const TOP_ACTOR_CLASS = 'actor-top';
@@ -11,7 +13,7 @@ const BOTTOM_ACTOR_CLASS = 'actor-bottom';
 const ACTOR_BOX_CLASS = 'actor-box';
 const ACTOR_MAN_FIGURE_CLASS = 'actor-man';
 
-export const drawRect = function (elem, rectData) {
+export const drawRect = (elem: SVG, rectData: RectData): D3RectElement => {
   return svgDrawCommon.drawRect(elem, rectData);
 };
 
@@ -24,13 +26,13 @@ interface TextAttrs {
   'font-weight'?: string;
 }
 
-export const drawPopup = function (
-  elem: SVGGElement,
+export const drawPopup = (
+  elem: SVG,
   actor: Actor,
   minMenuWidth: number,
   textAttrs: TextAttrs,
   forceMenus: boolean
-): { height: number; width: number } {
+): { height: number; width: number } => {
   if (!actor.links) {
     return { height: 0, width: 0 };
   }
@@ -56,8 +58,8 @@ export const drawPopup = function (
   rectElem.attr('stroke', rectData.stroke);
   rectElem.attr('width', menuWidth);
   rectElem.attr('height', rectData.height);
-  rectElem.attr('rx', rectData.rx);
-  rectElem.attr('ry', rectData.ry);
+  rectElem.attr('rx', rectData.rx || 0);
+  rectElem.attr('ry', rectData.ry || 0);
 
   let linkY = 20;
   const offsetX = 10;
@@ -86,7 +88,7 @@ export const drawPopup = function (
   return { height: rectData.height + linkY, width: menuWidth };
 };
 
-const popupMenuToggle = function (elementId: string) {
+const popupMenuToggle = (elementId: string) => {
   return `const popupMenu = document.getElementById('${elementId}'); if (popupMenu != null) { popupMenu.style.display = popupMenu.style.display == 'block' ? 'none' : 'block'; }`;
 };
 
