@@ -107,6 +107,14 @@ stateDiagram-v2
         [*] --> second
         second --> [*]
     }
+
+    [*] --> NamedComposite
+    NamedComposite: Another Composite
+    state NamedComposite {
+        [*] --> namedSimple
+        namedSimple --> [*]
+        namedSimple: Another simple
+    }
 ```
 
 You can do this in several layers:
