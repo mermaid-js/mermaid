@@ -1,3 +1,5 @@
+import type { RectData } from '../common/commonTypes';
+
 export interface Box {
   name: string;
   wrap: boolean;
@@ -12,10 +14,10 @@ export interface Actor {
   wrap: boolean;
   prevActor?: string;
   nextActor?: string;
-  links: Record<string, unknown>;
+  links: Record<string, string>;
   properties: Record<string, unknown>;
   actorCnt: number | null;
-  rectData: unknown;
+  rectData: RectData;
   type: string;
 }
 

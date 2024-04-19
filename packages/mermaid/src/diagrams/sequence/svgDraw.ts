@@ -3,6 +3,7 @@ import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
+import { Actor } from './types.js';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
 const TOP_ACTOR_CLASS = 'actor-top';
@@ -14,33 +15,41 @@ export const drawRect = function (elem, rectData) {
   return svgDrawCommon.drawRect(elem, rectData);
 };
 
-export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMenus) {
-  if (actor.links === undefined || actor.links === null || Object.keys(actor.links).length === 0) {
+interface TextAttrs {
+  class?: string;
+  fill?: string;
+  stroke?: string;
+  'font-size'?: string;
+  'font-family'?: string;
+  'font-weight'?: string;
+}
+
+export const drawPopup = function (
+  elem: SVGGElement,
+  actor: Actor,
+  minMenuWidth: number,
+  textAttrs: TextAttrs,
+  forceMenus: boolean
+): { height: number; width: number } {
+  if (!actor.links) {
     return { height: 0, width: 0 };
   }
 
-  const links = actor.links;
-  const actorCnt = actor.actorCnt;
-  const rectData = actor.rectData;
+  const { links, actorCnt, rectData } = actor;
 
-  var displayValue = 'none';
-  if (forceMenus) {
-    displayValue = 'block !important';
-  }
+  const displayValue = forceMenus ? 'block !important' : 'none';
 
   const g = elem.append('g');
-  g.attr('id', 'actor' + actorCnt + '_popup');
+  g.attr('id', `actor${actorCnt}_popup`);
   g.attr('class', 'actorPopupMenu');
   g.attr('display', displayValue);
-  var actorClass = '';
-  if (rectData.class !== undefined) {
-    actorClass = ' ' + rectData.class;
-  }
+  const actorClass = rectData.class ? ` ${rectData.class}` : '';
 
-  let menuWidth = rectData.width > minMenuWidth ? rectData.width : minMenuWidth;
+  const menuWidth = Math.max(rectData.width, minMenuWidth);
+  const menuHeight = 20;
 
   const rectElem = g.append('rect');
-  rectElem.attr('class', 'actorPopupMenuPanel' + actorClass);
+  rectElem.attr('class', `actorPopupMenuPanel${actorClass}`);
   rectElem.attr('x', rectData.x);
   rectElem.attr('y', rectData.height);
   rectElem.attr('fill', rectData.fill);
@@ -49,27 +58,27 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   rectElem.attr('height', rectData.height);
   rectElem.attr('rx', rectData.rx);
   rectElem.attr('ry', rectData.ry);
-  if (links != null) {
-    var linkY = 20;
-    for (let key in links) {
-      var linkElem = g.append('a');
-      var sanitizedLink = sanitizeUrl(links[key]);
-      linkElem.attr('xlink:href', sanitizedLink);
-      linkElem.attr('target', '_blank');
 
-      _drawMenuItemTextCandidateFunc(textAttrs)(
-        key,
-        linkElem,
-        rectData.x + 10,
-        rectData.height + linkY,
-        menuWidth,
-        20,
-        { class: 'actor' },
-        textAttrs
-      );
+  let linkY = 20;
+  const offsetX = 10;
+  const offsetY = 30;
+  for (const key in links) {
+    const linkElem = g.append('a');
+    const sanitizedLink = sanitizeUrl(links[key]);
+    linkElem.attr('xlink:href', sanitizedLink);
+    linkElem.attr('target', '_blank');
+    _drawMenuItemTextCandidateFunc(textAttrs)(
+      key,
+      linkElem,
+      rectData.x + offsetX,
+      rectData.height + linkY,
+      menuWidth,
+      menuHeight,
+      { class: 'actor' },
+      textAttrs
+    );
 
-      linkY += 30;
-    }
+    linkY += offsetY;
   }
 
   rectElem.attr('height', linkY);
@@ -77,12 +86,8 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   return { height: rectData.height + linkY, width: menuWidth };
 };
 
-const popupMenuToggle = function (popId) {
-  return (
-    "var pu = document.getElementById('" +
-    popId +
-    "'); if (pu != null) { pu.style.display = pu.style.display == 'block' ? 'none' : 'block'; }"
-  );
+const popupMenuToggle = function (elementId: string) {
+  return `const popupMenu = document.getElementById('${elementId}'); if (popupMenu != null) { popupMenu.style.display = popupMenu.style.display == 'block' ? 'none' : 'block'; }`;
 };
 
 export const drawKatex = async function (elem, textData, msgModel = null) {
