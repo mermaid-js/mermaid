@@ -220,6 +220,13 @@ class Theme {
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
 
+    /* architecture */
+    this.archEdgeStrokeColor = this.archEdgeStrokeColor || '#777';
+    this.archEdgeArrowColor = this.archEdgeArrowColor || '#777';
+    this.archEdgeStrokeWidth = this.archEdgeStrokeWidth || '3';
+    this.archGroupBorderStrokeColor = this.archGroupBorderStrokeColor || '#000';
+    this.archGroupBorderStrokeWidth = this.archGroupBorderStrokeWidth || '2px';
+
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
     this.quadrant2Fill = this.quadrant2Fill || adjust(this.primaryColor, { r: 5, g: 5, b: 5 });

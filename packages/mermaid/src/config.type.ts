@@ -670,6 +670,7 @@ export interface RequirementDiagramConfig extends BaseDiagramConfig {
 export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
   padding?: number;
   iconSize?: number;
+  fontSize?: number;
 }
 /**
  * The object containing configurations specific for mindmap diagrams

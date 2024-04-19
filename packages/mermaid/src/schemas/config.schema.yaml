@@ -887,13 +887,17 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - useMaxWidth
       - padding
       - iconSize
+      - fontSize
     properties:
       padding:
         type: number
-        default: 10
+        default: 40
       iconSize:
         type: number
         default: 80
+      fontSize:
+        type: number
+        default: 16
 
   MindmapDiagramConfig:
     title: Mindmap Diagram Config

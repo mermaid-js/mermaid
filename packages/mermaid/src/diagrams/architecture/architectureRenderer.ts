@@ -250,7 +250,7 @@ function layoutArchitecture(
           style: {
             'text-valign': 'bottom',
             'text-halign': 'center',
-            'font-size': '16px',
+            'font-size': `${getConfigField('fontSize')}px`,
           },
         },
         {
@@ -265,7 +265,7 @@ function layoutArchitecture(
           selector: '.node-group',
           style: {
             // @ts-ignore Incorrect library types
-            padding: '40px',
+            padding: `${getConfigField('padding')}px`,
           },
         },
       ],

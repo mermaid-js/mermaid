@@ -133,6 +133,11 @@ export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
 };
 
 export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
+  const padding = getConfigField('padding');
+  const groupIconSize = padding * 0.75;
+
+  const fontSize = getConfigField('fontSize');
+
   const iconSize = getConfigField('iconSize');
   const halfIconSize = iconSize / 2;
 
@@ -155,15 +160,15 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
       let shiftedY1 = y1;
       if (data.icon) {
         const bkgElem = groupLabelContainer.append('g');
-        // TODO: magic number
-        getIcon(data.icon)?.(bkgElem, 32);
+        getIcon(data.icon)?.(bkgElem, groupIconSize);
         bkgElem.attr(
           'transform',
           'translate(' + (shiftedX1 + halfIconSize + 1) + ', ' + (shiftedY1 + halfIconSize + 1) + ')'
         );
-        shiftedX1 += 32;
-        // TODO: proper values once dynamic sizes are implemented
-        shiftedY1 += 4;
+        shiftedX1 += groupIconSize;
+        // TODO: test with more values
+        // - 1 - 2 comes from the Y axis transform of the icon and label
+        shiftedY1 += ((fontSize / 2) - 1 - 2);
       }
       if (data.label) {
         const textElem = groupLabelContainer.append('g');
