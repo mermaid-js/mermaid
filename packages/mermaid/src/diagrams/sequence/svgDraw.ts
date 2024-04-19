@@ -5,6 +5,7 @@ import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
 import type { Actor } from './types.js';
 import type {
+  Bound,
   D3RectElement,
   D3TextElement,
   RectData,
@@ -12,6 +13,8 @@ import type {
   TextObject,
 } from '../common/commonTypes.js';
 import type { SVG } from '../../diagram-api/types.js';
+import type { SequenceDiagramConfig } from '../../config.type.js';
+import type { D3Element } from '../../mermaidAPI.js';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
 const TOP_ACTOR_CLASS = 'actor-top';
@@ -98,18 +101,10 @@ const popupMenuToggle = (elementId: string) => {
   return `const popupMenu = document.getElementById('${elementId}'); if (popupMenu != null) { popupMenu.style.display = popupMenu.style.display == 'block' ? 'none' : 'block'; }`;
 };
 
-interface MessageModel {
-  startx: number;
-  stopx: number;
-  starty: number;
-  stopy: number;
-  sequenceIndex: number;
-  sequenceVisible: boolean;
-}
 export const drawKatex = async (
-  elem: SVG,
+  elem: D3Element,
   textData: TextData,
-  msgModel: MessageModel | null = null
+  msgModel: LoopModel | null = null
 ) => {
   const textElem = elem.append('foreignObject');
   const lines = await renderKatex(textData.text, configApi.getConfig());
@@ -155,7 +150,7 @@ export const drawKatex = async (
   return [textElem];
 };
 
-export const drawText = function (elem: SVG, textObject: TextObject): D3TextElement[] {
+export const drawText = function (elem: D3Element, textObject: TextObject): D3TextElement[] {
   let prevTextHeight = 0;
   let textHeight = 0;
   const lines = textObject.text.split(common.lineBreakRegex);
@@ -277,7 +272,6 @@ export const drawText = function (elem: SVG, textObject: TextObject): D3TextElem
       textObject.textMargin !== undefined &&
       textObject.textMargin > 0
     ) {
-      // @ts-expect-error - Incorrect types
       textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
       prevTextHeight = textHeight;
     }
@@ -570,44 +564,68 @@ export const anchorElement = function (elem) {
 /**
  * Draws an activation in the diagram
  *
- * @param {any} elem - Element to append activation rect.
- * @param {any} bounds - Activation box bounds.
- * @param {any} verticalPos - Precise y coordinate of bottom activation box edge.
- * @param {any} conf - Sequence diagram config object.
- * @param {any} actorActivations - Number of activations on the actor.
+ * @param  elem - Element to append the activation to.
+ * @param  bounds - Bounds of the activation.
+ * @param  verticalPos - Precise y coordinate of bottom activation box edge.
+ * @param  conf - Sequence diagram config object.
+ * @param  actorActivations - Count of activations on the actor.
  */
-export const drawActivation = function (elem, bounds, verticalPos, conf, actorActivations) {
+export const drawActivation = function (
+  elem: SVG,
+  bounds: Bound,
+  verticalPos: number,
+  conf: SequenceDiagramConfig,
+  actorActivations: number
+) {
   const rect = svgDrawCommon.getNoteRect();
   const g = bounds.anchored;
   rect.x = bounds.startx;
   rect.y = bounds.starty;
-  rect.class = 'activation' + (actorActivations % 3); // Will evaluate to 0, 1 or 2
+  rect.class = `activation${actorActivations % 3}`; // Will evaluate to 0, 1 or 2
   rect.width = bounds.stopx - bounds.startx;
   rect.height = verticalPos - bounds.starty;
   drawRect(g, rect);
 };
 
+interface LoopModel {
+  startx: number;
+  starty: number;
+  stopx: number;
+  stopy: number;
+  title: string;
+  wrap: boolean;
+  width: number;
+  height: number;
+  fill: string;
+  sections: Array<{ x: number; y: number; height: number }>;
+  sectionTitles?: Array<{ message: string }>;
+}
 /**
  * Draws a loop in the diagram
  *
- * @param {any} elem - Element to append the loop to.
- * @param {any} loopModel - LoopModel of the given loop.
- * @param {any} labelText - Text within the loop.
- * @param {any} conf - Diagram configuration
- * @returns {any}
+ * @param elem - Element to append the loop to.
+ * @param loopModel - Loop Model of the given loop.
+ * @param labelText - Text within the loop.
+ * @param conf - Diagram configuration
+ * @returns SVG
  */
-export const drawLoop = async function (elem, loopModel, labelText, conf) {
+export const drawLoop = async function (
+  elem: SVG,
+  loopModel: LoopModel,
+  labelText: string,
+  conf: SequenceDiagramConfig
+) {
   const {
-    boxMargin,
-    boxTextMargin,
-    labelBoxHeight,
-    labelBoxWidth,
+    boxMargin = 0,
+    boxTextMargin = 0,
+    labelBoxHeight = 0,
+    labelBoxWidth = 0,
     messageFontFamily: fontFamily,
     messageFontSize: fontSize,
     messageFontWeight: fontWeight,
   } = conf;
   const g = elem.append('g');
-  const drawLoopLine = function (startx, starty, stopx, stopy) {
+  const drawLoopLine = function (startx: number, starty: number, stopx: number, stopy: number) {
     return g
       .append('line')
       .attr('x1', startx)
@@ -658,7 +676,7 @@ export const drawLoop = async function (elem, loopModel, labelText, conf) {
   txt.fontWeight = fontWeight;
   txt.wrap = true;
 
-  let textElem = hasKatex(txt.text) ? await drawKatex(g, txt, loopModel) : drawText(g, txt);
+  const textElem = hasKatex(txt.text) ? await drawKatex(g, txt, loopModel) : drawText(g, txt);
 
   if (loopModel.sectionTitles !== undefined) {
     for (const [idx, item] of Object.entries(loopModel.sectionTitles)) {
@@ -681,7 +699,7 @@ export const drawLoop = async function (elem, loopModel, labelText, conf) {
         } else {
           drawText(g, txt);
         }
-        let sectionHeight = Math.round(
+        const sectionHeight = Math.round(
           textElem
             .map((te) => (te._groups || te)[0][0].getBBox().height)
             .reduce((acc, curr) => acc + curr)
@@ -842,15 +860,19 @@ export const getTextObj = () => {
     x: 0,
     y: 0,
     fill: undefined,
-    anchor: undefined,
+    anchor: 'start',
     style: '#666',
-    width: undefined,
-    height: undefined,
+    width: 0,
+    height: 0,
     textMargin: 0,
     rx: 0,
     ry: 0,
     tspan: true,
-    valign: undefined,
+    valign: 'baseline',
+    'text-anchor': 'start',
+    text: '',
+    dominantBaseline: 'auto',
+    alignmentBaseline: 'auto',
   };
 };
 

@@ -1,3 +1,5 @@
+import { SVG } from '../../diagram-api/types';
+
 export interface RectData {
   x: number;
   y: number;
@@ -21,6 +23,7 @@ export interface Bound {
   stopy: number;
   fill: string;
   stroke: string;
+  anchored: SVG;
 }
 
 export interface TextData {
@@ -45,9 +48,10 @@ export interface TextObject extends TextData {
   valign: string;
   dominantBaseline: string;
   alignmentBaseline: string;
-  fontSize: string;
-  fontWeight: string;
-  fontFamily: string;
+  fontSize?: string | number;
+  fontWeight?: string | number;
+  fontFamily?: string;
+  wrap?: boolean;
 }
 
 export type D3RectElement = d3.Selection<SVGRectElement, unknown, Element | null, unknown>;
