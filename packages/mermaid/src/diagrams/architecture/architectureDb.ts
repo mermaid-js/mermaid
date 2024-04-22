@@ -35,7 +35,7 @@ const DEFAULT_ARCHITECTURE_CONFIG: Required<ArchitectureDiagramConfig> =
 
 const state = new ImperativeState<ArchitectureState>(() => ({
   services: {},
-  groups: [],
+  groups: {},
   edges: [],
   registeredIds: {},
   config: DEFAULT_ARCHITECTURE_CONFIG,
@@ -80,7 +80,6 @@ const addService = function ({ id, icon, in: parent, title }: Omit<ArchitectureS
 const getServices = (): ArchitectureService[] => Object.values(state.records.services);
 
 const addGroup = function ({ id, icon, in: parent, title }: ArchitectureGroup) {
-  // const { icon, in: inside, title } = opts;
   if (state.records.registeredIds[id] !== undefined) {
     throw new Error(`The group id [${id}] is already in use by another ${state.records.registeredIds[id]}`);
   }
@@ -100,20 +99,21 @@ const addGroup = function ({ id, icon, in: parent, title }: ArchitectureGroup) {
 
   state.records.registeredIds[id] = 'group';
 
-  state.records.groups.push({
+  state.records.groups[id] = {
     id,
     icon,
     title,
     in: parent,
-  });
+  };
 };
 const getGroups = (): ArchitectureGroup[] => {
-  return state.records.groups;
+  return Object.values(state.records.groups);
 };
 
 const addEdge = function (
   { lhsId, rhsId, lhsDir, rhsDir, lhsInto, rhsInto, title }: ArchitectureEdge
 ) {
+
   if (!isArchitectureDirection(lhsDir)) {
     throw new Error(
       `Invalid direction given for left hand side of edge ${lhsId}--${rhsId}. Expected (L,R,T,B) got ${lhsDir}`
@@ -124,14 +124,15 @@ const addEdge = function (
       `Invalid direction given for right hand side of edge ${lhsId}--${rhsId}. Expected (L,R,T,B) got ${rhsDir}`
     );
   }
-  if (state.records.services[lhsId] === undefined) {
+
+  if (state.records.services[lhsId] === undefined && state.records.groups[lhsId] === undefined) {
     throw new Error(
-      `The left-hand service [${lhsId}] does not yet exist. Please create the service before declaring an edge to it.`
+      `The left-hand id [${lhsId}] does not yet exist. Please create the service/group before declaring an edge to it.`
     );
   }
-  if (state.records.services[rhsId] === undefined) {
+  if (state.records.services[rhsId] === undefined && state.records.groups[lhsId] === undefined) {
     throw new Error(
-      `The right-hand service [${rhsId}] does not yet exist. Please create the service before declaring an edge to it.`
+      `The right-hand id [${rhsId}] does not yet exist. Please create the service/group before declaring an edge to it.`
     );
   }
 
@@ -146,9 +147,12 @@ const addEdge = function (
   };
 
   state.records.edges.push(edge);
+  if (state.records.services[lhsId] && state.records.services[rhsId]) {
+    state.records.services[lhsId].edges.push(state.records.edges[state.records.edges.length - 1]);
+    state.records.services[rhsId].edges.push(state.records.edges[state.records.edges.length - 1]);
+  } else if (state.records.groups[lhsId] && state.records.groups[rhsId]) {
 
-  state.records.services[lhsId].edges.push(state.records.edges[state.records.edges.length - 1]);
-  state.records.services[rhsId].edges.push(state.records.edges[state.records.edges.length - 1]);
+  }
 };
 
 const getEdges = (): ArchitectureEdge[] => state.records.edges;
@@ -164,24 +168,24 @@ const getDataStructures = () => {
     // Outer reduce applied on all services
     // Inner reduce applied on the edges for a service
     const adjList = Object.entries(state.records.services).reduce<{ [id: string]: ArchitectureDirectionPairMap }>(
-      (prev, [id, service]) => {
-        prev[id] = service.edges.reduce<ArchitectureDirectionPairMap>((prev, edge) => {
+      (prevOuter, [id, service]) => {
+        prevOuter[id] = service.edges.reduce<ArchitectureDirectionPairMap>((prevInner, edge) => {
           if (edge.lhsId === id) {
             // source is LHS
             const pair = getArchitectureDirectionPair(edge.lhsDir, edge.rhsDir);
             if (pair) {
-              prev[pair] = edge.rhsId;
+              prevInner[pair] = edge.rhsId;
             }
           } else {
             // source is RHS
             const pair = getArchitectureDirectionPair(edge.rhsDir, edge.lhsDir);
             if (pair) {
-              prev[pair] = edge.lhsId;
+              prevInner[pair] = edge.lhsId;
             }
           }
-          return prev;
+          return prevInner;
         }, {});
-        return prev;
+        return prevOuter;
       },
       {}
     );
@@ -251,8 +255,8 @@ export const db: ArchitectureDB = {
   getServices,
   addGroup,
   getGroups,
-  addEdge: addEdge,
-  getEdges: getEdges,
+  addEdge,
+  getEdges,
   setElementForId,
   getElementById,
   getDataStructures,

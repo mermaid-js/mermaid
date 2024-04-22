@@ -230,7 +230,7 @@ export type ArchitectureDataStructures = {
 
 export interface ArchitectureState extends Record<string, unknown> {
   services: Record<string, ArchitectureService>;
-  groups: ArchitectureGroup[];
+  groups: Record<string, ArchitectureGroup>;
   edges: ArchitectureEdge[];
   registeredIds: Record<string, 'service' | 'group'>;
   dataStructures?: ArchitectureDataStructures;

@@ -116,7 +116,7 @@ export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
               .attr('dominant-baseline', 'auto')
               .attr('transform', `rotate(${-1 * x * y * 45})`);
 
-            // Calculate the new width/height with the rotation and transform to the proper position
+            // Calculate the new width/height with the rotation applied, and transform to the proper position
             const bboxNew = textElem.node().getBoundingClientRect();
             textElem
               .attr('transform', `
