@@ -347,9 +347,7 @@ export const renderKatex = async (text: string, config: MermaidConfig): Promise<
     .split(lineBreakRegex)
     .map((line) =>
       hasKatex(line)
-        ? `<div style="display: flex; align-items: center; justify-content: center; white-space: nowrap;">
-              ${line}
-            </div>`
+        ? `<div style="display: flex; align-items: center; justify-content: center; white-space: nowrap;">${line}</div>`
         : `<div>${line}</div>`
     )
     .join('')
