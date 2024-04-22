@@ -85,6 +85,13 @@ class Theme {
     this.personBorder = this.primaryBorderColor;
     this.personBkg = this.mainBkg;
 
+    /* Architecture Diagram variables */
+    this.archEdgeStrokeColor = 'calculated';
+    this.archEdgeArrowColor = 'calculated';
+    this.archEdgeStrokeWidth = 'calculated';
+    this.archGroupBorderStrokeColor = '#FFF';
+    this.archGroupBorderStrokeWidth = 'calculated';
+
     /* state colors */
     this.labelColor = 'calculated';
 
