@@ -121,6 +121,13 @@ export interface MermaidConfig {
    */
   legacyMathML?: boolean;
   /**
+   * This option forces Mermaid to rely on KaTeX's own stylesheet for rendering MathML. Due to differences between OS
+   * fonts and browser's MathML implementation, this option is recommended if consistent rendering is important.
+   * If set to true, ignores legacyMathML.
+   *
+   */
+  forceLegacyMathML?: boolean;
+  /**
    * This option controls if the generated ids of nodes in the SVG are
    * generated randomly or based on a seed.
    * If set to `false`, the IDs are generated based on the current date and

@@ -337,11 +337,12 @@ export const renderKatex = async (text: string, config: MermaidConfig): Promise<
     return text;
   }
 
-  if (!isMathMLSupported() && !config.legacyMathML) {
+  if (!(isMathMLSupported() || config.legacyMathML || config.forceLegacyMathML)) {
     return text.replace(katexRegex, 'MathML is unsupported in this environment.');
   }
 
   const { default: katex } = await import('katex');
+  const outputMode = (config.forceLegacyMathML) || (!isMathMLSupported() && config.legacyMathML) ? 'htmlAndMathml' : 'mathml';
   return text
     .split(lineBreakRegex)
     .map((line) =>
@@ -357,7 +358,7 @@ export const renderKatex = async (text: string, config: MermaidConfig): Promise<
         .renderToString(c, {
           throwOnError: true,
           displayMode: true,
-          output: isMathMLSupported() ? 'mathml' : 'htmlAndMathml',
+          output: outputMode
         })
         .replace(/\n/g, ' ')
         .replace(/<annotation.*<\/annotation>/g, '')
