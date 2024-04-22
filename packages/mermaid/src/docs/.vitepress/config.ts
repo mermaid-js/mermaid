@@ -155,6 +155,7 @@ function sidebarSyntax() {
         { text: 'XYChart 🔥', link: '/syntax/xyChart' },
         { text: 'Block Diagram 🔥', link: '/syntax/block' },
         { text: 'Packet 🔥', link: '/syntax/packet' },
+        { text: 'Architecture 🔥', link: '/syntax/architecture' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
