@@ -1,7 +1,8 @@
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
-import insertMarkers from './markers.js';
-import { updateNodeBounds } from './shapes/util.js';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
+import insertMarkers from '../../rendering-elements/markers.js';
+import { updateNodeBounds } from '../../rendering-elements/shapes/util.js';
 import {
   clear as clearGraphlib,
   clusterDb,
@@ -9,12 +10,22 @@ import {
   findNonClusterChild,
   sortNodesByHierarchy,
 } from './mermaid-graphlib.js';
-import { insertNode, positionNode, clear as clearNodes, setNodeElem } from './nodes.js';
-import { insertCluster, clear as clearClusters } from './clusters.js';
-import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } from './edges.js';
-import { log } from '../logger.js';
-import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
-import { getConfig } from '../diagram-api/diagramAPI.js';
+import {
+  insertNode,
+  positionNode,
+  clear as clearNodes,
+  setNodeElem,
+} from '../../rendering-elements/nodes.js';
+import { insertCluster, clear as clearClusters } from '../../rendering-elements/clusters.js';
+import {
+  insertEdgeLabel,
+  positionEdgeLabel,
+  insertEdge,
+  clear as clearEdges,
+} from '../../rendering-elements/edges.js';
+import { log } from '$root/logger.js';
+import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
+import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
 const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, siteConfig) => {
   log.info('Graph in recursive render: XXX', graphlibJson.write(graph), parentCluster);
@@ -161,19 +172,49 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, sit
   return { elem, diff };
 };
 
-export const render = async (elem, graph, markers, diagramtype, id) => {
-  insertMarkers(elem, markers, diagramtype, id);
+export const render = async (data4Layout, svg, element) => {
+  console.warn('HERERERERERER');
+  // Create the input mermaid.graph
+  const graph = new graphlib.Graph({
+    multigraph: true,
+    compound: true,
+  })
+    .setGraph({
+      rankdir: data4Layout.direction,
+      nodesep: data4Layout.nodeSpacing,
+      ranksep: data4Layout.rankSpacing,
+      marginx: 8,
+      marginy: 8,
+    })
+    .setDefaultEdgeLabel(function () {
+      return {};
+    });
+
+  // Org
+
+  insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
   clearNodes();
   clearEdges();
   clearClusters();
   clearGraphlib();
 
+  // Add the nodes and edges to the graph
+  data4Layout.nodes.forEach((node) => {
+    graph.setNode(node.id, { ...node });
+  });
+
   log.warn('Graph at first:', JSON.stringify(graphlibJson.write(graph)));
   adjustClustersAndEdges(graph);
   log.warn('Graph after:', JSON.stringify(graphlibJson.write(graph)));
-  // log.warn('Graph ever  after:', graphlibJson.write(graph.node('A').graph));
   const siteConfig = getConfig();
-  await recursiveRender(elem, graph, diagramtype, id, undefined, siteConfig);
+  await recursiveRender(
+    element,
+    graph,
+    data4Layout.type,
+    data4Layout.diagramId,
+    undefined,
+    siteConfig
+  );
 };
 
 // const shapeDefinitions = {};
