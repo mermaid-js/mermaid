@@ -562,17 +562,16 @@ export const anchorElement = function (elem) {
  * @param  actorActivations - Count of activations on the actor.
  */
 export const drawActivation = function (
-  elem: SVG,
   bounds: Bound,
   verticalPos: number,
-  conf: SequenceDiagramConfig,
   actorActivations: number
 ) {
   const rect = svgDrawCommon.getNoteRect();
   const g = bounds.anchored;
   rect.x = bounds.startx;
   rect.y = bounds.starty;
-  rect.class = `activation${actorActivations % 3}`; // Will evaluate to 0, 1 or 2
+  // Will evaluate to 0, 1 or 2
+  rect.class = `activation${actorActivations % 3}`;
   rect.width = bounds.stopx - bounds.startx;
   rect.height = verticalPos - bounds.starty;
   drawRect(g, rect);

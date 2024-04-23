@@ -831,13 +831,7 @@ export const draw = async function (_text: string, id: string, _version: string,
       activationData.starty = verticalPos - 6;
       verticalPos += 12;
     }
-    svgDraw.drawActivation(
-      diagram,
-      activationData,
-      verticalPos,
-      conf,
-      actorActivations(msg.from.actor).length
-    );
+    svgDraw.drawActivation(activationData, verticalPos, actorActivations(msg.from.actor).length);
 
     bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos);
   }
