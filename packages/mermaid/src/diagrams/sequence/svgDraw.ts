@@ -282,37 +282,17 @@ export const drawText = function (elem: D3Element, textObject: TextObject): D3Te
   return textElems;
 };
 
-export const drawLabel = function (elem, txtObject) {
+export const drawLabel = function (elem: SVG, txtObject: TextObject) {
   /**
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} cut
-   * @returns {any}
+   * @param x - x coordinate of the label
+   * @param y - y coordinate of the label
+   * @param width - width of the label
+   * @param height - height of the label
+   * @param cut - Offset at which the label is cut
+   * @returns number
    */
-  function genPoints(x, y, width, height, cut) {
-    return (
-      x +
-      ',' +
-      y +
-      ' ' +
-      (x + width) +
-      ',' +
-      y +
-      ' ' +
-      (x + width) +
-      ',' +
-      (y + height - cut) +
-      ' ' +
-      (x + width - cut * 1.2) +
-      ',' +
-      (y + height) +
-      ' ' +
-      x +
-      ',' +
-      (y + height)
-    );
+  function genPoints(x: number, y: number, width: number, height: number, cut: number) {
+    return `${x},${y} ${x + width},${y} ${x + width},${y + height - cut} ${x + width - cut * 1.2},${y + height} ${x},${y + height}`;
   }
   const polygon = elem.append('polygon');
   polygon.attr('points', genPoints(txtObject.x, txtObject.y, txtObject.width, txtObject.height, 7));
@@ -326,7 +306,12 @@ export const drawLabel = function (elem, txtObject) {
 
 let actorCnt = -1;
 
-export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
+export const fixLifeLineHeights = (
+  diagram: D3Element,
+  actors: Record<string, Actor>,
+  actorKeys: Array<string>,
+  conf: SequenceDiagramConfig
+) => {
   if (!diagram.select) {
     return;
   }
@@ -344,12 +329,17 @@ export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
 /**
  * Draws an actor in the diagram with the attached line
  *
- * @param {any} elem - The diagram we'll draw to.
- * @param {any} actor - The actor to draw.
- * @param {any} conf - DrawText implementation discriminator object
- * @param {boolean} isFooter - If the actor is the footer one
+ * @param elem - The diagram we'll draw to.
+ * @param actor - The actor to draw.
+ * @param conf - DrawText implementation discriminator object
+ * @param isFooter - If the actor is the footer
  */
-const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
+const drawActorTypeParticipant = async function (
+  elem: SVG,
+  actor: Actor,
+  conf: SequenceDiagramConfig,
+  isFooter: boolean
+) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 5;
@@ -425,8 +415,9 @@ const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
   );
 
   let height = actor.height;
-  if (rectElem.node) {
-    const bounds = rectElem.node().getBBox();
+  const rectNode = rectElem.node();
+  if (rectNode) {
+    const bounds = rectNode.getBBox();
     actor.height = bounds.height;
     height = bounds.height;
   }

@@ -15,10 +15,18 @@ export interface Actor {
   prevActor?: string;
   nextActor?: string;
   links: Record<string, string>;
-  properties: Record<string, unknown>;
+  properties: Record<string, string>;
   actorCnt: number | null;
   rectData: RectData;
   type: string;
+  stopx: number;
+  stopy: number;
+  height: number;
+  startx: number;
+  starty: number;
+  width: number;
+  x: number;
+  y: number;
 }
 
 export interface Message {
