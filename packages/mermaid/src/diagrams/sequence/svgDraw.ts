@@ -39,7 +39,7 @@ export const drawPopup = (
   elem: SVG,
   actor: Actor,
   minMenuWidth: number,
-  textAttrs: TextAttrs,
+  textAttrs: SequenceDiagramConfig,
   forceMenus: boolean
 ): { height: number; width: number } => {
   if (!actor.links) {
@@ -335,7 +335,7 @@ export const fixLifeLineHeights = (
  * @param isFooter - If the actor is the footer
  */
 const drawActorTypeParticipant = async function (
-  elem: SVG,
+  elem: D3Element,
   actor: Actor,
   conf: SequenceDiagramConfig,
   isFooter: boolean
@@ -601,7 +601,7 @@ interface LoopModel {
  * @returns SVG
  */
 export const drawLoop = async function (
-  elem: SVG,
+  elem: D3Element,
   loopModel: LoopModel,
   labelText: string,
   conf: SequenceDiagramConfig
@@ -729,7 +729,7 @@ export const insertDatabaseIcon = function (elem: SVG) {
     );
 };
 
-export const insertComputerIcon = function (elem) {
+export const insertComputerIcon = function (elem: SVG) {
   elem
     .append('defs')
     .append('symbol')
@@ -744,7 +744,7 @@ export const insertComputerIcon = function (elem) {
     );
 };
 
-export const insertClockIcon = function (elem) {
+export const insertClockIcon = function (elem: SVG) {
   elem
     .append('defs')
     .append('symbol')
@@ -927,7 +927,7 @@ const _drawTextCandidateFunc = (function () {
     width: number,
     height: number,
     textAttrs: TextAttrs,
-    conf: { actorFontSize: string; actorFontFamily: string; actorFontWeight: string }
+    conf: SequenceDiagramConfig
   ) {
     const { actorFontSize, actorFontFamily, actorFontWeight } = conf;
 
@@ -977,11 +977,7 @@ const _drawTextCandidateFunc = (function () {
     width: number,
     height: number,
     textAttrs: TextAttrs,
-    conf: {
-      actorFontSize: string;
-      actorFontFamily: string;
-      actorFontWeight: string;
-    }
+    conf: SequenceDiagramConfig
   ) {
     const s = g.append('switch');
     const f = s
@@ -1026,7 +1022,7 @@ const _drawTextCandidateFunc = (function () {
     width: number,
     height: number,
     textAttrs: TextAttrs,
-    conf: { actorFontSize: string; actorFontFamily: string; actorFontWeight: string }
+    conf: SequenceDiagramConfig
   ) {
     // TODO duplicate render calls, optimize
 
@@ -1063,7 +1059,7 @@ const _drawTextCandidateFunc = (function () {
     }
   }
 
-  return function (conf, hasKatex = false) {
+  return function (conf: SequenceDiagramConfig, hasKatex = false) {
     if (hasKatex) {
       return byKatex;
     }
@@ -1117,17 +1113,13 @@ const _drawMenuItemTextCandidateFunc = (function () {
     width: number,
     height: number,
     textAttrs: TextAttrs,
-    conf: {
-      actorFontSize: number;
-      actorFontFamily: number;
-      actorFontWeight: number;
-    }
+    conf: SequenceDiagramConfig
   ) {
-    const { actorFontSize = 0, actorFontFamily = 0, actorFontWeight = 0 } = conf;
+    const { actorFontSize = '0', actorFontFamily = 0, actorFontWeight = 0 } = conf;
 
     const lines = content.split(common.lineBreakRegex);
     for (let i = 0; i < lines.length; i++) {
-      const dy = i * actorFontSize - (actorFontSize * (lines.length - 1)) / 2;
+      const dy = i * Number(actorFontSize) - (Number(actorFontSize) * (lines.length - 1)) / 2;
       const text = g
         .append('text')
         .attr('x', x)
@@ -1165,11 +1157,7 @@ const _drawMenuItemTextCandidateFunc = (function () {
     width: number,
     height: number,
     textAttrs: TextAttrs,
-    conf: {
-      actorFontSize: string;
-      actorFontFamily: string;
-      actorFontWeight: string;
-    }
+    conf: SequenceDiagramConfig
   ) => {
     const s = g.append('switch');
     const f = s
@@ -1208,7 +1196,7 @@ const _drawMenuItemTextCandidateFunc = (function () {
     }
   };
 
-  return function (conf: { textPlacement: string }) {
+  return function (conf: SequenceDiagramConfig) {
     return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'old' ? byText : byTspan;
   };
 })();

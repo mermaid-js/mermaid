@@ -1350,6 +1350,7 @@ export interface SequenceDiagramConfig extends BaseDiagramConfig {
   messageFont?: FontCalculator;
   noteFont?: FontCalculator;
   actorFont?: FontCalculator;
+  textPlacement?: string;
 }
 /**
  * The object containing configurations specific for flowcharts
