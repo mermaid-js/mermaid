@@ -3,7 +3,7 @@ import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
-import type { Actor } from './types.js';
+import type { Actor, LoopModel, TextAttrs } from './types.js';
 import type {
   Bound,
   D3RectElement,
@@ -25,15 +25,6 @@ const ACTOR_MAN_FIGURE_CLASS = 'actor-man';
 export const drawRect = (elem: SVG, rectData: RectData): D3RectElement => {
   return svgDrawCommon.drawRect(elem, rectData);
 };
-
-interface TextAttrs {
-  class?: string;
-  fill?: string;
-  stroke?: string;
-  'font-size'?: string;
-  'font-family'?: string;
-  'font-weight'?: string;
-}
 
 export const drawPopup = (
   elem: SVG,
@@ -403,7 +394,7 @@ const drawActorTypeParticipant = async function (
     }
   }
 
-  await _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     g,
     rect.x,
@@ -577,19 +568,6 @@ export const drawActivation = function (
   drawRect(g, rect);
 };
 
-interface LoopModel {
-  startx: number;
-  starty: number;
-  stopx: number;
-  stopy: number;
-  title: string;
-  wrap: boolean;
-  width: number;
-  height: number;
-  fill: string;
-  sections: Array<{ x: number; y: number; height: number }>;
-  sectionTitles?: Array<{ message: string }>;
-}
 /**
  * Draws a loop in the diagram
  *

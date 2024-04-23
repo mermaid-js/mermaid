@@ -100,3 +100,26 @@ export interface Note {
   message: string;
   wrap: boolean;
 }
+
+export interface TextAttrs {
+  class?: string;
+  fill?: string;
+  stroke?: string;
+  'font-size'?: string;
+  'font-family'?: string;
+  'font-weight'?: string;
+}
+
+export interface LoopModel {
+  startx: number;
+  starty: number;
+  stopx: number;
+  stopy: number;
+  title: string;
+  wrap: boolean;
+  width: number;
+  height: number;
+  fill: string;
+  sections: Array<{ x: number; y: number; height: number }>;
+  sectionTitles?: Array<{ message: string }>;
+}
