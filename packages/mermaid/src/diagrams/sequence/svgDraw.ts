@@ -406,11 +406,13 @@ const drawActorTypeParticipant = async function (
   );
 
   let height = actor.height;
-  const rectNode = rectElem.node();
-  if (rectNode) {
-    const bounds = rectNode.getBBox();
-    actor.height = bounds.height;
-    height = bounds.height;
+  if (rectElem.node && typeof rectElem.node === 'function') {
+    const rectNode = rectElem.node();
+    if (rectNode) {
+      const bounds = rectNode.getBBox();
+      actor.height = bounds.height;
+      height = bounds.height;
+    }
   }
 
   return height;

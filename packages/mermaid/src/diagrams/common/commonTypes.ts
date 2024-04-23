@@ -1,4 +1,4 @@
-import { SVG } from '../../diagram-api/types';
+import type { SVG } from '../../diagram-api/types';
 
 export interface RectData {
   x: number;
