@@ -345,7 +345,7 @@ const drawActorTypeParticipant = async function (
   const centerY = actorY + 5;
 
   const boxplusLineGroup = elem.append('g').lower();
-  var g = boxplusLineGroup;
+  let g = boxplusLineGroup;
 
   if (!isFooter) {
     actorCnt++;
@@ -372,7 +372,7 @@ const drawActorTypeParticipant = async function (
   }
 
   const rect = svgDrawCommon.getNoteRect();
-  var cssclass = 'actor';
+  let cssclass = 'actor';
   if (actor.properties != null && actor.properties['class']) {
     cssclass = actor.properties['class'];
   } else {
@@ -707,10 +707,10 @@ export const drawLoop = async function (
 /**
  * Draws a background rectangle
  *
- * @param {any} elem Diagram (reference for bounds)
- * @param {any} bounds Shape of the rectangle
+ * @param elem - Diagram (reference for bounds)
+ * @param bounds - Shape of the rectangle
  */
-export const drawBackgroundRect = function (elem, bounds) {
+export const drawBackgroundRect = function (elem: SVG, bounds: Bound) {
   svgDrawCommon.drawBackgroundRect(elem, bounds);
 };
 
@@ -893,7 +893,7 @@ const _drawTextCandidateFunc = (function () {
    */
   function byText(
     content: string,
-    g: SVG,
+    g: D3Element,
     x: number,
     y: number,
     width: number,
@@ -910,19 +910,28 @@ const _drawTextCandidateFunc = (function () {
   }
 
   /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} conf
+   * @param content - The text to be drawn.
+   * @param g - The svg group to append the text to.
+   * @param x - The x coordinate of the text.
+   * @param y - The y coordinate of the text.
+   * @param width - The width of the text.
+   * @param height - The height of the text.
+   * @param textAttrs - The text attributes to be applied.
+   * @param conf - The configuration object.
    */
-  function byTspan(content, g, x, y, width, height, textAttrs, conf) {
+  function byTspan(
+    content: string,
+    g: D3Element,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs,
+    conf: { actorFontSize: string; actorFontFamily: string; actorFontWeight: string }
+  ) {
     const { actorFontSize, actorFontFamily, actorFontWeight } = conf;
 
-    const [_actorFontSize, _actorFontSizePx] = parseFontSize(actorFontSize);
+    const [_actorFontSize = 0, _actorFontSizePx = '0px'] = parseFontSize(actorFontSize);
 
     const lines = content.split(common.lineBreakRegex);
     for (let i = 0; i < lines.length; i++) {
@@ -951,16 +960,29 @@ const _drawTextCandidateFunc = (function () {
   }
 
   /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} conf
+   * @param content - The text to be drawn.
+   * @param g - The svg group to append the text to.
+   * @param x - The x coordinate of the text.
+   * @param y - The y coordinate of the text.
+   * @param width - The width of the text.
+   * @param height - The height of the text.
+   * @param textAttrs - The text attributes to be applied.
+   * @param conf - The configuration object.
    */
-  function byFo(content, g, x, y, width, height, textAttrs, conf) {
+  function byFo(
+    content: string,
+    g: D3Element,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs,
+    conf: {
+      actorFontSize: string;
+      actorFontFamily: string;
+      actorFontWeight: string;
+    }
+  ) {
     const s = g.append('switch');
     const f = s
       .append('foreignObject')
@@ -987,17 +1009,25 @@ const _drawTextCandidateFunc = (function () {
   }
 
   /**
-   *
-   * @param content
-   * @param g
-   * @param x
-   * @param y
-   * @param width
-   * @param height
-   * @param textAttrs
-   * @param conf
+   * @param content - The text to be drawn.
+   * @param g - The svg group to append the text to.
+   * @param x - The x coordinate of the text.
+   * @param y - The y coordinate of the text.
+   * @param width - The width of the text.
+   * @param height - The height of the text.
+   * @param textAttrs - The text attributes to be applied.
+   * @param conf - The configuration object.
    */
-  async function byKatex(content, g, x, y, width, height, textAttrs, conf) {
+  async function byKatex(
+    content: string,
+    g: D3Element,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs,
+    conf: { actorFontSize: string; actorFontFamily: string; actorFontWeight: string }
+  ) {
     // TODO duplicate render calls, optimize
 
     const dim = await calculateMathMLDimensions(content, configApi.getConfig());
@@ -1022,10 +1052,10 @@ const _drawTextCandidateFunc = (function () {
   }
 
   /**
-   * @param {any} toText
-   * @param {any} fromTextAttrsDict
+   * @param toText - The text SVG element to apply the attributes to.
+   * @param fromTextAttrsDict - The text attributes to be applied.
    */
-  function _setTextAttrs(toText, fromTextAttrsDict) {
+  function _setTextAttrs(toText: SVG, fromTextAttrsDict: TextAttrs) {
     for (const key in fromTextAttrsDict) {
       if (fromTextAttrsDict.hasOwnProperty(key)) {
         toText.attr(key, fromTextAttrsDict[key]);
@@ -1043,15 +1073,23 @@ const _drawTextCandidateFunc = (function () {
 
 const _drawMenuItemTextCandidateFunc = (function () {
   /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
+   * @param content - The text to be drawn.
+   * @param g - The svg group to append the text to.
+   * @param x - The x coordinate of the text.
+   * @param y - The y coordinate of the text.
+   * @param width - The width of the text.
+   * @param height - The height of the text.
+   * @param textAttrs - The text attributes to be applied.
    */
-  function byText(content, g, x, y, width, height, textAttrs) {
+  function byText(
+    content: string,
+    g: D3Element,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs
+  ) {
     const text = g
       .append('text')
       .attr('x', x)
@@ -1062,17 +1100,30 @@ const _drawMenuItemTextCandidateFunc = (function () {
   }
 
   /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} conf
+   * @param content - The text to be drawn.
+   * @param g - The svg group to append the text to.
+   * @param x - The x coordinate of the text.
+   * @param y - The y coordinate of the text.
+   * @param width - The width of the text.
+   * @param height - The height of the text.
+   * @param textAttrs - The text attributes to be applied.
+   * @param conf - The configuration object.
    */
-  function byTspan(content, g, x, y, width, height, textAttrs, conf) {
-    const { actorFontSize, actorFontFamily, actorFontWeight } = conf;
+  function byTspan(
+    content: string,
+    g: D3Element,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs,
+    conf: {
+      actorFontSize: number;
+      actorFontFamily: number;
+      actorFontWeight: number;
+    }
+  ) {
+    const { actorFontSize = 0, actorFontFamily = 0, actorFontWeight = 0 } = conf;
 
     const lines = content.split(common.lineBreakRegex);
     for (let i = 0; i < lines.length; i++) {
@@ -1097,16 +1148,29 @@ const _drawMenuItemTextCandidateFunc = (function () {
   }
 
   /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} conf
+   * @param content - The text to be drawn.
+   * @param g - The svg group to append the text to.
+   * @param x - The x coordinate of the text.
+   * @param y - The y coordinate of the text.
+   * @param width - The width of the text
+   * @param height -  The height of the text.
+   * @param textAttrs - The text attributes to be applied.
+   * @param conf - The configuration object.
    */
-  const byFo = (content, g, x, y, width, height, textAttrs, conf) => {
+  const byFo = (
+    content: string,
+    g: D3Element,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs,
+    conf: {
+      actorFontSize: string;
+      actorFontFamily: string;
+      actorFontWeight: string;
+    }
+  ) => {
     const s = g.append('switch');
     const f = s
       .append('foreignObject')
@@ -1133,10 +1197,10 @@ const _drawMenuItemTextCandidateFunc = (function () {
   };
 
   /**
-   * @param {any} toText
-   * @param {any} fromTextAttrsDict
+   * @param toText - The text SVG element to apply the attributes to.
+   * @param fromTextAttrsDict - The text attributes to be applied.
    */
-  const _setTextAttrs = (toText, fromTextAttrsDict) => {
+  const _setTextAttrs = (toText: SVG, fromTextAttrsDict: TextAttrs) => {
     for (const key in fromTextAttrsDict) {
       if (fromTextAttrsDict.hasOwnProperty(key)) {
         toText.attr(key, fromTextAttrsDict[key]);
@@ -1144,7 +1208,7 @@ const _drawMenuItemTextCandidateFunc = (function () {
     }
   };
 
-  return function (conf) {
+  return function (conf: { textPlacement: string }) {
     return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'old' ? byText : byTspan;
   };
 })();
