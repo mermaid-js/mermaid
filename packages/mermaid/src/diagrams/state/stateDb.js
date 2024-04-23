@@ -545,12 +545,26 @@ const dataFetcher = (parentId, doc, nodes, edges) => {
   doc.forEach((item) => {
     switch (item.stmt) {
       case STMT_STATE:
-        if(parentId) {
-          nodes.push({...item, labelText: item.id, labelType:'text', parentId});
+        if (parentId) {
+          nodes.push({ ...item, labelText: item.id, labelType: 'text', parentId, shape: 'rect' });
         } else {
-          nodes.push({...item, labelText: item.id, labelType:'text'});
+          nodes.push({
+            ...item,
+            labelText: item.id,
+            // description: item.id,
+            labelType: 'text',
+            labelStyle: '',
+            shape: 'rect',
+            domId: 'state-bla-bla-bla',
+            x: 100,
+            y: 100,
+            height: 100,
+            width: 100,
+            padding: 15,
+            classes: ' statediagram-state',
+          });
         }
-        if(item.doc) {
+        if (item.doc) {
           dataFetcher(item.id, item.doc, nodes, edges);
         }
         break;
@@ -559,7 +573,7 @@ const dataFetcher = (parentId, doc, nodes, edges) => {
         break;
     }
   });
-}
+};
 export const getData = () => {
   const nodes = [];
   const edges = [];
@@ -571,9 +585,8 @@ export const getData = () => {
   // }
   dataFetcher(undefined, rootDoc, nodes, edges);
 
-
-  return {nodes, edges, other: {}};
-}
+  return { nodes, edges, other: {} };
+};
 
 export default {
   getConfig: () => getConfig().state,
