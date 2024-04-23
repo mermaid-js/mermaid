@@ -93,7 +93,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.markers = ['barb'];
   data4Layout.diagramId = id;
 
-  render(data4Layout, svg, element);
+  await render(data4Layout, svg, element);
 };
 
 export default {
