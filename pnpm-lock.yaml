@@ -503,61 +503,6 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0
 
-  packages/mermaid/src/vitepress:
-    dependencies:
-      '@vueuse/core':
-        specifier: ^10.1.0
-        version: 10.1.0(vue@3.3.4)
-      jiti:
-        specifier: ^1.18.2
-        version: 1.18.2
-      mermaid:
-        specifier: workspace:^
-        version: link:../..
-      vue:
-        specifier: ^3.3
-        version: 3.3.4
-    devDependencies:
-      '@iconify-json/carbon':
-        specifier: ^1.1.16
-        version: 1.1.16
-      '@unocss/reset':
-        specifier: ^0.58.0
-        version: 0.58.0
-      '@vite-pwa/vitepress':
-        specifier: ^0.3.0
-        version: 0.3.0(vite-plugin-pwa@0.17.0)
-      '@vitejs/plugin-vue':
-        specifier: ^4.2.1
-        version: 4.2.1(vite@4.4.12)(vue@3.3.4)
-      fast-glob:
-        specifier: ^3.2.12
-        version: 3.2.12
-      https-localhost:
-        specifier: ^4.7.1
-        version: 4.7.1
-      pathe:
-        specifier: ^1.1.0
-        version: 1.1.0
-      unocss:
-        specifier: ^0.58.0
-        version: 0.58.0(postcss@8.4.33)(rollup@2.79.1)(vite@4.4.12)
-      unplugin-vue-components:
-        specifier: ^0.26.0
-        version: 0.26.0(rollup@2.79.1)(vue@3.3.4)
-      vite:
-        specifier: ^4.4.12
-        version: 4.4.12(@types/node@18.17.5)
-      vite-plugin-pwa:
-        specifier: ^0.17.0
-        version: 0.17.0(vite@4.4.12)(workbox-build@7.0.0)(workbox-window@7.0.0)
-      vitepress:
-        specifier: 1.0.0-rc.39
-        version: 1.0.0-rc.39(@algolia/client-search@4.19.1)(@types/node@18.17.5)(postcss@8.4.33)(search-insights@2.7.0)(typescript@5.1.6)
-      workbox-window:
-        specifier: ^7.0.0
-        version: 7.0.0
-
   packages/parser:
     dependencies:
       langium:
@@ -5351,22 +5296,6 @@ packages:
       eslint-visitor-keys: 3.4.3
     dev: true
 
-  /@unocss/astro@0.58.0(rollup@2.79.1)(vite@4.4.12):
-    resolution: {integrity: sha512-df+tEFO5eKXjQOwSWQhS9IdjD0sfLHLtn8U09sEKR2Nmh5CvpwyBxmvLQgOCilPou7ehmyKfsyGRLZg7IMp+Ew==}
-    peerDependencies:
-      vite: ^2.9.0 || ^3.0.0-0 || ^4.0.0 || ^5.0.0-0
-    peerDependenciesMeta:
-      vite:
-        optional: true
-    dependencies:
-      '@unocss/core': 0.58.0
-      '@unocss/reset': 0.58.0
-      '@unocss/vite': 0.58.0(rollup@2.79.1)(vite@4.4.12)
-      vite: 4.4.12(@types/node@18.17.5)
-    transitivePeerDependencies:
-      - rollup
-    dev: true
-
   /@unocss/astro@0.58.0(rollup@2.79.1)(vite@4.5.0):
     resolution: {integrity: sha512-df+tEFO5eKXjQOwSWQhS9IdjD0sfLHLtn8U09sEKR2Nmh5CvpwyBxmvLQgOCilPou7ehmyKfsyGRLZg7IMp+Ew==}
     peerDependencies:
@@ -5561,26 +5490,6 @@ packages:
       '@unocss/core': 0.58.0
     dev: true
 
-  /@unocss/vite@0.58.0(rollup@2.79.1)(vite@4.4.12):
-    resolution: {integrity: sha512-OCUOLMSOBEtXOEyBbAvMI3/xdR175BWRzmvV9Wc34ANZclEvCdVH8+WU725ibjY4VT0gVIuX68b13fhXdHV41A==}
-    peerDependencies:
-      vite: ^2.9.0 || ^3.0.0-0 || ^4.0.0 || ^5.0.0-0
-    dependencies:
-      '@ampproject/remapping': 2.2.1
-      '@rollup/pluginutils': 5.1.0(rollup@2.79.1)
-      '@unocss/config': 0.58.0
-      '@unocss/core': 0.58.0
-      '@unocss/inspector': 0.58.0
-      '@unocss/scope': 0.58.0
-      '@unocss/transformer-directives': 0.58.0
-      chokidar: 3.5.3
-      fast-glob: 3.3.2
-      magic-string: 0.30.5
-      vite: 4.4.12(@types/node@18.17.5)
-    transitivePeerDependencies:
-      - rollup
-    dev: true
-
   /@unocss/vite@0.58.0(rollup@2.79.1)(vite@4.5.0):
     resolution: {integrity: sha512-OCUOLMSOBEtXOEyBbAvMI3/xdR175BWRzmvV9Wc34ANZclEvCdVH8+WU725ibjY4VT0gVIuX68b13fhXdHV41A==}
     peerDependencies:
@@ -5607,17 +5516,6 @@ packages:
       vite-plugin-pwa: '>=0.17.0 <1'
     dependencies:
       vite-plugin-pwa: 0.17.0(vite@4.5.0)(workbox-build@7.0.0)(workbox-window@7.0.0)
-    dev: true
-
-  /@vitejs/plugin-vue@4.2.1(vite@4.4.12)(vue@3.3.4):
-    resolution: {integrity: sha512-ZTZjzo7bmxTRTkb8GSTwkPOYDIP7pwuyV+RV53c9PYUouwcbkIZIvWvNWlX2b1dYZqtOv7D6iUAnJLVNGcLrSw==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    peerDependencies:
-      vite: ^4.0.0
-      vue: ^3.2.25
-    dependencies:
-      vite: 4.4.12(@types/node@18.17.5)
-      vue: 3.3.4
     dev: true
 
   /@vitejs/plugin-vue@4.2.1(vite@4.5.0)(vue@3.3.4):
@@ -15861,45 +15759,6 @@ packages:
     engines: {node: '>= 10.0.0'}
     dev: true
 
-  /unocss@0.58.0(postcss@8.4.33)(rollup@2.79.1)(vite@4.4.12):
-    resolution: {integrity: sha512-MSPRHxBqWN+1AHGV+J5uUy4//e6ZBK6O+ISzD0qrXcCD/GNtxk1+lYjOK2ltkUiKX539+/KF91vNxzhhwEf+xA==}
-    engines: {node: '>=14'}
-    peerDependencies:
-      '@unocss/webpack': 0.58.0
-      vite: ^2.9.0 || ^3.0.0-0 || ^4.0.0 || ^5.0.0-0
-    peerDependenciesMeta:
-      '@unocss/webpack':
-        optional: true
-      vite:
-        optional: true
-    dependencies:
-      '@unocss/astro': 0.58.0(rollup@2.79.1)(vite@4.4.12)
-      '@unocss/cli': 0.58.0(rollup@2.79.1)
-      '@unocss/core': 0.58.0
-      '@unocss/extractor-arbitrary-variants': 0.58.0
-      '@unocss/postcss': 0.58.0(postcss@8.4.33)
-      '@unocss/preset-attributify': 0.58.0
-      '@unocss/preset-icons': 0.58.0
-      '@unocss/preset-mini': 0.58.0
-      '@unocss/preset-tagify': 0.58.0
-      '@unocss/preset-typography': 0.58.0
-      '@unocss/preset-uno': 0.58.0
-      '@unocss/preset-web-fonts': 0.58.0
-      '@unocss/preset-wind': 0.58.0
-      '@unocss/reset': 0.58.0
-      '@unocss/transformer-attributify-jsx': 0.58.0
-      '@unocss/transformer-attributify-jsx-babel': 0.58.0
-      '@unocss/transformer-compile-class': 0.58.0
-      '@unocss/transformer-directives': 0.58.0
-      '@unocss/transformer-variant-group': 0.58.0
-      '@unocss/vite': 0.58.0(rollup@2.79.1)(vite@4.4.12)
-      vite: 4.4.12(@types/node@18.17.5)
-    transitivePeerDependencies:
-      - postcss
-      - rollup
-      - supports-color
-    dev: true
-
   /unocss@0.58.0(postcss@8.4.33)(rollup@2.79.1)(vite@4.5.0):
     resolution: {integrity: sha512-MSPRHxBqWN+1AHGV+J5uUy4//e6ZBK6O+ISzD0qrXcCD/GNtxk1+lYjOK2ltkUiKX539+/KF91vNxzhhwEf+xA==}
     engines: {node: '>=14'}
@@ -16125,24 +15984,6 @@ packages:
       picocolors: 1.0.0
       test-exclude: 6.0.0
       vite: 4.4.12(@types/node@18.17.5)
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /vite-plugin-pwa@0.17.0(vite@4.4.12)(workbox-build@7.0.0)(workbox-window@7.0.0):
-    resolution: {integrity: sha512-cOyEG8EEc7JHmyMapTnjK2j0g2BIC3ErlmOHyGzVu8hqjyF9Jt6yWMmVNFtpA6v/NNyzP28ARf3vwzIAzR1kaw==}
-    engines: {node: '>=16.0.0'}
-    peerDependencies:
-      vite: ^3.1.0 || ^4.0.0 || ^5.0.0
-      workbox-build: ^7.0.0
-      workbox-window: ^7.0.0
-    dependencies:
-      debug: 4.3.4(supports-color@8.1.1)
-      fast-glob: 3.3.2
-      pretty-bytes: 6.1.1
-      vite: 4.4.12(@types/node@18.17.5)
-      workbox-build: 7.0.0
-      workbox-window: 7.0.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -16996,6 +16837,7 @@ packages:
 
   /workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
+    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
     dependencies:
       workbox-background-sync: 7.0.0
       workbox-core: 7.0.0

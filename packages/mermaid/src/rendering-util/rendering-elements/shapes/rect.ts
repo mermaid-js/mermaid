@@ -1,6 +1,7 @@
 import { log } from '$root/logger.js';
 import { labelHelper, updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
+import type { Node } from '$root/rendering-util/types.d.ts';
 
 /**
  *
@@ -9,12 +10,20 @@ import intersect from '../intersect/index.js';
  * @param totalWidth
  * @param totalHeight
  */
-function applyNodePropertyBorders(rect, borders, totalWidth, totalHeight) {
-  const strokeDashArray = [];
-  const addBorder = (length) => {
+function applyNodePropertyBorders(
+  rect: d3.Selection<SVGRectElement, unknown, null, undefined>,
+  borders: string | undefined,
+  totalWidth: number,
+  totalHeight: number
+) {
+  if (!borders) {
+    return;
+  }
+  const strokeDashArray: number[] = [];
+  const addBorder = (length: number) => {
     strokeDashArray.push(length, 0);
   };
-  const skipBorder = (length) => {
+  const skipBorder = (length: number) => {
     strokeDashArray.push(0, length);
   };
   if (borders.includes('t')) {
@@ -41,10 +50,11 @@ function applyNodePropertyBorders(rect, borders, totalWidth, totalHeight) {
   } else {
     skipBorder(totalHeight);
   }
+
   rect.attr('stroke-dasharray', strokeDashArray.join(' '));
 }
 
-export const rect = async (parent, node) => {
+export const rect = async (parent: SVGAElement, node: Node) => {
   const { shapeSvg, bbox, halfPadding } = await labelHelper(
     parent,
     node,
@@ -52,7 +62,7 @@ export const rect = async (parent, node) => {
     true
   );
 
-  console.log('rect node', node);
+  console.log('new rect node', node);
 
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -75,7 +85,7 @@ export const rect = async (parent, node) => {
   if (node.props) {
     const propKeys = new Set(Object.keys(node.props));
     if (node.props.borders) {
-      applyNodePropertyBorders(rect, node.props.borders, totalWidth, totalHeight);
+      applyNodePropertyBorders(rect, node.props.borders + '', totalWidth, totalHeight);
       propKeys.delete('borders');
     }
     propKeys.forEach((propKey) => {
@@ -92,7 +102,7 @@ export const rect = async (parent, node) => {
   return shapeSvg;
 };
 
-export const labelRect = async (parent, node) => {
+export const labelRect = async (parent: SVGElement, node: Node) => {
   const { shapeSvg } = await labelHelper(parent, node, 'label', true);
 
   log.trace('Classes = ', node.class);
@@ -108,7 +118,7 @@ export const labelRect = async (parent, node) => {
   if (node.props) {
     const propKeys = new Set(Object.keys(node.props));
     if (node.props.borders) {
-      applyNodePropertyBorders(rect, node.props.borders, totalWidth, totalHeight);
+      applyNodePropertyBorders(rect, node.borders, totalWidth, totalHeight);
       propKeys.delete('borders');
     }
     propKeys.forEach((propKey) => {

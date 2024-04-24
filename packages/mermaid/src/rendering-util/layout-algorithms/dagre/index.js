@@ -203,6 +203,11 @@ export const render = async (data4Layout, svg, element) => {
     graph.setNode(node.id, { ...node });
   });
 
+  console.log('Edges:', data4Layout.edges);
+  data4Layout.edges.forEach((edge) => {
+    graph.setEdge(edge.from, edge.to, { ...edge });
+  });
+
   log.warn('Graph at first:', JSON.stringify(graphlibJson.write(graph)));
   adjustClustersAndEdges(graph);
   log.warn('Graph after:', JSON.stringify(graphlibJson.write(graph)));
