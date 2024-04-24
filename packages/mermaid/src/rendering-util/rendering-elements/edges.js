@@ -8,6 +8,7 @@ import { evaluate } from '$root/diagrams/common/common.js';
 import { getLineFunctionsWithOffset } from '$root/utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '$root/utils/subGraphTitleMargins.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
+//import type { Edge } from '$root/rendering-util/types.d.ts';
 
 let edgeLabels = {};
 let terminalLabels = {};

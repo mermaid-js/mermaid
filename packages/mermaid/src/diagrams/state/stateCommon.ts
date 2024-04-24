@@ -20,6 +20,15 @@ export const STMT_APPLYCLASS = 'applyClass';
 export const DEFAULT_STATE_TYPE = 'default';
 export const DIVIDER_TYPE = 'divider';
 
+// Graph edge settings
+export const G_EDGE_STYLE = 'fill:none';
+export const G_EDGE_ARROWHEADSTYLE = 'fill: #333';
+export const G_EDGE_LABELPOS = 'c';
+export const G_EDGE_LABELTYPE = 'text';
+export const G_EDGE_THICKNESS = 'normal';
+
+export const CSS_EDGE = 'transition';
+
 export default {
   DEFAULT_DIAGRAM_DIRECTION,
   DEFAULT_NESTED_DOC_DIR,
@@ -29,4 +38,10 @@ export default {
   STMT_APPLYCLASS,
   DEFAULT_STATE_TYPE,
   DIVIDER_TYPE,
+  G_EDGE_STYLE,
+  G_EDGE_ARROWHEADSTYLE,
+  G_EDGE_LABELPOS,
+  G_EDGE_LABELTYPE,
+  G_EDGE_THICKNESS,
+  CSS_EDGE,
 };

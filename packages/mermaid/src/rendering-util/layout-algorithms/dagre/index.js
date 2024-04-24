@@ -39,7 +39,7 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, sit
     log.info('Recursive render XXX', graph.nodes());
   }
   if (graph.edges().length > 0) {
-    log.trace('Recursive edges', graph.edge(graph.edges()[0]));
+    log.info('Recursive edges', graph.edge(graph.edges()[0]));
   }
   const clusters = elem.insert('g').attr('class', 'clusters');
   const edgePaths = elem.insert('g').attr('class', 'edgePaths');
@@ -205,7 +205,7 @@ export const render = async (data4Layout, svg, element) => {
 
   console.log('Edges:', data4Layout.edges);
   data4Layout.edges.forEach((edge) => {
-    graph.setEdge(edge.from, edge.to, { ...edge });
+    graph.setEdge(edge.start, edge.end, { ...edge });
   });
 
   log.warn('Graph at first:', JSON.stringify(graphlibJson.write(graph)));

@@ -20,8 +20,13 @@ import {
   STMT_APPLYCLASS,
   DEFAULT_STATE_TYPE,
   DIVIDER_TYPE,
+  G_EDGE_STYLE,
+  G_EDGE_ARROWHEADSTYLE,
+  G_EDGE_LABELPOS,
+  G_EDGE_LABELTYPE,
+  G_EDGE_THICKNESS,
+  CSS_EDGE,
 } from './stateCommon.js';
-import { node } from 'stylis';
 
 const START_NODE = '[*]';
 const START_TYPE = 'start';
@@ -570,10 +575,19 @@ const dataFetcher = (parentId, doc, nodes, edges) => {
   //edges
   currentDocument.relations.forEach((item) => {
     edges.push({
-      id: item.id1 + item.id2,
-      from: item.id1,
-      to: item.id2,
-      label: item.relationTitle,
+      id: item.id1 + '-' + item.id2,
+      start: item.id1,
+      end: item.id2,
+      arrowhead: 'normal',
+      arrowTypeEnd: 'arrow_barb',
+      style: G_EDGE_STYLE,
+      labelStyle: '',
+      label: common.sanitizeText(item.description, getConfig()),
+      arrowheadStyle: G_EDGE_ARROWHEADSTYLE,
+      labelpos: G_EDGE_LABELPOS,
+      labelType: G_EDGE_LABELTYPE,
+      thickness: G_EDGE_THICKNESS,
+      classes: CSS_EDGE,
     });
   });
 
