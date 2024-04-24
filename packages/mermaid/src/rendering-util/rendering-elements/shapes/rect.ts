@@ -2,7 +2,8 @@ import { log } from '$root/logger.js';
 import { labelHelper, updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
-
+import rough from 'roughjs';
+import { select } from 'd3';
 /**
  *
  * @param rect
@@ -54,6 +55,20 @@ function applyNodePropertyBorders(
   rect.attr('stroke-dasharray', strokeDashArray.join(' '));
 }
 
+function roundedRect(ctx, x, y, width, height, radius) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+}
+
 export const rect = async (parent: SVGAElement, node: Node) => {
   const { shapeSvg, bbox, halfPadding } = await labelHelper(
     parent,
@@ -62,25 +77,34 @@ export const rect = async (parent: SVGAElement, node: Node) => {
     true
   );
 
-  console.log('new rect node', node);
-
-  // add the rect
-  const rect = shapeSvg.insert('rect', ':first-child');
+  const useRough = true;
 
   const totalWidth = bbox.width + node.padding;
   const totalHeight = bbox.height + node.padding;
+  const x = -bbox.width / 2 - halfPadding;
+  const y = -bbox.height / 2 - halfPadding;
 
-  rect
-    .attr('class', 'basic label-container')
-    .attr('style', node.style)
-    .attr('rx', node.rx)
-    .attr('ry', node.ry)
-    // .attr('x', -bbox.width / 2 - node.padding)
-    // .attr('y', -bbox.height / 2 - node.padding)
-    .attr('x', -bbox.width / 2 - halfPadding)
-    .attr('y', -bbox.height / 2 - halfPadding)
-    .attr('width', totalWidth)
-    .attr('height', totalHeight);
+  let rect;
+  if (useRough) {
+    const rc = rough.svg(shapeSvg);
+    // add the rect
+    const rnode = rc.rectangle(x, y, totalWidth, totalHeight);
+    const svgNode = shapeSvg.node();
+    svgNode.insertBefore(rnode, svgNode.firstChild);
+    rect = select(rnode);
+  } else {
+    rect = shapeSvg.insert('rect', ':first-child');
+
+    rect
+      .attr('class', 'basic label-container')
+      .attr('style', node.style)
+      .attr('rx', node.rx)
+      .attr('ry', node.ry)
+      .attr('x', x)
+      .attr('y', y)
+      .attr('width', totalWidth)
+      .attr('height', totalHeight);
+  }
 
   if (node.props) {
     const propKeys = new Set(Object.keys(node.props));
