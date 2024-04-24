@@ -21,6 +21,7 @@ import {
   DEFAULT_STATE_TYPE,
   DIVIDER_TYPE,
 } from './stateCommon.js';
+import { node } from 'stylis';
 
 const START_NODE = '[*]';
 const START_TYPE = 'start';
@@ -542,37 +543,48 @@ const setDirection = (dir) => {
 const trimColon = (str) => (str && str[0] === ':' ? str.substr(1).trim() : str.trim());
 
 const dataFetcher = (parentId, doc, nodes, edges) => {
-  doc.forEach((item) => {
-    switch (item.stmt) {
-      case STMT_STATE:
-        if (parentId) {
-          nodes.push({ ...item, labelText: item.id, labelType: 'text', parentId, shape: 'rect' });
-        } else {
-          nodes.push({
-            ...item,
-            labelText: item.id,
-            // description: item.id,
-            labelType: 'text',
-            labelStyle: '',
-            shape: 'rect',
-            domId: 'state-bla-bla-bla',
-            x: 100,
-            y: 100,
-            height: 100,
-            width: 100,
-            padding: 15,
-            classes: ' statediagram-state',
-          });
-        }
-        if (item.doc) {
-          dataFetcher(item.id, item.doc, nodes, edges);
-        }
-        break;
-      case STMT_RELATION:
-        edges.push(item);
-        break;
+  extract(doc);
+
+  //states
+  const stateKeys = Object.keys(currentDocument.states);
+
+  stateKeys.forEach((key) => {
+    const item = currentDocument.states[key];
+
+    if (parentId) {
+      nodes.push({ ...item, labelText: item.id, labelType: 'text', parentId, shape: 'rect' });
+    } else {
+      nodes.push({
+        ...item,
+        labelText: item.id,
+        // description: item.id,
+        labelType: 'text',
+        labelStyle: '',
+        shape: 'rect',
+        padding: 15,
+        classes: ' statediagram-state',
+      });
     }
   });
+
+  //edges
+  currentDocument.relations.forEach((item) => {
+    edges.push({
+      id: item.id1 + item.id2,
+      from: item.id1,
+      to: item.id2,
+      label: item.relationTitle,
+    });
+  });
+
+  // if (item.doc) {
+  //   dataFetcher(item.id, item.doc, nodes, edges);
+  // }
+  //break;
+  //   case STMT_RELATION:
+  //     edges.push(item);
+  //     break;
+  // }
 };
 export const getData = () => {
   const nodes = [];

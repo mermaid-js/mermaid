@@ -83,7 +83,6 @@ export const draw = async function (text: string, id: string, _version: string, 
   // // The performRender method provided in all supported diagrams is used to render the data
   // performRender(data4Rendering);
 
-  console.log('REF1:', data4Layout);
   data4Layout.type = diag.type;
   data4Layout.layoutAlgorithm = 'dagre-wrapper';
   data4Layout.skin = 'roughjs';
@@ -92,7 +91,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.rankSpacing = conf.rankSpacing || 50;
   data4Layout.markers = ['barb'];
   data4Layout.diagramId = id;
-
+  console.log('REF1:', data4Layout);
   await render(data4Layout, svg, element);
 };
 
