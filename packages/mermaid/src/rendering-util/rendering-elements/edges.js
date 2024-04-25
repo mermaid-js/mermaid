@@ -8,6 +8,7 @@ import { evaluate } from '$root/diagrams/common/common.js';
 import { getLineFunctionsWithOffset } from '$root/utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '$root/utils/subGraphTitleMargins.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
+import rough from 'roughjs';
 //import type { Edge } from '$root/rendering-util/types.d.ts';
 
 let edgeLabels = {};
@@ -395,37 +396,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
   if (edge.toCluster) {
     log.info('to cluster abc88', clusterDb[edge.toCluster]);
     points = cutPathAtIntersect(edge.points, clusterDb[edge.toCluster].node);
-    // log.trace('edge', edge);
-    // points = [];
-    // let lastPointOutside; // = edge.points[0];
-    // let isInside = false;
-    // edge.points.forEach(point => {
-    //   const node = clusterDb[edge.toCluster].node;
-    //   log.warn('checking from', edge.fromCluster, point, node);
 
-    //   if (!outsideNode(node, point) && !isInside) {
-    //     log.trace('inside', edge.toCluster, point, lastPointOutside);
-
-    //     // First point inside the rect
-    //     const inter = intersection(node, lastPointOutside, point);
-
-    //     let pointPresent = false;
-    //     points.forEach(p => {
-    //       pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
-    //     });
-    //     // if (!pointPresent) {
-    //     if (!points.find(e => e.x === inter.x && e.y === inter.y)) {
-    //       points.push(inter);
-    //     } else {
-    //       log.warn('no intersect', inter, points);
-    //     }
-    //     isInside = true;
-    // } else {
-    //   // outside
-    //   lastPointOutside = point;
-    //   if (!isInside) points.push(point);
-    // }
-    // });
     pointsHasChanged = true;
   }
 
@@ -477,14 +448,41 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
       strokeClasses += ' edge-pattern-dashed';
       break;
   }
+  let useRough = true;
+  let svgPath;
+  let path = '';
+  const pointArr = [];
+  edge.points.forEach((point) => {
+    path += point.x + ',' + point.y + ' ';
+    pointArr.push([point.x, point.y]);
+  });
 
-  const svgPath = elem
-    .append('path')
-    .attr('d', lineFunction(lineData))
-    .attr('id', edge.id)
-    .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
-    .attr('style', edge.style);
+  if (useRough) {
+    const rc = rough.svg(elem);
+    const svgPathNode = rc.curve(pointArr, { stroke: 'green' });
+    console.log('svgPathNode', svgPathNode);
+    // const svgPath2 = elem
+    //   .append('path')
+    //   .attr('d', lineFunction(lineData))
+    //   .attr('id', edge.id)
+    //   .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
+    //   .attr('style', edge.style);
 
+    // console.log('svgPath2', svgPath2.node());
+    svgPath = select(svgPathNode)
+      .select('path')
+      .attr('id', edge.id)
+      .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
+      .attr('style', edge.style);
+    elem.node().appendChild(svgPath.node());
+  } else {
+    svgPath = elem
+      .append('path')
+      .attr('d', lineFunction(lineData))
+      .attr('id', edge.id)
+      .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
+      .attr('style', edge.style);
+  }
   // DEBUG code, adds a red circle at each edge coordinate
   // edge.points.forEach((point) => {
   //   elem
