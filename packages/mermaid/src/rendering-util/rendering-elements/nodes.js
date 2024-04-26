@@ -1,5 +1,9 @@
 import { log } from '$root/logger.js';
-import { rect } from './shapes/rect.js';
+import { rect } from './shapes/rect.ts';
+import { stateStart } from './shapes/stateStart.ts';
+import { stateEnd } from './shapes/stateEnd.ts';
+import { forkJoin } from './shapes/forkJoin.ts';
+import { choice } from './shapes/choice.ts';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 const formatClass = (str) => {
@@ -11,6 +15,10 @@ const formatClass = (str) => {
 
 const shapes = {
   rect,
+  stateStart,
+  stateEnd,
+  forkJoin,
+  choice,
 };
 
 let nodeElems = {};
@@ -19,9 +27,9 @@ export const insertNode = async (elem, node, dir) => {
   let newEl;
   let el;
 
-  console.log('insertNode element', elem, elem.node(), rect);
   // debugger;
   // Add link when appropriate
+  console.log('node.link', node.link);
   if (node.link) {
     let target;
     if (getConfig().securityLevel === 'sandbox') {

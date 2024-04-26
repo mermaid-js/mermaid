@@ -28,6 +28,7 @@ export const G_EDGE_LABELTYPE = 'text';
 export const G_EDGE_THICKNESS = 'normal';
 
 export const CSS_EDGE = 'transition';
+export const CSS_DIAGRAM = 'statediagram';
 
 export default {
   DEFAULT_DIAGRAM_DIRECTION,
@@ -44,4 +45,5 @@ export default {
   G_EDGE_LABELTYPE,
   G_EDGE_THICKNESS,
   CSS_EDGE,
+  CSS_DIAGRAM,
 };

@@ -33,8 +33,10 @@ interface Node {
   tooltip?: string;
   type: string;
   width?: number;
-  intersect?: (point: any) => any;
+  height?: number;
+
   // Specific properties for State Diagram nodes TODO remove and use generic properties
+  intersect?: (point: any) => any;
   style?: string;
   class?: string;
   borders?: string;

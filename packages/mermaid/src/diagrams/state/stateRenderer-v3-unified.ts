@@ -8,6 +8,7 @@ import { render } from '../../rendering-util/render.js';
 import insertElementsForSize, {
   getDiagramElements,
 } from '../../rendering-util/inserElementsForSize.js';
+import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import {
   DEFAULT_DIAGRAM_DIRECTION,
   DEFAULT_NESTED_DOC_DIR,
@@ -15,6 +16,7 @@ import {
   STMT_RELATION,
   DEFAULT_STATE_TYPE,
   DIVIDER_TYPE,
+  CSS_DIAGRAM,
 } from './stateCommon.js';
 
 // Configuration
@@ -93,6 +95,8 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.diagramId = id;
   console.log('REF1:', data4Layout);
   await render(data4Layout, svg, element);
+  const padding = 8;
+  setupViewPortForSVG(svg, padding, CSS_DIAGRAM, conf.useMaxWidth);
 };
 
 export default {

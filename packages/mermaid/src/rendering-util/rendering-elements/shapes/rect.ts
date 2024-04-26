@@ -4,6 +4,7 @@ import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import rough from 'roughjs';
 import { select } from 'd3';
+
 /**
  *
  * @param rect

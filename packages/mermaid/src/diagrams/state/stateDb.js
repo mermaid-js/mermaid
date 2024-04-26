@@ -27,6 +27,7 @@ import {
   G_EDGE_THICKNESS,
   CSS_EDGE,
 } from './stateCommon.js';
+import { rect } from 'dagre-d3-es/src/dagre-js/intersect/index.js';
 
 const START_NODE = '[*]';
 const START_TYPE = 'start';
@@ -555,9 +556,36 @@ const dataFetcher = (parentId, doc, nodes, edges) => {
 
   stateKeys.forEach((key) => {
     const item = currentDocument.states[key];
+    console.log('Item:', item);
+
+    let itemShape = 'rect';
+    if (item.type === 'default' && item.id === 'root_start') {
+      itemShape = 'stateStart';
+    }
+    if (item.type === 'default' && item.id === 'root_end') {
+      itemShape = 'stateEnd';
+    }
+
+    if (item.type === 'fork' || item.type === 'join') {
+      itemShape = 'forkJoin';
+    }
+
+    if (item.type === 'choice') {
+      itemShape = 'choice';
+    }
+
+    if (item.id === '</choice>' && item.type === 'default') {
+      //ignore this item
+      return;
+    }
+
+    if (item.id === '</join></fork>' && item.type === 'default') {
+      //ignore this item
+      return;
+    }
 
     if (parentId) {
-      nodes.push({ ...item, labelText: item.id, labelType: 'text', parentId, shape: 'rect' });
+      nodes.push({ ...item, labelText: item.id, labelType: 'text', parentId, shape: itemShape });
     } else {
       nodes.push({
         ...item,
@@ -565,7 +593,7 @@ const dataFetcher = (parentId, doc, nodes, edges) => {
         // description: item.id,
         labelType: 'text',
         labelStyle: '',
-        shape: 'rect',
+        shape: itemShape,
         padding: 15,
         classes: ' statediagram-state',
       });
