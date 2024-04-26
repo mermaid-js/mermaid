@@ -552,12 +552,11 @@ const dataFetcher = (parentId, doc, nodes, edges) => {
   extract(doc);
 
   //states
+  const useRough = true;
   const stateKeys = Object.keys(currentDocument.states);
 
   stateKeys.forEach((key) => {
     const item = currentDocument.states[key];
-    console.log('Item:', item);
-
     let itemShape = 'rect';
     if (item.type === 'default' && item.id === 'root_start') {
       itemShape = 'stateStart';
@@ -585,7 +584,14 @@ const dataFetcher = (parentId, doc, nodes, edges) => {
     }
 
     if (parentId) {
-      nodes.push({ ...item, labelText: item.id, labelType: 'text', parentId, shape: itemShape });
+      nodes.push({
+        ...item,
+        labelText: item.id,
+        labelType: 'text',
+        parentId,
+        shape: itemShape,
+        useRough,
+      });
     } else {
       nodes.push({
         ...item,
@@ -597,6 +603,9 @@ const dataFetcher = (parentId, doc, nodes, edges) => {
         shape: itemShape,
         padding: 15,
         classes: ' statediagram-state',
+        rx: 10,
+        ry: 10,
+        useRough,
       });
     }
   });
@@ -617,6 +626,7 @@ const dataFetcher = (parentId, doc, nodes, edges) => {
       labelType: G_EDGE_LABELTYPE,
       thickness: G_EDGE_THICKNESS,
       classes: CSS_EDGE,
+      useRough,
     });
   });
 

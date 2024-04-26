@@ -40,6 +40,7 @@ interface Node {
   style?: string;
   class?: string;
   borders?: string;
+  useRough?: boolean;
 }
 
 // Common properties for any edge in the system

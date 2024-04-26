@@ -111,20 +111,6 @@ function createRoundedRectPathD(
   ].join(' ');
 }
 
-function roundedRect(ctx, x, y, width, height, radius) {
-  ctx.beginPath();
-  ctx.moveTo(x + radius, y);
-  ctx.lineTo(x + width - radius, y);
-  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-  ctx.lineTo(x + width, y + height - radius);
-  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-  ctx.lineTo(x + radius, y + height);
-  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-  ctx.lineTo(x, y + radius);
-  ctx.quadraticCurveTo(x, y, x + radius, y);
-  ctx.closePath();
-}
-
 export const rect = async (parent: SVGAElement, node: Node) => {
   const { shapeSvg, bbox, halfPadding } = await labelHelper(
     parent,
@@ -133,34 +119,31 @@ export const rect = async (parent: SVGAElement, node: Node) => {
     true
   );
 
-  const useRough = true;
-
   const totalWidth = bbox.width + node.padding;
   const totalHeight = bbox.height + node.padding;
   const x = -bbox.width / 2 - halfPadding;
   const y = -bbox.height / 2 - halfPadding;
 
   let rect;
+  const { rx, ry, style, useRough } = node;
   if (useRough) {
     const rc = rough.svg(shapeSvg);
-    let roughNode;
-    if (node.rx || node.ry) {
-      // add the rect
-      roughNode = rc.path(createRoundedRectPathD(x, y, totalWidth, totalHeight, 6));
-    } else {
-      roughNode = rc.rectangle(x, y, totalWidth, totalHeight, { radius: 60 });
-    }
-    const svgNode = shapeSvg.node();
-    svgNode.insertBefore(roughNode, svgNode.firstChild);
-    rect = select(roughNode);
+    const roughNode =
+      rx || ry
+        ? rc.path(createRoundedRectPathD(x, y, totalWidth, totalHeight, rx || 0), {
+            roughness: 0.7,
+          })
+        : rc.rectangle(x, y, totalWidth, totalHeight);
+
+    rect = shapeSvg.insert(() => roughNode);
   } else {
     rect = shapeSvg.insert('rect', ':first-child');
 
     rect
       .attr('class', 'basic label-container')
-      .attr('style', node.style)
-      .attr('rx', node.rx)
-      .attr('ry', node.ry)
+      .attr('style', style)
+      .attr('rx', rx)
+      .attr('ry', ry)
       .attr('x', x)
       .attr('y', y)
       .attr('width', totalWidth)

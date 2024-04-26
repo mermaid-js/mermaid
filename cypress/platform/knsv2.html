@@ -14,6 +14,10 @@
       href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+
     <style>
       body {
         /* background: rgb(221, 208, 208); */
@@ -54,6 +58,21 @@
       /* tspan {
         font-size: 6px !important;
       } */
+
+          <style class="style-fonts">
+      @font-face {
+        font-family: "Virgil";
+        src: url("https://excalidraw.com/Virgil.woff2");
+      }
+      @font-face {
+        font-family: "Cascadia";
+        src: url("https://excalidraw.com/Cascadia.woff2");
+      }
+      @font-face {
+        font-family: "Assistant";
+        src: url("https://excalidraw.com/Assistant-Regular.woff2");
+      }
+    </style>
     </style>
   </head>
   <body>
@@ -459,7 +478,7 @@ mindmap
       // });
       mermaid.initialize({
         flowchart: { titleTopMargin: 10 },
-        fontFamily: 'courier',
+        fontFamily: 'Kalam',
         sequence: {
           actorFontFamily: 'courier',
           noteFontFamily: 'courier',

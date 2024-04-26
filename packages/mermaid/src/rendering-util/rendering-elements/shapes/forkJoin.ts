@@ -3,6 +3,8 @@ import { updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import type { SVG } from '$root/diagram-api/types.js';
+import rough from 'roughjs';
+import solidFillOptions from './solidFillOptions.js';
 
 export const forkJoin = (parent: SVG, node: Node, dir: string) => {
   const shapeSvg = parent
@@ -17,14 +19,23 @@ export const forkJoin = (parent: SVG, node: Node, dir: string) => {
     width = 10;
     height = 70;
   }
+  const x = (-1 * width) / 2;
+  const y = (-1 * height) / 2;
 
-  const shape = shapeSvg
-    .append('rect')
-    .attr('x', (-1 * width) / 2)
-    .attr('y', (-1 * height) / 2)
-    .attr('width', width)
-    .attr('height', height)
-    .attr('class', 'fork-join');
+  let shape;
+  if (node.useRough) {
+    const rc = rough.svg(shapeSvg);
+    const roughNode = rc.rectangle(x, y, width, height, solidFillOptions);
+    shape = shapeSvg.insert(() => roughNode);
+  } else {
+    shape = shapeSvg
+      .append('rect')
+      .attr('x', x)
+      .attr('y', y)
+      .attr('width', width)
+      .attr('height', height)
+      .attr('class', 'fork-join');
+  }
 
   updateNodeBounds(node, shape);
   let nodeHeight = 0;

@@ -448,7 +448,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
       strokeClasses += ' edge-pattern-dashed';
       break;
   }
-  let useRough = true;
+  let useRough = edge.useRough;
   let svgPath;
   let path = '';
   const pointArr = [];
