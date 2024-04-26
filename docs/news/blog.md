@@ -6,6 +6,12 @@
 
 # Blog
 
+## [AI in software diagramming: What trends will define the future?](https://www.mermaidchart.com/blog/posts/ai-in-software-diagramming/)
+
+24 April 2024 ·5 mins
+
+Artificial intelligence (AI) tools are changing the way developers work.
+
 ## [Mermaid Chart Unveils Visual Editor for Sequence Diagrams](https://www.mermaidchart.com/blog/posts/mermaid-chart-unveils-visual-editor-for-sequence-diagrams/)
 
 8 April 2024 · 5 mins
