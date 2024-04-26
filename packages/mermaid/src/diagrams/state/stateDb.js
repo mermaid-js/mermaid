@@ -589,7 +589,8 @@ const dataFetcher = (parentId, doc, nodes, edges) => {
     } else {
       nodes.push({
         ...item,
-        labelText: item.id,
+        id: item.id,
+        labelText: item.descriptions?.length > 0 ? item.descriptions[0] : item.id,
         // description: item.id,
         labelType: 'text',
         labelStyle: '',
