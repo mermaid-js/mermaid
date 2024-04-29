@@ -201,6 +201,9 @@ export const render = async (data4Layout, svg, element) => {
   // Add the nodes and edges to the graph
   data4Layout.nodes.forEach((node) => {
     graph.setNode(node.id, { ...node });
+    if (node.parentId) {
+      graph.setParent(node.id, node.parentId);
+    }
   });
 
   console.log('Edges:', data4Layout.edges);
