@@ -375,11 +375,12 @@ const cutPathAtIntersect = (_points, boundryNode) => {
   return points;
 };
 
-export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph, id) {
+export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, id) {
+  console.log('abc88 InsertEdge - edge: ', edge);
   let points = edge.points;
   let pointsHasChanged = false;
-  const tail = graph.node(e.v);
-  var head = graph.node(e.w);
+  const tail = edge.start;
+  var head = edge.end;
 
   log.info('abc88 InsertEdge: ', edge);
   if (head.intersect && tail.intersect) {

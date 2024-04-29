@@ -158,7 +158,7 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, sit
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
     edge.points.forEach((point) => (point.y += subGraphTitleTotalMargin / 2));
-    const paths = insertEdge(edgePaths, e, edge, clusterDb, diagramtype, graph, id);
+    const paths = insertEdge(edgePaths, edge, clusterDb, diagramtype, graph, id);
     positionEdgeLabel(edge, paths);
   });
 
