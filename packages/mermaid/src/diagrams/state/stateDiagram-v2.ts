@@ -3,7 +3,7 @@ import type { DiagramDefinition } from '../../diagram-api/types.js';
 import parser from './parser/stateDiagram.jison';
 import db from './stateDb.js';
 import styles from './styles.js';
-// import renderer from './stateRenderer-v2.js';
+//import renderer from './stateRenderer-v2.js';
 import renderer from './stateRenderer-v3-unified.js';
 
 export const diagram: DiagramDefinition = {

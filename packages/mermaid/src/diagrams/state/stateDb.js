@@ -26,8 +26,27 @@ import {
   G_EDGE_LABELTYPE,
   G_EDGE_THICKNESS,
   CSS_EDGE,
+  DEFAULT_NESTED_DOC_DIR,
+  SHAPE_DIVIDER,
+  SHAPE_GROUP,
+  CSS_DIAGRAM_CLUSTER,
+  CSS_DIAGRAM_CLUSTER_ALT,
+  CSS_DIAGRAM_STATE,
+  SHAPE_STATE_WITH_DESC,
+  SHAPE_STATE,
+  SHAPE_START,
+  SHAPE_END,
+  SHAPE_NOTE,
+  SHAPE_NOTEGROUP,
+  CSS_DIAGRAM_NOTE,
+  DOMID_TYPE_SPACER,
+  DOMID_STATE,
+  NOTE_ID,
+  PARENT_ID,
+  NOTE,
+  PARENT,
 } from './stateCommon.js';
-import { rect } from 'dagre-d3-es/src/dagre-js/intersect/index.js';
+import { node } from 'stylis';
 
 const START_NODE = '[*]';
 const START_TYPE = 'start';
@@ -53,6 +72,12 @@ function newClassesList() {
 let direction = DEFAULT_DIAGRAM_DIRECTION;
 let rootDoc = [];
 let classes = newClassesList(); // style classes defined by a classDef
+
+// --------------------------------------
+// List of nodes created from the parsed diagram statement items
+let nodeDb = {};
+
+let graphItemCount = 0; // used to construct ids, etc.
 
 const newDoc = () => {
   return {
@@ -548,97 +573,257 @@ const setDirection = (dir) => {
 
 const trimColon = (str) => (str && str[0] === ':' ? str.substr(1).trim() : str.trim());
 
-const dataFetcher = (parentId, doc, nodes, edges) => {
-  extract(doc);
+const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, altFlag, useRough) => {
+  console.log(
+    'parent, parsedItemm, diagramStates, nodes, edges, altFlag, useRough:',
+    parent,
+    parsedItem,
+    diagramStates,
+    nodes,
+    edges,
+    altFlag,
+    useRough
+  );
+  const itemId = parsedItem.id;
+  const classStr = getClassesFromDbInfo(diagramStates[itemId]);
 
-  //states
-  const useRough = true;
-  const stateKeys = Object.keys(currentDocument.states);
-
-  stateKeys.forEach((key) => {
-    const item = currentDocument.states[key];
-    let itemShape = 'rect';
-    if (item.type === 'default' && item.id === 'root_start') {
-      itemShape = 'stateStart';
+  if (itemId !== 'root') {
+    let shape = SHAPE_STATE;
+    if (parsedItem.start === true) {
+      shape = SHAPE_START;
     }
-    if (item.type === 'default' && item.id === 'root_end') {
-      itemShape = 'stateEnd';
+    if (parsedItem.start === false) {
+      shape = SHAPE_END;
     }
-
-    if (item.type === 'fork' || item.type === 'join') {
-      itemShape = 'forkJoin';
-    }
-
-    if (item.type === 'choice') {
-      itemShape = 'choice';
-    }
-
-    if (item.id === '</choice>' && item.type === 'default') {
-      //ignore this item
-      return;
+    if (parsedItem.type !== DEFAULT_STATE_TYPE) {
+      shape = parsedItem.type;
     }
 
-    if (item.id === '</join></fork>' && item.type === 'default') {
-      //ignore this item
-      return;
+    // Add the node to our list (nodeDb)
+    if (!nodeDb[itemId]) {
+      nodeDb[itemId] = {
+        id: itemId,
+        shape,
+        description: common.sanitizeText(itemId, getConfig()),
+        classes: `${classStr} ${CSS_DIAGRAM_STATE}`,
+      };
     }
 
-    if (parentId) {
-      nodes.push({
-        ...item,
-        labelText: item.id,
-        labelType: 'text',
-        parentId,
-        shape: itemShape,
-        useRough,
+    const newNode = nodeDb[itemId];
+    console.log('New Node:', newNode);
+
+    // Save data for description and group so that for instance a statement without description overwrites
+    // one with description  @todo TODO What does this mean? If important, add a test for it
+
+    // Build of the array of description strings
+    if (parsedItem.description) {
+      if (Array.isArray(newNode.description)) {
+        // There already is an array of strings,add to it
+        newNode.shape = SHAPE_STATE_WITH_DESC;
+        newNode.description.push(parsedItem.description);
+      } else {
+        if (newNode.description?.length > 0) {
+          // if there is a description already transform it to an array
+          newNode.shape = SHAPE_STATE_WITH_DESC;
+          if (newNode.description === itemId) {
+            // If the previous description was this, remove it
+            newNode.description = [parsedItem.description];
+          } else {
+            newNode.description = [newNode.description, parsedItem.description];
+          }
+        } else {
+          newNode.shape = SHAPE_STATE;
+          newNode.description = parsedItem.description;
+        }
+      }
+      newNode.description = common.sanitizeTextOrArray(newNode.description, getConfig());
+    }
+
+    // If there's only 1 description entry, just use a regular state shape
+    if (newNode.description?.length === 1 && newNode.shape === SHAPE_STATE_WITH_DESC) {
+      newNode.shape = SHAPE_STATE;
+    }
+
+    // group
+    if (!newNode.type && parsedItem.doc) {
+      log.info('Setting cluster for ', itemId, getDir(parsedItem));
+      newNode.type = 'group';
+      newNode.dir = getDir(parsedItem);
+      newNode.shape = parsedItem.type === DIVIDER_TYPE ? SHAPE_DIVIDER : SHAPE_GROUP;
+      newNode.classes =
+        newNode.classes +
+        ' ' +
+        CSS_DIAGRAM_CLUSTER +
+        ' ' +
+        (altFlag ? CSS_DIAGRAM_CLUSTER_ALT : '');
+    }
+
+    // This is what will be added to the graph
+    const nodeData = {
+      labelStyle: '',
+      shape: newNode.shape,
+      labelText: newNode.description,
+      classes: newNode.classes,
+      style: '',
+      id: itemId,
+      dir: newNode.dir,
+      domId: stateDomId(itemId, graphItemCount),
+      type: newNode.type,
+      padding: 15,
+      rx: 10,
+      ry: 10,
+      useRough,
+    };
+
+    if (parent && parent.id !== 'root') {
+      log.trace('Setting node ', itemId, ' to be child of its parent ', parent.id);
+      nodeData.parentId = parent.id;
+    }
+
+    nodeData.centerLabel = true;
+
+    if (parsedItem.note) {
+      // Todo: set random id
+      const noteData = {
+        labelStyle: '',
+        shape: SHAPE_NOTE,
+        labelText: parsedItem.note.text,
+        classes: CSS_DIAGRAM_NOTE,
+        // useHtmlLabels: false,
+        style: '', // styles.style,
+        id: itemId + NOTE_ID + '-' + graphItemCount,
+        domId: stateDomId(itemId, graphItemCount, NOTE),
+        type: newNode.type,
+        padding: 15, //getConfig().flowchart.padding
+      };
+      const groupData = {
+        labelStyle: '',
+        shape: SHAPE_NOTEGROUP,
+        labelText: parsedItem.note.text,
+        classes: newNode.classes,
+        style: '', // styles.style,
+        id: itemId + PARENT_ID,
+        domId: stateDomId(itemId, graphItemCount, PARENT),
+        type: 'group',
+        padding: 0, //getConfig().flowchart.padding
+      };
+      graphItemCount++;
+
+      const parentNodeId = itemId + PARENT_ID;
+
+      //add parent id to groupData
+      groupData.id = parentNodeId;
+      //add parent id to noteData
+      noteData.parentId = parentId;
+
+      nodes.push(groupData);
+      nodes.push(noteData);
+      nodes.push(nodeData);
+
+      let from = itemId;
+      let to = noteData.id;
+
+      if (parsedItem.note.position === 'left of') {
+        from = noteData.id;
+        to = itemId;
+      }
+
+      edges.push({
+        id: from + '-' + to,
+        start: from,
+        end: to,
+        arrowhead: 'none',
+        arrowTypeEnd: '',
+        style: G_EDGE_STYLE,
+        labelStyle: '',
+        classes: CSS_EDGE_NOTE_EDGE,
+        arrowheadStyle: G_EDGE_ARROWHEADSTYLE,
+        labelpos: G_EDGE_LABELPOS,
+        labelType: G_EDGE_LABELTYPE,
+        thickness: G_EDGE_THICKNESS,
       });
     } else {
-      nodes.push({
-        ...item,
-        id: item.id,
-        labelText: item.descriptions?.length > 0 ? item.descriptions[0] : item.id,
-        // description: item.id,
-        labelType: 'text',
-        labelStyle: '',
-        shape: itemShape,
-        padding: 15,
-        classes: ' statediagram-state',
-        rx: 10,
-        ry: 10,
-        useRough,
-      });
+      nodes.push(nodeData);
+    }
+
+    console.log('Nodes:', nodes);
+  }
+  if (parsedItem.doc) {
+    log.trace('Adding nodes children ');
+    setupDoc(parsedItem, parsedItem.doc, diagramStates, nodes, edges, !altFlag, useRough);
+  }
+};
+
+/**
+ * Create a standard string for the dom ID of an item.
+ * If a type is given, insert that before the counter, preceded by the type spacer
+ *
+ * @param itemId
+ * @param counter
+ * @param {string | null} type
+ * @param typeSpacer
+ * @returns {string}
+ */
+export function stateDomId(itemId = '', counter = 0, type = '', typeSpacer = DOMID_TYPE_SPACER) {
+  const typeStr = type !== null && type.length > 0 ? `${typeSpacer}${type}` : '';
+  return `${DOMID_STATE}-${itemId}${typeStr}-${counter}`;
+}
+
+const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, useRough) => {
+  // graphItemCount = 0;
+  log.trace('items', doc);
+  doc.forEach((item) => {
+    switch (item.stmt) {
+      case STMT_STATE:
+        dataFetcher(parentParsedItem, item, diagramStates, nodes, edges, altFlag, useRough);
+        break;
+      case DEFAULT_STATE_TYPE:
+        dataFetcher(parentParsedItem, item, diagramStates, nodes, edges, altFlag, useRough);
+        break;
+      case STMT_RELATION:
+        {
+          dataFetcher(
+            parentParsedItem,
+            item.state1,
+            diagramStates,
+            nodes,
+            edges,
+            altFlag,
+            useRough
+          );
+          dataFetcher(
+            parentParsedItem,
+            item.state2,
+            diagramStates,
+            nodes,
+            edges,
+            altFlag,
+            useRough
+          );
+          const edgeData = {
+            id: 'edge' + graphItemCount,
+            start: item.state1.id,
+            end: item.state2.id,
+            arrowhead: 'normal',
+            arrowTypeEnd: 'arrow_barb',
+            style: G_EDGE_STYLE,
+            labelStyle: '',
+            label: common.sanitizeText(item.description, getConfig()),
+            arrowheadStyle: G_EDGE_ARROWHEADSTYLE,
+            labelpos: G_EDGE_LABELPOS,
+            labelType: G_EDGE_LABELTYPE,
+            thickness: G_EDGE_THICKNESS,
+            classes: CSS_EDGE,
+          };
+          edges.push(edgeData);
+          //g.setEdge(item.state1.id, item.state2.id, edgeData, graphItemCount);
+          graphItemCount++;
+        }
+        break;
     }
   });
-
-  //edges
-  currentDocument.relations.forEach((item) => {
-    edges.push({
-      id: item.id1 + '-' + item.id2,
-      start: item.id1,
-      end: item.id2,
-      arrowhead: 'normal',
-      arrowTypeEnd: 'arrow_barb',
-      style: G_EDGE_STYLE,
-      labelStyle: '',
-      label: common.sanitizeText(item.description, getConfig()),
-      arrowheadStyle: G_EDGE_ARROWHEADSTYLE,
-      labelpos: G_EDGE_LABELPOS,
-      labelType: G_EDGE_LABELTYPE,
-      thickness: G_EDGE_THICKNESS,
-      classes: CSS_EDGE,
-      useRough,
-    });
-  });
-
-  // if (item.doc) {
-  //   dataFetcher(item.id, item.doc, nodes, edges);
-  // }
-  //break;
-  //   case STMT_RELATION:
-  //     edges.push(item);
-  //     break;
-  // }
 };
+
 export const getData = () => {
   const nodes = [];
   const edges = [];
@@ -648,10 +833,55 @@ export const getData = () => {
   //     nodes.push({...currentDocument.states[key]});
   //   }
   // }
-  dataFetcher(undefined, rootDoc, nodes, edges);
+  extract(getRootDocV2());
+  const diagramStates = getStates();
+
+  const useRough = true;
+  dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, useRough);
 
   return { nodes, edges, other: {} };
 };
+
+/**
+ * Get the direction from the statement items.
+ * Look through all of the documents (docs) in the parsedItems
+ * Because is a _document_ direction, the default direction is not necessarily the same as the overall default _diagram_ direction.
+ * @param {object[]} parsedItem - the parsed statement item to look through
+ * @param [defaultDir] - the direction to use if none is found
+ * @returns {string}
+ */
+const getDir = (parsedItem, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
+  let dir = defaultDir;
+  if (parsedItem.doc) {
+    for (let i = 0; i < parsedItem.doc.length; i++) {
+      const parsedItemDoc = parsedItem.doc[i];
+      if (parsedItemDoc.stmt === 'dir') {
+        dir = parsedItemDoc.value;
+      }
+    }
+  }
+  return dir;
+};
+
+/**
+ * Get classes from the db for the info item.
+ * If there aren't any or if dbInfoItem isn't defined, return an empty string.
+ * Else create 1 string from the list of classes found
+ *
+ * @param {undefined | null | object} dbInfoItem
+ * @returns {string}
+ */
+function getClassesFromDbInfo(dbInfoItem) {
+  if (dbInfoItem === undefined || dbInfoItem === null) {
+    return '';
+  } else {
+    if (dbInfoItem.classes) {
+      return dbInfoItem.classes.join(' ');
+    } else {
+      return '';
+    }
+  }
+}
 
 export default {
   getConfig: () => getConfig().state,
