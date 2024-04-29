@@ -105,7 +105,7 @@ export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
         if (axis === 'X') {
           textElem.attr('transform', 'translate(' + midX + ', ' + midY + ')');
         } else if (axis === 'Y') {
-          textElem.attr('transform', 'translate(' + midX + ', ' + midY + ') rotate(90)');
+          textElem.attr('transform', 'translate(' + midX + ', ' + midY + ') rotate(-90)');
         } else if (axis === 'XY') {
           const pair = getArchitectureDirectionPair(sourceDir, targetDir);
           if (pair && isArchitecturePairXY(pair)) {
