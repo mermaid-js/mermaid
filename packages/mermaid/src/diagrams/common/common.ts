@@ -342,7 +342,10 @@ export const renderKatex = async (text: string, config: MermaidConfig): Promise<
   }
 
   const { default: katex } = await import('katex');
-  const outputMode = (config.forceLegacyMathML) || (!isMathMLSupported() && config.legacyMathML) ? 'htmlAndMathml' : 'mathml';
+  const outputMode =
+    config.forceLegacyMathML || (!isMathMLSupported() && config.legacyMathML)
+      ? 'htmlAndMathml'
+      : 'mathml';
   return text
     .split(lineBreakRegex)
     .map((line) =>
@@ -356,7 +359,7 @@ export const renderKatex = async (text: string, config: MermaidConfig): Promise<
         .renderToString(c, {
           throwOnError: true,
           displayMode: true,
-          output: outputMode
+          output: outputMode,
         })
         .replace(/\n/g, ' ')
         .replace(/<annotation.*<\/annotation>/g, '')
