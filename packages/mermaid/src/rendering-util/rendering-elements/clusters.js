@@ -6,6 +6,8 @@ import { select } from 'd3';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import { evaluate } from '$root/diagrams/common/common.js';
 import { getSubGraphTitleMargins } from '$root/utils/subGraphTitleMargins.js';
+import rough from 'roughjs';
+import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 
 const rect = (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
@@ -136,11 +138,11 @@ const roundedWithTitle = (parent, node) => {
   const shapeSvg = parent.insert('g').attr('class', node.classes).attr('id', node.id);
 
   // add the rect
-  const rect = shapeSvg.insert('rect', ':first-child');
+  const outerRectG = shapeSvg.insert('g', ':first-child');
 
   // Create the label and insert it after the rect
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');
-  const innerRect = shapeSvg.append('rect');
+  let innerRect = shapeSvg.append('rect');
 
   const text = label
     .node()
@@ -159,26 +161,52 @@ const roundedWithTitle = (parent, node) => {
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
 
-  const width = node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width;
+  const width =
+    (node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width) + padding;
   if (node.width <= bbox.width + node.padding) {
     node.diff = (bbox.width + node.padding * 0 - node.width) / 2;
   } else {
     node.diff = -node.padding / 2;
   }
 
-  // center the rect around its coordinate
-  rect
-    .attr('class', 'outer')
-    .attr('x', node.x - width / 2 - halfPadding)
-    .attr('y', node.y - node.height / 2 - halfPadding)
-    .attr('width', width + padding)
-    .attr('height', node.height + padding);
-  innerRect
-    .attr('class', 'inner')
-    .attr('x', node.x - width / 2 - halfPadding)
-    .attr('y', node.y - node.height / 2 - halfPadding + bbox.height - 1)
-    .attr('width', width + padding)
-    .attr('height', node.height + padding - bbox.height - 3);
+  const x = node.x - width / 2 - halfPadding;
+  const y = node.y - node.height / 2 - halfPadding;
+  const innerY = node.y - node.height / 2 - halfPadding + bbox.height - 1;
+  const height = node.height + padding;
+  const innerHeight = node.height + padding - bbox.height - 3;
+
+  // add the rect
+  let rect;
+  if (node.useRough) {
+    const rc = rough.svg(shapeSvg);
+    const roughOuterNode =
+      node.rx || node.ry
+        ? rc.path(createRoundedRectPathD(x, y, width, height, 10), {
+            roughness: 0.7,
+          })
+        : rc.rectangle(x, y, width, height);
+
+    rect = shapeSvg.insert(() => roughOuterNode);
+    const roughInnerNode = rc.rectangle(x, innerY, width, innerHeight);
+
+    rect = shapeSvg.insert(() => roughOuterNode);
+    innerRect = shapeSvg.insert(() => roughInnerNode);
+  } else {
+    rect = outerRectG.insert('rect', ':first-child');
+    // center the rect around its coordinate
+    rect
+      .attr('class', 'outer')
+      .attr('x', x)
+      .attr('y', y)
+      .attr('width', width)
+      .attr('height', node.height + padding);
+    innerRect
+      .attr('class', 'inner')
+      .attr('x', x)
+      .attr('y', innerY)
+      .attr('width', width)
+      .attr('height', innerHeight);
+  }
 
   const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
   // Center the label
