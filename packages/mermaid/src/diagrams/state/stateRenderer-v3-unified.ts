@@ -18,6 +18,7 @@ import {
   DIVIDER_TYPE,
   CSS_DIAGRAM,
 } from './stateCommon.js';
+import utils from '../../utils.js';
 
 // Configuration
 const conf: Record<string, any> = {};
@@ -87,7 +88,7 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   data4Layout.type = diag.type;
   data4Layout.layoutAlgorithm = 'dagre-wrapper';
-  // data4Layout.layoutAlgorithm = 'elk';
+  //data4Layout.layoutAlgorithm = 'elk';
   data4Layout.skin = 'roughjs';
   data4Layout.direction = DIR;
   data4Layout.nodeSpacing = conf.nodeSpacing || 50;
@@ -97,6 +98,12 @@ export const draw = async function (text: string, id: string, _version: string, 
   console.log('REF1:', data4Layout);
   await render(data4Layout, svg, element);
   const padding = 8;
+  utils.insertTitle(
+    element,
+    'statediagramTitleText',
+    conf.titleTopMargin,
+    diag.db.getDiagramTitle()
+  );
   setupViewPortForSVG(svg, padding, CSS_DIAGRAM, conf.useMaxWidth);
 };
 
