@@ -1,3 +1,5 @@
+import type { RectData } from '../common/commonTypes';
+
 export interface Box {
   name: string;
   wrap: boolean;
@@ -12,11 +14,19 @@ export interface Actor {
   wrap: boolean;
   prevActor?: string;
   nextActor?: string;
-  links: Record<string, unknown>;
-  properties: Record<string, unknown>;
+  links: Record<string, string>;
+  properties: Record<string, string>;
   actorCnt: number | null;
-  rectData: unknown;
+  rectData: RectData;
   type: string;
+  stopx: number;
+  stopy: number;
+  height: number;
+  startx: number;
+  starty: number;
+  width: number;
+  x: number;
+  y: number;
 }
 
 export interface Message {
@@ -89,4 +99,27 @@ export interface Note {
   placement: Message['placement'];
   message: string;
   wrap: boolean;
+}
+
+export interface TextAttrs {
+  class?: string;
+  fill?: string;
+  stroke?: string;
+  'font-size'?: string;
+  'font-family'?: string;
+  'font-weight'?: string;
+}
+
+export interface LoopModel {
+  startx: number;
+  starty: number;
+  stopx: number;
+  stopy: number;
+  title: string;
+  wrap: boolean;
+  width: number;
+  height: number;
+  fill: string;
+  sections: Array<{ x: number; y: number; height: number }>;
+  sectionTitles?: Array<{ message: string }>;
 }

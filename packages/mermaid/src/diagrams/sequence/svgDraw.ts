@@ -3,6 +3,18 @@ import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
+import type { Actor, LoopModel, TextAttrs } from './types.js';
+import type {
+  Bound,
+  D3RectElement,
+  D3TextElement,
+  RectData,
+  TextData,
+  TextObject,
+} from '../common/commonTypes.js';
+import type { SVG } from '../../diagram-api/types.js';
+import type { SequenceDiagramConfig } from '../../config.type.js';
+import type { D3Element } from '../../mermaidAPI.js';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
 const TOP_ACTOR_CLASS = 'actor-top';
@@ -10,66 +22,65 @@ const BOTTOM_ACTOR_CLASS = 'actor-bottom';
 const ACTOR_BOX_CLASS = 'actor-box';
 const ACTOR_MAN_FIGURE_CLASS = 'actor-man';
 
-export const drawRect = function (elem, rectData) {
+export const drawRect = (elem: SVG, rectData: RectData): D3RectElement => {
   return svgDrawCommon.drawRect(elem, rectData);
 };
 
-export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMenus) {
-  if (actor.links === undefined || actor.links === null || Object.keys(actor.links).length === 0) {
+export const drawPopup = (
+  elem: SVG,
+  actor: Actor,
+  minMenuWidth: number,
+  textAttrs: SequenceDiagramConfig,
+  forceMenus: boolean
+): { height: number; width: number } => {
+  if (!actor.links) {
     return { height: 0, width: 0 };
   }
 
-  const links = actor.links;
-  const actorCnt = actor.actorCnt;
-  const rectData = actor.rectData;
+  const { links, actorCnt, rectData } = actor;
 
-  var displayValue = 'none';
-  if (forceMenus) {
-    displayValue = 'block !important';
-  }
+  const displayValue = forceMenus ? 'block !important' : 'none';
 
   const g = elem.append('g');
-  g.attr('id', 'actor' + actorCnt + '_popup');
+  g.attr('id', `actor${actorCnt}_popup`);
   g.attr('class', 'actorPopupMenu');
   g.attr('display', displayValue);
-  var actorClass = '';
-  if (rectData.class !== undefined) {
-    actorClass = ' ' + rectData.class;
-  }
+  const actorClass = rectData.class ? ` ${rectData.class}` : '';
 
-  let menuWidth = rectData.width > minMenuWidth ? rectData.width : minMenuWidth;
+  const menuWidth = Math.max(rectData.width, minMenuWidth);
+  const menuHeight = 20;
 
   const rectElem = g.append('rect');
-  rectElem.attr('class', 'actorPopupMenuPanel' + actorClass);
+  rectElem.attr('class', `actorPopupMenuPanel${actorClass}`);
   rectElem.attr('x', rectData.x);
   rectElem.attr('y', rectData.height);
   rectElem.attr('fill', rectData.fill);
   rectElem.attr('stroke', rectData.stroke);
   rectElem.attr('width', menuWidth);
   rectElem.attr('height', rectData.height);
-  rectElem.attr('rx', rectData.rx);
-  rectElem.attr('ry', rectData.ry);
-  if (links != null) {
-    var linkY = 20;
-    for (let key in links) {
-      var linkElem = g.append('a');
-      var sanitizedLink = sanitizeUrl(links[key]);
-      linkElem.attr('xlink:href', sanitizedLink);
-      linkElem.attr('target', '_blank');
+  rectElem.attr('rx', rectData.rx || 0);
+  rectElem.attr('ry', rectData.ry || 0);
 
-      _drawMenuItemTextCandidateFunc(textAttrs)(
-        key,
-        linkElem,
-        rectData.x + 10,
-        rectData.height + linkY,
-        menuWidth,
-        20,
-        { class: 'actor' },
-        textAttrs
-      );
+  let linkY = 20;
+  const offsetX = 10;
+  const offsetY = 30;
+  for (const key in links) {
+    const linkElem = g.append('a');
+    const sanitizedLink = sanitizeUrl(links[key]);
+    linkElem.attr('xlink:href', sanitizedLink);
+    linkElem.attr('target', '_blank');
+    _drawMenuItemTextCandidateFunc(textAttrs)(
+      key,
+      linkElem,
+      rectData.x + offsetX,
+      rectData.height + linkY,
+      menuWidth,
+      menuHeight,
+      { class: 'actor' },
+      textAttrs
+    );
 
-      linkY += 30;
-    }
+    linkY += offsetY;
   }
 
   rectElem.attr('height', linkY);
@@ -77,16 +88,16 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   return { height: rectData.height + linkY, width: menuWidth };
 };
 
-const popupMenuToggle = function (popId) {
-  return (
-    "var pu = document.getElementById('" +
-    popId +
-    "'); if (pu != null) { pu.style.display = pu.style.display == 'block' ? 'none' : 'block'; }"
-  );
+const popupMenuToggle = (elementId: string) => {
+  return `const popupMenu = document.getElementById('${elementId}'); if (popupMenu != null) { popupMenu.style.display = popupMenu.style.display == 'block' ? 'none' : 'block'; }`;
 };
 
-export const drawKatex = async function (elem, textData, msgModel = null) {
-  let textElem = elem.append('foreignObject');
+export const drawKatex = async (
+  elem: D3Element,
+  textData: TextData,
+  msgModel: LoopModel | null = null
+) => {
+  const textElem = elem.append('foreignObject');
   const lines = await renderKatex(textData.text, configApi.getConfig());
 
   const divElem = textElem
@@ -94,159 +105,163 @@ export const drawKatex = async function (elem, textData, msgModel = null) {
     .attr('style', 'width: fit-content;')
     .attr('xmlns', 'http://www.w3.org/1999/xhtml')
     .html(lines);
-  const dim = divElem.node().getBoundingClientRect();
 
-  textElem.attr('height', Math.round(dim.height)).attr('width', Math.round(dim.width));
+  const node = divElem?.node();
+  if (!(node instanceof Element)) {
+    return [textElem];
+  }
+
+  const dims = node.getBoundingClientRect();
+
+  textElem.attr('height', Math.round(dims.height)).attr('width', Math.round(dims.width));
 
   if (textData.class === 'noteText') {
-    const rectElem = elem.node().firstChild;
+    const rectElem = elem?.node()?.firstChild as SVGRectElement;
 
-    rectElem.setAttribute('height', dim.height + 2 * textData.textMargin);
+    rectElem.setAttribute('height', `${dims.height + 2 * textData.textMargin}`);
     const rectDim = rectElem.getBBox();
 
     textElem
-      .attr('x', Math.round(rectDim.x + rectDim.width / 2 - dim.width / 2))
-      .attr('y', Math.round(rectDim.y + rectDim.height / 2 - dim.height / 2));
+      .attr('x', Math.round(rectDim.x + rectDim.width / 2 - dims.width / 2))
+      .attr('y', Math.round(rectDim.y + rectDim.height / 2 - dims.height / 2));
   } else if (msgModel) {
-    let { startx, stopx, starty } = msgModel;
+    let { startx, stopx } = msgModel;
     if (startx > stopx) {
-      const temp = startx;
-      startx = stopx;
-      stopx = temp;
+      [startx, stopx] = [stopx, startx];
     }
 
-    textElem.attr('x', Math.round(startx + Math.abs(startx - stopx) / 2 - dim.width / 2));
+    textElem.attr('x', Math.round(startx + Math.abs(startx - stopx) / 2 - dims.width / 2));
     if (textData.class === 'loopText') {
-      textElem.attr('y', Math.round(starty));
+      textElem.attr('y', Math.round(msgModel.starty));
     } else {
-      textElem.attr('y', Math.round(starty - dim.height));
+      textElem.attr('y', Math.round(msgModel.starty - dims.height));
     }
   }
 
   return [textElem];
 };
 
-export const drawText = function (elem, textData) {
+export const drawText = function (elem: D3Element, textObject: TextObject): D3TextElement[] {
   let prevTextHeight = 0;
   let textHeight = 0;
-  const lines = textData.text.split(common.lineBreakRegex);
+  const lines = textObject.text.split(common.lineBreakRegex);
 
-  const [_textFontSize, _textFontSizePx] = parseFontSize(textData.fontSize);
+  const [_textFontSize, _textFontSizePx] = parseFontSize(textObject.fontSize);
 
-  let textElems = [];
+  const textElems: D3TextElement[] = [];
   let dy = 0;
-  let yfunc = () => textData.y;
+  let yfunc = () => textObject.y;
   if (
-    textData.valign !== undefined &&
-    textData.textMargin !== undefined &&
-    textData.textMargin > 0
+    textObject.valign !== undefined &&
+    textObject.textMargin !== undefined &&
+    textObject.textMargin > 0
   ) {
-    switch (textData.valign) {
+    switch (textObject.valign) {
       case 'top':
       case 'start':
-        yfunc = () => Math.round(textData.y + textData.textMargin);
+        yfunc = () => Math.round(textObject.y + textObject.textMargin);
         break;
       case 'middle':
       case 'center':
         yfunc = () =>
-          Math.round(textData.y + (prevTextHeight + textHeight + textData.textMargin) / 2);
+          Math.round(textObject.y + (prevTextHeight + textHeight + textObject.textMargin) / 2);
         break;
       case 'bottom':
       case 'end':
         yfunc = () =>
           Math.round(
-            textData.y +
-              (prevTextHeight + textHeight + 2 * textData.textMargin) -
-              textData.textMargin
+            textObject.y +
+              (prevTextHeight + textHeight + 2 * textObject.textMargin) -
+              textObject.textMargin
           );
         break;
     }
   }
 
   if (
-    textData.anchor !== undefined &&
-    textData.textMargin !== undefined &&
-    textData.width !== undefined
+    textObject.anchor !== undefined &&
+    textObject.textMargin !== undefined &&
+    textObject.width !== undefined
   ) {
-    switch (textData.anchor) {
+    switch (textObject.anchor) {
       case 'left':
       case 'start':
-        textData.x = Math.round(textData.x + textData.textMargin);
-        textData.anchor = 'start';
-        textData.dominantBaseline = 'middle';
-        textData.alignmentBaseline = 'middle';
+        textObject.x = Math.round(textObject.x + textObject.textMargin);
+        textObject.anchor = 'start';
+        textObject.dominantBaseline = 'middle';
+        textObject.alignmentBaseline = 'middle';
         break;
       case 'middle':
       case 'center':
-        textData.x = Math.round(textData.x + textData.width / 2);
-        textData.anchor = 'middle';
-        textData.dominantBaseline = 'middle';
-        textData.alignmentBaseline = 'middle';
+        textObject.x = Math.round(textObject.x + textObject.width / 2);
+        textObject.anchor = 'middle';
+        textObject.dominantBaseline = 'middle';
+        textObject.alignmentBaseline = 'middle';
         break;
       case 'right':
       case 'end':
-        textData.x = Math.round(textData.x + textData.width - textData.textMargin);
-        textData.anchor = 'end';
-        textData.dominantBaseline = 'middle';
-        textData.alignmentBaseline = 'middle';
+        textObject.x = Math.round(textObject.x + textObject.width - textObject.textMargin);
+        textObject.anchor = 'end';
+        textObject.dominantBaseline = 'middle';
+        textObject.alignmentBaseline = 'middle';
         break;
     }
   }
 
-  for (let [i, line] of lines.entries()) {
+  for (const [i, line] of lines.entries()) {
     if (
-      textData.textMargin !== undefined &&
-      textData.textMargin === 0 &&
+      textObject.textMargin !== undefined &&
+      textObject.textMargin === 0 &&
       _textFontSize !== undefined
     ) {
       dy = i * _textFontSize;
     }
 
     const textElem = elem.append('text');
-    textElem.attr('x', textData.x);
+    textElem.attr('x', textObject.x);
     textElem.attr('y', yfunc());
-    if (textData.anchor !== undefined) {
+    if (textObject.anchor !== undefined) {
       textElem
-        .attr('text-anchor', textData.anchor)
-        .attr('dominant-baseline', textData.dominantBaseline)
-        .attr('alignment-baseline', textData.alignmentBaseline);
+        .attr('text-anchor', textObject.anchor)
+        .attr('dominant-baseline', textObject.dominantBaseline)
+        .attr('alignment-baseline', textObject.alignmentBaseline);
     }
-    if (textData.fontFamily !== undefined) {
-      textElem.style('font-family', textData.fontFamily);
+    if (textObject.fontFamily !== undefined) {
+      textElem.style('font-family', textObject.fontFamily);
     }
     if (_textFontSizePx !== undefined) {
       textElem.style('font-size', _textFontSizePx);
     }
-    if (textData.fontWeight !== undefined) {
-      textElem.style('font-weight', textData.fontWeight);
+    if (textObject.fontWeight !== undefined) {
+      textElem.style('font-weight', textObject.fontWeight);
     }
-    if (textData.fill !== undefined) {
-      textElem.attr('fill', textData.fill);
+    if (textObject.fill !== undefined) {
+      textElem.attr('fill', textObject.fill);
     }
-    if (textData.class !== undefined) {
-      textElem.attr('class', textData.class);
+    if (textObject.class !== undefined) {
+      textElem.attr('class', textObject.class);
     }
-    if (textData.dy !== undefined) {
-      textElem.attr('dy', textData.dy);
+    if (textObject.dy !== undefined) {
+      textElem.attr('dy', textObject.dy);
     } else if (dy !== 0) {
       textElem.attr('dy', dy);
     }
 
     const text = line || ZERO_WIDTH_SPACE;
-    if (textData.tspan) {
+    if (textObject.tspan) {
       const span = textElem.append('tspan');
-      span.attr('x', textData.x);
-      if (textData.fill !== undefined) {
-        span.attr('fill', textData.fill);
+      span.attr('x', textObject.x);
+      if (textObject.fill !== undefined) {
+        span.attr('fill', textObject.fill);
       }
       span.text(text);
     } else {
       textElem.text(text);
     }
     if (
-      textData.valign !== undefined &&
-      textData.textMargin !== undefined &&
-      textData.textMargin > 0
+      textObject.valign !== undefined &&
+      textObject.textMargin !== undefined &&
+      textObject.textMargin > 0
     ) {
       textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
       prevTextHeight = textHeight;
@@ -258,37 +273,17 @@ export const drawText = function (elem, textData) {
   return textElems;
 };
 
-export const drawLabel = function (elem, txtObject) {
+export const drawLabel = function (elem: SVG, txtObject: TextObject) {
   /**
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} cut
-   * @returns {any}
+   * @param x - x coordinate of the label
+   * @param y - y coordinate of the label
+   * @param width - width of the label
+   * @param height - height of the label
+   * @param cut - Offset at which the label is cut
+   * @returns number
    */
-  function genPoints(x, y, width, height, cut) {
-    return (
-      x +
-      ',' +
-      y +
-      ' ' +
-      (x + width) +
-      ',' +
-      y +
-      ' ' +
-      (x + width) +
-      ',' +
-      (y + height - cut) +
-      ' ' +
-      (x + width - cut * 1.2) +
-      ',' +
-      (y + height) +
-      ' ' +
-      x +
-      ',' +
-      (y + height)
-    );
+  function genPoints(x: number, y: number, width: number, height: number, cut: number) {
+    return `${x},${y} ${x + width},${y} ${x + width},${y + height - cut} ${x + width - cut * 1.2},${y + height} ${x},${y + height}`;
   }
   const polygon = elem.append('polygon');
   polygon.attr('points', genPoints(txtObject.x, txtObject.y, txtObject.width, txtObject.height, 7));
@@ -302,7 +297,12 @@ export const drawLabel = function (elem, txtObject) {
 
 let actorCnt = -1;
 
-export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
+export const fixLifeLineHeights = (
+  diagram: D3Element,
+  actors: Record<string, Actor>,
+  actorKeys: Array<string>,
+  conf: SequenceDiagramConfig
+) => {
   if (!diagram.select) {
     return;
   }
@@ -320,18 +320,23 @@ export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
 /**
  * Draws an actor in the diagram with the attached line
  *
- * @param {any} elem - The diagram we'll draw to.
- * @param {any} actor - The actor to draw.
- * @param {any} conf - DrawText implementation discriminator object
- * @param {boolean} isFooter - If the actor is the footer one
+ * @param elem - The diagram we'll draw to.
+ * @param actor - The actor to draw.
+ * @param conf - DrawText implementation discriminator object
+ * @param isFooter - If the actor is the footer
  */
-const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
+const drawActorTypeParticipant = async function (
+  elem: D3Element,
+  actor: Actor,
+  conf: SequenceDiagramConfig,
+  isFooter: boolean
+) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 5;
 
   const boxplusLineGroup = elem.append('g').lower();
-  var g = boxplusLineGroup;
+  let g = boxplusLineGroup;
 
   if (!isFooter) {
     actorCnt++;
@@ -358,7 +363,7 @@ const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
   }
 
   const rect = svgDrawCommon.getNoteRect();
-  var cssclass = 'actor';
+  let cssclass = 'actor';
   if (actor.properties != null && actor.properties['class']) {
     cssclass = actor.properties['class'];
   } else {
@@ -389,7 +394,7 @@ const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
     }
   }
 
-  await _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     g,
     rect.x,
@@ -401,10 +406,13 @@ const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
   );
 
   let height = actor.height;
-  if (rectElem.node) {
-    const bounds = rectElem.node().getBBox();
-    actor.height = bounds.height;
-    height = bounds.height;
+  if (rectElem.node && typeof rectElem.node === 'function') {
+    const rectNode = rectElem.node();
+    if (rectNode) {
+      const bounds = rectNode.getBBox();
+      actor.height = bounds.height;
+      height = bounds.height;
+    }
   }
 
   return height;
@@ -540,18 +548,23 @@ export const anchorElement = function (elem) {
 /**
  * Draws an activation in the diagram
  *
- * @param {any} elem - Element to append activation rect.
- * @param {any} bounds - Activation box bounds.
- * @param {any} verticalPos - Precise y coordinate of bottom activation box edge.
- * @param {any} conf - Sequence diagram config object.
- * @param {any} actorActivations - Number of activations on the actor.
+ * @param  elem - Element to append the activation to.
+ * @param  bounds - Bounds of the activation.
+ * @param  verticalPos - Precise y coordinate of bottom activation box edge.
+ * @param  conf - Sequence diagram config object.
+ * @param  actorActivations - Count of activations on the actor.
  */
-export const drawActivation = function (elem, bounds, verticalPos, conf, actorActivations) {
+export const drawActivation = function (
+  bounds: Bound,
+  verticalPos: number,
+  actorActivations: number
+) {
   const rect = svgDrawCommon.getNoteRect();
   const g = bounds.anchored;
   rect.x = bounds.startx;
   rect.y = bounds.starty;
-  rect.class = 'activation' + (actorActivations % 3); // Will evaluate to 0, 1 or 2
+  // Will evaluate to 0, 1 or 2
+  rect.class = `activation${actorActivations % 3}`;
   rect.width = bounds.stopx - bounds.startx;
   rect.height = verticalPos - bounds.starty;
   drawRect(g, rect);
@@ -560,24 +573,29 @@ export const drawActivation = function (elem, bounds, verticalPos, conf, actorAc
 /**
  * Draws a loop in the diagram
  *
- * @param {any} elem - Element to append the loop to.
- * @param {any} loopModel - LoopModel of the given loop.
- * @param {any} labelText - Text within the loop.
- * @param {any} conf - Diagram configuration
- * @returns {any}
+ * @param elem - Element to append the loop to.
+ * @param loopModel - Loop Model of the given loop.
+ * @param labelText - Text within the loop.
+ * @param conf - Diagram configuration
+ * @returns SVG
  */
-export const drawLoop = async function (elem, loopModel, labelText, conf) {
+export const drawLoop = async function (
+  elem: D3Element,
+  loopModel: LoopModel,
+  labelText: string,
+  conf: SequenceDiagramConfig
+) {
   const {
-    boxMargin,
-    boxTextMargin,
-    labelBoxHeight,
-    labelBoxWidth,
+    boxMargin = 0,
+    boxTextMargin = 0,
+    labelBoxHeight = 0,
+    labelBoxWidth = 0,
     messageFontFamily: fontFamily,
     messageFontSize: fontSize,
     messageFontWeight: fontWeight,
   } = conf;
   const g = elem.append('g');
-  const drawLoopLine = function (startx, starty, stopx, stopy) {
+  const drawLoopLine = function (startx: number, starty: number, stopx: number, stopy: number) {
     return g
       .append('line')
       .attr('x1', startx)
@@ -628,7 +646,7 @@ export const drawLoop = async function (elem, loopModel, labelText, conf) {
   txt.fontWeight = fontWeight;
   txt.wrap = true;
 
-  let textElem = hasKatex(txt.text) ? await drawKatex(g, txt, loopModel) : drawText(g, txt);
+  const textElem = hasKatex(txt.text) ? await drawKatex(g, txt, loopModel) : drawText(g, txt);
 
   if (loopModel.sectionTitles !== undefined) {
     for (const [idx, item] of Object.entries(loopModel.sectionTitles)) {
@@ -651,7 +669,7 @@ export const drawLoop = async function (elem, loopModel, labelText, conf) {
         } else {
           drawText(g, txt);
         }
-        let sectionHeight = Math.round(
+        const sectionHeight = Math.round(
           textElem
             .map((te) => (te._groups || te)[0][0].getBBox().height)
             .reduce((acc, curr) => acc + curr)
@@ -668,14 +686,14 @@ export const drawLoop = async function (elem, loopModel, labelText, conf) {
 /**
  * Draws a background rectangle
  *
- * @param {any} elem Diagram (reference for bounds)
- * @param {any} bounds Shape of the rectangle
+ * @param elem - Diagram (reference for bounds)
+ * @param bounds - Shape of the rectangle
  */
-export const drawBackgroundRect = function (elem, bounds) {
+export const drawBackgroundRect = function (elem: SVG, bounds: Bound) {
   svgDrawCommon.drawBackgroundRect(elem, bounds);
 };
 
-export const insertDatabaseIcon = function (elem) {
+export const insertDatabaseIcon = function (elem: SVG) {
   elem
     .append('defs')
     .append('symbol')
@@ -690,7 +708,7 @@ export const insertDatabaseIcon = function (elem) {
     );
 };
 
-export const insertComputerIcon = function (elem) {
+export const insertComputerIcon = function (elem: SVG) {
   elem
     .append('defs')
     .append('symbol')
@@ -705,7 +723,7 @@ export const insertComputerIcon = function (elem) {
     );
 };
 
-export const insertClockIcon = function (elem) {
+export const insertClockIcon = function (elem: SVG) {
   elem
     .append('defs')
     .append('symbol')
@@ -723,9 +741,9 @@ export const insertClockIcon = function (elem) {
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  *
- * @param elem
+ * @param elem - The svg element to append the arrowhead to.
  */
-export const insertArrowHead = function (elem) {
+export const insertArrowHead = function (elem: SVG) {
   elem
     .append('defs')
     .append('marker')
@@ -743,9 +761,9 @@ export const insertArrowHead = function (elem) {
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  *
- * @param {any} elem
+ * @param elem - The svg element to append the filled arrowhead to.
  */
-export const insertArrowFilledHead = function (elem) {
+export const insertArrowFilledHead = function (elem: SVG) {
   elem
     .append('defs')
     .append('marker')
@@ -762,9 +780,9 @@ export const insertArrowFilledHead = function (elem) {
 /**
  * Setup node number. The result is appended to the svg.
  *
- * @param {any} elem
+ * @param elem - The svg element to append the sequence number to.
  */
-export const insertSequenceNumber = function (elem) {
+export const insertSequenceNumber = function (elem: SVG) {
   elem
     .append('defs')
     .append('marker')
@@ -784,9 +802,9 @@ export const insertSequenceNumber = function (elem) {
 /**
  * Setup cross head and define the marker. The result is appended to the svg.
  *
- * @param {any} elem
+ * @param elem - The svg element to append the arrow crosshead to.
  */
-export const insertArrowCrossHead = function (elem) {
+export const insertArrowCrossHead = function (elem: SVG) {
   const defs = elem.append('defs');
   const marker = defs
     .append('marker')
@@ -807,24 +825,28 @@ export const insertArrowCrossHead = function (elem) {
   // this is actual shape for arrowhead
 };
 
-export const getTextObj = function () {
+export const getTextObj = () => {
   return {
     x: 0,
     y: 0,
     fill: undefined,
-    anchor: undefined,
+    anchor: 'start',
     style: '#666',
-    width: undefined,
-    height: undefined,
+    width: 0,
+    height: 0,
     textMargin: 0,
     rx: 0,
     ry: 0,
     tspan: true,
-    valign: undefined,
+    valign: 'baseline',
+    'text-anchor': 'start',
+    text: '',
+    dominantBaseline: 'auto',
+    alignmentBaseline: 'auto',
   };
 };
 
-export const getNoteRect = function () {
+export const getNoteRect = () => {
   return {
     x: 0,
     y: 0,
@@ -840,15 +862,23 @@ export const getNoteRect = function () {
 
 const _drawTextCandidateFunc = (function () {
   /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
+   * @param content - The text to be drawn.
+   * @param g - The svg group to append the text to.
+   * @param x - The x coordinate of the text.
+   * @param y - The y coordinate of the text.
+   * @param width - The width of the text.
+   * @param height - The height of the text.height
+   * @param textAttrs - The text attributes to be applied.
    */
-  function byText(content, g, x, y, width, height, textAttrs) {
+  function byText(
+    content: string,
+    g: D3Element,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs
+  ) {
     const text = g
       .append('text')
       .attr('x', x + width / 2)
@@ -859,19 +889,28 @@ const _drawTextCandidateFunc = (function () {
   }
 
   /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} conf
+   * @param content - The text to be drawn.
+   * @param g - The svg group to append the text to.
+   * @param x - The x coordinate of the text.
+   * @param y - The y coordinate of the text.
+   * @param width - The width of the text.
+   * @param height - The height of the text.
+   * @param textAttrs - The text attributes to be applied.
+   * @param conf - The configuration object.
    */
-  function byTspan(content, g, x, y, width, height, textAttrs, conf) {
+  function byTspan(
+    content: string,
+    g: D3Element,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs,
+    conf: SequenceDiagramConfig
+  ) {
     const { actorFontSize, actorFontFamily, actorFontWeight } = conf;
 
-    const [_actorFontSize, _actorFontSizePx] = parseFontSize(actorFontSize);
+    const [_actorFontSize = 0, _actorFontSizePx = '0px'] = parseFontSize(actorFontSize);
 
     const lines = content.split(common.lineBreakRegex);
     for (let i = 0; i < lines.length; i++) {
@@ -900,16 +939,25 @@ const _drawTextCandidateFunc = (function () {
   }
 
   /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} conf
+   * @param content - The text to be drawn.
+   * @param g - The svg group to append the text to.
+   * @param x - The x coordinate of the text.
+   * @param y - The y coordinate of the text.
+   * @param width - The width of the text.
+   * @param height - The height of the text.
+   * @param textAttrs - The text attributes to be applied.
+   * @param conf - The configuration object.
    */
-  function byFo(content, g, x, y, width, height, textAttrs, conf) {
+  function byFo(
+    content: string,
+    g: D3Element,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs,
+    conf: SequenceDiagramConfig
+  ) {
     const s = g.append('switch');
     const f = s
       .append('foreignObject')
@@ -936,17 +984,25 @@ const _drawTextCandidateFunc = (function () {
   }
 
   /**
-   *
-   * @param content
-   * @param g
-   * @param x
-   * @param y
-   * @param width
-   * @param height
-   * @param textAttrs
-   * @param conf
+   * @param content - The text to be drawn.
+   * @param g - The svg group to append the text to.
+   * @param x - The x coordinate of the text.
+   * @param y - The y coordinate of the text.
+   * @param width - The width of the text.
+   * @param height - The height of the text.
+   * @param textAttrs - The text attributes to be applied.
+   * @param conf - The configuration object.
    */
-  async function byKatex(content, g, x, y, width, height, textAttrs, conf) {
+  async function byKatex(
+    content: string,
+    g: D3Element,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs,
+    conf: SequenceDiagramConfig
+  ) {
     // TODO duplicate render calls, optimize
 
     const dim = await calculateMathMLDimensions(content, configApi.getConfig());
@@ -971,10 +1027,10 @@ const _drawTextCandidateFunc = (function () {
   }
 
   /**
-   * @param {any} toText
-   * @param {any} fromTextAttrsDict
+   * @param toText - The text SVG element to apply the attributes to.
+   * @param fromTextAttrsDict - The text attributes to be applied.
    */
-  function _setTextAttrs(toText, fromTextAttrsDict) {
+  function _setTextAttrs(toText: SVG, fromTextAttrsDict: TextAttrs) {
     for (const key in fromTextAttrsDict) {
       if (fromTextAttrsDict.hasOwnProperty(key)) {
         toText.attr(key, fromTextAttrsDict[key]);
@@ -982,7 +1038,7 @@ const _drawTextCandidateFunc = (function () {
     }
   }
 
-  return function (conf, hasKatex = false) {
+  return function (conf: SequenceDiagramConfig, hasKatex = false) {
     if (hasKatex) {
       return byKatex;
     }
@@ -992,15 +1048,23 @@ const _drawTextCandidateFunc = (function () {
 
 const _drawMenuItemTextCandidateFunc = (function () {
   /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
+   * @param content - The text to be drawn.
+   * @param g - The svg group to append the text to.
+   * @param x - The x coordinate of the text.
+   * @param y - The y coordinate of the text.
+   * @param width - The width of the text.
+   * @param height - The height of the text.
+   * @param textAttrs - The text attributes to be applied.
    */
-  function byText(content, g, x, y, width, height, textAttrs) {
+  function byText(
+    content: string,
+    g: D3Element,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs
+  ) {
     const text = g
       .append('text')
       .attr('x', x)
@@ -1011,21 +1075,30 @@ const _drawMenuItemTextCandidateFunc = (function () {
   }
 
   /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} conf
+   * @param content - The text to be drawn.
+   * @param g - The svg group to append the text to.
+   * @param x - The x coordinate of the text.
+   * @param y - The y coordinate of the text.
+   * @param width - The width of the text.
+   * @param height - The height of the text.
+   * @param textAttrs - The text attributes to be applied.
+   * @param conf - The configuration object.
    */
-  function byTspan(content, g, x, y, width, height, textAttrs, conf) {
-    const { actorFontSize, actorFontFamily, actorFontWeight } = conf;
+  function byTspan(
+    content: string,
+    g: D3Element,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs,
+    conf: SequenceDiagramConfig
+  ) {
+    const { actorFontSize = '0', actorFontFamily = 0, actorFontWeight = 0 } = conf;
 
     const lines = content.split(common.lineBreakRegex);
     for (let i = 0; i < lines.length; i++) {
-      const dy = i * actorFontSize - (actorFontSize * (lines.length - 1)) / 2;
+      const dy = i * Number(actorFontSize) - (Number(actorFontSize) * (lines.length - 1)) / 2;
       const text = g
         .append('text')
         .attr('x', x)
@@ -1046,16 +1119,25 @@ const _drawMenuItemTextCandidateFunc = (function () {
   }
 
   /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} conf
+   * @param content - The text to be drawn.
+   * @param g - The svg group to append the text to.
+   * @param x - The x coordinate of the text.
+   * @param y - The y coordinate of the text.
+   * @param width - The width of the text
+   * @param height -  The height of the text.
+   * @param textAttrs - The text attributes to be applied.
+   * @param conf - The configuration object.
    */
-  function byFo(content, g, x, y, width, height, textAttrs, conf) {
+  const byFo = (
+    content: string,
+    g: D3Element,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs,
+    conf: SequenceDiagramConfig
+  ) => {
     const s = g.append('switch');
     const f = s
       .append('foreignObject')
@@ -1079,21 +1161,21 @@ const _drawMenuItemTextCandidateFunc = (function () {
 
     byTspan(content, s, x, y, width, height, textAttrs, conf);
     _setTextAttrs(text, textAttrs);
-  }
+  };
 
   /**
-   * @param {any} toText
-   * @param {any} fromTextAttrsDict
+   * @param toText - The text SVG element to apply the attributes to.
+   * @param fromTextAttrsDict - The text attributes to be applied.
    */
-  function _setTextAttrs(toText, fromTextAttrsDict) {
+  const _setTextAttrs = (toText: SVG, fromTextAttrsDict: TextAttrs) => {
     for (const key in fromTextAttrsDict) {
       if (fromTextAttrsDict.hasOwnProperty(key)) {
         toText.attr(key, fromTextAttrsDict[key]);
       }
     }
-  }
+  };
 
-  return function (conf) {
+  return function (conf: SequenceDiagramConfig) {
     return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'old' ? byText : byTspan;
   };
 })();

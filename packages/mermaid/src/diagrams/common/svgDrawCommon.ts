@@ -124,6 +124,11 @@ export const getTextObj = (): TextObject => {
     rx: 0,
     ry: 0,
     tspan: true,
+    dominantBaseline: 'auto',
+    alignmentBaseline: 'auto',
+    text: '',
+    anchor: 'start',
+    valign: 'middle',
   };
   return testObject;
 };
