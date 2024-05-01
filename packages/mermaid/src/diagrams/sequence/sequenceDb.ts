@@ -513,10 +513,10 @@ export const apply = function (param: any | AddMessageParams | AddMessageParams[
         state.records.destroyedActors[param.actor] = state.records.messages.length;
         break;
       case 'activeStart':
-        addSignal(param.actor.actor, undefined, undefined, param.signalType);
+        addSignal(param.actor, undefined, undefined, param.signalType);
         break;
       case 'activeEnd':
-        addSignal(param.actor.actor, undefined, undefined, param.signalType);
+        addSignal(param.actor, undefined, undefined, param.signalType);
         break;
       case 'addNote':
         addNote(param.actor, param.placement, param.text);
