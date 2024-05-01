@@ -296,7 +296,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
  * Use D3 to construct the svg elements for the entities
  *
  * @param svgNode The svg node that contains the diagram
- * @param entities The entities to be drawn
+ * @param {Map<string, object>} entities The entities to be drawn
  * @param graph The graph that contains the vertex and edge definitions post-layout
  * @returns {object} The first entity that was inserted
  */

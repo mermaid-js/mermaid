@@ -129,13 +129,13 @@ export function stateDomId(itemId = '', counter = 0, type = '', typeSpacer = DOM
  * @param g - graph
  * @param {object} parent
  * @param {object} parsedItem - parsed statement item
- * @param {object[]} diagramStates - the list of all known  states for the diagram
+ * @param {Map<string, object>} diagramStates - the list of all known  states for the diagram
  * @param {object} diagramDb
  * @param {boolean} altFlag - for clusters, add the "statediagram-cluster-alt" CSS class
  */
 const setupNode = (g, parent, parsedItem, diagramStates, diagramDb, altFlag) => {
   const itemId = parsedItem.id;
-  const classStr = getClassesFromDbInfo(diagramStates[itemId]);
+  const classStr = getClassesFromDbInfo(diagramStates.get(itemId));
 
   if (itemId !== 'root') {
     let shape = SHAPE_STATE;
@@ -303,7 +303,7 @@ const setupNode = (g, parent, parsedItem, diagramStates, diagramDb, altFlag) => 
  * @param g
  * @param parentParsedItem - parsed Item that is the parent of this document (doc)
  * @param doc - the document to set up; it is a list of parsed statements
- * @param {object[]} diagramStates - the list of all known states for the diagram
+ * @param {Map<string, object>} diagramStates - the list of all known states for the diagram
  * @param diagramDb
  * @param {boolean} altFlag
  * @todo This duplicates some of what is done in stateDb.js extract method
