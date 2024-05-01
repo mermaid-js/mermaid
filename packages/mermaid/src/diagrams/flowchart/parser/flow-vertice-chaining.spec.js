@@ -141,7 +141,7 @@ describe('when parsing flowcharts', function () {
     expect(edges[3].type).toBe('arrow_point');
     expect(edges[3].text).toBe('');
   });
-  it('should handle chaining and multiple nodes in in link statement FVC ', function () {
+  it('should handle chaining and multiple nodes in link statement FVC ', function () {
     const res = flow.parser.parse(`
     graph TD
       A --> B & B2 & C --> D2;
@@ -181,7 +181,7 @@ describe('when parsing flowcharts', function () {
     expect(edges[5].type).toBe('arrow_point');
     expect(edges[5].text).toBe('');
   });
-  it('should handle chaining and multiple nodes in in link statement with extra info in statements', function () {
+  it('should handle chaining and multiple nodes in link statement with extra info in statements', function () {
     const res = flow.parser.parse(`
     graph TD
       A[ h ] -- hello --> B[" test "]:::exClass & C --> D;
