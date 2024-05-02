@@ -144,15 +144,15 @@ export const bounds = {
     this.updateBounds(_startx, _starty, _stopx, _stopy);
   },
   newActivation: function (message, diagram, actors) {
-    const actorRect = actors.get(message.from.actor);
-    const stackedSize = actorActivations(message.from.actor).length || 0;
+    const actorRect = actors.get(message.from);
+    const stackedSize = actorActivations(message.from).length || 0;
     const x = actorRect.x + actorRect.width / 2 + ((stackedSize - 1) * conf.activationWidth) / 2;
     this.activations.push({
       startx: x,
       starty: this.verticalPos + 2,
       stopx: x + conf.activationWidth,
       stopy: undefined,
-      actor: message.from.actor,
+      actor: message.from,
       anchored: svgDraw.anchorElement(diagram),
     });
   },
@@ -162,7 +162,7 @@ export const bounds = {
       .map(function (activation) {
         return activation.actor;
       })
-      .lastIndexOf(message.from.actor);
+      .lastIndexOf(message.from);
     return this.activations.splice(lastActorActivationIdx, 1)[0];
   },
   createLoop: function (title = { message: undefined, wrap: false, width: undefined }, fill) {
@@ -836,7 +836,7 @@ export const draw = async function (_text: string, id: string, _version: string,
       activationData,
       verticalPos,
       conf,
-      actorActivations(msg.from.actor).length
+      actorActivations(msg.from).length
     );
 
     bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos);
@@ -1538,14 +1538,14 @@ const calculateLoopBounds = async function (messages, actors, _maxWidthPerActor,
         break;
       case diagObj.db.LINETYPE.ACTIVE_START:
         {
-          const actorRect = actors.get(msg.from ? msg.from.actor : msg.to.actor);
-          const stackedSize = actorActivations(msg.from ? msg.from.actor : msg.to.actor).length;
+          const actorRect = actors.get(msg.from ? msg.from : msg.to.actor);
+          const stackedSize = actorActivations(msg.from ? msg.from : msg.to.actor).length;
           const x =
             actorRect.x + actorRect.width / 2 + ((stackedSize - 1) * conf.activationWidth) / 2;
           const toAdd = {
             startx: x,
             stopx: x + conf.activationWidth,
-            actor: msg.from.actor,
+            actor: msg.from,
             enabled: true,
           };
           bounds.activations.push(toAdd);
@@ -1555,7 +1555,7 @@ const calculateLoopBounds = async function (messages, actors, _maxWidthPerActor,
         {
           const lastActorActivationIdx = bounds.activations
             .map((a) => a.actor)
-            .lastIndexOf(msg.from.actor);
+            .lastIndexOf(msg.from);
           delete bounds.activations.splice(lastActorActivationIdx, 1)[0];
         }
         break;

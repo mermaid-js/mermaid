@@ -263,7 +263,7 @@ const getBlocksFlat = () => {
   return [...blockDatabase.values()];
 };
 /**
- * Returns the the hierarchy of blocks
+ * Returns the hierarchy of blocks
  * @returns
  */
 const getBlocks = () => {

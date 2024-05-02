@@ -64,7 +64,7 @@ describe('parsing a flow chart', function () {
     expect(edges[0].end).toBe('monograph');
   });
 
-  describe('special characters should be be handled.', function () {
+  describe('special characters should be handled.', function () {
     const charTest = function (char, result) {
       const res = flow.parser.parse('graph TD;A(' + char + ')-->B;');
 
