@@ -574,16 +574,6 @@ const setDirection = (dir) => {
 const trimColon = (str) => (str && str[0] === ':' ? str.substr(1).trim() : str.trim());
 
 const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, altFlag, useRough) => {
-  console.log(
-    'abc88 parent, parsedItemm, diagramStates, nodes, edges, altFlag, useRough:',
-    parent,
-    parsedItem,
-    diagramStates,
-    nodes,
-    edges,
-    altFlag,
-    useRough
-  );
   const itemId = parsedItem.id;
   const classStr = getClassesFromDbInfo(diagramStates[itemId]);
 
@@ -758,6 +748,11 @@ const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, altFlag, u
   }
 };
 
+/**
+ *
+ * @param nodes
+ * @param nodeData
+ */
 function insertOrUpdateNode(nodes, nodeData) {
   const existingNodeData = nodes.find((node) => node.id === nodeData.id);
   if (existingNodeData) {

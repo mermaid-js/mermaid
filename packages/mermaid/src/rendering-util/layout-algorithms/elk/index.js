@@ -21,6 +21,7 @@ import { log } from '$root/logger.js';
 import ELK from 'elkjs/lib/elk.bundled.js';
 
 const nodeDb = {};
+let portPos = {};
 let clusterDb = {};
 
 const addSubGraphs = function (db) {
@@ -46,6 +47,150 @@ const addSubGraphs = function (db) {
   return parentLookupDb;
 };
 
+export const addVertex = async (nodeEl, graph, nodeArr, node) => {
+  console.log('addVertex abc88', node.id);
+  // const node = vert[id];
+
+  //     /**
+  //      * Variable for storing the classes for the vertex
+  //      *
+  //      * @type {string}
+  //      */
+  //     let classStr = 'default';
+  //     if (node.classes.length > 0) {
+  //       classStr = node.classes.join(' ');
+  //     }
+  //     classStr = classStr + ' flowchart-label';
+  //     const styles = getStylesFromArray(node.styles);
+
+  //     // Use vertex id as text in the box if no text is provided by the graph definition
+  //     let vertexText = node.text !== undefined ? node.text : node.id;
+
+  //     // We create a SVG label, either by delegating to addHtmlLabel or manually
+  //     let vertexNode;
+  //     const labelData = { width: 0, height: 0 };
+
+  const ports = [
+    {
+      id: node.id + '-west',
+      layoutOptions: {
+        'port.side': 'WEST',
+      },
+    },
+    {
+      id: node.id + '-east',
+      layoutOptions: {
+        'port.side': 'EAST',
+      },
+    },
+    {
+      id: node.id + '-south',
+      layoutOptions: {
+        'port.side': 'SOUTH',
+      },
+    },
+    {
+      id: node.id + '-north',
+      layoutOptions: {
+        'port.side': 'NORTH',
+      },
+    },
+  ];
+
+  let boundingBox;
+  const child = {
+    ...node,
+    ports: node.shape === 'diamond' ? ports : [],
+  };
+  graph.children.push(child);
+
+  //     // Add the element to the DOM
+  if (node.type !== 'group') {
+    const childNodeEl = await insertNode(nodeEl, node, node.dir);
+    boundingBox = childNodeEl.node().getBBox();
+    child.domId = childNodeEl;
+    child.width = boundingBox.width;
+    child.height = boundingBox.height;
+  } else {
+    child.children = [];
+    await addVertices(nodeEl, nodeArr, child, node.id);
+  }
+
+  // else {
+  //       const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
+  //       // svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
+  //       // const rows = vertexText.split(common.lineBreakRegex);
+  //       // for (const row of rows) {
+  //       //   const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+  //       //   tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
+  //       //   tspan.setAttribute('dy', '1em');
+  //       //   tspan.setAttribute('x', '1');
+  //       //   tspan.textContent = row;
+  //       //   svgLabel.appendChild(tspan);
+  //       // }
+  //       // vertexNode = svgLabel;
+  //       // const bbox = vertexNode.getBBox();
+  //       const { shapeSvg, bbox } = await labelHelper(nodes, node, undefined, true);
+  //       labelData.width = bbox.width;
+  //       labelData.wrappingWidth = getConfig().flowchart.wrappingWidth;
+  //       labelData.height = bbox.height;
+  //       labelData.labelNode = shapeSvg.node();
+  //       node.labelData = labelData;
+  //     }
+  //     // const { shapeSvg, bbox } = await labelHelper(svg, node, undefined, true);
+
+  // const data = {
+  //   id: node.id,
+  //   ports: node.shape === 'diamond' ? ports : [],
+  //   // labelStyle: styles.labelStyle,
+  //   // shape: _shape,
+  //   layoutOptions,
+  //   labelText: vertexText,
+  //   labelData,
+  //   // labels: [{ text: vertexText }],
+  //   // rx: radius,
+  //   // ry: radius,
+  //   // class: classStr,
+  //   // style: styles.style,
+  //   // link: vertex.link,
+  //   // linkTarget: vertex.linkTarget,
+  //   // tooltip: diagObj.db.getTooltip(vertex.id) || '',
+  //   domId: diagObj.db.lookUpDomId(node.id),
+  //   // haveCallback: vertex.haveCallback,
+  //   width: boundingBox?.width,
+  //   height: boundingBox?.height,
+  //   // dir: vertex.dir,
+  //   type: node.shape,
+  //   // props: vertex.props,
+  //   // padding: getConfig().flowchart.padding,
+  //   // boundingBox,
+  //   el: nodeEl,
+  //   parent: parentLookupDb.parentById[node.id],
+  // };
+  //     // if (!Object.keys(parentLookupDb.childrenById).includes(vertex.id)) {
+  //     // graph.children.push({
+  //     //   ...data,
+  //     // });
+  //     // }
+  //     nodeDb[node.id] = data;
+  //     // log.trace('setNode', {
+  //     //   labelStyle: styles.labelStyle,
+  //     //   shape: _shape,
+  //     //   labelText: vertexText,
+  //     //   rx: radius,
+  //     //   ry: radius,
+  //     //   class: classStr,
+  //     //   style: styles.style,
+  //     //   id: vertex.id,
+  //     //   domId: diagObj.db.lookUpDomId(vertex.id),
+  //     //   width: vertex.type === 'group' ? 500 : undefined,
+  //     //   type: vertex.type,
+  //     //   dir: vertex.dir,
+  //     //   props: vertex.props,
+  //     //   padding: getConfig().flowchart.padding,
+  //     //   parent: parentLookupDb.parentById[vertex.id],
+  //     // });
+};
 // /**
 //  * Function that adds the vertices found during parsing to the graph to be rendered.
 //  *
@@ -56,148 +201,13 @@ const addSubGraphs = function (db) {
 //  * @param doc
 //  * @param diagObj
 //  */
-export const addVertices = async function (svg, data4Layout, parentLookupDb, graph) {
-  const nodes = svg.insert('g').attr('class', 'nodes');
-
-  console.log('data4Layout (node)', data4Layout);
+export const addVertices = async function (nodeEl, nodeArr, graph, parentId) {
+  const siblings = nodeArr.filter((node) => node.parentId === parentId);
+  log.info('addVertices abc88', siblings, parentId);
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   await Promise.all(
-    data4Layout.nodes.map(async (node) => {
-      console.log('node', node);
-      // const node = vert[id];
-
-      //     /**
-      //      * Variable for storing the classes for the vertex
-      //      *
-      //      * @type {string}
-      //      */
-      //     let classStr = 'default';
-      //     if (node.classes.length > 0) {
-      //       classStr = node.classes.join(' ');
-      //     }
-      //     classStr = classStr + ' flowchart-label';
-      //     const styles = getStylesFromArray(node.styles);
-
-      //     // Use vertex id as text in the box if no text is provided by the graph definition
-      //     let vertexText = node.text !== undefined ? node.text : node.id;
-
-      //     // We create a SVG label, either by delegating to addHtmlLabel or manually
-      //     let vertexNode;
-      //     const labelData = { width: 0, height: 0 };
-
-      const ports = [
-        {
-          id: node.id + '-west',
-          layoutOptions: {
-            'port.side': 'WEST',
-          },
-        },
-        {
-          id: node.id + '-east',
-          layoutOptions: {
-            'port.side': 'EAST',
-          },
-        },
-        {
-          id: node.id + '-south',
-          layoutOptions: {
-            'port.side': 'SOUTH',
-          },
-        },
-        {
-          id: node.id + '-north',
-          layoutOptions: {
-            'port.side': 'NORTH',
-          },
-        },
-      ];
-
-      let boundingBox;
-      let nodeEl;
-
-      //     // Add the element to the DOM
-      if (node.type !== 'group') {
-        nodeEl = await insertNode(nodes, node, node.dir);
-        boundingBox = nodeEl.node().getBBox();
-        graph.children.push({
-          ...node,
-          domId: nodeEl,
-        });
-      }
-      // else {
-      //       const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
-      //       // svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
-      //       // const rows = vertexText.split(common.lineBreakRegex);
-      //       // for (const row of rows) {
-      //       //   const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-      //       //   tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
-      //       //   tspan.setAttribute('dy', '1em');
-      //       //   tspan.setAttribute('x', '1');
-      //       //   tspan.textContent = row;
-      //       //   svgLabel.appendChild(tspan);
-      //       // }
-      //       // vertexNode = svgLabel;
-      //       // const bbox = vertexNode.getBBox();
-      //       const { shapeSvg, bbox } = await labelHelper(nodes, node, undefined, true);
-      //       labelData.width = bbox.width;
-      //       labelData.wrappingWidth = getConfig().flowchart.wrappingWidth;
-      //       labelData.height = bbox.height;
-      //       labelData.labelNode = shapeSvg.node();
-      //       node.labelData = labelData;
-      //     }
-      //     // const { shapeSvg, bbox } = await labelHelper(svg, node, undefined, true);
-
-      // const data = {
-      //   id: node.id,
-      //   ports: node.type === 'diamond' ? ports : [],
-      //   // labelStyle: styles.labelStyle,
-      //   // shape: _shape,
-      //   layoutOptions,
-      //   labelText: vertexText,
-      //   labelData,
-      //   // labels: [{ text: vertexText }],
-      //   // rx: radius,
-      //   // ry: radius,
-      //   // class: classStr,
-      //   // style: styles.style,
-      //   // link: vertex.link,
-      //   // linkTarget: vertex.linkTarget,
-      //   // tooltip: diagObj.db.getTooltip(vertex.id) || '',
-      //   domId: diagObj.db.lookUpDomId(node.id),
-      //   // haveCallback: vertex.haveCallback,
-      //   width: boundingBox?.width,
-      //   height: boundingBox?.height,
-      //   // dir: vertex.dir,
-      //   type: node.type,
-      //   // props: vertex.props,
-      //   // padding: getConfig().flowchart.padding,
-      //   // boundingBox,
-      //   el: nodeEl,
-      //   parent: parentLookupDb.parentById[node.id],
-      // };
-      //     // if (!Object.keys(parentLookupDb.childrenById).includes(vertex.id)) {
-      //     // graph.children.push({
-      //     //   ...data,
-      //     // });
-      //     // }
-      //     nodeDb[node.id] = data;
-      //     // log.trace('setNode', {
-      //     //   labelStyle: styles.labelStyle,
-      //     //   shape: _shape,
-      //     //   labelText: vertexText,
-      //     //   rx: radius,
-      //     //   ry: radius,
-      //     //   class: classStr,
-      //     //   style: styles.style,
-      //     //   id: vertex.id,
-      //     //   domId: diagObj.db.lookUpDomId(vertex.id),
-      //     //   width: vertex.type === 'group' ? 500 : undefined,
-      //     //   type: vertex.type,
-      //     //   dir: vertex.dir,
-      //     //   props: vertex.props,
-      //     //   padding: getConfig().flowchart.padding,
-      //     //   parent: parentLookupDb.parentById[vertex.id],
-      //     // });
+    siblings.map(async (node) => {
+      await addVertex(nodeEl, graph, nodeArr, node);
     })
   );
   return graph;
@@ -235,9 +245,18 @@ const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
       //       );
       //       label.node().appendChild(node.labelData.labelNode);
 
-      //       log.info('Id (UGH)= ', node.type, node.labels);
+      //       log.info('Id (UGH)= ', node.shape, node.labels);
       //     } else {
-      log.info('Id (UGH)= ', node.id);
+      log.info(
+        'Id (UGH)= ',
+        node.id,
+        node.x,
+        node.y,
+        relX,
+        relY,
+        node.domId.node(),
+        `translate(${node.x + relX + node.width / 2}, ${node.y + relY + node.height / 2})`
+      );
       node.domId.attr(
         'transform',
         `translate(${node.x + relX + node.width / 2}, ${node.y + relY + node.height / 2})`
@@ -246,10 +265,59 @@ const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
     //   }
     // });
     // nodeArray.forEach(function (node) {
-    //   if (node && node.type === 'group') {
+    //   if (node && node.shape === 'group') {
     //     drawNodes(relX + node.x, relY + node.y, node.children, svg, subgraphsEl, diagObj, depth + 1);
     //   }
   });
+};
+
+const getNextPort = (node, edgeDirection, graphDirection) => {
+  log.info('getNextPort abc88', { node, edgeDirection, graphDirection });
+  if (!portPos[node]) {
+    switch (graphDirection) {
+      case 'TB':
+      case 'TD':
+        portPos[node] = {
+          inPosition: 'north',
+          outPosition: 'south',
+        };
+        break;
+      case 'BT':
+        portPos[node] = {
+          inPosition: 'south',
+          outPosition: 'north',
+        };
+        break;
+      case 'RL':
+        portPos[node] = {
+          inPosition: 'east',
+          outPosition: 'west',
+        };
+        break;
+      case 'LR':
+        portPos[node] = {
+          inPosition: 'west',
+          outPosition: 'east',
+        };
+        break;
+    }
+  }
+  const result = edgeDirection === 'in' ? portPos[node].inPosition : portPos[node].outPosition;
+
+  if (edgeDirection === 'in') {
+    portPos[node].inPosition = getNextPosition(
+      portPos[node].inPosition,
+      edgeDirection,
+      graphDirection
+    );
+  } else {
+    portPos[node].outPosition = getNextPosition(
+      portPos[node].outPosition,
+      edgeDirection,
+      graphDirection
+    );
+  }
+  return result;
 };
 
 const getEdgeStartEndPoint = (edge, dir) => {
@@ -267,11 +335,11 @@ const getEdgeStartEndPoint = (edge, dir) => {
     return { source, target };
   }
 
-  if (startNode.type === 'diamond') {
+  if (startnode.shape === 'diamond') {
     source = `${source}-${getNextPort(source, 'out', dir)}`;
   }
 
-  if (endNode.type === 'diamond') {
+  if (endnode.shape === 'diamond') {
     target = `${target}-${getNextPort(target, 'in', dir)}`;
   }
 
@@ -514,7 +582,9 @@ export const render = async (data4Layout, svg, element) => {
   // that is not in the dom so we need to add it to the dom, get the size
   // we will position the nodes when we get the layout from elkjs
   const parentLookupDb = {};
-  graph = await addVertices(svg, data4Layout, parentLookupDb, graph);
+  const nodeEl = svg.insert('g').attr('class', 'nodes');
+  graph = await addVertices(nodeEl, data4Layout.nodes, graph);
+  console.log('after addVertices abc88', JSON.stringify(graph, null, 2));
 
   console.log('graph', graph, data4Layout);
 
@@ -596,11 +666,13 @@ export const render = async (data4Layout, svg, element) => {
   // });
 
   // insertChildren(graph.children, parentLookupDb);
-  // log.info('after layout', JSON.stringify(graph, null, 2));
+
+  // console.log('before layout abc88', JSON.stringify(graph, null, 2));
   const g = await elk.layout(graph);
+  log.info('after layout', JSON.stringify(graph, null, 2));
+  console.log('after layout abc88', g);
   // drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
   drawNodes(0, 0, g.children, svg, null, 0);
-  console.log('after layout', g);
   g.edges?.map((edge) => {
     // (elem, edge, clusterDb, diagramType, graph, id)
     edge.start = nodeDb[edge.sources[0]];

@@ -419,7 +419,10 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
   // Currently only flowcharts get the curve from the settings, perhaps this should
   // be expanded to a common setting? Restricting it for now in order not to cause side-effects that
   // have not been thought through
-  if (edge.curve && (diagramType === 'graph' || diagramType === 'flowchart')) {
+  if (
+    edge.curve &&
+    (diagramType === 'graph' || diagramType === 'flowchart' || diagramType === 'stateDiagram')
+  ) {
     curve = edge.curve;
   }
 
