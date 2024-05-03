@@ -716,7 +716,12 @@ const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, altFlag, u
       //add parent id to noteData
       noteData.parentId = parentId;
 
-      nodes.push(groupData, noteData, nodeData);
+      //insert groupData
+      insertOrUpdateNode(nodes, groupData);
+      //insert noteData
+      insertOrUpdateNode(nodes, noteData);
+      //insert nodeData
+      insertOrUpdateNode(nodes, nodeData);
 
       let from = itemId;
       let to = noteData.id;
@@ -742,7 +747,7 @@ const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, altFlag, u
         useRough,
       });
     } else {
-      nodes.push(nodeData);
+      insertOrUpdateNode(nodes, nodeData);
     }
 
     console.log('Nodes:', nodes);
@@ -752,6 +757,16 @@ const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, altFlag, u
     setupDoc(parsedItem, parsedItem.doc, diagramStates, nodes, edges, !altFlag, useRough);
   }
 };
+
+function insertOrUpdateNode(nodes, nodeData) {
+  const existingNodeData = nodes.find((node) => node.id === nodeData.id);
+  if (existingNodeData) {
+    //update the existing nodeData
+    Object.assign(existingNodeData, nodeData);
+  } else {
+    nodes.push(nodeData);
+  }
+}
 
 /**
  * Create a standard string for the dom ID of an item.

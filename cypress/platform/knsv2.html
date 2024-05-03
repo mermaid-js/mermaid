@@ -74,8 +74,13 @@
   <body>
     <pre id="diagram" class="mermaid">
 stateDiagram-v2
-    Chimp --> Gorilla
-    Chimp --> Bonobo
+    [*] --> First
+    state First {
+        [*] --> second
+        second --> [*]
+    }
+
+
 
   </pre
     >
