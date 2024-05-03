@@ -88,8 +88,7 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   data4Layout.type = diag.type;
   data4Layout.layoutAlgorithm = 'dagre-wrapper';
-  //data4Layout.layoutAlgorithm = 'elk';
-  data4Layout.skin = 'roughjs';
+  // data4Layout.layoutAlgorithm = 'elk';
   data4Layout.direction = DIR;
   data4Layout.nodeSpacing = conf.nodeSpacing || 50;
   data4Layout.rankSpacing = conf.rankSpacing || 50;

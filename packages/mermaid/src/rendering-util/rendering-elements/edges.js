@@ -382,18 +382,21 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
   const tail = edge.start;
   var head = edge.end;
 
-  log.info('abc88 InsertEdge: ', edge);
+  log.info('abc88 InsertEdge: ', points);
   if (head.intersect && tail.intersect) {
-    points = points.slice(1, edge.points.length - 1);
-    points.unshift(tail.intersect(points[0]));
-    log.info(
-      'Last point',
-      points[points.length - 1],
-      head,
-      head.intersect(points[points.length - 1])
-    );
-    points.push(head.intersect(points[points.length - 1]));
+    log.info('abc88 InsertEdge: 0.5', points);
+    // points = points.slice(1, edge.points.length - 1);
+    log.info('abc88 InsertEdge: 0.7', points);
+    // points.unshift(tail.intersect(points[0]));
+    //   log.info(
+    //     'Last point abc88',
+    //     points[points.length - 1],
+    //     head,
+    //     head.intersect(points[points.length - 1])
+    //   );
+    //   points.push(head.intersect(points[points.length - 1]));
   }
+  log.info('abc88 InsertEdge 2: ', points);
   if (edge.toCluster) {
     log.info('to cluster abc88', clusterDb[edge.toCluster]);
     points = cutPathAtIntersect(edge.points, clusterDb[edge.toCluster].node);
@@ -436,7 +439,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
       strokeClasses = 'edge-thickness-thick';
       break;
     default:
-      strokeClasses = '';
+      strokeClasses = 'edge-thickness-normal';
   }
   switch (edge.pattern) {
     case 'solid':
@@ -448,6 +451,8 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
     case 'dashed':
       strokeClasses += ' edge-pattern-dashed';
       break;
+    default:
+      strokeClasses += ' edge-pattern-solid';
   }
   let useRough = edge.useRough;
   let svgPath;
@@ -460,8 +465,9 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
 
   if (useRough) {
     const rc = rough.svg(elem);
-    const svgPathNode = rc.curve(pointArr, { stroke: 'green' });
-    console.log('svgPathNode', svgPathNode);
+    const svgPathNode = rc.curve(pointArr, { roughness: 0.5, stroke: 'green' });
+    console.log('svgPathNode abc88', svgPathNode);
+    strokeClasses += ' transition';
     // const svgPath2 = elem
     //   .append('path')
     //   .attr('d', lineFunction(lineData))
@@ -469,7 +475,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
     //   .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
     //   .attr('style', edge.style);
 
-    // console.log('svgPath2', svgPath2.node());
+    console.log('svgPath2 abc88', strokeClasses + (edge.classes ? ' ' + edge.classes : ''));
     svgPath = select(svgPathNode)
       .select('path')
       .attr('id', edge.id)

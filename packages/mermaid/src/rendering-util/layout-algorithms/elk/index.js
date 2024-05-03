@@ -306,7 +306,7 @@ export const addEdges = function (dataForLayout, graph, svg) {
   // }
 
   edges.forEach(function (edge) {
-    console.log('edge abc78', edge.id);
+    console.log('edge abc88', edge);
     // Identify Link
     const linkIdBase = edge.id; // 'L-' + edge.start + '-' + edge.end;
     // count the links from+to the same node to give unique id
@@ -429,6 +429,7 @@ export const addEdges = function (dataForLayout, graph, svg) {
     // Add the edge to the graph
     graph.edges.push({
       id: 'e' + edge.start + edge.end,
+      ...edge,
       sources: [source],
       targets: [target],
       sourceId,
@@ -515,6 +516,8 @@ export const render = async (data4Layout, svg, element) => {
   const parentLookupDb = {};
   graph = await addVertices(svg, data4Layout, parentLookupDb, graph);
 
+  console.log('graph', graph, data4Layout);
+
   // Add the nodes and edges to the graph
   // data4Layout.nodes.forEach((node) => {
   //   graph.setNode(node.id, { ...node });
@@ -600,6 +603,21 @@ export const render = async (data4Layout, svg, element) => {
   console.log('after layout', g);
   g.edges?.map((edge) => {
     // (elem, edge, clusterDb, diagramType, graph, id)
+    edge.start = nodeDb[edge.sources[0]];
+    edge.end = nodeDb[edge.targets[0]];
+    const offset = { x: 0, y: 0 };
+    const src = edge.sections[0].startPoint;
+    const dest = edge.sections[0].endPoint;
+    const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
+
+    const segPoints = segments.map((segment) => {
+      return { x: segment.x + offset.x, y: segment.y + offset.y };
+    });
+    edge.points = [
+      { x: src.x + offset.x, y: src.y + offset.y },
+      ...segPoints,
+      { x: dest.x + offset.x, y: dest.y + offset.y },
+    ];
     insertEdge(edgesEl, edge, clusterDb, data4Layout.type, g, data4Layout.diagramId);
   });
   // setupGraphViewbox({}, svg, conf.diagramPadding, conf.useMaxWidth);

@@ -575,7 +575,7 @@ const trimColon = (str) => (str && str[0] === ':' ? str.substr(1).trim() : str.t
 
 const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, altFlag, useRough) => {
   console.log(
-    'parent, parsedItemm, diagramStates, nodes, edges, altFlag, useRough:',
+    'abc88 parent, parsedItemm, diagramStates, nodes, edges, altFlag, useRough:',
     parent,
     parsedItem,
     diagramStates,
@@ -716,9 +716,7 @@ const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, altFlag, u
       //add parent id to noteData
       noteData.parentId = parentId;
 
-      nodes.push(groupData);
-      nodes.push(noteData);
-      nodes.push(nodeData);
+      nodes.push(groupData, noteData, nodeData);
 
       let from = itemId;
       let to = noteData.id;
@@ -741,6 +739,7 @@ const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, altFlag, u
         labelpos: G_EDGE_LABELPOS,
         labelType: G_EDGE_LABELTYPE,
         thickness: G_EDGE_THICKNESS,
+        useRough,
       });
     } else {
       nodes.push(nodeData);
@@ -836,7 +835,7 @@ export const getData = () => {
   extract(getRootDocV2());
   const diagramStates = getStates();
 
-  const useRough = false;
+  const useRough = true;
   dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, useRough);
 
   return { nodes, edges, other: {} };

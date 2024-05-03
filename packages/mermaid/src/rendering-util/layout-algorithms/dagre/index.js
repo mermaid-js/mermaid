@@ -173,7 +173,6 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, sit
 };
 
 export const render = async (data4Layout, svg, element) => {
-  console.warn('HERERERERERER');
   // Create the input mermaid.graph
   const graph = new graphlib.Graph({
     multigraph: true,
