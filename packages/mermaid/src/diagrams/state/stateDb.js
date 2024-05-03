@@ -828,6 +828,7 @@ const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, u
             labelType: G_EDGE_LABELTYPE,
             thickness: G_EDGE_THICKNESS,
             classes: CSS_EDGE,
+            useRough,
           };
           edges.push(edgeData);
           //g.setEdge(item.state1.id, item.state2.id, edgeData, graphItemCount);

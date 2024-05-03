@@ -71,6 +71,7 @@ interface Edge {
   minlen?: number;
   pattern?: string;
   thickness?: number;
+  useRough?: boolean;
 }
 
 // Extending the Node interface for specific types if needed
