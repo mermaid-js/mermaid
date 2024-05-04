@@ -15,6 +15,7 @@ import {
   insertEdge,
   clear as clearEdges,
 } from '../../rendering-elements/edges.js';
+import { labelHelper } from '$root/rendering-util/rendering-elements/shapes/util.js';
 import common from '$root/diagrams/common/common.js';
 import { log } from '$root/logger.js';
 
@@ -23,29 +24,6 @@ import ELK from 'elkjs/lib/elk.bundled.js';
 const nodeDb = {};
 let portPos = {};
 let clusterDb = {};
-
-const addSubGraphs = function (db) {
-  const parentLookupDb = { parentById: {}, childrenById: {} };
-  const subgraphs = db.getSubGraphs();
-  log.info('Subgraphs - ', subgraphs);
-  subgraphs.forEach(function (subgraph) {
-    subgraph.nodes.forEach(function (node) {
-      parentLookupDb.parentById[node] = subgraph.id;
-      if (parentLookupDb.childrenById[subgraph.id] === undefined) {
-        parentLookupDb.childrenById[subgraph.id] = [];
-      }
-      parentLookupDb.childrenById[subgraph.id].push(node);
-    });
-  });
-
-  subgraphs.forEach(function (subgraph) {
-    const data = { id: subgraph.id };
-    if (parentLookupDb.parentById[subgraph.id] !== undefined) {
-      data.parent = parentLookupDb.parentById[subgraph.id];
-    }
-  });
-  return parentLookupDb;
-};
 
 export const addVertex = async (nodeEl, graph, nodeArr, node) => {
   console.log('addVertex abc88', node.id);
@@ -69,7 +47,7 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
   //     // We create a SVG label, either by delegating to addHtmlLabel or manually
   //     let vertexNode;
   //     const labelData = { width: 0, height: 0 };
-
+  const labelData = { width: 0, height: 0 };
   const ports = [
     {
       id: node.id + '-west',
@@ -103,6 +81,7 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
     ports: node.shape === 'diamond' ? ports : [],
   };
   graph.children.push(child);
+  nodeDb[node.id] = child;
 
   //     // Add the element to the DOM
   if (node.type !== 'group') {
@@ -114,29 +93,37 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
   } else {
     child.children = [];
     await addVertices(nodeEl, nodeArr, child, node.id);
-  }
 
-  // else {
-  //       const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
-  //       // svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
-  //       // const rows = vertexText.split(common.lineBreakRegex);
-  //       // for (const row of rows) {
-  //       //   const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-  //       //   tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
-  //       //   tspan.setAttribute('dy', '1em');
-  //       //   tspan.setAttribute('x', '1');
-  //       //   tspan.textContent = row;
-  //       //   svgLabel.appendChild(tspan);
-  //       // }
-  //       // vertexNode = svgLabel;
-  //       // const bbox = vertexNode.getBBox();
-  //       const { shapeSvg, bbox } = await labelHelper(nodes, node, undefined, true);
-  //       labelData.width = bbox.width;
-  //       labelData.wrappingWidth = getConfig().flowchart.wrappingWidth;
-  //       labelData.height = bbox.height;
-  //       labelData.labelNode = shapeSvg.node();
-  //       node.labelData = labelData;
-  //     }
+    // const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
+    //       // svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
+    //       // const rows = vertexText.split(common.lineBreakRegex);
+    //       // for (const row of rows) {
+    //       //   const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+    //       //   tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
+    //       //   tspan.setAttribute('dy', '1em');
+    //       //   tspan.setAttribute('x', '1');
+    //       //   tspan.textContent = row;
+    //       //   svgLabel.appendChild(tspan);
+    //       // }
+    //       // vertexNode = svgLabel;
+    //       // const bbox = vertexNode.getBBox();
+    const { shapeSvg, bbox } = await labelHelper(nodeEl, node, undefined, true);
+    labelData.width = bbox.width;
+    labelData.wrappingWidth = getConfig().flowchart.wrappingWidth;
+    labelData.height = bbox.height;
+    labelData.labelNode = shapeSvg.node();
+    log.debug(
+      'addVertex abc88 setting labelData',
+      node.id,
+      labelData,
+      nodeEl,
+      node,
+      shapeSvg,
+      bbox
+    );
+    child.labelData = labelData;
+    child.domId = nodeEl;
+  }
   //     // const { shapeSvg, bbox } = await labelHelper(svg, node, undefined, true);
 
   // const data = {
@@ -203,7 +190,7 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
 //  */
 export const addVertices = async function (nodeEl, nodeArr, graph, parentId) {
   const siblings = nodeArr.filter((node) => node.parentId === parentId);
-  log.info('addVertices abc88', siblings, parentId);
+  log.info('addVertices', siblings, parentId);
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   await Promise.all(
     siblings.map(async (node) => {
@@ -214,6 +201,7 @@ export const addVertices = async function (nodeEl, nodeArr, graph, parentId) {
 };
 
 const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
+  console.log('drawNodes abc88', relX, relY, nodeArray);
   nodeArray.forEach(function (node) {
     if (node) {
       nodeDb[node.id] = node;
@@ -226,48 +214,50 @@ const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
         width: node.width,
         height: node.height,
       };
-      //     if (node.type === 'group') {
-      //       const subgraphEl = subgraphsEl.insert('g').attr('class', 'subgraph');
-      //       subgraphEl
-      //         .insert('rect')
-      //         .attr('class', 'subgraph subgraph-lvl-' + (depth % 5) + ' node')
-      //         .attr('x', node.x + relX)
-      //         .attr('y', node.y + relY)
-      //         .attr('width', node.width)
-      //         .attr('height', node.height);
-      //       const label = subgraphEl.insert('g').attr('class', 'label');
-      //       const labelCentering = getConfig().flowchart.htmlLabels ? node.labelData.width / 2 : 0;
-      //       label.attr(
-      //         'transform',
-      //         `translate(${node.labels[0].x + relX + node.x + labelCentering}, ${
-      //           node.labels[0].y + relY + node.y + 3
-      //         })`
-      //       );
-      //       label.node().appendChild(node.labelData.labelNode);
+      if (node.type === 'group') {
+        log.debug('Id abc88 subgraph (UGH)= ', node.id, node.x, node.y, node.labelData);
+        const subgraphEl = subgraphsEl.insert('g').attr('class', 'subgraph');
+        subgraphEl
+          .insert('rect')
+          .attr('class', 'subgraph subgraph-lvl-' + (depth % 5) + ' node')
+          .attr('x', node.x + relX)
+          .attr('y', node.y + relY)
+          .attr('width', node.width)
+          .attr('height', node.height);
+        const label = subgraphEl.insert('g').attr('class', 'label');
+        const labelCentering = getConfig().flowchart.htmlLabels ? node.labelData.width / 2 : 0;
+        console.log(node);
+        label.attr(
+          'transform',
+          `translate(${node.labels[0].x + relX + node.x + labelCentering}, ${
+            node.labels[0].y + relY + node.y + 3
+          })`
+        );
+        label.node().appendChild(node.labelData.labelNode);
 
-      //       log.info('Id (UGH)= ', node.shape, node.labels);
-      //     } else {
-      log.info(
-        'Id (UGH)= ',
-        node.id,
-        node.x,
-        node.y,
-        relX,
-        relY,
-        node.domId.node(),
-        `translate(${node.x + relX + node.width / 2}, ${node.y + relY + node.height / 2})`
-      );
-      node.domId.attr(
-        'transform',
-        `translate(${node.x + relX + node.width / 2}, ${node.y + relY + node.height / 2})`
-      );
+        log.info('Id (UGH)= ', node.shape, node.labels);
+      } else {
+        log.info(
+          'Id (UGH)= ',
+          node.id,
+          node.x,
+          node.y,
+          relX,
+          relY,
+          node.domId.node(),
+          `translate(${node.x + relX + node.width / 2}, ${node.y + relY + node.height / 2})`
+        );
+        node.domId.attr(
+          'transform',
+          `translate(${node.x + relX + node.width / 2}, ${node.y + relY + node.height / 2})`
+        );
+      }
     }
-    //   }
-    // });
-    // nodeArray.forEach(function (node) {
-    //   if (node && node.shape === 'group') {
-    //     drawNodes(relX + node.x, relY + node.y, node.children, svg, subgraphsEl, diagObj, depth + 1);
-    //   }
+  });
+  nodeArray.forEach(function (node) {
+    if (node && node.type === 'group') {
+      drawNodes(relX + node.x, relY + node.y, node.children, svg, subgraphsEl, depth + 1);
+    }
   });
 };
 
@@ -320,6 +310,49 @@ const getNextPort = (node, edgeDirection, graphDirection) => {
   return result;
 };
 
+const addSubGraphs = function (nodeArr) {
+  const parentLookupDb = { parentById: {}, childrenById: {} };
+  const subgraphs = nodeArr.filter((node) => node.type === 'group');
+  log.info('Subgraphs - ', subgraphs);
+  subgraphs.forEach(function (subgraph) {
+    const children = nodeArr.filter((node) => node.parentId === subgraph.id);
+    children.forEach(function (node) {
+      parentLookupDb.parentById[node.id] = subgraph.id;
+      if (parentLookupDb.childrenById[subgraph.id] === undefined) {
+        parentLookupDb.childrenById[subgraph.id] = [];
+      }
+      parentLookupDb.childrenById[subgraph.id].push(node);
+    });
+  });
+
+  subgraphs.forEach(function (subgraph) {
+    const data = { id: subgraph.id };
+    if (parentLookupDb.parentById[subgraph.id] !== undefined) {
+      data.parent = parentLookupDb.parentById[subgraph.id];
+    }
+  });
+  return parentLookupDb;
+};
+
+const insertChildren = (nodeArray, parentLookupDb) => {
+  nodeArray.forEach((node) => {
+    // Check if we have reached the end of the tree
+    if (!node.children) {
+      node.children = [];
+    }
+    // Check if the node has children
+    const childIds = parentLookupDb.childrenById[node.id];
+    // If the node has children, add them to the node
+    if (childIds) {
+      childIds.forEach((childId) => {
+        node.children.push(nodeDb[childId]);
+      });
+    }
+    // Recursive call
+    insertChildren(node.children, parentLookupDb);
+  });
+};
+
 const getEdgeStartEndPoint = (edge, dir) => {
   let source = edge.start;
   let target = edge.end;
@@ -328,18 +361,18 @@ const getEdgeStartEndPoint = (edge, dir) => {
   const sourceId = source;
   const targetId = target;
 
-  const startNode = nodeDb[source];
-  const endNode = nodeDb[target];
+  const startNode = nodeDb[edge.start.id];
+  const endNode = nodeDb[edge.end.id];
 
   if (!startNode || !endNode) {
     return { source, target };
   }
 
-  if (startnode.shape === 'diamond') {
+  if (startNode.shape === 'diamond') {
     source = `${source}-${getNextPort(source, 'out', dir)}`;
   }
 
-  if (endnode.shape === 'diamond') {
+  if (endNode.shape === 'diamond') {
     target = `${target}-${getNextPort(target, 'in', dir)}`;
   }
 
@@ -525,21 +558,16 @@ export const addEdges = function (dataForLayout, graph, svg) {
 export const render = async (data4Layout, svg, element) => {
   const elk = new ELK();
 
-  // Org
-
+  // Add the arrowheads to the svg
   insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
-  // clearNodes();
-  // clearEdges();
-  // clearClusters();
-  // clearGraphlib();
 
-  let graph = {
+  // Setup the graph with the layout options and the data for the layout
+  let elkGraph = {
     id: 'root',
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
       'org.eclipse.elk.padding': '[top=100, left=100, bottom=110, right=110]',
       'elk.layered.spacing.edgeNodeBetweenLayers': '30',
-      'elk.direction': 'DOWN',
     },
     children: [],
     edges: [],
@@ -547,132 +575,77 @@ export const render = async (data4Layout, svg, element) => {
 
   log.info('Drawing flowchart using v4 renderer', elk);
 
+  // Set the direction of the graph based on the parsed information
   let dir = data4Layout.direction || 'DOWN';
   switch (dir) {
     case 'BT':
-      graph.layoutOptions['elk.direction'] = 'UP';
+      elkGraph.layoutOptions['elk.direction'] = 'UP';
       break;
     case 'TB':
-      graph.layoutOptions['elk.direction'] = 'DOWN';
+      elkGraph.layoutOptions['elk.direction'] = 'DOWN';
       break;
     case 'LR':
-      graph.layoutOptions['elk.direction'] = 'RIGHT';
+      elkGraph.layoutOptions['elk.direction'] = 'RIGHT';
       break;
     case 'RL':
-      graph.layoutOptions['elk.direction'] = 'LEFT';
+      elkGraph.layoutOptions['elk.direction'] = 'LEFT';
       break;
     default:
-      graph.layoutOptions['elk.direction'] = 'DOWN';
+      elkGraph.layoutOptions['elk.direction'] = 'DOWN';
       break;
   }
 
-  // ###########################################################################
-  // ###########################################################################
-  // ###########################################################################
-  // ###########################################################################
-  // ###########################################################################
-  // ###########################################################################
-
   // Create the lookup db for the subgraphs and their children to used when creating
   // the tree structured graph
-  // const parentLookupDb = addSubGraphs(diagObj.db);
+  const parentLookupDb = addSubGraphs(data4Layout.nodes);
 
-  // Add the nodes to the graph, this will entail creating the actual nodes
-  // in order to get the size of the node. You can't get the size of a node
-  // that is not in the dom so we need to add it to the dom, get the size
-  // we will position the nodes when we get the layout from elkjs
-  const parentLookupDb = {};
+  // Add elements in the svg to be used to hold the subgraphs container
+  // elements and the nodes
+  const subGraphsEl = svg.insert('g').attr('class', 'subgraphs');
   const nodeEl = svg.insert('g').attr('class', 'nodes');
-  graph = await addVertices(nodeEl, data4Layout.nodes, graph);
-  console.log('after addVertices abc88', JSON.stringify(graph, null, 2));
-
-  console.log('graph', graph, data4Layout);
-
-  // Add the nodes and edges to the graph
-  // data4Layout.nodes.forEach((node) => {
-  //   graph.setNode(node.id, { ...node });
-  // });
-
-  // data4Layout.edges.forEach((edge) => {
-  //   graph.setEdge(edge.start, edge.end, { ...edge });
-  // });
-
-  // Setup nodes from the subgraphs with type group, these will be used
-  // as nodes with children in the subgraph
-  // let subG;
-  // const subGraphs = diagObj.db.getSubGraphs();
-  // log.info('Subgraphs - ', subGraphs);
-  // for (let i = subGraphs.length - 1; i >= 0; i--) {
-  //   subG = subGraphs[i];
-  //   diagObj.db.addVertex(
-  //     subG.id,
-  //     { text: subG.title, type: subG.labelType },
-  //     'group',
-  //     undefined,
-  //     subG.classes,
-  //     subG.dir
-  //   );
-  // }
-
-  // debugger;
-  // Add an element in the svg to be used to hold the subgraphs container
-  // // elements
-  // const subGraphsEl = svg.insert('g').attr('class', 'subgraphs');
-
-  // // Create the lookup db for the subgraphs and their children to used when creating
-  // // the tree structured graph
-  // const parentLookupDb = addSubGraphs(diagObj.db);
 
   // Add the nodes to the graph, this will entail creating the actual nodes
   // in order to get the size of the node. You can't get the size of a node
   // that is not in the dom so we need to add it to the dom, get the size
   // we will position the nodes when we get the layout from elkjs
-  // graph = await addVertices(, graph);
-
+  elkGraph = await addVertices(nodeEl, data4Layout.nodes, elkGraph);
   // Time for the edges, we start with adding an element in the node to hold the edges
   const edgesEl = svg.insert('g').attr('class', 'edges edgePath');
-  // // Fetch the edges form the parsed graph definition
-  // const edges = diagObj.db.getEdges();
 
-  // // Add the edges to the graph, this will entail creating the actual edges
-  graph = addEdges(data4Layout, graph, svg);
+  // Add the edges to the elk graph, this will entail creating the actual edges
+  elkGraph = addEdges(data4Layout, elkGraph, svg);
 
   // Iterate through all nodes and add the top level nodes to the graph
-  // const nodes = data4Layout.nodes;
-  // nodes.forEach((nodeId) => {
-  //   const node = nodeDb[nodeId];
-  //   if (!node.parent) {
-  //     graph.children.push(node);
-  //   }
-  //   // Subgraph
-  //   if (parentLookupDb.childrenById[nodeId] !== undefined) {
-  //     node.labels = [
-  //       {
-  //         text: node.labelText,
-  //         layoutOptions: {
-  //           'nodeLabels.placement': '[H_CENTER, V_TOP, INSIDE]',
-  //         },
-  //         width: node.labelData.width,
-  //         height: node.labelData.height,
-  //         // width: 100,
-  //         // height: 100,
-  //       },
-  //     ];
-  //     delete node.x;
-  //     delete node.y;
-  //     delete node.width;
-  //     delete node.height;
-  //   }
-  // });
+  const nodes = data4Layout.nodes;
+  // const nodes = Object.keys(nodeDb);
+  nodes.forEach((n) => {
+    const node = nodeDb[n.id];
 
-  // insertChildren(graph.children, parentLookupDb);
+    // Subgraph
+    if (parentLookupDb.childrenById[node.id] !== undefined) {
+      node.labels = [
+        {
+          text: node.labelText,
+          layoutOptions: {
+            'nodeLabels.placement': '[H_CENTER, V_TOP, INSIDE]',
+          },
+          width: node?.labelData?.width || 100,
+          height: node?.labelData?.height || 100,
+          // width: 100,
+          // height: 100,
+        },
+      ];
+      delete node.x;
+      delete node.y;
+      delete node.width;
+      delete node.height;
+    }
+  });
 
-  // console.log('before layout abc88', JSON.stringify(graph, null, 2));
-  const g = await elk.layout(graph);
-  log.info('after layout', JSON.stringify(graph, null, 2));
-  console.log('after layout abc88', g);
-  // drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
-  drawNodes(0, 0, g.children, svg, null, 0);
+  log.info('before layout abc88', JSON.stringify(elkGraph, null, 2));
+  const g = await elk.layout(elkGraph);
+  log.info('after layout abc88', g);
+  drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
   g.edges?.map((edge) => {
     // (elem, edge, clusterDb, diagramType, graph, id)
     edge.start = nodeDb[edge.sources[0]];
