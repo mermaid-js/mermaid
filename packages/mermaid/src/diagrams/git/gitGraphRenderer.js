@@ -83,7 +83,8 @@ const findClosestParent = (parents) => {
   let maxPosition = 0;
 
   parents.forEach((parent) => {
-    const parentPosition = dir === 'TB' || dir === 'BT' ? commitPos.get(parent).y : commitPos.get(parent).x;
+    const parentPosition =
+      dir === 'TB' || dir === 'BT' ? commitPos.get(parent).y : commitPos.get(parent).x;
     if (parentPosition >= maxPosition) {
       closestParent = parent;
       maxPosition = parentPosition;
@@ -716,8 +717,8 @@ const drawArrow = (svg, commitA, commitB, allCommits) => {
 };
 
 /**
- * @param {*} svg 
- * @param {CommitMap} commits 
+ * @param {*} svg
+ * @param {CommitMap} commits
  */
 const drawArrows = (svg, commits) => {
   const gArrows = svg.append('g').attr('class', 'commit-arrows');
