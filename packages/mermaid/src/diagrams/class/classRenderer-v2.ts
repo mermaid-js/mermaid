@@ -187,7 +187,7 @@ export const addNotes = function (
     g.setNode(vertex.id, node);
     log.info('setNode', node);
 
-    if (!vertex.class || !(vertex.class in classes)) {
+    if (!vertex.class || !classes.has(vertex.class)) {
       return;
     }
     const edgeId = startEdgeId + i;
