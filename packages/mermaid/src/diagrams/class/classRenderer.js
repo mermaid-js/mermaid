@@ -216,7 +216,7 @@ export const draw = function (text, id, _version, diagObj) {
     // metadata about the node. In this case we're going to add labels to each of
     // our nodes.
     g.setNode(node.id, node);
-    if (note.class && note.class in classes) {
+    if (note.class && classes.has(note.class)) {
       g.setEdge(
         note.id,
         getGraphId(note.class),
