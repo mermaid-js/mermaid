@@ -1,4 +1,4 @@
-import { interpolateToCurve } from './utils.js';
+import type { interpolateToCurve } from './utils.js';
 
 export interface Point {
   x: number;

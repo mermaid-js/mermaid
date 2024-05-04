@@ -230,10 +230,7 @@ export const isSubstringInArray = function (str: string, arr: string[]): number 
  * @param defaultCurve - The default curve to return
  * @returns The curve factory to use
  */
-export function interpolateToCurve(
-  interpolate: string | undefined,
-  defaultCurve: CurveFactory
-) {
+export function interpolateToCurve(interpolate: string | undefined, defaultCurve: CurveFactory) {
   if (!interpolate) {
     return defaultCurve;
   }
