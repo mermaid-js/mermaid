@@ -1,5 +1,5 @@
 import { sanitizeUrl } from '@braintree/sanitize-url';
-import type { CurveFactory } from 'd3';
+import type { CurveFactory, Selection } from 'd3';
 import {
   curveBasis,
   curveBasisClosed,
@@ -233,13 +233,12 @@ export const isSubstringInArray = function (str: string, arr: string[]): number 
 export function interpolateToCurve(
   interpolate: string | undefined,
   defaultCurve: CurveFactory
-): CurveFactory {
+) {
   if (!interpolate) {
     return defaultCurve;
   }
   const curveName = `curve${interpolate.charAt(0).toUpperCase() + interpolate.slice(1)}`;
 
-  // @ts-ignore TODO: Fix issue with curve type
   return d3CurveTypes[curveName as keyof typeof d3CurveTypes] ?? defaultCurve;
 }
 
@@ -487,6 +486,25 @@ export const random = (options: { length: number }) => {
   return makeRandomHex(options.length);
 };
 
+interface TextData {
+  text: string;
+  x: number;
+  y: number;
+  anchor: 'start' | 'middle' | 'end';
+  fontFamily?: string;
+  fontSize?: string | number;
+  fontWeight?: string | number;
+  fill?: string;
+  class?: string;
+  textMargin: number;
+  style?: string;
+  width?: number;
+  height?: number;
+  rx?: number;
+  ry?: number;
+  valign?: string;
+}
+
 export const getTextObj = function () {
   return {
     x: 0,
@@ -501,7 +519,7 @@ export const getTextObj = function () {
     ry: 0,
     valign: undefined,
     text: '',
-  };
+  } satisfies TextData;
 };
 
 /**
@@ -512,20 +530,9 @@ export const getTextObj = function () {
  * @returns Text element with given styling and content
  */
 export const drawSimpleText = function (
-  elem: SVGElement,
-  textData: {
-    text: string;
-    x: number;
-    y: number;
-    anchor: 'start' | 'middle' | 'end';
-    fontFamily: string;
-    fontSize: string | number;
-    fontWeight: string | number;
-    fill: string;
-    class: string | undefined;
-    textMargin: number;
-  }
-): SVGTextElement {
+  elem: Selection<SVGSVGElement, any, HTMLElement, any>,
+  textData: TextData
+) {
   // Remove and ignore br:s
   const nText = textData.text.replace(common.lineBreakRegex, ' ');
 
@@ -689,7 +696,7 @@ export const calculateTextDimensions: (
   text: string,
   config: TextDimensionConfig
 ) => TextDimensions = memoize(
-  (text: string, config: TextDimensionConfig): TextDimensions => {
+  (text: string, config: TextDimensionConfig) => {
     const { fontSize = 12, fontFamily = 'Arial', fontWeight = 400 } = config;
     if (!text) {
       return { width: 0, height: 0 };
@@ -719,9 +726,7 @@ export const calculateTextDimensions: (
       for (const line of lines) {
         const textObj = getTextObj();
         textObj.text = line || ZERO_WIDTH_SPACE;
-        // @ts-ignore TODO: Fix D3 types
         const textElem = drawSimpleText(g, textObj)
-          // @ts-ignore TODO: Fix D3 types
           .style('font-size', _fontSizePx)
           .style('font-weight', fontWeight)
           .style('font-family', fontFamily);

@@ -158,7 +158,7 @@ export interface MermaidConfig {
   block?: BlockDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
-  fontSize?: number;
+  fontSize?: string | number;
   markdownAutoWrap?: boolean;
   /**
    * Suppresses inserting 'Syntax error' diagram in the DOM.

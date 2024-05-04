@@ -55,7 +55,6 @@ export const imgSnapshotTest = (
   const options: CypressMermaidConfig = {
     ..._options,
     fontFamily: _options.fontFamily || 'courier',
-    // @ts-ignore TODO: Fix type of fontSize
     fontSize: _options.fontSize || '16px',
     sequence: {
       ...(_options.sequence || {}),

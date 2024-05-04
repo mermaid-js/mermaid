@@ -1,3 +1,5 @@
+import { interpolateToCurve } from './utils.js';
+
 export interface Point {
   x: number;
   y: number;
@@ -30,7 +32,7 @@ export interface EdgeData {
   arrowTypeEnd: string;
   style: string;
   labelStyle: string;
-  curve: any;
+  curve: ReturnType<typeof interpolateToCurve>;
 }
 
 export type ArrayElement<A> = A extends readonly (infer T)[] ? T : never;

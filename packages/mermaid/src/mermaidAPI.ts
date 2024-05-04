@@ -10,10 +10,8 @@
  *
  * In addition to the render function, a number of behavioral configuration options are available.
  */
-// @ts-ignore TODO: Investigate D3 issue
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
-// @ts-ignore: TODO Fix ts errors
 import { version } from '../package.json';
 import * as configApi from './config.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
