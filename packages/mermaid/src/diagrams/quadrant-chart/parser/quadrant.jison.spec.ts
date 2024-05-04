@@ -2,7 +2,6 @@
 import { parser } from './quadrant.jison';
 import type { Mock } from 'vitest';
 import { vi } from 'vitest';
-import { addClass } from '../../flowchart/flowDb.js';
 
 const parserFnConstructor = (str: string) => {
   return () => {
