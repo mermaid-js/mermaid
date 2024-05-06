@@ -19,6 +19,20 @@ const getStyles: DiagramStylesProvider = (options: ArchitectureStyleOptions) =>
     stroke-width: ${options.archGroupBorderStrokeWidth};
     stroke-dasharray: 8;
   }
+  .node-icon-text {
+    display: flex; 
+    align-items: center;
+  }
+  
+  .node-icon-text > div {
+    color: #fff;
+    margin: 1px;
+    height: fit-content;
+    text-align: center;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+  }
 `;
 
 export default getStyles;

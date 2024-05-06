@@ -118,15 +118,16 @@ export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
 
             // Calculate the new width/height with the rotation applied, and transform to the proper position
             const bboxNew = textElem.node().getBoundingClientRect();
-            textElem
-              .attr('transform', `
-                translate(${midX}, ${midY - (bboxOrig.height / 2)}) 
-                translate(${x * bboxNew.width / 2}, ${y * bboxNew.height / 2}) 
+            textElem.attr(
+              'transform',
+              `
+                translate(${midX}, ${midY - bboxOrig.height / 2}) 
+                translate(${(x * bboxNew.width) / 2}, ${(y * bboxNew.height) / 2}) 
                 rotate(${-1 * x * y * 45}, 0, ${bboxOrig.height / 2})
-              `);
+              `
+            );
           }
         }
-
       }
     }
   });
@@ -163,12 +164,16 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
         getIcon(data.icon)?.(bkgElem, groupIconSize);
         bkgElem.attr(
           'transform',
-          'translate(' + (shiftedX1 + halfIconSize + 1) + ', ' + (shiftedY1 + halfIconSize + 1) + ')'
+          'translate(' +
+            (shiftedX1 + halfIconSize + 1) +
+            ', ' +
+            (shiftedY1 + halfIconSize + 1) +
+            ')'
         );
         shiftedX1 += groupIconSize;
         // TODO: test with more values
         // - 1 - 2 comes from the Y axis transform of the icon and label
-        shiftedY1 += ((fontSize / 2) - 1 - 2);
+        shiftedY1 += fontSize / 2 - 1 - 2;
       }
       if (data.label) {
         const textElem = groupLabelContainer.append('g');
@@ -190,7 +195,11 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
 
         textElem.attr(
           'transform',
-          'translate(' + (shiftedX1 + halfIconSize + 4) + ', ' + (shiftedY1 + halfIconSize + 2) + ')'
+          'translate(' +
+            (shiftedX1 + halfIconSize + 4) +
+            ', ' +
+            (shiftedY1 + halfIconSize + 2) +
+            ')'
         );
       }
     }
@@ -218,6 +227,7 @@ export const drawServices = function (
         },
         getConfig()
       );
+      
       textElem
         .attr('dy', '1em')
         .attr('alignment-baseline', 'middle')
@@ -234,6 +244,17 @@ export const drawServices = function (
       //   throw new Error(`Invalid SVG Icon name: "${service.icon}"`);
       // }
       bkgElem = getIcon(service.icon)?.(bkgElem, iconSize);
+    } else if (service.iconText) {
+      bkgElem = getIcon('blank')?.(bkgElem, iconSize);
+      const textElemContainer = bkgElem.append('g');
+      const fo = textElemContainer.append('foreignObject').attr('width', iconSize).attr('height', iconSize);
+      const divElem = fo
+        .append('div')
+        .attr('class', 'node-icon-text')
+        .attr('style', `height: ${iconSize}px;`)
+        .append('div').html(service.iconText);
+      const fontSize = parseInt(window.getComputedStyle(divElem.node(), null).getPropertyValue("font-size").replace(/[^\d]/g, '')) ?? 16;
+      divElem.attr('style', `-webkit-line-clamp: ${Math.floor((iconSize - 2) / fontSize)};`)
     } else {
       bkgElem
         .append('path')

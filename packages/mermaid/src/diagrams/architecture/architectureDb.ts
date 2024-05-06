@@ -48,7 +48,7 @@ const clear = (): void => {
   commonClear();
 };
 
-const addService = function ({ id, icon, in: parent, title }: Omit<ArchitectureService, "edges">) {
+const addService = function ({ id, icon, in: parent, title, iconText }: Omit<ArchitectureService, "edges">) {
   if (state.records.registeredIds[id] !== undefined) {
     throw new Error(`The service id [${id}] is already in use by another ${state.records.registeredIds[id]}`);
   }
@@ -71,6 +71,7 @@ const addService = function ({ id, icon, in: parent, title }: Omit<ArchitectureS
   state.records.services[id] = {
     id,
     icon,
+    iconText,
     title,
     edges: [],
     in: parent,

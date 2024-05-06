@@ -26,7 +26,7 @@ Group:
 ;
 
 Service:
-    'service' id=ARCH_ID icon=ARCH_ICON? title=ARCH_TITLE? ('in' in=ARCH_ID)? EOL
+    'service' id=ARCH_ID (iconText=ARCH_TEXT_ICON | icon=ARCH_ICON)? title=ARCH_TITLE? ('in' in=ARCH_ID)? EOL
 ;
 
 Edge:
@@ -35,6 +35,7 @@ Edge:
 
 terminal ARROW_DIRECTION: 'L' | 'R' | 'T' | 'B';
 terminal ARCH_ID: /[\w]+/;
+terminal ARCH_TEXT_ICON: /\("[^"]+"\)/;
 terminal ARCH_ICON: /\([\w]+\)/;
 terminal ARCH_TITLE: /\[[\w ]+\]/;
 terminal ARROW_INTO: /\(|\)/;

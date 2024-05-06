@@ -5,6 +5,7 @@ import disk from './disk.js';
 import internet from './internet.js';
 import cloud from './cloud.js';
 import unknown from './unknown.js';
+import blank from './blank.js';
 
 const defaultIconLibrary: IconLibrary = {
   database: database,
@@ -13,6 +14,7 @@ const defaultIconLibrary: IconLibrary = {
   internet: internet,
   cloud: cloud,
   unknown: unknown,
+  blank: blank,
 };
 
 export default defaultIconLibrary;

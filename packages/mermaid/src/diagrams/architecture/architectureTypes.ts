@@ -183,6 +183,7 @@ export interface ArchitectureService {
   id: string;
   edges: ArchitectureEdge[];
   icon?: string;
+  iconText?: string;
   title?: string;
   in?: string;
   width?: number;
