@@ -64,6 +64,7 @@ export interface MermaidConfig {
   theme?: 'default' | 'forest' | 'dark' | 'neutral' | 'null';
   themeVariables?: any;
   themeCSS?: string;
+  handdrawn?: boolean; // Different from theme as it could be combined with any theme in the future
   /**
    * The maximum allowed size of the users text diagram
    */

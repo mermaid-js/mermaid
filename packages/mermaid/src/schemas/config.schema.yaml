@@ -70,6 +70,16 @@ properties:
     tsType: any
   themeCSS:
     type: string
+  handdrawn:
+    description: |
+      Defines whether or not to use the handdrawn effect in the diagram.
+    type: boolean
+    default: false
+  layout:
+    description: |
+      Defines which layout algorithm to use for rendering the diagram.
+    type: string
+    default: 'dagre'
   maxTextSize:
     description: The maximum allowed size of the users text diagram
     type: number

@@ -75,10 +75,15 @@
     <pre id="diagram" class="mermaid">
 stateDiagram-v2
     Chimp --> A
+    Chimp --> B
+    Chimp --> C
 
   </pre
     >
     <pre id="diagram" class="mermaid">
+---
+  handdrawn: false
+---
 stateDiagram-v2
     state First {
 second
@@ -95,10 +100,17 @@ stateDiagram-v2
   </pre
     >
     <pre id="diagram" class="mermaid2">
-    flowchart TB
-      subgraph First
-        Second
-      end
+   stateDiagram-v2
+    state fork_state <<fork>>
+      [*] --> fork_state
+      fork_state --> State2
+      fork_state --> State3
+
+      state join_state <<join>>
+      State2 --> join_state
+      State3 --> join_state
+      join_state --> State4
+      State4 --> [*]
     </pre>
     <pre id="diagram" class="mermaid2">
     flowchart TB
@@ -474,8 +486,9 @@ mindmap
       //   useMaxWidth: false,
       // });
       mermaid.initialize({
+        handdrawn: true,
+        layout: 'elk',
         flowchart: { titleTopMargin: 10 },
-        /* fontFamily: 'Kalam', */
         fontFamily: 'Caveat',
         sequence: {
           actorFontFamily: 'courier',
