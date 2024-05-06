@@ -30,27 +30,6 @@ let portPos = {};
 let clusterDb = {};
 
 export const addVertex = async (nodeEl, graph, nodeArr, node) => {
-  console.log('addVertex DAGA', node.id);
-  // const node = vert[id];
-
-  //     /**
-  //      * Variable for storing the classes for the vertex
-  //      *
-  //      * @type {string}
-  //      */
-  //     let classStr = 'default';
-  //     if (node.classes.length > 0) {
-  //       classStr = node.classes.join(' ');
-  //     }
-  //     classStr = classStr + ' flowchart-label';
-  //     const styles = getStylesFromArray(node.styles);
-
-  //     // Use vertex id as text in the box if no text is provided by the graph definition
-  //     let vertexText = node.text !== undefined ? node.text : node.id;
-
-  //     // We create a SVG label, either by delegating to addHtmlLabel or manually
-  //     let vertexNode;
-  //     const labelData = { width: 0, height: 0 };
   const labelData = { width: 0, height: 0 };
   const ports = [
     {
@@ -98,7 +77,7 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
     child.children = [];
     await addVertices(nodeEl, nodeArr, child, node.id);
 
-    // const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
+    // We need the label hight to be able to size the subgraph;
     //       // svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
     //       // const rows = vertexText.split(common.lineBreakRegex);
     //       // for (const row of rows) {
@@ -116,74 +95,12 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
     labelData.wrappingWidth = getConfig().flowchart.wrappingWidth;
     labelData.height = bbox.height;
     labelData.labelNode = shapeSvg.node();
-    log.debug('addVertex DAGA setting labelData', node.id, labelData, nodeEl, node, shapeSvg, bbox);
+    shapeSvg.remove();
     child.labelData = labelData;
     child.domId = nodeEl;
   }
-  //     // const { shapeSvg, bbox } = await labelHelper(svg, node, undefined, true);
-
-  // const data = {
-  //   id: node.id,
-  //   ports: node.shape === 'diamond' ? ports : [],
-  //   // labelStyle: styles.labelStyle,
-  //   // shape: _shape,
-  //   layoutOptions,
-  //   labelText: vertexText,
-  //   labelData,
-  //   // labels: [{ text: vertexText }],
-  //   // rx: radius,
-  //   // ry: radius,
-  //   // class: classStr,
-  //   // style: styles.style,
-  //   // link: vertex.link,
-  //   // linkTarget: vertex.linkTarget,
-  //   // tooltip: diagObj.db.getTooltip(vertex.id) || '',
-  //   domId: diagObj.db.lookUpDomId(node.id),
-  //   // haveCallback: vertex.haveCallback,
-  //   width: boundingBox?.width,
-  //   height: boundingBox?.height,
-  //   // dir: vertex.dir,
-  //   type: node.shape,
-  //   // props: vertex.props,
-  //   // padding: getConfig().flowchart.padding,
-  //   // boundingBox,
-  //   el: nodeEl,
-  //   parent: parentLookupDb.parentById[node.id],
-  // };
-  //     // if (!Object.keys(parentLookupDb.childrenById).includes(vertex.id)) {
-  //     // graph.children.push({
-  //     //   ...data,
-  //     // });
-  //     // }
-  //     nodeDb[node.id] = data;
-  //     // log.trace('setNode', {
-  //     //   labelStyle: styles.labelStyle,
-  //     //   shape: _shape,
-  //     //   labelText: vertexText,
-  //     //   rx: radius,
-  //     //   ry: radius,
-  //     //   class: classStr,
-  //     //   style: styles.style,
-  //     //   id: vertex.id,
-  //     //   domId: diagObj.db.lookUpDomId(vertex.id),
-  //     //   width: vertex.type === 'group' ? 500 : undefined,
-  //     //   type: vertex.type,
-  //     //   dir: vertex.dir,
-  //     //   props: vertex.props,
-  //     //   padding: getConfig().flowchart.padding,
-  //     //   parent: parentLookupDb.parentById[vertex.id],
-  //     // });
 };
-// /**
-//  * Function that adds the vertices found during parsing to the graph to be rendered.
-//  *
-//  * @param vert Object containing the vertices.
-//  * @param g The graph that is to be drawn.
-//  * @param svgId
-//  * @param root
-//  * @param doc
-//  * @param diagObj
-//  */
+
 export const addVertices = async function (nodeEl, nodeArr, graph, parentId) {
   const siblings = nodeArr.filter((node) => node.parentId === parentId);
   log.info('addVertices DAGA', siblings, parentId);
@@ -401,14 +318,7 @@ export const addEdges = function (dataForLayout, graph, svg) {
   let defaultStyle;
   let defaultLabelStyle;
 
-  // if (edges.defaultStyle !== undefined) {
-  //   const defaultStyles = getStylesFromArray(edges.defaultStyle);
-  //   defaultStyle = defaultStyles.style;
-  //   defaultLabelStyle = defaultStyles.labelStyle;
-  // }
-
   edges.forEach(function (edge) {
-    console.log('edge abc88', edge);
     // Identify Link
     const linkIdBase = edge.id; // 'L-' + edge.start + '-' + edge.end;
     // count the links from+to the same node to give unique id
@@ -426,7 +336,6 @@ export const addEdges = function (dataForLayout, graph, svg) {
 
     const edgeData = { style: '', labelStyle: '' };
     edgeData.minlen = edge.length || 1;
-    //edgeData.id = 'id' + cnt;
 
     // Set link type for rendering
     if (edge.type === 'arrow_open') {
@@ -663,6 +572,4 @@ export const render = async (data4Layout, svg, element) => {
     ];
     insertEdge(edgesEl, edge, clusterDb, data4Layout.type, g, data4Layout.diagramId);
   });
-  // // Remove element after layout
-  // renderEl.remove();
 };

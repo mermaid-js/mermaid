@@ -846,7 +846,7 @@ export const getData = () => {
   extract(getRootDocV2());
   const diagramStates = getStates();
 
-  const useRough = true;
+  const useRough = false;
   dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, useRough);
 
   return { nodes, edges, other: {} };
