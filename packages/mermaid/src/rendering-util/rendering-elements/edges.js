@@ -375,6 +375,16 @@ const cutPathAtIntersect = (_points, boundryNode) => {
   return points;
 };
 
+const calcOffset = function (src, dest, parentLookupDb) {
+  const ancestor = findCommonAncestor(src, dest, parentLookupDb);
+  if (ancestor === undefined || ancestor === 'root') {
+    return { x: 0, y: 0 };
+  }
+
+  const ancestorOffset = nodeDb[ancestor].offset;
+  return { x: ancestorOffset.posX, y: ancestorOffset.posY };
+};
+
 export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, id) {
   console.log('abc88 InsertEdge - edge: ', edge);
   let points = edge.points;

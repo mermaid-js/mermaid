@@ -74,13 +74,44 @@
   <body>
     <pre id="diagram" class="mermaid">
 stateDiagram-v2
+    state ProActive {
+      state Active {
+          APA
+      }
+    }
+      </pre
+    >
+    <pre id="diagram" class="mermaid">
+stateDiagram-v2
+    [*] --> Active
+
+    state Active {
+        [*] --> NumLockOff
+        NumLockOff --> NumLockOn : EvNumLockPressed
+        NumLockOn --> NumLockOff : EvNumLockPressed
+        --
+        [*] --> CapsLockOff
+        CapsLockOff --> CapsLockOn : EvCapsLockPressed
+        CapsLockOn --> CapsLockOff : EvCapsLockPressed
+        --
+        [*] --> ScrollLockOff
+        ScrollLockOff --> ScrollLockOn : EvScrollLockPressed
+        ScrollLockOn --> ScrollLockOff : EvScrollLockPressed
+    }
+      </pre
+    >
+    <pre id="diagram" class="mermaid">
+stateDiagram-v2
+    state ProActive {
+      state Active {
     Chimp --> A
     Chimp --> B
     Chimp --> C
-
+      }
+    }
   </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 ---
   handdrawn: false
 ---

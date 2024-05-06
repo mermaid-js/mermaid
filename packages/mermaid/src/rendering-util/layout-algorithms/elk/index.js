@@ -1,6 +1,7 @@
 import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import insertMarkers from '../../rendering-elements/markers.js';
+import { findCommonAncestor } from './find-common-ancestor.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import {
   insertNode,
@@ -129,30 +130,14 @@ const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
       if (node.type === 'group') {
         log.debug('Id abc88 subgraph (DAGA)= ', node.id, node.x, node.y, node.labelData);
         const subgraphEl = subgraphsEl.insert('g').attr('class', 'subgraph');
-        const useOrg = false;
-        if (useOrg) {
-          subgraphEl
-            .insert('rect')
-            .attr('class', 'subgraph subgraph-lvl-' + (depth % 5) + ' node')
-            .attr('x', node.x + relX)
-            .attr('y', node.y + relY)
-            .attr('width', node.width)
-            .attr('height', node.height);
-          const label = subgraphEl.insert('g').attr('class', 'label');
-          const labelCentering = getConfig().flowchart.htmlLabels ? node.labelData.width / 2 : 0;
-          label.attr(
-            'transform',
-            `translate(${node.labels[0].x + relX + node.x + labelCentering}, ${
-              node.labels[0].y + relY + node.y + 3
-            })`
-          );
-          label.node().appendChild(node.labelData.labelNode);
-        } else {
-          const cluster = insertCluster(subgraphEl, node);
-          const bbox = cluster.node().getBBox();
-          node.x -= bbox.width / 2 - 2; // Magic number 2... why??? WHY???
-          node.y -= bbox.height / 2;
-        }
+        const clusterNode = JSON.parse(JSON.stringify(node));
+        clusterNode.x = node.offset.posX + node.width / 2;
+        clusterNode.y = node.offset.posY + node.height / 2;
+        // clusterNode.y = node.y + node.height / 2;
+        const cluster = insertCluster(subgraphEl, clusterNode);
+        // const bbox = cluster.node().getBBox();
+        // node.x -= bbox.width / 2 - 2; // Magic number 2... why??? WHY???
+        // node.y -= bbox.height / 2;
         log.info('Id (UGH)= ', node.shape, node.labels);
       } else {
         log.info(
@@ -296,6 +281,17 @@ const getEdgeStartEndPoint = (edge, dir) => {
 
   // Add the edge to the graph
   return { source, target, sourceId, targetId };
+};
+
+const calcOffset = function (src, dest, parentLookupDb) {
+  console.log('DAGA src dest', src, dest, parentLookupDb);
+  const ancestor = findCommonAncestor(src, dest, parentLookupDb);
+  if (ancestor === undefined || ancestor === 'root') {
+    return { x: 0, y: 0 };
+  }
+
+  const ancestorOffset = nodeDb[ancestor].offset;
+  return { x: ancestorOffset.posX, y: ancestorOffset.posY };
 };
 
 /**
@@ -552,12 +548,19 @@ export const render = async (data4Layout, svg, element) => {
   log.info('before layout abc88', JSON.stringify(elkGraph, null, 2));
   const g = await elk.layout(elkGraph);
   log.info('after layout abc88 DAGA', g);
+
+  // debugger;
   drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
   g.edges?.map((edge) => {
     // (elem, edge, clusterDb, diagramType, graph, id)
     edge.start = nodeDb[edge.sources[0]];
     edge.end = nodeDb[edge.targets[0]];
-    const offset = { x: 0, y: 0 };
+    const sourceId = edge.start.id;
+    const targetId = edge.end.id;
+
+    const offset = calcOffset(sourceId, targetId, parentLookupDb);
+    // const offset = { x: 50, y: 25 };
+
     const src = edge.sections[0].startPoint;
     const dest = edge.sections[0].endPoint;
     const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
@@ -570,6 +573,16 @@ export const render = async (data4Layout, svg, element) => {
       ...segPoints,
       { x: dest.x + offset.x, y: dest.y + offset.y },
     ];
+    console.log(
+      'DAGA org points: ',
+      [
+        { x: src.x, y: src.y },
+        { x: dest.x, y: dest.y },
+      ],
+      'points: ',
+      edge.points
+    );
+
     insertEdge(edgesEl, edge, clusterDb, data4Layout.type, g, data4Layout.diagramId);
   });
 };
