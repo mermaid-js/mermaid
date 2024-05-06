@@ -43,4 +43,12 @@ const getIcon = (name: string): IconResolver | null => {
   return icons['unknown'];
 };
 
-export { registerIcon, registerIcons, getIcon, isIconNameInUse, createIcon, IconLibrary, IconResolver };
+export {
+  registerIcon,
+  registerIcons,
+  getIcon,
+  isIconNameInUse,
+  createIcon,
+  IconLibrary,
+  IconResolver,
+};

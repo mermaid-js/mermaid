@@ -35,7 +35,10 @@ export type ArchitectureServices = LangiumCoreServices & ArchitectureAddedServic
  * Dependency injection module that overrides Langium default services and
  * contributes the declared `Architecture` services.
  */
-export const ArchitectureModule: Module<ArchitectureServices, PartialLangiumCoreServices & ArchitectureAddedServices> = {
+export const ArchitectureModule: Module<
+  ArchitectureServices,
+  PartialLangiumCoreServices & ArchitectureAddedServices
+> = {
   parser: {
     TokenBuilder: () => new ArchitectureTokenBuilder(),
     ValueConverter: () => new ArchitectureValueConverter(),
@@ -56,7 +59,9 @@ export const ArchitectureModule: Module<ArchitectureServices, PartialLangiumCore
  * @param context - Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
-export function createArchitectureServices(context: DefaultSharedCoreModuleContext = EmptyFileSystem): {
+export function createArchitectureServices(
+  context: DefaultSharedCoreModuleContext = EmptyFileSystem
+): {
   shared: LangiumSharedCoreServices;
   Architecture: ArchitectureServices;
 } {

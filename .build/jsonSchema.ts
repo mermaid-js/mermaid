@@ -25,7 +25,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'sankey',
   'block',
   'packet',
-  'architecture'
+  'architecture',
 ] as const;
 
 /**

@@ -20,7 +20,7 @@ architecture
 
 ## Syntax
 
-The building blocks of an architecture are `groups`, `services`, and `edges`. 
+The building blocks of an architecture are `groups`, `services`, and `edges`.
 
 For supporting components, icons are declared by surrounding the icon name with `()`, while labels are declared by surrounding the text with `[]`.
 
@@ -29,6 +29,7 @@ To begin an architecture diagram, use the keyword `architecture`, followed by yo
 ### Groups
 
 The syntax for declaring a group is:
+
 ```
 group {group id}({icon name})[{title}] (in {parent id})?
 ```
@@ -48,12 +49,15 @@ group private_api(cloud)[Private API] in public_api
 ```
 
 ### Services
+
 The syntax for declaring a group is:
+
 ```
 service {service id}({icon name})[{title}] (in {parent id})?
 ```
 
 Put together:
+
 ```
 service database(db)[Database]
 ```
@@ -67,6 +71,7 @@ service database(db)[Database] in private_api
 ```
 
 ### Edges
+
 TODO
 
 ## Configuration

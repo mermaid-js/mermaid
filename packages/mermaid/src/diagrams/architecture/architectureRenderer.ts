@@ -12,7 +12,7 @@ import type {
   ArchitectureDataStructures,
   ArchitectureSpatialMap,
   EdgeSingularData,
-  EdgeSingular
+  EdgeSingular,
 } from './architectureTypes.js';
 import {
   type ArchitectureDB,
@@ -25,7 +25,7 @@ import {
   isArchitectureDirectionXY,
   isArchitectureDirectionY,
   nodeData,
-  edgeData
+  edgeData,
 } from './architectureTypes.js';
 import { select } from 'd3';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
@@ -54,8 +54,10 @@ function addServices(services: ArchitectureService[], cy: cytoscape.Core) {
 
 function positionServices(db: ArchitectureDB, cy: cytoscape.Core) {
   cy.nodes().map((node) => {
-    const data = nodeData(node)
-    if (data.type === 'group') { return; }
+    const data = nodeData(node);
+    if (data.type === 'group') {
+      return;
+    }
     data.x = node.position().x;
     data.y = node.position().y;
 
@@ -126,8 +128,12 @@ function getAlignments(spatialMaps: ArchitectureSpatialMap[]): fcose.FcoseAlignm
     const verticalAlignments: Record<number, string[]> = {};
     // Group service ids in an object with their x and y coordinate as the key
     Object.entries(spatialMap).forEach(([id, [x, y]]) => {
-      if (!horizontalAlignments[y]) { horizontalAlignments[y] = []; }
-      if (!verticalAlignments[x]) { verticalAlignments[x] = []; }
+      if (!horizontalAlignments[y]) {
+        horizontalAlignments[y] = [];
+      }
+      if (!verticalAlignments[x]) {
+        verticalAlignments[x] = [];
+      }
       horizontalAlignments[y].push(id);
       verticalAlignments[x].push(id);
     });
@@ -221,7 +227,7 @@ function layoutArchitecture(
           selector: 'edge',
           style: {
             'curve-style': 'straight',
-            'label': 'data(label)',
+            label: 'data(label)',
             'source-endpoint': 'data(sourceEndpoint)',
             'target-endpoint': 'data(targetEndpoint)',
           },
@@ -300,16 +306,16 @@ function layoutArchitecture(
       // Hacky fix for: https://github.com/iVis-at-Bilkent/cytoscape.js-fcose/issues/67
       idealEdgeLength(edge: EdgeSingular) {
         const [nodeA, nodeB] = edge.connectedNodes();
-        const { parent: parentA } = nodeData(nodeA)
-        const { parent: parentB } = nodeData(nodeB)
+        const { parent: parentA } = nodeData(nodeA);
+        const { parent: parentB } = nodeData(nodeB);
         const elasticity =
           parentA === parentB ? 1.5 * getConfigField('iconSize') : 0.5 * getConfigField('iconSize');
         return elasticity;
       },
       edgeElasticity(edge: EdgeSingular) {
         const [nodeA, nodeB] = edge.connectedNodes();
-        const { parent: parentA } = nodeData(nodeA)
-        const { parent: parentB } = nodeData(nodeB)
+        const { parent: parentA } = nodeData(nodeA);
+        const { parent: parentB } = nodeData(nodeB);
         const elasticity = parentA === parentB ? 0.45 : 0.001;
         return elasticity;
       },
@@ -374,7 +380,7 @@ function layoutArchitecture(
           if (sX !== tX && sY !== tY) {
             const sEP = edge.sourceEndpoint();
             const tEP = edge.targetEndpoint();
-            const { sourceDir } = edgeData(edge)
+            const { sourceDir } = edgeData(edge);
             const [pointX, pointY] = isArchitectureDirectionY(sourceDir)
               ? [sEP.x, tEP.y]
               : [tEP.x, sEP.y];

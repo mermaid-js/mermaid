@@ -40,17 +40,25 @@ const state = new ImperativeState<ArchitectureState>(() => ({
   registeredIds: {},
   config: DEFAULT_ARCHITECTURE_CONFIG,
   dataStructures: undefined,
-  elements: {}
-}))
+  elements: {},
+}));
 
 const clear = (): void => {
-  state.reset()
+  state.reset();
   commonClear();
 };
 
-const addService = function ({ id, icon, in: parent, title, iconText }: Omit<ArchitectureService, "edges">) {
+const addService = function ({
+  id,
+  icon,
+  in: parent,
+  title,
+  iconText,
+}: Omit<ArchitectureService, 'edges'>) {
   if (state.records.registeredIds[id] !== undefined) {
-    throw new Error(`The service id [${id}] is already in use by another ${state.records.registeredIds[id]}`);
+    throw new Error(
+      `The service id [${id}] is already in use by another ${state.records.registeredIds[id]}`
+    );
   }
   if (parent !== undefined) {
     if (id === parent) {
@@ -82,7 +90,9 @@ const getServices = (): ArchitectureService[] => Object.values(state.records.ser
 
 const addGroup = function ({ id, icon, in: parent, title }: ArchitectureGroup) {
   if (state.records.registeredIds[id] !== undefined) {
-    throw new Error(`The group id [${id}] is already in use by another ${state.records.registeredIds[id]}`);
+    throw new Error(
+      `The group id [${id}] is already in use by another ${state.records.registeredIds[id]}`
+    );
   }
   if (parent !== undefined) {
     if (id === parent) {
@@ -111,10 +121,15 @@ const getGroups = (): ArchitectureGroup[] => {
   return Object.values(state.records.groups);
 };
 
-const addEdge = function (
-  { lhsId, rhsId, lhsDir, rhsDir, lhsInto, rhsInto, title }: ArchitectureEdge
-) {
-
+const addEdge = function ({
+  lhsId,
+  rhsId,
+  lhsDir,
+  rhsDir,
+  lhsInto,
+  rhsInto,
+  title,
+}: ArchitectureEdge) {
   if (!isArchitectureDirection(lhsDir)) {
     throw new Error(
       `Invalid direction given for left hand side of edge ${lhsId}--${rhsId}. Expected (L,R,T,B) got ${lhsDir}`
@@ -152,7 +167,6 @@ const addEdge = function (
     state.records.services[lhsId].edges.push(state.records.edges[state.records.edges.length - 1]);
     state.records.services[rhsId].edges.push(state.records.edges[state.records.edges.length - 1]);
   } else if (state.records.groups[lhsId] && state.records.groups[rhsId]) {
-
   }
 };
 
@@ -168,28 +182,27 @@ const getDataStructures = () => {
     // Create an adjacency list of the diagram to perform BFS on
     // Outer reduce applied on all services
     // Inner reduce applied on the edges for a service
-    const adjList = Object.entries(state.records.services).reduce<{ [id: string]: ArchitectureDirectionPairMap }>(
-      (prevOuter, [id, service]) => {
-        prevOuter[id] = service.edges.reduce<ArchitectureDirectionPairMap>((prevInner, edge) => {
-          if (edge.lhsId === id) {
-            // source is LHS
-            const pair = getArchitectureDirectionPair(edge.lhsDir, edge.rhsDir);
-            if (pair) {
-              prevInner[pair] = edge.rhsId;
-            }
-          } else {
-            // source is RHS
-            const pair = getArchitectureDirectionPair(edge.rhsDir, edge.lhsDir);
-            if (pair) {
-              prevInner[pair] = edge.lhsId;
-            }
+    const adjList = Object.entries(state.records.services).reduce<{
+      [id: string]: ArchitectureDirectionPairMap;
+    }>((prevOuter, [id, service]) => {
+      prevOuter[id] = service.edges.reduce<ArchitectureDirectionPairMap>((prevInner, edge) => {
+        if (edge.lhsId === id) {
+          // source is LHS
+          const pair = getArchitectureDirectionPair(edge.lhsDir, edge.rhsDir);
+          if (pair) {
+            prevInner[pair] = edge.rhsId;
           }
-          return prevInner;
-        }, {});
-        return prevOuter;
-      },
-      {}
-    );
+        } else {
+          // source is RHS
+          const pair = getArchitectureDirectionPair(edge.rhsDir, edge.lhsDir);
+          if (pair) {
+            prevInner[pair] = edge.lhsId;
+          }
+        }
+        return prevInner;
+      }, {});
+      return prevOuter;
+    }, {});
 
     // Configuration for the initial pass of BFS
     const firstId = Object.keys(adjList)[0];

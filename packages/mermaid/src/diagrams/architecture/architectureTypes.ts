@@ -21,8 +21,7 @@ export type ArchitectureDirectionPair = Exclude<
 >;
 export type ArchitectureDirectionPairXY = Exclude<
   InvalidArchitectureDirectionPair,
-  'LL' | 'RR' | 'TT' | 'BB'
-  | 'LR' | 'RL' | 'TB' | 'BT'
+  'LL' | 'RR' | 'TT' | 'BB' | 'LR' | 'RL' | 'TB' | 'BT'
 >;
 
 export const ArchitectureDirectionName = {
@@ -85,7 +84,7 @@ export const isArchitectureDirectionXY = function (
 };
 
 export const isArchitecturePairXY = function (
-  pair: ArchitectureDirectionPair,
+  pair: ArchitectureDirectionPair
 ): pair is ArchitectureDirectionPairXY {
   const lhs = pair[0] as ArchitectureDirection;
   const rhs = pair[1] as ArchitectureDirection;
@@ -161,13 +160,13 @@ export const getArchitectureDirectionXYFactors = function (
   pair: ArchitectureDirectionPairXY
 ): number[] {
   if (pair === 'LT' || pair === 'TL') {
-    return [1, 1]
+    return [1, 1];
   } else if (pair === 'BL' || pair === 'LB') {
-    return [1, -1]
+    return [1, -1];
   } else if (pair === 'BR' || pair === 'RB') {
-    return [-1, -1]
+    return [-1, -1];
   } else {
-    return [-1, 1]
+    return [-1, 1];
   }
 };
 
@@ -209,13 +208,11 @@ export interface ArchitectureEdge {
 
 export interface ArchitectureDB extends DiagramDB {
   clear: () => void;
-  addService: (service: Omit<ArchitectureService, "edges">) => void;
+  addService: (service: Omit<ArchitectureService, 'edges'>) => void;
   getServices: () => ArchitectureService[];
   addGroup: (group: ArchitectureGroup) => void;
   getGroups: () => ArchitectureGroup[];
-  addEdge: (
-    edge: ArchitectureEdge
-  ) => void;
+  addEdge: (edge: ArchitectureEdge) => void;
   getEdges: () => ArchitectureEdge[];
   setElementForId: (id: string, element: D3Element) => void;
   getElementById: (id: string) => D3Element;
@@ -257,7 +254,7 @@ export type EdgeSingularData = {
 
 export const edgeData = (edge: cytoscape.EdgeSingular) => {
   return edge.data() as EdgeSingularData;
-}
+};
 
 export interface EdgeSingular extends cytoscape.EdgeSingular {
   _private: {
@@ -275,28 +272,29 @@ export interface EdgeSingular extends cytoscape.EdgeSingular {
   data<T extends keyof EdgeSingularData>(key: T): EdgeSingularData[T];
 }
 
-export type NodeSingularData = {
-  type: 'service';
-  id: string;
-  icon?: string;
-  label?: string;
-  parent?: string;
-  width: number;
-  height: number;
-  [key: string]: any;
-}
+export type NodeSingularData =
   | {
-    type: 'group';
-    id: string;
-    icon?: string;
-    label?: string;
-    parent?: string;
-    [key: string]: any;
-  };
+      type: 'service';
+      id: string;
+      icon?: string;
+      label?: string;
+      parent?: string;
+      width: number;
+      height: number;
+      [key: string]: any;
+    }
+  | {
+      type: 'group';
+      id: string;
+      icon?: string;
+      label?: string;
+      parent?: string;
+      [key: string]: any;
+    };
 
 export const nodeData = (node: cytoscape.NodeSingular) => {
   return node.data() as NodeSingularData;
-}
+};
 
 export interface NodeSingular extends cytoscape.NodeSingular {
   _private: {

@@ -10,12 +10,12 @@ export class ArchitectureValueConverter extends AbstractMermaidValueConverter {
     _cstNode: CstNode
   ): ValueType | undefined {
     if (rule.name === 'ARCH_ICON') {
-        return input.replace(/[()]/g, '').trim();
+      return input.replace(/[()]/g, '').trim();
     } else if (rule.name === 'ARCH_TEXT_ICON') {
-        return input.replace(/[()"]/g, '');
+      return input.replace(/[()"]/g, '');
     } else if (rule.name === 'ARCH_TITLE') {
-        return input.replace(/[[\]]/g, '').trim();
+      return input.replace(/[[\]]/g, '').trim();
     }
-    return undefined
+    return undefined;
   }
 }

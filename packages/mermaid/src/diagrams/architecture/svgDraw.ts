@@ -227,7 +227,7 @@ export const drawServices = function (
         },
         getConfig()
       );
-      
+
       textElem
         .attr('dy', '1em')
         .attr('alignment-baseline', 'middle')
@@ -247,14 +247,24 @@ export const drawServices = function (
     } else if (service.iconText) {
       bkgElem = getIcon('blank')?.(bkgElem, iconSize);
       const textElemContainer = bkgElem.append('g');
-      const fo = textElemContainer.append('foreignObject').attr('width', iconSize).attr('height', iconSize);
+      const fo = textElemContainer
+        .append('foreignObject')
+        .attr('width', iconSize)
+        .attr('height', iconSize);
       const divElem = fo
         .append('div')
         .attr('class', 'node-icon-text')
         .attr('style', `height: ${iconSize}px;`)
-        .append('div').html(service.iconText);
-      const fontSize = parseInt(window.getComputedStyle(divElem.node(), null).getPropertyValue("font-size").replace(/[^\d]/g, '')) ?? 16;
-      divElem.attr('style', `-webkit-line-clamp: ${Math.floor((iconSize - 2) / fontSize)};`)
+        .append('div')
+        .html(service.iconText);
+      const fontSize =
+        parseInt(
+          window
+            .getComputedStyle(divElem.node(), null)
+            .getPropertyValue('font-size')
+            .replace(/[^\d]/g, '')
+        ) ?? 16;
+      divElem.attr('style', `-webkit-line-clamp: ${Math.floor((iconSize - 2) / fontSize)};`);
     } else {
       bkgElem
         .append('path')

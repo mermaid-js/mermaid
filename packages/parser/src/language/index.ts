@@ -12,7 +12,7 @@ export {
   isPacketBlock,
   isPie,
   isPieSection,
-  isArchitecture
+  isArchitecture,
 } from './generated/ast.js';
 
 export {
@@ -20,7 +20,7 @@ export {
   MermaidGeneratedSharedModule,
   PacketGeneratedModule,
   PieGeneratedModule,
-  ArchitectureGeneratedModule
+  ArchitectureGeneratedModule,
 } from './generated/module.js';
 
 export * from './common/index.js';
