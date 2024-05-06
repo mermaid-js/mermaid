@@ -5,7 +5,7 @@ import { render } from '../../dagre-wrapper/index.js';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import common from '../common/common.js';
-import utils from '../../utils.js';
+import utils, { getEdgeId } from '../../utils.js';
 
 import {
   DEFAULT_DIAGRAM_DIRECTION,
@@ -275,7 +275,9 @@ const setupNode = (g, parent, parsedItem, diagramStates, diagramDb, altFlag) => 
         arrowType: '',
         style: G_EDGE_STYLE,
         labelStyle: '',
-        id: 'edge' + graphItemCount + `_${from}_${to}`,
+        id: getEdgeId(from, to, {
+          counter: graphItemCount,
+        }),
         classes: CSS_EDGE_NOTE_EDGE,
         arrowheadStyle: G_EDGE_ARROWHEADSTYLE,
         labelpos: G_EDGE_LABELPOS,
@@ -327,7 +329,9 @@ const setupDoc = (g, parentParsedItem, doc, diagramStates, diagramDb, altFlag) =
           setupNode(g, parentParsedItem, item.state1, diagramStates, diagramDb, altFlag);
           setupNode(g, parentParsedItem, item.state2, diagramStates, diagramDb, altFlag);
           const edgeData = {
-            id: 'edge' + graphItemCount + `_${item.state1.id}_${item.state2.id}`,
+            id: getEdgeId(item.state1.id, item.state2.id, {
+              counter: graphItemCount,
+            }),
             arrowhead: 'normal',
             arrowTypeEnd: 'arrow_barb',
             style: G_EDGE_STYLE,
