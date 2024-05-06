@@ -8,7 +8,11 @@ import {
   clear as clearNodes,
   setNodeElem,
 } from '../../rendering-elements/nodes.js';
-import { insertCluster, clear as clearClusters } from '../../rendering-elements/clusters.js';
+import {
+  insertCluster,
+  clear as clearClusters,
+  positionCluster,
+} from '../../rendering-elements/clusters.js';
 import {
   insertEdgeLabel,
   positionEdgeLabel,
@@ -26,7 +30,7 @@ let portPos = {};
 let clusterDb = {};
 
 export const addVertex = async (nodeEl, graph, nodeArr, node) => {
-  console.log('addVertex abc88', node.id);
+  console.log('addVertex DAGA', node.id);
   // const node = vert[id];
 
   //     /**
@@ -112,15 +116,7 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
     labelData.wrappingWidth = getConfig().flowchart.wrappingWidth;
     labelData.height = bbox.height;
     labelData.labelNode = shapeSvg.node();
-    log.debug(
-      'addVertex abc88 setting labelData',
-      node.id,
-      labelData,
-      nodeEl,
-      node,
-      shapeSvg,
-      bbox
-    );
+    log.debug('addVertex DAGA setting labelData', node.id, labelData, nodeEl, node, shapeSvg, bbox);
     child.labelData = labelData;
     child.domId = nodeEl;
   }
@@ -190,7 +186,7 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
 //  */
 export const addVertices = async function (nodeEl, nodeArr, graph, parentId) {
   const siblings = nodeArr.filter((node) => node.parentId === parentId);
-  log.info('addVertices', siblings, parentId);
+  log.info('addVertices DAGA', siblings, parentId);
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   await Promise.all(
     siblings.map(async (node) => {
@@ -201,7 +197,6 @@ export const addVertices = async function (nodeEl, nodeArr, graph, parentId) {
 };
 
 const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
-  console.log('drawNodes abc88', relX, relY, nodeArray);
   nodeArray.forEach(function (node) {
     if (node) {
       nodeDb[node.id] = node;
@@ -215,30 +210,36 @@ const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
         height: node.height,
       };
       if (node.type === 'group') {
-        log.debug('Id abc88 subgraph (UGH)= ', node.id, node.x, node.y, node.labelData);
+        log.debug('Id abc88 subgraph (DAGA)= ', node.id, node.x, node.y, node.labelData);
         const subgraphEl = subgraphsEl.insert('g').attr('class', 'subgraph');
-        subgraphEl
-          .insert('rect')
-          .attr('class', 'subgraph subgraph-lvl-' + (depth % 5) + ' node')
-          .attr('x', node.x + relX)
-          .attr('y', node.y + relY)
-          .attr('width', node.width)
-          .attr('height', node.height);
-        const label = subgraphEl.insert('g').attr('class', 'label');
-        const labelCentering = getConfig().flowchart.htmlLabels ? node.labelData.width / 2 : 0;
-        console.log(node);
-        label.attr(
-          'transform',
-          `translate(${node.labels[0].x + relX + node.x + labelCentering}, ${
-            node.labels[0].y + relY + node.y + 3
-          })`
-        );
-        label.node().appendChild(node.labelData.labelNode);
-
+        const useOrg = false;
+        if (useOrg) {
+          subgraphEl
+            .insert('rect')
+            .attr('class', 'subgraph subgraph-lvl-' + (depth % 5) + ' node')
+            .attr('x', node.x + relX)
+            .attr('y', node.y + relY)
+            .attr('width', node.width)
+            .attr('height', node.height);
+          const label = subgraphEl.insert('g').attr('class', 'label');
+          const labelCentering = getConfig().flowchart.htmlLabels ? node.labelData.width / 2 : 0;
+          label.attr(
+            'transform',
+            `translate(${node.labels[0].x + relX + node.x + labelCentering}, ${
+              node.labels[0].y + relY + node.y + 3
+            })`
+          );
+          label.node().appendChild(node.labelData.labelNode);
+        } else {
+          const cluster = insertCluster(subgraphEl, node);
+          const bbox = cluster.node().getBBox();
+          node.x -= bbox.width / 2 - 2; // Magic number 2... why??? WHY???
+          node.y -= bbox.height / 2;
+        }
         log.info('Id (UGH)= ', node.shape, node.labels);
       } else {
         log.info(
-          'Id (UGH)= ',
+          'Id NODE (DAGA)= ',
           node.id,
           node.x,
           node.y,
@@ -617,7 +618,6 @@ export const render = async (data4Layout, svg, element) => {
 
   // Iterate through all nodes and add the top level nodes to the graph
   const nodes = data4Layout.nodes;
-  // const nodes = Object.keys(nodeDb);
   nodes.forEach((n) => {
     const node = nodeDb[n.id];
 
@@ -631,8 +631,6 @@ export const render = async (data4Layout, svg, element) => {
           },
           width: node?.labelData?.width || 100,
           height: node?.labelData?.height || 100,
-          // width: 100,
-          // height: 100,
         },
       ];
       delete node.x;
@@ -644,7 +642,7 @@ export const render = async (data4Layout, svg, element) => {
 
   log.info('before layout abc88', JSON.stringify(elkGraph, null, 2));
   const g = await elk.layout(elkGraph);
-  log.info('after layout abc88', g);
+  log.info('after layout abc88 DAGA', g);
   drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
   g.edges?.map((edge) => {
     // (elem, edge, clusterDb, diagramType, graph, id)
@@ -665,17 +663,6 @@ export const render = async (data4Layout, svg, element) => {
     ];
     insertEdge(edgesEl, edge, clusterDb, data4Layout.type, g, data4Layout.diagramId);
   });
-  // setupGraphViewbox({}, svg, conf.diagramPadding, conf.useMaxWidth);
   // // Remove element after layout
   // renderEl.remove();
 };
-
-// const shapeDefinitions = {};
-// export const addShape = ({ shapeType: fun }) => {
-//   shapeDefinitions[shapeType] = fun;
-// };
-
-// const arrowDefinitions = {};
-// export const addArrow = ({ arrowType: fun }) => {
-//   arrowDefinitions[arrowType] = fun;
-// };
