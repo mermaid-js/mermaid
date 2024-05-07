@@ -17,7 +17,7 @@ import { compile, serialize, stringify } from 'stylis';
 import { version } from '../package.json';
 import * as configApi from './config.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
-import { Diagram, getDiagramFromText as getDiagramFromTextInternal } from './Diagram.js';
+import { Diagram } from './Diagram.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
 import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
@@ -368,6 +368,16 @@ const render = async function (
   const enclosingDivID = 'd' + id;
   const enclosingDivID_selector = '#' + enclosingDivID;
 
+  const removeTempElements = () => {
+    // -------------------------------------------------------------------------------
+    // Remove the temporary HTML element if appropriate
+    const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
+    const node = select(tmpElementSelector).node();
+    if (node && 'remove' in node) {
+      node.remove();
+    }
+  };
+
   let root: any = select('body');
 
   const isSandboxed = config.securityLevel === SECURITY_LVL_SANDBOX;
@@ -422,9 +432,13 @@ const render = async function (
   let parseEncounteredException;
 
   try {
-    diag = await getDiagramFromText(text, { title: processed.title });
+    diag = await Diagram.fromText(text, { title: processed.title });
   } catch (error) {
-    diag = new Diagram('error');
+    if (config.suppressErrorRendering) {
+      removeTempElements();
+      throw error;
+    }
+    diag = await Diagram.fromText('error');
     parseEncounteredException = error;
   }
 
@@ -451,7 +465,11 @@ const render = async function (
   try {
     await diag.renderer.draw(text, id, version, diag);
   } catch (e) {
-    errorRenderer.draw(text, id, version);
+    if (config.suppressErrorRendering) {
+      removeTempElements();
+    } else {
+      errorRenderer.draw(text, id, version);
+    }
     throw e;
   }
 
@@ -460,7 +478,6 @@ const render = async function (
   const a11yTitle: string | undefined = diag.db.getAccTitle?.();
   const a11yDescr: string | undefined = diag.db.getAccDescription?.();
   addA11yInfo(diagramType, svgNode, a11yTitle, a11yDescr);
-
   // -------------------------------------------------------------------------------
   // Clean up SVG code
   root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
@@ -488,13 +505,7 @@ const render = async function (
     throw parseEncounteredException;
   }
 
-  // -------------------------------------------------------------------------------
-  // Remove the temporary HTML element if appropriate
-  const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
-  const node = select(tmpElementSelector).node();
-  if (node && 'remove' in node) {
-    node.remove();
-  }
+  removeTempElements();
 
   return {
     diagramType,
@@ -536,7 +547,7 @@ function initialize(options: MermaidConfig = {}) {
 
 const getDiagramFromText = (text: string, metadata: Pick<DiagramMetadata, 'title'> = {}) => {
   const { code } = preprocessDiagram(text);
-  return getDiagramFromTextInternal(code, metadata);
+  return Diagram.fromText(code, metadata);
 };
 
 /**
@@ -567,6 +578,7 @@ function addA11yInfo(
  *     securityLevel: 'strict',
  *     startOnLoad: true,
  *     arrowMarkerAbsolute: false,
+ *     suppressErrorRendering: false,
  *
  *     er: {
  *       diagramPadding: 20,

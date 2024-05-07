@@ -177,7 +177,7 @@ const getRootDocV2 = () => {
  * Ex: the section within a fork has its own statements, and incoming and outgoing statements
  * refer to the fork as a whole (document).
  * See the parser grammar:  the definition of a document is a document then a 'line', where a line can be a statement.
- * This will push the statement into the the list of statements for the current document.
+ * This will push the statement into the list of statements for the current document.
  *
  * @param _doc
  */
@@ -292,7 +292,7 @@ export const addState = function (
   if (classes) {
     log.info('Setting state classes', trimmedId, classes);
     const classesList = typeof classes === 'string' ? [classes] : classes;
-    classesList.forEach((klass) => setCssClass(trimmedId, klass.trim()));
+    classesList.forEach((cssClass) => setCssClass(trimmedId, cssClass.trim()));
   }
 
   if (styles) {

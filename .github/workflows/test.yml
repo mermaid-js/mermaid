@@ -8,20 +8,17 @@ permissions:
 jobs:
   unit-test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x]
     steps:
       - uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v2
         # uses version from "packageManager" field in package.json
 
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           cache: pnpm
-          node-version: ${{ matrix.node-version }}
+          node-version-file: '.node-version'
 
       - name: Install Packages
         run: |
@@ -42,7 +39,7 @@ jobs:
           pnpm exec vitest run ./packages/mermaid/src/diagrams/gantt/ganttDb.spec.ts --coverage
 
       - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         # Run step only pushes to develop and pull_requests
         if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/develop' }}
         with:

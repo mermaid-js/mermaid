@@ -1,5 +1,6 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
+import { ImperativeState } from '../../utils/imperativeState.js';
 import { sanitizeText } from '../common/common.js';
 import {
   clear as commonClear,
@@ -10,9 +11,24 @@ import {
   setAccTitle,
   setDiagramTitle,
 } from '../common/commonDb.js';
-import { ImperativeState } from '../../utils/imperativeState.js';
+import type { Actor, AddMessageParams, Box, Message, Note } from './types.js';
 
-const state = new ImperativeState(() => ({
+interface SequenceState {
+  prevActor?: string;
+  actors: Record<string, Actor>;
+  createdActors: Record<string, number>;
+  destroyedActors: Record<string, number>;
+  boxes: Box[];
+  messages: Message[];
+  notes: Note[];
+  sequenceNumbersEnabled: boolean;
+  wrapEnabled?: boolean;
+  currentBox?: Box;
+  lastCreated?: Actor;
+  lastDestroyed?: Actor;
+}
+
+const state = new ImperativeState<SequenceState>(() => ({
   prevActor: undefined,
   actors: {},
   createdActors: {},
@@ -27,7 +43,7 @@ const state = new ImperativeState(() => ({
   lastDestroyed: undefined,
 }));
 
-export const addBox = function (data) {
+export const addBox = function (data: { text: string; color: string; wrap: boolean }) {
   state.records.boxes.push({
     name: data.text,
     wrap: (data.wrap === undefined && autoWrap()) || !!data.wrap,
@@ -37,20 +53,19 @@ export const addBox = function (data) {
   state.records.currentBox = state.records.boxes.slice(-1)[0];
 };
 
-export const addActor = function (id, name, description, type) {
+export const addActor = function (
+  id: string,
+  name: string,
+  description: { text: string; wrap?: boolean | null; type: string },
+  type: string
+) {
   let assignedBox = state.records.currentBox;
   const old = state.records.actors[id];
   if (old) {
     // If already set and trying to set to a new one throw error
     if (state.records.currentBox && old.box && state.records.currentBox !== old.box) {
       throw new Error(
-        'A same participant should only be defined in one Box: ' +
-          old.name +
-          " can't be in '" +
-          old.box.name +
-          "' and in '" +
-          state.records.currentBox.name +
-          "' at the same time."
+        `A same participant should only be defined in one Box: ${old.name} can't be in '${old.box.name}' and in '${state.records.currentBox.name}' at the same time.`
       );
     }
 
@@ -82,7 +97,7 @@ export const addActor = function (id, name, description, type) {
     properties: {},
     actorCnt: null,
     rectData: null,
-    type: type || 'participant',
+    type: type ?? 'participant',
   };
   if (state.records.prevActor && state.records.actors[state.records.prevActor]) {
     state.records.actors[state.records.prevActor].nextActor = id;
@@ -94,19 +109,22 @@ export const addActor = function (id, name, description, type) {
   state.records.prevActor = id;
 };
 
-const activationCount = (part) => {
+const activationCount = (part: string) => {
   let i;
   let count = 0;
+  if (!part) {
+    return 0;
+  }
   for (i = 0; i < state.records.messages.length; i++) {
     if (
       state.records.messages[i].type === LINETYPE.ACTIVE_START &&
-      state.records.messages[i].from.actor === part
+      state.records.messages[i].from === part
     ) {
       count++;
     }
     if (
       state.records.messages[i].type === LINETYPE.ACTIVE_END &&
-      state.records.messages[i].from.actor === part
+      state.records.messages[i].from === part
     ) {
       count--;
     }
@@ -114,7 +132,12 @@ const activationCount = (part) => {
   return count;
 };
 
-export const addMessage = function (idFrom, idTo, message, answer) {
+export const addMessage = function (
+  idFrom: Message['from'],
+  idTo: Message['to'],
+  message: { text: string; wrap?: boolean },
+  answer: Message['answer']
+) {
   state.records.messages.push({
     from: idFrom,
     to: idTo,
@@ -125,17 +148,19 @@ export const addMessage = function (idFrom, idTo, message, answer) {
 };
 
 export const addSignal = function (
-  idFrom,
-  idTo,
-  message = { text: undefined, wrap: undefined },
-  messageType,
-  activate = false
+  idFrom?: Message['from'],
+  idTo?: Message['to'],
+  message?: { text: string; wrap: boolean },
+  messageType?: number,
+  activate: boolean = false
 ) {
   if (messageType === LINETYPE.ACTIVE_END) {
-    const cnt = activationCount(idFrom.actor);
+    const cnt = activationCount(idFrom || '');
     if (cnt < 1) {
       // Bail out as there is an activation signal from an inactive participant
-      let error = new Error('Trying to inactivate an inactive participant (' + idFrom.actor + ')');
+      const error = new Error('Trying to inactivate an inactive participant (' + idFrom + ')');
+
+      // @ts-ignore: we are passing hash param to the error object, however we should define our own custom error class to make it type safe
       error.hash = {
         text: '->>-',
         token: '->>-',
@@ -149,8 +174,8 @@ export const addSignal = function (
   state.records.messages.push({
     from: idFrom,
     to: idTo,
-    message: message.text,
-    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
+    message: message?.text ?? '',
+    wrap: (message?.wrap === undefined && autoWrap()) || !!message?.wrap,
     type: messageType,
     activate,
   });
@@ -181,7 +206,7 @@ export const getCreatedActors = function () {
 export const getDestroyedActors = function () {
   return state.records.destroyedActors;
 };
-export const getActor = function (id) {
+export const getActor = function (id: string) {
   return state.records.actors[id];
 };
 export const getActorKeys = function () {
@@ -195,7 +220,7 @@ export const disableSequenceNumbers = function () {
 };
 export const showSequenceNumbers = () => state.records.sequenceNumbersEnabled;
 
-export const setWrap = function (wrapSetting) {
+export const setWrap = function (wrapSetting?: boolean) {
   state.records.wrapEnabled = wrapSetting;
 };
 
@@ -205,7 +230,7 @@ export const autoWrap = () => {
   if (state.records.wrapEnabled !== undefined) {
     return state.records.wrapEnabled;
   }
-  return getConfig().sequence.wrap;
+  return getConfig()?.sequence?.wrap;
 };
 
 export const clear = function () {
@@ -213,25 +238,25 @@ export const clear = function () {
   commonClear();
 };
 
-export const parseMessage = function (str) {
-  const _str = str.trim();
+export const parseMessage = function (str: string) {
+  const trimmedStr = str.trim();
   const message = {
-    text: _str.replace(/^:?(?:no)?wrap:/, '').trim(),
+    text: trimmedStr.replace(/^:?(?:no)?wrap:/, '').trim(),
     wrap:
-      _str.match(/^:?wrap:/) !== null
+      trimmedStr.match(/^:?wrap:/) !== null
         ? true
-        : _str.match(/^:?nowrap:/) !== null
-        ? false
-        : undefined,
+        : trimmedStr.match(/^:?nowrap:/) !== null
+          ? false
+          : undefined,
   };
-  log.debug('parseMessage:', message);
+  log.debug(`parseMessage: ${message}`);
   return message;
 };
 
 // We expect the box statement to be color first then description
 // The color can be rgb,rgba,hsl,hsla, or css code names  #hex codes are not supported for now because of the way the char # is handled
 // We extract first segment as color, the rest of the line is considered as text
-export const parseBoxData = function (str) {
+export const parseBoxData = function (str: string) {
   const match = str.match(/^((?:rgba?|hsla?)\s*\(.*\)|\w*)(.*)$/);
   let color = match != null && match[1] ? match[1].trim() : 'transparent';
   let title = match != null && match[2] ? match[2].trim() : undefined;
@@ -262,8 +287,8 @@ export const parseBoxData = function (str) {
         ? title.match(/^:?wrap:/) !== null
           ? true
           : title.match(/^:?nowrap:/) !== null
-          ? false
-          : undefined
+            ? false
+            : undefined
         : undefined,
   };
 };
@@ -312,18 +337,21 @@ export const PLACEMENT = {
   OVER: 2,
 };
 
-export const addNote = function (actor, placement, message) {
-  const note = {
+export const addNote = function (
+  actor: { actor: string },
+  placement: Message['placement'],
+  message: { text: string; wrap?: boolean }
+) {
+  const note: Note = {
     actor: actor,
     placement: placement,
     message: message.text,
     wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
   };
 
-  // Coerce actor into a [to, from, ...] array
+  //@ts-ignore: Coerce actor into a [to, from, ...] array
   // eslint-disable-next-line unicorn/prefer-spread
   const actors = [].concat(actor, actor);
-
   state.records.notes.push(note);
   state.records.messages.push({
     from: actors[0],
@@ -335,7 +363,7 @@ export const addNote = function (actor, placement, message) {
   });
 };
 
-export const addLinks = function (actorId, text) {
+export const addLinks = function (actorId: string, text: { text: string }) {
   // find the actor
   const actor = getActor(actorId);
   // JSON.parse the text
@@ -351,17 +379,17 @@ export const addLinks = function (actorId, text) {
   }
 };
 
-export const addALink = function (actorId, text) {
+export const addALink = function (actorId: string, text: { text: string }) {
   // find the actor
   const actor = getActor(actorId);
   try {
-    const links = {};
+    const links: Record<string, string> = {};
     let sanitizedText = sanitizeText(text.text, getConfig());
-    var sep = sanitizedText.indexOf('@');
+    const sep = sanitizedText.indexOf('@');
     sanitizedText = sanitizedText.replace(/&amp;/g, '&');
     sanitizedText = sanitizedText.replace(/&equals;/g, '=');
-    var label = sanitizedText.slice(0, sep - 1).trim();
-    var link = sanitizedText.slice(sep + 1).trim();
+    const label = sanitizedText.slice(0, sep - 1).trim();
+    const link = sanitizedText.slice(sep + 1).trim();
 
     links[label] = link;
     // add the deserialized text to the actor's links field.
@@ -372,26 +400,26 @@ export const addALink = function (actorId, text) {
 };
 
 /**
- * @param {any} actor
- * @param {any} links
+ * @param actor - the actor to add the links to
+ * @param links - the links to add to the actor
  */
-function insertLinks(actor, links) {
+function insertLinks(actor: Actor, links: Record<string, string>) {
   if (actor.links == null) {
     actor.links = links;
   } else {
-    for (let key in links) {
+    for (const key in links) {
       actor.links[key] = links[key];
     }
   }
 }
 
-export const addProperties = function (actorId, text) {
+export const addProperties = function (actorId: string, text: { text: string }) {
   // find the actor
   const actor = getActor(actorId);
   // JSON.parse the text
   try {
-    let sanitizedText = sanitizeText(text.text, getConfig());
-    const properties = JSON.parse(sanitizedText);
+    const sanitizedText = sanitizeText(text.text, getConfig());
+    const properties: Record<string, unknown> = JSON.parse(sanitizedText);
     // add the deserialized text to the actor's property field.
     insertProperties(actor, properties);
   } catch (e) {
@@ -400,30 +428,27 @@ export const addProperties = function (actorId, text) {
 };
 
 /**
- * @param {any} actor
- * @param {any} properties
+ * @param actor - the actor to add the properties to
+ * @param properties - the properties to add to the actor's properties
  */
-function insertProperties(actor, properties) {
+function insertProperties(actor: Actor, properties: Record<string, unknown>) {
   if (actor.properties == null) {
     actor.properties = properties;
   } else {
-    for (let key in properties) {
+    for (const key in properties) {
       actor.properties[key] = properties[key];
     }
   }
 }
 
-/**
- *
- */
 function boxEnd() {
   state.records.currentBox = undefined;
 }
 
-export const addDetails = function (actorId, text) {
+export const addDetails = function (actorId: string, text: { text: string }) {
   // find the actor
   const actor = getActor(actorId);
-  const elem = document.getElementById(text.text);
+  const elem = document.getElementById(text.text)!;
 
   // JSON.parse the text
   try {
@@ -442,7 +467,7 @@ export const addDetails = function (actorId, text) {
   }
 };
 
-export const getActorProperty = function (actor, key) {
+export const getActorProperty = function (actor: Actor, key: string) {
   if (actor !== undefined && actor.properties !== undefined) {
     return actor.properties[key];
   }
@@ -450,20 +475,7 @@ export const getActorProperty = function (actor, key) {
   return undefined;
 };
 
-/**
- * @typedef {object} AddMessageParams A message from one actor to another.
- * @property {string} from - The id of the actor sending the message.
- * @property {string} to - The id of the actor receiving the message.
- * @property {string} msg - The message text.
- * @property {number} signalType - The type of signal.
- * @property {"addMessage"} type - Set to `"addMessage"` if this is an `AddMessageParams`.
- * @property {boolean} [activate] - If `true`, this signal starts an activation.
- */
-
-/**
- * @param {object | object[] | AddMessageParams} param - Object of parameters.
- */
-export const apply = function (param) {
+export const apply = function (param: any | AddMessageParams | AddMessageParams[]) {
   if (Array.isArray(param)) {
     param.forEach(function (item) {
       apply(item);

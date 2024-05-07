@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Block diagram demo page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+  </head>
+
+  <body>
+    <h1>Block diagram demos</h1>
+    <pre id="diagram" class="mermaid">
+block-beta
+columns 1
+  db(("DB"))
+  blockArrowId6<["&nbsp;&nbsp;&nbsp;"]>(down)
+  block:ID
+    A
+    B["A wide one in the middle"]
+    C
+  end
+  space
+  D
+  ID --> D
+  C --> D
+  style B fill:#f9F,stroke:#333,stroke-width:4px
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+    A1["square"]
+    B1("rounded")
+    C1(("circle"))
+    A2>"rect_left_inv_arrow"]
+    B2{"diamond"}
+    C2{{"hexagon"}}
+    </pre>
+
+    <pre id="diagram" class="mermaid">
+block-beta
+    A1(["stadium"])
+    A2[["subroutine"]]
+    B1[("cylinder")]
+    C1>"surprise"]
+    A3[/"lean right"/]
+    B2[\"lean left"\]
+    C2[/"trapezoid"\]
+    D2[\"trapezoid"/]
+    </pre>
+
+    <pre id="diagram" class="mermaid">
+block-beta
+  block:e:4
+    columns 2
+      f
+      g
+  end
+
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+  block:e:4
+    columns 2
+      f
+      g
+      h
+  end
+
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+  columns 3
+  a:3
+  block:e:3
+      f
+      g
+  end
+  h
+  i
+  j
+
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+  columns 4
+  a b c d
+  block:e:4
+    columns 2
+      f
+      g
+      h
+  end
+  i:4
+
+    </pre>
+    <pre id="diagram" class="mermaid">
+flowchart LR
+  X-- "a label" -->z
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+columns 5
+   A space B
+   A --x B
+    </pre>
+    <pre id="diagram" class="mermaid">
+block-beta
+columns 3
+  a["A wide one"] b:2 c:2 d
+    </pre>
+
+    <pre id="diagram" class="mermaid">
+block-beta
+columns 3
+  a b c
+  e:3
+  f g h
+    </pre>
+
+    <pre id="diagram" class="mermaid">
+block-beta
+
+  A1:3
+  A2:1
+  A3
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({
+        theme: 'default',
+        logLevel: 3,
+        securityLevel: 'loose',
+        block: {
+          padding: 10,
+        },
+      });
+    </script>
+  </body>
+</html>

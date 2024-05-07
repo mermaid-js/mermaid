@@ -6,8 +6,9 @@ import { evaluate, sanitizeText } from '../../diagrams/common/common.js';
 import { decodeEntities } from '../../utils.js';
 
 export const labelHelper = async (parent, node, _classes, isNode) => {
+  const config = getConfig();
   let classes;
-  const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig().flowchart.htmlLabels);
+  const useHtmlLabels = node.useHtmlLabels || evaluate(config.flowchart.htmlLabels);
   if (!_classes) {
     classes = 'node default';
   } else {
@@ -39,26 +40,26 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
   let text;
   if (node.labelType === 'markdown') {
     // text = textNode;
-    text = createText(label, sanitizeText(decodeEntities(labelText), getConfig()), {
-      useHtmlLabels,
-      width: node.width || getConfig().flowchart.wrappingWidth,
-      classes: 'markdown-node-label',
-    });
+    text = createText(
+      label,
+      sanitizeText(decodeEntities(labelText), config),
+      {
+        useHtmlLabels,
+        width: node.width || config.flowchart.wrappingWidth,
+        classes: 'markdown-node-label',
+      },
+      config
+    );
   } else {
     text = textNode.appendChild(
-      createLabel(
-        sanitizeText(decodeEntities(labelText), getConfig()),
-        node.labelStyle,
-        false,
-        isNode
-      )
+      createLabel(sanitizeText(decodeEntities(labelText), config), node.labelStyle, false, isNode)
     );
   }
   // Get the size of the label
   let bbox = text.getBBox();
   const halfPadding = node.padding / 2;
 
-  if (evaluate(getConfig().flowchart.htmlLabels)) {
+  if (evaluate(config.flowchart.htmlLabels)) {
     const div = text.children[0];
     const dv = select(text);
 
@@ -80,8 +81,8 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
 
                 if (noImgText) {
                   // default size if no text
-                  const bodyFontSize = getConfig().fontSize
-                    ? getConfig().fontSize
+                  const bodyFontSize = config.fontSize
+                    ? config.fontSize
                     : window.getComputedStyle(document.body).fontSize;
                   const enlargingFactor = 5;
                   const width = parseInt(bodyFontSize, 10) * enlargingFactor + 'px';
@@ -119,6 +120,7 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
     label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
   }
   label.insert('rect', ':first-child');
+
   return { shapeSvg, bbox, halfPadding, label };
 };
 

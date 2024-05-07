@@ -164,6 +164,7 @@ describe('mermaidAPI', () => {
     });
 
     it('decodesEntities', () => {
+      // cspell:ignore brrrr
       const result = cleanUpSvgCode('¶ß brrrr', true, true);
       expect(result).toEqual('; brrrr');
     });
@@ -232,6 +233,8 @@ describe('mermaidAPI', () => {
     const svg_append_spy = vi.spyOn(fauxSvgNode, 'append').mockReturnValue(fauxGNode);
     // @ts-ignore @todo TODO why is this getting a type error?
     const svg_attr_spy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
+
+    // cspell:ignore dthe
 
     it('appends a div node', () => {
       appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
@@ -677,7 +680,7 @@ describe('mermaidAPI', () => {
       await expect(
         mermaidAPI.parse('this is not a mermaid diagram definition')
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        '"No diagram type detected matching given configuration for text: this is not a mermaid diagram definition"'
+        `[UnknownDiagramError: No diagram type detected matching given configuration for text: this is not a mermaid diagram definition]`
       );
     });
     it('returns false for invalid definition with silent option', async () => {
@@ -741,7 +744,7 @@ describe('mermaidAPI', () => {
           const diagramText = `${diagramType}\n accTitle: ${a11yTitle}\n accDescr: ${a11yDescr}\n`;
           const expectedDiagramType = testedDiagram.expectedType;
 
-          it('should set aria-roledscription to the diagram type AND should call addSVGa11yTitleDescription', async () => {
+          it('should set aria-roledescription to the diagram type AND should call addSVGa11yTitleDescription', async () => {
             const a11yDiagramInfo_spy = vi.spyOn(accessibility, 'setA11yDiagramInfo');
             const a11yTitleDesc_spy = vi.spyOn(accessibility, 'addSVGa11yTitleDescription');
             const result = await mermaidAPI.render(id, diagramText);

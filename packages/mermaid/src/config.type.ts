@@ -114,6 +114,14 @@ export interface MermaidConfig {
    */
   secure?: string[];
   /**
+   * This option specifies if Mermaid can expect the dependent to include KaTeX stylesheets for browsers
+   * without their own MathML implementation. If this option is disabled and MathML is not supported, the math
+   * equations are replaced with a warning. If this option is enabled and MathML is not supported, Mermaid will
+   * fall back to legacy rendering for KaTeX.
+   *
+   */
+  legacyMathML?: boolean;
+  /**
    * This option controls if the generated ids of nodes in the SVG are
    * generated randomly or based on a seed.
    * If set to `false`, the IDs are generated based on the current date and
@@ -148,9 +156,17 @@ export interface MermaidConfig {
   c4?: C4DiagramConfig;
   sankey?: SankeyDiagramConfig;
   packet?: PacketDiagramConfig;
+  block?: BlockDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
+  markdownAutoWrap?: boolean;
+  /**
+   * Suppresses inserting 'Syntax error' diagram in the DOM.
+   * This is useful when you want to control how to handle syntax errors in your application.
+   *
+   */
+  suppressErrorRendering?: boolean;
 }
 /**
  * The object containing configurations specific for packet diagrams.
@@ -197,6 +213,15 @@ export interface BaseDiagramConfig {
    *
    */
   useMaxWidth?: boolean;
+}
+/**
+ * The object containing configurations specific for block diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "BlockDiagramConfig".
+ */
+export interface BlockDiagramConfig extends BaseDiagramConfig {
+  padding?: number;
 }
 /**
  * The object containing configurations specific for c4 diagrams

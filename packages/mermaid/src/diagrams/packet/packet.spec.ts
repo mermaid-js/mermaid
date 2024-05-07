@@ -1,3 +1,4 @@
+import { it, describe, expect } from 'vitest';
 import { db } from './db.js';
 import { parser } from './parser.js';
 
@@ -8,24 +9,20 @@ describe('packet diagrams', () => {
     clear();
   });
 
-  it('should handle a packet-beta definition', () => {
+  it('should handle a packet-beta definition', async () => {
     const str = `packet-beta`;
-    expect(() => {
-      parser.parse(str);
-    }).not.toThrow();
+    await expect(parser.parse(str)).resolves.not.toThrow();
     expect(getPacket()).toMatchInlineSnapshot('[]');
   });
 
-  it('should handle diagram with data and title', () => {
+  it('should handle diagram with data and title', async () => {
     const str = `packet-beta
     title Packet diagram
     accTitle: Packet accTitle
     accDescr: Packet accDescription
     0-10: "test"
     `;
-    expect(() => {
-      parser.parse(str);
-    }).not.toThrow();
+    await expect(parser.parse(str)).resolves.not.toThrow();
     expect(getDiagramTitle()).toMatchInlineSnapshot('"Packet diagram"');
     expect(getAccTitle()).toMatchInlineSnapshot('"Packet accTitle"');
     expect(getAccDescription()).toMatchInlineSnapshot('"Packet accDescription"');
@@ -42,14 +39,12 @@ describe('packet diagrams', () => {
     `);
   });
 
-  it('should handle single bits', () => {
+  it('should handle single bits', async () => {
     const str = `packet-beta
     0-10: "test"
     11: "single"
     `;
-    expect(() => {
-      parser.parse(str);
-    }).not.toThrow();
+    await expect(parser.parse(str)).resolves.not.toThrow();
     expect(getPacket()).toMatchInlineSnapshot(`
       [
         [
@@ -68,14 +63,12 @@ describe('packet diagrams', () => {
     `);
   });
 
-  it('should split into multiple rows', () => {
+  it('should split into multiple rows', async () => {
     const str = `packet-beta
     0-10: "test"
     11-90: "multiple"
     `;
-    expect(() => {
-      parser.parse(str);
-    }).not.toThrow();
+    await expect(parser.parse(str)).resolves.not.toThrow();
     expect(getPacket()).toMatchInlineSnapshot(`
       [
         [
@@ -108,14 +101,12 @@ describe('packet diagrams', () => {
     `);
   });
 
-  it('should split into multiple rows when cut at exact length', () => {
+  it('should split into multiple rows when cut at exact length', async () => {
     const str = `packet-beta
     0-16: "test"
     17-63: "multiple"
     `;
-    expect(() => {
-      parser.parse(str);
-    }).not.toThrow();
+    await expect(parser.parse(str)).resolves.not.toThrow();
     expect(getPacket()).toMatchInlineSnapshot(`
       [
         [
@@ -141,52 +132,44 @@ describe('packet diagrams', () => {
     `);
   });
 
-  it('should throw error if numbers are not continuous', () => {
+  it('should throw error if numbers are not continuous', async () => {
     const str = `packet-beta
     0-16: "test"
     18-20: "error"
     `;
-    expect(() => {
-      parser.parse(str);
-    }).toThrowErrorMatchingInlineSnapshot(
-      '"Packet block 18 - 20 is not contiguous. It should start from 17."'
+    await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Packet block 18 - 20 is not contiguous. It should start from 17.]`
     );
   });
 
-  it('should throw error if numbers are not continuous for single packets', () => {
+  it('should throw error if numbers are not continuous for single packets', async () => {
     const str = `packet-beta
     0-16: "test"
     18: "error"
     `;
-    expect(() => {
-      parser.parse(str);
-    }).toThrowErrorMatchingInlineSnapshot(
-      '"Packet block 18 - 18 is not contiguous. It should start from 17."'
+    await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Packet block 18 - 18 is not contiguous. It should start from 17.]`
     );
   });
 
-  it('should throw error if numbers are not continuous for single packets - 2', () => {
+  it('should throw error if numbers are not continuous for single packets - 2', async () => {
     const str = `packet-beta
     0-16: "test"
     17: "good"
     19: "error"
     `;
-    expect(() => {
-      parser.parse(str);
-    }).toThrowErrorMatchingInlineSnapshot(
-      '"Packet block 19 - 19 is not contiguous. It should start from 18."'
+    await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Packet block 19 - 19 is not contiguous. It should start from 18.]`
     );
   });
 
-  it('should throw error if end is less than start', () => {
+  it('should throw error if end is less than start', async () => {
     const str = `packet-beta
     0-16: "test"
     25-20: "error"
     `;
-    expect(() => {
-      parser.parse(str);
-    }).toThrowErrorMatchingInlineSnapshot(
-      '"Packet block 25 - 20 is invalid. End must be greater than start."'
+    await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Packet block 25 - 20 is invalid. End must be greater than start.]`
     );
   });
 });

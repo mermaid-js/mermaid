@@ -1,8 +1,7 @@
 import type { AstNode } from 'langium';
 
-export type { Info, Packet } from './language/index.js';
-export { MermaidParseError, parse } from './parse.js';
-export type { DiagramAST } from './parse.js';
+export * from './language/index.js';
+export * from './parse.js';
 
 /**
  * Exclude/omit all `AstNode` attributes recursively.

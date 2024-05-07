@@ -21,7 +21,7 @@ export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: Mermaid
   let sumOfDirectives: MermaidConfig = {};
   for (const d of _directives) {
     sanitize(d);
-    // Apply the data from the directive where the the overrides the themeVariables
+    // Apply the data from the directive where the overrides the themeVariables
     sumOfDirectives = assignWithDepth(sumOfDirectives, d);
   }
 
@@ -124,7 +124,7 @@ export const setConfig = (conf: MermaidConfig): MermaidConfig => {
  * | --------- | ------------------------- | ----------- | ------------------------------ |
  * | getConfig | Obtains the currentConfig | Get Request | Any Values from current Config |
  *
- * **Notes**: Returns **any** the currentConfig
+ * **Notes**: Avoid calling this function repeatedly. Instead, store the result in a variable and use it, and pass it down to function calls.
  *
  * @returns The currentConfig
  */
