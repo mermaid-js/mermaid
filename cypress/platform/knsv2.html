@@ -73,15 +73,20 @@
   </head>
   <body>
     <pre id="diagram" class="mermaid">
-stateDiagram-v2
-    state ProActive {
-      state Active {
-          APA
-      }
-    }
+stateDiagram
+    state fork_state <<fork>>
+      [*] --> fork_state
+      fork_state --> State2
+      fork_state --> State3
+
+      state join_state <<join>>
+      State2 --> join_state
+      State3 --> join_state
+      join_state --> State4
+      State4 --> [*]
       </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 stateDiagram-v2
     [*] --> Active
 
@@ -100,13 +105,13 @@ stateDiagram-v2
     }
       </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 stateDiagram-v2
     state ProActive {
       state Active {
-    Chimp --> A
-    Chimp --> B
-    Chimp --> C
+        Chimp --> A
+        Chimp --> B
+        Chimp --> C
       }
     }
   </pre
@@ -520,7 +525,8 @@ mindmap
         handdrawn: true,
         layout: 'elk',
         flowchart: { titleTopMargin: 10 },
-        fontFamily: 'Caveat',
+        // fontFamily: 'Caveat',
+        fontFamily: 'Kalam',
         sequence: {
           actorFontFamily: 'courier',
           noteFontFamily: 'courier',

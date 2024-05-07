@@ -17,7 +17,8 @@ const shapes = {
   rect,
   stateStart,
   stateEnd,
-  forkJoin,
+  fork: forkJoin,
+  join: forkJoin,
   choice,
 };
 
