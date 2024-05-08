@@ -13,13 +13,15 @@ interface Node {
   label?: string;
   parentId?: string;
   position?: string;
-  styles?: string;
-  classes?: string;
+  styles?: string; // Pick one, don't need both `styles` & `style`, or have (nodeStyle + labelStyle)
+  style?: string;
+  classes?: string; // Pick one `classes` vs `class`
+  class?: string;
   // Flowchart specific properties
-  labelType?: string;
+  labelType?: string; // Always use markdown string?
   domId: string;
   // Rendering specific properties for both Flowchart and State Diagram nodes
-  dir?: string;
+  dir?: string; // Only relevant for isGroup true, i.e. a sub-graph or composite state.
   haveCallback?: boolean;
   labelStyle?: string;
   labelText?: string;
@@ -31,15 +33,14 @@ interface Node {
   ry?: number;
   shape?: string;
   tooltip?: string;
-  type: string;
+  type: string; // replace with isGroup: boolean, default false
   width?: number;
   height?: number;
 
   // Specific properties for State Diagram nodes TODO remove and use generic properties
   intersect?: (point: any) => any;
-  style?: string;
-  class?: string;
-  borders?: string;
+
+  borders?: string; //Maybe have it similar to nodeStyle, labelStyle, have it as borderStyle (check the usage)
   useRough?: boolean;
 }
 
