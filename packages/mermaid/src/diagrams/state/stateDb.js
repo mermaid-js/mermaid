@@ -755,7 +755,7 @@ const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, altFlag, u
  * @param nodeData
  */
 function insertOrUpdateNode(nodes, nodeData) {
-  if (!nodeData.id || nodeData.id === '</join></fork>') {
+  if (!nodeData.id || nodeData.id === '</join></fork>' || nodeData.id === '</choice>') {
     return;
   }
   const existingNodeData = nodes.find((node) => node.id === nodeData.id);

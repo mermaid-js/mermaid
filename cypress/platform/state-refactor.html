@@ -1,0 +1,1003 @@
+<html>
+
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+  <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    body {
+      /* background: rgb(221, 208, 208); */
+      /* background:#333; */
+      font-family: 'Arial';
+      /* font-size: 18px !important; */
+    }
+
+    table {
+      width: 100%;
+      /* Makes the table take full width */
+      border-collapse: collapse;
+      /* Removes space between borders */
+      table-layout: fixed;
+      /* Ensures that columns have consistent width */
+    }
+
+    th,
+    td {
+      border: 1px solid black;
+      /* Adds border to cells */
+      padding: 10px;
+      /* Adds padding inside cells */
+      text-align: center;
+      /* Centers text in cells */
+      vertical-align: middle;
+      /* Aligns content vertically in the middle */
+    }
+
+    .separator {
+      height: 20px;
+      /* Height of the separator row */
+      background-color: #f0f0f0;
+      /* Light gray background for the separator */
+    }
+
+    .vertical-header {
+      /* writing-mode: vertical-rl; */
+      /* Rotates text for vertical headers */
+      text-align: center;
+      /* Centers the rotated text */
+      /* transform: rotate(180deg); */
+      /* Corrects the orientation of the text */
+    }
+
+    h1 {
+      color: grey;
+    }
+
+
+
+    .mermaid2 {
+      display: none;
+    }
+
+    .mermaid svg {
+      /* font-size: 18px !important; */
+      background-color: #efefef;
+      background-image: radial-gradient(#fff 51%, transparent 91%),
+        radial-gradient(#fff 51%, transparent 91%);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+      background-repeat: repeat;
+    }
+
+    .malware {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 150px;
+      background: red;
+      color: black;
+      display: flex;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: monospace;
+      font-size: 72px;
+    }
+
+    /* tspan {
+        font-size: 6px !important;
+      } */
+  </style>
+</head>
+
+<body>
+  <table>
+    <tr>
+      <th></th> <!-- Placeholder for the top left corner -->
+      <th>Dagre</th>
+      <th>Dagre with rough</th>
+      <th>ELK</th>
+      <th>ELK with rough</th>
+    </tr>
+    <tr>
+      <th class="vertical-header">Simple State (only id)
+        <br />
+        <br />
+        <pre>
+      stateId
+  </pre>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+stateDiagram-v2
+    stateId
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"handdrawn": true} }%%
+stateDiagram-v2
+    stateId
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handdrawn": false, "layout": "elk"} }%%
+stateDiagram-v2
+    stateId
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"handdrawn": true, "layout": "elk"} }%%
+stateDiagram-v2
+    stateId
+
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+    <tr>
+      <th class="vertical-header">State with description with `as` keyword
+        <br />
+        <br />
+        <pre>
+
+    state "description text" as s2
+  </pre>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+stateDiagram-v2
+    state "This is a state description" as s2
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"handdrawn": true} }%%
+stateDiagram-v2
+    state "This is a state description" as s3
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handdrawn": false, "layout": "elk"} }%%
+stateDiagram-v2
+    state "This is a state description" as s4
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"handdrawn": true, "layout": "elk"} }%%
+stateDiagram-v2
+    state "This is a state description" as s5
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+    <tr>
+      <th class="vertical-header">State with description with `:` syntax
+        <br />
+        <br />
+        <pre>
+
+    s2 :  description text
+  </pre>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+stateDiagram-v2
+    s21 : This is a state description
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"handdrawn": true} }%%
+stateDiagram-v2
+    s22 : This is a state description
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handdrawn": false, "layout": "elk"} }%%
+stateDiagram-v2
+    s23 : This is a state description
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"handdrawn": true, "layout": "elk"} }%%
+stateDiagram-v2
+    s24 : This is a state description
+
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+      <tr>
+      <th class="vertical-header">State with transition 
+        <br />
+        <br />
+        <pre>
+
+    s1 --> s2
+
+  </pre>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+
+    stateDiagram-v2
+    s31 --> s32
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"handdrawn": true} }%%
+
+   stateDiagram-v2
+    s41 --> s42
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handdrawn": false, "layout": "elk"} }%%
+stateDiagram-v2
+    s51 --> s52
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"handdrawn": true, "layout": "elk"} }%%
+stateDiagram-v2
+    s61 --> s62
+
+
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+    </tr>
+      <tr>
+      <th class="vertical-header">State transition with label
+        <br />
+        <br />
+        <pre>
+
+    s1 --> s2: A transition
+
+  </pre>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+
+    stateDiagram-v2
+    a1 --> a2: A transition
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"handdrawn": true} }%%
+
+   stateDiagram-v2
+    a3 --> a4: A transition
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handdrawn": false, "layout": "elk"} }%%
+stateDiagram-v2
+    a5 --> a6: A transition
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"handdrawn": true, "layout": "elk"} }%%
+stateDiagram-v2
+   a7 --> a8: A transition
+
+
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+      </tr>
+      <tr>
+      <th class="vertical-header">Start & End
+        <br />
+        <br />
+        <pre>
+
+      [*] --> test
+    test --> [*]
+
+  </pre>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+
+    stateDiagram-v2
+       [*] --> test
+    test --> [*]
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"handdrawn": true} }%%
+
+   stateDiagram-v2
+       [*] --> test
+    test --> [*]
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handdrawn": false, "layout": "elk"} }%%
+stateDiagram-v2
+       [*] --> test
+    test --> [*]
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"handdrawn": true, "layout": "elk"} }%%
+stateDiagram-v2
+      [*] --> test
+    test --> [*]
+
+
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+     </tr>
+      <tr>
+      <th class="vertical-header">Composite state
+        <br />
+        <br />
+        <pre>
+
+      [*] --> First
+    state First {
+        [*] --> second
+        second --> [*]
+    }
+
+  </pre>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+
+    stateDiagram-v2
+       [*] --> First
+    state First {
+        [*] --> second
+        second --> [*]
+    }
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"handdrawn": true} }%%
+
+   stateDiagram-v2
+       [*] --> First
+    state First {
+        [*] --> second
+        second --> [*]
+    }
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handdrawn": false, "layout": "elk"} }%%
+stateDiagram-v2
+       [*] --> First
+    state First {
+        [*] --> second
+        second --> [*]
+    }
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"handdrawn": true, "layout": "elk"} }%%
+stateDiagram-v2
+      [*] --> First
+    state First {
+        [*] --> second
+        second --> [*]
+    }
+
+
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+
+         </tr>
+      <tr>
+      <th class="vertical-header">Nested Composite state
+        <br />
+        <br />
+        <pre>
+
+   
+    [*] --> Level1
+
+    state Level1 {
+        [*] --> Level2
+
+        state Level2 {
+            [*] --> level2
+            level2 --> Level3
+
+            state Level3 {
+                [*] --> level3
+                level3 --> [*]
+            }
+        }
+    }
+
+
+  </pre>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+
+    stateDiagram-v2
+    [*] --> Level1
+
+    state Level1 {
+        [*] --> Level2
+
+        state Level2 {
+            [*] --> level2
+            level2 --> Level3
+
+            state Level3 {
+                [*] --> level3
+                level3 --> [*]
+            }
+        }
+    }
+    
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"handdrawn": true} }%%
+
+   stateDiagram-v2
+    [*] --> Level1
+
+    state Level1 {
+        [*] --> Level2
+
+        state Level2 {
+            [*] --> level2
+            level2 --> Level3
+
+            state Level3 {
+                [*] --> level3
+                level3 --> [*]
+            }
+        }
+    }
+    
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handdrawn": false, "layout": "elk"} }%%
+ stateDiagram-v2
+    [*] --> Level1
+
+    state Level1 {
+        [*] --> Level2
+
+        state Level2 {
+            [*] --> level2
+            level2 --> Level3
+
+            state Level3 {
+                [*] --> level3
+                level3 --> [*]
+            }
+        }
+    }
+    
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"handdrawn": true, "layout": "elk"} }%%
+ stateDiagram-v2
+    [*] --> Level1
+
+    state Level1 {
+        [*] --> Level2
+
+        state Level2 {
+            [*] --> level2
+            level2 --> Level3
+
+            state Level3 {
+                [*] --> level3
+                level3 --> [*]
+            }
+        }
+    }
+    
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+          <tr>
+      <th class="vertical-header">Composite state with transition
+        <br />
+        <br />
+        <pre>
+    [*] --> B1
+    B1 --> B2
+    B1 --> B3
+
+    state B1 {
+        [*] --> B11
+        B11 --> [*]
+    }
+    state B2 {
+        [*] --> B22
+        B22 --> [*]
+    }
+    state B3 {
+        [*] --> B33
+        B33 --> [*]
+    }
+
+
+
+  </pre>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+
+    stateDiagram-v2
+    [*] --> B1
+    B1 --> B2
+    B1 --> B3
+
+    state B1 {
+        [*] --> B11
+        B11 --> [*]
+    }
+    state B2 {
+        [*] --> B22
+        B22 --> [*]
+    }
+    state B3 {
+        [*] --> B33
+        B33 --> [*]
+    }
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"handdrawn": true} }%%
+
+   stateDiagram-v2
+   [*] --> B1
+    B1 --> B2
+    B1 --> B3
+
+    state B1 {
+        [*] --> B11
+        B11 --> [*]
+    }
+    state B2 {
+        [*] --> B22
+        B22 --> [*]
+    }
+    state B3 {
+        [*] --> B33
+        B33 --> [*]
+    }
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handdrawn": false, "layout": "elk"} }%%
+ stateDiagram-v2
+  [*] --> B1
+    B1 --> B2
+    B1 --> B3
+
+    state B1 {
+        [*] --> B11
+        B11 --> [*]
+    }
+    state B2 {
+        [*] --> B22
+        B22 --> [*]
+    }
+    state B3 {
+        [*] --> B33
+        B33 --> [*]
+    }
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"handdrawn": true, "layout": "elk"} }%%
+ stateDiagram-v2
+[*] --> B1
+    B1 --> B2
+    B1 --> B3
+
+    state B1 {
+        [*] --> B11
+        B11 --> [*]
+    }
+    state B2 {
+        [*] --> B22
+        B22 --> [*]
+    }
+    state B3 {
+        [*] --> B33
+        B33 --> [*]
+    }
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+
+          <tr>
+      <th class="vertical-header">Choice
+        <br />
+        <br />
+        <pre>
+    state if_state &lt;&lt;choice&gt;&gt;
+    [*] --> IsPositive
+    IsPositive --> if_state
+    if_state --> False: if n < 0
+    if_state --> True : if n >= 0
+
+
+
+
+  </pre>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+
+    stateDiagram-v2
+    state if_state <<choice>>
+    [*] --> IsPositive
+    IsPositive --> if_state
+    if_state --> False: if n < 0
+    if_state --> True : if n >= 0
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"handdrawn": true} }%%
+
+   stateDiagram-v2
+   state if_state <<choice>>
+    [*] --> IsPositive
+    IsPositive --> if_state
+    if_state --> False: if n < 0
+    if_state --> True : if n >= 0
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handdrawn": false, "layout": "elk"} }%%
+ stateDiagram-v2
+   state if_state <<choice>>
+    [*] --> IsPositive
+    IsPositive --> if_state
+    if_state --> False: if n < 0
+    if_state --> True : if n >= 0
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"handdrawn": true, "layout": "elk"} }%%
+ stateDiagram-v2
+ state if_state <<choice>>
+    [*] --> IsPositive
+    IsPositive --> if_state
+    if_state --> False: if n < 0
+    if_state --> True : if n >= 0
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+              <tr>
+      <th class="vertical-header">Fork & Join
+        <br />
+        <br />
+        <pre>
+    state fork_state &lt;&lt;fork&gt;&gt;
+      [*] --> fork_state
+      fork_state --> State2
+      fork_state --> State3
+
+      state join_state &lt;&lt;join&gt;&gt;
+      State2 --> join_state
+      State3 --> join_state
+      join_state --> State4
+      State4 --> [*]
+
+
+
+  </pre>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+   stateDiagram-v2
+    state fork_state <<fork>>
+      [*] --> fork_state
+      fork_state --> State2
+      fork_state --> State3
+
+      state join_state <<join>>
+      State2 --> join_state
+      State3 --> join_state
+      join_state --> State4
+      State4 --> [*]
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"handdrawn": true} }%%
+   stateDiagram-v2
+    state fork_state <<fork>>
+      [*] --> fork_state
+      fork_state --> State2
+      fork_state --> State3
+
+      state join_state <<join>>
+      State2 --> join_state
+      State3 --> join_state
+      join_state --> State4
+      State4 --> [*]
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handdrawn": false, "layout": "elk"} }%%
+   stateDiagram-v2
+    state fork_state <<fork>>
+      [*] --> fork_state
+      fork_state --> State2
+      fork_state --> State3
+
+      state join_state <<join>>
+      State2 --> join_state
+      State3 --> join_state
+      join_state --> State4
+      State4 --> [*]
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"handdrawn": true, "layout": "elk"} }%%
+   stateDiagram-v2
+    state fork_state <<fork>>
+      [*] --> fork_state
+      fork_state --> State2
+      fork_state --> State3
+
+      state join_state <<join>>
+      State2 --> join_state
+      State3 --> join_state
+      join_state --> State4
+      State4 --> [*]
+
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+                  <tr>
+      <th class="vertical-header">Notes
+        <br />
+        <br />
+        <pre>
+
+  TN1: The state with a note
+  note right of TN1
+      note text
+  end note
+  TN1 --> TN2
+  note left of TN2 : note text
+
+  </pre>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+   stateDiagram-v2
+     TN1: The state with a note
+        note right of TN1
+            Important information! You can write
+            notes.
+        end note
+        TN1 --> TN2
+        note left of TN2 : This is the note to the left.
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"handdrawn": true} }%%
+   stateDiagram-v2
+     TN3: The state with a note
+        note right of TN3
+            Important information! You can write
+            notes.
+        end note
+        TN3 --> TN4
+        note left of TN4 : This is the note to the left.
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handdrawn": false, "layout": "elk"} }%%
+   stateDiagram-v2
+     TN5: The state with a note
+        note right of TN5
+            Important information! You can write
+            notes.
+        end note
+        TN5 --> TN6
+        note left of TN6 : This is the note to the left.
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"handdrawn": true, "layout": "elk"} }%%
+   stateDiagram-v2
+     TN7: The state with a note
+        note right of TN7
+            Important information! You can write
+            notes.
+        end note
+        TN7 --> TN8
+        note left of TN8 : This is the note to the left.
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+    <!-- New row -->
+    <tr>
+      <th class="vertical-header">Additional Content</th>
+      <td>New content 1</td>
+      <td>New content 2</td>
+      <td>New content 3</td>
+      <td>New content 4</td>
+    </tr>
+  </table>
+
+
+  <script type="module">
+    import mermaid from './mermaid.esm.mjs';
+    mermaid.parseError = function (err, hash) {
+
+    };
+
+    mermaid.initialize({
+      handdrawn: false,
+      layout: 'dagre',
+      flowchart: { titleTopMargin: 10 },
+      // fontFamily: 'Caveat',
+      fontFamily: 'Kalam',
+      sequence: {
+        actorFontFamily: 'courier',
+        noteFontFamily: 'courier',
+        messageFontFamily: 'courier',
+      },
+      fontSize: 16,
+      logLevel: 0,
+    });
+    function callback() {
+      alert('It worked');
+    }
+    mermaid.parseError = function (err, hash) {
+      console.error('In parse error:');
+      console.error(err);
+    };
+
+  </script>
+</body>
+
+</html>
