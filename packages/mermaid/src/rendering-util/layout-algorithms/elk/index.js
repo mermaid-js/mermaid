@@ -1,5 +1,3 @@
-import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
-import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import insertMarkers from '../../rendering-elements/markers.js';
 import { findCommonAncestor } from './find-common-ancestor.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
@@ -79,18 +77,6 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
     await addVertices(nodeEl, nodeArr, child, node.id);
 
     // We need the label hight to be able to size the subgraph;
-    //       // svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
-    //       // const rows = vertexText.split(common.lineBreakRegex);
-    //       // for (const row of rows) {
-    //       //   const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-    //       //   tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
-    //       //   tspan.setAttribute('dy', '1em');
-    //       //   tspan.setAttribute('x', '1');
-    //       //   tspan.textContent = row;
-    //       //   svgLabel.appendChild(tspan);
-    //       // }
-    //       // vertexNode = svgLabel;
-    //       // const bbox = vertexNode.getBBox();
     const { shapeSvg, bbox } = await labelHelper(nodeEl, node, undefined, true);
     labelData.width = bbox.width;
     labelData.wrappingWidth = getConfig().flowchart.wrappingWidth;
@@ -128,7 +114,7 @@ const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
         height: node.height,
       };
       if (node.type === 'group') {
-        log.debug('Id abc88 subgraph (DAGA)= ', node.id, node.x, node.y, node.labelData);
+        log.debug('Id abc88 subgraph = ', node.id, node.x, node.y, node.labelData);
         const subgraphEl = subgraphsEl.insert('g').attr('class', 'subgraph');
         const clusterNode = JSON.parse(JSON.stringify(node));
         clusterNode.x = node.offset.posX + node.width / 2;
@@ -141,7 +127,7 @@ const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
         log.info('Id (UGH)= ', node.shape, node.labels);
       } else {
         log.info(
-          'Id NODE (DAGA)= ',
+          'Id NODE = ',
           node.id,
           node.x,
           node.y,
@@ -284,7 +270,6 @@ const getEdgeStartEndPoint = (edge, dir) => {
 };
 
 const calcOffset = function (src, dest, parentLookupDb) {
-  console.log('DAGA src dest', src, dest, parentLookupDb);
   const ancestor = findCommonAncestor(src, dest, parentLookupDb);
   if (ancestor === undefined || ancestor === 'root') {
     return { x: 0, y: 0 };
@@ -306,7 +291,7 @@ const calcOffset = function (src, dest, parentLookupDb) {
  * @param svg
  */
 export const addEdges = function (dataForLayout, graph, svg) {
-  log.info('abc78 edges = ', dataForLayout);
+  log.info('abc78 DAGA edges = ', dataForLayout);
   const edges = dataForLayout.edges;
   const labelsEl = svg.insert('g').attr('class', 'edgeLabels');
   let linkIdCnt = {};
@@ -326,13 +311,14 @@ export const addEdges = function (dataForLayout, graph, svg) {
       log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
     }
     let linkId = linkIdBase + '-' + linkIdCnt[linkIdBase];
+    edge.id = linkId;
     log.info('abc78 new link id to be used is', linkIdBase, linkId, linkIdCnt[linkIdBase]);
     const linkNameStart = 'LS-' + edge.start;
     const linkNameEnd = 'LE-' + edge.end;
 
     const edgeData = { style: '', labelStyle: '' };
     edgeData.minlen = edge.length || 1;
-
+    edge.text = edge.label;
     // Set link type for rendering
     if (edge.type === 'arrow_open') {
       edgeData.arrowhead = 'none';
@@ -545,9 +531,9 @@ export const render = async (data4Layout, svg, element) => {
     }
   });
 
-  log.info('before layout abc88', JSON.stringify(elkGraph, null, 2));
+  log.info('before layout', JSON.stringify(elkGraph, null, 2));
   const g = await elk.layout(elkGraph);
-  log.info('after layout abc88 DAGA', g);
+  log.info('after layout DAGA', g);
 
   // debugger;
   drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
@@ -559,7 +545,6 @@ export const render = async (data4Layout, svg, element) => {
     const targetId = edge.end.id;
 
     const offset = calcOffset(sourceId, targetId, parentLookupDb);
-    // const offset = { x: 50, y: 25 };
 
     const src = edge.sections[0].startPoint;
     const dest = edge.sections[0].endPoint;
@@ -583,6 +568,10 @@ export const render = async (data4Layout, svg, element) => {
       edge.points
     );
 
-    insertEdge(edgesEl, edge, clusterDb, data4Layout.type, g, data4Layout.diagramId);
+    const paths = insertEdge(edgesEl, edge, clusterDb, data4Layout.type, g, data4Layout.diagramId);
+
+    edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
+    edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
+    positionEdgeLabel(edge, paths);
   });
 };

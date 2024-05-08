@@ -77,10 +77,15 @@ export const rect = async (parent: SVGAElement, node: Node) => {
       rx || ry
         ? rc.path(createRoundedRectPathD(x, y, totalWidth, totalHeight, rx || 0), {
             roughness: 0.7,
+            fill:'white',
+            fillStyle: 'solid' // solid fill'
           })
         : rc.rectangle(x, y, totalWidth, totalHeight);
 
-    rect = shapeSvg.insert(() => roughNode);
+    rect = shapeSvg.insert(() => roughNode, ':first-child');
+        rect
+      .attr('class', 'basic label-container')
+      .attr('style', style)
   } else {
     rect = shapeSvg.insert('rect', ':first-child');
 

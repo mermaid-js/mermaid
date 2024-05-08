@@ -846,8 +846,6 @@ export const getData = () => {
   extract(getRootDocV2());
   const diagramStates = getStates();
 
-  console.log('Config - DAGA', getConfig());
-
   const useRough = getConfig().handdrawn;
   dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, useRough);
 

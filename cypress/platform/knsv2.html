@@ -32,7 +32,7 @@
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        background: #333;
+        /* background: #333; */
         font-family: 'Arial';
         /* font-size: 18px !important; */
       }
@@ -49,8 +49,8 @@
       .mermaid svg {
         /* font-size: 18px !important; */
         /* background-color: #efefef; */
-        background-color: #333;
-        background-image: radial-gradient(#333 51%, transparent 91%),
+        /* background-color: #333; */
+        /* background-image: radial-gradient(#333 51%, transparent 91%), */
           radial-gradient(#333 51%, transparent 91%);
         background-size: 20px 20px;
         background-position: 0 0, 10px 10px;
@@ -79,152 +79,49 @@
   </head>
   <body>
     <pre id="diagram" class="mermaid">
-      block-beta
-  blockArrowId<["Label"]>(right)
-  blockArrowId2<["Label"]>(left)
-  blockArrowId3<["Label"]>(up)
-  blockArrowId4<["Label"]>(down)
-  blockArrowId5<["Label"]>(x)
-  blockArrowId6<["Label"]>(y)
-  blockArrowId6<["Label"]>(x, down)
-    </pre>
-    <pre id="diagram" class="mermaid">
-block-beta
-  block:e:4
-    columns 2
-      f
-      g
-  end
-
-    </pre>
-    <pre id="diagram" class="mermaid">
-block-beta
-  block:e:4
-    columns 2
-      f
-      g
-      h
-  end
-
-    </pre>
-    <pre id="diagram" class="mermaid">
-block-beta
-  columns 4
-  a b c d
-  block:e:4
-    columns 2
-      f
-      g
-      h
-  end
-  i:4
-
-      state join_state <<join>>
-      State2 --> join_state
-      State3 --> join_state
-      join_state --> State4
-      State4 --> [*]
+stateDiagram
+NumLockOff --> NumLockOn : EvNumLockPressed
       </pre
     >
     <pre id="diagram" class="mermaid2">
-flowchart LR
-  X-- "y" -->z
-    </pre>
+stateDiagram
+  State1: The state with a note
+  note right of State1
+      Important information! You can write
+      notes.
+  end note
+      </pre
+    >
     <pre id="diagram" class="mermaid2">
-block-beta
-columns 5
-   A space B
-   A --x B
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-columns 3
-  a["A wide one"] b:2 c:2 d
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-  block:e
-      f
-  end
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-  columns 3
-  a:3
-  block:e:3
-      f
-  end
-  g
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-  columns 3
-  a:3
-  block:e:3
-      f
-      g
-  end
-  h
-  i
-  j
+stateDiagram-v2
+    [*] --> Active
 
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-columns 3
-  a b:2
-  block:e:3
-      f
-  end
-  g h i
-    </pre>
+    state Active {
+        [*] --> NumLockOff
+        NumLockOff --> NumLockOn : EvNumLockPressed
+        NumLockOn --> NumLockOff : EvNumLockPressed
+        --
+        [*] --> CapsLockOff
+        CapsLockOff --> CapsLockOn : EvCapsLockPressed
+        CapsLockOn --> CapsLockOff : EvCapsLockPressed
+        --
+        [*] --> ScrollLockOff
+        ScrollLockOff --> ScrollLockOn : EvScrollLockPressed
+        ScrollLockOn --> ScrollLockOff : EvScrollLockPressed
+    }
+      </pre
+    >
     <pre id="diagram" class="mermaid">
-block-beta
-columns 3
-  a b c
-  e:3
-  f g h
-    </pre>
-    <pre id="diagram" class="mermaid">
-block-beta
-columns 1
-  db(("DB"))
-  blockArrowId6<["&nbsp;&nbsp;&nbsp;"]>(down)
-  block:ID
-    A
-    B["A wide one in the middle"]
-    C
-  end
-  space
-  D
-  ID --> D
-  C --> D
-  style B fill:#f9F,stroke:#333,stroke-width:4px
-    </pre>
-    <pre id="diagram" class="mermaid">
-block-beta
-  columns 5
-  A1:3
-  A2:1
-  A3
-  B1 B2 B3:3
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-  block
-    D
-    E
-  end
-  db("This is the text in the box")
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-
-      block
-        D
-      end
-      A["A: I am a wide one"]
-    </pre>
+stateDiagram-v2
+    state ProActive {
+      state Active {
+        Chimp --> A:One
+        Chimp --> B:Two
+        Chimp --> C:Three
+      }
+    }
+  </pre
+    >
     <pre id="diagram" class="mermaid2">
 block-beta
     A["square"]
@@ -615,8 +512,18 @@ mindmap
       //   useMaxWidth: false,
       // });
       mermaid.initialize({
-        theme: 'dark',
-        startOnLoad: true,
+        handdrawn: true,
+        // layout: 'dagre',
+        layout: 'elk',
+        flowchart: { titleTopMargin: 10 },
+        // fontFamily: 'Caveat',
+        fontFamily: 'Kalam',
+        sequence: {
+          actorFontFamily: 'courier',
+          noteFontFamily: 'courier',
+          messageFontFamily: 'courier',
+        },
+        fontSize: 16,
         logLevel: 0,
       });
       function callback() {

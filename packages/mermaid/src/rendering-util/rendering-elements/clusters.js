@@ -236,19 +236,37 @@ const divider = (parent, node) => {
   const shapeSvg = parent.insert('g').attr('class', node.classes).attr('id', node.id);
 
   // add the rect
-  const rect = shapeSvg.insert('rect', ':first-child');
+  let rect;
 
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
 
-  // center the rect around its coordinate
-  rect
-    .attr('class', 'divider')
-    .attr('x', node.x - node.width / 2 - halfPadding)
-    .attr('y', node.y - node.height / 2)
-    .attr('width', node.width + padding)
-    .attr('height', node.height + padding);
+  const x = node.x - node.width / 2 - halfPadding;
+  const y = node.y - node.height / 2;
+  const width = node.width + padding;
+  const height = node.height + padding;
+  if (node.useRough) {
+    const rc = rough.svg(shapeSvg);
+    const roughNode = rc.rectangle(x, y, width, height, {
+      fill: 'grey',
+      roughness: 0.5,
+      // bowing: 6,
+      // stroke: 'green',
+      // strokeWidth: 3,
+      strokeLineDash: [5],
+    });
 
+    rect = shapeSvg.insert(() => roughNode);
+  } else {
+    rect = shapeSvg.insert('rect', ':first-child');
+    // center the rect around its coordinate
+    rect
+      .attr('class', 'divider')
+      .attr('x', x)
+      .attr('y', y)
+      .attr('width', width)
+      .attr('height', height);
+  }
   const rectBox = rect.node().getBBox();
   node.width = rectBox.width;
   node.height = rectBox.height;
