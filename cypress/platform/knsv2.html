@@ -4,7 +4,7 @@
     <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/font-awesome.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
     <link
       href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
@@ -32,30 +32,25 @@
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        /* background: #333; */
+        /* background:#333; */
         font-family: 'Arial';
         /* font-size: 18px !important; */
       }
       h1 {
         color: grey;
       }
-      .mermaid {
-        border: 1px solid #ddd;
-        margin: 10px;
-      }
       .mermaid2 {
         display: none;
       }
       .mermaid svg {
         /* font-size: 18px !important; */
-        /* background-color: #efefef; */
-        /* background-color: #333; */
-        /* background-image: radial-gradient(#333 51%, transparent 91%), */
-          radial-gradient(#333 51%, transparent 91%);
+
+        background-color: #efefef;
+        background-image: radial-gradient(#fff 51%, transparent 91%),
+          radial-gradient(#fff 51%, transparent 91%);
         background-size: 20px 20px;
         background-position: 0 0, 10px 10px;
         background-repeat: repeat;
-        border: 2px solid rgb(131, 142, 205);
       }
       .malware {
         position: fixed;
@@ -73,8 +68,8 @@
         font-size: 72px;
       }
       /* tspan {
-        font-size: 6px !important;
-      } */
+              font-size: 6px !important;
+            } */
     </style>
   </head>
   <body>
@@ -165,9 +160,10 @@ flowchart
 
     <pre id="diagram" class="mermaid2">
 flowchart RL
-  subgraph "`one`"
-    id
-  end
+    subgraph "`one`"
+      a1 -- l1 --> a2
+      a1 -- l2 --> a2
+    end
     </pre>
     <pre id="diagram" class="mermaid2">
 flowchart RL

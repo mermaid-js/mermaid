@@ -45,6 +45,7 @@ import {
   PARENT_ID,
   NOTE,
   PARENT,
+  CSS_EDGE_NOTE_EDGE,
 } from './stateCommon.js';
 import { node } from 'stylis';
 
@@ -704,7 +705,7 @@ const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, altFlag, u
       //add parent id to groupData
       groupData.id = parentNodeId;
       //add parent id to noteData
-      noteData.parentId = parentId;
+      noteData.parentId = parentNodeId;
 
       //insert groupData
       insertOrUpdateNode(nodes, groupData);
@@ -754,6 +755,9 @@ const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, altFlag, u
  * @param nodeData
  */
 function insertOrUpdateNode(nodes, nodeData) {
+  if (!nodeData.id || nodeData.id === '</join></fork>') {
+    return;
+  }
   const existingNodeData = nodes.find((node) => node.id === nodeData.id);
   if (existingNodeData) {
     //update the existing nodeData
