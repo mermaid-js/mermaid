@@ -180,6 +180,13 @@ properties:
       fall back to legacy rendering for KaTeX.
     type: boolean
     default: false
+  forceLegacyMathML:
+    description: |
+      This option forces Mermaid to rely on KaTeX's own stylesheet for rendering MathML. Due to differences between OS 
+      fonts and browser's MathML implementation, this option is recommended if consistent rendering is important.
+      If set to true, ignores legacyMathML.
+    type: boolean
+    default: false
   deterministicIds:
     description: |
       This option controls if the generated ids of nodes in the SVG are
