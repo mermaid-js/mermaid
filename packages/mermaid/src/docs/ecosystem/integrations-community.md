@@ -235,6 +235,8 @@ Communication tools and platforms
 
 ### Other
 
+- [Astro](https://astro.build/)
+  - [Adding diagrams to your Astro site with MermaidJS and Playwright](https://agramont.net/blog/diagraming-with-mermaidjs-astro/)
 - [Bisheng](https://www.npmjs.com/package/bisheng)
   - [bisheng-plugin-mermaid](https://github.com/yct21/bisheng-plugin-mermaid)
 - [Blazorade Mermaid: Render Mermaid diagrams in Blazor applications](https://github.com/Blazorade/Blazorade-Mermaid/wiki)
@@ -254,7 +256,5 @@ Communication tools and platforms
   - [reveal-ck-mermaid-plugin](https://github.com/tmtm/reveal-ck-mermaid-plugin)
 - [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
-- [Astro](https://astro.build/)
-  - [Adding diagrams to your Astro site with MermaidJS and Playwright](https://agramont.net/blog/diagraming-with-mermaidjs-astro/)
 
 <!--- cspell:ignore Blazorade HueHive --->
