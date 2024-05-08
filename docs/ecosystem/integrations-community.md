@@ -251,6 +251,7 @@ Communication tools and platforms
 - [Jekyll](https://jekyllrb.com/)
   - [jekyll-mermaid](https://rubygems.org/gems/jekyll-mermaid)
   - [jekyll-mermaid-diagrams](https://github.com/fuzhibo/jekyll-mermaid-diagrams)
+- [MarkChart: Preview Mermaid diagrams on macOS](https://markchart.app/)
 - [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
 - [NiceGUI: Let any browser be the frontend of your Python code](https://nicegui.io) ✅
