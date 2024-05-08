@@ -42,6 +42,8 @@ interface Node {
 
   borders?: string; //Maybe have it similar to nodeStyle, labelStyle, have it as borderStyle (check the usage)
   useRough?: boolean;
+  useHtmlLabels?: boolean;
+  centerLabel?: boolean;
 }
 
 // Common properties for any edge in the system

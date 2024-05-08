@@ -4,6 +4,7 @@ import { stateStart } from './shapes/stateStart.ts';
 import { stateEnd } from './shapes/stateEnd.ts';
 import { forkJoin } from './shapes/forkJoin.ts';
 import { choice } from './shapes/choice.ts';
+import {note} from './shapes/note.ts';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 const formatClass = (str) => {
@@ -20,6 +21,7 @@ const shapes = {
   fork: forkJoin,
   join: forkJoin,
   choice,
+  note,
 };
 
 let nodeElems = {};
