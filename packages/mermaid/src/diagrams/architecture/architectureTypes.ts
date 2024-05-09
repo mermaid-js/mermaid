@@ -199,11 +199,13 @@ export interface ArchitectureGroup {
 export interface ArchitectureEdge {
   lhsId: string;
   lhsDir: ArchitectureDirection;
-  title?: string;
+  lhsInto?: boolean;
+  lhsGroup?: boolean;
   rhsId: string;
   rhsDir: ArchitectureDirection;
-  lhsInto?: boolean;
   rhsInto?: boolean;
+  rhsGroup?: boolean;
+  title?: string;
 }
 
 export interface ArchitectureDB extends DiagramDB {
@@ -246,9 +248,11 @@ export type EdgeSingularData = {
   source: string;
   sourceDir: ArchitectureDirection;
   sourceArrow?: boolean;
+  sourceGroup?: boolean;
   target: string;
   targetDir: ArchitectureDirection;
   targetArrow?: boolean;
+  targetGroup?: boolean;
   [key: string]: any;
 };
 
@@ -274,23 +278,23 @@ export interface EdgeSingular extends cytoscape.EdgeSingular {
 
 export type NodeSingularData =
   | {
-      type: 'service';
-      id: string;
-      icon?: string;
-      label?: string;
-      parent?: string;
-      width: number;
-      height: number;
-      [key: string]: any;
-    }
+    type: 'service';
+    id: string;
+    icon?: string;
+    label?: string;
+    parent?: string;
+    width: number;
+    height: number;
+    [key: string]: any;
+  }
   | {
-      type: 'group';
-      id: string;
-      icon?: string;
-      label?: string;
-      parent?: string;
-      [key: string]: any;
-    };
+    type: 'group';
+    id: string;
+    icon?: string;
+    label?: string;
+    parent?: string;
+    [key: string]: any;
+  };
 
 export const nodeData = (node: cytoscape.NodeSingular) => {
   return node.data() as NodeSingularData;

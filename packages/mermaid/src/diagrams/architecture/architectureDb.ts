@@ -128,6 +128,8 @@ const addEdge = function ({
   rhsDir,
   lhsInto,
   rhsInto,
+  lhsGroup,
+  rhsGroup,
   title,
 }: ArchitectureEdge) {
   if (!isArchitectureDirection(lhsDir)) {
@@ -152,14 +154,29 @@ const addEdge = function ({
     );
   }
 
+  const lhsGroupId = state.records.services[lhsId].in
+  const rhsGroupId = state.records.services[rhsId].in
+  if (lhsGroup && lhsGroupId && rhsGroupId && lhsGroupId == rhsGroupId) {
+    throw new Error(
+      `The left-hand id [${lhsId}] is modified to traverse the group boundary, but the edge does not pass through two groups.`
+    )
+  }
+  if (rhsGroup && lhsGroupId && rhsGroupId && lhsGroupId == rhsGroupId) {
+    throw new Error(
+      `The right-hand id [${rhsId}] is modified to traverse the group boundary, but the edge does not pass through two groups.`
+    )
+  }
+
   const edge = {
     lhsId,
     lhsDir,
+    lhsInto,
+    lhsGroup,
     rhsId,
     rhsDir,
-    title,
-    lhsInto,
     rhsInto,
+    rhsGroup,
+    title,
   };
 
   state.records.edges.push(edge);

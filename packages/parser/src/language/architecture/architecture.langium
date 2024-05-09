@@ -30,7 +30,7 @@ Service:
 ;
 
 Edge:
-    lhsId=ARCH_ID Arrow rhsId=ARCH_ID EOL
+    lhsId=ARCH_ID lhsGroup?=ARROW_GROUP? Arrow rhsId=ARCH_ID rhsGroup?=ARROW_GROUP? EOL
 ;
 
 terminal ARROW_DIRECTION: 'L' | 'R' | 'T' | 'B';
@@ -38,4 +38,5 @@ terminal ARCH_ID: /[\w]+/;
 terminal ARCH_TEXT_ICON: /\("[^"]+"\)/;
 terminal ARCH_ICON: /\([\w]+\)/;
 terminal ARCH_TITLE: /\[[\w ]+\]/;
+terminal ARROW_GROUP: /\{group\}/;
 terminal ARROW_INTO: /\(|\)/;

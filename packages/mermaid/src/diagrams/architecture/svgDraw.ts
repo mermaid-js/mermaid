@@ -22,17 +22,37 @@ import { getConfigField } from './architectureDb.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 
 export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
+  const padding = getConfigField('padding');
   const iconSize = getConfigField('iconSize');
   const arrowSize = iconSize / 6;
   const halfArrowSize = arrowSize / 2;
 
   cy.edges().map((edge, id) => {
-    const { sourceDir, sourceArrow, targetDir, targetArrow, label } = edgeData(edge);
-    const { x: startX, y: startY } = edge[0].sourceEndpoint();
+    const { sourceDir, sourceArrow, sourceGroup, targetDir, targetArrow, targetGroup, label } = edgeData(edge);
+    let { x: startX, y: startY } = edge[0].sourceEndpoint();
     const { x: midX, y: midY } = edge[0].midpoint();
-    const { x: endX, y: endY } = edge[0].targetEndpoint();
+    let { x: endX, y: endY } = edge[0].targetEndpoint();
+
+    const groupEdgeShift = padding + 4;
+    // +18 comes from the service label height that extends the padding on the bottom side of each group
+    if (sourceGroup) {
+      if (isArchitectureDirectionX(sourceDir)) {
+        sourceDir === 'L' ? startX -= groupEdgeShift : startX += groupEdgeShift;
+      } else {
+        sourceDir === 'T' ? startY -= groupEdgeShift : startY += (groupEdgeShift + 18);
+      }
+    }
+
+    if (targetGroup) {
+      if (isArchitectureDirectionX(targetDir)) {
+        targetDir === 'L' ? endX -= groupEdgeShift : endX += groupEdgeShift;
+      } else {
+        targetDir === 'T' ? endY -= groupEdgeShift : endY += (groupEdgeShift + 18);
+      }
+    }
+
     if (edge[0]._private.rscratch) {
-      const bounds = edge[0]._private.rscratch;
+      // const bounds = edge[0]._private.rscratch;
 
       const g = edgesEl.insert('g');
 
@@ -42,11 +62,11 @@ export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
 
       if (sourceArrow) {
         const xShift = isArchitectureDirectionX(sourceDir)
-          ? ArchitectureDirectionArrowShift[sourceDir](bounds.startX, arrowSize)
-          : bounds.startX - halfArrowSize;
+          ? ArchitectureDirectionArrowShift[sourceDir](startX, arrowSize)
+          : startX - halfArrowSize;
         const yShift = isArchitectureDirectionY(sourceDir)
-          ? ArchitectureDirectionArrowShift[sourceDir](bounds.startY, arrowSize)
-          : bounds.startY - halfArrowSize;
+          ? ArchitectureDirectionArrowShift[sourceDir](startY, arrowSize)
+          : startY - halfArrowSize;
 
         g.insert('polygon')
           .attr('points', ArchitectureDirectionArrow[sourceDir](arrowSize))
@@ -55,11 +75,11 @@ export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
       }
       if (targetArrow) {
         const xShift = isArchitectureDirectionX(targetDir)
-          ? ArchitectureDirectionArrowShift[targetDir](bounds.endX, arrowSize)
-          : bounds.endX - halfArrowSize;
+          ? ArchitectureDirectionArrowShift[targetDir](endX, arrowSize)
+          : endX - halfArrowSize;
         const yShift = isArchitectureDirectionY(targetDir)
-          ? ArchitectureDirectionArrowShift[targetDir](bounds.endY, arrowSize)
-          : bounds.endY - halfArrowSize;
+          ? ArchitectureDirectionArrowShift[targetDir](endY, arrowSize)
+          : endY - halfArrowSize;
 
         g.insert('polygon')
           .attr('points', ArchitectureDirectionArrow[targetDir](arrowSize))
@@ -165,10 +185,10 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
         bkgElem.attr(
           'transform',
           'translate(' +
-            (shiftedX1 + halfIconSize + 1) +
-            ', ' +
-            (shiftedY1 + halfIconSize + 1) +
-            ')'
+          (shiftedX1 + halfIconSize + 1) +
+          ', ' +
+          (shiftedY1 + halfIconSize + 1) +
+          ')'
         );
         shiftedX1 += groupIconSize;
         // TODO: test with more values
@@ -196,10 +216,10 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
         textElem.attr(
           'transform',
           'translate(' +
-            (shiftedX1 + halfIconSize + 4) +
-            ', ' +
-            (shiftedY1 + halfIconSize + 2) +
-            ')'
+          (shiftedX1 + halfIconSize + 4) +
+          ', ' +
+          (shiftedY1 + halfIconSize + 2) +
+          ')'
         );
       }
     }
