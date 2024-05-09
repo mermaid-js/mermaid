@@ -520,6 +520,78 @@ describe('when parsing a gitGraph', function () {
     ]);
   });
 
+  it('should handle new branch switch', function () {
+    const str = `gitGraph:
+    commit
+    branch testBranch
+    switch testBranch
+    `;
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+    expect(Object.keys(commits).length).toBe(1);
+    expect(parser.yy.getCurrentBranch()).toBe('testBranch');
+    expect(parser.yy.getDirection()).toBe('LR');
+    expect(Object.keys(parser.yy.getBranches()).length).toBe(2);
+  });
+
+  it('should handle new branch switch & commit', function () {
+    const str = `gitGraph:
+    commit
+    branch testBranch
+    switch testBranch
+    commit
+    `;
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+    expect(Object.keys(commits).length).toBe(2);
+    expect(parser.yy.getCurrentBranch()).toBe('testBranch');
+    expect(parser.yy.getDirection()).toBe('LR');
+    expect(Object.keys(parser.yy.getBranches()).length).toBe(2);
+    const commit1 = Object.keys(commits)[0];
+    const commit2 = Object.keys(commits)[1];
+    expect(commits[commit1].branch).toBe('main');
+    expect(commits[commit1].parents).toStrictEqual([]);
+    expect(commits[commit2].branch).toBe('testBranch');
+    expect(commits[commit2].parents).toStrictEqual([commit1]);
+  });
+
+  it('should handle new branch switch & commit and merge', function () {
+    const str = `gitGraph:
+    commit
+    branch testBranch
+    switch testBranch
+    commit
+    commit
+    switch main
+    merge testBranch
+    `;
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+    expect(Object.keys(commits).length).toBe(4);
+    expect(parser.yy.getCurrentBranch()).toBe('main');
+    expect(parser.yy.getDirection()).toBe('LR');
+    expect(Object.keys(parser.yy.getBranches()).length).toBe(2);
+    const commit1 = Object.keys(commits)[0];
+    const commit2 = Object.keys(commits)[1];
+    const commit3 = Object.keys(commits)[2];
+    const commit4 = Object.keys(commits)[3];
+    expect(commits[commit1].branch).toBe('main');
+    expect(commits[commit1].parents).toStrictEqual([]);
+    expect(commits[commit2].branch).toBe('testBranch');
+    expect(commits[commit2].parents).toStrictEqual([commits[commit1].id]);
+    expect(commits[commit3].branch).toBe('testBranch');
+    expect(commits[commit3].parents).toStrictEqual([commits[commit2].id]);
+    expect(commits[commit4].branch).toBe('main');
+    expect(commits[commit4].parents).toStrictEqual([commits[commit1].id, commits[commit3].id]);
+    expect(parser.yy.getBranchesAsObjArray()).toStrictEqual([
+      { name: 'main' },
+      { name: 'testBranch' },
+    ]);
+  });
+
   it('should handle merge tags', function () {
     const str = `gitGraph:
     commit

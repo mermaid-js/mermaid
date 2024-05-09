@@ -24,7 +24,7 @@
 #   you may need to add it to `.build/jsonSchema.ts`, `src/docs.mts`
 #   and `scripts/create-types-from-json-schema.mjs`
 #   to get the default values/docs/types to generate properly.
-$id: https://mermaid-js.github.io/schemas/config.schema.json
+$id: https://mermaid.js.org/schemas/config.schema.json
 $schema: https://json-schema.org/draft/2019-09/schema
 title: Mermaid Config
 type: object
@@ -186,7 +186,13 @@ properties:
       This option specifies an object contianing a mappig of SVG icon names to a resolver that returns the svg code.
       For supported diagrams (i.e., Architecture), their syntax allows refering to key names in this object to display the corresponding SVG icon in the rendered diagram.
     tsType: Array<import('./rendering-util/svgRegister.js').IconLibrary>
-    # tsType: Record<string, IconResolver>
+  forceLegacyMathML:
+    description: |
+      This option forces Mermaid to rely on KaTeX's own stylesheet for rendering MathML. Due to differences between OS 
+      fonts and browser's MathML implementation, this option is recommended if consistent rendering is important.
+      If set to true, ignores legacyMathML.
+    type: boolean
+    default: false
   deterministicIds:
     description: |
       This option controls if the generated ids of nodes in the SVG are
