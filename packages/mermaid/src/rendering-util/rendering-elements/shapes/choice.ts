@@ -2,7 +2,7 @@ import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import type { SVG } from '$root/diagram-api/types.js';
 import rough from 'roughjs';
-import solidFillOptions from './solidFillOptions.js';
+import { solidStateFill } from './handdrawnStyles.js';
 export const choice = (parent: SVG, node: Node) => {
   const shapeSvg = parent
     .insert('g')
@@ -23,7 +23,7 @@ export const choice = (parent: SVG, node: Node) => {
     const pointArr = points.map(function (d) {
       return [d.x, d.y];
     });
-    const roughNode = rc.polygon(pointArr, solidFillOptions);
+    const roughNode = rc.polygon(pointArr, solidStateFill('black'));
     choice = shapeSvg.insert(() => roughNode);
   } else {
     choice = shapeSvg.insert('polygon', ':first-child').attr(

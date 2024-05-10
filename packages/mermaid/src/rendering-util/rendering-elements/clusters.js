@@ -134,6 +134,12 @@ const noteGroup = (parent, node) => {
 const roundedWithTitle = (parent, node) => {
   const siteConfig = getConfig();
 
+  console.log('DAGO node in roundedWithTitle', siteConfig.themeVariables);
+
+  const { themeVariables } = siteConfig;
+  const { altBackground, compositeBackground, compositeTitleBackground, nodeBorder } =
+    themeVariables;
+
   // Add outer g element
   const shapeSvg = parent.insert('g').attr('class', node.classes).attr('id', node.id);
 
@@ -178,28 +184,26 @@ const roundedWithTitle = (parent, node) => {
   // add the rect
   let rect;
   if (node.useRough) {
-    const isAlt = node.classes.indexOf('statediagram-cluster-alt') >= 0;
-    console.log(
-      'DAGA node in roundedWithTitle',
-      node.classes,
-      node.classes.indexOf('statediagram-cluster-alt'),
-      isAlt
-    );
+    const isAlt = node.classes.includes('statediagram-cluster-alt');
     const rc = rough.svg(shapeSvg);
     const roughOuterNode =
       node.rx || node.ry
         ? rc.path(createRoundedRectPathD(x, y, width, height, 10), {
             roughness: 0.7,
+            fill: compositeTitleBackground,
+            fillStyle: 'solid',
+            stroke: nodeBorder,
           })
         : rc.rectangle(x, y, width, height);
 
-    rect = shapeSvg.insert(() => roughOuterNode);
+    rect = shapeSvg.insert(() => roughOuterNode, ':first-child');
     const roughInnerNode = rc.rectangle(x, innerY, width, innerHeight, {
-      fill: isAlt ? 'lightgrey' : 'white',
+      fill: isAlt ? altBackground : compositeBackground,
       fillStyle: isAlt ? 'hachure' : 'solid',
+      stroke: nodeBorder,
     });
 
-    rect = shapeSvg.insert(() => roughOuterNode);
+    rect = shapeSvg.insert(() => roughOuterNode, ':first-child');
     innerRect = shapeSvg.insert(() => roughInnerNode);
   } else {
     rect = outerRectG.insert('rect', ':first-child');

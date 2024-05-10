@@ -3,6 +3,7 @@ import { labelHelper, updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import { createRoundedRectPathD } from './roundedRectPath.js';
+import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import rough from 'roughjs';
 
 /**
@@ -57,6 +58,21 @@ function applyNodePropertyBorders(
 }
 
 export const rect = async (parent: SVGAElement, node: Node) => {
+  const { themeVariables } = getConfig();
+  const {
+    textColor,
+    clusterTextColor,
+    altBackground,
+    compositeBackground,
+    compositeTitleBackground,
+    compositeBorder,
+    noteBorderColor,
+    noteBkgColor,
+    nodeBorder,
+    mainBkg,
+    stateBorder,
+  } = themeVariables;
+
   const { shapeSvg, bbox, halfPadding } = await labelHelper(
     parent,
     node,
@@ -77,15 +93,14 @@ export const rect = async (parent: SVGAElement, node: Node) => {
       rx || ry
         ? rc.path(createRoundedRectPathD(x, y, totalWidth, totalHeight, rx || 0), {
             roughness: 0.7,
-            fill:'white',
-            fillStyle: 'solid' // solid fill'
+            fill: mainBkg,
+            fillStyle: 'solid', // solid fill'
+            stroke: nodeBorder,
           })
         : rc.rectangle(x, y, totalWidth, totalHeight);
 
     rect = shapeSvg.insert(() => roughNode, ':first-child');
-        rect
-      .attr('class', 'basic label-container')
-      .attr('style', style)
+    rect.attr('class', 'basic label-container').attr('style', style);
   } else {
     rect = shapeSvg.insert('rect', ':first-child');
 

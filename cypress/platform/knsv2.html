@@ -32,7 +32,7 @@
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        /* background:#333; */
+        /* background: #333; */
         font-family: 'Arial';
         /* font-size: 18px !important; */
       }
@@ -45,12 +45,14 @@
       .mermaid svg {
         /* font-size: 18px !important; */
 
-        background-color: #efefef;
+        /* background-color: #efefef;
         background-image: radial-gradient(#fff 51%, transparent 91%),
           radial-gradient(#fff 51%, transparent 91%);
         background-size: 20px 20px;
-        background-position: 0 0, 10px 10px;
-        background-repeat: repeat;
+        background-position:
+          0 0,
+          10px 10px;
+        background-repeat: repeat; */
       }
       .malware {
         position: fixed;
@@ -107,6 +109,22 @@ stateDiagram-v2
       </pre
     >
     <pre id="diagram" class="mermaid">
+      %%{init: {"handdrawn": "true"} }%%
+stateDiagram-v2
+    state ProActive {
+      state Active {
+        Chimp --> A:One
+        Chimp --> B:Two
+        Chimp --> C:Three
+        state InActive {
+          D
+        }
+      }
+    }
+  </pre
+    >
+    <pre id="diagram" class="mermaid">
+      %%{init: {"handdrawn": false} }%%
 stateDiagram-v2
     state ProActive {
       state Active {
@@ -511,6 +529,7 @@ mindmap
       //   useMaxWidth: false,
       // });
       mermaid.initialize({
+        theme: 'base',
         handdrawn: true,
         // layout: 'dagre',
         layout: 'elk',

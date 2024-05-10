@@ -1,17 +1,8 @@
 import insertMarkers from '../../rendering-elements/markers.js';
 import { findCommonAncestor } from './find-common-ancestor.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
-import {
-  insertNode,
-  positionNode,
-  clear as clearNodes,
-  setNodeElem,
-} from '../../rendering-elements/nodes.js';
-import {
-  insertCluster,
-  clear as clearClusters,
-  positionCluster,
-} from '../../rendering-elements/clusters.js';
+import { insertNode, clear as clearNodes } from '../../rendering-elements/nodes.js';
+import { insertCluster, clear as clearClusters } from '../../rendering-elements/clusters.js';
 import {
   insertEdgeLabel,
   positionEdgeLabel,
@@ -116,14 +107,12 @@ const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
       if (node.type === 'group') {
         log.debug('Id abc88 subgraph = ', node.id, node.x, node.y, node.labelData);
         const subgraphEl = subgraphsEl.insert('g').attr('class', 'subgraph');
+        // TODO use faster way of cloning
         const clusterNode = JSON.parse(JSON.stringify(node));
         clusterNode.x = node.offset.posX + node.width / 2;
         clusterNode.y = node.offset.posY + node.height / 2;
-        // clusterNode.y = node.y + node.height / 2;
         const cluster = insertCluster(subgraphEl, clusterNode);
-        // const bbox = cluster.node().getBBox();
-        // node.x -= bbox.width / 2 - 2; // Magic number 2... why??? WHY???
-        // node.y -= bbox.height / 2;
+
         log.info('Id (UGH)= ', node.shape, node.labels);
       } else {
         log.info(
@@ -524,6 +513,7 @@ export const render = async (data4Layout, svg, element) => {
           height: node?.labelData?.height || 100,
         },
       ];
+      node['elk.direction'] = 'RIGHT';
       delete node.x;
       delete node.y;
       delete node.width;
@@ -533,7 +523,7 @@ export const render = async (data4Layout, svg, element) => {
 
   log.info('before layout', JSON.stringify(elkGraph, null, 2));
   const g = await elk.layout(elkGraph);
-  log.info('after layout DAGA', g);
+  log.info('after layout DAGA', JSON.stringify(g));
 
   // debugger;
   drawNodes(0, 0, g.children, svg, subGraphsEl, 0);

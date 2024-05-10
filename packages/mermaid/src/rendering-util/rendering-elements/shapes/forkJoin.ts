@@ -4,7 +4,7 @@ import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import type { SVG } from '$root/diagram-api/types.js';
 import rough from 'roughjs';
-import solidFillOptions from './solidFillOptions.js';
+import { solidStateFill } from './handdrawnStyles.js';
 
 export const forkJoin = (parent: SVG, node: Node, dir: string) => {
   const shapeSvg = parent
@@ -25,7 +25,7 @@ export const forkJoin = (parent: SVG, node: Node, dir: string) => {
   let shape;
   if (node.useRough) {
     const rc = rough.svg(shapeSvg);
-    const roughNode = rc.rectangle(x, y, width, height, solidFillOptions);
+    const roughNode = rc.rectangle(x, y, width, height, solidStateFill('black'));
     shape = shapeSvg.insert(() => roughNode);
   } else {
     shape = shapeSvg
