@@ -686,6 +686,7 @@ const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, altFlag, u
         domId: stateDomId(itemId, graphItemCount, NOTE),
         type: newNode.type,
         padding: 15, //getConfig().flowchart.padding
+        useRough,
       };
       const groupData = {
         labelStyle: '',
@@ -697,6 +698,7 @@ const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, altFlag, u
         domId: stateDomId(itemId, graphItemCount, PARENT),
         type: 'group',
         padding: 0, //getConfig().flowchart.padding
+        useRough,
       };
       graphItemCount++;
 
