@@ -4,6 +4,7 @@ import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
+import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
 
 /**
@@ -77,13 +78,13 @@ export const rect = async (parent: SVGAElement, node: Node) => {
   const { rx, ry, style, useRough } = node;
   if (useRough) {
     const rc = rough.svg(shapeSvg);
-    const options = {
+    const options = userNodeOverrides(node, {
       roughness: 0.7,
       fill: mainBkg,
       fillStyle: 'solid', // solid fill'
       stroke: nodeBorder,
       seed: handdrawnSeed,
-    };
+    });
     const roughNode =
       rx || ry
         ? rc.path(createRoundedRectPathD(x, y, totalWidth, totalHeight, rx || 0), options)
