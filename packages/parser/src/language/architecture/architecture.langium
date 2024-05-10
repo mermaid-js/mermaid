@@ -14,6 +14,7 @@ entry Architecture:
 fragment Statement:
     groups+=Group
     | services+=Service
+    | junctions+=Junction
     | edges+=Edge
 ;
 
@@ -27,6 +28,10 @@ Group:
 
 Service:
     'service' id=ARCH_ID (iconText=ARCH_TEXT_ICON | icon=ARCH_ICON)? title=ARCH_TITLE? ('in' in=ARCH_ID)? EOL
+;
+
+Junction:
+    'junction' id=ARCH_ID ('in' in=ARCH_ID)? EOL
 ;
 
 Edge:

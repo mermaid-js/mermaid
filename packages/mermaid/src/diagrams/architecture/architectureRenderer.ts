@@ -13,6 +13,8 @@ import type {
   ArchitectureSpatialMap,
   EdgeSingularData,
   EdgeSingular,
+  ArchitectureJunction,
+  NodeSingularData,
 } from './architectureTypes.js';
 import {
   type ArchitectureDB,
@@ -29,7 +31,7 @@ import {
 } from './architectureTypes.js';
 import { select } from 'd3';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
-import { drawEdges, drawGroups, drawServices } from './svgDraw.js';
+import { drawEdges, drawGroups, drawJunctions, drawServices } from './svgDraw.js';
 import { getConfigField } from './architectureDb.js';
 
 cytoscape.use(fcose);
@@ -46,13 +48,29 @@ function addServices(services: ArchitectureService[], cy: cytoscape.Core) {
         parent: service.in,
         width: getConfigField('iconSize'),
         height: getConfigField('iconSize'),
-      },
+      } as NodeSingularData,
       classes: 'node-service',
     });
   });
 }
 
-function positionServices(db: ArchitectureDB, cy: cytoscape.Core) {
+function addJunctions(junctions: ArchitectureJunction[], cy: cytoscape.Core) {
+  junctions.forEach((junction) => {
+    cy.add({
+      group: 'nodes',
+      data: {
+        type: 'junction',
+        id: junction.id,
+        parent: junction.in,
+        width: getConfigField('iconSize'),
+        height: getConfigField('iconSize'),
+      } as NodeSingularData,
+      classes: 'node-junction',
+    });
+  });
+}
+
+function positionNodes(db: ArchitectureDB, cy: cytoscape.Core) {
   cy.nodes().map((node) => {
     const data = nodeData(node);
     if (data.type === 'group') {
@@ -76,7 +94,7 @@ function addGroups(groups: ArchitectureGroup[], cy: cytoscape.Core) {
         icon: group.icon,
         label: group.title,
         parent: group.in,
-      },
+      } as NodeSingularData,
       classes: 'node-group',
     });
   });
@@ -216,6 +234,7 @@ function getRelativeConstraints(
 
 function layoutArchitecture(
   services: ArchitectureService[],
+  junctions: ArchitectureJunction[],
   groups: ArchitectureGroup[],
   edges: ArchitectureEdge[],
   { spatialMaps }: ArchitectureDataStructures
@@ -270,6 +289,13 @@ function layoutArchitecture(
           },
         },
         {
+          selector: '.node-junction',
+          style: {
+            width: 'data(width)',
+            height: 'data(height)',
+          },
+        },
+        {
           selector: '.node-group',
           style: {
             // @ts-ignore Incorrect library types
@@ -283,6 +309,7 @@ function layoutArchitecture(
 
     addGroups(groups, cy);
     addServices(services, cy);
+    addJunctions(junctions, cy);
     addEdges(edges, cy);
 
     // Use the spatial map to create alignment arrays for fcose
@@ -408,6 +435,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   const db = diagObj.db as ArchitectureDB;
 
   const services = db.getServices();
+  const junctions = db.getJunctions();
   const groups = db.getGroups();
   const edges = db.getEdges();
   const ds = db.getDataStructures();
@@ -427,12 +455,13 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   groupElem.attr('class', 'architecture-groups');
 
   drawServices(db, servicesElem, services);
+  drawJunctions(db, servicesElem, junctions);
 
-  const cy = await layoutArchitecture(services, groups, edges, ds);
+  const cy = await layoutArchitecture(services, junctions, groups, edges, ds);
 
   drawEdges(edgesElem, cy);
   drawGroups(groupElem, cy);
-  positionServices(db, cy);
+  positionNodes(db, cy);
 
   setupGraphViewbox(undefined, svg, getConfigField('padding'), getConfigField('useMaxWidth'));
 

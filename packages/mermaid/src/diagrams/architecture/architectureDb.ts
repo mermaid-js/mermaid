@@ -9,11 +9,15 @@ import type {
   ArchitectureDirectionPairMap,
   ArchitectureDirectionPair,
   ArchitectureSpatialMap,
+  ArchitectureNode,
+  ArchitectureJunction,
 } from './architectureTypes.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import {
   getArchitectureDirectionPair,
   isArchitectureDirection,
+  isArchitectureJunction,
+  isArchitectureService,
   shiftPositionByArchitectureDirectionPair,
 } from './architectureTypes.js';
 import {
@@ -34,7 +38,7 @@ const DEFAULT_ARCHITECTURE_CONFIG: Required<ArchitectureDiagramConfig> =
   DEFAULT_CONFIG.architecture;
 
 const state = new ImperativeState<ArchitectureState>(() => ({
-  services: {},
+  nodes: {},
   groups: {},
   edges: [],
   registeredIds: {},
@@ -69,15 +73,16 @@ const addService = function ({
         `The service [${id}]'s parent does not exist. Please make sure the parent is created before this service`
       );
     }
-    if (state.records.registeredIds[parent] === 'service') {
+    if (state.records.registeredIds[parent] === 'node') {
       throw new Error(`The service [${id}]'s parent is not a group`);
     }
   }
 
-  state.records.registeredIds[id] = 'service';
+  state.records.registeredIds[id] = 'node';
 
-  state.records.services[id] = {
+  state.records.nodes[id] = {
     id,
+    type: 'service',
     icon,
     iconText,
     title,
@@ -86,7 +91,27 @@ const addService = function ({
   };
 };
 
-const getServices = (): ArchitectureService[] => Object.values(state.records.services);
+const getServices = (): ArchitectureService[] => Object.values(state.records.nodes).filter<ArchitectureService>(isArchitectureService);
+
+const addJunction = function ({
+  id, in: parent
+}: Omit<ArchitectureJunction, 'edges'>) {
+  state.records.registeredIds[id] = 'node';
+
+  state.records.nodes[id] = {
+    id,
+    type: 'junction',
+    edges: [],
+    in: parent,
+  };
+}
+
+const getJunctions = (): ArchitectureJunction[] => Object.values(state.records.nodes).filter<ArchitectureJunction>(isArchitectureJunction);
+
+const getNodes = (): ArchitectureNode[] => Object.values(state.records.nodes);
+
+const getNode = (id: string): ArchitectureNode | null => state.records.nodes[id];
+
 
 const addGroup = function ({ id, icon, in: parent, title }: ArchitectureGroup) {
   if (state.records.registeredIds[id] !== undefined) {
@@ -103,7 +128,7 @@ const addGroup = function ({ id, icon, in: parent, title }: ArchitectureGroup) {
         `The group [${id}]'s parent does not exist. Please make sure the parent is created before this group`
       );
     }
-    if (state.records.registeredIds[parent] === 'service') {
+    if (state.records.registeredIds[parent] === 'node') {
       throw new Error(`The group [${id}]'s parent is not a group`);
     }
   }
@@ -143,19 +168,19 @@ const addEdge = function ({
     );
   }
 
-  if (state.records.services[lhsId] === undefined && state.records.groups[lhsId] === undefined) {
+  if (state.records.nodes[lhsId] === undefined && state.records.groups[lhsId] === undefined) {
     throw new Error(
       `The left-hand id [${lhsId}] does not yet exist. Please create the service/group before declaring an edge to it.`
     );
   }
-  if (state.records.services[rhsId] === undefined && state.records.groups[lhsId] === undefined) {
+  if (state.records.nodes[rhsId] === undefined && state.records.groups[lhsId] === undefined) {
     throw new Error(
       `The right-hand id [${rhsId}] does not yet exist. Please create the service/group before declaring an edge to it.`
     );
   }
 
-  const lhsGroupId = state.records.services[lhsId].in
-  const rhsGroupId = state.records.services[rhsId].in
+  const lhsGroupId = state.records.nodes[lhsId].in
+  const rhsGroupId = state.records.nodes[rhsId].in
   if (lhsGroup && lhsGroupId && rhsGroupId && lhsGroupId == rhsGroupId) {
     throw new Error(
       `The left-hand id [${lhsId}] is modified to traverse the group boundary, but the edge does not pass through two groups.`
@@ -180,10 +205,9 @@ const addEdge = function ({
   };
 
   state.records.edges.push(edge);
-  if (state.records.services[lhsId] && state.records.services[rhsId]) {
-    state.records.services[lhsId].edges.push(state.records.edges[state.records.edges.length - 1]);
-    state.records.services[rhsId].edges.push(state.records.edges[state.records.edges.length - 1]);
-  } else if (state.records.groups[lhsId] && state.records.groups[rhsId]) {
+  if (state.records.nodes[lhsId] && state.records.nodes[rhsId]) {
+    state.records.nodes[lhsId].edges.push(state.records.edges[state.records.edges.length - 1]);
+    state.records.nodes[rhsId].edges.push(state.records.edges[state.records.edges.length - 1]);
   }
 };
 
@@ -199,7 +223,7 @@ const getDataStructures = () => {
     // Create an adjacency list of the diagram to perform BFS on
     // Outer reduce applied on all services
     // Inner reduce applied on the edges for a service
-    const adjList = Object.entries(state.records.services).reduce<{
+    const adjList = Object.entries(state.records.nodes).reduce<{
       [id: string]: ArchitectureDirectionPairMap;
     }>((prevOuter, [id, service]) => {
       prevOuter[id] = service.edges.reduce<ArchitectureDirectionPairMap>((prevInner, edge) => {
@@ -284,6 +308,10 @@ export const db: ArchitectureDB = {
 
   addService,
   getServices,
+  addJunction,
+  getJunctions,
+  getNodes,
+  getNode,
   addGroup,
   getGroups,
   addEdge,

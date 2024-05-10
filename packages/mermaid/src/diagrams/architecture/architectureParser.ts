@@ -9,7 +9,8 @@ import { db } from './architectureDb.js';
 const populateDb = (ast: Architecture, db: ArchitectureDB) => {
   populateCommonDb(ast, db);
   ast.groups.map(db.addGroup);
-  ast.services.map(db.addService);
+  ast.services.map((service) => db.addService({ ...service, type: 'service' }));
+  ast.junctions.map((service) => db.addJunction({ ...service, type: 'junction' }));
   // @ts-ignore TODO our parser guarantees the type is L/R/T/B and not string. How to change to union type?
   ast.edges.map(db.addEdge);
 };

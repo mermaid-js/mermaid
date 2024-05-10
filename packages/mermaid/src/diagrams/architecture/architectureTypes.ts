@@ -180,6 +180,7 @@ export interface ArchitectureStyleOptions {
 
 export interface ArchitectureService {
   id: string;
+  type: 'service';
   edges: ArchitectureEdge[];
   icon?: string;
   iconText?: string;
@@ -188,6 +189,27 @@ export interface ArchitectureService {
   width?: number;
   height?: number;
 }
+
+export interface ArchitectureJunction {
+  id: string;
+  type: 'junction';
+  edges: ArchitectureEdge[];
+  in?: string;
+  width?: number;
+  height?: number;
+}
+
+export type ArchitectureNode = ArchitectureService | ArchitectureJunction;
+
+export const isArchitectureService = function (x: ArchitectureNode): x is ArchitectureService {
+  const temp = x as ArchitectureService;
+  return temp.type === 'service';
+};
+
+export const isArchitectureJunction = function (x: ArchitectureNode): x is ArchitectureJunction {
+  const temp = x as ArchitectureJunction;
+  return temp.type === 'junction';
+};
 
 export interface ArchitectureGroup {
   id: string;
@@ -212,6 +234,10 @@ export interface ArchitectureDB extends DiagramDB {
   clear: () => void;
   addService: (service: Omit<ArchitectureService, 'edges'>) => void;
   getServices: () => ArchitectureService[];
+  addJunction: (service: Omit<ArchitectureJunction, 'edges'>) => void;
+  getJunctions: () => ArchitectureJunction[];
+  getNodes: () => ArchitectureNode[];
+  getNode: (id: string) => ArchitectureNode | null;
   addGroup: (group: ArchitectureGroup) => void;
   getGroups: () => ArchitectureGroup[];
   addEdge: (edge: ArchitectureEdge) => void;
@@ -229,10 +255,10 @@ export type ArchitectureDataStructures = {
 };
 
 export interface ArchitectureState extends Record<string, unknown> {
-  services: Record<string, ArchitectureService>;
+  nodes: Record<string, ArchitectureNode>;
   groups: Record<string, ArchitectureGroup>;
   edges: ArchitectureEdge[];
-  registeredIds: Record<string, 'service' | 'group'>;
+  registeredIds: Record<string, 'node' | 'group'>;
   dataStructures?: ArchitectureDataStructures;
   elements: Record<string, D3Element>;
   config: ArchitectureDiagramConfig;
@@ -282,6 +308,14 @@ export type NodeSingularData =
     id: string;
     icon?: string;
     label?: string;
+    parent?: string;
+    width: number;
+    height: number;
+    [key: string]: any;
+  }
+  | {
+    type: 'junction';
+    id: string;
     parent?: string;
     width: number;
     height: number;

@@ -16,7 +16,6 @@
 
 <body>
   <h1>Architecture diagram demo</h1>
-
   <h2>Simple diagram with groups</h2>
   <pre class="mermaid">
       architecture
@@ -181,6 +180,50 @@
         servR B-[Label that is Long]-R servB
     </pre>
 
+  <hr />
+  <h2>Junction Demo</h2>
+  <pre class="mermaid">
+      architecture
+        service left_disk(disk)[Disk]
+        service top_disk(disk)[Disk]
+        service bottom_disk(disk)[Disk]
+        service top_gateway(internet)[Gateway]
+        service bottom_gateway(internet)[Gateway]
+        junction juncC
+        junction juncR
+
+        left_disk R--L juncC
+        top_disk B--T juncC
+        bottom_disk T--B juncC
+        juncC R--L juncR
+        top_gateway B--T juncR
+        bottom_gateway T--B juncR
+    </pre>
+  <hr />
+
+  <h2>Junction Demo Groups</h2>
+  <pre class="mermaid">
+      architecture
+        group left
+        group right
+        service left_disk(disk)[Disk] in left
+        service top_disk(disk)[Disk] in left
+        service bottom_disk(disk)[Disk] in left
+        service top_gateway(internet)[Gateway] in right
+        service bottom_gateway(internet)[Gateway] in right
+        junction juncC in left
+        junction juncR in right
+
+        left_disk R--L juncC
+        top_disk B--T juncC
+        bottom_disk T--B juncC
+
+
+        top_gateway (B--T juncR
+        bottom_gateway (T--B juncR
+
+        juncC{group} R--L) juncR{group}
+    </pre>
   <hr />
 
   <script type="module">

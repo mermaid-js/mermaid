@@ -15,24 +15,27 @@ import {
   getArchitectureDirectionPair,
   getArchitectureDirectionXYFactors,
   isArchitecturePairXY,
+  ArchitectureJunction,
 } from './architectureTypes.js';
 import type cytoscape from 'cytoscape';
 import { getIcon } from '../../rendering-util/svgRegister.js';
-import { getConfigField } from './architectureDb.js';
+import { db, getConfigField } from './architectureDb.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 
 export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
   const padding = getConfigField('padding');
   const iconSize = getConfigField('iconSize');
+  const halfIconSize = iconSize / 2;
   const arrowSize = iconSize / 6;
   const halfArrowSize = arrowSize / 2;
 
   cy.edges().map((edge, id) => {
-    const { sourceDir, sourceArrow, sourceGroup, targetDir, targetArrow, targetGroup, label } = edgeData(edge);
+    const { source, sourceDir, sourceArrow, sourceGroup, target, targetDir, targetArrow, targetGroup, label } = edgeData(edge);
     let { x: startX, y: startY } = edge[0].sourceEndpoint();
     const { x: midX, y: midY } = edge[0].midpoint();
     let { x: endX, y: endY } = edge[0].targetEndpoint();
 
+    // Adjust the edge distance if it has the {group} modifier
     const groupEdgeShift = padding + 4;
     // +18 comes from the service label height that extends the padding on the bottom side of each group
     if (sourceGroup) {
@@ -48,6 +51,22 @@ export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
         targetDir === 'L' ? endX -= groupEdgeShift : endX += groupEdgeShift;
       } else {
         targetDir === 'T' ? endY -= groupEdgeShift : endY += (groupEdgeShift + 18);
+      }
+    }
+
+    // Adjust the edge distance if it doesn't have the {group} modifier and the endpoint is a junction node
+    if (!sourceGroup && db.getNode(source)?.type === 'junction') {
+      if (isArchitectureDirectionX(sourceDir)) {
+        sourceDir === 'L' ? startX += halfIconSize : startX -= halfIconSize;
+      } else {
+        sourceDir === 'T' ? startY += halfIconSize : startY -= halfIconSize;
+      }
+    }
+    if (!targetGroup && db.getNode(target)?.type === 'junction') {
+      if (isArchitectureDirectionX(targetDir)) {
+        targetDir === 'L' ? endX += halfIconSize : endX -= halfIconSize;
+      } else {
+        targetDir === 'T' ? endY += halfIconSize : endY -= halfIconSize;
       }
     }
 
@@ -305,3 +324,30 @@ export const drawServices = function (
   });
   return 0;
 };
+
+export const drawJunctions = function (
+  db: ArchitectureDB,
+  elem: D3Element,
+  junctions: ArchitectureJunction[]
+
+) {
+  junctions.forEach((junction) => {
+    const junctionElem = elem.append('g');
+    const iconSize = getConfigField('iconSize');
+
+    let bkgElem = junctionElem.append('g');
+    bkgElem
+      .append('rect')
+      .attr('id', 'node-' + junction.id)
+      .attr('fill-opacity', '0')
+      .attr('width', iconSize)
+      .attr('height', iconSize);
+
+    junctionElem.attr('class', 'architecture-junction');
+
+    const { width, height } = junctionElem._groups[0][0].getBBox();
+    junctionElem.width = width;
+    junctionElem.height = height;
+    db.setElementForId(junction.id, junctionElem);
+  });
+}
