@@ -178,6 +178,13 @@ const roundedWithTitle = (parent, node) => {
   // add the rect
   let rect;
   if (node.useRough) {
+    const isAlt = node.classes.indexOf('statediagram-cluster-alt') >= 0;
+    console.log(
+      'DAGA node in roundedWithTitle',
+      node.classes,
+      node.classes.indexOf('statediagram-cluster-alt'),
+      isAlt
+    );
     const rc = rough.svg(shapeSvg);
     const roughOuterNode =
       node.rx || node.ry
@@ -187,7 +194,10 @@ const roundedWithTitle = (parent, node) => {
         : rc.rectangle(x, y, width, height);
 
     rect = shapeSvg.insert(() => roughOuterNode);
-    const roughInnerNode = rc.rectangle(x, innerY, width, innerHeight);
+    const roughInnerNode = rc.rectangle(x, innerY, width, innerHeight, {
+      fill: isAlt ? 'lightgrey' : 'white',
+      fillStyle: isAlt ? 'hachure' : 'solid',
+    });
 
     rect = shapeSvg.insert(() => roughOuterNode);
     innerRect = shapeSvg.insert(() => roughInnerNode);
@@ -248,11 +258,8 @@ const divider = (parent, node) => {
   if (node.useRough) {
     const rc = rough.svg(shapeSvg);
     const roughNode = rc.rectangle(x, y, width, height, {
-      fill: 'grey',
+      fill: 'lightgrey',
       roughness: 0.5,
-      // bowing: 6,
-      // stroke: 'green',
-      // strokeWidth: 3,
       strokeLineDash: [5],
     });
 
