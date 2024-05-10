@@ -102,6 +102,21 @@ const rect = (parent, node) => {
  * @returns {any} ShapeSvg
  */
 const noteGroup = (parent, node) => {
+  const { themeVariables } = getConfig();
+  const {
+    textColor,
+    clusterTextColor,
+    altBackground,
+    compositeBackground,
+    compositeTitleBackground,
+    compositeBorder,
+    noteBorderColor,
+    noteBkgColor,
+    nodeBorder,
+    mainBkg,
+    stateBorder,
+  } = themeVariables;
+
   // Add outer g element
   const shapeSvg = parent.insert('g').attr('class', 'note-cluster').attr('id', node.id);
 
@@ -133,8 +148,6 @@ const noteGroup = (parent, node) => {
 };
 const roundedWithTitle = (parent, node) => {
   const siteConfig = getConfig();
-
-  console.log('DAGO node in roundedWithTitle', siteConfig.themeVariables);
 
   const { themeVariables } = siteConfig;
   const { altBackground, compositeBackground, compositeTitleBackground, nodeBorder } =

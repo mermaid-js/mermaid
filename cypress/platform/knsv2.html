@@ -109,34 +109,27 @@ stateDiagram-v2
       </pre
     >
     <pre id="diagram" class="mermaid">
-      %%{init: {"handdrawn": "true"} }%%
-stateDiagram-v2
-    state ProActive {
-      state Active {
-        Chimp --> A:One
-        Chimp --> B:Two
-        Chimp --> C:Three
-        state InActive {
-          D
-        }
-      }
-    }
+   stateDiagram-v2
+     TN1: The state with a note
+        note right of TN1
+            Important information! You can write
+            notes.
+        end note
+        TN1 --> TN2
+        note left of TN2 : This is the note to the left.
   </pre
     >
     <pre id="diagram" class="mermaid">
       %%{init: {"handdrawn": false} }%%
-stateDiagram-v2
-    state ProActive {
-      state Active {
-        Chimp --> A:One
-        Chimp --> B:Two
-        Chimp --> C:Three
-        state InActive {
-          D
-        }
-      }
-    }
-  </pre
+   stateDiagram-v2
+     TN3: The state with a note
+        note right of TN3
+            Important information! You can write
+            notes.
+        end note
+        TN3 --> TN4
+        note left of TN4 : This is the note to the left.
+          </pre
     >
     <pre id="diagram" class="mermaid2">
 block-beta

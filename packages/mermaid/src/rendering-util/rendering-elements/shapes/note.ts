@@ -1,10 +1,15 @@
 import { log } from '$root/logger.js';
 import { labelHelper, updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
+import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
+import rough from 'roughjs';
 
 export const note = async (parent: SVGAElement, node: Node) => {
-    const useHtmlLabels = node.useHtmlLabels ;
+  const { themeVariables } = getConfig();
+  const { noteBorderColor, noteBkgColor } = themeVariables;
+
+  const useHtmlLabels = node.useHtmlLabels;
   if (!useHtmlLabels) {
     node.centerLabel = true;
   }
@@ -16,16 +21,35 @@ export const note = async (parent: SVGAElement, node: Node) => {
   );
 
   log.info('Classes = ', node.classes);
-  // add the rect
-  const rect = shapeSvg.insert('rect', ':first-child');
+  const { style, useRough } = node;
+  let rect;
+  const totalWidth = bbox.width + node.padding;
+  const totalHeight = bbox.height + node.padding;
+  const x = -bbox.width / 2 - halfPadding;
+  const y = -bbox.height / 2 - halfPadding;
 
-  rect
-    .attr('rx', node.rx)
-    .attr('ry', node.ry)
-    .attr('x', -bbox.width / 2 - halfPadding)
-    .attr('y', -bbox.height / 2 - halfPadding)
-    .attr('width', bbox.width + node.padding)
-    .attr('height', bbox.height + node.padding);
+  if (useRough) {
+    // add the rect
+    const rc = rough.svg(shapeSvg);
+    const roughNode = rc.rectangle(x, y, totalWidth, totalHeight, {
+      roughness: 0.7,
+      fill: noteBkgColor,
+      fillStyle: 'solid', // solid fill'
+      stroke: noteBorderColor,
+    });
+
+    rect = shapeSvg.insert(() => roughNode, ':first-child');
+    rect.attr('class', 'basic label-container').attr('style', style);
+  } else {
+    rect = shapeSvg.insert('rect', ':first-child');
+    rect
+      .attr('rx', node.rx)
+      .attr('ry', node.ry)
+      .attr('x', x)
+      .attr('y', y)
+      .attr('width', totalWidth)
+      .attr('height', totalHeight);
+  }
 
   updateNodeBounds(node, rect);
 
