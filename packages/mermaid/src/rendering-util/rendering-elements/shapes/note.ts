@@ -6,7 +6,7 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 import rough from 'roughjs';
 
 export const note = async (parent: SVGAElement, node: Node) => {
-  const { themeVariables } = getConfig();
+  const { themeVariables, handdrawnSeed } = getConfig();
   const { noteBorderColor, noteBkgColor } = themeVariables;
 
   const useHtmlLabels = node.useHtmlLabels;
@@ -34,7 +34,9 @@ export const note = async (parent: SVGAElement, node: Node) => {
     const roughNode = rc.rectangle(x, y, totalWidth, totalHeight, {
       roughness: 0.7,
       fill: noteBkgColor,
-      fillStyle: 'solid', // solid fill'
+      fillWeight: 3,
+      seed: handdrawnSeed,
+      // fillStyle: 'solid', // solid fill'
       stroke: noteBorderColor,
     });
 

@@ -9,6 +9,7 @@ elems
 gantt
 gitgraph
 gzipped
+handdrawn
 knsv
 Knut
 marginx

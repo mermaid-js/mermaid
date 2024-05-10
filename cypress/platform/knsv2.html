@@ -32,7 +32,7 @@
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        /* background: #333; */
+        background: #333;
         font-family: 'Arial';
         /* font-size: 18px !important; */
       }
@@ -120,7 +120,7 @@ stateDiagram-v2
   </pre
     >
     <pre id="diagram" class="mermaid">
-      %%{init: {"handdrawn": false} }%%
+      %%{init: {"look": "classic"} }%%
    stateDiagram-v2
      TN3: The state with a note
         note right of TN3
@@ -522,8 +522,9 @@ mindmap
       //   useMaxWidth: false,
       // });
       mermaid.initialize({
-        theme: 'base',
-        handdrawn: true,
+        theme: 'dark',
+        handdrawnSeed: 12,
+        look: 'handdrawn',
         // layout: 'dagre',
         layout: 'elk',
         flowchart: { titleTopMargin: 10 },

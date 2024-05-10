@@ -25,7 +25,7 @@ export const stateEnd = (parent: SVG, node: Node) => {
   let innerCircle;
   if (node.useRough) {
     const rc = rough.svg(shapeSvg);
-    const roughNode = rc.circle(0, 0, 14, { roughness: 0.5 });
+    const roughNode = rc.circle(0, 0, 14, { ...solidStateFill('black'), roughness: 0.5 });
     const roughInnerNode = rc.circle(0, 0, 5, { ...solidStateFill('black'), fillStyle: 'solid' });
     circle = shapeSvg.insert(() => roughNode);
     innerCircle = shapeSvg.insert(() => roughInnerNode);

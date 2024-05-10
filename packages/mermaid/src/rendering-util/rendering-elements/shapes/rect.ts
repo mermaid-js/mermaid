@@ -58,20 +58,8 @@ function applyNodePropertyBorders(
 }
 
 export const rect = async (parent: SVGAElement, node: Node) => {
-  const { themeVariables } = getConfig();
-  const {
-    textColor,
-    clusterTextColor,
-    altBackground,
-    compositeBackground,
-    compositeTitleBackground,
-    compositeBorder,
-    noteBorderColor,
-    noteBkgColor,
-    nodeBorder,
-    mainBkg,
-    stateBorder,
-  } = themeVariables;
+  const { themeVariables, handdrawnSeed } = getConfig();
+  const { nodeBorder, mainBkg } = themeVariables;
 
   const { shapeSvg, bbox, halfPadding } = await labelHelper(
     parent,
@@ -89,15 +77,17 @@ export const rect = async (parent: SVGAElement, node: Node) => {
   const { rx, ry, style, useRough } = node;
   if (useRough) {
     const rc = rough.svg(shapeSvg);
+    const options = {
+      roughness: 0.7,
+      fill: mainBkg,
+      fillStyle: 'solid', // solid fill'
+      stroke: nodeBorder,
+      seed: handdrawnSeed,
+    };
     const roughNode =
       rx || ry
-        ? rc.path(createRoundedRectPathD(x, y, totalWidth, totalHeight, rx || 0), {
-            roughness: 0.7,
-            fill: mainBkg,
-            fillStyle: 'solid', // solid fill'
-            stroke: nodeBorder,
-          })
-        : rc.rectangle(x, y, totalWidth, totalHeight);
+        ? rc.path(createRoundedRectPathD(x, y, totalWidth, totalHeight, rx || 0), options)
+        : rc.rectangle(x, y, totalWidth, totalHeight, options);
 
     rect = shapeSvg.insert(() => roughNode, ':first-child');
     rect.attr('class', 'basic label-container').attr('style', style);

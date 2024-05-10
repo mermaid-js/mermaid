@@ -149,7 +149,7 @@ const noteGroup = (parent, node) => {
 const roundedWithTitle = (parent, node) => {
   const siteConfig = getConfig();
 
-  const { themeVariables } = siteConfig;
+  const { themeVariables, handdrawnSeed } = siteConfig;
   const { altBackground, compositeBackground, compositeTitleBackground, nodeBorder } =
     themeVariables;
 
@@ -206,14 +206,16 @@ const roundedWithTitle = (parent, node) => {
             fill: compositeTitleBackground,
             fillStyle: 'solid',
             stroke: nodeBorder,
+            seed: handdrawnSeed,
           })
-        : rc.rectangle(x, y, width, height);
+        : rc.rectangle(x, y, width, height, { seed: handdrawnSeed });
 
     rect = shapeSvg.insert(() => roughOuterNode, ':first-child');
     const roughInnerNode = rc.rectangle(x, innerY, width, innerHeight, {
       fill: isAlt ? altBackground : compositeBackground,
       fillStyle: isAlt ? 'hachure' : 'solid',
       stroke: nodeBorder,
+      seed: handdrawnSeed,
     });
 
     rect = shapeSvg.insert(() => roughOuterNode, ':first-child');
@@ -259,6 +261,7 @@ const roundedWithTitle = (parent, node) => {
 };
 
 const divider = (parent, node) => {
+  const { handdrawnSeed } = getConfig();
   // Add outer g element
   const shapeSvg = parent.insert('g').attr('class', node.classes).attr('id', node.id);
 
@@ -278,6 +281,7 @@ const divider = (parent, node) => {
       fill: 'lightgrey',
       roughness: 0.5,
       strokeLineDash: [5],
+      seed: handdrawnSeed,
     });
 
     rect = shapeSvg.insert(() => roughNode);

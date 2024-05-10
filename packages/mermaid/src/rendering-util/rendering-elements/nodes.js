@@ -4,7 +4,7 @@ import { stateStart } from './shapes/stateStart.ts';
 import { stateEnd } from './shapes/stateEnd.ts';
 import { forkJoin } from './shapes/forkJoin.ts';
 import { choice } from './shapes/choice.ts';
-import {note} from './shapes/note.ts';
+import { note } from './shapes/note.ts';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 const formatClass = (str) => {
@@ -32,7 +32,6 @@ export const insertNode = async (elem, node, dir) => {
 
   // debugger;
   // Add link when appropriate
-  console.log('node.link', node.link);
   if (node.link) {
     let target;
     if (getConfig().securityLevel === 'sandbox') {

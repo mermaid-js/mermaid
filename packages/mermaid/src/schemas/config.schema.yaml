@@ -71,11 +71,20 @@ properties:
     tsType: any
   themeCSS:
     type: string
-  handdrawn:
+  look:
     description: |
-      Defines whether or not to use the handdrawn effect in the diagram.
-    type: boolean
-    default: false
+      Defines which main look to use for the diagram.
+    type: string
+    enum:
+      - classic
+      - handdrawn
+      - slick
+    default: 'classic'
+  handdrawnSeed:
+    description: |
+      Defines the seed to be used when using handdrawn look. This is important for the automated tests as they will always find differentces without the seed. The default value is 0 which gives a random seed.
+    type: number
+    default: 0
   layout:
     description: |
       Defines which layout algorithm to use for rendering the diagram.

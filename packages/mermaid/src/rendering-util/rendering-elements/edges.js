@@ -386,6 +386,7 @@ const calcOffset = function (src, dest, parentLookupDb) {
 };
 
 export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, id) {
+  const { handdrawnSeed } = getConfig();
   console.log('abc88 InsertEdge - edge: ', edge);
   let points = edge.points;
   let pointsHasChanged = false;
@@ -478,17 +479,9 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
 
   if (useRough) {
     const rc = rough.svg(elem);
-    const svgPathNode = rc.curve(pointArr, { roughness: 0.5, stroke: 'green' });
-    console.log('svgPathNode abc88', svgPathNode);
+    const svgPathNode = rc.curve(pointArr, { roughness: 0.5, seed: handdrawnSeed });
     strokeClasses += ' transition';
-    // const svgPath2 = elem
-    //   .append('path')
-    //   .attr('d', lineFunction(lineData))
-    //   .attr('id', edge.id)
-    //   .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
-    //   .attr('style', edge.style);
 
-    console.log('svgPath2 abc88', strokeClasses + (edge.classes ? ' ' + edge.classes : ''));
     svgPath = select(svgPathNode)
       .select('path')
       .attr('id', edge.id)

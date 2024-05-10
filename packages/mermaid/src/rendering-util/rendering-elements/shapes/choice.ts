@@ -3,6 +3,7 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 import type { SVG } from '$root/diagram-api/types.js';
 import rough from 'roughjs';
 import { solidStateFill } from './handdrawnStyles.js';
+
 export const choice = (parent: SVG, node: Node) => {
   const shapeSvg = parent
     .insert('g')
