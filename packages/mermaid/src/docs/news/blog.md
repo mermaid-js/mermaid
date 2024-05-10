@@ -1,5 +1,11 @@
 # Blog
 
+## [How to Choose the Right Documentation Software](https://www.mermaidchart.com/blog/posts/how-to-choose-the-right-documentation-software/)
+
+7 May 2024 · 5 mins
+
+How to Choose the Right Documentation Software # Reliable and efficient documentation software is crucial in the fast-paced world of software development.
+
 ## [Mermaid Chart Unveils Visual Editor for Sequence Diagrams](https://www.mermaidchart.com/blog/posts/mermaid-chart-unveils-visual-editor-for-sequence-diagrams/)
 
 8 April 2024 · 5 mins
