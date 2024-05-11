@@ -20,7 +20,7 @@
 
   Plugins are available for:
 
-  - [ChatGPT](https://docs.mermaidchart.com/plugins/chatgpt)
+  - [ChatGPT](https://docs.mermaidchart.com/plugins/mermaid-chart-gpt)
   - [JetBrains IDE](https://plugins.jetbrains.com/plugin/23043-mermaid-chart)
   - [Microsoft PowerPoint and Word](https://appsource.microsoft.com/en-us/product/office/WA200006214?tab=Overview)
   - [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=MermaidChart.vscode-mermaid-chart)
