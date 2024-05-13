@@ -10,13 +10,13 @@
 
 /* eslint-disable no-console */
 
-import { readFile, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
 import assert from 'node:assert';
 import { execFile } from 'node:child_process';
+import { readFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { promisify } from 'node:util';
 
-import { load, JSON_SCHEMA } from 'js-yaml';
+import { JSON_SCHEMA, load } from 'js-yaml';
 import { compile, type JSONSchema } from 'json-schema-to-typescript';
 import prettier from 'prettier';
 
@@ -132,23 +132,6 @@ async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidCon
   }
 
   /**
-   * For backwards compatibility with older Mermaid Typescript defs,
-   * we need to make all value optional instead of required.
-   *
-   * This is because the `MermaidConfig` type is used as an input, and everything is optional,
-   * since all the required values have default values.s
-   *
-   * In the future, we should make make the input to Mermaid `Partial<MermaidConfig>`.
-   *
-   * @todo TODO: Remove this function when Mermaid releases a new breaking change.
-   * @param schema - The input schema.
-   * @returns The schema with all required values removed.
-   */
-  function removeRequired(schema: JSONSchemaType<Record<string, any>>) {
-    return { ...schema, required: [] };
-  }
-
-  /**
    * This is a temporary hack to control the order the types are generated in.
    *
    * By default, json-schema-to-typescript outputs the $defs in the order they
@@ -161,7 +144,7 @@ async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidCon
    * @param schema - The input schema.
    * @returns The schema with all `$ref`s removed.
    */
-  function unrefSubschemas(schema: JSONSchemaType<Record<string, any>>) {
+  function unrefSubschemas(schema: JSONSchemaType<MermaidConfig>) {
     return {
       ...schema,
       properties: Object.fromEntries(
@@ -194,17 +177,16 @@ async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidCon
 
   assert.ok(mermaidConfigSchema.$defs);
   const modifiedSchema = {
-    ...unrefSubschemas(removeRequired(mermaidConfigSchema)),
-
+    ...unrefSubschemas(mermaidConfigSchema),
     $defs: Object.fromEntries(
       Object.entries(mermaidConfigSchema.$defs).map(([key, subSchema]) => {
-        return [key, removeRequired(replaceAllOfWithExtends(subSchema))];
+        return [key, replaceAllOfWithExtends(subSchema as JSONSchemaType<Record<string, any>>)];
       })
     ),
   };
 
   const typescriptFile = await compile(
-    modifiedSchema as JSONSchema, // json-schema-to-typescript only allows JSON Schema 4 as input type
+    modifiedSchema as unknown as JSONSchema, // json-schema-to-typescript only allows JSON Schema 4 as input type
     'MermaidConfig',
     {
       additionalProperties: false, // in JSON Schema 2019-09, these are called `unevaluatedProperties`
