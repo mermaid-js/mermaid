@@ -171,7 +171,7 @@ export const createCssStyles = (
   }
 
   // classDefs defined in the diagram text
-  if (!isEmpty(classDefs) && classDefs instanceof Map) {
+  if (classDefs instanceof Map) {
     const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
 
     const cssHtmlElements = ['> *', 'span']; // TODO make a constant
@@ -180,8 +180,7 @@ export const createCssStyles = (
     const cssElements = htmlLabels ? cssHtmlElements : cssShapeElements;
 
     // create the CSS styles needed for each styleClass definition and css element
-    for (const classId of classDefs!.keys()) {
-      const styleClassDef = classDefs.get(classId)!;
+    classDefs.forEach((styleClassDef) => {
       // create the css styles for each cssElement and the styles (only if there are styles)
       if (!isEmpty(styleClassDef.styles)) {
         cssElements.forEach((cssElement) => {
@@ -192,7 +191,7 @@ export const createCssStyles = (
       if (!isEmpty(styleClassDef.textStyles)) {
         cssStyles += cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles);
       }
-    }
+    });
   }
   return cssStyles;
 };

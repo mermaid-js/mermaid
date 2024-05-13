@@ -44,14 +44,11 @@ export const addNamespaces = function (
   _id: string,
   diagObj: any
 ) {
-  const keys = [...namespaces.keys()];
-  log.info('keys:', keys);
+  log.info('keys:', [...namespaces.keys()]);
   log.info(namespaces);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
-  keys.forEach(function (id) {
-    const vertex = namespaces.get(id)!;
-
+  namespaces.forEach(function (vertex) {
     // parent node must be one of [rect, roundedWithTitle, noteGroup, divider]
     const shape = 'rect';
 
@@ -89,16 +86,13 @@ export const addClasses = function (
   diagObj: any,
   parent?: string
 ) {
-  const keys = [...classes.keys()];
-  log.info('keys:', keys);
+  log.info('keys:', [...classes.keys()]);
   log.info(classes);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
-  keys
-    .filter((id) => classes.get(id)!.parent == parent)
-    .forEach(function (id) {
-      const vertex = classes.get(id)!;
-
+  [...classes.values()]
+    .filter((vertex) => vertex.parent === parent)
+    .forEach(function (vertex) {
       /**
        * Variable for storing the classes for the vertex
        */

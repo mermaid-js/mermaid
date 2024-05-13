@@ -105,8 +105,8 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .attr('class', 'pieCircle');
 
   let sum = 0;
-  [...sections.keys()].forEach((key: string): void => {
-    sum += sections.get(key)!;
+  sections.forEach((section) => {
+    sum += section;
   });
   // Now add the percentage.
   // Use the centroid method to get the best coordinates.

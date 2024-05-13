@@ -40,10 +40,9 @@ const sanitizeText = (txt: string) => common.sanitizeText(txt, config);
  * @param id - id of the node
  */
 export const lookUpDomId = function (id: string) {
-  const vertexKeys = vertices.keys();
-  for (const vertexKey of vertexKeys) {
-    if (vertices.get(vertexKey)!.id === id) {
-      return vertices.get(vertexKey)!.domId;
+  for (const vertex of vertices.values()) {
+    if (vertex.id === id) {
+      return vertex.domId;
     }
   }
   return id;
@@ -67,17 +66,18 @@ export const addVertex = function (
   }
   let txt;
 
-  if (!vertices.has(id)) {
-    vertices.set(id, {
+  let vertex = vertices.get(id);
+  if (vertex === undefined) {
+    vertex = {
       id,
       labelType: 'text',
       domId: MERMAID_DOM_ID_PREFIX + id + '-' + vertexCounter,
       styles: [],
       classes: [],
-    });
+    };
+    vertices.set(id, vertex);
   }
   vertexCounter++;
-  const vertex = vertices.get(id)!;
 
   if (textObj !== undefined) {
     config = getConfig();
@@ -210,17 +210,19 @@ export const updateLink = function (positions: ('default' | number)[], style: st
 
 export const addClass = function (ids: string, style: string[]) {
   ids.split(',').forEach(function (id) {
-    if (!classes.has(id)) {
-      classes.set(id, { id, styles: [], textStyles: [] });
+    let classNode = classes.get(id);
+    if (classNode === undefined) {
+      classNode = { id, styles: [], textStyles: [] };
+      classes.set(id, classNode);
     }
 
     if (style !== undefined && style !== null) {
       style.forEach(function (s) {
         if (s.match('color')) {
           const newStyle = s.replace('fill', 'bgFill').replace('color', 'fill');
-          classes.get(id)!.textStyles.push(newStyle);
+          classNode.textStyles.push(newStyle);
         }
-        classes.get(id)!.styles.push(s);
+        classNode.styles.push(s);
       });
     }
   });
@@ -257,11 +259,13 @@ export const setDirection = function (dir: string) {
  */
 export const setClass = function (ids: string, className: string) {
   for (const id of ids.split(',')) {
-    if (vertices.has(id)) {
-      vertices.get(id)!.classes.push(className);
+    const vertex = vertices.get(id);
+    if (vertex) {
+      vertex.classes.push(className);
     }
-    if (subGraphLookup.has(id)) {
-      subGraphLookup.get(id)!.classes.push(className);
+    const subGraph = subGraphLookup.get(id);
+    if (subGraph) {
+      subGraph.classes.push(className);
     }
   }
 };
@@ -305,8 +309,9 @@ const setClickFun = function (id: string, functionName: string, functionArgs: st
     argList.push(id);
   }
 
-  if (vertices.has(id)) {
-    vertices.get(id)!.haveCallback = true;
+  const vertex = vertices.get(id);
+  if (vertex) {
+    vertex.haveCallback = true;
     funs.push(function () {
       const elem = document.querySelector(`[id="${domId}"]`);
       if (elem !== null) {
@@ -331,7 +336,7 @@ const setClickFun = function (id: string, functionName: string, functionArgs: st
  */
 export const setLink = function (ids: string, linkStr: string, target: string) {
   ids.split(',').forEach(function (id) {
-    const vertex = vertices.get(id)!;
+    const vertex = vertices.get(id);
     if (vertex !== undefined) {
       vertex.link = utils.formatUrl(linkStr, config);
       vertex.linkTarget = target;
@@ -341,10 +346,7 @@ export const setLink = function (ids: string, linkStr: string, target: string) {
 };
 
 export const getTooltip = function (id: string) {
-  if (tooltips.has(id)) {
-    return tooltips.get(id)!;
-  }
-  return undefined;
+  return tooltips.get(id);
 };
 
 /**

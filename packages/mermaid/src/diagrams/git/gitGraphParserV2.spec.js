@@ -339,9 +339,7 @@ describe('when parsing a gitGraph', function () {
     expect(parser.yy.getCurrentBranch()).toBe('main');
     expect(parser.yy.getDirection()).toBe('LR');
     expect(parser.yy.getBranches().size).toBe(2);
-    const commit1 = commits.keys().next().value;
-    const commit2 = [...commits.keys()][1];
-    const commit3 = [...commits.keys()][2];
+    const [commit1, commit2, commit3] = commits.keys();
     expect(commits.get(commit1).branch).toBe('main');
     expect(commits.get(commit2).branch).toBe('branch');
     expect(commits.get(commit3).branch).toBe('main');
@@ -477,8 +475,7 @@ describe('when parsing a gitGraph', function () {
     expect(parser.yy.getCurrentBranch()).toBe('testBranch');
     expect(parser.yy.getDirection()).toBe('LR');
     expect(parser.yy.getBranches().size).toBe(2);
-    const commit1 = commits.keys().next().value;
-    const commit2 = [...commits.keys()][1];
+    const [commit1, commit2] = commits.keys();
     expect(commits.get(commit1).branch).toBe('main');
     expect(commits.get(commit1).parents).toStrictEqual([]);
     expect(commits.get(commit2).branch).toBe('testBranch');
@@ -502,10 +499,7 @@ describe('when parsing a gitGraph', function () {
     expect(parser.yy.getCurrentBranch()).toBe('main');
     expect(parser.yy.getDirection()).toBe('LR');
     expect(parser.yy.getBranches().size).toBe(2);
-    const commit1 = commits.keys().next().value;
-    const commit2 = [...commits.keys()][1];
-    const commit3 = [...commits.keys()][2];
-    const commit4 = [...commits.keys()][3];
+    const [commit1, commit2, commit3, commit4] = commits.keys();
     expect(commits.get(commit1).branch).toBe('main');
     expect(commits.get(commit1).parents).toStrictEqual([]);
     expect(commits.get(commit2).branch).toBe('testBranch');
@@ -552,8 +546,7 @@ describe('when parsing a gitGraph', function () {
     expect(parser.yy.getCurrentBranch()).toBe('testBranch');
     expect(parser.yy.getDirection()).toBe('LR');
     expect(parser.yy.getBranches().size).toBe(2);
-    const commit1 = commits.keys().next().value;
-    const commit2 = [...commits.keys()][1];
+    const [commit1, commit2] = commits.keys();
     expect(commits.get(commit1).branch).toBe('main');
     expect(commits.get(commit1).parents).toStrictEqual([]);
     expect(commits.get(commit2).branch).toBe('testBranch');
@@ -577,10 +570,7 @@ describe('when parsing a gitGraph', function () {
     expect(parser.yy.getCurrentBranch()).toBe('main');
     expect(parser.yy.getDirection()).toBe('LR');
     expect(parser.yy.getBranches().size).toBe(2);
-    const commit1 = commits.keys().next().value;
-    const commit2 = [...commits.keys()][1];
-    const commit3 = [...commits.keys()][2];
-    const commit4 = [...commits.keys()][3];
+    const [commit1, commit2, commit3, commit4] = commits.keys();
     expect(commits.get(commit1).branch).toBe('main');
     expect(commits.get(commit1).parents).toStrictEqual([]);
     expect(commits.get(commit2).branch).toBe('testBranch');
@@ -614,10 +604,7 @@ describe('when parsing a gitGraph', function () {
     expect(parser.yy.getCurrentBranch()).toBe('main');
     expect(parser.yy.getDirection()).toBe('LR');
     expect(parser.yy.getBranches().size).toBe(2);
-    const commit1 = commits.keys().next().value;
-    const commit2 = [...commits.keys()][1];
-    const commit3 = [...commits.keys()][2];
-
+    const [commit1, commit2, commit3] = commits.keys();
     expect(commits.get(commit1).branch).toBe('main');
     expect(commits.get(commit1).parents).toStrictEqual([]);
 
