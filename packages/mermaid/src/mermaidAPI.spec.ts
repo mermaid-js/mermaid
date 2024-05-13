@@ -1,4 +1,4 @@
-import { vi, it, expect, describe, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // -------------------------------------
 //  Mocks and mocking
@@ -67,8 +67,8 @@ vi.mock('stylis', () => {
 });
 
 import { compile, serialize } from 'stylis';
-import { decodeEntities, encodeEntities } from './utils.js';
 import { Diagram } from './Diagram.js';
+import { decodeEntities, encodeEntities } from './utils.js';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
@@ -283,12 +283,12 @@ describe('mermaidAPI', () => {
   describe('createCssStyles', () => {
     const serif = 'serif';
     const sansSerif = 'sans-serif';
-    const mocked_config_with_htmlLabels: MermaidConfig = {
+    const mocked_config_with_htmlLabels = {
       themeCSS: 'default',
       fontFamily: serif,
       altFontFamily: sansSerif,
       htmlLabels: true,
-    };
+    } as MermaidConfig;
 
     it('gets the cssStyles from the theme', () => {
       const styles = createCssStyles(mocked_config_with_htmlLabels, null);
@@ -389,14 +389,14 @@ describe('mermaidAPI', () => {
         });
 
         it('there are flowchart.htmlLabels in the configuration', () => {
-          const mocked_config_flowchart_htmlLabels: MermaidConfig = {
+          const mocked_config_flowchart_htmlLabels = {
             themeCSS: 'default',
             fontFamily: 'serif',
             altFontFamily: 'sans-serif',
             flowchart: {
               htmlLabels: true,
             },
-          };
+          } as MermaidConfig;
           expect_correct_styles_with_htmlElements(mocked_config_flowchart_htmlLabels);
         });
 
@@ -405,7 +405,7 @@ describe('mermaidAPI', () => {
             themeCSS: 'default',
             fontFamily: 'serif',
             altFontFamily: 'sans-serif',
-          };
+          } as MermaidConfig;
 
           describe('creates styles for shape elements "rect", "polygon", "ellipse", and "circle"', () => {
             const htmlElements = ['rect', 'polygon', 'ellipse', 'circle'];
@@ -430,7 +430,7 @@ describe('mermaidAPI', () => {
       themeCSS: 'default',
       htmlLabels: true,
       themeVariables: { fontFamily: 'serif' },
-    };
+    } as MermaidConfig;
 
     const classDef1 = { id: 'classDef1', styles: ['style1-1'], textStyles: [] };
 

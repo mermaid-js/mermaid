@@ -3,7 +3,7 @@ import type { FlowchartDiagramConfig } from '../config.type.js';
 export const getSubGraphTitleMargins = ({
   flowchart,
 }: {
-  flowchart: FlowchartDiagramConfig;
+  flowchart: Pick<FlowchartDiagramConfig, 'subGraphTitleMargin'>;
 }): {
   subGraphTitleTopMargin: number;
   subGraphTitleBottomMargin: number;
