@@ -2,8 +2,7 @@
 import type * as d3 from 'd3';
 import type { SetRequired } from 'type-fest';
 import type { Diagram } from '../Diagram.js';
-import type { PartialMermaidConfig } from '../config.js';
-import type { BaseDiagramConfig } from '../config.type.js';
+import type { BaseDiagramConfig, PartialMermaidConfig } from '../config.type.js';
 
 export interface DiagramMetadata {
   title?: string;

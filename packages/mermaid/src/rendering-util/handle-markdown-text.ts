@@ -1,7 +1,7 @@
 import type { Content } from 'mdast';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import { dedent } from 'ts-dedent';
-import type { PartialMermaidConfig } from '../config.js';
+import type { PartialMermaidConfig } from '../config.type.js';
 import type { MarkdownLine, MarkdownWordType } from './types.js';
 
 /**

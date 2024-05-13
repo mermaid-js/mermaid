@@ -26,8 +26,7 @@ import {
 import memoize from 'lodash-es/memoize.js';
 import merge from 'lodash-es/merge.js';
 import assignWithDepth from './assignWithDepth.js';
-import type { PartialMermaidConfig } from './config.js';
-import type { MermaidConfig } from './config.type.js';
+import type { MermaidConfig, PartialMermaidConfig } from './config.type.js';
 import { detectType } from './diagram-api/detectType.js';
 import { directiveRegex } from './diagram-api/regexes.js';
 import common from './diagrams/common/common.js';

@@ -1,13 +1,11 @@
-import type { PartialDeep } from 'type-fest';
 import assignWithDepth from './assignWithDepth.js';
-import type { MermaidConfig } from './config.type.js';
+import type { MermaidConfig, PartialMermaidConfig } from './config.type.js';
 import config from './defaultConfig.js';
 import { log } from './logger.js';
 import theme from './themes/index.js';
 import { sanitizeDirective } from './utils/sanitizeDirective.js';
 
 export const defaultConfig: MermaidConfig = Object.freeze(config);
-export type PartialMermaidConfig = PartialDeep<MermaidConfig>;
 
 let siteConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
 let configFromInitialize: PartialMermaidConfig;

@@ -20,7 +20,7 @@ import { version } from '../package.json';
 import { Diagram } from './Diagram.js';
 import { addSVGa11yTitleDescription, setA11yDiagramInfo } from './accessibility.js';
 import * as configApi from './config.js';
-import type { MermaidConfig } from './config.type.js';
+import type { MermaidConfig, PartialMermaidConfig } from './config.type.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { evaluate } from './diagrams/common/common.js';
@@ -517,7 +517,7 @@ const render = async function (
 /**
  * @param  options - Initial Mermaid options
  */
-function initialize(options: configApi.PartialMermaidConfig = {}) {
+function initialize(options: PartialMermaidConfig = {}) {
   // Handle legacy location of font-family configuration
   if (options?.fontFamily && !options.themeVariables?.fontFamily) {
     if (!options.themeVariables) {

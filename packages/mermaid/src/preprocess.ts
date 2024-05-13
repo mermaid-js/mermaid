@@ -1,4 +1,4 @@
-import type { PartialMermaidConfig } from './config.js';
+import type { PartialMermaidConfig } from './config.type.js';
 import { cleanupComments } from './diagram-api/comments.js';
 import { extractFrontMatter } from './diagram-api/frontmatter.js';
 import type { DiagramMetadata } from './diagram-api/types.js';

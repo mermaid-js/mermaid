@@ -10,6 +10,13 @@
  */
 export type DOMPurifyConfiguration = import('dompurify').Config;
 /**
+ * MermaidConfig with all fields optional
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "PartialMermaidConfig".
+ */
+export type PartialMermaidConfig = import('type-fest').PartialDeep<MermaidConfig>;
+/**
  * JavaScript function that returns a `FontConfig`.
  *
  * By default, these return the appropriate `*FontSize`, `*FontFamily`, `*FontWeight`

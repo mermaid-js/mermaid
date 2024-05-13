@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as configApi from './config.js';
-import type { MermaidConfig } from './config.type.js';
+import type { MermaidConfig, PartialMermaidConfig } from './config.type.js';
 
 describe('when working with site config', () => {
   beforeEach(() => {
@@ -24,7 +24,7 @@ describe('when working with site config', () => {
       secure: [...configApi.defaultConfig.secure!, 'fontSize'],
     } as MermaidConfig;
     configApi.setSiteConfig(config_0);
-    const directive: configApi.PartialMermaidConfig = {
+    const directive: PartialMermaidConfig = {
       fontFamily: 'baf',
       // fontSize and securityLevel shouldn't be changed
       fontSize: 54321,
