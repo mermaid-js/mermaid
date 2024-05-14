@@ -20,7 +20,7 @@ const config = getConfig();
 
 let classes = {} as Record<string, ClassDef>;
 
-const sanitizeText = (txt) => common.sanitizeText(txt, config);
+const sanitizeText = (txt:string) => common.sanitizeText(txt, config);
 
 /**
  * Called when the parser comes across a (style) class definition
