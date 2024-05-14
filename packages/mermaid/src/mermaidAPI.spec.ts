@@ -203,7 +203,7 @@ describe('mermaidAPI', () => {
       const base64encodedSrc = toBase64(
         '<body style="' + 'margin:0' + '">' + inputSvgCode + '</body>'
       );
-      const expectedSrc = 'src="data:text/html;charset=UTF-8;base64,' + base64encodedSrc + '"'
+      const expectedSrc = 'src="data:text/html;charset=UTF-8;base64,' + base64encodedSrc + '"';
 
       const result = putIntoIFrame(inputSvgCode);
       expect(result).toContain(expectedSrc);
