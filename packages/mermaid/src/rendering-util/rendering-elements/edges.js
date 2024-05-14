@@ -1,7 +1,18 @@
 import { log } from '$root/logger.js';
 import createLabel from './createLabel.js';
 import { createText } from '$root/rendering-util/createText.ts';
-import { line, curveBasis, select } from 'd3';
+import {
+  line,
+  curveBasis,
+  curveLinear,
+  curveNatural,
+  curveCardinal,
+  curveStep,
+  select,
+  curveMonotoneX,
+  curveMonotoneY,
+  curveCatmullRom,
+} from 'd3';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import utils from '$root/utils.js';
 import { evaluate } from '$root/diagrams/common/common.js';
@@ -291,7 +302,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
       res.y = outsidePoint.y;
     }
 
-    log.warn(`abc89 topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res);
+    log.warn(`abc89 top/bot calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res);
 
     return res;
   } else {
@@ -385,6 +396,16 @@ const calcOffset = function (src, dest, parentLookupDb) {
   return { x: ancestorOffset.posX, y: ancestorOffset.posY };
 };
 
+// Function to insert a midpoint
+/**
+ *
+ * @param p1
+ * @param p2
+ */
+function insertMidpoint(p1, p2) {
+  return [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
+}
+
 export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, id) {
   const { handdrawnSeed } = getConfig();
   console.log('abc88 InsertEdge - edge: ', edge);
@@ -424,16 +445,32 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
 
   // The data for our line
   const lineData = points.filter((p) => !Number.isNaN(p.y));
-
+  let lastPoint = lineData[0];
+  if (lineData.length > 1) {
+    lastPoint = lineData[lineData.length - 1];
+    const secondLastPoint = lineData[lineData.length - 2];
+    // Calculate the mid point of the last two points
+    const diffX = (lastPoint.x - secondLastPoint.x) / 4;
+    const diffY = (lastPoint.y - secondLastPoint.y) / 4;
+    const midPoint = { x: secondLastPoint.x + 3 * diffX, y: secondLastPoint.y + 3 * diffY };
+    lineData.splice(-1, 0, midPoint);
+  }
+  // console.log('abc99 InsertEdge 3: ', lineData);
   // This is the accessor function we talked about above
-  let curve = curveBasis;
+  let curve;
+  // curve = curveBasis;
+  // curve = curveCardinal;
+  // curve = curveLinear;
+  // curve = curveNatural;
+  // curve = curveCatmullRom.alpha(0.5);
+  curve = curveCatmullRom;
+  // curve = curveCardinal.tension(1);
+  // curve = curveMonotoneY;
+  // let curve = interpolateToCurve([5], curveNatural, 0.01, 10);
   // Currently only flowcharts get the curve from the settings, perhaps this should
   // be expanded to a common setting? Restricting it for now in order not to cause side-effects that
   // have not been thought through
-  if (
-    edge.curve &&
-    (diagramType === 'graph' || diagramType === 'flowchart' || diagramType === 'stateDiagram')
-  ) {
+  if (edge.curve) {
     curve = edge.curve;
   }
 
@@ -479,14 +516,22 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
 
   if (useRough) {
     const rc = rough.svg(elem);
-    const svgPathNode = rc.curve(pointArr, { roughness: 0.5, seed: handdrawnSeed });
+    const svgPathNode = rc.path(lineFunction(lineData.splice(0, lineData.length - 1)), {
+      roughness: 0.3,
+      seed: handdrawnSeed,
+    });
+
     strokeClasses += ' transition';
 
     svgPath = select(svgPathNode)
       .select('path')
+      // .attr('d', lineFunction(lineData))
       .attr('id', edge.id)
       .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
       .attr('style', edge.style);
+    let d = svgPath.attr('d');
+    d = d + ' L ' + lastPoint.x + ' ' + lastPoint.y;
+    svgPath.attr('d', d);
     elem.node().appendChild(svgPath.node());
   } else {
     svgPath = elem
@@ -497,7 +542,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
       .attr('style', edge.style);
   }
   // DEBUG code, adds a red circle at each edge coordinate
-  // edge.points.forEach((point) => {
+  // lineData.forEach((point) => {
   //   elem
   //     .append('circle')
   //     .style('stroke', 'red')

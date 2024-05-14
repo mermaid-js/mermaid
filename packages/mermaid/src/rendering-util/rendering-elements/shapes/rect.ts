@@ -81,7 +81,9 @@ export const rect = async (parent: SVGAElement, node: Node) => {
     const options = userNodeOverrides(node, {
       roughness: 0.7,
       fill: mainBkg,
-      fillStyle: 'solid', // solid fill'
+      // fillStyle: 'solid', // solid fill'
+      fillStyle: 'hachure', // solid fill'
+      fillWeight: 3,
       stroke: nodeBorder,
       seed: handdrawnSeed,
     });

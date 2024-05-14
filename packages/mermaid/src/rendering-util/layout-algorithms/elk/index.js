@@ -374,7 +374,7 @@ export const addEdges = function (dataForLayout, graph, svg) {
     edgeData.labelStyle = edgeData.labelStyle += labelStyle;
 
     // if (edge.interpolate !== undefined) {
-    //   edgeData.curve = interpolateToCurve(edge.interpolate, curveLinear);
+    // edgeData.curve = interpolateToCurve(edge.interpolate, curveLinear);
     // } else if (edges.defaultInterpolate !== undefined) {
     //   edgeData.curve = interpolateToCurve(edges.defaultInterpolate, curveLinear);
     // } else {
