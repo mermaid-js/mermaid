@@ -69,6 +69,7 @@ vi.mock('stylis', () => {
 import { compile, serialize } from 'stylis';
 import { decodeEntities, encodeEntities } from './utils.js';
 import { Diagram } from './Diagram.js';
+import {toBase64} from './utils/base64.js';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
@@ -199,7 +200,7 @@ describe('mermaidAPI', () => {
     });
 
     it('sets src to base64 version of <body style="IFRAME_SVG_BODY_STYLE">svgCode<//body>', () => {
-      const base64encodedSrc = btoa('<body style="' + 'margin:0' + '">' + inputSvgCode + '</body>');
+      const base64encodedSrc = toBase64('<body style="' + 'margin:0' + '">' + inputSvgCode + '</body>');
       const expectedRegExp = new RegExp('src="data:text/html;charset=UTF-8;base64,' + base64encodedSrc + '"');
 
       const result = putIntoIFrame(inputSvgCode);
