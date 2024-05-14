@@ -6,9 +6,15 @@
 
 # Blog
 
+## [How to Choose the Right Documentation Software](https://www.mermaidchart.com/blog/posts/how-to-choose-the-right-documentation-software/)
+
+7 May 2024 · 5 mins
+
+How to Choose the Right Documentation Software. Reliable and efficient documentation software is crucial in the fast-paced world of software development.
+
 ## [AI in software diagramming: What trends will define the future?](https://www.mermaidchart.com/blog/posts/ai-in-software-diagramming/)
 
-24 April 2024 ·5 mins
+24 April 2024 · 5 mins
 
 Artificial intelligence (AI) tools are changing the way developers work.
 
