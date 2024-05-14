@@ -176,7 +176,7 @@ describe('mermaidAPI', () => {
   });
 
   describe('putIntoIFrame', () => {
-    const inputSvgCode = 'this is the SVG code';
+    const inputSvgCode = 'this is the SVG code ⛵';
 
     it('uses the default SVG iFrame height is used if no svgElement given', () => {
       const result = putIntoIFrame(inputSvgCode);
