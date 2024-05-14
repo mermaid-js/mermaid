@@ -157,7 +157,7 @@ For a list of Mermaid Plugins and Integrations, visit the [Integrations page](..
 
 Mermaid Chart plugins are available for:
 
-- [ChatGPT](https://docs.mermaidchart.com/plugins/chatgpt)
+- [Mermaid Chart GPT for ChatGPT](https://docs.mermaidchart.com/plugins/mermaid-chart-gpt)
 - [JetBrains IDE](https://docs.mermaidchart.com/plugins/jetbrains-ide)
 - [Microsoft PowerPoint](https://docs.mermaidchart.com/plugins/microsoft-powerpoint)
 - [Microsoft Word](https://docs.mermaidchart.com/plugins/microsoft-word)
