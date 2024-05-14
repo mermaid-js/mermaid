@@ -203,12 +203,10 @@ describe('mermaidAPI', () => {
       const base64encodedSrc = toBase64(
         '<body style="' + 'margin:0' + '">' + inputSvgCode + '</body>'
       );
-      const expectedRegExp = new RegExp(
-        'src="data:text/html;charset=UTF-8;base64,' + base64encodedSrc + '"'
-      );
+      const expectedSrc = 'src="data:text/html;charset=UTF-8;base64,' + base64encodedSrc + '"'
 
       const result = putIntoIFrame(inputSvgCode);
-      expect(result).toMatch(expectedRegExp);
+      expect(result).toContain(expectedSrc);
     });
 
     it('uses the height and appends px from the svgElement given', () => {
