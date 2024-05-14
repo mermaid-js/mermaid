@@ -200,7 +200,7 @@ describe('mermaidAPI', () => {
 
     it('sets src to base64 version of <body style="IFRAME_SVG_BODY_STYLE">svgCode<//body>', () => {
       const base64encodedSrc = btoa('<body style="' + 'margin:0' + '">' + inputSvgCode + '</body>');
-      const expectedRegExp = new RegExp('src="data:text/html;base64,' + base64encodedSrc + '"');
+      const expectedRegExp = new RegExp('src="data:text/html;charset=UTF-8;base64,' + base64encodedSrc + '"');
 
       const result = putIntoIFrame(inputSvgCode);
       expect(result).toMatch(expectedRegExp);
