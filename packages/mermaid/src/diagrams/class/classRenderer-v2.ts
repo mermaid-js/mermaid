@@ -4,7 +4,7 @@ import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { render } from '../../dagre-wrapper/index.js';
-import utils from '../../utils.js';
+import utils, { getEdgeId } from '../../utils.js';
 import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import common from '../common/common.js';
@@ -231,7 +231,10 @@ export const addRelations = function (relations: ClassRelation[], g: graphlib.Gr
       //Set relationship style and line type
       classes: 'relation',
       pattern: edge.relation.lineType == 1 ? 'dashed' : 'solid',
-      id: `id_${edge.id1}_${edge.id2}_${cnt}`,
+      id: getEdgeId(edge.id1, edge.id2, {
+        prefix: 'id',
+        counter: cnt,
+      }),
       // Set link type for rendering
       arrowhead: edge.type === 'arrow_open' ? 'none' : 'normal',
       //Set edge extra labels

@@ -1,7 +1,7 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select, curveLinear, selectAll } from 'd3';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import utils from '../../utils.js';
+import utils, { getEdgeId } from '../../utils.js';
 import { render } from '../../dagre-wrapper/index.js';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
 import { log } from '../../logger.js';
@@ -210,7 +210,11 @@ export const addEdges = async function (edges, g, diagObj) {
     cnt++;
 
     // Identify Link
-    const linkIdBase = 'L-' + edge.start + '-' + edge.end;
+    const linkIdBase = getEdgeId(edge.start, edge.end, {
+      counter: cnt,
+      prefix: 'L',
+    });
+
     // count the links from+to the same node to give unique id
     if (linkIdCnt[linkIdBase] === undefined) {
       linkIdCnt[linkIdBase] = 0;
@@ -219,7 +223,8 @@ export const addEdges = async function (edges, g, diagObj) {
       linkIdCnt[linkIdBase]++;
       log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
     }
-    let linkId = linkIdBase + '-' + linkIdCnt[linkIdBase];
+    let linkId = `${linkIdBase}_${linkIdCnt[linkIdBase]}`;
+
     log.info('abc78 new link id to be used is', linkIdBase, linkId, linkIdCnt[linkIdBase]);
     const linkNameStart = 'LS-' + edge.start;
     const linkNameEnd = 'LE-' + edge.end;

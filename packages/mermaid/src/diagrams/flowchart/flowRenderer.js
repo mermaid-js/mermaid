@@ -6,7 +6,7 @@ import { applyStyle } from 'dagre-d3-es/src/dagre-js/util.js';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
 import { log } from '../../logger.js';
 import common, { evaluate, renderKatex } from '../common/common.js';
-import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
+import { interpolateToCurve, getStylesFromArray, getEdgeId } from '../../utils.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import flowChartShapes from './flowChartShapes.js';
 import { replaceIconSubstring } from '../../rendering-util/createText.js';
@@ -175,7 +175,10 @@ export const addEdges = async function (edges, g, diagObj) {
     cnt++;
 
     // Identify Link
-    const linkId = 'L-' + edge.start + '-' + edge.end;
+    const linkId = getEdgeId(edge.start, edge.end, {
+      counter: cnt,
+      prefix: 'L',
+    });
     const linkNameStart = 'LS-' + edge.start;
     const linkNameEnd = 'LE-' + edge.end;
 

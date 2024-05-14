@@ -5,7 +5,7 @@ import { render } from '../../dagre-wrapper/index.js';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import common from '../common/common.js';
-import utils from '../../utils.js';
+import utils, { getEdgeId } from '../../utils.js';
 
 import {
   DEFAULT_DIAGRAM_DIRECTION,
@@ -252,7 +252,6 @@ const setupNode = (g, parent, parsedItem, diagramStates, diagramDb, altFlag) => 
         type: 'group',
         padding: 0, //getConfig().flowchart.padding
       };
-      graphItemCount++;
 
       const parentNodeId = itemId + PARENT_ID;
       g.setNode(parentNodeId, groupData);
@@ -270,17 +269,23 @@ const setupNode = (g, parent, parsedItem, diagramStates, diagramDb, altFlag) => 
         from = noteData.id;
         to = itemId;
       }
+
       g.setEdge(from, to, {
         arrowhead: 'none',
         arrowType: '',
         style: G_EDGE_STYLE,
         labelStyle: '',
+        id: getEdgeId(from, to, {
+          counter: graphItemCount,
+        }),
         classes: CSS_EDGE_NOTE_EDGE,
         arrowheadStyle: G_EDGE_ARROWHEADSTYLE,
         labelpos: G_EDGE_LABELPOS,
         labelType: G_EDGE_LABELTYPE,
         thickness: G_EDGE_THICKNESS,
       });
+
+      graphItemCount++;
     } else {
       g.setNode(itemId, nodeData);
     }
@@ -324,7 +329,9 @@ const setupDoc = (g, parentParsedItem, doc, diagramStates, diagramDb, altFlag) =
           setupNode(g, parentParsedItem, item.state1, diagramStates, diagramDb, altFlag);
           setupNode(g, parentParsedItem, item.state2, diagramStates, diagramDb, altFlag);
           const edgeData = {
-            id: 'edge' + graphItemCount,
+            id: getEdgeId(item.state1.id, item.state2.id, {
+              counter: graphItemCount,
+            }),
             arrowhead: 'normal',
             arrowTypeEnd: 'arrow_barb',
             style: G_EDGE_STYLE,
