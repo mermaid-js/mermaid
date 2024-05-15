@@ -3,8 +3,11 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 import type { SVG } from '$root/diagram-api/types.js';
 import rough from 'roughjs';
 import { solidStateFill } from './handdrawnStyles.js';
+import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 export const choice = (parent: SVG, node: Node) => {
+  const { themeVariables } = getConfig();
+  const { lineColor } = themeVariables;
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'node default')
@@ -24,7 +27,7 @@ export const choice = (parent: SVG, node: Node) => {
     const pointArr = points.map(function (d) {
       return [d.x, d.y];
     });
-    const roughNode = rc.polygon(pointArr, solidStateFill('black'));
+    const roughNode = rc.polygon(pointArr, solidStateFill(lineColor));
     choice = shapeSvg.insert(() => roughNode);
   } else {
     choice = shapeSvg.insert('polygon', ':first-child').attr(

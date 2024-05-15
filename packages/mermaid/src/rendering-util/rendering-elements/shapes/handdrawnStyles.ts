@@ -10,6 +10,7 @@ export const solidStateFill = (color: string) => {
     hachureGap: 4,
     fillWeight: 2,
     roughness: 0.7,
+    stroke: color,
     seed: handdrawnSeed,
   };
 };
