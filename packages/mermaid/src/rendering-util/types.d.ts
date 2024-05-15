@@ -91,12 +91,12 @@ interface ClassDiagramNode extends Node {
 export interface LayoutData {
   nodes: Node[];
   edges: Edge[];
-  other: any; // Additional properties not yet defined
+  [key: string]: any; // Additional properties not yet defined
 }
 
 export interface RenderData {
   items: (Node | Edge)[];
-  otherDetails: any; // Placeholder for additional, undefined properties
+  [key: string]: any; // Additional properties not yet defined
 }
 
 // This refactored approach ensures that common properties are included in the base `Node` and `Edge` interfaces, with specific types extending these bases with additional properties as needed. This maintains flexibility while ensuring type safety and reducing redundancy.

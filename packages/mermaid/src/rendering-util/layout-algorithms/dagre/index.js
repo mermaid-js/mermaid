@@ -27,7 +27,7 @@ import { log } from '$root/logger.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
-const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, siteConfig) => {
+const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, siteConfig) => {
   log.info('Graph in recursive render: XXX', graphlibJson.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
   log.trace('Dir in recursive render - dir:', dir);
@@ -68,7 +68,7 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, sit
         const o = await recursiveRender(
           nodes,
           node.graph,
-          diagramtype,
+          diagramType,
           id,
           graph.node(v),
           siteConfig
@@ -106,7 +106,7 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, sit
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ', e, ' ', JSON.stringify(graph.edge(e)));
 
     // Check if link is either from or to a cluster
-    log.info('Fix', clusterDb, 'ids:', e.v, e.w, 'Translateing: ', clusterDb[e.v], clusterDb[e.w]);
+    log.info('Fix', clusterDb, 'ids:', e.v, e.w, 'Translating: ', clusterDb[e.v], clusterDb[e.w]);
     insertEdgeLabel(edgeLabels, edge);
   });
 
@@ -158,7 +158,7 @@ const recursiveRender = async (_elem, graph, diagramtype, id, parentCluster, sit
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
     edge.points.forEach((point) => (point.y += subGraphTitleTotalMargin / 2));
-    const paths = insertEdge(edgePaths, edge, clusterDb, diagramtype, graph, id);
+    const paths = insertEdge(edgePaths, edge, clusterDb, diagramType, graph, id);
     positionEdgeLabel(edge, paths);
   });
 
@@ -205,7 +205,7 @@ export const render = async (data4Layout, svg, element) => {
     }
   });
 
-  console.log('Edges:', data4Layout.edges);
+  log.debug('Edges:', data4Layout.edges);
   data4Layout.edges.forEach((edge) => {
     graph.setEdge(edge.start, edge.end, { ...edge });
   });

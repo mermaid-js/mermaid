@@ -62,7 +62,7 @@ export const getClasses = function (
 export const draw = async function (text: string, id: string, _version: string, diag: any) {
   log.info('REF0:');
   log.info('Drawing state diagram (v2)', id);
-  const { securityLevel, state: conf } = getConfig();
+  const { securityLevel, state: conf, layout } = getConfig();
   // Extracting the data from the parsed structure into a more usable form
   // Not related to the refactoring, but this is the first step in the rendering process
   diag.db.extract(diag.db.getRootDocV2());
@@ -89,7 +89,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.type = diag.type;
   // data4Layout.layoutAlgorithm = 'dagre-wrapper';
   // data4Layout.layoutAlgorithm = 'elk';
-  data4Layout.layoutAlgorithm = getConfig().layout;
+  data4Layout.layoutAlgorithm = layout;
   data4Layout.direction = DIR;
   data4Layout.nodeSpacing = conf.nodeSpacing || 50;
   data4Layout.rankSpacing = conf.rankSpacing || 50;

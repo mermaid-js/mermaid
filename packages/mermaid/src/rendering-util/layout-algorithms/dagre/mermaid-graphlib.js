@@ -1,7 +1,7 @@
 /** Decorates with functions required by mermaids dagre-wrapper. */
 import { log } from '$root/logger.js';
-import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
+import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
 
 export let clusterDb = {};
 let descendants = {};
@@ -13,32 +13,24 @@ export const clear = () => {
   clusterDb = {};
 };
 
-const isDescendant = (id, ancenstorId) => {
-  // if (id === ancenstorId) return true;
-
-  log.trace('In isDecendant', ancenstorId, ' ', id, ' = ', descendants[ancenstorId].includes(id));
-  if (descendants[ancenstorId].includes(id)) {
-    return true;
-  }
-
-  return false;
+const isDescendant = (id, ancestorId) => {
+  log.trace('In isDescendant', ancestorId, ' ', id, ' = ', descendants[ancestorId].includes(id));
+  return descendants[ancestorId].includes(id);
 };
 
 const edgeInCluster = (edge, clusterId) => {
-  log.info('Decendants of ', clusterId, ' is ', descendants[clusterId]);
+  log.info('Descendants of ', clusterId, ' is ', descendants[clusterId]);
   log.info('Edge is ', edge);
   // Edges to/from the cluster is not in the cluster, they are in the parent
-  if (edge.v === clusterId) {
-    return false;
-  }
-  if (edge.w === clusterId) {
+  if (edge.v === clusterId || edge.w === clusterId) {
     return false;
   }
 
   if (!descendants[clusterId]) {
-    log.debug('Tilt, ', clusterId, ',not in decendants');
+    log.debug('Tilt, ', clusterId, ',not in descendants');
     return false;
   }
+
   return (
     descendants[clusterId].includes(edge.v) ||
     isDescendant(edge.v, clusterId) ||
@@ -244,7 +236,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
           // d1 xor d2 - if either d1 is true and d2 is false or the other way around
           if (d1 ^ d2) {
             log.warn('Edge: ', edge, ' leaves cluster ', id);
-            log.warn('Decendants of XXX ', id, ': ', descendants[id]);
+            log.warn('Descendants of XXX ', id, ': ', descendants[id]);
             clusterDb[id].externalConnections = true;
           }
         }
@@ -337,7 +329,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
 
   // Remove references to extracted cluster
   // graph.edges().forEach(edge => {
-  //   if (isDecendant(edge.v, clusterId) || isDecendant(edge.w, clusterId)) {
+  //   if (isDescendant(edge.v, clusterId) || isDescendant(edge.w, clusterId)) {
   //     graph.removeEdge(edge);
   //   }
   // });

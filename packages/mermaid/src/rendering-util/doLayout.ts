@@ -1,4 +1,5 @@
-import { LayoutData, LayoutMethod, RenderData } from './types';
+import { log } from '$root/logger.js';
+import type { LayoutData, LayoutMethod, RenderData } from './types.js';
 
 const layoutAlgorithms = {} as Record<string, any>;
 
@@ -8,7 +9,7 @@ const performLayout = (
   _version: string,
   layoutMethod: LayoutMethod
 ): RenderData => {
-  console.log('Performing layout', layoutData, id, _version, layoutMethod);
-  return { items: [], otherDetails:{} };
+  log.info('Performing layout', layoutData, id, _version, layoutMethod);
+  return { items: [] };
 };
 export default performLayout;

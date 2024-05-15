@@ -64,7 +64,21 @@ export interface MermaidConfig {
   theme?: 'default' | 'forest' | 'dark' | 'neutral' | 'null';
   themeVariables?: any;
   themeCSS?: string;
-  handdrawn?: boolean; // Different from theme as it could be combined with any theme in the future
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handdrawn' | 'slick';
+  /**
+   * Defines the seed to be used when using handdrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
+   *
+   */
+  handdrawnSeed?: number;
+  /**
+   * Defines which layout algorithm to use for rendering the diagram.
+   *
+   */
+  layout?: string;
   /**
    * The maximum allowed size of the users text diagram
    */

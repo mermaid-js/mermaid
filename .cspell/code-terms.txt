@@ -89,6 +89,7 @@ reqs
 rewritelinks
 rgba
 RIGHTOF
+roughjs
 sankey
 sequencenumber
 shrc
