@@ -239,8 +239,6 @@ export const addState = function (
     }
   }
 
-  const doc2 = currentDocument.states.get(trimmedId);
-
   if (descr) {
     log.info('Setting state description', trimmedId, descr);
     if (typeof descr === 'string') {
@@ -253,6 +251,7 @@ export const addState = function (
   }
 
   if (note) {
+    const doc2 = currentDocument.states.get(trimmedId);
     doc2.note = note;
     doc2.note.text = common.sanitizeText(doc2.note.text, getConfig());
   }

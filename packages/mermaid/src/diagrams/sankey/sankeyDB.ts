@@ -48,11 +48,13 @@ class SankeyNode {
 const findOrCreateNode = (ID: string): SankeyNode => {
   ID = common.sanitizeText(ID, getConfig());
 
-  if (!nodesMap.has(ID)) {
-    nodesMap.set(ID, new SankeyNode(ID));
-    nodes.push(nodesMap.get(ID)!);
+  let node = nodesMap.get(ID);
+  if (node === undefined) {
+    node = new SankeyNode(ID);
+    nodesMap.set(ID, node);
+    nodes.push(node);
   }
-  return nodesMap.get(ID)!;
+  return node;
 };
 
 const getNodes = () => nodes;

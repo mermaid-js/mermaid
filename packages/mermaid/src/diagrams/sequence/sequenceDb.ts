@@ -99,8 +99,11 @@ export const addActor = function (
     rectData: null,
     type: type ?? 'participant',
   });
-  if (state.records.prevActor && state.records.actors.has(state.records.prevActor)) {
-    state.records.actors.get(state.records.prevActor)!.nextActor = id;
+  if (state.records.prevActor) {
+    const prevActorInRecords = state.records.actors.get(state.records.prevActor);
+    if (prevActorInRecords) {
+      prevActorInRecords.nextActor = id;
+    }
   }
 
   if (state.records.currentBox) {
@@ -207,6 +210,7 @@ export const getDestroyedActors = function () {
   return state.records.destroyedActors;
 };
 export const getActor = function (id: string) {
+  // TODO: do we ever use this function in a way that it might return undefined?
   return state.records.actors.get(id)!;
 };
 export const getActorKeys = function () {

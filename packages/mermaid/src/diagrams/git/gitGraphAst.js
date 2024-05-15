@@ -479,9 +479,7 @@ export const getCommits = function () {
   return commits;
 };
 export const getCommitsArray = function () {
-  const commitArr = [...commits.keys()].map(function (key) {
-    return commits.get(key);
-  });
+  const commitArr = [...commits.values()];
   commitArr.forEach(function (o) {
     log.debug(o.id);
   });

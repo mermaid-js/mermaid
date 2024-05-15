@@ -26,10 +26,11 @@ let classes: Map<string, ClassDef> = new Map();
  */
 export const addStyleClass = function (id: string, styleAttributes = '') {
   // create a new style class object with this id
-  if (!classes.has(id)) {
-    classes.set(id, { id: id, styles: [], textStyles: [] }); // This is a classDef
+  let foundClass = classes.get(id);
+  if (!foundClass) {
+    foundClass = { id: id, styles: [], textStyles: [] };
+    classes.set(id, foundClass); // This is a classDef
   }
-  const foundClass = classes.get(id)!;
   if (styleAttributes !== undefined && styleAttributes !== null) {
     styleAttributes.split(STYLECLASS_SEP).forEach((attrib) => {
       // remove any trailing ;
@@ -73,13 +74,13 @@ export const setCssClass = function (itemIds: string, cssClassName: string) {
     let foundBlock = blockDatabase.get(id);
     if (foundBlock === undefined) {
       const trimmedId = id.trim();
-      blockDatabase.set(trimmedId, { id: trimmedId, type: 'na', children: [] } as Block);
-      foundBlock = blockDatabase.get(trimmedId);
+      foundBlock = { id: trimmedId, type: 'na', children: [] } as Block;
+      blockDatabase.set(trimmedId, foundBlock);
     }
-    if (!foundBlock!.classes) {
-      foundBlock!.classes = [];
+    if (!foundBlock.classes) {
+      foundBlock.classes = [];
     }
-    foundBlock!.classes.push(cssClassName);
+    foundBlock.classes.push(cssClassName);
   });
 };
 
@@ -104,12 +105,9 @@ const populateBlockDatabase = (_blockList: Block[] | Block[][], parent: Block): 
     if (block.type === 'column-setting') {
       parent.columns = block.columns || -1;
     } else if (block.type === 'edge') {
-      if (edgeCount.has(block.id)) {
-        edgeCount.set(block.id, edgeCount.get(block.id)! + 1);
-      } else {
-        edgeCount.set(block.id, 1);
-      }
-      block.id = edgeCount.get(block.id)! + '-' + block.id;
+      const count = (edgeCount.get(block.id) ?? 0) + 1;
+      edgeCount.set(block.id, count);
+      block.id = count + '-' + block.id;
       edgeList.push(block);
     } else {
       if (!block.label) {
@@ -120,17 +118,17 @@ const populateBlockDatabase = (_blockList: Block[] | Block[][], parent: Block): 
           block.label = block.id;
         }
       }
-      const isCreatingBlock = !blockDatabase.has(block.id);
+      const existingBlock = blockDatabase.get(block.id);
 
-      if (isCreatingBlock) {
+      if (existingBlock === undefined) {
         blockDatabase.set(block.id, block);
       } else {
         // Add newer relevant data to aggregated node
         if (block.type !== 'na') {
-          blockDatabase.get(block.id)!.type = block.type;
+          existingBlock.type = block.type;
         }
         if (block.label !== block.id) {
-          blockDatabase.get(block.id)!.label = block.label;
+          existingBlock.label = block.label;
         }
       }
 
@@ -146,7 +144,7 @@ const populateBlockDatabase = (_blockList: Block[] | Block[][], parent: Block): 
           blockDatabase.set(newBlock.id, newBlock);
           children.push(newBlock);
         }
-      } else if (isCreatingBlock) {
+      } else if (existingBlock === undefined) {
         children.push(block);
       }
     }

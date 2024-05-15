@@ -226,8 +226,9 @@ export const setCssClass = function (ids: string, className: string) {
     if (_id[0].match(/\d/)) {
       id = MERMAID_DOM_ID_PREFIX + id;
     }
-    if (classes.has(id)) {
-      classes.get(id)!.cssClasses.push(className);
+    const classNode = classes.get(id);
+    if (classNode) {
+      classNode.cssClasses.push(className);
     }
   });
 };
@@ -268,8 +269,8 @@ export const setLink = function (ids: string, linkStr: string, target: string) {
     if (_id[0].match(/\d/)) {
       id = MERMAID_DOM_ID_PREFIX + id;
     }
-    if (classes.has(id)) {
-      const theClass = classes.get(id)!;
+    const theClass = classes.get(id);
+    if (theClass) {
       theClass.link = utils.formatUrl(linkStr, config);
       if (config.securityLevel === 'sandbox') {
         theClass.linkTarget = '_top';
