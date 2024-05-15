@@ -406,6 +406,152 @@ function insertMidpoint(p1, p2) {
   return [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
 }
 
+/**
+ * Given an edge, this function will return the corner points of the edge. This is defined as:
+ * one point that has a previous point and a next point such as the angle between the previous
+ * point and the next point is 90 degrees. Meaning that the previous point has the same x coordinate
+ * as the center point and at the same time the next point has the same y coordinate or vice versa.
+ * @param points
+ */
+function extractCornerPoints(points) {
+  // console.log('abc99 extractCornerPoints: ', points);
+  const cornerPoints = [];
+  const cornerPointPositions = [];
+  for (let i = 1; i < points.length - 1; i++) {
+    const prev = points[i - 1];
+    const curr = points[i];
+    const next = points[i + 1];
+    // console.log('abc99 extractCornerPoints: ', prev, curr, next);
+    if (
+      prev.x === curr.x &&
+      curr.y === next.y &&
+      Math.abs(curr.x - next.x) > 5 &&
+      Math.abs(curr.y - prev.y) > 5
+    ) {
+      // console.log('abc99 extractCornerPoints got one... ');
+      console.log('abc99 extractCornerPoints got one... ');
+      cornerPoints.push(curr);
+      cornerPointPositions.push(i);
+    } else if (
+      prev.y === curr.y &&
+      curr.x === next.x &&
+      Math.abs(curr.x - prev.x) > 5 &&
+      Math.abs(curr.y - next.y) > 5
+    ) {
+      console.log('abc99 extractCornerPoints got one... ', curr.x - prev.x, curr.y - next.y);
+      cornerPoints.push(curr);
+      cornerPointPositions.push(i);
+    }
+  }
+  return { cornerPoints, cornerPointPositions };
+}
+
+const findAdjacentPoint = function (pointA, pointB, distance) {
+  const xDiff = pointB.x - pointA.x;
+  const yDiff = pointB.y - pointA.y;
+  const length = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+  const ratio = distance / length;
+  return { x: pointB.x - ratio * xDiff, y: pointB.y - ratio * yDiff };
+};
+
+/**
+ * Given an array of points, this function will return a new array of points where the cornershave been removed and replaced with
+ * adjacent points in each direction. SO a corder will be replaced with a point before and the point after the corner.
+ */
+
+const fixCorners = function (lineData) {
+  const { cornerPoints, cornerPointPositions } = extractCornerPoints(lineData);
+  const newLineData = [];
+  let lastCorner = 0;
+  if (lineData.length > 3) {
+    console.log('abc99 fixCorners: ', lineData);
+  }
+  for (let i = 0; i < lineData.length; i++) {
+    if (cornerPointPositions.includes(i)) {
+      const prevPoint = lineData[i - 1];
+      const nextPoint = lineData[i + 1];
+      const cornerPoint = lineData[i];
+      // newLineData.push(lineData[i]);
+      // Find point 5 points back and push it to the new array
+      // console.log('abc99 fixCorners git one: ', cornerPointPositions);
+      // Find a new point on the line point 5 points back and push it to the new array
+      const newPrevPoint = findAdjacentPoint(prevPoint, cornerPoint, 5);
+      const newNextPoint = findAdjacentPoint(nextPoint, cornerPoint, 5);
+      newLineData.push(newPrevPoint);
+
+      const xDiff = newNextPoint.x - newPrevPoint.x;
+      const yDiff = newNextPoint.y - newPrevPoint.y;
+
+      const a = Math.sqrt(2) * 2;
+      let newCornerPoint = { x: cornerPoint.x, y: cornerPoint.y };
+      if (cornerPoint.x === newPrevPoint.x) {
+        // if (yDiff > 0) {
+        newCornerPoint = {
+          x: xDiff < 0 ? newPrevPoint.x - 5 + a : newPrevPoint.x + 5 - a,
+          y: yDiff < 0 ? newPrevPoint.y - a : newPrevPoint.y + a,
+        };
+        // } else {
+        //   newCornerPoint = { x: newPrevPoint.x - a, y: newPrevPoint.y + a };
+        // }
+      } else {
+        // if (yDiff > 0) {
+        //   newCornerPoint = { x: newPrevPoint.x - 5 + a, y: newPrevPoint.y + a };
+        // } else {
+        newCornerPoint = {
+          x: xDiff < 0 ? newPrevPoint.x - a : newPrevPoint.x + a,
+          y: yDiff < 0 ? newPrevPoint.y - 5 + a : newPrevPoint.y + 5 - a,
+        };
+        // }
+      }
+      if (lineData.length > 3) {
+        console.log(
+          '########### abc99\nCorner point',
+          cornerPoint,
+          a,
+          '\n new points prev: ',
+          newPrevPoint,
+          'Next',
+          newNextPoint,
+          'xDiff: ',
+          xDiff,
+          'yDiff',
+          yDiff,
+          'newCornerPoint',
+          newCornerPoint
+        );
+      }
+
+      // newLineData.push(cornerPoint);
+      newLineData.push(newCornerPoint, newNextPoint);
+    } else {
+      newLineData.push(lineData[i]);
+    }
+  }
+  if (lineData.length > 3) {
+    console.log('abc99 fixCorners done: ', newLineData);
+  }
+  return newLineData;
+};
+
+/**
+ * Given a line, this function will return a new line where the corners are rounded.
+ * @param lineData
+ */
+function roundedCornersLine(lineData) {
+  console.log('abc99 roundedCornersLine: ', lineData);
+  const newLineData = fixCorners(lineData);
+  let path = '';
+  for (let i = 0; i < newLineData.length; i++) {
+    if (i === 0) {
+      path += 'M' + newLineData[i].x + ',' + newLineData[i].y;
+    } else if (i === newLineData.length - 1) {
+      path += 'L' + newLineData[i].x + ',' + newLineData[i].y;
+    } else {
+      path += 'L' + newLineData[i].x + ',' + newLineData[i].y;
+    }
+  }
+  return path;
+}
 export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, id) {
   const { handdrawnSeed } = getConfig();
   console.log('abc88 InsertEdge - edge: ', edge);
@@ -444,7 +590,10 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
   }
 
   // The data for our line
-  const lineData = points.filter((p) => !Number.isNaN(p.y));
+  let lineData = points.filter((p) => !Number.isNaN(p.y));
+  const { cornerPoints, cornerPointPositions } = extractCornerPoints(lineData);
+  lineData = fixCorners(lineData);
+  // console.log('abc99 lineData: ', lineData, points);
   let lastPoint = lineData[0];
   if (lineData.length > 1) {
     lastPoint = lineData[lineData.length - 1];
@@ -458,13 +607,13 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
   // console.log('abc99 InsertEdge 3: ', lineData);
   // This is the accessor function we talked about above
   let curve;
-  // curve = curveBasis;
+  curve = curveBasis;
   // curve = curveCardinal;
   // curve = curveLinear;
   // curve = curveNatural;
   // curve = curveCatmullRom.alpha(0.5);
-  curve = curveCatmullRom;
-  // curve = curveCardinal.tension(1);
+  // curve = curveCatmullRom;
+  // curve = curveCardinal.tension(0.7);
   // curve = curveMonotoneY;
   // let curve = interpolateToCurve([5], curveNatural, 0.01, 10);
   // Currently only flowcharts get the curve from the settings, perhaps this should
@@ -475,6 +624,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
   }
 
   const { x, y } = getLineFunctionsWithOffset(edge);
+  // const lineFunction = edge.curve ? line().x(x).y(y).curve(curve) : roundedCornersLine;
   const lineFunction = line().x(x).y(y).curve(curve);
 
   // Construct stroke classes based on properties
@@ -508,15 +658,11 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
   let useRough = edge.useRough;
   let svgPath;
   let path = '';
-  const pointArr = [];
-  edge.points.forEach((point) => {
-    path += point.x + ',' + point.y + ' ';
-    pointArr.push([point.x, point.y]);
-  });
 
   if (useRough) {
     const rc = rough.svg(elem);
-    const svgPathNode = rc.path(lineFunction(lineData.splice(0, lineData.length - 1)), {
+    const ld = Object.assign([], lineData);
+    const svgPathNode = rc.path(lineFunction(ld.splice(0, ld.length - 1)), {
       roughness: 0.3,
       seed: handdrawnSeed,
     });
@@ -542,6 +688,15 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
       .attr('style', edge.style);
   }
   // DEBUG code, adds a red circle at each edge coordinate
+  // cornerPoints.forEach((point) => {
+  //   elem
+  //     .append('circle')
+  //     .style('stroke', 'blue')
+  //     .style('fill', 'blue')
+  //     .attr('r', 3)
+  //     .attr('cx', point.x)
+  //     .attr('cy', point.y);
+  // });
   // lineData.forEach((point) => {
   //   elem
   //     .append('circle')

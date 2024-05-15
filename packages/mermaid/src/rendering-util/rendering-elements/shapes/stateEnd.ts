@@ -5,28 +5,22 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 import type { SVG } from '$root/diagram-api/types.js';
 import rough from 'roughjs';
 import { solidStateFill } from './handdrawnStyles.js';
+import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 export const stateEnd = (parent: SVG, node: Node) => {
+  const { themeVariables } = getConfig();
+  const { lineColor } = themeVariables;
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'node default')
     .attr('id', node.domId || node.id);
 
-  // const roughNode = rc.circle(0, 0, 14, {
-  //   fill: 'white',
-  //   fillStyle: 'solid',
-  //   roughness: 1,
-  //   stroke: 'black',
-  //   strokeWidth: 1,
-  // });
-
-  // circle = shapeSvg.insert(() => roughNode);
   let circle;
   let innerCircle;
   if (node.useRough) {
     const rc = rough.svg(shapeSvg);
-    const roughNode = rc.circle(0, 0, 14, { ...solidStateFill('black'), roughness: 0.5 });
-    const roughInnerNode = rc.circle(0, 0, 5, { ...solidStateFill('black'), fillStyle: 'solid' });
+    const roughNode = rc.circle(0, 0, 14, { ...solidStateFill(lineColor), roughness: 0.5 });
+    const roughInnerNode = rc.circle(0, 0, 5, { ...solidStateFill(lineColor), fillStyle: 'solid' });
     circle = shapeSvg.insert(() => roughNode);
     innerCircle = shapeSvg.insert(() => roughInnerNode);
   } else {

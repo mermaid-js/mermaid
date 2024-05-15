@@ -5,8 +5,12 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 import type { SVG } from '$root/diagram-api/types.js';
 import rough from 'roughjs';
 import { solidStateFill } from './handdrawnStyles.js';
+import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 export const stateStart = (parent: SVG, node: Node) => {
+  const { themeVariables } = getConfig();
+  const { lineColor } = themeVariables;
+
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'node default')
@@ -15,7 +19,7 @@ export const stateStart = (parent: SVG, node: Node) => {
   let circle;
   if (node.useRough) {
     const rc = rough.svg(shapeSvg);
-    const roughNode = rc.circle(0, 0, 14, solidStateFill('black'));
+    const roughNode = rc.circle(0, 0, 14, solidStateFill(lineColor));
     circle = shapeSvg.insert(() => roughNode);
   } else {
     circle = shapeSvg.insert('circle', ':first-child');

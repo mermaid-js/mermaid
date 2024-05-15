@@ -44,6 +44,11 @@ interface Node {
   useRough?: boolean;
   useHtmlLabels?: boolean;
   centerLabel?: boolean;
+
+  //Node style properties
+  backgroundColor?: string;
+  borderColor?: string;
+  labelTextColor?: string;
 }
 
 // Common properties for any edge in the system

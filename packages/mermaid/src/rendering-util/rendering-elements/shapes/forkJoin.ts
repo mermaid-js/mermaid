@@ -5,8 +5,11 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 import type { SVG } from '$root/diagram-api/types.js';
 import rough from 'roughjs';
 import { solidStateFill } from './handdrawnStyles.js';
+import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 export const forkJoin = (parent: SVG, node: Node, dir: string) => {
+  const { themeVariables } = getConfig();
+  const { lineColor } = themeVariables;
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'node default')
@@ -25,7 +28,7 @@ export const forkJoin = (parent: SVG, node: Node, dir: string) => {
   let shape;
   if (node.useRough) {
     const rc = rough.svg(shapeSvg);
-    const roughNode = rc.rectangle(x, y, width, height, solidStateFill('black'));
+    const roughNode = rc.rectangle(x, y, width, height, solidStateFill(lineColor));
     shape = shapeSvg.insert(() => roughNode);
   } else {
     shape = shapeSvg
