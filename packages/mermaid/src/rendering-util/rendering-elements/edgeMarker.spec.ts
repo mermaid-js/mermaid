@@ -1,5 +1,5 @@
+import type { SVG } from '$root/diagram-api/types.js';
 import type { Mocked } from 'vitest';
-import type { SVG } from '../diagram-api/types.js';
 import { addEdgeMarkers } from './edgeMarker.js';
 
 describe('addEdgeMarker', () => {

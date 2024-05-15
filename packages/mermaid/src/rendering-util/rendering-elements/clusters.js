@@ -1,12 +1,12 @@
-import intersectRect from '../rendering-elements/intersect/intersect-rect.js';
-import { log } from '$root/logger.js';
-import createLabel from './createLabel.js';
-import { createText } from '../createText.ts';
-import { select } from 'd3';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import { evaluate } from '$root/diagrams/common/common.js';
+import { log } from '$root/logger.js';
 import { getSubGraphTitleMargins } from '$root/utils/subGraphTitleMargins.js';
+import { select } from 'd3';
 import rough from 'roughjs';
+import { createText } from '../createText.ts';
+import intersectRect from '../rendering-elements/intersect/intersect-rect.js';
+import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 
 const rect = (parent, node) => {
@@ -71,13 +71,13 @@ const rect = (parent, node) => {
   if (useHtmlLabels) {
     label.attr(
       'transform',
-      // This puts the labal on top of the box instead of inside it
+      // This puts the label on top of the box instead of inside it
       `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
     );
   } else {
     label.attr(
       'transform',
-      // This puts the labal on top of the box instead of inside it
+      // This puts the label on top of the box instead of inside it
       `translate(${node.x}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
     );
   }
