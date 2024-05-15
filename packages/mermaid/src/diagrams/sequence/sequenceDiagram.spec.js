@@ -348,7 +348,7 @@ Bob-->Alice-in-Wonderland:I am good thanks!`;
 
     await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
-    expect([...actors.keys()].sort()).toEqual(['Alice-in-Wonderland', 'Bob']);
+    expect([...actors.keys()]).toEqual(['Alice-in-Wonderland', 'Bob']);
     expect(actors.get('Alice-in-Wonderland').description).toBe('Alice-in-Wonderland');
     expect(actors.get('Bob').description).toBe('Bob');
 
@@ -371,7 +371,7 @@ B-->A: I am good thanks!`;
 
     const actors = diagram.db.getActors();
 
-    expect([...actors.keys()].sort()).toEqual(['A', 'B']);
+    expect([...actors.keys()]).toEqual(['A', 'B']);
     expect(actors.get('A').description).toBe('Alice');
     expect(actors.get('B').description).toBe('Bob');
 

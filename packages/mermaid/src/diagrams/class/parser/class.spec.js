@@ -8,17 +8,9 @@ describe('class diagram', function () {
   });
 
   describe('prototype properties', function () {
-    function validateProperty(prop) {
+    it.each(['__proto__', 'constructor'])('should work with a %s property', function (prop) {
       expect(() => parser.parse(`classDiagram\nclass ${prop}`)).not.toThrow();
       expect(() => parser.parse(`classDiagram\nnamespace ${prop} {\n\tclass A\n}`)).not.toThrow();
-    }
-
-    it('should work with a __proto__ property', function () {
-      validateProperty('__proto__');
-    });
-
-    it('should work with a constructor property', function () {
-      validateProperty('constructor');
     });
   });
 });

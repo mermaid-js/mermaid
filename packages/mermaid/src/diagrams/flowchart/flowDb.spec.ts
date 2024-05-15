@@ -53,8 +53,8 @@ describe('flow db addClass', () => {
 
     expect(classes.has('a')).toBe(true);
     expect(classes.has('b')).toBe(true);
-    expect(classes.get('a')?.['styles']).toEqual(['stroke-width: 8px']);
-    expect(classes.get('b')?.['styles']).toEqual(['stroke-width: 8px']);
+    expect(classes.get('a')?.styles).toEqual(['stroke-width: 8px']);
+    expect(classes.get('b')?.styles).toEqual(['stroke-width: 8px']);
   });
 
   it('should detect single class', () => {
@@ -62,6 +62,6 @@ describe('flow db addClass', () => {
     const classes = flowDb.getClasses();
 
     expect(classes.has('a')).toBe(true);
-    expect(classes.get('a')?.['styles']).toEqual(['stroke-width: 8px']);
+    expect(classes.get('a')?.styles).toEqual(['stroke-width: 8px']);
   });
 });

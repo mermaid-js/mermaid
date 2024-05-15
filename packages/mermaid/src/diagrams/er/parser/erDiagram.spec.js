@@ -794,20 +794,13 @@ describe('when parsing ER diagram it...', function () {
   });
 
   describe('prototype properties', function () {
-    function validateProperty(prop) {
-      expect(() => erDiagram.parser.parse(`erDiagram\n${prop} ||--|{ ORDER : place`)).not.toThrow();
-    }
-
-    it('should work with a prototype property', function () {
-      validateProperty('prototype');
-    });
-
-    it('should work with a __proto__ property', function () {
-      validateProperty('__proto__');
-    });
-
-    it('should work with a constructor property', function () {
-      validateProperty('constructor');
-    });
+    it.each(['__proto__', 'constructor', 'prototype'])(
+      'should work with a %s property',
+      function (prop) {
+        expect(() =>
+          erDiagram.parser.parse(`erDiagram\n${prop} ||--|{ ORDER : place`)
+        ).not.toThrow();
+      }
+    );
   });
 });
