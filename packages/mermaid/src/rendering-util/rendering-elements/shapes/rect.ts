@@ -83,7 +83,7 @@ export const rect = async (parent: SVGAElement, node: Node) => {
       fill: mainBkg,
       // fillStyle: 'solid', // solid fill'
       fillStyle: 'hachure', // solid fill'
-      fillWeight: 3,
+      fillWeight: 3.5,
       stroke: nodeBorder,
       seed: handdrawnSeed,
     });
