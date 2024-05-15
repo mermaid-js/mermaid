@@ -760,6 +760,34 @@ function insertOrUpdateNode(nodes, nodeData) {
   if (!nodeData.id || nodeData.id === '</join></fork>' || nodeData.id === '</choice>') {
     return;
   }
+
+  //Populate node style attributes if nodeData has classes defined
+  if (nodeData.classes) {
+    nodeData.classes.split(' ').forEach((cssClass) => {
+      if (classes[cssClass]) {
+        classes[cssClass].styles.forEach((style) => {
+          // Populate nodeData with style attributes specifically to be used by rough.js
+          if (style && style.startsWith('fill:')) {
+            nodeData.backgroundColor = style.replace('fill:', '');
+          }
+          if (style && style.startsWith('stroke:')) {
+            nodeData.borderColor = style.replace('stroke:', '');
+          }
+          if (style && style.startsWith('stroke-width:')) {
+            nodeData.borderWidth = style.replace('stroke-width:', '');
+          }
+
+          nodeData.style += style + ';';
+        });
+        classes[cssClass].textStyles.forEach((style) => {
+          nodeData.labelStyle += style + ';';
+          if (style && style.startsWith('fill:')) {
+            nodeData.labelTextColor = style.replace('fill:', '');
+          }
+        });
+      }
+    });
+  }
   const existingNodeData = nodes.find((node) => node.id === nodeData.id);
   if (existingNodeData) {
     //update the existing nodeData
