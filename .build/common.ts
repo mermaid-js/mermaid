@@ -27,4 +27,9 @@ export const packageOptions = {
     packageName: 'mermaid-flowchart-elk',
     file: 'detector.ts',
   },
+  'mermaid-layout-elk': {
+    name: 'mermaid-layout-elk',
+    packageName: 'mermaid-layout-elk',
+    file: 'index.ts',
+  },
 } as const;

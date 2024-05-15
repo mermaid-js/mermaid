@@ -5,7 +5,8 @@ export const render = async (data4Layout, svg, element) => {
       return layoutRenderer.render(data4Layout, svg, element);
     }
     case 'elk': {
-      const layoutRenderer = await import('./layout-algorithms/elk/index.js');
+      // TODO: Should fix this import path
+      const layoutRenderer = await import('../../../mermaid-layout-elk/src/index.js');
       return layoutRenderer.render(data4Layout, svg, element);
     }
   }
