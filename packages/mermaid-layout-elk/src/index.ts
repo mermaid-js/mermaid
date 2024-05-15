@@ -1,23 +1,23 @@
-import insertMarkers from '../../rendering-elements/markers.js';
-import { findCommonAncestor } from './find-common-ancestor.js';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
-import { insertNode, clear as clearNodes } from '../../rendering-elements/nodes.js';
-import { insertCluster, clear as clearClusters } from '../../rendering-elements/clusters.js';
-import {
-  insertEdgeLabel,
-  positionEdgeLabel,
-  insertEdge,
-  clear as clearEdges,
-} from '../../rendering-elements/edges.js';
-import { labelHelper } from '$root/rendering-util/rendering-elements/shapes/util.js';
-import common from '$root/diagrams/common/common.js';
-import { log } from '$root/logger.js';
+// @ts-nocheck File not ready to check types
 
 import ELK from 'elkjs/lib/elk.bundled.js';
+import { getConfig } from '../../mermaid/src/config.js';
+import common from '../../mermaid/src/diagrams/common/common.js';
+import { log } from '../../mermaid/src/logger.js';
+import { insertCluster } from '../../mermaid/src/rendering-util/rendering-elements/clusters.js';
+import {
+  insertEdge,
+  insertEdgeLabel,
+  positionEdgeLabel,
+} from '../../mermaid/src/rendering-util/rendering-elements/edges.js';
+import insertMarkers from '../../mermaid/src/rendering-util/rendering-elements/markers.js';
+import { insertNode } from '../../mermaid/src/rendering-util/rendering-elements/nodes.js';
+import { labelHelper } from '../../mermaid/src/rendering-util/rendering-elements/shapes/util.js';
+import { findCommonAncestor } from './find-common-ancestor.js';
 
 const nodeDb = {};
-let portPos = {};
-let clusterDb = {};
+const portPos = {};
+const clusterDb = {};
 
 export const addVertex = async (nodeEl, graph, nodeArr, node) => {
   const labelData = { width: 0, height: 0 };
@@ -283,8 +283,8 @@ export const addEdges = function (dataForLayout, graph, svg) {
   log.info('abc78 DAGA edges = ', dataForLayout);
   const edges = dataForLayout.edges;
   const labelsEl = svg.insert('g').attr('class', 'edgeLabels');
-  let linkIdCnt = {};
-  let dir = dataForLayout.direction || 'DOWN';
+  const linkIdCnt = {};
+  const dir = dataForLayout.direction || 'DOWN';
   let defaultStyle;
   let defaultLabelStyle;
 
@@ -299,7 +299,7 @@ export const addEdges = function (dataForLayout, graph, svg) {
       linkIdCnt[linkIdBase]++;
       log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
     }
-    let linkId = linkIdBase + '-' + linkIdCnt[linkIdBase];
+    const linkId = linkIdBase + '-' + linkIdCnt[linkIdBase];
     edge.id = linkId;
     log.info('abc78 new link id to be used is', linkIdBase, linkId, linkIdCnt[linkIdBase]);
     const linkNameStart = 'LS-' + edge.start;
@@ -374,7 +374,7 @@ export const addEdges = function (dataForLayout, graph, svg) {
     edgeData.labelStyle = edgeData.labelStyle += labelStyle;
 
     // if (edge.interpolate !== undefined) {
-    // edgeData.curve = interpolateToCurve(edge.interpolate, curveLinear);
+    //   edgeData.curve = interpolateToCurve(edge.interpolate, curveLinear);
     // } else if (edges.defaultInterpolate !== undefined) {
     //   edgeData.curve = interpolateToCurve(edges.defaultInterpolate, curveLinear);
     // } else {
@@ -457,7 +457,7 @@ export const render = async (data4Layout, svg, element) => {
   log.info('Drawing flowchart using v4 renderer', elk);
 
   // Set the direction of the graph based on the parsed information
-  let dir = data4Layout.direction || 'DOWN';
+  const dir = data4Layout.direction || 'DOWN';
   switch (dir) {
     case 'BT':
       elkGraph.layoutOptions['elk.direction'] = 'UP';
