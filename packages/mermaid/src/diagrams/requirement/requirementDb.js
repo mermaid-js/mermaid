@@ -11,9 +11,9 @@ import {
 
 let relations = [];
 let latestRequirement = {};
-let requirements = {};
+let requirements = new Map();
 let latestElement = {};
-let elements = {};
+let elements = new Map();
 
 const RequirementType = {
   REQUIREMENT: 'Requirement',
@@ -48,8 +48,8 @@ const Relationships = {
 };
 
 const addRequirement = (name, type) => {
-  if (requirements[name] === undefined) {
-    requirements[name] = {
+  if (!requirements.has(name)) {
+    requirements.set(name, {
       name,
       type,
 
@@ -57,11 +57,11 @@ const addRequirement = (name, type) => {
       text: latestRequirement.text,
       risk: latestRequirement.risk,
       verifyMethod: latestRequirement.verifyMethod,
-    };
+    });
   }
   latestRequirement = {};
 
-  return requirements[name];
+  return requirements.get(name);
 };
 
 const getRequirements = () => requirements;
@@ -91,18 +91,17 @@ const setNewReqVerifyMethod = (verifyMethod) => {
 };
 
 const addElement = (name) => {
-  if (elements[name] === undefined) {
-    elements[name] = {
+  if (!elements.has(name)) {
+    elements.set(name, {
       name,
-
       type: latestElement.type,
       docRef: latestElement.docRef,
-    };
+    });
     log.info('Added new requirement: ', name);
   }
   latestElement = {};
 
-  return elements[name];
+  return elements.get(name);
 };
 
 const getElements = () => elements;
@@ -132,9 +131,9 @@ const getRelationships = () => relations;
 const clear = () => {
   relations = [];
   latestRequirement = {};
-  requirements = {};
+  requirements = new Map();
   latestElement = {};
-  elements = {};
+  elements = new Map();
   commonClear();
 };
 

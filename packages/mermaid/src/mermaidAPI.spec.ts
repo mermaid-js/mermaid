@@ -295,7 +295,7 @@ describe('mermaidAPI', () => {
       expect(styles).toMatch(/^\ndefault(.*)/);
     });
     it('gets the fontFamily from the config', () => {
-      const styles = createCssStyles(mocked_config_with_htmlLabels, {});
+      const styles = createCssStyles(mocked_config_with_htmlLabels, new Map());
       expect(styles).toMatch(/(.*)\n:root { --mermaid-font-family: serif(.*)/);
     });
     it('gets the alt fontFamily from the config', () => {
@@ -375,7 +375,7 @@ describe('mermaidAPI', () => {
               // @todo TODO Can't figure out how to spy on the cssImportantStyles method.
               //   That would be a much better approach than manually checking the result
 
-              const styles = createCssStyles(mocked_config, classDefs);
+              const styles = createCssStyles(mocked_config, new Map(Object.entries(classDefs)));
               htmlElements.forEach((htmlElement) => {
                 expect_styles_matchesHtmlElements(styles, htmlElement);
               });
@@ -413,7 +413,10 @@ describe('mermaidAPI', () => {
             it('creates CSS styles for every style and textStyle in every classDef', () => {
               // TODO Can't figure out how to spy on the cssImportantStyles method. That would be a much better approach than manually checking the result.
 
-              const styles = createCssStyles(mocked_config_no_htmlLabels, classDefs);
+              const styles = createCssStyles(
+                mocked_config_no_htmlLabels,
+                new Map(Object.entries(classDefs))
+              );
               htmlElements.forEach((htmlElement) => {
                 expect_styles_matchesHtmlElements(styles, htmlElement);
               });
@@ -437,7 +440,7 @@ describe('mermaidAPI', () => {
     it('gets the css styles created', () => {
       // @todo TODO if a single function in the module can be mocked, do it for createCssStyles and mock the results.
 
-      createUserStyles(mockConfig, 'flowchart-v2', { classDef1 }, 'someId');
+      createUserStyles(mockConfig, 'flowchart-v2', new Map([['classDef1', classDef1]]), 'someId');
       const expectedStyles =
         '\ndefault' +
         '\n.classDef1 > * { style1-1 !important; }' +
@@ -448,12 +451,12 @@ describe('mermaidAPI', () => {
     });
 
     it('calls getStyles to get css for all graph, user css styles, and config theme variables', () => {
-      createUserStyles(mockConfig, 'someDiagram', {}, 'someId');
+      createUserStyles(mockConfig, 'someDiagram', new Map(), 'someId');
       expect(getStyles).toHaveBeenCalled();
     });
 
     it('returns the result of compiling, stringifying, and serializing the css code with stylis', () => {
-      const result = createUserStyles(mockConfig, 'someDiagram', {}, 'someId');
+      const result = createUserStyles(mockConfig, 'someDiagram', new Map(), 'someId');
       expect(compile).toHaveBeenCalled();
       expect(serialize).toHaveBeenCalled();
       expect(result).toEqual('stylis serialized css');
