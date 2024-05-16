@@ -6,6 +6,10 @@
 
 # Mermaid Chart
 
+The Future of Diagramming & Visual Collaboration
+
+Try the Ultimate AI, Mermaid, and Visual Diagramming Suite by creating an account at [Mermaid Chart](https://www.mermaidchart.com/app/sign-up).
+
 <br />
 
 <a href="https://www.producthunt.com/posts/mermaid-chart?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-mermaid&#0045;chart" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=416671&theme=light" alt="Mermaid&#0032;Chart - A&#0032;smarter&#0032;way&#0032;to&#0032;create&#0032;diagrams | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
@@ -18,22 +22,26 @@
 
 - **Editor** - A web based editor for creating and editing Mermaid diagrams.
 
-- **Presentation** - A presentation mode for viewing Mermaid diagrams in a slideshow format.
+- **Visual Editor** - The Visual Editor enables users of all skill levels to create diagrams easily and efficiently, with both GUI and code-based editing options.
 
-- **Collaboration** - A web based collaboration feature for multi-user editing on Mermaid diagrams in real-time (Pro plan).
+- **AI Chat** - Use our embedded AI Chat to generate diagrams from natural language descriptions.
 
 - **Plugins** - A plugin system for extending the functionality of Mermaid.
 
-  Plugins are available for:
+  Official Mermaid Chart plugins:
 
-  - [Mermaid Chart GPT for ChatGPT](https://docs.mermaidchart.com/plugins/mermaid-chart-gpt)
+  - [Mermaid Chart GPT](https://chat.openai.com/g/g-1IRFKwq4G-mermaid-chart)
+  - [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=MermaidChart.vscode-mermaid-chart)
   - [JetBrains IDE](https://plugins.jetbrains.com/plugin/23043-mermaid-chart)
   - [Microsoft PowerPoint and Word](https://appsource.microsoft.com/en-us/product/office/WA200006214?tab=Overview)
-  - [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=MermaidChart.vscode-mermaid-chart)
 
-- **AI diagramming** - A feature for generating Mermaid diagrams from text using AI (Pro plan).
+  Visit our [Plugins](https://www.mermaidchart.com/plugins) page for more information.
 
-- **More** - To learn more, visit our [Product](https://www.mermaidchart.com/product) page.
+- **Collaboration** - A web based collaboration feature for multi-user editing on Mermaid diagrams in real-time (Pro and Enterprise plans).
+
+- **Comments** - Enhance collaboration by adding comments to diagrams.
+
+- **Presentations** - A presentation mode for viewing Mermaid diagrams in a slideshow format.
 
 ## Plans
 
@@ -43,11 +51,9 @@
 
 - **Enterprise** - A paid plan for enterprise use that includes all Pro features, and more.
 
-## Access
+To learn more, visit our [Pricing](https://mermaidchart.com/pricing) page.
 
-Sign up for a free account at [Mermaid Chart](https://www.mermaidchart.com/app/sign-up).
-
-Mermaid Chart is currently offering a 14-day free trial of our newly-launched Pro tier. To learn more, visit our [Pricing](https://mermaidchart.com/pricing) page.
+Mermaid Chart is currently offering a 14-day free trial on our Pro and Enterprise tiers. Sign up for a free account at [Mermaid Chart](https://www.mermaidchart.com/app/sign-up).
 
 ## Mermaid JS contributions
 
