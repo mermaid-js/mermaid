@@ -1,3 +1,4 @@
+import type { PartialMermaidConfig } from './config.type.js';
 import { cleanupComments } from './diagram-api/comments.js';
 import { extractFrontMatter } from './diagram-api/frontmatter.js';
 import type { DiagramMetadata } from './diagram-api/types.js';
@@ -30,7 +31,7 @@ const processFrontmatter = (code: string) => {
 };
 
 const processDirectives = (code: string) => {
-  const initDirective = utils.detectInit(code) ?? {};
+  const initDirective: PartialMermaidConfig = utils.detectInit(code) ?? {};
   const wrapDirectives = utils.detectDirective(code, 'wrap');
   if (Array.isArray(wrapDirectives)) {
     initDirective.wrap = wrapDirectives.some(({ type }) => {

@@ -1,4 +1,5 @@
-import { it, describe, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import type { MermaidConfig } from '../config.type.js';
 import { detectType } from './detectType.js';
 import { addDiagrams } from './diagram-orchestration.js';
 
@@ -46,30 +47,40 @@ describe('diagram-orchestration', () => {
       // graph & dagre-d3 => flowchart
       expect(detectType('graph TD; A-->B')).toBe('flowchart');
       // graph & dagre-d3 => flowchart
-      expect(detectType('graph TD; A-->B', { flowchart: { defaultRenderer: 'dagre-d3' } })).toBe(
-        'flowchart'
-      );
+      expect(
+        detectType('graph TD; A-->B', {
+          flowchart: { defaultRenderer: 'dagre-d3' },
+        } as MermaidConfig)
+      ).toBe('flowchart');
       // flowchart & dagre-d3 => error
       expect(() =>
-        detectType('flowchart TD; A-->B', { flowchart: { defaultRenderer: 'dagre-d3' } })
+        detectType('flowchart TD; A-->B', {
+          flowchart: { defaultRenderer: 'dagre-d3' },
+        } as MermaidConfig)
       ).toThrowErrorMatchingInlineSnapshot(
         `[UnknownDiagramError: No diagram type detected matching given configuration for text: flowchart TD; A-->B]`
       );
 
       // graph & dagre-wrapper => flowchart-v2
       expect(
-        detectType('graph TD; A-->B', { flowchart: { defaultRenderer: 'dagre-wrapper' } })
+        detectType('graph TD; A-->B', {
+          flowchart: { defaultRenderer: 'dagre-wrapper' },
+        } as MermaidConfig)
       ).toBe('flowchart-v2');
       // flowchart ==> flowchart-v2
       expect(detectType('flowchart TD; A-->B')).toBe('flowchart-v2');
       // flowchart && dagre-wrapper ==> flowchart-v2
       expect(
-        detectType('flowchart TD; A-->B', { flowchart: { defaultRenderer: 'dagre-wrapper' } })
+        detectType('flowchart TD; A-->B', {
+          flowchart: { defaultRenderer: 'dagre-wrapper' },
+        } as MermaidConfig)
       ).toBe('flowchart-v2');
       // flowchart && elk ==> flowchart-elk
-      expect(detectType('flowchart TD; A-->B', { flowchart: { defaultRenderer: 'elk' } })).toBe(
-        'flowchart-elk'
-      );
+      expect(
+        detectType('flowchart TD; A-->B', {
+          flowchart: { defaultRenderer: 'elk' },
+        } as MermaidConfig)
+      ).toBe('flowchart-elk');
     });
 
     it('should not detect flowchart if pie contains flowchart', () => {

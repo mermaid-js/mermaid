@@ -7,12 +7,12 @@ import {
   curveBumpX,
   curveBumpY,
   curveBundle,
+  curveCardinal,
   curveCardinalClosed,
   curveCardinalOpen,
-  curveCardinal,
+  curveCatmullRom,
   curveCatmullRomClosed,
   curveCatmullRomOpen,
-  curveCatmullRom,
   curveLinear,
   curveLinearClosed,
   curveMonotoneX,
@@ -23,17 +23,17 @@ import {
   curveStepBefore,
   select,
 } from 'd3';
-import common from './diagrams/common/common.js';
-import { sanitizeDirective } from './utils/sanitizeDirective.js';
-import { log } from './logger.js';
-import { detectType } from './diagram-api/detectType.js';
-import assignWithDepth from './assignWithDepth.js';
-import type { MermaidConfig } from './config.type.js';
 import memoize from 'lodash-es/memoize.js';
 import merge from 'lodash-es/merge.js';
+import assignWithDepth from './assignWithDepth.js';
+import type { MermaidConfig, PartialMermaidConfig } from './config.type.js';
+import { detectType } from './diagram-api/detectType.js';
 import { directiveRegex } from './diagram-api/regexes.js';
+import common from './diagrams/common/common.js';
+import { log } from './logger.js';
 import type { D3Element } from './mermaidAPI.js';
 import type { Point, TextDimensionConfig, TextDimensions } from './types.js';
+import { sanitizeDirective } from './utils/sanitizeDirective.js';
 
 export const ZERO_WIDTH_SPACE = '\u200b';
 
@@ -97,26 +97,23 @@ const directiveWithoutOpen =
  * @param config - Optional mermaid configuration object.
  * @returns The json object representing the init passed to mermaid.initialize()
  */
-export const detectInit = function (
-  text: string,
-  config?: MermaidConfig
-): MermaidConfig | undefined {
+export const detectInit = function (text: string): PartialMermaidConfig | undefined {
   const inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
-  let results: MermaidConfig & { config?: unknown } = {};
+  let results: PartialMermaidConfig & { config?: unknown } = {};
 
   if (Array.isArray(inits)) {
     const args = inits.map((init) => init.args);
     sanitizeDirective(args);
     results = assignWithDepth(results, [...args]);
   } else {
-    results = inits.args as MermaidConfig;
+    results = inits.args as PartialMermaidConfig;
   }
 
   if (!results) {
     return;
   }
 
-  let type = detectType(text, config);
+  let type = detectType(text);
 
   // Move the `config` value to appropriate diagram type value
   const prop = 'config';
@@ -250,7 +247,10 @@ export function interpolateToCurve(
  * @param config - Configuration passed to MermaidJS
  * @returns The formatted URL or `undefined`.
  */
-export function formatUrl(linkStr: string, config: MermaidConfig): string | undefined {
+export function formatUrl(
+  linkStr: string,
+  config: Pick<MermaidConfig, 'securityLevel'>
+): string | undefined {
   const url = linkStr.trim();
 
   if (!url) {

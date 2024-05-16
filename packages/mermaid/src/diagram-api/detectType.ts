@@ -1,13 +1,13 @@
 import type { MermaidConfig } from '../config.type.js';
+import { UnknownDiagramError } from '../errors.js';
 import { log } from '../logger.js';
+import { anyCommentRegex, directiveRegex, frontMatterRegex } from './regexes.js';
 import type {
   DetectorRecord,
   DiagramDetector,
   DiagramLoader,
   ExternalDiagramDefinition,
 } from './types.js';
-import { anyCommentRegex, directiveRegex, frontMatterRegex } from './regexes.js';
-import { UnknownDiagramError } from '../errors.js';
 
 export const detectors: Record<string, DetectorRecord> = {};
 

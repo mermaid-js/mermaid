@@ -26,9 +26,9 @@ Pushes in a directive to the configuration
 
 #### Parameters
 
-| Name        | Type            | Description              |
-| :---------- | :-------------- | :----------------------- |
-| `directive` | `MermaidConfig` | The directive to push in |
+| Name        | Type                                     | Description              |
+| :---------- | :--------------------------------------- | :----------------------- |
+| `directive` | `PartialObjectDeep`<`MermaidConfig`, {}> | The directive to push in |
 
 #### Returns
 
@@ -36,7 +36,7 @@ Pushes in a directive to the configuration
 
 #### Defined in
 
-[config.ts:188](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L188)
+[config.ts:191](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L191)
 
 ---
 
@@ -60,7 +60,7 @@ The currentConfig
 
 #### Defined in
 
-[config.ts:131](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L131)
+[config.ts:134](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L134)
 
 ---
 
@@ -84,7 +84,7 @@ The siteConfig
 
 #### Defined in
 
-[config.ts:96](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L96)
+[config.ts:99](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L99)
 
 ---
 
@@ -118,7 +118,7 @@ The siteConfig
 
 #### Defined in
 
-[config.ts:218](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L218)
+[config.ts:221](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L221)
 
 ---
 
@@ -147,7 +147,7 @@ options in-place
 
 #### Defined in
 
-[config.ts:146](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L146)
+[config.ts:149](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L149)
 
 ---
 
@@ -157,9 +157,9 @@ options in-place
 
 #### Parameters
 
-| Name   | Type            |
-| :----- | :-------------- |
-| `conf` | `MermaidConfig` |
+| Name   | Type                                     |
+| :----- | :--------------------------------------- |
+| `conf` | `PartialObjectDeep`<`MermaidConfig`, {}> |
 
 #### Returns
 
@@ -167,7 +167,7 @@ options in-place
 
 #### Defined in
 
-[config.ts:75](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L75)
+[config.ts:78](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L78)
 
 ---
 
@@ -187,9 +187,9 @@ corresponding siteConfig value.
 
 #### Parameters
 
-| Name   | Type            | Description                 |
-| :----- | :-------------- | :-------------------------- |
-| `conf` | `MermaidConfig` | The potential currentConfig |
+| Name   | Type                                     | Description                 |
+| :----- | :--------------------------------------- | :-------------------------- |
+| `conf` | `PartialObjectDeep`<`MermaidConfig`, {}> | The potential currentConfig |
 
 #### Returns
 
@@ -199,7 +199,7 @@ The currentConfig merged with the sanitized conf
 
 #### Defined in
 
-[config.ts:113](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L113)
+[config.ts:116](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L116)
 
 ---
 
@@ -220,9 +220,9 @@ function _Default value: At default, will mirror Global Config_
 
 #### Parameters
 
-| Name   | Type            | Description                                 |
-| :----- | :-------------- | :------------------------------------------ |
-| `conf` | `MermaidConfig` | The base currentConfig to use as siteConfig |
+| Name   | Type                                     | Description                                 |
+| :----- | :--------------------------------------- | :------------------------------------------ |
+| `conf` | `PartialObjectDeep`<`MermaidConfig`, {}> | The base currentConfig to use as siteConfig |
 
 #### Returns
 
@@ -232,7 +232,7 @@ The new siteConfig
 
 #### Defined in
 
-[config.ts:61](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L61)
+[config.ts:64](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L64)
 
 ---
 
@@ -242,10 +242,10 @@ The new siteConfig
 
 #### Parameters
 
-| Name          | Type               |
-| :------------ | :----------------- |
-| `siteCfg`     | `MermaidConfig`    |
-| `_directives` | `MermaidConfig`\[] |
+| Name          | Type                                        |
+| :------------ | :------------------------------------------ |
+| `siteCfg`     | `MermaidConfig`                             |
+| `_directives` | `PartialObjectDeep`<`MermaidConfig`, {}>\[] |
 
 #### Returns
 
@@ -263,9 +263,9 @@ The new siteConfig
 
 #### Parameters
 
-| Name   | Type            |
-| :----- | :-------------- |
-| `conf` | `MermaidConfig` |
+| Name   | Type                                     |
+| :----- | :--------------------------------------- |
+| `conf` | `PartialObjectDeep`<`MermaidConfig`, {}> |
 
 #### Returns
 
@@ -273,4 +273,4 @@ The new siteConfig
 
 #### Defined in
 
-[config.ts:79](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L79)
+[config.ts:82](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L82)

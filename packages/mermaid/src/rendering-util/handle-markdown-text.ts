@@ -1,14 +1,14 @@
 import type { Content } from 'mdast';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import { dedent } from 'ts-dedent';
+import type { PartialMermaidConfig } from '../config.type.js';
 import type { MarkdownLine, MarkdownWordType } from './types.js';
-import type { MermaidConfig } from '../config.type.js';
 
 /**
  * @param markdown - markdown to process
  * @returns processed markdown
  */
-function preprocessMarkdown(markdown: string, { markdownAutoWrap }: MermaidConfig): string {
+function preprocessMarkdown(markdown: string, { markdownAutoWrap }: PartialMermaidConfig): string {
   // Replace multiple newlines with a single newline
   const withoutMultipleNewlines = markdown.replace(/\n{2,}/g, '\n');
   // Remove extra spaces at the beginning of each line
@@ -22,7 +22,10 @@ function preprocessMarkdown(markdown: string, { markdownAutoWrap }: MermaidConfi
 /**
  * @param markdown - markdown to split into lines
  */
-export function markdownToLines(markdown: string, config: MermaidConfig = {}): MarkdownLine[] {
+export function markdownToLines(
+  markdown: string,
+  config: PartialMermaidConfig = {}
+): MarkdownLine[] {
   const preprocessedMarkdown = preprocessMarkdown(markdown, config);
   const { children } = fromMarkdown(preprocessedMarkdown);
   const lines: MarkdownLine[] = [[]];
@@ -60,7 +63,7 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
   return lines;
 }
 
-export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidConfig = {}) {
+export function markdownToHTML(markdown: string, { markdownAutoWrap }: PartialMermaidConfig = {}) {
   const { children } = fromMarkdown(markdown);
 
   function output(node: Content): string {

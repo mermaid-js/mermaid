@@ -261,6 +261,11 @@ properties:
       This is useful when you want to control how to handle syntax errors in your application.
 
 $defs: # JSON Schema definition (maybe we should move these to a separate file)
+  PartialMermaidConfig:
+    title: PartialMermaidConfig
+    description: MermaidConfig with all fields optional
+    type: object
+    tsType: "import('type-fest').PartialDeep<MermaidConfig>"
   BaseDiagramConfig:
     # TODO: More config needs to be moved here
     title: Base Diagram Config

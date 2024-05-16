@@ -1,24 +1,27 @@
 import assignWithDepth from './assignWithDepth.js';
+import type { MermaidConfig, PartialMermaidConfig } from './config.type.js';
+import config from './defaultConfig.js';
 import { log } from './logger.js';
 import theme from './themes/index.js';
-import config from './defaultConfig.js';
-import type { MermaidConfig } from './config.type.js';
 import { sanitizeDirective } from './utils/sanitizeDirective.js';
 
 export const defaultConfig: MermaidConfig = Object.freeze(config);
 
 let siteConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
-let configFromInitialize: MermaidConfig;
-let directives: MermaidConfig[] = [];
+let configFromInitialize: PartialMermaidConfig;
+let directives: PartialMermaidConfig[] = [];
 let currentConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
 
-export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: MermaidConfig[]) => {
+export const updateCurrentConfig = (
+  siteCfg: MermaidConfig,
+  _directives: PartialMermaidConfig[]
+) => {
   // start with config being the siteConfig
   let cfg: MermaidConfig = assignWithDepth({}, siteCfg);
   // let sCfg = assignWithDepth(defaultConfig, siteConfigDelta);
 
   // Join directives
-  let sumOfDirectives: MermaidConfig = {};
+  let sumOfDirectives: PartialMermaidConfig = {};
   for (const d of _directives) {
     sanitize(d);
     // Apply the data from the directive where the overrides the themeVariables
@@ -58,7 +61,7 @@ export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: Mermaid
  * @param conf - The base currentConfig to use as siteConfig
  * @returns The new siteConfig
  */
-export const setSiteConfig = (conf: MermaidConfig): MermaidConfig => {
+export const setSiteConfig = (conf: PartialMermaidConfig): MermaidConfig => {
   siteConfig = assignWithDepth({}, defaultConfig);
   siteConfig = assignWithDepth(siteConfig, conf);
 
@@ -72,11 +75,11 @@ export const setSiteConfig = (conf: MermaidConfig): MermaidConfig => {
   return siteConfig;
 };
 
-export const saveConfigFromInitialize = (conf: MermaidConfig): void => {
+export const saveConfigFromInitialize = (conf: PartialMermaidConfig): void => {
   configFromInitialize = assignWithDepth({}, conf);
 };
 
-export const updateSiteConfig = (conf: MermaidConfig): MermaidConfig => {
+export const updateSiteConfig = (conf: PartialMermaidConfig): MermaidConfig => {
   siteConfig = assignWithDepth(siteConfig, conf);
   updateCurrentConfig(siteConfig, directives);
 
@@ -110,7 +113,7 @@ export const getSiteConfig = (): MermaidConfig => {
  * @param conf - The potential currentConfig
  * @returns The currentConfig merged with the sanitized conf
  */
-export const setConfig = (conf: MermaidConfig): MermaidConfig => {
+export const setConfig = (conf: PartialMermaidConfig): MermaidConfig => {
   checkConfig(conf);
   assignWithDepth(currentConfig, conf);
 
@@ -185,7 +188,7 @@ export const sanitize = (options: any) => {
  *
  * @param directive - The directive to push in
  */
-export const addDirective = (directive: MermaidConfig) => {
+export const addDirective = (directive: PartialMermaidConfig) => {
   sanitizeDirective(directive);
 
   // If the directive has a fontFamily, but no themeVariables, add the fontFamily to the themeVariables
@@ -236,7 +239,7 @@ const issueWarning = (warning: ConfigWarningStrings) => {
   issuedWarnings[warning] = true;
 };
 
-const checkConfig = (config: MermaidConfig) => {
+const checkConfig = (config: PartialMermaidConfig) => {
   if (!config) {
     return;
   }

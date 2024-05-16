@@ -1,17 +1,17 @@
+import type { DiagramDefinition } from '../../diagram-api/types.js';
+import flowDb from './flowDb.js';
+import flowRendererV2 from './flowRenderer-v2.js';
+import flowRenderer from './flowRenderer.js';
 // @ts-ignore: JISON doesn't support types
 import flowParser from './parser/flow.jison';
-import flowDb from './flowDb.js';
-import flowRenderer from './flowRenderer.js';
-import flowRendererV2 from './flowRenderer-v2.js';
 import flowStyles from './styles.js';
-import type { MermaidConfig } from '../../config.type.js';
 
-export const diagram = {
+export const diagram: DiagramDefinition = {
   parser: flowParser,
   db: flowDb,
   renderer: flowRendererV2,
   styles: flowStyles,
-  init: (cnf: MermaidConfig) => {
+  init: (cnf) => {
     if (!cnf.flowchart) {
       cnf.flowchart = {};
     }

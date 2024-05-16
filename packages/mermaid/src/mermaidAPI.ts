@@ -14,22 +14,22 @@
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 // @ts-ignore: TODO Fix ts errors
+import DOMPurify from 'dompurify';
+import isEmpty from 'lodash-es/isEmpty.js';
 import { version } from '../package.json';
-import * as configApi from './config.js';
-import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import { Diagram } from './Diagram.js';
+import { addSVGa11yTitleDescription, setA11yDiagramInfo } from './accessibility.js';
+import * as configApi from './config.js';
+import type { MermaidConfig, PartialMermaidConfig } from './config.type.js';
+import { addDiagrams } from './diagram-api/diagram-orchestration.js';
+import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
+import { evaluate } from './diagrams/common/common.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
 import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
+import { preprocessDiagram } from './preprocess.js';
 import getStyles from './styles.js';
 import theme from './themes/index.js';
-import DOMPurify from 'dompurify';
-import type { MermaidConfig } from './config.type.js';
-import { evaluate } from './diagrams/common/common.js';
-import isEmpty from 'lodash-es/isEmpty.js';
-import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
-import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
-import { preprocessDiagram } from './preprocess.js';
 import { decodeEntities } from './utils.js';
 
 const MAX_TEXTLENGTH = 50_000;
@@ -516,7 +516,7 @@ const render = async function (
 /**
  * @param  options - Initial Mermaid options
  */
-function initialize(options: MermaidConfig = {}) {
+function initialize(options: PartialMermaidConfig = {}) {
   // Handle legacy location of font-family configuration
   if (options?.fontFamily && !options.themeVariables?.fontFamily) {
     if (!options.themeVariables) {
