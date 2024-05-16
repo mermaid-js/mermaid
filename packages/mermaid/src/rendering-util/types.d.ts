@@ -1,3 +1,5 @@
+import config from '../../dist/defaultConfig';
+import { MermaidConfig } from '../../dist/config.type';
 export type MarkdownWordType = 'normal' | 'strong' | 'emphasis';
 export interface MarkdownWord {
   content: string;
@@ -12,42 +14,49 @@ interface Node {
   id: string;
   label?: string;
   parentId?: string;
-  position?: string;
-  styles?: string; // Pick one, don't need both `styles` & `style`, or have (nodeStyle + labelStyle)
-  style?: string;
-  classes?: string; // Pick one `classes` vs `class`
-  class?: string;
+  position?: string; //REMOVE
+  cssStyles?: string; // Renamed from `styles` to `cssStyles`
+  style?: string; //REMOVE
+  cssClasses?: string; // Renamed from `classes` to `cssClasses`
+  classes?: string; //REMOVE
+  class?: string; //REMOVE
+  labelStyle?: string;
+  labelText?: string; //REMOVE, use `label` instead
+
   // Flowchart specific properties
-  labelType?: string; // Always use markdown string?
+  labelType?: string; // REMOVE? Always use markdown string, need to check for KaTeX
   domId: string;
   // Rendering specific properties for both Flowchart and State Diagram nodes
   dir?: string; // Only relevant for isGroup true, i.e. a sub-graph or composite state.
   haveCallback?: boolean;
-  labelStyle?: string;
-  labelText?: string;
   link?: string;
   linkTarget?: string;
-  padding?: number;
-  props?: Record<string, unknown>;
-  rx?: number;
-  ry?: number;
+  padding?: number; //REMOVE, use from LayoutData.config
+  props?: Record<string, unknown>; //REMOVE
   shape?: string;
   tooltip?: string;
-  type: string; // replace with isGroup: boolean, default false
+  type: string; // REMOVE, replace with isGroup: boolean, default false
+  isGroup: boolean;
   width?: number;
   height?: number;
-
   // Specific properties for State Diagram nodes TODO remove and use generic properties
   intersect?: (point: any) => any;
 
-  borders?: string; //Maybe have it similar to nodeStyle, labelStyle, have it as borderStyle (check the usage)
+  // Non-generic properties
+  rx?: number; // Used for rounded corners in Rect, Ellipse, etc.Maybe it to specialized RectNode, EllipseNode, etc.
+  ry?: number;
+
+  borders?: string; //REMOVE
   useRough?: boolean;
   useHtmlLabels?: boolean;
-  centerLabel?: boolean;
+  centerLabel?: boolean; //keep for now.
+  //Candidate for removal, maybe rely on labelStyle or a specific property labelPosition: Top, Center, Bottom
 
   //Node style properties
   backgroundColor?: string;
   borderColor?: string;
+  borderStyle?: string;
+  borderWidth?: number;
   labelTextColor?: string;
 }
 
@@ -91,6 +100,7 @@ interface ClassDiagramNode extends Node {
 export interface LayoutData {
   nodes: Node[];
   edges: Edge[];
+  config: MermaidConfig;
   [key: string]: any; // Additional properties not yet defined
 }
 
