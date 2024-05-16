@@ -533,8 +533,15 @@ function initialize(options: MermaidConfig = {}) {
 
   registerIcons(defaultIconLibrary);
   if (options?.iconLibraries) {
-    options.iconLibraries.forEach((library) => {
-      registerIcons(library);
+    options.iconLibraries.forEach(async (library) => {
+      if (typeof (library) === 'string') {
+        if (library === 'aws:full') {
+          const { default: awsFull } = await import('./rendering-util/svg/aws/aws_full.js');
+          registerIcons(awsFull);
+        }
+      } else {
+        registerIcons(library);
+      }
     });
   }
 

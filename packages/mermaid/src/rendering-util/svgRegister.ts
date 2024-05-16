@@ -6,7 +6,7 @@ type IconResolver = (
 ) => Selection<SVGGElement, unknown, Element | null, unknown>;
 type IconLibrary = Record<string, IconResolver>;
 
-const createIcon = (icon: string, originalSize: number): IconResolver => {
+const createIcon: (icon: string, originalSize: number) => IconResolver = (icon, originalSize) => {
   return (
     parent: Selection<SVGGElement, unknown, Element | null, unknown>,
     size: number = originalSize

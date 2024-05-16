@@ -2,7 +2,7 @@
  * Designer: Nicolas Newman
  * @see https://github.com/NicolasNewman/IconLibrary
  */
-import { createIcon } from '../svgRegister.js';
+import { createIcon } from '../../svgRegister.js';
 
 export default createIcon(
   `<g>

@@ -226,6 +226,17 @@
     </pre>
   <hr />
 
+  <h2>AWS Icon Demo</h2>
+  <pre class="mermaid">
+    architecture
+      service s3(s3)[Cloud Store]
+      service ec2(ec2)[Server]
+      service wave(wavelength)[Wave]
+
+      s3 L--R ec2
+      s3 T--B wave
+  </pre>
+
   <script type="module">
     import mermaid from './mermaid.esm.mjs';
 
@@ -284,6 +295,7 @@
         iconSize: 80,
       },
       useMaxWidth: false,
+      iconLibraries: ['aws:full']
     });
     function callback() {
       alert('It worked');
