@@ -299,11 +299,11 @@ export const addEdges = function (dataForLayout, graph, svg) {
       linkIdCnt[linkIdBase]++;
       log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
     }
-    const linkId = linkIdBase + '-' + linkIdCnt[linkIdBase];
+    const linkId = linkIdBase + '_' + linkIdCnt[linkIdBase];
     edge.id = linkId;
     log.info('abc78 new link id to be used is', linkIdBase, linkId, linkIdCnt[linkIdBase]);
-    const linkNameStart = 'LS-' + edge.start;
-    const linkNameEnd = 'LE-' + edge.end;
+    const linkNameStart = 'LS_' + edge.start;
+    const linkNameEnd = 'LE_' + edge.end;
 
     const edgeData = { style: '', labelStyle: '' };
     edgeData.minlen = edge.length || 1;
@@ -436,6 +436,21 @@ export const addEdges = function (dataForLayout, graph, svg) {
   return graph;
 };
 
+function dir2ElkDirection(dir) {
+  switch (dir) {
+    case 'LR':
+      return 'RIGHT';
+    case 'RL':
+      return 'LEFT';
+    case 'TB':
+      return 'DOWN';
+    case 'BT':
+      return 'UP';
+    default:
+      return 'DOWN';
+  }
+}
+
 export const render = async (data4Layout, svg, element) => {
   const elk = new ELK();
 
@@ -446,7 +461,7 @@ export const render = async (data4Layout, svg, element) => {
   let elkGraph = {
     id: 'root',
     layoutOptions: {
-      'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+      // 'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
       'org.eclipse.elk.padding': '[top=100, left=100, bottom=110, right=110]',
       'elk.layered.spacing.edgeNodeBetweenLayers': '30',
     },
@@ -458,23 +473,7 @@ export const render = async (data4Layout, svg, element) => {
 
   // Set the direction of the graph based on the parsed information
   const dir = data4Layout.direction || 'DOWN';
-  switch (dir) {
-    case 'BT':
-      elkGraph.layoutOptions['elk.direction'] = 'UP';
-      break;
-    case 'TB':
-      elkGraph.layoutOptions['elk.direction'] = 'DOWN';
-      break;
-    case 'LR':
-      elkGraph.layoutOptions['elk.direction'] = 'RIGHT';
-      break;
-    case 'RL':
-      elkGraph.layoutOptions['elk.direction'] = 'LEFT';
-      break;
-    default:
-      elkGraph.layoutOptions['elk.direction'] = 'DOWN';
-      break;
-  }
+  elkGraph.layoutOptions['elk.direction'] = dir2ElkDirection(dir);
 
   // Create the lookup db for the subgraphs and their children to used when creating
   // the tree structured graph
@@ -513,7 +512,12 @@ export const render = async (data4Layout, svg, element) => {
           height: node?.labelData?.height || 100,
         },
       ];
-      node['elk.direction'] = 'RIGHT';
+      // console.log('DAGA node dir: ', node.dir);
+      if (node.dir) {
+        node.layoutOptions = {
+          'elk.direction': dir2ElkDirection(node.dir),
+        };
+      }
       delete node.x;
       delete node.y;
       delete node.width;
