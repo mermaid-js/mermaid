@@ -1,7 +1,9 @@
 import clone from 'lodash-es/clone.js';
 import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
+import common from '../common/common.js';
 import { clear as commonClear } from '../common/commonDb.js';
 import type { Block, ClassDef } from './blockTypes.js';
 
@@ -14,8 +16,11 @@ const COLOR_KEYWORD = 'color';
 const FILL_KEYWORD = 'fill';
 const BG_FILL = 'bgFill';
 const STYLECLASS_SEP = ',';
+const config = getConfig();
 
 let classes: Map<string, ClassDef> = new Map();
+
+const sanitizeText = (txt: string) => common.sanitizeText(txt, config);
 
 /**
  * Called when the parser comes across a (style) class definition
@@ -88,6 +93,9 @@ const populateBlockDatabase = (_blockList: Block[] | Block[][], parent: Block): 
   const blockList = _blockList.flat();
   const children = [];
   for (const block of blockList) {
+    if (block.label) {
+      block.label = sanitizeText(block.label);
+    }
     if (block.type === 'classDef') {
       addStyleClass(block.id, block.css);
       continue;

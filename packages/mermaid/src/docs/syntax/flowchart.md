@@ -567,7 +567,7 @@ Examples of tooltip usage below:
 
 ```html
 <script>
-  const callback = function () {
+  window.callback = function () {
     alert('A callback was triggered');
   };
 </script>
@@ -588,7 +588,7 @@ flowchart LR
 
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
 
-?> Due to limitations with how Docsify handles JavaScript callback functions, an alternate working demo for the above code can be viewed at [this jsfiddle](https://jsfiddle.net/Ogglas/2o73vdez/7).
+?> Due to limitations with how Docsify handles JavaScript callback functions, an alternate working demo for the above code can be viewed at [this jsfiddle](https://jsfiddle.net/yk4h7qou/2/).
 
 Links are opened in the same browser tab/window by default. It is possible to change this by adding a link target to the click definition (`_self`, `_blank`, `_parent` and `_top` are supported):
 
@@ -620,7 +620,7 @@ Beginner's tip—a full example using interactive links in a html context:
   </pre>
 
   <script>
-    const callback = function () {
+    window.callback = function () {
       alert('A callback was triggered');
     };
     const config = {
