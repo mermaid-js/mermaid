@@ -95,9 +95,10 @@ stateDiagram-v2
 
     state Active {
       direction BT
-        [*] --> NumLockOff
-        NumLockOff --> NumLockOn : EvNumLockPressed
+        [*] --> Inner
+        Inner --> NumLockOn : EvNumLockPressed
     }
+    %% Outer --> Inner
       </pre
     >
     <pre id="diagram" class="mermaid2">

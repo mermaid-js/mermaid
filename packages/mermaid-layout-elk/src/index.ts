@@ -451,6 +451,21 @@ function dir2ElkDirection(dir) {
   }
 }
 
+function setIncludeChildrenPolicy(nodeId: string, ancestorId: string) {
+  const node = nodeDb[nodeId];
+
+  if (!node) {
+    return;
+  }
+  if (node?.layoutOptions === undefined) {
+    node.layoutOptions = {};
+  }
+  node.layoutOptions['elk.hierarchyHandling'] = 'INCLUDE_CHILDREN';
+  if (node.id !== ancestorId) {
+    setIncludeChildrenPolicy(node.parentId, ancestorId);
+  }
+}
+
 export const render = async (data4Layout, svg, element) => {
   const elk = new ELK();
 
@@ -461,7 +476,7 @@ export const render = async (data4Layout, svg, element) => {
   let elkGraph = {
     id: 'root',
     layoutOptions: {
-      // 'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+      'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
       'org.eclipse.elk.padding': '[top=100, left=100, bottom=110, right=110]',
       'elk.layered.spacing.edgeNodeBetweenLayers': '30',
     },
@@ -516,12 +531,24 @@ export const render = async (data4Layout, svg, element) => {
       if (node.dir) {
         node.layoutOptions = {
           'elk.direction': dir2ElkDirection(node.dir),
+          'elk.hierarchyHandling': 'SEPARATE_CHILDREN',
         };
       }
       delete node.x;
       delete node.y;
       delete node.width;
       delete node.height;
+    }
+  });
+  elkGraph.edges.forEach((edge) => {
+    const source = edge.sources[0];
+    const target = edge.targets[0];
+
+    if (nodeDb[source].parentId !== nodeDb[target].parentId) {
+      const ancestorId = findCommonAncestor(source, target, parentLookupDb);
+      // an edge that breaks a subgraph has been identified, set configuration accordingly
+      setIncludeChildrenPolicy(source, ancestorId);
+      setIncludeChildrenPolicy(target, ancestorId);
     }
   });
 
@@ -540,32 +567,31 @@ export const render = async (data4Layout, svg, element) => {
 
     const offset = calcOffset(sourceId, targetId, parentLookupDb);
 
-    const src = edge.sections[0].startPoint;
-    const dest = edge.sections[0].endPoint;
-    const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
+    if (edge.sections) {
+      const src = edge.sections[0].startPoint;
+      const dest = edge.sections[0].endPoint;
+      const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
 
-    const segPoints = segments.map((segment) => {
-      return { x: segment.x + offset.x, y: segment.y + offset.y };
-    });
-    edge.points = [
-      { x: src.x + offset.x, y: src.y + offset.y },
-      ...segPoints,
-      { x: dest.x + offset.x, y: dest.y + offset.y },
-    ];
-    console.log(
-      'DAGA org points: ',
-      [
-        { x: src.x, y: src.y },
-        { x: dest.x, y: dest.y },
-      ],
-      'points: ',
-      edge.points
-    );
+      const segPoints = segments.map((segment) => {
+        return { x: segment.x + offset.x, y: segment.y + offset.y };
+      });
+      edge.points = [
+        { x: src.x + offset.x, y: src.y + offset.y },
+        ...segPoints,
+        { x: dest.x + offset.x, y: dest.y + offset.y },
+      ];
+      const paths = insertEdge(
+        edgesEl,
+        edge,
+        clusterDb,
+        data4Layout.type,
+        g,
+        data4Layout.diagramId
+      );
 
-    const paths = insertEdge(edgesEl, edge, clusterDb, data4Layout.type, g, data4Layout.diagramId);
-
-    edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
-    edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
-    positionEdgeLabel(edge, paths);
+      edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
+      edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
+      positionEdgeLabel(edge, paths);
+    }
   });
 };
