@@ -18,6 +18,7 @@ Markdownish
 mermaidjs
 mindmap
 mindmaps
+mrtree
 multigraph
 nodesep
 NOTEGROUP

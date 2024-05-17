@@ -10,6 +10,8 @@ import {
   insertEdgeLabel,
   positionEdgeLabel,
 } from '../../mermaid/src/rendering-util/rendering-elements/edges.js';
+import { curveLinear } from 'd3';
+import { interpolateToCurve } from '../../mermaid/src/utils.js';
 import insertMarkers from '../../mermaid/src/rendering-util/rendering-elements/markers.js';
 import { insertNode } from '../../mermaid/src/rendering-util/rendering-elements/nodes.js';
 import { labelHelper } from '../../mermaid/src/rendering-util/rendering-elements/shapes/util.js';
@@ -373,13 +375,14 @@ export const addEdges = function (dataForLayout, graph, svg) {
     edgeData.style = edgeData.style += style;
     edgeData.labelStyle = edgeData.labelStyle += labelStyle;
 
-    // if (edge.interpolate !== undefined) {
-    //   edgeData.curve = interpolateToCurve(edge.interpolate, curveLinear);
-    // } else if (edges.defaultInterpolate !== undefined) {
-    //   edgeData.curve = interpolateToCurve(edges.defaultInterpolate, curveLinear);
-    // } else {
-    //   edgeData.curve = interpolateToCurve(conf.curve, curveLinear);
-    // }
+    const conf = getConfig();
+    if (edge.interpolate !== undefined) {
+      edgeData.curve = interpolateToCurve(edge.interpolate, curveLinear);
+    } else if (edges.defaultInterpolate !== undefined) {
+      edgeData.curve = interpolateToCurve(edges.defaultInterpolate, curveLinear);
+    } else {
+      edgeData.curve = interpolateToCurve(conf.curve, curveLinear);
+    }
 
     if (edge.text === undefined) {
       if (edge.style !== undefined) {
@@ -466,7 +469,7 @@ function setIncludeChildrenPolicy(nodeId: string, ancestorId: string) {
   }
 }
 
-export const render = async (data4Layout, svg, element) => {
+export const render = async (data4Layout, svg, element, algorithm) => {
   const elk = new ELK();
 
   // Add the arrowheads to the svg
@@ -479,6 +482,15 @@ export const render = async (data4Layout, svg, element) => {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
       'org.eclipse.elk.padding': '[top=100, left=100, bottom=110, right=110]',
       'elk.layered.spacing.edgeNodeBetweenLayers': '30',
+      'elk.algorithm': algorithm,
+      'nodePlacement.strategy': 'NETWORK_SIMPLEX',
+      'spacing.nodeNode': 70,
+      'spacing.nodeNodeBetweenLayers': 25,
+      'spacing.edgeNode': 10,
+      'spacing.edgeNodeBetweenLayers': 20,
+      'spacing.edgeEdge': 20,
+      'spacing.edgeEdgeBetweenLayers': 20,
+      'spacing.nodeSelfLoop': 20,
     },
     children: [],
     edges: [],

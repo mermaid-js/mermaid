@@ -75,12 +75,17 @@
     </style>
   </head>
   <body>
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
+      %%{init: {"layout": "stress"} }%%
 stateDiagram
-NumLockOff --> NumLockOn : EvNumLockPressed
+  [*] --> T1
+  T1 --> T2
+  T2 --> T3
+  T3 --> T1
+  T1 --> T3
       </pre
     >
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 stateDiagram
   State1: The state with a note
   note right of State1
