@@ -14,17 +14,19 @@ interface Node {
   id: string;
   label?: string;
   parentId?: string;
-  position?: string; // Keep, this is for notes 'left of', 'right of', etc.
+  position?: string; // Keep, this is for notes 'left of', 'right of', etc. Move into nodeNode
   cssStyles?: string; // Renamed from `styles` to `cssStyles`
   cssClasses?: string; // Renamed from `classes` to `cssClasses`
-  // style?: string; //REMOVE
-  // class?: string; //REMOVE
-  // labelText?: string; //REMOVE, use `label` instead
-  // props?: Record<string, unknown>; //REMOVE
+  // style?: string; //REMOVE ✅
+  // class?: string; //REMOVE ✅
+  // labelText?: string; //REMOVE, use `label` instead  ✅
+  // props?: Record<string, unknown>; //REMOVE  ✅
+  // type: string; // REMOVE, replace with isGroup: boolean, default false  ✅
+  // borders?: string; //REMOVE  ✅
   labelStyle?: string;
 
   // Flowchart specific properties
-  labelType?: string; // REMOVE? Always use markdown string, need to check for KaTeX - wait with this one
+  labelType?: string; // REMOVE? Always use markdown string, need to check for KaTeX - ⏳ wait with this one
   domId: string;
   // Rendering specific properties for both Flowchart and State Diagram nodes
   dir?: string; // Only relevant for isGroup true, i.e. a sub-graph or composite state.
@@ -34,7 +36,6 @@ interface Node {
   padding?: number; //REMOVE?, use from LayoutData.config - Keep, this could be shape specific
   shape?: string;
   tooltip?: string;
-  type: string; // REMOVE, replace with isGroup: boolean, default false
   isGroup: boolean;
   width?: number;
   height?: number;
@@ -45,7 +46,6 @@ interface Node {
   rx?: number; // Used for rounded corners in Rect, Ellipse, etc.Maybe it to specialized RectNode, EllipseNode, etc.
   ry?: number;
 
-  borders?: string; //REMOVE
   useRough?: boolean;
   useHtmlLabels?: boolean;
   centerLabel?: boolean; //keep for now.
