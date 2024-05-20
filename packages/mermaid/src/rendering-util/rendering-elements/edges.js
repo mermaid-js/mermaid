@@ -414,22 +414,18 @@ function insertMidpoint(p1, p2) {
  * @param points
  */
 function extractCornerPoints(points) {
-  // console.log('abc99 extractCornerPoints: ', points);
   const cornerPoints = [];
   const cornerPointPositions = [];
   for (let i = 1; i < points.length - 1; i++) {
     const prev = points[i - 1];
     const curr = points[i];
     const next = points[i + 1];
-    // console.log('abc99 extractCornerPoints: ', prev, curr, next);
     if (
       prev.x === curr.x &&
       curr.y === next.y &&
       Math.abs(curr.x - next.x) > 5 &&
       Math.abs(curr.y - prev.y) > 5
     ) {
-      // console.log('abc99 extractCornerPoints got one... ');
-      console.log('abc99 extractCornerPoints got one... ');
       cornerPoints.push(curr);
       cornerPointPositions.push(i);
     } else if (
@@ -438,7 +434,6 @@ function extractCornerPoints(points) {
       Math.abs(curr.x - prev.x) > 5 &&
       Math.abs(curr.y - next.y) > 5
     ) {
-      console.log('abc99 extractCornerPoints got one... ', curr.x - prev.x, curr.y - next.y);
       cornerPoints.push(curr);
       cornerPointPositions.push(i);
     }
@@ -463,17 +458,12 @@ const fixCorners = function (lineData) {
   const { cornerPoints, cornerPointPositions } = extractCornerPoints(lineData);
   const newLineData = [];
   let lastCorner = 0;
-  if (lineData.length > 3) {
-    console.log('abc99 fixCorners: ', lineData);
-  }
   for (let i = 0; i < lineData.length; i++) {
     if (cornerPointPositions.includes(i)) {
       const prevPoint = lineData[i - 1];
       const nextPoint = lineData[i + 1];
       const cornerPoint = lineData[i];
-      // newLineData.push(lineData[i]);
-      // Find point 5 points back and push it to the new array
-      // console.log('abc99 fixCorners git one: ', cornerPointPositions);
+
       // Find a new point on the line point 5 points back and push it to the new array
       const newPrevPoint = findAdjacentPoint(prevPoint, cornerPoint, 5);
       const newNextPoint = findAdjacentPoint(nextPoint, cornerPoint, 5);
@@ -503,32 +493,12 @@ const fixCorners = function (lineData) {
         };
         // }
       }
-      if (lineData.length > 3) {
-        console.log(
-          '########### abc99\nCorner point',
-          cornerPoint,
-          a,
-          '\n new points prev: ',
-          newPrevPoint,
-          'Next',
-          newNextPoint,
-          'xDiff: ',
-          xDiff,
-          'yDiff',
-          yDiff,
-          'newCornerPoint',
-          newCornerPoint
-        );
-      }
 
       // newLineData.push(cornerPoint);
       newLineData.push(newCornerPoint, newNextPoint);
     } else {
       newLineData.push(lineData[i]);
     }
-  }
-  if (lineData.length > 3) {
-    console.log('abc99 fixCorners done: ', newLineData);
   }
   return newLineData;
 };
@@ -538,7 +508,6 @@ const fixCorners = function (lineData) {
  * @param lineData
  */
 function roundedCornersLine(lineData) {
-  console.log('abc99 roundedCornersLine: ', lineData);
   const newLineData = fixCorners(lineData);
   let path = '';
   for (let i = 0; i < newLineData.length; i++) {
@@ -554,7 +523,6 @@ function roundedCornersLine(lineData) {
 }
 export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, id) {
   const { handdrawnSeed } = getConfig();
-  console.log('abc88 InsertEdge - edge: ', edge);
   let points = edge.points;
   let pointsHasChanged = false;
   const tail = edge.start;
@@ -593,7 +561,6 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
   let lineData = points.filter((p) => !Number.isNaN(p.y));
   const { cornerPoints, cornerPointPositions } = extractCornerPoints(lineData);
   lineData = fixCorners(lineData);
-  // console.log('abc99 lineData: ', lineData, points);
   let lastPoint = lineData[0];
   if (lineData.length > 1) {
     lastPoint = lineData[lineData.length - 1];
@@ -604,7 +571,6 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
     const midPoint = { x: secondLastPoint.x + 3 * diffX, y: secondLastPoint.y + 3 * diffY };
     lineData.splice(-1, 0, midPoint);
   }
-  // console.log('abc99 InsertEdge 3: ', lineData);
   // This is the accessor function we talked about above
   let curve;
   curve = curveBasis;

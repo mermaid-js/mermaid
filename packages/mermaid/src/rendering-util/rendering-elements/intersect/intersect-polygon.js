@@ -48,7 +48,6 @@ function intersectPolygon(node, polyPoints, point) {
   }
 
   if (!intersections.length) {
-    // console.log('NO INTERSECTION FOUND, RETURN NODE CENTER', node);
     return node;
   }
 

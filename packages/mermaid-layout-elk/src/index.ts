@@ -484,6 +484,7 @@ export const render = async (data4Layout, svg, element, algorithm) => {
       'elk.layered.spacing.edgeNodeBetweenLayers': '30',
       'elk.algorithm': algorithm,
       'nodePlacement.strategy': 'NETWORK_SIMPLEX',
+
       'spacing.nodeNode': 70,
       'spacing.nodeNodeBetweenLayers': 25,
       'spacing.edgeNode': 10,
@@ -539,7 +540,6 @@ export const render = async (data4Layout, svg, element, algorithm) => {
           height: node?.labelData?.height || 100,
         },
       ];
-      // console.log('DAGA node dir: ', node.dir);
       if (node.dir) {
         node.layoutOptions = {
           'elk.direction': dir2ElkDirection(node.dir),

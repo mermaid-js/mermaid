@@ -1,5 +1,4 @@
 const intersectRect = (node, point) => {
-  console.log('intersect.rect abc88', node, point);
   var x = node.x;
   var y = node.y;
 
