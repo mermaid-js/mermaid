@@ -1,7 +1,7 @@
 import { createIcon } from "../../svgRegister.js";
 
 const awsIcons = {
-    "activate": createIcon(
+    "aws:activate": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -12,7 +12,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "alexa-for-business": createIcon(
+    "aws:alexa-for-business": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -21,7 +21,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "apache-mxnet-on-aws": createIcon(
+    "aws:apache-mxnet-on-aws": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -30,7 +30,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "app-mesh": createIcon(
+    "aws:app-mesh": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -39,7 +39,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "app-runner": createIcon(
+    "aws:app-runner": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -50,7 +50,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "appconfig": createIcon(
+    "aws:appconfig": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -59,7 +59,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "appfabric": createIcon(
+    "aws:appfabric": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -70,7 +70,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "appflow": createIcon(
+    "aws:appflow": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -81,7 +81,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "application-auto-scaling": createIcon(
+    "aws:application-auto-scaling": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -92,7 +92,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "application-composer": createIcon(
+    "aws:application-composer": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -101,7 +101,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "application-cost-profiler": createIcon(
+    "aws:application-cost-profiler": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -112,7 +112,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "application-discovery-service": createIcon(
+    "aws:application-discovery-service": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -121,7 +121,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "application-migration-service": createIcon(
+    "aws:application-migration-service": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -130,7 +130,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "appstream": createIcon(
+    "aws:appstream": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -139,7 +139,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "appsync": createIcon(
+    "aws:appsync": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -150,7 +150,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "artifact": createIcon(
+    "aws:artifact": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -159,7 +159,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "athena": createIcon(
+    "aws:athena": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -168,7 +168,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "audit-manager": createIcon(
+    "aws:audit-manager": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -179,7 +179,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "augmented-ai-a2i": createIcon(
+    "aws:augmented-ai-a2i": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -188,7 +188,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "auto-scaling": createIcon(
+    "aws:auto-scaling": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -197,7 +197,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "b2b-data-interchange": createIcon(
+    "aws:b2b-data-interchange": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -208,7 +208,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "backint-agent": createIcon(
+    "aws:backint-agent": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -219,7 +219,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "backup": createIcon(
+    "aws:backup": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -228,7 +228,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "batch": createIcon(
+    "aws:batch": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -237,7 +237,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "bedrock": createIcon(
+    "aws:bedrock": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -248,7 +248,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "billing-conductor": createIcon(
+    "aws:billing-conductor": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -259,7 +259,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "bottlerocket": createIcon(
+    "aws:bottlerocket": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -270,7 +270,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "braket": createIcon(
+    "aws:braket": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -279,7 +279,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "budgets": createIcon(
+    "aws:budgets": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -288,7 +288,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "certificate-manager": createIcon(
+    "aws:certificate-manager": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -297,7 +297,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "chatbot": createIcon(
+    "aws:chatbot": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -306,7 +306,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "chime-sdk": createIcon(
+    "aws:chime-sdk": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -317,7 +317,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "chime": createIcon(
+    "aws:chime": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -326,7 +326,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "clean-rooms": createIcon(
+    "aws:clean-rooms": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -335,7 +335,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "client-vpn": createIcon(
+    "aws:client-vpn": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -344,7 +344,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "cloud-control-api": createIcon(
+    "aws:cloud-control-api": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -355,7 +355,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "cloud-development-kit": createIcon(
+    "aws:cloud-development-kit": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -364,7 +364,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "cloud-directory": createIcon(
+    "aws:cloud-directory": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -375,7 +375,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "cloud-map": createIcon(
+    "aws:cloud-map": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -384,7 +384,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "cloud-wan": createIcon(
+    "aws:cloud-wan": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -393,7 +393,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "cloud9": createIcon(
+    "aws:cloud9": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -403,7 +403,7 @@ const awsIcons = {
         80
     ),
 
-    "cloudhsm": createIcon(
+    "aws:cloudhsm": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -412,7 +412,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "cloudsearch": createIcon(
+    "aws:cloudsearch": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -421,7 +421,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "cloudshell": createIcon(
+    "aws:cloudshell": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -432,7 +432,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "cloudtrail": createIcon(
+    "aws:cloudtrail": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -441,7 +441,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "codeartifact": createIcon(
+    "aws:codeartifact": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -452,7 +452,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "codebuild": createIcon(
+    "aws:codebuild": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -461,7 +461,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "codecatalyst": createIcon(
+    "aws:codecatalyst": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -470,7 +470,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "codecommit": createIcon(
+    "aws:codecommit": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -479,7 +479,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "codedeploy": createIcon(
+    "aws:codedeploy": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -488,7 +488,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "codeguru": createIcon(
+    "aws:codeguru": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -497,7 +497,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "codepipeline": createIcon(
+    "aws:codepipeline": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -506,7 +506,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "codestar": createIcon(
+    "aws:codestar": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -515,7 +515,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "codewhisperer": createIcon(
+    "aws:codewhisperer": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -526,7 +526,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "cognito": createIcon(
+    "aws:cognito": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -535,7 +535,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "command-line-interface": createIcon(
+    "aws:command-line-interface": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -544,7 +544,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "comprehend-medical": createIcon(
+    "aws:comprehend-medical": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -555,7 +555,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "comprehend": createIcon(
+    "aws:comprehend": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -564,7 +564,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "compute-optimizer": createIcon(
+    "aws:compute-optimizer": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -575,7 +575,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "config": createIcon(
+    "aws:config": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -584,7 +584,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "connect": createIcon(
+    "aws:connect": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -593,7 +593,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "console-mobile-application": createIcon(
+    "aws:console-mobile-application": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -604,7 +604,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "control-tower": createIcon(
+    "aws:control-tower": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -613,7 +613,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "corretto": createIcon(
+    "aws:corretto": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -624,7 +624,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "cost-and-usage-report": createIcon(
+    "aws:cost-and-usage-report": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -633,7 +633,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "cost-explorer": createIcon(
+    "aws:cost-explorer": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -642,7 +642,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "data-exchange": createIcon(
+    "aws:data-exchange": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -651,7 +651,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "data-pipeline": createIcon(
+    "aws:data-pipeline": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -660,7 +660,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "database-migration-service": createIcon(
+    "aws:database-migration-service": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -669,7 +669,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "datasync": createIcon(
+    "aws:datasync": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -678,7 +678,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "datazone": createIcon(
+    "aws:datazone": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -687,7 +687,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "deep-learning-amis": createIcon(
+    "aws:deep-learning-amis": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -698,7 +698,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "deep-learning-containers": createIcon(
+    "aws:deep-learning-containers": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -707,7 +707,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "deepcomposer": createIcon(
+    "aws:deepcomposer": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -716,7 +716,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "deeplens": createIcon(
+    "aws:deeplens": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -725,7 +725,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "deepracer": createIcon(
+    "aws:deepracer": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -734,7 +734,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "detective": createIcon(
+    "aws:detective": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -743,7 +743,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "device-farm": createIcon(
+    "aws:device-farm": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -752,7 +752,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "devops-guru": createIcon(
+    "aws:devops-guru": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -763,7 +763,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "direct-connect": createIcon(
+    "aws:direct-connect": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -772,7 +772,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "directory-service": createIcon(
+    "aws:directory-service": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -781,7 +781,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "distro-for-opentelemetry": createIcon(
+    "aws:distro-for-opentelemetry": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -792,7 +792,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "ec2-auto-scaling": createIcon(
+    "aws:ec2-auto-scaling": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -801,7 +801,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "ec2-image-builder": createIcon(
+    "aws:ec2-image-builder": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -810,7 +810,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "ecs-anywhere": createIcon(
+    "aws:ecs-anywhere": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -821,7 +821,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "eks-anywhere": createIcon(
+    "aws:eks-anywhere": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -832,7 +832,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "eks-cloud": createIcon(
+    "aws:eks-cloud": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -843,7 +843,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "eks-distro": createIcon(
+    "aws:eks-distro": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -854,7 +854,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elastic-block-store": createIcon(
+    "aws:elastic-block-store": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -863,7 +863,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elastic-container-registry": createIcon(
+    "aws:elastic-container-registry": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -872,7 +872,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elastic-container-service": createIcon(
+    "aws:elastic-container-service": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -881,7 +881,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elastic-disaster-recovery": createIcon(
+    "aws:elastic-disaster-recovery": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -890,7 +890,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elastic-fabric-adapter": createIcon(
+    "aws:elastic-fabric-adapter": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g transform="translate(-0.000000, 0.000000)" fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -901,7 +901,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elastic-inference": createIcon(
+    "aws:elastic-inference": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -910,7 +910,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elastic-kubernetes-service": createIcon(
+    "aws:elastic-kubernetes-service": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -919,7 +919,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elastic-load-balancing": createIcon(
+    "aws:elastic-load-balancing": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -928,7 +928,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elastic-transcoder": createIcon(
+    "aws:elastic-transcoder": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -937,7 +937,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elasticache": createIcon(
+    "aws:elasticache": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -946,7 +946,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elemental-appliances-&-software": createIcon(
+    "aws:elemental-appliances-&-software": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -955,7 +955,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elemental-conductor": createIcon(
+    "aws:elemental-conductor": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -964,7 +964,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elemental-delta": createIcon(
+    "aws:elemental-delta": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -973,7 +973,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elemental-link": createIcon(
+    "aws:elemental-link": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -984,7 +984,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elemental-live": createIcon(
+    "aws:elemental-live": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -993,7 +993,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elemental-mediaconnect": createIcon(
+    "aws:elemental-mediaconnect": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1002,7 +1002,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elemental-mediaconvert": createIcon(
+    "aws:elemental-mediaconvert": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1011,7 +1011,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elemental-medialive": createIcon(
+    "aws:elemental-medialive": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1020,7 +1020,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elemental-mediapackage": createIcon(
+    "aws:elemental-mediapackage": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1029,7 +1029,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elemental-mediastore": createIcon(
+    "aws:elemental-mediastore": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1038,7 +1038,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elemental-mediatailor": createIcon(
+    "aws:elemental-mediatailor": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1047,7 +1047,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "elemental-server": createIcon(
+    "aws:elemental-server": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1056,7 +1056,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "emr": createIcon(
+    "aws:emr": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g transform="translate(0.504212, 0.000000)" fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1065,7 +1065,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "entity-resolution": createIcon(
+    "aws:entity-resolution": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1076,7 +1076,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "eventbridge": createIcon(
+    "aws:eventbridge": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1085,7 +1085,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "express-workflows": createIcon(
+    "aws:express-workflows": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1094,7 +1094,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "fault-injection-simulator": createIcon(
+    "aws:fault-injection-simulator": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1105,7 +1105,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "file-cache": createIcon(
+    "aws:file-cache": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1114,7 +1114,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "finspace": createIcon(
+    "aws:finspace": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1125,7 +1125,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "firewall-manager": createIcon(
+    "aws:firewall-manager": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1134,7 +1134,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "forecast": createIcon(
+    "aws:forecast": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1143,7 +1143,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "fraud-detector": createIcon(
+    "aws:fraud-detector": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1152,7 +1152,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "freertos": createIcon(
+    "aws:freertos": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1161,7 +1161,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "fsx-for-lustre": createIcon(
+    "aws:fsx-for-lustre": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1170,7 +1170,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "fsx-for-netapp-ontap": createIcon(
+    "aws:fsx-for-netapp-ontap": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1181,7 +1181,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "fsx-for-openzfs": createIcon(
+    "aws:fsx-for-openzfs": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1190,7 +1190,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "fsx-for-wfs": createIcon(
+    "aws:fsx-for-wfs": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1201,7 +1201,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "fsx": createIcon(
+    "aws:fsx": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1212,7 +1212,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "gamekit": createIcon(
+    "aws:gamekit": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1223,7 +1223,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "gamelift": createIcon(
+    "aws:gamelift": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1234,7 +1234,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "gamesparks": createIcon(
+    "aws:gamesparks": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1245,7 +1245,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "genomics-cli": createIcon(
+    "aws:genomics-cli": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1254,7 +1254,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "global-accelerator": createIcon(
+    "aws:global-accelerator": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1263,7 +1263,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "glue-databrew": createIcon(
+    "aws:glue-databrew": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1274,7 +1274,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "glue-elastic-views": createIcon(
+    "aws:glue-elastic-views": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1285,7 +1285,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "glue": createIcon(
+    "aws:glue": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1294,7 +1294,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "ground-station": createIcon(
+    "aws:ground-station": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1303,7 +1303,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "guardduty": createIcon(
+    "aws:guardduty": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1312,7 +1312,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "health-dashboard": createIcon(
+    "aws:health-dashboard": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1321,7 +1321,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "healthimaging": createIcon(
+    "aws:healthimaging": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1332,7 +1332,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "healthlake": createIcon(
+    "aws:healthlake": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1343,7 +1343,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "healthomics": createIcon(
+    "aws:healthomics": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1352,7 +1352,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "healthscribe": createIcon(
+    "aws:healthscribe": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1363,7 +1363,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "honeycode": createIcon(
+    "aws:honeycode": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1374,7 +1374,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "iam-identity-center": createIcon(
+    "aws:iam-identity-center": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1383,7 +1383,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "inspector": createIcon(
+    "aws:inspector": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1392,7 +1392,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "interactive-video-service": createIcon(
+    "aws:interactive-video-service": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1403,7 +1403,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "iot-1-click": createIcon(
+    "aws:iot-1-click": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1412,7 +1412,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "iot-analytics": createIcon(
+    "aws:iot-analytics": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1421,7 +1421,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "iot-button": createIcon(
+    "aws:iot-button": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1430,7 +1430,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "iot-core": createIcon(
+    "aws:iot-core": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1439,7 +1439,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "iot-device-defender": createIcon(
+    "aws:iot-device-defender": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1448,7 +1448,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "iot-device-management": createIcon(
+    "aws:iot-device-management": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1457,7 +1457,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "iot-events": createIcon(
+    "aws:iot-events": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1466,7 +1466,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "iot-expresslink": createIcon(
+    "aws:iot-expresslink": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1477,7 +1477,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "iot-fleetwise": createIcon(
+    "aws:iot-fleetwise": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1488,7 +1488,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "iot-greengrass": createIcon(
+    "aws:iot-greengrass": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1497,7 +1497,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "iot-roborunner": createIcon(
+    "aws:iot-roborunner": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1508,7 +1508,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "iot-sitewise": createIcon(
+    "aws:iot-sitewise": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1517,7 +1517,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "iot-things-graph": createIcon(
+    "aws:iot-things-graph": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1526,7 +1526,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "iot-twinmaker": createIcon(
+    "aws:iot-twinmaker": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1537,7 +1537,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "iq": createIcon(
+    "aws:iq": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1548,7 +1548,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "kendra": createIcon(
+    "aws:kendra": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1557,7 +1557,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "keyspaces": createIcon(
+    "aws:keyspaces": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1566,7 +1566,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "kinesis-data-firehose": createIcon(
+    "aws:kinesis-data-firehose": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1577,7 +1577,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "kinesis-data-streams": createIcon(
+    "aws:kinesis-data-streams": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1588,7 +1588,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "kinesis-video-streams": createIcon(
+    "aws:kinesis-video-streams": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1599,7 +1599,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "lake-formation": createIcon(
+    "aws:lake-formation": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1608,7 +1608,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "launch-wizard": createIcon(
+    "aws:launch-wizard": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1617,7 +1617,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "lex": createIcon(
+    "aws:lex": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1626,7 +1626,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "license-manager": createIcon(
+    "aws:license-manager": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1635,7 +1635,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "lightsail-for-research": createIcon(
+    "aws:lightsail-for-research": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1644,7 +1644,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "local-zones": createIcon(
+    "aws:local-zones": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1653,7 +1653,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "location-service": createIcon(
+    "aws:location-service": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1664,7 +1664,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "lookout-for-equipment": createIcon(
+    "aws:lookout-for-equipment": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1675,7 +1675,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "lookout-for-metrics": createIcon(
+    "aws:lookout-for-metrics": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1686,7 +1686,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "lookout-for-vision": createIcon(
+    "aws:lookout-for-vision": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1697,7 +1697,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "macie": createIcon(
+    "aws:macie": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1706,7 +1706,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "mainframe-modernization": createIcon(
+    "aws:mainframe-modernization": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1717,7 +1717,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "managed-blockchain": createIcon(
+    "aws:managed-blockchain": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1726,7 +1726,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "managed-grafana": createIcon(
+    "aws:managed-grafana": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1737,7 +1737,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "managed-service-for-apache-flink": createIcon(
+    "aws:managed-service-for-apache-flink": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1748,7 +1748,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "managed-service-for-prometheus": createIcon(
+    "aws:managed-service-for-prometheus": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1759,7 +1759,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "managed-services": createIcon(
+    "aws:managed-services": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1770,7 +1770,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "managed-streaming-for-apache-kafka": createIcon(
+    "aws:managed-streaming-for-apache-kafka": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1779,7 +1779,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "managed-workflows-for-apache-airflow": createIcon(
+    "aws:managed-workflows-for-apache-airflow": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1790,7 +1790,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "management-console": createIcon(
+    "aws:management-console": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1799,7 +1799,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "marketplace_dark": createIcon(
+    "aws:marketplace_dark": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <rect fill="#FFFFFF" x="0" y="0" width="80" height="80"></rect>
     <g transform="translate(16.000000, 15.500000)" fill="#232F3D">
@@ -1808,7 +1808,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "marketplace_light": createIcon(
+    "aws:marketplace_light": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <rect fill="#232F3E" x="0" y="0" width="80" height="80"></rect>
     <g transform="translate(16.000000, 15.500000)" fill="#FFFFFF">
@@ -1817,7 +1817,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "memorydb-for-redis": createIcon(
+    "aws:memorydb-for-redis": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1828,7 +1828,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "migration-evaluator": createIcon(
+    "aws:migration-evaluator": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1839,7 +1839,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "migration-hub": createIcon(
+    "aws:migration-hub": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1848,7 +1848,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "monitron": createIcon(
+    "aws:monitron": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1859,7 +1859,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "mq": createIcon(
+    "aws:mq": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1868,7 +1868,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "network-firewall": createIcon(
+    "aws:network-firewall": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1879,7 +1879,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "neuron": createIcon(
+    "aws:neuron": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1888,7 +1888,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "nice-dcv": createIcon(
+    "aws:nice-dcv": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g transform="translate(-0.000000, 0.000000)" fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1899,7 +1899,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "nice-enginframe": createIcon(
+    "aws:nice-enginframe": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1910,7 +1910,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "nimble-studio": createIcon(
+    "aws:nimble-studio": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1921,7 +1921,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "nitro-enclaves": createIcon(
+    "aws:nitro-enclaves": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1930,7 +1930,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "open-3d-engine": createIcon(
+    "aws:open-3d-engine": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1941,7 +1941,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "opensearch-service": createIcon(
+    "aws:opensearch-service": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1950,7 +1950,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "opsworks": createIcon(
+    "aws:opsworks": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1959,7 +1959,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "organizations": createIcon(
+    "aws:organizations": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1968,7 +1968,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "outposts-family": createIcon(
+    "aws:outposts-family": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1977,7 +1977,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "outposts-rack": createIcon(
+    "aws:outposts-rack": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1986,7 +1986,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "outposts-servers": createIcon(
+    "aws:outposts-servers": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g transform="translate(-0.000000, 0.000000)" fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -1997,7 +1997,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "panorama": createIcon(
+    "aws:panorama": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2008,7 +2008,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "parallel-cluster": createIcon(
+    "aws:parallel-cluster": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2019,7 +2019,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "payment-cryptography": createIcon(
+    "aws:payment-cryptography": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2030,7 +2030,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "personalize": createIcon(
+    "aws:personalize": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2039,7 +2039,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "pinpoint-apis": createIcon(
+    "aws:pinpoint-apis": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2050,7 +2050,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "pinpoint": createIcon(
+    "aws:pinpoint": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2061,7 +2061,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "polly": createIcon(
+    "aws:polly": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2070,7 +2070,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "private-5g": createIcon(
+    "aws:private-5g": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2079,7 +2079,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "private-certificate-authority": createIcon(
+    "aws:private-certificate-authority": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2088,7 +2088,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "privatelink": createIcon(
+    "aws:privatelink": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2097,7 +2097,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "professional-services": createIcon(
+    "aws:professional-services": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2108,7 +2108,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "proton": createIcon(
+    "aws:proton": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2119,7 +2119,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "q": createIcon(
+    "aws:q": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2130,7 +2130,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "quantum-ledger-database": createIcon(
+    "aws:quantum-ledger-database": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2139,7 +2139,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "quicksight": createIcon(
+    "aws:quicksight": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g transform="translate(0.121366, 0.000000)" fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2148,7 +2148,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "rds-on-vmware": createIcon(
+    "aws:rds-on-vmware": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2157,7 +2157,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "red-hat-openshift-service-on-aws": createIcon(
+    "aws:red-hat-openshift-service-on-aws": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2168,7 +2168,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "rekognition": createIcon(
+    "aws:rekognition": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2177,7 +2177,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "repost-private": createIcon(
+    "aws:repost-private": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2188,7 +2188,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "repost": createIcon(
+    "aws:repost": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2199,7 +2199,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "reserved-instance-reporting": createIcon(
+    "aws:reserved-instance-reporting": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2208,7 +2208,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "resilience-hub": createIcon(
+    "aws:resilience-hub": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2217,7 +2217,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "resource-access-manager": createIcon(
+    "aws:resource-access-manager": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2226,7 +2226,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "resource-explorer": createIcon(
+    "aws:resource-explorer": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2235,7 +2235,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "robomaker": createIcon(
+    "aws:robomaker": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2244,7 +2244,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "s3-on-outposts": createIcon(
+    "aws:s3-on-outposts": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2255,7 +2255,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "sagemaker-ground-truth": createIcon(
+    "aws:sagemaker-ground-truth": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2264,7 +2264,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "sagemaker-studio-lab": createIcon(
+    "aws:sagemaker-studio-lab": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2275,7 +2275,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "sagemaker": createIcon(
+    "aws:sagemaker": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2284,7 +2284,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "savings-plans": createIcon(
+    "aws:savings-plans": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2295,7 +2295,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "security-hub": createIcon(
+    "aws:security-hub": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2304,7 +2304,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "security-lake": createIcon(
+    "aws:security-lake": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2313,7 +2313,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "serverless-application-repository": createIcon(
+    "aws:serverless-application-repository": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2322,7 +2322,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "service-catalog": createIcon(
+    "aws:service-catalog": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2331,7 +2331,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "service-management-connector": createIcon(
+    "aws:service-management-connector": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2340,7 +2340,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "shield": createIcon(
+    "aws:shield": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2349,7 +2349,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "signer": createIcon(
+    "aws:signer": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2360,7 +2360,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "simple-email-service": createIcon(
+    "aws:simple-email-service": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2369,7 +2369,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "simple-notification-service": createIcon(
+    "aws:simple-notification-service": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2378,7 +2378,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "simple-queue-service": createIcon(
+    "aws:simple-queue-service": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2387,7 +2387,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "simple-storage-service-glacier": createIcon(
+    "aws:simple-storage-service-glacier": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2398,7 +2398,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "simspace-weaver": createIcon(
+    "aws:simspace-weaver": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2407,7 +2407,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "site-to-site-vpn": createIcon(
+    "aws:site-to-site-vpn": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2418,7 +2418,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "snowball-edge": createIcon(
+    "aws:snowball-edge": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2427,7 +2427,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "snowball": createIcon(
+    "aws:snowball": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2436,7 +2436,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "snowcone": createIcon(
+    "aws:snowcone": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2447,7 +2447,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "snowmobile": createIcon(
+    "aws:snowmobile": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2456,7 +2456,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "step-functions": createIcon(
+    "aws:step-functions": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2465,7 +2465,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "storage-gateway": createIcon(
+    "aws:storage-gateway": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#7AA116">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2474,7 +2474,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "supply-chain": createIcon(
+    "aws:supply-chain": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2483,7 +2483,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "support": createIcon(
+    "aws:support": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2492,7 +2492,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "systems-manager": createIcon(
+    "aws:systems-manager": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2501,7 +2501,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "telco-network-builder": createIcon(
+    "aws:telco-network-builder": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2510,7 +2510,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "tensorflow-on-aws": createIcon(
+    "aws:tensorflow-on-aws": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2519,7 +2519,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "textract": createIcon(
+    "aws:textract": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2528,7 +2528,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "thinkbox-deadline": createIcon(
+    "aws:thinkbox-deadline": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2539,7 +2539,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "thinkbox-frost": createIcon(
+    "aws:thinkbox-frost": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2550,7 +2550,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "thinkbox-krakatoa": createIcon(
+    "aws:thinkbox-krakatoa": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2561,7 +2561,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "thinkbox-sequoia": createIcon(
+    "aws:thinkbox-sequoia": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2572,7 +2572,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "thinkbox-stoke": createIcon(
+    "aws:thinkbox-stoke": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2583,7 +2583,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "thinkbox-xmesh": createIcon(
+    "aws:thinkbox-xmesh": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2594,7 +2594,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "tools-and-sdks": createIcon(
+    "aws:tools-and-sdks": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2603,7 +2603,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "torchserve": createIcon(
+    "aws:torchserve": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2614,7 +2614,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "training-certification": createIcon(
+    "aws:training-certification": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2623,7 +2623,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "transcribe": createIcon(
+    "aws:transcribe": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2632,7 +2632,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "transfer-family": createIcon(
+    "aws:transfer-family": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2641,7 +2641,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "transit-gateway": createIcon(
+    "aws:transit-gateway": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2650,7 +2650,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "translate": createIcon(
+    "aws:translate": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2659,7 +2659,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "trusted-advisor": createIcon(
+    "aws:trusted-advisor": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2668,7 +2668,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "verified-access": createIcon(
+    "aws:verified-access": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2677,7 +2677,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "verified-permissions": createIcon(
+    "aws:verified-permissions": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2686,7 +2686,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "vmware-cloud-on-aws": createIcon(
+    "aws:vmware-cloud-on-aws": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2695,7 +2695,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "vpc-lattice": createIcon(
+    "aws:vpc-lattice": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#8C4FFF">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2704,7 +2704,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "waf": createIcon(
+    "aws:waf": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2715,7 +2715,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "wavelength": createIcon(
+    "aws:wavelength": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#ED7100">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2724,7 +2724,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "well-architected-tool": createIcon(
+    "aws:well-architected-tool": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#E7157B">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2733,7 +2733,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "wickr": createIcon(
+    "aws:wickr": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2742,7 +2742,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "workdocs-sdk": createIcon(
+    "aws:workdocs-sdk": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2753,7 +2753,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "workdocs": createIcon(
+    "aws:workdocs": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2764,7 +2764,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "worklink": createIcon(
+    "aws:worklink": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2773,7 +2773,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "workmail": createIcon(
+    "aws:workmail": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#DD344C">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2782,7 +2782,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "workspaces-family": createIcon(
+    "aws:workspaces-family": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2791,7 +2791,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "workspaces-thin-client": createIcon(
+    "aws:workspaces-thin-client": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#01A88D">
         <rect x="0" y="0" width="80" height="80"></rect>
@@ -2802,7 +2802,7 @@ const awsIcons = {
 </g>`,
         80
     ),
-    "x-ray": createIcon(
+    "aws:x-ray": createIcon(
         `<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g fill="#C925D1">
         <rect x="0" y="0" width="80" height="80"></rect>
