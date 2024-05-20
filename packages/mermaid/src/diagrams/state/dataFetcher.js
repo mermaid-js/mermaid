@@ -279,6 +279,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
     if (!newNode.type && parsedItem.doc) {
       log.info('Setting cluster for ', itemId, getDir(parsedItem));
       newNode.type = 'group';
+      newNode.isGroup = true;
       newNode.dir = getDir(parsedItem);
       newNode.shape = parsedItem.type === DIVIDER_TYPE ? SHAPE_DIVIDER : SHAPE_GROUP;
       newNode.cssClasses =
@@ -300,6 +301,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
       dir: newNode.dir,
       domId: stateDomId(itemId, graphItemCount),
       type: newNode.type,
+      isGroup: newNode.type === 'group',
       padding: 15,
       rx: 10,
       ry: 10,
@@ -325,6 +327,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
         id: itemId + NOTE_ID + '-' + graphItemCount,
         domId: stateDomId(itemId, graphItemCount, NOTE),
         type: newNode.type,
+        isGroup: newNode.type === 'group',
         padding: 15, //getConfig().flowchart.padding
         useRough,
       };
@@ -337,6 +340,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
         id: itemId + PARENT_ID,
         domId: stateDomId(itemId, graphItemCount, PARENT),
         type: 'group',
+        isGroup: true,
         padding: 0, //getConfig().flowchart.padding
         useRough,
       };

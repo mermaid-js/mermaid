@@ -59,7 +59,7 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
   nodeDb[node.id] = child;
 
   //     // Add the element to the DOM
-  if (node.type !== 'group') {
+  if (!node.isGroup) {
     const childNodeEl = await insertNode(nodeEl, node, node.dir);
     boundingBox = childNodeEl.node().getBBox();
     child.domId = childNodeEl;
@@ -106,7 +106,7 @@ const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
         width: node.width,
         height: node.height,
       };
-      if (node.type === 'group') {
+      if (node.isGroup) {
         log.debug('Id abc88 subgraph = ', node.id, node.x, node.y, node.labelData);
         const subgraphEl = subgraphsEl.insert('g').attr('class', 'subgraph');
         // TODO use faster way of cloning
@@ -135,7 +135,7 @@ const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
     }
   });
   nodeArray.forEach(function (node) {
-    if (node && node.type === 'group') {
+    if (node && node.isGroup) {
       drawNodes(relX + node.x, relY + node.y, node.children, svg, subgraphsEl, depth + 1);
     }
   });
@@ -192,7 +192,7 @@ const getNextPort = (node, edgeDirection, graphDirection) => {
 
 const addSubGraphs = function (nodeArr) {
   const parentLookupDb = { parentById: {}, childrenById: {} };
-  const subgraphs = nodeArr.filter((node) => node.type === 'group');
+  const subgraphs = nodeArr.filter((node) => node.isGroup);
   log.info('Subgraphs - ', subgraphs);
   subgraphs.forEach(function (subgraph) {
     const children = nodeArr.filter((node) => node.parentId === subgraph.id);

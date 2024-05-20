@@ -165,7 +165,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   graph.nodes().forEach(function (v) {
     const n = graph.node(v);
     log.info(v, n.type, n.diff);
-    if (n.type === 'group') {
+    if (n.isGroup) {
       diff = n.diff;
     }
   });
