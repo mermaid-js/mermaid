@@ -48,9 +48,9 @@ export const insertNode = async (elem, node, dir) => {
   if (node.tooltip) {
     el.attr('title', node.tooltip);
   }
-  if (node.class) {
-    el.attr('class', 'node default ' + node.class);
-  }
+  // if (node.class) {
+  //   el.attr('class', 'node default ' + node.class);
+  // }
 
   nodeElems[node.id] = newEl;
 

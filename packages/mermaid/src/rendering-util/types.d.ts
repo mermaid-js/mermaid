@@ -14,25 +14,24 @@ interface Node {
   id: string;
   label?: string;
   parentId?: string;
-  position?: string; //REMOVE
+  position?: string; // Keep, this is for notes 'left of', 'right of', etc.
   cssStyles?: string; // Renamed from `styles` to `cssStyles`
-  style?: string; //REMOVE
   cssClasses?: string; // Renamed from `classes` to `cssClasses`
-  classes?: string; //REMOVE
-  class?: string; //REMOVE
+  // style?: string; //REMOVE
+  // class?: string; //REMOVE
+  // labelText?: string; //REMOVE, use `label` instead
+  // props?: Record<string, unknown>; //REMOVE
   labelStyle?: string;
-  labelText?: string; //REMOVE, use `label` instead
 
   // Flowchart specific properties
-  labelType?: string; // REMOVE? Always use markdown string, need to check for KaTeX
+  labelType?: string; // REMOVE? Always use markdown string, need to check for KaTeX - wait with this one
   domId: string;
   // Rendering specific properties for both Flowchart and State Diagram nodes
   dir?: string; // Only relevant for isGroup true, i.e. a sub-graph or composite state.
   haveCallback?: boolean;
   link?: string;
   linkTarget?: string;
-  padding?: number; //REMOVE, use from LayoutData.config
-  props?: Record<string, unknown>; //REMOVE
+  padding?: number; //REMOVE?, use from LayoutData.config - Keep, this could be shape specific
   shape?: string;
   tooltip?: string;
   type: string; // REMOVE, replace with isGroup: boolean, default false
@@ -137,8 +136,8 @@ export function createDomElement(node: Node): Node {
   element.id = node.domId;
 
   // Optional: Apply styles and classes to the element
-  if (node.styles) {
-    element.style.cssText = node.styles;
+  if (node.cssStyles) {
+    element.style.cssText = node.cssStyles;
   }
   if (node.classes) {
     element.className = node.classes;

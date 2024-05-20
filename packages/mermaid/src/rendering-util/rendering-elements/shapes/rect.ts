@@ -65,7 +65,7 @@ export const rect = async (parent: SVGAElement, node: Node) => {
   const { shapeSvg, bbox, halfPadding } = await labelHelper(
     parent,
     node,
-    'node ' + node.classes + ' ' + node.class,
+    'node ' + node.cssClasses, // + ' ' + node.class,
     true
   );
 
@@ -75,7 +75,7 @@ export const rect = async (parent: SVGAElement, node: Node) => {
   const y = -bbox.height / 2 - halfPadding;
 
   let rect;
-  const { rx, ry, style, useRough } = node;
+  const { rx, ry, style: cssStyles, useRough } = node;
   if (useRough) {
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {
@@ -93,13 +93,13 @@ export const rect = async (parent: SVGAElement, node: Node) => {
         : rc.rectangle(x, y, totalWidth, totalHeight, options);
 
     rect = shapeSvg.insert(() => roughNode, ':first-child');
-    rect.attr('class', 'basic label-container').attr('style', style);
+    rect.attr('class', 'basic label-container').attr('style', cssStyles);
   } else {
     rect = shapeSvg.insert('rect', ':first-child');
 
     rect
       .attr('class', 'basic label-container')
-      .attr('style', style)
+      .attr('style', cssStyles)
       .attr('rx', rx)
       .attr('ry', ry)
       .attr('x', x)
@@ -108,16 +108,16 @@ export const rect = async (parent: SVGAElement, node: Node) => {
       .attr('height', totalHeight);
   }
 
-  if (node.props) {
-    const propKeys = new Set(Object.keys(node.props));
-    if (node.props.borders) {
-      applyNodePropertyBorders(rect, node.props.borders + '', totalWidth, totalHeight);
-      propKeys.delete('borders');
-    }
-    propKeys.forEach((propKey) => {
-      log.warn(`Unknown node property ${propKey}`);
-    });
-  }
+  // if (node.props) {
+  //   const propKeys = new Set(Object.keys(node.props));
+  //   if (node.props.borders) {
+  //     applyNodePropertyBorders(rect, node.props.borders + '', totalWidth, totalHeight);
+  //     propKeys.delete('borders');
+  //   }
+  //   propKeys.forEach((propKey) => {
+  //     log.warn(`Unknown node property ${propKey}`);
+  //   });
+  // }
 
   updateNodeBounds(node, rect);
 
@@ -131,7 +131,7 @@ export const rect = async (parent: SVGAElement, node: Node) => {
 export const labelRect = async (parent: SVGElement, node: Node) => {
   const { shapeSvg } = await labelHelper(parent, node, 'label', true);
 
-  log.trace('Classes = ', node.class);
+  // log.trace('Classes = ', node.class);
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 
@@ -141,16 +141,16 @@ export const labelRect = async (parent: SVGElement, node: Node) => {
   rect.attr('width', totalWidth).attr('height', totalHeight);
   shapeSvg.attr('class', 'label edgeLabel');
 
-  if (node.props) {
-    const propKeys = new Set(Object.keys(node.props));
-    if (node.props.borders) {
-      applyNodePropertyBorders(rect, node.borders, totalWidth, totalHeight);
-      propKeys.delete('borders');
-    }
-    propKeys.forEach((propKey) => {
-      log.warn(`Unknown node property ${propKey}`);
-    });
-  }
+  // if (node.props) {
+  //   const propKeys = new Set(Object.keys(node.props));
+  //   if (node.props.borders) {
+  //     applyNodePropertyBorders(rect, node.borders, totalWidth, totalHeight);
+  //     propKeys.delete('borders');
+  //   }
+  //   propKeys.forEach((propKey) => {
+  //     log.warn(`Unknown node property ${propKey}`);
+  //   });
+  // }
 
   updateNodeBounds(node, rect);
 

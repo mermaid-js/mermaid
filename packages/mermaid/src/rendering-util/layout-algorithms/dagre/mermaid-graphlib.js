@@ -288,7 +288,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
         domId: specialId,
         id: specialId,
         labelStyle: '',
-        labelText: edge.label,
+        label: edge.label,
         padding: 0,
         shape: 'labelRect',
         style: '',
@@ -416,7 +416,7 @@ export const extractor = (graph, depth) => {
         clusterNode: true,
         id: node,
         clusterData: clusterDb[node].clusterData,
-        labelText: clusterDb[node].labelText,
+        label: clusterDb[node].label,
         graph: clusterGraph,
       });
       log.warn('New graph after copy node: (', node, ')', graphlibJson.write(clusterGraph));

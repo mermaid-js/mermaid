@@ -6,48 +6,43 @@ import { evaluate, sanitizeText } from '$root/diagrams/common/common.js';
 import { decodeEntities } from '$root/utils.js';
 
 export const labelHelper = async (parent, node, _classes, isNode) => {
-  let classes;
+  let cssClasses;
   const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig().flowchart.htmlLabels);
   if (!_classes) {
-    classes = 'node default';
+    cssClasses = 'node default';
   } else {
-    classes = _classes;
+    cssClasses = _classes;
   }
 
   // Add outer g element
   const shapeSvg = parent
     .insert('g')
-    .attr('class', classes)
+    .attr('class', cssClasses)
     .attr('id', node.domId || node.id);
 
   // Create the label and insert it after the rect
-  const label = shapeSvg.insert('g').attr('class', 'label').attr('style', node.labelStyle);
+  const labelEl = shapeSvg.insert('g').attr('class', 'label').attr('style', node.labelStyle);
 
-  // Replace labelText with default value if undefined
-  let labelText;
-  if (node.labelText === undefined) {
-    labelText = '';
+  // Replace label with default value if undefined
+  let label;
+  if (node.label === undefined) {
+    label = '';
   } else {
-    labelText = typeof node.labelText === 'string' ? node.labelText : node.labelText[0];
+    label = typeof node.label === 'string' ? node.label : node.label[0];
   }
 
-  const textNode = label.node();
+  const textNode = labelEl.node();
   let text;
   if (node.labelType === 'markdown') {
     // text = textNode;
-    text = createText(label, sanitizeText(decodeEntities(labelText), getConfig()), {
+    text = createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
       useHtmlLabels,
       width: node.width || getConfig().flowchart.wrappingWidth,
-      classes: 'markdown-node-label',
+      cssClasses: 'markdown-node-label',
     });
   } else {
     text = textNode.appendChild(
-      createLabel(
-        sanitizeText(decodeEntities(labelText), getConfig()),
-        node.labelStyle,
-        false,
-        isNode
-      )
+      createLabel(sanitizeText(decodeEntities(label), getConfig()), node.labelStyle, false, isNode)
     );
   }
   // Get the size of the label
@@ -61,7 +56,7 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
     // if there are images, need to wait for them to load before getting the bounding box
     const images = div.getElementsByTagName('img');
     if (images) {
-      const noImgText = labelText.replace(/<img[^>]*>/g, '').trim() === '';
+      const noImgText = label.replace(/<img[^>]*>/g, '').trim() === '';
 
       await Promise.all(
         [...images].map(
@@ -107,15 +102,15 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
 
   // Center the label
   if (useHtmlLabels) {
-    label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
+    labelEl.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
   } else {
-    label.attr('transform', 'translate(' + 0 + ', ' + -bbox.height / 2 + ')');
+    labelEl.attr('transform', 'translate(' + 0 + ', ' + -bbox.height / 2 + ')');
   }
   if (node.centerLabel) {
-    label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
+    labelEl.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
   }
-  label.insert('rect', ':first-child');
-  return { shapeSvg, bbox, halfPadding, label };
+  labelEl.insert('rect', ':first-child');
+  return { shapeSvg, bbox, halfPadding, label: labelEl };
 };
 
 export const updateNodeBounds = (node, element) => {

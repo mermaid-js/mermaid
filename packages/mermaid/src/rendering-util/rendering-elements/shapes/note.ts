@@ -16,12 +16,12 @@ export const note = async (parent: SVGAElement, node: Node) => {
   const { shapeSvg, bbox, halfPadding } = await labelHelper(
     parent,
     node,
-    'node ' + node.classes,
+    'node ' + node.cssClasses,
     true
   );
 
-  log.info('Classes = ', node.classes);
-  const { style, useRough } = node;
+  log.info('Classes = ', node.cssClasses);
+  const { cssStyles, useRough } = node;
   let rect;
   const totalWidth = bbox.width + node.padding;
   const totalHeight = bbox.height + node.padding;
@@ -41,7 +41,7 @@ export const note = async (parent: SVGAElement, node: Node) => {
     });
 
     rect = shapeSvg.insert(() => roughNode, ':first-child');
-    rect.attr('class', 'basic label-container').attr('style', style);
+    rect.attr('class', 'basic label-container').attr('style', cssStyles);
   } else {
     rect = shapeSvg.insert('rect', ':first-child');
     rect

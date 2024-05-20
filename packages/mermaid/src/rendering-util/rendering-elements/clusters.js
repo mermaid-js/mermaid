@@ -14,10 +14,7 @@ const rect = (parent, node) => {
   const siteConfig = getConfig();
 
   // Add outer g element
-  const shapeSvg = parent
-    .insert('g')
-    .attr('class', 'cluster' + (node.class ? ' ' + node.class : ''))
-    .attr('id', node.id);
+  const shapeSvg = parent.insert('g').attr('class', 'cluster').attr('id', node.id);
 
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -25,15 +22,15 @@ const rect = (parent, node) => {
   const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
 
   // Create the label and insert it after the rect
-  const label = shapeSvg.insert('g').attr('class', 'cluster-label');
+  const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label');
 
   // const text = label
   //   .node()
-  //   .appendChild(createLabel(node.labelText, node.labelStyle, undefined, true));
+  //   .appendChild(createLabel(node.label, node.labelStyle, undefined, true));
   const text =
     node.labelType === 'markdown'
-      ? createText(label, node.labelText, { style: node.labelStyle, useHtmlLabels })
-      : label.node().appendChild(createLabel(node.labelText, node.labelStyle, undefined, true));
+      ? createText(labelEl, node.label, { style: node.labelStyle, useHtmlLabels })
+      : labelEl.node().appendChild(createLabel(node.label, node.labelStyle, undefined, true));
 
   // Get the size of the label
   let bbox = text.getBBox();
@@ -59,7 +56,7 @@ const rect = (parent, node) => {
   log.trace('Data ', node, JSON.stringify(node));
   // center the rect around its coordinate
   rect
-    .attr('style', node.style)
+    .attr('style', node.cssStyles)
     .attr('rx', node.rx)
     .attr('ry', node.ry)
     .attr('x', node.x - width / 2)
@@ -69,13 +66,13 @@ const rect = (parent, node) => {
 
   const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
   if (useHtmlLabels) {
-    label.attr(
+    labelEl.attr(
       'transform',
       // This puts the label on top of the box instead of inside it
       `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
     );
   } else {
-    label.attr(
+    labelEl.attr(
       'transform',
       // This puts the label on top of the box instead of inside it
       `translate(${node.x}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
@@ -154,7 +151,7 @@ const roundedWithTitle = (parent, node) => {
     themeVariables;
 
   // Add outer g element
-  const shapeSvg = parent.insert('g').attr('class', node.classes).attr('id', node.id);
+  const shapeSvg = parent.insert('g').attr('class', node.cssClasses).attr('id', node.id);
 
   // add the rect
   const outerRectG = shapeSvg.insert('g', ':first-child');
@@ -163,9 +160,7 @@ const roundedWithTitle = (parent, node) => {
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');
   let innerRect = shapeSvg.append('rect');
 
-  const text = label
-    .node()
-    .appendChild(createLabel(node.labelText, node.labelStyle, undefined, true));
+  const text = label.node().appendChild(createLabel(node.label, node.labelStyle, undefined, true));
 
   // Get the size of the label
   let bbox = text.getBBox();
@@ -197,7 +192,7 @@ const roundedWithTitle = (parent, node) => {
   // add the rect
   let rect;
   if (node.useRough) {
-    const isAlt = node.classes.includes('statediagram-cluster-alt');
+    const isAlt = node.cssClasses.includes('statediagram-cluster-alt');
     const rc = rough.svg(shapeSvg);
     const roughOuterNode =
       node.rx || node.ry
@@ -263,7 +258,7 @@ const roundedWithTitle = (parent, node) => {
 const divider = (parent, node) => {
   const { handdrawnSeed } = getConfig();
   // Add outer g element
-  const shapeSvg = parent.insert('g').attr('class', node.classes).attr('id', node.id);
+  const shapeSvg = parent.insert('g').attr('class', node.cssClasses).attr('id', node.id);
 
   // add the rect
   let rect;
@@ -318,7 +313,7 @@ export const insertCluster = (elem, node) => {
   return cluster;
 };
 export const getClusterTitleWidth = (elem, node) => {
-  const label = createLabel(node.labelText, node.labelStyle, undefined, true);
+  const label = createLabel(node.label, node.labelStyle, undefined, true);
   elem.node().appendChild(label);
   const width = label.getBBox().width;
   elem.node().removeChild(label);
