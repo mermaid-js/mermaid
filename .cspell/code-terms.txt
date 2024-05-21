@@ -27,6 +27,7 @@ controly
 CSSCLASS
 CYLINDEREND
 CYLINDERSTART
+DAGA
 datakey
 DEND
 descr
