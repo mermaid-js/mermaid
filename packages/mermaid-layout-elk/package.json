@@ -31,7 +31,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "elkjs": "^0.9.3"
+    "elkjs": "^0.9.3",
+    "d3": "^7.9.0"
   },
   "devDependencies": {
     "mermaid": "workspace:^"

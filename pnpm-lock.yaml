@@ -436,6 +436,9 @@ importers:
 
   packages/mermaid-layout-elk:
     dependencies:
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
       elkjs:
         specifier: ^0.9.3
         version: 0.9.3
