@@ -22,9 +22,9 @@ describe('when parsing flowcharts', function () {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].id).toBe('A');
-    expect(vert['B'].id).toBe('B');
-    expect(vert['C'].id).toBe('C');
+    expect(vert.get('A').id).toBe('A');
+    expect(vert.get('B').id).toBe('B');
+    expect(vert.get('C').id).toBe('C');
     expect(edges.length).toBe(2);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
@@ -44,9 +44,9 @@ describe('when parsing flowcharts', function () {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].id).toBe('A');
-    expect(vert['B'].id).toBe('B');
-    expect(vert['C'].id).toBe('C');
+    expect(vert.get('A').id).toBe('A');
+    expect(vert.get('B').id).toBe('B');
+    expect(vert.get('C').id).toBe('C');
     expect(edges.length).toBe(2);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('C');
@@ -66,9 +66,9 @@ describe('when parsing flowcharts', function () {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].id).toBe('A');
-    expect(vert['B'].id).toBe('B');
-    expect(vert['C'].id).toBe('C');
+    expect(vert.get('A').id).toBe('A');
+    expect(vert.get('B').id).toBe('B');
+    expect(vert.get('C').id).toBe('C');
     expect(edges.length).toBe(2);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
@@ -88,10 +88,10 @@ describe('when parsing flowcharts', function () {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].id).toBe('A');
-    expect(vert['B'].id).toBe('B');
-    expect(vert['C'].id).toBe('C');
-    expect(vert['D'].id).toBe('D');
+    expect(vert.get('A').id).toBe('A');
+    expect(vert.get('B').id).toBe('B');
+    expect(vert.get('C').id).toBe('C');
+    expect(vert.get('D').id).toBe('D');
     expect(edges.length).toBe(4);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('C');
@@ -119,10 +119,10 @@ describe('when parsing flowcharts', function () {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].id).toBe('A');
-    expect(vert['B'].id).toBe('B');
-    expect(vert['C'].id).toBe('C');
-    expect(vert['D'].id).toBe('D');
+    expect(vert.get('A').id).toBe('A');
+    expect(vert.get('B').id).toBe('B');
+    expect(vert.get('C').id).toBe('C');
+    expect(vert.get('D').id).toBe('D');
     expect(edges.length).toBe(4);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('C');
@@ -150,11 +150,11 @@ describe('when parsing flowcharts', function () {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].id).toBe('A');
-    expect(vert['B'].id).toBe('B');
-    expect(vert['B2'].id).toBe('B2');
-    expect(vert['C'].id).toBe('C');
-    expect(vert['D2'].id).toBe('D2');
+    expect(vert.get('A').id).toBe('A');
+    expect(vert.get('B').id).toBe('B');
+    expect(vert.get('B2').id).toBe('B2');
+    expect(vert.get('C').id).toBe('C');
+    expect(vert.get('D2').id).toBe('D2');
     expect(edges.length).toBe(6);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
@@ -193,14 +193,14 @@ describe('when parsing flowcharts', function () {
 
     const classes = flow.parser.yy.getClasses();
 
-    expect(classes['exClass'].styles.length).toBe(2);
-    expect(classes['exClass'].styles[0]).toBe('background:#bbb');
-    expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
-    expect(vert['A'].id).toBe('A');
-    expect(vert['B'].id).toBe('B');
-    expect(vert['B'].classes[0]).toBe('exClass');
-    expect(vert['C'].id).toBe('C');
-    expect(vert['D'].id).toBe('D');
+    expect(classes.get('exClass').styles.length).toBe(2);
+    expect(classes.get('exClass').styles[0]).toBe('background:#bbb');
+    expect(classes.get('exClass').styles[1]).toBe('border:1px solid red');
+    expect(vert.get('A').id).toBe('A');
+    expect(vert.get('B').id).toBe('B');
+    expect(vert.get('B').classes[0]).toBe('exClass');
+    expect(vert.get('C').id).toBe('C');
+    expect(vert.get('D').id).toBe('D');
     expect(edges.length).toBe(4);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');

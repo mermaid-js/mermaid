@@ -20,6 +20,7 @@ const mockDB: Record<string, Mock<any, any>> = {
   setYAxisBottomText: vi.fn(),
   setDiagramTitle: vi.fn(),
   addPoint: vi.fn(),
+  addClass: vi.fn(),
 };
 
 function clearMocks() {
@@ -422,5 +423,14 @@ describe('Testing quadrantChart jison file', () => {
       '0.30',
       ['stroke-width: 10px']
     );
+  });
+
+  it('should be able to handle constructor as a className', () => {
+    const str = `quadrantChart
+    classDef constructor fill:#ff0000
+    Microsoft:::constructor: [0.75, 0.75]
+    `;
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.addClass).toHaveBeenCalledWith('constructor', ['fill:#ff0000']);
   });
 });

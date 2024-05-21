@@ -127,7 +127,7 @@ export class QuadrantBuilder {
   private config: QuadrantBuilderConfig;
   private themeConfig: QuadrantBuilderThemeConfig;
   private data: QuadrantBuilderData;
-  private classes: Record<string, StylesObject> = {};
+  private classes: Map<string, StylesObject> = new Map();
 
   constructor() {
     this.config = this.getDefaultConfig();
@@ -202,7 +202,7 @@ export class QuadrantBuilder {
     this.config = this.getDefaultConfig();
     this.themeConfig = this.getDefaultThemeConfig();
     this.data = this.getDefaultData();
-    this.classes = {};
+    this.classes = new Map();
     log.info('clear called');
   }
 
@@ -215,7 +215,7 @@ export class QuadrantBuilder {
   }
 
   addClass(className: string, styles: StylesObject) {
-    this.classes[className] = styles;
+    this.classes.set(className, styles);
   }
 
   setConfig(config: Partial<QuadrantBuilderConfig>) {
@@ -486,7 +486,7 @@ export class QuadrantBuilder {
       .range([quadrantHeight + quadrantTop, quadrantTop]);
 
     const points: QuadrantPointType[] = this.data.points.map((point) => {
-      const classStyles = this.classes[point.className as keyof typeof this.classes];
+      const classStyles = this.classes.get(point.className!);
       if (classStyles) {
         point = { ...classStyles, ...point };
       }
