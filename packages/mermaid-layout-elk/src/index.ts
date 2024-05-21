@@ -214,25 +214,6 @@ const addSubGraphs = function (nodeArr) {
   return parentLookupDb;
 };
 
-const insertChildren = (nodeArray, parentLookupDb) => {
-  nodeArray.forEach((node) => {
-    // Check if we have reached the end of the tree
-    if (!node.children) {
-      node.children = [];
-    }
-    // Check if the node has children
-    const childIds = parentLookupDb.childrenById[node.id];
-    // If the node has children, add them to the node
-    if (childIds) {
-      childIds.forEach((childId) => {
-        node.children.push(nodeDb[childId]);
-      });
-    }
-    // Recursive call
-    insertChildren(node.children, parentLookupDb);
-  });
-};
-
 const getEdgeStartEndPoint = (edge, dir) => {
   let source = edge.start;
   let target = edge.end;
@@ -272,14 +253,6 @@ const calcOffset = function (src, dest, parentLookupDb) {
 
 /**
  * Add edges to graph based on parsed graph definition
- *
- * @param {object} edges The edges to add to the graph
- * @param {object} g The graph object
- * @param cy
- * @param diagObj
- * @param dataForLayout
- * @param graph
- * @param svg
  */
 export const addEdges = function (dataForLayout, graph, svg) {
   log.info('abc78 DAGA edges = ', dataForLayout);
