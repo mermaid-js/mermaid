@@ -156,10 +156,20 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
       node.height
     );
     if (node && node.clusterNode) {
-      const parent = graph.node(node.parentId);
-      node.y += 2;
+      const parentId = graph.parent(v);
+      node.y = parentId ? node.y + 2 : node.y - 8;
       node.x -= 8;
-      log.trace('A tainted cluster node XAX', v, node.id, node.width, node.height, node.x, node.y);
+      // node.y -= 8;
+      log.info(
+        'A tainted cluster node XBX',
+        v,
+        node.id,
+        node.width,
+        node.height,
+        node.x,
+        node.y,
+        graph.parent(v)
+      );
       clusterDb[node.id].node = node;
       // node.y += subGraphTitleTotalMargin - 10;
       node.y -= (node.offsetY || 0) / 2;
@@ -173,8 +183,8 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         insertCluster(clusters, node);
 
         // A cluster in the non-recursive way
-        log.trace(
-          'A pure cluster node with children XAX',
+        log.info(
+          'A pure cluster node with children XBX',
           v,
           node.id,
           node.width,
@@ -188,8 +198,8 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
       } else {
         const parent = graph.node(node.parentId);
         node.y += (parent?.offsetY || 0) / 2;
-        log.trace(
-          'A regular node XAX - using the padding',
+        log.info(
+          'A regular node XBX - using the padding',
           v,
           node.id,
           'parent',

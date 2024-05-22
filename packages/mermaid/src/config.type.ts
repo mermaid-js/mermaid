@@ -88,6 +88,11 @@ export interface MermaidConfig {
    *
    */
   maxEdges?: number;
+  /**
+   * Elk specific option that allows edge egdes to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
+   *
+   */
+  mergeEdges?: boolean;
   darkMode?: boolean;
   htmlLabels?: boolean;
   /**
