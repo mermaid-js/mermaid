@@ -1,21 +1,22 @@
 // @ts-nocheck File not ready to check types
-
+import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
-import { getConfig } from '../../mermaid/src/config.js';
-import common from '../../mermaid/src/diagrams/common/common.js';
-import { log } from '../../mermaid/src/logger.js';
-import { insertCluster } from '../../mermaid/src/rendering-util/rendering-elements/clusters.js';
-import {
+import mermaid from 'mermaid';
+import { findCommonAncestor } from './find-common-ancestor.js';
+
+const {
+  common,
+  getConfig,
+  insertCluster,
   insertEdge,
   insertEdgeLabel,
+  insertMarkers,
+  insertNode,
+  interpolateToCurve,
+  labelHelper,
+  log,
   positionEdgeLabel,
-} from '../../mermaid/src/rendering-util/rendering-elements/edges.js';
-import { curveLinear } from 'd3';
-import { interpolateToCurve } from '../../mermaid/src/utils.js';
-import insertMarkers from '../../mermaid/src/rendering-util/rendering-elements/markers.js';
-import { insertNode } from '../../mermaid/src/rendering-util/rendering-elements/nodes.js';
-import { labelHelper } from '../../mermaid/src/rendering-util/rendering-elements/shapes/util.js';
-import { findCommonAncestor } from './find-common-ancestor.js';
+} = mermaid.internalHelpers;
 
 const nodeDb = {};
 const portPos = {};
@@ -214,25 +215,6 @@ const addSubGraphs = function (nodeArr) {
   return parentLookupDb;
 };
 
-const insertChildren = (nodeArray, parentLookupDb) => {
-  nodeArray.forEach((node) => {
-    // Check if we have reached the end of the tree
-    if (!node.children) {
-      node.children = [];
-    }
-    // Check if the node has children
-    const childIds = parentLookupDb.childrenById[node.id];
-    // If the node has children, add them to the node
-    if (childIds) {
-      childIds.forEach((childId) => {
-        node.children.push(nodeDb[childId]);
-      });
-    }
-    // Recursive call
-    insertChildren(node.children, parentLookupDb);
-  });
-};
-
 const getEdgeStartEndPoint = (edge, dir) => {
   let source = edge.start;
   let target = edge.end;
@@ -272,14 +254,6 @@ const calcOffset = function (src, dest, parentLookupDb) {
 
 /**
  * Add edges to graph based on parsed graph definition
- *
- * @param {object} edges The edges to add to the graph
- * @param {object} g The graph object
- * @param cy
- * @param diagObj
- * @param dataForLayout
- * @param graph
- * @param svg
  */
 export const addEdges = function (dataForLayout, graph, svg) {
   log.info('abc78 DAGA edges = ', dataForLayout);

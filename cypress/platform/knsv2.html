@@ -508,6 +508,8 @@ mindmap
       // import mindmap from '../../packages/mermaid-mindmap/src/detector';
       // import example from '../../packages/mermaid-example-diagram/src/mermaid-example-diagram.core.mjs';
       import mermaid from './mermaid.esm.mjs';
+      import { layouts } from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
       // await mermaid.registerExternalDiagrams([example]);
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);

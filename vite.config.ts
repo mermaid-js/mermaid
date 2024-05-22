@@ -15,7 +15,6 @@ export default defineConfig({
   plugins: [
     jison(),
     jsonSchemaPlugin(), // handles .schema.yaml JSON Schema files
-    // @ts-expect-error According to the type definitions, rollup plugins are incompatible with vite
     typescript({ compilerOptions: { declaration: false } }),
   ],
   test: {
