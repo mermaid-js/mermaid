@@ -247,6 +247,8 @@ const roundedWithTitle = (parent, node) => {
 
   const rectBox = rect.node().getBBox();
   node.height = rectBox.height;
+  node.offsetX = 0;
+  node.offsetY = 20;
 
   node.intersect = function (point) {
     return intersectRect(node, point);
@@ -292,8 +294,9 @@ const divider = (parent, node) => {
   }
   const rectBox = rect.node().getBBox();
   node.width = rectBox.width;
-  node.height = rectBox.height;
-  node.diff = -node.padding / 2;
+  node.height = rectBox.height - node.padding;
+  node.diff = 0; //-node.padding / 2;
+  node.offsetY = 0;
   node.intersect = function (point) {
     return intersectRect(node, point);
   };
@@ -306,7 +309,6 @@ const shapes = { rect, roundedWithTitle, noteGroup, divider };
 let clusterElems = {};
 
 export const insertCluster = (elem, node) => {
-  log.trace('Inserting cluster');
   const shape = node.shape || 'rect';
   const cluster = shapes[shape](elem, node);
   clusterElems[node.id] = cluster;

@@ -75,16 +75,12 @@ export const positionNode = (node) => {
     node,
     'translate(' + (node.x - node.width / 2 - 5) + ', ' + node.width / 2 + ')'
   );
-  const padding = 8;
-  const diff = node.diff || 0;
+
+  const diff = 0;
   if (node.clusterNode) {
     el.attr(
       'transform',
-      'translate(' +
-        (node.x + diff - node.width / 2) +
-        ', ' +
-        (node.y - node.height / 2 - padding) +
-        ')'
+      'translate(' + (node.x + diff - node.width / 2) + ', ' + (node.y - node.height / 2) + ')'
     );
   } else {
     el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');

@@ -302,7 +302,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
       domId: stateDomId(itemId, graphItemCount),
       type: newNode.type,
       isGroup: newNode.type === 'group',
-      padding: 15,
+      padding: 8,
       rx: 10,
       ry: 10,
       useRough,
@@ -328,7 +328,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
         domId: stateDomId(itemId, graphItemCount, NOTE),
         type: newNode.type,
         isGroup: newNode.type === 'group',
-        padding: 15, //getConfig().flowchart.padding
+        padding: 0, //getConfig().flowchart.padding
         useRough,
       };
       const groupData = {
@@ -341,7 +341,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
         domId: stateDomId(itemId, graphItemCount, PARENT),
         type: 'group',
         isGroup: true,
-        padding: 0, //getConfig().flowchart.padding
+        padding: 16, //getConfig().flowchart.padding
         useRough,
       };
       graphItemCount++;
