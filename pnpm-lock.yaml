@@ -442,7 +442,6 @@ importers:
       elkjs:
         specifier: ^0.9.3
         version: 0.9.3
-    devDependencies:
       mermaid:
         specifier: workspace:^
         version: link:../mermaid

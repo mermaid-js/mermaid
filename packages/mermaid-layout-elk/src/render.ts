@@ -1,21 +1,22 @@
 // @ts-nocheck File not ready to check types
-
+import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
-import { getConfig } from '../../mermaid/src/config.js';
-import common from '../../mermaid/src/diagrams/common/common.js';
-import { log } from '../../mermaid/src/logger.js';
-import { insertCluster } from '../../mermaid/src/rendering-util/rendering-elements/clusters.js';
-import {
+import mermaid from 'mermaid';
+import { findCommonAncestor } from './find-common-ancestor.js';
+
+const {
+  common,
+  getConfig,
+  insertCluster,
   insertEdge,
   insertEdgeLabel,
+  insertMarkers,
+  insertNode,
+  interpolateToCurve,
+  labelHelper,
+  log,
   positionEdgeLabel,
-} from '../../mermaid/src/rendering-util/rendering-elements/edges.js';
-import { curveLinear } from 'd3';
-import { interpolateToCurve } from '../../mermaid/src/utils.js';
-import insertMarkers from '../../mermaid/src/rendering-util/rendering-elements/markers.js';
-import { insertNode } from '../../mermaid/src/rendering-util/rendering-elements/nodes.js';
-import { labelHelper } from '../../mermaid/src/rendering-util/rendering-elements/shapes/util.js';
-import { findCommonAncestor } from './find-common-ancestor.js';
+} = mermaid.internalHelpers;
 
 const nodeDb = {};
 const portPos = {};
