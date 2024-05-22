@@ -1,4 +1,5 @@
-import type { MermaidConfig } from '../../config.type.js';
+import { describe, expect, it } from 'vitest';
+import type { MermaidConfigWithDefaults } from '../../config.type.js';
 import { countOccurrence, parseGenericTypes, removeScript, sanitizeText } from './common.js';
 
 describe('when securityLevel is antiscript, all script must be removed', () => {
@@ -68,7 +69,7 @@ describe('Sanitize text', () => {
     const result = sanitizeText(maliciousStr, {
       securityLevel: 'strict',
       flowchart: { htmlLabels: true },
-    } as MermaidConfig);
+    } as MermaidConfigWithDefaults);
     expect(result).not.toContain('javascript:alert(1)');
   });
 });

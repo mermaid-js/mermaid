@@ -1,7 +1,10 @@
 import { load, JSON_SCHEMA } from 'js-yaml';
 import assert from 'node:assert';
 import Ajv2019, { type JSONSchemaType } from 'ajv/dist/2019.js';
-import type { MermaidConfig, BaseDiagramConfig } from '../packages/mermaid/src/config.type.js';
+import type {
+  MermaidConfigWithDefaults,
+  BaseDiagramConfig,
+} from '../packages/mermaid/src/config.type.js';
 
 /**
  * All of the keys in the mermaid config that have a mermaid diagram config.
@@ -36,7 +39,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
  * @param mermaidConfigSchema - The Mermaid JSON Schema to use.
  * @returns The default mermaid config object.
  */
-function generateDefaults(mermaidConfigSchema: JSONSchemaType<MermaidConfig>) {
+function generateDefaults(mermaidConfigSchema: JSONSchemaType<MermaidConfigWithDefaults>) {
   const ajv = new Ajv2019({
     useDefaults: true,
     allowUnionTypes: true,
@@ -105,20 +108,23 @@ function generateDefaults(mermaidConfigSchema: JSONSchemaType<MermaidConfig>) {
   return mermaidDefaultConfig;
 }
 
-export const loadSchema = (src: string, filename: string): JSONSchemaType<MermaidConfig> => {
+export const loadSchema = (
+  src: string,
+  filename: string
+): JSONSchemaType<MermaidConfigWithDefaults> => {
   const jsonSchema = load(src, {
     filename,
     // only allow JSON types in our YAML doc (will probably be default in YAML 1.3)
     // e.g. `true` will be parsed a boolean `true`, `True` will be parsed as string `"True"`.
     schema: JSON_SCHEMA,
-  }) as JSONSchemaType<MermaidConfig>;
+  }) as JSONSchemaType<MermaidConfigWithDefaults>;
   return jsonSchema;
 };
 
-export const getDefaults = (schema: JSONSchemaType<MermaidConfig>) => {
+export const getDefaults = (schema: JSONSchemaType<MermaidConfigWithDefaults>) => {
   return `export default ${JSON.stringify(generateDefaults(schema), undefined, 2)};`;
 };
 
-export const getSchema = (schema: JSONSchemaType<MermaidConfig>) => {
+export const getSchema = (schema: JSONSchemaType<MermaidConfigWithDefaults>) => {
   return `export default ${JSON.stringify(schema, undefined, 2)};`;
 };

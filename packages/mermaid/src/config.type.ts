@@ -24,7 +24,7 @@
  * ```
  *
  *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "FontCalculator".
  */
 export type FontCalculator = () => Partial<FontConfig>;
@@ -32,7 +32,7 @@ export type FontCalculator = () => Partial<FontConfig>;
  * Picks the color of the sankey diagram links, using the colors of the source and/or target of the links.
  *
  *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "SankeyLinkColor".
  */
 export type SankeyLinkColor = 'source' | 'target' | 'gradient';
@@ -42,7 +42,7 @@ export type SankeyLinkColor = 'source' | 'target' | 'gradient';
  * See <https://github.com/d3/d3-sankey#alignments>.
  *
  *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "SankeyNodeAlignment".
  */
 export type SankeyNodeAlignment = 'left' | 'right' | 'center' | 'justify';
@@ -51,18 +51,18 @@ export type SankeyNodeAlignment = 'left' | 'right' | 'center' | 'justify';
  */
 export type DOMPurifyConfiguration = import('dompurify').Config;
 /**
- * MermaidConfig with all fields optional
+ * MermaidConfigWithDefaults with all fields optional
  *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "PartialMermaidConfig".
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
+ * via the `definition` "MermaidConfig".
  */
-export type PartialMermaidConfig = import('type-fest').PartialDeep<MermaidConfig>;
+export type MermaidConfig = import('type-fest').PartialDeep<MermaidConfigWithDefaults>;
 /**
  * The font size to use
  */
 export type CSSFontSize = string | number;
 
-export interface MermaidConfig {
+export interface MermaidConfigWithDefaults {
   /**
    * Theme, the CSS style sheet.
    * You may also use `themeCSS` to override this value.
@@ -184,7 +184,7 @@ export interface MermaidConfig {
 /**
  * The object containing configurations specific for flowcharts
  *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "FlowchartDiagramConfig".
  */
 export interface FlowchartDiagramConfig extends BaseDiagramConfig {
@@ -255,7 +255,7 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
   wrappingWidth: number;
 }
 /**
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "BaseDiagramConfig".
  */
 export interface BaseDiagramConfig {
@@ -271,7 +271,7 @@ export interface BaseDiagramConfig {
 /**
  * The object containing configurations specific for sequence diagrams
  *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "SequenceDiagramConfig".
  */
 export interface SequenceDiagramConfig extends BaseDiagramConfig {
@@ -414,7 +414,7 @@ export interface SequenceDiagramConfig extends BaseDiagramConfig {
  * The object containing configurations specific for gantt diagrams
  *
  *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "GanttDiagramConfig".
  */
 export interface GanttDiagramConfig extends BaseDiagramConfig {
@@ -499,7 +499,7 @@ export interface GanttDiagramConfig extends BaseDiagramConfig {
  * The object containing configurations specific for journey diagrams
  *
  *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "JourneyDiagramConfig".
  */
 export interface JourneyDiagramConfig extends BaseDiagramConfig {
@@ -577,7 +577,7 @@ export interface JourneyDiagramConfig extends BaseDiagramConfig {
   sectionColours?: string[];
 }
 /**
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "TimelineDiagramConfig".
  */
 export interface TimelineDiagramConfig extends BaseDiagramConfig {
@@ -657,7 +657,7 @@ export interface TimelineDiagramConfig extends BaseDiagramConfig {
   disableMulticolor?: boolean;
 }
 /**
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "ClassDiagramConfig".
  */
 export interface ClassDiagramConfig extends BaseDiagramConfig {
@@ -692,7 +692,7 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
 /**
  * The object containing configurations specific for entity relationship diagrams
  *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "StateDiagramConfig".
  */
 export interface StateDiagramConfig extends BaseDiagramConfig {
@@ -731,7 +731,7 @@ export interface StateDiagramConfig extends BaseDiagramConfig {
 /**
  * The object containing configurations specific for entity relationship diagrams
  *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "ErDiagramConfig".
  */
 export interface ErDiagramConfig extends BaseDiagramConfig {
@@ -777,7 +777,7 @@ export interface ErDiagramConfig extends BaseDiagramConfig {
   fontSize?: number;
 }
 /**
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "PieDiagramConfig".
  */
 export interface PieDiagramConfig extends BaseDiagramConfig {
@@ -788,7 +788,7 @@ export interface PieDiagramConfig extends BaseDiagramConfig {
   textPosition?: number;
 }
 /**
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "QuadrantChartConfig".
  */
 export interface QuadrantChartConfig extends BaseDiagramConfig {
@@ -868,7 +868,7 @@ export interface QuadrantChartConfig extends BaseDiagramConfig {
 /**
  * This object contains configuration specific to XYCharts
  *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "XYChartConfig".
  */
 export interface XYChartConfig extends BaseDiagramConfig {
@@ -906,7 +906,7 @@ export interface XYChartConfig extends BaseDiagramConfig {
 /**
  * This object contains configuration for XYChart axis config
  *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "XYChartAxisConfig".
  */
 export interface XYChartAxisConfig {
@@ -958,7 +958,7 @@ export interface XYChartAxisConfig {
 /**
  * The object containing configurations specific for req diagrams
  *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "RequirementDiagramConfig".
  */
 export interface RequirementDiagramConfig extends BaseDiagramConfig {
@@ -975,7 +975,7 @@ export interface RequirementDiagramConfig extends BaseDiagramConfig {
 /**
  * The object containing configurations specific for mindmap diagrams
  *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "MindmapDiagramConfig".
  */
 export interface MindmapDiagramConfig extends BaseDiagramConfig {
@@ -983,7 +983,7 @@ export interface MindmapDiagramConfig extends BaseDiagramConfig {
   maxNodeWidth: number;
 }
 /**
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "GitGraphDiagramConfig".
  */
 export interface GitGraphDiagramConfig extends BaseDiagramConfig {
@@ -1007,7 +1007,7 @@ export interface GitGraphDiagramConfig extends BaseDiagramConfig {
   arrowMarkerAbsolute?: boolean;
 }
 /**
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "NodeLabel".
  */
 export interface NodeLabel {
@@ -1019,7 +1019,7 @@ export interface NodeLabel {
 /**
  * The object containing configurations specific for c4 diagrams
  *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "C4DiagramConfig".
  */
 export interface C4DiagramConfig extends BaseDiagramConfig {
@@ -1400,7 +1400,7 @@ export interface C4DiagramConfig extends BaseDiagramConfig {
 /**
  * The object containing configurations specific for sankey diagrams.
  *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "SankeyDiagramConfig".
  */
 export interface SankeyDiagramConfig extends BaseDiagramConfig {
@@ -1432,7 +1432,7 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
 /**
  * The object containing configurations specific for packet diagrams.
  *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "PacketDiagramConfig".
  */
 export interface PacketDiagramConfig extends BaseDiagramConfig {
@@ -1464,14 +1464,14 @@ export interface PacketDiagramConfig extends BaseDiagramConfig {
 /**
  * The object containing configurations specific for block diagrams.
  *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "BlockDiagramConfig".
  */
 export interface BlockDiagramConfig extends BaseDiagramConfig {
   padding?: number;
 }
 /**
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * This interface was referenced by `MermaidConfigWithDefaults`'s JSON-Schema
  * via the `definition` "FontConfig".
  */
 export interface FontConfig {

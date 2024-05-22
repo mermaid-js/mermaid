@@ -1,5 +1,5 @@
 import DOMPurify from 'dompurify';
-import type { MermaidConfig } from '../../config.type.js';
+import type { MermaidConfigWithDefaults } from '../../config.type.js';
 
 // Remove and ignore br:s
 export const lineBreakRegex = /<br\s*\/?>/gi;
@@ -63,7 +63,7 @@ export const removeScript = (txt: string): string => {
   return sanitizedText;
 };
 
-const sanitizeMore = (text: string, config: MermaidConfig) => {
+const sanitizeMore = (text: string, config: MermaidConfigWithDefaults) => {
   if (config.flowchart?.htmlLabels !== false) {
     const level = config.securityLevel;
     if (level === 'antiscript' || level === 'strict') {
@@ -78,7 +78,7 @@ const sanitizeMore = (text: string, config: MermaidConfig) => {
   return text;
 };
 
-export const sanitizeText = (text: string, config: MermaidConfig): string => {
+export const sanitizeText = (text: string, config: MermaidConfigWithDefaults): string => {
   if (!text) {
     return text;
   }
@@ -94,7 +94,7 @@ export const sanitizeText = (text: string, config: MermaidConfig): string => {
 
 export const sanitizeTextOrArray = (
   a: string | string[] | string[][],
-  config: MermaidConfig
+  config: MermaidConfigWithDefaults
 ): string | string[] => {
   if (typeof a === 'string') {
     return sanitizeText(a, config);
@@ -310,7 +310,10 @@ export const hasKatex = (text: string): boolean => (text.match(katexRegex)?.leng
  * @param config - Configuration for Mermaid
  * @returns Object containing \{width, height\}
  */
-export const calculateMathMLDimensions = async (text: string, config: MermaidConfig) => {
+export const calculateMathMLDimensions = async (
+  text: string,
+  config: MermaidConfigWithDefaults
+) => {
   text = await renderKatex(text, config);
   const divElem = document.createElement('div');
   divElem.innerHTML = text;
@@ -332,7 +335,10 @@ export const calculateMathMLDimensions = async (text: string, config: MermaidCon
  * @param config - Configuration for Mermaid
  * @returns String containing MathML if KaTeX is supported, or an error message if it is not and stylesheets aren't present
  */
-export const renderKatex = async (text: string, config: MermaidConfig): Promise<string> => {
+export const renderKatex = async (
+  text: string,
+  config: MermaidConfigWithDefaults
+): Promise<string> => {
   if (!hasKatex(text)) {
     return text;
   }

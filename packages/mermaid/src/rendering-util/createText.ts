@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // @ts-nocheck TODO: Fix types
-import type { MermaidConfig } from '../config.type.js';
+import type { MermaidConfigWithDefaults } from '../config.type.js';
 import type { Group } from '../diagram-api/types.js';
 import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
@@ -195,7 +195,7 @@ export const createText = (
     width = 200,
     addSvgBackground = false,
   } = {},
-  config: MermaidConfig
+  config: MermaidConfigWithDefaults
 ) => {
   log.info('createText', text, style, isTitle, classes, useHtmlLabels, isNode, addSvgBackground);
   if (useHtmlLabels) {

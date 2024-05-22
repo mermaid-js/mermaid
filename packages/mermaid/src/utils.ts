@@ -26,7 +26,7 @@ import {
 import memoize from 'lodash-es/memoize.js';
 import merge from 'lodash-es/merge.js';
 import assignWithDepth from './assignWithDepth.js';
-import type { MermaidConfig, PartialMermaidConfig } from './config.type.js';
+import type { MermaidConfigWithDefaults, MermaidConfig } from './config.type.js';
 import { detectType } from './diagram-api/detectType.js';
 import { directiveRegex } from './diagram-api/regexes.js';
 import common from './diagrams/common/common.js';
@@ -97,16 +97,16 @@ const directiveWithoutOpen =
  * @param config - Optional mermaid configuration object.
  * @returns The json object representing the init passed to mermaid.initialize()
  */
-export const detectInit = function (text: string): PartialMermaidConfig | undefined {
+export const detectInit = function (text: string): MermaidConfig | undefined {
   const inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
-  let results: PartialMermaidConfig & { config?: unknown } = {};
+  let results: MermaidConfig & { config?: unknown } = {};
 
   if (Array.isArray(inits)) {
     const args = inits.map((init) => init.args);
     sanitizeDirective(args);
     results = assignWithDepth(results, [...args]);
   } else {
-    results = inits.args as PartialMermaidConfig;
+    results = inits.args as MermaidConfig;
   }
 
   if (!results) {
@@ -121,7 +121,7 @@ export const detectInit = function (text: string): PartialMermaidConfig | undefi
     if (type === 'flowchart-v2') {
       type = 'flowchart';
     }
-    results[type as keyof MermaidConfig] = results[prop];
+    results[type as keyof MermaidConfigWithDefaults] = results[prop];
     delete results[prop];
   }
 
@@ -249,7 +249,7 @@ export function interpolateToCurve(
  */
 export function formatUrl(
   linkStr: string,
-  config: Pick<MermaidConfig, 'securityLevel'>
+  config: Pick<MermaidConfigWithDefaults, 'securityLevel'>
 ): string | undefined {
   const url = linkStr.trim();
 

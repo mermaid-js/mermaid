@@ -6,7 +6,7 @@ import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import type { Diagram } from '../../Diagram.js';
-import type { MermaidConfig } from '../../config.type.js';
+import type { MermaidConfigWithDefaults } from '../../config.type.js';
 
 interface Block<TDesc, TSection> {
   number: number;
@@ -241,7 +241,7 @@ export const drawTasks = function (
   masterX: number,
   masterY: number,
   maxTaskHeight: number,
-  conf: MermaidConfig,
+  conf: MermaidConfigWithDefaults,
   maxEventCount: number,
   maxEventLineLength: number,
   maxSectionHeight: number,
@@ -318,7 +318,7 @@ export const drawEvents = function (
   sectionColor: number,
   masterX: number,
   masterY: number,
-  conf: MermaidConfig
+  conf: MermaidConfigWithDefaults
 ) {
   let maxEventHeight = 0;
   const eventBeginY = masterY;

@@ -35,7 +35,7 @@ vi.mock('./diagrams/state/stateRenderer-v2.js');
 // -------------------------------------
 
 import assignWithDepth from './assignWithDepth.js';
-import type { MermaidConfig } from './config.type.js';
+import type { MermaidConfigWithDefaults } from './config.type.js';
 import mermaid from './mermaid.js';
 import mermaidAPI, {
   appendDivSvgG,
@@ -288,7 +288,7 @@ describe('mermaidAPI', () => {
       fontFamily: serif,
       altFontFamily: sansSerif,
       htmlLabels: true,
-    } as MermaidConfig;
+    } as MermaidConfigWithDefaults;
 
     it('gets the cssStyles from the theme', () => {
       const styles = createCssStyles(mocked_config_with_htmlLabels, null);
@@ -367,7 +367,7 @@ describe('mermaidAPI', () => {
         }
 
         // common suite and tests to verify that the right styles are created with the right htmlElements
-        function expect_correct_styles_with_htmlElements(mocked_config: MermaidConfig) {
+        function expect_correct_styles_with_htmlElements(mocked_config: MermaidConfigWithDefaults) {
           describe('creates styles for "> *" and  "span" elements', () => {
             const htmlElements = ['> *', 'span'];
 
@@ -396,7 +396,7 @@ describe('mermaidAPI', () => {
             flowchart: {
               htmlLabels: true,
             },
-          } as MermaidConfig;
+          } as MermaidConfigWithDefaults;
           expect_correct_styles_with_htmlElements(mocked_config_flowchart_htmlLabels);
         });
 
@@ -405,7 +405,7 @@ describe('mermaidAPI', () => {
             themeCSS: 'default',
             fontFamily: 'serif',
             altFontFamily: 'sans-serif',
-          } as MermaidConfig;
+          } as MermaidConfigWithDefaults;
 
           describe('creates styles for shape elements "rect", "polygon", "ellipse", and "circle"', () => {
             const htmlElements = ['rect', 'polygon', 'ellipse', 'circle'];
@@ -430,7 +430,7 @@ describe('mermaidAPI', () => {
       themeCSS: 'default',
       htmlLabels: true,
       themeVariables: { fontFamily: 'serif' },
-    } as MermaidConfig;
+    } as MermaidConfigWithDefaults;
 
     const classDef1 = { id: 'classDef1', styles: ['style1-1'], textStyles: [] };
 

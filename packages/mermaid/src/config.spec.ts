@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { expect, it } from 'vitest';
 import * as configApi from './config.js';
-import type { MermaidConfig, PartialMermaidConfig } from './config.type.js';
+import type { MermaidConfig, MermaidConfigWithDefaults } from './config.type.js';
 
 describe('when working with site config', () => {
   beforeEach(() => {
@@ -22,15 +23,15 @@ describe('when working with site config', () => {
       securityLevel: 'strict', // can't be changed
       fontSize: 12345, // can't be changed
       secure: [...configApi.defaultConfig.secure!, 'fontSize'],
-    } as MermaidConfig;
+    } as MermaidConfigWithDefaults;
     configApi.setSiteConfig(config_0);
-    const directive: PartialMermaidConfig = {
+    const directive: MermaidConfig = {
       fontFamily: 'baf',
       // fontSize and securityLevel shouldn't be changed
       fontSize: 54321,
       securityLevel: 'loose',
     };
-    const cfg: MermaidConfig = configApi.updateCurrentConfig(config_0, [directive]);
+    const cfg: MermaidConfigWithDefaults = configApi.updateCurrentConfig(config_0, [directive]);
     expect(cfg.fontFamily).toEqual(directive.fontFamily);
     expect(cfg.fontSize).toBe(config_0.fontSize);
     expect(cfg.securityLevel).toBe(config_0.securityLevel);

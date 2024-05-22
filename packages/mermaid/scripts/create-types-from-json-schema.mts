@@ -25,7 +25,7 @@ import prettier from 'prettier';
 const Ajv2019 = _Ajv2019 as unknown as typeof _Ajv2019.default;
 
 // !!! -- The config.type.js file is created by this script -- !!!
-import type { MermaidConfig } from '../src/config.type.js';
+import type { MermaidConfigWithDefaults } from '../src/config.type.js';
 
 // options for running the main command
 const verifyOnly = process.argv.includes('--verify');
@@ -33,7 +33,7 @@ const verifyOnly = process.argv.includes('--verify');
 const git = process.argv.includes('--git');
 
 /**
- * Loads the MermaidConfig JSON schema YAML file.
+ * Loads the MermaidConfigWithDefaults JSON schema YAML file.
  *
  * @returns The loaded JSON Schema, use {@link validateSchema} to confirm it is a valid JSON Schema.
  */
@@ -55,7 +55,9 @@ async function loadJsonSchemaFromYaml() {
  * @param jsonSchema - The value to validate as JSON Schema 2019-09
  * @throws {Error} if the given object is invalid.
  */
-function validateSchema(jsonSchema: unknown): asserts jsonSchema is JSONSchemaType<MermaidConfig> {
+function validateSchema(
+  jsonSchema: unknown
+): asserts jsonSchema is JSONSchemaType<MermaidConfigWithDefaults> {
   if (typeof jsonSchema !== 'object') {
     throw new Error(`jsonSchema param is not an object: actual type is ${typeof jsonSchema}`);
   }
@@ -85,7 +87,7 @@ function validateSchema(jsonSchema: unknown): asserts jsonSchema is JSONSchemaTy
  *
  * @param mermaidConfigSchema - The input JSON Schema.
  */
-async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidConfig>) {
+async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidConfigWithDefaults>) {
   /**
    * Replace all usages of `allOf` with `extends`.
    *
@@ -119,7 +121,7 @@ async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidCon
 
   const typescriptFile = await compile(
     modifiedSchema as unknown as JSONSchema, // json-schema-to-typescript only allows JSON Schema 4 as input type
-    'MermaidConfig',
+    'MermaidConfigWithDefaults',
     {
       additionalProperties: false, // in JSON Schema 2019-09, these are called `unevaluatedProperties`
       unreachableDefinitions: true, // definition for FontConfig is unreachable
@@ -173,6 +175,7 @@ async function main() {
   }
 
   const configJsonSchema = await loadJsonSchemaFromYaml();
+  // TODO: Add code to mark objects with default values as required
 
   removeProp(configJsonSchema, 'default');
 

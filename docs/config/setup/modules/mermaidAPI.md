@@ -32,7 +32,7 @@ Renames and re-exports [mermaidAPI](mermaidAPI.md#mermaidapi)
 
 ### mermaidAPI
 
-• `Const` **mermaidAPI**: `Readonly`<{ `defaultConfig`: `MermaidConfig` = configApi.defaultConfig; `getConfig`: () => `MermaidConfig` = configApi.getConfig; `getDiagramFromText`: (`text`: `string`, `metadata`: `Pick`<`DiagramMetadata`, `"title"`>) => `Promise`<`Diagram`> ; `getSiteConfig`: () => `MermaidConfig` = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`options`: `PartialObjectDeep`<`MermaidConfig`, {}>) => `void` ; `parse`: (`text`: `string`, `parseOptions`: [`ParseOptions`](../interfaces/mermaidAPI.ParseOptions.md) & { `suppressErrors`: `true` }) => `Promise`<[`ParseResult`](../interfaces/mermaidAPI.ParseResult.md) | `false`>(`text`: `string`, `parseOptions?`: [`ParseOptions`](../interfaces/mermaidAPI.ParseOptions.md)) => `Promise`<[`ParseResult`](../interfaces/mermaidAPI.ParseResult.md)> ; `render`: (`id`: `string`, `text`: `string`, `svgContainingElement?`: `Element`) => `Promise`<[`RenderResult`](../interfaces/mermaidAPI.RenderResult.md)> ; `reset`: () => `void` ; `setConfig`: (`conf`: `PartialObjectDeep`<`MermaidConfig`, {}>) => `MermaidConfig` = configApi.setConfig; `updateSiteConfig`: (`conf`: `PartialObjectDeep`<`MermaidConfig`, {}>) => `MermaidConfig` = configApi.updateSiteConfig }>
+• `Const` **mermaidAPI**: `Readonly`<{ `defaultConfig`: `MermaidConfigWithDefaults` = configApi.defaultConfig; `getConfig`: () => `MermaidConfigWithDefaults` = configApi.getConfig; `getDiagramFromText`: (`text`: `string`, `metadata`: `Pick`<`DiagramMetadata`, `"title"`>) => `Promise`<`Diagram`> ; `getSiteConfig`: () => `MermaidConfigWithDefaults` = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`options`: `PartialObjectDeep`<`MermaidConfigWithDefaults`, {}>) => `void` ; `parse`: (`text`: `string`, `parseOptions`: [`ParseOptions`](../interfaces/mermaidAPI.ParseOptions.md) & { `suppressErrors`: `true` }) => `Promise`<[`ParseResult`](../interfaces/mermaidAPI.ParseResult.md) | `false`>(`text`: `string`, `parseOptions?`: [`ParseOptions`](../interfaces/mermaidAPI.ParseOptions.md)) => `Promise`<[`ParseResult`](../interfaces/mermaidAPI.ParseResult.md)> ; `render`: (`id`: `string`, `text`: `string`, `svgContainingElement?`: `Element`) => `Promise`<[`RenderResult`](../interfaces/mermaidAPI.RenderResult.md)> ; `reset`: () => `void` ; `setConfig`: (`conf`: `PartialObjectDeep`<`MermaidConfigWithDefaults`, {}>) => `MermaidConfigWithDefaults` = configApi.setConfig; `updateSiteConfig`: (`conf`: `PartialObjectDeep`<`MermaidConfigWithDefaults`, {}>) => `MermaidConfigWithDefaults` = configApi.updateSiteConfig }>
 
 ## mermaidAPI configuration defaults
 
@@ -169,7 +169,7 @@ Create the user styles
 
 | Name        | Type                                                                | Description                                                                                                               |
 | :---------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
-| `config`    | `MermaidConfig`                                                     | configuration that has style and theme settings to use                                                                    |
+| `config`    | `MermaidConfigWithDefaults`                                         | configuration that has style and theme settings to use                                                                    |
 | `classDefs` | `undefined` \| `null` \| `Record`<`string`, `DiagramStyleClassDef`> | the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...) |
 
 #### Returns
@@ -192,7 +192,7 @@ the string with all the user styles
 
 | Name        | Type                                                      |
 | :---------- | :-------------------------------------------------------- |
-| `config`    | `MermaidConfig`                                           |
+| `config`    | `MermaidConfigWithDefaults`                               |
 | `graphType` | `string`                                                  |
 | `classDefs` | `undefined` \| `Record`<`string`, `DiagramStyleClassDef`> |
 | `svgId`     | `string`                                                  |

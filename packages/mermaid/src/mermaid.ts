@@ -3,7 +3,7 @@
  * functionality and to render the diagrams to svg code!
  */
 import { dedent } from 'ts-dedent';
-import type { MermaidConfig } from './config.type.js';
+import type { MermaidConfigWithDefaults, MermaidConfig } from './config.type.js';
 import { log } from './logger.js';
 import utils from './utils.js';
 import type { ParseOptions, ParseResult, RenderResult } from './mermaidAPI.js';
@@ -18,6 +18,7 @@ import type { UnknownDiagramError } from './errors.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 
 export type {
+  MermaidConfigWithDefaults,
   MermaidConfig,
   DetailedError,
   ExternalDiagramDefinition,
@@ -330,8 +331,8 @@ const executeQueue = async () => {
  * // throws Error
  * ```
  */
-const parse: typeof mermaidAPI.parse = async (text, parseOptions) => {
-  return new Promise((resolve, reject) => {
+const parse = async (text: string, parseOptions?: ParseOptions & { suppressErrors: true }) => {
+  return new Promise<ParseResult | false>((resolve, reject) => {
     // This promise will resolve when the render call is done.
     // It will be queued first and will be executed when it is first in line
     const performCall = () =>

@@ -1,8 +1,8 @@
 import cytoscape from 'cytoscape';
-// @ts-expect-error No types available
+// @ts-ignore Types for cose-bilkent are not present
 import coseBilkent from 'cytoscape-cose-bilkent';
 import { select } from 'd3';
-import type { MermaidConfig } from '../../config.type.js';
+import type { MermaidConfigWithDefaults } from '../../config.type.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
@@ -21,7 +21,7 @@ function drawNodes(
   svg: D3Element,
   mindmap: FilledMindMapNode,
   section: number,
-  conf: MermaidConfig
+  conf: MermaidConfigWithDefaults
 ) {
   drawNode(db, svg, mindmap, section, conf);
   if (mindmap.children) {
@@ -64,7 +64,12 @@ function drawEdges(edgesEl: D3Element, cy: cytoscape.Core) {
   });
 }
 
-function addNodes(mindmap: MindmapNode, cy: cytoscape.Core, conf: MermaidConfig, level: number) {
+function addNodes(
+  mindmap: MindmapNode,
+  cy: cytoscape.Core,
+  conf: MermaidConfigWithDefaults,
+  level: number
+) {
   cy.add({
     group: 'nodes',
     data: {
@@ -99,7 +104,10 @@ function addNodes(mindmap: MindmapNode, cy: cytoscape.Core, conf: MermaidConfig,
   }
 }
 
-function layoutMindmap(node: MindmapNode, conf: MermaidConfig): Promise<cytoscape.Core> {
+function layoutMindmap(
+  node: MindmapNode,
+  conf: MermaidConfigWithDefaults
+): Promise<cytoscape.Core> {
   return new Promise((resolve) => {
     // Add temporary render element
     const renderEl = select('body').append('div').attr('id', 'cy').attr('style', 'display:none');

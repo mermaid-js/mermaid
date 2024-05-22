@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import type { MermaidConfig } from '../config.type.js';
+import { describe, expect, it, beforeAll } from 'vitest';
+import type { MermaidConfigWithDefaults } from '../config.type.js';
 import { detectType } from './detectType.js';
 import { addDiagrams } from './diagram-orchestration.js';
 
@@ -50,13 +50,13 @@ describe('diagram-orchestration', () => {
       expect(
         detectType('graph TD; A-->B', {
           flowchart: { defaultRenderer: 'dagre-d3' },
-        } as MermaidConfig)
+        } as MermaidConfigWithDefaults)
       ).toBe('flowchart');
       // flowchart & dagre-d3 => error
       expect(() =>
         detectType('flowchart TD; A-->B', {
           flowchart: { defaultRenderer: 'dagre-d3' },
-        } as MermaidConfig)
+        } as MermaidConfigWithDefaults)
       ).toThrowErrorMatchingInlineSnapshot(
         `[UnknownDiagramError: No diagram type detected matching given configuration for text: flowchart TD; A-->B]`
       );
@@ -65,7 +65,7 @@ describe('diagram-orchestration', () => {
       expect(
         detectType('graph TD; A-->B', {
           flowchart: { defaultRenderer: 'dagre-wrapper' },
-        } as MermaidConfig)
+        } as MermaidConfigWithDefaults)
       ).toBe('flowchart-v2');
       // flowchart ==> flowchart-v2
       expect(detectType('flowchart TD; A-->B')).toBe('flowchart-v2');
@@ -73,13 +73,13 @@ describe('diagram-orchestration', () => {
       expect(
         detectType('flowchart TD; A-->B', {
           flowchart: { defaultRenderer: 'dagre-wrapper' },
-        } as MermaidConfig)
+        } as MermaidConfigWithDefaults)
       ).toBe('flowchart-v2');
       // flowchart && elk ==> flowchart-elk
       expect(
         detectType('flowchart TD; A-->B', {
           flowchart: { defaultRenderer: 'elk' },
-        } as MermaidConfig)
+        } as MermaidConfigWithDefaults)
       ).toBe('flowchart-elk');
     });
 

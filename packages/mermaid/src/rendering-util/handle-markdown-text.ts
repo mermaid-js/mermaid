@@ -1,14 +1,16 @@
-import type { Content } from 'mdast';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import { dedent } from 'ts-dedent';
-import type { PartialMermaidConfig } from '../config.type.js';
+import type { MermaidConfigWithDefaults } from '../config.type.js';
 import type { MarkdownLine, MarkdownWordType } from './types.js';
+import { RootContent } from 'mdast';
+
+type MarkdownConfig = Partial<Pick<MermaidConfigWithDefaults, 'markdownAutoWrap'>>;
 
 /**
  * @param markdown - markdown to process
  * @returns processed markdown
  */
-function preprocessMarkdown(markdown: string, { markdownAutoWrap }: PartialMermaidConfig): string {
+function preprocessMarkdown(markdown: string, { markdownAutoWrap }: MarkdownConfig): string {
   // Replace multiple newlines with a single newline
   const withoutMultipleNewlines = markdown.replace(/\n{2,}/g, '\n');
   // Remove extra spaces at the beginning of each line
@@ -22,16 +24,13 @@ function preprocessMarkdown(markdown: string, { markdownAutoWrap }: PartialMerma
 /**
  * @param markdown - markdown to split into lines
  */
-export function markdownToLines(
-  markdown: string,
-  config: PartialMermaidConfig = {}
-): MarkdownLine[] {
+export function markdownToLines(markdown: string, config: MarkdownConfig = {}): MarkdownLine[] {
   const preprocessedMarkdown = preprocessMarkdown(markdown, config);
   const { children } = fromMarkdown(preprocessedMarkdown);
   const lines: MarkdownLine[] = [[]];
   let currentLine = 0;
 
-  function processNode(node: Content, parentType: MarkdownWordType = 'normal') {
+  function processNode(node: RootContent, parentType: MarkdownWordType = 'normal') {
     if (node.type === 'text') {
       const textLines = node.value.split('\n');
       textLines.forEach((textLine, index) => {
@@ -63,10 +62,10 @@ export function markdownToLines(
   return lines;
 }
 
-export function markdownToHTML(markdown: string, { markdownAutoWrap }: PartialMermaidConfig = {}) {
+export function markdownToHTML(markdown: string, { markdownAutoWrap }: MarkdownConfig = {}) {
   const { children } = fromMarkdown(markdown);
 
-  function output(node: Content): string {
+  function output(node: RootContent): string {
     if (node.type === 'text') {
       if (markdownAutoWrap === false) {
         return node.value.replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;');

@@ -1,4 +1,4 @@
-import type { MermaidConfig } from '../config.type.js';
+import type { MermaidConfigWithDefaults } from '../config.type.js';
 import { UnknownDiagramError } from '../errors.js';
 import { log } from '../logger.js';
 import { anyCommentRegex, directiveRegex, frontMatterRegex } from './regexes.js';
@@ -33,7 +33,7 @@ export const detectors: Record<string, DetectorRecord> = {};
  * @param config - The mermaid config.
  * @returns A graph definition key
  */
-export const detectType = function (text: string, config?: MermaidConfig): string {
+export const detectType = function (text: string, config?: MermaidConfigWithDefaults): string {
   text = text
     .replace(frontMatterRegex, '')
     .replace(directiveRegex, '')

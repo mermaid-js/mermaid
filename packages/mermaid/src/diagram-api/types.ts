@@ -2,11 +2,11 @@
 import type * as d3 from 'd3';
 import type { SetRequired } from 'type-fest';
 import type { Diagram } from '../Diagram.js';
-import type { BaseDiagramConfig, PartialMermaidConfig } from '../config.type.js';
+import type { BaseDiagramConfig, MermaidConfig } from '../config.type.js';
 
 export interface DiagramMetadata {
   title?: string;
-  config?: PartialMermaidConfig;
+  config?: MermaidConfig;
 }
 
 export interface InjectUtils {
@@ -78,7 +78,7 @@ export interface DiagramDefinition {
   renderer: DiagramRenderer;
   parser: ParserDefinition;
   styles?: any;
-  init?: (config: PartialMermaidConfig) => void;
+  init?: (config: MermaidConfig) => void;
   injectUtils?: (
     _log: InjectUtils['_log'],
     _setLogLevel: InjectUtils['_setLogLevel'],
@@ -102,7 +102,7 @@ export interface ExternalDiagramDefinition {
   loader: DiagramLoader;
 }
 
-export type DiagramDetector = (text: string, config?: PartialMermaidConfig) => boolean;
+export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
 export type DiagramLoader = () => Promise<{ id: string; diagram: DiagramDefinition }>;
 
 /**

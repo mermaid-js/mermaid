@@ -1,11 +1,11 @@
 # Used for VS Code's YAML plugin to automatically error on invalid types
 # yaml-language-server: $schema=https://json-schema.org/draft/2019-09/schema
 
-# This file defines the MermaidConfig JSON Schema as a YAML file.
+# This file defines the MermaidConfigWithDefaults JSON Schema as a YAML file.
 #
 # From this file, the following things can be generated:
 #   - `scripts/create-types-from-json-schema.mjs`
-#     Used to generate the `src/config.type.ts` TypeScript types for MermaidConfig
+#     Used to generate the `src/config.type.ts` TypeScript types for MermaidConfigWithDefaults
 #     with the `json-schema-to-typescript` NPM package.
 #   - `.build/jsonSchema.ts`
 #     Used to generate the default values from the `default` keys in this
@@ -20,13 +20,13 @@
 # - Use the `|` character for multi-line strings
 # - Use `meta:enum` to document enum values (from jsonschema2md)
 # - Use `tsType` to override the TypeScript type (from json-schema-to-typescript)
-# - If adding a new object to `MermaidConfig` (e.g. a new diagram type),
+# - If adding a new object to `MermaidConfigWithDefaults` (e.g. a new diagram type),
 #   you may need to add it to `.build/jsonSchema.ts`, `src/docs.mts`
 #   and `scripts/create-types-from-json-schema.mjs`
 #   to get the default values/docs/types to generate properly.
 $id: https://mermaid.js.org/schemas/config.schema.json
 $schema: https://json-schema.org/draft/2019-09/schema
-title: Mermaid Config
+title: MermaidConfigWithDefaults
 type: object
 additionalProperties: false
 required:
@@ -261,11 +261,11 @@ properties:
       This is useful when you want to control how to handle syntax errors in your application.
 
 $defs: # JSON Schema definition (maybe we should move these to a separate file)
-  PartialMermaidConfig:
-    title: PartialMermaidConfig
-    description: MermaidConfig with all fields optional
+  MermaidConfig:
+    title: MermaidConfig
+    description: MermaidConfigWithDefaults with all fields optional
     type: object
-    tsType: "import('type-fest').PartialDeep<MermaidConfig>"
+    tsType: "import('type-fest').PartialDeep<MermaidConfigWithDefaults>"
   BaseDiagramConfig:
     # TODO: More config needs to be moved here
     title: Base Diagram Config

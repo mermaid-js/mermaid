@@ -6,7 +6,7 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { cleanAndMerge, parseFontSize } from '../../utils.js';
 import type { DrawDefinition, Group, SVG } from '../../diagram-api/types.js';
 import type { D3Section, PieDB, Sections } from './pieTypes.js';
-import type { MermaidConfig, PieDiagramConfig } from '../../config.type.js';
+import type { MermaidConfigWithDefaults, PieDiagramConfig } from '../../config.type.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 
 const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Section>[] => {
@@ -38,7 +38,7 @@ const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Section>[] => {
 export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   log.debug('rendering pie chart\n' + text);
   const db = diagObj.db as PieDB;
-  const globalConfig: MermaidConfig = getConfig();
+  const globalConfig: MermaidConfigWithDefaults = getConfig();
   const pieConfig: Required<PieDiagramConfig> = cleanAndMerge(db.getConfig(), globalConfig.pie);
   const MARGIN = 40;
   const LEGEND_RECT_SIZE = 18;

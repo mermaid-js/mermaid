@@ -10,7 +10,7 @@
 
 ### defaultConfig
 
-• `Const` **defaultConfig**: `MermaidConfig`
+• `Const` **defaultConfig**: `MermaidConfigWithDefaults`
 
 #### Defined in
 
@@ -26,9 +26,9 @@ Pushes in a directive to the configuration
 
 #### Parameters
 
-| Name        | Type                                     | Description              |
-| :---------- | :--------------------------------------- | :----------------------- |
-| `directive` | `PartialObjectDeep`<`MermaidConfig`, {}> | The directive to push in |
+| Name        | Type                                                 | Description              |
+| :---------- | :--------------------------------------------------- | :----------------------- |
+| `directive` | `PartialObjectDeep`<`MermaidConfigWithDefaults`, {}> | The directive to push in |
 
 #### Returns
 
@@ -42,7 +42,7 @@ Pushes in a directive to the configuration
 
 ### getConfig
 
-▸ **getConfig**(): `MermaidConfig`
+▸ **getConfig**(): `MermaidConfigWithDefaults`
 
 ## getConfig
 
@@ -54,7 +54,7 @@ Pushes in a directive to the configuration
 
 #### Returns
 
-`MermaidConfig`
+`MermaidConfigWithDefaults`
 
 The currentConfig
 
@@ -66,7 +66,7 @@ The currentConfig
 
 ### getSiteConfig
 
-▸ **getSiteConfig**(): `MermaidConfig`
+▸ **getSiteConfig**(): `MermaidConfigWithDefaults`
 
 ## getSiteConfig
 
@@ -78,7 +78,7 @@ The currentConfig
 
 #### Returns
 
-`MermaidConfig`
+`MermaidConfigWithDefaults`
 
 The siteConfig
 
@@ -108,9 +108,9 @@ The siteConfig
 
 #### Parameters
 
-| Name     | Type            | Default value | Description                                                                                                                                                   |
-| :------- | :-------------- | :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `config` | `MermaidConfig` | `siteConfig`  | base set of values, which currentConfig could be **reset** to. Defaults to the current siteConfig (e.g returned by [getSiteConfig](config.md#getsiteconfig)). |
+| Name     | Type                        | Default value | Description                                                                                                                                                   |
+| :------- | :-------------------------- | :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `config` | `MermaidConfigWithDefaults` | `siteConfig`  | base set of values, which currentConfig could be **reset** to. Defaults to the current siteConfig (e.g returned by [getSiteConfig](config.md#getsiteconfig)). |
 
 #### Returns
 
@@ -157,9 +157,9 @@ options in-place
 
 #### Parameters
 
-| Name   | Type                                     |
-| :----- | :--------------------------------------- |
-| `conf` | `PartialObjectDeep`<`MermaidConfig`, {}> |
+| Name   | Type                                                 |
+| :----- | :--------------------------------------------------- |
+| `conf` | `PartialObjectDeep`<`MermaidConfigWithDefaults`, {}> |
 
 #### Returns
 
@@ -173,7 +173,7 @@ options in-place
 
 ### setConfig
 
-▸ **setConfig**(`conf`): `MermaidConfig`
+▸ **setConfig**(`conf`): `MermaidConfigWithDefaults`
 
 ## setConfig
 
@@ -187,13 +187,13 @@ corresponding siteConfig value.
 
 #### Parameters
 
-| Name   | Type                                     | Description                 |
-| :----- | :--------------------------------------- | :-------------------------- |
-| `conf` | `PartialObjectDeep`<`MermaidConfig`, {}> | The potential currentConfig |
+| Name   | Type                                                 | Description                 |
+| :----- | :--------------------------------------------------- | :-------------------------- |
+| `conf` | `PartialObjectDeep`<`MermaidConfigWithDefaults`, {}> | The potential currentConfig |
 
 #### Returns
 
-`MermaidConfig`
+`MermaidConfigWithDefaults`
 
 The currentConfig merged with the sanitized conf
 
@@ -205,7 +205,7 @@ The currentConfig merged with the sanitized conf
 
 ### setSiteConfig
 
-▸ **setSiteConfig**(`conf`): `MermaidConfig`
+▸ **setSiteConfig**(`conf`): `MermaidConfigWithDefaults`
 
 ## setSiteConfig
 
@@ -220,13 +220,13 @@ function _Default value: At default, will mirror Global Config_
 
 #### Parameters
 
-| Name   | Type                                     | Description                                 |
-| :----- | :--------------------------------------- | :------------------------------------------ |
-| `conf` | `PartialObjectDeep`<`MermaidConfig`, {}> | The base currentConfig to use as siteConfig |
+| Name   | Type                                                 | Description                                 |
+| :----- | :--------------------------------------------------- | :------------------------------------------ |
+| `conf` | `PartialObjectDeep`<`MermaidConfigWithDefaults`, {}> | The base currentConfig to use as siteConfig |
 
 #### Returns
 
-`MermaidConfig`
+`MermaidConfigWithDefaults`
 
 The new siteConfig
 
@@ -238,18 +238,18 @@ The new siteConfig
 
 ### updateCurrentConfig
 
-▸ **updateCurrentConfig**(`siteCfg`, `_directives`): `MermaidConfig`
+▸ **updateCurrentConfig**(`siteCfg`, `_directives`): `MermaidConfigWithDefaults`
 
 #### Parameters
 
-| Name          | Type                                        |
-| :------------ | :------------------------------------------ |
-| `siteCfg`     | `MermaidConfig`                             |
-| `_directives` | `PartialObjectDeep`<`MermaidConfig`, {}>\[] |
+| Name          | Type                                                    |
+| :------------ | :------------------------------------------------------ |
+| `siteCfg`     | `MermaidConfigWithDefaults`                             |
+| `_directives` | `PartialObjectDeep`<`MermaidConfigWithDefaults`, {}>\[] |
 
 #### Returns
 
-`MermaidConfig`
+`MermaidConfigWithDefaults`
 
 #### Defined in
 
@@ -259,17 +259,17 @@ The new siteConfig
 
 ### updateSiteConfig
 
-▸ **updateSiteConfig**(`conf`): `MermaidConfig`
+▸ **updateSiteConfig**(`conf`): `MermaidConfigWithDefaults`
 
 #### Parameters
 
-| Name   | Type                                     |
-| :----- | :--------------------------------------- |
-| `conf` | `PartialObjectDeep`<`MermaidConfig`, {}> |
+| Name   | Type                                                 |
+| :----- | :--------------------------------------------------- |
+| `conf` | `PartialObjectDeep`<`MermaidConfigWithDefaults`, {}> |
 
 #### Returns
 
-`MermaidConfig`
+`MermaidConfigWithDefaults`
 
 #### Defined in
 

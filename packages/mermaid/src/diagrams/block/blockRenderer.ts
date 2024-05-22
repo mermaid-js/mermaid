@@ -5,7 +5,7 @@ import {
 } from 'd3';
 import type { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
-import type { MermaidConfig } from '../../config.type.js';
+import type { MermaidConfigWithDefaults } from '../../config.type.js';
 import insertMarkers from '../../dagre-wrapper/markers.js';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
@@ -75,7 +75,7 @@ export const draw = async function (
     const magicFactor = Math.max(1, Math.round(0.125 * (bounds2.width / bounds2.height)));
     const height = bounds2.height + magicFactor + 10;
     const width = bounds2.width + 10;
-    const { useMaxWidth } = conf as Exclude<MermaidConfig['block'], undefined>;
+    const { useMaxWidth } = conf as Exclude<MermaidConfigWithDefaults['block'], undefined>;
     configureSvgSize(svg, height, width, !!useMaxWidth);
     log.debug('Here Bounds', bounds, bounds2);
     svg.attr(

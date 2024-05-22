@@ -20,7 +20,7 @@
 
 ### default
 
-• `Const` **default**: `RequiredDeep`<`MermaidConfig`>
+• `Const` **default**: `RequiredDeep`<`MermaidConfigWithDefaults`>
 
 Default mermaid configuration options.
 
