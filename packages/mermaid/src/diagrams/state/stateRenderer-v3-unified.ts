@@ -1,34 +1,12 @@
-import { log } from '../../logger.js';
-import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
-import type { LayoutData, LayoutMethod } from '../../rendering-util/types.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import doLayout from '../../rendering-util/doLayout.js';
-import performRender from '../../rendering-util/performRender.js';
+import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
+import { log } from '../../logger.js';
+import { getDiagramElements } from '../../rendering-util/inserElementsForSize.js';
 import { render } from '../../rendering-util/render.js';
-import insertElementsForSize, {
-  getDiagramElements,
-} from '../../rendering-util/inserElementsForSize.js';
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
-import {
-  DEFAULT_DIAGRAM_DIRECTION,
-  DEFAULT_NESTED_DOC_DIR,
-  STMT_STATE,
-  STMT_RELATION,
-  DEFAULT_STATE_TYPE,
-  DIVIDER_TYPE,
-  CSS_DIAGRAM,
-} from './stateCommon.js';
+import type { LayoutData } from '../../rendering-util/types.js';
 import utils from '../../utils.js';
-
-// Configuration
-const conf: Record<string, any> = {};
-
-export const setConf = function (cnf: Record<string, any>) {
-  const keys = Object.keys(cnf);
-  for (const key of keys) {
-    conf[key] = cnf[key];
-  }
-};
+import { CSS_DIAGRAM, DEFAULT_NESTED_DOC_DIR } from './stateCommon.js';
 
 /**
  * Get the direction from the statement items.
@@ -54,7 +32,7 @@ const getDir = (parsedItem: any, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
 export const getClasses = function (
   text: string,
   diagramObj: any
-): Record<string, DiagramStyleClassDef> {
+): Map<string, DiagramStyleClassDef> {
   diagramObj.db.extract(diagramObj.db.getRootDocV2());
   return diagramObj.db.getClasses();
 };
@@ -108,7 +86,6 @@ export const draw = async function (text: string, id: string, _version: string, 
 };
 
 export default {
-  setConf,
   getClasses,
   draw,
 };
