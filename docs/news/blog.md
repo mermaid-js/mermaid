@@ -6,6 +6,12 @@
 
 # Blog
 
+## [How to Use the official Mermaid Chart for Confluence app](https://www.mermaidchart.com/blog/posts/how-to-use-the-official-mermaid-chart-for-confluence-app/)
+
+21 May 2024 · 4 mins
+
+It doesn’t matter if you’re a data enthusiast, software engineer, or visual storyteller; our Confluence app can allow you to embed Mermaid Chart diagrams — and dynamically edit them — within your Confluence pages.
+
 ## [How to Choose the Right Documentation Software](https://www.mermaidchart.com/blog/posts/how-to-choose-the-right-documentation-software/)
 
 7 May 2024 · 5 mins
