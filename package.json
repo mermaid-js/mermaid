@@ -4,7 +4,7 @@
   "version": "10.2.4",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
-  "packageManager": "pnpm@8.15.8",
+  "packageManager": "pnpm@9.1.2+sha512.127dc83b9ea10c32be65d22a8efb4a65fb952e8fefbdfded39bdc3c97efc32d31b48b00420df2c1187ace28c921c902f0cb5a134a4d032b8b5295cbfa2c681e2",
   "keywords": [
     "diagram",
     "markdown",
@@ -19,7 +19,7 @@
     "build:esbuild": "pnpm run -r clean && tsx .esbuild/build.ts",
     "build:mermaid": "pnpm build:esbuild --mermaid",
     "build:viz": "pnpm build:esbuild --visualize",
-    "build:types": "tsx .build/types.ts",
+    "build:types": "pnpm --filter mermaid types:build-config && tsx .build/types.ts",
     "build:types:watch": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly --watch",
     "dev": "tsx .esbuild/server.ts",
     "dev:vite": "tsx .vite/server.ts",
