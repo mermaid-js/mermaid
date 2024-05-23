@@ -75,8 +75,9 @@ export const rect = async (parent: SVGAElement, node: Node) => {
   const y = -bbox.height / 2 - halfPadding;
 
   let rect;
-  const { rx, ry, style: cssStyles, useRough } = node;
+  const { rx, ry, cssStyles, useRough } = node;
   if (useRough) {
+    // @ts-ignore
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {
       roughness: 0.7,

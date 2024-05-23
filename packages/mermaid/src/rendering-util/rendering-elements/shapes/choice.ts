@@ -23,6 +23,7 @@ export const choice = (parent: SVG, node: Node) => {
 
   let choice;
   if (node.useRough) {
+    // @ts-ignore
     const rc = rough.svg(shapeSvg);
     const pointArr = points.map(function (d) {
       return [d.x, d.y];
@@ -41,6 +42,7 @@ export const choice = (parent: SVG, node: Node) => {
   }
 
   // center the circle around its coordinate
+  // @ts-ignore
   choice.attr('class', 'state-start').attr('r', 7).attr('width', 28).attr('height', 28);
   node.width = 28;
   node.height = 28;

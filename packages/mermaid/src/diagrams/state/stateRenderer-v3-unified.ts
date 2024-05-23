@@ -1,7 +1,7 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
-import { getDiagramElements } from '../../rendering-util/inserElementsForSize.js';
+import { getDiagramElements } from '../../rendering-util/insertElementsForSize.js';
 import { render } from '../../rendering-util/render.js';
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import type { LayoutData } from '../../rendering-util/types.js';
@@ -65,12 +65,14 @@ export const draw = async function (text: string, id: string, _version: string, 
   // performRender(data4Rendering);
 
   data4Layout.type = diag.type;
-  // data4Layout.layoutAlgorithm = 'dagre-wrapper';
-  // data4Layout.layoutAlgorithm = 'elk';
   data4Layout.layoutAlgorithm = layout;
   data4Layout.direction = DIR;
-  data4Layout.nodeSpacing = conf.nodeSpacing || 50;
-  data4Layout.rankSpacing = conf.rankSpacing || 50;
+
+  // TODO: Should we move these two to baseConfig? These types are not there in StateConfig.
+  // @ts-expect-error
+  data4Layout.nodeSpacing = conf?.nodeSpacing || 50;
+  // @ts-expect-error
+  data4Layout.rankSpacing = conf?.rankSpacing || 50;
   data4Layout.markers = ['barb'];
   data4Layout.diagramId = id;
   console.log('REF1:', data4Layout);
@@ -79,10 +81,10 @@ export const draw = async function (text: string, id: string, _version: string, 
   utils.insertTitle(
     element,
     'statediagramTitleText',
-    conf.titleTopMargin,
+    conf?.titleTopMargin ?? 25,
     diag.db.getDiagramTitle()
   );
-  setupViewPortForSVG(svg, padding, CSS_DIAGRAM, conf.useMaxWidth);
+  setupViewPortForSVG(svg, padding, CSS_DIAGRAM, conf?.useMaxWidth ?? true);
 };
 
 export default {

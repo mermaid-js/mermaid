@@ -30,6 +30,7 @@ export const note = async (parent: SVGAElement, node: Node) => {
 
   if (useRough) {
     // add the rect
+    // @ts-ignore
     const rc = rough.svg(shapeSvg);
     const roughNode = rc.rectangle(x, y, totalWidth, totalHeight, {
       roughness: 0.7,
