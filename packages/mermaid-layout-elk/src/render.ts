@@ -465,7 +465,7 @@ export const render = async (data4Layout, svg, element, algorithm) => {
       'elk.algorithm': algorithm,
       'nodePlacement.strategy': 'NETWORK_SIMPLEX',
 
-      'spacing.nodeNode': 70,
+      'spacing.nodeNode': 20,
       'spacing.nodeNodeBetweenLayers': 25,
       'spacing.edgeNode': 10,
       'spacing.edgeNodeBetweenLayers': 20,
