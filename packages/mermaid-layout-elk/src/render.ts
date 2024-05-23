@@ -3,6 +3,7 @@ import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import mermaid from 'mermaid';
 import { findCommonAncestor } from './find-common-ancestor.js';
+import config from '../../mermaid/src/defaultConfig';
 
 const {
   common,
@@ -460,18 +461,11 @@ export const render = async (data4Layout, svg, element, algorithm) => {
     id: 'root',
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-      'org.eclipse.elk.padding': '[top=100, left=100, bottom=110, right=110]',
-      'elk.layered.spacing.edgeNodeBetweenLayers': '30',
       'elk.algorithm': algorithm,
-      'nodePlacement.strategy': 'NETWORK_SIMPLEX',
-
-      'spacing.nodeNode': 20,
-      'spacing.nodeNodeBetweenLayers': 25,
-      'spacing.edgeNode': 10,
-      'spacing.edgeNodeBetweenLayers': 20,
-      'spacing.edgeEdge': 20,
-      'spacing.edgeEdgeBetweenLayers': 20,
-      'spacing.nodeSelfLoop': 20,
+      'nodePlacement.strategy': data4Layout.config['elk.nodePlacement.strategy'],
+      'elk.layered.mergeEdges': data4Layout.config.mergeEdges,
+      'elk.direction': 'DOWN',
+      'spacing.baseValue': 30,
     },
     children: [],
     edges: [],
@@ -521,8 +515,12 @@ export const render = async (data4Layout, svg, element, algorithm) => {
           height: node?.labelData?.height || 0,
         },
       ];
+      node.layoutOptions = {
+        'spacing.baseValue': 30,
+      };
       if (node.dir) {
         node.layoutOptions = {
+          ...node.layoutOptions,
           'elk.direction': dir2ElkDirection(node.dir),
           'elk.hierarchyHandling': 'SEPARATE_CHILDREN',
         };

@@ -100,11 +100,21 @@ properties:
     type: integer
     default: 500
     minimum: 0
-  mergeEdges:
+  elk.mergeEdges:
     description: |
       Elk specific option that allows edge egdes to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
     type: boolean
     default: false
+  elk.nodePlacement.strategy:
+    description: |
+      Elk specific option affedcting how nodes are placed.
+    type: string
+    enum:
+      - SIMPLE
+      - NETWORK_SIMPLEX
+      - LINEAR_SEGMENTS
+      - BRANDES_KOEPF
+    default: SIMPLE
   darkMode:
     type: boolean
     default: false
@@ -206,7 +216,7 @@ properties:
     default: false
   forceLegacyMathML:
     description: |
-      This option forces Mermaid to rely on KaTeX's own stylesheet for rendering MathML. Due to differences between OS 
+      This option forces Mermaid to rely on KaTeX's own stylesheet for rendering MathML. Due to differences between OS
       fonts and browser's MathML implementation, this option is recommended if consistent rendering is important.
       If set to true, ignores legacyMathML.
     type: boolean
