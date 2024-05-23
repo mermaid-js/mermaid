@@ -157,9 +157,10 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
     );
     if (node && node.clusterNode) {
       const parentId = graph.parent(v);
+      // Adjust for padding when on root level
       node.y = parentId ? node.y + 2 : node.y - 8;
       node.x -= 8;
-      // node.y -= 8;
+
       log.info(
         'A tainted cluster node XBX',
         v,

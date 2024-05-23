@@ -70,13 +70,19 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
     child.children = [];
     await addVertices(nodeEl, nodeArr, child, node.id);
 
-    // We need the label hight to be able to size the subgraph;
-    const { shapeSvg, bbox } = await labelHelper(nodeEl, node, undefined, true);
-    labelData.width = bbox.width;
-    labelData.wrappingWidth = getConfig().flowchart.wrappingWidth;
-    labelData.height = bbox.height;
-    labelData.labelNode = shapeSvg.node();
-    shapeSvg.remove();
+    if (node.label) {
+      const { shapeSvg, bbox } = await labelHelper(nodeEl, node, undefined, true);
+      labelData.width = bbox.width;
+      labelData.wrappingWidth = getConfig().flowchart.wrappingWidth;
+      labelData.height = bbox.height - 8;
+      labelData.labelNode = shapeSvg.node();
+      // We need the label hight to be able to size the subgraph;
+      shapeSvg.remove();
+    } else {
+      // Subgraph without label
+      labelData.width = 0;
+      labelData.height = 0;
+    }
     child.labelData = labelData;
     child.domId = nodeEl;
   }
@@ -504,14 +510,15 @@ export const render = async (data4Layout, svg, element, algorithm) => {
 
     // Subgraph
     if (parentLookupDb.childrenById[node.id] !== undefined) {
+      log.trace('Subgraph XCX', node.id, node);
       node.labels = [
         {
           text: node.labelText,
           layoutOptions: {
             'nodeLabels.placement': '[H_CENTER, V_TOP, INSIDE]',
           },
-          width: node?.labelData?.width || 100,
-          height: node?.labelData?.height || 100,
+          width: node?.labelData?.width || 0,
+          height: node?.labelData?.height || 0,
         },
       ];
       if (node.dir) {
@@ -538,9 +545,9 @@ export const render = async (data4Layout, svg, element, algorithm) => {
     }
   });
 
-  log.info('before layout', JSON.stringify(elkGraph, null, 2));
+  log.trace('before layout', JSON.stringify(elkGraph, null, 2));
   const g = await elk.layout(elkGraph);
-  log.info('after layout DAGA', JSON.stringify(g));
+  log.info('after layout', JSON.stringify(g));
 
   // debugger;
   drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
