@@ -1,5 +1,7 @@
 import { log } from '$root/logger.js';
-import { rect } from './shapes/rect.ts';
+import { state } from './shapes/state.ts';
+import { roundedRect } from './shapes/roundedRect.ts';
+import { squareRect } from './shapes/squareRect.ts';
 import { stateStart } from './shapes/stateStart.ts';
 import { stateEnd } from './shapes/stateEnd.ts';
 import { forkJoin } from './shapes/forkJoin.ts';
@@ -15,13 +17,15 @@ const formatClass = (str) => {
 };
 
 const shapes = {
-  rect,
+  state,
   stateStart,
   stateEnd,
   fork: forkJoin,
   join: forkJoin,
   choice,
   note,
+  roundedRect,
+  squareRect,
 };
 
 let nodeElems = {};
@@ -30,7 +34,6 @@ export const insertNode = async (elem, node, dir) => {
   let newEl;
   let el;
 
-  // debugger;
   // Add link when appropriate
   if (node.link) {
     let target;

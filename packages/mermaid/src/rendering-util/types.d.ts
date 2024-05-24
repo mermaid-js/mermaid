@@ -1,5 +1,5 @@
 import config from '../../dist/defaultConfig';
-import { MermaidConfig } from '../../dist/config.type';
+import type { MermaidConfig } from '../../dist/config.type';
 export type MarkdownWordType = 'normal' | 'strong' | 'emphasis';
 export interface MarkdownWord {
   content: string;
@@ -88,6 +88,12 @@ interface Edge {
   pattern?: string;
   thickness?: number;
   useRough?: boolean;
+}
+
+interface RectOptions {
+  rx: number;
+  ry: number;
+  classes: string;
 }
 
 // Extending the Node interface for specific types if needed

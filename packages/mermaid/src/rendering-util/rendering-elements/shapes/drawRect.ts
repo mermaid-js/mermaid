@@ -1,7 +1,7 @@
 import { log } from '$root/logger.js';
 import { labelHelper, updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '$root/rendering-util/types.d.ts';
+import type { Node, RectOptions } from '$root/rendering-util/types.d.ts';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
@@ -58,7 +58,7 @@ function applyNodePropertyBorders(
   rect.attr('stroke-dasharray', strokeDashArray.join(' '));
 }
 
-export const rect = async (parent: SVGAElement, node: Node) => {
+export const drawRect = async (parent: SVGAElement, node: Node, options: RectOptions) => {
   const { themeVariables, handdrawnSeed } = getConfig();
   const { nodeBorder, mainBkg } = themeVariables;
 
@@ -75,7 +75,7 @@ export const rect = async (parent: SVGAElement, node: Node) => {
   const y = -bbox.height / 2 - halfPadding;
 
   let rect;
-  const { rx, ry, style: cssStyles, useRough } = node;
+  const { rx, ry, cssStyles, useRough } = node;
   if (useRough) {
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {
@@ -101,6 +101,8 @@ export const rect = async (parent: SVGAElement, node: Node) => {
       .attr('class', 'basic label-container')
       .attr('style', cssStyles)
       .attr('rx', rx)
+      .attr('data-id', 'abc')
+      .attr('data-et', 'node')
       .attr('ry', ry)
       .attr('x', x)
       .attr('y', y)
