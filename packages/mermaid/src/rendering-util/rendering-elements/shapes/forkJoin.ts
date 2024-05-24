@@ -26,7 +26,7 @@ export const forkJoin = (parent: SVG, node: Node, dir: string) => {
 
   let shape;
   if (node.useRough) {
-    // @ts-ignore
+    // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const roughNode = rc.rectangle(x, y, width, height, solidStateFill(lineColor));
     shape = shapeSvg.insert(() => roughNode);

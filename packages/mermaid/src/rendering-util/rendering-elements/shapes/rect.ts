@@ -77,7 +77,7 @@ export const rect = async (parent: SVGAElement, node: Node) => {
   let rect;
   const { rx, ry, cssStyles, useRough } = node;
   if (useRough) {
-    // @ts-ignore
+    // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {
       roughness: 0.7,

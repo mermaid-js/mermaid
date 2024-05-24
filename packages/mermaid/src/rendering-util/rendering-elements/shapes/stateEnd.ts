@@ -18,7 +18,7 @@ export const stateEnd = (parent: SVG, node: Node) => {
   let circle;
   let innerCircle;
   if (node.useRough) {
-    // @ts-ignore
+    // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const roughNode = rc.circle(0, 0, 14, { ...solidStateFill(lineColor), roughness: 0.5 });
     const roughInnerNode = rc.circle(0, 0, 5, { ...solidStateFill(lineColor), fillStyle: 'solid' });
