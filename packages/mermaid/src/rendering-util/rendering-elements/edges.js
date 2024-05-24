@@ -1,25 +1,14 @@
-import { log } from '$root/logger.js';
-import createLabel from './createLabel.js';
-import { createText } from '$root/rendering-util/createText.ts';
-import {
-  line,
-  curveBasis,
-  curveLinear,
-  curveNatural,
-  curveCardinal,
-  curveStep,
-  select,
-  curveMonotoneX,
-  curveMonotoneY,
-  curveCatmullRom,
-} from 'd3';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
-import utils from '$root/utils.js';
 import { evaluate } from '$root/diagrams/common/common.js';
+import { log } from '$root/logger.js';
+import { createText } from '$root/rendering-util/createText.ts';
+import utils from '$root/utils.js';
 import { getLineFunctionsWithOffset } from '$root/utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '$root/utils/subGraphTitleMargins.js';
-import { addEdgeMarkers } from './edgeMarker.ts';
+import { curveBasis, line, select } from 'd3';
 import rough from 'roughjs';
+import createLabel from './createLabel.js';
+import { addEdgeMarkers } from './edgeMarker.ts';
 //import type { Edge } from '$root/rendering-util/types.d.ts';
 
 let edgeLabels = {};
@@ -339,23 +328,23 @@ export const intersection = (node, outsidePoint, insidePoint) => {
  * and return an update path ending by the border of the node.
  *
  * @param {Array} _points
- * @param {any} boundryNode
+ * @param {any} boundaryNode
  * @returns {Array} Points
  */
-const cutPathAtIntersect = (_points, boundryNode) => {
-  log.warn('abc88 cutPathAtIntersect', _points, boundryNode);
+const cutPathAtIntersect = (_points, boundaryNode) => {
+  log.warn('abc88 cutPathAtIntersect', _points, boundaryNode);
   let points = [];
   let lastPointOutside = _points[0];
   let isInside = false;
   _points.forEach((point) => {
     // const node = clusterDb[edge.toCluster].node;
-    log.info('abc88 checking point', point, boundryNode);
+    log.info('abc88 checking point', point, boundaryNode);
 
     // check if point is inside the boundary rect
-    if (!outsideNode(boundryNode, point) && !isInside) {
+    if (!outsideNode(boundaryNode, point) && !isInside) {
       // First point inside the rect found
       // Calc the intersection coord between the point anf the last point outside the rect
-      const inter = intersection(boundryNode, lastPointOutside, point);
+      const inter = intersection(boundaryNode, lastPointOutside, point);
       log.warn('abc88 inside', point, lastPointOutside, inter);
       log.warn('abc88 intersection', inter);
 
@@ -385,26 +374,6 @@ const cutPathAtIntersect = (_points, boundryNode) => {
   log.warn('abc88 returning points', points);
   return points;
 };
-
-const calcOffset = function (src, dest, parentLookupDb) {
-  const ancestor = findCommonAncestor(src, dest, parentLookupDb);
-  if (ancestor === undefined || ancestor === 'root') {
-    return { x: 0, y: 0 };
-  }
-
-  const ancestorOffset = nodeDb[ancestor].offset;
-  return { x: ancestorOffset.posX, y: ancestorOffset.posY };
-};
-
-// Function to insert a midpoint
-/**
- *
- * @param p1
- * @param p2
- */
-function insertMidpoint(p1, p2) {
-  return [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
-}
 
 /**
  * Given an edge, this function will return the corner points of the edge. This is defined as:
@@ -450,7 +419,7 @@ const findAdjacentPoint = function (pointA, pointB, distance) {
 };
 
 /**
- * Given an array of points, this function will return a new array of points where the cornershave been removed and replaced with
+ * Given an array of points, this function will return a new array of points where the corners have been removed and replaced with
  * adjacent points in each direction. SO a corder will be replaced with a point before and the point after the corner.
  */
 

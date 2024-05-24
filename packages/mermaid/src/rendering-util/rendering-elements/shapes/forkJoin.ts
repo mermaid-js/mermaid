@@ -1,4 +1,3 @@
-import { log } from '$root/logger.js';
 import { updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
@@ -27,6 +26,7 @@ export const forkJoin = (parent: SVG, node: Node, dir: string) => {
 
   let shape;
   if (node.useRough) {
+    // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const roughNode = rc.rectangle(x, y, width, height, solidStateFill(lineColor));
     shape = shapeSvg.insert(() => roughNode);

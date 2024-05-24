@@ -1,42 +1,20 @@
-import { log } from '../../logger.js';
-import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
-import type { LayoutData, LayoutMethod } from '../../rendering-util/types.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import doLayout from '../../rendering-util/doLayout.js';
-import performRender from '../../rendering-util/performRender.js';
+import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
+import { log } from '../../logger.js';
+import { getDiagramElements } from '../../rendering-util/insertElementsForSize.js';
 import { render } from '../../rendering-util/render.js';
-import insertElementsForSize, {
-  getDiagramElements,
-} from '../../rendering-util/inserElementsForSize.js';
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
-import {
-  DEFAULT_DIAGRAM_DIRECTION,
-  DEFAULT_NESTED_DOC_DIR,
-  STMT_STATE,
-  STMT_RELATION,
-  DEFAULT_STATE_TYPE,
-  DIVIDER_TYPE,
-  CSS_DIAGRAM,
-} from './stateCommon.js';
+import type { LayoutData } from '../../rendering-util/types.js';
 import utils from '../../utils.js';
-
-// Configuration
-const conf: Record<string, any> = {};
-
-export const setConf = function (cnf: Record<string, any>) {
-  const keys = Object.keys(cnf);
-  for (const key of keys) {
-    conf[key] = cnf[key];
-  }
-};
+import { CSS_DIAGRAM, DEFAULT_NESTED_DOC_DIR } from './stateCommon.js';
 
 /**
  * Get the direction from the statement items.
  * Look through all of the documents (docs) in the parsedItems
  * Because is a _document_ direction, the default direction is not necessarily the same as the overall default _diagram_ direction.
- * @param {object[]} parsedItem - the parsed statement item to look through
- * @param [defaultDir] - the direction to use if none is found
- * @returns {string}
+ * @param parsedItem - the parsed statement item to look through
+ * @param defaultDir - the direction to use if none is found
+ * @returns The direction to use
  */
 const getDir = (parsedItem: any, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
   let dir = defaultDir;
@@ -54,7 +32,7 @@ const getDir = (parsedItem: any, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
 export const getClasses = function (
   text: string,
   diagramObj: any
-): Record<string, DiagramStyleClassDef> {
+): Map<string, DiagramStyleClassDef> {
   diagramObj.db.extract(diagramObj.db.getRootDocV2());
   return diagramObj.db.getClasses();
 };
@@ -87,28 +65,29 @@ export const draw = async function (text: string, id: string, _version: string, 
   // performRender(data4Rendering);
 
   data4Layout.type = diag.type;
-  // data4Layout.layoutAlgorithm = 'dagre-wrapper';
-  // data4Layout.layoutAlgorithm = 'elk';
   data4Layout.layoutAlgorithm = layout;
   data4Layout.direction = DIR;
-  data4Layout.nodeSpacing = conf.nodeSpacing || 50;
-  data4Layout.rankSpacing = conf.rankSpacing || 50;
+
+  // TODO: Should we move these two to baseConfig? These types are not there in StateConfig.
+  // @ts-expect-error TODO: Will be fixed after config refactor
+  data4Layout.nodeSpacing = conf?.nodeSpacing || 50;
+  // @ts-expect-error TODO: Will be fixed after config refactor
+  data4Layout.rankSpacing = conf?.rankSpacing || 50;
   data4Layout.markers = ['barb'];
   data4Layout.diagramId = id;
-  console.log('REF1:', data4Layout);
+  // console.log('REF1:', data4Layout);
   await render(data4Layout, svg, element);
   const padding = 8;
   utils.insertTitle(
     element,
     'statediagramTitleText',
-    conf.titleTopMargin,
+    conf?.titleTopMargin ?? 25,
     diag.db.getDiagramTitle()
   );
-  setupViewPortForSVG(svg, padding, CSS_DIAGRAM, conf.useMaxWidth);
+  setupViewPortForSVG(svg, padding, CSS_DIAGRAM, conf?.useMaxWidth ?? true);
 };
 
 export default {
-  setConf,
   getClasses,
   draw,
 };
