@@ -65,6 +65,21 @@ export interface MermaidConfig {
   themeVariables?: any;
   themeCSS?: string;
   /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handdrawn' | 'slick';
+  /**
+   * Defines the seed to be used when using handdrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
+   *
+   */
+  handdrawnSeed?: number;
+  /**
+   * Defines which layout algorithm to use for rendering the diagram.
+   *
+   */
+  layout?: string;
+  /**
    * The maximum allowed size of the users text diagram
    */
   maxTextSize?: number;
@@ -73,6 +88,16 @@ export interface MermaidConfig {
    *
    */
   maxEdges?: number;
+  /**
+   * Elk specific option that allows edge egdes to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
+   *
+   */
+  'elk.mergeEdges'?: boolean;
+  /**
+   * Elk specific option affedcting how nodes are placed.
+   *
+   */
+  'elk.nodePlacement.strategy'?: 'SIMPLE' | 'NETWORK_SIMPLEX' | 'LINEAR_SEGMENTS' | 'BRANDES_KOEPF';
   darkMode?: boolean;
   htmlLabels?: boolean;
   /**

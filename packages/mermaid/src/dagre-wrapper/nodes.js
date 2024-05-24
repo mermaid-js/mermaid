@@ -1,12 +1,12 @@
 import { select } from 'd3';
-import { log } from '../logger.js';
-import { labelHelper, updateNodeBounds, insertPolygonShape } from './shapes/util.js';
 import { getConfig } from '../diagram-api/diagramAPI.js';
-import intersect from './intersect/index.js';
-import createLabel from './createLabel.js';
-import note from './shapes/note.js';
 import { evaluate } from '../diagrams/common/common.js';
+import { log } from '../logger.js';
 import { getArrowPoints } from './blockArrowHelper.js';
+import createLabel from './createLabel.js';
+import intersect from './intersect/index.js';
+import note from './shapes/note.js';
+import { insertPolygonShape, labelHelper, updateNodeBounds } from './shapes/util.js';
 
 const formatClass = (str) => {
   if (str) {
@@ -395,6 +395,7 @@ const rect = async (parent, node) => {
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 
+  // console.log('Rect node:', node, 'bbox:', bbox, 'halfPadding:', halfPadding, 'node.padding:', node.padding);
   // const totalWidth = bbox.width + node.padding * 2;
   // const totalHeight = bbox.height + node.padding * 2;
   const totalWidth = node.positioned ? node.width : bbox.width + node.padding;
@@ -1134,6 +1135,8 @@ export const insertNode = async (elem, node, dir) => {
   let newEl;
   let el;
 
+  // console.log('insertNode element', elem, elem.node());
+  // debugger;
   // Add link when appropriate
   if (node.link) {
     let target;

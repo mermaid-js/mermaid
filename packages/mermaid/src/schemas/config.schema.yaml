@@ -71,6 +71,25 @@ properties:
     tsType: any
   themeCSS:
     type: string
+  look:
+    description: |
+      Defines which main look to use for the diagram.
+    type: string
+    enum:
+      - classic
+      - handdrawn
+      - slick
+    default: 'classic'
+  handdrawnSeed:
+    description: |
+      Defines the seed to be used when using handdrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
+    type: number
+    default: 0
+  layout:
+    description: |
+      Defines which layout algorithm to use for rendering the diagram.
+    type: string
+    default: 'dagre'
   maxTextSize:
     description: The maximum allowed size of the users text diagram
     type: number
@@ -81,6 +100,21 @@ properties:
     type: integer
     default: 500
     minimum: 0
+  elk.mergeEdges:
+    description: |
+      Elk specific option that allows edge egdes to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
+    type: boolean
+    default: false
+  elk.nodePlacement.strategy:
+    description: |
+      Elk specific option affedcting how nodes are placed.
+    type: string
+    enum:
+      - SIMPLE
+      - NETWORK_SIMPLEX
+      - LINEAR_SEGMENTS
+      - BRANDES_KOEPF
+    default: SIMPLE
   darkMode:
     type: boolean
     default: false
@@ -182,7 +216,7 @@ properties:
     default: false
   forceLegacyMathML:
     description: |
-      This option forces Mermaid to rely on KaTeX's own stylesheet for rendering MathML. Due to differences between OS 
+      This option forces Mermaid to rely on KaTeX's own stylesheet for rendering MathML. Due to differences between OS
       fonts and browser's MathML implementation, this option is recommended if consistent rendering is important.
       If set to true, ignores legacyMathML.
     type: boolean

@@ -17,6 +17,9 @@ import type { DetailedError } from './utils.js';
 import type { ExternalDiagramDefinition } from './diagram-api/types.js';
 import type { UnknownDiagramError } from './errors.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
+import { registerLayoutLoaders } from './rendering-util/render.js';
+import type { LayoutLoaderDefinition } from './rendering-util/render.js';
+import { internalHelpers } from './internals.js';
 
 export type {
   MermaidConfig,
@@ -26,6 +29,7 @@ export type {
   RenderResult,
   ParseOptions,
   UnknownDiagramError,
+  LayoutLoaderDefinition,
 };
 
 export interface RunOptions {
@@ -423,11 +427,17 @@ export interface Mermaid {
   render: typeof render;
   init: typeof init;
   run: typeof run;
+  registerLayoutLoaders: typeof registerLayoutLoaders;
   registerExternalDiagrams: typeof registerExternalDiagrams;
   initialize: typeof initialize;
   contentLoaded: typeof contentLoaded;
   setParseErrorHandler: typeof setParseErrorHandler;
   detectType: typeof detectType;
+  /**
+   * Internal helpers for mermaid
+   * @deprecated - This should not be used by external packages, as the definitions will change without notice.
+   */
+  internalHelpers: typeof internalHelpers;
 }
 
 const mermaid: Mermaid = {
@@ -438,11 +448,13 @@ const mermaid: Mermaid = {
   init,
   run,
   registerExternalDiagrams,
+  registerLayoutLoaders,
   initialize,
   parseError: undefined,
   contentLoaded,
   setParseErrorHandler,
   detectType,
+  internalHelpers,
 };
 
 export default mermaid;

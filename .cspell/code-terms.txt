@@ -27,6 +27,7 @@ controly
 CSSCLASS
 CYLINDEREND
 CYLINDERSTART
+DAGA
 datakey
 DEND
 descr
@@ -89,6 +90,7 @@ reqs
 rewritelinks
 rgba
 RIGHTOF
+roughjs
 sankey
 sequencenumber
 shrc

@@ -11,6 +11,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
+import { dataFetcher } from './dataFetcher.js';
 
 import {
   DEFAULT_DIAGRAM_DIRECTION,
@@ -20,7 +21,34 @@ import {
   STMT_APPLYCLASS,
   DEFAULT_STATE_TYPE,
   DIVIDER_TYPE,
+  G_EDGE_STYLE,
+  G_EDGE_ARROWHEADSTYLE,
+  G_EDGE_LABELPOS,
+  G_EDGE_LABELTYPE,
+  G_EDGE_THICKNESS,
+  CSS_EDGE,
+  DEFAULT_NESTED_DOC_DIR,
+  SHAPE_DIVIDER,
+  SHAPE_GROUP,
+  CSS_DIAGRAM_CLUSTER,
+  CSS_DIAGRAM_CLUSTER_ALT,
+  CSS_DIAGRAM_STATE,
+  SHAPE_STATE_WITH_DESC,
+  SHAPE_STATE,
+  SHAPE_START,
+  SHAPE_END,
+  SHAPE_NOTE,
+  SHAPE_NOTEGROUP,
+  CSS_DIAGRAM_NOTE,
+  DOMID_TYPE_SPACER,
+  DOMID_STATE,
+  NOTE_ID,
+  PARENT_ID,
+  NOTE,
+  PARENT,
+  CSS_EDGE_NOTE_EDGE,
 } from './stateCommon.js';
+import { node } from 'stylis';
 
 const START_NODE = '[*]';
 const START_TYPE = 'start';
@@ -46,6 +74,8 @@ function newClassesList() {
 let direction = DEFAULT_DIAGRAM_DIRECTION;
 let rootDoc = [];
 let classes = newClassesList(); // style classes defined by a classDef
+
+// --------------------------------------
 
 const newDoc = () => {
   return {
@@ -540,8 +570,27 @@ const setDirection = (dir) => {
 
 const trimColon = (str) => (str && str[0] === ':' ? str.substr(1).trim() : str.trim());
 
+export const getData = () => {
+  const nodes = [];
+  const edges = [];
+
+  // for (const key in currentDocument.states) {
+  //   if (currentDocument.states.hasOwnProperty(key)) {
+  //     nodes.push({...currentDocument.states[key]});
+  //   }
+  // }
+  extract(getRootDocV2());
+  const diagramStates = getStates();
+  const config = getConfig();
+  const useRough = config.look === 'handdrawn';
+  dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, useRough);
+
+  return { nodes, edges, other: {}, config };
+};
+
 export default {
   getConfig: () => getConfig().state,
+  getData,
   addState,
   clear,
   getState,

@@ -29,6 +29,8 @@ export const setConf = function (cnf) {
  */
 export const addVertices = async function (vert, g, svgId, root, doc, diagObj) {
   const svg = root.select(`[id="${svgId}"]`);
+  // console.log('SVG:', svg, svg.node(), 'root:', root, root.node());
+
   const keys = vert.keys();
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
