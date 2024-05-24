@@ -1,5 +1,5 @@
-import config from '../../dist/defaultConfig';
-import { MermaidConfig } from '../../dist/config.type';
+import type { MermaidConfig } from '$root/config.type.ts';
+
 export type MarkdownWordType = 'normal' | 'strong' | 'emphasis';
 export interface MarkdownWord {
   content: string;
