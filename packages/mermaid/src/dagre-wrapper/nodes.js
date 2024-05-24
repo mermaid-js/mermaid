@@ -1135,7 +1135,7 @@ export const insertNode = async (elem, node, dir) => {
   let newEl;
   let el;
 
-  console.log('insertNode element', elem, elem.node());
+  // console.log('insertNode element', elem, elem.node());
   // debugger;
   // Add link when appropriate
   if (node.link) {

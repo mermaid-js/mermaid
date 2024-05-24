@@ -18,6 +18,7 @@ export const stateStart = (parent: SVG, node: Node) => {
 
   let circle;
   if (node.useRough) {
+    // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const roughNode = rc.circle(0, 0, 14, solidStateFill(lineColor));
     circle = shapeSvg.insert(() => roughNode);
@@ -26,6 +27,7 @@ export const stateStart = (parent: SVG, node: Node) => {
   }
 
   // center the circle around its coordinate
+  // @ts-ignore TODO: Fix typings
   circle.attr('class', 'state-start').attr('r', 7).attr('width', 14).attr('height', 14);
 
   updateNodeBounds(node, circle);

@@ -15,7 +15,7 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
     classes = _classes;
   }
 
-  console.log('parentY', parent.node());
+  // console.log('parentY', parent.node());
 
   // Add outer g element
   const shapeSvg = parent
@@ -34,9 +34,8 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
     labelText = typeof node.labelText === 'string' ? node.labelText : node.labelText[0];
   }
 
-
   const textNode = label.node();
-  console.log('parentX', parent, 'node',node,'labelText',labelText, textNode, node.labelType, 'label', label.node());
+  // console.log('parentX', parent, 'node',node,'labelText',labelText, textNode, node.labelType, 'label', label.node());
   let text;
   if (node.labelType === 'markdown') {
     // text = textNode;

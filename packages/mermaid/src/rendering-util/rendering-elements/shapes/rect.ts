@@ -7,56 +7,49 @@ import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
 
-/**
- *
- * @param rect
- * @param borders
- * @param totalWidth
- * @param totalHeight
- */
-function applyNodePropertyBorders(
-  rect: d3.Selection<SVGRectElement, unknown, null, undefined>,
-  borders: string | undefined,
-  totalWidth: number,
-  totalHeight: number
-) {
-  if (!borders) {
-    return;
-  }
-  const strokeDashArray: number[] = [];
-  const addBorder = (length: number) => {
-    strokeDashArray.push(length, 0);
-  };
-  const skipBorder = (length: number) => {
-    strokeDashArray.push(0, length);
-  };
-  if (borders.includes('t')) {
-    log.debug('add top border');
-    addBorder(totalWidth);
-  } else {
-    skipBorder(totalWidth);
-  }
-  if (borders.includes('r')) {
-    log.debug('add right border');
-    addBorder(totalHeight);
-  } else {
-    skipBorder(totalHeight);
-  }
-  if (borders.includes('b')) {
-    log.debug('add bottom border');
-    addBorder(totalWidth);
-  } else {
-    skipBorder(totalWidth);
-  }
-  if (borders.includes('l')) {
-    log.debug('add left border');
-    addBorder(totalHeight);
-  } else {
-    skipBorder(totalHeight);
-  }
+// function applyNodePropertyBorders(
+//   rect: d3.Selection<SVGRectElement, unknown, null, undefined>,
+//   borders: string | undefined,
+//   totalWidth: number,
+//   totalHeight: number
+// ) {
+//   if (!borders) {
+//     return;
+//   }
+//   const strokeDashArray: number[] = [];
+//   const addBorder = (length: number) => {
+//     strokeDashArray.push(length, 0);
+//   };
+//   const skipBorder = (length: number) => {
+//     strokeDashArray.push(0, length);
+//   };
+//   if (borders.includes('t')) {
+//     log.debug('add top border');
+//     addBorder(totalWidth);
+//   } else {
+//     skipBorder(totalWidth);
+//   }
+//   if (borders.includes('r')) {
+//     log.debug('add right border');
+//     addBorder(totalHeight);
+//   } else {
+//     skipBorder(totalHeight);
+//   }
+//   if (borders.includes('b')) {
+//     log.debug('add bottom border');
+//     addBorder(totalWidth);
+//   } else {
+//     skipBorder(totalWidth);
+//   }
+//   if (borders.includes('l')) {
+//     log.debug('add left border');
+//     addBorder(totalHeight);
+//   } else {
+//     skipBorder(totalHeight);
+//   }
 
-  rect.attr('stroke-dasharray', strokeDashArray.join(' '));
-}
+//   rect.attr('stroke-dasharray', strokeDashArray.join(' '));
+// }
 
 export const rect = async (parent: SVGAElement, node: Node) => {
   const { themeVariables, handdrawnSeed } = getConfig();
@@ -75,8 +68,9 @@ export const rect = async (parent: SVGAElement, node: Node) => {
   const y = -bbox.height / 2 - halfPadding;
 
   let rect;
-  const { rx, ry, style: cssStyles, useRough } = node;
+  const { rx, ry, cssStyles, useRough } = node;
   if (useRough) {
+    // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {
       roughness: 0.7,
