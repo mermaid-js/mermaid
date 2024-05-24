@@ -32,7 +32,7 @@ const rect = (parent, node) => {
   //   .appendChild(createLabel(node.labelText, node.labelStyle, undefined, true));
   const text =
     node.labelType === 'markdown'
-      ? createText(label, node.labelText, { style: node.labelStyle, useHtmlLabels })
+      ? createText(label, node.labelText, { style: node.labelStyle, useHtmlLabels }, siteConfig)
       : label.node().appendChild(createLabel(node.labelText, node.labelStyle, undefined, true));
 
   // Get the size of the label

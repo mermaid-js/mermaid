@@ -21,13 +21,14 @@ dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);
 dayjs.extend(dayjsAdvancedFormat);
 
+const WEEKEND_START_DAY = { friday: 5, saturday: 6 };
 let dateFormat = '';
 let axisFormat = '';
 let tickInterval = undefined;
 let todayMarker = '';
 let includes = [];
 let excludes = [];
-let links = {};
+let links = new Map();
 let sections = [];
 let tasks = [];
 let currentSection = '';
@@ -37,6 +38,7 @@ let funs = [];
 let inclusiveEndDates = false;
 let topAxis = false;
 let weekday = 'sunday';
+let weekend = 'saturday';
 
 // The serial order of the task in the script
 let lastOrder = 0;
@@ -60,9 +62,10 @@ export const clear = function () {
   inclusiveEndDates = false;
   topAxis = false;
   lastOrder = 0;
-  links = {};
+  links = new Map();
   commonClear();
   weekday = 'sunday';
+  weekend = 'saturday';
 };
 
 export const setAxisFormat = function (txt) {
@@ -167,7 +170,11 @@ export const isInvalidDate = function (date, dateFormat, excludes, includes) {
   if (includes.includes(date.format(dateFormat.trim()))) {
     return false;
   }
-  if (date.isoWeekday() >= 6 && excludes.includes('weekends')) {
+  if (
+    excludes.includes('weekends') &&
+    (date.isoWeekday() === WEEKEND_START_DAY[weekend] ||
+      date.isoWeekday() === WEEKEND_START_DAY[weekend] + 1)
+  ) {
     return true;
   }
   if (excludes.includes(date.format('dddd').toLowerCase())) {
@@ -182,6 +189,10 @@ export const setWeekday = function (txt) {
 
 export const getWeekday = function () {
   return weekday;
+};
+
+export const setWeekend = function (startDay) {
+  weekend = startDay;
 };
 
 /**
@@ -628,7 +639,7 @@ export const setLink = function (ids, _linkStr) {
       pushFun(id, () => {
         window.open(linkStr, '_self');
       });
-      links[id] = linkStr;
+      links.set(id, linkStr);
     }
   });
   setClass(ids, 'clickable');
@@ -781,6 +792,7 @@ export default {
   isInvalidDate,
   setWeekday,
   getWeekday,
+  setWeekend,
 };
 
 /**

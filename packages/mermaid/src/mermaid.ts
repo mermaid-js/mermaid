@@ -16,7 +16,7 @@ import { isDetailedError } from './utils.js';
 import type { DetailedError } from './utils.js';
 import type { ExternalDiagramDefinition } from './diagram-api/types.js';
 import type { UnknownDiagramError } from './errors.js';
-// import { defaultConfig } from './config';
+import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 
 export type {
   MermaidConfig,
@@ -245,6 +245,7 @@ const registerExternalDiagrams = async (
     lazyLoad?: boolean;
   } = {}
 ) => {
+  addDiagrams();
   registerLazyLoadedDiagrams(...diagrams);
   if (lazyLoad === false) {
     await loadRegisteredDiagrams();
@@ -317,9 +318,21 @@ interface ConfigTuple {
 /**
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
- * @param parseOptions - Options for parsing.
- * @returns true if the diagram is valid, false otherwise if parseOptions.suppressErrors is true.
- * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false.
+ * @param parseOptions - Options for parsing. @see {@link ParseOptions}
+ * @returns If valid, {@link Diagram} otherwise `false` if parseOptions.suppressErrors is `true`.
+ * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false or not set.
+ *
+ * @example
+ * ```js
+ * console.log(await mermaid.parse('flowchart \n a --> b'));
+ * // { diagramType: 'flowchart-v2' }
+ * console.log(await mermaid.parse('wrong \n a --> b', { suppressErrors: true }));
+ * // false
+ * console.log(await mermaid.parse('wrong \n a --> b', { suppressErrors: false }));
+ * // throws Error
+ * console.log(await mermaid.parse('wrong \n a --> b'));
+ * // throws Error
+ * ```
  */
 const parse = async (
   text: string,
@@ -376,7 +389,7 @@ const parse = async (
  *   element will be removed when rendering is completed.
  * @returns Returns the SVG Definition and BindFunctions.
  */
-const render = (id: string, text: string, container?: Element): Promise<RenderResult> => {
+const render: typeof mermaidAPI.render = (id, text, container) => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the mermaidAPI.render call is done.
     // It will be queued first and will be executed when it is first in line

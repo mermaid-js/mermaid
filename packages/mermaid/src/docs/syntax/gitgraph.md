@@ -33,6 +33,8 @@ In Mermaid, we support the basic git operations like:
 With the help of these key git commands, you will be able to draw a gitgraph in Mermaid very easily and quickly.
 Entity names are often capitalized, although there is no accepted standard on this, and it is not required in Mermaid.
 
+**NOTE**: `checkout` and `switch` can be used interchangeably.
+
 ## Syntax
 
 Mermaid syntax for a gitgraph is very straight-forward and simple. It follows a declarative-approach, where each commit is drawn on the timeline in the diagram, in order of its occurrences/presence in code. Basically, it follows the insertion order for each command.
@@ -519,9 +521,9 @@ Here, we have changed the default main branch name to `MetroLine1`.
 
 ## Orientation (v10.3.0+)
 
-Mermaid supports two graph orientations: **Left-to-Right** (default) and **Top-to-Bottom**.
+Mermaid supports three graph orientations: **Left-to-Right** (default), **Top-to-Bottom**, and **Bottom-to-Top**.
 
-You can set this with either `LR:` (for [**Left-to-Right**](#left-to-right-default-lr)) or `TB:` (for [**Top-to-Bottom**](#top-to-bottom-tb)) after `gitGraph`.
+You can set this with either `LR:` (for [**Left-to-Right**](#left-to-right-default-lr)), `TB:` (for [**Top-to-Bottom**](#top-to-bottom-tb)) or `BT:` (for [**Bottom-to-Top**](#bottom-to-top-bt)) after `gitGraph`.
 
 ### Left to Right (default, `LR:`)
 
@@ -556,6 +558,29 @@ Usage example:
 
 ```mermaid-example
     gitGraph TB:
+       commit
+       commit
+       branch develop
+       commit
+       commit
+       checkout main
+       commit
+       commit
+       merge develop
+       commit
+       commit
+```
+
+### Bottom to Top (`BT:`) (v<MERMAID_RELEASE_VERSION>+)
+
+In `BT` (**Bottom-to-Top**) orientation, the commits run from bottom to top of the graph and branches are arranged side-by-side.
+
+To orient the graph this way, you need to add `BT:` after gitGraph.
+
+Usage example:
+
+```mermaid-example
+    gitGraph BT:
        commit
        commit
        branch develop

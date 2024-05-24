@@ -54,6 +54,14 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
       if (node && node.clusterNode) {
         // const children = graph.children(v);
         log.info('Cluster identified', v, node.width, graph.node(v));
+        // `node.graph.setGraph` applies the graph configurations such as nodeSpacing to subgraphs as without this the default values would be used
+        // We override only the `ranksep` and `nodesep` configurations to allow for setting subgraph spacing while avoiding overriding other properties
+        const { ranksep, nodesep } = graph.graph();
+        node.graph.setGraph({
+          ...node.graph.graph(),
+          ranksep,
+          nodesep,
+        });
         const o = await recursiveRender(
           nodes,
           node.graph,

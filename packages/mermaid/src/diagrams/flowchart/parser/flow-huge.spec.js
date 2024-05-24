@@ -23,7 +23,7 @@ describe('[Text] when parsing', () => {
 
       expect(edges[0].type).toBe('arrow_point');
       expect(edges.length).toBe(47917);
-      expect(Object.keys(vert).length).toBe(2);
+      expect(vert.size).toBe(2);
     });
   });
 });

@@ -60,11 +60,13 @@ The syntax for creating Mindmaps is simple and relies on indentation for setting
 
 In the following example you can see how there are 3 different levels. One with starting at the left of the text and another level with two rows starting at the same column, defining the node A. At the end there is one more level where the text is indented further than the previous lines defining the nodes B and C.
 
-    mindmap
-        Root
-            A
-                B
-                C
+```
+mindmap
+    Root
+        A
+            B
+            C
+```
 
 In summary is a simple text outline where there is one node at the root level called `Root` which has one child `A`. `A` in turn has two children `B`and `C`. In the diagram below we can see this rendered as a mindmap.
 
@@ -230,11 +232,13 @@ _These classes need to be supplied by the site administrator._
 
 The actual indentation does not really matter only compared with the previous rows. If we take the previous example and disrupt it a little we can see how the calculations are performed. Let us start with placing C with a smaller indentation than `B` but larger then `A`.
 
-    mindmap
-        Root
-            A
-                B
-              C
+```
+mindmap
+    Root
+        A
+            B
+          C
+```
 
 This outline is unclear as `B` clearly is a child of `A` but when we move on to `C` the clarity is lost. `C` is not a child of `B` with a higher indentation nor does it have the same indentation as `B`. The only thing that is clear is that the first node with smaller indentation, indicating a parent, is A. Then Mermaid relies on this known truth and compensates for the unclear indentation and selects `A` as a parent of `C` leading till the same diagram with `B` and `C` as siblings.
 
@@ -300,7 +304,7 @@ From version 9.4.0 you can simplify this code to:
 
 ```html
 <script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 </script>
 ```
 

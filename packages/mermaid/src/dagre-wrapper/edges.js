@@ -18,15 +18,21 @@ export const clear = () => {
 };
 
 export const insertEdgeLabel = (elem, edge) => {
-  const useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
+  const config = getConfig();
+  const useHtmlLabels = evaluate(config.flowchart.htmlLabels);
   // Create the actual text element
   const labelElement =
     edge.labelType === 'markdown'
-      ? createText(elem, edge.label, {
-          style: edge.labelStyle,
-          useHtmlLabels,
-          addSvgBackground: true,
-        })
+      ? createText(
+          elem,
+          edge.label,
+          {
+            style: edge.labelStyle,
+            useHtmlLabels,
+            addSvgBackground: true,
+          },
+          config
+        )
       : createLabel(edge.label, edge.labelStyle);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout

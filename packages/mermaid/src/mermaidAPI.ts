@@ -17,7 +17,7 @@ import { compile, serialize, stringify } from 'stylis';
 import { version } from '../package.json';
 import * as configApi from './config.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
-import { Diagram, getDiagramFromText as getDiagramFromTextInternal } from './Diagram.js';
+import { Diagram } from './Diagram.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
 import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
@@ -57,6 +57,10 @@ const DOMPURIFY_TAGS = ['foreignobject'];
 const DOMPURIFY_ATTR = ['dominant-baseline'];
 
 export interface ParseOptions {
+  /**
+   * If `true`, parse will return `false` instead of throwing error when the diagram is invalid.
+   * The `parseError` function will not be called.
+   */
   suppressErrors?: boolean;
 }
 
@@ -68,6 +72,10 @@ export interface RenderResult {
    * The svg code for the rendered graph.
    */
   svg: string;
+  /**
+   * The diagram type, e.g. 'flowchart', 'sequence', etc.
+   */
+  diagramType: string;
   /**
    * Bind function to be called after the svg has been inserted into the DOM.
    * This is necessary for adding event listeners to the elements in the svg.
@@ -90,19 +98,20 @@ function processAndSetConfigs(text: string) {
 /**
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
- * @param parseOptions - Options for parsing.
- * @returns true if the diagram is valid, false otherwise if parseOptions.suppressErrors is true.
- * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false.
+ * @param parseOptions - Options for parsing. @see {@link ParseOptions}
+ * @returns An object with the `diagramType` set to type of the diagram if valid. Otherwise `false` if parseOptions.suppressErrors is `true`.
+ * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false or not set.
  */
-
-async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean | Diagram> {
+async function parse(
+  text: string,
+  parseOptions: ParseOptions & { suppressErrors: true }
+): Promise<Diagram | false>;
+async function parse(text: string, parseOptions?: ParseOptions): Promise<Diagram>;
+async function parse(text: string, parseOptions?: ParseOptions): Promise<Diagram | false> {
   addDiagrams();
-
-  text = processAndSetConfigs(text).code;
-
   try {
-    const diagram = await getDiagramFromText(text);
-    // diagram.parse();
+    const { code } = processAndSetConfigs(text);
+    const diagram = await getDiagramFromText(code);
     return diagram;
   } catch (error) {
     if (parseOptions?.suppressErrors) {
@@ -110,11 +119,8 @@ async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean
     }
     throw error;
   }
-  return true;
 }
 
-// append !important; to each cssClass followed by a final !important, all enclosed in { }
-//
 /**
  * Create a CSS style that starts with the given class name, then the element,
  * with an enclosing block that has each of the cssClasses followed by !important;
@@ -140,7 +146,7 @@ export const cssImportantStyles = (
  */
 export const createCssStyles = (
   config: MermaidConfig,
-  classDefs: Record<string, DiagramStyleClassDef> | null | undefined = {}
+  classDefs: Map<string, DiagramStyleClassDef> | null | undefined = new Map()
 ): string => {
   let cssStyles = '';
 
@@ -159,7 +165,7 @@ export const createCssStyles = (
   }
 
   // classDefs defined in the diagram text
-  if (!isEmpty(classDefs)) {
+  if (classDefs instanceof Map) {
     const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
 
     const cssHtmlElements = ['> *', 'span']; // TODO make a constant
@@ -168,8 +174,7 @@ export const createCssStyles = (
     const cssElements = htmlLabels ? cssHtmlElements : cssShapeElements;
 
     // create the CSS styles needed for each styleClass definition and css element
-    for (const classId in classDefs) {
-      const styleClassDef = classDefs[classId];
+    classDefs.forEach((styleClassDef) => {
       // create the css styles for each cssElement and the styles (only if there are styles)
       if (!isEmpty(styleClassDef.styles)) {
         cssElements.forEach((cssElement) => {
@@ -180,7 +185,7 @@ export const createCssStyles = (
       if (!isEmpty(styleClassDef.textStyles)) {
         cssStyles += cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles);
       }
-    }
+    });
   }
   return cssStyles;
 };
@@ -188,7 +193,7 @@ export const createCssStyles = (
 export const createUserStyles = (
   config: MermaidConfig,
   graphType: string,
-  classDefs: Record<string, DiagramStyleClassDef> | undefined,
+  classDefs: Map<string, DiagramStyleClassDef> | undefined,
   svgId: string
 ): string => {
   const userCSSstyles = createCssStyles(config, classDefs);
@@ -356,6 +361,16 @@ const render = async function (
   const enclosingDivID = 'd' + id;
   const enclosingDivID_selector = '#' + enclosingDivID;
 
+  const removeTempElements = () => {
+    // -------------------------------------------------------------------------------
+    // Remove the temporary HTML element if appropriate
+    const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
+    const node = select(tmpElementSelector).node();
+    if (node && 'remove' in node) {
+      node.remove();
+    }
+  };
+
   let root: any = select('body');
 
   const isSandboxed = config.securityLevel === SECURITY_LVL_SANDBOX;
@@ -410,9 +425,13 @@ const render = async function (
   let parseEncounteredException;
 
   try {
-    diag = await getDiagramFromText(text, { title: processed.title });
+    diag = await Diagram.fromText(text, { title: processed.title });
   } catch (error) {
-    diag = new Diagram('error');
+    if (config.suppressErrorRendering) {
+      removeTempElements();
+      throw error;
+    }
+    diag = await Diagram.fromText('error');
     parseEncounteredException = error;
   }
 
@@ -439,7 +458,11 @@ const render = async function (
   try {
     await diag.renderer.draw(text, id, version, diag);
   } catch (e) {
-    errorRenderer.draw(text, id, version);
+    if (config.suppressErrorRendering) {
+      removeTempElements();
+    } else {
+      errorRenderer.draw(text, id, version);
+    }
     throw e;
   }
 
@@ -475,15 +498,10 @@ const render = async function (
     throw parseEncounteredException;
   }
 
-  // -------------------------------------------------------------------------------
-  // Remove the temporary HTML element if appropriate
-  const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
-  const node = select(tmpElementSelector).node();
-  if (node && 'remove' in node) {
-    node.remove();
-  }
+  removeTempElements();
 
   return {
+    diagramType,
     svg: svgCode,
     bindFunctions: diag.db.bindFunctions,
   };
@@ -522,7 +540,7 @@ function initialize(options: MermaidConfig = {}) {
 
 const getDiagramFromText = (text: string, metadata: Pick<DiagramMetadata, 'title'> = {}) => {
   const { code } = preprocessDiagram(text);
-  return getDiagramFromTextInternal(code, metadata);
+  return Diagram.fromText(code, metadata);
 };
 
 /**
@@ -553,6 +571,7 @@ function addA11yInfo(
  *     securityLevel: 'strict',
  *     startOnLoad: true,
  *     arrowMarkerAbsolute: false,
+ *     suppressErrorRendering: false,
  *
  *     er: {
  *       diagramPadding: 20,

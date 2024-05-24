@@ -66,6 +66,12 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [redmine-mermaid](https://github.com/styz/redmine_mermaid)
 - Visual Studio Code [Polyglot Interactive Notebooks](https://github.com/dotnet/interactive#net-interactive)
 
+### LLM integrations
+
+LLM integrations to create mermaid diagrams using AI from text descriptions.
+
+- [HueHive - Create mermaid diagrams with text](https://huehive.co/tools/diagrams)
+
 ### CRM/ERP
 
 Customer Relationship Management/Enterprise Resource Planning
@@ -92,6 +98,8 @@ Content Management Systems/Enterprise Content Management
 
 - [ApostropheCMS](https://apostrophecms.com/)
   - [Extension for Mermaid.js](https://github.com/BoDonkey/mermaid-extension)
+- [Drupal](https://drupal.org/)
+  - [Mermaid Diagram Field module](https://www.drupal.org/project/mermaid_diagram_field)
 - [Grav CMS](https://getgrav.org/)
   - [Mermaid Diagrams Plugin](https://github.com/DanielFlaum/grav-plugin-mermaid-diagrams)
   - [GitLab Markdown Adapter](https://github.com/Goutte/grav-plugin-gitlab-markdown-adapter)
@@ -227,6 +235,8 @@ Communication tools and platforms
 
 ### Other
 
+- [Astro](https://astro.build/)
+  - [Adding diagrams to your Astro site with MermaidJS and Playwright](https://agramont.net/blog/diagraming-with-mermaidjs-astro/)
 - [Bisheng](https://www.npmjs.com/package/bisheng)
   - [bisheng-plugin-mermaid](https://github.com/yct21/bisheng-plugin-mermaid)
 - [Blazorade Mermaid: Render Mermaid diagrams in Blazor applications](https://github.com/Blazorade/Blazorade-Mermaid/wiki)
@@ -236,6 +246,7 @@ Communication tools and platforms
 - [Jekyll](https://jekyllrb.com/)
   - [jekyll-mermaid](https://rubygems.org/gems/jekyll-mermaid)
   - [jekyll-mermaid-diagrams](https://github.com/fuzhibo/jekyll-mermaid-diagrams)
+- [MarkChart: Preview Mermaid diagrams on macOS](https://markchart.app/)
 - [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
 - [NiceGUI: Let any browser be the frontend of your Python code](https://nicegui.io) ✅
@@ -247,4 +258,4 @@ Communication tools and platforms
 - [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
 
-<!--- cspell:ignore Blazorade --->
+<!--- cspell:ignore Blazorade HueHive --->

@@ -1,6 +1,6 @@
+import { defineConfig, MarkdownOptions } from 'vitepress';
 import { version } from '../../../package.json';
 import MermaidExample from './mermaid-markdown-all.js';
-import { defineConfig, MarkdownOptions } from 'vitepress';
 
 const allMarkdownTransformers: MarkdownOptions = {
   // the shiki theme to highlight code blocks
@@ -150,10 +150,11 @@ function sidebarSyntax() {
         { text: 'C4 Diagram 🦺⚠️', link: '/syntax/c4' },
         { text: 'Mindmaps', link: '/syntax/mindmap' },
         { text: 'Timeline', link: '/syntax/timeline' },
-        { text: 'Zenuml', link: '/syntax/zenuml' },
-        { text: 'Sankey', link: '/syntax/sankey' },
-        { text: 'XYChart 🔥', link: '/syntax/xyChart' },
+        { text: 'ZenUML', link: '/syntax/zenuml' },
+        { text: 'Sankey 🔥', link: '/syntax/sankey' },
+        { text: 'XY Chart 🔥', link: '/syntax/xyChart' },
         { text: 'Block Diagram 🔥', link: '/syntax/block' },
+        { text: 'Packet 🔥', link: '/syntax/packet' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
