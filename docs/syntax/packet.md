@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/packet.md](../../packages/mermaid/src/docs/syntax/packet.md).
 
-# Packet Diagram (v\<MERMAID_RELEASE_VERSION>+)
+# Packet Diagram (v11.0.0-beta.1+)
 
 ## Introduction
 
