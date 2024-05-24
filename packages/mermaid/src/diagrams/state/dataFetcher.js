@@ -1,41 +1,37 @@
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import common from '../common/common.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-
 import {
-  DEFAULT_DIAGRAM_DIRECTION,
-  STMT_STATE,
-  STMT_RELATION,
-  STMT_CLASSDEF,
-  STMT_APPLYCLASS,
+  CSS_DIAGRAM_CLUSTER,
+  CSS_DIAGRAM_CLUSTER_ALT,
+  CSS_DIAGRAM_NOTE,
+  CSS_DIAGRAM_STATE,
+  CSS_EDGE,
+  CSS_EDGE_NOTE_EDGE,
+  DEFAULT_NESTED_DOC_DIR,
   DEFAULT_STATE_TYPE,
   DIVIDER_TYPE,
-  G_EDGE_STYLE,
+  DOMID_STATE,
+  DOMID_TYPE_SPACER,
   G_EDGE_ARROWHEADSTYLE,
   G_EDGE_LABELPOS,
   G_EDGE_LABELTYPE,
+  G_EDGE_STYLE,
   G_EDGE_THICKNESS,
-  CSS_EDGE,
-  DEFAULT_NESTED_DOC_DIR,
+  NOTE,
+  NOTE_ID,
+  PARENT,
+  PARENT_ID,
   SHAPE_DIVIDER,
-  SHAPE_GROUP,
-  CSS_DIAGRAM_CLUSTER,
-  CSS_DIAGRAM_CLUSTER_ALT,
-  CSS_DIAGRAM_STATE,
-  SHAPE_STATE_WITH_DESC,
-  SHAPE_STATE,
-  SHAPE_START,
   SHAPE_END,
+  SHAPE_GROUP,
   SHAPE_NOTE,
   SHAPE_NOTEGROUP,
-  CSS_DIAGRAM_NOTE,
-  DOMID_TYPE_SPACER,
-  DOMID_STATE,
-  NOTE_ID,
-  PARENT_ID,
-  NOTE,
-  PARENT,
-  CSS_EDGE_NOTE_EDGE,
+  SHAPE_START,
+  SHAPE_STATE,
+  SHAPE_STATE_WITH_DESC,
+  STMT_RELATION,
+  STMT_STATE,
 } from './stateCommon.js';
 
 // List of nodes created from the parsed diagram statement items
@@ -241,7 +237,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
     }
 
     const newNode = nodeDb[itemId];
-    console.log('New Node:', newNode);
+    // console.log('New Node:', newNode);
 
     // Save data for description and group so that for instance a statement without description overwrites
     // one with description  @todo TODO What does this mean? If important, add a test for it
@@ -387,7 +383,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
       insertOrUpdateNode(nodes, nodeData);
     }
 
-    console.log('Nodes:', nodes);
+    // console.log('Nodes:', nodes);
   }
   if (parsedItem.doc) {
     log.trace('Adding nodes children ');

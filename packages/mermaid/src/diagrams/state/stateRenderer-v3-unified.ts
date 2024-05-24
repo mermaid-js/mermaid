@@ -12,9 +12,9 @@ import { CSS_DIAGRAM, DEFAULT_NESTED_DOC_DIR } from './stateCommon.js';
  * Get the direction from the statement items.
  * Look through all of the documents (docs) in the parsedItems
  * Because is a _document_ direction, the default direction is not necessarily the same as the overall default _diagram_ direction.
- * @param {object[]} parsedItem - the parsed statement item to look through
- * @param [defaultDir] - the direction to use if none is found
- * @returns {string}
+ * @param parsedItem - the parsed statement item to look through
+ * @param defaultDir - the direction to use if none is found
+ * @returns The direction to use
  */
 const getDir = (parsedItem: any, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
   let dir = defaultDir;
@@ -69,13 +69,13 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.direction = DIR;
 
   // TODO: Should we move these two to baseConfig? These types are not there in StateConfig.
-  // @ts-expect-error
+  // @ts-expect-error TODO: Will be fixed after config refactor
   data4Layout.nodeSpacing = conf?.nodeSpacing || 50;
-  // @ts-expect-error
+  // @ts-expect-error TODO: Will be fixed after config refactor
   data4Layout.rankSpacing = conf?.rankSpacing || 50;
   data4Layout.markers = ['barb'];
   data4Layout.diagramId = id;
-  console.log('REF1:', data4Layout);
+  // console.log('REF1:', data4Layout);
   await render(data4Layout, svg, element);
   const padding = 8;
   utils.insertTitle(

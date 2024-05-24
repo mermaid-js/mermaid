@@ -375,26 +375,6 @@ const cutPathAtIntersect = (_points, boundaryNode) => {
   return points;
 };
 
-const calcOffset = function (src, dest, parentLookupDb) {
-  const ancestor = findCommonAncestor(src, dest, parentLookupDb);
-  if (ancestor === undefined || ancestor === 'root') {
-    return { x: 0, y: 0 };
-  }
-
-  const ancestorOffset = nodeDb[ancestor].offset;
-  return { x: ancestorOffset.posX, y: ancestorOffset.posY };
-};
-
-// Function to insert a midpoint
-/**
- *
- * @param p1
- * @param p2
- */
-function insertMidpoint(p1, p2) {
-  return [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
-}
-
 /**
  * Given an edge, this function will return the corner points of the edge. This is defined as:
  * one point that has a previous point and a next point such as the angle between the previous

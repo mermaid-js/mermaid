@@ -278,6 +278,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
       clusterDb[e.w]
     );
     if (clusterDb[e.v] && clusterDb[e.w] && clusterDb[e.v] === clusterDb[e.w]) {
+      // cspell:ignore trixing
       log.warn('Fixing and trixing link to self - removing XXX', e.v, e.w, e.name);
       log.warn('Fixing and trixing - removing XXX', e.v, e.w, e.name);
       v = getAnchorId(e.v);
