@@ -16,3 +16,5 @@ generated/
 # Ignore the files creates in /demos/dev except for example.html
 demos/dev/**
 !/demos/dev/example.html
+# TODO: Lots of errors to fix
+cypress/platform/state-refactor.html
