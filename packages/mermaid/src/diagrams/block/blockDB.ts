@@ -20,7 +20,7 @@ const config = getConfig();
 
 let classes = {} as Record<string, ClassDef>;
 
-const sanitizeText = (txt:string) => common.sanitizeText(txt, config);
+const sanitizeText = (txt: string) => common.sanitizeText(txt, config);
 
 /**
  * Called when the parser comes across a (style) class definition
@@ -93,7 +93,7 @@ const populateBlockDatabase = (_blockList: Block[] | Block[][], parent: Block): 
   const children = [];
   for (const block of blockList) {
     if (block.label) {
-        block.label = sanitizeText(block.label);
+      block.label = sanitizeText(block.label);
     }
     if (block.type === 'classDef') {
       addStyleClass(block.id, block.css);
