@@ -1,7 +1,7 @@
 // @ts-nocheck File not ready to check types
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
-import mermaid from 'mermaid';
+import mermaid from '@mermaid-chart/mermaid';
 import { findCommonAncestor } from './find-common-ancestor.js';
 import config from '../../mermaid/src/defaultConfig';
 

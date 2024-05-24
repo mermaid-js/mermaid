@@ -18,6 +18,6 @@
   },
   "dependencies": {
     "@mermaid-js/mermaid-example-diagram": "workspace:*",
-    "mermaid": "workspace:*"
+    "@mermaid-chart/mermaid": "workspace:*"
   }
 }

@@ -35,7 +35,7 @@
     "d3": "^7.9.0"
   },
   "peerDependencies": {
-    "mermaid": "workspace:^"
+    "@mermaid-chart/mermaid": "workspace:^"
   },
   "files": [
     "dist"

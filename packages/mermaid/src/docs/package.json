@@ -19,7 +19,7 @@
     "@vueuse/core": "^10.9.0",
     "font-awesome": "^4.7.0",
     "jiti": "^1.21.0",
-    "mermaid": "workspace:^",
+    "@mermaid-chart/mermaid": "workspace:^",
     "vue": "^3.4.21"
   },
   "devDependencies": {
