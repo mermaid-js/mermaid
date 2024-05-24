@@ -3,6 +3,7 @@ import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import mermaid from 'mermaid';
 import { findCommonAncestor } from './find-common-ancestor.js';
+import config from '../../mermaid/src/defaultConfig';
 
 const {
   common,
@@ -70,13 +71,19 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
     child.children = [];
     await addVertices(nodeEl, nodeArr, child, node.id);
 
-    // We need the label hight to be able to size the subgraph;
-    const { shapeSvg, bbox } = await labelHelper(nodeEl, node, undefined, true);
-    labelData.width = bbox.width;
-    labelData.wrappingWidth = getConfig().flowchart.wrappingWidth;
-    labelData.height = bbox.height;
-    labelData.labelNode = shapeSvg.node();
-    shapeSvg.remove();
+    if (node.label) {
+      const { shapeSvg, bbox } = await labelHelper(nodeEl, node, undefined, true);
+      labelData.width = bbox.width;
+      labelData.wrappingWidth = getConfig().flowchart.wrappingWidth;
+      labelData.height = bbox.height - 8;
+      labelData.labelNode = shapeSvg.node();
+      // We need the label hight to be able to size the subgraph;
+      shapeSvg.remove();
+    } else {
+      // Subgraph without label
+      labelData.width = 0;
+      labelData.height = 0;
+    }
     child.labelData = labelData;
     child.domId = nodeEl;
   }
@@ -454,18 +461,11 @@ export const render = async (data4Layout, svg, element, algorithm) => {
     id: 'root',
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-      'org.eclipse.elk.padding': '[top=100, left=100, bottom=110, right=110]',
-      'elk.layered.spacing.edgeNodeBetweenLayers': '30',
       'elk.algorithm': algorithm,
-      'nodePlacement.strategy': 'NETWORK_SIMPLEX',
-
-      'spacing.nodeNode': 70,
-      'spacing.nodeNodeBetweenLayers': 25,
-      'spacing.edgeNode': 10,
-      'spacing.edgeNodeBetweenLayers': 20,
-      'spacing.edgeEdge': 20,
-      'spacing.edgeEdgeBetweenLayers': 20,
-      'spacing.nodeSelfLoop': 20,
+      'nodePlacement.strategy': data4Layout.config['elk.nodePlacement.strategy'],
+      'elk.layered.mergeEdges': data4Layout.config.mergeEdges,
+      'elk.direction': 'DOWN',
+      'spacing.baseValue': 30,
     },
     children: [],
     edges: [],
@@ -504,18 +504,23 @@ export const render = async (data4Layout, svg, element, algorithm) => {
 
     // Subgraph
     if (parentLookupDb.childrenById[node.id] !== undefined) {
+      log.trace('Subgraph XCX', node.id, node);
       node.labels = [
         {
           text: node.labelText,
           layoutOptions: {
             'nodeLabels.placement': '[H_CENTER, V_TOP, INSIDE]',
           },
-          width: node?.labelData?.width || 100,
-          height: node?.labelData?.height || 100,
+          width: node?.labelData?.width || 0,
+          height: node?.labelData?.height || 0,
         },
       ];
+      node.layoutOptions = {
+        'spacing.baseValue': 30,
+      };
       if (node.dir) {
         node.layoutOptions = {
+          ...node.layoutOptions,
           'elk.direction': dir2ElkDirection(node.dir),
           'elk.hierarchyHandling': 'SEPARATE_CHILDREN',
         };
@@ -538,9 +543,9 @@ export const render = async (data4Layout, svg, element, algorithm) => {
     }
   });
 
-  log.info('before layout', JSON.stringify(elkGraph, null, 2));
+  log.trace('before layout', JSON.stringify(elkGraph, null, 2));
   const g = await elk.layout(elkGraph);
-  log.info('after layout DAGA', JSON.stringify(g));
+  log.info('after layout', JSON.stringify(g));
 
   // debugger;
   drawNodes(0, 0, g.children, svg, subGraphsEl, 0);

@@ -237,7 +237,6 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
     }
 
     const newNode = nodeDb[itemId];
-    // console.log('New Node:', newNode);
 
     // Save data for description and group so that for instance a statement without description overwrites
     // one with description  @todo TODO What does this mean? If important, add a test for it
@@ -273,7 +272,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
 
     // group
     if (!newNode.type && parsedItem.doc) {
-      log.info('Setting cluster for ', itemId, getDir(parsedItem));
+      log.info('Setting cluster for XCX', itemId, getDir(parsedItem));
       newNode.type = 'group';
       newNode.isGroup = true;
       newNode.dir = getDir(parsedItem);
@@ -298,11 +297,16 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
       domId: stateDomId(itemId, graphItemCount),
       type: newNode.type,
       isGroup: newNode.type === 'group',
-      padding: 15,
+      padding: 8,
       rx: 10,
       ry: 10,
       useRough,
     };
+
+    // Clear the label for dividers who have no description
+    if (nodeData.shape === SHAPE_DIVIDER) {
+      nodeData.label = '';
+    }
 
     if (parent && parent.id !== 'root') {
       log.trace('Setting node ', itemId, ' to be child of its parent ', parent.id);
@@ -324,7 +328,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
         domId: stateDomId(itemId, graphItemCount, NOTE),
         type: newNode.type,
         isGroup: newNode.type === 'group',
-        padding: 15, //getConfig().flowchart.padding
+        padding: 0, //getConfig().flowchart.padding
         useRough,
       };
       const groupData = {
@@ -337,7 +341,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
         domId: stateDomId(itemId, graphItemCount, PARENT),
         type: 'group',
         isGroup: true,
-        padding: 0, //getConfig().flowchart.padding
+        padding: 16, //getConfig().flowchart.padding
         useRough,
       };
       graphItemCount++;
@@ -382,8 +386,6 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
     } else {
       insertOrUpdateNode(nodes, nodeData);
     }
-
-    // console.log('Nodes:', nodes);
   }
   if (parsedItem.doc) {
     log.trace('Adding nodes children ');

@@ -581,11 +581,11 @@ export const getData = () => {
   // }
   extract(getRootDocV2());
   const diagramStates = getStates();
-
-  const useRough = getConfig().look === 'handdrawn';
+  const config = getConfig();
+  const useRough = config.look === 'handdrawn';
   dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, useRough);
 
-  return { nodes, edges, other: {} };
+  return { nodes, edges, other: {}, config };
 };
 
 export default {

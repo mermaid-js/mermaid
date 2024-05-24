@@ -1221,12 +1221,15 @@ direction LR
 
   <script type="module">
     import mermaid from './mermaid.esm.mjs';
+    import { layouts } from './mermaid-layout-elk.esm.mjs';
+    mermaid.registerLayoutLoaders(layouts);
     mermaid.parseError = function (err, hash) {
 
     };
 
     mermaid.initialize({
       handdrawn: false,
+      mergeEdges: true,
       layout: 'dagre',
       flowchart: { titleTopMargin: 10 },
       // fontFamily: 'Caveat',
@@ -1249,8 +1252,8 @@ direction LR
 
 
     let coll = document.getElementsByClassName("collapsible");
-    for (let i = 0; i < coll.length; i++) {
-      coll[i].addEventListener("click", function () {
+    for (const element of coll) {
+  element.addEventListener("click", function () {
         this.classList.toggle("active");
         let content = this.nextElementSibling;
         if (content.style.maxHeight) {
