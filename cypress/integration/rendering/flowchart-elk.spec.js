@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe.skip('Flowchart ELK', () => {
   it('1-elk: should render a simple flowchart', () => {
@@ -9,8 +9,7 @@ describe.skip('Flowchart ELK', () => {
       C -->|One| D[Laptop]
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
-      `,
-      {}
+      `
     );
     imgSnapshotTest(
       `flowchart TD
@@ -51,8 +50,7 @@ describe.skip('Flowchart ELK', () => {
         P2 --> P4
         P3 --> P6
         P1.5 --> P5
-      `,
-      {}
+      `
     );
   });
 
@@ -69,8 +67,7 @@ describe.skip('Flowchart ELK', () => {
       C ----> E3
       C <-...-> E4
       C ======> E5
-      `,
-      {}
+      `
     );
   });
   it('5-elk: should render escaped without html labels', () => {
@@ -90,7 +87,7 @@ describe.skip('Flowchart ELK', () => {
     );
   });
   it('7-elk: should render a flowchart when useMaxWidth is true (default)', () => {
-    renderGraph(
+    imgSnapshotTest(
       `flowchart-elk TD
       A[Christmas] -->|Get money| B(Go shopping)
       B --> C{Let me think}
@@ -113,7 +110,7 @@ describe.skip('Flowchart ELK', () => {
     });
   });
   it('8-elk: should render a flowchart when useMaxWidth is false', () => {
-    renderGraph(
+    imgSnapshotTest(
       `flowchart-elk TD
       A[Christmas] -->|Get money| B(Go shopping)
       B --> C{Let me think}
@@ -685,11 +682,10 @@ A --> B
     );
   });
   it('elk: should include classes on the edges', () => {
-    renderGraph(
+    imgSnapshotTest(
       `flowchart-elk TD
       A --> B --> C --> D
-      `,
-      {}
+      `
     );
     cy.get('svg').should((svg) => {
       const edges = svg.querySelectorAll('.edges > path');

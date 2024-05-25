@@ -11,8 +11,7 @@ describe('Configuration and directives - nodes should be light blue', () => {
             B
             C
           end
-        `,
-      {}
+        `
     );
   });
   it('Settings from initialize - nodes should be green', () => {
@@ -56,8 +55,7 @@ graph TD
             B
             C
           end
-        `,
-      {}
+        `
     );
   });
   it('Settings from frontmatter - nodes should be grey', () => {
@@ -74,8 +72,7 @@ graph TD
             B
             C
           end
-        `,
-      {}
+        `
     );
   });
 
@@ -90,8 +87,7 @@ graph TD
             B
             C
           end
-        `,
-      {}
+        `
     );
   });
   it('Settings from initialize and directive - nodes should be grey', () => {

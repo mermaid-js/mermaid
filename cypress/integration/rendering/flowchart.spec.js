@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('Graph', () => {
   it('1: should render a simple flowchart no htmlLabels', () => {
@@ -693,8 +693,7 @@ describe('Graph', () => {
     imgSnapshotTest(
       `graph TD
       A[Christmas]
-      `,
-      {}
+      `
     );
   });
 
@@ -711,8 +710,7 @@ describe('Graph', () => {
       C ----> E3
       C -----> E4
       C ======> E5
-      `,
-      {}
+      `
     );
   });
   it('36: should render escaped without html labels', () => {
@@ -732,7 +730,7 @@ describe('Graph', () => {
     );
   });
   it('38: should render a flowchart when useMaxWidth is true (default)', () => {
-    renderGraph(
+    imgSnapshotTest(
       `graph TD
       A[Christmas] -->|Get money| B(Go shopping)
       B --> C{Let me think}
@@ -755,7 +753,7 @@ describe('Graph', () => {
     });
   });
   it('39: should render a flowchart when useMaxWidth is false', () => {
-    renderGraph(
+    imgSnapshotTest(
       `graph TD
       A[Christmas] -->|Get money| B(Go shopping)
       B --> C{Let me think}

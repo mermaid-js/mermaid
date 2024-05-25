@@ -5,10 +5,8 @@ describe('Quadrant Chart', () => {
     imgSnapshotTest(
       `
   quadrantChart
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
   it('should render a complete quadrant chart', () => {
     imgSnapshotTest(
@@ -27,10 +25,8 @@ describe('Quadrant Chart', () => {
     Campaign D: [0.78, 0.34]
     Campaign E: [0.40, 0.34]
     Campaign F: [0.35, 0.78]
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
   it('should render without points', () => {
     imgSnapshotTest(
@@ -43,10 +39,8 @@ describe('Quadrant Chart', () => {
     quadrant-2 Need to promote
     quadrant-3 Re-evaluate
     quadrant-4 May be improved
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
   it('should able to render y-axix on right side', () => {
     imgSnapshotTest(
@@ -60,10 +54,8 @@ describe('Quadrant Chart', () => {
     quadrant-2 Need to promote
     quadrant-3 Re-evaluate
     quadrant-4 May be improved
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
   it('should able to render x-axix on bottom', () => {
     imgSnapshotTest(
@@ -77,10 +69,8 @@ describe('Quadrant Chart', () => {
     quadrant-2 Need to promote
     quadrant-3 Re-evaluate
     quadrant-4 May be improved
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
   it('should able to render x-axix on bottom and y-axis on right', () => {
     imgSnapshotTest(
@@ -94,10 +84,8 @@ describe('Quadrant Chart', () => {
     quadrant-2 Need to promote
     quadrant-3 Re-evaluate
     quadrant-4 May be improved
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
   it('should render without title', () => {
     imgSnapshotTest(
@@ -109,10 +97,8 @@ describe('Quadrant Chart', () => {
     quadrant-2 Need to promote
     quadrant-3 Re-evaluate
     quadrant-4 May be improved
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
   it('should use all the config', () => {
     imgSnapshotTest(
@@ -132,10 +118,8 @@ describe('Quadrant Chart', () => {
     Campaign D: [0.78, 0.34]
     Campaign E: [0.40, 0.34]
     Campaign F: [0.35, 0.78]
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
   it('should use all the theme variable', () => {
     imgSnapshotTest(
@@ -155,10 +139,8 @@ describe('Quadrant Chart', () => {
     Campaign D: [0.78, 0.34]
     Campaign E: [0.40, 0.34]
     Campaign F: [0.35, 0.78]
-      `,
-      {}
+      `
     );
-    cy.get('svg');
   });
   it('should render x-axis labels in the center, if x-axis has two labels', () => {
     imgSnapshotTest(
