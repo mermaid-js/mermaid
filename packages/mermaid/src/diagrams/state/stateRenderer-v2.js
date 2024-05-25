@@ -326,8 +326,25 @@ const setupDoc = (g, parentParsedItem, doc, diagramStates, diagramDb, altFlag) =
         break;
       case STMT_RELATION:
         {
-          setupNode(g, parentParsedItem, item.state1, diagramStates, diagramDb, altFlag);
-          setupNode(g, parentParsedItem, item.state2, diagramStates, diagramDb, altFlag);
+          // in case the type of the state is defined later in the graph: Get the type of the last state in the graph
+          let state1;
+          let state2;
+          for (let i = doc.length - 1; i >= 0; i--) {
+            if (doc[i].id === item.state1.id && doc[i].stmt === 'state') {
+              state1 = doc[i];
+            }
+            if (doc[i].id === item.state2.id && doc[i].stmt === 'state') {
+              state2 = doc[i];
+            }
+            if (state1 && state2) {
+              break;
+            }
+          }
+          state1 = state1 || item.state1;
+          state2 = state2 || item.state2;
+
+          setupNode(g, parentParsedItem, state1, diagramStates, diagramDb, altFlag);
+          setupNode(g, parentParsedItem, state2, diagramStates, diagramDb, altFlag);
           const edgeData = {
             id: getEdgeId(item.state1.id, item.state2.id, {
               counter: graphItemCount,
