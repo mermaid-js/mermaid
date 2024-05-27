@@ -1,64 +1,16 @@
 import { log } from '$root/logger.js';
-import { labelHelper, updateNodeBounds } from './util.js';
+import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node, RectOptions } from '$root/rendering-util/types.d.ts';
 import { createRoundedRectPathD } from './roundedRectPath.js';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
 
-// function applyNodePropertyBorders(
-//   rect: d3.Selection<SVGRectElement, unknown, null, undefined>,
-//   borders: string | undefined,
-//   totalWidth: number,
-//   totalHeight: number
-// ) {
-//   if (!borders) {
-//     return;
-//   }
-//   const strokeDashArray: number[] = [];
-//   const addBorder = (length: number) => {
-//     strokeDashArray.push(length, 0);
-//   };
-//   const skipBorder = (length: number) => {
-//     strokeDashArray.push(0, length);
-//   };
-//   if (borders.includes('t')) {
-//     log.debug('add top border');
-//     addBorder(totalWidth);
-//   } else {
-//     skipBorder(totalWidth);
-//   }
-//   if (borders.includes('r')) {
-//     log.debug('add right border');
-//     addBorder(totalHeight);
-//   } else {
-//     skipBorder(totalHeight);
-//   }
-//   if (borders.includes('b')) {
-//     log.debug('add bottom border');
-//     addBorder(totalWidth);
-//   } else {
-//     skipBorder(totalWidth);
-//   }
-//   if (borders.includes('l')) {
-//     log.debug('add left border');
-//     addBorder(totalHeight);
-//   } else {
-//     skipBorder(totalHeight);
-//   }
-
-//   rect.attr('stroke-dasharray', strokeDashArray.join(' '));
-// }
-
 export const drawRect = async (parent: SVGAElement, node: Node, options: RectOptions) => {
-  const { themeVariables, handdrawnSeed } = getConfig();
-  const { nodeBorder, mainBkg } = themeVariables;
-
   const { shapeSvg, bbox, halfPadding } = await labelHelper(
     parent,
     node,
-    'node ' + node.cssClasses, // + ' ' + node.class,
+    getNodeClasses(node),
     true
   );
 
@@ -79,15 +31,7 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
   if (useRough) {
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
-    const options = userNodeOverrides(node, {
-      roughness: 0.7,
-      fill: mainBkg,
-      // fillStyle: 'solid', // solid fill'
-      fillStyle: 'hachure', // solid fill'
-      fillWeight: 3.5,
-      stroke: nodeBorder,
-      seed: handdrawnSeed,
-    });
+    const options = userNodeOverrides(node, {});
 
     console.log('rect options: ', options);
     const roughNode =

@@ -139,3 +139,6 @@ export function insertPolygonShape(parent, w, h, points) {
     .attr('class', 'label-container')
     .attr('transform', 'translate(' + -w / 2 + ',' + h / 2 + ')');
 }
+
+export const getNodeClasses = (node, extra) =>
+  (node.useRough ? 'rough-node' : 'node') + ' ' + node.cssClasses + ' ' + (extra || '');

@@ -1,7 +1,6 @@
 import { log } from '$root/logger.js';
-import { labelHelper, updateNodeBounds } from './util.js';
+import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
@@ -31,15 +30,7 @@ export const createLeanLeftPathD = (
 };
 
 export const lean_left = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
-  const { themeVariables, handdrawnSeed } = getConfig();
-  const { nodeBorder, mainBkg } = themeVariables;
-
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(
-    parent,
-    node,
-    'node ' + node.cssClasses,
-    true
-  );
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node), true);
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
@@ -54,17 +45,9 @@ export const lean_left = async (parent: SVGAElement, node: Node): Promise<SVGAEl
   const { cssStyles, useRough } = node;
 
   if (useRough) {
-    console.log('Lean Left: Inside use useRough');
+    // @ts-ignore
     const rc = rough.svg(shapeSvg);
-    const options = userNodeOverrides(node, {
-      roughness: 0.7,
-      fill: mainBkg,
-      fillStyle: 'hachure',
-      fillWeight: 1.5,
-      stroke: nodeBorder,
-      seed: handdrawnSeed,
-      strokeWidth: 1,
-    });
+    const options = userNodeOverrides(node, {});
     const pathData = createLeanLeftPathD(0, 0, w, h);
     const roughNode = rc.path(pathData, options);
 

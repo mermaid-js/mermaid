@@ -1,7 +1,6 @@
 import { log } from '$root/logger.js';
-import { labelHelper, updateNodeBounds } from './util.js';
+import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
@@ -33,17 +32,35 @@ export const createCylinderPathD = (
     `l0,${-height}`,
   ].join(' ');
 };
-
+export const createOuterCylinderPathD = (
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  rx: number,
+  ry: number
+): string => {
+  return [
+    `M${x},${y + ry}`,
+    `M${x + width},${y + ry}`,
+    `a${rx},${ry} 0,0,0 ${-width},0`,
+    `l0,${height}`,
+    `a${rx},${ry} 0,0,0 ${width},0`,
+    `l0,${-height}`,
+  ].join(' ');
+};
+export const createInnerCylinderPathD = (
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  rx: number,
+  ry: number
+): string => {
+  return [`M${x - width / 2},${-height / 2}`, `a${rx},${ry} 0,0,0 ${width},0`].join(' ');
+};
 export const cylinder = async (parent: SVGAElement, node: Node) => {
-  const { themeVariables, handdrawnSeed } = getConfig();
-  const { nodeBorder, mainBkg } = themeVariables;
-
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(
-    parent,
-    node,
-    'node ' + node.cssClasses, // + ' ' + node.class,
-    true
-  );
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node), true);
 
   const w = bbox.width + node.padding;
   const rx = w / 2;
@@ -54,21 +71,15 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
   const { cssStyles, useRough } = node;
 
   if (useRough) {
-    console.log('Cylinder: Inside use useRough');
+    // @ts-ignore
     const rc = rough.svg(shapeSvg);
-    const options = userNodeOverrides(node, {
-      roughness: 0.7,
-      fill: mainBkg,
-      fillStyle: 'hachure',
-      fillWeight: 1.5,
-      stroke: nodeBorder,
-      seed: handdrawnSeed,
-      strokeWidth: 1,
-    });
-    const pathData = createCylinderPathD(0, 0, w, h, rx, ry);
-    const roughNode = rc.path(pathData, options);
+    const outerPathData = createOuterCylinderPathD(0, 0, w, h, rx, ry);
+    const innerPathData = createInnerCylinderPathD(0, ry, w, h, rx, ry);
+    const outerNode = rc.path(outerPathData, userNodeOverrides(node, {}));
+    const innerLine = rc.path(innerPathData, userNodeOverrides(node, { fill: 'none' }));
 
-    cylinder = shapeSvg.insert(() => roughNode, ':first-child');
+    cylinder = shapeSvg.insert(() => innerLine, ':first-child');
+    cylinder = shapeSvg.insert(() => outerNode, ':first-child');
     cylinder.attr('class', 'basic label-container');
     if (cssStyles) {
       cylinder.attr('style', cssStyles);

@@ -1,7 +1,6 @@
 import { log } from '$root/logger.js';
-import { labelHelper, updateNodeBounds } from './util.js';
+import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
@@ -53,15 +52,7 @@ export const createStadiumPathD = (
 };
 
 export const stadium = async (parent: SVGAElement, node: Node) => {
-  const { themeVariables, handdrawnSeed } = getConfig();
-  const { nodeBorder, mainBkg } = themeVariables;
-
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(
-    parent,
-    node,
-    'node ' + node.cssClasses, // + ' ' + node.class,
-    true
-  );
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node), true);
 
   const h = bbox.height + node.padding;
   const w = bbox.width + h / 4 + node.padding;
@@ -69,20 +60,11 @@ export const stadium = async (parent: SVGAElement, node: Node) => {
   let rect;
   const { cssStyles, useRough } = node;
   if (useRough) {
-    console.log('Stadium:Inside use useRough');
+    // @ts-ignore
     const rc = rough.svg(shapeSvg);
-    const options = userNodeOverrides(node, {
-      roughness: 0.7,
-      fill: mainBkg,
-      fillStyle: 'hachure', // solid fill
-      fillWeight: 3.5,
-      stroke: nodeBorder,
-      seed: handdrawnSeed,
-      // strokeWidth: 1,
-    });
+    const options = userNodeOverrides(node, {});
 
-    console.log('Stadium options: ', options);
-    const pathData = createRoundedRectPathD(-w / 2, -h / 2, w, h, h / 3);
+    const pathData = createRoundedRectPathD(-w / 2, -h / 2, w, h, h / 2);
     const roughNode = rc.path(pathData, options);
 
     rect = shapeSvg.insert(() => roughNode, ':first-child');

@@ -1,7 +1,6 @@
 import { log } from '$root/logger.js';
-import { labelHelper, updateNodeBounds } from './util.js';
+import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
@@ -34,39 +33,14 @@ export const createSubroutinePathD = (
 };
 
 export const subroutine = async (parent: SVGAElement, node: Node) => {
-  const { themeVariables, handdrawnSeed } = getConfig();
-  const { nodeBorder, mainBkg } = themeVariables;
-
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(
-    parent,
-    node,
-    'node ' + node.cssClasses, // + ' ' + node.class,
-    true
-  );
-
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node), true);
+  const halfPadding = (node?.padding || 0) / 2;
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
-
+  const x = -bbox.width / 2 - halfPadding;
+  const y = -bbox.height / 2 - halfPadding;
   let rect;
   const { cssStyles, useRough } = node;
-  if (useRough) {
-    const rc = rough.svg(shapeSvg);
-    const options = userNodeOverrides(node, {
-      roughness: 0.7,
-      fill: mainBkg,
-      fillStyle: 'hachure',
-      fillWeight: 1.5,
-      stroke: nodeBorder,
-      seed: handdrawnSeed,
-      strokeWidth: 1,
-    });
-    const pathData = createSubroutinePathD(-w / 2, -h / 2, w, h);
-    const roughNode = rc.path(pathData, options);
-
-    rect = shapeSvg.insert(() => roughNode, ':first-child');
-    rect.attr('class', 'basic label-container').attr('style', cssStyles);
-  }
-
   const points = [
     { x: 0, y: 0 },
     { x: w, y: 0 },
@@ -80,12 +54,28 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
     { x: -8, y: 0 },
   ];
 
-  const el = insertPolygonShape(shapeSvg, w, h, points);
-  if (cssStyles) {
-    el.attr('style', cssStyles);
-  }
+  if (useRough) {
+    // @ts-ignore
+    const rc = rough.svg(shapeSvg);
+    const options = userNodeOverrides(node, {});
+    const pathData = createSubroutinePathD(-w / 2, -h / 2, w, h);
 
-  updateNodeBounds(node, el);
+    const roughNode = rc.rectangle(x - 8, y, w + 16, h, options);
+    const l1 = rc.line(x, y, x, y + h, options);
+    const l2 = rc.line(x + w, y, x + w, y + h, options);
+
+    shapeSvg.insert(() => l1, ':first-child');
+    shapeSvg.insert(() => l2, ':first-child');
+    rect = shapeSvg.insert(() => roughNode, ':first-child');
+
+    rect.attr('class', 'basic label-container').attr('style', cssStyles);
+  } else {
+    const el = insertPolygonShape(shapeSvg, w, h, points);
+    if (cssStyles) {
+      el.attr('style', cssStyles);
+    }
+    updateNodeBounds(node, el);
+  }
 
   node.intersect = function (point) {
     return intersect.polygon(node, points, point);

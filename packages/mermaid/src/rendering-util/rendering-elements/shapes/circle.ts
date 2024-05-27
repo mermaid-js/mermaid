@@ -1,19 +1,15 @@
 import { log } from '$root/logger.js';
-import { labelHelper, updateNodeBounds } from './util.js';
+import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
 
 export const circle = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
-  const { themeVariables, handdrawnSeed } = getConfig();
-  const { nodeBorder, mainBkg } = themeVariables;
-
   const { shapeSvg, bbox, halfPadding } = await labelHelper(
     parent,
     node,
-    'node ' + node.cssClasses,
+    getNodeClasses(node),
     true
   );
 
@@ -22,17 +18,9 @@ export const circle = async (parent: SVGAElement, node: Node): Promise<SVGAEleme
   const { cssStyles, useRough } = node;
 
   if (useRough) {
-    console.log('Circle: Inside use useRough');
+    // @ts-ignore
     const rc = rough.svg(shapeSvg);
-    const options = userNodeOverrides(node, {
-      roughness: 0.9,
-      fill: mainBkg,
-      fillStyle: 'hachure',
-      fillWeight: 1.5,
-      stroke: nodeBorder,
-      seed: handdrawnSeed,
-      strokeWidth: 1,
-    });
+    const options = userNodeOverrides(node, {});
     const roughNode = rc.circle(0, 0, radius * 2, options);
 
     circleElem = shapeSvg.insert(() => roughNode, ':first-child');
