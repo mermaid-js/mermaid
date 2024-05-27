@@ -7,8 +7,19 @@ import { stateEnd } from './shapes/stateEnd.ts';
 import { forkJoin } from './shapes/forkJoin.ts';
 import { choice } from './shapes/choice.ts';
 import { note } from './shapes/note.ts';
+import { stadium } from './shapes/stadium.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
-
+import { subroutine } from './shapes/subroutine.js';
+import { cylinder } from './shapes/cylinder.js';
+import { circle } from './shapes/circle.js';
+import { doublecircle } from './shapes/doubleCircle.js';
+import { rect_left_inv_arrow } from './shapes/rectLeftInvArrow.js';
+import { question } from './shapes/question.js';
+import { hexagon } from './shapes/hexagon.js';
+import { lean_right } from './shapes/leanRight.js';
+import { lean_left } from './shapes/leanLeft.js';
+import { trapezoid } from './shapes/trapezoid.js';
+import { inv_trapezoid } from './shapes/invertedTrapezoid.js';
 const formatClass = (str) => {
   if (str) {
     return ' ' + str;
@@ -26,6 +37,18 @@ const shapes = {
   note,
   roundedRect,
   squareRect,
+  stadium,
+  subroutine,
+  cylinder,
+  circle,
+  doublecircle,
+  odd: rect_left_inv_arrow,
+  diamond: question,
+  hexagon,
+  lean_right,
+  lean_left,
+  trapezoid,
+  inv_trapezoid,
 };
 
 let nodeElems = {};
@@ -33,6 +56,18 @@ let nodeElems = {};
 export const insertNode = async (elem, node, dir) => {
   let newEl;
   let el;
+
+  if (node) {
+    console.log('BLA: rect node', JSON.stringify(node));
+  }
+  //special check for rect shape (with or without rounded corners)
+  if (node.shape === 'rect') {
+    if (node.rx && node.ry) {
+      node.shape = 'roundedRect';
+    } else {
+      node.shape = 'squareRect';
+    }
+  }
 
   // Add link when appropriate
   if (node.link) {

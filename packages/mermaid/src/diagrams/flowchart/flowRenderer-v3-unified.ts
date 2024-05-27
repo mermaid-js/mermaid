@@ -3,7 +3,7 @@ import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
 import type { LayoutData, LayoutMethod } from '../../rendering-util/types.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { render } from '../../rendering-util/render.js';
-import { getDiagramElements } from '../../rendering-util/inserElementsForSize.js';
+import { getDiagramElements } from '../../rendering-util/insertElementsForSize.js';
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import { getDirection } from './flowDb.js';
 

@@ -774,6 +774,7 @@ export const getData = () => {
 
   // extract(getRootDocV2());
   // const diagramStates = getStates();
+  const useRough = config.look === 'handdrawn';
   const n = getVertices();
   n.forEach((vertex) => {
     const node: Node = {
@@ -788,11 +789,12 @@ export const getData = () => {
       domId: vertex.domId,
       type: undefined,
       isGroup: false,
+      useRough,
     };
     nodes.push(node);
   });
 
-  const useRough = config.look === 'handdrawn';
+  //const useRough = config.look === 'handdrawn';
 
   return { nodes, edges, other: {}, config };
 };

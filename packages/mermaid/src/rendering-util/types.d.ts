@@ -57,6 +57,10 @@ interface Node {
   borderStyle?: string;
   borderWidth?: number;
   labelTextColor?: string;
+
+  // Flowchart specific properties
+  x?: number;
+  y?: number;
 }
 
 // Common properties for any edge in the system

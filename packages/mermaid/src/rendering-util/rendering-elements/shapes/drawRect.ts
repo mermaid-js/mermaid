@@ -68,7 +68,14 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
   const y = -bbox.height / 2 - halfPadding;
 
   let rect;
-  const { rx, ry, cssStyles, useRough } = node;
+  let { rx, ry, cssStyles, useRough } = node;
+
+  //use options rx, ry overrides if present
+  if (options && options.rx && options.ry) {
+    rx = options.rx;
+    ry = options.ry;
+  }
+
   if (useRough) {
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
@@ -81,6 +88,8 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
       stroke: nodeBorder,
       seed: handdrawnSeed,
     });
+
+    console.log('rect options: ', options);
     const roughNode =
       rx || ry
         ? rc.path(createRoundedRectPathD(x, y, totalWidth, totalHeight, rx || 0), options)
