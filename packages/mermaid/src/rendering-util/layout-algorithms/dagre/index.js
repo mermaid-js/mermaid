@@ -180,7 +180,10 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
       if (graph.children(v).length > 0) {
         node.height += 0;
         const parent = graph.node(node.parentId);
-        node.y += (node.offsetY || 0) / 2;
+        const halfPadding = node?.padding / 2 || 0;
+        const labelHeight = node?.labelBBox?.height || 0;
+        const offsetY = labelHeight - halfPadding || 0;
+        node.y += offsetY / 2 + 2;
         insertCluster(clusters, node);
 
         // A cluster in the non-recursive way

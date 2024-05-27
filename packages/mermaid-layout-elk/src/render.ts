@@ -68,6 +68,7 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
     child.width = boundingBox.width;
     child.height = boundingBox.height;
   } else {
+    // A subgraph
     child.children = [];
     await addVertices(nodeEl, nodeArr, child, node.id);
 
@@ -75,7 +76,8 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
       const { shapeSvg, bbox } = await labelHelper(nodeEl, node, undefined, true);
       labelData.width = bbox.width;
       labelData.wrappingWidth = getConfig().flowchart.wrappingWidth;
-      labelData.height = bbox.height - 8;
+      // Give some padding for elk
+      labelData.height = bbox.height - 2;
       labelData.labelNode = shapeSvg.node();
       // We need the label hight to be able to size the subgraph;
       shapeSvg.remove();
@@ -503,8 +505,9 @@ export const render = async (data4Layout, svg, element, algorithm) => {
     const node = nodeDb[n.id];
 
     // Subgraph
+    console.log('Subgraph XCX before');
     if (parentLookupDb.childrenById[node.id] !== undefined) {
-      log.trace('Subgraph XCX', node.id, node);
+      console.log('Subgraph XCX', node.id, node, node.labelData);
       node.labels = [
         {
           text: node.labelText,
@@ -543,7 +546,7 @@ export const render = async (data4Layout, svg, element, algorithm) => {
     }
   });
 
-  log.trace('before layout', JSON.stringify(elkGraph, null, 2));
+  console.log('before layout', JSON.stringify(elkGraph, null, 2));
   const g = await elk.layout(elkGraph);
   log.info('after layout', JSON.stringify(g));
 

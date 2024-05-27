@@ -102,17 +102,6 @@ export const rect = async (parent: SVGAElement, node: Node) => {
       .attr('height', totalHeight);
   }
 
-  // if (node.props) {
-  //   const propKeys = new Set(Object.keys(node.props));
-  //   if (node.props.borders) {
-  //     applyNodePropertyBorders(rect, node.props.borders + '', totalWidth, totalHeight);
-  //     propKeys.delete('borders');
-  //   }
-  //   propKeys.forEach((propKey) => {
-  //     log.warn(`Unknown node property ${propKey}`);
-  //   });
-  // }
-
   updateNodeBounds(node, rect);
 
   node.intersect = function (point) {

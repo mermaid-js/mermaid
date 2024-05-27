@@ -88,7 +88,7 @@ const rect = (parent, node) => {
     return intersectRect(node, point);
   };
 
-  return shapeSvg;
+  return { cluster: shapeSvg, labelBBox: bbox };
 };
 
 /**
@@ -141,7 +141,7 @@ const noteGroup = (parent, node) => {
     return intersectRect(node, point);
   };
 
-  return shapeSvg;
+  return { cluster: shapeSvg, labelBBox: { width: 0, height: 0 } };
 };
 const roundedWithTitle = (parent, node) => {
   const siteConfig = getConfig();
@@ -171,7 +171,6 @@ const roundedWithTitle = (parent, node) => {
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }
-  bbox = text.getBBox();
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
 
@@ -232,29 +231,30 @@ const roundedWithTitle = (parent, node) => {
       .attr('height', innerHeight);
   }
 
-  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
   // Center the label
   label.attr(
     'transform',
     `translate(${node.x - bbox.width / 2}, ${
       node.y -
       node.height / 2 -
-      node.padding / 3 +
-      (evaluate(siteConfig.flowchart.htmlLabels) ? 5 : 3) +
-      subGraphTitleTopMargin
+      node.padding +
+      bbox.height / 2 -
+      (evaluate(siteConfig.flowchart.htmlLabels) ? 5 : 3)
     })`
   );
 
   const rectBox = rect.node().getBBox();
   node.height = rectBox.height;
   node.offsetX = 0;
-  node.offsetY = 20;
+  // Used by payout engone to position subgraph in parent
+  node.offsetY = bbox.height - node.padding / 2;
+  node.labelBBox = bbox;
 
   node.intersect = function (point) {
     return intersectRect(node, point);
   };
 
-  return shapeSvg;
+  return { cluster: shapeSvg, labelBBox: bbox };
 };
 
 const divider = (parent, node) => {
@@ -301,7 +301,7 @@ const divider = (parent, node) => {
     return intersectRect(node, point);
   };
 
-  return shapeSvg;
+  return { cluster: shapeSvg, labelBBox: { width: 0, height: 0 } };
 };
 
 const shapes = { rect, roundedWithTitle, noteGroup, divider };
