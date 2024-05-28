@@ -80,52 +80,23 @@
   init: {
   "theme":"base",
   "fontFamily": "Kalam",
-  "themeVariables": {
-    "background": "#FFFFFF",
-    "primaryColor": "#7bdfa7",
-    "primaryTextColor": "#3c3c3b",
-    "secondaryColor": "#642470",
-    "secondaryTextColor": "#3c3c3b",
-    "tertiaryColor": "#1c736D",
-    "tertiaryTextColor": "#3c3c3b",
-    "noteBkgColor": "#9fd8ef",
-    "loopTextColor": "#636362",
-    "labelBoxBkgColor": "#642470",
-    "labelBoxBorderColor": "#642470",
-    "labelTextColor": "#d4d4d4",
-    "signalTextColor": "#636362",
-    "signalColor": "#642470"
-  }
-  }
-}%%
-sequenceDiagram
-    Alice->>+John: Hello John, how are you?
-    Alice->>+John: John, can you hear me?
-    John-->>-Alice: Hi Alice, I can hear you!
-    John-->>-Alice: I feel great!
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
-%%{
-  init: {
-    "theme":"base",
-  "fontFamily": "Forth Bold",
-  "themeVariables": {
-    "background": "#FFFFFF",
-    "primaryColor": "#7bdfa7",
-    "primaryTextColor": "#3c3c3b",
-    "secondaryColor": "#642470",
-    "secondaryTextColor": "#3c3c3b",
-    "tertiaryColor": "#1c736D",
-    "tertiaryTextColor": "#3c3c3b",
-    "noteBkgColor": "#9fd8ef",
-    "loopTextColor": "#636362",
-    "labelBoxBkgColor": "#642470",
-    "labelBoxBorderColor": "#642470",
-    "labelTextColor": "#d4d4d4",
-    "signalTextColor": "#636362",
-    "signalColor": "#642470"
-  }
+  "themeVariables":
+    {
+      "background": "#FFFFFF",
+      "primaryColor": "#7bdfa7",
+      "primaryTextColor": "#3c3c3b",
+      "secondaryColor": "#642470",
+      "secondaryTextColor": "#3c3c3b",
+      "tertiaryColor": "#1c736D",
+      "tertiaryTextColor": "#3c3c3b",
+      "noteBkgColor": "#9fd8ef",
+      "loopTextColor": "#636362",
+      "labelBoxBkgColor": "#642470",
+      "labelBoxBorderColor": "#642470",
+      "labelTextColor": "#d4d4d4",
+      "signalTextColor": "#636362",
+      "signalColor": "#642470"
+    }
   }
 }%%
 sequenceDiagram
@@ -137,29 +108,35 @@ sequenceDiagram
     >
 
     <pre id="diagram" class="mermaid2">
-      %%{init: {"layout": "elk", "mergeEdges": true} }%%
+      %%{init: {"layout": "dagre", "mergeEdges": true} }%%
 stateDiagram
-      A --> B
+      A: This is A
       </pre
     >
-    <pre id="diagram" class="mermaid">
-      %%{init: {"layout": "elk", "mergeEdges": true} }%%
+    <pre id="diagram" class="mermaid2">
+      %%{init: {"layout": "dagre", "mergeEdges": true} }%%
 flowchart
       A --> B(This is B)
       </pre
     >
     <pre id="diagram" class="mermaid2">
-      %%{init: {"layout": "elk", "mergeEdges": false, "elk.nodePlacement.strategy": "NETWORK_SIMPLEX"} }%%
-stateDiagram
-  State T0 {
-    direction LR
-    A --> B
-  }
-  State T1 {
-    [*] --> NumLockOff
-    NumLockOff --> NumLockOn : EvNumLockPressed
-    NumLockOn --> NumLockOff : EvNumLockPressed
-  }
+      %%{init: {"layout": "elk", "mergeEdges": false, "elk.nodePlacement.strategy": "SIMPLE"} }%%
+      stateDiagram
+    state if_state &lt;&lt;choice&gt;&gt;
+    [*] --> IsPositive
+    IsPositive --> if_state
+    if_state --> False: if n < 0
+    if_state --> True : if n >= 0
+      </pre
+    >
+    <pre id="diagram" class="mermaid">
+      %%{init: {"layout": "elk", "mergeEdges": false, "elk.nodePlacement.strategy": "SIMPLE"} }%%
+      stateDiagram
+    state if_state &lt;&lt;choice&gt;&gt;
+    [*] --> IsPositive
+    IsPositive --> if_state
+    if_state --> False: if n < 0
+    if_state --> True : if n >= 0
       </pre
     >
     <pre id="diagram" class="mermaid2">
@@ -250,16 +227,16 @@ stateDiagram-v2
         console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'base',
+        // theme: 'base',
         handdrawnSeed: 12,
         look: 'handdrawn',
-        'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+
         // layout: 'dagre',
-        layout: 'elk',
+        // layout: 'elk',
         flowchart: { titleTopMargin: 10 },
         // fontFamily: 'Caveat',
-        // fontFamily: 'Kalam',
-        fontFamily: 'courier',
+        fontFamily: 'Kalam',
+        // fontFamily: 'courier',
         sequence: {
           actorFontFamily: 'courier',
           noteFontFamily: 'courier',
@@ -275,10 +252,6 @@ stateDiagram-v2
         console.error('In parse error:');
         console.error(err);
       };
-      // mermaid.test1('first_slow', 1200).then((r) => console.info(r));
-      // mermaid.test1('second_fast', 200).then((r) => console.info(r));
-      // mermaid.test1('third_fast', 200).then((r) => console.info(r));
-      // mermaid.test1('forth_slow', 1200).then((r) => console.info(r));
     </script>
   </body>
 </html>

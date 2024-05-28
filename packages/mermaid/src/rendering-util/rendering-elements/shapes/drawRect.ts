@@ -33,7 +33,6 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
 
-    console.log('rect options: ', options);
     const roughNode =
       rx || ry
         ? rc.path(createRoundedRectPathD(x, y, totalWidth, totalHeight, rx || 0), options)
