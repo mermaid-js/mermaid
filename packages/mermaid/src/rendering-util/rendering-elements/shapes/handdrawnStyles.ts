@@ -18,8 +18,25 @@ export const solidStateFill = (color: string) => {
 // Striped fill like start or fork nodes in state diagrams
 // TODO remove any
 export const userNodeOverrides = (node: Node, options: any) => {
-  const result = Object.assign({}, options);
-  result.fill = node.backgroundColor || options.fill;
-  result.stroke = node.borderColor || options.stroke;
+  const { themeVariables, handdrawnSeed } = getConfig();
+  const { nodeBorder, mainBkg } = themeVariables;
+  const result = Object.assign(
+    {
+      roughness: 0.7,
+      fill: mainBkg,
+      fillStyle: 'hachure', // solid fill
+      fillWeight: 3.5,
+      stroke: nodeBorder,
+      seed: handdrawnSeed,
+      strokeWidth: 1.3,
+    },
+    options
+  );
+  if (node.backgroundColor) {
+    result.fill = node.backgroundColor;
+  }
+  if (node.borderColor) {
+    result.stroke = node.borderColor;
+  }
   return result;
 };

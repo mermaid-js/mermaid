@@ -23,6 +23,11 @@ export const getDiagramElements = (id, securityLevel) => {
 };
 
 // export function insertElementsForSize(el: SVGElement, data: LayoutData): void {
+/**
+ *
+ * @param el
+ * @param data
+ */
 export function insertElementsForSize(el, data) {
   const nodesElem = el.insert('g').attr('class', 'nodes');
   const edgesElem = el.insert('g').attr('class', 'edges');
