@@ -31,20 +31,12 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
     label = typeof node.label === 'string' ? node.label : node.label[0];
   }
 
-  const textNode = labelEl.node();
   let text;
-  if (node.labelType === 'markdown') {
-    // text = textNode;
-    text = createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
-      useHtmlLabels,
-      width: node.width || getConfig().flowchart.wrappingWidth,
-      cssClasses: 'markdown-node-label',
-    });
-  } else {
-    text = textNode.appendChild(
-      createLabel(sanitizeText(decodeEntities(label), getConfig()), node.labelStyle, false, isNode)
-    );
-  }
+  text = createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
+    useHtmlLabels,
+    width: node.width || getConfig().flowchart.wrappingWidth,
+    cssClasses: 'markdown-node-label',
+  });
   // Get the size of the label
   let bbox = text.getBBox();
   const halfPadding = node.padding / 2;
@@ -139,3 +131,6 @@ export function insertPolygonShape(parent, w, h, points) {
     .attr('class', 'label-container')
     .attr('transform', 'translate(' + -w / 2 + ',' + h / 2 + ')');
 }
+
+export const getNodeClasses = (node, extra) =>
+  (node.useRough ? 'rough-node' : 'node') + ' ' + node.cssClasses + ' ' + (extra || '');

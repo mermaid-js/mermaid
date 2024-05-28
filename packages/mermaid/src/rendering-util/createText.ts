@@ -32,6 +32,7 @@ function addHtmlSpan(element, node, width, classes, addBackground = false) {
   applyStyle(div, node.labelStyle);
   div.style('display', 'table-cell');
   div.style('white-space', 'nowrap');
+  div.style('line-height', '1');
   div.style('max-width', width + 'px');
   div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
   if (addBackground) {
@@ -197,7 +198,16 @@ export const createText = (
   } = {},
   config: MermaidConfig
 ) => {
-  log.info('createText', text, style, isTitle, classes, useHtmlLabels, isNode, addSvgBackground);
+  log.info(
+    'createText XEX',
+    text,
+    style,
+    isTitle,
+    classes,
+    useHtmlLabels,
+    isNode,
+    addSvgBackground
+  );
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
 

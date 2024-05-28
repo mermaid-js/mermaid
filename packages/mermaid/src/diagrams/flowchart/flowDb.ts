@@ -2,6 +2,7 @@ import { select } from 'd3';
 import utils from '../../utils.js';
 import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
+import type { LayoutData, LayoutMethod, Node, Edge } from '../../rendering-util/types.js';
 import { log } from '../../logger.js';
 import {
   setAccTitle,
@@ -755,11 +756,55 @@ export const lex = {
   firstGraph,
 };
 
+const getTypeFromVertex = (vertex: FlowVertex) => {
+  if (vertex.type === 'square') {
+    return 'squareRect';
+  }
+  if (vertex.type === 'round') {
+    return 'roundedRect';
+  }
+
+  return vertex.type || 'squareRect';
+};
+
+export const getData = () => {
+  const config = getConfig();
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+
+  // extract(getRootDocV2());
+  // const diagramStates = getStates();
+  const useRough = config.look === 'handdrawn';
+  const n = getVertices();
+  n.forEach((vertex) => {
+    const node: Node = {
+      id: vertex.id,
+      label: vertex.text,
+      labelStyle: '',
+      padding: config.flowchart?.padding || 8,
+      cssStyles: vertex.styles.join(' '),
+      cssClasses: vertex.classes.join(' '),
+      shape: getTypeFromVertex(vertex),
+      dir: vertex.dir,
+      domId: vertex.domId,
+      type: undefined,
+      isGroup: false,
+      useRough,
+    };
+    nodes.push(node);
+  });
+
+  //const useRough = config.look === 'handdrawn';
+
+  return { nodes, edges, other: {}, config };
+};
+
 export default {
   defaultConfig: () => defaultConfig.flowchart,
   setAccTitle,
   getAccTitle,
   getAccDescription,
+  getData,
   setAccDescription,
   addVertex,
   lookUpDomId,

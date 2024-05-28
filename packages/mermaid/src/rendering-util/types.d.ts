@@ -1,5 +1,5 @@
-import type { MermaidConfig } from '$root/config.type.ts';
-
+import config from '../../dist/defaultConfig';
+import type { MermaidConfig } from '../../dist/config.type';
 export type MarkdownWordType = 'normal' | 'strong' | 'emphasis';
 export interface MarkdownWord {
   content: string;
@@ -57,6 +57,10 @@ interface Node {
   borderStyle?: string;
   borderWidth?: number;
   labelTextColor?: string;
+
+  // Flowchart specific properties
+  x?: number;
+  y?: number;
 }
 
 // Common properties for any edge in the system
@@ -88,6 +92,12 @@ interface Edge {
   pattern?: string;
   thickness?: number;
   useRough?: boolean;
+}
+
+interface RectOptions {
+  rx: number;
+  ry: number;
+  classes: string;
 }
 
 // Extending the Node interface for specific types if needed

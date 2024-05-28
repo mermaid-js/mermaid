@@ -136,15 +136,19 @@ sequenceDiagram
       </pre
     >
 
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
       %%{init: {"layout": "elk", "mergeEdges": true} }%%
 stateDiagram
-  direction TB
-  T00 --> T0
-  T00 --> T1
+      A --> B
       </pre
     >
     <pre id="diagram" class="mermaid">
+      %%{init: {"layout": "elk", "mergeEdges": true} }%%
+flowchart
+      A --> B(This is B)
+      </pre
+    >
+    <pre id="diagram" class="mermaid2">
       %%{init: {"layout": "elk", "mergeEdges": false, "elk.nodePlacement.strategy": "NETWORK_SIMPLEX"} }%%
 stateDiagram
   State T0 {

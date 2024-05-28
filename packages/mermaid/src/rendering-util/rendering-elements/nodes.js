@@ -1,12 +1,25 @@
 import { log } from '$root/logger.js';
-import { rect } from './shapes/rect.ts';
+import { state } from './shapes/state.ts';
+import { roundedRect } from './shapes/roundedRect.ts';
+import { squareRect } from './shapes/squareRect.ts';
 import { stateStart } from './shapes/stateStart.ts';
 import { stateEnd } from './shapes/stateEnd.ts';
 import { forkJoin } from './shapes/forkJoin.ts';
 import { choice } from './shapes/choice.ts';
 import { note } from './shapes/note.ts';
+import { stadium } from './shapes/stadium.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
-
+import { subroutine } from './shapes/subroutine.js';
+import { cylinder } from './shapes/cylinder.js';
+import { circle } from './shapes/circle.js';
+import { doublecircle } from './shapes/doubleCircle.js';
+import { rect_left_inv_arrow } from './shapes/rectLeftInvArrow.js';
+import { question } from './shapes/question.js';
+import { hexagon } from './shapes/hexagon.js';
+import { lean_right } from './shapes/leanRight.js';
+import { lean_left } from './shapes/leanLeft.js';
+import { trapezoid } from './shapes/trapezoid.js';
+import { inv_trapezoid } from './shapes/invertedTrapezoid.js';
 const formatClass = (str) => {
   if (str) {
     return ' ' + str;
@@ -15,13 +28,27 @@ const formatClass = (str) => {
 };
 
 const shapes = {
-  rect,
+  state,
   stateStart,
   stateEnd,
   fork: forkJoin,
   join: forkJoin,
   choice,
   note,
+  roundedRect,
+  squareRect,
+  stadium,
+  subroutine,
+  cylinder,
+  circle,
+  doublecircle,
+  odd: rect_left_inv_arrow,
+  diamond: question,
+  hexagon,
+  lean_right,
+  lean_left,
+  trapezoid,
+  inv_trapezoid,
 };
 
 let nodeElems = {};
@@ -30,7 +57,18 @@ export const insertNode = async (elem, node, dir) => {
   let newEl;
   let el;
 
-  // debugger;
+  if (node) {
+    console.log('BLA: rect node', JSON.stringify(node));
+  }
+  //special check for rect shape (with or without rounded corners)
+  if (node.shape === 'rect') {
+    if (node.rx && node.ry) {
+      node.shape = 'roundedRect';
+    } else {
+      node.shape = 'squareRect';
+    }
+  }
+
   // Add link when appropriate
   if (node.link) {
     let target;
