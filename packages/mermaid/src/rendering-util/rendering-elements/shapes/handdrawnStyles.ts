@@ -28,7 +28,7 @@ export const userNodeOverrides = (node: Node, options: any) => {
       fillWeight: 3.5,
       stroke: nodeBorder,
       seed: handdrawnSeed,
-      strokeWidth: 1,
+      strokeWidth: 1.3,
     },
     options
   );

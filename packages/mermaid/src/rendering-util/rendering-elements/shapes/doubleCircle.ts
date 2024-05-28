@@ -1,20 +1,16 @@
 import { log } from '$root/logger.js';
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
 //import d3 from 'd3';
 
 export const doublecircle = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
-  const { themeVariables } = getConfig();
-  const { mainBkg } = themeVariables;
-
   const { shapeSvg, bbox, halfPadding } = await labelHelper(
     parent,
     node,
-    'node ' + node.cssClasses,
+    getNodeClasses(node),
     true
   );
   const gap = 5;
@@ -27,13 +23,14 @@ export const doublecircle = async (parent: SVGAElement, node: Node): Promise<SVG
   if (useRough) {
     // @ts-ignore
     const rc = rough.svg(shapeSvg);
-    const outerOptions = userNodeOverrides(node, {});
+    const outerOptions = userNodeOverrides(node, { roughness: 0.2, strokeWidth: 2.5 });
 
-    const innerOptions = { ...outerOptions, fill: mainBkg };
+    const innerOptions = userNodeOverrides(node, { roughness: 0.2, strokeWidth: 1.5 });
     const outerRoughNode = rc.circle(0, 0, outerRadius * 2, outerOptions);
     const innerRoughNode = rc.circle(0, 0, innerRadius * 2, innerOptions);
 
     circleGroup = shapeSvg.insert('g', ':first-child');
+    // circleGroup = circleGroup.insert(() => outerRoughNode, ':first-child');
     circleGroup.attr('class', node.cssClasses).attr('style', cssStyles);
 
     circleGroup.node()?.appendChild(outerRoughNode);
