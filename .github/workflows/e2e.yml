@@ -17,9 +17,19 @@ permissions:
   contents: read
 
 env:
-  # For PRs and MergeQueues, the target commit is used, and for push events, github.event.previous is used.
-  targetHash: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || (github.event.before == '0000000000000000000000000000000000000000' && 'develop' || github.event.before)  }}
-
+  # For PRs and MergeQueues, the target commit is used, and for push events to non-develop branches, github.event.previous is used if available. Otherwise, 'develop' is used.
+  targetHash: >-
+    ${{ 
+      github.event.pull_request.base.sha || 
+      github.event.merge_group.base_sha || 
+      (
+        (
+          (github.event_name == 'push' && github.ref == 'refs/heads/develop') || 
+          github.event.before == '0000000000000000000000000000000000000000'
+        ) && 'develop'
+      ) || 
+      github.event.before
+    }}
 jobs:
   cache:
     runs-on: ubuntu-latest
@@ -48,11 +58,26 @@ jobs:
         with:
           ref: ${{ env.targetHash }}
 
+      - name: Install dependencies
+        if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
+        uses: cypress-io/github-action@v6
+        with:
+          # just perform install
+          runTests: false
+
+      - name: Calculate bundle size
+        if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true'}}
+        run: |
+          pnpm run build:viz
+          mkdir -p cypress/snapshots/stats/base
+          mv stats cypress/snapshots/stats/base
+
       - name: Cypress run
-        uses: cypress-io/github-action@v4
+        uses: cypress-io/github-action@v6
         id: cypress-snapshot-gen
         if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
         with:
+          install: false
           start: pnpm run dev
           wait-on: 'http://localhost:9000'
           browser: chrome
@@ -81,20 +106,35 @@ jobs:
       # These cached snapshots are downloaded, providing the reference snapshots.
       - name: Cache snapshots
         id: cache-snapshot
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: ./cypress/snapshots
           key: ${{ runner.os }}-snapshots-${{ env.targetHash }}
 
+      - name: Install dependencies
+        uses: cypress-io/github-action@v6
+        with:
+          runTests: false
+
+      - name: Output size diff
+        if: ${{ matrix.containers == 1 }}
+        run: |
+          pnpm run build:viz
+          mv stats cypress/snapshots/stats/head
+          echo '## Bundle size difference' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          npx tsx scripts/size.ts >> "$GITHUB_STEP_SUMMARY"
+
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
-        uses: cypress-io/github-action@v4
+        uses: cypress-io/github-action@v6
         id: cypress
         # If CYPRESS_RECORD_KEY is set, run in parallel on all containers
         # Otherwise (e.g. if running from fork), we run on a single container only
         if: ${{ ( env.CYPRESS_RECORD_KEY != '' ) || ( matrix.containers == 1 ) }}
         with:
+          install: false
           start: pnpm run dev:coverage
           wait-on: 'http://localhost:9000'
           browser: chrome
@@ -108,7 +148,7 @@ jobs:
           CYPRESS_COMMIT: ${{ github.sha }}
 
       - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         # Run step only pushes to develop and pull_requests
         if: ${{ steps.cypress.conclusion == 'success' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop')}}
         with:
@@ -145,7 +185,7 @@ jobs:
       - name: Save snapshots cache
         id: cache-upload
         if: ${{ github.event_name == 'push' && needs.e2e.result != 'failure' }}
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: ./snapshots
           key: ${{ runner.os }}-snapshots-${{ github.event.after }}

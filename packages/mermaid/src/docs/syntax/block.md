@@ -291,7 +291,7 @@ block-beta
   ida space:3 idb idc
 ```
 
-Note that you can set how many columns the spece block occupied using the number notaion `space:num` where num is a number indicating the num columns width. You can alsio use `space` which defaults to one column.
+Note that you can set how many columns the space block occupied using the number notation `space:num` where num is a number indicating the num columns width. You can also use `space` which defaults to one column.
 
 The variety of shapes and special blocks in Mermaid enhances the expressive power of block diagrams, allowing for more accurate and context-specific representations. These options give users the flexibility to create diagrams that are both informative and visually appealing. In the next sections, we will explore the ways to connect these blocks and customize their appearance.
 
@@ -445,7 +445,7 @@ block-beta
 ```
 
 **Correction**:
-Ensure that links between blocks are correctly specified with arrows (--> or ---) to define the direction and type of connection. Also rememeber that one of the fundaments for block diagram is to give the author full control of where the boxes are positioned so in the example you need to add a space between the boxes:
+Ensure that links between blocks are correctly specified with arrows (--> or ---) to define the direction and type of connection. Also remember that one of the fundaments for block diagram is to give the author full control of where the boxes are positioned so in the example you need to add a space between the boxes:
 
 ```mermaid-example
 block-beta

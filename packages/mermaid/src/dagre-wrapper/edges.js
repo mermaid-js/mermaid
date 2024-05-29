@@ -18,15 +18,21 @@ export const clear = () => {
 };
 
 export const insertEdgeLabel = (elem, edge) => {
-  const useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
+  const config = getConfig();
+  const useHtmlLabels = evaluate(config.flowchart.htmlLabels);
   // Create the actual text element
   const labelElement =
     edge.labelType === 'markdown'
-      ? createText(elem, edge.label, {
-          style: edge.labelStyle,
-          useHtmlLabels,
-          addSvgBackground: true,
-        })
+      ? createText(
+          elem,
+          edge.label,
+          {
+            style: edge.labelStyle,
+            useHtmlLabels,
+            addSvgBackground: true,
+          },
+          config
+        )
       : createLabel(edge.label, edge.labelStyle);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
@@ -269,7 +275,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
       res.y = outsidePoint.y;
     }
 
-    log.debug(`abc89 topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res);
+    log.debug(`abc89 topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res); // cspell: disable-line
 
     return res;
   } else {
@@ -306,20 +312,20 @@ export const intersection = (node, outsidePoint, insidePoint) => {
  * and return an update path ending by the border of the node.
  *
  * @param {Array} _points
- * @param {any} boundryNode
+ * @param {any} boundaryNode
  * @returns {Array} Points
  */
-const cutPathAtIntersect = (_points, boundryNode) => {
-  log.debug('abc88 cutPathAtIntersect', _points, boundryNode);
+const cutPathAtIntersect = (_points, boundaryNode) => {
+  log.debug('abc88 cutPathAtIntersect', _points, boundaryNode);
   let points = [];
   let lastPointOutside = _points[0];
   let isInside = false;
   _points.forEach((point) => {
     // check if point is inside the boundary rect
-    if (!outsideNode(boundryNode, point) && !isInside) {
+    if (!outsideNode(boundaryNode, point) && !isInside) {
       // First point inside the rect found
       // Calc the intersection coord between the point anf the last point outside the rect
-      const inter = intersection(boundryNode, lastPointOutside, point);
+      const inter = intersection(boundaryNode, lastPointOutside, point);
 
       // // Check case where the intersection is the same as the last point
       let pointPresent = false;

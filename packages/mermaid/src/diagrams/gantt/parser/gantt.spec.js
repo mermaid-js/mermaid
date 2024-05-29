@@ -118,6 +118,38 @@ describe('when parsing a gantt diagram it', function () {
     expect(tasks[0].id).toEqual('des1');
     expect(tasks[0].task).toEqual('Design jison grammar');
   });
+  it('should handle a task with start/end time relative to other tasks', function () {
+    const str =
+      'gantt\n' +
+      'dateFormat YYYY-MM-DD\n' +
+      'title Adding gantt diagram functionality to mermaid\n' +
+      'section Documentation\n' +
+      'task A: a, 2024-01-27, 2024-01-28\n' +
+      'task B: b, after a, 2024-01-30\n' +
+      'task C: c, 2024-01-20, until a\n' +
+      'task D: d, after c, until b';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+
+    expect(tasks[0].startTime).toEqual(new Date(2024, 0, 27));
+    expect(tasks[0].endTime).toEqual(new Date(2024, 0, 28));
+    expect(tasks[0].id).toEqual('a');
+    expect(tasks[0].task).toEqual('task A');
+    expect(tasks[1].startTime).toEqual(new Date(2024, 0, 28));
+    expect(tasks[1].endTime).toEqual(new Date(2024, 0, 30));
+    expect(tasks[1].id).toEqual('b');
+    expect(tasks[1].task).toEqual('task B');
+    expect(tasks[2].startTime).toEqual(new Date(2024, 0, 20));
+    expect(tasks[2].endTime).toEqual(new Date(2024, 0, 27));
+    expect(tasks[2].id).toEqual('c');
+    expect(tasks[2].task).toEqual('task C');
+    expect(tasks[3].startTime).toEqual(new Date(2024, 0, 27));
+    expect(tasks[3].endTime).toEqual(new Date(2024, 0, 28));
+    expect(tasks[3].id).toEqual('d');
+    expect(tasks[3].task).toEqual('task D');
+  });
   it.each(convert`
     tags                     | milestone | done     | crit     | active
     ${'milestone'}           | ${true}   | ${false} | ${false} | ${false}
@@ -224,4 +256,15 @@ row2`;
       expect(ganttDb.getWeekday()).toBe(day);
     }
   );
+
+  it.each(['__proto__', 'constructor'])('should allow for a link to %s id', (prop) => {
+    expect(() =>
+      parser.parse(`gantt
+    dateFormat YYYY-MM-DD
+    section Section
+    A task :${prop}, 2024-10-01, 3d
+    click ${prop} href "https://mermaid.js.org/"
+    `)
+    ).not.toThrow();
+  });
 });

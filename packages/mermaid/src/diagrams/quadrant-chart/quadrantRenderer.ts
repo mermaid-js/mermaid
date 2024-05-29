@@ -152,7 +152,9 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
     .attr('cx', (data: QuadrantPointType) => data.x)
     .attr('cy', (data: QuadrantPointType) => data.y)
     .attr('r', (data: QuadrantPointType) => data.radius)
-    .attr('fill', (data: QuadrantPointType) => data.fill);
+    .attr('fill', (data: QuadrantPointType) => data.fill)
+    .attr('stroke', (data: QuadrantPointType) => data.strokeColor)
+    .attr('stroke-width', (data: QuadrantPointType) => data.strokeWidth);
 
   dataPoints
     .append('text')

@@ -113,7 +113,7 @@ describe('[Text] when parsing', () => {
       const edges = flow.parser.yy.getEdges();
 
       expect(edges[0].type).toBe('arrow_cross');
-      expect(vert['v'].text).toBe('my text');
+      expect(vert.get('v').text).toBe('my text');
     });
     it('should handle v in node ids v at end', function () {
       // v at end
@@ -123,7 +123,7 @@ describe('[Text] when parsing', () => {
       const edges = flow.parser.yy.getEdges();
 
       expect(edges[0].type).toBe('arrow_cross');
-      expect(vert['csv'].text).toBe('my text');
+      expect(vert.get('csv').text).toBe('my text');
     });
     it('should handle v in node ids v in middle', function () {
       // v in middle
@@ -133,7 +133,7 @@ describe('[Text] when parsing', () => {
       const edges = flow.parser.yy.getEdges();
 
       expect(edges[0].type).toBe('arrow_cross');
-      expect(vert['ava'].text).toBe('my text');
+      expect(vert.get('ava').text).toBe('my text');
     });
     it('should handle v in node ids, v at start', function () {
       // v at start
@@ -143,7 +143,7 @@ describe('[Text] when parsing', () => {
       const edges = flow.parser.yy.getEdges();
 
       expect(edges[0].type).toBe('arrow_cross');
-      expect(vert['va'].text).toBe('my text');
+      expect(vert.get('va').text).toBe('my text');
     });
     it('should handle keywords', function () {
       const res = flow.parser.parse('graph TD;A--x|text including graph space|B;');
@@ -157,7 +157,7 @@ describe('[Text] when parsing', () => {
       const res = flow.parser.parse('graph TD;V-->a[v]');
       const vert = flow.parser.yy.getVertices();
       const edges = flow.parser.yy.getEdges();
-      expect(vert['a'].text).toBe('v');
+      expect(vert.get('a').text).toBe('v');
     });
     it('should handle quoted text', function () {
       const res = flow.parser.parse('graph TD;V-- "test string()" -->a[v]');
@@ -302,8 +302,8 @@ describe('[Text] when parsing', () => {
       const vert = flow.parser.yy.getVertices();
       const edges = flow.parser.yy.getEdges();
 
-      expect(vert['C'].type).toBe('round');
-      expect(vert['C'].text).toBe('Chimpansen hoppar');
+      expect(vert.get('C').type).toBe('round');
+      expect(vert.get('C').text).toBe('Chimpansen hoppar');
     });
 
     const keywords = [
@@ -353,8 +353,8 @@ describe('[Text] when parsing', () => {
 
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
-        expect(vert['B'].type).toBe(`${shape.name}`);
-        expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
+        expect(vert.get('B').type).toBe(`${shape.name}`);
+        expect(vert.get('B').text).toBe(`This node has a ${keyword} as text`);
       });
     });
 
@@ -365,24 +365,24 @@ describe('[Text] when parsing', () => {
 
       const vert = flow.parser.yy.getVertices();
       const edges = flow.parser.yy.getEdges();
-      expect(vert['B'].type).toBe('rect');
-      expect(vert['B'].text).toBe(`This node has a ${keyword} as text`);
+      expect(vert.get('B').type).toBe('rect');
+      expect(vert.get('B').text).toBe(`This node has a ${keyword} as text`);
     });
 
     it('should handle edge case for odd vertex with node id ending with minus', function () {
       const res = flow.parser.parse('graph TD;A_node-->odd->Vertex Text];');
       const vert = flow.parser.yy.getVertices();
 
-      expect(vert['odd-'].type).toBe('odd');
-      expect(vert['odd-'].text).toBe('Vertex Text');
+      expect(vert.get('odd-').type).toBe('odd');
+      expect(vert.get('odd-').text).toBe('Vertex Text');
     });
     it('should allow forward slashes in lean_right vertices', function () {
       const rest = flow.parser.parse(`graph TD;A_node-->B[/This node has a / as text/];`);
 
       const vert = flow.parser.yy.getVertices();
       const edges = flow.parser.yy.getEdges();
-      expect(vert['B'].type).toBe('lean_right');
-      expect(vert['B'].text).toBe(`This node has a / as text`);
+      expect(vert.get('B').type).toBe('lean_right');
+      expect(vert.get('B').text).toBe(`This node has a / as text`);
     });
 
     it('should allow back slashes in lean_left vertices', function () {
@@ -390,8 +390,8 @@ describe('[Text] when parsing', () => {
 
       const vert = flow.parser.yy.getVertices();
       const edges = flow.parser.yy.getEdges();
-      expect(vert['B'].type).toBe('lean_left');
-      expect(vert['B'].text).toBe(`This node has a \\ as text`);
+      expect(vert.get('B').type).toBe('lean_left');
+      expect(vert.get('B').text).toBe(`This node has a \\ as text`);
     });
 
     it('should handle åäö and minus', function () {
@@ -400,8 +400,8 @@ describe('[Text] when parsing', () => {
       const vert = flow.parser.yy.getVertices();
       const edges = flow.parser.yy.getEdges();
 
-      expect(vert['C'].type).toBe('diamond');
-      expect(vert['C'].text).toBe('Chimpansen hoppar åäö-ÅÄÖ');
+      expect(vert.get('C').type).toBe('diamond');
+      expect(vert.get('C').text).toBe('Chimpansen hoppar åäö-ÅÄÖ');
     });
 
     it('should handle with åäö, minus and space and br', function () {
@@ -410,8 +410,8 @@ describe('[Text] when parsing', () => {
       const vert = flow.parser.yy.getVertices();
       const edges = flow.parser.yy.getEdges();
 
-      expect(vert['C'].type).toBe('round');
-      expect(vert['C'].text).toBe('Chimpansen hoppar åäö  <br> -  ÅÄÖ');
+      expect(vert.get('C').type).toBe('round');
+      expect(vert.get('C').text).toBe('Chimpansen hoppar åäö  <br> -  ÅÄÖ');
     });
     // it.skip('should handle åäö, minus and space and br',function(){
     //    const res = flow.parser.parse('graph TD; A[Object&#40;foo,bar&#41;]-->B(Thing);');
@@ -419,22 +419,22 @@ describe('[Text] when parsing', () => {
     //    const vert = flow.parser.yy.getVertices();
     //    const edges = flow.parser.yy.getEdges();
     //
-    //    expect(vert['C'].type).toBe('round');
-    //    expect(vert['C'].text).toBe(' A[Object&#40;foo,bar&#41;]-->B(Thing);');
+    //    expect(vert.get('C').type).toBe('round');
+    //    expect(vert.get('C').text).toBe(' A[Object&#40;foo,bar&#41;]-->B(Thing);');
     // });
     it('should handle unicode chars', function () {
       const res = flow.parser.parse('graph TD;A-->C(Начало);');
 
       const vert = flow.parser.yy.getVertices();
 
-      expect(vert['C'].text).toBe('Начало');
+      expect(vert.get('C').text).toBe('Начало');
     });
     it('should handle backslask', function () {
       const res = flow.parser.parse('graph TD;A-->C(c:\\windows);');
 
       const vert = flow.parser.yy.getVertices();
 
-      expect(vert['C'].text).toBe('c:\\windows');
+      expect(vert.get('C').text).toBe('c:\\windows');
     });
     it('should handle CAPS', function () {
       const res = flow.parser.parse('graph TD;A-->C(some CAPS);');
@@ -442,8 +442,8 @@ describe('[Text] when parsing', () => {
       const vert = flow.parser.yy.getVertices();
       const edges = flow.parser.yy.getEdges();
 
-      expect(vert['C'].type).toBe('round');
-      expect(vert['C'].text).toBe('some CAPS');
+      expect(vert.get('C').type).toBe('round');
+      expect(vert.get('C').text).toBe('some CAPS');
     });
     it('should handle directions', function () {
       const res = flow.parser.parse('graph TD;A-->C(some URL);');
@@ -451,8 +451,8 @@ describe('[Text] when parsing', () => {
       const vert = flow.parser.yy.getVertices();
       const edges = flow.parser.yy.getEdges();
 
-      expect(vert['C'].type).toBe('round');
-      expect(vert['C'].text).toBe('some URL');
+      expect(vert.get('C').type).toBe('round');
+      expect(vert.get('C').text).toBe('some URL');
     });
   });
 
@@ -464,9 +464,9 @@ describe('[Text] when parsing', () => {
 
     expect(edges[0].type).toBe('arrow_circle');
     expect(edges[1].type).toBe('arrow_point');
-    expect(vert['A'].id).toBe('A');
-    expect(vert['B'].id).toBe('B');
-    expect(vert['C'].id).toBe('C');
+    expect(vert.get('A').id).toBe('A');
+    expect(vert.get('B').id).toBe('B');
+    expect(vert.get('C').id).toBe('C');
     expect(edges.length).toBe(2);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
@@ -482,8 +482,8 @@ describe('[Text] when parsing', () => {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].type).toBe('square');
-    expect(vert['A'].text).toBe('chimpansen hoppar');
+    expect(vert.get('A').type).toBe('square');
+    expect(vert.get('A').text).toBe('chimpansen hoppar');
   });
 
   it('should handle text in vertices with space with spaces between vertices and link', function () {
@@ -492,8 +492,8 @@ describe('[Text] when parsing', () => {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].type).toBe('square');
-    expect(vert['A'].text).toBe('chimpansen hoppar');
+    expect(vert.get('A').type).toBe('square');
+    expect(vert.get('A').text).toBe('chimpansen hoppar');
   });
   it('should handle text including _ in vertices', function () {
     const res = flow.parser.parse('graph TD;A[chimpansen_hoppar] --> C;');
@@ -501,8 +501,8 @@ describe('[Text] when parsing', () => {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].type).toBe('square');
-    expect(vert['A'].text).toBe('chimpansen_hoppar');
+    expect(vert.get('A').type).toBe('square');
+    expect(vert.get('A').text).toBe('chimpansen_hoppar');
   });
 
   it('should handle quoted text in vertices ', function () {
@@ -511,8 +511,8 @@ describe('[Text] when parsing', () => {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].type).toBe('square');
-    expect(vert['A'].text).toBe('chimpansen hoppar ()[]');
+    expect(vert.get('A').type).toBe('square');
+    expect(vert.get('A').text).toBe('chimpansen hoppar ()[]');
   });
 
   it('should handle text in circle vertices with space', function () {
@@ -521,8 +521,8 @@ describe('[Text] when parsing', () => {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].type).toBe('circle');
-    expect(vert['A'].text).toBe('chimpansen hoppar');
+    expect(vert.get('A').type).toBe('circle');
+    expect(vert.get('A').text).toBe('chimpansen hoppar');
   });
 
   it('should handle text in ellipse vertices', function () {
@@ -531,8 +531,8 @@ describe('[Text] when parsing', () => {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].type).toBe('ellipse');
-    expect(vert['A'].text).toBe('this is an ellipse');
+    expect(vert.get('A').type).toBe('ellipse');
+    expect(vert.get('A').text).toBe('this is an ellipse');
   });
 
   it('should not freeze when ellipse text has a `(`', function () {
@@ -545,8 +545,8 @@ describe('[Text] when parsing', () => {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].type).toBe('round');
-    expect(vert['A'].text).toBe('chimpansen hoppar');
+    expect(vert.get('A').type).toBe('round');
+    expect(vert.get('A').text).toBe('chimpansen hoppar');
   });
 
   it('should handle text in with ?', function () {
@@ -555,7 +555,7 @@ describe('[Text] when parsing', () => {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].text).toBe('?');
+    expect(vert.get('A').text).toBe('?');
     expect(edges[0].text).toBe('?');
   });
   it('should handle text in with éèêàçô', function () {
@@ -564,7 +564,7 @@ describe('[Text] when parsing', () => {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].text).toBe('éèêàçô');
+    expect(vert.get('A').text).toBe('éèêàçô');
     expect(edges[0].text).toBe('éèêàçô');
   });
 
@@ -574,7 +574,7 @@ describe('[Text] when parsing', () => {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].text).toBe(',.?!+-*');
+    expect(vert.get('A').text).toBe(',.?!+-*');
     expect(edges[0].text).toBe(',.?!+-*');
   });
 

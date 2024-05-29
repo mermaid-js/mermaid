@@ -301,3 +301,5 @@ Graph layout can be changed by setting `nodeAlignment` to:
 - `center`
 - `left`
 - `right`
+
+<!--- cspell:ignore Ngas bioenergy biofuel --->

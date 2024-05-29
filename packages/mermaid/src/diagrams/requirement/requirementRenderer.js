@@ -191,9 +191,13 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
   return;
 };
 
+/**
+ * @param {Map<string, any>} reqs
+ * @param graph
+ * @param svgNode
+ */
 export const drawReqs = (reqs, graph, svgNode) => {
-  Object.keys(reqs).forEach((reqName) => {
-    let req = reqs[reqName];
+  reqs.forEach((req, reqName) => {
     reqName = elementString(reqName);
     log.info('Added new requirement: ', reqName);
 
@@ -236,9 +240,13 @@ export const drawReqs = (reqs, graph, svgNode) => {
   });
 };
 
+/**
+ * @param {Map<string, any>} els
+ * @param graph
+ * @param svgNode
+ */
 export const drawElements = (els, graph, svgNode) => {
-  Object.keys(els).forEach((elName) => {
-    let el = els[elName];
+  els.forEach((el, elName) => {
     const id = elementString(elName);
 
     const groupNode = svgNode.append('g').attr('id', id);
@@ -361,6 +369,8 @@ export const draw = (text, id, _version, diagObj) => {
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
 };
+
+// cspell:ignore txts
 
 export default {
   draw,

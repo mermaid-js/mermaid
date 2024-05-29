@@ -296,12 +296,12 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
  * Use D3 to construct the svg elements for the entities
  *
  * @param svgNode The svg node that contains the diagram
- * @param entities The entities to be drawn
+ * @param {Map<string, object>} entities The entities to be drawn
  * @param graph The graph that contains the vertex and edge definitions post-layout
  * @returns {object} The first entity that was inserted
  */
 const drawEntities = function (svgNode, entities, graph) {
-  const keys = Object.keys(entities);
+  const keys = [...entities.keys()];
   let firstOne;
 
   keys.forEach(function (entityName) {
@@ -326,12 +326,12 @@ const drawEntities = function (svgNode, entities, graph) {
       .style('text-anchor', 'middle')
       .style('font-family', getConfig().fontFamily)
       .style('font-size', conf.fontSize + 'px')
-      .text(entities[entityName].alias ?? entityName);
+      .text(entities.get(entityName).alias ?? entityName);
 
     const { width: entityWidth, height: entityHeight } = drawAttributes(
       groupNode,
       textNode,
-      entities[entityName].attributes
+      entities.get(entityName).attributes
     );
 
     // Draw the rectangle - insert it before the text so that the text is not obscured
