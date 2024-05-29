@@ -622,6 +622,11 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
       .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
       .attr('style', edge.style);
   }
+
+  // MC Special
+  svgPath.attr('data-edge', true);
+  svgPath.attr('data-et', 'edge');
+  svgPath.attr('data-id', edge.id);
   // DEBUG code, adds a red circle at each edge coordinate
   // cornerPoints.forEach((point) => {
   //   elem
