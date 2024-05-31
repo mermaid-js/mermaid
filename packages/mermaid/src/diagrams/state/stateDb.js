@@ -585,7 +585,7 @@ export const getData = () => {
   const useRough = config.look === 'handdrawn';
   const look = config.look;
   resetDataFetching();
-  dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, useRough);
+  dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, useRough, look);
 
   console.log('State Nodes XDX:', nodes);
   return { nodes, edges, other: {}, config };

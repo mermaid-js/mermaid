@@ -449,7 +449,7 @@ const fixCorners = function (lineData) {
           Math.abs(nextPoint.x - prevPoint.x),
           Math.abs(nextPoint.y - prevPoint.y)
         );
-        const r = 3;
+        const r = 5;
         if (cornerPoint.x === newPrevPoint.x) {
           newCornerPoint = {
             x: xDiff < 0 ? newPrevPoint.x - r + a : newPrevPoint.x + r - a,
