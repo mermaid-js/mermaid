@@ -11,7 +11,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
-import { dataFetcher } from './dataFetcher.js';
+import { dataFetcher, reset as resetDataFetching } from './dataFetcher.js';
 
 import {
   DEFAULT_DIAGRAM_DIRECTION,
@@ -583,6 +583,8 @@ export const getData = () => {
   const diagramStates = getStates();
   const config = getConfig();
   const useRough = config.look === 'handdrawn';
+  const look = config.look;
+  resetDataFetching();
   dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, useRough);
 
   console.log('State Nodes XDX:', nodes);

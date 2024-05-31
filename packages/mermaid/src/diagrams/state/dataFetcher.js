@@ -54,16 +54,16 @@ export function stateDomId(itemId = '', counter = 0, type = '', typeSpacer = DOM
   return `${DOMID_STATE}-${itemId}${typeStr}-${counter}`;
 }
 
-const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, useRough) => {
+const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, useRough, look) => {
   // graphItemCount = 0;
   log.trace('items', doc);
   doc.forEach((item) => {
     switch (item.stmt) {
       case STMT_STATE:
-        dataFetcher(parentParsedItem, item, diagramStates, nodes, edges, altFlag, useRough);
+        dataFetcher(parentParsedItem, item, diagramStates, nodes, edges, altFlag, useRough, look);
         break;
       case DEFAULT_STATE_TYPE:
-        dataFetcher(parentParsedItem, item, diagramStates, nodes, edges, altFlag, useRough);
+        dataFetcher(parentParsedItem, item, diagramStates, nodes, edges, altFlag, useRough, look);
         break;
       case STMT_RELATION:
         {
@@ -74,7 +74,8 @@ const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, u
             nodes,
             edges,
             altFlag,
-            useRough
+            useRough,
+            look
           );
           dataFetcher(
             parentParsedItem,
@@ -83,7 +84,8 @@ const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, u
             nodes,
             edges,
             altFlag,
-            useRough
+            useRough,
+            look
           );
           const edgeData = {
             id: 'edge' + graphItemCount,
@@ -100,6 +102,7 @@ const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, u
             thickness: G_EDGE_THICKNESS,
             classes: CSS_EDGE,
             useRough,
+            look,
           };
           edges.push(edgeData);
           //g.setEdge(item.state1.id, item.state2.id, edgeData, graphItemCount);
@@ -210,7 +213,16 @@ function getClassesFromDbInfo(dbInfoItem) {
     }
   }
 }
-export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, altFlag, useRough) => {
+export const dataFetcher = (
+  parent,
+  parsedItem,
+  diagramStates,
+  nodes,
+  edges,
+  altFlag,
+  useRough,
+  look
+) => {
   const itemId = parsedItem.id;
   const classStr = getClassesFromDbInfo(diagramStates[itemId]);
 
@@ -301,6 +313,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
       rx: 10,
       ry: 10,
       useRough,
+      look,
     };
 
     // Clear the label for dividers who have no description
@@ -330,6 +343,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
         isGroup: newNode.type === 'group',
         padding: 0, //getConfig().flowchart.padding
         useRough,
+        look,
       };
       const groupData = {
         labelStyle: '',
@@ -343,6 +357,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
         isGroup: true,
         padding: 16, //getConfig().flowchart.padding
         useRough,
+        look,
       };
       graphItemCount++;
 
@@ -382,6 +397,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
         labelType: G_EDGE_LABELTYPE,
         thickness: G_EDGE_THICKNESS,
         useRough,
+        look,
       });
     } else {
       insertOrUpdateNode(nodes, nodeData);
@@ -389,6 +405,11 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
   }
   if (parsedItem.doc) {
     log.trace('Adding nodes children ');
-    setupDoc(parsedItem, parsedItem.doc, diagramStates, nodes, edges, !altFlag, useRough);
+    setupDoc(parsedItem, parsedItem.doc, diagramStates, nodes, edges, !altFlag, useRough, look);
   }
+};
+
+export const reset = () => {
+  nodeDb = {};
+  graphItemCount = 0;
 };
