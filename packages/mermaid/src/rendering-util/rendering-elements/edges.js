@@ -475,7 +475,6 @@ const fixCorners = function (lineData) {
   }
   return newLineData;
 };
-
 /**
  * Given a line, this function will return a new line where the corners are rounded.
  * @param lineData
