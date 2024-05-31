@@ -37,8 +37,14 @@ export const getClasses = function (
   return diagramObj.db.getClasses();
 };
 
-export const draw = async function (text: string, id: string, _version: string, diag: any) {
-  log.info('REF0:');
+export const draw = async function (
+  text: string,
+  id: string,
+  _version: string,
+  diag: any,
+  positions: any
+) {
+  log.info('REF0:', positions);
   log.info('Drawing state diagram (v2)', id);
   const { securityLevel, state: conf, layout } = getConfig();
   // Extracting the data from the parsed structure into a more usable form
@@ -76,7 +82,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.markers = ['barb'];
   data4Layout.diagramId = id;
   // console.log('REF1:', data4Layout);
-  await render(data4Layout, svg, element);
+  await render(data4Layout, svg, element, positions);
   const padding = 8;
   utils.insertTitle(
     element,

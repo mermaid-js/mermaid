@@ -5,7 +5,7 @@ import { createText } from '$root/rendering-util/createText.ts';
 import utils from '$root/utils.js';
 import { getLineFunctionsWithOffset } from '$root/utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '$root/utils/subGraphTitleMargins.js';
-import { curveBasis, line, select } from 'd3';
+import { curveBasis, curveLinear, curveCardinal, line, select } from 'd3';
 import rough from 'roughjs';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
@@ -157,7 +157,8 @@ export const positionEdgeLabel = (edge, paths) => {
         pos.x,
         ',',
         pos.y,
-        ') abc78'
+        ') abc78',
+        el
       );
       if (paths.updatedPath) {
         x = pos.x;

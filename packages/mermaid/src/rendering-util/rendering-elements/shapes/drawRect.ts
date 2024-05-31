@@ -14,10 +14,10 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
     true
   );
 
-  const totalWidth = bbox.width + node.padding;
-  const totalHeight = bbox.height + node.padding;
-  const x = -bbox.width / 2 - halfPadding;
-  const y = -bbox.height / 2 - halfPadding;
+  const totalWidth = Math.max(bbox.width + node.padding, node?.width || 0);
+  const totalHeight = Math.max(bbox.height + node.padding, node?.height || 0);
+  const x = -totalWidth / 2;
+  const y = -totalHeight / 2;
 
   let rect;
   let { rx, ry, cssStyles, useRough } = node;

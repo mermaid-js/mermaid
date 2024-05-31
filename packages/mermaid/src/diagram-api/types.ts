@@ -117,7 +117,10 @@ export type DrawDefinition = (
   text: string,
   id: string,
   version: string,
-  diagramObject: Diagram
+  diagramObject: Diagram,
+  // Todo: types from positions when logic is done
+  // MC Special
+  positions?: any
 ) => void | Promise<void>;
 
 export interface ParserDefinition {

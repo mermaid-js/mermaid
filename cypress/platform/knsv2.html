@@ -110,9 +110,11 @@ sequenceDiagram
     <pre id="diagram" class="mermaid">
 stateDiagram
   S:Stillas
+  T:Tiger
+  U:Ulv
       </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 stateDiagram
   state "This is a state description" as S
       </pre
@@ -133,7 +135,7 @@ flowchart
     if_state --> True : if n >= 0
       </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
       %%{init: {"layout": "elk", "mergeEdges": false, "elk.nodePlacement.strategy": "SIMPLE"} }%%
       stateDiagram
     state if_state &lt;&lt;choice&gt;&gt;
@@ -235,8 +237,9 @@ stateDiagram-v2
         handdrawnSeed: 12,
         look: 'handdrawn',
         'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
-        layout: 'dagre',
+        // layout: 'dagre',
         // layout: 'elk',
+        layout: 'fixed',
         flowchart: { titleTopMargin: 10 },
         // fontFamily: 'Caveat',
         fontFamily: 'Kalam',
@@ -256,6 +259,12 @@ stateDiagram-v2
         console.error('In parse error:');
         console.error(err);
       };
+      void (async () => {
+        const { svg } = await mermaid.render('the-id-of-the-svg', code);
+        console.log(svg);
+        const elem = document.querySelector('#graph-to-be');
+        elem.innerHTML = svg;
+      })();
     </script>
   </body>
 </html>
