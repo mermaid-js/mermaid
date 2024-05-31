@@ -436,34 +436,38 @@ const fixCorners = function (lineData) {
       // Find a new point on the line point 5 points back and push it to the new array
       const newPrevPoint = findAdjacentPoint(prevPoint, cornerPoint, 5);
       const newNextPoint = findAdjacentPoint(nextPoint, cornerPoint, 5);
-      newLineData.push(newPrevPoint);
 
       const xDiff = newNextPoint.x - newPrevPoint.x;
       const yDiff = newNextPoint.y - newPrevPoint.y;
+      newLineData.push(newPrevPoint);
 
       const a = Math.sqrt(2) * 2;
       let newCornerPoint = { x: cornerPoint.x, y: cornerPoint.y };
-      if (cornerPoint.x === newPrevPoint.x) {
-        // if (yDiff > 0) {
-        newCornerPoint = {
-          x: xDiff < 0 ? newPrevPoint.x - 5 + a : newPrevPoint.x + 5 - a,
-          y: yDiff < 0 ? newPrevPoint.y - a : newPrevPoint.y + a,
-        };
-        // } else {
-        //   newCornerPoint = { x: newPrevPoint.x - a, y: newPrevPoint.y + a };
-        // }
+      if (Math.abs(nextPoint.x - prevPoint.x) > 10 && Math.abs(nextPoint.y - prevPoint.y) >= 10) {
+        console.log(
+          'Corner point fixing',
+          Math.abs(nextPoint.x - prevPoint.x),
+          Math.abs(nextPoint.y - prevPoint.y)
+        );
+        const r = 3;
+        if (cornerPoint.x === newPrevPoint.x) {
+          newCornerPoint = {
+            x: xDiff < 0 ? newPrevPoint.x - r + a : newPrevPoint.x + r - a,
+            y: yDiff < 0 ? newPrevPoint.y - a : newPrevPoint.y + a,
+          };
+        } else {
+          newCornerPoint = {
+            x: xDiff < 0 ? newPrevPoint.x - a : newPrevPoint.x + a,
+            y: yDiff < 0 ? newPrevPoint.y - r + a : newPrevPoint.y + r - a,
+          };
+        }
       } else {
-        // if (yDiff > 0) {
-        //   newCornerPoint = { x: newPrevPoint.x - 5 + a, y: newPrevPoint.y + a };
-        // } else {
-        newCornerPoint = {
-          x: xDiff < 0 ? newPrevPoint.x - a : newPrevPoint.x + a,
-          y: yDiff < 0 ? newPrevPoint.y - 5 + a : newPrevPoint.y + 5 - a,
-        };
-        // }
+        console.log(
+          'Corner point skipping fixing',
+          Math.abs(nextPoint.x - prevPoint.x),
+          Math.abs(nextPoint.y - prevPoint.y)
+        );
       }
-
-      // newLineData.push(cornerPoint);
       newLineData.push(newCornerPoint, newNextPoint);
     } else {
       newLineData.push(lineData[i]);
