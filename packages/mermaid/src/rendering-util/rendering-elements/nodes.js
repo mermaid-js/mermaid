@@ -36,6 +36,7 @@ const shapes = {
   choice,
   note,
   roundedRect,
+  rectWithTitle: roundedRect,
   squareRect,
   stadium,
   subroutine,

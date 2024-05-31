@@ -136,13 +136,17 @@ sequenceDiagram
       </pre
     >
 
-    <pre id="diagram" class="mermaid2">
-      %%{init: {"layout": "elk", "mergeEdges": true} }%%
+    <pre id="diagram" class="mermaid">
 stateDiagram
-      A --> B
+  S:Stillas
       </pre
     >
     <pre id="diagram" class="mermaid">
+stateDiagram
+  state "This is a state description" as S
+      </pre
+    >
+    <pre id="diagram" class="mermaid2">
       %%{init: {"layout": "elk", "mergeEdges": true} }%%
 flowchart
       A --> B(This is B)
@@ -254,8 +258,8 @@ stateDiagram-v2
         handdrawnSeed: 12,
         look: 'handdrawn',
         'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
-        // layout: 'dagre',
-        layout: 'elk',
+        layout: 'dagre',
+        // layout: 'elk',
         flowchart: { titleTopMargin: 10 },
         // fontFamily: 'Caveat',
         // fontFamily: 'Kalam',
