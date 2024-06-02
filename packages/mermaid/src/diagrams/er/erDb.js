@@ -80,6 +80,12 @@ const clear = function () {
   commonClear();
 };
 
+let direction = 'TB';
+const getDirection = () => direction;
+const setDirection = (dir) => {
+  direction = dir;
+};
+
 export default {
   Cardinality,
   Identification,
@@ -96,4 +102,6 @@ export default {
   getAccDescription,
   setDiagramTitle,
   getDiagramTitle,
+  setDirection,
+  getDirection
 };
