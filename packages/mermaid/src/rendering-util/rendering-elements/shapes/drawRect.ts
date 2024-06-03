@@ -17,10 +17,11 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
     getNodeClasses(node),
     true
   );
-  const totalWidth = bbox.width + options.labelPaddingX * 2;
-  const totalHeight = bbox.height + options.labelPaddingY * 2;
-  const x = -bbox.width / 2 - options.labelPaddingX;
-  const y = -bbox.height / 2 - options.labelPaddingY;
+
+  const totalWidth = Math.max(bbox.width + options.labelPaddingX * 2, node?.width || 0);
+  const totalHeight = Math.max(bbox.height + options.labelPaddingY * 2, node?.height || 0);
+  const x = -totalWidth / 2;
+  const y = -totalHeight / 2;
 
   let rect;
   let { rx, ry } = node;

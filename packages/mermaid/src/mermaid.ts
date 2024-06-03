@@ -393,13 +393,13 @@ const parse = async (
  *   element will be removed when rendering is completed.
  * @returns Returns the SVG Definition and BindFunctions.
  */
-const render: typeof mermaidAPI.render = (id, text, container) => {
+const render: typeof mermaidAPI.render = (id, text, container, positions) => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the mermaidAPI.render call is done.
     // It will be queued first and will be executed when it is first in line
     const performCall = () =>
       new Promise((res, rej) => {
-        mermaidAPI.render(id, text, container).then(
+        mermaidAPI.render(id, text, container, positions).then(
           (r) => {
             // This resolves for the promise for the queue handling
             res(r);

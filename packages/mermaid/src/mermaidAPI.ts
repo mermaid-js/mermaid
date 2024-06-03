@@ -340,7 +340,8 @@ export const removeExistingElements = (
 const render = async function (
   id: string,
   text: string,
-  svgContainingElement?: Element
+  svgContainingElement?: Element,
+  positions: any
 ): Promise<RenderResult> {
   addDiagrams();
 
@@ -456,7 +457,7 @@ const render = async function (
   // -------------------------------------------------------------------------------
   // Draw the diagram with the renderer
   try {
-    await diag.renderer.draw(text, id, version, diag);
+    await diag.renderer.draw(text, id, version, diag, positions);
   } catch (e) {
     if (config.suppressErrorRendering) {
       removeTempElements();

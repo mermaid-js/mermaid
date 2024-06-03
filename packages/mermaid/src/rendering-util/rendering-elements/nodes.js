@@ -36,6 +36,7 @@ const shapes = {
   choice,
   note,
   roundedRect,
+  rectWithTitle: roundedRect,
   squareRect,
   stadium,
   subroutine,
@@ -57,9 +58,6 @@ export const insertNode = async (elem, node, dir) => {
   let newEl;
   let el;
 
-  if (node) {
-    console.log('BLA: rect node', JSON.stringify(node));
-  }
   //special check for rect shape (with or without rounded corners)
   if (node.shape === 'rect') {
     if (node.rx && node.ry) {
@@ -83,6 +81,10 @@ export const insertNode = async (elem, node, dir) => {
     el = await shapes[node.shape](elem, node, dir);
     newEl = el;
   }
+  // MC Special
+  newEl.attr('data-id', node.id);
+  newEl.attr('data-node', true);
+  newEl.attr('data-et', 'node');
   if (node.tooltip) {
     el.attr('title', node.tooltip);
   }

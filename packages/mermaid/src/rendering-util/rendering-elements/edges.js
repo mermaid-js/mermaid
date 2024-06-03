@@ -5,7 +5,7 @@ import { createText } from '$root/rendering-util/createText.ts';
 import utils from '$root/utils.js';
 import { getLineFunctionsWithOffset } from '$root/utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '$root/utils/subGraphTitleMargins.js';
-import { curveBasis, line, select } from 'd3';
+import { curveBasis, curveLinear, curveCardinal, line, select } from 'd3';
 import rough from 'roughjs';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
@@ -157,7 +157,8 @@ export const positionEdgeLabel = (edge, paths) => {
         pos.x,
         ',',
         pos.y,
-        ') abc78'
+        ') abc78',
+        el
       );
       if (paths.updatedPath) {
         x = pos.x;
@@ -436,34 +437,38 @@ const fixCorners = function (lineData) {
       // Find a new point on the line point 5 points back and push it to the new array
       const newPrevPoint = findAdjacentPoint(prevPoint, cornerPoint, 5);
       const newNextPoint = findAdjacentPoint(nextPoint, cornerPoint, 5);
-      newLineData.push(newPrevPoint);
 
       const xDiff = newNextPoint.x - newPrevPoint.x;
       const yDiff = newNextPoint.y - newPrevPoint.y;
+      newLineData.push(newPrevPoint);
 
       const a = Math.sqrt(2) * 2;
       let newCornerPoint = { x: cornerPoint.x, y: cornerPoint.y };
-      if (cornerPoint.x === newPrevPoint.x) {
-        // if (yDiff > 0) {
-        newCornerPoint = {
-          x: xDiff < 0 ? newPrevPoint.x - 5 + a : newPrevPoint.x + 5 - a,
-          y: yDiff < 0 ? newPrevPoint.y - a : newPrevPoint.y + a,
-        };
-        // } else {
-        //   newCornerPoint = { x: newPrevPoint.x - a, y: newPrevPoint.y + a };
-        // }
+      if (Math.abs(nextPoint.x - prevPoint.x) > 10 && Math.abs(nextPoint.y - prevPoint.y) >= 10) {
+        console.log(
+          'Corner point fixing',
+          Math.abs(nextPoint.x - prevPoint.x),
+          Math.abs(nextPoint.y - prevPoint.y)
+        );
+        const r = 5;
+        if (cornerPoint.x === newPrevPoint.x) {
+          newCornerPoint = {
+            x: xDiff < 0 ? newPrevPoint.x - r + a : newPrevPoint.x + r - a,
+            y: yDiff < 0 ? newPrevPoint.y - a : newPrevPoint.y + a,
+          };
+        } else {
+          newCornerPoint = {
+            x: xDiff < 0 ? newPrevPoint.x - a : newPrevPoint.x + a,
+            y: yDiff < 0 ? newPrevPoint.y - r + a : newPrevPoint.y + r - a,
+          };
+        }
       } else {
-        // if (yDiff > 0) {
-        //   newCornerPoint = { x: newPrevPoint.x - 5 + a, y: newPrevPoint.y + a };
-        // } else {
-        newCornerPoint = {
-          x: xDiff < 0 ? newPrevPoint.x - a : newPrevPoint.x + a,
-          y: yDiff < 0 ? newPrevPoint.y - 5 + a : newPrevPoint.y + 5 - a,
-        };
-        // }
+        console.log(
+          'Corner point skipping fixing',
+          Math.abs(nextPoint.x - prevPoint.x),
+          Math.abs(nextPoint.y - prevPoint.y)
+        );
       }
-
-      // newLineData.push(cornerPoint);
       newLineData.push(newCornerPoint, newNextPoint);
     } else {
       newLineData.push(lineData[i]);
@@ -471,7 +476,6 @@ const fixCorners = function (lineData) {
   }
   return newLineData;
 };
-
 /**
  * Given a line, this function will return a new line where the corners are rounded.
  * @param lineData
@@ -622,6 +626,11 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
       .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
       .attr('style', edge.style);
   }
+
+  // MC Special
+  svgPath.attr('data-edge', true);
+  svgPath.attr('data-et', 'edge');
+  svgPath.attr('data-id', edge.id);
   // DEBUG code, adds a red circle at each edge coordinate
   // cornerPoints.forEach((point) => {
   //   elem
@@ -632,6 +641,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, i
   //     .attr('cx', point.x)
   //     .attr('cy', point.y);
   // });
+
   // lineData.forEach((point) => {
   //   elem
   //     .append('circle')

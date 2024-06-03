@@ -408,3 +408,8 @@ export const dataFetcher = (
     setupDoc(parsedItem, parsedItem.doc, diagramStates, nodes, edges, !altFlag, useRough, look);
   }
 };
+
+export const reset = () => {
+  nodeDb = {};
+  graphItemCount = 0;
+};
