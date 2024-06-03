@@ -206,8 +206,20 @@ function getClassesFromDbInfo(dbInfoItem) {
   if (dbInfoItem === undefined || dbInfoItem === null) {
     return '';
   } else {
-    if (dbInfoItem.cssClasses) {
-      return dbInfoItem.cssClasses.join(' ');
+    if (dbInfoItem.classes) {
+      let classStr = '';
+      // for each class in classes, add it to the string as comma separated
+      for (let i = 0; i < dbInfoItem.classes.length; i++) {
+        //do not add comma for the last class
+        if (i === dbInfoItem.classes.length - 1) {
+          classStr += dbInfoItem.classes[i];
+        }
+        //add comma for all other classes
+        else {
+          classStr += dbInfoItem.classes[i] + ',';
+        }
+      }
+      return classStr;
     } else {
       return '';
     }
@@ -224,7 +236,7 @@ export const dataFetcher = (
   look
 ) => {
   const itemId = parsedItem.id;
-  const classStr = getClassesFromDbInfo(diagramStates[itemId]);
+  const classStr = getClassesFromDbInfo(diagramStates.get(itemId));
 
   if (itemId !== 'root') {
     let shape = SHAPE_STATE;
@@ -344,6 +356,7 @@ export const dataFetcher = (
         padding: 0, //getConfig().flowchart.padding
         useRough,
         look,
+        position: parsedItem.note.position,
       };
       const groupData = {
         labelStyle: '',
@@ -358,6 +371,7 @@ export const dataFetcher = (
         padding: 16, //getConfig().flowchart.padding
         useRough,
         look,
+        position: parsedItem.note.position,
       };
       graphItemCount++;
 
