@@ -263,6 +263,20 @@ const cross = (elem, type, id) => {
     .style('stroke-width', 2)
     .style('stroke-dasharray', '1,0');
 };
+// const barb = (elem, type, id) => {
+//   elem
+//     .append('defs')
+//     .append('marker')
+//     .attr('id', id + '_' + type + '-barbEnd')
+//     .attr('refX', 19)
+//     .attr('refY', 7)
+//     .attr('markerWidth', 20)
+//     .attr('markerHeight', 14)
+//     .attr('markerUnits', 'strokeWidth')
+//     .attr('orient', 'auto')
+//     .append('path')
+//     .attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
+// };
 const barb = (elem, type, id) => {
   elem
     .append('defs')
@@ -275,7 +289,7 @@ const barb = (elem, type, id) => {
     .attr('markerUnits', 'strokeWidth')
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
+    .attr('d', 'M 19,7 L13,13 L15,7 L13,1 Z');
 };
 
 // TODO rename the class diagram markers to something shape descriptive and semantic free
