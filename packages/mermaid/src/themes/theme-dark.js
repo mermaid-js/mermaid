@@ -29,6 +29,7 @@ class Theme {
     this.labelBackground = '#181818';
     this.textColor = '#ccc';
     this.THEME_COLOR_LIMIT = 12;
+    this.radius = 5;
 
     /* Flowchart variables */
     this.nodeBkg = 'calculated';

@@ -37,6 +37,7 @@ class Theme {
     this.labelBackground = '#e8e8e8';
     this.textColor = '#333';
     this.THEME_COLOR_LIMIT = 12;
+    this.radius = 5;
 
     /* Flowchart variables */
 

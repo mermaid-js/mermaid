@@ -151,9 +151,15 @@ g.stateGroup line {
 }
 
 .statediagram-state rect.basic {
-  rx: 5px;
-  ry: 5px;
+  rx: ${options.radius}px;
+  ry: ${options.radius}px;
 }
+
+.state-shadow {
+  filter: drop-shadow( 3px 3px 2px rgba(0,0,0,.7) );
+}
+
+
 .statediagram-state rect.divider {
   stroke-dasharray: 10,10;
   fill: ${options.altBackground ? options.altBackground : '#efefef'};

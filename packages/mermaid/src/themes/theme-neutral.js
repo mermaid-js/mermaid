@@ -42,6 +42,7 @@ class Theme {
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '16px';
     this.THEME_COLOR_LIMIT = 12;
+    this.radius = 5;
 
     /* Flowchart variables */
 

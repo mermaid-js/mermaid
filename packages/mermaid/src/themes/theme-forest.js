@@ -31,6 +31,7 @@ class Theme {
     this.lineColor = invert(this.background);
     this.textColor = invert(this.background);
     this.THEME_COLOR_LIMIT = 12;
+    this.radius = 5;
 
     /* Flowchart variables */
     this.nodeBkg = 'calculated';

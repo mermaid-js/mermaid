@@ -97,6 +97,8 @@ interface Edge {
 interface RectOptions {
   rx: number;
   ry: number;
+  labelPaddingX: number;
+  labelPaddingY: number;
   classes: string;
 }
 

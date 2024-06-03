@@ -69,7 +69,9 @@ const getStyles = (
   }
 
   ${diagramStyles}
-
+  .node .neo-node {
+    stroke: red;
+  }
   ${userStyles}
 `;
 };

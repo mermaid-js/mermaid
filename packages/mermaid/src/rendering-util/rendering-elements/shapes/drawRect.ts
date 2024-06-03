@@ -5,35 +5,37 @@ import type { Node, RectOptions } from '$root/rendering-util/types.d.ts';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
+import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 export const drawRect = async (parent: SVGAElement, node: Node, options: RectOptions) => {
+  const { themeVariables, handdrawnSeed } = getConfig();
+  const { nodeBorder, mainBkg } = themeVariables;
+
   const { shapeSvg, bbox, halfPadding } = await labelHelper(
     parent,
     node,
     getNodeClasses(node),
     true
   );
-
-  const totalWidth = bbox.width + node.padding;
-  const totalHeight = bbox.height + node.padding;
-  const x = -bbox.width / 2 - halfPadding;
-  const y = -bbox.height / 2 - halfPadding;
+  const totalWidth = bbox.width + options.labelPaddingX * 2;
+  const totalHeight = bbox.height + options.labelPaddingY * 2;
+  const x = -bbox.width / 2 - options.labelPaddingX;
+  const y = -bbox.height / 2 - options.labelPaddingY;
 
   let rect;
-  let { rx, ry, cssStyles, useRough } = node;
+  let { rx, ry } = node;
+  const { cssStyles, useRough } = node;
 
   //use options rx, ry overrides if present
   if (options && options.rx && options.ry) {
     rx = options.rx;
     ry = options.ry;
   }
-
   if (useRough) {
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
 
-    console.log('rect options: ', options);
     const roughNode =
       rx || ry
         ? rc.path(createRoundedRectPathD(x, y, totalWidth, totalHeight, rx || 0), options)
@@ -41,6 +43,21 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
 
     rect = shapeSvg.insert(() => roughNode, ':first-child');
     rect.attr('class', 'basic label-container').attr('style', cssStyles);
+  } else if (node.look === 'neo') {
+    // TODO: Take theme and look into account
+    rect = shapeSvg.insert('rect', ':first-child');
+
+    rect
+      .attr('class', 'basic label-container neo-node state-shadow')
+      .attr('style', cssStyles)
+      .attr('rx', rx)
+      .attr('data-id', 'abc')
+      .attr('data-et', 'node')
+      .attr('ry', ry)
+      .attr('x', x)
+      .attr('y', y)
+      .attr('width', totalWidth)
+      .attr('height', totalHeight);
   } else {
     rect = shapeSvg.insert('rect', ':first-child');
 

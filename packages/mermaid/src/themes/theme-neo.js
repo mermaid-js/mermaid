@@ -14,13 +14,14 @@ class Theme {
      */
     this.background = '#f4f4f4';
 
-    this.primaryColor = '#fff4dd';
+    this.primaryColor = '#cccccc';
+    this.mainBkg = '#f4f4f4';
 
     this.noteBkgColor = '#fff5ad';
     this.noteTextColor = '#333';
 
     this.THEME_COLOR_LIMIT = 12;
-    this.radius = 5;
+    this.radius = 2;
     // dark
 
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
