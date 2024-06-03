@@ -586,8 +586,6 @@ export const getData = () => {
   const look = config.look;
   resetDataFetching();
   dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, useRough, look);
-
-  console.log('State Nodes XDX:', nodes);
   return { nodes, edges, other: {}, config };
 };
 
