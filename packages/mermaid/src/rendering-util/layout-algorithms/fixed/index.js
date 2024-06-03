@@ -16,7 +16,11 @@ import {
   clear as clearNodes,
   setNodeElem,
 } from '../../rendering-elements/nodes.js';
-import { insertCluster, clear as clearClusters } from '../../rendering-elements/clusters.js';
+import {
+  insertCluster,
+  clear as clearClusters,
+  positionCluster,
+} from '../../rendering-elements/clusters.js';
 import {
   insertEdgeLabel,
   positionEdgeLabel,
@@ -53,15 +57,28 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
   const nodeDB = {};
   await Promise.all(
     data4Layout.nodes.map(async function (node) {
+      let pos;
       if (node.x === undefined || node.y === undefined) {
-        const pos = positions.nodes[node.id];
-        node.x = pos?.x || 0;
-        node.y = pos?.y || 0;
+        pos = positions.nodes[node.id];
         node.height = pos?.height || 0;
         node.width = pos?.width || 0;
       }
-
-      await insertNode(nodes, node, 'TB');
+      if (node.isGroup) {
+        node.x = 0;
+        node.y = 0;
+        await insertCluster(nodes, node, 'TB');
+        // Don't set the coordinates before they "layout", this will mess up the positioning
+        if (pos) {
+          node.x = pos?.x || 0;
+          node.y = pos?.y || 0;
+        }
+      } else {
+        if (pos) {
+          node.x = pos?.x || 0;
+          node.y = pos?.y || 0;
+        }
+        await insertNode(nodes, node, 'TB');
+      }
       nodeDB[node.id] = node;
     })
   );
@@ -79,7 +96,11 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
   // Position the nodes
   await Promise.all(
     data4Layout.nodes.map(async function (node) {
-      positionNode(node);
+      if (node.isGroup) {
+        positionCluster(node);
+      } else {
+        positionNode(node);
+      }
     })
   );
 

@@ -327,8 +327,20 @@ export const clear = () => {
 };
 
 export const positionCluster = (node) => {
-  log.info('Position cluster (' + node.id + ', ' + node.x + ', ' + node.y + ')');
+  log.info(
+    'Position cluster (' +
+      node.id +
+      ', ' +
+      node.x +
+      ', ' +
+      node.y +
+      ') (' +
+      node?.width +
+      ', ' +
+      node?.height +
+      ')',
+    clusterElems[node.id]
+  );
   const el = clusterElems[node.id];
-
-  el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
+  el.cluster.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
 };
