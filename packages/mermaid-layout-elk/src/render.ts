@@ -561,8 +561,8 @@ export const render = async (data4Layout, svg, element, algorithm) => {
   drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
   g.edges?.map((edge) => {
     // (elem, edge, clusterDb, diagramType, graph, id)
-    edge.start = nodeDb[edge.sources[0]];
-    edge.end = nodeDb[edge.targets[0]];
+    const startNode = nodeDb[edge.sources[0]];
+    const endNode = nodeDb[edge.targets[0]];
     const sourceId = edge.start.id;
     const targetId = edge.end.id;
 
@@ -586,7 +586,8 @@ export const render = async (data4Layout, svg, element, algorithm) => {
         edge,
         clusterDb,
         data4Layout.type,
-        g,
+        startNode,
+        endNode,
         data4Layout.diagramId
       );
 

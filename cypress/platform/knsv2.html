@@ -76,34 +76,12 @@
   </head>
   <body>
     <pre id="diagram" class="mermaid2">
-%%{
-  init: {
-  "theme":"base",
-  "fontFamily": "Kalam",
-  "themeVariables":
-    {
-      "background": "#FFFFFF",
-      "primaryColor": "#7bdfa7",
-      "primaryTextColor": "#3c3c3b",
-      "secondaryColor": "#642470",
-      "secondaryTextColor": "#3c3c3b",
-      "tertiaryColor": "#1c736D",
-      "tertiaryTextColor": "#3c3c3b",
-      "noteBkgColor": "#9fd8ef",
-      "loopTextColor": "#636362",
-      "labelBoxBkgColor": "#642470",
-      "labelBoxBorderColor": "#642470",
-      "labelTextColor": "#d4d4d4",
-      "signalTextColor": "#636362",
-      "signalColor": "#642470"
-    }
-  }
-}%%
-sequenceDiagram
-    Alice->>+John: Hello John, how are you?
-    Alice->>+John: John, can you hear me?
-    John-->>-Alice: Hi Alice, I can hear you!
-    John-->>-Alice: I feel great!
+stateDiagram-v2
+    state if_state <<choice>>
+    [*] --> IsPositive
+    IsPositive --> if_state
+    if_state --> False: if n < 0
+    if_state --> True : if n >= 0
       </pre
     >
 

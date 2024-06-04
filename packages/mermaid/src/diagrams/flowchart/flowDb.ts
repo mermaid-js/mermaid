@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import utils from '../../utils.js';
+import utils, { getEdgeId } from '../../utils.js';
 import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
 import type { LayoutData, LayoutMethod, Node, Edge } from '../../rendering-util/types.js';
@@ -793,6 +793,37 @@ export const getData = () => {
     };
     nodes.push(node);
   });
+
+  const e = getEdges();
+  e.forEach((rawEdge, index) => {
+    const edge: Edge = {
+      id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'edge' }),
+      start: rawEdge.start,
+      end: rawEdge.end,
+      type: rawEdge.type || 'normal',
+      label: rawEdge.text,
+      labelpos: 'c',
+      //   labelStyle: '',
+      //   cssStyles: rawEdge.styles.join(' '),
+      thickness: rawEdge.stroke,
+      minlen: rawEdge.length,
+      classes: 'edge-thickness-normal edge-pattern-solid flowchart-link',
+      arrowhead: 'none',
+      arrowTypeEnd: 'arrow_point',
+      arrowheadStyle: 'fill: #333',
+      // stroke: rawEdge.pattern,
+      pattern: rawEdge.stroke,
+      //   shape: getTypeFromVertex(rawEdge),
+      //   dir: rawEdge.dir,
+      //   domId: verawEdgertex.domId,
+      //   rawEdge: undefined,
+      //   isGroup: false,
+      useRough,
+    };
+    // console.log('rawEdge SPLIT', rawEdge, index);
+    edges.push(edge);
+  });
+  console.log('edges SPLIT', edges);
 
   //const useRough = config.look === 'handdrawn';
 

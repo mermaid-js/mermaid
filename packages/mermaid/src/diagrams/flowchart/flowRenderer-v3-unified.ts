@@ -60,7 +60,8 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.direction = DIR;
   data4Layout.nodeSpacing = conf?.nodeSpacing || 50;
   data4Layout.rankSpacing = conf?.rankSpacing || 50;
-  data4Layout.markers = ['barb'];
+  data4Layout.markers = ['point', 'circle', 'cross'];
+
   data4Layout.diagramId = id;
   console.log('REF1:', data4Layout);
   await render(data4Layout, svg, element);
