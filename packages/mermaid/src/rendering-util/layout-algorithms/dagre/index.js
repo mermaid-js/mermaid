@@ -230,7 +230,9 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
     edge.points.forEach((point) => (point.y += subGraphTitleTotalMargin / 2));
-    const paths = insertEdge(edgePaths, edge, clusterDb, diagramType, graph, id);
+    const startNode = graph.node(e.v);
+    var endNode = graph.node(e.w);
+    const paths = insertEdge(edgePaths, edge, clusterDb, diagramType, startNode, endNode, id);
     positionEdgeLabel(edge, paths);
   });
 
@@ -284,7 +286,7 @@ export const render = async (data4Layout, svg, element) => {
 
   log.debug('Edges:', data4Layout.edges);
   data4Layout.edges.forEach((edge) => {
-    graph.setEdge(edge.start, edge.end, { ...edge });
+    graph.setEdge(edge.start, edge.end, { ...edge }, edge.id);
   });
 
   log.warn('Graph at first:', JSON.stringify(graphlibJson.write(graph)));

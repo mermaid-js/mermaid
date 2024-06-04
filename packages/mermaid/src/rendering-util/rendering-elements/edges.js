@@ -493,28 +493,28 @@ function roundedCornersLine(lineData) {
   }
   return path;
 }
-export const insertEdge = function (elem, edge, clusterDb, diagramType, graph, id) {
+export const insertEdge = function (elem, edge, clusterDb, diagramType, startNode, endNode, id) {
   const { handdrawnSeed } = getConfig();
   let points = edge.points;
   let pointsHasChanged = false;
-  const tail = edge.start;
-  var head = edge.end;
+  const tail = startNode;
+  var head = endNode;
 
-  log.info('abc88 InsertEdge: ', points);
+  // log.info('abc88 InsertEdge SPLIT: ', points, edge.start, id);
   if (head.intersect && tail.intersect) {
-    log.info('abc88 InsertEdge: 0.5', points);
-    // points = points.slice(1, edge.points.length - 1);
-    log.info('abc88 InsertEdge: 0.7', points);
-    // points.unshift(tail.intersect(points[0]));
-    //   log.info(
-    //     'Last point abc88',
-    //     points[points.length - 1],
-    //     head,
-    //     head.intersect(points[points.length - 1])
-    //   );
-    //   points.push(head.intersect(points[points.length - 1]));
+    // log.info('abc88 InsertEdge SPLIT: 0.5', points);
+    points = points.slice(1, edge.points.length - 1);
+    // log.info('abc88 InsertEdge SPLIT: 0.7', points);
+    points.unshift(tail.intersect(points[0]));
+    log.info(
+      'Last point abc88',
+      points[points.length - 1],
+      head,
+      head.intersect(points[points.length - 1])
+    );
+    points.push(head.intersect(points[points.length - 1]));
   }
-  log.info('abc88 InsertEdge 2: ', points);
+  // log.info('abc88 InsertEdge 2 SPLIT: ', points);
   if (edge.toCluster) {
     log.info('to cluster abc88', clusterDb[edge.toCluster]);
     points = cutPathAtIntersect(edge.points, clusterDb[edge.toCluster].node);

@@ -76,47 +76,31 @@
   </head>
   <body>
     <pre id="diagram" class="mermaid2">
-%%{
-  init: {
-  "theme":"base",
-  "fontFamily": "Kalam",
-  "themeVariables":
-    {
-      "background": "#FFFFFF",
-      "primaryColor": "#7bdfa7",
-      "primaryTextColor": "#3c3c3b",
-      "secondaryColor": "#642470",
-      "secondaryTextColor": "#3c3c3b",
-      "tertiaryColor": "#1c736D",
-      "tertiaryTextColor": "#3c3c3b",
-      "noteBkgColor": "#9fd8ef",
-      "loopTextColor": "#636362",
-      "labelBoxBkgColor": "#642470",
-      "labelBoxBorderColor": "#642470",
-      "labelTextColor": "#d4d4d4",
-      "signalTextColor": "#636362",
-      "signalColor": "#642470"
-    }
-  }
-}%%
-sequenceDiagram
-    Alice->>+John: Hello John, how are you?
-    Alice->>+John: John, can you hear me?
-    John-->>-Alice: Hi Alice, I can hear you!
-    John-->>-Alice: I feel great!
+stateDiagram-v2
+    state if_state <<choice>>
+    [*] --> IsPositive
+    IsPositive --> if_state
+    if_state --> False: if n < 0
+    if_state --> True : if n >= 0
       </pre
     >
+    <pre id="diagram" class="mermaid2">
+flowchart LR
+    A[Start] --> B{Is it?} --> B1 & B2
 
-    <pre id="diagram" class="mermaid2">
-      %%{init: {"layout": "dagre", "mergeEdges": true} }%%
-stateDiagram
-      A: This is A
       </pre
     >
-    <pre id="diagram" class="mermaid2">
-      %%{init: {"layout": "dagre", "mergeEdges": true} }%%
-flowchart
-      A --> B(This is B)
+    <pre id="diagram" class="mermaid">
+      %%{init: {"layout": "dagre", "mergeEdges": false} }%%
+flowchart LR
+      A ==> B(This is B)
+    A[Start] --> B(Is it?)
+    B -- Yes --> C[OK]
+    C --> D[Rethink]
+    D --> B
+    B -. No ...-> E[End]
+
+
       </pre
     >
     <pre id="diagram" class="mermaid2">
@@ -129,7 +113,7 @@ flowchart
     if_state --> True : if n >= 0
       </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
       %%{init: {"layout": "elk", "mergeEdges": false, "elk.nodePlacement.strategy": "SIMPLE"} }%%
       stateDiagram
     state if_state &lt;&lt;choice&gt;&gt;
@@ -228,11 +212,13 @@ stateDiagram-v2
       };
       mermaid.initialize({
         // theme: 'base',
-        handdrawnSeed: 12,
-        look: 'handdrawn',
-
-        // layout: 'dagre',
+        // handdrawnSeed: 12,
+        // look: 'handdrawn',
+        'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+        layout: 'dagre',
         // layout: 'elk',
+        // layout: 'fixed',
+        htmlLabels: false,
         flowchart: { titleTopMargin: 10 },
         // fontFamily: 'Caveat',
         fontFamily: 'Kalam',
