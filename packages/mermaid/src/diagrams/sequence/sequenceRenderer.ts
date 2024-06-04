@@ -425,14 +425,7 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
     }
   } else {
     line = diagram.append('line');
-    let adjustedStartx = startx;
-    if (
-      type === diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED ||
-      type === diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID
-    ) {
-      startx < stopx ? (adjustedStartx += 3) : (adjustedStartx -= 3);
-    }
-    line.attr('x1', adjustedStartx);
+    line.attr('x1', startx);
     line.attr('y1', lineStartY);
     line.attr('x2', stopx);
     line.attr('y2', lineStartY);
@@ -1480,6 +1473,14 @@ const buildMessageModel = function (msg, actors, diagObj) {
      */
     if (![diagObj.db.LINETYPE.SOLID_OPEN, diagObj.db.LINETYPE.DOTTED_OPEN].includes(msg.type)) {
       stopx += adjustValue(3);
+    }
+
+    if (
+      ![diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID, diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED].includes(
+        msg.type
+      )
+    ) {
+      startx -= adjustValue(3);
     }
   }
 
