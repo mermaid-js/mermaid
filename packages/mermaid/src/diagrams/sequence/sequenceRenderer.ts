@@ -1435,7 +1435,7 @@ const buildMessageModel = function (msg, actors, diagObj) {
   const [fromLeft, fromRight] = activationBounds(msg.from, actors);
   const [toLeft, toRight] = activationBounds(msg.to, actors);
   const isArrowToRight = fromLeft <= toLeft;
-  const startx = isArrowToRight ? fromRight : fromLeft;
+  let startx = isArrowToRight ? fromRight : fromLeft;
   let stopx = isArrowToRight ? toLeft : toRight;
 
   // As the line width is considered, the left and right values will be off by 2.
@@ -1475,8 +1475,11 @@ const buildMessageModel = function (msg, actors, diagObj) {
       stopx += adjustValue(3);
     }
 
+    /**
+     * Shorten start position of bidirectional arrow to accommodate for second arrowhead
+     */
     if (
-      ![diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID, diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED].includes(
+      [diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID, diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED].includes(
         msg.type
       )
     ) {
