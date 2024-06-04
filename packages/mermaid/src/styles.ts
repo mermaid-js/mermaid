@@ -70,7 +70,7 @@ const getStyles = (
 
   ${diagramStyles}
   .node .neo-node {
-    stroke: red;
+    stroke: ${options.nodeBorder};
   }
   ${userStyles}
 `;

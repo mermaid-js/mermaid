@@ -127,8 +127,9 @@ g.stateGroup line {
 }
 
 .statediagram-cluster rect.outer {
-  rx: 5px;
-  ry: 5px;
+  rx: 2px;
+  ry: 2px;
+  filter: drop-shadow( 1px 2px 2px rgba(185,185,185,1.0) );
 }
 .statediagram-state .divider {
   stroke: ${options.stateBorder || options.nodeBorder};
@@ -143,6 +144,7 @@ g.stateGroup line {
 }
 .statediagram-cluster.statediagram-cluster-alt .inner {
   fill: ${options.altBackground ? options.altBackground : '#efefef'};
+
 }
 
 .statediagram-cluster .inner {
@@ -156,7 +158,7 @@ g.stateGroup line {
 }
 
 .state-shadow {
-  filter: drop-shadow( 0px 1px 1px rgba(0,0,0,.7) );
+  filter: drop-shadow( 1px 2px 2px rgba(185,185,185,1.0) );
 }
 
 
