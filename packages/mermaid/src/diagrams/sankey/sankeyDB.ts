@@ -15,12 +15,12 @@ let links: SankeyLink[] = [];
 // Array of nodes guarantees their order
 let nodes: SankeyNode[] = [];
 // We also have to track nodes uniqueness (by ID)
-let nodesMap: Record<string, SankeyNode> = {};
+let nodesMap: Map<string, SankeyNode> = new Map();
 
 const clear = (): void => {
   links = [];
   nodes = [];
-  nodesMap = {};
+  nodesMap = new Map();
   commonClear();
 };
 
@@ -48,11 +48,13 @@ class SankeyNode {
 const findOrCreateNode = (ID: string): SankeyNode => {
   ID = common.sanitizeText(ID, getConfig());
 
-  if (!nodesMap[ID]) {
-    nodesMap[ID] = new SankeyNode(ID);
-    nodes.push(nodesMap[ID]);
+  let node = nodesMap.get(ID);
+  if (node === undefined) {
+    node = new SankeyNode(ID);
+    nodesMap.set(ID, node);
+    nodes.push(node);
   }
-  return nodesMap[ID];
+  return node;
 };
 
 const getNodes = () => nodes;

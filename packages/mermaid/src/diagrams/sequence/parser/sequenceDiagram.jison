@@ -3,7 +3,7 @@
  *  (c) 2014-2015 Knut Sveidqvist
  *  MIT license.
  *
- *  Based on js sequence diagrams jison grammr
+ *  Based on js sequence diagrams jison grammar
  *  https://bramp.github.io/js-sequence-diagrams/
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
@@ -140,8 +140,8 @@ statement
 	| autonumber NUM 'NEWLINE' { $$ = {type:'sequenceIndex',sequenceIndex: Number($2), sequenceIndexStep:1, sequenceVisible:true, signalType:yy.LINETYPE.AUTONUMBER};}
 	| autonumber off 'NEWLINE' { $$ = {type:'sequenceIndex', sequenceVisible:false, signalType:yy.LINETYPE.AUTONUMBER};}
 	| autonumber 'NEWLINE'  {$$ = {type:'sequenceIndex', sequenceVisible:true, signalType:yy.LINETYPE.AUTONUMBER}; }
-	| 'activate' actor 'NEWLINE' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2};}
-	| 'deactivate' actor 'NEWLINE' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2};}
+	| 'activate' actor 'NEWLINE' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2.actor};}
+	| 'deactivate' actor 'NEWLINE' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2.actor};}
 	| note_statement 'NEWLINE'
 	| links_statement 'NEWLINE'
 	| link_statement 'NEWLINE'
@@ -290,11 +290,11 @@ placement
 signal
 	: actor signaltype '+' actor text2
 	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$2, msg:$5, activate: true},
-	              {type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $4}
+	              {type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $4.actor}
 	             ]}
 	| actor signaltype '-' actor text2
 	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$2, msg:$5},
-	             {type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $1}
+	             {type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $1.actor}
 	             ]}
 	| actor signaltype actor text2
 	{ $$ = [$1,$3,{type: 'addMessage', from:$1.actor, to:$3.actor, signalType:$2, msg:$4}]}

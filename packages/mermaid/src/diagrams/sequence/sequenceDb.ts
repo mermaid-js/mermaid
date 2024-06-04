@@ -15,9 +15,9 @@ import type { Actor, AddMessageParams, Box, Message, Note } from './types.js';
 
 interface SequenceState {
   prevActor?: string;
-  actors: Record<string, Actor>;
-  createdActors: Record<string, number>;
-  destroyedActors: Record<string, number>;
+  actors: Map<string, Actor>;
+  createdActors: Map<string, number>;
+  destroyedActors: Map<string, number>;
   boxes: Box[];
   messages: Message[];
   notes: Note[];
@@ -30,9 +30,9 @@ interface SequenceState {
 
 const state = new ImperativeState<SequenceState>(() => ({
   prevActor: undefined,
-  actors: {},
-  createdActors: {},
-  destroyedActors: {},
+  actors: new Map(),
+  createdActors: new Map(),
+  destroyedActors: new Map(),
   boxes: [],
   messages: [],
   notes: [],
@@ -60,7 +60,7 @@ export const addActor = function (
   type: string
 ) {
   let assignedBox = state.records.currentBox;
-  const old = state.records.actors[id];
+  const old = state.records.actors.get(id);
   if (old) {
     // If already set and trying to set to a new one throw error
     if (state.records.currentBox && old.box && state.records.currentBox !== old.box) {
@@ -87,7 +87,7 @@ export const addActor = function (
     description = { text: name, wrap: null, type };
   }
 
-  state.records.actors[id] = {
+  state.records.actors.set(id, {
     box: assignedBox,
     name: name,
     description: description.text,
@@ -98,9 +98,12 @@ export const addActor = function (
     actorCnt: null,
     rectData: null,
     type: type ?? 'participant',
-  };
-  if (state.records.prevActor && state.records.actors[state.records.prevActor]) {
-    state.records.actors[state.records.prevActor].nextActor = id;
+  });
+  if (state.records.prevActor) {
+    const prevActorInRecords = state.records.actors.get(state.records.prevActor);
+    if (prevActorInRecords) {
+      prevActorInRecords.nextActor = id;
+    }
   }
 
   if (state.records.currentBox) {
@@ -115,17 +118,16 @@ const activationCount = (part: string) => {
   if (!part) {
     return 0;
   }
-
   for (i = 0; i < state.records.messages.length; i++) {
     if (
       state.records.messages[i].type === LINETYPE.ACTIVE_START &&
-      state.records.messages[i].from?.actor === part
+      state.records.messages[i].from === part
     ) {
       count++;
     }
     if (
       state.records.messages[i].type === LINETYPE.ACTIVE_END &&
-      state.records.messages[i].from?.actor === part
+      state.records.messages[i].from === part
     ) {
       count--;
     }
@@ -156,12 +158,10 @@ export const addSignal = function (
   activate: boolean = false
 ) {
   if (messageType === LINETYPE.ACTIVE_END) {
-    const cnt = activationCount(idFrom?.actor || '');
+    const cnt = activationCount(idFrom || '');
     if (cnt < 1) {
       // Bail out as there is an activation signal from an inactive participant
-      const error = new Error(
-        'Trying to inactivate an inactive participant (' + idFrom?.actor + ')'
-      );
+      const error = new Error('Trying to inactivate an inactive participant (' + idFrom + ')');
 
       // @ts-ignore: we are passing hash param to the error object, however we should define our own custom error class to make it type safe
       error.hash = {
@@ -210,10 +210,11 @@ export const getDestroyedActors = function () {
   return state.records.destroyedActors;
 };
 export const getActor = function (id: string) {
-  return state.records.actors[id];
+  // TODO: do we ever use this function in a way that it might return undefined?
+  return state.records.actors.get(id)!;
 };
 export const getActorKeys = function () {
-  return Object.keys(state.records.actors);
+  return [...state.records.actors.keys()];
 };
 export const enableSequenceNumbers = function () {
   state.records.sequenceNumbersEnabled = true;
@@ -504,18 +505,18 @@ export const apply = function (param: any | AddMessageParams | AddMessageParams[
         addActor(param.actor, param.actor, param.description, param.draw);
         break;
       case 'createParticipant':
-        if (state.records.actors[param.actor]) {
+        if (state.records.actors.has(param.actor)) {
           throw new Error(
             "It is not possible to have actors with the same id, even if one is destroyed before the next is created. Use 'AS' aliases to simulate the behavior"
           );
         }
         state.records.lastCreated = param.actor;
         addActor(param.actor, param.actor, param.description, param.draw);
-        state.records.createdActors[param.actor] = state.records.messages.length;
+        state.records.createdActors.set(param.actor, state.records.messages.length);
         break;
       case 'destroyParticipant':
         state.records.lastDestroyed = param.actor;
-        state.records.destroyedActors[param.actor] = state.records.messages.length;
+        state.records.destroyedActors.set(param.actor, state.records.messages.length);
         break;
       case 'activeStart':
         addSignal(param.actor, undefined, undefined, param.signalType);

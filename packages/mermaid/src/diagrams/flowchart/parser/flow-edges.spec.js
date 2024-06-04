@@ -48,8 +48,6 @@ describe('[Edges] when parsing', () => {
 
   it('should handle open ended edges', function () {
     const res = flow.parser.parse('graph TD;A---B;');
-
-    const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
     expect(edges[0].type).toBe('arrow_open');
@@ -57,8 +55,6 @@ describe('[Edges] when parsing', () => {
 
   it('should handle cross ended edges', function () {
     const res = flow.parser.parse('graph TD;A--xB;');
-
-    const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
     expect(edges[0].type).toBe('arrow_cross');
@@ -66,8 +62,6 @@ describe('[Edges] when parsing', () => {
 
   it('should handle open ended edges', function () {
     const res = flow.parser.parse('graph TD;A--oB;');
-
-    const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
     expect(edges[0].type).toBe('arrow_circle');
@@ -81,8 +75,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -99,8 +93,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -119,8 +113,8 @@ describe('[Edges] when parsing', () => {
           const vert = flow.parser.yy.getVertices();
           const edges = flow.parser.yy.getEdges();
 
-          expect(vert['A'].id).toBe('A');
-          expect(vert['B'].id).toBe('B');
+          expect(vert.get('A').id).toBe('A');
+          expect(vert.get('B').id).toBe('B');
           expect(edges.length).toBe(1);
           expect(edges[0].start).toBe('A');
           expect(edges[0].end).toBe('B');
@@ -139,8 +133,8 @@ describe('[Edges] when parsing', () => {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].id).toBe('A');
-    expect(vert['B'].id).toBe('B');
+    expect(vert.get('A').id).toBe('A');
+    expect(vert.get('B').id).toBe('B');
     expect(edges.length).toBe(2);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
@@ -164,8 +158,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -183,8 +177,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -202,8 +196,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -221,8 +215,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -240,8 +234,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -259,8 +253,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -278,8 +272,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -297,8 +291,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -316,8 +310,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -335,8 +329,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -354,8 +348,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -373,8 +367,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -392,8 +386,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -411,8 +405,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -430,8 +424,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -449,8 +443,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -468,8 +462,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -487,8 +481,8 @@ describe('[Edges] when parsing', () => {
         const vert = flow.parser.yy.getVertices();
         const edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].id).toBe('A');
-        expect(vert['B'].id).toBe('B');
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');

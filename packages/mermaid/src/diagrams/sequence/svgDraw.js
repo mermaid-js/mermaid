@@ -307,7 +307,7 @@ export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
     return;
   }
   actorKeys.forEach((actorKey) => {
-    const actor = actors[actorKey];
+    const actor = actors.get(actorKey);
     const actorDOM = diagram.select('#actor' + actor.actorCnt);
     if (!conf.mirrorActors && actor.stopy) {
       actorDOM.attr('y2', actor.stopy + actor.height / 2);
