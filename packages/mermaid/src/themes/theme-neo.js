@@ -12,10 +12,10 @@ class Theme {
      * - Background - used to know what the background color is of the diagram. This is used for
      *   deducing colors for instance line color. Default value is #f4f4f4.
      */
-    this.background = '#f4f4f4';
+    this.background = '#ffffff';
 
     this.primaryColor = '#cccccc';
-    this.mainBkg = '#f4f4f4';
+    this.mainBkg = '#ffffff';
 
     this.noteBkgColor = '#fff5ad';
     this.noteTextColor = '#333';

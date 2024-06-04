@@ -90,9 +90,16 @@ stateDiagram-v2
     >
 
     <pre id="diagram" class="mermaid">
-      stateDiagram-v2
+      stateDiagram
+        direction LR
+        [*] --> A
+        A --> B
+        B --> C
+        state B {
           direction LR
-          Active --> Passive
+          a --> b
+        }
+        B --> D
 
 
 
