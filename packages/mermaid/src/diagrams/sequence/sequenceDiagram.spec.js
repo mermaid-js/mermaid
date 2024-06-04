@@ -523,8 +523,8 @@ Alice<<->>Bob:Hello Bob, how are you?`;
 
     await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
-    expect(actors.Alice.description).toBe('Alice');
-    expect(actors.Bob.description).toBe('Bob');
+    expect(actors.get('Alice').description).toBe('Alice');
+    expect(actors.get('Bob').description).toBe('Bob');
 
     const messages = diagram.db.getMessages();
 
@@ -538,8 +538,8 @@ Alice<<->>Bob:Hello Bob, how are you?`;
 
     await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
-    expect(actors.Alice.description).toBe('Alice');
-    expect(actors.Bob.description).toBe('Bob');
+    expect(actors.get('Alice').description).toBe('Alice');
+    expect(actors.get('Bob').description).toBe('Bob');
 
     const messages = diagram.db.getMessages();
 
