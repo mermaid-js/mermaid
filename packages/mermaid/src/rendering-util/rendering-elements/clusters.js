@@ -187,7 +187,7 @@ const roundedWithTitle = (parent, node) => {
   const innerY = node.y - node.height / 2 - halfPadding + bbox.height - 1;
   const height = node.height + padding;
   const innerHeight = node.height + padding - bbox.height - 3;
-
+  const look = siteConfig.look;
   // add the rect
   let rect;
   if (node.useRough) {
@@ -216,9 +216,15 @@ const roundedWithTitle = (parent, node) => {
     innerRect = shapeSvg.insert(() => roughInnerNode);
   } else {
     rect = outerRectG.insert('rect', ':first-child');
+    let outerRectClass = 'outer';
+    if (look === 'neo') {
+      outerRectClass = 'outer state-shadow';
+    } else {
+      outerRectClass = 'outer';
+    }
     // center the rect around its coordinate
     rect
-      .attr('class', 'outer')
+      .attr('class', outerRectClass)
       .attr('x', x)
       .attr('y', y)
       .attr('width', width)

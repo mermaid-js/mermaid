@@ -1,8 +1,10 @@
 import type { Node } from '$root/rendering-util/types.d.ts';
 import { drawRect } from './drawRect.js';
+import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 export const state = async (parent: SVGAElement, node: Node) => {
-  node.look = 'neo';
+  const { look } = getConfig();
+  node.look = look;
 
   const options = {
     rx: node.look === 'neo' ? 2 : 5,

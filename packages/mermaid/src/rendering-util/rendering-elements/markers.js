@@ -263,21 +263,21 @@ const cross = (elem, type, id) => {
     .style('stroke-width', 2)
     .style('stroke-dasharray', '1,0');
 };
-// const barb = (elem, type, id) => {
-//   elem
-//     .append('defs')
-//     .append('marker')
-//     .attr('id', id + '_' + type + '-barbEnd')
-//     .attr('refX', 19)
-//     .attr('refY', 7)
-//     .attr('markerWidth', 20)
-//     .attr('markerHeight', 14)
-//     .attr('markerUnits', 'strokeWidth')
-//     .attr('orient', 'auto')
-//     .append('path')
-//     .attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
-// };
 const barb = (elem, type, id) => {
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-barbEnd')
+    .attr('refX', 19)
+    .attr('refY', 7)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 14)
+    .attr('markerUnits', 'strokeWidth')
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
+};
+const barbNeo = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
@@ -303,5 +303,6 @@ const markers = {
   circle,
   cross,
   barb,
+  barbNeo,
 };
 export default insertMarkers;

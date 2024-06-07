@@ -61,6 +61,9 @@ interface Node {
   // Flowchart specific properties
   x?: number;
   y?: number;
+
+  // Added look to handle
+  look?: string;
 }
 
 // Common properties for any edge in the system

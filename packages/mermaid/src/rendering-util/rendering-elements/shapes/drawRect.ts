@@ -1,4 +1,3 @@
-import { log } from '$root/logger.js';
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node, RectOptions } from '$root/rendering-util/types.d.ts';
@@ -8,7 +7,7 @@ import rough from 'roughjs';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 export const drawRect = async (parent: SVGAElement, node: Node, options: RectOptions) => {
-  const { themeVariables, handdrawnSeed } = getConfig();
+  const { themeVariables, handdrawnSeed, look } = getConfig();
   const { nodeBorder, mainBkg } = themeVariables;
 
   const { shapeSvg, bbox, halfPadding } = await labelHelper(
@@ -24,6 +23,7 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
   const y = -totalHeight / 2;
 
   let rect;
+  node.look = look;
   let { rx, ry } = node;
   const { cssStyles, useRough } = node;
 

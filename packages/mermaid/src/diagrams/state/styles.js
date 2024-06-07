@@ -129,7 +129,6 @@ g.stateGroup line {
 .statediagram-cluster rect.outer {
   rx: 2px;
   ry: 2px;
-  filter: drop-shadow( 1px 2px 2px rgba(185,185,185,1.0) );
 }
 .statediagram-state .divider {
   stroke: ${options.stateBorder || options.nodeBorder};
