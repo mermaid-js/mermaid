@@ -775,20 +775,39 @@ export const getData = () => {
   // extract(getRootDocV2());
   // const diagramStates = getStates();
   const useRough = config.look === 'handdrawn';
+  const subGraphs = getSubGraphs();
+  log.info('Subgraphs - ', subGraphs);
+  const parentDB = new Map<string, string>();
+  const subGraphDB = new Map<string, boolean>();
+
+  for (let i = subGraphs.length - 1; i >= 0; i--) {
+    const subGraph = subGraphs[i];
+    if (subGraph.nodes.length > 0) {
+      subGraphDB.set(subGraph.id, true);
+    }
+    subGraph.nodes.forEach((id) => {
+      parentDB.set(id, subGraph.id);
+    });
+  }
+
   const n = getVertices();
   n.forEach((vertex) => {
+    let parentId = parentDB.get(vertex.id);
+    let isGroup = subGraphDB.get(vertex.id) || false;
+
     const node: Node = {
       id: vertex.id,
       label: vertex.text,
       labelStyle: '',
+      parentId,
       padding: config.flowchart?.padding || 8,
       cssStyles: vertex.styles.join(' '),
       cssClasses: vertex.classes.join(' '),
       shape: getTypeFromVertex(vertex),
       dir: vertex.dir,
       domId: vertex.domId,
-      type: undefined,
-      isGroup: false,
+      type: isGroup ? 'group' : undefined,
+      isGroup,
       useRough,
     };
     nodes.push(node);
@@ -823,7 +842,6 @@ export const getData = () => {
     // console.log('rawEdge SPLIT', rawEdge, index);
     edges.push(edge);
   });
-  console.log('edges SPLIT', edges);
 
   //const useRough = config.look === 'handdrawn';
 

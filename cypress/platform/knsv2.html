@@ -84,13 +84,17 @@ stateDiagram-v2
     if_state --> True : if n >= 0
       </pre
     >
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 flowchart LR
-    A[Start] --> B{Is it?} --> B1 & B2
+    subgraph Apa
+      A[Start] --> B
+    end
+    Apa --> C
+    A --> C
 
       </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
       %%{init: {"layout": "dagre", "mergeEdges": false} }%%
 flowchart LR
       A ==> B(This is B)
@@ -213,12 +217,12 @@ stateDiagram-v2
       mermaid.initialize({
         // theme: 'base',
         // handdrawnSeed: 12,
-        // look: 'handdrawn',
-        'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
-        layout: 'dagre',
+        look: 'handdrawn',
+        // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+        // layout: 'dagre',
         // layout: 'elk',
         // layout: 'fixed',
-        htmlLabels: false,
+        // htmlLabels: false,
         flowchart: { titleTopMargin: 10 },
         // fontFamily: 'Caveat',
         fontFamily: 'Kalam',
