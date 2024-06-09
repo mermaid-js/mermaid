@@ -767,35 +767,22 @@ const getTypeFromVertex = (vertex: FlowVertex) => {
   return vertex.type || 'squareRect';
 };
 
-export const getData = () => {
-  const config = getConfig();
-  const nodes: Node[] = [];
-  const edges: Edge[] = [];
+const findNode = (nodes: Node[], id: string) => nodes.find((node) => node.id === id);
 
-  // extract(getRootDocV2());
-  // const diagramStates = getStates();
-  const useRough = config.look === 'handdrawn';
-  const subGraphs = getSubGraphs();
-  log.info('Subgraphs - ', subGraphs);
-  const parentDB = new Map<string, string>();
-  const subGraphDB = new Map<string, boolean>();
+const addNodeFromVertex = (
+  vertex: FlowVertex,
+  nodes: Node[],
+  parentDB: Map<string, string>,
+  subGraphDB: Map<string, boolean>,
+  config: any,
+  useRough: boolean
+): Node => {
+  let parentId = parentDB.get(vertex.id);
+  let isGroup = subGraphDB.get(vertex.id) || false;
 
-  for (let i = subGraphs.length - 1; i >= 0; i--) {
-    const subGraph = subGraphs[i];
-    if (subGraph.nodes.length > 0) {
-      subGraphDB.set(subGraph.id, true);
-    }
-    subGraph.nodes.forEach((id) => {
-      parentDB.set(id, subGraph.id);
-    });
-  }
-
-  const n = getVertices();
-  n.forEach((vertex) => {
-    let parentId = parentDB.get(vertex.id);
-    let isGroup = subGraphDB.get(vertex.id) || false;
-
-    const node: Node = {
+  let node = findNode(nodes, vertex.id);
+  if (!node) {
+    nodes.push({
       id: vertex.id,
       label: vertex.text,
       labelStyle: '',
@@ -809,9 +796,58 @@ export const getData = () => {
       type: isGroup ? 'group' : undefined,
       isGroup,
       useRough,
-    };
-    nodes.push(node);
+    });
+  }
+};
+
+export const getData = () => {
+  const config = getConfig();
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+
+  // extract(getRootDocV2());
+  // const diagramStates = getStates();
+  const useRough = config.look === 'handdrawn';
+  const subGraphs = getSubGraphs();
+  log.info('Subgraphs - APA12', subGraphs);
+  const parentDB = new Map<string, string>();
+  const subGraphDB = new Map<string, boolean>();
+
+  for (let i = subGraphs.length - 1; i >= 0; i--) {
+    const subGraph = subGraphs[i];
+    if (subGraph.nodes.length > 0) {
+      subGraphDB.set(subGraph.id, true);
+    }
+    subGraph.nodes.forEach((id) => {
+      parentDB.set(id, subGraph.id);
+    });
+    nodes.push({
+      id: subGraph.id,
+      label: subGraph.title,
+      labelStyle: '',
+      parentId: parentDB.get(subGraph.id),
+      padding: config.flowchart?.padding || 8,
+      cssStyles: '',
+      cssClasses: '',
+      shape: 'rect',
+      dir: subGraph.dir,
+      domId: subGraph.domId,
+      type: 'group',
+      isGroup: true,
+      useRough,
+    });
+  }
+  console.log('APA12 nodes - 1', nodes.length);
+
+  const n = getVertices();
+  n.forEach((vertex) => {
+    const node = addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, useRough);
+    if (node) {
+      nodes.push(node);
+    }
   });
+
+  console.log('APA12 nodes', nodes.length);
 
   const e = getEdges();
   e.forEach((rawEdge, index) => {
@@ -829,6 +865,7 @@ export const getData = () => {
       classes: 'edge-thickness-normal edge-pattern-solid flowchart-link',
       arrowhead: 'none',
       arrowTypeEnd: 'arrow_point',
+      // arrowTypeEnd: 'arrow_barb',
       arrowheadStyle: 'fill: #333',
       // stroke: rawEdge.pattern,
       pattern: rawEdge.stroke,

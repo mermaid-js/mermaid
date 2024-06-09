@@ -24,6 +24,10 @@ const registerDefaultLayoutLoaders = () => {
       name: 'dagre',
       loader: async () => await import('./layout-algorithms/dagre/index.js'),
     },
+    // {
+    //   name: 'elk',
+    //   loader: async () => await import('../../../mermaid-layout-elk/src/render.js'),
+    // },
   ]);
 };
 
