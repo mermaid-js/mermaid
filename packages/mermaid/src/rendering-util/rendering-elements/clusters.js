@@ -9,6 +9,11 @@ import intersectRect from '../rendering-elements/intersect/intersect-rect.js';
 import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 
+// Helper function to calculate the offset correction for the label
+const calcLabelOffsetCorrection = (diff) => {
+  return diff * 0.75 - 6;
+};
+
 const rect = (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
   const siteConfig = getConfig();
@@ -222,6 +227,7 @@ const roundedWithTitle = (parent, node) => {
     } else {
       outerRectClass = 'outer';
     }
+
     // center the rect around its coordinate
     rect
       .attr('class', outerRectClass)
@@ -237,16 +243,12 @@ const roundedWithTitle = (parent, node) => {
       .attr('height', innerHeight);
   }
 
-  // Center the label
+  let diff = bbox.height - (innerY - y) / 2;
+  let correction = calcLabelOffsetCorrection(diff, bbox.height);
+
   label.attr(
     'transform',
-    `translate(${node.x - bbox.width / 2}, ${
-      node.y -
-      node.height / 2 -
-      node.padding +
-      bbox.height / 2 -
-      (evaluate(siteConfig.flowchart.htmlLabels) ? 5 : 3)
-    })`
+    `translate(${node.x - bbox.width / 2}, ${(innerY - y) / 2 - correction})`
   );
 
   const rectBox = rect.node().getBBox();
