@@ -28,6 +28,10 @@ const registerDefaultLayoutLoaders = () => {
       name: 'fixed',
       loader: async () => await import('./layout-algorithms/fixed/index.js'),
     },
+    // {
+    //   name: 'elk',
+    //   loader: async () => await import('../../../mermaid-layout-elk/src/render.js'),
+    // },
   ]);
 };
 

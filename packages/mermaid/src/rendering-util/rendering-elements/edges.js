@@ -534,14 +534,14 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   let lineData = points.filter((p) => !Number.isNaN(p.y));
   const { cornerPoints, cornerPointPositions } = extractCornerPoints(lineData);
   lineData = fixCorners(lineData);
-  let lastPoint = lineData[0];
+  let lastPoint = lineData[lineData.length - 1];
   if (lineData.length > 1) {
     lastPoint = lineData[lineData.length - 1];
     const secondLastPoint = lineData[lineData.length - 2];
     // Calculate the mid point of the last two points
-    const diffX = (lastPoint.x - secondLastPoint.x) / 4;
-    const diffY = (lastPoint.y - secondLastPoint.y) / 4;
-    const midPoint = { x: secondLastPoint.x + 3 * diffX, y: secondLastPoint.y + 3 * diffY };
+    const diffX = (lastPoint.x - secondLastPoint.x) / 2;
+    const diffY = (lastPoint.y - secondLastPoint.y) / 2;
+    const midPoint = { x: secondLastPoint.x + diffX, y: secondLastPoint.y + diffY };
     lineData.splice(-1, 0, midPoint);
   }
   // This is the accessor function we talked about above
@@ -597,11 +597,16 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   let useRough = edge.useRough;
   let svgPath;
   let path = '';
-
+  let linePath = lineFunction(lineData);
   if (useRough) {
     const rc = rough.svg(elem);
     const ld = Object.assign([], lineData);
-    const svgPathNode = rc.path(lineFunction(ld.splice(0, ld.length - 1)), {
+    // const svgPathNode = rc.path(lineFunction(ld.splice(0, ld.length-1)), {
+    // const svgPathNode = rc.path(lineFunction(ld), {
+    //   roughness: 0.3,
+    //   seed: handdrawnSeed,
+    // });
+    const svgPathNode = rc.path(linePath, {
       roughness: 0.3,
       seed: handdrawnSeed,
     });
@@ -615,13 +620,12 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
       .attr('style', edge.style);
     let d = svgPath.attr('d');
-    d = d + ' L ' + lastPoint.x + ' ' + lastPoint.y;
     svgPath.attr('d', d);
     elem.node().appendChild(svgPath.node());
   } else {
     svgPath = elem
       .append('path')
-      .attr('d', lineFunction(lineData))
+      .attr('d', linePath)
       .attr('id', edge.id)
       .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
       .attr('style', edge.style);

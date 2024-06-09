@@ -75,15 +75,28 @@
     </style>
   </head>
   <body>
-    <pre id="diagram" class="mermaid2">
-stateDiagram-v2
-    state if_state <<choice>>
-    [*] --> IsPositive
-    IsPositive --> if_state
-    if_state --> False: if n < 0
-    if_state --> True : if n >= 0
+    <pre id="diagram" class="mermaid">
+stateDiagram
+direction LR
+      state Gorilla0 {
+        state Apa0 {
+          A0 --> B0
+        }
+
+      }
+      Apa0 --> C0
+      A0 --> C0
       </pre
     >
+    <pre id="diagram" class="mermaid">
+flowchart LR
+    subgraph Gorilla
+      subgraph Apa
+        A[A] --- B
+      end
+    end
+    Apa --- C
+    A --x C
 
     <pre id="diagram" class="mermaid">
 stateDiagram
@@ -93,8 +106,16 @@ stateDiagram
       </pre
     >
     <pre id="diagram" class="mermaid2">
-stateDiagram
-  state "This is a state description" as S
+      %%{init: {"layout": "dagre", "mergeEdges": false} }%%
+flowchart LR
+      A ==> B(This is B)
+    A[Start] --> B(Is it?)
+    B -- Yes --> C[OK]
+    C --> D[Rethink]
+    D --> B
+    B -. No ...-> E[End]
+
+
       </pre
     >
     <pre id="diagram" class="mermaid2">
@@ -113,7 +134,7 @@ flowchart
     if_state --> True : if n >= 0
       </pre
     >
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid3">
       %%{init: {"layout": "elk", "mergeEdges": false, "elk.nodePlacement.strategy": "SIMPLE"} }%%
       stateDiagram
     state if_state &lt;&lt;choice&gt;&gt;
@@ -128,8 +149,10 @@ flowchart
 stateDiagram
   direction TB
   State T1 {
-    T11
+    T11 --> T12
   }
+  T1 --> T2
+  T11 --> T2
       </pre
     >
     <pre id="diagram" class="mermaid2">
@@ -212,12 +235,13 @@ stateDiagram-v2
       };
       mermaid.initialize({
         // theme: 'base',
-        handdrawnSeed: 12,
+        // handdrawnSeed: 12,
         look: 'handdrawn',
-        'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
-        layout: 'dagre',
-        // layout: 'elk',
+        // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+        // layout: 'dagre',
+        layout: 'elk',
         // layout: 'fixed',
+        // htmlLabels: false,
         flowchart: { titleTopMargin: 10 },
         // fontFamily: 'Caveat',
         fontFamily: 'Kalam',

@@ -8,16 +8,17 @@ import { createText } from '../createText.ts';
 import intersectRect from '../rendering-elements/intersect/intersect-rect.js';
 import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
+import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 
 const rect = (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
   const siteConfig = getConfig();
+  const { themeVariables, handdrawnSeed } = siteConfig;
+  const { clusterBkg, clusterBorder } = themeVariables;
+  let { useRough } = node;
 
   // Add outer g element
   const shapeSvg = parent.insert('g').attr('class', 'cluster').attr('id', node.id);
-
-  // add the rect
-  const rect = shapeSvg.insert('rect', ':first-child');
 
   const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
 
@@ -44,7 +45,6 @@ const rect = (parent, node) => {
   }
 
   const padding = 0 * node.padding;
-  const halfPadding = padding / 2;
 
   const width = node.width <= bbox.width + padding ? bbox.width + padding : node.width;
   if (node.width <= bbox.width + padding) {
@@ -53,17 +53,45 @@ const rect = (parent, node) => {
     node.diff = -node.padding / 2;
   }
 
-  log.trace('Data ', node, JSON.stringify(node));
-  // center the rect around its coordinate
-  rect
-    .attr('style', node.cssStyles)
-    .attr('rx', node.rx)
-    .attr('ry', node.ry)
-    .attr('x', node.x - width / 2)
-    .attr('y', node.y - node.height / 2 - halfPadding)
-    .attr('width', width)
-    .attr('height', node.height + padding);
+  const totalWidth = width + padding;
+  const totalHeight = node.height + padding;
+  const x = node.x - totalWidth / 2;
+  const y = node.y - totalHeight / 2;
 
+  log.trace('Data ', node, JSON.stringify(node));
+  let rect;
+  if (useRough) {
+    // @ts-ignore TODO: Fix rough typings
+    const rc = rough.svg(shapeSvg);
+    const options = userNodeOverrides(node, {
+      roughness: 0.7,
+      fill: clusterBkg,
+      // fill: 'red',
+      stroke: clusterBorder,
+      fillWeight: 3,
+      seed: handdrawnSeed,
+      stroke: clusterBorder,
+    });
+    const roughNode = rc.path(createRoundedRectPathD(x, y, totalWidth, totalHeight, 0), options);
+    // console.log('Rough node insert CXC', roughNode);
+
+    rect = shapeSvg.insert(() => {
+      console.log('Rough node insert CXC', roughNode);
+      return roughNode;
+    }, ':first-child');
+  } else {
+    // add the rect
+    rect = shapeSvg.insert('rect', ':first-child');
+    // center the rect around its coordinate
+    rect
+      .attr('style', node.cssStyles)
+      .attr('rx', node.rx)
+      .attr('ry', node.ry)
+      .attr('x', x)
+      .attr('y', y)
+      .attr('width', totalWidth)
+      .attr('height', totalHeight);
+  }
   const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
   if (useHtmlLabels) {
     labelEl.attr(
@@ -303,8 +331,8 @@ const divider = (parent, node) => {
 
   return { cluster: shapeSvg, labelBBox: { width: 0, height: 0 } };
 };
-
-const shapes = { rect, roundedWithTitle, noteGroup, divider };
+const squareRect = rect;
+const shapes = { rect, squareRect, roundedWithTitle, noteGroup, divider };
 
 let clusterElems = {};
 

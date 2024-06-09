@@ -60,7 +60,7 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
   graph.children.push(child);
   nodeDb[node.id] = child;
 
-  //     // Add the element to the DOM
+  // Add the element to the DOM
   if (!node.isGroup) {
     const childNodeEl = await insertNode(nodeEl, node, node.dir);
     boundingBox = childNodeEl.node().getBBox();
@@ -93,7 +93,7 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
 
 export const addVertices = async function (nodeEl, nodeArr, graph, parentId) {
   const siblings = nodeArr.filter((node) => node.parentId === parentId);
-  log.info('addVertices DAGA', siblings, parentId);
+  log.info('addVertices APA12', siblings, parentId);
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   await Promise.all(
     siblings.map(async (node) => {
@@ -512,9 +512,7 @@ export const render = async (data4Layout, svg, element, algorithm) => {
     const node = nodeDb[n.id];
 
     // Subgraph
-    console.log('Subgraph XCX before');
     if (parentLookupDb.childrenById[node.id] !== undefined) {
-      console.log('Subgraph XCX', node.id, node, node.labelData);
       node.labels = [
         {
           text: node.labelText,
@@ -553,9 +551,9 @@ export const render = async (data4Layout, svg, element, algorithm) => {
     }
   });
 
-  console.log('before layout', JSON.stringify(elkGraph, null, 2));
+  // log.info('before layout', JSON.stringify(elkGraph, null, 2));
   const g = await elk.layout(elkGraph);
-  log.info('after layout', JSON.stringify(g));
+  // log.info('after layout', JSON.stringify(g));
 
   // debugger;
   drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
@@ -563,11 +561,11 @@ export const render = async (data4Layout, svg, element, algorithm) => {
     // (elem, edge, clusterDb, diagramType, graph, id)
     const startNode = nodeDb[edge.sources[0]];
     const endNode = nodeDb[edge.targets[0]];
-    const sourceId = edge.start.id;
-    const targetId = edge.end.id;
+    const sourceId = edge.start;
+    const targetId = edge.end;
 
     const offset = calcOffset(sourceId, targetId, parentLookupDb);
-
+    log.info('APA12 offset', offset, sourceId, targetId, edge);
     if (edge.sections) {
       const src = edge.sections[0].startPoint;
       const dest = edge.sections[0].endPoint;
@@ -590,6 +588,7 @@ export const render = async (data4Layout, svg, element, algorithm) => {
         endNode,
         data4Layout.diagramId
       );
+      log.info('APA12 edge points after insert', JSON.stringify(edge.points));
 
       edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
       edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
