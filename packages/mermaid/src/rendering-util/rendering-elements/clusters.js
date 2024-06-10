@@ -20,7 +20,6 @@ const rect = (parent, node) => {
   const siteConfig = getConfig();
   const { themeVariables, handdrawnSeed } = siteConfig;
   const { clusterBkg, clusterBorder } = themeVariables;
-  let { useRough } = node;
 
   // Add outer g element
   const shapeSvg = parent.insert('g').attr('class', 'cluster').attr('id', node.id);
@@ -65,7 +64,7 @@ const rect = (parent, node) => {
 
   log.trace('Data ', node, JSON.stringify(node));
   let rect;
-  if (useRough) {
+  if (node.look === 'handdrawn') {
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {
@@ -223,7 +222,7 @@ const roundedWithTitle = (parent, node) => {
   const look = siteConfig.look;
   // add the rect
   let rect;
-  if (node.useRough) {
+  if (node.look === 'handdrawn') {
     const isAlt = node.cssClasses.includes('statediagram-cluster-alt');
     const rc = rough.svg(shapeSvg);
     const roughOuterNode =
@@ -308,7 +307,7 @@ const divider = (parent, node) => {
   const y = node.y - node.height / 2;
   const width = node.width + padding;
   const height = node.height + padding;
-  if (node.useRough) {
+  if (node.look === 'handdrawn') {
     const rc = rough.svg(shapeSvg);
     const roughNode = rc.rectangle(x, y, width, height, {
       fill: 'lightgrey',

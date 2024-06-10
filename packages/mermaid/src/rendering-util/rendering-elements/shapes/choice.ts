@@ -22,7 +22,7 @@ export const choice = (parent: SVG, node: Node) => {
   ];
 
   let choice;
-  if (node.useRough) {
+  if (node.look === 'handdrawn') {
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const pointArr = points.map(function (d) {

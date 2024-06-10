@@ -25,7 +25,7 @@ export const forkJoin = (parent: SVG, node: Node, dir: string) => {
   const y = (-1 * height) / 2;
 
   let shape;
-  if (node.useRough) {
+  if (node.look === 'handdrawn') {
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const roughNode = rc.rectangle(x, y, width, height, solidStateFill(lineColor));

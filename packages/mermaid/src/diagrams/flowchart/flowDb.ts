@@ -775,12 +775,12 @@ const addNodeFromVertex = (
   parentDB: Map<string, string>,
   subGraphDB: Map<string, boolean>,
   config: any,
-  useRough: boolean
+  look: string
 ): Node => {
-  let parentId = parentDB.get(vertex.id);
-  let isGroup = subGraphDB.get(vertex.id) || false;
+  const parentId = parentDB.get(vertex.id);
+  const isGroup = subGraphDB.get(vertex.id) || false;
 
-  let node = findNode(nodes, vertex.id);
+  const node = findNode(nodes, vertex.id);
   if (!node) {
     nodes.push({
       id: vertex.id,
@@ -795,7 +795,7 @@ const addNodeFromVertex = (
       domId: vertex.domId,
       type: isGroup ? 'group' : undefined,
       isGroup,
-      useRough,
+      look,
     });
   }
 };
@@ -807,7 +807,6 @@ export const getData = () => {
 
   // extract(getRootDocV2());
   // const diagramStates = getStates();
-  const useRough = config.look === 'handdrawn';
   const subGraphs = getSubGraphs();
   log.info('Subgraphs - APA12', subGraphs);
   const parentDB = new Map<string, string>();
@@ -834,14 +833,14 @@ export const getData = () => {
       domId: subGraph.domId,
       type: 'group',
       isGroup: true,
-      useRough,
+      look: config.look,
     });
   }
   console.log('APA12 nodes - 1', nodes.length);
 
   const n = getVertices();
   n.forEach((vertex) => {
-    const node = addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, useRough);
+    const node = addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, config.look);
     if (node) {
       nodes.push(node);
     }
@@ -874,13 +873,11 @@ export const getData = () => {
       //   domId: verawEdgertex.domId,
       //   rawEdge: undefined,
       //   isGroup: false,
-      useRough,
+      look: config.look,
     };
     // console.log('rawEdge SPLIT', rawEdge, index);
     edges.push(edge);
   });
-
-  //const useRough = config.look === 'handdrawn';
 
   return { nodes, edges, other: {}, config };
 };
