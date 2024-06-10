@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import utils from '../../utils.js';
+import utils, { getEdgeId } from '../../utils.js';
 import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
 import type { LayoutData, LayoutMethod, Node, Edge } from '../../rendering-util/types.js';
@@ -767,6 +767,39 @@ const getTypeFromVertex = (vertex: FlowVertex) => {
   return vertex.type || 'squareRect';
 };
 
+const findNode = (nodes: Node[], id: string) => nodes.find((node) => node.id === id);
+
+const addNodeFromVertex = (
+  vertex: FlowVertex,
+  nodes: Node[],
+  parentDB: Map<string, string>,
+  subGraphDB: Map<string, boolean>,
+  config: any,
+  useRough: boolean
+): Node => {
+  let parentId = parentDB.get(vertex.id);
+  let isGroup = subGraphDB.get(vertex.id) || false;
+
+  let node = findNode(nodes, vertex.id);
+  if (!node) {
+    nodes.push({
+      id: vertex.id,
+      label: vertex.text,
+      labelStyle: '',
+      parentId,
+      padding: config.flowchart?.padding || 8,
+      cssStyles: vertex.styles.join(' '),
+      cssClasses: vertex.classes.join(' '),
+      shape: getTypeFromVertex(vertex),
+      dir: vertex.dir,
+      domId: vertex.domId,
+      type: isGroup ? 'group' : undefined,
+      isGroup,
+      useRough,
+    });
+  }
+};
+
 export const getData = () => {
   const config = getConfig();
   const nodes: Node[] = [];
@@ -775,23 +808,76 @@ export const getData = () => {
   // extract(getRootDocV2());
   // const diagramStates = getStates();
   const useRough = config.look === 'handdrawn';
+  const subGraphs = getSubGraphs();
+  log.info('Subgraphs - APA12', subGraphs);
+  const parentDB = new Map<string, string>();
+  const subGraphDB = new Map<string, boolean>();
+
+  for (let i = subGraphs.length - 1; i >= 0; i--) {
+    const subGraph = subGraphs[i];
+    if (subGraph.nodes.length > 0) {
+      subGraphDB.set(subGraph.id, true);
+    }
+    subGraph.nodes.forEach((id) => {
+      parentDB.set(id, subGraph.id);
+    });
+    nodes.push({
+      id: subGraph.id,
+      label: subGraph.title,
+      labelStyle: '',
+      parentId: parentDB.get(subGraph.id),
+      padding: config.flowchart?.padding || 8,
+      cssStyles: '',
+      cssClasses: '',
+      shape: 'rect',
+      dir: subGraph.dir,
+      domId: subGraph.domId,
+      type: 'group',
+      isGroup: true,
+      useRough,
+    });
+  }
+  console.log('APA12 nodes - 1', nodes.length);
+
   const n = getVertices();
   n.forEach((vertex) => {
-    const node: Node = {
-      id: vertex.id,
-      label: vertex.text,
-      labelStyle: '',
-      padding: config.flowchart?.padding || 8,
-      cssStyles: vertex.styles.join(' '),
-      cssClasses: vertex.classes.join(' '),
-      shape: getTypeFromVertex(vertex),
-      dir: vertex.dir,
-      domId: vertex.domId,
-      type: undefined,
-      isGroup: false,
+    const node = addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, useRough);
+    if (node) {
+      nodes.push(node);
+    }
+  });
+
+  console.log('APA12 nodes', nodes.length);
+
+  const e = getEdges();
+  e.forEach((rawEdge, index) => {
+    const edge: Edge = {
+      id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'edge' }),
+      start: rawEdge.start,
+      end: rawEdge.end,
+      type: rawEdge.type || 'normal',
+      label: rawEdge.text,
+      labelpos: 'c',
+      //   labelStyle: '',
+      //   cssStyles: rawEdge.styles.join(' '),
+      thickness: rawEdge.stroke,
+      minlen: rawEdge.length,
+      classes: 'edge-thickness-normal edge-pattern-solid flowchart-link',
+      arrowhead: 'none',
+      arrowTypeEnd: 'arrow_point',
+      // arrowTypeEnd: 'arrow_barb',
+      arrowheadStyle: 'fill: #333',
+      // stroke: rawEdge.pattern,
+      pattern: rawEdge.stroke,
+      //   shape: getTypeFromVertex(rawEdge),
+      //   dir: rawEdge.dir,
+      //   domId: verawEdgertex.domId,
+      //   rawEdge: undefined,
+      //   isGroup: false,
       useRough,
     };
-    nodes.push(node);
+    // console.log('rawEdge SPLIT', rawEdge, index);
+    edges.push(edge);
   });
 
   //const useRough = config.look === 'handdrawn';

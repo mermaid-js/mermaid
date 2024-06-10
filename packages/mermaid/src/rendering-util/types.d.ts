@@ -93,7 +93,7 @@ interface Edge {
   labelStyle?: string;
   minlen?: number;
   pattern?: string;
-  thickness?: number;
+  thickness?: 'normal' | 'thick' | 'invisible';
   useRough?: boolean;
 }
 

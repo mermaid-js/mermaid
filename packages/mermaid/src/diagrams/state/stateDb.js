@@ -579,7 +579,6 @@ export const getData = () => {
   //     nodes.push({...currentDocument.states[key]});
   //   }
   // }
-  extract(getRootDocV2());
   const diagramStates = getStates();
   const config = getConfig();
   const useRough = config.look === 'handdrawn';
