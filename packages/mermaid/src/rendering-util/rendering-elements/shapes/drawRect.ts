@@ -49,7 +49,7 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
     rect = shapeSvg.insert('rect', ':first-child');
 
     rect
-      .attr('class', 'basic label-container neo-node state-shadow')
+      .attr('class', 'basic label-container state-shadow-neo')
       .attr('style', cssStyles)
       .attr('rx', rx)
       .attr('data-id', 'abc')

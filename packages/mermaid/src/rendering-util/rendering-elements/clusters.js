@@ -250,7 +250,7 @@ const roundedWithTitle = (parent, node) => {
     rect = outerRectG.insert('rect', ':first-child');
     let outerRectClass = 'outer';
     if (look === 'neo') {
-      outerRectClass = 'outer state-shadow';
+      outerRectClass = 'outer state-shadow-neo';
     } else {
       outerRectClass = 'outer';
     }

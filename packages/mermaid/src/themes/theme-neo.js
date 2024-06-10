@@ -15,7 +15,8 @@ class Theme {
     this.background = '#ffffff';
 
     this.primaryColor = '#cccccc';
-    this.mainBkg = '#ffffff';
+    //this.mainBkg = '#ffffff';
+    this.mainBkg = '#ecedfe';
 
     this.noteBkgColor = '#fff5ad';
     this.noteTextColor = '#333';
@@ -57,6 +58,7 @@ class Theme {
     this.nodeBkg = this.nodeBkg || this.primaryColor;
     this.mainBkg = this.mainBkg || this.primaryColor;
     this.nodeBorder = this.nodeBorder || this.primaryBorderColor;
+    this.nodeBorder = 'none';
     this.clusterBkg = this.clusterBkg || this.tertiaryColor;
     this.clusterBorder = this.clusterBorder || this.tertiaryBorderColor;
     this.defaultLinkColor = this.defaultLinkColor || this.lineColor;

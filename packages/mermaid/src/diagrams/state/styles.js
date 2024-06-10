@@ -156,7 +156,8 @@ g.stateGroup line {
   ry: ${options.radius}px;
 }
 
-.state-shadow {
+
+.state-shadow-neo {
   filter: drop-shadow( 1px 2px 2px rgba(185,185,185,1.0) );
 }
 
