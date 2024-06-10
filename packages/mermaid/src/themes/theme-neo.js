@@ -25,7 +25,7 @@ class Theme {
     // dark
 
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
-    this.fontSize = '16px';
+    this.fontSize = '10px';
   }
   updateColors() {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used

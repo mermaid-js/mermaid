@@ -333,7 +333,7 @@ const setupDoc = (g, parentParsedItem, doc, diagramStates, diagramDb, altFlag) =
               counter: graphItemCount,
             }),
             arrowhead: 'normal',
-            arrowTypeEnd: 'arrow_barb',
+            arrowTypeEnd: 'arrow_neo',
             style: G_EDGE_STYLE,
             labelStyle: '',
             label: common.sanitizeText(item.description, getConfig()),

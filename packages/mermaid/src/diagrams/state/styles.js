@@ -127,16 +127,16 @@ g.stateGroup line {
 }
 
 .statediagram-cluster rect.outer {
-  rx: 2px;
-  ry: 2px;
+  rx: ${options.radius}px;
+  ry: ${options.radius}px;
 }
 .statediagram-state .divider {
   stroke: ${options.stateBorder || options.nodeBorder};
 }
 
 .statediagram-state .title-state {
-  rx: 5px;
-  ry: 5px;
+  rx: ${options.radius}px;
+  ry: ${options.radius}px;
 }
 .statediagram-cluster.statediagram-cluster .inner {
   fill: ${options.compositeBackground || options.background};
