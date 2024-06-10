@@ -68,7 +68,7 @@ export interface MermaidConfig {
    * Defines which main look to use for the diagram.
    *
    */
-  look?: 'classic' | 'handdrawn' | 'slick' | 'neo';
+  look?: 'classic' | 'handdrawn' | 'neo';
   /**
    * Defines the seed to be used when using handdrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
    *
