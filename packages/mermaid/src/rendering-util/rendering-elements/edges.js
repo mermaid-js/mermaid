@@ -272,7 +272,6 @@ export const intersection = (node, outsidePoint, insidePoint) => {
   // log.warn();
   if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) {
     // Intersection is top or bottom of rect.
-    // let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
     let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
     r = (R * q) / Q;
     const res = {
@@ -280,10 +279,10 @@ export const intersection = (node, outsidePoint, insidePoint) => {
       y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - Q + q,
     };
 
-    if (r === 0) {
-      res.x = outsidePoint.x;
-      res.y = outsidePoint.y;
-    }
+    // if (r === 0) {
+    //   res.x = outsidePoint.x;
+    //   res.y = outsidePoint.y;
+    // }
     if (R === 0) {
       res.x = outsidePoint.x;
     }
@@ -291,7 +290,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
       res.y = outsidePoint.y;
     }
 
-    log.warn(`abc89 top/bot calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res);
+    log.warn(`abc89 top/bot calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res, 'apa');
 
     return res;
   } else {
@@ -346,7 +345,7 @@ const cutPathAtIntersect = (_points, boundaryNode) => {
       // Calc the intersection coord between the point anf the last point outside the rect
       const inter = intersection(boundaryNode, lastPointOutside, point);
       log.warn('abc88 inside', point, lastPointOutside, inter);
-      log.warn('abc88 intersection', inter);
+      log.warn('abc88 intersection', inter, boundaryNode);
 
       // // Check case where the intersection is the same as the last point
       let pointPresent = false;
