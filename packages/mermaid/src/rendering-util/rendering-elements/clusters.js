@@ -10,11 +10,6 @@ import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 
-// Helper function to calculate the offset correction for the label
-const calcLabelOffsetCorrection = (diff) => {
-  return diff * 0.75 - 6;
-};
-
 const rect = (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
   const siteConfig = getConfig();
@@ -196,6 +191,7 @@ const roundedWithTitle = (parent, node) => {
 
   // Get the size of the label
   let bbox = text.getBBox();
+
   if (evaluate(siteConfig.flowchart.htmlLabels)) {
     const div = text.children[0];
     const dv = select(text);
@@ -203,6 +199,7 @@ const roundedWithTitle = (parent, node) => {
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }
+
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
 
@@ -216,10 +213,11 @@ const roundedWithTitle = (parent, node) => {
 
   const x = node.x - width / 2 - halfPadding;
   const y = node.y - node.height / 2 - halfPadding;
-  const innerY = node.y - node.height / 2 - halfPadding + bbox.height - 1;
+  const innerY = node.y - node.height / 2 - halfPadding + bbox.height + 2;
   const height = node.height + padding;
-  const innerHeight = node.height + padding - bbox.height - 3;
+  const innerHeight = node.height + padding - bbox.height - 2;
   const look = siteConfig.look;
+
   // add the rect
   let rect;
   if (node.look === 'handdrawn') {
@@ -270,12 +268,9 @@ const roundedWithTitle = (parent, node) => {
       .attr('height', innerHeight);
   }
 
-  let diff = bbox.height - (innerY - y) / 2;
-  let correction = calcLabelOffsetCorrection(diff, bbox.height);
-
   label.attr(
     'transform',
-    `translate(${node.x - bbox.width / 2}, ${(innerY - y) / 2 - correction})`
+    `translate(${node.x - bbox.width / 2}, ${y + 1 - (evaluate(siteConfig.flowchart.htmlLabels) ? 0 : 3)})`
   );
 
   const rectBox = rect.node().getBBox();

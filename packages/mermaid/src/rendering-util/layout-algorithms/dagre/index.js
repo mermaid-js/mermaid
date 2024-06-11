@@ -162,7 +162,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
       node.x -= 8;
 
       log.info(
-        'A tainted cluster node XBX',
+        'A pure cluster node XBX',
         v,
         node.id,
         node.width,
@@ -188,7 +188,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
 
         // A cluster in the non-recursive way
         log.info(
-          'A pure cluster node with children XBX',
+          'A tainted cluster node with children XBX',
           v,
           node.id,
           node.width,
