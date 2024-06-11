@@ -18,9 +18,9 @@ export const doublecircle = async (parent: SVGAElement, node: Node): Promise<SVG
   const innerRadius = bbox.width / 2 + halfPadding;
 
   let circleGroup;
-  const { cssStyles, useRough } = node;
+  const { cssStyles } = node;
 
-  if (useRough) {
+  if (node.look === 'handdrawn') {
     // @ts-ignore
     const rc = rough.svg(shapeSvg);
     const outerOptions = userNodeOverrides(node, { roughness: 0.2, strokeWidth: 2.5 });

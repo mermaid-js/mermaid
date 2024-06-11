@@ -46,7 +46,6 @@ interface Node {
   rx?: number; // Used for rounded corners in Rect, Ellipse, etc.Maybe it to specialized RectNode, EllipseNode, etc.
   ry?: number;
 
-  useRough?: boolean;
   useHtmlLabels?: boolean;
   centerLabel?: boolean; //keep for now.
   //Candidate for removal, maybe rely on labelStyle or a specific property labelPosition: Top, Center, Bottom
@@ -61,6 +60,9 @@ interface Node {
   // Flowchart specific properties
   x?: number;
   y?: number;
+
+  // Added look to handle
+  look?: string;
 }
 
 // Common properties for any edge in the system
@@ -91,12 +93,15 @@ interface Edge {
   minlen?: number;
   pattern?: string;
   thickness?: 'normal' | 'thick' | 'invisible';
-  useRough?: boolean;
+
+  look?: string;
 }
 
 interface RectOptions {
   rx: number;
   ry: number;
+  labelPaddingX: number;
+  labelPaddingY: number;
   classes: string;
 }
 

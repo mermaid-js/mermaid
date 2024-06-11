@@ -127,22 +127,23 @@ g.stateGroup line {
 }
 
 .statediagram-cluster rect.outer {
-  rx: 5px;
-  ry: 5px;
+  rx: ${options.radius}px;
+  ry: ${options.radius}px;
 }
 .statediagram-state .divider {
   stroke: ${options.stateBorder || options.nodeBorder};
 }
 
 .statediagram-state .title-state {
-  rx: 5px;
-  ry: 5px;
+  rx: ${options.radius}px;
+  ry: ${options.radius}px;
 }
 .statediagram-cluster.statediagram-cluster .inner {
   fill: ${options.compositeBackground || options.background};
 }
 .statediagram-cluster.statediagram-cluster-alt .inner {
   fill: ${options.altBackground ? options.altBackground : '#efefef'};
+
 }
 
 .statediagram-cluster .inner {
@@ -151,9 +152,16 @@ g.stateGroup line {
 }
 
 .statediagram-state rect.basic {
-  rx: 5px;
-  ry: 5px;
+  rx: ${options.radius}px;
+  ry: ${options.radius}px;
 }
+
+
+.state-shadow-neo {
+  filter: drop-shadow( 1px 2px 2px rgba(185,185,185,1.0) );
+}
+
+
 .statediagram-state rect.divider {
   stroke-dasharray: 10,10;
   fill: ${options.altBackground ? options.altBackground : '#efefef'};

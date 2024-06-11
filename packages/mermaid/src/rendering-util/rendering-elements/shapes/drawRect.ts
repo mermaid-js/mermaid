@@ -1,12 +1,15 @@
-import { log } from '$root/logger.js';
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node, RectOptions } from '$root/rendering-util/types.d.ts';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
+import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 export const drawRect = async (parent: SVGAElement, node: Node, options: RectOptions) => {
+  const { themeVariables, handdrawnSeed, look } = getConfig();
+  const { nodeBorder, mainBkg } = themeVariables;
+
   const { shapeSvg, bbox, halfPadding } = await labelHelper(
     parent,
     node,
@@ -14,21 +17,22 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
     true
   );
 
-  const totalWidth = Math.max(bbox.width + node.padding, node?.width || 0);
-  const totalHeight = Math.max(bbox.height + node.padding, node?.height || 0);
+  const totalWidth = Math.max(bbox.width + options.labelPaddingX * 2, node?.width || 0);
+  const totalHeight = Math.max(bbox.height + options.labelPaddingY * 2, node?.height || 0);
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;
 
   let rect;
-  let { rx, ry, cssStyles, useRough } = node;
+  node.look = look;
+  let { rx, ry } = node;
+  const { cssStyles } = node;
 
   //use options rx, ry overrides if present
   if (options && options.rx && options.ry) {
     rx = options.rx;
     ry = options.ry;
   }
-
-  if (useRough) {
+  if (node.look === 'handdrawn') {
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
@@ -40,6 +44,21 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
 
     rect = shapeSvg.insert(() => roughNode, ':first-child');
     rect.attr('class', 'basic label-container').attr('style', cssStyles);
+  } else if (node.look === 'neo') {
+    // TODO: Take theme and look into account
+    rect = shapeSvg.insert('rect', ':first-child');
+
+    rect
+      .attr('class', 'basic label-container state-shadow-neo')
+      .attr('style', cssStyles)
+      .attr('rx', rx)
+      .attr('data-id', 'abc')
+      .attr('data-et', 'node')
+      .attr('ry', ry)
+      .attr('x', x)
+      .attr('y', y)
+      .attr('width', totalWidth)
+      .attr('height', totalHeight);
   } else {
     rect = shapeSvg.insert('rect', ':first-child');
 

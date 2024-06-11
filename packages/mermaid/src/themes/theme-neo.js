@@ -12,19 +12,25 @@ class Theme {
      * - Background - used to know what the background color is of the diagram. This is used for
      *   deducing colors for instance line color. Default value is #f4f4f4.
      */
-    this.background = '#f4f4f4';
+    this.background = '#ffffff';
 
-    this.primaryColor = '#fff4dd';
+    this.primaryColor = '#cccccc';
+    //this.mainBkg = '#ffffff';
+    this.mainBkg = '#ecedfe';
 
     this.noteBkgColor = '#fff5ad';
     this.noteTextColor = '#333';
 
     this.THEME_COLOR_LIMIT = 12;
-    this.radius = 5;
+    this.radius = 3;
     // dark
 
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
-    this.fontSize = '16px';
+    this.fontSize = '10px';
+
+    // Neo-specific
+    this.nodeBorder = 'none';
+    this.stateBorder = 'none';
   }
   updateColors() {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used

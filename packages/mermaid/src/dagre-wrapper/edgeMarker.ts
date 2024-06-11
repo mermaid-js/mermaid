@@ -29,6 +29,7 @@ const arrowTypesMap = {
   arrow_cross: 'cross',
   arrow_point: 'point',
   arrow_barb: 'barb',
+  arrow_neo: 'barbNeo',
   arrow_circle: 'circle',
   aggregation: 'aggregation',
   extension: 'extension',

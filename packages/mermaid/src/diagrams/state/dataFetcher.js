@@ -54,39 +54,23 @@ export function stateDomId(itemId = '', counter = 0, type = '', typeSpacer = DOM
   return `${DOMID_STATE}-${itemId}${typeStr}-${counter}`;
 }
 
-const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, useRough, look) => {
+const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, look) => {
   // graphItemCount = 0;
   log.trace('items', doc);
   doc.forEach((item) => {
     switch (item.stmt) {
       case STMT_STATE:
-        dataFetcher(parentParsedItem, item, diagramStates, nodes, edges, altFlag, useRough, look);
+        dataFetcher(parentParsedItem, item, diagramStates, nodes, edges, altFlag, look);
+
         break;
       case DEFAULT_STATE_TYPE:
-        dataFetcher(parentParsedItem, item, diagramStates, nodes, edges, altFlag, useRough, look);
+        dataFetcher(parentParsedItem, item, diagramStates, nodes, edges, altFlag, look);
+
         break;
       case STMT_RELATION:
         {
-          dataFetcher(
-            parentParsedItem,
-            item.state1,
-            diagramStates,
-            nodes,
-            edges,
-            altFlag,
-            useRough,
-            look
-          );
-          dataFetcher(
-            parentParsedItem,
-            item.state2,
-            diagramStates,
-            nodes,
-            edges,
-            altFlag,
-            useRough,
-            look
-          );
+          dataFetcher(parentParsedItem, item.state1, diagramStates, nodes, edges, altFlag, look);
+          dataFetcher(parentParsedItem, item.state2, diagramStates, nodes, edges, altFlag, look);
           const edgeData = {
             id: 'edge' + graphItemCount,
             start: item.state1.id,
@@ -101,7 +85,6 @@ const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, u
             labelType: G_EDGE_LABELTYPE,
             thickness: G_EDGE_THICKNESS,
             classes: CSS_EDGE,
-            useRough,
             look,
           };
           edges.push(edgeData);
@@ -225,16 +208,7 @@ function getClassesFromDbInfo(dbInfoItem) {
     }
   }
 }
-export const dataFetcher = (
-  parent,
-  parsedItem,
-  diagramStates,
-  nodes,
-  edges,
-  altFlag,
-  useRough,
-  look
-) => {
+export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, altFlag, look) => {
   const itemId = parsedItem.id;
   const classStr = getClassesFromDbInfo(diagramStates.get(itemId));
 
@@ -324,7 +298,6 @@ export const dataFetcher = (
       padding: 8,
       rx: 10,
       ry: 10,
-      useRough,
       look,
     };
 
@@ -354,7 +327,6 @@ export const dataFetcher = (
         type: newNode.type,
         isGroup: newNode.type === 'group',
         padding: 0, //getConfig().flowchart.padding
-        useRough,
         look,
         position: parsedItem.note.position,
       };
@@ -369,7 +341,6 @@ export const dataFetcher = (
         type: 'group',
         isGroup: true,
         padding: 16, //getConfig().flowchart.padding
-        useRough,
         look,
         position: parsedItem.note.position,
       };
@@ -410,7 +381,6 @@ export const dataFetcher = (
         labelpos: G_EDGE_LABELPOS,
         labelType: G_EDGE_LABELTYPE,
         thickness: G_EDGE_THICKNESS,
-        useRough,
         look,
       });
     } else {
@@ -419,7 +389,7 @@ export const dataFetcher = (
   }
   if (parsedItem.doc) {
     log.trace('Adding nodes children ');
-    setupDoc(parsedItem, parsedItem.doc, diagramStates, nodes, edges, !altFlag, useRough, look);
+    setupDoc(parsedItem, parsedItem.doc, diagramStates, nodes, edges, !altFlag, look);
   }
 };
 

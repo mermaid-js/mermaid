@@ -42,9 +42,9 @@ export const rect_left_inv_arrow = async (
   ];
 
   let polygon;
-  const { cssStyles, useRough } = node;
+  const { cssStyles } = node;
 
-  if (useRough) {
+  if (node.look === 'handdrawn') {
     // @ts-ignore
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});

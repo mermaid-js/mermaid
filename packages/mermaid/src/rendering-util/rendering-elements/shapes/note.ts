@@ -21,14 +21,14 @@ export const note = async (parent: SVGAElement, node: Node) => {
   );
 
   log.info('Classes = ', node.cssClasses);
-  const { cssStyles, useRough } = node;
+  const { cssStyles } = node;
   let rect;
   const totalWidth = bbox.width + node.padding;
   const totalHeight = bbox.height + node.padding;
   const x = -bbox.width / 2 - halfPadding;
   const y = -bbox.height / 2 - halfPadding;
 
-  if (useRough) {
+  if (node.look === 'handdrawn') {
     // add the rect
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);

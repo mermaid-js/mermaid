@@ -4,16 +4,35 @@
     <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/font-awesome.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
     />
     <link
       href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        /* background:#333; */
+        /* background: #333; */
         font-family: 'Arial';
         /* font-size: 18px !important; */
       }
@@ -25,6 +44,15 @@
       }
       .mermaid svg {
         /* font-size: 18px !important; */
+
+        /* background-color: #efefef;
+        background-image: radial-gradient(#fff 51%, transparent 91%),
+          radial-gradient(#fff 51%, transparent 91%);
+        background-size: 20px 20px;
+        background-position:
+          0 0,
+          10px 10px;
+        background-repeat: repeat; */
       }
       .malware {
         position: fixed;
@@ -41,34 +69,68 @@
         font-family: monospace;
         font-size: 72px;
       }
+      /* tspan {
+              font-size: 6px !important;
+            } */
     </style>
   </head>
   <body>
-    <div>Security check</div>
-    <pre id="diagram" class="mermaid">
-flowchart LR
-A-->B
-        </pre
-    >
     <pre id="diagram" class="mermaid2">
-            mindmap
-          root
-            ch1
-            ch2
-        </pre
+stateDiagram-v2
+    direction LR
+    [*] --> Active
+
+    state Active {
+      direction BT
+        [*] --> Inner
+        Inner --> NumLockOn : EvNumLockPressed
+    }
+    %% Outer --> Inner
+      </pre
     >
-    <script src="./packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script>
-    <script src="./packages/mermaid-mindmap/dist/mermaid-example-diagram-detector.js"></script>
-    <script src="./packages/mermaid/dist/mermaid.esm.mjs"></script>
-    <script>
+
+    <pre id="diagram" class="mermaid">
+      stateDiagram
+        direction LR
+        [*] --> A
+        A --> B
+        B --> C
+        state B {
+          direction LR
+          a --> b
+        }
+        B --> D
+
+
+
+            </pre
+    >
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import { layouts } from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
       mermaid.parseError = function (err, hash) {
-        // console.error('Mermaid error: ', err);
+        console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        startOnLoad: true,
+        theme: 'neo',
+        handdrawnSeed: 12,
+        look: 'neo',
+        'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+        // layout: 'dagre',
+        // layout: 'elk',
+        flowchart: { titleTopMargin: 10 },
+        // fontFamily: 'Caveat',
+        // fontFamily: 'Kalam',
+        fontFamily: 'Arial',
+        sequence: {
+          actorFontFamily: 'arial',
+          noteFontFamily: 'arial',
+          messageFontFamily: 'arial',
+        },
+        fontSize: 12,
         logLevel: 0,
-        basePath: './packages/',
-        // themeVariables: {relationLabelColor: 'red'}
       });
       function callback() {
         alert('It worked');
@@ -77,6 +139,10 @@ A-->B
         console.error('In parse error:');
         console.error(err);
       };
+      // mermaid.test1('first_slow', 1200).then((r) => console.info(r));
+      // mermaid.test1('second_fast', 200).then((r) => console.info(r));
+      // mermaid.test1('third_fast', 200).then((r) => console.info(r));
+      // mermaid.test1('forth_slow', 1200).then((r) => console.info(r));
     </script>
   </body>
 </html>
