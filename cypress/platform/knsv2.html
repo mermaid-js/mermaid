@@ -76,6 +76,62 @@
   </head>
   <body>
     <pre id="diagram" class="mermaid">
+flowchart LR
+subgraph Apa["Apa"]
+    A["Start"]
+    B["This is B"]
+end
+    A --> B & C["C"]
+    Apa --> C
+      </pre
+    >
+    <pre id="diagram" class="mermaid">
+flowchart LR
+subgraph Apa["Apa"]
+    B["This is B"]
+    A["Start"]
+end
+    A --> B & C["C"]
+    Apa --> C
+      </pre
+    >
+    <pre id="diagram" class="mermaid">
+flowchart LR
+subgraph Apa["Apa"]
+  subgraph Gorilla
+    A["Start"]
+    B["This is B"]
+  end
+end
+    A --> B & C["C"]
+    Gorilla --> C
+      </pre
+    >
+    <pre id="diagram" class="mermaid">
+flowchart LR
+subgraph Apa["Apa"]
+  subgraph Gorilla
+    A["Start"]
+    B["This is B"]
+  end
+end
+    A --> B & C["C"]
+    Apa --> C
+      </pre
+    >
+    <pre id="diagram" class="mermaid2">
+flowchart LR
+subgraph Apa["Apa"]
+  subgraph Gorilla
+    B["This is B"]
+    A["Start"]
+  end
+end
+Apa --> C
+A --> B & C["C"]
+      </pre
+    >
+    <pre id="diagram" class="mermaid2">
 stateDiagram
 direction LR
       state Gorilla0 {
@@ -88,7 +144,7 @@ direction LR
       A0 --> C0
       </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 flowchart LR
     subgraph Gorilla
       subgraph Apa
@@ -103,6 +159,17 @@ stateDiagram
   S:Stillas
   T:Tiger
   U:Ulv
+      </pre
+    >
+    <pre id="diagram" class="mermaid2">
+flowchart LR
+ subgraph Apa["Apa"]
+        A["Start"]
+        B["This is B"]
+  end
+    A --> B & C["C"]
+    Apa --> C
+
       </pre
     >
     <pre id="diagram" class="mermaid2">
@@ -134,7 +201,7 @@ flowchart
     if_state --> True : if n >= 0
       </pre
     >
-    <pre id="diagram" class="mermaid3">
+    <pre id="diagram" class="mermaid2">
       %%{init: {"layout": "elk", "mergeEdges": false, "elk.nodePlacement.strategy": "SIMPLE"} }%%
       stateDiagram
     state if_state &lt;&lt;choice&gt;&gt;
@@ -228,18 +295,18 @@ stateDiagram-v2
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
-      import { layouts } from './mermaid-layout-elk.esm.mjs';
-      mermaid.registerLayoutLoaders(layouts);
+      // import { layouts } from './mermaid-layout-elk.esm.mjs';
+      // mermaid.registerLayoutLoaders(layouts);
       mermaid.parseError = function (err, hash) {
         console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
         // theme: 'base',
         // handdrawnSeed: 12,
-        look: 'handdrawn',
+        // look: 'handdrawn',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
         // layout: 'dagre',
-        layout: 'elk',
+        // layout: 'elk',
         // layout: 'fixed',
         // htmlLabels: false,
         flowchart: { titleTopMargin: 10 },
