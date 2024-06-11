@@ -22,11 +22,15 @@ class Theme {
     this.noteTextColor = '#333';
 
     this.THEME_COLOR_LIMIT = 12;
-    this.radius = 2;
+    this.radius = 3;
     // dark
 
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '10px';
+
+    // Neo-specific
+    this.nodeBorder = 'none';
+    this.stateBorder = 'none';
   }
   updateColors() {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used
@@ -58,7 +62,6 @@ class Theme {
     this.nodeBkg = this.nodeBkg || this.primaryColor;
     this.mainBkg = this.mainBkg || this.primaryColor;
     this.nodeBorder = this.nodeBorder || this.primaryBorderColor;
-    this.nodeBorder = 'none';
     this.clusterBkg = this.clusterBkg || this.tertiaryColor;
     this.clusterBorder = this.clusterBorder || this.tertiaryBorderColor;
     this.defaultLinkColor = this.defaultLinkColor || this.lineColor;
