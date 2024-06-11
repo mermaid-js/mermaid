@@ -133,6 +133,7 @@ g.stateGroup line {
 
 .cluster-label, .nodeLabel {
   color: ${options.stateLabelColor};
+  line-height: 1.0;
 }
 
 .statediagram-cluster rect.outer {
