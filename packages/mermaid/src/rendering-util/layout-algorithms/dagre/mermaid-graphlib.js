@@ -152,27 +152,58 @@ export const validate = (graph) => {
   return true;
 };
 
+const findCommonEdges = (graph, id1, id2) => {
+  const edges1 = graph.edges().filter((edge) => edge.v === id1 || edge.w === id1);
+  const edges2 = graph.edges().filter((edge) => edge.v === id2 || edge.w === id2);
+  const edges1Prim = edges1.map((edge) => {
+    return { v: edge.v === id1 ? id2 : edge.v, w: edge.w === id1 ? id1 : edge.w };
+  });
+  const edges2Prim = edges2.map((edge) => {
+    return { v: edge.v, w: edge.w };
+  });
+  const result = edges1Prim.filter((edgeIn1) => {
+    return edges2Prim.filter((edge) => edgeIn1.v === edge.v && edgeIn1.w === edge.w).length > 0;
+  });
+
+  return result;
+};
+
 /**
  * Finds a child that is not a cluster. When faking an edge between a node and a cluster.
  *
  * @param id
  * @param {any} graph
  */
-export const findNonClusterChild = (id, graph) => {
-  log.trace('Searching', id);
-  const children = graph.children(id).reverse();
+export const findNonClusterChild = (id, graph, clusterId) => {
+  const children = graph.children(id);
   log.trace('Searching children of id ', id, children);
   if (children.length < 1) {
-    log.trace('This is a valid node', id);
     return id;
   }
+  let reserve;
   for (const child of children) {
-    const _id = findNonClusterChild(child, graph);
+    const _id = findNonClusterChild(child, graph, clusterId);
+
+    // Edge chase where the cluster has an edge to a node and the selected
+    // child has a link to the same node
+    const commonEdges = findCommonEdges(graph, clusterId, _id);
+
     if (_id) {
-      log.trace('Found replacement for', id, ' => ', _id);
-      return _id;
+      if (commonEdges.length > 0) {
+        // console.log(
+        //   '\x1B[44;93;4m abc24 The replacement also has an edge',
+        //   clusterId,
+        //   ' => ',
+        //   _id,
+        //   graph.edges()
+        // );
+        reserve = _id;
+      } else {
+        return _id;
+      }
     }
   }
+  return reserve;
 };
 
 const getAnchorId = (id) => {
@@ -207,10 +238,10 @@ export const adjustClustersAndEdges = (graph, depth) => {
         'Cluster identified',
         id,
         ' Replacement id in edges: ',
-        findNonClusterChild(id, graph)
+        findNonClusterChild(id, graph, id)
       );
       descendants[id] = extractDescendants(id, graph);
-      clusterDb[id] = { id: findNonClusterChild(id, graph), clusterData: graph.node(id) };
+      clusterDb[id] = { id: findNonClusterChild(id, graph, id), clusterData: graph.node(id) };
     }
   });
 

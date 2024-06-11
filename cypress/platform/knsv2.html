@@ -77,19 +77,58 @@
   <body>
     <pre id="diagram" class="mermaid">
 flowchart LR
- subgraph Apa["Apa"]
-        A["Start"]
-        B["This is B"]
+subgraph Apa["Apa"]
+    A["Start"]
+    B["This is B"]
+end
+    A --> B & C["C"]
+    Apa --> C
+      </pre
+    >
+    <pre id="diagram" class="mermaid">
+flowchart LR
+subgraph Apa["Apa"]
+    B["This is B"]
+    A["Start"]
+end
+    A --> B & C["C"]
+    Apa --> C
+      </pre
+    >
+    <pre id="diagram" class="mermaid">
+flowchart LR
+subgraph Apa["Apa"]
+  subgraph Gorilla
+    A["Start"]
+    B["This is B"]
   end
+end
+    A --> B & C["C"]
+    Gorilla --> C
+      </pre
+    >
+    <pre id="diagram" class="mermaid">
+flowchart LR
+subgraph Apa["Apa"]
+  subgraph Gorilla
+    A["Start"]
+    B["This is B"]
+  end
+end
     A --> B & C["C"]
     Apa --> C
       </pre
     >
     <pre id="diagram" class="mermaid2">
 flowchart LR
- subgraph Apa["Apa"]
-    B --> B &   C
+subgraph Apa["Apa"]
+  subgraph Gorilla
+    B["This is B"]
+    A["Start"]
   end
+end
+Apa --> C
+A --> B & C["C"]
       </pre
     >
     <pre id="diagram" class="mermaid2">
