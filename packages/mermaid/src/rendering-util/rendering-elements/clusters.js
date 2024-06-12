@@ -215,7 +215,7 @@ const roundedWithTitle = (parent, node) => {
   const y = node.y - node.height / 2 - halfPadding;
   const innerY = node.y - node.height / 2 - halfPadding + bbox.height + 2;
   const height = node.height + padding;
-  const innerHeight = node.height + padding - bbox.height - 2;
+  const innerHeight = node.height + padding - bbox.height - 6;
   const look = siteConfig.look;
 
   // add the rect

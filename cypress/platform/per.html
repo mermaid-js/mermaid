@@ -89,6 +89,19 @@ stateDiagram-v2
       </pre
     >
 
+    <pre id="diagram" class="mermaid2">
+      stateDiagram
+        [*] --> Still
+        Still --> [*]
+        Still --> Moving
+        Moving --> Still
+        Moving --> Crash
+        Crash --> [*]
+
+
+
+    </pre>
+
     <pre id="diagram" class="mermaid">
       stateDiagram
         direction LR
@@ -100,11 +113,7 @@ stateDiagram-v2
           a --> b
         }
         B --> D
-
-
-
-            </pre
-    >
+    </pre>
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
@@ -122,15 +131,16 @@ stateDiagram-v2
         // layout: 'elk',
         flowchart: { titleTopMargin: 10 },
         // fontFamily: 'Caveat',
-        // fontFamily: 'Kalam',
+        //fontFamily: 'Kalam',
         fontFamily: 'Arial',
         sequence: {
           actorFontFamily: 'arial',
           noteFontFamily: 'arial',
           messageFontFamily: 'arial',
         },
-        fontSize: 12,
+        fontSize: 10,
         logLevel: 0,
+        htmlLabels: true,
       });
       function callback() {
         alert('It worked');
