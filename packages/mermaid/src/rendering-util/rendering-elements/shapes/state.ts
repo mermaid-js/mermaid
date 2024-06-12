@@ -7,8 +7,8 @@ export const state = async (parent: SVGAElement, node: Node) => {
   node.look = look;
 
   const options = {
-    rx: node.look === 'neo' ? 2 : 5,
-    ry: node.look === 'neo' ? 2 : 5,
+    rx: node.look === 'neo' ? 3 : 5,
+    ry: node.look === 'neo' ? 3 : 5,
     classes: 'flowchart-node',
   };
   return drawRect(parent, node, options);

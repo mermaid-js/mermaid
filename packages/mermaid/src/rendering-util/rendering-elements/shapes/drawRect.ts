@@ -44,26 +44,16 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
 
     rect = shapeSvg.insert(() => roughNode, ':first-child');
     rect.attr('class', 'basic label-container').attr('style', cssStyles);
-  } else if (node.look === 'neo') {
-    // TODO: Take theme and look into account
-    rect = shapeSvg.insert('rect', ':first-child');
-
-    rect
-      .attr('class', 'basic label-container state-shadow-neo')
-      .attr('style', cssStyles)
-      .attr('rx', rx)
-      .attr('data-id', 'abc')
-      .attr('data-et', 'node')
-      .attr('ry', ry)
-      .attr('x', x)
-      .attr('y', y)
-      .attr('width', totalWidth)
-      .attr('height', totalHeight);
   } else {
     rect = shapeSvg.insert('rect', ':first-child');
 
+    let rectClass = 'basic label-container';
+    if (node.look === 'neo') {
+      rectClass += ' state-shadow-neo';
+    }
+
     rect
-      .attr('class', 'basic label-container')
+      .attr('class', rectClass)
       .attr('style', cssStyles)
       .attr('rx', rx)
       .attr('data-id', 'abc')

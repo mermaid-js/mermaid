@@ -101,7 +101,7 @@ g.stateGroup line {
 }
 
 .node circle.state-end {
-  fill: ${options.innerEndBackground};
+  fill:  ${options.stateBkg || options.mainBkg};
   stroke: ${options.background};
   stroke-width: 1.5
 }
