@@ -36,26 +36,13 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   // The getData method provided in all supported diagrams is used to extract the data from the parsed structure
   // into the Layout data format
-  console.log('Before getData: ');
+  log.debug('Before getData: ');
   const data4Layout = diag.db.getData() as LayoutData;
-  console.log('Data: ', data4Layout);
+  log.debug('Data: ', data4Layout);
   // Create the root SVG - the element is the div containing the SVG element
   const { element, svg } = getDiagramElements(id, securityLevel);
 
-  // // For some diagrams this call is not needed, but in the state diagram it is
-  // await insertElementsForSize(element, data4Layout);
-
-  // console.log('data4Layout:', data4Layout);
-
-  // // Now we have layout data with real sizes, we can perform the layout
-  // const data4Rendering = doLayout(data4Layout, id, _version, 'dagre-wrapper');
-
-  // // The performRender method provided in all supported diagrams is used to render the data
-  // performRender(data4Rendering);
-
   data4Layout.type = diag.type;
-  // data4Layout.layoutAlgorithm = 'dagre-wrapper';
-  // data4Layout.layoutAlgorithm = 'elk';
   data4Layout.layoutAlgorithm = layout;
   data4Layout.direction = DIR;
   data4Layout.nodeSpacing = conf?.nodeSpacing || 50;
@@ -63,7 +50,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.markers = ['point', 'circle', 'cross'];
 
   data4Layout.diagramId = id;
-  console.log('REF1:', data4Layout);
+  log.debug('REF1:', data4Layout);
   await render(data4Layout, svg, element);
   const padding = 8;
   utils.insertTitle(

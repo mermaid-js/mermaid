@@ -5,16 +5,6 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
 
-/**
- * Creates an SVG path for a cylindrical shape.
- * @param {number} x - The x coordinate of the top-left corner.
- * @param {number} y - The y coordinate of the top-left corner.
- * @param {number} width - The width of the cylinder.
- * @param {number} height - The height of the cylinder.
- * @param {number} rx - The x-radius of the cylinder's ends.
- * @param {number} ry - The y-radius of the cylinder's ends.
- * @returns {string} The path data for the cylindrical shape.
- */
 export const createCylinderPathD = (
   x: number,
   y: number,
@@ -71,7 +61,7 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
   const { cssStyles } = node;
 
   if (node.look === 'handdrawn') {
-    // @ts-ignore
+    // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const outerPathData = createOuterCylinderPathD(0, 0, w, h, rx, ry);
     const innerPathData = createInnerCylinderPathD(0, ry, w, h, rx, ry);
