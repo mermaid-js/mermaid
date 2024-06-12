@@ -183,11 +183,12 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         const halfPadding = node?.padding / 2 || 0;
         const labelHeight = node?.labelBBox?.height || 0;
         const offsetY = labelHeight - halfPadding || 0;
-        node.y += offsetY / 2 + 2;
+        node.y += offsetY + (parent?.offsetY / 2 || 4);
+        node.offsetY = offsetY;
         insertCluster(clusters, node);
 
         // A cluster in the non-recursive way
-        log.info(
+        console.log(
           'A tainted cluster node with children XBX',
           v,
           node.id,
@@ -204,7 +205,6 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         node.y += (parent?.offsetY || 0) / 2;
         log.info(
           'A regular node XBX - using the padding',
-          v,
           node.id,
           'parent',
           node.parentId,
@@ -216,6 +216,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
           node.offsetY,
           'parent',
           parent,
+          parent?.offsetY,
           node
         );
 
