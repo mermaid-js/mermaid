@@ -58,9 +58,9 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
   const h = bbox.height + ry + node.padding;
 
   let cylinder: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
-  const { cssStyles, useRough } = node;
+  const { cssStyles } = node;
 
-  if (useRough) {
+  if (node.look === 'handdrawn') {
     // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const outerPathData = createOuterCylinderPathD(0, 0, w, h, rx, ry);

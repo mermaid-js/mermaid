@@ -40,7 +40,7 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
   const x = -bbox.width / 2 - halfPadding;
   const y = -bbox.height / 2 - halfPadding;
   let rect;
-  const { cssStyles, useRough } = node;
+  const { cssStyles } = node;
   const points = [
     { x: 0, y: 0 },
     { x: w, y: 0 },
@@ -54,7 +54,7 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
     { x: -8, y: 0 },
   ];
 
-  if (useRough) {
+  if (node.look === 'handdrawn') {
     // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});

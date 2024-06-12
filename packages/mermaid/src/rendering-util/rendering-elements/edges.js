@@ -592,11 +592,10 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     default:
       strokeClasses += ' edge-pattern-solid';
   }
-  let useRough = edge.useRough;
   let svgPath;
   let path = '';
   let linePath = lineFunction(lineData);
-  if (useRough) {
+  if (edge.look === 'handdrawn') {
     const rc = rough.svg(elem);
     const ld = Object.assign([], lineData);
     // const svgPathNode = rc.path(lineFunction(ld.splice(0, ld.length-1)), {

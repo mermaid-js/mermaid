@@ -35,9 +35,9 @@ export const inv_trapezoid = async (parent: SVGAElement, node: Node): Promise<SV
   ];
 
   let polygon: d3.Selection<SVGPolygonElement | SVGGElement, unknown, null, undefined>;
-  const { cssStyles, useRough } = node;
+  const { cssStyles } = node;
 
-  if (useRough) {
+  if (node.look === 'handdrawn') {
     // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});

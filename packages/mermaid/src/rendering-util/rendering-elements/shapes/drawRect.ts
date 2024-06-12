@@ -21,7 +21,7 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
 
   let rect;
   let { rx, ry } = node;
-  const { cssStyles, useRough } = node;
+  const { cssStyles } = node;
 
   //use options rx, ry overrides if present
   if (options && options.rx && options.ry) {
@@ -29,7 +29,7 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
     ry = options.ry;
   }
 
-  if (useRough) {
+  if (node.look === 'handdrawn') {
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});

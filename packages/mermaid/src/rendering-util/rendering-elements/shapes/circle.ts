@@ -15,9 +15,9 @@ export const circle = async (parent: SVGAElement, node: Node): Promise<SVGAEleme
 
   const radius = bbox.width / 2 + halfPadding;
   let circleElem;
-  const { cssStyles, useRough } = node;
+  const { cssStyles } = node;
 
-  if (useRough) {
+  if (node.look === 'handdrawn') {
     // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});

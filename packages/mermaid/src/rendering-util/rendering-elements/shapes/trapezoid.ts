@@ -34,9 +34,9 @@ export const trapezoid = async (parent: SVGAElement, node: Node): Promise<SVGAEl
   ];
 
   let polygon: d3.Selection<SVGPolygonElement | SVGGElement, unknown, null, undefined>;
-  const { cssStyles, useRough } = node;
+  const { cssStyles } = node;
 
-  if (useRough) {
+  if (node.look === 'handdrawn') {
     console.log('Trapezoid: Inside use useRough');
     // @ts-ignore
     const rc = rough.svg(shapeSvg);

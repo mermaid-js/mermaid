@@ -58,8 +58,8 @@ export const stadium = async (parent: SVGAElement, node: Node) => {
   const w = bbox.width + h / 4 + node.padding;
 
   let rect;
-  const { cssStyles, useRough } = node;
-  if (useRough) {
+  const { cssStyles } = node;
+  if (node.look === 'handdrawn') {
     // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});

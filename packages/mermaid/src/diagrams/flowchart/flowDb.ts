@@ -793,7 +793,7 @@ const addNodeFromVertex = (
   parentDB: Map<string, string>,
   subGraphDB: Map<string, boolean>,
   config: any,
-  useRough: boolean
+  look: string
 ) => {
   let parentId = parentDB.get(vertex.id);
   let isGroup = subGraphDB.get(vertex.id) || false;
@@ -812,7 +812,7 @@ const addNodeFromVertex = (
       dir: vertex.dir,
       domId: vertex.domId,
       isGroup,
-      useRough,
+      look,
     });
   }
 };
@@ -822,7 +822,6 @@ export const getData = () => {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
 
-  const useRough = config.look === 'handdrawn';
   const subGraphs = getSubGraphs();
   log.info('Subgraphs - APA12', subGraphs);
   const parentDB = new Map<string, string>();
@@ -847,7 +846,7 @@ export const getData = () => {
       shape: 'rect',
       dir: subGraph.dir,
       isGroup: true,
-      useRough,
+      look: config.look,
     });
   }
 
@@ -873,7 +872,7 @@ export const getData = () => {
       arrowTypeEnd,
       arrowheadStyle: 'fill: #333',
       pattern: rawEdge.stroke,
-      useRough,
+      look: config.look,
     };
     console.log('rawEdge SPLIT', rawEdge, index);
     edges.push(edge);

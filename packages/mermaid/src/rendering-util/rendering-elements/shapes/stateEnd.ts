@@ -17,7 +17,7 @@ export const stateEnd = (parent: SVG, node: Node) => {
 
   let circle;
   let innerCircle;
-  if (node.useRough) {
+  if (node.look === 'handdrawn') {
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const roughNode = rc.circle(0, 0, 14, { ...solidStateFill(lineColor), roughness: 0.5 });
