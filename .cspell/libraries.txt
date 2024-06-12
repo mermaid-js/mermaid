@@ -61,6 +61,7 @@ ssim
 stylis
 Swimm
 tsbuildinfo
+tseslint
 Tuleap
 Typora
 unocss
