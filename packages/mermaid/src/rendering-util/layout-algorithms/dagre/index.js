@@ -183,8 +183,8 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         const halfPadding = node?.padding / 2 || 0;
         const labelHeight = node?.labelBBox?.height || 0;
         const offsetY = labelHeight - halfPadding || 0;
-        node.y += offsetY + (parent?.offsetY / 2 || 4);
-        node.offsetY = offsetY;
+        node.y += offsetY + (parent?.offsetY / 2 || 0);
+        // node.offsetY = offsetY;
         insertCluster(clusters, node);
 
         // A cluster in the non-recursive way
