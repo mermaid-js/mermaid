@@ -822,8 +822,6 @@ export const getData = () => {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
 
-  // extract(getRootDocV2());
-  // const diagramStates = getStates();
   const subGraphs = getSubGraphs();
   log.info('Subgraphs - APA12', subGraphs);
   const parentDB = new Map<string, string>();

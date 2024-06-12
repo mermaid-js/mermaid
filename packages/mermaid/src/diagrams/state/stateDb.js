@@ -230,7 +230,7 @@ const extract = (_doc) => {
   const config = getConfig();
   const look = config.look;
   resetDataFetching();
-  dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true,look);
+  dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, look);
 };
 
 /**

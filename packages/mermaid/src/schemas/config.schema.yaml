@@ -78,7 +78,6 @@ properties:
     enum:
       - classic
       - handdrawn
-      - slick
     default: 'classic'
   handdrawnSeed:
     description: |

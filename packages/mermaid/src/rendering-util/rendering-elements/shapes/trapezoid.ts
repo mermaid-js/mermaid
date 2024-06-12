@@ -37,7 +37,7 @@ export const trapezoid = async (parent: SVGAElement, node: Node): Promise<SVGAEl
   const { cssStyles } = node;
 
   if (node.look === 'handdrawn') {
-    console.log('Trapezoid: Inside use handdrawn');
+    console.log('Trapezoid: Inside handdrawn block');
     // @ts-ignore
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});

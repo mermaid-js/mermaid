@@ -85,7 +85,7 @@ end
     Apa --> C
       </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 flowchart LR
 subgraph Apa["Apa"]
     B["This is B"]
@@ -95,7 +95,7 @@ end
     Apa --> C
       </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 flowchart RL
 subgraph Apa["Apa"]
   subgraph Gorilla
@@ -107,7 +107,7 @@ end
     Gorilla --> C
       </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 flowchart LR
 subgraph Apa["Apa"]
   subgraph Gorilla
@@ -154,11 +154,32 @@ flowchart LR
     Apa --- C
     A --x C
 
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
+---
+config:
+  look: neo
+  theme: neo
+  layout: elk
+  elk.mergeEdges: true
+  themeVariables: {}
+---
+%% 'elk.stress',
+%% 'elk.force'
+%%'elk.mrtree'
+%% 'elk.sporeOverlap
 stateDiagram
-  S:Stillas
-  T:Tiger
-  U:Ulv
+  direction TB
+  A --> B
+  A --> C
+  A --> D
+  A --> E
+  A --> F
+  state F {
+    Another
+  }
+  Another --> A
+
+
       </pre
     >
     <pre id="diagram" class="mermaid2">
@@ -211,7 +232,7 @@ flowchart
     if_state --> True : if n >= 0
       </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
       %%{init: {"layout": "dagre", "mergeEdges": true} }%%
 stateDiagram
   direction TB
@@ -232,7 +253,7 @@ State T1 {
     }
       </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
       %%{init: {"layouts": "elk2", "mergeEdges": true} }%%
       stateDiagram
       State S1 {
@@ -242,7 +263,7 @@ State T1 {
   S1 --> S2
       </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
       %%{init: {"layout": "elk", "mergeEdges": true} }%%
 stateDiagram
 State T1 {
@@ -252,7 +273,7 @@ State T1 {
     }
       </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
       %%{init: {"layout": "elk", "mergeEdges": true} }%%
 stateDiagram
   [*] --> T1

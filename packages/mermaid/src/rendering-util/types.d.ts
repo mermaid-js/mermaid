@@ -62,7 +62,6 @@ interface Node {
   x?: number;
   y?: number;
 
-  // Added look to handle
   look?: string;
 }
 
@@ -94,7 +93,6 @@ interface Edge {
   minlen?: number;
   pattern?: string;
   thickness?: 'normal' | 'thick' | 'invisible';
-
   look?: string;
 }
 
