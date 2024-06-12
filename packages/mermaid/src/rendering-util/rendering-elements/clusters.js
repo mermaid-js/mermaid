@@ -177,7 +177,12 @@ const roundedWithTitle = (parent, node) => {
     themeVariables;
 
   // Add outer g element
-  const shapeSvg = parent.insert('g').attr('class', node.cssClasses).attr('id', node.id);
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', node.cssClasses)
+    .attr('id', node.id)
+    .attr('data-et', 'node')
+    .attr('data-id', node.id);
 
   // add the rect
   const outerRectG = shapeSvg.insert('g', ':first-child');
