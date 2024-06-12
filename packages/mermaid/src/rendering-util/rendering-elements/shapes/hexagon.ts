@@ -7,15 +7,6 @@ import rough from 'roughjs';
 
 import { insertPolygonShape } from './insertPolygonShape.js';
 
-/**
- * Creates an SVG path for a hexagon shape.
- * @param {number} x - The x coordinate of the top-left corner.
- * @param {number} y - The y coordinate of the top-left corner.
- * @param {number} width - The width of the hexagon.
- * @param {number} height - The height of the hexagon.
- * @param {number} m - The margin size for the hexagon.
- * @returns {string} The path data for the hexagon shape.
- */
 export const createHexagonPathD = (
   x: number,
   y: number,
@@ -59,7 +50,7 @@ export const hexagon = async (parent: SVGAElement, node: Node): Promise<SVGAElem
   const { cssStyles, useRough } = node;
 
   if (useRough) {
-    // @ts-ignore
+    // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
     const pathData = createHexagonPathD(0, 0, w, h, m);

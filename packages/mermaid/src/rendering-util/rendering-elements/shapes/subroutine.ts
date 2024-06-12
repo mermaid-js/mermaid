@@ -55,7 +55,7 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
   ];
 
   if (useRough) {
-    // @ts-ignore
+    // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
     const pathData = createSubroutinePathD(-w / 2, -h / 2, w, h);

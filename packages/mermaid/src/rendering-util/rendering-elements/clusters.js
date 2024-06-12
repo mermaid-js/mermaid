@@ -75,7 +75,7 @@ const rect = (parent, node) => {
     // console.log('Rough node insert CXC', roughNode);
 
     rect = shapeSvg.insert(() => {
-      console.log('Rough node insert CXC', roughNode);
+      log.debug('Rough node insert CXC', roughNode);
       return roughNode;
     }, ':first-child');
   } else {

@@ -443,7 +443,7 @@ const fixCorners = function (lineData) {
       const a = Math.sqrt(2) * 2;
       let newCornerPoint = { x: cornerPoint.x, y: cornerPoint.y };
       if (Math.abs(nextPoint.x - prevPoint.x) > 10 && Math.abs(nextPoint.y - prevPoint.y) >= 10) {
-        console.log(
+        log.debug(
           'Corner point fixing',
           Math.abs(nextPoint.x - prevPoint.x),
           Math.abs(nextPoint.y - prevPoint.y)
@@ -461,7 +461,7 @@ const fixCorners = function (lineData) {
           };
         }
       } else {
-        console.log(
+        log.debug(
           'Corner point skipping fixing',
           Math.abs(nextPoint.x - prevPoint.x),
           Math.abs(nextPoint.y - prevPoint.y)

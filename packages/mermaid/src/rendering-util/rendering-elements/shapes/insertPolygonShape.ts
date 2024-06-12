@@ -1,9 +1,3 @@
-/**
- * @param parent
- * @param w
- * @param h
- * @param points
- */
 export function insertPolygonShape(
   parent: any,
   w: number,

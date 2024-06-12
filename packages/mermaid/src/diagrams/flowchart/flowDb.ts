@@ -768,7 +768,25 @@ const getTypeFromVertex = (vertex: FlowVertex) => {
 };
 
 const findNode = (nodes: Node[], id: string) => nodes.find((node) => node.id === id);
+const destructEdgeType = (type: string | undefined) => {
+  let arrowTypeStart = 'none';
+  let arrowTypeEnd = 'arrow_point';
+  switch (type) {
+    case 'arrow_point':
+    case 'arrow_circle':
+    case 'arrow_cross':
+      arrowTypeEnd = type;
+      break;
 
+    case 'double_arrow_point':
+    case 'double_arrow_circle':
+    case 'double_arrow_cross':
+      arrowTypeStart = type.replace('double_', '');
+      arrowTypeEnd = arrowTypeStart;
+      break;
+  }
+  return { arrowTypeStart, arrowTypeEnd };
+};
 const addNodeFromVertex = (
   vertex: FlowVertex,
   nodes: Node[],
@@ -776,7 +794,7 @@ const addNodeFromVertex = (
   subGraphDB: Map<string, boolean>,
   config: any,
   useRough: boolean
-): Node => {
+) => {
   let parentId = parentDB.get(vertex.id);
   let isGroup = subGraphDB.get(vertex.id) || false;
 
@@ -793,7 +811,6 @@ const addNodeFromVertex = (
       shape: getTypeFromVertex(vertex),
       dir: vertex.dir,
       domId: vertex.domId,
-      type: isGroup ? 'group' : undefined,
       isGroup,
       useRough,
     });
@@ -805,8 +822,6 @@ export const getData = () => {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
 
-  // extract(getRootDocV2());
-  // const diagramStates = getStates();
   const useRough = config.look === 'handdrawn';
   const subGraphs = getSubGraphs();
   log.info('Subgraphs - APA12', subGraphs);
@@ -831,26 +846,19 @@ export const getData = () => {
       cssClasses: '',
       shape: 'rect',
       dir: subGraph.dir,
-      domId: subGraph.domId,
-      type: 'group',
       isGroup: true,
       useRough,
     });
   }
-  console.log('APA12 nodes - 1', nodes.length);
 
   const n = getVertices();
   n.forEach((vertex) => {
     const node = addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, useRough);
-    if (node) {
-      nodes.push(node);
-    }
   });
-
-  console.log('APA12 nodes', nodes.length);
 
   const e = getEdges();
   e.forEach((rawEdge, index) => {
+    const { arrowTypeStart, arrowTypeEnd } = destructEdgeType(rawEdge.type);
     const edge: Edge = {
       id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'edge' }),
       start: rawEdge.start,
@@ -858,29 +866,18 @@ export const getData = () => {
       type: rawEdge.type || 'normal',
       label: rawEdge.text,
       labelpos: 'c',
-      //   labelStyle: '',
-      //   cssStyles: rawEdge.styles.join(' '),
       thickness: rawEdge.stroke,
       minlen: rawEdge.length,
       classes: 'edge-thickness-normal edge-pattern-solid flowchart-link',
-      arrowhead: 'none',
-      arrowTypeEnd: 'arrow_point',
-      // arrowTypeEnd: 'arrow_barb',
+      arrowTypeStart,
+      arrowTypeEnd,
       arrowheadStyle: 'fill: #333',
-      // stroke: rawEdge.pattern,
       pattern: rawEdge.stroke,
-      //   shape: getTypeFromVertex(rawEdge),
-      //   dir: rawEdge.dir,
-      //   domId: verawEdgertex.domId,
-      //   rawEdge: undefined,
-      //   isGroup: false,
       useRough,
     };
-    // console.log('rawEdge SPLIT', rawEdge, index);
+    console.log('rawEdge SPLIT', rawEdge, index);
     edges.push(edge);
   });
-
-  //const useRough = config.look === 'handdrawn';
 
   return { nodes, edges, other: {}, config };
 };

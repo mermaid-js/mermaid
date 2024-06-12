@@ -6,13 +6,6 @@ import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shape
 import rough from 'roughjs';
 import { insertPolygonShape } from './insertPolygonShape.js';
 
-/**
- * Creates an SVG path for a decision box shape (question shape).
- * @param {number} x - The x coordinate of the top-left corner.
- * @param {number} y - The y coordinate of the top-left corner.
- * @param {number} size - The size of the shape.
- * @returns {string} The path data for the decision box shape.
- */
 export const createDecisionBoxPathD = (x: number, y: number, size: number): string => {
   return [
     `M${x + size / 2},${y}`,
@@ -41,7 +34,7 @@ export const question = async (parent: SVGAElement, node: Node): Promise<SVGAEle
   const { cssStyles, useRough } = node;
 
   if (useRough) {
-    // @ts-ignore
+    // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
     const pathData = createDecisionBoxPathD(0, 0, s);

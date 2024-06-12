@@ -6,14 +6,6 @@ import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shape
 import rough from 'roughjs';
 import { insertPolygonShape } from './insertPolygonShape.js';
 
-/**
- * Creates an SVG path for a special polygon shape with a left-inverted arrow.
- * @param {number} x - The x coordinate of the top-left corner.
- * @param {number} y - The y coordinate of the top-left corner.
- * @param {number} width - The width of the shape.
- * @param {number} height - The height of the shape.
- * @returns {string} The path data for the special polygon shape.
- */
 export const createPolygonPathD = (x: number, y: number, width: number, height: number): string => {
   return [
     `M${x - height / 2},${y}`,
@@ -45,7 +37,7 @@ export const rect_left_inv_arrow = async (
   const { cssStyles, useRough } = node;
 
   if (useRough) {
-    // @ts-ignore
+    // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
     const pathData = createPolygonPathD(0, 0, w, h);

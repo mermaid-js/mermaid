@@ -20,7 +20,8 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
   const y = -bbox.height / 2 - halfPadding;
 
   let rect;
-  let { rx, ry, cssStyles, useRough } = node;
+  let { rx, ry } = node;
+  const { cssStyles, useRough } = node;
 
   //use options rx, ry overrides if present
   if (options && options.rx && options.ry) {
