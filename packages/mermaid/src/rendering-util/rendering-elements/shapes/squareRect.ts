@@ -6,6 +6,8 @@ export const squareRect = async (parent: SVGAElement, node: Node) => {
     rx: 0,
     ry: 0,
     classes: '',
+    labelPaddingX: (node?.padding || 0) * 2,
+    labelPaddingY: (node?.padding || 0) * 1,
   } as RectOptions;
   return drawRect(parent, node, options);
 };
