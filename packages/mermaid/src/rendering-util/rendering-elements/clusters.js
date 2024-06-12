@@ -70,7 +70,6 @@ const rect = (parent, node) => {
       stroke: clusterBorder,
       fillWeight: 3,
       seed: handdrawnSeed,
-      stroke: clusterBorder,
     });
     const roughNode = rc.path(createRoundedRectPathD(x, y, totalWidth, totalHeight, 0), options);
     // console.log('Rough node insert CXC', roughNode);
