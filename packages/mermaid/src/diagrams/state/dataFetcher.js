@@ -67,24 +67,8 @@ const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, l
         break;
       case STMT_RELATION:
         {
-          dataFetcher(
-            parentParsedItem,
-            item.state1,
-            diagramStates,
-            nodes,
-            edges,
-            altFlag,,
-            look
-          );
-          dataFetcher(
-            parentParsedItem,
-            item.state2,
-            diagramStates,
-            nodes,
-            edges,
-            altFlag,
-            look
-          );
+          dataFetcher(parentParsedItem, item.state1, diagramStates, nodes, edges, altFlag, look);
+          dataFetcher(parentParsedItem, item.state2, diagramStates, nodes, edges, altFlag, look);
           const edgeData = {
             id: 'edge' + graphItemCount,
             start: item.state1.id,
@@ -222,15 +206,7 @@ function getClassesFromDbInfo(dbInfoItem) {
     }
   }
 }
-export const dataFetcher = (
-  parent,
-  parsedItem,
-  diagramStates,
-  nodes,
-  edges,
-  altFlag,
-  look
-) => {
+export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, altFlag, look) => {
   const itemId = parsedItem.id;
   const classStr = getClassesFromDbInfo(diagramStates.get(itemId));
 
