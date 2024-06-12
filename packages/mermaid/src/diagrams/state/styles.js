@@ -107,7 +107,7 @@ g.stateGroup line {
 }
 .end-state-inner {
   fill: ${options.compositeBackground || options.background};
-  // stroke: ${options.background};
+  stroke: ${options.background};
   stroke-width: 1.5
 }
 
@@ -152,8 +152,7 @@ g.stateGroup line {
   fill: ${options.compositeBackground || options.background};
 }
 .statediagram-cluster.statediagram-cluster-alt .inner {
-  fill: ${options.altBackground ? options.altBackground : '#efefef'};
-
+  fill: ${options.altBackground ? options.altBackground : '#f0f0f0'};
 }
 
 .statediagram-cluster .inner {
