@@ -184,7 +184,7 @@ Apa --> C
 A --> B & C["C"]
       </pre
     >
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 stateDiagram
 direction LR
       state Gorilla0 {
@@ -195,6 +195,7 @@ direction LR
       }
       Apa0 --> C0
       A0 --> C0
+      C1: "`This is C`"
       </pre
     >
     <pre id="diagram" class="mermaid2">
@@ -206,6 +207,7 @@ flowchart LR
     end
     Apa --- C
     A --x C
+    </pre>
 
     <pre id="diagram" class="mermaid2">
 ---
@@ -235,14 +237,9 @@ stateDiagram
 
       </pre
     >
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 flowchart LR
- subgraph Apa["Apa"]
-        A["Start"]
-        B["This is B"]
-  end
-    A --> B & C["C"]
-    Apa --> C
+    Apa --Hello--> C
 
       </pre
     >

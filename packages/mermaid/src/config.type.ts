@@ -725,6 +725,8 @@ export interface StateDiagramConfig extends BaseDiagramConfig {
   textHeight?: number;
   titleShift?: number;
   noteMargin?: number;
+  nodeSpacing?: number;
+  rankSpacing?: number;
   forkWidth?: number;
   forkHeight?: number;
   miniPadding?: number;

@@ -852,7 +852,7 @@ export const getData = () => {
 
   const n = getVertices();
   n.forEach((vertex) => {
-    const node = addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, config.look);
+    addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, config.look || 'classic');
   });
 
   const e = getEdges();
@@ -874,7 +874,6 @@ export const getData = () => {
       pattern: rawEdge.stroke,
       look: config.look,
     };
-    console.log('rawEdge SPLIT', rawEdge, index);
     edges.push(edge);
   });
 

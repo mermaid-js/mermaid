@@ -8,6 +8,7 @@ import { forkJoin } from './shapes/forkJoin.ts';
 import { choice } from './shapes/choice.ts';
 import { note } from './shapes/note.ts';
 import { stadium } from './shapes/stadium.js';
+import { rectWithTitle } from './shapes/rectWithTitle.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import { subroutine } from './shapes/subroutine.js';
 import { cylinder } from './shapes/cylinder.js';
@@ -36,7 +37,7 @@ const shapes = {
   choice,
   note,
   roundedRect,
-  rectWithTitle: roundedRect,
+  rectWithTitle,
   squareRect,
   stadium,
   subroutine,
@@ -117,8 +118,8 @@ export const positionNode = (node) => {
     node,
     'translate(' + (node.x - node.width / 2 - 5) + ', ' + node.width / 2 + ')'
   );
-
-  const diff = 0;
+  // Handling of the case where teh label grows the cluster
+  const diff = node.diff || 0;
   if (node.clusterNode) {
     el.attr(
       'transform',

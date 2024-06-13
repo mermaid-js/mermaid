@@ -324,7 +324,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
         domId: stateDomId(itemId, graphItemCount, NOTE),
         type: newNode.type,
         isGroup: newNode.type === 'group',
-        padding: 0, //getConfig().flowchart.padding
+        padding: getConfig().flowchart.padding,
         look,
         position: parsedItem.note.position,
       };

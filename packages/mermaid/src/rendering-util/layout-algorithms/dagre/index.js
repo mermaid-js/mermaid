@@ -183,22 +183,11 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         const halfPadding = node?.padding / 2 || 0;
         const labelHeight = node?.labelBBox?.height || 0;
         const offsetY = labelHeight - halfPadding || 0;
-        node.y += offsetY + (parent?.offsetY / 2 || 0);
+        // node.y += offsetY + (parent?.offsetY / 2 || 0);
         // node.offsetY = offsetY;
         insertCluster(clusters, node);
 
         // A cluster in the non-recursive way
-        console.log(
-          'A tainted cluster node with children XBX',
-          v,
-          node.id,
-          node.width,
-          node.height,
-          node.x,
-          node.y,
-          'offset',
-          parent?.offsetY
-        );
         clusterDb[node.id].node = node;
       } else {
         const parent = graph.node(node.parentId);
@@ -244,7 +233,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
       diff = n.diff;
     }
   });
-  log.trace('Returning from recursive render XAX', elem, diff);
+  log.warn('Returning from recursive render XAX', elem, diff);
   return { elem, diff };
 };
 /**

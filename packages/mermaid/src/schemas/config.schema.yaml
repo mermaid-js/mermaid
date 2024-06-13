@@ -52,6 +52,7 @@ required:
   - sankey
   - packet
   - block
+  - look
 properties:
   theme:
     description: |
@@ -1291,6 +1292,16 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       noteMargin:
         type: number
         default: 10
+      nodeSpacing:
+        type: integer
+        minimum: 0
+        # should the default value be 50?
+        # see https://github.com/mermaid-js/mermaid/blob/7647ae317a7b2130e32777248d25a9c4d24b8f9f/packages/mermaid/src/diagrams/class/classRenderer-v2.ts#L258
+      rankSpacing:
+        type: integer
+        minimum: 0
+        # should the default value be 50?
+        # see https://github.com/mermaid-js/mermaid/blob/7647ae317a7b2130e32777248d25a9c4d24b8f9f/packages/mermaid/src/diagrams/class/classRenderer-v2.ts#L259
       forkWidth:
         type: number
         default: 70
