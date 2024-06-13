@@ -96,6 +96,7 @@
       <th>Dagre with neo</th>
       <th>ELK</th>
       <th>ELK with rough</th>
+      <th>ELK with neo</th>
     </tr>
     <tr>
       <th class="vertical-header">
@@ -140,6 +141,14 @@ stateDiagram-v2
       <td>
         <pre id="diagram4" class="mermaid">
 %%{init: {"look": "handdrawn", "layout": "elk"} }%%
+stateDiagram-v2
+    stateId
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "neo", "layout": "elk"} }%%
 stateDiagram-v2
     stateId
 
@@ -196,6 +205,13 @@ stateDiagram-v2
     state "This is a state description" as s5
       </pre>
       </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "neo", "layout": "elk"} }%%
+stateDiagram-v2
+    state "This is a state description" as s5
+      </pre>
+      </td>
     </tr>
     <!-- Separator row -->
     <tr class="separator">
@@ -246,6 +262,14 @@ stateDiagram-v2
       <td>
         <pre id="diagram4" class="mermaid">
 %%{init: {"look": "handdrawn", "layout": "elk"} }%%
+stateDiagram-v2
+    s24 : This is a state description
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "neo", "layout": "elk"} }%%
 stateDiagram-v2
     s24 : This is a state description
 
@@ -313,6 +337,15 @@ stateDiagram-v2
 %%{init: {"look": "handdrawn", "layout": "elk"} }%%
 stateDiagram-v2
     s71 --> s72
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "neo", "layout": "elk"} }%%
+stateDiagram-v2
+    s73 --> s74
 
 
       </pre>

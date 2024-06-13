@@ -91,12 +91,7 @@ stateDiagram-v2
 
     <pre id="diagram" class="mermaid">
       stateDiagram
-        [*] --> Still
-        Still --> [*]
-        Still --> Moving
-        Moving --> Still
-        Moving --> Crash
-        Crash --> [*]
+       StateID
 
 
 
@@ -126,6 +121,7 @@ stateDiagram-v2
         theme: 'neo',
         handdrawnSeed: 12,
         look: 'neo',
+        //layout: 'elk',
         'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
         // layout: 'dagre',
         // layout: 'elk',

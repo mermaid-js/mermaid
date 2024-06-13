@@ -116,6 +116,13 @@ g.stateGroup line {
   stroke: ${options.stateBorder || options.nodeBorder};
   stroke-width: 1px;
 }
+
+.node-rect-neo {
+  fill: ${options.stateBkg || options.mainBkg};
+  stroke: none;
+  stroke-width: 1px;
+}
+
 .node polygon {
   fill: ${options.mainBkg};
   stroke: ${options.stateBorder || options.nodeBorder};;
