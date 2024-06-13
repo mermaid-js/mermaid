@@ -96,6 +96,7 @@
       <th>Dagre with neo</th>
       <th>ELK</th>
       <th>ELK with rough</th>
+      <th>ELK with neo</th>
     </tr>
     <tr>
       <th class="vertical-header">
@@ -123,7 +124,7 @@ stateDiagram-v2
       </td>
       <td>
         <pre id="diagram2" class="mermaid">
-%%{init: {"look": "neo"} }%%
+%%{init: {"look": "neo", "theme": "neo"} }%%
 stateDiagram-v2
     stateId
 
@@ -140,6 +141,14 @@ stateDiagram-v2
       <td>
         <pre id="diagram4" class="mermaid">
 %%{init: {"look": "handdrawn", "layout": "elk"} }%%
+stateDiagram-v2
+    stateId
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "neo", "layout": "elk"} }%%
 stateDiagram-v2
     stateId
 
@@ -177,7 +186,7 @@ stateDiagram-v2
       </td>
       <td>
         <pre id="diagram2" class="mermaid">
-%%{init: {"look": "neo"} }%%
+%%{init: {"look": "neo", "theme": "neo"} }%%
 stateDiagram-v2
     state "This is a state description" as s3
       </pre>
@@ -192,6 +201,13 @@ stateDiagram-v2
       <td>
         <pre id="diagram4" class="mermaid">
 %%{init: {"look": "handdrawn", "layout": "elk"} }%%
+stateDiagram-v2
+    state "This is a state description" as s5
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "neo", "layout": "elk"} }%%
 stateDiagram-v2
     state "This is a state description" as s5
       </pre>
@@ -229,7 +245,7 @@ stateDiagram-v2
       </td>
       <td>
         <pre id="diagram2" class="mermaid">
-%%{init: {"look": "neo"} }%%
+%%{init: {"look": "neo", "theme": "neo"} }%%
 stateDiagram-v2
     s22 : This is a state description
 
@@ -246,6 +262,14 @@ stateDiagram-v2
       <td>
         <pre id="diagram4" class="mermaid">
 %%{init: {"look": "handdrawn", "layout": "elk"} }%%
+stateDiagram-v2
+    s24 : This is a state description
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "neo", "layout": "elk"} }%%
 stateDiagram-v2
     s24 : This is a state description
 
@@ -291,7 +315,7 @@ stateDiagram-v2
       </td>
       <td>
           <pre id="diagram2" class="mermaid">
-  %%{init: {"look": "neo"} }%%
+%%{init: {"look": "neo", "theme": "neo"} }%%
 
      stateDiagram-v2
       s51 --> s52
@@ -313,6 +337,15 @@ stateDiagram-v2
 %%{init: {"look": "handdrawn", "layout": "elk"} }%%
 stateDiagram-v2
     s71 --> s72
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "neo", "layout": "elk"} }%%
+stateDiagram-v2
+    s73 --> s74
 
 
       </pre>
@@ -359,7 +392,7 @@ stateDiagram-v2
       </td>
       <td>
         <pre id="diagram2" class="mermaid">
-%%{init: {"look": "neo"} }%%
+%%{init: {"look": "neo", "theme": "neo"} }%%
 
    stateDiagram-v2
     a5 --> a6: A transition
@@ -430,7 +463,7 @@ stateDiagram-v2
       </td>
       <td>
         <pre id="diagram2" class="mermaid">
-%%{init: {"look": "neo"} }%%
+%%{init: {"look": "neo", "theme": "neo"} }%%
 
    stateDiagram-v2
        [*] --> test
@@ -513,7 +546,7 @@ stateDiagram-v2
       </td>
       <td>
         <pre id="diagram2" class="mermaid">
-%%{init: {"look": "neo"} }%%
+%%{init: {"look": "neo", "theme": "neo"} }%%
 
    stateDiagram-v2
        [*] --> First
@@ -640,7 +673,7 @@ stateDiagram-v2
       </td>
       <td>
         <pre id="diagram2" class="mermaid">
-%%{init: {"look": "neo"} }%%
+%%{init: {"look": "neo", "theme": "neo"} }%%
 
    stateDiagram-v2
     [*] --> Level1
@@ -792,7 +825,7 @@ stateDiagram-v2
       </td>
       <td>
           <pre id="diagram2" class="mermaid">
-  %%{init: {"look": "neo"} }%%
+%%{init: {"look": "neo", "theme": "neo"} }%%
 
      stateDiagram-v2
      [*] --> B1
@@ -913,7 +946,7 @@ stateDiagram-v2
       </td>
         <td>
           <pre id="diagram2" class="mermaid">
-  %%{init: {"look": "neo"} }%%
+%%{init: {"look": "neo", "theme": "neo"} }%%
 
      stateDiagram-v2
      state if_state <<choice>>
@@ -1011,7 +1044,7 @@ stateDiagram-v2
       </td>
       <td>
         <pre id="diagram2" class="mermaid">
-%%{init: {"look": "neo"} }%%
+%%{init: {"look": "neo", "theme": "neo"} }%%
    stateDiagram-v2
     state fork_state <<fork>>
       [*] --> fork_state
@@ -1114,7 +1147,7 @@ stateDiagram-v2
       </td>
       <td>
         <pre id="diagram2" class="mermaid">
-%%{init: {"look": "neo"} }%%
+%%{init: {"look": "neo", "theme": "neo"} }%%
    stateDiagram-v2
      TN3: The state with a note
         note right of TN3
@@ -1232,7 +1265,7 @@ state Active {
       </td>
       <td>
         <pre id="diagram2" class="mermaid">
-%%{init: {"look": "neo"} }%%
+%%{init: {"look": "neo", "theme": "neo"} }%%
      stateDiagram-v2
     [*] --> Active
 
@@ -1354,7 +1387,7 @@ direction LR
       </td>
       <td>
         <pre id="diagram2" class="mermaid">
-%%{init: {"look": "neo"} }%%
+%%{init: {"look": "neo", "theme": "neo"} }%%
      stateDiagram-v2
    direction LR
     [*] --> D1

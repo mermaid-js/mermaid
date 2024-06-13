@@ -101,13 +101,13 @@ g.stateGroup line {
 }
 
 .node circle.state-end {
-  fill: ${options.innerEndBackground};
+  fill:  ${options.stateBkg || options.mainBkg};
   stroke: ${options.background};
   stroke-width: 1.5
 }
 .end-state-inner {
   fill: ${options.compositeBackground || options.background};
-  // stroke: ${options.background};
+  stroke: ${options.background};
   stroke-width: 1.5
 }
 
@@ -116,6 +116,13 @@ g.stateGroup line {
   stroke: ${options.stateBorder || options.nodeBorder};
   stroke-width: 1px;
 }
+
+.node-rect-neo {
+  fill: ${options.stateBkg || options.mainBkg};
+  stroke: none;
+  stroke-width: 1px;
+}
+
 .node polygon {
   fill: ${options.mainBkg};
   stroke: ${options.stateBorder || options.nodeBorder};;
@@ -152,8 +159,7 @@ g.stateGroup line {
   fill: ${options.compositeBackground || options.background};
 }
 .statediagram-cluster.statediagram-cluster-alt .inner {
-  fill: ${options.altBackground ? options.altBackground : '#efefef'};
-
+  fill: ${options.altBackground ? options.altBackground : '#f0f0f0'};
 }
 
 .statediagram-cluster .inner {

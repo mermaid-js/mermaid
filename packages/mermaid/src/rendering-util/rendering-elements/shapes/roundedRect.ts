@@ -6,11 +6,11 @@ export const roundedRect = async (parent: SVGAElement, node: Node) => {
   const { look } = getConfig();
   node.look = look;
   const options = {
-    rx: node.look === 'neo' ? 1 : 5,
-    ry: node.look === 'neo' ? 1 : 5,
+    rx: node.look === 'neo' ? 3 : 5,
+    ry: node.look === 'neo' ? 3 : 5,
 
-    labelPaddingX: node.padding * 2,
-    labelPaddingY: node.padding * 1,
+    labelPaddingX: node.look === 'neo' ? node.padding * 2 : node.padding,
+    labelPaddingY: node.look === 'neo' ? node.padding : node.padding,
     classes: '',
   } as RectOptions;
 
