@@ -852,7 +852,7 @@ export const getData = () => {
 
   const n = getVertices();
   n.forEach((vertex) => {
-    addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, config.look);
+    addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, config.look || 'classic');
   });
 
   const e = getEdges();

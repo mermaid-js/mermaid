@@ -103,7 +103,6 @@ export const clear = () => {
 };
 
 export const positionNode = (node) => {
-  console.log('Position node', node, node.diff);
   const el = nodeElems[node.id];
 
   log.trace(

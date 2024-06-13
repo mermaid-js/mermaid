@@ -69,9 +69,8 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.direction = DIR;
 
   // TODO: Should we move these two to baseConfig? These types are not there in StateConfig.
-  // @ts-expect-error TODO: Will be fixed after config refactor
+
   data4Layout.nodeSpacing = conf?.nodeSpacing || 50;
-  // @ts-expect-error TODO: Will be fixed after config refactor
   data4Layout.rankSpacing = conf?.rankSpacing || 50;
   data4Layout.markers = ['barb'];
   data4Layout.diagramId = id;
