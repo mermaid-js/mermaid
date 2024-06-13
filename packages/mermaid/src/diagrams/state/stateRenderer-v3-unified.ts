@@ -46,6 +46,7 @@ export const draw = async function (
 ) {
   log.info('REF0:', positions);
   log.info('Drawing state diagram (v2)', id);
+  log.info('Diagram Configuration:', getConfig());
   const { securityLevel, state: conf, layout } = getConfig();
   // Extracting the data from the parsed structure into a more usable form
   // Not related to the refactoring, but this is the first step in the rendering process

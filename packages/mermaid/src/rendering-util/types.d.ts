@@ -27,7 +27,8 @@ interface Node {
 
   // Flowchart specific properties
   labelType?: string; // REMOVE? Always use markdown string, need to check for KaTeX - ⏳ wait with this one
-  domId: string;
+
+  domId?: string; // When you create the node in the getData function you do not have the domId yet
   // Rendering specific properties for both Flowchart and State Diagram nodes
   dir?: string; // Only relevant for isGroup true, i.e. a sub-graph or composite state.
   haveCallback?: boolean;
@@ -61,7 +62,6 @@ interface Node {
   x?: number;
   y?: number;
 
-  // Added look to handle
   look?: string;
 }
 
@@ -93,7 +93,6 @@ interface Edge {
   minlen?: number;
   pattern?: string;
   thickness?: 'normal' | 'thick' | 'invisible';
-
   look?: string;
 }
 

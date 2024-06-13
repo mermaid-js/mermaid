@@ -32,6 +32,7 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
     rx = options.rx;
     ry = options.ry;
   }
+
   if (node.look === 'handdrawn') {
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);

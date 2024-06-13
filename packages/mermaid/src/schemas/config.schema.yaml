@@ -78,7 +78,6 @@ properties:
     enum:
       - classic
       - handdrawn
-      - slick
     default: 'classic'
   handdrawnSeed:
     description: |
@@ -102,7 +101,7 @@ properties:
     minimum: 0
   elk.mergeEdges:
     description: |
-      Elk specific option that allows edge egdes to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
+      Elk specific option that allows egdes to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
     type: boolean
     default: false
   elk.nodePlacement.strategy:

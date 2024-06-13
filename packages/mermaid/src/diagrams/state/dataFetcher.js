@@ -61,11 +61,9 @@ const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, l
     switch (item.stmt) {
       case STMT_STATE:
         dataFetcher(parentParsedItem, item, diagramStates, nodes, edges, altFlag, look);
-
         break;
       case DEFAULT_STATE_TYPE:
         dataFetcher(parentParsedItem, item, diagramStates, nodes, edges, altFlag, look);
-
         break;
       case STMT_RELATION:
         {

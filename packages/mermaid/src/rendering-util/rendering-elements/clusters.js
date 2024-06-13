@@ -69,13 +69,12 @@ const rect = (parent, node) => {
       stroke: clusterBorder,
       fillWeight: 3,
       seed: handdrawnSeed,
-      stroke: clusterBorder,
     });
     const roughNode = rc.path(createRoundedRectPathD(x, y, totalWidth, totalHeight, 0), options);
     // console.log('Rough node insert CXC', roughNode);
 
     rect = shapeSvg.insert(() => {
-      console.log('Rough node insert CXC', roughNode);
+      log.debug('Rough node insert CXC', roughNode);
       return roughNode;
     }, ':first-child');
   } else {
@@ -178,7 +177,12 @@ const roundedWithTitle = (parent, node) => {
     themeVariables;
 
   // Add outer g element
-  const shapeSvg = parent.insert('g').attr('class', node.cssClasses).attr('id', node.id);
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', node.cssClasses)
+    .attr('id', node.id)
+    .attr('data-et', 'node')
+    .attr('data-id', node.id);
 
   // add the rect
   const outerRectG = shapeSvg.insert('g', ':first-child');
@@ -211,6 +215,12 @@ const roundedWithTitle = (parent, node) => {
     node.diff = -node.padding / 2;
   }
 
+  // if (node.id === 'Apa0') {
+  //   console.log('XBX here', node);
+  //   node.y += 10;
+  // } else {
+  //   console.log('XBX there', node);
+  // }
   const x = node.x - width / 2 - halfPadding;
   const y = node.y - node.height / 2 - halfPadding;
   const innerY = node.y - node.height / 2 - halfPadding + bbox.height + 2;

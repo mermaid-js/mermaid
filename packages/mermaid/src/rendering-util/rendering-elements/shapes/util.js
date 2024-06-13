@@ -133,4 +133,4 @@ export function insertPolygonShape(parent, w, h, points) {
 }
 
 export const getNodeClasses = (node, extra) =>
-  (node.useRough ? 'rough-node' : 'node') + ' ' + node.cssClasses + ' ' + (extra || '');
+  (node.look === 'handdrawn' ? 'rough-node' : 'node') + ' ' + node.cssClasses + ' ' + (extra || '');

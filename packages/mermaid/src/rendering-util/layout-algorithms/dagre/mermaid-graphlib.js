@@ -162,7 +162,7 @@ const findCommonEdges = (graph, id1, id2) => {
     return { v: edge.v, w: edge.w };
   });
   const result = edges1Prim.filter((edgeIn1) => {
-    return edges2Prim.filter((edge) => edgeIn1.v === edge.v && edgeIn1.w === edge.w).length > 0;
+    return edges2Prim.some((edge) => edgeIn1.v === edge.v && edgeIn1.w === edge.w);
   });
 
   return result;

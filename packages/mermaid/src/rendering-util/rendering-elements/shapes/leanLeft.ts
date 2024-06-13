@@ -6,14 +6,6 @@ import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shape
 import rough from 'roughjs';
 import { insertPolygonShape } from './insertPolygonShape.js';
 
-/**
- * Creates an SVG path for a lean left shape.
- * @param {number} x - The x coordinate of the top-left corner.
- * @param {number} y - The y coordinate of the top-left corner.
- * @param {number} width - The width of the shape.
- * @param {number} height - The height of the shape.
- * @returns {string} The path data for the lean left shape.
- */
 export const createLeanLeftPathD = (
   x: number,
   y: number,
@@ -45,7 +37,7 @@ export const lean_left = async (parent: SVGAElement, node: Node): Promise<SVGAEl
   const { cssStyles } = node;
 
   if (node.look === 'handdrawn') {
-    // @ts-ignore
+    // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
     const pathData = createLeanLeftPathD(0, 0, w, h);

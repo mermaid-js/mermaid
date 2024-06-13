@@ -71,6 +71,9 @@ function newClassesList() {
   return new Map();
 }
 
+let nodes = [];
+let edges = [];
+
 let direction = DEFAULT_DIAGRAM_DIRECTION;
 let rootDoc = [];
 let classes = newClassesList(); // style classes defined by a classDef
@@ -222,6 +225,12 @@ const extract = (_doc) => {
         break;
     }
   });
+
+  const diagramStates = getStates();
+  const config = getConfig();
+  const look = config.look;
+  resetDataFetching();
+  dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, look);
 };
 
 /**
@@ -306,6 +315,8 @@ export const addState = function (
 };
 
 export const clear = function (saveCommon) {
+  nodes = [];
+  edges = [];
   documents = {
     root: newDoc(),
   };
@@ -571,20 +582,7 @@ const setDirection = (dir) => {
 const trimColon = (str) => (str && str[0] === ':' ? str.substr(1).trim() : str.trim());
 
 export const getData = () => {
-  const nodes = [];
-  const edges = [];
-
-  // for (const key in currentDocument.states) {
-  //   if (currentDocument.states.hasOwnProperty(key)) {
-  //     nodes.push({...currentDocument.states[key]});
-  //   }
-  // }
-  const diagramStates = getStates();
   const config = getConfig();
-  const look = config.look;
-  resetDataFetching();
-  dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, look);
-
   return { nodes, edges, other: {}, config };
 };
 
