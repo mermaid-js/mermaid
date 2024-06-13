@@ -278,7 +278,7 @@ const roundedWithTitle = (parent, node) => {
   const rectBox = rect.node().getBBox();
   node.height = rectBox.height;
   node.offsetX = 0;
-  // Used by payout engone to position subgraph in parent
+  // Used by layout engine to position subgraph in parent
   node.offsetY = bbox.height - node.padding / 2;
   node.labelBBox = bbox;
 

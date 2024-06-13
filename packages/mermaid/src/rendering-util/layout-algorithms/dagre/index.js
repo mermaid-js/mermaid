@@ -188,17 +188,6 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         insertCluster(clusters, node);
 
         // A cluster in the non-recursive way
-        console.log(
-          'A tainted cluster node with children XBX',
-          v,
-          node.id,
-          node.width,
-          node.height,
-          node.x,
-          node.y,
-          'offset',
-          parent?.offsetY
-        );
         clusterDb[node.id].node = node;
       } else {
         const parent = graph.node(node.parentId);
