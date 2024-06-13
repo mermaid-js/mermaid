@@ -59,8 +59,6 @@ export const insertNode = async (elem, node, dir) => {
   let newEl;
   let el;
 
-  console.log('node DDD', node);
-
   //special check for rect shape (with or without rounded corners)
   if (node.shape === 'rect') {
     if (node.rx && node.ry) {

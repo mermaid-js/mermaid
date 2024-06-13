@@ -32,7 +32,7 @@ export const rectWithTitle = async (parent: SVGElement, node: Node) => {
 
   const description = node.description;
 
-  let title = node.label;
+  const title = node.label;
 
   const text = label.node().appendChild(createLabel(title, node.labelStyle, true, true));
   let bbox = { width: 0, height: 0 };
@@ -45,7 +45,7 @@ export const rectWithTitle = async (parent: SVGElement, node: Node) => {
   }
   log.info('Text 2', description);
   const textRows = description || [];
-  let titleBox = text.getBBox();
+  const titleBox = text.getBBox();
   const descr = label
     .node()
     .appendChild(

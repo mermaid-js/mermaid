@@ -239,7 +239,6 @@ const extract = (_doc) => {
       node.label = node.label[0];
     }
   });
-  console.log('nodes after extract', nodes);
 };
 
 /**
