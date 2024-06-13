@@ -182,6 +182,7 @@ const roundedWithTitle = (parent, node) => {
     .attr('class', node.cssClasses)
     .attr('id', node.id)
     .attr('data-et', 'node')
+    .attr('data-node', 'true')
     .attr('data-id', node.id);
 
   // add the rect
