@@ -48,10 +48,7 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
   } else {
     rect = shapeSvg.insert('rect', ':first-child');
 
-    let rectClass = 'basic label-container';
-    if (node.look === 'neo') {
-      rectClass += ' state-shadow-neo';
-    }
+    const rectClass = 'basic label-container';
 
     rect
       .attr('class', rectClass)
