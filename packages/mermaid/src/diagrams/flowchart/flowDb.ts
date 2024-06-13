@@ -795,10 +795,10 @@ const addNodeFromVertex = (
   config: any,
   look: string
 ) => {
-  let parentId = parentDB.get(vertex.id);
-  let isGroup = subGraphDB.get(vertex.id) || false;
+  const parentId = parentDB.get(vertex.id);
+  const isGroup = subGraphDB.get(vertex.id) || false;
 
-  let node = findNode(nodes, vertex.id);
+  const node = findNode(nodes, vertex.id);
   if (!node) {
     nodes.push({
       id: vertex.id,
@@ -852,7 +852,7 @@ export const getData = () => {
 
   const n = getVertices();
   n.forEach((vertex) => {
-    const node = addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, config.look);
+    addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, config.look);
   });
 
   const e = getEdges();
@@ -874,7 +874,6 @@ export const getData = () => {
       pattern: rawEdge.stroke,
       look: config.look,
     };
-    console.log('rawEdge SPLIT', rawEdge, index);
     edges.push(edge);
   });
 
