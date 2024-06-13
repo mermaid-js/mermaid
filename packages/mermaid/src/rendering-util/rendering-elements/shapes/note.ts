@@ -25,8 +25,8 @@ export const note = async (parent: SVGAElement, node: Node) => {
   let rect;
   const totalWidth = bbox.width + node.padding;
   const totalHeight = bbox.height + node.padding;
-  const x = -bbox.width / 2 - halfPadding;
-  const y = -bbox.height / 2 - halfPadding;
+  const x = -totalWidth / 2;
+  const y = -totalHeight / 2;
 
   if (node.look === 'handdrawn') {
     // add the rect

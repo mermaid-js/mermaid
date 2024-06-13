@@ -61,7 +61,7 @@
     ]
   },
   "devDependencies": {
-    "@applitools/eyes-cypress": "^3.42.3",
+    "@applitools/eyes-cypress": "^3.44.4",
     "@cspell/eslint-plugin": "^8.6.0",
     "@cypress/code-coverage": "^3.12.30",
     "@rollup/plugin-typescript": "^11.1.6",
@@ -85,7 +85,7 @@
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "cspell": "^8.6.0",
-    "cypress": "^13.7.1",
+    "cypress": "^13.11.0",
     "cypress-image-snapshot": "^4.0.1",
     "esbuild": "^0.20.2",
     "eslint": "^8.57.0",
@@ -126,10 +126,5 @@
   },
   "nyc": {
     "report-dir": "coverage/cypress"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "cytoscape@3.28.1": "patches/cytoscape@3.28.1.patch"
-    }
   }
 }

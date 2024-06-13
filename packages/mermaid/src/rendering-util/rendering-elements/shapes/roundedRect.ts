@@ -6,6 +6,8 @@ export const roundedRect = async (parent: SVGAElement, node: Node) => {
     rx: 5,
     ry: 5,
     classes: '',
+    labelPaddingX: (node?.padding || 0) * 1,
+    labelPaddingY: (node?.padding || 0) * 1,
   } as RectOptions;
 
   return drawRect(parent, node, options);

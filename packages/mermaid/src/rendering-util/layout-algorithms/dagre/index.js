@@ -183,7 +183,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         const halfPadding = node?.padding / 2 || 0;
         const labelHeight = node?.labelBBox?.height || 0;
         const offsetY = labelHeight - halfPadding || 0;
-        node.y += offsetY + (parent?.offsetY / 2 || 0);
+        // node.y += offsetY + (parent?.offsetY / 2 || 0);
         // node.offsetY = offsetY;
         insertCluster(clusters, node);
 
@@ -244,7 +244,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
       diff = n.diff;
     }
   });
-  log.trace('Returning from recursive render XAX', elem, diff);
+  log.warn('Returning from recursive render XAX', elem, diff);
   return { elem, diff };
 };
 /**

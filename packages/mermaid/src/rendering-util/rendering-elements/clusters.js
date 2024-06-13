@@ -177,7 +177,13 @@ const roundedWithTitle = (parent, node) => {
     themeVariables;
 
   // Add outer g element
-  const shapeSvg = parent.insert('g').attr('class', node.cssClasses).attr('id', node.id);
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', node.cssClasses)
+    .attr('id', node.id)
+    .attr('data-et', 'node')
+    .attr('data-node', 'true')
+    .attr('data-id', node.id);
 
   // add the rect
   const outerRectG = shapeSvg.insert('g', ':first-child');
@@ -190,6 +196,7 @@ const roundedWithTitle = (parent, node) => {
 
   // Get the size of the label
   let bbox = text.getBBox();
+
   if (evaluate(siteConfig.flowchart.htmlLabels)) {
     const div = text.children[0];
     const dv = select(text);
@@ -197,6 +204,7 @@ const roundedWithTitle = (parent, node) => {
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }
+
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
 
@@ -216,9 +224,10 @@ const roundedWithTitle = (parent, node) => {
   // }
   const x = node.x - width / 2 - halfPadding;
   const y = node.y - node.height / 2 - halfPadding;
-  const innerY = node.y - node.height / 2 - halfPadding + bbox.height - 1;
+  const innerY = node.y - node.height / 2 - halfPadding + bbox.height + 2;
   const height = node.height + padding;
-  const innerHeight = node.height + padding - bbox.height - 3;
+  const innerHeight = node.height + padding - bbox.height - 6;
+  const look = siteConfig.look;
 
   // add the rect
   let rect;
@@ -248,9 +257,16 @@ const roundedWithTitle = (parent, node) => {
     innerRect = shapeSvg.insert(() => roughInnerNode);
   } else {
     rect = outerRectG.insert('rect', ':first-child');
+    let outerRectClass = 'outer';
+    if (look === 'neo') {
+      outerRectClass = 'outer state-shadow-neo';
+    } else {
+      outerRectClass = 'outer';
+    }
+
     // center the rect around its coordinate
     rect
-      .attr('class', 'outer')
+      .attr('class', outerRectClass)
       .attr('x', x)
       .attr('y', y)
       .attr('width', width)
@@ -263,16 +279,9 @@ const roundedWithTitle = (parent, node) => {
       .attr('height', innerHeight);
   }
 
-  // Center the label
   label.attr(
     'transform',
-    `translate(${node.x - bbox.width / 2}, ${
-      node.y -
-      node.height / 2 -
-      node.padding +
-      bbox.height / 2 -
-      (evaluate(siteConfig.flowchart.htmlLabels) ? 5 : 3)
-    })`
+    `translate(${node.x - bbox.width / 2}, ${y + 1 - (evaluate(siteConfig.flowchart.htmlLabels) ? 0 : 3)})`
   );
 
   const rectBox = rect.node().getBBox();

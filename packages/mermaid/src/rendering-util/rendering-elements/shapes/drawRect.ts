@@ -5,8 +5,12 @@ import type { Node, RectOptions } from '$root/rendering-util/types.d.ts';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
+import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 export const drawRect = async (parent: SVGAElement, node: Node, options: RectOptions) => {
+  const { themeVariables, handdrawnSeed, look } = getConfig();
+  const { nodeBorder, mainBkg } = themeVariables;
+
   const { shapeSvg, bbox, halfPadding } = await labelHelper(
     parent,
     node,
@@ -14,12 +18,13 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
     true
   );
 
-  const totalWidth = bbox.width + node.padding;
-  const totalHeight = bbox.height + node.padding;
-  const x = -bbox.width / 2 - halfPadding;
-  const y = -bbox.height / 2 - halfPadding;
+  const totalWidth = Math.max(bbox.width + options.labelPaddingX * 2, node?.width || 0);
+  const totalHeight = Math.max(bbox.height + options.labelPaddingY * 2, node?.height || 0);
+  const x = -totalWidth / 2;
+  const y = -totalHeight / 2;
 
   let rect;
+  node.look = look;
   let { rx, ry } = node;
   const { cssStyles } = node;
 
